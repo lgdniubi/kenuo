@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.CouponAcmountMappingDao">
+	<sql id="sqlColumns">
+		amount_id,
+		coupon_id,
+		amount_name,
+		base_amount,
+		coupon_money,
+		total_number,
+		coupon_number,
+		status,
+		create_date,
+		create_by AS "createBy.name",
+		update_date,
+		update_by AS "updateBy.name"
+
+	</sql>
+	<!-- 	根据id查询 -->
+	<select id="acmountList" resultType="CouponAcmountMapping">
+		SELECT
+		<include refid="sqlColumns"></include>
+		FROM mtmydb.mtmy_coupon_acmount_mapping
+		where coupon_id=#{couponId}
+	</select>
+	
+	<!-- 	根据id查询 -->
+	<select id="findByCouIdList" resultType="CouponAcmountMapping">
+		SELECT
+		<include refid="sqlColumns"></include>
+		FROM mtmydb.mtmy_coupon_acmount_mapping
+		where coupon_id=#{couponId} and status=2
+	</select>
+	
+	<!-- 	保存知道商品优惠 -->
+	<insert id="insertCouponAcmountMapping">
+		INSERT INTO mtmydb.mtmy_coupon_acmount_mapping
+		(
+			coupon_id,
+			amount_name,
+			base_amount,
+			coupon_money,
+			total_number,
+			coupon_number,
+			status,
+			create_date,
+			create_by
+		
+		)
+		VALUES
+		(
+			#{couponId},
+			#{amountName},
+			#{baseAmount},
+			#{couponMoney},
+			#{totalNumber},
+			#{couponNumber},
+			#{status},
+			SYSDATE(),
+			#{createBy.name}
+		)
+		
+	</insert>
+	<!-- 更新数据 -->
+	<update id="updateAcmount">
+		UPDATE mtmydb.mtmy_coupon_acmount_mapping SET
+			amount_name=#{amountName},
+			base_amount=#{baseAmount},
+			coupon_money=#{couponMoney},
+			total_number=#{totalNumber},
+			coupon_number=#{couponNumber},
+			update_date=SYSDATE(),
+			update_by=#{updateBy.name}
+		WHERE amount_id=#{amountId}
+	</update>
+	<!-- 更新状态 -->
+	<update id="updateStatus">
+		UPDATE mtmydb.mtmy_coupon_acmount_mapping SET
+			status=#{status},
+			update_date=SYSDATE(),
+			update_by=#{createBy.name}
+		WHERE amount_id=#{amountId}
+	</update>
+	<!-- 根据id查询 -->
+	<select id="findByAcomountId" resultType="CouponAcmountMapping">
+		SELECT
+		<include refid="sqlColumns"></include>
+		FROM mtmydb.mtmy_coupon_acmount_mapping
+		where amount_id=#{amountId}
+	</select>
+	
+	<!-- 	删除数据 -->
+	<delete id="deleteCoupCate">
+		DELETE FROM mtmydb.mtmy_coupon_acmount_mapping  WHERE coupon_id=#{couponId}
+
+	</delete>
+
+	<update id="modifyCouponNumber" parameterType="map">
+		UPDATE mtmydb.mtmy_coupon_acmount_mapping 
+		SET coupon_number = #{count} WHERE amount_id = #{amount_id}
+	</update>
+	
+	<select id="timeOutAmountList" resultType="CouponAcmountMapping">
+		<![CDATA[
+		SELECT 
+			cam.*
+		FROM mtmydb.mtmy_coupon cou
+		LEFT JOIN mtmydb.mtmy_coupon_acmount_mapping cam ON cam.coupon_id = cou.coupon_id
+		WHERE cou.status <> 2 AND NOW() > cou.expiration_date
+		]]>
+	</select>
+</mapper>

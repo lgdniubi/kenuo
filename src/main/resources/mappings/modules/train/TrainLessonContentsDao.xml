@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.TrainLessonContentsDao">
+
+	<!-- 查询单个对象 -->
+	<select id="get" resultType="TrainLessonContents">
+		SELECT 
+		  content_id as 'contentId',
+		  content,
+		  createtime,
+		  status,
+		  cover_pic as 'coverPic',
+		  name,
+		  length as 'contentlength',
+		  content_type as 'contentType',
+		  lesson_id as 'lessonId' 
+		FROM
+		  train_lesson_contents
+		WHERE content_id = #{contentId}
+		AND status != -1
+	</select>
+	
+	<!-- 根据课程ID查询所有的内容 -->
+	<select id="findList" resultType="TrainLessonContents">
+		SELECT 
+		  content_id as 'contentId',
+		  content,
+		  createtime,
+		  status,
+		  cover_pic as 'coverPic',
+		  name,
+		  length as 'contentlength',
+		  content_type as 'contentType',
+		  lesson_id as 'lessonId' 
+		FROM
+		  train_lesson_contents
+		WHERE lesson_id = #{trainLessons.lessonId}
+		AND status != -1
+		ORDER BY CREATETIME DESC
+	</select>
+	
+	<!-- 保存课程内容 -->
+	<insert id="insert">
+		INSERT INTO train_lesson_contents (
+		  content_id,
+		  lesson_id,
+		  content,
+		  createtime,
+		  STATUS,
+		  cover_pic,
+		  NAME,
+		  LENGTH,
+		  content_type,
+		  down_url
+		) 
+		VALUES
+		  (
+		  #{contentId},
+		  #{trainLessons.lessonId},
+		  #{content},
+		  SYSDATE(),
+		  #{status},
+		  #{coverPic},
+		  #{name},
+		  #{contentlength},
+		  #{contentType},
+		  #{downUrl}
+		  )
+	</insert>
+	
+	<!-- 修改课程详细表 (在把课程ID修改到课程内容中) -->
+	<update id="updateTrainlessonContents">
+		UPDATE 
+		  train_lesson_contents 
+		SET
+		  LESSON_ID = #{trainLessons.lessonId}
+		WHERE CONTENT_ID = #{contentId}
+	</update>
+	
+	<!-- 删除课程详细表 (修改课程内容status为"-1"无效) -->
+	<update id="deleteTrainlessonContents">
+		UPDATE 
+		  train_lesson_contents 
+		SET
+		  STATUS = -1
+		WHERE CONTENT_ID = #{contentId}
+	</update>
+	
+	<!-- 修改课程内容表 (保存视频缩略图) -->
+	<update id="updateCoverPic">
+		UPDATE 
+		  train_lesson_contents 
+		SET
+		  COVER_PIC = #{coverPic}
+		WHERE CONTENT_ID = #{contentId}
+	</update>
+
+	
+</mapper>

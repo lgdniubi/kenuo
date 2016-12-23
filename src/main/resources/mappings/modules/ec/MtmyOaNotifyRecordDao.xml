@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.MtmyOaNotifyRecordDao">
+	<sql id="MtmyOaNotifyRecordColumns">
+		a.ID AS "id",
+		a.OA_NOTIFY_ID AS "mtmyOaNotify.id",
+		a.USER_ID AS "users.id",
+		a.READ_FLAG AS "readFlag",
+		a.READ_DATE AS "readDate",
+		concat(u.nickname,' (',u.mobile,')') AS "users.nickname"
+	</sql>
+	
+	<sql id="MtmyoaNotifyRecordJoins">
+		JOIN mtmydb.mtmy_users u ON u.user_id = a.user_id
+	</sql>
+	
+	<select id="get" resultType="MtmyOaNotifyRecord">
+		SELECT 
+			<include refid="MtmyOaNotifyRecordColumns"/>
+		FROM mtmydb.mtmy_oa_notify_record a
+		<include refid="MtmyoaNotifyRecordJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<update id="deleteByOaNotifyId">
+		update mtmydb.mtmy_oa_notify_record
+		set del_flag = 1
+		where oa_notify_id = #{oaNotifyId}
+	</update>
+	
+	<insert id="insertAll" parameterType="List">
+		INSERT INTO mtmydb.mtmy_oa_notify_record(
+			ID,
+			OA_NOTIFY_ID,
+			USER_ID,
+			READ_FLAG,
+			READ_DATE
+		)
+		<foreach collection="list" item="e" separator=" UNION ALL ">
+			SELECT
+				#{e.id},
+				#{e.mtmyOaNotify.id},
+				#{e.users.id},
+				#{e.readFlag},
+				#{e.readDate}
+			FROM dual
+		</foreach>
+	</insert>
+	
+	<select id="findList" resultType="MtmyOaNotifyRecord">
+		SELECT 
+			<include refid="MtmyOaNotifyRecordColumns"/>
+		FROM mtmydb.mtmy_oa_notify_record a
+		<include refid="MtmyoaNotifyRecordJoins"/>
+		WHERE 1=1
+		<if test="mtmyOaNotify != null and mtmyOaNotify.id != null and mtmyOaNotify.id != ''">
+			AND oa_notify_id = #{mtmyOaNotify.id}
+			AND a.del_flag = 0
+		</if>
+		ORDER BY a.read_flag ASC
+	</select>
+	
+	<update id="updateNotifyContentId" parameterType="map">
+		update mtmydb.mtmy_oa_notify
+		set content_id = #{content_id}
+		where id = #{notify_id}
+	</update>
+	
+	<!-- 修改推送结果 -->
+	<update id="updatePushResult" parameterType="map">
+		update mtmydb.mtmy_oa_notify
+		set result = #{result},
+			msg_total = #{msg_total},
+			msg_process = #{msg_process},
+			click_num = #{click_num},
+			push_num = #{push_num},
+			status = #{status}
+		where id = #{notify_id}
+	</update>
+</mapper>

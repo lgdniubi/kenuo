@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.ActionInfoDao">
+
+	<sql id="actionColunm">
+		a.action_id,
+		a.action_name,
+		a.action_title,
+		a.start_time,
+		a.end_time,
+		a.show_time,
+		a.close_time,
+		a.ceiling,
+		a.level,
+		a.status,
+		a.execute_status,
+		a.create_by AS "createBy.name",
+		a.create_date,
+		a.update_by AS "updateBy.name",
+		a.update_date
+
+	</sql>
+	<sql id="actionJion">
+		
+	</sql>
+	<select id="get" resultType="ActionInfo">
+		SELECT
+		 <include refid="actionColunm"></include>
+		FROM mtmydb.mtmy_action_info a
+		WHERE a.action_id=#{actionId}
+	</select>
+	<!-- 分页查询 -->
+	<select id="findList" resultType="ActionInfo">
+		SELECT
+		 <include refid="actionColunm"></include>
+		FROM mtmydb.mtmy_action_info a
+		WHERE 1=1
+		<if test="actionName != null and actionName!=''">
+			AND a.action_name like
+			<if test="dbName == 'oracle'">'%'||#{actionName} ||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{actionName} , '%')</if>
+		</if>
+		<if test="startTime != null and startTime != ''">
+			AND DATE_FORMAT(a.start_time,'%Y-%m-%d') >= DATE_FORMAT(#{startTime},'%Y-%m-%d')
+		</if>
+		<if test="endTime!=null and endTime!=''">
+			<![CDATA[AND DATE_FORMAT(a.end_time,'%Y-%m-%d') <= DATE_FORMAT(#{endTime},'%Y-%m-%d')]]>
+		</if>
+		<if test="status!=null and status!=''">
+			AND a.status=#{status}
+		</if>
+		ORDER BY a.create_date DESC
+	</select>
+	<select id="findAllList" resultType="ActionInfo">
+		SELECT
+		 <include refid="actionColunm"></include>
+		FROM mtmydb.mtmy_action_info a
+	</select>
+	
+	<!-- 更新状态 -->
+	<update id="updateStatus">
+		UPDATE mtmydb.mtmy_action_info SET
+		status=#{status},
+		update_by=#{updateBy.name},
+		update_date=SYSDATE()
+		where action_id=#{actionId}
+	</update>
+	<!-- 插入数据 -->
+	<insert id="insertAction">
+		INSERT INTO mtmydb.mtmy_action_info
+		(
+		action_name,
+		action_title,
+		start_time,
+		end_time,
+		show_time,
+		close_time,
+		ceiling,
+		level,
+		status,
+		create_by,
+		create_date
+		)VALUES
+		(
+		#{actionName},
+		#{actionTitle},
+		#{startTime},
+		#{endTime},
+		#{showTime},
+		#{closeTime},
+		#{ceiling},
+		#{level},
+		#{status},
+		#{createBy.name},
+		SYSDATE()
+		
+		)
+
+	</insert>
+	<!-- 更新数据 -->
+	<update id="update">
+		UPDATE mtmydb.mtmy_action_info SET
+		action_name=#{actionName},
+		action_title=#{actionTitle},
+		start_time=#{startTime},
+		end_time=#{endTime},
+		show_time=#{showTime},
+		close_time=#{closeTime},
+		ceiling=#{ceiling},
+		level=#{level},
+		update_by=#{createBy.name},
+		update_date=SYSDATE()
+		WHERE action_id=#{actionId}
+	
+	</update>
+	
+	<!-- 定时器查询所有开启 时间已经到的 状态为开启 -->
+	<select id="selectActionStarttime" resultType="ActionInfo">
+		 SELECT
+			 <include refid="actionColunm"></include>
+		FROM mtmydb.mtmy_action_info a
+		WHERE a.status = 1	AND a.execute_status=0
+		<![CDATA[ AND a.show_time <= SYSDATE() ]]>
+	
+	</select>
+
+	<!-- 定时器查询所有关闭时间已经到的 状态为开启,关闭 -->
+	<select id="selectActionCloseTime" resultType="ActionInfo">
+		SELECT
+			<include refid="actionColunm"></include>
+		FROM
+			mtmydb.mtmy_action_info a
+		WHERE
+			<![CDATA[ a.close_time <= SYSDATE()
+		AND  a.status in (1,2) ]]>
+	</select>
+	<!-- 更新定时器状态 -->
+	<update id="updateExecuteStatus">
+		UPDATE mtmydb.mtmy_action_info SET
+			execute_status=#{executeStatus}
+		where action_id=#{actionId}
+	
+	</update>
+
+</mapper>

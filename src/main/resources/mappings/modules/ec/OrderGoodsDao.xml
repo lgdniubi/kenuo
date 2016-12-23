@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.OrderGoodsDao">
+	<sql id="ordergoodsColmun">
+		a.rec_id,
+		a.order_id,
+		a.user_id,
+		a.goods_name,
+		a.goods_id,
+		a.goods_sn,
+		a.goods_num,
+		a.original_img,
+		a.market_price,
+		a.goods_price,
+		a.cost_price,
+		a.member_goods_price,
+		a.give_integral,
+		a.spec_key,
+		a.spec_key_name,
+		a.bar_code,
+		a.is_comment,
+		a.action_type,
+		a.action_id,
+		a.is_send,
+		a.delivery_id,
+		a.add_time,
+		a.service_times,
+		a.remain_times,
+		a.service_min,
+		a.is_real,
+		a.expiring_date
+			
+	</sql>
+
+
+	<select id="findListByOrderid" resultType="OrderGoods">
+		SELECT
+		<include refid="ordergoodsColmun"></include>
+		FROM
+		mtmydb.mtmy_order_goods_mapping a
+		WHERE a.del_flag =0
+		and a.order_id=#{orderid}
+	</select>
+	<!-- 通过订单号查询订单下的虚拟商品及用户信息 -->
+	<select id="findOrderGoods" resultType="OrderGoods">
+		SELECT 
+			<include refid="ordergoodsColmun"></include>,
+			u.user_id AS 'users.userid',
+			u.mobile AS 'users.mobile',
+			u.name AS 'users.name'
+		FROM 
+			mtmydb.mtmy_order_goods_mapping a
+			LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
+			LEFT JOIN mtmydb.mtmy_orders o ON a.order_id = o.order_id
+		WHERE 
+			a.del_flag =0
+			and a.order_id=#{orderid}
+			and a.is_real = 1
+			and a.remain_times >0
+			AND o.order_status > 0
+	</select>
+	<insert id="saveOrderGoods">
+		INSERT INTO mtmydb.mtmy_order_goods_mapping
+		(
+		order_id,
+		user_id,
+		goods_name,
+		goods_id,
+		goods_num,
+		goods_sn,
+		original_img,
+		bar_code,
+		service_times,
+		remain_times,
+		service_min,
+		market_price,
+		goods_price,
+		spec_key,
+		spec_key_name,
+		add_time,
+		is_real,
+		expiring_date
+		)VALUES(
+		#{orderid},
+		#{userid},
+		#{goodsname},
+		#{goodsid},
+		#{goodsnum},
+		#{goodssn},
+		#{originalimg},
+		#{barcode},
+		#{servicetimes},
+		#{remaintimes},
+		#{servicemin},
+		#{marketprice},
+		#{goodsprice},
+		#{speckey},
+		#{speckeyname},
+		SYSDATE(),
+		#{isreal},
+		#{expiringDate}
+		)
+
+	</insert>
+	<select id="numByGoodsId" resultType="Integer">
+		SELECT
+			COUNT(*) AS "num"
+		FROM
+			mtmydb.mtmy_order_goods_mapping
+		WHERE goods_id=#{goodsId}
+	</select>
+	<select id="findBarCodeByOederId" resultType="OrderGoods">
+		SELECT
+		<include refid="ordergoodsColmun"></include>,
+		p.bar_code AS goodBarCode,
+		p.goods_no AS goodsNo
+		FROM
+		mtmydb.mtmy_order_goods_mapping a
+		LEFT JOIN mtmydb.mtmy_spec_goods_price p ON (p.goods_id = a.goods_id AND p.spec_key = a.spec_key )
+		WHERE a.del_flag = 0
+		and a.order_id=#{orderid}
+	</select>
+</mapper>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.TabBannerDao">
+    
+    <!-- 插入数据 -->
+	<insert id="insert" parameterType="TabBanner">
+		INSERT INTO mtmydb.mtmy_tab_banner_content(
+			tab_id,
+			tab_name,
+			tab_icon,
+			tab_select_icon,
+			sort,
+			create_date
+		) VALUES (
+			#{tabId},
+			#{tabName},
+			#{tabIcon},
+			#{tabSelectIcon},
+			#{newSort},
+			SYSDATE()
+		)
+	</insert>
+	
+	<!-- 查询数据列表  -->
+	<select id="findList" resultType="TabBanner">
+		SELECT
+			id AS tabBannerId,
+			tab_name AS tabName,                               
+			tab_icon AS tabIcon,
+			tab_select_icon AS tabSelectIcon,
+			sort AS newSort
+		FROM
+			mtmydb.mtmy_tab_banner_content
+		WHERE tab_id = #{tabId}
+		ORDER BY
+			id DESC
+	</select>
+	
+	<!-- 查询一对tab_banner详情 -->
+	<select id="getTabBanner" resultType="TabBanner">
+		SELECT
+			id AS tabBannerId,
+			tab_name AS tabName,                               
+			tab_icon AS tabIcon,
+			tab_select_icon AS tabSelectIcon,
+			sort AS newSort
+		FROM
+			mtmydb.mtmy_tab_banner_content
+		WHERE 
+			id = #{tabBannerId}
+	</select>
+	
+	<!--更新数据 -->
+	<update id="update" parameterType="TabBanner">
+		UPDATE mtmydb.mtmy_tab_banner_content
+			SET 
+			  tab_name = #{tabName},     
+			  tab_icon = #{tabIcon},
+			  tab_select_icon = #{tabSelectIcon},
+			  sort = #{newSort}
+		WHERE id = #{tabBannerId}
+	</update>
+	
+	<!-- 删除某一tab_banner -->
+	<delete id="delTabBanner" parameterType="TabBanner">
+		Delete 
+		FROM mtmydb.mtmy_tab_banner_content
+		WHERE id = #{tabBannerId}
+	</delete>
+</mapper>

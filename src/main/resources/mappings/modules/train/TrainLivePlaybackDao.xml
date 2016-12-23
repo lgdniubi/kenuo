@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.TrainLivePlaybackDao">
+	<sql id="sqlColumns">
+		a.id,
+		a.playbackId,
+		a.userId,
+		a.liveId,
+		a.bengtime,
+		a.endtime,
+		a.`name`,
+		a.`desc`,
+		a.imgurl,
+		a.playpass,
+		a.collect,
+		a.thumbup,
+		a.playNum
+
+	</sql>
+
+	<!-- 根据编号获特长 -->
+	<select id="get" resultType="TrainLivePlayback">
+		SELECT
+			<include refid="sqlColumns" />
+		FROM trains.train_live_playback a 
+		WHERE a.userId=#{userId}
+
+	</select>
+	<!-- 查询所有用户下的数据 -->
+	<select id="findList" resultType="TrainLivePlayback">
+		SELECT
+			<include refid="sqlColumns" />
+		FROM trains.train_live_playback a 
+		WHERE a.userId=#{userId}
+	</select>
+
+</mapper>

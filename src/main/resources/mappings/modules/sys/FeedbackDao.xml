@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.sys.dao.FeedbackDao">
+	<select id="findList" resultType="Feedback">
+		SELECT A.FB_ID,A.CONTENT,A.CREATETIME,A.FB_STATUS,B.NAME
+			FROM  
+			TRAIN_feedback AS A,SYS_USER AS B
+			WHERE 
+			 A.status=0
+			and b.id=a.user_id
+			<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
+			AND
+			a.createtime BETWEEN #{beginDate} AND #{endDate}
+			</if>
+			<if test="content != null and content != ''">
+			AND a.content LIKE 
+					<if test="dbName == 'oracle'">'%'||#{content}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{content}, '%')</if>
+			</if>
+			<if test="fbStatus != null and fbStatus != ''">
+			AND a.fb_Status LIKE #{fbStatus}
+			</if>
+			ORDER BY  A.CREATETIME DESC
+	</select>
+	<select id="get" resultType="Feedback">
+		SELECT A.FB_STATUS,a.content,a.createtime,b.name,b.photo
+			FROM  
+			TRAIN_feedback AS A,sys_user as b
+			WHERE 
+			A.status=0
+			and a.user_id=b.id
+			AND a. FB_ID = #{fbId}
+	</select>
+	<update id="updateFbStatus">
+		UPDATE TRAIN_feedback
+				SET 
+				FB_STATUS = #{fbStatus}
+			WHERE 
+			    FB_ID = #{fbId}
+	</update>
+</mapper>

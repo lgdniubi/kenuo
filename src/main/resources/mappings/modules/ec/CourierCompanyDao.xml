@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.CourierCompanyDao">
+
+	<sql id="actionColunm">
+		a.id,
+		a.courier_name,
+		a.courier_no,
+		a.remark,
+		a.create_date
+	</sql>
+	<!-- 根据id获取数据 -->
+	<select id="get" resultType="CourierCompany">
+		SELECT
+		 <include refid="actionColunm"></include>
+		FROM mtmydb.mtmy_courier_company a
+		WHERE a.id=#{id}
+	</select>
+	<!-- 分页查询 -->
+	<select id="findList" resultType="CourierCompany">
+		SELECT
+		 <include refid="actionColunm"></include>
+		FROM mtmydb.mtmy_courier_company a
+		ORDER BY a.create_date DESC
+	</select>
+	<select id="findAllList" resultType="CourierCompany">
+		SELECT
+		 <include refid="actionColunm"></include>
+		FROM mtmydb.mtmy_courier_company a
+	</select>
+	<!-- 插入数据 -->
+	<insert id="insert">
+		INSERT INTO mtmydb.mtmy_courier_company
+		(
+		courier_name,
+		courier_no,
+		remark,
+		create_date
+		)VALUES
+		(
+		#{courierName},
+		#{courierNo},
+		#{remark},
+		SYSDATE()
+		)
+
+	</insert>
+	
+</mapper>

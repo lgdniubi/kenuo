@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.sys.dao.FranchiseeDao">
+	
+	<sql id="franchiseeColumns">
+		  f.id,
+		  f.parent_id AS 'parent.id',
+		  fp.name AS 'parent.name',
+		  f.parent_ids AS 'parentIds',
+		  f.name,
+		  f.sort,
+		  f.type,
+		  f.code,
+		  f.area_id AS 'area.id',
+		  a.name AS 'area.name',
+		  f.address,
+		  f.zipcode,
+		  f.legal_name AS 'legalName',
+		  f.contacts,
+		  f.mobile,
+		  f.tel,
+		  f.charter_url AS 'charterUrl',
+		  f.taxation_url AS 'taxationUrl',
+		  f.bank_beneficiary AS 'bankBeneficiary',
+		  f.bank_code AS 'bankCode',
+		  f.bank_name AS 'bankName',
+		  f.status,
+		  f.remarks
+	</sql>
+	
+	<sql id="franchiseeJoins">
+		LEFT JOIN sys_area a ON f.area_id = a.id
+		LEFT JOIN sys_franchisee fp ON fp.id = f.parent_id
+	</sql>
+	
+	<!-- 查询详细信息 -->
+	<select id="get" resultType="Franchisee">
+		SELECT 
+		   <include refid="franchiseeColumns"/>
+		FROM
+		  sys_franchisee f
+		  <include refid="franchiseeJoins"/>
+		WHERE f.id = #{id}
+		AND f.del_flag = 0 
+	</select>
+	
+	<select id="findList" resultType="Franchisee">
+		SELECT 
+		  f.id,
+		  f.name,
+		  f.sort,
+		  f.address,
+		  f.zipcode,
+		  f.contacts,
+		  f.mobile
+		 
+		FROM
+		  sys_franchisee f 
+		
+		WHERE f.del_flag = 0 and f.parent_id !=0
+		
+		ORDER BY f.code
+	</select>
+	
+	<select id="findByParentIdsLike" resultType="Franchisee">
+		SELECT
+			<include refid="franchiseeColumns"/>
+		FROM 
+			sys_franchisee f
+			<include refid="franchiseeJoins"/>
+		WHERE f.del_flag = 0
+			AND f.parent_ids LIKE #{parentIds}
+		ORDER BY a.code
+	</select>
+			
+	<!-- 查询所有数据  -->		
+	<select id="findAllList" resultType="Franchisee">
+		SELECT 
+		  f.id,
+		  f.parent_id AS 'parent.id',
+		  f.parent_ids AS 'parentIds',
+		  f.name,
+		  f.sort,
+		  (CASE
+		      WHEN f.type = 1 
+		      THEN '直营店' 
+		      WHEN f.type = 2 
+		      THEN '加盟店' 
+		    END) AS 'type',
+		  f.code,
+		  f.area_id AS 'area.id',
+		  (SELECT NAME FROM sys_area WHERE CODE = a.code AND TYPE = 4) AS 'district',
+  		  (SELECT NAME FROM sys_area WHERE CODE = LEFT(a.code,9) AND TYPE = 3) AS 'city',
+  		  (SELECT NAME FROM sys_area WHERE CODE = LEFT(a.code,5) AND TYPE = 2) AS 'province',
+		  f.address,
+		  f.zipcode,
+		  f.contacts,
+		  f.mobile,
+		  f.tel 
+		FROM
+		  sys_franchisee f 
+		  LEFT JOIN sys_area a ON f.area_id = a.id
+		WHERE f.del_flag = 0  
+			AND a.del_flag = 0  
+		ORDER BY f.code
+	</select>
+	
+	<!-- 查询code下一个值 -->
+	<select id="findListbyPID" resultType="Franchisee">
+		SELECT
+			<include refid="franchiseeColumns"/>
+			FROM sys_franchisee f
+			<include refid="franchiseeJoins"/>
+		WHERE f.del_flag = 0 AND f.parent_id= #{parent.id}
+		ORDER BY f.code
+	</select>
+	
+	<!-- 保存 -->
+	<insert id="insertFranchisee" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO sys_franchisee (
+		  parent_id,
+		  parent_ids,
+		  name,
+		  type,
+		  sort,
+		  code,
+		  area_id,
+		  address,
+		  zipcode,
+		  legal_name,
+		  contacts,
+		  mobile,
+		  tel,
+		  charter_url,
+		  taxation_url,
+		  bank_beneficiary,
+		  bank_code,
+		  bank_name,
+		  status,
+		  create_by,
+		  create_date,
+		  update_by,
+		  update_date,
+		  del_flag,
+		  remarks
+		) 
+		VALUES
+		  (
+		    #{parent.id}, 
+			#{parentIds},
+		    #{name},
+		    #{type},
+		    #{sort},
+		    #{code},
+		    #{area.id},
+		    #{address},
+		    #{zipcode},
+		    #{legalName},
+		    #{contacts},
+		    #{mobile},
+		    #{tel},
+		    #{charterUrl},
+		    #{taxationUrl},
+		    #{bankBeneficiary},
+		    #{bankCode},
+		    #{bankName},
+		    #{status},
+		    #{createBy.name},
+		    SYSDATE(),
+		    NULL,
+		    NULL,
+		    0,
+		    #{remarks}
+		  )
+	</insert>
+	
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE 
+		  sys_franchisee
+		SET
+		  name = #{name},
+		  type = #{type},
+		  area_id = #{area.id},
+		  address = #{address},
+		  zipcode = #{zipcode},
+		  legal_name = #{legalName},
+		  contacts = #{contacts},
+		  mobile = #{mobile},
+		  tel = #{tel},
+		  charter_url = #{charterUrl},
+		  taxation_url = #{taxationUrl},
+		  bank_beneficiary = #{bankBeneficiary},
+		  bank_code = #{bankCode},
+		  bank_name = #{bankName},
+		  update_by = #{updateBy.name},
+		  update_date = SYSDATE(),
+		  remarks = #{remarks} 
+		WHERE id = #{id} 
+	</update>
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteByLogic">
+		UPDATE sys_franchisee SET 
+			del_flag = 1
+		WHERE id = #{id} OR parent_ids LIKE 
+					<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+	</update>
+	
+</mapper>

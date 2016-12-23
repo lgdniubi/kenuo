@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.ActivityCouponDao">
+	<sql id="sqlColumns">
+		a.id,
+		a.action_id,
+		a.coupon_name,
+		a.coupon_type,
+		a.used_type,
+		a.base_amount,
+		a.coupon_money,
+		a.total_number,
+		a.coupon_number,
+		a.ceiling,
+		a.`status`,
+		a.create_date,
+		a.create_by AS "createBy.name"
+
+	</sql>
+
+	<!-- 根据编号获对象-->
+	<select id="get" resultType="ActivityCoupon">
+		SELECT
+		<include refid="sqlColumns" />
+		FROM mtmydb.mtmy_activity_coupon a
+		WHERE
+		a.id = #{id}
+	</select>
+	
+	<!-- 根据编号获对象 -->
+	<select id="findByCouponId" resultType="ActivityCoupon">
+		SELECT
+		<include refid="sqlColumns" />
+		FROM mtmydb.mtmy_activity_coupon a
+		WHERE
+		a.id = #{id}
+
+	</select>
+	<!-- 查询红包活动下的所有红包列表 -->
+	<select id="Couponlist" resultType="ActivityCoupon">
+		SELECT
+		<include refid="sqlColumns" />
+		FROM mtmydb.mtmy_activity_coupon a
+		WHERE
+		a.action_id = #{actionId}
+		ORDER BY a.create_date DESC
+	</select>
+	
+	<select id="findByCouIdList" resultType="ActivityCoupon">
+		SELECT
+		<include refid="sqlColumns" />
+		FROM mtmydb.mtmy_activity_coupon a
+		WHERE
+		a.action_id = #{actionId} and a.status=1
+		ORDER BY a.create_date DESC
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="findList" resultType="ActivityCoupon">
+		SELECT
+		<include refid="sqlColumns"></include>
+		FROM
+		mtmydb.mtmy_activity_coupon a
+		<!-- <if test="reType != null and reType != ''"> -->
+		<!-- AND re_type=#{reType} -->
+		<!-- </if> -->
+
+		ORDER BY a.create_date DESC
+
+	</select>
+	<!-- 查询过期时间的数据 -->
+	<select id="selectByTime" resultType="ActivityCoupon">
+		SELECT
+		<include refid="sqlColumns"></include>
+		FROM
+		mtmydb.mtmy_activity_coupon a
+		
+	</select>
+	<!-- 保存数据 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO mtmydb.mtmy_activity_coupon (
+		action_id,
+		coupon_name,
+		coupon_type,
+		used_type,
+		base_amount,
+		coupon_money,
+		total_number,
+		coupon_number,
+		ceiling,
+		`status`,
+		create_date,
+		create_by
+		)
+		VALUES
+		(
+		#{actionId},
+		#{couponName},
+		#{couponType},
+		#{usedType},
+		#{baseAmount},
+		#{couponMoney},
+		#{totalNumber},
+		#{couponNumber},
+		#{ceiling},
+		#{status},
+		SYSDATE(),
+		#{createBy.name}
+		)
+
+	</insert>
+	<!-- 更新数据 -->
+	<update id="update">
+		UPDATE mtmydb.mtmy_activity_coupon SET
+		coupon_name=#{couponName},
+		coupon_type=#{couponType},
+		used_type=#{usedType},
+		base_amount=#{baseAmount},
+		coupon_money=#{couponMoney},
+		total_number=#{totalNumber},
+		coupon_number=#{couponNumber},
+		ceiling=#{ceiling}
+		where id=#{id}
+	</update>
+	<!-- 更新状态 -->
+	<update id="updateCouponStatus">
+		UPDATE mtmydb.mtmy_activity_coupon SET
+		status=#{status}
+		where id=#{id}
+	</update>
+	<!-- 修改开启时间 -->
+	<update id="updateTime">
+		UPDATE mtmydb.mtmy_activity_coupon SET
+		get_begintime=#{getBegintime},
+		get_endtime=#{getEndtime},
+		status=#{status},
+		update_by=#{updateBy.name},
+		update_date=SYSDATE()
+		where coupon_id=#{couponId}
+	</update>
+	<!-- 过期更改状态 -->
+	<update id="updateOldStatus">
+		 UPDATE mtmydb.mtmy_activity_coupon SET status=2 WHERE coupon_id=#{couponId}
+	</update>
+	
+	<update id="updateSendStatus">
+		UPDATE mtmydb.mtmy_activity_coupon SET
+			send_status=1
+		where coupon_id=#{couponId}
+	</update>
+
+	<update id="updateTimeOStatus" parameterType="int">
+		UPDATE mtmydb.mtmy_activity_coupon SET
+			status=2,
+			update_date=SYSDATE()
+		WHERE coupon_id=#{value}
+	</update>
+	
+	<update id="modifyCouponNumber" parameterType="map">
+		UPDATE mtmydb.mtmy_activity_coupon 
+		SET coupon_number = #{count} WHERE id=#{id}
+	</update>
+	
+</mapper>

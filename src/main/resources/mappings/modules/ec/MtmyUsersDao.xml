@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.MtmyUsersDao">
+	<sql id="usersColumns">
+		u.user_id AS userid,
+		u.name,
+		u.sex,
+		u.nickname,
+		u.reg_time AS regtime,
+		u.last_login AS lastlogin,
+		u.phone,
+		u.mobile,
+		u.is_lock AS islock,
+		u.user_money
+	</sql>
+    <insert id="insert" parameterType="Users" useGeneratedKeys="true" keyProperty="userid">
+		INSERT INTO mtmydb.mtmy_users(
+			name, 
+			nickname, 
+			password, 
+			mobile, 
+			sex,
+			reg_time,
+			del_flag
+		) VALUES (
+			#{name}, 
+			#{nickname}, 
+			#{password}, 
+			#{mobile}, 
+			#{sex},
+			SYSDATE(),
+			#{DEL_FLAG_NORMAL}
+		)
+	</insert>
+	<!-- 新增用户时插入用户账目表 -->
+	<insert id="insertAccounts">
+		INSERT INTO mtmydb.mtmy_user_accounts(
+			user_id, 
+			user_balance, 
+			frozen_balance, 
+			total_amount, 
+			user_integral
+		) VALUES (
+			#{userid}, 
+			0, 
+			0, 
+			0, 
+			0
+		)
+	</insert>
+	<insert id="insterSaleStats">
+		INSERT INTO mtmydb.mtmy_sale_account_stats(
+			user_id, 
+			user_total_amount, 
+			team_total_amount, 
+			team_total_balance, 
+			team_total_integral
+		) VALUES (
+			#{userid}, 
+			0, 
+			0, 
+			0, 
+			0
+		)
+	</insert>
+	<!-- 新增妃子校用户更新到每天美耶用户 -->
+	<insert id="trainsInsertMtmy" parameterType="User" useGeneratedKeys="true" keyProperty="mtmyUserId">
+		INSERT INTO mtmydb.mtmy_users (
+			NAME,
+			email,
+			PASSWORD,
+			sex,
+			source,
+			layer,
+			birthday,
+			user_money,
+			frozen_money,
+			pay_points,
+			address_id,
+			reg_time,
+			last_login,
+			last_ip,
+			qq,
+			phone,
+			mobile,
+			mobile_validated,
+			oauth,
+			openid,
+			head_pic,
+			province,
+			city,
+			district,
+			email_validated,
+			nickname,
+			LEVEL,
+			discount,
+			total_amount,
+			is_lock,
+			del_flag,
+			update_by,
+			update_date,
+			weight,
+			height
+		) VALUES (
+			#{name},
+			NULL,
+			#{password},
+			0,
+			1,
+			'A',
+			NULL,
+			0.00,
+			0.00,
+			0,
+			0,
+			SYSDATE(),
+			SYSDATE(),
+			'192.168.1.25',
+			NULL,
+			NULL,
+			#{mobile},
+			0,
+			NULL,
+			NULL,
+			'http://resource.idengyun.com/resource/images/2016/08/24271e63-1db7-4751-9a00-eace572daa1c.png',
+			'0',
+			'0',
+			'0',
+			0,
+			#{name},
+			1,
+			1.00,
+			0.00,
+			0,
+			0,
+			NULL,
+			NULL,
+			0,
+			0
+		)
+	</insert>
+	<!-- 妃子校更新用户到每天美耶时  进行验证 -->
+	<select id="findByMobile" parameterType="User" resultType="Users">
+		SELECT 
+		  <include refid="usersColumns"/>
+		FROM
+		  mtmydb.mtmy_users AS u
+		WHERE 
+			1=1
+			AND u.mobile = #{mobile}
+	</select>
+	<select id="findAllList" resultType="Users">
+		SELECT 
+		  <include refid="usersColumns"/>,
+		  (SELECT a.name FROM trains.sys_area AS a where a.id = u.province ) AS province,
+		  (SELECT a.name FROM trains.sys_area AS a where a.id = u.city ) AS city,
+		  (SELECT a.name FROM trains.sys_area AS a where a.id = u.district ) AS district
+		FROM
+		  mtmydb.mtmy_users AS u
+		WHERE 
+			1=1
+			<if test="mobile != null and mobile != ''">
+				AND u.mobile LIKE 
+					<if test="dbName == 'oracle'">'%'||#{mobile }||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{mobile }, '%')</if>
+			</if>
+			<if test="nickname != null and nickname != ''">
+				AND u.nickname LIKE 
+					<if test="dbName == 'oracle'">'%'||#{nickname}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{nickname}, '%')</if>
+			</if>
+			<if test="name != null and name != ''">
+				AND u.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+			</if>
+			<if test="startRegtime != null and startRegtime != '' and endRegtime != null and endRegtime != ''">
+				AND u.reg_time BETWEEN #{startRegtime} AND #{endRegtime}
+			</if>
+			<if test="startLastlogin != null and startLastlogin != '' and endLastlogin != null and endLastlogin != ''">
+				AND u.last_login BETWEEN #{startLastlogin} AND #{endLastlogin}
+			</if>
+			<if test="district != null and district != ''">
+				AND (
+					u.district = #{district }
+					or u.city = #{district }
+					or u.province = #{district }
+					)
+			</if>
+			AND u.del_flag = #{DEL_FLAG_NORMAL}
+		ORDER BY u.reg_time DESC
+	</select>
+	<select id="get" resultType="Users">
+		SELECT 
+		  <include refid="usersColumns"/>
+		FROM
+		  mtmydb.mtmy_users AS u
+		WHERE 
+			1=1
+			AND u.user_id = #{userid}
+	</select>
+	<select id="findUserBymobile" resultType="int">
+		SELECT     
+			COUNT(*)   
+		FROM     
+			mtmydb.mtmy_users    
+		WHERE     
+			1=1    
+			AND mobile = #{mobile}
+	</select>
+	<select id="findUserBynickName" resultType="int">
+		SELECT     
+			COUNT(*)   
+		FROM     
+			mtmydb.mtmy_users    
+		WHERE     
+			1=1    
+			AND nickname = #{nickname}
+	</select>
+	<select id="getUserByPhone" resultType="Users">
+		SELECT 
+		  <include refid="usersColumns"/>
+		FROM
+		  mtmydb.mtmy_users AS u
+		WHERE 
+			1=1
+			AND u.mobile = #{phone}
+			AND u.is_lock = 0
+	</select>
+	<select id="getUsersBy" resultType="Users">
+		SELECT 
+		  <include refid="usersColumns"/>
+		FROM
+		  mtmydb.mtmy_users AS u
+		WHERE 
+			1=1
+			AND u.mobile = #{phone}
+	</select>
+	<update id="update">
+		UPDATE mtmydb.mtmy_users SET 
+			<if test="mobile != null and mobile != ''">
+				phone  = #{phone},
+				mobile = #{mobile},
+			</if>
+			<if test="password != null and password != ''">
+				password = #{password},
+			</if>
+			<if test="islock != null and islock != ''">
+				is_lock = #{islock},
+			</if>
+			update_by = #{id},
+			update_date = SYSDATE()
+			WHERE 
+			user_id = #{userid}
+	</update>
+	<update id="lockUser">
+		UPDATE mtmydb.mtmy_users SET 
+				is_lock = #{islock},
+				update_by = #{id},
+				update_date = SYSDATE()
+				WHERE 
+				user_id = #{userid}
+	</update>
+	<!-- 返现提成 -->
+	<update id="UpdateUserMoney">
+		UPDATE mtmydb.mtmy_users SET
+		user_money =user_money+#{usermoney}
+		WHERE user_id = #{userid}
+	
+	</update>
+	
+	<update id="modifyUserMoneyForMtmy" parameterType="map">
+		UPDATE mtmydb.mtmy_users SET user_money = user_money + #{money} 
+		WHERE user_id = #{user_id}
+	</update>
+	<update id="modifyPay_points" parameterType="map">
+		UPDATE mtmydb.mtmy_users SET pay_points = pay_points + #{paypoints} WHERE user_id = #{user_id}
+	</update>
+	<!-- 消费增加积分 -->
+	<update id="UpdateUserPayPost">
+		UPDATE mtmydb.mtmy_users SET
+		pay_points=pay_points+#{paypoints},
+		level_value=level_value+#{levelValue}
+		WHERE user_id = #{userid}
+	
+	</update>
+	<!-- 通知  查询所有有cid的用户信息 -->
+	<select id="findUserByCid" resultType="Users">
+		SELECT 
+		  <include refid="usersColumns"/>
+		FROM
+		  mtmydb.mtmy_users AS u 
+		  RIGHT JOIN mtmydb.mtmy_oa_user_client AS c ON u.user_id = c.user_id 
+		WHERE 
+			1=1
+			<if test="mobile != null and mobile != ''">
+				AND u.mobile LIKE 
+					<if test="dbName == 'oracle'">'%'||#{mobile }||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{mobile }, '%')</if>
+			</if>
+			<if test="nickname != null and nickname != ''">
+				AND u.nickname LIKE 
+					<if test="dbName == 'oracle'">'%'||#{nickname}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{nickname}, '%')</if>
+			</if>
+			<if test="district != null and district != ''">
+				AND (
+					u.district = #{district }
+					or u.city = #{district }
+					or u.province = #{district }
+					)
+			</if>
+			AND u.del_flag = #{DEL_FLAG_NORMAL}
+			AND u.user_id is NOT NULL
+		ORDER BY u.reg_time DESC
+	</select>
+	<!-- 根据条件查询  推送用户红包 -->
+	<select id="findAllBy" resultType="Users">
+		SELECT 
+		  <include refid="usersColumns"/>
+		FROM
+		  mtmydb.mtmy_users  u 
+		WHERE 
+			1=1
+			<if test="nickname != null and nickname != ''">
+				AND u.nickname LIKE 
+					<if test="dbName == 'oracle'">'%'||#{nickname}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{nickname}, '%')</if>
+			</if>
+			<if test="mobile != null and mobile != ''">
+				AND u.mobile LIKE 
+					<if test="dbName == 'oracle'">'%'||#{mobile}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{mobile}, '%')</if>
+			</if>
+			<if test="level != null and level != ''">
+				AND u.level >= #{level} 
+			</if>
+			<if test="district != null and district != ''">
+				AND (
+					u.district = #{district }
+					or u.city = #{district }
+					or u.province = #{district }
+					)
+			</if>
+			
+			AND u.del_flag = #{DEL_FLAG_NORMAL}
+		ORDER BY u.reg_time DESC
+	</select>
+	<!-- 内部推送用户 -->
+	<select id="selectSend"  resultType="Integer">
+		SELECT
+			b.user_id
+		FROM
+			trains.sys_user a,mtmydb.mtmy_users b 
+		WHERE a.mobile=b.mobile AND a.del_flag=0
+	
+	</select>
+	<select id="relieveUser" statementType="CALLABLE">
+		{CALL mtmydb.relieveUser(#{userid},#{source})}
+	</select>
+</mapper>

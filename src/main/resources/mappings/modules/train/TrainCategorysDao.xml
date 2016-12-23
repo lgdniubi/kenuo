@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.TrainCategorysDao">
+	
+	<!-- 根据priority优先级查询课程分类 -->
+	<select id="findcategoryslist" resultType="TrainCategorys">
+		SELECT
+			DISTINCT
+			t.category_id AS 'categoryId',
+			t.parent_id AS 'parentId',
+			t.name,
+			t.priority,
+			t.cover_pic AS 'coverPic',
+			t.introduce,
+			t.cate_type AS 'cateType',
+			t.office_code AS 'officeCode',
+			t.createuser,
+			t.status,
+			T.CREATETIME
+		FROM
+			train_categorys t
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		<!-- 若priority为空或者null,则表示查询所有分类 -->
+		<if test="priority != null and priority != ''">
+			AND t.priority = #{priority}
+		</if>
+		<!-- 根据一级分类找二级分类，实现二级联动 -->
+		<if test="parentId != null and parentId != ''">
+			AND t.parent_id = #{parentId}
+		</if>
+			AND t.status != -1
+		ORDER BY T.CREATETIME DESC 
+	</select>
+
+	<insert id="insert">
+		INSERT INTO train_categorys (
+		  category_id,
+		  parent_id,
+		  name,
+		  priority,
+		  cover_pic,
+		  introduce,
+		  cate_type,
+		  office_code,
+		  createuser,
+		  status,
+		  createtime,
+		  updatetime,
+		  office_id
+		) 
+		VALUES
+		  (
+		    #{categoryId},
+		    #{parentId},
+		    #{name},
+		    #{priority},
+		    #{coverPic},
+		    #{introduce},
+		    #{cateType},
+		    #{officeCode},
+		    #{createuser},
+		    #{status},
+		    SYSDATE(),
+		    NULL,
+		    <if test="priority == 1">
+		    	(SELECT company_id FROM trains.sys_user WHERE id = #{createuser})
+		    </if>
+		    <if test="priority == 2">
+		    	#{office.id}
+		    </if>
+		  )
+	</insert>
+	
+	<!-- 根据id,获取课程分类对象 -->
+	<select id="get" parameterType="String" resultType="TrainCategorys">
+		select
+			t.category_id AS 'categoryId',
+			t.parent_id AS 'parentId',
+			t.name,
+			t.priority,
+			t.cover_pic AS 'coverPic',
+			t.introduce,
+			t.status,
+			o.id AS "office.id",
+			o.name AS "office.name"
+		FROM
+		train_categorys t
+		LEFT JOIN sys_office o ON o.id = t.office_id
+		WHERE
+		t.category_id = #{categoryId}
+		AND status != -1
+	</select>
+	
+	<!-- 查询所有“有效”的课程分类信息 升序-->
+	<select id="findList" resultType="TrainCategorys">
+		SELECT
+			DISTINCT
+			t.category_id AS 'categoryId',
+			t.parent_id AS 'parentId',
+			t.name,
+			t.priority,
+			t.cover_pic AS 'coverPic',
+			t.introduce,
+			t.cate_type AS 'cateType',
+			t.office_code AS 'officeCode',
+			t.createuser,
+			t.status,
+			(SELECT COUNT(*) FROM train_categorys AS c WHERE t.category_id = c.parent_id AND c.status != -1) AS 'num',
+			T.CREATETIME
+		FROM
+			train_categorys t
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		<!-- 树状只加载父级 -->
+		<if test="parentId != null and parentId != ''">
+			AND t.parent_id = #{parentId }
+		</if>
+		<if test="name != null and name != ''">
+			AND name LIKE
+			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+		</if>
+			AND t.status != -1
+		ORDER BY t.priority,t.createtime 
+	</select>
+	
+	<!-- 修改课程分类  parent_id = #{parentId},-->
+	<update id="update">
+		UPDATE 
+		  train_categorys
+		SET
+			name = #{name},
+			introduce = #{introduce},
+			<if test="parentId != null and parentId != '' and parentId.length() > 1 ">
+				parent_id = #{parentId},
+			</if>
+			cover_pic = #{coverPic},
+			updatetime = SYSDATE(),
+			<if test="priority  == 1">
+		    	office_id = (SELECT company_id FROM trains.sys_user WHERE id = #{createuser})
+		    </if>
+		    <if test="priority == 2">
+		    	office_id = #{office.id}
+		    </if>
+		WHERE category_id = '${categoryId}'
+	</update>
+	
+	<!-- 删除课程分类 -->
+	<update id="delete">
+		UPDATE 
+		  train_categorys 
+		SET
+		  status = '-1',
+		  updatetime = SYSDATE()
+		WHERE category_id = '${categoryId}'
+			OR parent_id = '${categoryId}'
+	</update>
+	<!-- 树形三级 -->
+	<select id="findCategoryLessonid" resultType="CategoryLesson">	
+		SELECT
+		a.category_id AS categoryId,
+		a.name AS lessonName,
+		a.lesson_id AS lessonId
+		FROM
+		train_categorys as t,train_lessons  as a
+		WHERE t.status != -1
+		and a.status != -1
+		and a.lesson_type=1
+		and a.category_id=t.category_id
+		and a.category_id= #{categoryId}
+	</select>
+	<!-- 树形通过ID查名字 -->
+	<select id="findbyid" resultType="OaNotify">	
+		SELECT
+		DISTINCT
+		<if test="categoryId != null and categoryId != ''">
+		t.name
+		FROM
+		train_categorys as t
+		WHERE 
+		t.status != -1
+		AND t.category_id = #{categoryId}
+		</if>
+		<if test="lessonId != null and lessonId != ''">
+		a.name AS lessonName
+		FROM
+		train_lessons  as a
+		WHERE 
+		a.status=0
+		AND a.lesson_id = #{lessonId}
+		</if>
+	</select>
+	<!-- 分类数据权限发生变化时   同步更新课程、试题  -->
+	<update id="syncUpdateLesson">
+		UPDATE 
+		  train_lessons 
+		SET
+		  office_id = #{newOfficeId}
+		WHERE office_id = #{oldOfficeId}
+	</update>
+	<update id="syncUpdateExam">
+		UPDATE 
+		  train_exercises 
+		SET
+		  office_id = #{newOfficeId}
+		WHERE office_id = #{oldOfficeId}
+	</update>
+</mapper>

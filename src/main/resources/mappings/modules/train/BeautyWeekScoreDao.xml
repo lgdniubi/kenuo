@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.BeautyWeekScoreDao">
+	<insert id="insertWeekScore" parameterType="BeautyWeekScore">
+		INSERT INTO train_lesson_week_score(user_id,week,week_score,year,area_rank,office_id,area_id)
+		VALUES(#{userid},#{week},#{weekscore},#{year},#{arearank},#{officeid},#{areaid})
+	</insert>
+	
+	<!-- 根据区域code  年  周 作为条件  对店铺code进行分组  统计店铺周学分 -->
+	<select id="queryWeekScoreByGroupByOfficeCode" parameterType="map" resultType="BeautyWeekScore">
+		SELECT 
+			office_id as officeid,
+			FORMAT(avg(week_score),2) as weekscore,
+			area_id as areaid
+		FROM train_lesson_week_score  
+		WHERE year =#{year} AND week=#{week} AND area_id=#{area_id} GROUP BY office_id ORDER BY  weekscore DESC
+	</select>
+</mapper>

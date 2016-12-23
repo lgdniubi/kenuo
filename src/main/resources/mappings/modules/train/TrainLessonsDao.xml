@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.TrainLessonsDao">
+
+	<!-- 查询所有数据 -->
+	<select id="findList" resultType="TrainLessons">
+		SELECT
+			DISTINCT
+			t.lesson_id AS 'lessonId',
+			c.name AS 'trainCategorys.name',
+			c.category_id AS 'trainCategorys.categoryId',
+			t.name,
+			t.cover_pic AS 'coverPic',
+			t.introduce,
+			t.status,
+			t.lesson_type AS 'lessontype',
+			t.lesson_score AS 'lessonScore',
+			T.CREATETIME
+		FROM
+			train_categorys c,
+			train_lessons t
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}	
+			AND t.category_id = c.category_id
+			AND t.createtime BETWEEN #{beginDate} AND #{endDate}
+		<if test="name != null and name != ''">
+			AND t.name LIKE
+			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+		</if>
+		<if test="categoryId != null and categoryId !='' and categoryId !='-1'">
+			AND t.category_id = #{categoryId}
+		</if>
+		<if test="parentId !='-1' and categoryId =='-1'">
+			AND t.category_id IN (SELECT category_id FROM train_categorys WHERE parent_id = #{parentId})
+		</if>
+			AND T.STATUS != -1
+		ORDER BY T.CREATETIME DESC
+	</select>
+
+	<!-- 查询单个信息 --><!-- cuoqu -->
+	<select id="get" resultType="TrainLessons">
+		SELECT
+			t.lesson_id AS 'lessonId',
+			c.category_id AS 'categoryId',
+			c.parent_id AS 'parentId',
+			t.name,
+			t.cover_pic AS 'coverPic',
+			t.introduce,
+			t.status,
+			t.lesson_type AS 'lessontype',
+			t.lesson_score AS 'lessonScore'
+		FROM
+			train_categorys c,
+			train_lessons t
+		WHERE t.category_id = c.category_id
+			AND t.lesson_id = #{lessonId}
+			AND t.status != -1
+	</select>
+	
+	<!-- 删除操作，修改表Struts的状态 （ 1 已完成，-1 未完成，0 正在学习） -->
+	<update id="deleteCourseForUpdate">
+		UPDATE 
+		  train_lessons t 
+		SET
+		  t.status = '-1' 
+		WHERE t.lesson_id = '${lessonId}'
+	</update>
+	
+	<!-- 保存课程 -->
+	<insert id="insert">
+		INSERT INTO train_lessons (
+			LESSON_ID,
+			CATEGORY_ID,
+			NAME,
+			COVER_PIC,
+			INTRODUCE,
+			OFFICE_CODE,
+			CREATEUSER,
+			CREATETIME,
+			STATUS,
+			LESSON_TYPE,
+			LESSON_SCORE,
+			office_id
+		)
+		VALUES
+		(
+			#{lessonId},
+			#{trainCategorys.categoryId},
+			#{name},
+			#{coverPic},
+			#{introduce},
+			#{officeCode},
+			#{createuser},
+			SYSDATE(),
+			#{status},
+			#{lessontype},
+			#{lessonScore},
+			(SELECT office_id FROM trains.train_categorys WHERE category_id = #{trainCategorys.categoryId})
+		)
+	</insert>
+	
+	<!-- 修改课程 -->
+	<update id="update">
+		UPDATE 
+		  train_lessons 
+		SET
+		  category_id = #{categoryId},
+		  name = #{name},
+		  cover_pic = #{coverPic},
+		  introduce = #{introduce},
+		  lesson_type = #{lessontype},
+		  lesson_score = #{lessonScore},
+		  office_id = (SELECT office_id FROM trains.train_categorys WHERE category_id = #{categoryId})
+		WHERE lesson_id = #{lessonId} 
+	</update>
+	
+</mapper>

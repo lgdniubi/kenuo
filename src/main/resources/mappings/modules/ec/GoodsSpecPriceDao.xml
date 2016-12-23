@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.GoodsSpecPriceDao">
+	<sql id="specpriceColunm">
+		a.goods_id,
+		a.spec_key,
+		a.spec_key_value,
+		a.price,
+		a.store_count,
+		a.bar_code,
+		a.goods_no,
+		a.service_times,
+		a.expiring_date
+
+	</sql>
+	<!-- 根据商品查询规格 -->
+	<select id="speclistBygoods" resultType="GoodsSpecPrice">
+		SELECT
+		<include refid="specpriceColunm"></include>
+		FROM
+		mtmydb.mtmy_spec_goods_price a
+		WHERE a.goods_id=#{id}
+
+	</select>
+	<!-- 根据规格查询 -->
+	<select id="getSpecPrce" resultType="GoodsSpecPrice">
+		SELECT
+		<include refid="specpriceColunm"></include>
+		FROM
+		mtmydb.mtmy_spec_goods_price a
+		WHERE a.spec_key=#{specKey} AND a.goods_id=#{goodsId}
+	</select>
+	<update id="modifySpecStoreCount" parameterType="map">
+		UPDATE mtmydb.mtmy_spec_goods_price 
+		SET store_count = #{store_count} WHERE goods_id = #{goods_id} and spec_key = #{spec_key}
+	</update>
+	
+	<select id="querySpecsPrices" resultType="GoodsSpecPrice">
+		SELECT * FROM mtmydb.mtmy_spec_goods_price
+	</select>
+</mapper>

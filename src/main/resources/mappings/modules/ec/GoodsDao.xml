@@ -1,0 +1,649 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.GoodsDao">
+	
+	<sql id="goodsColumns">
+		  g.goods_id AS 'goodsId',
+		  g.category_id AS 'goodsCategoryId',
+		  g.franchisee_id AS 'franchiseeId',
+		  g.goodsbrand_id AS 'goodsBrandId',
+		  g.category_id AS 'goodsCategory.id',
+		  g.franchisee_id AS 'franchisee.id',
+		  g.goodsbrand_id AS 'goodsBrand.id',
+		  c.name AS 'goodsCategory.name',
+  		  f.name AS 'franchisee.name',
+		  g.goods_sn AS 'goodsSn',
+		  g.goods_short_name AS 'goodsShortName',
+		  g.goods_description AS 'goodsDescription',
+		  g.goods_key AS 'goodsKey',
+		  g.goods_name AS 'goodsName',
+		  g.total_store AS 'totalStore',
+		  g.store_count AS 'storeCount',
+		  g.weight,
+		  g.market_price AS 'marketPrice',
+		  g.shop_price AS 'shopPrice',
+		  g.cost_price AS 'costPrice',
+		  g.goods_tags AS 'goodsTags',
+		  g.keywords AS 'keywords',
+		  g.goods_remark AS 'goodsRemark',
+		  g.goods_content AS 'goodsContent',
+		  g.original_img AS 'originalImg',
+		  g.is_real AS 'isReal',
+		  g.is_on_sale AS 'isOnSale',
+		  g.is_free_shipping AS 'isFreeShipping',
+		  g.sort,
+		  g.is_recommend AS 'isRecommend',
+		  g.is_new AS 'isNew',
+		  g.is_hot AS 'isHot',
+		  g.attr_type AS 'attrType',
+		  g.spec_type AS 'specType',
+		  g.give_integral AS 'giveIntegral',
+		  g.sales_sum AS 'salesSum',
+		  g.region_name AS 'regionName',
+		  g.action_type AS 'actionType',
+		  g.action_id AS 'actionId',
+		  g.service_min AS 'serviceMin'
+	</sql>
+	
+	<sql id="goodsJoins">
+		LEFT JOIN mtmydb.mtmy_goods_category c ON c.category_id = g.category_id
+  		LEFT JOIN trains.sys_franchisee f ON f.id = g.franchisee_id
+    </sql>
+	
+	<!-- 分页查询数据 -->
+	<select id="findList" resultType="Goods">
+		SELECT 
+		  g.goods_id AS 'goodsId',
+		  g.goods_name AS 'goodsName',
+		  g.goods_sn AS 'goodsSn',
+		  c.name AS 'goodsCategory.name',
+		  g.shop_price AS 'shopPrice',
+		  g.total_store AS 'totalStore',
+		  g.store_count AS 'storeCount',
+		  g.is_on_sale  AS 'isOnSale',
+		  g.is_recommend AS 'isRecommend',
+		  g.is_new AS 'isNew',
+		  g.is_hot AS 'isHot',
+		  g.is_real AS 'isReal',
+		  g.sort,
+		  g.action_id as "actionId",
+		  b.action_name as "actionName"
+		FROM
+		  mtmydb.mtmy_goods g 
+		  LEFT JOIN mtmydb.mtmy_goods_category c 
+		    ON c.category_id = g.category_id 
+		  LEFT JOIN mtmydb.mtmy_action_info b ON b.action_id=g.action_id
+		WHERE 1 = 1
+			<if test="actionId !=null and actionId !=''">
+				AND g.action_id=#{actionId}
+			</if>
+			<if test="goodsCategoryId != null and goodsCategoryId != ''">
+				AND g.category_id = #{goodsCategoryId}
+			</if>
+			<if test="goodsBrandId != null and goodsBrandId != '' and goodsBrandId != '-1'">
+				AND g.goodsbrand_id = #{goodsBrandId}
+			</if>
+			<if test="isOnSale != null and isOnSale != '' and isOnSale != '-1'">
+				AND g.is_on_sale = #{isOnSale}
+			</if>
+			<if test="isNew != null and isNew != '' and isNew != '-1'">
+				AND g.is_new = #{isNew}
+			</if>
+			<if test="isRecommend != null and isRecommend != '' and isRecommend != '-1'">
+				AND g.is_recommend = #{isRecommend}
+			</if>
+			<if test="isHot != null and isHot != '' and isHot != '-1'">
+				AND g.is_hot = #{isHot}
+			</if>
+			<if test="isReal != null and isReal != '' and isReal != '-1'">
+				AND g.is_real = #{isReal}
+			</if>
+			<if test="querytext != null and querytext != ''">
+				AND (g.goods_name LIKE CONCAT('%', #{querytext}, '%') OR g.keywords LIKE CONCAT('%', #{querytext}, '%'))
+			</if>
+			AND g.del_flag = 0 
+			ORDER BY g.sort DESC 
+	</select>
+	
+	<!-- 根据商品id，查询商品信息 -->
+	<select id="get" resultType="Goods">
+		SELECT 
+		  <include refid="goodsColumns"/>
+		FROM
+		  mtmydb.mtmy_goods g
+		  <include refid="goodsJoins"/> 
+		WHERE g.del_flag = 0 
+		  AND g.goods_id = #{goodsId} 
+	</select>
+	<!-- 根据活动id，查询商品信息 -->
+	<select id="ActionGoodslist" resultType="Goods">
+		SELECT 
+		  <include refid="goodsColumns"/>
+		FROM
+		  mtmydb.mtmy_goods g
+		  <include refid="goodsJoins"/> 
+		WHERE g.del_flag = 0 
+		  AND g.action_id = #{actionId} 
+	</select>
+	
+	<!-- 根据分类，查询商品信息 -->
+	<select id="findAllList" resultType="Goods">
+		SELECT 
+		  <include refid="goodsColumns"/>
+		FROM
+		  mtmydb.mtmy_goods g
+		  <include refid="goodsJoins"/> 
+		WHERE g.del_flag = 0 
+		  
+	</select>
+	<!-- 根据分类查询集合 -->
+	<select id="goodslist"  resultType="Goods">
+		SELECT 
+		  <include refid="goodsColumns"/>
+		FROM
+		  mtmydb.mtmy_goods g
+		  <include refid="goodsJoins"/> 
+		WHERE g.del_flag = 0 
+		<if test="actionId !=null and actionId !=''">
+			AND g.action_id=0
+		</if>
+		<if test="franchiseeId !=null and franchiseeId !=''">
+			AND g.franchisee_id=#{franchiseeId}
+		</if>
+		<if test="goodsCategoryId != null and goodsCategoryId != ''">
+			AND g.category_id=#{goodsCategoryId} 
+		</if>
+		<if test="actionType !=null and actionType != ''">
+			AND g.action_type=#{actionType}
+		</if>
+		<if test="goodsName !=null and goodsName!=''">
+			AND g.goods_name like
+			<if test="dbName == 'oracle'">'%'||#{goodsName} ||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{goodsName} , '%')</if>
+		</if>
+		
+	</select>
+	<!-- 根据多个分类查询上商品 -->
+	<select id="findByCateList" resultType="Goods">
+		SELECT
+			<include refid="goodsColumns"/>
+		FROM
+			mtmydb.mtmy_goods g
+			<include refid="goodsJoins"/> 
+		WHERE g.del_flag = 0  AND g.category_id in (#{cateId})
+
+	</select>
+	
+	<!-- 根据商品id，查询商品信息 -->
+	<select id="getgoods" resultType="Goods">
+		SELECT 
+		  g.goods_id AS 'goodsId',
+		  g.goods_sn AS 'goodsSn',
+		  g.goods_key AS 'goodsKey',
+		  g.goods_name AS 'goodsName',
+		  g.store_count AS 'storeCount',
+		  g.weight,
+		  g.market_price AS 'marketPrice',
+		  g.shop_price AS 'shopPrice',
+		  g.cost_price AS 'costPrice',
+		  g.goods_tags AS 'goodsTags',
+		  g.keywords AS 'keywords',
+		  g.goods_remark AS 'goodsRemark',
+		  g.goods_content AS 'goodsContent',
+		  g.original_img AS 'originalImg',
+		  g.is_real AS 'isReal',
+		  g.is_on_sale AS 'isOnSale',
+		  g.is_free_shipping AS 'isFreeShipping',
+		  g.sort,
+		  g.is_recommend AS 'isRecommend',
+		  g.is_new AS 'isNew',
+		  g.is_hot AS 'isHot',
+		  g.attr_type AS 'attrType',
+		  g.spec_type AS 'specType',
+		  g.give_integral AS 'giveIntegral',
+		  g.sales_sum AS 'salesSum',
+		  g.region_name AS 'regionName',
+		  g.service_min AS 'serviceMin'
+		FROM
+		  mtmydb.mtmy_goods g
+		 
+		WHERE g.del_flag = 0 
+		  AND g.goods_id = #{id} 
+	</select>
+	
+	<!-- 保存-商品通用信息 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="goodsId">
+		INSERT INTO mtmydb.mtmy_goods (
+		  category_id,
+		  franchisee_id,
+		  goodsbrand_id,
+		  goods_sn,
+		  goods_short_name,
+		  goods_description,
+		  goods_key,
+		  goods_name,
+		  weight,
+		  market_price,
+		  shop_price,
+		  cost_price,
+		  goods_tags,
+		  keywords,
+		  goods_remark,
+		  goods_content,
+		  original_img,
+		  is_real,
+		  is_on_sale,
+		  is_free_shipping,
+		  sort,
+		  is_recommend,
+		  is_new,
+		  is_hot,
+		  attr_type,
+		  spec_type,
+		  give_integral,
+		  sales_sum,
+		  region_name,
+		  action_type,
+		  action_id,
+		  service_min,
+		  on_time,
+		  last_update
+		) 
+		VALUES
+		  ( #{goodsCategoryId},
+		    #{franchiseeId},
+		    #{goodsBrandId},
+		    #{goodsSn},
+		    #{goodsShortName},
+		    #{goodsDescription},
+		    #{goodsKey},
+		    #{goodsName},
+		    #{weight},
+		    #{marketPrice},
+		    #{shopPrice},
+		    #{costPrice},
+		    #{goodsTags},
+		    #{keywords},
+		    #{goodsRemark},
+		    #{goodsContent},
+		    #{originalImg},
+		    #{isReal},
+		    #{isOnSale},
+		    #{isFreeShipping},
+		    #{sort},
+		    #{isRecommend},
+		    #{isNew},
+		    #{isHot},
+		    #{attrType},
+		    #{specType},
+		    #{giveIntegral},
+		    #{salesSum},
+		    #{regionName},
+		    #{actionType},
+		    #{actionId},
+		    #{serviceMin},
+		    SYSDATE(),
+		    SYSDATE()
+		  )
+	</insert>
+	
+	<!-- 修改-商品通用信息 -->
+	<update id="update">
+		UPDATE mtmydb.mtmy_goods
+			SET 
+			  category_id = #{goodsCategoryId},
+			  franchisee_id = #{franchiseeId},
+			  goodsbrand_id = #{goodsBrandId},
+			  goods_sn = #{goodsSn},
+			  goods_short_name = #{goodsShortName},
+			  goods_description = #{goodsDescription},
+			  goods_key = #{goodsKey},
+			  goods_name = #{goodsName},
+			  weight = #{weight},
+			  market_price = #{marketPrice},
+			  shop_price = #{shopPrice},
+			  cost_price = #{costPrice},
+			  goods_tags = #{goodsTags},
+			  keywords = #{keywords},
+			  goods_remark = #{goodsRemark},
+			  goods_content = #{goodsContent},
+			  original_img = #{originalImg},
+			  is_real = #{isReal},
+			  is_on_sale = #{isOnSale},
+			  is_free_shipping = #{isFreeShipping},
+			  sort = #{sort},
+			  is_recommend = #{isRecommend},
+			  is_new = #{isNew},
+			  is_hot = #{isHot},
+			  attr_type = #{attrType},
+			  spec_type = #{specType},
+			  give_integral = #{giveIntegral},
+			  sales_sum = #{salesSum},
+			  region_name = #{regionName},
+			  service_min = #{serviceMin},
+			  action_type = #{actionType},
+			  last_update = SYSDATE()
+			WHERE del_flag = 0 AND goods_id = #{goodsId}
+	</update>
+	<update id="updateTotalstore">
+		UPDATE mtmydb.mtmy_goods
+			SET total_store=0
+		WHERE del_flag = 0 AND goods_id = #{goodsId}	
+	</update>
+	<!-- 更新库存 -->
+	<update id="updateStorCount">
+		UPDATE mtmydb.mtmy_goods SET
+			 total_store = #{totalStore},
+			 store_count = #{storeCount}
+		WHERE del_flag = 0 AND goods_id = #{goodsId}	 
+	</update>
+	<!-- 逻辑删除-商品 -->
+	<delete id="deleteByLogic">
+		UPDATE mtmydb.mtmy_goods
+			SET 
+			  del_flag = 1
+			WHERE del_flag = 0 AND goods_id = #{goodsId}	
+	</delete>
+	
+	<!-- 修改商品类型（规格与属性的类型） -->
+	<update id="updategoodstype">
+		UPDATE mtmydb.mtmy_goods
+			SET 
+			  attr_type = #{attrType},
+			  spec_type = #{specType},
+			  last_update = SYSDATE()
+			WHERE del_flag = 0 AND goods_id = #{goodsId}
+	</update>
+	
+	<!-- 保存商品相册 -->
+	<insert id="savegoodsimages">
+		INSERT INTO mtmydb.mtmy_goods_images
+            (goods_id,
+             image_url,
+             image_type,
+             image_desc,
+             sort)
+		<foreach collection="goodsImagesList" item="goodsImages" separator=" union all ">
+			SELECT  #{goodsImages.goodsId}, 
+					#{goodsImages.imageUrl}, 
+					#{goodsImages.imageType}, 
+					#{goodsImages.imageDesc}, 
+					#{goodsImages.sort}
+			FROM dual
+		</foreach>
+	</insert>
+	
+	<!-- 删除商品相册 -->
+	<delete id="deletegoodsimages">
+		DELETE
+			FROM mtmydb.mtmy_goods_images
+		WHERE image_type = #{imageType} AND goods_id = #{goodsId}
+	</delete>
+	
+	<!-- 保存商品规格项 -->
+	<insert id="savespec">
+		INSERT INTO mtmydb.mtmy_spec_goods_price
+            (goods_id,
+             spec_key,
+             spec_key_value,
+             price,
+             market_price,
+             store_count,
+             bar_code,
+             goods_no,
+             service_times,
+             expiring_date)
+		<foreach collection="goodsSpecPricesList" item="goodsSpecPrice" separator=" union all ">
+			SELECT  #{goodsSpecPrice.goodsId}, 
+					#{goodsSpecPrice.specKey}, 
+					#{goodsSpecPrice.specKeyValue}, 
+					#{goodsSpecPrice.price}, 
+					#{goodsSpecPrice.marketPrice}, 
+					#{goodsSpecPrice.storeCount}, 
+					#{goodsSpecPrice.barCode}, 
+					#{goodsSpecPrice.goodsNo},
+					#{goodsSpecPrice.serviceTimes},
+					#{goodsSpecPrice.expiringDate}
+			FROM dual
+		</foreach>
+	</insert>
+	
+	<!-- 删除商品规格 -->
+	<delete id="deletespec">
+		DELETE
+			FROM mtmydb.mtmy_spec_goods_price
+		WHERE goods_id = #{goodsId}
+	</delete>
+	
+	<!-- 保存保存商品属性 -->
+	<insert id="saveattribute">
+		INSERT INTO mtmydb.mtmy_goods_attribute_mappings (
+		  attr_id,
+		  goods_id,
+		  attr_value) 
+		<foreach collection="goodsAttributeMappingsList" item="goodsAttributeMappings" separator=" union all ">
+			SELECT  #{goodsAttributeMappings.attrId}, 
+					#{goodsAttributeMappings.goodsId}, 
+					#{goodsAttributeMappings.attrValue}
+			FROM dual
+		</foreach>
+	</insert>
+	
+	<!-- 删除商品类型（规格、属性） -->
+	<delete id="deleteattribute">
+		DELETE
+			FROM mtmydb.mtmy_goods_attribute_mappings
+		WHERE goods_id = #{goodsId}
+	</delete>
+	
+	<!-- 商品-是否显示（上架、推荐、新品、热卖） -->
+	<update id="updateisyesno">
+		UPDATE mtmydb.mtmy_goods
+			SET 
+			  <if test="isOnSale != null and isOnSale != ''">
+				is_on_sale = #{isOnSale},
+			  </if>
+			  <if test="isRecommend != null and isRecommend != ''">
+				is_recommend = #{isRecommend},
+			  </if>
+			  <if test="isNew != null and isNew != ''">
+				is_new = #{isNew},
+			  </if>
+			  <if test="isHot != null and isHot != ''">
+				is_hot = #{isHot},
+			  </if>
+			  last_update = SYSDATE()
+			WHERE del_flag = 0 AND goods_id = #{goodsId}
+	</update>
+	
+	<!-- 根据商品ID，查询商品图片 -->
+	<select id="findGoodsImages" resultType="GoodsImages">
+		SELECT 
+		  img_id AS 'imgId',
+		  goods_id AS 'goodsId',
+		  image_url AS 'imageUrl',
+		  image_type AS 'imageType',
+		  image_desc AS 'imageDesc',
+		  sort 
+		FROM
+		  mtmydb.mtmy_goods_images
+		WHERE goods_id = #{goodsId}
+			ORDER BY sort
+	</select>
+	
+	<!-- 根据商品ID，查询商品规格价格项 -->
+	<select id="findGoodsSpecPrice" resultType="GoodsSpecPrice">
+		SELECT 
+		  goods_id AS 'goodsId',
+		  spec_key AS 'specKey',
+		  spec_key_value AS 'specKeyValue',
+		  price,
+		  market_price AS 'marketPrice',
+		  store_count AS 'storeCount',
+		  bar_code AS 'barCode',
+		  goods_no AS 'goodsNo',
+		  service_times AS 'serviceTimes',
+		  expiring_date AS 'expiringDate'
+		FROM
+		  mtmydb.mtmy_spec_goods_price 
+		WHERE goods_id = #{goodsId}
+	</select>
+	
+	<!-- 根据商品规格specKey，查询商品规格价格 -->
+	<select id="findByGoodsSpecPrice" resultType="GoodsSpecPrice">
+		SELECT 
+		  goods_id AS 'goodsId',
+		  spec_key AS 'specKey',
+		  spec_key_value AS 'specKeyValue',
+		  price,
+		  market_price AS 'marketPrice',
+		  store_count AS 'storeCount',
+		  bar_code AS 'barCode',
+		  goods_no AS 'goodsNo',
+		  service_times AS 'serviceTimes',
+		  expiring_date AS 'expiringDate'
+		FROM
+		  mtmydb.mtmy_spec_goods_price 
+		WHERE spec_key = #{specKey}
+		AND goods_id = #{goodsId}
+	</select>
+	
+	<!-- 商品规格specKey，修改商品规格价格 -->
+	<update id="updateByGoodsSpecPrice">
+		UPDATE mtmydb.mtmy_spec_goods_price
+			SET 
+			 price = #{price},
+			 bar_code = #{barCode},
+			 goods_no = #{goodsNo},
+			 service_times = #{serviceTimes},
+			 expiring_date = #{expiringDate},
+			 market_price = #{marketPrice}
+		WHERE spec_key = #{specKey}
+		AND goods_id = #{goodsId}
+	</update>
+	
+	<!-- 根据商品ID，查询商品属性 -->
+	<select id="findGoodsAttributeMappings" resultType="GoodsAttributeMappings">
+		SELECT 
+		  goods_attr_id AS 'goodsAttrId',
+		  attr_id AS 'attrId',
+		  goods_id AS 'goodsId',
+		  attr_value AS 'attrValue' 
+		FROM
+		  mtmydb.mtmy_goods_attribute_mappings 
+		WHERE goods_id = #{goodsId}
+	</select>
+	
+	<select id="findspecimgbyid" resultType="GoodsSpecImage">
+		SELECT
+			goods_id AS 'goodsId',
+            spec_item_id AS 'specItemId',
+            src 
+		FROM
+		  mtmydb.mtmy_spec_image 
+		WHERE goods_id = #{goodsId}
+	</select>
+	
+	<!-- 保存商品规格图片 -->
+	<select id="savespecimg">
+		INSERT INTO mtmydb.mtmy_spec_image
+            (goods_id,
+             spec_item_id,
+             src)
+		<foreach collection="goodsSpecImagesList" item="goodsSpecImage" separator=" union all ">
+			SELECT  #{goodsSpecImage.goodsId}, 
+					#{goodsSpecImage.specItemId}, 
+					#{goodsSpecImage.src}
+			FROM dual
+		</foreach>
+	</select>
+	
+	<!-- 删除商品规格图片 -->
+	<delete id="deletespecimg">
+		DELETE
+			FROM mtmydb.mtmy_spec_image
+		WHERE goods_id = #{goodsId}
+	</delete>	
+	
+	<!-- 商品附属功能 -->
+	<!-- 商品功效 -->
+	<select id="findEffect" resultType="Effect">
+		SELECT 
+			e.ef_id AS efId,
+			e.name,
+			e.sort,
+			e.add_time AS addTime,
+			e.img
+		FROM 
+			mtmydb.mtmy_effect AS e
+		WHERE e.del_flag = 0
+			ORDER BY e.sort ASC,e.add_time DESC
+	</select>
+	<insert id="saveEffect">
+		INSERT INTO mtmydb.mtmy_effect(
+			name,
+			sort,
+			add_time,
+			del_flag,
+			img
+		) VALUES (
+			#{name},
+			#{sort},
+			SYSDATE(),
+			#{DEL_FLAG_NORMAL},
+			#{img }
+		)
+	</insert>
+	<update id="deleteEffect">
+		UPDATE 
+			mtmydb.mtmy_effect 
+			SET 
+			del_flag = #{DEL_FLAG_DELETE}
+			WHERE 
+			ef_id = #{efId}
+	</update>
+	<update id="updateEffect">
+		UPDATE 
+			mtmydb.mtmy_effect 
+			SET 
+			name = #{name},
+			sort = #{sort},
+			del_flag = #{DEL_FLAG_NORMAL},
+			img = #{img }
+			WHERE 
+			ef_id = #{efId}
+	</update>
+	<update id="updateActionId">
+		UPDATE mtmydb.mtmy_goods SET 
+		action_id =#{actionId},
+		action_type=#{actionType}
+		WHERE goods_id=#{goodsId}
+	
+	</update>
+	<update id="modifyStoreCount" parameterType="map">
+		UPDATE mtmydb.mtmy_goods SET store_count = #{store_count} WHERE goods_id = #{goods_id}
+	</update>
+	<update id="updateGoodsStauts">
+		UPDATE mtmydb.mtmy_goods SET 
+		is_on_sale = #{isOnSale}
+		WHERE action_id =#{actionId}
+	</update>
+	<select id="queryStoreCount" resultType="StoreVo">
+		SELECT 
+			goods_id as goodsid, 
+			store_count as storecount
+		FROM mtmydb.mtmy_goods WHERE del_flag = 0
+	</select>
+	
+	<select id="queryAllGoodsCollect" resultType="GoodsCollect">
+		SELECT * FROM mtmydb.mtmy_goods_collect
+	</select>
+	
+	<select id="queryAllUnshelve" resultType="int">
+		SELECT goods_id FROM mtmydb.mtmy_goods WHERE del_flag = 0 AND is_on_sale = 0
+	</select>
+	<!-- 查询排序最大值 -->
+	<select id="selectByMaxSort" resultType="int">
+		SELECT MAX(sort) as num FROM mtmydb.mtmy_goods 
+	</select>
+</mapper>

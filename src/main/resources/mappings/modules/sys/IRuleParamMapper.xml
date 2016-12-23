@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.training.modules.sys.dao.IRuleParamMapper">
+	
+	<resultMap type="RuleParam" id="ruleParamMap">
+		<result column="paramKey" property="paramKey"/>
+		<result column="param_value" property="param_value"/>
+	</resultMap> 
+	
+	<!-- 查询所有Trains系统规则参数 -->
+	<select id="findAllTrainsRuleParam" resultMap="ruleParamMap">
+		SELECT
+			param_key AS 'paramKey',
+			param_value AS 'paramValue'
+		FROM
+			trains.train_rule_param
+	</select>
+	
+	<!-- 查询所有Mtmy系统规则参数 -->
+	<select id="findAllMtmyRuleParam" resultMap="ruleParamMap">
+		SELECT
+			param_key AS 'paramKey',
+			param_value AS 'paramValue'
+		FROM
+			mtmydb.mtmy_rule_param
+	</select>
+	
+</mapper>

@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.OrdersDao">
+	<sql id="orderColmun">
+		a.order_id,
+		a.temp_orderId,
+		a.parent_id,
+		a.user_id,
+		a.order_status,
+		a.shipping_type,
+		a.shipping_status,
+		a.shipping_code,
+		a.shipping_name,
+		d.pay_id,
+		d.pay_code,
+		d.pay_name,
+		a.invoice_title,
+		a.goods_price,
+		a.shipping_price,
+		a.user_money,
+		a.coupon_price,
+		a.integral,
+		a.integral_money,
+		a.order_amount,
+		a.total_amount,
+		a.add_time,
+		a.confirm_time,
+		a.pay_time,
+		a.action_id,
+		a.order_action_amount,
+		a.discount,
+		a.user_note,
+		a.admin_note,
+		a.shipping_time,
+		a.phone,
+		a.mobile,
+		a.consignee,
+		a.address,
+		a.create_logo,
+		a.postal_code,
+		b.nickname as "username",
+		COUNT(c.order_id) as "goodsnum"
+
+	</sql>
+
+	<sql id="ordersJoins">
+		LEFT JOIN mtmydb.mtmy_payment d ON a.pay_code = d.pay_code
+		LEFT JOIN mtmydb.mtmy_users b ON a.user_id = b.user_id
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping c ON c.order_id = a.order_id
+		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=c.goods_id
+		LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
+	</sql>
+
+	<!-- 根据编号获特长 -->
+	<select id="get" resultType="Orders">
+		SELECT
+		<include refid="orderColmun" />
+
+		FROM mtmydb.mtmy_orders a
+		<include refid="ordersJoins" />
+		WHERE
+		a.order_id = #{orderid} and a.del_flag=0
+		GROUP BY
+		a.order_id,d.pay_id,d.pay_code,d.pay_name
+	</select>
+
+
+
+	<!-- 分页查询 -->
+	<select id="findList" resultType="Orders">
+		SELECT
+			a.order_id,
+			a.order_status,
+			d.pay_name,
+			a.user_money,
+			a.coupon_price,
+			a.order_amount,
+			a.total_amount,
+			a.add_time,
+			a.action_id,
+			a.user_note,
+			a.admin_note,
+			a.create_logo,
+			a.postal_code,
+			b.nickname AS "username",
+			COUNT(c.order_id) AS "goodsnum"
+		FROM mtmydb.mtmy_orders a
+		<include refid="ordersJoins" />
+		WHERE a.del_flag =0
+		and a.parent_id=0
+		<if test="username != null and username!=''">
+			AND b.nickname like
+			<if test="dbName == 'oracle'">'%'||#{username} ||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{username} , '%')</if>
+		</if>
+		<if test="mobile != null  and mobile != ''">
+			AND b.mobile=#{mobile}
+		</if>
+		<if test="orderid != null and orderid != ''">
+			AND a.order_id = #{orderid}
+		</if>
+		<if test="orderstatus != null and orderstatus != ''">
+			AND a.order_status=#{orderstatus}
+		</if>
+		<if test="createlogo != null and createlogo != ''">
+			AND a.create_logo=#{createlogo}
+		</if>
+		<if test="begtime != null and begtime != ''">
+			AND DATE_FORMAT(a.add_time,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+		</if>
+		<if test="userid != null and userid != ''">
+			AND a.user_id = #{userid}
+		</if>
+		<if test="cetaid !='' and  goodsids ==''">
+			AND f.category_id=#{cetaid}
+		</if>
+		<if test="goodsids !='' and  cetaid ==''">
+			AND c.goods_id=#{goodsids}
+		</if>
+		<if test="goodsids !=null and  cetaid !=null and goodsids !='' and cetaid !=''">
+			AND f.category_id=#{cetaid} and c.goods_id=#{goodsids}
+		
+		</if>
+
+		GROUP BY a.order_id,d.pay_name
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.add_time DESC
+			</otherwise>
+		</choose>
+	</select>
+		<!-- 分页查询 -->
+	<select id="findAlllist" resultType="Orders">
+		SELECT
+			a.order_id,
+			a.order_amount,
+			a.order_status as "status",
+			a.shipping_type as "shipType",
+			a.address,
+			a.consignee,
+			a.mobile,
+			a.pay_code,
+			d.pay_name,
+			a.shipping_code,
+			a.shipping_name,
+			a.shipping_time,
+			a.temp_orderId,
+			b.nickname as "username",
+			c.goods_name,
+			c.goods_sn,
+			c.spec_key_name,
+			c.goods_num,
+			c.goods_price,
+			f.`name` as "catename"
+		FROM
+			mtmydb.mtmy_orders a
+			LEFT JOIN mtmydb.mtmy_payment d ON a.pay_code=d.pay_code
+			LEFT JOIN mtmydb.mtmy_users b ON a.user_id=b.user_id
+			LEFT JOIN mtmydb.mtmy_order_goods_mapping c ON c.order_id=a.order_id
+			LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=c.goods_id
+			LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
+		WHERE a.del_flag =0 and a.parent_id=0
+		<if test="username != null and username!=''">
+			AND b.nickname like
+			<if test="dbName == 'oracle'">'%'||#{username} ||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{username} , '%')</if>
+		</if>
+		<if test="mobile != null  and mobile != ''">
+			AND b.mobile=#{mobile}
+		</if>
+		<if test="orderid != null and orderid != ''">
+			AND a.order_id = #{orderid}
+		</if>
+		<if test="orderstatus != null and orderstatus != ''">
+			AND a.order_status=#{orderstatus}
+		</if>
+		<if test="createlogo != null and createlogo != ''">
+			AND a.create_logo=#{createlogo}
+		</if>
+		<if test="begtime != null and begtime != ''">
+			AND DATE_FORMAT(a.add_time,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+		</if>
+		<if test="userid != null and userid != ''">
+			AND a.user_id = #{userid}
+		</if>
+		<if test="cetaid !='' and  goodsids ==''">
+			AND f.category_id=#{cetaid}
+		</if>
+		<if test="goodsids !='' and  cetaid ==''">
+			AND c.goods_id=#{goodsids}
+		</if>
+		<if test="goodsids !=null and  cetaid !=null and goodsids !='' and cetaid !=''">
+			AND f.category_id=#{cetaid} and c.goods_id=#{goodsids}
+		
+		</if>
+
+		GROUP BY a.order_id,d.pay_name,c.goods_name,c.goods_sn,c.spec_key_name,c.goods_num,c.goods_price,f.name
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.add_time DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 	根据订单id查询 -->
+	<select id="orderlist" resultType="Orders">
+		SELECT
+		<include refid="orderColmun" />
+
+		FROM mtmydb.mtmy_orders a
+		<include refid="ordersJoins" />
+		WHERE
+		a.parent_id = #{orderid} and a.del_flag=0
+		GROUP BY
+		a.order_id,d.pay_id,d.pay_code,d.pay_name
+	</select>
+	<!-- 查询用户订单数量 -->
+	<select id="findOrderByUserId" resultType="Integer">
+		SELECT
+		count(*)
+		FROM mtmydb.mtmy_orders a
+		
+		WHERE
+		a.user_id=#{userId} and a.del_flag=0 and a.order_status>0
+		
+	</select>
+	<!-- 	更新订单数据 -->
+	<update id="UpdateOrders">
+		UPDATE mtmydb.mtmy_orders SET
+		order_status=#{orderstatus},
+		shipping_code=#{shippingcode},
+		shipping_name=#{shippingname},
+		shipping_time=#{shippingtime},
+		order_amount=#{orderamount},
+		pay_id=#{payid},
+		pay_code=#{paycode},
+		pay_name=#{payname},
+		admin_note=#{adminnote},
+		pay_time=#{paytime},
+		phone=#{phone},
+		mobile=#{mobile},
+		consignee=#{consignee},
+		address=#{address},
+		postal_code=#{postalcode}
+		where order_id=#{orderid}
+
+	</update>
+		<!-- 	更新订单数据 -->
+	<update id="UpdateShipping">
+		UPDATE mtmydb.mtmy_orders SET
+		shipping_code=#{shippingcode},
+		shipping_name=#{shippingname},
+		shipping_time=#{shippingtime},
+		order_status=2
+		where order_id=#{orderid}
+
+	</update>
+	
+	<!-- 	插入退货数据 -->
+	<insert id="insertReturn">
+		INSERT INTO mtmydb.mtmy_orders
+		(
+		order_id,
+		parent_id,
+		order_status,
+		order_amount,
+		add_time
+		)values(
+		#{orderid},
+		#{parentid},
+		#{orderstatus},
+		#{orderamount},
+		SYSDATE()
+		)
+	</insert>
+	<!-- 更新订单状态 -->
+	<update id="UpdateOrderstatus">
+		UPDATE mtmydb.mtmy_orders SET
+		order_status=#{orderstatus}
+		where order_id=#{parentid}
+
+	</update>
+	<!-- 更新订单状态 -->
+	<update id="UpdateOrderReturnStatus">
+		UPDATE mtmydb.mtmy_orders SET
+		order_status=#{orderstatus}
+		where parent_id=#{orderid}
+
+	</update>
+	
+	
+	<!-- 更新退货订单数据 -->
+	<update id="UpdateOrderReturn">
+		UPDATE mtmydb.mtmy_orders SET
+		order_status=#{orderstatus},
+		order_amount=#{orderamount}
+		where
+		parent_id=#{parentid}
+
+	</update>
+	<!-- 保存订单数据 -->
+	<insert id="saveOrder">
+		INSERT INTO mtmydb.mtmy_orders
+		(
+		order_id,
+		user_id,
+		shipping_type,
+		order_status,
+		order_amount,
+		pay_id,
+		pay_code,
+		pay_name,
+		goods_price,
+		mobile,
+		consignee,
+		address,
+		admin_note,
+		pay_time,
+		add_time,
+		create_logo
+		)values(
+		#{orderid},
+		#{userid},
+		#{shippingtype},
+		#{orderstatus},
+		#{orderamount},
+		#{payid},
+		#{paycode},
+		#{payname},
+		#{goodsprice},
+		#{mobile},
+		#{consignee},
+		#{address},
+		#{adminnote},
+		SYSDATE(),
+		SYSDATE(),
+		#{createlogo}
+		)
+	</insert>
+	<!-- 定时器查询过期的 未支付订单 -->
+	<select id="queryNotPayOrder" resultType="Orders" parameterType="map">
+		SELECT
+		*
+		FROM mtmydb.mtmy_orders 
+		<![CDATA[WHERE DATE_ADD(add_time,INTERVAL #{minute} MINUTE) < NOW()]]>
+		AND order_type = #{order_type} 
+		AND order_status = -1
+	</select>
+	
+	<update id="modifyOrderStatus" parameterType="map">
+		UPDATE mtmydb.mtmy_orders SET order_status = #{order_status}
+		WHERE order_id = #{order_id}
+	</update>
+	<select id="selectSaleByOrderid" resultType="Integer">
+		SELECT
+			COUNT(*) AS Num
+		FROM
+			mtmydb.mtmy_sale_rebates_log
+		WHERE
+			order_id =#{orderId};
+	</select>
+	
+	<!-- 更新对账日志 -->
+	<insert id="updateSale">
+		INSERT INTO mtmydb.mtmy_sale_rebates_log
+		(
+			rebate_user,
+			receive_user,
+			depth,
+			order_id,
+			order_amount,
+			balance_percent,
+			balance_amount,
+			integral_percent,
+			integral_amount,
+			rebate_flag,
+			rabate_date,
+			create_date,
+			del_flag
+		
+		)SELECT 
+			rebate_user,
+			receive_user,
+			depth,
+			order_id,
+			(-order_amount),
+			balance_percent,
+			(-balance_amount),
+			integral_percent,
+			(-integral_amount),
+			0,
+			rabate_date,
+			SYSDATE(),
+			-1
+		FROM mtmydb.mtmy_sale_rebates_log
+		WHERE order_id=#{orderId};
+	</insert>
+	
+	
+</mapper>

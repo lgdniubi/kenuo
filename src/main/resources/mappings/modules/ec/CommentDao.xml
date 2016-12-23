@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.training.modules.ec.dao.CommentDao">
+	<sql id="CommentColumns">
+		c.comment_id AS commentId,
+		c.goods_id AS goodsId,
+		c.email,
+		c.contents,
+		c.deliver_rank AS deliverRank,
+		c.add_time AS addTime,
+		c.ip_address AS ipAddress,
+		c.is_show AS isShow,
+		c.parent_id AS parentId,
+		c.user_id AS userId,
+		c.img,
+		c.order_id AS orderId,
+		c.goods_rank AS goodsRank,
+		c.service_rank AS serviceRank,
+		c.reply_id AS replyId
+	</sql>
+	<sql id="BeautyCommentColumns">
+		b.comm_id AS commentId,
+		b.beauty_id AS beautyId,
+		b.user_id AS userId,
+		b.is_show AS isShow,
+		b.content AS contents,
+		b.img,
+		b.beauty_rank AS goodsRank,
+		b.add_time AS addTime,
+		b.parent_id AS parentId
+	</sql>
+	<select id="findAllList" resultType="Comment">
+		SELECT 
+			 <include refid="CommentColumns"/>,
+			g.goods_name AS 'goods.goodsName',
+			u.nickname AS 'users.name'
+		FROM 
+			mtmydb.mtmy_comment AS c
+			LEFT JOIN mtmydb.mtmy_goods AS g ON c.goods_id = g.goods_id
+			LEFT JOIN mtmydb.mtmy_users AS u ON c.user_id = u.user_id
+		WHERE 
+			1=1
+			AND c.parent_id = '0'
+			<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
+				AND c.add_time BETWEEN #{beginDate} AND #{endDate}
+			</if>
+			<if test="userName != null and userName != ''">
+				AND g.goods_name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{userName}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{userName}, '%')</if>
+			</if>
+			<if test="usersName != null and usersName != ''">
+				AND u.nickname LIKE
+					<if test="dbName == 'oracle'">'%'||#{usersName}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{usersName}, '%')</if>
+			</if>
+			ORDER BY c.add_time DESC
+	</select>
+	<select id="findRealByCid" parameterType="Comment" resultType="Comment">
+		SELECT	
+			<include refid="CommentColumns"/>,
+	        u.nickname AS 'users.name',
+	        cu.name AS 'user.name'
+		FROM	mtmydb.mtmy_comment AS c    
+				LEFT OUTER   JOIN   mtmydb.mtmy_users AS u  ON c.user_id = u.user_id 
+				LEFT OUTER   JOIN   trains.sys_user   AS cu ON c.reply_id = cu.id
+			WHERE 
+			1=1
+		 	AND ( c.comment_id = #{commentId} OR c.parent_id = #{commentId} )
+		 	ORDER BY c.add_time ASC
+	</select>
+	<insert id="insert">
+		INSERT INTO mtmydb.mtmy_comment(
+			contents,
+			add_time,
+			is_show,
+			parent_id,
+			reply_id
+		) VALUES (
+			#{contents},
+			SYSDATE(),
+			#{isShow},
+			#{parentId},
+			#{replyId}
+		)
+	</insert>
+	<update id="updateRealComment">
+		UPDATE
+			mtmydb.mtmy_comment
+		SET
+		    is_show = #{isShow}
+		WHERE 
+			comment_id = #{parentId}
+			OR parent_id = #{parentId}
+	</update>
+	<select id="findList" resultType="Comment">
+		SELECT
+			<include refid="BeautyCommentColumns"/>,
+			u.nickname AS 'users.name',
+			a.name AS 'user.name'
+			FROM
+				mtmydb.mtmy_beauty_comment AS b
+				LEFT JOIN mtmydb.mtmy_users AS u ON b.user_id = u.user_id
+				LEFT JOIN trains.sys_user AS a ON b.beauty_id = a.id
+			WHERE
+				1=1
+				AND b.parent_id = '0'
+				<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
+					AND b.add_time BETWEEN #{beginDate} AND #{endDate}
+				</if>
+				<if test="userName != null and userName != ''">
+					AND a.name LIKE 
+						<if test="dbName == 'oracle'">'%'||#{userName}||'%'</if>
+						<if test="dbName == 'mysql'">CONCAT('%', #{userName}, '%')</if>
+				</if>
+				<if test="usersName != null and usersName != ''">
+					AND u.nickname LIKE
+						<if test="dbName == 'oracle'">'%'||#{usersName}||'%'</if>
+						<if test="dbName == 'mysql'">CONCAT('%', #{usersName}, '%')</if>
+				</if>
+				ORDER BY b.add_time DESC
+	</select>
+	<select id="findBeautyByCid" resultType="Comment">
+		SELECT
+			<include refid="BeautyCommentColumns"/>,
+			u.nickname AS 'users.name',
+			cu.name AS 'user.name'
+			FROM
+				mtmydb.mtmy_beauty_comment AS b 
+				LEFT OUTER  JOIN  mtmydb.mtmy_users AS u  ON b.user_id = u.user_id
+				LEFT OUTER  JOIN  trains.sys_user   AS cu ON b.reply_id = cu.id
+			WHERE
+				1=1
+				AND ( b.comm_id = #{commentId} OR b.parent_id = #{commentId} )
+				ORDER BY b.add_time ASC
+	</select>
+	<insert id="insterbeautyComment">
+		INSERT INTO mtmydb.mtmy_beauty_comment(
+			content,
+			add_time,
+			is_show,
+			parent_id,
+			reply_id
+		) VALUES (
+			#{contents},
+			SYSDATE(),
+			#{isShow},
+			#{parentId},
+			#{replyId}
+		)
+	</insert>
+	<update id="updateBeautyComment">
+		UPDATE
+			mtmydb.mtmy_beauty_comment
+		SET
+		    is_show = #{isShow}
+		WHERE 
+			comm_id = #{parentId}
+			OR parent_id = #{parentId}
+	</update>
+</mapper>

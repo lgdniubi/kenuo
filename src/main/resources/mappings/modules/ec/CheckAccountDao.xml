@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.CheckAccountDao">
+    
+	<insert id="insert">
+		INSERT INTO mtmydb.mtmy_bank_account(
+			order_no,
+			ping_id,
+			pay_date,
+			pay_amount,
+			pay_channel,
+			pay_remark,
+			create_date,
+			group_flag
+		) VALUES (
+			#{orderNo},
+			#{pingId},
+			#{payDate},
+			#{payAmount},
+			#{payChannel},
+			#{payRemark},
+			SYSDATE(),
+			#{groupFlag}
+		)
+	</insert>
+	<!-- 用于分页查询 -->
+	<select id="findAllList" resultType="MtmyCheckAccount">
+		SELECT
+			a.order_id AS orderId,
+			b.order_no AS orderNo,
+			b.pay_date AS payDate,
+			b.pay_amount AS payAmount,
+			b.pay_channel AS payChannel,
+			b.group_flag AS groupFlag,
+			c.user_id AS userId,
+			c.nickname AS nickname,
+			c.mobile AS mobile,
+			a.order_amount AS orderAmount,
+			a.consignee AS consignee,
+			a.mobile AS mobile1,
+			a.address AS address
+		FROM
+			mtmydb.mtmy_orders a
+			RIGHT JOIN mtmydb.mtmy_bank_account b ON b.order_no = a.temp_orderId
+			LEFT JOIN mtmydb.mtmy_users c ON c.user_id = a.user_id
+		WHERE 
+			1 = 1
+			<if test="orderNo != null and orderNo != ''">
+				AND b.order_no = #{orderNo}
+			</if>
+			<if test="groupFlag != null and groupFlag != ''">
+				AND b.group_flag = #{groupFlag}
+			</if>
+			<if test="begtime != null and begtime != ''">
+				AND DATE_FORMAT(b.pay_date,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
+			</if>
+			<if test="endtime!=null and endtime!=''">
+				AND DATE_FORMAT(b.pay_date,'%Y-%m-%d') <![CDATA[<=]]> DATE_FORMAT(#{endtime},'%Y-%m-%d')
+			</if>
+		ORDER BY
+			a.order_id 
+	</select>
+	<!-- 用于导出 -->
+	<select id="findList" resultType="MtmyCheckAccount">
+		SELECT
+			a.order_id AS orderId,
+			b.order_no AS orderNo,
+			b.pay_date AS payDate,
+			b.pay_amount AS payAmount,
+			b.pay_channel AS payChannel,
+			b.group_flag AS groupFlag,
+			c.user_id AS userId,
+			c.nickname AS nickname,
+			c.mobile AS mobile,
+			d.goods_id AS goodsId,
+			d.goods_sn AS goodsSn,
+			d.goods_num AS goodsNum,
+			d.goods_name AS goodsName,
+			d.spec_key_name AS specKeyName,
+			d.goods_price AS goodsPrice,
+			a.order_amount AS orderAmount,
+			a.consignee AS consignee,
+			a.mobile AS mobile1,
+			a.address AS address,
+			(SELECT bar_code FROM mtmydb.mtmy_spec_goods_price WHERE spec_key = d.spec_key AND goods_id = d.goods_id) AS barCode,
+   			(SELECT goods_no FROM mtmydb.mtmy_spec_goods_price WHERE spec_key = d.spec_key AND goods_id = d.goods_id) AS goodsNo,
+			(
+				SELECT
+					o3.`name`
+				FROM
+					sys_office_info o1
+				LEFT JOIN sys_office o2 ON o1.id = o2.id
+				LEFT JOIN sys_office o3 ON o3.id = o2.parent_id
+				WHERE
+					o1.store_phone = a.mobile
+				AND o2.`name` = a.consignee
+			) AS officeName,
+			a.add_time AS addTime,
+			a.shipping_code AS shippingCode,
+			a.shipping_name AS shippingName,
+			a.shipping_time AS shippingTime,
+		    '' AS remark
+		FROM
+			mtmydb.mtmy_orders a
+			RIGHT JOIN mtmydb.mtmy_bank_account b ON b.order_no = a.temp_orderId
+			LEFT JOIN mtmydb.mtmy_users c ON c.user_id = a.user_id
+			LEFT JOIN mtmydb.mtmy_order_goods_mapping d ON d.order_id = a.order_id
+		WHERE 
+			1 = 1
+			<if test="orderNo != null and orderNo != ''">
+				AND b.order_no = #{orderNo}
+			</if>
+			<if test="groupFlag != null and groupFlag != ''">
+				AND b.group_flag = #{groupFlag}
+			</if>
+			<if test="begtime != null and begtime != ''">
+				AND DATE_FORMAT(b.pay_date,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
+			</if>
+			<if test="endtime!=null and endtime!=''">
+				AND DATE_FORMAT(b.pay_date,'%Y-%m-%d') <![CDATA[<=]]> DATE_FORMAT(#{endtime},'%Y-%m-%d')
+			</if>
+		ORDER BY
+			a.order_id 
+	</select>
+	<select id="findByOrderNo" resultType="int">
+		select COUNT(order_no) from mtmydb.mtmy_bank_account WHERE order_no = #{orderNo}
+	</select>
+	<select id="findGroupFlag" resultType="MtmyCheckAccount">
+		select DISTINCT(group_flag) AS groupFlag from mtmydb.mtmy_bank_account ORDER BY group_flag desc
+	</select>
+</mapper>

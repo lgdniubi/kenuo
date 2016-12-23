@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.ExamBankDao">
+	<insert id="addExamLesson"  parameterType="ExamLessionMapping">
+		INSERT INTO train_exercises_lesson_mapping(
+			exercise_id,
+			lesson_Id,
+			CATEGORY_ID,
+			CREATETIME,
+			STATUS
+		) VALUES (
+			#{exerciseId},
+			#{lessonId},
+			#{categoryId},
+			SYSDATE(),
+			#{status}
+		) ON DUPLICATE KEY UPDATE CREATETIME = SYSDATE(), STATUS=0;
+	</insert>
+	<select id="lookAll" parameterType="ExamLessionMapping" resultType="ExamLessionMapping">
+		SELECT EXERCISE_ID FROM TRAIN_EXERCISES_LESSON_MAPPING WHERE status=0 and  
+			<if test="lessontype == 1">
+				LESSON_ID = #{lessonId}
+			</if>
+			<if test="lessontype == 2 ">
+				CATEGORY_ID = #{categoryId}
+			</if>
+	</select>
+	<update id="deleteAll"  parameterType="ExamLessionMapping">
+		UPDATE TRAIN_EXERCISES_LESSON_MAPPING SET 
+			STATUS = '-1'
+			WHERE 
+			<if test="lessontype == 1">
+				LESSON_ID = #{lessonId}
+			</if>
+			<if test="lessontype == 2 ">
+				CATEGORY_ID = #{categoryId}
+			</if>
+			and STATUS=0 
+	</update>
+	<select id="findByLessonid" resultType="TrainCategorys">
+		SELECT category_id AS 'categoryId',parent_id AS 'parentId' FROM trains.`train_categorys` WHERE category_id = (SELECT category_id FROM trains.`train_lessons` WHERE lesson_id = #{lessonId })
+	</select>
+	<select id="findByziCategoryId" resultType="TrainCategorys">
+		SELECT category_id AS 'categoryId',parent_id AS 'parentId' FROM trains.`train_categorys` WHERE category_id = #{ziCategoryId }
+	</select>
+	<select id="findByExerciseType" resultType="ExercisesCategorys">
+		SELECT 
+				a.exercise_id AS  exerciseId,
+				a.exercise_type AS exerciseType,
+				a.exercise_title AS exerciseTitle,
+				b.name
+			FROM 
+				trains.`train_exercises` AS a,trains.`train_categorys` AS b
+			WHERE 
+				a.`category_id`=b.`category_id` 
+				AND a.exercise_type = #{lessontype} 
+				<if test="categoryId !='' and categoryId !=null">
+					AND a.category_id = #{categoryId }
+				</if>
+					ORDER BY RAND() LIMIT #{newNum}
+	</select>
+	<select id="jiaZaiNum" resultType="int">
+		SELECT  COUNT(*) FROM trains.`train_exercises` AS e,trains.`train_categorys` AS c
+			WHERE e.exercise_type = #{lessontype } 
+			<if test="categoryId !='' and categoryId !=null and categoryId != 'null'">
+				AND e.category_id = #{categoryId } 
+			</if>
+			AND e.STATUS = '0'
+			AND e.category_id = c.category_id AND c.STATUS = '0'
+	</select>
+</mapper>
