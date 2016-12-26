@@ -1,0 +1,14 @@
+lass
+
+# Package Files #
+*.war
+*.ear
+/target/*
+/target
+#.gitignore
+#.classpath
+#.project
+/.settings
+/.settings/*
+/.externalToolBuilders
+/.externalToolBuilders/*
