@@ -12,3 +12,4 @@ lass
 /.settings/*
 /.externalToolBuilders
 /.externalToolBuilders/*
+/build/*
