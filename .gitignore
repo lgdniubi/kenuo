@@ -1,13 +1,13 @@
 lass
 
 # Package Files #
+#.gitignore
+#.project
+.classpath
 *.war
 *.ear
 /target/*
 /target
-#.gitignore
-#.classpath
-#.project
 /.settings
 /.settings/*
 /.externalToolBuilders
