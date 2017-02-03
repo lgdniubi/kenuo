@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<decorators defaultdir="/webpage">
-	
-	<!-- 默认装饰页面, 在需要装饰的页面增加<meta name="decorator" content="default"/> -->
-	<decorator name="blank" page="layouts/blank.jsp" />
-	<!-- <decorator name="default" page="layouts/default.jsp" /> -->
-	<!-- 为减少界面加载时加载不需要的js/css  引入新的headFrame  咖啡  -->
-	<decorator name="default" page="layouts/blank.min.jsp" />
-</decorators>
