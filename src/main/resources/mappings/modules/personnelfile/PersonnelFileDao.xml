@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.personnelfile.dao.PersonnelFileDao">
+	<resultMap type="PersonnelFile"  id="resultCount">
+		<id property="id" column="id" />
+		<result column="sName" property="sName"/>
+	    <result column="sex" property="sex"/>
+		<result column="birthday" property="birthday"/>
+		<result column="nation" property="nation"/>
+		<result column="native" property="userNative"/>
+		<result column="loginName" property="loginName"/>
+		<result column="probationStartDate" property="probationStartDate"/>
+		<result column="soName" property="soName"/>
+		<result column="no" property="no"/>
+		<result column="idcard" property="idcard"/>
+		<result column="delFlag" property="delFlag"/>
+		<result column="oName" property="oName"/>
+		<result column="photo" property="photo"/>
+		<result column="mobile" property="mobile"/>
+		<result column="filing" property="filing"/>
+		<result column="inductionTime" property="inductionTime"/>
+		<collection property="rolelist" ofType="com.training.modules.sys.entity.Role">
+			<result column="srName" property="name" />
+		</collection>
+	</resultMap>	
+
+	<select id="get" resultMap="resultCount">
+		SELECT
+			su.id,
+			su.`name`
+		FROM sys_user su
+		WHERE su.id = #{id}
+	</select>
+	
+   <!-- 分页查询人事档案信息 -->
+	<select id="findPersonnelFileList" resultMap="resultCount">
+		SELECT
+			s.id as id,
+			s.`name` as sName,
+			ubi.sex as sex,
+			sr.`name` as srName,
+			ubi.birthday as birthday,
+			ubi.nation as nation,
+			ubi.native as native,
+			ue.probation_start_date as probationStartDate,
+			s.del_flag as delFlag,
+			o.name as oName,
+			s.filing as filing,
+			s.mobile as mobile,
+			s.induction_time as inductionTime
+		FROM
+			sys_user s
+		LEFT JOIN user_base_info ubi ON s.id = ubi.user_id
+		LEFT JOIN sys_user_role sur ON s.id = sur.user_id
+		LEFT JOIN sys_role sr ON sur.role_id = sr.id
+		LEFT JOIN user_employed ue ON ue.user_id = s.id
+		LEFT JOIN sys_office o ON o.id = s.office_id
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		AND s.del_flag = #{parentDel}
+		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
+		<if test="!currentUser.admin">
+			AND s.id != '1'
+		</if>
+		<if test="sName != null and sName != ''">
+			AND s.name like CONCAT('%', #{sName}, '%')
+		</if>
+		<if test="filing != null and filing != ''">
+			AND s.filing  = #{filing}
+		</if>
+		<if test="filing == 0">
+			AND s.filing  = #{filing}
+		</if>
+		<if test="filing == 1">
+			AND s.filing  = #{filing}
+		</if>
+		<if test="officeId != null and officeId != ''">
+			AND (o.id = #{officeId} OR o.parent_ids LIKE CONCAT('%,', #{officeId}, ',%'))
+		</if>
+		<if test="mobile != null and mobile != ''">
+			AND s.mobile = #{mobile}
+		</if>
+	</select>
+	
+	<!-- 人事档案新增页面信息回带方法 -->
+	<select id="findPortionInfo" resultMap="resultCount">
+		SELECT
+			s.id AS id,
+			s.login_name AS loginName,
+			s. NAME AS sName,
+			so. NAME AS soName,
+			sr. NAME AS srName,
+			s.`no` AS no,
+			s.idcard AS idcard,
+			s.photo As photo,
+			s.mobile AS mobile
+		FROM
+			sys_user s
+		LEFT JOIN sys_office so ON s.office_id = so.id
+		LEFT JOIN sys_user_role sur ON sur.user_id = s.id
+		LEFT JOIN sys_role sr ON sur.role_id = sr.id
+		WHERE 
+			s.id=#{id}
+	</select>
+	
+	<resultMap type="PersonnelFile"  id="personnelFileBeforCount">
+		<id property="id" column="id" />
+		<result column="loginName" property="loginName"/>
+		<result column="sName" property="sName"/>
+		<result column="soName" property="soName"/>
+		<result column="no" property="no"/>
+		<result column="idcard" property="idcard"/>
+		<result column="photo" property="photo"/>
+		<result column="sex" property="sex"/>
+	    <result column="userBaseInfo.age" property="userBaseInfo.age"/>
+	    <result column="userBaseInfo.bloodType" property="userBaseInfo.bloodType"/>
+		<result column="userBaseInfo.birthday" property="userBaseInfo.birthday"/>
+		<result column="userBaseInfo.nation" property="userBaseInfo.nation"/>
+		<result column="userBaseInfo.stature" property="userBaseInfo.stature"/>
+		<result column="userBaseInfo.maritalStatus" property="userBaseInfo.maritalStatus"/>
+		<result column="userBaseInfo.party" property="userBaseInfo.party"/>
+		<result column="userBaseInfo.joinParty" property="userBaseInfo.joinParty"/>
+		<result column="userBaseInfo.registerType" property="userBaseInfo.registerType"/>
+		<result column="userBaseInfo.registerSite" property="userBaseInfo.registerSite"/>
+		<result column="userBaseInfo.dwelling" property="userBaseInfo.dwelling"/>
+		<result column="userEmployed.phoneNumber" property="userEmployed.phoneNumber"/>
+		<result column="userEmployed.officeTel" property="userEmployed.officeTel"/>
+		<result column="userEmployed.familyTel" property="userEmployed.familyTel"/>
+		<result column="userEmployed.source" property="userEmployed.source"/>
+		<result column="userEmployed.introducer" property="userEmployed.introducer"/>
+		<result column="userEmployed.introducerTel" property="userEmployed.introducerTel"/>
+		<result column="userEmployed.probationStartDate" property="userEmployed.probationStartDate"/>
+		<result column="userEmployed.memberDate" property="userEmployed.memberDate"/>
+		<result column="userEmployed.contractEndDate" property="userEmployed.contractEndDate"/>
+		<result column="userEmployed.probationWages" property="userEmployed.probationWages"/>
+		<result column="userEmployed.baseWages" property="userEmployed.baseWages"/>
+		<result column="userEmployed.secondWork" property="userEmployed.secondWork"/>
+		<result column="userEmployed.bankBeneficiary" property="userEmployed.bankBeneficiary"/>
+		<result column="userEmployed.bankCode" property="userEmployed.bankCode"/>
+		<result column="userEducation.education" property="userEducation.education"/>
+		<result column="userEducation.degree" property="userEducation.degree"/>
+		<result column="userEducation.graduationDate" property="userEducation.graduationDate"/>
+		<result column="userEducation.graduationSchool" property="userEducation.graduationSchool"/>
+		<result column="userEducation.major" property="userEducation.major"/>
+		<result column="userEducation.languageAbili" property="userEducation.languageAbili"/>
+		<result column="userSelfevaluation.hobby" property="userSelfevaluation.hobby"/>
+		<result column="userSelfevaluation.specialty" property="userSelfevaluation.specialty"/>
+		<result column="userSelfevaluation.failing" property="userSelfevaluation.failing"/>
+		<result column="userSelfevaluation.expansibility" property="userSelfevaluation.expansibility"/>
+		<result column="userSelfevaluation.selfEvaluation" property="userSelfevaluation.selfEvaluation"/>
+		<result column="userDepartures.isleaveoffice" property="userDepartures.isleaveoffice"/>
+		<result column="userDepartures.leaveofficeDate" property="userDepartures.leaveofficeDate"/>
+		<result column="userDepartures.stopAccountingwages" property="userDepartures.stopAccountingwages"/>
+		<result column="userDepartures.leaveofficeReasons" property="userDepartures.leaveofficeReasons"/>
+		<result column="userDepartures.operationLog" property="userDepartures.operationLog"/>
+		<collection property="rolelist" ofType="com.training.modules.sys.entity.Role">
+			<result column="srName" property="name" />
+		</collection>
+	</resultMap>
+	
+	<select id="getPersonnelFileBefor" resultMap="personnelFileBeforCount">
+		SELECT
+			su.id as "id",
+			su.login_name as "loginName",
+			su.`name` as "sName",
+			so.`name` as "soName",
+			su.`no` as "no",
+			su.idcard as "idcard",
+			su.photo as photo,
+			ubi.age as "userBaseInfo.age",
+			ubi.blood_type as "userBaseInfo.bloodType",
+			ubi.birthday as "userBaseInfo.birthday",
+			ubi.nation as "userBaseInfo.nation",
+			ubi.stature as "userBaseInfo.stature",
+			ubi.marital_status as "userBaseInfo.maritalStatus",
+			ubi.party as "userBaseInfo.party",
+			ubi.join_party as "userBaseInfo.joinParty",
+			ubi.register_type as "userBaseInfo.registerType",
+			ubi.register_site as "userBaseInfo.registerSite",
+			ubi.dwelling as "userBaseInfo.dwelling",
+			ue.phone_number as "userEmployed.phoneNumber",
+			ue.office_tel as "userEmployed.officeTel",
+			ue.family_tel as "userEmployed.familyTel",
+			ue.source as "userEmployed.source",
+			ue.introducer as "userEmployed.introducer",
+			ue.introducer_tel as "userEmployed.introducerTel",
+			ue.probation_start_date as "userEmployed.probationStartDate",
+			ue.member_date as "userEmployed.memberDate",
+			ue.contract_end_date as "userEmployed.contractEndDate",
+			ue.probation_wages as "userEmployed.probationWages",
+			ue.base_wages as "userEmployed.baseWages",
+			ue.second_work as "userEmployed.secondWork",
+			ue.bank_beneficiary as "userEmployed.bankBeneficiary",
+			ue.bank_code as "userEmployed.bankCode",
+			ued.education  as "userEducation.education",
+			ued.degree as "userEducation.degree",
+			ued.graduation_date as "userEducation.graduationDate",
+			ued.graduation_school as "userEducation.graduationSchool",
+			ued.major as "userEducation.major",
+			ued.language_abili as "userEducation.languageAbili",
+			us.hobby as "userSelfevaluation.hobby",
+			us.specialty as "userSelfevaluation.specialty",
+			us.failing as "userSelfevaluation.failing",
+			us.expansibility as "userSelfevaluation.expansibility",
+			us.self_evaluation as "userSelfevaluation.selfEvaluation",
+			ud.isleaveoffice as "userDepartures.isleaveoffice",
+			ud.leaveoffice_date as "userDepartures.leaveofficeDate",
+			ud.stop_accountingwages as "userDepartures.stopAccountingwages",
+			ud.leaveoffice_reasons as "userDepartures.leaveofficeReasons",
+			ud.operation_log as "userDepartures.operationLog",
+			sr.`name` as srName,
+			ubi.sex as sex
+		FROM
+			sys_user su
+		LEFT JOIN user_base_info ubi ON ubi.user_id = su.id
+		LEFT JOIN user_employed ue ON ue.user_id = su.id
+		LEFT JOIN user_education ued ON ued.user_id = su.id
+		LEFT JOIN user_selfevaluation us ON us.user_id = su.id
+		LEFT JOIN user_departures  ud ON ud.user_id = su.id
+		LEFT JOIN sys_office so ON so.id = su.office_id
+		LEFT JOIN sys_user_role sur ON sur.user_id = su.id
+		LEFT JOIN sys_role sr ON sur.role_id = sr.id
+		WHERE su.id=#{id}
+	</select>
+	
+	<update id="updateUserInfo">
+		UPDATE sys_user SET 
+			photo = #{photo},
+			filing = #{filing},
+			del_flag = #{delFlag}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

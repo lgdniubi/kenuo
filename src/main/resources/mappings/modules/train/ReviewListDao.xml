@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.ReviewListDao">
+	<select id="findList" resultType="LessonAskComments">
+		SELECT A.ASK_ID,A.CONTENT,A.CREATETIME,A.COMMENT_ID,B.NAME ,B.PHOTO
+			FROM  
+			TRAIN_LESSON_ASK_COMMENTS AS A,SYS_USER AS B
+			WHERE 
+			A.ASK_ID = #{askId}
+			and A.status=0
+			and b.id=a.user_id
+			ORDER BY  B.USER_TYPE ASC ,  A.CREATETIME DESC
+	</select>
+	<update id="deleteOneComment">
+		UPDATE TRAIN_LESSON_ASK_COMMENTS SET 
+			STATUS = '-1'
+		WHERE COMMENT_ID = #{commentId}
+	</update>
+	<select id="get" resultType="LessonAskComments">
+	SELECT ASK_ID
+			FROM  
+			TRAIN_LESSON_ASK_COMMENTS 
+			WHERE 
+			comment_id= #{commentId}
+	</select>
+</mapper>

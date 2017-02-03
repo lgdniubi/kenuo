@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.training.modules.quartz.dao.ITaskDao">
+	
+	<sql id="taskColumns">
+		j.job_id as 'jobId',
+		j.job_name AS 'jobName',
+		j.job_group AS 'jobGroup',
+		j.job_status AS 'jobStatus',
+		j.is_concurrent AS 'isConcurrent',
+		j.cron_expression AS 'cronExpression',
+		j.description AS 'description',
+		j.bean_class AS 'beanClass',
+		j.spring_id AS 'springId',
+		j.method_name AS 'methodName',
+		j.create_time AS 'createTime'
+	</sql>
+	
+	<!-- 查询所有的定时任务 -->
+	<select id="findAllTasks" parameterType="Task" resultType="Task">
+		SELECT  
+		 	<include refid="taskColumns"/>
+		FROM quartz_schedulejob j 
+		WHERE 1 = 1
+		<if test="jobName != null and jobName != ''">
+			AND j.job_name = #{jobName}
+		</if>
+			AND del_flag = 0
+	</select>
+	
+	<!-- 根据id查询定时任务 -->
+	<select id="findTaskById" parameterType="Task" resultType="Task">
+		SELECT  
+		 	<include refid="taskColumns"/>
+		FROM quartz_schedulejob j 
+		WHERE j.job_id = #{jobId}
+			AND del_flag = 0
+	</select>
+	
+	<!-- 保存定时任务 -->
+	<insert id="insertTask" useGeneratedKeys="true" keyProperty="jobId">
+		INSERT INTO quartz_schedulejob
+			(
+			job_name,
+			job_group,
+			job_status,
+			is_concurrent,
+			cron_expression,
+			description,
+			bean_class,
+			spring_id,
+			method_name,
+			create_time
+			)
+		VALUES
+			(
+			#{jobName},
+			#{jobGroup},
+			#{jobStatus},
+			#{isConcurrent},
+			#{cronExpression},
+			#{description},
+			#{beanClass},
+			#{springId},
+			#{methodName},
+			SYSDATE()
+			)
+	</insert>
+	
+	<!-- 修改定时任务 -->
+	<update id="updateTask">
+		UPDATE quartz_schedulejob
+			SET
+			job_name = #{jobName},
+			job_group = #{jobGroup},
+			job_status = 1,
+			is_concurrent = 1,
+			cron_expression = #{cronExpression},
+			description = #{description},
+			bean_class = #{beanClass},
+			spring_id = #{springId},
+			method_name = #{methodName},
+			update_time = SYSDATE()
+		WHERE job_id = #{jobId}
+			AND del_flag = 0
+	</update>
+	
+	<!-- 根据ID，修改任务状态 -->
+	<update id="updateTaskStatus">
+		UPDATE quartz_schedulejob 
+			SET job_status = #{jobStatus}
+		WHERE job_id = #{jobId}
+			AND del_flag = 0
+	</update>
+	
+	<!-- 根据id，删除定时器 -->
+	<delete id="deleteByLogic">
+		UPDATE quartz_schedulejob 
+			SET del_flag = 1
+		WHERE job_id = #{jobId}
+	</delete>
+	
+	<!-- 查询定时任务日志 -->
+	<select id="findAllTasksLogs" parameterType="TaskLog" resultType="TaskLog">
+		SELECT 
+		  id,
+		  job_name AS 'jobName',
+		  job_description AS 'jobDescription',
+		  start_date AS 'startDate',
+		  end_date AS 'endDate',
+		  run_time AS 'runTime',
+		  create_date AS 'createDate',
+		  status,
+		  LEFT(exception_msg,20) AS 'exceptionMsg',
+		  remarks
+		FROM
+		  quartz_schedulejob_log
+		WHERE 1 = 1
+		<if test="jobName != null and jobName != ''">
+			AND job_name = #{jobName}
+		</if> 
+		<if test="status != null and status != '' and status != '-1'">
+			AND status = #{status}
+		</if> 
+		ORDER BY id DESC
+	</select>
+	
+	<!-- 根据id查询定时任务 -->
+	<select id="findLogById" parameterType="TaskLog" resultType="TaskLog">
+		SELECT 
+		  exception_msg AS 'exceptionMsg'
+		FROM
+		  quartz_schedulejob_log
+		WHERE id = #{id}
+	</select>
+	
+	<!-- 保存定时任务日志 -->
+	<insert id="insertTaskLog">
+		INSERT INTO trains.quartz_schedulejob_log
+            (
+             job_name,
+             job_description,
+             start_date,
+             end_date,
+             run_time,
+             create_date,
+             status,
+             exception_msg,
+             remarks)
+		VALUES (
+		        #{jobName},
+		        #{jobDescription},
+		        #{startDate},
+		        #{endDate},
+		        #{runTime},
+		        SYSDATE(),
+		        #{status},
+		        #{exceptionMsg},
+		        #{remarks})
+	</insert>
+</mapper>

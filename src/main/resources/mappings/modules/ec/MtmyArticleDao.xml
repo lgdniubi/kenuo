@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.MtmyArticleDao">
+	<sql id="mtmyArticleColumns">
+		a.id,
+		a.title,
+		a.short_title,
+		a.author_name   AS authorId,
+		a.type,
+		a.first_image AS firstImage,
+		a.contents,
+		a.digest,
+		a.audit_flag  AS auditFlag,
+		a.create_by   AS "createBy.id",
+		a.create_date,
+		a.update_by   AS "updateBy.id",
+		a.update_date,
+		a.is_show     AS isShow,
+		a.del_flag,
+		a.category_id AS categoryId,
+		a.sort,
+		a.is_recommend AS isRecommend,
+		a.is_top AS isTop,
+		a.is_task AS isTask,
+		a.task_date AS taskDate,
+		a.like_num AS likeNum
+	</sql>
+	<!-- 分页查询文章 -->
+	<select id="findAllList" resultType="MtmyArticle">
+		SELECT
+			<include refid="mtmyArticleColumns"/>,
+			ac.name AS categoryName,
+			(SELECT COUNT(*) FROM mtmydb.mtmy_articles_comment AS c WHERE c.articles_id=a.id AND c.del_flag = 0 AND a.del_flag=0) AS comNum
+		FROM mtmydb.mtmy_articles AS a
+		LEFT JOIN mtmydb.mtmy_article_category ac ON ac.id = a.category_id
+			WHERE 1=1
+				<if test="delFlag != 0 and delFlag != null">
+					AND a.del_flag = #{delFlag}
+				</if>
+				<if test="delFlag == 0">
+					AND a.audit_flag = #{auditFlag}
+					AND a.del_flag = #{DEL_FLAG_NORMAL}
+				</if>
+				<if test="categoryId != 0">
+					AND a.category_id = #{categoryId}
+				</if>
+				<if test="title != null and title != ''">
+					AND a.title like 
+							<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+							<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+				</if>
+				<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
+					AND a.create_date BETWEEN #{beginDate} AND #{endDate}
+				</if>
+				ORDER BY a.is_top,a.sort DESC,a.create_date DESC
+	</select>
+	<!-- 添加文章 -->
+	<insert id="insert">
+		INSERT INTO mtmydb.mtmy_articles(
+			title,
+			short_title,
+			author_id,
+			type,
+			first_image,
+			contents,
+			digest,
+			audit_flag,
+			create_by,
+			create_date,
+			del_flag,
+			category_id
+		) VALUES (
+			#{title},
+			#{shortTitle},
+			#{authorId},
+			#{type},
+			#{firstImage},
+			#{contents},
+			#{digest},
+			1,
+			#{createBy.id}, 
+			SYSDATE(), 
+			#{DEL_FLAG_NORMAL},
+			#{categoryId}
+		)
+	</insert>
+	<!-- 修改文章 -->
+	<update id="update">
+		UPDATE mtmydb.mtmy_articles SET 
+			title		= #{title},
+			short_title = #{shortTitle},
+			author_id   = #{authorId},
+			type        = #{type},
+			first_image = #{firstImage},
+			contents	= #{contents},
+			digest		= #{digest},
+			audit_flag	= 1,
+			update_by   = #{updateBy.id},
+			update_date = SYSDATE(), 
+			del_flag	= #{DEL_FLAG_NORMAL},
+			category_id	= #{categoryId}
+		WHERE id = #{id}
+	</update>
+	<!-- 查询单个文章 -->
+	<select id="get" resultType="MtmyArticle">
+		SELECT
+			<include refid="mtmyArticleColumns"/>
+		FROM mtmydb.mtmy_articles AS a
+			WHERE 1=1
+				AND id = #{id}
+	</select>
+	<!-- 审核文章 -->
+	<update id="auditArticle">
+		UPDATE mtmydb.mtmy_articles SET 
+			audit_flag = 0,
+			update_by = #{updateBy.id},
+			update_date = SYSDATE()
+		WHERE id = #{id}
+	</update>
+	<!-- 分页查询文章评论 -->
+	<select id="findArticleComment" resultType="MtmyArticleComment">
+		SELECT
+			id,
+			articles_id AS articlesId,
+			contents,
+			create_by AS "createBy.id",
+			create_name AS createName,
+			create_photo AS createPhoto,
+			create_date,
+			del_flag,
+			like_num AS likeNum
+		FROM mtmydb.mtmy_articles_comment
+			WHERE 1=1
+				AND del_flag = #{DEL_FLAG_NORMAL}
+				AND articles_id = #{articlesId}
+				ORDER BY create_date DESC
+	</select>
+	<!-- 删除文章评论 -->
+	<update id="deleteComment">
+		UPDATE mtmydb.mtmy_articles_comment SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	<!-- 删除文章 -->
+	<update id="delete">
+		UPDATE mtmydb.mtmy_articles SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	<!-- 分页查询文章分类 -->
+	<select id="findListCategory" resultType="MtmyArticleCategory">
+		SELECT
+			id,
+			name,
+			sort,
+			create_by AS "createBy.id",
+			create_date
+		FROM mtmydb.mtmy_article_category
+			WHERE 1=1
+				AND del_flag = #{DEL_FLAG_NORMAL}
+				ORDER BY sort DESC,create_date DESC
+	</select>
+	<!-- 新增文章分类 -->
+	<insert id="saveCategory" >
+		INSERT INTO mtmydb.mtmy_article_category(
+			name, 
+			sort, 
+			create_by, 
+			create_date, 
+			del_flag
+		) VALUES (
+			#{name}, 
+			#{sort},
+			#{createBy.id}, 
+			SYSDATE(), 
+			#{DEL_FLAG_NORMAL}
+		)
+	</insert>
+	<!-- 修改文章分类 -->
+	<update id="updateCategory">
+		UPDATE mtmydb.mtmy_article_category SET 
+			name = #{name}, 
+			sort = #{sort},
+			update_by = #{updateBy.id}, 
+			update_date = SYSDATE(), 
+			del_flag = #{DEL_FLAG_NORMAL}
+		WHERE id = #{id}
+	</update>
+	<!-- 删除文章分类 -->
+	<update id="deleteCategory">
+		UPDATE mtmydb.mtmy_article_category SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<select id="findApplyPage" resultType="MtmyArticle">
+		SELECT
+			a.title,
+			u.name AS 'users.name',
+			u.nickname AS 'users.nickname',
+			u.mobile AS 'users.mobile',
+			c.contents AS 'contents'
+		FROM
+			mtmydb.`mtmy_articles_comment` AS c
+		LEFT JOIN mtmydb.mtmy_articles AS a ON c.articles_id = a.id
+		LEFT JOIN mtmydb.`mtmy_users` AS u on c.`create_by` = u.`user_id`
+		WHERE
+			c.`contents` LIKE '%报名%'
+			<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
+				AND c.create_date BETWEEN #{beginDate} AND #{endDate}
+			</if>
+			ORDER BY c.create_date DESC
+	</select>
+	
+	<!-- 更新文章的部分：排序，分类，是否置顶，是否推荐，是否显示 -->
+	<update id="updateForPart" parameterType="MtmyArticle">
+		UPDATE mtmydb.mtmy_articles SET
+			category_id = #{categoryId},
+			sort = #{sort},
+			is_top = #{isTop},
+			is_recommend = #{isRecommend},
+			is_show = #{isShow}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 更新是否置顶 -->
+	<update id="updateIsTop">
+		UPDATE mtmydb.mtmy_articles SET
+			is_top = #{isTop}
+		WHERE id = #{id}
+	</update>
+	<!-- 更新是否推荐 -->
+	<update id="updateIsRecommend">
+		UPDATE mtmydb.mtmy_articles SET
+			is_recommend = #{isRecommend}
+		WHERE id = #{id}
+	</update>
+	<!-- 更新是否显示 -->
+	<update id="updateIsShow">
+		UPDATE mtmydb.mtmy_articles SET
+			is_show = #{isShow}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 定时发布文章 -->
+	<update id="updateIsTask">
+		UPDATE mtmydb.mtmy_articles
+			SET 
+			  is_task = #{isTask},
+			  <if test="isTask == 0">
+			  	task_date = null,
+			  </if>
+			  <if test="isTask == 1">
+			  task_date = #{taskDate},
+			  </if>
+			  update_by = #{updateBy.id},
+			  update_date = SYSDATE()
+			WHERE id = #{id}
+	</update>
+	<!-- 定时发布  用于定时器 -->
+	<update id="taskArticles">
+		UPDATE mtmydb.mtmy_articles SET is_show = 0 WHERE del_flag = 0 AND is_show = 1 AND audit_flag = 0 AND is_task = 1 AND task_date <![CDATA[ <= ]]> SYSDATE()
+	</update>
+	
+	<!-- 查询所有的评论 -->
+	<select id="findAllArticleComment" resultType="MtmyArticleComment">
+		SELECT
+			ac.id,
+			ac.articles_id AS articlesId,
+			ac.contents,
+			ac.create_by AS "createBy.id",
+			ac.create_name AS createName,
+			ac.create_photo AS createPhoto,
+			ac.create_date,
+			ac.del_flag,
+			ac.like_num AS likeNum
+		FROM mtmydb.mtmy_articles_comment ac
+		LEFT JOIN mtmydb.mtmy_articles c ON c.id = ac.articles_id
+		LEFT JOIN mtmydb.mtmy_article_category b ON b.id = c.category_id
+		WHERE 1=1
+			<if test="delFlag != 0 and delFlag != null">
+				AND ac.del_flag = 1
+			</if>
+			<if test="delFlag == 0">
+				AND ac.del_flag = 0
+			</if>
+			<if test="categoryId != 0">
+				AND c.category_id = #{categoryId}
+			</if>
+			<if test="title != null and title != ''">
+				AND c.title like 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+			</if>
+			<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
+				AND ac.create_date BETWEEN #{beginDate} AND #{endDate}
+			</if>
+		ORDER BY create_date DESC
+	</select>
+</mapper>

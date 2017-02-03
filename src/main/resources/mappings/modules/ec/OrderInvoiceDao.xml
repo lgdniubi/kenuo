@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.OrderInvoiceDao">
+
+	<sql id="actionColunm">
+		a.id,
+		a.user_id,
+		b.mobile,
+		b.nickname as "userName",
+		a.invoice_type,
+		a.head_content,
+		a.tax_num,
+		a.account_holder,
+		a.bank_name,
+		a.bank_no,
+		a.phone,
+		a.address,
+		a.invoice_amount,
+		a.invoice_content,
+		a.recipients_name,
+		a.recipients_phone,
+		a.recipients_address,
+		a.shipping_code,
+		a.shipping_time,
+		a.shipping_name,
+		a.invoice_status,
+		a.create_by,
+		a.create_date,
+		a.update_by,
+		a.update_date,
+		a.remarks,
+		a.del_flag
+	</sql>
+	<select id="get" resultType="OrderInvoice">
+		SELECT
+		 <include refid="actionColunm"></include>
+		FROM mtmydb.mtmy_order_invoice a
+		LEFT JOIN mtmydb.mtmy_users b ON a.user_id=b.user_id
+		WHERE a.id=#{id}
+	
+	</select>
+	<!-- 分页查询 -->
+	<select id="findList" resultType="OrderInvoice">
+		SELECT
+		 <include refid="actionColunm"></include>
+		FROM mtmydb.mtmy_order_invoice a
+		LEFT JOIN mtmydb.mtmy_users b ON a.user_id=b.user_id
+		WHERE 1=1 and a.del_flag=0
+		<if test="userName!= null and userName!=''">
+			AND b.nickname like
+			<if test="dbName == 'oracle'">'%'||#{userName}||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{userName} , '%')</if>
+		</if>
+		<if test="mobile!= null and mobile!=''">
+			AND b.mobile like
+			<if test="dbName == 'oracle'">'%'||#{mobile}||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{mobile} , '%')</if>
+		</if>
+		<if test="invoiceType != 0">
+			AND a.invoice_type = #{invoiceType}
+		</if>
+		<!-- <if test="startTime != null and startTime != ''">
+			AND DATE_FORMAT(a.start_time,'%Y-%m-%d') >= DATE_FORMAT(#{startTime},'%Y-%m-%d')
+		</if>
+		<if test="endTime!=null and endTime!=''">
+			<![CDATA[AND DATE_FORMAT(a.end_time,'%Y-%m-%d') <= DATE_FORMAT(#{endTime},'%Y-%m-%d')]]>
+		</if>
+		<if test="status!=null and status!=''">
+			AND a.status=#{status}
+		</if> -->
+		ORDER BY a.create_date DESC
+	</select>
+	<select id="findAllList" resultType="OrderInvoice">
+		SELECT
+		 <include refid="actionColunm"></include>
+		FROM mtmydb.mtmy_activity a
+	</select>
+	
+	<!-- 插入数据 -->
+	<insert id="saveOrderInvoice" useGeneratedKeys="true" keyProperty="invoiceId">
+		INSERT INTO mtmydb.mtmy_order_invoice (
+			user_id,
+			invoice_type,
+			head_content,
+			tax_num,
+			bank_name,
+			bank_no,
+			phone,
+			address,
+			invoice_amount,
+			invoice_content,
+			recipients_name,
+			recipients_phone,
+			recipients_address,
+			create_date,
+			update_by
+		)VALUES(
+			#{userid},
+			#{invoiceType},
+			#{headContent},
+			#{taxNum},
+			#{bankName},
+			#{bankNo},
+			#{invoicePhone},
+			#{invoiceAddress},
+			#{invoiceAmount},
+			#{invoiceContent},
+			#{recipientsName},
+			#{recipientsPhone},
+			#{recipientsAddress},
+			SYSDATE(),
+			#{createBy.id}
+		)
+
+	</insert>
+	<!-- 保存 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO mtmydb.mtmy_order_invoice (
+			user_id,
+			invoice_type,
+			head_content,
+			tax_num,
+			bank_name,
+			bank_no,
+			phone,
+			address,
+			account_holder,
+			invoice_amount,
+			invoice_content,
+			recipients_name,
+			recipients_phone,
+			recipients_address,
+			create_date
+	
+		)
+		VALUES
+		(
+			#{userId},
+			#{invoiceType},
+			#{headContent},
+			#{taxNum},
+			#{bankName},
+			#{bankNo},
+			#{phone},
+			#{address},
+			#{accountHolder},
+			#{invoiceAmount},
+			#{invoiceContent},
+			#{recipientsName},
+			#{recipientsPhone},
+			#{recipientsAddress},
+			SYSDATE()
+	
+		)
+	</insert>
+	<!-- 修改数据 -->
+	<update id="updateSave">
+		UPDATE mtmydb.mtmy_order_invoice SET
+			invoice_type=#{invoiceType},
+			head_content=#{headContent},
+			tax_num=#{taxNum},
+			bank_name=#{bankName},
+			bank_no=#{bankNo},
+			phone=#{phone},
+			address=#{address},
+			invoice_status=#{invoiceStatus},
+			account_holder=#{accountHolder},
+			invoice_amount=#{invoiceAmount},
+			invoice_content=#{invoiceContent},
+			recipients_name=#{recipientsName},
+			recipients_phone=#{recipientsPhone},
+			recipients_address=#{recipientsAddress}
+		WHERE id=#{id}
+	</update>
+	<!-- 删除数据 -->
+	<update id="delInvoic">
+		UPDATE mtmydb.mtmy_order_invoice SET
+			del_flag=1
+		WHERE id=#{id}	
+	</update>
+	<!-- 插入中间表 -->	
+	<insert id="insertMaping">
+		INSERT INTO mtmydb.mtmy_order_invoice_relevancy(
+			invoice_id,
+			order_id	
+		)
+		value
+		(
+			#{invoiceId},
+			#{orderId}
+		)
+	
+	</insert>
+	<!-- 修改已经开的发票状态 -->
+	<update id="updateOrderIsinv">
+		UPDATE mtmydb.mtmy_orders SET
+			is_invoice=1
+		where order_id=#{orderId}
+	</update>
+	<!-- 导出发票 -->
+	<select id="findExportList" resultType="OrderInvoiceExport">
+		SELECT
+			a.id AS eId,
+			a.create_date AS receiptsDate,
+			a.tax_num AS buyTaxNo,
+			a.bank_no AS buyBankNo,
+			c.goods_name AS shopName,
+			c.spec_key_name AS specKeyName,
+			c.goods_num AS goodsNum,
+		  	c.total_amount AS totalAmount,
+			c.goods_price AS goodsPrice
+		FROM
+			mtmydb.mtmy_order_invoice a
+		LEFT JOIN mtmydb.mtmy_order_invoice_relevancy b ON b.invoice_id = a.id 
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping c ON b.order_id = c.order_id
+		WHERE a.del_flag = 0
+	</select>
+	<!-- 查询管理订单id -->
+	<select id="findInvoiceRelevancy" resultType="OrderInvoiceRelevancy">
+		SELECT
+			a.id,
+			a.invoice_id,
+			a.order_id
+		FROM
+			mtmydb.mtmy_order_invoice_relevancy a
+		
+		WHERE
+			a.invoice_id = #{invoiceId}
+	</select>
+	
+</mapper>

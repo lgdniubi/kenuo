@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.training.modules.personnelfile.dao.UserWorkExperienceDao" >
+  <resultMap id="BaseResultMap" type="com.training.modules.personnelfile.entity.UserWorkExperience" >
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="once_company" property="onceCompany" jdbcType="VARCHAR" />
+    <result column="work_start_date" property="workStartDate" jdbcType="TIMESTAMP" />
+    <result column="work_end_date" property="workEndDate" jdbcType="TIMESTAMP" />
+    <result column="position" property="position" jdbcType="VARCHAR" />
+    <result column="major" property="major" jdbcType="VARCHAR" />
+    <result column="language_abili" property="languageAbili" jdbcType="VARCHAR" />
+    <result column="work_type" property="workType" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    user_id, once_company, work_start_date, work_end_date, position, major, language_abili, work_type
+  </sql>
+  <select id="findList" resultMap="BaseResultMap" parameterType="com.training.modules.personnelfile.entity.UserWorkExperience" >
+    select
+    	<include refid="Base_Column_List" />
+    from user_workexperience
+    where user_id = #{userId}
+	ORDER BY work_type;
+  </select>
+  
+  <insert id="insert" parameterType="com.training.modules.personnelfile.entity.UserWorkExperience" >
+    insert into user_workexperience (user_id, once_company, work_start_date, 
+      work_end_date, position, major, 
+      language_abili)
+    values (#{userId,jdbcType=VARCHAR}, #{onceCompany,jdbcType=VARCHAR}, #{workStartDate,jdbcType=TIMESTAMP}, 
+      #{workEndDate,jdbcType=TIMESTAMP}, #{position,jdbcType=VARCHAR}, #{major,jdbcType=VARCHAR}, 
+      #{languageAbili,jdbcType=VARCHAR})
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.training.modules.personnelfile.entity.UserWorkExperience" >
+    insert into user_workexperience
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="onceCompany != null" >
+        once_company,
+      </if>
+      <if test="workStartDate != null" >
+        work_start_date,
+      </if>
+      <if test="workEndDate != null" >
+        work_end_date,
+      </if>
+      <if test="position != null" >
+        position,
+      </if>
+      <if test="major != null" >
+        major,
+      </if>
+      <if test="languageAbili != null" >
+        language_abili,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="onceCompany != null" >
+        #{onceCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="workStartDate != null" >
+        #{workStartDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="workEndDate != null" >
+        #{workEndDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="position != null" >
+        #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="major != null" >
+        #{major,jdbcType=VARCHAR},
+      </if>
+      <if test="languageAbili != null" >
+        #{languageAbili,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <insert id="saveUserWorkExperienceList" parameterType="java.util.List">
+		INSERT INTO user_workexperience 
+			(
+				user_id,
+				once_company,
+				work_start_date,
+				work_end_date,
+				position,
+				major,
+				language_abili,
+				work_type
+			)
+		<foreach collection="list" item="uwe" separator=" union all ">
+			SELECT  #{uwe.userId},
+					#{uwe.onceCompany},
+					#{uwe.workStartDate},
+					#{uwe.workEndDate},
+					#{uwe.position},
+					#{uwe.major},
+					#{uwe.languageAbili},
+					#{uwe.workType}
+			FROM dual
+		</foreach>
+	</insert>
+	
+	<delete id="deleteByUserId">
+	    DELETE
+		FROM
+			user_workexperience
+		WHERE
+			user_id = #{userId}
+  </delete>
+</mapper>

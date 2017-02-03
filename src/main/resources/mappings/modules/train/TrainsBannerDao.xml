@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.TrainsBannerDao">
+    
+	<insert id="insert">
+		INSERT INTO train_advert(
+			ad_name,
+			ad_type,
+			ad_pic,
+			ad_url,
+			remark,
+			sort,
+			del_flag,
+			create_time
+		) VALUES (
+			#{adName},
+			#{adType},
+			#{adPic},
+			#{adUrl},
+			#{remark},
+			#{sort},
+			#{DEL_FLAG_DELETE},
+			SYSDATE()
+		)
+	</insert>
+	<select id="findList" resultType="TrainsBanner">
+		SELECT
+			ad_id AS adId,
+			ad_name AS adName,
+			ad_type AS adType,
+			ad_pic AS adPic,
+			sort,
+			del_flag	
+		FROM
+			train_advert
+		ORDER BY
+			sort DESC
+	</select>
+	<select id="getBanner" resultType="TrainsBanner">
+		SELECT
+			ad_id AS adId,
+			ad_name AS adName,
+			ad_type AS adType,
+			ad_pic AS adPic,
+			ad_url AS adUrl,
+			remark,
+			sort	
+		FROM
+			train_advert
+		WHERE 
+			ad_id = #{adId}
+	</select>
+	<update id="update">
+		UPDATE train_advert
+			SET 
+			  ad_name = #{adName},
+			  ad_type = #{adType},
+			  ad_pic = #{adPic},
+			  ad_url = #{adUrl},
+			  remark = #{remark},
+			  sort = #{sort},
+			  del_flag = 1
+			WHERE ad_id = #{adId}
+	</update>
+	<update id="deleteBanner">
+		UPDATE train_advert
+			SET 
+			  del_flag = #{flag }
+			WHERE ad_id = #{adId}
+	</update>
+</mapper>

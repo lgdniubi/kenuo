@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.training.modules.personnelfile.dao.UserFamilyDao" >
+  <resultMap id="BaseResultMap" type="com.training.modules.personnelfile.entity.UserFamily" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="contact_number" property="contactNumber" jdbcType="VARCHAR" />
+    <result column="birthday" property="birthday" jdbcType="DATE" />
+    <result column="family_address" property="familyAddress" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="DATE" />
+    <result column="name_type" property="nameType" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, user_id, name, contact_number, birthday, family_address, create_date, name_type
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_family
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from user_family
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.training.modules.personnelfile.entity.UserFamily" >
+    insert into user_family (id, user_id, father, 
+      mother, contact_number, birthday, 
+      family_address, create_date)
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{father,jdbcType=VARCHAR}, 
+      #{mother,jdbcType=VARCHAR}, #{contactNumber,jdbcType=VARCHAR}, #{birthday,jdbcType=DATE}, 
+      #{familyAddress,jdbcType=VARCHAR}, #{createDate,jdbcType=DATE})
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.training.modules.personnelfile.entity.UserFamily" >
+    insert into user_family
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="contactNumber != null" >
+        contact_number,
+      </if>
+      <if test="birthday != null" >
+        birthday,
+      </if>
+      <if test="familyAddress != null" >
+        family_address,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="nameType != null" >
+        name_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="contactNumber != null" >
+        #{contactNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null" >
+        #{birthday,jdbcType=DATE},
+      </if>
+      <if test="familyAddress != null" >
+        #{familyAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=DATE},
+      </if>
+      <if test="nameType != null" >
+        #{nameType,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.training.modules.personnelfile.entity.UserFamily" >
+    update user_family
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="father != null" >
+        father = #{father,jdbcType=VARCHAR},
+      </if>
+      <if test="mother != null" >
+        mother = #{mother,jdbcType=VARCHAR},
+      </if>
+      <if test="contactNumber != null" >
+        contact_number = #{contactNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null" >
+        birthday = #{birthday,jdbcType=DATE},
+      </if>
+      <if test="familyAddress != null" >
+        family_address = #{familyAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.training.modules.personnelfile.entity.UserFamily" >
+    update user_family
+    set user_id = #{userId,jdbcType=VARCHAR},
+      father = #{father,jdbcType=VARCHAR},
+      mother = #{mother,jdbcType=VARCHAR},
+      contact_number = #{contactNumber,jdbcType=VARCHAR},
+      birthday = #{birthday,jdbcType=DATE},
+      family_address = #{familyAddress,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=DATE}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+   <select id="getObject" resultMap="BaseResultMap">
+    select 
+    	<include refid="Base_Column_List" />
+    from user_family
+    where user_id = #{userId}
+    and name_type = #{nameType}
+  </select>
+  
+  
+  <delete id="deleteByUserId">
+	    DELETE
+		FROM
+			user_family
+		WHERE
+			user_id = #{userId}
+  </delete>
+</mapper>

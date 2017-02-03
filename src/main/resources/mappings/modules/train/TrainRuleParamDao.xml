@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.TrainRuleParamDao">
+
+	<sql id="ruleParamJoins">
+		LEFT JOIN train_rule_param_type ty ON ts.param_type = ty.id 
+  		LEFT JOIN sys_user tu ON ts.create_by = tu.id 
+    </sql>
+
+	<!-- 查询所有数据 -->
+	<select id="findList" resultType="TrainRuleParam">
+		SELECT 
+		  ts.id AS 'id',
+		  ts.param_key AS 'paramKey',
+		  ts.param_value AS 'paramValue',
+		  ts.param_explain AS 'paramExplain',
+		  ts.param_uplimit AS 'paramUplimit',
+		  ty.type_name AS 'TrainRuleParamType.typeName',
+		  tu.id AS 'createBy.id',
+		  tu.name AS 'createBy.name',
+		  ts.sort,
+		  ts.create_date AS 'createDate',
+		  ts.remarks
+		FROM
+		  train_rule_param ts 
+		  <include refid="ruleParamJoins"/> 
+		WHERE 1 = 1 
+		<if test="paramKey != null and paramKey != ''">
+			AND ts.param_key LIKE
+			<if test="dbName == 'oracle'">'%'||#{paramKey}||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{paramKey}, '%')</if>
+		</if>
+		<if test="paramType != null and paramType !='' and paramType !='-2'">
+			AND ts.param_type = #{paramType}
+		</if>
+			AND ts.del_flag = 0
+		ORDER BY ts.sort DESC
+	</select>
+	
+	<!-- 根据id查看 -->
+	<select id="get" resultType="TrainRuleParam">
+		SELECT 
+		  ts.id AS 'id',
+		  ts.param_key AS 'paramKey',
+		  ts.param_value AS 'paramValue',
+		  ts.param_explain AS 'paramExplain',
+		  ts.param_uplimit AS 'paramUplimit',
+		  ty.id AS 'TrainRuleParamType.id',
+		  ty.type_name AS 'TrainRuleParamType.typeName',
+		  ty.alia_name AS 'TrainRuleParamType.aliaName',
+		  tu.id AS 'createBy.id',
+		  tu.name AS 'createBy.name',
+		  ts.sort,
+		  ts.create_date AS 'createDate',
+		  ts.remarks
+		FROM
+		  train_rule_param ts 
+		  <include refid="ruleParamJoins"/> 
+		WHERE ts.id = #{id}
+			AND ts.del_flag = 0
+	</select>
+	
+	<!-- 保存 -->
+	<insert id="insert">
+		INSERT INTO train_rule_param
+            (
+             param_key,
+             param_value,
+             param_type,
+             param_explain,
+             param_uplimit,
+             create_by,
+             create_date,
+             sort,
+             remarks)
+		VALUES (
+		        #{paramKey},
+		        #{paramValue},
+		        #{trainRuleParamType.id},
+		        #{paramExplain},
+		        #{paramUplimit},
+		        #{createBy.id},
+		        #{createDate},
+		        #{sort},
+		        #{remarks})
+	</insert>
+	
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE train_rule_param
+			SET 
+			  param_key = #{paramKey},
+			  param_value = #{paramValue},
+			  param_type = #{trainRuleParamType.id},
+			  param_explain = #{paramExplain},
+			  param_uplimit = #{paramUplimit},
+			  update_by = #{updateBy.id},
+			  update_date = #{updateDate},
+			  sort = #{sort},
+			  remarks = #{remarks}
+			WHERE id = #{id}
+	</update>
+	
+	<!--逻辑删除 -->
+	<delete id="deleteByLogic">
+		UPDATE train_rule_param
+			SET 
+			  del_flag = 1
+			WHERE id = #{id}
+	</delete>
+	
+	<!-- 根据规则类型-级联删除 -->
+	<delete id="typefordelete">
+		UPDATE train_rule_param
+		SET 
+		   update_by = #{updateBy.id},
+		   update_date = #{updateDate},
+		   del_flag = 1
+		WHERE param_type = #{paramType}
+	</delete>
+	
+	
+	<!-- 查询所有参数类型数据 -->
+	<select id="findParamTypeList" resultType="TrainRuleParamType">
+		SELECT 
+		  id,type_name AS 'typeName',alia_name AS 'aliaName',remarks
+		FROM
+		  train_rule_param_type 
+		WHERE 1 = 1
+		<if test="typeName != null and typeName != ''">
+			AND type_name LIKE
+			<if test="dbName == 'oracle'">'%'||#{typeName}||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{typeName}, '%')</if>
+		</if>
+			AND del_flag = 0
+		ORDER BY id DESC
+	</select>
+	
+	<!-- 根据id，查询其规则参数类型 -->
+	<select id="findRuleType" resultType="TrainRuleParamType">
+		SELECT 
+		  id,type_name AS 'typeName',alia_name AS 'aliaName',remarks
+		FROM
+		  train_rule_param_type 
+		WHERE del_flag = 0
+			AND id = #{id}
+		ORDER BY id 
+	</select>
+	
+	<!-- 规则参数类型-保存 -->
+	<insert id="insertRuleType">
+		INSERT INTO train_rule_param_type
+            (
+             type_name,
+             alia_name,
+             remarks)
+		VALUES (
+		        #{typeName},
+		        #{aliaName},
+		        #{remarks})
+	</insert>
+	
+	<!-- 规则参数类型-修改 -->
+	<update id="updateRuleType">
+		UPDATE train_rule_param_type
+		SET 
+		  type_name = #{typeName},
+		  alia_name = #{aliaName},
+		  remarks = #{remarks}
+		WHERE id = #{id}
+	
+	</update>
+	
+	<!-- 规则参数类型-删除 -->
+	<delete id="deleteRuleType">
+		UPDATE train_rule_param_type
+		SET
+		  del_flag = 1
+		WHERE id = #{id}
+	</delete>
+	<!-- 通过参数Key查询参数值 -->
+	<select id="findParamByKey" resultType="TrainRuleParam">
+		SELECT param_value AS 'paramValue' FROM train_rule_param WHERE param_key = #{paramKey} AND del_flag = 0
+	</select>
+</mapper>

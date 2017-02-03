@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.OrderGoodsDetailsDao">
+	<!-- 保存商品规格项 -->
+	<insert id="saveOrderGoodsDetails">
+		INSERT INTO mtmydb.mtmy_order_goods_details (
+			order_id,
+			goods_mapping_id,
+			total_amount,
+			order_balance,
+			order_arrearage,
+			<if test="itemAmount!=null and itemAmount!=''">
+				item_amount,
+			</if>
+			<if test="itemCapitalPool!=null and itemCapitalPool!=''">
+				item_capital_pool,
+			</if>
+			<if test="serviceTimes!=null and serviceTimes!=''">
+				service_times,
+			</if>
+			type,
+			create_by,
+			create_date
+		)VALUES(
+			#{orderId},
+			#{goodsMappingId},
+			#{totalAmount},
+			#{orderBalance},
+			#{orderArrearage},
+			<if test="itemAmount!=null and itemAmount!=''">
+				#{itemAmount},
+			</if>
+			<if test="itemCapitalPool!=null and itemCapitalPool!=''">
+				#{itemCapitalPool},
+			</if>
+			<if test="serviceTimes!=null and serviceTimes!=''">
+				#{serviceTimes},
+			</if>
+			#{type},
+			#{createBy.id},
+			SYSDATE()
+		)
+	</insert>
+	
+	<select id="getOrderGoodsDetailListByOid" resultType="Orders">
+		SELECT
+			SUM(total_amount) as totalAmount,
+			SUM(order_balance) as orderBalance,
+			SUM(order_arrearage) as orderArrearage
+		FROM
+			mtmydb.mtmy_order_goods_details
+		WHERE
+			order_id = #{orderid}
+	</select>
+	
+	
+	<select id="getOrderGoodsDetailListByMid" resultType="OrderGoods">
+		SELECT
+			SUM(total_amount) as totalAmount,
+			SUM(order_balance) as orderBalance,
+			SUM(order_arrearage) as orderArrearage,
+			SUM(service_times) AS remaintimes
+		FROM
+			mtmydb.mtmy_order_goods_details
+		WHERE
+			goods_mapping_id = #{mid}
+	</select>
+	
+	<select id="getMappinfOrderView" resultType="OrderGoodsDetails">
+		select 
+			d.order_id as orderId,
+			d.goods_mapping_id as goodsMappingId,
+			d.total_amount as totalAmount,
+			d.order_balance as orderBalance,
+			d.order_arrearage as orderArrearage,
+			d.item_amount as itemAmount,
+			d.item_capital_pool as itemCapitalPool,
+			d.service_times as serviceTimes,
+			d.create_by as "createBy.id",
+			u.`name` as createByName,
+			d.create_date as createDate
+		from mtmydb.mtmy_order_goods_details d,sys_user u
+		where d.create_by = u.id
+		AND goods_mapping_id = #{recid}
+	</select>
+	<select id="selectDetaiSum" resultType="GoodsDetailSum">
+		SELECT
+			a.rec_id,
+			a.single_reality_price,
+			a.goods_num,
+			a.order_amount,
+			a.total_amount,
+			(a.order_amount - SUM(c.total_amount)) AS "isFre",
+			SUM(c.total_amount) AS "detaiAmount",
+			SUM(c.service_times) as "times"
+
+		FROM
+			mtmydb.mtmy_order_goods_mapping a
+		LEFT JOIN mtmydb.mtmy_order_goods_details c ON c.goods_mapping_id = a.rec_id
+		WHERE
+			a.rec_id =#{recId}
+		GROUP BY a.rec_id
+	
+	</select>
+	
+	
+</mapper>

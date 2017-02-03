@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.PdTemplatePriceDao">
+
+	<sql id="actionColunm">
+		p.id as priceId,
+		p.template_id AS templateId,
+		p.first_weight AS firstWeight,
+		p.first_price AS firstPrice,
+		p.add_weight AS addWeight,
+		p.add_price AS addPrice,
+		p.is_default AS isDefault
+	</sql>
+	<!-- 根据id获取数据 -->
+	<select id="get" resultType="PdTemplatePrice">
+		SELECT
+		 <include refid="actionColunm"></include>
+		FROM mtmydb.mtmy_pd_template_price p
+		WHERE a.id=#{templatePriceId}
+	</select>
+	
+	<select id="findAllList" resultType="PdTemplatePrice">
+		SELECT
+		 <include refid="actionColunm"></include>
+		FROM mtmydb.mtmy_pd_template_price p
+		WHERE 1=1
+	</select>
+	
+	<select id="getTemplatePriceList" resultType="PdTemplatePrice">
+		SELECT
+			ptp.id AS priceId,
+			ptp.first_weight AS firstWeight,
+			ptp.first_price AS firstPrice,
+			ptp.add_weight AS addWeight,
+			ptp.add_price AS addPrice
+		FROM
+			mtmydb.mtmy_pd_template_price ptp
+		WHERE
+			ptp.template_id = #{templateId}
+		AND ptp.is_default = 0;
+	</select>
+  	<insert id="saveTemplatePrice" useGeneratedKeys="true" keyProperty="priceId">
+		INSERT INTO mtmydb.mtmy_pd_template_price (
+			template_id,
+			first_weight,
+			first_price,
+			add_weight,
+			add_price,
+			is_default
+		)VALUES(
+			#{templateId},
+			#{firstWeight},
+			#{firstPrice},
+			#{addWeight},
+			#{addPrice},
+			#{isDefault}
+		)
+	</insert>
+  	<insert id="saveTemplatePriceAreas">
+		INSERT INTO mtmydb.mtmy_pd_template_price (
+			template_id,
+			first_weight,
+			first_price,
+			add_weight,
+			add_price,
+			is_default
+		)VALUES(
+			#{templateId},
+			#{firstWeight},
+			#{firstPrice},
+			#{addWeight},
+			#{addPrice},
+			#{isDefault}
+		)
+	</insert>
+	
+	<select id="getTemplatePrices" resultType="PdTemplatePrice">
+		SELECT
+			 <include refid="actionColunm"></include>
+		FROM
+			mtmydb.mtmy_pd_template_price p
+		WHERE
+			p.template_id = #{templateId}
+	</select>
+	
+	<delete id="deleteTemplatePriceById">
+		DELETE
+		FROM
+			mtmydb.mtmy_pd_template_price
+		WHERE
+			template_id = #{templateId}
+	</delete>
+</mapper>

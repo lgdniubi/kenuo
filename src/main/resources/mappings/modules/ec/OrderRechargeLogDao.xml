@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.OrderRechargeLogDao">
+	<!-- 保存商品规格项 -->
+	<insert id="saveOrderRechargeLog">
+		INSERT INTO mtmydb.mtmy_order_recharge_log (
+			order_id,
+			mtmy_user_id,
+			recharge_amount,
+			account_balance,
+			total_amount,
+			create_by,
+			<if test="remarks != null and remarks != ''">
+				remarks,
+			</if>
+			create_date
+		)
+		VALUES(
+			#{orderId},
+			#{mtmyUserId},
+			#{rechargeAmount},
+			#{accountBalance},
+			#{totalAmount},
+			#{createBy.id},
+			<if test="remarks != null and remarks != ''">
+				#{remarks},
+			</if>
+			SYSDATE()
+		)
+	</insert>
+	
+	<!-- 查看主订单充值记录 -->
+	<select id="getOrderRechargeView" resultType="OrderRechargeLog">
+	SELECT
+		l.create_date as createDate,
+		l.recharge_amount as rechargeAmount,
+		l.account_balance as accountBalance,
+		l.total_amount as totalAmount,
+		u.`name` as createByName
+	FROM
+		mtmydb.mtmy_order_recharge_log l,
+		trains.sys_user u
+	WHERE
+		l.create_by = u.id
+	AND order_id = #{orderid}
+	</select>
+</mapper>

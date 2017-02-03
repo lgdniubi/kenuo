@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.MtmySaleRelieveDao">
+	
+	<!-- 解除用户列名 -->
+	<sql id="mtmyArticleColumns">
+		s.id,
+		s.user_id AS userId,
+		s.parent_id AS parentId,
+		s.depth,
+		s.invite_type AS inviteType,
+		s.invitation_code AS invitationCode,
+		s.apply_explain AS applyExplain,
+		s.status,
+		s.create_date,
+		s.update_by  AS "updateBy.id",
+		s.update_date,
+		s.remark
+	</sql>
+
+	<!-- 查询所有申请解除用户数据 -->
+	<select id="findAllRelieve" resultType="MtmySaleRelieve">
+		SELECT 
+		   <include refid="mtmyArticleColumns"/>,
+		   sr.create_date AS date,
+		   a.nickname AS name,
+		   a.mobile,
+		   a.layer AS "newusers.layer",
+		   u.nickname AS "users.nickname",
+		   u.layer AS "users.layer",
+		   <!-- cu.name AS "user.name", 用户在trains里的昵称 -->
+		   b.balanceAmount AS "mtmySaleRelieveLog.balanceAmount",
+    	   b.integralAmount AS "mtmySaleRelieveLog.integralAmount"
+		FROM
+		  mtmydb.mtmy_users AS a ,
+ 		  mtmydb.mtmy_sale_relations_relieve AS s
+ 		  LEFT JOIN mtmydb.mtmy_sale_relations AS sr ON sr.user_id = s.user_id
+		  LEFT OUTER   JOIN   mtmydb.mtmy_users AS u  ON s.parent_id = u.user_id 
+  		  <!-- LEFT OUTER   JOIN   sys_user AS cu ON s.parent_id = cu.mtmy_user_id -->
+		  LEFT JOIN (
+				SELECT rebate_user,receive_user,SUM(balance_amount) AS balanceAmount,SUM(integral_amount) AS integralAmount FROM mtmydb.mtmy_day_account WHERE rebate_flag = 1 GROUP BY rebate_user,receive_user
+		    )b ON b.rebate_user = s.user_id AND b.receive_user = s.parent_id
+		WHERE 1 = 1 
+		    AND a.user_id = s.user_id
+			AND s.status = #{status}
+			<if test="tag != null and tag != ''">
+				AND (
+					a.nickname LIKE 
+						<if test="dbName == 'oracle'">'%'||#{tag }||'%'</if>
+						<if test="dbName == 'mysql'">CONCAT('%', #{tag }, '%')</if>
+		   			or a.mobile LIKE
+		   				<if test="dbName == 'oracle'">'%'||#{tag }||'%'</if>
+						<if test="dbName == 'mysql'">CONCAT('%', #{tag }, '%')</if>
+					)
+			</if>
+			<if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+				AND s.create_date BETWEEN #{startTime} AND #{endTime}
+			</if>
+		ORDER BY s.create_date DESC
+	</select>
+	<!-- 批量时  需要反查到userid pasrentid -->
+	<select id="get" resultType="MtmySaleRelieve">
+		SELECT <include refid="mtmyArticleColumns"/> FROM mtmydb.mtmy_sale_relations_relieve AS s WHERE s.id = #{id}
+	</select>
+	<!-- 同意用户解除后  原用户绑定到清风下  修改原始表parent_id -->
+	<update id="updateParentId">
+		UPDATE mtmydb.mtmy_sale_relations SET
+			depth = CONCAT((SELECT layer FROM mtmydb.mtmy_users WHERE user_id = #{newParentId}),(SELECT layer FROM mtmydb.mtmy_users WHERE user_id = #{userId} )),
+			parent_id = #{newParentId},
+			status = 0
+		where 
+			user_id = #{userId} 
+			AND parent_id = #{parentId}
+	</update>
+	<!-- 修改申请表申请状态及备注 -->
+	<update id="updateStatus">
+		UPDATE mtmydb.mtmy_sale_relations_relieve SET
+			status = #{status},
+			remark = #{remark},
+			update_by = #{createBy.name},
+			update_date = SYSDATE()
+		where id = #{id}
+	</update>
+	<!-- 修改原始表申请状态 -->
+	<update id="updateBy">
+		UPDATE mtmydb.mtmy_sale_relations SET
+			status = #{status}
+		where 
+			user_id = #{userId} 
+			AND parent_id = #{parentId}
+	</update>
+	<!-- 同意解除用户时 同时删除code表中的记录 -->
+	<delete id="deleteByLogic">
+		DELETE FROM mtmydb.mtmy_sale_invitationcodes WHERE invitation_code = #{invitationCode}
+	</delete>
+	<!-- 查询所有A用户 -->
+	<select id="findAllA" resultType="MtmySaleRelieve">
+		 SELECT 
+		  a.name AS "user.name",
+		  c.name AS "office.name",
+		  r.ABnum,
+		  rc.ACnum,
+		  r.parent_id,
+		  u.user_id AS "users.userid",
+		  u.nickname AS "users.nickname",
+		  uu.user_balance AS "users.usermoney",
+		  uu.user_integral AS "users.paypoints"
+		FROM
+		  trains.sys_user a 
+		  LEFT JOIN trains.sys_office c ON c.id = a.office_id 
+		  LEFT JOIN (SELECT COUNT(parent_id) AS ABnum,parent_id FROM mtmydb.mtmy_sale_relations WHERE depth = 'AB' GROUP BY parent_id) AS r ON r.parent_id = a.mtmy_user_id
+		  LEFT JOIN (SELECT COUNT(parent_id) AS ACnum,parent_id FROM mtmydb.mtmy_sale_relations WHERE depth = 'AC' GROUP BY parent_id) AS rc ON rc.parent_id = a.mtmy_user_id
+		  LEFT JOIN mtmydb.mtmy_users AS u ON u.user_id = a.mtmy_user_id 
+		  LEFT JOIN mtmydb.mtmy_user_accounts AS uu ON uu.user_id = a.mtmy_user_id 
+		WHERE
+		  a.del_flag = 0
+		  AND c.del_flag = 0
+		  AND a.id != '1'
+		<if test="user != null and user.name != null and user.name != ''">
+		  AND(
+		  	a.name like 
+				<if test="dbName == 'oracle'">'%'||#{user.name }||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{user.name }, '%')</if>
+			or u.nickname like
+				<if test="dbName == 'oracle'">'%'||#{user.name }||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{user.name }, '%')</if>
+		  	)	
+		</if>
+		<if test="user != null and user.mobile != null and user.mobile != ''">
+		  AND(
+		  	a.mobile like 
+				<if test="dbName == 'oracle'">'%'||#{user.mobile}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{user.mobile }, '%')</if>
+			or u.mobile like
+				<if test="dbName == 'oracle'">'%'||#{user.mobile }||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{user.mobile }, '%')</if>
+		  	)	
+		</if>
+		<if test="office != null and office.id != null and office.id != ''">
+			AND (c.id = #{office.id} OR c.parent_ids LIKE 
+					<if test="dbName == 'oracle'">'%,'||#{office.id}||',%')</if>
+					<if test="dbName == 'mysql'">CONCAT('%,', #{office.id}, ',%'))</if>
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY  a.create_date
+			</otherwise>
+		</choose>
+	</select>
+	<!-- 查询用户详细信息 -->
+	<select id="findByUserId" resultType="MtmySaleRelieve">
+	SELECT 
+		  a.name AS "user.name",
+		  c.name AS "office.name",
+		  r.ABnum,
+		  rc.ACnum,
+		  r.parent_id,
+		  u.user_id AS "users.userid",
+		  u.nickname AS "users.nickname",
+		  uu.user_balance AS "users.usermoney",
+		  uu.user_integral AS "users.paypoints",
+		  TRUNCATE((b.balance_amount + c.balance_amount),2) AS "mtmySaleRelieveLog.balanceAmount",
+		  TRUNCATE((b.integral_amount + c.integral_amount),2) AS "mtmySaleRelieveLog.integralAmount"
+		FROM
+		  trains.sys_user a 
+		  LEFT JOIN trains.sys_office c ON c.id = a.office_id 
+		  LEFT JOIN (SELECT COUNT(parent_id) AS ABnum,parent_id FROM mtmydb.mtmy_sale_relations WHERE depth = 'AB' GROUP BY parent_id) AS r ON r.parent_id = a.mtmy_user_id
+		  LEFT JOIN (SELECT COUNT(parent_id) AS ACnum,parent_id FROM mtmydb.mtmy_sale_relations WHERE depth = 'AC' GROUP BY parent_id) AS rc ON rc.parent_id = a.mtmy_user_id
+		  LEFT JOIN mtmydb.mtmy_users AS u ON u.user_id = a.mtmy_user_id 
+		  LEFT JOIN mtmydb.mtmy_user_accounts AS uu ON uu.user_id = a.mtmy_user_id 
+		  LEFT JOIN (SELECT IFNULL(receive_user,#{users.userid }) AS receive_user,IFNULL(SUM(balance_amount),0) AS balance_amount,IFNULL(SUM(integral_amount),0) AS integral_amount FROM mtmydb.mtmy_day_account WHERE receive_user = #{users.userid } AND rebate_flag = 0 ) AS b ON b.receive_user = u.user_id
+		  LEFT JOIN (SELECT IFNULL(receive_user,#{users.userid }) AS receive_user,IFNULL(SUM(balance_amount),0) AS balance_amount,IFNULL(SUM(integral_amount),0) AS integral_amount FROM mtmydb.mtmy_sale_rebates_log WHERE receive_user = #{users.userid } AND rebate_flag = 0) AS c ON c.receive_user = u.user_id
+		WHERE
+		  a.del_flag = 0
+		  AND c.del_flag = 0
+		  AND u.user_id = #{users.userid }
+	</select>
+	<!-- 查询单个A级用户所有下级详情 -->
+	<select id="findByParentId" resultType="MtmySaleRelieve">
+		SELECT 
+			r.depth,
+			u.user_id AS "users.userid",
+			u.layer AS "users.layer",
+			u.nickname AS "users.nickname",
+			u.mobile AS "users.mobile",
+			r.parent_id AS parentId,
+			uu.layer AS "newusers.layer",
+			uu.nickname AS "newusers.nickname",
+			uu.mobile AS "newusers.mobile",
+			<!-- su.name AS "user.name", -->
+			r.create_date,
+			l.balanceAmount AS "mtmySaleRelieveLog.balanceAmount",
+			l.integralAmount AS "mtmySaleRelieveLog.integralAmount",
+		    (SELECT COUNT(1) FROM mtmydb.mtmy_sale_relations WHERE parent_id = u.user_id) AS lowerNum
+		FROM 
+			mtmydb.mtmy_sale_relations AS r 
+			LEFT JOIN (
+				SELECT rebate_user,receive_user,SUM(balance_amount) AS balanceAmount,SUM(integral_amount) AS integralAmount FROM mtmydb.mtmy_day_account WHERE rebate_flag = 1 GROUP BY rebate_user,receive_user
+			) AS l ON (r.user_id = l.rebate_user AND r.parent_id = l.receive_user)
+			LEFT JOIN mtmydb.mtmy_users AS u ON r.user_id = u.user_id 
+			LEFT JOIN mtmydb.mtmy_users AS uu ON r.parent_id = uu.user_id 
+			<!-- LEFT JOIN sys_user AS su ON r.parent_id = su.mtmy_user_id -->
+		WHERE r.parent_id = #{users.userid }
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY  r.create_date,r.depth
+			</otherwise>
+		</choose>
+	</select>
+	<!-- 查询单个A级用户所有下级详情 -->
+	<select id="findUserDetails" resultType="MtmySaleRelieveLog">
+		SELECT 
+			create_date,
+			order_id AS "orders.orderid",
+			order_amount AS "orders.orderamount",
+			balance_amount AS balanceAmount,
+			integral_amount AS integralAmount
+		FROM 
+			mtmydb.mtmy_sale_rebates_log 
+		WHERE 
+			rebate_user = #{rebateUser} and receive_user = #{receiveUser} AND rebate_flag = 2	
+	</select>
+	<!-- A用户收益明细 -->
+	<select id="findUserEarnings" resultType="MtmySaleRelieveLog">
+		SELECT rabate_date AS rabateDate,SUM(balance_amount)  AS balanceAmount,SUM(integral_amount) AS integralAmount,rebate_flag AS rebateFlag
+			FROM mtmydb.mtmy_day_account WHERE receive_user = #{receiveUser} GROUP BY receive_user,rebate_flag,rabate_date
+		UNION
+		SELECT rabate_date AS rabateDate,TRUNCATE(SUM(balance_amount),2) AS balanceAmount,TRUNCATE(SUM(integral_amount),2) AS integralAmount, 0 AS rebateFlag FROM mtmydb.mtmy_sale_rebates_log WHERE rebate_flag = 0 AND receive_user = #{receiveUser} GROUP BY rabate_date
+	</select>
+	<!-- 通过时间   查看收益明细 -->
+	<select id="findUserAllOrder" resultType="MtmySaleRelieveLog">
+		SELECT 
+			l.create_date,
+			u.nickname AS "users.nickname",
+			u.layer AS "users.layer",
+			l.balance_amount AS balanceAmount,
+			l.integral_amount AS integralAmount,
+			l.rebate_flag AS rebateFlag,
+			l.order_id AS "orders.orderid"
+		FROM 
+			mtmydb.mtmy_sale_rebates_log  AS l
+			LEFT JOIN mtmydb.mtmy_users AS u ON u.user_id = l. rebate_user
+		WHERE 
+			l.rabate_date = #{rabateDate}
+			AND l.receive_user = #{receiveUser}
+			<!-- AND l.del_flag != -1   -->
+			<if test="rebateFlag == 0">
+				AND l.rebate_flag != 2
+			</if>
+			<if test="rebateFlag == 1">
+				AND l.rebate_flag = 2
+			</if>
+			
+	</select>
+	<!-- 查询A以外的分销用户 -->
+	<select id="findOtherUsers" resultType="MtmySaleRelieve">
+		SELECT
+			u.user_id AS "users.userid",
+			u.layer AS "users.layer",
+			u.nickname AS "users.nickname",
+			u.mobile AS "users.mobile",
+			m.nickname AS "newusers.nickname",
+			m.layer AS "newusers.layer",
+			m.user_id AS "newusers.userid",
+			m.mobile AS "newusers.mobile",
+			r.depth,
+			r.create_date,
+			uu.user_balance AS "users.usermoney",
+			uu.user_integral AS "users.paypoints",
+			r.status,
+			<!-- s.name AS "user.name", -->
+			rc.ABnum 
+		FROM
+			mtmydb.mtmy_sale_relations AS r
+			LEFT JOIN mtmydb.mtmy_users AS u ON r.user_id = u.user_id
+			LEFT JOIN mtmydb.mtmy_users AS m ON r.parent_id = m.user_id
+			LEFT JOIN mtmydb.mtmy_user_accounts AS uu ON uu.user_id = u.user_id 
+			<!-- LEFT JOIN trains.sys_user AS s ON r.parent_id = s.mtmy_user_id -->
+			LEFT JOIN (SELECT COUNT(parent_id) AS ABnum,parent_id FROM mtmydb.mtmy_sale_relations WHERE 1 = 1 GROUP BY parent_id) AS rc ON rc.parent_id = r.user_id
+		WHERE
+			1=1
+			AND u.layer = #{layer}
+			<if test="tag != null and tag != ''">
+				AND (
+					u.nickname LIKE 
+						<if test="dbName == 'oracle'">'%'||#{tag }||'%'</if>
+						<if test="dbName == 'mysql'">CONCAT('%', #{tag }, '%')</if>
+		   			or u.mobile LIKE
+		   				<if test="dbName == 'oracle'">'%'||#{tag }||'%'</if>
+						<if test="dbName == 'mysql'">CONCAT('%', #{tag }, '%')</if>
+					)
+			</if>
+			<if test="newusers != null and newusers.nickname != null and newusers.nickname != ''">
+				AND (
+					m.nickname LIKE 
+						<if test="dbName == 'oracle'">'%'||#{newusers.nickname }||'%'</if>
+						<if test="dbName == 'mysql'">CONCAT('%', #{newusers.nickname }, '%')</if>
+					or m.mobile LIKE
+		   				<if test="dbName == 'oracle'">'%'||#{newusers.nickname }||'%'</if>
+						<if test="dbName == 'mysql'">CONCAT('%', #{newusers.nickname }, '%')</if>
+					)
+			</if>
+			<if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+				AND r.create_date BETWEEN #{startTime} AND #{endTime}
+			</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY r.create_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	<!--  -->
+	<select id="findOtherUsersByUserId" resultType="MtmySaleRelieve">
+		SELECT
+			u.user_id AS "users.userid",
+			u.layer AS "users.layer",
+			u.nickname AS "users.nickname",
+			u.mobile AS "users.mobile",
+			m.nickname AS "newusers.nickname",
+			m.layer AS "newusers.layer",
+			m.mobile AS "newusers.mobile",
+			r.depth,
+			r.create_date,
+			uu.user_balance AS "users.usermoney",
+			uu.user_integral AS "users.paypoints",
+			r.status,
+			<!-- s.name AS "user.name", -->
+			TRUNCATE((b.balance_amount + c.balance_amount),2) AS "mtmySaleRelieveLog.balanceAmount",
+		    TRUNCATE((b.integral_amount + c.integral_amount),2) AS "mtmySaleRelieveLog.integralAmount",
+		    rc.ABnum
+		FROM
+			mtmydb.mtmy_sale_relations AS r
+			LEFT JOIN mtmydb.mtmy_users AS u ON r.user_id = u.user_id
+			LEFT JOIN mtmydb.mtmy_user_accounts AS uu ON uu.user_id = u.user_id 
+			LEFT JOIN mtmydb.mtmy_users AS m ON r.parent_id = m.user_id
+			<!-- LEFT JOIN trains.sys_user AS s ON r.parent_id = s.mtmy_user_id -->
+			LEFT JOIN (SELECT IFNULL(receive_user,#{users.userid }) AS receive_user,IFNULL(SUM(balance_amount),0) AS balance_amount,IFNULL(SUM(integral_amount),0) AS integral_amount FROM mtmydb.mtmy_day_account WHERE receive_user = #{users.userid } AND rebate_flag = 0 ) AS b ON b.receive_user = r.user_id
+		    LEFT JOIN (SELECT IFNULL(receive_user,#{users.userid }) AS receive_user,IFNULL(SUM(balance_amount),0) AS balance_amount,IFNULL(SUM(integral_amount),0) AS integral_amount FROM mtmydb.mtmy_sale_rebates_log WHERE receive_user = #{users.userid } AND rebate_flag = 0) AS c ON c.receive_user = r.user_id
+			LEFT JOIN (SELECT COUNT(parent_id) AS ABnum,parent_id FROM mtmydb.mtmy_sale_relations WHERE 1 = 1 GROUP BY parent_id) AS rc ON rc.parent_id = r.user_id
+		WHERE
+			1=1
+			AND r.user_id = #{users.userid}
+	</select>
+	<select id="SaleOrderInsertLog" statementType="CALLABLE">
+		{CALL mtmydb.SaleOrderInsertLog()}
+	</select>
+	<select id="SaleDayAccounts" statementType="CALLABLE">
+		{CALL mtmydb.SaleDayAccounts()}
+	</select>
+	<select id="SaleSettleDayAccounts" statementType="CALLABLE">
+		{CALL mtmydb.SaleSettleDayAccounts()}
+	</select>
+</mapper>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.sys.dao.BugLogDao">
+    <sql id="BugColumns">
+    	a.id,
+		a.title,
+		a.request_uri,
+		a.content,
+		a.create_time,
+		a.create_user,
+		a.user_agent,
+		a.exception,
+		a.ramek
+    </sql>
+    
+    
+    
+	<select id="findList" resultType="BugLog">
+		SELECT 
+			<include refid="BugColumns"></include>
+		FROM bug_log a
+		WHERE a.create_time BETWEEN #{beginDate} AND #{endDate}
+		<if test="title != null and title != ''">
+			AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+		</if>
+		<if test="createUser != null and createUser != ''">
+			AND a.create_user = #{createUser}
+		</if>
+		<if test="requestUri != null and requestUri != ''">
+			AND a.request_uri LIKE 
+					<if test="dbName == 'oracle'">'%'||#{requestUri}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{requestUri}, '%')</if>
+		</if>
+		
+		ORDER BY a.create_time DESC
+	</select>
+	
+	<select id="get" resultType="BugLog">
+		SELECT 
+			*
+		FROM bug_log a
+		WHERE a.id = #{id}
+	</select>
+	
+	<update id="deleteByLogic">
+		DELETE FROM bug_log 
+		WHERE id = #{id}
+	</update>
+	
+	<update id="empty">
+		DELETE FROM bug_log 
+	</update>
+	
+	<insert id="insert">
+		INSERT INTO bug_log(
+			id, 
+			title,
+			request_uri, 
+			content,
+			create_user, 
+			create_time, 
+			user_agent,
+			exception,
+			ramek
+		) VALUES (
+			#{id},
+			#{title},
+			#{requestUri},
+			#{content},
+			#{createUser},
+			SYSDATE(),
+			#{userAgent},
+			#{exception},
+			#{ramek}
+		)
+	</insert>
+	
+</mapper>

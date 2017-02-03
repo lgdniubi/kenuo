@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.training.modules.personnelfile.dao.UserSelfevaluationDao" >
+  <resultMap id="BaseResultMap" type="com.training.modules.personnelfile.entity.UserSelfevaluation" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="hobby" property="hobby" jdbcType="VARCHAR" />
+    <result column="specialty" property="specialty" jdbcType="VARCHAR" />
+    <result column="failing" property="failing" jdbcType="VARCHAR" />
+    <result column="expansibility" property="expansibility" jdbcType="VARCHAR" />
+    <result column="self_evaluation" property="selfEvaluation" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="DATE" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, user_id, hobby, specialty, failing, expansibility, self_evaluation, create_date
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_selfevaluation
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from user_selfevaluation
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.training.modules.personnelfile.entity.UserSelfevaluation" >
+    insert into user_selfevaluation (id, user_id, hobby, 
+      specialty, failing, expansibility, 
+      self_evaluation, create_date)
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{hobby,jdbcType=VARCHAR}, 
+      #{specialty,jdbcType=VARCHAR}, #{failing,jdbcType=VARCHAR}, #{expansibility,jdbcType=VARCHAR}, 
+      #{selfEvaluation,jdbcType=VARCHAR}, #{createDate,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.training.modules.personnelfile.entity.UserSelfevaluation" >
+    insert into user_selfevaluation
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="hobby != null" >
+        hobby,
+      </if>
+      <if test="specialty != null" >
+        specialty,
+      </if>
+      <if test="failing != null" >
+        failing,
+      </if>
+      <if test="expansibility != null" >
+        expansibility,
+      </if>
+      <if test="selfEvaluation != null" >
+        self_evaluation,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="hobby != null" >
+        #{hobby,jdbcType=VARCHAR},
+      </if>
+      <if test="specialty != null" >
+        #{specialty,jdbcType=VARCHAR},
+      </if>
+      <if test="failing != null" >
+        #{failing,jdbcType=VARCHAR},
+      </if>
+      <if test="expansibility != null" >
+        #{expansibility,jdbcType=VARCHAR},
+      </if>
+      <if test="selfEvaluation != null" >
+        #{selfEvaluation,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.training.modules.personnelfile.entity.UserSelfevaluation" >
+    update user_selfevaluation
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="hobby != null" >
+        hobby = #{hobby,jdbcType=VARCHAR},
+      </if>
+      <if test="specialty != null" >
+        specialty = #{specialty,jdbcType=VARCHAR},
+      </if>
+      <if test="failing != null" >
+        failing = #{failing,jdbcType=VARCHAR},
+      </if>
+      <if test="expansibility != null" >
+        expansibility = #{expansibility,jdbcType=VARCHAR},
+      </if>
+      <if test="selfEvaluation != null" >
+        self_evaluation = #{selfEvaluation,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.training.modules.personnelfile.entity.UserSelfevaluation" >
+    update user_selfevaluation
+    set user_id = #{userId,jdbcType=VARCHAR},
+      hobby = #{hobby,jdbcType=VARCHAR},
+      specialty = #{specialty,jdbcType=VARCHAR},
+      failing = #{failing,jdbcType=VARCHAR},
+      expansibility = #{expansibility,jdbcType=VARCHAR},
+      self_evaluation = #{selfEvaluation,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=DATE}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <delete id="deleteByUserId">
+	    DELETE
+		FROM
+			user_selfevaluation
+		WHERE
+			user_id = #{userId}
+  </delete>
+</mapper>

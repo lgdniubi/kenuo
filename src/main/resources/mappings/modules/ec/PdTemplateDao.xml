@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.PdTemplateDao">
+
+	<sql id="actionColunm">
+		p.id as templateId,
+		p.template_name AS templateName,
+		p.template_area_id AS templateAreaId,
+		p.template_address AS templateAddress,
+		p.delivery_time AS deliveryTime,
+		p.is_free AS isFree,
+		p.valuation_type AS valuationType
+	</sql>
+	<!-- 根据id获取数据 -->
+	<select id="get" resultType="PdTemplate">
+		SELECT
+		 <include refid="actionColunm"></include>
+		FROM mtmydb.mtmy_pd_template p
+		WHERE a.id=#{id}
+	</select>
+	
+	<select id="findAllList" resultType="PdTemplate">
+		SELECT
+		 <include refid="actionColunm"></include>
+		FROM mtmydb.mtmy_pd_template p
+		WHERE 1=1
+	</select>
+	
+	<!-- 更新状态 -->
+	<update id="updateStatus">
+		UPDATE mtmydb.mtmy_pd_template SET
+			del_flag=1
+		where id=#{courierHouseId}
+	</update>
+	
+	<select id="getAreaList" resultType="PdTemplate">
+		SELECT
+			w.id AS areaId,
+			w.parent_id AS areaPid,
+			w.`name` as areaName
+		FROM
+			sys_area w
+		WHERE
+			w.type = #{type}
+		AND w.del_flag = 0
+		<if test="areaId != null and areaId != ''">
+			AND w.parent_id = #{areaId}
+		</if>
+		ORDER BY
+			w.`code`
+	</select>
+	
+	<select id="getTemplate" resultType="PdTemplate">
+		SELECT
+			 <include refid="actionColunm"></include>
+		FROM
+			mtmydb.mtmy_pd_template p
+		WHERE
+			p.id = #{templateId}
+	</select>
+	
+	  <insert id="saveTemplate" useGeneratedKeys="true" keyProperty="templateId">
+		INSERT INTO mtmydb.mtmy_pd_template (
+			template_name,
+			template_area_id,
+			template_address,
+			delivery_time,
+			is_free,
+			valuation_type
+		)VALUES(
+			#{templateName},
+			#{templateAreaId},
+			#{templateAddress},
+			#{deliveryTime},
+			#{isFree},
+			#{valuationType}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE mtmydb.mtmy_pd_template
+		SET template_name = #{templateName},
+		 template_area_id = #{templateAreaId},
+		 template_address = #{templateAddress},
+		 delivery_time = #{deliveryTime},
+		 is_free = #{isFree},
+		 valuation_type = #{valuationType}
+		WHERE
+			id = #{templateId}
+	</update>
+</mapper>

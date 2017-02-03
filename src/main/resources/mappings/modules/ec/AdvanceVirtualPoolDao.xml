@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.AdvanceVirtualPoolDao">
+	
+	<select id="newFindList" resultType="AdvanceVirtualPool">
+		SELECT 
+			order_id AS 'orderId',    
+		 	rec_id AS 'recId',    
+		 	goods_id AS 'goodsId',     
+			goods_name AS 'goodsName',  
+			spec_key_name AS 'specKeyName',    
+			goods_sn AS 'goodsSn',    
+		 	goods_num AS 'goodsNum',    
+			order_amount AS 'orderAmount',     
+			total_amount AS 'totalAmount',    
+			order_arrearage AS 'orderArrearage',  
+		 	service_times AS 'serviceTimes',       
+			pay_times AS 'payTimes',          
+			use_times AS 'useTimes',           
+			actual_use_fee AS 'actualUseFee'     
+		FROM mtmydb.advance_virtual_pool
+		WHERE office_id = #{officeId}
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+		</choose>
+	</select>
+</mapper>

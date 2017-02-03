@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.SpecEquipmentDao">
+	<sql id="specEquipmentColunm">
+			e.id AS equipmentId,
+			e.name,
+			e.type,
+			e.office_id AS officeId,
+			e.create_by AS "createBy.id",
+			e.create_date AS createDate,
+			e.remarks,
+			e.del_flag AS delFlag,
+			e.label_id AS labelId,
+			e.bazaar_id AS bazaarId,
+			e.shop_id AS shopId,
+			(SELECT o.name FROM sys_office o WHERE o.id = e.bazaar_id) AS bazaarName,
+			(SELECT o.name FROM sys_office o WHERE o.id = e.shop_id) AS shopName
+	</sql>
+	
+	<!-- 查询出所有特殊的设备 -->
+	<select id="findAllList" resultType="Equipment">
+		SELECT
+		<include refid="specEquipmentColunm"></include>
+		FROM train_equipment e
+		WHERE e.del_flag=0
+		AND e.type = 1
+	</select>
+	
+	<!-- 查询出所有的通用设备 -->
+	<select id="newFindAllList" resultType="Equipment">
+		SELECT
+		<include refid="specEquipmentColunm"></include>
+		FROM train_equipment e
+		WHERE e.del_flag=0
+		AND e.type = 2
+	</select>
+	
+	<!-- 分页查询设备 -->
+	<select id="findList" resultType="Equipment">
+		SELECT
+		<include refid="specEquipmentColunm" />
+		FROM train_equipment e
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		AND e.del_flag = 0
+		<if test="name != null and name != ''">
+			AND e.name = #{name} 
+		</if>
+		<choose>
+			<when test="shopId != null and shopId != ''">
+				AND e.shop_id = #{shopId}
+			</when>
+			<when test="bazaarId != null and bazaarId != ''">
+				AND e.bazaar_id = #{bazaarId}
+			</when>
+		</choose> 
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY e.create_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 根据equipmentId获得设备-->
+	<select id="get" resultType="Equipment">
+		SELECT
+		<include refid="specEquipmentColunm" />
+		FROM train_equipment e
+		WHERE e.id = #{equipmentId} 
+		AND e.del_flag=0
+	</select>
+	
+	<!-- 新增设备 -->
+	<insert id="insertSpecEquipment" parameterType="Equipment">
+		INSERT INTO train_equipment(
+		name,
+		label_id,
+		bazaar_id,
+		shop_id,
+		type,
+		office_id,
+		create_by,
+		create_date,
+		remarks
+		)VALUES(
+		#{name},
+		#{labelId},
+		#{bazaarId},
+		#{shopId},
+		#{type},
+		#{officeId},
+		#{createBy.id},
+		SYSDATE(),
+		#{remarks}
+		)
+	</insert>
+	
+	<!-- 修改设备 -->
+	<update id="updateSpecEquipment" parameterType="Equipment">
+		UPDATE train_equipment
+		SET 
+			name = #{name},
+			bazaar_id = #{bazaarId},
+			label_id = #{labelId},
+			shop_id = #{shopId},
+			remarks = #{remarks}
+		WHERE id = #{equipmentId}
+	</update>
+	
+	<!-- 逻辑删除设备 -->
+	<delete id="deleteSpecEquipment" parameterType="Equipment">
+		UPDATE train_equipment
+		SET del_flag = 1
+		WHERE id = #{equipmentId}
+	</delete>
+	
+	<!-- 分页查询店铺对应的通用设备 -->
+	<select id="findShopComEquipmentList" resultType="ShopComEquipment">
+		SELECT
+			id AS shopComEquipmentId,
+			shop_id AS shopId,
+			equipment_id AS equipmentId, 
+			name,
+			is_enabled AS isEnabled
+		FROM train_shop_equipment 
+		WHERE shop_id = #{shopId}
+		AND del_flag = 0
+		<!-- 数据范围过滤 -->
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY create_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 保存店铺添加的通用设备 -->
+	<insert id="saveshopComEquipment" parameterType="ShopComEquipment">
+		INSERT INTO train_shop_equipment(
+			id,
+			shop_id,
+			equipment_id,
+			name,
+			is_enabled,
+			label_id,
+			create_by,
+			create_date
+		)VALUES(
+			#{shopComEquipmentId},
+			#{shopId},
+			#{equipmentId},
+			#{name},
+			0,
+			#{labelId},
+			#{createBy.id},
+			SYSDATE()
+		)
+	</insert>
+	
+	<!-- 查询某店铺的某通用设备的数量-->
+	<select id="querySum" resultType="int">
+		SELECT COUNT(*) AS sum
+		FROM train_shop_equipment
+		WHERE shop_id = #{shopId}
+		AND equipment_id = #{equipmentId}
+	</select>
+	
+	<!-- 修改店铺通用设备状态 -->
+	<update id="updateType">
+		UPDATE train_shop_equipment
+		SET is_enabled = #{isEnabled}
+		WHERE id = #{shopComEquipmentId}
+	</update>
+	
+	<!-- 查找店铺所属市场对应的通用设备 -->
+	<select id="findForCom" resultType="Equipment">
+		SELECT 
+			id AS equipmentId,
+			name
+		FROM train_equipment
+		WHERE bazaar_id = (SELECT parent_id FROM sys_office WHERE id = #{shopId}) 
+		AND type = 2
+		AND del_flag = 0
+	</select>
+
+	<!-- 查询某市场里的某设备数量-->
+	<select id="queryNum" resultType="int">
+		SELECT COUNT(*) AS num
+		FROM train_equipment
+		WHERE bazaar_id = #{bazaarId}
+		AND label_id = #{labelId}
+	</select>
+	
+	<!-- 分页查询查询设备排班详情 -->
+	<select id="findEquipmentLogsList" resultType="EquipmentLogs">
+		SELECT 
+			ar.appt_date AS 'apptDate',
+			o.name AS 'bazaarName',
+			ar.shop_name
+		FROM train_arrange_equipment ar
+		LEFT JOIN sys_office o ON o.id = ar.local_bazaar_id
+		WHERE ar.equipment_id = #{equipmentId}
+		<!-- 数据范围过滤 -->
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY ar.appt_date DESC
+			</otherwise>
+		</choose>
+	</select>
+</mapper>

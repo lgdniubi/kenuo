@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.PdTemplateAreaDao">
+
+	<!-- 批量保存物流模板计费区域 -->
+	<insert id="saveTemplatePriceAreas">
+		INSERT INTO mtmydb.mtmy_pd_template_area (
+			price_id,
+			area_id
+		)
+		<foreach collection="areaIds" item="areaId" separator="union all">
+			SELECT 
+				#{templatePriceId},
+				#{areaId}
+			FROM dual
+		</foreach>
+		
+	</insert>
+	<!-- 批量删除计费区域记录 -->
+	<select id="getTemplateAreaList" resultType="PdTemplateArea">
+		SELECT
+			pta.area_id as areaId,
+			a.`name` as name
+		FROM
+			mtmydb.mtmy_pd_template_area pta,
+			sys_area a
+		WHERE
+			pta.area_id = a.id
+		AND pta.price_id = #{priceId}
+	</select>
+	
+    <delete id = "deleteTemplateAreaByIds" parameterType = "java.util.List">  
+        DELETE
+		FROM
+			mtmydb.mtmy_pd_template_area
+		WHERE
+			price_id
+		IN
+       <foreach collection="list" item = "templatePrice" open="(" separator="," close=")">
+       	#{templatePrice.priceId}  
+       </foreach>  
+    </delete>  
+</mapper>

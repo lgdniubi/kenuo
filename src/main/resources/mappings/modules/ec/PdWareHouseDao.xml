@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.PdWareHouseDao">
+
+	<sql id="actionColunm">
+		a.id as wareHouseId,
+		a.name as name,
+		a.franchisee_id as franchiseeId,
+		a.area_id as areaId,
+		a.address as address,
+		a.governor as governor,
+		a.phone as phone,
+		a.create_by as createBy,
+		a.create_date as createDate,
+		a.update_by as updateBy,
+		a.update_date as updateDate,
+		a.remarks as remarks,
+		a.del_flag as delFlag,
+		a.postalcode as postalcode
+	</sql>
+	<!-- 根据id获取数据 -->
+	<select id="get" resultType="PdWareHouse">
+		SELECT
+		 <include refid="actionColunm"></include>
+		 ,sf.`name` as "company.name",
+		 sf.id as "company.id",
+		 tsa.`name` as areaName
+		FROM mtmydb.mtmy_pd_warehouse a
+		LEFT JOIN sys_franchisee sf
+		ON a.franchisee_id = sf.id
+		LEFT JOIN trains.sys_area tsa
+		ON a.area_id = tsa.id
+		WHERE a.id=#{wareHouseId}
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="findAllList" resultType="PdWareHouse">
+		SELECT
+		 <include refid="actionColunm"></include>
+		 , sf.`name` as fName
+		FROM mtmydb.mtmy_pd_warehouse a
+		LEFT JOIN sys_franchisee sf
+		ON a.franchisee_id = sf.id
+		WHERE 1=1
+		AND	a.del_flag = 0
+		<if test="timeStart!=null and timeStart!=''">
+			 AND DATE_FORMAT(a.create_date,"%Y-%m-%d") >= DATE_FORMAT(#{timeStart},"%Y-%m-%d")
+		</if>
+		<if test="timeEnd!=null and timeEnd!=''">
+			 AND DATE_FORMAT(#{timeEnd},"%Y-%m-%d") >= DATE_FORMAT(a.create_date,"%Y-%m-%d")
+		</if>
+		ORDER BY a.create_date desc
+	</select>
+	
+	<!-- 更新状态 -->
+	<update id="updateStatus">
+		UPDATE mtmydb.mtmy_pd_warehouse SET
+			del_flag=1
+		where id=#{wareHouseId}
+	</update>
+
+	<!-- 插入数据 -->
+	<insert id="insertWareHouse">
+		INSERT INTO mtmydb.mtmy_pd_warehouse
+		(
+		franchisee_id,
+		name,
+		area_id,
+		address,
+		governor,
+		phone,
+		create_by,
+		create_date,
+		<if test="postalcode != null and postalcode != ''">
+			postalcode,
+		</if>
+		remarks,
+		del_flag,
+		province,
+		<if test="district != null and district != ''">
+			district,
+		</if>
+		city
+		)VALUES
+		(
+		#{company.id},
+		#{name},
+		#{areaId},
+		#{address},
+		#{governor},
+		#{phone},
+		#{createBy.id},
+		SYSDATE(),
+		<if test="postalcode != null and postalcode != ''">
+			#{postalcode},
+		</if>
+		#{remarks},
+		#{houseDelFlag},
+		#{province},
+		<if test="district != null and district != ''">
+			#{district},
+		</if>
+		#{city}
+		)
+
+	</insert>
+	
+	<!-- 修改 -->
+	<update id="updateWareHouse">
+		UPDATE mtmydb.mtmy_pd_warehouse ch
+		SET 
+		 ch.franchisee_id = #{company.id},
+		 ch.name = #{name},
+		 ch.area_id = #{area.id},
+		 ch.address = #{address},
+		 ch.governor = #{governor},
+		 ch.phone = #{phone},
+		 ch.postalcode = #{postalcode},
+		 ch.create_date = SYSDATE(),
+		 ch.update_by = #{updateBy.name},
+		 ch.update_date = #{updateDate},
+		 ch.remarks = #{remarks}
+		WHERE
+		 ch.id = #{wareHouseId};
+	</update>
+	
+	<update id="updateWareHouseDelFlag">
+		UPDATE mtmydb.mtmy_pd_warehouse ch
+		SET 
+		 ch.del_flag = 1
+		WHERE
+		 ch.id = #{wareHouseId};
+	</update>
+	
+	<select id="getAreaById" resultType="Area">
+		SELECT
+			a.parent_ids as parentIds
+		FROM
+			trains.sys_area a
+		WHERE
+			a.id = #{areaId}
+	</select>
+	<select id="getAreaByIds" resultType="Area">
+		SELECT
+			tsa.`name`
+		FROM
+			trains.sys_area tsa
+		WHERE tsa.id IN
+		 <foreach collection="list" item = "areaId" open="(" separator="," close=")">
+			#{areaId}
+		</foreach>
+		order by tsa.type asc
+	</select>
+</mapper>

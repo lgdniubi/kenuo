@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.PdWhTemplatesDao">
+
+	<!-- 更新状态 -->
+	<update id="updateStatus">
+		UPDATE mtmydb.mtmy_pd_wh_templates SET
+			is_default = 1
+		where template_id =#{templateId}
+	</update>
+	
+	<update id="updateStatusAll">
+		UPDATE mtmydb.mtmy_pd_wh_templates SET
+			is_default = 0
+	</update>
+
+	<select id="getAreaList" resultType="PdWhTemplates">
+		SELECT
+			w.id AS areaId,
+			w.parent_id AS areaPid,
+			w.`name` as areaName
+		FROM
+			sys_area w
+		WHERE
+			w.type = #{type}
+		AND w.del_flag = 0
+		<if test="areaId != null and areaId != ''">
+			AND w.parent_id = #{areaId}
+		</if>
+		ORDER BY
+			w.`code`
+	</select>
+	
+	  <insert id="saveWhTemplate">
+		INSERT INTO mtmydb.mtmy_pd_wh_templates (
+			warehouse_id,
+			template_id,
+			is_default,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		)
+		VALUES(
+			#{warehouseId},
+			#{templateId},
+			#{isDefault},
+			#{createBy.name},
+			SYSDATE(),
+			#{updateBy.name},
+			SYSDATE(),
+			#{isDelFlag}
+		)
+	</insert>
+	<select id="getTemplateList" resultType="PdTemplate">
+		SELECT
+			pwt.update_date AS updateDate,
+			pwt.is_default AS isDefault,
+			pwt.template_id AS templateId
+		FROM
+			mtmydb.mtmy_pd_wh_templates pwt
+		WHERE del_flag = 0
+		AND	pwt.warehouse_id = #{houseId}
+		ORDER BY pwt.is_default DESC
+	</select>
+	
+	<select id="getTemplate" resultType="PdTemplatePrice">
+		SELECT
+			warehouse_id,
+			template_id,
+			is_default,
+			create_by,
+			create_date,
+			update_by,
+			update_date
+		FROM
+			mtmydb.mtmy_pd_wh_templates
+		WHERE
+			is_default = 1;
+	</select>
+	
+	<update id="updateDate">
+		UPDATE mtmydb.mtmy_pd_wh_templates
+		SET update_by = #{updateBy.name},
+		 update_date = SYSDATE()
+		WHERE
+			template_id = #{templateId};
+	</update>
+	
+	<update id="updateTemplateDelFlag">
+		UPDATE mtmydb.mtmy_pd_wh_templates
+		SET del_flag = 1,
+		 remarks = #{remarks}
+		WHERE
+			template_id = #{templateId}
+	</update>
+</mapper>

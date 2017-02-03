@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.OrderGoodsDao">
+	<sql id="ordergoodsColmun">
+		a.rec_id,
+		a.order_id,
+		a.user_id,
+		a.goods_name,
+		a.goods_id,
+		a.goods_sn,
+		a.goods_num,
+		a.original_img,
+		a.market_price,
+		a.goods_price,
+		a.cost_price,
+		a.coupon_price,
+		a.member_goods_price,
+		a.discount,
+		a.give_integral,
+		a.spec_key,
+		a.spec_key_name,
+		a.bar_code,
+		a.is_comment,
+		a.action_type,
+		a.action_id,
+		a.is_send,
+		a.delivery_id,
+		a.add_time,
+		a.service_times,
+		a.remain_times,
+		a.service_min,
+		a.is_real,
+		a.expiring_date,
+		a.total_amount,
+		a.order_amount,
+		a.order_balance,
+		a.order_arrearage,
+		a.single_reality_price,
+		a.single_norm_price,
+		a.is_after_sales
+			
+	</sql>
+
+
+	<select id="findListByOrderid" resultType="OrderGoods">
+		SELECT
+		<include refid="ordergoodsColmun"></include>
+		FROM
+		mtmydb.mtmy_order_goods_mapping a
+		WHERE a.del_flag =0
+		and a.order_id=#{orderid}
+	</select>
+	<!-- 查询数据 -->
+	<select id="orderlistTow" resultType="OrderGoods">
+		SELECT
+			a.rec_id,
+			a.order_id,
+			a.user_id,
+			a.goods_name,
+			a.goods_id,
+			a.goods_sn,
+			a.goods_num,
+			a.original_img,
+			a.market_price,
+			a.goods_price,
+			a.cost_price,
+			a.coupon_price,
+			a.member_goods_price,
+			a.discount,
+			a.give_integral,
+			a.spec_key,
+			a.spec_key_name,
+			a.bar_code,
+			a.is_comment,
+			a.action_type,
+			a.action_id,
+			a.is_send,
+			a.delivery_id,
+			a.add_time,
+			a.service_times,
+			a.remain_times,
+			a.service_min,
+			a.is_real,
+			a.expiring_date,
+			a.order_amount,
+			a.single_reality_price,
+			a.single_norm_price,
+			a.is_after_sales,
+			SUM(b.total_amount) as "totalAmount",
+			SUM(b.order_balance) as "orderBalance",
+			SUM(b.service_times) as "remaintimes",
+			SUM(b.order_arrearage) as "orderArrearage"
+		FROM
+			mtmydb.mtmy_order_goods_mapping a
+		LEFT JOIN mtmydb.mtmy_order_goods_details b ON a.rec_id=b.goods_mapping_id
+		WHERE
+			a.del_flag = 0
+		and a.order_id=#{orderid}
+		GROUP BY a.rec_id
+		
+	</select>
+	<!-- 通过订单号查询订单下的虚拟商品及用户信息 -->
+	<select id="findOrderGoods" resultType="OrderGoods">
+		SELECT 
+			a.rec_id,
+			a.order_id,
+			a.user_id,
+			a.goods_name,
+			a.goods_id,
+			a.service_times,
+			a.service_min,
+			u.user_id AS 'users.userid',
+			u.mobile AS 'users.mobile',
+			u.name AS 'users.name',
+			b.service_times AS remainTimes,
+			s.skill_id AS skillId,
+			e.label_id AS labelId
+		FROM 
+			mtmydb.mtmy_order_goods_mapping a
+			LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
+			LEFT JOIN mtmydb.mtmy_orders o ON a.order_id = o.order_id
+			LEFT JOIN (
+						SELECT order_id,goods_mapping_id,SUM(service_times) AS service_times FROM mtmydb.mtmy_order_goods_details GROUP BY order_id,goods_mapping_id
+					) b ON a.rec_id = b.goods_mapping_id
+			LEFT JOIN (SELECT group_concat(skill_id) AS skill_id,goods_id FROM mtmydb.mtmy_goods_skill GROUP BY goods_id) s ON s.goods_id = a.goods_id
+			LEFT JOIN mtmydb.mtmy_goods_equipment e ON e.goods_id = a.goods_id
+		WHERE 
+			a.del_flag = 0
+			and a.order_id = #{orderid}
+			and a.is_real = 1
+			and b.service_times > 0
+			AND o.order_status = 4
+	</select>
+	<insert id="saveOrderGoods"  useGeneratedKeys="true" keyProperty="recid">
+		INSERT INTO mtmydb.mtmy_order_goods_mapping
+		(
+			order_id,
+			user_id,
+			goods_id,
+			goods_name,
+			goods_sn,
+			goods_num,
+			original_img,
+			spec_key,
+			spec_key_name,
+			cost_price,
+			market_price,
+			goods_price,
+			order_amount,
+			total_amount,
+			order_arrearage,
+			order_balance,
+			single_reality_price,
+			single_norm_price,
+			service_times,
+			add_time,
+			expiring_date,
+			is_real,
+			service_min
+		)VALUES(
+			#{orderid},
+			#{userid},
+			#{goodsid},
+			#{goodsname},
+			#{goodssn},
+			#{goodsnum},
+			#{originalimg},
+			#{speckey},
+			#{speckeyname},
+			#{costprice},
+			#{marketprice},
+			#{goodsprice},
+			#{orderAmount},
+			#{totalAmount},
+			#{orderArrearage},
+			#{orderBalance},
+			#{singleRealityPrice},
+			#{singleNormPrice},
+			#{servicetimes},
+			SYSDATE(),
+			#{expiringDate},
+			#{isreal},
+			#{servicemin}
+		)
+
+	</insert>
+	<select id="numByGoodsId" resultType="Integer">
+		SELECT
+			COUNT(*) AS "num"
+		FROM
+			mtmydb.mtmy_order_goods_mapping
+		WHERE goods_id=#{goodsId}
+	</select>
+	<select id="findBarCodeByOederId" resultType="OrderGoods">
+		SELECT
+		<include refid="ordergoodsColmun"></include>,
+		p.bar_code AS goodBarCode,
+		p.goods_no AS goodsNo
+		FROM
+		mtmydb.mtmy_order_goods_mapping a
+		LEFT JOIN mtmydb.mtmy_spec_goods_price p ON (p.goods_id = a.goods_id AND p.spec_key = a.spec_key )
+		WHERE a.del_flag = 0
+		and a.order_id=#{orderid}
+	</select>
+	
+	<select id="getOrderGoodsMapping" resultType="OrderGoods">
+		SELECT 
+			rec_id as recid,
+			goods_name as goodsname,
+			goods_id as goodsid,
+			spec_key as speckey,
+			spec_key_name as speckeyname,
+			market_price as marketprice,
+			goods_price as goodsprice,
+			cost_price as costprice,
+			order_amount as orderAmount,
+			goods_num as goodsnum,
+			total_amount as totalAmount,
+			order_balance as orderBalance,
+			order_arrearage as orderArrearage,
+			single_reality_price as singleRealityPrice,
+			single_norm_price as singleNormPrice,
+			service_times as servicetimes,
+			coupon_price as couponPrice,
+			discount as discount,
+			member_goods_price as membergoodsprice
+		from 
+		mtmydb.mtmy_order_goods_mapping 
+		where order_id = #{orderid}
+	</select>
+	<select id="selectByOrderId" resultType="OrderGoods">
+		SELECT
+		<include refid="ordergoodsColmun"></include>
+		FROM
+		mtmydb.mtmy_order_goods_mapping a
+		WHERE a.del_flag =0
+		and a.order_id=#{orderid} and a.user_id=#{userid}
+	</select>
+	<select id="selectSumByorderid" resultType="OrderGoods">
+		SELECT
+			a.goods_id as "goodsid",
+			a.goods_name as "goodsname",
+			SUM(a.goods_num) as goodsnum,
+			a.goods_price as "goodsprice"
+		FROM
+			mtmydb.mtmy_order_goods_mapping a
+		WHERE
+			 a.order_id=#{orderId}
+		GROUP BY a.goods_id,a.goods_name,a.goods_price
+	</select>
+	<!-- 更新售后状态 -->
+	<update id="updateIsAfterSales">
+		UPDATE mtmydb.mtmy_order_goods_mapping SET
+			after_sale_num=(after_sale_num+(#{afterSaleNum}))
+		WHERE rec_id=#{recid}
+	</update>
+	<!-- 更新售后状态 -->
+	<update id="updateIsAfterSalesTow">
+		UPDATE mtmydb.mtmy_order_goods_mapping SET
+			is_after_sales=0
+		WHERE rec_id=#{recId}
+	</update>
+	
+	
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.OrderPushmoneyRecordDao">
+	<!-- 保存商品规格项 -->
+	<insert id="saveOrderPushmoneyRecord">
+		INSERT INTO mtmydb.mtmy_order_pushmoney_record (
+			order_id,
+			user_id,
+			push_money,
+			create_by,
+			create_date,
+			del_flag
+		)VALUES(
+			#{orderId},
+			#{pushmoneyUserId},
+			#{pushMoney},
+			#{createBy.id},
+			SYSDATE(),
+			#{delFlag}			
+		)
+	</insert>
+	
+	<!-- 根据订单id查询相关业务员提成信息 -->
+	<select id="getOrderPushmoneyRecordByOrderId" resultType="OrderPushmoneyRecord">
+		SELECT
+			r.id as pushmoneyRecordId,
+			r.order_id as orderId,
+			r.user_id as pushmoneyUserId,
+			r.push_money as pushMoney,
+			r.create_by as "createBy.id",
+			r.create_date as createDate,
+			u.`name` as pushmoneyUserName,
+			u.mobile as pushmoneyUserMobile,
+			su.`name` as "createBy.name"
+		FROM
+			mtmydb.mtmy_order_pushmoney_record r,mtmydb.mtmy_users u,trains.sys_user su
+		WHERE r.user_id = u.user_id
+		AND r.create_by = su.id
+		AND order_id = #{orderid}
+	</select>
+	
+	<!-- 删除当前订单下的所有业务员提成信息 -->
+	<delete id="deleteOrderPushmoneyRecord">
+		DELETE FROM mtmydb.mtmy_order_pushmoney_record WHERE order_id = #{orderid}
+	</delete>
+	
+	<!-- 删除指定提成人员 -->
+	<delete id="deleteMtmyUserInfo">
+		DELETE FROM mtmydb.mtmy_order_pushmoney_record WHERE user_id= #{mtmyUserId}
+	</delete>
+</mapper>

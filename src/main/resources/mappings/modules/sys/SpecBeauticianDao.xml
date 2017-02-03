@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.sys.dao.SpecBeauticianDao">
+
+	<sql id="specBeauticianColunm">
+			sb.user_id AS userId,
+			sb.user_name AS userName,
+			sb.user_phone AS userPhone,
+			sb.bazaar_id AS bazaarId,
+			sb.shop_id AS shopId,
+			sb.status,
+			sb.office_id AS officeId, 
+			sb.create_by AS "createBy.id",
+			sb.create_date AS createDate,
+			sb.update_by AS "updateBy.id",
+			sb.update_date AS updateDate,
+			sb.remarks,
+			sb.del_flag AS delFlag
+	</sql>
+	
+	<!-- 查询出所有的特殊美容师 -->
+	<select id="findAllList" resultType="SpecBeautician">
+		SELECT
+		<include refid="specBeauticianColunm"></include>
+		FROM train_special_beautician sb
+		WHERE sb.del_flag=0
+	</select>
+	
+	<!-- 根据id查找特殊美容师 -->
+	<select id="get" resultType="SpecBeautician">
+		SELECT
+		<include refid="specBeauticianColunm"></include>
+		FROM train_special_beautician sb
+		WHERE sb.user_id = #{id}
+		AND sb.del_flag=0
+	</select>
+	
+	<!-- 分页查询特殊美容师 -->
+	<select id="findList" resultType="SpecBeautician">
+		SELECT
+			o2.name AS shopName,
+			o1.name AS bazaarName,
+			<include refid="specBeauticianColunm" />
+		FROM train_special_beautician sb
+		LEFT JOIN sys_office o1 ON o1.id = sb.bazaar_id
+		LEFT JOIN sys_office o2 ON o2.id = sb.shop_id
+		${sqlMap.dsf}
+		AND sb.del_flag = 0
+		<!-- 数据范围过滤 -->
+		<if test="bazaarId != null and bazaarId != ''">
+			AND (o1.id = #{bazaarId} OR o1.parent_ids LIKE CONCAT('%,', #{bazaarId}, ',%'))
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY sb.create_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 新增特殊美容师  -->
+	<insert id="insertSpecBeautician" parameterType="SpecBeautician">
+		INSERT INTO train_special_beautician(
+			user_id,
+			user_name,
+			user_phone,
+			bazaar_id,
+			shop_id,
+			status,
+			office_id,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks
+		)VALUES(
+			#{userId},
+			#{userName},
+			#{userPhone},
+			#{bazaarId},
+			#{shopId},
+			0,
+			#{officeId},
+			#{createBy.id},
+			SYSDATE(),
+			#{createBy.id},
+			SYSDATE(),
+			#{remarks}
+		)
+	</insert>
+	
+	<!-- 逻辑删除特殊美容师 -->
+	<delete id="deleteSpecBeautician" parameterType="SpecBeautician">
+		UPDATE train_special_beautician
+		SET del_flag = 1
+		WHERE user_id = #{userId}
+	</delete>
+	
+	<!-- 物理删除特殊美容师 -->
+	<delete id="newDeleteSpecBeautician" parameterType="SpecBeautician">
+		DELETE FROM train_special_beautician
+		WHERE user_id = #{userId}
+	</delete>
+	<!-- 查询特殊美容师（用于删除用户） -->
+	<select id="findSpecBeautician" resultType="int">
+		SELECT COUNT(*) FROM train_special_beautician WHERE user_id = #{userId} AND del_flag = 0
+	</select>
+</mapper>

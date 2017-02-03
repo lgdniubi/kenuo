@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.training.modules.personnelfile.dao.UserDeparturesDao" >
+  <resultMap id="BaseResultMap" type="com.training.modules.personnelfile.entity.UserDepartures" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="isleaveoffice" property="isleaveoffice" jdbcType="INTEGER" />
+    <result column="leaveoffice_date" property="leaveofficeDate" jdbcType="DATE" />
+    <result column="stop accountingwages" property="stopAccountingwages" jdbcType="INTEGER" />
+    <result column="leaveoffice_reasons" property="leaveofficeReasons" jdbcType="VARCHAR" />
+    <result column="operation_log" property="operationLog" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="DATE" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, user_id, isleaveoffice, leaveoffice_date, "stop accountingwages", leaveoffice_reasons, 
+    operation_log, create_date
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_departures
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from user_departures
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.training.modules.personnelfile.entity.UserDepartures" >
+    insert into user_departures (id, user_id, isleaveoffice, 
+      leaveoffice_date, "stop accountingwages", leaveoffice_reasons, 
+      operation_log, create_date)
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{isleaveoffice,jdbcType=INTEGER}, 
+      #{leaveofficeDate,jdbcType=DATE}, #{stopAccountingwages,jdbcType=INTEGER}, #{leaveofficeReasons,jdbcType=VARCHAR}, 
+      #{operationLog,jdbcType=VARCHAR}, #{createDate,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.training.modules.personnelfile.entity.UserDepartures" >
+    insert into user_departures
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="isleaveoffice != null" >
+        isleaveoffice,
+      </if>
+      <if test="leaveofficeDate != null" >
+        leaveoffice_date,
+      </if>
+      <if test="stopAccountingwages != null" >
+        stop_accountingwages,
+      </if>
+      <if test="leaveofficeReasons != null" >
+        leaveoffice_reasons,
+      </if>
+      <if test="operationLog != null" >
+        operation_log,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="isleaveoffice != null" >
+        #{isleaveoffice,jdbcType=INTEGER},
+      </if>
+      <if test="leaveofficeDate != null" >
+        #{leaveofficeDate,jdbcType=DATE},
+      </if>
+      <if test="stopAccountingwages != null" >
+        #{stopAccountingwages,jdbcType=INTEGER},
+      </if>
+      <if test="leaveofficeReasons != null" >
+        #{leaveofficeReasons,jdbcType=VARCHAR},
+      </if>
+      <if test="operationLog != null" >
+        #{operationLog,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.training.modules.personnelfile.entity.UserDepartures" >
+    update user_departures
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="isleaveoffice != null" >
+        isleaveoffice = #{isleaveoffice,jdbcType=INTEGER},
+      </if>
+      <if test="leaveofficeDate != null" >
+        leaveoffice_date = #{leaveofficeDate,jdbcType=DATE},
+      </if>
+      <if test="stopAccountingwages != null" >
+        "stop_accountingwages" = #{stopAccountingwages,jdbcType=INTEGER},
+      </if>
+      <if test="leaveofficeReasons != null" >
+        leaveoffice_reasons = #{leaveofficeReasons,jdbcType=VARCHAR},
+      </if>
+      <if test="operationLog != null" >
+        operation_log = #{operationLog,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.training.modules.personnelfile.entity.UserDepartures" >
+    update user_departures
+    set user_id = #{userId,jdbcType=VARCHAR},
+      isleaveoffice = #{isleaveoffice,jdbcType=INTEGER},
+      leaveoffice_date = #{leaveofficeDate,jdbcType=DATE},
+      "stop accountingwages" = #{stopAccountingwages,jdbcType=INTEGER},
+      leaveoffice_reasons = #{leaveofficeReasons,jdbcType=VARCHAR},
+      operation_log = #{operationLog,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=DATE}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <delete id="deleteByUserId">
+	    DELETE
+		FROM
+			user_departures
+		WHERE
+			user_id = #{userId}
+  </delete>
+</mapper>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.oa.dao.OaNotifyDao">
+    
+	<sql id="oaNotifyColumns">
+		a.ID AS "id",
+		a.TYPE AS "type",
+		a.TITLE AS "title",
+		a.CONTENT AS "content",
+		a.FILES AS "files",
+		a.STATUS AS "status",
+		a.CREATE_BY AS "createBy.id",
+		a.CREATE_DATE AS "createDate",
+		a.UPDATE_BY AS "updateBy.id",
+		a.UPDATE_DATE AS "updateDate",
+		a.REMARKS AS "remarks",
+		a.DEL_FLAG AS "delFlag",
+		a.PUSH_TYPE AS "pushType",
+		a.RESULT AS "result",
+		a.MSG_TOTAL AS "msgTotal",
+		a.MSG_PROCESS AS "msgProcess",
+		a.CLICK_NUM AS "clickNum",
+		a.START_TIME AS "startTime",
+		a.END_TIME AS "endTime",
+		a.CONTENT_ID AS "contentId",
+		a.PUSH_NUM AS "pushNum",
+	    b.read_num,
+	    b.un_read_num
+	</sql>
+	
+	<sql id="oaNotifyJoins">
+		<!-- 查询已读和未读条数 -->
+		LEFT JOIN (
+            SELECT r.oa_notify_id, 
+                   sum(case when r.read_flag = '1' then 1 else 0 end) read_num,
+                   sum(case when r.read_flag != '1' then 1 else 0 end) un_read_num 
+            FROM oa_notify_record r GROUP BY r.oa_notify_id
+    	) b ON b.oa_notify_id = a.id
+	</sql>
+    
+	<select id="get" resultType="OaNotify">
+		SELECT 
+			<include refid="oaNotifyColumns"/>
+		FROM oa_notify a
+		<include refid="oaNotifyJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OaNotify">
+		SELECT 
+			<include refid="oaNotifyColumns"/>
+		FROM oa_notify a
+		<include refid="oaNotifyJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		<if test="isSelf">
+			AND a.create_by = #{currentUser.id}
+		</if>
+		<if test="title != null and title != ''">
+			AND a.TITLE LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+		</if>
+		<if test="type != null and type != ''">
+			AND a.TYPE = #{type}
+		</if>
+		<if test="status != null and status != ''">
+			AND a.STATUS = #{status}
+		</if>
+		ORDER BY a.update_date DESC
+	</select>
+	
+	<select id="findAllList" resultType="OaNotify">
+		SELECT 
+			<include refid="oaNotifyColumns"/>
+		FROM oa_notify a
+		<include refid="oaNotifyJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL} 
+		ORDER BY a.update_date DESC
+	</select>
+	
+	<select id="findCount" resultType="Long">
+		SELECT 
+			count(1)
+		FROM oa_notify a
+		<if test="isSelf">
+			JOIN oa_notify_record r ON r.oa_notify_id = a.id AND r.user_id = #{currentUser.id}
+				<if test="readFlag != null and readFlag != ''">
+					AND r.read_flag = #{readFlag}
+				</if>
+		</if>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		<if test="isSelf">
+			AND a.STATUS = '1'
+		</if>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO oa_notify(
+			ID,
+			TYPE,
+			TITLE,
+			CONTENT,
+			FILES,
+			STATUS,
+			CREATE_BY,
+			CREATE_DATE,
+			UPDATE_BY,
+			UPDATE_DATE,
+			REMARKS,
+			DEL_FLAG,
+			PUSH_TYPE,
+			START_TIME,
+			END_TIME
+			
+		) VALUES (
+			#{id},
+			#{type},
+			#{title},
+			#{content},
+			#{files},
+			0,
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag},
+			#{pushType},
+			#{startTime},
+			#{endTime}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE oa_notify SET 	
+			TYPE = #{type},
+			TITLE = #{title},
+			CONTENT = #{content},
+			FILES = #{files},
+			STATUS = #{status},
+			UPDATE_BY = #{updateBy.id},
+			UPDATE_DATE = #{updateDate},
+			REMARKS = #{remarks},
+			PUSH_TYPE = #{pushType},
+			START_TIME = #{startTime},
+			END_TIME = #{endTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM oa_notify
+		WHERE id = #{id}
+	</update>
+	
+	<update id="deleteByLogic">
+		UPDATE oa_notify SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<select id="findMapById" parameterType="string" resultType="map">
+		select 
+			id as notify_id,
+			title as title,
+			type as notify_type,
+			start_time as start_time,
+			end_time as end_time,
+			content as content,
+			push_type as push_type
+		from oa_notify
+		where id = #{notify_id}
+	</select>
+	
+	<select id="selectCids" parameterType="string" resultType="string">
+		select
+			uc.client_id
+		from oa_notify n
+		left join oa_notify_record nr on nr.oa_notify_id = n.id
+		left join oa_user_cid uc on uc.user_id = nr.user_id
+		where n.id = #{notify_id} and uc.client_id is not null
+	</select>
+	<select id="selectByuserId" parameterType="string" resultType="string">
+		SELECT
+			client_id
+		FROM
+			oa_user_cid
+		WHERE user_id=#{userId};
+	</select>
+	
+	<update id="updateStatus" parameterType="map">
+		update oa_notify
+		set status = #{status}
+		where id = #{notify_id}
+	</update>
+</mapper>

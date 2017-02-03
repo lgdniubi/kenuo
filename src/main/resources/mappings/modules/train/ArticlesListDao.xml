@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.ArticlesListDao">
+	
+	<sql id="articleColumns">
+		a.id AS articleId,
+		a.category_id AS categoryId,
+		a.author_name AS authorName,
+		a.author_photo AS authorPhoto,
+		a.title,
+		a.short_title AS shortTitle,
+		a.image_type AS imageType,
+		a.keywords,
+		a.digest,
+		a.contents,
+		a.is_recommend AS isRecommend,
+		a.is_show AS isShow,
+		a.is_top AS isTop,
+		a.sort,
+		a.audit_flag AS auditFlag,
+		a.is_task AS isTask,
+		a.task_date AS taskDate,
+		a.create_by AS "createBy.id",
+		a.create_date,
+		a.update_by AS "updateby.id",
+		a.update_date,
+		a.del_flag
+	</sql>
+	<!-- 查询所有文章 -->
+	<select id="findList" resultType="Articles">
+		SELECT
+			a.id AS articleId,
+			a.category_id AS categoryId,
+			a.author_name AS authorName,
+			a.author_photo AS authorPhoto,
+			a.title,
+			a.is_recommend AS isRecommend,
+			a.is_show AS isShow,
+			a.is_top AS isTop,
+			a.sort,
+			a.audit_flag AS auditFlag,
+			a.is_task AS isTask,
+			a.task_date AS taskDate,
+			a.del_flag,
+			c.name AS "category.name",
+			(SELECT COUNT(1) FROM train_articles_comment AS b WHERE b.article_id=a.id AND b.del_flag = 0) AS commentNum
+		FROM train_articles AS a
+		LEFT JOIN train_articles_category c ON a.category_id = c.id 
+			WHERE 1=1
+				<if test="delFlag != 0 and delFlag != null">
+					AND a.del_flag = #{delFlag}
+				</if>
+				<if test="delFlag == 0">
+					AND a.audit_flag = #{auditFlag}
+					AND a.del_flag = #{DEL_FLAG_NORMAL}
+				</if>
+				<if test="categoryId != 0">
+					AND a.category_id = #{categoryId}
+				</if>
+				<if test="title != null and title != ''">
+					AND a.title like 
+							<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+							<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+				</if>
+				<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
+					AND a.create_date BETWEEN #{beginDate} AND #{endDate}
+				</if>
+				ORDER BY a.is_top,a.sort DESC,a.create_date DESC
+	</select>
+	<!-- 查看文章详情 -->
+	<select id="get" resultType="Articles">
+		SELECT
+			<include refid="articleColumns"/>
+		FROM train_articles AS a
+		WHERE id = #{articleId}
+	</select>
+	<!-- 审核文章 -->
+	<update id="auditArticles">
+		UPDATE train_articles
+			SET 
+			  <if test="flag == 1">
+			  	 audit_flag = 0,
+			  </if>
+			  <if test="flag != 1">
+			  category_id = #{categoryId},
+			  is_show = #{isShow},
+			  is_recommend = #{isRecommend},
+			  is_top = #{isTop},
+			  sort = #{sort},
+			  </if>
+			  update_by = #{updateBy.id},
+			  update_date = SYSDATE()
+			WHERE id = #{articleId}
+	</update>
+	<!-- 查看单个文章评论 -->
+	<select id="findArticlesComment" resultType="ArticlesComment">
+		SELECT 
+			comment_id AS commentId,
+			create_name AS createName,
+			create_photo AS createPhoto,
+			create_date,
+			content,
+			like_num AS likeNum
+		FROM 
+			train_articles_comment 
+		WHERE article_id = #{articleId}
+			AND del_flag = #{DEL_FLAG_NORMAL}
+	</select>
+	<!-- 查询文章评论集合 -->
+	<select id="findArticlesCommentList" resultType="ArticlesComment">
+		SELECT
+			a.comment_id,
+			a.article_id,
+			a.create_name,
+			a.create_photo,
+			a.create_date,
+			a.content,
+			a.like_num,
+			b.title,
+			c.id
+		FROM
+			train_articles_comment a
+			LEFT JOIN train_articles b ON a.article_id = b.id
+			LEFT JOIN train_articles_category c ON b.category_id = c.id
+		WHERE
+			a.del_flag = #{delFlag}
+			AND b.del_flag = 0
+			AND c.del_flag = 0
+			<if test="articleName != null and articleName != ''">
+				AND b.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{articleName}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{articleName}, '%')</if>
+			</if>
+			<if test="categoryId != 0">
+				AND c.id = #{categoryId}
+			</if>
+			<if test="beginDate != null and beginDate != ''">
+				AND a.create_date >= #{beginDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND a.create_date <![CDATA[ <= ]]> #{endDate}
+			</if>
+		ORDER BY
+			a.create_date DESC
+	</select>
+	<!-- 删除文章评论 -->
+	<update id="deleteComment">
+		UPDATE train_articles_comment SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE comment_id = #{commentId}
+	</update>
+	<!-- 修改文章状态 -->
+	<update id="updateArticleIS">
+		UPDATE train_articles
+			SET 
+			  <if test="flag == 'ISSHOW'">
+				is_show = #{isyesno},
+			  </if>
+			  <if test="flag == 'ISRECOMMENT'">
+				is_recommend = #{isyesno},
+			  </if>
+			  <if test="flag == 'ISTOP'">
+				is_top = #{isyesno},
+			  </if>
+			  update_by = #{userId},
+			  update_date = SYSDATE()
+			WHERE del_flag = 0 AND id = #{articleId}
+	</update>
+	<!-- 定时发布  用于定时器 -->
+	<update id="taskArticles">
+		UPDATE train_articles SET is_show = 0 WHERE del_flag = 0 AND is_show = 1 AND audit_flag = 0 AND is_task = 1 AND task_date <![CDATA[ <= ]]> SYSDATE()
+	</update>
+	<!-- 设置定时发布文章 -->
+	<update id="updateIsTask">
+		UPDATE train_articles
+			SET 
+			  is_task = #{isTask},
+			  <if test="isTask == 0">
+			  	task_date = NULL,
+			  </if>
+			  <if test="isTask == 1">
+			  	task_date = #{taskDate},
+			  </if>
+			  update_by = #{updateBy.id},
+			  update_date = SYSDATE()
+			WHERE id = #{articleId}
+	</update>
+	<!-- 删除文章 -->
+	<update id="deleteArticle">
+		UPDATE train_articles SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{articleId}
+	</update>
+	<!-- 查询文章分类 -->
+	<select id="findCategory" resultType="ArticlesCategory">
+		SELECT
+			id AS categoryId,
+			name,
+			sort,
+			create_by AS "createBy.id",
+			create_date
+		FROM train_articles_category
+		WHERE 1=1
+			AND del_flag = #{DEL_FLAG_NORMAL}
+			ORDER BY sort DESC,create_date DESC
+	</select>
+	<!-- 新增文章分类 -->
+	<insert id="saveCategory" >
+		INSERT INTO train_articles_category(
+			name, 
+			sort, 
+			create_by, 
+			create_date, 
+			del_flag
+		) VALUES (
+			#{name}, 
+			#{sort},
+			#{createBy.id}, 
+			SYSDATE(), 
+			#{DEL_FLAG_NORMAL}
+		)
+	</insert>
+	<!-- 修改文章分类 -->
+	<update id="updateCategory">
+		UPDATE train_articles_category SET 
+			name = #{name}, 
+			sort = #{sort},
+			update_by = #{updateBy.id}, 
+			update_date = SYSDATE(), 
+			del_flag = #{DEL_FLAG_NORMAL}
+		WHERE id = #{categoryId}
+	</update>
+	<!-- 删除文章分类 -->
+	<update id="deleteCategory">
+		UPDATE train_articles_category SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{categoryId}
+	</update>
+</mapper>

@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.ArticleRepositoryDao">
+	<sql id="articleColumns">
+		a.id AS articleId,
+		a.category_id AS categoryId,
+		a.author_name AS authorName,
+		a.author_photo AS authorPhoto,
+		a.title,
+		a.short_title AS shortTitle,
+		a.keywords,
+		a.digest,
+		a.contents,
+		a.image_type AS imageType,
+		a.create_by  AS "createBy.id",
+		a.create_date,
+		a.update_by  AS "updateby.id",
+		a.update_date,
+		a.del_flag
+	</sql>
+	<!-- 分页查询文章 -->
+	<select id="findAllList" resultType="ArticleRepository">
+		SELECT
+			<include refid="articleColumns"/>,
+			c.name AS "category.name"
+		FROM article_repository AS a
+		LEFT JOIN article_category c ON a.category_id = c.id 
+			WHERE 1=1
+				AND a.del_flag = #{DEL_FLAG_NORMAL}
+				<if test="categoryId != 0">
+					AND a.category_id = #{categoryId}
+				</if>
+				<if test="title != null and title != ''">
+					AND a.title like 
+							<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+							<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+				</if>
+				<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
+					AND a.create_date BETWEEN #{beginDate} AND #{endDate}
+				</if>
+				ORDER BY a.create_date DESC
+	</select>
+	<!-- 添加文章 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="articleId">
+		INSERT INTO article_repository(
+			category_id,
+			author_name,
+			author_photo,
+			title,
+			short_title,
+			keywords,
+			digest,
+			contents,
+			image_type,
+			create_by,
+			create_date,
+			del_flag
+		) VALUES (
+			#{categoryId},
+			#{authorName},
+			#{authorPhoto},
+			#{title},
+			#{shortTitle},
+			#{keywords},
+			#{digest},
+			#{contents},
+			#{imageType},
+			#{createBy.id}, 
+			SYSDATE(), 
+			#{DEL_FLAG_NORMAL}
+		)
+	</insert>
+	<!-- 修改文章 -->
+	<update id="update">
+		UPDATE article_repository SET 
+			category_id = #{categoryId},
+			author_name = #{authorName},
+			author_photo= #{authorPhoto},
+			title       = #{title},
+			short_title = #{shortTitle},
+			keywords	= #{keywords},
+			digest		= #{digest},
+			contents	= #{contents},
+			image_type  = #{imageType},
+			update_by   = #{updateBy.id},
+			update_date = SYSDATE(), 
+			del_flag	= #{DEL_FLAG_NORMAL}
+		WHERE id = #{articleId}
+	</update>
+	<!-- 删除文章 -->
+	<update id="deleteByLogic">
+		UPDATE article_repository SET 
+			update_by   = #{updateBy.id},
+			update_date = SYSDATE(), 
+			del_flag	= #{DEL_FLAG_DELETE}
+		WHERE id = #{articleId}
+	</update>
+	<!-- 删除文章首图 -->
+	<delete id="delImages">
+		DELETE FROM article_images WHERE article_id = #{articleId}
+	</delete>
+	<!-- 添加文章首图 -->
+	<insert id="insertImages">
+		INSERT INTO article_images(article_id, img_url,create_date)
+		<foreach collection="list" item="list" separator=" union all ">
+			SELECT #{list.articleId}, #{list.imgUrl},SYSDATE() FROM dual
+		</foreach>
+	</insert>
+	<!-- 查询单个文章 -->
+	<select id="get" resultType="ArticleRepository">
+		SELECT
+			<include refid="articleColumns"/>
+		FROM article_repository AS a
+			WHERE 1=1
+				AND id = #{articleId}
+	</select>
+	<!-- 查询文章首图 -->
+	<select id="findImages" resultType="ArticleImage">
+		SELECT article_id AS articleId,img_url AS imgUrl FROM article_images WHERE article_id = #{articleId}
+	</select>
+	<!-- 删除文章 -->
+	<update id="delete">
+		UPDATE mtmy_articles SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	<!-- 查询妃子校、每天美耶是否存在文章 -->
+	<select id="findArticle" resultType="int">
+		SELECT 
+			COUNT(1) 
+		FROM 
+			<if test="type == 'train'">
+				train_articles 
+			</if>
+			<if test="type == 'mtmy'">
+				mtmydb.mtmy_articles
+			</if>
+		WHERE id = #{articleId}
+	</select>
+	<!-- 发布文章到妃子校 -->
+	<insert id="sendTrainArticle">
+		INSERT INTO train_articles(
+			id,
+			category_id,
+			author_name,
+			author_photo,
+			title,
+			short_title,
+			image_type,
+			keywords,
+			digest,
+			contents,
+			is_recommend,
+			is_show,
+			is_top,
+			sort,
+			audit_flag,
+			is_task,
+			create_by,
+			create_date
+		)
+		SELECT
+			id,
+			#{categoryId},
+			author_name,
+			author_photo,
+			title,
+			short_title,
+			image_type,
+			keywords,
+			digest,
+			contents,
+			1,
+			1,
+			1,
+			0,
+			1,
+			0,
+			#{userId},
+			SYSDATE()
+		FROM
+			article_repository
+		WHERE
+			id = #{articleId}
+	</insert>
+	<insert id="sendTrainArticleImg">
+		INSERT INTO train_articles_images(article_id, img_url,create_date)
+		<foreach collection="list" item="list" separator=" union all ">
+			SELECT #{list.articleId}, #{list.imgUrl},SYSDATE() FROM dual
+		</foreach>
+	</insert>
+	<!-- 发布文章到每天美耶 -->
+	<insert id="sendMtmyArticle">
+		INSERT INTO mtmydb.mtmy_articles (
+			id,
+			category_id,
+			author_name,
+			author_photo,
+			title,
+			short_title,
+			keywords,
+			image_type,
+			digest,
+			contents,
+			audit_flag,
+			is_show,
+			is_recommend,
+			is_top,
+			is_task,
+			sort,
+			create_by,
+			create_date
+		)
+		SELECT
+			id,
+			#{categoryId},
+			author_name,
+			author_photo,
+			title,
+			short_title,
+			keywords,
+			image_type,
+			digest,
+			contents,
+			1,
+			1,
+			1,
+			1,
+			0,
+			0,
+			#{userId},
+			SYSDATE()
+		FROM
+			article_repository
+		WHERE
+			id = #{articleId}
+	</insert>
+	<insert id="sendMtmyArticleImg">
+		INSERT INTO mtmydb.mtmy_article_images(article_id, img_url,create_date)
+		<foreach collection="list" item="list" separator=" union all ">
+			SELECT #{list.articleId}, #{list.imgUrl},SYSDATE() FROM dual
+		</foreach>
+	</insert>
+	<!-- 修改妃子校文章 -->
+	<update id="updateTrainArticle">
+		UPDATE train_articles
+		SET  category_id = #{categoryId},
+			 author_name = #{authorName},
+			 author_photo = #{authorPhoto},
+			 title = #{title},
+			 short_title = #{shortTitle},
+			 image_type = #{imageType},
+			 keywords = #{keywords},
+			 digest = #{digest},
+			 contents = #{contents},
+			 is_recommend = 1,
+			 is_show = 1,
+			 is_top = 1,
+			 sort = 0,
+			 audit_flag = 1,
+			 is_task = 0,
+			 task_date = null,
+			 update_by = #{updateBy.id}, 
+			 update_date = SYSDATE(),
+			 del_flag = 0
+		WHERE
+			id = #{articleId}
+	</update>
+	<delete id="delTrainArticleImg">
+		DELETE FROM train_articles_images WHERE article_id = #{articleId}
+	</delete>
+	<!-- 修改每天美耶文章 -->
+	<update id="updateMtmyArticle">
+		UPDATE mtmydb.mtmy_articles
+		SET  category_id = #{categoryId},
+			 author_name = #{authorName},
+			 author_photo = #{authorPhoto},
+			 title = #{title},
+			 short_title = #{shortTitle},
+			 keywords = #{keywords},
+			 image_type = #{imageType},
+			 digest = #{digest},
+			 contents = #{contents},
+			 audit_flag = 1,
+			 is_show = 1,
+			 is_recommend = 1,
+			 is_top = 1,
+			 is_task = 0,
+			 task_date = null,
+			 sort = 0,
+			 update_by = #{updateBy.id}, 
+			 update_date = SYSDATE(),
+			 del_flag = 0
+		WHERE
+			id = #{articleId}
+	</update>
+	<!-- 保存文章发布日志 -->
+	<insert id="saveLogs">
+		INSERT INTO article_issue_log(
+			article_id,
+			log,
+			create_by,
+			create_date
+		)
+		VALUES
+			(
+				#{articleId},
+				(CASE #{type} WHEN 'train' THEN CONCAT('发布文章到妃子校--',(SELECT name FROM train_articles_category WHERE id = #{categoryId})) ELSE CONCAT('发布文章到每天美耶--',(SELECT name FROM mtmydb.mtmy_article_category WHERE id = #{categoryId})) END),
+				#{userId},
+				SYSDATE()
+			)
+	</insert>
+	<!-- 查看文章发布日志 -->
+	<select id="findLogs" resultType="ArticleIssueLogs">
+		SELECT
+			l.log,
+			u.name AS "createBy.name",
+			l.create_date
+		FROM
+			article_issue_log l
+			LEFT JOIN sys_user u ON l.create_by = u.id 
+		WHERE 
+			article_id = #{articleId}
+	</select>
+	<delete id="delMtmyArticleImg">
+		DELETE FROM mtmydb.mtmy_article_images WHERE article_id = #{articleId}
+	</delete>
+	<!-- 分页查询文章分类 -->
+	<select id="findCategory" resultType="ArticleRepositoryCategory">
+		SELECT
+			id AS categoryId,
+			name,
+			sort,
+			create_by AS "createBy.id",
+			create_date
+		FROM article_category
+			WHERE 1=1
+				AND del_flag = #{DEL_FLAG_NORMAL}
+				ORDER BY sort DESC,create_date DESC
+	</select>
+	<!-- 新增文章分类 -->
+	<insert id="saveCategory" >
+		INSERT INTO article_category(
+			name, 
+			sort, 
+			create_by, 
+			create_date, 
+			del_flag
+		) VALUES (
+			#{name}, 
+			#{sort},
+			#{createBy.id}, 
+			SYSDATE(), 
+			#{DEL_FLAG_NORMAL}
+		)
+	</insert>
+	<!-- 修改文章分类 -->
+	<update id="updateCategory">
+		UPDATE article_category SET 
+			name = #{name}, 
+			sort = #{sort},
+			update_by = #{updateBy.id}, 
+			update_date = SYSDATE(), 
+			del_flag = #{DEL_FLAG_NORMAL}
+		WHERE id = #{categoryId}
+	</update>
+	<!-- 删除文章分类 -->
+	<update id="deleteCategory">
+		UPDATE article_category SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{categoryId}
+	</update>
+</mapper>

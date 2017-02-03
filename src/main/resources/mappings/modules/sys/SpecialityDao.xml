@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.sys.dao.SpecialityDao">
+
+	<sql id="specialityColunm">
+		a.id,
+		a.franchisee_id,
+		a.name,
+		a.status,
+		a.create_by,
+		a.create_time
+	</sql>
+	<sql id="speJoin">
+		LEFT JOIN user_speciality b ON a.id=b.speciality_id
+	</sql>
+	<insert id="insertSpec">
+		INSERT INTO speciality(
+		id,
+		franchisee_id,
+		name,
+		create_by,
+		create_time
+		)VALUES(
+		#{id},
+		#{franchiseeid},
+		#{name},
+		#{createby},
+		SYSDATE()
+		)
+
+	</insert>
+	<select id="findlistByuserid" resultType="Speciality">
+		SELECT
+		<include refid="specialityColunm"></include>
+		FROM
+		speciality a
+		<include refid="speJoin"></include>
+		WHERE b.user_id=#{userid}
+
+	</select>
+	<!-- 根据编号获特长 -->
+	<select id="get" resultType="Speciality">
+		SELECT
+		<include refid="specialityColunm" />
+		FROM speciality a
+		WHERE a.id = #{id} and a.del_flag=0
+	</select>
+
+
+	<select id="findAllList" resultType="Speciality">
+		SELECT
+		<include refid="specialityColunm"></include>
+		FROM speciality a
+		WHERE a.status=0 and a.del_flag=0
+
+	</select>
+
+	<insert id="insertSpecialityorm">
+		INSERT INTO user_speciality
+		(
+		user_id,
+		speciality_id
+		)
+		<foreach collection="list" item="list" separator="union all ">
+			SELECT #{list.userid},#{list.specialityid} FROM dual
+		</foreach>
+	</insert>
+	<delete id="deletormSpec">
+		DELETE FROM user_speciality WHERE user_id=#{userid}
+
+	</delete>
+	<update id="updateSpec">
+		Update speciality
+		set name=#{name}
+		where id=#{id}
+
+	</update>
+
+
+	<!-- 分页查询用户信息 -->
+	<select id="findList" resultType="Speciality">
+		SELECT
+		<include refid="specialityColunm" />
+		FROM speciality a
+
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL} and a.status=0
+		<!-- 数据范围过滤 -->
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_time
+			</otherwise>
+		</choose>
+	</select>
+
+	<update id="deleteSpeciality">
+		update speciality
+		set del_flag=1
+		where id=#{id}
+
+	</update>
+
+
+</mapper>

@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.ReturnedGoodsDao">
+	<sql id="returnColunm">
+		a.id,
+		a.order_id,
+		a.goods_mapping_id,
+		b.goods_id,
+		b.goods_name as "goodsName",
+		b.goods_num as "goodsNum",
+		b.spec_key,
+		b.spec_key_name as "specName",
+		b.cost_price,
+		b.market_price,
+		b.goods_price as "goodsPrice",
+		b.total_amount,
+		b.order_amount as "orderAmount",
+		b.order_balance,
+		b.order_arrearage,
+		b.service_times as "serviceTimes",
+		a.user_id,
+		d.nickname as "userName",
+		d.mobile,
+		b.is_real,
+		a.problem_desc as "problemDesc",
+		a.refusal_cause as "refusalCause",
+		a.audit_by,
+		a.audit_date,
+		a.apply_type,
+		a.return_num,
+		a.apply_date,
+		a.return_reason,
+		a.return_amount,
+		a.warehouse_id,
+		a.is_storage,
+		a.return_status,
+		a.receipt_by,
+		a.financial_by,
+		a.update_by,
+		a.update_date,
+		a.office_id,
+		a.remarks,
+		a.shipper_by,
+		a.consigner_name,
+		a.consigner_address,
+		a.consigner_shipping_name,
+		a.consigner_shipping_code,
+		a.consigner_shipping_time,
+		a.consigner_shipping_img,
+		a.shipping_name,
+		a.shipping_code,
+		a.shipping_time,
+		a.shipper_date,
+		e.`name` as "hoseName",
+		e.governor,
+		e.address
+	</sql>
+	<sql id="returnJion">
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.goods_mapping_id=b.rec_id
+		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
+		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
+		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
+	</sql>
+	<!-- 根据编号 -->
+	<select id="get" resultType="ReturnedGoods">
+		SELECT
+			<include refid="returnColunm"/>
+		FROM mtmydb.mtmy_returned_goods a
+		<include refid="returnJion"/>
+		WHERE 
+		a.id = #{id} and a.del_flag=0
+	</select>
+	<!-- 根据orderid 查询退货订单是否存在 -->
+<!-- <select id="retlist" resultType="ReturnedGoods">
+		SELECT
+			a.return_goods_id,
+			a.order_id,
+			a.parent_id,
+			a.order_sn,
+			a.goods_id,
+			a.type,
+			a.reason,
+			a.imgs,
+			a.bank_no,
+			a.bank_name,
+			a.ret_username,
+			a.storage_status,
+			a.return_money,
+			a.return_status,
+			a.remark,
+			a.user_id,
+			a.add_time,
+			a.entry_operator,
+			a.financial_operator
+		FROM  
+		mtmydb.mtmy_return_goods a 
+		WHERE 
+		a.order_id = #{orderid} and a.del_flag=0
+	</select> -->
+	<!-- 审核 -->
+	<update id="saveEdite">
+		UPDATE mtmydb.mtmy_returned_goods SET
+			return_status=#{returnStatus},
+			return_amount=#{returnAmount},
+			refusal_cause=#{refusalCause},
+			warehouse_id=#{warehouseId},
+			remarks=#{remarks},
+			audit_by=#{auditBy},
+			audit_date=SYSDATE(),
+			update_by=#{auditBy},
+			update_date=SYSDATE()
+		where id=#{id}
+	</update>
+	<!-- 确认入库 -->
+	<update id="confirmTake">
+		UPDATE mtmydb.mtmy_returned_goods SET
+			return_status=#{returnStatus},
+			receipt_by=#{receiptBy},
+			receipt_date=SYSDATE(),
+			is_storage=1,
+			update_by=#{receiptBy},
+			update_date=SYSDATE()
+		where id=#{id}
+	</update>
+	<!-- 修改物流 -->
+	<update id="UpdateShipping">
+		UPDATE mtmydb.mtmy_returned_goods SET
+			return_status=#{returnStatus},
+			shipping_name=#{shippingName},
+			shipping_code=#{shippingCode},
+			shipping_time=#{shippingTime},
+			shipper_by=#{shipperBy},
+			shipper_date=#{shipperDate},
+			update_by=#{shipperBy},
+			update_date=SYSDATE()
+		where id=#{id}
+	</update>
+	<!-- 重新发货 -->
+	<update id="againSendApply">
+		UPDATE mtmydb.mtmy_returned_goods SET
+			return_status=#{returnStatus}
+		where id=#{id}
+	</update>
+	<!-- 退款 -->
+	<update id="updateReturnMomeny">
+		UPDATE mtmydb.mtmy_returned_goods SET
+			return_status=#{returnStatus},
+			financial_by=#{financialBy},
+			financial_date=SYSDATE(),
+			update_by=#{financialBy},
+			update_date=SYSDATE()
+		where id=#{id}
+	</update>
+	<!-- 申请退款 -->
+	<update id="confirmApply">
+		UPDATE mtmydb.mtmy_returned_goods SET
+			return_status=#{returnStatus}
+		where id=#{id}	
+	</update>
+	<!-- 保存 -->
+	<insert id="insertReturn">
+		INSERT INTO mtmydb.mtmy_returned_goods
+		(
+			id,
+			order_id,
+			goods_mapping_id,
+			user_id,
+			is_real,
+			apply_type,
+			apply_date,
+			return_reason,
+			problem_desc,
+			return_num,
+			total_amount,
+			return_amount,
+			office_id,
+			remarks,
+			return_status
+		)VALUES(
+			#{id},
+			#{orderId},
+			#{goodsMappingId},
+			#{userId},
+			#{isReal},
+			#{applyType},
+			#{applyDate},
+			#{returnReason},
+			#{problemDesc},
+			#{returnNum},
+			#{totalAmount},
+			#{returnAmount},
+			#{officeId},
+			#{remarks},
+			#{returnStatus}
+		)
+	</insert>
+	<!-- 强制取消 -->
+	<insert id="insertForcedCancel">
+		INSERT INTO mtmydb.mtmy_returned_goods
+		(
+			id,
+			order_id,
+			goods_mapping_id,
+			user_id,
+			is_real,
+			apply_type,
+			apply_date,
+			return_reason,
+			problem_desc,
+			return_num,
+			total_amount,
+			return_amount,
+			office_id,
+			remarks,
+			return_status,
+			is_storage
+		)VALUES(
+			#{id},
+			#{orderId},
+			#{goodsMappingId},
+			#{userId},
+			#{isReal},
+			#{applyType},
+			#{applyDate},
+			#{returnReason},
+			#{problemDesc},
+			#{returnNum},
+			#{totalAmount},
+			#{returnAmount},
+			#{officeId},
+			#{remarks},
+			#{returnStatus},
+			#{isStorage}
+		)
+	</insert>
+	<!-- 分页查询 -->
+	<select id="findList" resultType="ReturnedGoods">
+		SELECT
+			<include refid="returnColunm"/>
+		FROM mtmydb.mtmy_returned_goods a 
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.goods_mapping_id=b.rec_id
+		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
+		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
+		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
+		${sqlMap.dsf}	and a.del_flag=0
+		<if test="userName != null and userName!=''">
+			AND d.nickname like
+			<if test="dbName == 'oracle'">'%'||#{userName} ||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{userName} , '%')</if>
+			 
+		</if>
+		<if test="mobile != null  and mobile != ''">
+			AND d.mobile=#{mobile}
+		</if>
+		<if test="id != null and id != ''">
+			AND a.id = #{id}
+		</if>
+		<if test="orderId != null and orderId != ''">
+			AND a.order_id = #{orderId}
+		</if>
+ 		<if test="isStorage != null and isStorage != ''">
+			AND a.is_storage = #{isStorage}
+		</if>
+		<if test="returnStatus != null and returnStatus != ''">
+			AND a.return_status = #{returnStatus}
+		</if>
+		<if test="begtime != null and begtime != ''">
+			AND DATE_FORMAT(a.apply_date,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			<![CDATA[AND DATE_FORMAT(a.apply_date,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY  a.apply_date desc
+			</otherwise>
+		</choose>
+	</select>
+	<!-- 查询退货图片 -->
+	<select id="selectImgById" resultType="ReturnedGoodsImages">
+		SELECT
+			a.id,
+			a.return_id,
+			a.return_img,
+			a.create_date
+		FROM
+			mtmydb.mtmy_returned_goods_images a
+		WHERE
+			return_id =#{id}
+	</select>
+</mapper>

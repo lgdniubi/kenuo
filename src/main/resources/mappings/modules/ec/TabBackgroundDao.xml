@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.TabBackgroundDao">
+    
+    <!-- 更新数据 -->
+	<insert id="insert" parameterType="TabBackground">
+		INSERT INTO mtmydb.mtmy_tab_banner(
+			group_name,
+			tab_bg,
+			top_style,
+			tab_name_style,
+			tab_name_color,
+			tab_name_select_color,
+			remarks,
+			create_by,
+			create_date,
+			update_by,
+			update_date
+		) VALUES (
+			#{groupName},
+			#{tabBg},
+			#{topStyle},
+			#{tabNameStyle},
+			#{tabNameColor},
+			#{tabNameSelectColor},
+			#{remarks},
+			#{createBy.name},
+			SYSDATE(),
+			#{createBy.name},
+			SYSDATE()
+		)
+	</insert>
+	
+	<!-- 查询所有数据列表 -->
+	<select id="findList" resultType="TabBackground">
+		SELECT
+			id AS tabBackgroundId,
+			group_name AS groupName,                               
+			tab_bg AS tabBg,
+			top_style AS topStyle,
+		    create_by AS "createBy.name",
+			create_date AS createDate,
+		    update_by AS "updateBy.name",
+		    update_date AS updateDate,
+		    is_show AS isShow,
+			remarks,
+			del_flag
+		FROM
+			mtmydb.mtmy_tab_banner
+		ORDER BY
+			id DESC
+	</select>
+	
+	<!-- 查询单个背景图详情 -->
+	<select id="getTabBackground" resultType="TabBackground">
+		SELECT
+			id AS tabBackgroundId,
+			is_show AS isShow,
+			group_name AS groupName,                               
+			tab_bg AS tabBg,
+			top_style AS topStyle,
+		    tab_name_style AS tabNameStyle,
+			tab_name_color AS tabNameColor,
+		    tab_name_select_color AS tabNameSelectColor,
+			remarks
+		FROM
+			mtmydb.mtmy_tab_banner
+		WHERE 
+			id = #{tabBackgroundId}
+	</select>
+	
+	<!-- 更新数据 -->
+	<update id="update" parameterType="TabBackground">
+		UPDATE mtmydb.mtmy_tab_banner
+			SET 
+			  group_name = #{groupName},     
+			  tab_bg = #{tabBg},
+			  top_style = #{topStyle},
+			  tab_name_style = #{tabNameStyle},
+			  tab_name_color = #{tabNameColor},
+			  tab_name_select_color = #{tabNameSelectColor},
+			  update_by = #{updateBy.name},
+			  update_date = SYSDATE(),
+			  remarks = #{remarks}
+		WHERE id = #{tabBackgroundId}
+	</update>
+	
+	<!-- 删除整组tab_banner -->
+	<delete id="deleteTabBackground" parameterType="TabBackground">
+		Delete 
+		FROM mtmydb.mtmy_tab_banner
+		WHERE id = #{tabBackgroundId}
+	</delete>
+	
+	<!-- 修改某一组的状态  -->
+	<update id="changIsShow" parameterType="TabBackground">
+		UPDATE mtmydb.mtmy_tab_banner
+			SET 
+			  is_show = #{isShow }
+		WHERE id = #{tabBackgroundId}
+	</update>
+	
+	<!-- 修改当前页面上所有组的状态 -->
+	<update id="changAllIsShow">
+		UPDATE mtmydb.mtmy_tab_banner
+			SET 
+			  is_show = 1
+	</update>
+	
+	<!-- 查询出最近更新的那一组的id -->
+	<select id="selectIdByUpdateDate" resultType="Integer">
+		SELECT id AS tabBackgroundId
+		FROM mtmydb.mtmy_tab_banner
+		ORDER BY update_date desc LIMIT 1
+	</select>
+</mapper>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.EquipmentLabelDao">
+	
+	<sql id="equipmentLabelColunm">
+			el.id AS 'equipmentLabelId',
+			el.name,
+			el.no,
+			el.type,
+			el.description,
+			el.create_by AS 'createBy.id',
+			el.create_date AS 'createDate',
+			el.update_by AS 'updateBy.id',
+			el.update_date AS 'updateDate',
+			el.remarks,
+			el.del_flag AS 'delflag'
+	</sql>
+	
+	<!-- 查询出所有的设备标签 -->
+	<select id="findAllList" resultType="EquipmentLabel" parameterType="String">
+		SELECT
+			<include refid="equipmentLabelColunm"></include>
+		FROM train_equipment_label el
+		WHERE el.del_flag=0
+		AND el.type = #{newFlag}
+		
+	</select>
+	
+	<!-- 分页查询设备标签 -->
+	<select id="findList" resultType="EquipmentLabel">
+		SELECT
+			<include refid="equipmentLabelColunm" />
+		FROM train_equipment_label el
+		WHERE el.del_flag = 0
+		<!-- 数据范围过滤 -->
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY el.create_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 根据equipmentLabelId获得设备标签-->
+	<select id="get" resultType="EquipmentLabel">
+		SELECT
+			<include refid="equipmentLabelColunm" />
+		FROM train_equipment_label el
+		WHERE el.id = #{equipmentLabelId} 
+		AND el.del_flag=0
+	</select>
+	
+	<!-- 新增设备标签 -->
+	<insert id="insertEquipmentLabel" parameterType="EquipmentLabel">
+		INSERT INTO train_equipment_label(
+			name,
+			no,
+			type,
+			description,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks
+		)VALUES(
+			#{name},
+			#{no},
+			#{type},
+			#{description},
+			#{createBy.id},
+			SYSDATE(),
+			#{createBy.id},
+			SYSDATE(),
+			#{remarks}
+		)
+	</insert>
+	
+	<!-- 编辑设备标签 -->
+	<update id="updateEquipmentLabel" parameterType="EquipmentLabel">
+		UPDATE train_equipment_label
+		SET 
+			name = #{name},
+			no = #{no},
+			description = #{description},
+			update_by = #{updateBy.id},
+			update_date = SYSDATE(),
+			remarks = #{remarks}
+		WHERE id = #{equipmentLabelId}
+	</update>
+	
+	<!-- 逻辑删除技能标签 -->
+	<delete id="deleteEquipmentLabel" parameterType="EquipmentLabel">
+		UPDATE train_equipment_label
+		SET del_flag = 1,
+			remarks = #{remarks}
+		WHERE id = #{equipmentLabelId}
+	</delete>
+	
+	<!-- 验证设备编号 -->
+	<select id="getByNO" resultType="int">
+		SELECT COUNT(*)
+		FROM train_equipment_label el
+		WHERE el.no = #{no} AND el.del_flag =0
+	</select>
+	
+	<!-- 验证设备名称 -->
+	<select id="getByName" resultType="int">
+		SELECT COUNT(*)
+		FROM train_equipment_label el
+		WHERE el.name = #{name} AND el.del_flag =0
+	</select>
+	
+	<!-- 根据商品id获取其设备标签 -->
+	<select id="findEquipmentLabelListByGoodsId" resultType="EquipmentLabel">
+	SELECT 
+		el.id AS 'equipmentLabelId',
+		el.name,
+		el.no,
+		el.type,
+		el.description,
+		el.create_by AS 'createBy.id',
+		el.create_date AS 'createDate',
+		el.update_by AS 'updateBy.id',
+		el.update_date AS 'updateDate',
+		el.remarks,
+		el.del_flag AS 'delflag'
+	FROM train_equipment_label el
+	LEFT JOIN mtmydb.mtmy_goods_equipment ge ON el.id = ge.label_id		
+	WHERE ge.goods_id=#{goodsId}
+	AND el.del_flag = 0
+	</select>
+	
+
+	<!-- 插入商品设备标签中间表 -->
+	<insert id="insertGoodsEquipmentLabel" parameterType="GoodsEquipmentLabel">
+		INSERT INTO mtmydb.mtmy_goods_equipment(
+			goods_id,
+			label_id
+		)values(
+			#{goodsId},
+			#{labelId}
+		)
+	</insert>
+	
+	<!-- 删除商品设备标签表中间冗余部分数据 -->
+	<delete id="deleteGoodsEquipmentLabel">
+		DELETE FROM mtmydb.mtmy_goods_equipment WHERE goods_id=#{goodsId}
+	</delete>
+</mapper>

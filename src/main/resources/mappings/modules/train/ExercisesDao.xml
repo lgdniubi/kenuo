@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.ExercisesDao">
+	<select id="findList" resultType="ExercisesCategorys">
+		SELECT DISTINCT a.*,c.name FROM 
+			TRAIN_CATEGORYS AS c,
+			TRAIN_EXERCISES AS a
+			<!-- 数据范围过滤 -->
+			${sqlMap.dsf}
+			AND a.STATUS=0
+			AND a.category_id=c.category_id
+			<if test="name != null and name != ''">
+				AND c.name = 
+				(SELECT name FROM 
+				TRAIN_CATEGORYS 
+				WHERE category_id = #{name})
+			</if>
+			<if test="exerciseTitle != null and exerciseTitle != ''">
+				AND ( a.exercise_title LIKE 
+						<if test="dbName == 'oracle'">'%'||#{exerciseTitle}||'%'</if>
+						<if test="dbName == 'mysql'">CONCAT('%', #{exerciseTitle}, '%')</if>
+				OR a.tags LIKE 
+						<if test="dbName == 'oracle'">'%'||#{exerciseTitle}||'%'</if>
+						<if test="dbName == 'mysql'">CONCAT('%', #{exerciseTitle}, '%')</if>
+						)
+			</if>
+			<if test="exerciseType != null and exerciseType !=''">
+				AND a.exercise_type = #{exerciseType }
+			</if>
+			ORDER BY A.CREATETIME DESC 
+	</select>
+	<!-- 	
+	<select id="findTypeList" resultType="TrainCategorys">
+		SELECT DISTINCT
+			b.name AS name
+			FROM TRAIN_EXERCISES AS a,TRAIN_CATEGORYS AS b WHERE a.category_id=b.category_id
+			AND a.STATUS=0
+	</select> 
+	-->
+	<update id="deleteOneExam">
+		UPDATE TRAIN_EXERCISES SET 
+			STATUS = '-1'
+			WHERE 
+			EXERCISE_ID =  #{exerciseId} 
+			and STATUS=0 
+	</update>
+	<update id="deleteOneLessonExam">
+		UPDATE TRAIN_EXERCISES_LESSON_MAPPING SET 
+			STATUS = '-1'
+			WHERE 
+			EXERCISE_ID =  #{exerciseId} and 
+			STATUS=0
+	</update>
+	<select id="get" resultType="ExercisesCategorys">
+		SELECT a.*,b.name FROM 
+			TRAIN_EXERCISES AS a,TRAIN_CATEGORYS AS b
+			WHERE a.STATUS=0
+			AND a.category_id=b.category_id
+			AND a.exercise_id = #{exerciseId}
+	</select>
+	<select id="getParentId" resultType="String">
+		SELECT DISTINCT b.parent_id FROM 
+			TRAIN_EXERCISES AS a,TRAIN_CATEGORYS AS b
+			WHERE a.STATUS=0
+			AND a.category_id=b.category_id
+			AND b.category_id = 
+			(SELECT category_id 
+			from 
+			TRAIN_EXERCISES where 
+			exercise_id = #{exerciseId}	)
+	</select>
+	<insert id="addExam">
+		INSERT INTO TRAIN_EXERCISES(
+			EXERCISE_ID,
+			EXERCISE_TYPE,
+			EXERCISE_CONTENT,
+			EXERCISE_RESULT,
+			CREATETIME,
+			STATUS,
+			EXERCISE_TITLE,
+			CATEGORY_ID,
+			TAGS,
+			OFFICE_CODE,
+			CREATEUSER,
+			office_id
+		) VALUES (
+			#{exerciseId},
+			#{exerciseType},
+			#{exerciseContent},
+			#{exerciseResult},
+			SYSDATE(),
+			#{status},
+			#{exerciseTitle},
+			#{categoryId},
+			#{tags},
+			(
+			select code from sys_office where id=(select office_id from sys_user where id=#{createuser})
+			),
+			#{createuser},
+			(SELECT office_id FROM trains.train_categorys WHERE category_id = #{categoryId})
+		)
+	</insert>
+	<update id="update">
+		UPDATE 
+		  TRAIN_EXERCISES 
+			SET
+			EXERCISE_TYPE = #{exerciseType},
+			EXERCISE_CONTENT = #{exerciseContent},
+			EXERCISE_RESULT = #{exerciseResult},
+			CREATETIME = SYSDATE(),
+			STATUS = #{status},
+			EXERCISE_TITLE = #{exerciseTitle},
+			TAGS = #{tags},
+			CATEGORY_ID = #{categoryId},
+			OFFICE_CODE = (select code from sys_office where id=(select office_id from sys_user where id=#{createuser})),
+			CREATEUSER = #{createuser},
+			office_id = (SELECT office_id FROM trains.train_categorys WHERE category_id = #{categoryId})
+		WHERE EXERCISE_ID = #{exerciseId}
+	</update>
+	<select id="findByName" resultType="TrainCategorys">
+		SELECT category_id AS categoryId FROM trains.`train_categorys` WHERE NAME = #{categoryName} AND parent_id != '0' AND STATUS =0;
+	</select>
+</mapper>

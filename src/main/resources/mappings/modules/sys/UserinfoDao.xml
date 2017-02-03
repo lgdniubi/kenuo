@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.sys.dao.UserinfoDao">
+	<resultMap id="userInfoResult" type="com.training.modules.sys.entity.Userinfo">
+		<id property="id" column="id" />
+		<result property="userid" column="user_id" />
+		<result property="sex" column="sex" />
+		<result property="birthday" column="birthday" />
+		<result property="areaP.id" column="areaP.id" />
+		<result property="areaP.name" column="areaP.name" />
+		<result property="areaC.id" column="areaC.id" />
+		<result property="areaC.name" column="areaC.name" />
+		<result property="position" column="position" />
+		<result property="userlevel" column="userlevel" />
+		<result property="franchiseeid" column="franchisee_id" />
+		<result property="franchisee.id" column="franchisee.id" />
+		<result property="franchisee.name" column="franchisee.name" />
+		<result property="officeid" column="office_id" />
+		<result property="selfintro" column="self_intro" />
+		<result property="createtime" column="create_time" />
+		<result property="updatetime" column="update_time" />
+		<result property="teachersComment" column="teachersComment" />
+		<result property="teachersStarLevel" column="teachersStarLevel" />
+		<collection property="infocontlist" resultMap="infocontormPic"></collection>
+
+	</resultMap>
+	<resultMap type="com.training.modules.sys.entity.Userinfocontent"
+		id="infocontormPic">
+		<result property="userid" column="contuser_id" />
+		<result property="name" column="contname" />
+		<result property="url" column="conturl" />
+		<result property="type" column="content_type" />
+		<result property="status" column="status" />
+	</resultMap>
+
+	<sql id="UserinfoColumns">
+		a.id,
+		a.user_id,
+		a.sex,
+		a.birthday,
+		a.native_area as "areaP.id",
+		b.name as "areaP.name",
+		a.work_area as "areaC.id",
+		c.name as "areaC.name",
+		a.position,
+		a.userlevel,
+		a.franchisee_id,
+		f.id as "franchisee.id",
+		f.name as "franchisee.name",
+		a.office_id,
+		a.self_intro,
+		a.create_time,
+		a.update_time,
+		a.teachers_comment AS teachersComment,
+		a.teachers_star_level AS teachersStarLevel,
+		d.user_id as "contuser_id",
+		d.name as "contname",
+		d.url as "conturl",
+		d.content_type as "content_type",
+		d.status as "status"
+	</sql>
+	<sql id="inclode">
+		LEFT JOIN sys_area b on a.native_area=b.id
+		LEFT JOIN sys_area c on a.work_area=c.id
+		LEFT JOIN sys_franchisee f on f.id=a.franchisee_id
+		LEFT JOIN sys_userinfo_content d on a.user_id=d.user_id
+
+	</sql>
+
+
+	<select id="findall">
+		select
+			<include refid="UserinfoColumns" />
+		from sys_user_info a
+			<include refid="inclode" />
+		where a.id=#{id}
+	</select>
+
+
+	<insert id="insertUserinfo">
+		insert into sys_user_info(
+			id,
+			user_id,
+			sex,
+			birthday,
+			native_area,
+			work_area,
+			position,
+			userlevel,
+			franchisee_id,
+			office_id,
+			self_intro,
+			teachers_comment,
+			teachers_star_level,
+			create_time,
+			update_time
+		)values(
+			#{id},
+			#{userid},
+			#{sex},
+			#{birthday},
+			#{nativearea},
+			#{workarea},
+			#{position},
+			#{userlevel},
+			#{franchiseeid},
+			#{officeid},
+			#{selfintro},
+			#{teachersComment},
+			#{teachersStarLevel},
+			SYSDATE(),
+			NULL
+		)
+	</insert>
+	
+	<select id="findByuserId" resultMap="userInfoResult">
+		select
+			<include refid="UserinfoColumns"></include>
+		from
+		sys_user_info a
+			<include refid="inclode"></include>
+		where
+		a.del_flag=0 and a.user_id=#{userid}
+	</select>
+
+	<update id="updateUserinfo">
+		update sys_user_info set
+			sex=#{sex},
+			birthday=#{birthday},
+			native_area=#{nativearea},
+			work_area=#{workarea},
+			position=#{position},
+			userlevel=#{userlevel},
+			franchisee_id=#{franchiseeid},
+			office_id=#{officeid},
+			self_intro=#{selfintro},
+			teachers_comment=#{teachersComment},
+			teachers_star_level=#{teachersStarLevel},
+			update_time=SYSDATE()
+		where user_id=#{userid}
+	</update>
+	
+</mapper>

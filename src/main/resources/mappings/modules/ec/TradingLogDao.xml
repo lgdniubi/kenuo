@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.TradingLogDao">
+
+	<!-- 分页查询 -->
+	<select id="findList" resultType="TradingLog">
+		SELECT
+		a.id,
+		a.user_id,
+		a.money,
+		a.`status`,
+		a.type,
+		a.order_id,
+		a.trading_time,
+		b.nickname as "userName"
+		FROM mtmydb.mtmy_trading_log a
+		LEFT JOIN mtmydb.mtmy_users b ON a.user_id=b.user_id
+		where 1=1
+		<if test="userName!= null  and userName!= ''">
+			AND b.nickname=#{userName}
+		</if>
+		ORDER BY a.trading_time DESC
+	</select>
+	<!-- 添加账户明细 -->
+	<insert id="insert">
+		INSERT INTO mtmydb.mtmy_trading_log
+		(
+		user_id,
+		money,
+		status,
+		type,
+		order_id,
+		trading_time
+		)values(
+		#{userId},
+		#{money},
+		#{status},
+		#{type},
+		#{orderId},
+		SYSDATE()
+		)
+	</insert>
+	<insert id="insertTradingLog" parameterType="map">
+		INSERT INTO mtmydb.mtmy_trading_log
+		(
+		user_id,
+		money,
+		status,
+		type,
+		order_id,
+		trading_time
+		)values(
+		#{userId},
+		#{money},
+		#{status},
+		#{type},
+		#{orderId},
+		SYSDATE()
+		)
+	</insert>	
+	<select id="findByOrderId"  resultType="TradingLog">
+		SELECT
+		a.id,
+		a.user_id,
+		a.money,
+		a.`status`,
+		a.type,
+		a.order_id,
+		a.trading_time
+		FROM mtmydb.mtmy_trading_log a
+		where a.`status`=2 and a.order_id=#{orderId}
+
+	</select>
+</mapper>

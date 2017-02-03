@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.ArrangeDao">
+	<!-- 查询市场下的所有店铺 -->
+	<select id="findOffice" resultType="Office">
+		SELECT id,name FROM sys_office WHERE parent_id = #{officeId} AND del_flag = 0
+	</select>
+	<!-- 查询店铺上班时间 -->
+	<select id="findArrange" resultType="int"><!-- union 去重 union all 不去重   -->
+		SELECT DISTINCT a.day FROM (
+			SELECT DISTINCT day FROM train_arrange_equipment WHERE shop_id = #{officeId} AND month = #{month}
+			union
+			SELECT DISTINCT day FROM train_arrange_shop WHERE shop_id = #{officeId} AND month = #{month}) as a ORDER BY day
+	</select>
+	<!-- 查询店铺美容师上班详情 -->
+	<select id="findArrangeBeautician" resultType="ArrangeBeautician">
+		SELECT
+			b.name
+		FROM
+			train_arrange_shop a
+			LEFT JOIN sys_user b ON a.beautician_id = b.id
+		WHERE
+			a.shop_id = #{officeId}
+			AND a.month = #{month}
+			AND a.day = #{day}
+	</select>
+	<!-- 查询店铺设备上班详情 -->
+	<select id="findArrangeEquipment" resultType="ArrangeBeautician">
+		SELECT
+			b.name AS equipmentName
+		FROM
+			train_arrange_equipment a
+		LEFT JOIN train_equipment b ON a.equipment_id = b.id
+		WHERE
+			a.shop_id = #{officeId}
+			AND a.month = #{month}
+			AND a.day = #{day}
+	</select>
+	<!-- 查询所有特殊美容师 -->
+	<select id="findAllBeautician" resultType="ArrangeBeautician">
+		SELECT DISTINCT a.id AS userId,a.name,a.office_id AS userOfficeId,c.del_flag FROM sys_user a RIGHT JOIN (
+			SELECT user_id FROM train_special_beautician WHERE bazaar_id = (SELECT parent_id FROM trains.sys_office WHERE id = #{officeId}) AND del_flag = 0
+			union all
+			SELECT DISTINCT b.beautician_id AS userId FROM train_arrange_shop b WHERE b.shop_id = #{officeId} AND b.month = #{month}
+		) AS b ON a.id = b.user_id
+		LEFT JOIN train_special_beautician c ON b.user_id = c.user_id
+	</select>
+	<!-- 查询美容师排班详情 -->
+	<select id="findBeautician" resultType="ArrangeShop">
+		SELECT 
+			a.id AS arrangeId,
+			a.local_bazaar_id AS localBazaarId,
+			a.local_shop_id AS localShopId,
+			a.beautician_id AS beauticianId,
+			a.month,
+			a.day,
+			a.shop_id AS shopId,
+			a.shop_name AS shopName
+		 FROM 
+		 	train_arrange_shop a
+		 WHERE 
+		 	a.beautician_id = #{id} AND a.month = #{month}
+		 ORDER BY a.day
+	</select>
+	<!-- 删除特殊美容师当前月所有排班 -->
+	<delete id="delBeautician">
+		DELETE FROM train_arrange_shop WHERE month = #{month} AND beautician_id IN 
+			<foreach collection="ids" item="id" open="(" separator="," close=")">
+	            #{id}
+	        </foreach>
+	</delete>
+	<!-- 插入所有特殊美容师排班 -->
+	<insert id="saveBeautician">
+		INSERT INTO train_arrange_shop
+			(
+				local_bazaar_id,
+				local_shop_id,
+				beautician_id,
+				appt_date,
+				month,
+				day,
+				shop_id,
+				shop_name,
+				create_by,
+				create_date
+			)
+			<foreach collection="list" item="list" separator="union all ">
+				SELECT 
+					IFNULL((SELECT bazaar_id FROM train_special_beautician WHERE user_id = #{list.beauticianId} AND  del_flag = 0) ,(SELECT parent_id FROM sys_office WHERE id = (SELECT office_id FROM sys_user WHERE id = #{list.beauticianId}))),
+					IF((SELECT bazaar_id FROM train_special_beautician WHERE user_id = #{list.beauticianId} AND  del_flag = 0) ,(SELECT shop_id FROM train_special_beautician WHERE user_id = #{list.beauticianId} AND  del_flag = 0) ,(SELECT office_id FROM sys_user WHERE id = #{list.beauticianId})),
+					#{list.beauticianId},
+					#{list.apptDate},
+					#{list.month},
+					#{list.day},
+					#{list.shopId},
+					(CASE #{list.shopId} WHEN '1' THEN '休' WHEN '2' THEN '假' ELSE (SELECT name FROM sys_office WHERE id = #{list.shopId}) END),
+					#{list.createBy.id},
+					SYSDATE()
+				FROM dual
+			</foreach>
+	</insert>
+	<!-- 查询所有特殊设备 -->
+	<select id="findAllEquipment" resultType="ArrangeBeautician">
+		SELECT DISTINCT a.id AS equipmentId,a.name AS equipmentName,a.del_flag FROM train_equipment a RIGHT JOIN(
+			SELECT id AS equipment_id FROM train_equipment WHERE type = 1 AND del_flag = 0 AND bazaar_id = (SELECT parent_id FROM trains.sys_office WHERE id = #{officeId})
+			union all
+			SELECT DISTINCT b.equipment_id AS equipment_id FROM train_arrange_equipment b WHERE b.shop_id = #{officeId} AND b.month = #{month}
+		) AS b ON a.id = b.equipment_id
+	</select>
+	<!-- 查询设备排班信息 -->
+	<select id="findEquipment" resultType="ArrangeEquipment">
+		SELECT 
+			a.id AS eId,
+			a.local_bazaar_id AS localBazaarId,
+			a.local_shop_id AS localShopId,
+			a.equipment_id AS equipmentId,
+			a.month,
+			a.day,
+			a.shop_id AS shopId,
+			a.shop_name AS shopName
+		FROM train_arrange_equipment a
+		WHERE a.equipment_id = #{equipmentId} AND a.month = #{month}
+	</select>
+	<!-- 删除特殊设备当前月所有排班 -->
+	<delete id="delEquipment">
+		DELETE FROM train_arrange_equipment WHERE month = #{month}
+	</delete>
+	<!-- 插入所有特殊设备排班 -->
+	<insert id="saveEquipment">
+		INSERT INTO train_arrange_equipment
+			(
+				local_bazaar_id,
+				local_shop_id,
+				equipment_id,
+				label_id,
+				appt_date,
+				month,
+				day,
+				shop_id,
+				shop_name,
+				office_id,
+				create_by,
+				create_date
+			)
+			<foreach collection="list" item="list" separator="union all ">
+				SELECT 
+					(SELECT bazaar_id FROM train_equipment WHERE id = #{list.equipmentId} AND  del_flag = 0),
+					(SELECT shop_id FROM train_equipment WHERE id = #{list.equipmentId} AND  del_flag = 0),
+					#{list.equipmentId},
+					(SELECT label_id FROM train_equipment WHERE id = #{list.equipmentId}),
+					#{list.apptDate},
+					#{list.month},
+					#{list.day},
+					#{list.shopId},
+					(CASE #{list.shopId} WHEN '1' THEN '修' ELSE (SELECT name FROM sys_office WHERE id = #{list.shopId}) END),
+					#{list.officeId},
+					#{list.createBy.id},
+					SYSDATE()
+				FROM dual
+			</foreach>
+	</insert>
+	<select id="findAllOrdinary" resultType="ArrangeBeautician">
+		SELECT DISTINCT a.id AS userId,a.name,a.office_id AS userOfficeId,a.del_flag FROM sys_user a RIGHT JOIN (
+			SELECT id AS user_id FROM sys_user WHERE office_id = #{officeId} AND user_type = '2' AND del_flag = 0
+			union all
+			SELECT DISTINCT b.beautician_id AS userId FROM train_arrange_shop b WHERE b.shop_id = #{officeId} AND b.month = #{month}
+		) AS b ON a.id = b.user_id
+	</select>
+</mapper>

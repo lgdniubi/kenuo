@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.PaymentDao">
+	<sql id="PaymentColumn">
+		a.pay_id,
+		a.pay_code,
+		a.pay_name,
+		a.pay_fee,
+		a.pay_desc,
+		a.pay_order,
+		a.pay_config,
+		a.enabled,
+		a.is_cod,
+		a.is_online
+
+	</sql>
+	<!-- 查询数据 -->
+	<select id="findAlllist" resultType="Payment">
+		SELECT
+		<include refid="PaymentColumn"></include>
+		FROM mtmydb.mtmy_payment a
+	</select>
+	<!-- 根据code查询数据 -->
+	<select id="getByCode" resultType="Payment">
+		SELECT
+		<include refid="PaymentColumn"></include>
+		FROM mtmydb.mtmy_payment a
+		WHERE a.pay_code=#{code}
+	</select>
+</mapper>

@@ -1,0 +1,71 @@
+package com.training.modules.sys.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.training.common.persistence.Page;
+import com.training.common.service.CrudService;
+import com.training.modules.sys.dao.SkillDao;
+import com.training.modules.sys.entity.Skill;
+import com.training.modules.sys.entity.User;
+import com.training.modules.sys.utils.UserUtils;
+
+/**
+ * 技能标签Service
+ * @author 小叶  2016.12.27
+ *
+ */
+@Service
+@Transactional(readOnly = false)
+public class SkillService extends CrudService<SkillDao, Skill>{
+	@Autowired
+	private SkillDao skillDao;
+	
+	/**
+	 * 查询出所有的技能标签
+	 */
+	public List<Skill> findAllList(){
+		return skillDao.findAllList();
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param skill
+	 * @return
+	 */
+	public Page<Skill> findList(Page<Skill> page, Skill skill) {
+		// 设置分页参数
+		skill.setPage(page);
+		// 执行分页查询
+		page.setList(skillDao.findList(skill));
+		return page;
+	}
+	
+	/**
+	 * 新增编辑技能标签
+	 * @param skill
+	 */
+	public void saveSkill(Skill skill){
+		User user = UserUtils.getUser();
+		if(skill.getSkillId() != 0){
+			skill.setUpdateBy(user);
+			skillDao.updateSkill(skill);
+		}else{
+			skill.setCreateBy(user);
+			skillDao.insertSkill(skill);
+		}
+	}
+	
+	/**
+	 * 逻辑删除技能标签
+	 * @param skillId
+	 * @return
+	 */
+	public void deleteSkill(Skill skill){
+		skillDao.deleteSkill(skill);
+}
+}

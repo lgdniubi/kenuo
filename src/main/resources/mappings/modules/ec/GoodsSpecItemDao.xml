@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.GoodsSpecItemDao">
+	
+	<!-- 根据商品规格ID，查询其所有的规格项 -->
+	<select id="findSpecItemList" resultType="GoodsSpecItem">
+		SELECT 
+		  spec_item_id AS 'specItemId',
+		  spec_id AS 'specId',
+		  item 
+		FROM
+		  mtmydb.mtmy_spec_item t 
+		  WHERE spec_id = #{specId}
+	</select>
+	
+	<!-- 根据拼接好的itemid，查询 -->
+	<select id="findSpecItems" resultType="GoodsSpecItem">
+		SELECT 
+		  spec_item_id AS 'specItemId',
+		  spec_id AS 'specId',
+		  item 
+		FROM
+		  mtmydb.mtmy_spec_item t 
+		  WHERE 
+		  <foreach collection="specItemIdList" item="specItemId" open="" close="" separator=" OR ">
+		   	spec_item_id = #{specItemId}
+		  </foreach>
+		ORDER BY spec_id ASC
+	</select>
+	
+	<!-- 查询详细信息 -->
+	<select id="get" resultType="GoodsSpecItem">
+		SELECT 
+		  s.name AS 'specName',
+		  i.item AS 'item'
+		FROM
+		  mtmydb.mtmy_spec_item i 
+		  LEFT JOIN mtmydb.mtmy_spec s 
+		    ON s.spec_id = i.spec_id 
+		WHERE i.spec_item_id = #{specItemId}
+	</select>
+	
+	<!-- 添加规格项值 -->
+	<insert id="saveItems" useGeneratedKeys="true" keyProperty="specItemId">
+		INSERT INTO mtmydb.mtmy_spec_item(spec_id,item) VALUES (#{specId},#{item})
+	</insert>
+	
+	<!-- 删除规格项值 -->
+	<delete id="delteteItems">
+		DELETE FROM mtmydb.mtmy_spec_item WHERE spec_id = #{specId} AND spec_item_id = #{specItemId}
+	</delete>
+	
+</mapper>

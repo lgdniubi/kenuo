@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.IntegralLogDao">
+	<!-- 根据订单查询 -->
+	<select id="findByOrderId" resultType="IntegralLog">
+		SELECT
+		user_id,
+		type,
+		remark,
+		value,
+		order_id,
+		add_time
+		FROM mtmydb.mtmy_Integral_log 
+		WHERE type=1 and order_id=#{orderId}
+	
+	</select>
+
+	<!-- 根据订单查询 -->
+	<select id="findByOrderIdAdd" resultType="IntegralLog">
+		SELECT
+		user_id,
+		type,
+		remark,
+		value,
+		order_id,
+		add_time
+		FROM mtmydb.mtmy_Integral_log 
+		WHERE type='0' and order_id=#{orderId}
+	
+	</select>
+	<!-- 添加积分记录 -->
+	<insert id="insert">
+		INSERT INTO mtmydb.mtmy_Integral_log
+		(
+		user_id,
+		type,
+		remark,
+		value,
+		order_id,
+		add_time
+		
+		)values(
+		#{userId},
+		#{type},
+		#{remark},
+		#{value},
+		#{orderId},
+		SYSDATE()
+		)
+	</insert>
+	<insert id="insertIntegralLog" parameterType="map">
+		INSERT INTO mtmydb.mtmy_Integral_log
+		(
+		user_id,
+		type,
+		remark,
+		value,
+		order_id,
+		add_time
+		
+		)values(
+		#{userId},
+		#{type},
+		#{remark},
+		#{value},
+		#{orderId},
+		SYSDATE()
+		)
+	</insert>
+</mapper>

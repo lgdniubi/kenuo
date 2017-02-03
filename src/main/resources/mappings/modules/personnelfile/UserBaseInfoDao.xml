@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.personnelfile.dao.UserBaseInfoDao">
+	
+	<insert id="saveUserBaseInfo" parameterType="com.training.modules.personnelfile.entity.UserBaseInfo">
+		INSERT INTO user_base_info (
+			user_id,
+			age,
+			birthday,
+			nation,
+			stature,
+			blood_type,
+			marital_status,
+			party,
+			join_party,
+			register_type,
+			register_site,
+			dwelling,
+			sex
+		)
+		VALUES(
+			#{userId}, #{age}, #{birthday}, #{nation}, #{stature}, #{bloodType}, 
+			#{maritalStatus}, #{party}, #{joinParty}, #{registerType}, #{registerSite}, #{dwelling}, #{sex}
+		);
+	</insert>
+	
+	<delete id="deleteByUserId">
+	    delete from user_base_info
+	    where user_id = #{userId}
+ 	</delete>
+	
+</mapper>

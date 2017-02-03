@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.personnelfile.dao.UserEmployedDao">
+	
+	<insert id="saveUserEmployed" parameterType="com.training.modules.personnelfile.entity.UserEmployed">
+		INSERT INTO user_employed (
+			user_id,
+			phone_number,
+			office_tel,
+			family_tel,
+			source,
+			introducer,
+			introducer_tel,
+			probation_start_date,
+			member_date,
+			contract_end_date,
+			probation_wages,
+			base_wages,
+			second_work,
+			bank_name,
+			bank_beneficiary,
+			bank_code,
+			create_date
+		)
+		VALUES(
+			#{userId},
+			#{phoneNumber},
+			#{officeTel},
+			#{familyTel},
+			#{source},
+			#{introducer},
+			#{introducerTel},
+			#{probationStartDate},
+			#{memberDate},
+			#{contractEndDate},
+			#{probationWages},
+			#{baseWages},
+			#{secondWork},
+			#{bankName},
+			#{bankBeneficiary},
+			#{bankCode},
+			#{createDate}
+		);
+	</insert>
+	
+	<delete id="deleteByUserId">
+	    DELETE
+		FROM
+			user_employed
+		WHERE
+			user_id = #{userId}
+  </delete>
+</mapper>
