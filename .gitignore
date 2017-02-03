@@ -5,8 +5,9 @@
 *.ear
 /target/*
 /target
+/build
 #.gitignore
-.classpath
 #.project
+.classpath
 /.settings
 /.settings/*
