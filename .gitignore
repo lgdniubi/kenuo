@@ -1,5 +1,4 @@
 *.class
-
 # Package Files #
 *.war
 *.ear
@@ -8,6 +7,6 @@
 /build
 #.gitignore
 #.project
-.classpath
+#.classpath
 /.settings
 /.settings/*
