@@ -68,7 +68,7 @@ public interface EquipmentLabelDao extends CrudDao<EquipmentLabel>{
 	 * @param 
 	 * @return
 	 */
-	public int insertGoodsEquipmentLabel(GoodsEquipmentLabel goodsEquipmentLabel);
+	public int insertGoodsEquipmentLabel(List<GoodsEquipmentLabel> list);
 	
 	/**
 	 * 删除商品设备标签表中间冗余部分数据并且从新更新

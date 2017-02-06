@@ -462,7 +462,7 @@
 										<div style="width: 40%;padding-left: 150px;">
 						                    <sys:treeselect id="equipmentLabel" name="equipmentLabel.id" value="${goods.equipmentLabel.id}" 
 												labelName="equipmentLabel.name" labelValue="${goods.equipmentLabel.name }" 
-									     		title="设备标签" url="/ec/equipmentLabel/treeData?newFlag=1" cssClass="form-control" allowClear="true" notAllowSelectParent="true" />
+									     		title="设备标签" url="/ec/equipmentLabel/treeData?newFlag=1" cssClass="form-control" allowClear="true" notAllowSelectParent="true" checked="true"/>
 								     		<span class="control-label cannotEdit">若为特殊商品则必填</span>
 								     	</div>	
 								     	

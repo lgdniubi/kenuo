@@ -341,10 +341,10 @@ public class GoodsService extends CrudService<GoodsDao,Goods>{
 			
 			//插入设备标签
 			if(!"".equals(goods.getEquipmentLabel().getId())){
-				GoodsEquipmentLabel goodsEquipmentLabel = new GoodsEquipmentLabel();
-				goodsEquipmentLabel.setGoodsId(goods.getGoodsId());
-				goodsEquipmentLabel.setLabelId(Integer.valueOf(goods.getEquipmentLabel().getId()));
-				equipmentLabelDao.insertGoodsEquipmentLabel(goodsEquipmentLabel);
+				List<GoodsEquipmentLabel> list = SpeArrGoodsEquipmentLabelList(goods); // 获取拼接的设备标签list
+				if (list.size() > 0) {
+					equipmentLabelDao.insertGoodsEquipmentLabel(list);  // 插入设备标签表
+				}
 			}
 		}else{
 			
@@ -656,12 +656,10 @@ public class GoodsService extends CrudService<GoodsDao,Goods>{
 			}
 			
 			//更新商品设备标签
+			List<GoodsEquipmentLabel> goodsEquipmentLabelList = SpeArrGoodsEquipmentLabelList(goods); // 获得设备标签list
 			equipmentLabelDao.deleteGoodsEquipmentLabel(goods.getGoodsId());
-			if(!"".equals(goods.getEquipmentLabel().getId())){
-				GoodsEquipmentLabel goodsEquipmentLabel = new GoodsEquipmentLabel();
-				goodsEquipmentLabel.setGoodsId(goods.getGoodsId());
-				goodsEquipmentLabel.setLabelId(Integer.valueOf(goods.getEquipmentLabel().getId()));
-				equipmentLabelDao.insertGoodsEquipmentLabel(goodsEquipmentLabel);
+			if (goodsEquipmentLabelList.size() > 0) {
+				equipmentLabelDao.insertGoodsEquipmentLabel(goodsEquipmentLabelList);
 			}
 		}
 	}
@@ -1072,6 +1070,29 @@ public class GoodsService extends CrudService<GoodsDao,Goods>{
 					GoodsSkill usspe = new GoodsSkill();
 					usspe.setGoodsId(goods.getGoodsId());
 					usspe.setSkillId(Integer.valueOf(arry[i]));
+					list.add(usspe);
+				}
+			}
+			
+		}
+		return list;
+	}
+	
+	/**
+	 * 商品设备标签拼接
+	 * @param goods
+	 * @return
+	 */
+	public List<GoodsEquipmentLabel> SpeArrGoodsEquipmentLabelList(Goods goods){
+		List<GoodsEquipmentLabel> list = new ArrayList<GoodsEquipmentLabel>();
+		if (goods.getEquipmentLabel().getId() != null) {
+			String spec = goods.getEquipmentLabel().getId();
+			if(!"".equals(spec) && spec != null){
+				String[] arry = spec.split(",");
+				for (int i = 0; i < arry.length; i++) {
+					GoodsEquipmentLabel usspe = new GoodsEquipmentLabel();
+					usspe.setGoodsId(goods.getGoodsId());
+					usspe.setLabelId(Integer.valueOf(arry[i]));
 					list.add(usspe);
 				}
 			}

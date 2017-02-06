@@ -134,14 +134,11 @@
 	
 
 	<!-- 插入商品设备标签中间表 -->
-	<insert id="insertGoodsEquipmentLabel" parameterType="GoodsEquipmentLabel">
-		INSERT INTO mtmydb.mtmy_goods_equipment(
-			goods_id,
-			label_id
-		)values(
-			#{goodsId},
-			#{labelId}
-		)
+	<insert id="insertGoodsEquipmentLabel">
+		INSERT INTO mtmydb.mtmy_goods_equipment(goods_id,label_id)
+		<foreach collection="list" item="list" separator="union all ">
+			SELECT #{list.goodsId},#{list.labelId} FROM dual
+		</foreach>
 	</insert>
 	
 	<!-- 删除商品设备标签表中间冗余部分数据 -->
