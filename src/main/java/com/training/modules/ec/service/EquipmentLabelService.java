@@ -26,10 +26,17 @@ public class EquipmentLabelService extends CrudService<EquipmentLabelDao, Equipm
 	private EquipmentLabelDao equipmentLabelDao;
 	
 	/**
-	 * 查询出所有的设备标签
+	 * 查询设备标签
 	 */
 	public List<EquipmentLabel> findAllList(String newFlag){
 		return equipmentLabelDao.findAllList(newFlag);
+	}
+	
+	/**
+	 * 查询所有的设备标签
+	 */
+	public List<EquipmentLabel> newFindAllList(){
+		return equipmentLabelDao.newFindAllList();
 	}
 	
 	
