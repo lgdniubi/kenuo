@@ -47,6 +47,7 @@ import com.training.common.utils.excel.ImportExcel;
 import com.training.common.web.BaseController;
 import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.dao.ReservationDao;
+import com.training.modules.ec.entity.Users;
 import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.sys.dao.RoleDao;
 import com.training.modules.sys.dao.SpecBeauticianDao;
@@ -305,11 +306,7 @@ public class UserController extends BaseController {
 			user.setQrCode(request.getContextPath() + Global.USERFILES_BASE_URL + user.getId() + "/qrcode/" + name);
 			// 保存用户信息
 			systemService.saveUser(user);
-			// 清除当前用户缓存
-			if (user.getLoginName().equals(UserUtils.getUser().getLoginName())) {
-				// UserUtils.getCacheMap().clear();
-			}
-			UserUtils.clearCache();
+			UserUtils.clearCache(user);		//清除指定用户缓存
 			addMessage(redirectAttributes, "保存用户'" + user.getLoginName() + "'成功");
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -548,41 +545,36 @@ public class UserController extends BaseController {
 						if ("true".equals(checkLoginName("", user.getLoginName()))) {
 							if(isInteger(user.getMobile())){
 								if (user.getMobile().length() == 11) {
-									if ("true".equals(checkMobile("", user.getMobile()))) {
+									if ("4".equals(newCheckMobile(user.getMobile()))) {              
 										if ("true".equals(checkIdcard("", user.getIdCard()))) {
 											if (user.getIdCard().length() == 15 || user.getIdCard().length() == 18) {
-												if(mtmyUsersDao.findByMobile(user) == null){   // 用于验证手机号是否在每天美耶注册过
-													if("true".equals(checkOfficeId(user.getCode()))){
-														try {
-															//默认给美容师角色
-															Role role = new Role();
-															role.setName("美容师");
-															role = roleDao.getByNameNew(role);
-															user.setRole(role);
-															List<Role> roleList = Lists.newArrayList();
-															roleList.add(role);
-															user.setRoleList(roleList);
-															//默认职位为美容师
-															user.setUserType("2");
-															user.setPassword(SystemService.entryptPassword("123456"));
-															Office office = systemService.getoffice(user.getCode());
-															user.setOffice(office);
-															user.setName(user.getName().replace(" ", ""));
-															systemService.saveUser(user);
-															successNum++;
-			
-														} catch (Exception e) {
-															e.getMessage();
-															BugLogUtils.saveBugLog(request, "导入保存失败", e);
-															failureMsg.append("<br/>导入保存失败 " + user.getMobile());
-															failureNum++;
-														}
-													}else{
-														failureMsg.append("<br/>手机号" + user.getMobile() + " ,此用户机构编码有误; ");
+												if("true".equals(checkOfficeId(user.getCode()))){
+													try {
+														//默认给美容师角色
+														Role role = new Role();
+														role.setName("美容师");
+														role = roleDao.getByNameNew(role);
+														user.setRole(role);
+														List<Role> roleList = Lists.newArrayList();
+														roleList.add(role);
+														user.setRoleList(roleList);
+														//默认职位为美容师
+														user.setUserType("2");
+														user.setPassword(SystemService.entryptPassword("123456"));
+														Office office = systemService.getoffice(user.getCode());
+														user.setOffice(office);
+														user.setName(user.getName().replace(" ", ""));
+														systemService.saveUser(user);
+														successNum++;
+		
+													} catch (Exception e) {
+														e.getMessage();
+														BugLogUtils.saveBugLog(request, "导入保存失败", e);
+														failureMsg.append("<br/>导入保存失败 " + user.getMobile());
 														failureNum++;
 													}
-												} else {
-													failureMsg.append("<br/>手机号" + user.getMobile() + " ,此手机号已在每天美耶注册,请联系管理员; ");
+												}else{
+													failureMsg.append("<br/>手机号" + user.getMobile() + " ,此用户机构编码有误; ");
 													failureNum++;
 												}
 											} else {
@@ -606,8 +598,17 @@ public class UserController extends BaseController {
 										}
 	
 									} else {
-										failureMsg.append("<br/>手机号码 " + user.getMobile() + " 已存在; ");
-										failureNum++;
+										String result = newCheckMobile(user.getMobile());
+										if(result == "3"){
+											failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码妃子校和每天美耶都已注册,请联系管理员; ");
+											failureNum++;
+										}else if(result == "2"){
+											failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码每天美耶已注册,请联系管理员; ");
+											failureNum++;
+										}else if(result == "1"){
+											failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码妃子校已注册,请联系管理员; ");
+											failureNum++;
+										}
 									}
 								} else {
 									failureMsg.append("<br/>手机号码 " + user.getMobile() + "要为11位数！");
@@ -895,24 +896,28 @@ public class UserController extends BaseController {
 
 	/**
 	 * 验证手机号
-	 * 
-	 * @param oldmobile
 	 * @param mobile
 	 * @return
 	 */
 	@ResponseBody
 	@RequiresPermissions(value = { "sys:user:add", "sys:user:edit" }, logical = Logical.OR)
-	@RequestMapping(value = "checkMobile")
-	public String checkMobile(String oldmobile, String mobile) {
-		User user = new User();
+	@RequestMapping(value = "newCheckMobile")
+	public String newCheckMobile(String mobile) {
+		Users user = new Users();
 		user.setMobile(mobile);
-		if (mobile != null && mobile.equals(oldmobile)) {
-			return "true";
-		} else if (mobile != null && systemService.getByMobile(mobile) == null && mtmyUsersDao.findByMobile(user) == null) {
-			return "true";
+		if(mobile != null && systemService.getByMobile(mobile) != null && mtmyUsersDao.findUserBymobile(user) != 0){
+			return "3";
+		}else if(mobile != null && mtmyUsersDao.findUserBymobile(user) != 0){
+			return "2";
+		}else if (mobile != null && systemService.getByMobile(mobile) != null){
+			return "1";
 		}
-		return "false";
+		return "4";
+		
 	}
+	
+
+	
 	/**
 	 * 导入用户验证用户上级机构是否准确
 	 * @param officeCode

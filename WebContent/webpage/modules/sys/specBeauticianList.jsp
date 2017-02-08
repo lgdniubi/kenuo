@@ -11,6 +11,14 @@
 	function refresh(){
 		window.location="${ctx}/sys/specBeautician/list";
 	}
+	
+	function newReset(){
+		$("#pageNo").val(0);
+		$(".form-group").val("");
+		$(".form-control").val("");
+		$("#searchForm").submit();
+			return false;
+	}
 </script>
 </head>
 <body>
@@ -35,6 +43,10 @@
 								<span>选择市场：</span>
 								<sys:treeselect id="bazaar" name="bazaarId" value="${specBeautician.bazaarId}" labelName="bazaarName" labelValue="${specBeautician.bazaarName}" title="市场" url="/sys/office/treeData?isGrade=true" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="true" notAllowSelectParent="true"/>
 							</div>
+							<span>姓&nbsp;&nbsp;&nbsp;名：</span>
+								<form:input path="userName" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
+							<span>电话号码：</span>
+								<form:input path="userPhone" htmlEscape="false" maxlength="50" class=" form-control input-sm" /> 
 						</form:form>
 						<br />
 					</div>
@@ -56,7 +68,7 @@
 							<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()">
 								<i class="fa fa-search"></i> 查询
 							</button>
-							<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()">
+							<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="newReset()">
 								<i class="fa fa-refresh"></i> 重置
 							</button>
 						</div>
@@ -67,7 +79,7 @@
 					<thead>
 						<tr>
 							<th style="text-align: center;">姓名</th>
-							<th style="text-align: center;">电话号码</th>
+							<th style="text-align: center;">手机号码</th>
 							<th style="text-align: center;">所在市场</th>
 							<th style="text-align: center;">所在店铺</th>
 							<th style="text-align: center;">在职状态</th>

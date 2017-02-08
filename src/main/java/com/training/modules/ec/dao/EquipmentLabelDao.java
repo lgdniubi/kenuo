@@ -16,10 +16,14 @@ import com.training.modules.ec.entity.GoodsEquipmentLabel;
 public interface EquipmentLabelDao extends CrudDao<EquipmentLabel>{
 	
 	/**
-	 * 查询出所有的设备标签
+	 * 查询设备标签
 	 */
 	public List<EquipmentLabel> findAllList(String newFlag);
 	
+	/**
+	 * 查询出所有的设备标签
+	 */
+	public List<EquipmentLabel> newFindAllList();
 	
 	/**
 	 * 新增设备标签
@@ -68,7 +72,7 @@ public interface EquipmentLabelDao extends CrudDao<EquipmentLabel>{
 	 * @param 
 	 * @return
 	 */
-	public int insertGoodsEquipmentLabel(GoodsEquipmentLabel goodsEquipmentLabel);
+	public int insertGoodsEquipmentLabel(List<GoodsEquipmentLabel> list);
 	
 	/**
 	 * 删除商品设备标签表中间冗余部分数据并且从新更新

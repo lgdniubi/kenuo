@@ -17,12 +17,15 @@
 	<script type="text/javascript">
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
+			clean();
+			var html=$("#mobileError").html();
+			if(html.length > 0){
+				return;
+			}
 		  if(validateForm.form()){
-
-			 loading('正在提交，请稍等...');
-			 $("#inputForm").submit();
-			 return true;  
-
+        	  loading('正在提交，请稍等...');
+		      $("#inputForm").submit();
+	     	  return true;
 		  }
 		  return false;
 		}
@@ -291,8 +294,7 @@
 					mobile:{
 						digits:true,
 						minlength:11,
-						isMobile:true,
-						remote: "${ctx}/sys/user/checkMobile?oldmobile=" + encodeURIComponent('${user.mobile}')
+						isMobile:true
 						
 					},
 					idCard:{
@@ -306,8 +308,7 @@
 					mobile:{
 						digits:"输入合法手机号",
 						minlength:"手机号码要11位",
-						isMobile :"请输入正确手机号",
-						remote:"手机号已经存在"
+						isMobile :"请输入正确手机号"
 					},
 					idCard:{
 						isIdCard :"请输入正确身份证号码",
@@ -355,6 +356,30 @@
 
 		window.onload=init;
 		//window.onload=BindSelect;
+		
+		function clean(){
+			 $("#mobileError").html("");
+			 $.ajax({
+				  async:false,
+		          type:"get",  
+		          url:"${ctx}/sys/user/newCheckMobile",  
+		          data:{'mobile':$('#mobile').val()},  
+		          dateType:'json',
+		          success: function(data){ 
+		              if (data == '1'){
+		            	 $("#mobileError").html("该号码妃子校已存在");
+		            	 return;
+		              }else if(data == '2'){
+		            	 $("#mobileError").html("该号码每天美耶已存在"); 
+		            	 return;
+		              }else if(data == '3'){
+		            	 $("#mobileError").html("该号码妃子校和每天美耶都已存在");
+		            	 return;
+		              }
+		          }
+		      });
+		}
+		
 	</script>
 </head>
 <body>
@@ -422,8 +447,11 @@
 		      
 		      <tr>
 		         <td class="active"><label class="pull-right"><font color="red">*</font>手机:</label></td>
-		         <td><input id="oldMobile" name="oldMobile" type="hidden" value="${user.mobile}">
-		         <form:input path="mobile" htmlEscape="false" maxlength="11" class="form-control required"/></td>
+		         <td>
+			         <input id="oldMobile" name="oldMobile" type="hidden" value="${user.mobile}">
+			         <form:input path="mobile" htmlEscape="false" maxlength="11" class="form-control required" onchange="clean()"/>
+			         <br><font color="red" id="mobileError"></font><br>
+		         </td>
 		         <td class="active"><label class="pull-right">是否允许登录:</label></td>
 		         <td><form:select path="loginFlag"  class="form-control">
 					<form:options items="${fns:getDictList('yes_no')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
