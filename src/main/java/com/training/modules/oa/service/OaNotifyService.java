@@ -22,6 +22,7 @@ import com.training.common.mapper.JsonMapper;
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.common.utils.StringUtils;
+import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.oa.dao.OaNotifyDao;
 import com.training.modules.oa.dao.OaNotifyRecordDao;
 import com.training.modules.oa.entity.OaNotify;
@@ -31,6 +32,8 @@ import com.training.modules.train.dao.TrainCategorysDao;
 import com.training.modules.train.dao.TrainLessonsDao;
 import com.training.modules.train.entity.TrainCategorys;
 import com.training.modules.train.entity.TrainLessons;
+
+import net.sf.json.JSONObject;
 
 /**
  * 通知通告Service
@@ -151,7 +154,7 @@ public class OaNotifyService extends CrudService<OaNotifyDao, OaNotify> {
 		
 		
 	}
-	private String push(String jsonObj){
+	private String push(String m){
 		
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
@@ -159,7 +162,12 @@ public class OaNotifyService extends CrudService<OaNotifyDao, OaNotify> {
 		headers.setContentType(type);
 		headers.add("Accept", MediaType.APPLICATION_JSON.toString());
 		
-		HttpEntity<String> entity = new HttpEntity<String>(jsonObj,headers);
+		//  用于加密
+		JSONObject jsonObj = JSONObject.fromObject(m);
+		String sign = WebUtils.MD5("train"+jsonObj+"train");
+		String paramter = "{'sign':'"+sign+"' , 'jsonStr':'train"+jsonObj+"'}";
+		
+		HttpEntity<String> entity = new HttpEntity<String>(paramter,headers);
 		
 		String push_url = ParametersFactory.getMtmyParamValues("push_url");
 		//Global.getInstance().getConfig("push_url")
