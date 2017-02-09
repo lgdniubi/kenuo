@@ -451,6 +451,7 @@
 			         <input id="oldMobile" name="oldMobile" type="hidden" value="${user.mobile}">
 			         <form:input path="mobile" htmlEscape="false" maxlength="11" class="form-control required" onchange="clean()"/>
 			         <br><font color="red" id="mobileError"></font><br>
+			         <input type="hidden" id="star"> 
 		         </td>
 		         <td class="active"><label class="pull-right">是否允许登录:</label></td>
 		         <td><form:select path="loginFlag"  class="form-control">
