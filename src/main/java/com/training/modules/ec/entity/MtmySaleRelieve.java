@@ -3,6 +3,7 @@ package com.training.modules.ec.entity;
 import java.util.Date;
 
 import com.training.common.persistence.DataEntity;
+import com.training.common.utils.excel.annotation.ExcelField;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.User;
 
@@ -53,6 +54,13 @@ public class MtmySaleRelieve extends DataEntity<MtmySaleRelieve>{
 	
 	private int lowerNum;			//下级用户数量
 	
+	
+	private String userMobile;          //用户手机号码
+	private String areaName;            //所在大区名称
+	private String groupName;           //所在集团军名称
+	private String bazaarName;          //所在市场名称
+	
+	
 	public Users getUsers() {
 		return users;
 	}
@@ -71,6 +79,7 @@ public class MtmySaleRelieve extends DataEntity<MtmySaleRelieve>{
 	public void setUser(User user) {
 		this.user = user;
 	}
+	@ExcelField(title="妃子校用户归属店铺", align=2, sort=25)
 	public Office getOffice() {
 		return office;
 	}
@@ -173,6 +182,7 @@ public class MtmySaleRelieve extends DataEntity<MtmySaleRelieve>{
 	public void setMtmySaleRelieveLog(MtmySaleRelieveLog mtmySaleRelieveLog) {
 		this.mtmySaleRelieveLog = mtmySaleRelieveLog;
 	}
+	@ExcelField(title="B级用户数", align=2, sort=45)
 	public int getABnum() {
 		return ABnum;
 	}
@@ -209,5 +219,34 @@ public class MtmySaleRelieve extends DataEntity<MtmySaleRelieve>{
 	public void setLowerNum(int lowerNum) {
 		this.lowerNum = lowerNum;
 	}
+	@ExcelField(title="手机号码", align=2, sort=40)
+	public String getUserMobile() {
+		return userMobile;
+	}
+	public void setUserMobile(String userMobile) {
+		this.userMobile = userMobile;
+	}
+	@ExcelField(title="归属大区", align=2, sort=5)
+	public String getAreaName() {
+		return areaName;
+	}
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
+	}
+	@ExcelField(title="归属集团军", align=2, sort=10)
+	public String getGroupName() {
+		return groupName;
+	}
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+	@ExcelField(title="归属市场", align=2, sort=15)
+	public String getBazaarName() {
+		return bazaarName;
+	}
+	public void setBazaarName(String bazaarName) {
+		this.bazaarName = bazaarName;
+	}
+	
 }
     
