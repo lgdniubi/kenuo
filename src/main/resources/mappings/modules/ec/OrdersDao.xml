@@ -262,7 +262,9 @@
 			f.`name` as "catename",
 			sp.goods_no as "goodsNo",
 			sp.bar_code as "barCode",
-			ogd.order_arrearage AS orderArrearage
+			ogd.order_arrearage AS orderArrearage,
+			a. user_note AS useNote,
+		    a.admin_note AS adminNote
 		FROM
 			mtmydb.mtmy_orders a
 			LEFT JOIN mtmydb.mtmy_payment d ON a.pay_code=d.pay_code
@@ -821,11 +823,11 @@
 	</update>
 
 	<update id="updateOrderStatut">
-	UPDATE mtmydb.mtmy_orders
-			SET order_status = -2,
-			user_note='强制取消'
-	WHERE
-		order_id = #{orderid}
+		UPDATE mtmydb.mtmy_orders
+				SET order_status = -2,
+				admin_note='强制取消'
+		WHERE
+			order_id = #{orderid}
 	</update>
 
 	<!-- 取消订单 -->

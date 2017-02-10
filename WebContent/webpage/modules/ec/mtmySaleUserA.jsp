@@ -45,6 +45,8 @@
 								<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="nowReset()" ><i class="fa fa-refresh"></i> 重置</button>
 							</div>
 						</form:form>
+						<!-- 导出按钮 -->
+						<table:exportExcel url="${ctx}/ec/mtmySale/export"></table:exportExcel>
 					</div>
 				</div>
 				<p></p>
@@ -53,9 +55,13 @@
 					<thead>
 						<tr>
 							<th>级别</th>
+							<th>归属大区</th>
+							<th>归属集团军</th>
+							<th>归属市场</th>
 							<th>妃子校用户归属店铺</th>
 							<th>妃子校用户名</th>
 							<th>每天美耶用户名</th>
+							<th>手机号码</th>
 							<th class="sort-column r.ABnum">B级用户</th>
 							<th>剩余B级用户</th>
 							<th class="sort-column rc.ACnum">AB级用户</th>
@@ -69,9 +75,13 @@
 						<c:forEach items="${page.list}" var="mtmySaleRelieve">
 							<tr>
 								<td>A</td>
+								<td>${mtmySaleRelieve.areaName}</td>
+								<td>${mtmySaleRelieve.groupName}</td>
+								<td>${mtmySaleRelieve.bazaarName}</td>
 								<td>${mtmySaleRelieve.office.name}</td>
 								<td>${mtmySaleRelieve.user.name}</td>
 								<td>${mtmySaleRelieve.users.nickname}</td>
+								<td>${mtmySaleRelieve.userMobile}</td>
 								<td>${mtmySaleRelieve.ABnum}</td>
 								<td>
 									<c:if test="${mtmyRuleParam.paramValue-mtmySaleRelieve.ABnum < 0}">
