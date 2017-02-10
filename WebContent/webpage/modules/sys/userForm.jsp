@@ -17,7 +17,6 @@
 	<script type="text/javascript">
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-			clean();
 			var html=$("#mobileError").html();
 			if(html.length > 0){
 				return;
@@ -81,6 +80,21 @@
 			    var idCard = /^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$/;       
 			    return this.optional(element) || ((length == 15 || length == 18) && idCard.test(value));
 			}, "请正确填写您的身份证号码");
+			jQuery.validator.addMethod("isShow", function(value, element) {
+				var length = value.length;
+				var oldMobile=$("#oldMobile").val();
+				if(oldMobile==value){
+					
+				}else{
+					if(length==11){
+						clean();
+					}else{
+						$("#mobileError").html("手机号要为11位");	
+						return false;
+					}
+				}
+				return true;
+			},"请正确填写您的手机号码");
 			/* jQuery.validator.addMethod("delIdCard", function(value, element) {    //用jquery ajax的方法验证身份证号码是否被删除 
 				  var flag = 1;
 			      $.ajax({  
@@ -292,9 +306,10 @@
 					no:{remote:"${ctx}/sys/user/checkNO?oldNo=" + encodeURIComponent('${user.no}')},
 					loginName: {remote: "${ctx}/sys/user/checkLoginName?oldLoginName=" + encodeURIComponent('${user.loginName}')},//设置了远程验证，在初始化时必须预先调用一次。
 					mobile:{
+						isShow:true,
 						digits:true,
-						minlength:11,
 						isMobile:true
+						
 						
 					},
 					idCard:{
@@ -306,9 +321,11 @@
 					no:{remote:"用户工号已存在"},
 					loginName: {remote: "用户登录名已存在"},
 					mobile:{
+						isShow:"",
 						digits:"输入合法手机号",
-						minlength:"手机号码要11位",
 						isMobile :"请输入正确手机号"
+						
+						
 					},
 					idCard:{
 						isIdCard :"请输入正确身份证号码",
@@ -449,8 +466,8 @@
 		         <td class="active"><label class="pull-right"><font color="red">*</font>手机:</label></td>
 		         <td>
 			         <input id="oldMobile" name="oldMobile" type="hidden" value="${user.mobile}">
-			         <form:input path="mobile" htmlEscape="false" maxlength="11" class="form-control required" onchange="clean()"/>
-			         <br><font color="red" id="mobileError"></font><br>
+			         <form:input path="mobile" htmlEscape="false" maxlength="11" class="form-control required" onchange="clean()" />
+			         <br><label><font color="red" id="mobileError"></font></label><br>
 			         <input type="hidden" id="star"> 
 		         </td>
 		         <td class="active"><label class="pull-right">是否允许登录:</label></td>
