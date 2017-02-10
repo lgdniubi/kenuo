@@ -6,7 +6,12 @@
 	<title>退货审核</title>
 	<meta name="decorator" content="default"/>
 	<!-- 内容上传 引用-->
-
+	<link href="${ctxStatic}/train/css/imgbox.css" rel="stylesheet" />
+	<script src="${ctxStatic}/train/js/jquery.min.js"></script>
+	<script type="text/javascript">
+		var jq = $.noConflict();
+	</script>
+	<script src="${ctxStatic}/train/js/jquery.imgbox.pack.js"></script>
 <script type="text/javascript">
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
@@ -31,7 +36,13 @@
 	
 		$(document).ready(function(){
 	
-			
+			jq("a[class='img']").imgbox({
+				'speedIn'		: 0,
+				'speedOut'		: 0,
+				'alignment'		: 'center',
+				'overlayShow'	: true,
+				'allowMultiple'	: false
+			});
 			$("#reason").focus();
 			validateForm = $("#inputForm").validate({
 				rules: {
@@ -80,8 +91,6 @@
 			
 			
 		});
-
-		
 </script>
 </head>
 <body>
@@ -128,7 +137,7 @@
 			        <label>售后商品图片：</label>
 			        <c:forEach items="${returnedGoods.imgList}" var="imgList">
 			        	<label>
-			        		<img alt="退货商品图片" src="${imgList.returnImg}" style="width: 180px;height:100px;">
+			        		<a class='img' href="${imgList.returnImg}"><img alt="退货商品图片" src="${imgList.returnImg}" style="width: 180px;height:100px;"></a>
 			        	</label>
 			        </c:forEach>
 			      	<p></p>
