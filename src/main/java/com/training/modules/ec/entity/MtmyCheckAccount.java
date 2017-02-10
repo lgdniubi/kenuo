@@ -60,6 +60,8 @@ public class MtmyCheckAccount extends DataEntity<MtmyCheckAccount>{
 	private Date endtime;				//结束时间
 	private int isReal;					//是否实物
 	
+	private String userNote;            //买家留言
+	private String adminNote;           //备注
 	@JsonIgnore
 	@NotNull(message="商户订单号不能为空")
 	@ExcelField(title="商户订单号", type=0, align=2, sort=20)
@@ -208,8 +210,7 @@ public class MtmyCheckAccount extends DataEntity<MtmyCheckAccount>{
 	public void setShippingTime(String shippingTime) {
 		this.shippingTime = shippingTime;
 	}
-	@JsonIgnore
-	@ExcelField(title="备注", type=1, align=2, sort=240)
+	
 	public String getRemark() {
 		return remark;
 	}
@@ -322,6 +323,20 @@ public class MtmyCheckAccount extends DataEntity<MtmyCheckAccount>{
 	public void setIsReal(int isReal) {
 		this.isReal = isReal;
 	}
-	
-	
+	@JsonIgnore
+	@ExcelField(title="买家留言", type=1, align=2, sort=240)
+	public String getUserNote() {
+		return userNote;
+	}
+	public void setUserNote(String userNote) {
+		this.userNote = userNote;
+	}
+	@JsonIgnore
+	@ExcelField(title="备注", type=1, align=2, sort=245)
+	public String getAdminNote() {
+		return adminNote;
+	}
+	public void setAdminNote(String adminNote) {
+		this.adminNote = adminNote;
+	}
 }

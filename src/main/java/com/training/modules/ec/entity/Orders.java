@@ -164,6 +164,9 @@ public class Orders extends TreeEntity<Orders> {
 	private int flag;						//分销是否处理 分销结算标示（0：未结算；1：已结算）
 	
 
+	private String userNote;            //买家留言
+	private String adminNote;           //备注
+	
 	@JsonIgnore
 	@ExcelField(title="商品货号", align=2, sort=73)
 	public String getGoodsNo() {
@@ -1336,5 +1339,24 @@ public class Orders extends TreeEntity<Orders> {
 	public void setReturnTime(Date returnTime) {
 		this.returnTime = returnTime;
 	}
+	
+	@JsonIgnore
+	@ExcelField(title="买家留言", type=1, align=2, sort=240)
+	public String getUserNote() {
+		return userNote;
+	}
 
+	public void setUserNote(String userNote) {
+		this.userNote = userNote;
+	}
+	@JsonIgnore
+	@ExcelField(title="备注", type=1, align=2, sort=245)
+	public String getAdminNote() {
+		return adminNote;
+	}
+
+	public void setAdminNote(String adminNote) {
+		this.adminNote = adminNote;
+	}
+	
 }
