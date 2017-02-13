@@ -390,6 +390,7 @@ public class GoodsController extends BaseController{
 			addMessage(redirectAttributes, "保存/修改 商品'" + goods.getGoodsName() + "'成功");
 		} catch (Exception e) {
 			logger.error("保存/修改 商品通用信息 出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "保存/修改 商品通用信息 出现异常", e);
 			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
 		return "redirect:" + adminPath + "/ec/goods/list?actionId="+goods.getActionId();

@@ -208,6 +208,9 @@
 		<if test="name != null and name != ''">
 			AND a.name like CONCAT('%', #{name}, '%')
 		</if>
+		<if test="mobile != null and mobile != ''">
+			AND a.mobile = #{mobile}
+		</if>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
