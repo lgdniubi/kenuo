@@ -98,7 +98,7 @@
    	       	$.ajax({
    	       		type : 'post',
    	       		url : '${ctx}/ec/mtmyMnappointment/loadOffice',
-   	       		data:{'areaName':$('#areaName').val(),'goodsId':$("#goodsId").val()},
+   	       		data:{'areaId':$('#areaId').val(),'goodsId':$("#goodsId").val()},
    	       		dateType: 'text',
    	       		success:function(data){
    	   				$.each(data.office,function(index,item){
