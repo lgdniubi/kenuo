@@ -468,17 +468,46 @@ public class SystemService extends BaseService implements InitializingBean {
 					userinfocontentDao.insertPiclive(contlist);
 				}
 			}
-			user.preUpdate();
-			userDao.update(user);
+			
+//begin     修改妃子校用户同时更新每天美耶用户开始   修改时间2017年1月23日
+			//用于验证每天美耶用户   
+			User currentUser = UserUtils.getUser();
+			Users u = new Users();
+			u.setId(currentUser.getId());
+			u.setUserid(user.getMtmyUserId());
+			u.setMobile(user.getMobile());
+			
 			//更新妃子校手机号时  同时更新每天美耶用户手机号
 			if(!oldUser.getMobile().equals(user.getMobile())){
-				User currentUser = UserUtils.getUser();
-				Users u = new Users();
-				u.setId(currentUser.getId());
-				u.setUserid(user.getMtmyUserId());
-				u.setMobile(user.getMobile());
-				mtmyUsersDao.update(u);
+				// 每天美耶存在该用户时 更新  相反 新增
+				if(mtmyUsersDao.get(u) != null){
+					mtmyUsersDao.update(u);
+				}else{
+					mtmyUsersDao.trainsInsertMtmy(user);
+					logger.info("#####[保存妃子校用户时插入每天美耶--返回每天美耶id]:"+user.getMtmyUserId());
+					//新增用户时插入用户账目表
+					Users users = new Users();
+					users.setUserid(user.getMtmyUserId());
+					mtmyUsersDao.insertAccounts(users);
+					//新增用户时插入用户统计表
+					mtmyUsersDao.insterSaleStats(users);
+				};
+			}else{
+				if(mtmyUsersDao.get(u) == null){
+					mtmyUsersDao.trainsInsertMtmy(user);
+					logger.info("#####[保存妃子校用户时插入每天美耶--返回每天美耶id]:"+user.getMtmyUserId());
+					//新增用户时插入用户账目表
+					Users users = new Users();
+					users.setUserid(user.getMtmyUserId());
+					mtmyUsersDao.insertAccounts(users);
+					//新增用户时插入用户统计表
+					mtmyUsersDao.insterSaleStats(users);
+				};
 			}
+//end     修改妃子校用户同时更新每天美耶用户结束
+			
+			user.preUpdate();
+			userDao.update(user);
 		}
 		if (StringUtils.isNotBlank(user.getId())) {
 			// 更新用户与角色关联

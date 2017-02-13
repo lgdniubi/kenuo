@@ -377,7 +377,7 @@
 		u.name AS 'mtmyName',
 		a.mobile AS 'userMobile',
 		r.ABnum AS 'bNum',
-		(14 - r.ABnum) AS 'surplusNum',
+		(mrp.param_value - r.ABnum) AS 'surplusNum',
 		u.user_money AS 'totalSurplus',
 		u.pay_points AS 'totalCloudMoney',
 		s.user_id AS 'saleUserId',
@@ -391,6 +391,7 @@
 		(SELECT SUM(order_amount) FROM mtmydb.mtmy_sale_rebates_log WHERE receive_user = u.user_id AND rebate_user = s.user_id) AS 'bOrderAmount',
 		(SELECT o1.create_date FROM mtmydb.mtmy_sale_rebates_log o1 LEFT JOIN mtmydb.mtmy_orders o2 ON o1.order_id = o2.order_id WHERE receive_user = u.user_id AND rebate_user = s.user_id LIMIT 1) AS 'firstOrderTime'
 	FROM
+		mtmydb.mtmy_rule_param mrp,
 		trains.sys_user a 
 		LEFT JOIN trains.sys_office c ON c.id = a.office_id 
 		LEFT JOIN (SELECT COUNT(parent_id) AS ABnum,parent_id FROM mtmydb.mtmy_sale_relations WHERE parent_id >0 GROUP BY parent_id) AS r ON r.parent_id = a.mtmy_user_id
@@ -402,5 +403,6 @@
 		AND c.del_flag = 0
 		AND a.id != '1'
 		AND a.mtmy_user_id > 0
+		AND mrp.param_key = 'sale_invite_userNum_AB'
 	</select>
 </mapper>
