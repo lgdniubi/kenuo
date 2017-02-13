@@ -1085,7 +1085,7 @@
 					var goodsNum=${goods.goodsNum};
 
 					if(goodsNum>0){
-						top.layer.alert('商品已经有人够买,仅规格数据无法修改!', {icon: 0, title:'提醒'});
+						top.layer.alert('商品已经有人购买,仅规格数据无法修改!', {icon: 0, title:'提醒'});
 					}
 					var content = $(".ke-edit-iframe").contents().find(".ke-content").html();
 					if(content.indexOf("style") >=0){
