@@ -57,6 +57,8 @@
 									notAllowSelectRoot="false" notAllowSelectParent="false" />
 								<span>姓&nbsp;&nbsp;&nbsp;名：</span>
 								<form:input path="name" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
+								<span>手机号码：</span>
+								<form:input path="mobile" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
 								<shiro:hasPermission name="sys:user:state">
 									<form:select path="parentDel" onchange="parentDelchange(this.options[this.options.selectedIndex].value)" cssClass="form-control">
 										<form:option value="0">在职</form:option>
