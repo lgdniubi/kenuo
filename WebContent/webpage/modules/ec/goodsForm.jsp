@@ -682,9 +682,9 @@
 				        <div class="upload" style="margin top:10px;">
 							<input type="file" name="file_img_upload" id="file_img_upload"> 
 						</div>
-						<input type="text" readonly="readonly" id="img" name="img" value="" class="form-control" style="width: 350px;" >   
-						<div id="file_img_queue" style="margin top:10px;"></div> 
-						<img id="imgsrc" src="" alt="" style="width: 200px;height: 100px;"/> 
+						<div class="t3">
+							<div id="file_img_queue" style="margin top:10px;"></div> 
+						</div>
 					</div>
 				</div>
 			</div>
@@ -846,9 +846,11 @@
 				$("#httpImg").val('http://');
 				$('#ke-dialog').hide();
 			}else if("2" == $("#ke-dialog-num").val()){
-				if($("#img").val() != ""){
-					editor.insertHtml('<img alt="" src="'+$("#img").val()+'">');
-				}
+				$("input[name='img']").each(function(index,item){
+					if($(this).val() != ""){
+						editor.insertHtml('<img alt="" src="'+$(this).val()+'">');
+					}
+				});
 				$("#imgsrc").attr('src',null); 
 				$("#img,#w_httpImg,#h_httpImg").val('');
 				$("#httpImg").val('http://');
@@ -1224,7 +1226,7 @@
 				'fileTypeDesc' : '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
 				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
 				'fileSizeLimit' : '10MB',//上传文件的大小限制
-				'multi' : false,//设置为true时可以上传多个文件
+				'multi' : true,//设置为true时可以上传多个文件
 				'auto' : true,//点击上传按钮才上传(false)
 				'onFallback' : function() {
 					//没有兼容的FLASH时触发
@@ -1232,10 +1234,13 @@
 				},
 				'onUploadSuccess' : function(file, data, response) {
 					var jsonData = $.parseJSON(data);//text 转 json
+					console.log(jsonData);
 					if (jsonData.result == '200') {
-						$("#img").val(jsonData.file_url);
-						$('.img').attr('href', jsonData.file_url);
-						$("#imgsrc").attr('src', jsonData.file_url);
+					/* 	$("#img").val(jsonData.file_url); */
+						$(".t3").append("<input type='hidden' readonly='readonly' id='img' name='img' value='"+jsonData.file_url+"' class='form-control' style='width: 350px;' > <img id='imgsrc' src='"+jsonData.file_url+"' alt='' style='width: 200px;height: 100px;'/> ");
+						
+					/* 	$('.img').attr('href', jsonData.file_url);
+						$("#imgsrc").attr('src', jsonData.file_url); */
 					}
 				}
 			});

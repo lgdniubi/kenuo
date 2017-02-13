@@ -264,7 +264,8 @@
 			sp.bar_code as "barCode",
 			ogd.order_arrearage AS orderArrearage,
 			a. user_note AS useNote,
-		    a.admin_note AS adminNote
+		    a.admin_note AS adminNote,
+		    a.is_real AS orderIsReal
 		FROM
 			mtmydb.mtmy_orders a
 			LEFT JOIN mtmydb.mtmy_payment d ON a.pay_code=d.pay_code
