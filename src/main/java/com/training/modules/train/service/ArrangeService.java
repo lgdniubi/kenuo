@@ -65,8 +65,8 @@ public class ArrangeService extends CrudService<ArrangeDao,ArrangeShop>{
 		return dao.findEquipment(equipmentId, month);
 	}
 	//保存特殊设备排班
-	public void saveEquipment(List<ArrangeEquipment> list,int month){
-		dao.delEquipment(month);
+	public void saveEquipment(String[] ids,List<ArrangeEquipment> list,int month){
+		dao.delEquipment(ids,month);
 		if(list.size() > 0){
 			dao.saveEquipment(list);
 		}

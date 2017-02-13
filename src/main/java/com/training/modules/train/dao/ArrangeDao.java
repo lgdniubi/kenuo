@@ -48,7 +48,7 @@ public interface ArrangeDao extends CrudDao<ArrangeShop>{
 	//查询特殊设备排班详情
 	public List<ArrangeEquipment> findEquipment(@Param(value="equipmentId")int equipmentId,@Param(value="month")int month);
 	//清空特殊设备排班
-	public void delEquipment(int month);
+	public void delEquipment(@Param(value="ids")String[] ids,@Param(value="month")int month);
 	//保存特殊设备排班
 	public void saveEquipment(List<ArrangeEquipment> list);
 }
