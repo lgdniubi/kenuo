@@ -79,6 +79,8 @@
 							<form:input path="couponId" htmlEscape="false" maxlength="50" style="width:200px;" class="form-control" />
 							<label>用户名：</label>
 							<form:input path="name" htmlEscape="false" maxlength="50" style="width:200px;" class="form-control" />
+							<span>手机号码：</span>
+								<form:input path="mobile" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
 							<label>是否使用：</label>
 							<form:select path="status" class="form-control"
 								style="width:185px;">

@@ -57,6 +57,9 @@
 		<if test="status!=null and status!=''">
 			AND a.status=#{status}
 		</if>
+		<if test="mobile!=null and mobile!=''">
+			AND b.mobile=#{mobile}
+		</if>
 		<if test="begtime != null and begtime != ''">
 			AND DATE_FORMAT(a.add_time,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
 		</if>
