@@ -102,10 +102,16 @@
 							</form:select>
 						<label>是否有欠费：</label>
 						<form:select path="orderArrearageType"  class="form-control" style="width:185px;">
-								<form:option value="0">全部</form:option>
-								<form:option value="1">无欠款</form:option>
-								<form:option value="2">有欠款</form:option>
-							</form:select>
+							<form:option value="0">全部</form:option>
+							<form:option value="1">无欠款</form:option>
+							<form:option value="2">有欠款</form:option>
+						</form:select>
+						<label>订单区分：</label>
+						<form:select path="searchIsReal"  class="form-control" style="width:185px;">
+							<form:option value="">全部</form:option>
+							<form:option value="1">虚拟</form:option>
+							<form:option value="0">实物</form:option>
+						</form:select>
 						<p></p>
 						<label>创建类型：</label>
 						<form:select path="channelFlag"  class="form-control" style="width:185px;">
@@ -232,7 +238,7 @@
 								</c:if>
 							</td>
 							<td><fmt:formatDate value="${orders.addtime}" pattern="yyyy-MM-dd HH:mm:ss" /> </td>
-							<td><div style="width:100px;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${orders.usernote}</div></td>
+							<td><div style="width:100px;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${orders.userNote}</div></td>
 
 							<td>
 			 					<shiro:hasPermission name="ec:orders:view"> 

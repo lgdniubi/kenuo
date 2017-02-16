@@ -401,7 +401,7 @@ public class ExportExcel {
 				this.addCell(row, colunm++, val, ef.align(), ef.fieldType());
 				sb.append(val + ", ");
 			}
-			log.debug("Write success: ["+row.getRowNum()+"] "+sb.toString());
+			//log.debug("Write success: ["+row.getRowNum()+"] "+sb.toString());
 		}
 		return this;
 	}

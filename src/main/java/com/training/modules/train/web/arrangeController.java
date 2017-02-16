@@ -352,7 +352,7 @@ public class arrangeController extends BaseController{
 					}
 				}
 			}
-			arrangeService.saveEquipment(list,map.get("month"));
+			arrangeService.saveEquipment(idArray,list,map.get("month"));
 			addMessage(redirectAttributes, "保存特殊设备排班成功");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "保存特殊设备排班", e);

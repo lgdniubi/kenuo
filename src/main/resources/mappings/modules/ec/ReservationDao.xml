@@ -77,6 +77,6 @@
 	</select>
 	<!-- 查询可用的店铺 -->
 	<select id="loadOffice" resultType="Office">
-		CALL mtmydb.find_goods_for_shop(#{goodsId},0,#{areaName},'','','',0,10000)
+		CALL mtmydb.find_goods_for_shop(#{goodsId},0,#{nationName},#{provinceId},#{cityId},#{districtId},0,10000)
 	</select>
 </mapper>

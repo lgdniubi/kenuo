@@ -16,14 +16,21 @@
 			el.del_flag AS 'delflag'
 	</sql>
 	
-	<!-- 查询出所有的设备标签 -->
+	<!-- 查询设备标签 -->
 	<select id="findAllList" resultType="EquipmentLabel" parameterType="String">
 		SELECT
 			<include refid="equipmentLabelColunm"></include>
 		FROM train_equipment_label el
 		WHERE el.del_flag=0
 		AND el.type = #{newFlag}
-		
+	</select>
+	
+	<!-- 查询所有的设备标签 -->
+	<select id="newFindAllList" resultType="EquipmentLabel">
+		SELECT
+			<include refid="equipmentLabelColunm"></include>
+		FROM train_equipment_label el
+		WHERE el.del_flag=0
 	</select>
 	
 	<!-- 分页查询设备标签 -->
@@ -134,14 +141,11 @@
 	
 
 	<!-- 插入商品设备标签中间表 -->
-	<insert id="insertGoodsEquipmentLabel" parameterType="GoodsEquipmentLabel">
-		INSERT INTO mtmydb.mtmy_goods_equipment(
-			goods_id,
-			label_id
-		)values(
-			#{goodsId},
-			#{labelId}
-		)
+	<insert id="insertGoodsEquipmentLabel">
+		INSERT INTO mtmydb.mtmy_goods_equipment(goods_id,label_id,label_type)
+		<foreach collection="list" item="list" separator="union all ">
+			SELECT #{list.goodsId},#{list.labelId},(select type from train_equipment_label where id = #{list.labelId}) FROM dual
+		</foreach>
 	</insert>
 	
 	<!-- 删除商品设备标签表中间冗余部分数据 -->

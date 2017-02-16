@@ -141,6 +141,27 @@ public class EquipmentLabelController extends BaseController{
 		return mapList;
 	}
 	
+	/**
+	 * 获取所有的设备标签JSON数据。
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "newTreeData")
+	public List<Map<String, Object>> newTreeData(HttpServletResponse response) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<EquipmentLabel> list = equipmentLabelService.newFindAllList();
+		for (int i = 0; i < list.size(); i++) {
+			EquipmentLabel e = list.get(i);
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getEquipmentLabelId());
+				map.put("name", e.getName());
+				
+				mapList.add(map);
+		}
+		return mapList;
+	}
+	
 	
 	/**
 	 * 验证设备编号是否存在

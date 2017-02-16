@@ -100,7 +100,8 @@
 			a.shipping_code AS shippingCode,
 			a.shipping_name AS shippingName,
 			a.shipping_time AS shippingTime,
-		    '' AS remark
+		    a. user_note AS useNote,
+		    a.admin_note AS adminNote
 		FROM
 			mtmydb.mtmy_orders a
 			RIGHT JOIN mtmydb.mtmy_bank_account b ON b.order_no = a.temp_orderId

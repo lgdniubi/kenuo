@@ -43,7 +43,7 @@
 			union all
 			SELECT DISTINCT b.beautician_id AS userId FROM train_arrange_shop b WHERE b.shop_id = #{officeId} AND b.month = #{month}
 		) AS b ON a.id = b.user_id
-		LEFT JOIN train_special_beautician c ON b.user_id = c.user_id
+		LEFT JOIN train_special_beautician c ON b.user_id = c.user_id WHERE c.del_flag is NOT NULL ORDER BY c.del_flag
 	</select>
 	<!-- 查询美容师排班详情 -->
 	<select id="findBeautician" resultType="ArrangeShop">
@@ -123,7 +123,10 @@
 	</select>
 	<!-- 删除特殊设备当前月所有排班 -->
 	<delete id="delEquipment">
-		DELETE FROM train_arrange_equipment WHERE month = #{month}
+		DELETE FROM train_arrange_equipment WHERE month = #{month} AND equipment_id IN 
+			<foreach collection="ids" item="id" open="(" separator="," close=")">
+	            #{id}
+	        </foreach>
 	</delete>
 	<!-- 插入所有特殊设备排班 -->
 	<insert id="saveEquipment">

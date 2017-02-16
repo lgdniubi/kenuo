@@ -5,6 +5,7 @@ import java.util.List;
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.MtmySaleRelieve;
+import com.training.modules.ec.entity.MtmySaleRelieveExport;
 import com.training.modules.ec.entity.MtmySaleRelieveLog;
 
 /**
@@ -98,6 +99,13 @@ public interface MtmySaleRelieveDao extends CrudDao<MtmySaleRelieve>{
 	 * @return
 	 */
 	public void SaleSettleDayAccounts();
+	
+	/**
+	 * 导出A级用户信息
+	 * @param mtmySaleRelieveExport
+	 * @return
+	 */
+	public List<MtmySaleRelieveExport> exportFile(MtmySaleRelieveExport mtmySaleRelieveExport);
 }
 
 

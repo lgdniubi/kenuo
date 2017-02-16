@@ -150,7 +150,7 @@
 							<tr>
 								<td><label class="pull-right"><font color="red">*</font>联系方式：</label></td>
 								<td>
-									<form:input path="phone" htmlEscape="false" maxlength="11" style="width:250px;" class="form-control required  digits" />
+									<form:input path="phone" htmlEscape="false" maxlength="20" style="width:250px;" class="form-control required" />
 								</td>
 							</tr>
 							<tr>

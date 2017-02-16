@@ -9,9 +9,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
-import com.training.modules.ec.entity.Users;
 import com.training.modules.sys.entity.Role;
-import com.training.modules.sys.entity.Skill;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.entity.UserLog;
 import com.training.modules.sys.entity.UserOfficeCode;

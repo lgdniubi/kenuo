@@ -7,6 +7,7 @@ import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.ec.dao.MtmySaleRelieveDao;
 import com.training.modules.ec.entity.MtmySaleRelieve;
+import com.training.modules.ec.entity.MtmySaleRelieveExport;
 import com.training.modules.ec.entity.MtmySaleRelieveLog;
 
 
@@ -156,4 +157,15 @@ public class MtmySaleRelieveService extends CrudService<MtmySaleRelieveDao,MtmyS
 	public void SaleSettleDayAccounts(){
 		dao.SaleSettleDayAccounts();
 	};
+	
+	/**
+	 * 导出A级用户信息
+	 * @param mtmySaleRelieveExport
+	 * @return
+	 */
+	public Page<MtmySaleRelieveExport> exportFile(Page<MtmySaleRelieveExport> page,MtmySaleRelieveExport mtmySaleRelieveExport){
+		mtmySaleRelieveExport.setPage(page);
+		page.setList(dao.exportFile(mtmySaleRelieveExport));
+		return page;
+	}
 }

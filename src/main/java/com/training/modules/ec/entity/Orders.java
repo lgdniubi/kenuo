@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Predicate;
 import com.training.common.persistence.TreeEntity;
 import com.training.common.utils.excel.annotation.ExcelField;
 import com.training.modules.sys.entity.Office;
@@ -93,6 +94,8 @@ public class Orders extends TreeEntity<Orders> {
 	private String pid;					//订单父id
 	private int isShow;					//是否展示
 	private int isReal;					//是否实物
+	private String searchIsReal;		//是否实物(查询条件)
+	private String orderIsReal;			//是否实物(导出字段)
 	private String channelFlag;			//渠道标识（WAP：wap端；IOS：苹果手机；Android：安卓手机；BM：后台管理）
 	private double memberGoodsPrice;	//会员折扣优惠了多少
 	
@@ -162,7 +165,51 @@ public class Orders extends TreeEntity<Orders> {
 	List<OrderGoodsCoupon> orderGoodsCoupons;	//订单红包
 	
 	private int flag;						//分销是否处理 分销结算标示（0：未结算；1：已结算）
+	private String strReal;				//导出 字段 订单类型
+	private String strChannel;		//订单创建类型
 	
+	
+	@JsonIgnore
+	@ExcelField(title="创建类型", align=2, sort=5)
+	public String getStrChannel() {
+		return strChannel;
+	}
+	public void setStrChannel(String strChannel) {
+		if(strChannel.equals("bm")){
+			this.strChannel = "后台订单";
+		}else if(strChannel.equals("wap")){
+			this.strChannel = "wap端订单";
+		}else if(strChannel.equals("ios")){
+			this.strChannel = "苹果端订单";
+		}else if(strChannel.equals("android")){
+			this.strChannel = "安卓端订单";
+		}
+		
+	}
+	@JsonIgnore
+	@ExcelField(title="订单类型", align=2, sort=4)
+	public String getStrReal() {
+		return strReal;
+	}
+	public void setStrReal(String strReal) {
+		if(strReal.equals("0")){
+			this.strReal="实物";
+		}else if(strReal.equals("1")){
+			this.strReal="虚拟";
+		}
+		
+	}
+
+	private String userNote;            //买家留言
+	private String adminNote;           //备注
+	
+	public String getSearchIsReal() {
+		return searchIsReal;
+	}
+
+	public void setSearchIsReal(String searchIsReal) {
+		this.searchIsReal = searchIsReal;
+	}
 
 	@JsonIgnore
 	@ExcelField(title="商品货号", align=2, sort=73)
@@ -491,6 +538,20 @@ public class Orders extends TreeEntity<Orders> {
 		this.isReal = isReal;
 	}
 
+	@JsonIgnore
+	@ExcelField(title="订单区分", align=2, sort=61)
+	public String getOrderIsReal() {
+		return orderIsReal;
+	}
+
+	public void setOrderIsReal(String orderIsReal) {
+		if(orderIsReal.equals("0")){
+			this.orderIsReal="实物商品";
+		}else if(orderIsReal.equals("1")){
+			this.orderIsReal="虚拟商品";
+		}
+	}
+
 	public double getActualPayment() {
 		return actualPayment;
 	}
@@ -741,7 +802,7 @@ public class Orders extends TreeEntity<Orders> {
 	}
 
 	@JsonIgnore
-	@ExcelField(title="订单类型", align=2, sort=2)
+	@ExcelField(title="发货方式", align=2, sort=2)
 	public String getShipType() {
 		return shipType;
 	}
@@ -1336,5 +1397,24 @@ public class Orders extends TreeEntity<Orders> {
 	public void setReturnTime(Date returnTime) {
 		this.returnTime = returnTime;
 	}
+	
+	@JsonIgnore
+	@ExcelField(title="买家留言", type=1, align=2, sort=240)
+	public String getUserNote() {
+		return userNote;
+	}
 
+	public void setUserNote(String userNote) {
+		this.userNote = userNote;
+	}
+	@JsonIgnore
+	@ExcelField(title="备注", type=1, align=2, sort=245)
+	public String getAdminNote() {
+		return adminNote;
+	}
+
+	public void setAdminNote(String adminNote) {
+		this.adminNote = adminNote;
+	}
+	
 }

@@ -31,5 +31,5 @@ public interface ReservationDao extends CrudDao<Reservation>{
 	 * @param reservation
 	 * @return
 	 */
-	public List<Office> loadOffice(@Param(value="goodsId")int goodsId,@Param(value="areaName")String areaName);
+	public List<Office> loadOffice(@Param(value="goodsId")int goodsId,@Param(value="nationName")String nationName,@Param(value="provinceId")String provinceId,@Param(value="cityId")String cityId,@Param(value="districtId")String districtId);
 }

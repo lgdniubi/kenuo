@@ -139,10 +139,10 @@ public class MtmyMnappointmentController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "loadOffice")
-	public Map<String, Object> loadOffice(String areaName,int goodsId,Boolean isAll,HttpServletRequest request, HttpServletResponse response){
+	public Map<String, Object> loadOffice(String areaId,int goodsId,Boolean isAll,HttpServletRequest request, HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		Set<Map<String, Object>> setMain = new HashSet<Map<String, Object>>();
-		List<Office> list1= reservationService.loadOffice(goodsId,areaName);  	// 可用店铺
+		List<Office> list1= reservationService.loadOffice(goodsId,areaId);  	// 可用店铺
 		List<Office> list2 = officeService.findList(isAll);		//有权限机构
 		if(list1.size() > 0 && list2.size() > 0){		// 当两个集合都存在值时  取交集 
 			Map<String, Object> setMap = new HashMap<String, Object>();

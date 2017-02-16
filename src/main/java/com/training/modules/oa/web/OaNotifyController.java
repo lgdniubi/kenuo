@@ -30,11 +30,15 @@ import com.training.common.persistence.Page;
 import com.training.common.utils.DateUtils;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
+import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.oa.entity.OaNotify;
 import com.training.modules.oa.entity.OaNotifyRecord;
 import com.training.modules.oa.service.OaNotifyService;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.train.service.TrainCategorysService;
+
+import net.sf.json.JSON;
+import net.sf.json.JSONObject;
 
 /**
  * 通知通告Controller
@@ -253,8 +257,12 @@ public class OaNotifyController extends BaseController {
 		MediaType type = MediaType.parseMediaType("application/json;charset=UTF-8");
 		headers.setContentType(type);
 		headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+		//  用于加密
+		JSONObject jsonObj = JSONObject.fromObject(m);
+		String sign = WebUtils.MD5("train"+jsonObj+"train");
+		String paramter = "{'sign':'"+sign+"' , 'jsonStr':'train"+jsonObj+"'}";
 		
-		HttpEntity<String> entity = new HttpEntity<String>(JsonMapper.toJsonString(m),headers);
+		HttpEntity<String> entity = new HttpEntity<String>(paramter,headers);
 		
 		String pushresult_url = ParametersFactory.getMtmyParamValues("pushresult_url");
 		//Global.getInstance().getConfig("getPushResult")
@@ -262,6 +270,7 @@ public class OaNotifyController extends BaseController {
 		String json = restTemplate.postForObject(pushresult_url, entity, String.class);
 		
 		Map<String, Object> map = (Map<String, Object>) JsonMapper.fromJsonString(json, Map.class);
+		
 		if("200".equals(map.get("result"))){
 			this.oaNotifyService.updateStatus(notify_id, 2);
 		}

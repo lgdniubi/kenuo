@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
+import com.training.common.utils.DateUtils;
 import com.training.common.utils.StringUtils;
+import com.training.common.utils.excel.ExportExcel;
 import com.training.common.web.BaseController;
 import com.training.modules.ec.dao.MtmyRuleParamDao;
 import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.entity.MtmyRuleParam;
 import com.training.modules.ec.entity.MtmySaleRelieve;
+import com.training.modules.ec.entity.MtmySaleRelieveExport;
 import com.training.modules.ec.entity.MtmySaleRelieveLog;
 import com.training.modules.ec.entity.Users;
 import com.training.modules.ec.service.MtmySaleRelieveService;
@@ -567,5 +570,26 @@ public class MtmySaleReliveController extends BaseController{
 			model.addAttribute("message", "查看子类用户信息出现异常，请与管理员联系");
 		}
 		return "";
+	}
+	
+	/**
+	 * 导出A级用户
+	 * @param mtmySaleRelieveExport
+	 * @param request
+	 * @param response
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value="export")
+	public String exportFile(MtmySaleRelieveExport mtmySaleRelieveExport,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
+		try {
+			String fileName = "用户数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+			Page<MtmySaleRelieveExport> page = mtmySaleRelieveService.exportFile(new Page<MtmySaleRelieveExport>(request, response,-1), mtmySaleRelieveExport);
+			new ExportExcel("用户数据", MtmySaleRelieveExport.class).setDataList(page.getList()).write(response, fileName).dispose();
+			return null;
+		} catch (Exception e) {
+			addMessage(redirectAttributes, "导出用户失败！失败信息：" + e.getMessage());
+		}
+		return "redirect:" + adminPath + "/ec/mtmySale/findAllA";
 	}
 }

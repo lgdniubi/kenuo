@@ -75,12 +75,12 @@ public class AreaController extends BaseController {
 	@RequestMapping(value = {"list"})
 	public String list(Area area, Model model) {
 		
-		//查询所有或者查询第一条数据时
+		/*//查询所有或者查询第一条数据时
 		if(area.getId() == null || "1".equals(area.getId())){
 			area.setId("");
 		}
-		model.addAttribute("list", areaService.findAreaByParentIdsLike(area));
-		return "modules/sys/areaList";
+		model.addAttribute("list", areaService.findAreaByParentIdsLike(area));*/
+		return "modules/sys/areaLists";
 	}
 
 	/**
@@ -172,6 +172,32 @@ public class AreaController extends BaseController {
 				map.put("id", e.getId());
 				map.put("pId", e.getParentId());
 				map.put("name", e.getName());
+				mapList.add(map);
+			}
+		}
+		return mapList;
+	}
+	
+	/**新的
+	 * 左侧-区域树状加载
+	 * @param extId
+	 * @param response
+	 * @return
+	 */
+	@RequiresPermissions("user")
+	@ResponseBody
+	@RequestMapping(value = "newTreeData")
+	public List<Map<String, Object>> newTreeData(@RequestParam(required=false) String extId, HttpServletResponse response) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<Area> list = areaService.findAll();
+		for (int i=0; i<list.size(); i++){
+			Area e = list.get(i);
+			if (StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1)){
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("pId", e.getParentId());
+				map.put("name", e.getName());
+				map.put("code", "区域编码:("+e.getCode()+")");
 				mapList.add(map);
 			}
 		}
