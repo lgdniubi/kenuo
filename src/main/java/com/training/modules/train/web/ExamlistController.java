@@ -519,7 +519,7 @@ public class ExamlistController extends BaseController{
      * @return
      */
     @RequestMapping(value = "import/template")
-    public String importFileTemplate(HttpServletRequest request,HttpServletResponse response, RedirectAttributes redirectAttributes) {
+    public void importFileTemplate(HttpServletRequest request,HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		try {
 			String filename = "examImport.xlsx";
 			String oldPath = request.getServletContext().getRealPath("/") + "static/Exceltemplate/" + filename;
@@ -548,7 +548,6 @@ public class ExamlistController extends BaseController{
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "导入模板下载失败！失败信息：" + e.getMessage());
 		}
-		return null;
     }
     public static void main(String[] args) {
     	String regex = "[A-D][,][A-D][,][A-D]"; //答案验证（A,B,C,D）

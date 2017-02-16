@@ -12,7 +12,11 @@ import com.training.modules.train.entity.TrainLivePlayback;
 @MyBatisDao
 public interface TrainLivePlaybackDao extends TreeDao<TrainLivePlayback>{
 	
-	
-	
+	/**
+	 * 显示隐藏回看
+	 * @param trainLivePlayback
+	 * @return
+	 */
+	public int updateIsShow(TrainLivePlayback trainLivePlayback);
 
 }

@@ -5,7 +5,8 @@
 		a.id,
 		a.userId,
 		b.`name` as "userName",
-		b.remarks,
+		b.user_type,
+		c.label as "remarks",
 		a.title,
 		a.name,
 		a.desc,
@@ -36,9 +37,10 @@
 		SELECT
 		<include refid="sqlColumns" />
 		FROM trains.train_live_audit a 
-		LEFT JOIN sys_user b ON a.userId=b.id
-		LEFT JOIN train_live_room r ON r.userId=a.userId
-		WHERE a.del_flag=0 and a.id=#{id}
+		LEFT JOIN trains.sys_user b ON a.userId=b.id
+		LEFT JOIN trains.sys_dict c ON c.`value`=b.user_type
+		LEFT JOIN trains.train_live_room r ON r.userId=a.userId
+		WHERE a.del_flag=0 AND c.type='sys_user_type'and a.id=#{id}
 
 	</select>
 
@@ -48,9 +50,10 @@
 		SELECT
 		<include refid="sqlColumns" />
 		FROM trains.train_live_audit a 
-		LEFT JOIN sys_user b ON a.userId=b.id
-		LEFT JOIN train_live_room r ON r.userId=a.userId
-		WHERE a.del_flag=0
+		LEFT JOIN trains.sys_user b ON a.userId=b.id
+		LEFT JOIN trains.sys_dict c ON c.`value`=b.user_type
+		LEFT JOIN trains.train_live_room r ON r.userId=a.userId
+		WHERE a.del_flag=0 AND c.type='sys_user_type'
 		<if test="userName!=null and userName!=''">
 			AND b.name like
 			<if test="dbName == 'oracle'">'%'||#{userName}||'%'</if>
@@ -93,18 +96,20 @@
 		SELECT
 			<include refid="sqlColumns" />
 		FROM trains.train_live_audit a 
-		LEFT JOIN sys_user b ON a.userId=b.id
-		LEFT JOIN train_live_room r ON r.userId=a.userId
-		WHERE a.del_flag=0 AND a.audit_status = 1 AND a.bengTime <![CDATA[ <= ]]> SYSDATE()
+		LEFT JOIN trains.sys_user b ON a.userId=b.id
+		LEFT JOIN trains.sys_dict c ON c.`value`=b.user_type
+		LEFT JOIN trains.train_live_room r ON r.userId=a.userId
+		WHERE a.del_flag=0 AND c.type='sys_user_type' AND a.audit_status = 1 AND a.bengTime <![CDATA[ <= ]]> SYSDATE()
 	</select>
 	<!-- 查询要直播数据 -->
 	<select id="selectWantLive" resultType="TrainLiveAudit">
 		SELECT
 			<include refid="sqlColumns" />
 		FROM trains.train_live_audit a 
-		LEFT JOIN sys_user b ON a.userId=b.id
-		LEFT JOIN train_live_room r ON r.userId=a.userId
-		WHERE a.del_flag=0 AND a.audit_status = 2 <![CDATA[  AND SYSDATE() < a.bengtime  AND a.bengtime <= date_add(SYSDATE(),INTERVAL 5 MINUTE)]]>
+		LEFT JOIN trains.sys_user b ON a.userId=b.id
+		LEFT JOIN trains.sys_dict c ON c.`value`=b.user_type
+		LEFT JOIN trains.train_live_room r ON r.userId=a.userId
+		WHERE a.del_flag=0 AND c.type='sys_user_type' AND a.audit_status = 2 <![CDATA[  AND SYSDATE() < a.bengtime  AND a.bengtime <= date_add(SYSDATE(),INTERVAL 5 MINUTE)]]>
 	</select>
 	
 </mapper>

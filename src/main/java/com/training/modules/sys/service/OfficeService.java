@@ -280,4 +280,13 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public Office selectForSpec(String id){
 		return dao.selectForSpec(id);
 	}
+	
+	/**
+	 * 验证店铺下是否有员工
+	 * @param id
+	 * @return
+	 */
+	public int delConfirm(Office office){
+		return dao.delConfirm(office);
+	}
 }

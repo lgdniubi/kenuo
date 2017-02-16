@@ -64,7 +64,7 @@ public class WebUtils {
     }
 	
 	/**
-	 * 传参调用方法
+	 * mtmy传参调用方法
 	 * @param param
 	 * @param url
 	 * @return
@@ -94,6 +94,41 @@ public class WebUtils {
 		return result;
 	}
 
-	
+	/**
+	 * trains传参调用方法
+	 * @param param
+	 * @param url
+	 * @return
+	 */
+	public static String postTrainObject(String param, String url){
+		String result = "";
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			HttpHeaders headers = new HttpHeaders();
+			MediaType type = MediaType.parseMediaType("application/json;charset=UTF-8");
+			
+			headers.setContentType(type);
+			headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+			       
+			JSONObject jsonObj = JSONObject.fromObject(param);
+			//jsonObj.put("client_side", "wap");
+			String json=jsonObj.toString();
+			String sign = MD5("train"+json+"train");
+			System.err.println(sign);
+			System.err.println("train"+json+"train");
+
+			String paramter = "{'sign':'"+sign+"' , 'jsonStr':'train"+json+"'}";
+			HttpEntity<String> entity = new HttpEntity<String>(paramter, headers);
+			result = restTemplate.postForObject(url, entity, String.class);
+			
+			System.out.println(result);
+			
+
+		} catch (JSONException e) {
+		//	logger.error(e.getMessage(), e);
+			throw e;
+		}
+		return result;
+	}
 }
 

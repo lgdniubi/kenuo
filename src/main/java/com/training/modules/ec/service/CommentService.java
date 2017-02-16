@@ -9,6 +9,7 @@ import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.ec.dao.CommentDao;
 import com.training.modules.ec.entity.Comment;
+import com.training.modules.ec.entity.MtmyComment;
 
 /**
  * 评论Service
@@ -86,4 +87,13 @@ public class CommentService extends CrudService<CommentDao, Comment>{
 	public void updateBeautyComment(Comment comment){
 		dao.updateBeautyComment(comment);
 	}; 
+	/**
+	 * 导出商品评论
+	 * @param MtmyComment
+	 * @return
+	 */
+	public Page<MtmyComment> exportGoodsComment(Page<MtmyComment> page,MtmyComment mtmyComment){
+		mtmyComment.setPage(page);
+		return page.setList(dao.exportGoodsComment(mtmyComment));
+	}
 }

@@ -6,6 +6,8 @@
 		a.auditId,
 		a.playbackId,
 		a.userId,
+		b.`name` as "userName",
+		c.label,
 		a.liveId,
 		a.bengtime,
 		a.endtime,
@@ -15,7 +17,11 @@
 		a.playpass,
 		a.collect,
 		a.thumbup,
-		a.playNum
+		a.playNum,
+		a.down_status,
+		a.down_url,
+		a.is_show,
+		d.isPay
 
 	</sql>
 
@@ -23,8 +29,11 @@
 	<select id="get" resultType="TrainLivePlayback">
 		SELECT
 			<include refid="sqlColumns" />
-		FROM trains.train_live_playback a 
-		WHERE a.userId=#{userId}
+		FROM trains.train_live_playback a
+		LEFT JOIN trains.train_live_audit d ON a.auditId=d.id
+		LEFT JOIN trains.sys_user b ON a.userId=b.id
+		LEFT JOIN trains.sys_dict c ON c.`value`=b.user_type
+		WHERE c.type='sys_user_type' and a.id=#{id}
 
 	</select>
 	<!-- 查询所有用户下的数据 -->
@@ -32,7 +41,44 @@
 		SELECT
 			<include refid="sqlColumns" />
 		FROM trains.train_live_playback a 
-		WHERE a.userId=#{userId}
+		LEFT JOIN trains.train_live_audit d ON a.auditId=d.id
+		LEFT JOIN trains.sys_user b ON a.userId=b.id
+		LEFT JOIN trains.sys_dict c ON c.`value`=b.user_type
+		WHERE c.type='sys_user_type' and a.userId=#{userId}
 	</select>
+	
+	<!-- 查询所有用户下的数据 -->
+	<select id="findAllList" resultType="TrainLivePlayback">
+		SELECT
+			<include refid="sqlColumns" />
+		FROM trains.train_live_playback a
+		LEFT JOIN trains.train_live_audit d ON a.auditId=d.id
+		LEFT JOIN trains.sys_user b ON a.userId=b.id
+		LEFT JOIN trains.sys_dict c ON c.`value`=b.user_type
+		WHERE c.type='sys_user_type'
+		<if test="userName != null and userName != ''">
+			AND b.name like
+			<if test="dbName == 'oracle'">'%'||#{userName}||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%',#{userName}, '%')</if>
+		</if>
+		<if test="name != null and name != ''">
+			AND a.name like
+			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%',#{name}, '%')</if>
+		</if>
+		<if test="auditId != null and auditId != ''">
+			AND a.auditId=#{auditId}
+		</if>
+		<if test="playbackId != null and playbackId != ''">
+			AND a.playbackId=#{playbackId}
+		</if>
+		ORDER BY a.id DESC
+	</select>
+	<!-- 回看显示隐藏 -->
+	<update id="updateIsShow">
+		UPDATE train_live_playback SET
+			is_show=#{isShow}
+		WHERE id=#{id}
+	</update>
 
 </mapper>

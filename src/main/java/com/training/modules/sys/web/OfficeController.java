@@ -44,6 +44,7 @@ import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.OfficeService;
+import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.DictUtils;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.TrainRuleParamDao;
@@ -683,7 +684,7 @@ public class OfficeController extends BaseController {
 	 */
 	@RequiresPermissions("sys:office:template")
     @RequestMapping(value = "import/template")
-    public String importFileTemplate(HttpServletRequest request,HttpServletResponse response, RedirectAttributes redirectAttributes) {
+    public void importFileTemplate(HttpServletRequest request,HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		try {
 			String filename = "officeImport.xlsx";
 			String oldPath = request.getServletContext().getRealPath("/") + "static/Exceltemplate/" + filename;
@@ -711,7 +712,7 @@ public class OfficeController extends BaseController {
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "导入模板下载失败！失败信息：" + e.getMessage());
 		}
-		return null;
+		
     }
     /**
 	 * 导出店铺数据
@@ -741,5 +742,30 @@ public class OfficeController extends BaseController {
     @RequestMapping(value = "lists")
     public String lists( HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
     	return "modules/sys/officeLists";
+    }
+    
+    /**
+     * 验证店铺下是否有员工
+     * @param office
+     * @param redirectAttributes
+     * @param request
+     * @return
+     */
+    @RequestMapping(value="delConfirm")
+    @ResponseBody
+    public String delConfirm(Office office,RedirectAttributes redirectAttributes,HttpServletRequest request){
+    	String result = "";
+    	try{
+    		if(officeService.delConfirm(office) > 0){
+    			result= "error";
+    		}else{
+    			result= "success";
+    		}
+    	}catch(Exception e){
+    		addMessage(redirectAttributes, "动态验证店铺下是否有员工失败！");
+			logger.error("动态验证店铺下是否有员工出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "动态验证店铺下是否有员工失败错误信息", e);
+    	}
+    	return result;
     }
 }

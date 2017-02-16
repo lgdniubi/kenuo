@@ -150,5 +150,12 @@ public interface OfficeDao extends TreeDao<Office> {
 	 * @return
 	 */
 	public Office selectForSpec(String id);
+	
+	/**
+	 * 验证店铺下是否有员工
+	 * @param id
+	 * @return
+	 */
+	public int delConfirm(Office office);
 }
 

@@ -21,6 +21,7 @@ public class ArticleRepository extends DataEntity<ArticleRepository>{
 	private String keywords;		//关键字
 	private String contents;		//文章内容
 	private int imageType;			//图片类型（0:无图  、1：一图 、2：二图 、 3：三图）  首图模式
+	private int type;				//类型  1：草稿  0：发布
 	private Date beginDate;			//开始时间
 	private Date endDate;			//结束时间
 	
@@ -89,6 +90,12 @@ public class ArticleRepository extends DataEntity<ArticleRepository>{
 	}
 	public void setImageType(int imageType) {
 		this.imageType = imageType;
+	}
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
 	}
 	public Date getBeginDate() {
 		return beginDate;

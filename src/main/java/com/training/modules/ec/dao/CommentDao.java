@@ -5,6 +5,7 @@ import java.util.List;
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.Comment;
+import com.training.modules.ec.entity.MtmyComment;
 
 
 /**
@@ -41,4 +42,11 @@ public interface CommentDao extends CrudDao<Comment>{
 	 * @param comment
 	 */
 	public void updateBeautyComment(Comment comment); 
+	
+	/**
+	 * 导出商品评论
+	 * @param MtmyComment
+	 * @return
+	 */
+	public List<MtmyComment> exportGoodsComment(MtmyComment mtmyComment);
 }

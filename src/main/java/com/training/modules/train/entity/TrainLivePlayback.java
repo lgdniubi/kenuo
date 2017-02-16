@@ -12,20 +12,25 @@ import com.training.common.persistence.TreeEntity;
 public class TrainLivePlayback extends TreeEntity<TrainLivePlayback> {
 	
 	private static final long serialVersionUID = 1L;
-	private int auditId;						//申请直播id
-	private String 	playbackId;					//回看id
+	private int auditId;							//申请直播id
+	private String playbackId;				//回看id
 	private String userId;						//直播用户
 	private String liveId;						//直播房间id
-	private Date bengtime;						//开始时间
+	private Date bengtime;					//开始时间
 	private Date endtime;						//结束时间
 	private String name;						//房间名称
 	private String desc;						//描述
 	private String imgurl;						//图片
 	private String playpass;					//密码
-	private int collect;						//内容
-	private int thumbup;
-	private int playNum;
-
+	private int collect;							//收藏次数
+	private int thumbup;						//点赞数
+	private int playNum;						//播放数
+	private int downStatus;					//视频是否下载到资源服务器  0：未同步到资源服务器，1：已同步到资源服务器
+	private String downUrl;					//视频地址
+	private int isShow;							//是否显示
+	private int isPay;							//是否付费
+	private String userName;					//用户名
+	private String label;						//职位
 	
 	
 	public int getAuditId() {
@@ -105,6 +110,42 @@ public class TrainLivePlayback extends TreeEntity<TrainLivePlayback> {
 	}
 	public void setPlayNum(int playNum) {
 		this.playNum = playNum;
+	}
+	public int getDownStatus() {
+		return downStatus;
+	}
+	public void setDownStatus(int downStatus) {
+		this.downStatus = downStatus;
+	}
+	public String getDownUrl() {
+		return downUrl;
+	}
+	public void setDownUrl(String downUrl) {
+		this.downUrl = downUrl;
+	}
+	public int getIsShow() {
+		return isShow;
+	}
+	public int getIsPay() {
+		return isPay;
+	}
+	public void setIsPay(int isPay) {
+		this.isPay = isPay;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getLabel() {
+		return label;
+	}
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	public void setIsShow(int isShow) {
+		this.isShow = isShow;
 	}
 	@Override
 	public TrainLivePlayback getParent() {

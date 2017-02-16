@@ -33,6 +33,7 @@ import com.training.modules.train.service.TrainLiveAuditService;
 import com.training.modules.train.service.TrainLiveRoomService;
 import com.training.modules.train.service.TrainLiveUserService;
 import com.training.modules.train.utils.EncryptLiveUtil;
+
 import net.sf.json.JSONObject;
 
 @Controller
@@ -50,7 +51,9 @@ public class TrainLiveAuditController extends BaseController{
 	
 	
 	public static String LIVE_USERID="E8F7E756412DC768";   //直播用户id   E8F7E756412DC768
-	public static String API_KEY="K4MV4Mv4Q90FaEEQYclkz0XJIqEZf5rK";  	//API KEY  K4MV4Mv4Q90FaEEQYclkz0XJIqEZf5rK 
+	public static String API_KEY="K4MV4Mv4Q90FaEEQYclkz0XJIqEZf5rK";  	//API KEY  K4MV4Mv4Q90FaEEQYclkz0XJIqEZf5rK
+	public static final String CRATE_LIVE_URL = "http://api.csslcloud.net/api/room/create";			//创建直播间
+	public static final String UPDATE_LIVE_URL="http://api.csslcloud.net/api/room/update";			//修改直播间
 	
 	@ModelAttribute
 	public TrainLiveAudit get(@RequestParam(required = false) String id) {
@@ -185,8 +188,10 @@ public class TrainLiveAuditController extends BaseController{
 							map.put("foreignpublish",URLEncoder.encode("0","utf-8"));
 							map.put("openlowdelaymode",URLEncoder.encode("0","utf-8"));
 							map.put("showusercount",URLEncoder.encode("1","utf-8"));
+							//请求参数加密
 							String	qString=EncryptLiveUtil.createHashedQueryString(map,time,API_KEY);
-							String result=EncryptLiveUtil.UpdateLiveGet(qString);
+							//修改直播见信息
+							String result=EncryptLiveUtil.SendLiveGet(UPDATE_LIVE_URL,qString);
 							JSONObject json = JSONObject.fromObject(result);
 							System.out.println(json.getString("result"));
 							if(json.getString("result").equals("OK")){
@@ -217,8 +222,10 @@ public class TrainLiveAuditController extends BaseController{
 						map.put("foreignpublish",URLEncoder.encode("0","utf-8"));
 						map.put("openlowdelaymode",URLEncoder.encode("0","utf-8"));
 						map.put("showusercount",URLEncoder.encode("1","utf-8"));
+						//请求参数加密
 						String	qString=EncryptLiveUtil.createHashedQueryString(map,time,API_KEY);
-						String result=EncryptLiveUtil.CreateLiveGet(qString);
+						//修改直播见信息
+						String result=EncryptLiveUtil.SendLiveGet(CRATE_LIVE_URL,qString);
 						JSONObject json = JSONObject.fromObject(result);
 						System.out.println(json.getString("result"));
 						if(json.getString("result").equals("OK")){
@@ -254,10 +261,13 @@ public class TrainLiveAuditController extends BaseController{
 			logger.error("方法：save，直播：" + e.getMessage());
 			addMessage(redirectAttributes, "直播保存失败");
 		}
-
+	   
 		return "redirect:" + adminPath + "/train/live/list";
 
 	}
 	
 
+
+    
+    
 }

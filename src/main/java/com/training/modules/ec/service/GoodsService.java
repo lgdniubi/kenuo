@@ -231,6 +231,7 @@ public class GoodsService extends CrudService<GoodsDao,Goods>{
 								gsp.setStoreCount(Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][store_count]")));// 库存数量
 								gsp.setBarCode(request.getParameter("item["+specItemList.get(i)+"][bar_code]"));// 商品条形码
 								gsp.setGoodsNo(request.getParameter("item["+specItemList.get(i)+"][goods_No]"));// 商品编码
+								gsp.setGoodsWeight(Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][goods_weight]")));// 商品重量
 								gsp.setServiceTimes(Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][service_times]")));//服务次数
 								gsp.setExpiringDate(Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][expiring_date]")));//截止日期（月）
 								//保存到list中
@@ -478,6 +479,7 @@ public class GoodsService extends CrudService<GoodsDao,Goods>{
 									gsp.setStoreCount(Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][store_count]")));// 库存数量
 									gsp.setBarCode(request.getParameter("item["+specItemList.get(i)+"][bar_code]"));// 商品条形码
 									gsp.setGoodsNo(request.getParameter("item["+specItemList.get(i)+"][goods_No]"));// 商品编码
+									gsp.setGoodsWeight(Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][goods_weight]")));// 商品重量
 									gsp.setServiceTimes(Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][service_times]")));//服务次数
 									gsp.setExpiringDate(Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][expiring_date]")));//截止日期（月）
 									//保存到list中

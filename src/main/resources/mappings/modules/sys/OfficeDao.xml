@@ -596,4 +596,15 @@
 		LEFT JOIN sys_user u ON u.office_id = o.id
 		WHERE u.id = #{id} 
 	</select>
+	
+	<!-- 验证店铺下是否有员工 -->
+	<select id="delConfirm" parameterType="Office" resultType="int">
+		SELECT COUNT(1)
+		FROM sys_user a
+		LEFT JOIN sys_office o ON o.id = a.office_id
+		WHERE o.id = #{id} OR o.parent_ids LIKE 
+			<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+		AND a.del_flag = 0
+	</select>
 </mapper>

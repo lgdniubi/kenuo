@@ -94,7 +94,6 @@ public class Orders extends TreeEntity<Orders> {
 	private String pid;					//订单父id
 	private int isShow;					//是否展示
 	private int isReal;					//是否实物
-	private String searchIsReal;		//是否实物(查询条件)
 	private String orderIsReal;			//是否实物(导出字段)
 	private String channelFlag;			//渠道标识（WAP：wap端；IOS：苹果手机；Android：安卓手机；BM：后台管理）
 	private double memberGoodsPrice;	//会员折扣优惠了多少
@@ -203,14 +202,6 @@ public class Orders extends TreeEntity<Orders> {
 	private String userNote;            //买家留言
 	private String adminNote;           //备注
 	
-	public String getSearchIsReal() {
-		return searchIsReal;
-	}
-
-	public void setSearchIsReal(String searchIsReal) {
-		this.searchIsReal = searchIsReal;
-	}
-
 	@JsonIgnore
 	@ExcelField(title="商品货号", align=2, sort=73)
 	public String getGoodsNo() {

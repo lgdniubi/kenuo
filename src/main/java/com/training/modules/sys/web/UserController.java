@@ -742,7 +742,7 @@ public class UserController extends BaseController {
 	 */
 	@RequiresPermissions("sys:user:import")
 	@RequestMapping(value = "import/template")
-	public String importFileTemplate(HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes) {
+	public void importFileTemplate(HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes) {
 		try {
 			String filename = "sysUserImport.xlsx";
 			String oldPath = request.getServletContext().getRealPath("/") + "static/Exceltemplate/" + filename;
@@ -769,9 +769,10 @@ public class UserController extends BaseController {
 			toClient.close();
 
 		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "用户导入模板下载失败", e);
 			addMessage(redirectAttributes, "导入模板下载失败！失败信息：" + e.getMessage());
 		}
-		return "redirect:" + adminPath + "/sys/user/list?repage";
+	
 	}
 
 	/**
@@ -783,7 +784,7 @@ public class UserController extends BaseController {
 	 */
 	@RequiresPermissions("sys:user:import")
 	@RequestMapping(value = "import/templateDelete")
-	public String importTemplateDelete(HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes) {
+	public void importTemplateDelete(HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes) {
 		try {
 			String filename = "delUserImport.xlsx";
 			String oldPath = request.getServletContext().getRealPath("/") + "static/Exceltemplate/" + filename;
@@ -811,9 +812,10 @@ public class UserController extends BaseController {
 			toClient.flush();
 			toClient.close();
 		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "删除用户模板下载失败", e);
 			addMessage(redirectAttributes, "模板下载失败！失败信息：" + e.getMessage());
 		}
-		return "redirect:" + adminPath + "/sys/user/list?repage";
+		
 	}
 
 	/**

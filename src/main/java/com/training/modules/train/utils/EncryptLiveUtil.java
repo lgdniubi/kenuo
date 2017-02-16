@@ -13,8 +13,7 @@ import com.ndktools.javamd5.Mademd5;
 public class EncryptLiveUtil {
 	
 	
-	public static final String CRATE_LIVE_URL = "http://api.csslcloud.net/api/room/create";
-	public static final String UPDATE_LIVE_URL="http://api.csslcloud.net/api/room/update";
+
 
 
 	/**
@@ -64,9 +63,9 @@ public class EncryptLiveUtil {
 	 * @throws IOException
 	 */
 
-    public static String CreateLiveGet(String qString) throws IOException {
+    public static String SendLiveGet(String url,String qString) throws IOException {
         // 拼凑get请求的URL字串，使用URLEncoder.encode对特殊和不可见字符进行编码
-        String getURL = CRATE_LIVE_URL +"?"+qString;//URLEncoder.encode(qString,"utf-8");
+        String getURL = url +"?"+qString;//URLEncoder.encode(qString,"utf-8");
         System.out.println(getURL);
         URL getUrl = new URL(getURL);
         // 根据拼凑的URL，打开连接，URL.openConnection函数会根据URL的类型，
@@ -88,31 +87,5 @@ public class EncryptLiveUtil {
         return lines;
     }
     
-    /**
-	 * 修改直播间
-	 * @param qString
-	 * @return
-	 * @throws IOException
-	 */
-
-    public static String UpdateLiveGet(String qString) throws IOException {
-        // 拼凑get请求的URL字串，使用URLEncoder.encode对特殊和不可见字符进行编码
-        String getURL = UPDATE_LIVE_URL +"?"+qString;//URLEncoder.encode(qString,"utf-8");
-        System.out.println(getURL);
-        URL getUrl = new URL(getURL);
-        // 根据拼凑的URL，打开连接，URL.openConnection函数会根据URL的类型，
-        // 返回不同的URLConnection子类的对象，这里URL是一个http，因此实际返回的是HttpURLConnection
-        HttpURLConnection connection = (HttpURLConnection) getUrl.openConnection();
-        // 进行连接，但是实际上get request要在下一句的connection.getInputStream()函数中才会真正发到
-        // 服务器
-        connection.connect();
-        // 取得输入流，并使用Reader读取
-        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String lines = reader.readLine();
-        reader.close();
-        // 断开连接
-        connection.disconnect();
-        return lines;
-    }
 
 }

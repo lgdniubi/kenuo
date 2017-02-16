@@ -632,9 +632,8 @@ public class OrdersController extends BaseController {
 	}
 	
 	/**
-	 * 导出用户数据
-	 * 
-	 * @param user
+	 * 导出订单数据
+	 * @param orders
 	 * @param request
 	 * @param response
 	 * @param redirectAttributes
@@ -649,7 +648,8 @@ public class OrdersController extends BaseController {
 			new ExportExcel("订单数据", Orders.class).setDataList(page.getList()).write(response, fileName).dispose();
 			return null;
 		} catch (Exception e) {
-			addMessage(redirectAttributes, "导出订单数据！失败信息：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "导出订单数据失败", e);
+			addMessage(redirectAttributes, "导出订单数据,失败!" );
 		}
 		return "redirect:" + adminPath + "/ec/orders/list?repage";
 	}
@@ -673,7 +673,7 @@ public class OrdersController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "import/template")
-	public String importFileTemplate(Orders orders,HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes) {
+	public void importFileTemplate(Orders orders,HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes) {
 		try {
 			String filename = "wuliuImport.xlsx";
 			String oldPath = request.getServletContext().getRealPath("/") + "static/Exceltemplate/" + filename;
@@ -698,11 +698,12 @@ public class OrdersController extends BaseController {
 			toClient.write(buffer);
 			toClient.flush();
 			toClient.close();
-			return null;
+			
 		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "导入模板下载失败", e);
 			addMessage(redirectAttributes, "导入模板下载失败！失败信息：" + e.getMessage());
 		}
-		return "redirect:" + adminPath + "/ec/orders/list";
+	
 	}
 	
 	
@@ -714,7 +715,7 @@ public class OrdersController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "import")
-	public String importShipping(MultipartFile file, RedirectAttributes redirectAttributes) {
+	public String importShipping(HttpServletRequest request,MultipartFile file, RedirectAttributes redirectAttributes) {
 	
 		try {
 			int successNum = 0;
@@ -763,6 +764,7 @@ public class OrdersController extends BaseController {
 						}	
 
 					} catch (ConstraintViolationException ex) {
+						BugLogUtils.saveBugLog(request, "导入物流出错", ex);
 						logger.error("导入物流出错："+ex.getMessage());
 						failureMsg.append("<br/>订单 " + shipping.getOrderid() + " 更新物流失败：");
 						List<String> messageList = BeanValidators.extractPropertyAndMessageAsList(ex, ":");
@@ -771,6 +773,7 @@ public class OrdersController extends BaseController {
 							failureNum++;
 						}
 					} catch (Exception ex) {
+						BugLogUtils.saveBugLog(request, "导入物流出错", ex);
 						logger.error("导入物流出错："+ex.getMessage());
 						failureMsg.append("<br/>订单号 " + shipping.getOrderid() + " 更新物流失败：" + ex.getMessage());
 					}
@@ -783,6 +786,7 @@ public class OrdersController extends BaseController {
 			addMessage(redirectAttributes, "已成功更新 " + successNum + " 条订单。" + failureMsg);
 			
 		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "导入物流出错", e);
 			logger.error("导入物流出错："+e.getMessage());
 			addMessage(redirectAttributes, "导入物流失败！失败信息：" + e.getMessage());
 		}

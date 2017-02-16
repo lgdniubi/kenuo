@@ -55,7 +55,7 @@ public class TaskService {
 	*/
 	@PostConstruct
 	public void init() throws Exception {
-		//大龙你是傻逼123456
+		
 		//添加日志
 		TaskLog taskLog = new TaskLog();
 		Date startDate;	//开始时间

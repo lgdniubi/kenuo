@@ -11,13 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
 import com.training.common.utils.DateUtils;
+import com.training.common.utils.excel.ExportExcel;
 import com.training.common.web.BaseController;
 import com.training.modules.ec.entity.Comment;
+import com.training.modules.ec.entity.MtmyComment;
 import com.training.modules.ec.service.CommentService;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.UserUtils;
@@ -135,4 +138,27 @@ public class MtmyCommentController extends BaseController{
 		addMessage(redirectAttributes, "回复用户评论成功");
 		return "redirect:" + adminPath + "/ec/mtmycomment/beautyComment";
 	}
+	
+	/**
+	 * 导出商品评论
+	 * 
+	 * @param mtmyComment
+	 * @param request
+	 * @param response
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = "export", method = RequestMethod.POST)
+	public String exportFile(MtmyComment mtmyComment, HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
+		try {
+			String fileName = "商品评论数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+			Page<MtmyComment> page = commentService.exportGoodsComment(new Page<MtmyComment>(request, response, -1), mtmyComment);
+			new ExportExcel("商品评论数据", MtmyComment.class).setDataList(page.getList()).write(response, fileName).dispose();
+			return null;
+		} catch (Exception e) {
+			addMessage(redirectAttributes, "导出商品评论数据！失败信息：" + e.getMessage());
+		}
+		return "redirect:" + adminPath + "/ec/mtmycomment/realComment?repage";
+	}
+
 }

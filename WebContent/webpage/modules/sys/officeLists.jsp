@@ -18,6 +18,26 @@
 		function refresh(){//刷新
 			window.location="${ctx}/sys/office/lists";
 		}
+		
+		function delConfirm(id){
+			$.ajax({
+				type:"post",
+				url:"${ctx}/sys/office/delConfirm?id="+id,
+				success:function(data){
+					if(data == 'success'){
+						if(confirm('要删除该机构及所有子机构项吗？')){
+							window.location="${ctx}/sys/office/delete?id="+id;
+						}
+					}else if(data == 'error'){
+						top.layer.alert('删除失败!店铺中仍有员工，无法删除', {icon: 2, title:'提醒'});
+						window.location="${ctx}/sys/office/list"; 
+					}
+				},
+				error:function(XMLHttpRequest,textStatus,errorThrown){
+					    
+				}
+			});
+		}
 	</script>
 </head>
 <body class="gray-bg">
@@ -210,7 +230,7 @@
 					editStr = editStr + "<a href=\"#\" onclick=\"openDialog('修改机构', '${ctx}/sys/office/form?id="+treeNode.id+"&&num="+treeNode.num+"','800px', '620px')\" class=\"btn btn-success btn-xs\"><i class=\"fa fa-edit\"></i> 修改</a>";
 				}
 				if($("#shiroDel").val() == 1){
-					editStr = editStr + "<a href=\"${ctx}/sys/office/delete?id="+treeNode.id+"\" onclick=\"return confirmx('要删除该机构及所有子机构项吗？', this.href)\" class=\"btn btn-danger btn-xs\"><i class=\"fa fa-trash\"></i> 删除</a>";
+					editStr = editStr + "<a href=\"#\" onclick=\"delConfirm('"+treeNode.id +"')\" class=\"btn btn-danger btn-xs\"><i class=\"fa fa-trash\"></i> 删除</a>";
 				}
 			}
 			if(treeNode.grade == 1){

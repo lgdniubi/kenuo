@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
@@ -37,6 +38,7 @@ public class ArticleRepositoryService extends CrudService<ArticleRepositoryDao, 
 	 * 保存文章
 	 */
 	public void saveArticle(ArticleRepository articleRepository){
+		articleRepository.setContents(HtmlUtils.htmlUnescape(articleRepository.getContents()));
 		User user = UserUtils.getUser();
 		if(articleRepository.getArticleId() == 0){
 			articleRepository.setCreateBy(user);

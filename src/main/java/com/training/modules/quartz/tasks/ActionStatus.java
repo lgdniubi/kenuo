@@ -72,6 +72,7 @@ public class ActionStatus extends CommonService{
 					Goods goods=new Goods();
 					goods.setActionId(vo.getActionId());
 					goods.setIsOnSale("1");
+					goods.setIsAppshow("1");
 					int num=goodsService.updateGoodsStauts(goods);
 					List<Goods> list=actionInfoService.ActionGoodslist(vo.getActionId());
 					for (int i = 0; i < list.size(); i++) {

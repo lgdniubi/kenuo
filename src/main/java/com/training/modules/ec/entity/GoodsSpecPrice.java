@@ -24,14 +24,24 @@ public class GoodsSpecPrice extends DataEntity<GoodsSpecPrice> {
 	private String goodsNo;			//商品编码
 	private int serviceTimes;		// 服务次数
 	private int expiringDate;		// 截止日期（月）
+	private int goodsWeight;	//商品重量
+	
 	
 	private double costPrice;       //成本价格
 	/**
 	 * get/set
 	 */
 	
+	
+	
 	public String getGoodsId() {
 		return goodsId;
+	}
+	public int getGoodsWeight() {
+		return goodsWeight;
+	}
+	public void setGoodsWeight(int goodsWeight) {
+		this.goodsWeight = goodsWeight;
 	}
 	public String getGoodsNo() {
 		return goodsNo;

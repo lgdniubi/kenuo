@@ -194,7 +194,7 @@ public class TrainLiveUserController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "import/template")
-	public String importFileTemplate(TrainLiveUser trainLiveUser,HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes) {
+	public void importFileTemplate(TrainLiveUser trainLiveUser,HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes) {
 		try {
 			String filename = "userVipImport.xlsx";
 			String oldPath = request.getServletContext().getRealPath("/") + "static/Exceltemplate/" + filename;
@@ -219,12 +219,12 @@ public class TrainLiveUserController extends BaseController{
 			toClient.write(buffer);
 			toClient.flush();
 			toClient.close();
-			return null;
+	
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "导入模板下载失败", e);
 			addMessage(redirectAttributes, "导入模板下载失败！失败信息：" + e.getMessage());
 		}
-		return "redirect:" + adminPath + "/train/liveUser/liveUserList";
+		
 	}
 	
 	

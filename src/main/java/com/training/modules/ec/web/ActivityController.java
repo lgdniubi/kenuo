@@ -84,7 +84,6 @@ public class ActivityController extends BaseController {
 
 	/**
 	 * 创建活动，修改
-	 * 
 	 * @param activity
 	 * @param model
 	 * @return

@@ -39,13 +39,14 @@
 						<div class="form-group">
 							<label>用户名：</label><form:input path="userName" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
 							<label>直播主题：</label><form:input path="title" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
-							<label>审核状态：</label><form:select path="auditStatus" class="form-control">
-														<form:option value=" ">全部</form:option>
-														<form:option value="0">审核失败</form:option>
-														<form:option value="1">请求审核</form:option>
-														<form:option value="2">审核通过</form:option>
-														<form:option value="3">已完成</form:option>
-													</form:select>
+							<label>审核状态：</label>
+							<form:select path="auditStatus" class="form-control">
+								<form:option value=" ">全部</form:option>
+								<form:option value="0">审核失败</form:option>
+								<form:option value="1">请求审核</form:option>
+								<form:option value="2">审核通过</form:option>
+								<form:option value="3">已完成</form:option>
+							</form:select>
 						</div>
 					</form:form>
 					<!-- 工具栏 -->
@@ -155,7 +156,5 @@
 			</div>
 		</div>
 	</div>
-
-
 </body>
 </html>

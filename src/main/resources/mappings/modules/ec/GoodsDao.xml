@@ -403,6 +403,7 @@
              store_count,
              bar_code,
              goods_no,
+             goods_weight,
              service_times,
              expiring_date)
 		<foreach collection="goodsSpecPricesList" item="goodsSpecPrice" separator=" union all ">
@@ -415,6 +416,7 @@
 					#{goodsSpecPrice.storeCount}, 
 					#{goodsSpecPrice.barCode}, 
 					#{goodsSpecPrice.goodsNo},
+					#{goodsSpecPrice.goodsWeight},
 					#{goodsSpecPrice.serviceTimes},
 					#{goodsSpecPrice.expiringDate}
 			FROM dual
@@ -500,7 +502,8 @@
 		  bar_code AS 'barCode',
 		  goods_no AS 'goodsNo',
 		  service_times AS 'serviceTimes',
-		  expiring_date AS 'expiringDate'
+		  expiring_date AS 'expiringDate',
+		  goods_weight  AS 'goodsWeight'
 		FROM
 		  mtmydb.mtmy_spec_goods_price 
 		WHERE goods_id = #{goodsId}
@@ -644,7 +647,8 @@
 	</update>
 	<update id="updateGoodsStauts">
 		UPDATE mtmydb.mtmy_goods SET 
-		is_on_sale = #{isOnSale}
+		is_on_sale = #{isOnSale},
+		is_appshow = #{isAppshow}
 		WHERE action_id =#{actionId}
 	</update>
 	<select id="queryStoreCount" resultType="StoreVo">

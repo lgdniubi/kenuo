@@ -172,6 +172,15 @@
 						</div>
 					</form>
 				</div>
+				<!-- 工具栏 -->
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="pull-left">
+							<!-- 导出 -->
+							<table:exportExcel url="${ctx}/ec/mtmycomment/export"></table:exportExcel>
+						</div>
+					</div>
+				</div>
 				<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 					<thead>
 						<tr>
