@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -23,8 +24,15 @@ import com.training.common.persistence.Page;
 import com.training.common.utils.DateUtils;
 import com.training.common.utils.IdGen;
 import com.training.common.utils.StringUtils;
+import com.training.common.utils.excel.ExportExcel;
 import com.training.common.web.BaseController;
+import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.entity.StatisticsCollectionExport;
+import com.training.modules.train.entity.StatisticsCommentExport;
+import com.training.modules.train.entity.StatisticsTotalExport;
+import com.training.modules.train.entity.StatisticsUnitExport;
+import com.training.modules.train.entity.StatisticsUnitTotalExport;
 import com.training.modules.train.entity.TrainCategorys;
 import com.training.modules.train.entity.TrainLessonContents;
 import com.training.modules.train.entity.TrainLessons;
@@ -454,4 +462,121 @@ public class CourseController extends BaseController{
 		}
 		return jsonMap;
 	}
+	
+	/**
+	 * 导出课程统计总览
+	 * @param trainLessons
+	 * @param request
+	 * @param response
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = "totalexport", method = RequestMethod.POST)
+	public String totalExport(TrainLessons trainLessons, HttpServletRequest request, HttpServletResponse response,
+			RedirectAttributes redirectAttributes) {
+		try {
+			String fileName = "课程统计总览" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+			List<StatisticsTotalExport> list=trainLessonsService.totalExport(trainLessons);
+			new ExportExcel("课程统计总览", StatisticsTotalExport.class).setDataList(list).write(response, fileName).dispose();
+			return null;
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "课程统计总览", e);
+			addMessage(redirectAttributes, "课程统计总览，导出失败！");
+		}
+		return "redirect:" + adminPath + "/train/course/listcourse";
+	}
+	
+	
+	/**
+	 * 导出收藏统计
+	 * @param trainLessons
+	 * @param request
+	 * @param response
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = "collectionexport", method = RequestMethod.POST)
+	public String collectionExport(TrainLessons trainLessons, HttpServletRequest request, HttpServletResponse response,
+			RedirectAttributes redirectAttributes) {
+		try {
+			String fileName = "收藏统计" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+			List<StatisticsCollectionExport> list=trainLessonsService.collectionExport(trainLessons);
+			new ExportExcel("课程收藏统计", StatisticsCollectionExport.class).setDataList(list).write(response, fileName).dispose();
+			return null;
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "课程收藏统计", e);
+			addMessage(redirectAttributes, "课程收藏统计，导出失败！");
+		}
+		return "redirect:" + adminPath + "/train/course/listcourse";
+	}
+	
+	/**
+	 * 导出评论统计
+	 * @param trainLessons
+	 * @param request
+	 * @param response
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = "commentexport", method = RequestMethod.POST)
+	public String commentExport(TrainLessons trainLessons, HttpServletRequest request, HttpServletResponse response,
+			RedirectAttributes redirectAttributes) {
+		try {
+			String fileName = "评论统计" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+			List<StatisticsCommentExport> list=trainLessonsService.commentExport(trainLessons);
+			new ExportExcel("课程评论统计", StatisticsCommentExport.class).setDataList(list).write(response, fileName).dispose();
+			return null;
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "课程评论统计", e);
+			addMessage(redirectAttributes, "课程评论统计，导出失败！");
+		}
+		return "redirect:" + adminPath + "/train/course/listcourse";
+	}
+	
+	/**
+	 * 单元测试
+	 * @param trainLessons
+	 * @param request
+	 * @param response
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = "unitexport", method = RequestMethod.POST)
+	public String unitExport(TrainLessons trainLessons, HttpServletRequest request, HttpServletResponse response,
+			RedirectAttributes redirectAttributes) {
+		try {
+			String fileName = "单元测试" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+			List<StatisticsUnitExport> list=trainLessonsService.unitExport(trainLessons);
+			new ExportExcel("单元测试", StatisticsUnitExport.class).setDataList(list).write(response, fileName).dispose();
+			return null;
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "单元测试", e);
+			addMessage(redirectAttributes, "单元测试，导出失败！");
+		}
+		return "redirect:" + adminPath + "/train/course/listcourse";
+	}
+	
+	/**
+	 * 单元测试统计
+	 * @param trainLessons
+	 * @param request
+	 * @param response
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = "totalunitexport", method = RequestMethod.POST)
+	public String totalUnitExport(TrainLessons trainLessons, HttpServletRequest request, HttpServletResponse response,
+			RedirectAttributes redirectAttributes) {
+		try {
+			String fileName = "单元测试统计" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+			List<StatisticsUnitTotalExport> list=trainLessonsService.unitTotalExport(trainLessons);
+			new ExportExcel("单元测试统计", StatisticsUnitTotalExport.class).setDataList(list).write(response, fileName).dispose();
+			return null;
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "单元测试统计", e);
+			addMessage(redirectAttributes, "单元测试统计，导出失败！");
+		}
+		return "redirect:" + adminPath + "/train/course/listcourse";
+	}
+	
 }

@@ -30,7 +30,6 @@ import com.training.modules.ec.entity.ActivityCoupon;
 import com.training.modules.ec.entity.ActivityCouponCategory;
 import com.training.modules.ec.entity.ActivityCouponGoods;
 import com.training.modules.ec.entity.ActivityCouponUser;
-import com.training.modules.ec.entity.Orders;
 import com.training.modules.ec.entity.Users;
 import com.training.modules.ec.service.ActivityService;
 import com.training.modules.sys.entity.Franchisee;
@@ -590,7 +589,6 @@ public class ActivityController extends BaseController {
 		try {
 			String fileName = "红包明细" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
 			List<ActivityCouponUser> list=activityService.exportCouponUser(activityCouponUser);
-			System.out.println(list.size());
 			new ExportExcel("红包明细", ActivityCouponUser.class).setDataList(list).write(response, fileName).dispose();
 			return null;
 		} catch (Exception e) {
