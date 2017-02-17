@@ -410,7 +410,7 @@ window.onload=initStatus;
 							</form:select>
 							<p></p>
 							<label >留言备注：</label>
-							<textarea name="usernote" rows="5" cols="60">${orders.usernote }</textarea>
+							<textarea name="usernote" rows="5" cols="60">${orders.userNote }</textarea>
 						</div>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
