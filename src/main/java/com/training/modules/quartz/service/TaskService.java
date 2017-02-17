@@ -57,7 +57,7 @@ public class TaskService {
 	public void init() throws Exception {
 		
 		//添加日志
-		/*TaskLog taskLog = new TaskLog();
+		TaskLog taskLog = new TaskLog();
 		Date startDate;	//开始时间
 		Date endDate;	//结束时间
 		long runTime;	//运行时间
@@ -97,7 +97,7 @@ public class TaskService {
 			taskLog.setRunTime(runTime);
 			taskLog.setRemarks("后台重启，重新加载");
 			iTaskDao.insertTaskLog(taskLog);
-		}*/
+		}
 	}
 	
 	/**
