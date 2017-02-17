@@ -126,6 +126,7 @@
 								<th style="text-align: center;">文章标题</th>
 							    <th style="text-align: center;">类别</th>
 							    <th style="text-align: center;">作者</th>
+							    <th style="text-align: center;">发布类型</th>
 							    <th style="text-align: center;">发布时间</th>
 							    <th style="text-align: center;">操作</th>
 							</tr>
@@ -137,6 +138,14 @@
 								  	<td>${articleRepository.title }</td>
 								  	<td>${articleRepository.category.name }</td>
 								  	<td>${articleRepository.authorName }</td>
+								  	<td>
+								  		<c:if test="${articleRepository.type == 0}">
+								  			已发布
+								  		</c:if>
+								  		<c:if test="${articleRepository.type == 1}">
+								  			草稿
+								  		</c:if>
+								  	</td>
 								  	<td><fmt:formatDate value="${articleRepository.createDate }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								    <td>
 								    	<shiro:hasPermission name="ec:articles:update">
@@ -145,9 +154,11 @@
 								    	<shiro:hasPermission name="ec:articles:del">
 								    		<a href="${ctx}/ec/articles/deleteArticle?articleId=${articleRepository.articleId}" onclick="return confirmx('确认要删除该文章吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
 								    	</shiro:hasPermission>
-								    	<shiro:hasPermission name="ec:articles:issue">
-								    		<a href="#" onclick="openDialog('发布文章', '${ctx}/ec/articles/issueArticle?articleId=${articleRepository.articleId}','600px', '550px')" class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i> 发布</a>
-								    	</shiro:hasPermission>
+								    	<c:if test="${articleRepository.type == 0}">
+									    	<shiro:hasPermission name="ec:articles:issue">
+									    		<a href="#" onclick="openDialog('发布文章', '${ctx}/ec/articles/issueArticle?articleId=${articleRepository.articleId}','800px', '550px')" class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i> 发布</a>
+									    	</shiro:hasPermission>
+								  		</c:if>
 								    	<shiro:hasPermission name="ec:articles:findLogs">
 									    	<button class="btn btn-primary btn-xs" title="发布日志" onclick="openDialog('发布日志', '${ctx}/ec/articles/findLogs?articleId=${articleRepository.articleId}','650px', '500px')" data-placement="left" data-toggle="tooltip">
 												<i class="fa fa-calendar-o"></i> 发布日志
