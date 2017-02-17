@@ -15,13 +15,19 @@ public class LessonAsks extends DataEntity<LessonAsks>{
 	private String userId;  //用户ID
 	private String content;  //问题内容  
 	private int askType;     //问题类型       2  文本+图片     3  文本+视频    
-	
+	private String isTop;		//是否置顶（0：否；1：是）
 	private int num; 			//回答问题的总数
 	private String name;		//提问者名字
 	
 	private Date beginDate;		// 开始日期
 	private Date endDate;		// 结束日期
 	
+	public String getIsTop() {
+		return isTop;
+	}
+	public void setIsTop(String isTop) {
+		this.isTop = isTop;
+	}
 	public String getAskId() {
 		return askId;
 	}

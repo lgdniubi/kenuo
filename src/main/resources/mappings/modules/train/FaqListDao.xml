@@ -19,7 +19,7 @@
 					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
 			</if>
-			ORDER BY A.CREATETIME DESC 
+			ORDER BY A.is_top DESC,A.CREATETIME DESC 
 	</select>
 	<insert id="addcomment">
 		INSERT INTO TRAIN_LESSON_ASK_COMMENTS(
@@ -77,4 +77,12 @@
 			and
 			ask_id= #{askId }
 	</select>
+	
+	<update id="updateIsTop">
+		UPDATE TRAIN_LESSON_ASKS AS C
+				SET 
+				c.is_top = #{isTop}
+			WHERE 
+				c.ask_id = #{askId}
+	</update>
 </mapper>

@@ -151,24 +151,24 @@
 	<!-- 分页查询 -->
 	<select id="findList" resultType="Orders">
 		SELECT
-			a.order_id,
-			a.order_status,
-			p.pay_name,
-			a.user_money,
-			a.coupon_price,
-			a.order_amount,
-			a.total_amount,
-			a.add_time,
-			a.action_id,
-			a.user_note,
-			a.admin_note,
-			a.create_logo,
-			a.postal_code,
-			a.flag,
-			a.mobile,
+			a.order_id AS orderid,
+			a.order_status AS orderstatus,
+			p.pay_name AS payname,
+			a.user_money AS usermoney,
+			a.coupon_price AS couponprice,
+			a.order_amount AS orderamount,
+			a.total_amount AS totalamount,
+			a.add_time AS addtime,
+			a.action_id AS actionid,
+			a.user_note AS userNote,
+			a.admin_note AS adminnote,
+			a.create_logo AS createlogo,
+			a.postal_code AS postalcode,
+			a.flag AS flag,
+			a.mobile AS mobile,
 			u.nickname AS "username",
 			a.is_real as isReal,
-			a.channel_flag,
+			a.channel_flag AS channelflag,
 			COUNT(m.rec_id) AS "goodsnum",
 			ogd.order_arrearage AS orderArrearage
 		FROM
@@ -218,6 +218,10 @@
 		</if>
 		<if test="goodsids !=null and  cetaid !=null and goodsids !='' and cetaid !=''">
 			AND f.category_id=#{cetaid} and m.goods_id=#{goodsids}
+		
+		</if>
+		<if test="searchIsReal !=null and searchIsReal !=''">
+			AND a.is_real=#{searchIsReal}
 		
 		</if>
 		GROUP BY a.order_id

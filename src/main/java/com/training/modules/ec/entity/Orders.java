@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.base.Predicate;
 import com.training.common.persistence.TreeEntity;
 import com.training.common.utils.excel.annotation.ExcelField;
 import com.training.modules.sys.entity.Office;
@@ -94,6 +93,7 @@ public class Orders extends TreeEntity<Orders> {
 	private String pid;					//订单父id
 	private int isShow;					//是否展示
 	private int isReal;					//是否实物
+	private String searchIsReal;		//搜索条件是否实物
 	private String orderIsReal;			//是否实物(导出字段)
 	private String channelFlag;			//渠道标识（WAP：wap端；IOS：苹果手机；Android：安卓手机；BM：后台管理）
 	private double memberGoodsPrice;	//会员折扣优惠了多少
@@ -168,6 +168,12 @@ public class Orders extends TreeEntity<Orders> {
 	private String strChannel;		//订单创建类型
 	
 	
+	public String getSearchIsReal() {
+		return searchIsReal;
+	}
+	public void setSearchIsReal(String searchIsReal) {
+		this.searchIsReal = searchIsReal;
+	}
 	@JsonIgnore
 	@ExcelField(title="创建类型", align=2, sort=5)
 	public String getStrChannel() {
