@@ -83,4 +83,11 @@ public class FaqlistService extends CrudService<FaqlistDao,LessonAsks>{
 		List<LessonAskContent> a=dao.findContentList(lessonAskContent);
 		return a;
 	}
+	/**
+	 * 修改lessonAsks的istop值
+	 * @param lessonAsks
+	 */
+	public void updateIsTop(LessonAsks lessonAsks) {
+		dao.updateIsTop(lessonAsks);
+	}
 }
