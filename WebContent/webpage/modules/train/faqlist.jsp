@@ -92,6 +92,33 @@
 		function a(){
 			$("p").hide();
 		}
+	  
+	  
+		function changeTableVal(id,istop){
+			$(".loading").show();//打开展示层
+			$.ajax({
+				type : "POST",
+				url : "${ctx}/train/faqlist/updateistop?id="+id+"&istop="+istop,
+				dataType: 'json',
+				success: function(data) {
+					$(".loading").hide(); //关闭加载层
+					var status = data.STATUS;
+					var istop = data.ISTOP;
+					if("OK" == status){
+						$("#ISTOP"+id).html("");//清除DIV内容	
+						if(istop == '0'){
+							//当前状态为【否】，则打开
+							$("#ISTOP"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+id+"','1')\">");
+						}else if(istop == '1'){
+							//当前状态为【是】，则取消
+							$("#ISTOP"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+id+"','0')\">");
+						}
+					}else if("ERROR" == status){
+						alert(data.MESSAGE);
+					}
+				}
+			});   
+		}
 	</script>
     <title>问答列表</title>
 </head>
@@ -141,6 +168,7 @@
                             <th width="120" style="text-align: center;"> <label for="i-checks"><input type="checkbox" name="" id="i-checks" class="i-checks"></label></th>
                             <th width="120" style="text-align: center;">提问者</th>
                             <th style="text-align: center;">问题标题</th>
+                            <th style="text-align: center;">是否置顶</th>
                             <th width="120" style="text-align: center;">回答人数</th>
                             <th width="200" style="text-align: center;">发布时间</th>
                             <th width="200" style="text-align: center;">操作</th>
@@ -152,6 +180,14 @@
 	                            <td><input type="checkbox" id="${LessonAsks.askId }" name="ids" class="i-checks" ></td>
 	                            <td>${LessonAsks.name }</td>
 	                            <td><a href="#" onclick='top.openTab("${ctx}/train/faqlist/faqdetail?askId=${LessonAsks.askId}","问答详情", false)'>${LessonAsks.title }</a></td>
+	                            <td style="text-align: center;" id="ISTOP${LessonAsks.askId}">
+									<c:if test="${LessonAsks.isTop == 0}">
+										<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('${LessonAsks.askId}','1')">
+									</c:if>
+									<c:if test="${LessonAsks.isTop == 1}">
+										<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('${LessonAsks.askId}','0')">
+									</c:if>
+								</td>
 	                            <td><a href="#" onclick='top.openTab("${ctx}/train/reviewlist/reviewlist?askId=${LessonAsks.askId}","评论管理", false)'>${LessonAsks.num }人</a></td>
 	                            <td><fmt:formatDate value="${LessonAsks.createtime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 	                            <td>

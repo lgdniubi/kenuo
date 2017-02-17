@@ -30,7 +30,6 @@
 						}
 					}else if(data == 'error'){
 						top.layer.alert('删除失败!店铺中仍有员工，无法删除', {icon: 2, title:'提醒'});
-						window.location="${ctx}/sys/office/list"; 
 					}
 				},
 				error:function(XMLHttpRequest,textStatus,errorThrown){
