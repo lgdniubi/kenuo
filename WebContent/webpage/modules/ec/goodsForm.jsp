@@ -66,7 +66,7 @@
 	  }
 	</style>
 	<script type="text/javascript">
-		var cateid = 0;  // 分类的id
+		var cateid = 0;  // 分类的id  
 		$(document).ready(function(){
 			$("#newGoodsCategoryIdButton").click(function(){
 				// 是否限制选择，如果限制，设置为disabled
