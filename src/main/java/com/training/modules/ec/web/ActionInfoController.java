@@ -230,8 +230,7 @@ public class ActionInfoController extends BaseController {
 		try {
 			User user = UserUtils.getUser();
 			actionInfo.setUpdateBy(user);
-			
-
+	
 			//活动开启
 			if(actionInfo.getStatus()==1){
 				actionInfo = get(actionInfo.getActionId()+"");
@@ -250,6 +249,7 @@ public class ActionInfoController extends BaseController {
 					Goods goods=new Goods();
 					goods.setActionId(actionInfo.getActionId());
 					goods.setIsOnSale("1");
+					goods.setIsAppshow("1");
 					actionInfoService.updateGoodsStauts(goods);
 					for (int i = 0; i < list.size(); i++) {
 						//用户商品上下架Regis缓存
@@ -276,6 +276,7 @@ public class ActionInfoController extends BaseController {
 				Goods goods=new Goods();
 				goods.setActionId(actionInfo.getActionId());
 				goods.setIsOnSale("0");
+				goods.setIsAppshow("1");
 				actionInfoService.updateGoodsStauts(goods);
 				for (int i = 0; i < list.size(); i++) {
 					//用户商品上下架Regis缓存

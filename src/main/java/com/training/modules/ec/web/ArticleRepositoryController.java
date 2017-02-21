@@ -40,7 +40,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.HtmlUtils;
 
-import com.alibaba.druid.sql.visitor.functions.Now;
 import com.training.common.persistence.Page;
 import com.training.common.utils.DateUtils;
 import com.training.common.web.BaseController;
@@ -540,18 +539,18 @@ public class ArticleRepositoryController extends BaseController {
             int srcHeight = bi.getHeight(); // 源图高度
             logger.info("#######照片原始宽度srcWidth= " + srcWidth + "_____原始高度srcHeight= " + srcHeight);
 			double scale = 0;
-            if(srcWidth >= 500 && srcHeight >= 500){
+            if(srcWidth >= 400 && srcHeight >= 400){
             	if(srcWidth > srcHeight){
-            		scale = srcWidth/500;
+            		scale = srcWidth/400;
             	}else if(srcWidth < srcHeight){
-            		scale = srcHeight/500;
+            		scale = srcHeight/400;
             	}else{
             		scale = 1/1;
             	}
-            }else if(srcWidth > 500 && srcHeight <= 500){
-            	scale = srcWidth/500;
-            }else if(srcHeight > 500 && srcWidth <= 500){
-            	scale = srcHeight/500;
+            }else if(srcWidth > 400 && srcHeight <= 400){
+            	scale = srcWidth/400;
+            }else if(srcHeight > 400 && srcWidth <= 400){
+            	scale = srcHeight/400;
             }
             x = (int)(x + (x*scale));
             y = (int)(y + (y*scale));
