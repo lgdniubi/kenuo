@@ -709,7 +709,7 @@
 			del_flag,
 			shipping_type,
 			consignee,
-			mobile,
+			phone,
 			address,
 			user_note,
 			invoice_overtime,

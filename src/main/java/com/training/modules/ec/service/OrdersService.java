@@ -903,17 +903,28 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		int serviceTimes_in = 0;//剩余服务次数
 		double totalAmount_in = 0;//实付款金额（入库）
 		double accountBalance_in = 0;//余额
-		
-		if(singleRealityPrice <= totalAmount && totalAmount < orderArrearage){
-			// 实际单次标价  < 实付款金额	< 欠款
-			serviceTimes_in = (int)Math.floor(totalAmount/singleRealityPrice);//充值次数
-			totalAmount_in = serviceTimes_in * singleRealityPrice;//实付金额
-			accountBalance_in = totalAmount - totalAmount_in - accountBalance;
-		}else if(totalAmount >= orderArrearage){
-			//实付款金额	>  欠款
-			serviceTimes_in = _servicetimes-oLog.getRemaintimes();//充值次数
-			totalAmount_in = orderArrearage;//实付金额
-			accountBalance_in = totalAmount - totalAmount_in - accountBalance;
+		if(1 == oLog.getIsReal()){ //虚拟
+			if(singleRealityPrice <= totalAmount && totalAmount < orderArrearage){
+				// 实际单次标价  < 实付款金额	< 欠款
+				serviceTimes_in = (int)Math.floor(totalAmount/singleRealityPrice);//充值次数
+				totalAmount_in = serviceTimes_in * singleRealityPrice;//实付金额
+				accountBalance_in = totalAmount - totalAmount_in - accountBalance;
+			}else if(totalAmount >= orderArrearage){
+				//实付款金额	>  欠款
+				serviceTimes_in = _servicetimes-oLog.getRemaintimes();//充值次数
+				totalAmount_in = orderArrearage;//实付金额
+				accountBalance_in = totalAmount - totalAmount_in - accountBalance;
+			}
+		}else{//实物
+			if(totalAmount<=orderArrearage){
+				//实际付款 <= 欠款
+				totalAmount_in = totalAmount;
+				accountBalance_in = totalAmount- totalAmount_in - accountBalance;
+			}else if(totalAmount > orderArrearage){
+				//实际付款 > 欠款
+				totalAmount_in = orderArrearage;
+				accountBalance_in = totalAmount- totalAmount_in - accountBalance;
+			}
 		}
 		
 		double itemAmount = serviceTimes_in * singleRealityPrice; //项目金额

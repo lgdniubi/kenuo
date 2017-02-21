@@ -21,7 +21,16 @@ public class OrderRechargeLog extends TreeEntity<OrderRechargeLog> {
 	private double orderArrearage;		//欠款金额
 	private int servicetimes;			//预计服务次数
 	private int remaintimes;				//实际服务次数
+	private int isReal;			//实物虚拟
 	
+	public int getIsReal() {
+		return isReal;
+	}
+
+	public void setIsReal(int isReal) {
+		this.isReal = isReal;
+	}
+
 	public int getRemaintimes() {
 		return remaintimes;
 	}
