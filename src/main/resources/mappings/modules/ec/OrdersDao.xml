@@ -269,7 +269,7 @@
 			sp.goods_no as "goodsNo",
 			sp.bar_code as "barCode",
 			ogd.order_arrearage AS orderArrearage,
-			a. user_note AS useNote,
+			a.user_note AS userNote,
 		    a.admin_note AS adminNote,
 		    a.is_real AS orderIsReal
 		FROM
