@@ -10,6 +10,13 @@
     <meta charset="utf-8">
     <meta name="decorator" content="default"/>
     <link rel="stylesheet" type="text/css" href="${ctxStatic}/ec/css/loading.css">
+    
+    <!-- 日期控件 -->
+	<script type="text/javascript" src="${ctxStatic}/My97DatePicker/WdatePicker.js"></script>
+	<!-- 截图 -->
+	<link href="${ctxStatic}/jquery.imgareaselect-0.9.10/css/imgareaselect-default.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="${ctxStatic}/jquery.imgareaselect-0.9.10/scripts/jquery.imgareaselect.min.js"></script>
+	<script type="text/javascript" src="${ctxStatic}/jquery.imgareaselect-0.9.10/scripts/jquery.imgareaselect.pack.js"></script>
 	
 	<!-- 图片上传 引用-->
 	<link rel="stylesheet" type="text/css" href="${ctxStatic}/ec/css/custom_uploadImg.css">
@@ -36,12 +43,16 @@
 		.mt-item p .cost i{font-size:12px;}
 		.mt-item p .link-btn{float:right;}
 		strong{font-weight:bold}
+		.layer-date{vertical-align: middle;}
+		.allImage div{cursor:pointer}
+		.allImage .queryImg{position:relative;}
+		.allImage .queryImg::after{position:absolute;content:'';width:25px;height:25px;right:0;top:-30px;background:url(${ctxStatic}/kindEditor/themes/default/imgGou.png) center;background-size:25px;}
 	</style>
 	<script type="text/javascript">
 	var cateid = 0;  // 分类的id
 	$(document).ready(function(){
 		$("#imageType").val($("#type").val());
-		changeType($("#type").val());
+		newChangeType($("#type").val());
 		
 		$("#goodsCategoryIdButton").click(function(){
 			// 是否限制选择，如果限制，设置为disabled
@@ -186,7 +197,24 @@
 					+ "</style>");
 		}
 	}
+	function newChangeType(type){
+		if(type == 0){
+			$("#imagePattern,#img1,#img2,#img3").hide();
+		}else if(type == 1){
+			$("#imagePattern,#img1").show();
+			$("#img2,#img3").hide();
+		}else if(type == 2){
+			$("#imagePattern,#img1,#img2").show();	
+			$("#img3").hide();
+		}else if(type == 3){
+			$("#imagePattern,#img1,#img2,#img3").show();	
+		}else{
+			top.layer.alert('首图类型有误！', {icon: 0});
+		}
+	}
 	function changeType(type){
+		$("#livesrc1,#livesrc2,#livesrc3").attr("src","");
+		$(".photo1,.photo2,.photo3").val("");
 		if(type == 0){
 			$("#imagePattern,#img1,#img2,#img3").hide();
 		}else if(type == 1){
@@ -228,7 +256,7 @@
                                <form:input path="title" cssClass="form-control required" maxlength="26"/>
 						    </div>
 					   </div>
-					   <div class="form-group">
+					  <%--  <div class="form-group">
                             <label class="col-sm-2 control-label"><font color="red">*</font>短标题：</label>
                             <div class="col-sm-8">
                            		<form:input path="shortTitle" cssClass="form-control required" maxlength="8"/>
@@ -239,7 +267,7 @@
                             <div class="col-sm-8">
                            		<form:input path="keywords" cssClass="form-control required" maxlength="16"/>
 						    </div>
-					   </div>
+					   </div> --%>
 					   <div class="form-group">
                            <label class="col-sm-2 control-label"><font color="red">*</font>作者：</label>
                            <div class="col-sm-8">
@@ -249,10 +277,8 @@
 					   <div class="form-group">
                            <label class="col-sm-2 control-label"><font color="red">*</font>作者头像：</label>
                            <div class="col-sm-8">
-                           		<input type="file" name="file_photo_upload" id="file_photo_upload">
                            		<input type="hidden" id="authorPhoto" name="authorPhoto" value="${articleRepository.authorPhoto}" class="form-control" style="width: 350px;" >   
-								<div id="file_photo_queue" style="margin top:10px;"></div> 
-								<img id="authorPhotoSrc" src="${articleRepository.authorPhoto}" alt="" style="width: 200px;height: 100px;"/>
+								<img id="authorPhotoSrc" src="${articleRepository.authorPhoto}" onerror="this.src='${ctxStatic}/kindEditor/themes/default/upload.png'" alt="" style="width: 200px;height: 100px;" onclick="selectAuthorPhoto()"/>
 						   </div>
 					   </div>
 					   <div class="form-group">
@@ -300,27 +326,18 @@
                            <label class="col-sm-2 control-label"><font color="red">*</font>选择首图：</label>
                            <div class="col-sm-8">
                          		<c:forEach items="${articleRepository.imageList}" var="list" varStatus="status">
-                         			<div id="img${status.index+1}">
-					  					<img id="livesrc${status.index+1}" src="${list.imgUrl}" alt="images" style="width:200px;height:100px;"/>
+                         			<div id="img${status.index+1}" style="display:inline;">
+					  					<img id="livesrc${status.index+1}" src="${list.imgUrl}" onerror="this.src='${ctxStatic}/kindEditor/themes/default/upload.png'" alt="images" style="width:200px;height:100px;" onclick="findAllImg(${status.index+1})"/>
 						  				<form:input type="hidden" path="articleImage.imgUrl" class="photo${status.index+1}" name="photo${status.index+1}" value="${list.imgUrl}"/>
-										<input type="file" name="file_live_upload${status.index+1}" id="file_live_upload${status.index+1}" onclick="a('${status.index+1}')">
 									</div>
                          		</c:forEach>
 						   </div>
 					   </div>
-			    	   <div class="form-group">
-            	 	   		<label class="col-sm-2 control-label"><font color="red">*</font>注：</label>
-            	 	 		<div class="col-sm-8">
-	            	 	 	1、<img alt="" src="${ctxStatic}/kindEditor/themes/default/tag.png" style="width: 16px;height: 16px;">此按钮为插入商品卡片按钮；<br>
-	            	 	 	2、在插入商品卡片时需点击插入代码按钮(<img alt="" src="${ctxStatic}/kindEditor/themes/default/code.png" style="width: 16px;height: 16px">)插入商品卡片样式；<br>
-	            	 	 	3、编辑商品详情时需点击插入代码按钮(<img alt="" src="${ctxStatic}/kindEditor/themes/default/code.png" style="width: 16px;height: 16px">)插入商品详情样式；<br>
-	            	 	 	4、若为新样式需点击插入代码按钮(<img alt="" src="${ctxStatic}/kindEditor/themes/default/code.png" style="width: 16px;height: 16px">)自行编辑自定义样式；
-	            	 	    </div>
-            	 	   </div>
 				    </form:form>
             	 </div>
-	             <div class="mail-body text-right tooltip-demo">
-           				<button type="button" class="btn btn-primary  btn-sm" onclick="sendLetter()"><i class="fa fa-reply"></i>确认添加</button>
+	             <div class="mail-body text-center tooltip-demo">
+	             		<button type="button" class="btn btn-primary  btn-sm" onclick="sendIssue()"><i class="fa fa-reply"></i>发布</button>
+           				<button type="button" class="btn btn-primary  btn-sm" onclick="sendLetter()"><i class="fa fa-reply"></i>保存草稿</button>
                   		<a href="javascript:history.back(-1)" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="放弃"><i class="fa fa-times"></i> 放弃</a>
 	             </div>
 	             <div class="clearfix"></div>
@@ -449,6 +466,124 @@
 			<div class="ke-dialog-mask ke-add-mask"></div>
 		</div>
 	</div>
+	<!-- 选择首图弹出框 -->
+	<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="ke-dialog-allImage" >
+		<div class="modal-dialog modal-lg">
+		    <div class="modal-content">
+		    	<div class="modal-header">
+		    		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title" id="myModalLabel">确认操作</h4>
+				</div>
+				<div class="modal-body">
+					<div id="allImage" class="allImage"></div>
+		      	</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" onclick="selectPhoto()">确定</button>
+		      	</div>
+		    </div>
+ 		</div>
+	</div>
+	<!-- 截图弹出框 -->
+	<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="ke-dialog-cutPhoto" >
+		<div class="modal-dialog modal-lg">
+		    <div class="modal-content">
+		    	<div class="modal-header">
+		    		<button type="button" class="close" onclick="closeCutPhoto()"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title" id="myModalLabel">裁剪照片</h4>
+				</div>
+				<div class="modal-body">
+					<div style="width: 430px;height: 430px;">
+						<img alt="" src="" style="max-width: 400px;max-height: 400px;border: 1px solid black;" id="cutphoto">
+						<input id="x1" name="x1" type="hidden">
+						<input id="y1" name="y1" type="hidden">
+						<input id="width" name="width" type="hidden">
+						<input id="height" name="height" type="hidden">
+						<br><span id="cutImgContent"></span>
+					</div>
+		      	</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" onclick="cutPhoto()">确定</button>
+		      	</div>
+		    </div>
+ 		</div>
+	</div>
+	<!-- 发布弹出框 -->
+	<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="ke-dialog-sendIssue" >
+		<div class="modal-dialog modal-lg">
+		    <div class="modal-content">
+		    	<div class="modal-header">
+		    		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title" id="myModalLabel"></h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-xs-12 col-md-12 "style="height:35px;line-height:35px;" >
+							<input type="checkbox" id="checkType" name="checkType" value="train"> 妃子校
+						</div>		
+						<div class="col-xs-12 col-md-6" style="height:35px;line-height:35px;">
+							<span style="float:left;">分类：</span><select id="trainsCategoryId" name="trainsCategoryId" class="form-control required" style="width:200px;">
+								<c:forEach items="${trainsCategoryList }" var="list">
+									<option value="${list.categoryId}">${list.name}</option>
+								</c:forEach>
+							</select>
+						</div>
+						<div class="col-xs-12 col-md-6" style="height:35px;line-height:35px;">
+							<span style="float:left;">发布时间：</span><input id="trainsTaskDate" name="trainsTaskDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" value="<fmt:formatDate value="${articles.taskDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+										onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'%y-%M-%d %H:%m:%s}'})"/>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 col-md-12 "style="height:35px;line-height:35px;" >
+							<input type="checkbox" id="checkType" name="checkType" value="mtmy"> 每天美耶
+						</div>
+						<div class="col-xs-12 col-md-6" style="height:35px;line-height:35px;">
+							<span style="float:left;">分类：</span>
+							<select id="mtmyCategoryId" name="mtmyCategoryId" class="form-control required" style="width:200px;">
+								<c:forEach items="${mtmyCategoryList }" var="list">
+									<option value="${list.id}">${list.name}</option>
+								</c:forEach>
+							</select>
+						</div>
+						<div class="col-xs-12 col-md-6" style="height:35px;line-height:35px;">
+							<span style="float:left;">发布时间：</span>
+							<input id="mtmyTaskDate" name="mtmyTaskDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" value="<fmt:formatDate value="${articles.taskDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+										onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'%y-%M-%d %H:%m:%s}'})"/>
+						</div>
+					</div>
+		      	</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" onclick="issue()">确定</button>
+		      	</div>
+		    </div>
+ 		</div>
+	</div>
+	<!-- 作者头像弹出框 -->
+	<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="ke-dialog-authorPhoto" >
+		<div class="modal-dialog modal-lg">
+		    <div class="modal-content">
+		    	<div class="modal-header">
+		    		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title" id="myModalLabel">选择头像</h4>
+				</div>
+				<div class="modal-body">
+					<div id="allAuthorPhoto" class="allImage">
+						<div style="display:inline;margin-left: 5px;">
+							<img alt="" src="http://resource.idengyun.com/resource/images/2017/02/cc019215-b136-4394-b2a0-4d7d4bf0bdd1.png" style="width: 200px;height: 100px;">
+						</div>
+						<div style="display:inline;margin-left: 5px;">
+							<img alt="" src="http://resource.idengyun.com/resource/images/2017/02/80c54153-a0c5-4dd6-bd2e-a362955a392d.png" style="width: 200px;height: 100px;">
+						</div>
+						<div style="display:inline;margin-left: 5px;">
+							<img alt="" src="http://resource.idengyun.com/resource/images/2017/02/cb3c8c26-2fa6-4314-b18a-41c0b513586d.png" style="width: 200px;height: 100px;">
+						</div>
+					</div>
+		      	</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" onclick="changePhoto()">确定</button>
+		      	</div>
+		    </div>
+ 		</div>
+	</div>
 	<div class="loading"></div>
 	<script type="text/javascript" src="${ctxStatic}/train/uploadify/lang-cn.js"></script>
 	<script type="text/javascript" src="${ctxStatic}/train/uploadify/jquery.uploadify.min.js"></script>
@@ -492,7 +627,8 @@
 		var editor;
 		KindEditor.ready(function(K) {
 			editor = K.create('textarea[name="content1"]', {
-				width : "100%"
+				width : "100%",
+				items : ['source','preview','|','shoptag','code','|','image','media','link','|','fullscreen']
 			});
 		});
 		$("#close,#newClose,#closeShopTag,#newCloseShopTag,#closeCode,#newCloseCode").click(function(){
@@ -560,7 +696,7 @@
 			}else{
 				console.log($(this).index())
 				$('.ke-dalog-addpic .tab2').show()
-				$('.ke-dalog-addpic .tab1').hide();-
+				$('.ke-dalog-addpic .tab1').hide();
 				$("#ke-dialog-num").val("2");
 			};
 		});
@@ -595,110 +731,6 @@
 					}
 				}
 			});
-			//文章作者头像
-			$("#file_photo_upload").uploadify({
-				'buttonText' : '&nbsp;&nbsp;&nbsp;请选择上传图片',
-				'method' : 'post',
-				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
-				'uploader' : '<%=uploadURL%>',
-				'fileObjName' : 'file_photo_upload',//<input type="file"/>的name
-				'queueID' : 'file_photo_queue',//与下面HTML的div.id对应
-				'method' : 'post',
-				'fileTypeDesc' : '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
-				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
-				'fileSizeLimit' : '10MB',//上传文件的大小限制
-				'multi' : false,//设置为true时可以上传多个文件
-				'auto' : true,//点击上传按钮才上传(false)
-				'onFallback' : function() {
-					//没有兼容的FLASH时触发
-					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
-				},
-				'onUploadSuccess' : function(file, data, response) {
-					var jsonData = $.parseJSON(data);//text 转 json
-					if (jsonData.result == '200') {
-						$("#authorPhoto").val(jsonData.file_url);
-						$('.authorPhoto').attr('href', jsonData.file_url);
-						$("#authorPhotoSrc").attr('src', jsonData.file_url);
-					}
-				}
-			});
-			
-			//  文章首图实现裁剪功能后  上传方法进行修改
-			$("#file_live_upload1").uploadify({
-				'buttonText' : '请选择封面',
-				'method' : 'post',
-				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
-				'uploader' : '<%=uploadURL%>',
-				'fileObjName' : 'file_live_upload1',//<input type="file"/>的name
-				'queueID' : 'file_user_queue1',//与下面HTML的div.id对应
-				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
-				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
-				'fileSizeLimit' : '10MB',//上传文件的大小限制
-				'multi' : false,//设置为true时可以上传多个文件
-				'auto' : true,//点击上传按钮才上传(false)
-				'onFallback' : function(){
-					//没有兼容的FLASH时触发
-					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
-				},
-				'onUploadSuccess' : function(file, data, response) { 
-					var jsonData = $.parseJSON(data);//text 转 json
-					if(jsonData.result == '200'){
-						$(".photo1").val(jsonData.file_url);
-						$("#livesrc1").attr('src',jsonData.file_url); 
-					}
-				}
-			});
-			
-			$("#file_live_upload2").uploadify({
-				'buttonText' : '请选择封面',
-				'method' : 'post',
-				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
-				'uploader' : '<%=uploadURL%>',
-				'fileObjName' : 'file_live_upload2',//<input type="file"/>的name
-				'queueID' : 'file_user_queue2',//与下面HTML的div.id对应
-				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
-				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
-				'fileSizeLimit' : '10MB',//上传文件的大小限制
-				'multi' : false,//设置为true时可以上传多个文件
-				'auto' : true,//点击上传按钮才上传(false)
-				'onFallback' : function(){
-					//没有兼容的FLASH时触发
-					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
-				},
-				'onUploadSuccess' : function(file, data, response) { 
-					var jsonData = $.parseJSON(data);//text 转 json
-					if(jsonData.result == '200'){
-						$(".photo2").val(jsonData.file_url);
-						$("#livesrc2").attr('src',jsonData.file_url); 
-					}
-				}
-			});
-			
-			$("#file_live_upload3").uploadify({
-				'buttonText' : '请选择封面',
-				'method' : 'post',
-				'swf': '${ctxStatic}/train/uploadify/uploadify.swf',
-				'uploader' : '<%=uploadURL%>',
-				'fileObjName' : 'file_live_upload3',//<input type="file"/>的name
-				'queueID' : 'file_user_queue3',//与下面HTML的div.id对应
-				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
-				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
-				'fileSizeLimit' : '10MB',//上传文件的大小限制
-				'multi' : false,//设置为true时可以上传多个文件
-				'auto' : true,//点击上传按钮才上传(false)
-				'onFallback' : function(){
-					//没有兼容的FLASH时触发
-					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
-				},
-				'onUploadSuccess' : function(file, data, response) { 
-					var jsonData = $.parseJSON(data);//text 转 json
-					if(jsonData.result == '200'){
-						$(".photo3").val(jsonData.file_url);
-						$("#livesrc3").attr('src',jsonData.file_url); 
-					}
-				}
-			});
-			
 			validateForm = $("#inputForm").validate();
 		});
 		function LoadOver(){
@@ -735,12 +767,144 @@
 			}else{
 				if(validateForm.form()){
 		    		loading("正在提交，请稍候...");
+		    		$("#inputForm").attr("action","${ctx}/ec/articles/saveArticle");
 					$("#inputForm").submit();
 		    	}
 			}
 		}
 		window.onload=LoadOver;
-		
+		var authorSrc = '';
+		function selectAuthorPhoto(){
+			authorSrc = '';
+			$("#ke-dialog-authorPhoto").modal('show');
+			$('#allAuthorPhoto div').click(function(){
+				$(this).addClass('queryImg').siblings().removeClass('queryImg');
+				authorSrc = $(this).find("img").attr('src');
+			});
+		}
+		function changePhoto(){
+			if(authorSrc.length > 0){
+				$("#ke-dialog-authorPhoto").modal('hide');
+				$("#authorPhoto").val(authorSrc);
+				$("#authorPhotoSrc").attr('src',authorSrc);
+			}else{
+				top.layer.alert('未选取作者头像！', {icon: 0});
+			}
+		}
+		var imgUrl = '';
+		var num = '';
+		function findAllImg(s){
+			num = s;
+			$("#allImage").empty();
+			imgUrl = '';
+			$(".ke-edit-iframe").contents().find(".ke-content img").each(function(){
+				$("#allImage").append("<div style=\"display:inline;margin-left: 5px;\"><img src="+this.src+" style=\"width: 200px;height: 100px;\"></div>");
+			})
+			$("#ke-dialog-allImage").modal('show');
+			$('#allImage div').click(function(){
+				$(this).addClass('queryImg').siblings().removeClass('queryImg');
+				imgUrl = $(this).find("img").attr('src');
+			});
+		}
+		function selectPhoto(){
+			if(imgUrl.length > 0){
+				$("#ke-dialog-allImage").modal('hide');
+				$("#x1,#y1,#width,#height").val("");
+				$("#cutImgContent").html("");
+				$("#cutphoto").attr("src",imgUrl);
+				$("#ke-dialog-cutPhoto").modal('show');
+				if($("#imageType").val() == 1){
+					cutImg("2:1");
+				}else{
+					cutImg("1:1");
+				}
+			}else{
+				top.layer.alert('未选择图片!请重新选择!', {icon: 0});
+			}
+		}
+		function cutImg(s){
+			$('#cutphoto').imgAreaSelect({
+				aspectRatio: s, 
+				onSelectEnd: function (img, selection) {
+		            $('input[name="x1"]').val(selection.x1);
+		            $('input[name="y1"]').val(selection.y1);
+		            $('input[name="width"]').val(selection.width);
+		            $('input[name="height"]').val(selection.height); 
+		            $("#cutImgContent").html("当前选择尺寸:"+selection.width+"*"+selection.height);
+		        }
+            }); 
+		}
+		function cutPhoto(){
+			if($("#x1").val().length > 0 && $("#y1").val().length > 0 && $("#width").val().length > 0 && $("#height").val().length > 0){
+				$(".loading").show();
+				$.ajax({
+					type : "POST",   
+					url : "${ctx}/ec/articles/ajaxCutImg",
+					data:{'path':imgUrl,'x':$("#x1").val(),'y':$("#y1").val(),'width':$("#width").val(),'height':$("#height").val()},
+					dataType: 'text',
+					success: function(str) {
+						$(".loading").hide();//隐藏展示层
+						closeCutPhoto();
+						var data = $.parseJSON(str);
+						if(data.status == 200){
+							$("#livesrc"+num).attr("src",data.msg.file_url);
+							$(".photo"+num).val(data.msg.file_url);
+						}else{
+							top.layer.alert('截图出现异常!', {icon: 0});
+						}
+					}
+				});   
+			}else{
+				top.layer.alert('未截取图片!请重新截取!', {icon: 0});
+			}
+		}
+		function closeCutPhoto(){
+			$('#cutphoto').imgAreaSelect({
+				remove:true
+            }); 
+			$("#ke-dialog-cutPhoto").modal('hide');
+		}
+		function sendIssue(){
+			var content = $(".ke-edit-iframe").contents().find(".ke-content").html();
+			if(content.indexOf("style") >=0){
+				content = content.replace("&lt;style&gt;","<style>");
+				content = content.replace("&lt;/style&gt;","</style>");
+			}
+			$("#contents").val(content);
+			if($("#contents").val().length >= 15000){
+				top.layer.alert('文章内容过长！', {icon: 0});
+			}else if($("#authorPhoto").val() == ""){
+				top.layer.alert('作者头像不能为空！', {icon: 0});
+			}else if($("#categoryId").val() == 0){
+				top.layer.alert('文章分类不能为空！', {icon: 0});
+			}else if($("#imageType").val() == 1 && $(".photo1").val() == ""){
+				top.layer.alert('首图不能为空！', {icon: 0});
+			}else if($("#imageType").val() == 2 && ($(".photo1").val() == "" || $(".photo2").val() == "")){
+				top.layer.alert('首图不能为空！', {icon: 0});
+			}else if($("#imageType").val() == 3 && ($(".photo1").val() == "" || $(".photo2").val() == "" || $(".photo3").val() == "")){
+				top.layer.alert('首图不能为空！', {icon: 0});
+			}else if($("#contents").val() == ""){
+				top.layer.alert('文章内容不能为空！', {icon: 0});
+			}else{
+				if(validateForm.form()){
+					$("#ke-dialog-sendIssue").modal('show');
+		    	}
+			}
+		}
+		function issue(){
+			if(document.querySelectorAll("input[name=checkType]:checked").length > 0){
+				var str = '';
+				$("input[name=checkType]:checked").each(function(){ 
+					str = str + $(this).val() + ",";
+				}); 
+	    		loading("正在提交，请稍候...");
+	    		$("#inputForm").attr("action","${ctx}/ec/articles/confirmIssue?checkType="+str+"&trainsCategoryId="+$("#trainsCategoryId").val()+"&trainsTaskDate="+$("#trainsTaskDate").val()
+	    				+"&mtmyCategoryId="+$("#mtmyCategoryId").val()+"&mtmyTaskDate="+$("#mtmyTaskDate").val());
+				$("#inputForm").submit();
+			}else{
+				top.layer.alert('请选择发布方!', {icon: 0});
+			} 
+		}
     </script>
 </body>
 </html>

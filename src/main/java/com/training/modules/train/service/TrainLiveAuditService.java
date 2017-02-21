@@ -159,16 +159,17 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 			content="您的直播将要在5分钟内开始，请准时直播！";
 			param=pushParam(title,notify_type,content,list);
 			WebUtils webUtils = new WebUtils();
-			String result = webUtils.webUtilsMain(param, push_url);
+			String result = webUtils.postTrainObject(param, push_url);
 			jsonObject = JSONObject.fromObject(result);
 			System.out.println(jsonObject.toString());
 			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",message:"+jsonObject.get("message"));
 		}else if("9".equals(Status)){			//  9 直播将要开始  购买者
 			title="购买直播将要开始";
 			notify_type="9";				//notify_type 0 审核失败  0 审核通过 8 直播将要开始  9 预约直播提醒
+			content="您购买的直播将要在5分钟内开始，请准时观看！";
 			param=pushParam(title,notify_type,content,list);
 			WebUtils webUtils = new WebUtils();
-			String result = webUtils.webUtilsMain(param, push_url);
+			String result = webUtils.postTrainObject(param, push_url);
 			jsonObject = JSONObject.fromObject(result);
 			System.out.println(jsonObject.toString());
 			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",message:"+jsonObject.get("message"));
@@ -178,7 +179,7 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 			content="您预约的直播将要在5分钟内开始，请准时观看！";
 			param=pushParam(title,notify_type,content,list);
 			WebUtils webUtils = new WebUtils();
-			String result = webUtils.webUtilsMain(param, push_url);
+			String result = webUtils.postTrainObject(param, push_url);
 			jsonObject = JSONObject.fromObject(result);
 			System.out.println(jsonObject.toString());
 			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",message:"+jsonObject.get("message"));

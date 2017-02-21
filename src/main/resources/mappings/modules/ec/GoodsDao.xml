@@ -169,6 +169,9 @@
 		<if test="isReal !=null and isReal!=''">
 			AND g.is_real = #{isReal}
 		</if>
+		<if test="isOnSale != null and isOnSale != ''">
+			AND g.is_on_sale = #{isOnSale}
+		</if>
 	</select>
 	<!-- 根据多个分类查询上商品 -->
 	<select id="findByCateList" resultType="Goods">

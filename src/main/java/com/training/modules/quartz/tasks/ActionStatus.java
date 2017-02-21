@@ -105,6 +105,7 @@ public class ActionStatus extends CommonService{
 					Goods goods=new Goods();
 					goods.setActionId(vo.getActionId());
 					goods.setIsOnSale("0");
+					goods.setIsAppshow("1");
 					int num=goodsService.updateGoodsStauts(goods);
 					//下架数量
 					logger.info("[商品下架]，商品下架数量："+num);

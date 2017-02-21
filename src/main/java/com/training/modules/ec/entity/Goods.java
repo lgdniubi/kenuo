@@ -76,6 +76,7 @@ public class Goods extends DataEntity<Goods> {
 	private EquipmentLabel equipmentLabel;   //商品设备标签
 	private String isAppshow;      //是否app显示[0：否；1：是]
 	
+	private int subId;           //主题图中商品对应的主题图id
 	/**
 	 * get/set
 	 */
@@ -391,6 +392,12 @@ public class Goods extends DataEntity<Goods> {
 	}
 	public void setEquipmentLabel(EquipmentLabel equipmentLabel) {
 		this.equipmentLabel = equipmentLabel;
+	}
+	public int getSubId() {
+		return subId;
+	}
+	public void setSubId(int subId) {
+		this.subId = subId;
 	}
 	
 }

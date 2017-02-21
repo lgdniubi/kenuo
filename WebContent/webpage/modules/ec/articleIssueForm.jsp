@@ -4,6 +4,11 @@
 <head>
 	<title>发布界面</title>
 	<meta name="decorator" content="default"/>
+	<!-- 日期控件 -->
+	<script type="text/javascript" src="${ctxStatic}/My97DatePicker/WdatePicker.js"></script>
+	<style type="text/css">
+		.layer-date{vertical-align: middle;}
+	</style>
 	<script type="text/javascript">
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
@@ -46,36 +51,41 @@
 	                <div class="tab-inner">
 						<form:form id="inputForm"  action="${ctx}/ec/articles/sendArticles" method="post">
 							<input type="hidden" id="articleId" name="articleId" value="${articleRepository.articleId }">
-							<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
-								<tr>
-									<td width="100px;"><label class="pull-right"><font color="red">*</font>发布到：</label></td>
-									<td>
-										<select id="type" name="type" class="form-control required" onchange="changeType(this.value)">
-											<option value="1">妃子校</option>
-											<option value="2">每天美耶</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td><label class="pull-right"><font color="red">*</font>所属分类：</label></td>
-									<td>
-										<div id="trains">
-											<select id="trainsCategoryId" name="trainsCategoryId" class="form-control required">
-												<c:forEach items="${trainsCategoryList }" var="list">
-													<option value="${list.categoryId}">${list.name}</option>
-												</c:forEach>
-											</select>
-										</div>
-										<div id="mtmy">
-											<select id="mtmyCategoryId" name="mtmyCategoryId" class="form-control required">
-												<c:forEach items="${mtmyCategoryList }" var="list">
-													<option value="${list.id}">${list.name}</option>
-												</c:forEach>
-											</select>
-										</div>
-									</td>
-								</tr>
-							</table>
+							<div class="row">
+								<div class="col-xs-12 col-md-12 "style="height:35px;line-height:35px;" >
+									<input type="checkbox" id="" name="" value="train"> 妃子校
+								</div>		
+								<div class="col-xs-6 col-md-6" style="height:35px;line-height:35px;">
+									<span style="float:left;">分类：</span><select id="trainsCategoryId" name="trainsCategoryId" class="form-control required" style="width:200px;">
+										<c:forEach items="${trainsCategoryList }" var="list">
+											<option value="${list.categoryId}">${list.name}</option>
+										</c:forEach>
+									</select>
+								</div>
+								<div class="col-xs-6 col-md-6" style="height:35px;line-height:35px;">
+									<span style="float:left;">发布时间：</span><input id="trainsTaskDate" name="trainsTaskDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" value="<fmt:formatDate value="${articles.taskDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+												onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'%y-%M-%d %H:%m:%s}'})"/>
+								</div>
+								
+							</div>
+							<div class="row">
+								<div class="col-xs-12 col-md-12 "style="height:35px;line-height:35px;" >
+									<input type="checkbox" id="" name="" value="mtmy"> 每天美耶
+								</div>
+								<div class="col-xs-6 col-md-6" style="height:35px;line-height:35px;">
+									<span style="float:left;">分类：</span>
+									<select id="mtmyCategoryId" name="mtmyCategoryId" class="form-control required" style="width:200px;">
+										<c:forEach items="${mtmyCategoryList }" var="list">
+											<option value="${list.id}">${list.name}</option>
+										</c:forEach>
+									</select>
+								</div>
+								<div class="col-xs-6 col-md-6" style="height:35px;line-height:35px;">
+									<span style="float:left;">发布时间：</span>
+									<input id="mtmyTaskDate" name="mtmyTaskDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" value="<fmt:formatDate value="${articles.taskDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
+												onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'%y-%M-%d %H:%m:%s}'})"/>
+								</div>
+							</div>
 						</form:form>
 					</div>
 				</div>
