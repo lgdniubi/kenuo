@@ -386,7 +386,7 @@ window.onload=initStatus;
 							<c:if test="${orders.distinction == 2}">售后卖</c:if>
 							<c:if test="${orders.distinction == 3}">老带新</c:if>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<label class="active">手机号码:</label>&nbsp;&nbsp;${orders.mobile }
+							<label class="active">手机号码:</label>&nbsp;&nbsp;${orders.users.mobile }
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">订单状态:</label>&nbsp;&nbsp;
 							<form:select path="orderstatus"  class="form-control" style="width:180px">
@@ -537,7 +537,7 @@ window.onload=initStatus;
 									<label ><font color="red">*</font>收&nbsp;&nbsp;货&nbsp;&nbsp;人：</label>
 									<form:input path="consignee" htmlEscape="false" maxlength="10" class="form-control required" style="width:180px" />
 									<label ><font color="red">*</font>联系电话：</label>
-									<form:input path="phone" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
+									<form:input path="mobile" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
 									<label ><font color="red">*</font>收货地址：</label>
 									<form:input path="address" htmlEscape="false" maxlength="50" class="form-control required" style="width:180px" />
 								</div>
