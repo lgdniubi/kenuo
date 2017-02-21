@@ -179,8 +179,8 @@
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping m ON a.order_id = m.order_id
 		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=m.goods_id
 		LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
-		WHERE a.parent_id=0
-		AND a.del_flag = 0
+		${sqlMap.dsf} and a.parent_id=0
+		 AND a.del_flag = 0
 		<if test="username != null and username!=''">
 			AND u.nickname like
 			<if test="dbName == 'oracle'">'%'||#{username} ||'%'</if>

@@ -54,7 +54,7 @@ public abstract class CommonScopeUtils {
 			}else if(User.DATA_SCOPE_CUSTOM.equals(String.valueOf(user.getDataScope()))){
 				//数据范围(2:按明细设置)
 				sqlString.append("LEFT JOIN sys_user_office b1 ON b1.office_id = "+Alias+".office_id OR b1.office_id =" + Alias+".shop_id ");
-				sqlString.append(" WHERE 1 = 1 AND ((b1.user_id = '"+user.getId()+"') OR (b1.user_id =" +Alias+".user_id))");
+				sqlString.append(" WHERE 1 = 1 AND b1.user_id = '"+user.getId()+"'");
 			}
 		}else{
 			//当用户为“管理员”,查询所有数据

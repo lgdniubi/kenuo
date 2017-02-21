@@ -53,6 +53,7 @@ import com.training.modules.sys.dao.AreaDao;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.utils.ScopeUtils;
 
 /**
  * 订单service
@@ -118,7 +119,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 */
 	public Page<Orders> findOrders(Page<Orders> page, Orders orders) {
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
-		//	orders.getSqlMap().put("dsf", dataScopeFilter(orders.getCurrentUser(), "o", "a"));
+		//orders.getSqlMap().put("dsf", dataScopeFilter(orders.getCurrentUser(), "o", "a"));
+		orders.getSqlMap().put("dsf",ScopeUtils.dataScopeFilter("a", "orderOrRet"));
 		// 设置分页参数
 		orders.setPage(page);
 		// 执行分页查询
