@@ -23,6 +23,7 @@
     } 
    	$(document).ready(function(){
    		changeStatus($("#oldStatus").val());
+   		$("#apptStatus").val($("#oldStatus").val());
    		validateForm = $("#inputForm").validate({
    			rules: {
    				apptStartTime:{
