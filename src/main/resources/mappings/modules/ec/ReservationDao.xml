@@ -24,14 +24,13 @@
 		  <include refid="ReservationColumns"/>,
 		  m.goods_name AS 'goods.goodsName',
 		  a.name AS 'user.name',
-		  o.name AS 'office.name'
+		  o1.name AS 'office.name'
 		FROM
 		  mtmydb.mtmy_appt_order AS r
-		  LEFT JOIN trains.sys_office AS o ON r.shop_id = o.id
+		  LEFT JOIN trains.sys_office AS o1 ON r.shop_id = o1.id
 		  LEFT JOIN trains.sys_user AS a ON r.beautician_id = a.id
 		  LEFT JOIN mtmydb.mtmy_order_goods_mapping AS m ON r.goods_mapping_id = m.rec_id
-		WHERE 
-			1=1
+		  ${sqlMap.dsf}
 			<if test="apptStatus != null and apptStatus != ''">
 				AND r.appt_status = #{apptStatus }
 			</if>
@@ -45,7 +44,7 @@
 				OR r.user_phone LIKE 
 						<if test="dbName == 'oracle'">'%'||#{keyword}||'%'</if>
 						<if test="dbName == 'mysql'">CONCAT('%', #{keyword}, '%')</if>
-				OR o.name LIKE 
+				OR o1.name LIKE 
 						<if test="dbName == 'oracle'">'%'||#{keyword}||'%'</if>
 						<if test="dbName == 'mysql'">CONCAT('%', #{keyword}, '%')</if>
 				OR a.name LIKE 
