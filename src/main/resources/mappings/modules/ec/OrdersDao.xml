@@ -596,7 +596,8 @@
 			del_flag,
 			invoice_overtime,
 			user_note,
-			pay_time
+			pay_time,
+			create_by
 		)values(
 			#{orderid},
 			#{parentid},
@@ -620,7 +621,8 @@
 			#{delFlag},
 			#{invoiceOvertime},
 			#{usernote},
-			SYSDATE()
+			SYSDATE(),
+			#{createBy.id}
 		)
 	</insert>
 	
@@ -713,7 +715,8 @@
 			address,
 			user_note,
 			invoice_overtime,
-			pay_time
+			pay_time,
+			create_by
 		)values(
 			#{orderid},
 			#{parentid},
@@ -740,7 +743,8 @@
 			#{address},
 			#{usernote},
 			#{invoiceOvertime},
-			SYSDATE()
+			SYSDATE(),
+			#{createBy.id}
 		)
 	</insert>
 	<!-- 插入备注信息 -->

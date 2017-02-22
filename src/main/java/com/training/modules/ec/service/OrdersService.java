@@ -743,6 +743,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setIsNeworder(orders.getIsNeworder()); //是否新订单（0：新订单；1：老订单）
 		_orders.setDistinction(orders.getDistinction()); //订单性质
 		_orders.setOffice(user.getOffice());
+		_orders.setCreateBy(user);
 		_orders.setDelFlag("0");
 		_orders.setChannelFlag("bm");
 		_orders.setShippingtype(2);
@@ -1148,6 +1149,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setAddress(orders.getAddress());
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		_orders.setCreateBy(user);
 		ordersDao.saveKindOrder(_orders);
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
