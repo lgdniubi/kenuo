@@ -97,7 +97,7 @@
 									<a href="${ctx}/ec/subject/del?subId=${subject.subId}" onclick="return confirmx('确认要删除吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="ec:subject:addGoods">
-									<a href="#" onclick="openDialogView('增加商品', '${ctx}/ec/subject/subjectGoodsList?subId=${subject.subId}','700px', '750px')" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> 增加商品</a>
+									<a href="#" onclick="openDialogView('增加商品', '${ctx}/ec/subject/subjectGoodsList?subId=${subject.subId}','700px', '650px')" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> 增加商品</a>
 								</shiro:hasPermission>
 							</td>
 						</tr>
