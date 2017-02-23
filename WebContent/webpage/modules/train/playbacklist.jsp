@@ -129,6 +129,10 @@
 												<i class="fa fa-file"></i>隐藏</a>
 										</c:if>
 									</shiro:hasPermission>
+									<shiro:hasPermission name="train:live:sku">
+										<a href="#" onclick="openDialogView('配置列表', '${ctx}/train/live/liveSkuForm?auditId=${playback.auditId}','800px','500px')"
+											 class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>查看配置</a>
+									</shiro:hasPermission>
 
 								</td>
 							</tr>
