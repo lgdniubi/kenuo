@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.training.modules.train.dao.EntryMapper">
+
+
+    <!-- 修改申请直播状态 -->
+    <update id="upauditstatus" parameterType="java.lang.Integer">
+	UPDATE 
+		trains.train_live_audit set audit_status=5
+	WHERE
+		now() > DATE_ADD(bengtime,INTERVAL ${value} MINUTE)
+		AND audit_status=2
+    </update> 
+ 
+    <select id="querylive_outTime" parameterType="java.lang.String" resultType="java.lang.Integer">
+	SELECT 
+		param_value
+	FROM 
+		trains.train_rule_param
+	WHERE 
+		param_key=#{live_outTime}
+    </select>
+   
+   <!-- 修改申请直播状态 -->
+    <update id="uplivestatus" parameterType="java.lang.Integer">
+	UPDATE 
+		trains.train_live_audit 
+	set audit_status=5
+	WHERE
+		now() > DATE_ADD(bengtime,INTERVAL ${value} MINUTE)
+		AND id=#{auditid}
+		AND audit_status = 4        
+    </update>
+    
+    <select id="queryCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+	SELECT 
+		count(*)
+	WHERE
+		now() > DATE_ADD(bengtime,INTERVAL ${value} MINUTE)
+		AND id=#{auditid}
+		AND audit_status = 4        
+    </select>
+    
+	<select id="queryRoomidandAuditid" resultType="com.training.modules.train.entity.LiveRoomidAndAuditid">
+	SELECT
+		ro.roomId AS roomid,
+		au.id AS auditid,
+		au.bengtime
+	FROM
+		trains.train_live_audit au
+		LEFT JOIN trains.train_live_room ro ON au.userId = ro.userId
+	WHERE
+		audit_status = 4
+	</select>
+	
+	<select id="getliveendbyid" parameterType="java.lang.Integer" resultType="com.training.modules.train.entity.EntrySopCastBean">
+    SELECT 
+	    title,
+	    `desc`,
+	    imgurl,
+	    playpass,
+	    bengtime,
+	    id AS auditId 
+    FROM 
+    	train_live_audit 
+    WHERE 
+    	id=#{value} 
+    	AND audit_status=4
+    </select>
+	
+	<!-- 将直播信息存到数据库中 -->
+	<insert id="LiveEnd" parameterType="map">
+	INSERT INTO 
+		trains.train_live_playback 
+		(
+		playbackId,
+		userId,
+		liveId,
+		bengtime,
+		endtime,
+		thumbup,
+		playNum,
+		`name`,
+		`desc`,
+		imgurl,
+		playpass,
+		auditId
+		)
+	VALUES
+		(
+		#{playbackId},
+		#{user_id},
+		#{liveId},
+		#{bengtime},
+		#{overtime},
+		#{Thumbup},
+		#{playNum},
+		#{name},
+		#{desc},
+		#{imgurl},
+		#{playpass},
+		#{auditId}
+		)
+	</insert>
+	
+	<!-- 当直播完毕后将审核表中的状态改为3   3：完成直播 -->
+	<update id="alterstatus" parameterType="java.lang.Integer">
+	UPDATE 
+		trains.train_live_audit 
+	SET 
+		audit_status=3 
+	WHERE 
+		id=#{value} 
+		AND audit_status=4
+	</update>
+	
+	<update id="liveendtime" parameterType="java.lang.Integer">
+    UPDATE trains.train_live_audit SET endtime = now() WHERE id = #{value}
+    </update>
+    
+    <update id="operatebackrecord">
+		update trains.train_live_back_record set del_flag = 1 where now() > validity_date and is_pay = 2
+	</update>
+    
+</mapper>
