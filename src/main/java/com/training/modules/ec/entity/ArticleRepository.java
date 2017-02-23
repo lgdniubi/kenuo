@@ -31,6 +31,8 @@ public class ArticleRepository extends DataEntity<ArticleRepository>{
 	private ArticleRepositoryCategory category;		//文章分类
 	private int likeNum;			//文章点赞数
 	
+	private String articleType;		//用于条件查询
+	
 	public int getArticleId() {
 		return articleId;
 	}
@@ -132,5 +134,11 @@ public class ArticleRepository extends DataEntity<ArticleRepository>{
 	}
 	public void setLikeNum(int likeNum) {
 		this.likeNum = likeNum;
+	}
+	public String getArticleType() {
+		return articleType;
+	}
+	public void setArticleType(String articleType) {
+		this.articleType = articleType;
 	}
 }

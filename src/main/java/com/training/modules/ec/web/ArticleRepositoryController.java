@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -40,9 +41,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.HtmlUtils;
 
+import com.google.common.collect.Maps;
 import com.training.common.persistence.Page;
 import com.training.common.utils.DateUtils;
 import com.training.common.web.BaseController;
+import com.training.modules.ec.entity.ArticleAuthorPhoto;
 import com.training.modules.ec.entity.ArticleImage;
 import com.training.modules.ec.entity.ArticleIssueLogs;
 import com.training.modules.ec.entity.ArticleRepository;
@@ -121,11 +124,22 @@ public class ArticleRepositoryController extends BaseController {
 			MtmyArticleCategory mtmyArticleCategory = new MtmyArticleCategory();
 			List<MtmyArticleCategory> mtmyCategoryList= mtmyArticleService.findCategory(mtmyArticleCategory);
 			model.addAttribute("mtmyCategoryList", mtmyCategoryList);
+			//发布每天美耶常用分类
+			List<MtmyArticleCategory> mtmyCateCommList = articleRepositoryService.findMtmyCateComm();
+			model.addAttribute("mtmyCateCommList", mtmyCateCommList);
 			//妃子校文章分类
 			ArticlesCategory articlesCategory = new ArticlesCategory();
 			List<ArticlesCategory> trainsCategoryList = articlesListService.findCategory(articlesCategory);
 			model.addAttribute("trainsCategoryList", trainsCategoryList);
-			model.addAttribute("articleRepository", articleRepository);
+			//发布妃子校常用分类
+			List<ArticlesCategory> trainCateCommList = articleRepositoryService.findTrainCateComm();
+			model.addAttribute("trainCateCommList", trainCateCommList);
+			// 查询常用分类
+			List<ArticleRepositoryCategory> commonCate= articleRepositoryService.findCategoryCommon();
+			model.addAttribute("commonCate", commonCate);
+			// 查询常用作者
+			List<ArticleAuthorPhoto> authorList = articleRepositoryService.findAllAuthor();
+			model.addAttribute("authorList", authorList);
 			
 			List<ArticleRepositoryCategory> categoryList = articleRepositoryService.findCategory(articleRepositoryCategory);
 			model.addAttribute("categoryList", categoryList);
@@ -275,10 +289,16 @@ public class ArticleRepositoryController extends BaseController {
 			MtmyArticleCategory mtmyArticleCategory = new MtmyArticleCategory();
 			List<MtmyArticleCategory> mtmyCategoryList= mtmyArticleService.findCategory(mtmyArticleCategory);
 			model.addAttribute("mtmyCategoryList", mtmyCategoryList);
+			//发布每天美耶常用分类
+			List<MtmyArticleCategory> mtmyCateCommList = articleRepositoryService.findMtmyCateComm();
+			model.addAttribute("mtmyCateCommList", mtmyCateCommList);
 			//妃子校文章分类
 			ArticlesCategory articlesCategory = new ArticlesCategory();
 			List<ArticlesCategory> trainsCategoryList = articlesListService.findCategory(articlesCategory);
 			model.addAttribute("trainsCategoryList", trainsCategoryList);
+			//发布妃子校常用分类
+			List<ArticlesCategory> trainCateCommList = articleRepositoryService.findTrainCateComm();
+			model.addAttribute("trainCateCommList", trainCateCommList);
 			model.addAttribute("articleRepository", articleRepository);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "发布文章跳转", e);
@@ -541,16 +561,16 @@ public class ArticleRepositoryController extends BaseController {
 			double scale = 0;
             if(srcWidth >= 400 && srcHeight >= 400){
             	if(srcWidth > srcHeight){
-            		scale = srcWidth/400;
+            		scale = (double)400/(double)srcWidth;
             	}else if(srcWidth < srcHeight){
-            		scale = srcHeight/400;
+            		scale = (double)400/(double)srcHeight;
             	}else{
-            		scale = 1/1;
+            		scale = 0;
             	}
             }else if(srcWidth > 400 && srcHeight <= 400){
-            	scale = srcWidth/400;
+            	scale = (double)400/(double)srcWidth;
             }else if(srcHeight > 400 && srcWidth <= 400){
-            	scale = srcHeight/400;
+            	scale = (double)400/(double)srcHeight;
             }
             x = (int)(x + (x*scale));
             y = (int)(y + (y*scale));
@@ -562,10 +582,8 @@ public class ArticleRepositoryController extends BaseController {
                 // 四个参数分别为图像起点坐标和宽高
                 // 即: CropImageFilter(int x,int y,int width,int height)
                 cropFilter = new CropImageFilter(x, y, destWidth, destHeight);
-                img = Toolkit.getDefaultToolkit().createImage(
-                        new FilteredImageSource(image.getSource(), cropFilter));
-                BufferedImage tag = new BufferedImage(destWidth, destHeight,
-                        BufferedImage.TYPE_INT_RGB);
+                img = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(image.getSource(), cropFilter));
+                BufferedImage tag = new BufferedImage(destWidth, destHeight,BufferedImage.TYPE_INT_RGB);
                 Graphics g = tag.getGraphics();
                 g.drawImage(img, 0, 0, null); // 绘制缩小后的图
                 g.dispose();
@@ -605,7 +623,7 @@ public class ArticleRepositoryController extends BaseController {
                 resJson.put("msg",postMethod.getResponseBodyAsString());
                 return resJson;
             } else {
-            	System.out.println("请求易信接口上传图片，请求失败。");
+            	System.out.println("请求上传图片，请求失败。");
                 resJson.put("status", "-1");
                 resJson.put("msg", "上传图片，请求失败。");
                 return resJson;
@@ -613,8 +631,49 @@ public class ArticleRepositoryController extends BaseController {
         } catch(Exception e) {
             resJson.put("status", "-1");
             resJson.put("msg", "系统异常");
-            System.out.println("请求易信接口上传图片，请求失败。"+e.toString());
+            System.out.println("请求上传图片，请求失败。"+e.toString());
             return resJson;
         }
     }
+	/**
+	 * 添加作者
+	 * @param articleAuthorPhoto
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "addAuthor")
+	public Map<String, Object> addAuthor(ArticleAuthorPhoto articleAuthorPhoto,HttpServletRequest request){
+		Map<String, Object> map = Maps.newHashMap();
+		try {
+			articleRepositoryService.addAuthor(articleAuthorPhoto);
+			map.put("status", "200");
+			map.put("msg", articleAuthorPhoto.getAuthorId());
+		} catch (Exception e) {
+			map.put("status", "-1");
+			BugLogUtils.saveBugLog(request, "添加作者--异步添加作者出现异常", e);
+			logger.error("添加作者--异步添加作者异常信息:"+e.getMessage());
+		}
+		return map;
+	}
+	/**
+	 * 删除作者
+	 * @param articleAuthorPhoto
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "delAuthor")
+	public Map<String, Object> delAuthor(ArticleAuthorPhoto articleAuthorPhoto,HttpServletRequest request){
+		Map<String, Object> map = Maps.newHashMap();
+		try {
+			articleRepositoryService.delAuthor(articleAuthorPhoto);
+			map.put("status", "200");
+		} catch (Exception e) {
+			map.put("status", "-1");
+			BugLogUtils.saveBugLog(request, "删除作者--异步删除作者出现异常", e);
+			logger.error("删除作者--异步删除作者异常信息:"+e.getMessage());
+		}
+		return map;
+	}
 }

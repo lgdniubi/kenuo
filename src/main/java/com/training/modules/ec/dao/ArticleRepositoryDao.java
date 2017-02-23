@@ -7,10 +7,13 @@ import org.apache.ibatis.annotations.Param;
 
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
+import com.training.modules.ec.entity.ArticleAuthorPhoto;
 import com.training.modules.ec.entity.ArticleImage;
 import com.training.modules.ec.entity.ArticleIssueLogs;
 import com.training.modules.ec.entity.ArticleRepository;
 import com.training.modules.ec.entity.ArticleRepositoryCategory;
+import com.training.modules.ec.entity.MtmyArticleCategory;
+import com.training.modules.train.entity.ArticlesCategory;
 
 /**
  * 文章资源dao
@@ -103,4 +106,37 @@ public interface ArticleRepositoryDao extends CrudDao<ArticleRepository>{
 	 * @param articleRepositoryCategory
 	 */
 	public void deleteCategory(ArticleRepositoryCategory articleRepositoryCategory);
+	/**
+	 * 查询常用文章分类
+	 * @return
+	 */
+	public List<ArticleRepositoryCategory> findCategoryCommon(String userId);
+	/**
+	 * 添加用户常用作者
+	 * @param articleAuthorPhoto
+	 * @param userId
+	 */
+	public void addAuthor(ArticleAuthorPhoto articleAuthorPhoto);
+	/**
+	 * 删除作者
+	 * @param articleAuthorPhoto
+	 */
+	public void delAuthor(ArticleAuthorPhoto articleAuthorPhoto);
+	/**
+	 * 查询所有作者信息
+	 * @param articleAuthorPhoto
+	 * @return
+	 */
+	public List<ArticleAuthorPhoto> findAllAuthor(ArticleAuthorPhoto articleAuthorPhoto);
+	/**
+	 * 查询发布妃子校常用分类
+	 * @return
+	 */
+	public List<ArticlesCategory> findTrainCateComm(String userId);
+	/**
+	 * 查询发布每天美耶常用分类
+	 * @return
+	 */
+	public List<MtmyArticleCategory> findMtmyCateComm(String userId);
+	
 }
