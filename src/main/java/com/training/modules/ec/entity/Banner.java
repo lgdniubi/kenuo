@@ -17,13 +17,13 @@ public class Banner extends DataEntity<Banner>{
 	private String redirectUrl;	//文本
 	private String remark;		//备注
 	private int sort;			//排序
-	private String isShow;		//是否显示（0：显示；1：不显示）
+	private String isShow;		//是否显示（0：显示；1：不显示） 
 	
-	private String bannerType;		//位置类型（1：首页；2：商城）
+	private String bannerType;	//位置类型（1：首页；2：分类，3：我的订单）
 	private int goodsId;		//商品ID
 	private int actionType;		//商品类型（0 普通商品,1 限时抢购, 2 团购 , 3 促销优惠）
 	private String isShare;		//是否分享（0：分享；1：不分享）
-	private int pageType;		//跳转类型：(0:文章;1:商品;2：活动页)
+	private int pageType;		//跳转类型：(0：活动页；1：商品；2：专题页，3：文章)
 	
 	public int getBannerId() {
 		return bannerId;
