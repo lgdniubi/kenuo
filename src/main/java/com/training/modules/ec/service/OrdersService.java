@@ -1306,5 +1306,4 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	public Orders selectByOrderIdSum(String orderid){
 		return dao.selectByOrderIdSum(orderid);
 	}
-
 }

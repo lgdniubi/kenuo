@@ -68,6 +68,7 @@ import com.training.modules.ec.service.ReturnGoodsService;
 import com.training.modules.ec.service.ReturnedGoodsService;
 import com.training.modules.ec.utils.CourierUtils;
 import com.training.modules.ec.utils.OrderUtils;
+import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
@@ -76,6 +77,7 @@ import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.TrainRuleParam;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * 订单Controller
@@ -884,8 +886,19 @@ public class OrdersController extends BaseController {
 	public String updateVirtualOrder(Orders orders, HttpServletRequest request, Model model,
 			RedirectAttributes redirectAttributes) {
 		try {
-			ordersService.updateVirtualOrder(orders);
-			addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
+			if(-2 == orders.getOrderstatus()){ //是取消订单
+				boolean result = returnRepository(orders.getOrderid());
+				if(result){
+					ordersService.updateVirtualOrder(orders);
+					addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
+				}else{
+					addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'失败");
+				}
+				logger.info("商品退还仓库是否成功："+result);
+			}else{//不是取消订单
+				ordersService.updateVirtualOrder(orders);
+				addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
+			}
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "修改订单", e);
 			logger.error("方法：updateVirtualOrder，修改订单出现错误：" + e.getMessage());
@@ -1208,9 +1221,16 @@ public class OrdersController extends BaseController {
 	@RequestMapping(value = "cancellationOrder")
 	public String cancellationOrder(HttpServletRequest request, Orders orders,RedirectAttributes redirectAttributes) {
 		try {
-			ordersService.cancellationOrder(orders);
-			addMessage(redirectAttributes, "取消订单'" + orders.getOrderid() + "'成功");
+			boolean result = returnRepository(orders.getOrderid());
+			if(result){
+				ordersService.cancellationOrder(orders);
+				addMessage(redirectAttributes, "取消订单'" + orders.getOrderid() + "'成功");
+			}else{
+				addMessage(redirectAttributes, "取消订单'" + orders.getOrderid() + "'失败");
+			}
+			logger.info("商品退还仓库是否成功："+result);
 		} catch (Exception e) {
+			addMessage(redirectAttributes, "取消订单'" + orders.getOrderid() + "'失败");
 			BugLogUtils.saveBugLog(request, "取消订单失败", e);
 			logger.error("取消订单失败：" + e.getMessage());
 		}
@@ -1231,6 +1251,14 @@ public class OrdersController extends BaseController {
 			List<OrderGoods> goodsList=new ArrayList<OrderGoods>();
 			
 			orders = ordersService.findselectByOrderId(orders.getOrderid());
+			boolean result = returnRepository(orders.getOrderid());
+			if(!result){
+				logger.error("取消库存失败，导致强制取消无法进行");
+				addMessage(redirectAttributes, "强制取消'" + orders.getOrderid() + "'失败！");
+				return "redirect:" + adminPath + "/ec/orders/orderform?type=view&orderid="+orders.getOrderid();
+			}
+			logger.info("商品退还仓库是否成功："+result);
+			
 			goodsList=ordergoodService.orderlistTow(orders.getOrderid());
 			if(goodsList.size()>0){
 				for (int i = 0; i < goodsList.size(); i++) {
@@ -1295,7 +1323,6 @@ public class OrdersController extends BaseController {
 				 }
 				
 			 }
-			
 			addMessage(redirectAttributes, "强制取消'" + orders.getOrderid() + "'成功！");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "强制取消错误", e);
@@ -1305,6 +1332,24 @@ public class OrdersController extends BaseController {
 		//return "redirect:" + adminPath + "/ec/orders/list";
 		return "redirect:" + adminPath + "/ec/orders/orderform?type=view&orderid="+orders.getOrderid();
 	}
-	
-	
+	/**
+	 * 归还仓库
+	 * @return
+	 */
+	public boolean returnRepository(String orderId){
+		String weburl = ParametersFactory.getMtmyParamValues("mtmy_incrstore_url");
+		List<OrderGoods> orderGoods = ordergoodService.getGoodMapping(orderId);
+		if (null != orderGoods && orderGoods.size() > 0) {
+			for (OrderGoods orderGood : orderGoods) {
+				String parpm = "{\"goods_id\":"+orderGood.getGoodsid()+",\"spec_key\":\""+orderGood.getSpeckey()+"\",\"count\":"+orderGood.getGoodsnum()+"}";
+				String result = WebUtils.postObject(parpm, weburl);
+				JSONObject jsonObject = JSONObject.fromObject(result);
+				String code = jsonObject.get("code").toString();
+				if(!"200".equals(code)){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 }
