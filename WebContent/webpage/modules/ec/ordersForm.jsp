@@ -174,7 +174,8 @@
 											totalAmount:topUpTotalAmount,
 											orderArrearage:orderArrearage,
 											servicetimes:servicetimes,
-											remaintimes:remaintimes
+											remaintimes:remaintimes,
+											isReal:isReal
 										 },
 										url:"${ctx}/ec/orders/addOrderRechargeLog",
 										success:function(date){
@@ -385,7 +386,7 @@ window.onload=initStatus;
 							<c:if test="${orders.distinction == 2}">售后卖</c:if>
 							<c:if test="${orders.distinction == 3}">老带新</c:if>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<label class="active">手机号码:</label>&nbsp;&nbsp;${orders.mobile }
+							<label class="active">手机号码:</label>&nbsp;&nbsp;${orders.users.mobile }
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">订单状态:</label>&nbsp;&nbsp;
 							<form:select path="orderstatus"  class="form-control" style="width:180px">

@@ -78,6 +78,7 @@
 										<form:select path="bannerType" class="form-control">
 											<form:option value="1">首页</form:option>
 											<form:option value="2">分类</form:option>
+											<form:option value="3">我的订单</form:option>
 										</form:select>
 									</td>
 								</tr>
@@ -117,9 +118,10 @@
 									<td><label class="pull-right">跳转类型：</label></td>
 									<td>
 										<form:select path="pageType" class="form-control">
-											<form:option value="0">文章</form:option>
+											<form:option value="0">活动页</form:option>
 											<form:option value="1">商品</form:option>
-											<form:option value="2">活动页</form:option>
+											<form:option value="2">专题页</form:option>
+											<form:option value="3">文章</form:option>
 										</form:select>
 									</td>
 								</tr>

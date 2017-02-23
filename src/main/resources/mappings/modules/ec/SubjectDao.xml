@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.SubjectDao">
+
+	<!-- 查询出所有的专题图 -->
+	<select id="findAllList" resultType="Subject">
+		SELECT 
+			sub_id AS 'subId',
+			sub_name AS 'subName',
+			position,
+			sub_head_img AS 'subHeadImg',
+			suboriginal_img AS 'subOriginalImg',
+			add_time AS 'addTime',
+			del_flag 
+		FROM mtmydb.mtmy_specialsubject
+		WHERE del_flag = 0
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+		</choose>
+	</select>
+	
+	<!-- 插入主题图 -->
+	<insert id="insertSubject">
+		INSERT INTO mtmydb.mtmy_specialsubject(
+			sub_name,
+			position,
+			sub_head_img,
+			suboriginal_img,
+			add_time
+		)values(
+			#{subName},
+			#{position},
+			#{subHeadImg},
+			#{subOriginalImg},
+			NOW()
+		)
+	</insert>
+	
+	<!-- 更新主题图 -->
+	<update id="updateSubject">
+		UPDATE mtmydb.mtmy_specialsubject
+		SET 
+			sub_name = #{subName},
+			position = #{position},
+			sub_head_img = #{subHeadImg},
+			suboriginal_img = #{subOriginalImg}
+		WHERE sub_id = #{subId}
+	</update>
+	
+	<!-- 根据subId获取相应的主题图 -->
+	<select id="getSubject" parameterType="int" resultType="Subject">
+		SELECT 
+			sub_id AS 'subId',
+			sub_name AS 'subName',
+			position,
+			sub_head_img AS 'subHeadImg',
+			suboriginal_img AS 'subOriginalImg',
+			add_time AS 'addTime',
+			del_flag 
+		FROM mtmydb.mtmy_specialsubject
+		WHERE del_flag = 0
+		AND sub_id = #{subId}
+	</select>
+	
+	<!-- 逻辑删除主题图 -->
+	<update id="delSubject">
+		UPDATE mtmydb.mtmy_specialsubject
+		SET del_flag = 1
+		WHERE sub_id = #{subId}
+	</update>
+	
+	<!-- 查询出主题图对应的商品 -->
+	<select id="findGoodsList" resultType="Goods">
+		SELECT
+			mg.goods_id,
+			mg.goods_name,
+			mg.market_price,
+			mg.original_img
+		FROM mtmydb.mtmy_goods mg
+		LEFT JOIN mtmydb.mtmy_sub_goods msg ON msg.goods_id = mg.goods_id
+		WHERE msg.sub_id = #{subId}
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+		</choose>
+	</select>
+	
+	<!-- 保存主题图对应的商品 -->
+	<insert id="insertGoods">
+		INSERT INTO mtmydb.mtmy_sub_goods(
+			sub_id,
+			goods_id
+		)VALUES(
+			#{subId},
+			#{goodsId}
+		)
+	</insert>
+	
+	<!-- 删除主题图对应的商品 -->
+	<delete id="delGoods">
+		DELETE FROM mtmydb.mtmy_sub_goods
+		WHERE sub_id = #{subId}
+		AND	goods_id=#{goodsId}
+	</delete>
+</mapper>

@@ -179,8 +179,8 @@
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping m ON a.order_id = m.order_id
 		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=m.goods_id
 		LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
-		WHERE a.parent_id=0
-		AND a.del_flag = 0
+		${sqlMap.dsf} and a.parent_id=0
+		 AND a.del_flag = 0
 		<if test="username != null and username!=''">
 			AND u.nickname like
 			<if test="dbName == 'oracle'">'%'||#{username} ||'%'</if>
@@ -269,7 +269,7 @@
 			sp.goods_no as "goodsNo",
 			sp.bar_code as "barCode",
 			ogd.order_arrearage AS orderArrearage,
-			a. user_note AS useNote,
+			a.user_note AS userNote,
 		    a.admin_note AS adminNote,
 		    a.is_real AS orderIsReal
 		FROM
@@ -596,7 +596,8 @@
 			del_flag,
 			invoice_overtime,
 			user_note,
-			pay_time
+			pay_time,
+			create_by
 		)values(
 			#{orderid},
 			#{parentid},
@@ -620,7 +621,8 @@
 			#{delFlag},
 			#{invoiceOvertime},
 			#{usernote},
-			SYSDATE()
+			SYSDATE(),
+			#{createBy.id}
 		)
 	</insert>
 	
@@ -641,12 +643,12 @@
 		SELECT
 			u.user_id as userid,
 			o.order_id as orderid,
-			u.mobile as mobile,
+			u.mobile as "users.mobile",
 			o.distinction as distinction,
 			order_status as orderStatus,
 			o.is_neworder as isNeworder,
 			o.pay_code as paycode,
-			o.phone as phone,
+			o.mobile as mobile,
 			o.consignee as consignee,
 			o.address as address,
 			o.shipping_type as shippingtype,
@@ -676,7 +678,7 @@
 			pay_code = #{paycode},
 			pay_name = #{payname},
 			order_status = #{orderstatus},
-			phone = #{phone},
+			mobile = #{mobile},
 			consignee = #{consignee},
 			address = #{address},
 			shipping_type = #{shippingtype},
@@ -713,7 +715,8 @@
 			address,
 			user_note,
 			invoice_overtime,
-			pay_time
+			pay_time,
+			create_by
 		)values(
 			#{orderid},
 			#{parentid},
@@ -740,7 +743,8 @@
 			#{address},
 			#{usernote},
 			#{invoiceOvertime},
-			SYSDATE()
+			SYSDATE(),
+			#{createBy.id}
 		)
 	</insert>
 	<!-- 插入备注信息 -->

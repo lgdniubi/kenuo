@@ -60,7 +60,6 @@ public class TabBannerController extends BaseController{
 	 */
 	@RequestMapping(value = "save")
 	public String save(TabBackground tabBackground,RedirectAttributes redirectAttributes){
-		System.out.println("<>>>>>>>>>"+tabBackground);
 		if(tabBackground.getTabBackgroundId()==0){
 			User user=UserUtils.getUser();
 			tabBackground.setCreateBy(user);

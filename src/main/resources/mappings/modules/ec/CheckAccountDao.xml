@@ -100,7 +100,7 @@
 			a.shipping_code AS shippingCode,
 			a.shipping_name AS shippingName,
 			a.shipping_time AS shippingTime,
-		    a. user_note AS useNote,
+		    a.user_note AS userNote,
 		    a.admin_note AS adminNote
 		FROM
 			mtmydb.mtmy_orders a

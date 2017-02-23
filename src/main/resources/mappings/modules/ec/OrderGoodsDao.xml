@@ -261,5 +261,15 @@
 		WHERE rec_id=#{recId}
 	</update>
 	
-	
+	<!-- 根据订单id查询所有商品订单 -->
+	<select id="getGoodMapping" resultType="OrderGoods">
+		SELECT
+			m.goods_id AS "goodsid",
+			m.spec_key AS "speckey",
+			m.goods_num AS "goodsnum"
+		FROM
+			mtmydb.mtmy_order_goods_mapping m
+		WHERE
+			m.order_id = #{orderId};
+	</select>
 </mapper>
