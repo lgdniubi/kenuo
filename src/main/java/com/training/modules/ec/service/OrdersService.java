@@ -611,7 +611,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			double price = goodspec.getPrice();	//优惠价格
 			double marketPrice = goodspec.getMarketPrice();	//市场单价
 			double costprice = goodspec.getCostPrice(); //系统价
-			goodsprice = costprice;
+			goodsprice += price;
 			//获取计算后的一些费用
 			Orders computingCost = computingCost(orderAmount, actualPayment, serviceTimes, price);	//计算获取所有价钱
 			double _afterPayment = computingCost.getAfterPayment();//实际付款（后）
@@ -743,6 +743,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setIsNeworder(orders.getIsNeworder()); //是否新订单（0：新订单；1：老订单）
 		_orders.setDistinction(orders.getDistinction()); //订单性质
 		_orders.setOffice(user.getOffice());
+		_orders.setCreateBy(user);
 		_orders.setDelFlag("0");
 		_orders.setChannelFlag("bm");
 		_orders.setShippingtype(2);
@@ -1034,6 +1035,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		double afterPaymentSum = 0d;  //实际付款总额
 		double debtMoneySum = 0d;	//总欠款
 		double spareMoneySum = 0d;	//总余额
+		double goodsprice = 0;  //商品总价
 		for (Integer i = 0; i < goodselectIds.size(); i++) {
 			Integer goodselectId = goodselectIds.get(i);		//商品id
 			String speckey = speckeys.get(i);					//规格key
@@ -1054,6 +1056,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			double actualPayment_on = 0;		//实付款（入库）
 			double orderArrearage_on = 0;		//欠款（入库）
 			double orderBalance_on = 0;			//余额（入库）
+			goodsprice += price;
 			if(orderAmount > actualPayment){
 				//应付 > 实付
 				actualPayment_on = actualPayment;
@@ -1129,7 +1132,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setPayid(payment.getPayid());
 		_orders.setPaycode(payment.getPaycode());
 		_orders.setPayname(payment.getPayname());
-		_orders.setGoodsprice(0);	//商品总价
+		_orders.setGoodsprice(goodsprice);	//商品总价
 		_orders.setOrderamount(orderAmountSum); //应付总金额
 		_orders.setTotalamount(afterPaymentSum); //实付总额
 		_orders.setOrderArrearage(debtMoneySum); //总欠款
@@ -1146,6 +1149,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setAddress(orders.getAddress());
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		_orders.setCreateBy(user);
 		ordersDao.saveKindOrder(_orders);
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
@@ -1302,5 +1306,4 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	public Orders selectByOrderIdSum(String orderid){
 		return dao.selectByOrderIdSum(orderid);
 	}
-
 }
