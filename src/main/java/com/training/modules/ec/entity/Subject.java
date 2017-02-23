@@ -19,6 +19,8 @@ public class Subject extends DataEntity<Subject>{
 	private String subHeadImg;  //头图
 	private String subOriginalImg;  //原始图
 	private Date addTime;   // 创建时间
+	private int type;       //专题类型（1：动态；2：静态）
+	private String url;     //专题跳转地址
 	private int del_flag;    //删除标识
 	
 	public int getSubId() {
@@ -62,6 +64,18 @@ public class Subject extends DataEntity<Subject>{
 	}
 	public void setDel_flag(int del_flag) {
 		this.del_flag = del_flag;
+	}
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
 	}
 	
 	
