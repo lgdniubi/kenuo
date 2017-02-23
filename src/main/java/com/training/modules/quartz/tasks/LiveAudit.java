@@ -29,6 +29,7 @@ import com.training.modules.train.utils.EncryptLiveUtils;
  *	
  */
 @Component
+@SuppressWarnings("all")
 public class LiveAudit extends CommonService{
 
 	private Logger logger = Logger.getLogger(LiveAudit.class);
