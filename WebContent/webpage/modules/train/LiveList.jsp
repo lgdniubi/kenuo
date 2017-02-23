@@ -137,6 +137,10 @@
 										<a href="#" onclick="openDialogView('会员列表', '${ctx}/train/live/liveUserform?auditId=${live.id}','800px','500px')"
 												class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>会员列表</a>
 									</shiro:hasPermission> 
+									<shiro:hasPermission name="train:live:sku">
+										<a href="#" onclick="openDialogView('配置列表', '${ctx}/train/live/liveSkuForm?auditId=${live.id}','800px','500px')"
+											 class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>查看配置</a>
+									</shiro:hasPermission>
 								</td>
 							</tr>
 						</c:forEach>
