@@ -6,12 +6,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.training.common.utils.BeanUtil;
 import com.training.modules.quartz.entity.TaskLog;
 import com.training.modules.quartz.tasks.utils.CommonService;
+import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.train.entity.TrainLiveAudit;
 import com.training.modules.train.service.TrainLiveAuditService;
 
@@ -36,6 +39,7 @@ public class LiveAudit extends CommonService{
 	 */
 	public void liveAudit(){
 		logger.info("[work0],start,妃子校直播处理，开始时间："+df.format(new Date()));
+		HttpServletRequest request=null;
 		List<TrainLiveAudit> list=new ArrayList<TrainLiveAudit>();
 		List<TrainLiveAudit> wantlist=new ArrayList<TrainLiveAudit>();
 		List<String> liveUsers=new ArrayList<String>();
@@ -104,6 +108,7 @@ public class LiveAudit extends CommonService{
 
 		} catch (Exception e) {
 			logger.error("#####【定时任务trainLiveAudit】妃子校审核直播,出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "抢购活动定时器", e);
 			taskLog.setStatus(1);
 			taskLog.setExceptionMsg(e.getMessage().substring(0, e.getMessage().length()>2500?2500:e.getMessage().length()));
 		}finally {

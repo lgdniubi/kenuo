@@ -42,14 +42,15 @@ import net.sf.json.JSONObject;
 
 /**
  * 商品属性-Service层
+ * 
  * @author kele
  * @version 2016-6-20
  */
 @Service
 @Transactional(readOnly = false)
-public class GoodsService extends CrudService<GoodsDao,Goods>{
+public class GoodsService extends CrudService<GoodsDao, Goods> {
 
-	public static final String GOOD_UNSHELVE_KEY = "GOOD_UNSHELVE_KEY"; //商品下架
+	public static final String GOOD_UNSHELVE_KEY = "GOOD_UNSHELVE_KEY"; // 商品下架
 	@Autowired
 	private GoodsDao goodsDao;
 	@Autowired
@@ -68,9 +69,10 @@ public class GoodsService extends CrudService<GoodsDao,Goods>{
 	private SkillDao skillDao;
 	@Autowired
 	private EquipmentLabelDao equipmentLabelDao;
-	
+
 	/**
 	 * 分页展示所有信息
+	 * 
 	 * @param page
 	 * @param trainLessonss
 	 * @return
@@ -80,584 +82,601 @@ public class GoodsService extends CrudService<GoodsDao,Goods>{
 		page.setList(dao.findList(goods));
 		return page;
 	}
-	
+
 	/**
 	 * 商品-通用信息-保存
+	 * 
 	 * @param goods
 	 * @return
 	 */
-	public void saveGoods(Goods goods,HttpServletRequest request){
-		//商品详情转换
-		goods.setGoodsContent(HtmlUtils.htmlUnescape(goods.getGoodsContent())); 
-		
-		if (0 == goods.getGoodsId()){
-			
-			goods.setAttrType((goods.getAttrType()==null || "".equals(goods.getAttrType()))?null:goods.getAttrType());
-			goods.setSpecType((goods.getSpecType()==null || "".equals(goods.getSpecType()))?null:goods.getSpecType());
-			
-			goods.setIsRecommend(goods.getIsRecommend()==null?"0":goods.getIsRecommend());
-			goods.setIsHot(goods.getIsHot()==null?"0":goods.getIsHot());
-			goods.setIsAppshow(goods.getIsAppshow()==null?"0":goods.getIsAppshow());
-			goods.setIsOnSale(goods.getIsOnSale()==null?"0":goods.getIsOnSale());
-			goods.setIsFreeShipping(goods.getIsFreeShipping()==null?"0":goods.getIsFreeShipping());
-			goods.setIsNew(goods.getIsNew()==null?"0":goods.getIsNew());
-			
-			//保存
+	public void saveGoods(Goods goods, HttpServletRequest request) {
+		// 商品详情转换
+		goods.setGoodsContent(HtmlUtils.htmlUnescape(goods.getGoodsContent()));
+
+		if (0 == goods.getGoodsId()) {
+
+			goods.setAttrType(
+					(goods.getAttrType() == null || "".equals(goods.getAttrType())) ? null : goods.getAttrType());
+			goods.setSpecType(
+					(goods.getSpecType() == null || "".equals(goods.getSpecType())) ? null : goods.getSpecType());
+
+			goods.setIsRecommend(goods.getIsRecommend() == null ? "0" : goods.getIsRecommend());
+			goods.setIsHot(goods.getIsHot() == null ? "0" : goods.getIsHot());
+			goods.setIsAppshow(goods.getIsAppshow() == null ? "0" : goods.getIsAppshow());
+			goods.setIsOnSale(goods.getIsOnSale() == null ? "0" : goods.getIsOnSale());
+			goods.setIsFreeShipping(goods.getIsFreeShipping() == null ? "0" : goods.getIsFreeShipping());
+			goods.setIsNew(goods.getIsNew() == null ? "0" : goods.getIsNew());
+
+			// 保存
 			dao.insert(goods);
 			int goodId = goods.getGoodsId();
-			if(0 == goodId){
+			if (0 == goodId) {
 				try {
 					throw new Exception("保存失败");
 				} catch (Exception e) {
-					
+
 				}
 			}
-			
-			//用户商品上下架Regis缓存
-			if(goods.getIsOnSale().equals("0")){
-				//下架
-				redisClientTemplate.hset(GOOD_UNSHELVE_KEY, goodId+"", "0");
-			}else if(goods.getIsOnSale().equals("1")){
-				//上架
-				redisClientTemplate.hdel(GOOD_UNSHELVE_KEY, goodId+"");
+
+			// 用户商品上下架Regis缓存
+			if (goods.getIsOnSale().equals("0")) {
+				// 下架
+				redisClientTemplate.hset(GOOD_UNSHELVE_KEY, goodId + "", "0");
+			} else if (goods.getIsOnSale().equals("1")) {
+				// 上架
+				redisClientTemplate.hdel(GOOD_UNSHELVE_KEY, goodId + "");
 			}
-			
-			//保存护理流程图
+
+			// 保存护理流程图
 			String[] goodsNurseImages = request.getParameterValues("goodsNurseImages");
 			String[] goodsNurseImagesText = request.getParameterValues("goodsNurseImagesText");
-			if(0 != goodId ){
-				if(null != goodsNurseImages && goodsNurseImages.length > 0){
+			if (0 != goodId) {
+				if (null != goodsNurseImages && goodsNurseImages.length > 0) {
 					List<GoodsImages> giList = new ArrayList<GoodsImages>();
 					for (int i = 0; i < goodsNurseImages.length; i++) {
 						GoodsImages goodsImg = new GoodsImages();
 						goodsImg.setGoodsId(String.valueOf(goodId));
 						goodsImg.setImageUrl(goodsNurseImages[i]);
-						goodsImg.setImageDesc((null != goodsNurseImagesText[i] && !"".equals(goodsNurseImagesText[i])?goodsNurseImagesText[i]:""));//商品描述
-						goodsImg.setImageType(1);//图片类型　　0　是商品图　　1　护理流程图
-						goodsImg.setSort(i+1+"0");//10、20
+						goodsImg.setImageDesc((null != goodsNurseImagesText[i] && !"".equals(goodsNurseImagesText[i])
+								? goodsNurseImagesText[i] : ""));// 商品描述
+						goodsImg.setImageType(1);// 图片类型 0 是商品图 1 护理流程图
+						goodsImg.setSort(i + 1 + "0");// 10、20
 						giList.add(goodsImg);
 					}
 					goods.setGoodsImagesList(giList);
-					goods.setImageType(1);//商品图片类型[0:是商品图;1:护理流程图;]
+					goods.setImageType(1);// 商品图片类型[0:是商品图;1:护理流程图;]
 					savegoodsimages(goods);
-				}else{
-					//当没有图片时，删除原有的图片
-					goods.setImageType(1);//商品图片类型[0:是商品图;1:护理流程图;]
+				} else {
+					// 当没有图片时，删除原有的图片
+					goods.setImageType(1);// 商品图片类型[0:是商品图;1:护理流程图;]
 					deletegoodsimages(goods);
 				}
 			}
-			
+
 			String[] goodsImages = request.getParameterValues("goodsImages");
-			
-			if(goods.getGoodsId()>0){
-				//goods.setGoodsId(Integer.parseInt(goodId));
-				//goods = goodsService.get(goods);
-				
-				//获取商品名称，判断是否根据商品ID查询到商品信息
-				if(!StringUtils.isEmpty(goods.getGoodsName())){
-					if(null != goodsImages && goodsImages.length > 0){
+
+			if (goods.getGoodsId() > 0) {
+				// goods.setGoodsId(Integer.parseInt(goodId));
+				// goods = goodsService.get(goods);
+
+				// 获取商品名称，判断是否根据商品ID查询到商品信息
+				if (!StringUtils.isEmpty(goods.getGoodsName())) {
+					if (null != goodsImages && goodsImages.length > 0) {
 						List<GoodsImages> giList = new ArrayList<GoodsImages>();
 						for (int i = 0; i < goodsImages.length; i++) {
 							GoodsImages goodsImg = new GoodsImages();
-							goodsImg.setGoodsId(goods.getGoodsId()+"");
+							goodsImg.setGoodsId(goods.getGoodsId() + "");
 							goodsImg.setImageUrl(goodsImages[i]);
-							goodsImg.setImageDesc("");//商品描述
-							goodsImg.setImageType(0);//图片类型　　0　是商品图　　1　护理流程图
-							goodsImg.setSort(i+1+"0");//10、20
+							goodsImg.setImageDesc("");// 商品描述
+							goodsImg.setImageType(0);// 图片类型 0 是商品图 1 护理流程图
+							goodsImg.setSort(i + 1 + "0");// 10、20
 							giList.add(goodsImg);
 						}
 						goods.setGoodsImagesList(giList);
-						goods.setImageType(0);//商品图片类型[0:是商品图;1:护理流程图;]
+						goods.setImageType(0);// 商品图片类型[0:是商品图;1:护理流程图;]
 						savegoodsimages(goods);
-					}else{
-						//当商品相册为空时，删除以前全部数据
-						goods.setImageType(0);//商品图片类型[0:是商品图;1:护理流程图;]
+					} else {
+						// 当商品相册为空时，删除以前全部数据
+						goods.setImageType(0);// 商品图片类型[0:是商品图;1:护理流程图;]
 						deletegoodsimages(goods);
 					}
-					
+
 				}
 			}
-			
-			//String goodsId = request.getParameter("goodsid");
+
+			// String goodsId = request.getParameter("goodsid");
 			String specTypeId = request.getParameter("specTypeId");
 			String spec_arr = request.getParameter("specarr");
-			
-			if(!StringUtils.isEmpty(specTypeId) && !StringUtils.isEmpty(spec_arr)){
-				
 
-				//获取商品名称，判断是否根据商品ID查询到商品信息
-				if(!StringUtils.isEmpty(goods.getGoodsName())){
-					
-					if("-1".equals(specTypeId) || null == spec_arr || "{}".equals(spec_arr)){
-						//删除
+			if (!StringUtils.isEmpty(specTypeId) && !StringUtils.isEmpty(spec_arr)) {
+
+				// 获取商品名称，判断是否根据商品ID查询到商品信息
+				if (!StringUtils.isEmpty(goods.getGoodsName())) {
+
+					if ("-1".equals(specTypeId) || null == spec_arr || "{}".equals(spec_arr)) {
+						// 删除
 						deletespec(goods);
 						goods.setSpecType("0");
 						updategoodstype(goods);
-						
-					}else{
-						List<String[]> list = new ArrayList<String[]>();//保存规格的规格项数组
+
+					} else {
+						List<String[]> list = new ArrayList<String[]>();// 保存规格的规格项数组
 						JSONObject json = JSONObject.fromObject(spec_arr);
 						Iterator<?> iterator = json.keys();
-						while(iterator.hasNext()){
+						while (iterator.hasNext()) {
 							String key = (String) iterator.next();
-							//保存所需选择的规格项的数组
-							String[] value = (String[]) json.getString(key).replace("[", "").replace("]", "").split(",");
-					        list.add(value);
+							// 保存所需选择的规格项的数组
+							String[] value = (String[]) json.getString(key).replace("[", "").replace("]", "")
+									.split(",");
+							list.add(value);
 						}
-						
-						List<String> specItemList = new ArrayList<String>();//获取所有排列组合值
-						//判断规格项有值时，才进行查询
-						if(list.size() >0){
-							//规格项数组，排列组合
+
+						List<String> specItemList = new ArrayList<String>();// 获取所有排列组合值
+						// 判断规格项有值时，才进行查询
+						if (list.size() > 0) {
+							// 规格项数组，排列组合
 							String str = "";
-							GoodsUtil.goodsSpecItem(list, list.get(0), str,specItemList,goodsSpecItemService);
+							GoodsUtil.goodsSpecItem(list, list.get(0), str, specItemList, goodsSpecItemService);
 						}
-						
-						//判断随机排列活的组合值
-						if(specItemList.size() >0){
+
+						// 判断随机排列活的组合值
+						if (specItemList.size() > 0) {
 							List<GoodsSpecPrice> goodsSpecPricesList = new ArrayList<GoodsSpecPrice>();
 							List<GoodsSpecImage> goodsSpecImagesList = new ArrayList<GoodsSpecImage>();
-							//int storeCount=0;	//库存
-							//遍历组合值，拼接form表单的值，并循环获取
+							// int storeCount=0; //库存
+							// 遍历组合值，拼接form表单的值，并循环获取
 							for (int i = 0; i < specItemList.size(); i++) {
 								GoodsSpecPrice gsp = new GoodsSpecPrice();
-								gsp.setGoodsId(goods.getGoodsId()+"");// 商品id
-								
+								gsp.setGoodsId(goods.getGoodsId() + "");// 商品id
+
 								gsp.setSpecKey(specItemList.get(i));// 规格键
-								gsp.setSpecKeyValue(request.getParameter("item["+specItemList.get(i)+"][key_name]"));// 规格键名中文
-								gsp.setPrice(Double.valueOf(request.getParameter("item["+specItemList.get(i)+"][price]")));// 优惠价格
-								gsp.setMarketPrice(Double.valueOf(request.getParameter("item["+specItemList.get(i)+"][market_price]")));//市场价格
-								gsp.setCostPrice(Double.valueOf(request.getParameter("item["+specItemList.get(i)+"][cost_price]")));//成本价格
-								gsp.setStoreCount(Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][store_count]")));// 库存数量
-								gsp.setBarCode(request.getParameter("item["+specItemList.get(i)+"][bar_code]"));// 商品条形码
-								gsp.setGoodsNo(request.getParameter("item["+specItemList.get(i)+"][goods_No]"));// 商品编码
-								gsp.setGoodsWeight(Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][goods_weight]")));// 商品重量
-								gsp.setServiceTimes(Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][service_times]")));//服务次数
-								gsp.setExpiringDate(Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][expiring_date]")));//截止日期（月）
-								//保存到list中
-								//规格库存统一使用补仓功能  -kele 2016年10月9日
-								//storeCount=storeCount+Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][store_count]"));
+								gsp.setSpecKeyValue(
+										request.getParameter("item[" + specItemList.get(i) + "][key_name]"));// 规格键名中文
+								gsp.setPrice(Double
+										.valueOf(request.getParameter("item[" + specItemList.get(i) + "][price]")));// 优惠价格
+								gsp.setMarketPrice(Double.valueOf(
+										request.getParameter("item[" + specItemList.get(i) + "][market_price]")));// 市场价格
+								gsp.setCostPrice(Double.valueOf(
+										request.getParameter("item[" + specItemList.get(i) + "][cost_price]")));// 成本价格
+								gsp.setStoreCount(Integer.parseInt(
+										request.getParameter("item[" + specItemList.get(i) + "][store_count]")));// 库存数量
+								gsp.setBarCode(request.getParameter("item[" + specItemList.get(i) + "][bar_code]"));// 商品条形码
+								gsp.setGoodsNo(request.getParameter("item[" + specItemList.get(i) + "][goods_No]"));// 商品编码
+								gsp.setGoodsWeight(Integer.parseInt(
+										request.getParameter("item[" + specItemList.get(i) + "][goods_weight]")));// 商品重量
+								gsp.setServiceTimes(Integer.parseInt(
+										request.getParameter("item[" + specItemList.get(i) + "][service_times]")));// 服务次数
+								gsp.setExpiringDate(Integer.parseInt(
+										request.getParameter("item[" + specItemList.get(i) + "][expiring_date]")));// 截止日期（月）
+								// 保存到list中
+								// 规格库存统一使用补仓功能 -kele 2016年10月9日
+								// storeCount=storeCount+Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][store_count]"));
 								goodsSpecPricesList.add(gsp);
 							}
-							
+
 							List<String> items = GoodsUtil.getitemsvalue(list);
-							
+
 							for (int j = 0; j < items.size(); j++) {
-								//保存到商品规格图片
+								// 保存到商品规格图片
 								GoodsSpecImage goodsSpecImage = new GoodsSpecImage();
-								String gsivalue = request.getParameter("item_img["+items.get(j)+"]");
-								if(null != gsivalue && !"".equals(gsivalue)){
-									goodsSpecImage.setGoodsId(goods.getGoodsId()+"");
+								String gsivalue = request.getParameter("item_img[" + items.get(j) + "]");
+								if (null != gsivalue && !"".equals(gsivalue)) {
+									goodsSpecImage.setGoodsId(goods.getGoodsId() + "");
 									goodsSpecImage.setSpecItemId(Integer.parseInt(items.get(j)));
 									goodsSpecImage.setSrc(gsivalue);
-									//保存到list中
+									// 保存到list中
 									goodsSpecImagesList.add(goodsSpecImage);
 								}
 							}
-							
-							goods.setGoodsSpecPricesList(goodsSpecPricesList);//保存到商品实体bean-商品规格价格list
-							goods.setGoodsSpecImagesList(goodsSpecImagesList);//保存到商品实体bean-商品规格图片list
-							
-							//规格库存统一使用补仓功能  -kele 2016年10月9日
-							//Goods goods2=new Goods();
-							//goods2.setGoodsId(Integer.parseInt(goodsId));
-							//goods2.setStoreCount(storeCount);
-							//goodsService.updateStorCount(goods2);
-							
-							//商品规格【价格】list有数据才进行保存操作
-							if(goodsSpecPricesList.size() > 0){
-								//添加商品排列组合规格项数据（先删除、后添加）
+
+							goods.setGoodsSpecPricesList(goodsSpecPricesList);// 保存到商品实体bean-商品规格价格list
+							goods.setGoodsSpecImagesList(goodsSpecImagesList);// 保存到商品实体bean-商品规格图片list
+
+							// 规格库存统一使用补仓功能 -kele 2016年10月9日
+							// Goods goods2=new Goods();
+							// goods2.setGoodsId(Integer.parseInt(goodsId));
+							// goods2.setStoreCount(storeCount);
+							// goodsService.updateStorCount(goods2);
+
+							// 商品规格【价格】list有数据才进行保存操作
+							if (goodsSpecPricesList.size() > 0) {
+								// 添加商品排列组合规格项数据（先删除、后添加）
 								savespec(goods);
-								//修改商品规格项类型
+								// 修改商品规格项类型
 								goods.setSpecType(specTypeId);
 								updategoodstype(goods);
 							}
-							
-							//商品规格【图片】list有数据才进行保存操作
-							if(goodsSpecImagesList.size() > 0){
+
+							// 商品规格【图片】list有数据才进行保存操作
+							if (goodsSpecImagesList.size() > 0) {
 								savespecimg(goods);
 							}
 						}
 					}
-					
-				
+
 				}
 			}
-			
+
 			String attrTypeId = request.getParameter("attrTypeId");
-			
-			if(!StringUtils.isEmpty(goods.getGoodsId()+"") && !StringUtils.isEmpty(attrTypeId)){
-			//	goods.setGoodsId(Integer.parseInt(goodsId));
-				//goods = goodsService.get(goods);
-				
-				//获取商品名称，判断是否根据商品ID查询到商品信息
-				if(!StringUtils.isEmpty(goods.getGoodsName())){
-					
-					if("-1".equals(attrTypeId)){
-						//删除商品属性数据
+
+			if (!StringUtils.isEmpty(goods.getGoodsId() + "") && !StringUtils.isEmpty(attrTypeId)) {
+				// goods.setGoodsId(Integer.parseInt(goodsId));
+				// goods = goodsService.get(goods);
+
+				// 获取商品名称，判断是否根据商品ID查询到商品信息
+				if (!StringUtils.isEmpty(goods.getGoodsName())) {
+
+					if ("-1".equals(attrTypeId)) {
+						// 删除商品属性数据
 						deleteattribute(goods);
-						//修改商品规格项类型
+						// 修改商品规格项类型
 						goods.setAttrType("0");
 						updategoodstype(goods);
-						
-					}else{
-						List<GoodsAttributeMappings> goodsAttributeMappingsList = new ArrayList<GoodsAttributeMappings>();//商品的所有属性
-						
-						//商品属性
+
+					} else {
+						List<GoodsAttributeMappings> goodsAttributeMappingsList = new ArrayList<GoodsAttributeMappings>();// 商品的所有属性
+
+						// 商品属性
 						GoodsAttribute goodsAttribute = new GoodsAttribute();
 						goodsAttribute.setTypeId(attrTypeId);
 						List<GoodsAttribute> galist = goodsAttributeDao.findList(goodsAttribute);
-						if(galist.size() > 0){
+						if (galist.size() > 0) {
 							for (int i = 0; i < galist.size(); i++) {
 								goodsAttribute = galist.get(i);
 								GoodsAttributeMappings gam = new GoodsAttributeMappings();
-								gam.setGoodsId(goods.getGoodsId()+"");
+								gam.setGoodsId(goods.getGoodsId() + "");
 								gam.setAttrId(Integer.parseInt(goodsAttribute.getId()));
-								gam.setAttrValue(request.getParameter("attr_"+goodsAttribute.getId()));
+								gam.setAttrValue(request.getParameter("attr_" + goodsAttribute.getId()));
 								goodsAttributeMappingsList.add(gam);
 							}
 							goods.setGoodsAttributeMappingsList(goodsAttributeMappingsList);
 						}
-						
-						//商品属性列表值大于0
-						if(goodsAttributeMappingsList.size() > 0){
-							//添加商品属性数据（先删除、后添加）
+
+						// 商品属性列表值大于0
+						if (goodsAttributeMappingsList.size() > 0) {
+							// 添加商品属性数据（先删除、后添加）
 							saveattribute(goods);
-							//修改商品规格项类型
+							// 修改商品规格项类型
 							goods.setAttrType(attrTypeId);
 							updategoodstype(goods);
 						}
 					}
-					
+
 				}
 			}
-			
-			//插入商品技能标签
-			if(!"".equals(goods.getSkill().getId())){
+
+			// 插入商品技能标签
+			if (!"".equals(goods.getSkill().getId())) {
 				List<GoodsSkill> list = SpeArrSkillList(goods); // 获取拼接的技能标签list
 				if (list.size() > 0) {
-					skillDao.insertGoodsSkill(list);     // 插入技能标签表
+					skillDao.insertGoodsSkill(list); // 插入技能标签表
 				}
 			}
-			
-			//插入设备标签
-			if(!"".equals(goods.getEquipmentLabel().getId())){
+
+			// 插入设备标签
+			if (!"".equals(goods.getEquipmentLabel().getId())) {
 				List<GoodsEquipmentLabel> list = SpeArrGoodsEquipmentLabelList(goods); // 获取拼接的设备标签list
 				if (list.size() > 0) {
-					equipmentLabelDao.insertGoodsEquipmentLabel(list);  // 插入设备标签表
+					equipmentLabelDao.insertGoodsEquipmentLabel(list); // 插入设备标签表
 				}
 			}
-		}else{
-			
-			goods.setAttrType((goods.getAttrType()==null || "".equals(goods.getAttrType()))?null:goods.getAttrType());
-			goods.setSpecType((goods.getSpecType()==null || "".equals(goods.getSpecType()))?null:goods.getSpecType());
-			goods.setIsRecommend(goods.getIsRecommend()==null?"0":goods.getIsRecommend());
-			goods.setIsHot(goods.getIsHot()==null?"0":goods.getIsHot());
-			goods.setIsAppshow(goods.getIsAppshow()==null?"0":goods.getIsAppshow());
-			goods.setIsOnSale(goods.getIsOnSale()==null?"0":goods.getIsOnSale());
-			goods.setIsFreeShipping(goods.getIsFreeShipping()==null?"0":goods.getIsFreeShipping());
-			goods.setIsNew(goods.getIsNew()==null?"0":goods.getIsNew());
-			
-			//修改
+		} else {
+
+			goods.setAttrType(
+					(goods.getAttrType() == null || "".equals(goods.getAttrType())) ? null : goods.getAttrType());
+			goods.setSpecType(
+					(goods.getSpecType() == null || "".equals(goods.getSpecType())) ? null : goods.getSpecType());
+			goods.setIsRecommend(goods.getIsRecommend() == null ? "0" : goods.getIsRecommend());
+			goods.setIsHot(goods.getIsHot() == null ? "0" : goods.getIsHot());
+			goods.setIsAppshow(goods.getIsAppshow() == null ? "0" : goods.getIsAppshow());
+			goods.setIsOnSale(goods.getIsOnSale() == null ? "0" : goods.getIsOnSale());
+			goods.setIsFreeShipping(goods.getIsFreeShipping() == null ? "0" : goods.getIsFreeShipping());
+			goods.setIsNew(goods.getIsNew() == null ? "0" : goods.getIsNew());
+
+			// 修改
 			updateGoods(goods);
-			
-			//用户商品上下架Regis缓存
-			if(goods.getIsOnSale().equals("0")){
-				//下架
-				redisClientTemplate.hset(GOOD_UNSHELVE_KEY, goods.getGoodsId()+"", "0");
-			}else if(goods.getIsOnSale().equals("1")){
-				//上架
-				redisClientTemplate.hdel(GOOD_UNSHELVE_KEY, goods.getGoodsId()+"");
+
+			// 用户商品上下架Regis缓存
+			if (goods.getIsOnSale().equals("0")) {
+				// 下架
+				redisClientTemplate.hset(GOOD_UNSHELVE_KEY, goods.getGoodsId() + "", "0");
+			} else if (goods.getIsOnSale().equals("1")) {
+				// 上架
+				redisClientTemplate.hdel(GOOD_UNSHELVE_KEY, goods.getGoodsId() + "");
 			}
-			
-			//保存护理流程图
+
+			// 保存护理流程图
 			String[] goodsNurseImages = request.getParameterValues("goodsNurseImages");
 			String[] goodsNurseImagesText = request.getParameterValues("goodsNurseImagesText");
-			if(0 != goods.getGoodsId()){
-				if(null != goodsNurseImages && goodsNurseImages.length > 0){
+			if (0 != goods.getGoodsId()) {
+				if (null != goodsNurseImages && goodsNurseImages.length > 0) {
 					List<GoodsImages> giList = new ArrayList<GoodsImages>();
 					for (int i = 0; i < goodsNurseImages.length; i++) {
 						GoodsImages goodsImg = new GoodsImages();
 						goodsImg.setGoodsId(String.valueOf(goods.getGoodsId()));
 						goodsImg.setImageUrl(goodsNurseImages[i]);
-						goodsImg.setImageDesc((null != goodsNurseImagesText[i] && !"".equals(goodsNurseImagesText[i])?goodsNurseImagesText[i]:""));//商品描述
-						goodsImg.setImageType(1);//图片类型　　0　是商品图　　1　护理流程图
-						goodsImg.setSort(i+1+"0");//10、20
+						goodsImg.setImageDesc((null != goodsNurseImagesText[i] && !"".equals(goodsNurseImagesText[i]) ? goodsNurseImagesText[i] : ""));// 商品描述
+						goodsImg.setImageType(1);// 图片类型 0 是商品图 1 护理流程图
+						goodsImg.setSort(i + 1 + "0");// 10、20
 						giList.add(goodsImg);
 					}
 					goods.setGoodsImagesList(giList);
-					goods.setImageType(1);//商品图片类型[0:是商品图;1:护理流程图;]
+					goods.setImageType(1);// 商品图片类型[0:是商品图;1:护理流程图;]
 					savegoodsimages(goods);
-				}else{
-					//当没有图片时，删除原有的图片
-					goods.setImageType(1);//商品图片类型[0:是商品图;1:护理流程图;]
+				} else {
+					// 当没有图片时，删除原有的图片
+					goods.setImageType(1);// 商品图片类型[0:是商品图;1:护理流程图;]
 					deletegoodsimages(goods);
 				}
 			}
-			
+
 			String[] goodsImages = request.getParameterValues("goodsImages");
-			
-			if(goods.getGoodsId()>0){
-				//goods.setGoodsId(Integer.parseInt(goodId));
-				//goods = goodsService.get(goods);
-				
-				//获取商品名称，判断是否根据商品ID查询到商品信息
-				if(!StringUtils.isEmpty(goods.getGoodsName())){
-					if(null != goodsImages && goodsImages.length > 0){
+
+			if (goods.getGoodsId() > 0) {
+				// goods.setGoodsId(Integer.parseInt(goodId));
+				// goods = goodsService.get(goods);
+
+				// 获取商品名称，判断是否根据商品ID查询到商品信息
+				if (!StringUtils.isEmpty(goods.getGoodsName())) {
+					if (null != goodsImages && goodsImages.length > 0) {
 						List<GoodsImages> giList = new ArrayList<GoodsImages>();
 						for (int i = 0; i < goodsImages.length; i++) {
 							GoodsImages goodsImg = new GoodsImages();
-							goodsImg.setGoodsId(goods.getGoodsId()+"");
+							goodsImg.setGoodsId(goods.getGoodsId() + "");
 							goodsImg.setImageUrl(goodsImages[i]);
-							goodsImg.setImageDesc("");//商品描述
-							goodsImg.setImageType(0);//图片类型　　0　是商品图　　1　护理流程图
-							goodsImg.setSort(i+1+"0");//10、20
+							goodsImg.setImageDesc("");// 商品描述
+							goodsImg.setImageType(0);// 图片类型 0 是商品图 1 护理流程图
+							goodsImg.setSort(i + 1 + "0");// 10、20
 							giList.add(goodsImg);
 						}
 						goods.setGoodsImagesList(giList);
-						goods.setImageType(0);//商品图片类型[0:是商品图;1:护理流程图;]
+						goods.setImageType(0);// 商品图片类型[0:是商品图;1:护理流程图;]
 						savegoodsimages(goods);
-					}else{
-						//当商品相册为空时，删除以前全部数据
-						goods.setImageType(0);//商品图片类型[0:是商品图;1:护理流程图;]
+					} else {
+						// 当商品相册为空时，删除以前全部数据
+						goods.setImageType(0);// 商品图片类型[0:是商品图;1:护理流程图;]
 						deletegoodsimages(goods);
 					}
-					
+
 				}
 			}
-			
-			Goods goodsnew=get(goods);
-			int goodsNum=orderGoodsDao.numByGoodsId(goods.getGoodsId()+"");
-			if(goodsNum==0){
+
+			Goods goodsnew = get(goods);
+			int goodsNum = orderGoodsDao.numByGoodsId(goods.getGoodsId() + "");
+			if (goodsNum == 0) {
 				String specTypeId = request.getParameter("specTypeId");
 				String spec_arr = request.getParameter("specarr");
-				if(!StringUtils.isEmpty(specTypeId) && !StringUtils.isEmpty(spec_arr)){
-					
-					//获取商品名称，判断是否根据商品ID查询到商品信息
-					if(!StringUtils.isEmpty(goods.getGoodsName())){
-						
-						if("-1".equals(specTypeId) || null == spec_arr || "{}".equals(spec_arr)){
-							//删除
+				if (!StringUtils.isEmpty(specTypeId) && !StringUtils.isEmpty(spec_arr)) {
+
+					// 获取商品名称，判断是否根据商品ID查询到商品信息
+					if (!StringUtils.isEmpty(goods.getGoodsName())) {
+
+						if ("-1".equals(specTypeId) || null == spec_arr || "{}".equals(spec_arr)) {
+							// 删除
 							deletespec(goods);
 							goods.setSpecType("0");
 							updategoodstype(goods);
-							
-						}else{
-							List<String[]> list = new ArrayList<String[]>();//保存规格的规格项数组
+
+						} else {
+							List<String[]> list = new ArrayList<String[]>();// 保存规格的规格项数组
 							JSONObject json = JSONObject.fromObject(spec_arr);
 							Iterator<?> iterator = json.keys();
-							while(iterator.hasNext()){
+							while (iterator.hasNext()) {
 								String key = (String) iterator.next();
-								//保存所需选择的规格项的数组
-								String[] value = (String[]) json.getString(key).replace("[", "").replace("]", "").split(",");
-						        list.add(value);
+								// 保存所需选择的规格项的数组
+								String[] value = (String[]) json.getString(key).replace("[", "").replace("]", "")
+										.split(",");
+								list.add(value);
 							}
-							
-							List<String> specItemList = new ArrayList<String>();//获取所有排列组合值
-							//判断规格项有值时，才进行查询
-							if(list.size() >0){
-								//规格项数组，排列组合
+
+							List<String> specItemList = new ArrayList<String>();// 获取所有排列组合值
+							// 判断规格项有值时，才进行查询
+							if (list.size() > 0) {
+								// 规格项数组，排列组合
 								String str = "";
-								GoodsUtil.goodsSpecItem(list, list.get(0), str,specItemList,goodsSpecItemService);
+								GoodsUtil.goodsSpecItem(list, list.get(0), str, specItemList, goodsSpecItemService);
 							}
-							int totalNum=0;
-							//判断随机排列活的组合值
-							if(specItemList.size() >0){
+							int totalNum = 0;
+							// 判断随机排列活的组合值
+							if (specItemList.size() > 0) {
 								List<GoodsSpecPrice> goodsSpecPricesList = new ArrayList<GoodsSpecPrice>();
 								List<GoodsSpecImage> goodsSpecImagesList = new ArrayList<GoodsSpecImage>();
-								//int storeCount=0;	//库存
-								//遍历组合值，拼接form表单的值，并循环获取
+								// int storeCount=0; //库存
+								// 遍历组合值，拼接form表单的值，并循环获取
 								for (int i = 0; i < specItemList.size(); i++) {
 									GoodsSpecPrice gsp = new GoodsSpecPrice();
-									gsp.setGoodsId(goods.getGoodsId()+"");// 商品id
-									
+									gsp.setGoodsId(goods.getGoodsId() + "");// 商品id
+
 									gsp.setSpecKey(specItemList.get(i));// 规格键
-									gsp.setSpecKeyValue(request.getParameter("item["+specItemList.get(i)+"][key_name]"));// 规格键名中文
-									gsp.setPrice(Double.valueOf(request.getParameter("item["+specItemList.get(i)+"][price]")));// 优惠价格
-									gsp.setMarketPrice(Double.valueOf(request.getParameter("item["+specItemList.get(i)+"][market_price]")));//市场价格
-									gsp.setCostPrice(Double.valueOf(request.getParameter("item["+specItemList.get(i)+"][cost_price]")));//成本价格
-									gsp.setStoreCount(Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][store_count]")));// 库存数量
-									gsp.setBarCode(request.getParameter("item["+specItemList.get(i)+"][bar_code]"));// 商品条形码
-									gsp.setGoodsNo(request.getParameter("item["+specItemList.get(i)+"][goods_No]"));// 商品编码
-									gsp.setGoodsWeight(Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][goods_weight]")));// 商品重量
-									gsp.setServiceTimes(Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][service_times]")));//服务次数
-									gsp.setExpiringDate(Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][expiring_date]")));//截止日期（月）
-									//保存到list中
-									//规格库存统一使用补仓功能  -kele 2016年10月9日
-									//storeCount=storeCount+Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][store_count]"));
-									totalNum=totalNum+Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][store_count]"));
+									gsp.setSpecKeyValue(
+											request.getParameter("item[" + specItemList.get(i) + "][key_name]"));// 规格键名中文
+									gsp.setPrice(Double
+											.valueOf(request.getParameter("item[" + specItemList.get(i) + "][price]")));// 优惠价格
+									gsp.setMarketPrice(Double.valueOf(
+											request.getParameter("item[" + specItemList.get(i) + "][market_price]")));// 市场价格
+									gsp.setCostPrice(Double.valueOf(
+											request.getParameter("item[" + specItemList.get(i) + "][cost_price]")));// 成本价格
+									gsp.setStoreCount(Integer.parseInt(
+											request.getParameter("item[" + specItemList.get(i) + "][store_count]")));// 库存数量
+									gsp.setBarCode(request.getParameter("item[" + specItemList.get(i) + "][bar_code]"));// 商品条形码
+									gsp.setGoodsNo(request.getParameter("item[" + specItemList.get(i) + "][goods_No]"));// 商品编码
+									gsp.setGoodsWeight(Integer.parseInt(
+											request.getParameter("item[" + specItemList.get(i) + "][goods_weight]")));// 商品重量
+									gsp.setServiceTimes(Integer.parseInt(
+											request.getParameter("item[" + specItemList.get(i) + "][service_times]")));// 服务次数
+									gsp.setExpiringDate(Integer.parseInt(
+											request.getParameter("item[" + specItemList.get(i) + "][expiring_date]")));// 截止日期（月）
+									// 保存到list中
+									// 规格库存统一使用补仓功能 -kele 2016年10月9日
+									// storeCount=storeCount+Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][store_count]"));
+									totalNum = totalNum + Integer.parseInt(
+											request.getParameter("item[" + specItemList.get(i) + "][store_count]"));
 									goodsSpecPricesList.add(gsp);
 								}
-								if(goodsNum==0){
-									if(totalNum==goodsnew.getTotalStore()){
+								if (goodsNum == 0) {
+									if (totalNum == goodsnew.getTotalStore()) {
 										List<String> items = GoodsUtil.getitemsvalue(list);
-										
+
 										for (int j = 0; j < items.size(); j++) {
-											//保存到商品规格图片
+											// 保存到商品规格图片
 											GoodsSpecImage goodsSpecImage = new GoodsSpecImage();
-											String gsivalue = request.getParameter("item_img["+items.get(j)+"]");
-											if(null != gsivalue && !"".equals(gsivalue)){
-												goodsSpecImage.setGoodsId(goods.getGoodsId()+"");
+											String gsivalue = request.getParameter("item_img[" + items.get(j) + "]");
+											if (null != gsivalue && !"".equals(gsivalue)) {
+												goodsSpecImage.setGoodsId(goods.getGoodsId() + "");
 												goodsSpecImage.setSpecItemId(Integer.parseInt(items.get(j)));
 												goodsSpecImage.setSrc(gsivalue);
-												//保存到list中
+												// 保存到list中
 												goodsSpecImagesList.add(goodsSpecImage);
 											}
 										}
-										
-										goods.setGoodsSpecPricesList(goodsSpecPricesList);//保存到商品实体bean-商品规格价格list
-										goods.setGoodsSpecImagesList(goodsSpecImagesList);//保存到商品实体bean-商品规格图片list
-										
-										//规格库存统一使用补仓功能  -kele 2016年10月9日
-										//Goods goods2=new Goods();
-										//goods2.setGoodsId(Integer.parseInt(goodsId));
-										//goods2.setStoreCount(storeCount);
-										//goodsService.updateStorCount(goods2);
-										
-										//商品规格【价格】list有数据才进行保存操作
-										if(goodsSpecPricesList.size() > 0){
-											//添加商品排列组合规格项数据（先删除、后添加）
+
+										goods.setGoodsSpecPricesList(goodsSpecPricesList);// 保存到商品实体bean-商品规格价格list
+										goods.setGoodsSpecImagesList(goodsSpecImagesList);// 保存到商品实体bean-商品规格图片list
+
+										// 规格库存统一使用补仓功能 -kele 2016年10月9日
+										// Goods goods2=new Goods();
+										// goods2.setGoodsId(Integer.parseInt(goodsId));
+										// goods2.setStoreCount(storeCount);
+										// goodsService.updateStorCount(goods2);
+
+										// 商品规格【价格】list有数据才进行保存操作
+										if (goodsSpecPricesList.size() > 0) {
+											// 添加商品排列组合规格项数据（先删除、后添加）
 											savespec(goods);
-											//修改商品规格项类型
+											// 修改商品规格项类型
 											goods.setSpecType(specTypeId);
 											updategoodstype(goods);
 										}
-										
-										//商品规格【图片】list有数据才进行保存操作
-										if(goodsSpecImagesList.size() > 0){
+
+										// 商品规格【图片】list有数据才进行保存操作
+										if (goodsSpecImagesList.size() > 0) {
 											savespecimg(goods);
 										}
-										
-							
-									}else{
-										//修改规格  先删除商品规格缓存 
-										List<GoodsSpecPrice> gspList =findGoodsSpecPrice(goods);
-										List<String> spckeylist=new ArrayList<String>();
+
+									} else {
+										// 修改规格 先删除商品规格缓存
+										List<GoodsSpecPrice> gspList = findGoodsSpecPrice(goods);
+										List<String> spckeylist = new ArrayList<String>();
 										for (int j = 0; j < gspList.size(); j++) {
 											spckeylist.add(gspList.get(j).getSpecKey());
 										}
-										//删除商品规格缓存
+										// 删除商品规格缓存
 										modifyGoodsStore.delStore(goods.getGoodsId(), spckeylist);
 										goodsDao.updateTotalstore(goods.getGoodsId());
-										
-										
+
 										List<String> items = GoodsUtil.getitemsvalue(list);
-										
+
 										for (int j = 0; j < items.size(); j++) {
-											//保存到商品规格图片
+											// 保存到商品规格图片
 											GoodsSpecImage goodsSpecImage = new GoodsSpecImage();
-											String gsivalue = request.getParameter("item_img["+items.get(j)+"]");
-											if(null != gsivalue && !"".equals(gsivalue)){
-												goodsSpecImage.setGoodsId(goods.getGoodsId()+"");
+											String gsivalue = request.getParameter("item_img[" + items.get(j) + "]");
+											if (null != gsivalue && !"".equals(gsivalue)) {
+												goodsSpecImage.setGoodsId(goods.getGoodsId() + "");
 												goodsSpecImage.setSpecItemId(Integer.parseInt(items.get(j)));
 												goodsSpecImage.setSrc(gsivalue);
-												//保存到list中
+												// 保存到list中
 												goodsSpecImagesList.add(goodsSpecImage);
 											}
 										}
-										
-										goods.setGoodsSpecPricesList(goodsSpecPricesList);//保存到商品实体bean-商品规格价格list
-										goods.setGoodsSpecImagesList(goodsSpecImagesList);//保存到商品实体bean-商品规格图片list
-										
-										//规格库存统一使用补仓功能  -kele 2016年10月9日
-										//Goods goods2=new Goods();
-										//goods2.setGoodsId(Integer.parseInt(goodsId));
-										//goods2.setStoreCount(storeCount);
-										//goodsService.updateStorCount(goods2);
-										
-										//商品规格【价格】list有数据才进行保存操作
-										if(goodsSpecPricesList.size() > 0){
-											//添加商品排列组合规格项数据（先删除、后添加）
+
+										goods.setGoodsSpecPricesList(goodsSpecPricesList);// 保存到商品实体bean-商品规格价格list
+										goods.setGoodsSpecImagesList(goodsSpecImagesList);// 保存到商品实体bean-商品规格图片list
+
+										// 规格库存统一使用补仓功能 -kele 2016年10月9日
+										// Goods goods2=new Goods();
+										// goods2.setGoodsId(Integer.parseInt(goodsId));
+										// goods2.setStoreCount(storeCount);
+										// goodsService.updateStorCount(goods2);
+
+										// 商品规格【价格】list有数据才进行保存操作
+										if (goodsSpecPricesList.size() > 0) {
+											// 添加商品排列组合规格项数据（先删除、后添加）
 											savespec(goods);
-											//修改商品规格项类型
+											// 修改商品规格项类型
 											goods.setSpecType(specTypeId);
 											updategoodstype(goods);
 										}
-										
-										//商品规格【图片】list有数据才进行保存操作
-										if(goodsSpecImagesList.size() > 0){
+
+										// 商品规格【图片】list有数据才进行保存操作
+										if (goodsSpecImagesList.size() > 0) {
 											savespecimg(goods);
 										}
-										
-										//修改规格 更新到缓存
-										List<GoodsSpecPrice> addkeyList =findGoodsSpecPrice(goods);
-										List<String> addlist=new ArrayList<String>();
+
+										// 修改规格 更新到缓存
+										List<GoodsSpecPrice> addkeyList = findGoodsSpecPrice(goods);
+										List<String> addlist = new ArrayList<String>();
 										for (int j = 0; j < addkeyList.size(); j++) {
-											addlist.add(gspList.get(j).getSpecKey());
+											addlist.add(addkeyList.get(j).getSpecKey());
 										}
-										//删除商品规格缓存
+										// 删除商品规格缓存
 										modifyGoodsStore.addStore(goods.getGoodsId(), addlist);
-										
-										
+
 									}
-									
-									
+
 								}
-									
+
 							}
 						}
-						
-					
+
 					}
 				}
 			}
 
-			
 			String attrTypeId = request.getParameter("attrTypeId");
-			
-			if(!StringUtils.isEmpty(goods.getGoodsId()+"") && !StringUtils.isEmpty(attrTypeId)){
-			//	goods.setGoodsId(Integer.parseInt(goodsId));
-				//goods = goodsService.get(goods);
-				
-				//获取商品名称，判断是否根据商品ID查询到商品信息
-				if(!StringUtils.isEmpty(goods.getGoodsName())){
-					
-					if("-1".equals(attrTypeId)){
-						//删除商品属性数据
+
+			if (!StringUtils.isEmpty(goods.getGoodsId() + "") && !StringUtils.isEmpty(attrTypeId)) {
+				// goods.setGoodsId(Integer.parseInt(goodsId));
+				// goods = goodsService.get(goods);
+
+				// 获取商品名称，判断是否根据商品ID查询到商品信息
+				if (!StringUtils.isEmpty(goods.getGoodsName())) {
+
+					if ("-1".equals(attrTypeId)) {
+						// 删除商品属性数据
 						deleteattribute(goods);
-						//修改商品规格项类型
+						// 修改商品规格项类型
 						goods.setAttrType("0");
 						updategoodstype(goods);
-						
-					}else{
-						List<GoodsAttributeMappings> goodsAttributeMappingsList = new ArrayList<GoodsAttributeMappings>();//商品的所有属性
-						
-						//商品属性
+
+					} else {
+						List<GoodsAttributeMappings> goodsAttributeMappingsList = new ArrayList<GoodsAttributeMappings>();// 商品的所有属性
+
+						// 商品属性
 						GoodsAttribute goodsAttribute = new GoodsAttribute();
 						goodsAttribute.setTypeId(attrTypeId);
 						List<GoodsAttribute> galist = goodsAttributeDao.findList(goodsAttribute);
-						if(galist.size() > 0){
+						if (galist.size() > 0) {
 							for (int i = 0; i < galist.size(); i++) {
 								goodsAttribute = galist.get(i);
 								GoodsAttributeMappings gam = new GoodsAttributeMappings();
-								gam.setGoodsId(goods.getGoodsId()+"");
+								gam.setGoodsId(goods.getGoodsId() + "");
 								gam.setAttrId(Integer.parseInt(goodsAttribute.getId()));
-								gam.setAttrValue(request.getParameter("attr_"+goodsAttribute.getId()));
+								gam.setAttrValue(request.getParameter("attr_" + goodsAttribute.getId()));
 								goodsAttributeMappingsList.add(gam);
 							}
 							goods.setGoodsAttributeMappingsList(goodsAttributeMappingsList);
 						}
-						
-						//商品属性列表值大于0
-						if(goodsAttributeMappingsList.size() > 0){
-							//添加商品属性数据（先删除、后添加）
+
+						// 商品属性列表值大于0
+						if (goodsAttributeMappingsList.size() > 0) {
+							// 添加商品属性数据（先删除、后添加）
 							saveattribute(goods);
-							//修改商品规格项类型
+							// 修改商品规格项类型
 							goods.setAttrType(attrTypeId);
 							updategoodstype(goods);
 						}
 					}
-					
+
 				}
 			}
-			//更新商品技能标签
+			// 更新商品技能标签
 			List<GoodsSkill> skillList = SpeArrSkillList(goods); // 获得技能标签list
 			skillDao.deleteGoodsSkill(goods.getGoodsId());
 			if (skillList.size() > 0) {
 				skillDao.insertGoodsSkill(skillList);
 			}
-			
-			//更新商品设备标签
+
+			// 更新商品设备标签
 			List<GoodsEquipmentLabel> goodsEquipmentLabelList = SpeArrGoodsEquipmentLabelList(goods); // 获得设备标签list
 			equipmentLabelDao.deleteGoodsEquipmentLabel(goods.getGoodsId());
 			if (goodsEquipmentLabelList.size() > 0) {
@@ -665,250 +684,255 @@ public class GoodsService extends CrudService<GoodsDao,Goods>{
 			}
 		}
 	}
-	
+
 	/**
 	 * 复制商品
+	 * 
 	 * @param goods
 	 * @return
 	 */
-	public void saveCoypGoods(Goods goods){
-		//根据商品ID，查询商品信息
-		//goods.setGoodsId(goods.getId());
-		goods =get(goods);
-		//查询商品相册、商品护理流程 begin
+	public void saveCoypGoods(Goods goods) {
+		// 根据商品ID，查询商品信息
+		// goods.setGoodsId(goods.getId());
+		goods = get(goods);
+		// 查询商品相册、商品护理流程 begin
 		goods.setGoodsImagesList(findGoodsImages(goods));
-		//根据商品ID，查询所有规格价格信息
+		// 根据商品ID，查询所有规格价格信息
 		List<GoodsSpecPrice> gspList = findGoodsSpecPrice(goods);
-		//根据商品id，查询出商品规格图片
+		// 根据商品id，查询出商品规格图片
 		List<GoodsSpecImage> goodsSpecImagesList = findspecimgbyid(goods);
-		//根据商品ID，查询所有属性值内容
+		// 根据商品ID，查询所有属性值内容
 		List<GoodsAttributeMappings> gamList = findGoodsAttributeMappings(goods);
-		
-		if (goods!=null) {
-			int num=dao.selectByMaxSort();
+
+		if (goods != null) {
+			int num = dao.selectByMaxSort();
 			goods.setGoodsId(0);
 			goods.setActionType("0");
 			goods.setActionId(0);
-			goods.setSort(num+1);
+			goods.setSort(num + 1);
 			goods.setStoreCount(0);
-			//保存
+			// 保存
 			dao.insert(goods);
 			int goodId = goods.getGoodsId();
-			if(0 == goodId){
+			if (0 == goodId) {
 				try {
 					throw new Exception("保存失败");
 				} catch (Exception e) {
-					
+
 				}
-			}	
+			}
 		}
-		if(goods.getGoodsImagesList().size()>0){
-			List<GoodsImages> imglist=goods.getGoodsImagesList();
-			List<GoodsImages> list=new ArrayList<GoodsImages>();
+		if (goods.getGoodsImagesList().size() > 0) {
+			List<GoodsImages> imglist = goods.getGoodsImagesList();
+			List<GoodsImages> list = new ArrayList<GoodsImages>();
 			for (int i = 0; i < imglist.size(); i++) {
 				GoodsImages goodsImg = new GoodsImages();
-				goodsImg.setGoodsId(goods.getGoodsId()+"");
+				goodsImg.setGoodsId(goods.getGoodsId() + "");
 				goodsImg.setImageUrl(imglist.get(i).getImageUrl());
-				goodsImg.setImageDesc(imglist.get(i).getImageDesc());//商品描述
-				goodsImg.setImageType(imglist.get(i).getImageType());//图片类型　　0　是商品图　　1　护理流程图
-				goodsImg.setSort(imglist.get(i).getSort());//10、20
+				goodsImg.setImageDesc(imglist.get(i).getImageDesc());// 商品描述
+				goodsImg.setImageType(imglist.get(i).getImageType());// 图片类型 0
+																		// 是商品图
+																		// 1
+																		// 护理流程图
+				goodsImg.setSort(imglist.get(i).getSort());// 10、20
 				list.add(goodsImg);
 			}
 			goods.setGoodsImagesList(list);
 			savegoodsimages(goods);
 		}
-		if(gspList.size()>0){
-			List<GoodsSpecPrice> goodspriceList=new ArrayList<GoodsSpecPrice>();
+		if (gspList.size() > 0) {
+			List<GoodsSpecPrice> goodspriceList = new ArrayList<GoodsSpecPrice>();
 			for (GoodsSpecPrice goodsSpecPrice : gspList) {
-				GoodsSpecPrice goodsSpec=goodsSpecPrice;
-				goodsSpec.setGoodsId(goods.getGoodsId()+"");
+				GoodsSpecPrice goodsSpec = goodsSpecPrice;
+				goodsSpec.setGoodsId(goods.getGoodsId() + "");
 				goodsSpec.setStoreCount(0);
 				goodspriceList.add(goodsSpec);
 			}
-			goods.setGoodsSpecPricesList(goodspriceList);	//保存到商品实体bean-商品规格价格list
-			
+			goods.setGoodsSpecPricesList(goodspriceList); // 保存到商品实体bean-商品规格价格list
 
-			//添加商品排列组合规格项数据（先删除、后添加）
+			// 添加商品排列组合规格项数据（先删除、后添加）
 			savespec(goods);
-			//修改商品规格项类型
-			//goods.setSpecType(specTypeId);
+			// 修改商品规格项类型
+			// goods.setSpecType(specTypeId);
 			updategoodstype(goods);
-			
-			
-			
+
 		}
-		if(goodsSpecImagesList.size() > 0){
-			List<GoodsSpecImage> goodsimgelist=new ArrayList<GoodsSpecImage>();
-			//商品规格【图片】list有数据才进行保存操作
+		if (goodsSpecImagesList.size() > 0) {
+			List<GoodsSpecImage> goodsimgelist = new ArrayList<GoodsSpecImage>();
+			// 商品规格【图片】list有数据才进行保存操作
 			for (GoodsSpecImage goodsSpecImage : goodsSpecImagesList) {
-				GoodsSpecImage goodsImage=goodsSpecImage;
-				goodsImage.setGoodsId(goods.getGoodsId()+"");
+				GoodsSpecImage goodsImage = goodsSpecImage;
+				goodsImage.setGoodsId(goods.getGoodsId() + "");
 				goodsimgelist.add(goodsImage);
 			}
-			goods.setGoodsSpecImagesList(goodsimgelist);//保存到商品实体bean-商品规格图片list
+			goods.setGoodsSpecImagesList(goodsimgelist);// 保存到商品实体bean-商品规格图片list
 			savespecimg(goods);
 		}
-		if(gamList.size()>0){
-			List<GoodsAttributeMappings> goodsAttributeList=new ArrayList<GoodsAttributeMappings>();
+		if (gamList.size() > 0) {
+			List<GoodsAttributeMappings> goodsAttributeList = new ArrayList<GoodsAttributeMappings>();
 			for (GoodsAttributeMappings goodsAttributeMappings : gamList) {
-				GoodsAttributeMappings goodsAttribut=goodsAttributeMappings;
-				goodsAttribut.setGoodsId(goods.getGoodsId()+"");
+				GoodsAttributeMappings goodsAttribut = goodsAttributeMappings;
+				goodsAttribut.setGoodsId(goods.getGoodsId() + "");
 				goodsAttributeList.add(goodsAttribut);
 			}
 			goods.setGoodsAttributeMappingsList(goodsAttributeList);
 			saveattribute(goods);
 		}
 
-		
-	
-		
 	}
-	
-	
-	
+
 	/**
 	 * 商品-通用信息-修改
+	 * 
 	 * @param goods
 	 * @return
 	 */
-	public int updateGoods(Goods goods){
+	public int updateGoods(Goods goods) {
 		int result = dao.update(goods);
-		if(1 == result){
+		if (1 == result) {
 			return 1;
-		}else{
+		} else {
 			try {
 				throw new Exception("修改失败");
 			} catch (Exception e) {
-				
+
 			}
 		}
 		return result;
 	}
+
 	/**
 	 * 更新库存
+	 * 
 	 * @param goods
 	 * @return
 	 */
-	public int updateStorCount(Goods goods){
-		int num=dao.updateStorCount(goods);
-		if(1 == num){
+	public int updateStorCount(Goods goods) {
+		int num = dao.updateStorCount(goods);
+		if (1 == num) {
 			return 1;
-		}else{
+		} else {
 			try {
 				throw new Exception("添加库存失败");
 			} catch (Exception e) {
-				
+
 			}
 		}
 		return num;
 	}
-	
+
 	/**
 	 * 修改商品类型（规格与属性的类型）
+	 * 
 	 * @param goods
 	 * @return
 	 */
-	public int updategoodstype(Goods goods){
+	public int updategoodstype(Goods goods) {
 		int result = goodsDao.updategoodstype(goods);
-		if(1 == result){
+		if (1 == result) {
 			return 1;
-		}else{
+		} else {
 			try {
 				throw new Exception("修改失败");
 			} catch (Exception e) {
-				
+
 			}
 		}
 		return result;
 	}
-	
-	
+
 	/**
 	 * 商品-是否显示（上架、推荐、新品、热卖、app显示）
+	 * 
 	 * @param goods
 	 * @return
 	 */
-	public int updateisyesno(Goods goods){
+	public int updateisyesno(Goods goods) {
 		int result = goodsDao.updateisyesno(goods);
-		if(1 == result){
+		if (1 == result) {
 			return 1;
-		}else{
+		} else {
 			try {
 				throw new Exception("修改失败");
 			} catch (Exception e) {
-				
+
 			}
 		}
 		return result;
 	}
-	
+
 	/**
-	 * 根据商品ID，查询商品图片
-	 * 0-商品相册；1-商品护理流程
+	 * 根据商品ID，查询商品图片 0-商品相册；1-商品护理流程
+	 * 
 	 * @param goods
 	 * @return
 	 */
-	public List<GoodsImages> findGoodsImages(Goods goods){
+	public List<GoodsImages> findGoodsImages(Goods goods) {
 		return goodsDao.findGoodsImages(goods);
 	}
-	
-	
+
 	/**
 	 * 根据商品ID，查询商品规格价格项
+	 * 
 	 * @param goods
 	 * @return
 	 */
-	public List<GoodsSpecPrice> findGoodsSpecPrice(Goods goods){
+	public List<GoodsSpecPrice> findGoodsSpecPrice(Goods goods) {
 		return goodsDao.findGoodsSpecPrice(goods);
 	}
-	
+
 	/**
 	 * 根据商品ID，查询商品规格价格项
+	 * 
 	 * @param goods
 	 * @return
 	 */
-	public GoodsSpecPrice findByGoodsSpecPrice(GoodsSpecPrice goodsSpecPrice){
+	public GoodsSpecPrice findByGoodsSpecPrice(GoodsSpecPrice goodsSpecPrice) {
 		return goodsDao.findByGoodsSpecPrice(goodsSpecPrice);
 	}
-	
+
 	/**
 	 * 根据商品规格specKey，修改商品规格价格项
+	 * 
 	 * @param goodsSpecPrice
 	 * @return
 	 */
-	public int updateByGoodsSpecPrice(GoodsSpecPrice goodsSpecPrice){
+	public int updateByGoodsSpecPrice(GoodsSpecPrice goodsSpecPrice) {
 		int result = goodsDao.updateByGoodsSpecPrice(goodsSpecPrice);
-		if(1 == result){
+		if (1 == result) {
 			return 1;
-		}else{
+		} else {
 			try {
 				throw new Exception("根据商品ID，修改商品规格价格项：失败");
 			} catch (Exception e) {
-				
+
 			}
 		}
 		return result;
 	}
-	
-	
+
 	/**
 	 * 根据商品ID，查询商品属性
+	 * 
 	 * @param goods
 	 * @return
 	 */
-	public List<GoodsAttributeMappings> findGoodsAttributeMappings(Goods goods){
+	public List<GoodsAttributeMappings> findGoodsAttributeMappings(Goods goods) {
 		return goodsDao.findGoodsAttributeMappings(goods);
 	}
-	
+
 	/**
 	 * 查询所有功效
+	 * 
 	 * @return
 	 */
-	public List<Effect> findEffect(Effect effect){
+	public List<Effect> findEffect(Effect effect) {
 		return dao.findEffect(effect);
 	}
+
 	/**
 	 * 分页查询功效
+	 * 
 	 * @param page
 	 * @param effect
 	 * @return
@@ -918,155 +942,178 @@ public class GoodsService extends CrudService<GoodsDao,Goods>{
 		page.setList(dao.findEffect(effect));
 		return page;
 	}
+
 	/**
 	 * 保存功效
+	 * 
 	 * @param effect
 	 */
-	public void saveEffect(Effect effect){
+	public void saveEffect(Effect effect) {
 		dao.saveEffect(effect);
 	}
+
 	/**
 	 * 删除功效
+	 * 
 	 * @param effect
 	 */
-	public void deleteEffect(Effect effect){
+	public void deleteEffect(Effect effect) {
 		dao.deleteEffect(effect);
 	}
+
 	/**
 	 * 修改功效
+	 * 
 	 * @param effect
 	 */
-	public void updateEffect(Effect effect){
+	public void updateEffect(Effect effect) {
 		dao.updateEffect(effect);
 	}
-	
+
 	/**
 	 * 保存商品相册
+	 * 
 	 * @param goods
-	 * @return 
+	 * @return
 	 */
-	public void savegoodsimages(Goods goods){
-		goodsDao.deletegoodsimages(goods);//先删除之前的商品相册项内容
-		goodsDao.savegoodsimages(goods);//再添加新的商品相册内容
+	public void savegoodsimages(Goods goods) {
+		goodsDao.deletegoodsimages(goods);// 先删除之前的商品相册项内容
+		goodsDao.savegoodsimages(goods);// 再添加新的商品相册内容
 	}
-	
+
 	/**
 	 * 删除商品相册项内容
+	 * 
 	 * @param goods
 	 */
-	public void deletegoodsimages(Goods goods){
-		goodsDao.deletegoodsimages(goods);//先删除之前的商品相册项内容
+	public void deletegoodsimages(Goods goods) {
+		goodsDao.deletegoodsimages(goods);// 先删除之前的商品相册项内容
 	}
-	
-	
+
 	/**
 	 * 保存商品规格项
+	 * 
 	 * @param goods
-	 * @return 
+	 * @return
 	 */
-	public void savespec(Goods goods){
-		goodsDao.deletespec(goods);//先删除之前的商品规格项内容
-		goodsDao.savespec(goods);//再添加新的商品规格项内容
+	public void savespec(Goods goods) {
+		goodsDao.deletespec(goods);// 先删除之前的商品规格项内容
+		goodsDao.savespec(goods);// 再添加新的商品规格项内容
 	}
-	
+
 	/**
 	 * 先删除之前的商品规格项内容
+	 * 
 	 * @param goods
 	 */
-	public void deletespec(Goods goods){
+	public void deletespec(Goods goods) {
 		goodsDao.deletespec(goods);
 	}
-	
+
 	/**
 	 * 保存商品属性
+	 * 
 	 * @param goods
 	 */
-	public void saveattribute(Goods goods){
-		goodsDao.deleteattribute(goods);//先删除之前保存的商品属性
-		goodsDao.saveattribute(goods);//再添加新的商品属性
+	public void saveattribute(Goods goods) {
+		goodsDao.deleteattribute(goods);// 先删除之前保存的商品属性
+		goodsDao.saveattribute(goods);// 再添加新的商品属性
 	}
-	
+
 	/**
 	 * 先删除之前保存的商品属性
+	 * 
 	 * @param goods
 	 */
-	public void deleteattribute(Goods goods){
+	public void deleteattribute(Goods goods) {
 		goodsDao.deleteattribute(goods);
 	}
-	
 
 	/**
 	 * 保存商品规格图片
+	 * 
 	 * @param goods
 	 */
-	public void savespecimg(Goods goods){
-		goodsDao.deletespecimg(goods);//先删除之前保存的商品规格图片
-		goodsDao.savespecimg(goods);//再添加新的商品规格图片
+	public void savespecimg(Goods goods) {
+		goodsDao.deletespecimg(goods);// 先删除之前保存的商品规格图片
+		goodsDao.savespecimg(goods);// 再添加新的商品规格图片
 	}
-	
+
 	/**
 	 * 根据商品ID，查询商品规格图片
+	 * 
 	 * @param goods
 	 * @return
 	 */
-	public List<GoodsSpecImage> findspecimgbyid(Goods goods){
+	public List<GoodsSpecImage> findspecimgbyid(Goods goods) {
 		return goodsDao.findspecimgbyid(goods);
 	}
+
 	/**
 	 * 根据分类查询商品
+	 * 
 	 * @param goodsCategory
 	 * @return
 	 */
-	public List<Goods> list(Goods goods){
+	public List<Goods> list(Goods goods) {
 		return goodsDao.goodslist(goods);
 	}
-	public int modifyStoreCount(Map<String, Object> map){
+
+	public int modifyStoreCount(Map<String, Object> map) {
 		return this.goodsDao.modifyStoreCount(map);
 	}
-	public int modifySpecStoreCount(Map<String, Object> map){
+
+	public int modifySpecStoreCount(Map<String, Object> map) {
 		return goodsSpecPriceDao.modifySpecStoreCount(map);
 	}
-	
-	public List<StoreVo> queryStoreCount(){
+
+	public List<StoreVo> queryStoreCount() {
 		return this.goodsDao.queryStoreCount();
 	}
-	public List<GoodsSpecPrice> querySpecsPrices(){
+
+	public List<GoodsSpecPrice> querySpecsPrices() {
 		return goodsSpecPriceDao.querySpecsPrices();
 	}
-	public List<GoodsCollect> queryAllGoodsCollect(){
+
+	public List<GoodsCollect> queryAllGoodsCollect() {
 		return this.goodsDao.queryAllGoodsCollect();
 	}
-	
-	public List<Integer> queryAllUnshelve(){
+
+	public List<Integer> queryAllUnshelve() {
 		return this.goodsDao.queryAllUnshelve();
 	}
+
 	/**
 	 * 定时器执行商品上下架
+	 * 
 	 * @param goods
 	 * @return
 	 */
-	public int updateGoodsStauts(Goods goods){
+	public int updateGoodsStauts(Goods goods) {
 		return goodsDao.updateGoodsStauts(goods);
 	}
+
 	/**
 	 * 根据多分类查询数据
+	 * 
 	 * @param cateId
 	 * @return
 	 */
-	public List<Goods> findByCateList(String cateId){
+	public List<Goods> findByCateList(String cateId) {
 		return goodsDao.findByCateList(cateId);
 	}
-	
+
 	/**
 	 * 技能标签拼接
+	 * 
 	 * @param goods
 	 * @return
 	 */
-	public List<GoodsSkill> SpeArrSkillList(Goods goods){
+	public List<GoodsSkill> SpeArrSkillList(Goods goods) {
 		List<GoodsSkill> list = new ArrayList<GoodsSkill>();
 		if (goods.getSkill().getId() != null) {
 			String spec = goods.getSkill().getId();
-			if(!"".equals(spec) && spec != null){
+			if (!"".equals(spec) && spec != null) {
 				String[] arry = spec.split(",");
 				for (int i = 0; i < arry.length; i++) {
 					GoodsSkill usspe = new GoodsSkill();
@@ -1075,21 +1122,22 @@ public class GoodsService extends CrudService<GoodsDao,Goods>{
 					list.add(usspe);
 				}
 			}
-			
+
 		}
 		return list;
 	}
-	
+
 	/**
 	 * 商品设备标签拼接
+	 * 
 	 * @param goods
 	 * @return
 	 */
-	public List<GoodsEquipmentLabel> SpeArrGoodsEquipmentLabelList(Goods goods){
+	public List<GoodsEquipmentLabel> SpeArrGoodsEquipmentLabelList(Goods goods) {
 		List<GoodsEquipmentLabel> list = new ArrayList<GoodsEquipmentLabel>();
 		if (goods.getEquipmentLabel().getId() != null) {
 			String spec = goods.getEquipmentLabel().getId();
-			if(!"".equals(spec) && spec != null){
+			if (!"".equals(spec) && spec != null) {
 				String[] arry = spec.split(",");
 				for (int i = 0; i < arry.length; i++) {
 					GoodsEquipmentLabel usspe = new GoodsEquipmentLabel();
@@ -1098,18 +1146,18 @@ public class GoodsService extends CrudService<GoodsDao,Goods>{
 					list.add(usspe);
 				}
 			}
-			
+
 		}
 		return list;
 	}
-	
-	
+
 	/**
 	 * 根据商品id获取该商品的技能标签
+	 * 
 	 * @param goodsId
 	 * @return
 	 */
-	public Skill getSkillByGoodsId(int goodsId){
+	public Skill getSkillByGoodsId(int goodsId) {
 		String id = "";
 		String name = "";
 		Skill skill = new Skill();
@@ -1126,13 +1174,14 @@ public class GoodsService extends CrudService<GoodsDao,Goods>{
 		}
 		return skill;
 	}
-	
+
 	/**
 	 * 根据商品id获取该商品的设备标签
+	 * 
 	 * @param goodsId
 	 * @return
 	 */
-	public EquipmentLabel getEquipmentLabelByGoodsId(int goodsId){
+	public EquipmentLabel getEquipmentLabelByGoodsId(int goodsId) {
 		String id = "";
 		String name = "";
 		EquipmentLabel equipmentLabel = new EquipmentLabel();
