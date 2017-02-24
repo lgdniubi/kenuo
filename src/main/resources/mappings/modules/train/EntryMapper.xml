@@ -61,7 +61,9 @@
 	    imgurl,
 	    playpass,
 	    bengtime,
-	    id AS auditId 
+	    id AS auditId,
+	    au.userId,
+	    ro.roomId AS liveId 
     FROM 
     	train_live_audit 
     WHERE 
@@ -94,8 +96,8 @@
 		#{liveId},
 		#{bengtime},
 		#{overtime},
-		#{Thumbup},
-		#{playNum},
+		0,
+		0,
 		#{name},
 		#{desc},
 		#{imgurl},
