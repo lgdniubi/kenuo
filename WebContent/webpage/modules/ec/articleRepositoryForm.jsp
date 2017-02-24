@@ -605,8 +605,8 @@
 		        	<h4 class="modal-title" id="myModalLabel">裁剪照片</h4>
 				</div>
 				<div class="modal-body" style="background:url(${ctxStatic}/kindEditor/themes/default/cutImgBg.png);background-size:20px;">
-					<div style="width: 410px;height: 410px;line-height:410px;text-align:center; margin: 0 auto">
-						<img alt="" src="" style="max-width: 400px;max-height: 400px;border: 1px solid black;" id="cutphoto">
+					<div style="width: 350px;height: 350px;line-height:350px;text-align:center; margin: 0 auto">
+						<img alt="" src="" style="max-width: 350px;max-height: 350px;border: 1px solid black;" id="cutphoto">
 						<input id="x1" name="x1" type="hidden">
 						<input id="y1" name="y1" type="hidden">
 						<input id="width" name="width" type="hidden">
@@ -1003,7 +1003,7 @@
 				$("#cutImgContent").html("");
 				$("#cutphoto").attr("src",imgUrl);
 				$("#ke-dialog-cutPhoto").modal('show');
-				if($("#imageType").val() == 1){
+				if($("input[type=radio][name=imageType]:checked").val() == 1){
 					cutImg("2:1");
 				}else{
 					cutImg("1:1");

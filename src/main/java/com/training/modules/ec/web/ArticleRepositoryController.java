@@ -466,21 +466,30 @@ public class ArticleRepositoryController extends BaseController {
 	@RequestMapping(value = "ajaxCutImg")
 	public String ajaxCutImg(String path,int x,int y,int width,int height,HttpServletRequest request){
 		JSONObject josn = null;
-		// 下载照片到本地
-		JSONObject josnIO = convertIO(path,request,logger);
-		if("200".equals(josnIO.get("status"))){
-			// 截图保存到本地
-			String string = cutImg(josnIO.get("msg").toString(), x, y, width, height,request,logger);
-			if("true".equals(string)){
-				// 上传本地照片到服务器
-				josn = postImg(josnIO.get("msg").toString(),request,logger);
+		JSONObject josnIO = null;
+		try {
+			// 下载照片到本地
+			josnIO = convertIO(path,request,logger);
+			if("200".equals(josnIO.get("status"))){
+				// 截图保存到本地
+				String string = cutImg(josnIO.get("msg").toString(), x, y, width, height,request,logger);
+				if("true".equals(string)){
+					// 上传本地照片到服务器
+					josn = postImg(josnIO.get("msg").toString(),request,logger);
+				}else{
+					josn.put("status", "-1");
+					josn.put("msg","截图出现异常,请联系管理员");
+				}
 			}else{
 				josn.put("status", "-1");
-		        josn.put("msg","截图出现异常,请联系管理员");
+				josn.put("msg","截图出现异常,请联系管理员");
 			}
-		}else{
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "截图出现异常", e);
+			logger.error("截图错误信息:"+e.getMessage());
 			josn.put("status", "-1");
 	        josn.put("msg","截图出现异常,请联系管理员");
+	        return josn.toString();
 		}
 		boolean success = (new File(josnIO.get("msg").toString())).delete();
         if (success) {
@@ -558,24 +567,26 @@ public class ArticleRepositoryController extends BaseController {
             int srcWidth = bi.getWidth(); // 源图宽度
             int srcHeight = bi.getHeight(); // 源图高度
             logger.info("#######照片原始宽度srcWidth= " + srcWidth + "_____原始高度srcHeight= " + srcHeight);
-			double scale = 0;
-            if(srcWidth >= 400 && srcHeight >= 400){
+			double scale = 1;
+            if(srcWidth >= 350 && srcHeight >= 350){
             	if(srcWidth > srcHeight){
-            		scale = (double)400/(double)srcWidth;
+            		scale = (double)srcWidth/(double)350;
             	}else if(srcWidth < srcHeight){
-            		scale = (double)400/(double)srcHeight;
+            		scale = (double)srcHeight/(double)350;
             	}else{
             		scale = 0;
             	}
-            }else if(srcWidth > 400 && srcHeight <= 400){
-            	scale = (double)400/(double)srcWidth;
-            }else if(srcHeight > 400 && srcWidth <= 400){
-            	scale = (double)400/(double)srcHeight;
+            }else if(srcWidth > 350 && srcHeight <= 350){
+            	scale = (double)srcWidth/(double)350;
+            }else if(srcHeight > 350 && srcWidth <= 350){
+            	scale = (double)srcHeight/(double)350;
+            }else{
+            	scale = 1;
             }
-            x = (int)(x + (x*scale));
-            y = (int)(y + (y*scale));
-            destWidth = (int)(destWidth + (destWidth*scale));
-            destHeight = (int)(destHeight + (destHeight*scale));
+            x = (int)(x*scale);
+            y = (int)(y*scale);
+            destWidth = (int)(destWidth*scale);
+            destHeight = (int)(destHeight*scale);
             if (srcWidth >= destWidth && srcHeight >= destHeight) {
                 Image image = bi.getScaledInstance(srcWidth, srcHeight,Image.SCALE_DEFAULT);
                 // 改进的想法:是否可用多线程加快切割速度
