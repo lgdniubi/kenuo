@@ -5,6 +5,8 @@ import java.util.List;
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.TrainLiveAudit;
+import com.training.modules.train.entity.TrainLiveOrder;
+import com.training.modules.train.entity.TrainLiveSku;
 
 /**
  * 直播dao
@@ -32,4 +34,15 @@ public interface TrainLiveAuditDao extends TreeDao<TrainLiveAudit>{
 	 */
 	public List<TrainLiveAudit> selectWantLive();
 	
+	/**
+	 * 分页分页查询直播Sku配置 
+	 * @return
+	 */
+	public List<TrainLiveSku> findSkuList(TrainLiveSku trainLiveSku);
+	
+	/**
+	 * 分页分页查询直播订单列表
+	 * @return
+	 */
+	public List<TrainLiveOrder> findOrderList(TrainLiveOrder trainLiveOrder);
 }

@@ -115,4 +115,10 @@
 		WHERE sub_id = #{subId}
 		AND	goods_id=#{goodsId}
 	</delete>
+	
+	<!-- 添加商品前删除主题图对应的所有商品 -->
+	<delete id="delAllGoods">
+		DELETE FROM mtmydb.mtmy_sub_goods
+		WHERE sub_id = #{subId}
+	</delete>
 </mapper>
