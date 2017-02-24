@@ -137,8 +137,7 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 						GoodsImages goodsImg = new GoodsImages();
 						goodsImg.setGoodsId(String.valueOf(goodId));
 						goodsImg.setImageUrl(goodsNurseImages[i]);
-						goodsImg.setImageDesc((null != goodsNurseImagesText[i] && !"".equals(goodsNurseImagesText[i])
-								? goodsNurseImagesText[i] : ""));// 商品描述
+						goodsImg.setImageDesc((null != goodsNurseImagesText[i] && !"".equals(goodsNurseImagesText[i])? goodsNurseImagesText[i] : ""));// 商品描述
 						goodsImg.setImageType(1);// 图片类型 0 是商品图 1 护理流程图
 						goodsImg.setSort(i + 1 + "0");// 10、20
 						giList.add(goodsImg);
@@ -206,8 +205,7 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 						while (iterator.hasNext()) {
 							String key = (String) iterator.next();
 							// 保存所需选择的规格项的数组
-							String[] value = (String[]) json.getString(key).replace("[", "").replace("]", "")
-									.split(",");
+							String[] value = (String[]) json.getString(key).replace("[", "").replace("]", "").split(",");
 							list.add(value);
 						}
 
@@ -230,24 +228,16 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 								gsp.setGoodsId(goods.getGoodsId() + "");// 商品id
 
 								gsp.setSpecKey(specItemList.get(i));// 规格键
-								gsp.setSpecKeyValue(
-										request.getParameter("item[" + specItemList.get(i) + "][key_name]"));// 规格键名中文
-								gsp.setPrice(Double
-										.valueOf(request.getParameter("item[" + specItemList.get(i) + "][price]")));// 优惠价格
-								gsp.setMarketPrice(Double.valueOf(
-										request.getParameter("item[" + specItemList.get(i) + "][market_price]")));// 市场价格
-								gsp.setCostPrice(Double.valueOf(
-										request.getParameter("item[" + specItemList.get(i) + "][cost_price]")));// 成本价格
-								gsp.setStoreCount(Integer.parseInt(
-										request.getParameter("item[" + specItemList.get(i) + "][store_count]")));// 库存数量
+								gsp.setSpecKeyValue(request.getParameter("item[" + specItemList.get(i) + "][key_name]"));// 规格键名中文
+								gsp.setPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][price]")));// 优惠价格
+								gsp.setMarketPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][market_price]")));// 市场价格
+								gsp.setCostPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][cost_price]")));// 成本价格
+								gsp.setStoreCount(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][store_count]")));// 库存数量
 								gsp.setBarCode(request.getParameter("item[" + specItemList.get(i) + "][bar_code]"));// 商品条形码
 								gsp.setGoodsNo(request.getParameter("item[" + specItemList.get(i) + "][goods_No]"));// 商品编码
-								gsp.setGoodsWeight(Integer.parseInt(
-										request.getParameter("item[" + specItemList.get(i) + "][goods_weight]")));// 商品重量
-								gsp.setServiceTimes(Integer.parseInt(
-										request.getParameter("item[" + specItemList.get(i) + "][service_times]")));// 服务次数
-								gsp.setExpiringDate(Integer.parseInt(
-										request.getParameter("item[" + specItemList.get(i) + "][expiring_date]")));// 截止日期（月）
+								gsp.setGoodsWeight(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][goods_weight]")));// 商品重量
+								gsp.setServiceTimes(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][service_times]")));// 服务次数
+								gsp.setExpiringDate(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][expiring_date]")));// 截止日期（月）
 								// 保存到list中
 								// 规格库存统一使用补仓功能 -kele 2016年10月9日
 								// storeCount=storeCount+Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][store_count]"));
@@ -362,10 +352,8 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 			}
 		} else {
 
-			goods.setAttrType(
-					(goods.getAttrType() == null || "".equals(goods.getAttrType())) ? null : goods.getAttrType());
-			goods.setSpecType(
-					(goods.getSpecType() == null || "".equals(goods.getSpecType())) ? null : goods.getSpecType());
+			goods.setAttrType((goods.getAttrType() == null || "".equals(goods.getAttrType())) ? null : goods.getAttrType());
+			goods.setSpecType((goods.getSpecType() == null || "".equals(goods.getSpecType())) ? null : goods.getSpecType());
 			goods.setIsRecommend(goods.getIsRecommend() == null ? "0" : goods.getIsRecommend());
 			goods.setIsHot(goods.getIsHot() == null ? "0" : goods.getIsHot());
 			goods.setIsAppshow(goods.getIsAppshow() == null ? "0" : goods.getIsAppshow());
@@ -488,29 +476,20 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 									gsp.setGoodsId(goods.getGoodsId() + "");// 商品id
 
 									gsp.setSpecKey(specItemList.get(i));// 规格键
-									gsp.setSpecKeyValue(
-											request.getParameter("item[" + specItemList.get(i) + "][key_name]"));// 规格键名中文
-									gsp.setPrice(Double
-											.valueOf(request.getParameter("item[" + specItemList.get(i) + "][price]")));// 优惠价格
-									gsp.setMarketPrice(Double.valueOf(
-											request.getParameter("item[" + specItemList.get(i) + "][market_price]")));// 市场价格
-									gsp.setCostPrice(Double.valueOf(
-											request.getParameter("item[" + specItemList.get(i) + "][cost_price]")));// 成本价格
-									gsp.setStoreCount(Integer.parseInt(
-											request.getParameter("item[" + specItemList.get(i) + "][store_count]")));// 库存数量
+									gsp.setSpecKeyValue(request.getParameter("item[" + specItemList.get(i) + "][key_name]"));// 规格键名中文
+									gsp.setPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][price]")));// 优惠价格
+									gsp.setMarketPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][market_price]")));// 市场价格
+									gsp.setCostPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][cost_price]")));// 成本价格
+									gsp.setStoreCount(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][store_count]")));// 库存数量
 									gsp.setBarCode(request.getParameter("item[" + specItemList.get(i) + "][bar_code]"));// 商品条形码
 									gsp.setGoodsNo(request.getParameter("item[" + specItemList.get(i) + "][goods_No]"));// 商品编码
-									gsp.setGoodsWeight(Integer.parseInt(
-											request.getParameter("item[" + specItemList.get(i) + "][goods_weight]")));// 商品重量
-									gsp.setServiceTimes(Integer.parseInt(
-											request.getParameter("item[" + specItemList.get(i) + "][service_times]")));// 服务次数
-									gsp.setExpiringDate(Integer.parseInt(
-											request.getParameter("item[" + specItemList.get(i) + "][expiring_date]")));// 截止日期（月）
+									gsp.setGoodsWeight(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][goods_weight]")));// 商品重量
+									gsp.setServiceTimes(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][service_times]")));// 服务次数
+									gsp.setExpiringDate(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][expiring_date]")));// 截止日期（月）
 									// 保存到list中
 									// 规格库存统一使用补仓功能 -kele 2016年10月9日
 									// storeCount=storeCount+Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][store_count]"));
-									totalNum = totalNum + Integer.parseInt(
-											request.getParameter("item[" + specItemList.get(i) + "][store_count]"));
+									totalNum = totalNum + Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][store_count]"));
 									goodsSpecPricesList.add(gsp);
 								}
 								if (goodsNum == 0) {
