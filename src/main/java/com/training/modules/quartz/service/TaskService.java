@@ -56,7 +56,7 @@ public class TaskService {
 	@PostConstruct
 	public void init() throws Exception {
 		
-		/*//添加日志
+		//添加日志
 		TaskLog taskLog = new TaskLog();
 		Date startDate;	//开始时间
 		Date endDate;	//结束时间
@@ -86,8 +86,8 @@ public class TaskService {
 			taskLog.setStatus(0);//任务状态
 			
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error("#####定时任务init(),加载异常，异常信息为："+e.getMessage());
+			
 			taskLog.setStatus(1);
 			taskLog.setExceptionMsg(e.getMessage().substring(0, e.getMessage().length()>2500?2500:e.getMessage().length()));
 		}finally {
@@ -97,7 +97,7 @@ public class TaskService {
 			taskLog.setRunTime(runTime);
 			taskLog.setRemarks("后台重启，重新加载");
 			iTaskDao.insertTaskLog(taskLog);
-		}*/
+		}
 	}
 	
 	/**
