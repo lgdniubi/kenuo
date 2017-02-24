@@ -18,7 +18,9 @@ import com.training.modules.train.dao.TrainLiveAuditDao;
 import com.training.modules.train.dao.TrainLivePlaybackDao;
 import com.training.modules.train.dao.TrainLiveUserDao;
 import com.training.modules.train.entity.TrainLiveAudit;
+import com.training.modules.train.entity.TrainLiveOrder;
 import com.training.modules.train.entity.TrainLivePlayback;
+import com.training.modules.train.entity.TrainLiveSku;
 
 import net.sf.json.JSONObject;
 
@@ -218,6 +220,34 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 				+"\"end_time\":\""+dateStr+"\",\"push_time\":\""+dateStr+"\",\"content\":"+"\""+content+"\"}}";
 	
 		return param;
+	}
+	
+	/**
+	 * 分页查询sku配置
+	 * @param page
+	 * @param 
+	 * @return
+	 */
+	public Page<TrainLiveSku> findSkuList(Page<TrainLiveSku> page, TrainLiveSku trainLiveSku) {
+		// 设置分页参数
+		trainLiveSku.setPage(page);
+		// 执行分页查询
+		page.setList(trainLiveAuditDao.findSkuList(trainLiveSku));
+		return page;
+	}
+	
+	/**
+	 * 分页查询直播订单列表
+	 * @param page
+	 * @param 
+	 * @return
+	 */
+	public Page<TrainLiveOrder> findOrderList(Page<TrainLiveOrder> page, TrainLiveOrder trainLiveOrder) {
+		// 设置分页参数
+		trainLiveOrder.setPage(page);
+		// 执行分页查询
+		page.setList(trainLiveAuditDao.findOrderList(trainLiveOrder));
+		return page;
 	}
 	
 }

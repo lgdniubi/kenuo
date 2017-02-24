@@ -26,8 +26,10 @@ import com.training.common.web.BaseController;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.TrainLiveAudit;
+import com.training.modules.train.entity.TrainLiveOrder;
 import com.training.modules.train.entity.TrainLivePlayback;
 import com.training.modules.train.entity.TrainLiveRoom;
+import com.training.modules.train.entity.TrainLiveSku;
 import com.training.modules.train.entity.TrainLiveUser;
 import com.training.modules.train.service.TrainLiveAuditService;
 import com.training.modules.train.service.TrainLiveRoomService;
@@ -266,8 +268,37 @@ public class TrainLiveAuditController extends BaseController{
 
 	}
 	
-
-
-    
+	/**
+	 * 查看sku配置
+	 * @param trainLiveAudit
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="liveSkuForm")
+	public String liveSkuForm(TrainLiveSku trainLiveSku,Model model,HttpServletRequest request,HttpServletResponse response){
+		try{
+			Page<TrainLiveSku> page = trainLiveAuditService.findSkuList(new Page<TrainLiveSku>(request, response), trainLiveSku);
+			model.addAttribute("page", page);
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "查看sku配置", e);
+			logger.error("查看sku配置出错信息：" + e.getMessage());
+		}
+		return "modules/train/liveSkuForm";
+	}
+	
+	/**
+	 * 直播订单列表
+	 * @param trainLiveOrder
+	 * @param model
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value="liveOrderList")
+    public String liveOrderList(TrainLiveOrder trainLiveOrder,Model model,HttpServletRequest request,HttpServletResponse response){
+    	Page<TrainLiveOrder> page = trainLiveAuditService.findOrderList(new Page<TrainLiveOrder>(request, response), trainLiveOrder);
+		model.addAttribute("page", page);
+    	return "modules/train/liveOrderList";
+    }
     
 }
