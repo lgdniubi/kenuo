@@ -43,6 +43,9 @@
 		.mt-item p .cost i{font-size:12px;}
 		.mt-item p .link-btn{float:right;}
 		strong{font-weight:bold}
+		.delAuthor{position:relative;}
+		.delAuthor:hover::after{display:block}
+		.delAuthor::after{content:'删除此作者';display:none;cursor:pointer; position:absolute;width:100%;height:100%;text-align:center;line-height:120px;color:#fff;font-size:14px; left:0;top:0; background-color:rgba(0,0,0,.2);background-image:url(${ctxStatic}/kindEditor/themes/default/delAuthor.png);background-position:right top;background-repeat:no-repeat;}
 		.layer-date{vertical-align: middle;}
 		.allImage div{cursor:pointer}
 		.allImage .queryImg{position:relative;}
@@ -50,8 +53,9 @@
 	</style>
 	<script type="text/javascript">
 	var cateid = 0;  // 分类的id
+	var imgType = 0;
 	$(document).ready(function(){
-		$("#imageType").val($("#type").val());
+		imgType = $("#type").val();
 		newChangeType($("#type").val());
 		
 		$("#goodsCategoryIdButton").click(function(){
@@ -151,6 +155,25 @@
 				}); 
 			}
 		});
+		
+		$("input[type=radio][name=imageType]").click(function(){
+			if(imgType != $(this).val()){
+				imgType = $(this).val();
+				$("#livesrc1,#livesrc2,#livesrc3").attr("src","");
+				$(".photo1,.photo2,.photo3").val("");
+				newChangeType(imgType);
+			}
+		})
+		// 验证作者头像
+		var oldPhoto = $("#oldAuthorPhoto").val();
+		var oldName = $("#oldAuthorName").val();
+		$("input[type=radio][name=authorList][value='"+oldPhoto+"']").attr("checked",'checked');
+		if($("input[name=authorList]:checked").length == 1){
+			$("#authorPhoto").val(oldPhoto);
+			$("#authorName").val(oldName);
+		}
+		// 原文章分类可能删除
+		$("#categoryId").val($("#oldCategoryId").val());
 	});
 	function loadGoods(num){
 		$("#goodsdetails").empty();
@@ -198,6 +221,7 @@
 		}
 	}
 	function newChangeType(type){
+		$("input[type=radio][name=imageType][value="+type+"]").attr("checked",'checked');
 		if(type == 0){
 			$("#imagePattern,#img1,#img2,#img3").hide();
 		}else if(type == 1){
@@ -212,22 +236,49 @@
 			top.layer.alert('首图类型有误！', {icon: 0});
 		}
 	}
-	function changeType(type){
-		$("#livesrc1,#livesrc2,#livesrc3").attr("src","");
-		$(".photo1,.photo2,.photo3").val("");
-		if(type == 0){
-			$("#imagePattern,#img1,#img2,#img3").hide();
-		}else if(type == 1){
-			$("#imagePattern,#img1").show();
-			$("#img2,#img3").hide();
-		}else if(type == 2){
-			$("#imagePattern,#img1,#img2").show();	
-			$("#img3").hide();
-		}else if(type == 3){
-			$("#imagePattern,#img1,#img2,#img3").show();	
+	function selectCommCate(num){
+		$("#oldCategoryId").val(0);
+		$("#cate"+num).css("background","#5BC0DE").siblings().css("background","");
+		$("#categoryId").val(num);
+	}
+	function selectCate(num){
+		$("#allCate").find(".cate").css("background","");
+		$("#categoryId").val(num);
+	}
+	//发布作者 选择头像 单选框
+	function postAuthor(elem){
+		var $parent =  $(elem).parent();
+		var	imgUrl = $parent.siblings('li').find('img').attr('src');
+		var name = $parent.siblings('li').text();
+		if(imgUrl.length > 0 && name.length > 0){
+			$("#authorPhoto").val(imgUrl);
+			$("#authorName").val(name);
 		}else{
-			top.layer.alert('首图类型有误！', {icon: 0});
+			$(elem).removeAttr("checked");
+			top.layer.alert('选择作者有误！', {icon: 0});
 		}
+	}
+	// 发布文章  选择妃子校分类
+	function changeTrainCate(num){
+    	$("#trainsCategoryId").val(num); 
+    	$("#allTrainCate").find(".trainCate").css("background","");
+    }
+	// 发布文章  选择妃子校常用分类
+	function selectTrainCommCate(num){
+		$("#oldTrainsCategoryId").val(0);
+		$("#trainCate"+num).css("background","#5BC0DE").siblings().css("background","");
+		$("#trainsCategoryId").val(num); 
+	}
+	// 发布文章  选择每天美耶分类
+	function changeMtmyCate(num){
+		$("#mtmyCategoryId").val(num); 
+		$("#allMtmyCate").find(".mtmyCate").css("background","");
+    }
+	// 发布文章  选择每天美耶常用分类
+	function selectMtmyCommCate(num){
+		$("#oldMtmyCategoryId").val(0);
+		$("#mtmyCate"+num).css("background","#5BC0DE").siblings().css("background","");
+		$("#mtmyCategoryId").val(num); 
 	}
 	</script>
 </head>
@@ -250,11 +301,19 @@
 						<input type="hidden" id="articleId" name="articleId" value="${articleRepository.articleId}">
 						<input type="hidden" id="type" name="type" value="${articleRepository.imageType}">
 		                <input type="hidden" id="contents" name="contents" value="${articleRepository.contents}"><!-- 内容 -->
+		                <input id="oldAuthorName" value="${articleRepository.authorName }" type="hidden"> <!-- 原作者名称  --> 
+		                <input id="oldAuthorPhoto" value="${articleRepository.authorPhoto }" type="hidden"> <!-- 原作者头像 -->
                        <div class="form-group">
-                            <label class="col-sm-2 control-label"><font color="red">*</font>标题：</label>
+                            <label class="col-sm-2 control-label"><font color="red">*</font>标题： </label>
                             <div class="col-sm-8">
-                               <form:input path="title" cssClass="form-control required" maxlength="26"/>
+                               <form:input path="title" cssClass="form-control required" maxlength="26" placeholder="请输入标题"/>
 						    </div>
+					   </div>
+					    <div class="form-group">
+                           <label class="col-sm-2 control-label">内容：</label>
+                           <div class="col-sm-8">
+                         		<textarea name="content1" id="editor1" cols="30" rows="20"></textarea>
+						   </div>
 					   </div>
 					  <%--  <div class="form-group">
                             <label class="col-sm-2 control-label"><font color="red">*</font>短标题：</label>
@@ -268,10 +327,10 @@
                            		<form:input path="keywords" cssClass="form-control required" maxlength="16"/>
 						    </div>
 					   </div> --%>
-					   <div class="form-group">
+					   <%-- <div class="form-group">
                            <label class="col-sm-2 control-label"><font color="red">*</font>作者：</label>
                            <div class="col-sm-8">
-                           		<form:input path="authorName" cssClass="form-control required" maxlength="20"/>
+                           		<form:hidden path="authorName" cssClass="form-control required" maxlength="20"/>
 						   </div>
 					   </div>
 					   <div class="form-group">
@@ -280,11 +339,64 @@
                            		<input type="hidden" id="authorPhoto" name="authorPhoto" value="${articleRepository.authorPhoto}" class="form-control" style="width: 350px;" >   
 								<img id="authorPhotoSrc" src="${articleRepository.authorPhoto}" onerror="this.src='${ctxStatic}/kindEditor/themes/default/upload.png'" alt="" style="width: 200px;height: 100px;" onclick="selectAuthorPhoto()"/>
 						   </div>
+					   </div> --%>
+					   <div class="form-group" style="padding:10px 0;" id="postAuthor">
+                           <label class="col-sm-2 control-label"><font color="red">*</font>作者：</label>
+                           <div class="col-sm-8" style="overflow:hidden">
+                           		<div style="float:left;width:120px;height: 160px;text-align:center;margin:0 10px 10px 0" >
+                           			<ul>
+                           				<li><img alt="" src="http://resource.idengyun.com/resource/images/2017/02/cc019215-b136-4394-b2a0-4d7d4bf0bdd1.png" style='width:120px;height:120px;border:1px solid #ccc'></li>
+                           				<li style='height:30px;line-height:40px;'>每天美耶</li>
+                           				<li>
+                           					<input type="radio" id="authorList" name="authorList" onclick="postAuthor(this)" value="http://resource.idengyun.com/resource/images/2017/02/cc019215-b136-4394-b2a0-4d7d4bf0bdd1.png">
+                           				</li>
+                           			</ul>
+                           		</div>
+                           		<div style="float:left;width:120px;height: 160px;text-align:center;margin:0 10px 10px 0" >
+	                           		<ul>
+	                           			<li><img alt="" src="http://resource.idengyun.com/resource/images/2017/02/80c54153-a0c5-4dd6-bd2e-a362955a392d.png" style='width:120px;height:120px;border:1px solid #ccc'></li>
+	                           			<li style='height:30px;line-height:40px;'>美容养生</li>
+	                           			<li>
+	                           				<input type="radio" id="authorList" name="authorList" onclick="postAuthor(this)" value="http://resource.idengyun.com/resource/images/2017/02/80c54153-a0c5-4dd6-bd2e-a362955a392d.png">
+	                           			</li>
+	                           		</ul>
+                           		</div>
+                           		<div style="float:left;width:120px;height: 160px;text-align:center;margin:0 10px 10px 0" >
+                           			<ul>
+	                           			<li><img alt="" src="http://resource.idengyun.com/resource/images/2017/02/cb3c8c26-2fa6-4314-b18a-41c0b513586d.png" style='width:120px;height:120px;border:1px solid #ccc'></li>
+	                           			<li style='height:30px;line-height:40px;'>新浪时尚</li>
+	                           			<li>
+	                           				<input type="radio" id="authorList" name="authorList" onclick="postAuthor(this)" value="http://resource.idengyun.com/resource/images/2017/02/cb3c8c26-2fa6-4314-b18a-41c0b513586d.png">
+	                           			</li>
+	                           		</ul>
+                           		</div>
+                           		<c:forEach items="${authorList }" var="authorList">
+                           			<div id="delAuthor${authorList.authorId }" style="float:left;width:120px;height: 160px;text-align:center;margin:0 10px 10px 0">
+	                           			<ul>
+		                           			<li class="delAuthor" onclick="delAuthor(${authorList.authorId })"><img alt="" src="${authorList.photoUrl }" style="width:120px;height:120px;border:1px solid #ccc"></li>
+		                           			<li style='height:30px;line-height:40px;'>${authorList.authorName }</li>
+		                           			<li>
+		                           				<input type="radio" id="authorList" name="authorList" onclick="postAuthor(this)" value="${authorList.photoUrl }">
+		                           			</li>
+		                           		</ul>
+	                           		</div>
+                           		</c:forEach>
+                           		<div style="float:left;width:120px;height: 160px;text-align:center;margin:0 10px 10px 0" id="divAuthor">
+                           			<ul>
+	                           			<li><img alt="" src="" onerror="this.src='${ctxStatic}/kindEditor/themes/default/upload.png'" style='width:120px;height:120px;border:1px solid #ccc'></li>
+	                           			<li style='height:30px;line-height:40px;'>
+	                           				<input type="button" value="请选择文件" class="btn btn-white btn-sm" onclick="selectAuthorPhoto()">
+	                           			</li>
+	                           		</ul>
+                           		</div>
+                           		<input id="authorName" name="authorName" type="hidden">
+                           		<input id="authorPhoto" name="authorPhoto" type="hidden">
+						   </div>
 					   </div>
 					   <div class="form-group">
                    	  	  <label class="col-sm-2 control-label"><font color="red">*</font>分类：</label>
-                  	  	  <div class="col-sm-8">
-	                          <select class="form-control required" id="categoryId" name="categoryId">
+                  	  	  <div class="col-sm-8" id="allCate">
+	                          <select class="form-control" id="oldCategoryId" name="oldCategoryId" style="width:200px;" onchange="selectCate(this.value)">
 								   <option value=0>请选择分类</option>
 								   <c:forEach items="${categoryList}" var="categoryList">
 								   	   <c:choose>
@@ -297,38 +409,39 @@
 										</c:choose>
 								   </c:forEach>
 							  </select>
+							  <c:forEach items="${commonCate }" var="commonCate">
+							  		<input type="button" value="${commonCate.name }" onclick="selectCommCate(${commonCate.categoryId })" class="cate btn btn-white btn-sm" id="cate${commonCate.categoryId }">
+							  </c:forEach>
+							  <input type="hidden" id="categoryId" name="categoryId" value="">
 						  </div>
 					   </div>
-					   <div class="form-group">
+					  <%--  <div class="form-group">
                            <label class="col-sm-2 control-label"><font color="red">*</font>摘要：</label>
                            <div class="col-sm-8">
                            		<form:input path="digest" cssClass="form-control required" maxlength="50"/>
 						   </div>
-					   </div>
+					   </div> --%>
 					   <div class="form-group">
-                           <label class="col-sm-2 control-label"><font color="red">*</font>内容：</label>
-                           <div class="col-sm-8">
-                         		<textarea name="content1" id="editor1" cols="30" rows="20"></textarea>
-						   </div>
+                           <label class="col-sm-2 control-label"><font color="red">*</font>封面：</label>
+                           <div class="col-sm-8" style="height:35px;line-height:35px;">
+							   <input type="radio" checked="checked"  id="imageType" name="imageType" value=0 style="margin: auto;" >无图模式
+	                           &nbsp;&nbsp;&nbsp;<input type="radio" id="imageType" name="imageType" value=1 class="from">单图模式
+	                           &nbsp;&nbsp;&nbsp;<input type="radio" id="imageType" name="imageType" value=2 class="from">双图模式
+	                           &nbsp;&nbsp;&nbsp;<input type="radio" id="imageType" name="imageType" value=3 class="from">三图模式
+                           </div>
 					   </div>
-					   <div class="form-group">
-                           <label class="col-sm-2 control-label"><font color="red">*</font>首图模式：</label>
-                           <div class="col-sm-8">
-                         		<select id="imageType" name="imageType" onchange="changeType(this.value)" class="form-control required">
-                         			<option value=0>无图模式</option>
-                         			<option value=1>单图模式</option>
-                         			<option value=2>双图模式</option>
-                         			<option value=3>三图模式</option>
-                         		</select>
-						   </div>
-					   </div>
-					   <div class="form-group" id="imagePattern">
-                           <label class="col-sm-2 control-label"><font color="red">*</font>选择首图：</label>
-                           <div class="col-sm-8">
+					   <div class="form-group" id="imagePattern" style="padding:10px 0;">
+                          <label class="col-sm-2 control-label"></label>
+                           <div style="overflow:hidden">
                          		<c:forEach items="${articleRepository.imageList}" var="list" varStatus="status">
-                         			<div id="img${status.index+1}" style="display:inline;">
-					  					<img id="livesrc${status.index+1}" src="${list.imgUrl}" onerror="this.src='${ctxStatic}/kindEditor/themes/default/upload.png'" alt="images" style="width:200px;height:100px;" onclick="findAllImg(${status.index+1})"/>
-						  				<form:input type="hidden" path="articleImage.imgUrl" class="photo${status.index+1}" name="photo${status.index+1}" value="${list.imgUrl}"/>
+                         			<div id="img${status.index+1}" style="float:left;width:120px;height: 130px;text-align:center;margin:0 10px 10px 0">
+                         			<ul>
+                         				<li><img id="livesrc${status.index+1}" src="${list.imgUrl}" onerror="this.src='${ctxStatic}/kindEditor/themes/default/upload.png'" alt="images" style="width:200px;height:100px;" /></li>
+                         				<li style='height:30px;line-height:40px;'>
+                         					<input type="button" value="请选择文件" class="btn btn-white btn-sm" onclick="findAllImg(${status.index+1})" id="allImage${status.index+1}">
+                         					<form:input type="hidden" path="articleImage.imgUrl" class="photo${status.index+1}" name="photo${status.index+1}" value="${list.imgUrl}"/>
+                         				</li>
+                         			</ul>
 									</div>
                          		</c:forEach>
 						   </div>
@@ -491,8 +604,8 @@
 		    		<button type="button" class="close" onclick="closeCutPhoto()"><span aria-hidden="true">&times;</span></button>
 		        	<h4 class="modal-title" id="myModalLabel">裁剪照片</h4>
 				</div>
-				<div class="modal-body">
-					<div style="width: 430px;height: 430px;">
+				<div class="modal-body" style="background:url(${ctxStatic}/kindEditor/themes/default/cutImgBg.png);background-size:20px;">
+					<div style="width: 410px;height: 410px;line-height:410px;text-align:center; margin: 0 auto">
 						<img alt="" src="" style="max-width: 400px;max-height: 400px;border: 1px solid black;" id="cutphoto">
 						<input id="x1" name="x1" type="hidden">
 						<input id="y1" name="y1" type="hidden">
@@ -520,12 +633,18 @@
 						<div class="col-xs-12 col-md-12 "style="height:35px;line-height:35px;" >
 							<input type="checkbox" id="checkType" name="checkType" value="train"> 妃子校
 						</div>		
-						<div class="col-xs-12 col-md-6" style="height:35px;line-height:35px;">
-							<span style="float:left;">分类：</span><select id="trainsCategoryId" name="trainsCategoryId" class="form-control required" style="width:200px;">
+						<div class="col-xs-12 col-md-6" style="height:70px;line-height:35px;">
+							<span style="float:left;">分类：</span>
+							<select id="oldTrainsCategoryId" name="oldTrainsCategoryId" class="form-control" style="width:200px;" onclick="changeTrainCate(this.value)">
+								<option value=0>请选择分类</option>
 								<c:forEach items="${trainsCategoryList }" var="list">
 									<option value="${list.categoryId}">${list.name}</option>
 								</c:forEach>
 							</select>
+							<c:forEach items="${trainCateCommList }" var="trainCateCommList">
+								<input type="button" value="${trainCateCommList.name }" onclick="selectTrainCommCate(${trainCateCommList.categoryId })" class="trainCate btn btn-white btn-sm" id="trainCate${trainCateCommList.categoryId }">
+							</c:forEach>
+							<input id="trainsCategoryId" name="trainsCategoryId" type="hidden">
 						</div>
 						<div class="col-xs-12 col-md-6" style="height:35px;line-height:35px;">
 							<span style="float:left;">发布时间：</span><input id="trainsTaskDate" name="trainsTaskDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" value="<fmt:formatDate value="${articles.taskDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
@@ -536,13 +655,18 @@
 						<div class="col-xs-12 col-md-12 "style="height:35px;line-height:35px;" >
 							<input type="checkbox" id="checkType" name="checkType" value="mtmy"> 每天美耶
 						</div>
-						<div class="col-xs-12 col-md-6" style="height:35px;line-height:35px;">
+						<div class="col-xs-12 col-md-6" style="height:70px;line-height:35px;">
 							<span style="float:left;">分类：</span>
-							<select id="mtmyCategoryId" name="mtmyCategoryId" class="form-control required" style="width:200px;">
+							<select id="oldMtmyCategoryId" name="oldMtmyCategoryId" class="form-control" style="width:200px;" onclick="changeMtmyCate(this.value)">
+								<option value=0>请选择分类</option>
 								<c:forEach items="${mtmyCategoryList }" var="list">
 									<option value="${list.id}">${list.name}</option>
 								</c:forEach>
 							</select>
+							<c:forEach items="${mtmyCateCommList }" var="mtmyCateCommList">
+								<input type="button" value="${mtmyCateCommList.name }" onclick="selectMtmyCommCate(${mtmyCateCommList.categoryId })" class="mtmyCate btn btn-white btn-sm" id="mtmyCate${mtmyCateCommList.categoryId }">
+							</c:forEach>
+							<input id="mtmyCategoryId" name="mtmyCategoryId" type="hidden">
 						</div>
 						<div class="col-xs-12 col-md-6" style="height:35px;line-height:35px;">
 							<span style="float:left;">发布时间：</span>
@@ -563,20 +687,22 @@
 		    <div class="modal-content">
 		    	<div class="modal-header">
 		    		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		        	<h4 class="modal-title" id="myModalLabel">选择头像</h4>
+		        	<h4 class="modal-title" id="myModalLabel">自定义作者</h4>
 				</div>
 				<div class="modal-body">
-					<div id="allAuthorPhoto" class="allImage">
-						<div style="display:inline;margin-left: 5px;">
-							<img alt="" src="http://resource.idengyun.com/resource/images/2017/02/cc019215-b136-4394-b2a0-4d7d4bf0bdd1.png" style="width: 200px;height: 100px;">
-						</div>
-						<div style="display:inline;margin-left: 5px;">
-							<img alt="" src="http://resource.idengyun.com/resource/images/2017/02/80c54153-a0c5-4dd6-bd2e-a362955a392d.png" style="width: 200px;height: 100px;">
-						</div>
-						<div style="display:inline;margin-left: 5px;">
-							<img alt="" src="http://resource.idengyun.com/resource/images/2017/02/cb3c8c26-2fa6-4314-b18a-41c0b513586d.png" style="width: 200px;height: 100px;">
-						</div>
-					</div>
+					<ul>
+						<li>
+							<input type="file" name="file_photo_upload" id="file_photo_upload">
+							<div id="file_photo_queue" style="margin top:10px;"></div> 
+						</li>
+						<li>
+							<img id="newAuthorPhotoSrc" src="http://resource.idengyun.com/resource/images/2017/02/cc019215-b136-4394-b2a0-4d7d4bf0bdd1.png" alt="" style="width: 100px;height: 100px;"/>
+		                    <input type="hidden" id="newAuthorPhoto" name="newAuthorPhoto" value="" class="form-control" style="width: 350px;" >   
+						</li>
+						<li style='margin-top:15px;'>
+		                    <input type="text" id="newAuthorName" name="newAuthorName" placeholder="请输入作者名称" maxlength="5" value="" class="form-control" style="width: 350px;" >
+						</li>
+					</ul>
 		      	</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-success" onclick="changePhoto()">确定</button>
@@ -628,7 +754,7 @@
 		KindEditor.ready(function(K) {
 			editor = K.create('textarea[name="content1"]', {
 				width : "100%",
-				items : ['source','preview','|','shoptag','code','|','image','media','link','|','fullscreen']
+				items : ['plainpaste','image','media','link','shoptag','fontname','fontsize','forecolor','bold','italic','underline','|','code','source','|','fullscreen']
 			});
 		});
 		$("#close,#newClose,#closeShopTag,#newCloseShopTag,#closeCode,#newCloseCode").click(function(){
@@ -731,6 +857,32 @@
 					}
 				}
 			});
+			//文章作者头像
+			$("#file_photo_upload").uploadify({
+				'buttonText' : '&nbsp;&nbsp;&nbsp;请选择上传图片',
+				'method' : 'post',
+				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
+				'uploader' : '<%=uploadURL%>',
+				'fileObjName' : 'file_photo_upload',//<input type="file"/>的name
+				'queueID' : 'file_photo_queue',//与下面HTML的div.id对应
+				'method' : 'post',
+				'fileTypeDesc' : '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
+				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
+				'fileSizeLimit' : '10MB',//上传文件的大小限制
+				'multi' : false,//设置为true时可以上传多个文件
+				'auto' : true,//点击上传按钮才上传(false)
+				'onFallback' : function() {
+					//没有兼容的FLASH时触发
+					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
+				},
+				'onUploadSuccess' : function(file, data, response) {
+					var jsonData = $.parseJSON(data);//text 转 json
+					if (jsonData.result == '200') {
+						$("#newAuthorPhoto").val(jsonData.file_url);
+						$("#newAuthorPhotoSrc").attr('src', jsonData.file_url);
+					}
+				}
+			});
 			validateForm = $("#inputForm").validate();
 		});
 		function LoadOver(){
@@ -752,18 +904,16 @@
 			$("#contents").val(content);
 			if($("#contents").val().length >= 15000){
 				top.layer.alert('文章内容过长！', {icon: 0});
-			}else if($("#authorPhoto").val() == ""){
-				top.layer.alert('作者头像不能为空！', {icon: 0});
+			}else if($("input[name=authorList]:checked").length != 1){
+				top.layer.alert('作者不能为空！', {icon: 0});
 			}else if($("#categoryId").val() == 0){
 				top.layer.alert('文章分类不能为空！', {icon: 0});
-			}else if($("#imageType").val() == 1 && $(".photo1").val() == ""){
+			}else if($("input[type=radio][name=imageType]:checked").val() == 1 && $(".photo1").val() == ""){
 				top.layer.alert('首图不能为空！', {icon: 0});
-			}else if($("#imageType").val() == 2 && ($(".photo1").val() == "" || $(".photo2").val() == "")){
+			}else if($("input[type=radio][name=imageType]:checked").val() == 2 && ($(".photo1").val() == "" || $(".photo2").val() == "")){
 				top.layer.alert('首图不能为空！', {icon: 0});
-			}else if($("#imageType").val() == 3 && ($(".photo1").val() == "" || $(".photo2").val() == "" || $(".photo3").val() == "")){
+			}else if($("input[type=radio][name=imageType]:checked").val() == 3 && ($(".photo1").val() == "" || $(".photo2").val() == "" || $(".photo3").val() == "")){
 				top.layer.alert('首图不能为空！', {icon: 0});
-			}else if($("#contents").val() == ""){
-				top.layer.alert('文章内容不能为空！', {icon: 0});
 			}else{
 				if(validateForm.form()){
 		    		loading("正在提交，请稍候...");
@@ -773,32 +923,71 @@
 			}
 		}
 		window.onload=LoadOver;
-		var authorSrc = '';
+		// 自定义作者
 		function selectAuthorPhoto(){
-			authorSrc = '';
+			$("#newAuthorPhoto").val("");
+			$("#newAuthorName").val("");
+			$("#newAuthorPhotoSrc").attr('src', "");
 			$("#ke-dialog-authorPhoto").modal('show');
-			$('#allAuthorPhoto div').click(function(){
-				$(this).addClass('queryImg').siblings().removeClass('queryImg');
-				authorSrc = $(this).find("img").attr('src');
-			});
 		}
+		// 添加作者
 		function changePhoto(){
-			if(authorSrc.length > 0){
+			if($("#newAuthorPhoto").val().length > 0 && $("#newAuthorName").val().length > 0){
+				$(".loading").show();//隐藏展示层
 				$("#ke-dialog-authorPhoto").modal('hide');
-				$("#authorPhoto").val(authorSrc);
-				$("#authorPhotoSrc").attr('src',authorSrc);
+				// 异步加载用户信息
+				$.ajax({
+					type : "POST",   
+					url : "${ctx}/ec/articles/addAuthor",
+					data:{'authorName':$("#newAuthorName").val(),'photoUrl':$("#newAuthorPhoto").val()},
+					dataType: 'text',
+					success: function(str) {
+						$(".loading").hide();//隐藏展示层
+						var data = $.parseJSON(str);
+						if(data.status == 200){
+							$("#divAuthor").before("<div id=\"delAuthor"+data.msg+"\" style=\"float:left;width:120px;height: 160px;text-align:center;margin:0 10px 10px 0\">"
+									+"<ul><li class='delAuthor' onclick='delAuthor("+data.msg+")'><img alt='' src=\""+$('#newAuthorPhoto').val()+"\" style=\"width:120px;height:120px;border:1px solid #ccc\"></li>"
+									+"<li style=\"height:30px;line-height:40px;\">"+$('#newAuthorName').val()+"</li>"
+									+"<li><input type=\"radio\" id=\"authorList\" name=\"authorList\"></li></ul><div>");
+							if($("input[type=radio][name=authorList]").length >= 8){
+								$("#divAuthor").hide();
+							}
+						}else{
+							top.layer.alert('添加作者出现异常!', {icon: 0});
+						}
+					}
+				});  
 			}else{
-				top.layer.alert('未选取作者头像！', {icon: 0});
+				top.layer.alert('未选取作者头像或作者名称！', {icon: 0});
 			}
+		}
+		// 删除作者
+		function delAuthor(num){
+			$(".loading").show();//隐藏展示层
+			$.ajax({
+				type : "POST",   
+				url : "${ctx}/ec/articles/delAuthor?authorId="+num,
+				dataType: 'text',
+				success: function(str) {
+					$(".loading").hide();//隐藏展示层
+					var data = $.parseJSON(str);
+					if(data.status == 200){
+						$("#delAuthor"+num).remove();
+					}else{
+						top.layer.alert('删除作者出现异常!', {icon: 0});
+					}
+				}
+			});  
 		}
 		var imgUrl = '';
 		var num = '';
+		// 查询所有文章内的照片
 		function findAllImg(s){
 			num = s;
 			$("#allImage").empty();
 			imgUrl = '';
 			$(".ke-edit-iframe").contents().find(".ke-content img").each(function(){
-				$("#allImage").append("<div style=\"display:inline;margin-left: 5px;\"><img src="+this.src+" style=\"width: 200px;height: 100px;\"></div>");
+				$("#allImage").append("<div style=\"display:inline;margin-left: 5px;\"><img src="+this.src+" style=\"width: 100px;height: 100px;\"></div>");
 			})
 			$("#ke-dialog-allImage").modal('show');
 			$('#allImage div').click(function(){
@@ -806,6 +995,7 @@
 				imgUrl = $(this).find("img").attr('src');
 			});
 		}
+		// 选中图片
 		function selectPhoto(){
 			if(imgUrl.length > 0){
 				$("#ke-dialog-allImage").modal('hide');
@@ -822,6 +1012,7 @@
 				top.layer.alert('未选择图片!请重新选择!', {icon: 0});
 			}
 		}
+		// 截取照片方法
 		function cutImg(s){
 			$('#cutphoto').imgAreaSelect({
 				aspectRatio: s, 
@@ -834,6 +1025,7 @@
 		        }
             }); 
 		}
+		// 确定截取照片
 		function cutPhoto(){
 			if($("#x1").val().length > 0 && $("#y1").val().length > 0 && $("#width").val().length > 0 && $("#height").val().length > 0){
 				$(".loading").show();
@@ -858,12 +1050,14 @@
 				top.layer.alert('未截取图片!请重新截取!', {icon: 0});
 			}
 		}
+		// 关闭截图弹出框
 		function closeCutPhoto(){
 			$('#cutphoto').imgAreaSelect({
 				remove:true
             }); 
 			$("#ke-dialog-cutPhoto").modal('hide');
 		}
+		// 发布文章弹出框
 		function sendIssue(){
 			var content = $(".ke-edit-iframe").contents().find(".ke-content").html();
 			if(content.indexOf("style") >=0){
@@ -873,37 +1067,57 @@
 			$("#contents").val(content);
 			if($("#contents").val().length >= 15000){
 				top.layer.alert('文章内容过长！', {icon: 0});
-			}else if($("#authorPhoto").val() == ""){
-				top.layer.alert('作者头像不能为空！', {icon: 0});
+			}else if($("input[name=authorList]:checked").length != 1){
+				top.layer.alert('作者不能为空！', {icon: 0});
 			}else if($("#categoryId").val() == 0){
 				top.layer.alert('文章分类不能为空！', {icon: 0});
-			}else if($("#imageType").val() == 1 && $(".photo1").val() == ""){
+			}else if($("input[type=radio][name=imageType]:checked").val() == 1 && $(".photo1").val() == ""){
 				top.layer.alert('首图不能为空！', {icon: 0});
-			}else if($("#imageType").val() == 2 && ($(".photo1").val() == "" || $(".photo2").val() == "")){
+			}else if($("input[type=radio][name=imageType]:checked").val() == 2 && ($(".photo1").val() == "" || $(".photo2").val() == "")){
 				top.layer.alert('首图不能为空！', {icon: 0});
-			}else if($("#imageType").val() == 3 && ($(".photo1").val() == "" || $(".photo2").val() == "" || $(".photo3").val() == "")){
+			}else if($("input[type=radio][name=imageType]:checked").val() == 3 && ($(".photo1").val() == "" || $(".photo2").val() == "" || $(".photo3").val() == "")){
 				top.layer.alert('首图不能为空！', {icon: 0});
-			}else if($("#contents").val() == ""){
-				top.layer.alert('文章内容不能为空！', {icon: 0});
 			}else{
 				if(validateForm.form()){
 					$("#ke-dialog-sendIssue").modal('show');
 		    	}
 			}
 		}
+		// 确认发布
 		function issue(){
-			if(document.querySelectorAll("input[name=checkType]:checked").length > 0){
-				var str = '';
-				$("input[name=checkType]:checked").each(function(){ 
-					str = str + $(this).val() + ",";
-				}); 
-	    		loading("正在提交，请稍候...");
-	    		$("#inputForm").attr("action","${ctx}/ec/articles/confirmIssue?checkType="+str+"&trainsCategoryId="+$("#trainsCategoryId").val()+"&trainsTaskDate="+$("#trainsTaskDate").val()
-	    				+"&mtmyCategoryId="+$("#mtmyCategoryId").val()+"&mtmyTaskDate="+$("#mtmyTaskDate").val());
-				$("#inputForm").submit();
+			if($("input[type=checkbox][name=checkType]:checked").length == 1){
+				if($("input[type=checkbox][name=checkType]:checked").val() == "train"){
+					if($("#trainsCategoryId").val() != 0){
+						postIssue();
+					}else{
+						top.layer.alert('未勾选分类！', {icon: 0});
+					}
+				}else if($("input[type=checkbox][name=checkType]:checked").val() == "mtmy"){
+					if($("#mtmyCategoryId").val() != 0){
+						postIssue();
+					}else{
+						top.layer.alert('未勾选分类！', {icon: 0});
+					}
+				}
+			}else if($("input[type=checkbox][name=checkType]:checked").length == 2){
+				if($("#trainsCategoryId").val() != 0 && $("#mtmyCategoryId").val() != 0){
+					postIssue();
+				}else{
+					top.layer.alert('未勾选分类！', {icon: 0});
+				}
 			}else{
-				top.layer.alert('请选择发布方!', {icon: 0});
-			} 
+				top.layer.alert('未勾选发布方', {icon: 0});
+			}
+		}
+		function postIssue(){
+			var str = '';
+			$("input[name=checkType]:checked").each(function(){ 
+				str = str + $(this).val() + ",";
+			}); 
+    		loading("正在提交，请稍候...");
+    		$("#inputForm").attr("action","${ctx}/ec/articles/confirmIssue?checkType="+str+"&trainsCategoryId="+$("#trainsCategoryId").val()+"&trainsTaskDate="+$("#trainsTaskDate").val()
+    				+"&mtmyCategoryId="+$("#mtmyCategoryId").val()+"&mtmyTaskDate="+$("#mtmyTaskDate").val());
+			$("#inputForm").submit();
 		}
     </script>
 </body>

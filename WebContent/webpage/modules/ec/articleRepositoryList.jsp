@@ -16,7 +16,8 @@
 		function nowReset(){
 			$("#pageNo").val(0);
 			$("#searchForm div.form-group input").val("");
-			$("#searchForm div.form-group select").val(0);
+			$("#categoryId").val(0);
+			$("#articleType").val("");
 			$("#searchForm").submit();
 		}
 		$(document).ready(function() {
@@ -61,7 +62,6 @@
 			});
 			
 		});
-		
     </script>
     <title>文章管理</title>
 </head>
@@ -92,6 +92,23 @@
 											</c:otherwise>
 									    </c:choose>
 								  </c:forEach>
+						   </select>
+						   <select class="form-control" id="articleType" name="articleType">
+								  <option value="">请选择文章类型</option>
+								  <c:choose>
+										<c:when test="${articleRepository.articleType == '0'}">
+											<option value="0" selected="selected">已发布</option>
+								  			<option value="1">草稿</option>
+										</c:when>
+										<c:when test="${articleRepository.articleType == '1'}">
+											<option value="0">已发布</option>
+								  			<option value="1" selected="selected">草稿</option>
+										</c:when>
+										<c:otherwise>
+											<option value="0">已发布</option>
+								  			<option value="1">草稿</option>
+										</c:otherwise>
+								    </c:choose>
 						   </select>
 				  时间范围：<input id="beginDate" name="beginDate" type="text" class="laydate-icon form-control layer-date input-sm"
 								value="<fmt:formatDate value="${articleRepository.beginDate}" pattern="yyyy-MM-dd"/>" readonly="readonly"/>
