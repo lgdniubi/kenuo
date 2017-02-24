@@ -66,6 +66,15 @@ public class OrderGoodsService extends TreeService<OrderGoodsDao,OrderGoods>{
 		orderGoods.setUserid(Integer.parseInt(userId));
 		return dao.selectByOrderId(orderGoods);
 	}
+
+	/**
+	 * 通过订单id查询订单商品信息
+	 * @param orderId
+	 * @return
+	 */
+	public List<OrderGoods> getGoodMapping(String orderId) {
+		return dao.getGoodMapping(orderId);
+	}
 	
 	
 	

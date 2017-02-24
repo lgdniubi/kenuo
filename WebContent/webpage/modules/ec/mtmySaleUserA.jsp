@@ -46,7 +46,9 @@
 							</div>
 						</form:form>
 						<!-- 导出按钮 -->
-						<table:exportExcel url="${ctx}/ec/mtmySale/export"></table:exportExcel>
+						<shiro:hasPermission name="ec:mtmySale:export">
+							<table:exportExcel url="${ctx}/ec/mtmySale/export"></table:exportExcel>
+						</shiro:hasPermission>
 					</div>
 				</div>
 				<p></p>

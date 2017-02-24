@@ -39,6 +39,9 @@
 				<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
 					AND a.create_date BETWEEN #{beginDate} AND #{endDate}
 				</if>
+				<if test="articleType != null and articleType != ''">
+					AND a.type = #{articleType}
+				</if>
 				ORDER BY a.create_date DESC
 	</select>
 	<!-- 添加文章 -->
@@ -303,6 +306,8 @@
 		INSERT INTO article_issue_log(
 			article_id,
 			log,
+			issue_type,
+			category_id,
 			create_by,
 			create_date
 		)
@@ -310,6 +315,8 @@
 			(
 				#{articleId},
 				(CASE #{type} WHEN 'train' THEN CONCAT('发布文章到妃子校--',(SELECT name FROM train_articles_category WHERE id = #{categoryId})) ELSE CONCAT('发布文章到每天美耶--',(SELECT name FROM mtmydb.mtmy_article_category WHERE id = #{categoryId})) END),
+				(CASE #{type} WHEN 'train' THEN 0 ELSE 1 END),
+				#{categoryId},
 				#{userId},
 				SYSDATE()
 			)
@@ -374,4 +381,77 @@
 			del_flag = #{DEL_FLAG_DELETE}
 		WHERE id = #{categoryId}
 	</update>
+	<!-- 查询该用户七天内常用分类 -->
+	<select id="findCategoryCommon" resultType="ArticleRepositoryCategory">
+		SELECT 
+			r.category_id AS categoryId,
+			c.name 
+		FROM 
+			article_repository AS r 
+			LEFT JOIN article_category AS c ON r.category_id = c.id AND c.del_flag = 0 
+			WHERE 
+				r.create_by = #{userId} 
+				AND r.create_date > date_sub(NOW(),interval 7 day)
+			GROUP BY r.category_id ORDER BY COUNT(r.category_id) DESC LIMIT 3
+	</select>
+	<!-- 添加用户常用作者 -->
+	<insert id="addAuthor" useGeneratedKeys="true" keyProperty="authorId">
+		INSERT INTO article_author_photo(
+			user_id, 
+			author_name, 
+			photo_url, 
+			create_date
+		) VALUES (
+			#{createBy.id}, 
+			#{authorName},
+			#{photoUrl}, 
+			SYSDATE()
+		)
+	</insert>
+	<!-- 删除作者 -->
+	<delete id="delAuthor">
+		DELETE FROM article_author_photo WHERE id = #{authorId};
+	</delete>
+	<!-- 查询用户常用作者 -->
+	<select id="findAllAuthor" resultType="ArticleAuthorPhoto">
+		SELECT 
+			id AS authorId,
+			author_name AS authorName,
+			photo_url AS photoUrl  
+		FROM 
+			article_author_photo 
+		WHERE 
+			user_id = #{createBy.id}
+			ORDER BY create_date
+	</select>
+	<!-- 查询妃子校常用分类 -->
+	<select id="findTrainCateComm" resultType="ArticlesCategory">
+		SELECT
+			c.id AS categoryId,
+			c.name
+		FROM
+			article_issue_log AS l
+		RIGHT JOIN trains.train_articles_category c ON l.category_id = c.id
+		AND c.del_flag = 0
+		WHERE
+			l.issue_type = 0
+			AND l.create_by = #{userId}
+			AND l.create_date > date_sub(NOW(), INTERVAL 7 DAY)
+			GROUP BY l.category_id ORDER BY COUNT(l.category_id) DESC LIMIT 3
+	</select>
+	<!-- 查询每天美耶常用分类 -->
+	<select id="findMtmyCateComm" resultType="MtmyArticleCategory">
+		SELECT
+			c.id AS categoryId,
+			c.name
+		FROM
+			article_issue_log AS l
+		RIGHT JOIN mtmydb.mtmy_article_category c ON l.category_id = c.id
+		AND c.del_flag = 0
+		WHERE
+			l.issue_type = 1
+		AND l.create_by = #{userId}
+		AND l.create_date > date_sub(NOW(), INTERVAL 7 DAY)
+		GROUP BY l.category_id ORDER BY COUNT(l.category_id) DESC LIMIT 3
+	</select>
 </mapper>

@@ -166,7 +166,7 @@ public class Orders extends TreeEntity<Orders> {
 	private int flag;						//分销是否处理 分销结算标示（0：未结算；1：已结算）
 	private String strReal;				//导出 字段 订单类型
 	private String strChannel;		//订单创建类型
-	
+	private String strAddTime;		//导出字段 下单时间
 	
 	public String getSearchIsReal() {
 		return searchIsReal;
@@ -1412,6 +1412,14 @@ public class Orders extends TreeEntity<Orders> {
 
 	public void setAdminNote(String adminNote) {
 		this.adminNote = adminNote;
+	}
+	@JsonIgnore
+	@ExcelField(title="创建时间", type=1, align=2, sort=7)
+	public String getStrAddTime() {
+		return strAddTime;
+	}
+	public void setStrAddTime(String strAddTime) {
+		this.strAddTime = strAddTime;
 	}
 	
 }
