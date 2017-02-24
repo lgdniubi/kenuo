@@ -220,6 +220,8 @@ public class LiveAudit extends CommonService{
 								m.put("desc", entrysopcastbean.getDesc());
 								m.put("imgurl", entrysopcastbean.getImgurl());
 								m.put("playpass",entrysopcastbean.getPlaypass());
+								m.put("user_id", entrysopcastbean.getUserId());
+								m.put("liveId", entrysopcastbean.getLiveId());
 							}
 							// 将回放的数据插到回放表
 							entryService.LiveEnd(m);
