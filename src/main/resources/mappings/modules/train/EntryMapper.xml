@@ -56,16 +56,17 @@
 	
 	<select id="getliveendbyid" parameterType="java.lang.Integer" resultType="com.training.modules.train.entity.EntrySopCastBean">
     SELECT 
-	    title,
-	    `desc`,
-	    imgurl,
-	    playpass,
-	    bengtime,
-	    id AS auditId,
+	    au.title,
+	    au.`desc`,
+	    au.imgurl,
+	    au.playpass,
+	    au.bengtime,
+	    au.id AS auditId,
 	    au.userId,
 	    ro.roomId AS liveId 
     FROM 
-    	train_live_audit 
+    	train_live_audit au
+    	LEFT JOIN trains.train_live_room ro ON au.userId = ro.userId
     WHERE 
     	id=#{value} 
     	AND audit_status=4
