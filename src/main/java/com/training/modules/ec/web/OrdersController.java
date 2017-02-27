@@ -1297,6 +1297,7 @@ public class OrdersController extends BaseController {
 					returnedGoods.setRemarks("强制取消");
 					returnedGoods.setReturnNum(goodsList.get(i).getGoodsnum());
 					returnedGoods.setTotalAmount(goodsList.get(i).getTotalAmount());
+					returnedGoods.setOrderAmount(goodsList.get(i).getOrderAmount());
 					returnedGoods.setReturnAmount(goodsList.get(i).getTotalAmount());
 					returnedGoods.setId(id);
 					returnedGoods.setApplyType(0);
