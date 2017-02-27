@@ -60,8 +60,9 @@
 				<table id="contentTable"
 					class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 					<thead>
-						<tr>
+						<tr>	
 							<th style="text-align: center;">编号</th>
+							<th style="text-align: center;">直播申请编号</th>
 							<th style="text-align: center;">用户名</th>
 							<th style="text-align: center;">用户职位</th>
 							<th style="text-align: center;">回看编码</th>
@@ -82,6 +83,7 @@
 						<c:forEach items="${page.list}" var="playback">
 							<tr>
 								<td>${playback.id}</td>
+								<td>${playback.auditId}</td>
 								<td>${playback.userName}</td>
 								<td>${playback.label}</td>
 								<td>${playback.playbackId}</td>
