@@ -216,20 +216,19 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		AcountLog acountLog = new AcountLog();
 		acountLog.setOperator(currentUser);
 		acountLog.setOrderid(orders.getOrderid());
-		Orders newOrders = ordersDao.get(orders.getOrderid());
 		String orderstatusname = null;
-		switch (newOrders.getOrderstatus()) {
+		switch (orders.getOrderstatus()) {
 		case -2:
 			orderstatusname = "取消订单";
 			break;
 		case -1:
-			orderstatusname = "未付款";
+			orderstatusname = "待付款";
 			break;
 		case 1:
-			orderstatusname = "已付款";
+			orderstatusname = "待发货";
 			break;
 		case 2:
-			orderstatusname = "已发货";
+			orderstatusname = "待收货";
 			break;
 		case 3:
 			orderstatusname = "已退款";
@@ -237,23 +236,13 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		case 4:
 			orderstatusname = "已完成";
 			break;
-		case 5:
-			orderstatusname = "申请退款";
-			break;
 		}
-		String time = null;
-		if (newOrders.getShippingtime() != null) {
-			time = DateUtils.format(newOrders.getShippingtime(), "yyyy-MM-dd");
-		}
-		String string = "支付方式:" + orders.getPayname() + "|订单状态:" + orderstatusname + "|修改价格:"
-				+ newOrders.getOrderamount() + "</br>发货时间:" + time + "|快递单号:" + newOrders.getShippingcode() + "|快递公司:"
-				+ newOrders.getShippingname() + "</br>收货人姓名:" + newOrders.getConsignee() + "街道地址:"
-				+ newOrders.getAddress() + "|邮政编码:" + newOrders.getPostalcode() + "</br>手机号码:" + newOrders.getMobile()
-				+ "|固定电话:" + newOrders.getPhone() + "|备注:" + newOrders.getAdminnote();
+		String string = "支付方式:" + orders.getPayname() + "|订单状态:" + orderstatusname + "</br>|物流类型:"
+				+ orders.getShippingtype() + "|收货人:" + orders.getConsignee() + "|联系电话:" + orders.getMobile() + "|收货地址:"
+				+ orders.getAddress();
 		String str = string.replaceAll("null", "");
 		acountLog.setLogdesc(str);
 		acountLogDao.insertLog(acountLog);
-
 	}
 
 	/**
@@ -991,7 +980,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		orders.setPayid(payment.getPayid());
 		orders.setPaycode(payment.getPaycode());
 		orders.setPayname(payment.getPayname());
+		Orders _orders = ordersDao.selectOrderById(orders.getOrderid());
+		insertLog(_orders);
 		ordersDao.updateVirtualOrder(orders);
+		insertLog(orders);
 	}
 
 	/**

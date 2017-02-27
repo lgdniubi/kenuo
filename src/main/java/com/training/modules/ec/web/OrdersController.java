@@ -886,16 +886,21 @@ public class OrdersController extends BaseController {
 	public String updateVirtualOrder(Orders orders, HttpServletRequest request, Model model,
 			RedirectAttributes redirectAttributes) {
 		try {
-			if(-2 == orders.getOrderstatus()){ //是取消订单
-				boolean result = returnRepository(orders.getOrderid());
-				if(result){
+			if(orders.getOldstatus() != orders.getOrderstatus()){ //2次订单修改状态不一致
+				if(-2 == orders.getOrderstatus()){//新订单状态 等于“取消订单”
+					boolean result = returnRepository(orders.getOrderid());
+					if(result){
+						ordersService.updateVirtualOrder(orders);
+						addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
+					}else{
+						addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'失败");
+					}
+					logger.info("商品退还仓库是否成功："+result);
+				}else{//不是取消订单
 					ordersService.updateVirtualOrder(orders);
 					addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
-				}else{
-					addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'失败");
 				}
-				logger.info("商品退还仓库是否成功："+result);
-			}else{//不是取消订单
+			}else{
 				ordersService.updateVirtualOrder(orders);
 				addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
 			}
@@ -904,6 +909,7 @@ public class OrdersController extends BaseController {
 			logger.error("方法：updateVirtualOrder，修改订单出现错误：" + e.getMessage());
 			addMessage(redirectAttributes, "修改订单失败！");
 		}
+		
 		return "redirect:" + adminPath + "/ec/orders/list";
 	}
 	
