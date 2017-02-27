@@ -1264,8 +1264,12 @@ public class OrdersController extends BaseController {
 				return "redirect:" + adminPath + "/ec/orders/orderform?type=view&orderid="+orders.getOrderid();
 			}
 			logger.info("商品退还仓库是否成功："+result);
-			
-			goodsList=ordergoodService.orderlistTow(orders.getOrderid());
+			//验证订单是前台创建
+			if(orders.getChannelFlag().trim().equals("bm")){
+				goodsList=ordergoodService.orderlistTow(orders.getOrderid());
+			}else{
+				goodsList=ordergoodService.orderlist(orders.getOrderid());
+			}
 			if(goodsList.size()>0){
 				for (int i = 0; i < goodsList.size(); i++) {
 					Date date=new Date();
