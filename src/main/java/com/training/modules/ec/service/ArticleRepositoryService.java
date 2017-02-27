@@ -10,12 +10,15 @@ import org.springframework.web.util.HtmlUtils;
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.ec.dao.ArticleRepositoryDao;
+import com.training.modules.ec.entity.ArticleAuthorPhoto;
 import com.training.modules.ec.entity.ArticleImage;
 import com.training.modules.ec.entity.ArticleIssueLogs;
 import com.training.modules.ec.entity.ArticleRepository;
 import com.training.modules.ec.entity.ArticleRepositoryCategory;
+import com.training.modules.ec.entity.MtmyArticleCategory;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.entity.ArticlesCategory;
 
 
 /**
@@ -172,5 +175,54 @@ public class ArticleRepositoryService extends CrudService<ArticleRepositoryDao, 
 	 */
 	public void deleteCategory(ArticleRepositoryCategory articleRepositoryCategory){
 		dao.deleteCategory(articleRepositoryCategory);
+	}
+	/**
+	 * 查询常用文章分类
+	 * @return
+	 */
+	public List<ArticleRepositoryCategory> findCategoryCommon(){
+		User currentUser = UserUtils.getUser(); 
+		return dao.findCategoryCommon(currentUser.getId());
+	}
+	/**
+	 * 添加用户常用作者
+	 * @param authorName
+	 * @param photoUrl
+	 */
+	public void addAuthor(ArticleAuthorPhoto articleAuthorPhoto){
+		User currentUser = UserUtils.getUser(); 
+		articleAuthorPhoto.setCreateBy(currentUser);
+		dao.addAuthor(articleAuthorPhoto);
+	}
+	/**
+	 * 删除作者
+	 * @param articleAuthorPhoto
+	 */
+	public void delAuthor(ArticleAuthorPhoto articleAuthorPhoto){
+		dao.delAuthor(articleAuthorPhoto);
+	}
+	/**
+	 * 查询所有作者信息
+	 * @param articleAuthorPhoto
+	 * @return
+	 */
+	public List<ArticleAuthorPhoto> findAllAuthor(){
+		ArticleAuthorPhoto articleAuthorPhoto = new ArticleAuthorPhoto();
+		articleAuthorPhoto.setCreateBy(UserUtils.getUser());
+		return dao.findAllAuthor(articleAuthorPhoto);
+	}
+	/**
+	 * 查询发布妃子校常用分类
+	 * @return
+	 */
+	public List<ArticlesCategory> findTrainCateComm(){
+		return dao.findTrainCateComm(UserUtils.getUser().getId());
+	}
+	/**
+	 * 查询发布每天美耶常用分类
+	 * @return
+	 */
+	public List<MtmyArticleCategory> findMtmyCateComm(){
+		return dao.findMtmyCateComm(UserUtils.getUser().getId());
 	}
 }

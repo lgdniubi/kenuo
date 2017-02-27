@@ -78,6 +78,7 @@ public class SubjectService extends CrudService<SubjectDao,Subject>{
 	 */
 	public void saveSubjectGoods(int subId,String goodsIds){
 		if(!"".equals(goodsIds) && goodsIds != null){
+			subjectDao.delAllGoods(subId);
 			String[] goodsIdArr = goodsIds.split(",");
 			for(String goodsId:goodsIdArr){
 				subjectDao.insertGoods(subId, Integer.valueOf(goodsId));

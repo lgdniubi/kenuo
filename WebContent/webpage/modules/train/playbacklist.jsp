@@ -14,6 +14,9 @@
 		return false;
 	}
 	
+	function newReset(){
+		window.location="${ctx}/train/playback/list";
+	}
 	
 	
 	
@@ -41,7 +44,6 @@
 							<label>回看主题：</label><form:input path="name" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
 							<label>回看编码：</label><form:input path="playbackId" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
 							<label>直播申请编码：</label><form:input path="auditId" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
-						
 						</div>
 					</form:form>
 					<!-- 工具栏 -->
@@ -49,7 +51,7 @@
 						<div class="col-sm-12">
 							<div class="pull-right">
 								<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
-								<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()" ><i class="fa fa-refresh"></i> 重置</button>
+								<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="newReset()" ><i class="fa fa-refresh"></i> 重置</button>
 							</div>
 						</div>
 					</div>
@@ -128,6 +130,10 @@
 											<a href="${ctx}/train/playback/pIsShow?isShow=1&id=${playback.id}"  class="btn btn-primary btn-xs">
 												<i class="fa fa-file"></i>隐藏</a>
 										</c:if>
+									</shiro:hasPermission>
+									<shiro:hasPermission name="train:live:sku">
+										<a href="#" onclick="openDialogView('配置列表', '${ctx}/train/live/liveSkuForm?auditId=${playback.auditId}','800px','500px')"
+											 class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>查看配置</a>
 									</shiro:hasPermission>
 
 								</td>

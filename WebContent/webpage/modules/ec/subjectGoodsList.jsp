@@ -58,17 +58,20 @@
 		    btn: ['确定', '关闭'],
 		    yes: function(index, layero){
 		        var obj =  layero.find("iframe")[0].contentWindow;
-				var select2 = obj.document.getElementById("select2"); 
+				var select2 = obj.document.getElementById("select2");
 		        var arr = new Array(); //数组定义标准形式，不要写成Array arr = new Array();
 		        var all = new Array(); //定义变量全部保存
-		        $(select2).each(function () {
-			    	  var txt = $(this).text(); //获取单个text
-			    	  var val = $(this).val(); //获取单个value
-			    	      arr.push(val);
-			    	      all.push(txt);
-			    	 }); 
 		        
-				if($(select2).val()== null || $(select2).val()==""){
+		     /*     $(select2).each(function () {
+		    	  	all = $(this).text(); //获取单个text
+		    	  	arr = $(this).val(); //获取单个value
+		    	 });  */
+		       	for(i=0;i<select2.length;i++){
+		        	arr.push(select2[i].value);
+		        } 
+		    	 alert(arr);
+		    	 alert(arr.length);
+				if(arr.length <= 0){
 					top.layer.alert('商品不能为空!', {icon: 0, title:'提醒'}); 
 					return;
 				}

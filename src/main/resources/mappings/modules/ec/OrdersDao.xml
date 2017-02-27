@@ -271,7 +271,8 @@
 			ogd.order_arrearage AS orderArrearage,
 			a.user_note AS userNote,
 		    a.admin_note AS adminNote,
-		    a.is_real AS orderIsReal
+		    a.is_real AS orderIsReal,
+		    a.add_time AS strAddTime
 		FROM
 			mtmydb.mtmy_orders a
 			LEFT JOIN mtmydb.mtmy_payment d ON a.pay_code=d.pay_code

@@ -86,6 +86,21 @@
 										<div id="file_img_queue1"></div>
 									</td>
 								</tr>
+								<tr>
+									<td><label class="pull-right"><font color="red">*</font>类型：</label></td>
+									<td>
+										<select class="form-control required" id="type" name="type" >
+											<option value=1 <c:if test="${subject.type == 1}">selected</c:if>>动态</option>
+											<option value=2 <c:if test="${subject.type == 2}">selected</c:if>>静态</option>
+										</select>
+									</td>
+								</tr>
+								<tr id = "urls">
+									<td><label class="pull-right">链接：</label></td>
+									<td>
+										<input class="form-control" id="url" name="url" type="text" value="${subject.url }" style="width: 300px"/>
+									</td>
+								</tr>
 							</table>
 						</form>
 					</div>

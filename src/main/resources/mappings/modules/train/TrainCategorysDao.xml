@@ -129,9 +129,9 @@
 		<!-- 树状只加载父级 -->
 		<if test="parentId != null and parentId != ''">
 			AND t.parent_id = #{parentId }
-		</if>
+		</if> 
 		<if test="name != null and name != ''">
-			AND name LIKE
+			AND t.name LIKE
 			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
 		</if>

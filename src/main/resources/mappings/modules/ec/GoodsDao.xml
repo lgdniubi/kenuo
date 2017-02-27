@@ -525,7 +525,8 @@
 		  bar_code AS 'barCode',
 		  goods_no AS 'goodsNo',
 		  service_times AS 'serviceTimes',
-		  expiring_date AS 'expiringDate'
+		  expiring_date AS 'expiringDate',
+		  goods_weight  AS 'goodsWeight'
 		FROM
 		  mtmydb.mtmy_spec_goods_price 
 		WHERE spec_key = #{specKey}
@@ -542,7 +543,8 @@
 			 service_times = #{serviceTimes},
 			 expiring_date = #{expiringDate},
 			 cost_price = #{costPrice},
-			 market_price = #{marketPrice}
+			 market_price = #{marketPrice},
+			 goods_weight  = #{goodsWeight}
 		WHERE spec_key = #{specKey}
 		AND goods_id = #{goodsId}
 	</update>

@@ -60,4 +60,10 @@ public interface SubjectDao extends CrudDao<Subject>{
 	 * @param goodsId
 	 */
 	public void delGoods(@Param("subId")int subId,@Param(value="goodsId")int goodsId);
+	
+	/**
+	 * 删除主题图对应的商品 
+	 * @param subId
+	 */
+	public void delAllGoods(int subId);
 }

@@ -139,7 +139,7 @@
 					<div class="searcharea clearfix">
 						<form:form id="searchForm" action="${ctx}/train/categorys/findalllist" method="post" class="navbar-form navbar-left searcharea">
 							<div class="form-group">
-								<label>关键字：<input id="name" name="name" maxlength="10" type="text" class="form-control" value="${trainCategorys.name}"></label> 
+								<label>关键字：<input id="name" name="name" maxlength="10" type="text" class="form-control" value="${trainCategorys.name}" ></label> 
 							</div>
 							<shiro:hasPermission name="train:categorys:findalllist">
 								<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">

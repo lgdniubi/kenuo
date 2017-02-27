@@ -64,9 +64,9 @@ public class CategorysController extends BaseController{
 	@RequestMapping(value = {"findalllist", ""})
 	public String findalllist(TrainCategorys trainCategorys,HttpServletRequest request, HttpServletResponse response, Model model){
 		//默认加载父类为0的分类   当为搜索时跳过此赋值
-		if(null!=trainCategorys.getName() || !"".equals(trainCategorys.getName())){
+		/*if(null!=trainCategorys.getName() || !"".equals(trainCategorys.getName())){
 			trainCategorys.setParentId("0");
-		}
+		}*/
 		//添加数据权限
 	//	trainCategorys = CategorysUtils.categorysFilter(trainCategorys);
 	// office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a"));	

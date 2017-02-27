@@ -11,6 +11,8 @@
 			sub_head_img AS 'subHeadImg',
 			suboriginal_img AS 'subOriginalImg',
 			add_time AS 'addTime',
+			type,
+			url,
 			del_flag 
 		FROM mtmydb.mtmy_specialsubject
 		WHERE del_flag = 0
@@ -28,12 +30,16 @@
 			position,
 			sub_head_img,
 			suboriginal_img,
+			type,
+			url,
 			add_time
 		)values(
 			#{subName},
 			#{position},
 			#{subHeadImg},
 			#{subOriginalImg},
+			#{type},
+			#{url},
 			NOW()
 		)
 	</insert>
@@ -45,6 +51,8 @@
 			sub_name = #{subName},
 			position = #{position},
 			sub_head_img = #{subHeadImg},
+			type = #{type},
+			url = #{url},
 			suboriginal_img = #{subOriginalImg}
 		WHERE sub_id = #{subId}
 	</update>
@@ -58,6 +66,8 @@
 			sub_head_img AS 'subHeadImg',
 			suboriginal_img AS 'subOriginalImg',
 			add_time AS 'addTime',
+			type,
+			url,
 			del_flag 
 		FROM mtmydb.mtmy_specialsubject
 		WHERE del_flag = 0
@@ -104,5 +114,11 @@
 		DELETE FROM mtmydb.mtmy_sub_goods
 		WHERE sub_id = #{subId}
 		AND	goods_id=#{goodsId}
+	</delete>
+	
+	<!-- 添加商品前删除主题图对应的所有商品 -->
+	<delete id="delAllGoods">
+		DELETE FROM mtmydb.mtmy_sub_goods
+		WHERE sub_id = #{subId}
 	</delete>
 </mapper>

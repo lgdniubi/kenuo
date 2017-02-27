@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +21,7 @@ import com.training.modules.quartz.entity.TaskLog;
 import com.training.modules.quartz.tasks.utils.CommonService;
 import com.training.modules.quartz.tasks.utils.RedisConfig;
 import com.training.modules.sys.entity.User;
+import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
 
 /**
@@ -48,7 +51,7 @@ public class ActionStatus extends CommonService{
 	 */
 	public void actionStatus(){
 		logger.info("[actionStatus],start,开启活动设置,开始时间："+df.format(new Date()));
-		
+		HttpServletRequest request=null;
 		//添加日志
 		TaskLog taskLog = new TaskLog();
 		Date startDate;	//开始时间
@@ -145,6 +148,7 @@ public class ActionStatus extends CommonService{
 			
 		} catch (Exception e) {
 			logger.error("#####【定时任务orderTimeOut】过期订单,当前订单号["+actionId+"]出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "抢购活动定时器", e);
 			taskLog.setStatus(1);
 			taskLog.setExceptionMsg(e.getMessage().substring(0, e.getMessage().length()>2500?2500:e.getMessage().length()));
 		}finally{
