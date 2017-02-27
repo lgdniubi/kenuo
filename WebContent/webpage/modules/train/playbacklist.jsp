@@ -18,24 +18,6 @@
 		window.location="${ctx}/train/playback/list";
 	}
 	
-	  function RepNumber(obj) {
-          var reg = /^[\d]+$/g;
-           if (!reg.test(obj.value)) {
-               var txt = obj.value;
-               txt.replace(/[^0-9]+/, function (char, index, val) {//匹配第一次非数字字符
-                  obj.value = val.replace(/\D/g, "");//将非数字字符替换成""
-                  var rtextRange = null;
-                  if (obj.setSelectionRange) {
-                      obj.setSelectionRange(index, index);
-                  } else {//支持ie
-                      rtextRange = obj.createTextRange();
-                      rtextRange.moveStart('character', index);
-                      rtextRange.collapse(true);
-                      rtextRange.select();
-                  }
-              })
-           }
-       }
 	
 	
 </script>
@@ -60,8 +42,8 @@
 						<div class="form-group">
 							<label>用户名：</label><form:input path="userName" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
 							<label>回看主题：</label><form:input path="name" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
-							<label>回看编码：</label><form:input path="playbackId" htmlEscape="false" maxlength="50" class=" form-control input-sm" onkeyup="javascript:RepNumber(this)"/>
-							<label>直播申请编码：</label><form:input path="auditId" htmlEscape="false" maxlength="50" class=" form-control input-sm" onkeyup="javascript:RepNumber(this)"/>
+							<label>回看编码：</label><form:input path="playbackId" htmlEscape="false" maxlength="50" class=" form-control input-sm" onkeyup="this.value=this.value.replace(/\D/g,'')"/>
+							<label>直播申请编码：</label><form:input path="auditId" htmlEscape="false" maxlength="50" class=" form-control input-sm" onkeyup="this.value=this.value.replace(/\D/g,'')"/>
 						</div>
 					</form:form>
 					<!-- 工具栏 -->
