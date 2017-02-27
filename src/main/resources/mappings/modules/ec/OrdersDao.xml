@@ -170,7 +170,7 @@
 			a.is_real as isReal,
 			a.channel_flag AS channelflag,
 			COUNT(m.rec_id) AS "goodsnum",
-			ogd.order_arrearage AS orderArrearage
+			IFNULL(ogd.order_arrearage,0) AS orderArrearage
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
@@ -226,10 +226,10 @@
 		</if>
 		GROUP BY a.order_id
 		<if test="orderArrearageType == 2 "> <!-- 没有欠款 -->
-			HAVING (orderarrearage > 0 OR orderarrearage IS NOT NULL)
+			HAVING orderarrearage > 0
 		</if>
 		<if test="orderArrearageType == 1 "> <!-- 有欠款 -->
-			HAVING (orderarrearage = 0 OR orderarrearage IS NULL)
+			HAVING orderarrearage = 0
 		</if>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
