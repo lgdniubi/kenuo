@@ -39,9 +39,10 @@
     </script> -->
 	<!-- 富文本框上传图片样式 -->
 	<style>
-		.ke-dalog-addpic{width:450px;position:fixed; z-index:1000; left:50%; top: 50%;margin:-150px 0 0 -225px;display:none;}
+		.ke-dalog-addpic{width:750px;position:fixed; z-index:1000; left:50%; top: 50%;margin:-300px 0 0 -375px;display:none;}
 		.ke-dalog-addpic .tab1,.ke-dalog-addpic .tab2{display:none;padding-top:15px;}
 		.ke-add-mask{position:fixed;z-index:-1;width:100%;height:100%;left:0;top:0;}
+		.ke-tabs{height:500px;overflow-x:hidden;overflow-y:auto;}
 		/* 商品卡片样式 */
     	p{margin:0;padding:0 12px;line-height:26px;color:#1a1a1a;font-size:16px;}
 		img{max-width:100%;}
@@ -827,6 +828,7 @@
 			$("#imgsrc").attr('src',null); 
 			$("#img,#w_httpImg,#h_httpImg").val('');
 			$("#httpImg").val('http://');
+			$(".t3").html("");
 			$('#ke-dialog').hide();
 			
 			$("#goodsCategoryIdId,#goodsCategoryIdName,#goodselectId,#goodselectName").val("");
@@ -844,6 +846,7 @@
 				$("#imgsrc").attr('src',null); 
 				$("#img,#w_httpImg,#h_httpImg").val('');
 				$("#httpImg").val('http://');
+				$(".t3").html("");
 				$('#ke-dialog').hide();
 			}else if("2" == $("#ke-dialog-num").val()){
 				$("input[name='img']").each(function(index,item){
@@ -854,11 +857,13 @@
 				$("#imgsrc").attr('src',null); 
 				$("#img,#w_httpImg,#h_httpImg").val('');
 				$("#httpImg").val('http://');
+				$(".t3").html("");
 				$('#ke-dialog').hide();
 			}else{
 				$("#imgsrc").attr('src',null); 
 				$("#img,#w_httpImg,#h_httpImg").val('');
 				$("#httpImg").val('http://');
+				$(".t3").html("");
 				$('#ke-dialog').hide();
 			}
 		}	
@@ -1237,7 +1242,7 @@
 					console.log(jsonData);
 					if (jsonData.result == '200') {
 					/* 	$("#img").val(jsonData.file_url); */
-						$(".t3").append("<input type='hidden' readonly='readonly' id='img' name='img' value='"+jsonData.file_url+"' class='form-control' style='width: 350px;' > <img id='imgsrc' src='"+jsonData.file_url+"' alt='' style='width: 200px;height: 100px;'/> ");
+						$(".t3").append("<input type='hidden' readonly='readonly' id='img' name='img' value='"+jsonData.file_url+"' class='form-control' style='width: 350px;' > <img id='imgsrc' src='"+jsonData.file_url+"' alt='' style='width: 100px;height: 100px;'/> ");
 						
 					/* 	$('.img').attr('href', jsonData.file_url);
 						$("#imgsrc").attr('src', jsonData.file_url); */
