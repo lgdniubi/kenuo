@@ -69,8 +69,6 @@
 		       	for(i=0;i<select2.length;i++){
 		        	arr.push(select2[i].value);
 		        } 
-		    	 alert(arr);
-		    	 alert(arr.length);
 				if(arr.length <= 0){
 					top.layer.alert('商品不能为空!', {icon: 0, title:'提醒'}); 
 					return;
