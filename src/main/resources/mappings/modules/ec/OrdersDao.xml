@@ -226,10 +226,10 @@
 		</if>
 		GROUP BY a.order_id
 		<if test="orderArrearageType == 2 "> <!-- 没有欠款 -->
-			HAVING orderarrearage > 0
+			HAVING (orderarrearage > 0 OR orderarrearage IS NOT NULL)
 		</if>
 		<if test="orderArrearageType == 1 "> <!-- 有欠款 -->
-			HAVING orderarrearage = 0
+			HAVING (orderarrearage = 0 OR orderarrearage IS NULL)
 		</if>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -321,10 +321,10 @@
 
 		GROUP BY a.order_id,d.pay_name,c.goods_name,c.goods_sn,c.spec_key_name,c.goods_num,c.goods_price,f.name,sp.goods_no,sp.bar_code,c.order_amount,c.total_amount
 		<if test="orderArrearageType == 2 "> <!-- 没有欠款 -->
-			HAVING orderarrearage > 0
+			HAVING (orderarrearage > 0 OR orderarrearage IS NOT NULL)
 		</if>
 		<if test="orderArrearageType == 1 "> <!-- 有欠款 -->
-			HAVING orderarrearage = 0
+			HAVING (orderarrearage = 0 OR orderarrearage IS NULL)
 		</if>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -646,6 +646,7 @@
 			u.mobile as "users.mobile",
 			o.distinction as distinction,
 			order_status as orderStatus,
+			order_status as oldstatus,
 			o.is_neworder as isNeworder,
 			o.pay_code as paycode,
 			o.mobile as mobile,

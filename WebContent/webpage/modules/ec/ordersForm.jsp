@@ -389,15 +389,24 @@ window.onload=initStatus;
 							<label class="active">手机号码:</label>&nbsp;&nbsp;${orders.users.mobile }
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">订单状态:</label>&nbsp;&nbsp;
+							<form:input path="oldstatus"/>
 							<form:select path="orderstatus"  class="form-control" style="width:180px">
 								<c:if test="${orders.isReal == 0}">
-									<form:option value="-2">取消订单</form:option>
-									<form:option value="-1">待付款</form:option>
-									<form:option value="1">待发货</form:option>
-									<form:option value="2">待收货</form:option>
-									<form:option value="3">已退款</form:option>
-									<form:option value="4">已完成</form:option>
-									
+									<c:if test="${orders.orderstatus == -2}">
+										<form:option value="-2">取消订单</form:option>
+									</c:if>
+									<c:if test="${orders.orderstatus == -1}">
+										<form:option value="-1">待付款</form:option>
+										<form:option value="1">待发货</form:option>
+									</c:if>
+									<c:if test="${orders.orderstatus == 1 or orders.orderstatus == 2 or orders.orderstatus == 4}">
+										<form:option value="1">待发货</form:option>
+										<form:option value="2">待收货</form:option>
+										<form:option value="4">已完成</form:option>
+									</c:if>
+									<c:if test="${orders.orderstatus == 3}">
+										<form:option value="3">已退款</form:option>
+									</c:if>
 								</c:if>
 								<c:if test="${orders.isReal == 1}">
 									<form:option value="4">已完成</form:option>
