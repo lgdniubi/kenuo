@@ -42,8 +42,8 @@
 						<div class="form-group">
 							<label>用户名：</label><form:input path="userName" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
 							<label>回看主题：</label><form:input path="name" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
-							<label>回看编码：</label><form:input path="playbackId" htmlEscape="false" maxlength="50" class=" form-control input-sm" onkeyup="this.value=this.value.replace(/\D/g,'')"/>
-							<label>直播申请编码：</label><form:input path="auditId" htmlEscape="false" maxlength="50" class=" form-control input-sm" onkeyup="this.value=this.value.replace(/\D/g,'')"/>
+							<label>回看编码：</label><form:input path="playbackId" htmlEscape="false" maxlength="50" class=" form-control input-sm"/>
+							<label>直播申请编码：</label><form:input path="auditId" htmlEscape="false" maxlength="50" class=" form-control input-sm" onkeyup="this.value=this.value.replace(/\D/g,'')" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';"/>
 						</div>
 					</form:form>
 					<!-- 工具栏 -->
@@ -60,8 +60,9 @@
 				<table id="contentTable"
 					class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 					<thead>
-						<tr>
+						<tr>	
 							<th style="text-align: center;">编号</th>
+							<th style="text-align: center;">直播申请编号</th>
 							<th style="text-align: center;">用户名</th>
 							<th style="text-align: center;">用户职位</th>
 							<th style="text-align: center;">回看编码</th>
@@ -82,6 +83,7 @@
 						<c:forEach items="${page.list}" var="playback">
 							<tr>
 								<td>${playback.id}</td>
+								<td>${playback.auditId}</td>
 								<td>${playback.userName}</td>
 								<td>${playback.label}</td>
 								<td>${playback.playbackId}</td>
