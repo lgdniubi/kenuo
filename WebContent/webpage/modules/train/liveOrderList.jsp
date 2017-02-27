@@ -45,7 +45,7 @@
 						<tr>
 							<th style="text-align: center;">订单ID</th>
 							<th style="text-align: center;">直播申请ID</th>
-							<th style="text-align: center;">用户ID</th>
+							<th style="text-align: center;">用户名</th>
 							<th style="text-align: center;">直播规格ID</th>
 							<th style="text-align: center;">天数</th>
 							<th style="text-align: center;">实付金额</th>
@@ -61,7 +61,7 @@
 							<tr>
 								<td>${order.trainLiveOrderId}</td>
 								<td>${order.auditId}</td>
-								<td>${order.userId}</td>
+								<td>${order.userName}</td>
 								<td>${order.specId}</td>
 								<td>${order.specNum}</td>
 								<td>${order.specPrice}</td>

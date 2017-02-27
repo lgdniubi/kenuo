@@ -102,8 +102,7 @@
 				mtmydb.mtmy_beauty_comment AS b
 				LEFT JOIN mtmydb.mtmy_users AS u ON b.user_id = u.user_id
 				LEFT JOIN trains.sys_user AS a ON b.beauty_id = a.id
-			WHERE
-				1=1
+			WHERE				1=1
 				AND b.parent_id = '0'
 				<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
 					AND b.add_time BETWEEN #{beginDate} AND #{endDate}
@@ -177,7 +176,10 @@
 		LEFT JOIN mtmydb.mtmy_spec_goods_price e ON e.goods_id = a.goods_id AND e.spec_key = d.spec_key
 		WHERE
 			c.user_id IS NOT NULL
-		AND a.add_time >= '2017-01-01 00:00:00'
-		AND a.add_time <![CDATA[ <= ]]> '2017-01-31 23:59:59'
+		<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
+			AND a.add_time >= #{beginDate}
+			AND a.add_time <![CDATA[ <= ]]> #{endDate}
+		</if>
+		
 	</select>
 </mapper>

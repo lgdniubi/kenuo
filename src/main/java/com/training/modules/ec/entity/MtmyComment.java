@@ -1,5 +1,7 @@
 package com.training.modules.ec.entity;
 
+import java.util.Date;
+
 import com.training.common.persistence.DataEntity;
 import com.training.common.utils.excel.annotation.ExcelField;
 
@@ -21,6 +23,10 @@ public class MtmyComment extends DataEntity<MtmyComment>{
 	private String specKeyName;  //规格项
 	private String barCode;      //条形码
 	private String goodsNo;      //商品编号
+	private Date beginDate;		//开始时间
+	private Date endDate;		//结束时间
+	
+	
 	
 	@ExcelField(title="名称/昵称", align=2, sort=5)
 	public String getName() {
@@ -84,6 +90,18 @@ public class MtmyComment extends DataEntity<MtmyComment>{
 	}
 	public void setGoodsNo(String goodsNo) {
 		this.goodsNo = goodsNo;
+	}
+	public Date getBeginDate() {
+		return beginDate;
+	}
+	public void setBeginDate(Date beginDate) {
+		this.beginDate = beginDate;
+	}
+	public Date getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 	
 	

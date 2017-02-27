@@ -136,19 +136,22 @@
 	<!-- 分页查询直播订单列表 -->
 	<select id="findOrderList" resultType="TrainLiveOrder">
 		SELECT 
-			order_id AS 'trainLiveOrderId',
-			audit_id AS 'auditId',
-			user_id AS 'userId',
-			spec_id AS 'specid',
-			spec_price AS 'specprice',
-			spec_num AS 'specNum',
-			type,
-			pay_date AS 'payDate',
-			valid_date AS 'validDate',
-			order_status AS 'orderStatus',
-			create_date AS 'createDate',
-			del_flag AS 'delflag'
-		FROM trains.train_live_order
+			lo.order_id AS 'trainLiveOrderId',
+			lo.audit_id AS 'auditId',
+			lo.user_id AS 'userId',
+			u.name AS 'userName',
+			lo.spec_id AS 'specid',
+			lo.spec_price AS 'specprice',
+			lo.spec_num AS 'specNum',
+			lo.type,
+			lo.pay_date AS 'payDate',
+			lo.valid_date AS 'validDate',
+			lo.order_status AS 'orderStatus',
+			lo.create_date AS 'createDate',
+			lo.del_flag AS 'delflag'
+		FROM trains.train_live_order lo
+		LEFT JOIN trains.sys_user u ON u.id = lo.user_id
+		WHERE lo.del_flag = 0
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}

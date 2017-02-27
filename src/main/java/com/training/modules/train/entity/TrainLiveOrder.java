@@ -16,6 +16,7 @@ public class TrainLiveOrder extends DataEntity<TrainLiveOrder>{
 	private String trainLiveOrderId;   //直播订单id
 	private int auditId;          //直播申请ID
 	private String userId;         //用户ID（妃子校用户）
+	private String userName;       //用户名
 	private int specId;            //直播规格ID
 	private double specPrice;      //规格价格
 	private int specNum;            //规格有效时间（天数）
@@ -89,6 +90,12 @@ public class TrainLiveOrder extends DataEntity<TrainLiveOrder>{
 	}
 	public void setDelflag(int delflag) {
 		this.delflag = delflag;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 	
 	
