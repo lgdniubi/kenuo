@@ -42,8 +42,8 @@
 						<div class="form-group">
 							<label>用户名：</label><form:input path="userName" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
 							<label>回看主题：</label><form:input path="name" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
-							<label>回看编码：</label><form:input path="playbackId" htmlEscape="false" maxlength="50" class=" form-control input-sm" onkeyup="this.value=this.value.replace(/\D/g,'')"/>
-							<label>直播申请编码：</label><form:input path="auditId" htmlEscape="false" maxlength="50" class=" form-control input-sm" onkeyup="this.value=this.value.replace(/\D/g,'')"/>
+							<label>回看编码：</label><form:input path="playbackId" htmlEscape="false" maxlength="50" class=" form-control input-sm"/>
+							<label>直播申请编码：</label><form:input path="auditId" htmlEscape="false" maxlength="50" class=" form-control input-sm" onkeyup="this.value=this.value.replace(/\D/g,'')" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';"/>
 						</div>
 					</form:form>
 					<!-- 工具栏 -->
