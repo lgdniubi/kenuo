@@ -174,6 +174,10 @@
 		}
 		// 原文章分类可能删除
 		$("#categoryId").val($("#oldCategoryId").val());
+		// 作者头像最对8个
+		if($("input[type=radio][name=authorList]").length >= 8){
+			$("#divAuthor").hide();
+		}
 	});
 	function loadGoods(num){
 		$("#goodsdetails").empty();
@@ -948,7 +952,7 @@
 							$("#divAuthor").before("<div id=\"delAuthor"+data.msg+"\" style=\"float:left;width:120px;height: 160px;text-align:center;margin:0 10px 10px 0\">"
 									+"<ul><li class='delAuthor' onclick='delAuthor("+data.msg+")'><img alt='' src=\""+$('#newAuthorPhoto').val()+"\" style=\"width:120px;height:120px;border:1px solid #ccc\"></li>"
 									+"<li style=\"height:30px;line-height:40px;\">"+$('#newAuthorName').val()+"</li>"
-									+"<li><input type=\"radio\" id=\"authorList\" name=\"authorList\"></li></ul><div>");
+									+"<li><input type=\"radio\" id=\"authorList\" name=\"authorList\" onclick=\"postAuthor(this)\"></li></ul><div>");
 							if($("input[type=radio][name=authorList]").length >= 8){
 								$("#divAuthor").hide();
 							}
@@ -973,6 +977,9 @@
 					var data = $.parseJSON(str);
 					if(data.status == 200){
 						$("#delAuthor"+num).remove();
+						if($("input[type=radio][name=authorList]").length >= 8){
+							$("#divAuthor").show();
+						}
 					}else{
 						top.layer.alert('删除作者出现异常!', {icon: 0});
 					}
