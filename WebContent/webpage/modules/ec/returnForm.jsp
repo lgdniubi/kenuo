@@ -61,6 +61,7 @@
 				var orderA=$("#"+id+"orderAmount").val();
 				var totalA=$("#"+id+"total").val();
 				$("#totalAmount").val(totalA);
+				$("#orderAmount").val(orderA);
 				if(isReal==0){
 					if(orderA==totalA){
 						$("#totalAmount").val(totalA);
@@ -128,11 +129,13 @@
 
 			}else{
 				var totalA=$("#"+id+"total").val();
+				var orderA=$("#"+id+"orderAmount").val();
 				$("#totalAmount").val(totalA);
 				returnAmount=totalA/goodNum;
 				var retNum=$("#returnNum").val();
 				var SumAmount=returnAmount*retNum;
 				$("#returnAmount").val(SumAmount.toFixed(2));
+				$("#orderAmount").val(orderA);
 			}
 			
 		}
@@ -298,6 +301,7 @@
 						</form:select>
 			        </c:if>
 					<p></p>
+					<form:hidden path="orderAmount"/>
 			        <label><font color="red">*</font>支付金额：</label>
 			        <form:input path="totalAmount" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control" readonly="true"/>
 					<p></p>
