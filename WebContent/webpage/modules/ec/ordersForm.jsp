@@ -389,7 +389,7 @@ window.onload=initStatus;
 							<label class="active">手机号码:</label>&nbsp;&nbsp;${orders.users.mobile }
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">订单状态:</label>&nbsp;&nbsp;
-							<form:input path="oldstatus"/>
+							<form:hidden path="oldstatus"/>
 							<form:select path="orderstatus"  class="form-control" style="width:180px">
 								<c:if test="${orders.isReal == 0}">
 									<c:if test="${orders.orderstatus == -2}">
