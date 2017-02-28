@@ -69,6 +69,7 @@ import com.training.modules.ec.service.ReturnedGoodsService;
 import com.training.modules.ec.utils.CourierUtils;
 import com.training.modules.ec.utils.OrderUtils;
 import com.training.modules.ec.utils.WebUtils;
+import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
@@ -108,6 +109,10 @@ public class OrdersController extends BaseController {
 	@Autowired
 	private SaleRebatesLogDao saleRebatesLogDao;
 	
+	@Autowired
+	private RedisClientTemplate redisClientTemplate;
+	
+	public static final String buying_limit_prefix = "buying_limit_";				//抢购活动商品限购数量
 	
 	@ModelAttribute
 	public Orders get(@RequestParam(required = false) String id) {
@@ -1302,8 +1307,13 @@ public class OrdersController extends BaseController {
 					returnedGoods.setId(id);
 					returnedGoods.setApplyType(0);
 					returnedGoods.setApplyDate(date);
+					//保存到退货表
 					returnedGoodsService.insertForcedCancel(returnedGoods);
 					ordersService.updateOrderStatut(orders.getOrderid());
+					//验证是否为抢购活动订单
+					if(goodsList.get(i).getActiontype()==1){
+						redisClientTemplate.hincrBy(buying_limit_prefix+goodsList.get(i).getActionid(), orders.getUserid()+"_"+goodsList.get(i).getGoodsid(),-goodsList.get(i).getGoodsnum());
+					}
 				}
 			}
 			List<SaleRebatesLog> list=new ArrayList<SaleRebatesLog>();
