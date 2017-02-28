@@ -165,21 +165,19 @@
 			a.add_time AS 'addTime',
 			a.goods_rank AS 'goodsRank',
 			a.contents AS 'contents',
-			d.spec_key_name AS 'specKeyName',
+			a.spec_key_name AS 'specKeyName',
 			e.bar_code AS 'barCode',
 			e.goods_no AS 'goodsNo'
 		FROM
 			mtmydb.mtmy_comment a
 		LEFT JOIN mtmydb.mtmy_goods b ON b.goods_id = a.goods_id
 		LEFT JOIN mtmydb.mtmy_users c ON c.user_id = a.user_id
-		LEFT JOIN mtmydb.mtmy_order_goods_mapping d ON d.order_id = a.order_id AND d.goods_id = a.goods_id
-		LEFT JOIN mtmydb.mtmy_spec_goods_price e ON e.goods_id = a.goods_id AND e.spec_key = d.spec_key
+		LEFT JOIN mtmydb.mtmy_spec_goods_price e ON e.goods_id = a.goods_id AND e.spec_key = a.spec_key
 		WHERE
-			c.user_id IS NOT NULL
+			a.parent_id = '0'
 		<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
 			AND a.add_time >= #{beginDate}
 			AND a.add_time <![CDATA[ <= ]]> #{endDate}
 		</if>
-		
 	</select>
 </mapper>
