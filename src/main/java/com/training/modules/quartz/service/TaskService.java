@@ -53,52 +53,52 @@ public class TaskService {
 	 * 容器初始化 bean 注解
 	 * @PostConstruct
 	*/
-	@PostConstruct
-	public void init() throws Exception {
-		
-		//添加日志
-		TaskLog taskLog = new TaskLog();
-		Date startDate;	//开始时间
-		Date endDate;	//结束时间
-		long runTime;	//运行时间
-		
-		startDate = new Date();
-		taskLog.setJobName("init");
-		taskLog.setStartDate(startDate);
-		
-		try {
-			//定时器加载时间-进行redisCaChe缓存
-			new RedisCaCheLoad().load();
-			
-			logger.info("######[执行定时任务]######");
-			// 这里获取任务信息数据
-			Task job = new Task();
-			job.setJobStatus("0");//开启状态
-			List<Task> jobList = iTaskDao.findAllTasks(job);
-			logger.info("#####[开启-定时任务数量：]"+jobList.size());
-			if(jobList.size() > 0){
-				for (Task task : jobList) {
-					addJob(task);
-				}
-			}
-			
-			taskLog.setJobDescription("[work] 定时器加载时间-进行redisCaChe缓存 | 开启-定时任务数量："+jobList.size());
-			taskLog.setStatus(0);//任务状态
-			
-		} catch (Exception e) {
-			logger.error("#####定时任务init(),加载异常，异常信息为："+e.getMessage());
-			
-			taskLog.setStatus(1);
-			taskLog.setExceptionMsg(e.getMessage().substring(0, e.getMessage().length()>2500?2500:e.getMessage().length()));
-		}finally {
-			endDate = new Date();//结束时间
-			runTime = (endDate.getTime() - startDate.getTime())/1000;//运行时间
-			taskLog.setEndDate(new Date());	//结束时间
-			taskLog.setRunTime(runTime);
-			taskLog.setRemarks("后台重启，重新加载");
-			iTaskDao.insertTaskLog(taskLog);
-		}
-	}
+//	@PostConstruct
+//	public void init() throws Exception {
+//		
+//		//添加日志
+//		TaskLog taskLog = new TaskLog();
+//		Date startDate;	//开始时间
+//		Date endDate;	//结束时间
+//		long runTime;	//运行时间
+//		
+//		startDate = new Date();
+//		taskLog.setJobName("init");
+//		taskLog.setStartDate(startDate);
+//		
+//		try {
+//			//定时器加载时间-进行redisCaChe缓存
+//			new RedisCaCheLoad().load();
+//			
+//			logger.info("######[执行定时任务]######");
+//			// 这里获取任务信息数据
+//			Task job = new Task();
+//			job.setJobStatus("0");//开启状态
+//			List<Task> jobList = iTaskDao.findAllTasks(job);
+//			logger.info("#####[开启-定时任务数量：]"+jobList.size());
+//			if(jobList.size() > 0){
+//				for (Task task : jobList) {
+//					addJob(task);
+//				}
+//			}
+//			
+//			taskLog.setJobDescription("[work] 定时器加载时间-进行redisCaChe缓存 | 开启-定时任务数量："+jobList.size());
+//			taskLog.setStatus(0);//任务状态
+//			
+//		} catch (Exception e) {
+//			logger.error("#####定时任务init(),加载异常，异常信息为："+e.getMessage());
+//			
+//			taskLog.setStatus(1);
+//			taskLog.setExceptionMsg(e.getMessage().substring(0, e.getMessage().length()>2500?2500:e.getMessage().length()));
+//		}finally {
+//			endDate = new Date();//结束时间
+//			runTime = (endDate.getTime() - startDate.getTime())/1000;//运行时间
+//			taskLog.setEndDate(new Date());	//结束时间
+//			taskLog.setRunTime(runTime);
+//			taskLog.setRemarks("后台重启，重新加载");
+//			iTaskDao.insertTaskLog(taskLog);
+//		}
+//	}
 	
 	/**
 	 * 分页定时任务
