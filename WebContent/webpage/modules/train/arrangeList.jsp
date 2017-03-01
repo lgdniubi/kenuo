@@ -7,7 +7,10 @@
 	<link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
 	<link rel="stylesheet" href="${ctxStatic}/jquery.scrollbar/optiscroll.css">
 	<style type="text/css">
-	    .column { width: 100%; height: 500px; background: #f6f2f2; padding: 10px;}
+		.column { width: 100%; height: 100%; background: #f6f2f2; padding: 10px;}
+	    .optiscroll-content{height: 100%;}
+		#treeTable td,#treeTable th{padding:8px 0;}
+		#treeTable div{ word-wrap: break-word;}
     </style>
     <script type="text/javascript" src="${ctxStatic}/jquery.scrollbar/optiscroll.js"></script>
 	<script type="text/javascript">
@@ -57,14 +60,14 @@
 	</script>
 </head>
 <body>
-	<div class="ibox-content">
+	<div class="ibox-content" style="height: 100%;">
 		<sys:message content="${message}"/>
-		<div class="warpper-content">
-			<div class="ibox">
+		<div class="warpper-content" style="height: 100%;">
+			<div class="ibox" style="height: 100%;">
 				<div class="ibox-title">
 					<h5>市场排班管理</h5>
 				</div>
-				<div class="ibox-content">
+				<div class="ibox-content" style="height:100%">
 				<input id="month" value="${month }" type="hidden">
 				<c:if test="${empty nextMonth}">
 					<div class="searcharea clearfix">
@@ -95,46 +98,91 @@
 						</div>
 					</div>
 				</c:if>
-					<div style="padding-top: 10px;">
-						<div id="os1" class="optiscroll column mid-50">
-							<table id="treeTable" class="table table-bordered table-hover table-striped" style="word-break:keep-all">
-			                    <thead>
-			                       <c:if test="${not empty calendarStr }">
-							    		${calendarStr }
-							    	</c:if>
-			                    </thead>
-			                    <tbody>
-		                    	<c:forEach items="${lists}" var="ArrangeBeautician">
-			                        <tr style="text-align: center;">
-		                        		<td>
-		                        			<shiro:hasPermission name="train:arrange:ArrangeBeautician">
-		                        				<a href="#" onclick='top.openTab("${ctx }/train/arrange/ArrangeBeautician?officeId=${ArrangeBeautician.officeId }&officeName=${ArrangeBeautician.name}&searcTime=${fns:formatDateTime(arrangeShop.searcTime)}","市场美容师排班", false)' class="btn btn-success btn-xs" >美容师排班</a>
-		                        			</shiro:hasPermission>
-		                        			<shiro:hasPermission name="train:arrange:ArrangeSpecEquipment">
-		                        				<a href="#" onclick='top.openTab("${ctx }/train/arrange/ArrangeSpecEquipment?officeId=${ArrangeBeautician.officeId }&officeName=${ArrangeBeautician.name}&searcTime=${fns:formatDateTime(arrangeShop.searcTime)}","市场设备排班", false)' class="btn btn-success btn-xs" >设备排班</a>
-		                        			</shiro:hasPermission>
-		                            	</td>
-			                            <td>${ArrangeBeautician.name }</td>
-			                            <c:forEach items="${ArrangeBeautician.arrangeShops}" var="arrangeShops" varStatus="status" end="31">
-			                            	<td>
-			                            		<c:if test="${arrangeShops.flag == 1}">
-			                            			<a href="#" onclick="show('${ArrangeBeautician.officeId }',${status.index+1 })">班</a>
-			                            		</c:if>
+				<div id='os1' style="padding-top: 33px;height:calc(100% - 100px);position: relative;overflow: scroll;">
+					<c:if test="${not empty calendarStr }">
+						<table id="treeTable" class="osTop table table-bordered table-hover table-striped" style="width:200px;position:absolute;left:0;top:0;z-index:10;">
+							<thead>
+								<tr>
+									<th style="text-align:center;"><div style="width:100px;">操作</div></th>
+							 		<th style="text-align:center;"><div style="width:100px;">${bazaarName }</div></th>
+							 	</tr>
+							</thead>
+						</table>
+						<div id="osLeft" style="height:auto;width:200px;position:absolute;left:0;top:0;z-index:4;background:#fff;">
+							<table id="treeTable" class="table table-bordered table-hover table-striped" style="word-break:keep-all;">
+								<thead>
+								 	<tr>
+								 		<th style="text-align:center;"><div style="width:100px;">操作</div></th>
+								 		<th style="text-align:center;"><div style="width:100px;">${bazaarName }</div></th>
+								 	</tr>
+								 </thead>
+								 <tbody>
+								  	<c:forEach items="${lists}" var="ArrangeBeautician">
+				                        <tr style="text-align: center;">
+			                        		<td>
+			                        			<div style="width: 100px;">
+				                        			<shiro:hasPermission name="train:arrange:ArrangeBeautician">
+				                        				<a href="#" onclick='top.openTab("${ctx }/train/arrange/ArrangeBeautician?officeId=${ArrangeBeautician.officeId }&officeName=${ArrangeBeautician.name}&searcTime=${fns:formatDateTime(arrangeShop.searcTime)}","市场美容师排班", false)' class="btn btn-success btn-xs" >美容师排班</a>
+				                        			</shiro:hasPermission>
+				                        			<shiro:hasPermission name="train:arrange:ArrangeSpecEquipment">
+				                        				<a href="#" onclick='top.openTab("${ctx }/train/arrange/ArrangeSpecEquipment?officeId=${ArrangeBeautician.officeId }&officeName=${ArrangeBeautician.name}&searcTime=${fns:formatDateTime(arrangeShop.searcTime)}","市场设备排班", false)' class="btn btn-success btn-xs" >设备排班</a>
+				                        			</shiro:hasPermission>
+			                        			</div>
 			                            	</td>
-			                            </c:forEach>
-			                        </tr>
-		                        </c:forEach>
-		                    </tbody>
-		                </table>
-	                </div>
-                </div>
+				                            <td><div style="width: 100px;">${ArrangeBeautician.name }</div></td>
+				                        </tr>
+			                        </c:forEach>
+								 </tbody>
+							</table>
+						</div>
+					</c:if>
+					<table id="treeTable" class="table table-bordered table-hover table-striped" style="word-break:keep-all;">
+						<thead style="position:absolute;top:0;z-index:2;">
+							<c:if test="${not empty calendarStr }">
+								${calendarStr }
+							</c:if>
+						</thead>
+						<tbody>
+							<c:forEach items="${lists}" var="ArrangeBeautician">
+								<tr style="text-align: center;">
+									<td>
+										<div style="width: 100px;">
+											<shiro:hasPermission name="train:arrange:ArrangeBeautician">
+												<a href="#" onclick='top.openTab("${ctx }/train/arrange/ArrangeBeautician?officeId=${ArrangeBeautician.officeId }&officeName=${ArrangeBeautician.name}&searcTime=${fns:formatDateTime(arrangeShop.searcTime)}","市场美容师排班", false)' class="btn btn-success btn-xs" >美容师排班</a>
+											</shiro:hasPermission>
+											<shiro:hasPermission name="train:arrange:ArrangeSpecEquipment">
+												<a href="#" onclick='top.openTab("${ctx }/train/arrange/ArrangeSpecEquipment?officeId=${ArrangeBeautician.officeId }&officeName=${ArrangeBeautician.name}&searcTime=${fns:formatDateTime(arrangeShop.searcTime)}","市场设备排班", false)' class="btn btn-success btn-xs" >设备排班</a>
+											</shiro:hasPermission>
+										</div>
+									</td>
+									<td><div style="width: 100px;">${ArrangeBeautician.name }</div></td>
+									<c:forEach items="${ArrangeBeautician.arrangeShops}" var="arrangeShops" varStatus="status" end="31">
+										<td>
+											<div style="width: 100px;">
+												<c:if test="${arrangeShops.flag == 1}">
+													<a href="#" onclick="show('${ArrangeBeautician.officeId }',${status.index+1 })">班</a>
+												</c:if>
+											</div>
+										</td>
+									</c:forEach>
+								</tr>
+							</c:forEach>
+						</tbody>
+					</table>
+				</div>
                 <script type="text/javascript">
-			        var os1 = new Optiscroll(document.getElementById('os1'), { maxTrackSize: 20, preventParentScroll: true });
+			      $(function(){
+						$('#os1').scroll(function(){
+			    		   var $this = $(this);
+			    		   console.log($this.scrollTop());
+			    		   $(this).find('thead').css({'top':''+$this.scrollTop()+'px'})
+			    		   $(this).find('#osLeft').css({'left':''+$this.scrollLeft()+'px'})
+			    		   $(this).find('.osTop').css({'left':''+$this.scrollLeft()+'px','top':''+$this.scrollTop()+'px'})
+			    	   })
+			    	   
+			       })
 			    </script>
-				<script type="text/javascript">
-				    var wr = new Optiscroll(document.getElementById('m-wrapper'), { forceScrollbars: true });
-				</script>
-                </div>
+				</div>
 			</div>
 		</div>
 	</div>

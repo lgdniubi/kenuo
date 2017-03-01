@@ -101,6 +101,7 @@ public class arrangeController extends BaseController{
 				}
 				model.addAttribute("lists", lists);
 				model.addAttribute("month",map.get("month"));
+				model.addAttribute("bazaarName", arrangeShop.getSearchOfficeName());
 			}else{
 				model.addAttribute("message", "请选择市场");
 			}
@@ -537,16 +538,16 @@ public class arrangeController extends BaseController{
 		}
 		Map<String, Integer> map = calendarDay(date);	//获取月份天数、月份、时间
 		StringBuffer str = new StringBuffer();
-		str.append("<tr>");
+		str.append("<tr class='freezeTr'>");
 		if ("shop".equals(string)){
-			str.append("<th style=\"text-align: center;\">操作</th>");
+			str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;\">操作</div></th>");
 		}
-		str.append("<th style=\"text-align: center;\">"+name+"</th>");
+		str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;\">"+name+"</div></th>");
 		for (int i = 1; i <= map.get("maxDay"); i++) {
 			if(i == map.get("day")){
-				str.append("<th style=\"text-align:center;background:red;\">"+map.get("month")+"/"+i+"</th>");
+				str.append("<th style=\"text-align:center;background:red;\"><div style=\"width: 100px;\">"+map.get("month")+"/"+i+"</div></th>");
 			}else {
-				str.append("<th style=\"text-align: center;\">"+map.get("month")+"/"+i+"</th>");
+				str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;\">"+map.get("month")+"/"+i+"<div></th>");
 			}
 		}
 		str.append("</tr>");

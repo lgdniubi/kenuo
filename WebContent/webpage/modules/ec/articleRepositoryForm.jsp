@@ -977,7 +977,7 @@
 					var data = $.parseJSON(str);
 					if(data.status == 200){
 						$("#delAuthor"+num).remove();
-						if($("input[type=radio][name=authorList]").length >= 8){
+						if($("input[type=radio][name=authorList]").length < 8){
 							$("#divAuthor").show();
 						}
 					}else{
