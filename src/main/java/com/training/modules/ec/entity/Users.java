@@ -57,6 +57,7 @@ public class Users extends TreeEntity<Users> {
 	private String layer;			//用户等级  用于分销
 	private int source;				//用户来源  用户分销
 	
+	private String noLogin;			//未登陆用户
 	public int getLevelValue() {
 		return levelValue;
 	}
@@ -290,6 +291,12 @@ public class Users extends TreeEntity<Users> {
 	}
 	public void setSource(int source) {
 		this.source = source;
+	}
+	public String getNoLogin() {
+		return noLogin;
+	}
+	public void setNoLogin(String noLogin) {
+		this.noLogin = noLogin;
 	}
 	@Override
 	public Users getParent() {
