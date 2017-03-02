@@ -45,4 +45,17 @@ public interface TrainLiveAuditDao extends TreeDao<TrainLiveAudit>{
 	 * @return
 	 */
 	public List<TrainLiveOrder> findOrderList(TrainLiveOrder trainLiveOrder);
+	
+	/**
+	 * 根据trainLiveSkuId查询Sku配置
+	 * @param trainLiveSkuId
+	 * @return
+	 */
+	public TrainLiveSku findByTrainLiveSkuId(int trainLiveSkuId);
+	
+	/**
+	 * 保存Sku配置
+	 * @param trainLiveSku
+	 */
+	public void saveSku(TrainLiveSku trainLiveSku);
 }

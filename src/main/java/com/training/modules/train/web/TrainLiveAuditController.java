@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
@@ -296,9 +297,54 @@ public class TrainLiveAuditController extends BaseController{
 	 */
 	@RequestMapping(value="liveOrderList")
     public String liveOrderList(TrainLiveOrder trainLiveOrder,Model model,HttpServletRequest request,HttpServletResponse response){
-    	Page<TrainLiveOrder> page = trainLiveAuditService.findOrderList(new Page<TrainLiveOrder>(request, response), trainLiveOrder);
-		model.addAttribute("page", page);
+    	try{
+    		Page<TrainLiveOrder> page = trainLiveAuditService.findOrderList(new Page<TrainLiveOrder>(request, response), trainLiveOrder);
+    		model.addAttribute("page", page);
+    	}catch(Exception e){
+    		BugLogUtils.saveBugLog(request, "查看直播订单列表失败!", e);
+			logger.error("查看直播订单列表失败：" + e.getMessage());
+    	}
     	return "modules/train/liveOrderList";
     }
     
+	/**
+	 * 修改sku配置
+	 * @param trainLiveSku
+	 * @param request
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value="editSku")
+	public String editSku(TrainLiveSku trainLiveSku,HttpServletRequest request,Model model,RedirectAttributes redirectAttributes){
+		try{
+			trainLiveSku = trainLiveAuditService.findByTrainLiveSkuId(trainLiveSku.getTrainLiveSkuId());
+			model.addAttribute("trainLiveSku",trainLiveSku);
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "跳转修改sku配置失败!", e);
+			logger.error("跳转修改sku配置失败：" + e.getMessage());
+		}
+		return "modules/train/editSku";
+	}
+	
+	/**
+	 * 保存SKU配置
+	 * @param trainLiveSku
+	 * @param request
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value="saveSku")
+	@ResponseBody
+	public String saveSku(TrainLiveSku trainLiveSku,HttpServletRequest request,Model model,RedirectAttributes redirectAttributes){
+		try{
+			trainLiveAuditService.saveSku(trainLiveSku);
+			return "success";
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "保存sku配置失败!", e);
+			logger.error("保存sku配置失败：" + e.getMessage());
+			return "error";
+		}
+	}
 }

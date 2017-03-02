@@ -250,4 +250,20 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 		return page;
 	}
 	
+	/**
+	 * 根据trainLiveSkuId查询Sku配置
+	 * @param trainLiveSkuId
+	 * @return
+	 */
+	public TrainLiveSku findByTrainLiveSkuId(int trainLiveSkuId){
+		return trainLiveAuditDao.findByTrainLiveSkuId(trainLiveSkuId);
+	}
+	
+	/**
+	 * 保存Sku配置
+	 * @param trainLiveSku
+	 */
+	public void saveSku(TrainLiveSku trainLiveSku){
+		trainLiveAuditDao.saveSku(trainLiveSku);
+	}
 }

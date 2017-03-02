@@ -180,4 +180,28 @@
 		</if>
 		ORDER BY lo.create_date DESC
 	</select>
+	
+	<!-- 根据trainLiveSkuId查询Sku配置 -->
+	<select id="findByTrainLiveSkuId" resultType="TrainLiveSku">
+		SELECT 
+			audit_id AS 'auditId',
+			user_id AS 'userId',
+			price,
+			num,
+			type,
+			create_date AS 'createDate',
+			update_by AS 'updateBy',
+			update_create AS 'updateCreate'
+		FROM trains.train_live_spec
+		WHERE id = #{trainLiveSkuId}
+	</select>
+	
+	<!-- 保存sku配置 -->
+	<update id="saveSku">
+		UPDATE trains.train_live_spec
+		SET 
+			price = #{price},
+			num = #{num}
+		WHERE id = #{trainLiveSkuId}
+	</update>
 </mapper>
