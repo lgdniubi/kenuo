@@ -1240,7 +1240,7 @@ public class OrdersController extends BaseController {
 				//验证是否为抢购活动订单
 				for (int i = 0; i < goodsList.size(); i++){
 					if(goodsList.get(i).getActiontype()==1){
-						redisClientTemplate.hincrBy(buying_limit_prefix+goodsList.get(i).getActionid(), orders.getUserid()+"_"+goodsList.get(i).getGoodsid(),-goodsList.get(i).getGoodsnum());
+						redisClientTemplate.hincrBy(buying_limit_prefix+goodsList.get(i).getActionid(), goodsList.get(i).getUserid()+"_"+goodsList.get(i).getGoodsid(),-goodsList.get(i).getGoodsnum());
 					}
 				}
 				addMessage(redirectAttributes, "取消订单'" + orders.getOrderid() + "'成功");
