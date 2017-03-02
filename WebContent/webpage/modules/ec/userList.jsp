@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/webpage/include/taglib.jsp"%>
+<%@ include file="/webpage/include/icheck.jsp"%>
 <html>
 <head>
 	<title>会员管理</title>
@@ -176,7 +177,7 @@
 			<!-- 查询条件 -->
 	    	<div class="ibox-content">
 				<div class="clearfix">
-					<form id="searchForm" modelAttribute="" action="${ctx}/ec/mtmyuser/list" method="post" class="navbar-form navbar-left searcharea">
+					<form id="searchForm" action="${ctx}/ec/mtmyuser/list" method="post" class="navbar-form navbar-left searcharea">
 						<!-- 翻页隐藏文本框 -->
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
@@ -199,6 +200,7 @@
 							<input id="startLastlogin" name="startLastlogin" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${users.startLastlogin }" pattern="yyyy-MM-dd"/>" placeholder="开始时间" readonly="readonly"/>
 							<label>--</label>
 							<input id="endLastlogin" name="endLastlogin" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${users.endLastlogin }" pattern="yyyy-MM-dd"/>" placeholder="结束时间" readonly="readonly"/>
+							&nbsp;&nbsp;<label><input type="checkbox" class="i-checks" id="noLogin" name="noLogin" value=1 ${(users.noLogin == 1)?'checked="checked"':''} >只查询未登陆用户</label>
 						</p>
 						 </div>	
 					</form>

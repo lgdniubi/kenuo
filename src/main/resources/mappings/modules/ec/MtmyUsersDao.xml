@@ -193,6 +193,9 @@
 					or u.province = #{district }
 					)
 			</if>
+			<if test="noLogin == 1">
+				AND u.last_login IS NULL
+			</if>
 			AND u.del_flag = #{DEL_FLAG_NORMAL}
 		ORDER BY u.reg_time DESC
 	</select>
