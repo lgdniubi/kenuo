@@ -34,8 +34,11 @@
 			<if test="apptStatus != null and apptStatus != ''">
 				AND r.appt_status = #{apptStatus }
 			</if>
-			<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
-				AND r.appt_date BETWEEN #{beginDate} AND #{endDate}
+			<if test="beginDate != null and beginDate != ''">
+				AND r.appt_date >= #{beginDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND r.appt_date <![CDATA[ <= ]]> #{endDate}
 			</if>
 			<if test="keyword != null and keyword != ''">
 				AND ( r.user_name LIKE 

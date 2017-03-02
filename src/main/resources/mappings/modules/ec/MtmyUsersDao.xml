@@ -174,11 +174,17 @@
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
 			</if>
-			<if test="startRegtime != null and startRegtime != '' and endRegtime != null and endRegtime != ''">
-				AND u.reg_time BETWEEN #{startRegtime} AND #{endRegtime}
+			<if test="startRegtime != null and startRegtime != ''">
+				AND DATE_FORMAT(u.reg_time,'%Y-%m-%d') >= DATE_FORMAT(#{startRegtime},'%Y-%m-%d')
 			</if>
-			<if test="startLastlogin != null and startLastlogin != '' and endLastlogin != null and endLastlogin != ''">
-				AND u.last_login BETWEEN #{startLastlogin} AND #{endLastlogin}
+			<if test="endRegtime != null and endRegtime != ''">
+				<![CDATA[AND DATE_FORMAT(u.reg_time,'%Y-%m-%d') <= DATE_FORMAT(#{endRegtime},'%Y-%m-%d')]]>
+			</if>
+			<if test="startLastlogin != null and startLastlogin != ''">
+				AND DATE_FORMAT(u.last_login,'%Y-%m-%d') >= DATE_FORMAT(#{startLastlogin},'%Y-%m-%d')
+			</if>
+			<if test="endLastlogin != null and endLastlogin != ''">
+				<![CDATA[AND DATE_FORMAT(u.last_login,'%Y-%m-%d') <= DATE_FORMAT(#{endLastlogin},'%Y-%m-%d')]]>
 			</if>
 			<if test="district != null and district != ''">
 				AND (

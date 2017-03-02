@@ -9,8 +9,11 @@
 		FROM mtmydb.user_report as u
 		WHERE 
 			1=1
-			<if test="begtime != null and begtime != '' and endtime != null and endtime != ''">
-				AND u.addtime BETWEEN #{begtime} AND #{endtime}
+			<if test="begtime != null and begtime != ''">
+				AND DATE_FORMAT(u.addtime,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
+			</if>
+			<if test="endtime != null and endtime != ''">
+				<![CDATA[AND DATE_FORMAT(u.addtime,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
 			</if>
 		ORDER BY u.addtime ASC
 	</select>
@@ -55,9 +58,13 @@
 			mtmydb.category_order_report o
 		WHERE
 			g.category_id = o.category_id
-			<if test="begtime != null and begtime != '' and endtime != null and endtime != ''">
-				AND o.addtime BETWEEN #{begtime} AND #{endtime}
+			<if test="begtime != null and begtime != ''">
+				AND DATE_FORMAT(o.addtime,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
 			</if>
+			<if test="endtime != null and endtime != ''">
+				<![CDATA[AND DATE_FORMAT(o.addtime,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+			</if>
+			
 			<if test="parentId != null and parentId != ''">
 				AND g.parent_id = #{parentId }
 			</if>

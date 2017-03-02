@@ -10,9 +10,11 @@
 			FROM  TRAIN_LESSON_ASKS
 			AS A
 			WHERE A.STATUS=0
-			<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
-			AND
-			a.createtime BETWEEN #{beginDate} AND #{endDate}
+			<if test="beginDate != null and beginDate != ''">
+				AND DATE_FORMAT(a.createtime,'%Y-%m-%d') >= DATE_FORMAT(#{beginDate},'%Y-%m-%d')
+			</if>
+			<if test="endDate != null and endDate != ''">
+				<![CDATA[AND DATE_FORMAT(a.createtime,'%Y-%m-%d') <= DATE_FORMAT(#{endDate},'%Y-%m-%d')]]>
 			</if>
 			<if test="title != null and title != ''">
 			AND a.title LIKE 

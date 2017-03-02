@@ -5,7 +5,7 @@
 		a.id AS articleId,
 		a.category_id AS categoryId,
 		a.author_name AS authorName,
-		a.author_photo AS authorPhoto,
+		a.author_photo AS authorPhoto,			
 		a.title,
 		a.short_title AS shortTitle,
 		a.keywords,
@@ -36,8 +36,11 @@
 							<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
 							<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
 				</if>
-				<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
-					AND a.create_date BETWEEN #{beginDate} AND #{endDate}
+				<if test="beginDate != null and beginDate != ''">
+					AND DATE_FORMAT(a.create_date,'%Y-%m-%d') >= DATE_FORMAT(#{beginDate},'%Y-%m-%d')
+				</if>
+				<if test="endDate != null and endDate != ''">
+					<![CDATA[AND DATE_FORMAT(a.create_date,'%Y-%m-%d') <= DATE_FORMAT(#{endDate},'%Y-%m-%d')]]>
 				</if>
 				<if test="articleType != null and articleType != ''">
 					AND a.type = #{articleType}

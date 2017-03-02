@@ -53,8 +53,11 @@
 						<if test="dbName == 'mysql'">CONCAT('%', #{tag }, '%')</if>
 					)
 			</if>
-			<if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-				AND s.create_date BETWEEN #{startTime} AND #{endTime}
+			<if test="startTime != null and startTime != ''">
+				AND DATE_FORMAT(s.create_date,'%Y-%m-%d') >= DATE_FORMAT(#{startTime},'%Y-%m-%d')
+			</if>
+			<if test="endTime != null and endTime != ''">
+				<![CDATA[AND DATE_FORMAT(s.create_date,'%Y-%m-%d') <= DATE_FORMAT(#{endTime},'%Y-%m-%d')]]>
 			</if>
 		ORDER BY s.create_date DESC
 	</select>
@@ -310,8 +313,11 @@
 						<if test="dbName == 'mysql'">CONCAT('%', #{newusers.nickname }, '%')</if>
 					)
 			</if>
-			<if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-				AND r.create_date BETWEEN #{startTime} AND #{endTime}
+			<if test="startTime != null and startTime != ''">
+				AND DATE_FORMAT(r.create_date,'%Y-%m-%d') >= DATE_FORMAT(#{startTime},'%Y-%m-%d')
+			</if>
+			<if test="endTime != null and endTime != ''">
+				<![CDATA[AND DATE_FORMAT(r.create_date,'%Y-%m-%d') <= DATE_FORMAT(#{endTime},'%Y-%m-%d')]]>
 			</if>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
