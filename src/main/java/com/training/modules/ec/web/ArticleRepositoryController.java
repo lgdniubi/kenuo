@@ -569,7 +569,7 @@ public class ArticleRepositoryController extends BaseController {
             logger.info("#######照片原始宽度srcWidth= " + srcWidth + "_____原始高度srcHeight= " + srcHeight);
 			double scale = 1;
             if(srcWidth >= 350 && srcHeight >= 350){
-            	if(srcWidth > srcHeight){
+            	if(srcWidth >= srcHeight){
             		scale = (double)srcWidth/(double)350;
             	}else if(srcWidth < srcHeight){
             		scale = (double)srcHeight/(double)350;

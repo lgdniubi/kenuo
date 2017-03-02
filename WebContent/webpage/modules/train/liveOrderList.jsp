@@ -75,27 +75,28 @@
 							<label>订单ID：</label>
 							<form:input path="trainLiveOrderId" htmlEscape="false" maxlength="50" class=" form-control input-sm"/>&nbsp;&nbsp;&nbsp;&nbsp;
 							<label>直播申请ID：</label>
-							<form:input path="auditId" htmlEscape="false" maxlength="50" class=" form-control input-sm"/>&nbsp;&nbsp;&nbsp;&nbsp;
-							<label>添加时间：</label>
-							<input id="beginDate" name="beginDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${trainLiveOrder.beginDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" placeholder="开始时间" readonly="readonly"/>--
-							<input id="endDate" name="endDate" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${trainLiveOrder.endDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" placeholder="结束时间" readonly="readonly"/>
-							<p></p>
-							<p>
+							<form:input path="auditId" htmlEscape="false" maxlength="50" class=" form-control input-sm" onkeyup="this.value=this.value.replace(/\D/g,'')" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';"/>&nbsp;&nbsp;&nbsp;&nbsp;
 							<label>类型：</label>
 							<form:select path="type"  class="form-control" style="width:185px;">
 								<form:option value="0">全部</form:option>
 								<form:option value="1">直播</form:option>
 								<form:option value="2">回放</form:option>
 							</form:select>
-							<label>支付状态：</label>
-							<form:select path="orderStatus"  class="form-control" style="width:185px;">
-								<form:option value="0">全部</form:option>
-								<form:option value="1">取消订单</form:option>
-								<form:option value="2">待支付</form:option>
-								<form:option value="3">已付款</form:option>
-								<form:option value="4">已退款</form:option>
-							</form:select>
+							<p></p>
+							<p>
+								<label>支付状态：</label>
+								<form:select path="orderStatus"  class="form-control" style="width:185px;">
+									<form:option value="0">全部</form:option>
+									<form:option value="1">取消订单</form:option>
+									<form:option value="2">待支付</form:option>
+									<form:option value="3">已付款</form:option>
+									<form:option value="4">已退款</form:option>
+								</form:select>
+								<label>添加时间：</label>
+								<input id="beginDate" name="beginDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${trainLiveOrder.beginDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" placeholder="开始时间" readonly="readonly"/>--
+								<input id="endDate" name="endDate" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${trainLiveOrder.endDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" placeholder="结束时间" readonly="readonly"/>
 							</p>
+							
 						</div>
 					</form:form>
 					<div class="pull-right">
