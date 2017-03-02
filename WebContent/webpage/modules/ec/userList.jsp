@@ -200,7 +200,7 @@
 							<input id="startLastlogin" name="startLastlogin" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${users.startLastlogin }" pattern="yyyy-MM-dd"/>" placeholder="开始时间" readonly="readonly"/>
 							<label>--</label>
 							<input id="endLastlogin" name="endLastlogin" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${users.endLastlogin }" pattern="yyyy-MM-dd"/>" placeholder="结束时间" readonly="readonly"/>
-							&nbsp;&nbsp;<label><input type="checkbox" class="i-checks" id="noLogin" name="noLogin" value=1 ${(users.noLogin == 1)?'checked="checked"':''} >只查询未登陆用户</label>
+							&nbsp;&nbsp;<label><input type="checkbox" class="i-checks" id="noLogin" name="noLogin" value='1' ${(users.noLogin eq '1')?'checked="checked"':''} >只查询未登陆用户</label>
 						</p>
 						 </div>	
 					</form>
