@@ -157,5 +157,27 @@
 				ORDER BY ${page.orderBy}
 			</when>
 		</choose>
+		<if test="userName != null and userName != ''">
+			AND u.name = #{userName}
+		</if>
+		<if test="trainLiveOrderId != null and trainLiveOrderId != ''">
+			AND lo.order_id =#{trainLiveOrderId}
+		</if>
+		<if test="auditId != 0">
+			AND lo.audit_id = #{auditId}
+		</if>
+		<if test="beginDate != null and beginDate != ''">
+			AND lo.create_date >= #{beginDate}
+		</if>
+		<if test="endDate != null and endDate != ''">
+			AND lo.create_date <![CDATA[ <= ]]> #{endDate}
+		</if>
+		<if test="type != 0">
+			AND lo.type = #{type} 
+		</if>
+		<if test="orderStatus != 0">
+			AND lo.order_status = #{orderStatus}
+		</if>
+		ORDER BY lo.create_date DESC
 	</select>
 </mapper>

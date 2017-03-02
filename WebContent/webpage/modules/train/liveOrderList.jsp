@@ -14,14 +14,47 @@
 		return false;
 	}
 	
+	$(document).ready(function() {
+	    var start = {
+		    elem: '#beginDate',
+		    format: 'YYYY-MM-DD hh:mm:ss',
+		    event: 'focus',
+		    max: $("#endDate").val(),   //最大日期
+		    istime: true,				//是否显示时间
+		    isclear: false,				//是否显示清除
+		    istoday: false,				//是否显示今天
+		    issure: true,				//是否显示确定
+		    festival: true,				//是否显示节日
+		    choose: function(datas){
+		         end.min = datas; 		//开始日选好后，重置结束日的最小日期
+		         end.start = datas 		//将结束日的初始值设定为开始日
+		    }
+		};
+		var end = {
+		    elem: '#endDate',
+		    format: 'YYYY-MM-DD hh:mm:ss',
+		    event: 'focus',
+		    min: $("#beginDate").val(),
+		    istime: true,
+		    isclear: false,
+		    istoday: false,
+		    issure: true,
+		    festival: true,
+		    choose: function(datas){
+		        start.max = datas; //结束日选好后，重置开始日的最大日期
+		    }
+		};
+		laydate(start);
+		laydate(end);
+    })
 	
+    function newReset(){
+		window.location = "${ctx}/train/live/liveOrderList";
+	}
 	
 	
 </script>
 </head>
-
-
-
 
 <body class="gray-bg">
 	<div class="wrapper wrapper-content">
@@ -33,10 +66,46 @@
 			<!-- 查询条件 -->
 			<div class="ibox-content">
 				<div class="clearfix">
-					<form:form id="searchForm" modelAttribute="TrainLiveOrder" action="${ctx}/train/live/liveOrderList" method="post" class="form-inline">
+					<form:form id="searchForm" modelAttribute="trainLiveOrder" action="${ctx}/train/live/liveOrderList" method="post" class="form-inline">
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+						<div class="form-group">
+							<label>用户名：</label>
+							<form:input path="userName" htmlEscape="false" maxlength="50" class=" form-control input-sm"/>&nbsp;&nbsp;&nbsp;&nbsp;
+							<label>订单ID：</label>
+							<form:input path="trainLiveOrderId" htmlEscape="false" maxlength="50" class=" form-control input-sm"/>&nbsp;&nbsp;&nbsp;&nbsp;
+							<label>直播申请ID：</label>
+							<form:input path="auditId" htmlEscape="false" maxlength="50" class=" form-control input-sm"/>&nbsp;&nbsp;&nbsp;&nbsp;
+							<label>添加时间：</label>
+							<input id="beginDate" name="beginDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${trainLiveOrder.beginDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" placeholder="开始时间" readonly="readonly"/>--
+							<input id="endDate" name="endDate" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${trainLiveOrder.endDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" placeholder="结束时间" readonly="readonly"/>
+							<p></p>
+							<p>
+							<label>类型：</label>
+							<form:select path="type"  class="form-control" style="width:185px;">
+								<form:option value="0">全部</form:option>
+								<form:option value="1">直播</form:option>
+								<form:option value="2">回放</form:option>
+							</form:select>
+							<label>支付状态：</label>
+							<form:select path="orderStatus"  class="form-control" style="width:185px;">
+								<form:option value="0">全部</form:option>
+								<form:option value="1">取消订单</form:option>
+								<form:option value="2">待支付</form:option>
+								<form:option value="3">已付款</form:option>
+								<form:option value="4">已退款</form:option>
+							</form:select>
+							</p>
+						</div>
 					</form:form>
+					<div class="pull-right">
+						<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()">
+							<i class="fa fa-search"></i> 查询
+						</button>
+						<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="newReset()">
+							<i class="fa fa-refresh"></i> 重置
+						</button>
+					</div>
 				</div>
 				<p></p>
 				<table id="contentTable"
