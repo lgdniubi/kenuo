@@ -116,6 +116,14 @@ public class LiveAudit extends CommonService{
 							yueNum=yueNum+yuUser.size();
 							yuUser.clear(); 
 						}
+					//线上收费直播价格为0的预约提醒
+					}else if(liveAudit.getIsPay()==3 && trainLiveAuditService.findSkuPrice(liveAudit.getId()) == 0){
+						yuUser=trainLiveAuditService.selectWantLiveUser(liveAudit.getId());
+						if(yuUser.size()>0){
+							trainLiveAuditService.pushMsg("10",yuUser,new Date());
+							yueNum=yueNum+yuUser.size();
+							yuUser.clear(); 
+						}
 					}
 				}
 			}

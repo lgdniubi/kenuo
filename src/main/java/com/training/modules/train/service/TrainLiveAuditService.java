@@ -266,4 +266,13 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 	public void saveSku(TrainLiveSku trainLiveSku){
 		trainLiveAuditDao.saveSku(trainLiveSku);
 	}
+	
+	/**
+	 * 根据直播id查找Sku配置价格
+	 * @param id
+	 * @return
+	 */
+	public double findSkuPrice(String id){
+		return trainLiveAuditDao.findSkuPrice(id);
+	}
 }

@@ -204,4 +204,12 @@
 			num = #{num}
 		WHERE id = #{trainLiveSkuId}
 	</update>
+	
+	<!-- 根据直播id查找Sku配置价格 -->
+	<select id="findSkuPrice">
+		SELECT price
+		FROM trains.train_live_spec
+		WHERE audit_id = #{id}
+		AND type = 1
+	</select>
 </mapper>

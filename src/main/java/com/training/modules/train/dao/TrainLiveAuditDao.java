@@ -58,4 +58,11 @@ public interface TrainLiveAuditDao extends TreeDao<TrainLiveAudit>{
 	 * @param trainLiveSku
 	 */
 	public void saveSku(TrainLiveSku trainLiveSku);
+	
+	/**
+	 * 根据直播id查找Sku配置价格
+	 * @param id
+	 * @return
+	 */
+	public double findSkuPrice(String id);
 }
