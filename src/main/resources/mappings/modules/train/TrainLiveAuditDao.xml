@@ -206,7 +206,7 @@
 	</update>
 	
 	<!-- 根据直播id查找Sku配置价格 -->
-	<select id="findSkuPrice">
+	<select id="findSkuPrice" resultType="Double">
 		SELECT price
 		FROM trains.train_live_spec
 		WHERE audit_id = #{id}

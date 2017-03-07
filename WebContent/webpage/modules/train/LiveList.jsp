@@ -92,7 +92,10 @@
 										免费
 									</c:if>
 									<c:if test="${live.isPay==2}">
-										收费
+										线下收费
+									</c:if>
+									<c:if test="${live.isPay==3}">
+										线上收费
 									</c:if>
 								</td>
 								<td><fmt:formatDate value="${live.bengTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>

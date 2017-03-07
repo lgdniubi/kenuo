@@ -94,7 +94,10 @@
 										免费
 									</c:if>
 									<c:if test="${playback.isPay==2}">
-										收费
+										线下收费
+									</c:if>
+									<c:if test="${playback.isPay==3}">
+										线上收费
 									</c:if>
 								</td>
 								<td><fmt:formatDate value="${playback.bengtime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
