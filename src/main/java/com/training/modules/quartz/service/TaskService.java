@@ -53,6 +53,7 @@ public class TaskService {
 	 * 容器初始化 bean 注解
 	 * @PostConstruct
 	*/
+	
 	@PostConstruct
 	public void init() throws Exception {
 		
@@ -65,7 +66,7 @@ public class TaskService {
 		startDate = new Date();
 		taskLog.setJobName("init");
 		taskLog.setStartDate(startDate);
-		
+		/*
 		try {
 			//定时器加载时间-进行redisCaChe缓存
 			new RedisCaCheLoad().load();
@@ -97,7 +98,7 @@ public class TaskService {
 			taskLog.setRunTime(runTime);
 			taskLog.setRemarks("后台重启，重新加载");
 			iTaskDao.insertTaskLog(taskLog);
-		}
+		}*/
 	}
 	
 	/**

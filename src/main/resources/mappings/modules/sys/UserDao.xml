@@ -199,6 +199,9 @@
 		<if test="parentDel == 0 or parentDel == 1">
 			AND a.del_flag = #{parentDel }
 		</if>
+		<if test="company != null and company.id != null and company.id != ''">
+			AND a.company_id = #{company.id} 
+		</if>
 		<if test="office != null and office.id != null and office.id != ''">
 			AND (o.id = #{office.id} OR o.parent_ids LIKE CONCAT('%,', #{office.id}, ',%'))
 		</if>
