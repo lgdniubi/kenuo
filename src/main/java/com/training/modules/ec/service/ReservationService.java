@@ -58,14 +58,16 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 		String cityId = "";
 		String districtId = "";
 		Area area = areaDao.get(areaId);
-		if("1".equals(area.getType())){
-			nationName = area.getName();
-		}else if("2".equals(area.getType())){
-			provinceId = area.getId();
-		}else if("3".equals(area.getType())){
-			cityId = area.getId();
-		}else if("4".equals(area.getType())){
-			districtId = area.getId();
+		if(area != null){
+			if("1".equals(area.getType())){
+				nationName = area.getName();
+			}else if("2".equals(area.getType())){
+				provinceId = area.getId();
+			}else if("3".equals(area.getType())){
+				cityId = area.getId();
+			}else if("4".equals(area.getType())){
+				districtId = area.getId();
+			}
 		}
 		return dao.loadOffice(goodsId,nationName,provinceId,cityId,districtId);
 	}
