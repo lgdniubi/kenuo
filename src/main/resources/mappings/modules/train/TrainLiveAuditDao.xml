@@ -158,7 +158,7 @@
 			</when>
 		</choose>
 		<if test="userName != null and userName != ''">
-			AND u.name = #{userName}
+			AND u.name like CONCAT('%', #{userName}, '%') 
 		</if>
 		<if test="trainLiveOrderId != null and trainLiveOrderId != ''">
 			AND lo.order_id =#{trainLiveOrderId}
