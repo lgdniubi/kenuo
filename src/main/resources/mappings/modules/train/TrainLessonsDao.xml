@@ -144,7 +144,7 @@
 			u.name AS "userName",
 			u.mobile AS "mobile",
 			(SELECT label FROM sys_dict WHERE value=u.user_type AND type = 'sys_user_type') AS 'position',
-			u.create_date AS "createDate",
+			DATE_FORMAT(u.create_date,"%Y-%m-%d %T") AS "createTime",
 			(
 			CASE
 			 WHEN LENGTH(o.parent_ids) = 111 THEN o.name
@@ -179,7 +179,7 @@
 			u.name AS "userName",
 			u.mobile AS "mobile",
 			(SELECT label FROM sys_dict WHERE value=u.user_type AND type = 'sys_user_type') AS 'position',
-			u.create_date AS "createDate",
+			DATE_FORMAT(u.create_date,"%Y-%m-%d %T") AS "createTime",
 			(
 			CASE
 			 WHEN LENGTH(o.parent_ids) = 111 THEN o.name
@@ -202,7 +202,7 @@
 			l.lesson_id AS "lessonsId",
 			l.name  AS "lessonsName",
 			c.name  AS "categorysName",
-			f.createtime AS "collectionDate"
+			DATE_FORMAT(f.createtime,"%Y-%m-%d %T") AS "collectionDate"
 		FROM train_lesson_favorites f
 		LEFT JOIN train_lessons l ON f.lesson_id = l.lesson_id
 		LEFT JOIN train_categorys c ON l.category_id = c.category_id
@@ -217,7 +217,7 @@
 			u.name AS "userName",
 			u.mobile AS "mobile",
 			(SELECT label FROM sys_dict WHERE value=u.user_type AND type = 'sys_user_type') AS 'position',
-			u.create_date,
+			DATE_FORMAT(u.create_date,"%Y-%m-%d %T") AS "createTime",
 			(
 			CASE
 			 WHEN LENGTH(o.parent_ids) = 111 THEN o.name
@@ -241,7 +241,7 @@
 			l.name AS lessonsName,
 			c.name AS categorysName,
 			co.content,
-			co.createtime,
+			DATE_FORMAT(co.createtime,"%Y-%m-%d %T") AS "commentTime",
 			co.star
 		FROM train_lesson_comments co
 		LEFT JOIN train_lessons l ON co.lesson_id = l.lesson_id
@@ -257,7 +257,7 @@
 			u.name AS "userName",
 			u.mobile AS "mobile",
 			(SELECT label FROM sys_dict WHERE value=u.user_type AND type = 'sys_user_type') AS 'position',
-			u.create_date,
+			DATE_FORMAT(u.create_date,"%Y-%m-%d %T") AS "createTime",
 			(
 			CASE
 			 WHEN LENGTH(o.parent_ids) = 111 THEN o.name
