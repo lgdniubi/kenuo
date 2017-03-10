@@ -1,8 +1,12 @@
 package com.training.modules.train.web;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
@@ -80,17 +85,24 @@ public class TrainLivePlayBackController extends BaseController{
 	 * @param trainLivePlayback
 	 * @return
 	 */
+	@RequiresPermissions(value="train:playback:edit")
 	@RequestMapping(value = "pIsShow")
-	public String pIsShow(HttpServletRequest request,TrainLivePlayback trainLivePlayback) {
+	@ResponseBody
+	public Map<String, String> pIsShow(HttpServletRequest request,TrainLivePlayback trainLivePlayback) {
+		
+		Map<String, String> jsonMap = new HashMap<String, String>();
 		try {
+			String isyesno = request.getParameter("isShow");
 			trainLivePlaybackService.updateIsShow(trainLivePlayback);
+			jsonMap.put("STATUS", "OK");
+			jsonMap.put("ISYESNO", isyesno);
 		} catch (Exception e) {
-			// TODO: handle exception
 			BugLogUtils.saveBugLog(request, "回看查看修改页面", e);
 			logger.error("回看查看修改页面：" + e.getMessage());
+			jsonMap.put("STATUS", "ERROR");
+			jsonMap.put("MESSAGE", "修改失败,出现异常");
 		}
-
-		return "redirect:" + adminPath + "/train/playback/list?repage";
+		return jsonMap;
 	}
     
 }
