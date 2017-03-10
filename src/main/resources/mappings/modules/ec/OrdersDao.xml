@@ -248,6 +248,7 @@
 			a.channel_flag as "strChannel",
 			c.order_amount as "strOrderAmount",
 			c.total_amount as "strTotalAmount",
+			a.total_amount as "orderTotalAmount",
 			a.order_status as "status",
 			a.shipping_type as "shipType",
 			a.address,
@@ -272,7 +273,8 @@
 			a.user_note AS userNote,
 		    a.admin_note AS adminNote,
 		    a.is_real AS orderIsReal,
-		    a.add_time AS strAddTime
+		    a.add_time AS strAddTime,
+		    a.shipping_price as newShippingPrice
 		FROM
 			mtmydb.mtmy_orders a
 			LEFT JOIN mtmydb.mtmy_payment d ON a.pay_code=d.pay_code

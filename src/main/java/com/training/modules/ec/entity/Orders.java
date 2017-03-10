@@ -109,9 +109,11 @@ public class Orders extends TreeEntity<Orders> {
 	private String strGoodsNum;			//商品数量
 	private String strGoodsPrice;		//商品价格
 	private String strOrderAmount;		//订单价格
-	private String strTotalAmount;		//实付金额
+	private String strTotalAmount;		//商品实付金额
+	private String orderTotalAmount;    //订单实付金额
 	private String goodsNo;				//货号
 	private String barCode;				//商品条形码
+	private String newShippingPrice;       //邮费
 	
 	private double singleNormPrice;		//单次标价
 	private double singleRealityPrice;	//实际服务单次价
@@ -191,8 +193,7 @@ public class Orders extends TreeEntity<Orders> {
 		}
 		
 	}
-	@JsonIgnore
-	@ExcelField(title="订单类型", align=2, sort=4)
+	
 	public String getStrReal() {
 		return strReal;
 	}
@@ -209,7 +210,7 @@ public class Orders extends TreeEntity<Orders> {
 	private String adminNote;           //备注
 	
 	@JsonIgnore
-	@ExcelField(title="商品货号", align=2, sort=73)
+	@ExcelField(title="商品货号", align=2, sort=74)
 	public String getGoodsNo() {
 		return goodsNo;
 	}
@@ -218,7 +219,7 @@ public class Orders extends TreeEntity<Orders> {
 		this.goodsNo = goodsNo;
 	}
 	@JsonIgnore
-	@ExcelField(title="商品条形码", align=2, sort=72)
+	@ExcelField(title="商品条形码", align=2, sort=73)
 	public String getBarCode() {
 		return barCode;
 	}
@@ -228,7 +229,7 @@ public class Orders extends TreeEntity<Orders> {
 	}
 
 	@JsonIgnore
-	@ExcelField(title="实付金额", align=2, sort=71)
+	@ExcelField(title="商品实付金额", align=2, sort=70)
 	public String getStrTotalAmount() {
 		return strTotalAmount;
 	}
@@ -536,7 +537,7 @@ public class Orders extends TreeEntity<Orders> {
 	}
 
 	@JsonIgnore
-	@ExcelField(title="订单区分", align=2, sort=61)
+	@ExcelField(title="订单区分", align=2, sort=4)
 	public String getOrderIsReal() {
 		return orderIsReal;
 	}
@@ -1049,6 +1050,7 @@ public class Orders extends TreeEntity<Orders> {
 		this.goodsprice = goodsprice;
 	}
 
+	
 	public double getShippingprice() {
 		return shippingprice;
 	}
@@ -1091,7 +1093,7 @@ public class Orders extends TreeEntity<Orders> {
 
 
 	@JsonIgnore
-	@ExcelField(title="应付款金", align=2, sort=70)
+	@ExcelField(title="应付款金额", align=2, sort=69)
 	public String getStrOrderAmount() {
 		return strOrderAmount;
 	}
@@ -1421,5 +1423,25 @@ public class Orders extends TreeEntity<Orders> {
 	public void setStrAddTime(String strAddTime) {
 		this.strAddTime = strAddTime;
 	}
+	@JsonIgnore
+	@ExcelField(title="订单实付金额", type=1, align=2, sort=71)
+	public String getOrderTotalAmount() {
+		return orderTotalAmount;
+	}
+	public void setOrderTotalAmount(String orderTotalAmount) {
+		this.orderTotalAmount = orderTotalAmount;
+	}
+	
+	@JsonIgnore
+	@ExcelField(title="邮费", align=2, sort=72)
+	public String getNewShippingPrice() {
+		return newShippingPrice;
+	}
+	public void setNewShippingPrice(String newShippingPrice) {
+		this.newShippingPrice = newShippingPrice;
+	}
+	
+	
+	
 	
 }
