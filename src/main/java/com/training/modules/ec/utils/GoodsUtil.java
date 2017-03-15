@@ -55,6 +55,7 @@ public class GoodsUtil {
 					} else if (i == list.size() - 1) {
 												
 						String specgroup = "";
+						String specNameList = "";
 						String stvalue = (String) st.substring(0, st.length()-1);
 						
 						GoodsSpecItem gsi = new GoodsSpecItem();
@@ -73,10 +74,10 @@ public class GoodsUtil {
 							gsi = specItemsList.get(j);
 							tablecontent.append("<td>"+gsi.getItem()+"</td>");
 							specgroup = specgroup +"+"+ gsi.getItem();
+							specNameList = specNameList + gsi.getSpecName() + "_";
 						}
-						
 						specgroup = specgroup.substring(specgroup.indexOf("+")+1, specgroup.length());
-						
+						specNameList = (String) specNameList.substring(0, specNameList.length()-1);
 						GoodsSpecPrice gsp = checkObject(stvalue,gspList);
 						logger.debug("#####[gsp]:"+ gsp);
 						
@@ -90,7 +91,7 @@ public class GoodsUtil {
 							tablecontent.append("<td><input style='width: 100%;' name=\"item["+stvalue+"][goods_weight]\" value=\""+gsp.getGoodsWeight()+"\" onkeyup=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" onpaste=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" onfocus=\"if(value == '0')value=''\" onblur=\"if(this.value == '')this.value='0';\"/>");
 							tablecontent.append("<td><input style='width: 100%;' name=\"item["+stvalue+"][service_times]\" value=\""+gsp.getServiceTimes()+"\" onkeyup=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" maxlength=\"3\" onpaste=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" onfocus=\"if(value == '0')value=''\" onblur=\"if(this.value == '')this.value='0';\"/>");
 							tablecontent.append("<td><input style='width: 100%;' name=\"item["+stvalue+"][expiring_date]\" value=\""+gsp.getExpiringDate()+"\" onkeyup=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" maxlength=\"2\" onpaste=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" onfocus=\"if(value == '0')value=''\" onblur=\"if(this.value == '')this.value='0';\"/></td>");
-							tablecontent.append("<input type=\"hidden\" name=\"item["+stvalue+"][key_name]\" value=\""+specgroup+"\" /></td>");
+							tablecontent.append("<input type=\"hidden\" name=\"item["+stvalue+"][key_name]\" value=\""+specgroup+"\" /><input type=\"hidden\" name=\"item["+stvalue+"][spec_name]\" value=\""+specNameList+"\" /></td>");
 							tablecontent.append("<input name=\"item["+stvalue+"][store_count]\" type=\"hidden\" value=\""+gsp.getStoreCount()+"\" onkeyup=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" onpaste=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" onfocus=\"if(value == '0')value=''\" onblur=\"if(this.value == '')this.value='0';\"/>");
 						}else{
 							tablecontent.append("<td><input style='width: 100%;' name=\"item["+stvalue+"][price]\" value=\"0\" onkeyup=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" onpaste=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" onfocus=\"if(value == '0')value=''\" onblur=\"if(this.value == '')this.value='0';\"/></td>");
@@ -102,7 +103,7 @@ public class GoodsUtil {
 							tablecontent.append("<td><input style='width: 100%;' name=\"item["+stvalue+"][goods_weight]\"  value=\"0\" onkeyup=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" onpaste=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" onfocus=\"if(value == '0')value=''\" onblur=\"if(this.value == '')this.value='0';\"/>");
 							tablecontent.append("<td><input style='width: 100%;' name=\"item["+stvalue+"][service_times]\" value=\"0\" onkeyup=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" maxlength=\"3\" onpaste=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" onfocus=\"if(value == '0')value=''\" onblur=\"if(this.value == '')this.value='0';\"/>");
 							tablecontent.append("<td><input style='width: 100%;' name=\"item["+stvalue+"][expiring_date]\" value=\"0\" onkeyup=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" maxlength=\"2\" onpaste=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" onfocus=\"if(value == '0')value=''\" onblur=\"if(this.value == '')this.value='0';\"/></td>");
-							tablecontent.append("<input type=\"hidden\" name=\"item["+stvalue+"][key_name]\" value=\""+specgroup+"\" /></td>");
+							tablecontent.append("<input type=\"hidden\" name=\"item["+stvalue+"][key_name]\" value=\""+specgroup+"\" /><input type=\"hidden\" name=\"item["+stvalue+"][spec_name]\" value=\""+specNameList+"\" /></td>");
 							tablecontent.append("<input name=\"item["+stvalue+"][store_count]\" type=\"hidden\" value=\"0\" onkeyup=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" onpaste=\"this.value=this.value.replace(/[^\\d.]/g,&quot;&quot;)\" onfocus=\"if(value == '0')value=''\" onblur=\"if(this.value == '')this.value='0';\"/>");
 						}
 						tablecontent.append("</tr>");//结尾

@@ -399,6 +399,7 @@
 		INSERT INTO mtmydb.mtmy_spec_goods_price
             (goods_id,
              spec_key,
+             spec_key_name,
              spec_key_value,
              price,
              market_price,
@@ -412,6 +413,7 @@
 		<foreach collection="goodsSpecPricesList" item="goodsSpecPrice" separator=" union all ">
 			SELECT  #{goodsSpecPrice.goodsId}, 
 					#{goodsSpecPrice.specKey}, 
+					#{goodsSpecPrice.specKeyName},
 					#{goodsSpecPrice.specKeyValue}, 
 					#{goodsSpecPrice.price}, 
 					#{goodsSpecPrice.marketPrice}, 

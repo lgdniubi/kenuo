@@ -16,16 +16,19 @@
 	<!-- 根据拼接好的itemid，查询 -->
 	<select id="findSpecItems" resultType="GoodsSpecItem">
 		SELECT 
-		  spec_item_id AS 'specItemId',
-		  spec_id AS 'specId',
-		  item 
+		  t.spec_item_id AS 'specItemId',
+		  t.spec_id AS 'specId',
+		  s.name AS 'specName',
+		  t.item 
 		FROM
 		  mtmydb.mtmy_spec_item t 
+		  LEFT JOIN mtmydb.mtmy_spec s 
+		    ON s.spec_id = t.spec_id 
 		  WHERE 
 		  <foreach collection="specItemIdList" item="specItemId" open="" close="" separator=" OR ">
-		   	spec_item_id = #{specItemId}
+		   	t.spec_item_id = #{specItemId}
 		  </foreach>
-		ORDER BY spec_id ASC
+		ORDER BY t.spec_id ASC
 	</select>
 	
 	<!-- 查询详细信息 -->
