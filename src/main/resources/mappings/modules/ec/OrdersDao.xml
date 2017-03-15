@@ -180,7 +180,7 @@
 		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=m.goods_id
 		LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
 		${sqlMap.dsf} and a.parent_id=0
-		 AND a.del_flag = 0
+		 <!-- AND a.del_flag = 0  用户删除订单后 后台无法查看该订单  -->
 		<if test="username != null and username!=''">
 			AND u.nickname like
 			<if test="dbName == 'oracle'">'%'||#{username} ||'%'</if>
