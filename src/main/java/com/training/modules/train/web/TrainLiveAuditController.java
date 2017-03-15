@@ -29,6 +29,7 @@ import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.TrainLiveAudit;
 import com.training.modules.train.entity.TrainLiveOrder;
 import com.training.modules.train.entity.TrainLivePlayback;
+import com.training.modules.train.entity.TrainLiveRewardRecord;
 import com.training.modules.train.entity.TrainLiveRoom;
 import com.training.modules.train.entity.TrainLiveSku;
 import com.training.modules.train.entity.TrainLiveUser;
@@ -346,5 +347,25 @@ public class TrainLiveAuditController extends BaseController{
 			logger.error("保存sku配置失败：" + e.getMessage());
 			return "error";
 		}
+	}
+	
+	/**
+	 * 查看云币贡献榜
+	 * @param trainLiveRewardRecord
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="cloudContribution")
+	public String cloudContribution(TrainLiveRewardRecord trainLiveRewardRecord,HttpServletRequest request,HttpServletResponse response,Model model){
+		try{
+			Page<TrainLiveRewardRecord> page = trainLiveAuditService.findCloudContribution(new Page<TrainLiveRewardRecord>(request, response), trainLiveRewardRecord);
+			model.addAttribute("page", page);
+			model.addAttribute("trainLiveRewardRecord",trainLiveRewardRecord);
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "查看云币贡献榜失败!", e);
+			logger.error("保查看云币贡献榜失败！：" + e.getMessage());
+		}
+		return "modules/train/cloudContribution";
 	}
 }

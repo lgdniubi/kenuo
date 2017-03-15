@@ -6,6 +6,7 @@ import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.TrainLiveAudit;
 import com.training.modules.train.entity.TrainLiveOrder;
+import com.training.modules.train.entity.TrainLiveRewardRecord;
 import com.training.modules.train.entity.TrainLiveSku;
 
 /**
@@ -65,4 +66,11 @@ public interface TrainLiveAuditDao extends TreeDao<TrainLiveAudit>{
 	 * @return
 	 */
 	public double findSkuPrice(String id);
+	
+	/**
+	 * 查看云币贡献榜
+	 * @param trainLiveRewardRecord
+	 * @return
+	 */
+	public List<TrainLiveRewardRecord> findCloudContribution(TrainLiveRewardRecord trainLiveRewardRecord);
 }

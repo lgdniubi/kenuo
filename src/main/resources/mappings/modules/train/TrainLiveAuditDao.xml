@@ -212,4 +212,29 @@
 		WHERE audit_id = #{id}
 		AND type = 1
 	</select>
+	
+	<!-- 查看云币贡献榜 -->
+	<select id="findCloudContribution" resultType="TrainLiveRewardRecord">
+		SELECT
+			u.name AS 'name',
+			u.mobile AS 'phone',
+			o.name AS 'organization',
+			d.label AS 'position',
+			SUM(r.integrals) AS 'num'
+		FROM trains.train_live_reward_record r
+		LEFT JOIN sys_user u ON u.id = r.send_user_id
+		LEFT JOIN sys_office o ON o.id = u.office_id
+		LEFT JOIN sys_dict d ON d.value = u.user_type 
+		AND d.type = 'sys_user_type'
+		WHERE r.audit_id = #{auditId}
+		GROUP BY r.send_user_id,u.name,u.mobile,o.name,d.label
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY SUM(r.integrals) DESC
+			</otherwise>
+		</choose>
+	</select>
 </mapper>
