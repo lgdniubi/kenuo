@@ -23,9 +23,6 @@
 <body class="gray-bg">
 	<div class="wrapper wrapper-content">
 		<div class="ibox">
-			<div class="ibox-title">
-				<h5>云币贡献榜</h5>
-			</div>
 			<sys:message content="${message}" />
 			<!-- 查询条件 -->
 			<div class="ibox-content">
@@ -37,8 +34,7 @@
 					</form:form>
 				</div>
 				<p></p>
-				<table id="contentTable"
-					class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
+				<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 					<thead>
 						<tr>
 							<th style="text-align: center;">排名</th>
@@ -60,7 +56,6 @@
 								<td>${live.num}</td>
 							</tr>
 						</c:forEach>
-						
 					</tbody>
 					<tfoot>
 						<tr>
