@@ -64,12 +64,18 @@
 			AND DATE_FORMAT(a.add_time,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
 		</if>
 		<if test="endtime!=null and endtime!=''">
-			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+			AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{endtime},'%Y-%m-%d')
+		</if>
+		<if test="startTime != null and startTime != ''">
+			AND DATE_FORMAT(a.used_time,'%Y-%m-%d') >= DATE_FORMAT(#{startTime},'%Y-%m-%d')
+		</if>
+		<if test="lastTime!=null and lastTime!=''">
+			AND DATE_FORMAT(a.used_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastTime},'%Y-%m-%d')
 		</if>
 		ORDER BY a.add_time DESC
 
 	</select>
-	<!-- 红包明细导出更能 -->
+	<!-- 红包明细导出功能 -->
 	<select id="exportfindList" resultType="ActivityCouponUser">
 		SELECT
 			a.id as "mxId",
@@ -81,10 +87,11 @@
 			c.coupon_money as "couponAmount",
 			CASE c.used_type WHEN 1 THEN '全部商品' WHEN 2 THEN '指定分类' ELSE '指定商品' END as "usedType",
 			CASE a.`status` WHEN 0 THEN '未使用' WHEN 1 THEN '已使用' ELSE '已过期' END as "excelStatus",
-			a.add_time as "addTime",
-			a.used_time as "usedTime",
+			DATE_FORMAT(a.add_time,"%Y-%m-%d %T") as "addDate",
+			DATE_FORMAT(a.used_time,"%Y-%m-%d %T") as "usedDate",
 			a.order_id as "orderId",
 			b.order_amount as "orderMoney",
+			b.order_status AS "orderStatus",
 			f.id as "actionId",
 			f.`name` as "actionName"
 		FROM
@@ -112,7 +119,13 @@
 			AND DATE_FORMAT(a.add_time,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
 		</if>
 		<if test="endtime!=null and endtime!=''">
-			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+			AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{endtime},'%Y-%m-%d')
+		</if>
+		<if test="startTime != null and startTime != ''">
+			AND DATE_FORMAT(a.used_time,'%Y-%m-%d') >= DATE_FORMAT(#{startTime},'%Y-%m-%d')
+		</if>
+		<if test="lastTime!=null and lastTime!=''">
+			AND DATE_FORMAT(a.used_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastTime},'%Y-%m-%d')
 		</if>
 		ORDER BY a.add_time DESC
 	</select>
