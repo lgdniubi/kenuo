@@ -793,7 +793,7 @@
 		KindEditor.ready(function(K) {
 			editor = K.create('textarea[name="content1"]', {
 				width : "100%",
-				items : ['plainpaste','image','media','link','shoptag','fontname','fontsize','forecolor','bold','italic','underline','|','code','source','|','fullscreen']
+				items : ['undo', 'redo', '|','plainpaste','image','media','link','shoptag','fontname','fontsize','forecolor','hilitecolor','bold','italic','underline','|','justifyleft', 'justifycenter', 'justifyright','justifyfull','|','clearhtml','code','source','|','fullscreen']
 			});
 		});
 		$("#close,#newClose,#closeShopTag,#newCloseShopTag,#closeCode,#newCloseCode").click(function(){
