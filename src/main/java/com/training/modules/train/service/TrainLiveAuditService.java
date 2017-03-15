@@ -20,6 +20,7 @@ import com.training.modules.train.dao.TrainLiveUserDao;
 import com.training.modules.train.entity.TrainLiveAudit;
 import com.training.modules.train.entity.TrainLiveOrder;
 import com.training.modules.train.entity.TrainLivePlayback;
+import com.training.modules.train.entity.TrainLiveRewardRecord;
 import com.training.modules.train.entity.TrainLiveSku;
 
 import net.sf.json.JSONObject;
@@ -274,5 +275,16 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 	 */
 	public double findSkuPrice(String id){
 		return trainLiveAuditDao.findSkuPrice(id);
+	}
+	
+	/**
+	 * 查看云币贡献榜
+	 * @param trainLiveRewardRecord
+	 * @return
+	 */
+	public Page<TrainLiveRewardRecord> findCloudContribution(Page<TrainLiveRewardRecord> page,TrainLiveRewardRecord trainLiveRewardRecord){
+		trainLiveRewardRecord.setPage(page);
+		page.setList(trainLiveAuditDao.findCloudContribution(trainLiveRewardRecord));
+		return page;
 	}
 }

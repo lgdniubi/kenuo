@@ -368,6 +368,7 @@ window.onload=initStatus;
 			<div class="ibox-content">
 				<div class="clearfix">
 					<form:form id="inputForm" modelAttribute="orders" action="${ctx}/ec/orders/updateVirtualOrder" method="post" class="form-horizontal">
+						<input id="oldAddress" name="oldAddress" type="hidden" value="${orders.address}"/>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 							<input type="hidden" id="isReal" value="${orders.isReal}" />
 							<input type="hidden" id="operationName" value="${user.name}" />

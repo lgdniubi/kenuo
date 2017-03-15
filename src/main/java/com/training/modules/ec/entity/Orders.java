@@ -24,7 +24,7 @@ public class Orders extends TreeEntity<Orders> {
 	private String consignee;			//收货人
 //	private String country;				//国家
 //	private String province;			//省份
-	private	 String city;				//城市
+	private	String city;				//城市
 	private String cityname;			//城市名称
 //	private	 String district;			//县区s
 //	private String twonl;				//城镇
@@ -170,8 +170,13 @@ public class Orders extends TreeEntity<Orders> {
 	private String strChannel;		//订单创建类型
 	private String strAddTime;		//导出字段 下单时间
 	
-	private String userDelFlag;		//订单类型（0：正常 1：用户删除）
+	private String newProvince;     //导出字段  省
+	private String newCity;         //导出字段  市
+	private String newDistrict;     //导出字段  县
 	
+	private String oldAddress;      //修改前的地址
+	
+	private String userDelFlag;		//订单类型（0：正常 1：用户删除）
 	public String getSearchIsReal() {
 		return searchIsReal;
 	}
@@ -1433,7 +1438,6 @@ public class Orders extends TreeEntity<Orders> {
 	public void setOrderTotalAmount(String orderTotalAmount) {
 		this.orderTotalAmount = orderTotalAmount;
 	}
-	
 	@JsonIgnore
 	@ExcelField(title="邮费", align=2, sort=72)
 	public String getNewShippingPrice() {
@@ -1442,11 +1446,42 @@ public class Orders extends TreeEntity<Orders> {
 	public void setNewShippingPrice(String newShippingPrice) {
 		this.newShippingPrice = newShippingPrice;
 	}
+	@JsonIgnore
+	@ExcelField(title="省", align=2, sort=17)
+	public String getNewProvince() {
+		return newProvince;
+	}
+	public void setNewProvince(String newProvince) {
+		this.newProvince = newProvince;
+	}
+	
+	@JsonIgnore
+	@ExcelField(title="市", align=2, sort=18)
+	public String getNewCity() {
+		return newCity;
+	}
+	public void setNewCity(String newCity) {
+		this.newCity = newCity;
+	}
+	
+	@JsonIgnore
+	@ExcelField(title="县", align=2, sort=19)
+	public String getNewDistrict() {
+		return newDistrict;
+	}
+	public void setNewDistrict(String newDistrict) {
+		this.newDistrict = newDistrict;
+	}
+	public String getOldAddress() {
+		return oldAddress;
+	}
+	public void setOldAddress(String oldAddress) {
+		this.oldAddress = oldAddress;
+	}
 	public String getUserDelFlag() {
 		return userDelFlag;
 	}
 	public void setUserDelFlag(String userDelFlag) {
 		this.userDelFlag = userDelFlag;
 	}
-	
 }

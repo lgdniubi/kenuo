@@ -144,6 +144,10 @@
 										<a href="#" onclick="openDialogView('配置列表', '${ctx}/train/live/liveSkuForm?auditId=${live.id}','800px','500px')"
 											 class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>查看配置</a>
 									</shiro:hasPermission>
+									<shiro:hasPermission name="train:live:cloudContribution">
+										<a href="#" onclick="openDialogView('云币贡献榜', '${ctx}/train/live/cloudContribution?auditId=${live.id}','800px','500px')"
+											 class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>云币贡献榜</a>
+									</shiro:hasPermission>
 								</td>
 							</tr>
 						</c:forEach>

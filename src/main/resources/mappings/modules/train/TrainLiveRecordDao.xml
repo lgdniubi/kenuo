@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.TrainLiveRecordDao">
+
+	<!-- 云币充值记录 -->
+	<select id="selectPayRecord" resultType="TrainLiveRecord">
+		SELECT
+			u.name AS 'name',
+			u.mobile AS 'phone',
+			o.name AS 'organization.name',
+			lo.order_id AS 'orderId',
+			lo.integrals,
+			lo.spec_price AS 'specPrice',
+			lo.pay_date AS 'payDate',
+			lo.pay_code AS 'payCode'
+		FROM train_live_order lo
+		LEFT JOIN sys_user u ON u.id = lo.user_id
+		LEFT JOIN sys_office o ON o.id = u.office_id
+		WHERE lo.type = 3
+		AND lo.order_status = 3
+		<if test="name != null and name != ''">
+			AND u.name like CONCAT('%', #{name}, '%')
+		</if>
+		<if test="phone != null and phone != ''">
+			AND u.mobile = #{phone}
+		</if>
+		<if test="organization != null and organization.id != null and organization.id != ''">
+			AND (o.id = #{organization.id} OR o.parent_ids LIKE CONCAT('%,', #{organization.id}, ',%'))
+		</if>
+		<if test="beginTime != null and beginTime != ''">
+			AND DATE_FORMAT(lo.pay_date,'%Y-%m-%d') >= DATE_FORMAT(#{beginTime},'%Y-%m-%d')
+		</if>
+		<if test="endTime!=null and endTime!=''">
+			<![CDATA[AND DATE_FORMAT(lo.pay_date,'%Y-%m-%d') <= DATE_FORMAT(#{endTime},'%Y-%m-%d')]]>
+		</if>
+		<if test="orderId != null and orderId != ''">
+			AND lo.order_id = #{orderId}
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY lo.pay_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 佣金兑换云币记录 -->
+	<select id="selectExchangeRecord" resultType="TrainLiveRecord">
+		SELECT
+			u.name AS 'name',
+			u.mobile AS 'phone',
+			o.name AS 'organization.name',
+			lo.order_id AS 'orderId',
+			lo.integrals,
+			lo.spec_price AS 'specPrice',
+			lo.create_date AS 'createDate',
+			lo.pay_code AS 'payCode'
+		FROM train_live_order lo
+		LEFT JOIN sys_user u ON u.id = lo.user_id
+		LEFT JOIN sys_office o ON o.id = u.office_id
+		WHERE lo.type = 4
+		<if test="name != null and name != ''">
+			AND u.name like CONCAT('%', #{name}, '%')
+		</if>
+		<if test="phone != null and phone != ''">
+			AND u.mobile = #{phone}
+		</if>
+		<if test="organization != null and organization.id != null and organization.id != ''">
+			AND (o.id = #{organization.id} OR o.parent_ids LIKE CONCAT('%,', #{organization.id}, ',%'))
+		</if>
+		<if test="beginTime != null and beginTime != ''">
+			AND DATE_FORMAT(lo.create_date,'%Y-%m-%d') >= DATE_FORMAT(#{beginTime},'%Y-%m-%d')
+		</if>
+		<if test="endTime!=null and endTime!=''">
+			<![CDATA[AND DATE_FORMAT(lo.create_date,'%Y-%m-%d') <= DATE_FORMAT(#{endTime},'%Y-%m-%d')]]>
+		</if>
+		<if test="orderId != null and orderId != ''">
+			AND lo.order_id = #{orderId}
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY lo.create_date DESC
+			</otherwise>
+		</choose>
+	</select>
+</mapper>
