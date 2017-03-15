@@ -80,7 +80,7 @@ public class TrainLivePlayBackController extends BaseController{
 	
     
 	/**
-	 * 显示隐藏回看
+	 * 修改会看是否显示
 	 * @param request
 	 * @param trainLivePlayback
 	 * @return
@@ -97,8 +97,8 @@ public class TrainLivePlayBackController extends BaseController{
 			jsonMap.put("STATUS", "OK");
 			jsonMap.put("ISYESNO", isyesno);
 		} catch (Exception e) {
-			BugLogUtils.saveBugLog(request, "回看查看修改页面", e);
-			logger.error("回看查看修改页面：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "修改会看是否显示失败", e);
+			logger.error("修改会看是否显示失败：" + e.getMessage());
 			jsonMap.put("STATUS", "ERROR");
 			jsonMap.put("MESSAGE", "修改失败,出现异常");
 		}

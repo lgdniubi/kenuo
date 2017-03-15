@@ -15,6 +15,12 @@
 	    }); */
 		
 		$(document).ready(function() {
+			$(".imgUrl img").each(function(){
+				var $this = $(this),
+					$src = $this.attr('data-src');  
+				$this.attr({'src':$src})
+			});
+			
 			//树形table配置
 			var option = {
                 expandLevel : 1,
@@ -178,16 +184,14 @@
 								<th width="300" style="text-align: center;">课程操作</th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody><%-- src="${trainCategory.coverPic}" --%>
 							<c:forEach items="${list}" var="trainCategory">
 								<tr pid="${trainCategory.parentId}" id="${trainCategory.categoryId}" ${trainCategory.num>0?'hasChild="true"':''}>
 								    <%-- <td><input type="checkbox" id="${trainCategory.categoryId}" class="i-checks"></td>  批量删除 由于样式问题  取消 --%>
 									<td nowrap style="text-align: left;"><i class="icon-menu.icon"></i>${trainCategory.name}</td>
 									<td>${trainCategory.introduce}</td>
-									<td>
-										<c:if test="${trainCategory.parentId != '0' }">
-											<img alt="images" style="width: 220px;height: 120px;" src="${trainCategory.coverPic}">
-										</c:if>
+									<td class="imgUrl">
+										<img alt="images" style="width: 220px;height: 120px;" src="${ctxStatic}/images/lazylode.png"  data-src="${trainCategory.coverPic}">
 									</td>
 									<td style="text-align: center;" id="isShow${trainCategory.categoryId}">
 										<c:if test="${trainCategory.isShow == 1}">

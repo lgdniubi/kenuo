@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.TrainLiveActivityRatioDao">
+	
+	<!-- 分页查询充值兑换配置表对应的活动 -->
+	<select id="findList" resultType="TrainLiveActivityRatio">
+		SELECT 
+			id AS 'trainLiveActivityRatioId',
+			name,
+			is_show AS 'isShow',
+			create_by AS 'createBy.id',
+			create_date AS 'createDate',
+			update_by AS 'updateBy.id',
+			update_date AS 'updateDate',
+			del_flag AS 'delFlag'
+		FROM trains.train_live_activity_ratio
+		WHERE del_flag = '0'
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY create_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 根据id找到对应的TrainLiveActivityRatio -->
+	<select id="getTrainLiveActivityRatio" resultType="TrainLiveActivityRatio">
+		SELECT
+			id AS 'trainLiveActivityRatioId',
+			name,
+			is_show AS 'isShow'
+		FROM trains.train_live_activity_ratio
+		WHERE id = #{trainLiveActivityRatioId}
+	</select>
+	
+	<!-- 保存TrainLiveActivityRatio -->
+	<insert id="insert">
+		INSERT INTO trains.train_live_activity_ratio(
+			name,
+			is_show,
+			create_by,
+			create_date,
+			del_flag
+		)VALUES(
+			#{name},
+			1,
+			#{createBy.id},
+			NOW(),
+			0
+		)
+	</insert>
+	
+	<!-- 修改TrainLiveActivityRatio -->
+	<update id="update">
+		UPDATE trains.train_live_activity_ratio
+		SET 
+			name = #{name},
+			update_by = #{updateBy.id},
+			update_date = NOW()
+		WHERE id = #{trainLiveActivityRatioId}
+	</update>
+	
+	<!-- 逻辑删除充值兑换配置表对应的活动 同时删除对应的兑换比例配置-->
+	<update id="deleteTrainLiveActivityRatio">
+		UPDATE trains.train_live_activity_ratio
+		SET 
+			del_flag = '1'
+		WHERE id = #{trainLiveActivityRatioId}
+	</update>
+	<update id="deleteActivityExchangeRatio">
+		UPDATE trains.train_live_exchange_ratio
+		SET del_flag = '1'
+		WHERE activity_id = #{trainLiveActivityRatioId}
+	</update>
+
+	<!-- 将所有的活动的状态都修改为1，不可用 -->
+	<update id="updateAll">
+		UPDATE trains.train_live_activity_ratio
+		SET is_show = '1'
+	</update>
+
+	<!-- 修改某一组的状态  -->
+	<update id="updateIsShow" parameterType="TrainLiveActivityRatio">
+		UPDATE trains.train_live_activity_ratio
+			SET 
+			  is_show = #{isShow}
+		WHERE id = #{trainLiveActivityRatioId}
+	</update>
+
+	<!-- 查询出最近更新的那一组的id -->
+	<select id="selectIdByCreateDate" resultType="Integer">
+		SELECT id AS trainLiveActivityRatioId
+		FROM trains.train_live_activity_ratio
+		ORDER BY create_date desc LIMIT 1
+	</select>
+
+	<!-- 查询兑换比例配置-->
+	<select id="newFindList" resultType="TrainLiveExchangeRatio">
+		SELECT 
+			id AS 'exchangeRatioId',
+			name,
+			exchange_type AS 'exchangeType',
+			exchange_price AS 'exchangePrice',
+			integrals,
+			sort,
+			is_show AS 'isShow',
+			create_by AS 'createBy.id',
+			create_date AS 'createDate',
+			update_by AS 'updateBy.id',
+			update_date AS 'updateDate',
+			del_flag AS 'delFlag'
+		FROM trains.train_live_exchange_ratio
+		WHERE activity_id = #{activityId} 
+		AND exchange_type = #{flag}
+		AND del_flag = '0'
+		ORDER BY exchange_type,sort DESC
+	</select>
+	
+	<!-- 修改兑换比例配置的是否显示状态 -->
+	<update id="changeIsShow">
+		UPDATE trains.train_live_exchange_ratio
+		SET is_show = #{isShow}
+		WHERE id = #{exchangeRatioId}
+	</update>
+	
+	<!-- 根据id找到对应的兑换比例配置 -->
+	<select id="getTrainLiveExchangeRatio" resultType="TrainLiveExchangeRatio">
+		SELECT
+			id AS 'exchangeRatioId',
+			activity_id AS 'activityId',
+			name,
+			exchange_type AS 'exchangeType',
+			exchange_price AS 'exchangePrice',
+			integrals,
+			sort,
+			is_show AS 'isShow',
+			create_by AS 'createBy.id',
+			create_date AS 'createDate',
+			update_by AS 'updateBy.id',
+			update_date AS 'updateDate'
+		FROM trains.train_live_exchange_ratio
+		WHERE id = #{exchangeRatioId}
+	</select>
+	
+	<!-- 保存兑换比例配置 -->
+	<insert id="insertExchangeRatio">
+		INSERT INTO trains.train_live_exchange_ratio(
+			name,
+			activity_id,
+			exchange_type,
+			exchange_price,
+			integrals,
+			sort,
+			is_show,
+			create_by,
+			create_date
+		)VALUES(
+			#{name},
+			#{activityId},
+			#{exchangeType},
+			#{exchangePrice},
+			#{integrals},
+			#{sort},
+			1,
+			#{createBy.id},
+			NOW()
+		)
+	</insert>
+	
+	<!-- 更新兑换比例配置 -->
+	<update id="updateExchangeRatio">
+		UPDATE trains.train_live_exchange_ratio
+		SET 
+			name = #{name},
+			exchange_price = #{exchangePrice},
+			integrals = #{integrals},
+			sort = #{sort},
+			update_by = #{updateBy.id},
+			update_date = NOW()
+		WHERE id = #{exchangeRatioId}
+	</update>
+	
+	<!-- 逻辑删除某一兑换比例配置 -->
+	<update id="delExchangeRatio">
+		UPDATE trains.train_live_exchange_ratio
+		SET del_flag = '1'
+		WHERE id = #{exchangeRatioId}
+	</update>
+	
+	<!-- 查找处于显示状态的兑换比例配置的个数 -->
+	<select id="selectNum" resultType="Integer">
+		SELECT COUNT(*)
+		FROM trains.train_live_exchange_ratio
+		WHERE exchange_type = #{exchangeType}
+		AND activity_id = #{activityId}
+		AND is_show = '0'
+	</select>
+</mapper>
