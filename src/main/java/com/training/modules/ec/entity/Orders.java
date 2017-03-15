@@ -170,6 +170,8 @@ public class Orders extends TreeEntity<Orders> {
 	private String strChannel;		//订单创建类型
 	private String strAddTime;		//导出字段 下单时间
 	
+	private String userDelFlag;		//订单类型（0：正常 1：用户删除）
+	
 	public String getSearchIsReal() {
 		return searchIsReal;
 	}
@@ -1440,8 +1442,11 @@ public class Orders extends TreeEntity<Orders> {
 	public void setNewShippingPrice(String newShippingPrice) {
 		this.newShippingPrice = newShippingPrice;
 	}
-	
-	
-	
+	public String getUserDelFlag() {
+		return userDelFlag;
+	}
+	public void setUserDelFlag(String userDelFlag) {
+		this.userDelFlag = userDelFlag;
+	}
 	
 }

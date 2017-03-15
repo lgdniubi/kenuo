@@ -170,7 +170,8 @@
 			a.is_real as isReal,
 			a.channel_flag AS channelflag,
 			COUNT(m.rec_id) AS "goodsnum",
-			IFNULL(ogd.order_arrearage,0) AS orderArrearage
+			IFNULL(ogd.order_arrearage,0) AS orderArrearage,
+			a.del_flag
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
@@ -218,11 +219,12 @@
 		</if>
 		<if test="goodsids !=null and  cetaid !=null and goodsids !='' and cetaid !=''">
 			AND f.category_id=#{cetaid} and m.goods_id=#{goodsids}
-		
 		</if>
 		<if test="searchIsReal !=null and searchIsReal !=''">
 			AND a.is_real=#{searchIsReal}
-		
+		</if>
+		<if test="userDelFlag !=null and userDelFlag !=''">
+			AND a.del_flag=#{userDelFlag}
 		</if>
 		GROUP BY a.order_id
 		<if test="orderArrearageType == 2 "> <!-- 没有欠款 -->
