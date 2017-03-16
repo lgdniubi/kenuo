@@ -82,7 +82,15 @@ public class TabBannerController extends BaseController{
 	 */
 	@RequestMapping(value = "del")
 	public String delete(TabBackground tabBackground,RedirectAttributes redirectAttributes){
+		
+		tabBackground = tabBackgroundService.getTabBackground(tabBackground.getTabBackgroundId());
 		tabBackgroundService.deleteTabBackground(tabBackground);
+		if(tabBackground.getIsShow() == 0){
+			int tabBackgroundId = tabBackgroundService.selectIdByUpdateDate();
+			tabBackground = tabBackgroundService.getTabBackground(tabBackgroundId);
+			tabBackground.setIsShow(0);
+			tabBackgroundService.changIsShow(tabBackground);
+		}
 		addMessage(redirectAttributes, "删除成功");
 		return "redirect:" + adminPath + "/ec/tab_banner/list";
 	}
