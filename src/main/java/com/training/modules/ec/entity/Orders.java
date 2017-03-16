@@ -177,6 +177,7 @@ public class Orders extends TreeEntity<Orders> {
 	private String oldAddress;      //修改前的地址
 	private String newFlag;         //标识   判断当前订单的收货地址是否修改，0 未修改 ，1修改
 	
+	private String userDelFlag;		//订单类型（0：正常 1：用户删除）
 	public String getSearchIsReal() {
 		return searchIsReal;
 	}
@@ -1438,7 +1439,6 @@ public class Orders extends TreeEntity<Orders> {
 	public void setOrderTotalAmount(String orderTotalAmount) {
 		this.orderTotalAmount = orderTotalAmount;
 	}
-	
 	@JsonIgnore
 	@ExcelField(title="邮费", align=2, sort=72)
 	public String getNewShippingPrice() {
@@ -1447,7 +1447,6 @@ public class Orders extends TreeEntity<Orders> {
 	public void setNewShippingPrice(String newShippingPrice) {
 		this.newShippingPrice = newShippingPrice;
 	}
-	
 	@JsonIgnore
 	@ExcelField(title="省", align=2, sort=17)
 	public String getNewProvince() {
@@ -1487,8 +1486,10 @@ public class Orders extends TreeEntity<Orders> {
 		this.newFlag = newFlag;
 	}
 	
-	
-	
-	
-	
+	public String getUserDelFlag() {
+		return userDelFlag;
+	}
+	public void setUserDelFlag(String userDelFlag) {
+		this.userDelFlag = userDelFlag;
+	}
 }

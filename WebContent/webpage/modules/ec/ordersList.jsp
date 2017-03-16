@@ -90,7 +90,7 @@
 						<form:input path="username" htmlEscape="false" maxlength="50" class=" form-control input-sm" placeholder="用户名"/>&nbsp;&nbsp;&nbsp;&nbsp;
 						<form:input path="mobile" htmlEscape="false" maxlength="50" class=" form-control input-sm" placeholder="手机号"/>&nbsp;&nbsp;&nbsp;&nbsp;
 						<form:input path="orderid" htmlEscape="false" maxlength="50" class=" form-control input-sm" placeholder="订单号"/>&nbsp;&nbsp;&nbsp;&nbsp;
-						<label>订单类型：</label>
+						<label>订单状态：</label>
 							<form:select path="orderstatus"  class="form-control" style="width:185px;">
 								<form:option value="0">全部</form:option>
 								<form:option value="-2">取消订单</form:option>
@@ -113,6 +113,12 @@
 								<form:option value="1">虚拟</form:option>
 						</form:select>	
 						<p></p>
+						<label>订单类型：</label>	
+						<form:select path="userDelFlag"  class="form-control" style="width:185px;">
+								<form:option value="">全部</form:option>
+								<form:option value="0">正常</form:option>
+								<form:option value="1">用户删除</form:option>
+						</form:select>	
 						<label>创建类型：</label>
 						<form:select path="channelFlag"  class="form-control" style="width:185px;">
 								<form:option value="">全部</form:option>
@@ -181,6 +187,7 @@
 							<th style="text-align: center;">商品种类</th>
 							<th style="text-align: center;">支付方式</th>
 							<th style="text-align: center;">创建类型</th>
+							<th style="text-align: center;">订单类型</th>
 							<th style="text-align: center;">创建时间</th>
 							<th style="text-align: center;">客户留言</th>
 							<th style="text-align: center;">操作</th>
@@ -235,6 +242,14 @@
 								</c:if>
 								<c:if test="${orders.channelFlag=='bm'}">
 									后台管理
+								</c:if>
+							</td>
+							<td>
+								<c:if test="${orders.delFlag == 0}">
+									正常
+								</c:if>
+								<c:if test="${orders.delFlag == 1}">
+									用户删除
 								</c:if>
 							</td>
 							<td><fmt:formatDate value="${orders.addtime}" pattern="yyyy-MM-dd HH:mm:ss" /> </td>
