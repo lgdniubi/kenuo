@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.training.modules.train.dao.TrainLiveGiftDao">
+	
+	<!-- 分页查询直播送的礼物-->
+	<select id="findList" resultType="TrainLiveGift">
+		SELECT 
+			id AS 'trainLiveGiftId',
+			name,
+			img_url AS 'imgUrl',
+			integrals,
+			is_show AS 'isShow',
+			sort,
+			create_by AS 'createBy.id',
+			create_date AS 'createDate',
+			update_by AS 'updateBy.id',
+			update_date AS 'updateDate',
+			del_flag AS 'delFlag'
+		FROM trains.train_live_gift
+		WHERE del_flag = '0'
+		ORDER BY create_date DESC
+	</select>
+
+	<!-- 根据 trainLiveGiftId查找相应的礼物-->
+	<select id="getTrainLiveGift" resultType="TrainLiveGift">
+		SELECT
+			id AS 'trainLiveGiftId',
+			name,
+			img_url AS 'imgUrl',
+			integrals,
+			is_show AS 'isShow',
+			sort,
+			create_by AS 'createBy.id',
+			create_date AS 'createDate',
+			update_by AS 'updateBy.id',
+			update_date AS 'updateDate'
+		FROM trains.train_live_gift
+		WHERE id = #{trainLiveGiftId}
+	</select>
+	
+	
+	<!-- 保存礼物 -->
+	<insert id="insert">
+		INSERT INTO trains.train_live_gift(
+			name,
+			img_url,
+			integrals,
+			is_show,
+			sort,
+			create_by,
+			create_date,
+			del_flag
+		)VALUES(
+			#{name},
+			#{imgUrl},
+			#{integrals},
+			1,
+			#{sort},
+			#{createBy.id},
+			NOW(),
+			0
+		)
+	</insert>
+	
+	<!-- 更新礼物 -->
+	<update id="update">
+		UPDATE trains.train_live_gift
+		SET 
+			name = #{name},
+			img_url = #{imgUrl},
+			integrals = #{integrals},
+			sort = #{sort},
+			update_by = #{updateBy.id},
+			update_date = NOW()
+		WHERE id = #{trainLiveGiftId}
+	</update>
+	
+	<!-- 逻辑删除礼物 -->
+	<update id="deleteGift">
+		UPDATE trains.train_live_gift
+		SET del_flag = '1'
+		WHERE id = #{trainLiveGiftId}
+	</update>
+	
+	<!-- 更改礼物的状态 -->
+	<update id="updateIsShow">
+		UPDATE trains.train_live_gift
+		SET is_show = #{isShow}
+		WHERE id = #{trainLiveGiftId}
+	</update>
+	
+	<!-- 查找处于显示状态的礼物的个数 -->
+	<select id="selectNum" resultType="Integer">
+		SELECT COUNT(*)
+		FROM trains.train_live_gift
+		WHERE is_show = '0'
+		AND del_flag = '0'
+	</select>
+</mapper>

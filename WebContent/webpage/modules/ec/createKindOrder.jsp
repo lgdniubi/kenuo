@@ -504,7 +504,7 @@
 						<label ><font color="red">*</font>联系电话：</label>
 						<form:input path="phone" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
 						<label ><font color="red">*</font>收货地址：</label>
-						<form:input path="address" htmlEscape="false" maxlength="50" class="form-control required" style="width:180px" />
+						<form:input path="address" htmlEscape="false" maxlength="120" class="form-control required" style="width:180px" />
 					</div>
 				</div>
 				<p></p>
