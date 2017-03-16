@@ -969,10 +969,16 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	}
 
 	/**
-	 * 修改虚拟订单
+	 * 修改订单
 	 * @param orders
 	 */
 	public void updateVirtualOrder(Orders orders) {
+		//判断收货地址是否修改了，若未修改则xml中不对address更新，若不修改，则将省市县详细地址存到相应的地方
+		if(!orders.getOldAddress().equals(orders.getAddress())){
+			orders.setNewFlag("1");
+		}else{
+			orders.setNewFlag("0");
+		}
 		User user = UserUtils.getUser(); //登陆用户
 		orders.setCreateBy(user);
 		Payment payment = paymentDao.getByCode(orders.getPaycode());
