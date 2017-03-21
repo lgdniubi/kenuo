@@ -4,6 +4,7 @@
 <head>
 	<title>通知管理</title>
 	<meta name="decorator" content="default"/>
+	<script src="http://malsup.github.io/min/jquery.form.min.js"></script>
 	<script type="text/javascript">
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
@@ -66,12 +67,16 @@
 			laydate(end); */
 			if($("#pushType").val() == 1){
 				$("#tr").show();
+			}else if($("#pushType").val() == 2){
+				$("#group").show();
 			};
+			
 			push($("#type").val());
 		});
 		function selectType(v){
 			if(v == 1 & ($("#status").val() == "" || $("#status").val() == "0")){
 				$("#tr").show();
+				$("#group").hide();
 				top.layer.open({
 				    type: 2, 
 				    area: ['800px', '620px'],
@@ -113,7 +118,11 @@
 		    	           //按钮【按钮二】的回调
 		    	       }
 				}); 
+			}else if(v == 2){
+				$("#group").show();
+				$("#tr").hide();
 			}else{
+				$("#group").hide();
 				$("#tr").hide();
 			}
 		}
@@ -124,7 +133,48 @@
 				$(".help-inline").hide();
 			}
 		}
-
+	
+		 function newImport(){
+			$("#newComment").empty();
+			$('#commentModal').modal('show');
+			closeTip(); 
+		 }
+		 
+		 $(function(){
+	          var options = {
+	              url : "${ctx}/ec/mtmyOaNotify/importPhones",
+	              dataType : "text",
+	              type : "post",
+	              success : function(data){
+	            	  $('#commentModal').modal('hide');
+	                  var newDate = $.parseJSON(data);
+				 	  var type = newDate.type;
+					  var phones = newDate.phones;
+					  if(type =="success"){
+						  var a = $("#phones").val();
+						  if(a.endsWith(",") || a.length == 0){
+							  $("#phones").val(phones);
+						  }else{
+							  $("#phones").val(a + "," + phones);
+						  }
+						
+					  }
+					  if(type=="error"){
+						 top.layer.alert('导入手机号失败!', {icon: 2, title:'提醒'});
+					  }
+	              },
+	              error:function(XMLHttpRequest,textStatus,errorThrown){
+				  }
+	          };
+	          $("#yes").click(function(){
+	             $("#inputForm2").ajaxSubmit(options)
+	          });
+	      });
+		 
+		//导出下载模板	
+		function importFileTemplate(){
+			window.location.href= '${ctx}/ec/mtmyOaNotify/importPhonesOrders/template';
+		}
 	</script>
 </head>
 <body>
@@ -149,8 +199,12 @@
 		      		<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>推送类型：</label></td>
 		       		<td class="width-35" colspan="3">
 			       		<form:select path="pushType" class="form-control required" id="pushType" onchange="selectType(this.value)">
-							<form:option value="" label=""/>
-							<form:options items="${fns:getDictList('oa_push_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+							<%-- <form:option value="" label=""/>
+							<form:options items="${fns:getDictList('oa_push_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/> --%>
+							<form:option value="-1" >请选择类型</form:option>
+							<form:option value="0" >群推</form:option>
+							<form:option value="1" >列推</form:option>
+							<form:option value="2" >组推</form:option>
 						</form:select>
 					</td>
 		        </tr>
@@ -167,6 +221,21 @@
 			       		</td>
 			        </tr>
 		        </c:if>
+		        
+		         <c:if test="${mtmyOaNotify.status == '0'}">
+		         <tr id="group" style="display:none">
+		        	<td  class="width-15 active">
+		        		<label class="pull-right"><font color="red">*</font>接收人：</label>
+		        		<input id="mtmyOaNotifyRecordMobile" name="mtmyOaNotifyRecordMobile" value="${mtmyOaNotify.mtmyOaNotifyRecordMobile}" type="hidden">
+		        	</td>
+		       		<td colspan="3">
+	       				<a href="#" onclick="newImport()" class="btn btn-white btn-sm"><i class="fa fa-folder-open-o"></i>导入</a><br>
+	       				<textarea id='phones' name="phones" rows="6" cols="1" maxlength='2000' class='form-control required' >${mtmyOaNotify.mtmyOaNotifyRecordMobile}</textarea>
+		       		</td>
+		        </tr>
+		        </c:if>
+		       
+		        
 				<c:if test="${mtmyOaNotify.status == '1' || mtmyOaNotify.status == '2'}">
 			        <tr>
 			         	<td  class="width-15 active">	<label class="pull-right">接受人：</label></td>
@@ -230,5 +299,27 @@
 			</tbody>
 		</table>
 	</form:form>
+	<div class="loading"></div>
+	<!-- 评论对话框 -->
+	<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="commentModal">
+ 		<div class="modal-dialog modal-lg">
+		    <div class="modal-content">
+		    	<div class="modal-header">
+		    		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title" id="myModalLabel"></h4>
+				</div>
+				<div class="modal-body">
+		      		<form id="inputForm2" action="" method="post" enctype="multipart/form-data" style="padding-left:20px;"><br/>
+						<input id="uploadFile" accept=".xls,.xlsx" name="file" type="file" style="width:330px"/>
+						导入文件不能超过5M，仅允许导入“xls”或“xlsx”格式文件！
+					</form>
+					<input class="btn" style="margin-left: 150px;margin-top: 7px;" type="button" value="下载模板" onclick="importFileTemplate()">
+		      	</div>
+				<div class="modal-footer">
+					<button id="yes">上传</button>
+		      	</div>
+		    </div>
+		</div>
+	</div>
 </body>
 </html>

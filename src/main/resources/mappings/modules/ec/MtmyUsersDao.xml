@@ -451,4 +451,14 @@
 	</delete>	
 	<!-- 用户异常数据处理 begin -->
 	
+	<!-- 根据手机号查找用户 -->
+	<select id="getUserByMobile" resultType="Users">
+		SELECT 
+		  <include refid="usersColumns"/>
+		FROM
+		  mtmydb.mtmy_users AS u
+		WHERE 
+			1=1
+			AND u.mobile = #{mobile}
+	</select>
 </mapper>

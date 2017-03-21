@@ -134,7 +134,10 @@
 								${fns:getDictLabel(mtmyOaNotify.type, 'mtmy_oa_notify_type', '')}
 							</td>
 							<td>
-								${fns:getDictLabel(mtmyOaNotify.pushType, 'oa_push_type', '')}
+								<c:if test="${mtmyOaNotify.pushType == 0}">群推</c:if>
+								<c:if test="${mtmyOaNotify.pushType == 1}">列推</c:if>
+								<c:if test="${mtmyOaNotify.pushType == 2}">组推</c:if>
+								<%-- ${fns:getDictLabel(mtmyOaNotify.pushType, 'oa_push_type', '')} --%>
 							</td>
 							<td>
 								${fns:getDictLabel(mtmyOaNotify.status, 'oa_notify_status', '')}
