@@ -9,9 +9,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -123,9 +126,15 @@ public class MtmyOaNotifyController extends BaseController {
 				String phones = mtmyOaNotify.getPhones();
 				//当导入的手机号不为空时
 				if(!"".equals(phones) && phones != null){
+					//手机号码去重
 					String[] strs = phones.split(",");
-					for(int i=0;i<strs.length;i++){
-						Users users = mtmyUsersService.getUserByMobile(strs[i]);
+					Set<String> set = new HashSet<>();  
+			        for(int i=0;i<strs.length;i++){  
+			            set.add(strs[i]);  
+			        }  
+			        String[] arrayResult = (String[]) set.toArray(new String[set.size()]);  
+					for(int i=0;i<arrayResult.length;i++){
+						Users users = mtmyUsersService.getUserByMobile(arrayResult[i]);
 						//当用户不为空时
 						if(users != null){
 							if(mtmyOaNotifyService.selectClient(users.getUserid()) > 0){
