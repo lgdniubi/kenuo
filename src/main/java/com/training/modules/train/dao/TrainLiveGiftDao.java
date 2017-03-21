@@ -36,4 +36,10 @@ public interface TrainLiveGiftDao extends CrudDao<TrainLiveGift>{
 	 * @return
 	 */
 	public int selectNum();
+	
+	/**
+	 * 更改礼物是否能连发
+	 * @param trainLiveGift
+	 */
+	public void updateIsBatter(TrainLiveGift trainLiveGift);
 }

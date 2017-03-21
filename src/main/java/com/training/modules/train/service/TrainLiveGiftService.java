@@ -87,4 +87,12 @@ public class TrainLiveGiftService extends CrudService<TrainLiveGiftDao,TrainLive
 	public int selectNum(){
 		return trainLiveGiftDao.selectNum();
 	}
+	
+	/**
+	 * 更改礼物是否能连发
+	 * @param trainLiveGift
+	 */
+	public void updateIsBatter(TrainLiveGift trainLiveGift){
+		trainLiveGiftDao.updateIsBatter(trainLiveGift);
+	}
 }

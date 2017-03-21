@@ -15,6 +15,8 @@ public class TrainLiveGift extends DataEntity<TrainLiveGift>{
 	private String name;            //礼物名称
 	private String imgUrl;         	//礼物照片路径
 	private int integrals;          //云币
+	private String imgName;         //图片名字，也就是页面上的那个英文名
+	private String isBatter;       //是否连击 （0：是；1：否））
 	private String isShow;         //是否显示（0：是；1：否）
 	private int sort;              //排序
 	
@@ -53,6 +55,18 @@ public class TrainLiveGift extends DataEntity<TrainLiveGift>{
 	}
 	public void setSort(int sort) {
 		this.sort = sort;
+	}
+	public String getImgName() {
+		return imgName;
+	}
+	public void setImgName(String imgName) {
+		this.imgName = imgName;
+	}
+	public String getIsBatter() {
+		return isBatter;
+	}
+	public void setIsBatter(String isBatter) {
+		this.isBatter = isBatter;
 	}
 	
 	

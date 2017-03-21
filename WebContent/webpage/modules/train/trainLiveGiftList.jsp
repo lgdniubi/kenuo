@@ -51,6 +51,31 @@
 				}
 			});   
 		}
+	  
+		 //是否显示
+		function changeIsBatter(id,isBatter){
+			$(".loading").show();//打开展示层
+			$.ajax({
+				type : "POST",
+				url : "${ctx}/train/liveGift/updateIsBatter?isBatter="+isBatter+"&trainLiveGiftId="+id,
+				dataType: 'json',
+				success: function(data) {
+					$(".loading").hide(); //关闭加载层
+					var status = data.STATUS;
+					var isBatter = data.ISBATTER;
+					if("OK" == status){
+						$("#isBatter"+id).html("");//清除DIV内容
+						if(isBatter == '1'){
+							$("#isBatter"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeIsBatter('"+id+"','0')\">");
+						}else if(isBatter == '0'){
+							$("#isBatter"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeIsBatter('"+id+"','1')\">");
+						}
+					}else if("ERROR" == status){
+						top.layer.alert(data.MESSAGE, {icon: 2, title:'提醒'});
+					}
+				}
+			});   
+		}
 		
     </script>
     <title>直播送礼管理</title>
@@ -83,8 +108,10 @@
                 		<tr>
                 			<th style="text-align: center;">名称</th>
                 			<th style="text-align: center;">图片</th>
+                			<th style="text-align: center;">英文名</th>
                 			<th style="text-align: center;">云币</th>
                 			<th style="text-align: center;">排序</th>
+                			<th style="text-align: center;">是否连发</th>
                 			<th style="text-align: center;">状态</th>
                 			<th style="text-align: center;">操作</th>
                 		</tr>
@@ -94,8 +121,17 @@
 						<tr>
 							<td style="text-align: center;">${trainLiveGift.name}</td>
 							<td style="text-align: center;"class="imgUrl" ><img alt="" src="${ctxStatic}/images/lazylode.png"  data-src="${trainLiveGift.imgUrl}" style="width: 150px;height: 100px;border:1px solid black; "></td>
+							<td style="text-align: center;">${trainLiveGift.imgName}</td>
 							<td style="text-align: center;">${trainLiveGift.integrals}</td>
 							<td style="text-align: center;">${trainLiveGift.sort}</td>
+							<td style="text-align: center;" id="isBatter${trainLiveGift.trainLiveGiftId}">
+								<c:if test="${trainLiveGift.isBatter==1}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeIsBatter('${trainLiveGift.trainLiveGiftId}','0')">
+								</c:if>
+								<c:if test="${trainLiveGift.isBatter==0}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeIsBatter('${trainLiveGift.trainLiveGiftId}','1')">
+								</c:if>
+							</td>
 							<td style="text-align: center;" id="isShow${trainLiveGift.trainLiveGiftId}">
 								<c:if test="${trainLiveGift.isShow==1}">
 									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('${trainLiveGift.trainLiveGiftId}','0')">

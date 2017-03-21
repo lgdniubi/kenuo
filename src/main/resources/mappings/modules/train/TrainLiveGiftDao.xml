@@ -7,8 +7,10 @@
 		SELECT 
 			id AS 'trainLiveGiftId',
 			name,
+			img_name AS 'imgName',
 			img_url AS 'imgUrl',
 			integrals,
+			is_batter AS 'isBatter',
 			is_show AS 'isShow',
 			sort,
 			create_by AS 'createBy.id',
@@ -26,8 +28,10 @@
 		SELECT
 			id AS 'trainLiveGiftId',
 			name,
+			img_name AS 'imgName',
 			img_url AS 'imgUrl',
 			integrals,
+			is_batter AS 'isBatter',
 			is_show AS 'isShow',
 			sort,
 			create_by AS 'createBy.id',
@@ -43,8 +47,10 @@
 	<insert id="insert">
 		INSERT INTO trains.train_live_gift(
 			name,
+			img_name,
 			img_url,
 			integrals,
+			is_batter,
 			is_show,
 			sort,
 			create_by,
@@ -52,8 +58,10 @@
 			del_flag
 		)VALUES(
 			#{name},
+			#{imgName},
 			#{imgUrl},
 			#{integrals},
+			1,
 			1,
 			#{sort},
 			#{createBy.id},
@@ -67,6 +75,7 @@
 		UPDATE trains.train_live_gift
 		SET 
 			name = #{name},
+			img_name = #{imgName},
 			img_url = #{imgUrl},
 			integrals = #{integrals},
 			sort = #{sort},
@@ -96,4 +105,11 @@
 		WHERE is_show = '0'
 		AND del_flag = '0'
 	</select>
+	
+	<!-- 更改礼物是否能连发 -->
+	<update id="updateIsBatter">
+		UPDATE trains.train_live_gift
+		SET is_batter = #{isBatter}
+		WHERE id = #{trainLiveGiftId}
+	</update>
 </mapper>

@@ -73,7 +73,13 @@
 										<div id="file_img_queue"></div>
 									</td>
 								</tr>
-									<tr>
+								<tr>
+									<td><label class="pull-right"><font color="red">*</font>英文名：</label></td>
+									<td>
+										<input class="form-control required" id="imgName" name="imgName" type="text" value="${trainLiveGift.imgName }" style="width: 300px"/>
+									</td>
+								</tr>
+								<tr>
 									<td><label class="pull-right"><font color="red">*</font>云币：</label></td>
 									<td>
 										<input class="form-control required" id="integrals" name="integrals" type="text" value="${trainLiveGift.integrals }"/>

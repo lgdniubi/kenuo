@@ -156,4 +156,29 @@ public class TrainLiveGiftController extends BaseController{
 		}
 		return jsonMap;
 	}
+	
+	/**
+	 * 修改礼物是否能连发
+	 * @param request
+	 * @param trainLiveGift
+	 * @return
+	 */
+	@RequestMapping(value="updateIsBatter")
+	@ResponseBody
+	public Map<String, String> updateIsBatter(HttpServletRequest request,TrainLiveGift trainLiveGift) {
+		Map<String, String> jsonMap = new HashMap<String, String>();
+		try {
+			String isBatter = request.getParameter("isBatter");
+			trainLiveGift.setIsBatter(isBatter);
+			trainLiveGiftService.updateIsBatter(trainLiveGift);
+			jsonMap.put("STATUS", "OK");
+			jsonMap.put("ISBATTER", isBatter);
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "修改礼物是否能连发失败", e);
+			logger.error("修改礼物是否能连发失败：" + e.getMessage());
+			jsonMap.put("STATUS", "ERROR");
+			jsonMap.put("MESSAGE", "修改失败,出现异常");
+		}
+		return jsonMap;
+	}
 }
