@@ -182,6 +182,7 @@
 							<th style="text-align: center;">订单区分</th>
 							<th style="text-align: center;">用户名</th>
 							<th style="text-align: center;">订单状态</th>
+							<th style="text-align: center;">取消类型</th>
 							<th style="text-align: center;">订单欠款</th>
 							<th style="text-align: center;">支付金额</th>
 							<th style="text-align: center;">商品种类</th>
@@ -225,6 +226,9 @@
 								<c:if test="${orders.orderstatus==5}">
 									申请退款
 								</c:if>
+							</td>
+							<td>	
+								${orders.cancelType}
 							</td>
 							<td>${orders.orderArrearage}</td>
 							<td>${orders.orderamount}</td>

@@ -46,6 +46,8 @@
 								<form:option value="1">请求审核</form:option>
 								<form:option value="2">审核通过</form:option>
 								<form:option value="3">已完成</form:option>
+								<form:option value="4">正在直播</form:option>
+								<form:option value="5">异常</form:option>
 							</form:select>
 						</div>
 					</form:form>
@@ -115,6 +117,9 @@
 									</c:if>
 									<c:if test="${live.auditStatus==4}">
 										正在直播
+									</c:if>
+									<c:if test="${live.auditStatus==5}">
+										异常
 									</c:if>
 								</td>	
 								<td>${live.auditUser}</td>
