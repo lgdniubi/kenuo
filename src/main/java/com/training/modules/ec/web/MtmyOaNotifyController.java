@@ -297,10 +297,9 @@ public class MtmyOaNotifyController extends BaseController {
 			trainRuleParam.setParamKey("excel_path"); 
 			String path = trainRuleParamDao.findParamByKey(trainRuleParam).getParamValue() + "/static/Exceltemplate/" + filename;
 			logger.info("#####[组推手机号模板-new-path"+path);
-																	//提交到git上之前记得改回来
-			File file = new File(oldPath);
+			File file = new File(path);
 			// 以流的形式下载文件。
-			InputStream fis = new BufferedInputStream(new FileInputStream(oldPath));
+			InputStream fis = new BufferedInputStream(new FileInputStream(path));
 			byte[] buffer = new byte[fis.available()];
 			fis.read(buffer);
 			fis.close();

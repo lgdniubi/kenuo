@@ -70,7 +70,7 @@
 								<form:input path="title" htmlEscape="false" maxlength="200"  class=" form-control input-sm"/>
 							<span>类型：</span>
 								<form:select path="type"  class="form-control m-b">
-								    <form:option value="" label="推送类型"/>
+								    <form:option value="" label=""/>
 								    <form:options items="${fns:getDictList('mtmy_oa_notify_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 							    </form:select>
 							<span>状态：</span>
