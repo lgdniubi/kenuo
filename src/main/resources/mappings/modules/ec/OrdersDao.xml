@@ -697,7 +697,12 @@
 			order_status = #{orderstatus},
 			mobile = #{mobile},
 			consignee = #{consignee},
+			<if test="newFlag == 1">
 			address = #{address},
+			province = null,
+			city = null,
+			district = null,
+			</if>
 			shipping_type = #{shippingtype},
 			user_note = #{usernote}
 			<if test="cancelType != null  and cancelType != ''">

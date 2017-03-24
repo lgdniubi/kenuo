@@ -93,6 +93,7 @@
 	<select id="selectIdByCreateDate" resultType="Integer">
 		SELECT id AS trainLiveActivityRatioId
 		FROM trains.train_live_activity_ratio
+		WHERE del_flag = '0'
 		ORDER BY create_date desc LIMIT 1
 	</select>
 
@@ -196,5 +197,6 @@
 		WHERE exchange_type = #{exchangeType}
 		AND activity_id = #{activityId}
 		AND is_show = '0'
+		AND del_flag = '0'
 	</select>
 </mapper>

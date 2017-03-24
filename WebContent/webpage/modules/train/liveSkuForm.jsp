@@ -72,9 +72,6 @@
 <body class="gray-bg">
 	<div class="wrapper wrapper-content">
 		<div class="ibox">
-			<div class="ibox-title">
-				<h5>配置列表</h5>
-			</div>
 			<sys:message content="${message}" />
 			<!-- 查询条件 -->
 			<div class="ibox-content">

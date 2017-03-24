@@ -233,7 +233,7 @@ $(document).ready(function() {
 							<td><input type="checkbox" id="${user.id}" class="i-checks"></td>
 							<td style="text-align: center;">${user.name}</td>
 							<td style="text-align: center;">${user.office.name}</td>
-							<td style="text-align: center;">${user.phone}</td>
+							<td style="text-align: center;">${user.mobile}</td>
 						</tr>
 						</c:forEach>
 					</tbody>

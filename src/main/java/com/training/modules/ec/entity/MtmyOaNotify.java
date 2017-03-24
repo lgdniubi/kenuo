@@ -9,11 +9,13 @@ import java.util.List;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 import com.training.common.persistence.DataEntity;
 import com.training.common.utils.Collections3;
 import com.training.common.utils.IdGen;
 import com.training.common.utils.StringUtils;
+import com.training.common.utils.excel.annotation.ExcelField;
 
 /**
  * 每天每夜通知通告Entity
@@ -51,6 +53,7 @@ public class MtmyOaNotify extends DataEntity<MtmyOaNotify> {
 	
 	private Users users;
 	
+	private String phones;      //组推人员的手机号
 	public MtmyOaNotify() {
 		super();
 	}
@@ -169,6 +172,14 @@ public class MtmyOaNotify extends DataEntity<MtmyOaNotify> {
 		// 什么也不做
 	}
 
+	/**
+	 * 获取通知发送记录用户mobile
+	 * @return
+	 */
+	public String getMtmyOaNotifyRecordMobile() {
+		return Collections3.extractToString(mtmyOaNotifyRecordList, "mtmyOaNotify.phones", ",") ;
+	}
+		
 	public boolean isSelf() {
 		return isSelf;
 	}
@@ -285,5 +296,15 @@ public class MtmyOaNotify extends DataEntity<MtmyOaNotify> {
 	public void setUsers(Users users) {
 		this.users = users;
 	}
+	
+	@JsonIgnore
+	@ExcelField(title="手机号码", align=2, sort=1,type=2)
+	public String getPhones() {
+		return phones;
+	}
 
+	public void setPhones(String phones) {
+		this.phones = phones;
+	}
+	
 }

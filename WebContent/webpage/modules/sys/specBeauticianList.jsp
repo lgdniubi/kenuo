@@ -45,7 +45,7 @@
 							</div>
 							<span>姓&nbsp;&nbsp;&nbsp;名：</span>
 								<form:input path="userName" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
-							<span>电话号码：</span>
+							<span>手机号码：</span>
 								<form:input path="userPhone" htmlEscape="false" maxlength="50" class=" form-control input-sm" /> 
 						</form:form>
 						<br />

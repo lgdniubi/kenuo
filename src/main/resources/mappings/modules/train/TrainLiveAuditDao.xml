@@ -53,6 +53,7 @@
 		LEFT JOIN trains.sys_user b ON a.userId=b.id
 		LEFT JOIN trains.sys_dict c ON c.`value`=b.user_type
 		LEFT JOIN trains.train_live_room r ON r.userId=a.userId
+		LEFT JOIN trains.sys_office o ON o.id = b.office_id
 		WHERE a.del_flag=0 AND c.type='sys_user_type'
 		<if test="userName!=null and userName!=''">
 			AND b.name like
@@ -66,6 +67,15 @@
 		</if>
 		<if test="auditStatus!=null and auditStatus!=''">
 			AND a.audit_status=#{auditStatus}
+		</if>
+		<if test="mobile != null and mobile != ''">
+			AND b.mobile = #{mobile}
+		</if>
+		<if test="organization != null and organization.id != null and organization.id != ''">
+			AND (o.id = #{organization.id} OR o.parent_ids LIKE CONCAT('%,', #{organization.id}, ',%'))
+		</if>
+		<if test="position != null and position != ''">
+			AND c.label = #{position}
 		</if>
 
 		ORDER BY a.create_date DESC

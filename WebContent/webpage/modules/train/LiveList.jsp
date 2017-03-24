@@ -38,6 +38,11 @@
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 						<div class="form-group">
 							<label>用户名：</label><form:input path="userName" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
+							<label>手机号：</label><form:input path="mobile" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
+							<span>归属机构：</span>
+							<sys:treeselect id="organization" name="organization.id" value="${trainLiveAudit.organization.id}" labelName="organization.name" labelValue="${trainLiveAudit.organization.name}" title="部门" url="/sys/office/treeData?type=2" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="false" />
+							<label>职位：</label><form:input path="position" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
+							<p></p>
 							<label>直播主题：</label><form:input path="title" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
 							<label>审核状态：</label>
 							<form:select path="auditStatus" class="form-control">

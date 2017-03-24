@@ -18,6 +18,7 @@
 		LEFT JOIN sys_office o ON o.id = u.office_id
 		WHERE lo.type = 3
 		AND lo.order_status = 3
+		AND lo.del_flag = 0
 		<if test="name != null and name != ''">
 			AND u.name like CONCAT('%', #{name}, '%')
 		</if>
@@ -61,6 +62,7 @@
 		LEFT JOIN sys_user u ON u.id = lo.user_id
 		LEFT JOIN sys_office o ON o.id = u.office_id
 		WHERE lo.type = 4
+		AND lo.del_flag = 0
 		<if test="name != null and name != ''">
 			AND u.name like CONCAT('%', #{name}, '%')
 		</if>

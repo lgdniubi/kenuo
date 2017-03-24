@@ -42,7 +42,7 @@ public interface TrainLiveActivityRatioDao extends CrudDao<TrainLiveActivityRati
 	public void updateIsShow(TrainLiveActivityRatio trainLiveActivityRatio);
 	
 	/**
-	 * 查询出最近更新的那一组的id
+	 * 查询出最近创建的那一组的id
 	 */
 	public int selectIdByCreateDate();
 	

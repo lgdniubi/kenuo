@@ -111,7 +111,14 @@ public class TrainLiveActivityRatioController extends BaseController{
 	@RequestMapping(value="del")
 	public String delete(TrainLiveActivityRatio trainLiveActivityRatio,HttpServletRequest request,RedirectAttributes redirectAttributes){
 		try{
+			trainLiveActivityRatio = trainLiveActivityRatioService.getTrainLiveActivityRatio(trainLiveActivityRatio.getTrainLiveActivityRatioId());
 			trainLiveActivityRatioService.deleteTrainLiveActivityRatio(trainLiveActivityRatio.getTrainLiveActivityRatioId());
+			if("0".equals(trainLiveActivityRatio.getIsShow())){
+				int trainLiveActivityRatioId = trainLiveActivityRatioService.selectIdByCreateDate();
+				trainLiveActivityRatio = trainLiveActivityRatioService.getTrainLiveActivityRatio(trainLiveActivityRatioId);
+				trainLiveActivityRatio.setIsShow("0");
+				trainLiveActivityRatioService.updateIsShow(trainLiveActivityRatio);
+			}
 			addMessage(redirectAttributes, "删除充值兑换配置表对应的活动成功");
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "删除充值兑换配置表对应的活动失败!", e);

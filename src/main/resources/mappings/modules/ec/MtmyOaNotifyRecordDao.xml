@@ -7,6 +7,7 @@
 		a.USER_ID AS "users.id",
 		a.READ_FLAG AS "readFlag",
 		a.READ_DATE AS "readDate",
+		u.mobile AS 'mtmyOaNotify.phones',
 		concat(u.nickname,' (',u.mobile,')') AS "users.nickname"
 	</sql>
 	
@@ -77,4 +78,11 @@
 			status = #{status}
 		where id = #{notify_id}
 	</update>
+	
+	<!-- 根据用户user_id查询用户是否有client -->
+	<select id="selectClient" resultType="Integer">
+		SELECT COUNT(*) 
+		FROM mtmydb.mtmy_oa_user_client
+		WHERE user_id = #{userId}
+	</select>
 </mapper>

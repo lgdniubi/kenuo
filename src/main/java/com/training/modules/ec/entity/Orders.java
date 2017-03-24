@@ -175,6 +175,7 @@ public class Orders extends TreeEntity<Orders> {
 	private String newDistrict;     //导出字段  县
 	
 	private String oldAddress;      //修改前的地址
+	private String newFlag;         //标识   判断当前订单的收货地址是否修改，0 未修改 ，1修改
 	
 	private String userDelFlag;		//订单类型（0：正常 1：用户删除）
 	private String cancelType;		//订单取消类型
@@ -1481,6 +1482,13 @@ public class Orders extends TreeEntity<Orders> {
 	public void setOldAddress(String oldAddress) {
 		this.oldAddress = oldAddress;
 	}
+	public String getNewFlag() {
+		return newFlag;
+	}
+	public void setNewFlag(String newFlag) {
+		this.newFlag = newFlag;
+	}
+	
 	public String getUserDelFlag() {
 		return userDelFlag;
 	}
