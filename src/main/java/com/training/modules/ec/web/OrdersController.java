@@ -895,6 +895,8 @@ public class OrdersController extends BaseController {
 				if(-2 == orders.getOrderstatus()){//新订单状态 等于“取消订单”
 					boolean result = returnRepository(orders.getOrderid());
 					if(result){
+						// 取消订单  修改订单取消类型为后台取消
+						orders.setCancelType("1");
 						ordersService.updateVirtualOrder(orders);
 						addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
 					}else{
@@ -906,7 +908,6 @@ public class OrdersController extends BaseController {
 					addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
 				}
 			}else{
-				ordersService.updateVirtualOrder(orders);
 				addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
 			}
 		} catch (Exception e) {
