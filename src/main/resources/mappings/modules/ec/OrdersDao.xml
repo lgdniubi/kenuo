@@ -171,7 +171,8 @@
 			a.channel_flag AS channelflag,
 			COUNT(m.rec_id) AS "goodsnum",
 			IFNULL(ogd.order_arrearage,0) AS orderArrearage,
-			a.del_flag
+			a.del_flag,
+			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
@@ -279,7 +280,8 @@
 		    a.admin_note AS adminNote,
 		    a.is_real AS orderIsReal,
 		    a.add_time AS strAddTime,
-		    a.shipping_price as newShippingPrice
+		    a.shipping_price as newShippingPrice,
+		    (CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
 		FROM
 			mtmydb.mtmy_orders a
 			LEFT JOIN mtmydb.mtmy_payment d ON a.pay_code=d.pay_code
@@ -519,7 +521,13 @@
 	</select>
 	
 	<update id="modifyOrderStatus" parameterType="map">
-		UPDATE mtmydb.mtmy_orders SET order_status = #{order_status}
+		UPDATE 
+			mtmydb.mtmy_orders 
+		SET 
+			order_status = #{order_status}
+			<if test="cancelType != null  and cancelType != ''">
+				cancel_type = #{cancelType}
+			</if>
 		WHERE order_id = #{order_id}
 	</update>
 	<select id="selectSaleByOrderid" resultType="Integer">
@@ -697,6 +705,9 @@
 			</if>
 			shipping_type = #{shippingtype},
 			user_note = #{usernote}
+			<if test="cancelType != null  and cancelType != ''">
+				cancel_type = #{cancelType}
+			</if>
 		WHERE order_id = #{orderid}
 	</update>
 	
@@ -850,7 +861,8 @@
 	<update id="updateOrderStatut">
 		UPDATE mtmydb.mtmy_orders
 				SET order_status = -2,
-				admin_note='强制取消'
+				admin_note='强制取消',
+				cancel_type = '1'
 		WHERE
 			order_id = #{orderid}
 	</update>

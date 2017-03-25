@@ -178,6 +178,9 @@ public class Orders extends TreeEntity<Orders> {
 	private String newFlag;         //标识   判断当前订单的收货地址是否修改，0 未修改 ，1修改
 	
 	private String userDelFlag;		//订单类型（0：正常 1：用户删除）
+	private String cancelType;		//订单取消类型
+	private int isInvoice;		//是否可开发票
+	
 	public String getSearchIsReal() {
 		return searchIsReal;
 	}
@@ -1492,4 +1495,25 @@ public class Orders extends TreeEntity<Orders> {
 	public void setUserDelFlag(String userDelFlag) {
 		this.userDelFlag = userDelFlag;
 	}
+	@JsonIgnore
+	@ExcelField(title="取消类型", align=2, sort=6)
+	public String getCancelType() {
+		return cancelType;
+	}
+	public void setCancelType(String cancelType) {
+		if(cancelType.equals("0")){
+			this.cancelType="用户取消";
+		}else if(cancelType.equals("1")){
+			this.cancelType="后台取消";
+		}else if(cancelType.equals("2")){
+			this.cancelType="自动取消";
+		}
+	}
+	public int getIsInvoice() {
+		return isInvoice;
+	}
+	public void setIsInvoice(int isInvoice) {
+		this.isInvoice = isInvoice;
+	}
+	
 }

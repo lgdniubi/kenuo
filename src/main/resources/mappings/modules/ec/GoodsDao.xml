@@ -499,6 +499,7 @@
 		SELECT 
 		  goods_id AS 'goodsId',
 		  spec_key AS 'specKey',
+		  spec_key_name AS 'specKeyName',
 		  spec_key_value AS 'specKeyValue',
 		  price,
 		  market_price AS 'marketPrice',
