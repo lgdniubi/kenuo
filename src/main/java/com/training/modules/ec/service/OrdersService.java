@@ -980,6 +980,18 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		}else{
 			orders.setNewFlag("0");
 		}
+		//当订单发票的过期时间为空时
+		if(orders.getInvoiceOvertime() == null){
+			if(orders.getIsReal() == 0){   //app下单实物的状态改为待发货时，将发票过期时间设置为下个月月底
+				if(orders.getOrderstatus() == 1){
+					orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+				}
+			}else if(orders.getIsReal() == 1){  //app下单虚拟的状态改为已完成时，将发票过期时间设置为下个月月底
+				if(orders.getOrderstatus() == 4){
+					orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+				}
+			}
+		}
 		User user = UserUtils.getUser(); //登陆用户
 		orders.setCreateBy(user);
 		Payment payment = paymentDao.getByCode(orders.getPaycode());

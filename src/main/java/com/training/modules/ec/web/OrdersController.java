@@ -898,6 +898,9 @@ public class OrdersController extends BaseController {
 	public String updateVirtualOrder(Orders orders, HttpServletRequest request, Model model,
 			RedirectAttributes redirectAttributes) {
 		try {
+			Orders newOrders = ordersService.selectOrderById(orders.getOrderid());
+			orders.setInvoiceOvertime(newOrders.getInvoiceOvertime());
+			orders.setIsReal(newOrders.getIsReal());
 			if(orders.getOldstatus() != orders.getOrderstatus()){ //2次订单修改状态不一致
 				if(-2 == orders.getOrderstatus()){//新订单状态 等于“取消订单”
 					boolean result = returnRepository(orders.getOrderid());
@@ -1549,9 +1552,9 @@ public class OrdersController extends BaseController {
 				orderGoods.setAdvanceServiceTimes(0);        //服务次数
 				orderGoods.setDebt(c);                       //欠款
 			}else{
-				double a = advance/singleRealityPrice;
+				int a = (int)(advance/singleRealityPrice);
 				double b = Double.parseDouble(formater.format(advance - a*singleRealityPrice));
-//				orderGoods.setAdvanceServiceTimes(a);        //服务次数 
+				orderGoods.setAdvanceServiceTimes(a);        //服务次数 
 				orderGoods.setAdvanceBalance(b);             //余额
 			}
 			double accountBalance = ordersService.getAccount(userid); //用户账户余额

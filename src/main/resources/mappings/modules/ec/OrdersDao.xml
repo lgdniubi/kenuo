@@ -680,6 +680,7 @@
 			o.coupon_price as couponprice,
 			o.discount as discount,
 			o.member_goods_price as membergoodsprice,
+			o.invoice_overtime as invoiceOvertime,
 			o.shipping_price as shippingprice
 		FROM
 			mtmydb.mtmy_orders o,
@@ -697,6 +698,7 @@
 			order_status = #{orderstatus},
 			mobile = #{mobile},
 			consignee = #{consignee},
+			invoice_overtime = #{invoiceOvertime},
 			<if test="newFlag == 1">
 			address = #{address},
 			province = null,
