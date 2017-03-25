@@ -162,7 +162,7 @@
 						<div class="col-sm-12">
 							<div class="pull-left">
 								<shiro:hasPermission name="train:categorys:addcategorys">
-									<table:addRow url="${ctx}/train/categorys/addcategorys" width="430px" height="480px" title="添加课程分类"></table:addRow><!-- 增加按钮 -->
+									<table:addRow url="${ctx}/train/categorys/addcategorys" width="430px" height="480px" title="课程分类"></table:addRow><!-- 增加按钮 -->
 								</shiro:hasPermission>
 								<%-- <shiro:hasPermission name="train:categorys:batchdeletecategorys">
 									<table:delRow url="${ctx}/train/categorys/batchdeletecategorys" id="treeTable"></table:delRow><!-- 删除按钮 -->
@@ -205,22 +205,22 @@
 									<td>${trainCategory.sort}</td>
 									<td style="text-align: left;">
 										<shiro:hasPermission name="train:categorys:form">
-											<a href="#" onclick="openDialogView('查看课程', '${ctx}/train/categorys/form?categoryId=${trainCategory.categoryId}&opflag=VIEW','430px', '480px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>
+											<a href="#" onclick="openDialogView('查看分类', '${ctx}/train/categorys/form?categoryId=${trainCategory.categoryId}&opflag=VIEW','430px', '480px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>
 										</shiro:hasPermission>
 										<!-- 1、分类类型为：公共时，才能允许有修改与删除功能 
 										   或者 2、登录用户角色的机构为1（可诺丹婷），才能允许有修改与删除功能
 										-->
 										<c:if test="${(trainCategory.cateType != '1') || (trainCategorys.officeType == '1')}">
 											<shiro:hasPermission name="train:categorys:updatecategorys">
-					    						<a href="#" onclick="openDialog('修改课程', '${ctx}/train/categorys/form?categoryId=${trainCategory.categoryId}&opflag=UPDATE','430px', '480px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
+					    						<a href="#" onclick="openDialog('修改分类', '${ctx}/train/categorys/form?categoryId=${trainCategory.categoryId}&opflag=UPDATE','430px', '480px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 						    				</shiro:hasPermission>
 						    				<shiro:hasPermission name="train:categorys:deletecategorys">
-												<a href="${ctx}/train/categorys/deletecategorys?categoryId=${trainCategory.categoryId}" onclick="return confirmx('要删除该课程及所有子课程吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
+												<a href="${ctx}/train/categorys/deletecategorys?categoryId=${trainCategory.categoryId}" onclick="return confirmx('要删除该分类及所有子分类吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
 											</shiro:hasPermission>
 										</c:if>
 										<c:if test="${trainCategory.parentId == '0' }">
 											<shiro:hasPermission name="train:categorys:juniorcategorys">
-												<a href="#" onclick="openDialog('添加下级课程', '${ctx}/train/categorys/addcategorys?categoryId=${trainCategory.categoryId}','430px', '480px')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i> 添加下级课程</a>
+												<a href="#" onclick="openDialog('添加下级分类', '${ctx}/train/categorys/addcategorys?categoryId=${trainCategory.categoryId}','430px', '480px')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i> 添加下级分类</a>
 											</shiro:hasPermission>
 										</c:if>
 									</td>
