@@ -39,6 +39,7 @@
 								<input type="button" value='班' id='goWork' class="btn btn-default">&nbsp;
 								<input type="button" value='假' id='holiday' class="btn btn-default">&nbsp;
 								<input type="button" value='休' id='weekWork' class="btn btn-default">&nbsp;
+								<input type="button" value='学' id='study' class="btn btn-default">&nbsp;
 								<input type="button" value='清' id='delWork' class="btn btn-default">&nbsp;
 								<shiro:hasPermission name="train:arrange:save">
 									<input type="button" onclick="save()"  class="btn btn-default" value="保存">
@@ -99,19 +100,27 @@
 					                            			<td class="isYes">
 					                            				<div style="width: 100px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden">
-							                            			<span>班</span>
+							                            			<span style="color: #5ec4ff">班</span>
 						                            			</div>
 						                            		</td>
 					                            		</c:when>
-					                            		<c:when test="${arrangeShops.shopId == '1' or arrangeShops.shopId == '2' }">
+					                            		<c:when test="${arrangeShops.shopId == '1' or arrangeShops.shopId == '2' or arrangeShops.shopId == '3'}">
 					                            			<td class="isYes">
 					                            				<div style="width: 100px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden">
-							                            			<span>${arrangeShops.shopName }</span>
+							                            			<c:if test="${arrangeShops.shopId == '1'}">
+							                            				<span style="color: #4ad264">${arrangeShops.shopName }</span>
+							                            			</c:if>
+							                            			<c:if test="${arrangeShops.shopId == '2'}">
+							                            				<span style="color: #ff873f">${arrangeShops.shopName }</span>
+							                            			</c:if>
+							                            			<c:if test="${arrangeShops.shopId == '3'}">
+							                            				<span style="color: #ff3000">${arrangeShops.shopName }</span>
+							                            			</c:if>
 							                            		</div>
 						                            		</td>
 					                            		</c:when>
-					                            		<c:when test="${arrangeShops.shopId != '1' and arrangeShops.shopId != '2' and arrangeShops.shopId != '' and arrangeShops.shopId != null}">
+					                            		<c:when test="${arrangeShops.shopId != '1' and arrangeShops.shopId != '2' and arrangeShops.shopId != '3' and arrangeShops.shopId != '' and arrangeShops.shopId != null}">
 					                            			<td class="isNo">
 					                            				<div style="width: 100px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden">
@@ -136,19 +145,27 @@
 					                            			<td class="isNo">
 					                            				<div style="width: 100px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden">
-							                            			<span>班</span>
+							                            			<span style="color: #5ec4ff">班</span>
 						                            			</div>
 						                            		</td>
 					                            		</c:when>
-					                            		<c:when test="${arrangeShops.shopId == '1' or arrangeShops.shopId == '2' }">
+					                            		<c:when test="${arrangeShops.shopId == '1' or arrangeShops.shopId == '2' or arrangeShops.shopId == '3'}">
 					                            			<td class="isNo">
 					                            				<div style="width: 100px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden">
-							                            			<span>${arrangeShops.shopName }</span>
+							                            			<c:if test="${arrangeShops.shopId == '1'}">
+							                            				<span style="color: #4ad264">${arrangeShops.shopName }</span>
+							                            			</c:if>
+							                            			<c:if test="${arrangeShops.shopId == '2'}">
+							                            				<span style="color: #ff873f">${arrangeShops.shopName }</span>
+							                            			</c:if>
+							                            			<c:if test="${arrangeShops.shopId == '3'}">
+							                            				<span style="color: #ff3000">${arrangeShops.shopName }</span>
+							                            			</c:if>
 							                            		</div>
 						                            		</td>
 					                            		</c:when>
-					                            		<c:when test="${arrangeShops.shopId != '1' and arrangeShops.shopId != '2' and arrangeShops.shopId != '' and arrangeShops.shopId != null}">
+					                            		<c:when test="${arrangeShops.shopId != '1' and arrangeShops.shopId != '2' and arrangeShops.shopId != '3' and arrangeShops.shopId != '' and arrangeShops.shopId != null}">
 					                            			<td class="isNo">
 					                            				<div style="width: 100px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden">
@@ -196,24 +213,26 @@
 				//高亮显示
 				var $this = $(this);
 		        $this.addClass('active').siblings().removeClass('active');
-				/* if($state != 'cencleWork'){
-					$('#treeTable').addClass('editTd');
-				}else{
-					$('#treeTable').removeClass('editTd');
-				} */
 			});
 			
 			$('#treeTable .isYes').click(function(){
 				var $this = $(this);
 				if($state == 'goWork'){
 					$this.find('span').text('班');
+					$this.find('span').attr('style','color:#5ec4ff');
 					$this.find('input[type="hidden"]').val($("#nowOfficeId").val());
 				}else if($state == 'holiday'){
 					$this.find('span').text('假');
+					$this.find('span').attr('style','color:#ff873f');
 					$this.find('input[type="hidden"]').val('2');
 				}else if($state == 'weekWork'){
 					$this.find('span').text('休');
+					$this.find('span').attr('style','color:#4ad264');
 					$this.find('input[type="hidden"]').val('1');
+				}else if($state == 'study'){
+					$this.find('span').text('学');
+					$this.find('span').attr('style','color:#ff3000');
+					$this.find('input[type="hidden"]').val('3');
 				}else if($state == 'delWork'){
 					$this.find('span').text('');
 					$this.find('input[type="hidden"]').val('');
