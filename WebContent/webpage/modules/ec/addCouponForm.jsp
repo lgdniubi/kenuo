@@ -316,7 +316,7 @@
 			$.ajax({
 				 type:"get",
 				 dataType:"json",
-				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&actionType="+actionType,
+				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&actionType="+actionType+"&franchiseeId="+$("#franchiseeId").val(),
 				 success:function(date){
 					var data=date;
 // 					console.log(data);
@@ -563,6 +563,7 @@
 				<div class="clearfix">
 					<form:form id="inputForm" modelAttribute="activityCoupon" action="${ctx}/ec/activity/saveCoupon" method="post" class="form-horizontal">
 						<form:hidden path="id"/>
+						<input value="${franchiseeId }" type="hidden" id="franchiseeId"> <!-- 活动所属品牌 -->
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 
 							<tr>

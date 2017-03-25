@@ -5,7 +5,6 @@
 <head>
 <title>活动列表</title>
 <meta name="decorator" content="default" />
-
 <script type="text/javascript">
 	function page(n,s) {
 		$("#pageNo").val(n);
@@ -13,8 +12,6 @@
 		$("#searchForm").submit();
 		return false;
 	}
-	
-	
 	function  addGoods(show,close,actionId){
 		var newDate=new Date();
 		var showDate =new Date(show);
@@ -30,9 +27,7 @@
 		if(newDate.getTime()<showDate.getTime()){
 			 openDialogView('活动商品列表', '${ctx}/ec/action/addActionGoodsList?actionId='+actionId,'900px','700px');
 		}
-	
 	}           
-	
 	function  actionEdit(show,close,actionId){
 		var newDate=new Date();
 		var showDate =new Date(show);
@@ -48,14 +43,8 @@
 		if(newDate.getTime()<showDate.getTime()){
 			openDialog('查看抢购活动', '${ctx}/ec/action/form?actionId='+actionId,'800px','550px');
 		}
-	
 	}           
-	
-	
-	
 	$(document).ready(function() {
-		
-		
 		var start = {
 			    elem: '#startTime',
 			    format: 'YYYY-MM-DD',
@@ -87,16 +76,9 @@
 			};
 			laydate(start);
 			laydate(end);
-       
     });
-	
-	
 </script>
 </head>
-
-
-
-
 <body class="gray-bg">
 	<div class="wrapper wrapper-content">
 		<div class="ibox">
@@ -186,7 +168,6 @@
 								<c:if test="${action.status==3}">
 									<td>已结束</td>
 								</c:if>
-								
 								<td>
 									<shiro:hasPermission name="ec:action:edit">
 										<c:if test="${action.status==1}">
@@ -253,7 +234,6 @@
 								<div class="tfoot">
 									<table:page page="${page}"></table:page>
 								</div>
-
 							</td>
 						</tr>
 					</tfoot>
@@ -261,7 +241,5 @@
 			</div>
 		</div>
 	</div>
-
-
 </body>
 </html>
