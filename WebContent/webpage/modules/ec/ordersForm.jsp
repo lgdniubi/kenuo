@@ -356,6 +356,49 @@
 	    return currentdate;
 	}
 window.onload=initStatus;
+
+	function ToAdvance(recid){
+		var userid = $("#userid").val();
+		var orderid = $("#orderid").val();
+		var isReal = $("#isReal").val();
+		top.layer.open({
+		    type: 2, 
+		    area: ['600px', '450px'],
+		    title:"充值",
+		    content: "${ctx}/ec/orders/handleAdvanceFlagForm?recid="+recid+"&userid="+userid,
+		    btn: ['确定', '关闭'],
+		    yes: function(index, layero){
+		    	var obj =  layero.find("iframe")[0].contentWindow;
+     	    	var sum = obj.document.getElementById("sum").value; //员工id
+				//异步处理预约金
+				$.ajax({
+					type:"post",
+					data:{
+						sum:sum,
+						recid:recid, 
+						userid:userid
+					 },
+					url:"${ctx}/ec/orders/handleAdvanceFlag?recid="+recid+"&userid="+userid+"&orderid="+orderid,
+					success:function(date){
+						if(date == 'success'){
+							top.layer.alert('处理成功!', {icon: 1, title:'提醒'});
+							window.location="${ctx}/ec/orders/orderform?orderid="+orderid;
+							top.layer.close(index);	
+						}else if(date == 'error'){
+							top.layer.alert('处理失败!', {icon: 0, title:'提醒'});
+							window.location="${ctx}/ec/orders/orderform?orderid="+orderid;
+							top.layer.close(index);
+						}
+						
+					},
+					error:function(XMLHttpRequest,textStatus,errorThrown){}
+				});
+		},
+		cancel: function(index){ //或者使用btn2
+			    	           //按钮【按钮二】的回调
+		}
+	}); 
+	}
 </script>
 </head>
 
@@ -444,7 +487,7 @@ window.onload=initStatus;
 									</c:if>
 									<!-- <th style="text-align: center;">余款</th> -->
 									<th style="text-align: center;">欠款</th>
-									<c:if test="${orders.channelFlag == 'bm'}">
+									<c:if test="${orders.channelFlag == 'bm' || (orders.channelFlag != 'bm' && orders.isReal==1)}">
 										<th style="text-align: center;">操作</th>
 									</c:if>
 								</tr>
@@ -466,14 +509,19 @@ window.onload=initStatus;
 										</c:if>
 										<%-- <td>${orderGood.orderBalance }</td> --%>
 										<td align="center">${orderGood.orderArrearage }</td>
-										<c:if test="${orders.channelFlag == 'bm'}">
+										<c:if test="${orders.channelFlag == 'bm' || (orders.channelFlag != 'bm' && orders.isReal==1)}">
 											<td align="center">
 												<c:if test="${type != 'view' }">
-													<c:if test="${orderGood.orderArrearage != 0}">
-														<a href="#" onclick="TopUp(${orderGood.recid},${orderGood.singleRealityPrice },${orderGood.singleNormPrice },${orderGood.orderArrearage },${orderGood.servicetimes },${orderGood.remaintimes })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>充值</a>
+													<c:if test="${orders.channelFlag == 'bm' || (orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag != 1)}">
+														<c:if test="${orderGood.orderArrearage != 0}">
+															<a href="#" onclick="TopUp(${orderGood.recid},${orderGood.singleRealityPrice },${orderGood.singleNormPrice },${orderGood.orderArrearage },${orderGood.servicetimes },${orderGood.remaintimes })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>充值</a>
+														</c:if>
+														<c:if test="${orderGood.orderArrearage == 0}">
+															<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>充值</a>
+														</c:if>
 													</c:if>
-													<c:if test="${orderGood.orderArrearage == 0}">
-														<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>充值</a>
+													<c:if test="${orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag == 1}">
+														<a href="#" onclick="ToAdvance(${orderGood.recid})"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
 													</c:if>
 												</c:if>
 												<a href="#" onclick="openDialogView('查看订单', '${ctx}/ec/orders/getMappinfOrderView?recid=${orderGood.recid}&orderid=${orders.orderid }&orderType=mapping','800px','600px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>商品充值查看</a>

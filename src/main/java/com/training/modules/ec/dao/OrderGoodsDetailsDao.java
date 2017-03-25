@@ -55,4 +55,10 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @return
 	 */
 	public  GoodsDetailSum selectDetaiSum(String recId);
+	
+	/**
+	 * 处理预约金
+	 * @param recId
+	 */
+	public void updateAdvanceFlag(String recId);
 }

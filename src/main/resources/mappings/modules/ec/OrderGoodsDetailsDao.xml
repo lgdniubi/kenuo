@@ -27,7 +27,7 @@
 			#{totalAmount},
 			#{orderBalance},
 			#{orderArrearage},
-			<if test="itemAmount!=null and itemAmount!=''">
+			<if test="itemAmount != null and itemAmount != ''">
 				#{itemAmount},
 			</if>
 			<if test="itemCapitalPool!=null and itemCapitalPool!=''">
@@ -56,6 +56,7 @@
 	
 	<select id="getOrderGoodsDetailListByMid" resultType="OrderGoods">
 		SELECT
+			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = #{mid} AND advance_flag = '1') AS 'advanceFlag',
 			SUM(total_amount) as totalAmount,
 			SUM(order_balance) as orderBalance,
 			SUM(order_arrearage) as orderArrearage,
@@ -103,5 +104,12 @@
 	
 	</select>
 	
-	
+	<!-- 处理预约金 -->
+	<update id="updateAdvanceFlag">
+		UPDATE mtmydb.mtmy_order_goods_details
+		SET 
+			advance_flag = '0',
+			order_arrearage = '0'
+		WHERE goods_mapping_id = #{recid}
+	</update>
 </mapper>

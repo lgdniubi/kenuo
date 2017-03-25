@@ -3,6 +3,7 @@ package com.training.modules.ec.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.service.TreeService;
 import com.training.modules.ec.dao.OrderGoodsDetailsDao;
@@ -18,6 +19,7 @@ import com.training.modules.ec.entity.Orders;
  */
 
 @Service
+@Transactional(readOnly = false)
 public class OrderGoodsDetailsService extends TreeService<OrderGoodsDetailsDao, OrderGoodsDetails> {
 
 	/**
@@ -56,5 +58,13 @@ public class OrderGoodsDetailsService extends TreeService<OrderGoodsDetailsDao, 
 	 */
 	public List<OrderGoodsDetails> getMappinfOrderView(Integer recid) {
 		return dao.getMappinfOrderView(recid);
+	}
+	
+	/**
+	 * 处理预约金
+	 * @param recId
+	 */
+	public void updateAdvanceFlag(String recId){
+		dao.updateAdvanceFlag(recId);
 	}
 }

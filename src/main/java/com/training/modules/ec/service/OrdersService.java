@@ -824,7 +824,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				//计算出当前子订单成本总价
 				double totalPrice = orderGoods.getGoodsprice()*orderGoods.getGoodsnum();
 				goodsprice = goodsprice + totalPrice*100; //总订单的成本价是子订单成本总价的合
-				if("bm".equals(orders.getChannelFlag())){
+//				if("bm".equals(orders.getChannelFlag())){
 					OrderGoods _orderGoods = orderGoodsDetailsService.getOrderGoodsDetailListByMid(orderGoods.getRecid());
 					if(_orderGoods!=null){
 						orderGoods.setTotalAmount(_orderGoods.getTotalAmount());
@@ -832,21 +832,22 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 						orderGoods.setOrderArrearage(_orderGoods.getOrderArrearage());
 						orderGoods.setTotalPrice(totalPrice);
 						orderGoods.setRemaintimes(_orderGoods.getRemaintimes());
+						orderGoods.setAdvanceFlag(_orderGoods.getAdvanceFlag());
 					}
-				}
+//				}
 			}
 		}
-		if(!"bm".equals(orders.getChannelFlag())){
-			orders.setTotalamount(orders.getTotalamount());
-			orders.setOrderBalance(orders.getOrderBalance());
-			orders.setOrderArrearage(orders.getOrderArrearage());
-		}else{
+//		if(!"bm".equals(orders.getChannelFlag())){
+//			orders.setTotalamount(orders.getTotalamount());
+//			orders.setOrderBalance(orders.getOrderBalance());
+//			orders.setOrderArrearage(orders.getOrderArrearage());
+//		}else{
 			if(_orders!=null){
 				orders.setTotalamount(_orders.getTotalamount());
 				orders.setOrderBalance(_orders.getOrderBalance());
 				orders.setOrderArrearage(_orders.getOrderArrearage());
 			}
-		}
+//		}
 		orders.setGoodsprice(goodsprice/100);
 		orders.setOrderGoodList(orderGoodList);
 		//查询订单提成人员信息
@@ -1302,5 +1303,103 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 */
 	public Orders selectByOrderIdSum(String orderid){
 		return dao.selectByOrderIdSum(orderid);
+	}
+	
+
+	 /**
+	  * 根据recid查找相应的商品信息
+	  * @param recId
+	  * @return
+	  */
+	public OrderGoods selectOrderGoodsByRecid(int recId){
+		return orderGoodsDao.selectOrderGoodsByRecid(recId);
+	}
+	
+	/**
+	 * app虚拟订单处理预约金
+	 * @param oLog
+	 * @param sum是否使用了账户余额，0使用了，1未使用
+	 * @param orderAmount应付款金额
+	 */
+	public void handleAdvanceFlag(OrderRechargeLog oLog,int sum,double orderAmount){
+		//获取基本值
+		User user = UserUtils.getUser(); //登陆用户
+		double totalAmount = oLog.getTotalAmount(); //实付款金额
+		double accountBalance = oLog.getAccountBalance(); //订单余款 //账户余额（不是账户的余额，而是用了多少账户的余额）
+		double singleRealityPrice = oLog.getSingleRealityPrice(); //实际服务单次价
+		double singleNormPrice = oLog.getSingleNormPrice(); //单次标价
+		double advance = oLog.getAdvance();
+		
+		int serviceTimes_in = 0;//实际的充值次数
+		int serviceTimes_in_a = 0; //充值次数
+		double totalAmount_in_a = 0;//实付款金额
+		double totalAmount_in = 0;//实付款金额（入库）
+		double accountBalance_in = 0;//余额
+		
+		DecimalFormat formater = new DecimalFormat("#0.##");
+		if(singleRealityPrice < advance){
+			// 实际单次标价  < 预付金	
+			serviceTimes_in_a = (int)Math.floor(totalAmount/singleRealityPrice);//充值次数
+			serviceTimes_in = serviceTimes_in_a - 1;                                //实际的充值次数，因为预约的时候给了一次，入库的时候减少一次
+			totalAmount_in_a = serviceTimes_in_a * singleRealityPrice;//实付金额
+			accountBalance_in =  Double.parseDouble(formater.format(totalAmount - totalAmount_in_a));     //订单余款，也就是这个条件下要存入用户账户余额里的钱
+			totalAmount_in = Double.parseDouble(formater.format(totalAmount_in_a - advance));        //存入库的实付款金额=实付款金额-订金
+		}else if(singleRealityPrice >= advance){
+			//实际单次标价  >= 预付金
+			serviceTimes_in_a = (int)Math.floor(totalAmount/singleRealityPrice);//充值次数
+			serviceTimes_in = serviceTimes_in_a - 1;                                //实际的充值次数，因为预约的时候给了一次，入库的时候减少一次,此时的其实也就是0
+			totalAmount_in_a = singleRealityPrice;//实付金额
+			accountBalance_in = 0;                                 //订单余款，
+			totalAmount_in = Double.parseDouble(formater.format(totalAmount_in_a - advance));       //存入库的实付款金额=实付款金额-订金
+		}
+		
+		double itemAmount = serviceTimes_in_a * singleRealityPrice; //项目金额
+		double itemCapitalPool = serviceTimes_in_a * singleNormPrice; //项目资金池
+		
+		if(accountBalance > 0){ //订金小于单次价，若使用了账户余额，则日志中的账户余额为使用的账户相应的金额
+			oLog.setAccountBalance(-accountBalance);
+			oLog.setRechargeAmount(advance);
+		}else if(accountBalance_in > 0){  //订金大于单次价，若订单有余款，则将余款存到日志的账户余额中
+			oLog.setAccountBalance(accountBalance_in);
+			oLog.setRechargeAmount(totalAmount_in_a);
+		}else if(accountBalance == 0){//订金小于单次价，若未使用账户余额，而是线下补齐的
+			oLog.setAccountBalance(accountBalance);
+			oLog.setRechargeAmount(singleRealityPrice);
+		}
+		
+		oLog.setCreateBy(user);
+		oLog.setRemarks("处理预约金");
+		//保存充值日志记录
+		orderRechargeLogService.saveOrderRechargeLog(oLog);
+		//保存订单商品详情记录表
+		OrderGoodsDetails details = new OrderGoodsDetails();
+		details.setOrderId(oLog.getOrderId());
+		details.setGoodsMappingId(oLog.getRecid()+"");
+		details.setTotalAmount(totalAmount_in);	//实付款金额
+		details.setOrderBalance(accountBalance_in);	//订单余款
+		details.setOrderArrearage(Double.parseDouble(formater.format(orderAmount - totalAmount_in_a)));	//订单欠款
+		details.setItemAmount(itemAmount);	//项目金额
+		details.setItemCapitalPool(itemCapitalPool); //项目资金池
+		details.setServiceTimes(serviceTimes_in);	//剩余服务次数
+		details.setType(0);
+		details.setCreateBy(user);
+		//保存订单商品详情记录
+		orderGoodsDetailsService.saveOrderGoodsDetails(details);
+		
+		//对用户的账户进行操作
+		Orders _orders = new Orders();//根据用户id查询用户账户信息
+		_orders.setUserid(oLog.getMtmyUserId());
+		Orders account = ordersDao.getAccount(_orders);
+		double accountArrearage = account.getAccountArrearage()+Double.parseDouble(formater.format((orderAmount - totalAmount_in_a)));	//账户欠款信息
+		account.setAccountArrearage(accountArrearage);
+		double accountBalance_ = 0;
+		if(accountBalance > 0){ //若使用了账户余额，则减去相应的金额
+			accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()-accountBalance));
+		}else if(accountBalance_in > 0){  //若未使用账户的金额，且订单有余款，则将余款存到账户余额中
+			accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()+accountBalance_in));
+		}
+		account.setAccountBalance(accountBalance_);
+		ordersDao.updateAccount(account);
+		
 	}
 }

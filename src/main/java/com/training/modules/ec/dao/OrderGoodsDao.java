@@ -96,4 +96,12 @@ public interface OrderGoodsDao extends TreeDao<OrderGoods> {
 	 * @return
 	 */
 	public List<OrderGoods> getGoodMapping(@Param("orderId")String orderId);
+	
+	
+	 /**
+	  * 根据recid查找相应的商品信息
+	  * @param recId
+	  * @return
+	  */
+	public OrderGoods selectOrderGoodsByRecid(int recId);
 }
