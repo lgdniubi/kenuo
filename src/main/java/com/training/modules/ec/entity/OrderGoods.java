@@ -63,6 +63,9 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private String labelId;					//设备标签id
 	
 	private int afterSaleNum;				//申请售后商品数量
+//  用于发票
+	private int openNum;					//已开发票数量
+	private double unitPrice;				//商品实付单次价
 	
 	//--------------------预约金需要字段------------------------------------------
 	private int advanceFlag;             //是否预付金,等于1说明查到advance_flag=1,若不为1，则说明是advance_flag=0
@@ -349,6 +352,18 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setLabelId(String labelId) {
 		this.labelId = labelId;
+	}
+	public int getOpenNum() {
+		return openNum;
+	}
+	public void setOpenNum(int openNum) {
+		this.openNum = openNum;
+	}
+	public double getUnitPrice() {
+		return unitPrice;
+	}
+	public void setUnitPrice(double unitPrice) {
+		this.unitPrice = unitPrice;
 	}
 	public int getAdvanceFlag() {
 		return advanceFlag;
