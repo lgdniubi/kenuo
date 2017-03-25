@@ -32,4 +32,10 @@ public interface ReservationDao extends CrudDao<Reservation>{
 	 * @return
 	 */
 	public List<Office> loadOffice(@Param(value="goodsId")int goodsId,@Param(value="nationName")String nationName,@Param(value="provinceId")String provinceId,@Param(value="cityId")String cityId,@Param(value="districtId")String districtId);
+	/**
+	 * 隐藏店铺时  验证店铺下是否有预约
+	 * @param id
+	 * @return
+	 */
+	public int findCountByOfficeId(String id);
 }

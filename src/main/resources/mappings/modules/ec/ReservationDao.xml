@@ -81,4 +81,8 @@
 	<select id="loadOffice" resultType="Office">
 		CALL mtmydb.find_goods_for_shop(#{goodsId},0,#{nationName},#{provinceId},#{cityId},#{districtId},0,10000)
 	</select>
+	<!-- 隐藏店铺时  验证店铺下是否有预约 -->
+	<select id="findCountByOfficeId" resultType="int">
+		SELECT COUNT(*) FROM mtmydb.mtmy_appt_order WHERE shop_id = #{id} AND appt_status = 0;
+	</select>
 </mapper>

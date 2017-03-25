@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +40,7 @@ import com.training.common.utils.StringUtils;
 import com.training.common.utils.excel.ExportExcel;
 import com.training.common.utils.excel.ImportExcel;
 import com.training.common.web.BaseController;
+import com.training.modules.ec.dao.ReservationDao;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeInfo;
@@ -67,6 +69,8 @@ public class OfficeController extends BaseController {
 	private OfficeService officeService;
 	@Autowired
 	private TrainRuleParamDao trainRuleParamDao;
+	@Autowired
+	private ReservationDao reservationDao;
 	
 	@ModelAttribute("office")
 	public Office get(@RequestParam(required=false) String id) {
@@ -767,5 +771,33 @@ public class OfficeController extends BaseController {
 			BugLogUtils.saveBugLog(request, "动态验证店铺下是否有员工失败错误信息", e);
     	}
     	return result;
+    }
+    
+    /**
+     * 隐藏店铺
+     * @param office
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = {"updateOfficeStatus"})
+    public @ResponseBody Map<String, String> updateOfficeStatus(OfficeInfo officeInfo,HttpServletRequest request){
+    	Map<String, String> jsonMap = new HashMap<String, String>();
+    	try {
+    		int num = reservationDao.findCountByOfficeId(officeInfo.getId());
+    		officeService.updateOfficeStatus(officeInfo);
+    		jsonMap.put("FLAG", "OK");
+    		if(num > 0){
+    			jsonMap.put("MESSAGE", "该店铺存在未完成的预约!");
+    		}else{
+    			jsonMap.put("MESSAGE", "隐藏该店铺成功");
+    		}
+    		
+		} catch (Exception e) {
+			logger.error("修改店铺状态出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "修改店铺状态", e);
+			jsonMap.put("FLAG", "ERROR");
+			jsonMap.put("MESSAGE", "修改失败,出现异常");
+		}
+    	return jsonMap;
     }
 }
