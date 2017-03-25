@@ -76,6 +76,9 @@ public class Goods extends DataEntity<Goods> {
 	private EquipmentLabel equipmentLabel;   //商品设备标签
 	private String isAppshow;      //是否app显示[0：否；1：是]
 	
+	private double advancePrice;	// 预约金
+	private int goodsType;			// 商品区分(0: 老商品 1: 新商品)
+	
 	private int subId;           //主题图中商品对应的主题图id
 	/**
 	 * get/set
@@ -398,6 +401,18 @@ public class Goods extends DataEntity<Goods> {
 	}
 	public void setSubId(int subId) {
 		this.subId = subId;
+	}
+	public double getAdvancePrice() {
+		return advancePrice;
+	}
+	public void setAdvancePrice(double advancePrice) {
+		this.advancePrice = advancePrice;
+	}
+	public int getGoodsType() {
+		return goodsType;
+	}
+	public void setGoodsType(int goodsType) {
+		this.goodsType = goodsType;
 	}
 	
 }

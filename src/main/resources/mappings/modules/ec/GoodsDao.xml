@@ -43,7 +43,9 @@
 		  g.region_name AS 'regionName',
 		  g.action_type AS 'actionType',
 		  g.action_id AS 'actionId',
-		  g.service_min AS 'serviceMin'
+		  g.service_min AS 'serviceMin',
+		  g.goods_type AS 'goodsType',
+		  g.advance_price AS 'advancePrice'
 	</sql>
 	
 	<sql id="goodsJoins">
@@ -259,7 +261,9 @@
 		  action_id,
 		  service_min,
 		  on_time,
-		  last_update
+		  last_update,
+		  goods_type,
+		  advance_price
 		) 
 		VALUES
 		  ( #{goodsCategoryId},
@@ -296,7 +300,14 @@
 		    #{actionId},
 		    #{serviceMin},
 		    SYSDATE(),
-		    SYSDATE()
+		    SYSDATE(),
+		    #{goodsType},
+		    <if test="isReal != 1">
+		    	0
+		    </if>
+		    <if test="isReal == 1">
+		    	#{advancePrice}
+		    </if>
 		  )
 	</insert>
 	
@@ -336,7 +347,14 @@
 			  region_name = #{regionName},
 			  service_min = #{serviceMin},
 			  action_type = #{actionType},
-			  last_update = SYSDATE()
+			  last_update = SYSDATE(),
+			  goods_type = #{goodsType},
+			  <if test="isReal != 1">
+				advance_price = 0
+			  </if>
+			  <if test="isReal == 1">
+		    	advance_price = #{advancePrice}
+			  </if>
 			WHERE del_flag = 0 AND goods_id = #{goodsId}
 	</update>
 	<update id="updateTotalstore">
