@@ -51,7 +51,7 @@
 		    type: 2, 
 		    area: ['850px', '600px'],
 		    title:"编辑红包",
-		    content: "${ctx}/ec/activity/addCouponForm?id="+id,
+		    content: "${ctx}/ec/activity/addCouponForm?id="+id+"&franchiseeId="+$("#franchiseeId").val(),
 		    btn: ['确定', '关闭'],
 		    yes: function(index, layero){
 		        var obj =  layero.find("iframe")[0].contentWindow;
@@ -296,7 +296,7 @@
 <%-- 					<c:if test="${activityCoupon.dateCompare<0}"> --%>
 						<a href="#" onclick="addActionGoods(0)" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加红包</a>
 <%-- 					</c:if> --%>
-					
+						<input value="${activity.franchiseeId }" id="franchiseeId" type="hidden"> <!-- 活动所属品牌 -->
 				</div>
 				<p></p>
 				<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
@@ -372,9 +372,8 @@
 <%--                                 	</c:if>	 --%>
 	                            </c:if>
 	                            <c:if test="${list.status==1}">
-	                            <a href="#" style="background: #C0C0C0; color: #FFF" class="btn  btn-xs"><i class="fa fa-edit"></i>修改</a>
+	                            	<a href="#" style="background: #C0C0C0; color: #FFF" class="btn  btn-xs"><i class="fa fa-edit"></i>修改</a>
 	                             </c:if>   
-                                
 								<a href="#" onclick="openDialogView('信息列表', '${ctx}/ec/activity/CateGoodsList?id=${list.id}&usedType=${list.usedType}','300px','400px')"
 												class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>查看</a>
 								

@@ -98,19 +98,21 @@
 					                            			<td class="isYes">
 					                            				<div style="width: 100px;">
 							                            			<input id="${ArrangeBeautician.equipmentId }${status.index+1 }" name="${ArrangeBeautician.equipmentId }${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden">
-							                            			<span>班</span>
+							                            			<span style="color: #5ec4ff">班</span>
 						                            			</div>
 						                            		</td>
 					                            		</c:when>
-					                            		<c:when test="${arrangeEquipments.shopId == '1' or arrangeEquipments.shopId == '2' }">
+					                            		<c:when test="${arrangeEquipments.shopId == '1'}">
 					                            			<td class="isYes">
 					                            				<div style="width: 100px;">
 							                            			<input id="${ArrangeBeautician.equipmentId }${status.index+1 }" name="${ArrangeBeautician.equipmentId }${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden">
-							                            			<span>${arrangeEquipments.shopName }</span>
+							                            			<c:if test="${arrangeEquipments.shopId == '1'}">
+							                            				<span style="color: #ff3000">${arrangeEquipments.shopName }</span>
+							                            			</c:if>
 						                            			</div>
 						                            		</td>
 					                            		</c:when>
-					                            		<c:when test="${arrangeEquipments.shopId != '1' and arrangeEquipments.shopId != '2' and arrangeEquipments.shopId != '' and arrangeEquipments.shopId != null}">
+					                            		<c:when test="${arrangeEquipments.shopId != '1' and arrangeEquipments.shopId != '' and arrangeEquipments.shopId != null}">
 					                            			<td class="isNo">
 					                            				<div style="width: 100px;">
 							                            			<input id="${ArrangeBeautician.equipmentId }${status.index+1 }" name="${ArrangeBeautician.equipmentId }${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden">
@@ -135,19 +137,21 @@
 					                            			<td class="isNo">
 					                            				<div style="width: 100px;">
 							                            			<input id="${ArrangeBeautician.equipmentId }${status.index+1 }" name="${ArrangeBeautician.equipmentId }${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden">
-							                            			<span>班</span>
+							                            			<span style="color: #5ec4ff">班</span>
 						                            			</div>
 						                            		</td>
 					                            		</c:when>
-					                            		<c:when test="${arrangeEquipments.shopId == '1' or arrangeEquipments.shopId == '2' }">
+					                            		<c:when test="${arrangeEquipments.shopId == '1'}">
 					                            			<td class="isNo">
 					                            				<div style="width: 100px;">
 							                            			<input id="${ArrangeBeautician.equipmentId }${status.index+1 }" name="${ArrangeBeautician.equipmentId }${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden">
-							                            			<span>${arrangeEquipments.shopName }</span>
+							                            			<c:if test="${arrangeEquipments.shopId == '1'}">
+							                            				<span style="color: #ff3000">${arrangeEquipments.shopName }</span>
+							                            			</c:if>
 							                            		</div>
 						                            		</td>
 					                            		</c:when>
-					                            		<c:when test="${arrangeEquipments.shopId != '1' and arrangeEquipments.shopId != '2' and arrangeEquipments.shopId != '' and arrangeEquipments.shopId != null}">
+					                            		<c:when test="${arrangeEquipments.shopId != '1' and arrangeEquipments.shopId != '' and arrangeEquipments.shopId != null}">
 					                            			<td class="isNo">
 					                            				<div style="width: 100px;">
 							                            			<input id="${ArrangeBeautician.equipmentId }${status.index+1 }" name="${ArrangeBeautician.equipmentId }${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden">
@@ -195,20 +199,17 @@
 				//高亮显示
 				var $this = $(this);
 		        $this.addClass('active').siblings().removeClass('active');
-				/* if($state != 'cencleWork'){
-					$('#treeTable').addClass('editTd');
-				}else{
-					$('#treeTable').removeClass('editTd');
-				} */
 			});
 			
 			$('#treeTable .isYes').click(function(){
 				var $this = $(this);
 				if($state == 'goWork'){
 					$this.find('span').text('班');
+					$this.find('span').attr('style','color:#5ec4ff');
 					$this.find('input[type="hidden"]').val($("#nowOfficeId").val());
 				}else if($state == 'holiday'){
 					$this.find('span').text('修');
+					$this.find('span').attr('style','color:#ff3000');
 					$this.find('input[type="hidden"]').val('1');
 				}else if($state == 'delWork'){
 					$this.find('span').text('');
