@@ -60,6 +60,7 @@ import com.training.modules.ec.entity.ReturnedGoods;
 import com.training.modules.ec.entity.SaleRebatesLog;
 import com.training.modules.ec.entity.Shipping;
 import com.training.modules.ec.service.AcountLogService;
+import com.training.modules.ec.service.OrderGoodsDetailsService;
 import com.training.modules.ec.service.OrderGoodsService;
 import com.training.modules.ec.service.OrdersLogService;
 import com.training.modules.ec.service.OrdersService;
@@ -108,6 +109,8 @@ public class OrdersController extends BaseController {
 	private ReturnedGoodsService returnedGoodsService;
 	@Autowired
 	private SaleRebatesLogDao saleRebatesLogDao;
+	@Autowired
+	private OrderGoodsDetailsService orderGoodsDetailsService;
 	
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
@@ -810,18 +813,22 @@ public class OrdersController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "computingCost")
-	public static Orders computingCost(double transactionPrice,double actualPayment,int ServiceNum, double favourablePrice){
-		DecimalFormat formater = new DecimalFormat("#0.##");
+	public static Orders computingCost(double transactionPrice,double actualPayment,int ServiceNum, double favourablePrice,HttpServletRequest request){
 		Orders orders = new Orders();
-		double singleRealityPrice = Double.parseDouble(formater.format(transactionPrice/ServiceNum)); //实际服务单次价
-		int actualNum = (int)Math.floor(actualPayment/singleRealityPrice);	//实际服务次数 = 剩余服务次数
-		double spareMoney = Double.parseDouble(formater.format(actualPayment - singleRealityPrice*actualNum)); //余款
-		double afterPayment = Double.parseDouble(formater.format(actualPayment-spareMoney));	//计算后实际付款
-		double debtMoney = Double.parseDouble(formater.format(transactionPrice-afterPayment));//欠款
-		orders.setActualNum(actualNum);
-		orders.setSpareMoney(spareMoney);
-		orders.setAfterPayment(afterPayment);
-		orders.setDebtMoney(debtMoney);
+		try {
+			DecimalFormat formater = new DecimalFormat("#0.##");
+			double singleRealityPrice = Double.parseDouble(formater.format(transactionPrice/ServiceNum)); //实际服务单次价
+			int actualNum = (int)Math.floor(actualPayment/singleRealityPrice);	//实际服务次数 = 剩余服务次数
+			double spareMoney = Double.parseDouble(formater.format(actualPayment - singleRealityPrice*actualNum)); //余款
+			double afterPayment = Double.parseDouble(formater.format(actualPayment-spareMoney));	//计算后实际付款
+			double debtMoney = Double.parseDouble(formater.format(transactionPrice-afterPayment));//欠款
+			orders.setActualNum(actualNum);
+			orders.setSpareMoney(spareMoney);
+			orders.setAfterPayment(afterPayment);
+			orders.setDebtMoney(debtMoney);
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "商品规格错误！", e);
+		}
 		return orders;
 	}
 	/**
@@ -1381,4 +1388,227 @@ public class OrdersController extends BaseController {
 		}
 		return true;
 	}
+	
+	/**
+	 * 跳转到导入虚拟订单页面
+	 * 
+	 * @return
+	 *//*
+	@RequestMapping(value = "importVirtualOrdersPage")
+	public String importVirtualOrders() {
+		return "modules/ec/importVirtualOrdersPage";
+	}
+	
+	
+	*//**
+	 * 下载导入虚拟订单模板
+	 * 
+	 * @param response
+	 * @param redirectAttributes
+	 * @return
+	 *//*
+	@RequestMapping(value = "importVirtualOrders/template")
+	public void importVirtualOrdersTemplate(Orders orders,HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes) {
+		try {
+			String filename = "virtualOrdersImport.xlsx";
+			String oldPath = request.getServletContext().getRealPath("/") + "static/Exceltemplate/" + filename;
+			logger.info("#####[虚拟订单模板-old-path"+oldPath);
+			TrainRuleParam trainRuleParam  =new TrainRuleParam();
+			trainRuleParam.setParamKey("excel_path"); 
+			String path = trainRuleParamDao.findParamByKey(trainRuleParam).getParamValue() + "/static/Exceltemplate/" + filename;
+			logger.info("#####[虚拟订单模板-new-path"+path);
+			
+			
+			
+																	//提交到git上之前记得改回来
+			File file = new File(oldPath);
+			// 以流的形式下载文件。
+			InputStream fis = new BufferedInputStream(new FileInputStream(oldPath));
+			byte[] buffer = new byte[fis.available()];
+			fis.read(buffer);
+			fis.close();
+			// 清空response
+			response.reset();
+			// 设置response的Header
+			response.addHeader("Content-Disposition","attachment;filename=" + java.net.URLEncoder.encode(filename, "UTF-8"));
+			response.addHeader("Content-Length", "" + file.length());
+			OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
+			response.setContentType("application/vnd.ms-excel");
+			toClient.write(buffer);
+			toClient.flush();
+			toClient.close();
+			
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "导入模板下载失败", e);
+			addMessage(redirectAttributes, "导入模板下载失败！失败信息：" + e.getMessage());
+		}
+	}
+	
+	*//**
+	 * 导入虚拟订单
+	 * 
+	 * @param file
+	 * @param redirectAttributes
+	 * @return
+	 *//*
+	@RequestMapping(value = "importVirtualOrders")
+	public String importVirtualOrders(HttpServletRequest request,MultipartFile file, RedirectAttributes redirectAttributes) {
+		try {
+			int successNum = 0;
+			int failureNum = 0;
+			StringBuilder failureMsg = new StringBuilder();
+			ImportExcel ei = new ImportExcel(file, 1, 0);
+			int cell = ei.getLastCellNum();
+			if (cell > 4) {
+				failureMsg.insert(0, "<br/>导入的模板错误，请检查模板; ");
+
+			} else {
+				List<Shipping> list = ei.getDataList(Shipping.class);
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date date=null;
+				for (Shipping shipping : list) {
+					try {
+						if (shipping.getOrderid() == null) {
+							break;
+						}
+						BeanValidators.validateWithException(validator, shipping);
+						Orders orders=new Orders();
+						if(shipping.getShippingtime()!=null){
+							date=sdf.parse(shipping.getShippingtime());
+						}else{
+							date=new Date();
+						}
+						orders.setOrderid(shipping.getOrderid());
+						orders.setShippingcode(shipping.getShippingcode());
+						orders.setShippingname(shipping.getShippingname());
+						orders.setShippingtime(date);
+						
+						//修改退货日期
+						int returnDay = Integer.parseInt(ParametersFactory.getMtmyParamValues("returngoods_date"));
+						if(-1 == returnDay){
+							returnDay = 10;	//默认给一个10天（快递3天+7天退货）
+						}
+						Date returnTime = sdf.parse(OrderUtils.plusDay(returnDay, sdf.format(orders.getShippingtime())));
+						orders.setReturnTime(returnTime);
+						
+						int index = ordersService.UpdateShipping(orders);
+						if (index > 0) {		
+							successNum++;
+						} else {
+							failureMsg.append("<br/>订单" + shipping.getOrderid() + "更新物流失败; ");
+							failureNum++;
+						}	
+
+					} catch (ConstraintViolationException ex) {
+						BugLogUtils.saveBugLog(request, "导入物流出错", ex);
+						logger.error("导入物流出错："+ex.getMessage());
+						failureMsg.append("<br/>订单 " + shipping.getOrderid() + " 更新物流失败：");
+						List<String> messageList = BeanValidators.extractPropertyAndMessageAsList(ex, ":");
+						for (String message : messageList) {
+							failureMsg.append(message + ";");
+							failureNum++;
+						}
+					} catch (Exception ex) {
+						BugLogUtils.saveBugLog(request, "导入物流出错", ex);
+						logger.error("导入物流出错："+ex.getMessage());
+						failureMsg.append("<br/>订单号 " + shipping.getOrderid() + " 更新物流失败：" + ex.getMessage());
+					}
+				}
+				
+			}
+			if (failureNum > 0) {
+				failureMsg.insert(0, "，失败 " + failureNum + " 条，物流更新信息如下：");
+			}
+			addMessage(redirectAttributes, "已成功更新 " + successNum + " 条订单。" + failureMsg);
+			
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "导入物流出错", e);
+			logger.error("导入物流出错："+e.getMessage());
+			addMessage(redirectAttributes, "导入物流失败！失败信息：" + e.getMessage());
+		}
+		return "redirect:" + adminPath + "/ec/orders/list";
+	}
+	*/
+	
+	/**
+	 * 跳转处理预约金页面
+	 * @param orderGoods
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="handleAdvanceFlagForm")
+	public String handleAdvanceFlagForm(OrderGoods orderGoods,int userid,HttpServletRequest request,Model model){
+		DecimalFormat formater = new DecimalFormat("#0.##");
+		try{
+			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());
+			double advance = orderGoods.getAdvance();  //预约金
+			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
+			if(advance < singleRealityPrice){
+				double c = Double.parseDouble(formater.format(singleRealityPrice - advance));
+				orderGoods.setAdvanceServiceTimes(0);        //服务次数
+				orderGoods.setDebt(c);                       //欠款
+			}else{
+				double a = advance/singleRealityPrice;
+				double b = Double.parseDouble(formater.format(advance - a*singleRealityPrice));
+//				orderGoods.setAdvanceServiceTimes(a);        //服务次数 
+				orderGoods.setAdvanceBalance(b);             //余额
+			}
+			double accountBalance = ordersService.getAccount(userid); //用户账户余额
+			orderGoods.setAccountBalance(accountBalance);
+			model.addAttribute("orderGoods", orderGoods);
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "跳转处理预约金页面出错", e);
+			logger.error("跳转处理预约金页面出错："+e.getMessage());
+		}
+		return "modules/ec/handleAdvanceFlagForm";
+	}
+	
+	/**
+	 * 处理预约金
+	 * @param oLog
+	 * @param orderGoods
+	 * @param userid
+	 * @param orderid
+	 * @param sum
+	 * @return
+	 */
+	@RequestMapping(value="handleAdvanceFlag")
+	@ResponseBody
+	public String handleAdvanceFlag(OrderRechargeLog oLog,OrderGoods orderGoods,int userid,String orderid,int sum){
+		String date="";
+		try{
+			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());
+			double advance = orderGoods.getAdvance();  //预约金
+			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
+			double orderAmount = orderGoods.getOrderAmount();        //应付款金额
+			
+			DecimalFormat formater = new DecimalFormat("#0.##");
+			oLog.setMtmyUserId(userid);
+			oLog.setOrderId(orderid);
+			oLog.setRecid(orderGoods.getRecid());
+			oLog.setSingleRealityPrice(orderGoods.getSingleRealityPrice());
+			oLog.setSingleNormPrice(orderGoods.getSingleNormPrice());
+			oLog.setAdvance(advance);
+			//若订金小于单次价，则实付款金额就是单次价，
+			if(advance < singleRealityPrice){
+				oLog.setTotalAmount(singleRealityPrice);
+				if(sum == 0){//用了账户余额
+					oLog.setAccountBalance(Double.parseDouble(formater.format(singleRealityPrice-advance))); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+				}else{
+					oLog.setAccountBalance(0);
+				}
+			}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
+				oLog.setTotalAmount(advance);
+				
+			}
+			ordersService.handleAdvanceFlag(oLog,sum,orderAmount);
+			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
+			date = "success";
+		}catch(Exception e){
+			e.printStackTrace();
+			date = "error";
+		}
+		return date;
+	}
+	
 }
