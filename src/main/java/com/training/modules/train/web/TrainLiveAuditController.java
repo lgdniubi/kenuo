@@ -51,9 +51,6 @@ public class TrainLiveAuditController extends BaseController{
 	@Autowired
 	private TrainLiveUserService trainLiveUserService;
 
-	
-	
-	
 	public static String LIVE_USERID="E8F7E756412DC768";   //直播用户id   E8F7E756412DC768
 	public static String API_KEY="K4MV4Mv4Q90FaEEQYclkz0XJIqEZf5rK";  	//API KEY  K4MV4Mv4Q90FaEEQYclkz0XJIqEZf5rK
 	public static final String CRATE_LIVE_URL = "http://api.csslcloud.net/api/room/create";			//创建直播间
@@ -99,6 +96,7 @@ public class TrainLiveAuditController extends BaseController{
 	public String backform(TrainLivePlayback trainLivePlayback, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<TrainLivePlayback> page = trainLiveAuditService.findback(new Page<TrainLivePlayback>(request, response), trainLivePlayback);
 		model.addAttribute("page", page);
+		model.addAttribute("trainLivePlayback", trainLivePlayback);
 		return "modules/train/backList";
 	}
 	
