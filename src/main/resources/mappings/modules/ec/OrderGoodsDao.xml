@@ -277,7 +277,7 @@
 	<select id="selectOrderGoodsByRecid" resultType="OrderGoods">
 		SELECT
 			m.total_amount AS 'totalAmount',
-			m.order_amount AS 'orderAmount',
+			m.goods_price AS 'goodsPrice',
 			m.single_norm_price AS 'singleNormPrice',
 			m.rec_id AS 'recid',
 			m.single_reality_price AS 'singleRealityPrice',

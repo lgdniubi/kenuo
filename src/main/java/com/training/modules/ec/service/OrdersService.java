@@ -1333,7 +1333,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param sum是否使用了账户余额，0使用了，1未使用
 	 * @param orderAmount应付款金额
 	 */
-	public void handleAdvanceFlag(OrderRechargeLog oLog,int sum,double orderAmount){
+	public void handleAdvanceFlag(OrderRechargeLog oLog,int sum,double goodsPrice){
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
 		double totalAmount = oLog.getTotalAmount(); //实付款金额
@@ -1389,7 +1389,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setGoodsMappingId(oLog.getRecid()+"");
 		details.setTotalAmount(totalAmount_in);	//实付款金额
 		details.setOrderBalance(accountBalance_in);	//订单余款
-		details.setOrderArrearage(Double.parseDouble(formater.format(orderAmount - totalAmount_in_a)));	//订单欠款
+		details.setOrderArrearage(Double.parseDouble(formater.format(goodsPrice - totalAmount_in_a)));	//订单欠款
 		details.setItemAmount(itemAmount);	//项目金额
 		details.setItemCapitalPool(itemCapitalPool); //项目资金池
 		details.setServiceTimes(serviceTimes_in);	//剩余服务次数
@@ -1402,7 +1402,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		Orders _orders = new Orders();//根据用户id查询用户账户信息
 		_orders.setUserid(oLog.getMtmyUserId());
 		Orders account = ordersDao.getAccount(_orders);
-		double accountArrearage = account.getAccountArrearage()+Double.parseDouble(formater.format((orderAmount - totalAmount_in_a)));	//账户欠款信息
+		double accountArrearage = account.getAccountArrearage()+Double.parseDouble(formater.format((goodsPrice - totalAmount_in_a)));	//账户欠款信息
 		account.setAccountArrearage(accountArrearage);
 		double accountBalance_ = 0;
 		if(accountBalance > 0){ //若使用了账户余额，则减去相应的金额
