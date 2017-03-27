@@ -106,7 +106,7 @@ public class Orders extends TreeEntity<Orders> {
 	private String officeId;			//机构id
 	
 	//导出字段
-	private String userId;               //用户id
+	private String usersId;               //用户id
 	private String usersMobile;       //用户手机号（每天美耶的手机号）
 	private String strGoodsNum;			//商品数量
 	private String strGoodsPrice;		//商品价格
@@ -1520,11 +1520,11 @@ public class Orders extends TreeEntity<Orders> {
 	
 	@JsonIgnore
 	@ExcelField(title="用户id", align=2, sort=8)
-	public String getUserId() {
-		return userId;
+	public String getUsersId() {
+		return usersId;
 	}
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUsersId(String usersId) {
+		this.usersId = usersId;
 	}
 	
 	@JsonIgnore

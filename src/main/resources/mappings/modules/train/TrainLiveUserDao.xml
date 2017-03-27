@@ -34,10 +34,12 @@
 	<!-- 分页查询 -->
 	<select id="findList" resultType="TrainLiveUser">
 		SELECT
-		<include refid="sqlColumns" />
+			o.name AS 'organization',
+			<include refid="sqlColumns" />
 		FROM train_live_user a
 		LEFT JOIN sys_user b ON a.userId=b.id
 		LEFT JOIN train_live_audit c ON a.auditId=c.id
+		LEFT JOIN sys_office o ON o.id = b.office_id
 		WHERE a.del_flag=0
 		 <if test="auditId!=null and auditId!=''">
 			AND a.auditId=#{auditId}
