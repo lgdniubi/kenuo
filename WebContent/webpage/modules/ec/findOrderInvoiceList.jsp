@@ -50,7 +50,7 @@
 			                   	  				<div class="user_photo"><img src="${orderGoodsList.originalimg }" alt="" class="img-responsive"></div>
 			                   	  				<div class="comments_con">
 				                   	  				<span class="usersname">${orderGoodsList.goodsname }</span><%-- <span class="times">${orderGoodsList.recid }</span> --%>
-				                   	  				<p>￥${orderGoodsList.unitPrice }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;×${orderGoodsList.openNum }</p>
+				                   	  				<p>￥${orderGoodsList.goodsprice }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;×${orderGoodsList.openNum }</p>
 			                   	  				</div>
 		                   	  				</div>
 		                   	  			</c:forEach>
@@ -68,7 +68,7 @@
 			                   	  				<div class="user_photo"><img src="${orderGoodsList.originalimg }" alt="" class="img-responsive"></div>
 			                   	  				<div class="comments_con">
 				                   	  				<span class="usersname">${orderGoodsList.goodsname }</span><span class="times">${orderGoodsList.recid }</span>
-				                   	  				<p>￥${orderGoodsList.unitPrice }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;×${orderGoodsList.openNum }</p>
+				                   	  				<p>￥${orderGoodsList.goodsprice }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;×${orderGoodsList.openNum }</p>
 			                   	  				</div>
 		                   	  				</div>
 		                   	  			</c:forEach>
@@ -86,7 +86,7 @@
 			                   	  				<div class="user_photo"><img src="${orderGoodsList.originalimg }" alt="" class="img-responsive"></div>
 			                   	  				<div class="comments_con">
 				                   	  				<span class="usersname">${orderGoodsList.goodsname }</span><span class="times">${orderGoodsList.recid }</span>
-				                   	  				<p>￥${orderGoodsList.unitPrice }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;×${orderGoodsList.openNum }</p>
+				                   	  				<p>￥${orderGoodsList.goodsprice }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;×${orderGoodsList.openNum }</p>
 			                   	  				</div>
 		                   	  				</div>
 		                   	  			</c:forEach>
