@@ -320,6 +320,8 @@ public class OrderInvoiceController extends BaseController {
 	
 	@RequestMapping(value = "findOrderInvoiceList")
 	public String findOrderInvoiceList(OrderInvoice orderInvoice,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,Model model){
+		DecimalFormat formater = new DecimalFormat("#0.00");
+		
 		List<Orders> orderInvoiceCan = new ArrayList<Orders>();			// 订单可开发票
 		List<Orders> orderInvoiceOvertime = new ArrayList<Orders>();	// 订单过期
 		// 获取用户所有已开发票
@@ -331,7 +333,7 @@ public class OrderInvoiceController extends BaseController {
 			for (int j = 0; j < orderGoodsList.size(); j++) {
 				goodsprice = goodsprice + (orderGoodsList.get(j).getOpenNum()*orderGoodsList.get(j).getUnitPrice());
 			}
-			ordersInvoiceOpen.get(i).setGoodsprice(goodsprice);
+			ordersInvoiceOpen.get(i).setGoodsprice(Double.parseDouble(formater.format(goodsprice)));
 			ordersInvoiceOpen.get(i).setOrderGoodList(orderGoodsList);
 		}
 		// 查询所有无欠款、已完成的订单(包含过期订单)
@@ -343,7 +345,7 @@ public class OrderInvoiceController extends BaseController {
 				goodsprice = goodsprice + (orderGoods.get(j).getOpenNum()*orderGoods.get(j).getUnitPrice());
 			}
 			Orders order = new Orders();
-			order.setGoodsprice(goodsprice);
+			order.setGoodsprice(Double.parseDouble(formater.format(goodsprice)));
 			order.setOrderid(list.get(i).getOrderid());
 			order.setOrderGoodList(orderGoods);
 			// 过期订单

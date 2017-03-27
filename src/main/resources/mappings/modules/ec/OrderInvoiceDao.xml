@@ -261,6 +261,7 @@
 			a.mapping_id AS recid,
 			b.original_img AS originalimg,
 			b.goods_name AS goodsname,
+			b.goods_price AS goodsprice,
 			SUM(a.open_num) AS openNum,
 			TRUNCATE(b.total_amount/b.goods_num,2) AS unitPrice
 		FROM
@@ -279,6 +280,7 @@
 			a.rec_id AS recid,
 			a.original_img AS originalimg,
 			a.goods_name AS goodsname,
+			a.goods_price AS goodsprice,
 			<!-- a.goods_num AS goodsnum,
 			IFNULL((SELECT SUM(open_num) FROM mtmydb.mtmy_order_invoice_relevancy WHERE mapping_id = a.rec_id),0) AS openNum,
 			IFNULL((SELECT SUM(return_num) FROM mtmydb.mtmy_returned_goods WHERE goods_mapping_id = a.rec_id AND return_status IN (11,12,13,14,15,16)),0) AS afterSaleNum, -->
