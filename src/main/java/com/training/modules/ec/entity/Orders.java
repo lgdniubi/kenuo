@@ -106,6 +106,8 @@ public class Orders extends TreeEntity<Orders> {
 	private String officeId;			//机构id
 	
 	//导出字段
+	private String userId;               //用户id
+	private String usersMobile;       //用户手机号（每天美耶的手机号）
 	private String strGoodsNum;			//商品数量
 	private String strGoodsPrice;		//商品价格
 	private String strOrderAmount;		//订单价格
@@ -1514,6 +1516,24 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setIsInvoice(int isInvoice) {
 		this.isInvoice = isInvoice;
+	}
+	
+	@JsonIgnore
+	@ExcelField(title="用户id", align=2, sort=8)
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	
+	@JsonIgnore
+	@ExcelField(title="注册手机号", align=2, sort=11)
+	public String getUsersMobile() {
+		return usersMobile;
+	}
+	public void setUsersMobile(String usersMobile) {
+		this.usersMobile = usersMobile;
 	}
 	
 }

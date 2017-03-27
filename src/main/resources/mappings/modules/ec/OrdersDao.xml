@@ -281,6 +281,8 @@
 		    a.is_real AS orderIsReal,
 		    a.add_time AS strAddTime,
 		    a.shipping_price as newShippingPrice,
+		    b.user_id as userId,
+		    b.mobile as usersMobile,
 		    (CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
 		FROM
 			mtmydb.mtmy_orders a
