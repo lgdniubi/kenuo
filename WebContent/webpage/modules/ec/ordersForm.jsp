@@ -453,7 +453,31 @@ window.onload=initStatus;
 									</c:if>
 								</c:if>
 								<c:if test="${orders.isReal == 1}">
-									<form:option value="4">已完成</form:option>
+									<c:if test="${orders.channelFlag != 'bm'}">
+										<form:option value='${orders.orderstatus }'>
+											<c:if test="${orders.orderstatus == -2}">
+												取消订单
+											</c:if>
+											<c:if test="${orders.orderstatus == -1}">
+												待付款
+											</c:if>
+											<c:if test="${orders.orderstatus == 1}">
+												待发货
+											</c:if>
+											<c:if test="${orders.orderstatus == 2}">
+												待收货
+											</c:if>
+											<c:if test="${orders.orderstatus == 3}">
+												已退款
+											</c:if>
+											<c:if test="${orders.orderstatus == 4}">
+												已完成
+											</c:if>
+										</form:option>
+									</c:if>
+									<c:if test="${orders.channelFlag == 'bm'}">
+										<form:option value="4">已完成</form:option>
+									</c:if>
 								</c:if>
 							</form:select>&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">付款方式：</label>
@@ -521,7 +545,13 @@ window.onload=initStatus;
 														</c:if>
 													</c:if>
 													<c:if test="${orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag == 1}">
-														<a href="#" onclick="ToAdvance(${orderGood.recid})"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
+														<c:if test="${orders.orderstatus == 4}">
+															<a href="#" onclick="ToAdvance(${orderGood.recid})"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
+														</c:if>
+														<c:if test="${orders.orderstatus != 4}">
+															<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
+														</c:if>
+														
 													</c:if>
 												</c:if>
 												<a href="#" onclick="openDialogView('查看订单', '${ctx}/ec/orders/getMappinfOrderView?recid=${orderGood.recid}&orderid=${orders.orderid }&orderType=mapping','800px','600px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>商品充值查看</a>

@@ -133,6 +133,20 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param user分页查询
 	 * @return
 	 */
+	public Page<Orders> newFindOrders(Page<Orders> page, Orders orders) {
+		// 设置分页参数
+		orders.setPage(page);
+		// 执行分页查询
+		page.setList(ordersDao.newFindList(orders));
+		return page;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param user分页查询
+	 * @return
+	 */
 	public Page<Orders> findOrdersExcal(Page<Orders> page, Orders orders) {
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
 		//	orders.getSqlMap().put("dsf", dataScopeFilter(orders.getCurrentUser(), "o", "a"));

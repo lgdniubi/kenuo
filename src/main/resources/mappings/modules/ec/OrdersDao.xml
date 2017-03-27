@@ -243,6 +243,102 @@
 			</otherwise>
 		</choose>
 	</select>
+	
+	<!-- 分页查询 -->
+	<select id="newFindList" resultType="Orders">
+		SELECT
+			a.order_id AS orderid,
+			a.order_status AS orderstatus,
+			p.pay_name AS payname,
+			a.user_money AS usermoney,
+			a.coupon_price AS couponprice,
+			a.order_amount AS orderamount,
+			a.total_amount AS totalamount,
+			a.add_time AS addtime,
+			a.action_id AS actionid,
+			a.user_note AS userNote,
+			a.admin_note AS adminnote,
+			a.create_logo AS createlogo,
+			a.postal_code AS postalcode,
+			a.flag AS flag,
+			a.mobile AS mobile,
+			u.nickname AS "username",
+			a.is_real as isReal,
+			a.channel_flag AS channelflag,
+			COUNT(m.rec_id) AS "goodsnum",
+			IFNULL(ogd.order_arrearage,0) AS orderArrearage,
+			a.del_flag,
+			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
+		FROM
+			mtmydb.mtmy_orders a
+		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
+		LEFT JOIN mtmydb.mtmy_payment p ON a.pay_id = p.pay_id
+		LEFT JOIN (SELECT SUM(order_arrearage) AS order_arrearage,order_id FROM mtmydb.mtmy_order_goods_details GROUP BY order_id) ogd ON a.order_id = ogd.order_id
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping m ON a.order_id = m.order_id
+		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=m.goods_id
+		LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
+		WHERE a.parent_id=0
+		 <!-- AND a.del_flag = 0  用户删除订单后 后台无法查看该订单  -->
+		<if test="username != null and username!=''">
+			AND u.nickname like
+			<if test="dbName == 'oracle'">'%'||#{username} ||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{username} , '%')</if>
+		</if>
+		<if test="mobile != null  and mobile != ''">
+			AND u.mobile=#{mobile}
+		</if>
+		<if test="orderid != null and orderid != ''">
+			AND a.order_id = #{orderid}
+		</if>
+		<if test="orderstatus != null and orderstatus != ''">
+			AND a.order_status=#{orderstatus}
+		</if>
+		<if test="createlogo != null and createlogo != ''">
+			AND a.create_logo=#{createlogo}
+		</if>
+		<if test="channelFlag != null and channelFlag != ''">
+			AND a.channel_flag=#{channelFlag}
+		</if>
+		<if test="begtime != null and begtime != ''">
+			AND DATE_FORMAT(a.add_time,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+		</if>
+		<if test="userid != null and userid != ''">
+			AND a.user_id = #{userid}
+		</if>
+		<if test="cetaid !='' and  goodsids ==''">
+			AND f.category_id=#{cetaid}
+		</if>
+		<if test="goodsids !='' and  cetaid ==''">
+			AND m.goods_id=#{goodsids}
+		</if>
+		<if test="goodsids !=null and  cetaid !=null and goodsids !='' and cetaid !=''">
+			AND f.category_id=#{cetaid} and m.goods_id=#{goodsids}
+		</if>
+		<if test="searchIsReal !=null and searchIsReal !=''">
+			AND a.is_real=#{searchIsReal}
+		</if>
+		<if test="userDelFlag !=null and userDelFlag !=''">
+			AND a.del_flag=#{userDelFlag}
+		</if>
+		GROUP BY a.order_id
+		<if test="orderArrearageType == 2 "> <!-- 没有欠款 -->
+			HAVING orderarrearage > 0
+		</if>
+		<if test="orderArrearageType == 1 "> <!-- 有欠款 -->
+			HAVING orderarrearage = 0
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.add_time DESC
+			</otherwise>
+		</choose>
+	</select>
 		<!-- 分页查询 -->
 	<select id="findAlllist" resultType="Orders">
 		SELECT

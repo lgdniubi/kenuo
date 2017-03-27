@@ -139,7 +139,12 @@ public class OrdersController extends BaseController {
 	@RequestMapping(value = { "list", "" })
 	public String list(Orders orders, HttpServletRequest request, HttpServletResponse response, Model model) {
 		try {
-			Page<Orders> page = ordersService.findOrders(new Page<Orders>(request, response), orders);
+			Page<Orders> page = new Page<Orders>();
+			if(StringUtils.isNotBlank(orders.getUsername()) || StringUtils.isNotBlank(orders.getMobile()) || StringUtils.isNotBlank(orders.getOrderid())){
+				page = ordersService.newFindOrders(new Page<Orders>(request, response), orders);
+			}else{
+				page = ordersService.findOrders(new Page<Orders>(request, response), orders);
+			}
 			model.addAttribute("page", page);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "订单列表", e);
