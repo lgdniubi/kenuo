@@ -54,7 +54,7 @@
 			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%',#{name}, '%')</if>
 		</if>
-		<if test="status!=null and status!=''">
+		<if test="status != null  and status != ''">
 			AND a.status=#{status}
 		</if>
 		<if test="mobile!=null and mobile!=''">
@@ -112,7 +112,7 @@
 			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%',#{name}, '%')</if>
 		</if>
-		<if test="status!=null and status!=''">
+		<if test="status != null  and status != ''">
 			AND a.status=#{status}
 		</if>
 		<if test="begtime != null and begtime != ''">
@@ -303,5 +303,10 @@
 		WHERE
 			coupon_id=#{couponId} and user_id=#{userId} and status=0
 	</select>
-	
+	<!-- 活动过期后将用户领取的红包修改为已过期 -->
+	<update id="updateCouponUser">
+		UPDATE mtmydb.mtmy_activity_coupon_user SET 
+			status = 2 
+		WHERE coupon_id = #{id} AND status = 0
+	</update>
 </mapper>

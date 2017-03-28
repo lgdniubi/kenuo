@@ -1,5 +1,7 @@
 package com.training.modules.ec.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,6 +11,7 @@ import com.training.modules.ec.dao.MtmySaleRelieveDao;
 import com.training.modules.ec.entity.MtmySaleRelieve;
 import com.training.modules.ec.entity.MtmySaleRelieveExport;
 import com.training.modules.ec.entity.MtmySaleRelieveLog;
+import com.training.modules.ec.entity.Users;
 
 
 
@@ -157,7 +160,13 @@ public class MtmySaleRelieveService extends CrudService<MtmySaleRelieveDao,MtmyS
 	public void SaleSettleDayAccounts(){
 		dao.SaleSettleDayAccounts();
 	};
-	
+	/**
+	 * 结算的所有用户及云币
+	 * @return
+	 */
+	public List<Users> changeSaleAccounts(){
+		return dao.changeSaleAccounts();
+	}
 	/**
 	 * 导出A级用户信息
 	 * @param mtmySaleRelieveExport

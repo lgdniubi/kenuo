@@ -11,8 +11,10 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.training.common.utils.BeanUtil;
+import com.training.modules.ec.dao.ActivityCouponUserDao;
 import com.training.modules.ec.entity.ActionInfo;
 import com.training.modules.ec.entity.Activity;
+import com.training.modules.ec.entity.ActivityCoupon;
 import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.service.ActionInfoService;
 import com.training.modules.ec.service.ActivityService;
@@ -39,11 +41,13 @@ public class ActionStatus extends CommonService{
 	private static ActionInfoService actionInfoService;
 	private static GoodsService goodsService;
 	private static ActivityService activityService;
+	private static ActivityCouponUserDao activityCouponUserDao;
 	
 	static{
 		actionInfoService = (ActionInfoService) BeanUtil.getBean("actionInfoService");
 		goodsService = (GoodsService) BeanUtil.getBean("goodsService");
 		activityService=(ActivityService) BeanUtil.getBean("activityService");
+		activityCouponUserDao = (ActivityCouponUserDao)BeanUtil.getBean("activityCouponUserDao");
 	}
 	
 	/**
@@ -131,16 +135,26 @@ public class ActionStatus extends CommonService{
 
 				}
 			}
-			int activityId=0;
+			int activityId=0;	
 			List<Activity> activitieslist=activityService.selectActionCloseTime();
 			logger.info("[红包活动]，扫描已过期的数据数："+activitieslist.size());
 			if(activitieslist.size()>0){
 				for(Activity vo : activitieslist){
-					activityId=Integer.parseInt(vo.getId());
+					activityId=Integer.parseInt(vo.getId()); // 活动id
 					logger.info("[过期活动]，更新过期红包活动状态：id:"+activityId);
 					activityService.updateOutTime(activityId);
+					
+					// 获取活动下所有红包
+					List<ActivityCoupon> list=activityService.Couponlist(String.valueOf(activityId));
+					ActivityCoupon activityCoupon = new ActivityCoupon();
+					activityCoupon.setId(String.valueOf(activityId));
+					activityCoupon.setStatus(2);
+					// 修改过期活动下红包状态为结束
+					activityService.updateCouponStatus(activityCoupon);
+					for (ActivityCoupon a : list) {
+						activityCouponUserDao.updateCouponUser(Integer.valueOf(a.getId()));
+					}
 				}
-				
 			}
 			
 			taskLog.setJobDescription("[自动开启]，扫瞄活动开始，开启活动个数：["+statrlist.size()+"]"+"[自动结束]，已结束活动数量：["+endList.size()+"]");
