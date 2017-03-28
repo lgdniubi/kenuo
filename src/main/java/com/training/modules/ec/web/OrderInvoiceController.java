@@ -107,6 +107,7 @@ public class OrderInvoiceController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(HttpServletRequest request,OrderInvoice orderInvoice, Model model) {
 		try {
+			DecimalFormat formater = new DecimalFormat("#0.00");
 			List<Orders> Orders=orderInvoiceService.findInvoiceRelevancy(orderInvoice.getId());
 			for (int i = 0; i < Orders.size(); i++) {
 				List<OrderGoods> orderGoodsList = orderInvoiceService.findOpenOrderListDetails(Orders.get(i).getOrderid());
@@ -115,7 +116,7 @@ public class OrderInvoiceController extends BaseController {
 				for (int j = 0; j < orderGoodsList.size(); j++) {
 					goodsprice = goodsprice + (orderGoodsList.get(j).getOpenNum()*orderGoodsList.get(j).getUnitPrice());
 				}
-				Orders.get(i).setGoodsprice(goodsprice);
+				Orders.get(i).setGoodsprice(Double.parseDouble(formater.format(goodsprice)));
 			}
 			model.addAttribute("Orders",Orders);
 			model.addAttribute("orderInvoice", orderInvoice);
