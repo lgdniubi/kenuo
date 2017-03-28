@@ -17,11 +17,13 @@
 		INSERT INTO speciality(
 		id,
 		franchisee_id,
+		office_id,
 		name,
 		create_by,
 		create_time
 		)VALUES(
 		#{id},
+		#{franchiseeid},
 		#{franchiseeid},
 		#{name},
 		#{createby},
@@ -82,8 +84,10 @@
 		SELECT
 		<include refid="specialityColunm" />
 		FROM speciality a
-
-		WHERE a.del_flag = #{DEL_FLAG_NORMAL} and a.status=0
+		LEFT JOIN sys_office o ON o.id = a.office_id
+		${sqlMap.dsf}
+		AND a.del_flag = #{DEL_FLAG_NORMAL} 
+		AND a.status=0
 		<!-- 数据范围过滤 -->
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
