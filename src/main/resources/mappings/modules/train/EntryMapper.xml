@@ -126,4 +126,7 @@
 		update trains.train_live_back_record set del_flag = 1 where now() > validity_date and is_pay = 2
 	</update>
     
+    <update id="SyncIntegrals" parameterType="java.lang.String">
+		UPDATE mtmydb.mtmy_user_accounts SET user_integral = #{integral} WHERE user_id = #{mtmy_id}
+	</update>
 </mapper>

@@ -36,7 +36,7 @@ public interface EntryMapper {
 
 	public void operatebackrecord();
 
-	
+	public void SyncIntegrals(@Param("mtmy_id")String mtmy_id, @Param("integral")String integral);
 
 
 	

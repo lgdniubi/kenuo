@@ -7,6 +7,7 @@ import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.MtmySaleRelieve;
 import com.training.modules.ec.entity.MtmySaleRelieveExport;
 import com.training.modules.ec.entity.MtmySaleRelieveLog;
+import com.training.modules.ec.entity.Users;
 
 /**
  * 分销   解除用户DAO
@@ -99,7 +100,11 @@ public interface MtmySaleRelieveDao extends CrudDao<MtmySaleRelieve>{
 	 * @return
 	 */
 	public void SaleSettleDayAccounts();
-	
+	/**
+	 * 结算的所有用户及云币
+	 * @return
+	 */
+	public List<Users> changeSaleAccounts();
 	/**
 	 * 导出A级用户信息
 	 * @param mtmySaleRelieveExport

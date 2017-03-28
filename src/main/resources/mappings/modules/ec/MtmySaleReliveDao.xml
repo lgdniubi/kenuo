@@ -369,6 +369,15 @@
 	<select id="SaleSettleDayAccounts" statementType="CALLABLE">
 		{CALL mtmydb.SaleSettleDayAccounts()}
 	</select>
+	<select id="changeSaleAccounts" resultType="Users">
+		SELECT 
+			receive_user AS userid,SUM(integral_amount) AS paypoints
+		FROM mtmydb.mtmy_day_account 
+		WHERE 
+			rebate_flag = 0 
+			AND rabate_date <![CDATA[ < ]]> DATE_FORMAT(date_sub(NOW(),interval (SELECT param_value FROM mtmydb.mtmy_rule_param where param_key = 'returngoods_date') day),'%Y%m%d') 
+			GROUP BY receive_user,rabate_date,depth
+	</select>
 	
 	<!-- 导出A级用户 -->
 	<select id="exportFile" resultType="MtmySaleRelieveExport">
