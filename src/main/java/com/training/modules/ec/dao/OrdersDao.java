@@ -252,6 +252,6 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 */
 	public List<Orders> newFindList(Orders orders);
 
-
-
+	
+	
 }

@@ -1610,8 +1610,8 @@ public class OrdersController extends BaseController {
 				oLog.setTotalAmount(advance);
 				
 			}
-			ordersService.handleAdvanceFlag(oLog,sum,goodsPrice);
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
+			ordersService.handleAdvanceFlag(oLog,sum,goodsPrice);
 			date = "success";
 		}catch(Exception e){
 			e.printStackTrace();
