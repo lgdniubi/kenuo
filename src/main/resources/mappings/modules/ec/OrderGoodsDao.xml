@@ -285,5 +285,6 @@
 		FROM mtmydb.mtmy_order_goods_mapping m
 		LEFT JOIN mtmydb.mtmy_order_goods_details ogd ON ogd.goods_mapping_id = m.rec_id
 		WHERE m.rec_id=#{recId}
+		AND ogd.advance_flag = '1'
 	</select>
 </mapper>

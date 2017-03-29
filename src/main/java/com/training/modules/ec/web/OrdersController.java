@@ -1590,6 +1590,7 @@ public class OrdersController extends BaseController {
 			double advance = orderGoods.getAdvance();  //预约金
 			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
 			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
+			double newTotalAmount = orderGoods.getTotalAmount();     //用户的预约金减去优惠以后实际付款
 			
 			DecimalFormat formater = new DecimalFormat("#0.##");
 			oLog.setMtmyUserId(userid);
@@ -1611,7 +1612,7 @@ public class OrdersController extends BaseController {
 				
 			}
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleAdvanceFlag(oLog,sum,goodsPrice);
+			ordersService.handleAdvanceFlag(oLog,sum,goodsPrice,newTotalAmount);
 			date = "success";
 		}catch(Exception e){
 			e.printStackTrace();
