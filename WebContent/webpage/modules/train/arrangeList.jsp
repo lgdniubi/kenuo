@@ -159,7 +159,7 @@
 									<c:forEach items="${ArrangeBeautician.arrangeShops}" var="arrangeShops" varStatus="status" end="31">
 										<td>
 											<div style="width: 100px;">
-												<c:if test="${arrangeShops.flag == 1}">
+												<c:if test="${arrangeShops.status == 1}">
 													<a href="#" onclick="show('${ArrangeBeautician.officeId }',${status.index+1 })">班</a>
 												</c:if>
 											</div>

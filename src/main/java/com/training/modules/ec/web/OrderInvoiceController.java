@@ -200,6 +200,8 @@ public class OrderInvoiceController extends BaseController {
 				 orderInvoice.setPhone("");
 				 orderInvoice.setAddress("");
 			 }
+			 // 发票 订单 中间实体类
+			 List<OrderInvoiceRelevancy> list=new ArrayList<OrderInvoiceRelevancy>();
 			 if(orderInvoice.getOrderId().length()>0){
 				 String[] arrId=orderInvoice.getOrderId().split(",");
 				 for (int i = 0; i < arrId.length; i++) {
@@ -207,6 +209,11 @@ public class OrderInvoiceController extends BaseController {
 					for (int j = 0; j < orderGoods.size(); j++) {
 						invoiceAmount = invoiceAmount + (orderGoods.get(j).getOpenNum()*orderGoods.get(j).getUnitPrice());
 						content=content+"商品名称："+orderGoods.get(j).getGoodsname()+"  数量："+orderGoods.get(j).getOpenNum()+" 商品价格："+orderGoods.get(j).getOpenNum()*orderGoods.get(j).getUnitPrice()+",";
+						OrderInvoiceRelevancy relevancy = new OrderInvoiceRelevancy();
+						relevancy.setOrderId(arrId[i].toString());
+						relevancy.setMappingId(String.valueOf(orderGoods.get(j).getRecid()));
+						relevancy.setOpenNum(orderGoods.get(j).getOpenNum());
+						list.add(relevancy);
 					}
 					 content=content.substring(0, content.length()-1);
 				 }
@@ -214,14 +221,16 @@ public class OrderInvoiceController extends BaseController {
 			orderInvoice.setInvoiceAmount(Double.parseDouble(df.format(invoiceAmount)));
 			orderInvoice.setInvoiceContent(content);
 			orderInvoiceService.saveOrderInvoice(orderInvoice);
+			
 			if(orderInvoice.getOrderId().length()>0){
-			 String[] arrId=orderInvoice.getOrderId().split(",");
-				for (int i = 0; i < arrId.length; i++) {
-					OrderInvoiceRelevancy relevancy=new OrderInvoiceRelevancy();
+				for (int i = 0; i < list.size(); i++) {
+					OrderInvoiceRelevancy relevancy = new OrderInvoiceRelevancy();
 					relevancy.setInvoiceId(Integer.parseInt(orderInvoice.getId()));
-					relevancy.setOrderId(arrId[i].toString());
+					relevancy.setOrderId(list.get(i).getOrderId());
+					relevancy.setMappingId(list.get(i).getMappingId());
+					relevancy.setOpenNum(list.get(i).getOpenNum());
 					orderInvoiceService.insertMaping(relevancy);
-					orderInvoiceService.updateOrderIsinv(arrId[i].toString());
+					orderInvoiceService.updateOrderIsinv(list.get(i).getOrderId());
 				}
 			}
 			addMessage(redirectAttributes, "保存发票成功");

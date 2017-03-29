@@ -87,12 +87,12 @@ public class arrangeController extends BaseController{
 		    				for (Integer integer : iList) {
 		    					if(integer == i){
 		    						y = 1;
-		    						arr.setFlag(1);
+		    						arr.setStatus(1);
 		    					}
 		    				}
 		    			}
 		    			if(y == 0){
-		    				arr.setFlag(2);
+		    				arr.setStatus(2);
 		    			}
 						l.add(arr);
 					}
@@ -227,12 +227,14 @@ public class arrangeController extends BaseController{
 				for (int i = 1; i <= map.get("maxDay"); i++) {
 					ArrangeShop arrangeShop = new ArrangeShop();
 					String shopId = request.getParameter(id+i);
+					String flag = request.getParameter("flag"+id+i);
 					if(shopId != null && !"".equals(shopId)){
 						arrangeShop.setBeauticianId(id);
 						arrangeShop.setShopId(shopId);
 						arrangeShop.setApptDate(sdf.parse(map.get("year")+"-"+map.get("month")+"-"+i));
 						arrangeShop.setMonth(map.get("month"));
 						arrangeShop.setDay(i);
+						arrangeShop.setFlag(flag);
 						arrangeShop.setCreateBy(currentUser);
 						arrangeShop.setOfficeId(currentUser.getOffice().getId());
 						list.add(arrangeShop);
@@ -464,12 +466,14 @@ public class arrangeController extends BaseController{
 				for (int i = 1; i <= map.get("maxDay"); i++) {
 					ArrangeShop arrangeShop = new ArrangeShop();
 					String shopId = request.getParameter(id+i);
+					String flag = request.getParameter("flag"+id+i);
 					if(shopId != null && !"".equals(shopId)){
 						arrangeShop.setBeauticianId(id);
 						arrangeShop.setShopId(shopId);
 						arrangeShop.setApptDate(sdf.parse(map.get("year")+"-"+map.get("month")+"-"+i));
 						arrangeShop.setMonth(map.get("month"));
 						arrangeShop.setDay(i);
+						arrangeShop.setFlag(flag);
 						arrangeShop.setCreateBy(currentUser);
 						arrangeShop.setOfficeId(currentUser.getOffice().getId());
 						list.add(arrangeShop);
