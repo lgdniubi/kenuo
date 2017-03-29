@@ -40,7 +40,6 @@ import com.training.modules.ec.entity.OfficeAccountLog;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderGoodsCoupon;
 import com.training.modules.ec.entity.OrderGoodsDetails;
-import com.training.modules.ec.entity.OrderInvoice;
 import com.training.modules.ec.entity.OrderInvoiceRelevancy;
 import com.training.modules.ec.entity.OrderPushmoneyRecord;
 import com.training.modules.ec.entity.OrderRechargeLog;
@@ -874,8 +873,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<OrderRemarksLog> orderRemarks = dao.getOrderRemarksLog(orderid);
 		orders.setOrderRemarksLog(orderRemarks);
 		//查询订单发票信息
-		OrderInvoice orderInvoice  = dao.getOrderInvoiceRelevancy(orderid);
-		orders.setOrderInvoice(orderInvoice);
+		orders.setNum(dao.selectInvoiceRelevancyNum(orderid));
+//		OrderInvoice orderInvoice  = dao.getOrderInvoiceRelevancy(orderid);
+//		orders.setOrderInvoice(orderInvoice);
 		//查询订单下的红包
 		List<OrderGoodsCoupon> orderGoodsCoupons = activityCouponUserDao.findlistByOrdeid(orderid);
 		orders.setOrderGoodsCoupons(orderGoodsCoupons);

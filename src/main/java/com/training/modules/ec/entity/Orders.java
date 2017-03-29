@@ -182,6 +182,8 @@ public class Orders extends TreeEntity<Orders> {
 	private String userDelFlag;		//订单类型（0：正常 1：用户删除）
 	private String cancelType;		//订单取消类型
 	private int isInvoice;		//是否可开发票
+	 
+	private int num;         //订单的发票个数
 	
 	public String getSearchIsReal() {
 		return searchIsReal;
@@ -1534,6 +1536,12 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setUsersMobile(String usersMobile) {
 		this.usersMobile = usersMobile;
+	}
+	public int getNum() {
+		return num;
+	}
+	public void setNum(int num) {
+		this.num = num;
 	}
 	
 }

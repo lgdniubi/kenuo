@@ -907,8 +907,8 @@
 	</delete>
 	
 	<insert id="saveOrderInvoiceRelevancy">
-		INSERT INTO mtmydb.mtmy_order_invoice_relevancy (invoice_id, order_id)
-		VALUES (#{invoiceId},#{orderId})
+		INSERT INTO mtmydb.mtmy_order_invoice_relevancy (invoice_id, order_id,mapping_id,open_num)
+		(SELECT #{invoiceId},#{orderId},rec_id,goods_num FROM mtmydb.mtmy_order_goods_mapping WHERE order_id = #{orderId})
 	</insert>
 	
 	<select id="getOrderInvoiceRelevancy" resultType="OrderInvoice">
@@ -932,6 +932,11 @@
 		AND	r.order_id = #{orderid}
 	</select>
 	
+	<select id="selectInvoiceRelevancyNum" resultType="Integer">
+		SELECT COUNT(*) 
+		FROM mtmydb.mtmy_order_invoice_relevancy
+		WHERE order_id = #{orderid}
+	</select>
 	
 	<!-- 插入一条备注信息 -->
 	<insert id="saveOrderRemarks">

@@ -399,6 +399,12 @@ window.onload=initStatus;
 		}
 	}); 
 	}
+	
+	function getInvoiceRelevancy(orderid){
+		top.openTab("${ctx}/ec/invoice/list?orderId="+orderid,"发票列表", false);
+		var index = parent.layer.getFrameIndex(window.name);
+		top.layer.close(index);
+	}
 </script>
 </head>
 
@@ -632,9 +638,13 @@ window.onload=initStatus;
 							</div>
 							<p></p>
 						</c:if>
-						<c:if test="${not empty orders.orderInvoice }">
+						<c:if test="${orders.num > 0}">
 								<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
-								<label class="active">索要发票</label>
+									<div class="pull-left">
+										<a href="#" onclick="getInvoiceRelevancy('${orders.orderid}')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>发票信息</a>
+									</div>
+									<p></p>
+								<%-- <label class="active">索要发票</label>
 								<p></p>
 								<div id="iType">
 									<label class="active">发票类型：</label>
@@ -668,8 +678,8 @@ window.onload=initStatus;
 								<label class="active">联系电话：</label>
 								<input type="text" name="recipientsPhone" class="form-control" style="width:180px" value="${orders.orderInvoice.recipientsPhone }"  readonly="readonly" />
 								<label class="active">收货地址：</label>
-								<input type="text" name="recipientsAddress" class="form-control" style="width:180px" value="${orders.orderInvoice.recipientsAddress }"  readonly="readonly" />
-							</div>
+								<input type="text" name="recipientsAddress" class="form-control" style="width:180px" value="${orders.orderInvoice.recipientsAddress }"  readonly="readonly" />--%>
+							</div> 
 						</c:if>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
