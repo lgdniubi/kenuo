@@ -328,7 +328,7 @@ public class OrderInvoiceController extends BaseController {
 		// 获取用户所有已开发票
 		List<Orders> ordersInvoiceOpen = orderInvoiceService.findOpenOrderList(orderInvoice.getUserId());	
 		for (int i = 0; i < ordersInvoiceOpen.size(); i++) {
-			List<OrderGoods> orderGoodsList = orderInvoiceService.findOpenOrderListDetails(ordersInvoiceOpen.get(i).getOrderid());
+			List<OrderGoods> orderGoodsList = orderInvoiceService.findOpenOrderListDetails(ordersInvoiceOpen.get(i).getOrderInvoice().getId());
 			
 			double goodsprice = 0.00;
 			for (int j = 0; j < orderGoodsList.size(); j++) {

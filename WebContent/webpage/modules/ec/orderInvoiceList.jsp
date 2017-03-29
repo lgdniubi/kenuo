@@ -39,6 +39,7 @@
 						<div class="form-group">
 							<form:input path="userName" htmlEscape="false" maxlength="50" class=" form-control input-sm" placeholder="用户名"/>
 							<form:input path="mobile" htmlEscape="false" maxlength="50" class=" form-control input-sm" placeholder="手机号"/>
+							<form:input path="orderId" htmlEscape="false" maxlength="50" class=" form-control input-sm" placeholder="订单号"/>
 							<label>发票类型：</label>
 								<form:select path="invoiceType"  class="form-control" style="width:185px;">
 									<form:option value="0">请选择类型</form:option>
