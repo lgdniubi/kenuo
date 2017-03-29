@@ -57,6 +57,7 @@
 	<select id="getOrderGoodsDetailListByMid" resultType="OrderGoods">
 		SELECT
 			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = #{mid} AND advance_flag = '1') AS 'advanceFlag',
+			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = #{mid} AND advance_flag = '0' AND service_times = -1) AS 'sumAppt',
 			SUM(total_amount) as totalAmount,
 			SUM(order_balance) as orderBalance,
 			SUM(order_arrearage) as orderArrearage,
@@ -112,4 +113,68 @@
 			order_arrearage = '0'
 		WHERE goods_mapping_id = #{recid}
 	</update>
+	
+	<!-- 根据office_id查找其对应的登云账户的金额 -->
+	<select id="selectByOfficeId" resultType="Double">
+		SELECT amount
+		FROM sys_office_account
+		WHERE office_id = #{officeId}
+	</select>
+	
+	<!-- 根据office_id对登云美业或者店铺的登云账户进行更新 -->
+	<update id="updateByOfficeId">
+		UPDATE sys_office_account
+		SET amount = #{amount}
+		WHERE office_id = #{officeId}
+	</update>
+	
+	<!-- 根据office_id对登云美业或者店铺的登云账户进行插入 -->
+	<insert id="insertByOfficeId">
+		INSERT INTO sys_office_account(
+			office_id,
+			amount
+		)VALUES(
+			#{officeId},
+			#{amount}
+		)
+	</insert>
+	
+	<!-- 判断店铺的登云账户是否存在 -->
+	<select id="selectShopByOfficeId" resultType="Integer">
+		SELECT count(*) 
+		FROM sys_office_account 
+		WHERE office_id = #{officeId}
+	</select>
+	
+	<!-- 查询用户购买商品预约的店铺id -->
+	<select id="selectShopId" resultType="String">
+		SELECT ao.shop_id 
+		FROM mtmydb.mtmy_order_goods_details ogd
+		LEFT JOIN mtmydb.mtmy_appt_order ao ON ao.id = ogd.appt_id
+		WHERE ogd.goods_mapping_id = #{goodsMappingId}
+		AND ogd.service_times = -1
+	</select>
+	
+	<!-- 当对登云账户进行操作时，插入log日志 -->
+	<insert id="insertOfficeAccountLog">
+		INSERT INTO sys_office_account_log (
+			order_id,
+			office_id,
+			type,
+			office_from,
+			amount,
+			channel_flag,
+			create_by,
+			create_date
+		)VALUES(
+			#{orderId},
+			#{officeId},
+			#{type},
+			#{officeFrom},
+			#{amount},
+			'bm',
+			#{createBy.id},
+			SYSDATE()
+		)
+	</insert>
 </mapper>

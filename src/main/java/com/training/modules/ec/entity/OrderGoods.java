@@ -74,6 +74,7 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private double debt;                  //欠款
 	private double advanceBalance;        //余额
 	private double accountBalance;        //用户账户余额
+	private int sumAppt;                  //处理预约金前是否有预约
 	//-------------------------------------------------------------------------
 	public int getAfterSaleNum() {
 		return afterSaleNum;
@@ -400,6 +401,12 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setDebt(double debt) {
 		this.debt = debt;
+	}
+	public int getSumAppt() {
+		return sumAppt;
+	}
+	public void setSumAppt(int sumAppt) {
+		this.sumAppt = sumAppt;
 	}
 	
 }

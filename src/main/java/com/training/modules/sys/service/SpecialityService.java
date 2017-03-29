@@ -45,12 +45,13 @@ public class SpecialityService extends CrudService<SpecialityDao, Speciality>{
 	
 
 	public Page<Speciality> findSpeciality(Page<Speciality> page, Speciality speciality) {
-		// TODO Auto-generated method stub
+		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
+		speciality.getSqlMap().put("dsf", dataScopeFilter(speciality.getCurrentUser(),"o"));
 		// 设置分页参数
-			speciality.setPage(page);
-				// 执行分页查询
-			page.setList(scialityDao.findList(speciality));
-			return page;
+		speciality.setPage(page);
+		// 执行分页查询
+		page.setList(scialityDao.findList(speciality));
+		return page;
 	}
 	/**
 	 * 保存更新信息
