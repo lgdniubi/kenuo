@@ -187,12 +187,16 @@
 	<insert id="insertMaping">
 		INSERT INTO mtmydb.mtmy_order_invoice_relevancy(
 			invoice_id,
-			order_id	
+			order_id,
+			mapping_id,
+			open_num	
 		)
 		value
 		(
 			#{invoiceId},
-			#{orderId}
+			#{orderId},
+			#{mappingId},
+			#{openNum}
 		)
 	
 	</insert>
