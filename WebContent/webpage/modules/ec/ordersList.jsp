@@ -58,7 +58,7 @@
 			openDialog("新增"+'虚拟订单添加',"/kenuo/a/ec/orders/createOrder","900px", "650px","");
 		}
 		function addKindOrder(){
-			openDialog("新增"+'实物订单添加',"/kenuo/a/ec/orders/createKindOrder","900px", "650px","");
+			openDialog("新增"+'实物订单&nbsp;&nbsp;&nbsp;&nbsp;<span style=\'color:red;\'>实物订单无法预约,如需创建服务项目,请添加虚拟订单</span>',"/kenuo/a/ec/orders/createKindOrder","900px", "650px","");
 		}
 		//退货列表
 		function returnedGoodsList(orderId,flag){
@@ -155,7 +155,7 @@
 									<i class="fa fa-plus"></i>添加虚拟订单
 								</button>
 								<button class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="left" onclick="addKindOrder()" title="添加实物订单">
-									<i class="fa fa-plus"></i>添加实物订单
+									<i class="fa fa-plus"></i>添加实物订单<span style="color: red;font-weight:bold;">&nbsp;&nbsp;*&nbsp;实物订单无法预约！</span>
 								</button>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="ec:orders:importPage">

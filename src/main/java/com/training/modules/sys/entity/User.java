@@ -74,8 +74,8 @@ public class User extends DataEntity<User> {
 	private UserLog userLog;				//用户操作日志
 	
 	private Skill skill;                  //美容师的技能标签
-	
-	
+	private String sex;					//用户性别
+	private String parendNames;			//所有父类name
 	
 	private List<Map<String, Object>> arealist;		//区域list
 	
@@ -540,6 +540,16 @@ public class User extends DataEntity<User> {
 	public void setSkill(Skill skill) {
 		this.skill = skill;
 	}
-	
-	
+	public String getSex() {
+		return sex;
+	}
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
+	public String getParendNames() {
+		return parendNames;
+	}
+	public void setParendNames(String parendNames) {
+		this.parendNames = parendNames;
+	}
 }
