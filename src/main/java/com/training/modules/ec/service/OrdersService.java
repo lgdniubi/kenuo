@@ -749,6 +749,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setCreateBy(user);
 		_orders.setDelFlag("0");
 		_orders.setChannelFlag("bm");
+		_orders.setShippingstatus(2);
 		_orders.setShippingtype(2);
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
