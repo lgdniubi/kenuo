@@ -512,6 +512,7 @@ window.onload=initStatus;
 									<th style="text-align: center;">会员折扣</th>
 									<th style="text-align: center;">应付金额</th>
 									<th style="text-align: center;">实付金额</th>
+									<th style="text-align: center;">预约金</th>
 									<c:if test="${orders.isReal == 1 }">
 										<th style="text-align: center;">实际次数</th>
 									</c:if>
@@ -533,7 +534,22 @@ window.onload=initStatus;
 										<td align="center">${orderGood.discount }</td>
 										<td align="center">${orderGood.membergoodsprice }</td>
 										<td align="center">${orderGood.orderAmount }</td>
-										<td align="center">${orderGood.totalAmount }</td>
+										<td align="center">
+											<c:if test="${orders.isReal == 1 }">
+												${orderGood.totalAmount - orderGood.couponPrice - orderGood.membergoodsprice}
+											</c:if>
+											<c:if test="${orders.isReal != 1 }">
+												${orderGood.totalAmount}
+											</c:if>
+										</td>
+										<td align="center">
+											<c:if test="${orders.isReal == 1 }">
+												${orderGood.totalAmount}
+											</c:if>
+											<c:if test="${orders.isReal != 1 }">
+												0.0
+											</c:if>
+										</td>
 										<c:if test="${orders.isReal == 1 }">
 											<td align="center">${orderGood.remaintimes }</td>
 										</c:if>

@@ -115,7 +115,7 @@
 				$("#_isNeworder").val(isNeworder);
 				top.layer.close(index);
 				
-				if(orderArrearage != 0){ //欠款
+				if(orderArrearage != 0 || isNeworder == 1){ //欠款或者为老订单时无法开发票
 					$("#iType").hide();
 					$("#personheadContent").hide();
 					$("#invoiceRecipient").hide();
@@ -404,6 +404,20 @@
 			$("#invoiceRecipient input").val("");
 		});
 	}
+	
+	function choose(value){
+		if(value == 1){
+			
+			$("#iType").hide();
+			$("#personheadContent").hide();
+			$("#invoiceRecipient").hide();
+			$("#companyheadContent").hide();
+			$("#fpinfo").hide();
+			$("#Ichecks").attr("checked",false);
+			$("#Ichecks").attr("disabled",true);
+		}
+	}
+	
 	</script>
 </head>
 <body>
@@ -424,7 +438,7 @@
 						<form:option value="3">老带新</form:option>
 				</form:select>&nbsp;&nbsp;
 				<label><font color="red">*</font>新老订单：</label>
-				<form:select id="isNeworder" path="isNeworder"  class="form-control" style="width:200px">
+				<form:select id="isNeworder" path="isNeworder"  class="form-control" style="width:200px" onchange="choose(this.value)">
 						<form:option value="0">新订单</form:option>
 						<form:option value="1">老订单</form:option>
 				</form:select>
