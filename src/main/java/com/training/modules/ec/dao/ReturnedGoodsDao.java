@@ -74,5 +74,12 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 * @return
 	 */
 	public int insertForcedCancel(ReturnedGoods returnedGoods);
+	
+	/**
+	 * 根据用户Id查找售后记录
+	 * @param 
+	 * @return int
+	 */
+	public List<ReturnedGoods> findListByUser(ReturnedGoods returnedGoods);
 
 }

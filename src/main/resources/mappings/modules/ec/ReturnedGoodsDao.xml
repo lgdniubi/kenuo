@@ -295,4 +295,52 @@
 		WHERE
 			return_id =#{id}
 	</select>
+	
+	<!--根据用户Id查询-->
+	<select id="findListByUser" resultType="ReturnedGoods">
+		SELECT
+			<include refid="returnColunm"/>
+		FROM mtmydb.mtmy_returned_goods a 
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.goods_mapping_id=b.rec_id
+		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
+		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
+		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
+		${sqlMap.dsf}	
+		AND a.del_flag=0 
+		AND a.user_id =#{userId}
+		<if test="userName != null and userName!=''">
+			AND d.nickname like
+			<if test="dbName == 'oracle'">'%'||#{userName} ||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{userName} , '%')</if>
+		</if>
+		<if test="mobile != null  and mobile != ''">
+			AND d.mobile=#{mobile}
+		</if>
+		<if test="id != null and id != ''">
+			AND a.id = #{id}
+		</if>
+		<if test="orderId != null and orderId != ''">
+			AND a.order_id = #{orderId}
+		</if>
+ 		<if test="isStorage != null and isStorage != ''">
+			AND a.is_storage = #{isStorage}
+		</if>
+		<if test="returnStatus != null and returnStatus != ''">
+			AND a.return_status = #{returnStatus}
+		</if>
+		<if test="begtime != null and begtime != ''">
+			AND DATE_FORMAT(a.apply_date,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			<![CDATA[AND DATE_FORMAT(a.apply_date,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY  a.apply_date desc
+			</otherwise>
+		</choose>
+	</select>
 </mapper>

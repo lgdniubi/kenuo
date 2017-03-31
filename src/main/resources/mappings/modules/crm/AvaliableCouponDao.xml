@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.crm.dao.AvaliableCouponDao">
+    
+    <!--根据用户ID查找产品寄存记录-->
+	<select id="getAvaliableNumber" resultType="Integer">
+		SELECT
+		  COUNT(id)
+		FROM
+			mtmydb.mtmy_activity_coupon_user macu
+		WHERE
+			user_id =#{userId}
+		AND macu.`status` = 0 
+	</select>
+	
+	<!--根据ID查找单条记录-->
+	<select id="findAvaliableList" resultType="AvaliableCoupon">
+		SELECT
+		  	mac.coupon_name AS 'couponName',
+			mac.base_amount AS 'baseAmount',
+			mac.coupon_money  AS 'couponMoney',
+			mac.coupon_type AS 'couponType',
+		  	mac.used_type AS 'usedType',
+			ma.expiration_date AS 'expirationDate'
+		FROM
+			mtmydb.mtmy_activity_coupon_user macu
+		LEFT JOIN mtmydb.mtmy_activity_coupon mac ON macu.coupon_id = mac.id
+		LEFT JOIN mtmydb.mtmy_activity ma ON mac.action_id = ma.id
+		WHERE
+			user_id = #{userId}
+		AND macu.`status` = 0 
+	</select>
+</mapper>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.crm.dao.ShapeFileDao">
+	
+    <!-- 查询单个用户的皮肤档案 -->
+	<select id="get" resultType="ShapeFile">
+		SELECT
+			usf.mtmy_user_id AS 'userId',
+			usf.breast_height_standard AS 'breastHeightStandard',
+			usf.up_bust AS upperBust,
+			usf.bust AS bust,
+			usf.down_bust AS lowerBust,
+			usf.abdomen AS abdomen,
+			usf.left_bp AS leftBp,
+			usf.right_bp AS rightBp,
+			usf.hip AS hip,
+			usf.bb AS bb,
+			usf.waist AS waist,
+			usf.left_thign AS leftThign,
+			usf.right_thign AS rightThign
+		FROM
+		mtmydb.mtmy_user_shape_file usf
+		WHERE
+		usf.mtmy_user_id = #{id}
+	</select>
+	
+	<!-- 插入单条形体状态的数据 --> 	
+	<insert id="insert">
+		INSERT INTO mtmydb.mtmy_user_shape_file(		
+			  mtmy_user_id ,
+			  breast_height_standard,
+			  up_bust,
+			  bust,
+			  down_bust,
+			  abdomen,
+			  left_bp,
+			  right_bp,
+			  hip,
+			  bb,
+			  waist,
+			  left_thign,
+			  right_thign,
+			  create_by,
+			  create_date
+		) VALUES (
+			#{userId}, 
+			#{breastHeightStandard}, 
+			#{upperBust}, 
+			#{bust}, 
+			#{lowerBust}, 
+			#{abdomen}, 
+			#{leftBp}, 
+			#{rightBp}, 
+			#{hip}, 
+			#{bb}, 
+			#{waist}, 
+			#{leftThign},
+			#{rightThign},
+			#{createBy.name},
+			SYSDATE()			
+		)
+	</insert>
+	
+	<!-- 更新形体状态的数据 -->
+	<update id="update">
+		UPDATE mtmydb.mtmy_user_shape_file SET 			
+		   breast_height_standard=#{breastHeightStandard}, 
+		   up_bust=#{upperBust},
+		   bust=#{bust},
+		   down_bust=#{lowerBust},
+		   abdomen=#{abdomen},
+		   left_bp=#{leftBp},
+		   right_bp=#{rightBp},
+		   hip=#{hip},
+		   bb=#{bb},
+		   waist=#{waist},
+		   left_thign=#{leftThign},
+		   right_thign=#{rightThign}
+		WHERE mtmy_user_id= #{userId}
+	</update>
+</mapper>
