@@ -268,8 +268,14 @@ public class UserController extends BaseController {
 //				}
 //			}
 			// 修正引用赋值问题，不知道为何，Company和Office引用的一个实例地址，修改了一个，另外一个跟着修改。
-			user.setCompany(new Office(request.getParameter("company.id")));
-			user.setOffice(new Office(request.getParameter("office.id")));
+			Office company = new Office();
+			company.setId(request.getParameter("company.id"));
+			company.setName(request.getParameter("company.name"));
+			user.setCompany(company);
+			Office office = new Office();
+			office.setId(request.getParameter("office.id"));
+			office.setName(request.getParameter("office.name"));
+			user.setOffice(office);
 			
 			/*更新用户时，需要更新用户的TOKEN，用户妃子校*/
 			redisClientTemplate.hdel("USERTOKEN", user.getId());
