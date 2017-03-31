@@ -4,6 +4,7 @@
 
 	<select id="getUserNickname" resultType="UserDetail">
 		SELECT
+		    user_id AS userId,
 			nickname,
 			mobile,
 			`name`
