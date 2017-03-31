@@ -591,6 +591,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<String> speckeys = orders.getSpeckeys();				//规格key集合
 		List<Double> orderAmounts = orders.getOrderAmounts();		//成交价集合
 		List<Double> actualPayments = orders.getActualPayments();	//实际付款集合
+		List<Integer> remaintimeNums = orders.getRemaintimeNums();	//虚拟订单老产品-实际次数
 		double orderAmountSum = 0d;  //应付总额
 		double afterPaymentSum = 0d;  //实际付款总额
 		double debtMoneySum = 0d;	//总欠款
@@ -708,7 +709,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			if(isNeworder == 0){
 				details.setServiceTimes(_serviceTimes);	//剩余服务次数
 			}else{
-				details.setServiceTimes(orders.getRemaintimes());	//剩余服务次数
+				details.setServiceTimes(remaintimeNums.get(i));	//剩余服务次数
 			}
 			details.setType(0);
 			details.setCreateBy(user);

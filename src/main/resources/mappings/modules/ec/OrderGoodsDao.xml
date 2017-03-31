@@ -223,6 +223,7 @@
 			service_times as servicetimes,
 			coupon_price as couponPrice,
 			discount as discount,
+			advance_price as advancePrice,
 			member_goods_price as membergoodsprice
 		from 
 		mtmydb.mtmy_order_goods_mapping 

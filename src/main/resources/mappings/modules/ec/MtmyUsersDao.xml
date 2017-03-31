@@ -473,4 +473,24 @@
 			1=1
 			AND u.mobile = #{mobile}
 	</select>
+	
+	<!-- 根据用户手机号获取其等级 -->
+	<select id="selectLayer" resultType="String">
+		SELECT layer
+		FROM mtmydb.mtmy_users
+		WHERE mobile = #{mobile}
+	</select>
+	
+	<!-- 若新增用户的手机号在每天美耶已经存在，则将新该用户的等级改为A-->
+	<update id="updateLayer">
+		UPDATE mtmydb.mtmy_users
+		SET layer = 'A'
+		WHERE user_id = #{userId}
+	</update>
+	
+	<!-- 根据被邀请人的id删除表中对应的数据 -->
+	<delete id="deleteFromSaleRelations">
+		DELETE FROM mtmydb.mtmy_sale_relations
+		WHERE user_id = #{userId}
+	</delete>
 </mapper>

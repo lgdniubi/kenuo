@@ -212,4 +212,18 @@ public class MtmyUsersService extends CrudService<MtmyUsersDao,Users>{
 	public Users getUserByMobile(String mobile){
 		return dao.getUserByMobile(mobile);
 	}
+	
+	/**
+	 * 若新增用户的手机号在每天美耶已经存在，则将新该用户的等级改为A
+	 */
+	public void updateLayer(int userId){
+		dao.updateLayer(userId);
+	}
+	
+	/**
+	 * 根据被邀请人的id删除表中对应的数据 
+	 */
+	public void deleteFromSaleRelations(int userId){
+		dao.deleteFromSaleRelations(userId);
+	}
 }
