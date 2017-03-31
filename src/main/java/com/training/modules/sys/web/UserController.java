@@ -71,6 +71,8 @@ import com.training.modules.tools.utils.TwoDimensionCode;
 import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.TrainRuleParam;
 
+import net.sf.json.JSONObject;
+
 /**
  * 用户Controller
  * 
@@ -545,7 +547,7 @@ public class UserController extends BaseController {
 						if ("true".equals(checkLoginName("", user.getLoginName()))) {
 							if(isInteger(user.getMobile())){
 								if (user.getMobile().length() == 11) {
-									if ("4".equals(newCheckMobile(user.getMobile()))) {              
+									if ("4".equals(JSONObject.fromObject(newCheckMobile(user.getMobile())).get("result"))) {              
 										if ("true".equals(checkIdcard("", user.getIdCard()))) {
 											if (user.getIdCard().length() == 15 || user.getIdCard().length() == 18) {
 												if("true".equals(checkOfficeId(user.getCode()))){
@@ -598,7 +600,7 @@ public class UserController extends BaseController {
 										}
 	
 									} else {
-										String result = newCheckMobile(user.getMobile());
+										String result = JSONObject.fromObject(newCheckMobile(user.getMobile())).getString("result");
 										if(result == "3"){
 											failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码妃子校和每天美耶都已注册,请联系管理员; ");
 											failureNum++;
@@ -905,17 +907,23 @@ public class UserController extends BaseController {
 	@RequiresPermissions(value = { "sys:user:add", "sys:user:edit" }, logical = Logical.OR)
 	@RequestMapping(value = "newCheckMobile")
 	public String newCheckMobile(String mobile) {
+		JSONObject jsonO = new JSONObject();
 		Users user = new Users();
 		user.setMobile(mobile);
 		if(mobile != null && systemService.getByMobile(mobile) != null && mtmyUsersDao.findUserBymobile(user) != 0){
-			return "3";
+			jsonO.put("result", "3");
+			return jsonO.toString();
 		}else if(mobile != null && mtmyUsersDao.findUserBymobile(user) != 0){
-			return "2";
+			String layer = mtmyUsersDao.selectLayer(mobile);
+			jsonO.put("result", "2");
+			jsonO.put("layer",layer);
+			return jsonO.toString();
 		}else if (mobile != null && systemService.getByMobile(mobile) != null){
-			return "1";
+			jsonO.put("result", "1");
+			return jsonO.toString();
 		}
-		return "4";
-		
+		jsonO.put("result", "4");
+		return jsonO.toString();
 	}
 	
 
