@@ -69,7 +69,8 @@
 									href="${ctx}/crm/user/account?userId=${userId}">账户总览</a></li>
 								<li role="presentation"><a
 									href="${ctx}/crm/invitation/list?userId=${userId}">邀请明细</a></li>
-								<li role="presentation"><a href="#">投诉咨询</a></li>
+								<li role="presentation"><a 
+									href="${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1">投诉咨询</a></li>
 							</ul>
 						</div>
 					</div>

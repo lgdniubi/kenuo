@@ -277,6 +277,7 @@
 	                                <form:textarea path="solveContent" htmlEscape="false" rows="2" maxlength="200" class="form-control" style="width:480px;" />
 								</div>					        
 				       	 	</div>
+				       	 	<c:if test="${complain.changeTimes != 2 }">
 				        	<div class="row" style="text-align:center;margin:10px">
 					        	<div class="col-sm-12 col-offset-sm-1" style="text-align:left;">
 					        	    <div style="float:left;">
@@ -298,6 +299,7 @@
 									 </div>				        
 				        	   </div>
 				        	</div>
+				        	</c:if>
 				        	<div class="row" style="text-align:center;margin:10px">
 								<div class="col-sm-12 col-offset-sm-1" style="text-align:left;">
 									 <label >&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：</label>
@@ -310,7 +312,7 @@
 				       
 					   <c:forEach items="${complains}" var="complains" varStatus="status">
 							<div class="row" style="text-align:center;margin:10px">				
-								<div class="col-sm-2 col-offset-sm-1" style="text-align:left;">
+								<div class="col-sm-3 col-offset-sm-1" style="text-align:left;">
 									<font color="#660000"><label >处理过程：</label>
 									${complains.solveTimes}</font>
 								</div>
@@ -335,7 +337,7 @@
 								            已处理
 								    </c:if>
 								</div>
-								<div class="col-sm-4 col-offset-sm-1" style="text-align:left;">
+								<div class="col-sm-3 col-offset-sm-1" style="text-align:left;">
 									<label >&nbsp;处理时间：</label>
 	                                ${complains.cretDate}
 								</div>					

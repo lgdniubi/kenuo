@@ -381,7 +381,7 @@
 		SELECT
 			user_balance  AS 'userBalance',
 	  		frozen_balance AS 'frozenBalance',
-	 		total_amount AS 'totalAmount',
+	 		total_amount AS 'totalBmount',
 	  		user_integral AS 'userIntegral',
 			account_balance AS 'accountBalance',
 			account_arrearage AS 'accountArrearage'

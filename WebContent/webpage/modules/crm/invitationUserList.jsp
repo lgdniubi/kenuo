@@ -56,7 +56,8 @@
 								href="${ctx}/crm/invitation?userId=${userId}">邀请明细</a></li>
 					<li role="presentation"><a
 								href="${ctx}/crm/returnRecord?userId=${userId}">回访记录</a></li>
-					<li role="presentation"><a href="#">投诉咨询</a></li>
+					<li role="presentation"><a 
+								href="${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1">投诉咨询</a></li>
 				  </ul>
 					</div>
 				</div>

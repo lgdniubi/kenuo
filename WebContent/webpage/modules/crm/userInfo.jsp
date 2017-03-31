@@ -12,8 +12,12 @@
 <script type="text/javascript">
 	function save() {
 		//loading("正在提交，请稍候...");
-		$("#inputForm").submit();
-		return true;
+		if($("#fieldset").attr("disabled")) {
+			alert("未编辑");
+		}else{
+				$("#inputForm").submit();
+				return true;
+		}
 	}
 	function enableEdit()  {
 		if($("#fieldset").attr("disabled")) {
@@ -21,6 +25,7 @@
 		}
 	}
 	$(document).ready(function() {
+		
 		var weddingDay = {
 			elem : '#weddingDay',
 			format : 'YYYY-MM-DD',
@@ -218,7 +223,8 @@
 										href="${ctx}/crm/user/account?userId=${userId}">账户总览</a></li>
 									<li role="presentation"><a
 										href="${ctx}/crm/invitation/list?userId=${userId}">邀请明细</a></li>
-									<li role="presentation"><a href="#">投诉咨询</a></li>
+									<li role="presentation"><a 
+										href="${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1">投诉咨询</a></li>
 								</ul>
 							</div>
 							<!-- 工具栏 -->
@@ -408,6 +414,35 @@
 									type="number" name="menstrualPeroid" class="form-control" />
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
+									<label><font color="red"></font>身&nbsp;&nbsp;高:&nbsp;&nbsp;&nbsp;</label>
+									<input name="height" value="${detail.height}" maxlength="50"
+									type="number"	style="width: 150px;" class="form-control " />
+								</div>
+							</div>
+							<div class="row" style="text-align: center; margin: 10px">
+								<div class="col-sm-2 col-offset-sm-1">
+									<label><font color="red"> </font>体&nbsp;&nbsp;重:&nbsp;&nbsp;&nbsp;&nbsp;</label>
+									<input name="weight" value="${detail.weight}" maxlength="50"
+									type="number"	style="width: 150px;" class="form-control " /><br />
+								</div>
+								<div class="col-sm-2 col-offset-sm-1">
+									<label style="float: left"><font
+										color="red"> </font>所属店铺:</label> <input id="officeId"
+										class="form-control" name="officeId"
+										value="${detail.officeId}" type="hidden">
+									<div class="input-group"
+										style="width: 148px; float: right; margin-right: 10px">
+										<input id="officeName" class=" form-control" name="officeName"
+											readonly="readonly" value="${detail.officeName}" type="text">
+										<span class="input-group-btn">
+											<button id="officeButton" class="btn btn-primary "
+												type="button">
+												<i class="fa fa-search"></i>
+											</button>
+										</span>
+									</div>
+								</div>
+								<div class="col-sm-2 col-offset-sm-1">
 									<label style="margin-left: -10px; float: left"><font
 										color="red"></font>所属美容师:</label> <input id="beautyId" name="beautyId"
 										type="hidden" value="${detail.beautyId}">
@@ -424,35 +459,6 @@
 									</div>
 									<%-- <sys:treeselect id="beautyId" name="beautyId" value="${detail.beautyId}" labelName="beautyName" labelValue="${detail.beautyName}"  --%>
 									<%-- 							     title="美容师" url="/sys/office/treeData?type=3" allowClear="true" notAllowSelectRoot="true"/> --%>
-								</div>
-							</div>
-							<div class="row" style="text-align: center; margin: 10px">
-								<div class="col-sm-2 col-offset-sm-1">
-									<label><font color="red"></font>身&nbsp;&nbsp;高:&nbsp;&nbsp;&nbsp;</label>
-									<input name="height" value="${detail.height}" maxlength="50"
-									type="number"	style="width: 150px;" class="form-control " />
-								</div>
-								<div class="col-sm-2 col-offset-sm-1">
-									<label><font color="red"> </font>体&nbsp;&nbsp;重:&nbsp;&nbsp;&nbsp;&nbsp;</label>
-									<input name="weight" value="${detail.weight}" maxlength="50"
-									type="number"	style="width: 150px;" class="form-control " /><br />
-								</div>
-								<div class="col-sm-2 col-offset-sm-1">
-									<label style="margin-left: 9px; float: left"><font
-										color="red"> </font>所属店铺:</label> <input id="officeId"
-										class="form-control" name="officeId"
-										value="${detail.officeId}" type="hidden">
-									<div class="input-group"
-										style="width: 148px; float: right; margin-right: 10px">
-										<input id="officeName" class=" form-control" name="officeName"
-											readonly="readonly" value="${detail.officeName}" type="text">
-										<span class="input-group-btn">
-											<button id="officeButton" class="btn btn-primary "
-												type="button">
-												<i class="fa fa-search"></i>
-											</button>
-										</span>
-									</div>
 								</div>
 							</div>
 							<div class="row" style="text-align: center; margin: 10px">
