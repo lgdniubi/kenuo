@@ -57,7 +57,7 @@
 					<li role="presentation"><a
 								href="${ctx}/crm/returnRecord?userId=${userId}">回访记录</a></li>
 					<li role="presentation"><a 
-								href="crm/store/list?mobile=${userDetail.mobile}&stamp='1';">投诉咨询</a></li>
+								href="${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1">投诉咨询</a></li>
 				  </ul>
 					</div>
 				</div>
