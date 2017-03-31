@@ -150,7 +150,7 @@
 			    q_status AS status,
 			    record_time AS recordTime,    
 			    a.mtmy_user_id AS member,
-			    date_format(a.create_date, '%Y-%c-%d %h:%i:%s') AS cretDate,
+			    date_format(a.create_date, '%Y-%c-%d %h:%i:%s') AS creatDate,
 			    b.name AS creatBy,
 			    c.question_source AS questionSource,
 			   (SELECT f.redirect_explain FROM mtmydb.fcsd_question_solve f WHERE f.question_id = a.id ORDER BY f.create_date DESC LIMIT 1)	AS changeTimes
@@ -246,8 +246,8 @@
 			WHERE 
 			    1=1
 	            <if test="mobile!=null and mobile!=''">
-	            and mobile=#{mobile}
-	            or name=#{mobile}
+	            and (mobile=#{mobile}
+	            or nickname=#{mobile})
                 </if>
 	  </select>
 	       
@@ -377,6 +377,8 @@
 				 #{remarks} 
 				)
 		</insert> 
+		
+		<!-- 查询转交对象集合 -->
 		<select id="findUser" resultType="User">
 			 SELECT
 				 a.id,
@@ -387,14 +389,16 @@
 				 o. NAME AS "office.name"
 			 FROM
 				 sys_user a
-			 LEFT JOIN sys_franchisee c ON c.id = a.company_id
-			 LEFT JOIN sys_office o ON o.id = a.office_id
+				 LEFT JOIN sys_franchisee c ON c.id = a.company_id
+				 LEFT JOIN sys_office o ON o.id = a.office_id
+		         LEFT JOIN sys_user_role d ON a.id = d.user_id
+		         LEFT JOIN sys_role e ON d.role_id = e.id
 			 WHERE
 			     a.del_flag = 0
-			 AND (
-				o.id = #{office.id} OR o.parent_ids LIKE CONCAT('%,', #{office.id}, ',%')
-			     )
-			ORDER BY
+			     <!-- and (o.id = #{office.id} OR o.parent_ids LIKE CONCAT('%,', #{office.id}, ',%')) -->
+			     AND o.id = #{office.id}
+		         AND (e.enname = '400kf' or e.enname = 'yy93') 
+			 ORDER BY
 				o. CODE,
 				c. CODE,
 		        a. NAME

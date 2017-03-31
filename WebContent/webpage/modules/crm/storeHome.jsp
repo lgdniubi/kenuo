@@ -22,8 +22,8 @@
 				url:"${ctx}/crm/store/member",
 				dataType: 'json',
 				success:function(date){
-					if(date != null && date.userId !=null){									
-						  window.location.href = '${ctx}/crm/userDetail?userId='+date.userId; 
+					if(date != null && date.userId !=null){	
+						  window.location.href = '${ctx}/crm/user/userDetail?userId='+date.userId; 
 					}else{
 						if(date != null && date.mobile != null){
 						    window.location.href = '${ctx}/crm/store/list?mobile='+mobile+'&stamp='+"1"; 
