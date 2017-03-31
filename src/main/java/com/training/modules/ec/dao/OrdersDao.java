@@ -245,7 +245,11 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 */
 	public Orders selectByOrderIdSum(String orderid);
 
-
-
+	/**
+	 * @param 
+	 * @return Orders
+	 * 根据USERID及其其他条件查询订单列表
+	 */
+	public List<Orders> findByUser(Orders order);
 
 }

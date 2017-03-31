@@ -849,5 +849,51 @@
 			SET order_status = -2
 		WHERE order_id = #{orderid}
 	</update>
+	
+	<!-- 根据userId及其其他条件分页查询 -->
+	<select id="findByUser" resultType="Orders">
+		SELECT
+			a.order_id AS orderid,
+			a.is_real as isReal,
+			u.nickname AS "username",
+			a.add_time AS addtime,
+			a.pay_time AS paytime,
+			p.pay_name AS payname,
+			a.total_amount AS totalamount,
+			a.order_arrearage AS orderArrearage,
+			a.order_status AS orderstatus,
+			a.is_comment AS isComment,
+			a.distinction AS distinction
+		FROM
+			mtmydb.mtmy_orders a
+		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
+		LEFT JOIN mtmydb.mtmy_payment p ON a.pay_id = p.pay_id
+		WHERE a.del_flag = 0
+		 AND a.user_id=#{userid}
+		<if test="orderstatus!= null  and orderstatus!= ''">
+			AND a.order_status=#{orderstatus}
+		</if>
+		<if test="distinction!= null  and distinction!= ''">
+			AND a.distinction=#{distinction}
+		</if>
+		<if test="keyword != null and keyword!=''">
+			AND (
+				u.nickname like 
+				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+				OR u.mobile like
+				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if> 
+				OR a.order_id like
+				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if> 
+			  )
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.add_time DESC
+			</otherwise>
+		</choose>
+	</select>
 
 </mapper>
