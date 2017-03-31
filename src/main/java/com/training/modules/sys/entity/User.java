@@ -79,6 +79,9 @@ public class User extends DataEntity<User> {
 	
 	private List<Map<String, Object>> arealist;		//区域list
 	
+	private String result;           //添加用户时判断用户是否存在在每天美耶或者妃子校的标识
+	private String layer;            //用户等级
+	
 	// new add kele 2016-11-3
 	// 数据范围（1：所在部门及以下数据；2：按明细设置）
 	private	int dataScope;//数据范围(1:所在部门及以下数据;2:按明细设置)
@@ -552,4 +555,18 @@ public class User extends DataEntity<User> {
 	public void setParendNames(String parendNames) {
 		this.parendNames = parendNames;
 	}
+	public String getResult() {
+		return result;
+	}
+	public void setResult(String result) {
+		this.result = result;
+	}
+	public String getLayer() {
+		return layer;
+	}
+	public void setLayer(String layer) {
+		this.layer = layer;
+	}
+	
+	
 }

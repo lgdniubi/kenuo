@@ -385,13 +385,26 @@
 		          data:{'mobile':$('#mobile').val()},  
 		          dateType:'json',
 		          success: function(data){ 
-		              if (data == '1'){
+		        	  newData = eval("("+data+")");
+		        	  var result = newData.result;
+		        	  var layer = newData.layer;
+		              if (result == '1'){
 		            	 $("#mobileError").html("该号码妃子校已存在");
 		            	 return;
-		              }else if(data == '2'){
-		            	 top.layer.alert('该号码每天美耶已存在!', {icon: 0, title:'提醒'}); 
-		            	 return;
-		              }else if(data == '3'){
+		              }else if(result == '2'){
+		            	  $("#result").val(result);
+		            	  $("#layer").val(layer);
+		            	  if($("#id").val()){
+		            		  top.layer.alert('该号码每天美耶已存在!', {icon: 0, title:'提醒'}); 
+		            		  return;
+		            	  }else{
+		            		  if(layer == 'Z'){
+			            		  top.layer.alert('该号码每天美耶已存在!该用户无等级', {icon: 0, title:'提醒'}); 
+			            	  }else{
+			            		  top.layer.alert('该号码每天美耶已存在!该用户等级为'+layer, {icon: 0, title:'提醒'}); 
+			            	  }
+		            	  }
+		              }else if(result == '3'){
 		            	 $("#mobileError").html("该号码妃子校和每天美耶都已存在");
 		            	 return;
 		              }
@@ -404,6 +417,8 @@
 <body>
 	<form:form id="inputForm" modelAttribute="user" action="${ctx}/sys/user/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
+		<input id="result" name="result" type="hidden"/>
+		<input id="layer" name="layer" type="hidden"/>
 		<sys:message content="${message}"/>
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		   <tbody>
@@ -506,7 +521,7 @@
 		         </td>
 		      </tr>
 		      <tr>
-		         <td class="active"><label class="pull-right">性别:</label></td>
+		         <td class="active"><label class="pull-right"><font color="red">*</font>性别:</label></td>
 		         <td>
 		         	<form:select path="sex" cssClass="form-control required">
 		         		<form:option value=""></form:option>

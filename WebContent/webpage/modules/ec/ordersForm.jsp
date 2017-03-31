@@ -544,7 +544,7 @@ window.onload=initStatus;
 										</td>
 										<td align="center">
 											<c:if test="${orders.isReal == 1 }">
-												${orderGood.totalAmount}
+												${orderGood.advancePrice}
 											</c:if>
 											<c:if test="${orders.isReal != 1 }">
 												0.0

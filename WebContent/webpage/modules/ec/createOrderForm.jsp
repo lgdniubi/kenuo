@@ -102,7 +102,7 @@
 						"<td> "+$(orderAmount).val()+"<input id='orderAmounts' name='orderAmounts' type='hidden' value='"+$(orderAmount).val()+"'></td> "+
 						"<td> "+$(goodsNum).val()+"</td> "+
 						"<td> "+$(afterPayment).val()+"<input id='actualPayments' name='actualPayments' type='hidden' value='"+$(actualPayment).val()+"'></td> "+
-						"<td> "+$(actualNum).val()+"<input id='remaintimes' name='remaintimes' type='hidden' value='"+$(actualNum).val()+"'></td> "+
+						"<td> "+$(actualNum).val()+"<input id='remaintimes' name='remaintimeNums' type='hidden' value='"+$(actualNum).val()+"'></td> "+
 						"<td> "+$(spareMoney).val()+"</td> "+
 						"<td> "+$(debtMoney).val()+"</td> "+
 						"<td> "+

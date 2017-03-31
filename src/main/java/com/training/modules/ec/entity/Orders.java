@@ -158,6 +158,7 @@ public class Orders extends TreeEntity<Orders> {
 	private List<OrderRemarksLog> orderRemarksLog;		//订单备注返回对象
 	private List<String> orderRemarks;		//订单备注信息存储数据
 	private String orderRemark;				//单条订单备注信息存储数据
+	private List<Integer> remaintimeNums;		//实际次数  --新加属性
 	private OrderInvoice orderInvoice;		//订单发票对象
 	//--------------------用户账户需要字段------------------------------------------
 	private double accountBalance;		//账户余额
@@ -1544,6 +1545,12 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setNum(int num) {
 		this.num = num;
+	}
+	public List<Integer> getRemaintimeNums() {
+		return remaintimeNums;
+	}
+	public void setRemaintimeNums(List<Integer> remaintimeNums) {
+		this.remaintimeNums = remaintimeNums;
 	}
 	
 	public String getIsComment() {

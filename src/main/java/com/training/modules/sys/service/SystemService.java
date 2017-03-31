@@ -418,15 +418,26 @@ public class SystemService extends BaseService implements InitializingBean {
 		
 		if (StringUtils.isBlank(user.getId())) {
 			user.preInsert();
-			mtmyUsersDao.trainsInsertMtmy(user);
-			logger.info("#####[保存妃子校用户时插入每天美耶--返回每天美耶id]:"+user.getMtmyUserId());
-			//新增用户时插入用户账目表
-			Users users = new Users();
-			users.setUserid(user.getMtmyUserId());
-			mtmyUsersDao.insertAccounts(users);
-			//新增用户时插入用户统计表
-			mtmyUsersDao.insterSaleStats(users);
-			userDao.insert(user);
+			if("2".equals(user.getResult())){
+				int mtmyUserId = mtmyUsersDao.getUserByMobile(user.getMobile()).getUserid();
+				if("B".equals(user.getLayer())){
+					mtmyUsersDao.deleteFromSaleRelations(mtmyUserId);
+				}
+				mtmyUsersDao.updateLayer(mtmyUserId);
+				user.setMtmyUserId(mtmyUserId);
+				userDao.insert(user);
+			}else{
+				mtmyUsersDao.trainsInsertMtmy(user);
+				logger.info("#####[保存妃子校用户时插入每天美耶--返回每天美耶id]:"+user.getMtmyUserId());
+				//新增用户时插入用户账目表
+				Users users = new Users();
+				users.setUserid(user.getMtmyUserId());
+				mtmyUsersDao.insertAccounts(users);
+				//新增用户时插入用户统计表
+				mtmyUsersDao.insterSaleStats(users);
+				userDao.insert(user);
+			}
+			
 			// userinfo.preInsert();
 			if (user.getUserinfo() != null) {
 				user.getUserinfo().preInsert();
@@ -434,7 +445,6 @@ public class SystemService extends BaseService implements InitializingBean {
 				user.getUserinfo().setNativearea(user.getUserinfo().getAreaP().getId());
 				user.getUserinfo().setWorkarea(user.getUserinfo().getAreaC().getId());
 				userinfoDao.insertUserinfo(user.getUserinfo()); // 创建新的用户
-
 			}
 			if (user.getSpeciality() != null) {
 				List<UserSpeciality> list = SpeArryTolist(user); // 获取拼接的特长list
