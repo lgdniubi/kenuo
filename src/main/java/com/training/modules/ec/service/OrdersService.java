@@ -1335,7 +1335,18 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		return dao.selectByOrderIdSum(orderid);
 	}
 	
-
+	/**
+	 * @param 
+	 * @return Page<Orders>
+	 * 根据用户ID搜索订单
+	 */
+	public Page<Orders> findByUser(Page<Orders> page, Orders orders){
+		orders.setPage(page);
+		// 执行分页查询
+		page.setList(ordersDao.findByUser(orders));
+		return page;
+	}
+		
 	 /**
 	  * 根据recid查找相应的商品信息
 	  * @param recId

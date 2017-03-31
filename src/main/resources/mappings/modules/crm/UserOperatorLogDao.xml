@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.crm.dao.UserOperatorLogDao">
+    
+	<select id="findList" resultType="UserOperatorLog">
+		SELECT
+			muo.content,
+			muo.mtmy_user_id AS 'userId',
+		    muo.operator_type,
+			muo.create_date AS 'createTime',
+			muo.create_by AS 'creatorName'
+		FROM
+			mtmydb.mtmy_user_operate_log muo
+	    WHERE muo.mtmy_user_id =#{userId}
+	    <if test="operatorType!=null and operatorType!=''">
+			     AND muo.operator_type=#{operatorType}
+		</if>
+        ORDER BY muo.create_date DESC
+	</select>
+
+	<!-- 插入单条Log--> 	
+	<insert id="insert">
+		INSERT INTO mtmydb.mtmy_user_operate_log(		
+		   mtmy_user_id,
+		   operator_type,
+		   content,
+		   create_date,
+		   create_by
+		) VALUES (
+			#{userId}, 
+			#{operatorType}, 
+			#{content}, 
+			SYSDATE(),
+			#{createBy.name}
+		)
+	</insert>
+	
+</mapper>

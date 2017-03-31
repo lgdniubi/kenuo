@@ -6,6 +6,7 @@ import java.util.Date;
 import com.training.common.persistence.DataEntity;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.User;
+import com.training.modules.sys.entity.Userinfo;
 /**
  * 预约实体类
  * @author coffee
@@ -38,6 +39,16 @@ public class Reservation extends DataEntity<Reservation>{
 	private Orders order;				//订单实体类
 	private Office office;				//店铺机构实体类
 	private Goods goods;				//商品实体类
+	
+	
+	private Integer teachersStarLevel;  //sharp 3月27所加，美容师评级
+	public Integer getTeachersStarLevel() {
+		return teachersStarLevel;
+	}
+	public void setTeachersStarLevel(Integer teachersStarLevel) {
+		this.teachersStarLevel = teachersStarLevel;
+	}
+	
 	
 	public int getReservationId() {
 		return reservationId;

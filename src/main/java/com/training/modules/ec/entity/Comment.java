@@ -43,6 +43,18 @@ public class Comment extends DataEntity<Comment>{
 	
 	private String userName;	//用户姓名
 	private String usersName;	//美容师姓名
+	
+	/**
+	 * sharp 所加，用于查询每个预约下的评论 
+	 */
+	private String reservationId;	//预约Id
+	
+	public String getReservationId() {
+		return reservationId;
+	}
+	public void setReservationId(String reservationId) {
+		this.reservationId = reservationId;
+	}
 	public int getCommentId() {
 		return commentId;
 	}

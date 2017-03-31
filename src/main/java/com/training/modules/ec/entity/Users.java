@@ -13,7 +13,7 @@ public class Users extends TreeEntity<Users> {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private int userid;			//用户id
+	private Integer userid;			//用户id
 	private String name;			//真实姓名
 	private String email;			//邮箱
 	private	 String password;		//密码
@@ -57,6 +57,22 @@ public class Users extends TreeEntity<Users> {
 	private String layer;			//用户等级  用于分销
 	private int source;				//用户来源  用户分销
 	
+
+	private String officeId ;		//所属门店
+	private String beautyId;	    //所属美容师
+	
+	public String getOfficeId() {
+		return officeId;
+	}
+	public void setOfficeId(String officeId) {
+		this.officeId = officeId;
+	}
+	public String getBeautyId() {
+		return beautyId;
+	}
+	public void setBeautyId(String beautyId) {
+		this.beautyId = beautyId;
+	}
 	private String noLogin;			//未登陆用户
 	public int getLevelValue() {
 		return levelValue;
@@ -70,10 +86,12 @@ public class Users extends TreeEntity<Users> {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	public int getUserid() {
+	
+	
+	public Integer getUserid() {
 		return userid;
 	}
-	public void setUserid(int userid) {
+	public void setUserid(Integer userid) {
 		this.userid = userid;
 	}
 	public String getName() {

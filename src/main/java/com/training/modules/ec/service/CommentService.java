@@ -96,4 +96,14 @@ public class CommentService extends CrudService<CommentDao, Comment>{
 		mtmyComment.setPage(page);
 		return page.setList(dao.exportGoodsComment(mtmyComment));
 	}
+	/**
+	 * 根据用户ID查找美容师评论
+	 * @param MtmyComment
+	 * @return
+	 */
+	public List<Comment> findCommentByUserId(Comment comment){
+		
+		return dao.findBeautyByUserId(comment);
+	}
+	
 }

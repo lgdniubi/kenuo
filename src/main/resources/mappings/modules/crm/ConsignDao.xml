@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.crm.dao.ConsignDao">
+    
+    <!--根据用户ID查找产品寄存记录-->
+	<select id="findConsignList" resultType="Consign">
+		SELECT
+		   uc.id AS consignId,
+		   uc.consign_num AS consignNum,
+		   uc.purchase_num AS purchaseNum,
+		   uc.taken_num AS takenNum ,
+		   uc.remark,
+		   uc.create_date AS createDate,
+		   so.`name` AS officeName,
+		   mg.goods_sn AS goodsNo,
+		   mg.goods_name AS goodsName
+		FROM
+			mtmydb.mtmy_user_consign uc 
+		LEFT JOIN mtmydb.mtmy_goods mg ON uc.goods_id = mg.goods_id
+		LEFT JOIN trains.sys_office so ON uc.office_id = so.id
+		WHERE
+		uc.mtmy_user_id = #{userId}
+		ORDER BY uc.create_date DESC
+	</select>
+	
+	<!--根据ID查找单条记录-->
+	<select id="get" resultType="Consign">
+		SELECT
+		   uc.id AS 'consignId',
+		   uc.consign_num AS 'consignNum',
+		   uc.purchase_num AS 'purchaseNum',
+		   uc.taken_num AS 'takenNum' ,
+		   uc.remark,
+		   uc.create_date AS 'createDate',
+		   uc.goods_id AS 'goodsId',
+		   uc.goods_name AS 'goodsName',
+		   mg.goods_sn AS 'goodsNo',
+		   so.`name` AS 'officeName',
+		   uc.office_id AS 'officeId'
+		FROM
+			mtmydb.mtmy_user_consign uc 
+		LEFT JOIN mtmydb.mtmy_goods mg ON uc.goods_id = mg.goods_id
+		LEFT JOIN trains.sys_office so ON uc.office_id = so.id
+		WHERE
+		uc.id = #{consignId}
+	</select>
+
+	<!--增加用户寄存记录  -->
+	<insert id="insert">
+		INSERT INTO mtmydb.mtmy_user_consign(		
+		  	mtmy_user_id,
+			order_id,
+			goods_id,
+			goods_name,
+			purchase_num,
+			consign_num,
+			taken_num,
+			remark,
+			create_by,
+			create_date,
+			office_id
+		) VALUES (
+			#{userId}, 
+			#{orderId}, 
+			#{goodsId}, 
+			#{goodsName},
+			#{purchaseNum}, 
+			#{consignNum}, 
+			#{takenNum}, 
+			#{remark}, 
+			#{createBy.name}, 
+			SYSDATE(), 
+			#{officeId}
+		)
+	</insert>
+
+	<!--更新用户寄存记录-->
+	<update id="updateSingle">
+		UPDATE mtmydb.mtmy_user_consign SET 			
+		    order_id =#{orderId},
+			goods_id =#{goodsId},
+			purchase_num=#{purchaseNum},
+			consign_num=#{consignNum},
+			taken_num=#{takenNum},
+			remark=#{remark},
+			office_id =#{officeId}
+		WHERE id = #{consignId}
+	</update>
+
+	<!--删除用户单条寄存记录-->
+	<delete id="delete">
+		DELETE 
+		  FROM mtmydb.mtmy_user_consign
+		WHERE id = #{consignId}
+	</delete>
+</mapper>

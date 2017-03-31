@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.crm.dao.UserContactInfoDao">
+
+	<select id="get" resultType="UserContactInfo">
+		
+		SELECT
+			id,
+			mtmy_user_id,
+			qq,
+			wechat,
+			email,
+			company_name as companyName,
+			area_id,
+			address,
+			create_by,
+			create_date
+		FROM
+			mtmydb.mtmy_user_contact_info where mtmy_user_id=#{userId}
+	</select>
+	
+	<!--增加用户产品使用记录 -->
+	<insert id="insert">
+		INSERT INTO mtmydb.mtmy_user_contact_info(
+			mtmy_user_id,
+			qq,
+			wechat,
+			email,
+			company_name,
+			address,
+			create_by,
+			create_date
+			)
+		VALUES(
+			#{userId},
+			#{qq},
+			#{wechat},
+			#{email},
+			#{companyName},
+			#{address},
+			#{createBy.name},
+			SYSDATE()
+		)
+	</insert>
+
+	<!--更新产品使用记录 -->
+	<update id="updateSingle">
+		UPDATE mtmydb.mtmy_user_contact_info SET
+			 qq=#{qq},
+			 wechat=#{wechat},
+			 email=#{email},
+			company_name=#{companyName},
+			address=#{address}
+		WHERE mtmy_user_id = #{userId}
+	</update>
+</mapper>

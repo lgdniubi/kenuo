@@ -13,6 +13,7 @@
 		u.is_lock AS islock,
 		u.user_money
 	</sql>
+    <!-- shiba 增加两个字段officeId 和 beautyId-->   
     <insert id="insert" parameterType="Users" useGeneratedKeys="true" keyProperty="userid">
 		INSERT INTO mtmydb.mtmy_users(
 			name, 
@@ -20,6 +21,8 @@
 			password, 
 			mobile, 
 			sex,
+			office_id,
+			beautician_id,
 			reg_time,
 			del_flag
 		) VALUES (
@@ -28,6 +31,8 @@
 			#{password}, 
 			#{mobile}, 
 			#{sex},
+			#{officeId},
+			#{beautyId},
 			SYSDATE(),
 			#{DEL_FLAG_NORMAL}
 		)
@@ -202,6 +207,8 @@
 	<select id="get" resultType="Users">
 		SELECT 
 		  <include refid="usersColumns"/>
+		  ,
+		  u.layer AS layer
 		FROM
 		  mtmydb.mtmy_users AS u
 		WHERE 
@@ -368,9 +375,14 @@
 		{CALL mtmydb.relieveUser(#{userid},#{source})}
 	</select>
 	
-	<!-- 根据用户ID，查询用户账户信息 -->
-	<select id="findUserAccounts" resultType="usersAccounts">
+	<!-- 根据用户ID，查询用户账户信息   -->
+	<!-- 把resultType的 U 由小写改为大写-->
+	<select id="findUserAccounts" resultType="UsersAccounts">
 		SELECT
+			user_balance  AS 'userBalance',
+	  		frozen_balance AS 'frozenBalance',
+	 		total_amount AS 'totalAmount',
+	  		user_integral AS 'userIntegral',
 			account_balance AS 'accountBalance',
 			account_arrearage AS 'accountArrearage'
 		FROM

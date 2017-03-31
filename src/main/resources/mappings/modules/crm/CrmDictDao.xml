@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.crm.dao.CrmDictDao">
+
+
+   	<resultMap id="typeList" type="com.training.modules.crm.entity.CrmDict" >
+  		<result column="type" property="type"/>
+  		<result column="description" property="description"/>
+   		<collection property="crmDictList" column="type" javaType="ArrayList" select="getCrmListByType"/>
+  	</resultMap>
+  	 <resultMap id="getCrmByType" type="com.training.modules.crm.entity.CrmDict">  
+	    <result property="type" column="type" />  
+	    <result property="value" column="value" />  
+	    <result property="description" column="description" />  
+	    <result property="label" column="label" />
+  	</resultMap> 
+	<select id="get" resultType="CrmDict">
+		SELECT 
+			* 
+		FROM mtmydb.mtmy_user_dict 
+		WHERE id = #{id}
+	</select>
+	
+	<select id="findDict" resultType="CrmDict">
+		SELECT 
+			* 
+		FROM mtmydb.mtmy_user_dict 
+		WHERE type = #{type}
+			  AND value = #{value }
+	</select>
+	
+	<select id="findList" resultType="CrmDict">
+		SELECT 
+			* 
+		FROM mtmydb.mtmy_user_dict 
+		WHERE del_flag = #{DEL_FLAG_NORMAL} 
+		<if test="type != null and type != ''">
+			AND type = #{type}
+		</if>
+		<if test="description != null and description != ''">
+			AND description LIKE 
+					<if test="dbName == 'oracle'">'%'||#{description}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{description}, '%')</if>
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="findAllList" resultType="CrmDict">
+		SELECT 
+			* 
+		FROM mtmydb.mtmy_user_dict 
+		WHERE del_flag = #{delFlag} 
+		ORDER BY type, sort, update_date DESC
+	</select>
+	
+	<select id="findTypeList" resultType="string">
+		SELECT 
+			type 
+		FROM mtmydb.mtmy_user_dict 
+		WHERE del_flag = #{DEL_FLAG_NORMAL} 
+		GROUP BY type
+		ORDER BY type
+	</select>
+	
+	<!-- 插入单条记录 -->
+	<insert id="insert">
+		INSERT INTO mtmydb.mtmy_user_dict(
+			id, 
+			value, 
+			label, 
+			type, 
+			description,
+			sort, 
+			action_type,
+			create_by, 
+			create_date, 
+			update_by, 
+			update_date, 
+			remarks,
+			group_type,  
+			del_flag
+		) VALUES (
+			#{id}, 
+			#{value}, 
+			#{label}, 
+			#{type}, 
+			#{description}, 
+			#{sort}, 
+			#{actionType}, 
+			#{createBy.id}, 
+			#{createDate}, 
+			#{updateBy.id}, 
+			#{updateDate}, 
+			#{remarks}, 
+			#{groupType},
+			#{delFlag}
+		)
+	</insert>
+	
+	<!-- 更新dictionary单条记录 -->
+	<update id="update">
+		UPDATE mtmydb.mtmy_user_dict SET 
+			value = #{value}, 
+			label = #{label}, 
+			type = #{type}, 
+			action_type = #{actionType}, 
+			description = #{description}, 
+			sort = #{sort}, 
+			group_type=#{groupType},
+			update_by = #{updateBy.id}, 
+			update_date = #{updateDate}, 
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM mtmydb.mtmy_user_dict 
+		WHERE id = #{id}
+	</update>
+	
+	<update id="deleteByLogic">
+		UPDATE mtmydb.mtmy_user_dict SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+ 
+	 <!--取得所有皮肤档案的数据字典-->
+    <select id="getSkinFile" resultMap="typeList">
+		SELECT 
+			DISTINCT(type) as type,
+			action_type AS 'actionType',
+			description as description
+		FROM
+			mtmydb.mtmy_user_dict
+		WHERE
+			group_type = 'skin'
+    </select>
+    <!--每个type获取一个list-->
+  	<select id="getCrmListByType" resultMap="getCrmByType" parameterType="String" >
+    	SELECT
+			type,
+			`value`,
+			description,
+			label
+		FROM
+			mtmydb.mtmy_user_dict
+		WHERE
+		 	type = #{type}
+	</select>
+    
+</mapper>

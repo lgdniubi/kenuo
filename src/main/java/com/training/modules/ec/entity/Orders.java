@@ -166,6 +166,8 @@ public class Orders extends TreeEntity<Orders> {
 	private List<OrderGoods> orderGoodList;
 	List<OrderPushmoneyRecord> orderPushmoneyRecords;
 	List<OrderGoodsCoupon> orderGoodsCoupons;	//订单红包
+	//------------------CRM根据用户查询需要显示的字段----------------------------------
+	private String isComment;
 	
 	private int flag;						//分销是否处理 分销结算标示（0：未结算；1：已结算）
 	private String strReal;				//导出 字段 订单类型
@@ -1542,6 +1544,13 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setNum(int num) {
 		this.num = num;
+	}
+	
+	public String getIsComment() {
+		return isComment;
+	}
+	public void setIsComment(String isComment) {
+		this.isComment = isComment;
 	}
 	
 }
