@@ -71,7 +71,8 @@
 								href="${ctx}/crm/user/account?userId=${userId}">账户总览</a></li>
 							<li role="presentation"><a
 								href="${ctx}/crm/invitation/list?userId=${userId}">邀请明细</a></li>
-							<li role="presentation"><a href="#">投诉咨询</a></li>
+							<li role="presentation"><a 
+								href="crm/store/list?mobile=${userDetail.mobile}&stamp='1';">投诉咨询</a></li>
 						</ul>
 					</div>
 					<!-- 工具栏 -->
@@ -155,25 +156,25 @@
 									<label style="float: left; line-height: 30px"><font
 										color="red"> </font>右BP:</label> <input name="rightBp"
 										value="${shapeFile.rightBp}" maxlength="50"
-										style="width: 150px; float: right" " class="form-control">
+										style="width: 150px; float: right"  class="form-control">
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
 									<label style="float: left; line-height: 30px"><font
 										color="red"> </font>BB:</label> <input name="bb"
 										value="${shapeFile.bb}" maxlength="50"
-										style="width: 150px; float: right" " class="form-control">
+										style="width: 150px; float: right" class="form-control">
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
 									<label style="float: left; line-height: 30px"><font
 										color="red"> </font>左大腿:</label> <input name="leftThign"
 										value="${shapeFile.leftThign}" maxlength="50"
-										style="width: 150px; float: right" " class="form-control">
+										style="width: 150px; float: right" class="form-control">
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
 									<label style="float: left; line-height: 30px"><font
 										color="red"> </font>右大腿:</label> <input name="rightThign"
 										value="${shapeFile.rightThign}" maxlength="50"
-										style="width: 150px; float: right" " class="form-control">
+										style="width: 150px; float: right " class="form-control">
 								</div>
 							</div>
 						</fieldset>

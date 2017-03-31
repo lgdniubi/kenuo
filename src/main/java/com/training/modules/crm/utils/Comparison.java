@@ -117,7 +117,7 @@ public class Comparison {
 	                    System.out.println("数据类型为：Integer");  
 	                    if (afterValue != null) {  
 	                    	Double beforeValue = (Double) m.invoke(beforeObj);  
-	                    	if (beforeValue.equals(afterValue)) {
+	                    	if (beforeValue==afterValue) {
 	                    		
 	                    	}else {
 	                    		if (null==beforeObj) {
