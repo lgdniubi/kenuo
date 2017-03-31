@@ -228,6 +228,7 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 								gsp.setGoodsId(goods.getGoodsId() + "");// 商品id
 
 								gsp.setSpecKey(specItemList.get(i));// 规格键
+								gsp.setSpecKeyName(request.getParameter("item[" + specItemList.get(i) + "][spec_name]"));//规格名称
 								gsp.setSpecKeyValue(request.getParameter("item[" + specItemList.get(i) + "][key_name]"));// 规格键名中文
 								gsp.setPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][price]")));// 优惠价格
 								gsp.setMarketPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][market_price]")));// 市场价格
@@ -476,6 +477,7 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 									gsp.setGoodsId(goods.getGoodsId() + "");// 商品id
 
 									gsp.setSpecKey(specItemList.get(i));// 规格键
+									gsp.setSpecKeyName(request.getParameter("item[" + specItemList.get(i) + "][spec_name]"));//规格名称
 									gsp.setSpecKeyValue(request.getParameter("item[" + specItemList.get(i) + "][key_name]"));// 规格键名中文
 									gsp.setPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][price]")));// 优惠价格
 									gsp.setMarketPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][market_price]")));// 市场价格

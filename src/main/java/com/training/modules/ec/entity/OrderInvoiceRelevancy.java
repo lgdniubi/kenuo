@@ -15,7 +15,8 @@ public class OrderInvoiceRelevancy extends TreeEntity<OrderInvoiceRelevancy>{
 	private static final long serialVersionUID = 1L;
 	private int invoiceId;
 	private String orderId;
-
+	private String mappingId;
+	private int openNum;
 	
 	
 	public int getInvoiceId() {
@@ -29,6 +30,18 @@ public class OrderInvoiceRelevancy extends TreeEntity<OrderInvoiceRelevancy>{
 	}
 	public void setOrderId(String orderId) {
 		this.orderId = orderId;
+	}
+	public String getMappingId() {
+		return mappingId;
+	}
+	public void setMappingId(String mappingId) {
+		this.mappingId = mappingId;
+	}
+	public int getOpenNum() {
+		return openNum;
+	}
+	public void setOpenNum(int openNum) {
+		this.openNum = openNum;
 	}
 	@Override
 	public OrderInvoiceRelevancy getParent() {

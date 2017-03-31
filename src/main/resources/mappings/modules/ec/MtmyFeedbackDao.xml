@@ -8,8 +8,11 @@
 			LEFT JOIN mtmydb.mtmy_users u ON u.user_id = f.user_id
 			WHERE
 			1=1
-			<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
-			AND f.msg_time BETWEEN #{beginDate} AND #{endDate}
+			<if test="beginDate != null and beginDate != ''">
+				AND DATE_FORMAT(f.msg_time,'%Y-%m-%d') >= DATE_FORMAT(#{beginDate},'%Y-%m-%d')
+			</if>
+			<if test="endDate != null and endDate != ''">
+				<![CDATA[AND DATE_FORMAT(f.msg_time,'%Y-%m-%d') <= DATE_FORMAT(#{endDate},'%Y-%m-%d')]]>
 			</if>
 			<if test="msgContent != null and msgContent != ''">
 			AND f.msg_content LIKE 

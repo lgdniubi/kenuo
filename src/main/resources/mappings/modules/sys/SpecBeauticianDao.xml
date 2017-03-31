@@ -51,7 +51,7 @@
 			AND (o1.id = #{bazaarId} OR o1.parent_ids LIKE CONCAT('%,', #{bazaarId}, ',%'))
 		</if>
 		<if test="userName != null and userName != ''">
-			AND sb.user_name = #{userName}
+			AND sb.user_name like CONCAT('%', #{userName}, '%')        
 		</if>
 		<if test="userPhone != null and userPhone != ''">
 			AND sb.user_phone = #{userPhone}

@@ -96,6 +96,7 @@
 		a.user_money,
 		a.mtmy_user_id AS mtmyUserId,
 		a.data_scope AS 'dataScope',
+		a.sex,
     	c.name AS "company.name",
     	c.parent_id AS "company.parent.id",
     	c.parent_ids AS "company.parentIds",
@@ -146,7 +147,17 @@
 	<!-- 根据编号获得用户 -->
 	<select id="get" resultType="User">
 		SELECT
-			<include refid="userColumns"/><!-- ,
+			<include refid="userColumns"/>,
+			
+			(SELECT group_concat(T2.name) FROM ( 
+			    SELECT 
+			        @r AS _id, 
+			        (SELECT @r := parent_id FROM trains.sys_office WHERE id = _id) AS parent_id
+			    FROM 
+			        (SELECT @r := (SELECT office_id FROM trains.sys_user WHERE id = '9e5e6e3bba734acd832d68f83eb51260') ) vars, 
+			        trains.sys_office h WHERE @r >= 0) T1 JOIN trains.sys_office T2 ON T1._id = T2.id
+			) AS parendNames
+			<!-- ,
 			ro.office_id AS "roleList.officeList.id" -->
 		FROM sys_user a
 		<include refid="userJoins"/><!-- 
@@ -198,6 +209,9 @@
 		<!-- 离职标识 -->
 		<if test="parentDel == 0 or parentDel == 1">
 			AND a.del_flag = #{parentDel }
+		</if>
+		<if test="company != null and company.id != null and company.id != ''">
+			AND a.company_id = #{company.id} 
 		</if>
 		<if test="office != null and office.id != null and office.id != ''">
 			AND (o.id = #{office.id} OR o.parent_ids LIKE CONCAT('%,', #{office.id}, ',%'))
@@ -391,7 +405,8 @@
 			password, 
 			no,
 			idcard,
-			name, 
+			name,
+			sex, 
 			induction_time,
 			email, 
 			phone, 
@@ -415,7 +430,8 @@
 			#{password}, 
 			#{no},
 			#{idCard},
-			#{name}, 
+			#{name},
+			#{sex}, 
 			#{inductionTime},
 			#{email}, 
 			#{phone}, 
@@ -456,7 +472,8 @@
 			password = #{password}, 
 			no = #{no}, 
 			idcard=#{idCard},
-			name = #{name}, 
+			name = #{name},
+			sex = #{sex}, 
 			induction_time=#{inductionTime},
 			email = #{email}, 
 			phone = #{phone}, 

@@ -1,7 +1,5 @@
 package com.training.modules.train.entity;
 
-import java.sql.Date;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.training.common.persistence.DataEntity;
 import com.training.common.utils.excel.annotation.ExcelField;
@@ -22,7 +20,7 @@ public class StatisticsUnitExport extends DataEntity<StatisticsUnitExport>{
 	private String userName;				//用户名
 	private String mobile;					//手机号
 	private String position;				//职位
-	private Date createDate;				//日期
+	private String createTime;				//日期
 	private String shopName;			//店铺
 	private String market;					//市场
 	private String area;						//区域
@@ -70,11 +68,11 @@ public class StatisticsUnitExport extends DataEntity<StatisticsUnitExport>{
 	}
 	@JsonIgnore
 	@ExcelField(title="日期", align=2, sort=5)
-	public Date getCreateDate() {
-		return createDate;
+	public String getCreateTime() {
+		return createTime;
 	}
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
 	}
 	@JsonIgnore
 	@ExcelField(title="店铺", align=2, sort=6)

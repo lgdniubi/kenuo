@@ -250,6 +250,12 @@
 										<input type="radio" id="isReal" name="isReal" value="1" ${(goods.isReal == '1')?'checked="checked"':''} onclick="radiochange(this.value)">虚拟商品
 										<input type="radio" id="isReal" name="isReal" value="0" ${(goods.isReal == '0' || goods.isReal == null)?'checked="checked"':''} onclick="radiochange(this.value)">实物商品
 									</li>
+									<li class="form-group" id="goodsTypeLi">
+										<span class="control-label col-sm-2"><font color="red">*</font>商品区分：</span>
+										<input type="hidden" id="goodsTypeValue" value="${goods.goodsType }">
+										<input type="radio" id="goodsType" name="goodsType" value="1" ${(goods.goodsType == '1')?'checked="checked"':''}>新商品
+										<input type="radio" id="goodsType" name="goodsType" value="0" ${(goods.goodsType == '0' || goods.goodsType == null)?'checked="checked"':''}>老商品
+									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>活动类型：</span>
 										<select class="form-control" id="actionType" name="actionType">
@@ -350,6 +356,15 @@
 											onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
 											onfocus="if(value == '0.0'){value=''}"
 											onblur="if(value == ''){value='0.0'}"/>
+									</li>
+									<li class="form-group" id="advancePriceLi">
+										<span class="control-label col-sm-2"><font color="red">*</font>预约金：</span>
+										<form:input path="advancePrice" htmlEscape="false" maxlength="150" class="form-control"
+											onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
+											onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+											onfocus="if(value == '0.0'){value=''}"
+											onblur="if(value == ''){value='0.0'}"/>
+										<span class="control-label cannotEdit">(虚拟商品,预约金必填)</span>
 									</li>
 									<%-- 
 										<li class="form-group">
@@ -909,9 +924,11 @@
 			if(v == 0){
 				//实物
 				$("#serviceMin").attr("disabled","disabled"); 
+				$("#goodsTypeLi,#advancePriceLi").hide();
 			}else if(v == 1){
 				//虚拟
 				$("#serviceMin").removeAttr("disabled"); 
+				$("#goodsTypeLi,#advancePriceLi").show();
 			}
 		}
 	

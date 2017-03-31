@@ -204,4 +204,12 @@ public class MtmyUsersService extends CrudService<MtmyUsersDao,Users>{
 	public int delMtmyUserSaleInvitationcodes(String invitationCode){
 		return dao.delMtmyUserSaleInvitationcodes(invitationCode);
 	}
+	
+	/**
+	 * 根据手机号查找用户
+	 * @return
+	 */
+	public Users getUserByMobile(String mobile){
+		return dao.getUserByMobile(mobile);
+	}
 }

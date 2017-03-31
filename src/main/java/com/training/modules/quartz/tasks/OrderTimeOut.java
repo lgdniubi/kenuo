@@ -83,6 +83,7 @@ public class OrderTimeOut extends CommonService{
 				logger.info("[过期普通订单]，订单id："+vo.getOrderid());
 				Map<String, Object> m = new HashMap<String, Object>();
 				m.put("order_status", -2);
+				m.put("cancel_type", 2);
 				m.put("order_id", vo.getOrderid());
 				//将过期的订单置为已作废
 				ordersService.modifyOrderStatus(m);
@@ -164,6 +165,7 @@ public class OrderTimeOut extends CommonService{
 				logger.info("[过期抢购订单]，订单id："+vo.getOrderid());
 				Map<String, Object> m = new HashMap<String, Object>();
 				m.put("order_status", -2);
+				m.put("cancel_type", 2);
 				m.put("order_id", vo.getOrderid());
 				//将过期的订单置为已作废
 				ordersService.modifyOrderStatus(m);

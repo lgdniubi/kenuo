@@ -13,7 +13,14 @@
 		JOIN sys_user u ON u.id = a.create_by
 		JOIN sys_franchisee c ON c.id = u.company_id
 		JOIN sys_office o ON o.id = u.office_id
-		WHERE a.create_date BETWEEN #{beginDate} AND #{endDate}
+		WHERE 
+		1 = 1
+		<if test="beginDate != null and beginDate != ''">
+			AND DATE_FORMAT(a.create_date,'%Y-%m-%d') >= DATE_FORMAT(#{beginDate},'%Y-%m-%d')
+		</if>
+		<if test="endDate != null and endDate != ''">
+			<![CDATA[AND DATE_FORMAT(a.create_date,'%Y-%m-%d') <= DATE_FORMAT(#{endDate},'%Y-%m-%d')]]>
+		</if>
 		<if test="title != null and title != ''">
 			AND a.title LIKE 
 					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>

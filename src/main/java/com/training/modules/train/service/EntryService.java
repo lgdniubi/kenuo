@@ -85,6 +85,14 @@ public class EntryService {
 	public void operatebackrecord() {
 		entrymapper.operatebackrecord();
 	}
-	
+	/**
+	 * 同步云币
+	 * @param mtmy_id
+	 * @param integral
+	 */
+	public void SyncIntegrals(String mtmy_id, String integral) {
+		entrymapper.SyncIntegrals(mtmy_id,integral);
+		
+	}
 
 }

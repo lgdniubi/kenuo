@@ -41,8 +41,11 @@
 		WHERE 
 			1=1
 			AND c.parent_id = '0'
-			<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
-				AND c.add_time BETWEEN #{beginDate} AND #{endDate}
+			<if test="beginDate != null and beginDate != ''">
+				AND c.add_time >= #{beginDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND c.add_time <![CDATA[ <= ]]> #{endDate}
 			</if>
 			<if test="userName != null and userName != ''">
 				AND g.goods_name LIKE 
@@ -104,8 +107,11 @@
 				LEFT JOIN trains.sys_user AS a ON b.beauty_id = a.id
 			WHERE				1=1
 				AND b.parent_id = '0'
-				<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
-					AND b.add_time BETWEEN #{beginDate} AND #{endDate}
+				<if test="beginDate != null and beginDate != ''">
+					AND b.add_time >= #{beginDate}
+				</if>
+				<if test="endDate != null and endDate != ''">
+					AND b.add_time <![CDATA[ <= ]]> #{endDate}
 				</if>
 				<if test="userName != null and userName != ''">
 					AND a.name LIKE 

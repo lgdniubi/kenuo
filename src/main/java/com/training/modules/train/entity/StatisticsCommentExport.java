@@ -1,7 +1,5 @@
 package com.training.modules.train.entity;
 
-import java.sql.Date;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.training.common.persistence.DataEntity;
 import com.training.common.utils.excel.annotation.ExcelField;
@@ -22,7 +20,7 @@ public class StatisticsCommentExport extends DataEntity<StatisticsCommentExport>
 	private String userName;				//用户名
 	private String mobile;					//手机号
 	private String position;				//职位
-	private Date createDate;				//日期
+	private String createTime;				//日期
 	private String shopName;			//店铺
 	private String market;					//市场
 	private String area;						//区域
@@ -30,7 +28,7 @@ public class StatisticsCommentExport extends DataEntity<StatisticsCommentExport>
 	private String categorysName;		//课程分类名称
 	private String lessonsName;		//课程名称
 	private String content;				//评论内容
-	private Date  createtime;			//评论日期
+	private String  commentTime;			//评论日期
 	private String star;						//评论星级
 	
 	
@@ -70,11 +68,11 @@ public class StatisticsCommentExport extends DataEntity<StatisticsCommentExport>
 	}
 	@JsonIgnore
 	@ExcelField(title="日期", align=2, sort=5)
-	public Date getCreateDate() {
-		return createDate;
+	public String getCreateTime() {
+		return createTime;
 	}
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
+	public void setCreateDate(String createTime) {
+		this.createTime = createTime;
 	}
 	@JsonIgnore
 	@ExcelField(title="店铺", align=2, sort=6)
@@ -136,11 +134,11 @@ public class StatisticsCommentExport extends DataEntity<StatisticsCommentExport>
 	}
 	@JsonIgnore
 	@ExcelField(title="评论时间", align=2, sort=13)
-	public Date getCreatetime() {
-		return createtime;
+	public String getCommentTime() {
+		return commentTime;
 	}
-	public void setCreatetime(Date createtime) {
-		this.createtime = createtime;
+	public void setCommentTime(String commentTime) {
+		this.commentTime = commentTime;
 	}
 	@JsonIgnore
 	@ExcelField(title="评论星级", align=2, sort=14)

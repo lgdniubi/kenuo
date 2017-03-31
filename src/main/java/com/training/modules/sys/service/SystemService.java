@@ -26,6 +26,7 @@ import com.training.common.utils.Encodes;
 import com.training.common.utils.StringUtils;
 import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.entity.Users;
+import com.training.modules.ec.utils.SaveLogUtils;
 import com.training.modules.sys.dao.DictDao;
 import com.training.modules.sys.dao.MenuDao;
 import com.training.modules.sys.dao.OfficeDao;
@@ -51,6 +52,8 @@ import com.training.modules.sys.entity.Userinfo;
 import com.training.modules.sys.entity.Userinfocontent;
 import com.training.modules.sys.utils.LogUtils;
 import com.training.modules.sys.utils.UserUtils;
+
+import net.sf.json.JSONObject;
 
 /**
  * 系统管理，安全相关实体的管理类,包括用户、角色、菜单.
@@ -360,7 +363,42 @@ public class SystemService extends BaseService implements InitializingBean {
 		user.setUserLog(userLog);
 		userDao.saveUserLog(user);
 	}
-
+	/**
+	 * 用户日志
+	 * @param oldUser
+	 * @param user
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	public String specialLog(User oldUser,User user){
+		StringBuffer str = new StringBuffer();	// 用于存储一些特殊的日志
+		if(oldUser.getCompany() != null){
+			if(!oldUser.getCompany().getId().equals(user.getCompany().getId())){
+				str.append("所属商家:修改前("+oldUser.getCompany().getName()+"),修改后("+user.getCompany().getName()+")|");
+			}
+		}else{
+			str.append("所属商家:修改前(此商家异常,原商家id:"+oldUser.getCompany().getId()+"),修改后("+user.getCompany().getName()+")|");
+		}
+		if(oldUser.getOffice() != null){
+			if(!oldUser.getOffice().getId().equals(user.getOffice().getId())){
+				str.append("所属店铺:修改前("+oldUser.getOffice().getName()+"),修改后("+user.getOffice().getName()+")|");
+			}
+		}else{
+			str.append("所属店铺:修改前(此店铺异常,原店铺id:"+oldUser.getOffice().getId()+"),修改后("+user.getOffice().getName()+")|");
+		}
+		if(oldUser.getUserType()!=user.getUserType()){
+			Dict oldDict = new Dict();
+			oldDict.setValue(oldUser.getUserType());
+			oldDict.setType("sys_user_type");
+			Dict oldD = dictDao.findDict(oldDict);
+			Dict newDict = new Dict();
+			newDict.setValue(user.getUserType());
+			newDict.setType("sys_user_type");
+			Dict newD = dictDao.findDict(newDict);
+			str.append("职位:修改前("+oldD.getLabel()+"),修改后("+newD.getLabel()+")|");
+		}
+		return str.toString();
+	}
 	/**
 	 * 保存删除日志
 	 * 
@@ -422,9 +460,20 @@ public class SystemService extends BaseService implements InitializingBean {
 			}
 
 		} else {
-			saveUserLog1(user);
+//			saveUserLog1(user);
 			// 清除原用户机构用户缓存
 			User oldUser = userDao.get(user.getId());
+			//保存用户日志
+			String str = specialLog(oldUser,user);
+			JSONObject json = new JSONObject();
+			json.put("property", "[\"no\",\"name\",\"loginName\",\"idCard\",\"inductionTime\",\"mobile\",\"mobile\",\"name\"]");
+			json.put("name", "[\"工号\",\"姓名\",\"登录名\",\"身份证号码\",\"入职日期\",\"手机号码\",\"入职时间\",\"姓名\"]");
+			String string = SaveLogUtils.saveLog(json,str.toString(),oldUser,user);
+			UserLog userLog = new UserLog();
+			userLog.setContent(string);
+			user.setUserLog(userLog);
+			userDao.saveUserLog(user);
+			
 			if (oldUser.getOffice() != null && oldUser.getOffice().getId() != null) {
 				CacheUtils.remove(UserUtils.USER_CACHE,
 						UserUtils.USER_CACHE_LIST_BY_OFFICE_ID_ + oldUser.getOffice().getId());
@@ -940,5 +989,4 @@ public class SystemService extends BaseService implements InitializingBean {
 		user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(),"o"));
 		return userDao.findRoleUser(user);
 	}
-	
 }

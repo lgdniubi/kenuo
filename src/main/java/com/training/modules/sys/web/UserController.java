@@ -258,13 +258,13 @@ public class UserController extends BaseController {
 				}
 			}
 			//新增用户时  验证其用户是否存在于每天美耶中
-			if(user.getId().length() <= 0){
-				if(mtmyUsersDao.findByMobile(user) != null){
-					addMessage(redirectAttributes, "保存用户失败,此手机号已在每天美耶注册,请联系管理员");
-					UserUtils.clearCache(user);
-					return "redirect:" + adminPath + "/sys/user/list?repage";
-				}
-			}
+//			if(user.getId().length() <= 0){
+//				if(mtmyUsersDao.findByMobile(user) != null){
+//					addMessage(redirectAttributes, "保存用户失败,此手机号已在每天美耶注册,请联系管理员");
+//					UserUtils.clearCache(user);
+//					return "redirect:" + adminPath + "/sys/user/list?repage";
+//				}
+//			}
 			// 修正引用赋值问题，不知道为何，Company和Office引用的一个实例地址，修改了一个，另外一个跟着修改。
 			user.setCompany(new Office(request.getParameter("company.id")));
 			user.setOffice(new Office(request.getParameter("office.id")));
@@ -1263,5 +1263,6 @@ public class UserController extends BaseController {
 	// }
 	// });
 	// }
+      
 }
 

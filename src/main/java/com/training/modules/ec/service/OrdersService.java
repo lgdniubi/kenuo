@@ -35,10 +35,11 @@ import com.training.modules.ec.entity.GoodsDetailSum;
 import com.training.modules.ec.entity.GoodsSpecPrice;
 import com.training.modules.ec.entity.IntegralLog;
 import com.training.modules.ec.entity.MtmyRuleParam;
+import com.training.modules.ec.entity.OfficeAccount;
+import com.training.modules.ec.entity.OfficeAccountLog;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderGoodsCoupon;
 import com.training.modules.ec.entity.OrderGoodsDetails;
-import com.training.modules.ec.entity.OrderInvoice;
 import com.training.modules.ec.entity.OrderInvoiceRelevancy;
 import com.training.modules.ec.entity.OrderPushmoneyRecord;
 import com.training.modules.ec.entity.OrderRechargeLog;
@@ -124,6 +125,20 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		orders.setPage(page);
 		// 执行分页查询
 		page.setList(ordersDao.findList(orders));
+		return page;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param user分页查询
+	 * @return
+	 */
+	public Page<Orders> newFindOrders(Page<Orders> page, Orders orders) {
+		// 设置分页参数
+		orders.setPage(page);
+		// 执行分页查询
+		page.setList(ordersDao.newFindList(orders));
 		return page;
 	}
 	
@@ -734,6 +749,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setCreateBy(user);
 		_orders.setDelFlag("0");
 		_orders.setChannelFlag("bm");
+		_orders.setShippingstatus(2);
 		_orders.setShippingtype(2);
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
@@ -824,7 +840,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				//计算出当前子订单成本总价
 				double totalPrice = orderGoods.getGoodsprice()*orderGoods.getGoodsnum();
 				goodsprice = goodsprice + totalPrice*100; //总订单的成本价是子订单成本总价的合
-				if("bm".equals(orders.getChannelFlag())){
+//				if("bm".equals(orders.getChannelFlag())){
 					OrderGoods _orderGoods = orderGoodsDetailsService.getOrderGoodsDetailListByMid(orderGoods.getRecid());
 					if(_orderGoods!=null){
 						orderGoods.setTotalAmount(_orderGoods.getTotalAmount());
@@ -832,21 +848,23 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 						orderGoods.setOrderArrearage(_orderGoods.getOrderArrearage());
 						orderGoods.setTotalPrice(totalPrice);
 						orderGoods.setRemaintimes(_orderGoods.getRemaintimes());
+						orderGoods.setAdvanceFlag(_orderGoods.getAdvanceFlag());
+						orderGoods.setSumAppt(_orderGoods.getSumAppt());
 					}
-				}
+//				}
 			}
 		}
-		if(!"bm".equals(orders.getChannelFlag())){
-			orders.setTotalamount(orders.getTotalamount());
-			orders.setOrderBalance(orders.getOrderBalance());
-			orders.setOrderArrearage(orders.getOrderArrearage());
-		}else{
+//		if(!"bm".equals(orders.getChannelFlag())){
+//			orders.setTotalamount(orders.getTotalamount());
+//			orders.setOrderBalance(orders.getOrderBalance());
+//			orders.setOrderArrearage(orders.getOrderArrearage());
+//		}else{
 			if(_orders!=null){
 				orders.setTotalamount(_orders.getTotalamount());
 				orders.setOrderBalance(_orders.getOrderBalance());
 				orders.setOrderArrearage(_orders.getOrderArrearage());
 			}
-		}
+//		}
 		orders.setGoodsprice(goodsprice/100);
 		orders.setOrderGoodList(orderGoodList);
 		//查询订单提成人员信息
@@ -856,8 +874,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<OrderRemarksLog> orderRemarks = dao.getOrderRemarksLog(orderid);
 		orders.setOrderRemarksLog(orderRemarks);
 		//查询订单发票信息
-		OrderInvoice orderInvoice  = dao.getOrderInvoiceRelevancy(orderid);
-		orders.setOrderInvoice(orderInvoice);
+		orders.setNum(dao.selectInvoiceRelevancyNum(orderid));
+//		OrderInvoice orderInvoice  = dao.getOrderInvoiceRelevancy(orderid);
+//		orders.setOrderInvoice(orderInvoice);
 		//查询订单下的红包
 		List<OrderGoodsCoupon> orderGoodsCoupons = activityCouponUserDao.findlistByOrdeid(orderid);
 		orders.setOrderGoodsCoupons(orderGoodsCoupons);
@@ -969,10 +988,28 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	}
 
 	/**
-	 * 修改虚拟订单
+	 * 修改订单
 	 * @param orders
 	 */
 	public void updateVirtualOrder(Orders orders) {
+		//判断收货地址是否修改了，若未修改则xml中不对address更新，若不修改，则将省市县详细地址存到相应的地方
+		if(!orders.getOldAddress().equals(orders.getAddress())){
+			orders.setNewFlag("1");
+		}else{
+			orders.setNewFlag("0");
+		}
+		//当订单发票的过期时间为空时
+		if(orders.getInvoiceOvertime() == null){
+			if(orders.getIsReal() == 0){   //app下单实物的状态改为待发货时，将发票过期时间设置为下个月月底
+				if(orders.getOrderstatus() == 1){
+					orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+				}
+			}else if(orders.getIsReal() == 1){  //app下单虚拟的状态改为已完成时，将发票过期时间设置为下个月月底
+				if(orders.getOrderstatus() == 4){
+					orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+				}
+			}
+		}
 		User user = UserUtils.getUser(); //登陆用户
 		orders.setCreateBy(user);
 		Payment payment = paymentDao.getByCode(orders.getPaycode());
@@ -1308,5 +1345,141 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		// 执行分页查询
 		page.setList(ordersDao.findByUser(orders));
 		return page;
+	}
+		
+	 /**
+	  * 根据recid查找相应的商品信息
+	  * @param recId
+	  * @return
+	  */
+	public OrderGoods selectOrderGoodsByRecid(int recId){
+		return orderGoodsDao.selectOrderGoodsByRecid(recId);
+	}
+	
+	/**
+	 * app虚拟订单处理预约金
+	 * @param oLog
+	 * @param sum是否使用了账户余额，0使用了，1未使用
+	 * @param orderAmount应付款金额
+	 */
+	public void handleAdvanceFlag(OrderRechargeLog oLog,int sum,double goodsPrice,double newTotalAmount){
+		//获取基本值
+		User user = UserUtils.getUser(); //登陆用户
+		double totalAmount = oLog.getTotalAmount(); //实付款金额
+		double accountBalance = oLog.getAccountBalance(); //订单余款 //账户余额（不是账户的余额，而是用了多少账户的余额）
+		double singleRealityPrice = oLog.getSingleRealityPrice(); //实际服务单次价
+		double singleNormPrice = oLog.getSingleNormPrice(); //单次标价
+		double advance = oLog.getAdvance();
+		
+		int serviceTimes_in = 0;//实际的充值次数
+		int serviceTimes_in_a = 0; //充值次数
+		double totalAmount_in_a = 0;//实付款金额
+		double totalAmount_in = 0;//实付款金额（入库）
+		double accountBalance_in = 0;//余额
+		
+		DecimalFormat formater = new DecimalFormat("#0.##");
+		if(singleRealityPrice < advance){
+			// 实际单次标价  < 预付金	
+			serviceTimes_in_a = (int)Math.floor(totalAmount/singleRealityPrice);//充值次数
+			serviceTimes_in = serviceTimes_in_a - 1;                                //实际的充值次数，因为预约的时候给了一次，入库的时候减少一次
+			totalAmount_in_a = serviceTimes_in_a * singleRealityPrice;//实付金额
+			accountBalance_in =  Double.parseDouble(formater.format(totalAmount - totalAmount_in_a));     //订单余款，也就是这个条件下要存入用户账户余额里的钱
+			totalAmount_in = Double.parseDouble(formater.format(totalAmount_in_a - advance));        //存入库的实付款金额=实付款金额-订金
+		}else if(singleRealityPrice >= advance){
+			//实际单次标价  >= 预付金
+			serviceTimes_in_a = (int)Math.floor(totalAmount/singleRealityPrice);//充值次数
+			serviceTimes_in = serviceTimes_in_a - 1;                                //实际的充值次数，因为预约的时候给了一次，入库的时候减少一次,此时的其实也就是0
+			totalAmount_in_a = singleRealityPrice;//实付金额
+			accountBalance_in = 0;                                 //订单余款，
+			totalAmount_in = Double.parseDouble(formater.format(totalAmount_in_a - advance));       //存入库的实付款金额=实付款金额-订金
+		}
+		
+		double itemAmount = serviceTimes_in_a * singleRealityPrice; //项目金额
+		double itemCapitalPool = serviceTimes_in_a * singleNormPrice; //项目资金池
+		
+		if(accountBalance > 0){ //订金小于单次价，若使用了账户余额，则日志中的账户余额为使用的账户相应的金额
+			oLog.setAccountBalance(-accountBalance);
+			oLog.setRechargeAmount(advance);
+		}else if(accountBalance_in > 0){  //订金大于单次价，若订单有余款，则将余款存到日志的账户余额中
+			oLog.setAccountBalance(accountBalance_in);
+			oLog.setRechargeAmount(totalAmount_in_a);
+		}else if(accountBalance == 0){//订金小于单次价，若未使用账户余额，而是线下补齐的
+			oLog.setAccountBalance(accountBalance);
+			oLog.setRechargeAmount(singleRealityPrice);
+		}
+		
+		oLog.setCreateBy(user);
+		oLog.setRemarks("处理预约金");
+		//保存充值日志记录
+		orderRechargeLogService.saveOrderRechargeLog(oLog);
+		//保存订单商品详情记录表
+		OrderGoodsDetails details = new OrderGoodsDetails();
+		details.setOrderId(oLog.getOrderId());
+		details.setGoodsMappingId(oLog.getRecid()+"");
+		details.setTotalAmount(totalAmount_in);	//实付款金额
+		details.setOrderBalance(accountBalance_in);	//订单余款
+		details.setOrderArrearage(Double.parseDouble(formater.format(goodsPrice - totalAmount_in_a)));	//订单欠款
+		details.setItemAmount(itemAmount);	//项目金额
+		details.setItemCapitalPool(itemCapitalPool); //项目资金池
+		details.setServiceTimes(serviceTimes_in);	//剩余服务次数
+		details.setType(0);
+		details.setCreateBy(user);
+		//保存订单商品详情记录
+		orderGoodsDetailsService.saveOrderGoodsDetails(details);
+		
+		//对用户的账户进行操作
+		Orders _orders = new Orders();//根据用户id查询用户账户信息
+		_orders.setUserid(oLog.getMtmyUserId());
+		Orders account = ordersDao.getAccount(_orders);
+		double accountArrearage = account.getAccountArrearage()+Double.parseDouble(formater.format((goodsPrice - totalAmount_in_a)));	//账户欠款信息
+		account.setAccountArrearage(accountArrearage);
+		double accountBalance_ = 0;
+		if(accountBalance > 0){ //若使用了账户余额，则减去相应的金额
+			accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()-accountBalance));
+		}else if(accountBalance_in > 0){  //若未使用账户的金额，且订单有余款，则将余款存到账户余额中
+			accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()+accountBalance_in));
+		}
+		account.setAccountBalance(accountBalance_);
+		ordersDao.updateAccount(account);
+		
+		//对登云账户进行操作
+		if(newTotalAmount > 0){
+			double claimMoney = newTotalAmount * 1.2;  //补偿金
+			OfficeAccountLog officeAccountLog = new OfficeAccountLog();
+			User newUser = UserUtils.getUser();
+			
+			double amount = orderGoodsDetailsService.selectByOfficeId("1");   //登云美业公司账户的钱
+			double afterAmount = Double.parseDouble(formater.format(amount - claimMoney));
+			orderGoodsDetailsService.updateByOfficeId(afterAmount, "1");   //更新登云美业的登云账户金额
+			
+			//登云美业的登云账户减少钱时对日志进行操作
+			officeAccountLog.setOrderId(oLog.getOrderId());
+			officeAccountLog.setOfficeId("1");
+			officeAccountLog.setType("1");
+			officeAccountLog.setOfficeFrom("1");
+			officeAccountLog.setAmount(claimMoney);
+			officeAccountLog.setCreateBy(newUser);
+			orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
+			
+			String shopId = orderGoodsDetailsService.selectShopId(String.valueOf(oLog.getRecid())); //获取当前预约对应的店铺id
+			if(orderGoodsDetailsService.selectShopByOfficeId(shopId) == 0){    //若登云账户中无该店铺的账户
+				OfficeAccount officeAccount = new OfficeAccount();
+				officeAccount.setAmount(claimMoney);
+				officeAccount.setOfficeId(shopId);
+				orderGoodsDetailsService.insertByOfficeId(officeAccount);
+			}else{         
+				double shopAmount = orderGoodsDetailsService.selectByOfficeId(shopId);   //登云账户中店铺的钱
+				double afterShopAmount =  Double.parseDouble(formater.format(shopAmount + claimMoney));
+				orderGoodsDetailsService.updateByOfficeId(afterShopAmount, shopId);
+			}
+			//店铺的登云账户减少钱时对日志进行操作
+			officeAccountLog.setOrderId(oLog.getOrderId());
+			officeAccountLog.setOfficeId(shopId);
+			officeAccountLog.setType("0");
+			officeAccountLog.setOfficeFrom("1");
+			officeAccountLog.setAmount(claimMoney);
+			officeAccountLog.setCreateBy(newUser);
+			orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
+		}
 	}
 }

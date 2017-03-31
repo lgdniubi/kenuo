@@ -114,6 +114,6 @@
 	<delete id="deleteCategory">
 	UPDATE trains.train_live_category
 	SET del_flag = 1
-	WHERE id = #{trainLiveCategoryId}
+	WHERE parent_ids LIKE CONCAT('%', #{trainLiveCategoryId}, '%') OR id = #{trainLiveCategoryId}
 	</delete>
 </mapper>

@@ -46,12 +46,9 @@ public class TrainLiveCategoryService extends CrudService<TrainLiveCategoryDao,T
 			trainLiveCategory.setParentId("0");
 			trainLiveCategory.setParentIds("0");
 			trainLiveCategory.setType(1);
-		}else if(liveCategoryDao.get(trainLiveCategory.getParentId()).getType() == 1){
-			trainLiveCategory.setParentIds(trainLiveCategory.getParentId());
-			trainLiveCategory.setType(2);
-		}else if(liveCategoryDao.get(trainLiveCategory.getParentId()).getType() == 2){
-			trainLiveCategory.setParentIds(liveCategoryDao.get(trainLiveCategory.getParentId()).getParentId() + "," + trainLiveCategory.getParentId());
-			trainLiveCategory.setType(3);
+		}else{
+			trainLiveCategory.setParentIds(liveCategoryDao.get(trainLiveCategory.getParentId()).getParentIds()+","+ trainLiveCategory.getParentId()); 
+			trainLiveCategory.setType(liveCategoryDao.get(trainLiveCategory.getParentId()).getType() + 1);
 		}
 		liveCategoryDao.insertCategory(trainLiveCategory);
 	}

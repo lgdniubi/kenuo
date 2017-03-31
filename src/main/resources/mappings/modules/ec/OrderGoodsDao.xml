@@ -272,4 +272,19 @@
 		WHERE
 			m.order_id = #{orderId};
 	</select>
+	
+	<!-- 根据recid查找相应的商品信息 -->
+	<select id="selectOrderGoodsByRecid" resultType="OrderGoods">
+		SELECT
+			m.total_amount AS 'totalAmount',
+			m.goods_price AS 'goodsPrice',
+			m.single_norm_price AS 'singleNormPrice',
+			m.rec_id AS 'recid',
+			m.single_reality_price AS 'singleRealityPrice',
+			ogd.total_amount AS 'advance'
+		FROM mtmydb.mtmy_order_goods_mapping m
+		LEFT JOIN mtmydb.mtmy_order_goods_details ogd ON ogd.goods_mapping_id = m.rec_id
+		WHERE m.rec_id=#{recId}
+		AND ogd.advance_flag = '1'
+	</select>
 </mapper>

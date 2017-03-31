@@ -26,7 +26,7 @@ public class GoodsSpecPrice extends DataEntity<GoodsSpecPrice> {
 	private int expiringDate;		// 截止日期（月）
 	private int goodsWeight;	//商品重量
 	
-	
+	private String specKeyName;	//规格名称
 	private double costPrice;       //成本价格
 	/**
 	 * get/set
@@ -99,6 +99,12 @@ public class GoodsSpecPrice extends DataEntity<GoodsSpecPrice> {
 	}
 	public void setExpiringDate(int expiringDate) {
 		this.expiringDate = expiringDate;
+	}
+	public String getSpecKeyName() {
+		return specKeyName;
+	}
+	public void setSpecKeyName(String specKeyName) {
+		this.specKeyName = specKeyName;
 	}
 	public double getCostPrice() {
 		return costPrice;

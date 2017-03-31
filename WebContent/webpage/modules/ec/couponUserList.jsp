@@ -7,20 +7,14 @@
 <meta name="decorator" content="default" />
 
 <script type="text/javascript">
-
 		function page(n,s){
 			$("#pageNo").val(n);
 			$("#pageSize").val(s);
 			$("#searchForm").submit();
 	    	return false;
 	    }
-	
-		
-		
-		
 		$(document).ready(function() {
-			
-			var start = {
+			var beg = {
 				    elem: '#begtime',
 				    format: 'YYYY-MM-DD',
 				    event: 'focus',
@@ -46,19 +40,46 @@
 				    issure: true,
 				    festival: true,
 				    choose: function(datas){
-				        start.max = datas; //结束日选好后，重置开始日的最大日期
+				        beg.max = datas; //结束日选好后，重置开始日的最大日期
 				    }
 				};
-				laydate(start);
+				var start = {
+				    elem: '#startTime',
+				    format: 'YYYY-MM-DD',
+				    event: 'focus',
+				    max: $("#lastTime").val(),   //最大日期
+				    istime: false,				//是否显示时间
+				    isclear: false,				//是否显示清除
+				    istoday: false,				//是否显示今天
+				    issure: true,				//是否显示确定
+				    festival: true,				//是否显示节日
+				    choose: function(datas){
+				         end.min = datas; 		//开始日选好后，重置结束日的最小日期
+				         end.start = datas 		//将结束日的初始值设定为开始日
+				    }
+				};
+				var last = {
+				    elem: '#lastTime',
+				    format: 'YYYY-MM-DD',
+				    event: 'focus',
+				    min: $("#startTime").val(),
+				    istime: false,
+				    isclear: false,
+				    istoday: false,
+				    issure: true,
+				    festival: true,
+				    choose: function(datas){
+				    	start.max = datas; //结束日选好后，重置开始日的最大日期
+				    }
+				};
+				laydate(beg);
 				laydate(end);
+				laydate(start);
+				laydate(last);
 
 	    });
 </script>
 </head>
-
-
-
-
 <body class="gray-bg">
 	<div class="wrapper wrapper-content">
 		<div class="ibox">
@@ -75,12 +96,10 @@
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
 
 						<div class="form-group">
-							<label>红包ID：</label>
-							<form:input path="couponId" htmlEscape="false" maxlength="50" style="width:200px;" class="form-control" />
-							<label>用户名：</label>
-							<form:input path="name" htmlEscape="false" maxlength="50" style="width:200px;" class="form-control" />
-							<span>手机号码：</span>
-								<form:input path="mobile" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
+							<form:input path="orderId" htmlEscape="false" maxlength="60" style="width:200px;" class="form-control" placeholder="订单号"/>
+							<form:input path="couponId" htmlEscape="false" maxlength="50" style="width:200px;" class="form-control" placeholder="红包ID"/>
+							<form:input path="name" htmlEscape="false" maxlength="50" style="width:200px;" class="form-control" placeholder="用户名"/>
+							<form:input path="mobile" htmlEscape="false" maxlength="50" class=" form-control input-sm" placeholder="手机号码"/>
 							<label>是否使用：</label>
 							<form:select path="status" class="form-control"
 								style="width:185px;">
@@ -89,18 +108,19 @@
 								<form:option value="1">已使用</form:option>
 								<form:option value="2">已过期</form:option>
 							</form:select>
-							
 							<p></p>
-							
-							<label>订单号：</label>
-							<form:input path="orderId" htmlEscape="false" maxlength="60" style="width:200px;" class="form-control" />
 							<label>领取日期：</label>
 							<input id="begtime" name="begtime" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
 							value="<fmt:formatDate value="${activityCouponUser.begtime}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="开始时间" readonly="readonly"/>
 							一
 							<input id="endtime" name="endtime" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" 
 							value="<fmt:formatDate value="${activityCouponUser.endtime}" pattern="yyyy-MM-dd"/>"  style="width:185px;" placeholder="结束时间" readonly="readonly"/>&nbsp;&nbsp;
-
+							<label>使用日期：</label>
+							<input id="startTime" name="startTime" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
+							value="<fmt:formatDate value="${activityCouponUser.startTime}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="开始时间" readonly="readonly"/>
+							一
+							<input id="lastTime" name="lastTime" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" 
+							value="<fmt:formatDate value="${activityCouponUser.lastTime}" pattern="yyyy-MM-dd"/>"  style="width:185px;" placeholder="结束时间" readonly="readonly"/>&nbsp;&nbsp;
 						</div>
 					</form:form>
 					<p></p>

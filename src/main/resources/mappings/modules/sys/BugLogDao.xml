@@ -19,7 +19,14 @@
 		SELECT 
 			<include refid="BugColumns"></include>
 		FROM bug_log a
-		WHERE a.create_time BETWEEN #{beginDate} AND #{endDate}
+		WHERE 
+			1 = 1
+		<if test="beginDate != null and beginDate != ''">
+			AND DATE_FORMAT(a.create_time,'%Y-%m-%d') >= DATE_FORMAT(#{beginDate},'%Y-%m-%d')
+		</if>
+		<if test="endDate != null and endDate != ''">
+			<![CDATA[AND DATE_FORMAT(a.create_time,'%Y-%m-%d') <= DATE_FORMAT(#{endDate},'%Y-%m-%d')]]>
+		</if>
 		<if test="title != null and title != ''">
 			AND a.title LIKE 
 					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>

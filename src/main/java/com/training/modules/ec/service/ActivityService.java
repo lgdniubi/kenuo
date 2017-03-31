@@ -380,7 +380,6 @@ public class ActivityService extends TreeService<ActivityDao,Activity> {
 	public int updateOutTime(int id){
 		return activityDao.updateOutTime(id);
 	}
-	
 	/**
 	 * 优惠卷数组拼接
 	 * 

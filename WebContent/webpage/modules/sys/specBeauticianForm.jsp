@@ -110,11 +110,11 @@ $(document).ready(function() {
 							nodes = tree.getSelectedNodes();
 						}
 						for(var i=0; i<nodes.length; i++) {//
-							if (nodes[i].level == 0){
+							/* if (nodes[i].level == 0){
 								//top.$.jBox.tip("不能选择根节点（"+nodes[i].name+"）请重新选择。");
 								top.layer.msg("不能选择根节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
 								return false;
-							}//
+							}// */
 							if (nodes[i].isParent){
 								//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
 								//layer.msg('有表情地提示');
@@ -224,7 +224,7 @@ $(document).ready(function() {
 							<th><input type="checkbox" class="i-checks"></th>
 							<th style="text-align: center;">姓名</th>
 							<th style="text-align: center;">所在店铺</th>
-							<th style="text-align: center;">电话号码</th>
+							<th style="text-align: center;">手机号码</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -233,7 +233,7 @@ $(document).ready(function() {
 							<td><input type="checkbox" id="${user.id}" class="i-checks"></td>
 							<td style="text-align: center;">${user.name}</td>
 							<td style="text-align: center;">${user.office.name}</td>
-							<td style="text-align: center;">${user.phone}</td>
+							<td style="text-align: center;">${user.mobile}</td>
 						</tr>
 						</c:forEach>
 					</tbody>

@@ -25,6 +25,9 @@ public class TrainLiveOrder extends DataEntity<TrainLiveOrder>{
 	private Date validDate;          //有效期时间
 	private int orderStatus;         //订单状态（1：取消订单；2：待支付；3：已付款；4：已退款；）
 	private int delflag;             // 删除标识（0：正常；1：成功）
+	
+	private Date beginDate;         //添加开始时间
+	private Date endDate;           //添加结束时间
 	public String getTrainLiveOrderId() {
 		return trainLiveOrderId;
 	}
@@ -96,6 +99,19 @@ public class TrainLiveOrder extends DataEntity<TrainLiveOrder>{
 	}
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+	
+	public Date getBeginDate() {
+		return beginDate;
+	}
+	public void setBeginDate(Date beginDate) {
+		this.beginDate = beginDate;
+	}
+	public Date getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 	
 	

@@ -74,7 +74,7 @@
 						<form:form id="searchForm" action="${ctx}/train/arrange/list" method="post" class="navbar-form navbar-left searcharea">
 							<div class="form-group">
 								<label>请选择市场：<sys:treeselect id="office" name="searchOfficeId" value="${arrangeShop.searchOfficeId}" labelName="searchOfficeName" labelValue="${arrangeShop.searchOfficeName}"
-									title="市场" url="/sys/office/treeData?isGrade=true" cssClass="form-control" notAllowSelectRoot="true" notAllowSelectParent="true"/></label>
+									title="市场" url="/sys/office/treeData?isGrade=true" cssClass="form-control" notAllowSelectRoot="false" notAllowSelectParent="true"/></label>
 								<input id="searcTime" name="searcTime" value="${arrangeShop.searcTime }" type="hidden"> <!-- 用于区分当前月还是下一个月 -->
 							</div>
 							<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
@@ -159,7 +159,7 @@
 									<c:forEach items="${ArrangeBeautician.arrangeShops}" var="arrangeShops" varStatus="status" end="31">
 										<td>
 											<div style="width: 100px;">
-												<c:if test="${arrangeShops.flag == 1}">
+												<c:if test="${arrangeShops.status == 1}">
 													<a href="#" onclick="show('${ArrangeBeautician.officeId }',${status.index+1 })">班</a>
 												</c:if>
 											</div>

@@ -34,7 +34,7 @@
 	                    <input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		 				<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
                         <div class="form-group">
-                            <label>关键字：<input type="text" id="paramKey" name="paramKey" class="form-control" placeholder="搜索参数Key" value="${mtmyRuleParam.paramKey }" maxlength="10"></label>
+                            <label>关键字：<input type="text" id="paramKey" name="paramKey" class="form-control" placeholder="搜索参数Key" value="${mtmyRuleParam.paramKey }" maxlength="50"></label>
                         </div>
                         <div class="pull-right" style="margin-left: 50px;">
 							<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>

@@ -82,7 +82,7 @@ public class SpecialityController extends BaseController {
 	@RequestMapping(value = "save")
 	public String save(Speciality speciality, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
 		String currentUser = UserUtils.getUser().getName();
-		String currentFranchisee = UserUtils.getUser().getOffice().getId();
+		String currentFranchisee = UserUtils.getUser().getCompany().getId();
 		speciality.setCreateby(currentUser);
 		speciality.setFranchiseeid(currentFranchisee);
 

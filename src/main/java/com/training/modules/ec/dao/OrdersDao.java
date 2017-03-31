@@ -187,6 +187,13 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @return
 	 */
 	public OrderInvoice getOrderInvoiceRelevancy(String orderid);
+
+	/**
+	 * 查找订单的发票个数
+	 */
+	public int selectInvoiceRelevancyNum(String orderId);
+
+
 	/**
 	 * 添加单条备注
 	 * @param orders
@@ -252,4 +259,10 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 */
 	public List<Orders> findByUser(Orders order);
 
+	/**
+	 * 分页查询订单，无权限的
+	 * @param orders
+	 * @return
+	 */
+	public List<Orders> newFindList(Orders orders);
 }

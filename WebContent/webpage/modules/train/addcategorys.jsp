@@ -21,19 +21,28 @@
 		function categorychange(v){
 			if(v == 1){
 				$("#secondcategory").hide();
-				$("#categoryupload").hide();
+				$("#categoryupload").show();
 				$("#auth2").hide();
 				$("#auth1").show();
+				/* $("#rank2").hide();
+				$("#rank1").show();   //必选是否显示 */
 			}else if(v == 2){
 				$("#secondcategory").show();
 				$("#categoryupload").show();
 				$("#auth2").show();
 				$("#auth1").hide();
+				/* $("#rank2").show();
+				$("#rank1").hide();  //必选是否显示 */
 			}
 		}
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-		  if(validateForm.form()){
+			if(!$("#coverPic").val()){
+				top.layer.alert('课程封面不能为空!', {icon: 0, title:'提醒'});
+				return;
+			}
+			
+			if(validateForm.form()){
 			  $("#inputForm").submit();
 			  return true;
 		  }
@@ -51,15 +60,20 @@
 				$("#secondcategory").attr({"disabled":"disabled"});//禁用分类选项
 				//$("#customization").hide(); 
 				$("#cateType").attr({"disabled":"disabled"});//禁用分类选项
+			/* 	$("#rank2").show();   
+				$("#rank1").hide();  //必选是否显示 */
 			}else{
 				//一级分类隐藏上传图片
-				$("#categoryupload").hide(); 
+				$("#categoryupload").show(); 
 				$("#auth2").hide();
 				$("#auth1").show();
+				/* $("#rank2").hide();
+				$("#rank1").show();   //必选是否显示 */
 			}
 			
 			//表单验证
 			validateForm = $("#inputForm").validate({
+				
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
 					form.submit();
@@ -113,7 +127,7 @@
 				<div class="form-group">
 					<span style="color: red;">*</span>
 					<span>名称分类：</span> 
-					<input type="text" id="name" name="name" maxlength="10" class="input-medium form-control required" style="width: 70%;">
+					<input type="text" id="name" name="name" maxlength="6" class="input-medium form-control required" style="width: 70%;">
 				</div>
 			</div>
 			<div class="form-inline">
@@ -193,7 +207,8 @@
 				</div>
 			</div>
 			<div class="form-group input-item" id="categoryupload">
-				<span>&nbsp;&nbsp;</span>
+				<span id="rank1" style="color: red;">*</span>
+				<span id="rank2">&nbsp;&nbsp;</span>
 				<span>课程封面：</span> 
 				<img class="input-item-img" id="coverpicsrc" src="${trainLessons.coverPic}" alt="images" />
 				<input type="hidden" id="coverPic" name="coverPic" value="${trainLessons.coverPic}">

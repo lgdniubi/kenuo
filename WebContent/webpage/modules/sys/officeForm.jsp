@@ -101,15 +101,42 @@
 				$("#a1,#a2,#a3,#a4,#a5,#area2").show();
 			}
 		}
-		function a(){
-			alert(123);
-			$("#img").val("http://192.168.1.252:8888/resource/images/2016/04/1bb056cb-9619-4384-a61d-aa9241cd06f3.jpg");
+		function changeTableVal(id,status){
+			if($("#officeStatus").val() == 1){
+				$(".loading").show();//打开展示层
+				$.ajax({
+					type : "POST",
+					url : "${ctx}/sys/office/updateOfficeStatus?id="+id+"&status="+status,
+					dataType: 'json',
+					success: function(data) {
+						$(".loading").hide(); //关闭加载层
+						var flag = data.FLAG;
+						if("OK" == flag){
+							$("#status").html("");//清除DIV内容	
+							if(status == '1'){
+								//当前状态为【否】，则打开
+								$("#status").append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+id+"','0')\">&nbsp;&nbsp;隐藏状态");
+							}else if(status == '0'){
+								//当前状态为【是】，则取消
+								$("#status").append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+id+"','1')\">&nbsp;&nbsp;正常状态");
+							}
+						}
+						top.layer.alert(data.MESSAGE, {icon: 0, title:'提醒'}); 
+					}
+				});   
+			}else{
+				top.layer.alert("无此操作权限!", {icon: 0, title:'提醒'}); 
+			}
 		}
 	</script>
 </head>
 <body>
 	<div class="ibox-content">
 		<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/save" method="post" class="form-horizontal">
+			<!-- 操作隐藏店铺按钮权限 -->
+			<shiro:hasPermission name="sys:office:updateOfficeStatus">
+				<input type="hidden" id="officeStatus" value="1">
+			</shiro:hasPermission>
 			<form:hidden path="id"/>
 			<sys:message content="${message}"/>
 				<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
@@ -118,7 +145,7 @@
 						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>所属商家:</label></td>
 				         	<td class="width-35">
-				         		<input value="${a }" class="form-control" readonly="true">
+				         		<input value="${a }" class="form-control" readonly="readonly">
 				         	</td>
 				         	<td class="width-15 active"><label class="pull-right">机构类型:</label></td>
 					        <td class="width-35">
@@ -243,8 +270,27 @@
 				      <tr>
 				      	 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>床位：</label></td>
 				         <td class="width-35"><form:input path="officeInfo.bedNum" htmlEscape="false" maxlength="5" cssClass="form-control digits required"/></td>
+				      	 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺状态：</label></td>
+				         <td class="width-35" id="status">
+				         	<c:if test="${not empty office.id }">
+				         		<c:if test="${office.officeInfo.status == 1}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('${office.id}',0)">&nbsp;&nbsp;隐藏状态
+								</c:if>
+								<c:if test="${office.officeInfo.status == 0}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('${office.id}',1)">&nbsp;&nbsp;正常状态
+								</c:if>
+				         	</c:if>
+				         	<c:if test="${empty office.id }">
+				         		<select id="officeInfo.status" name="officeInfo.status" class="form-control">
+				         			<option value="0">正常</option>
+				         			<option value="1">隐藏</option>
+				         		</select>
+				         	</c:if>
+				         </td>
+				      </tr>
+				      <tr>
 				      	 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>详细地址:</label></td>
-				         <td class="width-35"><form:textarea path="officeInfo.detailedAddress" htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required"/></td>
+				         <td class="width-35" colspan="3"><form:textarea path="officeInfo.detailedAddress" htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required"/></td>
 				      </tr>
 			      </tbody>
 		      </table>

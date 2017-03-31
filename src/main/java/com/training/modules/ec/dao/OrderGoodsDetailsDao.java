@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Param;
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.GoodsDetailSum;
+import com.training.modules.ec.entity.OfficeAccount;
+import com.training.modules.ec.entity.OfficeAccountLog;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderGoodsDetails;
 import com.training.modules.ec.entity.Orders;
@@ -55,4 +57,41 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @return
 	 */
 	public  GoodsDetailSum selectDetaiSum(String recId);
+	
+	/**
+	 * 处理预约金
+	 * @param recId
+	 */
+	public void updateAdvanceFlag(String recId);
+	
+	/**
+	 * 根据office_id查找其对应的登云账户的金额
+	 */
+	public double selectByOfficeId(String officeId);
+	
+	/**
+	 * 根据office_id对登云美业或者店铺的登云账户进行更新
+	 */
+	public void updateByOfficeId(@Param(value="amount")double amount, @Param(value="officeId")String officeId);
+	
+	
+	/**
+	 * 根据office_id对登云美业或者店铺的登云账户进行插入 
+	 */
+	public void insertByOfficeId(OfficeAccount officeAccount);
+	
+	/**
+	 * 判断店铺的登云账户是否存在
+	 */
+	public int selectShopByOfficeId(String officeId);
+	
+	/**
+	 * 查询用户购买商品预约的店铺id
+	 */
+	public String selectShopId(String goodsMappingId);
+	
+	/**
+	 * 当对登云账户进行操作时，插入log日志 
+	 */
+	public void insertOfficeAccountLog(OfficeAccountLog officeAccountLog);
 }

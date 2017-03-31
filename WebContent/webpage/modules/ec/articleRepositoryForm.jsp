@@ -42,6 +42,7 @@
 		.mt-item p .cost{font-size:20px;}
 		.mt-item p .cost i{font-size:12px;}
 		.mt-item p .link-btn{float:right;}
+		/* 删除作者样式 */
 		strong{font-weight:bold}
 		.delAuthor{position:relative;}
 		.delAuthor:hover::after{display:block}
@@ -50,6 +51,15 @@
 		.allImage div{cursor:pointer}
 		.allImage .queryImg{position:relative;}
 		.allImage .queryImg::after{position:absolute;content:'';width:25px;height:25px;right:0;top:-30px;background:url(${ctxStatic}/kindEditor/themes/default/imgGou.png) center;background-size:25px;}
+		/* 预览封面 */
+		.change-cover{width:600px;height:400px;margin:0 auto;position: relative;border:1px solid #cecece;}
+		#inner{width:400px;margin:0 auto;overflow:hidden;}
+		#inner ul{width:400px;height:400px;line-height:400px;overflow:hidden}
+		#inner ul li{width:400px;height:400px;line-height:400px;float:left;}
+		#inner ul img{width:100%;vertical-align:middle}
+		.change-cover .change-ctrl{position:absolute;left:0;top:0;width:100%;height:100%;}
+		.change-cover .change-ctrl .leftBtn{height:100%;width:70px;float:left;background:url(${ctxStatic}/kindEditor/themes/default/left.png) center no-repeat;cursor:pointer}
+		.change-cover .change-ctrl .rightBtn{height:100%;width:70px;float:right;background:url(${ctxStatic}/kindEditor/themes/default/right.png) center no-repeat;cursor:pointer}
 	</style>
 	<script type="text/javascript">
 	var cateid = 0;  // 分类的id
@@ -448,6 +458,9 @@
                          			</ul>
 									</div>
                          		</c:forEach>
+                         		<div style="float:left;width:120px;height: 130px;line-height:130px;text-align:center;margin:0 10px 10px 0">
+                         			<input type="button" value="封面预览" class="btn btn-primary  btn-sm" onclick="lookFirsrPhoto()">
+								</div>
 						   </div>
 					   </div>
 				    </form:form>
@@ -615,7 +628,6 @@
 						<input id="y1" name="y1" type="hidden">
 						<input id="width" name="width" type="hidden">
 						<input id="height" name="height" type="hidden">
-						<br><span id="cutImgContent"></span>
 					</div>
 		      	</div>
 				<div class="modal-footer">
@@ -714,6 +726,29 @@
 		    </div>
  		</div>
 	</div>
+	<!-- 首图预览弹出框 -->
+	<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="ke-dialog-AllfirstPhoto" >
+		<div class="modal-dialog modal-lg">
+		    <div class="modal-content">
+		    	<div class="modal-header">
+		    		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title" id="myModalLabel">首图预览</h4>
+				</div>
+				<div class="modal-body">
+					<div class="change-cover">
+					    <div id="inner">
+					    </div>
+						<ul class="change-ctrl">
+							<li class="leftBtn"></li>
+							<li class="rightBtn"></li>
+						</ul>
+					</div>
+		      	</div>
+				<div class="modal-footer">
+		      	</div>
+		    </div>
+ 		</div>
+	</div>
 	<div class="loading"></div>
 	<script type="text/javascript" src="${ctxStatic}/train/uploadify/lang-cn.js"></script>
 	<script type="text/javascript" src="${ctxStatic}/train/uploadify/jquery.uploadify.min.js"></script>
@@ -758,7 +793,7 @@
 		KindEditor.ready(function(K) {
 			editor = K.create('textarea[name="content1"]', {
 				width : "100%",
-				items : ['plainpaste','image','media','link','shoptag','fontname','fontsize','forecolor','bold','italic','underline','|','code','source','|','fullscreen']
+				items : ['undo', 'redo', '|','plainpaste','image','media','link','shoptag','fontname','fontsize','forecolor','hilitecolor','bold','italic','underline','|','justifyleft', 'justifycenter', 'justifyright','justifyfull','|','clearhtml','code','source','|','fullscreen']
 			});
 		});
 		$("#close,#newClose,#closeShopTag,#newCloseShopTag,#closeCode,#newCloseCode").click(function(){
@@ -1007,7 +1042,6 @@
 			if(imgUrl.length > 0){
 				$("#ke-dialog-allImage").modal('hide');
 				$("#x1,#y1,#width,#height").val("");
-				$("#cutImgContent").html("");
 				$("#cutphoto").attr("src",imgUrl);
 				$("#ke-dialog-cutPhoto").modal('show');
 				if($("input[type=radio][name=imageType]:checked").val() == 1){
@@ -1028,7 +1062,6 @@
 		            $('input[name="y1"]').val(selection.y1);
 		            $('input[name="width"]').val(selection.width);
 		            $('input[name="height"]').val(selection.height); 
-		            $("#cutImgContent").html("当前选择尺寸:"+selection.width+"*"+selection.height);
 		        }
             }); 
 		}
@@ -1125,6 +1158,39 @@
     		$("#inputForm").attr("action","${ctx}/ec/articles/confirmIssue?checkType="+str+"&trainsCategoryId="+$("#trainsCategoryId").val()+"&trainsTaskDate="+$("#trainsTaskDate").val()
     				+"&mtmyCategoryId="+$("#mtmyCategoryId").val()+"&mtmyTaskDate="+$("#mtmyTaskDate").val());
 			$("#inputForm").submit();
+		}
+		
+		
+		function lookFirsrPhoto(){
+			$("#inner").empty();
+			var str = "<ul>";
+			 $("input[name='articleImage.imgUrl']").each(function(index,item){
+				 if($(this).val() != null && $(this).val() != ""){
+					 str = str + "<li><img src='"+$(this).val()+"' /></li>";
+				 }
+			});
+			str = str + "</ul>";
+			$("#inner").append(str);
+			$("#ke-dialog-AllfirstPhoto").modal('show');
+			changeCoverd();
+		}
+		function changeCoverd(){
+			var len = $('#inner li').length,
+				scroller = $('#inner');
+				if(len == 1){
+					$('.change-cover .change-ctrl').hide();
+				}else{
+					$('.change-cover .change-ctrl').show();
+				}
+				$('#inner ul').width(len*400+'px');
+			$('.change-cover .rightBtn').click(function(){
+				
+				scroller.animate({scrollLeft:""+(scroller.scrollLeft() + 400)+"px"},500);
+			});
+			$('.change-cover .leftBtn').click(function(){
+			
+				scroller.animate({scrollLeft:""+(scroller.scrollLeft() - 400)+"px"},500);
+			});
 		}
     </script>
 </body>

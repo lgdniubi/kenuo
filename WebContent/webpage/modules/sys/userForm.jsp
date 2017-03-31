@@ -71,7 +71,7 @@
 			// 手机号码验证
 			jQuery.validator.addMethod("isMobile", function(value, element) {
 			    var length = value.length;
-			    var mobile = /^(133[0-9]{8})|(153[0-9]{8})|(180[0-9]{8})|(181[0-9]{8})|(189[0-9]{8})|(177[0-9]{8})|(130[0-9]{8})|(131[0-9]{8})|(132[0-9]{8})|(155[0-9]{8})|(156[0-9]{8})|(185[0-9]{8})|(186[0-9]{8})|(145[0-9]{8})|(170[0-9]{8})|(176[0-9]{8})|(134[0-9]{8})|(135[0-9]{8})|(136[0-9]{8})|(137[0-9]{8})|(138[0-9]{8})|(139[0-9]{8})|(150[0-9]{8})|(151[0-9]{8})|(152[0-9]{8})|(157[0-9]{8})|(158[0-9]{8})|(159[0-9]{8})|(182[0-9]{8})|(183[0-9]{8})|(184[0-9]{8})|(187[0-9]{8})|(188[0-9]{8})|(147[0-9]{8})|(178[0-9]{8})|(149[0-9]{8})|(173[0-9]{8})|(171[0-9]{8})$/;       
+			    var mobile = /^(133[0-9]{8})|(153[0-9]{8})|(180[0-9]{8})|(181[0-9]{8})|(189[0-9]{8})|(177[0-9]{8})|(130[0-9]{8})|(131[0-9]{8})|(132[0-9]{8})|(155[0-9]{8})|(156[0-9]{8})|(185[0-9]{8})|(186[0-9]{8})|(145[0-9]{8})|(170[0-9]{8})|(176[0-9]{8})|(134[0-9]{8})|(135[0-9]{8})|(136[0-9]{8})|(137[0-9]{8})|(138[0-9]{8})|(139[0-9]{8})|(150[0-9]{8})|(151[0-9]{8})|(152[0-9]{8})|(157[0-9]{8})|(158[0-9]{8})|(159[0-9]{8})|(182[0-9]{8})|(183[0-9]{8})|(184[0-9]{8})|(187[0-9]{8})|(188[0-9]{8})|(147[0-9]{8})|(178[0-9]{8})|(149[0-9]{8})|(173[0-9]{8})|(175[0-9]{8})|(171[0-9]{8})$/;       
 			    return this.optional(element) || (length == 11 && mobile.test(value));
 			}, "请正确填写您的手机号码");
 			// 身份证号码验证
@@ -81,6 +81,7 @@
 			    return this.optional(element) || ((length == 15 || length == 18) && idCard.test(value));
 			}, "请正确填写您的身份证号码");
 			jQuery.validator.addMethod("isShow", function(value, element) {
+				$("#mobileError").html("");
 				var length = value.length;
 				var oldMobile=$("#oldMobile").val();
 				if(oldMobile==value){
@@ -376,6 +377,7 @@
 		
 		function clean(){
 			 $("#mobileError").html("");
+			 $("#mobileWarn").html("");
 			 $.ajax({
 				  async:false,
 		          type:"get",  
@@ -387,7 +389,7 @@
 		            	 $("#mobileError").html("该号码妃子校已存在");
 		            	 return;
 		              }else if(data == '2'){
-		            	 $("#mobileError").html("该号码每天美耶已存在"); 
+		            	 top.layer.alert('该号码每天美耶已存在!', {icon: 0, title:'提醒'}); 
 		            	 return;
 		              }else if(data == '3'){
 		            	 $("#mobileError").html("该号码妃子校和每天美耶都已存在");
@@ -503,12 +505,23 @@
 		         	${user.roleNames}
 		         </td>
 		      </tr>
+		      <tr>
+		         <td class="active"><label class="pull-right">性别:</label></td>
+		         <td>
+		         	<form:select path="sex" cssClass="form-control required">
+		         		<form:option value=""></form:option>
+		         		<form:option value="1">男</form:option>
+		         		<form:option value="2">女</form:option>
+		         	</form:select>
+		         </td>
+		         <td class="active">
+		         	<label class="pull-right"><c:if test="${not empty user.id}">用户组织架构</c:if></label>
+		         </td>
+		         <td>${user.parendNames}<form:input path="delFlag" cssStyle="display:none;"></form:input></td>
+		      </tr>
 		       <tr>
 		         <td class="active"><label class="pull-right">备注:</label></td>
-
-		         <td><form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" class="form-control"/></td>
-		         <td class="active"><label class="pull-right"></label></td>
-		         <td><form:input path="delFlag" cssStyle="display:none;"></form:input></td>
+		         <td colspan="3"><form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" class="form-control"/></td>
 		      </tr>
 		      
 		      <c:if test="${not empty user.id}">
@@ -529,12 +542,18 @@
 		  		
 		  	</tr>
 		  	<tr>
-		  	 <td class="width-15 active"><label class="pull-right">性别:</label></td>
+		  	 <%-- <td class="width-15 active"><label class="pull-right">性别:</label></td>
  		  	 <td class="width-35">
 				<form:select path="userinfo.sex"  class="form-control">
 					<form:option value="1">男</form:option>
 		  			<form:option value="2" selected="selected">女</form:option>
 				</form:select>
+			</td> --%>
+			<td class="width-15 active"><label class="pull-right">美容师星级:</label></td>
+			 <td class="width-35"><form:select path="userinfo.teachersStarLevel" class="form-control">
+				<form:options items="${fns:getDictList('teachers_star_level')}" itemLabel="label" itemValue="value" htmlEscape="false" cssClass="form-control"/>
+				</form:select>
+				<span class="help-inline">提示：星级是美容师综合素质的展示</span>
 			</td>
 			 <td class="width-15 active"><label class="pull-right">生日:</label></td>
 			 <td class="width-35">
@@ -571,14 +590,6 @@
 								title="特长" url="/sys/speciality/treeData" cssClass="form-control" notAllowSelectParent="true" checked="true"/></td>
 		  		<td class="width-15 active"><label class="pull-right">技能标签:</label></td>
 		  		<td><sys:treeselect id="skill" name="skill.id" value="${user.skill.id}" labelName="skill.name" labelValue="${user.skill.name}" title="技能标签" url="/sys/skill/treeData" cssClass="form-control" notAllowSelectParent="true" checked="true"/></td>
-		  	</tr>
-		  	<tr>
-		  		<td class="width-15 active"><label class="pull-right">美容师星级:</label></td>
-				 <td class="width-35"><form:select path="userinfo.teachersStarLevel" class="form-control">
-					<form:options items="${fns:getDictList('teachers_star_level')}" itemLabel="label" itemValue="value" htmlEscape="false" cssClass="form-control"/>
-					</form:select>
-					<span class="help-inline">提示：星级是美容师综合素质的展示</span>
-				</td>
 		  	</tr>
 		  	<tr>
 		  		<td class="width-15 active"><label class="pull-right">生活照:</label></td>

@@ -289,4 +289,13 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public int delConfirm(Office office){
 		return dao.delConfirm(office);
 	}
+	
+	/**
+	 * 隐藏店铺
+	 * @param office
+	 */
+	@Transactional(readOnly = false)
+	public void updateOfficeStatus(OfficeInfo officeInfo){
+		dao.updateOfficeStatus(officeInfo);
+	}
 }

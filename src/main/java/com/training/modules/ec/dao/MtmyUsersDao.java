@@ -169,4 +169,10 @@ public interface MtmyUsersDao extends CrudDao<Users>{
 	 * @param userId
 	 */
 	public int delMtmyUserSaleInvitationcodes(String invitationCode);
+	
+	/**
+	 * 根据手机号查找用户
+	 * @return
+	 */
+	public Users getUserByMobile(String mobile);
 }

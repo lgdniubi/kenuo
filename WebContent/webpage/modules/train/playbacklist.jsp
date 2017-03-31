@@ -5,7 +5,7 @@
 <head>
 <title>回看列表</title>
 <meta name="decorator" content="default" />
-
+<link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
 <script type="text/javascript">
 	function page(n, s) {
 		$("#pageNo").val(n);
@@ -18,7 +18,30 @@
 		window.location="${ctx}/train/playback/list";
 	}
 	
-	
+	//是否显示
+	function changeTableVal(id,isyesno){
+		$(".loading").show();//打开展示层
+		$.ajax({
+			type : "POST",
+			url : "${ctx}/train/playback/pIsShow?isShow="+isyesno+"&id="+id,
+			dataType: 'json',
+			success: function(data) {
+				$(".loading").hide(); //关闭加载层
+				var status = data.STATUS;
+				var isyesno = data.ISYESNO;
+				if("OK" == status){
+					$("#isShow"+id).html("");//清除DIV内容
+					if(isyesno == '1'){
+						$("#isShow"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+id+"','0')\">");
+					}else if(isyesno == '0'){
+						$("#isShow"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+id+"','1')\">");
+					}
+				}else if("ERROR" == status){
+					alert(data.MESSAGE);
+				}
+			}
+		});   
+	}
 	
 </script>
 </head>
@@ -94,7 +117,10 @@
 										免费
 									</c:if>
 									<c:if test="${playback.isPay==2}">
-										收费
+										线下收费
+									</c:if>
+									<c:if test="${playback.isPay==3}">
+										线上收费
 									</c:if>
 								</td>
 								<td><fmt:formatDate value="${playback.bengtime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
@@ -110,12 +136,12 @@
 										是
 									</c:if>
 								</td>
-								<td>
-									<c:if test="${playback.isShow==0}">
-										显示
-									</c:if>
+								<td id="isShow${playback.id}">
 									<c:if test="${playback.isShow==1}">
-										隐藏
+										<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('${playback.id}','0')">
+									</c:if>
+									<c:if test="${playback.isShow==0}">
+										<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('${playback.id}','1')">
 									</c:if>
 								</td>
 								<td>
@@ -123,16 +149,6 @@
 										<a href="#" onclick="openDialogView('查看回看', '${ctx}/train/playback/form?id=${playback.id}','800px','650px')"
 											class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>查看</a>
 									</shiro:hasPermission> 
-									<shiro:hasPermission name="train:playback:edit">
-										<c:if test="${playback.isShow==1}">
-											<a href="${ctx}/train/playback/pIsShow?isShow=0&id=${playback.id}"  class="btn btn-danger btn-xs">
-											<i class="fa fa-close"></i>显示</a>
-										</c:if>
-										<c:if test="${playback.isShow==0}">
-											<a href="${ctx}/train/playback/pIsShow?isShow=1&id=${playback.id}"  class="btn btn-primary btn-xs">
-												<i class="fa fa-file"></i>隐藏</a>
-										</c:if>
-									</shiro:hasPermission>
 									<shiro:hasPermission name="train:live:sku">
 										<a href="#" onclick="openDialogView('配置列表', '${ctx}/train/live/liveSkuForm?auditId=${playback.auditId}','800px','500px')"
 											 class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>查看配置</a>
@@ -156,6 +172,7 @@
 				</table>
 			</div>
 		</div>
+		<div class="loading"></div>
 	</div>
 </body>
 </html>

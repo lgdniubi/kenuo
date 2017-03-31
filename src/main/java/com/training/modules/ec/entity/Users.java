@@ -73,6 +73,7 @@ public class Users extends TreeEntity<Users> {
 	public void setBeautyId(String beautyId) {
 		this.beautyId = beautyId;
 	}
+	private String noLogin;			//未登陆用户
 	public int getLevelValue() {
 		return levelValue;
 	}
@@ -308,6 +309,12 @@ public class Users extends TreeEntity<Users> {
 	}
 	public void setSource(int source) {
 		this.source = source;
+	}
+	public String getNoLogin() {
+		return noLogin;
+	}
+	public void setNoLogin(String noLogin) {
+		this.noLogin = noLogin;
 	}
 	@Override
 	public Users getParent() {

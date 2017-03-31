@@ -23,6 +23,10 @@ public class OrderRechargeLog extends TreeEntity<OrderRechargeLog> {
 	private int remaintimes;				//实际服务次数
 	private int isReal;			//实物虚拟
 	
+	private String remarks; //处理预约金的备注
+	
+	private double advance;     //预付金
+	
 	public int getIsReal() {
 		return isReal;
 	}
@@ -139,4 +143,21 @@ public class OrderRechargeLog extends TreeEntity<OrderRechargeLog> {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public double getAdvance() {
+		return advance;
+	}
+
+	public void setAdvance(double advance) {
+		this.advance = advance;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+	
 }

@@ -49,4 +49,10 @@ public interface ReservationDao extends CrudDao<Reservation>{
      */
     public List<Comment> findReservationComment(String reservationId);
 	
+	/**
+	 * 隐藏店铺时  验证店铺下是否有预约
+	 * @param id
+	 * @return
+	 */
+	public int findCountByOfficeId(String id);
 }
