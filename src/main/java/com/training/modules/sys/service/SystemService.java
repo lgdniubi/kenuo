@@ -386,7 +386,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		}else{
 			str.append("所属店铺:修改前(此店铺异常,原店铺id:"+oldUser.getOffice().getId()+"),修改后("+user.getOffice().getName()+")|");
 		}
-		if(oldUser.getUserType()!=user.getUserType()){
+		if(!(oldUser.getUserType()).equals(user.getUserType())){
 			Dict oldDict = new Dict();
 			oldDict.setValue(oldUser.getUserType());
 			oldDict.setType("sys_user_type");
@@ -476,8 +476,8 @@ public class SystemService extends BaseService implements InitializingBean {
 			//保存用户日志
 			String str = specialLog(oldUser,user);
 			JSONObject json = new JSONObject();
-			json.put("property", "[\"no\",\"name\",\"loginName\",\"idCard\",\"inductionTime\",\"mobile\",\"mobile\",\"name\"]");
-			json.put("name", "[\"工号\",\"姓名\",\"登录名\",\"身份证号码\",\"入职日期\",\"手机号码\",\"入职时间\",\"姓名\"]");
+			json.put("property", "[\"no\",\"loginName\",\"idCard\",\"inductionTime\",\"mobile\",\"mobile\",\"name\"]");
+			json.put("name", "[\"工号\",\"登录名\",\"身份证号码\",\"入职日期\",\"手机号码\",\"入职时间\",\"姓名\"]");
 			String string = SaveLogUtils.saveLog(json,str.toString(),oldUser,user);
 			UserLog userLog = new UserLog();
 			userLog.setContent(string);
