@@ -63,9 +63,7 @@
 					            <img alt="" src="${ctxStatic}/ec/images/u657.png" style="width: 16px;height: 16px">自己的&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					            <img alt="" src="${ctxStatic}/ec/images/u730.png" style="width: 16px;height: 16px">我给别人的&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
 					        </c:if>              				         
-							<shiro:hasPermission name="ec:goodsspec:add">
 								<table:addRow url="${ctx}/crm/store/from" width="800px" height="680px" title="投诉咨询"></table:addRow><!-- 增加按钮 -->
-							</shiro:hasPermission>
 							<div class="pull-right">
 								<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
 								<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()" ><i class="fa fa-refresh"></i> 重置</button>
