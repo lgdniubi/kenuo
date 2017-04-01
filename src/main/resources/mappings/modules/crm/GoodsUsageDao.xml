@@ -27,6 +27,7 @@
 		<if test="endDate!=null">
 			<![CDATA[AND mugu.end_time<= #{endDate,jdbcType=DATE}]]>
 		</if>	
+		ORDER BY mugu.create_date DESC
 	</select>
 
 	<!--根据ID查找单条记录 -->
