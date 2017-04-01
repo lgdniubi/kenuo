@@ -560,7 +560,7 @@ window.onload=initStatus;
 												<c:if test="${type != 'view' }">
 													<c:if test="${orders.channelFlag == 'bm' || (orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag != 1)}">
 														<c:if test="${orderGood.orderArrearage != 0}">
-															<a href="#" onclick="TopUp(${orderGood.recid},${orderGood.singleRealityPrice },${orderGood.singleNormPrice },${orderGood.orderArrearage },${orderGood.servicetimes },${orderGood.remaintimes })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>充值</a>
+															<a href="#" onclick="TopUp(${orderGood.recid},${orderGood.singleRealityPrice },${orderGood.singleNormPrice },${orderGood.orderArrearage },${orderGood.servicetimes },${orderGood.payRemaintimes })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>充值</a>
 														</c:if>
 														<c:if test="${orderGood.orderArrearage == 0}">
 															<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>充值</a>
