@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -79,6 +80,7 @@ public class AdviceController extends BaseController {
 	 * @description：店长首页 
 	 * 2017年3月10日
 	 */
+	@RequiresPermissions("crm:store:home")
 	@RequestMapping(value = "home")
 	public String storeHome(Complain complain, HttpServletRequest request, Model model) {
 		String id = UserUtils.getUser().getId();
@@ -114,11 +116,14 @@ public class AdviceController extends BaseController {
 	 * @description：分页查询、条件查询 
 	 * 2017年3月10日
 	 */
+	@RequiresPermissions("crm:store:list")
 	@RequestMapping(value = "/list")
 	public String list(Complain complain, HttpServletRequest request, HttpServletResponse response, Model model, RedirectAttributes redirectAttributes) {
 		if(null != complain && complain.getStamp() != null && !complain.getStamp().equals("")){
 			complain.setRedirectUserId("");
 			model.addAttribute("stamp", complain.getStamp());
+			model.addAttribute("mobile", complain.getMobile());
+			
 		}else{
 			String id = UserUtils.getUser().getId();
 			complain.setRedirectUserId(id);
@@ -221,8 +226,12 @@ public class AdviceController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "getRedirectUserId")
 	public int getRedirectUserId(Complain complain){
-		if(complain.getId()!=null && complain.getId().equals("")){
-			return 0;
+		if(complain !=null && complain.getId()!=null && complain.getId().equals("")){
+			if(complain.getRedirectUserId()!= null && complain.getRedirectUserId().equals(UserUtils.getUser().getId())){
+				return 1;				
+			}else{
+				return 0;
+			}
 		}else{
 			List<Complain> complains = adviceService.getRedirectUserId(complain);
 			int count = complains.size();
@@ -265,14 +274,7 @@ public class AdviceController extends BaseController {
 			//判断是否有处理过程
 			if (complain.getHandResult() != null) {
 				//判断是否转接
-				if (complain.getRedirectUserId() == null) {
-					complain.setRedirectUserId(id);
-					complain.setChangeTimes(0);
-					complain.setSolveTimes(1);
-					complain.setQuestionSource(1);
-					adviceService.saveQuestion(complain);
-					adviceService.saveSolve(complain);
-				} else {
+				if (complain.getRedirectUserId() != null && !complain.getRedirectUserId().equals("")) {
 					complain.setRedirectUserId(id);
 					complain.setChangeTimes(1);
 					complain.setQuestionSource(2);
@@ -283,6 +285,13 @@ public class AdviceController extends BaseController {
 					complain.setQuestionSource(3);
 					complain.setSolveTimes(1);
 					adviceService.saveSolve(complain);
+				}else {
+					complain.setRedirectUserId(id);
+					complain.setChangeTimes(0);
+					complain.setSolveTimes(1);
+					complain.setQuestionSource(1);
+					adviceService.saveQuestion(complain);
+					adviceService.saveSolve(complain);			
 				}
 			} else {
 				complain.setQuestionDegree(complain.getDegree());
@@ -306,16 +315,16 @@ public class AdviceController extends BaseController {
 				Complain complains = adviceService.selectHandle(complain);
 				complain.setSolveTimes(complains.getSolveTimes() + 1);
 				//判断是否转交
-				if (complain.getRedirectUserId()==null) {
-					complain.setQuestionSource(complains.getQuestionSource());//没转交的情况下，状态和上一个一致
-					complain.setChangeTimes(complains.getChangeTimes());
-				} else {
+				if (complain.getRedirectUserId()!=null && !complain.getRedirectUserId().equals("")) {
 					Complain complainId = adviceService.selectId(complain);
 					complainId.setQuestionSource(2);
 					adviceService.creatHandle(complainId);
 					complain.setRedirectUserId(redirectId);
 					complain.setChangeTimes(complains.getChangeTimes() + 1);
-					complain.setQuestionSource(3);
+					complain.setQuestionSource(3);	
+				}else{
+					complain.setQuestionSource(complains.getQuestionSource());//没转交的情况下，状态和上一个一致
+					complain.setChangeTimes(complains.getChangeTimes());
 				}
 				adviceService.saveHandle(complain);
 				addMessage(redirectAttributes, "处理过程保存成功");

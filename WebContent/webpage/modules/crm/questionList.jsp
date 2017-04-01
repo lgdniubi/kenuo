@@ -29,6 +29,7 @@
 							<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 							<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 							<form:hidden path="stamp" id="stamp"/>
+							<form:hidden path="mobile" id="mobile"/>
 							<div class="form-group">						
 								<label>商品品牌：</label>
 			                    <select class="form-control" id="brandType" name="brandType" style="text-align: center;width: 150px;">

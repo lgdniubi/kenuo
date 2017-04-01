@@ -224,7 +224,8 @@
 			coupon_price as couponPrice,
 			discount as discount,
 			advance_price as advancePrice,
-			member_goods_price as membergoodsprice
+			member_goods_price as membergoodsprice,
+			(SELECT SUM(a.service_times) FROM mtmydb.mtmy_order_goods_details a WHERE a.goods_mapping_id = rec_id AND type = 0) AS payRemaintimes
 		from 
 		mtmydb.mtmy_order_goods_mapping 
 		where order_id = #{orderid}
