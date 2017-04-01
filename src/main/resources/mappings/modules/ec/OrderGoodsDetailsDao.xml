@@ -69,7 +69,7 @@
 	</select>
 	
 	<select id="getMappinfOrderView" resultType="OrderGoodsDetails">
-		select 
+		SELECT 
 			d.order_id as orderId,
 			d.goods_mapping_id as goodsMappingId,
 			d.total_amount as totalAmount,
@@ -81,9 +81,9 @@
 			d.create_by as "createBy.id",
 			u.`name` as createByName,
 			d.create_date as createDate
-		from mtmydb.mtmy_order_goods_details d,sys_user u
-		where d.create_by = u.id
-		AND goods_mapping_id = #{recid}
+		FROM mtmydb.mtmy_order_goods_details d
+		LEFT JOIN sys_user u ON d.create_by = u.id
+		WHERE goods_mapping_id = #{recid}
 	</select>
 	<select id="selectDetaiSum" resultType="GoodsDetailSum">
 		SELECT
