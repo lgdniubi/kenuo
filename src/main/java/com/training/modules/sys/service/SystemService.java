@@ -386,6 +386,22 @@ public class SystemService extends BaseService implements InitializingBean {
 		}else{
 			str.append("所属店铺:修改前(此店铺异常,原店铺id:"+oldUser.getOffice().getId()+"),修改后("+user.getOffice().getName()+")|");
 		}
+		if(oldUser.getSex() != null){
+			if(!(oldUser.getSex()).equals(user.getSex())){
+				if("1".equals(oldUser.getSex())){
+					str.append("性别:修改前(男),修改后(女)|");
+				}else if("2".equals(oldUser.getSex())){
+					str.append("性别:修改前(女),修改后(男)|");
+				}
+			}
+		}else{
+			if("1".equals(user.getSex())){
+				str.append("性别:修改前(无),修改后(男)|");
+			}else if("2".equals(user.getSex())){
+				str.append("性别:修改前(无),修改后(女)|");
+			}
+		}
+	
 		if(!(oldUser.getUserType()).equals(user.getUserType())){
 			Dict oldDict = new Dict();
 			oldDict.setValue(oldUser.getUserType());
@@ -476,8 +492,8 @@ public class SystemService extends BaseService implements InitializingBean {
 			//保存用户日志
 			String str = specialLog(oldUser,user);
 			JSONObject json = new JSONObject();
-			json.put("property", "[\"no\",\"loginName\",\"idCard\",\"inductionTime\",\"mobile\",\"mobile\",\"name\"]");
-			json.put("name", "[\"工号\",\"登录名\",\"身份证号码\",\"入职日期\",\"手机号码\",\"入职时间\",\"姓名\"]");
+			json.put("property", "[\"no\",\"loginName\",\"idCard\",\"inductionTime\",\"mobile\",\"name\"]");
+			json.put("name", "[\"工号\",\"登录名\",\"身份证号码\",\"入职日期\",\"手机号码\",\"姓名\"]");
 			String string = SaveLogUtils.saveLog(json,str.toString(),oldUser,user);
 			UserLog userLog = new UserLog();
 			userLog.setContent(string);
