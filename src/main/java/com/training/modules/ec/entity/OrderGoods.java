@@ -67,6 +67,7 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private int openNum;					//已开发票数量
 	private double unitPrice;				//商品实付单次价
 	
+	private int payRemaintimes;				//订单已存值次数
 	//--------------------预约金需要字段------------------------------------------
 	private int advanceFlag;             //是否预付金,等于1说明查到advance_flag=1,若不为1，则说明是advance_flag=0
 	private double advance;              //预约金
@@ -366,6 +367,12 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setUnitPrice(double unitPrice) {
 		this.unitPrice = unitPrice;
+	}
+	public int getPayRemaintimes() {
+		return payRemaintimes;
+	}
+	public void setPayRemaintimes(int payRemaintimes) {
+		this.payRemaintimes = payRemaintimes;
 	}
 	public int getAdvanceFlag() {
 		return advanceFlag;

@@ -1378,7 +1378,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param sum是否使用了账户余额，0使用了，1未使用
 	 * @param orderAmount应付款金额
 	 */
-	public void handleAdvanceFlag(OrderRechargeLog oLog,int sum,double goodsPrice,double newTotalAmount){
+	public void handleAdvanceFlag(OrderRechargeLog oLog,int sum,double goodsPrice,double detailsTotalAmount){
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
 		double totalAmount = oLog.getTotalAmount(); //实付款金额
@@ -1459,12 +1459,12 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		ordersDao.updateAccount(account);
 		
 		//对登云账户进行操作
-		if(newTotalAmount > 0){
+		if(detailsTotalAmount > 0){
 			double claimMoney = 0.0;   //补偿金  补助不超过20
-			if(newTotalAmount * 0.2 >= 20){
-				claimMoney = newTotalAmount + 20;
+			if(detailsTotalAmount * 0.2 >= 20){
+				claimMoney = detailsTotalAmount + 20;
 			}else{
-				claimMoney = newTotalAmount * 1.2;
+				claimMoney = detailsTotalAmount * 1.2;
 			}
 			OfficeAccountLog officeAccountLog = new OfficeAccountLog();
 			User newUser = UserUtils.getUser();
