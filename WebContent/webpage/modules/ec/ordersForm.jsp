@@ -534,17 +534,10 @@ window.onload=initStatus;
 										<td align="center">${orderGood.discount }</td>
 										<td align="center">${orderGood.membergoodsprice }</td>
 										<td align="center">${orderGood.orderAmount }</td>
+										<td align="center">${orderGood.totalAmount}</td>
 										<td align="center">
 											<c:if test="${orders.isReal == 1 }">
-												${orderGood.totalAmount - orderGood.couponPrice - orderGood.membergoodsprice}
-											</c:if>
-											<c:if test="${orders.isReal != 1 }">
-												${orderGood.totalAmount}
-											</c:if>
-										</td>
-										<td align="center">
-											<c:if test="${orders.isReal == 1 }">
-												${orderGood.advancePrice}
+												${orderGood.advancePrice + orderGood.couponPrice + orderGood.membergoodsprice}
 											</c:if>
 											<c:if test="${orders.isReal != 1 }">
 												0.0

@@ -109,8 +109,7 @@
 	<update id="updateAdvanceFlag">
 		UPDATE mtmydb.mtmy_order_goods_details
 		SET 
-			advance_flag = '0',
-			order_arrearage = '0'
+			advance_flag = '0'
 		WHERE goods_mapping_id = #{recid}
 	</update>
 	

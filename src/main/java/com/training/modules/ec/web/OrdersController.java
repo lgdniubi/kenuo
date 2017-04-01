@@ -1555,8 +1555,13 @@ public class OrdersController extends BaseController {
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
 			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());
-			double advance = orderGoods.getAdvance();  //预约金
+			double membergoodsprice = orderGoods.getMembergoodsprice();    //会员折扣价格（就是用了会员折扣省去的钱）
+			double couponPrice = orderGoods.getCouponPrice();             //红包优惠价格 （就是用了红包的折扣）
+			double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
+			double advance = Double.parseDouble(formater.format(detailsTotalAmount + couponPrice + membergoodsprice)); //预约金
+			
 			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
+			orderGoods.setAdvance(advance);
 			if(advance < singleRealityPrice){
 				double c = Double.parseDouble(formater.format(singleRealityPrice - advance));
 				orderGoods.setAdvanceServiceTimes(0);        //服务次数
@@ -1590,14 +1595,17 @@ public class OrdersController extends BaseController {
 	@ResponseBody
 	public String handleAdvanceFlag(OrderRechargeLog oLog,OrderGoods orderGoods,int userid,String orderid,int sum){
 		String date="";
+		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
-			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());
-			double advance = orderGoods.getAdvance();  //预约金
+			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());    
+			double membergoodsprice = orderGoods.getMembergoodsprice();    //会员折扣价格（就是用了会员折扣省去的钱）
+			double couponPrice = orderGoods.getCouponPrice();             //红包优惠价格 （就是用了红包的折扣）
+			double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
+			double advance = Double.parseDouble(formater.format(detailsTotalAmount + couponPrice + membergoodsprice)); //预约金
+			
 			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
 			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
-			double newTotalAmount = orderGoods.getTotalAmount();     //用户的预约金减去优惠以后实际付款
 			
-			DecimalFormat formater = new DecimalFormat("#0.##");
 			oLog.setMtmyUserId(userid);
 			oLog.setOrderId(orderid);
 			oLog.setRecid(orderGoods.getRecid());
@@ -1617,7 +1625,7 @@ public class OrdersController extends BaseController {
 				
 			}
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleAdvanceFlag(oLog,sum,goodsPrice,newTotalAmount);
+			ordersService.handleAdvanceFlag(oLog,sum,goodsPrice,detailsTotalAmount);
 			date = "success";
 		}catch(Exception e){
 			e.printStackTrace();
