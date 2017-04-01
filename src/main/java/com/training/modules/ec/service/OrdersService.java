@@ -152,13 +152,28 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
 		//	orders.getSqlMap().put("dsf", dataScopeFilter(orders.getCurrentUser(), "o", "a"));
 		// 设置分页参数
+		orders.getSqlMap().put("dsf",ScopeUtils.dataScopeFilter("a", "orderOrRet"));
 		orders.setPage(page);
 		// 执行分页查询
 		page.setList(ordersDao.findAlllist(orders));
 		return page;
 	}
 	
-	
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param user分页查询
+	 * @return
+	 */
+	public Page<Orders> newFindOrdersExcal(Page<Orders> page, Orders orders) {
+		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
+		//	orders.getSqlMap().put("dsf", dataScopeFilter(orders.getCurrentUser(), "o", "a"));
+		// 设置分页参数
+		orders.setPage(page);
+		// 执行分页查询
+		page.setList(ordersDao.newFindAlllist(orders));
+		return page;
+	}
 
 	/**
 	 * 更新订单状态
@@ -1445,7 +1460,12 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		
 		//对登云账户进行操作
 		if(newTotalAmount > 0){
-			double claimMoney = newTotalAmount * 1.2;  //补偿金
+			double claimMoney = 0.0;   //补偿金  补助不超过20
+			if(newTotalAmount * 0.2 >= 20){
+				claimMoney = newTotalAmount + 20;
+			}else{
+				claimMoney = newTotalAmount * 1.2;
+			}
 			OfficeAccountLog officeAccountLog = new OfficeAccountLog();
 			User newUser = UserUtils.getUser();
 			

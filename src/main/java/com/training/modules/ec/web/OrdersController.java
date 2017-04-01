@@ -659,7 +659,12 @@ public class OrdersController extends BaseController {
 			RedirectAttributes redirectAttributes) {
 		try {
 			String fileName = "订单数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-			Page<Orders> page = ordersService.findOrdersExcal(new Page<Orders>(request, response, -1), orders);
+			Page<Orders> page = new Page<Orders>();
+			if(StringUtils.isNotBlank(orders.getUsername()) || StringUtils.isNotBlank(orders.getMobile()) || StringUtils.isNotBlank(orders.getOrderid())){
+				page = ordersService.newFindOrdersExcal(new Page<Orders>(request, response, -1), orders);
+			}else{
+				page = ordersService.findOrdersExcal(new Page<Orders>(request, response, -1), orders);
+			}
 			new ExportExcel("订单数据", Orders.class).setDataList(page.getList()).write(response, fileName).dispose();
 			return null;
 		} catch (Exception e) {
