@@ -84,10 +84,8 @@
 					<!-- 工具栏 -->
 				</div>
 			</div>
-			<sys:message content="${message}"/>
 			<!-- 查询条件 -->
 	    	<div class="ibox-content">
-	    	
 	    	<div class="clearfix">
 					<div class="row">
 						<div class="col-sm-12">

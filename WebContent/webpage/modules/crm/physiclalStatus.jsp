@@ -14,8 +14,12 @@
 			}
 		})
 		$('#edit').click(function(){
-			$("#inputForm").submit();
-			return true;
+			if($("#fieldset").attr("disabled")) {
+				alert("请先填入数据");
+			}else{
+				$("#inputForm").submit();
+				return true;
+			}
 		})
 	});
 </script>
@@ -95,7 +99,7 @@
 						<fieldset id="fieldset" disabled="disabled">
 							<div class="row">
 								<div class="col-xs-12 col-md-8">
-									<input type="hidden" value="${userId}" name="userId">
+									<input type="hidden" value="${userDetail.userId}" name="userId">
 									<c:forEach items="${dictList}" var="row">
 										<c:if test="${row.actionType=='1'}">  
 											<div class="row" style="margin:40px">
@@ -130,9 +134,8 @@
 									</c:forEach>
 									<div class="" style="margin:40px;">
 										<span style="align:center;float:left">其他问题:</span>	
-										<textarea name="remark" style="width:500px;height:200px;resize:mone; rows:50;cols:400;margin-left:40px" >
-										   ${skinFile.remark}
-										</textarea>	
+										<textarea style="width:500px;height:200px;resize:none; rows:50;cols:400;margin-left:40px" 
+										name="remark" class="form-control">${skinFile.remark}</textarea>		
 									</div>
 								</div>
 							</div>

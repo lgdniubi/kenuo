@@ -51,7 +51,7 @@ public class UserOrdersController extends BaseController {
 	@ModelAttribute
 	public UserDetail  get(@RequestParam(required = false) String userId) {
 		if (StringUtils.isNotBlank(userId)) {
-			UserDetail detail=  userDetailService.getUserNickname(userId); 
+			UserDetail detail= userDetailService.getUserNickname(userId); 
 		    return detail;
 		} else {
 			return new UserDetail();
@@ -84,7 +84,7 @@ public class UserOrdersController extends BaseController {
 
 //	@RequiresPermissions(value = { "ec:orders:add" }, logical = Logical.OR)
 	@RequestMapping(value = "createOrder")
-	public String createOrder(HttpServletRequest request,Orders orders,Model model){
+	public String createOrder(String userId,Orders orders,HttpServletRequest request,Model model){
 		try {
 
 			List<Payment> paylist = paymentService.paylist();
@@ -92,7 +92,7 @@ public class UserOrdersController extends BaseController {
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
 			model.addAttribute("cateList", cateList);
-
+            model.addAttribute("userId", userId);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转创建虚拟订单页面", e);
 			logger.error("方法：createOrder，跳转创建虚拟订单页面出错：" + e.getMessage());
@@ -112,9 +112,9 @@ public class UserOrdersController extends BaseController {
 	 * @return
 	 */
 
-	@RequiresPermissions(value = { "ec:orders:add" }, logical = Logical.OR)
+//	@RequiresPermissions(value = { "ec:orders:add" }, logical = Logical.OR)
 	@RequestMapping(value = "saveVirtualOrder")
-	public String saveVirtualOrder(Orders orders, HttpServletRequest request, Model model,
+	public String saveVirtualOrder(String userId,Orders orders, HttpServletRequest request, Model model,
 			RedirectAttributes redirectAttributes) {
 		try {
 			ordersService.saveVirtualOrder(orders);
@@ -125,7 +125,7 @@ public class UserOrdersController extends BaseController {
 			addMessage(redirectAttributes, "创建订单失败！");
 		}
 
-		return "redirect:" + adminPath + "/crm/orders/list";
+		return "redirect:" + adminPath + "/crm/orders/list?userId="+userId;
 
 	}
 	
@@ -138,7 +138,7 @@ public class UserOrdersController extends BaseController {
 	 */
 //	@RequiresPermissions(value = { "crm:orders:add" }, logical = Logical.OR)
 	@RequestMapping(value = "createKindOrder")
-	public String createKindOrder(HttpServletRequest request,Orders orders,Model model){
+	public String createKindOrder(String userId,Orders orders,HttpServletRequest request,Model model){
 		try {
 
 			List<Payment> paylist = paymentService.paylist();
@@ -146,7 +146,7 @@ public class UserOrdersController extends BaseController {
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
 			model.addAttribute("cateList", cateList);
-
+            model.addAttribute("userId", userId);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转创建实物订单页面", e);
 			logger.error("方法：createOrder，跳转创建实物订单页面出错：" + e.getMessage());
@@ -164,7 +164,7 @@ public class UserOrdersController extends BaseController {
 	 */
 //	@RequiresPermissions(value = { "crm:orders:add" }, logical = Logical.OR)
 	@RequestMapping(value = "saveKindOrder")
-	public String saveKindOrder(Orders orders, HttpServletRequest request, Model model,
+	public String saveKindOrder(String userId,Orders orders, HttpServletRequest request, Model model,
 			RedirectAttributes redirectAttributes) {
 		try {
 			ordersService.saveKindOrder(orders);
@@ -175,7 +175,7 @@ public class UserOrdersController extends BaseController {
 			addMessage(redirectAttributes, "创建实物订单失败！");
 		}
 
-		return "redirect:" + adminPath + "/crm/orders/list";
+		return "redirect:" + adminPath + "/crm/orders/list?userId="+userId;
 	}
 	
 	/**

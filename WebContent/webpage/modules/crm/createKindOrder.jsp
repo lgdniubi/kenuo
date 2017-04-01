@@ -211,26 +211,30 @@
 			rules:{
 				mobile:{
 					digits:true,
-					minlength:11,
+					minlength:7,
+					maxlength:11,
 					isMobile : true,
 					remote: "${ctx}/ec/mtmyuser/verifyPhone"
 				},
 				mobile1:{
 					digits:true,
-					minlength:11,
+					minlength:7,
+					maxlength:11,
 					isMobile : true
 				}
 			},
 			messages:{
 				mobile:{
 					digits:"输入合法手机号",
-					minlength:"手机号码要11位",
+					minlength:"手机号码要大于等于7位",
+					maxlength:"手机号码要等于11位",
 					isMobile :"请输入正确手机号",
 					remote:"手机号不存在，不可创建订单"
 				},
 				mobile1:{
 					digits:"输入合法手机号",
-					minlength:"手机号码要11位",
+					minlength:"手机号码要大于等于7位",
+					maxlength:"手机号码要等于11位",
 					isMobile :"请输入正确手机号"
 				}
 			},
@@ -416,6 +420,8 @@
 				<label><font color="red">*</font>昵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：</label>
 				<input id="username" name="username" type="text" class="form-control required" readonly="true" style="width:200px" />
 				<input type="hidden" name="userid" id="userid" />
+				<!-- crm所用的userId -->
+				<input type="hidden" name="userId" id="userId" value="${userDetail.userId}"/>
 				<p></p>
 				<label><font color="red">*</font>订单性质：</label>
 				<form:select path="distinction"  class="form-control" style="width:200px">
