@@ -44,7 +44,7 @@
 				 dataType: 'json',
 				 success:function(date){
 					if(date > 0){
-						top.layer.alert('转交人不能为已处理人！', {icon: 0, title:'提醒'});
+						top.layer.alert('转交人不能为已处理人或记录人！', {icon: 0, title:'提醒'});
 						$("#select1").val(-1);
 					}else{
 					 }
@@ -69,8 +69,9 @@
 							$(".loading").hide();
 							if(date.list.length>0){
 								top.layer.alert('转交对象查询成功!', {icon: 0, title:'提醒'}); 
+								$("#select1").append("<option value=''>请选择转交对象</option>")
 								for(var i=0;i<date.list.length;i++){
-									$("#select1").append("<option value='"+date.list[i].id+"'>"+date.list[i].name+"</option>");
+									$("#select1").append("<option value='"+date.list[i].id+"'>"+date.list[i].name+"</option>")
 								}
 							}else{
 								top.layer.alert('没有查询到转交对象!', {icon: 0, title:'提醒'});								
@@ -228,7 +229,7 @@
 				        	<div class="row" style="text-align:center;margin:10px">
 								<div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
 									<label >&nbsp;记&nbsp;&nbsp;录&nbsp;&nbsp;人：</label>
-	                                ${complain.handler}
+	                                ${complain.creatBy}
 								</div>	
 							<c:if test="${complain.creatDate != null }">		
 								<div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
@@ -291,7 +292,6 @@
 									 </div>
 									 <div style="float:left;">
 			         			     	 <select class="form-control" id="select1" name="redirectUserId" onchange="gradeChange()" style="text-align: center; width: 195px;">
-			         			     	<!--  <option value="-1">请选择转交对象</option> -->
 			         			     	 </select>
 								     </div>
 									 <div style="float:left;">
