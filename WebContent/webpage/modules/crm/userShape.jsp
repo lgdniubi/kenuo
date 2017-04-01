@@ -19,8 +19,12 @@
 	})
 	function save() {
 		//loading("正在提交，请稍候...");
-		$("#inputForm").submit();
-		return true;
+		if($("#fieldset").attr("disabled")) {
+			   alert("请先填入数据");
+		}else{
+			$("#inputForm").submit();
+			return true;
+		}
 	}
 </script>
 </head>

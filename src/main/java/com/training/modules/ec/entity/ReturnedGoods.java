@@ -69,10 +69,16 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	private String hoseName;					//仓库名称
 	private String governor;					//管理员
 	private String address;						//仓库地址	
-
+    
+	private String keyword;                     //搜索用关键字
 	
 	
-	
+	public String getKeyword() {
+		return keyword;
+	}
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
 	public String getShipperBy() {
 		return shipperBy;
 	}
