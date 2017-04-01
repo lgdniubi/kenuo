@@ -25,6 +25,11 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 */
 	public List<Orders> findAlllist(Orders orders);
 	/**
+	 * 查询所有数据
+	 * @return
+	 */
+	public List<Orders> newFindAlllist(Orders orders);
+	/**
 	 * 根据id查询数据
 	 * @param orderid
 	 * @return

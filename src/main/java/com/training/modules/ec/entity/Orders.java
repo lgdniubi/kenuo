@@ -188,6 +188,8 @@ public class Orders extends TreeEntity<Orders> {
 	 
 	private int num;         //订单的发票个数
 	
+	private String newIsNeworder;   //查询所用的新老订单字段
+	
 	public String getSearchIsReal() {
 		return searchIsReal;
 	}
@@ -1558,6 +1560,12 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setIsComment(String isComment) {
 		this.isComment = isComment;
+	}
+	public String getNewIsNeworder() {
+		return newIsNeworder;
+	}
+	public void setNewIsNeworder(String newIsNeworder) {
+		this.newIsNeworder = newIsNeworder;
 	}
 	
 }

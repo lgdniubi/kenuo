@@ -127,6 +127,12 @@
 								<form:option value="android">安卓手机</form:option>
 								<form:option value="bm">后台管理</form:option>
 						</form:select>
+						<label>新老订单：</label>
+						<form:select path="newIsNeworder"  class="form-control" style="width:185px;">
+								<form:option value="">全部</form:option>
+								<form:option value="0">新订单</form:option>
+								<form:option value="1">老订单</form:option>
+						</form:select>
 						
 						<label>商品分类：</label>
 						<sys:treeselect id="cateid" name="cetaid" value="${orders.cetaid}" 
