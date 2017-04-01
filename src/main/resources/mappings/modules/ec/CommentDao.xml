@@ -194,12 +194,12 @@
 			cu.name AS 'user.name'
 			FROM
 				mtmydb.mtmy_beauty_comment AS b 
-				LEFT OUTER  JOIN  mtmydb.mtmy_users AS u  ON b.user_id = u.user_id
-				LEFT OUTER  JOIN  trains.sys_user   AS cu ON b.reply_id = cu.id
+				LEFT JOIN  mtmydb.mtmy_users AS u  ON b.user_id = u.user_id
+				LEFT JOIN  trains.sys_user AS cu ON b.beauty_id = cu.id
 			WHERE
 				1=1
-				AND b.user_id = #{userId} 
-				AND b.reservation_id= #{reservationId} 
-				ORDER BY b.add_time ASC
+			AND b.user_id = #{userId} 
+			AND b.reservation_id= #{reservationId} 
+			ORDER BY b.add_time DESC
 	</select>
 </mapper>

@@ -28,7 +28,7 @@
 						    <th style="text-align: center;">用户昵称</th>
 						    <th style="text-align: center;">评论时间</th>
 						    <th style="text-align: center;">美容师</th>
-						    <th style="text-align: center;">星级</th>
+						    <th style="text-align: center;">评论星级</th>
 						    <th style="text-align: center;">评论内容</th>
 						</tr>
 					</thead>

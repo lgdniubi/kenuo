@@ -17,7 +17,6 @@ import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.crm.entity.UserDetail;
 import com.training.modules.crm.service.UserDetailService;
-import com.training.modules.ec.dao.CommentDao;
 import com.training.modules.ec.entity.Comment;
 import com.training.modules.ec.entity.Reservation;
 import com.training.modules.ec.service.CommentService;
@@ -58,7 +57,6 @@ public class ScheduleController extends BaseController {
 	 * @param
 	 * @return String 
 	 */
-	@SuppressWarnings("null")
 	@RequestMapping(value = "list")
 	public String schedule(String userId, HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -72,7 +70,11 @@ public class ScheduleController extends BaseController {
 		return "modules/crm/schedule";
 	}
 	
-	@SuppressWarnings("null")
+	/**
+	 * 查找针对美容师的评论
+	 * @param 
+	 * @return String
+	 */
 	@RequestMapping(value = "comment")
 	public String comment(Comment entity, HttpServletRequest request, HttpServletResponse response, Model model) {
 

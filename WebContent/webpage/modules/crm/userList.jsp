@@ -7,11 +7,14 @@
 <meta name="viewport"
 	content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no">
 <script type="text/javascript">
-	function addVirtualOrder(){
-		openDialog("新增"+'虚拟订单添加',"/kenuo/a/crm/orders/createOrder","900px", "650px","");
+	
+	function addVirtualOrder(userId){
+		var url = "/kenuo/a/crm/orders/createOrder?userId="+userId;
+		openDialog("新增虚拟订单添加",url,"900px", "650px");
 	}
-	function addKindOrder(){
-		openDialog("新增"+'实物订单添加',"/kenuo/a/crm/orders/createKindOrder","900px", "650px","");
+	function addKindOrder(userId){
+		var url = "/kenuo/a/crm/orders/createKindOrder?userId="+userId;
+		openDialog("新增实物订单添加",url,"900px", "650px");
 	}
 	function newSearch() {
 		$("#searchForm").submit();
@@ -311,8 +314,8 @@
 									<a class="btn btn-info btn-xs"
 									href="${ctx}/crm/user/userDetail?userId=${users.userId}">详情</a> 
 									<shiro:hasPermission name="crm:userSecret:view">
-									<button class="btn btn-info btn-xs btn-danger" onclick="addKindOrder()">实物</button> 
-									<button class="btn btn-info btn-xs btn-danger" onclick="addVirtualOrder()">虚拟</button>
+									<button class="btn btn-info btn-xs btn-danger" onclick="addKindOrder(${users.userId})">实物</button> 
+									<button class="btn btn-info btn-xs btn-danger" onclick="addVirtualOrder(${users.userId})">虚拟</button>
 								    </shiro:hasPermission>
 								</td>
 							</tr>

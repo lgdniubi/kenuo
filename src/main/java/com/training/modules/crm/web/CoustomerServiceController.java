@@ -18,14 +18,8 @@ import com.training.modules.crm.service.UserDetailService;
 import com.training.modules.ec.entity.ReturnedGoods;
 import com.training.modules.ec.service.ReturnedGoodsService;
 
-/**
- * kenuo 售后
- * 
- * @author：sharp @date：2017年3月7日
- */
 /**    
 * kenuo      
-* 
 * @author：sharp   
 * @date：2017年3月27日            
 */

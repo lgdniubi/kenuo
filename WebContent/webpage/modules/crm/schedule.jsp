@@ -117,7 +117,7 @@
 								    <c:if test="${item.apptStatus=='3'}">已取消</c:if>
 								    <c:if test="${item.apptStatus=='4'}">客户爽约</c:if>
 							    </td>
-							    <td>${item.apptStartTime}</td>
+							    <td><fmt:formatDate value="${item.apptDate}" pattern="yyyy-MM-dd "/></td>
 							  	<td>${item.user.name}</td>						
 							    <td>${item.teachersStarLevel}</td>	
 								<td>

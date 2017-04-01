@@ -131,6 +131,8 @@
 							value="${page.pageNo}" />
 						<input id="pageSize" name="pageSize" type="hidden"
 							value="${page.pageSize}" />
+						<input id="userId" name="userId" type="hidden"
+							value="${userDetail.userId}" />	
 						<table:sortColumn id="orderBy" name="orderBy"
 							value="${page.orderBy}" callback="sortOrRefresh();" />
 						<!-- 支持排序 -->
@@ -170,8 +172,9 @@
 								<form:option value="25">换货中</form:option>
 								<form:option value="26">换货完成</form:option>
 							</form:select>
+							<form:input path="keyword" htmlEscape="false" style="width:275px" class=" form-control input-sm" 
+							placeholder="请输入订单号，用户名或者手机号"/>
 							<p></p>
-							
 						</div>
 					</form:form>
 					<!-- 工具栏 -->
@@ -192,7 +195,8 @@
 					<p></p>
 				</div>
 				<table id="contentTable"
-					class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
+					class="table table-striped table-bordered  table-hover table-condensed  
+					dataTables-example dataTable no-footer">
 					<thead>
 						<tr>
 							<th style="text-align: center;">退货单号</th>
@@ -281,13 +285,11 @@
 								<div class="tfoot">
 									<table:page page="${page}"></table:page>
 								</div>
-
 							</td>
 						</tr>
 					</tfoot>
 				</table>
 			</div>
-
 		</div>
 	</div>
 </body>
