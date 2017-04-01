@@ -124,7 +124,6 @@ public class PhysiclalController extends BaseController {
 	 * @return String
 	 * @description
 	 */
-	@SuppressWarnings("null")
 	@RequestMapping(value = "saveSkinFile")
 	public String saveSkinFile(SkinFile skinFile, HttpServletRequest request, HttpServletResponse response, Model model,
 			RedirectAttributes redirectAttributes) {
@@ -181,7 +180,6 @@ public class PhysiclalController extends BaseController {
 	 * @param 形体档案
 	 * @return redirect
 	 */
-	@SuppressWarnings("null")
 	@RequestMapping(value = "saveShapeFile")
 	public String saveShapeFile(ShapeFile shapeFile, HttpServletRequest request, HttpServletResponse response, Model model,
 			RedirectAttributes redirectAttributes) {
