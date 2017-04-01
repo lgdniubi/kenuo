@@ -102,7 +102,7 @@
 	            and s.redirect_user_id=#{redirectUserId}
 	          </if>
 	          <if test="mobile!=null and mobile!=''">
-	            and q.mobile=#{mobile}
+	            and (q.mobile=#{mobile} or q.nickname=#{mobile})
 	          </if>
 		    ORDER BY q.id DESC
 	</select>
@@ -261,8 +261,8 @@
 			 WHERE 
 			     1=1
 	             <if test="mobile!=null and mobile!=''">
-	             and mobile=#{mobile}
-	             or name=#{mobile}
+	             and (mobile=#{mobile}
+	             or nickname=#{mobile})
                  </if>
 	   </select>
 				
