@@ -67,7 +67,7 @@
 		      </div><br/>	  
 			  <div class="row">
 		          <div class="col-md-6">
-					未处理（处理中的投诉咨询）<font color="red">(&nbsp;${coun}&nbsp;)</font>&nbsp;&nbsp;&nbsp;&nbsp;<a href="${ctx}/crm/store/list?status=1&member=1 " class="btn-xs">更多>></a>				
+					未处理（处理中的投诉咨询）<font color="red">(&nbsp;${coun}&nbsp;)</font>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick='top.openTab("${ctx}/crm/store/list?status=1&member=1","会员投诉咨询", false)'>更多>></a>				
 					 <table id="treeTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
 						<tbody>	
 							<thead >
@@ -118,7 +118,7 @@
 				  </table> 
 		          </div>         				           			       			           
 		           <div class="col-md-6">
-		         			未处理的快速来电记录&nbsp;<font color="red">(&nbsp;${count}&nbsp;)</font>&nbsp;&nbsp;&nbsp;&nbsp;<a href="${ctx}/crm/store/list?member=2&stamp=1" class="btn-xs">更多>></a>
+		         			未处理的快速来电记录&nbsp;<font color="red">(&nbsp;${count}&nbsp;)</font>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick='top.openTab("${ctx}/crm/store/list?member=2&stamp=1","非会员投诉咨询", false)'>更多>></a>
 					<table id="treeTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
 						<thead>
 							 <tr>
@@ -165,7 +165,7 @@
 		     </div><p></p>
 		     <div class="row">
 		           <div class="col-md-6">
-							已处理（处理中的投诉咨询）<font color="red">(&nbsp;${counts}&nbsp;)</font>&nbsp;&nbsp;&nbsp;&nbsp;<a href="${ctx}/crm/store/list?status=2&member=1" class="btn-xs">更多>></a>					
+							已处理（处理中的投诉咨询）<font color="red">(&nbsp;${counts}&nbsp;)</font>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick='top.openTab("${ctx}/crm/store/list?status=2&member=1","会员投诉咨询", false)'>更多>></a>					
 						<table id="treeTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
 							<thead>
 							 <tr>
