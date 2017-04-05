@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="renderer" content="webkit">
 	<meta http-equiv="x-ua-compatible" content="IE=7,9,10" >
-    <title>可诺丹婷</title>
+    <title>登云集团信息化平台</title>
 
 	<%@ include file="/webpage/include/head.jsp"%>
 	<script src="${ctxStatic}/common/inspinia.js?v=3.2.0"></script>
