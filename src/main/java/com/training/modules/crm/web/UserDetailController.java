@@ -92,23 +92,11 @@ public class UserDetailController extends BaseController {
 			   //判断是否为手机号
 			   if (null!=keyword && keyword.trim().length()==11 && StringUtils.isNumeric(keyword)) {
 			   //用手机号无权限过滤去查	
-			   UserDetail isChoosen = userDetailService.getUserWithoutScope(userDetail);
+			   Page<UserDetail> page  = userDetailService.getUserWithoutScope(new Page<UserDetail>(request, response), userDetail);
 			   //如果查到一条
-			   if (null!=isChoosen) {
-					String officeId = isChoosen.getOfficeId();
-					if (null!=isChoosen && null!=officeId && officeId.trim().length()>0) {
-					   	User user = UserUtils.getUser();
-					   	System.out.println(user.getOfficeIds());;
-					   	System.out.println(user.getOffice().getParentId());
-					   	System.out.println(user.getOfficeList());
-					   	List<String> officeIdList = user.getOfficeIdList();
-					    //判断查询到的officeId是否在登陆用户的parentIds下面
-					   	if (officeIdList.contains(officeId)) {
-					   		model.addAttribute("userDetail", userDetail);
-							model.addAttribute("page",isChoosen);
-						}else{
-							addMessage(model, "该用户不属于当前用户管理");						}
-					}
+			   if (page.getList().size()>0) {
+				   model.addAttribute("userDetail", userDetail);
+				   model.addAttribute("page", page);
 				}
 			}else{
 				Page<UserDetail> page = userDetailService.getUserList(new Page<UserDetail>(request, response), userDetail);
@@ -258,6 +246,7 @@ public class UserDetailController extends BaseController {
 				UserOperatorLog log = new UserOperatorLog();
 				if (null!=exists && null!=exists2 ) {
 					try {
+						userDetailService.updateMtmyUsers(entity);
 						userDetailService.updateSingle(entity);
 						contactInfoService.updateSingle(info);
 						String detailChange = Comparison.compareObj(exists,entity);
@@ -272,6 +261,7 @@ public class UserDetailController extends BaseController {
 					}
 				}else if (null!=exists && null==exists2 ) {
 					try {
+						userDetailService.updateMtmyUsers(entity);
 						contactInfoService.save(info);
 						userDetailService.updateSingle(entity);
 						String detailChange = Comparison.compareObj(exists,entity);
@@ -287,6 +277,7 @@ public class UserDetailController extends BaseController {
 					try {
 						contactInfoService.updateSingle(info);
 						userDetailService.save(entity);
+						userDetailService.updateMtmyUsers(entity);
 						String infoChange = Comparison.compareObj(exists2,info);
 						log.setUserId(userId);
 						log.setOperatorType("1");
@@ -300,6 +291,7 @@ public class UserDetailController extends BaseController {
 					try {
 						contactInfoService.save(info);
 						userDetailService.save(entity);
+						userDetailService.updateMtmyUsers(entity);
 						log.setUserId(userId);
 						log.setOperatorType("1");
 						log.setContent("创建新的用户详细记录");
