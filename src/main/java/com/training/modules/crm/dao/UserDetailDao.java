@@ -37,5 +37,13 @@ public interface UserDetailDao extends CrudDao<UserDetail>{
 	 * @return UserDetail
 	 */
 	public UserDetail getUserNickname(String userId);
+	
+	/**
+	 * 用电话号码查找每天美耶用户
+	 * 不过滤权限
+	 * @param 
+	 * @return UserDetail
+	 */
+	public UserDetail getUserWithoutScope(UserDetail entity);
 
 }

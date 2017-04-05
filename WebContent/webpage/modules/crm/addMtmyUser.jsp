@@ -33,7 +33,8 @@
 					      },
 					      mobile: {
 					            required : true,
-					            minlength : 7,
+					            minlength : 11,
+					            maxlength : 11,
 					            remote: "${ctx}/ec/mtmyuser/verifymobile"
 					      },
 					      officeName:{
@@ -59,7 +60,8 @@
 					      },
 					      mobile: {
 					            required : "请输入手机号",
-					            minlength : "请输入正确手机号",
+					            minlength : "请输入11位手机号",
+					            maxlength : "请输入11位手机号",
 					            remote: "此手机号已存在"
 					       },
 					      officeName:{

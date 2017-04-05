@@ -83,9 +83,11 @@
 					<div class="row">
 						<div class="col-sm-12">
 							<div class="pull-left">
+							<shiro:hasPermission name="crm:consign:exe">
 								<table:addRow url="${ctx}/crm/consign/add?userId=${userId}"
 									title="用户寄存记录"></table:addRow>
 								<!-- 增加按钮 -->
+							</shiro:hasPermission>	
 							</div>
 						</div>
 					</div>
@@ -120,9 +122,11 @@
 										pattern="yyyy-MM-dd " /></td>
 								<td>${item.remark}</td>
 								<td>
+								<shiro:hasPermission name="crm:consign:exe">
 									<a href="#"
 									onclick="openDialog('查看寄存详情', '${ctx}/crm/consign/update?consignId=${item.consignId}&userId=${userId}','800px', '500px')"
 									class="btn btn-success btn-xs"><i class="fa fa-search-plus"></i>修改</a>
+								</shiro:hasPermission>
 								</td>
 							</tr>
 						</c:forEach>
