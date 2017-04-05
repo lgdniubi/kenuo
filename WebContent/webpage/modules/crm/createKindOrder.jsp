@@ -211,14 +211,14 @@
 			rules:{
 				mobile:{
 					digits:true,
-					minlength:7,
+					minlength:11,
 					maxlength:11,
 					isMobile : true,
 					remote: "${ctx}/ec/mtmyuser/verifyPhone"
 				},
 				mobile1:{
 					digits:true,
-					minlength:7,
+					minlength:11,
 					maxlength:11,
 					isMobile : true
 				}
@@ -226,14 +226,14 @@
 			messages:{
 				mobile:{
 					digits:"输入合法手机号",
-					minlength:"手机号码要大于等于7位",
-					maxlength:"手机号码要等于11位",
+					minlength:"请输入11位手机号",
+					maxlength:"请输入11位手机号",
 					isMobile :"请输入正确手机号",
 					remote:"手机号不存在，不可创建订单"
 				},
 				mobile1:{
 					digits:"输入合法手机号",
-					minlength:"手机号码要大于等于7位",
+					minlength:"请输入11位手机号",
 					maxlength:"手机号码要等于11位",
 					isMobile :"请输入正确手机号"
 				}

@@ -94,4 +94,12 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * 当对登云账户进行操作时，插入log日志 
 	 */
 	public void insertOfficeAccountLog(OfficeAccountLog officeAccountLog);
+	
+	/**
+	 * 查询预约状态
+	 * @param recId
+	 * @return
+	 */
+	public int findApptStatus(int recId);
+	
 }

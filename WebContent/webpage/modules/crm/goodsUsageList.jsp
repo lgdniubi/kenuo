@@ -114,7 +114,9 @@
 			   	<!-- 工具栏 -->
 					<div class="from-group">
 						<div class="pull-left col-md-1">
+							<shiro:hasPermission name="crm:goodsUsage:exe">
 								<table:addRow url="${ctx}/crm/goodsUsage/add?userId=${userId}" title="用户使用记录"></table:addRow><!-- 增加按钮 -->
+						    </shiro:hasPermission>
 						</div>
 						<div class="row">
 						     <form action="${ctx}/crm/goodsUsage/list" method="post"> 
@@ -163,8 +165,10 @@
 								<td>${item.feedback}</td>
 								<td>${item.remark}</td> 
 								<td>
- 								<a href="#" onclick="openDialog('修改使用记录', '${ctx}/crm/goodsUsage/update?usageId=${item.usageId}&userId=${userId}','800px', '500px')"
- 								   class="btn btn-success btn-xs" ><i class="fa fa-search-plus"></i>修改</a> 
+									<shiro:hasPermission name="crm:goodsUsage:exe">
+ 									<a href="#" onclick="openDialog('修改使用记录', '${ctx}/crm/goodsUsage/update?usageId=${item.usageId}&userId=${userId}','800px', '500px')"
+ 								  		 class="btn btn-success btn-xs" ><i class="fa fa-search-plus"></i>修改</a> 
+								    </shiro:hasPermission>
 								</td> 
  							</tr> 
  						</c:forEach>

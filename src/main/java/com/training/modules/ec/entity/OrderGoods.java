@@ -77,6 +77,8 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private double accountBalance;        //用户账户余额
 	private int sumAppt;                  //处理预约金前是否有预约
 	private double advancePrice;          //用于详情展示的预约金
+	private int goodsType;                 //商品区分(0: 老商品 1: 新商品)
+	private String officeId;              //组织架构ID
 	//-------------------------------------------------------------------------
 	public int getAfterSaleNum() {
 		return afterSaleNum;
@@ -421,6 +423,18 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setAdvancePrice(double advancePrice) {
 		this.advancePrice = advancePrice;
+	}
+	public String getOfficeId() {
+		return officeId;
+	}
+	public void setOfficeId(String officeId) {
+		this.officeId = officeId;
+	}
+	public int getGoodsType() {
+		return goodsType;
+	}
+	public void setGoodsType(int goodsType) {
+		this.goodsType = goodsType;
 	}
 	
 }

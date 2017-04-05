@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.authc.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,20 +34,20 @@ import com.training.modules.crm.service.UserOperatorLogService;
 import com.training.modules.crm.utils.BirthdayUtil;
 import com.training.modules.crm.utils.Comparison;
 import com.training.modules.ec.dao.MtmyUsersDao;
-import com.training.modules.ec.entity.InvitationUser;
 import com.training.modules.ec.entity.Users;
 import com.training.modules.ec.entity.UsersAccounts;
-import com.training.modules.ec.service.InvitationUserService;
 import com.training.modules.ec.service.MtmyUsersService;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.SystemService;
 import com.training.modules.sys.utils.BugLogUtils;
+import com.training.modules.sys.utils.UserUtils;
 
 /**
- * kenuo @description：
- * 
- * @author：sharp @date：2017年3月7日
+ * kenuo 
+ * @description:用户详细信息
+ * @author：sharp 
+ * @date：2017年3月7日
  */
 @Controller
 @RequestMapping(value = "${adminPath}/crm/user")
@@ -88,9 +87,27 @@ public class UserDetailController extends BaseController {
 	@RequestMapping(value = "userList")
 	public String getUserList(UserDetail userDetail, HttpServletRequest request, HttpServletResponse response,
 			Model model) {
-		Page<UserDetail> page = userDetailService.getUserList(new Page<UserDetail>(request, response), userDetail);
-		model.addAttribute("userDetail", userDetail);
-		model.addAttribute("page", page);
+		try {
+			   String keyword =userDetail.getKeyword();
+			   //判断是否为手机号
+			   if (null!=keyword && keyword.trim().length()==11 && StringUtils.isNumeric(keyword)) {
+			   //用手机号无权限过滤去查	
+			   Page<UserDetail> page  = userDetailService.getUserWithoutScope(new Page<UserDetail>(request, response), userDetail);
+			   //如果查到一条
+			   if (page.getList().size()>0) {
+				   model.addAttribute("userDetail", userDetail);
+				   model.addAttribute("page", page);
+				}
+			}else{
+				Page<UserDetail> page = userDetailService.getUserList(new Page<UserDetail>(request, response), userDetail);
+				model.addAttribute("userDetail", userDetail);
+				model.addAttribute("page", page);
+			}
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+			addMessage(model, "查询出现问题");
+			e.printStackTrace();
+		}
 		return "modules/crm/userList";
 	}
 
@@ -229,6 +246,7 @@ public class UserDetailController extends BaseController {
 				UserOperatorLog log = new UserOperatorLog();
 				if (null!=exists && null!=exists2 ) {
 					try {
+						userDetailService.updateMtmyUsers(entity);
 						userDetailService.updateSingle(entity);
 						contactInfoService.updateSingle(info);
 						String detailChange = Comparison.compareObj(exists,entity);
@@ -243,6 +261,7 @@ public class UserDetailController extends BaseController {
 					}
 				}else if (null!=exists && null==exists2 ) {
 					try {
+						userDetailService.updateMtmyUsers(entity);
 						contactInfoService.save(info);
 						userDetailService.updateSingle(entity);
 						String detailChange = Comparison.compareObj(exists,entity);
@@ -258,6 +277,7 @@ public class UserDetailController extends BaseController {
 					try {
 						contactInfoService.updateSingle(info);
 						userDetailService.save(entity);
+						userDetailService.updateMtmyUsers(entity);
 						String infoChange = Comparison.compareObj(exists2,info);
 						log.setUserId(userId);
 						log.setOperatorType("1");
@@ -271,6 +291,7 @@ public class UserDetailController extends BaseController {
 					try {
 						contactInfoService.save(info);
 						userDetailService.save(entity);
+						userDetailService.updateMtmyUsers(entity);
 						log.setUserId(userId);
 						log.setOperatorType("1");
 						log.setContent("创建新的用户详细记录");

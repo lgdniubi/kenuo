@@ -67,7 +67,7 @@
 			  	v.name AS brandType,
 			    q.nickname AS nickName,
 			    q.name AS name, 
-			    date_format(q.create_date, '%Y-%c-%d %h:%i:%s') AS creatDate,
+			   	q.create_date AS creatDate,
 			    q.record_time AS recordTime,
 			    q.q_degree AS degree,
 			    h.name AS creatBy,
@@ -112,7 +112,7 @@
 			SELECT
 			    question_degree AS questionDegree,
 			    s_result AS handResult,
-			    date_format(a.create_date, '%Y-%c-%d %h:%i:%s') AS cretDate,
+			   	a.create_date AS cretDate,
 			    b.name AS handler,
 			    b.no AS handlerID,
 			    s_content AS solveContent,
@@ -150,7 +150,7 @@
 			    q_status AS status,
 			    record_time AS recordTime,    
 			    a.mtmy_user_id AS member,
-			    date_format(a.create_date, '%Y-%c-%d %h:%i:%s') AS creatDate,
+			    a.create_date AS creatDate,
 			    b.name AS creatBy,
 			    c.question_source AS questionSource,
 			   (SELECT f.redirect_explain FROM mtmydb.fcsd_question_solve f WHERE f.question_id = a.id ORDER BY f.create_date DESC LIMIT 1)	AS changeTimes

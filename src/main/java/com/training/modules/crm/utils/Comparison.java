@@ -1,25 +1,11 @@
 package com.training.modules.crm.utils;
 
 import java.lang.reflect.Field;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.collect.Maps;
-import com.training.modules.crm.entity.UserContactInfo;
-import com.training.modules.crm.entity.UserDetail;
 
 public class Comparison {
 	

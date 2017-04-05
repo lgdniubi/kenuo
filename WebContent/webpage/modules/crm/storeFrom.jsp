@@ -174,7 +174,7 @@
 								<div style="float:left;">
 									<label ><font color="red">*</font>消费门店：</label>&nbsp;
 								</div>
-								<div style="float:left;width:300px;">
+								<div style="float:left;width:260px;">
 								    <sys:treeselect id="officeId" name="officeId" value="${complain.officeId}" labelName="officeName" labelValue="${complain.officeName}" title="部门" url="/sys/office/treeData?type=2" cssClass="form-control required" notAllowSelectParent="false" notAllowSelectRoot="false"/>
 								</div>
 							</div>					
@@ -234,7 +234,8 @@
 							<c:if test="${complain.creatDate != null }">		
 								<div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
 									<label >&nbsp;记录时间：</label>
-	                                ${complain.creatDate}
+	                                <fmt:formatDate value="${complain.creatDate}"
+										pattern="yyyy-MM-dd HH:mm:ss" /> 
 								</div>	
 				           </c:if>											        
 				        	</div>										
@@ -316,7 +317,7 @@
 									<font color="#660000"><label >处理过程：</label>
 									${complains.solveTimes}</font>
 								</div>
-								<div class="col-sm-3 col-offset-sm-1" style="text-align:left;">
+								<div class="col-sm-4 col-offset-sm-1" style="text-align:left;">
 									<label >&nbsp;紧急程度：</label>
 	                                <c:if test="${complains.questionDegree =='1'}">
 								             非常紧急
@@ -328,29 +329,30 @@
 								             普通
 									</c:if>
 								</div>	
-								<div class="col-sm-3 col-offset-sm-1" style="text-align:left;">
-									<label >&nbsp;处理过程：</label>
+								<div class="col-sm-4 col-offset-sm-1" style="text-align:left;">
+									<label >&nbsp;&nbsp;处理过程：</label>
 									<c:if test="${complains.handResult =='1'}">
 								             未处理 
 								    </c:if>
 									<c:if test="${complains.handResult =='2'}">
 								            已处理
 								    </c:if>
-								</div>
-								<div class="col-sm-3 col-offset-sm-1" style="text-align:left;">
-									<label >&nbsp;处理时间：</label>
-	                                ${complains.cretDate}
-								</div>					
+								</div>				
 						    </div>
 					        <div class="row" style="text-align:center;margin:10px">
-					        	<div class="col-sm-4 col-offset-sm-1" style="text-align:left;">
+					        	<div class="col-sm-3 col-offset-sm-1" style="text-align:left;">
 									<label >&nbsp;处&nbsp;&nbsp;理&nbsp;&nbsp;人：</label>
 	                                ${complains.handler}
 								</div>
-								<div class="col-sm-4 col-offset-sm-1" style="text-align:left;">
+								<div class="col-sm-3 col-offset-sm-1" style="text-align:left;">
 									<label >&nbsp;工&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：</label>
 	                                ${complains.handlerID}
 								</div>
+								<div class="col-sm-5 col-offset-sm-1" style="text-align:left;">
+									<label >&nbsp;处理时间：</label>
+	                                <fmt:formatDate value="${complains.cretDate}"
+										pattern="yyyy-MM-dd HH:mm:ss" />
+								</div>	
 							</div>	
 							<div class="row" style="text-align:center;margin:10px">
 					        	<div class="col-sm-12 col-offset-sm-1" style="text-align:left;">
