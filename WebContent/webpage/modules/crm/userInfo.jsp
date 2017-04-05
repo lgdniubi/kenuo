@@ -323,7 +323,7 @@
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
 									<label><font color="red"> </font>客户等级:</label> <input
-										value="${detail.userLevel}" maxlength="50"
+										value="${userDetail.userLevel}" maxlength="50"
 										style="width: 150px;" class="form-control " readonly />
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
@@ -430,14 +430,14 @@
 								<div class="col-sm-2 col-offset-sm-1">
 									<label><font color="red"></font>身&nbsp;&nbsp;高:&nbsp;&nbsp;&nbsp;</label>
 									<input name="height" value="${detail.height}" maxlength="50"
-									type="number"	style="width: 150px;" class="form-control " />
+									type="number" min="0.0" step="0.01" style="width: 150px;" class="form-control " />
 								</div>
 							</div>
 							<div class="row" style="text-align: center; margin: 10px">
 								<div class="col-sm-2 col-offset-sm-1">
 									<label><font color="red"> </font>体&nbsp;&nbsp;重:&nbsp;&nbsp;&nbsp;&nbsp;</label>
 									<input name="weight" value="${detail.weight}" maxlength="50"
-									type="number"	style="width: 150px;" class="form-control " /><br />
+									type="number" min="0.0" step="0.01" style="width: 150px;" class="form-control " /><br />
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
 									<label style="float: left"><font
@@ -480,7 +480,7 @@
 									<shiro:hasPermission name="crm:userSecret:view">
 									<label style="float: left; margin-left: 9px"><font
 										color="red"> </font>身份证号:</label><input value="${detail.idCard}"
-										name="idCard" style="width: 413px; float: left" type="number"
+										name="idCard" style="width: 413px; float: left" type="number" min="0.0" step="1"
 										class="form-control " />
 									</shiro:hasPermission>
 								</div>
@@ -565,7 +565,7 @@
 								<div class="col-md-2" style="margin-left: -20px">
 									<label><font color="red"> </font>QQ号码:</label> <input name="qq"
 										value="${info.qq}" maxlength="50" style="width: 150px;"
-									type="number"	class="form-control " />
+									type="number" min="0.0" step="1" class="form-control " />
 								</div>
 								<div class="col-md-2" style="margin-left: -20px">
 									<label><font color="red"> </font>微信号码:</label> <input
