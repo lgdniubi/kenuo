@@ -7,7 +7,9 @@
 		    user_id AS userId,
 			nickname,
 			mobile,
-			`name`
+			`name`,
+			office_id AS officeId,
+			beauty_id AS beautyId
 		FROM
 			mtmydb.mtmy_users
 		WHERE
@@ -221,6 +223,44 @@
 			<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
 			)
 		</if>
+		GROUP BY
+			mu.user_id,
+			muyl. NAME,
+			muyl.`level`
+		ORDER BY
+			mu.reg_time DESC
+	</select>
+	
+	<select id="getUserWithoutScope" resultType="UserDetail">
+		SELECT
+			mu.user_id AS userId,
+			mu.`name`,
+			mu.sex,
+			mu.mobile,
+			mu.nickname,
+			mu.level_value AS 'levelvalue',
+			mu.reg_time regTime,
+			mua.account_arrearage accountArrearage,
+			MIN(mo.add_time) firstDate,
+			MAX(mo.add_time) lastDate,
+			muyl.`level` AS 'level',
+			tsu. NAME AS 'beautyName',
+			tso. NAME AS 'shopName',
+			tso2. NAME AS 'bazaarName',
+			tso.id AS officeId,
+			tsu.id AS beautyId,
+			tso2.id AS bazaarId
+		FROM
+			mtmydb.mtmy_users mu
+		LEFT JOIN mtmydb.mtmy_user_accounts mua ON
+			mu.user_id = mua.user_id
+		LEFT JOIN mtmydb.mtmy_orders mo ON mu.user_id = mo.user_id
+		LEFT JOIN mtmydb.mtmy_user_yz_level muyl ON mu.level_value <![CDATA[>=]]>muyl.min_val
+				  AND mu.level_value <![CDATA[<=]]>muyl.max_val
+		LEFT JOIN trains.sys_user tsu ON mu.beautician_id = tsu.id
+		LEFT JOIN trains.sys_office tso ON mu.office_id = tso.id
+		LEFT JOIN trains.sys_office tso2 ON tso.parent_id = tso2.id
+		WHERE mu.mobile = #{keyword}
 		GROUP BY
 			mu.user_id,
 			muyl. NAME,

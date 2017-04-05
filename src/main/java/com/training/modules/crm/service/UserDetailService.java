@@ -51,6 +51,14 @@ public class UserDetailService extends CrudService<UserDetailDao,UserDetail> {
 	public UserDetail getUserNickname(String userId){
 		return dao.getUserNickname(userId);
 	}
-
-
+	
+	/**
+	 * 不过滤权限
+	 * @param 
+	 * @return UserDetail
+	 */
+	public UserDetail getUserWithoutScope(UserDetail dto){
+		//不生成数据权限过滤条件
+		return  dao.getUserWithoutScope(dto);
+	}
 }

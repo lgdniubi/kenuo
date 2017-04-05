@@ -232,7 +232,7 @@
 									<form:input neme="keyword" path="keyword"
 										value="${userDetail.keyword}" htmlEscape="false"
 										maxlength="50" class=" form-control input-sm"
-										placeholder ="姓名、手机号码、昵称、美容师等" style="width:250px" />
+										placeholder ="手机号码或者昵称" style="width:250px" />
 									<div class="pull-right">
 									<button class="btn btn-primary btn-rounded btn-outline btn-sm "
 									onclick="newSearch()"><i class="fa fa-search"></i>查询</button>
