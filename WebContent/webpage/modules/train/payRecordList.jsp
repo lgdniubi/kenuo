@@ -7,41 +7,48 @@
 <meta name="decorator" content="default" />
 <link rel="stylesheet" type="text/css" href="${ctxStatic}/common/training.css">
 <script type="text/javascript">
-$(document).ready(function() {
-	
-	var start = {
-		    elem: '#begtime',
-		    format: 'YYYY-MM-DD',
-		    event: 'focus',
-		    max: $("#endtime").val(),   //最大日期
-		    istime: false,				//是否显示时间
-		    isclear: true,				//是否显示清除
-		    istoday: true,				//是否显示今天
-		    issure: true,				//是否显示确定
-		    festival: true,				//是否显示节日
-		    choose: function(datas){
-		         end.min = datas; 		//开始日选好后，重置结束日的最小日期
-		         end.start = datas 		//将结束日的初始值设定为开始日
-		    }
-		};
-	var end = {
-		    elem: '#endtime',
-		    format: 'YYYY-MM-DD',
-		    event: 'focus',
-		    min: $("#begtime").val(),
-		    istime: false,
-		    isclear: true,
-		    istoday: true,
-		    issure: true,
-		    festival: true,
-		    choose: function(datas){
-		        start.max = datas; //结束日选好后，重置开始日的最大日期
-		    }
-		};
-		laydate(start);
-		laydate(end);
-   
-});
+	function page(n, s) {
+		$("#pageNo").val(n);
+		$("#pageSize").val(s);
+		$("#searchForm").submit();
+		return false;
+	}
+
+	$(document).ready(function() {
+		
+		var start = {
+			    elem: '#begtime',
+			    format: 'YYYY-MM-DD',
+			    event: 'focus',
+			    max: $("#endtime").val(),   //最大日期
+			    istime: false,				//是否显示时间
+			    isclear: true,				//是否显示清除
+			    istoday: true,				//是否显示今天
+			    issure: true,				//是否显示确定
+			    festival: true,				//是否显示节日
+			    choose: function(datas){
+			         end.min = datas; 		//开始日选好后，重置结束日的最小日期
+			         end.start = datas 		//将结束日的初始值设定为开始日
+			    }
+			};
+		var end = {
+			    elem: '#endtime',
+			    format: 'YYYY-MM-DD',
+			    event: 'focus',
+			    min: $("#begtime").val(),
+			    istime: false,
+			    isclear: true,
+			    istoday: true,
+			    issure: true,
+			    festival: true,
+			    choose: function(datas){
+			        start.max = datas; //结束日选好后，重置开始日的最大日期
+			    }
+			};
+			laydate(start);
+			laydate(end);
+	   
+	});
 
 </script>
 </head>
