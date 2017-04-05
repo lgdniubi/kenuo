@@ -234,7 +234,8 @@
 							<c:if test="${complain.creatDate != null }">		
 								<div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
 									<label >&nbsp;记录时间：</label>
-	                                ${complain.creatDate}
+	                                <fmt:formatDate value="${complain.creatDate}"
+										pattern="yyyy-MM-dd HH:mm:ss" /> 
 								</div>	
 				           </c:if>											        
 				        	</div>										
@@ -349,7 +350,8 @@
 								</div>
 								<div class="col-sm-5 col-offset-sm-1" style="text-align:left;">
 									<label >&nbsp;处理时间：</label>
-	                                ${complains.cretDate}
+	                                <fmt:formatDate value="${complains.cretDate}"
+										pattern="yyyy-MM-dd HH:mm:ss" />
 								</div>	
 							</div>	
 							<div class="row" style="text-align:center;margin:10px">

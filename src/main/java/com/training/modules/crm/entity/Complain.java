@@ -1,6 +1,8 @@
 package com.training.modules.crm.entity;
 
 
+import java.util.Date;
+
 import com.training.common.persistence.DataEntity;
 
 
@@ -16,7 +18,7 @@ public class Complain extends DataEntity<Complain>{
 	private String nickName;                //客户昵称
 	private String name;					//客户姓名
 	private Integer member;					//是否会员
-	private String creatDate;				//记录日期
+	private Date creatDate;				    //记录日期
 	private String recordTime;				//花费时间
 	private Integer degree;					//紧急程度
 	private String creatBy;					//记录人ID
@@ -32,7 +34,7 @@ public class Complain extends DataEntity<Complain>{
 	private Integer questionSource;			//问题来源
 	private Integer questionDegree;			//紧急程度
 	private Integer handResult; 			//处理结果
-	private String cretDate;				//处理时间
+	private Date cretDate;				    //处理时间
 	private Integer solveTimes;				//处理次数
 	private String solveContent;			//处理方案
 	private String redirectUserId;			//转接对象
@@ -126,10 +128,10 @@ public class Complain extends DataEntity<Complain>{
 	public void setMember(Integer member) {
 		this.member = member;
 	}
-	public String getCreatDate() {
+	public Date getCreatDate() {
 		return creatDate;
 	}
-	public void setCreatDate(String creatDate) {
+	public void setCreatDate(Date creatDate) {
 		this.creatDate = creatDate;
 	}
 	public String getRecordTime() {
@@ -205,10 +207,10 @@ public class Complain extends DataEntity<Complain>{
 		this.handResult = handResult;
 	}
 
-	public String getCretDate() {
+	public Date getCretDate() {
 		return cretDate;
 	}
-	public void setCretDate(String cretDate) {
+	public void setCretDate(Date cretDate) {
 		this.cretDate = cretDate;
 	}
 	public String getRedirectUserId() {

@@ -57,8 +57,20 @@ public class UserDetailService extends CrudService<UserDetailDao,UserDetail> {
 	 * @param 
 	 * @return UserDetail
 	 */
-	public UserDetail getUserWithoutScope(UserDetail dto){
+	public Page<UserDetail> getUserWithoutScope(Page<UserDetail> page,UserDetail dto){
 		//不生成数据权限过滤条件
-		return  dao.getUserWithoutScope(dto);
+		 dto.setPage(page);
+		 page.setList(dao.getUserWithoutScope(dto));
+		 return page;
+	}
+	
+	/**
+	 * 绑定店铺
+	 * @param 
+	 * @return int
+	 */
+	public int updateMtmyUsers(UserDetail entity){
+		
+		 return dao.updateMtmyUsers(entity);
 	}
 }

@@ -860,7 +860,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					OrderGoods _orderGoods = orderGoodsDetailsService.getOrderGoodsDetailListByMid(orderGoods.getRecid());
 					if(_orderGoods!=null){
 						//存在预约记录且预约状态为已完成 已评价 爽约
-						if(_orderGoods.getSumAppt() != 0){
+						if(_orderGoods.getSumAppt() != 0 && _orderGoods.getAdvanceFlag() == 1){
 							if(orderGoodsDetailsService.findApptStatus(orderGoods.getRecid()) != 0){
 								_orderGoods.setSumAppt(1);
 							}else{

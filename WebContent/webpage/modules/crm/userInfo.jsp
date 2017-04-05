@@ -10,6 +10,14 @@
 <link href="${ctxStatic}/layer-v2.0/layer/skin/layui.css"
 	type="text/css" rel="stylesheet">
 <script type="text/javascript">
+	$(document).ready(function() {
+		var officeId = $("#officeId").val(); 
+		var beautyId =$("#beautyId").val();
+		if(officeId !=''){
+		    $("#officeButton").attr("disabled","disabled");//添加disabled属性
+		    $("#beautyButton").attr("disabled","disabled");         
+		}
+	})
 	function save() {
 		//loading("正在提交，请稍候...");
 		if($("#fieldset").attr("disabled")) {
@@ -154,6 +162,12 @@
 																	nodes = tree.getSelectedNodes();
 																}
 																for (var i = 0; i < nodes.length; i++) {//
+																	if (nodes[i].isParent) {
+																		//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+																		//layer.msg('有表情地提示');
+																		top.layer.msg("不能选择父节点（"+ nodes[i].name+ "）请重新选择。",{icon : 0});
+																		return false;
+																	}//
 																	ids.push(nodes[i].id);
 																	names.push(nodes[i].name);//
 																	break; // 如果为非复选框选择，则返回第一个选择  
@@ -305,7 +319,7 @@
 								<div class="col-sm-2 col-offset-sm-1">
 									<label><font color="red"> </font>客户年龄:</label> <input
 										value="${detail.age}" maxlength="50" style="width: 150px;"
-										class="form-control " />
+										class="form-control " readonly="readonly"/>
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
 									<label><font color="red"> </font>客户等级:</label> <input
@@ -345,10 +359,10 @@
 									<label><font color="red"> </font>客户类型:</label> <select
 										id="isMember" name="isMember" style="width: 150px;"
 										class="form-control">
-										<option value="0"
-											<c:if test="${detail.isMember=='0'}">selected="true"</c:if>>非会员</option>
 										<option value="1"
 											<c:if test="${detail.isMember=='1'}">selected="true"</c:if>>会员</option>
+										<option value="0"
+											<c:if test="${detail.isMember=='0'}">selected="true"</c:if>>非会员</option>
 									</select>
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
@@ -404,7 +418,7 @@
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
 									<label><font color="red"> </font>例假日期:</label> <input
-										id="menstrualDate" name="menstrualDate	" style="width: 150px;"
+										id="menstrualDate" name="menstrualDate" style="width: 150px;"
 										value="<fmt:formatDate value="${detail.menstrualDate}" pattern="yyyy-MM-dd"/>"
 										maxlength="50" class="form-control" />
 								</div>
@@ -429,11 +443,11 @@
 									<label style="float: left"><font
 										color="red"> </font>所属店铺:</label> <input id="officeId"
 										class="form-control" name="officeId"
-										value="${detail.officeId}" type="hidden">
+										value="${userDetail.officeId}" type="hidden">
 									<div class="input-group"
 										style="width: 148px; float: right; margin-right: 10px">
 										<input id="officeName" class=" form-control" name="officeName"
-											readonly="readonly" value="${detail.officeName}" type="text">
+											readonly="readonly" value="${userDetail.officeName}" type="text">
 										<span class="input-group-btn">
 											<button id="officeButton" class="btn btn-primary "
 												type="button">
@@ -445,11 +459,11 @@
 								<div class="col-sm-2 col-offset-sm-1">
 									<label style="margin-left: -10px; float: left"><font
 										color="red"></font>所属美容师:</label> <input id="beautyId" name="beautyId"
-										type="hidden" value="${detail.beautyId}">
+										type="hidden" value="${userDetail.beautyId}">
 									<div class="input-group"
 										style="float: right; width: 148px; margin-right: 10px">
 										<input id="beautyName" name="beautyName" readonly="readonly"
-											type="text" class="form-control" value="${detail.beautyName}">
+											type="text" class="form-control" value="${userDetail.beautyName}">
 										<span class="input-group-btn">
 											<button type="button" id="beautyButton"
 												class="btn btn-primary  ">
@@ -457,7 +471,7 @@
 											</button>
 										</span>
 									</div>
-									<%-- <sys:treeselect id="beautyId" name="beautyId" value="${detail.beautyId}" labelName="beautyName" labelValue="${detail.beautyName}"  --%>
+<%-- 									<sys:treeselect id="beautyId" name="beautyId" value="${detail.beautyId}" labelName="beautyName" labelValue="${detail.beautyName}"  --%>
 									<%-- 							     title="美容师" url="/sys/office/treeData?type=3" allowClear="true" notAllowSelectRoot="true"/> --%>
 								</div>
 							</div>
