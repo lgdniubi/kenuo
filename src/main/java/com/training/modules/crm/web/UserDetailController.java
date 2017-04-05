@@ -41,7 +41,6 @@ import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.SystemService;
 import com.training.modules.sys.utils.BugLogUtils;
-import com.training.modules.sys.utils.UserUtils;
 
 /**
  * kenuo 
