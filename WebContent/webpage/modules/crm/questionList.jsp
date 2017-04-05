@@ -122,7 +122,8 @@
 								    <c:if test="${complain.member== '1'}">会员</c:if>
 								    <c:if test="${complain.member== '2'}">非会员</c:if>
 					            </td>	
-								<td>${complain.creatDate}</td>
+								<td><fmt:formatDate value="${complain.creatDate}"
+										pattern="yyyy-MM-dd HH:mm:ss" /> </td>
                                    <td><c:if test="${complain.recordTime== '1'}">0-5分钟</c:if>
 								    <c:if test="${complain.recordTime== '2'}">6-15分钟</c:if>
 									<c:if test="${complain.recordTime== '3'}">15-30分钟</c:if>
