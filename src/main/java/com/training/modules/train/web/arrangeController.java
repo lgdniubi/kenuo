@@ -549,7 +549,7 @@ public class arrangeController extends BaseController{
 		str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;\">"+name+"</div></th>");
 		for (int i = 1; i <= map.get("maxDay"); i++) {
 			if(i == map.get("day")){
-				str.append("<th style=\"text-align:center;background:red;\"><div style=\"width: 100px;\">"+map.get("month")+"/"+i+"</div></th>");
+				str.append("<th style=\"text-align:center;background:#17b593;\"><div style=\"width: 100px;\">"+map.get("month")+"/"+i+"</div></th>");
 			}else {
 				str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;\">"+map.get("month")+"/"+i+"<div></th>");
 			}
