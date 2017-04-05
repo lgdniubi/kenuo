@@ -178,7 +178,7 @@
 			#{singleNormPrice},
 			#{servicetimes},
 			SYSDATE(),
-			#{expiringDate},
+			(SELECT expiring_date FROM mtmydb.mtmy_spec_goods_price WHERE goods_id = #{goodsid} AND spec_key = #{speckey} AND del_flag = 0),
 			#{isreal},
 			#{servicemin}
 		)
