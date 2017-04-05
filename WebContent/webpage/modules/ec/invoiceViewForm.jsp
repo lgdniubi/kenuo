@@ -1,49 +1,51 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%@ include file="/webpage/include/taglib.jsp"%>
+
 <html>
 <head>
 <title>创建发票</title>
 <meta name="decorator" content="default" />
-<link rel="stylesheet" href="${ctxStatic}/train/css/bootstrap.min.css">
-<link rel="stylesheet" href="${ctxStatic}/train/css/exam.css">
+<!-- 内容上传 引用-->
 <style type="text/css">
-	#one {
-		width: 200px;
-		height: 180px;
-		float: left
-	}
-	#two {
-		width: 50px;
-		height: 180px;
-		float: left
-	}
-	#three {
-		width: 200px;
-		height: 180px;
-		float: left
-	}
-	.fabtn {
-		width: 50px;
-		height: 30px;
-		margin-top: 10px;
-		cursor: pointer;
-	}
-	#ichecks{display: inline-block;width: 17px;height: 17px;background: rgb(255, 255, 255);vertical-align: middle;margin-top: -1px;margin-right: 2px;}
-	.comment_areas{padding:10px;background:none;border-bottom:1px solid #c6c6c6;}
-	.comment_areas{margin-bottom:10px;}
-	.comment_areas .user_photo {width:70px;height:70px;}
-	.comment_areas .user_photo img{width:100%;height:100%;border-radius:0;}
-	.comment_areas .usersname,.comment_areas p{height:35px;line-height:35px;}
+#one {
+	width: 200px;
+	height: 180px;
+	float: left
+}
+
+#two {
+	width: 50px;
+	height: 180px;
+	float: left
+}
+
+#three {
+	width: 200px;
+	height: 180px;
+	float: left
+}
+
+.fabtn {
+	width: 50px;
+	height: 30px;
+	margin-top: 10px;
+	cursor: pointer;
+}
 </style>
+
 <script type="text/javascript">
 	var validateForm;
+	
 	function doSubmit() {//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		if (validateForm.form()) {
+	
 			$("#inputForm").submit();
 			return true;
 		}
+
 		return false;
 	}
+	
 	function selectUser(obj){
 		var mobile = $(obj).val();
 		if(mobile == ""){
@@ -64,6 +66,9 @@
 			}
 		});
 	}
+	
+	
+	
 	function selectType(o){
 		var type=$("#invoiceType").val();
 		if(type==1){
@@ -77,6 +82,7 @@
 			$("#headContent").val("");
 		}
 	}
+	
 	function init() {
 		var type="${orderInvoice.invoiceType}";
 		if(type==1){
@@ -86,8 +92,11 @@
 		}else if(type==3){
 			$("#compay").show();
 		}		
+		
 	}
+	
 	$(document).ready(function() {
+		
 //		$("#orderIdButton, #orderIdName").click(function(){	    增加  , #orderIdName  文本框有点击事件
 		$("#orderIdButton").click(function(){
 			// 是否限制选择，如果限制，设置为disabled
@@ -196,29 +205,17 @@
 <body>
 	<div class="wrapper wrapper-content">
 		<div class="ibox">
+			<div class="ibox-title">
+				<h5>编辑发票</h5>
+			</div>
 			<div class="ibox-content">
 				<div class="clearfix">
 					<form:form id="inputForm" modelAttribute="orderInvoice" action="${ctx}/ec/invoice/updateSave" method="post" class="form-horizontal">
-						<label>已选订单：</label>
-						<div>
-							<c:forEach items="${Orders }" var="Orders">
-								<c:if test= "${not empty Orders.orderGoodList }">
-	                   	  			<p style="font-weight:bold;">订单号：${Orders.orderid }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;总计:${Orders.goodsprice }</p>
-									<div class="comment_areas clearfix">
-		                   	  			<c:forEach items="${Orders.orderGoodList }" var="orderGoodsList">
-		                   	  				<div style="overflow:hidden;margin-bottom:5px;">
-			                   	  				<div class="user_photo"><img src="${orderGoodsList.originalimg }" alt="" class="img-responsive"></div>
-			                   	  				<div class="comments_con">
-				                   	  				<span class="usersname">${orderGoodsList.goodsname }</span><span class="times">${orderGoodsList.recid }</span>
-				                   	  				<p>￥${orderGoodsList.unitPrice }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;×${orderGoodsList.openNum }</p>
-			                   	  				</div>
-		                   	  				</div>
-		                   	  			</c:forEach>
-	                   	  			</div>
-                   	  			</c:if>
-							</c:forEach>
-	                    </div>
-						
+						<label>订单编号：</label>
+						<c:forEach items="${relevancy}" var="relevancy">
+							<p></p>
+							 <label>${relevancy.orderId}</label>
+						</c:forEach>
 						<hr>
 						<form:hidden path="id"/>
 						<label><font color="red">*</font>发票状态：</label>

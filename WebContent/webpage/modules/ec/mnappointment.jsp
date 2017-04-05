@@ -49,6 +49,7 @@
 									</c:choose>
 								</c:forEach>
 							</select>
+							<p></p>
 				 时间范围：<input id="beginDate" name="beginDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" 
 								value="<fmt:formatDate value="${reservation.beginDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endDate\')}'})" readonly="readonly"/>
 							<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>

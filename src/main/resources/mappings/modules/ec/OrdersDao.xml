@@ -99,7 +99,22 @@
 	
 	<!-- 查询用户可以开发票的订单 -->
 	<select id="selectByOrderId" resultType="Orders">
-		SELECT * FROM (
+		SELECT 
+				a.order_id,
+				a.user_id,
+				a.order_status,
+				a.order_amount,
+				a.total_amount,
+				0 as "isFre"
+		FROM mtmydb.mtmy_orders a
+		WHERE
+				 a.user_id=1019205
+				AND a.order_status>0
+				and a.is_invoice=0
+				AND a.parent_id=0
+				AND a.channel_flag !='bm'
+				AND a.is_real = 0
+		<!-- SELECT * FROM (
 			SELECT	
 					a.order_id,
 					a.user_id,
@@ -135,8 +150,7 @@
 					AND a.parent_id=0
 					AND a.channel_flag !='bm'
 		) o
-		WHERE o.isFre=0
-
+		WHERE o.isFre=0 -->
 	</select>
 	<select id="selectBydoubl" resultType="Orders">
 		SELECT

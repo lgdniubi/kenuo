@@ -3,7 +3,6 @@
 <mapper namespace="com.training.modules.ec.dao.OrderInvoiceDao">
 
 	<sql id="actionColunm">
-		DISTINCT
 		a.id,
 		a.user_id,
 		b.mobile,
@@ -46,7 +45,6 @@
 		 <include refid="actionColunm"></include>
 		FROM mtmydb.mtmy_order_invoice a
 		LEFT JOIN mtmydb.mtmy_users b ON a.user_id=b.user_id
-		LEFT JOIN (SELECT invoice_id,order_id FROM mtmydb.mtmy_order_invoice_relevancy GROUP BY invoice_id,order_id) AS c ON a.id = c.invoice_id
 		WHERE 1=1 and a.del_flag=0
 		<if test="userName!= null and userName!=''">
 			AND b.nickname like
@@ -187,16 +185,12 @@
 	<insert id="insertMaping">
 		INSERT INTO mtmydb.mtmy_order_invoice_relevancy(
 			invoice_id,
-			order_id,
-			mapping_id,
-			open_num	
+			order_id	
 		)
 		value
 		(
 			#{invoiceId},
-			#{orderId},
-			#{mappingId},
-			#{openNum}
+			#{orderId}
 		)
 	
 	</insert>
@@ -225,82 +219,16 @@
 		WHERE a.del_flag = 0
 	</select>
 	<!-- 查询管理订单id -->
-	<select id="findInvoiceRelevancy" resultType="Orders">
+	<select id="findInvoiceRelevancy" resultType="OrderInvoiceRelevancy">
 		SELECT
-			DISTINCT
+			a.id,
+			a.invoice_id,
 			a.order_id
 		FROM
 			mtmydb.mtmy_order_invoice_relevancy a
+		
 		WHERE
 			a.invoice_id = #{invoiceId}
 	</select>
-	<!-- 2017年3月21日14:12:14 -->
-	<!-- 查询所有已完成无欠款的订单 -->
-	<select id="findOrderList" resultType="Orders">
-		SELECT 
-			a.order_id AS orderid,
-			IFNULL(ogd.order_arrearage,0) AS orderArrearage,
-			(CASE WHEN DATE_FORMAT(IFNULL(a.invoice_overtime,SYSDATE()),'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(SYSDATE(),'%Y-%m-%d') THEN '1' ELSE '2' END) AS isInvoice
-		FROM mtmydb.mtmy_orders a
-		LEFT JOIN (SELECT SUM(order_arrearage) AS order_arrearage,order_id FROM mtmydb.mtmy_order_goods_details GROUP BY order_id) ogd ON a.order_id = ogd.order_id
-		WHERE
-			a.user_id = #{userId} 
-			AND a.order_status = 4
-			AND a.is_neworder = 0
-			HAVING orderarrearage = 0
-			ORDER BY a.order_id DESC
-	</select>
-	<!-- 查询所有已开发票订单 -->
-	<select id="findOpenOrderList" resultType="Orders">
-		SELECT
-			DISTINCT a.order_id AS orderid
-		FROM
-			mtmydb.mtmy_order_invoice_relevancy a
-			LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.mapping_id = b.rec_id
-			LEFT JOIN mtmydb.mtmy_goods c ON b.goods_id = c.goods_id
-		WHERE
-			b.user_id = #{userId}
-		GROUP BY
-			a.invoice_id,a.order_id DESC
-	</select>
-	<!-- 查询所有已开发票的订单详情 -->
-	<select id="findOpenOrderListDetails" resultType="OrderGoods">
-		SELECT
-			a.order_id AS orderid,
-			a.mapping_id AS recid,
-			b.original_img AS originalimg,
-			b.goods_name AS goodsname,
-			b.goods_price AS goodsprice,
-			SUM(a.open_num) AS openNum,
-			TRUNCATE((SELECT SUM(total_amount) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = b.rec_id)/b.goods_num,2) AS unitPrice
-		FROM
-			mtmydb.mtmy_order_invoice_relevancy a
-			LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.mapping_id = b.rec_id
-		WHERE
-			a.order_id = #{orderId}
-		GROUP BY
-			a.order_id,
-			a.mapping_id
-	</select>
-	<!-- 查询所有已完成无欠款的订单详情 -->
-	<select id="findOrderListDetails" resultType="OrderGoods">
-		SELECT
-			a.order_id AS orderid,
-			a.rec_id AS recid,
-			a.original_img AS originalimg,
-			a.goods_name AS goodsname,
-			a.goods_price AS goodsprice,
-			<!-- a.goods_num AS goodsnum,
-			IFNULL((SELECT SUM(open_num) FROM mtmydb.mtmy_order_invoice_relevancy WHERE mapping_id = a.rec_id),0) AS openNum,
-			IFNULL((SELECT SUM(return_num) FROM mtmydb.mtmy_returned_goods WHERE goods_mapping_id = a.rec_id AND return_status IN (11,12,13,14,15,16)),0) AS afterSaleNum, -->
-			(CASE WHEN (a.goods_num - IFNULL((SELECT SUM(open_num) FROM mtmydb.mtmy_order_invoice_relevancy WHERE mapping_id = a.rec_id),0)) >= 
-						(a.goods_num - IFNULL((SELECT SUM(return_num) FROM mtmydb.mtmy_returned_goods WHERE goods_mapping_id = a.rec_id AND return_status IN (11,12,13,14,15,16)),0)) 
-			THEN (a.goods_num - IFNULL((SELECT SUM(return_num) FROM mtmydb.mtmy_returned_goods WHERE goods_mapping_id = a.rec_id AND return_status IN (11,12,13,14,15,16)),0))
- 			ELSE (a.goods_num - IFNULL((SELECT SUM(open_num) FROM mtmydb.mtmy_order_invoice_relevancy WHERE mapping_id = a.rec_id),0))	 END) AS openNum,
-			TRUNCATE((SELECT SUM(total_amount) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = a.rec_id)/a.goods_num,2) AS unitPrice
-		FROM
-			mtmydb.mtmy_order_goods_mapping a
-		WHERE
-			order_id = #{orderId} HAVING openNum > 0
-	</select>
+	
 </mapper>

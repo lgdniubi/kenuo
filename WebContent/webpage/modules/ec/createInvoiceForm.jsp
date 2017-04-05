@@ -38,16 +38,14 @@
 	
 	function doSubmit() {//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		if (validateForm.form()) {
-			if($("#orderId").val().length > 0){
-				$("#inputForm").submit();
-				return true;
-			}else{
-				top.layer.alert('未选择可开发票订单！', {icon: 0, title:'提醒'}); 
-				return false;
-			}
+	
+			$("#inputForm").submit();
+			return true;
 		}
+
 		return false;
 	}
+	
 	function selectUser(obj){
 		var mobile = $(obj).val();
 		if(mobile == ""){
@@ -69,6 +67,9 @@
 			}
 		});
 	}
+	
+	
+	
 	function selectType(o){
 		var type=$("#invoiceType").val();
 		if(type==1){
@@ -82,7 +83,65 @@
 			$("#headContent").val("");
 		}
 	}
-	$(document).ready(function() {		
+	
+	
+	$(document).ready(function() {
+		
+//		$("#orderIdButton, #orderIdName").click(function(){	    增加  , #orderIdName  文本框有点击事件
+		$("#orderIdButton").click(function(){
+			// 是否限制选择，如果限制，设置为disabled
+			if ($("#orderIdButton").hasClass("disabled")){
+				return true;
+			}
+			var mobile = $("#mobile").val();
+			var userId = $("#userId").val();
+			if(mobile == ""){
+				top.layer.alert('手机号码不能为空！', {icon: 0, title:'提醒'}); 
+				$("#userId").val("");
+				return;
+			}
+			// 正常打开	
+			top.layer.open({
+			    type: 2, 
+			    area: ['450px', '420px'],
+			    title:"选择选择订单",
+			    ajaxData:{selectIds: $("#orderIdId").val()},
+			    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/ec/invoice/getOrderGoods?userId="+userId)+"&module=&checked=true&extId=&isAll=" ,
+			    btn: ['确定', '关闭']
+	    	       ,yes: function(index, layero){ //或者使用btn1
+							var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+							var ids = [], names = [], nodes = [];
+							if ("true" == "true"){
+								nodes = tree.getCheckedNodes(true);
+							}else{
+								nodes = tree.getSelectedNodes();
+							}
+							for(var i=0; i<nodes.length; i++) {//
+								if (nodes[i].isParent){
+									continue; // 如果为复选框选择，则过滤掉父节点
+								}//
+								if (nodes[i].isParent){
+									//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+									//layer.msg('有表情地提示');
+									top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+									return false;
+								}//
+								ids.push(nodes[i].id);
+								names.push(nodes[i].name);//
+							}
+							$("#orderIdId").val(ids.join(",").replace(/u_/ig,""));
+							$("#orderIdName").val(names.join(","));
+							$("#orderIdName").focus();
+
+							top.layer.close(index);
+					    	       },
+	    	cancel: function(index){ //或者使用btn2
+	    	           //按钮【按钮二】的回调
+	    	       }
+			}); 
+		
+		});
+		
 		// 手机号码验证
 		jQuery.validator.addMethod("isMobile", function(value, element) {
 		    var length = value.length;
@@ -124,66 +183,49 @@
 			}
 		  }
 		});
+
 		//在ready函数中预先调用一次远程校验函数，是一个无奈的回避案。(刘高峰）
 		//否则打开修改对话框，不做任何更改直接submit,这时再触发远程校验，耗时较长，
 		//submit函数在等待远程校验结果然后再提交，而layer对话框不会阻塞会直接关闭同时会销毁表单，因此submit没有提交就被销毁了导致提交表单失败。
 		//$("#inputForm").validate().element($("#reason"));
+
+		
 	});
-	// 选择可开发票订单
-	function findOrderInvoiceList(){
-		var userId = $("#userId").val();
-		if(userId.length > 0){
-			top.layer.open({
-			    type: 2, 
-			    area: ['800px', '650px'],
-			    title:"选择订单",
-			    content: "${ctx}/ec/invoice/findOrderInvoiceList?userId="+userId,
-			    btn: ['确定', '关闭'],
-			    yes: function(index, layero){
-			    	var obj = layero.find("iframe")[0].contentWindow;
-			    	if(obj.document.querySelectorAll("input[type=checkbox]:checked").length > 0){
-			    		$("#invoice").empty();
-			    		$("#orderId").val("");
-			    		var s = "";
-						$(obj.document.querySelectorAll("input[type=checkbox]:checked")).each(function(){ 
-							s = s + $(this).val() + ",";
-						}); 
-						s = s.substring(0,s.length-1);	// 截取最后一位 ， 
-						$("#invoice").append(s);
-			    		$("#orderId").val(s);
-						top.layer.close(index);
-			    	}else{
-			    		top.layer.alert('未选择可开发票订单！', {icon: 0, title:'提醒'}); 
-			    	}
-			    }
-			})
-		}else{
-			top.layer.alert('请核实用户信息！', {icon: 0, title:'提醒'}); 
-		}
-	}
+
 </script>
 </head>
 <body>
 	<div class="wrapper wrapper-content">
 		<div class="ibox">
+			<div class="ibox-title">
+				<h5>创建发票</h5>
+			</div>
 			<div class="ibox-content">
 				<div class="clearfix">
 					<form:form id="inputForm" modelAttribute="orderInvoice" action="${ctx}/ec/invoice/save" method="post" class="form-horizontal">
 						<label><font color="red">*</font>手机号码：</label>
 						<form:input path="mobile" htmlEscape="false" maxlength="11" class="form-control required" style="width:200px" onchange="selectUser(this)"/>&nbsp;&nbsp;
 						<label><font color="red">*</font>用户名：</label>
-						<input id="userName" name="userName" type="text" class="form-control" style="width:200px;" readonly="readonly" />
+						<input id="userName" name="userName" type="text" class="form-control" readonly="true" style="width:200px" />
 						<input type="hidden" name="userId" id="userId" />
 						<p></p>
 						<div class="pull-left">
 							<label style="padding:10px 0px 0px 0px;"><font color="red">*</font>选择订单：</label>
 						</div>
+<%-- 						<sys:treeselect id="orderId" name="orderId" value="" labelName="orderIdName" labelValue=""  checked="true" --%>
+<%-- 						     	title="选择订单" url="/ec/invoice/getOrderGoods" cssClass="form-control required" allowClear="true" notAllowSelectParent="true"/> --%>
 						<div style="width:400px">
-	 						<a href="#" onclick="findOrderInvoiceList()" class="btn btn-white btn-sm"><i class="fa fa-plus"></i>选择可开发票订单</a>
+							<input id="orderIdId" name="orderId" class="form-control required" type="hidden" value="" aria-required="true">
+							<div class="input-group">
+	 								<input id="orderIdName" name="orderIdName" readonly="readonly" type="text" value="" data-msg-required="" class="form-control required" style="" aria-required="true">
+							       		 <span class="input-group-btn">
+								       		 <button type="button" id="orderIdButton" class="btn   btn-primary  "><i class="fa fa-search"></i>
+								             </button> 
+	 						       		 </span> 
+	 						</div> 
+	 						<label id="orderIdName-error" class="error" for="orderIdName" style="display:none"></label>
 						</div>
-						<p></p>
-						<label><font color="red">*</font>已选开票订单：</label>
-						<span id="invoice"></span><input id="orderId" name="orderId" class="form-control" type="hidden" value="" >
+						
 						<p></p>
 						<label><font color="red">*</font>发票类型：</label>
 						<form:select path="invoiceType"  class="form-control" style="width:185px;" onchange="selectType(this)">
