@@ -285,6 +285,7 @@
 			ogm.single_norm_price AS 'singleNormPrice',
 			ogm.rec_id AS 'recid',
 			ogm.single_reality_price AS 'singleRealityPrice',
+			ogm.advance_price AS 'advancePrice',
 			g.goods_type AS 'goodsType',
 			u.office_id AS 'officeId'
 		FROM mtmydb.mtmy_order_goods_mapping ogm
