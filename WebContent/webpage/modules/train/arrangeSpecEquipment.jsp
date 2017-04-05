@@ -116,7 +116,7 @@
 					                            			<td class="isNo">
 					                            				<div style="width: 100px;">
 							                            			<input id="${ArrangeBeautician.equipmentId }${status.index+1 }" name="${ArrangeBeautician.equipmentId }${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden">
-							                            			<span>${arrangeEquipments.shopName }</span>
+							                            			<span style="color: #999999">${arrangeEquipments.shopName }</span>
 						                            			</div>
 						                            		</td>
 					                            		</c:when>
@@ -155,7 +155,7 @@
 					                            			<td class="isNo">
 					                            				<div style="width: 100px;">
 							                            			<input id="${ArrangeBeautician.equipmentId }${status.index+1 }" name="${ArrangeBeautician.equipmentId }${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden">
-							                            			<span>${arrangeEquipments.shopName }</span>
+							                            			<span style="color: #999999">${arrangeEquipments.shopName }</span>
 						                            			</div>
 						                            		</td>
 					                            		</c:when>

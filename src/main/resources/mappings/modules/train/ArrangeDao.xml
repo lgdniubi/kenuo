@@ -168,10 +168,12 @@
 			</foreach>
 	</insert>
 	<select id="findAllOrdinary" resultType="ArrangeBeautician">
-		SELECT DISTINCT a.id AS userId,a.name,a.office_id AS userOfficeId,a.del_flag FROM sys_user a RIGHT JOIN (
-			SELECT id AS user_id FROM sys_user WHERE office_id = #{officeId} AND user_type = '2' AND del_flag = 0
-			union all
-			SELECT DISTINCT b.beautician_id AS userId FROM train_arrange_shop b WHERE b.shop_id = #{officeId} AND b.month = #{month}
+		SELECT DISTINCT a.id AS userId,a.name,a.office_id AS userOfficeId,a.del_flag,b.del_flag AS beauticianStatus FROM sys_user a RIGHT JOIN (
+			SELECT c.user_id,(CASE WHEN d.del_flag = 0 THEN 0 ELSE 1 END) AS del_flag FROM
+				(SELECT id AS user_id FROM sys_user WHERE office_id = #{officeId} AND user_type = '2' AND del_flag = 0
+				union
+				SELECT DISTINCT b.beautician_id AS user_id FROM train_arrange_shop b WHERE b.shop_id = #{officeId} AND b.month = #{month}) c
+				LEFT JOIN trains.train_special_beautician d ON c.user_id = d.user_id
 		) AS b ON a.id = b.user_id
 	</select>
 </mapper>
