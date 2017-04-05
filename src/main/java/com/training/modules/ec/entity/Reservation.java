@@ -6,7 +6,6 @@ import java.util.Date;
 import com.training.common.persistence.DataEntity;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.User;
-import com.training.modules.sys.entity.Userinfo;
 /**
  * 预约实体类
  * @author coffee
@@ -34,6 +33,7 @@ public class Reservation extends DataEntity<Reservation>{
 	private Date beginDate;				//开始时间
 	private Date endDate;				//结束时间
 	private String keyword;				//关键字
+	private String orderId;				//订单id
 	
 	private User user;					//美容师表
 	private Orders order;				//订单实体类
@@ -151,6 +151,12 @@ public class Reservation extends DataEntity<Reservation>{
 	}
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
+	}
+	public String getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
 	}
 	public User getUser() {
 		return user;
