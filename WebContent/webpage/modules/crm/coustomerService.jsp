@@ -205,20 +205,20 @@
 				</div>
 					<div>
 					<!-- 工具栏 -->
-					<div class="row">
-						<div class="col-sm-12">
-							<div class="pull-left">
-<%-- 								<shiro:hasPermission name="crm:returnedGoods:export"> --%>
-								<!-- 导出按钮 -->
-								<form id="exportForm" action ="${ctx}/crm/coustomerService/export" method="post">
-								  <input type="hidden" name="userId" value="${userDetail.userId}">	
-									<button id ="btnExport" class="btn btn-danger btn-xs">导出</button>
-<%-- 								</shiro:hasPermission> --%>
-								</form>
-							</div>
-						</div>
-					</div>
-					<!-- 工具栏 -->
+<!-- 					<div class="row"> -->
+<!-- 						<div class="col-sm-12"> -->
+<!-- 							<div class="pull-left"> -->
+<%-- <%-- 								<shiro:hasPermission name="crm:returnedGoods:export"> --%> 
+<!-- 								导出按钮 -->
+<%-- 								<form id="exportForm" action ="${ctx}/crm/coustomerService/export" method="post"> --%>
+<%-- 								  <input type="hidden" name="userId" value="${userDetail.userId}">	 --%>
+<!-- 									<button id ="btnExport" class="btn btn-danger btn-xs">导出</button> -->
+<%-- <%-- 								</shiro:hasPermission> --%>
+<!-- 								</form> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+<!-- 					工具栏 -->
 				</div>
 				<table id="contentTable"
 					class="table table-striped table-bordered  table-hover table-condensed  

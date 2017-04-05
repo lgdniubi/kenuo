@@ -102,7 +102,7 @@
 								<div class="form-group">
 									<span>选择订单状态：</span> 
 									<div class="input-group">
-									  <select name="orderstatus" class=" form-control input-sm">
+									  <select name="orderstatus" class=" form-control">
 										<option value="0">请选择</option>
 										<option value="0">全部</option>
 										<option value="-2">取消订单</option>
@@ -115,7 +115,7 @@
 									</div>
 									<span>请选择性质：</span> 
 									<div class="input-group">
-										<select name="distinction" class=" form-control input-sm">
+										<select name="distinction" class=" form-control">
 											<option value="0">电商</option>
 											<option value="1">售前卖</option>
 											<option value="2">售后卖</option>

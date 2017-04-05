@@ -102,6 +102,7 @@
 		LEFT JOIN mtmydb.mtmy_goods mg ON mao.goods_id = mg.goods_id
 		LEFT JOIN trains.sys_user_info sui ON su.id = sui.user_id
 		WHERE mao.user_id= #{userId} 
+		ORDER BY mao.create_date DESC
 	</select>
 	
 	<!--预约记录下的评论-->	
