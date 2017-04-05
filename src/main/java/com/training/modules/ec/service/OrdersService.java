@@ -859,6 +859,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 //				if("bm".equals(orders.getChannelFlag())){
 					OrderGoods _orderGoods = orderGoodsDetailsService.getOrderGoodsDetailListByMid(orderGoods.getRecid());
 					if(_orderGoods!=null){
+						//存在预约记录且预约状态为已完成 已评价 爽约
+						if(_orderGoods.getSumAppt() != 0){
+							if(orderGoodsDetailsService.findApptStatus(orderGoods.getRecid()) != 0){
+								_orderGoods.setSumAppt(1);
+							}else{
+								_orderGoods.setSumAppt(0);
+							}
+						}
 						orderGoods.setTotalAmount(_orderGoods.getTotalAmount());
 						orderGoods.setOrderBalance(_orderGoods.getOrderBalance());
 						orderGoods.setOrderArrearage(_orderGoods.getOrderArrearage());
@@ -1378,7 +1386,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param sum是否使用了账户余额，0使用了，1未使用
 	 * @param orderAmount应付款金额
 	 */
-	public void handleAdvanceFlag(OrderRechargeLog oLog,int sum,double goodsPrice,double detailsTotalAmount){
+	public void handleAdvanceFlag(OrderRechargeLog oLog,int sum,double goodsPrice,double detailsTotalAmount,int goodsType,String officeId){
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
 		double totalAmount = oLog.getTotalAmount(); //实付款金额
@@ -1434,7 +1442,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setGoodsMappingId(oLog.getRecid()+"");
 		details.setTotalAmount(totalAmount_in);	//实付款金额
 		details.setOrderBalance(accountBalance_in);	//订单余款
-		details.setOrderArrearage(Double.parseDouble(formater.format(goodsPrice - totalAmount_in_a)));	//订单欠款
+		details.setOrderArrearage(Double.parseDouble(formater.format(advance - totalAmount_in_a)));	//订单欠款
 		details.setItemAmount(itemAmount);	//项目金额
 		details.setItemCapitalPool(itemCapitalPool); //项目资金池
 		details.setServiceTimes(serviceTimes_in);	//剩余服务次数
@@ -1458,49 +1466,57 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		account.setAccountBalance(accountBalance_);
 		ordersDao.updateAccount(account);
 		
-		//对登云账户进行操作
-		if(detailsTotalAmount > 0){
-			double claimMoney = 0.0;   //补偿金  补助不超过20
-			if(detailsTotalAmount * 0.2 >= 20){
-				claimMoney = detailsTotalAmount + 20;
-			}else{
-				claimMoney = detailsTotalAmount * 1.2;
+		//若为老商品，则对店铺有补偿
+		if(goodsType == 0){
+			//对登云账户进行操作
+			if(detailsTotalAmount > 0){
+				double claimMoney = 0.0;   //补偿金  补助不超过20
+				if(detailsTotalAmount * 0.2 >= 20){
+					claimMoney = detailsTotalAmount + 20;
+				}else{
+					claimMoney = detailsTotalAmount * 1.2;
+				}
+				OfficeAccountLog officeAccountLog = new OfficeAccountLog();
+				User newUser = UserUtils.getUser();
+				
+				double amount = orderGoodsDetailsService.selectByOfficeId("1");   //登云美业公司账户的钱
+				double afterAmount = Double.parseDouble(formater.format(amount - claimMoney));
+				orderGoodsDetailsService.updateByOfficeId(afterAmount, "1");   //更新登云美业的登云账户金额
+				
+				//登云美业的登云账户减少钱时对日志进行操作
+				officeAccountLog.setOrderId(oLog.getOrderId());
+				officeAccountLog.setOfficeId("1");
+				officeAccountLog.setType("1");
+				officeAccountLog.setOfficeFrom("1");
+				officeAccountLog.setAmount(claimMoney);
+				officeAccountLog.setCreateBy(newUser);
+				orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
+				
+				String shopId = "";
+				if("".equals(officeId) || officeId == null){
+					shopId = orderGoodsDetailsService.selectShopId(String.valueOf(oLog.getRecid())); //获取当前预约对应的店铺id
+				}else{
+					shopId = officeId;
+				}
+				if(orderGoodsDetailsService.selectShopByOfficeId(shopId) == 0){    //若登云账户中无该店铺的账户
+					OfficeAccount officeAccount = new OfficeAccount();
+					officeAccount.setAmount(claimMoney);
+					officeAccount.setOfficeId(shopId);
+					orderGoodsDetailsService.insertByOfficeId(officeAccount);
+				}else{         
+					double shopAmount = orderGoodsDetailsService.selectByOfficeId(shopId);   //登云账户中店铺的钱
+					double afterShopAmount =  Double.parseDouble(formater.format(shopAmount + claimMoney));
+					orderGoodsDetailsService.updateByOfficeId(afterShopAmount, shopId);
+				}
+				//店铺的登云账户减少钱时对日志进行操作
+				officeAccountLog.setOrderId(oLog.getOrderId());
+				officeAccountLog.setOfficeId(shopId);
+				officeAccountLog.setType("0");
+				officeAccountLog.setOfficeFrom("1");
+				officeAccountLog.setAmount(claimMoney);
+				officeAccountLog.setCreateBy(newUser);
+				orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
 			}
-			OfficeAccountLog officeAccountLog = new OfficeAccountLog();
-			User newUser = UserUtils.getUser();
-			
-			double amount = orderGoodsDetailsService.selectByOfficeId("1");   //登云美业公司账户的钱
-			double afterAmount = Double.parseDouble(formater.format(amount - claimMoney));
-			orderGoodsDetailsService.updateByOfficeId(afterAmount, "1");   //更新登云美业的登云账户金额
-			
-			//登云美业的登云账户减少钱时对日志进行操作
-			officeAccountLog.setOrderId(oLog.getOrderId());
-			officeAccountLog.setOfficeId("1");
-			officeAccountLog.setType("1");
-			officeAccountLog.setOfficeFrom("1");
-			officeAccountLog.setAmount(claimMoney);
-			officeAccountLog.setCreateBy(newUser);
-			orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
-			
-			String shopId = orderGoodsDetailsService.selectShopId(String.valueOf(oLog.getRecid())); //获取当前预约对应的店铺id
-			if(orderGoodsDetailsService.selectShopByOfficeId(shopId) == 0){    //若登云账户中无该店铺的账户
-				OfficeAccount officeAccount = new OfficeAccount();
-				officeAccount.setAmount(claimMoney);
-				officeAccount.setOfficeId(shopId);
-				orderGoodsDetailsService.insertByOfficeId(officeAccount);
-			}else{         
-				double shopAmount = orderGoodsDetailsService.selectByOfficeId(shopId);   //登云账户中店铺的钱
-				double afterShopAmount =  Double.parseDouble(formater.format(shopAmount + claimMoney));
-				orderGoodsDetailsService.updateByOfficeId(afterShopAmount, shopId);
-			}
-			//店铺的登云账户减少钱时对日志进行操作
-			officeAccountLog.setOrderId(oLog.getOrderId());
-			officeAccountLog.setOfficeId(shopId);
-			officeAccountLog.setType("0");
-			officeAccountLog.setOfficeFrom("1");
-			officeAccountLog.setAmount(claimMoney);
-			officeAccountLog.setCreateBy(newUser);
-			orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
 		}
 	}
 }

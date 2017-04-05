@@ -1605,6 +1605,8 @@ public class OrdersController extends BaseController {
 			
 			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
 			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
+			int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
+			String officeId = orderGoods.getOfficeId();           //组织架构ID
 			
 			oLog.setMtmyUserId(userid);
 			oLog.setOrderId(orderid);
@@ -1625,7 +1627,7 @@ public class OrdersController extends BaseController {
 				
 			}
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleAdvanceFlag(oLog,sum,goodsPrice,detailsTotalAmount);
+			ordersService.handleAdvanceFlag(oLog,sum,goodsPrice,detailsTotalAmount,goodsType,officeId);
 			date = "success";
 		}catch(Exception e){
 			e.printStackTrace();

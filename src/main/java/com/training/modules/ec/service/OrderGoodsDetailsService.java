@@ -112,4 +112,13 @@ public class OrderGoodsDetailsService extends TreeService<OrderGoodsDetailsDao, 
 	public void insertOfficeAccountLog(OfficeAccountLog officeAccountLog){
 		dao.insertOfficeAccountLog(officeAccountLog);
 	}
+	
+	/**
+	 * 查询预约状态
+	 * @param recId
+	 * @return
+	 */
+	public int findApptStatus(int recId){
+		return dao.findApptStatus(recId);
+	}
 }

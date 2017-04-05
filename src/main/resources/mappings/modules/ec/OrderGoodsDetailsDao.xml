@@ -176,4 +176,10 @@
 			SYSDATE()
 		)
 	</insert>
+	<select id="findApptStatus" resultType="Integer">
+		SELECT ( CASE WHEN 
+					(SELECT appt_status FROM mtmydb.mtmy_appt_order WHERE id = (SELECT appt_id FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = #{recId} AND advance_flag = '0' AND service_times = -1)) 
+					IN (1,2,4) THEN 1 ELSE 0 END
+				) AS num
+	</select>
 </mapper>
