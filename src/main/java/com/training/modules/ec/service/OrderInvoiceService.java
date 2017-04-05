@@ -120,41 +120,7 @@ public class OrderInvoiceService extends TreeService<OrderInvoiceDao,OrderInvoic
 	 * @param invoiceId
 	 * @return
 	 */
-	public List<Orders> findInvoiceRelevancy(String invoiceId){
+	public List<OrderInvoiceRelevancy> findInvoiceRelevancy(String invoiceId){
 		return orderInvoiceDao.findInvoiceRelevancy(invoiceId);
 	} 
-	
-// 2017年3月21日14:20:37 发票优化
-	/**
-	 * 查询所有已完成无欠款的订单 
-	 * @param userId
-	 * @return
-	 */
-	public List<Orders> findOrderList(int userId){
-		return orderInvoiceDao.findOrderList(userId);
-	}
-	/**
-	 * 查询所有已开发票的订单
-	 * @param userId
-	 * @return
-	 */
-	public List<Orders> findOpenOrderList(int userId){
-		return orderInvoiceDao.findOpenOrderList(userId);
-	}
-	/**
-	 * 查询已开订单详情
-	 * @param orderId
-	 * @return
-	 */
-	public List<OrderGoods> findOpenOrderListDetails(String orderId){
-		return dao.findOpenOrderListDetails(orderId);
-	}
-	/**
-	 * 查询所有已完成无欠款的订单详情
-	 * @param orderId
-	 * @return
-	 */
-	public List<OrderGoods> findOrderListDetails(String orderId){
-		return dao.findOrderListDetails(orderId);
-	}
 }
