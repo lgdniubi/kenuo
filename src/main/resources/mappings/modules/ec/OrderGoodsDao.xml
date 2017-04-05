@@ -123,7 +123,7 @@
 						SELECT order_id,goods_mapping_id,SUM(service_times) AS service_times FROM mtmydb.mtmy_order_goods_details GROUP BY order_id,goods_mapping_id
 					) b ON a.rec_id = b.goods_mapping_id
 			LEFT JOIN (SELECT group_concat(skill_id) AS skill_id,goods_id FROM mtmydb.mtmy_goods_skill GROUP BY goods_id) s ON s.goods_id = a.goods_id
-			LEFT JOIN mtmydb.mtmy_goods_equipment e ON e.goods_id = a.goods_id
+			LEFT JOIN (SELECT group_concat(label_id) AS label_id,goods_id FROM mtmydb.mtmy_goods_equipment GROUP BY goods_id) e ON e.goods_id = a.goods_id
 		WHERE 
 			a.del_flag = 0
 			and a.order_id = #{orderid}
