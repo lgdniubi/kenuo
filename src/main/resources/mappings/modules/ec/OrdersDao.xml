@@ -938,17 +938,21 @@
 			mobile = #{mobile},
 			consignee = #{consignee},
 			invoice_overtime = #{invoiceOvertime},
-			<if test="newFlag == 1">
-			address = #{address},
-			province = null,
-			city = null,
-			district = null,
-			</if>
 			shipping_type = #{shippingtype},
 			user_note = #{usernote}
 			<if test="cancelType != null  and cancelType != ''">
 				cancel_type = #{cancelType}
 			</if>
+		WHERE order_id = #{orderid}
+	</update>
+	
+	<update id="updateAddress">
+		UPDATE mtmydb.mtmy_orders
+		SET 
+			address = #{address},
+			province = null,
+			city = null,
+			district = null
 		WHERE order_id = #{orderid}
 	</update>
 	

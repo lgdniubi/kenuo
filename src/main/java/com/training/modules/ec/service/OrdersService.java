@@ -1016,12 +1016,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param orders
 	 */
 	public void updateVirtualOrder(Orders orders) {
-		//判断收货地址是否修改了，若未修改则xml中不对address更新，若不修改，则将省市县详细地址存到相应的地方
-		if(!orders.getOldAddress().equals(orders.getAddress())){
-			orders.setNewFlag("1");
-		}else{
-			orders.setNewFlag("0");
-		}
 		//当订单发票的过期时间为空时
 		if(orders.getInvoiceOvertime() == null){
 			if(orders.getIsReal() == 0){   //app下单实物的状态改为待发货时，将发票过期时间设置为下个月月底

@@ -270,4 +270,10 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @return
 	 */
 	public List<Orders> newFindList(Orders orders);
+	
+	/**
+	 * 修改收货地址
+	 * @param orders
+	 */
+	public void updateAddress(Orders orders);
 }

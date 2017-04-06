@@ -39,6 +39,7 @@ import com.training.common.utils.StringUtils;
 import com.training.common.utils.excel.ExportExcel;
 import com.training.common.utils.excel.ImportExcel;
 import com.training.common.web.BaseController;
+import com.training.modules.ec.dao.OrdersDao;
 import com.training.modules.ec.dao.SaleRebatesLogDao;
 import com.training.modules.ec.entity.AcountLog;
 import com.training.modules.ec.entity.CourierResultXML;
@@ -111,6 +112,8 @@ public class OrdersController extends BaseController {
 	private SaleRebatesLogDao saleRebatesLogDao;
 	@Autowired
 	private OrderGoodsDetailsService orderGoodsDetailsService;
+	@Autowired
+	private OrdersDao ordersDao;
 	
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
@@ -911,6 +914,11 @@ public class OrdersController extends BaseController {
 			Orders newOrders = ordersService.selectOrderById(orders.getOrderid());
 			orders.setInvoiceOvertime(newOrders.getInvoiceOvertime());
 			orders.setIsReal(newOrders.getIsReal());
+			//判断收货地址是否修改了，若未修改则xml中不对address更新，若不修改，则将省市县详细地址存到相应的地方
+			if(!orders.getOldAddress().equals(orders.getAddress())){
+				ordersDao.updateAddress(orders);
+			}
+			
 			if(orders.getOldstatus() != orders.getOrderstatus()){ //2次订单修改状态不一致
 				if(-2 == orders.getOrderstatus()){//新订单状态 等于“取消订单”
 					boolean result = returnRepository(orders.getOrderid());
