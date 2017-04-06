@@ -17,9 +17,7 @@ public class Comparison {
 		cols.put("nickname","昵称");
 		cols.put("idCard","身份证");
 		cols.put("remark","备注");
-		cols.put("officeName","所属店铺");
-		cols.put("beautyName","所属美容师");
-		cols.put("birthDay","生日");
+		cols.put("birthday","生日");
 		cols.put("character","性格");
 		cols.put("constellation","星座");
 		cols.put("isMarrige","是否结婚");
@@ -74,63 +72,65 @@ public class Comparison {
 	            // 获取属性的类型  
 	            String type = field[j].getGenericType().toString();  
 	            // 如果type是类类型，则前面包含"class "，后面跟类名  
-        
-	            if (type.equals("class java.lang.String")) {
-	            	if ("beautyId".equals(typeName)||"officeId".equals(typeName)) {
-						
-					}else{
-	                    Method m = afterObj.getClass().getMethod("get" + nameUpperCase);  
-	                    // 调用getter方法获取属性值  
-	                    String afterValue = (String) m.invoke(afterObj);  
-	                    System.out.println("数据类型为：String");  
-	                    if (afterValue != null && afterValue.trim().length()>0){  
-	                    	String beforeValue = (String) m.invoke(beforeObj); 
-	                    	if (afterValue.equals(beforeValue)) {
-	                    		System.out.println("属性值相同");  
-							}else{
-								if (null==beforeObj) {
-	                    			sBuilder.append(cols.get(typeName)+"新增"+afterValue+";"); 
-								}else {
-									sBuilder.append(cols.get(typeName)+":"+beforeValue+"--"+afterValue+";"); 
-								} 
-							}
-	                    }
-					}
-	            }  
-	            if (type.equals("class java.lang.Double")) {  
-	                    Method m = afterObj.getClass().getMethod("get" +nameUpperCase);  
-	                    Double afterValue = (Double) m.invoke(afterObj);  
-	                    System.out.println("数据类型为：Integer");  
-	                    if (afterValue != null) {  
-	                    	Double beforeValue = (Double) m.invoke(beforeObj);  
-	                    	if (beforeValue==afterValue) {
-	                    		
-	                    	}else {
-	                    		if (null==beforeObj) {
-	                    			sBuilder.append(cols.get(typeName)+"新增"+afterValue+";"); 
-								}else {
-									sBuilder.append(cols.get(typeName)+":"+beforeValue+"--"+afterValue+";"); 
-								}
-							}
-	                    }
-	            }  
-	            if (type.equals("class java.util.Date")) {  
-	                    Method m = afterObj.getClass().getMethod("get" + nameUpperCase);  
-	                    Date afterValue = (Date)m.invoke(afterObj);  
-	                    System.out.println("数据类型为：Date");  
-	                    if (afterValue != null) {  
-	                    	java.util.Date beforeValue = (java.util.Date) m.invoke(beforeObj); 
-	                    	if (afterValue.equals(beforeValue)) {
-	                    		System.out.println(sBuilder);
-							}else{
-								if (null==beforeObj) {
-	                    			sBuilder.append(cols.get(typeName)+"新增"+afterValue+";"); 
-								}else {
-									sBuilder.append(cols.get(typeName)+":"+beforeValue+"--"+afterValue+";"); 
-								}
-							}
-	                    }  
-	            } 
+                if (cols.containsKey(typeName)) {
+                	if (type.equals("class java.lang.String")) {
+    	            	if ("beautyId".equals(typeName)||"officeId".equals(typeName)) {
+    						
+    					}else{
+    	                    Method m = afterObj.getClass().getMethod("get" + nameUpperCase);  
+    	                    // 调用getter方法获取属性值  
+    	                    String afterValue = (String) m.invoke(afterObj);  
+    	                    System.out.println("数据类型为：String");  
+    	                    if (afterValue != null && afterValue.trim().length()>0){  
+    	                    	String beforeValue = (String) m.invoke(beforeObj); 
+    	                    	if (afterValue.equals(beforeValue)) {
+    	                    		System.out.println("属性值相同");  
+    							}else{
+    								if (null==beforeObj||"".equals(beforeObj)) {
+    	                    			sBuilder.append(cols.get(typeName)+"新增"+afterValue+";"); 
+    								}else {
+    									sBuilder.append(cols.get(typeName)+":"+beforeValue+"--"+afterValue+";"); 
+    								} 
+    							}
+    	                    }
+    					}
+    	            }  
+    	            if (type.equals("class java.lang.Double")) {  
+    	                    Method m = afterObj.getClass().getMethod("get" +nameUpperCase);  
+    	                    Double afterValue = (Double) m.invoke(afterObj);  
+    	                    System.out.println("数据类型为：double");  
+    	                    if (afterValue != null) {  
+    	                    	Double beforeValue = (Double) m.invoke(beforeObj);  
+    	                    	if (beforeValue==afterValue) {
+    	                    		
+    	                    	}else {
+    	                    		if (beforeObj.toString().length()==0) {
+    	                    			sBuilder.append(cols.get(typeName)+"新增"+afterValue+";"); 
+    								}else {
+    									sBuilder.append(cols.get(typeName)+":"+beforeValue+"--"+afterValue+";"); 
+    								}
+    							}
+    	                    }
+    	            }  
+    	            if (type.equals("class java.util.Date")) {  
+    	                    Method m = afterObj.getClass().getMethod("get" + nameUpperCase);  
+    	                    Date afterValue = (Date)m.invoke(afterObj);  
+    	                    System.out.println("数据类型为：Date");  
+    	                    if (afterValue != null) {  
+    	                    	java.util.Date beforeValue = (java.util.Date) m.invoke(beforeObj); 
+    	                    	if (afterValue.equals(beforeValue)) {
+    	                    		System.out.println(sBuilder);
+    							}else{
+    								if (null==beforeObj) {
+    	                    			sBuilder.append(cols.get(typeName)+"新增"+afterValue+";"); 
+    								}else {
+    									sBuilder.append(cols.get(typeName)+":"+beforeValue+"--"+afterValue+";"); 
+    								}
+    							}
+    	                    }  
+    	            }
+				}
+	             
 	    }  
 	    return sBuilder.toString();
 	}  

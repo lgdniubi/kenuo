@@ -140,42 +140,38 @@
 	<!--更新产品使用记录 -->
 	<update id="updateSingle">
 		UPDATE mtmydb.mtmy_user_info SET
-		nickname=#{nickname},
-		name= #{name},
-		mobile= #{mobile},
-		idcard=
-		#{idCard},
-		birthday= #{birthday},
-		lunar_birthday= #{lunarBirthday},
-		`character`= #{character},
-		constellation= #constellation{},
-		is_marrige=#{isMarrige},
-		wedding_day= #{weddingDay},
-		is_estate=
-		#{isEstate},
-		is_member= #{isMember} ,
-		car_brand= #{carBrand} ,
-		children=
-		#{children},
-		occupation= #{occupation},
-		monthly_income= #{income} ,
-		menstrual_date=#{menstrualDate},
-		menstrual_peroid=#{menstrualPeroid},
-		weight=#{weight},
-		height=#{height},
-		critical_diseases=#{criticalDiseases},
-		belong_market = #{bazaarId},
-		belong_store =#{officeId},
-		belong_beautician_id= #{beautyId},
-		source=
-		#{source} ,
-		promotion_agent=#{promotionAgent} ,
-		c_using_brand=
-		#{usingBrand} ,
-		c_intrest=#{intrest},
-		c_taboo= #{taboo},
-		c_hate= #{hate},
-		remark=#{remark}
+			nickname=#{nickname},
+			name= #{name},
+			mobile= #{mobile},
+			idcard=
+			#{idCard},
+			birthday= #{birthday},
+			lunar_birthday= #{lunarBirthday},
+			`character`= #{character},
+			constellation= #{constellation},
+			is_marrige= #{isMarrige},
+			wedding_day= #{weddingDay},
+			is_estate=#{isEstate},
+			is_member= #{isMember} ,
+			car_brand= #{carBrand} ,
+			children= #{children},
+			occupation= #{occupation},
+			monthly_income= #{income} ,
+			menstrual_date=#{menstrualDate},
+			menstrual_peroid=#{menstrualPeroid},
+			weight=#{weight},
+			height=#{height},
+			critical_diseases=#{criticalDiseases},
+			belong_market = #{bazaarId},
+			belong_store =#{officeId},
+			belong_beautician_id= #{beautyId},
+			source=#{source},
+			promotion_agent=#{promotionAgent},
+			c_using_brand=#{usingBrand} ,
+			c_intrest=#{intrest},
+			c_taboo= #{taboo},
+			c_hate= #{hate},
+			remark=#{remark}
 		WHERE mtmy_user_id = #{userId}
 	</update>
 
