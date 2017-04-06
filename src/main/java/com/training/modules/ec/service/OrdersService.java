@@ -982,17 +982,17 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setCreateBy(user);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
-		if(accountBalance > 0){
+	/*	if(accountBalance > 0){*/
 			//根据用户id查询用户账户信息
 			Orders _orders = new Orders();
 			_orders.setUserid(oLog.getMtmyUserId());
 			Orders account = ordersDao.getAccount(_orders);
-			double accountArrearage = account.getAccountArrearage()-totalAmount;	//账户欠款信息
+			double accountArrearage = account.getAccountArrearage()-totalAmount_in;	//账户欠款信息
 			account.setAccountArrearage(accountArrearage);
 			double accountBalance_ = account.getAccountBalance()+accountBalance_in;
 			account.setAccountBalance(accountBalance_);
 			ordersDao.updateAccount(account);
-		}
+		/*}*/
 	}
 	/**
 	 * 订单ID（26位）=临时订单标识（1）+退货标识（1）+yyyyMMDDHHMMSSsss(17)+用户ID（7）
