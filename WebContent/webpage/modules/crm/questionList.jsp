@@ -30,6 +30,7 @@
 							<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 							<form:hidden path="stamp" id="stamp"/>
 							<form:hidden path="mobile" id="mobile"/>
+							<form:hidden path="member" id="member"/>
 							<div class="form-group">						
 								<label>商品品牌：</label>
 			                    <select class="form-control" id="brandType" name="brandType" style="text-align: center;width: 150px;">
@@ -43,12 +44,6 @@
 									<form:option value="">全部</form:option>
 									<form:option value="1">未处理</form:option>
 									<form:option value="2">已处理</form:option>
-								</form:select>
-								<label>是否会员：</label>
-								<form:select path="member"  class="form-control" style="width:185px;">
-									<form:option value="">全部</form:option>
-									<form:option value="1">会员</form:option>
-									<form:option value="2">非会员</form:option>
 								</form:select>
 								<label>用户名：</label>
 								<input id="name" name="name" maxlength="10" type="text" class="form-control" placeholder="昵称/姓名">	
