@@ -184,9 +184,12 @@
 									  		待发货
 									  	</c:if>
 									  	<c:if test="${order.orderstatus=='2'}">
-									  		已退款(退货并退款使用)
+									  		待收货
 									  	</c:if>
 									  	<c:if test="${order.orderstatus=='3'}">
+									  		已退款(退货并退款使用)
+									  	</c:if>
+									  	<c:if test="${order.orderstatus=='4'}">
 									  		已完成
 									   	</c:if>
 							    </td>
@@ -198,23 +201,23 @@
 								  		未评价
 								  	</c:if>
 								  	<c:if test="${order.isComment=='1'}">
-								  		>已评价
+								  		已评价
 								  	</c:if>
 							  	</td>
 							  	<td>
 								  	<c:if test="${empty order.distinction}">
 								  		无数据
 								  	</c:if>
-								    <c:if test="${order.distinction=='0'}">
+								    <c:if test="${order.distinction==0}">
 								  		电商
 								  	</c:if>
-								  	<c:if test="${order.distinction=='2'}">
+								  	<c:if test="${order.distinction==1}">
 								  		售前卖
 								  	</c:if>
-								  	<c:if test="${order.distinction=='3'}">
+								  	<c:if test="${order.distinction==2}">
 								  		售后卖
 								  	</c:if>
-								  	<c:if test="${order.distinction=='4'}">
+								  	<c:if test="${order.distinction==3}">
 								  		老带新
 								  	</c:if>
 							  	</td>
