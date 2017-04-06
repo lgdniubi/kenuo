@@ -9,6 +9,16 @@
 <!-- 引入layui.css -->
 <link href="${ctxStatic}/layer-v2.0/layer/skin/layui.css"
 	type="text/css" rel="stylesheet">
+	
+<style>
+input[type="number"] {
+   -moz-appearance: textfield;
+}
+input::-webkit-outer-spin-button,           
+input::-webkit-inner-spin-button{
+ -webkit-appearance: none !important;            
+}
+</style>	
 <script type="text/javascript">
 	$(document).ready(function() {
 		var officeId = $("#officeId").val(); 
