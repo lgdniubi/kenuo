@@ -599,7 +599,7 @@ window.onload=initStatus;
 									<td align="center">${orders.memberGoodsPrice }</td>
 									<td align="center">${orders.shippingprice }</td>
 									<td align="center">${orders.orderamount }</td>
-									<td align="center">${orders.totalamount }</td>
+									<td align="center">${(orders.totalamount*100 + orders.shippingprice*100)/100}</td>
 								</tr>
 						</table>
 							<%-- <div style="padding-left: 90px;">
