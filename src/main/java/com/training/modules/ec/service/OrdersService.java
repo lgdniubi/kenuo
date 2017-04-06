@@ -860,7 +860,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					OrderGoods _orderGoods = orderGoodsDetailsService.getOrderGoodsDetailListByMid(orderGoods.getRecid());
 					if(_orderGoods!=null){
 						//存在预约记录且预约状态为已完成 已评价 爽约
-						if(_orderGoods.getSumAppt() != 0){
+						if(_orderGoods.getSumAppt() != 0 && _orderGoods.getAdvanceFlag() == 1){
 							if(orderGoodsDetailsService.findApptStatus(orderGoods.getRecid()) != 0){
 								_orderGoods.setSumAppt(1);
 							}else{
@@ -982,17 +982,17 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setCreateBy(user);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
-		if(accountBalance > 0){
+	/*	if(accountBalance > 0){*/
 			//根据用户id查询用户账户信息
 			Orders _orders = new Orders();
 			_orders.setUserid(oLog.getMtmyUserId());
 			Orders account = ordersDao.getAccount(_orders);
-			double accountArrearage = account.getAccountArrearage()-totalAmount;	//账户欠款信息
+			double accountArrearage = account.getAccountArrearage()-totalAmount_in;	//账户欠款信息
 			account.setAccountArrearage(accountArrearage);
 			double accountBalance_ = account.getAccountBalance()+accountBalance_in;
 			account.setAccountBalance(accountBalance_);
 			ordersDao.updateAccount(account);
-		}
+		/*}*/
 	}
 	/**
 	 * 订单ID（26位）=临时订单标识（1）+退货标识（1）+yyyyMMDDHHMMSSsss(17)+用户ID（7）
@@ -1440,7 +1440,11 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		OrderGoodsDetails details = new OrderGoodsDetails();
 		details.setOrderId(oLog.getOrderId());
 		details.setGoodsMappingId(oLog.getRecid()+"");
-		details.setTotalAmount(totalAmount_in);	//实付款金额
+		if(totalAmount_in < 0){
+			details.setTotalAmount(0);	//实付款金额
+		}else{
+			details.setTotalAmount(totalAmount_in);	//实付款金额
+		}
 		details.setOrderBalance(accountBalance_in);	//订单余款
 		details.setOrderArrearage(Double.parseDouble(formater.format(advance - totalAmount_in_a)));	//订单欠款
 		details.setItemAmount(itemAmount);	//项目金额

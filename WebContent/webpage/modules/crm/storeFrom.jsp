@@ -23,10 +23,14 @@
  						top.layer.alert('会员信息查询成功!', {icon: 0, title:'提醒'});  
 						$("#nickName").val(date.nickName);
 						$("#name").val(date.name);
+						$("#nickName").attr("readonly","true");
+						$("#name").attr("readonly","true");
 					}else{
 						top.layer.alert('此号码不是会员!', {icon: 0, title:'提醒'}); 
 						$("#nickName").val("");
 						$("#name").val("");
+						$("#nickName").removeAttr("readonly")
+						$("#name").removeAttr("readonly");
 					}
 				},
 				error:function(XMLHttpRequest,textStatus,errorThrown){

@@ -127,7 +127,7 @@
 					                            				<div style="width: 100px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
-							                            			<span>${arrangeShops.shopName }</span>
+							                            			<span style="color: #999999">${arrangeShops.shopName }</span>
 						                            			</div>
 						                            		</td>
 					                            		</c:when>
@@ -176,7 +176,7 @@
 					                            				<div style="width: 100px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
-							                            			<span>${arrangeShops.shopName }</span>
+							                            			<span style="color: #999999">${arrangeShops.shopName }</span>
 							                            		</div>
 						                            		</td>
 					                            		</c:when>

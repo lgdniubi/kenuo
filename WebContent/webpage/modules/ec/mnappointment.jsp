@@ -35,6 +35,7 @@
 						<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();"/><!-- 支持排序 -->
 						<div class="form-group">
 							<input id="keyword" name="keyword" type="text" value="${reservation.keyword }" class="form-control" placeholder="请输入关键字"> 
+							<input id="orderId" name="orderId" type="text" value="${reservation.orderId }" class="form-control" placeholder="请输入订单号"> 
 							<select class="form-control" id="apptStatus" name="apptStatus">
 								<option value="">请选择预约状态</option>
 								<c:forEach items="${fns:getDictList('reservation_status')}" var="reservation_status">
@@ -48,6 +49,7 @@
 									</c:choose>
 								</c:forEach>
 							</select>
+							<p></p>
 				 时间范围：<input id="beginDate" name="beginDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" 
 								value="<fmt:formatDate value="${reservation.beginDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endDate\')}'})" readonly="readonly"/>
 							<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>

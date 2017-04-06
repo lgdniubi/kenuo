@@ -89,7 +89,7 @@ public class SpecialityController extends BaseController {
 		// 保存用户信息
 		specialityService.saveSpeciality(speciality);
 		addMessage(redirectAttributes, "保存特长'" + speciality.getName() + "'成功");
-		return "redirect:" + adminPath + "/sys/speciality/list?repage";
+		return "redirect:" + adminPath + "/sys/speciality/list";
 	}
 
 	/**

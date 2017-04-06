@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
-import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderInvoice;
 import com.training.modules.ec.entity.OrderInvoiceExport;
 import com.training.modules.ec.entity.OrderInvoiceRelevancy;
@@ -65,31 +64,5 @@ public interface OrderInvoiceDao extends TreeDao<OrderInvoice>{
 	 * 查询
 	 * @return
 	 */
-	public List<Orders> findInvoiceRelevancy(String invoiceId);
-	
-// 2017年3月21日14:20:09 发票优化
-	/**
-	 * 查询所有已完成无欠款的订单 
-	 * @param userId
-	 * @return
-	 */
-	public List<Orders> findOrderList(int userId);
-	/**
-	 * 查询所有已开发票的订单
-	 * @param userId
-	 * @return
-	 */
-	public List<Orders> findOpenOrderList(int userId);
-	/**
-	 * 查询已开订单详情
-	 * @param orderId
-	 * @return
-	 */
-	public List<OrderGoods> findOpenOrderListDetails(String orderId);
-	/**
-	 * 查询所有已完成无欠款的订单详情
-	 * @param orderId
-	 * @return
-	 */
-	public List<OrderGoods> findOrderListDetails(String orderId);
+	public List<OrderInvoiceRelevancy> findInvoiceRelevancy(String invoiceId);
 }

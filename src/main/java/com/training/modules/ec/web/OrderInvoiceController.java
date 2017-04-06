@@ -37,7 +37,7 @@ import com.training.modules.ec.service.OrdersService;
 import com.training.modules.sys.utils.BugLogUtils;
 
 /**
- * 发票管理
+ * 活动
  * 
  * @author yangyang
  *
@@ -52,6 +52,10 @@ public class OrderInvoiceController extends BaseController {
 	@Autowired
 	private OrdersService ordersService;
 
+	
+	
+	
+	
 	@ModelAttribute
 	public OrderInvoice get(@RequestParam(required = false) String id) {
 		if (StringUtils.isNotBlank(id)) {
@@ -60,6 +64,7 @@ public class OrderInvoiceController extends BaseController {
 			return new OrderInvoice();
 		}
 	}
+
 	/**
 	 * 分页查询 条件查询
 	 * 
@@ -77,6 +82,8 @@ public class OrderInvoiceController extends BaseController {
 		model.addAttribute("page", page);
 		return "modules/ec/orderInvoiceList";
 	}
+
+	
 	/**
 	 * 创建发票
 	 * 
@@ -88,11 +95,13 @@ public class OrderInvoiceController extends BaseController {
 	@RequestMapping(value = "createForm")
 	public String createForm(HttpServletRequest request,OrderInvoice orderInvoice, Model model) {
 		try {
+			
 			model.addAttribute("orderInvoice", orderInvoice);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "创建发票页面", e);
 			logger.error("创建发票页面：" + e.getMessage());
 		}
+
 		return "modules/ec/createInvoiceForm";
 	}
 
@@ -107,18 +116,8 @@ public class OrderInvoiceController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(HttpServletRequest request,OrderInvoice orderInvoice, Model model) {
 		try {
-			DecimalFormat formater = new DecimalFormat("#0.00");
-			List<Orders> Orders=orderInvoiceService.findInvoiceRelevancy(orderInvoice.getId());
-			for (int i = 0; i < Orders.size(); i++) {
-				List<OrderGoods> orderGoodsList = orderInvoiceService.findOpenOrderListDetails(Orders.get(i).getOrderid());
-				Orders.get(i).setOrderGoodList(orderGoodsList);
-				double goodsprice = 0.00;
-				for (int j = 0; j < orderGoodsList.size(); j++) {
-					goodsprice = goodsprice + (orderGoodsList.get(j).getOpenNum()*orderGoodsList.get(j).getUnitPrice());
-				}
-				Orders.get(i).setGoodsprice(Double.parseDouble(formater.format(goodsprice)));
-			}
-			model.addAttribute("Orders",Orders);
+			List<OrderInvoiceRelevancy> relevancy=orderInvoiceService.findInvoiceRelevancy(orderInvoice.getId());
+			model.addAttribute("relevancy",relevancy);
 			model.addAttribute("orderInvoice", orderInvoice);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "创建发票页面", e);
@@ -190,6 +189,8 @@ public class OrderInvoiceController extends BaseController {
 	public String save(OrderInvoice orderInvoice, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		try {
 			 DecimalFormat   df= new DecimalFormat("######0.00"); 
+			 List<OrderGoods> list=new ArrayList<OrderGoods>();
+			 List<Orders> orderlist=new ArrayList<Orders>();
 			 String content="";
 			 double invoiceAmount=0;
 			 if(orderInvoice.getInvoiceType()==1){
@@ -200,37 +201,45 @@ public class OrderInvoiceController extends BaseController {
 				 orderInvoice.setPhone("");
 				 orderInvoice.setAddress("");
 			 }
-			 // 发票 订单 中间实体类
-			 List<OrderInvoiceRelevancy> list=new ArrayList<OrderInvoiceRelevancy>();
+			 
+			 
 			 if(orderInvoice.getOrderId().length()>0){
 				 String[] arrId=orderInvoice.getOrderId().split(",");
 				 for (int i = 0; i < arrId.length; i++) {
-					List<OrderGoods> orderGoods = orderInvoiceService.findOrderListDetails(arrId[i].toString());
-					for (int j = 0; j < orderGoods.size(); j++) {
-						invoiceAmount = invoiceAmount + (orderGoods.get(j).getOpenNum()*orderGoods.get(j).getUnitPrice());
-						content=content+"商品名称："+orderGoods.get(j).getGoodsname()+"  数量："+orderGoods.get(j).getOpenNum()+" 商品价格："+orderGoods.get(j).getOpenNum()*orderGoods.get(j).getUnitPrice()+",";
-						OrderInvoiceRelevancy relevancy = new OrderInvoiceRelevancy();
-						relevancy.setOrderId(arrId[i].toString());
-						relevancy.setMappingId(String.valueOf(orderGoods.get(j).getRecid()));
-						relevancy.setOpenNum(orderGoods.get(j).getOpenNum());
-						list.add(relevancy);
-					}
-					 content=content.substring(0, content.length()-1);
+						Orders order=ordersService.selectBydoubl(arrId[i].toString()); 
+						orderlist.add(order);
+						OrderGoods goods= orderInvoiceService.selectSumByorderid(arrId[i].toString());
+						list.add(goods);
 				 }
+				
+			 }else{
+				
 			 }
+			
+			
+			 if(orderlist.size()>0){
+				 for (int i = 0; i < orderlist.size(); i++) {
+					invoiceAmount=invoiceAmount+orderlist.get(i).getOrderamount();
+				}
+			 }
+			
 			orderInvoice.setInvoiceAmount(Double.parseDouble(df.format(invoiceAmount)));
+			 if(list.size()>0){
+				 for (int i = 0; i < list.size(); i++) {
+					content=content+"商品名称："+list.get(i).getGoodsname()+"  数量："+list.get(i).getGoodsnum()+" 商品价格："+list.get(i).getGoodsprice()+",";
+				}
+				 content=content.substring(0, content.length()-1);
+			 }
 			orderInvoice.setInvoiceContent(content);
 			orderInvoiceService.saveOrderInvoice(orderInvoice);
-			
 			if(orderInvoice.getOrderId().length()>0){
-				for (int i = 0; i < list.size(); i++) {
-					OrderInvoiceRelevancy relevancy = new OrderInvoiceRelevancy();
+			 String[] arrId=orderInvoice.getOrderId().split(",");
+				for (int i = 0; i < arrId.length; i++) {
+					OrderInvoiceRelevancy relevancy=new OrderInvoiceRelevancy();
 					relevancy.setInvoiceId(Integer.parseInt(orderInvoice.getId()));
-					relevancy.setOrderId(list.get(i).getOrderId());
-					relevancy.setMappingId(list.get(i).getMappingId());
-					relevancy.setOpenNum(list.get(i).getOpenNum());
+					relevancy.setOrderId(arrId[i].toString());
 					orderInvoiceService.insertMaping(relevancy);
-					orderInvoiceService.updateOrderIsinv(list.get(i).getOrderId());
+					orderInvoiceService.updateOrderIsinv(arrId[i].toString());
 				}
 			}
 			addMessage(redirectAttributes, "保存发票成功");
@@ -239,6 +248,7 @@ public class OrderInvoiceController extends BaseController {
 			logger.error("方法：save，保存发票出错：" + e.getMessage());
 			addMessage(redirectAttributes, "保存发票失败");
 		}
+
 		return "redirect:" + adminPath + "/ec/invoice/list";
 
 	}
@@ -326,49 +336,4 @@ public class OrderInvoiceController extends BaseController {
 		return "redirect:" + adminPath + "/ec/invoice/list";
 	}
 	
-//   2017年3月21日14:01:47  优化发票管理  
-	
-	@RequestMapping(value = "findOrderInvoiceList")
-	public String findOrderInvoiceList(OrderInvoice orderInvoice,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,Model model){
-		DecimalFormat formater = new DecimalFormat("#0.00");
-		
-		List<Orders> orderInvoiceCan = new ArrayList<Orders>();			// 订单可开发票
-		List<Orders> orderInvoiceOvertime = new ArrayList<Orders>();	// 订单过期
-		// 获取用户所有已开发票
-		List<Orders> ordersInvoiceOpen = orderInvoiceService.findOpenOrderList(orderInvoice.getUserId());	
-		for (int i = 0; i < ordersInvoiceOpen.size(); i++) {
-			List<OrderGoods> orderGoodsList = orderInvoiceService.findOpenOrderListDetails(ordersInvoiceOpen.get(i).getOrderid());
-			
-			double goodsprice = 0.00;
-			for (int j = 0; j < orderGoodsList.size(); j++) {
-				goodsprice = goodsprice + (orderGoodsList.get(j).getOpenNum()*orderGoodsList.get(j).getUnitPrice());
-			}
-			ordersInvoiceOpen.get(i).setGoodsprice(Double.parseDouble(formater.format(goodsprice)));
-			ordersInvoiceOpen.get(i).setOrderGoodList(orderGoodsList);
-		}
-		// 查询所有无欠款、已完成的订单(包含过期订单)
-		List<Orders> list = orderInvoiceService.findOrderList(orderInvoice.getUserId());
-		for (int i = 0; i < list.size(); i++) {
-			List<OrderGoods> orderGoods = orderInvoiceService.findOrderListDetails(list.get(i).getOrderid());
-			double goodsprice = 0.00;
-			for (int j = 0; j < orderGoods.size(); j++) {
-				goodsprice = goodsprice + (orderGoods.get(j).getOpenNum()*orderGoods.get(j).getUnitPrice());
-			}
-			Orders order = new Orders();
-			order.setGoodsprice(Double.parseDouble(formater.format(goodsprice)));
-			order.setOrderid(list.get(i).getOrderid());
-			order.setOrderGoodList(orderGoods);
-			// 过期订单
-			if(list.get(i).getIsInvoice() == 1){
-				orderInvoiceOvertime.add(order);
-			}else{
-				orderInvoiceCan.add(order);
-			}
-		}
-		model.addAttribute("orderInvoiceCan", orderInvoiceCan);
-		model.addAttribute("orderInvoiceOvertime", orderInvoiceOvertime);
-		model.addAttribute("ordersInvoiceOpen", ordersInvoiceOpen);
-		return "modules/ec/findOrderInvoiceList";
-	}
-
 }
