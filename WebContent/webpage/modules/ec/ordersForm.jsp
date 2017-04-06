@@ -537,7 +537,7 @@ window.onload=initStatus;
 										<td align="center">${orderGood.totalAmount}</td>
 										<td align="center">
 											<c:if test="${orders.isReal == 1 }">
-												${(orderGood.advancePrice * 100 + orderGood.couponPrice * 100 + orderGood.membergoodsprice * 100)/100}
+												${orderGood.advancePrice}
 											</c:if>
 											<c:if test="${orders.isReal != 1 }">
 												0.0
