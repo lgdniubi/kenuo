@@ -1434,11 +1434,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		OrderGoodsDetails details = new OrderGoodsDetails();
 		details.setOrderId(oLog.getOrderId());
 		details.setGoodsMappingId(oLog.getRecid()+"");
-		if(totalAmount_in < 0){
-			details.setTotalAmount(0);	//实付款金额
-		}else{
-			details.setTotalAmount(totalAmount_in);	//实付款金额
-		}
+		details.setTotalAmount(totalAmount_in);	//实付款金额
 		details.setOrderBalance(accountBalance_in);	//订单余款
 		details.setOrderArrearage(Double.parseDouble(formater.format(advance - totalAmount_in_a)));	//订单欠款
 		details.setItemAmount(itemAmount);	//项目金额
