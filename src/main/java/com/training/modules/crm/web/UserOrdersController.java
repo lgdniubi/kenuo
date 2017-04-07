@@ -68,6 +68,7 @@ public class UserOrdersController extends BaseController {
 			Page<Orders> page = ordersService.findByUser(new Page<Orders>(request, response), orders);
 			model.addAttribute("page", page);
 			model.addAttribute("userId", userId);
+			model.addAttribute("orders",orders);
 		}
 		return "modules/crm/orders";
 	}
