@@ -6,6 +6,7 @@
 		SELECT
 			mmu.user_id AS userId,
 			mmu.nickname,
+			mmu.sex AS sex,
 			mmu.mobile,
 			mmu.`name`,
 			mmu.level AS userLevel,
@@ -279,7 +280,9 @@
 	<update id="updateMtmyUsers">
 		UPDATE mtmydb.mtmy_users SET
 			office_id=#{officeId},
-			beautician_id= #{beautyId}
+			beautician_id= #{beautyId},
+			name=#{name},
+			sex=#{sex}
 		WHERE  user_id = #{userId}	
 	</update>
 </mapper>
