@@ -520,7 +520,7 @@ input::-webkit-inner-spin-button{
 									<label><font color="red"> </font>客 户 忌 讳:</label>
 								</div>
 								<div class="col-md-3">
-									<input value="${detail.usingBrand}" maxlength="50"
+									<input value="${detail.taboo}" maxlength="50"
 										style="width: 300px;" name="taboo" class="form-control " />
 								</div>
 							</div>

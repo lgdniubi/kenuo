@@ -110,7 +110,7 @@ public class Comparison {
 		cols.put("source","客户来源");
 		cols.put("usingBrand","现用品牌");
 		cols.put("intrest","兴趣");
-		cols.put("taboo","禁忌");
+		cols.put("taboo","客户忌讳");
 		cols.put("hate","厌恶");
 		cols.put("promotionAgent","推广人员");
 		//比较联系信息
