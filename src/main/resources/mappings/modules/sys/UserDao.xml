@@ -154,7 +154,7 @@
 			        @r AS _id, 
 			        (SELECT @r := parent_id FROM trains.sys_office WHERE id = _id) AS parent_id
 			    FROM 
-			        (SELECT @r := (SELECT office_id FROM trains.sys_user WHERE id = '9e5e6e3bba734acd832d68f83eb51260') ) vars, 
+			        (SELECT @r := (SELECT office_id FROM trains.sys_user WHERE id = #{id}) ) vars, 
 			        trains.sys_office h WHERE @r >= 0) T1 JOIN trains.sys_office T2 ON T1._id = T2.id
 			) AS parendNames
 			<!-- ,
