@@ -26,7 +26,8 @@ public class Comparison {
 	private static final Map<String, String> selectChildren = new HashMap<String, String>();
 	private static final Map<String, String> selectOccupation= new HashMap<String, String>();
 	private static final Map<String, String> selectIncome = new HashMap<String, String>();
-
+    
+	private static Object lockForCompare = new Object();
 	
 	static{
 		//性别
@@ -64,8 +65,8 @@ public class Comparison {
 
 		//汽车品牌
 		selectCar.put("1", "奥迪");
-		selectCar.put("2", "宾利");
-		selectCar.put("3", "宝马");
+		selectCar.put("3", "宾利");
+		selectCar.put("2", "宝马");
 		selectCar.put("4", "本田");
 		//子女个数
 		selectChildren.put("0","0");
@@ -90,6 +91,7 @@ public class Comparison {
 		cols.put("idCard","身份证");
 		cols.put("remark","备注");
 		cols.put("birthday","生日");
+		cols.put("lunarBirthday","阴历生日");
 		cols.put("character","性格");
 		cols.put("constellation","星座");
 		cols.put("isMarrige","是否结婚");
@@ -108,7 +110,7 @@ public class Comparison {
 		cols.put("source","客户来源");
 		cols.put("usingBrand","现用品牌");
 		cols.put("intrest","兴趣");
-		cols.put("taboo","禁忌");
+		cols.put("taboo","客户忌讳");
 		cols.put("hate","厌恶");
 		cols.put("promotionAgent","推广人员");
 		//比较联系信息
@@ -141,14 +143,15 @@ public class Comparison {
 	                IllegalAccessException, IllegalArgumentException,  
 	                InvocationTargetException {  
 		 //返回的String    
-	    StringBuilder sBuilder = new StringBuilder();
+	    StringBuffer sBuilder = new StringBuffer();
 		// 获取实体类的所有属性，返回Field数组  
 	    Field[] field = afterObj.getClass().getDeclaredFields();  
 	    //转换日期
-        SimpleDateFormat format =new SimpleDateFormat("yyyy-MM-dd HH"); 
+        SimpleDateFormat format =new SimpleDateFormat("yyyy-MM-dd"); 
 	    // 遍历所有属性  
-	    for (int j = 0; j < field.length; j++) {  
-	    	    sBuilder.append("  ");
+        synchronized(lockForCompare){ 
+        
+        for (int j = 0; j < field.length; j++) {  
 	    	    // 获取属性的名字  
 	            String typeName = field[j].getName();  
 	            // 将属性的首字符大写，方便构造get，set方法  
@@ -157,25 +160,27 @@ public class Comparison {
 	            String type = field[j].getGenericType().toString();  
 	            // 如果type是类类型，则前面包含"class "，后面跟类名  
                 if (cols.containsKey(typeName)) {
+                	//string 类型的
                 	if (type.equals("class java.lang.String")) {
-    	            	if ("beautyId".equals(typeName)||"officeId".equals(typeName)) {
+    	            	if ("beautyId".equals(typeName)||"officeId".equals(typeName)||"sex".equals(typeName)) {
     						
     					}else{
     	                    Method m = afterObj.getClass().getMethod("get" + nameUpperCase);  
     	                    // 调用getter方法获取属性值  
     	                    String afterValue = (String) m.invoke(afterObj);  
-    	                    System.out.println("数据类型为：String");  
+    	                    String beforeValue = (String) m.invoke(beforeObj); 
     	                    if (afterValue != null && afterValue.trim().length()>0){  
-    	                    	String beforeValue = (String) m.invoke(beforeObj); 
     	                    	if (afterValue.equals(beforeValue)) {
-    	                    		System.out.println("属性值相同");  
+    	                    		
     							}else{
-    								if (null==beforeValue||"".equals(beforeValue)) {
-    									if (selectCols.containsKey(typeName)) {
-    										sBuilder.append(cols.get(typeName)+"新增:"+selectCols.get(typeName).get(afterValue)+";"); 
-										}else {
-											sBuilder.append(cols.get(typeName)+"新增:"+afterValue+";");
-										}
+    	    	                    System.out.println("数据类型为：String"+typeName+afterValue+"null"+beforeValue);  
+
+    								if(null==beforeValue || beforeValue.trim().length()<=0) {
+	    									if (selectCols.containsKey(typeName)) {
+	    										sBuilder.append(cols.get(typeName)+" :新增--"+selectCols.get(typeName).get(afterValue)+";"); 
+											}else {
+												sBuilder.append(cols.get(typeName)+" :新增--"+afterValue+";  ");
+											}
     								}else {
     									if (selectCols.containsKey(typeName)) {
     									sBuilder.append(cols.get(typeName)+": "+selectCols.get(typeName).get(beforeValue)
@@ -185,48 +190,56 @@ public class Comparison {
     									}
     								} 
     							}
-    	                    }
+    	                    }else if (null != beforeValue && beforeValue.trim().length()>0) {
+								sBuilder.append(cols.get(typeName)+":删除--"+beforeValue+"  "); 
+							}
     					}
     	            }  
     	            if (type.equals("class java.lang.Double")) {  
     	                    Method m = afterObj.getClass().getMethod("get" +nameUpperCase);  
     	                    Double afterValue = (Double) m.invoke(afterObj);  
-    	                    System.out.println("数据类型为：double");  
-    	                    if (afterValue != null) {  
-    	                    	Double beforeValue = (Double) m.invoke(beforeObj);  
+    	                    System.out.println("数据类型为：double");
+    	                    Double beforeValue = (Double) m.invoke(beforeObj); 
+    	                    if (null != afterValue) { 
+	    	                    System.out.println("数据类型为：double"+typeName+afterValue+"null"+beforeValue);  
     	                    	if (beforeValue==afterValue || beforeValue.compareTo(afterValue)==0) {
-    	                    		
+									
     	                    	}else {
     	                    		if (beforeValue==0) {
-    	                    			sBuilder.append(cols.get(typeName)+"新增"+afterValue+";"); 
+    	                    			sBuilder.append(cols.get(typeName)+":新增--"+afterValue+"; "); 
     								}else {
-    									sBuilder.append(cols.get(typeName)+":"+beforeValue+"--"+afterValue+";"); 
+    									sBuilder.append(cols.get(typeName)+":修改--"+beforeValue+"--"+afterValue+"; "); 
     								}
     							}
-    	                    }
+    	                    }else if (null!= beforeValue) {
+								sBuilder.append(cols.get(typeName)+":删除--"+beforeValue+" "); 
+							}
     	            }  
     	            if (type.equals("class java.util.Date")) {  
     	                    Method m = afterObj.getClass().getMethod("get" + nameUpperCase);  
     	                    Date afterValue = (Date)m.invoke(afterObj);  
     	                    System.out.println("数据类型为：Date");  
+	                    	java.util.Date beforeValue = (java.util.Date) m.invoke(beforeObj); 
     	                    if (afterValue != null) {  
-    	                    	java.util.Date beforeValue = (java.util.Date) m.invoke(beforeObj); 
     	                    	if (afterValue.equals(beforeValue)) {
     	                    		System.out.println(sBuilder);
     							}else{
     								if (null==beforeValue) {
-    	                    			sBuilder.append(cols.get(typeName)+"新增"+format.format(afterValue)+";"); 
+    	                    			sBuilder.append(cols.get(typeName)+"：新增--"+format.format(afterValue)+";"); 
     								}else {
-    									sBuilder.append(cols.get(typeName)+":"+format.format(beforeValue)+"--"+format.format(afterValue)+";"); 
+    									sBuilder.append(cols.get(typeName)+"：修改--"+format.format(beforeValue)+"--"+format.format(afterValue)+";"); 
     								}
     							}
-    	                    }  
+    	                    } else if (null!= beforeValue) {
+    	                    	sBuilder.append(cols.get(typeName)+":删除--"+format.format(beforeValue)+" "); 
+							} 
     	            }
 				}
-	    }
-	    if (null == sBuilder || sBuilder.toString().trim().length()<=0) {
-			sBuilder.append("未作任何修改");
-		}
+	         }
+		    if (sBuilder.toString().trim().length()<=0) {
+				sBuilder.append("未作修改");
+			}
+        }
 	    return sBuilder.toString();
 	}  
 }

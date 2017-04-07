@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -104,7 +105,7 @@ public class UserDetailController extends BaseController {
 			}
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
-			addMessage(model, "查询出现问题");
+			addMessage(model, "查询出现问题或者超时");
 			e.printStackTrace();
 		}
 		return "modules/crm/userList";
@@ -235,8 +236,9 @@ public class UserDetailController extends BaseController {
 	 * @param userDetail
 	 * @return void
 	 */
+	@Transactional(readOnly= false)
 	@RequestMapping(value = "saveDetail")
-	public String saveUsetDetail(UserDetail entity,UserContactInfo info, HttpServletRequest request, HttpServletResponse response) {
+	public String saveUsetDetail(UserDetail entity,UserContactInfo info, HttpServletRequest request, HttpServletResponse response,Model model) {
 		String userId = entity.getUserId();
 		if (null!=userId && userId.trim().length()>0) {
 			try {
@@ -252,9 +254,16 @@ public class UserDetailController extends BaseController {
 						String infoChange = Comparison.compareObj(exists2,info);
 						log.setUserId(userId);
 						log.setOperatorType("1");
-						log.setContent(detailChange+infoChange);
+						if ("未作修改".equals(infoChange)) {
+							log.setContent(detailChange);
+						}else if ("未作修改".equals(detailChange)) {
+							log.setContent(infoChange);
+						}else{
+							log.setContent(infoChange+detailChange);
+						}
 						logService.save(log);
 					} catch (Exception e) {
+						addMessage(model, "保存失败");
 						logger.debug(e.getMessage());
 						e.printStackTrace();
 					}
@@ -269,6 +278,7 @@ public class UserDetailController extends BaseController {
 						log.setContent("修改用户详细信息"+detailChange);
 						logService.save(log);
 					} catch (Exception e) {
+						addMessage(model, "保存失败");
 						logger.debug(e.getMessage());
 						e.printStackTrace();
 					}
@@ -283,6 +293,7 @@ public class UserDetailController extends BaseController {
 						log.setContent("创建新的用户详细记录;"+infoChange);
 						logService.save(log);
 					} catch (Exception e) {
+						addMessage(model, "保存失败");
 						logger.debug(e.getMessage());
 						e.printStackTrace();
 					}
@@ -296,6 +307,7 @@ public class UserDetailController extends BaseController {
 						log.setContent("创建新的用户详细记录");
 						logService.save(log);
 					} catch (Exception e) {
+						addMessage(model, "保存失败");
 						logger.debug(e.getMessage());
 						e.printStackTrace();
 					}
