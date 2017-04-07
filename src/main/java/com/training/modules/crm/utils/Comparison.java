@@ -3,6 +3,7 @@ package com.training.modules.crm.utils;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -142,6 +143,8 @@ public class Comparison {
 	    StringBuilder sBuilder = new StringBuilder();
 		// 获取实体类的所有属性，返回Field数组  
 	    Field[] field = afterObj.getClass().getDeclaredFields();  
+	    //转换日期
+        SimpleDateFormat format =new SimpleDateFormat("yyyy-MM-dd HH"); 
 	    // 遍历所有属性  
 	    for (int j = 0; j < field.length; j++) {  
 	    	    sBuilder.append("  ");
@@ -168,16 +171,16 @@ public class Comparison {
     							}else{
     								if (null==beforeValue||"".equals(beforeValue)) {
     									if (selectCols.containsKey(typeName)) {
-    										sBuilder.append(cols.get(typeName)+"新增"+selectCols.get(typeName).get(afterValue)+";"); 
+    										sBuilder.append(cols.get(typeName)+"新增:"+selectCols.get(typeName).get(afterValue)+";"); 
 										}else {
-											sBuilder.append(cols.get(typeName)+"新增"+afterValue+";");
+											sBuilder.append(cols.get(typeName)+"新增:"+afterValue+";");
 										}
     								}else {
     									if (selectCols.containsKey(typeName)) {
-    									sBuilder.append(cols.get(typeName)+":"+selectCols.get(typeName).get(beforeValue)
-    											+"--"+selectCols.get(typeName).get(afterValue)+";"); 
+    									sBuilder.append(cols.get(typeName)+": "+selectCols.get(typeName).get(beforeValue)
+    											+"--"+selectCols.get(typeName).get(afterValue)+"; "); 
     									}else{
-    										sBuilder.append(cols.get(typeName)+":"+beforeValue+"--"+afterValue+";"); 
+    										sBuilder.append(cols.get(typeName)+": "+beforeValue+"--"+afterValue+"; "); 
     									}
     								} 
     							}
@@ -190,10 +193,10 @@ public class Comparison {
     	                    System.out.println("数据类型为：double");  
     	                    if (afterValue != null) {  
     	                    	Double beforeValue = (Double) m.invoke(beforeObj);  
-    	                    	if (beforeValue==afterValue) {
+    	                    	if (beforeValue==afterValue || beforeValue.compareTo(afterValue)==0) {
     	                    		
     	                    	}else {
-    	                    		if (beforeValue.toString().length()==0) {
+    	                    		if (beforeValue==0) {
     	                    			sBuilder.append(cols.get(typeName)+"新增"+afterValue+";"); 
     								}else {
     									sBuilder.append(cols.get(typeName)+":"+beforeValue+"--"+afterValue+";"); 
@@ -211,15 +214,14 @@ public class Comparison {
     	                    		System.out.println(sBuilder);
     							}else{
     								if (null==beforeValue) {
-    	                    			sBuilder.append(cols.get(typeName)+"新增"+afterValue+";"); 
+    	                    			sBuilder.append(cols.get(typeName)+"新增"+format.format(afterValue)+";"); 
     								}else {
-    									sBuilder.append(cols.get(typeName)+":"+beforeValue+"--"+afterValue+";"); 
+    									sBuilder.append(cols.get(typeName)+":"+format.format(beforeValue)+"--"+format.format(afterValue)+";"); 
     								}
     							}
     	                    }  
     	            }
 				}
-	             
 	    }  
 	    return sBuilder.toString();
 	}  

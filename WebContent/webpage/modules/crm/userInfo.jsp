@@ -312,8 +312,8 @@ input::-webkit-inner-spin-button{
 								<div class="col-sm-2 col-offset-sm-1">
 									<label><font color="red"> </font>真实姓名:</label>
 									<!--隐藏userId的input框 -->
-									 <input name="name" value="${detail.name}" maxlength="50" style="width: 150px;"
-										class="form-control">
+									 <input name="name" value="${userDetail.name}" maxlength="50" style="width: 150px;"
+										class="form-control" disabled="disabled">
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
 									<label><font color="red"> </font>客户性格:</label> <select
