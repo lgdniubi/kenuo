@@ -87,11 +87,12 @@
 				if(oldMobile==value){
 					
 				}else{
-					if(length==11){
-						clean();
-					}else{
+					if(length !=11){
 						$("#mobileError").html("手机号要为11位");	
 						return false;
+					/* }else{
+						$("#mobileError").html("手机号要为11位");	
+						return false; */
 					}
 				}
 				return true;

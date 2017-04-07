@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
+import com.training.modules.crm.entity.CrmOrders;
 import com.training.modules.crm.entity.UserDetail;
 import com.training.modules.crm.service.UserDetailService;
 import com.training.modules.ec.entity.GoodsCategory;
@@ -60,12 +61,12 @@ public class UserOrdersController extends BaseController {
 	 * @return String 客户订单列表
 	 */
 	@RequestMapping(value = "list")
-	public String orders(String userId, Orders orders, HttpServletRequest request, HttpServletResponse response,
+	public String orders(String userId, CrmOrders orders, HttpServletRequest request, HttpServletResponse response,
 			Model model) {
 
 		if (null!=userId && userId.trim().length()>0) {
 			orders.setUserid(Integer.valueOf(userId));
-			Page<Orders> page = ordersService.findByUser(new Page<Orders>(request, response), orders);
+			Page<CrmOrders> page = ordersService.findByUser(new Page<CrmOrders>(request, response), orders);
 			model.addAttribute("page", page);
 			model.addAttribute("userId", userId);
 			model.addAttribute("orders",orders);

@@ -379,7 +379,7 @@
 			a.shipping_name,
 			a.shipping_time,
 			a.temp_orderId,
-			b.nickname as "username",
+			u.nickname as "username",
 			c.goods_name,
 			c.goods_sn,
 			c.spec_key_name,
@@ -394,13 +394,13 @@
 		    a.is_real AS orderIsReal,
 		    a.add_time AS strAddTime,
 		    a.shipping_price as newShippingPrice,
-		    b.user_id as usersId,
-		    b.mobile as usersMobile,
+		    u.user_id as usersId,
+		    u.mobile as usersMobile,
 		    (CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
 		FROM
 			mtmydb.mtmy_orders a
 			LEFT JOIN mtmydb.mtmy_payment d ON a.pay_code=d.pay_code
-			LEFT JOIN mtmydb.mtmy_users b ON a.user_id=b.user_id
+			LEFT JOIN mtmydb.mtmy_users u ON a.user_id=u.user_id
 			LEFT JOIN mtmydb.mtmy_order_goods_mapping c ON c.order_id=a.order_id
 			LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=c.goods_id
 			LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
@@ -410,12 +410,12 @@
 		<!-- and a.del_flag =0 --> 
 		and a.parent_id=0
 		<if test="username != null and username!=''">
-			AND b.nickname like
+			AND u.nickname like
 			<if test="dbName == 'oracle'">'%'||#{username} ||'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{username} , '%')</if>
 		</if>
 		<if test="mobile != null  and mobile != ''">
-			AND b.mobile=#{mobile}
+			AND u.mobile=#{mobile}
 		</if>
 		<if test="orderid != null and orderid != ''">
 			AND a.order_id = #{orderid}
@@ -434,9 +434,6 @@
 		</if>
 		<if test="endtime!=null and endtime!=''">
 			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
-		</if>
-		<if test="userid != null and userid != ''">
-			AND a.user_id = #{userid}
 		</if>
 		<if test="cetaid !='' and  goodsids ==''">
 			AND f.category_id=#{cetaid}
@@ -493,7 +490,7 @@
 			a.shipping_name,
 			a.shipping_time,
 			a.temp_orderId,
-			b.nickname as "username",
+			u.nickname as "username",
 			c.goods_name,
 			c.goods_sn,
 			c.spec_key_name,
@@ -508,13 +505,13 @@
 		    a.is_real AS orderIsReal,
 		    a.add_time AS strAddTime,
 		    a.shipping_price as newShippingPrice,
-		    b.user_id as usersId,
-		    b.mobile as usersMobile,
+		    u.user_id as usersId,
+		    u.mobile as usersMobile,
 		    (CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
 		FROM
 			mtmydb.mtmy_orders a
 			LEFT JOIN mtmydb.mtmy_payment d ON a.pay_code=d.pay_code
-			LEFT JOIN mtmydb.mtmy_users b ON a.user_id=b.user_id
+			LEFT JOIN mtmydb.mtmy_users u ON a.user_id=u.user_id
 			LEFT JOIN mtmydb.mtmy_order_goods_mapping c ON c.order_id=a.order_id
 			LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=c.goods_id
 			LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
@@ -523,12 +520,12 @@
 		<!-- WHERE a.del_flag =0 --> 
 		WHERE a.parent_id=0
 		<if test="username != null and username!=''">
-			AND b.nickname like
+			AND u.nickname like
 			<if test="dbName == 'oracle'">'%'||#{username} ||'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{username} , '%')</if>
 		</if>
 		<if test="mobile != null  and mobile != ''">
-			AND b.mobile=#{mobile}
+			AND u.mobile=#{mobile}
 		</if>
 		<if test="orderid != null and orderid != ''">
 			AND a.order_id = #{orderid}
@@ -547,9 +544,6 @@
 		</if>
 		<if test="endtime!=null and endtime!=''">
 			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
-		</if>
-		<if test="userid != null and userid != ''">
-			AND a.user_id = #{userid}
 		</if>
 		<if test="cetaid !='' and  goodsids ==''">
 			AND f.category_id=#{cetaid}

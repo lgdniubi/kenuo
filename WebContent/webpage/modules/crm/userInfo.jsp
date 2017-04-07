@@ -591,7 +591,7 @@ input::-webkit-inner-spin-button{
 				</fieldset>
 			</form>
 		</div>
-		<div style="text-align:left;max-width:1400px;">
+		<div style="text-align:center;max-width:1400px;">
 			<shiro:hasPermission name="crm:userInfo:edit">
 				<button onclick="enableEdit()" type="button" style="margin-right:20px;" class="btn btn-info" id="enableEdit">编辑</button>
 				<button onclick="save()" type="button" class="btn btn-success">保存</button>
