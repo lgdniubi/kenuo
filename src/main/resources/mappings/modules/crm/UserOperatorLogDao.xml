@@ -12,6 +12,7 @@
 		FROM
 			mtmydb.mtmy_user_operate_log muo
 	    WHERE muo.mtmy_user_id =#{userId}
+	    AND muo.operator_type = 1
 	    <if test="operatorType!=null and operatorType!=''">
 			     AND muo.operator_type=#{operatorType}
 		</if>
