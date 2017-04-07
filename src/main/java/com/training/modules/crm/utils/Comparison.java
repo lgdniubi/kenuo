@@ -86,6 +86,7 @@ public class Comparison {
 		//比较userDetail
 		cols.put("name","名字");
 		cols.put("nickname","昵称");
+		cols.put("sex","性别");
 		cols.put("idCard","身份证");
 		cols.put("remark","备注");
 		cols.put("birthday","生日");
@@ -222,7 +223,10 @@ public class Comparison {
     	                    }  
     	            }
 				}
-	    }  
+	    }
+	    if (null == sBuilder || sBuilder.toString().trim().length()<=0) {
+			sBuilder.append("未作任何修改");
+		}
 	    return sBuilder.toString();
 	}  
 }
