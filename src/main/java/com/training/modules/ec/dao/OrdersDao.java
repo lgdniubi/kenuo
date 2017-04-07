@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
+import com.training.modules.crm.entity.CrmOrders;
 import com.training.modules.ec.entity.OrderInvoice;
 import com.training.modules.ec.entity.OrderInvoiceRelevancy;
 import com.training.modules.ec.entity.OrderRemarksLog;
@@ -262,7 +263,7 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @return Orders
 	 * 根据USERID及其其他条件查询订单列表
 	 */
-	public List<Orders> findByUser(Orders order);
+	public List<CrmOrders> findByUser(CrmOrders order);
 
 	/**
 	 * 分页查询订单，无权限的
