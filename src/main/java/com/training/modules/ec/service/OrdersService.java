@@ -949,6 +949,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				serviceTimes_in = _servicetimes-oLog.getRemaintimes();//充值次数
 				totalAmount_in = orderArrearage;//实付金额
 				accountBalance_in = totalAmount - totalAmount_in - accountBalance;
+			}else if(singleRealityPrice > totalAmount){//实际单次标价  > 实付款金额
+				totalAmount_in = totalAmount;
+				accountBalance_in = totalAmount;
 			}
 		}else{//实物
 			if(totalAmount<=orderArrearage){
@@ -973,9 +976,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		OrderGoodsDetails details = new OrderGoodsDetails();
 		details.setOrderId(oLog.getOrderId());
 		details.setGoodsMappingId(oLog.getRecid()+"");
-		details.setTotalAmount(totalAmount_in);	//实付款金额
 		details.setOrderBalance(accountBalance_in);	//订单余款
-		details.setOrderArrearage(-totalAmount_in);	//订单欠款
+		if(1 == oLog.getIsReal() && singleRealityPrice > totalAmount){
+			details.setOrderArrearage(0);	//订单欠款
+			details.setTotalAmount(0);	//实付款金额
+		}else{
+			details.setOrderArrearage(-totalAmount_in);	//订单欠款
+			details.setTotalAmount(totalAmount_in);	//实付款金额
+		}
 		details.setItemAmount(itemAmount);	//项目金额
 		details.setItemCapitalPool(itemCapitalPool); //项目资金池
 		details.setServiceTimes(serviceTimes_in);	//剩余服务次数
@@ -986,9 +994,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	/*	if(accountBalance > 0){*/
 			//根据用户id查询用户账户信息
 			Orders _orders = new Orders();
+			double accountArrearage = 0;
 			_orders.setUserid(oLog.getMtmyUserId());
 			Orders account = ordersDao.getAccount(_orders);
-			double accountArrearage = account.getAccountArrearage()-totalAmount_in;	//账户欠款信息
+			if(1 == oLog.getIsReal() && singleRealityPrice > totalAmount){
+				accountArrearage = account.getAccountArrearage()-0;	//账户欠款信息
+			}else{
+				accountArrearage = account.getAccountArrearage()-totalAmount_in;	//账户欠款信息
+			}
 			account.setAccountArrearage(accountArrearage);
 			double accountBalance_ = account.getAccountBalance()+accountBalance_in;
 			account.setAccountBalance(accountBalance_);

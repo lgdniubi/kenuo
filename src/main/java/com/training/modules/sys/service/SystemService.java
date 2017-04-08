@@ -495,10 +495,13 @@ public class SystemService extends BaseService implements InitializingBean {
 			json.put("property", "[\"no\",\"loginName\",\"idCard\",\"inductionTime\",\"mobile\",\"name\"]");
 			json.put("name", "[\"工号\",\"登录名\",\"身份证号码\",\"入职日期\",\"手机号码\",\"姓名\"]");
 			String string = SaveLogUtils.saveLog(json,str.toString(),oldUser,user);
-			UserLog userLog = new UserLog();
-			userLog.setContent(string);
-			user.setUserLog(userLog);
-			userDao.saveUserLog(user);
+			if(!"".equals(string)){
+				UserLog userLog = new UserLog();
+				userLog.setContent(string);
+				user.setUserLog(userLog);
+				userDao.saveUserLog(user);
+			}
+			
 			
 			if (oldUser.getOffice() != null && oldUser.getOffice().getId() != null) {
 				CacheUtils.remove(UserUtils.USER_CACHE,
