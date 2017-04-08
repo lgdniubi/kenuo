@@ -303,10 +303,23 @@
 		
 			
 			validateForm = $("#inputForm").validate({
-				
 				rules: {
-					no:{remote:"${ctx}/sys/user/checkNO?oldNo=" + encodeURIComponent('${user.no}')},
-					loginName: {remote: "${ctx}/sys/user/checkLoginName?oldLoginName=" + encodeURIComponent('${user.loginName}')},//设置了远程验证，在初始化时必须预先调用一次。
+					/* no:{remote:"${ctx}/sys/user/checkNO?oldNo=" + encodeURIComponent('${user.no}')}, */
+					no:{
+						remote:{
+							type: "post",
+							async: false,
+							url: "${ctx}/sys/user/checkNO?oldNo=" + encodeURIComponent('${user.no}')
+						}
+					},
+					/* loginName: {remote: "${ctx}/sys/user/checkLoginName?oldLoginName=" + encodeURIComponent('${user.loginName}')}, *///设置了远程验证，在初始化时必须预先调用一次。
+					loginName: {
+						remote: {
+							type: "post",
+							async: false,
+							url: "${ctx}/sys/user/checkLoginName?oldLoginName=" + encodeURIComponent('${user.loginName}')
+						}
+					},
 					mobile:{
 						isShow:true,
 						digits:true,
@@ -316,7 +329,11 @@
 					},
 					idCard:{
 						isIdCard: true,
-						remote: "${ctx}/sys/user/checkIdcard?oldIdCard=" + encodeURIComponent('${user.idCard}')
+						remote: {
+							type: "post",
+							async: false,
+							url: "${ctx}/sys/user/checkIdcard?oldIdCard=" + encodeURIComponent('${user.idCard}')
+						}
 					}
 				},
 				messages:{
