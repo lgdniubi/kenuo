@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.persistence.Page;
 import com.training.common.service.TreeService;
+import com.training.modules.crm.entity.CrmOrders;
 import com.training.modules.ec.dao.AcountLogDao;
 import com.training.modules.ec.dao.ActivityCouponUserDao;
 import com.training.modules.ec.dao.CouponUserDao;
@@ -1370,7 +1371,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @return Page<Orders>
 	 * 根据用户ID搜索订单
 	 */
-	public Page<Orders> findByUser(Page<Orders> page, Orders orders){
+	public Page<CrmOrders> findByUser(Page<CrmOrders> page, CrmOrders orders){
 		orders.setPage(page);
 		// 执行分页查询
 		page.setList(ordersDao.findByUser(orders));
