@@ -31,20 +31,6 @@
 <body>
 	<div class="wrapper wrapper-content">
 		<div class="ibox">
-			<div class="ibox-title">
-				<div class="text">
-					<h5>首页&nbsp;&nbsp;</h5>
-				</div>
-				<div class="text active">
-					<h5>&nbsp;&nbsp;客户管理&nbsp;&nbsp;</h5>
-				</div>
-				<div class="text">
-					<h5>&nbsp;&nbsp;订单管理&nbsp;&nbsp;</h5>
-				</div>
-				<div class="text">
-					<h5>&nbsp;&nbsp;综合报表&nbsp;&nbsp;</h5>
-				</div>
-			</div>
 			<div class="nav">
 				<!-- 翻页隐藏文本框 -->
 				<div class="text-danger" style="margin:8px">
