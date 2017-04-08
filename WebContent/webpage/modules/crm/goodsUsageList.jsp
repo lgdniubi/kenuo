@@ -91,9 +91,12 @@
 									href="${ctx}/crm/user/account?userId=${userId}">账户总览</a></li>
 						<li role="presentation"><a
 									href="${ctx}/crm/invitation/list?userId=${userId}">邀请明细</a></li>
-						<li role="presentation"><a 
-								href="${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1">投诉咨询</a></li>
-					  </ul>
+						<li role="presentation">
+							<shiro:hasPermission name="crm:store:list">	
+							<a onclick='top.openTab("${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1","投诉咨询", false)'
+								>投诉咨询</a>
+							</shiro:hasPermission>
+						</li>
 					</div>
 				</div>
 			 <div>
@@ -129,7 +132,7 @@
 						<tr>
 							<!-- 							 <th style="text-align: center;">编号</th> -->
 							<th style="text-align: center;">产品名称</th>
-							<th style="text-align: center;">使用数量</th>
+							<th style="text-align: center;">购买数量</th>
 							<th style="text-align: center;">开始使用日期</th>
 							<th style="text-align: center;">结束使用日期</th>
 							<th style="text-align: center;">使用效果</th>
