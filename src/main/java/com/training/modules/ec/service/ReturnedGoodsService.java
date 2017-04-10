@@ -235,8 +235,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	 * @return
 	 */
 	public Page<ReturnedGoods> findListByUser(Page<ReturnedGoods> page, ReturnedGoods returnedGoods) {
-		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
-		returnedGoods.getSqlMap().put("dsf", ScopeUtils.dataScopeFilter("a", "orderOrRet"));
+		
 		// 设置分页参数
 		returnedGoods.setPage(page);
 		// 执行分页查询

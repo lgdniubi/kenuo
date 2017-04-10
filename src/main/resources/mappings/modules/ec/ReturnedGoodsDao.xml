@@ -305,7 +305,7 @@
 		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
 		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
 		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
-		${sqlMap.dsf}	
+		WHERE 1=1	
 		AND a.del_flag=0 
 		AND a.user_id =#{userId}
 		<if test="keyword != null and keyword!=''">
