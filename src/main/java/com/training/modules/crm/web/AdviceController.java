@@ -310,7 +310,7 @@ public class AdviceController extends BaseController {
 				adviceService.saveSolve(complain);
 			}
 			addMessage(redirectAttributes, complain.getName()+"的问题保存成功！");
-			return "redirect:" + adminPath + "/crm/store/list";
+			return "redirect:" + adminPath + "/crm/store/list?stamp="+complain.getStamp()+"&mobile="+complain.getMobile();
 		} else {
 			//判断有没有处理过程
 			if (complain.getHandResult() != null) {
