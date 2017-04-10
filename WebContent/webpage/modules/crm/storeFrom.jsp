@@ -6,7 +6,77 @@
 <meta name="decorator" content="default" />
 <link href="${ctxStatic}/layer-v2.0/layer/skin/layui.css" type="text/css" rel="stylesheet">
 <script type="text/javascript">
-
+		function validate(){ 
+			var mobile = $("#mobile").val();	
+			if(mobile == ""){
+				return;
+			}
+			$.ajax({
+				type:"get",
+				data:{
+					mobile:mobile
+				},
+				url:"${ctx}/crm/store/getUser",
+				success:function(date){
+					if(date != null && date != ""){
+							top.layer.alert('会员信息查询成功!', {icon: 0, title:'提醒'});  
+						$("#nickName").val(date.nickName);
+						$("#name").val(date.name);
+						$("#nickName").attr("readonly","true");
+						$("#name").attr("readonly","true");
+					}else{
+						top.layer.alert('此号码不是会员!', {icon: 0, title:'提醒'}); 
+						$("#nickName").val("");
+						$("#name").val("");
+						$("#nickName").removeAttr("readonly")
+						$("#name").removeAttr("readonly");
+					}
+				},
+				error:function(XMLHttpRequest,textStatus,errorThrown){
+				}
+			});
+			}
+		
+		$(document).ready(function() {
+			validateForm = $("#inputForm").validate({
+				rules: {
+					  brandType: {
+				            required : true,
+				      },
+				      recordTime: {
+				            required: true,
+				      },
+				      questionType: {
+				            required: true,
+				      },
+				      mobile: {
+				            required : true,
+				            number:true,
+				            min:0
+				      },
+				      callBack: {
+				            required : true,
+				            number:true,
+				            min:0
+				      },				      
+				  },
+				  messages: {
+					  brandType: {
+				            required : "这是必选字段",
+				       },
+				       recordTime: {
+				            required: "这是必选字段",
+				      },
+				      questionType: {
+				            required: "这是必选字段",
+				      },	
+				      mobile: {
+				            required: "请填写手机号码",
+				      },				      
+				  }
+		 });
+	    });
+/* 
 		function selectUser(){
 			var mobile = $("#mobile").val();	
 			if(mobile == ""){
@@ -36,7 +106,7 @@
 				error:function(XMLHttpRequest,textStatus,errorThrown){
 				}
 			});
-		}
+		} */
 		
 		function gradeChange(){
 			$.ajax({
@@ -137,48 +207,70 @@
 				<div class="clearfix">
 					<form:form id="inputForm" modelAttribute="complain" action="${ctx}/crm/store/save" method="post" class="form-horizontal">
 						<form:hidden path="id" id="id"/>							
-						<div class="row" style="text-align:center;margin:10px">				
-							<div class="col-sm-12 col-offset-sm-1" style="text-align:left;">
+						<div class="row" style="text-align:center;margin:10px">							
+						<c:if test="${complain.name ==null}">									
+							<div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
 								<div style="float:left;">
-									<label ><font color="red">*</font>手机号码：&nbsp;</label>
+									<label ><font color="red">*</font>手机号码：</label>
+									<form:input path="mobile" htmlEscape="false" maxlength="16" class="form-control required" style="width:200px" onchange="validate();"/>
 								</div>
+							</div>
+						</c:if>	
+						<c:if test="${complain.name !=null}">										
+							<div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
 								<div style="float:left;">
-									<form:input path="mobile" htmlEscape="false" maxlength="16" class="form-control required" style="width:200px" />
-									<input class="btn btn-primary btn-sm pull-right" type="button" id="pushType" value="会员查询" onclick="selectUser()"/>
+									<label ><font color="red">*</font>手机号码：</label>
+									<form:input path="mobile" htmlEscape="false" maxlength="16" class="form-control required" readonly="true" style="width:200px" onchange="validate();"/>
+								<!-- 	<input class="btn btn-primary btn-sm pull-right" type="button" id="pushType" value="会员查询" onclick="selectUser()"/> -->
 								</div>
-							</div>									
-						</div>
-						<div class="row" style="text-align:center;margin:10px" >				
+							</div>
+						</c:if>								
+						<c:if test="${complain.name !=null}">
+						    <div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
+								<label ><font color="red">*</font>客户姓名：</label>
+								<form:input id="name" path="name" htmlEscape="false" maxlength="20" class="form-control required" readonly="true" style="width:200px" />
+							</div>						
+						</c:if>	
+						<c:if test="${complain.name ==null}">
 							<div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
 								<label ><font color="red">*</font>客户姓名：</label>
-								<form:input id="name" path="name" htmlEscape="false" maxlength="11" class="form-control required" style="width:200px" />
-							</div>
+								<form:input id="name" path="name" htmlEscape="false" maxlength="20" class="form-control required" style="width:200px" />
+							</div>						
+						</c:if>																
+						</div>
+						<div class="row" style="text-align:center;margin:10px" >							
+						<c:if test="${complain.nickName !=null}">
 							<div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
-								<label ><font color="red">*</font>客户昵称：</label>
-								<form:input id="nickName" path="nickName" htmlEscape="false" maxlength="10" class="form-control required" style="width:200px" />
-							</div>												
-						</div>	
-						<div class="row" style="text-align:center;margin:10px">				
-							 						
+								<label >&nbsp;客户昵称：</label>
+								<form:input id="nickName" path="nickName" htmlEscape="false" maxlength="20" class="form-control" readonly="true" style="width:200px" />
+							</div>			
+						</c:if>	
+						<c:if test="${complain.nickName ==null}">		
+							<div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
+								<label >&nbsp;客户昵称：</label>
+								<form:input id="nickName" path="nickName" htmlEscape="false" maxlength="20" class="form-control" style="width:200px" />
+							</div>
+						</c:if>	
 							<div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
 							    <label ><font color="red">*</font>品牌分类：</label>
 								<select class="form-control" id="brandType" name="brandType" style="text-align: center; width:200px;">
+								     <option value="" class=" required">请选择品牌</option>
 									<c:forEach items="${goodsBrandList}" var="goodsBrand">
 									  <option ${(goodsBrand.id == complain.brandType)?'selected="selected"':''} value="${goodsBrand.id}">${goodsBrand.name}</option>
 								    </c:forEach> 
 							    </select>
-							</div>
+							</div>																							
+						</div>	
+						<div class="row" style="text-align:center;margin:10px">				
 							<div class="col-sm-6 col-offset-sm-1" style="text-align:left;float: left;">
 								<label ><font color="red">*</font>问题主题：</label>
-								<form:input path="theme" htmlEscape="false" maxlength="10" class="form-control required" style="width:200px" />
-							</div>												
-						</div>
-						<div class="row" style="text-align:center;margin:10px">				
-							<div class="col-sm-12 col-offset-sm-1" style="text-align:left;">
+								<form:input path="theme" htmlEscape="false" maxlength="20" class="form-control required" style="width:200px" />
+							</div>														
+							<div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
 								<div style="float:left;">
 									<label ><font color="red">*</font>消费门店：</label>&nbsp;
 								</div>
-								<div style="float:left;width:260px;">
+								<div style="float:left;width:200px;">
 								    <sys:treeselect id="officeId" name="officeId" value="${complain.officeId}" labelName="officeName" labelValue="${complain.officeName}" title="部门" url="/sys/office/treeData?type=2" cssClass="form-control required" notAllowSelectParent="false" notAllowSelectRoot="false"/>
 								</div>
 							</div>					
@@ -186,10 +278,10 @@
 						<div class="row" style="text-align:center;margin:10px">				
 							<div class="col-sm-12 col-offset-sm-1" style="text-align:left;">
 								<label ><font color="red">*</font>问题分类：</label>&nbsp;&nbsp;
-								<input type="radio"name="questionType${status.index}" class=" required" value="1" ${(complain.questionType =='1')?'checked':''} />投诉 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="radio" name="questionType${status.index}" class=" required" value="2" ${(complain.questionType =='2')?'checked':''} />咨询 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="radio" name="questionType${status.index}" class=" required" value="3" ${(complain.questionType =='3')?'checked':''} />销售机会 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<input type="radio" name="questionType${status.index}" class=" required" value="4" ${(complain.questionType =='4')?'checked':''} />其它
+								<input type="radio" name="questionType${status.index}" value="1" ${(complain.questionType =='1')?'checked':''} />投诉 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="radio" name="questionType${status.index}" value="2" ${(complain.questionType =='2')?'checked':''} />咨询 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="radio" name="questionType${status.index}" value="3" ${(complain.questionType =='3')?'checked':''} />销售机会 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="radio" name="questionType${status.index}" value="4" ${(complain.questionType =='4')?'checked':''} />其它
 							</div>				
 						</div>
 						<div class="row" style="text-align:center;margin:10px">				
@@ -223,6 +315,7 @@
 							<div class="col-sm-12 col-offset-sm-1" style="text-align:left;">
 								<label ><font color="red">*</font>花费时间：</label>
 								<form:select path="recordTime" class="form-control" style="width:200px;">
+								    <form:option value="">请选择时间</form:option>
 									<form:option value="1">0-5分钟</form:option>
 									<form:option value="2">6-15分钟</form:option>
 									<form:option value="3">15-30分钟</form:option>
@@ -250,7 +343,7 @@
 						<hr/>	
 						<div id="table1" style="display: none;">
 						<!-- <table id="table1" style="display: none;" border="1" class="table table-bordered  table-condensed dataTables-example dataTable no-footer"> -->
-							<div class="row" style="text-align:center;margin:10px">				
+							<div class="row" style="text-align:center;margin:10px">		 		
 								<div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
 									<div style="float:left;"><label class="pull-right"><font color="red">*</font>紧急程度：</label></div>
 									<div style="float:left;">&nbsp;&nbsp;

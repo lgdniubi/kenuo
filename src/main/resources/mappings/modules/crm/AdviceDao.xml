@@ -176,7 +176,7 @@
 	<!-- 根据电话号码查询会员信息 -->
 	<select id="getUser" resultType="Complain">
 			SELECT
-				IFNULL(mu.nickname,mu.name) AS nickName,
+				mu.nickname AS nickName,
 				mu.mobile AS mobile,
 				mu.name AS name
 			FROM
