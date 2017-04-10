@@ -560,19 +560,19 @@ input::-webkit-inner-spin-button{
 										name="email" value="${info.email}" maxlength="50"
 										style="width: 150px;" class="form-control " />
 								</div>
+									<div class="col-intems-5">
+										<label><font color="red">
+										</font>工作单位:</label> <input value="${info.companyName}" style="width: 320px;"
+											name="companyName" class="form-control " />
+									</div>
 								<shiro:hasPermission name="crm:userSecret:view">
-								<div class="col-intems-5">
-									<label><font color="red">
-									</font>工作单位:</label> <input value="${info.companyName}" style="width: 320px;"
-										name="companyName" class="form-control " />
-								</div>
+									<div class="col-intems-5">
+										<label><font color="red">
+										</font>客户住址:</label>
+										<input value="${info.address}" style="width: 320px;"
+											name="address" class="form-control " />
+									</div>
 								</shiro:hasPermission>
-								<div class="col-intems-5">
-									<label><font color="red">
-									</font>客户住址:</label>
-									<input value="${info.address}" style="width: 320px;"
-										name="address" class="form-control " />
-								</div>
 							</div>
 						</div>
 					</div>

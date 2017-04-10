@@ -12,9 +12,8 @@
 		FROM
 			mtmydb.mtmy_user_operate_log muo
 	    WHERE muo.mtmy_user_id =#{userId}
-	    AND muo.operator_type = 1
 	    <if test="operatorType!=null and operatorType!=''">
-			     AND muo.operator_type=#{operatorType}
+			AND muo.operator_type=#{operatorType}
 		</if>
         ORDER BY muo.create_date DESC
 	</select>
