@@ -131,17 +131,16 @@ public class ConsignController extends BaseController {
 		try {
 			consignId = consign.getConsignId();
 			UserOperatorLog log = new UserOperatorLog();
+			log.setOperatorType("2");
 			if (null==consignId|| consignId.trim().length()<=0) {
 				consignService.save(consign);
 				//save Log
 				log.setUserId(consign.getUserId());
-				log.setOperatorType("2");
 				log.setContent("创建新的寄存档案");
 				logService.save(log);
 			}else {
 				consignService.updateSingle(consign);
 				log.setUserId(consign.getUserId());
-				log.setOperatorType("2");
 				log.setContent("修改寄存档案");
 				logService.save(log);
 			}
