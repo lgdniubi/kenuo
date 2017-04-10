@@ -165,7 +165,7 @@
 		     </div><p></p>
 		     <div class="row">
 		           <div class="col-md-6">
-							已处理（处理中的投诉咨询）<font color="red">(&nbsp;${counts}&nbsp;)</font>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick='top.openTab("${ctx}/crm/store/list?status=2&member=1","会员投诉咨询", false)'>更多>></a>					
+							已处理（处理中的投诉咨询）<font color="red"></font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick='top.openTab("${ctx}/crm/store/list?status=2&member=1","会员投诉咨询", false)'>更多>></a>					
 						<table id="treeTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
 							<thead>
 							 <tr>

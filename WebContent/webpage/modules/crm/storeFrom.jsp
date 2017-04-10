@@ -154,8 +154,8 @@
 								<form:input id="name" path="name" htmlEscape="false" maxlength="11" class="form-control required" style="width:200px" />
 							</div>
 							<div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
-								<label ><font color="red">*</font>客户昵称：</label>
-								<form:input id="nickName" path="nickName" htmlEscape="false" maxlength="10" class="form-control required" style="width:200px" />
+								<label >&nbsp;客户昵称：</label>
+								<form:input id="nickName" path="nickName" htmlEscape="false" maxlength="10" class="form-control" style="width:200px" />
 							</div>												
 						</div>	
 						<div class="row" style="text-align:center;margin:10px">				
