@@ -178,103 +178,86 @@
 
 	<select id="findUserList" resultType="UserDetail">
 		SELECT
-		mu.user_id AS userId,
-		mu.`name`,
-		mu.sex,
-		mu.mobile,
-		mu.nickname,
-		mu.level_value AS 'levelvalue',
-		mu.reg_time regTime,
-		mua.account_arrearage accountArrearage,
-		MIN(mo.add_time) firstDate,
-		MAX(mo.add_time) lastDate,
-		muyl.`level` AS 'level',
-		tsu. NAME AS 'beautyName',
-		tso. NAME AS 'shopName',
-		tso2. NAME AS 'bazaarName'
+			mu.user_id AS userId,
+			mu.`name`,
+			mu.sex,
+			mu.mobile,
+			mu.nickname,
+			mu.level_value AS 'levelvalue',
+			mu.reg_time regTime,
+			mua.account_arrearage accountArrearage,
+			MIN(mo.add_time) firstDate,
+			MAX(mo.add_time) lastDate,
+			muyl.`level` AS 'level',
+			tsu. NAME AS 'beautyName',
+			tso. NAME AS 'shopName'
 		FROM
-		mtmydb.mtmy_users mu
-		LEFT JOIN mtmydb.mtmy_user_accounts mua ON
-		mu.user_id = mua.user_id
-		LEFT JOIN mtmydb.mtmy_orders mo ON mu.user_id =
-		mo.user_id
+			mtmydb.mtmy_users mu
+		LEFT JOIN mtmydb.mtmy_user_accounts mua ON mu.user_id = mua.user_id
+		LEFT JOIN mtmydb.mtmy_orders mo ON mu.user_id = mo.user_id
 		LEFT JOIN mtmydb.mtmy_user_yz_level muyl ON mu.level_value <![CDATA[>=]]>muyl.min_val
-		AND mu.level_value <![CDATA[<=]]>muyl.max_val
+			AND mu.level_value <![CDATA[<=]]>muyl.max_val
 		LEFT JOIN trains.sys_user tsu ON mu.beautician_id = tsu.id
-		LEFT JOIN
-		trains.sys_office tso ON mu.office_id = tso.id
-		LEFT JOIN
-		trains.sys_office tso2 ON tso.parent_id = tso2.id
+		LEFT JOIN trains.sys_office tso ON mu.office_id = tso.id
 		${sqlMap.dsf}
-		<if test="shopId != null and shopId!= ''">
-			AND tso.id =#{shopId}
+		<if test="officeId != null and officeId!='' ">
+			AND (tso.id = #{officeId} OR tso.parent_ids LIKE CONCAT('%,', #{officeId}, ',%'))
 		</if>
 		<if test="level!=null and level!=''">
 			AND muyl.level =#{level}
 		</if>
-		<if test="bazaarId!=null and bazaarId!=''">
-			AND tso2.id=#{bazaarId}
-		</if>
 		<if test="keyword!=null and keyword!=''">
 			AND (
-			mu.nickname like
-			<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
-			OR mu.mobile like
-			<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
-			OR mu.name like
-			<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
-			OR tsu.name like
-			<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+				mu.nickname like
+				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+				OR mu.mobile like
+				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+				OR mu.name like
+				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+				OR tsu.name like
+				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
 			)
 		</if>
 		GROUP BY
-		mu.user_id,
-		muyl. NAME,
-		muyl.`level`
+			mu.user_id,
+			muyl.NAME,
+			muyl.`level`
 		ORDER BY
-		mu.reg_time DESC
+			mu.reg_time DESC
 	</select>
 
 	<select id="getUserWithoutScope" resultType="UserDetail">
 		SELECT
-		mu.user_id AS userId,
-		mu.`name`,
-		mu.sex,
-		mu.mobile,
-		mu.nickname,
-		mu.level_value AS 'levelvalue',
-		mu.reg_time regTime,
-		mua.account_arrearage accountArrearage,
-		MIN(mo.add_time) firstDate,
-		MAX(mo.add_time) lastDate,
-		muyl.`level` AS 'level',
-		tsu. NAME AS 'beautyName',
-		tso. NAME AS 'shopName',
-		tso2. NAME AS 'bazaarName',
-		tso.id AS officeId,
-		tsu.id AS beautyId,
-		tso2.id AS bazaarId
+			mu.user_id AS userId,
+			mu.`name`,
+			mu.sex,
+			mu.mobile,
+			mu.nickname,
+			mu.level_value AS 'levelvalue',
+			mu.reg_time regTime,
+			mua.account_arrearage accountArrearage,
+			MIN(mo.add_time) firstDate,
+			MAX(mo.add_time) lastDate,
+			muyl.`level` AS 'level',
+			tsu.NAME AS 'beautyName',
+			tso.NAME AS 'shopName',
+			tso.id AS officeId,
+			tsu.id AS beautyId
 		FROM
-		mtmydb.mtmy_users mu
-		LEFT JOIN mtmydb.mtmy_user_accounts mua ON
-		mu.user_id = mua.user_id
-		LEFT JOIN mtmydb.mtmy_orders mo ON mu.user_id =
-		mo.user_id
+			mtmydb.mtmy_users mu
+		LEFT JOIN mtmydb.mtmy_user_accounts mua ON mu.user_id = mua.user_id
+		LEFT JOIN mtmydb.mtmy_orders mo ON mu.user_id = mo.user_id
 		LEFT JOIN mtmydb.mtmy_user_yz_level muyl ON mu.level_value <![CDATA[>=]]>muyl.min_val
-		AND mu.level_value <![CDATA[<=]]>muyl.max_val
+			AND mu.level_value <![CDATA[<=]]>muyl.max_val
 		LEFT JOIN trains.sys_user tsu ON mu.beautician_id = tsu.id
-		LEFT JOIN
-		trains.sys_office tso ON mu.office_id = tso.id
-		LEFT JOIN
-		trains.sys_office tso2 ON tso.parent_id = tso2.id
-		WHERE mu.mobile =
-		#{keyword}
+		LEFT JOIN trains.sys_office tso ON mu.office_id = tso.id
+		WHERE mu.mobile = #{keyword}
 		GROUP BY
-		mu.user_id,
-		muyl. NAME,
-		muyl.`level`
+			mu.user_id,
+			muyl. NAME,
+			muyl.`level`
 		ORDER BY
-		mu.reg_time DESC
+			mu.reg_time DESC
 	</select>
 
 	<update id="updateMtmyUsers">
