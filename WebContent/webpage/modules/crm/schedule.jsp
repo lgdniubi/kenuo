@@ -76,8 +76,14 @@
 				</div>
 			</div>
 			<sys:message content="${message}"/>
-			<!-- 查询条件 -->
 	    	<div class="ibox-content">
+	    	<form id="searchForm" action="${ctx}/crm/schedule/list" method="post" class="form-inline">
+					<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}" />
+					<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
+					<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();" />
+					<!-- 支持排序 -->
+					<input id="userId" name="userId" type="hidden" value="${userDetail.userId}" />
+			</form>	
 				<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 					<thead>
 						<tr>

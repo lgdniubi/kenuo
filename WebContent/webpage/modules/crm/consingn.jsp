@@ -69,6 +69,14 @@
 					</div>
 				</div>
 				<div>
+				<form id="searchForm" action="${ctx}/crm/consign/list" method="post" class="form-inline">
+					<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}" />
+					<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
+					<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();" />
+					<!-- 支持排序 -->
+					<input id="userId" name="userId" type="hidden" value="${userDetail.userId}" />
+			   </form>	
+				
 					<!-- 工具栏 -->
 					<div class="row">
 						<div class="col-sm-12">
@@ -81,7 +89,6 @@
 							</div>
 						</div>
 					</div>
-					<!-- 工具栏 -->
 				</div>
 				<table id="contentTable"
 					class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">

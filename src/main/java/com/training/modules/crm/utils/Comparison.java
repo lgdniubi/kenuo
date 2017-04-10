@@ -198,20 +198,16 @@ public class Comparison {
     	            if (type.equals("class java.lang.Double")) {  
     	                    Method m = afterObj.getClass().getMethod("get" +nameUpperCase);  
     	                    Double afterValue = (Double) m.invoke(afterObj);  
-    	                    System.out.println("数据类型为：double");
     	                    Double beforeValue = (Double) m.invoke(beforeObj); 
+    	                    
     	                    if (null != afterValue) { 
 	    	                    System.out.println("数据类型为：double"+typeName+afterValue+"null"+beforeValue);  
-    	                    	if (beforeValue==afterValue || beforeValue.compareTo(afterValue)==0) {
-									
-    	                    	}else {
-    	                    		if (beforeValue==0) {
-    	                    			sBuilder.append(cols.get(typeName)+":新增--"+afterValue+"; "); 
-    								}else {
-    									sBuilder.append(cols.get(typeName)+":修改--"+beforeValue+"--"+afterValue+"; "); 
-    								}
-    							}
-    	                    }else if (null!= beforeValue) {
+	    	                    if (null==beforeValue ) {
+	    	                    	sBuilder.append(cols.get(typeName)+":新增--"+afterValue+"; "); 
+	    	                    }else if(afterValue.doubleValue()!=beforeValue.doubleValue() || afterValue.compareTo(beforeValue)!=0){
+	    	                    	sBuilder.append(cols.get(typeName)+":修改--"+beforeValue+"--"+afterValue+"; ");  
+    							 }
+    						}else if (null!= beforeValue) {
 								sBuilder.append(cols.get(typeName)+":删除--"+beforeValue+" "); 
 							}
     	            }  

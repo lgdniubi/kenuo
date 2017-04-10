@@ -97,11 +97,20 @@
 								>投诉咨询</a>
 							</shiro:hasPermission>
 						</li>
+						</ul>
 					</div>
 				</div>
 			 <div>
 			   	<!-- 工具栏 -->
 					<div class="from-group">
+					<form id="searchForm" action="${ctx}/crm/goodsUsage/list" method="post" class="form-inline">
+						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}" />
+						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
+						<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();" />
+						<!-- 支持排序 -->
+						<input id="userId" name="userId" type="hidden" value="${userDetail.userId}" />
+					</form>	
+					
 						<div class="pull-left col-md-1">
 							<shiro:hasPermission name="crm:goodsUsage:exe">
 								<table:addRow url="${ctx}/crm/goodsUsage/add?userId=${userId}" title="用户使用记录"></table:addRow><!-- 增加按钮 -->
