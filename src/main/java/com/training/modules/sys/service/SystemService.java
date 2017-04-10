@@ -374,31 +374,31 @@ public class SystemService extends BaseService implements InitializingBean {
 		StringBuffer str = new StringBuffer();	// 用于存储一些特殊的日志
 		if(oldUser.getCompany() != null){
 			if(!oldUser.getCompany().getId().equals(user.getCompany().getId())){
-				str.append("所属商家:修改前("+oldUser.getCompany().getName()+"),修改后("+user.getCompany().getName()+")|");
+				str.append("所属商家:修改前("+oldUser.getCompany().getName()+"),修改后("+user.getCompany().getName()+")--");
 			}
 		}else{
-			str.append("所属商家:修改前(此商家异常,原商家id:"+oldUser.getCompany().getId()+"),修改后("+user.getCompany().getName()+")|");
+			str.append("所属商家:修改前(此商家异常,原商家id:"+oldUser.getCompany().getId()+"),修改后("+user.getCompany().getName()+")--");
 		}
 		if(oldUser.getOffice() != null){
 			if(!oldUser.getOffice().getId().equals(user.getOffice().getId())){
-				str.append("所属店铺:修改前("+oldUser.getOffice().getName()+"),修改后("+user.getOffice().getName()+")|");
+				str.append("所属店铺:修改前("+oldUser.getOffice().getName()+"),修改后("+user.getOffice().getName()+")--");
 			}
 		}else{
-			str.append("所属店铺:修改前(此店铺异常,原店铺id:"+oldUser.getOffice().getId()+"),修改后("+user.getOffice().getName()+")|");
+			str.append("所属店铺:修改前(此店铺异常,原店铺id:"+oldUser.getOffice().getId()+"),修改后("+user.getOffice().getName()+")--");
 		}
 		if(oldUser.getSex() != null){
 			if(!(oldUser.getSex()).equals(user.getSex())){
 				if("1".equals(oldUser.getSex())){
-					str.append("性别:修改前(男),修改后(女)|");
+					str.append("性别:修改前(男),修改后(女)--");
 				}else if("2".equals(oldUser.getSex())){
-					str.append("性别:修改前(女),修改后(男)|");
+					str.append("性别:修改前(女),修改后(男)--");
 				}
 			}
 		}else{
 			if("1".equals(user.getSex())){
-				str.append("性别:修改前(无),修改后(男)|");
+				str.append("性别:修改前(无),修改后(男)--");
 			}else if("2".equals(user.getSex())){
-				str.append("性别:修改前(无),修改后(女)|");
+				str.append("性别:修改前(无),修改后(女)--");
 			}
 		}
 	
@@ -411,7 +411,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			newDict.setValue(user.getUserType());
 			newDict.setType("sys_user_type");
 			Dict newD = dictDao.findDict(newDict);
-			str.append("职位:修改前("+oldD.getLabel()+"),修改后("+newD.getLabel()+")|");
+			str.append("职位:修改前("+oldD.getLabel()+"),修改后("+newD.getLabel()+")--");
 		}
 		return str.toString();
 	}
@@ -492,8 +492,8 @@ public class SystemService extends BaseService implements InitializingBean {
 			//保存用户日志
 			String str = specialLog(oldUser,user);
 			JSONObject json = new JSONObject();
-			json.put("property", "[\"no\",\"loginName\",\"idCard\",\"inductionTime\",\"mobile\",\"name\"]");
-			json.put("name", "[\"工号\",\"登录名\",\"身份证号码\",\"入职日期\",\"手机号码\",\"姓名\"]");
+			json.put("property", "[\"no\",\"name\",\"loginName\",\"idCard\",\"inductionTime\",\"email\",\"phone\",\"mobile\"]");
+			json.put("name", "[\"工号\",\"姓名\",\"登录名\",\"身份证号码\",\"入职日期\",\"邮箱\",\"电话\",\"手机号码\"]");
 			String string = SaveLogUtils.saveLog(json,str.toString(),oldUser,user);
 			if(!"".equals(string)){
 				UserLog userLog = new UserLog();

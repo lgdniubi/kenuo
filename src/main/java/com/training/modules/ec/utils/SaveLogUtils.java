@@ -46,7 +46,7 @@ public class SaveLogUtils {
 								valNewT = mNewT.invoke(newT);
 							}
 							if (!valOldT.equals(valNewT)) {
-								string.append(nameList.get(i)+":修改前("+String.valueOf(valOldT)+"),修改后("+String.valueOf(valNewT)+")|");
+								string.append(nameList.get(i)+":修改前("+String.valueOf(valOldT)+"),修改后("+String.valueOf(valNewT)+")--");
 							}
 						} catch (IllegalAccessException e) {
 							e.printStackTrace();
