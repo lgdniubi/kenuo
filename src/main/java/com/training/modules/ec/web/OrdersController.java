@@ -1412,6 +1412,93 @@ public class OrdersController extends BaseController {
 	}
 	
 	/**
+	 * 跳转处理预约金页面
+	 * @param orderGoods
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="handleAdvanceFlagForm")
+	public String handleAdvanceFlagForm(OrderGoods orderGoods,int userid,HttpServletRequest request,Model model){
+		DecimalFormat formater = new DecimalFormat("#0.##");
+		try{
+			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());
+			double advance = orderGoods.getAdvancePrice();                 //预约金
+			
+			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
+			orderGoods.setAdvance(advance);
+			if(advance < singleRealityPrice){
+				double c = Double.parseDouble(formater.format(singleRealityPrice - advance));
+				orderGoods.setAdvanceServiceTimes(0);        //服务次数
+				orderGoods.setDebt(c);                       //欠款
+			}else{
+				int a = (int)(advance/singleRealityPrice);
+				double b = Double.parseDouble(formater.format(advance - a*singleRealityPrice));
+				orderGoods.setAdvanceServiceTimes(a);        //服务次数 
+				orderGoods.setAdvanceBalance(b);             //余额
+			}
+			double accountBalance = ordersService.getAccount(userid); //用户账户余额
+			orderGoods.setAccountBalance(accountBalance);
+			model.addAttribute("orderGoods", orderGoods);
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "跳转处理预约金页面出错", e);
+			logger.error("跳转处理预约金页面出错："+e.getMessage());
+		}
+		return "modules/ec/handleAdvanceFlagForm";
+	}
+	
+	/**
+	 * 处理预约金
+	 * @param oLog
+	 * @param orderGoods
+	 * @param userid
+	 * @param orderid
+	 * @param sum
+	 * @return
+	 */
+	@RequestMapping(value="handleAdvanceFlag")
+	@ResponseBody
+	public String handleAdvanceFlag(OrderRechargeLog oLog,OrderGoods orderGoods,int userid,String orderid,int sum){
+		String date="";
+		DecimalFormat formater = new DecimalFormat("#0.##");
+		try{
+			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());    
+			double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
+			double advance = orderGoods.getAdvancePrice();                 //预约金
+			
+			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
+			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
+			int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
+			String officeId = orderGoods.getOfficeId();           //组织架构ID
+			
+			oLog.setMtmyUserId(userid);
+			oLog.setOrderId(orderid);
+			oLog.setRecid(orderGoods.getRecid());
+			oLog.setSingleRealityPrice(orderGoods.getSingleRealityPrice());
+			oLog.setSingleNormPrice(orderGoods.getSingleNormPrice());
+			oLog.setAdvance(advance);
+			//若订金小于单次价，则实付款金额就是单次价，
+			if(advance < singleRealityPrice){
+				oLog.setTotalAmount(singleRealityPrice);
+				if(sum == 0){//用了账户余额
+					oLog.setAccountBalance(Double.parseDouble(formater.format(singleRealityPrice-advance))); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+				}else{
+					oLog.setAccountBalance(0);
+				}
+			}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
+				oLog.setTotalAmount(advance);
+				
+			}
+			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
+			ordersService.handleAdvanceFlag(oLog,sum,goodsPrice,detailsTotalAmount,goodsType,officeId);
+			date = "success";
+		}catch(Exception e){
+			e.printStackTrace();
+			date = "error";
+		}
+		return date;
+	}
+	
+	/**
 	 * 跳转到导入虚拟订单页面
 	 * 
 	 * @return
@@ -1551,92 +1638,4 @@ public class OrdersController extends BaseController {
 		return "redirect:" + adminPath + "/ec/orders/list";
 	}
 	*/
-	
-	/**
-	 * 跳转处理预约金页面
-	 * @param orderGoods
-	 * @param request
-	 * @return
-	 */
-	@RequestMapping(value="handleAdvanceFlagForm")
-	public String handleAdvanceFlagForm(OrderGoods orderGoods,int userid,HttpServletRequest request,Model model){
-		DecimalFormat formater = new DecimalFormat("#0.##");
-		try{
-			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());
-			double advance = orderGoods.getAdvancePrice();                 //预约金
-			
-			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
-			orderGoods.setAdvance(advance);
-			if(advance < singleRealityPrice){
-				double c = Double.parseDouble(formater.format(singleRealityPrice - advance));
-				orderGoods.setAdvanceServiceTimes(0);        //服务次数
-				orderGoods.setDebt(c);                       //欠款
-			}else{
-				int a = (int)(advance/singleRealityPrice);
-				double b = Double.parseDouble(formater.format(advance - a*singleRealityPrice));
-				orderGoods.setAdvanceServiceTimes(a);        //服务次数 
-				orderGoods.setAdvanceBalance(b);             //余额
-			}
-			double accountBalance = ordersService.getAccount(userid); //用户账户余额
-			orderGoods.setAccountBalance(accountBalance);
-			model.addAttribute("orderGoods", orderGoods);
-		}catch(Exception e){
-			BugLogUtils.saveBugLog(request, "跳转处理预约金页面出错", e);
-			logger.error("跳转处理预约金页面出错："+e.getMessage());
-		}
-		return "modules/ec/handleAdvanceFlagForm";
-	}
-	
-	/**
-	 * 处理预约金
-	 * @param oLog
-	 * @param orderGoods
-	 * @param userid
-	 * @param orderid
-	 * @param sum
-	 * @return
-	 */
-	@RequestMapping(value="handleAdvanceFlag")
-	@ResponseBody
-	public String handleAdvanceFlag(OrderRechargeLog oLog,OrderGoods orderGoods,int userid,String orderid,int sum){
-		String date="";
-		DecimalFormat formater = new DecimalFormat("#0.##");
-		try{
-			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());    
-			double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
-			double advance = orderGoods.getAdvancePrice();                 //预约金
-			
-			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
-			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
-			int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
-			String officeId = orderGoods.getOfficeId();           //组织架构ID
-			
-			oLog.setMtmyUserId(userid);
-			oLog.setOrderId(orderid);
-			oLog.setRecid(orderGoods.getRecid());
-			oLog.setSingleRealityPrice(orderGoods.getSingleRealityPrice());
-			oLog.setSingleNormPrice(orderGoods.getSingleNormPrice());
-			oLog.setAdvance(advance);
-			//若订金小于单次价，则实付款金额就是单次价，
-			if(advance < singleRealityPrice){
-				oLog.setTotalAmount(singleRealityPrice);
-				if(sum == 0){//用了账户余额
-					oLog.setAccountBalance(Double.parseDouble(formater.format(singleRealityPrice-advance))); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
-				}else{
-					oLog.setAccountBalance(0);
-				}
-			}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
-				oLog.setTotalAmount(advance);
-				
-			}
-			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleAdvanceFlag(oLog,sum,goodsPrice,detailsTotalAmount,goodsType,officeId);
-			date = "success";
-		}catch(Exception e){
-			e.printStackTrace();
-			date = "error";
-		}
-		return date;
-	}
-	
 }
