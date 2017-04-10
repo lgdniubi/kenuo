@@ -113,7 +113,7 @@
 								href="${ctx}/crm/returnRecord?userId=${userId}">回访记录</a></li>
 							<li role="presentation">
 							<shiro:hasPermission name="crm:store:list">	
-							<a onclick='top.openTab("${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1","投诉咨询", false)'
+							<a onclick='top.openTab("${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1","会员投诉", false)'
 								>投诉咨询</a>
 							</shiro:hasPermission>
 							</li>
