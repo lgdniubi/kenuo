@@ -410,6 +410,10 @@
 			$("#fpinfo").hide();
 			$("#Ichecks").attr("checked",false);
 			$("#Ichecks").attr("disabled",true);
+			$("#mtmyUserPush").hide();
+			$("#mtmyUserInfo").empty();
+		}else{
+			$("#mtmyUserPush").show();
 		}
 	}
 	</script>
@@ -544,7 +548,7 @@
 					</div>
 				</div>
 				<p></p>
-				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="mtmyUserPush">
 					<div class="pull-left">
 						<h4>人员提成信息：</h4>
 					</div>
