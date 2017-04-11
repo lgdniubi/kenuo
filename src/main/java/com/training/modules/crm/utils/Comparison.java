@@ -116,9 +116,9 @@ public class Comparison {
 		//比较联系信息
 		cols.put("qq","qq号码");
 		cols.put("wechat","微信号码");
-		cols.put("email","电子邮箱");
-		cols.put("companyName","公司名称");
-		cols.put("address", "住址");
+		cols.put("email","邮箱地址");
+		cols.put("companyName","工作单位");
+		cols.put("address", "客户住址");
 		//select 所需要的列
 		selectCols.put("sex",selectSex);
 		selectCols.put("constellation",selectStar);

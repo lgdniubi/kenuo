@@ -133,6 +133,7 @@ public class UserDetailController extends BaseController {
 					userDetail.setAge(age);
 					// 取得操作日志
 					UserOperatorLog log = new UserOperatorLog();
+					log.setOperatorType("1");
 					log.setUserId(userId);
 					List<UserOperatorLog> logList = logService.findList(log);
 					// 取得联系信息
