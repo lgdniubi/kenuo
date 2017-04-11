@@ -95,26 +95,26 @@
 								<div class="col-sm-2 col-offset-sm-1">
 									<label style="float: left; line-height: 30px"><font
 										color="red"> </font>胸高标准:</label> <input name="breastHeightStandard"
-										value="${shapeFile.breastHeightStandard}" maxlength="50"
-										style="width: 150px; float: right" class="form-control">
+										value="${shapeFile.breastHeightStandard}" maxlength="50" min="0.0" step="0.1"
+										type="number" style="width: 150px; float: right" class="form-control">
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
 									<label style="float: left; line-height: 30px"><font
 										color="red"> </font>上胸围:</label> <input name="upperBust"
-										value="${shapeFile.upperBust}" maxlength="50"
-										style="width: 150px; float: right" class="form-control">
+										value="${shapeFile.upperBust}" maxlength="50" min="0.0" step="0.1"
+										type="number" style="width: 150px; float: right" class="form-control">
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
 									<label style="float: left; line-height: 30px"><font
 										color="red"> </font>腹围:</label> <input name="abdomen"
-										value="${shapeFile.abdomen}" maxlength="50"
-										style="width: 150px; float: right" class="form-control">
+										value="${shapeFile.abdomen}" maxlength="50" min="0.0" step="0.1"
+										type="number" style="width: 150px; float: right" class="form-control">
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
 									<label style="float: left; line-height: 30px"><font
 										color="red"> </font>臀围:</label> <input name="hip"
-										value="${shapeFile.hip}" maxlength="50"
-										style="width: 150px; float: right" class="form-control">
+										value="${shapeFile.hip}" maxlength="50" min="0.0" step="0.1"
+										type="number" style="width: 150px; float: right" class="form-control">
 								</div>
 							</div>
 
@@ -122,26 +122,26 @@
 								<div class="col-sm-2 col-offset-sm-1">
 									<label style="float: left; line-height: 30px"><font
 										color="red"> </font>左BP:</label> <input name="leftBp"
-										value="${shapeFile.leftBp}" maxlength="50"
-										style="width: 150px; float: right" class="form-control">
+										value="${shapeFile.leftBp}" maxlength="50" min="0.0" step="0.1"
+										type="number" style="width: 150px; float: right" class="form-control">
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
 									<label style="float: left; line-height: 30px"><font
 										color="red"> </font>下胸围:</label> <input name="lowerBust"
-										value="${shapeFile.lowerBust}" maxlength="50"
-										style="width: 150px; float: right" class="form-control">
+										value="${shapeFile.lowerBust}" maxlength="50" min="0.0" step="0.1"
+										type="number" style="width: 150px; float: right" class="form-control">
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
 									<label style="float: left; line-height: 30px"><font
 										color="red"> </font>胸围:</label> <input name="bust"
-										value="${shapeFile.bust}" maxlength="50"
-										style="width: 150px; float: right" class="form-control">
+										value="${shapeFile.bust}" maxlength="50" min="0.0" step="0.1"
+										type="number" style="width: 150px; float: right" class="form-control">
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
 									<label style="float: left; line-height: 30px"><font
 										color="red"> </font>腰围:</label> <input name="waist"
-										value="${shapeFile.waist}" maxlength="50"
-										style="width: 150px; float: right" class="form-control">
+										value="${shapeFile.waist}" maxlength="50" min="0.0" step="0.1"
+										type="number" style="width: 150px; float: right" class="form-control">
 								</div>
 							</div>
 
@@ -149,26 +149,26 @@
 								<div class="col-sm-2 col-offset-sm-1">
 									<label style="float: left; line-height: 30px"><font
 										color="red"> </font>右BP:</label> <input name="rightBp"
-										value="${shapeFile.rightBp}" maxlength="50"
-										style="width: 150px; float: right"  class="form-control">
+										value="${shapeFile.rightBp}" maxlength="50" min="0.0" step="0.1"
+										type="number" style="width: 150px; float: right"  class="form-control">
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
 									<label style="float: left; line-height: 30px"><font
 										color="red"> </font>BB:</label> <input name="bb"
-										value="${shapeFile.bb}" maxlength="50"
-										style="width: 150px; float: right" class="form-control">
+										value="${shapeFile.bb}" maxlength="50" min="0.0" step="0.1"
+										type="number" style="width: 150px; float: right" class="form-control">
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
 									<label style="float: left; line-height: 30px"><font
 										color="red"> </font>左大腿:</label> <input name="leftThign"
-										value="${shapeFile.leftThign}" maxlength="50"
-										style="width: 150px; float: right" class="form-control">
+										value="${shapeFile.leftThign}" maxlength="50" min="0.0" step="0.1"
+										type="number" style="width: 150px; float: right" class="form-control">
 								</div>
 								<div class="col-sm-2 col-offset-sm-1">
 									<label style="float: left; line-height: 30px"><font
 										color="red"> </font>右大腿:</label> <input name="rightThign"
-										value="${shapeFile.rightThign}" maxlength="50"
-										style="width: 150px; float: right " class="form-control">
+										value="${shapeFile.rightThign}" maxlength="50" min="0.0" step="0.1"
+										type="number" style="width: 150px; float: right " class="form-control">
 								</div>
 							</div>
 						</fieldset>
