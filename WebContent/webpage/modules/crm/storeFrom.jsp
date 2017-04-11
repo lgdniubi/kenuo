@@ -203,7 +203,7 @@
 					<form:form id="inputForm" modelAttribute="complain" action="${ctx}/crm/store/save" method="post" class="form-horizontal">
 						<form:hidden path="id" id="id"/>	
 						<form:hidden path="stamp" id="stamp"/>	
-						<form:hidden path="tab" id="tab"/>					
+						<%-- <form:hidden path="tab" id="tab"/>	 --%>				
 						<div class="row" style="text-align:center;margin:10px">							
 						<c:if test="${complain.name ==null}">									
 							<div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
