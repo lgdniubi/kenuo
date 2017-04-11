@@ -691,57 +691,59 @@ window.onload=initStatus;
 							</div> 
 						</c:if>
 						<p></p>
-						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
-							<div class="pull-left">
-								<h4>人员提成信息：</h4>
-							</div>
-							<c:if test="${type != 'view' }">
-								<div class="pull-right">
-									<a href="#" onclick="getMtmyUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
+						<c:if test="${orders.isNeworder == 0}">
+							<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+								<div class="pull-left">
+									<h4>人员提成信息：</h4>
 								</div>
-							</c:if>
-							<p></p>
-							<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
-								<thead>
-									<tr>
-										<th style="text-align: center;">业务员</th>
-										<th style="text-align: center;">手机号</th>
-										<th style="text-align: center;">提成金额</th>
-										<th style="text-align: center;">操作人</th>
-										<th style="text-align: center;">操作时间</th>
-										<c:if test="${type != 'view' }">
-											<th style="text-align: center;">操作</th>
-										</c:if>
-									</tr>
-								</thead>
-								<tbody id="mtmyUserInfo" style="text-align:center;">
-									<c:forEach items="${orders.orderPushmoneyRecords }" var="orderPushmoneyRecord" varStatus="stauts">
+								<c:if test="${type != 'view' }">
+									<div class="pull-right">
+										<a href="#" onclick="getMtmyUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
+									</div>
+								</c:if>
+								<p></p>
+								<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
+									<thead>
 										<tr>
-											<td>
-												<input type="hidden" id="mtmyUserId" name="mtmyUserId" value="${orderPushmoneyRecord.pushmoneyUserId }" />
-												<input id="mtmyUserName" name="mtmyUserName" type="text" value="${orderPushmoneyRecord.pushmoneyUserName }" class='form-control' readonly='readonly'>
-											</td>
-											<td>
-												<input id="mtmyUserMobile" name="mtmyUserMobile" type="text" value="${orderPushmoneyRecord.pushmoneyUserMobile }" class='form-control' readonly='readonly'>
-											</td>
-											<td>
-												${orderPushmoneyRecord.pushMoney }
-												<%-- <input class="form-control" type="text" id="pushMoney" class="form-control required" name="pushMoney" value="${orderPushmoneyRecord.pushMoney }" /> --%>
-											</td>
-											<td>
-												${orderPushmoneyRecord.createBy.name }
-											</td>
-											<td>
-												<fmt:formatDate value="${orderPushmoneyRecord.createDate }" pattern="yyyy-MM-dd HH:mm:ss" />
-											</td>
+											<th style="text-align: center;">业务员</th>
+											<th style="text-align: center;">手机号</th>
+											<th style="text-align: center;">提成金额</th>
+											<th style="text-align: center;">操作人</th>
+											<th style="text-align: center;">操作时间</th>
 											<c:if test="${type != 'view' }">
-												<td><a href="#" class="btn btn-danger btn-xs" onclick="delFileMtmyUserInfo(this)"><i class='fa fa-trash'></i> 删除</a></td>
+												<th style="text-align: center;">操作</th>
 											</c:if>
 										</tr>
-									</c:forEach>
-								</tbody>
-							</table>
-						</div>
+									</thead>
+									<tbody id="mtmyUserInfo" style="text-align:center;">
+										<c:forEach items="${orders.orderPushmoneyRecords }" var="orderPushmoneyRecord" varStatus="stauts">
+											<tr>
+												<td>
+													<input type="hidden" id="mtmyUserId" name="mtmyUserId" value="${orderPushmoneyRecord.pushmoneyUserId }" />
+													<input id="mtmyUserName" name="mtmyUserName" type="text" value="${orderPushmoneyRecord.pushmoneyUserName }" class='form-control' readonly='readonly'>
+												</td>
+												<td>
+													<input id="mtmyUserMobile" name="mtmyUserMobile" type="text" value="${orderPushmoneyRecord.pushmoneyUserMobile }" class='form-control' readonly='readonly'>
+												</td>
+												<td>
+													${orderPushmoneyRecord.pushMoney }
+													<%-- <input class="form-control" type="text" id="pushMoney" class="form-control required" name="pushMoney" value="${orderPushmoneyRecord.pushMoney }" /> --%>
+												</td>
+												<td>
+													${orderPushmoneyRecord.createBy.name }
+												</td>
+												<td>
+													<fmt:formatDate value="${orderPushmoneyRecord.createDate }" pattern="yyyy-MM-dd HH:mm:ss" />
+												</td>
+												<c:if test="${type != 'view' }">
+													<td><a href="#" class="btn btn-danger btn-xs" onclick="delFileMtmyUserInfo(this)"><i class='fa fa-trash'></i> 删除</a></td>
+												</c:if>
+											</tr>
+										</c:forEach>
+									</tbody>
+								</table>
+							</div>
+						</c:if>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 							<div class="pull-left">
