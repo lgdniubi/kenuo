@@ -119,11 +119,15 @@ public class AdviceController extends BaseController {
 	@RequiresPermissions("crm:store:list")
 	@RequestMapping(value = "/list")
 	public String list(Complain complain, HttpServletRequest request, HttpServletResponse response, Model model, RedirectAttributes redirectAttributes) {
-		if(null != complain && complain.getStamp() != null && !complain.getStamp().equals("")){
+		if(null != complain && complain.getStamp() != null && !complain.getStamp().equals("") && complain.getTab() ==null){
 			complain.setRedirectUserId("");
 			model.addAttribute("stamp", complain.getStamp());
 			model.addAttribute("mobile", complain.getMobile());
 			
+		}if(null != complain && complain.getTab() !=null && !complain.getTab().equals("")){
+			complain.setMobile("");
+			String id = UserUtils.getUser().getId();
+			complain.setRedirectUserId(id);
 		}else{
 			String id = UserUtils.getUser().getId();
 			complain.setRedirectUserId(id);
@@ -183,7 +187,7 @@ public class AdviceController extends BaseController {
 			complain.setMobile(complains.getMobile());
 			complain.setNickName(complains.getNickName());
 			complain.setName(complains.getName());
-		}		
+		}
 		String name = UserUtils.getUser().getName();
 		String no = UserUtils.getUser().getNo();
 		complain.setHandlerID(no);
@@ -310,7 +314,7 @@ public class AdviceController extends BaseController {
 				adviceService.saveSolve(complain);
 			}
 			addMessage(redirectAttributes, complain.getName()+"的问题保存成功！");
-			return "redirect:" + adminPath + "/crm/store/list?stamp="+complain.getStamp()+"&mobile="+complain.getMobile();
+			return "redirect:" + adminPath + "/crm/store/list?stamp="+complain.getStamp()+"&mobile="+complain.getMobile()+"&tab="+complain.getTab();
 		} else {
 			//判断有没有处理过程
 			if (complain.getHandResult() != null) {

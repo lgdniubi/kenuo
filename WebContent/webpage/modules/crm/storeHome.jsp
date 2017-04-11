@@ -59,7 +59,7 @@
 					  </form:form>					
 				  </div>				  
 				  <div class="col-md-2">
-				    <table:addRow url="${ctx}/crm/store/from" width="800px" height="680px" title="投诉咨询"></table:addRow><!-- 增加按钮 -->
+				    <table:addRow url="${ctx}/crm/store/from?tab=1" width="800px" height="680px" title="投诉咨询"></table:addRow><!-- 增加按钮 -->
 		          </div>
 				  <div class="col-md-6">
 				  	当前来电：
