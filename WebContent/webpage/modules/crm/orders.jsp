@@ -79,8 +79,7 @@
 	    	<div class="clearfix">
 					<div class="row">
 						<div class="col-sm-12">
-							<form id="searchForm" 
-								action="${ctx}/crm/orders/list" method="post" class="form-inline">
+							<form id="searchForm" action="${ctx}/crm/orders/list" method="post" class="form-inline">
 								<input id="pageNo" name="pageNo" type="hidden"
 									value="${page.pageNo}" />
 								<input id="pageSize" name="pageSize" type="hidden"
