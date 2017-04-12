@@ -120,7 +120,7 @@
 		          </div>         				           			       			           
 		           <div class="col-md-6">
 		         			<%-- 未处理的快速来电记录&nbsp;<font color="red">(&nbsp;${count}&nbsp;)</font>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick='top.openTab("${ctx}/crm/store/list?member=2&stamp=1","投诉咨询", false)'>更多>></a> --%>
-		         			未处理的快速来电记录&nbsp;<font color="red">(&nbsp;${count}&nbsp;)</font>&nbsp;&nbsp;&nbsp;&nbsp;<a href="${ctx}/crm/store/list?member=2&stamp=1" class="btn-xs">更多>></a>
+		         			未处理的快速来电记录&nbsp;<font color="red">(&nbsp;${count}&nbsp;)</font>&nbsp;&nbsp;&nbsp;&nbsp;<a href="${ctx}/crm/store/list?member=2&stamp=3" class="btn-xs">更多>></a>
 					<table id="treeTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
 						<thead>
 							 <tr>

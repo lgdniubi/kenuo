@@ -119,18 +119,19 @@ public class AdviceController extends BaseController {
 	@RequiresPermissions("crm:store:list")
 	@RequestMapping(value = "/list")
 	public String list(Complain complain, HttpServletRequest request, HttpServletResponse response, Model model, RedirectAttributes redirectAttributes) {
-		if(null != complain && complain.getStamp() != null && !complain.getStamp().equals("")){
+		if(null != complain && complain.getStamp() != null && complain.getStamp().equals("1")){
+			complain.setRedirectUserId("");
+			model.addAttribute("stamp", complain.getStamp());
+			model.addAttribute("mobile", complain.getMobile());			
+		}else if (null != complain && complain.getStamp() != null && complain.getStamp().equals("3") && complain.getMobile() ==null) {
 			complain.setRedirectUserId("");
 			model.addAttribute("stamp", complain.getStamp());
 			model.addAttribute("mobile", complain.getMobile());
-			
-		}
-/*		if(null != complain && complain.getTab() !=null && !complain.getTab().equals("")){
+		}else if (null != complain && complain.getStamp() != null && complain.getStamp().equals("3") && complain.getMobile() !=null) {
 			complain.setMobile("");
 			String id = UserUtils.getUser().getId();
 			complain.setRedirectUserId(id);
-		}*/
-		else{
+		}else{
 			complain.setMobile("");
 			String id = UserUtils.getUser().getId();
 			complain.setRedirectUserId(id);
