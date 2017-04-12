@@ -1163,5 +1163,18 @@
 			</otherwise>
 		</choose>
 	</select>
-
+	
+	<!-- 根据订单号查询其订单状态 -->
+	<select id="selectOrdersStatus" resultType="Integer">
+		SELECT order_status
+		FROM mtmydb.mtmy_orders
+		WHERE order_id = #{orderId}
+	</select>
+	
+	<!-- 查看订单号是否存在 -->
+	<select id="selectOrdersId" resultType="Integer">
+		SELECT COUNT(*)
+		FROM mtmydb.mtmy_orders
+		WHERE order_id = #{orderId}
+	</select>
 </mapper>
