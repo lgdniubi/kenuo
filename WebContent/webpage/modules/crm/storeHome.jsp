@@ -28,7 +28,7 @@
 						if(date != null && date.mobile != null){
 						    window.location.href = '${ctx}/crm/store/list?mobile='+mobile; 
 						}else{
-							top.layer.alert('此号码不是会员,且无投诉记录', {icon: 0, title:'提醒'}); 
+							top.layer.alert('此号码无投诉记录', {icon: 0, title:'提醒'}); 
 						}
 					}
 				},
