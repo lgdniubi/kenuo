@@ -26,7 +26,7 @@
 						  window.location.href = '${ctx}/crm/user/userDetail?userId='+date.userId; 
 					}else{
 						if(date != null && date.mobile != null){
-						    window.location.href = '${ctx}/crm/store/list?mobile='+mobile; 
+						    window.location.href = '${ctx}/crm/store/list?mobile='+mobile+'&stamp=1'; 
 						}else{
 							top.layer.alert('此号码无投诉记录', {icon: 0, title:'提醒'}); 
 						}
