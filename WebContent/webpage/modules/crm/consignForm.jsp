@@ -17,7 +17,6 @@
 			    }
 			}
 		 }else{ 
-			 alert("B");
 			  return false; 
 		 } 
 	}

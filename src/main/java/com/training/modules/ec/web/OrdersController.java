@@ -1470,7 +1470,7 @@ public class OrdersController extends BaseController {
 	 */
 	@RequestMapping(value="handleAdvanceFlag")
 	@ResponseBody
-	public String handleAdvanceFlag(OrderRechargeLog oLog,OrderGoods orderGoods,int userid,String orderid,int sum){
+	public String handleAdvanceFlag(OrderRechargeLog oLog,OrderGoods orderGoods,int userid,String orderid,int sum,HttpServletRequest request){
 		String date="";
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
@@ -1505,7 +1505,7 @@ public class OrdersController extends BaseController {
 			ordersService.handleAdvanceFlag(oLog,sum,goodsPrice,detailsTotalAmount,goodsType,officeId);
 			date = "success";
 		}catch(Exception e){
-			e.printStackTrace();
+			BugLogUtils.saveBugLog(request, "处理预约金异常", e);
 			date = "error";
 		}
 		return date;

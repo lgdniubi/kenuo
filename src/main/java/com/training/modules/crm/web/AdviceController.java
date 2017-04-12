@@ -124,7 +124,14 @@ public class AdviceController extends BaseController {
 			model.addAttribute("stamp", complain.getStamp());
 			model.addAttribute("mobile", complain.getMobile());
 			
-		}else{
+		}
+/*		if(null != complain && complain.getTab() !=null && !complain.getTab().equals("")){
+			complain.setMobile("");
+			String id = UserUtils.getUser().getId();
+			complain.setRedirectUserId(id);
+		}*/
+		else{
+			complain.setMobile("");
 			String id = UserUtils.getUser().getId();
 			complain.setRedirectUserId(id);
 		}
@@ -183,7 +190,7 @@ public class AdviceController extends BaseController {
 			complain.setMobile(complains.getMobile());
 			complain.setNickName(complains.getNickName());
 			complain.setName(complains.getName());
-		}		
+		}
 		String name = UserUtils.getUser().getName();
 		String no = UserUtils.getUser().getNo();
 		complain.setHandlerID(no);
@@ -271,7 +278,7 @@ public class AdviceController extends BaseController {
 		complain.setHandler(id);
 		//判断是不是首次保存问题
 		if (complain.getId().equals("")) {
-			Complain complains = adviceService.selectMember(complain);
+			Complain complains = adviceService.selectMemb(complain);
 			if (complains == null) {
 				complain.setMember(2);
 			} else {
@@ -310,7 +317,7 @@ public class AdviceController extends BaseController {
 				adviceService.saveSolve(complain);
 			}
 			addMessage(redirectAttributes, complain.getName()+"的问题保存成功！");
-			return "redirect:" + adminPath + "/crm/store/list";
+			return "redirect:" + adminPath + "/crm/store/list?stamp="+complain.getStamp()+"&mobile="+complain.getMobile();
 		} else {
 			//判断有没有处理过程
 			if (complain.getHandResult() != null) {
