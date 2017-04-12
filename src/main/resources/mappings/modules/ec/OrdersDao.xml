@@ -108,9 +108,9 @@
 				0 as "isFre"
 		FROM mtmydb.mtmy_orders a
 		WHERE
-				 a.user_id=1019205
+				 a.user_id=#{userId}
 				AND a.order_status>0
-				and a.is_invoice=0
+				AND a.is_invoice=0
 				AND a.parent_id=0
 				AND a.channel_flag !='bm'
 				AND a.is_real = 0
