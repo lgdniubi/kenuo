@@ -765,7 +765,12 @@ public class OrdersController extends BaseController {
 							failureNum++;
 							continue;
 						}
-						if(ordersService.selectOrdersStatus(shipping.getOrderid()) == -1){
+						if(ordersService.selectOrdersStatus(shipping.getOrderid()).getIsReal() == 1){
+							failureMsg.append("<br/>订单" + shipping.getOrderid() + "是虚拟订单，无法导入 ");
+							failureNum++;
+							continue;
+						}
+						if(ordersService.selectOrdersStatus(shipping.getOrderid()).getOrderstatus() == -1){
 							failureMsg.append("<br/>订单" + shipping.getOrderid() + "的订单状态为未付款，无法导入 ");
 							failureNum++;
 							continue;
