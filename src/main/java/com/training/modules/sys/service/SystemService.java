@@ -372,6 +372,9 @@ public class SystemService extends BaseService implements InitializingBean {
 	@Transactional(readOnly = false)
 	public String specialLog(User oldUser,User user){
 		StringBuffer str = new StringBuffer();	// 用于存储一些特殊的日志
+		if(!oldUser.getPassword().equals(user.getPassword())){
+			str.append("密码:用户更新过密码--");
+		}
 		if(oldUser.getCompany() != null){
 			if(!oldUser.getCompany().getId().equals(user.getCompany().getId())){
 				str.append("所属商家:修改前("+oldUser.getCompany().getName()+"),修改后("+user.getCompany().getName()+")--");
