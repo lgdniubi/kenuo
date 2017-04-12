@@ -30,7 +30,9 @@ public interface AdviceDao extends CrudDao<Complain>{
 	public void saveHandle(Complain complain);
 
 	public Complain selectMember(Complain complain);
-
+	
+	public Complain selectMemb(Complain complain);
+	
 	public List<Complain> selectStatus(Complain complain);
 
 	public void creatResult(Complain complain);
