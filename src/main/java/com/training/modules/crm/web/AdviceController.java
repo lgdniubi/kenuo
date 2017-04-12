@@ -278,7 +278,7 @@ public class AdviceController extends BaseController {
 		complain.setHandler(id);
 		//判断是不是首次保存问题
 		if (complain.getId().equals("")) {
-			Complain complains = adviceService.selectMember(complain);
+			Complain complains = adviceService.selectMemb(complain);
 			if (complains == null) {
 				complain.setMember(2);
 			} else {

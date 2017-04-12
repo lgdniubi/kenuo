@@ -94,7 +94,16 @@ public class AdviceService extends CrudService<AdviceDao, Complain>{
 		return dao.selectMember(complain);
 		
 	}
-
+	
+	/**
+	 * @author：星星
+	 * @description：查询是否会员
+	 * 2017年3月17日
+	 */
+	public Complain selectMemb(Complain complain) {
+		return dao.selectMemb(complain);
+		
+	}
 	/**
 	 * @author：星星
 	 * @description：查询未/已处理的问题list

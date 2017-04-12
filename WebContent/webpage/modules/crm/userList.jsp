@@ -218,9 +218,8 @@
 								<td>
 									<a class="btn btn-info btn-xs"
 									href="${ctx}/crm/user/userDetail?userId=${users.userId}">详情</a> 
-									<shiro:hasPermission name="crm:userSecret:view">
-									<button class="btn btn-info btn-xs btn-danger" onclick="addKindOrder(${users.userId})">实物</button> 
-									<button class="btn btn-info btn-xs btn-danger" onclick="addVirtualOrder(${users.userId})">虚拟</button>
+									<shiro:hasPermission name="ec:orders:add">
+									  <button class="btn btn-info btn-xs btn-danger" onclick='top.openTab("${ctx}/ec/orders/list","订单列表", false)'>创建订单</button> 
 								    </shiro:hasPermission>
 								</td>
 							</tr>

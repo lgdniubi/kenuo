@@ -756,8 +756,26 @@ public class OrdersController extends BaseController {
 				for (Shipping shipping : list) {
 					try {
 						if (shipping.getOrderid() == null) {
-							break;
+							failureMsg.append("<br/>参数异常，请核对订单号 ");
+							failureNum++;
+							continue;
 						}
+						if(ordersService.selectOrdersId(shipping.getOrderid()) != 1){
+							failureMsg.append("<br/>订单" + shipping.getOrderid() + "不存在，无法导入 ");
+							failureNum++;
+							continue;
+						}
+						if(ordersService.selectOrdersStatus(shipping.getOrderid()).getIsReal() == 1){
+							failureMsg.append("<br/>订单" + shipping.getOrderid() + "是虚拟订单，无法导入 ");
+							failureNum++;
+							continue;
+						}
+						if(ordersService.selectOrdersStatus(shipping.getOrderid()).getOrderstatus() == -1){
+							failureMsg.append("<br/>订单" + shipping.getOrderid() + "的订单状态为未付款，无法导入 ");
+							failureNum++;
+							continue;
+						}
+						
 						BeanValidators.validateWithException(validator, shipping);
 						Orders orders=new Orders();
 						if(shipping.getShippingtime()!=null){
