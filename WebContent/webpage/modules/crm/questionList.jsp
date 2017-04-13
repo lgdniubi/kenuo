@@ -46,7 +46,7 @@
 									<form:option value="2">已处理</form:option>
 								</form:select>
 								<label>用户名：</label>
-								<input id="name" name="name" maxlength="10" type="text" class="form-control" placeholder="昵称/姓名">	
+								<input id="name" name="name" maxlength="10" value="${complain.name }" type="text" class="form-control" placeholder="昵称/姓名">	
 							</div>
 						</form:form>
 					</div><p></p>
