@@ -951,8 +951,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				accountBalance_in = totalAmount - totalAmount_in - accountBalance;
 			}else if(singleRealityPrice > totalAmount){//实际单次标价  > 实付款金额
 				totalAmount_in = totalAmount;
-				accountBalance_in = totalAmount;
-				oLog.setRechargeAmount(0);
+				accountBalance_in = oLog.getRechargeAmount();
 			}
 		}else{//实物
 			if(totalAmount<=orderArrearage){
@@ -969,7 +968,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		double itemAmount = serviceTimes_in * singleRealityPrice; //项目金额
 		double itemCapitalPool = serviceTimes_in * singleNormPrice; //项目资金池
 		
-		oLog.setAccountBalance(accountBalance_in);
+		oLog.setAccountBalance(accountBalance);
 		oLog.setCreateBy(user);
 		//保存充值日志记录
 		orderRechargeLogService.saveOrderRechargeLog(oLog);
@@ -1430,15 +1429,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		double itemAmount = serviceTimes_in_a * singleRealityPrice; //项目金额
 		double itemCapitalPool = serviceTimes_in_a * singleNormPrice; //项目资金池
 		
-		if(accountBalance > 0){ //订金小于单次价，若使用了账户余额，则日志中的账户余额为使用的账户相应的金额
-			oLog.setAccountBalance(-accountBalance);
-			oLog.setRechargeAmount(advance);
-		}else if(accountBalance_in > 0){  //订金大于单次价，若订单有余款，则将余款存到日志的账户余额中
-			oLog.setAccountBalance(accountBalance_in);
-			oLog.setRechargeAmount(totalAmount_in_a);
-		}else if(accountBalance == 0){//订金小于单次价，若未使用账户余额，而是线下补齐的
+		if(accountBalance > 0){ //若使用了账户余额，则日志中的账户余额为使用的账户相应的金额
 			oLog.setAccountBalance(accountBalance);
-			oLog.setRechargeAmount(singleRealityPrice);
+			oLog.setRechargeAmount(advance);
+			oLog.setTotalAmount(Double.parseDouble(formater.format(accountBalance+advance)));
+		}else{
+			oLog.setAccountBalance(0);
+			oLog.setRechargeAmount(advance);
+			oLog.setTotalAmount(advance);
 		}
 		
 		oLog.setCreateBy(user);
