@@ -1467,7 +1467,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		double accountBalance_ = 0;
 		if(accountBalance > 0){ //若使用了账户余额，则减去相应的金额
 			accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()-accountBalance));
-		}else if(accountBalance_in > 0){  //若未使用账户的金额，且订单有余款，则将余款存到账户余额中
+		}else if(accountBalance_in >= 0){  //若未使用账户的金额，且订单有余款，则将余款存到账户余额中
 			accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()+accountBalance_in));
 		}
 		account.setAccountBalance(accountBalance_);
