@@ -42,6 +42,14 @@
 		       <tr>
 		         <td  class="width-15 active">	<label class="pull-right">父类型:</label></td>
 		         <td class="width-35" ><form:input path="groupType" htmlEscape="false" maxlength="11" class="form-control required"/></td>
+		     	  <td class="width-15 active"><label class="pull-right">操作类型</label></td>
+		     	 <td>	
+				    <form:select path="actionType" htmlEscape="false" maxlength="11" class="form-control required">
+								    <form:option value="2">请选择操作类型</form:option>
+									<form:option value="1">单选</form:option>
+									<form:option value="2">多选</form:option>
+					</form:select>
+		         </td>
 		      </tr>
 		   </tbody>
 		   </table>   
