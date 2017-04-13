@@ -72,10 +72,42 @@
 				    	start.max = datas; //结束日选好后，重置开始日的最大日期
 				    }
 				};
+				var startExpiration = {
+				    elem: '#startExpirationTime',
+				    format: 'YYYY-MM-DD',
+				    event: 'focus',
+				    max: $("#lastExpirationTime").val(),   //最大日期
+				    istime: false,				//是否显示时间
+				    isclear: false,				//是否显示清除
+				    istoday: false,				//是否显示今天
+				    issure: true,				//是否显示确定
+				    festival: true,				//是否显示节日
+				    choose: function(datas){
+				    	lastExpiration.min = datas; 		//开始日选好后，重置结束日的最小日期
+				    	lastExpiration.start = datas 		//将结束日的初始值设定为开始日
+				    }
+				};
+				var lastExpiration = {
+				    elem: '#lastExpirationTime',
+				    format: 'YYYY-MM-DD',
+				    event: 'focus',
+				    min: $("#startExpirationTime").val(),
+				    istime: false,
+				    isclear: false,
+				    istoday: false,
+				    issure: true,
+				    festival: true,
+				    choose: function(datas){
+				    	startExpiration.max = datas; //结束日选好后，重置开始日的最大日期
+				    }
+				};
+				
 				laydate(beg);
 				laydate(end);
 				laydate(start);
 				laydate(last);
+				laydate(startExpiration);
+				laydate(lastExpiration);
 
 	    });
 </script>
@@ -115,12 +147,18 @@
 							一
 							<input id="endtime" name="endtime" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" 
 							value="<fmt:formatDate value="${activityCouponUser.endtime}" pattern="yyyy-MM-dd"/>"  style="width:185px;" placeholder="结束时间" readonly="readonly"/>&nbsp;&nbsp;
-							<label>使用日期：</label>
+							<label>到期日期：</label>
 							<input id="startTime" name="startTime" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
 							value="<fmt:formatDate value="${activityCouponUser.startTime}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="开始时间" readonly="readonly"/>
 							一
 							<input id="lastTime" name="lastTime" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" 
 							value="<fmt:formatDate value="${activityCouponUser.lastTime}" pattern="yyyy-MM-dd"/>"  style="width:185px;" placeholder="结束时间" readonly="readonly"/>&nbsp;&nbsp;
+							<label>过期日期：</label>
+							<input id="startExpirationTime" name="startExpirationTime" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
+							value="<fmt:formatDate value="${activityCouponUser.startExpirationTime}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="开始时间" readonly="readonly"/>
+							一
+							<input id="lastExpirationTime" name="lastExpirationTime" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" 
+							value="<fmt:formatDate value="${activityCouponUser.lastExpirationTime}" pattern="yyyy-MM-dd"/>"  style="width:185px;" placeholder="结束时间" readonly="readonly"/>&nbsp;&nbsp;
 						</div>
 					</form:form>
 					<p></p>

@@ -72,6 +72,12 @@
 		<if test="lastTime!=null and lastTime!=''">
 			AND DATE_FORMAT(a.used_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastTime},'%Y-%m-%d')
 		</if>
+		<if test="startExpirationTime != null and startExpirationTime != ''">
+			AND DATE_FORMAT(f.expiration_date,'%Y-%m-%d') >= DATE_FORMAT(#{startExpirationTime},'%Y-%m-%d')
+		</if>
+		<if test="lastExpirationTime!=null and lastExpirationTime!=''">
+			AND DATE_FORMAT(f.expiration_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastExpirationTime},'%Y-%m-%d')
+		</if>
 		ORDER BY a.add_time DESC
 
 	</select>
@@ -93,7 +99,8 @@
 			b.order_amount as "orderMoney",
 			b.order_status AS "orderStatus",
 			f.id as "actionId",
-			f.`name` as "actionName"
+			f.`name` as "actionName",
+			DATE_FORMAT(f.expiration_date,"%Y-%m-%d %T") as "expirationDate"
 		FROM
 			mtmydb.mtmy_activity_coupon_user a
 			LEFT JOIN mtmydb.mtmy_orders b ON a.order_id=b.order_id
@@ -126,6 +133,12 @@
 		</if>
 		<if test="lastTime!=null and lastTime!=''">
 			AND DATE_FORMAT(a.used_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastTime},'%Y-%m-%d')
+		</if>
+		<if test="startExpirationTime != null and startExpirationTime != ''">
+			AND DATE_FORMAT(f.expiration_date,'%Y-%m-%d') >= DATE_FORMAT(#{startExpirationTime},'%Y-%m-%d')
+		</if>
+		<if test="lastExpirationTime!=null and lastExpirationTime!=''">
+			AND DATE_FORMAT(f.expiration_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastExpirationTime!=null},'%Y-%m-%d')
 		</if>
 		ORDER BY a.add_time DESC
 	</select>
