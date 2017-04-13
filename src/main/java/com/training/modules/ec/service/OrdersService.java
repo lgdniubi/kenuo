@@ -952,6 +952,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			}else if(singleRealityPrice > totalAmount){//实际单次标价  > 实付款金额
 				totalAmount_in = totalAmount;
 				accountBalance_in = totalAmount;
+				oLog.setRechargeAmount(0);
 			}
 		}else{//实物
 			if(totalAmount<=orderArrearage){
