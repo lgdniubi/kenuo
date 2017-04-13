@@ -50,14 +50,12 @@
 			<div class="ibox-content">
                <div class="row"><div class="col-md-12">					 		   
 			   <div class="row">
-				   <div class="col-md-4">
-					  <form:form id="searchForm" action="${ctx}/crm/store/member" modelAttribute="goodsType" method="post">			
-							客户查询：<input id="mobile" name="mobile" maxlength="20" type="text" class="form-control" style="width:220px" placeholder="昵称、手机号">	
-							<button type="button" id="pushType" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
-								<i class="fa fa-search"></i> 查询
-							</button>			
-					  </form:form>					
-				  </div>				  
+					<div class="col-md-4">			
+						客户查询：<input id="mobile" name="mobile" maxlength="20" type="text" class="form-control" style="width:220px" placeholder="昵称、手机号">	
+						<button type="button" id="pushType" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
+							<i class="fa fa-search"></i> 查询
+						</button>							
+					</div>				  
 				  <div class="col-md-2">
 				    <table:addRow url="${ctx}/crm/store/from?" width="800px" height="680px" title="投诉咨询"></table:addRow><!-- 增加按钮 -->
 		          </div>

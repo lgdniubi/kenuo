@@ -186,8 +186,8 @@ public class AdviceController extends BaseController {
 	 */
 	@RequestMapping(value = "from")
 	public String storeHome(Model model, Complain complain, HttpServletRequest request, HttpServletResponse response) {
-		if(complain !=null && complain.getMobile() !=null && !complain.getMobile().equals("")){
-			Complain complains = adviceService.getUser(complain.getMobile());
+		Complain complains = adviceService.getUser(complain.getMobile());
+		if(complains !=null){
 			complain.setMobile(complains.getMobile());
 			complain.setNickName(complains.getNickName());
 			complain.setName(complains.getName());
