@@ -33,9 +33,25 @@
 			alert("输入正确寄存数量");
 			return false;
 		}
+		if((consignNum> (purchaseNum-takenNum))){
+			alert("输入正确寄存数量");
+			return false;
+		}
 		return true;
 	}
+	function isnumber(num) {
+		 var regu = /^[1-9]\d*|0$/; 
+		 return regu.test(num);
+	}
+	
+	jQuery.validator.addMethod("isNumber", function(value, element) {
+	    var length = value.length;
+	    var temp = /^[1-9]\d*|0$/;   
+	    return this.optional(element) || (length >0 && temp.test(value));
+	}, "输入正确数量");
+	
 	$(document).ready(function() {
+		
 		validateForm = $("#inputForm").validate({
 			rules: {
 				  officeName: {
@@ -45,16 +61,19 @@
 			        required: true,
 			      },
 			      purchaseNum: {
-			        required: true,
-			        number:true,
-			        min:1
+			    	 isNumber:true,  
+			         required: true,
+			         number:true,
+			         min:1
 			      },
 			      takenNum: {
+			    	   isNumber:true,  
 			            required : true,
 			            number:true,
 			            min:0
 			      },
 			      consignNum:{
+			    	   isNumber:true,  
 			    	    required:true,
 			    	    number:true,
 			    	    min:0
@@ -72,16 +91,19 @@
 			        required: "这是必填字段",
 			      },
 			      purchaseNum: {
+			    	  isNumber:"非负整数",    
 			        required: "这是必填字段",
 			        number:"请输入数字",
 			        min:"大于零的数字"
 			      },
 			      takenNum: {
+			    	  isNumber:"非负整数",
 			            required : "这是必填字段",
 			            number:"请输入数字",
 			            min:"输入正确数字"
 			       },
 			       consignNum:{
+			    	   isNumber:"非负整数",
 			    	  required : "这是必填字段",
 			    	    number:"请输入数字",
 			    	    min:"不能为负数"
@@ -106,6 +128,13 @@
 			};
 		laydate(start);
     });
+	function NumberCheck(t){
+        var num = t.value;
+        var re=/^\d*$/;
+        if(!re.test(num)){
+            isNaN(parseInt(num))?t.value=0:t.value=parseInt(num);
+        }
+    }
 </script>
 </head>
 <body>
@@ -144,19 +173,19 @@
 									<td class="width-15 active"><label class="pull-right"><font
 											color="red">*</font>购买数量:</label></td>
 									<td class="width-20"><input name="purchaseNum" id="purchaseNum"
-										value="${consign.purchaseNum}" maxlength="50"
+										value="${consign.purchaseNum}" maxlength="50" onblur="NumberCheck(this)"
 										class="form-control required" /></td>
 								    <td class="width-15 active"><label class="pull-right"><font
 											color="red">*</font>取走数量:</label></td>
 									<td class="width-20"><input name="takenNum" id="takenNum"
-										value="${consign.takenNum}" maxlength="50"
+										value="${consign.takenNum}" maxlength="50" onblur="NumberCheck(this)"
 										class="form-control required" /></td>
 								</tr>
 								<tr>
 									<td class="width-15 active"><label class="pull-right"><font
 											color="red">*</font>寄存数量:</label></td>
 									<td class="width-20"><input name="consignNum" id="consignNum"
-										value="${consign.consignNum}" maxlength="50"
+										value="${consign.consignNum}" maxlength="50" onblur="NumberCheck(this)"
 										class="form-control required" /></td>
 								    <td class="width-15 active" ><label class="pull-right"><font
 											color="red">*</font>寄存时间:</label></td>

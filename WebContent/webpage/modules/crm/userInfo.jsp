@@ -36,8 +36,10 @@ input::-webkit-inner-spin-button{
 		if($("#fieldset").attr("disabled")) {
 			alert("未编辑");
 		}else{
+			if(validateForm.form()){
 				$("#inputForm").submit();
 				return true;
+			}	
 		}
 	}
 	function enableEdit()  {
@@ -84,10 +86,30 @@ input::-webkit-inner-spin-button{
 		laydate(birthday);
 		laydate(menstrualDate);
 	});
+	
+	jQuery.validator.addMethod("isIdCardNo", function(value, element) {
+	    var length = value.length;
+	    var idCard = /^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$/;       
+	    return this.optional(element) || ((length == 15 || length == 18) && idCard.test(value));
+	}, "请正确填写您的身份证号码");
 	$(document).ready(function() {
+		
+		validateForm = $("#inputForm").validate({
+			  rules: {
+			      idCard: {
+			    	  isIdCardNo:true,
+			      }
+			  },
+			  messages: {
+				  idCard: {
+					  isIdCardNo: "请输入正确身份证号码",
+			       }
+			  }
+	 });
+		
 						//点击事件
-						$("#officeButton").click(function() {
-											// 是否限制选择，如果限制，设置为disabled
+	$("#officeButton").click(function() {
+					// 是否限制选择，如果限制，设置为disabled
 											if ($("#officeButton").hasClass(
 													"disabled")) {
 												return true;
@@ -198,6 +220,7 @@ input::-webkit-inner-spin-button{
 											}
 										});
 					});
+	
 </script>
 </head>
 <body class="gray-bg">
@@ -464,7 +487,7 @@ input::-webkit-inner-spin-button{
 							</div>
 							<div class="col-intems-5">
 								<shiro:hasPermission name="crm:userSecret:view">
-								<label style="float: left;"><font color="red"> </font>身份证号:</label><input value="${detail.idCard}" name="idCard" style="width: 413px; float: left" type="number" min="0.0" step="1" class="form-control " />
+								<label style="float: left;"><font color="red"> </font>身份证号:</label><input value="${detail.idCard}" name="idCard" id="idCard" style="width: 413px; float: left" type="text" class="form-control " />
 								</shiro:hasPermission>
 							</div>
 							<div class="col-intems-5">

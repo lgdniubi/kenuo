@@ -66,6 +66,13 @@
 		laydate(start);
 		laydate(end);
 	});
+	function NumberCheck(t){
+        var num = t.value;
+        var re=/^\d*$/;
+        if(!re.test(num)){
+            isNaN(parseInt(num))?t.value=0:t.value=parseInt(num);
+        }
+    }
 </script>
 </head>
 <body>
@@ -96,7 +103,7 @@
 									<td class="width-15 active"><label class="pull-right"><font
 											color="red">*</font>购买数量:</label></td>
 									<td class="width-15" colspan="3"><input name="usageNum" id="usageNum"
-										value="${goodsUsage.usageNum}" maxlength="50" 
+										value="${goodsUsage.usageNum}" maxlength="50" onblur="NumberCheck(this)"
 										class="form-control required" /></td>
 								</tr>
 								<tr>

@@ -116,7 +116,7 @@
 									<span>请选择性质：</span> 
 									<div class="input-group">
 										<select name="distinction" id = "distinction" class=" form-control">
-											<option value=" ">请选择</option>
+											<option value="">请选择</option>
 											<option value="0"  <c:if test="${orders.distinction eq 0}">selected="true"</c:if>>电商</option>
 											<option value="1"  <c:if test="${orders.distinction eq 1}">selected="true"</c:if>>售前卖</option>
 											<option value="2"  <c:if test="${orders.distinction eq 2}">selected="true"</c:if>>售后卖</option>
