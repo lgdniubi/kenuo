@@ -1163,5 +1163,20 @@
 			</otherwise>
 		</choose>
 	</select>
-
+	
+	<!-- 根据订单号查询其订单状态以及是否为虚拟订单 -->
+	<select id="selectOrdersStatus" resultType="Orders">
+		SELECT 
+			order_status AS 'orderstatus',
+			is_real AS 'isReal'
+		FROM mtmydb.mtmy_orders
+		WHERE order_id = #{orderId}
+	</select>
+	
+	<!-- 查看订单号是否存在 -->
+	<select id="selectOrdersId" resultType="Integer">
+		SELECT COUNT(*)
+		FROM mtmydb.mtmy_orders
+		WHERE order_id = #{orderId}
+	</select>
 </mapper>
