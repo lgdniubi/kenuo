@@ -771,7 +771,7 @@ public class OrdersController extends BaseController {
 							continue;
 						}
 						if(ordersService.selectOrdersStatus(shipping.getOrderid()).getOrderstatus() == -1){
-							failureMsg.append("<br/>订单" + shipping.getOrderid() + "的订单状态为未付款，无法导入 ");
+							failureMsg.append("<br/>订单" + shipping.getOrderid() + "的订单状态为待付款，无法导入 ");
 							failureNum++;
 							continue;
 						}
