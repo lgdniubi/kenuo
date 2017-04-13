@@ -100,14 +100,14 @@
 										class="form-control required" /></td>
 								</tr>
 								<tr>
-									<td class="width-15"><label class="pull-right"><font
+									<td class="width-15 active" ><label class="pull-right"><font
 											color="red">*</font>开始使用日期:</label></td>
 									<td class="width-20" colspan="3"><input id="begtime"
 										name="startDate" type="text" maxlength="50" 
 										class="laydate-icon form-control layer-date input-sm required"
 										value="<fmt:formatDate value="${goodsUsage.startDate}" pattern="yyyy-MM-dd"/>"
 										style="width: 185px;" placeholder="开始时间" /></td>
-									<td class="width-15"><label class="pull-right"><font
+									<td class="width-15 active" ><label class="pull-right"><font
 											color="red">*</font>结束使用日期:</label></td>
 									<td class="width-20" colspan="3"><input id="endtime"
 										name="endDate" type="text" maxlength="50" 

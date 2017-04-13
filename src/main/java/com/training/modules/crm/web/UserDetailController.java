@@ -95,12 +95,12 @@ public class UserDetailController extends BaseController {
 			   Page<UserDetail> page  = userDetailService.getUserWithoutScope(new Page<UserDetail>(request, response), userDetail);
 			   //如果查到一条
 			   if (page.getList().size()>0) {
-				   model.addAttribute("userDetail", userDetail);
+				   model.addAttribute("detail", userDetail);
 				   model.addAttribute("page", page);
 				}
 			}else{
 				Page<UserDetail> page = userDetailService.getUserList(new Page<UserDetail>(request, response), userDetail);
-				model.addAttribute("userDetail", userDetail);
+				model.addAttribute("detail", userDetail);
 				model.addAttribute("page", page);
 			}
 		} catch (Exception e) {
