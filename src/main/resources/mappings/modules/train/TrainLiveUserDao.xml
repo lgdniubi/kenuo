@@ -16,7 +16,7 @@
 		a.del_flag,
 		c.title,
 		c.bengtime,
-		b.remarks as "position"
+		d.label as "position"
 	</sql>
 
 	<!-- 根据编号获特长 -->
@@ -40,6 +40,7 @@
 		LEFT JOIN sys_user b ON a.userId=b.id
 		LEFT JOIN train_live_audit c ON a.auditId=c.id
 		LEFT JOIN sys_office o ON o.id = b.office_id
+		LEFT JOIN sys_dict d ON d.value = b.user_type AND d.type = 'sys_user_type'
 		WHERE a.del_flag=0
 		 <if test="auditId!=null and auditId!=''">
 			AND a.auditId=#{auditId}
