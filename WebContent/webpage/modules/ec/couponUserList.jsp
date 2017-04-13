@@ -196,6 +196,7 @@
 							<th style="text-align: center;">领取时间</th>
 							<th style="text-align: center;">订单金额</th>
 							<th style="text-align: center;">使用时间</th>
+							<th style="text-align: center;">过期时间</th>
 							<th style="text-align: center;">订单号</th>
 						</tr>
 					</thead>
@@ -237,6 +238,7 @@
 									</c:if>
 								</td>	
 								<td><fmt:formatDate value="${coupon.usedTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
+								<td><fmt:formatDate value="${coupon.expirationTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
 								<td>${coupon.orderId}</td>
 								</tr>
 						</c:forEach>

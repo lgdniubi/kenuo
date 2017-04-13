@@ -39,7 +39,8 @@
 			c.order_amount AS "orderAmount",
 			d.coupon_name,
 			d.coupon_type AS "type",
-			d.coupon_money
+			d.coupon_money,
+			f.expiration_date AS 'expirationTime'
 		FROM mtmydb.mtmy_activity_coupon_user a
 		<include refid="includetable"></include>
 		WHERE 1=1
@@ -138,7 +139,7 @@
 			AND DATE_FORMAT(f.expiration_date,'%Y-%m-%d') >= DATE_FORMAT(#{startExpirationTime},'%Y-%m-%d')
 		</if>
 		<if test="lastExpirationTime!=null and lastExpirationTime!=''">
-			AND DATE_FORMAT(f.expiration_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastExpirationTime!=null},'%Y-%m-%d')
+			AND DATE_FORMAT(f.expiration_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastExpirationTime},'%Y-%m-%d')
 		</if>
 		ORDER BY a.add_time DESC
 	</select>

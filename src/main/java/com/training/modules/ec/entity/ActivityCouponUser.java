@@ -35,6 +35,7 @@ public class ActivityCouponUser extends TreeEntity<ActivityCouponUser>{
 	private Date lastTime;			// 结束时间
 	private Date startExpirationTime;	//到期时间
 	private Date lastExpirationTime;
+	private Date expirationTime;
 	//导出功能字段
 	private String mobile;			//手机号
 	private String usedType;		//红包类型
@@ -269,6 +270,13 @@ public class ActivityCouponUser extends TreeEntity<ActivityCouponUser>{
 	}
 	public void setLastExpirationTime(Date lastExpirationTime) {
 		this.lastExpirationTime = lastExpirationTime;
+	}
+	
+	public Date getExpirationTime() {
+		return expirationTime;
+	}
+	public void setExpirationTime(Date expirationTime) {
+		this.expirationTime = expirationTime;
 	}
 	@Override
 	public ActivityCouponUser getParent() {
