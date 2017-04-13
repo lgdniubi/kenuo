@@ -335,7 +335,7 @@
 				        	</div>										
 						<hr />							
 						
-					 <c:if test="${complain.status != 2 and complain.questionSource != 2 and stamp != 1}">		    			 
+					 <c:if test="${complain.status != 2 and complain.questionSource != 2 and stamp != 1 and stamp != 3}">		    			 
 						<input type="button" style="text-align:left;" class="btn btn-primary btn-sm pull-left" value="添加处理过程" onClick="toggle('table1')" />	    
 						<hr/>	
 						<div id="table1" style="display: none;">
