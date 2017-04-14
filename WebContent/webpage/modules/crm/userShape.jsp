@@ -189,10 +189,10 @@
 				<div align="center">
 				<shiro:hasPermission name="crm:userInfo:edit">
 					<div align="center" class="col-md-3">
-						<button id="enableEdit"  class="btn btn-default">编辑</button>
+						<button id="enableEdit"  class="btn btn-info">编辑</button>
 					</div>
 					<div align="center" class="col-md-3">
-						<button onclick="save()" type="button" class="btn btn-default">保存</button>
+						<button onclick="save()" type="button" class="btn btn-success">保存</button>
 					</div>
 				</shiro:hasPermission>
 				</div>

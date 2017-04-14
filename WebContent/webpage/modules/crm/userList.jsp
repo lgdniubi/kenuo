@@ -26,7 +26,8 @@
 		$("#level").val("");
 		$("#keyword").val("");
 		$("#searchForm div.form-control select").val("");
-		return false;
+		$("#searchForm").submit();
+		return true;
 	}
 	$(document).ready( function(){
 		$("#officeButton, #officeName").click(function(){	   
@@ -98,11 +99,11 @@
 									<shiro:hasPermission name="crm:office:choose">
 									<span>选择归属机构：</span> <input id="officeId"
 										class=" form-control input-sm" name="officeId"
-										value="${userDetail.officeId}" type="hidden">
+										value="${detail.officeId}" type="hidden">
 									<div class="input-group">
 										<input id="officeName" class=" form-control input-sm"
 											name="officeName" readonly="readonly"
-											value="${userDetail.officeName}" data-msg-required=""
+											value="${detail.officeName}" data-msg-required=""
 											style="" type="text"> <span class="input-group-btn">
 											<button id="officeButton" class="btn btn-sm btn-primary "
 												type="button">
@@ -114,7 +115,7 @@
 									<%-- <sys:treeselect id="bazaar" name="bazaarId" value="${equipment.bazaarId}" labelName="bazaarName" labelValue="${equipment.bazaarName}" title="市场" url="/sys/office/treeData?isGrade=true" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="true" notAllowSelectParent="true"/> --%>
 									<span>请选等级</span>
 									<form:select path="level" name="level" id="level"
-										value="${userDetail.level}" class="form-control"
+										value="${detail.level}" class="form-control"
 										style="width:185px;">
 										<form:option value="">等级</form:option>
 										<form:option value="0">L0</form:option>
@@ -130,7 +131,7 @@
 										<form:option value="10">L10</form:option>
 									</form:select>
 									<form:input neme="keyword" path="keyword" id="keyword"
-										value="${userDetail.keyword}" htmlEscape="false"
+										value="${detail.keyword}" htmlEscape="false"
 										maxlength="50" class=" form-control input-sm"
 										placeholder ="手机号码或者昵称" style="width:250px" />
 									<div class="pull-right">

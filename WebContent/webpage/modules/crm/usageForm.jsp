@@ -66,6 +66,13 @@
 		laydate(start);
 		laydate(end);
 	});
+	function NumberCheck(t){
+        var num = t.value;
+        var re=/^\d*$/;
+        if(!re.test(num)){
+            isNaN(parseInt(num))?t.value=0:t.value=parseInt(num);
+        }
+    }
 </script>
 </head>
 <body>
@@ -96,18 +103,18 @@
 									<td class="width-15 active"><label class="pull-right"><font
 											color="red">*</font>购买数量:</label></td>
 									<td class="width-15" colspan="3"><input name="usageNum" id="usageNum"
-										value="${goodsUsage.usageNum}" maxlength="50" 
+										value="${goodsUsage.usageNum}" maxlength="50" onblur="NumberCheck(this)"
 										class="form-control required" /></td>
 								</tr>
 								<tr>
-									<td class="width-15"><label class="pull-right"><font
+									<td class="width-15 active" ><label class="pull-right"><font
 											color="red">*</font>开始使用日期:</label></td>
 									<td class="width-20" colspan="3"><input id="begtime"
 										name="startDate" type="text" maxlength="50" 
 										class="laydate-icon form-control layer-date input-sm required"
 										value="<fmt:formatDate value="${goodsUsage.startDate}" pattern="yyyy-MM-dd"/>"
 										style="width: 185px;" placeholder="开始时间" /></td>
-									<td class="width-15"><label class="pull-right"><font
+									<td class="width-15 active" ><label class="pull-right"><font
 											color="red">*</font>结束使用日期:</label></td>
 									<td class="width-20" colspan="3"><input id="endtime"
 										name="endDate" type="text" maxlength="50" 

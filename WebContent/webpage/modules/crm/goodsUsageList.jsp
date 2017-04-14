@@ -122,11 +122,11 @@
 								<input id="startDate" name="startDate"
 								type="text" maxlength="20"
 								class="laydate-icon form-control layer-date input-sm"
-								value="<fmt:formatDate value="${returnedGoods.begtime}" pattern="yyyy-MM-dd"/>"
+								value="<fmt:formatDate value="${detail.startDate}" pattern="yyyy-MM-dd"/>"
 								placeholder="开始时间" readonly="readonly" style="width: 185px;" />
 							— <input id="endDate" name="endDate" type="text" maxlength="20"
 								class=" laydate-icon form-control layer-date input-sm"
-								value="<fmt:formatDate value="${returnedGoods.endtime}" pattern="yyyy-MM-dd"/>"
+								value="<fmt:formatDate value="${detail.endDate}" pattern="yyyy-MM-dd"/>"
 								placeholder="结束时间" readonly="readonly" style="width: 185px;" />
 								<button class="btn btn-primary btn-rounded btn-outline btn-sm "
 									type="submit">
