@@ -1145,7 +1145,7 @@ public class GoodsController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "treeGoodsData")
-	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String isReal,String isOnSale,HttpServletResponse response) {
+	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String isReal,String isOnSale,String isAppshow,HttpServletResponse response) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		Goods goods=new Goods();
 		goods.setGoodsCategoryId(goodsCategory);
@@ -1154,6 +1154,7 @@ public class GoodsController extends BaseController{
 		goods.setFranchiseeId(franchiseeId);
 		goods.setIsReal(isReal);
 		goods.setIsOnSale(isOnSale);
+		goods.setIsAppshow(isAppshow);
 		if(actionId!=null){
 			goods.setActionId(Integer.parseInt(actionId));
 		}
