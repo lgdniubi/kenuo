@@ -216,8 +216,7 @@
 								<td>${users.shopName }</td>
 
 								<td>
-									<a class="btn btn-info btn-xs"
-									href="${ctx}/crm/user/userDetail?userId=${users.userId}">详情</a> 
+									<button class="btn btn-info btn-xs" onclick='top.openTab("${ctx}/crm/user/userDetail?userId=${users.userId}","客户详情", false)'>详情</button>
 									<shiro:hasPermission name="ec:orders:add">
 									  <button class="btn btn-info btn-xs btn-danger" onclick='top.openTab("${ctx}/ec/orders/list","订单列表", false)'>创建订单</button> 
 								    </shiro:hasPermission>

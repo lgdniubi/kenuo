@@ -147,7 +147,7 @@
 							一
 							<input id="endtime" name="endtime" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" 
 							value="<fmt:formatDate value="${activityCouponUser.endtime}" pattern="yyyy-MM-dd"/>"  style="width:185px;" placeholder="结束时间" readonly="readonly"/>&nbsp;&nbsp;
-							<label>到期日期：</label>
+							<label>使用日期：</label>
 							<input id="startTime" name="startTime" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
 							value="<fmt:formatDate value="${activityCouponUser.startTime}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="开始时间" readonly="readonly"/>
 							一
