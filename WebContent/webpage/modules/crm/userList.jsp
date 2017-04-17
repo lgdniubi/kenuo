@@ -26,7 +26,8 @@
 		$("#level").val("");
 		$("#keyword").val("");
 		$("#searchForm div.form-control select").val("");
-		return false;
+		$("#searchForm").submit();
+		return true;
 	}
 	$(document).ready( function(){
 		$("#officeButton, #officeName").click(function(){	   
@@ -78,21 +79,6 @@
 <body class="gray-bg">
 	<div class="wrapper wrapper-content">
 		<div class="ibox">
-			<div class="ibox-title">
-				<div class="text">
-					<h5>首页&nbsp;&nbsp;</h5>
-				</div>
-				<div class="text">
-					<h5>&nbsp;&nbsp;客户管理&nbsp;&nbsp;</h5>
-				</div>
-				<div class="text">
-					<h5>&nbsp;&nbsp;订单管理&nbsp;&nbsp;</h5>
-				</div>
-				<div class="text">
-					<h5>&nbsp;&nbsp;综合报表&nbsp;&nbsp;</h5>
-				</div>
-			</div>
-
 			<sys:message content="${message}" />
 			<!-- 查询条件 -->
 			<div class="ibox-content">
@@ -113,11 +99,11 @@
 									<shiro:hasPermission name="crm:office:choose">
 									<span>选择归属机构：</span> <input id="officeId"
 										class=" form-control input-sm" name="officeId"
-										value="${userDetail.officeId}" type="hidden">
+										value="${detail.officeId}" type="hidden">
 									<div class="input-group">
 										<input id="officeName" class=" form-control input-sm"
 											name="officeName" readonly="readonly"
-											value="${userDetail.officeName}" data-msg-required=""
+											value="${detail.officeName}" data-msg-required=""
 											style="" type="text"> <span class="input-group-btn">
 											<button id="officeButton" class="btn btn-sm btn-primary "
 												type="button">
@@ -129,7 +115,7 @@
 									<%-- <sys:treeselect id="bazaar" name="bazaarId" value="${equipment.bazaarId}" labelName="bazaarName" labelValue="${equipment.bazaarName}" title="市场" url="/sys/office/treeData?isGrade=true" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="true" notAllowSelectParent="true"/> --%>
 									<span>请选等级</span>
 									<form:select path="level" name="level" id="level"
-										value="${userDetail.level}" class="form-control"
+										value="${detail.level}" class="form-control"
 										style="width:185px;">
 										<form:option value="">等级</form:option>
 										<form:option value="0">L0</form:option>
@@ -145,7 +131,7 @@
 										<form:option value="10">L10</form:option>
 									</form:select>
 									<form:input neme="keyword" path="keyword" id="keyword"
-										value="${userDetail.keyword}" htmlEscape="false"
+										value="${detail.keyword}" htmlEscape="false"
 										maxlength="50" class=" form-control input-sm"
 										placeholder ="手机号码或者昵称" style="width:250px" />
 									<div class="pull-right">
@@ -231,11 +217,9 @@
 								<td>${users.shopName }</td>
 
 								<td>
-									<a class="btn btn-info btn-xs"
-									href="${ctx}/crm/user/userDetail?userId=${users.userId}">详情</a> 
-									<shiro:hasPermission name="crm:userSecret:view">
-									<button class="btn btn-info btn-xs btn-danger" onclick="addKindOrder(${users.userId})">实物</button> 
-									<button class="btn btn-info btn-xs btn-danger" onclick="addVirtualOrder(${users.userId})">虚拟</button>
+									<button class="btn btn-info btn-xs" onclick='top.openTab("${ctx}/crm/user/userDetail?userId=${users.userId}","客户详情", false)'>详情</button>
+									<shiro:hasPermission name="ec:orders:add">
+									  <button class="btn btn-info btn-xs btn-danger" onclick='top.openTab("${ctx}/ec/orders/list","订单列表", false)'>创建订单</button> 
 								    </shiro:hasPermission>
 								</td>
 							</tr>

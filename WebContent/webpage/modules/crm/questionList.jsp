@@ -46,14 +46,14 @@
 									<form:option value="2">已处理</form:option>
 								</form:select>
 								<label>用户名：</label>
-								<input id="name" name="name" maxlength="10" type="text" class="form-control" placeholder="昵称/姓名">	
+								<input id="name" name="name" maxlength="10" value="${complain.name }" type="text" class="form-control" placeholder="昵称/姓名">	
 							</div>
 						</form:form>
 					</div><p></p>
 					<!-- 工具栏 -->
 					<div class="row">
 						<div class="col-sm-12">		
-						    <c:if test="${stamp != '1'}">
+						    <c:if test="${stamp != '1' and stamp != '3'}">
 				                                                      说明：
 				        		<img alt="" src="${ctxStatic}/ec/images/u655.png" style="width: 16px;height: 16px">别人给我的&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					            <img alt="" src="${ctxStatic}/ec/images/u657.png" style="width: 16px;height: 16px">自己的&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -92,7 +92,7 @@
 							<tr style="text-align: center;">
 								<td>${complain.id}</td>
 								<td style="text-align:left;">
-								  <c:if test="${stamp != '1'}">
+								  <c:if test="${stamp != '1' and stamp != '3'}">
 								    <c:choose>
 									    <c:when test="${complain.questionSource == 3}">
 									       <img alt="" src="${ctxStatic}/ec/images/u655.png" style="width: 16px;height: 16px">

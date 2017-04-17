@@ -250,6 +250,21 @@
 	            or nickname=#{mobile})
                 </if>
 	  </select>
+	    
+	  	<!-- 查询是否会员 --> 
+	 <select id="selectMemb" resultType="Complain">
+			SELECT
+				name AS name,
+				user_id AS userId,
+			    mobile AS mobile
+			FROM
+			    mtmydb.mtmy_users 
+			WHERE 
+			    1=1
+	            <if test="mobile!=null and mobile!=''">
+	            and mobile=#{mobile}
+                </if>
+	  </select>  
 	       
 		<!-- 查询该电话是否有投诉记录 --> 
 	  <select id="selectSeek" resultType="Complain">

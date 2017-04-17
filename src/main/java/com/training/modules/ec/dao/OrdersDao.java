@@ -277,4 +277,15 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @param orders
 	 */
 	public void updateAddress(Orders orders);
+	
+	/**
+	 * 根据订单号查询其订单状态以及是否为虚拟订单 
+	 */
+	public Orders selectOrdersStatus(String orderId);
+	
+	/**
+	 * 查看订单号是否存在
+	 */
+	public int selectOrdersId(String orderId);
+
 }

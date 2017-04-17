@@ -203,7 +203,7 @@
 					<form:form id="inputForm" modelAttribute="complain" action="${ctx}/crm/store/save" method="post" class="form-horizontal">
 						<form:hidden path="id" id="id"/>	
 						<form:hidden path="stamp" id="stamp"/>	
-						<form:hidden path="tab" id="tab"/>					
+						<%-- <form:hidden path="tab" id="tab"/>	 --%>				
 						<div class="row" style="text-align:center;margin:10px">							
 						<c:if test="${complain.name ==null}">									
 							<div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
@@ -335,7 +335,7 @@
 				        	</div>										
 						<hr />							
 						
-					 <c:if test="${complain.status != 2 and complain.questionSource != 2 and stamp != 1}">		    			 
+					 <c:if test="${complain.status != 2 and complain.questionSource != 2 and stamp != 1 and stamp != 3}">		    			 
 						<input type="button" style="text-align:left;" class="btn btn-primary btn-sm pull-left" value="添加处理过程" onClick="toggle('table1')" />	    
 						<hr/>	
 						<div id="table1" style="display: none;">

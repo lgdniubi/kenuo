@@ -13,6 +13,17 @@
 // 	    	$("sex").attr("disabled",false);
 // 	    	$("userid").removeAttr("disabled")
 // 	    }
+		function reset() {//重置，页码清零
+			$("#pageNo").val(0);
+			$("#pageSize").val("");
+			$("#orderBy").val("");
+			$("#orderstatus").val("");
+			$("#distinction").val("");
+			$("#keyword").val("");
+			$("#searchForm div.form-control select").val("");
+			$("#searchForm").submit();
+			return true;
+		}
 	    function newSearch(){
 	    	$("#searchForm").submit();
 			return true;
@@ -79,8 +90,7 @@
 	    	<div class="clearfix">
 					<div class="row">
 						<div class="col-sm-12">
-							<form id="searchForm" 
-								action="${ctx}/crm/orders/list" method="post" class="form-inline">
+							<form id="searchForm" action="${ctx}/crm/orders/list" method="post" class="form-inline">
 								<input id="pageNo" name="pageNo" type="hidden"
 									value="${page.pageNo}" />
 								<input id="pageSize" name="pageSize" type="hidden"
@@ -92,28 +102,28 @@
 								<div class="form-group">
 									<span>选择订单状态：</span> 
 									<div class="input-group">
-									  <select name="orderstatus" class=" form-control">
+									  <select name="orderstatus" id ="orderstatus" class=" form-control">
 										<option value="0">请选择</option>
-										<option value="0">全部</option>
-										<option value="-2">取消订单</option>
-										<option value="-1">待付款</option>
-										<option value="1">待发货</option>
-										<option value="2">待收货</option>
-										<option value="3">已退款</option>
-										<option value="4">已完成</option>
+										<option value="0" <c:if test="${orders.orderstatus eq 0}">selected="true"</c:if>>全部</option>
+										<option value="-2" <c:if test="${orders.orderstatus eq -2}">selected="true"</c:if>>取消订单</option>
+										<option value="-1" <c:if test="${orders.orderstatus eq -1}">selected="true"</c:if>>待付款</option>
+										<option value="1" <c:if test="${orders.orderstatus eq 1}">selected="true"</c:if>>待发货</option>
+										<option value="2" <c:if test="${orders.orderstatus eq 2}">selected="true"</c:if>>待收货</option>
+										<option value="3" <c:if test="${orders.orderstatus eq 3}">selected="true"</c:if>>已退款</option>
+										<option value="4" <c:if test="${orders.orderstatus eq 4}">selected="true"</c:if>>已完成</option>
 									  </select>
 									</div>
 									<span>请选择性质：</span> 
 									<div class="input-group">
-										<select name="distinction" class=" form-control">
-											<option value=" ">请选择</option>
-											<option value="0">电商</option>
-											<option value="1">售前卖</option>
-											<option value="2">售后卖</option>
-											<option value="3">老带新</option>
+										<select name="distinction" id = "distinction" class=" form-control">
+											<option value="">请选择</option>
+											<option value="0"  <c:if test="${orders.distinction eq 0}">selected="true"</c:if>>电商</option>
+											<option value="1"  <c:if test="${orders.distinction eq 1}">selected="true"</c:if>>售前卖</option>
+											<option value="2"  <c:if test="${orders.distinction eq 2}">selected="true"</c:if>>售后卖</option>
+											<option value="3"  <c:if test="${orders.distinction eq 3}">selected="true"</c:if>>老带新</option>
 										 </select>
 									</div>
-									<input name="keyword" maxlength="50" 
+									<input name="keyword" maxlength="50" id="keyword" value="${orders.keyword}"
 									class=" form-control input-sm" style="width:280px" 
 									placeholder="订单号，手机号码或者用户名"/>
 									<div class="pull-right">
@@ -122,6 +132,9 @@
 											onclick="newSearch()">
 											<i class="fa fa-search"></i> 查询
 										</button>
+										<a class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()">
+											<i class="fa fa-refresh"></i> 重置
+										</a>
 									</div>
 								</div>
 							</form>

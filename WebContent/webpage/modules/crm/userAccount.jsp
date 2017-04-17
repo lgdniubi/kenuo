@@ -23,7 +23,7 @@
 			}
 		});
 	    function couponList(){
-			openDialog("查看"+'用户可用红包',"/kenuo/a/crm/user/couponList?userId=${userId}","600px", "400px","");
+			openDialog("查看"+'用户可用红包',"/kenuo/a/crm/user/couponList?userId=${userId}","800px", "650px","");
 		}
 	    
 	</script>

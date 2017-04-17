@@ -33,7 +33,9 @@ public class ActivityCouponUser extends TreeEntity<ActivityCouponUser>{
 	private Date endtime;			// 结束时间
 	private Date startTime;			// 使用时间  开始时间
 	private Date lastTime;			// 结束时间
-	
+	private Date startExpirationTime;	//到期时间
+	private Date lastExpirationTime;
+	private Date expirationTime;
 	//导出功能字段
 	private String mobile;			//手机号
 	private String usedType;		//红包类型
@@ -45,7 +47,7 @@ public class ActivityCouponUser extends TreeEntity<ActivityCouponUser>{
 	private String couponAmount;	//红包金额
 	private String addDate;			//领取时间
 	private String usedDate;			//使用时间
-	
+	private String expirationDate;		//红包过期时间
 
 	@JsonIgnore
 	@ExcelField(title="明细ID", align=2, sort=10)
@@ -247,6 +249,34 @@ public class ActivityCouponUser extends TreeEntity<ActivityCouponUser>{
 	}
 	public void setUsedDate(String usedDate) {
 		this.usedDate = usedDate;
+	}
+	@JsonIgnore
+	@ExcelField(title="红包过期日期", align=2, sort=66)
+	public String getExpirationDate() {
+		return expirationDate;
+	}
+	public void setExpirationDate(String expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+	
+	public Date getStartExpirationTime() {
+		return startExpirationTime;
+	}
+	public void setStartExpirationTime(Date startExpirationTime) {
+		this.startExpirationTime = startExpirationTime;
+	}
+	public Date getLastExpirationTime() {
+		return lastExpirationTime;
+	}
+	public void setLastExpirationTime(Date lastExpirationTime) {
+		this.lastExpirationTime = lastExpirationTime;
+	}
+	
+	public Date getExpirationTime() {
+		return expirationTime;
+	}
+	public void setExpirationTime(Date expirationTime) {
+		this.expirationTime = expirationTime;
 	}
 	@Override
 	public ActivityCouponUser getParent() {

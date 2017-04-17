@@ -44,15 +44,29 @@
 									</p>
 								</td>
 								<td class="col-md-1">
-								
-								
-								
-									<p>${coupon.couponType}</p>
-								
-								
+									<c:if test="${coupon.couponType==1}">
+										<p>商品详情页</p>
+									</c:if>
+									<c:if test="${coupon.couponType==2}">
+										<p>活动页</p>
+									</c:if>
+									<c:if test="${coupon.couponType==3}">
+										<p>新注册</p>
+									</c:if>
+									<c:if test="${coupon.couponType==4}">
+										<p>通用红包</p>
+									</c:if>
 								</td>
 								<td class="col-md-1">
-									<p>${coupon.usedType}</p>
+									<c:if test="${coupon.usedType==1}">
+										<p>全部商品</p>
+									</c:if>
+									<c:if test="${coupon.usedType==2}">
+										<p>商品分类</p>
+									</c:if>
+									<c:if test="${coupon.usedType==3}">
+										<p>指定商品</p>
+									</c:if>
 								</td>
 							</tr>
 						</c:forEach>

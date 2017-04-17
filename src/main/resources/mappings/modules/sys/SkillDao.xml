@@ -6,6 +6,7 @@
 			sl.id AS skillId,
 			sl.name,
 			sl.description,
+			sl.is_show AS "isShow",
 			sl.create_by AS "createBy.id",
 			sl.create_date AS createDate,
 			sl.update_by AS "updateBy.id",
@@ -14,8 +15,17 @@
 			sl.del_flag AS delflag
 	</sql>
 	
-	<!-- 查询出所有的技能标签 -->
+	<!-- 查询出所有的技能标签 (只查找显示的)-->
 	<select id="findAllList" resultType="Skill">
+		SELECT
+			<include refid="skillColunm"></include>
+		FROM train_skill_label sl
+		WHERE sl.del_flag=0
+		AND sl.is_show = '0'
+	</select>
+	
+	<!-- 查询出所有的技能标签(无论显示还是隐藏都查出来) -->
+	<select id="newFindAllList" resultType="Skill">
 		SELECT
 			<include refid="skillColunm"></include>
 		FROM train_skill_label sl
@@ -53,6 +63,7 @@
 		INSERT INTO train_skill_label(
 			name,
 			description,
+			is_show,
 			create_by,
 			create_date,
 			update_by,
@@ -60,6 +71,7 @@
 		)VALUES(
 			#{name},
 			#{description},
+			'0',
 			#{createBy.id},
 			SYSDATE(),
 			#{createBy.id},
@@ -147,4 +159,11 @@
 		LEFT JOIN mtmydb.mtmy_goods_skill gs ON sl.id = gs.skill_id		
 		WHERE gs.goods_id=#{goodsId}
 	</select>
+	
+	<!-- 修改技能标签是否显示 -->
+	<update id="updateIsShow">
+		UPDATE train_skill_label
+		SET is_show = #{isShow}
+		WHERE id = #{skillId}
+	</update>
 </mapper>

@@ -98,5 +98,10 @@ public class EquipmentLabelService extends CrudService<EquipmentLabelDao, Equipm
 		return equipmentLabelDao.getByName(name);
 	}
 	
-	
+	/**
+	 * 设备标签是否显示
+	 */
+	public void updateIsShow(EquipmentLabel equipmentLabel){
+		equipmentLabelDao.updateIsShow(equipmentLabel);
+	}
 }

@@ -195,7 +195,7 @@ $(document).ready(function() {
 									<label id="shopName-error" class="error" for="shopName" style="display:none"></label>
 								
 								<span>技能标签：</span>
-								<sys:treeselect id="skill" name="skill.id" value="${user.skill.id}" labelName="skill.name" labelValue="${user.skill.name}" title="技能标签" url="/sys/skill/treeData" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="false" /> 
+								<sys:treeselect id="skill" name="skill.id" value="${user.skill.id}" labelName="skill.name" labelValue="${user.skill.name}" title="技能标签" url="/sys/skill/newTreeData" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="false" /> 
 							</div>
 						</form:form>
 						<br />
