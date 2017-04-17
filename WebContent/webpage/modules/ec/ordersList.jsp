@@ -172,10 +172,10 @@
 								<!-- 导入数据 -->
 								<a href="#" onclick="openDialog('导入物流数据', '${ctx}/ec/orders/importPage','400px', '220px')" class="btn btn-white btn-sm"><i class="fa fa-folder-open-o"></i>导入物流数据</a>
 							</shiro:hasPermission>
-							<%-- <shiro:hasPermission name="ec:orders:importVirtualOrders">
+							<shiro:hasPermission name="ec:orders:importVirtualOrdersPage">
 								<!-- 导入虚拟订单数据 -->
-								<a href="#" onclick="openDialog('导入虚拟订单订单', '${ctx}/ec/orders/importVirtualOrders','400px', '220px')" class="btn btn-white btn-sm"><i class="fa fa-folder-open-o"></i>导入虚拟订单</a>
-							</shiro:hasPermission> --%>
+								<a href="#" onclick="openDialog('导入虚拟订单订单', '${ctx}/ec/orders/importVirtualOrdersPage','400px', '220px')" class="btn btn-white btn-sm"><i class="fa fa-folder-open-o"></i>导入虚拟订单</a>
+							</shiro:hasPermission> 
 						</div>
 						<div class="pull-right">
 							<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
