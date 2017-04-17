@@ -607,13 +607,13 @@ public class UserController extends BaseController {
 	
 									} else {
 										String result = JSONObject.fromObject(newCheckMobile(user.getMobile())).getString("result");
-										if(result == "3"){
+										if("3".equals(result)){
 											failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码妃子校和每天美耶都已注册,请联系管理员; ");
 											failureNum++;
-										}else if(result == "2"){
+										}else if("2".equals(result)){
 											failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码每天美耶已注册,请联系管理员; ");
 											failureNum++;
-										}else if(result == "1"){
+										}else if("1".equals(result)){
 											failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码妃子校已注册,请联系管理员; ");
 											failureNum++;
 										}
@@ -655,7 +655,7 @@ public class UserController extends BaseController {
 			logger.error("导入用户出错："+e.getMessage());
 			addMessage(redirectAttributes, "导入用户失败！失败信息：" + e.getMessage());
 		}
-		return "redirect:" + adminPath + "/sys/user/index?repage";
+		return "redirect:" + adminPath + "/sys/user/list";
 	}
 
 	/**
