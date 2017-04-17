@@ -37,7 +37,9 @@ import com.training.modules.train.service.ArrangeService;
 @Controller
 @RequestMapping(value = "${adminPath}/train/arrange")
 public class arrangeController extends BaseController{
-
+	
+	public static final int RESERVATIONDATE = 4; //可预约天数 - 1
+	
 	@Autowired
 	private ArrangeService arrangeService;
 	/**
@@ -186,7 +188,7 @@ public class arrangeController extends BaseController{
 		    //验证排班不可操作日
 		    String num = nextMonth(date);
 		    if("true".equals(num)){
-		    	model.addAttribute("arrangeMaxDay", map.get("day")+2);
+		    	model.addAttribute("arrangeMaxDay", map.get("day")+RESERVATIONDATE);
 		    }else if("no".equals(num)){
 		    	model.addAttribute("arrangeMaxDay", 0);
 		    }else{
@@ -302,7 +304,7 @@ public class arrangeController extends BaseController{
 		    //验证排班不可操作日
 		    String num = nextMonth(date);
 		    if("true".equals(num)){
-		    	model.addAttribute("arrangeMaxDay", map.get("day")+2);
+		    	model.addAttribute("arrangeMaxDay", map.get("day")+RESERVATIONDATE);
 		    }else if("no".equals(num)){
 		    	model.addAttribute("arrangeMaxDay", 0);
 		    }else{
@@ -425,7 +427,7 @@ public class arrangeController extends BaseController{
 		    //验证排班不可操作日
 		    String num = nextMonth(date);
 		    if("true".equals(num)){
-		    	model.addAttribute("arrangeMaxDay", map.get("day")+2);
+		    	model.addAttribute("arrangeMaxDay", map.get("day")+RESERVATIONDATE);
 		    }else if("no".equals(num)){
 		    	model.addAttribute("arrangeMaxDay", 0);
 		    }else{
@@ -509,10 +511,10 @@ public class arrangeController extends BaseController{
 			return "true";
 		}else{
 			// 下一月
-			if(nowDay + 2 <= nowMaxDay){
+			if(nowDay + RESERVATIONDATE <= nowMaxDay){
 				return "no";
 			}else{
-				int num = (nowDay + 2) - nowMaxDay;
+				int num = (nowDay + RESERVATIONDATE) - nowMaxDay;
 				return Integer.toString(num);
 			}
 		}

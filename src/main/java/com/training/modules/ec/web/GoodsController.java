@@ -172,6 +172,7 @@ public class GoodsController extends BaseController{
 				goods.setGoodsImagesList(goodsService.findGoodsImages(goods));
 				//查询商品相册、商品护理流程 end
 				
+				
 				//商品规格 begin
 				//根据商品ID，查询所有规格价格信息
 				List<GoodsSpecPrice> gspList = goodsService.findGoodsSpecPrice(goods);
@@ -249,7 +250,7 @@ public class GoodsController extends BaseController{
 					//提交到页面展示
 					model.addAttribute("goodsSpectablecontent", tablecontent.toString());
 					
-					//出去map中value为空的数组
+					//除去map中value为空的数组
 					specitemmaps = GoodsUtil.removeMapNull(specitemmaps);
 					
 					if(specitemmaps.size() > 0 ){
@@ -391,9 +392,7 @@ public class GoodsController extends BaseController{
 	@RequestMapping(value = {"save"})
 	public String save(Goods goods, Model model,HttpServletRequest request, RedirectAttributes redirectAttributes){
 		try {
-			
-			 goodsService.saveGoods(goods,request);
-			
+			goodsService.saveGoods(goods,request);
 			addMessage(redirectAttributes, "保存/修改 商品'" + goods.getGoodsName() + "'成功");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "保存/修改 商品通用信息 出现异常!", e);
@@ -1145,7 +1144,7 @@ public class GoodsController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "treeGoodsData")
-	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String isReal,String isOnSale,HttpServletResponse response) {
+	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String isReal,String isOnSale,String isAppshow,HttpServletResponse response) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		Goods goods=new Goods();
 		goods.setGoodsCategoryId(goodsCategory);
@@ -1154,6 +1153,7 @@ public class GoodsController extends BaseController{
 		goods.setFranchiseeId(franchiseeId);
 		goods.setIsReal(isReal);
 		goods.setIsOnSale(isOnSale);
+		goods.setIsAppshow(isAppshow);
 		if(actionId!=null){
 			goods.setActionId(Integer.parseInt(actionId));
 		}
