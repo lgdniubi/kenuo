@@ -14,6 +14,7 @@ public class EquipmentLabel extends DataEntity<EquipmentLabel>{
  	private String name;             //设备名称
 	private String no;               //设备编号
 	private int type;                //设备标签类型
+	private String isShow;           //是否展示（0：展示，1：隐藏）
 	private String description;       //设备描述
 	private int delflag;              //删除标识
 	
@@ -67,6 +68,12 @@ public class EquipmentLabel extends DataEntity<EquipmentLabel>{
 	}
 	public void setNewFlag(String newFlag) {
 		this.newFlag = newFlag;
+	}
+	public String getIsShow() {
+		return isShow;
+	}
+	public void setIsShow(String isShow) {
+		this.isShow = isShow;
 	}
 	
 }

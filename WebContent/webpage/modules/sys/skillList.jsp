@@ -4,6 +4,7 @@
 <head>
 	<title>技能标签管理</title>
 	<meta name="decorator" content="default"/>
+	<link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
 	<script type="text/javascript">
 		//刷新
 		function refresh(){
@@ -21,6 +22,31 @@
 				confirmx(lable, nowhref, closed);
 			});
 			return false;
+		}
+		
+		//是否显示
+		function changeTableVal(id,isyesno){
+			$(".loading").show();//打开展示层
+			$.ajax({
+				type : "POST",
+				url : "${ctx}/sys/skill/changeIsShow?isShow="+isyesno+"&skillId="+id,
+				dataType: 'json',
+				success: function(data) {
+					$(".loading").hide(); //关闭加载层
+					var status = data.STATUS;
+					var isyesno = data.ISYESNO;
+					if("OK" == status){
+						$("#isShow"+id).html("");//清除DIV内容
+						if(isyesno == '1'){
+							$("#isShow"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+id+"','0')\">");
+						}else if(isyesno == '0'){
+							$("#isShow"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+id+"','1')\">");
+						}
+					}else if("ERROR" == status){
+						alert(data.MESSAGE);
+					}
+				}
+			});   
 		}
 	</script>
 </head>
@@ -65,6 +91,7 @@
 							<th style="text-align: center;">ID</th>
 							<th style="text-align: center;">技能标签</th>
 							<th style="text-align: center;">技能描述</th>
+							<th style="text-align: center;">是否显示</th>
 							<th style="text-align: center;">操作</th>
 						</tr>
 					</thead>
@@ -74,6 +101,14 @@
 							<td style="text-align: center;">${skill.name}</td>
 							<td align="center">
 								<div style="width:200px;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${skill.description}</div>
+							</td>
+							<td style="text-align: center;" id="isShow${skill.skillId}">
+								<c:if test="${skill.isShow == '1'}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('${skill.skillId}','0')">
+								</c:if>
+								<c:if test="${skill.isShow == '0'}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('${skill.skillId}','1')">
+								</c:if>
 							</td>
 							<td style="text-align: center;">
 								<shiro:hasPermission name="sys:skill:view">
@@ -93,6 +128,7 @@
 				<table:page page="${page}"></table:page>
 			</div>
 		</div>
+		<div class="loading"></div>
 	</div>
 </body>
 </html>

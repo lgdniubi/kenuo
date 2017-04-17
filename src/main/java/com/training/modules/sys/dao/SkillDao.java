@@ -17,9 +17,14 @@ import com.training.modules.sys.entity.UserSkill;
 @MyBatisDao
 public interface SkillDao extends CrudDao<Skill>{
 	/**
-	 * 查询出所有的技能标签
+	 * 查询出所有的技能标签(只查找显示的)
 	 */
 	public List<Skill> findAllList();
+	
+	/**
+	 * 查询出所有的技能标签(无论显示还是隐藏都查出来)
+	 */
+	public List<Skill> newFindAllList();
 	
 	/**
 	 * 新增技能标签
@@ -84,4 +89,9 @@ public interface SkillDao extends CrudDao<Skill>{
 	 * @return
 	 */
 	public List<Skill> findSkillListByGoodsId(int goodsId);
+	
+	/**
+	 * 修改技能标签是否显示
+	 */
+	public void updateIsShow(Skill skill);
 }

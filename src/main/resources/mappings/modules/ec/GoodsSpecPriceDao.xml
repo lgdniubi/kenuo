@@ -40,4 +40,20 @@
 	<select id="querySpecsPrices" resultType="GoodsSpecPrice">
 		SELECT * FROM mtmydb.mtmy_spec_goods_price
 	</select>
+	
+	<!-- 验证商品的规格是否存在 -->
+	<select id="checkGoodsSpecKey" resultType="Integer">
+		SELECT COUNT(*)
+		FROM mtmydb.mtmy_spec_goods_price 
+		WHERE spec_key=#{specKey} 
+		AND goods_id=#{goodsId}
+	</select>
+	
+	<!-- 验证商品规格的次数 -->
+	<select id="checkServiceTimes" resultType="Integer">
+		SELECT service_times
+		FROM mtmydb.mtmy_spec_goods_price 
+		WHERE spec_key=#{specKey} 
+		AND goods_id=#{goodsId}
+	</select>
 </mapper>

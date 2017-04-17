@@ -593,7 +593,7 @@
 										</c:if>
 									</div>
 								</div>
-								
+								<font color="red">*亲,修改商品规格,请到列表页面修改,谢谢!</font>
 								<!-- 提交按钮 -->
 								<div class="box-footer">   
 									<!-- 商品规格图片上传字段 -->
@@ -1106,11 +1106,11 @@
 						top.layer.alert('所属商家不能为空!', {icon: 0, title:'提醒'});
 						return;
 					}
-					var goodsNum=${goods.goodsNum};
+					/* var goodsNum=${goods.goodsNum};
 
 					if(goodsNum>0){
 						top.layer.alert('商品已经有人购买,仅规格数据无法修改!', {icon: 0, title:'提醒'});
-					}
+					} */
 					var content = $(".ke-edit-iframe").contents().find(".ke-content").html();
 					if(content.indexOf("style") >=0){
 						content = content.replace("&lt;style&gt;","<style>");

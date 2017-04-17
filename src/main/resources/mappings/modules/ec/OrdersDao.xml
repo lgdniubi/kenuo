@@ -1163,7 +1163,7 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+
 	<!-- 根据订单号查询其订单状态以及是否为虚拟订单 -->
 	<select id="selectOrdersStatus" resultType="Orders">
 		SELECT 
@@ -1179,4 +1179,5 @@
 		FROM mtmydb.mtmy_orders
 		WHERE order_id = #{orderId}
 	</select>
+
 </mapper>
