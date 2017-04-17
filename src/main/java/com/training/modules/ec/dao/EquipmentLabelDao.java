@@ -80,4 +80,9 @@ public interface EquipmentLabelDao extends CrudDao<EquipmentLabel>{
 	 * @return
 	 */
 	public int deleteGoodsEquipmentLabel(int goodsId);
+	
+	/**
+	 * 设备标签是否显示
+	 */
+	public void updateIsShow(EquipmentLabel equipmentLabel);
 }
