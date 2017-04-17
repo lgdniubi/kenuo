@@ -24,7 +24,6 @@ public class ImportVirtualOrders {
 	private String actualTimes;    //实际次数
 	private String payCode;        //支付方式
 	private String note;           //留言备注
-	private String checkout;       //预留校验
 	
 	@JsonIgnore
 	@NotNull(message="订单性质不能为空")
@@ -36,7 +35,9 @@ public class ImportVirtualOrders {
 		this.distinction = distinction;
 	}
 	
+	
 	@JsonIgnore
+	@NotNull(message="一级分类不能为空")
 	@ExcelField(title="一级分类", align=2, sort=10)
 	public String getFirstType() {
 		return firstType;
@@ -46,6 +47,7 @@ public class ImportVirtualOrders {
 	}
 	
 	@JsonIgnore
+	@NotNull(message="二级分类不能为空")
 	@ExcelField(title="二级分类", align=2, sort=15)
 	public String getSenondType() {
 		return senondType;
@@ -55,6 +57,7 @@ public class ImportVirtualOrders {
 	}
 	
 	@JsonIgnore
+	@NotNull(message="商品选择不能为空")
 	@ExcelField(title="商品选择", align=2, sort=20)
 	public String getGoodsChoose() {
 		return goodsChoose;
@@ -74,6 +77,7 @@ public class ImportVirtualOrders {
 	}
 	
 	@JsonIgnore
+	@NotNull(message="规格选择不能为空")
 	@ExcelField(title="规格选择", align=2, sort=30)
 	public String getSpecChoose() {
 		return specChoose;
@@ -93,8 +97,18 @@ public class ImportVirtualOrders {
 	}
 	
 	@JsonIgnore
+	@NotNull(message="付款方式不能为空")
+	@ExcelField(title="付款方式", align=2, sort=40)
+	public String getPayCode() {
+		return payCode;
+	}
+	public void setPayCode(String payCode) {
+		this.payCode = payCode;
+	}
+	
+	@JsonIgnore
 	@NotNull(message="手机号码不能为空")
-	@ExcelField(title="手机号码", align=2, sort=40)
+	@ExcelField(title="手机号码", align=2, sort=45)
 	public String getMobile() {
 		return mobile;
 	}
@@ -103,7 +117,7 @@ public class ImportVirtualOrders {
 	}
 	
 	@JsonIgnore
-	@ExcelField(title="姓名或昵称", align=2, sort=45)
+	@ExcelField(title="姓名或昵称", align=2, sort=50)
 	public String getName() {
 		return name;
 	}
@@ -113,7 +127,7 @@ public class ImportVirtualOrders {
 	
 	@JsonIgnore
 	@NotNull(message="实际次数不能为空")
-	@ExcelField(title="实际次数", align=2, sort=50)
+	@ExcelField(title="实际次数", align=2, sort=65)
 	public String getActualTimes() {
 		return actualTimes;
 	}
@@ -121,33 +135,14 @@ public class ImportVirtualOrders {
 		this.actualTimes = actualTimes;
 	}
 	
-	@JsonIgnore
-	@NotNull(message="付款方式不能为空")
-	@ExcelField(title="付款方式", align=2, sort=55)
-	public String getPayCode() {
-		return payCode;
-	}
-	public void setPayCode(String payCode) {
-		this.payCode = payCode;
-	}
 	
 	@JsonIgnore
-	@ExcelField(title="留言备注", align=2, sort=60)
+	@ExcelField(title="留言备注", align=2, sort=70)
 	public String getNote() {
 		return note;
 	}
 	public void setNote(String note) {
 		this.note = note;
 	}
-	
-	@JsonIgnore
-	@ExcelField(title="预校验", align=2, sort=65)
-	public String getCheckout() {
-		return checkout;
-	}
-	public void setCheckout(String checkout) {
-		this.checkout = checkout;
-	}
-	
 	
 }

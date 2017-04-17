@@ -1592,7 +1592,7 @@ public class OrdersController extends BaseController {
 			StringBuilder failureMsg = new StringBuilder();
 			ImportExcel ei = new ImportExcel(file, 1, 0);
 			int cell = ei.getLastCellNum();
-			if (cell != 13) {
+			if (cell != 12) {
 				failureMsg.insert(0, "<br/>导入的模板错误，请检查模板; ");
 			} else {
 				
