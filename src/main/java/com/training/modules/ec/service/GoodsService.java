@@ -505,8 +505,6 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 									for (String s1 : goodsSpecPricesList2) {
 										if (s2.equals(s1)) {
 											flag = true;
-										}else{
-											flag = false;
 											break;
 										}
 									}
