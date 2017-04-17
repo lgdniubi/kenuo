@@ -56,6 +56,7 @@ public class GoodsUsageController extends BaseController {
 			try {
 				Page<GoodsUsage> page = goodsUsageService.getConsignList(new Page<GoodsUsage>(request, response), entity);
 				model.addAttribute("page", page);
+				model.addAttribute("detail",entity);
 				model.addAttribute("userId", entity.getUserId());
 			} catch (Exception e) {
 				logger.error(e.getMessage());

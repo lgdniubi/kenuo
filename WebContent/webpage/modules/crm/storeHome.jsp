@@ -26,9 +26,9 @@
 						  window.location.href = '${ctx}/crm/user/userDetail?userId='+date.userId; 
 					}else{
 						if(date != null && date.mobile != null){
-						    window.location.href = '${ctx}/crm/store/list?mobile='+mobile+'&stamp='+"1"; 
+						    window.location.href = '${ctx}/crm/store/list?mobile='+mobile+'&stamp=1'; 
 						}else{
-							top.layer.alert('此号码不是会员,且无投诉记录', {icon: 0, title:'提醒'}); 
+							top.layer.alert('此号码无投诉记录', {icon: 0, title:'提醒'}); 
 						}
 					}
 				},
@@ -50,16 +50,14 @@
 			<div class="ibox-content">
                <div class="row"><div class="col-md-12">					 		   
 			   <div class="row">
-				   <div class="col-md-4">
-					  <form:form id="searchForm" action="${ctx}/crm/store/member" modelAttribute="goodsType" method="post">			
-							客户查询：<input id="mobile" name="mobile" maxlength="20" type="text" class="form-control" style="width:220px" placeholder="昵称、手机号">	
-							<button type="button" id="pushType" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
-								<i class="fa fa-search"></i> 查询
-							</button>			
-					  </form:form>					
-				  </div>				  
+					<div class="col-md-4">			
+						客户查询：<input id="mobile" name="mobile" maxlength="20" type="text" class="form-control" style="width:220px" placeholder="昵称、手机号">	
+						<button type="button" id="pushType" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
+							<i class="fa fa-search"></i> 查询
+						</button>							
+					</div>				  
 				  <div class="col-md-2">
-				    <table:addRow url="${ctx}/crm/store/from" width="800px" height="680px" title="投诉咨询"></table:addRow><!-- 增加按钮 -->
+				    <table:addRow url="${ctx}/crm/store/from?" width="800px" height="680px" title="投诉咨询"></table:addRow><!-- 增加按钮 -->
 		          </div>
 				  <div class="col-md-6">
 				  	当前来电：
@@ -67,7 +65,8 @@
 		      </div><br/>	  
 			  <div class="row">
 		          <div class="col-md-6">
-					未处理（处理中的投诉咨询）<font color="red">(&nbsp;${coun}&nbsp;)</font>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick='top.openTab("${ctx}/crm/store/list?status=1&member=1","会员投诉咨询", false)'>更多>></a>				
+<%-- 					未处理（处理中的投诉咨询）<font color="red">(&nbsp;${coun}&nbsp;)</font>&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='top.openTab("${ctx}/crm/store/list?status=1&member=1","投诉咨询", false)'>更多>></a> --%>	
+					未处理（处理中的投诉咨询）<font color="red">(&nbsp;${coun}&nbsp;)</font>&nbsp;&nbsp;&nbsp;&nbsp;<a href="${ctx}/crm/store/list?status=1&member=1" class="btn-xs">更多>></a>			
 					 <table id="treeTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
 						<tbody>	
 							<thead >
@@ -118,7 +117,8 @@
 				  </table> 
 		          </div>         				           			       			           
 		           <div class="col-md-6">
-		         			未处理的快速来电记录&nbsp;<font color="red">(&nbsp;${count}&nbsp;)</font>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick='top.openTab("${ctx}/crm/store/list?member=2&stamp=1","非会员投诉咨询", false)'>更多>></a>
+		         			<%-- 未处理的快速来电记录&nbsp;<font color="red">(&nbsp;${count}&nbsp;)</font>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick='top.openTab("${ctx}/crm/store/list?member=2&stamp=1","投诉咨询", false)'>更多>></a> --%>
+		         			未处理的快速来电记录&nbsp;<font color="red">(&nbsp;${count}&nbsp;)</font>&nbsp;&nbsp;&nbsp;&nbsp;<a href="${ctx}/crm/store/list?member=2&stamp=3" class="btn-xs">更多>></a>
 					<table id="treeTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
 						<thead>
 							 <tr>
@@ -165,7 +165,7 @@
 		     </div><p></p>
 		     <div class="row">
 		           <div class="col-md-6">
-							已处理（处理中的投诉咨询）<font color="red">(&nbsp;${counts}&nbsp;)</font>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick='top.openTab("${ctx}/crm/store/list?status=2&member=1","会员投诉咨询", false)'>更多>></a>					
+							已处理（处理中的投诉咨询）<font color="red"></font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="${ctx}/crm/store/list?status=2&member=1" class="btn-xs">更多>></a>					
 						<table id="treeTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
 							<thead>
 							 <tr>

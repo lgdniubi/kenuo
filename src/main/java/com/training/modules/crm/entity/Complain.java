@@ -43,7 +43,22 @@ public class Complain extends DataEntity<Complain>{
 	private String officeName;				//officeName
 	private String stamp;                   //标记
 	private String userId;                  //用户Id
+	private String tab;                     //标记     
+	private String tamb;      
 	
+	
+	public String getTamb() {
+		return tamb;
+	}
+	public void setTamb(String tamb) {
+		this.tamb = tamb;
+	}
+	public String getTab() {
+		return tab;
+	}
+	public void setTab(String tab) {
+		this.tab = tab;
+	}
 	public String getUserId() {
 		return userId;
 	}

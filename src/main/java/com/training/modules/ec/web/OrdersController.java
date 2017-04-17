@@ -763,8 +763,26 @@ public class OrdersController extends BaseController {
 				for (Shipping shipping : list) {
 					try {
 						if (shipping.getOrderid() == null) {
-							break;
+							failureMsg.append("<br/>参数异常，请核对订单号 ");
+							failureNum++;
+							continue;
 						}
+						if(ordersService.selectOrdersId(shipping.getOrderid()) != 1){
+							failureMsg.append("<br/>订单" + shipping.getOrderid() + "不存在，无法导入 ");
+							failureNum++;
+							continue;
+						}
+						if(ordersService.selectOrdersStatus(shipping.getOrderid()).getIsReal() == 1){
+							failureMsg.append("<br/>订单" + shipping.getOrderid() + "是虚拟订单，无法导入 ");
+							failureNum++;
+							continue;
+						}
+						if(ordersService.selectOrdersStatus(shipping.getOrderid()).getOrderstatus() == -1){
+							failureMsg.append("<br/>订单" + shipping.getOrderid() + "的订单状态为待付款，无法导入 ");
+							failureNum++;
+							continue;
+						}
+						
 						BeanValidators.validateWithException(validator, shipping);
 						Orders orders=new Orders();
 						if(shipping.getShippingtime()!=null){
@@ -1464,7 +1482,7 @@ public class OrdersController extends BaseController {
 	 */
 	@RequestMapping(value="handleAdvanceFlag")
 	@ResponseBody
-	public String handleAdvanceFlag(OrderRechargeLog oLog,OrderGoods orderGoods,int userid,String orderid,int sum){
+	public String handleAdvanceFlag(OrderRechargeLog oLog,OrderGoods orderGoods,int userid,String orderid,int sum,HttpServletRequest request){
 		String date="";
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
@@ -1499,7 +1517,7 @@ public class OrdersController extends BaseController {
 			ordersService.handleAdvanceFlag(oLog,sum,goodsPrice,detailsTotalAmount,goodsType,officeId);
 			date = "success";
 		}catch(Exception e){
-			e.printStackTrace();
+			BugLogUtils.saveBugLog(request, "处理预约金异常", e);
 			date = "error";
 		}
 		return date;

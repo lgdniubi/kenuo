@@ -119,12 +119,20 @@ public class AdviceController extends BaseController {
 	@RequiresPermissions("crm:store:list")
 	@RequestMapping(value = "/list")
 	public String list(Complain complain, HttpServletRequest request, HttpServletResponse response, Model model, RedirectAttributes redirectAttributes) {
-		if(null != complain && complain.getStamp() != null && !complain.getStamp().equals("")){
+		if(null != complain && complain.getStamp() != null && complain.getStamp().equals("1")){
+			complain.setRedirectUserId("");
+			model.addAttribute("stamp", complain.getStamp());
+			model.addAttribute("mobile", complain.getMobile());			
+		}else if (null != complain && complain.getStamp() != null && complain.getStamp().equals("3") && complain.getMobile() ==null) {
 			complain.setRedirectUserId("");
 			model.addAttribute("stamp", complain.getStamp());
 			model.addAttribute("mobile", complain.getMobile());
-			
+		}else if (null != complain && complain.getStamp() != null && complain.getStamp().equals("3") && complain.getMobile() !=null) {
+			complain.setMobile("");
+			String id = UserUtils.getUser().getId();
+			complain.setRedirectUserId(id);
 		}else{
+			complain.setMobile("");
 			String id = UserUtils.getUser().getId();
 			complain.setRedirectUserId(id);
 		}
@@ -178,6 +186,12 @@ public class AdviceController extends BaseController {
 	 */
 	@RequestMapping(value = "from")
 	public String storeHome(Model model, Complain complain, HttpServletRequest request, HttpServletResponse response) {
+		Complain complains = adviceService.getUser(complain.getMobile());
+		if(complains !=null){
+			complain.setMobile(complains.getMobile());
+			complain.setNickName(complains.getNickName());
+			complain.setName(complains.getName());
+		}
 		String name = UserUtils.getUser().getName();
 		String no = UserUtils.getUser().getNo();
 		complain.setHandlerID(no);
@@ -265,7 +279,7 @@ public class AdviceController extends BaseController {
 		complain.setHandler(id);
 		//判断是不是首次保存问题
 		if (complain.getId().equals("")) {
-			Complain complains = adviceService.selectMember(complain);
+			Complain complains = adviceService.selectMemb(complain);
 			if (complains == null) {
 				complain.setMember(2);
 			} else {
@@ -304,7 +318,7 @@ public class AdviceController extends BaseController {
 				adviceService.saveSolve(complain);
 			}
 			addMessage(redirectAttributes, complain.getName()+"的问题保存成功！");
-			return "redirect:" + adminPath + "/crm/store/list";
+			return "redirect:" + adminPath + "/crm/store/list?stamp="+complain.getStamp()+"&mobile="+complain.getMobile();
 		} else {
 			//判断有没有处理过程
 			if (complain.getHandResult() != null) {

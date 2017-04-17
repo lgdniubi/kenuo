@@ -21,116 +21,51 @@
 	}
 	function reset() {//重置，页码清零
 		$("#pageNo").val(0);
-		$("#bazaarId").val("");
-		$("#bazaarName").val("");
-		$("#shopId").val("");
-		$("#shopName").val("");
+		$("#officeId").val("");
+		$("#officeName").val("");
+		$("#level").val("");
+		$("#keyword").val("");
 		$("#searchForm div.form-control select").val("");
-		return false;
+		$("#searchForm").submit();
+		return true;
 	}
 	$(document).ready( function(){
-		$("#shopButton").click(function() {
-			var bazaarId = $("#bazaarId").val();
+		$("#officeButton, #officeName").click(function(){	   
+		// 增加  , #officeName  文本框有点击事件
 			// 是否限制选择，如果限制，设置为disabled
-			if ($("#shopButton").hasClass("disabled")) {
-				return true;
-		     }
-			if (bazaarId == null|| bazaarId == "") {
-				top.layer.alert('请先选择市场!', {
-					icon : 0,
-					title : '提醒'
-					});
-			} else {
-				// 正常打开	
-			   top.layer.open({
-				   		type : 2,
-						area : [ '300px','420px' ],
-						title : "选择所在店铺",
-						ajaxData : {
-							selectIds : $("#shopId").val()
-						},
-						content : "/kenuo/a/tag/treeselect?url="+ encodeURIComponent("/ec/specEquipment/treeDataForShop?id="+ bazaarId)
-								  + "&module=&checked=&extId=&isAll=",
-						btn : [ '确定', '关闭' ],
-						yes : function(index,layero) { 
-							    //或者使用btn1
-								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
-								var ids = [], names = [], nodes = [];
-									if ("" == "true") {
-										nodes = tree.getCheckedNodes(true);
-									} else {
-										nodes = tree.getSelectedNodes();
-									}
-									for (var i = 0; i < nodes.length; i++) {//
-										ids.push(nodes[i].id);
-										names.push(nodes[i].name);//
-										break; // 如果为非复选框选择，则返回第一个选择  
-									}
-									$("#shopId").val(ids.join(",").replace(/u_/ig,""));
-									$("#shopName").val(names.join(","));
-									$("#shopName").focus();
-									if ("shop" == "officeIdbeaut") {
-											findBeauty();
-									}
-										top.layer.close(index);
-									},
-						cancel : function(index) { //或者使用btn2
-																//按钮【按钮二】的回调
-								 }
-					});
-				}
-			});
-	$("#bazaarButton").click(function() {
-			$("#shopId").val("");
-			$("#shopName").val("");
-			// 是否限制选择，如果限制，设置为disabled
-			if ($("#bazaarButton").hasClass("disabled")) {
+			if ($("#officeButton").hasClass("disabled")){
 				return true;
 			}
 			// 正常打开	
 			top.layer.open({
-				type : 2,
-				area : [ '300px','420px' ],
-				title : "选择市场",
-				ajaxData : {
-					selectIds : $("#bazaarId").val()
-			    },
-				content : "/kenuo/a/tag/treeselect?url="+ encodeURIComponent("/sys/office/treeData?isGrade=true")
-							+ "&module=&checked=&extId=&isAll=",
-				btn : [ '确定', '关闭' ],
-				yes : function(index,layero) { //或者使用btn1
-						var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
-						var ids = [], names = [], nodes = [];
-						if ("" == "true") {
-							nodes = tree.getCheckedNodes(true);
-							} else {
-							nodes = tree.getSelectedNodes();
+			    type: 2, 
+			    area: ['300px', '420px'],
+			    title:"选择部门",
+			    ajaxData:{selectIds: $("#officeId").val()},
+			    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/office/treeData?type=2")+"&module=&checked=&extId=&isAll=" ,
+			    btn: ['确定', '关闭']
+	    	       ,yes: function(index, layero){ //或者使用btn1
+							var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+							var ids = [], names = [], nodes = [];
+							if ("" == "true"){
+								nodes = tree.getCheckedNodes(true);
+							}else{
+								nodes = tree.getSelectedNodes();
 							}
-						for (var i = 0; i < nodes.length; i++) {//
-							if (nodes[i].isParent) {
-							//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
-							//layer.msg('有表情地提示');
-							top.layer.msg("不能选择父节点（"+ nodes[i].name+ "）请重新选择。",{icon : 0});
-							return false;
-							}//
-							ids.push(nodes[i].id);
-							names.push(nodes[i].name);//
-							break; // 如果为非复选框选择，则返回第一个选择  
-						}
-						$("#bazaarId").val(ids.join(",").replace(/u_/ig,""));
-						$("#bazaarName").val(names.join(","));
-						$("#bazaarName").focus();
-						//预约管理-->> 修改预约地址时异步加载美容师   2016-06-29  咖啡
-						if ("bazaar" == "officeIdbeaut") {
-							findBeauty();
+							for(var i=0; i<nodes.length; i++) {//
+								ids.push(nodes[i].id);
+								names.push(nodes[i].name);//
+								break; // 如果为非复选框选择，则返回第一个选择  
 							}
-						top.layer.close(index);
-					},
-				cancel : function(index) { //或者使用btn2
-											   //按钮【按钮二】的回调
-					}
-			});
-
+							$("#officeId").val(ids.join(",").replace(/u_/ig,""));
+							$("#officeName").val(names.join(","));
+							$("#officeName").focus();
+							top.layer.close(index);
+					    	       },
+	    	cancel: function(index){ //或者使用btn2
+	    	           //按钮【按钮二】的回调
+	    	       }
+			}); 
 		});
 	});
 </script>
@@ -144,21 +79,6 @@
 <body class="gray-bg">
 	<div class="wrapper wrapper-content">
 		<div class="ibox">
-			<div class="ibox-title">
-				<div class="text">
-					<h5>首页&nbsp;&nbsp;</h5>
-				</div>
-				<div class="text">
-					<h5>&nbsp;&nbsp;客户管理&nbsp;&nbsp;</h5>
-				</div>
-				<div class="text">
-					<h5>&nbsp;&nbsp;订单管理&nbsp;&nbsp;</h5>
-				</div>
-				<div class="text">
-					<h5>&nbsp;&nbsp;综合报表&nbsp;&nbsp;</h5>
-				</div>
-			</div>
-
 			<sys:message content="${message}" />
 			<!-- 查询条件 -->
 			<div class="ibox-content">
@@ -177,44 +97,25 @@
 
 								<div class="form-group">
 									<shiro:hasPermission name="crm:office:choose">
-									<span>选择市场：</span> <input id="bazaarId"
-										class=" form-control input-sm" name="bazaarId"
-										value="${userDetail.bazaarId}" type="hidden">
+									<span>选择归属机构：</span> <input id="officeId"
+										class=" form-control input-sm" name="officeId"
+										value="${detail.officeId}" type="hidden">
 									<div class="input-group">
-										<input id="bazaarName" class=" form-control input-sm"
-											name="bazaarName" readonly="readonly"
-											value="${userDetail.bazaarName}" data-msg-required=""
+										<input id="officeName" class=" form-control input-sm"
+											name="officeName" readonly="readonly"
+											value="${detail.officeName}" data-msg-required=""
 											style="" type="text"> <span class="input-group-btn">
-											<button id="bazaarButton" class="btn btn-sm btn-primary "
+											<button id="officeButton" class="btn btn-sm btn-primary "
 												type="button">
 												<i class="fa fa-search"></i>
 											</button>
 										</span>
 									</div>
-									<label id="bazaarName-error" class="error" for="bazaarName"
-										style="display: none"></label>
 									</shiro:hasPermission>	
 									<%-- <sys:treeselect id="bazaar" name="bazaarId" value="${equipment.bazaarId}" labelName="bazaarName" labelValue="${equipment.bazaarName}" title="市场" url="/sys/office/treeData?isGrade=true" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="true" notAllowSelectParent="true"/> --%>
-									<shiro:hasPermission name="crm:office:choose">
-									<span>选择店铺：</span> <input id="shopId"
-										class=" form-control input-sm" name="shopId"
-										value="${userDetail.shopId}" type="hidden">
-									<div class="input-group">
-										<input id="shopName" class=" form-control input-sm"
-											name="shopName" readonly="readonly"
-											value="${userDetail.shopName}" data-msg-required="" style=""
-											type="text"> <span class="input-group-btn">
-											<button id="shopButton" class="btn btn-sm btn-primary "
-												type="button">
-												<i class="fa fa-search"></i>
-											</button>
-										</span>
-									</div>
-									</shiro:hasPermission>
-									<label id="shopName-error" class="error" for="shopName"
-										style="display: none"></label> <span>请选等级</span>
-									<form:select path="level" name="level"
-										value="${userDetail.level}" class="form-control"
+									<span>请选等级</span>
+									<form:select path="level" name="level" id="level"
+										value="${detail.level}" class="form-control"
 										style="width:185px;">
 										<form:option value="">等级</form:option>
 										<form:option value="0">L0</form:option>
@@ -229,16 +130,21 @@
 										<form:option value="9">L9</form:option>
 										<form:option value="10">L10</form:option>
 									</form:select>
-									<form:input neme="keyword" path="keyword"
-										value="${userDetail.keyword}" htmlEscape="false"
+									<form:input neme="keyword" path="keyword" id="keyword"
+										value="${detail.keyword}" htmlEscape="false"
 										maxlength="50" class=" form-control input-sm"
 										placeholder ="手机号码或者昵称" style="width:250px" />
 									<div class="pull-right">
-									<button class="btn btn-primary btn-rounded btn-outline btn-sm "
-									onclick="newSearch()"><i class="fa fa-search"></i>查询</button>
+										<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="newSearch()">
+											<i class="fa fa-search"></i>查询
+										</button>
+										<a class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()">
+											<i class="fa fa-refresh"></i> 重置
+										</a>
 							</div>	
 								</div>
 							</form:form>
+						
 						</div>
 						<div class="row" style="padding-top: 10px;">
 						<div class="col-sm-12">
@@ -273,7 +179,7 @@
 							<th style="text-align: center;">注册日期</th>
 							<th style="text-align: center;">首次消费</th>
 							<th style="text-align: center;">最近消费</th>
-							<th style="text-align: center;">所属市场</th>
+							<th style="text-align: center;">所属店铺</th>
 							<th style="text-align: center;">操作</th>
 						</tr>
 					</thead>
@@ -308,14 +214,12 @@
 										pattern="yyyy-MM-dd " /></td>
 								<td><fmt:formatDate value="${users.lastDate}"
 										pattern="yyyy-MM-dd " /></td>
-								<td>${users.bazaarName }</td>
+								<td>${users.shopName }</td>
 
 								<td>
-									<a class="btn btn-info btn-xs"
-									href="${ctx}/crm/user/userDetail?userId=${users.userId}">详情</a> 
-									<shiro:hasPermission name="crm:userSecret:view">
-									<button class="btn btn-info btn-xs btn-danger" onclick="addKindOrder(${users.userId})">实物</button> 
-									<button class="btn btn-info btn-xs btn-danger" onclick="addVirtualOrder(${users.userId})">虚拟</button>
+									<button class="btn btn-info btn-xs" onclick='top.openTab("${ctx}/crm/user/userDetail?userId=${users.userId}","客户详情", false)'>详情</button>
+									<shiro:hasPermission name="ec:orders:add">
+									  <button class="btn btn-info btn-xs btn-danger" onclick='top.openTab("${ctx}/ec/orders/list","订单列表", false)'>创建订单</button> 
 								    </shiro:hasPermission>
 								</td>
 							</tr>

@@ -31,20 +31,6 @@
 <body>
 	<div class="wrapper wrapper-content">
 		<div class="ibox">
-			<div class="ibox-title">
-				<div class="text">
-					<h5>首页&nbsp;&nbsp;</h5>
-				</div>
-				<div class="text active">
-					<h5>&nbsp;&nbsp;客户管理&nbsp;&nbsp;</h5>
-				</div>
-				<div class="text">
-					<h5>&nbsp;&nbsp;订单管理&nbsp;&nbsp;</h5>
-				</div>
-				<div class="text">
-					<h5>&nbsp;&nbsp;综合报表&nbsp;&nbsp;</h5>
-				</div>
-			</div>
 			<div class="nav">
 				<!-- 翻页隐藏文本框 -->
 				<div class="text-danger" style="margin:8px">
@@ -71,8 +57,12 @@
 						href="${ctx}/crm/account?userId=${userId}">账户总览</a></li>
 					<li role="presentation"  class="layui-this"><a
 						href="${ctx}/crm/invitation?userId=${userId}">邀请明细</a></li>
-					<li role="presentation"><a 
-						href="${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1">投诉咨询</a></li>
+					<li role="presentation">
+							<shiro:hasPermission name="crm:store:list">	
+							<a onclick='top.openTab("${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1","会员投诉", false)'
+								>投诉咨询</a>
+							</shiro:hasPermission>
+					</li>
 				</ul>
 			</div>
 			<!-- 标题 -->

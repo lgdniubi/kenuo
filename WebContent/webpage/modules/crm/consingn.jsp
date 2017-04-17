@@ -29,20 +29,6 @@
 <body class="gray-bg">
 	<div class="wrapper wrapper-content">
 		<div class="ibox">
-			<div class="ibox-title">
-				<div class="text">
-					<h5>首页&nbsp;&nbsp;</h5>
-				</div>
-				<div class="text active">
-					<h5>&nbsp;&nbsp;客户管理&nbsp;&nbsp;</h5>
-				</div>
-				<div class="text">
-					<h5>&nbsp;&nbsp;订单管理&nbsp;&nbsp;</h5>
-				</div>
-				<div class="text">
-					<h5>&nbsp;&nbsp;综合报表&nbsp;&nbsp;</h5>
-				</div>
-			</div>
 			<sys:message content="${message}" />
 			<!-- 查询条件 -->
 			<div class="ibox-content">
@@ -73,12 +59,24 @@
 										href="${ctx}/crm/account?userId=${userId}">账户总览</a></li>
 							<li role="presentation"><a
 										href="${ctx}/crm/invitation?userId=${userId}">邀请明细</a></li>
-							<li role="presentation"><a 
-								href="${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1;">投诉咨询</a></li>
+							<li role="presentation">
+								<shiro:hasPermission name="crm:store:list">	
+									<a onclick='top.openTab("${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1","会员投诉", false)'
+										>投诉咨询</a>
+								</shiro:hasPermission>
+							</li>
 						  </ul>
 					</div>
 				</div>
 				<div>
+				<form id="searchForm" action="${ctx}/crm/consign/list" method="post" class="form-inline">
+					<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}" />
+					<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
+					<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();" />
+					<!-- 支持排序 -->
+					<input id="userId" name="userId" type="hidden" value="${userDetail.userId}" />
+			   </form>	
+				
 					<!-- 工具栏 -->
 					<div class="row">
 						<div class="col-sm-12">
@@ -91,7 +89,6 @@
 							</div>
 						</div>
 					</div>
-					<!-- 工具栏 -->
 				</div>
 				<table id="contentTable"
 					class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">

@@ -16,7 +16,13 @@
 			
 			$.ajax({
 				type : "POST",   
-				url : "${ctx}/ec/goodsspec/updatespecitems?METHOD="+method+"&SPECITEMID="+specItemId+"&SPECID="+specId+"&ITEMSVALUE="+itemsvalue,
+				url : "${ctx}/ec/goodsspec/updatespecitems",
+				data:{
+					METHOD:method,
+					SPECITEMID:specItemId,
+					SPECID:specId,
+					ITEMSVALUE:itemsvalue
+				},
 				dataType : 'json',            	//服务器返回的格式,可以是json或xml或text等  
 				success : function(data, status) {
 					$(".loading").hide(); //关闭加载层

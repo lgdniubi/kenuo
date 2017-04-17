@@ -287,7 +287,12 @@
 									</c:if>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="ec:orders:edit"> 
-			 						<a href="#" onclick="openDialog('查看物流', '${ctx}/ec/orders/shipping?orderid=${orders.orderid}','600px','400px')" class="btn btn-info btn-xs" ><i class="fa fa-truck"></i> 物流</a>
+									<c:if test="${orders.orderstatus == -1}">
+										<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>物流</a>
+									</c:if>
+									<c:if test="${orders.orderstatus != -1}">
+										<a href="#" onclick="openDialog('查看物流', '${ctx}/ec/orders/shipping?orderid=${orders.orderid}','600px','400px')" class="btn btn-info btn-xs" ><i class="fa fa-truck"></i> 物流</a>
+									</c:if>
 			 					</shiro:hasPermission>
 			 				 	<shiro:hasPermission name="ec:orders:return">
 									<c:if test="${orders.orderstatus==4}">
