@@ -172,6 +172,7 @@ public class GoodsController extends BaseController{
 				goods.setGoodsImagesList(goodsService.findGoodsImages(goods));
 				//查询商品相册、商品护理流程 end
 				
+				
 				//商品规格 begin
 				//根据商品ID，查询所有规格价格信息
 				List<GoodsSpecPrice> gspList = goodsService.findGoodsSpecPrice(goods);
@@ -249,7 +250,7 @@ public class GoodsController extends BaseController{
 					//提交到页面展示
 					model.addAttribute("goodsSpectablecontent", tablecontent.toString());
 					
-					//出去map中value为空的数组
+					//除去map中value为空的数组
 					specitemmaps = GoodsUtil.removeMapNull(specitemmaps);
 					
 					if(specitemmaps.size() > 0 ){
@@ -391,9 +392,7 @@ public class GoodsController extends BaseController{
 	@RequestMapping(value = {"save"})
 	public String save(Goods goods, Model model,HttpServletRequest request, RedirectAttributes redirectAttributes){
 		try {
-			
-			 goodsService.saveGoods(goods,request);
-			
+			goodsService.saveGoods(goods,request);
 			addMessage(redirectAttributes, "保存/修改 商品'" + goods.getGoodsName() + "'成功");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "保存/修改 商品通用信息 出现异常!", e);
