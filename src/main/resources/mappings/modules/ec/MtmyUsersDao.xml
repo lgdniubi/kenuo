@@ -13,6 +13,7 @@
 		u.is_lock AS islock,
 		u.user_money
 	</sql>
+    <!-- shiba 增加两个字段officeId 和 beautyId-->   
     <insert id="insert" parameterType="Users" useGeneratedKeys="true" keyProperty="userid">
 		INSERT INTO mtmydb.mtmy_users(
 			name, 
@@ -20,6 +21,8 @@
 			password, 
 			mobile, 
 			sex,
+			office_id,
+			beautician_id,
 			reg_time,
 			del_flag
 		) VALUES (
@@ -28,6 +31,8 @@
 			#{password}, 
 			#{mobile}, 
 			#{sex},
+			#{officeId},
+			#{beautyId},
 			SYSDATE(),
 			#{DEL_FLAG_NORMAL}
 		)
@@ -174,11 +179,17 @@
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
 			</if>
-			<if test="startRegtime != null and startRegtime != '' and endRegtime != null and endRegtime != ''">
-				AND u.reg_time BETWEEN #{startRegtime} AND #{endRegtime}
+			<if test="startRegtime != null and startRegtime != ''">
+				AND DATE_FORMAT(u.reg_time,'%Y-%m-%d') >= DATE_FORMAT(#{startRegtime},'%Y-%m-%d')
 			</if>
-			<if test="startLastlogin != null and startLastlogin != '' and endLastlogin != null and endLastlogin != ''">
-				AND u.last_login BETWEEN #{startLastlogin} AND #{endLastlogin}
+			<if test="endRegtime != null and endRegtime != ''">
+				<![CDATA[AND DATE_FORMAT(u.reg_time,'%Y-%m-%d') <= DATE_FORMAT(#{endRegtime},'%Y-%m-%d')]]>
+			</if>
+			<if test="startLastlogin != null and startLastlogin != ''">
+				AND DATE_FORMAT(u.last_login,'%Y-%m-%d') >= DATE_FORMAT(#{startLastlogin},'%Y-%m-%d')
+			</if>
+			<if test="endLastlogin != null and endLastlogin != ''">
+				<![CDATA[AND DATE_FORMAT(u.last_login,'%Y-%m-%d') <= DATE_FORMAT(#{endLastlogin},'%Y-%m-%d')]]>
 			</if>
 			<if test="district != null and district != ''">
 				AND (
@@ -187,12 +198,17 @@
 					or u.province = #{district }
 					)
 			</if>
+			<if test="noLogin == 1">
+				AND u.last_login IS NULL
+			</if>
 			AND u.del_flag = #{DEL_FLAG_NORMAL}
 		ORDER BY u.reg_time DESC
 	</select>
 	<select id="get" resultType="Users">
 		SELECT 
 		  <include refid="usersColumns"/>
+		  ,
+		  u.layer AS layer
 		FROM
 		  mtmydb.mtmy_users AS u
 		WHERE 
@@ -359,9 +375,14 @@
 		{CALL mtmydb.relieveUser(#{userid},#{source})}
 	</select>
 	
-	<!-- 根据用户ID，查询用户账户信息 -->
-	<select id="findUserAccounts" resultType="usersAccounts">
+	<!-- 根据用户ID，查询用户账户信息   -->
+	<!-- 把resultType的 U 由小写改为大写-->
+	<select id="findUserAccounts" resultType="UsersAccounts">
 		SELECT
+			user_balance  AS 'userBalance',
+	  		frozen_balance AS 'frozenBalance',
+	 		total_amount AS 'totalBmount',
+	  		user_integral AS 'userIntegral',
 			account_balance AS 'accountBalance',
 			account_arrearage AS 'accountArrearage'
 		FROM
@@ -442,4 +463,34 @@
 	</delete>	
 	<!-- 用户异常数据处理 begin -->
 	
+	<!-- 根据手机号查找用户 -->
+	<select id="getUserByMobile" resultType="Users">
+		SELECT 
+		  <include refid="usersColumns"/>
+		FROM
+		  mtmydb.mtmy_users AS u
+		WHERE 
+			1=1
+			AND u.mobile = #{mobile}
+	</select>
+	
+	<!-- 根据用户手机号获取其等级 -->
+	<select id="selectLayer" resultType="String">
+		SELECT layer
+		FROM mtmydb.mtmy_users
+		WHERE mobile = #{mobile}
+	</select>
+	
+	<!-- 若新增用户的手机号在每天美耶已经存在，则将新该用户的等级改为A-->
+	<update id="updateLayer">
+		UPDATE mtmydb.mtmy_users
+		SET layer = 'A'
+		WHERE user_id = #{userId}
+	</update>
+	
+	<!-- 根据被邀请人的id删除表中对应的数据 -->
+	<delete id="deleteFromSaleRelations">
+		DELETE FROM mtmydb.mtmy_sale_relations
+		WHERE user_id = #{userId}
+	</delete>
 </mapper>

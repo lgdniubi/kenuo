@@ -424,7 +424,6 @@
 				detailed_address = #{officeInfo.detailedAddress},
 				img				 = #{officeInfo.img},
 				bed_num			 = #{officeInfo.bedNum},
-				status           = #{officeInfo.status},
 				<if test="grade == 1">
 					del_flag         = #{DEL_FLAG_NORMAL}
 				</if>
@@ -432,7 +431,10 @@
 					del_flag         = #{DEL_FLAG_DELETE}
 				</if>
 	</insert>
-	
+	<!-- 隐藏店铺 -->
+	<update id="updateOfficeStatus">
+		UPDATE sys_office_info SET status = #{status} WHERE id = #{id}
+	</update>
 	<select id="findFNameByCode" resultType="OfficeInfo">
 		SELECT
 			id  AS franchiseeId,
@@ -454,7 +456,8 @@
 			end_time     AS endTime,
 			detailed_address AS detailedAddress,
 			img,
-			bed_num 	AS bedNum
+			bed_num 	AS bedNum,
+			status
 		FROM sys_office_info
 		WHERE 
 			1=1
@@ -473,7 +476,8 @@
 			end_time     AS endTime,
 			detailed_address AS detailedAddress,
 			img,
-			bed_num 	 AS bedNum
+			bed_num 	 AS bedNum,
+			status
 		FROM sys_office_info
 		WHERE del_flag =0 AND id = #{id}
 	</select>

@@ -3,6 +3,8 @@ package com.training.modules.ec.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.OrderGoods;
@@ -88,4 +90,18 @@ public interface OrderGoodsDao extends TreeDao<OrderGoods> {
 	 * @return
 	 */
 	public int updateIsAfterSalesTow(String recId);
+	/**
+	 * 根据订单id查询所有商品订单
+	 * @param orderId
+	 * @return
+	 */
+	public List<OrderGoods> getGoodMapping(@Param("orderId")String orderId);
+	
+	
+	 /**
+	  * 根据recid查找相应的商品信息
+	  * @param recId
+	  * @return
+	  */
+	public OrderGoods selectOrderGoodsByRecid(int recId);
 }

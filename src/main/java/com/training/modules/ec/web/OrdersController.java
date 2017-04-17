@@ -39,6 +39,7 @@ import com.training.common.utils.StringUtils;
 import com.training.common.utils.excel.ExportExcel;
 import com.training.common.utils.excel.ImportExcel;
 import com.training.common.web.BaseController;
+import com.training.modules.ec.dao.OrdersDao;
 import com.training.modules.ec.dao.SaleRebatesLogDao;
 import com.training.modules.ec.entity.AcountLog;
 import com.training.modules.ec.entity.CourierResultXML;
@@ -60,6 +61,7 @@ import com.training.modules.ec.entity.ReturnedGoods;
 import com.training.modules.ec.entity.SaleRebatesLog;
 import com.training.modules.ec.entity.Shipping;
 import com.training.modules.ec.service.AcountLogService;
+import com.training.modules.ec.service.OrderGoodsDetailsService;
 import com.training.modules.ec.service.OrderGoodsService;
 import com.training.modules.ec.service.OrdersLogService;
 import com.training.modules.ec.service.OrdersService;
@@ -68,6 +70,8 @@ import com.training.modules.ec.service.ReturnGoodsService;
 import com.training.modules.ec.service.ReturnedGoodsService;
 import com.training.modules.ec.utils.CourierUtils;
 import com.training.modules.ec.utils.OrderUtils;
+import com.training.modules.ec.utils.WebUtils;
+import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
@@ -76,6 +80,7 @@ import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.TrainRuleParam;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * 订单Controller
@@ -105,7 +110,15 @@ public class OrdersController extends BaseController {
 	private ReturnedGoodsService returnedGoodsService;
 	@Autowired
 	private SaleRebatesLogDao saleRebatesLogDao;
+	@Autowired
+	private OrderGoodsDetailsService orderGoodsDetailsService;
+	@Autowired
+	private OrdersDao ordersDao;
 	
+	@Autowired
+	private RedisClientTemplate redisClientTemplate;
+	
+	public static final String buying_limit_prefix = "buying_limit_";				//抢购活动商品限购数量
 	
 	@ModelAttribute
 	public Orders get(@RequestParam(required = false) String id) {
@@ -129,7 +142,12 @@ public class OrdersController extends BaseController {
 	@RequestMapping(value = { "list", "" })
 	public String list(Orders orders, HttpServletRequest request, HttpServletResponse response, Model model) {
 		try {
-			Page<Orders> page = ordersService.findOrders(new Page<Orders>(request, response), orders);
+			Page<Orders> page = new Page<Orders>();
+			if(StringUtils.isNotBlank(orders.getUsername()) || StringUtils.isNotBlank(orders.getMobile()) || StringUtils.isNotBlank(orders.getOrderid())){
+				page = ordersService.newFindOrders(new Page<Orders>(request, response), orders);
+			}else{
+				page = ordersService.findOrders(new Page<Orders>(request, response), orders);
+			}
 			model.addAttribute("page", page);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "订单列表", e);
@@ -644,7 +662,12 @@ public class OrdersController extends BaseController {
 			RedirectAttributes redirectAttributes) {
 		try {
 			String fileName = "订单数据" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-			Page<Orders> page = ordersService.findOrdersExcal(new Page<Orders>(request, response, -1), orders);
+			Page<Orders> page = new Page<Orders>();
+			if(StringUtils.isNotBlank(orders.getUsername()) || StringUtils.isNotBlank(orders.getMobile()) || StringUtils.isNotBlank(orders.getOrderid())){
+				page = ordersService.newFindOrdersExcal(new Page<Orders>(request, response, -1), orders);
+			}else{
+				page = ordersService.findOrdersExcal(new Page<Orders>(request, response, -1), orders);
+			}
 			new ExportExcel("订单数据", Orders.class).setDataList(page.getList()).write(response, fileName).dispose();
 			return null;
 		} catch (Exception e) {
@@ -733,8 +756,26 @@ public class OrdersController extends BaseController {
 				for (Shipping shipping : list) {
 					try {
 						if (shipping.getOrderid() == null) {
-							break;
+							failureMsg.append("<br/>参数异常，请核对订单号 ");
+							failureNum++;
+							continue;
 						}
+						if(ordersService.selectOrdersId(shipping.getOrderid()) != 1){
+							failureMsg.append("<br/>订单" + shipping.getOrderid() + "不存在，无法导入 ");
+							failureNum++;
+							continue;
+						}
+						if(ordersService.selectOrdersStatus(shipping.getOrderid()).getIsReal() == 1){
+							failureMsg.append("<br/>订单" + shipping.getOrderid() + "是虚拟订单，无法导入 ");
+							failureNum++;
+							continue;
+						}
+						if(ordersService.selectOrdersStatus(shipping.getOrderid()).getOrderstatus() == -1){
+							failureMsg.append("<br/>订单" + shipping.getOrderid() + "的订单状态为待付款，无法导入 ");
+							failureNum++;
+							continue;
+						}
+						
 						BeanValidators.validateWithException(validator, shipping);
 						Orders orders=new Orders();
 						if(shipping.getShippingtime()!=null){
@@ -803,18 +844,22 @@ public class OrdersController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "computingCost")
-	public static Orders computingCost(double transactionPrice,double actualPayment,int ServiceNum, double favourablePrice){
-		DecimalFormat formater = new DecimalFormat("#0.##");
+	public static Orders computingCost(double transactionPrice,double actualPayment,int ServiceNum, double favourablePrice,HttpServletRequest request){
 		Orders orders = new Orders();
-		double singleRealityPrice = Double.parseDouble(formater.format(transactionPrice/ServiceNum)); //实际服务单次价
-		int actualNum = (int)Math.floor(actualPayment/singleRealityPrice);	//实际服务次数 = 剩余服务次数
-		double spareMoney = Double.parseDouble(formater.format(actualPayment - singleRealityPrice*actualNum)); //余款
-		double afterPayment = Double.parseDouble(formater.format(actualPayment-spareMoney));	//计算后实际付款
-		double debtMoney = Double.parseDouble(formater.format(transactionPrice-afterPayment));//欠款
-		orders.setActualNum(actualNum);
-		orders.setSpareMoney(spareMoney);
-		orders.setAfterPayment(afterPayment);
-		orders.setDebtMoney(debtMoney);
+		try {
+			DecimalFormat formater = new DecimalFormat("#0.##");
+			double singleRealityPrice = Double.parseDouble(formater.format(transactionPrice/ServiceNum)); //实际服务单次价
+			int actualNum = (int)Math.floor(actualPayment/singleRealityPrice);	//实际服务次数 = 剩余服务次数
+			double spareMoney = Double.parseDouble(formater.format(actualPayment - singleRealityPrice*actualNum)); //余款
+			double afterPayment = Double.parseDouble(formater.format(actualPayment-spareMoney));	//计算后实际付款
+			double debtMoney = Double.parseDouble(formater.format(transactionPrice-afterPayment));//欠款
+			orders.setActualNum(actualNum);
+			orders.setSpareMoney(spareMoney);
+			orders.setAfterPayment(afterPayment);
+			orders.setDebtMoney(debtMoney);
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "商品规格错误！", e);
+		}
 		return orders;
 	}
 	/**
@@ -884,13 +929,39 @@ public class OrdersController extends BaseController {
 	public String updateVirtualOrder(Orders orders, HttpServletRequest request, Model model,
 			RedirectAttributes redirectAttributes) {
 		try {
-			ordersService.updateVirtualOrder(orders);
-			addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
+			Orders newOrders = ordersService.selectOrderById(orders.getOrderid());
+			orders.setInvoiceOvertime(newOrders.getInvoiceOvertime());
+			orders.setIsReal(newOrders.getIsReal());
+			//判断收货地址是否修改了，若未修改则xml中不对address更新，若不修改，则将省市县详细地址存到相应的地方
+			if(!orders.getOldAddress().equals(orders.getAddress())){
+				ordersDao.updateAddress(orders);
+			}
+			
+			if(orders.getOldstatus() != orders.getOrderstatus()){ //2次订单修改状态不一致
+				if(-2 == orders.getOrderstatus()){//新订单状态 等于“取消订单”
+					boolean result = returnRepository(orders.getOrderid());
+					if(result){
+						// 取消订单  修改订单取消类型为后台取消
+						orders.setCancelType("1");
+						ordersService.updateVirtualOrder(orders);
+						addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
+					}else{
+						addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'失败");
+					}
+					logger.info("商品退还仓库是否成功："+result);
+				}else{//不是取消订单
+					ordersService.updateVirtualOrder(orders);
+					addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
+				}
+			}else{
+				addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
+			}
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "修改订单", e);
 			logger.error("方法：updateVirtualOrder，修改订单出现错误：" + e.getMessage());
 			addMessage(redirectAttributes, "修改订单失败！");
 		}
+		
 		return "redirect:" + adminPath + "/ec/orders/list";
 	}
 	
@@ -1208,9 +1279,24 @@ public class OrdersController extends BaseController {
 	@RequestMapping(value = "cancellationOrder")
 	public String cancellationOrder(HttpServletRequest request, Orders orders,RedirectAttributes redirectAttributes) {
 		try {
-			ordersService.cancellationOrder(orders);
-			addMessage(redirectAttributes, "取消订单'" + orders.getOrderid() + "'成功");
+			List<OrderGoods> goodsList=new ArrayList<OrderGoods>();
+			boolean result = returnRepository(orders.getOrderid());
+			if(result){
+				ordersService.cancellationOrder(orders);
+				goodsList=ordergoodService.orderlist(orders.getOrderid());
+				//验证是否为抢购活动订单
+				for (int i = 0; i < goodsList.size(); i++){
+					if(goodsList.get(i).getActiontype()==1){
+						redisClientTemplate.hincrBy(buying_limit_prefix+goodsList.get(i).getActionid(), goodsList.get(i).getUserid()+"_"+goodsList.get(i).getGoodsid(),-goodsList.get(i).getGoodsnum());
+					}
+				}
+				addMessage(redirectAttributes, "取消订单'" + orders.getOrderid() + "'成功");
+			}else{
+				addMessage(redirectAttributes, "取消订单'" + orders.getOrderid() + "'失败");
+			}
+			logger.info("商品退还仓库是否成功："+result);
 		} catch (Exception e) {
+			addMessage(redirectAttributes, "取消订单'" + orders.getOrderid() + "'失败");
 			BugLogUtils.saveBugLog(request, "取消订单失败", e);
 			logger.error("取消订单失败：" + e.getMessage());
 		}
@@ -1231,7 +1317,19 @@ public class OrdersController extends BaseController {
 			List<OrderGoods> goodsList=new ArrayList<OrderGoods>();
 			
 			orders = ordersService.findselectByOrderId(orders.getOrderid());
-			goodsList=ordergoodService.orderlistTow(orders.getOrderid());
+			boolean result = returnRepository(orders.getOrderid());
+			if(!result){
+				logger.error("取消库存失败，导致强制取消无法进行");
+				addMessage(redirectAttributes, "强制取消'" + orders.getOrderid() + "'失败！");
+				return "redirect:" + adminPath + "/ec/orders/orderform?type=view&orderid="+orders.getOrderid();
+			}
+			logger.info("商品退还仓库是否成功："+result);
+			//验证订单是前台创建
+			if(orders.getChannelFlag().trim().equals("bm")){
+				goodsList=ordergoodService.orderlistTow(orders.getOrderid());
+			}else{
+				goodsList=ordergoodService.orderlist(orders.getOrderid());
+			}
 			if(goodsList.size()>0){
 				for (int i = 0; i < goodsList.size(); i++) {
 					Date date=new Date();
@@ -1259,12 +1357,18 @@ public class OrdersController extends BaseController {
 					returnedGoods.setRemarks("强制取消");
 					returnedGoods.setReturnNum(goodsList.get(i).getGoodsnum());
 					returnedGoods.setTotalAmount(goodsList.get(i).getTotalAmount());
+					returnedGoods.setOrderAmount(goodsList.get(i).getOrderAmount());
 					returnedGoods.setReturnAmount(goodsList.get(i).getTotalAmount());
 					returnedGoods.setId(id);
 					returnedGoods.setApplyType(0);
 					returnedGoods.setApplyDate(date);
+					//保存到退货表
 					returnedGoodsService.insertForcedCancel(returnedGoods);
 					ordersService.updateOrderStatut(orders.getOrderid());
+					//验证是否为抢购活动订单
+					if(goodsList.get(i).getActiontype()==1){
+						redisClientTemplate.hincrBy(buying_limit_prefix+goodsList.get(i).getActionid(), orders.getUserid()+"_"+goodsList.get(i).getGoodsid(),-goodsList.get(i).getGoodsnum());
+					}
 				}
 			}
 			List<SaleRebatesLog> list=new ArrayList<SaleRebatesLog>();
@@ -1295,7 +1399,6 @@ public class OrdersController extends BaseController {
 				 }
 				
 			 }
-			
 			addMessage(redirectAttributes, "强制取消'" + orders.getOrderid() + "'成功！");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "强制取消错误", e);
@@ -1305,6 +1408,112 @@ public class OrdersController extends BaseController {
 		//return "redirect:" + adminPath + "/ec/orders/list";
 		return "redirect:" + adminPath + "/ec/orders/orderform?type=view&orderid="+orders.getOrderid();
 	}
+	/**
+	 * 归还仓库
+	 * @return
+	 */
+	public boolean returnRepository(String orderId){
+		String weburl = ParametersFactory.getMtmyParamValues("mtmy_incrstore_url");
+		List<OrderGoods> orderGoods = ordergoodService.getGoodMapping(orderId);
+		if (null != orderGoods && orderGoods.size() > 0) {
+			for (OrderGoods orderGood : orderGoods) {
+				String parpm = "{\"goods_id\":"+orderGood.getGoodsid()+",\"spec_key\":\""+orderGood.getSpeckey()+"\",\"count\":"+orderGood.getGoodsnum()+"}";
+				String result = WebUtils.postObject(parpm, weburl);
+				JSONObject jsonObject = JSONObject.fromObject(result);
+				String code = jsonObject.get("code").toString();
+				if(!"200".equals(code)){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 	
+	/**
+	 * 跳转处理预约金页面
+	 * @param orderGoods
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="handleAdvanceFlagForm")
+	public String handleAdvanceFlagForm(OrderGoods orderGoods,int userid,HttpServletRequest request,Model model){
+		DecimalFormat formater = new DecimalFormat("#0.##");
+		try{
+			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());
+			double advance = orderGoods.getAdvancePrice();                 //预约金
+			
+			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
+			orderGoods.setAdvance(advance);
+			if(advance < singleRealityPrice){
+				double c = Double.parseDouble(formater.format(singleRealityPrice - advance));
+				orderGoods.setAdvanceServiceTimes(0);        //服务次数
+				orderGoods.setDebt(c);                       //欠款
+			}else{
+				int a = (int)(advance/singleRealityPrice);
+				double b = Double.parseDouble(formater.format(advance - a*singleRealityPrice));
+				orderGoods.setAdvanceServiceTimes(a);        //服务次数 
+				orderGoods.setAdvanceBalance(b);             //余额
+			}
+			double accountBalance = ordersService.getAccount(userid); //用户账户余额
+			orderGoods.setAccountBalance(accountBalance);
+			model.addAttribute("orderGoods", orderGoods);
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "跳转处理预约金页面出错", e);
+			logger.error("跳转处理预约金页面出错："+e.getMessage());
+		}
+		return "modules/ec/handleAdvanceFlagForm";
+	}
 	
+	/**
+	 * 处理预约金
+	 * @param oLog
+	 * @param orderGoods
+	 * @param userid
+	 * @param orderid
+	 * @param sum
+	 * @return
+	 */
+	@RequestMapping(value="handleAdvanceFlag")
+	@ResponseBody
+	public String handleAdvanceFlag(OrderRechargeLog oLog,OrderGoods orderGoods,int userid,String orderid,int sum,HttpServletRequest request){
+		String date="";
+		DecimalFormat formater = new DecimalFormat("#0.##");
+		try{
+			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());    
+			double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
+			double advance = orderGoods.getAdvancePrice();                 //预约金
+			
+			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
+			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
+			int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
+			String officeId = orderGoods.getOfficeId();           //组织架构ID
+			
+			oLog.setMtmyUserId(userid);
+			oLog.setOrderId(orderid);
+			oLog.setRecid(orderGoods.getRecid());
+			oLog.setSingleRealityPrice(orderGoods.getSingleRealityPrice());
+			oLog.setSingleNormPrice(orderGoods.getSingleNormPrice());
+			oLog.setAdvance(advance);
+			//若订金小于单次价，则实付款金额就是单次价，
+			if(advance < singleRealityPrice){
+				oLog.setTotalAmount(singleRealityPrice);
+				if(sum == 0){//用了账户余额
+					oLog.setAccountBalance(Double.parseDouble(formater.format(singleRealityPrice-advance))); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+				}else{
+					oLog.setAccountBalance(0);
+				}
+			}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
+				oLog.setTotalAmount(advance);
+				
+			}
+			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
+			ordersService.handleAdvanceFlag(oLog,sum,goodsPrice,detailsTotalAmount,goodsType,officeId);
+			date = "success";
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "处理预约金异常", e);
+			date = "error";
+		}
+		return date;
+	}
+
 }

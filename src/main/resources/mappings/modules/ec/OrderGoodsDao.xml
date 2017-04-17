@@ -123,7 +123,7 @@
 						SELECT order_id,goods_mapping_id,SUM(service_times) AS service_times FROM mtmydb.mtmy_order_goods_details GROUP BY order_id,goods_mapping_id
 					) b ON a.rec_id = b.goods_mapping_id
 			LEFT JOIN (SELECT group_concat(skill_id) AS skill_id,goods_id FROM mtmydb.mtmy_goods_skill GROUP BY goods_id) s ON s.goods_id = a.goods_id
-			LEFT JOIN mtmydb.mtmy_goods_equipment e ON e.goods_id = a.goods_id
+			LEFT JOIN (SELECT group_concat(label_id) AS label_id,goods_id FROM mtmydb.mtmy_goods_equipment GROUP BY goods_id) e ON e.goods_id = a.goods_id
 		WHERE 
 			a.del_flag = 0
 			and a.order_id = #{orderid}
@@ -178,7 +178,7 @@
 			#{singleNormPrice},
 			#{servicetimes},
 			SYSDATE(),
-			#{expiringDate},
+			(SELECT expiring_date FROM mtmydb.mtmy_spec_goods_price WHERE goods_id = #{goodsid} AND spec_key = #{speckey} AND del_flag = 0),
 			#{isreal},
 			#{servicemin}
 		)
@@ -223,7 +223,9 @@
 			service_times as servicetimes,
 			coupon_price as couponPrice,
 			discount as discount,
-			member_goods_price as membergoodsprice
+			advance_price as advancePrice,
+			member_goods_price as membergoodsprice,
+			(SELECT SUM(a.service_times) FROM mtmydb.mtmy_order_goods_details a WHERE a.goods_mapping_id = rec_id AND type = 0) AS payRemaintimes
 		from 
 		mtmydb.mtmy_order_goods_mapping 
 		where order_id = #{orderid}
@@ -261,5 +263,35 @@
 		WHERE rec_id=#{recId}
 	</update>
 	
+	<!-- 根据订单id查询所有商品订单 -->
+	<select id="getGoodMapping" resultType="OrderGoods">
+		SELECT
+			m.goods_id AS "goodsid",
+			m.spec_key AS "speckey",
+			m.goods_num AS "goodsnum"
+		FROM
+			mtmydb.mtmy_order_goods_mapping m
+		WHERE
+			m.order_id = #{orderId};
+	</select>
 	
+	<!-- 根据recid查找相应的商品信息 -->
+	<select id="selectOrderGoodsByRecid" resultType="OrderGoods">
+		SELECT
+			ogm.coupon_price AS 'couponPrice',
+			ogm.member_goods_price AS 'membergoodsprice', 
+			ogm.total_amount AS 'totalAmount',
+			ogm.goods_price AS 'goodsPrice',
+			ogm.single_norm_price AS 'singleNormPrice',
+			ogm.rec_id AS 'recid',
+			ogm.single_reality_price AS 'singleRealityPrice',
+			ogm.advance_price AS 'advancePrice',
+			g.goods_type AS 'goodsType',
+			u.office_id AS 'officeId'
+		FROM mtmydb.mtmy_order_goods_mapping ogm
+		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id = ogm.goods_id
+		LEFT JOIN mtmydb.mtmy_users u ON u.user_id = ogm.user_id
+		WHERE ogm.rec_id = #{recId}
+		AND ogm.del_flag = 0
+	</select>
 </mapper>

@@ -53,8 +53,11 @@
 						<if test="dbName == 'mysql'">CONCAT('%', #{tag }, '%')</if>
 					)
 			</if>
-			<if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-				AND s.create_date BETWEEN #{startTime} AND #{endTime}
+			<if test="startTime != null and startTime != ''">
+				AND DATE_FORMAT(s.create_date,'%Y-%m-%d') >= DATE_FORMAT(#{startTime},'%Y-%m-%d')
+			</if>
+			<if test="endTime != null and endTime != ''">
+				<![CDATA[AND DATE_FORMAT(s.create_date,'%Y-%m-%d') <= DATE_FORMAT(#{endTime},'%Y-%m-%d')]]>
 			</if>
 		ORDER BY s.create_date DESC
 	</select>
@@ -106,9 +109,9 @@
 		  u.nickname AS "users.nickname",
 		  uu.user_balance AS "users.usermoney",
 		  uu.user_integral AS "users.paypoints",
-		  (SELECT `name` FROM trains.sys_office WHERE `code` = LEFT(c.`code`,9)) AS areaName,
-		  (SELECT `name` FROM trains.sys_office WHERE `code` = LEFT(c.`code`,13)) AS groupName,
-		  (SELECT `name` FROM trains.sys_office WHERE `code` = LEFT(c.`code`,17)) AS bazaarName
+		  (SELECT `name` FROM trains.sys_office WHERE `code` = LEFT(c.`code`,9) AND del_flag = '0') AS areaName ,
+		  (SELECT `name` FROM trains.sys_office WHERE `code` = LEFT(c.`code`,13) AND del_flag = '0') AS groupName ,
+		  (SELECT `name` FROM trains.sys_office WHERE `code` = LEFT(c.`code`,17) AND del_flag = '0') AS bazaarName 
 		FROM
 		  trains.sys_user a 
 		  LEFT JOIN trains.sys_office c ON c.id = a.office_id 
@@ -310,8 +313,11 @@
 						<if test="dbName == 'mysql'">CONCAT('%', #{newusers.nickname }, '%')</if>
 					)
 			</if>
-			<if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-				AND r.create_date BETWEEN #{startTime} AND #{endTime}
+			<if test="startTime != null and startTime != ''">
+				AND DATE_FORMAT(r.create_date,'%Y-%m-%d') >= DATE_FORMAT(#{startTime},'%Y-%m-%d')
+			</if>
+			<if test="endTime != null and endTime != ''">
+				<![CDATA[AND DATE_FORMAT(r.create_date,'%Y-%m-%d') <= DATE_FORMAT(#{endTime},'%Y-%m-%d')]]>
 			</if>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -362,6 +368,15 @@
 	</select>
 	<select id="SaleSettleDayAccounts" statementType="CALLABLE">
 		{CALL mtmydb.SaleSettleDayAccounts()}
+	</select>
+	<select id="changeSaleAccounts" resultType="Users">
+		SELECT 
+			receive_user AS userid,SUM(integral_amount) AS paypoints
+		FROM mtmydb.mtmy_day_account 
+		WHERE 
+			rebate_flag = 0 
+			AND rabate_date <![CDATA[ < ]]> DATE_FORMAT(date_sub(NOW(),interval (SELECT param_value FROM mtmydb.mtmy_rule_param where param_key = 'returngoods_date') day),'%Y%m%d') 
+			GROUP BY receive_user,rabate_date,depth
 	</select>
 	
 	<!-- 导出A级用户 -->

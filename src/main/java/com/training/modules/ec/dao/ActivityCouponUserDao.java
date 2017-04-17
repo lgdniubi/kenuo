@@ -83,5 +83,9 @@ public interface ActivityCouponUserDao extends CrudDao<ActivityCouponUser> {
 	 */
 	public List<ActivityCouponUser> exportfindList(ActivityCouponUser activityCouponUser);
 	
-	
+	/**
+	 * 活动过期后将用户领取的红包修改为已过期
+	 * @param id
+	 */
+	public void updateCouponUser(int id);
 }

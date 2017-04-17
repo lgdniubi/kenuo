@@ -5,6 +5,9 @@ import java.util.List;
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.TrainLiveAudit;
+import com.training.modules.train.entity.TrainLiveOrder;
+import com.training.modules.train.entity.TrainLiveRewardRecord;
+import com.training.modules.train.entity.TrainLiveSku;
 
 /**
  * 直播dao
@@ -32,4 +35,42 @@ public interface TrainLiveAuditDao extends TreeDao<TrainLiveAudit>{
 	 */
 	public List<TrainLiveAudit> selectWantLive();
 	
+	/**
+	 * 分页分页查询直播Sku配置 
+	 * @return
+	 */
+	public List<TrainLiveSku> findSkuList(TrainLiveSku trainLiveSku);
+	
+	/**
+	 * 分页分页查询直播订单列表
+	 * @return
+	 */
+	public List<TrainLiveOrder> findOrderList(TrainLiveOrder trainLiveOrder);
+	
+	/**
+	 * 根据trainLiveSkuId查询Sku配置
+	 * @param trainLiveSkuId
+	 * @return
+	 */
+	public TrainLiveSku findByTrainLiveSkuId(int trainLiveSkuId);
+	
+	/**
+	 * 保存Sku配置
+	 * @param trainLiveSku
+	 */
+	public void saveSku(TrainLiveSku trainLiveSku);
+	
+	/**
+	 * 根据直播id查找Sku配置价格
+	 * @param id
+	 * @return
+	 */
+	public double findSkuPrice(String id);
+	
+	/**
+	 * 查看云币贡献榜
+	 * @param trainLiveRewardRecord
+	 * @return
+	 */
+	public List<TrainLiveRewardRecord> findCloudContribution(TrainLiveRewardRecord trainLiveRewardRecord);
 }

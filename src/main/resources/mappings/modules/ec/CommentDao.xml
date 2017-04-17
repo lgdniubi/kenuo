@@ -41,8 +41,11 @@
 		WHERE 
 			1=1
 			AND c.parent_id = '0'
-			<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
-				AND c.add_time BETWEEN #{beginDate} AND #{endDate}
+			<if test="beginDate != null and beginDate != ''">
+				AND c.add_time >= #{beginDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND c.add_time <![CDATA[ <= ]]> #{endDate}
 			</if>
 			<if test="userName != null and userName != ''">
 				AND g.goods_name LIKE 
@@ -102,11 +105,13 @@
 				mtmydb.mtmy_beauty_comment AS b
 				LEFT JOIN mtmydb.mtmy_users AS u ON b.user_id = u.user_id
 				LEFT JOIN trains.sys_user AS a ON b.beauty_id = a.id
-			WHERE
-				1=1
+			WHERE				1=1
 				AND b.parent_id = '0'
-				<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
-					AND b.add_time BETWEEN #{beginDate} AND #{endDate}
+				<if test="beginDate != null and beginDate != ''">
+					AND b.add_time >= #{beginDate}
+				</if>
+				<if test="endDate != null and endDate != ''">
+					AND b.add_time <![CDATA[ <= ]]> #{endDate}
 				</if>
 				<if test="userName != null and userName != ''">
 					AND a.name LIKE 
@@ -166,18 +171,35 @@
 			a.add_time AS 'addTime',
 			a.goods_rank AS 'goodsRank',
 			a.contents AS 'contents',
-			d.spec_key_name AS 'specKeyName',
+			a.spec_key_name AS 'specKeyName',
 			e.bar_code AS 'barCode',
 			e.goods_no AS 'goodsNo'
 		FROM
 			mtmydb.mtmy_comment a
 		LEFT JOIN mtmydb.mtmy_goods b ON b.goods_id = a.goods_id
 		LEFT JOIN mtmydb.mtmy_users c ON c.user_id = a.user_id
-		LEFT JOIN mtmydb.mtmy_order_goods_mapping d ON d.order_id = a.order_id AND d.goods_id = a.goods_id
-		LEFT JOIN mtmydb.mtmy_spec_goods_price e ON e.goods_id = a.goods_id AND e.spec_key = d.spec_key
+		LEFT JOIN mtmydb.mtmy_spec_goods_price e ON e.goods_id = a.goods_id AND e.spec_key = a.spec_key
 		WHERE
-			c.user_id IS NOT NULL
-		AND a.add_time >= '2017-01-01 00:00:00'
-		AND a.add_time <![CDATA[ <= ]]> '2017-01-31 23:59:59'
+			a.parent_id = '0'
+		<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
+			AND a.add_time >= #{beginDate}
+			AND a.add_time <![CDATA[ <= ]]> #{endDate}
+		</if>
+	</select>
+	<!-- 根据用户ID查询美容师评论-->
+	<select id="findBeautyByUserId" resultType="Comment">
+		SELECT
+			<include refid="BeautyCommentColumns"/>,
+			u.nickname AS 'users.name',
+			cu.name AS 'user.name'
+			FROM
+				mtmydb.mtmy_beauty_comment AS b 
+				LEFT JOIN  mtmydb.mtmy_users AS u  ON b.user_id = u.user_id
+				LEFT JOIN  trains.sys_user AS cu ON b.beauty_id = cu.id
+			WHERE
+				1=1
+			AND b.user_id = #{userId} 
+			AND b.reservation_id= #{reservationId} 
+			ORDER BY b.add_time DESC
 	</select>
 </mapper>

@@ -47,5 +47,5 @@ public interface ActivityDao extends TreeDao<Activity> {
 	 * @return
 	 */
 	public int updateOutTime(int id);
-
+	
 }

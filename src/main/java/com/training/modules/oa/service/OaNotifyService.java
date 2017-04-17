@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -164,7 +165,7 @@ public class OaNotifyService extends CrudService<OaNotifyDao, OaNotify> {
 		
 		//  用于加密
 		JSONObject jsonObj = JSONObject.fromObject(m);
-		String sign = WebUtils.MD5("train"+jsonObj+"train");
+		String sign = WebUtils.MD5("train"+StringEscapeUtils.unescapeJava(jsonObj.toString())+"train");
 		String paramter = "{'sign':'"+sign+"' , 'jsonStr':'train"+jsonObj+"'}";
 		
 		HttpEntity<String> entity = new HttpEntity<String>(paramter,headers);

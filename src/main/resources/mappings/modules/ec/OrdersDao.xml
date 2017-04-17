@@ -99,7 +99,22 @@
 	
 	<!-- 查询用户可以开发票的订单 -->
 	<select id="selectByOrderId" resultType="Orders">
-		SELECT * FROM (
+		SELECT 
+				a.order_id,
+				a.user_id,
+				a.order_status,
+				a.order_amount,
+				a.total_amount,
+				0 as "isFre"
+		FROM mtmydb.mtmy_orders a
+		WHERE
+				 a.user_id=#{userId}
+				AND a.order_status>0
+				AND a.is_invoice=0
+				AND a.parent_id=0
+				AND a.channel_flag !='bm'
+				AND a.is_real = 0
+		<!-- SELECT * FROM (
 			SELECT	
 					a.order_id,
 					a.user_id,
@@ -135,8 +150,7 @@
 					AND a.parent_id=0
 					AND a.channel_flag !='bm'
 		) o
-		WHERE o.isFre=0
-
+		WHERE o.isFre=0 -->
 	</select>
 	<select id="selectBydoubl" resultType="Orders">
 		SELECT
@@ -151,26 +165,28 @@
 	<!-- 分页查询 -->
 	<select id="findList" resultType="Orders">
 		SELECT
-			a.order_id,
-			a.order_status,
-			p.pay_name,
-			a.user_money,
-			a.coupon_price,
-			a.order_amount,
-			a.total_amount,
-			a.add_time,
-			a.action_id,
-			a.user_note,
-			a.admin_note,
-			a.create_logo,
-			a.postal_code,
-			a.flag,
-			a.mobile,
+			a.order_id AS orderid,
+			a.order_status AS orderstatus,
+			p.pay_name AS payname,
+			a.user_money AS usermoney,
+			a.coupon_price AS couponprice,
+			a.order_amount AS orderamount,
+			a.total_amount AS totalamount,
+			a.add_time AS addtime,
+			a.action_id AS actionid,
+			a.user_note AS userNote,
+			a.admin_note AS adminnote,
+			a.create_logo AS createlogo,
+			a.postal_code AS postalcode,
+			a.flag AS flag,
+			a.mobile AS mobile,
 			u.nickname AS "username",
 			a.is_real as isReal,
-			a.channel_flag,
+			a.channel_flag AS channelflag,
 			COUNT(m.rec_id) AS "goodsnum",
-			ogd.order_arrearage AS orderArrearage
+			IFNULL(ogd.order_arrearage,0) AS orderArrearage,
+			a.del_flag,
+			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
@@ -179,8 +195,8 @@
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping m ON a.order_id = m.order_id
 		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=m.goods_id
 		LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
-		WHERE a.parent_id=0
-		AND a.del_flag = 0
+		${sqlMap.dsf} and a.parent_id=0
+		 <!-- AND a.del_flag = 0  用户删除订单后 后台无法查看该订单  -->
 		<if test="username != null and username!=''">
 			AND u.nickname like
 			<if test="dbName == 'oracle'">'%'||#{username} ||'%'</if>
@@ -218,7 +234,111 @@
 		</if>
 		<if test="goodsids !=null and  cetaid !=null and goodsids !='' and cetaid !=''">
 			AND f.category_id=#{cetaid} and m.goods_id=#{goodsids}
-		
+		</if>
+		<if test="searchIsReal !=null and searchIsReal !=''">
+			AND a.is_real=#{searchIsReal}
+		</if>
+		<if test="userDelFlag !=null and userDelFlag !=''">
+			AND a.del_flag=#{userDelFlag}
+		</if>
+		<if test="newIsNeworder != null and newIsNeworder !=''">
+			AND a.is_neworder = #{newIsNeworder}
+		</if>
+		GROUP BY a.order_id
+		<if test="orderArrearageType == 2 "> <!-- 没有欠款 -->
+			HAVING orderarrearage > 0
+		</if>
+		<if test="orderArrearageType == 1 "> <!-- 有欠款 -->
+			HAVING orderarrearage = 0
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.add_time DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="newFindList" resultType="Orders">
+		SELECT
+			a.order_id AS orderid,
+			a.order_status AS orderstatus,
+			p.pay_name AS payname,
+			a.user_money AS usermoney,
+			a.coupon_price AS couponprice,
+			a.order_amount AS orderamount,
+			a.total_amount AS totalamount,
+			a.add_time AS addtime,
+			a.action_id AS actionid,
+			a.user_note AS userNote,
+			a.admin_note AS adminnote,
+			a.create_logo AS createlogo,
+			a.postal_code AS postalcode,
+			a.flag AS flag,
+			a.mobile AS mobile,
+			u.nickname AS "username",
+			a.is_real as isReal,
+			a.channel_flag AS channelflag,
+			COUNT(m.rec_id) AS "goodsnum",
+			IFNULL(ogd.order_arrearage,0) AS orderArrearage,
+			a.del_flag,
+			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
+		FROM
+			mtmydb.mtmy_orders a
+		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
+		LEFT JOIN mtmydb.mtmy_payment p ON a.pay_id = p.pay_id
+		LEFT JOIN (SELECT SUM(order_arrearage) AS order_arrearage,order_id FROM mtmydb.mtmy_order_goods_details GROUP BY order_id) ogd ON a.order_id = ogd.order_id
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping m ON a.order_id = m.order_id
+		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=m.goods_id
+		LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
+		WHERE a.parent_id=0
+		 <!-- AND a.del_flag = 0  用户删除订单后 后台无法查看该订单  -->
+		<if test="username != null and username!=''">
+			AND u.nickname like
+			<if test="dbName == 'oracle'">'%'||#{username} ||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{username} , '%')</if>
+		</if>
+		<if test="mobile != null  and mobile != ''">
+			AND u.mobile=#{mobile}
+		</if>
+		<if test="orderid != null and orderid != ''">
+			AND a.order_id = #{orderid}
+		</if>
+		<if test="orderstatus != null and orderstatus != ''">
+			AND a.order_status=#{orderstatus}
+		</if>
+		<if test="createlogo != null and createlogo != ''">
+			AND a.create_logo=#{createlogo}
+		</if>
+		<if test="channelFlag != null and channelFlag != ''">
+			AND a.channel_flag=#{channelFlag}
+		</if>
+		<if test="begtime != null and begtime != ''">
+			AND DATE_FORMAT(a.add_time,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+		</if>
+		<if test="userid != null and userid != ''">
+			AND a.user_id = #{userid}
+		</if>
+		<if test="cetaid !='' and  goodsids ==''">
+			AND f.category_id=#{cetaid}
+		</if>
+		<if test="goodsids !='' and  cetaid ==''">
+			AND m.goods_id=#{goodsids}
+		</if>
+		<if test="goodsids !=null and  cetaid !=null and goodsids !='' and cetaid !=''">
+			AND f.category_id=#{cetaid} and m.goods_id=#{goodsids}
+		</if>
+		<if test="searchIsReal !=null and searchIsReal !=''">
+			AND a.is_real=#{searchIsReal}
+		</if>
+		<if test="userDelFlag !=null and userDelFlag !=''">
+			AND a.del_flag=#{userDelFlag}
 		</if>
 		GROUP BY a.order_id
 		<if test="orderArrearageType == 2 "> <!-- 没有欠款 -->
@@ -244,8 +364,12 @@
 			a.channel_flag as "strChannel",
 			c.order_amount as "strOrderAmount",
 			c.total_amount as "strTotalAmount",
+			a.total_amount as "orderTotalAmount",
 			a.order_status as "status",
 			a.shipping_type as "shipType",
+			a.province as 'newProvince',
+			a.city as 'newCity',
+			a.district as 'newDistrict',
 			a.address,
 			a.consignee,
 			a.mobile,
@@ -255,7 +379,7 @@
 			a.shipping_name,
 			a.shipping_time,
 			a.temp_orderId,
-			b.nickname as "username",
+			u.nickname as "username",
 			c.goods_name,
 			c.goods_sn,
 			c.spec_key_name,
@@ -265,26 +389,33 @@
 			sp.goods_no as "goodsNo",
 			sp.bar_code as "barCode",
 			ogd.order_arrearage AS orderArrearage,
-			a. user_note AS useNote,
+			a.user_note AS userNote,
 		    a.admin_note AS adminNote,
-		    a.is_real AS orderIsReal
+		    a.is_real AS orderIsReal,
+		    a.add_time AS strAddTime,
+		    a.shipping_price as newShippingPrice,
+		    u.user_id as usersId,
+		    u.mobile as usersMobile,
+		    (CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
 		FROM
 			mtmydb.mtmy_orders a
 			LEFT JOIN mtmydb.mtmy_payment d ON a.pay_code=d.pay_code
-			LEFT JOIN mtmydb.mtmy_users b ON a.user_id=b.user_id
+			LEFT JOIN mtmydb.mtmy_users u ON a.user_id=u.user_id
 			LEFT JOIN mtmydb.mtmy_order_goods_mapping c ON c.order_id=a.order_id
 			LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=c.goods_id
 			LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
 			LEFT JOIN mtmydb.mtmy_spec_goods_price sp ON (g.goods_id = sp.goods_id and c.spec_key = sp.spec_key)
 			LEFT JOIN (SELECT SUM(order_arrearage) AS order_arrearage,order_id FROM mtmydb.mtmy_order_goods_details GROUP BY order_id) ogd ON a.order_id = ogd.order_id
-		WHERE a.del_flag =0 and a.parent_id=0
+		${sqlMap.dsf}
+		<!-- and a.del_flag =0 --> 
+		and a.parent_id=0
 		<if test="username != null and username!=''">
-			AND b.nickname like
+			AND u.nickname like
 			<if test="dbName == 'oracle'">'%'||#{username} ||'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{username} , '%')</if>
 		</if>
 		<if test="mobile != null  and mobile != ''">
-			AND b.mobile=#{mobile}
+			AND u.mobile=#{mobile}
 		</if>
 		<if test="orderid != null and orderid != ''">
 			AND a.order_id = #{orderid}
@@ -295,14 +426,14 @@
 		<if test="createlogo != null and createlogo != ''">
 			AND a.create_logo=#{createlogo}
 		</if>
+		<if test="channelFlag != null and channelFlag != ''">
+			AND a.channel_flag=#{channelFlag}
+		</if>
 		<if test="begtime != null and begtime != ''">
 			AND DATE_FORMAT(a.add_time,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
 		</if>
 		<if test="endtime!=null and endtime!=''">
 			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
-		</if>
-		<if test="userid != null and userid != ''">
-			AND a.user_id = #{userid}
 		</if>
 		<if test="cetaid !='' and  goodsids ==''">
 			AND f.category_id=#{cetaid}
@@ -312,15 +443,129 @@
 		</if>
 		<if test="goodsids !=null and  cetaid !=null and goodsids !='' and cetaid !=''">
 			AND f.category_id=#{cetaid} and c.goods_id=#{goodsids}
-		
 		</if>
-
-		GROUP BY a.order_id,d.pay_name,c.goods_name,c.goods_sn,c.spec_key_name,c.goods_num,c.goods_price,f.name,sp.goods_no,sp.bar_code,c.order_amount,c.total_amount
+		<if test="searchIsReal !=null and searchIsReal !=''">
+			AND a.is_real=#{searchIsReal}
+		</if>
+		<if test="userDelFlag !=null and userDelFlag !=''">
+			AND a.del_flag=#{userDelFlag}
+		</if>
+		<!-- GROUP BY a.order_id,d.pay_name,c.goods_name,c.goods_sn,c.spec_key_name,c.goods_num,c.goods_price,f.name,sp.goods_no,sp.bar_code,c.order_amount,c.total_amount -->
 		<if test="orderArrearageType == 2 "> <!-- 没有欠款 -->
-			HAVING orderarrearage > 0
+			HAVING (orderarrearage > 0 OR orderarrearage IS NOT NULL)
 		</if>
 		<if test="orderArrearageType == 1 "> <!-- 有欠款 -->
-			HAVING orderarrearage = 0
+			HAVING (orderarrearage = 0 OR orderarrearage IS NULL)
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.add_time DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="newFindAlllist" resultType="Orders">
+		SELECT
+			a.order_id,
+			a.is_real as "strReal",
+			a.channel_flag as "strChannel",
+			c.order_amount as "strOrderAmount",
+			c.total_amount as "strTotalAmount",
+			a.total_amount as "orderTotalAmount",
+			a.order_status as "status",
+			a.shipping_type as "shipType",
+			a.province as 'newProvince',
+			a.city as 'newCity',
+			a.district as 'newDistrict',
+			a.address,
+			a.consignee,
+			a.mobile,
+			a.pay_code,
+			d.pay_name,
+			a.shipping_code,
+			a.shipping_name,
+			a.shipping_time,
+			a.temp_orderId,
+			u.nickname as "username",
+			c.goods_name,
+			c.goods_sn,
+			c.spec_key_name,
+			c.goods_num  as "strGoodsNum",
+			c.goods_price as "strGoodsPrice",
+			f.`name` as "catename",
+			sp.goods_no as "goodsNo",
+			sp.bar_code as "barCode",
+			ogd.order_arrearage AS orderArrearage,
+			a.user_note AS userNote,
+		    a.admin_note AS adminNote,
+		    a.is_real AS orderIsReal,
+		    a.add_time AS strAddTime,
+		    a.shipping_price as newShippingPrice,
+		    u.user_id as usersId,
+		    u.mobile as usersMobile,
+		    (CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
+		FROM
+			mtmydb.mtmy_orders a
+			LEFT JOIN mtmydb.mtmy_payment d ON a.pay_code=d.pay_code
+			LEFT JOIN mtmydb.mtmy_users u ON a.user_id=u.user_id
+			LEFT JOIN mtmydb.mtmy_order_goods_mapping c ON c.order_id=a.order_id
+			LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=c.goods_id
+			LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
+			LEFT JOIN mtmydb.mtmy_spec_goods_price sp ON (g.goods_id = sp.goods_id and c.spec_key = sp.spec_key)
+			LEFT JOIN (SELECT SUM(order_arrearage) AS order_arrearage,order_id FROM mtmydb.mtmy_order_goods_details GROUP BY order_id) ogd ON a.order_id = ogd.order_id
+		<!-- WHERE a.del_flag =0 --> 
+		WHERE a.parent_id=0
+		<if test="username != null and username!=''">
+			AND u.nickname like
+			<if test="dbName == 'oracle'">'%'||#{username} ||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{username} , '%')</if>
+		</if>
+		<if test="mobile != null  and mobile != ''">
+			AND u.mobile=#{mobile}
+		</if>
+		<if test="orderid != null and orderid != ''">
+			AND a.order_id = #{orderid}
+		</if>
+		<if test="orderstatus != null and orderstatus != ''">
+			AND a.order_status=#{orderstatus}
+		</if>
+		<if test="createlogo != null and createlogo != ''">
+			AND a.create_logo=#{createlogo}
+		</if>
+		<if test="channelFlag != null and channelFlag != ''">
+			AND a.channel_flag=#{channelFlag}
+		</if>
+		<if test="begtime != null and begtime != ''">
+			AND DATE_FORMAT(a.add_time,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+		</if>
+		<if test="cetaid !='' and  goodsids ==''">
+			AND f.category_id=#{cetaid}
+		</if>
+		<if test="goodsids !='' and  cetaid ==''">
+			AND c.goods_id=#{goodsids}
+		</if>
+		<if test="goodsids !=null and  cetaid !=null and goodsids !='' and cetaid !=''">
+			AND f.category_id=#{cetaid} and c.goods_id=#{goodsids}
+		</if>
+		<if test="searchIsReal !=null and searchIsReal !=''">
+			AND a.is_real=#{searchIsReal}
+		</if>
+		<if test="userDelFlag !=null and userDelFlag !=''">
+			AND a.del_flag=#{userDelFlag}
+		</if>
+		<!-- GROUP BY a.order_id,d.pay_name,c.goods_name,c.goods_sn,c.spec_key_name,c.goods_num,c.goods_price,f.name,sp.goods_no,sp.bar_code,c.order_amount,c.total_amount -->
+		<if test="orderArrearageType == 2 "> <!-- 没有欠款 -->
+			HAVING (orderarrearage > 0 OR orderarrearage IS NOT NULL)
+		</if>
+		<if test="orderArrearageType == 1 "> <!-- 有欠款 -->
+			HAVING (orderarrearage = 0 OR orderarrearage IS NULL)
 		</if>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -507,7 +752,13 @@
 	</select>
 	
 	<update id="modifyOrderStatus" parameterType="map">
-		UPDATE mtmydb.mtmy_orders SET order_status = #{order_status}
+		UPDATE 
+			mtmydb.mtmy_orders 
+		SET 
+			order_status = #{order_status}
+			<if test="cancelType != null  and cancelType != ''">
+				cancel_type = #{cancelType}
+			</if>
 		WHERE order_id = #{order_id}
 	</update>
 	<select id="selectSaleByOrderid" resultType="Integer">
@@ -588,11 +839,13 @@
 			office_id,
 			add_time,
 			channel_flag,
+			shipping_status,
 			shipping_type,
 			del_flag,
 			invoice_overtime,
 			user_note,
-			pay_time
+			pay_time,
+			create_by
 		)values(
 			#{orderid},
 			#{parentid},
@@ -612,11 +865,13 @@
 			#{office.id},
 			SYSDATE(),
 			#{channelFlag},
+			#{shippingstatus},
 			#{shippingtype},
 			#{delFlag},
 			#{invoiceOvertime},
 			#{usernote},
-			SYSDATE()
+			SYSDATE(),
+			#{createBy.id}
 		)
 	</insert>
 	
@@ -637,14 +892,15 @@
 		SELECT
 			u.user_id as userid,
 			o.order_id as orderid,
-			u.mobile as mobile,
+			u.mobile as "users.mobile",
 			o.distinction as distinction,
 			order_status as orderStatus,
+			order_status as oldstatus,
 			o.is_neworder as isNeworder,
 			o.pay_code as paycode,
-			o.phone as phone,
+			o.mobile as mobile,
 			o.consignee as consignee,
-			o.address as address,
+			CONCAT(IFNULL(o.province,''),IFNULL(o.city,''),IFNULL(o.district,''),IFNULL(o.address,'')) AS address,
 			o.shipping_type as shippingtype,
 			o.user_note as usernote,
 			o.is_real as isReal,
@@ -657,6 +913,7 @@
 			o.coupon_price as couponprice,
 			o.discount as discount,
 			o.member_goods_price as membergoodsprice,
+			o.invoice_overtime as invoiceOvertime,
 			o.shipping_price as shippingprice
 		FROM
 			mtmydb.mtmy_orders o,
@@ -672,11 +929,24 @@
 			pay_code = #{paycode},
 			pay_name = #{payname},
 			order_status = #{orderstatus},
-			phone = #{phone},
+			mobile = #{mobile},
 			consignee = #{consignee},
-			address = #{address},
+			invoice_overtime = #{invoiceOvertime},
 			shipping_type = #{shippingtype},
 			user_note = #{usernote}
+			<if test="cancelType != null  and cancelType != ''">
+				cancel_type = #{cancelType}
+			</if>
+		WHERE order_id = #{orderid}
+	</update>
+	
+	<update id="updateAddress">
+		UPDATE mtmydb.mtmy_orders
+		SET 
+			address = #{address},
+			province = null,
+			city = null,
+			district = null
 		WHERE order_id = #{orderid}
 	</update>
 	
@@ -709,7 +979,8 @@
 			address,
 			user_note,
 			invoice_overtime,
-			pay_time
+			pay_time,
+			create_by
 		)values(
 			#{orderid},
 			#{parentid},
@@ -736,7 +1007,8 @@
 			#{address},
 			#{usernote},
 			#{invoiceOvertime},
-			SYSDATE()
+			SYSDATE(),
+			#{createBy.id}
 		)
 	</insert>
 	<!-- 插入备注信息 -->
@@ -774,8 +1046,8 @@
 	</delete>
 	
 	<insert id="saveOrderInvoiceRelevancy">
-		INSERT INTO mtmydb.mtmy_order_invoice_relevancy (invoice_id, order_id)
-		VALUES (#{invoiceId},#{orderId})
+		INSERT INTO mtmydb.mtmy_order_invoice_relevancy (invoice_id, order_id,mapping_id,open_num)
+		(SELECT #{invoiceId},#{orderId},rec_id,goods_num FROM mtmydb.mtmy_order_goods_mapping WHERE order_id = #{orderId})
 	</insert>
 	
 	<select id="getOrderInvoiceRelevancy" resultType="OrderInvoice">
@@ -799,6 +1071,11 @@
 		AND	r.order_id = #{orderid}
 	</select>
 	
+	<select id="selectInvoiceRelevancyNum" resultType="Integer">
+		SELECT COUNT(*) 
+		FROM mtmydb.mtmy_order_invoice_relevancy
+		WHERE order_id = #{orderid}
+	</select>
 	
 	<!-- 插入一条备注信息 -->
 	<insert id="saveOrderRemarks">
@@ -828,7 +1105,8 @@
 	<update id="updateOrderStatut">
 		UPDATE mtmydb.mtmy_orders
 				SET order_status = -2,
-				admin_note='强制取消'
+				admin_note='强制取消',
+				cancel_type = '1'
 		WHERE
 			order_id = #{orderid}
 	</update>
@@ -839,5 +1117,66 @@
 			SET order_status = -2
 		WHERE order_id = #{orderid}
 	</update>
-
+	
+	<!-- 根据userId及其其他条件分页查询 -->
+	<select id="findByUser" resultType="Orders">
+		SELECT
+			a.order_id AS orderid,
+			a.is_real as isReal,
+			u.nickname AS "username",
+			a.add_time AS addtime,
+			a.pay_time AS paytime,
+			p.pay_name AS payname,
+			a.total_amount AS totalamount,
+			a.order_arrearage AS orderArrearage,
+			a.order_status AS orderstatus,
+			a.is_comment AS isComment,
+			a.distinction AS distinction
+		FROM
+			mtmydb.mtmy_orders a
+		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
+		LEFT JOIN mtmydb.mtmy_payment p ON a.pay_id = p.pay_id
+		WHERE a.del_flag = 0
+		 AND a.user_id=#{userid}
+		<if test="orderstatus!= null  and orderstatus!= ''">
+			AND a.order_status=#{orderstatus}
+		</if>
+		<if test="distinction!= null  and distinction!= ''">
+			AND a.distinction=#{distinction}
+		</if>
+		<if test="keyword != null and keyword!=''">
+			AND (
+				u.nickname like 
+				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+				OR u.mobile like
+				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if> 
+				OR a.order_id like
+				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if> 
+			  )
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.add_time DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 根据订单号查询其订单状态以及是否为虚拟订单 -->
+	<select id="selectOrdersStatus" resultType="Orders">
+		SELECT 
+			order_status AS 'orderstatus',
+			is_real AS 'isReal'
+		FROM mtmydb.mtmy_orders
+		WHERE order_id = #{orderId}
+	</select>
+	
+	<!-- 查看订单号是否存在 -->
+	<select id="selectOrdersId" resultType="Integer">
+		SELECT COUNT(*)
+		FROM mtmydb.mtmy_orders
+		WHERE order_id = #{orderId}
+	</select>
 </mapper>

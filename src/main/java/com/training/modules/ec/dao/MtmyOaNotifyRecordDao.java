@@ -44,4 +44,11 @@ public interface MtmyOaNotifyRecordDao extends CrudDao<MtmyOaNotifyRecord> {
 	 */
 	public void updatePushResult(Map<String, Object> map);
 	
+	/**
+	 *  根据用户user_id查询用户是否有client
+	 * @param userId
+	 * @return
+	 */
+	public int selectClient(int userId);
+	
 }

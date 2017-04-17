@@ -116,7 +116,7 @@
     	//清除下拉框的值
     	clearSelect("beauticianId,date,times");
     	if($("#shopId").val() != ""){
-    		/* $(".loading").show(); */
+    		$(".loading").show();
     		$.ajax({
    	       		type : 'post',
    	       		url : '${ctx}/ec/mtmyMnappointment/loadBeaut',

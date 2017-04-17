@@ -14,7 +14,7 @@
 		  client 
 		FROM
 		  mtmydb.mtmy_version
-		ORDER BY add_time
+		ORDER BY add_time DESC
 	</select>
 	
 	<!-- 根据id查看 -->

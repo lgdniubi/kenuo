@@ -37,7 +37,117 @@
 			if(null != parentIdval && '' != parentIdval){
 				categorychange(parentIdval);
 			}
+			
+			//课程总览统计
+			$("#btnExport").click(function(){
+				top.layer.confirm('确认要导出Excel吗?', {icon: 3, title:'系统提示'}, function(index){
+				    //do something
+				    	//导出之前备份
+				    	var url =  $("#searchForm").attr("action");
+				    	var pageNo =  $("#pageNo").val();
+				    	var pageSize = $("#pageSize").val();
+				    	//导出excel
+				        $("#searchForm").attr("action","${ctx}/train/course/totalexport");
+					    $("#pageNo").val(-1);
+						$("#pageSize").val(-1);
+						$("#searchForm").submit();
+
+						//导出excel之后还原
+						$("#searchForm").attr("action",url);
+					    $("#pageNo").val(pageNo);
+						$("#pageSize").val(pageSize);
+				    top.layer.close(index);
+				});
+			});
+			//收藏统计
+			$("#btnCollExport").click(function(){
+				top.layer.confirm('确认要导出Excel吗?', {icon: 3, title:'系统提示'}, function(index){
+				    //do something
+				    	//导出之前备份
+				    	var url =  $("#searchForm").attr("action");
+				    	var pageNo =  $("#pageNo").val();
+				    	var pageSize = $("#pageSize").val();
+				    	//导出excel
+				        $("#searchForm").attr("action","${ctx}/train/course/collectionexport");
+					    $("#pageNo").val(-1);
+						$("#pageSize").val(-1);
+						$("#searchForm").submit();
+
+						//导出excel之后还原
+						$("#searchForm").attr("action",url);
+					    $("#pageNo").val(pageNo);
+						$("#pageSize").val(pageSize);
+				    top.layer.close(index);
+				});
+			});
+			//评论统计
+			$("#btnComExport").click(function(){
+				top.layer.confirm('确认要导出Excel吗?', {icon: 3, title:'系统提示'}, function(index){
+				    //do something
+				    	//导出之前备份
+				    	var url =  $("#searchForm").attr("action");
+				    	var pageNo =  $("#pageNo").val();
+				    	var pageSize = $("#pageSize").val();
+				    	//导出excel
+				        $("#searchForm").attr("action","${ctx}/train/course/commentexport");
+					    $("#pageNo").val(-1);
+						$("#pageSize").val(-1);
+						$("#searchForm").submit();
+
+						//导出excel之后还原
+						$("#searchForm").attr("action",url);
+					    $("#pageNo").val(pageNo);
+						$("#pageSize").val(pageSize);
+				    top.layer.close(index);
+				});
+			});
+			//单元测试
+			$("#btnUnitExport").click(function(){
+				top.layer.confirm('确认要导出Excel吗?', {icon: 3, title:'系统提示'}, function(index){
+				    //do something
+				    	//导出之前备份
+				    	var url =  $("#searchForm").attr("action");
+				    	var pageNo =  $("#pageNo").val();
+				    	var pageSize = $("#pageSize").val();
+				    	//导出excel
+				        $("#searchForm").attr("action","${ctx}/train/course/unitexport");
+					    $("#pageNo").val(-1);
+						$("#pageSize").val(-1);
+						$("#searchForm").submit();
+
+						//导出excel之后还原
+						$("#searchForm").attr("action",url);
+					    $("#pageNo").val(pageNo);
+						$("#pageSize").val(pageSize);
+				    top.layer.close(index);
+				});
+			});
+			//单元测试统计
+			$("#btnUnitTotalExport").click(function(){
+				top.layer.confirm('确认要导出Excel吗?', {icon: 3, title:'系统提示'}, function(index){
+				    //do something
+				    	//导出之前备份
+				    	var url =  $("#searchForm").attr("action");
+				    	var pageNo =  $("#pageNo").val();
+				    	var pageSize = $("#pageSize").val();
+				    	//导出excel
+				        $("#searchForm").attr("action","${ctx}/train/course/totalunitexport");
+					    $("#pageNo").val(-1);
+						$("#pageSize").val(-1);
+						$("#searchForm").submit();
+
+						//导出excel之后还原
+						$("#searchForm").attr("action",url);
+					    $("#pageNo").val(pageNo);
+						$("#pageSize").val(pageSize);
+				    top.layer.close(index);
+				});
+			});
+			
+			
 	    });
+		
+		
 		//分页按钮
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -145,7 +255,21 @@
 								<shiro:hasPermission name="train:course:batchdeletecourse">
 									<table:delRow url="${ctx}/train/course/batchdeletecourse" id="treeTable"></table:delRow><!-- 批量删除按钮 -->
 								</shiro:hasPermission>
-								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新"><i class="glyphicon glyphicon-repeat"></i> 刷新</button>
+								<!-- 导出按钮 -->
+								<shiro:hasPermission name="train:course:importPage">
+									<button id="btnExport" class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" title="导出">
+										<i class="fa fa-file-excel-o"></i>课程总揽</button>
+									<button id="btnCollExport" class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" title="导出">
+										<i class="fa fa-file-excel-o"></i>收藏统计</button>
+									<button id="btnComExport" class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" title="导出">
+										<i class="fa fa-file-excel-o"></i>评论统计</button>
+									<button id="btnUnitExport" class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" title="导出">
+										<i class="fa fa-file-excel-o"></i>单元测试</button>
+									<button id="btnUnitTotalExport" class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" title="导出">
+										<i class="fa fa-file-excel-o"></i>单元测试统计</button>
+								</shiro:hasPermission>
+								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新">
+									<i class="glyphicon glyphicon-repeat"></i> 刷新</button>
 							</div>
 						</div>
 					</div>

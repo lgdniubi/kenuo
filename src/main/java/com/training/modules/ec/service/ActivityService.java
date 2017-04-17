@@ -10,20 +10,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.persistence.Page;
 import com.training.common.service.TreeService;
-import com.training.modules.ec.dao.ActionInfoDao;
 import com.training.modules.ec.dao.ActivityCouponCategoryDao;
 import com.training.modules.ec.dao.ActivityCouponDao;
 import com.training.modules.ec.dao.ActivityCouponGoodsDao;
 import com.training.modules.ec.dao.ActivityCouponUserDao;
 import com.training.modules.ec.dao.ActivityDao;
 import com.training.modules.ec.dao.MtmyUsersDao;
-import com.training.modules.ec.entity.ActionInfo;
 import com.training.modules.ec.entity.Activity;
 import com.training.modules.ec.entity.ActivityCoupon;
 import com.training.modules.ec.entity.ActivityCouponCategory;
 import com.training.modules.ec.entity.ActivityCouponGoods;
 import com.training.modules.ec.entity.ActivityCouponUser;
-import com.training.modules.ec.entity.CouponUser;
 import com.training.modules.ec.entity.Users;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.UserUtils;
@@ -383,7 +380,6 @@ public class ActivityService extends TreeService<ActivityDao,Activity> {
 	public int updateOutTime(int id){
 		return activityDao.updateOutTime(id);
 	}
-	
 	/**
 	 * 优惠卷数组拼接
 	 * 

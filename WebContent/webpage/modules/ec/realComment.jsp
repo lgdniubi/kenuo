@@ -177,7 +177,9 @@
 					<div class="col-sm-12">
 						<div class="pull-left">
 							<!-- 导出 -->
-							<table:exportExcel url="${ctx}/ec/mtmycomment/export"></table:exportExcel>
+							<shiro:hasPermission name="ec:mtmycomment:export">
+								<table:exportExcel url="${ctx}/ec/mtmycomment/export"></table:exportExcel>
+							</shiro:hasPermission>
 						</div>
 					</div>
 				</div>

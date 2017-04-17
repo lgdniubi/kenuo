@@ -5,12 +5,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.training.common.utils.BeanUtil;
+import com.training.modules.ec.dao.ActivityCouponUserDao;
 import com.training.modules.ec.entity.ActionInfo;
 import com.training.modules.ec.entity.Activity;
+import com.training.modules.ec.entity.ActivityCoupon;
 import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.service.ActionInfoService;
 import com.training.modules.ec.service.ActivityService;
@@ -19,6 +23,7 @@ import com.training.modules.quartz.entity.TaskLog;
 import com.training.modules.quartz.tasks.utils.CommonService;
 import com.training.modules.quartz.tasks.utils.RedisConfig;
 import com.training.modules.sys.entity.User;
+import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
 
 /**
@@ -36,11 +41,13 @@ public class ActionStatus extends CommonService{
 	private static ActionInfoService actionInfoService;
 	private static GoodsService goodsService;
 	private static ActivityService activityService;
+	private static ActivityCouponUserDao activityCouponUserDao;
 	
 	static{
 		actionInfoService = (ActionInfoService) BeanUtil.getBean("actionInfoService");
 		goodsService = (GoodsService) BeanUtil.getBean("goodsService");
 		activityService=(ActivityService) BeanUtil.getBean("activityService");
+		activityCouponUserDao = (ActivityCouponUserDao)BeanUtil.getBean("activityCouponUserDao");
 	}
 	
 	/**
@@ -48,7 +55,7 @@ public class ActionStatus extends CommonService{
 	 */
 	public void actionStatus(){
 		logger.info("[actionStatus],start,开启活动设置,开始时间："+df.format(new Date()));
-		
+		HttpServletRequest request=null;
 		//添加日志
 		TaskLog taskLog = new TaskLog();
 		Date startDate;	//开始时间
@@ -105,6 +112,7 @@ public class ActionStatus extends CommonService{
 					Goods goods=new Goods();
 					goods.setActionId(vo.getActionId());
 					goods.setIsOnSale("0");
+					goods.setIsAppshow("1");
 					int num=goodsService.updateGoodsStauts(goods);
 					//下架数量
 					logger.info("[商品下架]，商品下架数量："+num);
@@ -127,16 +135,26 @@ public class ActionStatus extends CommonService{
 
 				}
 			}
-			int activityId=0;
+			int activityId=0;	
 			List<Activity> activitieslist=activityService.selectActionCloseTime();
 			logger.info("[红包活动]，扫描已过期的数据数："+activitieslist.size());
 			if(activitieslist.size()>0){
 				for(Activity vo : activitieslist){
-					activityId=Integer.parseInt(vo.getId());
+					activityId=Integer.parseInt(vo.getId()); // 活动id
 					logger.info("[过期活动]，更新过期红包活动状态：id:"+activityId);
 					activityService.updateOutTime(activityId);
+					
+					// 获取活动下所有红包
+					List<ActivityCoupon> list=activityService.Couponlist(String.valueOf(activityId));
+					ActivityCoupon activityCoupon = new ActivityCoupon();
+					activityCoupon.setId(String.valueOf(activityId));
+					activityCoupon.setStatus(2);
+					// 修改过期活动下红包状态为结束
+					activityService.updateCouponStatus(activityCoupon);
+					for (ActivityCoupon a : list) {
+						activityCouponUserDao.updateCouponUser(Integer.valueOf(a.getId()));
+					}
 				}
-				
 			}
 			
 			taskLog.setJobDescription("[自动开启]，扫瞄活动开始，开启活动个数：["+statrlist.size()+"]"+"[自动结束]，已结束活动数量：["+endList.size()+"]");
@@ -144,6 +162,7 @@ public class ActionStatus extends CommonService{
 			
 		} catch (Exception e) {
 			logger.error("#####【定时任务orderTimeOut】过期订单,当前订单号["+actionId+"]出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "抢购活动定时器", e);
 			taskLog.setStatus(1);
 			taskLog.setExceptionMsg(e.getMessage().substring(0, e.getMessage().length()>2500?2500:e.getMessage().length()));
 		}finally{

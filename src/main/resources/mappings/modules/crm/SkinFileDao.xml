@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.crm.dao.SkinFileDao">
+
+    <!-- 查询单个用户的皮肤档案 -->
+	<select id="get" resultType="SkinFile">
+		SELECT
+			usf.mtmy_user_id AS 'userId',
+			usf.now_skin_condition AS 'nowSkinCondition',
+			usf.skin_type AS skinType,
+			usf.skin_resistibility AS skinResistibility,
+			usf.sleep_status AS sleepStatus,
+			usf.aging_cause AS agingCause,
+			usf.eye_situation AS eyeSituation,
+			usf.pachulosis_type AS pachulosisType,
+			usf.allergic_cause AS allergicCause,
+			usf.acne_cause AS acneCause,
+			usf.immune_signal AS immuneSignal,
+			usf.usual_care_product AS usualCareProduct,
+			usf.physique AS physique,
+			usf.remark AS remark
+		FROM
+		mtmydb.mtmy_user_skin_file usf
+		WHERE
+		usf.mtmy_user_id = #{id}
+	</select>
+	
+	<!-- 插入单挑皮肤状态的数据 --> 	
+	<insert id="insert">
+		INSERT INTO mtmydb.mtmy_user_skin_file(		
+		   mtmy_user_id,
+		   now_skin_condition,
+		   skin_type,
+		   skin_resistibility,
+		   sleep_status,
+		   aging_cause,
+		   eye_situation,
+		   pachulosis_type,
+		   allergic_cause,
+		   acne_cause,
+		   immune_signal,
+		   usual_care_product,
+		   physique,
+		   remark,
+		   create_date,
+		   create_by
+		) VALUES (
+			#{userId}, 
+			#{nowSkinCondition}, 
+			#{skinType}, 
+			#{skinResistibility}, 
+			#{sleepStatus}, 
+			#{agingCause}, 
+			#{eyeSituation}, 
+			#{pachulosisType}, 
+			#{allergicCause}, 
+			#{acneCause}, 
+			#{immuneSignal}, 
+			#{usualCareProduct},
+			#{physique},
+			#{remark},
+			SYSDATE(),
+			#{createBy.name}
+		)
+	</insert>
+	<update id="update">
+		UPDATE mtmydb.mtmy_user_skin_file SET 			
+		   now_skin_condition=#{nowSkinCondition},
+		   skin_type=#{skinType},
+		   skin_resistibility=#{skinResistibility},
+		   sleep_status=#{sleepStatus},
+		   aging_cause=#{agingCause},
+		   eye_situation=#{eyeSituation},
+		   pachulosis_type=#{pachulosisType},
+		   allergic_cause=#{allergicCause},
+		   acne_cause=#{acneCause},
+		   immune_signal=#{immuneSignal},
+		   usual_care_product=#{usualCareProduct},
+		   physique=#{physique},
+		   remark=#{remark}
+		WHERE mtmy_user_id= #{userId}
+	</update>
+				
+</mapper>

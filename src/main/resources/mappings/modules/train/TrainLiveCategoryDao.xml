@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.TrainLiveCategoryDao">
+
+	<!-- 查询直播分类 -->
+	<select id="findList" resultType="TrainLiveCategory">
+	SELECT
+		lc.id AS 'trainLiveCategoryId',
+		lc.parent_id AS 'parentId',
+		lc.parent_ids AS 'parentIds',
+		lc.name,
+		lc.type,
+		lc.sort,
+		u1.name AS 'createBy.name',
+		lc.create_date AS 'createDate',
+		u2.name AS 'updateBy.name',
+		lc.update_date AS 'updateDate',
+		(SELECT COUNT(*) FROM trains.train_live_category AS lc2 WHERE lc.id=lc2.parent_id AND lc2.del_flag=0) AS 'num',
+		lc.del_flag AS 'delflag'
+	FROM trains.train_live_category lc
+	LEFT JOIN trains.sys_user u1 ON u1.id = lc.create_by
+	LEFT JOIN trains.sys_user u2 ON u2.id = lc.update_by
+	WHERE lc.del_flag = 0
+	AND lc.type = 1
+	<if test="name != null and name != ''">
+		AND lc.name LIKE
+		<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+		<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+	</if>
+	ORDER BY lc.create_date DESC
+	</select>
+	
+	<!-- 根据parentsId查找相应的子类 -->
+	<select id="findByPidforChild" resultType="TrainLiveCategory">
+	SELECT
+		lc.id AS 'trainLiveCategoryId',
+		lc.parent_id AS 'parentId',
+		lc.parent_ids AS 'parentIds',
+		lc.name,
+		lc.type,
+		lc.sort,
+		u1.name AS 'createBy.name',
+		lc.create_date AS 'createDate',
+		u2.name AS 'updateBy.name',
+		lc.update_date AS 'updateDate',
+		(SELECT COUNT(*) FROM trains.train_live_category AS lc2 WHERE lc.id=lc2.parent_id AND lc2.del_flag=0) AS 'num',
+		lc.del_flag AS 'delflag'
+	FROM trains.train_live_category lc
+	LEFT JOIN trains.sys_user u1 ON u1.id = lc.create_by
+	LEFT JOIN trains.sys_user u2 ON u2.id = lc.update_by
+	WHERE lc.del_flag = 0
+	AND lc.parent_id = #{id}
+	ORDER BY lc.create_date DESC
+	
+	</select>
+	
+	<!--增加直播分类 -->
+	<insert id="insertCategory">
+		INSERT INTO trains.train_live_category(
+			id,
+			parent_id,
+			parent_ids,
+			name,
+			type,
+			sort,
+			create_by,
+			create_date,
+			del_flag
+		)VALUES(
+			#{trainLiveCategoryId},
+			#{parentId},
+			#{parentIds},
+			#{name},
+			#{type},
+			#{sort},
+			#{createBy.id},
+			NOW(),
+			0
+		)
+	</insert>
+	
+	<!-- 根据trainLiveCategoryId获取相应的trainLiveCategory -->
+	<select id="get" resultType="TrainLiveCategory">
+		SELECT
+			lc.id AS 'trainLiveCategoryId',
+			lc.parent_id AS 'parentId',
+			lc.parent_ids AS 'parentIds',
+			lc.name,
+			lc.type,
+			lc.sort,
+			u1.name AS 'createBy.name',
+			lc.create_date AS 'createDate',
+			u2.name AS 'updateBy.name',
+			lc.update_date AS 'updateDate'
+		FROM trains.train_live_category lc
+		LEFT JOIN trains.sys_user u1 ON u1.id = lc.create_by
+		LEFT JOIN trains.sys_user u2 ON u2.id = lc.update_by
+		WHERE lc.id = #{trainLiveCategoryId}
+		AND lc.del_flag = 0
+	</select>
+	
+	<!-- 修改直播分类 -->
+	<update id="updateCategory">
+		UPDATE trains.train_live_category
+		SET 
+			name = #{name},
+			sort = #{sort},
+			update_by = #{updateBy.id},
+			update_date = NOW()
+		WHERE id = #{trainLiveCategoryId}
+	</update>
+	
+	<!-- 删除直播分类 -->
+	<delete id="deleteCategory">
+	UPDATE trains.train_live_category
+	SET del_flag = 1
+	WHERE parent_ids LIKE CONCAT('%', #{trainLiveCategoryId}, '%') OR id = #{trainLiveCategoryId}
+	</delete>
+</mapper>

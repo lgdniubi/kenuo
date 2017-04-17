@@ -44,7 +44,7 @@
 		${sqlMap.dsf}
 		AND e.del_flag = 0
 		<if test="name != null and name != ''">
-			AND e.name = #{name} 
+			AND e.name like CONCAT('%', #{name}, '%')
 		</if>
 		<choose>
 			<when test="shopId != null and shopId != ''">

@@ -18,7 +18,10 @@ import com.training.modules.train.dao.TrainLiveAuditDao;
 import com.training.modules.train.dao.TrainLivePlaybackDao;
 import com.training.modules.train.dao.TrainLiveUserDao;
 import com.training.modules.train.entity.TrainLiveAudit;
+import com.training.modules.train.entity.TrainLiveOrder;
 import com.training.modules.train.entity.TrainLivePlayback;
+import com.training.modules.train.entity.TrainLiveRewardRecord;
+import com.training.modules.train.entity.TrainLiveSku;
 
 import net.sf.json.JSONObject;
 
@@ -159,16 +162,17 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 			content="您的直播将要在5分钟内开始，请准时直播！";
 			param=pushParam(title,notify_type,content,list);
 			WebUtils webUtils = new WebUtils();
-			String result = webUtils.webUtilsMain(param, push_url);
+			String result = webUtils.postTrainObject(param, push_url);
 			jsonObject = JSONObject.fromObject(result);
 			System.out.println(jsonObject.toString());
 			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",message:"+jsonObject.get("message"));
 		}else if("9".equals(Status)){			//  9 直播将要开始  购买者
 			title="购买直播将要开始";
 			notify_type="9";				//notify_type 0 审核失败  0 审核通过 8 直播将要开始  9 预约直播提醒
+			content="您购买的直播将要在5分钟内开始，请准时观看！";
 			param=pushParam(title,notify_type,content,list);
 			WebUtils webUtils = new WebUtils();
-			String result = webUtils.webUtilsMain(param, push_url);
+			String result = webUtils.postTrainObject(param, push_url);
 			jsonObject = JSONObject.fromObject(result);
 			System.out.println(jsonObject.toString());
 			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",message:"+jsonObject.get("message"));
@@ -178,7 +182,7 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 			content="您预约的直播将要在5分钟内开始，请准时观看！";
 			param=pushParam(title,notify_type,content,list);
 			WebUtils webUtils = new WebUtils();
-			String result = webUtils.webUtilsMain(param, push_url);
+			String result = webUtils.postTrainObject(param, push_url);
 			jsonObject = JSONObject.fromObject(result);
 			System.out.println(jsonObject.toString());
 			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",message:"+jsonObject.get("message"));
@@ -219,4 +223,68 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 		return param;
 	}
 	
+	/**
+	 * 分页查询sku配置
+	 * @param page
+	 * @param 
+	 * @return
+	 */
+	public Page<TrainLiveSku> findSkuList(Page<TrainLiveSku> page, TrainLiveSku trainLiveSku) {
+		// 设置分页参数
+		trainLiveSku.setPage(page);
+		// 执行分页查询
+		page.setList(trainLiveAuditDao.findSkuList(trainLiveSku));
+		return page;
+	}
+	
+	/**
+	 * 分页查询直播订单列表
+	 * @param page
+	 * @param 
+	 * @return
+	 */
+	public Page<TrainLiveOrder> findOrderList(Page<TrainLiveOrder> page, TrainLiveOrder trainLiveOrder) {
+		// 设置分页参数
+		trainLiveOrder.setPage(page);
+		// 执行分页查询
+		page.setList(trainLiveAuditDao.findOrderList(trainLiveOrder));
+		return page;
+	}
+	
+	/**
+	 * 根据trainLiveSkuId查询Sku配置
+	 * @param trainLiveSkuId
+	 * @return
+	 */
+	public TrainLiveSku findByTrainLiveSkuId(int trainLiveSkuId){
+		return trainLiveAuditDao.findByTrainLiveSkuId(trainLiveSkuId);
+	}
+	
+	/**
+	 * 保存Sku配置
+	 * @param trainLiveSku
+	 */
+	public void saveSku(TrainLiveSku trainLiveSku){
+		trainLiveAuditDao.saveSku(trainLiveSku);
+	}
+	
+	/**
+	 * 根据直播id查找Sku配置价格
+	 * @param id
+	 * @return
+	 */
+	public double findSkuPrice(String id){
+		return trainLiveAuditDao.findSkuPrice(id);
+	}
+	
+	/**
+	 * 查看云币贡献榜
+	 * @param trainLiveRewardRecord
+	 * @return
+	 */
+	public Page<TrainLiveRewardRecord> findCloudContribution(Page<TrainLiveRewardRecord> page,TrainLiveRewardRecord trainLiveRewardRecord){
+		trainLiveRewardRecord.setPage(page);
+		page.setList(trainLiveAuditDao.findCloudContribution(trainLiveRewardRecord));
+		return page;
+	}
 }

@@ -87,12 +87,12 @@ public class arrangeController extends BaseController{
 		    				for (Integer integer : iList) {
 		    					if(integer == i){
 		    						y = 1;
-		    						arr.setFlag(1);
+		    						arr.setStatus(1);
 		    					}
 		    				}
 		    			}
 		    			if(y == 0){
-		    				arr.setFlag(2);
+		    				arr.setStatus(2);
 		    			}
 						l.add(arr);
 					}
@@ -101,6 +101,7 @@ public class arrangeController extends BaseController{
 				}
 				model.addAttribute("lists", lists);
 				model.addAttribute("month",map.get("month"));
+				model.addAttribute("bazaarName", arrangeShop.getSearchOfficeName());
 			}else{
 				model.addAttribute("message", "请选择市场");
 			}
@@ -226,12 +227,14 @@ public class arrangeController extends BaseController{
 				for (int i = 1; i <= map.get("maxDay"); i++) {
 					ArrangeShop arrangeShop = new ArrangeShop();
 					String shopId = request.getParameter(id+i);
+					String flag = request.getParameter("flag"+id+i);
 					if(shopId != null && !"".equals(shopId)){
 						arrangeShop.setBeauticianId(id);
 						arrangeShop.setShopId(shopId);
 						arrangeShop.setApptDate(sdf.parse(map.get("year")+"-"+map.get("month")+"-"+i));
 						arrangeShop.setMonth(map.get("month"));
 						arrangeShop.setDay(i);
+						arrangeShop.setFlag(flag);
 						arrangeShop.setCreateBy(currentUser);
 						arrangeShop.setOfficeId(currentUser.getOffice().getId());
 						list.add(arrangeShop);
@@ -463,12 +466,14 @@ public class arrangeController extends BaseController{
 				for (int i = 1; i <= map.get("maxDay"); i++) {
 					ArrangeShop arrangeShop = new ArrangeShop();
 					String shopId = request.getParameter(id+i);
+					String flag = request.getParameter("flag"+id+i);
 					if(shopId != null && !"".equals(shopId)){
 						arrangeShop.setBeauticianId(id);
 						arrangeShop.setShopId(shopId);
 						arrangeShop.setApptDate(sdf.parse(map.get("year")+"-"+map.get("month")+"-"+i));
 						arrangeShop.setMonth(map.get("month"));
 						arrangeShop.setDay(i);
+						arrangeShop.setFlag(flag);
 						arrangeShop.setCreateBy(currentUser);
 						arrangeShop.setOfficeId(currentUser.getOffice().getId());
 						list.add(arrangeShop);
@@ -537,16 +542,16 @@ public class arrangeController extends BaseController{
 		}
 		Map<String, Integer> map = calendarDay(date);	//获取月份天数、月份、时间
 		StringBuffer str = new StringBuffer();
-		str.append("<tr>");
+		str.append("<tr class='freezeTr'>");
 		if ("shop".equals(string)){
-			str.append("<th style=\"text-align: center;\">操作</th>");
+			str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;\">操作</div></th>");
 		}
-		str.append("<th style=\"text-align: center;\">"+name+"</th>");
+		str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;\">"+name+"</div></th>");
 		for (int i = 1; i <= map.get("maxDay"); i++) {
 			if(i == map.get("day")){
-				str.append("<th style=\"text-align:center;background:red;\">"+map.get("month")+"/"+i+"</th>");
+				str.append("<th style=\"text-align:center;background:#17b593;\"><div style=\"width: 100px;\">"+map.get("month")+"/"+i+"</div></th>");
 			}else {
-				str.append("<th style=\"text-align: center;\">"+map.get("month")+"/"+i+"</th>");
+				str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;\">"+map.get("month")+"/"+i+"<div></th>");
 			}
 		}
 		str.append("</tr>");

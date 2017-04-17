@@ -26,8 +26,8 @@ public class ArrangeShop extends DataEntity<ArrangeShop>{
 	private String searchOfficeId;	//查询时传officeId
 	private String searchOfficeName;//查询时传officeName
 	
-	private int flag;				//用于标记当前店铺是否上班
-	
+	private int status;				//用于标记当前店铺是否上班
+	private String flag;			//用于标示 0 店铺排班  市场排班 1
 	private Date searcTime;			//时间
 	
 	public int getArrangeId() {
@@ -102,10 +102,16 @@ public class ArrangeShop extends DataEntity<ArrangeShop>{
 	public void setSearchOfficeName(String searchOfficeName) {
 		this.searchOfficeName = searchOfficeName;
 	}
-	public int getFlag() {
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	public String getFlag() {
 		return flag;
 	}
-	public void setFlag(int flag) {
+	public void setFlag(String flag) {
 		this.flag = flag;
 	}
 	public Date getSearcTime() {

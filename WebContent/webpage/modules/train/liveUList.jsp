@@ -36,6 +36,7 @@
 						<tr>
 							<th style="text-align: center;">编号</th>
 							<th style="text-align: center;">会员姓名</th>
+							<th style="text-align: center;">所属机构</th>
 							<th style="text-align: center;">手机号</th>
 							<th style="text-align: center;">职位</th>
 							<th style="text-align: center;">购买金额</th>
@@ -48,6 +49,7 @@
 							<tr>
 								<td>${list.id}</td>
 								<td>${list.name}</td>
+								<td>${list.organization }</td>
 								<td>${list.mobile}</td>
 								<td>${list.position}</td>
 								<td>${list.money}</td>

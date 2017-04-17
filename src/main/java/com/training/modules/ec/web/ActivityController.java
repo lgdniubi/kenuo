@@ -30,7 +30,6 @@ import com.training.modules.ec.entity.ActivityCoupon;
 import com.training.modules.ec.entity.ActivityCouponCategory;
 import com.training.modules.ec.entity.ActivityCouponGoods;
 import com.training.modules.ec.entity.ActivityCouponUser;
-import com.training.modules.ec.entity.Orders;
 import com.training.modules.ec.entity.Users;
 import com.training.modules.ec.service.ActivityService;
 import com.training.modules.sys.entity.Franchisee;
@@ -208,7 +207,7 @@ public class ActivityController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "addCouponForm")
-	public String addCouponForm(HttpServletRequest request,ActivityCoupon activityCoupon, Model model) {
+	public String addCouponForm(HttpServletRequest request,ActivityCoupon activityCoupon,String franchiseeId, Model model) {
 		try {
 			if(!activityCoupon.getId().equals("0")){
 				activityCoupon=activityService.findByCouponId(activityCoupon.getId());
@@ -220,7 +219,7 @@ public class ActivityController extends BaseController {
 				activityCoupon.setList(list);
 			}
 			}
-			
+			model.addAttribute("franchiseeId", franchiseeId); // 活动所属品牌
 			model.addAttribute("activityCoupon", activityCoupon);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "添加红包", e);
@@ -590,7 +589,6 @@ public class ActivityController extends BaseController {
 		try {
 			String fileName = "红包明细" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
 			List<ActivityCouponUser> list=activityService.exportCouponUser(activityCouponUser);
-			System.out.println(list.size());
 			new ExportExcel("红包明细", ActivityCouponUser.class).setDataList(list).write(response, fileName).dispose();
 			return null;
 		} catch (Exception e) {

@@ -115,7 +115,7 @@
 				$("#_isNeworder").val(isNeworder);
 				top.layer.close(index);
 				
-				if(orderArrearage != 0){ //欠款
+				if(orderArrearage != 0 || isNeworder == 1){ //欠款或者为老订单时无法开发票
 					$("#iType").hide();
 					$("#personheadContent").hide();
 					$("#invoiceRecipient").hide();
@@ -404,6 +404,22 @@
 			$("#invoiceRecipient input").val("");
 		});
 	}
+	
+	function choose(value){
+		if(value == 1){
+			$("#iType").hide();
+			$("#personheadContent").hide();
+			$("#invoiceRecipient").hide();
+			$("#companyheadContent").hide();
+			$("#fpinfo").hide();
+			$("#Ichecks").attr("checked",false);
+			$("#Ichecks").attr("disabled",true);
+			$("#mtmyUserPush").hide();
+			$("#mtmyUserInfo").empty();
+		}else{
+			$("#mtmyUserPush").show();
+		}
+	}
 	</script>
 </head>
 <body>
@@ -424,7 +440,7 @@
 						<form:option value="3">老带新</form:option>
 				</form:select>&nbsp;&nbsp;
 				<label><font color="red">*</font>新老订单：</label>
-				<form:select id="isNeworder" path="isNeworder"  class="form-control" style="width:200px">
+				<form:select id="isNeworder" path="isNeworder"  class="form-control" style="width:200px" onchange="choose(this.value)">
 						<form:option value="0">新订单</form:option>
 						<form:option value="1">老订单</form:option>
 				</form:select>
@@ -504,7 +520,7 @@
 						<label ><font color="red">*</font>联系电话：</label>
 						<form:input path="phone" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
 						<label ><font color="red">*</font>收货地址：</label>
-						<form:input path="address" htmlEscape="false" maxlength="50" class="form-control required" style="width:180px" />
+						<form:input path="address" htmlEscape="false" maxlength="120" class="form-control required" style="width:180px" />
 					</div>
 				</div>
 				<p></p>
@@ -558,7 +574,7 @@
 					</div>
 				</div>
 				<p></p>
-				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="mtmyUserPush">
 					<div class="pull-left">
 						<h4>人员提成信息：</h4>
 					</div>

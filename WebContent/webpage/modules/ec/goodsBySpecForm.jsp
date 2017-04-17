@@ -93,6 +93,14 @@
 				</tr>
 				<tr>
 					<td class="width-15 active">
+						<label class="pull-right">商品重量（克）</label>
+					</td>
+					<td class="width-35">
+						<form:input path="goodsWeight" htmlEscape="false" maxlength="50" class="form-control"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="width-15 active">
 						<label class="pull-right">服务次数:</label>
 					</td>
 					<td class="width-35">

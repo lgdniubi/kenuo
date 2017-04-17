@@ -272,6 +272,9 @@ public class MtmyMnappointmentController extends BaseController{
 					url = ParametersFactory.getMtmyParamValues("mtmy_finishSubscribeStatus");	//修改预约时间且状态为已完成
 					String appt_date = DateUtils.formatDate(reservation.getApptDate(), "yyyy-MM-dd");
 					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"appt_date\":\""+appt_date+"\",\"appt_start_time\":\""+reservation.getApptStartTime()+"\",\"appt_end_time\":\""+reservation.getApptEndTime()+"\",\"client\":\"bm\",\"remarks\":\""+reservation.getRemarks()+"\",\"update_by\":\""+user.getId()+"\"}";
+				}else if("3".equals(reservation.getApptStatus())){
+					url = ParametersFactory.getMtmyParamValues("mtmy_delphysubscribe_url");
+					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"client\":\"bm\"}";
 				}else{
 					url = ParametersFactory.getMtmyParamValues("mtmy_updateSubscribeStatus");	//修改预约状态
 					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"appt_status\":"+reservation.getApptStatus()+",\"client\":\"bm\",\"remarks\":\""+reservation.getRemarks()+"\",\"update_by\":\""+user.getId()+"\"}";

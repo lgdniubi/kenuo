@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
+import com.training.modules.crm.entity.CrmOrders;
 import com.training.modules.ec.entity.OrderInvoice;
 import com.training.modules.ec.entity.OrderInvoiceRelevancy;
 import com.training.modules.ec.entity.OrderRemarksLog;
@@ -24,6 +25,11 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @return
 	 */
 	public List<Orders> findAlllist(Orders orders);
+	/**
+	 * 查询所有数据
+	 * @return
+	 */
+	public List<Orders> newFindAlllist(Orders orders);
 	/**
 	 * 根据id查询数据
 	 * @param orderid
@@ -187,6 +193,13 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @return
 	 */
 	public OrderInvoice getOrderInvoiceRelevancy(String orderid);
+
+	/**
+	 * 查找订单的发票个数
+	 */
+	public int selectInvoiceRelevancyNum(String orderId);
+
+
 	/**
 	 * 添加单条备注
 	 * @param orders
@@ -245,7 +258,33 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 */
 	public Orders selectByOrderIdSum(String orderid);
 
+	/**
+	 * @param 
+	 * @return Orders
+	 * 根据USERID及其其他条件查询订单列表
+	 */
+	public List<CrmOrders> findByUser(CrmOrders order);
 
-
-
+	/**
+	 * 分页查询订单，无权限的
+	 * @param orders
+	 * @return
+	 */
+	public List<Orders> newFindList(Orders orders);
+	
+	/**
+	 * 修改收货地址
+	 * @param orders
+	 */
+	public void updateAddress(Orders orders);
+	
+	/**
+	 * 根据订单号查询其订单状态以及是否为虚拟订单 
+	 */
+	public Orders selectOrdersStatus(String orderId);
+	
+	/**
+	 * 查看订单号是否存在
+	 */
+	public int selectOrdersId(String orderId);
 }

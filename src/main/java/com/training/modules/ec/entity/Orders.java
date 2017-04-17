@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.base.Predicate;
 import com.training.common.persistence.TreeEntity;
 import com.training.common.utils.excel.annotation.ExcelField;
 import com.training.modules.sys.entity.Office;
@@ -25,7 +24,7 @@ public class Orders extends TreeEntity<Orders> {
 	private String consignee;			//收货人
 //	private String country;				//国家
 //	private String province;			//省份
-	private	 String city;				//城市
+	private	String city;				//城市
 	private String cityname;			//城市名称
 //	private	 String district;			//县区s
 //	private String twonl;				//城镇
@@ -94,6 +93,7 @@ public class Orders extends TreeEntity<Orders> {
 	private String pid;					//订单父id
 	private int isShow;					//是否展示
 	private int isReal;					//是否实物
+	private String searchIsReal;		//搜索条件是否实物
 	private String orderIsReal;			//是否实物(导出字段)
 	private String channelFlag;			//渠道标识（WAP：wap端；IOS：苹果手机；Android：安卓手机；BM：后台管理）
 	private double memberGoodsPrice;	//会员折扣优惠了多少
@@ -106,12 +106,16 @@ public class Orders extends TreeEntity<Orders> {
 	private String officeId;			//机构id
 	
 	//导出字段
+	private String usersId;               //用户id
+	private String usersMobile;       //用户手机号（每天美耶的手机号）
 	private String strGoodsNum;			//商品数量
 	private String strGoodsPrice;		//商品价格
 	private String strOrderAmount;		//订单价格
-	private String strTotalAmount;		//实付金额
+	private String strTotalAmount;		//商品实付金额
+	private String orderTotalAmount;    //订单实付金额
 	private String goodsNo;				//货号
 	private String barCode;				//商品条形码
+	private String newShippingPrice;       //邮费
 	
 	private double singleNormPrice;		//单次标价
 	private double singleRealityPrice;	//实际服务单次价
@@ -154,6 +158,7 @@ public class Orders extends TreeEntity<Orders> {
 	private List<OrderRemarksLog> orderRemarksLog;		//订单备注返回对象
 	private List<String> orderRemarks;		//订单备注信息存储数据
 	private String orderRemark;				//单条订单备注信息存储数据
+	private List<Integer> remaintimeNums;		//实际次数  --新加属性
 	private OrderInvoice orderInvoice;		//订单发票对象
 	//--------------------用户账户需要字段------------------------------------------
 	private double accountBalance;		//账户余额
@@ -162,12 +167,35 @@ public class Orders extends TreeEntity<Orders> {
 	private List<OrderGoods> orderGoodList;
 	List<OrderPushmoneyRecord> orderPushmoneyRecords;
 	List<OrderGoodsCoupon> orderGoodsCoupons;	//订单红包
+	//------------------CRM根据用户查询需要显示的字段----------------------------------
+	private String isComment;
 	
 	private int flag;						//分销是否处理 分销结算标示（0：未结算；1：已结算）
 	private String strReal;				//导出 字段 订单类型
 	private String strChannel;		//订单创建类型
+	private String strAddTime;		//导出字段 下单时间
 	
+	private String newProvince;     //导出字段  省
+	private String newCity;         //导出字段  市
+	private String newDistrict;     //导出字段  县
 	
+	private String oldAddress;      //修改前的地址
+	private String newFlag;         //标识   判断当前订单的收货地址是否修改，0 未修改 ，1修改
+	
+	private String userDelFlag;		//订单类型（0：正常 1：用户删除）
+	private String cancelType;		//订单取消类型
+	private int isInvoice;		//是否可开发票
+	 
+	private int num;         //订单的发票个数
+	
+	private String newIsNeworder;   //查询所用的新老订单字段
+	
+	public String getSearchIsReal() {
+		return searchIsReal;
+	}
+	public void setSearchIsReal(String searchIsReal) {
+		this.searchIsReal = searchIsReal;
+	}
 	@JsonIgnore
 	@ExcelField(title="创建类型", align=2, sort=5)
 	public String getStrChannel() {
@@ -185,8 +213,7 @@ public class Orders extends TreeEntity<Orders> {
 		}
 		
 	}
-	@JsonIgnore
-	@ExcelField(title="订单类型", align=2, sort=4)
+	
 	public String getStrReal() {
 		return strReal;
 	}
@@ -203,7 +230,7 @@ public class Orders extends TreeEntity<Orders> {
 	private String adminNote;           //备注
 	
 	@JsonIgnore
-	@ExcelField(title="商品货号", align=2, sort=73)
+	@ExcelField(title="商品货号", align=2, sort=74)
 	public String getGoodsNo() {
 		return goodsNo;
 	}
@@ -212,7 +239,7 @@ public class Orders extends TreeEntity<Orders> {
 		this.goodsNo = goodsNo;
 	}
 	@JsonIgnore
-	@ExcelField(title="商品条形码", align=2, sort=72)
+	@ExcelField(title="商品条形码", align=2, sort=73)
 	public String getBarCode() {
 		return barCode;
 	}
@@ -222,7 +249,7 @@ public class Orders extends TreeEntity<Orders> {
 	}
 
 	@JsonIgnore
-	@ExcelField(title="实付金额", align=2, sort=71)
+	@ExcelField(title="商品实付金额", align=2, sort=70)
 	public String getStrTotalAmount() {
 		return strTotalAmount;
 	}
@@ -530,7 +557,7 @@ public class Orders extends TreeEntity<Orders> {
 	}
 
 	@JsonIgnore
-	@ExcelField(title="订单区分", align=2, sort=61)
+	@ExcelField(title="订单区分", align=2, sort=4)
 	public String getOrderIsReal() {
 		return orderIsReal;
 	}
@@ -1043,6 +1070,7 @@ public class Orders extends TreeEntity<Orders> {
 		this.goodsprice = goodsprice;
 	}
 
+	
 	public double getShippingprice() {
 		return shippingprice;
 	}
@@ -1085,7 +1113,7 @@ public class Orders extends TreeEntity<Orders> {
 
 
 	@JsonIgnore
-	@ExcelField(title="应付款金", align=2, sort=70)
+	@ExcelField(title="应付款金额", align=2, sort=69)
 	public String getStrOrderAmount() {
 		return strOrderAmount;
 	}
@@ -1406,6 +1434,138 @@ public class Orders extends TreeEntity<Orders> {
 
 	public void setAdminNote(String adminNote) {
 		this.adminNote = adminNote;
+	}
+	@JsonIgnore
+	@ExcelField(title="创建时间", type=1, align=2, sort=7)
+	public String getStrAddTime() {
+		return strAddTime;
+	}
+	public void setStrAddTime(String strAddTime) {
+		this.strAddTime = strAddTime;
+	}
+	@JsonIgnore
+	@ExcelField(title="订单实付金额", type=1, align=2, sort=71)
+	public String getOrderTotalAmount() {
+		return orderTotalAmount;
+	}
+	public void setOrderTotalAmount(String orderTotalAmount) {
+		this.orderTotalAmount = orderTotalAmount;
+	}
+	@JsonIgnore
+	@ExcelField(title="邮费", align=2, sort=72)
+	public String getNewShippingPrice() {
+		return newShippingPrice;
+	}
+	public void setNewShippingPrice(String newShippingPrice) {
+		this.newShippingPrice = newShippingPrice;
+	}
+	@JsonIgnore
+	@ExcelField(title="省", align=2, sort=17)
+	public String getNewProvince() {
+		return newProvince;
+	}
+	public void setNewProvince(String newProvince) {
+		this.newProvince = newProvince;
+	}
+	
+	@JsonIgnore
+	@ExcelField(title="市", align=2, sort=18)
+	public String getNewCity() {
+		return newCity;
+	}
+	public void setNewCity(String newCity) {
+		this.newCity = newCity;
+	}
+	
+	@JsonIgnore
+	@ExcelField(title="县", align=2, sort=19)
+	public String getNewDistrict() {
+		return newDistrict;
+	}
+	public void setNewDistrict(String newDistrict) {
+		this.newDistrict = newDistrict;
+	}
+	public String getOldAddress() {
+		return oldAddress;
+	}
+	public void setOldAddress(String oldAddress) {
+		this.oldAddress = oldAddress;
+	}
+	public String getNewFlag() {
+		return newFlag;
+	}
+	public void setNewFlag(String newFlag) {
+		this.newFlag = newFlag;
+	}
+	
+	public String getUserDelFlag() {
+		return userDelFlag;
+	}
+	public void setUserDelFlag(String userDelFlag) {
+		this.userDelFlag = userDelFlag;
+	}
+	@JsonIgnore
+	@ExcelField(title="取消类型", align=2, sort=6)
+	public String getCancelType() {
+		return cancelType;
+	}
+	public void setCancelType(String cancelType) {
+		if(cancelType.equals("0")){
+			this.cancelType="用户取消";
+		}else if(cancelType.equals("1")){
+			this.cancelType="后台取消";
+		}else if(cancelType.equals("2")){
+			this.cancelType="自动取消";
+		}
+	}
+	public int getIsInvoice() {
+		return isInvoice;
+	}
+	public void setIsInvoice(int isInvoice) {
+		this.isInvoice = isInvoice;
+	}
+	
+	@JsonIgnore
+	@ExcelField(title="用户id", align=2, sort=8)
+	public String getUsersId() {
+		return usersId;
+	}
+	public void setUsersId(String usersId) {
+		this.usersId = usersId;
+	}
+	
+	@JsonIgnore
+	@ExcelField(title="注册手机号", align=2, sort=11)
+	public String getUsersMobile() {
+		return usersMobile;
+	}
+	public void setUsersMobile(String usersMobile) {
+		this.usersMobile = usersMobile;
+	}
+	public int getNum() {
+		return num;
+	}
+	public void setNum(int num) {
+		this.num = num;
+	}
+	public List<Integer> getRemaintimeNums() {
+		return remaintimeNums;
+	}
+	public void setRemaintimeNums(List<Integer> remaintimeNums) {
+		this.remaintimeNums = remaintimeNums;
+	}
+	
+	public String getIsComment() {
+		return isComment;
+	}
+	public void setIsComment(String isComment) {
+		this.isComment = isComment;
+	}
+	public String getNewIsNeworder() {
+		return newIsNeworder;
+	}
+	public void setNewIsNeworder(String newIsNeworder) {
+		this.newIsNeworder = newIsNeworder;
 	}
 	
 }

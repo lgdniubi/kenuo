@@ -71,6 +71,8 @@ import com.training.modules.tools.utils.TwoDimensionCode;
 import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.TrainRuleParam;
 
+import net.sf.json.JSONObject;
+
 /**
  * 用户Controller
  * 
@@ -258,16 +260,22 @@ public class UserController extends BaseController {
 				}
 			}
 			//新增用户时  验证其用户是否存在于每天美耶中
-			if(user.getId().length() <= 0){
-				if(mtmyUsersDao.findByMobile(user) != null){
-					addMessage(redirectAttributes, "保存用户失败,此手机号已在每天美耶注册,请联系管理员");
-					UserUtils.clearCache(user);
-					return "redirect:" + adminPath + "/sys/user/list?repage";
-				}
-			}
+//			if(user.getId().length() <= 0){
+//				if(mtmyUsersDao.findByMobile(user) != null){
+//					addMessage(redirectAttributes, "保存用户失败,此手机号已在每天美耶注册,请联系管理员");
+//					UserUtils.clearCache(user);
+//					return "redirect:" + adminPath + "/sys/user/list?repage";
+//				}
+//			}
 			// 修正引用赋值问题，不知道为何，Company和Office引用的一个实例地址，修改了一个，另外一个跟着修改。
-			user.setCompany(new Office(request.getParameter("company.id")));
-			user.setOffice(new Office(request.getParameter("office.id")));
+			Office company = new Office();
+			company.setId(request.getParameter("company.id"));
+			company.setName(request.getParameter("company.name"));
+			user.setCompany(company);
+			Office office = new Office();
+			office.setId(request.getParameter("office.id"));
+			office.setName(request.getParameter("office.name"));
+			user.setOffice(office);
 			
 			/*更新用户时，需要更新用户的TOKEN，用户妃子校*/
 			redisClientTemplate.hdel("USERTOKEN", user.getId());
@@ -545,7 +553,7 @@ public class UserController extends BaseController {
 						if ("true".equals(checkLoginName("", user.getLoginName()))) {
 							if(isInteger(user.getMobile())){
 								if (user.getMobile().length() == 11) {
-									if ("4".equals(newCheckMobile(user.getMobile()))) {              
+									if ("4".equals(JSONObject.fromObject(newCheckMobile(user.getMobile())).get("result"))) {              
 										if ("true".equals(checkIdcard("", user.getIdCard()))) {
 											if (user.getIdCard().length() == 15 || user.getIdCard().length() == 18) {
 												if("true".equals(checkOfficeId(user.getCode()))){
@@ -598,7 +606,7 @@ public class UserController extends BaseController {
 										}
 	
 									} else {
-										String result = newCheckMobile(user.getMobile());
+										String result = JSONObject.fromObject(newCheckMobile(user.getMobile())).getString("result");
 										if(result == "3"){
 											failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码妃子校和每天美耶都已注册,请联系管理员; ");
 											failureNum++;
@@ -905,17 +913,23 @@ public class UserController extends BaseController {
 	@RequiresPermissions(value = { "sys:user:add", "sys:user:edit" }, logical = Logical.OR)
 	@RequestMapping(value = "newCheckMobile")
 	public String newCheckMobile(String mobile) {
+		JSONObject jsonO = new JSONObject();
 		Users user = new Users();
 		user.setMobile(mobile);
 		if(mobile != null && systemService.getByMobile(mobile) != null && mtmyUsersDao.findUserBymobile(user) != 0){
-			return "3";
+			jsonO.put("result", "3");
+			return jsonO.toString();
 		}else if(mobile != null && mtmyUsersDao.findUserBymobile(user) != 0){
-			return "2";
+			String layer = mtmyUsersDao.selectLayer(mobile);
+			jsonO.put("result", "2");
+			jsonO.put("layer",layer);
+			return jsonO.toString();
 		}else if (mobile != null && systemService.getByMobile(mobile) != null){
-			return "1";
+			jsonO.put("result", "1");
+			return jsonO.toString();
 		}
-		return "4";
-		
+		jsonO.put("result", "4");
+		return jsonO.toString();
 	}
 	
 
@@ -1263,5 +1277,6 @@ public class UserController extends BaseController {
 	// }
 	// });
 	// }
+      
 }
 

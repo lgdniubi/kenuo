@@ -91,7 +91,7 @@
 	                    <input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		 				<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
                         <div class="form-group">
-                            <label>关键字：<input type="text" id="paramKey" name="paramKey" class="form-control" placeholder="搜索参数Key" value="${trainRuleParam.paramKey }" maxlength="10"></label>
+                            <label>关键字：<input type="text" id="paramKey" name="paramKey" class="form-control" placeholder="搜索参数Key" value="${trainRuleParam.paramKey }" maxlength="50"></label>
                             <label>类型：
 	                            <select id="paramType" name="paramType" class="form-control required">
 									<option value="-2">全部</option>

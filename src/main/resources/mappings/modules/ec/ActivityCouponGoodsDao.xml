@@ -20,10 +20,11 @@
 		(
 		coupon_id,
 		goods_id,
+		category_id,
 		good_name
 		)
 		<foreach collection="list" item="list" separator="union all ">
-			SELECT #{list.couponId},#{list.goodsId},#{list.goodName}
+			SELECT #{list.couponId},#{list.goodsId},(SELECT category_id FROM mtmydb.mtmy_goods WHERE goods_id = #{list.goodsId}),#{list.goodName}
 			FROM dual
 		</foreach>
 	</insert>

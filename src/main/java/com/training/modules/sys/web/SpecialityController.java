@@ -82,14 +82,14 @@ public class SpecialityController extends BaseController {
 	@RequestMapping(value = "save")
 	public String save(Speciality speciality, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
 		String currentUser = UserUtils.getUser().getName();
-		String currentFranchisee = UserUtils.getUser().getOffice().getId();
+		String currentFranchisee = UserUtils.getUser().getCompany().getId();
 		speciality.setCreateby(currentUser);
 		speciality.setFranchiseeid(currentFranchisee);
 
 		// 保存用户信息
 		specialityService.saveSpeciality(speciality);
 		addMessage(redirectAttributes, "保存特长'" + speciality.getName() + "'成功");
-		return "redirect:" + adminPath + "/sys/speciality/list?repage";
+		return "redirect:" + adminPath + "/sys/speciality/list";
 	}
 
 	/**

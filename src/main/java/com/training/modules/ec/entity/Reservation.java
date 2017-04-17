@@ -33,11 +33,22 @@ public class Reservation extends DataEntity<Reservation>{
 	private Date beginDate;				//开始时间
 	private Date endDate;				//结束时间
 	private String keyword;				//关键字
+	private String orderId;				//订单id
 	
 	private User user;					//美容师表
 	private Orders order;				//订单实体类
 	private Office office;				//店铺机构实体类
 	private Goods goods;				//商品实体类
+	
+	
+	private Integer teachersStarLevel;  //sharp 3月27所加，美容师评级
+	public Integer getTeachersStarLevel() {
+		return teachersStarLevel;
+	}
+	public void setTeachersStarLevel(Integer teachersStarLevel) {
+		this.teachersStarLevel = teachersStarLevel;
+	}
+	
 	
 	public int getReservationId() {
 		return reservationId;
@@ -140,6 +151,12 @@ public class Reservation extends DataEntity<Reservation>{
 	}
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
+	}
+	public String getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
 	}
 	public User getUser() {
 		return user;

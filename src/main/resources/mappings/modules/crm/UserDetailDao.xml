@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.crm.dao.UserDetailDao">
+
+	<select id="getUserNickname" resultType="UserDetail">
+		SELECT
+			mmu.user_id AS userId,
+			mmu.nickname,
+			mmu.sex AS sex,
+			mmu.mobile,
+			mmu.`name`,
+			mmu.level AS userLevel,
+			mmu.office_id AS officeId,
+			tso.name AS officeName,
+			mmu.beautician_id AS beautyId,
+			tsu.`name` AS beautyName
+		FROM
+			mtmydb.mtmy_users mmu
+		LEFT JOIN trains.sys_office tso ON mmu.office_id = tso.id
+		LEFT JOIN trains.sys_user tsu ON mmu.beautician_id = tsu.id
+		WHERE
+			user_id =#{userId}
+	</select>
+
+	<select id="get" resultType="UserDetail">
+		SELECT
+			mui.mtmy_user_id AS 'userId',
+			mui.nickname AS 'nickname',
+			mui.name AS 'name',
+			mui.mobile AS 'mobile',
+			mui.idcard AS 'idCard',
+			mui.birthday AS 'birthday',
+			mui.lunar_birthday AS 'lunarBirthday',
+			mui.`CHARACTER` AS 'character',
+			mui.constellation AS 'constellation',
+			mui.is_marrige AS 'isMarrige',
+			mui.wedding_day AS 'weddingDay',
+			mui.is_estate AS 'isEstate',
+			mui.is_member AS 'isMember',
+			mui.car_brand AS 'carBrand',
+			mui.children AS 'children',
+			mui.occupation AS 'occupation',
+			mui.monthly_income AS 'income',
+			mui.menstrual_date AS 'menstrualDate',
+			mui.menstrual_peroid AS 'menstrualPeroid',
+			mui.weight AS 'weight',
+			mui.height AS 'height',
+			mui.critical_diseases AS 'criticalDiseases',
+			mui.belong_market AS 'bazaarId',
+			mui.belong_store AS 'officeId',
+			mui.belong_beautician_id AS 'beautyId',
+			mui.source AS 'source',
+			mui.promotion_agent AS 'promotionAgent',
+			mui.c_using_brand AS 'usingBrand',
+			mui.c_intrest AS 'intrest',
+			mui.c_taboo AS 'taboo',
+			mui.c_hate AS 'hate',
+			mui.remark AS 'remark'
+		FROM
+			mtmydb.mtmy_user_info mui
+		WHERE
+			mui.mtmy_user_id=#{userId}
+	</select>
+
+	<!--增加用户产品使用记录 -->
+	<insert id="insert">
+		INSERT INTO mtmydb.mtmy_user_info(
+		mtmy_user_id,
+		nickname,
+		name,
+		mobile,
+		idcard,
+		birthday ,
+		lunar_birthday,
+		`character`,
+		constellation,
+		is_marrige,
+		wedding_day,
+		is_estate ,
+		is_member,
+		car_brand,
+		children ,
+		occupation,
+		monthly_income ,
+		menstrual_date,
+		menstrual_peroid,
+		weight,
+		height,
+		critical_diseases,
+		belong_market,
+		belong_store,
+		belong_beautician_id ,
+		source,
+		promotion_agent,
+		c_using_brand,
+		c_intrest,
+		c_taboo,
+		c_hate,
+		remark,
+		create_by ,
+		create_date
+		)
+		VALUES(
+		#{userId},
+		#{nickname},
+		#{name},
+		#{mobile},
+		#{idCard},
+		#{birthday},
+		#{lunarBirthday},
+		#{character},
+		#{constellation},
+		#{isMarrige},
+		#{weddingDay},
+		#{isEstate},
+		#{isMember} ,
+		#{carBrand} ,
+		#{children},
+		#{occupation},
+		#{income} ,
+		#{menstrualDate},
+		#{menstrualPeroid},
+		#{weight} ,
+		#{height},
+		#{criticalDiseases},
+		#{bazaarId},
+		#{officeId},
+		#{beautyId} ,
+		#{source} ,
+		#{promotionAgent},
+		#{usingBrand},
+		#{intrest},
+		#{taboo} ,
+		#{hate} ,
+		#{remark} ,
+		#{createBy.name},
+		SYSDATE()
+		)
+	</insert>
+
+	<!--更新产品使用记录 -->
+	<update id="updateSingle">
+		UPDATE mtmydb.mtmy_user_info SET
+			nickname=#{nickname},
+			name= #{name},
+			mobile= #{mobile},
+			idcard=
+			#{idCard},
+			birthday= #{birthday},
+			lunar_birthday= #{lunarBirthday},
+			`character`= #{character},
+			constellation= #{constellation},
+			is_marrige= #{isMarrige},
+			wedding_day= #{weddingDay},
+			is_estate=#{isEstate},
+			is_member= #{isMember} ,
+			car_brand= #{carBrand} ,
+			children= #{children},
+			occupation= #{occupation},
+			monthly_income= #{income} ,
+			menstrual_date=#{menstrualDate},
+			menstrual_peroid=#{menstrualPeroid},
+			weight=#{weight},
+			height=#{height},
+			critical_diseases=#{criticalDiseases},
+			belong_market = #{bazaarId},
+			belong_store =#{officeId},
+			belong_beautician_id= #{beautyId},
+			source=#{source},
+			promotion_agent=#{promotionAgent},
+			c_using_brand=#{usingBrand} ,
+			c_intrest=#{intrest},
+			c_taboo= #{taboo},
+			c_hate= #{hate},
+			remark=#{remark}
+		WHERE mtmy_user_id = #{userId}
+	</update>
+
+	<select id="findUserList" resultType="UserDetail">
+		SELECT
+			mu.user_id AS userId,
+			mu.`name`,
+			mu.sex,
+			mu.mobile,
+			mu.nickname,
+			mu.level_value AS 'levelvalue',
+			mu.reg_time regTime,
+			mua.account_arrearage accountArrearage,
+			MIN(mo.add_time) firstDate,
+			MAX(mo.add_time) lastDate,
+			muyl.`level` AS 'level',
+			tsu. NAME AS 'beautyName',
+			tso. NAME AS 'shopName'
+		FROM
+			mtmydb.mtmy_users mu
+		LEFT JOIN mtmydb.mtmy_user_accounts mua ON mu.user_id = mua.user_id
+		LEFT JOIN mtmydb.mtmy_orders mo ON mu.user_id = mo.user_id
+		LEFT JOIN mtmydb.mtmy_user_yz_level muyl ON mu.level_value <![CDATA[>=]]>muyl.min_val
+			AND mu.level_value <![CDATA[<=]]>muyl.max_val
+		LEFT JOIN trains.sys_user tsu ON mu.beautician_id = tsu.id
+		LEFT JOIN trains.sys_office tso ON mu.office_id = tso.id
+		${sqlMap.dsf}
+		<if test="officeId != null and officeId!='' ">
+			AND (tso.id = #{officeId} OR tso.parent_ids LIKE CONCAT('%,', #{officeId}, ',%'))
+		</if>
+		<if test="level!=null and level!=''">
+			AND muyl.level =#{level}
+		</if>
+		<if test="keyword!=null and keyword!=''">
+			AND (
+				mu.nickname like
+				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+				OR mu.mobile like
+				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+				OR mu.name like
+				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+				OR tsu.name like
+				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+			)
+		</if>
+		GROUP BY
+			mu.user_id,
+			muyl.NAME,
+			muyl.`level`
+		ORDER BY
+			mu.reg_time DESC
+	</select>
+
+	<select id="getUserWithoutScope" resultType="UserDetail">
+		SELECT
+			mu.user_id AS userId,
+			mu.`name`,
+			mu.sex,
+			mu.mobile,
+			mu.nickname,
+			mu.level_value AS 'levelvalue',
+			mu.reg_time regTime,
+			mua.account_arrearage accountArrearage,
+			MIN(mo.add_time) firstDate,
+			MAX(mo.add_time) lastDate,
+			muyl.`level` AS 'level',
+			tsu.NAME AS 'beautyName',
+			tso.NAME AS 'shopName',
+			tso.id AS officeId,
+			tsu.id AS beautyId
+		FROM
+			mtmydb.mtmy_users mu
+		LEFT JOIN mtmydb.mtmy_user_accounts mua ON mu.user_id = mua.user_id
+		LEFT JOIN mtmydb.mtmy_orders mo ON mu.user_id = mo.user_id
+		LEFT JOIN mtmydb.mtmy_user_yz_level muyl ON mu.level_value <![CDATA[>=]]>muyl.min_val
+			AND mu.level_value <![CDATA[<=]]>muyl.max_val
+		LEFT JOIN trains.sys_user tsu ON mu.beautician_id = tsu.id
+		LEFT JOIN trains.sys_office tso ON mu.office_id = tso.id
+		WHERE mu.mobile = #{keyword}
+		GROUP BY
+			mu.user_id,
+			muyl. NAME,
+			muyl.`level`
+		ORDER BY
+			mu.reg_time DESC
+	</select>
+
+	<update id="updateMtmyUsers">
+		UPDATE mtmydb.mtmy_users SET
+			office_id=#{officeId},
+			beautician_id= #{beautyId},
+			name=#{name},
+			sex=#{sex}
+		WHERE  user_id = #{userId}	
+	</update>
+</mapper>

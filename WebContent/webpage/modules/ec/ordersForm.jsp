@@ -174,7 +174,8 @@
 											totalAmount:topUpTotalAmount,
 											orderArrearage:orderArrearage,
 											servicetimes:servicetimes,
-											remaintimes:remaintimes
+											remaintimes:remaintimes,
+											isReal:isReal
 										 },
 										url:"${ctx}/ec/orders/addOrderRechargeLog",
 										success:function(date){
@@ -355,6 +356,55 @@
 	    return currentdate;
 	}
 window.onload=initStatus;
+
+	function ToAdvance(recid){
+		var userid = $("#userid").val();
+		var orderid = $("#orderid").val();
+		var isReal = $("#isReal").val();
+		top.layer.open({
+		    type: 2, 
+		    area: ['600px', '450px'],
+		    title:"充值",
+		    content: "${ctx}/ec/orders/handleAdvanceFlagForm?recid="+recid+"&userid="+userid,
+		    btn: ['确定', '关闭'],
+		    yes: function(index, layero){
+		    	var obj =  layero.find("iframe")[0].contentWindow;
+     	    	var sum = obj.document.getElementById("sum").value; //员工id
+				//异步处理预约金
+				$.ajax({
+					type:"post",
+					data:{
+						sum:sum,
+						recid:recid, 
+						userid:userid
+					 },
+					url:"${ctx}/ec/orders/handleAdvanceFlag?recid="+recid+"&userid="+userid+"&orderid="+orderid,
+					success:function(date){
+						if(date == 'success'){
+							top.layer.alert('处理成功!', {icon: 1, title:'提醒'});
+							window.location="${ctx}/ec/orders/orderform?orderid="+orderid;
+							top.layer.close(index);	
+						}else if(date == 'error'){
+							top.layer.alert('处理失败!', {icon: 0, title:'提醒'});
+							window.location="${ctx}/ec/orders/orderform?orderid="+orderid;
+							top.layer.close(index);
+						}
+						
+					},
+					error:function(XMLHttpRequest,textStatus,errorThrown){}
+				});
+		},
+		cancel: function(index){ //或者使用btn2
+			    	           //按钮【按钮二】的回调
+		}
+	}); 
+	}
+	
+	function getInvoiceRelevancy(orderid){
+		top.openTab("${ctx}/ec/invoice/list?orderId="+orderid,"发票列表", false);
+		var index = parent.layer.getFrameIndex(window.name);
+		top.layer.close(index);
+	}
 </script>
 </head>
 
@@ -367,6 +417,7 @@ window.onload=initStatus;
 			<div class="ibox-content">
 				<div class="clearfix">
 					<form:form id="inputForm" modelAttribute="orders" action="${ctx}/ec/orders/updateVirtualOrder" method="post" class="form-horizontal">
+						<input id="oldAddress" name="oldAddress" type="hidden" value="${orders.address}"/>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 							<input type="hidden" id="isReal" value="${orders.isReal}" />
 							<input type="hidden" id="operationName" value="${user.name}" />
@@ -385,21 +436,54 @@ window.onload=initStatus;
 							<c:if test="${orders.distinction == 2}">售后卖</c:if>
 							<c:if test="${orders.distinction == 3}">老带新</c:if>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<label class="active">手机号码:</label>&nbsp;&nbsp;${orders.mobile }
+							<label class="active">手机号码:</label>&nbsp;&nbsp;${orders.users.mobile }
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">订单状态:</label>&nbsp;&nbsp;
+							<form:hidden path="oldstatus"/>
 							<form:select path="orderstatus"  class="form-control" style="width:180px">
 								<c:if test="${orders.isReal == 0}">
-									<form:option value="-2">取消订单</form:option>
-									<form:option value="-1">待付款</form:option>
-									<form:option value="1">待发货</form:option>
-									<form:option value="2">待收货</form:option>
-									<form:option value="3">已退款</form:option>
-									<form:option value="4">已完成</form:option>
-									
+									<c:if test="${orders.orderstatus == -2}">
+										<form:option value="-2">取消订单</form:option>
+									</c:if>
+									<c:if test="${orders.orderstatus == -1}">
+										<form:option value="-1">待付款</form:option>
+										<form:option value="1">待发货</form:option>
+									</c:if>
+									<c:if test="${orders.orderstatus == 1 or orders.orderstatus == 2 or orders.orderstatus == 4}">
+										<form:option value="1">待发货</form:option>
+										<form:option value="2">待收货</form:option>
+										<form:option value="4">已完成</form:option>
+									</c:if>
+									<c:if test="${orders.orderstatus == 3}">
+										<form:option value="3">已退款</form:option>
+									</c:if>
 								</c:if>
 								<c:if test="${orders.isReal == 1}">
-									<form:option value="4">已完成</form:option>
+									<c:if test="${orders.channelFlag != 'bm'}">
+										<form:option value='${orders.orderstatus }'>
+											<c:if test="${orders.orderstatus == -2}">
+												取消订单
+											</c:if>
+											<c:if test="${orders.orderstatus == -1}">
+												待付款
+											</c:if>
+											<c:if test="${orders.orderstatus == 1}">
+												待发货
+											</c:if>
+											<c:if test="${orders.orderstatus == 2}">
+												待收货
+											</c:if>
+											<c:if test="${orders.orderstatus == 3}">
+												已退款
+											</c:if>
+											<c:if test="${orders.orderstatus == 4}">
+												已完成
+											</c:if>
+										</form:option>
+									</c:if>
+									<c:if test="${orders.channelFlag == 'bm'}">
+										<form:option value="4">已完成</form:option>
+									</c:if>
 								</c:if>
 							</form:select>&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">付款方式：</label>
@@ -410,7 +494,7 @@ window.onload=initStatus;
 							</form:select>
 							<p></p>
 							<label >留言备注：</label>
-							<textarea name="usernote" rows="5" cols="60">${orders.usernote }</textarea>
+							<textarea name="usernote" rows="5" cols="60">${orders.userNote }</textarea>
 						</div>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
@@ -428,12 +512,13 @@ window.onload=initStatus;
 									<th style="text-align: center;">会员折扣</th>
 									<th style="text-align: center;">应付金额</th>
 									<th style="text-align: center;">实付金额</th>
+									<th style="text-align: center;">预约金</th>
 									<c:if test="${orders.isReal == 1 }">
 										<th style="text-align: center;">实际次数</th>
 									</c:if>
 									<!-- <th style="text-align: center;">余款</th> -->
 									<th style="text-align: center;">欠款</th>
-									<c:if test="${orders.channelFlag == 'bm'}">
+									<c:if test="${orders.channelFlag == 'bm' || (orders.channelFlag != 'bm' && orders.isReal==1)}">
 										<th style="text-align: center;">操作</th>
 									</c:if>
 								</tr>
@@ -449,20 +534,39 @@ window.onload=initStatus;
 										<td align="center">${orderGood.discount }</td>
 										<td align="center">${orderGood.membergoodsprice }</td>
 										<td align="center">${orderGood.orderAmount }</td>
-										<td align="center">${orderGood.totalAmount }</td>
+										<td align="center">${orderGood.totalAmount}</td>
+										<td align="center">
+											<c:if test="${orders.isReal == 1 }">
+												${orderGood.advancePrice}
+											</c:if>
+											<c:if test="${orders.isReal != 1 }">
+												0.0
+											</c:if>
+										</td>
 										<c:if test="${orders.isReal == 1 }">
 											<td align="center">${orderGood.remaintimes }</td>
 										</c:if>
 										<%-- <td>${orderGood.orderBalance }</td> --%>
 										<td align="center">${orderGood.orderArrearage }</td>
-										<c:if test="${orders.channelFlag == 'bm'}">
+										<c:if test="${orders.channelFlag == 'bm' || (orders.channelFlag != 'bm' && orders.isReal==1)}">
 											<td align="center">
 												<c:if test="${type != 'view' }">
-													<c:if test="${orderGood.orderArrearage != 0}">
-														<a href="#" onclick="TopUp(${orderGood.recid},${orderGood.singleRealityPrice },${orderGood.singleNormPrice },${orderGood.orderArrearage },${orderGood.servicetimes },${orderGood.remaintimes })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>充值</a>
+													<c:if test="${orders.channelFlag == 'bm' || (orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag != 1)}">
+														<c:if test="${orderGood.orderArrearage != 0}">
+															<a href="#" onclick="TopUp(${orderGood.recid},${orderGood.singleRealityPrice },${orderGood.singleNormPrice },${orderGood.orderArrearage },${orderGood.servicetimes },${orderGood.payRemaintimes })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>充值</a>
+														</c:if>
+														<c:if test="${orderGood.orderArrearage == 0}">
+															<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>充值</a>
+														</c:if>
 													</c:if>
-													<c:if test="${orderGood.orderArrearage == 0}">
-														<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>充值</a>
+													<c:if test="${orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag == 1}">
+														<c:if test="${orders.orderstatus == 4 && orderGood.sumAppt == 1}">
+															<a href="#" onclick="ToAdvance(${orderGood.recid})"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
+														</c:if>
+														<c:if test="${orders.orderstatus != 4 || orderGood.sumAppt == 0}">
+															<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
+														</c:if>
+														
 													</c:if>
 												</c:if>
 												<a href="#" onclick="openDialogView('查看订单', '${ctx}/ec/orders/getMappinfOrderView?recid=${orderGood.recid}&orderid=${orders.orderid }&orderType=mapping','800px','600px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>商品充值查看</a>
@@ -495,7 +599,7 @@ window.onload=initStatus;
 									<td align="center">${orders.memberGoodsPrice }</td>
 									<td align="center">${orders.shippingprice }</td>
 									<td align="center">${orders.orderamount }</td>
-									<td align="center">${orders.totalamount }</td>
+									<td align="center">${(orders.totalamount*100 + orders.shippingprice*100)/100}</td>
 								</tr>
 						</table>
 							<%-- <div style="padding-left: 90px;">
@@ -538,14 +642,18 @@ window.onload=initStatus;
 									<label ><font color="red">*</font>联系电话：</label>
 									<form:input path="mobile" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
 									<label ><font color="red">*</font>收货地址：</label>
-									<form:input path="address" htmlEscape="false" maxlength="50" class="form-control required" style="width:180px" />
+									<form:input path="address" htmlEscape="false" maxlength="120" class="form-control required" style="width:180px" />
 								</div>
 							</div>
 							<p></p>
 						</c:if>
-						<c:if test="${not empty orders.orderInvoice }">
+						<c:if test="${orders.num > 0}">
 								<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
-								<label class="active">索要发票</label>
+									<div class="pull-left">
+										<a href="#" onclick="getInvoiceRelevancy('${orders.orderid}')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>发票信息</a>
+									</div>
+									<p></p>
+								<%-- <label class="active">索要发票</label>
 								<p></p>
 								<div id="iType">
 									<label class="active">发票类型：</label>
@@ -579,61 +687,63 @@ window.onload=initStatus;
 								<label class="active">联系电话：</label>
 								<input type="text" name="recipientsPhone" class="form-control" style="width:180px" value="${orders.orderInvoice.recipientsPhone }"  readonly="readonly" />
 								<label class="active">收货地址：</label>
-								<input type="text" name="recipientsAddress" class="form-control" style="width:180px" value="${orders.orderInvoice.recipientsAddress }"  readonly="readonly" />
-							</div>
+								<input type="text" name="recipientsAddress" class="form-control" style="width:180px" value="${orders.orderInvoice.recipientsAddress }"  readonly="readonly" />--%>
+							</div> 
 						</c:if>
 						<p></p>
-						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
-							<div class="pull-left">
-								<h4>人员提成信息：</h4>
-							</div>
-							<c:if test="${type != 'view' }">
-								<div class="pull-right">
-									<a href="#" onclick="getMtmyUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
+						<c:if test="${orders.isNeworder == 0}">
+							<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+								<div class="pull-left">
+									<h4>人员提成信息：</h4>
 								</div>
-							</c:if>
-							<p></p>
-							<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
-								<thead>
-									<tr>
-										<th style="text-align: center;">业务员</th>
-										<th style="text-align: center;">手机号</th>
-										<th style="text-align: center;">提成金额</th>
-										<th style="text-align: center;">操作人</th>
-										<th style="text-align: center;">操作时间</th>
-										<c:if test="${type != 'view' }">
-											<th style="text-align: center;">操作</th>
-										</c:if>
-									</tr>
-								</thead>
-								<tbody id="mtmyUserInfo" style="text-align:center;">
-									<c:forEach items="${orders.orderPushmoneyRecords }" var="orderPushmoneyRecord" varStatus="stauts">
+								<c:if test="${type != 'view' }">
+									<div class="pull-right">
+										<a href="#" onclick="getMtmyUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
+									</div>
+								</c:if>
+								<p></p>
+								<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
+									<thead>
 										<tr>
-											<td>
-												<input type="hidden" id="mtmyUserId" name="mtmyUserId" value="${orderPushmoneyRecord.pushmoneyUserId }" />
-												<input id="mtmyUserName" name="mtmyUserName" type="text" value="${orderPushmoneyRecord.pushmoneyUserName }" class='form-control' readonly='readonly'>
-											</td>
-											<td>
-												<input id="mtmyUserMobile" name="mtmyUserMobile" type="text" value="${orderPushmoneyRecord.pushmoneyUserMobile }" class='form-control' readonly='readonly'>
-											</td>
-											<td>
-												${orderPushmoneyRecord.pushMoney }
-												<%-- <input class="form-control" type="text" id="pushMoney" class="form-control required" name="pushMoney" value="${orderPushmoneyRecord.pushMoney }" /> --%>
-											</td>
-											<td>
-												${orderPushmoneyRecord.createBy.name }
-											</td>
-											<td>
-												<fmt:formatDate value="${orderPushmoneyRecord.createDate }" pattern="yyyy-MM-dd HH:mm:ss" />
-											</td>
+											<th style="text-align: center;">业务员</th>
+											<th style="text-align: center;">手机号</th>
+											<th style="text-align: center;">提成金额</th>
+											<th style="text-align: center;">操作人</th>
+											<th style="text-align: center;">操作时间</th>
 											<c:if test="${type != 'view' }">
-												<td><a href="#" class="btn btn-danger btn-xs" onclick="delFileMtmyUserInfo(this)"><i class='fa fa-trash'></i> 删除</a></td>
+												<th style="text-align: center;">操作</th>
 											</c:if>
 										</tr>
-									</c:forEach>
-								</tbody>
-							</table>
-						</div>
+									</thead>
+									<tbody id="mtmyUserInfo" style="text-align:center;">
+										<c:forEach items="${orders.orderPushmoneyRecords }" var="orderPushmoneyRecord" varStatus="stauts">
+											<tr>
+												<td>
+													<input type="hidden" id="mtmyUserId" name="mtmyUserId" value="${orderPushmoneyRecord.pushmoneyUserId }" />
+													<input id="mtmyUserName" name="mtmyUserName" type="text" value="${orderPushmoneyRecord.pushmoneyUserName }" class='form-control' readonly='readonly'>
+												</td>
+												<td>
+													<input id="mtmyUserMobile" name="mtmyUserMobile" type="text" value="${orderPushmoneyRecord.pushmoneyUserMobile }" class='form-control' readonly='readonly'>
+												</td>
+												<td>
+													${orderPushmoneyRecord.pushMoney }
+													<%-- <input class="form-control" type="text" id="pushMoney" class="form-control required" name="pushMoney" value="${orderPushmoneyRecord.pushMoney }" /> --%>
+												</td>
+												<td>
+													${orderPushmoneyRecord.createBy.name }
+												</td>
+												<td>
+													<fmt:formatDate value="${orderPushmoneyRecord.createDate }" pattern="yyyy-MM-dd HH:mm:ss" />
+												</td>
+												<c:if test="${type != 'view' }">
+													<td><a href="#" class="btn btn-danger btn-xs" onclick="delFileMtmyUserInfo(this)"><i class='fa fa-trash'></i> 删除</a></td>
+												</c:if>
+											</tr>
+										</c:forEach>
+									</tbody>
+								</table>
+							</div>
+						</c:if>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 							<div class="pull-left">

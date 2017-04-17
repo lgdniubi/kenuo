@@ -27,6 +27,7 @@
 			    	var marketPrice = obj.document.getElementById("marketPrice");
 					var barCode = obj.document.getElementById("barCode");
 					var goodsNo = obj.document.getElementById("goodsNo");
+					var goodsWeight = obj.document.getElementById("goodsWeight");
 					var serviceTimes = obj.document.getElementById("serviceTimes");
 					var expiringDate = obj.document.getElementById("expiringDate");
 					
@@ -40,6 +41,7 @@
 							marketPrice:$(marketPrice).val(),
 							barCode:$(barCode).val(),
 							goodsNo:$(goodsNo).val(),
+							goodsWeight:$(goodsWeight).val(),
 							serviceTimes:$(serviceTimes).val(),
 							expiringDate:$(expiringDate).val()
 						},
@@ -87,6 +89,7 @@
 							<th style="text-align: center;">库存</th>
 							<th style="text-align: center;">条形码</th>
 							<th style="text-align: center;">规格编码</th>
+							<th style="text-align: center;">商品重量（克）</th>
 							<th style="text-align: center;">服务次数</th>
 							<th style="text-align: center;">截止时间（月）</th>
 							<th style="text-align: center;">操作</th>
@@ -101,6 +104,7 @@
 									<td>${goodsspecprice.storeCount}</td>
 									<td>${goodsspecprice.barCode}</td>
 									<td>${goodsspecprice.goodsNo}</td>
+									<td>${goodsspecprice.goodsWeight}</td>
 									<td>${goodsspecprice.serviceTimes}</td>
 									<td>${goodsspecprice.expiringDate}</td>
 									<td style="text-align: left;">

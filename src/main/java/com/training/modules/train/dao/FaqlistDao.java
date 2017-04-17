@@ -50,4 +50,9 @@ public interface FaqlistDao extends CrudDao<LessonAsks>{
 	 * @return
 	 */
 	public List<LessonAskContent> findContentList(LessonAskContent lessonAskContent);
+	/**
+	 * 修改lessonAsks的istop值
+	 * @param lessonAsks
+	 */
+	public void updateIsTop(LessonAsks lessonAsks);
 }

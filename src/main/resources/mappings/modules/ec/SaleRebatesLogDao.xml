@@ -96,7 +96,7 @@
 			#{integralPercent},
 			#{integralAmount},
 			0,
-			#{rabateDate},
+			DATE_FORMAT(#{rabateDate}, '%Y%m%d'),
 			SYSDATE(),
 			-1
 		)

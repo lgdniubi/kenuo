@@ -3,6 +3,7 @@ package com.training.modules.train.entity;
 import java.util.Date;
 
 import com.training.common.persistence.TreeEntity;
+import com.training.modules.sys.entity.Office;
 
 /**
  * 直播entity
@@ -39,8 +40,9 @@ public class TrainLiveAudit extends TreeEntity<TrainLiveAudit> {
 	private String liveRemarks;			//直播备注  审核失败的时候必须给说明
 	private int isPay;					//是否付费
 	
-	
-	
+	private String mobile;             //申请人手机号
+	private Office organization;       //申请人归属机构
+	private String position;           //申请人职位
 	
 	public int getIsPay() {
 		return isPay;
@@ -254,6 +256,30 @@ public class TrainLiveAudit extends TreeEntity<TrainLiveAudit> {
 	public void setParent(TrainLiveAudit parent) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	public Office getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(Office organization) {
+		this.organization = organization;
+	}
+
+	public String getPosition() {
+		return position;
+	}
+
+	public void setPosition(String position) {
+		this.position = position;
 	}
 	
 	

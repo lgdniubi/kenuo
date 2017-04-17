@@ -31,7 +31,11 @@ public class ActivityCouponUser extends TreeEntity<ActivityCouponUser>{
 	private double orderAmount;	//订单金额
 	private Date begtime;			//查询条件  开始时间
 	private Date endtime;			// 结束时间
-	
+	private Date startTime;			// 使用时间  开始时间
+	private Date lastTime;			// 结束时间
+	private Date startExpirationTime;	//到期时间
+	private Date lastExpirationTime;
+	private Date expirationTime;
 	//导出功能字段
 	private String mobile;			//手机号
 	private String usedType;		//红包类型
@@ -39,9 +43,11 @@ public class ActivityCouponUser extends TreeEntity<ActivityCouponUser>{
 	private String actionName;		//活动名称
 	private String excelStatus;		//状态
 	private String orderMoney;		//订单金额
+	private String orderStatus;		//订单状态
 	private String couponAmount;	//红包金额
-	
-	
+	private String addDate;			//领取时间
+	private String usedDate;			//使用时间
+	private String expirationDate;		//红包过期时间
 
 	@JsonIgnore
 	@ExcelField(title="明细ID", align=2, sort=10)
@@ -115,16 +121,12 @@ public class ActivityCouponUser extends TreeEntity<ActivityCouponUser>{
 	public void setExcelStatus(String excelStatus) {
 		this.excelStatus = excelStatus;
 	}
-	@JsonIgnore
-	@ExcelField(title="领取日期", align=2, sort=50)
 	public Date getAddTime() {
 		return addTime;
 	}
 	public void setAddTime(Date addTime) {
 		this.addTime = addTime;
 	}
-	@JsonIgnore
-	@ExcelField(title="使用日期", align=2, sort=50)
 	public Date getUsedTime() {
 		return usedTime;
 	}
@@ -146,6 +148,26 @@ public class ActivityCouponUser extends TreeEntity<ActivityCouponUser>{
 	}
 	public void setOrderMoney(String orderMoney) {
 		this.orderMoney = orderMoney;
+	}
+	@JsonIgnore
+	@ExcelField(title="订单状态", align=2, sort=61)
+	public String getOrderStatus() {
+		return orderStatus;
+	}
+	public void setOrderStatus(String orderStatus) {
+		if(orderStatus.equals("-2")){
+			this.orderStatus="取消订单";
+		}else if(orderStatus.equals("-1")){
+			this.orderStatus="待付款";
+		}else if(orderStatus.equals("1")){
+			this.orderStatus="待发货";
+		}else if(orderStatus.equals("2")){
+			this.orderStatus="待收货";
+		}else if(orderStatus.equals("3")){
+			this.orderStatus="已退款";
+		}else if(orderStatus.equals("4")){
+			this.orderStatus="已完成";
+		}
 	}
 	@JsonIgnore
 	@ExcelField(title="活动ID", align=2, sort=65)
@@ -182,6 +204,18 @@ public class ActivityCouponUser extends TreeEntity<ActivityCouponUser>{
 	public void setEndtime(Date endtime) {
 		this.endtime = endtime;
 	}
+	public Date getStartTime() {
+		return startTime;
+	}
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+	public Date getLastTime() {
+		return lastTime;
+	}
+	public void setLastTime(Date lastTime) {
+		this.lastTime = lastTime;
+	}
 	public String getStatus() {
 		return status;
 	}
@@ -199,6 +233,50 @@ public class ActivityCouponUser extends TreeEntity<ActivityCouponUser>{
 	}
 	public void setCouponMoney(double couponMoney) {
 		this.couponMoney = couponMoney;
+	}
+	@JsonIgnore
+	@ExcelField(title="领取日期", align=2, sort=50)
+	public String getAddDate() {
+		return addDate;
+	}
+	public void setAddDate(String addDate) {
+		this.addDate = addDate;
+	}
+	@JsonIgnore
+	@ExcelField(title="使用日期", align=2, sort=50)
+	public String getUsedDate() {
+		return usedDate;
+	}
+	public void setUsedDate(String usedDate) {
+		this.usedDate = usedDate;
+	}
+	@JsonIgnore
+	@ExcelField(title="红包过期日期", align=2, sort=66)
+	public String getExpirationDate() {
+		return expirationDate;
+	}
+	public void setExpirationDate(String expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+	
+	public Date getStartExpirationTime() {
+		return startExpirationTime;
+	}
+	public void setStartExpirationTime(Date startExpirationTime) {
+		this.startExpirationTime = startExpirationTime;
+	}
+	public Date getLastExpirationTime() {
+		return lastExpirationTime;
+	}
+	public void setLastExpirationTime(Date lastExpirationTime) {
+		this.lastExpirationTime = lastExpirationTime;
+	}
+	
+	public Date getExpirationTime() {
+		return expirationTime;
+	}
+	public void setExpirationTime(Date expirationTime) {
+		this.expirationTime = expirationTime;
 	}
 	@Override
 	public ActivityCouponUser getParent() {

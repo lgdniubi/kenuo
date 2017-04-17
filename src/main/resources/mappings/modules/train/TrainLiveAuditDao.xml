@@ -53,6 +53,7 @@
 		LEFT JOIN trains.sys_user b ON a.userId=b.id
 		LEFT JOIN trains.sys_dict c ON c.`value`=b.user_type
 		LEFT JOIN trains.train_live_room r ON r.userId=a.userId
+		LEFT JOIN trains.sys_office o ON o.id = b.office_id
 		WHERE a.del_flag=0 AND c.type='sys_user_type'
 		<if test="userName!=null and userName!=''">
 			AND b.name like
@@ -66,6 +67,15 @@
 		</if>
 		<if test="auditStatus!=null and auditStatus!=''">
 			AND a.audit_status=#{auditStatus}
+		</if>
+		<if test="mobile != null and mobile != ''">
+			AND b.mobile = #{mobile}
+		</if>
+		<if test="organization != null and organization.id != null and organization.id != ''">
+			AND (o.id = #{organization.id} OR o.parent_ids LIKE CONCAT('%,', #{organization.id}, ',%'))
+		</if>
+		<if test="position != null and position != ''">
+			AND c.label = #{position}
 		</if>
 
 		ORDER BY a.create_date DESC
@@ -112,4 +122,129 @@
 		WHERE a.del_flag=0 AND c.type='sys_user_type' AND a.audit_status = 2 <![CDATA[  AND SYSDATE() < a.bengtime  AND a.bengtime <= date_add(SYSDATE(),INTERVAL 5 MINUTE)]]>
 	</select>
 	
+	<!-- 分页查询直播Sku配置 -->
+	<select id="findSkuList" resultType="TrainLiveSku">
+		SELECT 
+			id AS 'trainLiveSkuId',
+			audit_id AS 'auditId',
+			user_id AS 'userId',
+			price,
+			num,
+			type,
+			create_date AS 'createDate',
+			update_by AS 'updateBy',
+			update_create AS 'updateCreate'
+		FROM trains.train_live_spec
+		WHERE audit_id = #{auditId}
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+		</choose>
+	</select>
+	
+	<!-- 分页查询直播订单列表 -->
+	<select id="findOrderList" resultType="TrainLiveOrder">
+		SELECT 
+			lo.order_id AS 'trainLiveOrderId',
+			lo.audit_id AS 'auditId',
+			lo.user_id AS 'userId',
+			u.name AS 'userName',
+			lo.spec_id AS 'specid',
+			lo.spec_price AS 'specprice',
+			lo.spec_num AS 'specNum',
+			lo.type,
+			lo.pay_date AS 'payDate',
+			lo.valid_date AS 'validDate',
+			lo.order_status AS 'orderStatus',
+			lo.create_date AS 'createDate',
+			lo.del_flag AS 'delflag'
+		FROM trains.train_live_order lo
+		LEFT JOIN trains.sys_user u ON u.id = lo.user_id
+		WHERE lo.del_flag = 0
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+		</choose>
+		<if test="userName != null and userName != ''">
+			AND u.name like CONCAT('%', #{userName}, '%') 
+		</if>
+		<if test="trainLiveOrderId != null and trainLiveOrderId != ''">
+			AND lo.order_id =#{trainLiveOrderId}
+		</if>
+		<if test="auditId != 0">
+			AND lo.audit_id = #{auditId}
+		</if>
+		<if test="beginDate != null and beginDate != ''">
+			AND lo.create_date >= #{beginDate}
+		</if>
+		<if test="endDate != null and endDate != ''">
+			AND lo.create_date <![CDATA[ <= ]]> #{endDate}
+		</if>
+		<if test="type != 0">
+			AND lo.type = #{type} 
+		</if>
+		<if test="orderStatus != 0">
+			AND lo.order_status = #{orderStatus}
+		</if>
+		ORDER BY lo.create_date DESC
+	</select>
+	
+	<!-- 根据trainLiveSkuId查询Sku配置 -->
+	<select id="findByTrainLiveSkuId" resultType="TrainLiveSku">
+		SELECT 
+			audit_id AS 'auditId',
+			user_id AS 'userId',
+			price,
+			num,
+			type,
+			create_date AS 'createDate',
+			update_by AS 'updateBy',
+			update_create AS 'updateCreate'
+		FROM trains.train_live_spec
+		WHERE id = #{trainLiveSkuId}
+	</select>
+	
+	<!-- 保存sku配置 -->
+	<update id="saveSku">
+		UPDATE trains.train_live_spec
+		SET 
+			price = #{price},
+			num = #{num}
+		WHERE id = #{trainLiveSkuId}
+	</update>
+	
+	<!-- 根据直播id查找Sku配置价格 -->
+	<select id="findSkuPrice" resultType="Double">
+		SELECT price
+		FROM trains.train_live_spec
+		WHERE audit_id = #{id}
+		AND type = 1
+	</select>
+	
+	<!-- 查看云币贡献榜 -->
+	<select id="findCloudContribution" resultType="TrainLiveRewardRecord">
+		SELECT
+			u.name AS 'name',
+			u.mobile AS 'phone',
+			o.name AS 'organization',
+			d.label AS 'position',
+			SUM(r.integrals) AS 'num'
+		FROM trains.train_live_reward_record r
+		LEFT JOIN sys_user u ON u.id = r.send_user_id
+		LEFT JOIN sys_office o ON o.id = u.office_id
+		LEFT JOIN sys_dict d ON d.value = u.user_type 
+		AND d.type = 'sys_user_type'
+		WHERE r.audit_id = #{auditId}
+		GROUP BY r.send_user_id,u.name,u.mobile,o.name,d.label
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY SUM(r.integrals) DESC
+			</otherwise>
+		</choose>
+	</select>
 </mapper>

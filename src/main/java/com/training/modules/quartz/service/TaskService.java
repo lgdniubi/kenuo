@@ -53,6 +53,7 @@ public class TaskService {
 	 * 容器初始化 bean 注解
 	 * @PostConstruct
 	*/
+	
 	@PostConstruct
 	public void init() throws Exception {
 		
@@ -86,8 +87,8 @@ public class TaskService {
 			taskLog.setStatus(0);//任务状态
 			
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error("#####定时任务init(),加载异常，异常信息为："+e.getMessage());
+			
 			taskLog.setStatus(1);
 			taskLog.setExceptionMsg(e.getMessage().substring(0, e.getMessage().length()>2500?2500:e.getMessage().length()));
 		}finally {

@@ -39,7 +39,8 @@
 			c.order_amount AS "orderAmount",
 			d.coupon_name,
 			d.coupon_type AS "type",
-			d.coupon_money
+			d.coupon_money,
+			f.expiration_date AS 'expirationTime'
 		FROM mtmydb.mtmy_activity_coupon_user a
 		<include refid="includetable"></include>
 		WHERE 1=1
@@ -54,7 +55,7 @@
 			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%',#{name}, '%')</if>
 		</if>
-		<if test="status!=null and status!=''">
+		<if test="status != null  and status != ''">
 			AND a.status=#{status}
 		</if>
 		<if test="mobile!=null and mobile!=''">
@@ -64,12 +65,24 @@
 			AND DATE_FORMAT(a.add_time,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
 		</if>
 		<if test="endtime!=null and endtime!=''">
-			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+			AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{endtime},'%Y-%m-%d')
+		</if>
+		<if test="startTime != null and startTime != ''">
+			AND DATE_FORMAT(a.used_time,'%Y-%m-%d') >= DATE_FORMAT(#{startTime},'%Y-%m-%d')
+		</if>
+		<if test="lastTime!=null and lastTime!=''">
+			AND DATE_FORMAT(a.used_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastTime},'%Y-%m-%d')
+		</if>
+		<if test="startExpirationTime != null and startExpirationTime != ''">
+			AND DATE_FORMAT(f.expiration_date,'%Y-%m-%d') >= DATE_FORMAT(#{startExpirationTime},'%Y-%m-%d')
+		</if>
+		<if test="lastExpirationTime!=null and lastExpirationTime!=''">
+			AND DATE_FORMAT(f.expiration_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastExpirationTime},'%Y-%m-%d')
 		</if>
 		ORDER BY a.add_time DESC
 
 	</select>
-	<!-- 红包明细导出更能 -->
+	<!-- 红包明细导出功能 -->
 	<select id="exportfindList" resultType="ActivityCouponUser">
 		SELECT
 			a.id as "mxId",
@@ -81,12 +94,14 @@
 			c.coupon_money as "couponAmount",
 			CASE c.used_type WHEN 1 THEN '全部商品' WHEN 2 THEN '指定分类' ELSE '指定商品' END as "usedType",
 			CASE a.`status` WHEN 0 THEN '未使用' WHEN 1 THEN '已使用' ELSE '已过期' END as "excelStatus",
-			a.add_time as "addTime",
-			a.used_time as "usedTime",
+			DATE_FORMAT(a.add_time,"%Y-%m-%d %T") as "addDate",
+			DATE_FORMAT(a.used_time,"%Y-%m-%d %T") as "usedDate",
 			a.order_id as "orderId",
 			b.order_amount as "orderMoney",
+			b.order_status AS "orderStatus",
 			f.id as "actionId",
-			f.`name` as "actionName"
+			f.`name` as "actionName",
+			DATE_FORMAT(f.expiration_date,"%Y-%m-%d %T") as "expirationDate"
 		FROM
 			mtmydb.mtmy_activity_coupon_user a
 			LEFT JOIN mtmydb.mtmy_orders b ON a.order_id=b.order_id
@@ -105,14 +120,26 @@
 			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%',#{name}, '%')</if>
 		</if>
-		<if test="status!=null and status!=''">
+		<if test="status != null  and status != ''">
 			AND a.status=#{status}
 		</if>
 		<if test="begtime != null and begtime != ''">
 			AND DATE_FORMAT(a.add_time,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
 		</if>
 		<if test="endtime!=null and endtime!=''">
-			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+			AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{endtime},'%Y-%m-%d')
+		</if>
+		<if test="startTime != null and startTime != ''">
+			AND DATE_FORMAT(a.used_time,'%Y-%m-%d') >= DATE_FORMAT(#{startTime},'%Y-%m-%d')
+		</if>
+		<if test="lastTime!=null and lastTime!=''">
+			AND DATE_FORMAT(a.used_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastTime},'%Y-%m-%d')
+		</if>
+		<if test="startExpirationTime != null and startExpirationTime != ''">
+			AND DATE_FORMAT(f.expiration_date,'%Y-%m-%d') >= DATE_FORMAT(#{startExpirationTime},'%Y-%m-%d')
+		</if>
+		<if test="lastExpirationTime!=null and lastExpirationTime!=''">
+			AND DATE_FORMAT(f.expiration_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastExpirationTime},'%Y-%m-%d')
 		</if>
 		ORDER BY a.add_time DESC
 	</select>
@@ -290,5 +317,10 @@
 		WHERE
 			coupon_id=#{couponId} and user_id=#{userId} and status=0
 	</select>
-	
+	<!-- 活动过期后将用户领取的红包修改为已过期 -->
+	<update id="updateCouponUser">
+		UPDATE mtmydb.mtmy_activity_coupon_user SET 
+			status = 2 
+		WHERE coupon_id = #{id} AND status = 0
+	</update>
 </mapper>

@@ -63,7 +63,23 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private String labelId;					//设备标签id
 	
 	private int afterSaleNum;				//申请售后商品数量
+//  用于发票
+	private int openNum;					//已开发票数量
+	private double unitPrice;				//商品实付单次价
 	
+	private int payRemaintimes;				//订单已存值次数
+	//--------------------预约金需要字段------------------------------------------
+	private int advanceFlag;             //是否预付金,等于1说明查到advance_flag=1,若不为1，则说明是advance_flag=0
+	private double advance;              //预约金
+	private int advanceServiceTimes;      //预约金的服务次数
+	private double debt;                  //欠款
+	private double advanceBalance;        //余额
+	private double accountBalance;        //用户账户余额
+	private int sumAppt;                  //处理预约金前是否有预约
+	private double advancePrice;          //用于详情展示的预约金
+	private int goodsType;                 //商品区分(0: 老商品 1: 新商品)
+	private String officeId;              //组织架构ID
+	//-------------------------------------------------------------------------
 	public int getAfterSaleNum() {
 		return afterSaleNum;
 	}
@@ -341,6 +357,84 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setLabelId(String labelId) {
 		this.labelId = labelId;
+	}
+	public int getOpenNum() {
+		return openNum;
+	}
+	public void setOpenNum(int openNum) {
+		this.openNum = openNum;
+	}
+	public double getUnitPrice() {
+		return unitPrice;
+	}
+	public void setUnitPrice(double unitPrice) {
+		this.unitPrice = unitPrice;
+	}
+	public int getPayRemaintimes() {
+		return payRemaintimes;
+	}
+	public void setPayRemaintimes(int payRemaintimes) {
+		this.payRemaintimes = payRemaintimes;
+	}
+	public int getAdvanceFlag() {
+		return advanceFlag;
+	}
+	public void setAdvanceFlag(int advanceFlag) {
+		this.advanceFlag = advanceFlag;
+	}
+	public double getAdvance() {
+		return advance;
+	}
+	public void setAdvance(double advance) {
+		this.advance = advance;
+	}
+	public int getAdvanceServiceTimes() {
+		return advanceServiceTimes;
+	}
+	public void setAdvanceServiceTimes(int advanceServiceTimes) {
+		this.advanceServiceTimes = advanceServiceTimes;
+	}
+	public double getAdvanceBalance() {
+		return advanceBalance;
+	}
+	public void setAdvanceBalance(double advanceBalance) {
+		this.advanceBalance = advanceBalance;
+	}
+	public double getAccountBalance() {
+		return accountBalance;
+	}
+	public void setAccountBalance(double accountBalance) {
+		this.accountBalance = accountBalance;
+	}
+	public double getDebt() {
+		return debt;
+	}
+	public void setDebt(double debt) {
+		this.debt = debt;
+	}
+	public int getSumAppt() {
+		return sumAppt;
+	}
+	public void setSumAppt(int sumAppt) {
+		this.sumAppt = sumAppt;
+	}
+	public double getAdvancePrice() {
+		return advancePrice;
+	}
+	public void setAdvancePrice(double advancePrice) {
+		this.advancePrice = advancePrice;
+	}
+	public String getOfficeId() {
+		return officeId;
+	}
+	public void setOfficeId(String officeId) {
+		this.officeId = officeId;
+	}
+	public int getGoodsType() {
+		return goodsType;
+	}
+	public void setGoodsType(int goodsType) {
+		this.goodsType = goodsType;
 	}
 	
 }

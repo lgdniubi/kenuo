@@ -3,14 +3,14 @@
 <mapper namespace="com.training.modules.train.dao.ArrangeDao">
 	<!-- 查询市场下的所有店铺 -->
 	<select id="findOffice" resultType="Office">
-		SELECT id,name FROM sys_office WHERE parent_id = #{officeId} AND del_flag = 0
+		SELECT id,name FROM sys_office WHERE parent_id = #{officeId} AND del_flag = 0 AND grade = 1
 	</select>
 	<!-- 查询店铺上班时间 -->
 	<select id="findArrange" resultType="int"><!-- union 去重 union all 不去重   -->
 		SELECT DISTINCT a.day FROM (
 			SELECT DISTINCT day FROM train_arrange_equipment WHERE shop_id = #{officeId} AND month = #{month}
 			union
-			SELECT DISTINCT day FROM train_arrange_shop WHERE shop_id = #{officeId} AND month = #{month}) as a ORDER BY day
+			SELECT DISTINCT day FROM train_arrange_shop WHERE shop_id = #{officeId} AND month = #{month} AND flag = 1) as a ORDER BY day
 	</select>
 	<!-- 查询店铺美容师上班详情 -->
 	<select id="findArrangeBeautician" resultType="ArrangeBeautician">
@@ -23,6 +23,7 @@
 			a.shop_id = #{officeId}
 			AND a.month = #{month}
 			AND a.day = #{day}
+			AND a.flag = 1
 	</select>
 	<!-- 查询店铺设备上班详情 -->
 	<select id="findArrangeEquipment" resultType="ArrangeBeautician">
@@ -41,7 +42,7 @@
 		SELECT DISTINCT a.id AS userId,a.name,a.office_id AS userOfficeId,c.del_flag FROM sys_user a RIGHT JOIN (
 			SELECT user_id FROM train_special_beautician WHERE bazaar_id = (SELECT parent_id FROM trains.sys_office WHERE id = #{officeId}) AND del_flag = 0
 			union all
-			SELECT DISTINCT b.beautician_id AS userId FROM train_arrange_shop b WHERE b.shop_id = #{officeId} AND b.month = #{month}
+			SELECT DISTINCT b.beautician_id AS userId FROM train_arrange_shop b WHERE b.shop_id = #{officeId} AND b.month = #{month} AND flag = 1
 		) AS b ON a.id = b.user_id
 		LEFT JOIN train_special_beautician c ON b.user_id = c.user_id WHERE c.del_flag is NOT NULL ORDER BY c.del_flag
 	</select>
@@ -54,12 +55,14 @@
 			a.beautician_id AS beauticianId,
 			a.month,
 			a.day,
+			a.flag,
 			a.shop_id AS shopId,
 			a.shop_name AS shopName
 		 FROM 
 		 	train_arrange_shop a
 		 WHERE 
-		 	a.beautician_id = #{id} AND a.month = #{month}
+		 	a.beautician_id = #{id} 
+		 	AND a.month = #{month} 
 		 ORDER BY a.day
 	</select>
 	<!-- 删除特殊美容师当前月所有排班 -->
@@ -81,6 +84,7 @@
 				day,
 				shop_id,
 				shop_name,
+				flag,
 				create_by,
 				create_date
 			)
@@ -93,7 +97,8 @@
 					#{list.month},
 					#{list.day},
 					#{list.shopId},
-					(CASE #{list.shopId} WHEN '1' THEN '休' WHEN '2' THEN '假' ELSE (SELECT name FROM sys_office WHERE id = #{list.shopId}) END),
+					(CASE #{list.shopId} WHEN '1' THEN '休' WHEN '2' THEN '假' WHEN '3' THEN '学' ELSE (SELECT name FROM sys_office WHERE id = #{list.shopId}) END),
+					#{list.flag},
 					#{list.createBy.id},
 					SYSDATE()
 				FROM dual
@@ -163,10 +168,12 @@
 			</foreach>
 	</insert>
 	<select id="findAllOrdinary" resultType="ArrangeBeautician">
-		SELECT DISTINCT a.id AS userId,a.name,a.office_id AS userOfficeId,a.del_flag FROM sys_user a RIGHT JOIN (
-			SELECT id AS user_id FROM sys_user WHERE office_id = #{officeId} AND user_type = '2' AND del_flag = 0
-			union all
-			SELECT DISTINCT b.beautician_id AS userId FROM train_arrange_shop b WHERE b.shop_id = #{officeId} AND b.month = #{month}
+		SELECT DISTINCT a.id AS userId,a.name,a.office_id AS userOfficeId,a.del_flag,b.del_flag AS beauticianStatus FROM sys_user a RIGHT JOIN (
+			SELECT c.user_id,(CASE WHEN d.del_flag = 0 THEN 0 ELSE 1 END) AS del_flag FROM
+				(SELECT id AS user_id FROM sys_user WHERE office_id = #{officeId} AND user_type = '2' AND del_flag = 0
+				union
+				SELECT DISTINCT b.beautician_id AS user_id FROM train_arrange_shop b WHERE b.shop_id = #{officeId} AND b.month = #{month}) c
+				LEFT JOIN trains.train_special_beautician d ON c.user_id = d.user_id
 		) AS b ON a.id = b.user_id
 	</select>
 </mapper>

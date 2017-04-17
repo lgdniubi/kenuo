@@ -3,14 +3,17 @@ package com.training.modules.quartz.tasks;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.training.common.utils.BeanUtil;
+import com.training.modules.ec.entity.Users;
 import com.training.modules.ec.service.MtmySaleRelieveService;
 import com.training.modules.quartz.entity.TaskLog;
 import com.training.modules.quartz.tasks.utils.CommonService;
+import com.training.modules.quartz.utils.RedisLock;
 
 /**
  * 总结算
@@ -19,6 +22,7 @@ import com.training.modules.quartz.tasks.utils.CommonService;
 @Component
 public class SaleSettleDayAccounts extends CommonService{
 
+	public static final String MTMY_ID = "mtmy_id_";//用户云币缓存前缀
 	private Logger logger = Logger.getLogger(SubBeforeDay.class);
 	private DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
@@ -45,7 +49,18 @@ public class SaleSettleDayAccounts extends CommonService{
 		taskLog.setStartDate(startDate);
 		
 		try {
+			// 结算的所有用户及云币
+			List<Users> list = mtmySaleRelieveService.changeSaleAccounts();
 			mtmySaleRelieveService.SaleSettleDayAccounts();
+			for (int i = 0; i < list.size(); i++) {
+				boolean str = redisClientTemplate.exists(MTMY_ID+list.get(i).getUserid());
+				if(str){
+					RedisLock redisLock = new RedisLock(redisClientTemplate, MTMY_ID+list.get(i).getUserid());
+					redisLock.lock();
+					redisClientTemplate.incrBy(MTMY_ID+list.get(i).getUserid(),list.get(i).getPaypoints());
+					redisLock.unlock();
+				}
+			}
 			taskLog.setJobDescription("[work],总结算");
 			taskLog.setStatus(0);//任务状态
 			

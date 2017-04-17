@@ -172,4 +172,13 @@ public class MtmyOaNotifyService extends CrudService<MtmyOaNotifyDao, MtmyOaNoti
 	public void updatePushResult(Map<String, Object> map){
 		this.mtmyOaNotifyRecordDao.updatePushResult(map);
 	}
+	
+	/**
+	 *  根据用户user_id查询用户是否有client
+	 * @param userId
+	 * @return
+	 */
+	public int selectClient(int userId){
+		return mtmyOaNotifyRecordDao.selectClient(userId);
+	}
 }

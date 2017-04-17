@@ -28,6 +28,8 @@ public class TrainLiveUser extends DataEntity<TrainLiveUser> {
 	private String title;			//直播标题
 	private Date createDate;		//创建日期
 
+	private String organization;     //归属机构
+	
 	private Date bengTime; 			//直播日期
 	private String position;		//职位
 	
@@ -144,6 +146,14 @@ public class TrainLiveUser extends DataEntity<TrainLiveUser> {
 
 	public void setValidityDate(Date validityDate) {
 		this.validityDate = validityDate;
+	}
+
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
 	}
 
 

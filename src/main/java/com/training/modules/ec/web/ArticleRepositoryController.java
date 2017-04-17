@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -40,10 +41,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.HtmlUtils;
 
-import com.alibaba.druid.sql.visitor.functions.Now;
+import com.google.common.collect.Maps;
 import com.training.common.persistence.Page;
 import com.training.common.utils.DateUtils;
 import com.training.common.web.BaseController;
+import com.training.modules.ec.entity.ArticleAuthorPhoto;
 import com.training.modules.ec.entity.ArticleImage;
 import com.training.modules.ec.entity.ArticleIssueLogs;
 import com.training.modules.ec.entity.ArticleRepository;
@@ -122,11 +124,22 @@ public class ArticleRepositoryController extends BaseController {
 			MtmyArticleCategory mtmyArticleCategory = new MtmyArticleCategory();
 			List<MtmyArticleCategory> mtmyCategoryList= mtmyArticleService.findCategory(mtmyArticleCategory);
 			model.addAttribute("mtmyCategoryList", mtmyCategoryList);
+			//发布每天美耶常用分类
+			List<MtmyArticleCategory> mtmyCateCommList = articleRepositoryService.findMtmyCateComm();
+			model.addAttribute("mtmyCateCommList", mtmyCateCommList);
 			//妃子校文章分类
 			ArticlesCategory articlesCategory = new ArticlesCategory();
 			List<ArticlesCategory> trainsCategoryList = articlesListService.findCategory(articlesCategory);
 			model.addAttribute("trainsCategoryList", trainsCategoryList);
-			model.addAttribute("articleRepository", articleRepository);
+			//发布妃子校常用分类
+			List<ArticlesCategory> trainCateCommList = articleRepositoryService.findTrainCateComm();
+			model.addAttribute("trainCateCommList", trainCateCommList);
+			// 查询常用分类
+			List<ArticleRepositoryCategory> commonCate= articleRepositoryService.findCategoryCommon();
+			model.addAttribute("commonCate", commonCate);
+			// 查询常用作者
+			List<ArticleAuthorPhoto> authorList = articleRepositoryService.findAllAuthor();
+			model.addAttribute("authorList", authorList);
 			
 			List<ArticleRepositoryCategory> categoryList = articleRepositoryService.findCategory(articleRepositoryCategory);
 			model.addAttribute("categoryList", categoryList);
@@ -276,10 +289,16 @@ public class ArticleRepositoryController extends BaseController {
 			MtmyArticleCategory mtmyArticleCategory = new MtmyArticleCategory();
 			List<MtmyArticleCategory> mtmyCategoryList= mtmyArticleService.findCategory(mtmyArticleCategory);
 			model.addAttribute("mtmyCategoryList", mtmyCategoryList);
+			//发布每天美耶常用分类
+			List<MtmyArticleCategory> mtmyCateCommList = articleRepositoryService.findMtmyCateComm();
+			model.addAttribute("mtmyCateCommList", mtmyCateCommList);
 			//妃子校文章分类
 			ArticlesCategory articlesCategory = new ArticlesCategory();
 			List<ArticlesCategory> trainsCategoryList = articlesListService.findCategory(articlesCategory);
 			model.addAttribute("trainsCategoryList", trainsCategoryList);
+			//发布妃子校常用分类
+			List<ArticlesCategory> trainCateCommList = articleRepositoryService.findTrainCateComm();
+			model.addAttribute("trainCateCommList", trainCateCommList);
 			model.addAttribute("articleRepository", articleRepository);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "发布文章跳转", e);
@@ -447,21 +466,30 @@ public class ArticleRepositoryController extends BaseController {
 	@RequestMapping(value = "ajaxCutImg")
 	public String ajaxCutImg(String path,int x,int y,int width,int height,HttpServletRequest request){
 		JSONObject josn = null;
-		// 下载照片到本地
-		JSONObject josnIO = convertIO(path,request,logger);
-		if("200".equals(josnIO.get("status"))){
-			// 截图保存到本地
-			String string = cutImg(josnIO.get("msg").toString(), x, y, width, height,request,logger);
-			if("true".equals(string)){
-				// 上传本地照片到服务器
-				josn = postImg(josnIO.get("msg").toString(),request,logger);
+		JSONObject josnIO = null;
+		try {
+			// 下载照片到本地
+			josnIO = convertIO(path,request,logger);
+			if("200".equals(josnIO.get("status"))){
+				// 截图保存到本地
+				String string = cutImg(josnIO.get("msg").toString(), x, y, width, height,request,logger);
+				if("true".equals(string)){
+					// 上传本地照片到服务器
+					josn = postImg(josnIO.get("msg").toString(),request,logger);
+				}else{
+					josn.put("status", "-1");
+					josn.put("msg","截图出现异常,请联系管理员");
+				}
 			}else{
 				josn.put("status", "-1");
-		        josn.put("msg","截图出现异常,请联系管理员");
+				josn.put("msg","截图出现异常,请联系管理员");
 			}
-		}else{
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "截图出现异常", e);
+			logger.error("截图错误信息:"+e.getMessage());
 			josn.put("status", "-1");
 	        josn.put("msg","截图出现异常,请联系管理员");
+	        return josn.toString();
 		}
 		boolean success = (new File(josnIO.get("msg").toString())).delete();
         if (success) {
@@ -539,34 +567,34 @@ public class ArticleRepositoryController extends BaseController {
             int srcWidth = bi.getWidth(); // 源图宽度
             int srcHeight = bi.getHeight(); // 源图高度
             logger.info("#######照片原始宽度srcWidth= " + srcWidth + "_____原始高度srcHeight= " + srcHeight);
-			double scale = 0;
-            if(srcWidth >= 500 && srcHeight >= 500){
-            	if(srcWidth > srcHeight){
-            		scale = srcWidth/500;
+			double scale = 1;
+            if(srcWidth >= 350 && srcHeight >= 350){
+            	if(srcWidth >= srcHeight){
+            		scale = (double)srcWidth/(double)350;
             	}else if(srcWidth < srcHeight){
-            		scale = srcHeight/500;
+            		scale = (double)srcHeight/(double)350;
             	}else{
-            		scale = 1/1;
+            		scale = 0;
             	}
-            }else if(srcWidth > 500 && srcHeight <= 500){
-            	scale = srcWidth/500;
-            }else if(srcHeight > 500 && srcWidth <= 500){
-            	scale = srcHeight/500;
+            }else if(srcWidth > 350 && srcHeight <= 350){
+            	scale = (double)srcWidth/(double)350;
+            }else if(srcHeight > 350 && srcWidth <= 350){
+            	scale = (double)srcHeight/(double)350;
+            }else{
+            	scale = 1;
             }
-            x = (int)(x + (x*scale));
-            y = (int)(y + (y*scale));
-            destWidth = (int)(destWidth + (destWidth*scale));
-            destHeight = (int)(destHeight + (destHeight*scale));
+            x = (int)(x*scale);
+            y = (int)(y*scale);
+            destWidth = (int)(destWidth*scale);
+            destHeight = (int)(destHeight*scale);
             if (srcWidth >= destWidth && srcHeight >= destHeight) {
                 Image image = bi.getScaledInstance(srcWidth, srcHeight,Image.SCALE_DEFAULT);
                 // 改进的想法:是否可用多线程加快切割速度
                 // 四个参数分别为图像起点坐标和宽高
                 // 即: CropImageFilter(int x,int y,int width,int height)
                 cropFilter = new CropImageFilter(x, y, destWidth, destHeight);
-                img = Toolkit.getDefaultToolkit().createImage(
-                        new FilteredImageSource(image.getSource(), cropFilter));
-                BufferedImage tag = new BufferedImage(destWidth, destHeight,
-                        BufferedImage.TYPE_INT_RGB);
+                img = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(image.getSource(), cropFilter));
+                BufferedImage tag = new BufferedImage(destWidth, destHeight,BufferedImage.TYPE_INT_RGB);
                 Graphics g = tag.getGraphics();
                 g.drawImage(img, 0, 0, null); // 绘制缩小后的图
                 g.dispose();
@@ -606,7 +634,7 @@ public class ArticleRepositoryController extends BaseController {
                 resJson.put("msg",postMethod.getResponseBodyAsString());
                 return resJson;
             } else {
-            	System.out.println("请求易信接口上传图片，请求失败。");
+            	System.out.println("请求上传图片，请求失败。");
                 resJson.put("status", "-1");
                 resJson.put("msg", "上传图片，请求失败。");
                 return resJson;
@@ -614,8 +642,49 @@ public class ArticleRepositoryController extends BaseController {
         } catch(Exception e) {
             resJson.put("status", "-1");
             resJson.put("msg", "系统异常");
-            System.out.println("请求易信接口上传图片，请求失败。"+e.toString());
+            System.out.println("请求上传图片，请求失败。"+e.toString());
             return resJson;
         }
     }
+	/**
+	 * 添加作者
+	 * @param articleAuthorPhoto
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "addAuthor")
+	public Map<String, Object> addAuthor(ArticleAuthorPhoto articleAuthorPhoto,HttpServletRequest request){
+		Map<String, Object> map = Maps.newHashMap();
+		try {
+			articleRepositoryService.addAuthor(articleAuthorPhoto);
+			map.put("status", "200");
+			map.put("msg", articleAuthorPhoto.getAuthorId());
+		} catch (Exception e) {
+			map.put("status", "-1");
+			BugLogUtils.saveBugLog(request, "添加作者--异步添加作者出现异常", e);
+			logger.error("添加作者--异步添加作者异常信息:"+e.getMessage());
+		}
+		return map;
+	}
+	/**
+	 * 删除作者
+	 * @param articleAuthorPhoto
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "delAuthor")
+	public Map<String, Object> delAuthor(ArticleAuthorPhoto articleAuthorPhoto,HttpServletRequest request){
+		Map<String, Object> map = Maps.newHashMap();
+		try {
+			articleRepositoryService.delAuthor(articleAuthorPhoto);
+			map.put("status", "200");
+		} catch (Exception e) {
+			map.put("status", "-1");
+			BugLogUtils.saveBugLog(request, "删除作者--异步删除作者出现异常", e);
+			logger.error("删除作者--异步删除作者异常信息:"+e.getMessage());
+		}
+		return map;
+	}
 }

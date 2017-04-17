@@ -41,11 +41,11 @@
 							<!-- 支持排序 -->
 							<div class="form-group">
 								<span>选择市场：</span>
-								<sys:treeselect id="bazaar" name="bazaarId" value="${specBeautician.bazaarId}" labelName="bazaarName" labelValue="${specBeautician.bazaarName}" title="市场" url="/sys/office/treeData?isGrade=true" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="true" notAllowSelectParent="true"/>
+								<sys:treeselect id="bazaar" name="bazaarId" value="${specBeautician.bazaarId}" labelName="bazaarName" labelValue="${specBeautician.bazaarName}" title="市场" url="/sys/office/treeData?isGrade=true" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="true"/>
 							</div>
 							<span>姓&nbsp;&nbsp;&nbsp;名：</span>
 								<form:input path="userName" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
-							<span>电话号码：</span>
+							<span>手机号码：</span>
 								<form:input path="userPhone" htmlEscape="false" maxlength="50" class=" form-control input-sm" /> 
 						</form:form>
 						<br />

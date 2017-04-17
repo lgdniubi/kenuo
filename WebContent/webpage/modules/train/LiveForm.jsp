@@ -149,11 +149,18 @@
 					<td>
 						<c:if test="${trainLiveAudit.isPay==1}">
 							<label><input id="isPay" name="isPay" type="radio" value="1" checked="checked" class="form" />免费</label>
-							<label><input id="isPay" name="isPay" type="radio" value="2" class="form" />收费 </label>
+							<label><input id="isPay" name="isPay" type="radio" value="2" class="form" />线下收费 </label>
+							<label><input id="isPay" name="isPay" type="radio" value="3" class="form" disabled="disabled"/>线上收费</label>
 						</c:if> 
 						<c:if test="${trainLiveAudit.isPay==2}">
 							<label><input id="isPay" name="isPay" type="radio" value="1" class="form" />免费</label>
-							<label><input id="isPay" name="isPay" type="radio" value="2" checked="checked" class="form" />收费</label>
+							<label><input id="isPay" name="isPay" type="radio" value="2" checked="checked" class="form" />线下收费</label>
+							<label><input id="isPay" name="isPay" type="radio" value="3" class="form" disabled="disabled"/>线上收费</label>
+						</c:if> 
+						<c:if test="${trainLiveAudit.isPay==3}">
+							<label><input id="isPay" name="isPay" type="radio" value="1" class="form" disabled="disabled"/>免费</label>
+							<label><input id="isPay" name="isPay" type="radio" value="2" class="form" disabled="disabled"/>线下收费</label>
+							<label><input id="isPay" name="isPay" type="radio" value="3" checked="checked" class="form" />线上收费</label>
 						</c:if> 
 					</td>
 				</tr>

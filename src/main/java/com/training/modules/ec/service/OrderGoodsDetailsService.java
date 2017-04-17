@@ -3,9 +3,12 @@ package com.training.modules.ec.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.service.TreeService;
 import com.training.modules.ec.dao.OrderGoodsDetailsDao;
+import com.training.modules.ec.entity.OfficeAccount;
+import com.training.modules.ec.entity.OfficeAccountLog;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderGoodsDetails;
 import com.training.modules.ec.entity.Orders;
@@ -18,6 +21,7 @@ import com.training.modules.ec.entity.Orders;
  */
 
 @Service
+@Transactional(readOnly = false)
 public class OrderGoodsDetailsService extends TreeService<OrderGoodsDetailsDao, OrderGoodsDetails> {
 
 	/**
@@ -56,5 +60,65 @@ public class OrderGoodsDetailsService extends TreeService<OrderGoodsDetailsDao, 
 	 */
 	public List<OrderGoodsDetails> getMappinfOrderView(Integer recid) {
 		return dao.getMappinfOrderView(recid);
+	}
+	
+	/**
+	 * 处理预约金
+	 * @param recId
+	 */
+	public void updateAdvanceFlag(String recId){
+		dao.updateAdvanceFlag(recId);
+	}
+	
+	/**
+	 * 根据office_id查找其对应的登云账户的金额
+	 */
+	public double selectByOfficeId(String officeId){
+		return dao.selectByOfficeId(officeId);
+	}
+	
+	/**
+	 * 根据office_id对登云美业或者店铺的登云账户进行更新
+	 */
+	public void updateByOfficeId(double amount, String officeId){
+		dao.updateByOfficeId(amount,officeId);
+	}
+	
+	
+	/**
+	 * 根据office_id对登云美业或者店铺的登云账户进行插入 
+	 */
+	public void insertByOfficeId(OfficeAccount officeAccount){
+		dao.insertByOfficeId(officeAccount);
+	}
+	
+	/**
+	 * 判断店铺的登云账户是否存在
+	 */
+	public int selectShopByOfficeId(String officeId){
+		return dao.selectShopByOfficeId(officeId);
+	}
+	
+	/**
+	 * 查询用户购买商品预约的店铺id
+	 */
+	public String selectShopId(String goodsMappingId){
+		return dao.selectShopId(goodsMappingId);
+	}
+	
+	/**
+	 * 当对登云账户进行操作时，插入log日志 
+	 */
+	public void insertOfficeAccountLog(OfficeAccountLog officeAccountLog){
+		dao.insertOfficeAccountLog(officeAccountLog);
+	}
+	
+	/**
+	 * 查询预约状态
+	 * @param recId
+	 * @return
+	 */
+	public int findApptStatus(int recId){
+		return dao.findApptStatus(recId);
 	}
 }

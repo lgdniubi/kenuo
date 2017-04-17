@@ -169,4 +169,25 @@ public interface MtmyUsersDao extends CrudDao<Users>{
 	 * @param userId
 	 */
 	public int delMtmyUserSaleInvitationcodes(String invitationCode);
+	
+	/**
+	 * 根据手机号查找用户
+	 * @return
+	 */
+	public Users getUserByMobile(String mobile);
+	
+	/**
+	 * 根据用户手机号获取其等级
+	 */
+	public String selectLayer(String mobile);
+	
+	/**
+	 * 若新增用户的手机号在每天美耶已经存在，则将新该用户的等级改为A
+	 */
+	public void updateLayer(int userId);
+	
+	/**
+	 * 根据被邀请人的id删除表中对应的数据 
+	 */
+	public void deleteFromSaleRelations(int userId);
 }

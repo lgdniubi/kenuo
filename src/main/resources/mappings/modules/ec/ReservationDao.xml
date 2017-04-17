@@ -19,24 +19,30 @@
 		r.remarks,
 		r.channel_flag AS channelFlag
 	</sql>
+	<!-- 返回ec中的实体类 Reservation -->
 	<select id="findAllList" resultType="Reservation">
 		SELECT 
 		  <include refid="ReservationColumns"/>,
 		  m.goods_name AS 'goods.goodsName',
 		  a.name AS 'user.name',
-		  o.name AS 'office.name'
+		  o1.name AS 'office.name'
 		FROM
 		  mtmydb.mtmy_appt_order AS r
-		  LEFT JOIN trains.sys_office AS o ON r.shop_id = o.id
+		  LEFT JOIN trains.sys_office AS o1 ON r.shop_id = o1.id
 		  LEFT JOIN trains.sys_user AS a ON r.beautician_id = a.id
 		  LEFT JOIN mtmydb.mtmy_order_goods_mapping AS m ON r.goods_mapping_id = m.rec_id
-		WHERE 
-			1=1
+		  ${sqlMap.dsf}
+		  	<if test="orderId != null and orderId != ''">
+		  		AND m.order_id = #{orderId}
+		  	</if>
 			<if test="apptStatus != null and apptStatus != ''">
 				AND r.appt_status = #{apptStatus }
 			</if>
-			<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
-				AND r.appt_date BETWEEN #{beginDate} AND #{endDate}
+			<if test="beginDate != null and beginDate != ''">
+				AND r.appt_date >= #{beginDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND r.appt_date <![CDATA[ <= ]]> #{endDate}
 			</if>
 			<if test="keyword != null and keyword != ''">
 				AND ( r.user_name LIKE 
@@ -45,7 +51,7 @@
 				OR r.user_phone LIKE 
 						<if test="dbName == 'oracle'">'%'||#{keyword}||'%'</if>
 						<if test="dbName == 'mysql'">CONCAT('%', #{keyword}, '%')</if>
-				OR o.name LIKE 
+				OR o1.name LIKE 
 						<if test="dbName == 'oracle'">'%'||#{keyword}||'%'</if>
 						<if test="dbName == 'mysql'">CONCAT('%', #{keyword}, '%')</if>
 				OR a.name LIKE 
@@ -78,5 +84,55 @@
 	<!-- 查询可用的店铺 -->
 	<select id="loadOffice" resultType="Office">
 		CALL mtmydb.find_goods_for_shop(#{goodsId},0,#{nationName},#{provinceId},#{cityId},#{districtId},0,10000)
+	</select>
+
+	<!-- 单个用户的预约记录-->	
+	<select id="findUserPage" resultType="Reservation">
+		SELECT
+			mao.id AS reservationId,
+			mao.appt_date AS apptDate,
+			mao.appt_status AS apptStatus,
+			date_format(mao.appt_start_time,'%Y-%c-%d %h:%i:%s') AS apptStartTime,
+			date_format(mao.appt_end_time,'%Y-%c-%d %h:%i') AS apptEndTime,
+			su.`no` AS 'user.no',
+			su.`name` AS 'user.name',
+		    sui.teachers_star_level AS 'teachersStarLevel',
+			mg.goods_sn AS 'goods.goodsSn',
+			mg.goods_name AS 'goods.goodsName'
+		FROM
+			mtmydb.mtmy_appt_order mao
+		LEFT JOIN trains.sys_user su ON mao.beautician_id = su.id
+		LEFT JOIN mtmydb.mtmy_goods mg ON mao.goods_id = mg.goods_id
+		LEFT JOIN trains.sys_user_info sui ON su.id = sui.user_id
+		WHERE mao.user_id= #{userId} 
+		ORDER BY mao.create_date DESC
+	</select>
+	
+	<!--预约记录下的评论-->	
+	<select id="findReservationComment" resultType="Comment">
+		SELECT
+			b.comm_id AS commentId,
+			b.beauty_id AS beautyId,
+			b.user_id AS userId,
+			b.is_show AS isShow,
+			b.content AS contents,
+			b.img,
+			b.beauty_rank AS goodsRank,
+			b.add_time AS addTime,
+			b.parent_id AS parentId,
+			u.nickname AS 'users.name',
+			cu.name AS 'user.name'
+			FROM
+				mtmydb.mtmy_beauty_comment AS b 
+				LEFT OUTER  JOIN  mtmydb.mtmy_users AS u  ON b.user_id = u.user_id
+				LEFT OUTER  JOIN  trains.sys_user   AS cu ON b.reply_id = cu.id
+			WHERE
+				1=1
+				b.reservation_id = #{reservationId} 
+			ORDER BY b.add_time ASC
+	</select>
+	<!-- 隐藏店铺时  验证店铺下是否有预约 -->
+	<select id="findCountByOfficeId" resultType="int">
+		SELECT COUNT(*) FROM mtmydb.mtmy_appt_order WHERE shop_id = #{id} AND appt_status = 0;
 	</select>
 </mapper>

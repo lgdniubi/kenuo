@@ -49,4 +49,13 @@ public interface CommentDao extends CrudDao<Comment>{
 	 * @return
 	 */
 	public List<MtmyComment> exportGoodsComment(MtmyComment mtmyComment);
+	
+	/**
+	 * 根据用户ID查找美容师评论
+	 * @param Comment
+	 * @return
+	 */
+	public List<Comment> findBeautyByUserId(Comment comment);
+	
+	
 }

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.crm.dao.GoodsUsageDao">
+
+	<!--根据用户ID查找产品使用记录 -->
+	<select id="findUsageList" resultType="GoodsUsage">
+		SELECT
+			mugu.id AS 'usageId',
+			mugu.mtmy_user_id AS 'userId',
+			mugu.goods_id AS 'goodsId',
+			mugu.usage_num AS 'usageNum',
+			mugu.start_time AS 'startDate',
+			mugu.end_time AS 'endDate',
+			mugu.effection AS 'effection',
+			mugu.feedback AS 'feedback',
+			mugu.remark AS 'remark',
+			mg.goods_name AS'goodsName'
+		FROM
+			mtmydb.mtmy_user_goods_usage mugu
+		LEFT JOIN
+			mtmydb.mtmy_goods mg ON mugu.goods_id = mg.goods_id
+		WHERE 1=1 AND mugu.mtmy_user_id =#{userId}
+		
+		<if test="startDate != null">
+			<![CDATA[AND mugu.start_time >= #{startDate,jdbcType=DATE}]]>
+		</if>
+		<if test="endDate!=null">
+			<![CDATA[AND mugu.end_time<= #{endDate,jdbcType=DATE}]]>
+		</if>	
+		ORDER BY mugu.create_date DESC
+	</select>
+
+	<!--根据ID查找单条记录 -->
+	<select id="get" resultType="GoodsUsage">
+		SELECT
+			mugu.id AS 'usageId',
+			mugu.mtmy_user_id AS 'userId',
+			mugu.goods_id AS 'goodsId',
+			mugu.usage_num AS 'usageNum',
+			mugu.start_time AS 'startDate',
+			mugu.end_time AS 'endDate',
+			mugu.effection AS 'effection',
+			mugu.feedback AS 'feedback',
+			mugu.remark AS 'remark',
+			mg.goods_name AS 'goodsName'
+		FROM
+			mtmydb.mtmy_user_goods_usage mugu
+		LEFT JOIN
+			mtmydb.mtmy_goods mg ON mugu.goods_id = mg.goods_id
+		WHERE
+			id = #{usageId}
+	</select>
+
+	<!--增加用户产品使用记录 -->
+	<insert id="insert">
+		INSERT INTO mtmydb.mtmy_user_goods_usage(
+			mtmy_user_id,
+			goods_id,
+			goods_name,
+			usage_num,
+			start_time,
+			end_time,
+			effection,
+			feedback,
+			remark,
+			create_by,
+			create_date
+			)
+		VALUES(
+			#{userId},
+			#{goodsId},
+			#{goodsName},
+			#{usageNum},
+			#{startDate},
+			#{endDate},
+			#{effection},
+			#{feedback},
+			#{remark},
+			#{createBy.name},
+			SYSDATE()
+		)
+	</insert>
+
+	<!--更新产品使用记录 -->
+	<update id="updateSigle">
+		UPDATE mtmydb.mtmy_user_goods_usage SET
+			goods_id=#{goodsId},
+			start_time =#{startDate},
+			end_time=#{endDate},
+			usage_num=#{usageNum},
+			effection=#{effection},
+			feedback=#{feedback},
+			remark=#{remark}
+		WHERE id = #{usageId}
+	</update>
+</mapper>

@@ -38,6 +38,11 @@
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 						<div class="form-group">
 							<label>用户名：</label><form:input path="userName" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
+							<label>手机号：</label><form:input path="mobile" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
+							<span>归属机构：</span>
+							<sys:treeselect id="organization" name="organization.id" value="${trainLiveAudit.organization.id}" labelName="organization.name" labelValue="${trainLiveAudit.organization.name}" title="部门" url="/sys/office/treeData?type=2" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="false" />
+							<label>职位：</label><form:input path="position" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
+							<p></p>
 							<label>直播主题：</label><form:input path="title" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
 							<label>审核状态：</label>
 							<form:select path="auditStatus" class="form-control">
@@ -46,6 +51,8 @@
 								<form:option value="1">请求审核</form:option>
 								<form:option value="2">审核通过</form:option>
 								<form:option value="3">已完成</form:option>
+								<form:option value="4">正在直播</form:option>
+								<form:option value="5">异常</form:option>
 							</form:select>
 						</div>
 					</form:form>
@@ -92,7 +99,10 @@
 										免费
 									</c:if>
 									<c:if test="${live.isPay==2}">
-										收费
+										线下收费
+									</c:if>
+									<c:if test="${live.isPay==3}">
+										线上收费
 									</c:if>
 								</td>
 								<td><fmt:formatDate value="${live.bengTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
@@ -112,6 +122,9 @@
 									</c:if>
 									<c:if test="${live.auditStatus==4}">
 										正在直播
+									</c:if>
+									<c:if test="${live.auditStatus==5}">
+										异常
 									</c:if>
 								</td>	
 								<td>${live.auditUser}</td>
@@ -137,6 +150,14 @@
 										<a href="#" onclick="openDialogView('会员列表', '${ctx}/train/live/liveUserform?auditId=${live.id}','800px','500px')"
 												class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>会员列表</a>
 									</shiro:hasPermission> 
+									<shiro:hasPermission name="train:live:sku">
+										<a href="#" onclick="openDialogView('配置列表', '${ctx}/train/live/liveSkuForm?auditId=${live.id}','800px','500px')"
+											 class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>查看配置</a>
+									</shiro:hasPermission>
+									<shiro:hasPermission name="train:live:cloudContribution">
+										<a href="#" onclick="openDialogView('云币贡献榜', '${ctx}/train/live/cloudContribution?auditId=${live.id}','800px','500px')"
+											 class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>云币贡献榜</a>
+									</shiro:hasPermission>
 								</td>
 							</tr>
 						</c:forEach>

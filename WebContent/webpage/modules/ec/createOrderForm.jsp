@@ -102,7 +102,7 @@
 						"<td> "+$(orderAmount).val()+"<input id='orderAmounts' name='orderAmounts' type='hidden' value='"+$(orderAmount).val()+"'></td> "+
 						"<td> "+$(goodsNum).val()+"</td> "+
 						"<td> "+$(afterPayment).val()+"<input id='actualPayments' name='actualPayments' type='hidden' value='"+$(actualPayment).val()+"'></td> "+
-						"<td> "+$(actualNum).val()+"<input id='remaintimes' name='remaintimes' type='hidden' value='"+$(actualNum).val()+"'></td> "+
+						"<td> "+$(actualNum).val()+"<input id='remaintimes' name='remaintimeNums' type='hidden' value='"+$(actualNum).val()+"'></td> "+
 						"<td> "+$(spareMoney).val()+"</td> "+
 						"<td> "+$(debtMoney).val()+"</td> "+
 						"<td> "+
@@ -127,7 +127,7 @@
 				$("#invoiceAmount").val(changeTwoDecimal_f(totalamount));//发票总金额
 				top.layer.close(index);
 				
-				if(orderArrearage != 0){ //欠款
+				if(orderArrearage != 0 || isNeworder == 1){ //欠款或者为老订单时无法开发票
 					$("#iType").hide();
 					$("#personheadContent").hide();
 					$("#invoiceRecipient").hide();
@@ -399,6 +399,23 @@
 			}
 		}); 
 	}
+	
+	function choose(value){
+		if(value == 1){
+			
+			$("#iType").hide();
+			$("#personheadContent").hide();
+			$("#invoiceRecipient").hide();
+			$("#companyheadContent").hide();
+			$("#fpinfo").hide();
+			$("#Ichecks").attr("checked",false);
+			$("#Ichecks").attr("disabled",true);
+			$("#mtmyUserPush").hide();
+			$("#mtmyUserInfo").empty();
+		}else{
+			$("#mtmyUserPush").show();
+		}
+	}
 	</script>
 </head>
 <body>
@@ -419,7 +436,7 @@
 						<form:option value="3">老带新</form:option>
 				</form:select>&nbsp;&nbsp;
 				<label><font color="red">*</font>新老订单：</label>
-				<select id="isNeworder" class="form-control" style="width:200px">
+				<select id="isNeworder" class="form-control" style="width:200px" onchange="choose(this.value)">
 					<option value=0>新订单</option>
 					<option value=1>老订单</option>
 				</select>
@@ -531,7 +548,7 @@
 					</div>
 				</div>
 				<p></p>
-				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="mtmyUserPush">
 					<div class="pull-left">
 						<h4>人员提成信息：</h4>
 					</div>
