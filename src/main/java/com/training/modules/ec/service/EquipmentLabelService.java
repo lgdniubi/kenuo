@@ -104,4 +104,13 @@ public class EquipmentLabelService extends CrudService<EquipmentLabelDao, Equipm
 	public void updateIsShow(EquipmentLabel equipmentLabel){
 		equipmentLabelDao.updateIsShow(equipmentLabel);
 	}
+	
+	/**
+	 * 验证设备标签对应的商品是否仍有上架的
+	 * @param equipmentLabelId
+	 * @return
+	 */
+	public int selectGoodsisOnSale(int equipmentLabelId){
+		return equipmentLabelDao.selectGoodsisOnSale(equipmentLabelId);
+	}
 }

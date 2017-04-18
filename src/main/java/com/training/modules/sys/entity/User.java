@@ -264,7 +264,8 @@ public class User extends DataEntity<User> {
 	public void setInductionTime(Date inductionTime) {
 		this.inductionTime = inductionTime;
 	}
-
+	
+	@NotNull(message="工号不能为空")
 	@Length(min=1, max=100, message="工号长度必须介于 1 和 100 之间")
 	@ExcelField(title="工号", align=2, sort=45)
 	public String getNo() {

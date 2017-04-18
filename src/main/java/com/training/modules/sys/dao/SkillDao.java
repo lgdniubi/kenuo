@@ -94,4 +94,18 @@ public interface SkillDao extends CrudDao<Skill>{
 	 * 修改技能标签是否显示
 	 */
 	public void updateIsShow(Skill skill);
+	
+	/**
+	 * 验证技能标签对应的商品是否仍有上架的
+	 * @param skillId
+	 * @return
+	 */
+	public int selectGoodsisOnSale(int skillId);
+	
+	/**
+	 * 验证技能标签名称
+	 * @param name
+	 * @return
+	 */
+	public int getByName(String name);
 }

@@ -27,26 +27,55 @@
 		//是否显示
 		function changeTableVal(id,isyesno){
 			$(".loading").show();//打开展示层
-			$.ajax({
-				type : "POST",
-				url : "${ctx}/sys/skill/changeIsShow?isShow="+isyesno+"&skillId="+id,
-				dataType: 'json',
-				success: function(data) {
-					$(".loading").hide(); //关闭加载层
-					var status = data.STATUS;
-					var isyesno = data.ISYESNO;
-					if("OK" == status){
-						$("#isShow"+id).html("");//清除DIV内容
-						if(isyesno == '1'){
-							$("#isShow"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+id+"','0')\">");
-						}else if(isyesno == '0'){
-							$("#isShow"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+id+"','1')\">");
+			$(".loading").removeAttr("style");
+			var edit;
+			if(isyesno == '1'){
+				$.ajax({
+					type:"POST",
+					async: false,
+					url:"${ctx}/sys/skill/selectGoodsisOnSale?skillId="+id,
+					success:function(data){
+						if(data == 'true'){
+							edit = 'true';
+						}else if(data== 'false'){
+							$(".loading").hide(); //关闭加载层
+							top.layer.alert('修改失败！该技能标签对应的商品仍有上架的，无法修改状态', {icon: 2, title:'提醒'});
+							edit = 'false';
+						}else if(data == 'error'){
+							$(".loading").hide(); //关闭加载层
+							top.layer.alert('修改状态出现异常', {icon: 2, title:'提醒'});
+							edit = 'false';
 						}
-					}else if("ERROR" == status){
-						alert(data.MESSAGE);
 					}
-				}
-			});   
+					
+				});
+			}else{
+				edit = 'true';
+			}
+			
+			if(edit == 'true'){
+				$.ajax({
+					type : "POST",
+					async: false,
+					url : "${ctx}/sys/skill/changeIsShow?isShow="+isyesno+"&skillId="+id,
+					dataType: 'json',
+					success: function(data) {
+						$(".loading").hide(); //关闭加载层
+						var status = data.STATUS;
+						var isyesno = data.ISYESNO;
+						if("OK" == status){
+							$("#isShow"+id).html("");//清除DIV内容
+							if(isyesno == '1'){
+								$("#isShow"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+id+"','0')\">");
+							}else if(isyesno == '0'){
+								$("#isShow"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+id+"','1')\">");
+							}
+						}else if("ERROR" == status){
+							alert(data.MESSAGE);
+						}
+					}
+				});   
+			}
 		}
 	</script>
 </head>
@@ -67,6 +96,10 @@
 							<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 							<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 							<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();"/><!-- 支持排序 -->
+							<div class="form-group">
+								<span>技能标签：</span>
+								<form:input path="name" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
+							</div>
 						</form:form>
 						<br />
 					</div>
@@ -80,6 +113,14 @@
 							</shiro:hasPermission>
 							<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新">
 								<i class="glyphicon glyphicon-repeat"></i> 刷新
+							</button>
+						</div>
+						<div class="pull-right">
+							<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()">
+								<i class="fa fa-search"></i> 查询
+							</button>
+							<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()">
+								<i class="fa fa-refresh"></i> 重置
 							</button>
 						</div>
 					</div>

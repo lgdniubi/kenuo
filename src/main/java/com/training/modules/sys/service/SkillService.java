@@ -82,4 +82,22 @@ public class SkillService extends CrudService<SkillDao, Skill>{
 	public void updateIsShow(Skill skill){
 		skillDao.updateIsShow(skill);
 	}
+	
+	/**
+	 * 验证技能标签对应的商品是否仍有上架的
+	 * @param skillId
+	 * @return
+	 */
+	public int selectGoodsisOnSale(int skillId){
+		return skillDao.selectGoodsisOnSale(skillId);
+	}
+	
+	/**
+	 * 验证技能标签名称
+	 * @param name
+	 * @return
+	 */
+	public int getByName(String name){
+		return skillDao.getByName(name);
+	}
 }

@@ -185,4 +185,53 @@ public class SkillController extends BaseController{
 		}
 		return jsonMap;
 	}
+	
+	/**
+	 * 验证技能标签对应的商品是否仍有上架的
+	 * @param skillId
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="selectGoodsisOnSale")
+	@ResponseBody
+	public String selectGoodsisOnSale(int skillId,HttpServletRequest request){
+		String result = "";
+		try{
+			int sum = skillService.selectGoodsisOnSale(skillId);
+			if(sum == 0){
+				result = "true";
+			}else{
+				result = "false";
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "验证技能标签对应的商品是否仍有上架的失败", e);
+			logger.error("验证技能标签对应的商品是否仍有上架的失败：" + e.getMessage());
+			result = "error";
+		}
+		return result;
+	}
+	
+	/**
+	 * 验证技能标签名称是否存在
+	 * 
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "checkName")
+	public String checkName(String oldName, String name,HttpServletRequest request) {
+		String type = "";
+		try{
+			if (name != null && name.equals(oldName)) {
+				type = "true";
+			} else if (name != null && skillService.getByName(name) <= 0) {
+				type = "true";
+			}else{
+				type = "false";
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "验证技能标签名称是否存在错误", e);
+			logger.error("验证技能标签名称是否存在出错信息：" + e.getMessage());
+		}
+		return type;
+	}
 }

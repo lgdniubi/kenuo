@@ -45,7 +45,7 @@
 		    area: ['300px', '420px'],
 		    title:"选择${title}",
 		    ajaxData:{selectIds: $("#${id}Id").val()},
-		    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("${url}")+"&module=${module}&checked=${checked}&extId=${extId}&isAll=${isAll}" ,
+		    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("${url}")+"&module=${module}&checked=${checked}&extId=${extId}&isAll=${isAll}&selectIds=${value}" ,
 		    btn: ['确定', '关闭']
     	       ,yes: function(index, layero){ //或者使用btn1
 						var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
