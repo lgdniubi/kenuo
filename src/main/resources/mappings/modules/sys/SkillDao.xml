@@ -39,6 +39,9 @@
 		FROM train_skill_label sl
 		WHERE sl.del_flag = 0
 		<!-- 数据范围过滤 -->
+		<if test="name != '' and name != null">
+			AND sl.name like CONCAT('%', #{name}, '%')
+		</if>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
@@ -166,4 +169,22 @@
 		SET is_show = #{isShow}
 		WHERE id = #{skillId}
 	</update>
+	
+	<!-- 验证技能标签对应的商品是否仍有上架的 -->
+	<select id="selectGoodsisOnSale" resultType="Integer">
+		SELECT COUNT(*)
+		FROM train_skill_label sl
+		LEFT JOIN mtmydb.mtmy_goods_skill gs ON gs.skill_id = sl.id  
+		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id = gs.goods_id
+		WHERE sl.id = #{skillId}
+		AND g.is_on_sale = 1
+	</select>
+	
+	<!-- 验证技能标签名称 -->
+	<select id="getByName" resultType="int">
+		SELECT COUNT(*)
+		FROM train_skill_label sl
+		WHERE sl.name = #{name} 
+		AND sl.del_flag =0
+	</select>
 </mapper>

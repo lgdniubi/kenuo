@@ -236,4 +236,29 @@ public class EquipmentLabelController extends BaseController{
 		}
 		return jsonMap;
 	}
+	
+	/**
+	 * 验证设备标签对应的商品是否仍有上架的
+	 * @param equipmentLabelId
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="selectGoodsisOnSale")
+	@ResponseBody
+	public String selectGoodsisOnSale(int equipmentLabelId,HttpServletRequest request){
+		String result = "";
+		try{
+			int sum = equipmentLabelService.selectGoodsisOnSale(equipmentLabelId);
+			if(sum == 0){
+				result = "true";
+			}else{
+				result = "false";
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "验证设备标签对应的商品是否仍有上架的失败", e);
+			logger.error("验证设备标签对应的商品是否仍有上架的失败：" + e.getMessage());
+			result = "error";
+		}
+		return result;
+	}
 }
