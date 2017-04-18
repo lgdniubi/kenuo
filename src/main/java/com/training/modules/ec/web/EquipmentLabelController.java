@@ -225,9 +225,20 @@ public class EquipmentLabelController extends BaseController{
 		Map<String, String> jsonMap = new HashMap<String, String>();
 		try {
 			String isyesno = request.getParameter("isShow");
-			equipmentLabelService.updateIsShow(equipmentLabel);
-			jsonMap.put("STATUS", "OK");
-			jsonMap.put("ISYESNO", isyesno);
+			if("1".equals(isyesno)){
+				int sum = equipmentLabelService.selectGoodsisOnSale(equipmentLabel.getEquipmentLabelId());
+				if(sum == 0){
+					equipmentLabelService.updateIsShow(equipmentLabel);
+					jsonMap.put("STATUS", "OK");
+					jsonMap.put("ISYESNO", isyesno);
+				}else{
+					jsonMap.put("STATUS", "NO");
+				}
+			}else if("0".equals(isyesno)){
+				equipmentLabelService.updateIsShow(equipmentLabel);
+				jsonMap.put("STATUS", "OK");
+				jsonMap.put("ISYESNO", isyesno);
+			}
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "修改设备标签是否显示失败", e);
 			logger.error("修改设备标签是否显示失败：" + e.getMessage());
@@ -236,29 +247,5 @@ public class EquipmentLabelController extends BaseController{
 		}
 		return jsonMap;
 	}
-	
-	/**
-	 * 验证设备标签对应的商品是否仍有上架的
-	 * @param equipmentLabelId
-	 * @param request
-	 * @return
-	 */
-	@RequestMapping(value="selectGoodsisOnSale")
-	@ResponseBody
-	public String selectGoodsisOnSale(int equipmentLabelId,HttpServletRequest request){
-		String result = "";
-		try{
-			int sum = equipmentLabelService.selectGoodsisOnSale(equipmentLabelId);
-			if(sum == 0){
-				result = "true";
-			}else{
-				result = "false";
-			}
-		}catch(Exception e){
-			BugLogUtils.saveBugLog(request, "验证设备标签对应的商品是否仍有上架的失败", e);
-			logger.error("验证设备标签对应的商品是否仍有上架的失败：" + e.getMessage());
-			result = "error";
-		}
-		return result;
-	}
+
 }

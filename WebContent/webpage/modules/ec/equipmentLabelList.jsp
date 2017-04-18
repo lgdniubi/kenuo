@@ -27,53 +27,28 @@
 		//是否显示
 		function changeTableVal(id,isyesno){
 			$(".loading").show();//打开展示层
-			var edit;
-			if(isyesno == '1'){
-				$.ajax({
-					type:"POST",
-					async: false,
-					url:"${ctx}/ec/equipmentLabel/selectGoodsisOnSale?equipmentLabelId="+id,
-					success:function(data){
-						if(data == 'true'){
-							edit = 'true';
-						}else if(data== 'false'){
-							$(".loading").hide(); //关闭加载层
-							top.layer.alert('修改失败！该设备标签对应的商品仍有上架的，无法修改状态', {icon: 2, title:'提醒'});
-							edit = 'false';
-						}else if(data == 'error'){
-							$(".loading").hide(); //关闭加载层
-							top.layer.alert('修改状态出现异常', {icon: 2, title:'提醒'});
-							edit = 'false';
+			$.ajax({
+				type : "POST",
+				url : "${ctx}/ec/equipmentLabel/changeIsShow?isShow="+isyesno+"&equipmentLabelId="+id,
+				dataType: 'json',
+				success: function(data) {
+					$(".loading").hide(); //关闭加载层
+					var status = data.STATUS;
+					var isyesno = data.ISYESNO;
+					if("OK" == status){
+						$("#isShow"+id).html("");//清除DIV内容
+						if(isyesno == '1'){
+							$("#isShow"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+id+"','0')\">");
+						}else if(isyesno == '0'){
+							$("#isShow"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+id+"','1')\">");
 						}
+					}else if("NO" == status){
+						top.layer.alert('修改失败！该设备标签对应的商品仍有上架的，无法修改状态', {icon: 2, title:'提醒'});
+					}else if("ERROR" == status){
+						alert(data.MESSAGE);
 					}
-					
-				});
-			}else{
-				edit = 'true';
-			}
-			
-			if(edit == 'true'){
-				$.ajax({
-					type : "POST",
-					url : "${ctx}/ec/equipmentLabel/changeIsShow?isShow="+isyesno+"&equipmentLabelId="+id,
-					dataType: 'json',
-					success: function(data) {
-						$(".loading").hide(); //关闭加载层
-						var status = data.STATUS;
-						var isyesno = data.ISYESNO;
-						if("OK" == status){
-							$("#isShow"+id).html("");//清除DIV内容
-							if(isyesno == '1'){
-								$("#isShow"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+id+"','0')\">");
-							}else if(isyesno == '0'){
-								$("#isShow"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+id+"','1')\">");
-							}
-						}else if("ERROR" == status){
-							alert(data.MESSAGE);
-						}
-					}
-				});   
-			}
+				}
+			});   
 		}
 	</script>
 </head>

@@ -174,9 +174,21 @@ public class SkillController extends BaseController{
 		Map<String, String> jsonMap = new HashMap<String, String>();
 		try {
 			String isyesno = request.getParameter("isShow");
-			skillService.updateIsShow(skill);
-			jsonMap.put("STATUS", "OK");
-			jsonMap.put("ISYESNO", isyesno);
+			if("1".equals(isyesno)){
+				int sum = skillService.selectGoodsisOnSale(skill.getSkillId());
+				if(sum == 0){
+					skillService.updateIsShow(skill);
+					jsonMap.put("STATUS", "OK");
+					jsonMap.put("ISYESNO", isyesno);
+				}else{
+					jsonMap.put("STATUS", "NO");
+				}
+			}else if("0".equals(isyesno)){
+				skillService.updateIsShow(skill);
+				jsonMap.put("STATUS", "OK");
+				jsonMap.put("ISYESNO", isyesno);
+			}
+			
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "修改技能标签是否显示失败", e);
 			logger.error("修改技能标签是否显示失败：" + e.getMessage());
@@ -184,31 +196,6 @@ public class SkillController extends BaseController{
 			jsonMap.put("MESSAGE", "修改失败,出现异常");
 		}
 		return jsonMap;
-	}
-	
-	/**
-	 * 验证技能标签对应的商品是否仍有上架的
-	 * @param skillId
-	 * @param request
-	 * @return
-	 */
-	@RequestMapping(value="selectGoodsisOnSale")
-	@ResponseBody
-	public String selectGoodsisOnSale(int skillId,HttpServletRequest request){
-		String result = "";
-		try{
-			int sum = skillService.selectGoodsisOnSale(skillId);
-			if(sum == 0){
-				result = "true";
-			}else{
-				result = "false";
-			}
-		}catch(Exception e){
-			BugLogUtils.saveBugLog(request, "验证技能标签对应的商品是否仍有上架的失败", e);
-			logger.error("验证技能标签对应的商品是否仍有上架的失败：" + e.getMessage());
-			result = "error";
-		}
-		return result;
 	}
 	
 	/**
