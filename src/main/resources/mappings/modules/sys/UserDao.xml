@@ -742,5 +742,10 @@
 			ORDER BY  o.code,c.code, a.name
 	</select>
 	
-	
+	<!-- 验证导入的用户的工号是否已经存在 -->
+	<select id="selectNo" resultType="Integer">
+		SELECT COUNT(*)
+		FROM sys_user
+		WHERE no = #{no}
+	</select>
 </mapper>

@@ -1021,4 +1021,11 @@ public class SystemService extends BaseService implements InitializingBean {
 		user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(),"o"));
 		return userDao.findRoleUser(user);
 	}
+	
+	/**
+	 * 验证导入的用户的工号是否已经存在 
+	 */
+	public int selectNo(String no){
+		return userDao.selectNo(no);
+	}
 }
