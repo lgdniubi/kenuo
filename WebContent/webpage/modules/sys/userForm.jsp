@@ -617,12 +617,14 @@
 					</form:select>
 				</td>
 		  	</tr>
-		  	<tr>
-		  		<td class="width-15 active"><label class="pull-right">特长:</label></td>
-		  		<td><sys:treeselect id="speciality" name="speciality.id" value="${user.speciality.id}" labelName="speciality.name" labelValue="${user.speciality.name}"
+		  	<tr >
+		  		<td class="width-15 active"><label class="pull-right" >特长:</label></td>
+		  		<td colspan="4" width="200px"><sys:treeselect id="speciality" name="speciality.id" value="${user.speciality.id}" labelName="speciality.name" labelValue="${user.speciality.name}"
 								title="特长" url="/sys/speciality/treeData" cssClass="form-control" notAllowSelectParent="true" checked="true"/></td>
+			</tr>
+			<tr>
 		  		<td class="width-15 active"><label class="pull-right">技能标签:</label></td>
-		  		<td><sys:treeselect id="skill" name="skill.id" value="${user.skill.id}" labelName="skill.name" labelValue="${user.skill.name}" title="技能标签" url="/sys/skill/treeData" cssClass="form-control" notAllowSelectParent="true" checked="true"/></td>
+		  		<td colspan="4" width="200px"><sys:treeselect id="skill" name="skill.id" value="${user.skill.id}" labelName="skill.name" labelValue="${user.skill.name}" title="技能标签" url="/sys/skill/treeData" cssClass="form-control" notAllowSelectParent="true" checked="true"/></td>
 		  	</tr>
 		  	<tr>
 		  		<td class="width-15 active"><label class="pull-right">生活照:</label></td>
