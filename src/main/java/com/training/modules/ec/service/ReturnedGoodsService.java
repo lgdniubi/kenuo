@@ -12,10 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.ec.dao.OrderGoodsDao;
+import com.training.modules.ec.dao.OrderGoodsDetailsDao;
 import com.training.modules.ec.dao.OrdersDao;
 import com.training.modules.ec.dao.ReturnedGoodsDao;
 import com.training.modules.ec.dao.SaleRebatesLogDao;
 import com.training.modules.ec.entity.OrderGoods;
+import com.training.modules.ec.entity.OrderGoodsDetails;
 import com.training.modules.ec.entity.Orders;
 import com.training.modules.ec.entity.ReturnedGoods;
 import com.training.modules.ec.entity.ReturnedGoodsImages;
@@ -41,7 +43,9 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	private OrderGoodsDao orderGoodsDao;
 	@Autowired
 	private SaleRebatesLogDao saleRebatesLogDao;
-
+	@Autowired
+	private OrderGoodsDetailsDao orderGoodsDetailsDao;
+	
 	/**
 	 * 分页查询
 	 * 
@@ -81,7 +85,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		returnedGoods.setAuditBy(currentUser);
 		if ("11".equals(returnedGoods.getReturnStatus())) { // 申请退货退款
 			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
-			returnedGoodsDao.saveEdite(returnedGoods);
+			returnedGoodsDao.saveEdite(returnedGoods);//添加退货信息到mtmy_returned_goods表中
 			Orders orders = ordersDao.get(returnedGoods.getOrderId());
 			orders.setOrderid(returnedGoods.getId());
 			orders.setParentid(returnedGoods.getOrderId());
@@ -114,9 +118,25 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				orderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
 				orderGoods.setAfterSaleNum(-returnedGoods.getReturnNum());
 				orderGoodsDao.updateIsAfterSales(orderGoods);
+				
+				//退货处理
+				orderGoods = orderGoodsDao.selectOrderGoodsByRecid(orderGoods.getRecid());
+				//把数据存储到mtmy_order_goods_details表中
+				returnedGoods = returnedGoodsDao.get(returnedGoods);//先查询returnedGoods数据
+				OrderGoodsDetails ogd = new OrderGoodsDetails();
+				ogd.setOrderId(returnedGoods.getOrderId());
+				ogd.setGoodsMappingId(returnedGoods.getGoodsMappingId());
+				ogd.setItemAmount(returnedGoods.getGoodsNum()*orderGoods.getSingleRealityPrice());
+				ogd.setItemCapitalPool(returnedGoods.getGoodsNum()*orderGoods.getSingleNormPrice());
+				ogd.setServiceTimes(returnedGoods.getGoodsNum());
+				ogd.setType(0);
+				ogd.setCreateBy(UserUtils.getUser());
+				orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
+				
 			}
 
 		}
+		
 		if ("21".equals(returnedGoods.getReturnStatus())) { // 申请换货
 			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
 			returnedGoodsDao.saveEdite(returnedGoods);
@@ -127,7 +147,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				orderGoodsDao.updateIsAfterSales(orderGoods);
 			}
 		}
-
+		
 	}
 
 	/**
@@ -160,12 +180,25 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			returnedGoods.setReturnStatus("21");
 			returnedGoods.setReturnAmount(0);
 		}
-
 		returnedGoodsDao.insertReturn(returnedGoods);
 		OrderGoods orderGoods = new OrderGoods();
 		orderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
 		orderGoods.setAfterSaleNum(returnedGoods.getReturnNum());
 		orderGoodsDao.updateIsAfterSales(orderGoods);
+		
+		//退货处理
+		orderGoods = orderGoodsDao.selectOrderGoodsByRecid(orderGoods.getRecid());
+
+		OrderGoodsDetails ogd = new OrderGoodsDetails();
+		ogd.setOrderId(returnedGoods.getOrderId());
+		ogd.setGoodsMappingId(returnedGoods.getGoodsMappingId());
+		ogd.setItemAmount(returnedGoods.getServiceTimes()*orderGoods.getSingleRealityPrice());
+		ogd.setItemCapitalPool(returnedGoods.getServiceTimes()*orderGoods.getSingleNormPrice());
+		ogd.setServiceTimes(-returnedGoods.getServiceTimes());
+		ogd.setType(2);
+		ogd.setCreateBy(UserUtils.getUser());
+		orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);;
+		
 	}
 
 	/**
@@ -241,6 +274,15 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		// 执行分页查询
 		page.setList(returnedGoodsDao.findListByUser(returnedGoods));
 		return page;
+	}
+
+	/**
+	 * 根据orderID查询退货商品的return_status为11-15的数量
+	 * @param orderid
+	 * @return
+	 */
+	public int findreturnedGoodsNum(String orderid) {
+		return returnedGoodsDao.findreturnedGoodsNum(orderid);
 	}
 
 }

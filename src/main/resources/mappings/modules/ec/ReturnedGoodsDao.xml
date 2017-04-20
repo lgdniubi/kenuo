@@ -342,4 +342,13 @@
 			</otherwise>
 		</choose>
 	</select>
+	<!-- 根据orderID查询退货商品的return_status为11-15的数量 -->
+	<select id="findreturnedGoodsNum" resultType="int">
+		SELECT
+			SUM(return_num)
+		FROM
+			mtmydb.mtmy_returned_goods
+		WHERE
+			return_status in (11,12,13,14,15) AND  order_id = #{orderId}
+	</select>
 </mapper>

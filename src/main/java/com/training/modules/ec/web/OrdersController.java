@@ -632,7 +632,10 @@ public class OrdersController extends BaseController {
 		}else{
 			list=ordergoodService.orderlist(orderid);
 		}
+		//根据orderID查询退货商品的return_status为11-15的数量
+		int returnedGoodsNum = returnedGoodsService.findreturnedGoodsNum(orderid);
 		
+		model.addAttribute("returnedGoodsNum", returnedGoodsNum);
 		model.addAttribute("orders", orders);
 		model.addAttribute("orderGoodList", list);
 		model.addAttribute("returnedGoods", returnedGoods);
@@ -1592,7 +1595,7 @@ public class OrdersController extends BaseController {
 			StringBuilder failureMsg = new StringBuilder();
 			ImportExcel ei = new ImportExcel(file, 1, 0);
 			int cell = ei.getLastCellNum();
-			if (cell != 12) {
+			if (cell != 13) {
 				failureMsg.insert(0, "<br/>导入的模板错误，请检查模板; ");
 			} else {
 				

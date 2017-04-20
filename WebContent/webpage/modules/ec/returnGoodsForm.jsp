@@ -222,7 +222,7 @@
 					<p></p>
 					<c:if test="${returnedGoods.applyType==0}">
 						<label><font color="red">*</font>退款金额:</label>
-				        <form:input path="returnAmount" htmlEscape="false" maxlength="10"  style="width:180px;" class="form-control required"/>
+				        <form:input path="returnAmount" htmlEscape="false" maxlength="10"  style="width:180px;" class="form-control required" readonly="true"/>
 					</c:if>
 			        <p></p>
 			        <c:if test="${returnedGoods.returnStatus==11}">

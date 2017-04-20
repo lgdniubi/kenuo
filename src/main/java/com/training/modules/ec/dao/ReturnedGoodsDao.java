@@ -81,5 +81,12 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 * @return int
 	 */
 	public List<ReturnedGoods> findListByUser(ReturnedGoods returnedGoods);
+	
+	/**
+	 * 根据orderID查询退货商品的return_status为11-15的数量
+	 * @param orderid
+	 * @return
+	 */
+	public int findreturnedGoodsNum(String orderid);
 
 }
