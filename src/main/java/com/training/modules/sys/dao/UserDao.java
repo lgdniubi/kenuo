@@ -233,4 +233,8 @@ public interface UserDao extends CrudDao<User> {
 	 */
 	public List<User> newFindList(User user);
 	
+	/**
+	 * 验证导入的用户的工号是否已经存在 
+	 */
+	public int selectNo(String no);
 }

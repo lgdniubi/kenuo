@@ -557,28 +557,33 @@ public class UserController extends BaseController {
 										if ("true".equals(checkIdcard("", user.getIdCard()))) {
 											if (user.getIdCard().length() == 15 || user.getIdCard().length() == 18) {
 												if("true".equals(checkOfficeId(user.getCode()))){
-													try {
-														//默认给美容师角色
-														Role role = new Role();
-														role.setName("美容师");
-														role = roleDao.getByNameNew(role);
-														user.setRole(role);
-														List<Role> roleList = Lists.newArrayList();
-														roleList.add(role);
-														user.setRoleList(roleList);
-														//默认职位为美容师
-														user.setUserType("2");
-														user.setPassword(SystemService.entryptPassword("123456"));
-														Office office = systemService.getoffice(user.getCode());
-														user.setOffice(office);
-														user.setName(user.getName().replace(" ", ""));
-														systemService.saveUser(user);
-														successNum++;
-		
-													} catch (Exception e) {
-														e.getMessage();
-														BugLogUtils.saveBugLog(request, "导入保存失败", e);
-														failureMsg.append("<br/>导入保存失败 " + user.getMobile());
+													if(systemService.selectNo(user.getNo()) == 0){
+														try {
+															//默认给美容师角色
+															Role role = new Role();
+															role.setName("美容师");
+															role = roleDao.getByNameNew(role);
+															user.setRole(role);
+															List<Role> roleList = Lists.newArrayList();
+															roleList.add(role);
+															user.setRoleList(roleList);
+															//默认职位为美容师
+															user.setUserType("2");
+															user.setPassword(SystemService.entryptPassword("123456"));
+															Office office = systemService.getoffice(user.getCode());
+															user.setOffice(office);
+															user.setName(user.getName().replace(" ", ""));
+															systemService.saveUser(user);
+															successNum++;
+			
+														} catch (Exception e) {
+															e.getMessage();
+															BugLogUtils.saveBugLog(request, "导入保存失败", e);
+															failureMsg.append("<br/>导入保存失败 " + user.getMobile());
+															failureNum++;
+														}
+													}else{
+														failureMsg.append("<br/>工号" + user.getNo() + " ,此用户的工号已存在; ");
 														failureNum++;
 													}
 												}else{
