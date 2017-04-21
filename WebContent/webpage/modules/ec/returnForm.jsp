@@ -93,8 +93,10 @@
 			orderArrearage=$("#"+id+"orderArrearage").val();//订单欠款
 			singleRealityPrice=$("#"+id+"singleRealityPrice").val();//实际服务单次价
 			totalAmount=$("#"+id+"total").val();//实付款
-			returnedGoodsNum = $("#returnedGoodsNum").val();//实物中  从后台查出来的退货中的数量
-			$("#returnNum").val(parseInt(goodNum)-parseInt(returnedGoodsNum));//为售后商品数量赋值
+			if(isReal==0){
+				returnedGoodsNum = $("#returnedGoodsNum").val();//实物中  从后台查出来的退货中的数量
+				$("#returnNum").val(parseInt(goodNum)-parseInt(returnedGoodsNum));//为售后商品数量赋值
+			}
 
 			if(orderArrearage>0){
 				top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
@@ -343,7 +345,9 @@
 								<input type="hidden" id="${orderGood.recid}remaintimes" name="${orderGood.recid}remaintimes" value="${orderGood.remaintimes}" />
 								<input type="hidden" id="${orderGood.recid}orderAmount" name="${orderGood.recid}orderAmount" value="${orderGood.orderAmount}" />
 								<input type="hidden" id="${orderGood.recid}orderArrearage" name="${orderGood.recid}orderArrearage" value="${orderGood.orderArrearage}" />
-								<input type="hidden" id="returnedGoodsNum" value="${returnedGoodsNum}" />
+								<c:if test="${orderGood.isreal==0}">
+									<input type="hidden" id="returnedGoodsNum" value="${returnedGoodsNum}" />
+								</c:if>
 							</c:forEach>
 						</tbody>						
 					</table>	

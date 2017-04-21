@@ -632,10 +632,11 @@ public class OrdersController extends BaseController {
 		}else{
 			list=ordergoodService.orderlist(orderid);
 		}
-		//根据orderID查询退货商品的return_status为11-15的数量
-		int returnedGoodsNum = returnedGoodsService.findreturnedGoodsNum(orderid);
-		
-		model.addAttribute("returnedGoodsNum", returnedGoodsNum);
+		//先判断是否为实物,根据orderID查询退货商品的return_status为11-15的数量
+		if(orders.getIsReal() == 0){
+			int returnedGoodsNum = returnedGoodsService.findreturnedGoodsNum(orderid);
+			model.addAttribute("returnedGoodsNum", returnedGoodsNum);
+		}
 		model.addAttribute("orders", orders);
 		model.addAttribute("orderGoodList", list);
 		model.addAttribute("returnedGoods", returnedGoods);
