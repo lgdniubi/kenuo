@@ -282,8 +282,12 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	 * @return
 	 */
 	public int findreturnedGoodsNum(String orderid) {
-		int num = returnedGoodsDao.selectreturnedGoodsNum();//先查询实物中是否有正在退货的商品
-		return num == 0 ? 0:returnedGoodsDao.findreturnedGoodsNum(orderid);
+		int num = returnedGoodsDao.selectreturnedGoodsNum(orderid);//先查询实物中是否有正在退货的商品
+		if(num == 0){
+			return 0;
+		}else{
+			return returnedGoodsDao.findreturnedGoodsNum(orderid);
+		}
 	}
 
 }
