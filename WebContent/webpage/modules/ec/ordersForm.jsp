@@ -364,12 +364,12 @@ window.onload=initStatus;
 		top.layer.open({
 		    type: 2, 
 		    area: ['600px', '450px'],
-		    title:"充值",
+		    title:"处理预约金",
 		    content: "${ctx}/ec/orders/handleAdvanceFlagForm?recid="+recid+"&userid="+userid,
 		    btn: ['确定', '关闭'],
 		    yes: function(index, layero){
 		    	var obj =  layero.find("iframe")[0].contentWindow;
-     	    	var sum = obj.document.getElementById("sum").value; //员工id
+     	    	var sum = obj.document.getElementById("sum").value; //是否使用了账户余额
 				//异步处理预约金
 				$.ajax({
 					type:"post",
@@ -447,7 +447,6 @@ window.onload=initStatus;
 									</c:if>
 									<c:if test="${orders.orderstatus == -1}">
 										<form:option value="-1">待付款</form:option>
-										<form:option value="1">待发货</form:option>
 									</c:if>
 									<c:if test="${orders.orderstatus == 1 or orders.orderstatus == 2 or orders.orderstatus == 4}">
 										<form:option value="1">待发货</form:option>
@@ -487,11 +486,25 @@ window.onload=initStatus;
 								</c:if>
 							</form:select>&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">付款方式：</label>
-							<form:select path="paycode" class="form-control" style="width:180px">
+							<c:if test="${orders.isReal == 0 && orders.channelFlag != 'bm'}">
+								<c:if test="${orders.paycode == 'wx'}">微信支付</c:if>
+								<c:if test="${orders.paycode == 'alipay'}">支付宝App支付</c:if>
+								<c:if test="${orders.paycode == 'upacp_wap'}">银联</c:if>
+								<c:if test="${orders.paycode == 'wx_pub'}">微信公众号</c:if>
+								<c:if test="${orders.paycode == 'wx_pub_qr'}">微信公众号扫码</c:if>
+								<c:if test="${orders.paycode == 'alipay_wap'}">支付宝手机网页</c:if>
+								<c:if test="${orders.paycode == 'alipay_qr'}">支付宝扫码支付</c:if>
+								<c:if test="${orders.paycode == 'money'}">现金支付</c:if>
+								<c:if test="${orders.paycode == 'yeepay_wap'}">易宝手机网页支付</c:if>
+							</c:if>
+							<c:if test="${orders.isReal == 1 || (orders.isReal == 0 && orders.channelFlag == 'bm')}">
+								<form:select path="paycode" class="form-control" style="width:180px">
 								<c:forEach items="${paylist}" var="payment">
 									<form:option value="${payment.paycode}">${payment.paydesc}</form:option>
 								</c:forEach>
-							</form:select>
+								</form:select>
+							</c:if>
+							
 							<p></p>
 							<label >留言备注：</label>
 							<textarea name="usernote" rows="5" cols="60">${orders.userNote }</textarea>

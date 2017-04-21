@@ -983,9 +983,9 @@ public class OrdersController extends BaseController {
 	public String getMappinfOrderRechargeView(Integer recid, String orderid, String orderType, HttpServletRequest request, Model model) {
 		try {
 			List<OrderGoodsDetails> orderGoodsDetails = ordersService.getMappinfOrderView(recid);
-			List<OrderRechargeLog> orderRechargeLogs = ordersService.getOrderRechargeView(orderid);
+			/*List<OrderRechargeLog> orderRechargeLogs = ordersService.getOrderRechargeView(orderid);*/
 			model.addAttribute("orderGoodsDetails", orderGoodsDetails);
-			model.addAttribute("orderRechargeLogs", orderRechargeLogs);
+			/*model.addAttribute("orderRechargeLogs", orderRechargeLogs);*/
 			model.addAttribute("orderType", orderType);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "查看商品订单充值", e);
@@ -1482,7 +1482,7 @@ public class OrdersController extends BaseController {
 	 */
 	@RequestMapping(value="handleAdvanceFlag")
 	@ResponseBody
-	public String handleAdvanceFlag(OrderRechargeLog oLog,OrderGoods orderGoods,int userid,String orderid,int sum,HttpServletRequest request){
+	public String handleAdvanceFlag(OrderRechargeLog oLog,OrderGoods orderGoods,int sum,int userid,String orderid,HttpServletRequest request){
 		String date="";
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
@@ -1514,7 +1514,7 @@ public class OrdersController extends BaseController {
 				
 			}
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleAdvanceFlag(oLog,sum,goodsPrice,detailsTotalAmount,goodsType,officeId);
+			ordersService.handleAdvanceFlag(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId);
 			date = "success";
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "处理预约金异常", e);
