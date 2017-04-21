@@ -8,14 +8,24 @@
 	<!-- 内容上传 引用-->
 
 <script type="text/javascript">
+		var isReal=0;//判断是否为实物
 		var goodNum=0;
 		var returnAmount=0;
+		var remaintimes=0;
+		var singleRealityPrice=0;
+		var orderArrearage=0;//订单欠款
+		var totalAmount=0;//实付款
+		var returnedGoodsNum = 0;//后台查询出来 "实物" 中正在退货的商品数量
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		  if(validateForm.form()){
 			  var recid=$("#goodsMappingId").val();
 			  if(recid==""){
 				  top.layer.alert('请选择退货商品!', {icon: 0, title:'提醒'});
+				  return;
+			  }
+			  if(orderArrearage>0){
+				  top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
 				  return;
 			  }
 			  if(returnAmount==-1){
@@ -25,15 +35,38 @@
 				 top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
 				 return;
 			  }
-			  var num=$("#returnNum").val();
-				if(num<=0){
-					top.layer.alert('退货数量必须大于0，小于购买数量!', {icon: 0, title:'提醒'});
-					return;
-				}else if(num>goodNum){
-					top.layer.alert('退货数量必须大于0，小于购买数量!', {icon: 0, title:'提醒'});
-					return;
-				}
-			  $("#returnAmount").val(returnAmount*num);
+			  //当是实物的时候,售后商品数量 <=goodNum实际购买量-returnedGoodsNum(从后台查出来的退货中的数量)
+			  if(isReal == 0){
+				  var rn=$("#returnNum").val();
+				  if(parseInt(rn)<=0){
+					  top.layer.alert('售后商品数量必须大于0，小于购买数量!', {icon: 0, title:'提醒'});
+					  return;
+				  }else if(parseInt(rn)>(parseInt(goodNum)-parseInt(returnedGoodsNum))){
+					  top.layer.alert('售后商品数量必须大于0，小于购买数量!', {icon: 0, title:'提醒'});
+					  return;
+				  }
+			  }
+			  
+			  //虚拟商品的售后次数校验
+			  var st=$("#serviceTimes").val();
+			  if(parseInt(st)<=0){
+				  top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
+				  return;
+			  }else if(parseInt(st)>parseInt(remaintimes)){
+				  top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
+				  return;
+			  }
+				
+			  //虚拟商品的退款金额校验
+			  var ra=$("#returnAmount").val();
+			  if(ra<=0){
+				  top.layer.alert('退款金额必须大于0，小于实付款金额!', {icon: 0, title:'提醒'});
+				  return;
+			  }else if(parseInt(totalAmount)<parseInt(ra)){
+				  top.layer.alert('退款金额必须大于0，小于实付款金额!', {icon: 0, title:'提醒'});
+				  return;
+			  }
+			  $("#returnAmount").val();
 			  $("#inputForm").submit();
 			  return true;
 		  }
@@ -41,36 +74,75 @@
 		  return false;
 		}
 		
-		//初始化
+		/* //初始化
 		function init(){
 			var isReal="${orders.isReal}";
 			if(isReal==1){
 				$("#returnNum").attr("readonly",true);
 			}
-			
-		}
-		
+		} */
+		//选中某个商品时,查询数据
 		function selectFunction(o){
 			var id=$("#selectId:checked").val();
 			var type="${orders.channelFlag}";
-			var isReal="${orders.isReal}";
 			var orderId=$("#orderId").val();
+			isReal="${orders.isReal}";
 			$("#goodsMappingId").val(id);
 			goodNum=$("#"+id+"goodsnum").val();
-			if("bm"==type){
-				var orderA=$("#"+id+"orderAmount").val();
-				var totalA=$("#"+id+"total").val();
-				$("#totalAmount").val(totalA);
-				$("#orderAmount").val(orderA);
-				if(isReal==0){
-					if(orderA==totalA){
-						$("#totalAmount").val(totalA);
-						returnAmount=totalA/goodNum;
-						var retNum=$("#returnNum").val();
-						var SumAmount=returnAmount*retNum;
-						$("#returnAmount").val(SumAmount.toFixed(2));
-						
-					}else{
+			remaintimes=$("#"+id+"remaintimes").val();//为商品的售后次数赋值
+			orderArrearage=$("#"+id+"orderArrearage").val();//订单欠款
+			singleRealityPrice=$("#"+id+"singleRealityPrice").val();//实际服务单次价
+			totalAmount=$("#"+id+"total").val();//实付款
+			if(isReal==0){
+				returnedGoodsNum = $("#returnedGoodsNum").val();//实物中  从后台查出来的退货中的数量
+				$("#returnNum").val(parseInt(goodNum)-parseInt(returnedGoodsNum));//为售后商品数量赋值
+			}
+
+			if(orderArrearage>0){
+				top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
+			}else{
+				if("bm"==type){//当时后台数据时
+					var orderA=$("#"+id+"orderAmount").val();
+					var totalA=$("#"+id+"total").val();
+					$("#totalAmount").val(totalA);//实付款金额
+					$("#orderAmount").val(orderA);//应付款金额
+					if(isReal==0){//是实物
+						if(orderA==totalA){
+							$("#totalAmount").val(totalA);
+							returnAmount=totalA/goodNum;//计算退款金额
+							var retNum=$("#returnNum").val();//退货的商品数量
+							var SumAmount=returnAmount*retNum;//退款总金额
+							$("#returnAmount").val(SumAmount.toFixed(2));//退款金额
+						}else{
+							$.ajax({
+								type:"post",
+								async:false,
+								data:{
+									id:id,
+									isReal:isReal,
+									orderid:orderId
+								 },
+								url:"${ctx}/ec/orders/getOrderGoodsIsFre",
+								success:function(date){
+									returnAmount=date;
+									if(returnAmount==-1){
+										top.layer.alert('该商品欠款或者没有余款，无法退款!', {icon: 0, title:'提醒'});
+										return;
+									}else if(returnAmount==-2){
+										top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
+										return;
+									}else{
+										$("#returnAmount").val(returnAmount*$("#returnNum").val());
+									}
+									
+								},
+								error:function(XMLHttpRequest,textStatus,errorThrown){
+											    
+								}
+							});
+							
+						}
+					}else if(isReal==1){//是虚拟
 						$.ajax({
 							type:"post",
 							async:false,
@@ -89,53 +161,25 @@
 									top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
 									return;
 								}else{
-									$("#returnAmount").val(returnAmount*$("#returnNum").val());
+									$("#returnAmount").val(returnAmount)
 								}
-								
 							},
 							error:function(XMLHttpRequest,textStatus,errorThrown){
 										    
 							}
 						});
-						
 					}
-				}else if(isReal==1){
-					$.ajax({
-						type:"post",
-						async:false,
-						data:{
-							id:id,
-							isReal:isReal,
-							orderid:orderId
-						 },
-						url:"${ctx}/ec/orders/getOrderGoodsIsFre",
-						success:function(date){
-							returnAmount=date;
-							if(returnAmount==-1){
-								top.layer.alert('该商品欠款或者没有余款，无法退款!', {icon: 0, title:'提醒'});
-								return;
-							}else if(returnAmount==-2){
-								top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
-								return;
-							}else{
-								$("#returnAmount").val(returnAmount)
-							}
-						},
-						error:function(XMLHttpRequest,textStatus,errorThrown){
-									    
-						}
-					});
+	
+				}else{
+					var totalA=$("#"+id+"total").val();
+					var orderA=$("#"+id+"orderAmount").val();
+					$("#totalAmount").val(totalA);
+					returnAmount=totalA/goodNum;
+					var retNum=$("#returnNum").val();
+					var SumAmount=returnAmount*retNum;
+					$("#returnAmount").val(SumAmount.toFixed(2));
+					$("#orderAmount").val(orderA);
 				}
-
-			}else{
-				var totalA=$("#"+id+"total").val();
-				var orderA=$("#"+id+"orderAmount").val();
-				$("#totalAmount").val(totalA);
-				returnAmount=totalA/goodNum;
-				var retNum=$("#returnNum").val();
-				var SumAmount=returnAmount*retNum;
-				$("#returnAmount").val(SumAmount.toFixed(2));
-				$("#orderAmount").val(orderA);
 			}
 			
 		}
@@ -150,23 +194,43 @@
 			}
 		}
 		
-		//退款数量改变
+		//退款数量改变校验
 		function returnChangeNum(){
 			var num=$("#returnNum").val();
-			if(num<=0){
+			if(parseInt(num)<=0){
 				top.layer.alert('退货数量必须大于0，小于购买数量!', {icon: 0, title:'提醒'});
 				return;
-			}else if(num>goodNum){
+			}else if(parseInt(num)>parseInt(goodNum)){
 				top.layer.alert('退货数量必须大于0，小于购买数量!', {icon: 0, title:'提醒'});
 				return;
 			}
 			$("#returnAmount").val(returnAmount*num);
-			
 		}
-	
+		
+		 //虚拟商品的售后次数校验
+		function returnChangeTimes(){
+		   var st=$("#serviceTimes").val();
+		   if(parseInt(st)<=0){
+			   top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
+			   return;
+		   }else if(parseInt(st)>parseInt(remaintimes)){
+			   top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
+			   return;
+		   }
+		}
+		 
+		//虚拟商品的退款金额校验
+		function returnChangeAmount(){
+			var ra=$("#returnAmount").val();
+			if(parseInt(ra)<=0){
+				top.layer.alert('退款金额必须大于0，小于实付款金额!', {icon: 0, title:'提醒'});
+				return;
+			}else if(parseInt(totalAmount)<parseInt(ra)){
+				top.layer.alert('退款金额必须大于0，小于实付款金额!', {icon: 0, title:'提醒'});
+				return;
+			}
+		}
 		$(document).ready(function(){
-	
-			
 			$("#reason").focus();
 			validateForm = $("#inputForm").validate({
 				rules: {
@@ -246,7 +310,7 @@
 								<th style="text-align: center;">实付款</th>
 								<th style="text-align: center;">实际服务单价</th>
 								<th style="text-align: center;">剩余次数</th>
-								<th style="text-align: center;">余款</th>
+								<!-- <th style="text-align: center;">余额</th> -->
 								<th style="text-align: center;">欠款</th>
 							</tr>
 						</thead>
@@ -272,21 +336,27 @@
 									<td  style="text-align: center;">${orderGood.totalAmount}</td>
 									<td  style="text-align: center;">${orderGood.singleRealityPrice}</td>
 									<td  style="text-align: center;">${orderGood.remaintimes}</td>
-									<td  style="text-align: center;">${orderGood.orderBalance}</td>
+									<%-- <td  style="text-align: center;">${orderGood.orderBalance}</td> --%>
 									<td  style="text-align: center;">${orderGood.orderArrearage}</td>
 								</tr>
-								<input type="hidden" id="${orderGood.recid}total" name="${orderGood.recid}total" value="${orderGood.totalAmount}" />
 								<input type="hidden" id="${orderGood.recid}goodsnum" name="${orderGood.recid}goodsnum" value="${orderGood.goodsnum}" />
+								<input type="hidden" id="${orderGood.recid}total" name="${orderGood.recid}total" value="${orderGood.totalAmount}" />
+								<input type="hidden" id="${orderGood.recid}singleRealityPrice" name="${orderGood.recid}singleRealityPrice" value="${orderGood.singleRealityPrice}" />
+								<input type="hidden" id="${orderGood.recid}remaintimes" name="${orderGood.recid}remaintimes" value="${orderGood.remaintimes}" />
 								<input type="hidden" id="${orderGood.recid}orderAmount" name="${orderGood.recid}orderAmount" value="${orderGood.orderAmount}" />
+								<input type="hidden" id="${orderGood.recid}orderArrearage" name="${orderGood.recid}orderArrearage" value="${orderGood.orderArrearage}" />
+								<c:if test="${orderGood.isreal==0}">
+									<input type="hidden" id="returnedGoodsNum" value="${returnedGoodsNum}" />
+								</c:if>
 							</c:forEach>
 						</tbody>						
 					</table>	
 					<p></p>					
 				  	<label><font color="red">*</font>售后原因：</label>
-			       	<form:input path="returnReason" htmlEscape="false" maxlength="50" style="width: 300px;height:30px;" class="form-control"/>
+			       	<form:input path="returnReason" htmlEscape="false" maxlength="50" style="width: 300px;height:30px;" class="form-control required"/>
 			       	<p></p>
 			        <label><font color="red">*</font>问题描述：</label>
-			        <form:textarea path="problemDesc" htmlEscape="false" rows="3"  style="width:300px;" maxlength="200" class="form-control"/>
+			        <form:textarea path="problemDesc" htmlEscape="false" rows="3"  style="width:300px;" maxlength="200" class="form-control required"/>
 			        <p></p>
 			        <label><font color="red">*</font>申请类型：</label>
 			        <c:if test="${orders.isReal==0}">
@@ -306,11 +376,31 @@
 			        <form:input path="totalAmount" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control" readonly="true"/>
 					<p></p>
 			        <label><font color="red">*</font>售后商品数量：</label>
-			        <form:input path="returnNum" htmlEscape="false" maxlength="10" value="1" style="width: 180px;height:30px;" class="form-control" onchange="returnChangeNum()"/>
+			        <form:input path="returnNum" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control"
+			        onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
+					onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+					onfocus="if(value == '0'){value=''}"
+					onblur="if(value == ''){value='0'}"
+			        onchange="returnChangeNum()"/>
+					<c:if test="${orders.isReal==1}">
+						<p></p>
+						<label><font color="red">*</font>售后次数：</label>
+			        	<form:input path="serviceTimes" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control" 
+			        	onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
+						onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+						onfocus="if(value == '0'){value=''}"
+						onblur="if(value == ''){value='0'}"
+			        	onchange="returnChangeTimes()"/>
+			        </c:if>
 					<p></p>
 					<div id="hideandshow" style="display: display">
-						 <label><font color="red">*</font>退款金额：</label>
-						 <form:input path="returnAmount" htmlEscape="false" maxlength="10"  style="width:180px;" class="form-control required"/>
+						<label><font color="red">*</font>退款金额：</label>
+						<form:input path="returnAmount" htmlEscape="false" maxlength="10"  style="width:180px;" class="form-control required"
+						onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
+						onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+						onfocus="if(value == '0.00'){value=''}"
+						onblur="if(value == ''){value='0.00'}"
+						onchange="returnChangeAmount()"/>
 					</div>
 			       
 			        <p></p>

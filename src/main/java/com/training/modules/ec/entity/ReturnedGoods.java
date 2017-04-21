@@ -26,8 +26,8 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	private double orderArrearage;				//欠款金额
 	private double returnAmount;				//退款金额
 	private String isStorage;					//货品状态（0：未入库；1：已入库）
-	private String returnStatus;				//售后状态（-10：拒绝退货；11：申请退货；12：同意退货；13：退货中；14：退货完成；15：退款中；
-												//16：已退款；-20：拒绝换货；21：申请换货；22：同意换货；23：换货退货中；24：换货退货完成；25：换货中；26：换货完成）
+	private String returnStatus;				//售后状态（-10：拒绝退货；11：申请退货；12：同意退货；13：退货中；14：退货完成；15：退款中；16：已退款；
+													   //-20：拒绝换货；21：申请换货；22：同意换货；23：换货退货中；24：换货退货完成；25：换货中；26：换货完成）
 	private String refusalCause;				//拒绝原因
 	private String problemDesc;					//问题描述
 	private String receiptBy;					//入库人
