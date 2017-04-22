@@ -43,7 +43,7 @@
 				'overlayShow'	: true,
 				'allowMultiple'	: false
 			});
-			$("#reason").focus();
+			/* $("#reason").focus(); */
 			validateForm = $("#inputForm").validate({
 				rules: {
 					returnmoney:{
@@ -82,7 +82,7 @@
 			//在ready函数中预先调用一次远程校验函数，是一个无奈的回避案。(刘高峰）
 			//否则打开修改对话框，不做任何更改直接submit,这时再触发远程校验，耗时较长，
 			//submit函数在等待远程校验结果然后再提交，而layer对话框不会阻塞会直接关闭同时会销毁表单，因此submit没有提交就被销毁了导致提交表单失败。
-			$("#inputForm").validate().element($("#reason"));
+			/* $("#inputForm").validate().element($("#reason")); */
 			
 // 			laydate({
 // 	            elem: '#userinfo.birthday', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
@@ -217,11 +217,13 @@
 					<label>支付金额：</label>
 			        <form:input path="totalAmount" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control" readonly="true"/>
 					<p></p>
-			        <label>售后商品数量：</label>
-			        <form:input path="returnNum" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control" readonly="true"/>
+					<c:if test="${returnedGoods.isReal==0}">
+				        <label>售后商品数量：</label>
+				        <form:input path="returnNum" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control" readonly="true"/>
+       				</c:if>
 					<p></p>
 					<c:if test="${returnedGoods.applyType==0}">
-						<label><font color="red">*</font>退款金额:</label>
+						<label><!-- <font color="red">*</font> -->退款金额：</label>
 				        <form:input path="returnAmount" htmlEscape="false" maxlength="10"  style="width:180px;" class="form-control required" readonly="true"/>
 					</c:if>
 			        <p></p>
@@ -240,11 +242,11 @@
 						<form:textarea path="refusalCause" htmlEscape="false" rows="3" maxlength="30" style="width:300px;" class="form-control required"/>
 						<label><font color="red">如果拒绝请说明原因</font></label>
 					</div>
-					<c:if test="${returnedGoods.returnStatus<0}">
+					<%-- <c:if test="${returnedGoods.returnStatus<0}">
 						<label>拒绝原因：</label>
 						<form:textarea path="refusalCause" htmlEscape="false" rows="3" maxlength="30" style="width:300px;" class="form-control required"/>
 						<label><font color="red">如果拒绝请说明原因</font></label>
-					</c:if>
+					</c:if> --%>
 					<div id="addreess" style="display:none;">
 						<c:if test="${returnedGoods.isReal==0}">
 							<hr>

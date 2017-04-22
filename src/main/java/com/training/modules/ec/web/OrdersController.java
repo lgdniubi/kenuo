@@ -627,16 +627,7 @@ public class OrdersController extends BaseController {
 		Orders orders=new Orders();
 		orders = ordersService.findselectByOrderId(orderid);
 		returnedGoods.setUserId(orders.getUserid());
-		if(orders.getChannelFlag().contentEquals("bm")){
-			list=ordergoodService.orderlistTow(orderid);
-		}else{
-			list=ordergoodService.orderlist(orderid);
-		}
-		//先判断是否为实物,根据orderID查询退货商品的return_status为11-15的数量
-		if(orders.getIsReal()==0){
-			int returnedGoodsNum = returnedGoodsService.findreturnedGoodsNum(orderid);
-			model.addAttribute("returnedGoodsNum", returnedGoodsNum);
-		}
+		list=ordergoodService.orderlist(orderid);
 		
 		model.addAttribute("orders", orders);
 		model.addAttribute("orderGoodList", list);
@@ -1336,12 +1327,7 @@ public class OrdersController extends BaseController {
 				return "redirect:" + adminPath + "/ec/orders/orderform?type=view&orderid="+orders.getOrderid();
 			}
 			logger.info("商品退还仓库是否成功："+result);
-			//验证订单是前台创建
-			if(orders.getChannelFlag().trim().equals("bm")){
-				goodsList=ordergoodService.orderlistTow(orders.getOrderid());
-			}else{
-				goodsList=ordergoodService.orderlist(orders.getOrderid());
-			}
+			goodsList=ordergoodService.orderlist(orders.getOrderid());
 			if(goodsList.size()>0){
 				for (int i = 0; i < goodsList.size(); i++) {
 					Date date=new Date();

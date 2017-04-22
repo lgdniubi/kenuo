@@ -42,16 +42,8 @@
 	</sql>
 
 
-	<select id="findListByOrderid" resultType="OrderGoods">
-		SELECT
-		<include refid="ordergoodsColmun"></include>
-		FROM
-		mtmydb.mtmy_order_goods_mapping a
-		WHERE a.del_flag =0
-		and a.order_id=#{orderid}
-	</select>
 	<!-- 查询数据 -->
-	<select id="orderlistTow" resultType="OrderGoods">
+	<select id="findListByOrderid" resultType="OrderGoods">
 		SELECT
 			a.rec_id,
 			a.order_id,
@@ -89,15 +81,16 @@
 			SUM(b.total_amount) as "totalAmount",
 			SUM(b.order_balance) as "orderBalance",
 			SUM(b.service_times) as "remaintimes",
-			SUM(b.order_arrearage) as "orderArrearage"
+			SUM(b.order_arrearage) as "orderArrearage",
+			IFNULL(c.return_num,0) as "returnNum"
 		FROM
 			mtmydb.mtmy_order_goods_mapping a
 		LEFT JOIN mtmydb.mtmy_order_goods_details b ON a.rec_id=b.goods_mapping_id
+		LEFT JOIN (SELECT IFNULL(SUM(return_num),0) AS return_num,goods_mapping_id FROM mtmydb.mtmy_returned_goods WHERE order_id = #{orderId} AND return_status in (11,12,13,14,15) GROUP BY order_id,goods_mapping_id) c ON c.goods_mapping_id = a.rec_id
 		WHERE
 			a.del_flag = 0
-		and a.order_id=#{orderid}
+		and a.order_id= #{orderId}
 		GROUP BY a.rec_id
-		
 	</select>
 	<!-- 通过订单号查询订单下的虚拟商品及用户信息 -->
 	<select id="findOrderGoods" resultType="OrderGoods">

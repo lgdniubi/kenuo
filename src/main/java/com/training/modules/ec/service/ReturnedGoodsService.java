@@ -96,21 +96,25 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				orders.setChannelFlag("bm");
 			}
 			ordersDao.insertReturn(orders); // 订单表 插入退货信息
-			list = saleRebatesLogDao.selectByOrderId(returnedGoods.getOrderId()); // 插入分销日志
-			if (list.size() > 0) {
-				for (int i = 0; i < list.size(); i++) {
-					SaleRebatesLog saleRebatesLog = new SaleRebatesLog();
-					saleRebatesLog.setOrderId(returnedGoods.getOrderId());
-					saleRebatesLog.setDepth(list.get(i).getDepth());
-					saleRebatesLog.setOrderAmount(-returnedGoods.getReturnAmount());
-					saleRebatesLog.setBalancePercent(list.get(i).getBalancePercent());
-					saleRebatesLog.setBalanceAmount(-list.get(i).getBalancePercent() * returnedGoods.getReturnAmount());
-					saleRebatesLog.setIntegralPercent(list.get(i).getIntegralPercent());
-					saleRebatesLog.setIntegralAmount((int) -list.get(i).getIntegralPercent());
-					saleRebatesLog.setRebateFlag(0);
-					saleRebatesLog.setRabateDate(list.get(i).getRabateDate());
-					saleRebatesLog.setDelFlag("-1");
-					saleRebatesLogDao.updateSale(saleRebatesLog);
+			
+			//查询是否有退货记录
+			if(saleRebatesLogDao.selectNumByOrderId(returnedGoods.getOrderId()) == 0){//如果无退货记录
+				list = saleRebatesLogDao.selectByOrderId(returnedGoods.getOrderId()); // 插入分销日志
+				if (list.size() > 0) {
+					for (int i = 0; i < list.size(); i++) {
+						SaleRebatesLog saleRebatesLog = new SaleRebatesLog();
+						saleRebatesLog.setOrderId(returnedGoods.getOrderId());
+						saleRebatesLog.setDepth(list.get(i).getDepth());
+						saleRebatesLog.setOrderAmount(-returnedGoods.getReturnAmount());
+						saleRebatesLog.setBalancePercent(list.get(i).getBalancePercent());
+						saleRebatesLog.setBalanceAmount(-list.get(i).getBalancePercent() * returnedGoods.getReturnAmount());
+						saleRebatesLog.setIntegralPercent(list.get(i).getIntegralPercent());
+						saleRebatesLog.setIntegralAmount((int) -list.get(i).getIntegralPercent());
+						saleRebatesLog.setRebateFlag(0);
+						saleRebatesLog.setRabateDate(list.get(i).getRabateDate());
+						saleRebatesLog.setDelFlag("-1");
+						saleRebatesLogDao.updateSale(saleRebatesLog);
+					}
 				}
 			}
 			if (returnedGoods.getIsConfirm() == -10) {
@@ -274,20 +278,6 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		// 执行分页查询
 		page.setList(returnedGoodsDao.findListByUser(returnedGoods));
 		return page;
-	}
-
-	/**
-	 * 根据orderID查询退货商品的return_status为11-15的数量
-	 * @param orderid
-	 * @return
-	 */
-	public int findreturnedGoodsNum(String orderid) {
-		int num = returnedGoodsDao.selectreturnedGoodsNum(orderid);//先查询实物中是否有正在退货的商品
-		if(num == 0){
-			return 0;
-		}else{
-			return returnedGoodsDao.findreturnedGoodsNum(orderid);
-		}
 	}
 
 }

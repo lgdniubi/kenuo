@@ -24,12 +24,6 @@ public interface OrderGoodsDao extends TreeDao<OrderGoods> {
 	 * @return
 	 */
 	public List<OrderGoods> findListByOrderid(String orderid);
-	/**
-	 * 根据订单id查询订单下商品
-	 * @param id
-	 * @return
-	 */
-	public List<OrderGoods> orderlistTow(String orderid);
 	
 	/**
 	 * 保存新建订单数据
