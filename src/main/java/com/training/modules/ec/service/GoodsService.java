@@ -499,19 +499,8 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 								goodsSpecPricesList.add(gsp);
 								goodsSpecPricesList2.add(specItemList.get(i));
 							}
-							boolean flag = false;
-							if (gspList.size() == goodsSpecPricesList.size()) {
-								for (String s2 : goodsSpecPricesList1) {
-									for (String s1 : goodsSpecPricesList2) {
-										if (s2.equals(s1)) {
-											flag = true;
-											break;
-										}
-									}
-								}
-							} else {
-								flag = false;
-							}
+							//判断商品规格是否更改,更改就修改,如果没有,则直接跳过
+							boolean flag = (gspList.size() == goodsSpecPricesList.size()) && gspList.containsAll(goodsSpecPricesList);
 							if (!flag) {
 								List<String> items = GoodsUtil.getitemsvalue(list);
 
