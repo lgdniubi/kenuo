@@ -14,6 +14,19 @@
 		  client 
 		FROM
 		  mtmydb.mtmy_version
+		WHERE 1 = 1
+			<if test="versionCode != null and versionCode != ''">
+				AND versionCode LIKE CONCAT('%', #{versionCode}, '%')
+			</if>
+			<if test="type !=null and type !=''">
+				AND type = #{type}
+			</if>
+			<if test="client != null and client != ''">
+				AND client = #{client}
+			</if>
+			<if test="Flag !=null and Flag !=''">
+				AND del_flag=#{Flag}
+			</if>
 		ORDER BY add_time DESC
 	</select>
 	

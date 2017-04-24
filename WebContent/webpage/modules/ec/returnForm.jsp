@@ -74,13 +74,6 @@
 		  return false;
 		}
 		
-		/* //初始化
-		function init(){
-			var isReal="${orders.isReal}";
-			if(isReal==1){
-				$("#returnNum").attr("readonly",true);
-			}
-		} */
 		//选中某个商品时,查询数据
 		function selectFunction(o){
 			var id=$("#selectId:checked").val();
@@ -94,7 +87,7 @@
 			singleRealityPrice=$("#"+id+"singleRealityPrice").val();//实际服务单次价
 			totalAmount=$("#"+id+"total").val();//实付款
 			if(isReal==0){
-				returnedGoodsNum = $("#returnedGoodsNum").val();//实物中  从后台查出来的退货中的数量
+				returnedGoodsNum = $("#"+id+"returnedGoodsNum").val();//实物中  从后台查出来的退货中的数量
 				$("#returnNum").val(parseInt(goodNum)-parseInt(returnedGoodsNum));//为售后商品数量赋值
 			}
 
@@ -231,7 +224,6 @@
 			}
 		}
 		$(document).ready(function(){
-			$("#reason").focus();
 			validateForm = $("#inputForm").validate({
 				rules: {
 					returnmoney:{
@@ -270,7 +262,6 @@
 			//在ready函数中预先调用一次远程校验函数，是一个无奈的回避案。(刘高峰）
 			//否则打开修改对话框，不做任何更改直接submit,这时再触发远程校验，耗时较长，
 			//submit函数在等待远程校验结果然后再提交，而layer对话框不会阻塞会直接关闭同时会销毁表单，因此submit没有提交就被销毁了导致提交表单失败。
-			$("#inputForm").validate().element($("#reason"));
 			
 // 			laydate({
 // 	            elem: '#userinfo.birthday', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
@@ -279,8 +270,6 @@
 			
 			
 		});
-
-		window.onload = init;
 </script>
 </head>
 <body>
@@ -346,7 +335,7 @@
 								<input type="hidden" id="${orderGood.recid}orderAmount" name="${orderGood.recid}orderAmount" value="${orderGood.orderAmount}" />
 								<input type="hidden" id="${orderGood.recid}orderArrearage" name="${orderGood.recid}orderArrearage" value="${orderGood.orderArrearage}" />
 								<c:if test="${orderGood.isreal==0}">
-									<input type="hidden" id="returnedGoodsNum" value="${returnedGoodsNum}" />
+									<input type="hidden" id="${orderGood.recid}returnedGoodsNum" value="${orderGood.returnNum}" />
 								</c:if>
 							</c:forEach>
 						</tbody>						
@@ -375,13 +364,15 @@
 			        <label><font color="red">*</font>支付金额：</label>
 			        <form:input path="totalAmount" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control" readonly="true"/>
 					<p></p>
-			        <label><font color="red">*</font>售后商品数量：</label>
-			        <form:input path="returnNum" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control"
-			        onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
-					onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
-					onfocus="if(value == '0'){value=''}"
-					onblur="if(value == ''){value='0'}"
-			        onchange="returnChangeNum()"/>
+					<c:if test="${orders.isReal==0}">
+				        <label><font color="red">*</font>售后商品数量：</label>
+				        <form:input path="returnNum" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control"
+				        onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
+						onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+						onfocus="if(value == '0'){value=''}"
+						onblur="if(value == ''){value='0'}"
+				        onchange="returnChangeNum()"/>
+			        </c:if>
 					<c:if test="${orders.isReal==1}">
 						<p></p>
 						<label><font color="red">*</font>售后次数：</label>

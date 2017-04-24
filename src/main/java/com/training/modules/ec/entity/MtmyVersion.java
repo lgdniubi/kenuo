@@ -14,9 +14,9 @@ public class MtmyVersion extends DataEntity<MtmyVersion>{
 	private String versionCode;
 	private Date addTime;
 	private String remark;
-	private int type;
+	private String type;
 	private String client;
-	private int Flag;
+	private String Flag;
 	public String getVersionCode() {
 		return versionCode;
 	}
@@ -35,22 +35,24 @@ public class MtmyVersion extends DataEntity<MtmyVersion>{
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-	public int getType() {
-		return type;
-	}
-	public void setType(int type) {
-		this.type = type;
-	}
 	public String getClient() {
 		return client;
 	}
 	public void setClient(String client) {
 		this.client = client;
 	}
-	public int getFlag() {
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public String getFlag() {
 		return Flag;
 	}
-	public void setFlag(int flag) {
+	public void setFlag(String flag) {
 		Flag = flag;
 	}
+	
+	
 }
