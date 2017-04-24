@@ -500,7 +500,7 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 								goodsSpecPricesList2.add(specItemList.get(i));
 							}
 							//判断商品规格是否更改,更改就修改,如果没有,则直接跳过
-							boolean flag = (gspList.size() == goodsSpecPricesList.size()) && gspList.containsAll(goodsSpecPricesList);
+							boolean flag = (goodsSpecPricesList1.size() == goodsSpecPricesList2.size()) && goodsSpecPricesList1.containsAll(goodsSpecPricesList2);
 							if (!flag) {
 								List<String> items = GoodsUtil.getitemsvalue(list);
 
