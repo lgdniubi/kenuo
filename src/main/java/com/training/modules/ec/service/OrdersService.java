@@ -664,7 +664,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				if(actualPayment > orderAmount){  //实付大于应付
 					totalAmount = orderAmount;	//计算后实付款金额
 					afterPaymentSum = afterPaymentSum + totalAmount;  //实际付款总额
-					orderBalance = actualPayment-orderAmount;	//订单余款
+					orderBalance = Double.parseDouble(formater.format(actualPayment-orderAmount));	//订单余款
 					spareMoneySum = spareMoneySum+orderBalance;	//总余额
 					orderArrearage = 0;	//订单欠款
 					debtMoneySum = debtMoneySum + orderArrearage;		//总欠款
@@ -679,7 +679,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					spareMoneySum = spareMoneySum + orderBalance;	//总余额
 					orderArrearage = _debtMoney;	//订单欠款
 					debtMoneySum = debtMoneySum + orderArrearage;		//总欠款
-					newOrderBalance = actualPayment - _afterPayment;                              //商品余额（只放在details里的OrderBalance）
+					newOrderBalance = Double.parseDouble(formater.format(actualPayment - _afterPayment));                              //商品余额（只放在details里的OrderBalance）
 					appTotalAmount = actualPayment;                   //app实付金额
 					appArrearage = Double.parseDouble(formater.format(orderAmount - actualPayment)); //app欠款金额
 				}
@@ -975,7 +975,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				// 实际单次标价  < 实付款金额	< 欠款
 				serviceTimes_in = (int)Math.floor(newTotalAmount/singleRealityPrice);//充值次数
 				totalAmount_in = serviceTimes_in * singleRealityPrice;//实付金额
-				accountBalance_in = totalAmount - totalAmount_in - accountBalance;
+				accountBalance_in = Double.parseDouble(formater.format(totalAmount - totalAmount_in - accountBalance));
 				
 				newSpareMoneySum = -accountBalance;
 				newOrderBalance = Double.parseDouble(formater.format(newTotalAmount - totalAmount_in - sumOrderBalance));//商品余额（只放在details里的OrderBalance）
@@ -985,7 +985,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				//实付款金额	>  欠款
 				serviceTimes_in = _servicetimes-oLog.getRemaintimes();//充值次数
 				totalAmount_in = orderArrearage;//实付金额
-				accountBalance_in = totalAmount - totalAmount_in - accountBalance;
+				accountBalance_in = Double.parseDouble(formater.format(totalAmount - totalAmount_in - accountBalance));
 				
 				newSpareMoneySum = Double.parseDouble(formater.format(newTotalAmount - orderArrearage - accountBalance));//商品总余额(当实付大于欠款时，将多的存入个人账户余额中)
 				newOrderBalance = -sumOrderBalance;//商品余额（只放在details里的OrderBalance）
@@ -1004,7 +1004,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			if(newTotalAmount<=orderArrearage){
 				//实际付款 <= 欠款
 				totalAmount_in = totalAmount;
-				accountBalance_in = totalAmount- totalAmount_in - accountBalance;
+				accountBalance_in = Double.parseDouble(formater.format(totalAmount- totalAmount_in - accountBalance));
 				
 				newSpareMoneySum = -accountBalance;
 				newOrderBalance = 0;//商品余额（只放在details里的OrderBalance）
@@ -1013,9 +1013,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			}else if(newTotalAmount > orderArrearage){
 				//实际付款 > 欠款
 				totalAmount_in = orderArrearage;
-				accountBalance_in = totalAmount- totalAmount_in - accountBalance;
+				accountBalance_in = Double.parseDouble(formater.format(totalAmount- totalAmount_in - accountBalance));
 				
-				newSpareMoneySum = newTotalAmount - orderArrearage - accountBalance;//商品总余额(当实付大于欠款时，将多的存入个人账户余额中)
+				newSpareMoneySum = Double.parseDouble(formater.format(newTotalAmount - orderArrearage - accountBalance));//商品总余额(当实付大于欠款时，将多的存入个人账户余额中)
 				newOrderBalance = 0;//商品余额（只放在details里的OrderBalance）
 				appTotalAmount =  Double.parseDouble(formater.format(goodsPrice - sumAppTotalAmount));//app实付金额
 				appArrearage = -sumAppArrearage;//app欠款金额
@@ -1184,7 +1184,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			if(orderAmount > actualPayment){
 				//应付 > 实付
 				actualPayment_on = actualPayment;
-				orderArrearage_on =orderAmount - actualPayment_on;
+				orderArrearage_on = Double.parseDouble(formater.format(orderAmount - actualPayment_on));
 				orderBalance_on = 0;
 				newOrderBalance = 0;                              //商品余额（只放在details里的OrderBalance）
 				appTotalAmount = actualPayment;                   //app实付金额
@@ -1201,7 +1201,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				//应付 < 实付
 				actualPayment_on = orderAmount;
 				orderArrearage_on = 0;
-				orderBalance_on = actualPayment - actualPayment_on;
+				orderBalance_on = Double.parseDouble(formater.format(actualPayment - actualPayment_on));
 				newOrderBalance = 0;                              //商品余额（只放在details里的OrderBalance）
 				appTotalAmount = orderAmount;                   //app实付金额
 				appArrearage = 0;                                 //app欠款金额
@@ -1509,7 +1509,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			totalAmount_in_a = serviceTimes_in_a * singleRealityPrice;//实付金额
 			accountBalance_in =  Double.parseDouble(formater.format(totalAmount - totalAmount_in_a));     //订单余款
 			totalAmount_in = Double.parseDouble(formater.format(totalAmount_in_a - advance));        //存入库的实付款金额=实付款金额-订金
-			newSpareMoneySum = accountBalance;
+			newSpareMoneySum = -accountBalance;
 			appTotalAmount = 0;                   //app实付金额
 			appArrearage = 0; //app欠款金额
 		}else if(singleRealityPrice >= advance){
