@@ -84,7 +84,13 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		String currentUser = UserUtils.getUser().getName();
 		returnedGoods.setAuditBy(currentUser);
 		if ("11".equals(returnedGoods.getReturnStatus())) { // 申请退货退款
-			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
+			//判断是否为虚拟商品;是:直接状态为15退款中,入库状态为"空" -1.
+			if(returnedGoods.getIsReal() == 1){
+				returnedGoods.setReturnStatus(15 + "");
+				returnedGoods.setIsStorage(-1 + "");
+			}else{
+				returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
+			}
 			returnedGoodsDao.saveEdite(returnedGoods);//添加退货信息到mtmy_returned_goods表中
 			Orders orders = ordersDao.get(returnedGoods.getOrderId());
 			orders.setOrderid(returnedGoods.getId());

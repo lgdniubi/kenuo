@@ -108,7 +108,8 @@
 			audit_by=#{auditBy},
 			audit_date=SYSDATE(),
 			update_by=#{auditBy},
-			update_date=SYSDATE()
+			update_date=SYSDATE(),
+			is_storage=#{isStorage}
 		where id=#{id}
 	</update>
 	<!-- 确认入库 -->
