@@ -1651,19 +1651,19 @@ public class OrdersController extends BaseController {
 												}else if("支付宝App支付".equals(payCode)){
 													orders.setPaycode("alipay");
 												}else if("银联".equals(payCode)){
-													orders.setPaycode("");
+													orders.setPaycode("upacp_wap");
 												}else if("微信公众号".equals(payCode)){
-													orders.setPaycode("");
+													orders.setPaycode("wx_pub");
 												}else if("微信公众号扫码".equals(payCode)){
-													orders.setPaycode("");
+													orders.setPaycode("wx_pub_qr");
 												}else if("支付宝手机网页".equals(payCode)){
-													orders.setPaycode("");
+													orders.setPaycode("alipay_wap");
 												}else if("支付宝扫码支付".equals(payCode)){
-													orders.setPaycode("");
+													orders.setPaycode("alipay_qr");
 												}else if("现金支付".equals(payCode)){
-													orders.setPaycode("");
+													orders.setPaycode("money");
 												}else if("易宝手机网页支付".equals(payCode)){
-													orders.setPaycode("");
+													orders.setPaycode("yeepay_wap");
 												}
 										
 												ordersService.saveVirtualOrder(orders);
