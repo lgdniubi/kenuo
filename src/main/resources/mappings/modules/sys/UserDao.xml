@@ -748,4 +748,11 @@
 		FROM sys_user
 		WHERE no = #{no}
 	</select>
+	
+	<!-- 验证用户是否为特殊美容师 -->
+	<select id="selectSpecBeautician" resultType="Integer">
+		SELECT COUNT(*)
+		FROM trains.train_special_beautician
+		WHERE user_id = #{userId}
+	</select>
 </mapper>
