@@ -957,6 +957,7 @@ public class OrdersController extends BaseController {
 					addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
 				}
 			}else{
+				ordersService.updateVirtualOrder(orders);
 				addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
 			}
 		} catch (Exception e) {
