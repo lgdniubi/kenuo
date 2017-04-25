@@ -19,7 +19,6 @@ import com.training.modules.ec.dao.EquipmentLabelDao;
 import com.training.modules.ec.dao.GoodsAttributeDao;
 import com.training.modules.ec.dao.GoodsDao;
 import com.training.modules.ec.dao.GoodsSpecPriceDao;
-import com.training.modules.ec.dao.OrderGoodsDao;
 import com.training.modules.ec.entity.Effect;
 import com.training.modules.ec.entity.EquipmentLabel;
 import com.training.modules.ec.entity.Goods;
@@ -63,8 +62,6 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 	private GoodsAttributeDao goodsAttributeDao;
 	@Autowired
 	private ModifyGoodsStore modifyGoodsStore;
-	@Autowired
-	private OrderGoodsDao orderGoodsDao;
 	@Autowired
 	private SkillDao skillDao;
 	@Autowired
