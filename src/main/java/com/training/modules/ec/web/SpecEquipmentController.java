@@ -45,8 +45,6 @@ public class SpecEquipmentController extends BaseController {
 	@Autowired
 	private SpecEquipmentDao specEquipmentDao;
 	
-	@RequiresPermissions("ec:specEquipment:list")
-	@RequestMapping(value="list")
 	/**
 	 * 分页查询设备列表
 	 * @param equipment
@@ -55,6 +53,8 @@ public class SpecEquipmentController extends BaseController {
 	 * @param model
 	 * @return
 	 */
+	@RequiresPermissions("ec:specEquipment:list")
+	@RequestMapping(value="list")
 	public String list(Equipment equipment, HttpServletRequest request, HttpServletResponse response, Model model) {
 		try{
 			Page<Equipment> page = specEquipmentService.findList(new Page<Equipment>(request, response), equipment);
