@@ -553,7 +553,7 @@ public class UserController extends BaseController {
 						if ("true".equals(checkLoginName("", user.getLoginName()))) {
 							if(isInteger(user.getMobile())){
 								if (user.getMobile().length() == 11) {
-									if ("4".equals(JSONObject.fromObject(newCheckMobile(user.getMobile())).get("result"))) {              
+									if ("4".equals(JSONObject.fromObject(newCheckMobile(user.getMobile(),"")).get("result"))) {              
 										if ("true".equals(checkIdcard("", user.getIdCard()))) {
 											if (user.getIdCard().length() == 15 || user.getIdCard().length() == 18) {
 												if("true".equals(checkOfficeId(user.getCode()))){
@@ -611,7 +611,7 @@ public class UserController extends BaseController {
 										}
 	
 									} else {
-										String result = JSONObject.fromObject(newCheckMobile(user.getMobile())).getString("result");
+										String result = JSONObject.fromObject(newCheckMobile(user.getMobile(),"")).getString("result");
 										if("3".equals(result)){
 											failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码妃子校和每天美耶都已注册,请联系管理员; ");
 											failureNum++;
@@ -917,24 +917,31 @@ public class UserController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions(value = { "sys:user:add", "sys:user:edit" }, logical = Logical.OR)
 	@RequestMapping(value = "newCheckMobile")
-	public String newCheckMobile(String mobile) {
+	public String newCheckMobile(String mobile,String oldMobile) {
 		JSONObject jsonO = new JSONObject();
-		Users user = new Users();
-		user.setMobile(mobile);
-		if(mobile != null && systemService.getByMobile(mobile) != null && mtmyUsersDao.findUserBymobile(user) != 0){
-			jsonO.put("result", "3");
+		if((mobile != null || !"".equals(mobile))&& mobile.equals(oldMobile)){
+			jsonO.put("result", "4");
 			return jsonO.toString();
-		}else if(mobile != null && mtmyUsersDao.findUserBymobile(user) != 0){
-			String layer = mtmyUsersDao.selectLayer(mobile);
-			jsonO.put("result", "2");
-			jsonO.put("layer",layer);
-			return jsonO.toString();
-		}else if (mobile != null && systemService.getByMobile(mobile) != null){
-			jsonO.put("result", "1");
+		}else{
+			Users user = new Users();
+			user.setMobile(mobile);
+			User sysUser = systemService.getByMobile(mobile);	// 查看妃子校用户是否存在
+			int num = mtmyUsersDao.findUserBymobile(user);		// 查询每天美耶用户是否存在
+			if(mobile != null && sysUser != null && num != 0){
+				jsonO.put("result", "3");
+				return jsonO.toString();
+			}else if(mobile != null && num != 0){
+				String layer = mtmyUsersDao.selectLayer(mobile);
+				jsonO.put("result", "2");
+				jsonO.put("layer",layer);
+				return jsonO.toString();
+			}else if (mobile != null && sysUser != null){
+				jsonO.put("result", "1");
+				return jsonO.toString();
+			}
+			jsonO.put("result", "4");
 			return jsonO.toString();
 		}
-		jsonO.put("result", "4");
-		return jsonO.toString();
 	}
 	
 

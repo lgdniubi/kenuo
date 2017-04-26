@@ -17,10 +17,6 @@
 	<script type="text/javascript">
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-			var html=$("#mobileError").html();
-			if(html.length > 0){
-				return;
-			}
 		  if(validateForm.form()){
         	  loading('正在提交，请稍等...');
 		      $("#inputForm").submit();
@@ -30,49 +26,33 @@
 		}
 		
 		function init(){
-			var val="${user.userType}";
-			if(val==2){
+			var val="${user.roleNames}";
+			if(val.indexOf("排班")>=0){
 				document.getElementById("hideen").style.display="";
 			}
 			
 		}
-		
-		function select(o){
-		//	var val=jQuery("#userType").val();
-			if(o==2){
-				//document.getElementById("hideen").style.visibility="visible";
-				document.getElementById("hideen").style.display="";	
-			}else{
-				document.getElementById("hideen").style.display="none";
-			}
-			
-		}
-		
-		//绑定字典内容到指定的Select控件
-// 		function BindSelect() {
-			
-// 		var control=$("#nativearea");
-		    
-// 		    $.ajax({   
-// 		    	type:'post',
-// 		        url:'${ctx}/sys/area/treeDataJson',     
-// 		        data:{}, 
-// 		        dataType:'json',
-// 		        success:function(data){    
-// 		        	 control.empty();//清空下拉框
-// 		        	 jQuery.each(data.roomList, function(i,item){     
-// 		                 alert(item.id+","+item.name);     
-// 		             });  
-// 		        }  
-// 		    });  
-		    
-// 		}
-		
 			// 手机号码验证
 			jQuery.validator.addMethod("isMobile", function(value, element) {
 			    var length = value.length;
 			    var mobile = /^(133[0-9]{8})|(153[0-9]{8})|(180[0-9]{8})|(181[0-9]{8})|(189[0-9]{8})|(177[0-9]{8})|(130[0-9]{8})|(131[0-9]{8})|(132[0-9]{8})|(155[0-9]{8})|(156[0-9]{8})|(185[0-9]{8})|(186[0-9]{8})|(145[0-9]{8})|(170[0-9]{8})|(176[0-9]{8})|(134[0-9]{8})|(135[0-9]{8})|(136[0-9]{8})|(137[0-9]{8})|(138[0-9]{8})|(139[0-9]{8})|(150[0-9]{8})|(151[0-9]{8})|(152[0-9]{8})|(157[0-9]{8})|(158[0-9]{8})|(159[0-9]{8})|(182[0-9]{8})|(183[0-9]{8})|(184[0-9]{8})|(187[0-9]{8})|(188[0-9]{8})|(147[0-9]{8})|(178[0-9]{8})|(149[0-9]{8})|(173[0-9]{8})|(175[0-9]{8})|(171[0-9]{8})$/;       
-			    return this.optional(element) || (length == 11 && mobile.test(value));
+			    var isShow;
+			    var num = clean();
+			    if(num == '1'){ // 只存在妃子校
+			    	isShow = false;
+			    }else if(num == '3'){ // 妃子校、每天美耶都存在
+			    	layer.msg('该号码每天美耶、妃子校已存在!'); 
+			    	isShow = false;
+			    }else if(num == '4'){ 
+			    	isShow = true;
+			    }else if(num == 'Z'){ 
+			    	layer.msg('该号码每天美耶已存在!该用户等级为'+num+'级'); 
+			    	isShow = true;
+			    }else{
+			    	layer.msg('该号码每天美耶已存在!该用户等级为'+num+'级');
+			    	isShow = true;
+			    }
+			    return this.optional(element) || ((length == 11 && mobile.test(value)) && isShow);
 			}, "请正确填写您的手机号码");
 			// 身份证号码验证
 			jQuery.validator.addMethod("isIdCard", function(value, element) {
@@ -80,46 +60,6 @@
 			    var idCard = /^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$/;       
 			    return this.optional(element) || ((length == 15 || length == 18) && idCard.test(value));
 			}, "请正确填写您的身份证号码");
-			jQuery.validator.addMethod("isShow", function(value, element) {
-				$("#mobileError").html("");
-				var length = value.length;
-				var oldMobile=$("#oldMobile").val();
-				if(oldMobile==value){
-					
-				}else{
-					if(length !=11){
-						$("#mobileError").html("手机号要为11位");	
-						return false;
-					/* }else{
-						$("#mobileError").html("手机号要为11位");	
-						return false; */
-					}
-				}
-				return true;
-			},"请正确填写您的手机号码");
-			/* jQuery.validator.addMethod("delIdCard", function(value, element) {    //用jquery ajax的方法验证身份证号码是否被删除 
-				  var flag = 1;
-			      $.ajax({  
-			          type:"get",  
-			          url:"${ctx}/sys/user/checkDelIdcard",  
-			          async:false,        //同步方法，如果用异步的话，flag永远为1  
-			          data:{'oldIdCard':$('#oldIdCard').val(),'idCard':$('#idCard').val()},  
-			          dateType: 'text',
-			          success: function(data){ 
-			               if(data.id != null && data.status == 1){ 
-			            	  alert("此用户已被删除");
-			            	  flag = 0;
-			               }else if(data.id != null && data.status == 0){
-			            	  flag = 0;
-			               }
-			          }  
-			      }); 
-			      if(flag == 0){  
-			          return false;  
-			      }else{  
-			          return true;  
-			      }  
-			  }, "此身份证号码已存在"); */
 			function delIdCard(num){
 				  $.ajax({  
 			          type:"get",  
@@ -137,22 +77,7 @@
 			      }); 
 			  }
 			  
-			 /*  function openDialogView(title,url,width,height){
-					top.layer.open({
-					    type: 2,  
-					    area: [width, height],
-					    title: title,
-				        maxmin: true, //开启最大化最小化按钮
-					    content: url ,
-					    btn: ['关闭'],
-					    cancel: function(index){ 
-					       }
-					}); 	
-					
-				} */
-			  
 		$(document).ready(function(){
-		
 			$("#userTypeButton").click(function(){
 				// 是否限制选择，如果限制，设置为disabled
 				if ($("#userTypeButton").hasClass("disabled")){
@@ -182,7 +107,6 @@
 								$("#userTypeId").val(ids.join(",").replace(/u_/ig,""));
 								$("#userTypeName").val(names.join(","));
 								$("#userTypeName").focus();
-								select($("#userTypeId").val());
 								top.layer.close(index);
 						    	       },
 		    	cancel: function(index){ //或者使用btn2
@@ -297,11 +221,6 @@
 					}
 				}
 			});
-			
-		
-			
-		
-			
 			validateForm = $("#inputForm").validate({
 				rules: {
 					/* no:{remote:"${ctx}/sys/user/checkNO?oldNo=" + encodeURIComponent('${user.no}')}, */
@@ -321,11 +240,8 @@
 						}
 					},
 					mobile:{
-						isShow:true,
 						digits:true,
 						isMobile:true
-						
-						
 					},
 					idCard:{
 						isIdCard: true,
@@ -340,11 +256,8 @@
 					no:{remote:"用户工号已存在"},
 					loginName: {remote: "用户登录名已存在"},
 					mobile:{
-						isShow:"",
 						digits:"输入合法手机号",
 						isMobile :"请输入正确手机号"
-						
-						
 					},
 					idCard:{
 						isIdCard :"请输入正确身份证号码",
@@ -366,9 +279,6 @@
 					}
 				}
 			});
-			
-		
-		
 			//在ready函数中预先调用一次远程校验函数，是一个无奈的回避案。(刘高峰）
 			//否则打开修改对话框，不做任何更改直接submit,这时再触发远程校验，耗时较长，
 			//submit函数在等待远程校验结果然后再提交，而layer对话框不会阻塞会直接关闭同时会销毁表单，因此submit没有提交就被销毁了导致提交表单失败。
@@ -392,42 +302,30 @@
 
 		window.onload=init;
 		//window.onload=BindSelect;
-		
 		function clean(){
-			 $("#mobileError").html("");
-			 $("#mobileWarn").html("");
+			 var flag;
 			 $.ajax({
 				  async:false,
 		          type:"get",  
 		          url:"${ctx}/sys/user/newCheckMobile",  
-		          data:{'mobile':$('#mobile').val()},  
+		          data:{'mobile':$('#mobile').val(),'oldMobile':$('#oldMobile').val()},  
 		          dateType:'json',
 		          success: function(data){ 
 		        	  newData = eval("("+data+")");
 		        	  var result = newData.result;
 		        	  var layer = newData.layer;
-		              if (result == '1'){
-		            	 $("#mobileError").html("该号码妃子校已存在");
-		            	 return;
-		              }else if(result == '2'){
-		            	  $("#result").val(result);
-		            	  $("#layer").val(layer);
-		            	  if($("#id").val()){
-		            		  top.layer.alert('该号码每天美耶已存在!', {icon: 0, title:'提醒'}); 
-		            		  return;
-		            	  }else{
-		            		  if(layer == 'Z'){
-			            		  top.layer.alert('该号码每天美耶已存在!该用户无等级', {icon: 0, title:'提醒'}); 
-			            	  }else{
-			            		  top.layer.alert('该号码每天美耶已存在!该用户等级为'+layer, {icon: 0, title:'提醒'}); 
-			            	  }
-		            	  }
-		              }else if(result == '3'){
-		            	 $("#mobileError").html("该号码妃子校和每天美耶都已存在");
-		            	 return;
+		              if("4" == result){ /* 正常数据 */
+		            	  flag = '4';
+		              }else if("3" == result){ /* 妃子校、每天美耶都存在 */
+		            	  flag = '3';
+		              }else if("2" == result){ /* 只存在每天美耶 */
+		            	  flag = layer;
+		              }else if("1" == result){ /* 只存在妃子校 */
+		            	  flag = '1';
 		              }
 		          }
 		      });
+			 return flag;
 		}
 		
 	</script>
@@ -443,10 +341,6 @@
 		      <tr>
 		         <td class="width-15 active"><label class="pull-right">头像:</label></td>
 		         <td class="width-35">
-		         	<%-- 
-		         	<form:hidden id="nameImage" path="photo" htmlEscape="false" maxlength="255" />
-					<sys:ckfinder input="nameImage" type="images" uploadPath="/photo" selectMultiple="false" maxWidth="100" maxHeight="100"/> 
-					--%>
 					<img id="photosrc" src="${user.photo}" alt="images" style="width: 200px;height: 100px;"/>
 					<input type="hidden" id="photo" name="photo" value="${user.photo}">
 					<div class="upload">
@@ -501,8 +395,7 @@
 		         <td class="active"><label class="pull-right"><font color="red">*</font>手机:</label></td>
 		         <td>
 			         <input id="oldMobile" name="oldMobile" type="hidden" value="${user.mobile}">
-			         <form:input path="mobile" htmlEscape="false" maxlength="11" class="form-control required" onchange="clean()" />
-			         <br><label><font color="red" id="mobileError"></font></label><br>
+			         <form:input path="mobile" htmlEscape="false" maxlength="11" class="form-control required"/>
 			         <input type="hidden" id="star"> 
 		         </td>
 		         <td class="active"><label class="pull-right">是否允许登录:</label></td>
@@ -526,7 +419,7 @@
 					<label id="userTypeName-error" class="error" style="display:none" for="userTypeName"></label>
 					
 				 </td>
-				 <!-- 原数据权限  2013.11.9  咖啡修改 -->
+				 <!-- 原数据权限  2016.11.9  咖啡修改 -->
 		         <%-- <td class="active"><label class="pull-right"><font color="red">*</font>用户角色:</label></td>
 		         <td>
 		         	<form:checkboxes path="roleIdList" items="${allRoles}" itemLabel="name" itemValue="id" htmlEscape="false" cssClass="i-checks required"/>
@@ -592,21 +485,16 @@
 			 <td class="width-35">
 			 <input id="userinfo.birthday" name="userinfo.birthday" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
 				value="<fmt:formatDate value="${user.userinfo.birthday}" pattern="yyyy-MM-dd"/>"/>
-			
 			</td>
 		  	</tr>
 		  	<tr>
 		  		<td class="width-15 active"><label class="pull-right">籍贯:</label></td>
-		  		
- 					
 		  		<td class="width-35"><sys:treeselect id="nativearea" name="userinfo.areaP.id" value="${user.userinfo.areaP.id}" labelName="userinfo.areaP.name" labelValue="${user.userinfo.areaP.name}"
  					title="区域" url="/sys/area/treeData"  cssClass="form-control"  allowClear="true"  notAllowSelectParent="true"/>
 				</td>
-
 		  		<td class="width-15 active"><label class="pull-right">工作地点:</label></td>
 		  		<td class="width-35"><sys:treeselect id="workarea" name="userinfo.areaC.id" value="${user.userinfo.areaC.id}" labelName="userinfo.areaC.name" labelValue="${user.userinfo.areaC.name}"
 							title="区域" url="/sys/area/treeData" cssClass="form-control" allowClear="true" notAllowSelectParent="true"/></td> 
-		  		
 		  	</tr>
 		  	<tr>
 		  		<td class="width-15 active"><label class="pull-right">职位:</label></td>
@@ -667,17 +555,14 @@
 					</c:forEach>
 				</td>
 		  	</tr>
-		  	
 		  	<tr>
 		  		<td class="width-15 active"><label class="pull-right">自我评价:</label></td>
 		  		<td colspan="3"><form:textarea path="userinfo.selfintro" htmlEscape="false" rows="10" cols="60" /></td>
 		  	</tr>
-		  	
 		  	<tr>
 		  		<td class="width-15 active"><label class="pull-right">培训师评价:</label></td>
 		  		<td colspan="3"><form:textarea path="userinfo.teachersComment" htmlEscape="false" rows="10" cols="60" /></td>
 		  	</tr>
-		  	
 		 </tbody>
 		 </table> 
 		 <c:if test="${not empty user.id && !empty userLogs}">    
