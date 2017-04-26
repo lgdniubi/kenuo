@@ -36,8 +36,8 @@
 					<div class="row">
 						<div class="col-sm-12">
 							<div id='workState'>
-								<input type="button" value='班' id='goWork' class="btn btn-default">&nbsp;
-								<input type="button" value='修' id='holiday' class="btn btn-default">&nbsp;
+								<input type="button" value='班' id='goWork' class="btn btn-default" style="color: #5ec4ff">&nbsp;
+								<input type="button" value='修' id='holiday' class="btn btn-default" style="color: #ff3000">&nbsp;
 								<input type="button" value='清' id='delWork' class="btn btn-default"> &nbsp;
 								<shiro:hasPermission name="train:arrange:save">
 									<input type="button" onclick="save()"  class="btn btn-default" value="保存">
