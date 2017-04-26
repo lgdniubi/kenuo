@@ -561,6 +561,7 @@
 		  mtmydb.mtmy_spec_goods_price 
 		WHERE spec_key = #{specKey}
 		AND goods_id = #{goodsId}
+		AND del_flag = 0
 	</select>
 	
 	<!-- 商品规格specKey，修改商品规格价格 -->

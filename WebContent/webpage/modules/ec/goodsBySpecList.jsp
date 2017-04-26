@@ -17,7 +17,7 @@
 			top.layer.open({
 			    type: 2, 
 			    area: ['350px', '550px'],
-			    title:"编辑红包",
+			    title:"编辑规格",
 			    content: "${ctx}/ec/goods/goodsBySpecForm?goodsId="+goodsId+"&specKey="+specKey,
 			    btn: ['确定', '关闭'],
 			    yes: function(index, layero){
