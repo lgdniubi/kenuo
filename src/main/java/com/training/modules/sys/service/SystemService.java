@@ -1028,4 +1028,13 @@ public class SystemService extends BaseService implements InitializingBean {
 	public int selectNo(String no){
 		return userDao.selectNo(no);
 	}
+	
+	/**
+	 * 验证用户是否为特殊美容师 
+	 * @param id
+	 * @return
+	 */
+	public int selectSpecBeautician(String id){
+		return userDao.selectSpecBeautician(id);
+	}
 }

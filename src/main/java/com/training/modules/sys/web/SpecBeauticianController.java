@@ -61,7 +61,7 @@ public class SpecBeauticianController extends BaseController{
 	
 	/**
 	 * 新增特殊美容师
-	 * @param skill
+	 * @param request
 	 * @param model
 	 * @return
 	 */
@@ -79,7 +79,7 @@ public class SpecBeauticianController extends BaseController{
 	
 	/**
 	 * 保存特殊美容师
-	 * @param skill
+	 * @param specBeautician
 	 * @param request
 	 * @param model
 	 * @param redirectAttributes
@@ -127,7 +127,7 @@ public class SpecBeauticianController extends BaseController{
 	
 	/**
 	 * 逻辑删除特殊美容师
-	 * @param skill
+	 * @param specBeautician
 	 * @param redirectAttributes
 	 * @return
 	 */

@@ -627,11 +627,7 @@ public class OrdersController extends BaseController {
 		Orders orders=new Orders();
 		orders = ordersService.findselectByOrderId(orderid);
 		returnedGoods.setUserId(orders.getUserid());
-		if(orders.getChannelFlag().contentEquals("bm")){
-			list=ordergoodService.orderlistTow(orderid);
-		}else{
-			list=ordergoodService.orderlist(orderid);
-		}
+		list=ordergoodService.orderlist(orderid);
 		
 		model.addAttribute("orders", orders);
 		model.addAttribute("orderGoodList", list);
@@ -961,6 +957,7 @@ public class OrdersController extends BaseController {
 					addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
 				}
 			}else{
+				ordersService.updateVirtualOrder(orders);
 				addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
 			}
 		} catch (Exception e) {
@@ -983,9 +980,9 @@ public class OrdersController extends BaseController {
 	public String getMappinfOrderRechargeView(Integer recid, String orderid, String orderType, HttpServletRequest request, Model model) {
 		try {
 			List<OrderGoodsDetails> orderGoodsDetails = ordersService.getMappinfOrderView(recid);
-			List<OrderRechargeLog> orderRechargeLogs = ordersService.getOrderRechargeView(orderid);
+			/*List<OrderRechargeLog> orderRechargeLogs = ordersService.getOrderRechargeView(orderid);*/
 			model.addAttribute("orderGoodsDetails", orderGoodsDetails);
-			model.addAttribute("orderRechargeLogs", orderRechargeLogs);
+			/*model.addAttribute("orderRechargeLogs", orderRechargeLogs);*/
 			model.addAttribute("orderType", orderType);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "查看商品订单充值", e);
@@ -1331,12 +1328,7 @@ public class OrdersController extends BaseController {
 				return "redirect:" + adminPath + "/ec/orders/orderform?type=view&orderid="+orders.getOrderid();
 			}
 			logger.info("商品退还仓库是否成功："+result);
-			//验证订单是前台创建
-			if(orders.getChannelFlag().trim().equals("bm")){
-				goodsList=ordergoodService.orderlistTow(orders.getOrderid());
-			}else{
-				goodsList=ordergoodService.orderlist(orders.getOrderid());
-			}
+			goodsList=ordergoodService.orderlist(orders.getOrderid());
 			if(goodsList.size()>0){
 				for (int i = 0; i < goodsList.size(); i++) {
 					Date date=new Date();
@@ -1482,7 +1474,7 @@ public class OrdersController extends BaseController {
 	 */
 	@RequestMapping(value="handleAdvanceFlag")
 	@ResponseBody
-	public String handleAdvanceFlag(OrderRechargeLog oLog,OrderGoods orderGoods,int userid,String orderid,int sum,HttpServletRequest request){
+	public String handleAdvanceFlag(OrderRechargeLog oLog,OrderGoods orderGoods,int sum,int userid,String orderid,HttpServletRequest request){
 		String date="";
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
@@ -1514,7 +1506,7 @@ public class OrdersController extends BaseController {
 				
 			}
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleAdvanceFlag(oLog,sum,goodsPrice,detailsTotalAmount,goodsType,officeId);
+			ordersService.handleAdvanceFlag(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId);
 			date = "success";
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "处理预约金异常", e);
@@ -1660,19 +1652,19 @@ public class OrdersController extends BaseController {
 												}else if("支付宝App支付".equals(payCode)){
 													orders.setPaycode("alipay");
 												}else if("银联".equals(payCode)){
-													orders.setPaycode("");
+													orders.setPaycode("upacp_wap");
 												}else if("微信公众号".equals(payCode)){
-													orders.setPaycode("");
+													orders.setPaycode("wx_pub");
 												}else if("微信公众号扫码".equals(payCode)){
-													orders.setPaycode("");
+													orders.setPaycode("wx_pub_qr");
 												}else if("支付宝手机网页".equals(payCode)){
-													orders.setPaycode("");
+													orders.setPaycode("alipay_wap");
 												}else if("支付宝扫码支付".equals(payCode)){
-													orders.setPaycode("");
+													orders.setPaycode("alipay_qr");
 												}else if("现金支付".equals(payCode)){
-													orders.setPaycode("");
+													orders.setPaycode("money");
 												}else if("易宝手机网页支付".equals(payCode)){
-													orders.setPaycode("");
+													orders.setPaycode("yeepay_wap");
 												}
 										
 												ordersService.saveVirtualOrder(orders);

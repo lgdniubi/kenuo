@@ -23,8 +23,7 @@
 		if(advance - singleRealityPrice >= 0){
 			$("#ichecks").attr("disabled",true);
 		}
-		console.log($("#sum").val());
-	});
+	}); 
 	
 	function sum(){
 		if($("input[type='checkbox']").is(':checked')){

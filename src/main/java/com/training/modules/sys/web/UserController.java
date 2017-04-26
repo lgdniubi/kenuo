@@ -1289,6 +1289,22 @@ public class UserController extends BaseController {
 	// }
 	// });
 	// }
-      
+    
+	/**
+	 * 验证用户是否为特殊美容师 
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value="isSpecBeautician")
+	@ResponseBody
+	public String isSpecBeautician(String id){
+		String result = "";
+		if(systemService.selectSpecBeautician(id) != 0){
+			result = "false";
+		}else{
+			result = "true";
+		}
+		return result;
+	}
 }
 

@@ -8,8 +8,28 @@
 	<script type="text/javascript">
 		var validateForm;
 		var tree2;
+		var oldRoles;
+		var a = true;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 			if(validateForm.form()){
+				var roles = $("#roleId").val();
+				if((oldRoles.indexOf('cc78d1a10a584999af86410c0a4fabdb') != -1)&&(roles.indexOf('cc78d1a10a584999af86410c0a4fabdb')== -1)){
+						$.ajax({
+						  async:false,
+				          type:"get",  
+				          url:"${ctx}/sys/user/isSpecBeautician",  
+				          data:{'id':$('#id').val()},  
+				          success: function(data){ 
+				              if (data == 'false'){
+				            	  top.layer.alert('该用户为特殊美容师，无法将其排班角色删除', {icon: 0, title:'提醒'});
+				            	  a = false;
+				              }
+				          }
+					 });
+					if(a == false){
+						return;						
+					}						
+				}
 				var ids2 = [], nodes2 = tree2.getCheckedNodes(true);
 				for (var i=0; i<nodes2.length; i++) {
 					var halfCheck = nodes2[i].getCheckStatus();
@@ -36,6 +56,7 @@
 		  return false;
 		}
 		$(document).ready(function(){
+			oldRoles = $("#roleId").val();
 			
 			validateForm= $("#inputForm").validate({
 				submitHandler: function(form){
@@ -85,7 +106,7 @@
 </head>
 <body>
 	<form:form id="inputForm" modelAttribute="user" autocomplete="off" action="${ctx}/sys/user/saveAuth" method="post" class="form-horizontal" >
-		<form:hidden path="id"/>
+		<form:hidden path="id" id="id"/>
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		   <tbody>
 		   	  <tr>

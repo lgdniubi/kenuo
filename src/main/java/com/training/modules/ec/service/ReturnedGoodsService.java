@@ -12,10 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.ec.dao.OrderGoodsDao;
+import com.training.modules.ec.dao.OrderGoodsDetailsDao;
 import com.training.modules.ec.dao.OrdersDao;
 import com.training.modules.ec.dao.ReturnedGoodsDao;
 import com.training.modules.ec.dao.SaleRebatesLogDao;
 import com.training.modules.ec.entity.OrderGoods;
+import com.training.modules.ec.entity.OrderGoodsDetails;
 import com.training.modules.ec.entity.Orders;
 import com.training.modules.ec.entity.ReturnedGoods;
 import com.training.modules.ec.entity.ReturnedGoodsImages;
@@ -41,7 +43,9 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	private OrderGoodsDao orderGoodsDao;
 	@Autowired
 	private SaleRebatesLogDao saleRebatesLogDao;
-
+	@Autowired
+	private OrderGoodsDetailsDao orderGoodsDetailsDao;
+	
 	/**
 	 * 分页查询
 	 * 
@@ -80,8 +84,14 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		String currentUser = UserUtils.getUser().getName();
 		returnedGoods.setAuditBy(currentUser);
 		if ("11".equals(returnedGoods.getReturnStatus())) { // 申请退货退款
-			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
-			returnedGoodsDao.saveEdite(returnedGoods);
+			//判断是否为虚拟商品;是:直接状态为15退款中,入库状态为"空" -1.
+			if(returnedGoods.getIsReal() == 1){
+				returnedGoods.setReturnStatus(15 + "");
+				returnedGoods.setIsStorage(-1 + "");
+			}else{
+				returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
+			}
+			returnedGoodsDao.saveEdite(returnedGoods);//添加退货信息到mtmy_returned_goods表中
 			Orders orders = ordersDao.get(returnedGoods.getOrderId());
 			orders.setOrderid(returnedGoods.getId());
 			orders.setParentid(returnedGoods.getOrderId());
@@ -92,21 +102,25 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				orders.setChannelFlag("bm");
 			}
 			ordersDao.insertReturn(orders); // 订单表 插入退货信息
-			list = saleRebatesLogDao.selectByOrderId(returnedGoods.getOrderId()); // 插入分销日志
-			if (list.size() > 0) {
-				for (int i = 0; i < list.size(); i++) {
-					SaleRebatesLog saleRebatesLog = new SaleRebatesLog();
-					saleRebatesLog.setOrderId(returnedGoods.getOrderId());
-					saleRebatesLog.setDepth(list.get(i).getDepth());
-					saleRebatesLog.setOrderAmount(-returnedGoods.getReturnAmount());
-					saleRebatesLog.setBalancePercent(list.get(i).getBalancePercent());
-					saleRebatesLog.setBalanceAmount(-list.get(i).getBalancePercent() * returnedGoods.getReturnAmount());
-					saleRebatesLog.setIntegralPercent(list.get(i).getIntegralPercent());
-					saleRebatesLog.setIntegralAmount((int) -list.get(i).getIntegralPercent());
-					saleRebatesLog.setRebateFlag(0);
-					saleRebatesLog.setRabateDate(list.get(i).getRabateDate());
-					saleRebatesLog.setDelFlag("-1");
-					saleRebatesLogDao.updateSale(saleRebatesLog);
+			
+			//查询是否有退货记录
+			if(saleRebatesLogDao.selectNumByOrderId(returnedGoods.getOrderId()) == 0){//如果无退货记录
+				list = saleRebatesLogDao.selectByOrderId(returnedGoods.getOrderId()); // 插入分销日志
+				if (list.size() > 0) {
+					for (int i = 0; i < list.size(); i++) {
+						SaleRebatesLog saleRebatesLog = new SaleRebatesLog();
+						saleRebatesLog.setOrderId(returnedGoods.getOrderId());
+						saleRebatesLog.setDepth(list.get(i).getDepth());
+						saleRebatesLog.setOrderAmount(-returnedGoods.getReturnAmount());
+						saleRebatesLog.setBalancePercent(list.get(i).getBalancePercent());
+						saleRebatesLog.setBalanceAmount(-list.get(i).getBalancePercent() * returnedGoods.getReturnAmount());
+						saleRebatesLog.setIntegralPercent(list.get(i).getIntegralPercent());
+						saleRebatesLog.setIntegralAmount((int) -list.get(i).getIntegralPercent());
+						saleRebatesLog.setRebateFlag(0);
+						saleRebatesLog.setRabateDate(list.get(i).getRabateDate());
+						saleRebatesLog.setDelFlag("-1");
+						saleRebatesLogDao.updateSale(saleRebatesLog);
+					}
 				}
 			}
 			if (returnedGoods.getIsConfirm() == -10) {
@@ -114,9 +128,25 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				orderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
 				orderGoods.setAfterSaleNum(-returnedGoods.getReturnNum());
 				orderGoodsDao.updateIsAfterSales(orderGoods);
+				
+				//退货处理
+				orderGoods = orderGoodsDao.selectOrderGoodsByRecid(orderGoods.getRecid());
+				//把数据存储到mtmy_order_goods_details表中
+				returnedGoods = returnedGoodsDao.get(returnedGoods);//先查询returnedGoods数据
+				OrderGoodsDetails ogd = new OrderGoodsDetails();
+				ogd.setOrderId(returnedGoods.getOrderId());
+				ogd.setGoodsMappingId(returnedGoods.getGoodsMappingId());
+				ogd.setItemAmount(returnedGoods.getGoodsNum()*orderGoods.getSingleRealityPrice());
+				ogd.setItemCapitalPool(returnedGoods.getGoodsNum()*orderGoods.getSingleNormPrice());
+				ogd.setServiceTimes(returnedGoods.getGoodsNum());
+				ogd.setType(0);
+				ogd.setCreateBy(UserUtils.getUser());
+				orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
+				
 			}
 
 		}
+		
 		if ("21".equals(returnedGoods.getReturnStatus())) { // 申请换货
 			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
 			returnedGoodsDao.saveEdite(returnedGoods);
@@ -127,7 +157,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				orderGoodsDao.updateIsAfterSales(orderGoods);
 			}
 		}
-
+		
 	}
 
 	/**
@@ -160,12 +190,25 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			returnedGoods.setReturnStatus("21");
 			returnedGoods.setReturnAmount(0);
 		}
-
 		returnedGoodsDao.insertReturn(returnedGoods);
 		OrderGoods orderGoods = new OrderGoods();
 		orderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
 		orderGoods.setAfterSaleNum(returnedGoods.getReturnNum());
 		orderGoodsDao.updateIsAfterSales(orderGoods);
+		
+		//退货处理
+		orderGoods = orderGoodsDao.selectOrderGoodsByRecid(orderGoods.getRecid());
+
+		OrderGoodsDetails ogd = new OrderGoodsDetails();
+		ogd.setOrderId(returnedGoods.getOrderId());
+		ogd.setGoodsMappingId(returnedGoods.getGoodsMappingId());
+		ogd.setItemAmount(returnedGoods.getServiceTimes()*orderGoods.getSingleRealityPrice());
+		ogd.setItemCapitalPool(returnedGoods.getServiceTimes()*orderGoods.getSingleNormPrice());
+		ogd.setServiceTimes(-returnedGoods.getServiceTimes());
+		ogd.setType(2);
+		ogd.setCreateBy(UserUtils.getUser());
+		orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);;
+		
 	}
 
 	/**

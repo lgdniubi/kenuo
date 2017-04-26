@@ -19,7 +19,6 @@ import com.training.modules.ec.dao.EquipmentLabelDao;
 import com.training.modules.ec.dao.GoodsAttributeDao;
 import com.training.modules.ec.dao.GoodsDao;
 import com.training.modules.ec.dao.GoodsSpecPriceDao;
-import com.training.modules.ec.dao.OrderGoodsDao;
 import com.training.modules.ec.entity.Effect;
 import com.training.modules.ec.entity.EquipmentLabel;
 import com.training.modules.ec.entity.Goods;
@@ -63,8 +62,6 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 	private GoodsAttributeDao goodsAttributeDao;
 	@Autowired
 	private ModifyGoodsStore modifyGoodsStore;
-	@Autowired
-	private OrderGoodsDao orderGoodsDao;
 	@Autowired
 	private SkillDao skillDao;
 	@Autowired
@@ -499,19 +496,8 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 								goodsSpecPricesList.add(gsp);
 								goodsSpecPricesList2.add(specItemList.get(i));
 							}
-							boolean flag = false;
-							if (gspList.size() == goodsSpecPricesList.size()) {
-								for (String s2 : goodsSpecPricesList1) {
-									for (String s1 : goodsSpecPricesList2) {
-										if (s2.equals(s1)) {
-											flag = true;
-											break;
-										}
-									}
-								}
-							} else {
-								flag = false;
-							}
+							//判断商品规格是否更改,更改就修改,如果没有,则直接跳过
+							boolean flag = (goodsSpecPricesList1.size() == goodsSpecPricesList2.size()) && goodsSpecPricesList1.containsAll(goodsSpecPricesList2);
 							if (!flag) {
 								List<String> items = GoodsUtil.getitemsvalue(list);
 

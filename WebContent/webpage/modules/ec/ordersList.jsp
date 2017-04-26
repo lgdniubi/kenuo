@@ -294,19 +294,19 @@
 									</c:if>
 			 					</shiro:hasPermission>
 			 				 	<shiro:hasPermission name="ec:orders:return">
-									<c:if test="${orders.orderstatus==4}">
+									<c:if test="${orders.orderstatus==4 && orders.flag==1}">
 										<a href="#" onclick="returnedGoodsList('${orders.orderid}','${orders.flag}')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>售后服务</a>
 									</c:if>
-									<c:if test="${orders.orderstatus!=4}">
+									<c:if test="${orders.orderstatus!=4 || orders.flag!=1}">
 										<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>售后服务</a>
 									</c:if>
 								</shiro:hasPermission>
-								<c:if test="${orders.channelFlag=='bm' || (orders.channelFlag != 'bm' && orders.isReal==1)}">
+								<%-- <c:if test="${orders.channelFlag=='bm' || (orders.channelFlag != 'bm' && orders.isReal==1)}">
 									<a href="#" onclick="openDialogView('查看订单', '${ctx}/ec/orders/getOrderRechargeView?orderid=${orders.orderid}&orderType=order','800px','600px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>订单充值查看</a>
 								</c:if>
 								<c:if test="${orders.channelFlag!='bm' && orders.isReal==0}">
 									<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-search-plus"></i>订单充值查看</a>
-								</c:if>
+								</c:if> --%>
 								<c:if test="${orders.orderstatus == -1}">
 									<a href="${ctx}/ec/orders/cancellationOrder?orderid=${orders.orderid}" onclick="return confirmx('确定取消订单吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>取消订单</a>
 								</c:if>
