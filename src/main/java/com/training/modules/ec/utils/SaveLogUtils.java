@@ -46,10 +46,10 @@ public class SaveLogUtils {
 								valNewT = mNewT.invoke(newT);
 							}
 							if(valOldT == null || "".equals(valOldT)){
-								valOldT = "空";
+								valOldT = "无";
 							}
 							if(valNewT == null || "".equals(valNewT)){
-								valNewT = "空";
+								valNewT = "无";
 							}
 							if (!valOldT.equals(valNewT)) {
 								string.append(nameList.get(i)+":修改前("+String.valueOf(valOldT)+"),修改后("+String.valueOf(valNewT)+")--");
