@@ -28,6 +28,13 @@ public class CheckAccountService extends CrudService<CheckAccountDao, MtmyCheckA
 		dao.insert(mtmyCheckAccount);
 	}
 	/**
+	 * 插入微信支付宝数据
+	 * @param mtmyCheckAccount
+	 */
+	public int insterAccount(List<MtmyCheckAccount> list){
+		return dao.insterAccount(list);
+	}
+	/**
 	 * 分页查询
 	 * @param mtmyCheckAccount
 	 * @return

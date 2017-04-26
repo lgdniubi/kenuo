@@ -23,6 +23,30 @@
 			#{groupFlag}
 		)
 	</insert>
+	<insert id="insterAccount" parameterType="List">
+		INSERT INTO mtmydb.mtmy_bank_account(
+			order_no,
+			ping_id,
+			pay_date,
+			pay_amount,
+			pay_channel,
+			pay_remark,
+			create_date,
+			group_flag
+		) 
+		<foreach collection="list" item="e" separator=" UNION ALL ">
+			SELECT
+				#{e.orderNo},
+				#{e.pingId},
+				#{e.payDate},
+				TRUNCATE(#{e.payAmount},2),
+				#{e.payChannel},
+				#{e.payRemark},
+				SYSDATE(),
+				DATE_FORMAT(#{e.payDate},'%Y%m%d')
+			FROM dual
+		</foreach>
+	</insert>
 	<!-- 用于分页查询 -->
 	<select id="findAllList" resultType="MtmyCheckAccount">
 		SELECT
