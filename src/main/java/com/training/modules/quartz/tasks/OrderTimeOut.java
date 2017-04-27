@@ -11,8 +11,6 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.training.common.utils.BeanUtil;
-import com.training.modules.ec.dao.CouponUserDao;
-import com.training.modules.ec.entity.CouponUser;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.Orders;
 import com.training.modules.ec.service.OrderGoodsService;
@@ -37,14 +35,12 @@ public class OrderTimeOut extends CommonService{
 	
 	private static OrdersService ordersService;
 	private static OrderGoodsService orderGoodsService;
-	private static CouponUserDao couponUserDao;
 	/*
 	private static MtmyUsersService mtmyUsersService;
 	private static MtmyRuleParamService mtmyRuleParamService;*/
 	static{
 		ordersService = (OrdersService) BeanUtil.getBean("ordersService");
 		orderGoodsService = (OrderGoodsService) BeanUtil.getBean("orderGoodsService");
-		couponUserDao = (CouponUserDao) BeanUtil.getBean("couponUserDao");
 		/*mtmyUsersService = (MtmyUsersService) BeanUtil.getBean("mtmyUsersService");
 		mtmyRuleParamService = (MtmyRuleParamService) BeanUtil.getBean("mtmyRuleParamService");*/
 	}
