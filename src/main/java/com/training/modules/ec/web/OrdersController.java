@@ -885,11 +885,12 @@ public class OrdersController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "addTopUp")
-	public String addTopUp(String orderid,double singleRealityPrice,int userid,int isReal,Model model){
+	public String addTopUp(String orderid,double singleRealityPrice,int userid,int isReal,double goodsBalance,Model model){
 		model.addAttribute("orderid", orderid);
 		model.addAttribute("singleRealityPrice", singleRealityPrice);
 		model.addAttribute("userid", userid);
 		model.addAttribute("isReal", isReal);
+		model.addAttribute("goodsBalance",goodsBalance);
 		return "modules/ec/addTopUp";
 	}
 	/**

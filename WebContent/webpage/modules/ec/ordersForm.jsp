@@ -111,7 +111,7 @@
 	    });
 			
 	    	
-		    function TopUp(recid,singleRealityPrice,singleNormPrice,orderArrearage,servicetimes,remaintimes){
+		    function TopUp(recid,singleRealityPrice,singleNormPrice,orderArrearage,servicetimes,remaintimes,goodsBalance){
 		    	var orderid = $("#orderid").val();
 		    	var userid = $("#userid").val();
 		    	var isReal = $("#isReal").val();
@@ -119,7 +119,7 @@
 				    type: 2, 
 				    area: ['600px', '450px'],
 				    title:"充值",
-				    content: "${ctx}/ec/orders/addTopUp?orderid="+orderid+"&singleRealityPrice="+singleRealityPrice+"&userid="+userid+"&isReal="+isReal,
+				    content: "${ctx}/ec/orders/addTopUp?orderid="+orderid+"&singleRealityPrice="+singleRealityPrice+"&userid="+userid+"&isReal="+isReal+"&goodsBalance="+goodsBalance,
 				    btn: ['确定', '关闭'],
 				    yes: function(index, layero){
 				    	var orderid = $("#orderid").val();
@@ -566,7 +566,7 @@ window.onload=initStatus;
 												<c:if test="${type != 'view' }">
 													<c:if test="${orders.channelFlag == 'bm' || (orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag != 1)}">
 														<c:if test="${orderGood.orderArrearage != 0}">
-															<a href="#" onclick="TopUp(${orderGood.recid},${orderGood.singleRealityPrice },${orderGood.singleNormPrice },${orderGood.orderArrearage },${orderGood.servicetimes },${orderGood.payRemaintimes })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>充值</a>
+															<a href="#" onclick="TopUp(${orderGood.recid},${orderGood.singleRealityPrice },${orderGood.singleNormPrice },${orderGood.orderArrearage },${orderGood.servicetimes },${orderGood.payRemaintimes },${orderGood.goodsBalance})"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>充值</a>
 														</c:if>
 														<c:if test="${orderGood.orderArrearage == 0}">
 															<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>充值</a>

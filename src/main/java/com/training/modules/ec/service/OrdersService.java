@@ -894,6 +894,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 						orderGoods.setRemaintimes(_orderGoods.getRemaintimes());
 						orderGoods.setAdvanceFlag(_orderGoods.getAdvanceFlag());
 						orderGoods.setSumAppt(_orderGoods.getSumAppt());
+						orderGoods.setGoodsBalance(_orderGoods.getGoodsBalance());
 					}
 //				}
 			}
