@@ -1697,14 +1697,13 @@ public class OrdersController extends BaseController {
 							failureNum++;	
 						}
 					} catch (ConstraintViolationException ex) {
-						BugLogUtils.saveBugLog(request, "导入虚拟订单出错", ex);
 						logger.error("导入虚拟订单出错："+ex.getMessage());
 						failureMsg.append("<br/>订单 " + importVirtualOrders.getGoodsId()+","+importVirtualOrders.getSpecKey()+","+importVirtualOrders.getMobile() + " 导入失败：");
 						List<String> messageList = BeanValidators.extractPropertyAndMessageAsList(ex, ":");
 						for (String message : messageList) {
 							failureMsg.append(message + ";");
-							failureNum++;
 						}
+						failureNum++;
 					} catch (Exception ex) {
 						BugLogUtils.saveBugLog(request, "导入虚拟订单出错", ex);
 						logger.error("导入虚拟订单出错："+ex.getMessage());

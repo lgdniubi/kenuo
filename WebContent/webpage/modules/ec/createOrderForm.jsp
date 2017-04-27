@@ -256,14 +256,14 @@
 			$("#invoiceRecipient input").val("");
 		});
 		
-		// 手机号码验证
+		/* // 手机号码验证
 		jQuery.validator.addMethod("isMobile", function(value, element) {
 		    var length = value.length;
 		    var mobile =  /^(133[0-9]{8})|(153[0-9]{8})|(180[0-9]{8})|(181[0-9]{8})|(189[0-9]{8})|(177[0-9]{8})|(130[0-9]{8})|(131[0-9]{8})|(132[0-9]{8})|(155[0-9]{8})|(156[0-9]{8})|(185[0-9]{8})|(186[0-9]{8})|(145[0-9]{8})|(170[0-9]{8})|(176[0-9]{8})|(134[0-9]{8})|(135[0-9]{8})|(136[0-9]{8})|(137[0-9]{8})|(138[0-9]{8})|(139[0-9]{8})|(150[0-9]{8})|(151[0-9]{8})|(152[0-9]{8})|(157[0-9]{8})|(158[0-9]{8})|(159[0-9]{8})|(182[0-9]{8})|(183[0-9]{8})|(184[0-9]{8})|(187[0-9]{8})|(188[0-9]{8})|(147[0-9]{8})|(178[0-9]{8})|(149[0-9]{8})|(173[0-9]{8})$/;           
 		    return this.optional(element) || (length == 11 && mobile.test(value));
-		}, "请正确填写您的手机号码");
+		}, "请正确填写您的手机号码"); */
 		validateForm = $("#inputForm").validate( {
-			rules:{
+			/* rules:{
 				mobile:{
 					digits:true,
 					minlength:11,
@@ -274,21 +274,21 @@
 					digits:true,
 					minlength:11,
 					isMobile : true
-				}
+				} 
 			},
-			messages:{
+			 messages:{
 				mobile:{
 					digits:"输入合法手机号",
 					minlength:"手机号码要11位",
-					isMobile :"请输入正确手机号",
+					isMobile :"请输入正确手机号", 
 					remote:"手机号不存在，不可创建订单"
-				},
+				} ,
 				mobile1:{
 					digits:"输入合法手机号",
 					minlength:"手机号码要11位",
 					isMobile :"请输入正确手机号"
-				}
-			},
+				} 
+			}, */
 			submitHandler: function(form){
 				loading('正在提交，请稍等...');
 				form.submit();
