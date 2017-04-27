@@ -100,8 +100,8 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			}
 			ordersDao.insertReturn(orders); // 订单表 插入退货信息
 			
-			//查询是否有退货记录
-			if(saleRebatesLogDao.selectNumByOrderId(returnedGoods.getOrderId()) == 0){//如果无退货记录
+			//查询是否有退货记录,并且不是退货
+			if(saleRebatesLogDao.selectNumByOrderId(returnedGoods.getOrderId()) == 0 && returnedGoods.getIsConfirm() != -10){//如果无退货记录
 				saleRebatesLogDao.updateSale(returnedGoods.getOrderId());// 插入分销日志
 			}
 			if (returnedGoods.getIsConfirm() == -10) {
@@ -123,7 +123,6 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				ogd.setType(0);
 				ogd.setCreateBy(UserUtils.getUser());
 				orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
-				
 			}
 
 		}
