@@ -208,7 +208,7 @@
 			   return this.optional(element) || /^\d+(\.\d{1,2})?$/.test(value);         
 		}, "小数位不能超过三位"); 
 		validateForm = $("#inputForm").validate({
-			rules:{
+			/* rules:{
 				mobile:{
 					digits:true,
 					minlength:11,
@@ -233,7 +233,7 @@
 					minlength:"手机号码要11位",
 					isMobile :"请输入正确手机号"
 				}
-			},
+			}, */
 			submitHandler: function(form){
 				loading('正在提交，请稍等...');
 				form.submit();
