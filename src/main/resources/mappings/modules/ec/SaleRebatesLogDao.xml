@@ -93,21 +93,21 @@
 			rabate_date,
 			create_date,
 			del_flag
-		
-		)values(
-			#{rebateUser},
-			#{receiveUser},
-			#{depth},
-			#{orderId},
-			#{orderAmount},
-			#{balancePercent},
-			#{balanceAmount},
-			#{integralPercent},
-			#{integralAmount},
+		)SELECT 
+			rebate_user,
+			receive_user,
+			depth,
+			order_id,
+			(-order_amount),
+			balance_percent,
+			(-balance_amount),
+			integral_percent,
+			(-integral_amount),
 			0,
-			DATE_FORMAT(#{rabateDate}, '%Y%m%d'),
+			rabate_date,
 			SYSDATE(),
 			-1
-		)
+		FROM mtmydb.mtmy_sale_rebates_log
+		WHERE order_id=#{orderId}
 	</insert>
 </mapper>
