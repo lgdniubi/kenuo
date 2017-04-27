@@ -74,7 +74,7 @@
 					<div class="form-group">
 						<form:input path="userName" htmlEscape="false" maxlength="50" class=" form-control input-sm" placeholder="用户名"/>&nbsp;&nbsp;
 						<form:input path="mobile" htmlEscape="false" maxlength="50" class=" form-control input-sm" placeholder="手机号"/>&nbsp;&nbsp;
-						<form:input path="id" htmlEscape="false" maxlength="50" class=" form-control input-sm" placeholder="退货单号"/>&nbsp;&nbsp;
+						<form:input path="returnedId" htmlEscape="false" maxlength="50" class=" form-control input-sm" placeholder="退货单号"/>&nbsp;&nbsp;
 						<form:input path="orderId" htmlEscape="false" maxlength="50" class=" form-control input-sm" placeholder="原订单号"/>&nbsp;&nbsp;
 						<p></p>
 						<label>入库状态：</label>	

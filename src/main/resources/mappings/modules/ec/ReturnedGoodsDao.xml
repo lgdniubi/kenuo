@@ -257,8 +257,8 @@
 		<if test="mobile != null  and mobile != ''">
 			AND d.mobile=#{mobile}
 		</if>
-		<if test="id != null and id != ''">
-			AND a.id = #{id}
+		<if test="returnedId != null and returnedId != ''">
+			AND a.id = #{returnedId}
 		</if>
 		<if test="orderId != null and orderId != ''">
 			AND a.order_id = #{orderId}
