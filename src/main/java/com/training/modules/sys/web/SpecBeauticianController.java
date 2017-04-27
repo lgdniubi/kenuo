@@ -99,11 +99,13 @@ public class SpecBeauticianController extends BaseController{
 				User nowUser = UserUtils.getUser();
 				specBeautician.setOfficeId(nowUser.getOffice().getId());
 				specBeautician.setCreateBy(nowUser);
+				
 				//根据得到的美容师的id，获取该美容师的信息赋值给其对应的特殊美容师的属性
 				specBeautician.setUserId(arry[i]);
 				User user = systemService.getUser(arry[i]);
 				specBeautician.setUserName(user.getName());
 				specBeautician.setUserPhone(user.getMobile());
+				
 				//根据得到的美容师的id，获取其所属市场，所属店铺
 				Office office = officeService.selectForSpec(arry[i]);
 				//判断当前用户时属于店铺还是市场，如果是店铺，则既保存店铺又保存市场，否则只保存店铺

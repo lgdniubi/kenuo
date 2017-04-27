@@ -15,10 +15,12 @@ public class SpecBeautician extends DataEntity<SpecBeautician>{
 	private String userId;          //特殊美容师的用户id
 	private String userName;        //特殊美容师的名字
 	private String userPhone;        //特殊美容师手机
+	
 	private String bazaarId;        //特殊美容师所在市场id
 	private String shopId;          //特殊美容师所在店铺id
 	private int status;             //特殊美容师状态（0：在职；1：离职）
 	private String officeId;        //当前登录用户的office的id
+	
 	private String shopName;        //特殊美容师所在店铺
 	private String bazaarName;      //特殊美容师所在的市场
 	

@@ -10,9 +10,9 @@
 <script type="text/javascript">
 		var isReal=0;//判断是否为实物
 		var goodNum=0;
-		var returnAmount=0;
-		var remaintimes=0;
-		var singleRealityPrice=0;
+		var returnAmount=0;//退款金额
+		var remaintimes=0;//剩余次数
+		var singleRealityPrice=0;//服务单次价
 		var orderArrearage=0;//订单欠款
 		var totalAmount=0;//实付款
 		var returnedGoodsNum = 0;//后台查询出来 "实物" 中正在退货的商品数量
@@ -81,7 +81,7 @@
 			var orderId=$("#orderId").val();
 			isReal="${orders.isReal}";
 			$("#goodsMappingId").val(id);
-			goodNum=$("#"+id+"goodsnum").val();
+			goodNum=$("#"+id+"goodsnum").val();//购买的数量
 			remaintimes=$("#"+id+"remaintimes").val();//为商品的售后次数赋值
 			orderArrearage=$("#"+id+"orderArrearage").val();//订单欠款
 			singleRealityPrice=$("#"+id+"singleRealityPrice").val();//实际服务单次价
@@ -90,52 +90,23 @@
 				returnedGoodsNum = $("#"+id+"returnedGoodsNum").val();//实物中  从后台查出来的退货中的数量
 				$("#returnNum").val(parseInt(goodNum)-parseInt(returnedGoodsNum));//为售后商品数量赋值
 			}
-
+			//判断是否有无欠款
 			if(orderArrearage>0){
 				top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
 			}else{
 				if("bm"==type){//当时后台数据时
-					var orderA=$("#"+id+"orderAmount").val();
-					var totalA=$("#"+id+"total").val();
-					$("#totalAmount").val(totalA);//实付款金额
-					$("#orderAmount").val(orderA);//应付款金额
-					if(isReal==0){//是实物
-						if(orderA==totalA){
-							$("#totalAmount").val(totalA);
-							returnAmount=totalA/goodNum;//计算退款金额
-							var retNum=$("#returnNum").val();//退货的商品数量
-							var SumAmount=returnAmount*retNum;//退款总金额
-							$("#returnAmount").val(SumAmount.toFixed(2));//退款金额
-						}else{
-							$.ajax({
-								type:"post",
-								async:false,
-								data:{
-									id:id,
-									isReal:isReal,
-									orderid:orderId
-								 },
-								url:"${ctx}/ec/orders/getOrderGoodsIsFre",
-								success:function(date){
-									returnAmount=date;
-									if(returnAmount==-1){
-										top.layer.alert('该商品欠款或者没有余款，无法退款!', {icon: 0, title:'提醒'});
-										return;
-									}else if(returnAmount==-2){
-										top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
-										return;
-									}else{
-										$("#returnAmount").val(returnAmount*$("#returnNum").val());
-									}
-									
-								},
-								error:function(XMLHttpRequest,textStatus,errorThrown){
-											    
-								}
-							});
-							
-						}
-					}else if(isReal==1){//是虚拟
+				var orderA=$("#"+id+"orderAmount").val();
+				var totalA=$("#"+id+"total").val();
+				$("#totalAmount").val(totalA);//实付款金额
+				$("#orderAmount").val(orderA);//应付款金额
+				if(isReal==0){//是实物
+					if(orderA==totalA){
+						$("#totalAmount").val(totalA);
+						returnAmount=totalA/goodNum;//计算退款金额
+						var retNum=$("#returnNum").val();//退货的商品数量
+						var SumAmount=returnAmount*retNum;//退款总金额
+						$("#returnAmount").val(SumAmount.toFixed(2));//退款金额
+					}else{
 						$.ajax({
 							type:"post",
 							async:false,
@@ -154,24 +125,55 @@
 									top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
 									return;
 								}else{
-									$("#returnAmount").val(returnAmount)
+									$("#returnAmount").val(returnAmount*$("#returnNum").val());
 								}
+								
 							},
 							error:function(XMLHttpRequest,textStatus,errorThrown){
 										    
 							}
 						});
+						
 					}
+				}else if(isReal==1){//是虚拟
+					$.ajax({
+						type:"post",
+						async:false,
+						data:{
+							id:id,
+							isReal:isReal,
+							orderid:orderId
+						 },
+						url:"${ctx}/ec/orders/getOrderGoodsIsFre",
+						success:function(date){
+							returnAmount=date;
+							if(returnAmount==-1){
+								top.layer.alert('该商品欠款或者没有余款，无法退款!', {icon: 0, title:'提醒'});
+								return;
+							}else if(returnAmount==-2){
+								top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
+								return;
+							}else{
+								$("#returnAmount").val(returnAmount)
+							}
+						},
+						error:function(XMLHttpRequest,textStatus,errorThrown){
+									    
+						}
+					});
+				}
 	
 				}else{
 					var totalA=$("#"+id+"total").val();
 					var orderA=$("#"+id+"orderAmount").val();
 					$("#totalAmount").val(totalA);
-					returnAmount=totalA/goodNum;
-					var retNum=$("#returnNum").val();
-					var SumAmount=returnAmount*retNum;
-					$("#returnAmount").val(SumAmount.toFixed(2));
 					$("#orderAmount").val(orderA);
+
+					/* returnAmount=totalA/goodNum;
+					var retNum=$("#returnNum").val();
+					var SumAmount=returnAmount*retNum;//
+					$("#returnAmount").val(SumAmount.toFixed(2)); */
+					
 				}
 			}
 			
@@ -197,7 +199,6 @@
 				top.layer.alert('退货数量必须大于0，小于购买数量!', {icon: 0, title:'提醒'});
 				return;
 			}
-			$("#returnAmount").val(returnAmount*num);
 		}
 		
 		 //虚拟商品的售后次数校验

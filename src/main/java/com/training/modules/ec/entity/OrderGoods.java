@@ -81,6 +81,9 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private int goodsType;                 //商品区分(0: 老商品 1: 新商品)
 	private String officeId;              //组织架构ID
 	//-------------------------------------------------------------------------
+	
+	private double goodsBalance;         //商品余额，页面展示用
+	
 	public int getAfterSaleNum() {
 		return afterSaleNum;
 	}
@@ -442,6 +445,12 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setReturnNum(int returnNum) {
 		this.returnNum = returnNum;
+	}
+	public double getGoodsBalance() {
+		return goodsBalance;
+	}
+	public void setGoodsBalance(double goodsBalance) {
+		this.goodsBalance = goodsBalance;
 	}
 	
 }

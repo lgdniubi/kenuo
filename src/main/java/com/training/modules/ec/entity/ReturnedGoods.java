@@ -13,6 +13,7 @@ import com.training.common.persistence.TreeEntity;
 public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 
 	private static final long serialVersionUID = 1L;	//退货id
+	private String returnedId;					//退货订单(主要用于接收退货订单中退货单号)
 	private String orderId	;					//原订单id
 	private String goodsMappingId	;			//退货商品 订单-商品ID
 	private int userId;						//用户id
@@ -73,6 +74,13 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	private String keyword;                     //搜索用关键字
 	
 	
+	
+	public String getReturnedId() {
+		return returnedId;
+	}
+	public void setReturnedId(String returnedId) {
+		this.returnedId = returnedId;
+	}
 	public String getKeyword() {
 		return keyword;
 	}

@@ -753,5 +753,6 @@
 		SELECT COUNT(*)
 		FROM trains.train_special_beautician
 		WHERE user_id = #{userId}
+		AND del_flag = 0
 	</select>
 </mapper>
