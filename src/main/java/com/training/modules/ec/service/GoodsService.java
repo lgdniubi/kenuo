@@ -33,7 +33,6 @@ import com.training.modules.ec.utils.GoodsUtil;
 import com.training.modules.quartz.entity.GoodsCollect;
 import com.training.modules.quartz.entity.StoreVo;
 import com.training.modules.quartz.service.RedisClientTemplate;
-import com.training.modules.quartz.tasks.ModifyGoodsStore;
 import com.training.modules.sys.dao.SkillDao;
 import com.training.modules.sys.entity.Skill;
 
@@ -60,8 +59,6 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 	private GoodsSpecItemService goodsSpecItemService;
 	@Autowired
 	private GoodsAttributeDao goodsAttributeDao;
-	@Autowired
-	private ModifyGoodsStore modifyGoodsStore;
 	@Autowired
 	private SkillDao skillDao;
 	@Autowired

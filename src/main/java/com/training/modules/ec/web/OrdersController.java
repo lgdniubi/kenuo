@@ -1370,34 +1370,10 @@ public class OrdersController extends BaseController {
 					}
 				}
 			}
-			List<SaleRebatesLog> list=new ArrayList<SaleRebatesLog>();
-			list=saleRebatesLogDao.selectByOrderId(orders.getOrderid());   //插入分销日志
-			 Orders orders12=new Orders();
-			 orders12=ordersService.selectByOrderIdSum(orders.getOrderid());
-			 if(list.size()>0){
-				 if(orders12!=null){
-					 for (int i = 0; i < list.size(); i++) {
-							SaleRebatesLog saleRebatesLog=new SaleRebatesLog();
-							saleRebatesLog.setOrderId(orders.getOrderid());
-							saleRebatesLog.setDepth(list.get(i).getDepth());
-							if("bm".equals(orders12.getChannelFlag())){
-								saleRebatesLog.setOrderAmount(-orders.getTotalamount());
-								saleRebatesLog.setBalanceAmount(-list.get(i).getBalancePercent()*orders.getTotalamount());
-							}else if(!"bm".equals(orders12.getChannelFlag())){
-								saleRebatesLog.setOrderAmount(-orders.getOrderamount());
-								saleRebatesLog.setBalanceAmount(-list.get(i).getBalancePercent()*orders.getOrderamount());
-							}
-							saleRebatesLog.setBalancePercent(list.get(i).getBalancePercent());
-							saleRebatesLog.setIntegralPercent(list.get(i).getIntegralPercent());
-							saleRebatesLog.setIntegralAmount((int)-list.get(i).getIntegralPercent());
-							saleRebatesLog.setRebateFlag(0);
-							saleRebatesLog.setRabateDate(list.get(i).getRabateDate());
-							saleRebatesLog.setDelFlag("-1");
-							saleRebatesLogDao.updateSale(saleRebatesLog);
-						}
-				 }
-				
-			 }
+			//查询是否有退货记录
+			if(saleRebatesLogDao.selectNumByOrderId(orders.getOrderid()) == 0){//如果无退货记录
+				saleRebatesLogDao.updateSale(orders.getOrderid());// 插入分销日志
+			}
 			addMessage(redirectAttributes, "强制取消'" + orders.getOrderid() + "'成功！");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "强制取消错误", e);

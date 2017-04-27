@@ -1,7 +1,6 @@
 package com.training.modules.ec.service;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +20,6 @@ import com.training.modules.ec.entity.OrderGoodsDetails;
 import com.training.modules.ec.entity.Orders;
 import com.training.modules.ec.entity.ReturnedGoods;
 import com.training.modules.ec.entity.ReturnedGoodsImages;
-import com.training.modules.ec.entity.SaleRebatesLog;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.utils.ScopeUtils;
 
@@ -80,7 +78,6 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	 * @return
 	 */
 	public void saveEdite(ReturnedGoods returnedGoods) {
-		List<SaleRebatesLog> list = new ArrayList<SaleRebatesLog>();
 		String currentUser = UserUtils.getUser().getName();
 		returnedGoods.setAuditBy(currentUser);
 		if ("11".equals(returnedGoods.getReturnStatus())) { // 申请退货退款
@@ -105,23 +102,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			
 			//查询是否有退货记录
 			if(saleRebatesLogDao.selectNumByOrderId(returnedGoods.getOrderId()) == 0){//如果无退货记录
-				list = saleRebatesLogDao.selectByOrderId(returnedGoods.getOrderId()); // 插入分销日志
-				if (list.size() > 0) {
-					for (int i = 0; i < list.size(); i++) {
-						SaleRebatesLog saleRebatesLog = new SaleRebatesLog();
-						saleRebatesLog.setOrderId(returnedGoods.getOrderId());
-						saleRebatesLog.setDepth(list.get(i).getDepth());
-						saleRebatesLog.setOrderAmount(-returnedGoods.getReturnAmount());
-						saleRebatesLog.setBalancePercent(list.get(i).getBalancePercent());
-						saleRebatesLog.setBalanceAmount(-list.get(i).getBalancePercent() * returnedGoods.getReturnAmount());
-						saleRebatesLog.setIntegralPercent(list.get(i).getIntegralPercent());
-						saleRebatesLog.setIntegralAmount((int) -list.get(i).getIntegralPercent());
-						saleRebatesLog.setRebateFlag(0);
-						saleRebatesLog.setRabateDate(list.get(i).getRabateDate());
-						saleRebatesLog.setDelFlag("-1");
-						saleRebatesLogDao.updateSale(saleRebatesLog);
-					}
-				}
+				saleRebatesLogDao.updateSale(returnedGoods.getOrderId());// 插入分销日志
 			}
 			if (returnedGoods.getIsConfirm() == -10) {
 				OrderGoods orderGoods = new OrderGoods();
