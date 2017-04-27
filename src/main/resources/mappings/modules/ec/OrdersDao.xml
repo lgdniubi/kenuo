@@ -1109,7 +1109,8 @@
 	<!-- 取消订单 -->
 	<update id="cancellationOrder">
 		UPDATE mtmydb.mtmy_orders
-			SET order_status = -2
+			SET order_status = -2,
+				cancel_type = '1'
 		WHERE order_id = #{orderid}
 	</update>
 	

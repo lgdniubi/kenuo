@@ -553,7 +553,8 @@ public class UserController extends BaseController {
 						if ("true".equals(checkLoginName("", user.getLoginName()))) {
 							if(isInteger(user.getMobile())){
 								if (user.getMobile().length() == 11) {
-									if ("4".equals(JSONObject.fromObject(newCheckMobile(user.getMobile(),"")).get("result"))) {              
+									String result = JSONObject.fromObject(newCheckMobile(user.getMobile(),"")).getString("result");
+									if ("4".equals(result)) {              
 										if ("true".equals(checkIdcard("", user.getIdCard()))) {
 											if (user.getIdCard().length() == 15 || user.getIdCard().length() == 18) {
 												if("true".equals(checkOfficeId(user.getCode()))){
@@ -564,7 +565,7 @@ public class UserController extends BaseController {
 															role.setName("美容师");
 															role = roleDao.getByNameNew(role);
 															user.setRole(role);
-															List<Role> roleList = Lists.newArrayList();
+															List<Role> roleList = Lists.newArrayList(); 
 															roleList.add(role);
 															user.setRoleList(roleList);
 															//默认职位为美容师
@@ -609,19 +610,15 @@ public class UserController extends BaseController {
 											}
 	
 										}
-	
-									} else {
-										String result = JSONObject.fromObject(newCheckMobile(user.getMobile(),"")).getString("result");
-										if("3".equals(result)){
-											failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码妃子校和每天美耶都已注册,请联系管理员; ");
-											failureNum++;
-										}else if("2".equals(result)){
-											failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码每天美耶已注册,请联系管理员; ");
-											failureNum++;
-										}else if("1".equals(result)){
-											failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码妃子校已注册,请联系管理员; ");
-											failureNum++;
-										}
+									} else if("3".equals(result)){
+										failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码妃子校和每天美耶都已注册,请联系管理员; ");
+										failureNum++;
+									}else if("2".equals(result)){
+										failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码每天美耶已注册,请联系管理员; ");
+										failureNum++;
+									}else if("1".equals(result)){
+										failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码妃子校已注册,请联系管理员; ");
+										failureNum++;
 									}
 								} else {
 									failureMsg.append("<br/>手机号码 " + user.getMobile() + "要为11位数！");

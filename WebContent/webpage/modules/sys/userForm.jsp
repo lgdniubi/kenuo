@@ -38,20 +38,45 @@
 			    var mobile = /^(133[0-9]{8})|(153[0-9]{8})|(180[0-9]{8})|(181[0-9]{8})|(189[0-9]{8})|(177[0-9]{8})|(130[0-9]{8})|(131[0-9]{8})|(132[0-9]{8})|(155[0-9]{8})|(156[0-9]{8})|(185[0-9]{8})|(186[0-9]{8})|(145[0-9]{8})|(170[0-9]{8})|(176[0-9]{8})|(134[0-9]{8})|(135[0-9]{8})|(136[0-9]{8})|(137[0-9]{8})|(138[0-9]{8})|(139[0-9]{8})|(150[0-9]{8})|(151[0-9]{8})|(152[0-9]{8})|(157[0-9]{8})|(158[0-9]{8})|(159[0-9]{8})|(182[0-9]{8})|(183[0-9]{8})|(184[0-9]{8})|(187[0-9]{8})|(188[0-9]{8})|(147[0-9]{8})|(178[0-9]{8})|(149[0-9]{8})|(173[0-9]{8})|(175[0-9]{8})|(171[0-9]{8})$/;       
 			    var isShow;
 			    var num = clean();
-			    if(num == '1'){ // 只存在妃子校
-			    	isShow = false;
-			    }else if(num == '3'){ // 妃子校、每天美耶都存在
-			    	layer.msg('该号码每天美耶、妃子校已存在!'); 
-			    	isShow = false;
-			    }else if(num == '4'){ 
-			    	isShow = true;
-			    }else if(num == 'Z'){ 
-			    	layer.msg('该号码每天美耶已存在!该用户等级为'+num+'级'); 
-			    	isShow = true;
-			    }else{
-			    	layer.msg('该号码每天美耶已存在!该用户等级为'+num+'级');
-			    	isShow = true;
+			    var id = $("#id").val();
+			    if(id !='' && id != null){//修改
+			    	if(num == '1'){ // 只存在妃子校
+			    		    layer.msg('该号码妃子校已存在!'); 
+			    		 	isShow = false;
+					    }else if(num == '3'){ // 妃子校、每天美耶都存在
+					    	layer.msg('该号码每天美耶、妃子校已存在!'); 
+					    	isShow = false;
+					    }else if(num == '4'){ 
+					    	isShow = true;
+					    }else if(num == 'Z'){ 
+					    	layer.msg('该号码每天美耶已存在!'); 
+					    	isShow = false;
+					    }else {
+					    	layer.msg('该号码每天美耶已存在!');
+					    	isShow = false;
+					    }
+			    }else{//添加
+			    	 if(num == '1'){ // 只存在妃子校
+			    		    layer.msg('该号码妃子校已存在!'); 
+					    	isShow = false;
+					    }else if(num == '3'){ // 妃子校、每天美耶都存在
+					    	layer.msg('该号码每天美耶、妃子校已存在!'); 
+					    	isShow = false;
+					    }else if(num == '4'){ 
+					    	isShow = true;
+					    }else if(num == 'Z'){ 
+					    	$("#result").val('2');
+					    	$("#layer").val(num);
+					    	layer.msg('该号码每天美耶已存在!该用户等级为'+num+'级'); 
+					    	isShow = true;
+					    }else {
+					    	$("#result").val('2');
+					    	$("#layer").val(num);
+					    	layer.msg('该号码每天美耶已存在!该用户等级为'+num+'级');
+					    	isShow = true;
+					    }
 			    }
+			    
 			    return this.optional(element) || ((length == 11 && mobile.test(value)) && isShow);
 			}, "请正确填写您的手机号码");
 			// 身份证号码验证
@@ -332,7 +357,7 @@
 </head>
 <body>
 	<form:form id="inputForm" modelAttribute="user" action="${ctx}/sys/user/save" method="post" class="form-horizontal">
-		<form:hidden path="id"/>
+		<form:hidden path="id" id="id"/>
 		<input id="result" name="result" type="hidden"/>
 		<input id="layer" name="layer" type="hidden"/>
 		<sys:message content="${message}"/>
