@@ -194,6 +194,7 @@
 		LEFT JOIN mtmydb.mtmy_spec_goods_price p ON (p.goods_id = a.goods_id AND p.spec_key = a.spec_key )
 		WHERE a.del_flag = 0
 		and a.order_id=#{orderid}
+		AND p.del_flag = 0
 	</select>
 	
 	<select id="getOrderGoodsMapping" resultType="OrderGoods">
