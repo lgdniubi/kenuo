@@ -27,6 +27,7 @@ public class ArrangeBeautician extends DataEntity<ArrangeBeautician>{
 	private List<ArrangeEquipment> arrangeEquipments;
 	
 	private int beauticianStatus;	//特殊美容师状态 （0  特殊美容师 1 普通美容师）
+	private String roleId;			//权限id 用于普通美容师校验是否拥有美容师角色
 	
 	public String getUserId() {
 		return userId;
@@ -93,6 +94,11 @@ public class ArrangeBeautician extends DataEntity<ArrangeBeautician>{
 	}
 	public void setBeauticianStatus(int beauticianStatus) {
 		this.beauticianStatus = beauticianStatus;
+	}
+	public String getRoleId() {
+		return roleId;
+	}
+	public void setRoleId(String roleId) {
+		this.roleId = roleId;
 	}	
-	
 }

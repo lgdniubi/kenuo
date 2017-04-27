@@ -546,14 +546,14 @@ public class arrangeController extends BaseController{
 		StringBuffer str = new StringBuffer();
 		str.append("<tr class='freezeTr'>");
 		if ("shop".equals(string)){
-			str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;\">操作</div></th>");
+			str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\">操作</div></th>");
 		}
-		str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;\">"+name+"</div></th>");
+		str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\" title=\""+name+">\""+name+"</div></th>");
 		for (int i = 1; i <= map.get("maxDay"); i++) {
 			if(i == map.get("day")){
-				str.append("<th style=\"text-align:center;background:#17b593;\"><div style=\"width: 100px;\">"+map.get("month")+"/"+i+"</div></th>");
+				str.append("<th style=\"text-align:center;background:#17b593;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\">"+map.get("month")+"/"+i+"</div></th>");
 			}else {
-				str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;\">"+map.get("month")+"/"+i+"<div></th>");
+				str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\">"+map.get("month")+"/"+i+"<div></th>");
 			}
 		}
 		str.append("</tr>");
