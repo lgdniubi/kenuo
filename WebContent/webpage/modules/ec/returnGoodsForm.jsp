@@ -282,7 +282,7 @@
 			        <label>客服备注：</label>
 			        <form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" style="width:300px;" class="form-control"/>
 			        <p></p>
-			        <c:if test="${returnedGoods.returnStatus > 11 and returnedGoods.returnStatus != 21}">
+			        <c:if test="${returnedGoods.returnStatus > 11 and returnedGoods.returnStatus != 21 and returnedGoods.isReal==0}">
 						<hr>
 						<label>退货仓库地址：</label>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
@@ -302,7 +302,7 @@
 							</tbody>
 						</table>
 					</c:if>
-					<c:if test="${returnedGoods.returnStatus > 12 and returnedGoods.returnStatus != 21 and returnedGoods.returnStatus != 22}">
+					<c:if test="${returnedGoods.returnStatus > 12 and returnedGoods.returnStatus != 21 and returnedGoods.returnStatus != 22 and returnedGoods.isReal==0}">
 						<hr>
 						<label>用户退货物流信息：</label>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
