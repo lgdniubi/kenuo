@@ -43,7 +43,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="loading"></div>
+	<div class="loading" id="loading"></div>
 	<script type="text/javascript">
 		function sum(){
 			var rechargeAmount = parseFloat($("#rechargeAmount").val());
