@@ -49,6 +49,10 @@ import net.sf.json.JSONObject;
 public class GoodsService extends CrudService<GoodsDao, Goods> {
 
 	public static final String GOOD_UNSHELVE_KEY = "GOOD_UNSHELVE_KEY"; // 商品下架
+	public static final String GOODSSTORE = "GOODSSTORE_";	// 商品总库存
+	public static final String SPECPRICE = "SPECPRICE_";	// 商品对应的规格
+	public static final String GOODS_SPECPRICE_HASH = "GOODS_SPECPRICE_HASH";	//所有商品id集合
+	
 	@Autowired
 	private GoodsDao goodsDao;
 	@Autowired
@@ -527,6 +531,7 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 									// 修改商品规格项类型
 									goods.setSpecType(specTypeId);
 									updategoodstype(goods);
+									updateGoodsSpecCache(goods.getGoodsId(),goodsSpecPricesList1);
 								}
 
 								// 商品规格【图片】list有数据才进行保存操作
@@ -582,7 +587,6 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 							saveattribute(goods);
 							// 修改商品规格项类型
 							goods.setAttrType(attrTypeId);
-							updategoodstype(goods);
 						}
 					}
 
@@ -1113,5 +1117,12 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 			equipmentLabel.setName(name);
 		}
 		return equipmentLabel;
+	}
+	public void updateGoodsSpecCache(int goodsId,List<String> goodsSpecPricesList){
+		redisClientTemplate.set(GOODSSTORE+goodsId, "0");
+		for (int i = 0; i < goodsSpecPricesList.size(); i++) {
+			redisClientTemplate.del(SPECPRICE+goodsId+"#"+goodsSpecPricesList.get(i));
+//			redisClientTemplate.lrem(GOODS_SPECPRICE_HASH, 1, goodsId+"#"+goodsSpecPricesList.get(i));
+		}
 	}
 }

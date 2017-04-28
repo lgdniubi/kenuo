@@ -61,7 +61,6 @@ import com.training.modules.ec.entity.OrdersLog;
 import com.training.modules.ec.entity.Payment;
 import com.training.modules.ec.entity.ReturnGoods;
 import com.training.modules.ec.entity.ReturnedGoods;
-import com.training.modules.ec.entity.SaleRebatesLog;
 import com.training.modules.ec.entity.Shipping;
 import com.training.modules.ec.service.AcountLogService;
 import com.training.modules.ec.service.OrderGoodsDetailsService;
