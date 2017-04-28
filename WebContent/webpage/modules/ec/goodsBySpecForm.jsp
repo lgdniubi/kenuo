@@ -113,7 +113,7 @@
 						<label class="pull-right">截止日期（月）:</label>
 					</td>
 					<td class="width-35">
-						<input id="expiringDate" htmlEscape="false" maxlength="50" class="form-control" value="${goodsSpecPrice.expiringDate }"
+						<input id="expiringDate" htmlEscape="false" maxlength="2" class="form-control" value="${goodsSpecPrice.expiringDate }"
 							onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';"/>
 					</td>
 				</tr>
