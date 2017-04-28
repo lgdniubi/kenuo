@@ -226,6 +226,11 @@
 						<label><!-- <font color="red">*</font> -->退款金额：</label>
 				        <form:input path="returnAmount" htmlEscape="false" maxlength="10"  style="width:180px;" class="form-control required" readonly="true"/>
 					</c:if>
+					<p></p>
+					<c:if test="${returnedGoods.isReal==1}">
+						<label><!-- <font color="red">*</font> -->售后次数：</label>
+				        <form:input path="returnNum" htmlEscape="false" maxlength="10"  style="width:180px;" class="form-control required" readonly="true"/>
+					</c:if>
 			        <p></p>
 			        <c:if test="${returnedGoods.returnStatus==11}">
 			        		<label>是否同意申请：</label>

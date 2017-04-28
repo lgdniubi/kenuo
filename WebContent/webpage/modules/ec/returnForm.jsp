@@ -39,10 +39,10 @@
 			  if(isReal == 0){
 				  var rn=$("#returnNum").val();
 				  if(parseInt(rn)<=0){
-					  top.layer.alert('售后商品数量必须大于0，小于购买数量!', {icon: 0, title:'提醒'});
+					  top.layer.alert('售后商品数量必须大于0，小于可申请的售后数量!', {icon: 0, title:'提醒'});
 					  return;
 				  }else if(parseInt(rn)>(parseInt(goodNum)-parseInt(returnedGoodsNum))){
-					  top.layer.alert('售后商品数量必须大于0，小于购买数量!', {icon: 0, title:'提醒'});
+					  top.layer.alert('售后商品数量必须大于0，小于可申请的售后数量!', {icon: 0, title:'提醒'});
 					  return;
 				  }
 			  }
@@ -56,15 +56,17 @@
 				  top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
 				  return;
 			  }
-				
-			  //虚拟商品的退款金额校验
-			  var ra=$("#returnAmount").val();
-			  if(ra<=0){
-				  top.layer.alert('退款金额必须大于0，小于实付款金额!', {icon: 0, title:'提醒'});
-				  return;
-			  }else if(parseInt(totalAmount)<parseInt(ra)){
-				  top.layer.alert('退款金额必须大于0，小于实付款金额!', {icon: 0, title:'提醒'});
-				  return;
+			  var type=$("#applyType").val();
+			  if(type == 0){
+				  //虚拟商品的退款金额校验
+				  var ra=$("#returnAmount").val();
+				  if(ra<=0){
+					  top.layer.alert('退款金额必须大于0，小于实付款金额!', {icon: 0, title:'提醒'});
+					  return;
+				  }else if(parseInt(totalAmount)<parseInt(ra)){
+					  top.layer.alert('退款金额必须大于0，小于实付款金额!', {icon: 0, title:'提醒'});
+					  return;
+				  }
 			  }
 			  $("#returnAmount").val();
 			  $("#inputForm").submit();
@@ -195,10 +197,10 @@
 		function returnChangeNum(){
 			var num=$("#returnNum").val();
 			if(parseInt(num)<=0){
-				top.layer.alert('退货数量必须大于0，小于购买数量!', {icon: 0, title:'提醒'});
+				top.layer.alert('退货数量必须大于0，小于可申请的售后数量!', {icon: 0, title:'提醒'});
 				return;
 			}else if(parseInt(num)>parseInt(goodNum)){
-				top.layer.alert('退货数量必须大于0，小于购买数量!', {icon: 0, title:'提醒'});
+				top.layer.alert('退货数量必须大于0，小于可申请的售后数量!', {icon: 0, title:'提醒'});
 				return;
 			}
 		}

@@ -164,6 +164,10 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 
 		returnedGoods.setId(id);
 		returnedGoods.setApplyDate(date);
+		//虚拟商品退货时,由于在returnForm.jsp中,虚拟商品售后次数使用ServiceTimes.
+		if(orders.getIsReal() == 1){
+			returnedGoods.setReturnNum(returnedGoods.getServiceTimes());
+		}
 		if (returnedGoods.getApplyType() == 0) {
 			returnedGoods.setReturnStatus("11");
 		} else if (returnedGoods.getApplyType() == 1) {
