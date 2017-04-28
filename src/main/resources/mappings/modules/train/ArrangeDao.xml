@@ -168,13 +168,14 @@
 			</foreach>
 	</insert>
 	<select id="findAllOrdinary" resultType="ArrangeBeautician">
-		SELECT b.id AS userId,b.name,b.office_id AS userOfficeId,b.del_flag,a.del_flag AS beauticianStatus,
-			(SELECT b1.role_id FROM sys_user_role b1 LEFT JOIN sys_role c1 ON c1.id = b1.role_id WHERE 1 = 1 AND c1.enname = 'pb' AND c1.del_flag = 0 AND b1.user_id = a.user_id ) AS roleId
-		FROM (
-			SELECT a.beautician_id AS user_id,IFNULL(b.del_flag,2) AS del_flag FROM train_arrange_shop a LEFT JOIN trains.train_special_beautician b ON b.user_id = a.beautician_id WHERE 1 = 1 AND a.shop_id = #{officeId} AND a. month = #{month}
-			union
-			SELECT a.id AS user_id,2 AS del_flag FROM sys_user a LEFT JOIN sys_user_role b ON b.user_id = a.id LEFT JOIN sys_role c ON c.id = b.role_id WHERE 1 = 1 AND c.enname = 'pb' AND c.del_flag = 0 AND a.office_id = #{officeId} AND NOT EXISTS (SELECT 1 FROM trains.train_special_beautician d WHERE d.user_id = a.id)
-			) a
-			LEFT JOIN sys_user b ON b.id = a.user_id ORDER BY a.del_flag DESC
+		SELECT DISTINCT a.id AS userId,a.name,a.office_id AS userOfficeId,a.del_flag,b.del_flag AS beauticianStatus,
+			(SELECT b1.role_id FROM sys_user_role b1 LEFT JOIN sys_role c1 ON c1.id = b1.role_id WHERE 1 = 1 AND c1.enname = 'pb' AND c1.del_flag = 0 AND b1.user_id = a.id ) AS roleId
+		FROM sys_user a RIGHT JOIN (
+			SELECT c.user_id,(CASE WHEN d.del_flag = 0 THEN 0 ELSE 1 END) AS del_flag FROM
+				(SELECT a.id AS user_id FROM sys_user AS a RIGHT JOIN (SELECT user_id FROM trains.sys_user_role WHERE role_id = (SELECT id FROM trains.sys_role WHERE enname = 'pb' AND del_flag = 0)) ur ON a.id = ur.user_id WHERE a.office_id = #{officeId} AND a.del_flag = 0
+				union
+				SELECT DISTINCT b.beautician_id AS user_id FROM train_arrange_shop b WHERE b.shop_id = #{officeId} AND b.month = #{month}) c
+				LEFT JOIN trains.train_special_beautician d ON c.user_id = d.user_id
+		) AS b ON a.id = b.user_id ORDER BY a.del_flag
 	</select>
 </mapper>

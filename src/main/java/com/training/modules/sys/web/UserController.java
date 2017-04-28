@@ -415,6 +415,7 @@ public class UserController extends BaseController {
 		if(u != null ){
 			user.setOfficeIdList(u.getOfficeIdList());
 		}
+		model.addAttribute("isSpecBeautician", systemService.selectSpecBeautician(user.getId()));	
 		model.addAttribute("user", user);
 		model.addAttribute("officeList", officeService.findAll());
 		return "modules/sys/userAuth";
@@ -1286,22 +1287,5 @@ public class UserController extends BaseController {
 	// }
 	// });
 	// }
-    
-	/**
-	 * 验证用户是否为特殊美容师 
-	 * @param id
-	 * @return
-	 */
-	@RequestMapping(value="isSpecBeautician")
-	@ResponseBody
-	public String isSpecBeautician(String id){
-		String result = "";
-		if(systemService.selectSpecBeautician(id) != 0){
-			result = "false";
-		}else{
-			result = "true";
-		}
-		return result;
-	}
 }
 

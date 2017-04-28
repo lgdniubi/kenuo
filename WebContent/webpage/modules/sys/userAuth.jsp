@@ -8,27 +8,14 @@
 	<script type="text/javascript">
 		var validateForm;
 		var tree2;
-		var oldRoles;
+		var oldRoleNames;
 		var a = true;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 			if(validateForm.form()){
-				var roles = $("#roleId").val();
-				if((oldRoles.indexOf('cc78d1a10a584999af86410c0a4fabdb') != -1)&&(roles.indexOf('cc78d1a10a584999af86410c0a4fabdb')== -1)){
-						$.ajax({
-						  async:false,
-				          type:"get",  
-				          url:"${ctx}/sys/user/isSpecBeautician",  
-				          data:{'id':$('#id').val()},  
-				          success: function(data){ 
-				              if (data == 'false'){
-				            	  top.layer.alert('该用户为特殊美容师，无法将其排班角色删除', {icon: 0, title:'提醒'});
-				            	  a = false;
-				              }
-				          }
-					 });
-					if(a == false){
-						return;						
-					}						
+				var roles = $("#roleName").val();
+				if((oldRoleNames.indexOf('排班') != -1) && (roles.indexOf('排班') == -1) && ($("#isSpecBeautician").val() != '0')){
+					top.layer.alert('该用户为特殊美容师，无法将其排班角色删除', {icon: 0, title:'提醒'});
+					return false;						
 				}
 				var ids2 = [], nodes2 = tree2.getCheckedNodes(true);
 				for (var i=0; i<nodes2.length; i++) {
@@ -51,13 +38,13 @@
 					    loading('正在提交，请稍等...');
 					    $("#inputForm").submit();
 					    return true;
-				 }  
-		  }
+				 }
+		  	} 
 		  return false;
 		}
 		$(document).ready(function(){
-			oldRoles = $("#roleId").val();
-			
+			oldRoleNames = $("#roleName").val();
+
 			validateForm= $("#inputForm").validate({
 				submitHandler: function(form){
 					 loading('正在提交，请稍等...');
@@ -107,6 +94,7 @@
 <body>
 	<form:form id="inputForm" modelAttribute="user" autocomplete="off" action="${ctx}/sys/user/saveAuth" method="post" class="form-horizontal" >
 		<form:hidden path="id" id="id"/>
+		<input id="isSpecBeautician" name="isSpecBeautician" value="${isSpecBeautician }" type="hidden">
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		   <tbody>
 		   	  <tr>

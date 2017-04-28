@@ -531,7 +531,8 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 									// 修改商品规格项类型
 									goods.setSpecType(specTypeId);
 									updategoodstype(goods);
-									updateGoodsSpecCache(goods.getGoodsId(),goodsSpecPricesList1);
+									updateGoodsSpecCache(goods.getGoodsId(),goodsSpecPricesList1);	// 更新缓存
+									goodsDao.updateTotalstore(goods.getGoodsId());					// 修改商品总库存为0
 								}
 
 								// 商品规格【图片】list有数据才进行保存操作
@@ -1121,7 +1122,7 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 	public void updateGoodsSpecCache(int goodsId,List<String> goodsSpecPricesList){
 		redisClientTemplate.set(GOODSSTORE+goodsId, "0");
 		for (int i = 0; i < goodsSpecPricesList.size(); i++) {
-			redisClientTemplate.del(SPECPRICE+goodsId+"#"+goodsSpecPricesList.get(i));
+			redisClientTemplate.set(SPECPRICE+goodsId+"#"+goodsSpecPricesList.get(i),"0");
 //			redisClientTemplate.lrem(GOODS_SPECPRICE_HASH, 1, goodsId+"#"+goodsSpecPricesList.get(i));
 		}
 	}
