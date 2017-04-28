@@ -82,7 +82,9 @@
 			isReal="${orders.isReal}";
 			$("#goodsMappingId").val(id);
 			goodNum=$("#"+id+"goodsnum").val();//购买的数量
-			remaintimes=$("#"+id+"remaintimes").val();//为商品的售后次数赋值
+			remaintimes=$("#"+id+"remaintimes").val();//虚拟商品剩余次数
+			//$("#serviceTimes").val(remaintimes);
+			
 			orderArrearage=$("#"+id+"orderArrearage").val();//订单欠款
 			singleRealityPrice=$("#"+id+"singleRealityPrice").val();//实际服务单次价
 			totalAmount=$("#"+id+"total").val();//实付款
