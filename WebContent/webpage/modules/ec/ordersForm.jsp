@@ -128,19 +128,25 @@
 				    	var rechargeAmount = obj.document.getElementById("rechargeAmount").value;
 						var topUpTotalAmount = obj.document.getElementById("topUpTotalAmount").value;
 						var jsmoney = obj.document.getElementById("jsmoney").value;
+						var loading = obj.document.getElementById("loading");
+						$(loading).show();
 						if(accountBalance == ''){
+							$(loading).hide();
 							top.layer.alert('账户余额必填！', {icon: 0, title:'提醒'});
 							return;
 						}
 						if(rechargeAmount == ''){
+							$(loading).hide();
 							top.layer.alert('充值金额必填！', {icon: 0, title:'提醒'});
 							return;
 						}
 						if(topUpTotalAmount == ''){
-							top.layer.alert('实际付款必填！', {icon: 0, title:'提醒'});
+							$(loading).hide(); 
+							top.layer.alert('总付款必填！', {icon: 0, title:'提醒'});
 							return;
 						}
 						if(jsmoney == 0){
+							$(loading).hide();
 							top.layer.alert('请计算费用！', {icon: 0, title:'提醒'});
 							return;
 						}
@@ -159,8 +165,10 @@
 								var totalAmount = topUpTotalAmount/singleRealityPrice;
 								var _totalAmount = totalAmount - parseInt(totalAmount);
 								if(accountBalance > date){
+									$(loading).hide(); 
 									top.layer.alert('您输入的余额不能大于当前账户的余额！', {icon: 0, title:'提醒'});
 								}else{
+									top.layer.close(index);
 									$.ajax({
 										type:"post",
 										data:{
@@ -181,7 +189,6 @@
 										success:function(date){
 												top.layer.alert('保存成功!', {icon: 1, title:'提醒'});
 												window.location="${ctx}/ec/orders/orderform?orderid="+orderid;
-												top.layer.close(index);
 										},
 										error:function(XMLHttpRequest,textStatus,errorThrown){}
 									});

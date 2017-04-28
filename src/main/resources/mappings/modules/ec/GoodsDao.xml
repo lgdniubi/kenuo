@@ -578,6 +578,7 @@
 			 goods_weight  = #{goodsWeight}
 		WHERE spec_key = #{specKey}
 		AND goods_id = #{goodsId}
+		AND del_flag =0
 	</update>
 	
 	<!-- 根据商品ID，查询商品属性 -->

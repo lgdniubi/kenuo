@@ -32,7 +32,7 @@
 						<input type="checkbox" id="ichecks" /><label class="active">账户余额：</label>
 						<input type="text" id="accountBalance" name="accountBalance" style="width:150px;" value="0" class="form-control required" value="0" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';"/>（可用余额：<label id="ye"></label>）
 						<p></p>
-						<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">*</font>实际付款：</label>
+						<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">*</font>总付款：</label>
 						<input type="hidden" id="topUpTotalAmount" name="topUpTotalAmount" readonly="readonly" class="form-control required" style="width:150px;" />
 						<input type="text" id="newTopUpTotalAmount" name="newTopUpTotalAmount" readonly="readonly" class="form-control required" style="width:150px;" />
 						&nbsp;&nbsp;<a href="#" onclick="sum()">计算金额</a>
@@ -43,14 +43,14 @@
 			</div>
 		</div>
 	</div>
-	<div class="loading"></div>
+	<div class="loading" id="loading"></div>
 	<script type="text/javascript">
 		function sum(){
 			var rechargeAmount = parseFloat($("#rechargeAmount").val());
 			var accountBalance = parseFloat($("#accountBalance").val());
 			var goodsBalance = parseFloat($("#goodsBalance").val());
 			var topUpTotalAmount = (rechargeAmount+accountBalance).toFixed(2);
-			var newTopUpTotalAmount = rechargeAmount;
+			var newTopUpTotalAmount = (rechargeAmount+accountBalance+goodsBalance).toFixed(2);
 			
 			$("#rechargeAmount").attr("readonly",true);
 			$("#accountBalance").attr("readonly",true);
