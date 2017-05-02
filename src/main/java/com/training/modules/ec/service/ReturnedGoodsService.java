@@ -93,6 +93,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
 			}
 			returnedGoodsDao.saveEdite(returnedGoods);//添加退货信息到mtmy_returned_goods表中
+			
 			Orders orders = ordersDao.get(returnedGoods.getOrderId());
 			orders.setOrderid(returnedGoods.getId());
 			orders.setParentid(returnedGoods.getOrderId());
