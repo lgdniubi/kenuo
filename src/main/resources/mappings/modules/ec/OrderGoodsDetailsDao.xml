@@ -194,7 +194,8 @@
 			SUM(ogd.order_balance) AS 'orderBalance',
 			SUM(ogd.app_total_amount) AS 'appTotalAmount',
 			SUM(ogd.app_arrearage) AS 'appArrearage',
-			ogm.goods_price AS 'goodsPrice'
+			ogm.goods_price AS 'goodsPrice',
+			ogm.order_amount AS 'orderAmount'
 		FROM mtmydb.mtmy_order_goods_details ogd
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping ogm ON ogm.rec_id = ogd.goods_mapping_id
 		WHERE goods_mapping_id = #{recid}
