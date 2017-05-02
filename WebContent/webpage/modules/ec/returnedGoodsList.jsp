@@ -203,7 +203,17 @@
 								<td style="text-align: center;">
 									<fmt:formatDate value="${returnGoods.applyDate}" pattern="yyyy-MM-dd HH:mm:ss" /> 
 								</td>
-								<td style="text-align: center;">${returnGoods.returnReason}</td>
+								<td style="text-align: center;">
+									<!-- 当文本内容大于5个字符时，只显示其前五个字符 -->
+								  	<c:choose>  
+								         <c:when test="${fn:length(returnGoods.returnReason) > 20}">  
+								             <c:out value="${fn:substring(returnGoods.returnReason, 0, 20)}..." />  
+								         </c:when>  
+								        <c:otherwise>  
+								           <c:out value="${returnGoods.returnReason}" />  
+								        </c:otherwise>  
+								    </c:choose>
+								</td>
 								<td  style="text-align: center;">
 									<c:if test="${returnGoods.isStorage==0}">
 										未入库

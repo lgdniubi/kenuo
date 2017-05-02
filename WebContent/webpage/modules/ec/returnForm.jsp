@@ -99,18 +99,45 @@
 				top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
 			}else{
 				if("bm"==type){//当时后台数据时
-				var orderA=$("#"+id+"orderAmount").val();
-				var totalA=$("#"+id+"total").val();
-				$("#totalAmount").val(totalA);//实付款金额
-				$("#orderAmount").val(orderA);//应付款金额
-				if(isReal==0){//是实物
-					if(orderA==totalA){
-						$("#totalAmount").val(totalA);
-						returnAmount=totalA/goodNum;//计算退款金额
-						var retNum=$("#returnNum").val();//退货的商品数量
-						var SumAmount=returnAmount*retNum;//退款总金额
-						$("#returnAmount").val(SumAmount.toFixed(2));//退款金额
-					}else{
+					var orderA=$("#"+id+"orderAmount").val();
+					var totalA=$("#"+id+"total").val();
+					$("#totalAmount").val(totalA);//实付款金额
+					$("#orderAmount").val(orderA);//应付款金额
+					if(isReal==0){//是实物
+						if(orderA==totalA){
+							$("#totalAmount").val(totalA);
+							returnAmount=totalA/goodNum;//计算退款金额
+							var retNum=$("#returnNum").val();//退货的商品数量
+							var SumAmount=returnAmount*retNum;//退款总金额
+							//$("#returnAmount").val(SumAmount.toFixed(2));//退款金额
+						}else{
+							$.ajax({
+								type:"post",
+								async:false,
+								data:{
+									id:id,
+									isReal:isReal,
+									orderid:orderId
+								 },
+								url:"${ctx}/ec/orders/getOrderGoodsIsFre",
+								success:function(date){
+									returnAmount=date;
+									if(returnAmount==-1){
+										top.layer.alert('该商品欠款或者没有余款，无法退款!', {icon: 0, title:'提醒'});
+										return;
+									}else if(returnAmount==-2){
+										top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
+										return;
+									}
+									
+								},
+								error:function(XMLHttpRequest,textStatus,errorThrown){
+											    
+								}
+							});
+							
+						}
+					}else if(isReal==1){//是虚拟
 						$.ajax({
 							type:"post",
 							async:false,
@@ -128,44 +155,13 @@
 								}else if(returnAmount==-2){
 									top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
 									return;
-								}else{
-									$("#returnAmount").val(returnAmount*$("#returnNum").val());
 								}
-								
 							},
 							error:function(XMLHttpRequest,textStatus,errorThrown){
 										    
 							}
 						});
-						
 					}
-				}else if(isReal==1){//是虚拟
-					$.ajax({
-						type:"post",
-						async:false,
-						data:{
-							id:id,
-							isReal:isReal,
-							orderid:orderId
-						 },
-						url:"${ctx}/ec/orders/getOrderGoodsIsFre",
-						success:function(date){
-							returnAmount=date;
-							if(returnAmount==-1){
-								top.layer.alert('该商品欠款或者没有余款，无法退款!', {icon: 0, title:'提醒'});
-								return;
-							}else if(returnAmount==-2){
-								top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
-								return;
-							}else{
-								$("#returnAmount").val(returnAmount)
-							}
-						},
-						error:function(XMLHttpRequest,textStatus,errorThrown){
-									    
-						}
-					});
-				}
 	
 				}else{
 					var totalA=$("#"+id+"total").val();
@@ -303,7 +299,9 @@
 								<th style="text-align: center;">购买数量</th>
 								<th style="text-align: center;">实付款</th>
 								<th style="text-align: center;">实际服务单价</th>
-								<th style="text-align: center;">剩余次数</th>
+								<c:if test="${orders.isReal==1}">
+									<th style="text-align: center;">剩余次数</th>
+								</c:if>
 								<!-- <th style="text-align: center;">余额</th> -->
 								<th style="text-align: center;">欠款</th>
 							</tr>
@@ -329,7 +327,9 @@
 									<td  style="text-align: center;">${orderGood.goodsnum}</td>
 									<td  style="text-align: center;">${orderGood.totalAmount}</td>
 									<td  style="text-align: center;">${orderGood.singleRealityPrice}</td>
-									<td  style="text-align: center;">${orderGood.remaintimes}</td>
+									<c:if test="${orders.isReal==1}">
+										<td  style="text-align: center;">${orderGood.remaintimes}</td>
+									</c:if>
 									<%-- <td  style="text-align: center;">${orderGood.orderBalance}</td> --%>
 									<td  style="text-align: center;">${orderGood.orderArrearage}</td>
 								</tr>
@@ -394,8 +394,8 @@
 						<form:input path="returnAmount" htmlEscape="false" maxlength="10"  style="width:180px;" class="form-control required"
 						onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
 						onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
-						onfocus="if(value == '0.00'){value=''}"
-						onblur="if(value == ''){value='0.00'}"
+						onfocus="if(value == '0.0'){value=''}"
+						onblur="if(value == ''){value='0.0'}"
 						onchange="returnChangeAmount()"/>
 					</div>
 			       

@@ -532,7 +532,11 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 									goods.setSpecType(specTypeId);
 									updategoodstype(goods);
 									updateGoodsSpecCache(goods.getGoodsId(),goodsSpecPricesList1);	// 更新缓存
-									goodsDao.updateTotalstore(goods.getGoodsId());					// 修改商品总库存为0
+									Goods g = new Goods();
+									g.setGoodsId(goods.getGoodsId());
+									g.setTotalStore(0);
+									g.setStoreCount(0);
+									goodsDao.updateStorCount(g);					// 修改商品总库存、剩余库存为0 
 								}
 
 								// 商品规格【图片】list有数据才进行保存操作

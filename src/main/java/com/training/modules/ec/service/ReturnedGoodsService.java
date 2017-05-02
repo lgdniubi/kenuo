@@ -83,12 +83,17 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		if ("11".equals(returnedGoods.getReturnStatus())) { // 申请退货退款
 			//判断是否为虚拟商品;是:直接状态为15退款中,入库状态为"空" -1.
 			if(returnedGoods.getIsReal() == 1){
-				returnedGoods.setReturnStatus(15 + "");
+				if(returnedGoods.getIsConfirm() == -10){//当拒绝退货时
+					returnedGoods.setReturnStatus(-10 + "");
+				}else{
+					returnedGoods.setReturnStatus(15 + "");
+				}
 				returnedGoods.setIsStorage(-1 + "");
 			}else{
 				returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
 			}
 			returnedGoodsDao.saveEdite(returnedGoods);//添加退货信息到mtmy_returned_goods表中
+			
 			Orders orders = ordersDao.get(returnedGoods.getOrderId());
 			orders.setOrderid(returnedGoods.getId());
 			orders.setParentid(returnedGoods.getOrderId());
@@ -117,9 +122,14 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				OrderGoodsDetails ogd = new OrderGoodsDetails();
 				ogd.setOrderId(returnedGoods.getOrderId());
 				ogd.setGoodsMappingId(returnedGoods.getGoodsMappingId());
-				ogd.setItemAmount(returnedGoods.getGoodsNum()*orderGoods.getSingleRealityPrice());
-				ogd.setItemCapitalPool(returnedGoods.getGoodsNum()*orderGoods.getSingleNormPrice());
-				ogd.setServiceTimes(returnedGoods.getGoodsNum());
+				if(returnedGoods.getIsReal() == 1){
+					ogd.setItemAmount(returnedGoods.getReturnNum()*orderGoods.getSingleRealityPrice());
+					ogd.setItemCapitalPool(returnedGoods.getReturnNum()*orderGoods.getSingleNormPrice());
+				}else if(returnedGoods.getIsReal() == 0){
+					ogd.setItemAmount(0);
+					ogd.setItemCapitalPool(0);	
+				}
+				ogd.setServiceTimes(returnedGoods.getReturnNum());
 				ogd.setType(0);
 				ogd.setCreateBy(UserUtils.getUser());
 				orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
