@@ -104,7 +104,7 @@
 						<label class="pull-right">服务次数:</label>
 					</td>
 					<td class="width-35">
-						<input id="serviceTimes" htmlEscape="false" maxlength="50" class="form-control" value="${goodsSpecPrice.serviceTimes }"
+						<input id="serviceTimes" htmlEscape="false" maxlength="3" class="form-control" value="${goodsSpecPrice.serviceTimes }"
 							onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')" onfocus="if(value == '0') value=''" onblur="if(this.value == '')this.value='0';"/>
 					</td>
 				</tr>
