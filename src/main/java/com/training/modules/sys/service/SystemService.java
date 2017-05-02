@@ -506,7 +506,7 @@ public class SystemService extends BaseService implements InitializingBean {
 				userLog.setContent(string);
 				user.setUserLog(userLog);
 				userDao.saveUserLog(user);
-				redisClientTemplate.del("UTOKEN_"+user.getId());
+				redisClientTemplate.del("UTOKEN_"+user.getId());	// 清除用户缓存 用户TOKEN失效
 			}
 			
 			

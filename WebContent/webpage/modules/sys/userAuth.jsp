@@ -11,6 +11,7 @@
 		var oldRoleNames;
 		var a = true;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
+			$("#isUpdateRole").val(0);
 			if(validateForm.form()){
 				var roles = $("#roleName").val();
 				if((oldRoleNames.indexOf('排班') != -1) && (roles.indexOf('排班') == -1) && ($("#isSpecBeautician").val() != '0')){
@@ -35,9 +36,14 @@
 						  return false;
 					  }
 				 }else{
-					    loading('正在提交，请稍等...');
-					    $("#inputForm").submit();
-					    return true;
+					if(oldRoleNames == $("#roleName").val()){	// 用户校验用户角色是否修改过 修改过则清除用户缓存 用户TOKEN失效
+						$("#isUpdateRole").val(0);	
+					}else{
+						$("#isUpdateRole").val(1);	
+					}
+				    loading('正在提交，请稍等...');
+				    $("#inputForm").submit();
+				    return true;
 				 }
 		  	} 
 		  return false;
@@ -95,6 +101,7 @@
 	<form:form id="inputForm" modelAttribute="user" autocomplete="off" action="${ctx}/sys/user/saveAuth" method="post" class="form-horizontal" >
 		<form:hidden path="id" id="id"/>
 		<input id="isSpecBeautician" name="isSpecBeautician" value="${isSpecBeautician }" type="hidden">
+		<input id="isUpdateRole" name="isUpdateRole" type="hidden">
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		   <tbody>
 		   	  <tr>
