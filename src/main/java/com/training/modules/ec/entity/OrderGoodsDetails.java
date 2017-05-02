@@ -21,6 +21,7 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 	
 	private double appTotalAmount;   //app实付金额
 	private double appArrearage;      //app欠款金额
+	private double orderAmount;       //应付金额（讨价还价的价格）
 	
 	private double goodsPrice;       //商品的价格
 	
@@ -130,6 +131,15 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 
 	public void setGoodsPrice(double goodsPrice) {
 		this.goodsPrice = goodsPrice;
+	}
+
+	
+	public double getOrderAmount() {
+		return orderAmount;
+	}
+
+	public void setOrderAmount(double orderAmount) {
+		this.orderAmount = orderAmount;
 	}
 
 	@Override

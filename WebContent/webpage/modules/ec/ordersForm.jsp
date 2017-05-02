@@ -115,6 +115,7 @@
 		    	var orderid = $("#orderid").val();
 		    	var userid = $("#userid").val();
 		    	var isReal = $("#isReal").val();
+		    	var channelFlag = $("#channelFlag").val();
 				top.layer.open({
 				    type: 2, 
 				    area: ['600px', '450px'],
@@ -183,7 +184,8 @@
 											orderArrearage:orderArrearage,
 											servicetimes:servicetimes,
 											remaintimes:remaintimes,
-											isReal:isReal
+											isReal:isReal,
+											channelFlag:channelFlag
 										 },
 										url:"${ctx}/ec/orders/addOrderRechargeLog",
 										success:function(date){
@@ -426,6 +428,7 @@ window.onload=initStatus;
 					<form:form id="inputForm" modelAttribute="orders" action="${ctx}/ec/orders/updateVirtualOrder" method="post" class="form-horizontal">
 						<input id="oldAddress" name="oldAddress" type="hidden" value="${orders.address}"/>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+							<input type="hidden" id="channelFlag" value="${orders.channelFlag}" />
 							<input type="hidden" id="isReal" value="${orders.isReal}" />
 							<input type="hidden" id="operationName" value="${user.name}" />
 							<h4>订单基本信息:&nbsp;&nbsp;<c:if test="${orders.isReal == 1}">虚拟订单</c:if>&nbsp;&nbsp;<c:if test="${orders.isReal == 0}">实物订单</c:if></h4><br>

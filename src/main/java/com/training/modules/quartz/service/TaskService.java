@@ -67,7 +67,7 @@ public class TaskService {
 		taskLog.setJobName("init");
 		taskLog.setStartDate(startDate);
 		
-		try {
+		/*try {
 			//定时器加载时间-进行redisCaChe缓存
 			new RedisCaCheLoad().load();
 			
@@ -98,7 +98,7 @@ public class TaskService {
 			taskLog.setRunTime(runTime);
 			taskLog.setRemarks("后台重启，重新加载");
 			iTaskDao.insertTaskLog(taskLog);
-		}
+		}*/
 	}
 	
 	/**
