@@ -63,7 +63,7 @@
 				  if(ra<=0){
 					  top.layer.alert('退款金额必须大于0，小于实付款金额!', {icon: 0, title:'提醒'});
 					  return;
-				  }else if(totalAmount < ra){
+				  }else if(parseFloat(totalAmount) < parseFloat(ra)){
 					  top.layer.alert('退款金额必须大于0，小于实付款金额!', {icon: 0, title:'提醒'});
 					  return;
 				  }
@@ -219,7 +219,7 @@
 			if(parseInt(ra)<=0){
 				top.layer.alert('退款金额必须大于0，小于实付款金额!', {icon: 0, title:'提醒'});
 				return;
-			}else if(totalAmount<ra){
+			}else if(parseFloat(totalAmount)<parseFloat(ra)){
 				top.layer.alert('退款金额必须大于0，小于实付款金额!', {icon: 0, title:'提醒'});
 				return;
 			}
