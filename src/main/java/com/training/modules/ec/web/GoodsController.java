@@ -479,12 +479,24 @@ public class GoodsController extends BaseController{
 //							String result = WebUtils.postObject(parpm, url);
 //							JSONObject jsonObject = JSONObject.fromObject(result);
 //							logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg"));
-							boolean str = redisClientTemplate.exists(RedisConfig.GOODS_SPECPRICE_PREFIX+goodsId+"#"+gsp.getSpecKey());
-							if(str){
-								RedisLock redisLock = new RedisLock(redisClientTemplate, RedisConfig.GOODS_SPECPRICE_PREFIX+goodsId+"#"+gsp.getSpecKey());
-								redisLock.lock();
-								redisClientTemplate.incrBy(RedisConfig.GOODS_SPECPRICE_PREFIX+goodsId+"#"+gsp.getSpecKey(), storeCount);
-								redisLock.unlock();
+							if(StringUtils.isBlank(redisClientTemplate.get(RedisConfig.GOODS_STORECOUNT_PREFIX+goodsId))){
+								redisClientTemplate.sadd(RedisConfig.GOODS_IDS_HASH, goodsId);
+								redisClientTemplate.set(RedisConfig.GOODS_STORECOUNT_PREFIX+goodsId,String.valueOf(storeCount));
+								redisClientTemplate.sadd(RedisConfig.GOODS_SPECPRICE_HASH,goodsId+"#"+gsp.getSpecKey());
+								redisClientTemplate.set(RedisConfig.GOODS_SPECPRICE_PREFIX+goodsId+"#"+gsp.getSpecKey(),String.valueOf(storeCount));
+							}else{
+								boolean str = redisClientTemplate.exists(RedisConfig.GOODS_SPECPRICE_PREFIX+goodsId+"#"+gsp.getSpecKey());
+								if(str){
+									RedisLock redisLock = new RedisLock(redisClientTemplate, RedisConfig.GOODS_SPECPRICE_PREFIX+goodsId+"#"+gsp.getSpecKey());
+									redisLock.lock();
+									redisClientTemplate.incrBy(RedisConfig.GOODS_SPECPRICE_PREFIX+goodsId+"#"+gsp.getSpecKey(), storeCount);
+									redisClientTemplate.incrBy(RedisConfig.GOODS_STORECOUNT_PREFIX+goodsId,storeCount);
+									redisLock.unlock();
+								}else{
+									redisClientTemplate.incrBy(RedisConfig.GOODS_STORECOUNT_PREFIX+goodsId,storeCount);
+									redisClientTemplate.sadd(RedisConfig.GOODS_SPECPRICE_HASH,goodsId+"#"+gsp.getSpecKey());
+									redisClientTemplate.set(RedisConfig.GOODS_SPECPRICE_PREFIX+goodsId+"#"+gsp.getSpecKey(),String.valueOf(storeCount));
+								}
 							}
 						}
 							

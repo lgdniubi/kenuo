@@ -1415,8 +1415,8 @@ public class OrdersController extends BaseController {
 				}
 			}
 		} catch (Exception e) {
-			BugLogUtils.saveBugLog(request, "强制取消错误", e);
-			logger.error("强制取消错误：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "归还仓库错误", e);
+			logger.error("归还仓库错误：" + e.getMessage());
 			return false;
 		}
 		return true;
