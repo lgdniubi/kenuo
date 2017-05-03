@@ -176,6 +176,6 @@
 				union
 				SELECT DISTINCT b.beautician_id AS user_id FROM train_arrange_shop b WHERE b.shop_id = #{officeId} AND b.month = #{month}) c
 				LEFT JOIN trains.train_special_beautician d ON c.user_id = d.user_id
-		) AS b ON a.id = b.user_id ORDER BY a.del_flag
+		) AS b ON a.id = b.user_id ORDER BY beauticianStatus DESC
 	</select>
 </mapper>
