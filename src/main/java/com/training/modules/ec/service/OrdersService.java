@@ -1526,8 +1526,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			accountBalance_in = 0;                                 //订单余款，
 			totalAmount_in = Double.parseDouble(formater.format(totalAmount_in_a - advance));       //存入库的实付款金额=实付款金额-订金
 			newSpareMoneySum = -accountBalance;
-			appTotalAmount = 0;                   //app实付金额
-			appArrearage = 0; //app欠款金额
+			if(accountBalance != 0){
+				appTotalAmount = 0;                   //app实付金额
+				appArrearage = 0; //app欠款金额
+			}else{
+				appTotalAmount = Double.parseDouble(formater.format(singleRealityPrice - advance));  //app实付金额
+				appArrearage = -Double.parseDouble(formater.format(singleRealityPrice - advance));; //app欠款金额
+			}
+			
 		}
 		
 		double itemAmount = serviceTimes_in_a * singleRealityPrice; //项目金额
