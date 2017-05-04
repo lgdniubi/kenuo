@@ -1105,9 +1105,10 @@
 				content = content.replace("&lt;/style&gt;","</style>");
 			}
 			$("#contents").val(content);
-			if($("#contents").val().length >= 15000){
+			/* if($("#contents").val().length >= 15000){
 				top.layer.alert('文章内容过长！', {icon: 0});
-			}else if($("input[name=authorList]:checked").length != 1){
+			}else  */
+			if($("input[name=authorList]:checked").length != 1){
 				top.layer.alert('作者不能为空！', {icon: 0});
 			}else if($("#categoryId").val() == 0){
 				top.layer.alert('文章分类不能为空！', {icon: 0});

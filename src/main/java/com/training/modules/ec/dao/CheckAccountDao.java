@@ -15,6 +15,10 @@ import com.training.modules.ec.entity.MtmyCheckAccount;
 @MyBatisDao
 public interface CheckAccountDao extends CrudDao<MtmyCheckAccount>{
 	/**
+	 * 插入微信支付宝数据
+	 */
+	public int insterAccount(List<MtmyCheckAccount> list);
+	/**
 	 * 导入ping++数据
 	 * @param mtmyCheckAccount
 	 */

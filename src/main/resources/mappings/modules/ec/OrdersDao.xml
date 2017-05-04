@@ -11,9 +11,9 @@
 		a.shipping_status,
 		a.shipping_code,
 		a.shipping_name,
-		d.pay_id,
-		d.pay_code,
-		d.pay_name,
+		a.pay_id,
+		a.pay_code,
+		a.pay_name,
 		a.invoice_title,
 		a.goods_price,
 		a.shipping_price,
@@ -48,7 +48,6 @@
 	</sql>
 
 	<sql id="ordersJoins">
-		LEFT JOIN mtmydb.mtmy_payment d ON a.pay_code = d.pay_code
 		LEFT JOIN mtmydb.mtmy_users b ON a.user_id = b.user_id
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping c ON c.order_id = a.order_id
 		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=c.goods_id
@@ -66,7 +65,7 @@
 		a.order_id = #{orderid}
 		and a.del_flag=0
 		GROUP BY
-		a.order_id,d.pay_id,d.pay_code,d.pay_name
+		a.order_id,a.pay_id,a.pay_code,a.pay_name
 	</select>
 	
 	<select id="findselectByOrderId" resultType="Orders">
@@ -79,7 +78,7 @@
 		a.order_id = #{orderid}
 		and a.del_flag=0
 		GROUP BY
-		a.order_id,d.pay_id,d.pay_code,d.pay_name
+		a.order_id,a.pay_id,a.pay_code,a.pay_name
 	</select>
 	
 	<select id="selectByOrderIdSum" resultType="Orders">
@@ -167,7 +166,7 @@
 		SELECT
 			a.order_id AS orderid,
 			a.order_status AS orderstatus,
-			p.pay_name AS payname,
+			a.pay_name AS payname,
 			a.user_money AS usermoney,
 			a.coupon_price AS couponprice,
 			a.order_amount AS orderamount,
@@ -190,7 +189,6 @@
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
-		LEFT JOIN mtmydb.mtmy_payment p ON a.pay_id = p.pay_id
 		LEFT JOIN (SELECT SUM(order_arrearage) AS order_arrearage,order_id FROM mtmydb.mtmy_order_goods_details GROUP BY order_id) ogd ON a.order_id = ogd.order_id
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping m ON a.order_id = m.order_id
 		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=m.goods_id
@@ -266,7 +264,7 @@
 		SELECT
 			a.order_id AS orderid,
 			a.order_status AS orderstatus,
-			p.pay_name AS payname,
+			a.pay_name AS payname,
 			a.user_money AS usermoney,
 			a.coupon_price AS couponprice,
 			a.order_amount AS orderamount,
@@ -289,7 +287,6 @@
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
-		LEFT JOIN mtmydb.mtmy_payment p ON a.pay_id = p.pay_id
 		LEFT JOIN (SELECT SUM(order_arrearage) AS order_arrearage,order_id FROM mtmydb.mtmy_order_goods_details GROUP BY order_id) ogd ON a.order_id = ogd.order_id
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping m ON a.order_id = m.order_id
 		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=m.goods_id
@@ -374,7 +371,7 @@
 			a.consignee,
 			a.mobile,
 			a.pay_code,
-			d.pay_name,
+			a.pay_name,
 			a.shipping_code,
 			a.shipping_name,
 			a.shipping_time,
@@ -399,12 +396,11 @@
 		    (CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
 		FROM
 			mtmydb.mtmy_orders a
-			LEFT JOIN mtmydb.mtmy_payment d ON a.pay_code=d.pay_code
 			LEFT JOIN mtmydb.mtmy_users u ON a.user_id=u.user_id
 			LEFT JOIN mtmydb.mtmy_order_goods_mapping c ON c.order_id=a.order_id
 			LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=c.goods_id
 			LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
-			LEFT JOIN mtmydb.mtmy_spec_goods_price sp ON (g.goods_id = sp.goods_id and c.spec_key = sp.spec_key)
+			LEFT JOIN mtmydb.mtmy_spec_goods_price sp ON (g.goods_id = sp.goods_id and c.spec_key = sp.spec_key AND del_flag = 0)
 			LEFT JOIN (SELECT SUM(order_arrearage) AS order_arrearage,order_id FROM mtmydb.mtmy_order_goods_details GROUP BY order_id) ogd ON a.order_id = ogd.order_id
 		${sqlMap.dsf}
 		<!-- and a.del_flag =0 --> 
@@ -485,7 +481,7 @@
 			a.consignee,
 			a.mobile,
 			a.pay_code,
-			d.pay_name,
+			a.pay_name,
 			a.shipping_code,
 			a.shipping_name,
 			a.shipping_time,
@@ -510,12 +506,11 @@
 		    (CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
 		FROM
 			mtmydb.mtmy_orders a
-			LEFT JOIN mtmydb.mtmy_payment d ON a.pay_code=d.pay_code
 			LEFT JOIN mtmydb.mtmy_users u ON a.user_id=u.user_id
 			LEFT JOIN mtmydb.mtmy_order_goods_mapping c ON c.order_id=a.order_id
 			LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=c.goods_id
 			LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
-			LEFT JOIN mtmydb.mtmy_spec_goods_price sp ON (g.goods_id = sp.goods_id and c.spec_key = sp.spec_key)
+			LEFT JOIN mtmydb.mtmy_spec_goods_price sp ON (g.goods_id = sp.goods_id and c.spec_key = sp.spec_key AND del_flag = 0)
 			LEFT JOIN (SELECT SUM(order_arrearage) AS order_arrearage,order_id FROM mtmydb.mtmy_order_goods_details GROUP BY order_id) ogd ON a.order_id = ogd.order_id
 		<!-- WHERE a.del_flag =0 --> 
 		WHERE a.parent_id=0
@@ -1114,7 +1109,8 @@
 	<!-- 取消订单 -->
 	<update id="cancellationOrder">
 		UPDATE mtmydb.mtmy_orders
-			SET order_status = -2
+			SET order_status = -2,
+				cancel_type = '1'
 		WHERE order_id = #{orderid}
 	</update>
 	
@@ -1126,7 +1122,7 @@
 			u.nickname AS "username",
 			a.add_time AS addtime,
 			a.pay_time AS paytime,
-			p.pay_name AS payname,
+			a.pay_name AS payname,
 			a.total_amount AS totalamount,
 			a.order_arrearage AS orderArrearage,
 			a.order_status AS orderstatus,
@@ -1135,7 +1131,6 @@
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
-		LEFT JOIN mtmydb.mtmy_payment p ON a.pay_id = p.pay_id
 		WHERE a.del_flag = 0
 		 AND a.user_id=#{userid}
 		<if test="orderstatus!= null  and orderstatus!= ''">
@@ -1163,7 +1158,7 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+
 	<!-- 根据订单号查询其订单状态以及是否为虚拟订单 -->
 	<select id="selectOrdersStatus" resultType="Orders">
 		SELECT 
@@ -1179,4 +1174,5 @@
 		FROM mtmydb.mtmy_orders
 		WHERE order_id = #{orderId}
 	</select>
+
 </mapper>

@@ -27,6 +27,8 @@ public class OrderRechargeLog extends TreeEntity<OrderRechargeLog> {
 	
 	private double advance;     //预付金
 	
+	private String channelFlag;//渠道标识（wap：wap端；ios：苹果手机；android：安卓手机；bm：后台管理）
+	
 	public int getIsReal() {
 		return isReal;
 	}
@@ -158,6 +160,14 @@ public class OrderRechargeLog extends TreeEntity<OrderRechargeLog> {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public String getChannelFlag() {
+		return channelFlag;
+	}
+
+	public void setChannelFlag(String channelFlag) {
+		this.channelFlag = channelFlag;
 	}
 	
 }

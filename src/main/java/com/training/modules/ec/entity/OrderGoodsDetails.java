@@ -18,6 +18,13 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 	private double itemCapitalPool;	//项目资金池
 	private int serviceTimes;		//剩余服务次数
 	private int type;				//详情类型（0：充值；1：使用；2：退款）
+	
+	private double appTotalAmount;   //app实付金额
+	private double appArrearage;      //app欠款金额
+	private double orderAmount;       //应付金额（讨价还价的价格）
+	
+	private double goodsPrice;       //商品的价格
+	
 	private String createByName;	//操作人
 	
 	public String getCreateByName() {
@@ -98,6 +105,41 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 
 	public void setType(int type) {
 		this.type = type;
+	}
+	
+	
+	public double getAppTotalAmount() {
+		return appTotalAmount;
+	}
+
+	public void setAppTotalAmount(double appTotalAmount) {
+		this.appTotalAmount = appTotalAmount;
+	}
+
+	public double getAppArrearage() {
+		return appArrearage;
+	}
+
+	public void setAppArrearage(double appArrearage) {
+		this.appArrearage = appArrearage;
+	}
+
+	
+	public double getGoodsPrice() {
+		return goodsPrice;
+	}
+
+	public void setGoodsPrice(double goodsPrice) {
+		this.goodsPrice = goodsPrice;
+	}
+
+	
+	public double getOrderAmount() {
+		return orderAmount;
+	}
+
+	public void setOrderAmount(double orderAmount) {
+		this.orderAmount = orderAmount;
 	}
 
 	@Override

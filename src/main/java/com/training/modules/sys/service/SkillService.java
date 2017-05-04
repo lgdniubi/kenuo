@@ -25,10 +25,17 @@ public class SkillService extends CrudService<SkillDao, Skill>{
 	private SkillDao skillDao;
 	
 	/**
-	 * 查询出所有的技能标签
+	 * 查询出所有的技能标签(只查找显示的)
 	 */
 	public List<Skill> findAllList(){
 		return skillDao.findAllList();
+	}
+	
+	/**
+	 * 查询出所有的技能标签(无论显示还是隐藏都查出来)
+	 */
+	public List<Skill> newFindAllList(){
+		return skillDao.newFindAllList();
 	}
 	
 	/**
@@ -67,5 +74,30 @@ public class SkillService extends CrudService<SkillDao, Skill>{
 	 */
 	public void deleteSkill(Skill skill){
 		skillDao.deleteSkill(skill);
-}
+	}
+	
+	/**
+	 * 修改技能标签是否显示
+	 */
+	public void updateIsShow(Skill skill){
+		skillDao.updateIsShow(skill);
+	}
+	
+	/**
+	 * 验证技能标签对应的商品是否仍有上架的
+	 * @param skillId
+	 * @return
+	 */
+	public int selectGoodsisOnSale(int skillId){
+		return skillDao.selectGoodsisOnSale(skillId);
+	}
+	
+	/**
+	 * 验证技能标签名称
+	 * @param name
+	 * @return
+	 */
+	public int getByName(String name){
+		return skillDao.getByName(name);
+	}
 }

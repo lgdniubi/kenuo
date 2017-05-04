@@ -68,6 +68,7 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private double unitPrice;				//商品实付单次价
 	
 	private int payRemaintimes;				//订单已存值次数
+	private int returnNum;					//查询出的售后商品数量
 	//--------------------预约金需要字段------------------------------------------
 	private int advanceFlag;             //是否预付金,等于1说明查到advance_flag=1,若不为1，则说明是advance_flag=0
 	private double advance;              //预约金
@@ -80,6 +81,9 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private int goodsType;                 //商品区分(0: 老商品 1: 新商品)
 	private String officeId;              //组织架构ID
 	//-------------------------------------------------------------------------
+	
+	private double goodsBalance;         //商品余额，页面展示用
+	
 	public int getAfterSaleNum() {
 		return afterSaleNum;
 	}
@@ -435,6 +439,18 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setGoodsType(int goodsType) {
 		this.goodsType = goodsType;
+	}
+	public int getReturnNum() {
+		return returnNum;
+	}
+	public void setReturnNum(int returnNum) {
+		this.returnNum = returnNum;
+	}
+	public double getGoodsBalance() {
+		return goodsBalance;
+	}
+	public void setGoodsBalance(double goodsBalance) {
+		this.goodsBalance = goodsBalance;
 	}
 	
 }

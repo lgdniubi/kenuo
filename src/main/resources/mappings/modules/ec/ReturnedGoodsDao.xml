@@ -108,7 +108,8 @@
 			audit_by=#{auditBy},
 			audit_date=SYSDATE(),
 			update_by=#{auditBy},
-			update_date=SYSDATE()
+			update_date=SYSDATE(),
+			is_storage=#{isStorage}
 		where id=#{id}
 	</update>
 	<!-- 确认入库 -->
@@ -256,8 +257,8 @@
 		<if test="mobile != null  and mobile != ''">
 			AND d.mobile=#{mobile}
 		</if>
-		<if test="id != null and id != ''">
-			AND a.id = #{id}
+		<if test="returnedId != null and returnedId != ''">
+			AND a.id = #{returnedId}
 		</if>
 		<if test="orderId != null and orderId != ''">
 			AND a.order_id = #{orderId}

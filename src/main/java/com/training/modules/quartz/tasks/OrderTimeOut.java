@@ -11,8 +11,6 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.training.common.utils.BeanUtil;
-import com.training.modules.ec.dao.CouponUserDao;
-import com.training.modules.ec.entity.CouponUser;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.Orders;
 import com.training.modules.ec.service.OrderGoodsService;
@@ -37,14 +35,12 @@ public class OrderTimeOut extends CommonService{
 	
 	private static OrdersService ordersService;
 	private static OrderGoodsService orderGoodsService;
-	private static CouponUserDao couponUserDao;
 	/*
 	private static MtmyUsersService mtmyUsersService;
 	private static MtmyRuleParamService mtmyRuleParamService;*/
 	static{
 		ordersService = (OrdersService) BeanUtil.getBean("ordersService");
 		orderGoodsService = (OrderGoodsService) BeanUtil.getBean("orderGoodsService");
-		couponUserDao = (CouponUserDao) BeanUtil.getBean("couponUserDao");
 		/*mtmyUsersService = (MtmyUsersService) BeanUtil.getBean("mtmyUsersService");
 		mtmyRuleParamService = (MtmyRuleParamService) BeanUtil.getBean("mtmyRuleParamService");*/
 	}
@@ -94,8 +90,11 @@ public class OrderTimeOut extends CommonService{
 					logger.info("[过期普通订单]，归还商品id："+v.getGoodsid());
 					RedisLock lo = new RedisLock(redisClientTemplate, LOCK_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey());
 					lo.lock();
-					redisClientTemplate.incrBy(RedisConfig.GOODS_STORECOUNT_PREFIX+v.getGoodsid(),v.getGoodsnum());
-					redisClientTemplate.incrBy(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey(),v.getGoodsnum());
+					boolean str = redisClientTemplate.exists(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey());
+					if(str){
+						redisClientTemplate.incrBy(RedisConfig.GOODS_STORECOUNT_PREFIX+v.getGoodsid(),v.getGoodsnum());
+						redisClientTemplate.incrBy(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey(),v.getGoodsnum());
+					}
 					lo.unlock();
 					
 					/*logger.info("归还用户限购资源,活动id："+v.getActionid()+",用户id："+v.getUserid()+",商品id："+v.getGoodsid()+",数量："+v.getGoodsnum());
@@ -176,8 +175,11 @@ public class OrderTimeOut extends CommonService{
 					logger.info("[过期抢购订单]，归还商品id："+v.getGoodsid());
 					RedisLock lo = new RedisLock(redisClientTemplate, LOCK_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey());
 					lo.lock();
-					redisClientTemplate.incrBy(RedisConfig.GOODS_STORECOUNT_PREFIX+v.getGoodsid(),v.getGoodsnum());
-					redisClientTemplate.incrBy(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey(),v.getGoodsnum());
+					boolean str = redisClientTemplate.exists(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey());
+					if(str){
+						redisClientTemplate.incrBy(RedisConfig.GOODS_STORECOUNT_PREFIX+v.getGoodsid(),v.getGoodsnum());
+						redisClientTemplate.incrBy(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey(),v.getGoodsnum());
+					}
 					lo.unlock();
 					
 					logger.info("归还用户限购资源,活动id："+v.getActionid()+",用户id："+v.getUserid()+",商品id："+v.getGoodsid()+",数量："+v.getGoodsnum());
@@ -213,10 +215,12 @@ public class OrderTimeOut extends CommonService{
 			for(OrderGoods v : vs){
 				RedisLock lo = new RedisLock(redisClientTemplate, LOCK_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey());
 				lo.lock();
-				redisClientTemplate.incrBy(RedisConfig.GOODS_STORECOUNT_PREFIX+v.getGoodsid(),v.getGoodsnum());
-				redisClientTemplate.incrBy(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey(),v.getGoodsnum());
+				boolean str = redisClientTemplate.exists(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey());
+				if(str){
+					redisClientTemplate.incrBy(RedisConfig.GOODS_STORECOUNT_PREFIX+v.getGoodsid(),v.getGoodsnum());
+					redisClientTemplate.incrBy(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey(),v.getGoodsnum());
+				}
 				lo.unlock();
-				
 				logger.info("归还用户限购资源,活动id："+v.getActionid()+",用户id："+v.getUserid()+",商品id："+v.getGoodsid()+",数量："+v.getGoodsnum());
 				if(v.getActiontype() ==1){ //归还用户限购资源
 					redisClientTemplate.hincrBy(RedisConfig.buying_limit_prefix+v.getActionid(), v.getUserid()+"_"+v.getGoodsid(), -v.getGoodsnum());

@@ -27,6 +27,7 @@ import com.training.common.utils.StringUtils;
 import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.entity.Users;
 import com.training.modules.ec.utils.SaveLogUtils;
+import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.sys.dao.DictDao;
 import com.training.modules.sys.dao.MenuDao;
 import com.training.modules.sys.dao.OfficeDao;
@@ -92,6 +93,8 @@ public class SystemService extends BaseService implements InitializingBean {
 	private MtmyUsersDao mtmyUsersDao;
 	@Autowired
 	private SkillDao skillDao;
+	@Autowired
+	private RedisClientTemplate redisClientTemplate;
 	
 	public SessionDAO getSessionDao() {
 		return sessionDao;
@@ -498,11 +501,13 @@ public class SystemService extends BaseService implements InitializingBean {
 			json.put("property", "[\"no\",\"name\",\"loginName\",\"idCard\",\"inductionTime\",\"email\",\"phone\",\"mobile\"]");
 			json.put("name", "[\"工号\",\"姓名\",\"登录名\",\"身份证号码\",\"入职日期\",\"邮箱\",\"电话\",\"手机号码\"]");
 			String string = SaveLogUtils.saveLog(json,str.toString(),oldUser,user);
-			if(!"".equals(string)){
+			if(!"".equals(string) && null != string){
 				UserLog userLog = new UserLog();
 				userLog.setContent(string);
 				user.setUserLog(userLog);
+				user.preUpdate();
 				userDao.saveUserLog(user);
+				redisClientTemplate.del("UTOKEN_"+user.getId());	// 清除用户缓存 用户TOKEN失效
 			}
 			
 			
@@ -1020,5 +1025,21 @@ public class SystemService extends BaseService implements InitializingBean {
 	public List<User> findRoleUser(User user){
 		user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(),"o"));
 		return userDao.findRoleUser(user);
+	}
+	
+	/**
+	 * 验证导入的用户的工号是否已经存在 
+	 */
+	public int selectNo(String no){
+		return userDao.selectNo(no);
+	}
+	
+	/**
+	 * 验证用户是否为特殊美容师 
+	 * @param id
+	 * @return
+	 */
+	public int selectSpecBeautician(String id){
+		return userDao.selectSpecBeautician(id);
 	}
 }

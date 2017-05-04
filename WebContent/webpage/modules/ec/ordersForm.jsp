@@ -111,15 +111,16 @@
 	    });
 			
 	    	
-		    function TopUp(recid,singleRealityPrice,singleNormPrice,orderArrearage,servicetimes,remaintimes){
+		    function TopUp(recid,singleRealityPrice,singleNormPrice,orderArrearage,servicetimes,remaintimes,goodsBalance){
 		    	var orderid = $("#orderid").val();
 		    	var userid = $("#userid").val();
 		    	var isReal = $("#isReal").val();
+		    	var channelFlag = $("#channelFlag").val();
 				top.layer.open({
 				    type: 2, 
 				    area: ['600px', '450px'],
 				    title:"充值",
-				    content: "${ctx}/ec/orders/addTopUp?orderid="+orderid+"&singleRealityPrice="+singleRealityPrice+"&userid="+userid+"&isReal="+isReal,
+				    content: "${ctx}/ec/orders/addTopUp?orderid="+orderid+"&singleRealityPrice="+singleRealityPrice+"&userid="+userid+"&isReal="+isReal+"&goodsBalance="+goodsBalance,
 				    btn: ['确定', '关闭'],
 				    yes: function(index, layero){
 				    	var orderid = $("#orderid").val();
@@ -128,19 +129,25 @@
 				    	var rechargeAmount = obj.document.getElementById("rechargeAmount").value;
 						var topUpTotalAmount = obj.document.getElementById("topUpTotalAmount").value;
 						var jsmoney = obj.document.getElementById("jsmoney").value;
+						var loading = obj.document.getElementById("loading");
+						$(loading).show();
 						if(accountBalance == ''){
+							$(loading).hide();
 							top.layer.alert('账户余额必填！', {icon: 0, title:'提醒'});
 							return;
 						}
 						if(rechargeAmount == ''){
+							$(loading).hide();
 							top.layer.alert('充值金额必填！', {icon: 0, title:'提醒'});
 							return;
 						}
 						if(topUpTotalAmount == ''){
-							top.layer.alert('实际付款必填！', {icon: 0, title:'提醒'});
+							$(loading).hide(); 
+							top.layer.alert('总付款必填！', {icon: 0, title:'提醒'});
 							return;
 						}
 						if(jsmoney == 0){
+							$(loading).hide();
 							top.layer.alert('请计算费用！', {icon: 0, title:'提醒'});
 							return;
 						}
@@ -159,8 +166,10 @@
 								var totalAmount = topUpTotalAmount/singleRealityPrice;
 								var _totalAmount = totalAmount - parseInt(totalAmount);
 								if(accountBalance > date){
+									$(loading).hide(); 
 									top.layer.alert('您输入的余额不能大于当前账户的余额！', {icon: 0, title:'提醒'});
 								}else{
+									top.layer.close(index);
 									$.ajax({
 										type:"post",
 										data:{
@@ -175,13 +184,13 @@
 											orderArrearage:orderArrearage,
 											servicetimes:servicetimes,
 											remaintimes:remaintimes,
-											isReal:isReal
+											isReal:isReal,
+											channelFlag:channelFlag
 										 },
 										url:"${ctx}/ec/orders/addOrderRechargeLog",
 										success:function(date){
 												top.layer.alert('保存成功!', {icon: 1, title:'提醒'});
 												window.location="${ctx}/ec/orders/orderform?orderid="+orderid;
-												top.layer.close(index);
 										},
 										error:function(XMLHttpRequest,textStatus,errorThrown){}
 									});
@@ -364,12 +373,12 @@ window.onload=initStatus;
 		top.layer.open({
 		    type: 2, 
 		    area: ['600px', '450px'],
-		    title:"充值",
+		    title:"处理预约金",
 		    content: "${ctx}/ec/orders/handleAdvanceFlagForm?recid="+recid+"&userid="+userid,
 		    btn: ['确定', '关闭'],
 		    yes: function(index, layero){
 		    	var obj =  layero.find("iframe")[0].contentWindow;
-     	    	var sum = obj.document.getElementById("sum").value; //员工id
+     	    	var sum = obj.document.getElementById("sum").value; //是否使用了账户余额
 				//异步处理预约金
 				$.ajax({
 					type:"post",
@@ -419,6 +428,7 @@ window.onload=initStatus;
 					<form:form id="inputForm" modelAttribute="orders" action="${ctx}/ec/orders/updateVirtualOrder" method="post" class="form-horizontal">
 						<input id="oldAddress" name="oldAddress" type="hidden" value="${orders.address}"/>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+							<input type="hidden" id="channelFlag" value="${orders.channelFlag}" />
 							<input type="hidden" id="isReal" value="${orders.isReal}" />
 							<input type="hidden" id="operationName" value="${user.name}" />
 							<h4>订单基本信息:&nbsp;&nbsp;<c:if test="${orders.isReal == 1}">虚拟订单</c:if>&nbsp;&nbsp;<c:if test="${orders.isReal == 0}">实物订单</c:if></h4><br>
@@ -447,7 +457,6 @@ window.onload=initStatus;
 									</c:if>
 									<c:if test="${orders.orderstatus == -1}">
 										<form:option value="-1">待付款</form:option>
-										<form:option value="1">待发货</form:option>
 									</c:if>
 									<c:if test="${orders.orderstatus == 1 or orders.orderstatus == 2 or orders.orderstatus == 4}">
 										<form:option value="1">待发货</form:option>
@@ -553,7 +562,7 @@ window.onload=initStatus;
 												<c:if test="${type != 'view' }">
 													<c:if test="${orders.channelFlag == 'bm' || (orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag != 1)}">
 														<c:if test="${orderGood.orderArrearage != 0}">
-															<a href="#" onclick="TopUp(${orderGood.recid},${orderGood.singleRealityPrice },${orderGood.singleNormPrice },${orderGood.orderArrearage },${orderGood.servicetimes },${orderGood.payRemaintimes })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>充值</a>
+															<a href="#" onclick="TopUp(${orderGood.recid},${orderGood.singleRealityPrice },${orderGood.singleNormPrice },${orderGood.orderArrearage },${orderGood.servicetimes },${orderGood.payRemaintimes },${orderGood.goodsBalance})"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>充值</a>
 														</c:if>
 														<c:if test="${orderGood.orderArrearage == 0}">
 															<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>充值</a>

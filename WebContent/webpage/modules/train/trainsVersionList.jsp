@@ -14,6 +14,10 @@
 			$("#searchForm").submit();
 	    	return false;
 	    }
+	  	//重置表单
+		function resetnew(){
+			reset();
+		}
     </script>
     <title>妃子校版本管理</title>
 </head>
@@ -26,11 +30,42 @@
             <sys:message content="${message}"/>
             <div class="ibox-content">
                 <div class=" clearfix">
-                	<form id="searchForm" action="${ctx}/trains/version/list" method="post" class="navbar-form navbar-left searcharea">
+                	<form:form id="searchForm"  modelAttribute="version" action="${ctx}/trains/version/list" method="post" class="navbar-form navbar-left searcharea">
 						<!-- 翻页隐藏文本框 -->
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-					</form>
+						<div class="form-group" style="width: 100%;margin-top: 5px;">
+							<form:input path="versionCode" htmlEscape="false" maxlength="50" class=" form-control input-sm" placeholder="版本号"/>&nbsp;&nbsp;&nbsp;&nbsp;
+		                	<label>类型：</label>
+							<form:select path="type"  class="form-control" style="width:185px;">
+									<form:option value="">全部</form:option>
+									<form:option value="0">兼容版本</form:option>
+									<form:option value="1">审核版本</form:option>
+							</form:select>
+		                	<label>客户端：</label>
+							<form:select path="client"  class="form-control" style="width:185px;">
+								<form:option value="">全部</form:option>
+								<form:option value="wap">wap</form:option>
+								<form:option value="ios">ios</form:option>
+								<form:option value="android">android</form:option>
+							</form:select>
+		                	<label>状态：</label>
+							<form:select path="Flag"  class="form-control" style="width:185px;">
+								<form:option value="">全部</form:option>
+								<form:option value="0">开启</form:option>
+								<form:option value="1">关闭</form:option>
+							</form:select>
+							&nbsp;&nbsp;
+							<shiro:hasPermission name="ec:version:list">
+								<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
+									<i class="fa fa-search"></i> 搜索
+								</button>
+								<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="resetnew()" >
+									<i class="fa fa-refresh"></i> 重置
+								</button>
+							</shiro:hasPermission>
+						</div>
+					</form:form>
                     <!-- 工具栏 -->
 					<div class="row" style="padding-bottom: 5px;">
 						<div class="col-sm-12">

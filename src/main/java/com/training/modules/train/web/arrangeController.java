@@ -37,7 +37,9 @@ import com.training.modules.train.service.ArrangeService;
 @Controller
 @RequestMapping(value = "${adminPath}/train/arrange")
 public class arrangeController extends BaseController{
-
+	
+	public static final int RESERVATIONDATE = 4; //可预约天数 - 1
+	
 	@Autowired
 	private ArrangeService arrangeService;
 	/**
@@ -186,7 +188,7 @@ public class arrangeController extends BaseController{
 		    //验证排班不可操作日
 		    String num = nextMonth(date);
 		    if("true".equals(num)){
-		    	model.addAttribute("arrangeMaxDay", map.get("day")+2);
+		    	model.addAttribute("arrangeMaxDay", map.get("day")+RESERVATIONDATE);
 		    }else if("no".equals(num)){
 		    	model.addAttribute("arrangeMaxDay", 0);
 		    }else{
@@ -302,7 +304,7 @@ public class arrangeController extends BaseController{
 		    //验证排班不可操作日
 		    String num = nextMonth(date);
 		    if("true".equals(num)){
-		    	model.addAttribute("arrangeMaxDay", map.get("day")+2);
+		    	model.addAttribute("arrangeMaxDay", map.get("day")+RESERVATIONDATE);
 		    }else if("no".equals(num)){
 		    	model.addAttribute("arrangeMaxDay", 0);
 		    }else{
@@ -425,7 +427,7 @@ public class arrangeController extends BaseController{
 		    //验证排班不可操作日
 		    String num = nextMonth(date);
 		    if("true".equals(num)){
-		    	model.addAttribute("arrangeMaxDay", map.get("day")+2);
+		    	model.addAttribute("arrangeMaxDay", map.get("day")+RESERVATIONDATE);
 		    }else if("no".equals(num)){
 		    	model.addAttribute("arrangeMaxDay", 0);
 		    }else{
@@ -509,10 +511,10 @@ public class arrangeController extends BaseController{
 			return "true";
 		}else{
 			// 下一月
-			if(nowDay + 2 <= nowMaxDay){
+			if(nowDay + RESERVATIONDATE <= nowMaxDay){
 				return "no";
 			}else{
-				int num = (nowDay + 2) - nowMaxDay;
+				int num = (nowDay + RESERVATIONDATE) - nowMaxDay;
 				return Integer.toString(num);
 			}
 		}
@@ -544,14 +546,14 @@ public class arrangeController extends BaseController{
 		StringBuffer str = new StringBuffer();
 		str.append("<tr class='freezeTr'>");
 		if ("shop".equals(string)){
-			str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;\">操作</div></th>");
+			str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\">操作</div></th>");
 		}
-		str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;\">"+name+"</div></th>");
+		str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\" title=\""+name+">\""+name+"</div></th>");
 		for (int i = 1; i <= map.get("maxDay"); i++) {
 			if(i == map.get("day")){
-				str.append("<th style=\"text-align:center;background:#17b593;\"><div style=\"width: 100px;\">"+map.get("month")+"/"+i+"</div></th>");
+				str.append("<th style=\"text-align:center;background:#17b593;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\">"+map.get("month")+"/"+i+"</div></th>");
 			}else {
-				str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;\">"+map.get("month")+"/"+i+"<div></th>");
+				str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\">"+map.get("month")+"/"+i+"<div></th>");
 			}
 		}
 		str.append("</tr>");

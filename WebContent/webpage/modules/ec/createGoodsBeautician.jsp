@@ -432,13 +432,13 @@
 						<p></p>
 						<label><font color="red">*</font>高级费用:</label>
 						<input id="high" name="high" maxlength="10" class="form-control required"  style="width:150px;height:30px;"/>
-						<label ><font color="red">*</font>实习费用:</label>
+						<!-- <label ><font color="red">*</font>实习费用:</label>
 						<input id="internship" name="internship" maxlength="10" class="form-control required"  style="width:150px;height:30px;"/>
 						<p></p>
 						<label ><font color="red">*</font>储备费用:</label>
 						<input id="store" name="store" maxlength="10" class="form-control required"  style="width:150px;height:30px;"/>
 						<label ><font color="red">*</font>项目师费用:</label>
-						<input id="prther" name="prther"  maxlength="10" class="form-control required"  style="width:150px;height:30px;"/>
+						<input id="prther" name="prther"  maxlength="10" class="form-control required"  style="width:150px;height:30px;"/> -->
 						<p></p>
 						<label>备注说明:</label>
 						<form:textarea path="remarks" htmlEscape="false" rows="4"  maxlength="200" style="width:400px;" class="form-control"></form:textarea>

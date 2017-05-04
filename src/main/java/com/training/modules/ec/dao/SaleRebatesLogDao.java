@@ -27,5 +27,12 @@ public interface SaleRebatesLogDao extends TreeDao<SaleRebatesLog> {
 	 * @param saleRebatesLog
 	 * @return
 	 */
-	public int updateSale(SaleRebatesLog saleRebatesLog);
+	public int updateSale(String orderId);
+
+	/**
+	 * 查询是否有退货记录del_flag=-1
+	 * @param orderId
+	 * @return
+	 */
+	public int selectNumByOrderId(String orderId);
 }

@@ -172,6 +172,10 @@
 								<!-- 导入数据 -->
 								<a href="#" onclick="openDialog('导入物流数据', '${ctx}/ec/orders/importPage','400px', '220px')" class="btn btn-white btn-sm"><i class="fa fa-folder-open-o"></i>导入物流数据</a>
 							</shiro:hasPermission>
+							<shiro:hasPermission name="ec:orders:importVirtualOrdersPage">
+								<!-- 导入虚拟订单数据 -->
+								<a href="#" onclick="openDialog('导入虚拟订单订单', '${ctx}/ec/orders/importVirtualOrdersPage','400px', '220px')" class="btn btn-white btn-sm"><i class="fa fa-folder-open-o"></i>导入虚拟订单</a>
+							</shiro:hasPermission> 
 						</div>
 						<div class="pull-right">
 							<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
@@ -264,7 +268,6 @@
 							</td>
 							<td><fmt:formatDate value="${orders.addtime}" pattern="yyyy-MM-dd HH:mm:ss" /> </td>
 							<td><div style="width:100px;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${orders.userNote}</div></td>
-
 							<td>
 			 					<shiro:hasPermission name="ec:orders:view"> 
 			 						<a href="#" onclick="openDialogView('查看订单', '${ctx}/ec/orders/orderform?orderid=${orders.orderid}&isReal=${orders.isReal}&type=view','1100px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 订单详情</a>
@@ -291,19 +294,19 @@
 									</c:if>
 			 					</shiro:hasPermission>
 			 				 	<shiro:hasPermission name="ec:orders:return">
-									<c:if test="${orders.orderstatus==4}">
+									<c:if test="${orders.orderstatus==4 && orders.flag==1}">
 										<a href="#" onclick="returnedGoodsList('${orders.orderid}','${orders.flag}')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>售后服务</a>
 									</c:if>
-									<c:if test="${orders.orderstatus!=4}">
+									<c:if test="${orders.orderstatus!=4 || orders.flag!=1}">
 										<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>售后服务</a>
 									</c:if>
 								</shiro:hasPermission>
-								<c:if test="${orders.channelFlag=='bm' || (orders.channelFlag != 'bm' && orders.isReal==1)}">
+								<%-- <c:if test="${orders.channelFlag=='bm' || (orders.channelFlag != 'bm' && orders.isReal==1)}">
 									<a href="#" onclick="openDialogView('查看订单', '${ctx}/ec/orders/getOrderRechargeView?orderid=${orders.orderid}&orderType=order','800px','600px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>订单充值查看</a>
 								</c:if>
 								<c:if test="${orders.channelFlag!='bm' && orders.isReal==0}">
 									<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-search-plus"></i>订单充值查看</a>
-								</c:if>
+								</c:if> --%>
 								<c:if test="${orders.orderstatus == -1}">
 									<a href="${ctx}/ec/orders/cancellationOrder?orderid=${orders.orderid}" onclick="return confirmx('确定取消订单吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>取消订单</a>
 								</c:if>

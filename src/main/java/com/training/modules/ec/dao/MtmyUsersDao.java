@@ -190,4 +190,9 @@ public interface MtmyUsersDao extends CrudDao<Users>{
 	 * 根据被邀请人的id删除表中对应的数据 
 	 */
 	public void deleteFromSaleRelations(int userId);
+	
+	/**
+	 * 验证手机号是否存在于每天美耶 
+	 */
+	public int checkMobile(String mobile);
 }

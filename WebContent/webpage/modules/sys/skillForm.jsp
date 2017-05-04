@@ -25,6 +25,12 @@
 	$(document).ready(function(){
 		$("#name").focus();
 		validateForm = $("#inputForm").validate({
+			rules:{
+				name:{remote:"${ctx}/sys/skill/checkName?oldName=" + encodeURIComponent('${skill.name}')}
+				},
+			messages:{
+				name:{remote:"名称已存在"}
+			},
 			submitHandler : function(form) {
 				//alert("提交")
 				loading('正在提交，请稍等...');

@@ -49,10 +49,10 @@ import com.training.modules.ec.service.GoodsSpecService;
 import com.training.modules.ec.service.GoodsTypeService;
 import com.training.modules.ec.service.OrderGoodsService;
 import com.training.modules.ec.utils.GoodsUtil;
-import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.quartz.tasks.utils.RedisConfig;
+import com.training.modules.quartz.utils.RedisLock;
 import com.training.modules.sys.utils.BugLogUtils;
-import com.training.modules.sys.utils.ParametersFactory;
 
 import net.sf.json.JSONObject;
 
@@ -172,6 +172,7 @@ public class GoodsController extends BaseController{
 				goods.setGoodsImagesList(goodsService.findGoodsImages(goods));
 				//查询商品相册、商品护理流程 end
 				
+				
 				//商品规格 begin
 				//根据商品ID，查询所有规格价格信息
 				List<GoodsSpecPrice> gspList = goodsService.findGoodsSpecPrice(goods);
@@ -249,7 +250,7 @@ public class GoodsController extends BaseController{
 					//提交到页面展示
 					model.addAttribute("goodsSpectablecontent", tablecontent.toString());
 					
-					//出去map中value为空的数组
+					//除去map中value为空的数组
 					specitemmaps = GoodsUtil.removeMapNull(specitemmaps);
 					
 					if(specitemmaps.size() > 0 ){
@@ -391,9 +392,7 @@ public class GoodsController extends BaseController{
 	@RequestMapping(value = {"save"})
 	public String save(Goods goods, Model model,HttpServletRequest request, RedirectAttributes redirectAttributes){
 		try {
-			
-			 goodsService.saveGoods(goods,request);
-			
+			goodsService.saveGoods(goods,request);
 			addMessage(redirectAttributes, "保存/修改 商品'" + goods.getGoodsName() + "'成功");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "保存/修改 商品通用信息 出现异常!", e);
@@ -455,10 +454,10 @@ public class GoodsController extends BaseController{
 				List<GoodsSpecPrice> gspList = goodsService.findGoodsSpecPrice(goods);
 				List<GoodsSpecPrice> goodsSpecPricesList = new ArrayList<GoodsSpecPrice>();
 				
-				String connector = ParametersFactory.getMtmyParamValues("mtmy_connector");
-				String weburl = ParametersFactory.getMtmyParamValues("mtmy_incrstore_url");
+//				String connector = ParametersFactory.getMtmyParamValues("mtmy_connector");
+//				String weburl = ParametersFactory.getMtmyParamValues("mtmy_incrstore_url");
 				
-				logger.info("##### web接口版本号："+connector+",路径:"+weburl);
+//				logger.info("##### web接口版本号："+connector+",路径:"+weburl);
 				
 				int addcount = 0;//规格信息库存数
 				int count = 0;//添加库存总数：所有规格累加
@@ -474,12 +473,31 @@ public class GoodsController extends BaseController{
 						//当新库存与老库存不相同，才进行接口
 						if(storeCount != 0){
 							//调用接口，更新缓存中的库存
-							String parpm = "{\"goods_id\":"+goodsId+",\"spec_key\":\""+gsp.getSpecKey()+"\",\"count\":"+storeCount+"}";
-							logger.info("#####接口入参："+parpm);
-							String url=weburl;
-							String result = WebUtils.postObject(parpm, url);
-							JSONObject jsonObject = JSONObject.fromObject(result);
-							logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg"));
+//							String parpm = "{\"goods_id\":"+goodsId+",\"spec_key\":\""+gsp.getSpecKey()+"\",\"count\":"+storeCount+"}";
+//							logger.info("#####接口入参："+parpm);
+//							String url=weburl;
+//							String result = WebUtils.postObject(parpm, url);
+//							JSONObject jsonObject = JSONObject.fromObject(result);
+//							logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg"));
+							if(StringUtils.isBlank(redisClientTemplate.get(RedisConfig.GOODS_STORECOUNT_PREFIX+goodsId))){
+								redisClientTemplate.sadd(RedisConfig.GOODS_IDS_HASH, goodsId);
+								redisClientTemplate.set(RedisConfig.GOODS_STORECOUNT_PREFIX+goodsId,String.valueOf(storeCount));
+								redisClientTemplate.sadd(RedisConfig.GOODS_SPECPRICE_HASH,goodsId+"#"+gsp.getSpecKey());
+								redisClientTemplate.set(RedisConfig.GOODS_SPECPRICE_PREFIX+goodsId+"#"+gsp.getSpecKey(),String.valueOf(storeCount));
+							}else{
+								boolean str = redisClientTemplate.exists(RedisConfig.GOODS_SPECPRICE_PREFIX+goodsId+"#"+gsp.getSpecKey());
+								if(str){
+									RedisLock redisLock = new RedisLock(redisClientTemplate, RedisConfig.GOODS_SPECPRICE_PREFIX+goodsId+"#"+gsp.getSpecKey());
+									redisLock.lock();
+									redisClientTemplate.incrBy(RedisConfig.GOODS_SPECPRICE_PREFIX+goodsId+"#"+gsp.getSpecKey(), storeCount);
+									redisClientTemplate.incrBy(RedisConfig.GOODS_STORECOUNT_PREFIX+goodsId,storeCount);
+									redisLock.unlock();
+								}else{
+									redisClientTemplate.incrBy(RedisConfig.GOODS_STORECOUNT_PREFIX+goodsId,storeCount);
+									redisClientTemplate.sadd(RedisConfig.GOODS_SPECPRICE_HASH,goodsId+"#"+gsp.getSpecKey());
+									redisClientTemplate.set(RedisConfig.GOODS_SPECPRICE_PREFIX+goodsId+"#"+gsp.getSpecKey(),String.valueOf(storeCount));
+								}
+							}
 						}
 							
 						//保存新的库存
@@ -1145,7 +1163,7 @@ public class GoodsController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "treeGoodsData")
-	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String isReal,String isOnSale,HttpServletResponse response) {
+	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String isReal,String isOnSale,String isAppshow,HttpServletResponse response) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		Goods goods=new Goods();
 		goods.setGoodsCategoryId(goodsCategory);
@@ -1154,6 +1172,7 @@ public class GoodsController extends BaseController{
 		goods.setFranchiseeId(franchiseeId);
 		goods.setIsReal(isReal);
 		goods.setIsOnSale(isOnSale);
+		goods.setIsAppshow(isAppshow);
 		if(actionId!=null){
 			goods.setActionId(Integer.parseInt(actionId));
 		}

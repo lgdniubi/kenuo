@@ -8,6 +8,7 @@
 			el.no,
 			el.type,
 			el.description,
+			el.is_show AS 'isShow',
 			el.create_by AS 'createBy.id',
 			el.create_date AS 'createDate',
 			el.update_by AS 'updateBy.id',
@@ -23,6 +24,7 @@
 		FROM train_equipment_label el
 		WHERE el.del_flag=0
 		AND el.type = #{newFlag}
+		AND el.is_show = '0'
 	</select>
 	
 	<!-- 查询所有的设备标签 -->
@@ -31,6 +33,7 @@
 			<include refid="equipmentLabelColunm"></include>
 		FROM train_equipment_label el
 		WHERE el.del_flag=0
+		AND el.is_show = '0'
 	</select>
 	
 	<!-- 分页查询设备标签 -->
@@ -40,6 +43,9 @@
 		FROM train_equipment_label el
 		WHERE el.del_flag = 0
 		<!-- 数据范围过滤 -->
+		<if test="name != '' and name != null">
+			AND el.name like CONCAT('%', #{name}, '%')
+		</if>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
@@ -66,6 +72,7 @@
 			no,
 			type,
 			description,
+			is_show,
 			create_by,
 			create_date,
 			update_by,
@@ -76,6 +83,7 @@
 			#{no},
 			#{type},
 			#{description},
+			'0',
 			#{createBy.id},
 			SYSDATE(),
 			#{createBy.id},
@@ -152,4 +160,21 @@
 	<delete id="deleteGoodsEquipmentLabel">
 		DELETE FROM mtmydb.mtmy_goods_equipment WHERE goods_id=#{goodsId}
 	</delete>
+	
+	<!-- 设备标签是否显示 -->
+	<update id="updateIsShow">
+		UPDATE train_equipment_label
+		SET	is_show=#{isShow}
+		WHERE id=#{equipmentLabelId}
+	</update>
+	
+	<!-- 验证设备标签对应的商品是否仍有上架的 -->
+	<select id="selectGoodsisOnSale" resultType="Integer">
+		SELECT COUNT(*)
+		FROM train_equipment_label el
+		LEFT JOIN mtmydb.mtmy_goods_equipment ge ON ge.label_id = el.id  
+		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id = ge.goods_id
+		WHERE el.id=#{equipmentLabelId}
+		AND g.is_on_sale = 1
+	</select>
 </mapper>

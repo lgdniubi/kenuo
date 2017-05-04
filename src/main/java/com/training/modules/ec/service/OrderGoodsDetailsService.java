@@ -121,4 +121,13 @@ public class OrderGoodsDetailsService extends TreeService<OrderGoodsDetailsDao, 
 	public int findApptStatus(int recId){
 		return dao.findApptStatus(recId);
 	}
+	
+	/**
+	 * 根据mapping_id获取其订单余款
+	 * @param recId
+	 * @return
+	 */
+	public OrderGoodsDetails selectOrderBalance(int recId){
+		return dao.selectOrderBalance(recId);
+	}
 }

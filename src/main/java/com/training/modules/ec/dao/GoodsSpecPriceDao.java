@@ -3,6 +3,8 @@ package com.training.modules.ec.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.GoodsSpecPrice;
@@ -30,4 +32,14 @@ public interface GoodsSpecPriceDao extends CrudDao<GoodsSpecPrice>{
 	public int modifySpecStoreCount(Map<String, Object> map);
 	
 	public List<GoodsSpecPrice> querySpecsPrices();
+	
+	/**
+	 * 验证商品的规格是否存在
+	 */
+	public int checkGoodsSpecKey(@Param(value="goodsId")int goodsId,@Param(value="specKey")String specKey);
+	
+	/**
+	 * 验证商品规格的次数
+	 */
+	public int checkServiceTimes(@Param(value="goodsId")int goodsId,@Param(value="specKey")String specKey);
 }
