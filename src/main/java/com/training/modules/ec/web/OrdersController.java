@@ -72,8 +72,9 @@ import com.training.modules.ec.service.ReturnGoodsService;
 import com.training.modules.ec.service.ReturnedGoodsService;
 import com.training.modules.ec.utils.CourierUtils;
 import com.training.modules.ec.utils.OrderUtils;
-import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.quartz.tasks.utils.RedisConfig;
+import com.training.modules.quartz.utils.RedisLock;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
@@ -82,7 +83,6 @@ import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.TrainRuleParam;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 /**
  * 订单Controller
@@ -942,7 +942,7 @@ public class OrdersController extends BaseController {
 			
 			if(orders.getOldstatus() != orders.getOrderstatus()){ //2次订单修改状态不一致
 				if(-2 == orders.getOrderstatus()){//新订单状态 等于“取消订单”
-					boolean result = returnRepository(orders.getOrderid());
+					boolean result = returnRepository(orders.getOrderid(),request);
 					if(result){
 						// 取消订单  修改订单取消类型为后台取消
 						orders.setCancelType("1");
@@ -1284,7 +1284,7 @@ public class OrdersController extends BaseController {
 	public String cancellationOrder(HttpServletRequest request, Orders orders,RedirectAttributes redirectAttributes) {
 		try {
 			List<OrderGoods> goodsList=new ArrayList<OrderGoods>();
-			boolean result = returnRepository(orders.getOrderid());
+			boolean result = returnRepository(orders.getOrderid(),request);
 			if(result){
 				ordersService.cancellationOrder(orders);
 				goodsList=ordergoodService.orderlist(orders.getOrderid());
@@ -1321,7 +1321,7 @@ public class OrdersController extends BaseController {
 			List<OrderGoods> goodsList=new ArrayList<OrderGoods>();
 			
 			orders = ordersService.findselectByOrderId(orders.getOrderid());
-			boolean result = returnRepository(orders.getOrderid());
+			boolean result = returnRepository(orders.getOrderid(),request);
 			if(!result){
 				logger.error("取消库存失败，导致强制取消无法进行");
 				addMessage(redirectAttributes, "强制取消'" + orders.getOrderid() + "'失败！");
@@ -1387,19 +1387,38 @@ public class OrdersController extends BaseController {
 	 * 归还仓库
 	 * @return
 	 */
-	public boolean returnRepository(String orderId){
-		String weburl = ParametersFactory.getMtmyParamValues("mtmy_incrstore_url");
-		List<OrderGoods> orderGoods = ordergoodService.getGoodMapping(orderId);
-		if (null != orderGoods && orderGoods.size() > 0) {
-			for (OrderGoods orderGood : orderGoods) {
-				String parpm = "{\"goods_id\":"+orderGood.getGoodsid()+",\"spec_key\":\""+orderGood.getSpeckey()+"\",\"count\":"+orderGood.getGoodsnum()+"}";
-				String result = WebUtils.postObject(parpm, weburl);
-				JSONObject jsonObject = JSONObject.fromObject(result);
-				String code = jsonObject.get("code").toString();
-				if(!"200".equals(code)){
-					return false;
+	public boolean returnRepository(String orderId,HttpServletRequest request){
+//		String weburl = ParametersFactory.getMtmyParamValues("mtmy_incrstore_url");
+//		List<OrderGoods> orderGoods = ordergoodService.getGoodMapping(orderId);
+//		if (null != orderGoods && orderGoods.size() > 0) {
+//			for (OrderGoods orderGood : orderGoods) {
+//				String parpm = "{\"goods_id\":"+orderGood.getGoodsid()+",\"spec_key\":\""+orderGood.getSpeckey()+"\",\"count\":"+orderGood.getGoodsnum()+"}";
+//				String result = WebUtils.postObject(parpm, weburl);
+//				JSONObject jsonObject = JSONObject.fromObject(result);
+//				String code = jsonObject.get("code").toString();
+//				if(!"200".equals(code)){
+//					return false;
+//				}
+//			}
+//		}
+		try {
+			List<OrderGoods> orderGoods = ordergoodService.getGoodMapping(orderId);
+			if (null != orderGoods && orderGoods.size() > 0) {
+				for (OrderGoods orderGood : orderGoods) {
+					boolean str = redisClientTemplate.exists(RedisConfig.GOODS_SPECPRICE_PREFIX+orderGood.getGoodsid()+"#"+orderGood.getSpeckey());
+					if(str){
+						RedisLock redisLock = new RedisLock(redisClientTemplate, RedisConfig.GOODS_SPECPRICE_PREFIX+orderGood.getGoodsid()+"#"+orderGood.getSpeckey());
+						redisLock.lock();
+						redisClientTemplate.incrBy(RedisConfig.GOODS_SPECPRICE_PREFIX+orderGood.getGoodsid()+"#"+orderGood.getSpeckey(), orderGood.getGoodsnum());
+						redisClientTemplate.incrBy(RedisConfig.GOODS_STORECOUNT_PREFIX+orderGood.getGoodsid(),orderGood.getGoodsnum());
+						redisLock.unlock();
+					}
 				}
 			}
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "归还仓库错误", e);
+			logger.error("归还仓库错误：" + e.getMessage());
+			return false;
 		}
 		return true;
 	}

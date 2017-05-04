@@ -1126,8 +1126,8 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 	public void updateGoodsSpecCache(int goodsId,List<String> goodsSpecPricesList){
 		redisClientTemplate.set(GOODSSTORE+goodsId, "0");
 		for (int i = 0; i < goodsSpecPricesList.size(); i++) {
-			redisClientTemplate.set(SPECPRICE+goodsId+"#"+goodsSpecPricesList.get(i),"0");
-//			redisClientTemplate.lrem(GOODS_SPECPRICE_HASH, 1, goodsId+"#"+goodsSpecPricesList.get(i));
+			redisClientTemplate.srem(GOODS_SPECPRICE_HASH, goodsId+"#"+goodsSpecPricesList.get(i));
+			redisClientTemplate.del(SPECPRICE+goodsId+"#"+goodsSpecPricesList.get(i));
 		}
 	}
 }

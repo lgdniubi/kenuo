@@ -67,6 +67,7 @@ public class AlipayCheckAccount extends CommonService{
 		TrainRuleParam trainRuleParam = new TrainRuleParam();
 		trainRuleParam.setParamKey("excel_path");
 		URL = trainRuleParamDao.findParamByKey(trainRuleParam).getParamValue() + "/static/cutImg/alipayCheckAccount";
+		deleteFile(new File(URL));
 		logger.info("[work0],start,支付宝对账，开始时间："+df.format(new Date()));
 		
 		//添加日志
@@ -96,7 +97,7 @@ public class AlipayCheckAccount extends CommonService{
 				}else{
 					if (isZip(zipFile)) {	// 校验是否为zip文件
 						// 解压支付宝对账单
-						String unzip = unzip(zipFile,URL+"\\zip");
+						String unzip = unzip(zipFile,URL+"/zip");
 						if(null == unzip || unzip.indexOf("zip文件解压异常")!=-1){
 							taskLog.setStatus(1);
 							taskLog.setExceptionMsg("zip文件解压异常:"+unzip);
@@ -203,11 +204,12 @@ public class AlipayCheckAccount extends CommonService{
 			if(mcaList.size() > 0){
 				int num = checkAccountService.insterAccount(mcaList);
 				return "成功插入数据:"+num+"条";
+			}else{
+				return "成功插入数据:0条";
 			}
 		} catch (Exception e) {
 			return  "解析支付宝CSV数据异常:"+e.getMessage().substring(0, e.getMessage().length()>2500?2500:e.getMessage().length());
 		}
-		return "解析支付宝CSV数据异常,未捕获异常";
 	}
 	// 下载支付宝zip文件
 	public static String downloadZip(String urlStr){
