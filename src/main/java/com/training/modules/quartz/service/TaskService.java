@@ -35,14 +35,14 @@ import com.training.modules.quartz.quartzfactory.QuartzJobFactoryDisallowConcurr
 import com.training.modules.quartz.tasks.rediscache.RedisCaCheLoad;
 
 /**
- * 瀹氭椂浠诲姟-Service
+ * 定时任务-Service
  * @author kele
- * @version 2016骞�7鏈�28鏃�
+ * @version 2016年7月28日
  */
 @Service
 public class TaskService {
 
-	//鏃ュ織璁板綍鍣�
+	//日志记录器
 	private static final Log logger = LogFactory.getLog(TaskService.class);
 	@Autowired
 	private SchedulerFactoryBean schedulerFactoryBean;
@@ -50,59 +50,59 @@ public class TaskService {
 	private ITaskDao iTaskDao;
 	
 	/*
-	 * 瀹瑰櫒鍒濆鍖� bean 娉ㄨВ
+	 * 容器初始化 bean 注解
 	 * @PostConstruct
 	*/
 	
 	@PostConstruct
 	public void init() throws Exception {
 		
-		//娣诲姞鏃ュ織
+		//添加日志
 		TaskLog taskLog = new TaskLog();
-		Date startDate;	//寮�濮嬫椂闂�
-		Date endDate;	//缁撴潫鏃堕棿
-		long runTime;	//杩愯鏃堕棿
+		Date startDate;	//开始时间
+		Date endDate;	//结束时间
+		long runTime;	//运行时间
 		
 		startDate = new Date();
 		taskLog.setJobName("init");
 		taskLog.setStartDate(startDate);
 		
-//		try {
-//			//瀹氭椂鍣ㄥ姞杞芥椂闂�-杩涜redisCaChe缂撳瓨
-//			new RedisCaCheLoad().load();
-//			
-//			logger.info("######[鎵ц瀹氭椂浠诲姟]######");
-//			// 杩欓噷鑾峰彇浠诲姟淇℃伅鏁版嵁
-//			Task job = new Task();
-//			job.setJobStatus("0");//寮�鍚姸鎬�
-//			List<Task> jobList = iTaskDao.findAllTasks(job);
-//			logger.info("#####[寮�鍚�-瀹氭椂浠诲姟鏁伴噺锛歖"+jobList.size());
-//			if(jobList.size() > 0){
-//				for (Task task : jobList) {
-//					addJob(task);
-//				}
-//			}
-//			
-//			taskLog.setJobDescription("[work] 瀹氭椂鍣ㄥ姞杞芥椂闂�-杩涜redisCaChe缂撳瓨 | 寮�鍚�-瀹氭椂浠诲姟鏁伴噺锛�"+jobList.size());
-//			taskLog.setStatus(0);//浠诲姟鐘舵��
-//			
-//		} catch (Exception e) {
-//			logger.error("#####瀹氭椂浠诲姟init(),鍔犺浇寮傚父锛屽紓甯镐俊鎭负锛�"+e.getMessage());
-//			
-//			taskLog.setStatus(1);
-//			taskLog.setExceptionMsg(e.getMessage().substring(0, e.getMessage().length()>2500?2500:e.getMessage().length()));
-//		}finally {
-//			endDate = new Date();//缁撴潫鏃堕棿
-//			runTime = (endDate.getTime() - startDate.getTime())/1000;//杩愯鏃堕棿
-//			taskLog.setEndDate(new Date());	//缁撴潫鏃堕棿
-//			taskLog.setRunTime(runTime);
-//			taskLog.setRemarks("鍚庡彴閲嶅惎锛岄噸鏂板姞杞�");
-//			iTaskDao.insertTaskLog(taskLog);
-//		}
+		try {
+			//定时器加载时间-进行redisCaChe缓存
+			new RedisCaCheLoad().load();
+			
+			logger.info("######[执行定时任务]######");
+			// 这里获取任务信息数据
+			Task job = new Task();
+			job.setJobStatus("0");//开启状态
+			List<Task> jobList = iTaskDao.findAllTasks(job);
+			logger.info("#####[开启-定时任务数量：]"+jobList.size());
+			if(jobList.size() > 0){
+				for (Task task : jobList) {
+					addJob(task);
+				}
+			}
+			
+			taskLog.setJobDescription("[work] 定时器加载时间-进行redisCaChe缓存 | 开启-定时任务数量："+jobList.size());
+			taskLog.setStatus(0);//任务状态
+			
+		} catch (Exception e) {
+			logger.error("#####定时任务init(),加载异常，异常信息为："+e.getMessage());
+			
+			taskLog.setStatus(1);
+			taskLog.setExceptionMsg(e.getMessage().substring(0, e.getMessage().length()>2500?2500:e.getMessage().length()));
+		}finally {
+			endDate = new Date();//结束时间
+			runTime = (endDate.getTime() - startDate.getTime())/1000;//运行时间
+			taskLog.setEndDate(new Date());	//结束时间
+			taskLog.setRunTime(runTime);
+			taskLog.setRemarks("后台重启，重新加载");
+			iTaskDao.insertTaskLog(taskLog);
+		}
 	}
 	
 	/**
-	 * 鍒嗛〉瀹氭椂浠诲姟
+	 * 分页定时任务
 	 * @param page
 	 * @param trainLessons
 	 * @return
@@ -115,7 +115,7 @@ public class TaskService {
 	}
 	
 	/**
-	 * 鏍规嵁瀹氭椂浠诲姟id锛屾煡璇㈠叾瀹氭椂浠诲姟
+	 * 根据定时任务id，查询其定时任务
 	 * @param id
 	 * @return
 	 */
@@ -124,16 +124,16 @@ public class TaskService {
 	}
 	
 	/**
-	 * 娣诲姞瀹氭椂浠诲姟
+	 * 添加定时任务
 	 * @param task
 	 * @throws Exception 
 	 */
 	public void addTaskJob(Task task) throws Exception{
-		//淇濆瓨鏁版嵁搴�
+		//保存数据库
 		iTaskDao.insertTask(task);
 		task = iTaskDao.findTaskById(task.getJobId());
 		if(null != task){
-			//淇濆瓨鎴愬姛鍚庯紝娣诲姞瀹氭椂浠诲姟
+			//保存成功后，添加定时任务
 			addJob(task);
 		}
 	}
@@ -141,7 +141,7 @@ public class TaskService {
 	public void updateTask(Task task) throws Exception{
 		int result = iTaskDao.updateTask(task);
 		if(1 == result){
-			//淇敼鎴愬姛鍚庯紝鍒犻櫎瀹氭椂鍣�
+			//修改成功后，删除定时器
 			task = iTaskDao.findTaskById(task.getJobId());
 			deleteJob(task);
 			task.setJobStatus(Task.STATUS_NOT_RUNNING);
@@ -149,7 +149,7 @@ public class TaskService {
 	}
 	
 	/**
-	 * 淇敼瀹氭椂浠诲姟鐘舵��
+	 * 修改定时任务状态
 	 * @return
 	 */
 	public int updateTaskStatus(Task task){
@@ -157,7 +157,7 @@ public class TaskService {
 	}
 	
 	/**
-	 * 鏇存敼浠诲姟鐘舵��
+	 * 更改任务状态
 	 * @throws SchedulerException
 	 */
 	public void changeStatus(Task task, String cmd) throws SchedulerException {
@@ -171,7 +171,7 @@ public class TaskService {
 	}
 	
 	/**
-	 * 鏇存敼浠诲姟 cron琛ㄨ揪寮�
+	 * 更改任务 cron表达式
 	 * @throws SchedulerException
 	 */
 	public void updateCron(String id, String cron) throws SchedulerException {
@@ -188,73 +188,73 @@ public class TaskService {
 	}
 	
 	/**
-	 * 娣诲姞浠诲姟
+	 * 添加任务
 	 * @param task
 	 * @throws SchedulerException
 	 */
 	public void addJob(Task task) throws SchedulerException {
 		
-		//娣诲姞鏃ュ織
+		//添加日志
 		TaskLog taskLog = new TaskLog();
-		Date startDate;	//寮�濮嬫椂闂�
-		Date endDate;	//缁撴潫鏃堕棿
-		long runTime;	//杩愯鏃堕棿
+		Date startDate;	//开始时间
+		Date endDate;	//结束时间
+		long runTime;	//运行时间
 		
 		startDate = new Date();
 		taskLog.setJobName("addJob");
 		taskLog.setStartDate(startDate);
 		
 		try {
-			//鍒ゆ柇瀹氭椂浠诲姟涓嶄负null鏃讹紝骞朵笖锛岃繍琛岀姸鎬佷负[0-寮�鍚痌
+			//判断定时任务不为null时，并且，运行状态为[0-开启]
 			if (task == null || Task.STATUS_NOT_RUNNING.equals(task.getJobStatus())) {
 				return;
 			}
-			logger.info("#####[鍚姩-瀹氭椂浠诲姟鍚嶇О锛歖"+task.getJobName());
+			logger.info("#####[启动-定时任务名称：]"+task.getJobName());
 			Scheduler scheduler = schedulerFactoryBean.getScheduler();
 			TriggerKey triggerKey = TriggerKey.triggerKey(task.getJobName(), task.getJobGroup());
-			//鑾峰彇trigger锛屽嵆鍦╯pring閰嶇疆鏂囦欢涓畾涔夌殑 bean id="myTrigger"
+			//获取trigger，即在spring配置文件中定义的 bean id="myTrigger"
 			CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
-			//涓嶅瓨鍦紝鍒涘缓涓�涓�
+			//不存在，创建一个
 			if (null == trigger) {
 				Class<? extends Job> clazz = Task.CONCURRENT_IS.equals(task.getIsConcurrent()) ? QuartzJobFactory.class : QuartzJobFactoryDisallowConcurrentExecution.class;
 				JobDetail jobDetail = JobBuilder.newJob(clazz).withIdentity(task.getJobName(), task.getJobGroup()).build();
 				jobDetail.getJobDataMap().put("scheduleJob", task);
-				//琛ㄨ揪寮忚皟搴︽瀯寤哄櫒
+				//表达式调度构建器
 				CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(task.getCronExpression());
-				//鎸夋柊鐨刢ronExpression琛ㄨ揪寮忔瀯寤轰竴涓柊鐨則rigger
+				//按新的cronExpression表达式构建一个新的trigger
 				trigger = TriggerBuilder.newTrigger().withIdentity(task.getJobName(), task.getJobGroup()).withSchedule(scheduleBuilder).build();
 				scheduler.scheduleJob(jobDetail, trigger);
 			} else {
-				// Trigger宸插瓨鍦紝閭ｄ箞鏇存柊鐩稿簲鐨勫畾鏃惰缃�
-				//琛ㄨ揪寮忚皟搴︽瀯寤哄櫒
+				// Trigger已存在，那么更新相应的定时设置
+				//表达式调度构建器
 				CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(task.getCronExpression());
-				//鎸夋柊鐨刢ronExpression琛ㄨ揪寮忛噸鏂版瀯寤簍rigger
+				//按新的cronExpression表达式重新构建trigger
 				trigger = trigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(scheduleBuilder).build();
-				//鎸夋柊鐨則rigger閲嶆柊璁剧疆job鎵ц
+				//按新的trigger重新设置job执行
 				scheduler.rescheduleJob(triggerKey, trigger);
 			}
 			
-			//淇濆瓨鏃ュ織 
-			taskLog.setJobDescription("[鍚姩]瀹氭椂浠诲姟锛�"+task.getJobName()+" 鏄惁骞跺彂[0-鏄紱1-鍚:"+task.getIsConcurrent());
-			taskLog.setStatus(0);//浠诲姟鐘舵��
+			//保存日志 
+			taskLog.setJobDescription("[启动]定时任务："+task.getJobName()+" 是否并发[0-是；1-否]:"+task.getIsConcurrent());
+			taskLog.setStatus(0);//任务状态
 			
 		} catch (Exception e) {
-			logger.error("#####銆恆ddJob銆戞坊鍔犲畾鏃朵换鍔�,鍑虹幇寮傚父锛屽紓甯镐俊鎭负锛�"+e.getMessage());
+			logger.error("#####【addJob】添加定时任务,出现异常，异常信息为："+e.getMessage());
 			taskLog.setStatus(1);
 			taskLog.setExceptionMsg(e.getMessage().substring(0, e.getMessage().length()>2500?2500:e.getMessage().length()));
 			throw new SchedulerException();
 		}finally {
-			endDate = new Date();//缁撴潫鏃堕棿
-			runTime = (endDate.getTime() - startDate.getTime());//杩愯鏃堕棿
-			taskLog.setEndDate(new Date());	//缁撴潫鏃堕棿
+			endDate = new Date();//结束时间
+			runTime = (endDate.getTime() - startDate.getTime());//运行时间
+			taskLog.setEndDate(new Date());	//结束时间
 			taskLog.setRunTime(runTime);
-			taskLog.setRemarks("娣诲姞瀹氭椂浠诲姟");
+			taskLog.setRemarks("添加定时任务");
 			iTaskDao.insertTaskLog(taskLog);
 		}
 	}
 	
 	/**
-	 * 鑾峰彇鎵�鏈夎鍒掍腑鐨勪换鍔″垪琛�
+	 * 获取所有计划中的任务列表
 	 * @return
 	 * @throws SchedulerException
 	 */
@@ -269,7 +269,7 @@ public class TaskService {
 				Task job = new Task();
 				job.setJobName(jobKey.getName());
 				job.setJobGroup(jobKey.getGroup());
-				job.setDescription("瑙﹀彂鍣�:" + trigger.getKey());
+				job.setDescription("触发器:" + trigger.getKey());
 				Trigger.TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
 				job.setJobStatus(triggerState.name());
 				if (trigger instanceof CronTrigger) {
@@ -284,7 +284,7 @@ public class TaskService {
 	}
 	
 	/**
-	 * 鎵�鏈夋鍦ㄨ繍琛岀殑job
+	 * 所有正在运行的job
 	 * @return
 	 * @throws SchedulerException
 	 */
@@ -299,7 +299,7 @@ public class TaskService {
 			Trigger trigger = executingJob.getTrigger();
 			job.setJobName(jobKey.getName());
 			job.setJobGroup(jobKey.getGroup());
-			job.setDescription("瑙﹀彂鍣�:" + trigger.getKey());
+			job.setDescription("触发器:" + trigger.getKey());
 			Trigger.TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
 			job.setJobStatus(triggerState.name());
 			if (trigger instanceof CronTrigger) {
@@ -313,7 +313,7 @@ public class TaskService {
 	}
 	
 	/**
-	 * 鏆傚仠涓�涓猨ob
+	 * 暂停一个job
 	 * @param task
 	 * @throws SchedulerException
 	 */
@@ -324,7 +324,7 @@ public class TaskService {
 	}
 
 	/**
-	 * 鎭㈠涓�涓猨ob
+	 * 恢复一个job
 	 * @param scheduleJob
 	 * @throws SchedulerException
 	 */
@@ -335,7 +335,7 @@ public class TaskService {
 	}
 
 	/**
-	 * 鍒犻櫎瀹氭椂鍣ㄤ换鍔�-鏁版嵁搴�
+	 * 删除定时器任务-数据库
 	 * @param task
 	 * @return
 	 */
@@ -344,93 +344,93 @@ public class TaskService {
 	}
 	
 	/**
-	 * 鍒犻櫎涓�涓猨ob
+	 * 删除一个job
 	 * @param task
 	 * @throws SchedulerException
 	 */
 	public void deleteJob(Task task) throws SchedulerException {
-		//娣诲姞鏃ュ織
+		//添加日志
 		TaskLog taskLog = new TaskLog();
-		Date startDate;	//寮�濮嬫椂闂�
-		Date endDate;	//缁撴潫鏃堕棿
-		long runTime;	//杩愯鏃堕棿
+		Date startDate;	//开始时间
+		Date endDate;	//结束时间
+		long runTime;	//运行时间
 		
 		startDate = new Date();
 		taskLog.setJobName("deleteJob");
 		taskLog.setStartDate(startDate);
 		
 		try {
-			logger.info("#####鍒犻櫎瀹氭椂浠诲姟鍚嶇О锛�"+task.getJobName());
-			//鍒犻櫎浠诲姟-瀹氭椂鍣�
+			logger.info("#####删除定时任务名称："+task.getJobName());
+			//删除任务-定时器
 			Scheduler scheduler = schedulerFactoryBean.getScheduler();
 			JobKey jobKey = JobKey.jobKey(task.getJobName(), task.getJobGroup());
 			scheduler.deleteJob(jobKey);
 			
-			//淇濆瓨鏃ュ織 
-			taskLog.setJobDescription("[鍒犻櫎]瀹氭椂浠诲姟鍚嶇О锛�"+task.getJobName());
-			taskLog.setStatus(0);//浠诲姟鐘舵��
+			//保存日志 
+			taskLog.setJobDescription("[删除]定时任务名称："+task.getJobName());
+			taskLog.setStatus(0);//任务状态
 			
 		} catch (Exception e) {
-			logger.error("#####銆恉eleteJob銆戝垹闄ゅ畾鏃朵换鍔�,鍑虹幇寮傚父锛屽紓甯镐俊鎭负锛�"+e.getMessage());
+			logger.error("#####【deleteJob】删除定时任务,出现异常，异常信息为："+e.getMessage());
 			taskLog.setStatus(1);
 			taskLog.setExceptionMsg(e.getMessage().substring(0, e.getMessage().length()>2500?2500:e.getMessage().length()));
 			
 			throw new SchedulerException();
 		}finally {
-			endDate = new Date();//缁撴潫鏃堕棿
-			runTime = (endDate.getTime() - startDate.getTime());//杩愯鏃堕棿
-			taskLog.setEndDate(new Date());	//缁撴潫鏃堕棿
+			endDate = new Date();//结束时间
+			runTime = (endDate.getTime() - startDate.getTime());//运行时间
+			taskLog.setEndDate(new Date());	//结束时间
 			taskLog.setRunTime(runTime);
-			taskLog.setRemarks("鍒犻櫎瀹氭椂浠诲姟");
+			taskLog.setRemarks("删除定时任务");
 			iTaskDao.insertTaskLog(taskLog);
 		}
 	}
 	
 	/**
-	 * 绔嬪嵆鎵цjob
+	 * 立即执行job
 	 * @param task
 	 * @throws SchedulerException
 	 */
 	public void runJobNow(Task task) throws SchedulerException {
-		//娣诲姞鏃ュ織
+		//添加日志
 		TaskLog taskLog = new TaskLog();
-		Date startDate;	//寮�濮嬫椂闂�
-		Date endDate;	//缁撴潫鏃堕棿
-		long runTime;	//杩愯鏃堕棿
+		Date startDate;	//开始时间
+		Date endDate;	//结束时间
+		long runTime;	//运行时间
 		
 		startDate = new Date();
 		taskLog.setJobName("runJobNow");
 		taskLog.setStartDate(startDate);
 		
 		try {
-			logger.info("#####绔嬪嵆鎵ц瀹氭椂浠诲姟鍚嶇О锛�"+task.getJobName());
+			logger.info("#####立即执行定时任务名称："+task.getJobName());
 			
 			Scheduler scheduler = schedulerFactoryBean.getScheduler();
 			JobKey jobKey = JobKey.jobKey(task.getJobName(), task.getJobGroup());
 			scheduler.triggerJob(jobKey);
 			
-			//淇濆瓨鏃ュ織 
-			taskLog.setJobDescription("[绔嬪嵆鎵ц]瀹氭椂浠诲姟鍚嶇О锛�"+task.getJobName() +" 鏄惁骞跺彂[0-鏄紱1-鍚:"+task.getIsConcurrent());
-			taskLog.setStatus(0);//浠诲姟鐘舵��
+			//保存日志 
+			taskLog.setJobDescription("[立即执行]定时任务名称："+task.getJobName() +" 是否并发[0-是；1-否]:"+task.getIsConcurrent());
+			taskLog.setStatus(0);//任务状态
 			
 		} catch (Exception e) {
-			logger.error("#####銆恟unJobNow銆戠珛鍗虫墽琛屽畾鏃朵换鍔�,鍑虹幇寮傚父锛屽紓甯镐俊鎭负锛�"+e.getMessage());
+			logger.error("#####【runJobNow】立即执行定时任务,出现异常，异常信息为："+e.getMessage());
 			taskLog.setStatus(1);
 			taskLog.setExceptionMsg(e.getMessage().substring(0, e.getMessage().length()>2500?2500:e.getMessage().length()));
 			
 			throw new SchedulerException();
 		}finally {
-			endDate = new Date();//缁撴潫鏃堕棿
-			runTime = (endDate.getTime() - startDate.getTime());//杩愯鏃堕棿
-			taskLog.setEndDate(new Date());	//缁撴潫鏃堕棿
+			endDate = new Date();//结束时间
+			runTime = (endDate.getTime() - startDate.getTime());//运行时间
+			taskLog.setEndDate(new Date());	//结束时间
 			taskLog.setRunTime(runTime);
-			taskLog.setRemarks("绔嬪嵆鎵ц瀹氭椂浠诲姟");
+			taskLog.setRemarks("立即执行定时任务");
 			iTaskDao.insertTaskLog(taskLog);
 		}
 	}
 	
 	/**
-	 * 鏇存柊job鏃堕棿琛ㄨ揪寮�
+	 * 更新job时间表达式
 	 * @param task
 	 * @throws SchedulerException
 	 */
@@ -444,7 +444,7 @@ public class TaskService {
 	}
 	
 	/**
-	 * 淇濆瓨瀹氭椂浠诲姟鏃ュ織
+	 * 保存定时任务日志
 	 * @param taskLog
 	 */
 	public void saveTaskLog(TaskLog taskLog){
@@ -452,7 +452,7 @@ public class TaskService {
 	}
 	
 	/**
-	 * 鍒嗛〉瀹氭椂浠诲姟Log鏃ュ織鍒楄〃
+	 * 分页定时任务Log日志列表
 	 * @param page
 	 * @param trainLessons
 	 * @return
@@ -465,7 +465,7 @@ public class TaskService {
 	}
 	
 	/**
-	 * 鏍规嵁瀹氭椂浠诲姟id锛屾煡璇㈠叾瀹氭椂浠诲姟log
+	 * 根据定时任务id，查询其定时任务log
 	 * @param id
 	 * @return
 	 */
@@ -474,11 +474,11 @@ public class TaskService {
 	}
 	
 	/**
-	 * 鏇存柊琛ㄨ揪寮忥紝鍒ゆ柇琛ㄨ揪寮忔槸鍚︽纭彲鐢ㄤ竴涓嬩唬鐮�
+	 * 更新表达式，判断表达式是否正确可用一下代码
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		//鏇存柊琛ㄨ揪寮忥紝鍒ゆ柇琛ㄨ揪寮忔槸鍚︽纭彲鐢ㄤ竴涓嬩唬鐮�
+		//更新表达式，判断表达式是否正确可用一下代码
 		@SuppressWarnings("unused")
 		CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule("0 */20 * * * ?");
 	}
