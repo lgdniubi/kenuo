@@ -468,6 +468,9 @@ public class UserController extends BaseController {
 			if("1".equals(request.getParameter("isUpdateRole"))){	// 清除用户缓存 用户TOKEN失效
 				redisClientTemplate.del("UTOKEN_"+user.getId());
 			}
+			if("1".equals(request.getParameter("isPB"))){
+				userDao.UpdateUserStatus(user.getId());
+			}
 			// 清除用户缓存
 			UserUtils.clearCache(user);
 		} catch (Exception e) {
