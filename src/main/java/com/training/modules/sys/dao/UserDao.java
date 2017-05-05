@@ -244,4 +244,9 @@ public interface UserDao extends CrudDao<User> {
 	 * @return
 	 */
 	public int selectSpecBeautician(String id);
+	/**
+	 * 修改用户状态
+	 * @param user
+	 */
+	public void UpdateUserStatus(String id);
 }

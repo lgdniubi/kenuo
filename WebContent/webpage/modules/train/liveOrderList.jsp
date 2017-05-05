@@ -81,6 +81,8 @@
 								<form:option value="0">全部</form:option>
 								<form:option value="1">直播</form:option>
 								<form:option value="2">回放</form:option>
+								<form:option value="3">购买云币</form:option>
+								<form:option value="4">兑换云币</form:option>
 							</form:select>
 							<p></p>
 							<p>
@@ -138,6 +140,8 @@
 								<td>
 									<c:if test="${order.type == 1}">直播</c:if>
 									<c:if test="${order.type == 2}">回放</c:if>
+									<c:if test="${order.type == 3}">购买云币</c:if>
+									<c:if test="${order.type == 4}">兑换云币</c:if>
 								</td>
 								<td><fmt:formatDate value="${order.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								<td><fmt:formatDate value="${order.payDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
