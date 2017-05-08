@@ -133,7 +133,9 @@
 				<div class="clearfix">
 				</div>
 				<div>
-					<a href="#" onclick="addwebMainmenuNavbarContent(0,${mainmenuId},'add')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加主菜单导航栏内容图</a>
+					<shiro:hasPermission name="ec:webMainmenuNavbarContent:add">
+						<a href="#" onclick="addwebMainmenuNavbarContent(0,${mainmenuId},'add')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加主菜单导航栏内容图</a>
+					</shiro:hasPermission>
 				</div>
 				<p></p>
 				<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
@@ -162,14 +164,13 @@
 									<fmt:formatDate value="${page.createDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
 								</td>
 								<td style="text-align: center;">
-									<shiro:hasPermission name="ec:webMainmenuNavbar:view">
+									<shiro:hasPermission name="ec:webMainmenuNavbarContent:view">
 										<a href="#" onclick="openDialogView('查看', '${ctx}/ec/webMainmenuNavbarContent/form?webMainmenuNavbarContentId=${page.webMainmenuNavbarContentId}','600px', '550px')" class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i> 查看</a>
 									</shiro:hasPermission>
-									<shiro:hasPermission name="ec:webMainmenuNavbar:edit">
+									<shiro:hasPermission name="ec:webMainmenuNavbarContent:edit">
 										<a href="#" onclick="addwebMainmenuNavbarContent(${page.webMainmenuNavbarContentId},${page.mainmenuId},'update')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i>修改</a>
-										<%-- <a href="#" onclick="openDialog('修改', '${ctx}/ec/webMainmenuNavbarContent/form?webMainmenuNavbarContentId=${page.webMainmenuNavbarContentId}','600px', '550px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 修改</a>
-									 --%></shiro:hasPermission>
-									<shiro:hasPermission name="ec:webMainmenuNavbar:del">
+									 </shiro:hasPermission>
+									<shiro:hasPermission name="ec:webMainmenuNavbarContent:del">
 										<a href="#" onclick="delWebMainmenuNavbarContent(${page.webMainmenuNavbarContentId},${page.mainmenuId})" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>删除</a>
 									</shiro:hasPermission>
 								</td>

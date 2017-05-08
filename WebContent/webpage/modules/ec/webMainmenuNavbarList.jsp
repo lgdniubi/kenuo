@@ -125,7 +125,7 @@
 								<shiro:hasPermission name="ec:webMainmenuNavbar:del">
 									<a href="${ctx}/ec/webMainmenuNavbar/del?webMainmenuNavbarId=${webMainmenuNavbar.webMainmenuNavbarId}" onclick="return confirmx('确认要删除吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
 								</shiro:hasPermission>
-								<shiro:hasPermission name="ec:webMainmenuNavbar:add">
+								<shiro:hasPermission name="ec:webMainmenuNavbarContent:view">
 									<a href="#" onclick="openDialogView('主菜单导航栏内容图', '${ctx}/ec/webMainmenuNavbarContent/list?webMainmenuNavbarId=${webMainmenuNavbar.webMainmenuNavbarId}','800px', '600px')" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> 主菜单导航栏内容图</a>
 								</shiro:hasPermission>
 							</td>
