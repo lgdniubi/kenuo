@@ -174,6 +174,9 @@
 		<if test="isOnSale != null and isOnSale != ''">
 			AND g.is_on_sale = #{isOnSale}
 		</if>
+		<if test="isAppshow != null and isAppshow != ''">
+			AND g.is_appshow = #{isAppshow}
+		</if>
 	</select>
 	<!-- 根据多个分类查询上商品 -->
 	<select id="findByCateList" resultType="Goods">
@@ -452,6 +455,12 @@
 			FROM mtmydb.mtmy_spec_goods_price
 		WHERE goods_id = #{goodsId}
 	</delete>
+	<!-- 逻辑删除商品规格 -->
+	<update id="updatespec">
+		UPDATE  mtmydb.mtmy_spec_goods_price
+			SET del_flag = 1
+		WHERE goods_id = #{goodsId}
+	</update>
 	
 	<!-- 保存保存商品属性 -->
 	<insert id="saveattribute">
@@ -530,7 +539,7 @@
 		  goods_weight  AS 'goodsWeight'
 		FROM
 		  mtmydb.mtmy_spec_goods_price 
-		WHERE goods_id = #{goodsId}
+		WHERE goods_id = #{goodsId} AND del_flag = 0
 	</select>
 	
 	<!-- 根据商品规格specKey，查询商品规格价格 -->
@@ -552,6 +561,7 @@
 		  mtmydb.mtmy_spec_goods_price 
 		WHERE spec_key = #{specKey}
 		AND goods_id = #{goodsId}
+		AND del_flag = 0
 	</select>
 	
 	<!-- 商品规格specKey，修改商品规格价格 -->
@@ -568,6 +578,7 @@
 			 goods_weight  = #{goodsWeight}
 		WHERE spec_key = #{specKey}
 		AND goods_id = #{goodsId}
+		AND del_flag =0
 	</update>
 	
 	<!-- 根据商品ID，查询商品属性 -->

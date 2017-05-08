@@ -384,9 +384,9 @@
 		SELECT 
 		u.user_id AS 'mtmyUserId',
 		'A' AS 'grade',
-		(SELECT `name` FROM trains.sys_office WHERE `code` = LEFT(c.`code`,9)) AS 'areaName',
-		(SELECT `name` FROM trains.sys_office WHERE `code` = LEFT(c.`code`,13)) AS 'groupName',
-		(SELECT `name` FROM trains.sys_office WHERE `code` = LEFT(c.`code`,17)) AS 'bazaarName',
+		(SELECT `name` FROM trains.sys_office WHERE `code` = LEFT(c.`code`,9) AND del_flag = 0) AS 'areaName',
+		(SELECT `name` FROM trains.sys_office WHERE `code` = LEFT(c.`code`,13) AND del_flag = 0) AS 'groupName',
+		(SELECT `name` FROM trains.sys_office WHERE `code` = LEFT(c.`code`,17) AND del_flag = 0) AS 'bazaarName',
 		c.name AS 'shopName',
 		a.name AS 'userName',
 		u.name AS 'mtmyName',

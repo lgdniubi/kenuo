@@ -19,7 +19,6 @@ import com.training.modules.ec.dao.EquipmentLabelDao;
 import com.training.modules.ec.dao.GoodsAttributeDao;
 import com.training.modules.ec.dao.GoodsDao;
 import com.training.modules.ec.dao.GoodsSpecPriceDao;
-import com.training.modules.ec.dao.OrderGoodsDao;
 import com.training.modules.ec.entity.Effect;
 import com.training.modules.ec.entity.EquipmentLabel;
 import com.training.modules.ec.entity.Goods;
@@ -34,7 +33,6 @@ import com.training.modules.ec.utils.GoodsUtil;
 import com.training.modules.quartz.entity.GoodsCollect;
 import com.training.modules.quartz.entity.StoreVo;
 import com.training.modules.quartz.service.RedisClientTemplate;
-import com.training.modules.quartz.tasks.ModifyGoodsStore;
 import com.training.modules.sys.dao.SkillDao;
 import com.training.modules.sys.entity.Skill;
 
@@ -51,6 +49,10 @@ import net.sf.json.JSONObject;
 public class GoodsService extends CrudService<GoodsDao, Goods> {
 
 	public static final String GOOD_UNSHELVE_KEY = "GOOD_UNSHELVE_KEY"; // 商品下架
+	public static final String GOODSSTORE = "GOODSSTORE_";	// 商品总库存
+	public static final String SPECPRICE = "SPECPRICE_";	// 商品对应的规格
+	public static final String GOODS_SPECPRICE_HASH = "GOODS_SPECPRICE_HASH";	//所有商品id集合
+	
 	@Autowired
 	private GoodsDao goodsDao;
 	@Autowired
@@ -61,10 +63,6 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 	private GoodsSpecItemService goodsSpecItemService;
 	@Autowired
 	private GoodsAttributeDao goodsAttributeDao;
-	@Autowired
-	private ModifyGoodsStore modifyGoodsStore;
-	@Autowired
-	private OrderGoodsDao orderGoodsDao;
 	@Autowired
 	private SkillDao skillDao;
 	@Autowired
@@ -94,12 +92,9 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 		goods.setGoodsContent(HtmlUtils.htmlUnescape(goods.getGoodsContent()));
 
 		if (0 == goods.getGoodsId()) {
-
-			goods.setAttrType(
-					(goods.getAttrType() == null || "".equals(goods.getAttrType())) ? null : goods.getAttrType());
-			goods.setSpecType(
-					(goods.getSpecType() == null || "".equals(goods.getSpecType())) ? null : goods.getSpecType());
-
+			// 添加
+			goods.setAttrType((goods.getAttrType() == null || "".equals(goods.getAttrType())) ? null : goods.getAttrType());
+			goods.setSpecType((goods.getSpecType() == null || "".equals(goods.getSpecType())) ? null : goods.getSpecType());
 			goods.setIsRecommend(goods.getIsRecommend() == null ? "0" : goods.getIsRecommend());
 			goods.setIsHot(goods.getIsHot() == null ? "0" : goods.getIsHot());
 			goods.setIsAppshow(goods.getIsAppshow() == null ? "0" : goods.getIsAppshow());
@@ -226,9 +221,8 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 							for (int i = 0; i < specItemList.size(); i++) {
 								GoodsSpecPrice gsp = new GoodsSpecPrice();
 								gsp.setGoodsId(goods.getGoodsId() + "");// 商品id
-
 								gsp.setSpecKey(specItemList.get(i));// 规格键
-								gsp.setSpecKeyName(request.getParameter("item[" + specItemList.get(i) + "][spec_name]"));//规格名称
+								gsp.setSpecKeyName(request.getParameter("item[" + specItemList.get(i) + "][spec_name]"));// 规格名称
 								gsp.setSpecKeyValue(request.getParameter("item[" + specItemList.get(i) + "][key_name]"));// 规格键名中文
 								gsp.setPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][price]")));// 优惠价格
 								gsp.setMarketPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][market_price]")));// 市场价格
@@ -352,7 +346,7 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 				}
 			}
 		} else {
-
+			// 修改
 			goods.setAttrType((goods.getAttrType() == null || "".equals(goods.getAttrType())) ? null : goods.getAttrType());
 			goods.setSpecType((goods.getSpecType() == null || "".equals(goods.getSpecType())) ? null : goods.getSpecType());
 			goods.setIsRecommend(goods.getIsRecommend() == null ? "0" : goods.getIsRecommend());
@@ -362,7 +356,6 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 			goods.setIsFreeShipping(goods.getIsFreeShipping() == null ? "0" : goods.getIsFreeShipping());
 			goods.setIsNew(goods.getIsNew() == null ? "0" : goods.getIsNew());
 
-			// 修改
 			updateGoods(goods);
 
 			// 用户商品上下架Regis缓存
@@ -384,7 +377,7 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 						GoodsImages goodsImg = new GoodsImages();
 						goodsImg.setGoodsId(String.valueOf(goods.getGoodsId()));
 						goodsImg.setImageUrl(goodsNurseImages[i]);
-						goodsImg.setImageDesc((null != goodsNurseImagesText[i] && !"".equals(goodsNurseImagesText[i]) ? goodsNurseImagesText[i] : ""));// 商品描述
+						goodsImg.setImageDesc((null != goodsNurseImagesText[i] && !"".equals(goodsNurseImagesText[i])? goodsNurseImagesText[i] : ""));// 商品描述
 						goodsImg.setImageType(1);// 图片类型 0 是商品图 1 护理流程图
 						goodsImg.setSort(i + 1 + "0");// 10、20
 						giList.add(goodsImg);
@@ -430,181 +423,136 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 				}
 			}
 
-			Goods goodsnew = get(goods);
-			int goodsNum = orderGoodsDao.numByGoodsId(goods.getGoodsId() + "");
-			if (goodsNum == 0) {
-				String specTypeId = request.getParameter("specTypeId");
-				String spec_arr = request.getParameter("specarr");
-				if (!StringUtils.isEmpty(specTypeId) && !StringUtils.isEmpty(spec_arr)) {
+			// Goods goodsnew = get(goods);
+			// int goodsNum = orderGoodsDao.numByGoodsId(goods.getGoodsId() +
+			// "");
 
-					// 获取商品名称，判断是否根据商品ID查询到商品信息
-					if (!StringUtils.isEmpty(goods.getGoodsName())) {
+			// 从后台查询商品规格数据
+			List<GoodsSpecPrice> gspList = findGoodsSpecPrice(goods);
 
-						if ("-1".equals(specTypeId) || null == spec_arr || "{}".equals(spec_arr)) {
-							// 删除
-							deletespec(goods);
-							goods.setSpecType("0");
-							updategoodstype(goods);
+			String specTypeId = request.getParameter("specTypeId");
+			String spec_arr = request.getParameter("specarr");
+			if (!StringUtils.isEmpty(specTypeId) && !StringUtils.isEmpty(spec_arr)) {
+				// 获取商品名称，判断是否根据商品ID查询到商品信息
+				if (!StringUtils.isEmpty(goods.getGoodsName())) {
 
-						} else {
-							List<String[]> list = new ArrayList<String[]>();// 保存规格的规格项数组
-							JSONObject json = JSONObject.fromObject(spec_arr);
-							Iterator<?> iterator = json.keys();
-							while (iterator.hasNext()) {
-								String key = (String) iterator.next();
-								// 保存所需选择的规格项的数组
-								String[] value = (String[]) json.getString(key).replace("[", "").replace("]", "")
-										.split(",");
-								list.add(value);
-							}
+					if ("-1".equals(specTypeId) || null == spec_arr || "{}".equals(spec_arr)) {
+						// 删除
+						deletespec(goods);
+						goods.setSpecType("0");
+						updategoodstype(goods);
 
-							List<String> specItemList = new ArrayList<String>();// 获取所有排列组合值
-							// 判断规格项有值时，才进行查询
-							if (list.size() > 0) {
-								// 规格项数组，排列组合
-								String str = "";
-								GoodsUtil.goodsSpecItem(list, list.get(0), str, specItemList, goodsSpecItemService);
-							}
-							int totalNum = 0;
-							// 判断随机排列活的组合值
-							if (specItemList.size() > 0) {
-								List<GoodsSpecPrice> goodsSpecPricesList = new ArrayList<GoodsSpecPrice>();
-								List<GoodsSpecImage> goodsSpecImagesList = new ArrayList<GoodsSpecImage>();
-								// int storeCount=0; //库存
-								// 遍历组合值，拼接form表单的值，并循环获取
-								for (int i = 0; i < specItemList.size(); i++) {
-									GoodsSpecPrice gsp = new GoodsSpecPrice();
-									gsp.setGoodsId(goods.getGoodsId() + "");// 商品id
-
-									gsp.setSpecKey(specItemList.get(i));// 规格键
-									gsp.setSpecKeyName(request.getParameter("item[" + specItemList.get(i) + "][spec_name]"));//规格名称
-									gsp.setSpecKeyValue(request.getParameter("item[" + specItemList.get(i) + "][key_name]"));// 规格键名中文
-									gsp.setPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][price]")));// 优惠价格
-									gsp.setMarketPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][market_price]")));// 市场价格
-									gsp.setCostPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][cost_price]")));// 成本价格
-									gsp.setStoreCount(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][store_count]")));// 库存数量
-									gsp.setBarCode(request.getParameter("item[" + specItemList.get(i) + "][bar_code]"));// 商品条形码
-									gsp.setGoodsNo(request.getParameter("item[" + specItemList.get(i) + "][goods_No]"));// 商品编码
-									gsp.setGoodsWeight(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][goods_weight]")));// 商品重量
-									gsp.setServiceTimes(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][service_times]")));// 服务次数
-									gsp.setExpiringDate(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][expiring_date]")));// 截止日期（月）
-									// 保存到list中
-									// 规格库存统一使用补仓功能 -kele 2016年10月9日
-									// storeCount=storeCount+Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][store_count]"));
-									totalNum = totalNum + Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][store_count]"));
-									goodsSpecPricesList.add(gsp);
-								}
-								if (goodsNum == 0) {
-									if (totalNum == goodsnew.getTotalStore()) {
-										List<String> items = GoodsUtil.getitemsvalue(list);
-
-										for (int j = 0; j < items.size(); j++) {
-											// 保存到商品规格图片
-											GoodsSpecImage goodsSpecImage = new GoodsSpecImage();
-											String gsivalue = request.getParameter("item_img[" + items.get(j) + "]");
-											if (null != gsivalue && !"".equals(gsivalue)) {
-												goodsSpecImage.setGoodsId(goods.getGoodsId() + "");
-												goodsSpecImage.setSpecItemId(Integer.parseInt(items.get(j)));
-												goodsSpecImage.setSrc(gsivalue);
-												// 保存到list中
-												goodsSpecImagesList.add(goodsSpecImage);
-											}
-										}
-
-										goods.setGoodsSpecPricesList(goodsSpecPricesList);// 保存到商品实体bean-商品规格价格list
-										goods.setGoodsSpecImagesList(goodsSpecImagesList);// 保存到商品实体bean-商品规格图片list
-
-										// 规格库存统一使用补仓功能 -kele 2016年10月9日
-										// Goods goods2=new Goods();
-										// goods2.setGoodsId(Integer.parseInt(goodsId));
-										// goods2.setStoreCount(storeCount);
-										// goodsService.updateStorCount(goods2);
-
-										// 商品规格【价格】list有数据才进行保存操作
-										if (goodsSpecPricesList.size() > 0) {
-											// 添加商品排列组合规格项数据（先删除、后添加）
-											savespec(goods);
-											// 修改商品规格项类型
-											goods.setSpecType(specTypeId);
-											updategoodstype(goods);
-										}
-
-										// 商品规格【图片】list有数据才进行保存操作
-										if (goodsSpecImagesList.size() > 0) {
-											savespecimg(goods);
-										}
-
-									} else {
-										// 修改规格 先删除商品规格缓存
-										List<GoodsSpecPrice> gspList = findGoodsSpecPrice(goods);
-										List<String> spckeylist = new ArrayList<String>();
-										for (int j = 0; j < gspList.size(); j++) {
-											spckeylist.add(gspList.get(j).getSpecKey());
-										}
-										// 删除商品规格缓存
-										modifyGoodsStore.delStore(goods.getGoodsId(), spckeylist);
-										goodsDao.updateTotalstore(goods.getGoodsId());
-
-										List<String> items = GoodsUtil.getitemsvalue(list);
-
-										for (int j = 0; j < items.size(); j++) {
-											// 保存到商品规格图片
-											GoodsSpecImage goodsSpecImage = new GoodsSpecImage();
-											String gsivalue = request.getParameter("item_img[" + items.get(j) + "]");
-											if (null != gsivalue && !"".equals(gsivalue)) {
-												goodsSpecImage.setGoodsId(goods.getGoodsId() + "");
-												goodsSpecImage.setSpecItemId(Integer.parseInt(items.get(j)));
-												goodsSpecImage.setSrc(gsivalue);
-												// 保存到list中
-												goodsSpecImagesList.add(goodsSpecImage);
-											}
-										}
-
-										goods.setGoodsSpecPricesList(goodsSpecPricesList);// 保存到商品实体bean-商品规格价格list
-										goods.setGoodsSpecImagesList(goodsSpecImagesList);// 保存到商品实体bean-商品规格图片list
-
-										// 规格库存统一使用补仓功能 -kele 2016年10月9日
-										// Goods goods2=new Goods();
-										// goods2.setGoodsId(Integer.parseInt(goodsId));
-										// goods2.setStoreCount(storeCount);
-										// goodsService.updateStorCount(goods2);
-
-										// 商品规格【价格】list有数据才进行保存操作
-										if (goodsSpecPricesList.size() > 0) {
-											// 添加商品排列组合规格项数据（先删除、后添加）
-											savespec(goods);
-											// 修改商品规格项类型
-											goods.setSpecType(specTypeId);
-											updategoodstype(goods);
-										}
-
-										// 商品规格【图片】list有数据才进行保存操作
-										if (goodsSpecImagesList.size() > 0) {
-											savespecimg(goods);
-										}
-
-										// 修改规格 更新到缓存
-										List<GoodsSpecPrice> addkeyList = findGoodsSpecPrice(goods);
-										List<String> addlist = new ArrayList<String>();
-										for (int j = 0; j < addkeyList.size(); j++) {
-											addlist.add(addkeyList.get(j).getSpecKey());
-										}
-										// 删除商品规格缓存
-										modifyGoodsStore.addStore(goods.getGoodsId(), addlist);
-
-									}
-
-								}
-
-							}
+					} else {
+						List<String[]> list = new ArrayList<String[]>();// 保存规格的规格项数组
+						JSONObject json = JSONObject.fromObject(spec_arr);
+						Iterator<?> iterator = json.keys();
+						while (iterator.hasNext()) {
+							String key = (String) iterator.next();
+							// 保存所需选择的规格项的数组
+							String[] value = (String[]) json.getString(key).replace("[", "").replace("]", "").split(",");
+							list.add(value);
 						}
 
+						List<String> specItemList = new ArrayList<String>();// 获取所有排列组合值
+						// 判断规格项有值时，才进行查询
+						if (list.size() > 0) {
+							// 规格项数组，排列组合
+							String str = "";
+							GoodsUtil.goodsSpecItem(list, list.get(0), str, specItemList, goodsSpecItemService);
+						}
+						int totalNum = 0;
+						// 判断随机排列活的组合值
+						if (specItemList.size() > 0) {
+							List<GoodsSpecPrice> goodsSpecPricesList = new ArrayList<GoodsSpecPrice>();
+							List<GoodsSpecImage> goodsSpecImagesList = new ArrayList<GoodsSpecImage>();
+							// 创建两个集合,判断商品规格分类是否改变(取SpecKey进行比对),当改变就修改,否则就不修改
+							List<String> goodsSpecPricesList1 = new ArrayList<String>();
+							List<String> goodsSpecPricesList2 = new ArrayList<String>();
+
+							for (GoodsSpecPrice gsp : gspList) {
+								goodsSpecPricesList1.add(gsp.getSpecKey());
+							}
+
+							// int storeCount=0; //库存
+							// 遍历组合值，拼接form表单的值，并循环获取
+							for (int i = 0; i < specItemList.size(); i++) {
+								GoodsSpecPrice gsp = new GoodsSpecPrice();
+								gsp.setGoodsId(goods.getGoodsId() + "");// 商品id
+								gsp.setSpecKey(specItemList.get(i));// 规格键
+								gsp.setSpecKeyName(request.getParameter("item[" + specItemList.get(i) + "][spec_name]"));// 规格名称
+								gsp.setSpecKeyValue(request.getParameter("item[" + specItemList.get(i) + "][key_name]"));// 规格键名中文
+								gsp.setPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][price]")));// 优惠价格
+								gsp.setMarketPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][market_price]")));// 市场价格
+								gsp.setCostPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][cost_price]")));// 成本价格
+								gsp.setStoreCount(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][store_count]")));// 库存数量
+								gsp.setBarCode(request.getParameter("item[" + specItemList.get(i) + "][bar_code]"));// 商品条形码
+								gsp.setGoodsNo(request.getParameter("item[" + specItemList.get(i) + "][goods_No]"));// 商品编码
+								gsp.setGoodsWeight(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][goods_weight]")));// 商品重量
+								gsp.setServiceTimes(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][service_times]")));// 服务次数
+								gsp.setExpiringDate(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][expiring_date]")));// 截止日期（月）
+								// 保存到list中
+								// 规格库存统一使用补仓功能 -kele 2016年10月9日
+								// storeCount=storeCount+Integer.parseInt(request.getParameter("item["+specItemList.get(i)+"][store_count]"));
+								totalNum = totalNum + Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][store_count]"));
+								goodsSpecPricesList.add(gsp);
+								goodsSpecPricesList2.add(specItemList.get(i));
+							}
+							//判断商品规格是否更改,更改就修改,如果没有,则直接跳过
+							boolean flag = (goodsSpecPricesList1.size() == goodsSpecPricesList2.size()) && goodsSpecPricesList1.containsAll(goodsSpecPricesList2);
+							if (!flag) {
+								List<String> items = GoodsUtil.getitemsvalue(list);
+
+								for (int j = 0; j < items.size(); j++) {
+									// 保存到商品规格图片
+									GoodsSpecImage goodsSpecImage = new GoodsSpecImage();
+									String gsivalue = request.getParameter("item_img[" + items.get(j) + "]");
+									if (null != gsivalue && !"".equals(gsivalue)) {
+										goodsSpecImage.setGoodsId(goods.getGoodsId() + "");
+										goodsSpecImage.setSpecItemId(Integer.parseInt(items.get(j)));
+										goodsSpecImage.setSrc(gsivalue);
+										// 保存到list中
+										goodsSpecImagesList.add(goodsSpecImage);
+									}
+								}
+
+								goods.setGoodsSpecPricesList(goodsSpecPricesList);// 保存到商品实体bean-商品规格价格list
+								goods.setGoodsSpecImagesList(goodsSpecImagesList);// 保存到商品实体bean-商品规格图片list
+
+								// 规格库存统一使用补仓功能 -kele 2016年10月9日
+								// Goods goods2=new Goods();
+								// goods2.setGoodsId(Integer.parseInt(goodsId));
+								// goods2.setStoreCount(storeCount);
+								// goodsService.updateStorCount(goods2);
+
+								// 商品规格【价格】list有数据才进行保存操作
+								if (goodsSpecPricesList.size() > 0) {
+									// 添加商品排列组合规格项数据（先删除、后添加）
+									savespec(goods);
+									// 修改商品规格项类型
+									goods.setSpecType(specTypeId);
+									updategoodstype(goods);
+									updateGoodsSpecCache(goods.getGoodsId(),goodsSpecPricesList1);	// 更新缓存
+									Goods g = new Goods();
+									g.setGoodsId(goods.getGoodsId());
+									g.setTotalStore(0);
+									g.setStoreCount(0);
+									goodsDao.updateStorCount(g);					// 修改商品总库存、剩余库存为0 
+								}
+
+								// 商品规格【图片】list有数据才进行保存操作
+								if (goodsSpecImagesList.size() > 0) {
+									savespecimg(goods);
+								}
+
+							}
+
+						}
 					}
+
 				}
 			}
 
 			String attrTypeId = request.getParameter("attrTypeId");
-
 			if (!StringUtils.isEmpty(goods.getGoodsId() + "") && !StringUtils.isEmpty(attrTypeId)) {
 				// goods.setGoodsId(Integer.parseInt(goodsId));
 				// goods = goodsService.get(goods);
@@ -644,7 +592,6 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 							saveattribute(goods);
 							// 修改商品规格项类型
 							goods.setAttrType(attrTypeId);
-							updategoodstype(goods);
 						}
 					}
 
@@ -711,10 +658,7 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 				goodsImg.setGoodsId(goods.getGoodsId() + "");
 				goodsImg.setImageUrl(imglist.get(i).getImageUrl());
 				goodsImg.setImageDesc(imglist.get(i).getImageDesc());// 商品描述
-				goodsImg.setImageType(imglist.get(i).getImageType());// 图片类型 0
-																		// 是商品图
-																		// 1
-																		// 护理流程图
+				goodsImg.setImageType(imglist.get(i).getImageType());// 图片类型 0是商品图 ， 1 护理流程图
 				goodsImg.setSort(imglist.get(i).getSort());// 10、20
 				list.add(goodsImg);
 			}
@@ -978,7 +922,7 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 	 * @return
 	 */
 	public void savespec(Goods goods) {
-		goodsDao.deletespec(goods);// 先删除之前的商品规格项内容
+		goodsDao.updatespec(goods);// 先逻辑删除之前的商品规格项内容
 		goodsDao.savespec(goods);// 再添加新的商品规格项内容
 	}
 
@@ -1178,5 +1122,12 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 			equipmentLabel.setName(name);
 		}
 		return equipmentLabel;
+	}
+	public void updateGoodsSpecCache(int goodsId,List<String> goodsSpecPricesList){
+		redisClientTemplate.set(GOODSSTORE+goodsId, "0");
+		for (int i = 0; i < goodsSpecPricesList.size(); i++) {
+			redisClientTemplate.srem(GOODS_SPECPRICE_HASH, goodsId+"#"+goodsSpecPricesList.get(i));
+			redisClientTemplate.del(SPECPRICE+goodsId+"#"+goodsSpecPricesList.get(i));
+		}
 	}
 }

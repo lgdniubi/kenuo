@@ -23,8 +23,6 @@ public class OrderGoodsService extends TreeService<OrderGoodsDao,OrderGoods>{
 	@Autowired
 	private OrderGoodsDao orderGoodsDao;
 	
-	
-	
 	/**
 	 * 根据订单号查询订单下所有商品
 	 * @param id
@@ -32,15 +30,6 @@ public class OrderGoodsService extends TreeService<OrderGoodsDao,OrderGoods>{
 	 */
 	public List<OrderGoods> orderlist(String orderid){
 		return orderGoodsDao.findListByOrderid(orderid);
-	}
-	
-	/**
-	 * 根据订单号查询订单下所有商品
-	 * @param id
-	 * @return
-	 */
-	public List<OrderGoods> orderlistTow(String orderid){
-		return orderGoodsDao.orderlistTow(orderid);
 	}
 	
 	/**
@@ -75,9 +64,5 @@ public class OrderGoodsService extends TreeService<OrderGoodsDao,OrderGoods>{
 	public List<OrderGoods> getGoodMapping(String orderId) {
 		return dao.getGoodMapping(orderId);
 	}
-	
-	
-	
-	
 	
 }

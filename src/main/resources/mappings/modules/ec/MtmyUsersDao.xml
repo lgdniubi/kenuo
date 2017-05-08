@@ -493,4 +493,13 @@
 		DELETE FROM mtmydb.mtmy_sale_relations
 		WHERE user_id = #{userId}
 	</delete>
+	
+	<!-- 验证手机号是否存在于每天美耶 -->
+	<select id="checkMobile" resultType="int">
+		SELECT     
+			COUNT(*)   
+		FROM     
+			mtmydb.mtmy_users    
+		WHERE mobile = #{mobile}
+	</select>
 </mapper>

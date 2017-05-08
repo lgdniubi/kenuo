@@ -9,6 +9,8 @@
 			total_amount,
 			order_balance,
 			order_arrearage,
+			app_total_amount,
+			app_arrearage,
 			<if test="itemAmount!=null and itemAmount!=''">
 				item_amount,
 			</if>
@@ -27,6 +29,8 @@
 			#{totalAmount},
 			#{orderBalance},
 			#{orderArrearage},
+			#{appTotalAmount},
+			#{appArrearage},
 			<if test="itemAmount != null and itemAmount != ''">
 				#{itemAmount},
 			</if>
@@ -58,6 +62,7 @@
 		SELECT
 			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = #{mid} AND advance_flag = '1') AS 'advanceFlag',
 			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = #{mid} AND advance_flag = '0' AND service_times = -1) AS 'sumAppt',
+			(SELECT SUM(order_balance) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = #{mid}) AS 'goodsBalance',
 			SUM(total_amount) as totalAmount,
 			SUM(order_balance) as orderBalance,
 			SUM(order_arrearage) as orderArrearage,
@@ -181,5 +186,18 @@
 					(SELECT appt_status FROM mtmydb.mtmy_appt_order WHERE id = (SELECT appt_id FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = #{recId} AND advance_flag = '0' AND service_times = -1)) 
 					IN (1,2,4) THEN 1 ELSE 0 END
 				) AS num
+	</select>
+	
+	<!-- 根据mapping_id获取其订单余款 -->
+	<select id="selectOrderBalance" resultType="OrderGoodsDetails">
+		SELECT 
+			SUM(ogd.order_balance) AS 'orderBalance',
+			SUM(ogd.app_total_amount) AS 'appTotalAmount',
+			SUM(ogd.app_arrearage) AS 'appArrearage',
+			ogm.goods_price AS 'goodsPrice',
+			ogm.order_amount AS 'orderAmount'
+		FROM mtmydb.mtmy_order_goods_details ogd
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping ogm ON ogm.rec_id = ogd.goods_mapping_id
+		WHERE goods_mapping_id = #{recid}
 	</select>
 </mapper>

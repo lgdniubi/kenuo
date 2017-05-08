@@ -1,5 +1,6 @@
 package com.training.modules.ec.web;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -211,4 +212,40 @@ public class EquipmentLabelController extends BaseController{
 		return type;
 	}
 	
+	/**
+	 * 设备标签是否显示
+	 * @param request
+	 * @param equipmentLabel
+	 * @return
+	 */
+	@RequestMapping(value = "changeIsShow")
+	@ResponseBody
+	public Map<String, String> changeIsShow(HttpServletRequest request,EquipmentLabel equipmentLabel) {
+		
+		Map<String, String> jsonMap = new HashMap<String, String>();
+		try {
+			String isyesno = request.getParameter("isShow");
+			if("1".equals(isyesno)){
+				int sum = equipmentLabelService.selectGoodsisOnSale(equipmentLabel.getEquipmentLabelId());
+				if(sum == 0){
+					equipmentLabelService.updateIsShow(equipmentLabel);
+					jsonMap.put("STATUS", "OK");
+					jsonMap.put("ISYESNO", isyesno);
+				}else{
+					jsonMap.put("STATUS", "NO");
+				}
+			}else if("0".equals(isyesno)){
+				equipmentLabelService.updateIsShow(equipmentLabel);
+				jsonMap.put("STATUS", "OK");
+				jsonMap.put("ISYESNO", isyesno);
+			}
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "修改设备标签是否显示失败", e);
+			logger.error("修改设备标签是否显示失败：" + e.getMessage());
+			jsonMap.put("STATUS", "ERROR");
+			jsonMap.put("MESSAGE", "修改失败,出现异常");
+		}
+		return jsonMap;
+	}
+
 }

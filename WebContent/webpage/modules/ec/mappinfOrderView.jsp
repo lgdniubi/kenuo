@@ -39,10 +39,10 @@
 							<%-- </c:if> --%>
 						</table>
 					</c:if>
-					<label class="active">订单充值记录:</label>
+					<%-- <label class="active">订单充值记录:</label>
 					<table id="contentTable" 
 	                	class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
-						<%-- <c:if test="${orderRechargeLogs != null}"> --%>
+						<c:if test="${orderRechargeLogs != null}">
 							<tr>
 								<th style="text-align: center;">充值日期</th>
 								<th style="text-align: center;">充值金额</th>
@@ -59,8 +59,8 @@
 									<td>${orderRechargeLog.createByName }</td>
 								</tr>
 							</c:forEach>
-						<%-- </c:if> --%>
-					</table>
+						</c:if>
+					</table> --%>
 					</div>
 				</div>
 			</div>

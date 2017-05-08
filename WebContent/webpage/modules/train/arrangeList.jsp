@@ -11,6 +11,10 @@
 	    .optiscroll-content{height: 100%;}
 		#treeTable td,#treeTable th{padding:8px 0;}
 		#treeTable div{ word-wrap: break-word;}
+		.ibox .open > .dropdown-menu {
+		    left: 0!important;
+		    right: 0;
+		}
     </style>
     <script type="text/javascript" src="${ctxStatic}/jquery.scrollbar/optiscroll.js"></script>
 	<script type="text/javascript">
@@ -103,8 +107,8 @@
 						<table id="treeTable" class="osTop table table-bordered table-hover table-striped" style="width:200px;position:absolute;left:0;top:0;z-index:10;">
 							<thead>
 								<tr>
-									<th style="text-align:center;"><div style="width:100px;">操作</div></th>
-							 		<th style="text-align:center;"><div style="width:100px;">${bazaarName }</div></th>
+									<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">操作</div></th>
+							 		<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${bazaarName }">${bazaarName }</div></th>
 							 	</tr>
 							</thead>
 						</table>
@@ -112,24 +116,28 @@
 							<table id="treeTable" class="table table-bordered table-hover table-striped" style="word-break:keep-all;">
 								<thead>
 								 	<tr>
-								 		<th style="text-align:center;"><div style="width:100px;">操作</div></th>
-								 		<th style="text-align:center;"><div style="width:100px;">${bazaarName }</div></th>
+								 		<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">操作</div></th>
+								 		<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${bazaarName }">${bazaarName }</div></th>
 								 	</tr>
 								 </thead>
 								 <tbody>
 								  	<c:forEach items="${lists}" var="ArrangeBeautician">
 				                        <tr style="text-align: center;">
 			                        		<td>
-			                        			<div style="width: 100px;">
-				                        			<shiro:hasPermission name="train:arrange:ArrangeBeautician">
-				                        				<a href="#" onclick='top.openTab("${ctx }/train/arrange/ArrangeBeautician?officeId=${ArrangeBeautician.officeId }&officeName=${ArrangeBeautician.name}&searcTime=${fns:formatDateTime(arrangeShop.searcTime)}","市场美容师排班", false)' class="btn btn-success btn-xs" >美容师排班</a>
-				                        			</shiro:hasPermission>
-				                        			<shiro:hasPermission name="train:arrange:ArrangeSpecEquipment">
-				                        				<a href="#" onclick='top.openTab("${ctx }/train/arrange/ArrangeSpecEquipment?officeId=${ArrangeBeautician.officeId }&officeName=${ArrangeBeautician.name}&searcTime=${fns:formatDateTime(arrangeShop.searcTime)}","市场设备排班", false)' class="btn btn-success btn-xs" >设备排班</a>
-				                        			</shiro:hasPermission>
-			                        			</div>
+												<div class="btn-group" style="max-height: 17px;">
+													<button type="button" class="btn btn-success dropdown-toggle btn-xs" data-toggle="dropdown">操作<span class="caret"></span>
+													</button>
+													<ul class="dropdown-menu" role="menu">
+														<shiro:hasPermission name="train:arrange:ArrangeBeautician">
+															<li><a href="#" onclick='top.openTab("${ctx }/train/arrange/ArrangeBeautician?officeId=${ArrangeBeautician.officeId }&officeName=${ArrangeBeautician.name}&searcTime=${fns:formatDateTime(arrangeShop.searcTime)}","市场美容师排班", false)' class="btn" >美容师排班</a></li>
+														</shiro:hasPermission>
+														<shiro:hasPermission name="train:arrange:ArrangeSpecEquipment">
+															<li><a href="#" onclick='top.openTab("${ctx }/train/arrange/ArrangeSpecEquipment?officeId=${ArrangeBeautician.officeId }&officeName=${ArrangeBeautician.name}&searcTime=${fns:formatDateTime(arrangeShop.searcTime)}","市场设备排班", false)' class="btn" >设备排班</a></li>
+														</shiro:hasPermission>
+													</ul>
+												</div>
 			                            	</td>
-				                            <td><div style="width: 100px;">${ArrangeBeautician.name }</div></td>
+				                            <td><div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${ArrangeBeautician.name }">${ArrangeBeautician.name }</div></td>
 				                        </tr>
 			                        </c:forEach>
 								 </tbody>
@@ -146,19 +154,12 @@
 							<c:forEach items="${lists}" var="ArrangeBeautician">
 								<tr style="text-align: center;">
 									<td>
-										<div style="width: 100px;">
-											<shiro:hasPermission name="train:arrange:ArrangeBeautician">
-												<a href="#" onclick='top.openTab("${ctx }/train/arrange/ArrangeBeautician?officeId=${ArrangeBeautician.officeId }&officeName=${ArrangeBeautician.name}&searcTime=${fns:formatDateTime(arrangeShop.searcTime)}","市场美容师排班", false)' class="btn btn-success btn-xs" >美容师排班</a>
-											</shiro:hasPermission>
-											<shiro:hasPermission name="train:arrange:ArrangeSpecEquipment">
-												<a href="#" onclick='top.openTab("${ctx }/train/arrange/ArrangeSpecEquipment?officeId=${ArrangeBeautician.officeId }&officeName=${ArrangeBeautician.name}&searcTime=${fns:formatDateTime(arrangeShop.searcTime)}","市场设备排班", false)' class="btn btn-success btn-xs" >设备排班</a>
-											</shiro:hasPermission>
-										</div>
-									</td>
-									<td><div style="width: 100px;">${ArrangeBeautician.name }</div></td>
+										<div class="btn-group" style="width: 100px;max-height: 17px;"></div>
+	                            	</td>
+									<td><div style="width:100px;max-width: 100px;overflow: hidden;max-height: 17px;">${ArrangeBeautician.name }</div></td>
 									<c:forEach items="${ArrangeBeautician.arrangeShops}" var="arrangeShops" varStatus="status" end="31">
 										<td>
-											<div style="width: 100px;">
+											<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">
 												<c:if test="${arrangeShops.status == 1}">
 													<a href="#" onclick="show('${ArrangeBeautician.officeId }',${status.index+1 })">班</a>
 												</c:if>

@@ -233,4 +233,20 @@ public interface UserDao extends CrudDao<User> {
 	 */
 	public List<User> newFindList(User user);
 	
+	/**
+	 * 验证导入的用户的工号是否已经存在 
+	 */
+	public int selectNo(String no);
+	
+	/**
+	 * 验证用户是否为特殊美容师 
+	 * @param id
+	 * @return
+	 */
+	public int selectSpecBeautician(String id);
+	/**
+	 * 修改用户状态
+	 * @param user
+	 */
+	public void UpdateUserStatus(String id);
 }

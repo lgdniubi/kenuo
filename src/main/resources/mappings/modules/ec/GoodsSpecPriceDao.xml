@@ -22,7 +22,7 @@
 		FROM
 		mtmydb.mtmy_spec_goods_price a
 		WHERE a.goods_id=#{id}
-
+		AND del_flag = 0
 	</select>
 	<!-- 根据规格查询 -->
 	<select id="getSpecPrce" resultType="GoodsSpecPrice">
@@ -31,13 +31,33 @@
 		FROM
 		mtmydb.mtmy_spec_goods_price a
 		WHERE a.spec_key=#{specKey} AND a.goods_id=#{goodsId}
+		AND del_flag = 0
 	</select>
 	<update id="modifySpecStoreCount" parameterType="map">
 		UPDATE mtmydb.mtmy_spec_goods_price 
 		SET store_count = #{store_count} WHERE goods_id = #{goods_id} and spec_key = #{spec_key}
+		AND del_flag = 0
 	</update>
 	
 	<select id="querySpecsPrices" resultType="GoodsSpecPrice">
-		SELECT * FROM mtmydb.mtmy_spec_goods_price
+		SELECT * FROM mtmydb.mtmy_spec_goods_price AND del_flag = 0
+	</select>
+	
+	<!-- 验证商品的规格是否存在 -->
+	<select id="checkGoodsSpecKey" resultType="Integer">
+		SELECT COUNT(*)
+		FROM mtmydb.mtmy_spec_goods_price 
+		WHERE spec_key=#{specKey} 
+		AND goods_id=#{goodsId}
+		AND del_flag = 0
+	</select>
+	
+	<!-- 验证商品规格的次数 -->
+	<select id="checkServiceTimes" resultType="Integer">
+		SELECT service_times
+		FROM mtmydb.mtmy_spec_goods_price 
+		WHERE spec_key=#{specKey} 
+		AND goods_id=#{goodsId}
+		AND del_flag = 0
 	</select>
 </mapper>

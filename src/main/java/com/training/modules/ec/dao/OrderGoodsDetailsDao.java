@@ -102,4 +102,10 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 */
 	public int findApptStatus(int recId);
 	
+	/**
+	 * 根据mapping_id获取其订单余款
+	 * @param recId
+	 * @return
+	 */
+	public OrderGoodsDetails selectOrderBalance(int recId);
 }

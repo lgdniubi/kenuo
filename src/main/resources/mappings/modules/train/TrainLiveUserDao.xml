@@ -15,8 +15,7 @@
 		a.create_date,
 		a.del_flag,
 		c.title,
-		c.bengtime,
-		d.label as "position"
+		c.bengtime
 	</sql>
 
 	<!-- 根据编号获特长 -->
@@ -35,6 +34,7 @@
 	<select id="findList" resultType="TrainLiveUser">
 		SELECT
 			o.name AS 'organization',
+			d.label as "position",
 			<include refid="sqlColumns" />
 		FROM train_live_user a
 		LEFT JOIN sys_user b ON a.userId=b.id

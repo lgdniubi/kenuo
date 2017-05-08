@@ -251,6 +251,7 @@
 			c.code AS b
 		FROM
 			sys_user a
+		RIGHT JOIN (SELECT user_id FROM trains.sys_user_role WHERE role_id = (SELECT id FROM trains.sys_role WHERE enname = 'pb' AND del_flag = 0)) ur ON a.id = ur.user_id
 		LEFT JOIN sys_franchisee c ON c.id = a.company_id
 		LEFT JOIN sys_office o ON o.id = a.office_id
 		LEFT JOIN train_user_skill us ON us.user_id = a.id
@@ -282,7 +283,6 @@
 		<if test="skill != null and skill.id != null and skill.id != ''">
 			AND us.skill_id = #{skill.id}
 		</if>
-		AND a.user_type = 2
 		AND a.del_flag = 0
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -741,6 +741,25 @@
 			AND r.role_id = #{role.id}
 			ORDER BY  o.code,c.code, a.name
 	</select>
+	<!-- 验证导入的用户的工号是否已经存在 -->
+	<select id="selectNo" resultType="Integer">
+		SELECT COUNT(*)
+		FROM sys_user
+		WHERE no = #{no}
+	</select>
 	
+	<!-- 验证用户是否为特殊美容师 -->
+	<select id="selectSpecBeautician" resultType="Integer">
+		SELECT COUNT(*)
+		FROM trains.train_special_beautician
+		WHERE user_id = #{userId}
+		AND del_flag = 0
+	</select>
 	
+	<!-- 修改用户状态 -->
+	<update id="UpdateUserStatus">
+		UPDATE sys_user SET 
+			status = 1
+		WHERE id = #{id}
+	</update>
 </mapper>

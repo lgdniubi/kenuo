@@ -176,7 +176,7 @@
 							<tr>
 								<!-- <th width="40" style="text-align: center;"><input type="checkbox" class="i-checks"></th>  批量删除 由于样式问题  取消 -->
 								<th width="120" style="text-align: center;">名称</th>
-								<th style="text-align: center">课程介绍</th>
+								<th style="text-align: center">分类介绍</th>
 								<th width="230" style="text-align: center;">图片</th>
 								<th width="230" style="text-align: center;">是否显示</th>
 								<th width="230" style="text-align: center;">权限范围</th>

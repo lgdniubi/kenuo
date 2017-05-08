@@ -55,6 +55,12 @@ public interface GoodsDao extends CrudDao<Goods>{
 	public void deletespec(Goods goods);
 	
 	/**
+	 * 逻辑删除商品规格
+	 * @param goods
+	 */
+	public void updatespec(Goods goods);
+	
+	/**
 	 * 保存商品属性
 	 * @param goods
 	 */

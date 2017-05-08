@@ -1,5 +1,6 @@
 package com.training.modules.sys.web;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -119,7 +120,7 @@ public class SkillController extends BaseController{
 	}
 
 	/**
-	 * 获取机构JSON数据。
+	 * 获取机构JSON数据。(只查找显示的)
 	 * @param response
 	 * @return
 	 */
@@ -137,5 +138,87 @@ public class SkillController extends BaseController{
 				mapList.add(map);
 		}
 		return mapList;
+	}
+	
+		/**
+		 * 获取机构JSON数据。(无论显示还是隐藏都查出来)
+		 * @param response
+		 * @return
+		 */
+		@ResponseBody
+		@RequestMapping(value = "newTreeData")
+		public List<Map<String, Object>> newTreeData(HttpServletResponse response) {
+			List<Map<String, Object>> mapList = Lists.newArrayList();
+			List<Skill> list = skillService.newFindAllList();
+			for (int i = 0; i < list.size(); i++) {
+				Skill e = list.get(i);
+					Map<String, Object> map = Maps.newHashMap();
+					map.put("id", e.getSkillId());
+					map.put("name", e.getName());
+					
+					mapList.add(map);
+			}
+			return mapList;
+	}
+	
+	/**
+	 * 技能标签是否显示
+	 * @param request
+	 * @param equipmentLabel
+	 * @return
+	 */
+	@RequestMapping(value = "changeIsShow")
+	@ResponseBody
+	public Map<String, String> changeIsShow(HttpServletRequest request,Skill skill) {
+		
+		Map<String, String> jsonMap = new HashMap<String, String>();
+		try {
+			String isyesno = request.getParameter("isShow");
+			if("1".equals(isyesno)){
+				int sum = skillService.selectGoodsisOnSale(skill.getSkillId());
+				if(sum == 0){
+					skillService.updateIsShow(skill);
+					jsonMap.put("STATUS", "OK");
+					jsonMap.put("ISYESNO", isyesno);
+				}else{
+					jsonMap.put("STATUS", "NO");
+				}
+			}else if("0".equals(isyesno)){
+				skillService.updateIsShow(skill);
+				jsonMap.put("STATUS", "OK");
+				jsonMap.put("ISYESNO", isyesno);
+			}
+			
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "修改技能标签是否显示失败", e);
+			logger.error("修改技能标签是否显示失败：" + e.getMessage());
+			jsonMap.put("STATUS", "ERROR");
+			jsonMap.put("MESSAGE", "修改失败,出现异常");
+		}
+		return jsonMap;
+	}
+	
+	/**
+	 * 验证技能标签名称是否存在
+	 * 
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "checkName")
+	public String checkName(String oldName, String name,HttpServletRequest request) {
+		String type = "";
+		try{
+			if (name != null && name.equals(oldName)) {
+				type = "true";
+			} else if (name != null && skillService.getByName(name) <= 0) {
+				type = "true";
+			}else{
+				type = "false";
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "验证技能标签名称是否存在错误", e);
+			logger.error("验证技能标签名称是否存在出错信息：" + e.getMessage());
+		}
+		return type;
 	}
 }

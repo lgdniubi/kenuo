@@ -39,6 +39,8 @@ import com.training.common.utils.StringUtils;
 import com.training.common.utils.excel.ExportExcel;
 import com.training.common.utils.excel.ImportExcel;
 import com.training.common.web.BaseController;
+import com.training.modules.ec.dao.GoodsSpecPriceDao;
+import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.dao.OrdersDao;
 import com.training.modules.ec.dao.SaleRebatesLogDao;
 import com.training.modules.ec.entity.AcountLog;
@@ -47,6 +49,7 @@ import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.entity.GoodsCategory;
 import com.training.modules.ec.entity.GoodsDetailSum;
 import com.training.modules.ec.entity.GoodsSpecPrice;
+import com.training.modules.ec.entity.ImportVirtualOrders;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderGoodsCoupon;
 import com.training.modules.ec.entity.OrderGoodsDetails;
@@ -58,7 +61,6 @@ import com.training.modules.ec.entity.OrdersLog;
 import com.training.modules.ec.entity.Payment;
 import com.training.modules.ec.entity.ReturnGoods;
 import com.training.modules.ec.entity.ReturnedGoods;
-import com.training.modules.ec.entity.SaleRebatesLog;
 import com.training.modules.ec.entity.Shipping;
 import com.training.modules.ec.service.AcountLogService;
 import com.training.modules.ec.service.OrderGoodsDetailsService;
@@ -70,8 +72,9 @@ import com.training.modules.ec.service.ReturnGoodsService;
 import com.training.modules.ec.service.ReturnedGoodsService;
 import com.training.modules.ec.utils.CourierUtils;
 import com.training.modules.ec.utils.OrderUtils;
-import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.quartz.tasks.utils.RedisConfig;
+import com.training.modules.quartz.utils.RedisLock;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
@@ -80,7 +83,6 @@ import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.TrainRuleParam;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 /**
  * 订单Controller
@@ -114,6 +116,10 @@ public class OrdersController extends BaseController {
 	private OrderGoodsDetailsService orderGoodsDetailsService;
 	@Autowired
 	private OrdersDao ordersDao;
+	@Autowired
+	private MtmyUsersDao mtmyUsersDao;
+	@Autowired
+	private GoodsSpecPriceDao goodsSpecPriceDao;
 	
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
@@ -620,11 +626,7 @@ public class OrdersController extends BaseController {
 		Orders orders=new Orders();
 		orders = ordersService.findselectByOrderId(orderid);
 		returnedGoods.setUserId(orders.getUserid());
-		if(orders.getChannelFlag().contentEquals("bm")){
-			list=ordergoodService.orderlistTow(orderid);
-		}else{
-			list=ordergoodService.orderlist(orderid);
-		}
+		list=ordergoodService.orderlist(orderid);
 		
 		model.addAttribute("orders", orders);
 		model.addAttribute("orderGoodList", list);
@@ -882,11 +884,12 @@ public class OrdersController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "addTopUp")
-	public String addTopUp(String orderid,double singleRealityPrice,int userid,int isReal,Model model){
+	public String addTopUp(String orderid,double singleRealityPrice,int userid,int isReal,double goodsBalance,Model model){
 		model.addAttribute("orderid", orderid);
 		model.addAttribute("singleRealityPrice", singleRealityPrice);
 		model.addAttribute("userid", userid);
 		model.addAttribute("isReal", isReal);
+		model.addAttribute("goodsBalance",goodsBalance);
 		return "modules/ec/addTopUp";
 	}
 	/**
@@ -939,7 +942,7 @@ public class OrdersController extends BaseController {
 			
 			if(orders.getOldstatus() != orders.getOrderstatus()){ //2次订单修改状态不一致
 				if(-2 == orders.getOrderstatus()){//新订单状态 等于“取消订单”
-					boolean result = returnRepository(orders.getOrderid());
+					boolean result = returnRepository(orders.getOrderid(),request);
 					if(result){
 						// 取消订单  修改订单取消类型为后台取消
 						orders.setCancelType("1");
@@ -954,6 +957,7 @@ public class OrdersController extends BaseController {
 					addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
 				}
 			}else{
+				ordersService.updateVirtualOrder(orders);
 				addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
 			}
 		} catch (Exception e) {
@@ -976,9 +980,9 @@ public class OrdersController extends BaseController {
 	public String getMappinfOrderRechargeView(Integer recid, String orderid, String orderType, HttpServletRequest request, Model model) {
 		try {
 			List<OrderGoodsDetails> orderGoodsDetails = ordersService.getMappinfOrderView(recid);
-			List<OrderRechargeLog> orderRechargeLogs = ordersService.getOrderRechargeView(orderid);
+			/*List<OrderRechargeLog> orderRechargeLogs = ordersService.getOrderRechargeView(orderid);*/
 			model.addAttribute("orderGoodsDetails", orderGoodsDetails);
-			model.addAttribute("orderRechargeLogs", orderRechargeLogs);
+			/*model.addAttribute("orderRechargeLogs", orderRechargeLogs);*/
 			model.addAttribute("orderType", orderType);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "查看商品订单充值", e);
@@ -1280,7 +1284,7 @@ public class OrdersController extends BaseController {
 	public String cancellationOrder(HttpServletRequest request, Orders orders,RedirectAttributes redirectAttributes) {
 		try {
 			List<OrderGoods> goodsList=new ArrayList<OrderGoods>();
-			boolean result = returnRepository(orders.getOrderid());
+			boolean result = returnRepository(orders.getOrderid(),request);
 			if(result){
 				ordersService.cancellationOrder(orders);
 				goodsList=ordergoodService.orderlist(orders.getOrderid());
@@ -1317,19 +1321,14 @@ public class OrdersController extends BaseController {
 			List<OrderGoods> goodsList=new ArrayList<OrderGoods>();
 			
 			orders = ordersService.findselectByOrderId(orders.getOrderid());
-			boolean result = returnRepository(orders.getOrderid());
+			boolean result = returnRepository(orders.getOrderid(),request);
 			if(!result){
 				logger.error("取消库存失败，导致强制取消无法进行");
 				addMessage(redirectAttributes, "强制取消'" + orders.getOrderid() + "'失败！");
 				return "redirect:" + adminPath + "/ec/orders/orderform?type=view&orderid="+orders.getOrderid();
 			}
 			logger.info("商品退还仓库是否成功："+result);
-			//验证订单是前台创建
-			if(orders.getChannelFlag().trim().equals("bm")){
-				goodsList=ordergoodService.orderlistTow(orders.getOrderid());
-			}else{
-				goodsList=ordergoodService.orderlist(orders.getOrderid());
-			}
+			goodsList=ordergoodService.orderlist(orders.getOrderid());
 			if(goodsList.size()>0){
 				for (int i = 0; i < goodsList.size(); i++) {
 					Date date=new Date();
@@ -1371,34 +1370,10 @@ public class OrdersController extends BaseController {
 					}
 				}
 			}
-			List<SaleRebatesLog> list=new ArrayList<SaleRebatesLog>();
-			list=saleRebatesLogDao.selectByOrderId(orders.getOrderid());   //插入分销日志
-			 Orders orders12=new Orders();
-			 orders12=ordersService.selectByOrderIdSum(orders.getOrderid());
-			 if(list.size()>0){
-				 if(orders12!=null){
-					 for (int i = 0; i < list.size(); i++) {
-							SaleRebatesLog saleRebatesLog=new SaleRebatesLog();
-							saleRebatesLog.setOrderId(orders.getOrderid());
-							saleRebatesLog.setDepth(list.get(i).getDepth());
-							if("bm".equals(orders12.getChannelFlag())){
-								saleRebatesLog.setOrderAmount(-orders.getTotalamount());
-								saleRebatesLog.setBalanceAmount(-list.get(i).getBalancePercent()*orders.getTotalamount());
-							}else if(!"bm".equals(orders12.getChannelFlag())){
-								saleRebatesLog.setOrderAmount(-orders.getOrderamount());
-								saleRebatesLog.setBalanceAmount(-list.get(i).getBalancePercent()*orders.getOrderamount());
-							}
-							saleRebatesLog.setBalancePercent(list.get(i).getBalancePercent());
-							saleRebatesLog.setIntegralPercent(list.get(i).getIntegralPercent());
-							saleRebatesLog.setIntegralAmount((int)-list.get(i).getIntegralPercent());
-							saleRebatesLog.setRebateFlag(0);
-							saleRebatesLog.setRabateDate(list.get(i).getRabateDate());
-							saleRebatesLog.setDelFlag("-1");
-							saleRebatesLogDao.updateSale(saleRebatesLog);
-						}
-				 }
-				
-			 }
+			//查询是否有退货记录
+			if(saleRebatesLogDao.selectNumByOrderId(orders.getOrderid()) == 0){//如果无退货记录
+				saleRebatesLogDao.updateSale(orders.getOrderid());// 插入分销日志
+			}
 			addMessage(redirectAttributes, "强制取消'" + orders.getOrderid() + "'成功！");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "强制取消错误", e);
@@ -1412,19 +1387,38 @@ public class OrdersController extends BaseController {
 	 * 归还仓库
 	 * @return
 	 */
-	public boolean returnRepository(String orderId){
-		String weburl = ParametersFactory.getMtmyParamValues("mtmy_incrstore_url");
-		List<OrderGoods> orderGoods = ordergoodService.getGoodMapping(orderId);
-		if (null != orderGoods && orderGoods.size() > 0) {
-			for (OrderGoods orderGood : orderGoods) {
-				String parpm = "{\"goods_id\":"+orderGood.getGoodsid()+",\"spec_key\":\""+orderGood.getSpeckey()+"\",\"count\":"+orderGood.getGoodsnum()+"}";
-				String result = WebUtils.postObject(parpm, weburl);
-				JSONObject jsonObject = JSONObject.fromObject(result);
-				String code = jsonObject.get("code").toString();
-				if(!"200".equals(code)){
-					return false;
+	public boolean returnRepository(String orderId,HttpServletRequest request){
+//		String weburl = ParametersFactory.getMtmyParamValues("mtmy_incrstore_url");
+//		List<OrderGoods> orderGoods = ordergoodService.getGoodMapping(orderId);
+//		if (null != orderGoods && orderGoods.size() > 0) {
+//			for (OrderGoods orderGood : orderGoods) {
+//				String parpm = "{\"goods_id\":"+orderGood.getGoodsid()+",\"spec_key\":\""+orderGood.getSpeckey()+"\",\"count\":"+orderGood.getGoodsnum()+"}";
+//				String result = WebUtils.postObject(parpm, weburl);
+//				JSONObject jsonObject = JSONObject.fromObject(result);
+//				String code = jsonObject.get("code").toString();
+//				if(!"200".equals(code)){
+//					return false;
+//				}
+//			}
+//		}
+		try {
+			List<OrderGoods> orderGoods = ordergoodService.getGoodMapping(orderId);
+			if (null != orderGoods && orderGoods.size() > 0) {
+				for (OrderGoods orderGood : orderGoods) {
+					boolean str = redisClientTemplate.exists(RedisConfig.GOODS_SPECPRICE_PREFIX+orderGood.getGoodsid()+"#"+orderGood.getSpeckey());
+					if(str){
+						RedisLock redisLock = new RedisLock(redisClientTemplate, RedisConfig.GOODS_SPECPRICE_PREFIX+orderGood.getGoodsid()+"#"+orderGood.getSpeckey());
+						redisLock.lock();
+						redisClientTemplate.incrBy(RedisConfig.GOODS_SPECPRICE_PREFIX+orderGood.getGoodsid()+"#"+orderGood.getSpeckey(), orderGood.getGoodsnum());
+						redisClientTemplate.incrBy(RedisConfig.GOODS_STORECOUNT_PREFIX+orderGood.getGoodsid(),orderGood.getGoodsnum());
+						redisLock.unlock();
+					}
 				}
 			}
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "归还仓库错误", e);
+			logger.error("归还仓库错误：" + e.getMessage());
+			return false;
 		}
 		return true;
 	}
@@ -1475,7 +1469,7 @@ public class OrdersController extends BaseController {
 	 */
 	@RequestMapping(value="handleAdvanceFlag")
 	@ResponseBody
-	public String handleAdvanceFlag(OrderRechargeLog oLog,OrderGoods orderGoods,int userid,String orderid,int sum,HttpServletRequest request){
+	public String handleAdvanceFlag(OrderRechargeLog oLog,OrderGoods orderGoods,int sum,int userid,String orderid,HttpServletRequest request){
 		String date="";
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
@@ -1507,7 +1501,7 @@ public class OrdersController extends BaseController {
 				
 			}
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleAdvanceFlag(oLog,sum,goodsPrice,detailsTotalAmount,goodsType,officeId);
+			ordersService.handleAdvanceFlag(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId);
 			date = "success";
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "处理预约金异常", e);
@@ -1515,5 +1509,215 @@ public class OrdersController extends BaseController {
 		}
 		return date;
 	}
-
+	
+	/**
+	 * 跳转到导入虚拟订单页面
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "importVirtualOrdersPage")
+	public String importVirtualOrdersPage() {
+		return "modules/ec/importVirtualOrdersPage";
+	}
+	
+	
+	/**
+	 * 下载导入虚拟订单模板
+	 * 
+	 * @param response
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = "importVirtualOrders/template")
+	public void importVirtualOrdersTemplate(Orders orders,HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes) {
+		try {
+			String filename = "virtualOrdersImport.xlsx";
+			String oldPath = request.getServletContext().getRealPath("/") + "static/Exceltemplate/" + filename;
+			logger.info("#####[虚拟订单模板-old-path"+oldPath);
+			TrainRuleParam trainRuleParam  =new TrainRuleParam();
+			trainRuleParam.setParamKey("excel_path"); 
+			String path = trainRuleParamDao.findParamByKey(trainRuleParam).getParamValue() + "/static/Exceltemplate/" + filename;
+			logger.info("#####[虚拟订单模板-new-path"+path);
+		
+			File file = new File(path);
+			// 以流的形式下载文件。
+			InputStream fis = new BufferedInputStream(new FileInputStream(path));
+			byte[] buffer = new byte[fis.available()];
+			fis.read(buffer);
+			fis.close();
+			// 清空response
+			response.reset();
+			// 设置response的Header
+			response.addHeader("Content-Disposition","attachment;filename=" + java.net.URLEncoder.encode(filename, "UTF-8"));
+			response.addHeader("Content-Length", "" + file.length());
+			OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
+			response.setContentType("application/vnd.ms-excel");
+			toClient.write(buffer);
+			toClient.flush();
+			toClient.close();
+			
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "导入模板下载失败", e);
+			addMessage(redirectAttributes, "导入模板下载失败！失败信息：" + e.getMessage());
+		}
+	}
+	
+	/**
+	 * 导入虚拟订单
+	 * 
+	 * @param file
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = "importVirtualOrders")
+	public String importVirtualOrders(HttpServletRequest request,MultipartFile file, RedirectAttributes redirectAttributes) {
+		try {
+			int successNum = 0;
+			int failureNum = 0;
+			String str1 = "#售前卖#,#售后卖#,#老带新#";
+			String str2 = "#微信支付#,#支付宝App支付#,#银联#,#微信公众号#,#微信公众号扫码#,#支付宝手机网页#,#支付宝扫码支付#,#现金支付#,#易宝手机网页支付#";
+			StringBuilder failureMsg = new StringBuilder();
+			ImportExcel ei = new ImportExcel(file, 1, 0);
+			int cell = ei.getLastCellNum();
+			if (cell != 12) {
+				failureMsg.insert(0, "<br/>导入的模板错误，请检查模板; ");
+			} else {
+				
+				List<ImportVirtualOrders> list = ei.getDataList(ImportVirtualOrders.class);
+				for (ImportVirtualOrders importVirtualOrders : list) {
+					try {
+						BeanValidators.validateWithException(validator, importVirtualOrders);
+						if(str1.indexOf("#"+importVirtualOrders.getDistinction()+"#") != -1){
+							if(goodsSpecPriceDao.checkGoodsSpecKey(Integer.valueOf(importVirtualOrders.getGoodsId()), importVirtualOrders.getSpecKey()) == 1){
+								if(goodsSpecPriceDao.checkServiceTimes(Integer.valueOf(importVirtualOrders.getGoodsId()), importVirtualOrders.getSpecKey()) >= Integer.valueOf(importVirtualOrders.getActualTimes())){
+									if(mtmyUsersDao.checkMobile(importVirtualOrders.getMobile()) != 0){
+										if(str2.indexOf("#"+importVirtualOrders.getPayCode()+"#") != -1){
+											try {
+												Orders orders = new Orders();
+												String distinction = importVirtualOrders.getDistinction();  //导入的订单性质（0：电商；1：售前卖；2：售后卖；3：老带新）
+												if("售前卖".equals(distinction)){
+													orders.setDistinction(1);
+												}else if("售后卖".equals(distinction)){
+													orders.setDistinction(2);
+												}else if("老带新".equals(distinction)){
+													orders.setDistinction(3);
+												}
+												
+												int goodsId = Integer.valueOf(importVirtualOrders.getGoodsId());  //导入的商品id
+												String specKey = importVirtualOrders.getSpecKey();              //导入的规格id
+												String mobile = importVirtualOrders.getMobile();        //手机号码
+												int actualTimes = Integer.valueOf(importVirtualOrders.getActualTimes());    //实际次数
+												String note = importVirtualOrders.getNote();                           //留言备注
+												String payCode = importVirtualOrders.getPayCode();            //付款方式
+												
+												int mtmyUserId = mtmyUsersDao.getUserByMobile(mobile).getUserid();//每天每耶用户id
+												orders.setUserid(mtmyUserId);
+												
+												List<Integer> goodselectIds = new ArrayList<Integer>();      //商品id集合 
+												goodselectIds.add(goodsId);
+												orders.setGoodselectIds(goodselectIds);
+												
+												List<String> speckeys = new ArrayList<String>();             //规格key集合
+												speckeys.add(specKey);
+												orders.setSpeckeys(speckeys);
+												
+												List<Double> orderAmounts = new ArrayList<Double>();        //成交价集合
+												GoodsSpecPrice goodsSpecPrice = new GoodsSpecPrice();
+												goodsSpecPrice.setGoodsId(String.valueOf(goodsId));
+												goodsSpecPrice.setSpecKey(importVirtualOrders.getSpecKey());
+												orderAmounts.add(goodsSpecPriceDao.getSpecPrce(goodsSpecPrice).getPrice());
+												orders.setOrderAmounts(orderAmounts);
+												
+												List<Double> actualPayments = new ArrayList<Double>();      //实际付款集合
+												actualPayments.add(goodsSpecPriceDao.getSpecPrce(goodsSpecPrice).getPrice());
+												orders.setActualPayments(actualPayments);
+												
+												List<Integer> remaintimeNums = new ArrayList<Integer>();    //虚拟订单老产品-实际次数
+												remaintimeNums.add(actualTimes);
+												orders.setRemaintimeNums(remaintimeNums);
+												
+												orders.setIsNeworder(1);
+												orders.setOrderstatus(4);
+												if(!"".equals(note) || note != null){
+													orders.setUsernote(note);
+												}
+												
+												if("微信支付".equals(payCode)){
+													orders.setPaycode("wx");
+												}else if("支付宝App支付".equals(payCode)){
+													orders.setPaycode("alipay");
+												}else if("银联".equals(payCode)){
+													orders.setPaycode("upacp_wap");
+												}else if("微信公众号".equals(payCode)){
+													orders.setPaycode("wx_pub");
+												}else if("微信公众号扫码".equals(payCode)){
+													orders.setPaycode("wx_pub_qr");
+												}else if("支付宝手机网页".equals(payCode)){
+													orders.setPaycode("alipay_wap");
+												}else if("支付宝扫码支付".equals(payCode)){
+													orders.setPaycode("alipay_qr");
+												}else if("现金支付".equals(payCode)){
+													orders.setPaycode("money");
+												}else if("易宝手机网页支付".equals(payCode)){
+													orders.setPaycode("yeepay_wap");
+												}
+										
+												ordersService.saveVirtualOrder(orders);
+												successNum++;
+			
+											} catch (Exception e) {
+												e.getMessage();
+												BugLogUtils.saveBugLog(request, "导入保存失败", e);
+												failureMsg.append("<br/>导入保存失败 " + importVirtualOrders.getGoodsId()+","+importVirtualOrders.getSpecKey()+","+importVirtualOrders.getMobile());
+												failureNum++;
+											}
+										}else{
+											failureMsg.append("<br/>商品id:"+importVirtualOrders.getGoodsId()+"与商品规格:"+importVirtualOrders.getSpecKey() + "的付款方式有误");
+											failureNum++;
+										}
+									}else{
+										failureMsg.append("<br/>商品id:"+importVirtualOrders.getGoodsId()+"与商品规格:"+importVirtualOrders.getSpecKey() + "的手机号码有误");
+										failureNum++;
+									}
+								}else{
+									failureMsg.append("<br/>商品id:"+importVirtualOrders.getGoodsId()+"与商品规格:"+importVirtualOrders.getSpecKey()+"的实际次数有误");
+									failureNum++;	
+								}
+							}else{
+								failureMsg.append("<br/>商品id:"+importVirtualOrders.getGoodsId()+"与商品规格:"+importVirtualOrders.getSpecKey()+"不匹配;");
+								failureNum++;	
+							}
+						}else{
+							failureMsg.append("<br/>订单性质:"+importVirtualOrders.getDistinction()+",此订单性质有误");
+							failureNum++;	
+						}
+					} catch (ConstraintViolationException ex) {
+						logger.error("导入虚拟订单出错："+ex.getMessage());
+						failureMsg.append("<br/>订单 " + importVirtualOrders.getGoodsId()+","+importVirtualOrders.getSpecKey()+","+importVirtualOrders.getMobile() + " 导入失败：");
+						List<String> messageList = BeanValidators.extractPropertyAndMessageAsList(ex, ":");
+						for (String message : messageList) {
+							failureMsg.append(message + ";");
+						}
+						failureNum++;
+					} catch (Exception ex) {
+						BugLogUtils.saveBugLog(request, "导入虚拟订单出错", ex);
+						logger.error("导入虚拟订单出错："+ex.getMessage());
+						failureMsg.append("<br/>订单 " + importVirtualOrders.getGoodsId()+","+importVirtualOrders.getSpecKey()+","+importVirtualOrders.getMobile() + " 导入失败：");
+					}
+				}
+				
+			}
+			if (failureNum > 0) {
+				failureMsg.insert(0, "，失败 " + failureNum + " 条，虚拟订单导入信息如下：");
+			}
+			addMessage(redirectAttributes, "已成功导入 " + successNum + " 条订单。" + failureMsg);
+			
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "导入虚拟订单出错", e);
+			logger.error("导入虚拟订单出错："+e.getMessage());
+			addMessage(redirectAttributes, "导入虚拟订单出错失败！失败信息：" + e.getMessage());
+		}
+		return "redirect:" + adminPath + "/ec/orders/list";
+	}
+	
 }

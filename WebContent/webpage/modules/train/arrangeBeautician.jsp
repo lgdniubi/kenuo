@@ -36,10 +36,10 @@
 					<div class="row">
 						<div class="col-sm-12">
 							<div id='workState'>
-								<input type="button" value='班' id='goWork' class="btn btn-default">&nbsp;
-								<input type="button" value='假' id='holiday' class="btn btn-default">&nbsp;
-								<input type="button" value='休' id='weekWork' class="btn btn-default">&nbsp;
-								<input type="button" value='学' id='study' class="btn btn-default">&nbsp;
+								<input type="button" value='班' id='goWork' class="btn btn-default" style="color: #5ec4ff">&nbsp;
+								<input type="button" value='假' id='holiday' class="btn btn-default" style="color: #ff873f">&nbsp;
+								<input type="button" value='休' id='weekWork' class="btn btn-default" style="color: #4ad264">&nbsp;
+								<input type="button" value='学' id='study' class="btn btn-default" style="color: #ff3000">&nbsp;
 								<input type="button" value='清' id='delWork' class="btn btn-default">&nbsp;
 								<shiro:hasPermission name="train:arrange:save">
 									<input type="button" onclick="save()"  class="btn btn-default" value="保存">
@@ -56,7 +56,7 @@
 								<table id="treeTable" class="osTop table table-bordered table-hover table-striped" style="width:100px;position:absolute;left:0;top:0;z-index:10;">
 									<thead>
 										<tr>
-									 		<th style="text-align:center;"><div style="width:100px;">${officeName }</div></th>
+									 		<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${officeName }">${officeName }</div></th>
 									 	</tr>
 									</thead>
 								</table>
@@ -64,13 +64,13 @@
 									<table id="treeTable" class="table table-bordered table-hover table-striped" style="word-break:keep-all;">
 										<thead>
 										 	<tr>
-										 		<th style="text-align:center;"><div style="width:100px;">${officeName }</div></th>
+										 		<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${officeName }">${officeName }</div></th>
 										 	</tr>
 										 </thead>
 										 <tbody>
 										  	<c:forEach items="${lists}" var="ArrangeBeautician">
 						                        <tr style="text-align: center;">
-						                            <td><div style="width: 100px;">${ArrangeBeautician.name }</div></td>
+						                            <td><div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${ArrangeBeautician.name }">${ArrangeBeautician.name }</div></td>
 						                        </tr>
 					                        </c:forEach>
 										 </tbody>
@@ -87,7 +87,7 @@
 			                    	<c:forEach items="${lists}" var="ArrangeBeautician">
 				                        <tr style="text-align: center;">
 				                            <td>
-				                            	<div style="width: 100px;">
+				                            	<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${ArrangeBeautician.name }">
 					                            	${ArrangeBeautician.name }
 					                            	<input value="${ArrangeBeautician.userId }" name="userids" type="hidden">
 				                            	</div>
@@ -98,7 +98,7 @@
 					                            	<c:choose>
 					                            		<c:when test="${officeId eq arrangeShops.shopId }">
 					                            			<td class="isYes">
-					                            				<div style="width: 100px;">
+					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
 							                            			<span style="color: #5ec4ff">班</span>
@@ -107,7 +107,7 @@
 					                            		</c:when>
 					                            		<c:when test="${arrangeShops.shopId == '1' or arrangeShops.shopId == '2' or arrangeShops.shopId == '3'}">
 					                            			<td class="isYes">
-					                            				<div style="width: 100px;">
+					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${arrangeShops.shopName }">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
 							                            			<c:if test="${arrangeShops.shopId == '1'}">
@@ -124,7 +124,7 @@
 					                            		</c:when>
 					                            		<c:when test="${arrangeShops.shopId != '1' and arrangeShops.shopId != '2' and arrangeShops.shopId != '3' and arrangeShops.shopId != '' and arrangeShops.shopId != null}">
 					                            			<td class="isNo">
-					                            				<div style="width: 100px;">
+					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${arrangeShops.shopName }">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
 							                            			<span style="color: #999999">${arrangeShops.shopName }</span>
@@ -133,7 +133,7 @@
 					                            		</c:when>
 					                            		<c:otherwise>
 					                            			<td class="isYes">
-					                            				<div style="width: 100px;">
+					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
 							                            			<span></span>
@@ -147,7 +147,7 @@
 					                            	<c:choose>
 					                            		<c:when test="${officeId eq arrangeShops.shopId and arrangeShops.flag == '1'}">
 					                            			<td class="isNo">
-					                            				<div style="width: 100px;">
+					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
 							                            			<span style="color: #5ec4ff">班</span>
@@ -156,7 +156,7 @@
 					                            		</c:when>
 					                            		<c:when test="${(arrangeShops.shopId == '1' or arrangeShops.shopId == '2' or arrangeShops.shopId == '3') and arrangeShops.flag == '1'}">
 					                            			<td class="isNo">
-					                            				<div style="width: 100px;">
+					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${arrangeShops.shopName }">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
 							                            			<c:if test="${arrangeShops.shopId == '1'}">
@@ -173,7 +173,7 @@
 					                            		</c:when>
 					                            		<c:when test="${arrangeShops.shopId != '1' and arrangeShops.shopId != '2' and arrangeShops.shopId != '3' and arrangeShops.shopId != '' and arrangeShops.shopId != null and arrangeShops.flag == '1'}">
 					                            			<td class="isNo">
-					                            				<div style="width: 100px;">
+					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${arrangeShops.shopName }">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
 							                            			<span style="color: #999999">${arrangeShops.shopName }</span>
@@ -182,7 +182,7 @@
 					                            		</c:when>
 					                            		<c:otherwise>
 					                            			<td class="isNo">
-					                            				<div style="width: 100px;">
+					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
 							                            			<span></span>

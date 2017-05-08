@@ -252,7 +252,7 @@
 				    area: ['300px', '420px'],
 				    title:"商品选择",
 				    ajaxData:{selectIds: $("#goodselectId").val()},
-				    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?&isReal=0&goodsCategory="+cateid)+"&module=&checked=&extId=&isAll=",
+				    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?&isReal=0&isAppshow=0&goodsCategory="+cateid)+"&module=&checked=&extId=&isAll=",
 				    btn: ['确定', '关闭']
 		    	       ,yes: function(index, layero){ //或者使用btn1
 								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();

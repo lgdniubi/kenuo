@@ -415,6 +415,7 @@ public class UserController extends BaseController {
 		if(u != null ){
 			user.setOfficeIdList(u.getOfficeIdList());
 		}
+		model.addAttribute("isSpecBeautician", systemService.selectSpecBeautician(user.getId()));	
 		model.addAttribute("user", user);
 		model.addAttribute("officeList", officeService.findAll());
 		return "modules/sys/userAuth";
@@ -463,6 +464,12 @@ public class UserController extends BaseController {
 				addMessage(redirectAttributes, "保存用户数据权限成功");
 			}else{
 				addMessage(redirectAttributes, "保存出现异常，请与管理员联系");
+			}
+			if("1".equals(request.getParameter("isUpdateRole"))){	// 清除用户缓存 用户TOKEN失效
+				redisClientTemplate.del("UTOKEN_"+user.getId());
+			}
+			if("1".equals(request.getParameter("isPB"))){
+				userDao.UpdateUserStatus(user.getId());
 			}
 			// 清除用户缓存
 			UserUtils.clearCache(user);
@@ -553,32 +560,38 @@ public class UserController extends BaseController {
 						if ("true".equals(checkLoginName("", user.getLoginName()))) {
 							if(isInteger(user.getMobile())){
 								if (user.getMobile().length() == 11) {
-									if ("4".equals(JSONObject.fromObject(newCheckMobile(user.getMobile())).get("result"))) {              
+									String result = JSONObject.fromObject(newCheckMobile(user.getMobile(),"")).getString("result");
+									if ("4".equals(result)) {              
 										if ("true".equals(checkIdcard("", user.getIdCard()))) {
 											if (user.getIdCard().length() == 15 || user.getIdCard().length() == 18) {
 												if("true".equals(checkOfficeId(user.getCode()))){
-													try {
-														//默认给美容师角色
-														Role role = new Role();
-														role.setName("美容师");
-														role = roleDao.getByNameNew(role);
-														user.setRole(role);
-														List<Role> roleList = Lists.newArrayList();
-														roleList.add(role);
-														user.setRoleList(roleList);
-														//默认职位为美容师
-														user.setUserType("2");
-														user.setPassword(SystemService.entryptPassword("123456"));
-														Office office = systemService.getoffice(user.getCode());
-														user.setOffice(office);
-														user.setName(user.getName().replace(" ", ""));
-														systemService.saveUser(user);
-														successNum++;
-		
-													} catch (Exception e) {
-														e.getMessage();
-														BugLogUtils.saveBugLog(request, "导入保存失败", e);
-														failureMsg.append("<br/>导入保存失败 " + user.getMobile());
+													if(systemService.selectNo(user.getNo()) == 0){
+														try {
+															//默认给美容师角色
+															Role role = new Role();
+															role.setName("美容师");
+															role = roleDao.getByNameNew(role);
+															user.setRole(role);
+															List<Role> roleList = Lists.newArrayList(); 
+															roleList.add(role);
+															user.setRoleList(roleList);
+															//默认职位为美容师
+															user.setUserType("2");
+															user.setPassword(SystemService.entryptPassword("123456"));
+															Office office = systemService.getoffice(user.getCode());
+															user.setOffice(office);
+															user.setName(user.getName().replace(" ", ""));
+															systemService.saveUser(user);
+															successNum++;
+			
+														} catch (Exception e) {
+															e.getMessage();
+															BugLogUtils.saveBugLog(request, "导入保存失败", e);
+															failureMsg.append("<br/>导入保存失败 " + user.getMobile());
+															failureNum++;
+														}
+													}else{
+														failureMsg.append("<br/>工号" + user.getNo() + " ,此用户的工号已存在; ");
 														failureNum++;
 													}
 												}else{
@@ -604,19 +617,15 @@ public class UserController extends BaseController {
 											}
 	
 										}
-	
-									} else {
-										String result = JSONObject.fromObject(newCheckMobile(user.getMobile())).getString("result");
-										if(result == "3"){
-											failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码妃子校和每天美耶都已注册,请联系管理员; ");
-											failureNum++;
-										}else if(result == "2"){
-											failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码每天美耶已注册,请联系管理员; ");
-											failureNum++;
-										}else if(result == "1"){
-											failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码妃子校已注册,请联系管理员; ");
-											failureNum++;
-										}
+									} else if("3".equals(result)){
+										failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码妃子校和每天美耶都已注册,请联系管理员; ");
+										failureNum++;
+									}else if("2".equals(result)){
+										failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码每天美耶已注册,请联系管理员; ");
+										failureNum++;
+									}else if("1".equals(result)){
+										failureMsg.append("<br/>手机号" + user.getMobile() + " ,该号码妃子校已注册,请联系管理员; ");
+										failureNum++;
 									}
 								} else {
 									failureMsg.append("<br/>手机号码 " + user.getMobile() + "要为11位数！");
@@ -655,7 +664,7 @@ public class UserController extends BaseController {
 			logger.error("导入用户出错："+e.getMessage());
 			addMessage(redirectAttributes, "导入用户失败！失败信息：" + e.getMessage());
 		}
-		return "redirect:" + adminPath + "/sys/user/index?repage";
+		return "redirect:" + adminPath + "/sys/user/list";
 	}
 
 	/**
@@ -912,24 +921,31 @@ public class UserController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions(value = { "sys:user:add", "sys:user:edit" }, logical = Logical.OR)
 	@RequestMapping(value = "newCheckMobile")
-	public String newCheckMobile(String mobile) {
+	public String newCheckMobile(String mobile,String oldMobile) {
 		JSONObject jsonO = new JSONObject();
-		Users user = new Users();
-		user.setMobile(mobile);
-		if(mobile != null && systemService.getByMobile(mobile) != null && mtmyUsersDao.findUserBymobile(user) != 0){
-			jsonO.put("result", "3");
+		if((mobile != null || !"".equals(mobile))&& mobile.equals(oldMobile)){
+			jsonO.put("result", "4");
 			return jsonO.toString();
-		}else if(mobile != null && mtmyUsersDao.findUserBymobile(user) != 0){
-			String layer = mtmyUsersDao.selectLayer(mobile);
-			jsonO.put("result", "2");
-			jsonO.put("layer",layer);
-			return jsonO.toString();
-		}else if (mobile != null && systemService.getByMobile(mobile) != null){
-			jsonO.put("result", "1");
+		}else{
+			Users user = new Users();
+			user.setMobile(mobile);
+			User sysUser = systemService.getByMobile(mobile);	// 查看妃子校用户是否存在
+			int num = mtmyUsersDao.findUserBymobile(user);		// 查询每天美耶用户是否存在
+			if(mobile != null && sysUser != null && num != 0){
+				jsonO.put("result", "3");
+				return jsonO.toString();
+			}else if(mobile != null && num != 0){
+				String layer = mtmyUsersDao.selectLayer(mobile);
+				jsonO.put("result", "2");
+				jsonO.put("layer",layer);
+				return jsonO.toString();
+			}else if (mobile != null && sysUser != null){
+				jsonO.put("result", "1");
+				return jsonO.toString();
+			}
+			jsonO.put("result", "4");
 			return jsonO.toString();
 		}
-		jsonO.put("result", "4");
-		return jsonO.toString();
 	}
 	
 
@@ -1277,6 +1293,5 @@ public class UserController extends BaseController {
 	// }
 	// });
 	// }
-      
 }
 

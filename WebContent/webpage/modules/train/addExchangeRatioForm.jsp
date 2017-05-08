@@ -31,6 +31,9 @@
 			$("#exchangePrice2").show();
 		} 
 		 
+		var exchangePrice = $("#exchangePrice22").val();
+		var afterExchangePrice = parseInt(exchangePrice);
+		$("#exchangePrice22").val(afterExchangePrice);
 	});
 	
 		var validateForm;
@@ -90,7 +93,7 @@
 								<tr id="exchangePrice2">
 									<td><label class="pull-right"><font color="red">*</font>佣金：</label></td>
 									<td>
-										<input class="form-control required" id="exchangePrice22" name="exchangePrice" type="text" value="${trainLiveExchangeRatio.exchangePrice }" style="width: 300px"/>
+										<input class="form-control required" id="exchangePrice22" name="exchangePrice" type="text" value="${trainLiveExchangeRatio.exchangePrice}" style="width: 300px"/>
 									</td>
 								</tr>
 								<tr>

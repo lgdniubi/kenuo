@@ -81,5 +81,5 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 * @return int
 	 */
 	public List<ReturnedGoods> findListByUser(ReturnedGoods returnedGoods);
-
+	
 }

@@ -181,6 +181,7 @@
 		LEFT JOIN mtmydb.mtmy_spec_goods_price e ON e.goods_id = a.goods_id AND e.spec_key = a.spec_key
 		WHERE
 			a.parent_id = '0'
+		AND e.del_flag = 0
 		<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
 			AND a.add_time >= #{beginDate}
 			AND a.add_time <![CDATA[ <= ]]> #{endDate}
