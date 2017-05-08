@@ -456,7 +456,7 @@ public class GoodsController extends BaseController{
 				
 //				String connector = ParametersFactory.getMtmyParamValues("mtmy_connector");
 //				String weburl = ParametersFactory.getMtmyParamValues("mtmy_incrstore_url");
-				
+//				
 //				logger.info("##### web接口版本号："+connector+",路径:"+weburl);
 				
 				int addcount = 0;//规格信息库存数
@@ -479,6 +479,7 @@ public class GoodsController extends BaseController{
 //							String result = WebUtils.postObject(parpm, url);
 //							JSONObject jsonObject = JSONObject.fromObject(result);
 //							logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg"));
+							redisClientTemplate.sadd(RedisConfig.GOODS_IDS_HASH, goodsId);
 							if(StringUtils.isBlank(redisClientTemplate.get(RedisConfig.GOODS_STORECOUNT_PREFIX+goodsId))){
 								redisClientTemplate.sadd(RedisConfig.GOODS_IDS_HASH, goodsId);
 								redisClientTemplate.set(RedisConfig.GOODS_STORECOUNT_PREFIX+goodsId,String.valueOf(storeCount));

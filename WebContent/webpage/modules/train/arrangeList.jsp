@@ -157,7 +157,7 @@
 										<div class="btn-group" style="width: 100px;max-height: 17px;"></div>
 	                            	</td>
 									<td><div style="width:100px;max-width: 100px;overflow: hidden;max-height: 17px;">${ArrangeBeautician.name }</div></td>
-									<c:forEach items="${ArrangeBeautician.arrangeShops}" var="arrangeShops" varStatus="status" end="31">
+									<c:forEach items="${ArrangeBeautician.arrangeShops}" var="arrangeShops" varStatus="status">
 										<td>
 											<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">
 												<c:if test="${arrangeShops.status == 1}">

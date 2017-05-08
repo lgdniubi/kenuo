@@ -38,7 +38,7 @@ import com.training.modules.train.service.ArrangeService;
 @RequestMapping(value = "${adminPath}/train/arrange")
 public class arrangeController extends BaseController{
 	
-	public static final int RESERVATIONDATE = 4; //可预约天数 - 1
+	public static final int RESERVATIONDATE = 8; //可预约天数 - 2
 	
 	@Autowired
 	private ArrangeService arrangeService;
@@ -532,8 +532,8 @@ public class arrangeController extends BaseController{
 		int day = cal.get(Calendar.DATE);								//当前时间
 		int month = cal.get(Calendar.MONTH) + 1;						//当前月份
 		map.put("year", year);
-		map.put("maxDay", maxDay);
-		map.put("day", day);
+		map.put("maxDay", maxDay*2);
+		map.put("day", day*2);
 		map.put("month", month);
 		return map;
 	}
@@ -549,11 +549,15 @@ public class arrangeController extends BaseController{
 			str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\">操作</div></th>");
 		}
 		str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\" title=\""+name+">\""+name+"</div></th>");
-		for (int i = 1; i <= map.get("maxDay"); i++) {
+		for (int i = 0; i < map.get("maxDay"); i++) {
 			if(i == map.get("day")){
-				str.append("<th style=\"text-align:center;background:#17b593;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\">"+map.get("month")+"/"+i+"</div></th>");
-			}else {
-				str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\">"+map.get("month")+"/"+i+"<div></th>");
+				str.append("<th style=\"text-align:center;background:#17b593;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\">"+map.get("month")+"/"+(i/2+1)+"/AM</div>");
+			}else if(i == (map.get("day") + 1)){
+				str.append("<th style=\"text-align: center;background:#17b593;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\">"+map.get("month")+"/"+((i-1)/2+1)+"/PM<div></th>");
+			}else if(i%2 == 0){
+				str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\">"+map.get("month")+"/"+(i/2+1)+"/AM<div></th>");
+			}else{
+				str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\">"+map.get("month")+"/"+((i-1)/2+1)+"/PM<div></th>");
 			}
 		}
 		str.append("</tr>");

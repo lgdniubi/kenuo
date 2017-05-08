@@ -270,6 +270,15 @@
 				      <tr>
 				      	 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>床位：</label></td>
 				         <td class="width-35"><form:input path="officeInfo.bedNum" htmlEscape="false" maxlength="5" cssClass="form-control digits required"/></td>
+						 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>是否新店：</label></td>
+						 <td>
+							<select class="form-control required" id="isNew" name="isNew">
+								<option value='0' <c:if test="${office.isNew == '0'}">selected</c:if>>否</option>
+								<option value='1' <c:if test="${office.isNew == '1'}">selected</c:if>>是</option>
+							</select>
+						 </td>
+				      </tr>
+				      <tr>
 				      	 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺状态：</label></td>
 				         <td class="width-35" id="status">
 				         	<c:if test="${not empty office.id }">
@@ -287,8 +296,6 @@
 				         		</select>
 				         	</c:if>
 				         </td>
-				      </tr>
-				      <tr>
 				      	 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>详细地址:</label></td>
 				         <td class="width-35" colspan="3"><form:textarea path="officeInfo.detailedAddress" htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required"/></td>
 				      </tr>

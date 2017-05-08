@@ -90,7 +90,7 @@
 					                            	<input value="${ArrangeBeautician.equipmentId }" name="equipmentIds" type="hidden">
 				                            	</div>
 				                            </td>
-				                            <c:forEach items="${ArrangeBeautician.arrangeEquipments}" var="arrangeEquipments" varStatus="status" end="31">
+				                            <c:forEach items="${ArrangeBeautician.arrangeEquipments}" var="arrangeEquipments" varStatus="status">
 					                            <c:if test="${arrangeMaxDay < status.index+1 and ArrangeBeautician.delFlag == '0'}">
 					                            <%-- <c:if test="${ArrangeBeautician.delFlag == '0'}"> --%>
 					                            	<c:choose>

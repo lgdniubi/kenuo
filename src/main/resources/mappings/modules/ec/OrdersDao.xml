@@ -400,7 +400,7 @@
 			LEFT JOIN mtmydb.mtmy_order_goods_mapping c ON c.order_id=a.order_id
 			LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=c.goods_id
 			LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
-			LEFT JOIN mtmydb.mtmy_spec_goods_price sp ON (g.goods_id = sp.goods_id and c.spec_key = sp.spec_key AND del_flag = 0)
+			LEFT JOIN mtmydb.mtmy_spec_goods_price sp ON (g.goods_id = sp.goods_id and c.spec_key = sp.spec_key AND sp.del_flag = 0)
 			LEFT JOIN (SELECT SUM(order_arrearage) AS order_arrearage,order_id FROM mtmydb.mtmy_order_goods_details GROUP BY order_id) ogd ON a.order_id = ogd.order_id
 		${sqlMap.dsf}
 		<!-- and a.del_flag =0 --> 
@@ -510,7 +510,7 @@
 			LEFT JOIN mtmydb.mtmy_order_goods_mapping c ON c.order_id=a.order_id
 			LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=c.goods_id
 			LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
-			LEFT JOIN mtmydb.mtmy_spec_goods_price sp ON (g.goods_id = sp.goods_id and c.spec_key = sp.spec_key AND del_flag = 0)
+			LEFT JOIN mtmydb.mtmy_spec_goods_price sp ON (g.goods_id = sp.goods_id and c.spec_key = sp.spec_key AND sp.del_flag = 0)
 			LEFT JOIN (SELECT SUM(order_arrearage) AS order_arrearage,order_id FROM mtmydb.mtmy_order_goods_details GROUP BY order_id) ogd ON a.order_id = ogd.order_id
 		<!-- WHERE a.del_flag =0 --> 
 		WHERE a.parent_id=0

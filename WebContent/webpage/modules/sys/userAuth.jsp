@@ -12,11 +12,15 @@
 		var a = true;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 			$("#isUpdateRole").val(0);
+			$("#isPB").val(0);
 			if(validateForm.form()){
 				var roles = $("#roleName").val();
 				if((oldRoleNames.indexOf('排班') != -1) && (roles.indexOf('排班') == -1) && ($("#isSpecBeautician").val() != '0')){
 					top.layer.alert('该用户为特殊美容师，无法将其排班角色删除', {icon: 0, title:'提醒'});
 					return false;						
+				}
+				if((oldRoleNames.indexOf('排班') == -1) && (roles.indexOf('排班') != -1)){
+					$("#isPB").val(1);						
 				}
 				var ids2 = [], nodes2 = tree2.getCheckedNodes(true);
 				for (var i=0; i<nodes2.length; i++) {
@@ -102,6 +106,7 @@
 		<form:hidden path="id" id="id"/>
 		<input id="isSpecBeautician" name="isSpecBeautician" value="${isSpecBeautician }" type="hidden">
 		<input id="isUpdateRole" name="isUpdateRole" type="hidden">
+		<input id="isPB" name="isPB" type="hidden">
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		   <tbody>
 		   	  <tr>

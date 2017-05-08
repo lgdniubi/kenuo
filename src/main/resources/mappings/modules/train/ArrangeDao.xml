@@ -7,10 +7,10 @@
 	</select>
 	<!-- 查询店铺上班时间 -->
 	<select id="findArrange" resultType="int"><!-- union 去重 union all 不去重   -->
-		SELECT DISTINCT a.day FROM (
-			SELECT DISTINCT day FROM train_arrange_equipment WHERE shop_id = #{officeId} AND month = #{month}
+		SELECT DISTINCT IF(a.time = 0,a.day*2-1,a.day*2) AS day FROM (
+			SELECT DISTINCT day,time FROM train_arrange_equipment WHERE shop_id = #{officeId} AND month = #{month}
 			union
-			SELECT DISTINCT day FROM train_arrange_shop WHERE shop_id = #{officeId} AND month = #{month} AND flag = 1) as a ORDER BY day
+			SELECT DISTINCT day,time FROM train_arrange_shop WHERE shop_id = #{officeId} AND month = #{month} AND flag = 1) as a ORDER BY day
 	</select>
 	<!-- 查询店铺美容师上班详情 -->
 	<select id="findArrangeBeautician" resultType="ArrangeBeautician">
@@ -21,8 +21,9 @@
 			LEFT JOIN sys_user b ON a.beautician_id = b.id
 		WHERE
 			a.shop_id = #{officeId}
-			AND a.month = #{month}
-			AND a.day = #{day}
+			AND a.month = #{month}   
+			AND a.day = IF(MOD(#{day},2) = 0,floor(#{day}/2),floor((#{day}+1)/2))  
+			AND a.time = IF(MOD(#{day},2) = 0,1,0)
 			AND a.flag = 1
 	</select>
 	<!-- 查询店铺设备上班详情 -->
@@ -35,7 +36,8 @@
 		WHERE
 			a.shop_id = #{officeId}
 			AND a.month = #{month}
-			AND a.day = #{day}
+			AND a.day = IF(MOD(#{day},2) = 0,floor(#{day}/2),floor((#{day}+1)/2))  
+			AND a.time = IF(MOD(#{day},2) = 0,1,0)
 	</select>
 	<!-- 查询所有特殊美容师 -->
 	<select id="findAllBeautician" resultType="ArrangeBeautician">
@@ -54,7 +56,7 @@
 			a.local_shop_id AS localShopId,
 			a.beautician_id AS beauticianId,
 			a.month,
-			a.day,
+			IF(a.time = 0,a.day*2-1,a.day*2) AS day,
 			a.flag,
 			a.shop_id AS shopId,
 			a.shop_name AS shopName
@@ -82,6 +84,7 @@
 				appt_date,
 				month,
 				day,
+				time,
 				shop_id,
 				shop_name,
 				flag,
@@ -95,7 +98,8 @@
 					#{list.beauticianId},
 					#{list.apptDate},
 					#{list.month},
-					#{list.day},
+					IF(MOD(#{list.day},2) = 0,floor(#{list.day}/2),floor((#{list.day}+1)/2)),
+					IF(MOD(#{list.day},2) = 0,1,0),
 					#{list.shopId},
 					(CASE #{list.shopId} WHEN '1' THEN '休' WHEN '2' THEN '假' WHEN '3' THEN '学' ELSE (SELECT name FROM sys_office WHERE id = #{list.shopId}) END),
 					#{list.flag},
@@ -120,7 +124,7 @@
 			a.local_shop_id AS localShopId,
 			a.equipment_id AS equipmentId,
 			a.month,
-			a.day,
+			IF(a.time = 0,a.day*2-1,a.day*2) AS day,
 			a.shop_id AS shopId,
 			a.shop_name AS shopName
 		FROM train_arrange_equipment a
@@ -144,6 +148,7 @@
 				appt_date,
 				month,
 				day,
+				time,
 				shop_id,
 				shop_name,
 				office_id,
@@ -158,7 +163,8 @@
 					(SELECT label_id FROM train_equipment WHERE id = #{list.equipmentId}),
 					#{list.apptDate},
 					#{list.month},
-					#{list.day},
+					IF(MOD(#{list.day},2) = 0,floor(#{list.day}/2),floor((#{list.day}+1)/2)),
+					IF(MOD(#{list.day},2) = 0,1,0),
 					#{list.shopId},
 					(CASE #{list.shopId} WHEN '1' THEN '修' ELSE (SELECT name FROM sys_office WHERE id = #{list.shopId}) END),
 					#{list.officeId},
