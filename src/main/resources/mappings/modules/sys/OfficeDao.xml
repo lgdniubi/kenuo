@@ -23,6 +23,7 @@
 		a.create_date,
 		a.update_by AS "updateBy.id",
 		a.update_date,
+		a.is_new AS "isNew",
 		a.del_flag,
 		a.useable AS useable,
 		a.primary_person AS "primaryPerson.id",
@@ -83,6 +84,7 @@
 			a.update_by AS "updateBy.id",
 			a.update_date,
 			a.del_flag,
+			a.is_new,
 			a.useable AS useable,
 			a.primary_person AS "primaryPerson.id",
 			a.deputy_person AS "deputyPerson.id"
@@ -229,6 +231,7 @@
 			update_date, 
 			remarks, 
 			del_flag,
+			is_new,
 			useable,
 			primary_person,
 			deputy_person
@@ -254,6 +257,7 @@
 			#{updateDate}, 
 			#{remarks}, 
 			#{delFlag},
+			#{isNew},
 			#{useable},
 			#{primaryPerson.id},
 			#{deputyPerson.id}
@@ -296,6 +300,7 @@
 			update_date, 
 			remarks, 
 			del_flag,
+			is_new,
 			useable,
 			primary_person,
 			deputy_person
@@ -326,6 +331,7 @@
 			#{updateDate}, 
 			#{remarks}, 
 			#{delFlag},
+			#{isNew},
 			#{useable},
 			#{primaryPerson.id},
 			#{deputyPerson.id}
@@ -355,6 +361,7 @@
 			update_by = #{updateBy.id}, 
 			update_date = #{updateDate}, 
 			remarks = #{remarks},
+			is_new = #{isNew},
 			useable=#{useable},
 			primary_person=#{primaryPerson.id},
 			deputy_person=#{deputyPerson.id}
