@@ -117,7 +117,7 @@
 					                            	<input value="${ArrangeBeautician.userId }" name="userids" type="hidden">
 				                            	</div>
 				                            </td>
-				                            <c:forEach items="${ArrangeBeautician.arrangeShops}" var="arrangeShops" varStatus="status" end="31">
+				                            <c:forEach items="${ArrangeBeautician.arrangeShops}" var="arrangeShops" varStatus="status">
 				                            	<!-- 当前时间+2  <  日    可进行排班（1.当前时间之前排班不可操作  2.预约存在三天缓存） -->
 					                            <c:if test="${arrangeMaxDay < status.index+1 and ArrangeBeautician.userOfficeId == officeId and ArrangeBeautician.delFlag == '0' and not empty ArrangeBeautician.roleId}">
 					                            <%-- <c:if test="${ArrangeBeautician.userOfficeId == officeId and ArrangeBeautician.delFlag == '0'}"> --%>
