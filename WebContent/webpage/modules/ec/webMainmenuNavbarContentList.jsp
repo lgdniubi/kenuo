@@ -73,10 +73,11 @@
 					top.layer.alert('图片不能为空!', {icon: 0, title:'提醒'}); 
 					return;
 				}
-				if($(sort).val()== null || $(sort).val()==""){
-					top.layer.alert('排序不能为空!', {icon: 0, title:'提醒'}); 
+				if(!/^[1-9]*[1-9][0-9]*$/.test($(sort).val())){
+					top.layer.alert('排序必须为正整数!', {icon: 0, title:'提醒'});
 					return;
 				}
+				
 		        //异步添加商品
 				$.ajax({
 					type:"post",
@@ -144,7 +145,8 @@
 							<th style="text-align: center;">ID</th>
 							<th style="text-align: center;">导航栏ID</th>
 							<th style="text-align: center;">名称</th>
-							<th style="text-align: center;">图片链接</th>
+							<th style="text-align: center;">图片</th>
+							<th style="text-align: center;">链接地址</th>
 							<th style="text-align: center;">排序</th>
 							<th style="text-align: center;">创建时间</th>
 							<th style="text-align: center;">操作</th>
@@ -159,6 +161,7 @@
 								<td style="text-align: center;" class="imgUrl">
 									<img alt="" src="${ctxStatic}/images/lazylode.png" data-src="${page.imgUrl}" style="width: 150px;height: 100px;">
 								</td>
+								<td style="text-align: center;">${page.redirectUrl}</td>
 								<td style="text-align: center;">${page.sort}</td>
 								<td style="text-align: center;">
 									<fmt:formatDate value="${page.createDate}"  pattern="yyyy-MM-dd HH:mm:ss" />

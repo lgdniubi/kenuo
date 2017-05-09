@@ -19,10 +19,14 @@
 	<script type="text/javascript">
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-		    /* if($("#imgUrl").val() == null || $("#imgUrl").val() == ""){
-			   top.layer.alert('banner图不可为空！', {icon: 0, title:'提醒'});
+		    if($("#name").val() == null || $("#name").val() == ""){
+			   top.layer.alert('名称不可为空！', {icon: 0, title:'提醒'});
 			   return false;
-		    } */
+		    }
+		    if($("#imgUrl").val() == null || $("#imgUrl").val() == ""){
+			   top.layer.alert('图片不可为空！', {icon: 0, title:'提醒'});
+			   return false;
+		    }
 	    	if(validateForm.form()){
 	    		loading("正在提交，请稍候...");
 				$("#inputForm").submit();
@@ -68,13 +72,13 @@
 							<form:hidden path="isShou"/>
 							<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 								<tr>
-									<td><label class="pull-right"><font color="red">*</font>标签组名称：</label></td>
+									<td><label class="pull-right"><font color="red">*</font>名称：</label></td>
 									<td>
 										<form:input path="name" class="form-control required" style="width: 300px"/>
 									</td>
 								</tr>
 								<tr>
-									<td><label class="pull-right"><font color="red">*</font>背景图：</label></td>
+									<td><label class="pull-right"><font color="red">*</font>图片：</label></td>
 									<td>
 										<img id="img" src="${webMainmenuNavbar.imgUrl }" alt="" style="width: 200px;height: 100px;"/>
 										<input class="form-control" id="imgUrl" name="imgUrl" type="hidden" value="${webMainmenuNavbar.imgUrl }"/><!-- 图片隐藏文本框 -->
