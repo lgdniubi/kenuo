@@ -159,7 +159,7 @@
 								<td style="text-align: center;">${page.mainmenuId}</td>
 								<td style="text-align: center;">${page.name}</td>
 								<td style="text-align: center;" class="imgUrl">
-									<img alt="" src="${ctxStatic}/images/lazylode.png" data-src="${page.imgUrl}" style="width: 150px;height: 100px;">
+									<img alt="" src="${ctxStatic}/images/lazylode.png" data-src="${page.imgUrl}" style="width: 100px;height: 80px;">
 								</td>
 								<td style="text-align: center;">${page.redirectUrl}</td>
 								<td style="text-align: center;">${page.sort}</td>
