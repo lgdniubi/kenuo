@@ -80,6 +80,8 @@ public class Goods extends DataEntity<Goods> {
 	private int goodsType;			// 商品区分(0: 老商品 1: 新商品)
 	
 	private int subId;           //主题图中商品对应的主题图id
+	
+	private int adId;           //首页广告图中商品对应的首页广告图id
 	/**
 	 * get/set
 	 */
@@ -413,6 +415,12 @@ public class Goods extends DataEntity<Goods> {
 	}
 	public void setGoodsType(int goodsType) {
 		this.goodsType = goodsType;
+	}
+	public int getAdId() {
+		return adId;
+	}
+	public void setAdId(int adId) {
+		this.adId = adId;
 	}
 	
 }

@@ -43,6 +43,9 @@ public class Office extends TreeEntity<Office> {
 	
 	private OfficeInfo officeInfo;		//自营店实体类
 	private Franchisee franchisee;
+	
+	private String isNew;            //是否新店（0：否；1：是）
+	
 	public Office(){
 		super();
 //		this.sort = 30;
@@ -246,6 +249,14 @@ public class Office extends TreeEntity<Office> {
 
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
+	}
+
+	public String getIsNew() {
+		return isNew;
+	}
+
+	public void setIsNew(String isNew) {
+		this.isNew = isNew;
 	}
 	
 }
