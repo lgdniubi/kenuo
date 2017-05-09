@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.WebMainmenuNavbarContentDao">
+	
+	<!-- 查询所有数据列表 -->
+	<select id="findList" resultType="WebMainmenuNavbarContent">
+		SELECT
+			id AS webMainmenuNavbarContentId,
+			mainmenu_id AS mainmenuId,
+			name,                               
+			img_url AS imgUrl,
+			redirect_url AS redirectUrl,
+		    sort,
+			create_date AS createDate
+		FROM
+			mtmydb.mtmy_web_mainmenu_navbar_content
+		WHERE 
+			mainmenu_id = #{mainmenuId}
+		ORDER BY
+			id DESC
+	</select>
+	
+	<!-- 根据主菜单导航栏表的Id,删除内容表中所有关联的数据  (物理删除)-->
+	<delete id="deleteWebMainmenuNavbarContentBymainmenuId" parameterType="int">
+		DELETE 
+		FROM mtmydb.mtmy_web_mainmenu_navbar_content
+		WHERE mainmenu_id = #{mainmenuId}
+	</delete>
+	
+	<!-- (物理删除)  根据Id删除主菜单导航栏内容表中的数据-->
+	<delete id="deleteWebMainmenuNavbarContentById" parameterType="int">
+		DELETE 
+		FROM mtmydb.mtmy_web_mainmenu_navbar_content
+		WHERE id = #{webMainmenuNavbarContentId}
+	</delete>
+	
+	<!-- 根据条件查询主菜单导航栏内容数据 -->
+	<select id="getWebMainmenuNavbarContentById" resultType="WebMainmenuNavbarContent" parameterType="WebMainmenuNavbarContent">
+		SELECT
+			id AS webMainmenuNavbarContentId,
+			mainmenu_id AS mainmenuId,
+			name,                               
+			img_url AS imgUrl,
+			redirect_url AS redirectUrl,
+		    sort,
+			create_date AS createDate
+		FROM
+			mtmydb.mtmy_web_mainmenu_navbar_content
+		WHERE 
+			id = #{webMainmenuNavbarContentId}
+	</select>
+	
+	<!-- 插入数据 -->
+	<insert id="insert" parameterType="WebMainmenuNavbarContent">
+		INSERT INTO mtmydb.mtmy_web_mainmenu_navbar_content(
+			mainmenu_id	,
+			name,
+			img_url,
+			redirect_url,
+			sort,
+			create_date
+		) VALUES (
+			#{mainmenuId},
+			#{name},
+			#{imgUrl},
+			#{redirectUrl},
+			#{sort},
+			SYSDATE()
+		)
+	</insert>
+	
+	<!-- 根据ID修改数据 -->
+	<update id="update" parameterType="WebMainmenuNavbarContent">
+		UPDATE mtmydb.mtmy_web_mainmenu_navbar_content
+		SET
+			name = #{name},
+			img_url = #{imgUrl},
+			redirect_url = #{redirectUrl},
+			sort = #{sort}
+		WHERE id = #{webMainmenuNavbarContentId}
+	</update>
+</mapper>
