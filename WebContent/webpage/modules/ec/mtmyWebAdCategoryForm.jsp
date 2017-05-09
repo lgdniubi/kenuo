@@ -10,6 +10,10 @@
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		  if(validateForm.form()){
+			  if(!/^[1-9]*[1-9][0-9]*$/.test($(sort).val())){
+					top.layer.alert('排序必须为正整数!', {icon: 0, title:'提醒'});
+					return;
+				}
 			  $("#inputForm").submit();
 			  return true;
 		  }
