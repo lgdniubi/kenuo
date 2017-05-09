@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.TrainGtpRelationsDao">
+	<!-- 地推列表 -->
+	<select id="findList" resultType="TrainGtpRelations">
+		SELECT
+			a.user_id AS 'user.mtmyUserId',b.name AS 'user.name',b.mobile AS 'user.mobile',c.name AS 'user.office.name',COUNT(1) AS gtpNnm
+		FROM
+			train_gtp_relations a
+		LEFT JOIN sys_user b ON a.user_id = b.mtmy_user_id
+		LEFT JOIN sys_office c ON b.office_id = c.id AND c.del_flag = 0
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		<if test="office != null and office.id != null and office.id != ''">
+			AND (c.id = #{office.id} OR c.parent_ids LIKE CONCAT('%,', #{office.id}, ',%'))
+		</if>
+		<if test="user != null and user.name != null and user.name != ''">
+			AND b.name like CONCAT('%', #{user.name}, '%')
+		</if>
+		<if test="user != null and user.mobile != null and user.mobile != ''">
+			AND b.mobile = #{user.mobile}
+		</if>
+		GROUP BY a.user_id,b.name,b.mobile,c.name
+		ORDER BY gtpNnm DESC
+	</select>
+	<!-- 邀请详情 -->
+	<select id="findAllList" resultType="TrainGtpRelations">
+		SELECT
+			b.name AS 'user.name',a.mtmy_user_name AS mtmyUserName,a.mobile,d.reg_time AS 'users.regtime'
+		FROM
+			train_gtp_relations a
+		LEFT JOIN sys_user b ON a.user_id = b.mtmy_user_id
+		LEFT JOIN sys_office c ON b.office_id = c.id AND c.del_flag = 0
+		LEFT JOIN mtmydb.mtmy_users d ON a.mtmy_user_id = d.user_id
+		WHERE 1 = 1
+		AND a.user_id = #{mtmyUserId }
+		<if test="beginDate != null and beginDate != ''">
+			AND DATE_FORMAT(d.reg_time,'%Y-%m-%d') >= DATE_FORMAT(#{beginDate},'%Y-%m-%d')
+		</if>
+		<if test="endDate!=null and endDate!=''">
+			AND DATE_FORMAT(d.reg_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{endDate},'%Y-%m-%d')
+		</if>
+	</select>
+	<!-- 邀请总数 -->
+	<select id="report" resultType="int">
+		SELECT
+			COUNT(1) AS gtpNnm
+		FROM
+			train_gtp_relations a
+		LEFT JOIN sys_user b ON a.user_id = b.mtmy_user_id
+		LEFT JOIN sys_office c ON b.office_id = c.id AND c.del_flag = 0
+		LEFT JOIN mtmydb.mtmy_users d ON a.mtmy_user_id = d.user_id
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		AND (c.id = #{office.id} OR c.parent_ids LIKE CONCAT('%,', #{office.id}, ',%'))
+		<if test="beginDate != null and beginDate != ''">
+			AND DATE_FORMAT(d.reg_time,'%Y-%m-%d') >= DATE_FORMAT(#{beginDate},'%Y-%m-%d')
+		</if>
+		<if test="endDate!=null and endDate!=''">
+			AND DATE_FORMAT(d.reg_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{endDate},'%Y-%m-%d')
+		</if>
+	</select>
+</mapper>
