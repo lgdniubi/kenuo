@@ -550,9 +550,9 @@ public class arrangeController extends BaseController{
 		}
 		str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\" title=\""+name+">\""+name+"</div></th>");
 		for (int i = 0; i < map.get("maxDay"); i++) {
-			if(i == map.get("day")){
+			if(i == map.get("day")-2){
 				str.append("<th style=\"text-align:center;background:#17b593;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\">"+map.get("month")+"/"+(i/2+1)+"/AM</div>");
-			}else if(i == (map.get("day") + 1)){
+			}else if(i == map.get("day")-1){
 				str.append("<th style=\"text-align: center;background:#17b593;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\">"+map.get("month")+"/"+((i-1)/2+1)+"/PM<div></th>");
 			}else if(i%2 == 0){
 				str.append("<th style=\"text-align: center;\"><div style=\"width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;\">"+map.get("month")+"/"+(i/2+1)+"/AM<div></th>");

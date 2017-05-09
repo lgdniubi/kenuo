@@ -10,9 +10,9 @@
 			type,
 			img_url AS imgUrl,
 			is_show AS isShow,
-		    create_by AS "createBy.name",
+		    create_by AS "createBy.id",
 			create_date AS createDate,
-		    update_by AS "updateBy.name",
+		    update_by AS "updateBy.id",
 		    update_date AS updateDate,
 		    is_show AS isShou,
 			remarks
@@ -32,9 +32,9 @@
 			type AS type,
 			img_url AS imgUrl,
 			is_show AS isShow,
-		    create_by AS "createBy.name",
+		    create_by AS "createBy.id",
 			create_date AS createDate,
-		    update_by AS "updateBy.name",
+		    update_by AS "updateBy.id",
 		    update_date AS updateDate,
 		    is_show AS isShou,
 			remarks
@@ -62,9 +62,9 @@
 			#{type},
 			#{imgUrl},
 			#{isShou},
-			#{createBy.name},
+			#{createBy.id},
 			SYSDATE(),
-			#{createBy.name},
+			#{createBy.id},
 			SYSDATE(),
 			#{remarks},
 			0
@@ -79,7 +79,7 @@
 			type = #{type},
 			img_url = #{imgUrl},
 			is_show = #{isShou},
-			update_by = #{updateBy.name},
+			update_by = #{updateBy.id},
 			update_date = SYSDATE(),
 			remarks = #{remarks}
 		WHERE id = #{webMainmenuNavbarId}

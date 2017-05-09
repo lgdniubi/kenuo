@@ -65,8 +65,8 @@
                 	<thead> 
                 		<tr>
                 			<th style="text-align: center;">ID</th>
-                			<th style="text-align: center;">标签组名称</th>
-                			<th style="text-align: center;">背景图</th>
+                			<th style="text-align: center;">名称</th>
+                			<th style="text-align: center;">图片</th>
                 			<th style="text-align: center;">类型</th>
                 			<th style="text-align: center;">创建者</th>
                 			<th style="text-align: center;">创建时间</th>
@@ -93,11 +93,11 @@
 									生活美容
 								</c:if>
 							</td>
-							<td style="text-align: center;">${webMainmenuNavbar.createBy.name}</td>
+							<td style="text-align: center;">${webMainmenuNavbar.createBy.id}</td>
 							<td style="text-align: center;">
 								<fmt:formatDate value="${webMainmenuNavbar.createDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
 							</td>	
-							<td style="text-align: center;">${webMainmenuNavbar.updateBy.name}</td>
+							<td style="text-align: center;">${webMainmenuNavbar.updateBy.id}</td>
 							<td style="text-align: center;">
 								<fmt:formatDate value="${webMainmenuNavbar.updateDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
 							</td>	
