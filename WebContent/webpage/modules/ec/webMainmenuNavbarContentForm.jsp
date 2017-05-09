@@ -83,7 +83,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td><label class="pull-right">链接：</label></td>
+									<td><label class="pull-right"><font color="red">*</font>链接：</label></td>
 									<td>
 										<form:input path="redirectUrl" class="form-control" style="width: 300px"/>
 									</td>

@@ -73,6 +73,10 @@
 					top.layer.alert('图片不能为空!', {icon: 0, title:'提醒'}); 
 					return;
 				}
+				if($(redirectUrl).val()== null || $(redirectUrl).val()==""){
+					top.layer.alert('链接地址不能为空!', {icon: 0, title:'提醒'}); 
+					return;
+				}
 				if(!/^[1-9]*[1-9][0-9]*$/.test($(sort).val())){
 					top.layer.alert('排序必须为正整数!', {icon: 0, title:'提醒'});
 					return;
