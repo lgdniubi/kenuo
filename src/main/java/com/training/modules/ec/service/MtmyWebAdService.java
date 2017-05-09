@@ -99,4 +99,53 @@ public class MtmyWebAdService extends CrudService<MtmyWebAdDao,MtmyWebAd>{
 	public void delGoods(int adId,int goodsId){
 		mtmyWebAdDao.delGoods(adId, goodsId);
 	}
+	
+	/**
+	 * 根据categoryId逻辑删除首页广告图 ,当为二级分类时
+	 * @param categoryId
+	 */
+	public void delMtmyWebAdByCategoryIdForNotFirst(int categoryId){
+		mtmyWebAdDao.delMtmyWebAdByCategoryIdForNotFirst(categoryId);
+	}
+	
+	/**
+	 * 根据categoryId逻辑删除首页广告图 ,当为二级分类时
+	 * @param categoryId
+	 */
+	public void delMtmyWebAdByCategoryIdForFirst(int categoryId){
+		mtmyWebAdDao.delMtmyWebAdByCategoryIdForFirst(categoryId);
+	}
+	
+	/**
+	 * 根据categoryId屋里删除首页广告图对应的所有商品,当为二级分类时
+	 * @param categoryId
+	 */
+	public void delAllGoodsByCategoryIdForNotFirst(int categoryId){
+		mtmyWebAdDao.delAllGoodsByCategoryIdForNotFirst(categoryId);
+	}
+	
+	/**
+	 * 根据categoryId屋里删除首页广告图对应的所有商品,当为一级分类时
+	 * @param categoryId
+	 */
+	public void delAllGoodsByCategoryIdForFirst(int categoryId){
+		mtmyWebAdDao.delAllGoodsByCategoryIdForFirst(categoryId);
+	}
+	
+	/**
+	 * 修改当前页面上所有组的状态
+	 * @param categoryId
+	 */
+	public void changAllIsShow(MtmyWebAd mtmyWebAd){
+		mtmyWebAdDao.changAllIsShow(mtmyWebAd);
+	}
+	
+	/**
+	 * 查询出最近创建的那一组的id
+	 * @param categoryId
+	 * @return
+	 */
+	public int selectIdByCreateDate(MtmyWebAd mtmyWebAd){
+		return mtmyWebAdDao.selectIdByCreateDate(mtmyWebAd);
+	}
 }

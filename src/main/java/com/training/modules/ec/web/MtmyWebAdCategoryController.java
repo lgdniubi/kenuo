@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.training.common.web.BaseController;
 import com.training.modules.ec.entity.MtmyWebAdCategory;
 import com.training.modules.ec.service.MtmyWebAdCategoryService;
+import com.training.modules.ec.service.MtmyWebAdService;
 import com.training.modules.sys.utils.BugLogUtils;
 
 import net.sf.json.JSONArray;
@@ -35,6 +36,9 @@ public class MtmyWebAdCategoryController extends BaseController{
 	
 	@Autowired
 	private MtmyWebAdCategoryService mtmyWebAdCategoryService;
+
+	@Autowired 
+	private MtmyWebAdService mtmyWebAdService;
 	
 	/**
 	 * 广告图分类树list
@@ -117,7 +121,16 @@ public class MtmyWebAdCategoryController extends BaseController{
 	@RequestMapping(value="delete")
 	public String delete(MtmyWebAdCategory mtmyWebAdCategory,RedirectAttributes redirectAttributes,HttpServletRequest request){
 		try{
+			mtmyWebAdCategory = mtmyWebAdCategoryService.getMtmyWebAdCategory(mtmyWebAdCategory.getMtmyWebAdCategoryId());
+			//删除分类时同时逻辑删除下级分类、对应的首页广告图、物理删除首页广告图对应的商品
 			mtmyWebAdCategoryService.deleteCategory(mtmyWebAdCategory.getMtmyWebAdCategoryId());
+			if(mtmyWebAdCategory.getLevel() == 1){
+				mtmyWebAdService.delMtmyWebAdByCategoryIdForFirst(mtmyWebAdCategory.getMtmyWebAdCategoryId());
+				mtmyWebAdService.delAllGoodsByCategoryIdForFirst(mtmyWebAdCategory.getMtmyWebAdCategoryId());
+			}else{
+				mtmyWebAdService.delMtmyWebAdByCategoryIdForNotFirst(mtmyWebAdCategory.getMtmyWebAdCategoryId());
+				mtmyWebAdService.delAllGoodsByCategoryIdForNotFirst(mtmyWebAdCategory.getMtmyWebAdCategoryId());
+			}
 			addMessage(redirectAttributes, "删除广告图分类成功!");
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "删除广告图分类失败!", e);

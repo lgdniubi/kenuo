@@ -1,8 +1,6 @@
 package com.training.modules.ec.web;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +17,7 @@ import com.training.common.web.BaseController;
 import com.training.modules.ec.dao.MtmyWebAdDao;
 import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.entity.MtmyWebAd;
+import com.training.modules.ec.service.MtmyWebAdCategoryService;
 import com.training.modules.ec.service.MtmyWebAdService;
 import com.training.modules.sys.utils.BugLogUtils;
 
@@ -36,6 +35,9 @@ public class MtmyWebAdController extends BaseController{
 	
 	@Autowired
 	private MtmyWebAdDao mtmyWebAdDao;
+	
+	@Autowired
+	private MtmyWebAdCategoryService mtmyWebAdCategoryService;
 	
 	/**
 	 * 首页广告图列表
@@ -73,6 +75,8 @@ public class MtmyWebAdController extends BaseController{
 		try{
 			if(mtmyWebAd.getMtmyWebAdId() != 0){
 				mtmyWebAd = mtmyWebAdService.getMtmyWebAd(mtmyWebAd.getMtmyWebAdId());
+			}else{
+				mtmyWebAd.setPositionType(mtmyWebAdCategoryService.getMtmyWebAdCategory(mtmyWebAd.getCategoryId()).getPositionType());
 			}
 			model.addAttribute("mtmyWebAd", mtmyWebAd);
 		}catch(Exception e){
@@ -89,32 +93,27 @@ public class MtmyWebAdController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="updateIsShow")
-	@ResponseBody
-	public Map<String, String> updateIsShow(HttpServletRequest request,MtmyWebAd mtmyWebAd) {
-		Map<String, String> jsonMap = new HashMap<String, String>();
+	public String updateIsShow(HttpServletRequest request,MtmyWebAd mtmyWebAd) {
 		try {
 			String isShow = request.getParameter("isShow");
 			mtmyWebAd = mtmyWebAdService.getMtmyWebAd(mtmyWebAd.getMtmyWebAdId());
+			mtmyWebAdService.changAllIsShow(mtmyWebAd);
 			if("0".equals(isShow)){
 				mtmyWebAd.setIsShow(isShow);
 				mtmyWebAdService.updateIsShow(mtmyWebAd);
-				jsonMap.put("STATUS", "OK");
-				jsonMap.put("ISSHOW", isShow);
 			}else if("1".equals(isShow)){
-				mtmyWebAd.setIsShow(isShow);
+				int mtmyWebAdId = mtmyWebAdService.selectIdByCreateDate(mtmyWebAd);
+				mtmyWebAd = mtmyWebAdService.getMtmyWebAd(mtmyWebAdId);
+				mtmyWebAd.setIsShow("0");
 				mtmyWebAdService.updateIsShow(mtmyWebAd);
-				jsonMap.put("STATUS", "OK");
-				jsonMap.put("ISSHOW", isShow);
 			}
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "修改首页广告图的状态失败", e);
 			logger.error("修改首页广告图的状态失败：" + e.getMessage());
-			jsonMap.put("STATUS", "ERROR");
-			jsonMap.put("MESSAGE", "修改失败,出现异常");
 		}
-		return jsonMap;
+		return "redirect:" + adminPath + "/ec/webAd/list?categoryId="+mtmyWebAd.getCategoryId();
 	}
-	
+
 	/**
 	 * 添加首页广告图
 	 * @param mtmyWebAd
@@ -148,7 +147,9 @@ public class MtmyWebAdController extends BaseController{
 	@RequestMapping(value="del")
 	public String delete(MtmyWebAd mtmyWebAd,RedirectAttributes redirectAttributes,HttpServletRequest request){
 		try{
+			//逻辑删除广告图的同时物理删除其对应的所有商品
 			mtmyWebAdService.delMtmyWebAd(mtmyWebAd.getMtmyWebAdId());
+			mtmyWebAdDao.delAllGoods(mtmyWebAd.getMtmyWebAdId());
 			addMessage(redirectAttributes, "删除成功");
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "删除首页广告图", e);

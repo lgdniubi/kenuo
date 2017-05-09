@@ -52,21 +52,12 @@
 						<form id="inputForm" action="${ctx}/ec/webAd/save">
 							<input class="form-control" id="mtmyWebAdId" name="mtmyWebAdId" type="hidden" value="${mtmyWebAd.mtmyWebAdId}"/>
 							<input id="categoryId" type="hidden" name="categoryId" value="${mtmyWebAd.categoryId}">
+							<input id="positionType" type="hidden" name="positionType" value="${mtmyWebAd.positionType}">
 							<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 								<tr>
 									<td><label class="pull-right"><font color="red">*</font>名称：</label></td>
 									<td>
 										<input class="form-control required" id="name" name="name" type="text" value="${mtmyWebAd.name }" style="width: 300px"/>
-									</td>
-								</tr>
-								<tr>
-									<td><label class="pull-right"><font color="red">*</font>位置:</label></td>
-									<td>
-										<select class="form-control required" id="positionType" name="positionType">
-											<option value='1' <c:if test="${mtmyWebAd.positionType == '1'}">selected</c:if>>首页</option>
-											<option value='2' <c:if test="${mtmyWebAd.positionType == '2'}">selected</c:if>>商城</option>
-											<option value='3' <c:if test="${mtmyWebAd.positionType == '3'}">selected</c:if>>生活美容</option>
-										</select>
 									</td>
 								</tr>
 								<tr>

@@ -75,7 +75,7 @@
 			#{headImg},
 			#{dataType},
 			#{redirectUrl},
-			'0',
+			'1',
 			#{createBy.id},
 			NOW(),
 			'0'
@@ -87,7 +87,6 @@
 		UPDATE mtmydb.mtmy_web_ad
 		SET 
 			name = #{name},
-			position_type = #{positionType},
 			align = #{align},
 			suboriginal_img = #{suboriginalImg},
 			head_img = #{headImg},
@@ -140,4 +139,47 @@
 		DELETE FROM mtmydb.mtmy_web_ad_goods
 		WHERE ad_id = #{adId}
 	</delete>
+	
+	<!-- 根据categoryId逻辑删除首页广告图 ,当为非一级分类时-->
+	<update id="delMtmyWebAdByCategoryIdForNotFirst">
+		UPDATE mtmydb.mtmy_web_ad
+		SET del_flag = '1'
+		WHERE category_id = #{categoryId}
+	</update>
+	
+	<!-- 根据categoryId逻辑删除首页广告图 ,当为一级分类时-->
+	<update id="delMtmyWebAdByCategoryIdForFirst">
+		UPDATE mtmydb.mtmy_web_ad
+		SET del_flag = '1'
+		WHERE category_id IN(SELECT id FROM mtmydb.mtmy_web_ad_category WHERE parent_ids LIKE CONCAT('%', #{categoryId}, '%') OR parent_id = #{categoryId})
+	</update>
+	
+	<!-- 根据categoryId屋里删除首页广告图对应的所有商品,当为非一级分类时 -->
+	<delete id="delAllGoodsByCategoryIdForNotFirst">
+		DELETE FROM mtmydb.mtmy_web_ad_goods 
+		WHERE ad_id IN(SELECT id FROM mtmydb.mtmy_web_ad WHERE category_id = #{categoryId})
+	</delete>
+	
+	<!-- 根据categoryId屋里删除首页广告图对应的所有商品,当为一级分类时 -->
+	<delete id="delAllGoodsByCategoryIdForFirst">
+		DELETE FROM mtmydb.mtmy_web_ad_goods 
+		WHERE ad_id IN(SELECT id FROM mtmydb.mtmy_web_ad WHERE category_id IN(SELECT id FROM mtmydb.mtmy_web_ad_category WHERE parent_ids LIKE CONCAT('%', #{categoryId}, '%') OR parent_id = #{categoryId}))
+	</delete>
+	
+	<!-- 修改当前页面上所有组的状态 -->
+	<update id="changAllIsShow">
+		UPDATE mtmydb.mtmy_web_ad
+		SET is_show = '1'
+		WHERE category_id = #{categoryId}
+		AND align = #{align}
+	</update>
+	
+	<!-- 查询出最近创建的那一组的id -->
+	<select id="selectIdByCreateDate" resultType="Integer">
+		SELECT id AS mtmyWebAdId
+		FROM mtmydb.mtmy_web_ad
+		WHERE category_id = #{categoryId}
+		AND align = #{align}
+		ORDER BY create_date desc LIMIT 1
+	</select>
 </mapper>

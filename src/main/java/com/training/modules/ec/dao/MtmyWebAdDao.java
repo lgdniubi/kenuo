@@ -71,4 +71,41 @@ public interface MtmyWebAdDao extends CrudDao<MtmyWebAd>{
 	 */
 	public void delAllGoods(int adId);
 	
+	
+	/**
+	 * 根据categoryId逻辑删除首页广告图 ,当为非一级分类时
+	 * @param categoryId
+	 */
+	public void delMtmyWebAdByCategoryIdForNotFirst(int categoryId);
+	
+	/**
+	 * 根据categoryId逻辑删除首页广告图 ,当为一级分类时
+	 * @param categoryId
+	 */
+	public void delMtmyWebAdByCategoryIdForFirst(int categoryId);
+	
+	/**
+	 * 根据categoryId屋里删除首页广告图对应的所有商品,当为非一级分类时
+	 * @param categoryId
+	 */
+	public void delAllGoodsByCategoryIdForNotFirst(int categoryId);
+	
+	/**
+	 * 根据categoryId屋里删除首页广告图对应的所有商品,当为一级分类时
+	 * @param categoryId
+	 */
+	public void delAllGoodsByCategoryIdForFirst(int categoryId);
+	
+	/**
+	 * 修改当前页面上所有组的状态
+	 * @param mtmyWebAd
+	 */
+	public void changAllIsShow(MtmyWebAd mtmyWebAd);
+	
+	/**
+	 * 查询出最近创建的那一组的id
+	 * @param mtmyWebAd
+	 * @return
+	 */
+	public int selectIdByCreateDate(MtmyWebAd mtmyWebAd);
 }

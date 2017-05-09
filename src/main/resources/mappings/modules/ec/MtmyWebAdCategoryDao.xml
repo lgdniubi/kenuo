@@ -73,7 +73,7 @@
 			#{name},
 			#{positionType},
 			#{sort},
-			'0',
+			'1',
 			#{createBy.id},
 			SYSDATE(),
 			#{remarks},
@@ -98,7 +98,7 @@
 	<delete id="deleteCategory">
 		UPDATE mtmydb.mtmy_web_ad_category
 		SET del_flag = '1'
-		WHERE id = #{mtmyWebAdCategoryId}
+		WHERE parent_ids LIKE CONCAT('%', #{mtmyWebAdCategoryId}, '%') OR id = #{mtmyWebAdCategoryId}
 	</delete>
 	
 	<!-- 根据parentId查找相应的子类 -->
