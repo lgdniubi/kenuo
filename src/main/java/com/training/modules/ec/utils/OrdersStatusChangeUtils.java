@@ -1,5 +1,7 @@
 package com.training.modules.ec.utils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.training.common.mapper.JsonMapper;
 import com.training.common.utils.BeanUtil;
+import com.training.common.utils.IdGen;
 import com.training.modules.ec.dao.OrdersDao;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.Orders;
@@ -58,12 +61,15 @@ public class OrdersStatusChangeUtils {
 		mc.put("goodsPic",orderGoods.getOriginalimg());
 		mc.put("goodsName",orderGoods.getGoodsname());
 		mc.put("goodsNum",orderGoods.getGoodsnum());
+		JSONObject jso = JSONObject.fromObject(mc); 
+		
 		
 		m.put("title", orderGoods.getGoodsname());
-		m.put("notify_type", 3);
+		m.put("notify_type", "3");
 		m.put("push_type",1);
-		m.put("content",mc);
-		
+		m.put("push_time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+		m.put("content","_"+jso.toString());
+		m.put("notify_id", IdGen.uuid());
 		
 		map.put("content", m);
 		map.put("push_type", push_type);
