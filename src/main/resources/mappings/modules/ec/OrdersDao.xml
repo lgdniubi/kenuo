@@ -1174,5 +1174,23 @@
 		FROM mtmydb.mtmy_orders
 		WHERE order_id = #{orderId}
 	</select>
-
+	
+	<!-- 根据订单里的user_id找到对应的cilent_id -->
+	<select id="selectCidByUserId" resultType="String">
+		SELECT uc.client_id
+		FROM mtmydb.mtmy_orders o
+		LEFT JOIN mtmydb.mtmy_oa_user_client uc ON uc.user_id = o.user_id
+		WHERE o.order_id = #{orderid}
+		AND uc.client_id is not null
+	</select>
+	
+	<!-- 根据订单id查找对应的信息，供订单发货后推送给用户 -->
+	<select id="selectOrdersToUser" resultType="OrderGoods">
+		SELECT 
+			goods_name AS 'goodsname',
+			goods_num AS 'goodsnum',
+			original_img AS 'originalimg'
+		FROM mtmydb.mtmy_order_goods_mapping 
+		WHERE order_id = #{orderid}
+	</select>
 </mapper>

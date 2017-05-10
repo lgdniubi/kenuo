@@ -72,6 +72,7 @@ import com.training.modules.ec.service.ReturnGoodsService;
 import com.training.modules.ec.service.ReturnedGoodsService;
 import com.training.modules.ec.utils.CourierUtils;
 import com.training.modules.ec.utils.OrderUtils;
+import com.training.modules.ec.utils.OrdersStatusChangeUtils;
 import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.quartz.tasks.utils.RedisConfig;
 import com.training.modules.quartz.utils.RedisLock;
@@ -355,6 +356,7 @@ public class OrdersController extends BaseController {
 			Date returnTime = sdf.parse(OrderUtils.plusDay(returnDay, sdf.format(orders.getShippingtime())));
 			orders.setReturnTime(returnTime);
 			ordersService.UpdateShipping(orders);
+			OrdersStatusChangeUtils.pushMsg(orders, 3); //推送已发货信息给用户
 			addMessage(redirectAttributes, "订单：" + orders.getOrderid() + "物流修改成功");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "物流信息保存", e);
@@ -799,8 +801,10 @@ public class OrdersController extends BaseController {
 						orders.setReturnTime(returnTime);
 						
 						int index = ordersService.UpdateShipping(orders);
+						
 						if (index > 0) {		
 							successNum++;
+							OrdersStatusChangeUtils.pushMsg(orders, 3);//推送已发货信息给用户
 						} else {
 							failureMsg.append("<br/>订单" + shipping.getOrderid() + "更新物流失败; ");
 							failureNum++;
@@ -952,6 +956,9 @@ public class OrdersController extends BaseController {
 						addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'失败");
 					}
 					logger.info("商品退还仓库是否成功："+result);
+				}else if(orders.getOrderstatus() == 2){
+					ordersService.updateVirtualOrder(orders);
+					OrdersStatusChangeUtils.pushMsg(orders, 3); //推送已发货信息给用户
 				}else{//不是取消订单
 					ordersService.updateVirtualOrder(orders);
 					addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");

@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.crm.entity.CrmOrders;
+import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderInvoice;
 import com.training.modules.ec.entity.OrderInvoiceRelevancy;
 import com.training.modules.ec.entity.OrderRemarksLog;
@@ -287,5 +288,18 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * 查看订单号是否存在
 	 */
 	public int selectOrdersId(String orderId);
-
+	
+	/**
+	 * 根据订单里的user_id找到对应的cilent_id
+	 * @param orders
+	 * @return
+	 */
+	public List<String> selectCidByUserId(Orders orders);
+	
+	/**
+	 * 根据订单id查找对应的信息，供订单发货后推送给用户 
+	 * @param orders
+	 * @return
+	 */
+	public List<OrderGoods> selectOrdersToUser(Orders orders);
 }

@@ -1644,5 +1644,22 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	public int selectOrdersId(String orderId){
 		return ordersDao.selectOrdersId(orderId);
 	}
-
+	
+	/**
+	 * 根据订单里的user_id找到对应的cilent_id
+	 * @param orders
+	 * @return
+	 */
+	public List<String> selectCidByUserId(Orders orders){
+		return ordersDao.selectCidByUserId(orders);
+	}
+	
+	/**
+	 * 根据订单id查找对应的信息，供订单发货后推送给用户 
+	 * @param orders
+	 * @return
+	 */
+	public List<OrderGoods> selectOrdersToUser(Orders orders){
+		return ordersDao.selectOrdersToUser(orders);
+	}
 }
