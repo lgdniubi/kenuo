@@ -47,15 +47,23 @@ public class OrdersStatusChangeUtils {
 	public static String newPushMsg(Orders orders,Integer push_type) throws ResponseError{
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Object> m = new HashMap<String, Object>();
+		Map<String, Object> mc = new HashMap<String, Object>();
 		
 		List<OrderGoods> orderGoodsList = ordersService.selectOrdersToUser(orders);
 		OrderGoods orderGoods = orderGoodsList.get(0);
-		m.put("orderStatusName","订单已发货");
-		m.put("logisticsId",ordersService.get(orders.getOrderid()).getShippingcode());
-		m.put("orderId",orders.getOrderid());
-		m.put("goodsPic",orderGoods.getOriginalimg());
-		m.put("goodsName",orderGoods.getGoodsname());
-		m.put("goodsNum",orderGoods.getGoodsnum());
+		
+		mc.put("orderStatusName","订单已发货");
+		mc.put("logisticsId",ordersService.get(orders.getOrderid()).getShippingcode());
+		mc.put("orderId",orders.getOrderid());
+		mc.put("goodsPic",orderGoods.getOriginalimg());
+		mc.put("goodsName",orderGoods.getGoodsname());
+		mc.put("goodsNum",orderGoods.getGoodsnum());
+		
+		m.put("title", orderGoods.getGoodsname());
+		m.put("notify_type", 3);
+		m.put("push_type",1);
+		m.put("content",mc);
+		
 		
 		map.put("content", m);
 		map.put("push_type", push_type);
