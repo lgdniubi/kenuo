@@ -79,6 +79,9 @@
 											<form:option value="1">首页</form:option>
 											<form:option value="2">分类</form:option>
 											<form:option value="3">我的订单</form:option>
+											<form:option value="4">商城</form:option>
+											<form:option value="5">生活美容</form:option>
+											<form:option value="6">医美</form:option>
 										</form:select>
 									</td>
 								</tr>
