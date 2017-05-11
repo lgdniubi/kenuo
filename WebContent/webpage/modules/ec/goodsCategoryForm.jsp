@@ -129,6 +129,16 @@
 						<form:input path="sort" htmlEscape="false" maxlength="50" class="form-control required" />
 					</td>
 				</tr>
+				<c:if test="${empty goodsCategory.parent.name}">
+					<tr>
+						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>位置分类:</label></td>
+						<td class="width-35">
+							<form:select path="positionType" class="form-control">
+								<form:options items="${fns:getDictList('position_type')}" itemLabel="label" itemValue="value" htmlEscape="false" cssClass="form-control"/>
+							</form:select>
+						</td>
+					</tr>
+				</c:if>
 				<tr>
 					<td class="width-15 active"><label class="pull-right">分类展示<br/>（照片）:</label></td>
 					<td class="width-35" colspan="3">

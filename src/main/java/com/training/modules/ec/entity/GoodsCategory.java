@@ -24,6 +24,7 @@ public class GoodsCategory extends TreeEntity<GoodsCategory>{
 	private String 	code;				//分类编码
 	private String 	catGroup = "0";		//分类分组默认0
 	private int     type;				//分类类型   0：普通商品分类，1：抢购商品分类
+	private String  positionType;		//位置类型（0：商城（实物）；1：生美（虚拟）；）
 	
 	private int num;					//查看是否有子类
 	
@@ -105,4 +106,11 @@ public class GoodsCategory extends TreeEntity<GoodsCategory>{
 	public void setNum(int num) {
 		this.num = num;
 	}
+	public String getPositionType() {
+		return positionType;
+	}
+	public void setPositionType(String positionType) {
+		this.positionType = positionType;
+	}
+	
 }

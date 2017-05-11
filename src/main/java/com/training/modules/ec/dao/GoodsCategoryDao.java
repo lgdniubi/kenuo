@@ -58,7 +58,6 @@ public interface GoodsCategoryDao extends TreeDao<GoodsCategory>{
 	 * @return
 	 */
 	public List<GoodsCategory> catetwolist(String id);
-	
-	
+
 	
 }
