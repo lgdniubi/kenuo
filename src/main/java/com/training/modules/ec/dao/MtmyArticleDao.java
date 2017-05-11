@@ -62,7 +62,7 @@ public interface MtmyArticleDao extends CrudDao<MtmyArticle>{
 	public List<MtmyArticle> findApplyPage(MtmyArticle mtmyArticle);
 	
     /**
-     * 更新文章的部分：排序，分类，是否置顶，是否推荐，是否显示
+     * 更新文章的部分：排序，分类，是否置顶，是否推荐，是否显示,是否头条
      * @param mtmyArticle
      */
 	public void updateForPart(MtmyArticle mtmyArticle);
@@ -102,4 +102,10 @@ public interface MtmyArticleDao extends CrudDao<MtmyArticle>{
 	 * @return
 	 */
 	public List<MtmyArticleComment> findAllArticleComment(MtmyArticleComment mtmyArticleComment);
+	
+	/**
+	 * 修改文章是否为头条
+	 * @param mtmyArticle
+	 */
+	public void updateIsTopline(MtmyArticle mtmyArticle);
 }

@@ -111,6 +111,31 @@
 				}
 			});   
 		}
+		
+		//是否头条
+		function changeTableVal(id,isTopline){
+			$(".loading").show();//打开展示层
+			$.ajax({
+				type : "POST",
+				url : "${ctx}/ec/mtmyArticleList/updateIsTopline?isTopline="+isTopline+"&id="+id,
+				dataType: 'json',
+				success: function(data) {
+					$(".loading").hide(); //关闭加载层
+					var status = data.STATUS;
+					var isTopline = data.ISTOPLINE;
+					if("OK" == status){
+						$("#isTopline"+id).html("");//清除DIV内容
+						if(isTopline == '1'){
+							$("#isTopline"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+id+"','0')\">");
+						}else if(isTopline == '0'){
+							$("#isTopline"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+id+"','1')\">");
+						}
+					}else if("ERROR" == status){
+						top.layer.alert(data.MESSAGE, {icon: 2, title:'提醒'});
+					}
+				}
+			});   
+		}
     </script>
     <title>文章管理</title>
 </head>
@@ -198,6 +223,7 @@
 	                			<th style="text-align: center;">是否显示</th>
 	                			<th style="text-align: center;">是否推荐</th>
 	                			<th style="text-align: center;">是否置顶</th>
+	                			<th style="text-align: center;">是否头条</th>
 							</c:if>
 							<c:if test="${mtmyArticle.flag != 2}">
                 				<th style="text-align: center;">操作</th>
@@ -243,6 +269,14 @@
 									</c:if>
 									<c:if test="${MtmyArticle.isTop == 0}">
 										<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('isTop','${MtmyArticle.id}','1')">
+									</c:if>
+								</td>
+								<td style="text-align: center;" id="isTopline${MtmyArticle.id}">
+									<c:if test="${MtmyArticle.isTopline == 1}">
+										<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('${MtmyArticle.id}','0')">
+									</c:if>
+									<c:if test="${MtmyArticle.isTopline == 0}">
+										<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('${MtmyArticle.id}','1')">
 									</c:if>
 								</td>
 							</c:if>

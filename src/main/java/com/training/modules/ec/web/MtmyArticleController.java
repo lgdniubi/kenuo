@@ -482,4 +482,37 @@ public class MtmyArticleController extends BaseController{
 		}
 		return "redirect:" + adminPath + "/ec/mtmyArticleList/mtmyArticleCommentList"; 
 	} 
+	
+	/**
+	 * 修改文章是否为头条
+	 * @param request
+	 * @param mtmyArticle
+	 * @return
+	 */
+	@RequestMapping(value="updateIsTopline")
+	@ResponseBody
+	public Map<String, String> updateIsTopline(HttpServletRequest request,MtmyArticle mtmyArticle) {
+		Map<String, String> jsonMap = new HashMap<String, String>();
+		try {
+			String isTopline = request.getParameter("isTopline");
+			mtmyArticle = mtmyArticleService.getArticle(mtmyArticle.getId());
+			if("0".equals(isTopline)){
+				mtmyArticle.setIsTopline(isTopline);
+				mtmyArticleService.updateIsTopline(mtmyArticle);
+				jsonMap.put("STATUS", "OK");
+				jsonMap.put("ISTOPLINE", isTopline);
+			}else if("1".equals(isTopline)){
+				mtmyArticle.setIsTopline(isTopline);
+				mtmyArticleService.updateIsTopline(mtmyArticle);
+				jsonMap.put("STATUS", "OK");
+				jsonMap.put("ISTOPLINE", isTopline);
+			}
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "修改文章是否为头条失败", e);
+			logger.error("修改文章是否为头条失败：" + e.getMessage());
+			jsonMap.put("STATUS", "ERROR");
+			jsonMap.put("MESSAGE", "修改失败,出现异常");
+		}
+		return jsonMap;
+	}
 }
