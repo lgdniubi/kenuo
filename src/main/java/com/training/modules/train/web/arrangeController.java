@@ -233,7 +233,13 @@ public class arrangeController extends BaseController{
 					if(shopId != null && !"".equals(shopId)){
 						arrangeShop.setBeauticianId(id);
 						arrangeShop.setShopId(shopId);
-						arrangeShop.setApptDate(sdf.parse(map.get("year")+"-"+map.get("month")+"-"+i));
+						int d = 1;
+						if(i%2 == 0){
+							d = i/2;
+						}else{
+							d = (i/2)+1;
+						}
+						arrangeShop.setApptDate(sdf.parse(map.get("year")+"-"+map.get("month")+"-"+d));
 						arrangeShop.setMonth(map.get("month"));
 						arrangeShop.setDay(i);
 						arrangeShop.setFlag(flag);
@@ -348,7 +354,13 @@ public class arrangeController extends BaseController{
 					if(shopId != null && !"".equals(shopId)){
 						arrangeEquipment.setEquipmentId(Integer.parseInt(id));
 						arrangeEquipment.setShopId(shopId);
-						arrangeEquipment.setApptDate(sdf.parse(map.get("year")+"-"+map.get("month")+"-"+i));
+						int d = 1;
+						if(i%2 == 0){
+							d = i/2;
+						}else{
+							d = (i/2)+1;
+						}
+						arrangeEquipment.setApptDate(sdf.parse(map.get("year")+"-"+map.get("month")+"-"+d));
 						arrangeEquipment.setMonth(map.get("month"));
 						arrangeEquipment.setDay(i);
 						arrangeEquipment.setCreateBy(currentUser);
@@ -472,7 +484,13 @@ public class arrangeController extends BaseController{
 					if(shopId != null && !"".equals(shopId)){
 						arrangeShop.setBeauticianId(id);
 						arrangeShop.setShopId(shopId);
-						arrangeShop.setApptDate(sdf.parse(map.get("year")+"-"+map.get("month")+"-"+i));
+						int d = 1;
+						if(i%2 == 0){
+							d = i/2;
+						}else{
+							d = (i/2)+1;
+						}
+						arrangeShop.setApptDate(sdf.parse(map.get("year")+"-"+map.get("month")+"-"+d));
 						arrangeShop.setMonth(map.get("month"));
 						arrangeShop.setDay(i);
 						arrangeShop.setFlag(flag);
