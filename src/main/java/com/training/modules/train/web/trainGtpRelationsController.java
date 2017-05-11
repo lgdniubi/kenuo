@@ -19,7 +19,6 @@ import com.training.common.web.BaseController;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.utils.BugLogUtils;
-import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.TrainGtpRelations;
 import com.training.modules.train.service.TrainGtpRelationsService;
 
@@ -89,25 +88,25 @@ public class trainGtpRelationsController extends BaseController{
 	 * @param redirectAttributes
 	 * @return
 	 */
+	@SuppressWarnings("null")
 	@RequiresPermissions(value = {"train:gtpRelations:report"}, logical = Logical.OR)
 	@RequestMapping(value = "report")
 	public String report(TrainGtpRelations trainGtpRelations,HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes){
 		try {
-			if(trainGtpRelations == null || trainGtpRelations.getOffice() == null || trainGtpRelations.getOffice().getId().isEmpty()){
-				trainGtpRelations.setOffice(UserUtils.getUser().getOffice());
-			}
 			List<TrainGtpRelations> list = new ArrayList<TrainGtpRelations>();
 			int totalNum = 0;
-			List<Office> office = officeService.findByPidforChild(trainGtpRelations.getOffice());	// 获取下级所有机构
-			for (int i = 0; i < office.size(); i++) {
-				TrainGtpRelations trainGtpRelation = new TrainGtpRelations();
-				trainGtpRelation.setBeginDate(trainGtpRelations.getBeginDate());
-				trainGtpRelation.setEndDate(trainGtpRelations.getEndDate());
-				trainGtpRelation.setOffice(office.get(i));
-				int num = trainGtpRelationsService.report(trainGtpRelation);
-				trainGtpRelation.setGtpNnm(num);
-				totalNum = num + totalNum;
-				list.add(trainGtpRelation);
+			if(trainGtpRelations != null || trainGtpRelations.getOffice() != null || !trainGtpRelations.getOffice().getId().isEmpty()){
+				List<Office> office = officeService.findByPidforChild(trainGtpRelations.getOffice());	// 获取下级所有机构
+				for (int i = 0; i < office.size(); i++) {
+					TrainGtpRelations trainGtpRelation = new TrainGtpRelations();
+					trainGtpRelation.setBeginDate(trainGtpRelations.getBeginDate());
+					trainGtpRelation.setEndDate(trainGtpRelations.getEndDate());
+					trainGtpRelation.setOffice(office.get(i));
+					int num = trainGtpRelationsService.report(trainGtpRelation);
+					trainGtpRelation.setGtpNnm(num);
+					totalNum = num + totalNum;
+					list.add(trainGtpRelation);
+				}
 			}
 			model.addAttribute("list", list);
 			model.addAttribute("trainGtpRelations", trainGtpRelations);

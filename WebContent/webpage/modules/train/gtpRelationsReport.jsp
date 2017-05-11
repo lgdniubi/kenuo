@@ -72,7 +72,7 @@
 					</div>
                 </div>
                 <div class="" id="reviewlists">
-                	<font color="red" size="3" style="font-weight:bold;">${trainGtpRelations.office.name}邀请总人数:${totalNum }人&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                	<font color="red" size="3" style="font-weight:bold;"><c:if test="${not empty trainGtpRelations.office.name}">${trainGtpRelations.office.name}邀请总人数:${totalNum }人</c:if>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 		<c:choose>
                 			<c:when test="${not empty trainGtpRelations.beginDate and not empty trainGtpRelations.endDate}">
                 				<fmt:formatDate value="${trainGtpRelations.beginDate}" pattern="yyyy-MM-dd"/>至<fmt:formatDate value="${trainGtpRelations.endDate}" pattern="yyyy-MM-dd"/>

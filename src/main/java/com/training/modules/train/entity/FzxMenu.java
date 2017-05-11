@@ -18,7 +18,7 @@ public class FzxMenu extends DataEntity<FzxMenu> {
 	private String enname;	//英文名称
 	private String href;	//链接
 	private String icon;	//图标
-	private char isShow;	//是否在菜单中显示（0：显示；1：隐藏；）
+	private int isShow;	//是否在菜单中显示（0：显示；1：隐藏；）
 	private int sort;		//排序
 	public int getMenuId() {
 		return menuId;
@@ -50,10 +50,10 @@ public class FzxMenu extends DataEntity<FzxMenu> {
 	public void setIcon(String icon) {
 		this.icon = icon;
 	}
-	public char getIsShow() {
+	public int getIsShow() {
 		return isShow;
 	}
-	public void setIsShow(char isShow) {
+	public void setIsShow(int isShow) {
 		this.isShow = isShow;
 	}
 	public int getSort() {

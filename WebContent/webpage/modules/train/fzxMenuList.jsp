@@ -84,7 +84,10 @@
 								  	<td>${list.name }</td>
 								  	<td>${list.enname }</td>
 								  	<td class="imgUrl"><img alt="" src="${ctxStatic}/images/lazylode.png" data-src="${list.icon }" style="max-width: 100px;max-height: 100px;"></td>
-								  	<td>${list.isShow }</td>
+								  	<td>
+								  		<c:if test="${list.isShow == 0}">显示</c:if>
+								  		<c:if test="${list.isShow == 1}">隐藏</c:if>
+								  	</td>
 								  	<td>${list.sort }</td>
 								    <td>
 							    		<shiro:hasPermission name="train:fzxMenu:view">
