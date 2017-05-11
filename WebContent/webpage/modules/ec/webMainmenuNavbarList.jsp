@@ -68,10 +68,6 @@
                 			<th style="text-align: center;">名称</th>
                 			<th style="text-align: center;">图片</th>
                 			<th style="text-align: center;">类型</th>
-                			<th style="text-align: center;">创建者</th>
-                			<th style="text-align: center;">创建时间</th>
-                			<th style="text-align: center;">更新者</th>
-                			<th style="text-align: center;">更新时间</th>
                 			<th style="text-align: center;">状态</th>
                 			<th style="text-align: center;">操作</th>
                 		</tr>
@@ -93,14 +89,6 @@
 									生活美容
 								</c:if>
 							</td>
-							<td style="text-align: center;">${webMainmenuNavbar.createBy.id}</td>
-							<td style="text-align: center;">
-								<fmt:formatDate value="${webMainmenuNavbar.createDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
-							</td>	
-							<td style="text-align: center;">${webMainmenuNavbar.updateBy.id}</td>
-							<td style="text-align: center;">
-								<fmt:formatDate value="${webMainmenuNavbar.updateDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
-							</td>	
 							<td style="text-align: center;" id="${webMainmenuNavbar.webMainmenuNavbarId}">
 								<shiro:hasPermission name="ec:webMainmenuNavbar:update">
 									<c:if test="${webMainmenuNavbar.isShou == '1'}">
