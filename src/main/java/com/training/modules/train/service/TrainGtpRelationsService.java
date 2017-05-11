@@ -52,4 +52,13 @@ public class TrainGtpRelationsService extends CrudService<TrainGtpRelationsDao, 
 		trainGtpRelations.getSqlMap().put("dsf", dataScopeFilter(trainGtpRelations.getCurrentUser(),"c"));
 		return dao.report(trainGtpRelations);
 	}
+	/**
+	 * 邀请总数
+	 * @param office
+	 * @return
+	 */
+	public int reportOffice(TrainGtpRelations trainGtpRelations){
+		trainGtpRelations.getSqlMap().put("dsf", dataScopeFilter(trainGtpRelations.getCurrentUser(),"c"));
+		return dao.reportOffice(trainGtpRelations);
+	}
 }

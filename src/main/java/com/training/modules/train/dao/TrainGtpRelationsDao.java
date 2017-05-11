@@ -19,4 +19,10 @@ public interface TrainGtpRelationsDao extends CrudDao<TrainGtpRelations>{
 	 * @return
 	 */
 	public int report(TrainGtpRelations trainGtpRelations);
+	/**
+	 * 邀请总数
+	 * @param office
+	 * @return
+	 */
+	public int reportOffice(TrainGtpRelations trainGtpRelations);
 }

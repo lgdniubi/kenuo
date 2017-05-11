@@ -16,7 +16,7 @@
 			    event: 'focus',
 			    max: $("#endDate").val(),   //最大日期
 			    istime: false,				//是否显示时间
-			    isclear: false,				//是否显示清除
+			    isclear: true,				//是否显示清除
 			    istoday: false,				//是否显示今天
 			    issure: false,				//是否显示确定
 			    festival: true,				//是否显示节日
@@ -31,7 +31,7 @@
 			    event: 'focus',
 			    min: $("#beginDate").val(),
 			    istime: false,
-			    isclear: false,
+			    isclear: true,
 			    istoday: false,
 			    issure: false,
 			    festival: true,
@@ -72,7 +72,8 @@
 					</div>
                 </div>
                 <div class="" id="reviewlists">
-                	<font color="red" size="3" style="font-weight:bold;"><c:if test="${not empty trainGtpRelations.office.name}">${trainGtpRelations.office.name}邀请总人数:${totalNum }人</c:if>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                	<c:if test="${not empty trainGtpRelations.office.name}">
+                		<font color="red" size="3" style="font-weight:bold;">${trainGtpRelations.office.name}邀请总人数:${totalNum }人&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 		<c:choose>
                 			<c:when test="${not empty trainGtpRelations.beginDate and not empty trainGtpRelations.endDate}">
                 				<fmt:formatDate value="${trainGtpRelations.beginDate}" pattern="yyyy-MM-dd"/>至<fmt:formatDate value="${trainGtpRelations.endDate}" pattern="yyyy-MM-dd"/>
@@ -84,11 +85,11 @@
                 				截止<fmt:formatDate value="${trainGtpRelations.endDate}" pattern="yyyy-MM-dd"/>
                 			</c:when>
                 		</c:choose>
-                	</font>
+	                	</font>
+                	</c:if>
 					<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 						<thead>
 							<tr>
-								<th style="text-align: center;">编码</th>
 							    <th style="text-align: center;">所属机构</th>
 							    <th style="text-align: center;">邀请注册总人数</th>
 							</tr>
@@ -96,8 +97,7 @@
 						<tbody style="text-align: center;">
 							<c:forEach items="${list}" var="list" varStatus="status">
 								<tr>
-								  	<td>${status.index + 1 }</td>
-								  	<td>${list.office.name }</td>
+								  	<td>${list.office.name }<c:if test="${status.index == 0 }"><font color="red" style="font-weight:bold;">(不含下级机构)</font></c:if></td>
 								  	<td>${list.gtpNnm }</td>
 								</tr>
 							</c:forEach>
