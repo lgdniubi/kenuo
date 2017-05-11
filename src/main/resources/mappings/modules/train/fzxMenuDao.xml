@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.FzxMenuDao">
+	<!-- 菜单列表 -->
+	<select id="findList" resultType="FzxMenu">
+		SELECT 
+			id AS menuId,
+			name,
+			enname,
+			icon,
+			is_show AS isShow,
+			sort 
+		FROM 
+			fzx_menu 
+		WHERE 
+			del_flag = 0 
+			<if test="name != null and name != ''">
+				AND name like 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+			</if>
+			ORDER BY sort DESC
+	</select>
+	<!-- 查询所有菜单(未删除、显示) -->
+	<select id="findAllList" resultType="FzxMenu">
+		SELECT 
+			id AS menuId,
+			name
+		FROM 
+			fzx_menu 
+		WHERE 
+			del_flag = 0 
+			AND is_show = 0
+			ORDER BY sort DESC
+	</select>
+	<!-- 菜单详情 -->
+	<select id="get" resultType="FzxMenu">
+		SELECT id AS menuId,name,enname,href,icon,is_show AS isShow,sort,remarks FROM fzx_menu WHERE id = #{menuId}
+	</select>
+	<!-- 插入菜单 -->
+	<insert id="insert">
+		INSERT INTO fzx_menu(
+			parent_id, 
+			parent_ids, 
+			enname, 
+			name, 
+			href,
+			icon,
+			is_show,
+			sort, 
+			create_by,
+			create_date, 
+			remarks,
+			del_flag
+		) VALUES (
+			0,
+			'0,',
+			#{enname},
+			#{name},
+			#{href},
+			#{icon},
+			#{isShow},
+			#{sort},
+			#{createBy.id}, 
+			#{createDate}, 
+			#{remarks}, 
+			#{delFlag}
+		)
+	</insert>
+	<!-- 修改菜单 -->
+	<update id="update">
+		UPDATE fzx_menu SET 
+			enname = #{enname}, 
+			name = #{name}, 
+			href = #{href}, 
+			icon = #{icon}, 
+			is_show = #{isShow}, 
+			sort = #{sort},
+			update_by = #{updateBy.id}, 
+			update_date = #{updateDate}, 
+			remarks = #{remarks},
+			del_flag = 0
+		WHERE id = #{menuId}
+	</update>
+	<!-- 逻辑删除菜单 -->
+	<update id="deleteByLogic">
+		UPDATE fzx_menu SET del_flag = 1 WHERE id = #{menuId}
+	</update>
+	<delete id="deleteRoleMenu">
+		DELETE FROM fzx_role_menu WHERE fzx_menu_id = #{menuId}
+	</delete>
+</mapper>

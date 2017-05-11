@@ -21,6 +21,7 @@ import com.training.common.persistence.DataEntity;
 import com.training.common.supcan.annotation.treelist.cols.SupCol;
 import com.training.common.utils.Collections3;
 import com.training.common.utils.excel.annotation.ExcelField;
+import com.training.modules.train.entity.FzxRole;
 //import com.training.common.utils.excel.fieldtype.RoleListType;
 
 /**
@@ -89,7 +90,7 @@ public class User extends DataEntity<User> {
 	public static final String DATA_SCOPE_OFFICE_AND_CHILD = "1";
 	public static final String DATA_SCOPE_CUSTOM = "2";
 	
-	
+	private FzxRole fzxRole; 	//妃子校菜单
 	
 	
 	public int getUserLevel() {
@@ -568,6 +569,10 @@ public class User extends DataEntity<User> {
 	public void setLayer(String layer) {
 		this.layer = layer;
 	}
-	
-	
+	public FzxRole getFzxRole() {
+		return fzxRole;
+	}
+	public void setFzxRole(FzxRole fzxRole) {
+		this.fzxRole = fzxRole;
+	}
 }
