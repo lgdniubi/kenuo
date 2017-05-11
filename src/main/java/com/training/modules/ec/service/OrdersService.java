@@ -119,6 +119,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @return
 	 */
 	public Page<Orders> findOrders(Page<Orders> page, Orders orders) {
+		if(orders.getBegtime() == null && orders.getEndtime() == null){
+			orders.setBegtime(new Date());
+			orders.setEndtime(new Date());
+		}
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
 		//orders.getSqlMap().put("dsf", dataScopeFilter(orders.getCurrentUser(), "o", "a"));
 		orders.getSqlMap().put("dsf",ScopeUtils.dataScopeFilter("a", "orderOrRet"));
@@ -136,6 +140,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @return
 	 */
 	public Page<Orders> newFindOrders(Page<Orders> page, Orders orders) {
+		if(orders.getBegtime() == null && orders.getEndtime() == null){
+			orders.setBegtime(new Date());
+			orders.setEndtime(new Date());
+		}
 		// 设置分页参数
 		orders.setPage(page);
 		// 执行分页查询
