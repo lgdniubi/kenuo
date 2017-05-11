@@ -148,10 +148,10 @@
                 			<th style="text-align: center;">ID</th>
                 			<th style="text-align: center;">供应商名称</th>
                 			<th style="text-align: center;">供应商状态</th>
-                			<th style="text-align: center;">创建人</th>
+                			<!-- <th style="text-align: center;">创建人</th>
                 			<th style="text-align: center;">创建时间</th>
                 			<th style="text-align: center;">修改人</th>
-                			<th style="text-align: center;">修改时间</th>
+                			<th style="text-align: center;">修改时间</th> -->
                 			<th style="text-align: center;">操作</th>
                 		</tr>
                 	</thead>
@@ -170,14 +170,14 @@
 									</c:if>
 								</shiro:hasPermission>
 							</td>
-							<td style="text-align: center;">${goodsSupplier.createBy.id}</td>
+							<%-- <td style="text-align: center;">${goodsSupplier.createBy.id}</td>
 							<td style="text-align: center;">
 								<fmt:formatDate value="${goodsSupplier.createDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
 							</td>	
 							<td style="text-align: center;">${goodsSupplier.updateBy.id}</td>
 							<td style="text-align: center;">
 								<fmt:formatDate value="${goodsSupplier.updateDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
-							</td>	
+							</td>	 --%>
 							<td style="text-align: center;">
 								<shiro:hasPermission name="ec:goodsSupplier:view">
 									<a href="#" onclick="openDialogView('查看', '${ctx}/ec/goodsSupplier/form?goodsSupplierId=${goodsSupplier.goodsSupplierId}','600px', '550px')" class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i> 查看</a>
