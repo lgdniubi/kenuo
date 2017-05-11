@@ -317,6 +317,13 @@
 										</div>
 									</li>
 									<li class="form-group">
+										<span class="control-label col-sm-2"><font color="red">*</font>所属供应商：</span>
+										<div style="width: 40%;padding-left: 150px;">
+										<sys:treeselect id="supplierId" name="supplierId" value="${goods.supplierId}" labelName="supplierName" labelValue="${goods.supplierName}" 
+	 											title="供应商" url="/ec/goodsSupplier/treeData" cssClass="form-control required" allowClear="true" notAllowSelectParent="true"/> 
+										</div>
+					                </li>
+									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>商品分类：</span>
 										<div style="width: 40%;padding-left: 150px;">
 						                    <sys:treeselect id="goodsCategoryId" name="goodsCategoryId" value="${goods.goodsCategoryId}" 

@@ -78,6 +78,8 @@ public class Goods extends DataEntity<Goods> {
 	
 	private double advancePrice;	// 预约金
 	private int goodsType;			// 商品区分(0: 老商品 1: 新商品)
+	private int supplierId;		//供应商id
+	private String supplierName;//供应商name
 	
 	private int subId;           //主题图中商品对应的主题图id
 	/**
@@ -413,6 +415,18 @@ public class Goods extends DataEntity<Goods> {
 	}
 	public void setGoodsType(int goodsType) {
 		this.goodsType = goodsType;
+	}
+	public int getSupplierId() {
+		return supplierId;
+	}
+	public void setSupplierId(int supplierId) {
+		this.supplierId = supplierId;
+	}
+	public String getSupplierName() {
+		return supplierName;
+	}
+	public void setSupplierName(String supplierName) {
+		this.supplierName = supplierName;
 	}
 	
 }

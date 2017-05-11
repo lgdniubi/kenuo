@@ -45,7 +45,8 @@
 		  g.action_id AS 'actionId',
 		  g.service_min AS 'serviceMin',
 		  g.goods_type AS 'goodsType',
-		  g.advance_price AS 'advancePrice'
+		  g.advance_price AS 'advancePrice',
+		  g.supplier_id AS 'supplierId'
 	</sql>
 	
 	<sql id="goodsJoins">
@@ -115,10 +116,12 @@
 	<!-- 根据商品id，查询商品信息 -->
 	<select id="get" resultType="Goods">
 		SELECT 
-		  <include refid="goodsColumns"/>
+		  <include refid="goodsColumns"/>,
+		  s.name AS supplierName
 		FROM
 		  mtmydb.mtmy_goods g
 		  <include refid="goodsJoins"/> 
+		  LEFT JOIN mtmydb.mtmy_goods_supplier s ON g.supplier_id = s.id
 		WHERE g.del_flag = 0 
 		  AND g.goods_id = #{goodsId} 
 	</select>
@@ -266,7 +269,8 @@
 		  on_time,
 		  last_update,
 		  goods_type,
-		  advance_price
+		  advance_price,
+		  supplier_id
 		) 
 		VALUES
 		  ( #{goodsCategoryId},
@@ -306,11 +310,12 @@
 		    SYSDATE(),
 		    #{goodsType},
 		    <if test="isReal != 1">
-		    	0
+		    	0,
 		    </if>
 		    <if test="isReal == 1">
-		    	#{advancePrice}
+		    	#{advancePrice},
 		    </if>
+		    #{supplierId}
 		  )
 	</insert>
 	
@@ -353,11 +358,12 @@
 			  last_update = SYSDATE(),
 			  goods_type = #{goodsType},
 			  <if test="isReal != 1">
-				advance_price = 0
+				advance_price = 0,
 			  </if>
 			  <if test="isReal == 1">
-		    	advance_price = #{advancePrice}
+		    	advance_price = #{advancePrice},
 			  </if>
+			  supplier_id = #{supplierId}
 			WHERE del_flag = 0 AND goods_id = #{goodsId}
 	</update>
 	<update id="updateTotalstore">
@@ -425,9 +431,12 @@
              price,
              market_price,
              cost_price,
+             cargo_price,
+             purchase_price,
              store_count,
              bar_code,
              goods_no,
+             suplier_goods_no,
              goods_weight,
              service_times,
              expiring_date)
@@ -439,9 +448,12 @@
 					#{goodsSpecPrice.price}, 
 					#{goodsSpecPrice.marketPrice}, 
 					#{goodsSpecPrice.costPrice}, 
+					#{goodsSpecPrice.cargoPrice}, 
+					#{goodsSpecPrice.purchasePrice}, 
 					#{goodsSpecPrice.storeCount}, 
 					#{goodsSpecPrice.barCode}, 
 					#{goodsSpecPrice.goodsNo},
+					#{goodsSpecPrice.suplierGoodsNo},
 					#{goodsSpecPrice.goodsWeight},
 					#{goodsSpecPrice.serviceTimes},
 					#{goodsSpecPrice.expiringDate}
@@ -531,9 +543,12 @@
 		  price,
 		  market_price AS 'marketPrice',
 		  cost_price AS 'costPrice',
+		  cargo_price AS cargoPrice,
+		  purchase_price AS purchasePrice,
 		  store_count AS 'storeCount',
 		  bar_code AS 'barCode',
 		  goods_no AS 'goodsNo',
+		  suplier_goods_no AS 'suplierGoodsNo',
 		  service_times AS 'serviceTimes',
 		  expiring_date AS 'expiringDate',
 		  goods_weight  AS 'goodsWeight'
@@ -551,9 +566,12 @@
 		  price,
 		  market_price AS 'marketPrice',
 		  cost_price AS 'costPrice',
+		  cargo_price AS cargoPrice,
+		  purchase_price AS purchasePrice,
 		  store_count AS 'storeCount',
 		  bar_code AS 'barCode',
 		  goods_no AS 'goodsNo',
+		  suplier_goods_no AS 'suplierGoodsNo',
 		  service_times AS 'serviceTimes',
 		  expiring_date AS 'expiringDate',
 		  goods_weight  AS 'goodsWeight'
@@ -571,10 +589,13 @@
 			 price = #{price},
 			 bar_code = #{barCode},
 			 goods_no = #{goodsNo},
+			 suplier_goods_no = #{suplierGoodsNo},
 			 service_times = #{serviceTimes},
 			 expiring_date = #{expiringDate},
 			 cost_price = #{costPrice},
 			 market_price = #{marketPrice},
+			 cargo_price = #{cargoPrice},
+			 purchase_price = #{purchasePrice},
 			 goods_weight  = #{goodsWeight}
 		WHERE spec_key = #{specKey}
 		AND goods_id = #{goodsId}
