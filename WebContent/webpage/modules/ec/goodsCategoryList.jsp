@@ -175,7 +175,7 @@
 											<a href="#" onclick="openDialogView('查看商品分类', '${ctx}/ec/goodscategory/form?id=${goodsCategory.id}&opflag=VIEW','800px', '500px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>
 										</shiro:hasPermission>
 										<shiro:hasPermission name="ec:goodscategory:edit">
-				    						<a href="#" onclick="openDialog('修改商品分类', '${ctx}/ec/goodscategory/form?id=${goodsCategory.id}&opflag=UPDATE','800px', '500px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
+				    						<a href="#" onclick="openDialog('修改商品分类', '${ctx}/ec/goodscategory/form?id=${goodsCategory.id}&positionType=${goodsCategory.positionType}&opflag=UPDATE','800px', '500px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 					    				</shiro:hasPermission>
 					    				<shiro:hasPermission name="ec:goodscategory:del">
 											<a href="${ctx}/ec/goodscategory/delete?id=${goodsCategory.id}" onclick="return confirmx('要删除该分类及所有子分类项吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>

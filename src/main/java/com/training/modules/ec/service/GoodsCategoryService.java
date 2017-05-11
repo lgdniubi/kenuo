@@ -72,17 +72,54 @@ public class GoodsCategoryService extends TreeService<GoodsCategoryDao,GoodsCate
 	 * @return
 	 */
 	public int updateGoodsCategory(GoodsCategory goodsCategory){
-		int result = goodsCategoryDao.update(goodsCategory);
-		if(1 == result){
-			return 1;
+		//先判断位置类型是否变化position_type0：商城（实物）；1：生美（虚拟）
+		GoodsCategory gc = goodsCategoryDao.get(goodsCategory);
+		if(goodsCategory.getPositionType().equals(gc.getPositionType())){
+			int result = goodsCategoryDao.update(goodsCategory);
+			if(1 == result){
+				return 1;
+			}else{
+				try {
+					throw new Exception("修改失败");
+				} catch (Exception e) {
+					
+				}
+			}
+			return result;
 		}else{
-			try {
-				throw new Exception("修改失败");
-			} catch (Exception e) {
-				
+			//判断是否存在子集数据
+			List<GoodsCategory> goodsCategoryList = goodsCategoryDao.queryCategory(goodsCategory);
+			if(goodsCategoryList.size() == 0 ){
+				int result = goodsCategoryDao.update(goodsCategory);
+				if(1 == result){
+					return 1;
+				}else{
+					try {
+						throw new Exception("修改失败");
+					} catch (Exception e) {
+						
+					}
+				}
+				return result;
+			}else{
+				//循环修改子集的位置类型
+				for (GoodsCategory goodsC : goodsCategoryList) {
+					goodsC.setPositionType(goodsCategory.getPositionType());
+					goodsCategoryDao.update(goodsC);
+				}
+				int result = goodsCategoryDao.update(goodsCategory);
+				if(1 == result){
+					return 1;
+				}else{
+					try {
+						throw new Exception("修改失败");
+					} catch (Exception e) {
+						
+					}
+				}
+				return result;
 			}
 		}
-		return result;
 	}
 	
 	/**

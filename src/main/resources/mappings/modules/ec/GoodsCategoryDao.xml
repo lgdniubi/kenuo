@@ -17,6 +17,7 @@
 		  c.sort,
 		  c.level,
 		  c.cat_group AS 'catGroup',
+		  c.position_type AS 'positionType',
 		  c.type
 	</sql>
 	
@@ -40,6 +41,7 @@
 		  m.sort,
 		  m.level,
 		  m.cat_group AS 'catGroup',
+		  m.position_type AS 'positionType',
 		  m.type,
 		  (SELECT COUNT(*) FROM mtmydb.mtmy_goods_category AS c WHERE m.category_id = c.parent_id AND c.del_flag = 0 ) AS 'num'
 		FROM
@@ -167,6 +169,7 @@
 		  code = #{code},
 		  is_hot = #{isHot},
 		  image = #{image},
+		  position_type = #{positionType},
 		  type = #{type}
 		WHERE category_id = #{id}
 	</insert>
