@@ -452,7 +452,7 @@
 		         </td> --%>
 		         <td class="active"><label class="pull-right"><font color="red"></font>用户角色:</label></td>
 		         <td>
-		         	<c:if test="${empty user.id}">默认为美容师<input id="roleIdList" name="roleIdList" value="${role.id }" type="hidden"></c:if>
+		         	<c:if test="${empty user.id}">默认为美容师，排班<input id="roleIdList" name="roleIdList" value="${role.id }" type="hidden"></c:if>
 		         	${user.roleNames}
 		         </td>
 		      </tr>
