@@ -38,6 +38,10 @@ public interface EntryMapper {
 
 	public void SyncIntegrals(@Param("mtmy_id")String mtmy_id, @Param("integral")String integral);
 
+	public void updateauditstatus(@Param("auditid") int auditid);
+
+	
+
 
 	
 }

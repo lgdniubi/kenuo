@@ -135,9 +135,9 @@ public class LiveAudit extends CommonService{
 			
 			
 			/**
-			 * 1.扫面审核通过且没开直播的数据
-			 * 2.扫面打开直播间没有正常关闭的数据
-			 * 3.扫面直播的线下支付是否过期
+			 * 1.扫描审核通过且没开直播的数据
+			 * 2.扫描打开直播间没有正常关闭的数据
+			 * 3.扫描直播的线下支付是否过期
 			 * @author fengfeng
 			 * @version 2017年2月23日
 			 */
@@ -163,7 +163,7 @@ public class LiveAudit extends CommonService{
 
 			List<rooms> recommendArr = null;
 			//判断roomid是否为空值
-			if (roomids != "") {
+			if (roomids != ""){
 				//截取最后一个逗号
 				roomids = roomids.substring(0, roomids.length() - 1);
 				//请求CC接口，参数roomid
@@ -183,13 +183,15 @@ public class LiveAudit extends CommonService{
 							// auditid = auditid +
 							// noticelives.get(h).getAuditid() + ",";
 							//获取直播间处于关闭状态的直播
-							auditid.add(noticelives.get(h));
+							//auditid.add(noticelives.get(h));
+							entryService.updateauditstatus(noticelives.get(h).getAuditid());
 						}
 					}
 				}
 			}
+			
 			//循环直播间处于关闭状态的直播
-			for (int i = 0; i < auditid.size(); i++) {
+			/*for (int i = 0; i < auditid.size(); i++) {
 				//判断直播间是否超时
 				int count = entryService.queryCount(open_live_expiration_time,auditid.get(i).getAuditid());
 				//直播间超时将去请求CC接口查看是否有回放
@@ -240,8 +242,8 @@ public class LiveAudit extends CommonService{
 						// entryService.liveendtime(auditids);
 					}
 				}
-			}
-			//扫面线下支付表，将过期的数据作废
+			}*/
+			//扫描线下支付表，将过期的数据作废
 			entryService.operatebackrecord();
 
 			
