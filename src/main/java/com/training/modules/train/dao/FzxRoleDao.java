@@ -75,4 +75,10 @@ public interface FzxRoleDao extends CrudDao<FzxRole>{
 	 * @param fzxRoleId
 	 */
 	public void outUserInRole(@Param(value="userId")String userId,@Param(value="fzxRoleId")int fzxRoleId);
+	/**
+	 * 查询角色下所有用户
+	 * @param roleId
+	 * @return
+	 */
+	public List<User> findRoleUserAllList(int roleId);
 }

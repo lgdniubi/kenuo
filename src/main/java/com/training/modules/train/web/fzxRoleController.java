@@ -20,6 +20,7 @@ import com.google.common.collect.Maps;
 import com.training.common.persistence.Page;
 import com.training.common.utils.Collections3;
 import com.training.common.web.BaseController;
+import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.service.SystemService;
@@ -50,6 +51,8 @@ public class fzxRoleController extends BaseController{
 	private SystemService systemService;
 	@Autowired
 	private OfficeService officeService;
+	@Autowired
+	private RedisClientTemplate redisClientTemplate;		//redis缓存Service
 	
 	/**
 	 * 妃子校角色list
@@ -136,8 +139,12 @@ public class fzxRoleController extends BaseController{
 	@RequestMapping(value = "delete")
 	public String delete(Model model,FzxRole fzxRole,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
+			List<User> list = fzxRoleService.findRoleUserAllList(fzxRole.getRoleId());	// 查询角色下所有用户
 			fzxRoleService.delete(fzxRole);
 			fzxRoleService.deleteUserRoleForRoleId(fzxRole.getRoleId());
+			for (int i = 0; i < list.size(); i++) {
+				redisClientTemplate.del("UTOKEN_"+list.get(i).getId());
+			}
 			addMessage(redirectAttributes, "删除角色成功!");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "删除妃子校角色", e);
@@ -312,6 +319,7 @@ public class fzxRoleController extends BaseController{
 				User user =  systemService.getUser(idsArr[i]);
 				FzxRole f = fzxRoleService.findUserFzxRole(idsArr[i]);
 				if(user != null && (f == null || (!f.getFzxRoleIds().contains(String.valueOf(fzxRole.getRoleId()))))){
+					redisClientTemplate.del("UTOKEN_"+idsArr[i]);
 					FzxRole newFzxRole = new FzxRole();
 					newFzxRole.setRoleId(fzxRole.getRoleId());
 					newFzxRole.setId(idsArr[i]);

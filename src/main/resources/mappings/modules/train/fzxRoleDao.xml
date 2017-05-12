@@ -123,4 +123,12 @@
 	<delete id="outUserInRole">
 		DELETE FROM fzx_user_role WHERE fzx_role_id = #{fzxRoleId} AND user_id = #{userId}
 	</delete>
+	<select id="findRoleUserAllList" resultType="User">
+		SELECT
+			r.user_id AS id
+		FROM
+			fzx_user_role r
+			WHERE 1 = 1
+			AND r.fzx_role_id = #{roleId}
+	</select>
 </mapper>

@@ -145,11 +145,20 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 		return dao.findRoleUser(user);
 	}
 	/**
+	 * 查询角色下所有用户
+	 * @param fzxRole
+	 * @return
+	 */
+	public List<User> findRoleUserAllList(int roleId){
+		return dao.findRoleUserAllList(roleId);
+	}
+	/**
 	 * 从角色中移除用户
 	 * @param userId
 	 * @param fzxRoleId
 	 */
 	public void outUserInRole(String userId,int fzxRoleId){
+		redisClientTemplate.del("UTOKEN_"+userId);
 		dao.outUserInRole(userId, fzxRoleId);
 	}
 }

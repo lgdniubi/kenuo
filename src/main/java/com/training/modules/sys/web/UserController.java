@@ -70,6 +70,7 @@ import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.tools.utils.TwoDimensionCode;
 import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.TrainRuleParam;
+import com.training.modules.train.service.FzxRoleService;
 
 import net.sf.json.JSONObject;
 
@@ -104,6 +105,8 @@ public class UserController extends BaseController {
 	private RedisClientTemplate redisClientTemplate;		//redis缓存Service
 	@Autowired
 	private SpecBeauticianDao specBeauticianDao;	//特殊美容师
+	@Autowired
+	private FzxRoleService fzxRoleService;
 	
 	@ModelAttribute
 	public User get(@RequestParam(required = false) String id) {
@@ -425,6 +428,7 @@ public class UserController extends BaseController {
 		model.addAttribute("isSpecBeautician", systemService.selectSpecBeautician(user.getId()));	
 		model.addAttribute("user", user);
 		model.addAttribute("officeList", officeService.findAll());
+		model.addAttribute("fzxRole", fzxRoleService.findUserFzxRole(user.getId()));
 		return "modules/sys/userAuth";
 	}
 	/**
@@ -437,9 +441,10 @@ public class UserController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "saveAuth")
-	public String saveAuth(User user,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,Model model){
+	public String saveAuth(User user,String oldFzxRoleIds,String fzxRoleIds,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,Model model){
 		try {
 			
+			fzxRoleService.updateUserRole(user.getId(),oldFzxRoleIds,fzxRoleIds);
 			// 角色数据有效性验证，过滤不在授权内的角色
 			List<Role> roleList = Lists.newArrayList();
 			List<String> roleIdList = user.getRoleIdList();
