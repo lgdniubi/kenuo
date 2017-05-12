@@ -161,4 +161,12 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 		redisClientTemplate.del("UTOKEN_"+userId);
 		dao.outUserInRole(userId, fzxRoleId);
 	}
+	/**
+	 * 验证英文名称是否有效
+	 * @param enname
+	 * @return
+	 */
+	public int checkEnname(String enname){
+		return dao.checkEnname(enname);
+	}
 }

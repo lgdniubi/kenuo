@@ -127,6 +127,23 @@ public class fzxRoleController extends BaseController{
 	}
 	
 	/**
+	 * 验证英文名称是否有效
+	 * 
+	 * @param oldLoginName
+	 * @param loginName
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "checkEnname")
+	public String checkEnname(String oldEnname, String enname) {
+		if (enname != null && enname.equals(oldEnname)) {
+			return "true";
+		} else if (enname != null &&  fzxRoleService.checkEnname(enname) == 0) {
+			return "true";
+		}
+		return "false";
+	}
+	/**
 	 * 删除角色
 	 * @param model
 	 * @param fzxRole

@@ -131,4 +131,8 @@
 			WHERE 1 = 1
 			AND r.fzx_role_id = #{roleId}
 	</select>
+	<!-- 验证英文名称是否有效 -->
+	<select id="checkEnname" resultType="int">
+		SELECT COUNT(1) FROM fzx_role WHERE enname = #{enname} AND del_flag = 0
+	</select>
 </mapper>

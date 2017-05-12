@@ -81,4 +81,11 @@ public interface FzxRoleDao extends CrudDao<FzxRole>{
 	 * @return
 	 */
 	public List<User> findRoleUserAllList(int roleId);
+	
+	/**
+	 * 验证英文名称是否有效
+	 * @param enname
+	 * @return
+	 */
+	public int checkEnname(String enname);
 }

@@ -23,6 +23,18 @@
 		}
 		$(document).ready(function(){
 			validateForm = $("#inputForm").validate({
+				rules: {
+					enname:{
+						remote:{
+							type: "post",
+							async: false,
+							url: "${ctx}/train/fzxRole/checkEnname?oldEnname=" + encodeURIComponent('${fzxRole.enname}')
+						}
+					}
+				},
+				messages:{
+					enname:{remote:"英文名称已存在"}
+				},
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
 					form.submit();
