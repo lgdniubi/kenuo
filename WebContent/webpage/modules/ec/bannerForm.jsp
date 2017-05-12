@@ -76,12 +76,7 @@
 									<td><label class="pull-right"><font color="red">*</font>位置类型：</label></td>
 									<td>
 										<form:select path="bannerType" class="form-control">
-											<form:option value="1">首页</form:option>
-											<form:option value="2">分类</form:option>
-											<form:option value="3">我的订单</form:option>
-											<form:option value="4">商城</form:option>
-											<form:option value="5">生活美容</form:option>
-											<form:option value="6">医美</form:option>
+											<form:options items="${fns:getDictList('bannerType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 										</form:select>
 									</td>
 								</tr>
