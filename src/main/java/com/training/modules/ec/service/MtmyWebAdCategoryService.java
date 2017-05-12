@@ -45,6 +45,7 @@ public class MtmyWebAdCategoryService extends CrudService<MtmyWebAdCategoryDao,M
 			mtmyWebAdCategory.setParentId("0");
 			mtmyWebAdCategory.setParentIds("0");
 			mtmyWebAdCategory.setLevel(1);
+			mtmyWebAdCategory.setPositionType("0");
 		}else{
 			mtmyWebAdCategory.setParentIds(mtmyWebAdCategoryDao.getMtmyWebAdCategory(Integer.valueOf(mtmyWebAdCategory.getParentId())).getParentIds()+","+ mtmyWebAdCategory.getParentId()); 
 			mtmyWebAdCategory.setLevel(mtmyWebAdCategoryDao.getMtmyWebAdCategory(Integer.valueOf(mtmyWebAdCategory.getParentId())).getLevel() + 1);
@@ -57,6 +58,9 @@ public class MtmyWebAdCategoryService extends CrudService<MtmyWebAdCategoryDao,M
 	 * @param mtmyWebAdCategory
 	 */
 	public void updateMtmyWebAdCategory(MtmyWebAdCategory mtmyWebAdCategory){
+		if("0".equals(mtmyWebAdCategory.getParentId())){
+			mtmyWebAdCategory.setPositionType("0");
+		}
 		User user = UserUtils.getUser();
 		mtmyWebAdCategory.setUpdateBy(user);
 		mtmyWebAdCategoryDao.updateMtmyWebAdCategory(mtmyWebAdCategory);

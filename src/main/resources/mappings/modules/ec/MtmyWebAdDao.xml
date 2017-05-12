@@ -166,20 +166,4 @@
 		WHERE ad_id IN(SELECT id FROM mtmydb.mtmy_web_ad WHERE category_id IN(SELECT id FROM mtmydb.mtmy_web_ad_category WHERE parent_ids LIKE CONCAT('%', #{categoryId}, '%') OR parent_id = #{categoryId}))
 	</delete>
 	
-	<!-- 修改当前页面上所有组的状态 -->
-	<update id="changAllIsShow">
-		UPDATE mtmydb.mtmy_web_ad
-		SET is_show = '1'
-		WHERE category_id = #{categoryId}
-		AND align = #{align}
-	</update>
-	
-	<!-- 查询出最近创建的那一组的id -->
-	<select id="selectIdByCreateDate" resultType="Integer">
-		SELECT id AS mtmyWebAdId
-		FROM mtmydb.mtmy_web_ad
-		WHERE category_id = #{categoryId}
-		AND align = #{align}
-		ORDER BY create_date desc LIMIT 1
-	</select>
 </mapper>

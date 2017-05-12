@@ -32,6 +32,30 @@
 			
 		});
 		
+		//是否显示
+		function changeTableVal(id,isShow){
+			$(".loading").show();//打开展示层
+			$.ajax({
+				type : "POST",
+				url : "${ctx}/ec/webAd/updateIsShow?isShow="+isShow+"&mtmyWebAdId="+id,
+				dataType: 'json',
+				success: function(data) {
+					$(".loading").hide(); //关闭加载层
+					var status = data.STATUS;
+					var isShow = data.ISSHOW;
+					if("OK" == status){
+						$("#isShow"+id).html("");//清除DIV内容
+						if(isShow == '1'){
+							$("#isShow"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+id+"','0')\">");
+						}else if(isShow == '0'){
+							$("#isShow"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+id+"','1')\">");
+						}
+					}else if("ERROR" == status){
+						top.layer.alert(data.MESSAGE, {icon: 2, title:'提醒'});
+					}
+				}
+			});   
+		}
 		
     </script>
     <title>首页广告图管理</title>
@@ -91,16 +115,12 @@
 							</td>
 							<td style="text-align: center;" class="imgUrl" ><img alt="" src="${ctxStatic}/images/lazylode.png"  data-src="${mtmyWebAd.suboriginalImg}" style="width: 150px;height: 100px;border:1px solid black; "></td>
 							<td style="text-align: center;" class="imgUrl" ><img alt="" src="${ctxStatic}/images/lazylode.png"  data-src="${mtmyWebAd.headImg}" style="width: 150px;height: 100px;border:1px solid black; "></td>
-							<td style="text-align: center;" id="${mtmyWebAd.mtmyWebAdId}">
-								<c:if test="${mtmyWebAd.isShow == '1'}">
-									<a href="${ctx}/ec/webAd/updateIsShow?mtmyWebAdId=${mtmyWebAd.mtmyWebAdId}&isShow=0" >
-										<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" >
-									</a>	
+							<td style="text-align: center;" id="isShow${mtmyWebAd.mtmyWebAdId}">
+								<c:if test="${mtmyWebAd.isShow=='1'}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('${mtmyWebAd.mtmyWebAdId}','0')">
 								</c:if>
-								<c:if test="${mtmyWebAd.isShow eq '0'}">
-									<a href="${ctx}/ec/webAd/updateIsShow?mtmyWebAdId=${mtmyWebAd.mtmyWebAdId}&isShow=1" >
-										<img width="20" height="20" src="${ctxStatic}/ec/images/open.png">
-									</a>
+								<c:if test="${mtmyWebAd.isShow=='0'}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('${mtmyWebAd.mtmyWebAdId}','1')">
 								</c:if>
 							</td>
 							<td style="text-align: center;">

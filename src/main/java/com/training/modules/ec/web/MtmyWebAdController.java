@@ -1,6 +1,8 @@
 package com.training.modules.ec.web;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -93,26 +95,34 @@ public class MtmyWebAdController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="updateIsShow")
-	public String updateIsShow(HttpServletRequest request,MtmyWebAd mtmyWebAd) {
+	@ResponseBody
+	public Map<String, String> updateIsShow(HttpServletRequest request,MtmyWebAd mtmyWebAd) {
+		Map<String, String> jsonMap = new HashMap<String, String>();
 		try {
 			String isShow = request.getParameter("isShow");
 			mtmyWebAd = mtmyWebAdService.getMtmyWebAd(mtmyWebAd.getMtmyWebAdId());
-			mtmyWebAdService.changAllIsShow(mtmyWebAd);
 			if("0".equals(isShow)){
 				mtmyWebAd.setIsShow(isShow);
 				mtmyWebAdService.updateIsShow(mtmyWebAd);
+				jsonMap.put("STATUS", "OK");
+				jsonMap.put("ISSHOW", isShow);
 			}else if("1".equals(isShow)){
-				int mtmyWebAdId = mtmyWebAdService.selectIdByCreateDate(mtmyWebAd);
-				mtmyWebAd = mtmyWebAdService.getMtmyWebAd(mtmyWebAdId);
-				mtmyWebAd.setIsShow("0");
+				mtmyWebAd.setIsShow(isShow);
 				mtmyWebAdService.updateIsShow(mtmyWebAd);
+				jsonMap.put("STATUS", "OK");
+				jsonMap.put("ISSHOW", isShow);
+				
 			}
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "修改首页广告图的状态失败", e);
 			logger.error("修改首页广告图的状态失败：" + e.getMessage());
+			jsonMap.put("STATUS", "ERROR");
+			jsonMap.put("MESSAGE", "修改失败,出现异常");
 		}
-		return "redirect:" + adminPath + "/ec/webAd/list?categoryId="+mtmyWebAd.getCategoryId();
+		return jsonMap;
 	}
+	
+	
 
 	/**
 	 * 添加首页广告图

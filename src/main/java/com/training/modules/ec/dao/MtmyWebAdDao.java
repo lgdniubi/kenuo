@@ -96,16 +96,4 @@ public interface MtmyWebAdDao extends CrudDao<MtmyWebAd>{
 	 */
 	public void delAllGoodsByCategoryIdForFirst(int categoryId);
 	
-	/**
-	 * 修改当前页面上所有组的状态
-	 * @param mtmyWebAd
-	 */
-	public void changAllIsShow(MtmyWebAd mtmyWebAd);
-	
-	/**
-	 * 查询出最近创建的那一组的id
-	 * @param mtmyWebAd
-	 * @return
-	 */
-	public int selectIdByCreateDate(MtmyWebAd mtmyWebAd);
 }

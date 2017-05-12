@@ -64,7 +64,7 @@
 									html += "&nbsp;<a href=\"${ctx}/ec/adCategory/delete?mtmyWebAdCategoryId="+dataObj[i].mtmyWebAdCategoryId+"\" onclick=\"return confirmx('要删除该分类及所有子分类吗？', this.href)\" class=\"btn btn-danger btn-xs\" ><i class=\"fa fa-trash\"></i> 删除</a>";
 								}
 								//操作权限-添加
-								if($("#shiroAddChild").val() == 1){
+								if($("#shiroAddChild").val() == 1 && dataObj[i].level == 1){
 									html += "&nbsp;<a href=\"#\" onclick=\"openDialog('添加下级分类', '${ctx}/ec/adCategory/form?parentId="+dataObj[i].mtmyWebAdCategoryId+"','430px', '480px')\" class=\"btn btn-primary btn-xs\" ><i class=\"fa fa-plus\"></i> 添加下级分类</a>";
 								}
 								//操作权限-首页广告图管理
@@ -150,6 +150,7 @@
 							<td style="text-align: left;">${row.name}</td>
 							<td>${row.level}</td>
 							<td>
+								<c:if test="${row.positionType == '0'}"></c:if>
 								<c:if test="${row.positionType == '1'}">首页</c:if>
 								<c:if test="${row.positionType == '2'}">商城</c:if>
 								<c:if test="${row.positionType == '3'}">生活美容</c:if>
@@ -174,9 +175,11 @@
 								<shiro:hasPermission name="ec:adCategory:del">
 									<a href="${ctx}/ec/adCategory/delete?mtmyWebAdCategoryId=${row.mtmyWebAdCategoryId}" onclick="return confirmx('要删除该分类及所有子分类吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
 								</shiro:hasPermission>
-								<shiro:hasPermission name="ec:adCategory:addChild">
-									<a href="#" onclick="openDialog('添加下级分类', '${ctx}/ec/adCategory/form?parentId=${row.mtmyWebAdCategoryId}','430px', '480px')" class="btn  btn-primary btn-xs"><i class="fa fa-plus"></i> 添加下级分类</a>
-								</shiro:hasPermission>
+								<c:if test="${row.level == 1}">
+									<shiro:hasPermission name="ec:adCategory:addChild">
+										<a href="#" onclick="openDialog('添加下级分类', '${ctx}/ec/adCategory/form?parentId=${row.mtmyWebAdCategoryId}','430px', '480px')" class="btn  btn-primary btn-xs"><i class="fa fa-plus"></i> 添加下级分类</a>
+									</shiro:hasPermission>
+								</c:if>
 								<c:if test="${row.level == 2}">
 									<shiro:hasPermission name="ec:adCategory:addWebAd">
 										<a href="#" onclick='top.openTab("${ctx}/ec/webAd/list?categoryId=${row.mtmyWebAdCategoryId}","首页广告图管理", false)' class="btn  btn-primary btn-xs"><i class="fa fa-plus"></i> 首页广告图管理</a>

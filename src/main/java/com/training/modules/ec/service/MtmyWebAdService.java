@@ -132,20 +132,4 @@ public class MtmyWebAdService extends CrudService<MtmyWebAdDao,MtmyWebAd>{
 		mtmyWebAdDao.delAllGoodsByCategoryIdForFirst(categoryId);
 	}
 	
-	/**
-	 * 修改当前页面上所有组的状态
-	 * @param categoryId
-	 */
-	public void changAllIsShow(MtmyWebAd mtmyWebAd){
-		mtmyWebAdDao.changAllIsShow(mtmyWebAd);
-	}
-	
-	/**
-	 * 查询出最近创建的那一组的id
-	 * @param categoryId
-	 * @return
-	 */
-	public int selectIdByCreateDate(MtmyWebAd mtmyWebAd){
-		return mtmyWebAdDao.selectIdByCreateDate(mtmyWebAd);
-	}
 }
