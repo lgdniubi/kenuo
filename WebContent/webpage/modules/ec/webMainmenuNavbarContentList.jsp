@@ -147,10 +147,10 @@
 					<thead>
 						<tr>
 							<th style="text-align: center;">ID</th>
-							<th style="text-align: center;">导航栏ID</th>
+							<!-- <th style="text-align: center;">导航栏ID</th> -->
 							<th style="text-align: center;">名称</th>
 							<th style="text-align: center;">图片</th>
-							<th style="text-align: center;">链接地址</th>
+							<!-- <th style="text-align: center;">链接地址</th> -->
 							<th style="text-align: center;">排序</th>
 							<th style="text-align: center;">创建时间</th>
 							<th style="text-align: center;">操作</th>
@@ -160,12 +160,12 @@
 						<c:forEach items="${page.list}" var="page">
 							<tr>
 								<td style="text-align: center;">${page.webMainmenuNavbarContentId}</td>
-								<td style="text-align: center;">${page.mainmenuId}</td>
+								<%-- <td style="text-align: center;">${page.mainmenuId}</td> --%>
 								<td style="text-align: center;">${page.name}</td>
 								<td style="text-align: center;" class="imgUrl">
 									<img alt="" src="${ctxStatic}/images/lazylode.png" data-src="${page.imgUrl}" style="width: 100px;height: 80px;">
 								</td>
-								<td style="text-align: center;">${page.redirectUrl}</td>
+								<%-- <td style="text-align: center;">${page.redirectUrl}</td> --%>
 								<td style="text-align: center;">${page.sort}</td>
 								<td style="text-align: center;">
 									<fmt:formatDate value="${page.createDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
@@ -176,7 +176,7 @@
 									</shiro:hasPermission>
 									<shiro:hasPermission name="ec:webMainmenuNavbarContent:edit">
 										<a href="#" onclick="addwebMainmenuNavbarContent(${page.webMainmenuNavbarContentId},${page.mainmenuId},'update')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i>修改</a>
-									 </shiro:hasPermission>
+									</shiro:hasPermission>
 									<shiro:hasPermission name="ec:webMainmenuNavbarContent:del">
 										<a href="#" onclick="delWebMainmenuNavbarContent(${page.webMainmenuNavbarContentId},${page.mainmenuId})" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>删除</a>
 									</shiro:hasPermission>
