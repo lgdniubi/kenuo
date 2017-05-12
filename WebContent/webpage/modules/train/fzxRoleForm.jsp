@@ -63,7 +63,10 @@
 		      </tr>
 		      <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 英文名称:</label></td>
-		         <td  class="width-35" ><form:input path="enname" htmlEscape="false" maxlength="20" class="required form-control "/></td>
+		         <td  class="width-35" >
+		         	<form:input path="enname" htmlEscape="false" maxlength="20" class="required form-control "/>
+		         	<input type="hidden" id="oldEnname" name="oldEnname" value="${fzxRole.enname }">
+		         </td>
 		      </tr>
 		       <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 等级:</label></td>

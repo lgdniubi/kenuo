@@ -1,8 +1,11 @@
 package com.training.modules.train.dao;
 
 
+import java.util.List;
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
+import com.training.modules.sys.entity.User;
 import com.training.modules.train.entity.FzxMenu;
 
 /**
@@ -18,4 +21,12 @@ public interface FzxMenuDao extends CrudDao<FzxMenu>{
 	 * @param roleId
 	 */
 	public void deleteRoleMenu(int menuId);
+	
+	/**
+	 * 查询所有拥有该菜单的用户
+	 * @param menuId
+	 * @return
+	 */
+	public List<User> findUserByMenu(int menuId);
+	
 }

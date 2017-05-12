@@ -1,5 +1,7 @@
 package com.training.modules.train.web;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,6 +15,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
 import com.training.common.web.BaseController;
+import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.train.entity.FzxMenu;
 import com.training.modules.train.service.FzxMenuService;
@@ -29,6 +33,8 @@ public class fzxMenuController extends BaseController{
 	
 	@Autowired
 	private FzxMenuService fzxMenuService;
+	@Autowired
+	private RedisClientTemplate redisClientTemplate;		//redis缓存Service
 	
 	/**
 	 * 妃子校菜单list
@@ -93,6 +99,14 @@ public class fzxMenuController extends BaseController{
 	public String save(Model model,FzxMenu fzxMenu,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
 			fzxMenuService.saveFzxMenu(fzxMenu);
+			if(fzxMenu != null){
+				if(fzxMenu.getMenuId() != 0){
+					List<User> list = fzxMenuService.findUserByMenu(fzxMenu.getMenuId());
+					for (int i = 0; i < list.size(); i++) {
+						redisClientTemplate.del("UTOKEN_"+list.get(i).getId());
+					}
+				}
+			}
 			addMessage(redirectAttributes, "保存/修改菜单成功!");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "保存妃子校菜单", e);
@@ -115,6 +129,13 @@ public class fzxMenuController extends BaseController{
 	@RequestMapping(value = "delete")
 	public String delete(Model model,FzxMenu fzxMenu,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
+			// 查询所有拥有该菜单的用户
+			List<User> list = fzxMenuService.findUserByMenu(fzxMenu.getMenuId());
+			if(fzxMenu.getMenuId() != 0){
+				for (int i = 0; i < list.size(); i++) {
+					redisClientTemplate.del("UTOKEN_"+list.get(i).getId());
+				}
+			}
 			fzxMenuService.delete(fzxMenu);
 			fzxMenuService.deleteRoleMenu(fzxMenu.getMenuId());
 			addMessage(redirectAttributes, "删除菜单成功!");

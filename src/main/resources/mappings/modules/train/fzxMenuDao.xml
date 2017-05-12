@@ -89,4 +89,16 @@
 	<delete id="deleteRoleMenu">
 		DELETE FROM fzx_role_menu WHERE fzx_menu_id = #{menuId}
 	</delete>
+	<!-- 查询所有拥有该菜单的用户 -->
+	<select id="findUserByMenu" resultType="User">
+		SELECT
+			DISTINCT
+			c.user_id AS id
+		FROM
+			fzx_menu a
+		RIGHT JOIN fzx_role_menu b ON a.id = b.fzx_menu_id
+		RIGHT JOIN fzx_user_role c ON b.fzx_role_id = c.fzx_role_id
+		WHERE
+			a.id = #{menuId}
+	</select>
 </mapper>

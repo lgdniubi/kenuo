@@ -114,9 +114,18 @@ public class fzxRoleController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "save")
-	public String save(Model model,FzxRole fzxRole,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
+	public String save(Model model,FzxRole fzxRole,String oldEnname,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
 			fzxRoleService.saveFzxRole(fzxRole);
+			if(oldEnname != null && oldEnname != ""){
+				if(!oldEnname.equals(fzxRole.getEnname())){	
+					// 角色英文名称修改时 用户token失效
+					List<User> list = fzxRoleService.findRoleUserAllList(fzxRole.getRoleId());	// 查询角色下所有用户
+					for (int i = 0; i < list.size(); i++) {
+						redisClientTemplate.del("UTOKEN_"+list.get(i).getId());
+					}
+				}
+			}
 			addMessage(redirectAttributes, "保存/修改角色成功!");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "保存妃子校角色", e);
@@ -227,6 +236,11 @@ public class fzxRoleController extends BaseController{
 		try {
 			if(!oldMenuIds.equals(fzxRole.getMenuIds())){
 				fzxRoleService.saveRoleMenu(fzxRole);
+				// 角色菜单修改时 用户token失效
+				List<User> list = fzxRoleService.findRoleUserAllList(fzxRole.getRoleId());	// 查询角色下所有用户
+				for (int i = 0; i < list.size(); i++) {
+					redisClientTemplate.del("UTOKEN_"+list.get(i).getId());
+				}
 			}
 			addMessage(redirectAttributes, "保存角色菜单权限成功!");
 		} catch (Exception e) {
