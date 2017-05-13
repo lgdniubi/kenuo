@@ -28,7 +28,7 @@
 						remote:{
 							type: "post",
 							async: false,
-							url: "${ctx}/train/fzxMenu/checkEnname?oldEnname=" + encodeURIComponent('${fzxRole.enname}')
+							url: "${ctx}/train/fzxMenu/checkEnname?oldEnname=" + encodeURIComponent('${fzxMenu.enname}')
 						}
 					}
 				},
