@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
@@ -115,7 +116,23 @@ public class fzxMenuController extends BaseController{
 		}
 		return "redirect:" + adminPath + "/train/fzxMenu/list";
 	}
-	
+	/**
+	 * 验证英文名称是否有效
+	 * 
+	 * @param oldLoginName
+	 * @param loginName
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "checkEnname")
+	public String checkEnname(String oldEnname, String enname) {
+		if (enname != null && enname.equals(oldEnname)) {
+			return "true";
+		} else if (enname != null &&  fzxMenuService.checkEnname(enname) == 0) {
+			return "true";
+		}
+		return "false";
+	}
 	/**
 	 * 删除菜单
 	 * @param model

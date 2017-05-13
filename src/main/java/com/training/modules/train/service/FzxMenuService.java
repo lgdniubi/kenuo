@@ -70,4 +70,12 @@ public class FzxMenuService extends CrudService<FzxMenuDao,FzxMenu>{
 	public List<User> findUserByMenu(int menuId){
 		return dao.findUserByMenu(menuId);
 	}
+	/**
+	 * 验证英文名称是否有效
+	 * @param enname
+	 * @return
+	 */
+	public int checkEnname(String enname){
+		return dao.checkEnname(enname);
+	}
 }

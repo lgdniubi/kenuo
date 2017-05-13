@@ -29,4 +29,10 @@ public interface FzxMenuDao extends CrudDao<FzxMenu>{
 	 */
 	public List<User> findUserByMenu(int menuId);
 	
+	/**
+	 * 验证英文名称是否有效
+	 * @param enname
+	 * @return
+	 */
+	public int checkEnname(String enname);
 }
