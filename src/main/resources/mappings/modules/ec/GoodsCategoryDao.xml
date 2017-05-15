@@ -50,6 +50,9 @@
 		<if test="parentId != null and parentId != ''">
 			AND m.parent_id = #{parentId}
 		</if>
+		<if test="positionType !=null and positionType !=''">
+			AND m.position_type = #{positionType}
+		</if>
 		ORDER BY m.CODE
 	</select>
 	
