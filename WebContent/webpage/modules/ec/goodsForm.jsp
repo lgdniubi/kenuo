@@ -162,6 +162,51 @@
 					}); 
 				}
 			});
+			
+//			$("#goodsCategoryIdButton, #goodsCategoryIdName").click(function(){	    增加  , #goodsCategoryIdName  文本框有点击事件
+			$("#goodsCategoryIdButton").click(function(){
+				// 是否限制选择，如果限制，设置为disabled
+				if ($("#goodsCategoryIdButton").hasClass("disabled")){
+					return true;
+				}
+				// 正常打开	
+				top.layer.open({
+				    type: 2, 
+				    area: ['300px', '420px'],
+				    title:"选择商品分类",
+				    ajaxData:{selectIds: $("#goodsCategoryIdId").val()},
+				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/goodscategory/treeData?positionType="+$("input[id='isReal']:checked").val())+"&module=&checked=&extId=&isAll=&selectIds=&positionType="+$("#isReal").val(),
+				    btn: ['确定', '关闭']
+		    	       ,yes: function(index, layero){ //或者使用btn1
+								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+								var ids = [], names = [], nodes = [];
+								if ("" == "true"){
+									nodes = tree.getCheckedNodes(true);
+								}else{
+									nodes = tree.getSelectedNodes();
+								}
+								for(var i=0; i<nodes.length; i++) {//
+									if (nodes[i].isParent){
+										//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+										//layer.msg('有表情地提示');
+										top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+										return false;
+									}//
+									ids.push(nodes[i].id);
+									names.push(nodes[i].name);//
+									break; // 如果为非复选框选择，则返回第一个选择  
+								}
+								$("#goodsCategoryIdId").val(ids.join(",").replace(/u_/ig,""));
+								$("#goodsCategoryIdName").val(names.join(","));
+								$("#goodsCategoryIdName").focus();
+								top.layer.close(index);
+						    	       },
+		    	cancel: function(index){ //或者使用btn2
+		    	           //按钮【按钮二】的回调
+		    	       }
+				}); 
+			
+			});
 		});
 		function loadGoods(num){
 			$("#goodsdetails").empty();
@@ -319,9 +364,15 @@
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>商品分类：</span>
 										<div style="width: 40%;padding-left: 150px;">
-						                    <sys:treeselect id="goodsCategoryId" name="goodsCategoryId" value="${goods.goodsCategoryId}" 
-												labelName="goodsCategory.name" labelValue="${goods.goodsCategory.name }" 
-									     		title="商品分类" url="/ec/goodscategory/treeData" cssClass="form-control required" allowClear="true" notAllowSelectParent="true"/>
+											<input id="goodsCategoryIdId" name="goodsCategoryId" class="form-control required" type="hidden" value="${goods.goodsCategoryId}" aria-required="true">
+											<div class="input-group">
+												<input id="goodsCategoryIdName" name="goodsCategory.name" readonly="readonly" type="text" value="${goods.goodsCategory.name }" data-msg-required="" class="form-control required" style="" aria-required="true">
+										       		 <span class="input-group-btn">
+											       		 <button type="button" id="goodsCategoryIdButton" class="btn   btn-primary  "><i class="fa fa-search"></i>
+											             </button> 
+										       		 </span>
+										    </div>
+											 <label id="goodsCategoryIdName-error" class="error" for="goodsCategoryIdName" style="display:none"></label>
 								     	</div>	
 									</li>
 									<li class="form-group">
