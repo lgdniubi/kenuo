@@ -140,7 +140,7 @@
 								<c:if test="${banner.pageType == 0 }">活动页</c:if>
 								<c:if test="${banner.pageType == 1 }">商品</c:if>
 								<c:if test="${banner.pageType == 2 }">专题页</c:if>
-								<c:if test="${banner.pageType == 2 }">文章</c:if>
+								<c:if test="${banner.pageType == 3 }">文章</c:if>
 							</td>
 							<td style="text-align: center;" id="ISSHOW${banner.bannerId}">
 								<shiro:hasPermission name="ec:banner:update">
