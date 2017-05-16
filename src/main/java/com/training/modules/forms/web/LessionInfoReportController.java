@@ -5,7 +5,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,14 +49,15 @@ public class LessionInfoReportController extends BaseController {
 	 * @param model
 	 * @return
 	 */
-	@RequiresPermissions("report:report:view")
 	@RequestMapping(value = { "document", "" })
-	public String document(LessionTimeReport lessionTimeReport, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String document(LessionTimeReport lessionTimeReport, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes) {
 		try {
 			Page<LessionTimeReport> page = lessionInfoReportService.timeList(new Page<LessionTimeReport>(request, response), lessionTimeReport);
 			model.addAttribute("page", page);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "视频文档日报表表查询", e);
+			logger.error("视频文档日报表表查询出现异常，异常信息为："+e.getMessage());
+			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
 		return "modules/forms/lessionInfoReport";
 	}
@@ -70,9 +70,8 @@ public class LessionInfoReportController extends BaseController {
 	 * @param model
 	 * @return
 	 */
-	@RequiresPermissions("report:report:view")
 	@RequestMapping(value = { "documentbyid", "" })
-	public String documentbyid(LessionInfoReport lessionInfoReport, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String documentbyid(LessionInfoReport lessionInfoReport, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes) {
 		try {
 			//查询1级分类
 			List<LessionInfoReport> listone = lessionInfoReportService.findcategoryslist(lessionInfoReport);
@@ -83,6 +82,8 @@ public class LessionInfoReportController extends BaseController {
 			model.addAttribute("page", page);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "视频文档信息表", e);
+			logger.error("视频文档信息表出现异常，异常信息为："+e.getMessage());
+			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
 		return "modules/forms/lessionInfoByIdReport";
 	}
@@ -113,17 +114,17 @@ public class LessionInfoReportController extends BaseController {
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@RequiresPermissions("sys:user:export")
 	@RequestMapping(value = "exportdate")
-	public String exportFile(LessionTimeReport lessionTimeReport, HttpServletRequest request, HttpServletResponse response,
-			RedirectAttributes redirectAttributes) {
+	public String exportFile(LessionTimeReport lessionTimeReport, HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
 		try {
 			String fileName = "视频文档日报表" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
 			Page<LessionTimeReport> page = lessionInfoReportService.timeList(new Page<LessionTimeReport>(request, response, -1), lessionTimeReport);
 			new ExportExcel("视频文档日报表", LessionTimeReport.class).setDataList(page.getList()).write(response, fileName).dispose();
 			return null;
 		} catch (Exception e) {
-			addMessage(redirectAttributes, "导出用户失败！失败信息：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "视频文档日报表导出失败", e);
+			logger.error("视频文档日报表导出出现异常，异常信息为："+e.getMessage());
+			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
 		return "redirect:" + adminPath + "/forms/document/document?repage";
 	}
@@ -137,7 +138,6 @@ public class LessionInfoReportController extends BaseController {
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@RequiresPermissions("sys:user:export")
 	@RequestMapping(value = "exportinfo")
 	public String exportinfo1(LessionInfoReport lessionInfoReport, HttpServletRequest request, HttpServletResponse response,
 			RedirectAttributes redirectAttributes) {
@@ -147,7 +147,9 @@ public class LessionInfoReportController extends BaseController {
 			new ExportExcel("视频文档信息表", LessionInfoReport.class).setDataList(page.getList()).write(response, fileName).dispose();
 			return null;
 		} catch (Exception e) {
-			addMessage(redirectAttributes, "导出用户失败！失败信息：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "导出视频文档信息表失败", e);
+			logger.error("导出视频文档信息表失败出现异常，异常信息为："+e.getMessage());
+			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
 		return "redirect:" + adminPath + "/forms/document/documentbyid?repage";
 	}

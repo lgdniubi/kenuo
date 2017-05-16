@@ -41,7 +41,7 @@ public class UserCollectReportController extends BaseController {
 	 */
 	@RequiresPermissions("report:report:view")
 	@RequestMapping(value = { "collect", "" })
-	public String collect(UserCollectReport userCollectReport, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String collect(UserCollectReport userCollectReport, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes) {
 		try {
 			//判断有没有查询条件
 			if(userCollectReport.getBegtime() != null && userCollectReport.getEndtime() != null){
@@ -53,6 +53,8 @@ public class UserCollectReportController extends BaseController {
 			}
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "妃子校用户汇总查询", e);
+			logger.error("妃子校用户汇总查询出现异常，异常信息为："+e.getMessage());
+			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
 		return "modules/forms/userCollectReport";
 	}
@@ -67,13 +69,15 @@ public class UserCollectReportController extends BaseController {
 	 */
 	@RequiresPermissions("report:report:view")
 	@RequestMapping(value = { "info", "" })
-	public String info(UserInfoReport userInfoReport, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String info(UserInfoReport userInfoReport, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes) {
 		try {
 			Page<UserInfoReport> page = userCollectReportService.infoList(new Page<UserInfoReport>(request, response), userInfoReport);
 			model.addAttribute("page", page);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "妃子校用户汇总查询", e);
-			}
+			logger.error("妃子校用户汇总查询出现异常，异常信息为："+e.getMessage());
+			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
+		}
 		return "modules/forms/userInfoReport";
 	}
 	
@@ -87,8 +91,7 @@ public class UserCollectReportController extends BaseController {
 	 */
 	@RequiresPermissions("sys:user:export")
 	@RequestMapping(value = "exportcollect", method = RequestMethod.POST)
-	public String collectExportFile(UserCollectReport userCollectReport, HttpServletRequest request, HttpServletResponse response,
-			RedirectAttributes redirectAttributes) {
+	public String collectExportFile(UserCollectReport userCollectReport, HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
 		try {
 			String fileName = "妃子校用户汇总" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
 			//判断有没有查询条件
@@ -101,7 +104,9 @@ public class UserCollectReportController extends BaseController {
 			}
 			return null;
 		} catch (Exception e) {
-			addMessage(redirectAttributes, "导出用户失败！失败信息：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "导出妃子校用户汇总", e);
+			logger.error("导出妃子校用户汇总出现异常，异常信息为："+e.getMessage());
+			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
 		return "redirect:" + adminPath + "/forms/collect/collect?repage";
 	}
@@ -116,15 +121,16 @@ public class UserCollectReportController extends BaseController {
 	 */
 	@RequiresPermissions("sys:user:export")
 	@RequestMapping(value = "exportinfo", method = RequestMethod.POST)
-	public String infoExportFile(UserInfoReport userInfoReport, HttpServletRequest request, HttpServletResponse response,
-			RedirectAttributes redirectAttributes) {
+	public String infoExportFile(UserInfoReport userInfoReport, HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
 		try {
 			String fileName = "用户信息表" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
 			Page<UserInfoReport> page = userCollectReportService.infoList(new Page<UserInfoReport>(request, response, -1), userInfoReport);
 			new ExportExcel("用户信息表", UserInfoReport.class).setDataList(page.getList()).write(response, fileName).dispose();
 			return null;
 		} catch (Exception e) {
-			addMessage(redirectAttributes, "导出用户失败！失败信息：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "导出用户信息表", e);
+			logger.error("导出用户信息表出现异常，异常信息为："+e.getMessage());
+			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
 		return "redirect:" + adminPath + "/forms/collect/collect?repage";
 	}

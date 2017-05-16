@@ -5,7 +5,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,14 +47,15 @@ public class TvShowReportController extends BaseController{
 	 * @param response
 	 * @param model
 	 */
-	@RequiresPermissions("report:report:view")
 	@RequestMapping(value = { "show", "" })
-	public String collect(TvShowTimeReport tvShowTimeReport, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String collect(TvShowTimeReport tvShowTimeReport, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes) {
 		try {
 			Page<TvShowTimeReport> page = tvShowReportService.tvList(new Page<TvShowTimeReport>(request, response), tvShowTimeReport);
 			model.addAttribute("page", page);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "直播回放日报表", e);
+			logger.error("直播回放日报表出现异常，异常信息为："+e.getMessage());
+			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
 		return "modules/forms/tvShowReport";
 	}
@@ -67,14 +67,12 @@ public class TvShowReportController extends BaseController{
 	 * @param response
 	 * @param model
 	 */
-	@RequiresPermissions("report:report:view")
 	@RequestMapping(value = { "byidshow", "" })
-	public String byIdShow(TvShowReport tvShowReport, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String byIdShow(TvShowReport tvShowReport, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes) {
 		try {
 			//查询一级分类
 			List<TvShowReport> listone = tvShowReportService.onelist(tvShowReport);
 			model.addAttribute("listone", listone);
-			System.out.println("------------"+tvShowReport.getShowLiveId());
 			model.addAttribute("categoryOne", tvShowReport.getShowLiveOne());
 			model.addAttribute("categoryTwo", tvShowReport.getShowLiveTwo());
 			model.addAttribute("categoryThree", tvShowReport.getShowLiveThree());
@@ -82,7 +80,9 @@ public class TvShowReportController extends BaseController{
 			Page<TvShowReport> page = tvShowReportService.tvListById(new Page<TvShowReport>(request, response), tvShowReport);
 			model.addAttribute("page", page);
 		} catch (Exception e) {
-			BugLogUtils.saveBugLog(request, "直播回放信息表", e);
+			BugLogUtils.saveBugLog(request, "查询直播回放信息表", e);
+			logger.error("查询直播回放信息表出现异常，异常信息为："+e.getMessage());
+			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
 		return "modules/forms/tvShowByIdReport";
 	}
@@ -134,7 +134,6 @@ public class TvShowReportController extends BaseController{
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@RequiresPermissions("sys:user:export")
 	@RequestMapping(value = "exportinfo", method = RequestMethod.POST)
 	public String exportInfo(TvShowReport tvShowReport, HttpServletRequest request, HttpServletResponse response,
 			RedirectAttributes redirectAttributes) {
@@ -144,7 +143,9 @@ public class TvShowReportController extends BaseController{
 			new ExportExcel("直播回放信息表", TvShowReport.class).setDataList(page.getList()).write(response, fileName).dispose();
 			return null;
 		} catch (Exception e) {
-			addMessage(redirectAttributes, "导出用户失败！失败信息：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "导出直播回放信息表", e);
+			logger.error("导出直播回放信息表出现异常，异常信息为："+e.getMessage());
+			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
 		return "redirect:" + adminPath + "/forms/show/byidshow?repage";
 	}
@@ -157,7 +158,6 @@ public class TvShowReportController extends BaseController{
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@RequiresPermissions("sys:user:export")
 	@RequestMapping(value = "exportdate", method = RequestMethod.POST)
 	public String exportFile(TvShowTimeReport tvShowTimeReport, HttpServletRequest request, HttpServletResponse response,
 			RedirectAttributes redirectAttributes) {
@@ -167,7 +167,9 @@ public class TvShowReportController extends BaseController{
 			new ExportExcel("直播回放日报表", TvShowTimeReport.class).setDataList(page.getList()).write(response, fileName).dispose();
 			return null;
 		} catch (Exception e) {
-			addMessage(redirectAttributes, "导出用户失败！失败信息：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "导出直播回放日报表", e);
+			logger.error("导出直播回放日报表出现异常，异常信息为："+e.getMessage());
+			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
 		return "redirect:" + adminPath + "/forms/show/show?repage";
 	}
