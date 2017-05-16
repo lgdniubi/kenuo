@@ -113,7 +113,7 @@
 		}
 		
 		//是否头条
-		function changeTableVal(id,isTopline){
+		function newChangeTableVal(id,isTopline){
 			$(".loading").show();//打开展示层
 			$.ajax({
 				type : "POST",
@@ -126,9 +126,9 @@
 					if("OK" == status){
 						$("#isTopline"+id).html("");//清除DIV内容
 						if(isTopline == '1'){
-							$("#isTopline"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+id+"','0')\">");
+							$("#isTopline"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"newChangeTableVal('"+id+"','0')\">");
 						}else if(isTopline == '0'){
-							$("#isTopline"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+id+"','1')\">");
+							$("#isTopline"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"newChangeTableVal('"+id+"','1')\">");
 						}
 					}else if("ERROR" == status){
 						top.layer.alert(data.MESSAGE, {icon: 2, title:'提醒'});
@@ -273,10 +273,10 @@
 								</td>
 								<td style="text-align: center;" id="isTopline${MtmyArticle.id}">
 									<c:if test="${MtmyArticle.isTopline == 1}">
-										<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('${MtmyArticle.id}','0')">
+										<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="newChangeTableVal('${MtmyArticle.id}','0')">
 									</c:if>
 									<c:if test="${MtmyArticle.isTopline == 0}">
-										<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('${MtmyArticle.id}','1')">
+										<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="newChangeTableVal('${MtmyArticle.id}','1')">
 									</c:if>
 								</td>
 							</c:if>

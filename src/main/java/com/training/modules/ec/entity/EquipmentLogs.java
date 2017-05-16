@@ -16,6 +16,7 @@ public class EquipmentLogs extends DataEntity<EquipmentLogs>{
 	private String localBazaarId;  //所在市场id
 	private String shopName;       //名称（店铺名称、修）
 	private Date apptDate;         //预约时间
+	private int time;              //0: 上午 1: 下午
 	private String bazaarName;     //市场名称
 	
 
@@ -48,6 +49,12 @@ public class EquipmentLogs extends DataEntity<EquipmentLogs>{
 	}
 	public void setEquipmentId(int equipmentId) {
 		this.equipmentId = equipmentId;
+	}
+	public int getTime() {
+		return time;
+	}
+	public void setTime(int time) {
+		this.time = time;
 	}
 	
 	

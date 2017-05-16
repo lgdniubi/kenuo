@@ -33,7 +33,10 @@
 						<tbody style="text-align: center;">
 							<c:forEach items="${page.list }" var="equipmentLogs">
 								<tr>
-								  	<td><fmt:formatDate value="${equipmentLogs.apptDate }" pattern="yyyy-MM-dd"/></td>
+								  	<td><fmt:formatDate value="${equipmentLogs.apptDate }" pattern="yyyy-MM-dd"/>
+								  		<c:if test="${equipmentLogs.time == 0}">上午</c:if>
+								  		<c:if test="${equipmentLogs.time == 1}">下午</c:if>
+								  	</td>
 								  	<td>${equipmentLogs.bazaarName }</td>
 								  	<td>${equipmentLogs.shopName }</td>
 								</tr>
