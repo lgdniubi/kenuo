@@ -65,7 +65,7 @@ public class StatisticsTotalExport extends DataEntity<StatisticsTotalExport>{
 		this.position = position;
 	}
 	@JsonIgnore
-	@ExcelField(title="日期", align=2, sort=5)
+	@ExcelField(title="用户注册时间", align=2, sort=5)
 	public String getCreateTime() {
 		return createTime;
 	}

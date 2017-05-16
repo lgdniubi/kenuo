@@ -70,7 +70,7 @@
 		      </tr>
 		       <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 等级:</label></td>
-		         <td  class="width-35" ><form:input path="roleGrade" htmlEscape="false" maxlength="5" class="required form-control "/></td>
+		         <td  class="width-35" ><form:input path="roleGrade" htmlEscape="false" maxlength="5" class="required form-control digits"/></td>
 		      </tr>
 		      <tr>
 		         <td  class="width-15 active"><label class="pull-right">备注:</label></td>
