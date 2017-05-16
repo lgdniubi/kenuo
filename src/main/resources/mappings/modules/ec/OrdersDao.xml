@@ -745,7 +745,17 @@
 		AND order_type = #{order_type} 
 		AND order_status = -1
 	</select>
-	
+	<select id="queryNotPayOrder1" resultType="Orders" parameterType="map">
+		SELECT a.* FROM mtmydb.mtmy_orders a
+			LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.order_id = b.order_id
+			WHERE b.goods_id NOT IN (
+				SELECT goods_id FROM mtmydb.mtmy_groupon_activity
+			)
+			AND DATE_ADD(a.add_time,INTERVAL #{minute} MINUTE) <![CDATA[ < ]]> NOW()
+			AND a.order_type = #{order_type} 
+			AND a.order_status = -1
+			GROUP BY a.order_id
+	</select>
 	<update id="modifyOrderStatus" parameterType="map">
 		UPDATE 
 			mtmydb.mtmy_orders 
