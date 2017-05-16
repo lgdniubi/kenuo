@@ -131,6 +131,7 @@ public class AdviceController extends BaseController {
 			complain.setMobile("");
 			String id = UserUtils.getUser().getId();
 			complain.setRedirectUserId(id);
+			model.addAttribute("stamp", complain.getStamp());
 		}else{
 			complain.setMobile("");
 			String id = UserUtils.getUser().getId();

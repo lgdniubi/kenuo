@@ -108,7 +108,7 @@
 		      </tr>
 		       <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 排序:</label></td>
-		         <td  class="width-35" ><form:input path="sort" htmlEscape="false" maxlength="5" class="required form-control "/></td>
+		         <td  class="width-35" ><form:input path="sort" htmlEscape="false" maxlength="5" class="required form-control digits"/></td>
 		      </tr>
 		      <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 是否显示:</label></td>
