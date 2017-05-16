@@ -6,7 +6,6 @@
 <head>
 	<title>妃子校用户信息表</title>
 	<meta name="decorator" content="default"/>
-	<link rel="stylesheet" href="${ctxStatic}/train/css/addcourse.css">
 	<script type="text/javascript">
 		function page(n,s){
 			$("#pageNo").val(n);

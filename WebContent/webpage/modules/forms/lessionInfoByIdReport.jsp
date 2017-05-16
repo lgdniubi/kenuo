@@ -4,7 +4,6 @@
 <head>
 	<title>视频文档信息表</title>
 	<meta name="decorator" content="default"/>
-	<link rel="stylesheet" href="${ctxStatic}/train/css/addcourse.css">
 	<link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
 	<%@include file="/webpage/include/treetable.jsp" %>
 	<script type="text/javascript">
