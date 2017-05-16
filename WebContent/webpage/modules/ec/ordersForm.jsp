@@ -40,6 +40,9 @@
 		}, "小数位不能超过三位"); 
 		
 		$(document).ready(function() {
+			if($("#isReal").val() == '1'){
+				$("#shipping").hide();
+			}			
 			if($("#shippingtype").val()== 0 || $("#shippingtype").val()== 1){
 				$("#logistics").show();
 			}else{
@@ -636,26 +639,24 @@ window.onload=initStatus;
 							</div> --%>
 						</div>
 						<p></p>
-						<c:if test="${orders.isReal == 0 }">
-							<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
-								<label ><font color="red">*</font>物流类型：</label>
-								<form:select path="shippingtype"  class="form-control" style="width:180px">
-										<form:option value="0">快递发货</form:option>
-										<form:option value="1">到店自取</form:option>
-										<form:option value="2">无需发货</form:option>
-								</form:select>
-								<div id="logistics">
-									<p></p>
-									<label ><font color="red">*</font>收&nbsp;&nbsp;货&nbsp;&nbsp;人：</label>
-									<form:input path="consignee" htmlEscape="false" maxlength="10" class="form-control required" style="width:180px" />
-									<label ><font color="red">*</font>联系电话：</label>
-									<form:input path="mobile" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
-									<label ><font color="red">*</font>收货地址：</label>
-									<form:input path="address" htmlEscape="false" maxlength="120" class="form-control required" style="width:180px" />
-								</div>
+						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="shipping">
+							<label ><font color="red">*</font>物流类型：</label>
+							<form:select path="shippingtype"  class="form-control" style="width:180px">
+									<form:option value="0">快递发货</form:option>
+									<form:option value="1">到店自取</form:option>
+									<form:option value="2">无需发货</form:option>
+							</form:select>
+							<div id="logistics">
+								<p></p>
+								<label ><font color="red">*</font>收&nbsp;&nbsp;货&nbsp;&nbsp;人：</label>
+								<form:input path="consignee" htmlEscape="false" maxlength="10" class="form-control required" style="width:180px" />
+								<label ><font color="red">*</font>联系电话：</label>
+								<form:input path="mobile" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
+								<label ><font color="red">*</font>收货地址：</label>
+								<form:input path="address" htmlEscape="false" maxlength="120" class="form-control required" style="width:180px" />
 							</div>
-							<p></p>
-						</c:if>
+						</div>
+						<p></p>
 						<c:if test="${orders.num > 0}">
 								<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 									<div class="pull-left">
