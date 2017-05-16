@@ -19,7 +19,6 @@ import com.training.common.utils.DateUtils;
 import com.training.common.utils.excel.ExportExcel;
 import com.training.common.web.BaseController;
 import com.training.modules.forms.entity.TvShowReport;
-import com.training.modules.forms.entity.TvShowTimeReport;
 import com.training.modules.forms.service.TvShowReportService;
 import com.training.modules.sys.utils.BugLogUtils;
 
@@ -40,28 +39,8 @@ public class TvShowReportController extends BaseController{
 	@Autowired
 	private TvShowReportService tvShowReportService;
 	
-	/**直播回放日报表
-	 *  时间条件查询
-	 * @param tvShowTimeReport
-	 * @param request
-	 * @param response
-	 * @param model
-	 */
-	@RequestMapping(value = { "show", "" })
-	public String collect(TvShowTimeReport tvShowTimeReport, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes) {
-		try {
-			Page<TvShowTimeReport> page = tvShowReportService.tvList(new Page<TvShowTimeReport>(request, response), tvShowTimeReport);
-			model.addAttribute("page", page);
-		} catch (Exception e) {
-			BugLogUtils.saveBugLog(request, "直播回放日报表", e);
-			logger.error("直播回放日报表出现异常，异常信息为："+e.getMessage());
-			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
-		}
-		return "modules/forms/tvShowReport";
-	}
-	
-	/**直播回放信息表
-	 *  ID条件查询
+	/**直播回放数据表
+	 *  条件查询
 	 * @param TvShowReport
 	 * @param request
 	 * @param response
@@ -80,8 +59,8 @@ public class TvShowReportController extends BaseController{
 			Page<TvShowReport> page = tvShowReportService.tvListById(new Page<TvShowReport>(request, response), tvShowReport);
 			model.addAttribute("page", page);
 		} catch (Exception e) {
-			BugLogUtils.saveBugLog(request, "查询直播回放信息表", e);
-			logger.error("查询直播回放信息表出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "查询直播回放数据表", e);
+			logger.error("查询直播回放数据表出现异常，异常信息为："+e.getMessage());
 			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
 		return "modules/forms/tvShowByIdReport";
@@ -126,7 +105,7 @@ public class TvShowReportController extends BaseController{
 		return json.toString();
 	}
 	
-	/**直播回放信息表
+	/**直播回放数据表
 	 * 导出用户数据
 	 * @param TvShowReport
 	 * @param request
@@ -138,39 +117,15 @@ public class TvShowReportController extends BaseController{
 	public String exportInfo(TvShowReport tvShowReport, HttpServletRequest request, HttpServletResponse response,
 			RedirectAttributes redirectAttributes) {
 		try {
-			String fileName = "直播回放信息表" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+			String fileName = "直播回放数据表" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
 			Page<TvShowReport> page = tvShowReportService.tvListById(new Page<TvShowReport>(request, response, -1), tvShowReport);
-			new ExportExcel("直播回放信息表", TvShowReport.class).setDataList(page.getList()).write(response, fileName).dispose();
+			new ExportExcel("直播回放数据表", TvShowReport.class).setDataList(page.getList()).write(response, fileName).dispose();
 			return null;
 		} catch (Exception e) {
-			BugLogUtils.saveBugLog(request, "导出直播回放信息表", e);
-			logger.error("导出直播回放信息表出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "导出直播回放数据表", e);
+			logger.error("导出直播回放数据表出现异常，异常信息为："+e.getMessage());
 			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
 		return "redirect:" + adminPath + "/forms/show/byidshow?repage";
-	}
-	
-	/**直播回放日报表
-	 * 导出用户数据
-	 * @param TvShowTimeReport
-	 * @param request
-	 * @param response
-	 * @param redirectAttributes
-	 * @return
-	 */
-	@RequestMapping(value = "exportdate", method = RequestMethod.POST)
-	public String exportFile(TvShowTimeReport tvShowTimeReport, HttpServletRequest request, HttpServletResponse response,
-			RedirectAttributes redirectAttributes) {
-		try {
-			String fileName = "直播回放日报表" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
-			Page<TvShowTimeReport> page = tvShowReportService.tvList(new Page<TvShowTimeReport>(request, response, -1), tvShowTimeReport);
-			new ExportExcel("直播回放日报表", TvShowTimeReport.class).setDataList(page.getList()).write(response, fileName).dispose();
-			return null;
-		} catch (Exception e) {
-			BugLogUtils.saveBugLog(request, "导出直播回放日报表", e);
-			logger.error("导出直播回放日报表出现异常，异常信息为："+e.getMessage());
-			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
-		}
-		return "redirect:" + adminPath + "/forms/show/show?repage";
 	}
 }

@@ -83,10 +83,8 @@
 					<div class="row" style="padding-top:10px;">
 					<div class="col-sm-12">
 						<div class="pull-left">
-							<shiro:hasPermission name="sys:user:export">
-								<!-- 导出按钮 -->
-								<table:exportExcel url="${ctx}/forms/document/exportdate"></table:exportExcel>
-							</shiro:hasPermission>
+							<!-- 导出按钮 -->
+							<table:exportExcel url="${ctx}/forms/document/exportdate"></table:exportExcel>
 							<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新">
 								<i class="glyphicon glyphicon-repeat"></i> 刷新
 							</button>
@@ -100,7 +98,6 @@
 							<th style="text-align: center;">时间</th>
 							<th style="text-align: center;">视频文档ID</th>
 							<th style="text-align: center;">视频文档名称</th>
-							<th style="text-align: center;">下载次数</th>
 							<th style="text-align: center;">课程ID</th>
 							<th style="text-align: center;">课程名称</th>
 							<th style="text-align: center;">一级分类</th>
@@ -115,7 +112,6 @@
 								<td>${lession.time}</td>						
 								<td>${lession.contentId}</td>
 								<td>${lession.contentName}</td>
-								<td>${lession.downNum}</td>
 								<td>${lession.lessionId}</td>
 								<td>${lession.lessionName}</td>
 								<td>${lession.oneClassify}</td>

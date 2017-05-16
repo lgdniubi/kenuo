@@ -84,10 +84,8 @@
 					<div class="row" style="padding-top:10px;">
 						<div class="col-sm-12">
 							<div class="pull-left">
-								<shiro:hasPermission name="sys:user:export">
-									<!-- 导出按钮 -->
-									<table:exportExcel url="${ctx}/forms/collect/exportcollect"></table:exportExcel>
-								</shiro:hasPermission>
+								<!-- 导出按钮 -->
+								<table:exportExcel url="${ctx}/forms/collect/exportcollect"></table:exportExcel>
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新">
 									<i class="glyphicon glyphicon-repeat"></i> 刷新
 								</button>
@@ -99,7 +97,7 @@
 					<thead>
 						<tr>
 							<th style="text-align: center;">时间</th>
-							<th style="text-align: center;">总用户数</th>
+							<th style="text-align: center;">当前用户数</th>
 							<th style="text-align: center;">新增用户</th>
 							<th style="text-align: center;">离职用户数</th>
 						</tr>
@@ -108,7 +106,7 @@
 					<c:forEach items="${page.list}" var="collect" varStatus="status">
 						<tr>		
 							<td>${collect.times}</td>				
-							<td id="allUserCount">${collect.allUserCount}</td>
+							<td>${collect.sum}</td>
 							<td>${collect.addUserCount}</td>
 							<td>${collect.leaveUserCount}</td>						
 						</tr>

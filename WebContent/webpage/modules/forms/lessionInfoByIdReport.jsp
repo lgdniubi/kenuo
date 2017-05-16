@@ -23,7 +23,7 @@
 		function opentwo(){
 			$("#twoClassify").empty();
 			var categoryId=$("#oneClassify").val();
-			var category=$("#categoryone").val();
+			var category=$("#category").val();
 			$.ajax({
 				type : "POST",   
 				url : "${ctx}/forms/document/twoclass",
@@ -82,24 +82,20 @@
 									<option value="" selected='selected'>请选择二级分类</option>
 								</select>
 							</div>
-							<shiro:hasPermission name="train:categorys:findalllist">
-								<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
-									<i class="fa fa-search"></i> 搜索
-								</button>
-								<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="resetnew()" >
-									<i class="fa fa-refresh"></i> 重置
-								</button>
-							</shiro:hasPermission>
+							<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
+								<i class="fa fa-search"></i> 搜索
+							</button>
+							<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="resetnew()" >
+								<i class="fa fa-refresh"></i> 重置
+							</button>
 						</form:form>
 					</div>
 					<!-- 工具栏 -->
 					<div class="row" style="padding-top:10px;">
 						<div class="col-sm-12">
 							<div class="pull-left">
-								<shiro:hasPermission name="sys:user:export">
 								<!-- 导出按钮 -->
-									<table:exportExcel url="${ctx}/forms/document/exportinfo"></table:exportExcel>
-								</shiro:hasPermission>
+								<table:exportExcel url="${ctx}/forms/document/exportinfo"></table:exportExcel>
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新">
 									<i class="glyphicon glyphicon-repeat"></i> 刷新
 								</button>
@@ -111,7 +107,6 @@
 							<tr>
 								<th style="text-align: center;">视频文档ID</th>
 								<th style="text-align: center;">视频文档名称</th>
-								<th style="text-align: center;">下载次数</th>
 								<th style="text-align: center;">课程ID</th>
 								<th style="text-align: center;">课程名称</th>
 								<th style="text-align: center;">一级分类</th>
@@ -125,7 +120,6 @@
 								<tr>						
 									<td>${lession.contentId}</td>
 									<td>${lession.contentName}</td>
-									<td>${lession.downNum}</td>
 									<td>${lession.lessionId}</td>
 									<td>${lession.lessionName}</td>
 									<td>${lession.oneClassify}</td>

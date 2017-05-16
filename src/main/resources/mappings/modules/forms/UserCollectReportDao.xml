@@ -3,10 +3,11 @@
 <mapper namespace="com.training.modules.forms.dao.UserCollectReportDao">
 
 	<!-- 根据时间查询  (用户信息汇总表)-->
-	<select id="collectListByTime" resultType="UserCollectReport">
+	<select id="collectListByTime" resultType="UserCollectReport">	
 	SELECT
 		t.time AS 'times',
-		(SELECT COUNT(1) FROM sys_user) AS 'allUserCount',
+		(SELECT COUNT(1) FROM sys_user WHERE DATE_FORMAT(create_date,'%Y-%m-%d') &lt;= t.time ) AS 'addSum',
+		(SELECT COUNT(1) FROM sys_user WHERE DATE_FORMAT(create_date,'%Y-%m-%d') &lt;= t.time AND del_flag = '1') AS 'deleteSum',
 		count(1) AS 'addUserCount',
 		(SELECT
 			COUNT(1)
@@ -42,7 +43,7 @@
 	<!-- 无条件查询 -->
 	<select id="firstCollectList" resultType="UserCollectReport">
 		SELECT
-			COUNT(1) AS 'allUserCount',
+			(SELECT COUNT(1) FROM sys_user)-(SELECT COUNT(1) FROM sys_user WHERE del_flag = '1') AS 'sum', 
 			COUNT(1) AS 'addUserCount',
 			(SELECT
 				COUNT(1)

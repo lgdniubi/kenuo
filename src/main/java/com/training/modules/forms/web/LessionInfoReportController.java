@@ -1,5 +1,7 @@
 package com.training.modules.forms.web;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +54,17 @@ public class LessionInfoReportController extends BaseController {
 	@RequestMapping(value = { "document", "" })
 	public String document(LessionTimeReport lessionTimeReport, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes) {
 		try {
+			//默认时间（开始：前七天, 结束：当天)
+			if(lessionTimeReport.getBegtime() == null){
+				Date dNow = new Date();   								//当前时间
+				Date dBefore = new Date();
+				Calendar calendar = Calendar.getInstance();  			//得到日历
+				calendar.setTime(dNow);									//把当前时间赋给日历
+				calendar.add(Calendar.DAY_OF_MONTH, -7); 				//设置为前7天
+				dBefore = calendar.getTime();   						//得到前7天的时间
+				lessionTimeReport.setBegtime(dBefore);
+				lessionTimeReport.setEndtime(dNow);
+			}
 			Page<LessionTimeReport> page = lessionInfoReportService.timeList(new Page<LessionTimeReport>(request, response), lessionTimeReport);
 			model.addAttribute("page", page);
 		} catch (Exception e) {

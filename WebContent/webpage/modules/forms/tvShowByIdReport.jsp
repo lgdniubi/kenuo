@@ -75,6 +75,38 @@
 		
 		//就绪函数
 		$(document).ready(function() {
+			var start = {
+				    elem: '#begtime',
+				    format: 'YYYY-MM-DD',
+				    event: 'focus',
+				    max: $("#endtime").val(),   //最大日期
+				    istime: false,				//是否显示时间
+				    isclear: false,				//是否显示清除
+				    istoday: false,				//是否显示今天
+				    issure: true,				//是否显示确定
+				    festival: true,				//是否显示节日
+				    choose: function(datas){
+				         end.min = datas; 		//开始日选好后，重置结束日的最小日期
+				         end.start = datas 		//将结束日的初始值设定为开始日
+				    }
+				};
+			var end = {
+					    elem: '#endtime',
+					    format: 'YYYY-MM-DD',
+					    event: 'focus',
+					    min: $("#begtime").val(),
+					    istime: false,
+					    isclear: false,
+					    istoday: false,
+					    issure: true,
+					    festival: true,
+					    choose: function(datas){
+					        start.max = datas; //结束日选好后，重置开始日的最大日期
+					    }
+					};
+			laydate(start);
+			laydate(end);
+			
 			var categoryOne = $("#categoryOne").val();
 			if(null != categoryOne && '' != categoryOne){
 				opentwo();
@@ -87,9 +119,8 @@
 			
 			var pay = $("#pay").val();
 			if(null != pay && '' != pay){
-				$("#pay").clear();
+				$("#pay").empty();
 			}
-			
 	   });
 	</script>
 </head>
@@ -109,6 +140,13 @@
 					<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 					<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();"/><!-- 支持排序 -->
 					<div class="form-group">
+						<label>查询日期：</label>
+						<input id="begtime" name="begtime" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
+							value="<fmt:formatDate value="${tvShowReport.begtime}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="查询时间" readonly="readonly"/>
+					 			一
+						<input id="endtime" name="endtime" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" 
+							value="<fmt:formatDate value="${tvShowReport.endtime}" pattern="yyyy-MM-dd"/>"  style="width:185px;" placeholder="结束时间" readonly="readonly"/>
+						<p></p>
 						<label>直播ID：<input id="showLiveId" name="showLiveId" maxlength="100" type="text" class="form-control" value="${tvShowReport.showLiveId}" ></label> 
 						<label>主播姓名：<input id="showManName" name="showManName" maxlength="100" type="text" class="form-control" value="${tvShowReport.showManName}" ></label> 
 						<label>直播标题：<input id="showLiveTitle" name="showLiveTitle" maxlength="100" type="text" class="form-control" value="${tvShowReport.showLiveTitle}" ></label> 
@@ -135,24 +173,20 @@
 							<option value="" selected="selected">请选择三级分类</option>
 						</select>
 					 	<!-- 查询，重置按钮 -->
-					 	<shiro:hasPermission name="train:categorys:findalllist">
-							<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
-								<i class="fa fa-search"></i> 搜索
-							</button>
-							<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="resetnew()" >
-								<i class="fa fa-refresh"></i> 重置
-							</button>
-						</shiro:hasPermission>
+						<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
+							<i class="fa fa-search"></i> 搜索
+						</button>
+						<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="resetnew()" >
+							<i class="fa fa-refresh"></i> 重置
+						</button>
 					</div>
 				</form:form>
 					<!-- 工具栏 -->
 					<div class="row" style="padding-top:10px;">
 					<div class="col-sm-12">
 						<div class="pull-left">
-							<shiro:hasPermission name="sys:user:export">
-								<!-- 导出按钮 -->
-								<table:exportExcel url="${ctx}/forms/show/exportinfo"></table:exportExcel>
-							</shiro:hasPermission>
+							<!-- 导出按钮 -->
+							<table:exportExcel url="${ctx}/forms/show/exportinfo"></table:exportExcel>
 							<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新">
 								<i class="glyphicon glyphicon-repeat"></i> 刷新
 							</button>

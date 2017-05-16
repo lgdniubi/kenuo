@@ -31,9 +31,6 @@ public class LessionInfoReportService extends CrudService<LessionInfoReportDao,L
 	 * @return
 	 */
 	public Page<LessionTimeReport> timeList(Page<LessionTimeReport> page, LessionTimeReport lessionTimeReport) {
-		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
-		//goodsReport.getSqlMap().put("dsf", dataScopeFilter(orders.getCurrentUser(), "o", "a"));
-		lessionTimeReport.getSqlMap().put("dsf", dataScopeFilter(lessionTimeReport.getCurrentUser(),"o"));
 		// 设置分页参数
 		lessionTimeReport.setPage(page);
 		// 执行查询
@@ -48,9 +45,6 @@ public class LessionInfoReportService extends CrudService<LessionInfoReportDao,L
 	 * @return
 	 */
 	public Page<LessionInfoReport> infoListById(Page<LessionInfoReport> page, LessionInfoReport lessionInfoReport) {
-		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
-		//goodsReport.getSqlMap().put("dsf", dataScopeFilter(orders.getCurrentUser(), "o", "a"));
-		lessionInfoReport.getSqlMap().put("dsf", dataScopeFilter(lessionInfoReport.getCurrentUser(),"o"));
 		// 设置分页参数
 		lessionInfoReport.setPage(page);
 		// 执行查询

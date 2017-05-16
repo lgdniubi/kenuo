@@ -177,8 +177,8 @@ public class UserInfoReport extends TreeEntity<UserInfoReport>{
 		return begtime;
 	}
 
-	public void setBegtime(Date begtime) {
-		this.begtime = begtime;
+	public void setBegtime(Date time) {
+		this.begtime = time;
 	}
 
 	public Date getEndtime() {

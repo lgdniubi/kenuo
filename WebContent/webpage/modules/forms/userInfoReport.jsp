@@ -90,10 +90,8 @@
 					<div class="row" style="padding-top:10px;">
 						<div class="col-sm-12">
 							<div class="pull-left">
-								<shiro:hasPermission name="sys:user:export">
-									<!-- 导出按钮 -->
-									<table:exportExcel url="${ctx}/forms/collect/exportinfo"></table:exportExcel>
-								</shiro:hasPermission>
+								<!-- 导出按钮 -->
+								<table:exportExcel url="${ctx}/forms/collect/exportinfo"></table:exportExcel>
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新">
 									<i class="glyphicon glyphicon-repeat"></i> 刷新
 								</button>

@@ -1,5 +1,7 @@
 package com.training.modules.forms.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,13 +31,14 @@ public class UserCollectReportService extends CrudService<UserCollectReportDao,U
 	 * @return
 	 */
 	public Page<UserCollectReport> collectListByTime(Page<UserCollectReport> page, UserCollectReport userCollectReport) {
-		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
-		//goodsReport.getSqlMap().put("dsf", dataScopeFilter(orders.getCurrentUser(), "o", "a"));
-		userCollectReport.getSqlMap().put("dsf", dataScopeFilter(userCollectReport.getCurrentUser(),"o"));
 		// 设置分页参数
 		userCollectReport.setPage(page);
 		// 执行查询
-		page.setList(userCollectReportDao.collectListByTime(userCollectReport));
+		List<UserCollectReport> userCollectList = userCollectReportDao.collectListByTime(userCollectReport);
+		for(int i=0;i<userCollectList.size(); i++){
+			userCollectList.get(i).setSum(userCollectList.get(i).getAddSum()-userCollectList.get(i).getDeleteSum()); 
+		}
+		page.setList(userCollectList);
 		return page;
 	}
 

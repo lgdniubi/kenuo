@@ -1,78 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.training.modules.forms.dao.TvShowReportDao">
-	<!-- 根据时间查询 -->
-	<select id="findTvList" resultType="TvShowTimeReport">
-		SELECT
-			p.liveId AS 'showLiveId',
-			p.`name` AS 'showManName',
-			p.`desc` AS 'showLiveTitle',
-			p.playNum AS 'showLiveNum',
-			p.playNum AS 'showLiveLookNum',
-			p.collect AS 'collectNum',
-			p.thumbup AS 'praiseNum',
-			CASE a.isPay  
-	       		WHEN 1 THEN '是'  
-	        	WHEN 2 THEN '否'
-    		END AS 'isPay',
-			CASE
-			  WHEN LENGTH(o.parent_ids) >= 11 THEN  (SELECT name FROM sys_office WHERE id = SUBSTRING(o.parent_ids FROM 5 FOR 7))
-				ELSE ''
-			END AS 'stairOne',
-			CASE
-			  WHEN LENGTH(o.parent_ids) >= 45 THEN  (SELECT name FROM sys_office WHERE id = SUBSTRING(o.parent_ids FROM 13 FOR 32))
-				ELSE ''
-			END AS 'stairTwo',
-			CASE
-			  WHEN LENGTH(o.parent_ids) >= 79 THEN  (SELECT name FROM sys_office WHERE id = SUBSTRING(o.parent_ids FROM 46 FOR 32))
-				ELSE ''
-			END AS 'stairThree',
-			CASE
-			  WHEN LENGTH(o.parent_ids) >= 111 THEN  (SELECT name FROM sys_office WHERE id = SUBSTRING(o.parent_ids FROM 79 FOR 32))
-				ELSE ''
-			END AS 'stairFour',
-			CASE
-				 WHEN LENGTH(o.parent_ids) = 111 THEN o.name
-				 ELSE ''
-			END AS 'stairFive',
-			p.bengtime AS 'showLivebegtime',
-			p.endtime AS 'showLiveendtime',
-			d.label AS 'job',
-			GROUP_CONCAT(ro.name) AS 'role',
-			CASE 
-				WHEN LENGTH(c.parent_ids) > 1 THEN (SELECT `name` FROM train_live_category WHERE id = SUBSTRING(c.parent_ids FROM 3 FOR 32))
-				WHEN LENGTH(c.parent_ids) = 1 THEN c.`name`
-				
-			END AS 'showLiveOne',
-			CASE 
-				WHEN LENGTH(c.parent_ids) > 34 THEN (SELECT `name` FROM train_live_category WHERE id = SUBSTRING(c.parent_ids FROM 36 FOR 32))
-				WHEN LENGTH(c.parent_ids) = 34 THEN c.`name`
-			END AS 'showLiveTwo',
-			CASE 
-				WHEN LENGTH(c.parent_ids) = 67 THEN c.`name`
-			END AS 'showLiveThree'
-		FROM
-				train_live_playback p
-			LEFT JOIN train_live_audit a ON a.id = p.auditId
-			LEFT JOIN sys_user u ON u.id = p.userId
-			LEFT JOIN sys_user_role sur ON sur.user_id = p.userId 
-			LEFT JOIN sys_role ro ON ro.id = sur.role_id 
-			LEFT JOIN trains.sys_dict d ON d.`value`=u.user_type AND d.type='sys_user_type'
-			LEFT JOIN train_live_category c ON c.id = a.category_id
-			LEFT JOIN trains.sys_office o ON u.office_id = o.id
-		WHERE 
-			1 = 1
-		<if test="begtime != null and begtime != ''">
-			AND DATE_FORMAT(p.bengtime,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
-		</if>
-		<if test="endtime!=null and endtime!=''">
-			<![CDATA[AND DATE_FORMAT(p.bengtime,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
-		</if>
-			GROUP BY
-				p.id,d.label,c.parent_ids,c.name
-	</select>
 
-	<!-- 根据ID查询 -->
+	<!-- 根据查询条件查询 -->
 	<select id="findTvListById" resultType="TvShowReport">
 		SELECT
 			p.liveId AS 'showLiveId',
@@ -154,6 +84,12 @@
 		<if test="showLiveOne != null and showLiveOne != '' and showLiveTwo != null and showLiveTwo != '' and showLiveThree != null and showLiveThree != ''">
 			AND c.id = #{showLiveThree}
 			AND SUBSTRING(c.parent_ids FROM 36 FOR 32) = #{showLiveTwo} OR c.id = #{showLiveTwo}
+		</if>
+		<if test="begtime != null and begtime != ''">
+			AND DATE_FORMAT(p.bengtime,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			<![CDATA[AND DATE_FORMAT(p.bengtime,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
 		</if>
 		GROUP BY 
 			p.id,d.label,c.parent_ids,c.`name`

@@ -38,8 +38,6 @@ public class TvShowReport extends TreeEntity<TvShowReport>{
 	private String showLiveThree;				//直播三级分类
 	private String showLivebegtime;				//开始直播时间
 	private String showLiveendtime;				//结束直播时间
-	private String seleBegTime;					//sql查询开始时间
-	private String seleEndTime;					//sql查询结束时间
 	private Date begtime;					    //查询开始时间
 	private Date endtime;					    //查询开始时间
 	private String showId;						//直播Id
@@ -50,22 +48,6 @@ public class TvShowReport extends TreeEntity<TvShowReport>{
 
 	public void setShowId(String showId) {
 		this.showId = showId;
-	}
-
-	public String getSeleBegTime() {
-		return seleBegTime;
-	}
-
-	public void setSeleBegTime(String seleBegTime) {
-		this.seleBegTime = seleBegTime;
-	}
-
-	public String getSeleEndTime() {
-		return seleEndTime;
-	}
-
-	public void setSeleEndTime(String seleEndTime) {
-		this.seleEndTime = seleEndTime;
 	}
 
 	public Date getEndtime() {

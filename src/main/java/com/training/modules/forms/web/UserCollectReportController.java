@@ -1,9 +1,11 @@
 package com.training.modules.forms.web;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,7 +41,6 @@ public class UserCollectReportController extends BaseController {
 	 * @param response
 	 * @param model
 	 */
-	@RequiresPermissions("report:report:view")
 	@RequestMapping(value = { "collect", "" })
 	public String collect(UserCollectReport userCollectReport, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes) {
 		try {
@@ -67,10 +68,20 @@ public class UserCollectReportController extends BaseController {
 	 * @param response
 	 * @param model
 	 */
-	@RequiresPermissions("report:report:view")
 	@RequestMapping(value = { "info", "" })
 	public String info(UserInfoReport userInfoReport, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes) {
 		try {
+			//默认时间（开始：前七天, 结束：当天)
+			if(userInfoReport.getBegtime() == null && userInfoReport.getEndtime() == null){
+				Date dNow = new Date();   								//当前时间
+				Date dBefore = new Date();
+				Calendar calendar = Calendar.getInstance();  			//得到日历
+				calendar.setTime(dNow);									//把当前时间赋给日历
+				calendar.add(Calendar.DAY_OF_MONTH, -7); 				//设置为前7天
+				dBefore = calendar.getTime();   						//得到前7天的时间
+				userInfoReport.setBegtime(dBefore);
+				userInfoReport.setEndtime(dNow);
+			}
 			Page<UserInfoReport> page = userCollectReportService.infoList(new Page<UserInfoReport>(request, response), userInfoReport);
 			model.addAttribute("page", page);
 		} catch (Exception e) {
@@ -89,7 +100,6 @@ public class UserCollectReportController extends BaseController {
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@RequiresPermissions("sys:user:export")
 	@RequestMapping(value = "exportcollect", method = RequestMethod.POST)
 	public String collectExportFile(UserCollectReport userCollectReport, HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
 		try {
@@ -119,7 +129,6 @@ public class UserCollectReportController extends BaseController {
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@RequiresPermissions("sys:user:export")
 	@RequestMapping(value = "exportinfo", method = RequestMethod.POST)
 	public String infoExportFile(UserInfoReport userInfoReport, HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
 		try {

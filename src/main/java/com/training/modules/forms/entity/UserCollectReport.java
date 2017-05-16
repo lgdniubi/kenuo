@@ -15,7 +15,9 @@ public class UserCollectReport extends TreeEntity<UserCollectReport>{
 
 	private static final long serialVersionUID = 1L;
 	
-	private int allUserCount;              //总用户数
+	private int sum;      				   //累计用户数
+	private int addSum;      			   //累计新增用户数
+	private int deleteSum;      		   //累计离职用户数
 	private int addUserCount;              //新增用户数
 	private int leaveUserCount;            //离职用户数
 	private Date begtime;				   //查询开始时间
@@ -47,13 +49,13 @@ public class UserCollectReport extends TreeEntity<UserCollectReport>{
 		this.times = times;
 	}
 	
-	@ExcelField(title = "总用户数" , align = 2 , type = 1 , sort = 200)
-	public int getAllUserCount() {
-		return allUserCount;
+	@ExcelField(title = "累计用户数" , align = 2 , type = 1 , sort = 200)
+	public int getSum() {
+		return sum;
 	}
 
-	public void setAllUserCount(int allUserCount) {
-		this.allUserCount = allUserCount;
+	public void setSum(int sum) {
+		this.sum = sum;
 	}
 
 	@ExcelField(title = "新增用户数" , align = 2 , type = 1 , sort = 300)
@@ -87,7 +89,22 @@ public class UserCollectReport extends TreeEntity<UserCollectReport>{
 	@Override
 	public void setParent(UserCollectReport parent) {
 		// TODO Auto-generated method stub
-		
 	}
 
+	public int getAddSum() {
+		return addSum;
+	}
+
+	public void setAddSum(int addSum) {
+		this.addSum = addSum;
+	}
+
+	public int getDeleteSum() {
+		return deleteSum;
+	}
+
+	public void setDeleteSum(int deleteSum) {
+		this.deleteSum = deleteSum;
+	}
+	
 }

@@ -17,7 +17,6 @@ public class LessionTimeReport extends TreeEntity<LessionTimeReport>{
 	
 	private String contentId;               //视频文档ID
 	private String contentName;				//视频文档名称
-	private int downNum;                    //下载次数
 	private String lessionId;				//课程ID
 	private String lessionName;             //课程名称
 	private String oneClassify;;			//一级分类
@@ -47,15 +46,6 @@ public class LessionTimeReport extends TreeEntity<LessionTimeReport>{
 		this.contentName = contentName;
 	}
 	
-	@ExcelField(title = "下载次数" , align = 2 , sort = 300)
-	public int getDownNum() {
-		return downNum;
-	}
-
-	public void setDownNum(int downNum) {
-		this.downNum = downNum;
-	}
-
 	@ExcelField(title = "课程ID" , sort = 400)
 	public String getLessionId() {
 		return lessionId;

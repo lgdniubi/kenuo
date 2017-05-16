@@ -10,14 +10,12 @@ import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.forms.dao.TvShowReportDao;
 import com.training.modules.forms.entity.TvShowReport;
-import com.training.modules.forms.entity.TvShowTimeReport;
 
 /**
- * 直播回放信息表
+ * 直播回放数据表
  * @author stone
  * @date 2017年4月26日
  */
-
 @Service
 @Transactional(readOnly = false)
 public class TvShowReportService extends CrudService<TvShowReportDao,TvShowReport>{
@@ -25,27 +23,12 @@ public class TvShowReportService extends CrudService<TvShowReportDao,TvShowRepor
 	private TvShowReportDao tvShowReportDao;
 
 	/**
-	 * 根据时间分页查询
-	 * @param page
-	 * @param TvShowReport
-	 * @return
-	 */
-	public Page<TvShowTimeReport> tvList(Page<TvShowTimeReport> page, TvShowTimeReport tvShowTimeReport) {
-		// 设置分页参数
-		tvShowTimeReport.setPage(page);
-		// 执行查询
-		page.setList(tvShowReportDao.findTvList(tvShowTimeReport));
-		return page;
-	}
-
-	/**
-	 * 根据ID分页查询
+	 * 根据查询条件分页查询
 	 * @param page
 	 * @param TvShowReport
 	 * @return
 	 */
 	public Page<TvShowReport> tvListById(Page<TvShowReport> page, TvShowReport tvShowReport) {
-		//goodsReport.getSqlMap().put("dsf", dataScopeFilter(orders.getCurrentUser(), "o", "a"));
 		// 设置分页参数
 		tvShowReport.setPage(page);
 		// 执行查询
