@@ -171,11 +171,7 @@
 							<th style="text-align: center;">供应商ID</th>
 							<th style="text-align: center;">姓名</th>
 							<th style="text-align: center;">电话</th>
-							<th style="text-align: center;">供应商状态</th>
-							<th style="text-align: center;">创建人</th>
-                			<th style="text-align: center;">创建时间</th>
-                			<th style="text-align: center;">修改人</th>
-                			<th style="text-align: center;">修改时间</th>
+							<th style="text-align: center;">联系人状态</th>
                 			<th style="text-align: center;">操作</th>
 						</tr>
 					</thead>
@@ -195,14 +191,6 @@
 											<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeStatus('${page.goodsSupplierContactsId}','1')">
 										</c:if>
 									</shiro:hasPermission>
-								</td>
-								<td style="text-align: center;">${page.createBy.id}</td>
-								<td style="text-align: center;">
-									<fmt:formatDate value="${page.createDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
-								</td>	
-								<td style="text-align: center;">${page.updateBy.id}</td>
-								<td style="text-align: center;">
-									<fmt:formatDate value="${page.updateDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
 								</td>
 								<td style="text-align: center;">
 									<shiro:hasPermission name="ec:goodsSupplierContacts:view">
