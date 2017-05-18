@@ -1,6 +1,7 @@
 package com.training.modules.ec.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
@@ -56,6 +57,11 @@ public interface CommentDao extends CrudDao<Comment>{
 	 * @return
 	 */
 	public List<Comment> findBeautyByUserId(Comment comment);
-	
+	/**
+	 * 查询商品星级、总评论数
+	 * @param goodsId
+	 * @return
+	 */
+	public Map<String, Object> findCommentByGoodId(int goodsId);
 	
 }
