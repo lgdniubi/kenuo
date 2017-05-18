@@ -271,6 +271,11 @@ public class GoodsCategoryController extends BaseController{
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		GoodsCategory goodsCategory = new GoodsCategory();
 		goodsCategory.setPositionType(positionType);
+
+		GoodsCategory parent = new GoodsCategory();
+		parent.setId("");
+		goodsCategory.setParent(parent);
+		
 		List<GoodsCategory> list = goodsCategoryService.findAllList(goodsCategory);
 		for (int i=0; i<list.size(); i++){
 			GoodsCategory e = list.get(i);

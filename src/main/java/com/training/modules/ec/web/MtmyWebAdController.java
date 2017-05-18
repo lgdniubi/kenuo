@@ -201,6 +201,12 @@ public class MtmyWebAdController extends BaseController{
 	@RequestMapping(value="mtmyWebAdGoodsForm")
 	public String mtmyWebAdGoodsForm(Goods goods,HttpServletRequest request,Model model,String flag){
 		try{
+			String positionType = request.getParameter("positionType");
+			if("2".equals(positionType)){
+				model.addAttribute("isReal","0");
+			}else if("3".equals(positionType)){
+				model.addAttribute("isReal","1");
+			}
 			goods.setAdId(Integer.valueOf(request.getParameter("adId")));
 			List<Goods> goodsList = mtmyWebAdDao.findGoodsList(goods);
 			model.addAttribute("goods", goods);

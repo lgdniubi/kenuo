@@ -101,6 +101,7 @@
 	function findGood(){
 		var cateid=$("#goodsCategoryId").val();
 		var actionType=$("#actionType").val();
+		var isReal = $("#isReal").val();
 		var arr = new Array(); //数组定义标准形式，不要写成Array arr = new Array();
 	    var all = new Array(); //定义变量全部保存
 		$("#select1").empty();	
@@ -113,7 +114,7 @@
 			$.ajax({
 				 type:"get",
 				 dataType:"json",
-				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&actionType="+actionType+"&isOnSale=1",
+				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&actionType="+actionType+"&isOnSale=1"+"&isReal="+isReal,
 				 success:function(date){
 					var data=date;
 					if(arr.length>0){
@@ -153,13 +154,14 @@
 			<div class="ibox-content">
 				<div class="clearfix">
 					<form:form id="inputForm" modelAttribute="goods" action="${ctx}/ec/webAd/saveMtmyWebAdGoods" method="post" class="form-horizontal">
+						<input type="hidden" id="isReal" name="isReal" value="${isReal}">
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 							<tr>
 								<td>
 									<label class="pull-right" >选择分类：</label>
 								</td>
 								<td>
-									<sys:treeselect id="goodsCategory" name="goodsCategoryId" value="${goods.goodsCategoryId }" labelName="goodsCategory.name" labelValue="${goodsCategory.name }" title="商品分类" url="/ec/goodscategory/treeData" cssClass="form-control required" allowClear="true" notAllowSelectParent="true"/>
+									<sys:treeselect id="goodsCategory" name="goodsCategoryId" value="${goods.goodsCategoryId }" labelName="goodsCategory.name" labelValue="${goodsCategory.name }" title="商品分类" url="/ec/goodscategory/treeData?positionType=${isReal}" cssClass="form-control required" allowClear="true" notAllowSelectParent="true"/>
 							</tr>
 							<tr>
 								<td style="width:100px"><label class="pull-right">活动类型：</label></td>

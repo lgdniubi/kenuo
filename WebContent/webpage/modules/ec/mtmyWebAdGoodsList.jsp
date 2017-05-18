@@ -49,12 +49,12 @@
 	});
 	}
 	
-	function addGoods(id,flag){
+	function addGoods(id,flag,positionType){
 		top.layer.open({
 		    type: 2, 
 		    area: ['900px', '550px'],
 		    title:"添加商品",
-		    content: "${ctx}/ec/webAd/mtmyWebAdGoodsForm?adId="+id+"&flag="+flag,
+		    content: "${ctx}/ec/webAd/mtmyWebAdGoodsForm?adId="+id+"&flag="+flag+"&positionType="+positionType,
 		    btn: ['确定', '关闭'],
 		    yes: function(index, layero){
 		        var obj =  layero.find("iframe")[0].contentWindow;
@@ -130,7 +130,7 @@
 				</form>
 				</div>
 				<div>
-					<a href="#" onclick="addGoods(${mtmyWebAd.mtmyWebAdId},'add')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加商品</a>
+					<a href="#" onclick="addGoods(${mtmyWebAd.mtmyWebAdId},'add',${mtmyWebAd.positionType})" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加商品</a>
 				</div>
 				<p></p>
 				<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">

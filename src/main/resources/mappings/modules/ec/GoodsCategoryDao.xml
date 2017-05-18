@@ -47,8 +47,8 @@
 		FROM
 			mtmydb.mtmy_goods_category AS m
 		WHERE m.del_flag = 0 
-		<if test="parentId != null and parentId != ''">
-			AND m.parent_id = #{parentId}
+		<if test="parent != null and parent.id != null and parent.id != ''">
+			AND m.parent_id = #{parent.id}
 		</if>
 		<if test="positionType !=null and positionType !=''">
 			AND m.position_type = #{positionType}
