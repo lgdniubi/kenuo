@@ -69,6 +69,24 @@
 				</tr>
 				<tr>
 					<td class="width-15 active">
+						<label class="pull-right"><font color="red">*</font>报货价格:</label>
+					</td>
+					<td class="width-35">
+						<input id="cargoPrice" htmlEscape="false" maxlength="50" class="form-control required" value="${goodsSpecPrice.cargoPrice }"
+							onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="width-15 active">
+						<label class="pull-right"><font color="red">*</font>采购价格:</label>
+					</td>
+					<td class="width-35">
+						<input id="purchasePrice" htmlEscape="false" maxlength="50" class="form-control required" value="${goodsSpecPrice.purchasePrice }"
+							onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="width-15 active">
 						<label class="pull-right">库存:</label>
 					</td>
 					<td class="width-35">
@@ -89,6 +107,14 @@
 					</td>
 					<td class="width-35">
 						<form:input path="goodsNo" htmlEscape="false" maxlength="50" class="form-control"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="width-15 active">
+						<label class="pull-right">供应商商品编号:</label>
+					</td>
+					<td class="width-35">
+						<form:input path="suplierGoodsNo" htmlEscape="false" maxlength="50" class="form-control"/>
 					</td>
 				</tr>
 				<tr>

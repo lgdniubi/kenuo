@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.GoodsSupplierDao">
+    
+	<!-- 查询所有数据列表 -->
+	<select id="findList" resultType="GoodsSupplier">
+		SELECT
+			id AS goodsSupplierId,
+			name,                               
+			status,
+		    create_by AS "createBy.id",
+			create_date AS createDate,
+		    update_by AS "updateBy.id",
+		    update_date AS updateDate
+		FROM
+			mtmydb.mtmy_goods_supplier
+		WHERE del_flag=0 
+		<if test="name != null and name!=''">
+			AND name like
+			<if test="dbName == 'oracle'">'%'||#{name} ||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{name} , '%')</if>
+		</if>
+		<if test="status != null  and status != ''">
+			AND status=#{status}
+		</if>
+		ORDER BY
+			id DESC
+	</select>
+	
+	<!-- 查询单个背景图详情 -->
+	<select id="get" resultType="GoodsSupplier">
+		SELECT
+			id AS goodsSupplierId,
+			name,                               
+			status,
+		    create_by AS "createBy.id",
+			create_date AS createDate,
+		    update_by AS "updateBy.id",
+		    update_date AS updateDate
+		FROM
+			mtmydb.mtmy_goods_supplier
+		WHERE 
+			id = #{goodsSupplierId}
+	</select>
+	
+    <!-- 更新数据 -->
+	<insert id="insert" parameterType="GoodsSupplier">
+		INSERT INTO mtmydb.mtmy_goods_supplier(
+			id,
+			name,                               
+			status,
+		    create_by,
+			create_date,
+		    update_by,
+		    update_date,
+		    del_flag
+		) VALUES (
+			#{goodsSupplierId},
+			#{name},
+			#{status},
+			#{createBy.id},
+			SYSDATE(),
+			#{createBy.id},
+			SYSDATE(),
+			0
+		)
+	</insert>
+	
+	<!-- 更新数据 -->
+	<update id="update" parameterType="GoodsSupplier">
+		UPDATE mtmydb.mtmy_goods_supplier
+			SET 
+			  name = #{name},     
+			  status = #{status},
+			  update_by = #{updateBy.id},
+			  update_date = SYSDATE()
+		WHERE id = #{goodsSupplierId}
+	</update>
+	
+	<!-- 逻辑删除供应商  -->
+	<update id="delete" parameterType="GoodsSupplier">
+		UPDATE mtmydb.mtmy_goods_supplier
+			SET 
+			  del_flag = 1
+		WHERE id = #{goodsSupplierId}
+	</update>
+	
+	<!-- 异步 修改状态  -->
+	<update id="updateStatus" parameterType="GoodsSupplier">
+		UPDATE mtmydb.mtmy_goods_supplier
+			SET 
+			  status = #{status}
+		WHERE id = #{goodsSupplierId}
+	</update>
+	
+	
+	
+	
+	
+	
+	
+	<!-- 删除整组tab_banner -->
+	<delete id="deleteTabBackground" parameterType="TabBackground">
+		Delete 
+		FROM mtmydb.mtmy_tab_banner
+		WHERE id = #{tabBackgroundId}
+	</delete>
+	
+	
+	<!-- 修改当前页面上所有组的状态 -->
+	<update id="changAllIsShow">
+		UPDATE mtmydb.mtmy_tab_banner
+			SET 
+			  is_show = 1
+	</update>
+	
+	<!-- 查询出最近更新的那一组的id -->
+	<select id="selectIdByUpdateDate" resultType="Integer">
+		SELECT id AS tabBackgroundId
+		FROM mtmydb.mtmy_tab_banner
+		ORDER BY update_date desc LIMIT 1
+	</select>
+</mapper>

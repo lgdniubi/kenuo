@@ -280,9 +280,12 @@ public class GoodsController extends BaseController{
 						tablecontent.append("<td><b>优惠价</b></td>");
 						tablecontent.append("<td><b>市场价</b></td>");
 						tablecontent.append("<td><b>系统价</b></td>");
+						tablecontent.append("<td><b>报货价</b></td>");
+						tablecontent.append("<td><b>采购价</b></td>");
 						tablecontent.append("<td><b>库存</b></td>");
 						tablecontent.append("<td><b>条码</b></td>");
 						tablecontent.append("<td><b>商品编码</b></td>");
+						tablecontent.append("<td><b>供应商商品编码</b></td>");
 						tablecontent.append("<td><b>商品重量（克）</b></td>");
 						tablecontent.append("<td><b>服务次数</b></td>");
 						tablecontent.append("<td><b>截止时间（月）</b></td>");
@@ -894,9 +897,12 @@ public class GoodsController extends BaseController{
 									specItemcontent.append("<td><b>优惠价</b></td>");
 									specItemcontent.append("<td><b>市场价</b></td>");
 									specItemcontent.append("<td><b>系统价</b></td>");
+									specItemcontent.append("<td><b>报货价</b></td>");
+									specItemcontent.append("<td><b>采购价</b></td>");
 									specItemcontent.append("<td><b>库存</b></td>");
 									specItemcontent.append("<td><b>条码</b></td>");
 									specItemcontent.append("<td><b>商品编码</b></td>");
+									specItemcontent.append("<td><b>供应商商品编码</b></td>");
 									specItemcontent.append("<td><b>商品重量（克）</b></td>");
 									specItemcontent.append("<td><b>服务次数</b></td>");
 									specItemcontent.append("<td><b>截止时间（月）</b></td>");
@@ -1032,9 +1038,12 @@ public class GoodsController extends BaseController{
 				tablecontent.append("<td><b>优惠价</b></td>");
 				tablecontent.append("<td><b>市场价</b></td>");
 				tablecontent.append("<td><b>系统价</b></td>");
+				tablecontent.append("<td><b>报货价</b></td>");
+				tablecontent.append("<td><b>采购价</b></td>");
 				tablecontent.append("<td><b>库存</b></td>");
 				tablecontent.append("<td><b>条码</b></td>");
 				tablecontent.append("<td><b>商品编码</b></td>");
+				tablecontent.append("<td><b>供应商商品编码</b></td>");
 				tablecontent.append("<td><b>商品重量（克）</b></td>");
 				tablecontent.append("<td><b>服务次数</b></td>");
 				tablecontent.append("<td><b>截止时间（月）</b></td>");
