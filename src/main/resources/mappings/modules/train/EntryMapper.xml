@@ -25,7 +25,7 @@
     <update id="uplivestatus" parameterType="java.lang.Integer">
 	UPDATE 
 		trains.train_live_audit 
-	set audit_status=5
+	SET audit_status=5
 	WHERE
 		now() > DATE_ADD(bengtime,INTERVAL ${value} MINUTE)
 		AND id=#{auditid}
@@ -119,14 +119,19 @@
 	</update>
 	
 	<update id="liveendtime" parameterType="java.lang.Integer">
-    UPDATE trains.train_live_audit SET endtime = now() WHERE id = #{value}
+    	UPDATE trains.train_live_audit SET endtime = now() WHERE id = #{value}
     </update>
     
     <update id="operatebackrecord">
-		update trains.train_live_back_record set del_flag = 1 where now() > validity_date and is_pay = 2
+		UPDATE trains.train_live_back_record SET del_flag = 1 WHERE now() > validity_date AND is_pay = 2
 	</update>
-    
-    <update id="SyncIntegrals" parameterType="java.lang.String">
+	
+	<update id="SyncIntegrals" parameterType="java.lang.String">
 		UPDATE mtmydb.mtmy_user_accounts SET user_integral = #{integral} WHERE user_id = #{mtmy_id}
 	</update>
+    
+    <update id="updateauditstatus" parameterType="java.lang.Integer">
+    	UPDATE trains.train_live_audit SET audit_status = (CASE WHEN (SELECT count(*) FROM trains.train_live_playback WHERE auditId = #{auditid} AND is_show = 0) > 0 THEN 3 ELSE 5 END) WHERE id = #{auditid}
+    </update>
+    
 </mapper>

@@ -28,7 +28,7 @@
 						<form:form id="searchForm" action="${ctx}/crm/store/list" modelAttribute="complain" method="post" class="form-inline">
 							<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 							<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-							<form:hidden path="stamp" id="stamp"/>
+							<input id="stamp" class="stamp" name="stamp" value="${stamp }" type="hidden">
 							<form:hidden path="mobile" id="mobile"/>
 							<form:hidden path="member" id="member"/>
 							<div class="form-group">						

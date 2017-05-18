@@ -43,7 +43,6 @@
 			if($("#isReal").val() == '1'){
 				$("#shipping").hide();
 			}
-			
 			if($("#shippingtype").val()== 0 || $("#shippingtype").val()== 1){
 				$("#logistics").show();
 			}else{

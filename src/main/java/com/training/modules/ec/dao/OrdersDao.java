@@ -102,6 +102,8 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @return
 	 */
 	public List<Orders> queryNotPayOrder(Map<String, Object> map);
+	
+	public List<Orders> queryNotPayOrder1(Map<String, Object> map);
 	/**
 	 * 修改订单状态
 	 * @param map
