@@ -139,6 +139,7 @@
 		  image,
 		  cat_group,
 		  type,
+		  position_type,
 		  del_flag
 		) 
 		VALUES
@@ -155,6 +156,7 @@
 		    #{image},
 		    #{catGroup},
 		    #{type},
+		    #{positionType},
 		    0
 		  )
 	</insert>
