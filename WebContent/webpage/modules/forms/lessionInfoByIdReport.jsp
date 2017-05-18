@@ -4,8 +4,6 @@
 <head>
 	<title>视频文档信息表</title>
 	<meta name="decorator" content="default"/>
-	<link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
-	<%@include file="/webpage/include/treetable.jsp" %>
 	<script type="text/javascript">
 		//重置表单
 		function resetnew(){
@@ -19,10 +17,34 @@
 		}
 		
 		//一级分类改变事件，联动二级分类
+		function openone(){
+			$("#oneClassify").empty();
+			var sellerId=$("#seller").val();
+			var categoryone=$("#categoryone").val();
+			$.ajax({
+				type : "POST",   
+				url : "${ctx}/forms/document/oneclass",
+				data:{seller:sellerId},
+				dataType: 'json',
+				async: false,
+				success: function(data) {
+					$("#oneClassify").prepend("<option value='' selected='selected'>请选择一级分类</option>");
+					$.each(data, function(index,item){
+						if(categoryone == item.categoryId){
+							$("#oneClassify").prepend("<option value='"+item.categoryId+"' selected>"+item.oneClassify+"</option>");
+						}else{
+							$("#oneClassify").prepend("<option value="+item.categoryId+">"+item.oneClassify+"</option>");
+						}
+					});
+				}
+			});  
+		}
+		
+		//二级分类改变事件，联动三级分类
 		function opentwo(){
 			$("#twoClassify").empty();
 			var categoryId=$("#oneClassify").val();
-			var category=$("#category").val();
+			var categorytwo=$("#categorytwo").val();
 			$.ajax({
 				type : "POST",   
 				url : "${ctx}/forms/document/twoclass",
@@ -32,7 +54,7 @@
 				success: function(data) {
 					$("#twoClassify").prepend("<option value='' selected='selected'>请选择二级分类</option>");
 					$.each(data, function(index,item){
-						if(category == item.categoryId){
+						if(categorytwo == item.categoryId){
 							$("#twoClassify").prepend("<option value='"+item.categoryId+"' selected>"+item.twoClassify+"</option>");
 						}else{
 							$("#twoClassify").prepend("<option value="+item.categoryId+">"+item.twoClassify+"</option>");
@@ -44,6 +66,11 @@
 		
 		//就绪函数
 		$(document).ready(function() {
+			var seller=$("#sellerzero").val();
+			if(null != seller && '' != seller){
+				openone();
+			}
+			
 			var category=$("#categoryone").val();
 			if(null != category && '' != category){
 				opentwo();
@@ -52,15 +79,15 @@
 	</script>
 </head>
 <body>
-	<div class="ibox-content">
+	<div class="gray-bg">
 		<sys:message content="${message}"/>
-		<div class="warpper-content">
+		<div class="wrapper-content">
 			<div class="ibox">
 				<div class="ibox-title">
 					<h5>视频文档信息表</h5>
 				</div>
 				<div class="ibox-content">
-					<div class="searcharea clearfix">
+					<div class="clearfix">
 						<form:form id="searchForm" modelAttribute="goodsReport" action="${ctx}/forms/document/documentbyid" method="post" class="form-inline">
 							<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 							<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
@@ -69,17 +96,21 @@
 								<label>视频文档名称：<input id="contentName" name="contentName" maxlength="100" type="text" class="form-control" value="${lessionInfoReport.contentName}" ></label> 
 								<label>课程ID：<input id="lessionId" name="lessionId" maxlength="100" type="text" class="form-control" value="${lessionInfoReport.lessionId}" ></label>
 								<label>课程名称：<input id="lessionName" name="lessionName" maxlength="100" type="text" class="form-control" value="${lessionInfoReport.lessionName}" ></label>
-								<select class="form-control" id="oneClassify" name="oneClassify" onchange="opentwo()">
-									<option value="" selected='selected'>请选择一级分类</option>
-									<c:forEach items="${lession}" var="lession">
-										<option value="${lession.categoryId}" <c:if test="${one == lession.categoryId}">selected</c:if>>${lession.oneClassify}</option>
+								<select class="form-control" id="seller" name="seller" onchange="openone()">
+									<option value="" selected='selected'>请选择商家</option>
+									<c:forEach items="${seller}" var="seller">
+										<option value="${seller.categoryId}" <c:if test="${zero == seller.categoryId}">selected</c:if>>${seller.seller}</option>
 									</c:forEach>
 								</select>
-								<input type="hidden" id="categoryone" name="categoryone" value="${one}"/>
-								<input type="hidden" id="category" name="category" value="${two}"/>
+								<select class="form-control" id="oneClassify" name="oneClassify" onchange="opentwo()">
+									<option value="" selected='selected'>请选择一级分类</option>
+								</select>
 								<select class="form-control" id="twoClassify" name="twoClassify">
 									<option value="" selected='selected'>请选择二级分类</option>
 								</select>
+								<input type="hidden" id="sellerzero" name="sellerzero" value="${zero}"/>
+								<input type="hidden" id="categoryone" name="categoryone" value="${one}"/>
+								<input type="hidden" id="categorytwo" name="categorytwo" value="${two}"/>
 							</div>
 							<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
 								<i class="fa fa-search"></i> 搜索
@@ -101,7 +132,7 @@
 							</div>
 						</div>
 					</div>
-					<table id="treeTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
+					<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 						<thead>
 							<tr>
 								<th style="text-align: center;">视频文档ID</th>

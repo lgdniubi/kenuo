@@ -12,6 +12,11 @@
 	    	return false;
 	    }
 		
+		function resetnew(){
+			$("#name").val("");
+			reset();
+		}
+		
 		//刷新
 		function refresh(){
 			window.location="${ctx}/forms/collect/collect";
@@ -76,7 +81,7 @@
 						value="<fmt:formatDate value="${userCollectReport.endtime}" pattern="yyyy-MM-dd"/>"  style="width:185px;" placeholder="结束时间" readonly="readonly"/>&nbsp;&nbsp;
 					 	<!-- 查询 重置按钮 -->
 					 	<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
-						<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()" ><i class="fa fa-refresh"></i> 重置</button>
+						<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="resetnew()" ><i class="fa fa-refresh"></i> 重置</button>
 					 </div>	
 					 
 				</form:form>

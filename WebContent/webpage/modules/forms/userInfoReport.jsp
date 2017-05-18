@@ -14,6 +14,11 @@
 	    	return false;
 	    }
 		
+		function resetnew(){
+			$("#name").val("");
+			reset();
+		}
+		
 		//刷新
 		function refresh(){
 			window.location="${ctx}/forms/collect/info";
@@ -81,7 +86,7 @@
 						value="<fmt:formatDate value="${userInfoReport.endtime}" pattern="yyyy-MM-dd"/>"  style="width:185px;" placeholder="结束时间" readonly="readonly"/>&nbsp;&nbsp;
 					 	<!-- 查询 重置按钮 -->
 					 	<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
-						<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()" ><i class="fa fa-refresh"></i> 重置</button>
+						<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="resetnew()" ><i class="fa fa-refresh"></i> 重置</button>
 					 </div>	
 					 
 				</form:form>
@@ -105,7 +110,9 @@
 							<th style="text-align: center;">用户昵称</th>
 							<th style="text-align: center;">学分(总)</th>
 							<th style="text-align: center;">被预约次数(总)</th>
+							<th style="text-align: center;">被预约有效次数</th>
 							<th style="text-align: center;">云币额</th>
+							<th style="text-align: center;">可用佣金</th>
 							<th style="text-align: center;">商家</th>
 							<th style="text-align: center;">区域</th>
 							<th style="text-align: center;">集团军</th>
@@ -124,7 +131,9 @@
 							<td>${userinfo.userNmae}</td>
 							<td>${userinfo.score}</td>
 							<td>${userinfo.bespeak}</td>
-							<td>${userinfo.gold}</td>				
+							<td>${userinfo.valid}</td>
+							<td>${userinfo.gold}</td>	
+							<td>${userinfo.userBalance}</td>			
 							<td>${userinfo.oneClass}</td>
 							<td>${userinfo.twoClass}</td>
 							<td>${userinfo.threeClass}</td>	

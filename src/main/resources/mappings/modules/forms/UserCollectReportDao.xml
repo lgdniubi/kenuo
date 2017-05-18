@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.forms.dao.UserCollectReportDao">
+
+	<!-- 根据时间查询  (用户信息汇总表)-->
+	<select id="collectListByTime" resultType="UserCollectReport">	
+	SELECT
+		t.time AS 'times',
+		(SELECT COUNT(1) FROM sys_user WHERE DATE_FORMAT(create_date,'%Y-%m-%d') &lt;= t.time ) AS 'addSum',
+		(SELECT COUNT(1) FROM sys_user WHERE DATE_FORMAT(create_date,'%Y-%m-%d') &lt;= t.time AND del_flag = '1') AS 'deleteSum',
+		count(1) AS 'addUserCount',
+		(SELECT
+			COUNT(1)
+		FROM(
+			SELECT
+				date_format(create_date, '%Y-%m-%d') time2
+			FROM
+				sys_user
+			WHERE
+				del_flag = '1'
+			) AS t2
+		WHERE
+			t2.time2 = t.time
+		) AS 'leaveUserCount'
+	FROM
+		(SELECT
+			date_format(create_date, '%Y-%m-%d') time 
+		FROM
+			sys_user
+		WHERE 
+			1 = 1
+		<if test="begtime != null and begtime != ''">
+			AND DATE_FORMAT(create_date,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			<![CDATA[AND DATE_FORMAT(create_date,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+		</if>
+		) AS t
+	GROUP BY
+		time
+	</select>
+	
+	<!-- 无条件查询 -->
+	<select id="firstCollectList" resultType="UserCollectReport">
+		SELECT
+			(SELECT COUNT(1) FROM sys_user)-(SELECT COUNT(1) FROM sys_user WHERE del_flag = '1') AS 'sum', 
+			COUNT(1) AS 'addUserCount',
+			(SELECT
+				COUNT(1)
+			FROM
+				sys_user
+			WHERE
+				del_flag = '1'
+			) AS 'leaveUserCount'
+		FROM
+			sys_user
+	</select>
+	
+	<!-- 根据名称,id,创建时间,手机号查询 (用户信息)-->
+	<select id="infoList" resultType="UserInfoReport">
+		SELECT 
+			u.id AS 'userId',
+			u.`name` AS 'userNmae',
+			u.totle_score as 'score',
+			u.gold AS 'gold',
+			u.create_date AS 'createTime',
+			u.mobile AS 'mobile',
+			mus.user_balance AS 'userBalance',
+			(SELECT COUNT(*) FROM mtmydb.mtmy_appt_order WHERE beautician_id = u.id) AS 'bespeak',
+			(SELECT COUNT(*) FROM mtmydb.mtmy_appt_order WHERE beautician_id = u.id AND (appt_status IN (1,2))) AS 'valid',
+			CASE
+				WHEN LENGTH(o.parent_ids) = 4 THEN  o.`name`
+			  WHEN LENGTH(o.parent_ids) > 4 THEN  (SELECT `name` FROM sys_office WHERE id = SUBSTRING(o.parent_ids FROM 5 FOR 7))
+				ELSE ''
+			END AS 'oneClass',
+			CASE
+				WHEN LENGTH(o.parent_ids) = 12 THEN  o.`name`
+			  WHEN LENGTH(o.parent_ids) > 12 THEN  (SELECT `name` FROM sys_office WHERE id = SUBSTRING(o.parent_ids FROM 13 FOR 32))
+				ELSE ''
+			END AS 'twoClass',
+			CASE
+				WHEN LENGTH(o.parent_ids) = 45 THEN  o.`name`
+			  WHEN LENGTH(o.parent_ids) > 45 THEN  (SELECT `name` FROM sys_office WHERE id = SUBSTRING(o.parent_ids FROM 46 FOR 32))
+				ELSE ''
+			END AS 'threeClass',
+			CASE
+				WHEN LENGTH(o.parent_ids) = 78 THEN  o.`name`
+			  WHEN LENGTH(o.parent_ids) > 78 THEN  (SELECT `name` FROM sys_office WHERE id = SUBSTRING(o.parent_ids FROM 79 FOR 32))
+				ELSE ''
+			END AS 'foreClass',
+			CASE
+				 WHEN LENGTH(o.parent_ids) = 111 THEN o.`name`
+					 WHEN LENGTH(o.parent_ids) = 111 THEN (SELECT `name` FROM sys_office WHERE id = SUBSTRING(o.parent_ids FROM 112 FOR 32))
+				 ELSE ''
+			END AS 'fiveClass',
+			(SELECT label FROM trains.sys_dict d WHERE d.`value` = u.user_type AND d.type = 'sys_user_type') AS 'job',
+			GROUP_CONCAT(c.`name`) AS 'role'
+		FROM 
+			trains.sys_user u	
+		LEFT JOIN trains.sys_office o ON u.office_id = o.id
+		LEFT JOIN trains.sys_user_role sur ON sur.user_id = u.id 
+		LEFT JOIN trains.sys_role c ON sur.role_id = c.id
+		LEFT JOIN mtmydb.mtmy_user_accounts mus on mus.user_id = u.id
+		WHERE 
+				1 = 1
+		<if test="userId != null and userId != ''">
+			AND u.id = #{userId}
+		</if>
+		<if test="userNmae != null and userNmae != ''">
+			AND u.`name` LIKE '%${userNmae}%'
+		</if>
+		<if test="mobile != null and mobile != ''">
+			AND u.mobile = #{mobile}
+		</if>
+		<if test="begtime != null and begtime != ''">
+			AND DATE_FORMAT(u.create_date,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			<![CDATA[AND DATE_FORMAT(u.create_date,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+		</if>
+		GROUP BY 
+			u.id
+	</select>
+</mapper>
