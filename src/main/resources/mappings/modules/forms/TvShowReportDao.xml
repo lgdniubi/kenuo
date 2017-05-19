@@ -6,8 +6,8 @@
 	<select id="findTvListById" resultType="TvShowReport">
 		SELECT
 			p.liveId AS 'showLiveId',
-			p.`name` AS 'showManName',
-			p.`desc` AS 'showLiveTitle',
+			u.`name` AS 'showManName',
+			a.title AS 'showLiveTitle',
 			p.playNum AS 'showLiveNum',
 			p.playNum AS 'showLiveLookNum',
 			p.collect AS 'collectNum',
@@ -67,10 +67,10 @@
 			AND p.liveId = #{showLiveId}
 		</if>
 		<if test="showManName != null and showManName != ''">	
-			AND p.`name` LIKE '%${showManName}%'
+			AND u.`name` LIKE '%${showManName}%'
 		</if>
 		<if test="showLiveTitle != null and showLiveTitle != ''">	
-			AND p.`desc` LIKE '%${showLiveTitle}%'
+			AND a.title LIKE '%${showLiveTitle}%'
 		</if>
 		<if test="isPay != null and isPay != ''">	
 			AND a.isPay = #{isPay}

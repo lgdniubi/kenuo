@@ -17,7 +17,9 @@ public class UserInfoReport extends TreeEntity<UserInfoReport>{
 	private String userId;					//用户ID                     
 	private String userNmae;				//用户昵称
 	private String score;					//学分(总)
-	private String bespeak;					//预约次数(总)
+	private int bespeak;					//预约次数(总)
+	private int valid;						//预约有效次数
+	private int userBalance;				//可用佣金
 	private String gold;					//云币额(总)
 	private String oneClass;				//第一级(商家)
 	private String twoClass;				//第二级(区域)
@@ -59,14 +61,22 @@ public class UserInfoReport extends TreeEntity<UserInfoReport>{
 	}
 	
 	@ExcelField(title = "预约次数" ,sort = 400 )
-	public String getBespeak() {
+	public int getBespeak() {
 		return bespeak;
 	}
 
-	public void setBespeak(String bespeak) {
+	public void setBespeak(int bespeak) {
 		this.bespeak = bespeak;
 	}
-	
+	@ExcelField(title = "预约有效次数" ,sort = 450 )
+	public int getValid() {
+		return valid;
+	}
+
+	public void setValid(int valid) {
+		this.valid = valid;
+	}
+
 	@ExcelField(title = "云币额" ,sort = 500 )
 	public String getGold() {
 		return gold;
@@ -76,6 +86,15 @@ public class UserInfoReport extends TreeEntity<UserInfoReport>{
 		this.gold = gold;
 	}
 
+	@ExcelField(title = "可用佣金" ,sort = 550 )
+	public int getUserBalance() {
+		return userBalance;
+	}
+
+	public void setUserBalance(int userBalance) {
+		this.userBalance = userBalance;
+	}
+	
 	@ExcelField(title = "商家" ,sort = 600 )
 	public String getOneClass() {
 		return oneClass;

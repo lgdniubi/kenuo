@@ -18,12 +18,14 @@ public class LessionInfoReport extends TreeEntity<LessionInfoReport>{
 	private String contentName;				//视频文档名称
 	private String lessionId;				//课程ID
 	private String lessionName;             //课程名称
-	private String oneClassify;;			//一级分类
-	private String twoClassify;;			//二级分类
+	private String seller;					//商家分类
+	private String oneClassify;				//一级分类
+	private String twoClassify;				//二级分类
 	private int collect;                    //课程收藏总量
 	private String status;                  //属性（视频OR文档）
 	private Date begtime;					//查询开始时间
 	private Date endtime;					//查询结束时间
+	private String sellerId;				//商家分类ID
 	private String categoryId;				//分类ID
 	private String category;				//查询分类
 	
@@ -95,6 +97,22 @@ public class LessionInfoReport extends TreeEntity<LessionInfoReport>{
 		return status;
 	}
 	
+	public String getSeller() {
+		return seller;
+	}
+
+	public void setSeller(String seller) {
+		this.seller = seller;
+	}
+
+	public String getSellerId() {
+		return sellerId;
+	}
+
+	public void setSellerId(String sellerId) {
+		this.sellerId = sellerId;
+	}
+
 	public void setStatus(String status) {
 		this.status = status;
 	}

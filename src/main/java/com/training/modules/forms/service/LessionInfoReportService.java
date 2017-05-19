@@ -58,8 +58,8 @@ public class LessionInfoReportService extends CrudService<LessionInfoReportDao,L
 	 * @param lessionInfoReport
 	 * @return
 	 */
-	public List<LessionInfoReport> findcategoryslist(LessionInfoReport lessionInfoReport) {
-		List<LessionInfoReport> list = lessionInfoReportDao.findcategoryslist(lessionInfoReport);
+	public List<LessionInfoReport> findCategorysList(LessionInfoReport lessionInfoReport) {
+		List<LessionInfoReport> list = lessionInfoReportDao.findCategorysList(lessionInfoReport);
 		return list;
 	}
 
@@ -71,6 +71,17 @@ public class LessionInfoReportService extends CrudService<LessionInfoReportDao,L
 	 */
 	public List<LessionInfoReport> findtwolist(LessionInfoReport lessionInfoReport) {
 		List<LessionInfoReport> list = lessionInfoReportDao.findtwolist(lessionInfoReport);
+		return list;
+	}
+
+	/**
+	 * 查询商家分类
+	 * @param page
+	 * @param lessionInfoReport
+	 * @return
+	 */
+	public List<LessionInfoReport> findSellerList(LessionInfoReport lessionInfoReport) {
+		List<LessionInfoReport> list = lessionInfoReportDao.findSellerList(lessionInfoReport);
 		return list;
 	}
 

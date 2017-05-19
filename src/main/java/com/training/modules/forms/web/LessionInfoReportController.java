@@ -86,9 +86,10 @@ public class LessionInfoReportController extends BaseController {
 	@RequestMapping(value = { "documentbyid", "" })
 	public String documentbyid(LessionInfoReport lessionInfoReport, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes) {
 		try {
-			//查询1级分类
-			List<LessionInfoReport> listone = lessionInfoReportService.findcategoryslist(lessionInfoReport);
-			model.addAttribute("lession", listone);
+			//查询商家分类
+			List<LessionInfoReport> listone = lessionInfoReportService.findSellerList(lessionInfoReport);
+			model.addAttribute("seller", listone);
+			model.addAttribute("zero", lessionInfoReport.getSeller());
 			model.addAttribute("one", lessionInfoReport.getOneClassify());
 			model.addAttribute("two", lessionInfoReport.getTwoClassify());
 			Page<LessionInfoReport> page = lessionInfoReportService.infoListById(new Page<LessionInfoReport>(request, response), lessionInfoReport);
@@ -99,6 +100,23 @@ public class LessionInfoReportController extends BaseController {
 			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
 		return "modules/forms/lessionInfoByIdReport";
+	}
+	
+	/**
+	 * 查询一级级分类
+	 * @param lessionInfoReport
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "oneclass")
+	public String getOneClass(@RequestParam(required=false) HttpServletResponse response,
+	LessionInfoReport lessionInfoReport) {
+		List<LessionInfoReport> listone = lessionInfoReportService.findCategorysList(lessionInfoReport);
+		//转为json格式
+		JsonConfig jsonConfig = new JsonConfig();
+	  	jsonConfig.setCycleDetectionStrategy(CycleDetectionStrategy.LENIENT);
+	  	JSONArray json = JSONArray.fromObject(listone, jsonConfig);
+		return json.toString();
 	}
 	
 	/**

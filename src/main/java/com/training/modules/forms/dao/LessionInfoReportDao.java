@@ -31,7 +31,7 @@ public interface LessionInfoReportDao extends TreeDao<LessionInfoReport>{
 	 * 查询一级分类
 	 * @param lessionInfoReport
 	 */
-	public List<LessionInfoReport> findcategoryslist(LessionInfoReport lessionInfoReport);
+	public List<LessionInfoReport> findCategorysList(LessionInfoReport lessionInfoReport);
 
 	/**
 	 * 查询二级分类
@@ -45,4 +45,10 @@ public interface LessionInfoReportDao extends TreeDao<LessionInfoReport>{
 	 * @param lessionTimeReport
 	 */
 	public List<LessionTimeReport> timeList(LessionTimeReport lessionTimeReport);
+
+	/**
+	 * 查询商家分类
+	 * @param lessionInfoReport
+	 */
+	public List<LessionInfoReport> findSellerList(LessionInfoReport lessionInfoReport);
 }

@@ -115,19 +115,48 @@
 		 <if test="twoClassify != null and twoClassify != ''">
 			AND tc.parent_id = #{twoClassify}
 		</if>
+		<if test="seller != null and seller != ''">
+			AND SUBSTRING((SELECT parent_ids FROM sys_office WHERE id = tc.office_id) FROM 5 FOR 7) = #{seller}
+		</if>
 	</select>
 
-	<!-- 查询一级分类 -->
-	<select id="findcategoryslist" resultType="LessionInfoReport">
+	<!-- 查询所有商家 分类 -->
+	<select id="findSellerList" resultType="LessionInfoReport">
 		SELECT
-			category_id AS 'categoryId',
-			`name` AS 'oneClassify'
+			`name` AS 'seller',
+			id AS 'categoryId'
 		FROM
-			train_categorys
+			sys_office
+		WHERE
+			id IN 
+				(SELECT
+					SUBSTRING(parent_ids FROM 5 FOR 7) AS t
+				FROM
+					sys_office
+				WHERE
+					SUBSTRING(parent_ids FROM 5 FOR 7) != ''
+				GROUP BY
+					t)
+	</select>
+
+	<!--根据商家分类  查询一级分类 -->
+	<select id="findCategorysList" resultType="LessionInfoReport">
+		SELECT
+		DISTINCT
+			c.category_id AS 'categoryId',
+			c.`name` AS 'oneClassify'
+		FROM
+			train_categorys c
+		LEFT JOIN sys_office o ON 
+			CASE 
+				WHEN LENGTH(c.office_id) = 7 THEN c.office_id = o.id
+				WHEN LENGTH(c.office_id) > 7 THEN o.id = SUBSTRING((SELECT parent_ids FROM sys_office WHERE id = c.office_id) FROM 5 FOR 7) 
+			END
 		WHERE	
-			parent_id = 0 
+			c.parent_id = 0 
+		AND o.id = #{seller}
 		ORDER BY 
-			category_id
+			c.category_id
 	</select>
 	
 	<!-- 根据选择一级分类选择二级分类 -->

@@ -146,9 +146,9 @@
 							</div>
 							<br>
 							<p></p>
-		                	单选题：<input type="text" id="num1" name="num1" class="form-control" size="13" placeholder="请输入随机数量"  maxlength="2" onkeyup="this.value=this.value.replace(/\D/g,'')">
-		                	多选题：<input type="text" id="num2" name="num2" class="form-control" size="13" placeholder="请输入随机数量"  maxlength="2" onkeyup="this.value=this.value.replace(/\D/g,'')">
-		                	判断题：<input type="text" id="num3" name="num3" class="form-control" size="13" placeholder="请输入随机数量"  maxlength="2" onkeyup="this.value=this.value.replace(/\D/g,'')"><p></p>
+		                	单选题：<input type="text" id="num1" name="num1" class="form-control" size="13" placeholder="请输入随机数量"  onkeyup="this.value=this.value.replace(/\D/g,'')">
+		                	多选题：<input type="text" id="num2" name="num2" class="form-control" size="13" placeholder="请输入随机数量"  onkeyup="this.value=this.value.replace(/\D/g,'')">
+		                	判断题：<input type="text" id="num3" name="num3" class="form-control" size="13" placeholder="请输入随机数量"  onkeyup="this.value=this.value.replace(/\D/g,'')"><p></p>
 		                	<div id="mydiv"></div>
 		                </div>
 		            </form>

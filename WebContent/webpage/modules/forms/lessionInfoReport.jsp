@@ -12,6 +12,12 @@
 	    	return false;
 	    }
 		
+		//重置表单
+		function resetnew(){
+			$("#name").val("");
+			reset();
+		}
+		
 		//刷新
 		function refresh(){
 			window.location="${ctx}/forms/document/document";
@@ -77,7 +83,7 @@
 					</div>
 					<!-- 查询按钮 -->	
 					<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
-					<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()" ><i class="fa fa-refresh"></i> 重置</button>
+					<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="resetnew()" ><i class="fa fa-refresh"></i> 重置</button>
 				</form:form>
 					<!-- 工具栏 -->
 					<div class="row" style="padding-top:10px;">
