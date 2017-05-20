@@ -99,12 +99,12 @@ public class CourseController extends BaseController{
 		
 		
 		// 设置默认时间范围，默认当前月
-		if (trainLessons.getBeginDate() == null){
-			trainLessons.setBeginDate(DateUtils.setDays(DateUtils.parseDate(DateUtils.getDate()), 1));
-		}
-		if (trainLessons.getEndDate() == null){
-			trainLessons.setEndDate(DateUtils.addMonths(trainLessons.getBeginDate(), 1));
-		}
+//		if (trainLessons.getBeginDate() == null){
+//			trainLessons.setBeginDate(DateUtils.setDays(DateUtils.parseDate(DateUtils.getDate()), 1));
+//		}
+//		if (trainLessons.getEndDate() == null){
+//			trainLessons.setEndDate(DateUtils.addMonths(trainLessons.getBeginDate(), 1));
+//		}
 		//我的课程
 //		trainLessons.setCreateuser(UserUtils.getUser().getId());//用户ID
 //		trainLessons = CourseUtils.lessonsFilter(trainLessons);
