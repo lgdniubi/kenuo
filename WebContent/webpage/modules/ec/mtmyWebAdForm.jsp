@@ -99,9 +99,9 @@
 									</td>
 								</tr>
 								<tr id = "urls">
-									<td><label class="pull-right">链接：</label></td>
+									<td><label class="pull-right"><font color="red">*</font>链接：</label></td>
 									<td>
-										<input class="form-control" id="redirectUrl" name="redirectUrl" type="text" value="${mtmyWebAd.redirectUrl }" style="width: 300px"/>
+										<input class="form-control required" id="redirectUrl" name="redirectUrl" type="text" value="${mtmyWebAd.redirectUrl }" style="width: 300px"/>
 									</td>
 								</tr>
 							</table>
