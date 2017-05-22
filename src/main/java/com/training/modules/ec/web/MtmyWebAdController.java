@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import com.training.common.persistence.Page;
 import com.training.common.web.BaseController;
@@ -133,6 +134,7 @@ public class MtmyWebAdController extends BaseController{
 	@RequestMapping(value = "save")
 	public String save(MtmyWebAd mtmyWebAd,RedirectAttributes redirectAttributes,HttpServletRequest request){
 		try{
+			mtmyWebAd.setRedirectUrl(HtmlUtils.htmlUnescape(mtmyWebAd.getRedirectUrl()));
 			if(mtmyWebAd.getMtmyWebAdId() == 0){
 				mtmyWebAdService.insertMtmyWebAd(mtmyWebAd);
 				addMessage(redirectAttributes, "添加成功！");

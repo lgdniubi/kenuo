@@ -114,7 +114,7 @@
 	<select id="selectIdByType" resultType="Integer">
 		SELECT id AS webMainmenuNavbarId
 		FROM mtmydb.mtmy_web_mainmenu_navbar
-		WHERE del_flag=0
+		WHERE del_flag=0 AND type=#{type}
 		ORDER BY update_date desc LIMIT 1
 	</select>
 </mapper>
