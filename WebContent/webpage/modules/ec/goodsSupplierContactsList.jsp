@@ -63,8 +63,8 @@
 		        var arr = new Array(); //数组定义标准形式，不要写成Array arr = new Array();
 		        var all = new Array(); //定义变量全部保存
 				
-		        var name = $(name).val();
-		        if($(name).val() == null || $(name).val()=="" || name.replace(/(^s*)|(s*$)/g, "").length ==0){
+		        var na = $(name).val();
+		        if(na == null || na=="" || $.trim(na) == ""){
 					top.layer.alert('姓名不能为空!', {icon: 0, title:'提醒'}); 
 					return;
 				}
