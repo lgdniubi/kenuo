@@ -1,6 +1,7 @@
 package com.training.modules.ec.web;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,8 +48,8 @@ public class GoodsSupplierContactsController extends BaseController{
 	@RequestMapping(value="list")
 	public String list(GoodsSupplierContacts goodsSupplierContacts,HttpServletRequest request, HttpServletResponse response,Model model) {
 		try{
-			Page<GoodsSupplierContacts> page = goodsSupplierContactsService.findPage(new Page<GoodsSupplierContacts>(request, response), goodsSupplierContacts);
-			model.addAttribute("page", page);
+			List<GoodsSupplierContacts> list = goodsSupplierContactsService.findList(goodsSupplierContacts);
+			model.addAttribute("list", list);
 			model.addAttribute("supplierId", goodsSupplierContacts.getGoodsSupplierId());
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "查看供应商列表失败!", e);

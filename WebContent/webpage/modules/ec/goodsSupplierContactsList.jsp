@@ -5,6 +5,7 @@
 <head>
 <title>创建供应商联系人列表</title>
 <meta name="decorator" content="default" />
+<link rel="stylesheet" href="${ctxStatic}/train/css/addcourse.css">
 <!-- 内容上传 引用-->
 
 
@@ -177,7 +178,7 @@
 						</tr>
 					</thead>
 					<tbody style="text-align: center;">
-						<c:forEach items="${page.list}" var="page">
+						<c:forEach items="${list}" var="page">
 							<tr>
 								<td style="text-align: center;">${page.goodsSupplierContactsId}</td>
 								<td style="text-align: center;">${page.goodsSupplierId}</td>
@@ -211,6 +212,6 @@
 			</div>
 		</div>
 	</div>
-	
+	<div class="loading"></div>
 </body>
 </html>
