@@ -153,7 +153,7 @@
 		                </div>
 		            </form>
 	                <p></p>
-	                <form id="inputForm" action="${ctx}/train/exambank/addRandomExam">
+	                <form id="inputForm" action="${ctx}/train/exambank/addRandomExam" method="post">
 	                	<!-- 用于提交数据 -->
 	                	<input type="hidden" id="lessontype" name="lessontype" value="${lessontype }">
 	                	<input type="hidden" id="Tid" name="Tid" value="${Tid }">

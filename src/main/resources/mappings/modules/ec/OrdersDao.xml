@@ -63,7 +63,6 @@
 		<include refid="ordersJoins" />
 		WHERE
 		a.order_id = #{orderid}
-		and a.del_flag=0
 		GROUP BY
 		a.order_id,a.pay_id,a.pay_code,a.pay_name
 	</select>
@@ -76,7 +75,6 @@
 		<include refid="ordersJoins" />
 		WHERE
 		a.order_id = #{orderid}
-		and a.del_flag=0
 		GROUP BY
 		a.order_id,a.pay_id,a.pay_code,a.pay_name
 	</select>
@@ -580,7 +578,7 @@
 		FROM mtmydb.mtmy_orders a
 		<include refid="ordersJoins" />
 		WHERE
-		a.parent_id = #{orderid} and a.del_flag=0
+		a.parent_id = #{orderid} <!-- and a.del_flag=0 -->
 		GROUP BY
 		a.order_id,d.pay_id,d.pay_code,d.pay_name
 	</select>

@@ -263,7 +263,9 @@
 	<update id="updateMtmyUsers">
 		UPDATE mtmydb.mtmy_users SET
 			office_id=#{officeId},
+			office_name=(SELECT name FROM trains.sys_office WHERE id = #{officeId}),
 			beautician_id= #{beautyId},
+			beautician_name=(SELECT name FROM trains.sys_user WHERE id = #{beautyId}),
 			name=#{name},
 			sex=#{sex}
 		WHERE  user_id = #{userId}	
