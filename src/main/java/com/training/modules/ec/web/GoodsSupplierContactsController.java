@@ -1,6 +1,7 @@
 package com.training.modules.ec.web;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.ec.entity.GoodsSupplierContacts;
@@ -47,8 +47,8 @@ public class GoodsSupplierContactsController extends BaseController{
 	@RequestMapping(value="list")
 	public String list(GoodsSupplierContacts goodsSupplierContacts,HttpServletRequest request, HttpServletResponse response,Model model) {
 		try{
-			Page<GoodsSupplierContacts> page = goodsSupplierContactsService.findPage(new Page<GoodsSupplierContacts>(request, response), goodsSupplierContacts);
-			model.addAttribute("page", page);
+			List<GoodsSupplierContacts> list = goodsSupplierContactsService.findList(goodsSupplierContacts);
+			model.addAttribute("list", list);
 			model.addAttribute("supplierId", goodsSupplierContacts.getGoodsSupplierId());
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "查看供应商列表失败!", e);
@@ -140,9 +140,9 @@ public class GoodsSupplierContactsController extends BaseController{
 	@RequestMapping(value = "newgoodsSupplierContactsList")
 	public String newgoodsSupplierContactsList(GoodsSupplierContacts goodsSupplierContacts, HttpServletRequest request,HttpServletResponse response, Model model) {
 		try{
-			Page<GoodsSupplierContacts> page = goodsSupplierContactsService.findPage(new Page<GoodsSupplierContacts>(request, response), goodsSupplierContacts);
-			model.addAttribute("page", page);	
-			model.addAttribute("supplierId",goodsSupplierContacts.getGoodsSupplierId());
+			List<GoodsSupplierContacts> list = goodsSupplierContactsService.findList(goodsSupplierContacts);
+			model.addAttribute("list", list);
+			model.addAttribute("supplierId", goodsSupplierContacts.getGoodsSupplierId());
 			model.addAttribute("goodsSupplierContacts",goodsSupplierContacts);
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "保存供应商联系人以后返回供应商联系人列表失败!", e);

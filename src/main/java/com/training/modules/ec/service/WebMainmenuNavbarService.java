@@ -53,7 +53,27 @@ public class WebMainmenuNavbarService extends CrudService<WebMainmenuNavbarDao, 
 	 * @param banner
 	 */
 	public void update(WebMainmenuNavbar webMainmenuNavbar){
-		dao.update(webMainmenuNavbar);
+		//根据WebMainmenuNavbarID查询数据
+		WebMainmenuNavbar wMN = webMainmenuNavbarDao.getWebMainmenuNavbar(webMainmenuNavbar.getWebMainmenuNavbarId());
+		//确认位置类型是否修改
+		if(webMainmenuNavbar.getType().equals(wMN.getType())){
+			dao.update(webMainmenuNavbar);
+		}else{
+			//当位置类型发生改变,判断是否为显示
+			if(webMainmenuNavbar.getIsShou().equals("1")){//不显示状态
+				dao.update(webMainmenuNavbar);
+			}else{
+				//显示状态,先修改为不显示.
+				webMainmenuNavbar.setIsShou("1");
+				dao.update(webMainmenuNavbar);
+				//根据之前的类型,查询出该类型中最近修改过的一条数据,然后修改为显示
+				int id = webMainmenuNavbarDao.selectIdByType(wMN);
+				WebMainmenuNavbar webMN = webMainmenuNavbarDao.getWebMainmenuNavbar(id);
+				webMN.setIsShou("0");
+				webMainmenuNavbarDao.changIsShowByType(webMN);
+			}
+		}
+		
 	}
 
 	/**
