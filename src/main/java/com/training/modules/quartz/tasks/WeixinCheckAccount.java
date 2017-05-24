@@ -101,9 +101,11 @@ public class WeixinCheckAccount extends CommonService{
 	            	}
 	            }
 	            mtmyCheckAccount.setPayChannel("微信公众号支付(定时任务)");
-	            if(checkAccountService.findByOrderNo(mtmyCheckAccount) == 0){
-	            	list.add(mtmyCheckAccount);
-    			};
+	            if("每天美耶".equals(mtmyCheckAccount.getPayRemark())){
+		            if(checkAccountService.findByOrderNo(mtmyCheckAccount) == 0){
+		            	list.add(mtmyCheckAccount);
+	    			};
+	            }
 	            k = k + t.length;
 	        }
 	        int num = 0;

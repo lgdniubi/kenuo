@@ -1,5 +1,7 @@
 package com.training.modules.ec.dao;
 
+import java.util.List;
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.GoodsSupplierContacts;
@@ -12,6 +14,11 @@ import com.training.modules.ec.entity.GoodsSupplierContacts;
 @MyBatisDao
 public interface GoodsSupplierContactsDao extends CrudDao<GoodsSupplierContacts>{
 
+	/**
+	 * 分页查询
+	 * @return
+	 */
+	public List<GoodsSupplierContacts> findList();
 	/**
 	 * 异步 修改状态
 	 * @param goodsSupplierContacts
@@ -30,6 +37,7 @@ public interface GoodsSupplierContactsDao extends CrudDao<GoodsSupplierContacts>
 	 * @param goodsSupplierContacts
 	 */
 	public void deleteByGoodsSupplierId(GoodsSupplierContacts goodsSupplierContacts);
+
 
 	
 }

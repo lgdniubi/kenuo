@@ -1,10 +1,11 @@
 package com.training.modules.ec.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.ec.dao.GoodsSupplierContactsDao;
 import com.training.modules.ec.entity.GoodsSupplierContacts;
@@ -22,12 +23,10 @@ public class GoodsSupplierContactsService extends CrudService<GoodsSupplierConta
 	private GoodsSupplierContactsDao goodsSupplierContactsDao;
 	
 	/**
-	 * 分页查询tab_banner图
+	 * 分页查询
 	 */
-	public Page<GoodsSupplierContacts> findPage(Page<GoodsSupplierContacts> page,GoodsSupplierContacts goodsSupplierContacts){
-		goodsSupplierContacts.setPage(page);
-		page.setList(dao.findList(goodsSupplierContacts));
-		return page;
+	public List<GoodsSupplierContacts> findList(GoodsSupplierContacts goodsSupplierContacts){
+		return goodsSupplierContactsDao.findList(goodsSupplierContacts);
 	}
 
 	/**
