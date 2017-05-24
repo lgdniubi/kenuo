@@ -11,7 +11,7 @@ import com.training.modules.ec.dao.GoodsSupplierContactsDao;
 import com.training.modules.ec.entity.GoodsSupplierContacts;
 
 /**
- * goods_supplier_contacts图的Service
+ * goods_supplier_contacts的Service
  * @author 土豆  2017.5.9
  *
  */
@@ -20,13 +20,13 @@ import com.training.modules.ec.entity.GoodsSupplierContacts;
 public class GoodsSupplierContactsService extends CrudService<GoodsSupplierContactsDao, GoodsSupplierContacts>{
 
 	@Autowired
-	private GoodsSupplierContactsDao goodsSupplierContactsDao;
+	private GoodsSupplierContactsDao goodsSupplierContactsdao;
 	
 	/**
 	 * 分页查询
 	 */
 	public List<GoodsSupplierContacts> findList(GoodsSupplierContacts goodsSupplierContacts){
-		return goodsSupplierContactsDao.findList(goodsSupplierContacts);
+		return goodsSupplierContactsdao.findList(goodsSupplierContacts);
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class GoodsSupplierContactsService extends CrudService<GoodsSupplierConta
 	 * @param goodsSupplierContacts
 	 */
 	public void deleteByGoodsSupplierId(GoodsSupplierContacts goodsSupplierContacts) {
-		goodsSupplierContactsDao.deleteByGoodsSupplierId(goodsSupplierContacts);
+		goodsSupplierContactsdao.deleteByGoodsSupplierId(goodsSupplierContacts);
 	}
 
 }

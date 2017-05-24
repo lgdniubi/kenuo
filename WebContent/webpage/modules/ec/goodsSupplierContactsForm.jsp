@@ -65,16 +65,16 @@
 									</td>
 								</tr>
 								<tr>
-									<td><label class="pull-right"><font color="red">*</font>供应商状态：</label></td>
+									<td><label class="pull-right"><font color="red">*</font>联系人状态：</label></td>
 									<td>
 										<select class="form-control required" id="status" name="status">
 											<c:if test="${goodsSupplierContacts.status != 1}">
-												<option value="0" selected="selected">商用</option>
-												<option value="1">暂停</option>
+												<option value="0" selected="selected">可用</option>
+												<option value="1">不可用</option>
 											</c:if>
 											<c:if test="${goodsSupplierContacts.status == 1}">
-												<option value="0">商用</option>
-												<option value="1" selected="selected">暂停</option>
+												<option value="0">可用</option>
+												<option value="1" selected="selected">不可用</option>
 											</c:if>
 											
 										</select>
