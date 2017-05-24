@@ -391,6 +391,7 @@
 		    a.shipping_price as newShippingPrice,
 		    u.user_id as usersId,
 		    u.mobile as usersMobile,
+		    a.pay_time as payTime,
 		    (CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
 		FROM
 			mtmydb.mtmy_orders a
@@ -501,6 +502,7 @@
 		    a.shipping_price as newShippingPrice,
 		    u.user_id as usersId,
 		    u.mobile as usersMobile,
+		    a.pay_time as payTime,
 		    (CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
 		FROM
 			mtmydb.mtmy_orders a

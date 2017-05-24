@@ -125,7 +125,7 @@ public class Orders extends TreeEntity<Orders> {
 	private double debtMoney;			//欠款
 	private	double spareMoney;			//余款
 	private Date invoiceOvertime;		//过期时间（YYYYMMDD）
-	
+	private String payTime;             //支付时间
 	//-------------------------------保存需要传入后台的数据---------------------------------------------
 	private List<Integer> goodselectIds;	//商品订单 商品id
 	private List<Double> orderAmounts;		//商品订单 成交价
@@ -984,7 +984,7 @@ public class Orders extends TreeEntity<Orders> {
 	
 	
 	@JsonIgnore
-	@ExcelField(title="物流编码",align=2, sort=38)
+	@ExcelField(title="物流编码",align=2, sort=39)
 	public String getShippingcode() {
 		return shippingcode;
 	}
@@ -1004,7 +1004,7 @@ public class Orders extends TreeEntity<Orders> {
 
 
 	@JsonIgnore
-	@ExcelField(title="发货时间",align=2,sort=37)
+	@ExcelField(title="发货时间",align=2,sort=38)
 	public Date getShippingtime() {
 		return shippingtime;
 	}
@@ -1014,7 +1014,7 @@ public class Orders extends TreeEntity<Orders> {
 	}
 
 	@JsonIgnore
-	@ExcelField(title="物流公司",align=2,sort=36)
+	@ExcelField(title="物流公司",align=2,sort=37)
 	public String getShippingname() {
 		return shippingname;
 	}
@@ -1566,6 +1566,14 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setNewIsNeworder(String newIsNeworder) {
 		this.newIsNeworder = newIsNeworder;
+	}
+	@JsonIgnore
+	@ExcelField(title="支付时间", align=2, sort=36)
+	public String getPayTime() {
+		return payTime;
+	}
+	public void setPayTime(String payTime) {
+		this.payTime = payTime;
 	}
 	
 }
