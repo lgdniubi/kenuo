@@ -18,15 +18,15 @@ import com.training.modules.ec.entity.WebMainmenuNavbarContent;
 public class WebMainmenuNavbarContentService extends CrudService<WebMainmenuNavbarContentDao, WebMainmenuNavbarContent>{
 
 	@Autowired
-	private WebMainmenuNavbarContentDao webMainmenuNavbarContentDao;
+	private WebMainmenuNavbarContentDao webMainmenuNavbarContentdao;
 	
 	/**
-	 * 根据条件查询主菜单导航栏内容数据
+	 * 根据条件查询中部导航栏内容数据
 	 * @param webMainmenuNavbarContent
 	 * @return
 	 */
 	public WebMainmenuNavbarContent getWebMainmenuNavbarContentById(WebMainmenuNavbarContent webMainmenuNavbarContent) {
-		return webMainmenuNavbarContentDao.getWebMainmenuNavbarContentById(webMainmenuNavbarContent);
+		return webMainmenuNavbarContentdao.getWebMainmenuNavbarContentById(webMainmenuNavbarContent);
 	}
 
 	/**
@@ -34,16 +34,16 @@ public class WebMainmenuNavbarContentService extends CrudService<WebMainmenuNavb
 	 * @param webMainmenuNavbarContent
 	 */
 	public void saveWebMainmenuNavbarContent(WebMainmenuNavbarContent webMainmenuNavbarContent) {
-		webMainmenuNavbarContentDao.insert(webMainmenuNavbarContent);
+		webMainmenuNavbarContentdao.insert(webMainmenuNavbarContent);
 	}
 	
 	/**
-	 * 根据ID修改主菜单导航栏内容数据
+	 * 根据ID修改中部导航栏内容数据
 	 * @param webMainmenuNavbarContent
 	 * @return 
 	 */
 	public int update(WebMainmenuNavbarContent webMainmenuNavbarContent) {
-		return webMainmenuNavbarContentDao.update(webMainmenuNavbarContent);
+		return webMainmenuNavbarContentdao.update(webMainmenuNavbarContent);
 	}
 	
 	/**
@@ -51,7 +51,7 @@ public class WebMainmenuNavbarContentService extends CrudService<WebMainmenuNavb
 	 * @param webMainmenuNavbarContent
 	 */
 	public void deleteWebMainmenuNavbarContentById(WebMainmenuNavbarContent webMainmenuNavbarContent) {
-		webMainmenuNavbarContentDao.deleteWebMainmenuNavbarContentById(webMainmenuNavbarContent);
+		webMainmenuNavbarContentdao.deleteWebMainmenuNavbarContentById(webMainmenuNavbarContent);
 	}
 
 	

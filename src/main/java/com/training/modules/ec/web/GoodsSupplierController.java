@@ -2,7 +2,6 @@ package com.training.modules.ec.web;
 
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
@@ -30,7 +27,7 @@ import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
 
 /**
- * goods_supplier图Controller
+ * goods_supplier的Controller
  * 
  * @version  土豆  2017.5.9
  */
@@ -39,7 +36,7 @@ import com.training.modules.sys.utils.UserUtils;
 public class GoodsSupplierController extends BaseController{
 	
 	@Autowired
-	private GoodsSupplierService goodsSupplierService;
+	private GoodsSupplierService goodsSupplierservice;
 	
 	/**
 	 * 查看供应商列表
@@ -52,7 +49,7 @@ public class GoodsSupplierController extends BaseController{
 	@RequestMapping(value="list")
 	public String list(GoodsSupplier goodsSupplier,HttpServletRequest request, HttpServletResponse response,Model model) {
 		try{
-			Page<GoodsSupplier> page = goodsSupplierService.findPage(new Page<GoodsSupplier>(request, response), goodsSupplier);
+			Page<GoodsSupplier> page = goodsSupplierservice.findPage(new Page<GoodsSupplier>(request, response), goodsSupplier);
 			model.addAttribute("page", page);
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "查看供应商列表失败!", e);
@@ -64,7 +61,7 @@ public class GoodsSupplierController extends BaseController{
 	
 	/**
 	 * 跳转编辑供应商页面
-	 * @param tabBackground
+	 * @param goodsSupplier
 	 * @param model
 	 * @return
 	 */
@@ -72,7 +69,7 @@ public class GoodsSupplierController extends BaseController{
 	public String form(GoodsSupplier goodsSupplier,HttpServletRequest request,Model model){
 		try{
 			if(goodsSupplier.getGoodsSupplierId()!=0){
-				goodsSupplier = goodsSupplierService.get(goodsSupplier);
+				goodsSupplier = goodsSupplierservice.get(goodsSupplier);
 				model.addAttribute("goodsSupplier", goodsSupplier);
 			}
 		}catch(Exception e){
@@ -84,7 +81,7 @@ public class GoodsSupplierController extends BaseController{
 	
 	/**
 	 * 添加/修改 
-	 * @param tabBackground
+	 * @param goodsSupplier
 	 * @param redirectAttributes
 	 * @return
 	 */
@@ -94,12 +91,12 @@ public class GoodsSupplierController extends BaseController{
 			if(goodsSupplier.getGoodsSupplierId()==0){
 				User user=UserUtils.getUser();
 				goodsSupplier.setCreateBy(user);
-				goodsSupplierService.save(goodsSupplier);
+				goodsSupplierservice.save(goodsSupplier);
 				addMessage(redirectAttributes, "添加供应商成功！");
 			}else{
 				User user=UserUtils.getUser();
 				goodsSupplier.setUpdateBy(user);
-				goodsSupplierService.update(goodsSupplier);
+				goodsSupplierservice.update(goodsSupplier);
 				addMessage(redirectAttributes, "修改供应商成功！");
 			}
 		}catch(Exception e){
@@ -123,7 +120,7 @@ public class GoodsSupplierController extends BaseController{
 		try{
 			GoodsSupplierContacts goodsSupplierContacts = new GoodsSupplierContacts();
 			goodsSupplierContacts.setGoodsSupplierId(goodsSupplier.getGoodsSupplierId());
-			goodsSupplierService.deleteGoodsSupplier(goodsSupplier,goodsSupplierContacts);
+			goodsSupplierservice.deleteGoodsSupplier(goodsSupplier,goodsSupplierContacts);
 			addMessage(redirectAttributes, "删除成功");
 			return "success";
 		}catch(Exception e){
@@ -136,7 +133,7 @@ public class GoodsSupplierController extends BaseController{
 	
 	/**
 	 * 异步 修改状态
-	 * @param banner
+	 * @param goodsSupplier
 	 * @param redirectAttributes
 	 * @param request
 	 * @return
@@ -145,11 +142,10 @@ public class GoodsSupplierController extends BaseController{
 	@RequestMapping(value = {"updateStatus"})
 	@ResponseBody
 	public Map<String, String> updateStatus(GoodsSupplier goodsSupplier,HttpServletRequest request){
-		//商品属性-是否检索
 		Map<String, String> jsonMap = new HashMap<String, String>();
 		try {
 			if(goodsSupplier.getGoodsSupplierId() !=0 && !StringUtils.isEmpty(goodsSupplier.getStatus())){
-				goodsSupplierService.updateStatus(goodsSupplier);
+				goodsSupplierservice.updateStatus(goodsSupplier);
 				jsonMap.put("yesOrNo", "SUCCESS");//成功与否
 				jsonMap.put("status", goodsSupplier.getStatus());//状态
 			}else{
@@ -157,32 +153,10 @@ public class GoodsSupplierController extends BaseController{
 				jsonMap.put("MESSAGE", "修改失败,必要参数为空");
 			}
 		} catch (Exception e) {
-			logger.error("商品属性-是否检索 出现异常，异常信息为："+e.getMessage());
+			logger.error("修改状态 出现异常，异常信息为："+e.getMessage());
 			jsonMap.put("STATUS", "ERROR");
 			jsonMap.put("MESSAGE", "修改失败,出现异常");
 		}
 		return jsonMap;
-	}
-	/**
-	 * 获取供应商
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value = "treeData")
-	public List<Map<String, Object>> treeDate(HttpServletRequest request, HttpServletResponse response,GoodsSupplier goodsSupplier){
-		List<Map<String, Object>> mapList = Lists.newArrayList();
-		Page<GoodsSupplier> page = goodsSupplierService.findPage(new Page<GoodsSupplier>(request, response,-1), goodsSupplier);
-		List<GoodsSupplier> list = page.getList();
-		for (int i = 0; i < list.size(); i++) {
-			GoodsSupplier g = list.get(i);
-			if("0".equals(g.getStatus())){
-				Map<String, Object> map = Maps.newHashMap();
-				map.put("id", g.getGoodsSupplierId());
-				map.put("pId", 0);
-				map.put("name", g.getName());
-				mapList.add(map);
-			}
-		}
-		return mapList;
 	}
 }

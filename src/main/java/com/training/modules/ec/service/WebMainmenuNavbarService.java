@@ -10,7 +10,7 @@ import com.training.modules.ec.dao.WebMainmenuNavbarDao;
 import com.training.modules.ec.entity.WebMainmenuNavbar;
 
 /**
- * 主菜单导航栏的Service
+ * 中部导航栏的Service
  * @author 土豆  2017.5.4
  *
  */
@@ -19,12 +19,12 @@ import com.training.modules.ec.entity.WebMainmenuNavbar;
 public class WebMainmenuNavbarService extends CrudService<WebMainmenuNavbarDao, WebMainmenuNavbar>{
 	
 	@Autowired
-	private WebMainmenuNavbarDao webMainmenuNavbarDao;
+	private WebMainmenuNavbarDao webMainmenuNavbardao;
 	@Autowired
-	private WebMainmenuNavbarContentDao webMainmenuNavbarContentDao;
+	private WebMainmenuNavbarContentDao webMainmenuNavbarContentdao;
 	
 	/**
-	 * 分页查询主菜单导航栏图
+	 * 分页查询中部导航栏图
 	 */
 	public Page<WebMainmenuNavbar> findPage(Page<WebMainmenuNavbar> page,WebMainmenuNavbar webMainmenuNavbar){
 		webMainmenuNavbar.setPage(page);
@@ -33,12 +33,12 @@ public class WebMainmenuNavbarService extends CrudService<WebMainmenuNavbarDao, 
 	}
 
 	/**
-	 * 根据主菜单导航栏Id查询单个背景图详情
+	 * 根据中部导航栏Id查询单个背景图详情
 	 * @param bannerId
 	 * @return
 	 */
 	public WebMainmenuNavbar getWebMainmenuNavbar(int webMainmenuNavbarId){
-		return webMainmenuNavbarDao.getWebMainmenuNavbar(webMainmenuNavbarId);
+		return webMainmenuNavbardao.getWebMainmenuNavbar(webMainmenuNavbarId);
 	}
 	
 	/**
@@ -54,7 +54,7 @@ public class WebMainmenuNavbarService extends CrudService<WebMainmenuNavbarDao, 
 	 */
 	public void update(WebMainmenuNavbar webMainmenuNavbar){
 		//根据WebMainmenuNavbarID查询数据
-		WebMainmenuNavbar wMN = webMainmenuNavbarDao.getWebMainmenuNavbar(webMainmenuNavbar.getWebMainmenuNavbarId());
+		WebMainmenuNavbar wMN = webMainmenuNavbardao.getWebMainmenuNavbar(webMainmenuNavbar.getWebMainmenuNavbarId());
 		//确认位置类型是否修改
 		if(webMainmenuNavbar.getType().equals(wMN.getType())){
 			dao.update(webMainmenuNavbar);
@@ -67,10 +67,10 @@ public class WebMainmenuNavbarService extends CrudService<WebMainmenuNavbarDao, 
 				webMainmenuNavbar.setIsShou("1");
 				dao.update(webMainmenuNavbar);
 				//根据之前的类型,查询出该类型中最近修改过的一条数据,然后修改为显示
-				int id = webMainmenuNavbarDao.selectIdByType(wMN);
-				WebMainmenuNavbar webMN = webMainmenuNavbarDao.getWebMainmenuNavbar(id);
+				int id = webMainmenuNavbardao.selectIdByType(wMN);
+				WebMainmenuNavbar webMN = webMainmenuNavbardao.getWebMainmenuNavbar(id);
 				webMN.setIsShou("0");
-				webMainmenuNavbarDao.changIsShowByType(webMN);
+				webMainmenuNavbardao.changIsShowByType(webMN);
 			}
 		}
 		
@@ -81,9 +81,9 @@ public class WebMainmenuNavbarService extends CrudService<WebMainmenuNavbarDao, 
 	 * @param webMainmenuNavbar
 	 */
 	public void deleteWebMainmenuNavbarById(WebMainmenuNavbar webMainmenuNavbar) {
-		webMainmenuNavbarDao.updateWebMainmenuNavbarById(webMainmenuNavbar);//逻辑删除数据库中的数据
+		webMainmenuNavbardao.updateWebMainmenuNavbarById(webMainmenuNavbar);//逻辑删除数据库中的数据
 		//物理删除mtmy_web_mainmenu_navbar_content中的数据
-		webMainmenuNavbarContentDao.deleteWebMainmenuNavbarContentBymainmenuId(webMainmenuNavbar.getWebMainmenuNavbarId());
+		webMainmenuNavbarContentdao.deleteWebMainmenuNavbarContentBymainmenuId(webMainmenuNavbar.getWebMainmenuNavbarId());
 	}
 
 	/**

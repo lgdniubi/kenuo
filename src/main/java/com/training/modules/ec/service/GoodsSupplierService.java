@@ -20,7 +20,7 @@ import com.training.modules.ec.entity.GoodsSupplierContacts;
 public class GoodsSupplierService extends CrudService<GoodsSupplierDao, GoodsSupplier>{
 
 	@Autowired
-	private GoodsSupplierContactsService goodsSupplierContactsService;
+	private GoodsSupplierContactsService goodsSupplierContactsservice;
 	
 	/**
 	 * 分页查询tab_banner图
@@ -55,7 +55,7 @@ public class GoodsSupplierService extends CrudService<GoodsSupplierDao, GoodsSup
 	 */
 	public void deleteGoodsSupplier(GoodsSupplier goodsSupplier, GoodsSupplierContacts goodsSupplierContacts) {
 		dao.delete(goodsSupplier);
-		goodsSupplierContactsService.deleteByGoodsSupplierId(goodsSupplierContacts);
+		goodsSupplierContactsservice.deleteByGoodsSupplierId(goodsSupplierContacts);
 	}
 
 	/**

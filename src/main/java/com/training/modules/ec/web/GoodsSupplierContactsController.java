@@ -25,7 +25,7 @@ import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
 
 /**
- * goods_supplier_contacts图Controller
+ * goods_supplier_contacts的Controller
  * 
  * @version 土豆   2017.5.9
  */
@@ -34,7 +34,7 @@ import com.training.modules.sys.utils.UserUtils;
 public class GoodsSupplierContactsController extends BaseController{
 	
 	@Autowired
-	private GoodsSupplierContactsService goodsSupplierContactsService;
+	private GoodsSupplierContactsService goodsSupplierContactsservice;
 	
 	/**
 	 * 查看供应商联系人列表
@@ -47,19 +47,19 @@ public class GoodsSupplierContactsController extends BaseController{
 	@RequestMapping(value="list")
 	public String list(GoodsSupplierContacts goodsSupplierContacts,HttpServletRequest request, HttpServletResponse response,Model model) {
 		try{
-			List<GoodsSupplierContacts> list = goodsSupplierContactsService.findList(goodsSupplierContacts);
+			List<GoodsSupplierContacts> list = goodsSupplierContactsservice.findList(goodsSupplierContacts);
 			model.addAttribute("list", list);
 			model.addAttribute("supplierId", goodsSupplierContacts.getGoodsSupplierId());
 		}catch(Exception e){
-			BugLogUtils.saveBugLog(request, "查看供应商列表失败!", e);
-			logger.error("查看供应商列表失败：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "查看供应商联系人列表失败!", e);
+			logger.error("查看供应商联系人列表失败：" + e.getMessage());
 		}
 		
 		return "modules/ec/goodsSupplierContactsList";
 	}
 	
 	/**
-	 * 跳转编辑供应商页面
+	 * 跳转编辑供应商联系人页面
 	 * @param goodsSupplierContacts
 	 * @param model
 	 * @return
@@ -68,12 +68,12 @@ public class GoodsSupplierContactsController extends BaseController{
 	public String form(GoodsSupplierContacts goodsSupplierContacts,HttpServletRequest request,Model model){
 		try{
 			if(goodsSupplierContacts.getGoodsSupplierContactsId()!=0){
-				goodsSupplierContacts = goodsSupplierContactsService.get(goodsSupplierContacts);
+				goodsSupplierContacts = goodsSupplierContactsservice.get(goodsSupplierContacts);
 			}
 			model.addAttribute("goodsSupplierContacts", goodsSupplierContacts);
 		}catch(Exception e){
-			BugLogUtils.saveBugLog(request, "跳转编辑供应商页面失败!", e);
-			logger.error("跳转编辑供应商页面：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "跳转编辑供应商联系人页面失败!", e);
+			logger.error("跳转编辑供应商联系人页面：" + e.getMessage());
 		}
 		return "modules/ec/goodsSupplierContactsForm";
 	}
@@ -91,13 +91,13 @@ public class GoodsSupplierContactsController extends BaseController{
 			if(goodsSupplierContacts.getGoodsSupplierContactsId()==0){
 				User user=UserUtils.getUser();
 				goodsSupplierContacts.setCreateBy(user);
-				goodsSupplierContactsService.save(goodsSupplierContacts);
+				goodsSupplierContactsservice.save(goodsSupplierContacts);
 				addMessage(redirectAttributes, "添加供应商联系人成功！");
 				return "success";
 			}else{
 				User user=UserUtils.getUser();
 				goodsSupplierContacts.setUpdateBy(user);
-				goodsSupplierContactsService.update(goodsSupplierContacts);
+				goodsSupplierContactsservice.update(goodsSupplierContacts);
 				addMessage(redirectAttributes, "修改供应商联系人成功！");
 				return "success";
 			}
@@ -119,7 +119,7 @@ public class GoodsSupplierContactsController extends BaseController{
 	@ResponseBody
 	public String delete(GoodsSupplierContacts goodsSupplierContacts,HttpServletRequest request,RedirectAttributes redirectAttributes){
 		try{
-			goodsSupplierContactsService.deleteGoodsSupplierContacts(goodsSupplierContacts);
+			goodsSupplierContactsservice.deleteGoodsSupplierContacts(goodsSupplierContacts);
 			addMessage(redirectAttributes, "删除供应商联系人成功");
 			return "success";
 		}catch(Exception e){
@@ -140,7 +140,7 @@ public class GoodsSupplierContactsController extends BaseController{
 	@RequestMapping(value = "newgoodsSupplierContactsList")
 	public String newgoodsSupplierContactsList(GoodsSupplierContacts goodsSupplierContacts, HttpServletRequest request,HttpServletResponse response, Model model) {
 		try{
-			List<GoodsSupplierContacts> list = goodsSupplierContactsService.findList(goodsSupplierContacts);
+			List<GoodsSupplierContacts> list = goodsSupplierContactsservice.findList(goodsSupplierContacts);
 			model.addAttribute("list", list);
 			model.addAttribute("supplierId", goodsSupplierContacts.getGoodsSupplierId());
 			model.addAttribute("goodsSupplierContacts",goodsSupplierContacts);
@@ -162,11 +162,10 @@ public class GoodsSupplierContactsController extends BaseController{
 	@RequestMapping(value = {"updateStatus"})
 	@ResponseBody
 	public Map<String, String> updateStatus(GoodsSupplierContacts goodsSupplierContacts,HttpServletRequest request){
-		//商品属性-是否检索
 		Map<String, String> jsonMap = new HashMap<String, String>();
 		try {
 			if(goodsSupplierContacts.getGoodsSupplierContactsId() !=0 && !StringUtils.isEmpty(goodsSupplierContacts.getStatus())){
-				goodsSupplierContactsService.updateStatus(goodsSupplierContacts);
+				goodsSupplierContactsservice.updateStatus(goodsSupplierContacts);
 				jsonMap.put("yesOrNo", "SUCCESS");//成功与否
 				jsonMap.put("status", goodsSupplierContacts.getStatus());//状态
 			}else{
@@ -174,7 +173,7 @@ public class GoodsSupplierContactsController extends BaseController{
 				jsonMap.put("MESSAGE", "修改失败,必要参数为空");
 			}
 		} catch (Exception e) {
-			logger.error("商品属性-是否检索 出现异常，异常信息为："+e.getMessage());
+			logger.error("修改供应商联系人状态 出现异常，异常信息为："+e.getMessage());
 			jsonMap.put("STATUS", "ERROR");
 			jsonMap.put("MESSAGE", "修改失败,出现异常");
 		}
@@ -190,6 +189,6 @@ public class GoodsSupplierContactsController extends BaseController{
 	@ResponseBody
 	@RequestMapping(value = {"getCountGoodsSupplierContacts"})
 	public boolean getCountGoodsSupplierContacts(GoodsSupplierContacts goodsSupplierContacts,HttpServletRequest request){
-		return goodsSupplierContactsService.getCount(goodsSupplierContacts);
+		return goodsSupplierContactsservice.getCount(goodsSupplierContacts);
 	}
 }

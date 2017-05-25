@@ -32,7 +32,7 @@ public class WebMainmenuNavbarContentController extends BaseController{
 	private WebMainmenuNavbarContentService webMainmenuNavbarContentService;
 	
 	/**
-	 * 查看导航图对应的tab_banner列表
+	 * 查看中部导航图内容对应的列表
 	 * @param request
 	 * @param tabBackground
 	 * @param model
@@ -47,14 +47,14 @@ public class WebMainmenuNavbarContentController extends BaseController{
 			model.addAttribute("mainmenuId", webMainmenuNavbar.getWebMainmenuNavbarId());
 			model.addAttribute("webMainmenuNavbarContent", webMainmenuNavbarContent);	
 		}catch(Exception e){
-			BugLogUtils.saveBugLog(request, "查看主菜单导航栏内容列表失败!", e);
-			logger.error("查看主菜单导航栏表内容列表失败：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "查看中部导航栏内容列表失败!", e);
+			logger.error("查看中部导航栏表内容列表失败：" + e.getMessage());
 		}
 		return "modules/ec/webMainmenuNavbarContentList";
 	}
 	
 	/**
-	 * 跳转 编辑主菜单导航栏内容列表
+	 * 跳转 编辑中部导航栏内容列表
 	 * @param tabBackground
 	 * @param model
 	 * @return
@@ -70,14 +70,14 @@ public class WebMainmenuNavbarContentController extends BaseController{
 				model.addAttribute("webMainmenuNavbarContent", webMainmenuNavbarContent);
 			}
 		}catch(Exception e){
-			BugLogUtils.saveBugLog(request, "查看主菜单导航栏内容表图失败!", e);
-			logger.error("查看主菜单导航栏内容表图失败：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "查看中部导航栏内容表图失败!", e);
+			logger.error("查看中部导航栏内容表图失败：" + e.getMessage());
 		}
 		return "modules/ec/webMainmenuNavbarContentForm";
 	}
 	
 	/**
-	 * 保存/修改  主菜单导航栏表
+	 * 保存/修改  中部导航栏表
 	 * @param webMainmenuNavbar
 	 * @param redirectAttributes
 	 * @return
@@ -89,23 +89,23 @@ public class WebMainmenuNavbarContentController extends BaseController{
 			webMainmenuNavbarContent.setRedirectUrl(HtmlUtils.htmlUnescape(webMainmenuNavbarContent.getRedirectUrl()));
 			if(webMainmenuNavbarContent.getWebMainmenuNavbarContentId() == 0){
 				webMainmenuNavbarContentService.saveWebMainmenuNavbarContent(webMainmenuNavbarContent);
-				addMessage(redirectAttributes, "添加主菜单导航栏内容图成功！");
+				addMessage(redirectAttributes, "添加中部导航栏内容图成功！");
 				return "success";
 			}else{
 				webMainmenuNavbarContentService.update(webMainmenuNavbarContent);
-				addMessage(redirectAttributes, "修改主菜单导航栏内容图成功！");
+				addMessage(redirectAttributes, "修改中部导航栏内容图成功！");
 				return "success";
 			}
 		}catch(Exception e){
-			BugLogUtils.saveBugLog(request, "保存主菜单导航栏内容失败!", e);
-			logger.error("保存主菜单导航栏内容失败：" + e.getMessage());
-			addMessage(redirectAttributes,"保存主菜单导航栏内容失败");
+			BugLogUtils.saveBugLog(request, "保存中部导航栏内容失败!", e);
+			logger.error("保存中部导航栏内容失败：" + e.getMessage());
+			addMessage(redirectAttributes,"保存中部导航栏内容失败");
 			return "error";
 		}
 	}
 	
 	/**
-	 * 删除  根据ID删除主菜单导航栏内容数据
+	 * 删除  根据ID删除中部导航栏内容数据
 	 * @param webMainmenuNavbar
 	 * @param redirectAttributes
 	 * @return
@@ -117,14 +117,14 @@ public class WebMainmenuNavbarContentController extends BaseController{
 			webMainmenuNavbarContentService.deleteWebMainmenuNavbarContentById(webMainmenuNavbarContent);
 			return "success";
 		}catch(Exception e){
-			BugLogUtils.saveBugLog(request, "删除主菜单导航栏内容失败!", e);
-			logger.error("保存主菜单导航栏内容失败：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "删除中部导航栏内容失败!", e);
+			logger.error("保存中部导航栏内容失败：" + e.getMessage());
 			return "error";
 		}
 	}
 	
 	/**
-	 * 保存 主菜单导航栏内容 ,之后返回 主菜单导航栏内容列表
+	 * 保存 中部导航栏内容 ,之后返回 中部导航栏内容列表
 	 * @param request
 	 * @param response
 	 * @param webMainmenuNavbarContent
@@ -141,8 +141,8 @@ public class WebMainmenuNavbarContentController extends BaseController{
 			model.addAttribute("mainmenuId", mainmenuId);
 			model.addAttribute("webMainmenuNavbarContent", webMainmenuNavbarContent);	
 		}catch(Exception e){
-			BugLogUtils.saveBugLog(request, "查看导航图对应的webMainmenuNavbarContent列表失败!", e);
-			logger.error("查看导航图对应的webMainmenuNavbarContentList列表失败：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "查看中部导航图内容列表失败!", e);
+			logger.error("查看查看中部导航图内容列表失败：" + e.getMessage());
 		}
 		return "modules/ec/webMainmenuNavbarContentList";
 	}
