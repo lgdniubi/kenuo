@@ -219,6 +219,12 @@
 		<if test="endtime!=null and endtime!=''">
 			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
 		</if>
+		<if test="payBegTime != null and payBegTime != ''">
+			AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') >= DATE_FORMAT(#{payBegTime},'%Y-%m-%d')
+		</if>
+		<if test="payEndTime !=null and payEndTime!=''">
+			<![CDATA[AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') <= DATE_FORMAT(#{payEndTime},'%Y-%m-%d')]]>
+		</if>
 		<if test="userid != null and userid != ''">
 			AND a.user_id = #{userid}
 		</if>
@@ -316,6 +322,12 @@
 		</if>
 		<if test="endtime!=null and endtime!=''">
 			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+		</if>
+		<if test="payBegTime != null and payBegTime != ''">
+			AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') >= DATE_FORMAT(#{payBegTime},'%Y-%m-%d')
+		</if>
+		<if test="payEndTime !=null and payEndTime!=''">
+			<![CDATA[AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') <= DATE_FORMAT(#{payEndTime},'%Y-%m-%d')]]>
 		</if>
 		<if test="userid != null and userid != ''">
 			AND a.user_id = #{userid}

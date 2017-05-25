@@ -190,6 +190,9 @@ public class Orders extends TreeEntity<Orders> {
 	
 	private String newIsNeworder;   //查询所用的新老订单字段
 	
+	private Date payBegTime;    //支付开始时间，用于查询
+	private Date payEndTime;    //支付结束时间，用于查询
+	
 	public String getSearchIsReal() {
 		return searchIsReal;
 	}
@@ -1574,6 +1577,18 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setPayTime(String payTime) {
 		this.payTime = payTime;
+	}
+	public Date getPayBegTime() {
+		return payBegTime;
+	}
+	public void setPayBegTime(Date payBegTime) {
+		this.payBegTime = payBegTime;
+	}
+	public Date getPayEndTime() {
+		return payEndTime;
+	}
+	public void setPayEndTime(Date payEndTime) {
+		this.payEndTime = payEndTime;
 	}
 	
 }
