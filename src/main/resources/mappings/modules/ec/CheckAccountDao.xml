@@ -82,6 +82,12 @@
 			<if test="endtime!=null and endtime!=''">
 				AND DATE_FORMAT(b.pay_date,'%Y-%m-%d') <![CDATA[<=]]> DATE_FORMAT(#{endtime},'%Y-%m-%d')
 			</if>
+			<if test="starttime != null and starttime != ''">
+				AND DATE_FORMAT(a.add_time,'%Y-%m-%d') >= DATE_FORMAT(#{starttime},'%Y-%m-%d')
+			</if>
+			<if test="overtime !=null and overtime !=''">
+				AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <![CDATA[<=]]> DATE_FORMAT(#{overtime},'%Y-%m-%d')
+			</if>
 		ORDER BY
 			a.order_id 
 	</select>
@@ -144,6 +150,12 @@
 			</if>
 			<if test="endtime!=null and endtime!=''">
 				AND DATE_FORMAT(b.pay_date,'%Y-%m-%d') <![CDATA[<=]]> DATE_FORMAT(#{endtime},'%Y-%m-%d')
+			</if>
+			<if test="starttime != null and starttime != ''">
+				AND DATE_FORMAT(a.add_time,'%Y-%m-%d') >= DATE_FORMAT(#{starttime},'%Y-%m-%d')
+			</if>
+			<if test="overtime !=null and overtime !=''">
+				AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <![CDATA[<=]]> DATE_FORMAT(#{overtime},'%Y-%m-%d')
 			</if>
 		ORDER BY
 			a.order_id 

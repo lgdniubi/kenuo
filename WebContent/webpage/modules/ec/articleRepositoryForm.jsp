@@ -479,7 +479,7 @@
                           <label class="col-sm-2 control-label"></label>
                            <div style="overflow:hidden">
                          		<c:forEach items="${articleRepository.imageList}" var="list" varStatus="status">
-                         			<div id="img${status.index+1}" style="float:left;width:120px;height: 130px;text-align:center;margin:0 10px 10px 0">
+                         			<div id="img${status.index+1}" style="float:left;width:200px;height: 130px;text-align:center;margin:0 10px 10px 0">
                          			<ul>
                          				<li><img id="livesrc${status.index+1}" src="${list.imgUrl}" onerror="this.src='${ctxStatic}/kindEditor/themes/default/upload.png'" alt="images" style="width:200px;height:100px;" /></li>
                          				<li style='height:30px;line-height:40px;'>

@@ -141,14 +141,16 @@ public class DayAccount extends TreeEntity<DayAccount> {
 	}
 
 	public void setRebateLayer(String rebateLayer) {
-		if("C".equals(rebateLayer)){
+		if("A".equals(rebateLayer)){
+			this.rebateLayer = "A";
+		}else if("B".equals(rebateLayer)){
+			this.rebateLayer = "B";
+		}else if("C".equals(rebateLayer)){
 			this.rebateLayer = "AB";
 		}else if("D".equals(rebateLayer)){
 			this.rebateLayer = "C";
-		}else if("Z".equals(rebateLayer)){
-			this.rebateLayer = "无等级";
 		}else{
-			this.rebateLayer = rebateLayer;
+			this.rebateLayer = "无等级";
 		}
 	}
 
@@ -157,14 +159,16 @@ public class DayAccount extends TreeEntity<DayAccount> {
 	}
 
 	public void setReceiveLayer(String receiveLayer) {
-		if("C".equals(receiveLayer)){
-			this.receiveLayer = "AB";
-		}else if("D".equals(receiveLayer)){
-			this.receiveLayer = "C";
-		}else if("Z".equals(receiveLayer)){
-			this.receiveLayer = "无等级";
+		if("A".equals(rebateLayer)){
+			this.rebateLayer = "A";
+		}else if("B".equals(rebateLayer)){
+			this.rebateLayer = "B";
+		}else if("C".equals(rebateLayer)){
+			this.rebateLayer = "AB";
+		}else if("D".equals(rebateLayer)){
+			this.rebateLayer = "C";
 		}else{
-			this.receiveLayer = receiveLayer;
+			this.rebateLayer = "无等级";
 		}
 	}
 
