@@ -104,7 +104,7 @@ public class MtmyWebAdCategoryController extends BaseController{
 			}
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "新增修改广告图分类失败!", e);
-			logger.error("新增修改直播分类失败：" + e.getMessage());
+			logger.error("新增修改广告图分类失败：" + e.getMessage());
 			addMessage(redirectAttributes, "新增修改广告图分类失败!");
 		}
 		
@@ -134,7 +134,7 @@ public class MtmyWebAdCategoryController extends BaseController{
 			addMessage(redirectAttributes, "删除广告图分类成功!");
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "删除广告图分类失败!", e);
-			logger.error("删除直播分类失败：" + e.getMessage());
+			logger.error("删除广告图分类失败：" + e.getMessage());
 			addMessage(redirectAttributes, "删除广告图分类失败!");
 		}
 		return "redirect:" + adminPath + "/ec/adCategory/list";
