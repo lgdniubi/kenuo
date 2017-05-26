@@ -60,7 +60,7 @@
 									html += "&nbsp;<a href=\"#\" onclick=\"openDialog('修改分类', '${ctx}/ec/adCategory/form?mtmyWebAdCategoryId="+dataObj[i].mtmyWebAdCategoryId+"','430px', '480px')\" class=\"btn btn-success btn-xs\" ><i class=\"fa fa-edit\"></i> 修改</a>";
 								}
 								//操作权限-删除
-								if($("#shiroDel").val() == 1 && dataObj[i].mtmyWebAdCategoryId > 8){
+								if($("#shiroDel").val() == 1 && dataObj[i].mtmyWebAdCategoryId > 9){
 									html += "&nbsp;<a href=\"${ctx}/ec/adCategory/delete?mtmyWebAdCategoryId="+dataObj[i].mtmyWebAdCategoryId+"\" onclick=\"return confirmx('要删除该分类及所有子分类吗？', this.href)\" class=\"btn btn-danger btn-xs\" ><i class=\"fa fa-trash\"></i> 删除</a>";
 								}
 								//操作权限-添加
@@ -172,7 +172,7 @@
 								<shiro:hasPermission name="ec:adCategory:edit">
 									<a href="#" onclick="openDialog('修改分类', '${ctx}/ec/adCategory/form?flag=3&mtmyWebAdCategoryId=${row.mtmyWebAdCategoryId}','430px', '480px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 修改</a>
 								</shiro:hasPermission>
-								<c:if test="${row.mtmyWebAdCategoryId > 8}">
+								<c:if test="${row.mtmyWebAdCategoryId > 9}">
 									<shiro:hasPermission name="ec:adCategory:del">
 										<a href="${ctx}/ec/adCategory/delete?mtmyWebAdCategoryId=${row.mtmyWebAdCategoryId}" onclick="return confirmx('要删除该分类及所有子分类吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
 									</shiro:hasPermission>
