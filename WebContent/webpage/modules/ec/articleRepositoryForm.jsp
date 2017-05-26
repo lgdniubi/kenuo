@@ -226,7 +226,7 @@
     						+ '<dt><img src="'+data.originalImg+'" alt=""></dt>'
     						+ '<dd>'
     						+ '<h3>'+data.goodsName+'</h3>'
-    						+ '<p class="prise"><span>¥<i>'+data.marketPrice+'</i></span><del>¥'+data.shopPrice+'</del></p>'
+    						+ '<p class="prise"><span>¥<i>'+data.shopPrice+'</i></span><del>¥'+data.marketPrice+'</del></p>'
     						+ '<p class="features">'
     						+ '<span class="score"><span class="score-inner" style="width:'+data.rank+'"></span></span>'
     						+ '<span class="sales">'+Math.floor(data.commentNum*1.6)+'</span>'
