@@ -2,6 +2,7 @@ package com.training.modules.ec.web;
 
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
@@ -158,5 +161,27 @@ public class GoodsSupplierController extends BaseController{
 			jsonMap.put("MESSAGE", "修改失败,出现异常");
 		}
 		return jsonMap;
+	}
+	/**
+	 * 获取供应商
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "treeData")
+	public List<Map<String, Object>> treeDate(HttpServletRequest request, HttpServletResponse response,GoodsSupplier goodsSupplier){
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		Page<GoodsSupplier> page = goodsSupplierservice.findPage(new Page<GoodsSupplier>(request, response,-1), goodsSupplier);
+		List<GoodsSupplier> list = page.getList();
+		for (int i = 0; i < list.size(); i++) {
+			GoodsSupplier g = list.get(i);
+			if("0".equals(g.getStatus())){
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", g.getGoodsSupplierId());
+				map.put("pId", 0);
+				map.put("name", g.getName());
+				mapList.add(map);
+			}
+		}
+		return mapList;
 	}
 }
