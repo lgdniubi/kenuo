@@ -754,6 +754,7 @@ public class GoodsController extends BaseController{
 	 * @param request
 	 * @return
 	 */
+	@RequiresPermissions(value={"ec:goods:getattrcontent"},logical=Logical.OR)
 	@RequestMapping(value = {"getattrcontent"})
 	public @ResponseBody Map<String, String> getattrcontent(HttpServletRequest request){
 		Map<String, String> jsonMap = new HashMap<String, String>();
@@ -1005,6 +1006,7 @@ public class GoodsController extends BaseController{
 	 * @param request
 	 * @return
 	 */
+	@RequiresPermissions(value={"ec:goods:getspeccontent"},logical=Logical.OR)
 	@RequestMapping(value = {"getspeccontent"})
 	public @ResponseBody Map<String, String> getspeccontent(HttpServletRequest request){
 		Map<String, String> jsonMap = new HashMap<String, String>();

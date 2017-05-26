@@ -253,6 +253,7 @@ public class CourseController extends BaseController{
 	 * @throws IOException 
 	 * @throws IllegalStateException 
 	 */
+	@RequiresPermissions(value={"train:course:fileuploadcontents"},logical=Logical.OR)
 	@RequestMapping(value = {"fileuploadcontents", ""})
 	public @ResponseBody Map<String, String> fileuploadcontents(HttpServletRequest request, HttpServletResponse response){	
 		Map<String, String> jsonMap = new HashMap<String, String>();
@@ -332,6 +333,7 @@ public class CourseController extends BaseController{
 	 * @param response
 	 * @return
 	 */
+	@RequiresPermissions(value={"train:course:deleteuploadcontents"},logical=Logical.OR)
 	@RequestMapping(value = {"deleteuploadcontents", ""})
 	public @ResponseBody Map<String, String> deleteuploadcontents(HttpServletRequest request, HttpServletResponse response){  
 		Map<String, String> jsonMap = new HashMap<String, String>();

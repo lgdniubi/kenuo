@@ -124,6 +124,7 @@ public class GoodsBrandController extends BaseController{
 	 * @param redirectAttributes
 	 * @return
 	 */
+	@RequiresPermissions(value={"ec:goodsbrand:updateishot"},logical=Logical.OR)
 	@RequestMapping(value = {"updateishot"})
 	public @ResponseBody Map<String, String> updateishot(HttpServletRequest request){
 		
