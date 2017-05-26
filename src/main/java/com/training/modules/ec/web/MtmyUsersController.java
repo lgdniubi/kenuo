@@ -76,7 +76,6 @@ public class MtmyUsersController extends BaseController{
 	 * @param model
 	 * @return
 	 */
-	@RequiresPermissions(value={"ec:mtmyuser:lookmobile"},logical=Logical.OR)
 	@RequestMapping(value = "lookmobile" )
 	public @ResponseBody Users lookmobile(Users users,HttpServletRequest request, HttpServletResponse response,Model model){
 		users=mtmyUsersService.findUserById(users);
@@ -171,7 +170,6 @@ public class MtmyUsersController extends BaseController{
 	 * @param response
 	 * @param model
 	 */
-	@RequiresPermissions(value={"ec:mtmyuser:lookAddress"},logical=Logical.OR)
 	@RequestMapping(value = "lookAddress" )
 	public @ResponseBody Orders lookAddress(Orders orders,HttpServletRequest request, HttpServletResponse response,Model model){
 		orders=ordersService.get(orders.getOrderid());

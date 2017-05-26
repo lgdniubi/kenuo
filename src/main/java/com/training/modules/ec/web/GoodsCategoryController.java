@@ -180,7 +180,6 @@ public class GoodsCategoryController extends BaseController{
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@RequiresPermissions(value={"ec:goodscategory:updateisyesno"},logical=Logical.OR)
 	@RequestMapping(value = {"updateisyesno"})
 	public @ResponseBody Map<String, String> updateisyesno(HttpServletRequest request){
 		//商品品牌是否显示
@@ -226,7 +225,6 @@ public class GoodsCategoryController extends BaseController{
 	 * @param request
 	 * @return
 	 */
-	@RequiresPermissions(value={"ec:goodscategory:verifyparent"},logical=Logical.OR)
 	@RequestMapping(value = {"verifyparent"})
 	public @ResponseBody Map<String, String> verifyparent(HttpServletRequest request){ 
 		//商品品牌是否显示
@@ -244,7 +242,6 @@ public class GoodsCategoryController extends BaseController{
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@RequiresPermissions(value={"ec:goodscategory:querycatid"},logical=Logical.OR)
 	@RequestMapping(value = {"querycatid"})
 	public @ResponseBody Map<String, List<GoodsCategory>> querycatid(HttpServletRequest request){
 		Map<String, List<GoodsCategory>> jsonMap = new HashMap<String, List<GoodsCategory>>();

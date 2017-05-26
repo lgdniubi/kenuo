@@ -121,7 +121,6 @@ public class GoodsAttributeController extends BaseController{
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@RequiresPermissions(value={"ec:goodsattribute:updateattrindex"},logical=Logical.OR)
 	@RequestMapping(value = {"updateattrindex"})
 	public @ResponseBody Map<String, String> updateattrindex(HttpServletRequest request){
 		//商品属性-是否检索
