@@ -959,6 +959,7 @@ public class OrdersController extends BaseController {
 				}else if(orders.getOrderstatus() == 2){
 					ordersService.updateVirtualOrder(orders);
 					OrdersStatusChangeUtils.pushMsg(orders, 3); //推送已发货信息给用户
+					addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
 				}else{//不是取消订单
 					ordersService.updateVirtualOrder(orders);
 					addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
