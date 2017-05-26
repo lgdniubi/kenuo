@@ -540,10 +540,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		return this.ordersDao.queryNotPayOrder(map);
 	}
 	
-	public List<Orders> queryNotPayOrder1(Map<String, Object> map) {
-		return this.ordersDao.queryNotPayOrder1(map);
-	}
-
 	/**
 	 * 修改订单状态
 	 * 
