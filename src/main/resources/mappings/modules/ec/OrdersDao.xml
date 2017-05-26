@@ -757,17 +757,7 @@
 		AND order_type = #{order_type} 
 		AND order_status = -1
 	</select>
-	<select id="queryNotPayOrder1" resultType="Orders" parameterType="map">
-		SELECT a.* FROM mtmydb.mtmy_orders a
-			LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.order_id = b.order_id
-			WHERE b.goods_id NOT IN (
-				SELECT goods_id FROM mtmydb.mtmy_groupon_activity
-			)
-			AND DATE_ADD(a.add_time,INTERVAL #{minute} MINUTE) <![CDATA[ < ]]> NOW()
-			AND a.order_type = #{order_type} 
-			AND a.order_status = -1
-			GROUP BY a.order_id
-	</select>
+	<!-- 此方法只用于订单过期定时器 -->
 	<update id="modifyOrderStatus" parameterType="map">
 		UPDATE 
 			mtmydb.mtmy_orders 
@@ -776,7 +766,7 @@
 			<if test="cancelType != null  and cancelType != ''">
 				cancel_type = #{cancelType}
 			</if>
-		WHERE order_id = #{order_id}
+		WHERE order_id = #{order_id} AND order_status = -1
 	</update>
 	<select id="selectSaleByOrderid" resultType="Integer">
 		SELECT
