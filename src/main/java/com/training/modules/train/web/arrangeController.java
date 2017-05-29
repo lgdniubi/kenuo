@@ -529,10 +529,10 @@ public class arrangeController extends BaseController{
 			return "true";
 		}else{
 			// 下一月
-			if(nowDay + RESERVATIONDATE <= nowMaxDay){
+			if(nowDay + (RESERVATIONDATE / 2) <= nowMaxDay){
 				return "no";
 			}else{
-				int num = (nowDay + RESERVATIONDATE) - nowMaxDay;
+				int num = ((nowDay + (RESERVATIONDATE / 2)) - nowMaxDay) * 2;
 				return Integer.toString(num);
 			}
 		}
