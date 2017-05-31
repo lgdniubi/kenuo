@@ -40,6 +40,12 @@
 								html += "<td nowrap><i class=\"icon-menu.icon\"></i>"+dataObj[i].name+"</td>";
 								html += "<td style=\"text-align: center;\">"+dataObj[i].mobileName+"</td>";
 								
+								if(dataObj[i].positionType == 0){
+									html += "<td style=\"text-align: center;\">商城</td>";
+								}else{
+									html += "<td style=\"text-align: center;\">生美</td>";
+								}
+								
 								if(dataObj[i].isHot == 0){
 									html += "<td id=\"ISHOT"+dataObj[i].categoryId+"\" style=\"text-align: center;\"><img width=\"20\" height=\"20\" src=\"${ctxStatic}/ec/images/open.png\" onclick=\"changeTableVal('ISHOT','"+dataObj[i].categoryId+"','1')\"></td>";
 								}else{
@@ -142,6 +148,7 @@
 							<th style="text-align: center;">ID</th>
 							<th style="text-align: center;">分类名称</th>
 							<th style="text-align: center;">手机分类名称</th>
+							<th style="text-align: center;">位置分类</th>
 							<th style="text-align: center;">是否推荐</th>
 							<th style="text-align: center;">是否显示</th>
 							<th style="text-align: center;">排序</th>
@@ -153,6 +160,14 @@
 									<td>${goodsCategory.id}</td>
 									<td nowrap style="text-align: left;"><i class="icon-menu.icon"></i>${goodsCategory.name}</td>
 									<td>${goodsCategory.mobileName}</td>
+									<td style="text-align: center;">
+										<c:if test="${goodsCategory.positionType==0}">
+											商城
+										</c:if>
+										<c:if test="${goodsCategory.positionType==1}">
+											生美
+										</c:if>		
+									</td>
 									<td style="text-align: center;" id="ISHOT${goodsCategory.id}">
 										<c:if test="${goodsCategory.isHot == 0}">
 											<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('ISHOT','${goodsCategory.id}','1')">
@@ -175,13 +190,13 @@
 											<a href="#" onclick="openDialogView('查看商品分类', '${ctx}/ec/goodscategory/form?id=${goodsCategory.id}&opflag=VIEW','800px', '500px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>
 										</shiro:hasPermission>
 										<shiro:hasPermission name="ec:goodscategory:edit">
-				    						<a href="#" onclick="openDialog('修改商品分类', '${ctx}/ec/goodscategory/form?id=${goodsCategory.id}&opflag=UPDATE','800px', '500px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
+				    						<a href="#" onclick="openDialog('修改商品分类', '${ctx}/ec/goodscategory/form?id=${goodsCategory.id}&positionType=${goodsCategory.positionType}&opflag=UPDATE','800px', '500px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 					    				</shiro:hasPermission>
 					    				<shiro:hasPermission name="ec:goodscategory:del">
 											<a href="${ctx}/ec/goodscategory/delete?id=${goodsCategory.id}" onclick="return confirmx('要删除该分类及所有子分类项吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
 										</shiro:hasPermission>
 										<shiro:hasPermission name="ec:goodscategory:add">
-											<a href="#" onclick="openDialog('添加下级商品分类', '${ctx}/ec/goodscategory/form?parent.id=${goodsCategory.id}&opflag=ADD','800px', '500px')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i> 添加下级商品分类</a>
+											<a href="#" onclick="openDialog('添加下级商品分类', '${ctx}/ec/goodscategory/form?parent.id=${goodsCategory.id}&positionType=${goodsCategory.positionType}&opflag=ADD','800px', '500px')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i> 添加下级商品分类</a>
 										</shiro:hasPermission>
 									</td>
 								</tr>

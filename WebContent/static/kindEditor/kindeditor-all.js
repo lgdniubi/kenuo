@@ -288,12 +288,12 @@ K.options = {
 		font : ['id', 'class', 'color', 'size', 'face', '.background-color'],
 		span : [
 			'id', 'class', '.color', '.background-color', '.font-size', '.font-family', '.background',
-			'.font-weight', '.font-style', '.text-decoration', '.vertical-align', '.line-height'
+			'.font-weight', '.font-style', '.text-decoration', '.vertical-align', '.line-height','style','.width'
 		],
 		div : [
 			'id', 'class', 'align', '.border', '.margin', '.padding', '.text-align', '.color',
 			'.background-color', '.font-size', '.font-family', '.font-weight', '.background',
-			'.font-style', '.text-decoration', '.vertical-align', '.margin-left'
+			'.font-style', '.text-decoration', '.vertical-align', '.margin-left','data-id','action_type'
 		],
 		table: [
 			'id', 'class', 'border', 'cellspacing', 'cellpadding', 'width', 'height', 'align', 'bordercolor',
@@ -318,7 +318,7 @@ K.options = {
 		'br,tbody,tr,strong,b,sub,sup,em,i,u,strike,s,del' : ['id', 'class'],
 		iframe : ['id', 'class', 'src', 'frameborder', 'width', 'height', '.width', '.height'],
 		//咖啡
-		'dl,dt,dd':['class','data-id','action_type']
+		'dl,dt,dd':['class']
 	},
 	layout : '<div class="container"><div class="toolbar"></div><div class="edit"></div><div class="statusbar"></div></div>'
 };

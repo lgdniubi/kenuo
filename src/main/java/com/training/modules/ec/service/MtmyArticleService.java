@@ -135,7 +135,7 @@ public class MtmyArticleService extends CrudService<MtmyArticleDao, MtmyArticle>
 	}
 	
 	/**
-	 *  更新文章的部分：排序，分类，是否置顶，是否推荐，是否显示
+	 *  更新文章的部分：排序，分类，是否置顶，是否推荐，是否显示,是否头条
 	 * @param mtmyArticle
 	 */
 	public void updateForPart(MtmyArticle mtmyArticle){
@@ -193,5 +193,13 @@ public class MtmyArticleService extends CrudService<MtmyArticleDao, MtmyArticle>
 		mtmyArticleComment.setPage(page);
 		page.setList(dao.findAllArticleComment(mtmyArticleComment));
 		return page;
+	}
+	
+	/**
+	 * 修改文章是否为头条
+	 * @param mtmyArticle
+	 */
+	public void updateIsTopline(MtmyArticle mtmyArticle){
+		dao.updateIsTopline(mtmyArticle);
 	}
 }

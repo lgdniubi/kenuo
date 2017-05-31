@@ -28,12 +28,13 @@ public class GoodsSpecPrice extends DataEntity<GoodsSpecPrice> {
 	
 	private String specKeyName;	//规格名称
 	private double costPrice;       //成本价格
+	
+	private double cargoPrice;		//报货价格
+	private double purchasePrice;	//采购价格
+	private String suplierGoodsNo;	//供应商商品编号
 	/**
 	 * get/set
 	 */
-	
-	
-	
 	public String getGoodsId() {
 		return goodsId;
 	}
@@ -111,6 +112,24 @@ public class GoodsSpecPrice extends DataEntity<GoodsSpecPrice> {
 	}
 	public void setCostPrice(double costPrice) {
 		this.costPrice = costPrice;
+	}
+	public double getCargoPrice() {
+		return cargoPrice;
+	}
+	public void setCargoPrice(double cargoPrice) {
+		this.cargoPrice = cargoPrice;
+	}
+	public double getPurchasePrice() {
+		return purchasePrice;
+	}
+	public void setPurchasePrice(double purchasePrice) {
+		this.purchasePrice = purchasePrice;
+	}
+	public String getSuplierGoodsNo() {
+		return suplierGoodsNo;
+	}
+	public void setSuplierGoodsNo(String suplierGoodsNo) {
+		this.suplierGoodsNo = suplierGoodsNo;
 	}
 	
 }

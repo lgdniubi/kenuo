@@ -224,14 +224,14 @@
 						</c:if>								
 						<c:if test="${complain.name !=null}">
 						    <div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
-								<label ><font color="red">*</font>客户姓名：</label>
-								<form:input id="name" path="name" htmlEscape="false" maxlength="20" class="form-control required" readonly="true" style="width:200px" />
+								<label >&nbsp;客户姓名：</label>
+								<form:input id="name" path="name" htmlEscape="false" maxlength="20" class="form-control" readonly="true" style="width:200px" />
 							</div>						
 						</c:if>	
 						<c:if test="${complain.name ==null}">
 							<div class="col-sm-6 col-offset-sm-1" style="text-align:left;">
-								<label ><font color="red">*</font>客户姓名：</label>
-								<form:input id="name" path="name" htmlEscape="false" maxlength="20" class="form-control required" style="width:200px" />
+								<label >&nbsp;客户姓名：</label>
+								<form:input id="name" path="name" htmlEscape="false" maxlength="20" class="form-control" style="width:200px" />
 							</div>						
 						</c:if>																
 						</div>
@@ -292,7 +292,7 @@
 						<div class="row" style="text-align:center;margin:10px">				
 							<div class="col-sm-12 col-offset-sm-1" style="text-align:left;">
 								<label ><font color="red">*</font>问题描述：</label>
-								<form:textarea path="content" htmlEscape="false" rows="2" maxlength="200" class="form-control required" style="width:480px" />
+								<form:textarea path="content" htmlEscape="false" rows="2" maxlength="500" class="form-control required" style="width:480px" />
 							</div>				
 						</div>	
 						<div class="row" style="text-align:center;margin:10px" >				

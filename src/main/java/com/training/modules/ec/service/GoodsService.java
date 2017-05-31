@@ -227,9 +227,12 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 								gsp.setPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][price]")));// 优惠价格
 								gsp.setMarketPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][market_price]")));// 市场价格
 								gsp.setCostPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][cost_price]")));// 成本价格
+								gsp.setCargoPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][cargo_price]")));// 成本价格
+								gsp.setPurchasePrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][purchase_price]")));// 成本价格
 								gsp.setStoreCount(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][store_count]")));// 库存数量
 								gsp.setBarCode(request.getParameter("item[" + specItemList.get(i) + "][bar_code]"));// 商品条形码
 								gsp.setGoodsNo(request.getParameter("item[" + specItemList.get(i) + "][goods_No]"));// 商品编码
+								gsp.setSuplierGoodsNo(request.getParameter("item[" + specItemList.get(i) + "][suplier_goods_no]"));// 商品编码
 								gsp.setGoodsWeight(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][goods_weight]")));// 商品重量
 								gsp.setServiceTimes(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][service_times]")));// 服务次数
 								gsp.setExpiringDate(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][expiring_date]")));// 截止日期（月）
@@ -484,9 +487,12 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 								gsp.setPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][price]")));// 优惠价格
 								gsp.setMarketPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][market_price]")));// 市场价格
 								gsp.setCostPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][cost_price]")));// 成本价格
+								gsp.setCargoPrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][cargo_price]")));// 成本价格
+								gsp.setPurchasePrice(Double.valueOf(request.getParameter("item[" + specItemList.get(i) + "][purchase_price]")));// 成本价格
 								gsp.setStoreCount(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][store_count]")));// 库存数量
 								gsp.setBarCode(request.getParameter("item[" + specItemList.get(i) + "][bar_code]"));// 商品条形码
 								gsp.setGoodsNo(request.getParameter("item[" + specItemList.get(i) + "][goods_No]"));// 商品编码
+								gsp.setSuplierGoodsNo(request.getParameter("item[" + specItemList.get(i) + "][suplier_goods_no]"));// 商品编码
 								gsp.setGoodsWeight(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][goods_weight]")));// 商品重量
 								gsp.setServiceTimes(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][service_times]")));// 服务次数
 								gsp.setExpiringDate(Integer.parseInt(request.getParameter("item[" + specItemList.get(i) + "][expiring_date]")));// 截止日期（月）

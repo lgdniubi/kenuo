@@ -6,7 +6,7 @@
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
-		    var start = {
+		    var beg = {
 			    elem: '#begtime',
 			    format: 'YYYY-MM-DD',
 			    event: 'focus',
@@ -18,7 +18,7 @@
 			    festival: true,				//是否显示节日
 			    choose: function(datas){
 			         end.min = datas; 		//开始日选好后，重置结束日的最小日期
-			         end.start = datas 		//将结束日的初始值设定为开始日
+			         end.beg = datas 		//将结束日的初始值设定为开始日
 			    }
 			};
 			var end = {
@@ -32,11 +32,42 @@
 			    issure: true,
 			    festival: true,
 			    choose: function(datas){
+			        beg.max = datas; //结束日选好后，重置开始日的最大日期
+			    }
+			};
+			var start = {
+				    elem: '#starttime',
+				    format: 'YYYY-MM-DD',
+				    event: 'focus',
+				    max: $("#overtime").val(),   //最大日期
+				    istime: false,				//是否显示时间
+				    isclear: false,				//是否显示清除
+				    istoday: false,				//是否显示今天
+				    issure: true,				//是否显示确定
+				    festival: true,				//是否显示节日
+				    choose: function(datas){
+				         over.min = datas; 		//开始日选好后，重置结束日的最小日期
+				         over.start = datas 		//将结束日的初始值设定为开始日
+				    }
+				};
+			var over = {
+			    elem: '#overtime',
+			    format: 'YYYY-MM-DD',
+			    event: 'focus',
+			    min: $("#starttime").val(),
+			    istime: false,
+			    isclear: false,
+			    istoday: false,
+			    issure: true,
+			    festival: true,
+			    choose: function(datas){
 			        start.max = datas; //结束日选好后，重置开始日的最大日期
 			    }
 			};
-			laydate(start);
+			laydate(beg);
 			laydate(end);
+			laydate(start);
+			laydate(over);
 	    })
 	    function nowReset(){//重置，页码清零
 			$("#resetNum").val("reset");
@@ -92,10 +123,14 @@
 								</c:forEach>
 							</select>
 							<input id="orderNo" name="orderNo" type="text" value="${mtmyCheckAccount.orderNo }" class="form-control" placeholder="订单号"> 
-							<span>时间范围：</span>
+							<span>支付时间：</span>
 							<input id="begtime" name="begtime" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${mtmyCheckAccount.begtime }" pattern="yyyy-MM-dd"/>" placeholder="开始时间" readonly="readonly"/>
 							<label>&nbsp;&nbsp;--&nbsp;&nbsp;</label>
 							<input id="endtime" name="endtime" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${mtmyCheckAccount.endtime }" pattern="yyyy-MM-dd"/>" placeholder="结束时间" readonly="readonly"/>
+							<span>下单时间：</span>
+							<input id="starttime" name="starttime" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${mtmyCheckAccount.starttime }" pattern="yyyy-MM-dd"/>" placeholder="开始时间" readonly="readonly"/>
+							<label>&nbsp;&nbsp;--&nbsp;&nbsp;</label>
+							<input id="overtime" name="overtime" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${mtmyCheckAccount.overtime }" pattern="yyyy-MM-dd"/>" placeholder="结束时间" readonly="readonly"/>
 						</div>	
 					</form:form>
 					<!-- 工具栏 -->

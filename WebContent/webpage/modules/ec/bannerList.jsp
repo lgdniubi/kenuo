@@ -88,10 +88,7 @@
 									</form:select>
 									<label>位置类型：</label>
 									<form:select path="bannerType" cssClass="form-control">
-										<form:option value="-1">全部</form:option>
-										<form:option value="1">首页</form:option>
-										<form:option value="2">分类</form:option>
-										<form:option value="3">我的订单</form:option>
+										<form:options items="${fns:getDictList('bannerType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 									</form:select>
 								</div>
 							</div>	
@@ -137,15 +134,13 @@
 								<img alt="" src="${ctxStatic}/images/lazylode.png" data-src="${banner.imgUrl}" style="width: 150px;height: 100px;">
 							</td>
 							<td style="text-align: center;">
-								<c:if test="${banner.bannerType == 1}">首页</c:if>
-								<c:if test="${banner.bannerType == 2}">分类</c:if>
-								<c:if test="${banner.bannerType == 3}">我的订单</c:if>
+								${fns:getDictLabel(banner.bannerType, 'bannerType', '')}
 							</td>
 							<td style="text-align: center;">
 								<c:if test="${banner.pageType == 0 }">活动页</c:if>
 								<c:if test="${banner.pageType == 1 }">商品</c:if>
 								<c:if test="${banner.pageType == 2 }">专题页</c:if>
-								<c:if test="${banner.pageType == 2 }">文章</c:if>
+								<c:if test="${banner.pageType == 3 }">文章</c:if>
 							</td>
 							<td style="text-align: center;" id="ISSHOW${banner.bannerId}">
 								<shiro:hasPermission name="ec:banner:update">

@@ -29,6 +29,11 @@
 						ids2.push(nodes2[i].id);
 					}
 				}
+				if(oldRoleNames == $("#roleName").val()){	// 用户校验用户角色是否修改过 修改过则清除用户缓存 用户TOKEN失效
+					$("#isUpdateRole").val(0);	
+				}else{
+					$("#isUpdateRole").val(1);	
+				}
 				if($("#dataScope").val()==2){
 					  if(ids2.length > 0){
 						  $("#officeIds").val(ids2);
@@ -40,11 +45,6 @@
 						  return false;
 					  }
 				 }else{
-					if(oldRoleNames == $("#roleName").val()){	// 用户校验用户角色是否修改过 修改过则清除用户缓存 用户TOKEN失效
-						$("#isUpdateRole").val(0);	
-					}else{
-						$("#isUpdateRole").val(1);	
-					}
 				    loading('正在提交，请稍等...');
 				    $("#inputForm").submit();
 				    return true;
@@ -110,10 +110,18 @@
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		   <tbody>
 		   	  <tr>
-		         <td class="width-15 active"><label class="pull-right">用户角色</label></td>
+		         <td class="width-15 active"><label class="pull-right">用户后台角色</label></td>
 		         <td class="width-35">
-		         	<sys:treeselect id="role" name="roleIdList" value="${user.roleIds }" labelName="role.name" labelValue="${user.roleNames}" title="角色"
+		         	<sys:treeselect id="role" name="roleIdList" value="${user.roleIds }" labelName="role.name" labelValue="${user.roleNames}" title="后台角色"
 						url="/sys/role/treeData" cssClass=" form-control input-sm required" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="false" checked="true"/>
+				 </td>
+		      </tr>
+		      <tr>
+		         <td class="width-15 active"><label class="pull-right">用户妃子校角色</label></td>
+		         <td class="width-35">
+		         	<sys:treeselect id="fzxRole" name="fzxRoleIds" value="${fzxRole.fzxRoleIds }" labelName="fzxRoleNames" labelValue="${fzxRole.fzxRoleNames}" title="妃子校角色"
+						url="/train/fzxRole/treeData" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="false" checked="true"/>
+					<input type="hidden" id="oldFzxRoleIds" name="oldFzxRoleIds" value="${fzxRole.fzxRoleIds }">
 				 </td>
 		      </tr>
 		      <tr>

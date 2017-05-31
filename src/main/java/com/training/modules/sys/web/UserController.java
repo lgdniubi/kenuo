@@ -70,6 +70,7 @@ import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.tools.utils.TwoDimensionCode;
 import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.TrainRuleParam;
+import com.training.modules.train.service.FzxRoleService;
 
 import net.sf.json.JSONObject;
 
@@ -104,6 +105,8 @@ public class UserController extends BaseController {
 	private RedisClientTemplate redisClientTemplate;		//redis缓存Service
 	@Autowired
 	private SpecBeauticianDao specBeauticianDao;	//特殊美容师
+	@Autowired
+	private FzxRoleService fzxRoleService;
 	
 	@ModelAttribute
 	public User get(@RequestParam(required = false) String id) {
@@ -165,7 +168,14 @@ public class UserController extends BaseController {
 		Role role = new Role();
 		role.setName("美容师");
 		role = roleDao.getByNameNew(role);
-		model.addAttribute("role", role);
+		//默认给排班角色
+		Role newRole = new Role();
+		newRole.setName("排班");
+		newRole = roleDao.getByNameNew(newRole);
+		
+		Role roles = new Role();
+		roles.setId(role.getId()+","+newRole.getId());
+		model.addAttribute("role", roles);
 		/*model.addAttribute("allRoles", systemService.findAllRole());  2016年11月9日17:54:02   修改新数据权限   咖啡*/
 		return "modules/sys/userForm";
 	}
@@ -418,6 +428,7 @@ public class UserController extends BaseController {
 		model.addAttribute("isSpecBeautician", systemService.selectSpecBeautician(user.getId()));	
 		model.addAttribute("user", user);
 		model.addAttribute("officeList", officeService.findAll());
+		model.addAttribute("fzxRole", fzxRoleService.findUserFzxRole(user.getId()));
 		return "modules/sys/userAuth";
 	}
 	/**
@@ -430,9 +441,10 @@ public class UserController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "saveAuth")
-	public String saveAuth(User user,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,Model model){
+	public String saveAuth(User user,String oldFzxRoleIds,String fzxRoleIds,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,Model model){
 		try {
 			
+			fzxRoleService.updateUserRole(user.getId(),oldFzxRoleIds,fzxRoleIds);
 			// 角色数据有效性验证，过滤不在授权内的角色
 			List<Role> roleList = Lists.newArrayList();
 			List<String> roleIdList = user.getRoleIdList();
@@ -567,13 +579,19 @@ public class UserController extends BaseController {
 												if("true".equals(checkOfficeId(user.getCode()))){
 													if(systemService.selectNo(user.getNo()) == 0){
 														try {
-															//默认给美容师角色
+															//默认给美容师角色，排班角色
 															Role role = new Role();
 															role.setName("美容师");
 															role = roleDao.getByNameNew(role);
-															user.setRole(role);
+															/*user.setRole(role);*/
+															
+															Role newRole = new Role();
+															newRole.setName("排班");
+															newRole = roleDao.getByNameNew(newRole);
+															
 															List<Role> roleList = Lists.newArrayList(); 
 															roleList.add(role);
+															roleList.add(newRole);
 															user.setRoleList(roleList);
 															//默认职位为美容师
 															user.setUserType("2");
@@ -883,7 +901,6 @@ public class UserController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequiresPermissions(value = { "sys:user:add", "sys:user:edit" }, logical = Logical.OR)
 	@RequestMapping(value = "checkNO")
 	public String checkNO(String oldNo, String no) {
 		if (no != null && no.equals(oldNo)) {
@@ -902,7 +919,6 @@ public class UserController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequiresPermissions(value = { "sys:user:add", "sys:user:edit" }, logical = Logical.OR)
 	@RequestMapping(value = "checkLoginName")
 	public String checkLoginName(String oldLoginName, String loginName) {
 		if (loginName != null && loginName.equals(oldLoginName)) {
@@ -919,7 +935,6 @@ public class UserController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequiresPermissions(value = { "sys:user:add", "sys:user:edit" }, logical = Logical.OR)
 	@RequestMapping(value = "newCheckMobile")
 	public String newCheckMobile(String mobile,String oldMobile) {
 		JSONObject jsonO = new JSONObject();

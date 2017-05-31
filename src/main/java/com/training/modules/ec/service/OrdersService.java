@@ -119,6 +119,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @return
 	 */
 	public Page<Orders> findOrders(Page<Orders> page, Orders orders) {
+		if(orders.getBegtime() == null && orders.getEndtime() == null){
+			orders.setBegtime(new Date());
+			orders.setEndtime(new Date());
+		}
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
 		//orders.getSqlMap().put("dsf", dataScopeFilter(orders.getCurrentUser(), "o", "a"));
 		orders.getSqlMap().put("dsf",ScopeUtils.dataScopeFilter("a", "orderOrRet"));
@@ -136,6 +140,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @return
 	 */
 	public Page<Orders> newFindOrders(Page<Orders> page, Orders orders) {
+		if(orders.getBegtime() == null && orders.getEndtime() == null){
+			orders.setBegtime(new Date());
+			orders.setEndtime(new Date());
+		}
 		// 设置分页参数
 		orders.setPage(page);
 		// 执行分页查询
@@ -531,7 +539,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	public List<Orders> queryNotPayOrder(Map<String, Object> map) {
 		return this.ordersDao.queryNotPayOrder(map);
 	}
-
+	
 	/**
 	 * 修改订单状态
 	 * 
@@ -981,8 +989,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				
 				newSpareMoneySum = -accountBalance;
 				newOrderBalance = Double.parseDouble(formater.format(newTotalAmount - totalAmount_in - sumOrderBalance));//商品余额（只放在details里的OrderBalance）
-				appTotalAmount =  oLog.getRechargeAmount();//app实付金额
-				appArrearage = -oLog.getRechargeAmount();//app欠款金额
+				appTotalAmount =  Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app实付金额
+				appArrearage = -Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app欠款金额
 			}else if(newTotalAmount >= orderArrearage){
 				//实付款金额	>  欠款
 				serviceTimes_in = _servicetimes-oLog.getRemaintimes();//充值次数
@@ -1003,21 +1011,22 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				
 				newSpareMoneySum = -accountBalance;
 				newOrderBalance = totalAmount;//商品余额（只放在details里的OrderBalance）
-				appTotalAmount =  oLog.getRechargeAmount();//app实付金额
-				appArrearage = -oLog.getRechargeAmount();//app欠款金额
+				appTotalAmount =  Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app实付金额
+				appArrearage = -Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app欠款金额
+
 			}
 		}else{//实物
-			if(newTotalAmount<=orderArrearage){
-				//实际付款 <= 欠款
+			if(newTotalAmount<orderArrearage){
+				//实际付款 < 欠款
 				totalAmount_in = totalAmount;
 				accountBalance_in = Double.parseDouble(formater.format(totalAmount- totalAmount_in - accountBalance));
 				
 				newSpareMoneySum = -accountBalance;
 				newOrderBalance = 0;//商品余额（只放在details里的OrderBalance）
-				appTotalAmount =  oLog.getRechargeAmount();//app实付金额
-				appArrearage = -oLog.getRechargeAmount();//app欠款金额
-			}else if(newTotalAmount > orderArrearage){
-				//实际付款 > 欠款
+				appTotalAmount =  Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app实付金额
+				appArrearage = -Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app欠款金额
+			}else if(newTotalAmount >= orderArrearage){
+				//实际付款 >= 欠款
 				totalAmount_in = orderArrearage;
 				accountBalance_in = Double.parseDouble(formater.format(totalAmount- totalAmount_in - accountBalance));
 				
@@ -1526,13 +1535,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			accountBalance_in = 0;                                 //订单余款，
 			totalAmount_in = Double.parseDouble(formater.format(totalAmount_in_a - advance));       //存入库的实付款金额=实付款金额-订金
 			newSpareMoneySum = -accountBalance;
-			if(accountBalance != 0){
-				appTotalAmount = 0;                   //app实付金额
-				appArrearage = 0; //app欠款金额
-			}else{
-				appTotalAmount = Double.parseDouble(formater.format(singleRealityPrice - advance));  //app实付金额
-				appArrearage = -Double.parseDouble(formater.format(singleRealityPrice - advance));; //app欠款金额
-			}
+			appTotalAmount = Double.parseDouble(formater.format(singleRealityPrice - advance));  //app实付金额
+			appArrearage = -Double.parseDouble(formater.format(singleRealityPrice - advance));; //app欠款金额
 			
 		}
 		
@@ -1648,5 +1652,22 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	public int selectOrdersId(String orderId){
 		return ordersDao.selectOrdersId(orderId);
 	}
-
+	
+	/**
+	 * 根据订单里的user_id找到对应的cilent_id
+	 * @param orders
+	 * @return
+	 */
+	public List<String> selectCidByUserId(Orders orders){
+		return ordersDao.selectCidByUserId(orders);
+	}
+	
+	/**
+	 * 根据订单id查找对应的信息，供订单发货后推送给用户 
+	 * @param orders
+	 * @return
+	 */
+	public List<OrderGoods> selectOrdersToUser(Orders orders){
+		return ordersDao.selectOrdersToUser(orders);
+	}
 }

@@ -25,8 +25,11 @@
 			        var obj = layero.find("iframe")[0].contentWindow;
 					var price = obj.document.getElementById("price");
 			    	var marketPrice = obj.document.getElementById("marketPrice");
+			    	var cargoPrice = obj.document.getElementById("cargoPrice");
+			    	var purchasePrice = obj.document.getElementById("purchasePrice");
 					var barCode = obj.document.getElementById("barCode");
 					var goodsNo = obj.document.getElementById("goodsNo");
+					var suplierGoodsNo = obj.document.getElementById("suplierGoodsNo");
 					var goodsWeight = obj.document.getElementById("goodsWeight");
 					var serviceTimes = obj.document.getElementById("serviceTimes");
 					var expiringDate = obj.document.getElementById("expiringDate");
@@ -39,8 +42,11 @@
 							specKey:specKey,
 							price:$(price).val(),
 							marketPrice:$(marketPrice).val(),
+							cargoPrice:$(cargoPrice).val(),
+							purchasePrice:$(purchasePrice).val(),
 							barCode:$(barCode).val(),
 							goodsNo:$(goodsNo).val(),
+							suplierGoodsNo:$(suplierGoodsNo).val(),
 							goodsWeight:$(goodsWeight).val(),
 							serviceTimes:$(serviceTimes).val(),
 							expiringDate:$(expiringDate).val()
@@ -77,9 +83,6 @@
 					<h5>商品规格价格</h5>
 				</div>
 				<div class="ibox-content">
-					<div class="searcharea clearfix">
-						
-					</div>
 					<table id="treeTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
 						<thead>
 							<th style="text-align: center;">规格ID</th>

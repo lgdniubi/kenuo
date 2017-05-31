@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.MtmyWebAdCategoryDao">
+	
+	<!-- 查询所有的广告图分类 -->
+	<select id="findList" resultType="MtmyWebAdCategory">
+		SELECT 
+			wac.id AS 'mtmyWebAdCategoryId',
+			wac.parent_id AS 'parentId',
+			wac.parent_ids AS 'parentIds',
+			wac.level,
+			wac.name,
+			wac.position_type AS 'positionType',
+			wac.sort,
+			wac.is_show AS 'isShow',
+			u1.create_by AS 'createBy.name',
+			wac.create_date AS 'createDate',
+			u2.update_by AS 'updateBy.name',
+			wac.update_date AS 'updateDate',
+			wac.remarks,
+			(SELECT COUNT(*) FROM mtmydb.mtmy_web_ad_category AS wac2 WHERE wac.id=wac2.parent_id AND wac2.del_flag=0) AS 'num',
+			wac.del_flag AS 'delFlag' 
+		FROM mtmydb.mtmy_web_ad_category wac
+		LEFT JOIN trains.sys_user u1 ON u1.id = wac.create_by
+		LEFT JOIN trains.sys_user u2 ON u2.id = wac.update_by
+		WHERE wac.del_flag = 0
+		AND wac.level = 1
+		ORDER BY wac.create_date DESC
+	</select>
+	
+	<!-- 根据mtmyWebAdCategoryId获取相应的mtmyWebAdCategory -->
+	<select id="getMtmyWebAdCategory" resultType="MtmyWebAdCategory">
+		SELECT 
+			wac.id AS 'mtmyWebAdCategoryId',
+			wac.parent_id AS 'parentId',
+			wac.parent_ids AS 'parentIds',
+			wac.level,
+			wac.name,
+			wac.position_type AS 'positionType',
+			wac.sort,
+			wac.is_show AS 'isShow',
+			u1.create_by AS 'createBy.name',
+			wac.create_date AS 'createDate',
+			u2.update_by AS 'updateBy.name',
+			wac.update_date AS 'updateDate',
+			wac.remarks,
+			wac.del_flag AS 'delFlag' 
+		FROM mtmydb.mtmy_web_ad_category wac
+		LEFT JOIN trains.sys_user u1 ON u1.id = wac.create_by
+		LEFT JOIN trains.sys_user u2 ON u2.id = wac.update_by
+		WHERE wac.id = #{mtmyWebAdCategoryId}
+		AND wac.del_flag = 0
+	</select>
+	
+	<!-- 插入广告图分类 -->
+	<insert id="insertMtmyWebAdCategory">
+		INSERT INTO mtmydb.mtmy_web_ad_category(
+			parent_id,
+			parent_ids,
+			level,
+			name,
+			position_type,
+			sort,
+			is_show,
+			create_by,
+			create_date,
+			remarks,
+			del_flag
+		)VALUES(
+			#{parentId},
+			#{parentIds},
+			#{level},
+			#{name},
+			#{positionType},
+			#{sort},
+			'1',
+			#{createBy.id},
+			SYSDATE(),
+			#{remarks},
+			'0'
+			)
+	</insert>
+	
+	<!-- 修改广告图分类 -->
+	<update id="updateMtmyWebAdCategory">
+		UPDATE mtmydb.mtmy_web_ad_category
+		SET 
+			name = #{name},
+			position_type = #{positionType},
+			update_by = #{updateBy.id},
+			update_date = SYSDATE(),
+			sort = #{sort},
+			remarks = #{remarks}
+		WHERE id = #{mtmyWebAdCategoryId}
+	</update>
+	
+	<!-- 逻辑删除广告图分类 -->
+	<delete id="deleteCategory">
+		UPDATE mtmydb.mtmy_web_ad_category
+		SET del_flag = '1'
+		WHERE parent_ids LIKE CONCAT('%', #{mtmyWebAdCategoryId}, '%') OR id = #{mtmyWebAdCategoryId}
+	</delete>
+	
+	<!-- 根据parentId查找相应的子类 -->
+	<select id="findByPidforChild" resultType="MtmyWebAdCategory">
+	SELECT
+		wac.id AS 'mtmyWebAdCategoryId',
+		wac.parent_id AS 'parentId',
+		wac.parent_ids AS 'parentIds',
+		wac.level,
+		wac.name,
+		wac.position_type AS 'positionType',
+		wac.sort,
+		wac.is_show AS 'isShow',
+		u1.create_by AS 'createBy.name',
+		wac.create_date AS 'createDate',
+		u2.update_by AS 'updateBy.name',
+		wac.update_date AS 'updateDate',
+		wac.remarks,
+		(SELECT COUNT(*) FROM mtmydb.mtmy_web_ad_category AS wac2 WHERE wac.id=wac2.parent_id AND wac2.del_flag=0) AS 'num',
+		wac.del_flag AS 'delFlag' 
+	FROM mtmydb.mtmy_web_ad_category wac
+	LEFT JOIN trains.sys_user u1 ON u1.id = wac.create_by
+	LEFT JOIN trains.sys_user u2 ON u2.id = wac.update_by
+	WHERE wac.del_flag = 0
+	AND wac.parent_id = #{id}
+	ORDER BY wac.create_date DESC
+	</select>
+	
+	<!-- 更改广告图分类的状态 -->
+	<update id="updateIsShow">
+		UPDATE mtmydb.mtmy_web_ad_category
+		SET is_show = #{isShow}
+		WHERE id = #{mtmyWebAdCategoryId}
+	</update>
+</mapper>

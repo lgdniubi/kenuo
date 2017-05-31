@@ -20,6 +20,7 @@ public class MtmyArticle extends DataEntity<MtmyArticle>{
 	private String digest;		//文章摘要
 	private int auditFlag;		//审核标示 （0：已发布；1：待审核；）
 	private int isShow;			//是否显示（0：显示；1：不显示）
+	private String isTopline;   //是否头条（0：否；1：是）
 	
 	private int flag;			//标示
 	private int likeNum;		//点赞
@@ -168,6 +169,12 @@ public class MtmyArticle extends DataEntity<MtmyArticle>{
 	}
 	public void setIsTask(int isTask) {
 		this.isTask = isTask;
+	}
+	public String getIsTopline() {
+		return isTopline;
+	}
+	public void setIsTopline(String isTopline) {
+		this.isTopline = isTopline;
 	}
 	
 	

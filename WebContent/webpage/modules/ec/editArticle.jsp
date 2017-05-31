@@ -118,6 +118,15 @@
 										</select>
 									</td>
 								</tr>
+								<tr>
+									<td><label class="pull-right"><font color="red">*</font>是否头条：</label></td>
+									<td>
+										<select class="form-control required" id="isTopline" name="isTopline">
+											<option value='0' <c:if test="${mtmyArticle.isTopline == '0'}">selected</c:if>>否</option>
+											<option value='1' <c:if test="${mtmyArticle.isTopline == '1'}">selected</c:if>>是</option>
+										</select>
+									</td>
+								</tr>
 								</c:if>
 							</table>
 						</form>

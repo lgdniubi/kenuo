@@ -17,6 +17,7 @@
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		  if(validateForm.form()){
+			  $("#positionType").removeAttr("disabled"); 
 			  $("#inputForm").submit();
 			  return true;
 		  }
@@ -127,6 +128,21 @@
 					</td>
 					<td class="width-35" colspan="3">
 						<form:input path="sort" htmlEscape="false" maxlength="50" class="form-control required" />
+					</td>
+				</tr>
+				<tr>
+					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>位置分类:</label></td>
+					<td class="width-35">
+						<c:if test="${empty goodsCategory.parent.name}">
+							<form:select path="positionType" class="form-control">
+								<form:options items="${fns:getDictList('position_type')}" itemLabel="label" itemValue="value" htmlEscape="false" cssClass="form-control"/>
+							</form:select>
+						</c:if>
+						<c:if test="${not empty goodsCategory.parent.name}">
+							<form:select path="positionType" class="form-control" disabled="true">
+								<form:options items="${fns:getDictList('position_type')}" itemLabel="label" itemValue="value" htmlEscape="false" cssClass="form-control" />
+							</form:select>
+						</c:if>
 					</td>
 				</tr>
 				<tr>

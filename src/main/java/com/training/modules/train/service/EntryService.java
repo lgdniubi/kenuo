@@ -85,6 +85,7 @@ public class EntryService {
 	public void operatebackrecord() {
 		entrymapper.operatebackrecord();
 	}
+
 	/**
 	 * 同步云币
 	 * @param mtmy_id
@@ -94,5 +95,15 @@ public class EntryService {
 		entrymapper.SyncIntegrals(mtmy_id,integral);
 		
 	}
+
+	/**
+	 * 修改直播状态
+	 * @param auditid
+	 */
+	public void updateauditstatus(int auditid) {
+		entrymapper.updateauditstatus(auditid);
+	}
+
+	
 
 }

@@ -63,7 +63,6 @@
 		<include refid="ordersJoins" />
 		WHERE
 		a.order_id = #{orderid}
-		and a.del_flag=0
 		GROUP BY
 		a.order_id,a.pay_id,a.pay_code,a.pay_name
 	</select>
@@ -76,7 +75,6 @@
 		<include refid="ordersJoins" />
 		WHERE
 		a.order_id = #{orderid}
-		and a.del_flag=0
 		GROUP BY
 		a.order_id,a.pay_id,a.pay_code,a.pay_name
 	</select>
@@ -221,6 +219,12 @@
 		<if test="endtime!=null and endtime!=''">
 			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
 		</if>
+		<if test="payBegTime != null and payBegTime != ''">
+			AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') >= DATE_FORMAT(#{payBegTime},'%Y-%m-%d')
+		</if>
+		<if test="payEndTime !=null and payEndTime!=''">
+			<![CDATA[AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') <= DATE_FORMAT(#{payEndTime},'%Y-%m-%d')]]>
+		</if>
 		<if test="userid != null and userid != ''">
 			AND a.user_id = #{userid}
 		</if>
@@ -319,6 +323,12 @@
 		<if test="endtime!=null and endtime!=''">
 			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
 		</if>
+		<if test="payBegTime != null and payBegTime != ''">
+			AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') >= DATE_FORMAT(#{payBegTime},'%Y-%m-%d')
+		</if>
+		<if test="payEndTime !=null and payEndTime!=''">
+			<![CDATA[AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') <= DATE_FORMAT(#{payEndTime},'%Y-%m-%d')]]>
+		</if>
 		<if test="userid != null and userid != ''">
 			AND a.user_id = #{userid}
 		</if>
@@ -393,6 +403,7 @@
 		    a.shipping_price as newShippingPrice,
 		    u.user_id as usersId,
 		    u.mobile as usersMobile,
+		    a.pay_time as payTime,
 		    (CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
 		FROM
 			mtmydb.mtmy_orders a
@@ -430,6 +441,12 @@
 		</if>
 		<if test="endtime!=null and endtime!=''">
 			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+		</if>
+		<if test="payBegTime != null and payBegTime != ''">
+			AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') >= DATE_FORMAT(#{payBegTime},'%Y-%m-%d')
+		</if>
+		<if test="payEndTime !=null and payEndTime!=''">
+			<![CDATA[AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') <= DATE_FORMAT(#{payEndTime},'%Y-%m-%d')]]>
 		</if>
 		<if test="cetaid !='' and  goodsids ==''">
 			AND f.category_id=#{cetaid}
@@ -503,6 +520,7 @@
 		    a.shipping_price as newShippingPrice,
 		    u.user_id as usersId,
 		    u.mobile as usersMobile,
+		    a.pay_time as payTime,
 		    (CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
 		FROM
 			mtmydb.mtmy_orders a
@@ -539,6 +557,12 @@
 		</if>
 		<if test="endtime!=null and endtime!=''">
 			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+		</if>
+		<if test="payBegTime != null and payBegTime != ''">
+			AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') >= DATE_FORMAT(#{payBegTime},'%Y-%m-%d')
+		</if>
+		<if test="payEndTime !=null and payEndTime!=''">
+			<![CDATA[AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') <= DATE_FORMAT(#{payEndTime},'%Y-%m-%d')]]>
 		</if>
 		<if test="cetaid !='' and  goodsids ==''">
 			AND f.category_id=#{cetaid}
@@ -580,7 +604,7 @@
 		FROM mtmydb.mtmy_orders a
 		<include refid="ordersJoins" />
 		WHERE
-		a.parent_id = #{orderid} and a.del_flag=0
+		a.parent_id = #{orderid} <!-- and a.del_flag=0 -->
 		GROUP BY
 		a.order_id,d.pay_id,d.pay_code,d.pay_name
 	</select>
@@ -745,7 +769,7 @@
 		AND order_type = #{order_type} 
 		AND order_status = -1
 	</select>
-	
+	<!-- 此方法只用于订单过期定时器 -->
 	<update id="modifyOrderStatus" parameterType="map">
 		UPDATE 
 			mtmydb.mtmy_orders 
@@ -754,7 +778,7 @@
 			<if test="cancelType != null  and cancelType != ''">
 				cancel_type = #{cancelType}
 			</if>
-		WHERE order_id = #{order_id}
+		WHERE order_id = #{order_id} AND order_status = -1
 	</update>
 	<select id="selectSaleByOrderid" resultType="Integer">
 		SELECT
@@ -1174,5 +1198,23 @@
 		FROM mtmydb.mtmy_orders
 		WHERE order_id = #{orderId}
 	</select>
-
+	
+	<!-- 根据订单里的user_id找到对应的cilent_id -->
+	<select id="selectCidByUserId" resultType="String">
+		SELECT uc.client_id
+		FROM mtmydb.mtmy_orders o
+		LEFT JOIN mtmydb.mtmy_oa_user_client uc ON uc.user_id = o.user_id
+		WHERE o.order_id = #{orderid}
+		AND uc.client_id is not null
+	</select>
+	
+	<!-- 根据订单id查找对应的信息，供订单发货后推送给用户 -->
+	<select id="selectOrdersToUser" resultType="OrderGoods">
+		SELECT 
+			goods_name AS 'goodsname',
+			goods_num AS 'goodsnum',
+			original_img AS 'originalimg'
+		FROM mtmydb.mtmy_order_goods_mapping 
+		WHERE order_id = #{orderid}
+	</select>
 </mapper>

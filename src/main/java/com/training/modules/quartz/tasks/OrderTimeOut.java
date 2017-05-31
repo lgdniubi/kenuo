@@ -82,35 +82,37 @@ public class OrderTimeOut extends CommonService{
 				m.put("cancel_type", 2);
 				m.put("order_id", vo.getOrderid());
 				//将过期的订单置为已作废
-				ordersService.modifyOrderStatus(m);
-				List<OrderGoods> vs = orderGoodsService.orderlist(vo.getOrderid());
-				//归还订单商品的库存
-				logger.info("[过期普通订单]，归还商品数量："+vs.size());
-				for(OrderGoods v : vs){
-					logger.info("[过期普通订单]，归还商品id："+v.getGoodsid());
-					RedisLock lo = new RedisLock(redisClientTemplate, LOCK_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey());
-					lo.lock();
-					boolean str = redisClientTemplate.exists(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey());
-					if(str){
-						redisClientTemplate.incrBy(RedisConfig.GOODS_STORECOUNT_PREFIX+v.getGoodsid(),v.getGoodsnum());
-						redisClientTemplate.incrBy(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey(),v.getGoodsnum());
-					}
-					lo.unlock();
-					
-					/*logger.info("归还用户限购资源,活动id："+v.getActionid()+",用户id："+v.getUserid()+",商品id："+v.getGoodsid()+",数量："+v.getGoodsnum());
+				int num = ordersService.modifyOrderStatus(m);
+				if(num > 0){	// 修改订单成功后
+					List<OrderGoods> vs = orderGoodsService.orderlist(vo.getOrderid());
+					//归还订单商品的库存
+					logger.info("[过期普通订单]，归还商品数量："+vs.size());
+					for(OrderGoods v : vs){
+						logger.info("[过期普通订单]，归还商品id："+v.getGoodsid());
+						RedisLock lo = new RedisLock(redisClientTemplate, LOCK_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey());
+						lo.lock();
+						boolean str = redisClientTemplate.exists(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey());
+						if(str){
+							redisClientTemplate.incrBy(RedisConfig.GOODS_STORECOUNT_PREFIX+v.getGoodsid(),v.getGoodsnum());
+							redisClientTemplate.incrBy(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey(),v.getGoodsnum());
+						}
+						lo.unlock();
+						
+						/*logger.info("归还用户限购资源,活动id："+v.getActionid()+",用户id："+v.getUserid()+",商品id："+v.getGoodsid()+",数量："+v.getGoodsnum());
 					if(v.getActiontype() ==1){ //归还用户限购资源
 						redisClientTemplate.hincrBy(RedisConfig.buying_limit_prefix+v.getActionid(), v.getUserid()+"_"+v.getGoodsid(), -v.getGoodsnum());
 					}*/
-					
+						
+					}
+					//归还优惠券
+					/*logger.info("归还优惠券，价格:"+vo.getCouponprice()+",订单："+vo.getOrderid());
+					if(vo.getCouponprice() > 0){
+						CouponUser u = new CouponUser();
+						u.setOrderId(vo.getOrderid());
+						u.setStatus("0");
+						couponUserDao.UpdateStatus(u);
+					}*/
 				}
-				//归还优惠券
-				/*logger.info("归还优惠券，价格:"+vo.getCouponprice()+",订单："+vo.getOrderid());
-				if(vo.getCouponprice() > 0){
-					CouponUser u = new CouponUser();
-					u.setOrderId(vo.getOrderid());
-					u.setStatus("0");
-					couponUserDao.UpdateStatus(u);
-				}*/
 				
 			}
 			
@@ -167,24 +169,26 @@ public class OrderTimeOut extends CommonService{
 				m.put("cancel_type", 2);
 				m.put("order_id", vo.getOrderid());
 				//将过期的订单置为已作废
-				ordersService.modifyOrderStatus(m);
-				List<OrderGoods> vs = orderGoodsService.orderlist(vo.getOrderid());
-				//归还订单商品的库存
-				logger.info("[过期抢购订单]，归还商品数量："+vs.size());
-				for(OrderGoods v : vs){
-					logger.info("[过期抢购订单]，归还商品id："+v.getGoodsid());
-					RedisLock lo = new RedisLock(redisClientTemplate, LOCK_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey());
-					lo.lock();
-					boolean str = redisClientTemplate.exists(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey());
-					if(str){
-						redisClientTemplate.incrBy(RedisConfig.GOODS_STORECOUNT_PREFIX+v.getGoodsid(),v.getGoodsnum());
-						redisClientTemplate.incrBy(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey(),v.getGoodsnum());
-					}
-					lo.unlock();
-					
-					logger.info("归还用户限购资源,活动id："+v.getActionid()+",用户id："+v.getUserid()+",商品id："+v.getGoodsid()+",数量："+v.getGoodsnum());
-					if(v.getActiontype() ==1){ //归还用户限购资源
-						redisClientTemplate.hincrBy(RedisConfig.buying_limit_prefix+v.getActionid(), v.getUserid()+"_"+v.getGoodsid(), -v.getGoodsnum());
+				int num = ordersService.modifyOrderStatus(m);
+				if(num > 0){	// 修改订单成功后
+					List<OrderGoods> vs = orderGoodsService.orderlist(vo.getOrderid());
+					//归还订单商品的库存
+					logger.info("[过期抢购订单]，归还商品数量："+vs.size());
+					for(OrderGoods v : vs){
+						logger.info("[过期抢购订单]，归还商品id："+v.getGoodsid());
+						RedisLock lo = new RedisLock(redisClientTemplate, LOCK_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey());
+						lo.lock();
+						boolean str = redisClientTemplate.exists(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey());
+						if(str){
+							redisClientTemplate.incrBy(RedisConfig.GOODS_STORECOUNT_PREFIX+v.getGoodsid(),v.getGoodsnum());
+							redisClientTemplate.incrBy(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey(),v.getGoodsnum());
+						}
+						lo.unlock();
+						
+						logger.info("归还用户限购资源,活动id："+v.getActionid()+",用户id："+v.getUserid()+",商品id："+v.getGoodsid()+",数量："+v.getGoodsnum());
+						if(v.getActiontype() ==1){ //归还用户限购资源
+							redisClientTemplate.hincrBy(RedisConfig.buying_limit_prefix+v.getActionid(), v.getUserid()+"_"+v.getGoodsid(), -v.getGoodsnum());
+						}
 					}
 				}
 			}
@@ -229,4 +233,5 @@ public class OrderTimeOut extends CommonService{
 			}
 		}
 	}
+	
 }

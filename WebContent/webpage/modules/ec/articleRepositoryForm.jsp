@@ -31,7 +31,7 @@
 		.ke-dalog-addpic .tab1,.ke-dalog-addpic .tab2{display:none;padding-top:15px;}
 		.ke-add-mask{position:fixed;z-index:-1;width:100%;height:100%;left:0;top:0;}
     	/* 商品卡片样式 */
-    	p{margin:0;padding:0 12px;line-height:26px;color:#1a1a1a;font-size:16px;}
+    	/* p{margin:0;padding:0 12px;line-height:26px;color:#1a1a1a;font-size:16px;}
 		img{max-width:100%;}
 		.mt-item{margin:12px;padding:10px;overflow:hidden;box-shadow:0 1px 4px 2px #f0f0f0}
 		.mt-item dt{float:left;width:80px;height:80px;position:relative;overflow:hidden;}
@@ -41,7 +41,24 @@
 		.mt-item p{height:30px;line-height:30px;padding:0; font-size:14px;color:#ebbd30;margin-top:10px;}
 		.mt-item p .cost{font-size:20px;}
 		.mt-item p .cost i{font-size:12px;}
-		.mt-item p .link-btn{float:right;}
+		.mt-item p .link-btn{float:right;} */
+		.article .detail-area .hot-items{background:none;padding:0;}
+		.hot-items dl{padding:20px 12px;border-bottom:8px solid #f3f3f3;border:none;overflow:hidden;}
+		.hot-items dl dt{float:left;border:1px solid #dedede;background-color:#eee;border-radius:5px; overflow:hidden;}
+		.hot-items dl dt img{width:84px;height:84px;}
+		.hot-items dl dd{margin-left:100px;}
+		.hot-items dl h3{height:48px;line-height:24px;margin-top:-4px; font-size:14px;color:#1a1a1a;}
+		.hot-items dl p.prise{height:26px;line-height:26px;color:#ef508d;font-family:arial;font-size:13px;text-indent:1px}
+		.hot-items dl .features{color:#999;font-size:13px; overflow:hidden;}
+		.hot-items dl .prise i{font-size:16px;vertical-align:bottom;}
+		.hot-items dl .prise span{padding-right:.7em;}
+		.hot-items dl .prise del{vertical-align:middle;}
+		.hot-items dl .score{position:relative;float:left;width:87px;height:12px;margin-top:2px;vertical-align:middle; background:url(${ctxStatic}/kindEditor/themes/default/goods-score.png);background-size:87px 12px;overflow:hidden;}
+		.score .score-inner{position:absolute;left:0;height:12px;background:url(${ctxStatic}/kindEditor/themes/default/goods-score2.png);background-size:87px 12px;}
+		.hot-items dl .sales{float:right;height:14px;line-height:14px;}
+		.hot-items dl .sales::before{content:'';display:inline-block;width:14px;height:14px;vertical-align:top;margin-right:4px; background:url(${ctxStatic}/kindEditor/themes/default/icon-sales3.png) center no-repeat;background-size:15px;}
+		.hot-items dl .comment{float:right;height:14px;line-height:14px;margin-right:.5em;}
+		.hot-items dl .comment::before{content:'';display:inline-block;width:14px;height:14px;vertical-align:top;margin-right:4px; background:url(${ctxStatic}/kindEditor/themes/default/icon-comments3.png) center no-repeat;background-size:15px;}
 		/* 删除作者样式 */
 		strong{font-weight:bold}
 		.delAuthor{position:relative;}
@@ -131,7 +148,7 @@
 				    area: ['300px', '420px'],
 				    title:"商品选择",
 				    ajaxData:{selectIds: $("#goodselectId").val()},
-				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?goodsCategory="+cateid)+"&module=&checked=&extId=&isAll=",
+				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?goodsCategory="+cateid+"&isAppshow=1")+"&module=&checked=&extId=&isAll=",
 				    btn: ['确定', '关闭']
 		    	       ,yes: function(index, layero){ //或者使用btn1
 								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
@@ -197,13 +214,27 @@
         		url : '${ctx}/ec/mtmyArticleList/loadGoods?goodsId='+num,
         		dateType: 'text',
         		success:function(data){
-    				$("#goodsdetails").append('<dl class="mt-item" data-id="'+data.goodsId+'" action_type="'+data.actionType+'"><dt>'
+    				/* $("#goodsdetails").append('<dl class="mt-item" data-id="'+data.goodsId+'" action_type="'+data.actionType+'"><dt>'
     					+ '<img src="'+data.originalImg+'" alt="商品图片" style="width: 80px;height: 80px;"></dt>'
     					+ '<dd><h3>'+data.goodsName+'</h3>'
     					+ '<p class="clearfix">'
     					+ '<span class="cost"><i>¥</i>'+data.shopPrice+'</span>'
     					+ '<span class="link-btn">查看详情>> </span>'
-    					+ '</p></dd></dl><br>');
+    					+ '</p></dd></dl><br>'); */
+    				$("#goodsdetails").append('<div class="hot-items" data-id="'+data.goodsId+'" action_type="'+data.actionType+'">'
+    						+ '<dl>'
+    						+ '<dt><img src="'+data.originalImg+'" alt=""></dt>'
+    						+ '<dd>'
+    						+ '<h3>'+data.goodsName+'</h3>'
+    						+ '<p class="prise"><span>¥<i>'+data.shopPrice+'</i></span><del>¥'+data.marketPrice+'</del></p>'
+    						+ '<p class="features">'
+    						+ '<span class="score"><span class="score-inner" style="width:'+data.rank+'"></span></span>'
+    						+ '<span class="sales">'+Math.floor(data.commentNum*1.6)+'</span>'
+    						+ '<span class="comment">'+data.commentNum+'</span>'
+    						+ '	</p>'
+    						+ '</dd>'
+    						+ '</dl>'
+    						+ '</div>');
     				$(".loading").hide();
         		}
         	})
@@ -448,7 +479,7 @@
                           <label class="col-sm-2 control-label"></label>
                            <div style="overflow:hidden">
                          		<c:forEach items="${articleRepository.imageList}" var="list" varStatus="status">
-                         			<div id="img${status.index+1}" style="float:left;width:120px;height: 130px;text-align:center;margin:0 10px 10px 0">
+                         			<div id="img${status.index+1}" style="float:left;width:200px;height: 130px;text-align:center;margin:0 10px 10px 0">
                          			<ul>
                          				<li><img id="livesrc${status.index+1}" src="${list.imgUrl}" onerror="this.src='${ctxStatic}/kindEditor/themes/default/upload.png'" alt="images" style="width:200px;height:100px;" /></li>
                          				<li style='height:30px;line-height:40px;'>

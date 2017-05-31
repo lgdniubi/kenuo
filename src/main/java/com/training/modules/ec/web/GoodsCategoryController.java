@@ -267,9 +267,16 @@ public class GoodsCategoryController extends BaseController{
 	@ResponseBody
 	@RequestMapping(value = "treeData")
 	public List<Map<String, Object>> treeData(@RequestParam(required=false) String extId, @RequestParam(required=false) String type,
-			@RequestParam(required=false) Boolean isAll, HttpServletResponse response) {
+			@RequestParam(required=false) String positionType,@RequestParam(required=false) Boolean isAll, HttpServletResponse response) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		List<GoodsCategory> list = goodsCategoryService.findAllList(null);
+		GoodsCategory goodsCategory = new GoodsCategory();
+		goodsCategory.setPositionType(positionType);
+
+		GoodsCategory parent = new GoodsCategory();
+		parent.setId("");
+		goodsCategory.setParent(parent);
+		
+		List<GoodsCategory> list = goodsCategoryService.findAllList(goodsCategory);
 		for (int i=0; i<list.size(); i++){
 			GoodsCategory e = list.get(i);
 			if ((StringUtils.isBlank(extId) || 

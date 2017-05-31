@@ -321,6 +321,7 @@ public class SpecEquipmentController extends BaseController {
 		try{
 			Page<EquipmentLogs> page = specEquipmentService.findEquipmentLogsList(new Page<EquipmentLogs>(request, response), equipmentLogs);
 			model.addAttribute("page", page);
+			model.addAttribute("equipmentId", equipmentLogs.getEquipmentId());
 		}catch(Exception e){
 			logger.error("查询设备排班日志详情出错信息："+e.getMessage());
 			BugLogUtils.saveBugLog(request, "查询设备排班日志详情", e);

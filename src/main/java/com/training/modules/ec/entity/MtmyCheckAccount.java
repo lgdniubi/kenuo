@@ -56,8 +56,10 @@ public class MtmyCheckAccount extends DataEntity<MtmyCheckAccount>{
 	private	String goodsNo;			//商品编码
 	private String barCode;			//商品条形码
 	
-	private Date begtime;				//开始时间
-	private Date endtime;				//结束时间
+	private Date begtime;				//支付开始时间
+	private Date endtime;				//支付结束时间
+	private Date starttime;				//下单开始时间
+	private Date overtime;				//下单结束时间
 	private int isReal;					//是否实物
 	
 	private String userNote;            //买家留言
@@ -316,6 +318,18 @@ public class MtmyCheckAccount extends DataEntity<MtmyCheckAccount>{
 	}
 	public void setEndtime(Date endtime) {
 		this.endtime = endtime;
+	}
+	public Date getStarttime() {
+		return starttime;
+	}
+	public void setStarttime(Date starttime) {
+		this.starttime = starttime;
+	}
+	public Date getOvertime() {
+		return overtime;
+	}
+	public void setOvertime(Date overtime) {
+		this.overtime = overtime;
 	}
 	public int getIsReal() {
 		return isReal;

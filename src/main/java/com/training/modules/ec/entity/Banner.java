@@ -19,7 +19,7 @@ public class Banner extends DataEntity<Banner>{
 	private int sort;			//排序
 	private String isShow;		//是否显示（0：显示；1：不显示） 
 	
-	private String bannerType;	//位置类型（1：首页；2：分类，3：我的订单）
+	private String bannerType;	//位置类型（1：首页；2：分类；3：我的订单；4：商城；5：生活美容；6：医美；）
 	private int goodsId;		//商品ID
 	private int actionType;		//商品类型（0 普通商品,1 限时抢购, 2 团购 , 3 促销优惠）
 	private String isShare;		//是否分享（0：分享；1：不分享）

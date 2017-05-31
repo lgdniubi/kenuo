@@ -188,9 +188,11 @@ public class AlipayCheckAccount extends CommonService{
 	                			}
 		                	}
 	                		mtmyCheckAccount.setPayChannel("支付宝移动支付(定时任务)");
-	                		if(checkAccountService.findByOrderNo(mtmyCheckAccount) == 0){
-	            				mcaList.add(mtmyCheckAccount);
-	            			};
+	                		if("每天美耶".equals(mtmyCheckAccount.getPayRemark())){
+	                			if(checkAccountService.findByOrderNo(mtmyCheckAccount) == 0){
+	                				mcaList.add(mtmyCheckAccount);
+	                			};
+	                		}
 	            		}else{
 	            			t = row;
 	            			flag = true;

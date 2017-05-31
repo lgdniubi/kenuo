@@ -207,7 +207,6 @@ public class RoleController extends BaseController {
 	 * @param response
 	 * @return
 	 */
-	@RequiresPermissions("sys:role:assign")
 	@ResponseBody
 	@RequestMapping(value = "users")
 	public List<Map<String, Object>> users(String officeId, HttpServletResponse response) {

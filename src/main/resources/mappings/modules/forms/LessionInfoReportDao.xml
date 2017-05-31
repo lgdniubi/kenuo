@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.forms.dao.LessionInfoReportDao">
+
+	<!-- 根据时间查找 -->
+	<select id="timeList" resultType="LessionTimeReport">	
+		SELECT
+			t.time AS 'time',
+			t.contentId AS 'contentId',
+			t.contentName AS 'contentName',
+			t.lessionId AS 'lessionId',
+			t.lessionName AS 'lessionName',
+			t.oneClassify AS 'oneClassify',
+			t.twoClassify AS 'twoClassify',
+			count(1) AS 'collect',
+			t.status AS 'status'
+		FROM
+			(SELECT date_format(f.createtime, '%Y-%m-%d') time,
+				c.content_id contentId,
+				c.`name` contentName,
+				c.lesson_id lessionId,
+				l.`name` lessionName,
+				(SELECT c.`name` FROM	train_categorys c WHERE l.category_id = c.category_id GROUP BY c.category_id) AS 'oneClassify',
+				(SELECT tc.`name` FROM	train_categorys tc WHERE tc.category_id =
+					(SELECT c.parent_id FROM	train_categorys c WHERE l.category_id = c.category_id GROUP BY c.category_id)
+				) AS 'twoClassify',
+				CASE c.content_type  
+		       		WHEN 1 THEN '视频'  
+		        	WHEN 2 THEN '文档'
+					WHEN 3 THEN '其他'
+		    	END status
+			FROM train_lesson_favorites f
+			LEFT JOIN train_lesson_contents c ON c.lesson_id = f.lesson_id
+			LEFT JOIN train_lessons l ON l.lesson_id = c.lesson_id
+			WHERE
+				1 = 1
+			AND	
+				c.lesson_id IS NOT NULL
+			<if test="begtime != null and begtime != ''">
+				AND DATE_FORMAT(f.createtime,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
+			</if>
+			<if test="endtime!=null and endtime!=''">
+				<![CDATA[AND DATE_FORMAT(f.createtime,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+			</if>
+		) AS t
+		GROUP BY
+			t.time,contentId
+	</select>
+
+	<!-- 根据ID查找 -->
+	<select id="findInfoListById" resultType="LessionInfoReport">	
+		SELECT
+			c.content_id AS 'contentId',
+			c.`name` AS 'contentName',
+			c.lesson_id AS 'lessionId',
+			l.`name` AS 'lessionName',
+			(SELECT
+				c.`name`
+			FROM
+				train_categorys c
+			WHERE
+				c.parent_id = 0
+			AND
+				l.category_id = c.category_id
+			GROUP BY
+				c.category_id
+			) AS 'oneClassify',
+		 	(SELECT
+				tc.`name`
+			FROM
+				train_categorys tc
+			WHERE
+				tc.category_id = (
+					SELECT
+						c.parent_id
+					FROM
+						train_categorys c
+					WHERE
+						parent_id = 0
+					AND
+						 c.category_id = l.category_id
+					GROUP BY
+						c.category_id)
+			) AS 'twoClassify',
+				(SELECT
+					COUNT(1)
+				FROM
+					train_lesson_favorites f
+				WHERE
+					f.lesson_id = c.lesson_id
+				) AS 'collect',
+				CASE c.content_type  
+		       		WHEN 1 THEN '视频'  
+		        	WHEN 2 THEN '文档'
+					WHEN 3 THEN '其他'
+		    	END AS 'status'
+		FROM
+			train_lesson_contents c
+		LEFT JOIN train_lessons l ON l.lesson_id = c.lesson_id
+		LEFT JOIN train_categorys tc ON tc.category_id = l.category_id
+		WHERE
+			1 = 1
+		<if test="contentName != null and contentName != ''">
+			AND c.`name` like '%${contentName}%'
+		</if>
+		<if test="lessionId != null and lessionId != ''">
+			AND c.lesson_id = #{lessionId}
+		</if>
+		<if test="lessionName != null and lessionName != ''">
+			AND l.`name` like '%${lessionName}%'
+		</if>
+		<if test="oneClassify != null and oneClassify != ''">
+			AND tc.category_id = #{oneClassify}
+		</if> 
+		 <if test="twoClassify != null and twoClassify != ''">
+			AND tc.parent_id = #{twoClassify}
+		</if>
+		<if test="seller != null and seller != ''">
+			AND SUBSTRING((SELECT parent_ids FROM sys_office WHERE id = tc.office_id) FROM 5 FOR 7) = #{seller}
+		</if>
+	</select>
+
+	<!-- 查询所有商家 分类 -->
+	<select id="findSellerList" resultType="LessionInfoReport">
+		SELECT
+			`name` AS 'seller',
+			id AS 'categoryId'
+		FROM
+			sys_office
+		WHERE
+			id IN 
+				(SELECT
+					SUBSTRING(parent_ids FROM 5 FOR 7) AS t
+				FROM
+					sys_office
+				WHERE
+					SUBSTRING(parent_ids FROM 5 FOR 7) != ''
+				GROUP BY
+					t)
+	</select>
+
+	<!--根据商家分类  查询一级分类 -->
+	<select id="findCategorysList" resultType="LessionInfoReport">
+		SELECT
+		DISTINCT
+			c.category_id AS 'categoryId',
+			c.`name` AS 'oneClassify'
+		FROM
+			train_categorys c
+		LEFT JOIN sys_office o ON 
+			CASE 
+				WHEN LENGTH(c.office_id) = 7 THEN c.office_id = o.id
+				WHEN LENGTH(c.office_id) > 7 THEN o.id = SUBSTRING((SELECT parent_ids FROM sys_office WHERE id = c.office_id) FROM 5 FOR 7) 
+			END
+		WHERE	
+			c.parent_id = 0 
+		AND o.id = #{seller}
+		ORDER BY 
+			c.category_id
+	</select>
+	
+	<!-- 根据选择一级分类选择二级分类 -->
+	<select id="findtwolist" resultType="LessionInfoReport">
+		SELECT 
+			c.category_id AS 'categoryId',
+			c.`name` AS 'twoClassify'  
+		FROM 
+			train_categorys c 
+		WHERE 
+			c.category_id =
+			(SELECT
+				tc.parent_id
+			FROM
+				train_categorys tc
+			WHERE	 
+				tc.category_id = #{categoryId} )
+	</select>
+</mapper>

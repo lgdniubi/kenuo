@@ -22,7 +22,9 @@
 			mobile, 
 			sex,
 			office_id,
+			office_name,
 			beautician_id,
+			beautician_name,
 			reg_time,
 			del_flag
 		) VALUES (
@@ -32,7 +34,9 @@
 			#{mobile}, 
 			#{sex},
 			#{officeId},
+			(SELECT name FROM trains.sys_office WHERE id = #{officeId}),
 			#{beautyId},
+			(SELECT name FROM trains.sys_user WHERE id = #{beautyId}),
 			SYSDATE(),
 			#{DEL_FLAG_NORMAL}
 		)

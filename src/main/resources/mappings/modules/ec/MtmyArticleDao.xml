@@ -21,6 +21,7 @@
 		a.sort,
 		a.is_recommend AS isRecommend,
 		a.is_top AS isTop,
+		a.is_topline AS isTopline,
 		a.is_task AS isTask,
 		a.task_date AS taskDate,
 		a.like_num AS likeNum
@@ -218,14 +219,15 @@
 			ORDER BY c.create_date DESC
 	</select>
 	
-	<!-- 更新文章的部分：排序，分类，是否置顶，是否推荐，是否显示 -->
+	<!-- 更新文章的部分：排序，分类，是否置顶，是否推荐，是否显示,是否头条 -->
 	<update id="updateForPart" parameterType="MtmyArticle">
 		UPDATE mtmydb.mtmy_articles SET
 			category_id = #{categoryId},
 			sort = #{sort},
 			is_top = #{isTop},
 			is_recommend = #{isRecommend},
-			is_show = #{isShow}
+			is_show = #{isShow},
+			is_topline = #{isTopline}
 		WHERE id = #{id}
 	</update>
 	
@@ -306,4 +308,11 @@
 			</if>
 		ORDER BY create_date DESC
 	</select>
+	
+	<!-- 修改文章是否为头条 -->
+	<update id="updateIsTopline" >
+		UPDATE mtmydb.mtmy_articles
+		SET is_topline = #{isTopline}
+		WHERE id = #{id}
+	</update>
 </mapper>

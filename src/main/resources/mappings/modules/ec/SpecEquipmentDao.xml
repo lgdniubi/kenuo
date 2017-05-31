@@ -201,6 +201,7 @@
 		SELECT 
 			ar.appt_date AS 'apptDate',
 			o.name AS 'bazaarName',
+			ar.time AS 'time',
 			ar.shop_name
 		FROM train_arrange_equipment ar
 		LEFT JOIN sys_office o ON o.id = ar.local_bazaar_id

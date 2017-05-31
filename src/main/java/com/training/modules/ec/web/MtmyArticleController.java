@@ -1,5 +1,6 @@
 package com.training.modules.ec.web;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
+import com.training.modules.ec.dao.CommentDao;
 import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.entity.MtmyArticle;
 import com.training.modules.ec.entity.MtmyArticleCategory;
@@ -43,6 +45,10 @@ public class MtmyArticleController extends BaseController{
 	private MtmyArticleService mtmyArticleService;
 	@Autowired
 	private GoodsService goodsService;
+	@Autowired
+	private CommentDao commentDao;
+	
+	
 	/**
 	 * 文章列表
 	 * @return
@@ -92,6 +98,22 @@ public class MtmyArticleController extends BaseController{
 	public Goods loadGoods(Goods goods,HttpServletRequest request){
 		try {
 			goods = goodsService.get(goods);
+			// 查询商品星级、总评论数
+			Map<String, Object> map = commentDao.findCommentByGoodId(goods.getGoodsId());
+			double num = Double.valueOf(map.get("rank").toString()) * 2;
+			if(num > (int)num){
+				num = (int)num + 1;
+			}else{
+				num = (int)num;
+			}
+			// 若无等级  默认为五颗星
+			if(num == 0){
+				num = 10;
+			}
+			NumberFormat nFromat = NumberFormat.getPercentInstance();
+			String rank = nFromat.format(num/10);
+			goods.setRank(rank);
+			goods.setCommentNum(Integer.valueOf(map.get("commentNum").toString()));
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "生成商品卡片", e);
 			logger.error("生成商品卡片错误信息:"+e.getMessage());
@@ -482,4 +504,37 @@ public class MtmyArticleController extends BaseController{
 		}
 		return "redirect:" + adminPath + "/ec/mtmyArticleList/mtmyArticleCommentList"; 
 	} 
+	
+	/**
+	 * 修改文章是否为头条
+	 * @param request
+	 * @param mtmyArticle
+	 * @return
+	 */
+	@RequestMapping(value="updateIsTopline")
+	@ResponseBody
+	public Map<String, String> updateIsTopline(HttpServletRequest request,MtmyArticle mtmyArticle) {
+		Map<String, String> jsonMap = new HashMap<String, String>();
+		try {
+			String isTopline = request.getParameter("isTopline");
+			mtmyArticle = mtmyArticleService.getArticle(mtmyArticle.getId());
+			if("0".equals(isTopline)){
+				mtmyArticle.setIsTopline(isTopline);
+				mtmyArticleService.updateIsTopline(mtmyArticle);
+				jsonMap.put("STATUS", "OK");
+				jsonMap.put("ISTOPLINE", isTopline);
+			}else if("1".equals(isTopline)){
+				mtmyArticle.setIsTopline(isTopline);
+				mtmyArticleService.updateIsTopline(mtmyArticle);
+				jsonMap.put("STATUS", "OK");
+				jsonMap.put("ISTOPLINE", isTopline);
+			}
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "修改文章是否为头条失败", e);
+			logger.error("修改文章是否为头条失败：" + e.getMessage());
+			jsonMap.put("STATUS", "ERROR");
+			jsonMap.put("MESSAGE", "修改失败,出现异常");
+		}
+		return jsonMap;
+	}
 }

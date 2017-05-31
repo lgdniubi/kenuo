@@ -78,12 +78,12 @@ public class RedisCaCheLoad extends CommonService{
 			redisClientTemplate.set(RedisConfig.GOODS_SPECPRICE_PREFIX+sgp.getGoodsId()+"#"+sgp.getSpecKey(), sgp.getStoreCount()+"");
 		}*/
 		
-		List<GoodsCollect> lo = goodsService.queryAllGoodsCollect();
-		logger.info("-->收藏商品-size:"+lo.size());
-		for(GoodsCollect c : lo){
-			//logger.info("user_id:"+c.getUserid()+", goods_id:"+c.getGoodsid());
-			redisClientTemplate.hset(RedisConfig.GOODSCOLLECT_KEY, c.getUserid()+"#"+c.getGoodsid(), "true");
-		}
+//		List<GoodsCollect> lo = goodsService.queryAllGoodsCollect();
+//		logger.info("-->收藏商品-size:"+lo.size());
+//		for(GoodsCollect c : lo){
+//			//logger.info("user_id:"+c.getUserid()+", goods_id:"+c.getGoodsid());
+//			redisClientTemplate.hset(RedisConfig.GOODSCOLLECT_KEY, c.getUserid()+"#"+c.getGoodsid(), "true");
+//		}
 		
 		List<Integer> un = goodsService.queryAllUnshelve();
 		logger.info("-->下架商品-size:"+un.size());

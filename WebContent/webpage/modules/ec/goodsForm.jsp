@@ -44,7 +44,7 @@
 		.ke-add-mask{position:fixed;z-index:-1;width:100%;height:100%;left:0;top:0;}
 		.ke-tabs{height:450px;overflow-x:hidden;overflow-y:auto;}
 		/* 商品卡片样式 */
-    	p{margin:0;padding:0 12px;line-height:26px;color:#1a1a1a;font-size:16px;}
+    	/* p{margin:0;padding:0 12px;line-height:26px;color:#1a1a1a;font-size:16px;}
 		img{max-width:100%;}
 		.mt-item{margin:12px;padding:10px;overflow:hidden;box-shadow:0 1px 4px 2px #f0f0f0}
 		.mt-item dt{float:left;width:80px;height:80px;position:relative;overflow:hidden;}
@@ -54,7 +54,25 @@
 		.mt-item p{height:30px;line-height:30px;padding:0; font-size:14px;color:#ebbd30;margin-top:10px;}
 		.mt-item p .cost{font-size:20px;}
 		.mt-item p .cost i{font-size:12px;}
-		.mt-item p .link-btn{float:right;}
+		.mt-item p .link-btn{float:right;} */
+		.article .detail-area .hot-items{background:none;padding:0;}
+		.hot-items dl{padding:20px 12px;border-bottom:8px solid #f3f3f3;border:none;overflow:hidden;}
+		.hot-items dl dt{float:left;border:1px solid #dedede;background-color:#eee;border-radius:5px; overflow:hidden;}
+		.hot-items dl dt img{width:84px;height:84px;}
+		.hot-items dl dd{margin-left:100px;}
+		.hot-items dl h3{height:48px;line-height:24px;margin-top:-4px; font-size:14px;color:#1a1a1a;}
+		.hot-items dl p.prise{height:26px;line-height:26px;color:#ef508d;font-family:arial;font-size:13px;text-indent:1px}
+		.hot-items dl .features{color:#999;font-size:13px; overflow:hidden;}
+		.hot-items dl .prise i{font-size:16px;vertical-align:bottom;}
+		.hot-items dl .prise span{padding-right:.7em;}
+		.hot-items dl .prise del{vertical-align:middle;}
+		.hot-items dl .score{position:relative;float:left;width:87px;height:12px;margin-top:2px;vertical-align:middle; background:url(${ctxStatic}/kindEditor/themes/default/goods-score.png);background-size:87px 12px;overflow:hidden;}
+		.score .score-inner{position:absolute;left:0;height:12px;background:url(${ctxStatic}/kindEditor/themes/default/goods-score2.png);background-size:87px 12px;}
+		.hot-items dl .sales{float:right;height:14px;line-height:14px;}
+		.hot-items dl .sales::before{content:'';display:inline-block;width:14px;height:14px;vertical-align:top;margin-right:4px; background:url(${ctxStatic}/kindEditor/themes/default/icon-sales3.png) center no-repeat;background-size:15px;}
+		.hot-items dl .comment{float:right;height:14px;line-height:14px;margin-right:.5em;}
+		.hot-items dl .comment::before{content:'';display:inline-block;width:14px;height:14px;vertical-align:top;margin-right:4px; background:url(${ctxStatic}/kindEditor/themes/default/icon-comments3.png) center no-repeat;background-size:15px;}
+		
 		strong{font-weight:bold}
 		.goodsPectable tr td {
 		width:100px;
@@ -162,6 +180,51 @@
 					}); 
 				}
 			});
+			
+//			$("#goodsCategoryIdButton, #goodsCategoryIdName").click(function(){	    增加  , #goodsCategoryIdName  文本框有点击事件
+			$("#goodsCategoryIdButton").click(function(){
+				// 是否限制选择，如果限制，设置为disabled
+				if ($("#goodsCategoryIdButton").hasClass("disabled")){
+					return true;
+				}
+				// 正常打开	
+				top.layer.open({
+				    type: 2, 
+				    area: ['300px', '420px'],
+				    title:"选择商品分类",
+				    ajaxData:{selectIds: $("#goodsCategoryIdId").val()},
+				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/goodscategory/treeData?positionType="+$("input[id='isReal']:checked").val())+"&module=&checked=&extId=&isAll=&selectIds=&positionType="+$("#isReal").val(),
+				    btn: ['确定', '关闭']
+		    	       ,yes: function(index, layero){ //或者使用btn1
+								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+								var ids = [], names = [], nodes = [];
+								if ("" == "true"){
+									nodes = tree.getCheckedNodes(true);
+								}else{
+									nodes = tree.getSelectedNodes();
+								}
+								for(var i=0; i<nodes.length; i++) {//
+									if (nodes[i].isParent){
+										//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+										//layer.msg('有表情地提示');
+										top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+										return false;
+									}//
+									ids.push(nodes[i].id);
+									names.push(nodes[i].name);//
+									break; // 如果为非复选框选择，则返回第一个选择  
+								}
+								$("#goodsCategoryIdId").val(ids.join(",").replace(/u_/ig,""));
+								$("#goodsCategoryIdName").val(names.join(","));
+								$("#goodsCategoryIdName").focus();
+								top.layer.close(index);
+						    	       },
+		    	cancel: function(index){ //或者使用btn2
+		    	           //按钮【按钮二】的回调
+		    	       }
+				}); 
+			
+			});
 		});
 		function loadGoods(num){
 			$("#goodsdetails").empty();
@@ -171,13 +234,27 @@
 	        		url : '${ctx}/ec/mtmyArticleList/loadGoods?goodsId='+num,
 	        		dateType: 'text',
 	        		success:function(data){
-	    				$("#goodsdetails").append('<dl class="mt-item" data-id="'+data.goodsId+'" action_type="'+data.actionType+'"><dt>'
+	    				/* $("#goodsdetails").append('<dl class="mt-item" data-id="'+data.goodsId+'" action_type="'+data.actionType+'"><dt>'
 	    					+ '<img src="'+data.originalImg+'" alt="商品图片" style="width: 80px;height: 80px;"></dt>'
 	    					+ '<dd><h3>'+data.goodsName+'</h3>'
 	    					+ '<p class="clearfix">'
 	    					+ '<span class="cost"><i>¥</i>'+data.shopPrice+'</span>'
 	    					+ '<span class="link-btn">查看详情>> </span>'
-	    					+ '</p></dd></dl><br>');
+	    					+ '</p></dd></dl><br>'); */
+	    					$("#goodsdetails").append('<div class="hot-items" data-id="'+data.goodsId+'" action_type="'+data.actionType+'">'
+	        						+ '<dl>'
+	        						+ '<dt><img src="'+data.originalImg+'" alt=""></dt>'
+	        						+ '<dd>'
+	        						+ '<h3>'+data.goodsName+'</h3>'
+	        						+ '<p class="prise"><span>¥<i>'+data.shopPrice+'</i></span><del>¥'+data.marketPrice+'</del></p>'
+	        						+ '<p class="features">'
+	        						+ '<span class="score"><span class="score-inner" style="width:'+data.rank+'"></span></span>'
+	        						+ '<span class="sales">'+Math.floor(data.commentNum*1.6)+'</span>'
+	        						+ '<span class="comment">'+data.commentNum+'</span>'
+	        						+ '	</p>'
+	        						+ '</dd>'
+	        						+ '</dl>'
+	        						+ '</div>');
 						$(".loading").hide();
 	        		}
 	        	})
@@ -317,11 +394,24 @@
 										</div>
 									</li>
 									<li class="form-group">
+										<span class="control-label col-sm-2"><font color="red">*</font>所属供应商：</span>
+										<div style="width: 40%;padding-left: 150px;">
+										<sys:treeselect id="supplierId" name="supplierId" value="${goods.supplierId}" labelName="supplierName" labelValue="${goods.supplierName}" 
+	 											title="供应商" url="/ec/goodsSupplier/treeData" cssClass="form-control required" allowClear="true" notAllowSelectParent="true"/> 
+										</div>
+					                </li>
+									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>商品分类：</span>
 										<div style="width: 40%;padding-left: 150px;">
-						                    <sys:treeselect id="goodsCategoryId" name="goodsCategoryId" value="${goods.goodsCategoryId}" 
-												labelName="goodsCategory.name" labelValue="${goods.goodsCategory.name }" 
-									     		title="商品分类" url="/ec/goodscategory/treeData" cssClass="form-control required" allowClear="true" notAllowSelectParent="true"/>
+											<input id="goodsCategoryIdId" name="goodsCategoryId" class="form-control required" type="hidden" value="${goods.goodsCategoryId}" aria-required="true">
+											<div class="input-group">
+												<input id="goodsCategoryIdName" name="goodsCategory.name" readonly="readonly" type="text" value="${goods.goodsCategory.name }" data-msg-required="" class="form-control required" style="" aria-required="true">
+										       		 <span class="input-group-btn">
+											       		 <button type="button" id="goodsCategoryIdButton" class="btn   btn-primary  "><i class="fa fa-search"></i>
+											             </button> 
+										       		 </span>
+										    </div>
+											 <label id="goodsCategoryIdName-error" class="error" for="goodsCategoryIdName" style="display:none"></label>
 								     	</div>	
 									</li>
 									<li class="form-group">
@@ -452,6 +542,7 @@
 												<div id="file_originalImg_queue"></div>
 											</c:if>
 										</div>
+										<div style="width: 40%;padding-left: 150px;"><font color="red" size="2">备注:首图在移动端指商品列表的图片</font></div>
 									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2">设置：</span>
@@ -538,6 +629,7 @@
 									<input type="file" name="file_goodsImages_upload" id="file_goodsImages_upload">
 									<div id="file_goodsImages_queue"></div>
 								</div>
+								<div><font color="red" size="2">备注:商品相册在移动端指商品详情里的顶部轮播图</font></div>
 								<!-- 提交按钮 -->
 								<%-- <div class="box-footer">        
 									<input type="hidden" id="imggoodsid" name="goodsid" value="${goods.goodsId }">                	

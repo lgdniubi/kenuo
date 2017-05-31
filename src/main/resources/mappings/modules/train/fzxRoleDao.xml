@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.FzxRoleDao">
+	<!-- 角色列表 -->
+	<select id="findList" resultType="FzxRole">
+		SELECT 
+			id AS roleId,
+			name,
+			enname,
+			role_grade AS roleGrade
+		FROM 
+			fzx_role 
+		WHERE 
+			del_flag = 0 
+			<if test="name != null and name != ''">
+				AND name like 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+			</if>
+			ORDER BY id DESC
+	</select>
+	<!-- 角色详情 -->
+	<select id="get" resultType="FzxRole">
+		SELECT id AS roleId,name,enname,role_grade AS roleGrade,remarks FROM fzx_role WHERE id = #{roleId}
+	</select>
+	<!-- 插入角色 -->
+	<insert id="insert">
+		INSERT INTO fzx_role(
+			enname, 
+			name, 
+			role_grade,
+			create_by,
+			create_date, 
+			remarks,
+			del_flag
+		) VALUES (
+			#{enname},
+			#{name},
+			#{roleGrade},
+			#{createBy.id}, 
+			#{createDate}, 
+			#{remarks}, 
+			#{delFlag}
+		)
+	</insert>
+	<!-- 修改角色 -->
+	<update id="update">
+		UPDATE fzx_role SET 
+			enname = #{enname}, 
+			name = #{name}, 
+			role_grade = #{roleGrade}, 
+			update_by = #{updateBy.id}, 
+			update_date = #{updateDate}, 
+			remarks = #{remarks},
+			del_flag = 0
+		WHERE id = #{roleId}
+	</update>
+	<!-- 逻辑删除角色 -->
+	<update id="deleteByLogic">
+		UPDATE fzx_role SET del_flag = 1 WHERE id = #{roleId}
+	</update>
+	<!--  查询角色下所有菜单 -->
+	<select id="findRoleMenu" resultType="FzxRole">
+		SELECT a.id AS roleId,group_concat(b.fzx_menu_id) AS menuIds FROM fzx_role a LEFT JOIN fzx_role_menu b ON a.id = b.fzx_role_id WHERE a.id = #{roleId}
+	</select>
+	<!-- 删除角色下所有菜单 -->
+	<delete id="deleteRoleMenu">
+		DELETE FROM fzx_role_menu WHERE fzx_role_id = #{roleId}
+	</delete>
+	<insert id="insertRoleMenu">
+		INSERT INTO fzx_role_menu(
+			fzx_role_id, 
+			fzx_menu_id
+		) VALUES (
+			#{roleId},
+			#{menuId}
+		)
+	</insert>
+	<!-- 查询用户所有的角色 -->
+	<select id="findUserFzxRole" resultType="FzxRole">
+		SELECT group_concat(a.fzx_role_id) AS fzxRoleIds,group_concat(b.name) AS fzxRoleNames FROM fzx_user_role a LEFT JOIN fzx_role b ON a.fzx_role_id = b.id WHERE a.user_id = #{id}
+	</select>
+	<!-- 删除用户所有角色 -->
+	<delete id="deleteUserRole">
+		DELETE FROM fzx_user_role WHERE user_id = #{id}
+	</delete>
+	<!-- 保存用户角色 -->
+	<insert id="insertUserRole">
+		INSERT INTO fzx_user_role(
+			user_id, 
+			fzx_role_id
+		) VALUES (
+			#{id},
+			#{roleId}
+		)
+	</insert>
+	<!-- 删除角色时 关联删除角色用户表 -->
+	<delete id="deleteUserRoleForRoleId">
+		DELETE FROM fzx_user_role WHERE fzx_role_id = #{roleId}
+	</delete>
+	<!-- 通过妃子校角色查看用户 -->
+	<select id="findRoleUser" resultType="User">
+		SELECT
+			a.id,
+			a.login_name,
+			a. NAME,
+			a.phone,
+			a.mobile,
+			a.del_flag,
+			c. NAME AS "company.name",
+			o. NAME AS "office.name",
+			r.fzx_role_id AS "fzxRole.roleId"
+		FROM
+			fzx_user_role r
+			LEFT JOIN sys_user a ON a.id = r.user_id
+			LEFT JOIN sys_franchisee c ON c.id = a.company_id
+			LEFT JOIN sys_office o ON o.id = a.office_id
+			${sqlMap.dsf}
+			AND a.del_flag = 0
+			AND r.fzx_role_id = #{fzxRole.roleId}
+			ORDER BY  o.code,c.code, a.name
+	</select>
+	<delete id="outUserInRole">
+		DELETE FROM fzx_user_role WHERE fzx_role_id = #{fzxRoleId} AND user_id = #{userId}
+	</delete>
+	<select id="findRoleUserAllList" resultType="User">
+		SELECT
+			r.user_id AS id
+		FROM
+			fzx_user_role r
+			WHERE 1 = 1
+			AND r.fzx_role_id = #{roleId}
+	</select>
+	<!-- 验证英文名称是否有效 -->
+	<select id="checkEnname" resultType="int">
+		SELECT COUNT(1) FROM fzx_role WHERE enname = #{enname} AND del_flag = 0
+	</select>
+</mapper>
