@@ -186,7 +186,7 @@
 									<span class="col-sm-2" style="width: 100;">真实姓名：</span><input class="form-control" id="name" name="name" type="text" value="${users.name }" maxlength="10"/>
 								</li>
 								<li>
-									<span class="col-sm-2"><font color="red">*</font>用户昵称：</span><input class="form-control" id="nickname" name="nickname" type="text" value="${users.nickname }"/>
+									<span class="col-sm-2"><font color="red">*</font>用户昵称：</span><input class="form-control" id="nickname" name="nickname" type="text" value="${users.nickname }" readonly="readonly"/>
 								</li>
 								<li>
 									<span class="col-sm-2"><font color="red">*</font>手机号码：</span><input class="form-control" id="mobile" name="mobile" type="tel" maxlength="11" value="${users.mobile }" onkeyup="this.value=this.value.replace(/\D/g,'')"/>

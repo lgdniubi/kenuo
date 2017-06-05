@@ -1,9 +1,12 @@
 package com.training.modules.ec.web;
 
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -184,7 +187,12 @@ public class MtmyUsersController extends BaseController{
 	 */
 	@RequiresPermissions(value={"ec:mtmyuser:adduserindex"},logical=Logical.OR)
 	@RequestMapping(value = "adduserindex")
-	public String adduserindex() {
+	public String adduserindex(Users users,Model model) {
+        do{
+        	String str = getUserNickname();
+            users.setNickname(str);
+        }while(mtmyUsersService.findUserBynickName(users)>0);
+        model.addAttribute("users", users);
 		return "modules/ec/adduser";
 	}
 	/**
@@ -199,13 +207,18 @@ public class MtmyUsersController extends BaseController{
 	@RequestMapping(value = "adduser")
 	public String adduser(Users users,HttpServletRequest request, HttpServletResponse response,Model model, RedirectAttributes redirectAttributes) {
 	
-		users.setPassword(SystemService.entryptPassword(users.getPassword()));
-		mtmyUsersService.addUsers(users);
-		//新增用户时插入用户账目表
-		mtmyUsersDao.insertAccounts(users);
-		//新增用户时插入用户统计表
-		mtmyUsersDao.insterSaleStats(users);
-		addMessage(redirectAttributes, "添加用户"+users.getName()+"成功");
+		//校验昵称是否重复
+		if(mtmyUsersService.findUserBynickName(users)>0){
+			addMessage(redirectAttributes, "添加用户"+users.getName()+"失败,昵称重复");
+		}else{
+			users.setPassword(SystemService.entryptPassword(users.getPassword()));
+			mtmyUsersService.addUsers(users);
+			//新增用户时插入用户账目表
+			mtmyUsersDao.insertAccounts(users);
+			//新增用户时插入用户统计表
+			mtmyUsersDao.insterSaleStats(users);
+			addMessage(redirectAttributes, "添加用户"+users.getName()+"成功");
+		}
 		return "redirect:" + adminPath + "/ec/mtmyuser/list";
 	}
 	/**
@@ -413,5 +426,34 @@ public class MtmyUsersController extends BaseController{
 			model.addAttribute("message", "处理失败，必要参数为空");
 		}
 		return "modules/ec/userExceptions";
+	}
+	
+	/**
+	 * 生成昵称的方法
+	 * @return
+	 */
+	public String getUserNickname(){
+		//昵称生成
+		String str = "mm";  
+		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
+		str += formatter.format(date);
+        Random rand = new Random();  
+        for(int i=0;i<5;i++){  
+            int num = rand.nextInt(3);  
+            switch(num){  
+                case 0:  
+                    char c1 = (char)(rand.nextInt(26)+'a');//生成随机小写字母   
+                    str += c1;  
+                    break;  
+                case 1:  
+                    char c2 = (char)(rand.nextInt(26)+'A');//生成随机大写字母   
+                    str += c2;  
+                    break;  
+                case 2:  
+                    str += rand.nextInt(10);//生成随机数字  
+            }  
+        }
+        return str;
 	}
 }
