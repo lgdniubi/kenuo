@@ -20,6 +20,7 @@
 			<if test="serviceTimes!=null and serviceTimes!=''">
 				service_times,
 			</if>
+			advance_flag,
 			type,
 			create_by,
 			create_date
@@ -40,6 +41,7 @@
 			<if test="serviceTimes!=null and serviceTimes!=''">
 				#{serviceTimes},
 			</if>
+			#{advanceFlag},
 			#{type},
 			#{createBy.id},
 			SYSDATE()

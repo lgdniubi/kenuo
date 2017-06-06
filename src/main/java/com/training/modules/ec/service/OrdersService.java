@@ -753,6 +753,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				details.setServiceTimes(remaintimeNums.get(i));	//剩余服务次数
 			}
 			details.setType(0);
+			details.setAdvanceFlag("0");
 			details.setCreateBy(user);
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
@@ -1062,6 +1063,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setAppTotalAmount(appTotalAmount);//app实付金额
 		details.setAppArrearage(appArrearage);//app欠款金额
 		details.setType(0);
+		details.setAdvanceFlag("3");
 		details.setCreateBy(user);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
@@ -1257,6 +1259,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			details.setAppTotalAmount(appTotalAmount);  //app实付金额
 			details.setAppArrearage(appArrearage);   //app欠款金额
 			details.setType(0);
+			details.setAdvanceFlag("0");
 			details.setCreateBy(user);
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
@@ -1570,6 +1573,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setAppTotalAmount(appTotalAmount);   //app实付金额
 		details.setAppArrearage(appArrearage);        //app欠款金额
 		details.setType(0);
+		details.setAdvanceFlag("2");
 		details.setCreateBy(user);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
