@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.AppStartPageDao">
+
+	<!-- 查询所有数据列表 -->
+	<select id="findList" resultType="AppStartPage">
+		SELECT
+			id AS appStartPageId,
+			name,                               
+			img_url AS imgUrl,
+			is_on_sale AS isOnSale
+		FROM
+			mtmydb.mtmy_app_start_page
+		ORDER BY
+			id DESC
+	</select>
+	
+	<!-- 查询单个主菜单导航栏详情 -->
+	<select id="getAppStartPageById" resultType="AppStartPage">
+		SELECT
+			id AS appStartPageId,
+			name,                               
+			img_url AS imgUrl,
+			is_on_sale AS isOnSale,
+			redirect_url AS redirectUrl
+		FROM
+			mtmydb.mtmy_app_start_page
+		WHERE 
+			id = #{appStartPageId}
+	</select>
+	
+	<!-- 插入数据 -->
+	<insert id="insert" parameterType="AppStartPage">
+		INSERT INTO mtmydb.mtmy_app_start_page(
+			name,
+			img_url,
+			redirect_url,
+			is_on_sale,
+			create_by,
+			create_date,
+			update_by,
+			update_date
+		) VALUES (
+			#{name},
+			#{imgUrl},
+			#{redirectUrl},
+			#{isOnSale},
+			#{createBy.id},
+			SYSDATE(),
+			#{createBy.id},
+			SYSDATE()
+		)
+	</insert>
+	
+	<!-- 修改 -->
+	<update id="update" parameterType="AppStartPage">
+		UPDATE mtmydb.mtmy_app_start_page
+		SET
+			name = #{name},
+			img_url = #{imgUrl},
+			redirect_url = #{redirectUrl},
+			update_by = #{updateBy.id},
+			update_date = SYSDATE()
+		WHERE id = #{appStartPageId}
+	</update>
+	
+	<!-- 修改启动页广告图是否上架  -->
+	<update id="changIsShowByType" parameterType="AppStartPage">
+		UPDATE mtmydb.mtmy_app_start_page
+			SET 
+			  is_on_sale = #{isOnSale}
+		WHERE id = #{appStartPageId}
+	</update>
+	
+	<!-- 修改启动页广告图全部为下架 -->
+	<update id="changAllIsShowByType">
+		UPDATE mtmydb.mtmy_app_start_page
+			SET 
+			  is_on_sale = 0
+			
+	</update>
+	
+	<!-- 查询出最近更新的那一组的id -->
+	<select id="selectIdByType" resultType="AppStartPage">
+		SELECT 
+			id AS appStartPageId,
+			name,                               
+			is_on_sale AS isOnSale
+		FROM mtmydb.mtmy_app_start_page
+		ORDER BY update_date desc LIMIT 1
+	</select>
+</mapper>

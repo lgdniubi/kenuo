@@ -13,9 +13,16 @@
 			   return false;
 		   }
 		   if(validateForm.form()){
-			  $("#inputForm").submit();
-			  return true;
-		  }
+			   if($("#pushType").val() == 0){
+				   if(confirm("警告！所有用户都可以收到本次信息内容，请谨慎使用！")){
+				   		$("#inputForm").submit();
+				   		return true;
+				   }
+			   }else{
+			   		$("#inputForm").submit();
+			   		return true;
+			   }
+		   }
 		  return false;
 		}
 		$(document).ready(function() {
