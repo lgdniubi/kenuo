@@ -800,11 +800,20 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
-		/*double accountArrearage = account.getAccountArrearage()+debtMoneySum;	//账户欠款信息
-*/		double accountBalance = account.getAccountBalance()+newSpareMoneySum;	//账户余额信息
-		/*account.setAccountArrearage(accountArrearage);*/
-		account.setAccountBalance(accountBalance);
-		ordersDao.updateAccount(account);
+		if(account == null){
+			Orders newAccount = new Orders();
+			double accountBalance = newSpareMoneySum;	//账户余额信息
+			newAccount.setAccountBalance(accountBalance);
+			newAccount.setUserid(_orders.getUserid());
+			ordersDao.insertAccount(newAccount);
+		}else{
+			/*double accountArrearage = account.getAccountArrearage()+debtMoneySum;	//账户欠款信息*/		
+			double accountBalance = account.getAccountBalance()+newSpareMoneySum;	//账户余额信息
+			/*account.setAccountArrearage(accountArrearage);*/
+			account.setAccountBalance(accountBalance);
+			ordersDao.updateAccount(account);
+		}
+		
 		
 		//保存提成人员信息 
 		List<Integer> _mtmyUserId = orders.getMtmyUserId();	//提成人员id
@@ -947,7 +956,13 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		Orders _orders = new Orders();
 		_orders.setUserid(userid);
 		Orders account = dao.getAccount(_orders);
-		return account.getAccountBalance();
+		Orders newAccount = new Orders();
+		if(account == null){
+			newAccount.setAccountBalance(0);
+		}else{
+			newAccount.setAccountBalance(account.getAccountBalance());
+		}
+		return newAccount.getAccountBalance();
 	}
 	
 	/**
@@ -1078,10 +1093,18 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			accountArrearage = account.getAccountArrearage()-totalAmount_in;	//账户欠款信息
 		}
 		account.setAccountArrearage(accountArrearage);*/
-		double accountBalance_ = 0;
-		accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()+newSpareMoneySum));
-		account.setAccountBalance(accountBalance_);
-		ordersDao.updateAccount(account);
+		if(account == null){
+			Orders newAccount = new Orders();
+			double accountBalance_ = newSpareMoneySum;   //账户余额信息
+			newAccount.setAccountBalance(accountBalance_);
+			newAccount.setUserid(_orders.getUserid());
+			ordersDao.insertAccount(newAccount);
+		}else{
+			double accountBalance_ = 0;
+			accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()+newSpareMoneySum));
+			account.setAccountBalance(accountBalance_);
+			ordersDao.updateAccount(account);
+		}
 		
 	}
 	/**
@@ -1308,11 +1331,19 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
-		/*double accountArrearage = account.getAccountArrearage()+debtMoneySum;	//账户欠款信息
-*/		double accountBalance = account.getAccountBalance()+newSpareMoneySum;	//账户余额信息
-		/*account.setAccountArrearage(accountArrearage);*/
-		account.setAccountBalance(accountBalance);
-		ordersDao.updateAccount(account);
+		/*double accountArrearage = account.getAccountArrearage()+debtMoneySum;	//账户欠款信息*/		
+		if(account == null){
+			Orders newAccount = new Orders();
+			double accountBalance = newSpareMoneySum;	//账户余额信息
+			newAccount.setAccountBalance(accountBalance);
+			newAccount.setUserid(_orders.getUserid());
+			ordersDao.insertAccount(newAccount);
+		}else{
+			double accountBalance = account.getAccountBalance()+newSpareMoneySum;	//账户余额信息
+			/*account.setAccountArrearage(accountArrearage);*/
+			account.setAccountBalance(accountBalance);
+			ordersDao.updateAccount(account);
+		}
 		
 		//保存提成人员信息 
 		List<Integer> _mtmyUserId = orders.getMtmyUserId();	//提成人员id
@@ -1584,10 +1615,18 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		Orders account = ordersDao.getAccount(_orders);
 		/*double accountArrearage = account.getAccountArrearage()+Double.parseDouble(formater.format((goodsPrice - totalAmount_in_a)));	//账户欠款信息
 		account.setAccountArrearage(accountArrearage);*/
-		double accountBalance_ = 0;
-		accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()+newSpareMoneySum));
-		account.setAccountBalance(accountBalance_);
-		ordersDao.updateAccount(account);
+		if(account == null){
+			Orders newAccount = new Orders();
+			double accountBalance_ = newSpareMoneySum;	//账户余额信息
+			newAccount.setAccountBalance(accountBalance_);
+			newAccount.setUserid(_orders.getUserid());
+			ordersDao.insertAccount(newAccount);
+		}else{
+			double accountBalance_ = 0;
+			accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()+newSpareMoneySum));
+			account.setAccountBalance(accountBalance_);
+			ordersDao.updateAccount(account);
+		}
 		
 		//若为老商品，则对店铺有补偿
 		if(goodsType == 0){
