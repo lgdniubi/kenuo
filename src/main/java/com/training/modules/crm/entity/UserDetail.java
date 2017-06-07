@@ -65,6 +65,8 @@ public class UserDetail extends DataEntity<UserDetail> {
 	private Date lastDate;//最近消费
   	private String level;//颜值等级
   	
+  	//新添字段(对应mtmy_users中真实姓名remarkname)
+  	private String remarkname;
   	
   	public String getNickname() {
 		return nickname;
@@ -462,6 +464,14 @@ public class UserDetail extends DataEntity<UserDetail> {
 		this.sex = sex;
 	}
 
+	public String getRemarkname() {
+		return remarkname;
+	}
 
+	public void setRemarkname(String remarkname) {
+		this.remarkname = remarkname;
+	}
+
+	
 
 }

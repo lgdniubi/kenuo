@@ -90,15 +90,15 @@ public class UserDetailController extends BaseController {
 	public String getUserList(UserDetail userDetail, HttpServletRequest request, HttpServletResponse response,
 			Model model) {
 		try {
-			   String keyword =userDetail.getKeyword();
-			   //判断是否为手机号
-			   if (null!=keyword && keyword.trim().length()==11 && StringUtils.isNumeric(keyword)) {
-			   //用手机号无权限过滤去查	
-			   Page<UserDetail> page  = userDetailService.getUserWithoutScope(new Page<UserDetail>(request, response), userDetail);
-			   //如果查到一条
-			   if (page.getList().size()>0) {
-				   model.addAttribute("detail", userDetail);
-				   model.addAttribute("page", page);
+			String keyword =userDetail.getKeyword();
+			//判断是否为手机号
+			if (null!=keyword && keyword.trim().length()==11 && StringUtils.isNumeric(keyword)) {
+				//用手机号无权限过滤去查	
+				Page<UserDetail> page  = userDetailService.getUserWithoutScope(new Page<UserDetail>(request, response), userDetail);
+				//如果查到一条
+				if (page.getList().size()>0) {
+					model.addAttribute("detail", userDetail);
+					model.addAttribute("page", page);
 				}
 			}else{
 				Page<UserDetail> page = userDetailService.getUserList(new Page<UserDetail>(request, response), userDetail);
