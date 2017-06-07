@@ -183,6 +183,104 @@
 			}
 		});
 		
+		$("#goodsCategoryIdButton2").click(function(){
+			// 是否限制选择，如果限制，设置为disabled
+			if ($("#goodsCategoryIdButton2").hasClass("disabled")){
+				return true;
+			}
+			// 正常打开	
+			top.layer.open({
+			    type: 2, 
+			    area: ['300px', '420px'],
+			    title:"选择商品分类",
+			    ajaxData:{selectIds: $("#goodsCategoryIdId2").val()},
+			    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/goodscategory/treeData")+"&module=&checked=&extId=&isAll=" ,
+			    btn: ['确定', '关闭']
+	    	       ,yes: function(index, layero){ //或者使用btn1
+							var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+							var ids = [], names = [], nodes = [];
+							if ("" == "true"){
+								nodes = tree.getCheckedNodes(true);
+							}else{
+								nodes = tree.getSelectedNodes();
+							}
+							for(var i=0; i<nodes.length; i++) {//
+								if (nodes[i].isParent){
+									//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+									//layer.msg('有表情地提示');
+									top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+									return false;
+								}//
+								ids.push(nodes[i].id);
+								names.push(nodes[i].name);//
+								break; // 如果为非复选框选择，则返回第一个选择  
+							}
+							$("#goodsCategoryIdId2").val(ids.join(",").replace(/u_/ig,""));
+							$("#goodsCategoryIdName2").val(names.join(","));
+							$("#goodsCategoryIdName2").focus();
+							
+							cateid=$("#goodsCategoryIdId2").val();
+							
+							$("#goodselectId2").val("");
+							$("#goodselectName2").val("");
+							$("#goodsdetails2").empty();
+							top.layer.close(index);
+					    	       },
+	    	cancel: function(index){ //或者使用btn2
+	    	           //按钮【按钮二】的回调
+	    	       }
+			}); 
+		});
+		
+		$("#goodselectButton2").click(function(){
+			// 是否限制选择，如果限制，设置为disabled
+			if ($("#goodselectButton2").hasClass("disabled")){
+				return true;
+			}
+			if(cateid == "0" || cateid == ""){
+				top.layer.alert('请先选择商品分类!', {icon: 0, title:'提醒'});
+			}else{
+				// 正常打开	
+				top.layer.open({
+				    type: 2, 
+				    area: ['300px', '420px'],
+				    title:"商品选择",
+				    ajaxData:{selectIds: $("#goodselectId2").val()},
+				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?goodsCategory="+cateid+"&isAppshow=1"+"&isOnSale=1")+"&module=&checked=&extId=&isAll=",
+				    btn: ['确定', '关闭']
+		    	       ,yes: function(index, layero){ //或者使用btn1
+								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+								var ids = [], names = [], nodes = [];
+								if ("" == "true"){
+									nodes = tree.getCheckedNodes(true);
+								}else{
+									nodes = tree.getSelectedNodes();
+								}
+								for(var i=0; i<nodes.length; i++) {//
+									if (nodes[i].isParent){
+										//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+										//layer.msg('有表情地提示');
+										top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+										return false;
+									}//
+									ids.push(nodes[i].id);
+									names.push(nodes[i].name);//
+									break; // 如果为非复选框选择，则返回第一个选择  
+								}
+								$(".loading").show();
+								$("#goodselectId2").val(ids.join(",").replace(/u_/ig,""));
+								$("#goodselectName2").val(names.join(","));
+								$("#goodselectName2").focus();
+								loadGoods($("#goodselectId2").val());
+								top.layer.close(index);
+						    	       },
+		    	cancel: function(index){ //或者使用btn2
+		    	           //按钮【按钮二】的回调
+		    	       }
+				}); 
+			}
+		});
+		
 		$("input[type=radio][name=imageType]").click(function(){
 			if(imgType != $(this).val()){
 				imgType = $(this).val();
@@ -474,7 +572,36 @@
 	                           &nbsp;&nbsp;&nbsp;<input type="radio" id="imageType" name="imageType" value=2 class="from">双图模式
 	                           &nbsp;&nbsp;&nbsp;<input type="radio" id="imageType" name="imageType" value=3 class="from">三图模式
                            </div>
-					   </div>
+                        </div>  
+                         <div class="form-group">
+                           <label class="col-sm-2 control-label">商品分类：</label>
+                           <div class="col-sm-2" style="height:35px;line-height:35px;">
+							   <input id="goodsCategoryIdId2" class="form-control" type="hidden" value="" name="goodsCategoryId" aria-required="true">
+								<div class="input-group">
+									<input id="goodsCategoryIdName2" class="form-control" type="text" style="" data-msg-required="" value="${articleRepository.goodsCategoryName}" readonly="readonly" name="goodsCategoryName" aria-required="true"> <span class="input-group-btn">
+										<button id="goodsCategoryIdButton2" class="btn btn-primary " type="button">
+											<i class="fa fa-search"></i>
+										</button>
+									</span>
+								</div> 
+								<label id="goodsCategoryIdName-error" class="error" style="display: none" for="goodsCategoryIdName"></label>
+                           </div>
+                        </div>  
+                        <div class="form-group">
+                           <label class="col-sm-2 control-label">商品名称：</label>
+                           <div class="col-sm-2" style="height:35px;line-height:35px;">
+							   <input id="goodselectId2" name="newLabelGoodsId" class="form-control" type="hidden" value="${articleRepository.labelGoodsId}" aria-required="true">
+								<div class="input-group">
+									<input id="goodselectName2" name="goodsname" readonly="readonly" type="text" value="${articleRepository.goodsname}" data-msg-required="" class="form-control" style="" aria-required="true">
+									<span class="input-group-btn">
+										<button type="button" id="goodselectButton2" class="btn   btn-primary  ">
+											<i class="fa fa-search"></i>
+										</button>
+									</span>
+								</div>
+								<label id="goodselectName-error" class="error" for="goodselectName" style="display: none"></label>
+                           </div>
+                        </div>  
 					   <div class="form-group" id="imagePattern" style="padding:10px 0;">
                           <label class="col-sm-2 control-label"></label>
                            <div style="overflow:hidden">
@@ -493,7 +620,7 @@
                          			<input type="button" value="封面预览" class="btn btn-primary  btn-sm" onclick="lookFirsrPhoto()">
 								</div>
 						   </div>
-					   </div>
+						  </div>
 				    </form:form>
             	 </div>
 	             <div class="mail-body text-center tooltip-demo">
