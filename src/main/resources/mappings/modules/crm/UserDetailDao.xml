@@ -8,6 +8,7 @@
 			mmu.nickname,
 			mmu.sex AS sex,
 			mmu.mobile,
+			mmu.birthday,
 			mmu.`name`,
 			mmu.level AS userLevel,
 			mmu.office_id AS officeId,
@@ -265,9 +266,7 @@
 			office_id=#{officeId},
 			office_name=(SELECT name FROM trains.sys_office WHERE id = #{officeId}),
 			beautician_id= #{beautyId},
-			beautician_name=(SELECT name FROM trains.sys_user WHERE id = #{beautyId}),
-			name=#{name},
-			sex=#{sex}
+			beautician_name=(SELECT name FROM trains.sys_user WHERE id = #{beautyId})
 		WHERE  user_id = #{userId}	
 	</update>
 </mapper>
