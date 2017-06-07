@@ -193,7 +193,16 @@
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
 							                            			<%-- <span>${arrangeShops.shopName }</span> --%>
-							                            			<span></span>
+							                            			<!-- <span></span> -->
+							                            			<c:if test="${arrangeShops.shopId == '1'}">
+							                            				<span style="color: #4ad264">${arrangeShops.shopName }</span>
+							                            			</c:if>
+							                            			<c:if test="${arrangeShops.shopId == '2'}">
+							                            				<span style="color: #ff873f">${arrangeShops.shopName }</span>
+							                            			</c:if>
+							                            			<c:if test="${arrangeShops.shopId == '3'}">
+							                            				<span style="color: #ff3000">${arrangeShops.shopName }</span>
+							                            			</c:if>
 						                            			</div>
 						                            		</td>
 					                            		</c:when>

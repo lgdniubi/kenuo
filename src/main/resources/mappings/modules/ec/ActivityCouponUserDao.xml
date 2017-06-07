@@ -205,6 +205,7 @@
 				su.mtmy_user_id
 			FROM
 				trains.sys_user su
+				AND su.del_flag = 0
 		)
 
 	</insert>
@@ -235,6 +236,7 @@
 				su.mtmy_user_id
 			FROM
 				trains.sys_user su
+				AND su.del_flag = 0
 		)
 	</insert>
 	
@@ -280,6 +282,7 @@
 					FROM
 						mtmydb.mtmy_users
 				)
+				AND del_flag = 0
 		)
 	
 	</select>
@@ -303,6 +306,7 @@
 						mtmy_user_id
 					FROM
 						trains.sys_user
+						AND del_flag = 0
 				)
 		)
 	

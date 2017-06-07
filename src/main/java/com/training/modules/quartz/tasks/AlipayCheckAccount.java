@@ -172,7 +172,7 @@ public class AlipayCheckAccount extends CommonService{
 	                				mtmyCheckAccount.setPingId(row[i]);
 	                			}
 	                			if("商户订单号".equals(t[i])){
-	                				mtmyCheckAccount.setOrderNo(row[i]);
+	                				mtmyCheckAccount.setOrderNo(row[i].trim());
 	                			}
 	                			if("业务类型".equals(t[i]) && (!"交易".equals(row[i]))){
 	            					continue;
