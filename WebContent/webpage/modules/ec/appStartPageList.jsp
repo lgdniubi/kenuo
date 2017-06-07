@@ -95,14 +95,12 @@
 							<td style="text-align: center;">${appStartPage.name}</td>
 							<td style="text-align: center;" class="imgUrl" ><img alt="" src="${ctxStatic}/images/lazylode.png"  data-src="${appStartPage.imgUrl}" style="width: 150px;height: 100px;border:1px solid black; "></td>
 							<td style="text-align: center;" id="${appStartPage.appStartPageId}">
-								<shiro:hasPermission name="ec:appStartPage:update">
-									<c:if test="${appStartPage.isOnSale  eq '0'}">
-										<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="updateType('${appStartPage.appStartPageId}','1')">
-									</c:if>
-									<c:if test="${appStartPage.isOnSale eq '1'}">
-										<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="updateType('${appStartPage.appStartPageId}','0')">
-									</c:if>
-								</shiro:hasPermission>
+								<c:if test="${appStartPage.isOnSale  eq '0'}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="updateType('${appStartPage.appStartPageId}','1')">
+								</c:if>
+								<c:if test="${appStartPage.isOnSale eq '1'}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="updateType('${appStartPage.appStartPageId}','0')">
+								</c:if>
 							</td>
 							<td style="text-align: center;">
 								<shiro:hasPermission name="ec:appStartPage:view">

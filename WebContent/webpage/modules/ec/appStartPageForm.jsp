@@ -33,11 +33,6 @@
 	    
 		$(document).ready(function() {
 			validateForm = $("#inputForm").validate({
-					rules:{
-						titleStyle:{
-							isStyle:true
-						}
-					},
 					submitHandler: function(form){
 						loading('正在提交，请稍等...');
 						form.submit();
@@ -105,7 +100,7 @@
 				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
 				'uploader' : '<%=uploadURL%>',
 				'fileObjName' : 'file_img_upload',//<input type="file"/>的name
-				'queueID' : 'img',//与下面HTML的div.id对应
+				'queueID' : 'file_img_queue',//与下面HTML的div.id对应,上传时的进度条
 				'method' : 'post',
 				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
 				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
