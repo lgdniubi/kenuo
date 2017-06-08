@@ -114,7 +114,7 @@
 						<div class="pull-left">
 							<shiro:hasPermission name="train:trainActivityCourse:add">
 								<!-- 增加按钮 -->
-								<table:addRow url="${ctx}/train/trainActivityCourse/form" title="添加角色" width="800px" height="650px"></table:addRow>
+								<table:addRow url="${ctx}/train/trainActivityCourse/form" title="活动" width="800px" height="650px"></table:addRow>
 							</shiro:hasPermission>
 						</div>
 						<div class="pull-right">

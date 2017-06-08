@@ -51,14 +51,14 @@
 				AND end_date <![CDATA[ < ]]> SYSDATE()
 			</if>
 			<if test="beginDate != null and beginDate != '' ">
-				AND start_date > #{beginDate}
-				OR ( start_date <![CDATA[ < ]]> #{beginDate}
-					 AND end_date > #{beginDate} )
+				AND (DATE_FORMAT(start_date,'%Y-%m-%d') >= DATE_FORMAT(#{beginDate},'%Y-%m-%d')
+				OR ( DATE_FORMAT(start_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{beginDate},'%Y-%m-%d')
+					 AND DATE_FORMAT(end_date,'%Y-%m-%d') >= DATE_FORMAT(#{beginDate},'%Y-%m-%d') ))
 			</if>
 			<if test="lastDate != null and lastDate != '' ">
-				AND end_date <![CDATA[ < ]]> #{lastDate}
-				OR ( start_date <![CDATA[ < ]]> #{lastDate}
-					 AND end_date > #{beginDate} )
+				AND (DATE_FORMAT(end_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastDate},'%Y-%m-%d')
+				OR ( DATE_FORMAT(start_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastDate},'%Y-%m-%d')
+					 AND DATE_FORMAT(end_date,'%Y-%m-%d') >= DATE_FORMAT(#{lastDate},'%Y-%m-%d') ))
 			</if>
 			ORDER BY sort DESC
 	</select>
@@ -173,10 +173,10 @@
 				AND b.mobile = #{user.mobile}
 			</if>
 			<if test="beginDate != null and beginDate != '' ">
-				AND a.pay_time > #{beginDate}
+				AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') >= DATE_FORMAT(#{beginDate},'%Y-%m-%d')
 			</if>
 			<if test="lastDate != null and lastDate != '' ">
-				AND a.pay_time <![CDATA[ < ]]> #{lastDate}
+				AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastDate},'%Y-%m-%d')
 			</if>
 		ORDER BY a.pay_time DESC
 	</select>
