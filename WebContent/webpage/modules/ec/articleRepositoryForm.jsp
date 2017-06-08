@@ -573,6 +573,25 @@
 	                           &nbsp;&nbsp;&nbsp;<input type="radio" id="imageType" name="imageType" value=3 class="from">三图模式
                            </div>
                         </div>  
+                        <div class="form-group" id="imagePattern" style="padding:10px 0;">
+                          <label class="col-sm-2 control-label"></label>
+                           <div style="overflow:hidden">
+                         		<c:forEach items="${articleRepository.imageList}" var="list" varStatus="status">
+                         			<div id="img${status.index+1}" style="float:left;width:200px;height: 130px;text-align:center;margin:0 10px 10px 0">
+                         			<ul>
+                         				<li><img id="livesrc${status.index+1}" src="${list.imgUrl}" onerror="this.src='${ctxStatic}/kindEditor/themes/default/upload.png'" alt="images" style="width:200px;height:100px;" /></li>
+                         				<li style='height:30px;line-height:40px;'>
+                         					<input type="button" value="请选择文件" class="btn btn-white btn-sm" onclick="findAllImg(${status.index+1})" id="allImage${status.index+1}">
+                         					<form:input type="hidden" path="articleImage.imgUrl" class="photo${status.index+1}" name="photo${status.index+1}" value="${list.imgUrl}"/>
+                         				</li>
+                         			</ul>
+									</div>
+                         		</c:forEach>
+                         		<div style="float:left;width:120px;height: 130px;line-height:130px;text-align:center;margin:0 10px 10px 0">
+                         			<input type="button" value="封面预览" class="btn btn-primary  btn-sm" onclick="lookFirsrPhoto()">
+								</div>
+						   </div>
+							</div>
                          <div class="form-group">
                            <label class="col-sm-2 control-label">商品分类：</label>
                            <div class="col-sm-2" style="height:35px;line-height:35px;">
@@ -602,25 +621,6 @@
 								<label id="goodselectName-error" class="error" for="goodselectName" style="display: none"></label>
                            </div>
                         </div>  
-					   <div class="form-group" id="imagePattern" style="padding:10px 0;">
-                          <label class="col-sm-2 control-label"></label>
-                           <div style="overflow:hidden">
-                         		<c:forEach items="${articleRepository.imageList}" var="list" varStatus="status">
-                         			<div id="img${status.index+1}" style="float:left;width:200px;height: 130px;text-align:center;margin:0 10px 10px 0">
-                         			<ul>
-                         				<li><img id="livesrc${status.index+1}" src="${list.imgUrl}" onerror="this.src='${ctxStatic}/kindEditor/themes/default/upload.png'" alt="images" style="width:200px;height:100px;" /></li>
-                         				<li style='height:30px;line-height:40px;'>
-                         					<input type="button" value="请选择文件" class="btn btn-white btn-sm" onclick="findAllImg(${status.index+1})" id="allImage${status.index+1}">
-                         					<form:input type="hidden" path="articleImage.imgUrl" class="photo${status.index+1}" name="photo${status.index+1}" value="${list.imgUrl}"/>
-                         				</li>
-                         			</ul>
-									</div>
-                         		</c:forEach>
-                         		<div style="float:left;width:120px;height: 130px;line-height:130px;text-align:center;margin:0 10px 10px 0">
-                         			<input type="button" value="封面预览" class="btn btn-primary  btn-sm" onclick="lookFirsrPhoto()">
-								</div>
-						   </div>
-						  </div>
 				    </form:form>
             	 </div>
 	             <div class="mail-body text-center tooltip-demo">

@@ -60,6 +60,10 @@
 									<!-- 导出按钮 -->
 									<table:exportExcel url="${ctx}/sys/office/export"></table:exportExcel>
 								</shiro:hasPermission>
+								<!-- 店铺标签管理  -->
+								<shiro:hasPermission name="train:shopSpeciality:list">
+									<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/shopSpeciality/list","店铺标签管理", false)'><i class="fa fa-plus"></i>店铺标签管理</button>	
+								</shiro:hasPermission>
 							</div>
 						</div>
 					</div>
