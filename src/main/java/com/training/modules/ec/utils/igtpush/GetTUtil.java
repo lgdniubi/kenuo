@@ -204,7 +204,7 @@ public class GetTUtil {
 		
 		APNPayload apnpayload = new APNPayload();
 		apnpayload.setContentAvailable(1);
-		//apnpayload.setSound("test2.wav");
+		apnpayload.setSound("kenuoPika.wav");	//推送声音配置
 		//apnpayload.setCategory("ACTIONABLE");
 		apnpayload.addCustomMsg("content", json.toString());
 		apnpayload.setBadge(1);
