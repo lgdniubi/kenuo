@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.MtmyEveryoneSayDao">
+	
+	<!-- 查询出所有的专题图 -->
+	<select id="findList" resultType="MtmyEveryoneSay">
+		SELECT 
+			es.id AS 'mtmyEveryoneSayId',
+			es.parent_id AS 'parentId',
+			es.say_type,
+			es.position_type AS 'positionType',
+			es.content_id AS 'contentId',
+			es.content,
+			es.user_id AS 'userId',
+			es.user_name AS 'userName',
+			es.user_photo AS 'userPhoto',
+			es.user_level AS 'userLevel',
+			es.create_date AS 'createDate',
+			(CASE WHEN g.goods_name IS NOT NULL THEN g.goods_name
+				  WHEN u.name IS NOT NULL THEN u.name
+				  WHEN o.name IS NOT NULL THEN o.name
+				  ELSE '无' END) AS 'showName'
+		FROM mtmydb.mtmy_everyone_say es
+		LEFT JOIN mtmydb.mtmy_everyone_say_like esl ON esl.say_id = es.id 
+		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id = es.content_id
+		LEFT JOIN trains.sys_user u ON u.id = es.content_id
+		LEFT JOIN trains.sys_office o ON o.id = es.content_id
+		WHERE es.del_flag = '0'
+		AND es.say_type = '1'
+		<if test="begtime != null and begtime != ''">
+			AND DATE_FORMAT(es.create_date,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			<![CDATA[AND DATE_FORMAT(es.create_date,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+		</if>
+		<if test="positionType != null and positionType != ''">
+			AND es.position_type = #{positionType}
+		</if>
+		<if test="positionType != null and positionType != '' and positionType == 1 and name != null and name != ''">
+			AND o.name LIKE CONCAT('%', #{name}, '%')
+		</if>
+		<if test="positionType != null and positionType != '' and positionType == 2 and name != null and name != ''">
+			AND u.name LIKE CONCAT('%', #{name}, '%')
+		</if>
+		<if test="positionType != null and positionType != '' and positionType == 3 and name != null and name != ''">
+			AND g.goods_name LIKE CONCAT('%', #{name}, '%')
+		</if>
+		<if test="positionType == '' and name != null and name !=''">
+			AND (g.goods_name LIKE CONCAT('%', #{name}, '%') OR u.name LIKE CONCAT('%', #{name}, '%') OR o.name LIKE CONCAT('%', #{name}, '%'))
+		</if>
+	</select>
+	
+	<!-- 根据id查找相应的说说 -->
+	<select id="getMtmyEveryoneSay" resultType="MtmyEveryoneSay">
+		SELECT
+			id AS 'mtmyEveryoneSayId',
+			parent_id AS 'parentId',
+			say_type,
+			position_type AS 'positionType',
+			content_id AS 'contentId',
+			content,
+			user_id AS 'userId',
+			user_name AS 'userName',
+			user_photo AS 'userPhoto',
+			user_level AS 'userLevel',
+			create_date AS 'createDate'
+		FROM mtmydb.mtmy_everyone_say
+		WHERE id = #{mtmyEveryoneSayId}
+	</select>
+	
+	<!-- 根据id查找相应说说的回复 -->
+	<select id="getMtmyEveryoneSayForResponse" resultType="MtmyEveryoneSay">
+		SELECT
+			id AS 'mtmyEveryoneSayId',
+			parent_id AS 'parentId',
+			say_type,
+			position_type AS 'positionType',
+			content_id AS 'contentId',
+			content,
+			user_id AS 'userId',
+			user_name AS 'userName',
+			user_photo AS 'userPhoto',
+			user_level AS 'userLevel',
+			create_date AS 'createDate'
+		FROM mtmydb.mtmy_everyone_say
+		WHERE parent_id = #{mtmyEveryoneSayId}
+		AND say_type = '2'
+	</select>
+	
+	<!-- 逻辑删除说说 -->
+	<update id="delMtmyEveryoneSay">
+		UPDATE mtmydb.mtmy_everyone_say
+		SET del_flag = '1'
+		WHERE id = #{mtmyEveryoneSayId}
+	</update>
+</mapper>
