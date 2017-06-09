@@ -179,9 +179,4 @@ public class WeixinCheckAccount extends CommonService{
 		String stringA="appid="+appid+"&bill_date="+bill_date+"&bill_type="+bill_type+"&mch_id="+mch_id+"&nonce_str="+nonce_str+"&key="+key; 
 		return WebUtils.MD5(stringA);
 	}
-	public static void main(String[] args) {
-		String string = getXmlInfo(); 
-		String result = webUtil(string,downloadAccount);
-		System.out.println(result);
-	}
 }
