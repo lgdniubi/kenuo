@@ -227,7 +227,7 @@ public class MtmyMnappointmentController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "saveReservation")
-	public String saveReservation(Users users,String beauticianId,String shopId,String times,String recid,String servicemin,RedirectAttributes redirectAttributes,HttpServletRequest request){
+	public String saveReservation(Users users,String beauticianId,String shopId,String times,String recid,String servicemin,String remarks,RedirectAttributes redirectAttributes,HttpServletRequest request){
 		try {
 			String dateStr = times.replace("星期一", "").replace("星期二","").replace("星期三","").replace("星期四","").replace("星期五","").replace("星期六","").replace("星期日","");
 			Date date = DateUtils.parseDate(dateStr);
@@ -236,7 +236,7 @@ public class MtmyMnappointmentController extends BaseController{
 			String websaveReservation = ParametersFactory.getMtmyParamValues("mtmy_savereservation");
 			
 			logger.info("##### web接口路径:"+websaveReservation);
-			String parpm = "{\"beautician_id\":\""+beauticianId+"\",\"user_id\":\""+users.getUserid()+"\",\"user_phone\":\""+users.getMobile()+"\",\"user_name\":\""+users.getName()+"\",\"rec_id\":\""+recid+"\",\"appt_date\":\""+appt_date+"\",\"appt_start_time\":\""+appt_start_time+"\",\"shop_id\":\""+shopId+"\",\"service_min\":\""+servicemin+"\",\"client\":\"bm\"}";
+			String parpm = "{\"beautician_id\":\""+beauticianId+"\",\"remarks\":\""+remarks+"\",\"user_id\":\""+users.getUserid()+"\",\"user_phone\":\""+users.getMobile()+"\",\"user_name\":\""+users.getName()+"\",\"rec_id\":\""+recid+"\",\"appt_date\":\""+appt_date+"\",\"appt_start_time\":\""+appt_start_time+"\",\"shop_id\":\""+shopId+"\",\"service_min\":\""+servicemin+"\",\"client\":\"bm\"}";
 			logger.info("#### 添加预约参数"+parpm);
 			String url=websaveReservation;
 			String result = WebUtils.postObject(parpm, url);
