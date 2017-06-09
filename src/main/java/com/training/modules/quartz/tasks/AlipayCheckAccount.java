@@ -66,8 +66,7 @@ public class AlipayCheckAccount extends CommonService{
 	public void alipayCheckAccount(){
 		TrainRuleParam trainRuleParam = new TrainRuleParam();
 		trainRuleParam.setParamKey("excel_path");
-//		URL = trainRuleParamDao.findParamByKey(trainRuleParam).getParamValue() + "/static/cutImg/alipayCheckAccount";
-		URL = "C:/Users/Superman/Desktop/photo/alipayCheckAccount";
+		URL = trainRuleParamDao.findParamByKey(trainRuleParam).getParamValue() + "/static/cutImg/alipayCheckAccount";
 		deleteFile(new File(URL));
 		logger.info("[work0],start,支付宝对账，开始时间："+df.format(new Date()));
 		
