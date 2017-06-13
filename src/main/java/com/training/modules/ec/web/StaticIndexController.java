@@ -3,8 +3,8 @@ package com.training.modules.ec.web;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.web.BaseController;
@@ -29,7 +29,7 @@ public class StaticIndexController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "previews")
-	public String previews(RedirectAttributes redirectAttributes,HttpServletRequest request){
+	public String previews(RedirectAttributes redirectAttributes,HttpServletRequest request,Model model){
 		JSONObject jsonObject = null;
 		try {
 			String generateStaticIndex = ParametersFactory.getMtmyParamValues("generateStaticIndex");
@@ -41,7 +41,7 @@ public class StaticIndexController extends BaseController{
 			jsonObject = JSONObject.fromObject(result);
 			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",message:"+jsonObject.get("message"));
 			if("200".equals(jsonObject.get("result"))){
-				addMessage(redirectAttributes, "静态主页预览成功");
+				model.addAttribute("goal", jsonObject.get("data"));
 			}else{
 				addMessage(redirectAttributes, "静态主页预览失败:"+jsonObject.get("message"));
 			}
@@ -50,7 +50,7 @@ public class StaticIndexController extends BaseController{
 			logger.error("调用接口:静态主页预览错误信息:"+e.getMessage());
 			addMessage(redirectAttributes, "静态主页预览出现异常，请与管理员联系");
 		}
-		return "redirect:" + jsonObject.get("data");
+		return "modules/ec/staticIndex";
 	}
 	
 	/**
@@ -58,7 +58,6 @@ public class StaticIndexController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "publish")
-	@ResponseBody
 	public String publish(RedirectAttributes redirectAttributes,HttpServletRequest request){
 		JSONObject jsonObject = null;
 		try {
@@ -71,16 +70,16 @@ public class StaticIndexController extends BaseController{
 			jsonObject = JSONObject.fromObject(result);
 			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",message:"+jsonObject.get("message"));
 			if("200".equals(jsonObject.get("result"))){
-				return "success";
+				addMessage(redirectAttributes, "发布成功");
 			}else{
 				logger.error("##### 发布静态主页失败：失败信息:"+jsonObject.get("message"));
-				return "error";
+				addMessage(redirectAttributes, "发布失败");
 			}
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "调用接口:发布静态主页", e);
 			logger.error("调用接口:发布静态主页错误信息:"+e.getMessage());
 			addMessage(redirectAttributes, "发布静态主页出现异常，请与管理员联系");
-			return "error";
 		}
+		return "redirect:" + adminPath + "/ec/goods/list";
 	}
 }
