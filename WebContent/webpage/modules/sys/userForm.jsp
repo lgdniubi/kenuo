@@ -595,7 +595,7 @@
 		  	</tr>
 		  	<tr>
 		  		<td class="width-15 active"><label class="pull-right">自我评价:</label></td>
-		  		<td colspan="3"><form:textarea path="userinfo.selfintro" htmlEscape="false" rows="10" cols="60" maxlength="80"/></td>
+		  		<td colspan="3"><form:textarea path="userinfo.selfintro" htmlEscape="false" rows="10" cols="60" maxlength="500"/></td>
 		  	</tr>
 		  	<tr>
 		  		<td class="width-15 active"><label class="pull-right">培训师评价:</label></td>
