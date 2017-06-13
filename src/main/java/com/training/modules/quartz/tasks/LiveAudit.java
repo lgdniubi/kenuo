@@ -49,6 +49,7 @@ public class LiveAudit extends CommonService{
 	/**
 	 * 妃子校直播审核
 	 * @author yangyang
+	 * @param rooms 
 	 */
 	public void liveAudit(){
 		logger.info("[work0],start,妃子校直播处理，开始时间："+df.format(new Date()));
@@ -154,7 +155,7 @@ public class LiveAudit extends CommonService{
 			SimpleDateFormat smp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			
 			//获取直播开启状态的所有数据
-			List<LiveRoomidAndAuditid> noticelives = entryService.queryRoomidandAuditid();
+			List<LiveRoomidAndAuditid> noticelives = entryService.queryRoomidandAuditid(open_live_expiration_time);
 			String roomids = "";
 			//将所有直播的roomid拼在一起用逗号隔开
 			for (int i = 0; i < noticelives.size(); i++) {
@@ -171,16 +172,21 @@ public class LiveAudit extends CommonService{
 			}
 
 			//定义一个集合
-			List<LiveRoomidAndAuditid> auditid = new ArrayList<LiveRoomidAndAuditid>();
+			//List<LiveRoomidAndAuditid> auditid = new ArrayList<LiveRoomidAndAuditid>();
 			//判断数据库取回的数据和CC放回的数据都不能为空
 			if (noticelives != null && recommendArr != null) {
+				
+				Map<String,rooms> map = new HashMap<String,rooms>();
+				for (int i = 0; i < recommendArr.size(); i++) {
+					map.put(recommendArr.get(i).getRoomId(), recommendArr.get(i));
+				}
 				//循环数据库取回的数据集合
 				for (int h = 0; h < noticelives.size(); h++) {
 					//循环CC放回的数据集合
-					for (int f = 0; f < recommendArr.size(); f++) {
+					if(map.containsKey(noticelives.get(h).getRoomid())){
+						rooms room = map.get(noticelives.get(h).getRoomid());
 						//判断直播间是否是开启状态
-						if (noticelives.get(h).getRoomid().equals(recommendArr.get(f).getRoomId()) && recommendArr.get(f).getLiveStatus() == 0) {
-							// auditid = auditid +
+						if (noticelives.get(h).getRoomid().equals(room.getRoomId()) && room.getLiveStatus() == 0) {
 							// noticelives.get(h).getAuditid() + ",";
 							//获取直播间处于关闭状态的直播
 							//auditid.add(noticelives.get(h));
@@ -189,7 +195,6 @@ public class LiveAudit extends CommonService{
 					}
 				}
 			}
-			
 			//循环直播间处于关闭状态的直播
 			/*for (int i = 0; i < auditid.size(); i++) {
 				//判断直播间是否超时

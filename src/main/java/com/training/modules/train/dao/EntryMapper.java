@@ -22,7 +22,7 @@ public interface EntryMapper {
 
 	public void uplivestatus(@Param("value")int open_live_expiration_time,@Param("auditid") int auditid);
 
-	public List<LiveRoomidAndAuditid> queryRoomidandAuditid();
+	public List<LiveRoomidAndAuditid> queryRoomidandAuditid(@Param("times")int times);
 
 	public int queryCount(@Param("value")int open_live_expiration_time,@Param("auditid") int auditid);
 
