@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 
 import com.training.common.service.TreeService;
 import com.training.common.utils.StringUtils;
@@ -70,6 +71,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	 */
 	@Transactional(readOnly = false)
 	public void saveOfficeInfo(Office office){
+		office.getOfficeInfo().setDetails(HtmlUtils.htmlUnescape(office.getOfficeInfo().getDetails()));
 		dao.saveOfficeInfo(office);
 	}
 	/**
@@ -297,5 +299,14 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Transactional(readOnly = false)
 	public void updateOfficeStatus(OfficeInfo officeInfo){
 		dao.updateOfficeStatus(officeInfo);
+	}
+
+	/**
+	 * 店铺是否推荐
+	 * @param office
+	 */
+	@Transactional(readOnly = false)
+	public void updateIsRecommend(Office office) {
+		dao.updateIsRecommend(office);
 	}
 }

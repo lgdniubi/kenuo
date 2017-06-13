@@ -17,7 +17,7 @@ import com.training.modules.train.entity.ShopSpeciality;
 public interface ShopSpecialityDao extends CrudDao<ShopSpeciality> {
 	
 	/**
-	 * 查询所有特长
+	 * 查询所有标签
 	 */
 	
 	public List<ShopSpeciality> findAllList();
@@ -27,5 +27,11 @@ public interface ShopSpecialityDao extends CrudDao<ShopSpeciality> {
 	 * @param shopSpeciality
 	 */
 	public void deleteShopSpeciality(ShopSpeciality shopSpeciality);
+
+	/**
+	 * 查询所有标签
+	 * @return
+	 */
+	public List<ShopSpeciality> findAllShopSpeciality();
 	
 }

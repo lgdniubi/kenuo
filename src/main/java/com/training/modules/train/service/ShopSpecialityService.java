@@ -1,5 +1,7 @@
 package com.training.modules.train.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +58,14 @@ public class ShopSpecialityService extends CrudService<ShopSpecialityDao, ShopSp
 	 */
 	public void deleteShopSpeciality(ShopSpeciality shopSpeciality) {
 		shopSpecialityDao.deleteShopSpeciality(shopSpeciality);
+	}
+
+	/**
+	 * 查询除del_flag != 0 之外的全部标签
+	 * @return
+	 */
+	public List<ShopSpeciality> findAllShopSpeciality() {
+		return shopSpecialityDao.findAllShopSpeciality();
 	}
 
 }

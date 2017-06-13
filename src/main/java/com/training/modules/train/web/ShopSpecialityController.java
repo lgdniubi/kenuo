@@ -1,5 +1,8 @@
 package com.training.modules.train.web;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -7,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.training.common.persistence.Page;
 import com.training.common.web.BaseController;
 import com.training.modules.sys.utils.BugLogUtils;
@@ -91,5 +97,22 @@ public class ShopSpecialityController extends BaseController {
 		shopSpecialityService.deleteShopSpeciality(shopSpeciality);
 		addMessage(redirectAttributes, "删除店铺标签成功");
 		return "redirect:" + adminPath + "/train/shopSpeciality/list";
+	}
+	
+	/**
+	 * 标签生成树状
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "treeData")
+	public List<Map<String, Object>> treeData(HttpServletResponse response) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		for (ShopSpeciality s : shopSpecialityService.findAllShopSpeciality()) {
+			Map<String, Object> map = Maps.newHashMap();
+				map.put("name", s.getName());
+				mapList.add(map);
+		}
+		return mapList;
 	}
 }
