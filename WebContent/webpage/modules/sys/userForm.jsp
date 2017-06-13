@@ -30,6 +30,9 @@
 			if(val.indexOf("排班")>=0){
 				document.getElementById("hideen").style.display="";
 			}
+			if($("#id").val() == null || $("#id").val() == ""){
+				document.getElementById("hideen").style.display="";
+			}
 			
 		}
 			// 手机号码验证
