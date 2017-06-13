@@ -24,6 +24,9 @@
 		a.update_by AS "updateBy.id",
 		a.update_date,
 		a.is_new AS "isNew",
+		a.is_recommend AS "isRecommend",
+		a.longitude,
+		a.latitude,
 		a.del_flag,
 		a.useable AS useable,
 		a.primary_person AS "primaryPerson.id",
@@ -85,6 +88,9 @@
 			a.update_date,
 			a.del_flag,
 			a.is_new,
+			a.is_recommend AS isRecommend,
+			a.longitude AS longitude,
+			a.latitude AS latitude,
 			a.useable AS useable,
 			a.primary_person AS "primaryPerson.id",
 			a.deputy_person AS "deputyPerson.id"
@@ -232,6 +238,9 @@
 			remarks, 
 			del_flag,
 			is_new,
+			is_recommend,
+			longitude,
+			latitude,
 			useable,
 			primary_person,
 			deputy_person
@@ -258,6 +267,9 @@
 			#{remarks}, 
 			#{delFlag},
 			#{isNew},
+			#{isRecommend},
+			#{longitude},
+			#{latitude},
 			#{useable},
 			#{primaryPerson.id},
 			#{deputyPerson.id}
@@ -301,6 +313,9 @@
 			remarks, 
 			del_flag,
 			is_new,
+			is_recommend,
+			longitude,
+			latitude,
 			useable,
 			primary_person,
 			deputy_person
@@ -332,6 +347,9 @@
 			#{remarks}, 
 			#{delFlag},
 			#{isNew},
+			#{isRecommend},
+			#{longitude},
+			#{latitude},
 			#{useable},
 			#{primaryPerson.id},
 			#{deputyPerson.id}
@@ -362,6 +380,9 @@
 			update_date = #{updateDate}, 
 			remarks = #{remarks},
 			is_new = #{isNew},
+			is_recommend = #{isRecommend},
+			longitude = #{longitude},
+			latitude = #{latitude},
 			useable=#{useable},
 			primary_person=#{primaryPerson.id},
 			deputy_person=#{deputyPerson.id}
@@ -402,8 +423,11 @@
 				end_time,
 				detailed_address,
 				img,
+				tags,
+				intro,
 				bed_num,
 				status,
+				details,
 				del_flag
 			) values (
 				#{id},
@@ -416,8 +440,11 @@
 				#{officeInfo.endTime},
 				#{officeInfo.detailedAddress},
 				#{officeInfo.img},
+				#{officeInfo.tags},
+				#{officeInfo.intro},
 				#{officeInfo.bedNum},
 				#{officeInfo.status},
+				#{officeInfo.details},
 				#{DEL_FLAG_NORMAL}
 			)ON DUPLICATE KEY 
 				UPDATE 
@@ -430,6 +457,9 @@
 				end_time         = #{officeInfo.endTime},
 				detailed_address = #{officeInfo.detailedAddress},
 				img				 = #{officeInfo.img},
+				tags			 = #{officeInfo.tags},
+				intro			 = #{officeInfo.intro},
+				details			 = #{officeInfo.details},
 				bed_num			 = #{officeInfo.bedNum},
 				<if test="grade == 1">
 					del_flag         = #{DEL_FLAG_NORMAL}
@@ -442,6 +472,11 @@
 	<update id="updateOfficeStatus">
 		UPDATE sys_office_info SET status = #{status} WHERE id = #{id}
 	</update>
+	<!-- 店铺是否推荐 -->
+	<update id="updateIsRecommend">
+		UPDATE sys_office SET is_recommend = #{isRecommend} WHERE id = #{id}
+	</update>
+	
 	<select id="findFNameByCode" resultType="OfficeInfo">
 		SELECT
 			id  AS franchiseeId,
@@ -463,6 +498,9 @@
 			end_time     AS endTime,
 			detailed_address AS detailedAddress,
 			img,
+			tags,
+			intro,
+			details,
 			bed_num 	AS bedNum,
 			status
 		FROM sys_office_info
@@ -483,6 +521,9 @@
 			end_time     AS endTime,
 			detailed_address AS detailedAddress,
 			img,
+			tags,
+			intro,
+			details,
 			bed_num 	 AS bedNum,
 			status
 		FROM sys_office_info
@@ -511,6 +552,9 @@
 			i.begin_time   AS beginTime,
 			i.end_time     AS endTime,
 			i.bed_num	   AS bedNum,
+			i.tags,	
+			i.intro,	
+			i.details,	
 			i.detailed_address AS detailedAddress
 		FROM trains.sys_office AS o , trains.sys_office_info AS i,trains.sys_area AS ar 
 		WHERE 
@@ -565,6 +609,9 @@
 				end_time,
 				detailed_address,
 				bed_num,
+				tags,
+				intro,
+				details,
 				del_flag
 			) values (
 				#{id},
@@ -577,6 +624,9 @@
 				#{endTime},
 				#{detailedAddress},
 				#{bedNum},
+				#{tags},
+				#{intro},
+				#{details},
 				#{DEL_FLAG_NORMAL}
 			)
 	</insert>

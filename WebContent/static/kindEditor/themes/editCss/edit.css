@@ -1,5 +1,5 @@
 		.ke-tabs{height:450px;overflow-x:hidden;overflow-y:auto;} 
-		.ke-dalog-addpic{width:450px;position:fixed; z-index:1000; left:50%; top: 50%;margin:-150px 0 0 -225px;display:none;}
+		.ke-dalog-addpic{width:450px;position:fixed; z-index:1000; left:50%; top: 20%;margin:-150px 0 0 -225px;display:none;}
 		.ke-dalog-addpic .tab1,.ke-dalog-addpic .tab2{display:none;padding-top:15px;}
 		.ke-add-mask{position:fixed;z-index:-1;width:100%;height:100%;left:0;top:0;}
     	/* 商品卡片样式 */

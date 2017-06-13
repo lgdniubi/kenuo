@@ -163,5 +163,11 @@ public interface OfficeDao extends TreeDao<Office> {
 	 * @param office
 	 */
 	public void updateOfficeStatus(OfficeInfo officeInfo);
+	
+	/**
+	 * 店铺是否推荐
+	 * @param office
+	 */
+	public void updateIsRecommend(Office office);
 }
 

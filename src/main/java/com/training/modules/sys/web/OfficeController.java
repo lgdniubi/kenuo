@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -209,7 +210,9 @@ public class OfficeController extends BaseController {
 //		}
 		//当为实体店铺时查询其详细信息
 		if("1".equals(office.getGrade())){
-			office.setOfficeInfo(officeService.findbyid(office));
+			OfficeInfo officeInfo = officeService.findbyid(office);
+			officeInfo.setDetails(HtmlUtils.htmlEscape(officeInfo.getDetails()));//详细介绍转码
+			office.setOfficeInfo(officeInfo);
 		}
 		//界面展示所属加盟商
 		OfficeInfo o=new OfficeInfo();
@@ -224,6 +227,9 @@ public class OfficeController extends BaseController {
 			office.setType("1");
 		}else{
 			office.setType("2");
+		}
+		if(office.getOfficeInfo() != null && office.getOfficeInfo().getTags() !=null){
+			office.getOfficeInfo().setTags(office.getOfficeInfo().getTags().replaceAll("#", ","));
 		}
 		model.addAttribute("office", office);
 		return "modules/sys/officeForm";
@@ -242,6 +248,7 @@ public class OfficeController extends BaseController {
 	@RequiresPermissions(value={"sys:office:add","sys:office:edit"},logical=Logical.OR)
 	@RequestMapping(value = "save")
 	public String save(Office office,OfficeInfo officeInfo, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		//officeInfo中店铺标签 (多个标签用"#"分开)
 		if(Global.isDemoMode()){
 			addMessage(redirectAttributes, "演示模式，不允许操作！");
 			return "redirect:" + adminPath + "/sys/office/";
@@ -287,7 +294,6 @@ public class OfficeController extends BaseController {
 				officeService.save(childOffice);
 			}
 		}
-		
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
 		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
 		return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
@@ -800,4 +806,34 @@ public class OfficeController extends BaseController {
 		}
     	return jsonMap;
     }
+    /**
+     * 是否推荐
+     * @param office
+     * @param request
+     * @return
+     */
+    //@RequiresPermissions("sys:office:updateIsRecommend")
+    @RequestMapping(value = {"updateIsRecommend"})
+    public @ResponseBody Map<String, String> updateIsRecommend(Office office,HttpServletRequest request){
+    	Map<String, String> map = new HashMap<String, String>();
+    	try {
+    		if(!StringUtils.isEmpty(office.getId()) && !StringUtils.isEmpty(office.getIsRecommend())){
+    			officeService.updateIsRecommend(office);
+    			map.put("FLAG", "OK");
+    			map.put("MESSAGE", "店铺是否推荐,修改成功");
+    		}else{
+    			map = new HashMap<String, String>();
+    			map.put("FLAG", "ERROR");
+    			map.put("MESSAGE", "店铺是否推荐修改失败,必要参数为空");
+    		}
+    	} catch (Exception e) {
+    		logger.error("店铺是否推荐错误信息："+e.getMessage());
+    		BugLogUtils.saveBugLog(request, "店铺是否推荐修改失败", e);
+    		map = new HashMap<String, String>();
+    		map.put("FLAG", "ERROR");
+    		map.put("MESSAGE", "店铺是否推荐修改失败");
+    	}
+    	return map;
+    }
+	
 }
