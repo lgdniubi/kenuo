@@ -138,7 +138,13 @@
 							</td>
 						</tr>
 						<tr>
-							<td><label class="pull-right"><font color="red">*</font>备注：</label></td>
+							<td><label class="pull-right">消费者备注：</label></td>
+							<td>
+								<textarea rows="7" cols="30" id="userNote" name="userNote" class="form-control" readonly="readonly">${reservation.userNote }</textarea>
+							</td>
+						</tr>
+						<tr>
+							<td><label class="pull-right"><font color="red">*</font>管理员备注：</label></td>
 							<td>
 								<textarea rows="7" cols="30" id="remarks" name="remarks" class="form-control required">${reservation.remarks }</textarea>
 							</td>

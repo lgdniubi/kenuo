@@ -323,6 +323,11 @@
 	            elem: '#userinfo.birthday', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
 	            event: 'focus' //响应事件。如果没有传入event，则按照默认的click
 	        }); 	
+			laydate({
+				fixed: true,
+	            elem: '#userinfo.workYear', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
+	            event: 'focus' //响应事件。如果没有传入event，则按照默认的click
+	        }); 	
 		});
 
 		window.onload=init;
@@ -530,6 +535,14 @@
 					</form:select>
 				</td>
 		  	</tr>
+		  	<tr>
+		  		<td class="width-15 active"><label class="pull-right">从业年限:</label></td>
+		  		<td class="width-35">
+		  			<input id="userinfo.workYear" name="userinfo.workYear" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${user.userinfo.workYear}" pattern="yyyy-MM-dd"/>"/>
+		  		</td>
+		 		<td class="width-15 active"><label class="pull-right">服务宣言:</label></td>
+				<td class="width-35" colspan="3"><form:textarea path="userinfo.serviceManifesto" htmlEscape="false" rows="3" cols="30" style="width: 100%" class="form-control"/></td>
+		  	</tr>
 		  	<tr >
 		  		<td class="width-15 active"><label class="pull-right" >特长:</label></td>
 		  		<td colspan="4" width="200px"><sys:treeselect id="speciality" name="speciality.id" value="${user.speciality.id}" labelName="speciality.name" labelValue="${user.speciality.name}"
@@ -582,7 +595,7 @@
 		  	</tr>
 		  	<tr>
 		  		<td class="width-15 active"><label class="pull-right">自我评价:</label></td>
-		  		<td colspan="3"><form:textarea path="userinfo.selfintro" htmlEscape="false" rows="10" cols="60" /></td>
+		  		<td colspan="3"><form:textarea path="userinfo.selfintro" htmlEscape="false" rows="10" cols="60" maxlength="500"/></td>
 		  	</tr>
 		  	<tr>
 		  		<td class="width-15 active"><label class="pull-right">培训师评价:</label></td>

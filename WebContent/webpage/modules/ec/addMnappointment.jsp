@@ -285,7 +285,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="active"><label class="pull-right">备注：</label></td>
+							<td class="active"><label class="pull-right">消费者备注：</label></td>
 							<td>
 								<textarea rows="7" cols="30" id="remarks" name="remarks" class="form-control"></textarea>
 							</td>

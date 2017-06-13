@@ -42,6 +42,9 @@ public class Reservation extends DataEntity<Reservation>{
 	
 	
 	private Integer teachersStarLevel;  //sharp 3月27所加，美容师评级
+	
+	private String userNote;           //消费者备注
+	
 	public Integer getTeachersStarLevel() {
 		return teachersStarLevel;
 	}
@@ -182,6 +185,11 @@ public class Reservation extends DataEntity<Reservation>{
 	public void setGoods(Goods goods) {
 		this.goods = goods;
 	}
-	
+	public String getUserNote() {
+		return userNote;
+	}
+	public void setUserNote(String userNote) {
+		this.userNote = userNote;
+	}
 	
 }
