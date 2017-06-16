@@ -140,7 +140,7 @@
 				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
 				'uploader' : '<%=uploadURL%>',
 				'fileObjName' : 'file_photo_upload',//<input type="file"/>的name
-				'queueID' : 'file_photo_upload',//与下面HTML的div.id对应
+				'queueID' : 'file_photo_queue',//与下面HTML的div.id对应
 				'method' : 'post',
 				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
 				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
@@ -335,7 +335,7 @@
 		                   	<div class="upload">
 								<input type="file" name="file_photo_upload" id="file_photo_upload">
 							</div>
-							<div id="file_img_queue"></div>
+							<div id="file_photo_queue"></div>
 				         </td>
 				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺短名称：</label></td>
 				         <td class="width-35"><form:input path="officeInfo.shortName" htmlEscape="false" maxlength="50" cssClass="form-control required" /></td>
