@@ -25,6 +25,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.training.common.persistence.Page;
+import com.training.common.utils.ObjectUtils;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.ec.entity.ActionInfo;
@@ -65,6 +66,7 @@ import net.sf.json.JSONObject;
 @RequestMapping(value = "${adminPath}/ec/goods")
 public class GoodsController extends BaseController{
 
+	public static final String GOOD_DETAIL_KEY = "GOODS_DETAIL_"; // 商品下架
 	public static final String GOOD_UNSHELVE_KEY = "GOOD_UNSHELVE_KEY"; //商品下架
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
@@ -398,7 +400,6 @@ public class GoodsController extends BaseController{
 			goodsService.saveGoods(goods,request);
 			addMessage(redirectAttributes, "保存/修改 商品'" + goods.getGoodsName() + "'成功");
 		} catch (Exception e) {
-			BugLogUtils.saveBugLog(request, "保存/修改 商品通用信息 出现异常!", e);
 			logger.error("保存/修改 商品通用信息 出现异常，异常信息为："+e.getMessage());
 			BugLogUtils.saveBugLog(request, "保存/修改 商品通用信息 出现异常", e);
 			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
@@ -1301,4 +1302,22 @@ public class GoodsController extends BaseController{
 		}
 		return "error";
 	}
+	/**
+	 * 刷新商品详情缓存
+	 * @param goods
+	 * @return
+	 */
+	@RequiresPermissions(value={"ec:goods:refreshRedis"},logical=Logical.OR)
+	@RequestMapping(value = {"refreshRedis"})
+	public String refreshRedis(Goods goods,HttpServletRequest request,RedirectAttributes redirectAttributes){
+		try {
+			redisClientTemplate.del(ObjectUtils.serialize(GOOD_DETAIL_KEY+goods.getGoodsId()));
+			addMessage(redirectAttributes, "刷新商品(详情)成功");
+		} catch (Exception e) {
+			logger.error("刷新商品详情缓存出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "刷新商品详情缓存", e);
+			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
+		}
+		return "redirect:" + adminPath + "/ec/goods/list";
+	};
 }
