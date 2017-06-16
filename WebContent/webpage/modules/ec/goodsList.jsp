@@ -184,7 +184,7 @@
 								<button onclick="update('${ctx}/ec/goods/updateIsOnSale?flag=4')" class="btn btn-white btn-sm"><i class="fa fa-file-text-o"></i> 否推荐</button>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="ec:goods:generateStaticIndex">
-								<a href="#" onclick="openDialog('主页静态化', '${ctx}/ec/staticIndex/previews','600px', '850px')" class="btn btn-white btn-sm"><i class="fa fa-folder-open-o"></i>主页静态化</a>
+								<a href="#" onclick="openDialog('主页静态化', '${ctx}/ec/staticIndex/previews','600px', '500px')" class="btn btn-white btn-sm"><i class="fa fa-folder-open-o"></i>主页静态化</a>
 							</shiro:hasPermission>
 							<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新"><i class="glyphicon glyphicon-repeat"></i> 刷新</button>
 						</div>
