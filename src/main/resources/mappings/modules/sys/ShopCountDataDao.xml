@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.sys.dao.ShopCountDataDao">
+    
+    <sql id="selectApptOrder">
+    	SELECT
+			COUNT(mao.id) AS appt_count,
+			mao.shop_id
+		FROM
+			mtmydb.mtmy_appt_order mao
+		WHERE
+			mao.appt_status IN (1, 2)
+			AND id > #{apptOrderId}
+		GROUP BY
+			mao.shop_id
+    </sql>
+    <sql id="selectShopComment">
+    	SELECT
+			shop_id,
+			COUNT(contents) AS evaluation_count,
+			FORMAT((SUM(serve_rank) / COUNT(contents)),1) AS evaluation_score
+		FROM
+			mtmydb.mtmy_shop_comment
+		WHERE
+			id > #{commentId}
+		GROUP BY
+			shop_id
+    </sql>
+    
+    <!-- 获取定时器截止的  预约id -->
+    <select id="findApptOrderId" resultType="java.lang.Integer">
+    	SELECT
+			id
+		FROM
+			mtmydb.mtmy_appt_order
+		ORDER BY
+			id DESC
+		LIMIT 1
+    </select>
+    
+    <!-- 获取定时器截止的  评论id -->
+    <select id="findCommentId" resultType="java.lang.Integer">
+    	SELECT
+			t1.id
+		FROM
+			mtmydb.mtmy_shop_comment t1
+		ORDER BY
+			id DESC
+		LIMIT 1
+    </select>
+    
+    <!-- 查询店铺的所有统计数据 -->
+	<select id="queryShopCountData" resultType="ShopCountData" parameterType="java.util.Map">
+		SELECT
+			t1.shop_id AS 'shopId',
+			t1.appt_count AS 'apptCount',
+			IFNULL(t2.evaluation_count, 0)AS 'evaluationCount',
+			IFNULL(t2.evaluation_score, 0)AS 'evaluationScore',
+			IFNULL((SELECT tss.shop_id FROM trains.train_shop_statistics tss WHERE tss.shop_id = t1.shop_id),"NULL")AS 'isExist'
+		FROM
+			(<include refid="selectApptOrder"></include>) t1
+		LEFT JOIN (<include refid="selectShopComment"></include>) t2 ON t2.shop_id = t1.shop_id
+	</select>
+	
+	<!-- 修改train_shop_statistics 表中店铺的统计数据 -->
+	<update id="updateShopCountData" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" open="" close="" separator=";">
+	        UPDATE `trains`.`train_shop_statistics`
+	        <set>
+	            `evaluation_score` = (evaluation_score + #{item.evaluationScore}) / 2,
+				 `evaluation_count` = evaluation_count + #{item.evaluationCount},
+		 		`appt_count` = appt_count + #{item.apptCount},
+		 		`update_date` = SYSDATE()
+	        </set>
+	        where shop_id = #{item.shopId}
+    	</foreach>      
+	</update>
+	
+	<!-- 将店铺的统计数据插入train_shop_statistics 表 -->
+	<insert id="addShopCountData" parameterType="java.util.List">
+		INSERT INTO `trains`.`train_shop_statistics` (
+			`shop_id`,
+			`is_sham`,
+			`evaluation_score`,
+			`evaluation_count`,
+			`appt_count`,
+			`update_date`
+		)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator="," >  
+        (
+	        #{item.shopId},
+	        '0',
+	        #{item.evaluationScore},
+	        #{item.evaluationCount},
+	        #{item.apptCount},
+	        SYSDATE()
+	    )  
+    	</foreach>  
+	</insert>
+</mapper>

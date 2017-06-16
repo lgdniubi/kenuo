@@ -195,6 +195,20 @@
     	   $("#"+val+" option[value !='']").remove();
     	});
     }
+    
+    function checkEnter(e){
+	    var code;  
+	    if (!e) var  e = window.event;  
+	    if (e.keyCode) code = e.keyCode;  
+	    else if (e.which) code = e.which;  
+	    if(code==13 && window.event){  
+	        e.returnValue = false;  
+	        top.layer.alert('禁止换行!', {icon: 0, title:'提醒'}); 
+	    }else if(code==13){  
+	        e.preventDefault();
+	        top.layer.alert('禁止换行!', {icon: 0, title:'提醒'}); 
+	    }  
+    }
     </script>
 </head>
 <body class="gray-bg">
@@ -287,7 +301,7 @@
 						<tr>
 							<td class="active"><label class="pull-right">消费者备注：</label></td>
 							<td>
-								<textarea rows="7" cols="30" id="remarks" name="remarks" class="form-control"></textarea>
+								<textarea rows="7" cols="30" id="remarks" name="remarks" onkeydown="checkEnter(event)" class="form-control"></textarea>
 							</td>
 						</tr>
 					</table>

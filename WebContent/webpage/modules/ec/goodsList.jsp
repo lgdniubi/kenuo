@@ -82,41 +82,6 @@
 		    });
 		});
 		
-		function staticIndex(){
-			top.layer.open({
-			    type: 2, 
-			    area: ['800px', '650px'],
-			    title:"静态主页预览",
-			    content: "${ctx}/ec/staticIndex/previews",
-			    btn: ['确定', '关闭'],
-			    yes: function(index, layero){
-					
-					$.ajax({
-					type:"post",
-					url:"${ctx}/ec/staticIndex/publish",
-					success:function(date){
-						if(date=="success"){
-							top.layer.alert('发布成功!', {icon: 1, title:'提醒'});
-							window.location="${ctx}/ec/goods/list";
-						}
-						if(date=="error"){
-							top.layer.alert('发布失败!', {icon: 2, title:'提醒'});
-							window.location="${ctx}/ec/goods/list";
-						}
-									
-					},
-					error:function(XMLHttpRequest,textStatus,errorThrown){
-								    
-					}
-								 
-			});
-			top.layer.close(index);
-			},
-			cancel: function(index){ //或者使用btn2
-				    	           //按钮【按钮二】的回调
-			  }
-		}); 
-		}
 	</script>
 </head>
 <body>
@@ -220,7 +185,7 @@
 								<button onclick="update('${ctx}/ec/goods/updateIsOnSale?flag=4')" class="btn btn-white btn-sm"><i class="fa fa-file-text-o"></i> 否推荐</button>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="ec:goods:generateStaticIndex">
-								<a href="#" onclick="staticIndex()" class="btn btn-white btn-sm" ><i class="fa fa-folder-open-o"></i>主页静态化</a>
+								<a href="#" onclick="openDialog('主页静态化', '${ctx}/ec/staticIndex/previews','600px', '850px')" class="btn btn-white btn-sm"><i class="fa fa-folder-open-o"></i>主页静态化</a>
 							</shiro:hasPermission>
 							<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新"><i class="glyphicon glyphicon-repeat"></i> 刷新</button>
 						</div>
