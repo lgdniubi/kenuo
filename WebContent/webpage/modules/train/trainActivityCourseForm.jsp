@@ -86,6 +86,7 @@
 	            	amount: {
 	                    required: true,    //要求输入不能为空
 	                    number: true,     //输入必须是数字
+	                    min:0,
 	                    checkNumber: $("#amount").val()    //调用自定义验证
 	                }
 	            },
