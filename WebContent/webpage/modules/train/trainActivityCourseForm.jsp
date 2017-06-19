@@ -231,7 +231,7 @@
 		   <tbody>
 		      <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 活动名称:</label></td>
-		         <td  class="width-35" colspan="3"><form:input path="name" htmlEscape="false" class="required form-control "/></td>
+		         <td  class="width-35" colspan="3"><form:input path="name" htmlEscape="false" class="required form-control" maxlength="100"/></td>
 		      </tr>
 		      <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 报名开始时间:</label></td>
