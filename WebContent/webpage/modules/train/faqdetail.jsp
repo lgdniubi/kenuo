@@ -58,13 +58,14 @@
 					        </li>
 					    </c:forEach>
 			        </ul>
-			        <form action="${ctx}/train/faqlist/comment" class="reviewarea" id="reviewarea">
+			        <!-- 2017年6月19日16:06:55 由于问答盖楼 后台注释回复评论 -->
+			        <%-- <form action="${ctx}/train/faqlist/comment" class="reviewarea" id="reviewarea">
 			        	<input id="askId" name="askId" type="hidden" value="${lessonAskContent.askId }"/>
 				    	<textarea name="content" id="reviewText" required maxlength="500"></textarea>
 				    	<shiro:hasPermission name="train:faqlist:add">
 				    		<button class="btn btn-primary review-btn"  type="submit">确认回复</button>
 				    	</shiro:hasPermission>
-				    </form>
+				    </form> --%>
 			    </div>
 			</div>
 		</div>

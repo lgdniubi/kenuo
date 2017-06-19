@@ -188,7 +188,11 @@
 										<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('${LessonAsks.askId}','0')">
 									</c:if>
 								</td>
-	                            <td><a href="#" onclick='top.openTab("${ctx}/train/reviewlist/reviewlist?askId=${LessonAsks.askId}","评论管理", false)'>${LessonAsks.num }人</a></td>
+	                            <td>
+	                            	<!-- 2017年6月19日16:06:55 由于问答盖楼 后台注释回复评论 -->
+	                            	<%-- <a href="#" onclick='top.openTab("${ctx}/train/reviewlist/reviewlist?askId=${LessonAsks.askId}","评论管理", false)'>${LessonAsks.num }人</a> --%>
+									${LessonAsks.num }人
+	                            </td>
 	                            <td><fmt:formatDate value="${LessonAsks.createtime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 	                            <td>
 	                            	<shiro:hasPermission name="train:faqlist:add">
