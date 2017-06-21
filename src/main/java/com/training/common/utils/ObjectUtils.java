@@ -59,6 +59,8 @@ public class ObjectUtils extends org.apache.commons.lang3.ObjectUtils {
 				baos = new ByteArrayOutputStream();
 				oos = new ObjectOutputStream(baos);
 				oos.writeObject(object);
+				oos.close();
+				baos.close();
 				return baos.toByteArray();
 			}
 		} catch (Exception e) {

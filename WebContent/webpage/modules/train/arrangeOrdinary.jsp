@@ -128,6 +128,8 @@
 					                            					<input value="${ArrangeBeautician.beauticianStatus }" type="hidden" class="beauticianStatus">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
+							                            			<input id="id${ArrangeBeautician.userId }${status.index+1 }" name="id${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.arrangeId }" type="hidden" class="id">
+							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<span style="color: #5ec4ff">班</span>
 						                            			</div>
 						                            		</td>
@@ -138,6 +140,8 @@
 					                            					<input value="${ArrangeBeautician.beauticianStatus }" type="hidden" class="beauticianStatus">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
+							                            			<input id="id${ArrangeBeautician.userId }${status.index+1 }" name="id${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.arrangeId }" type="hidden" class="id">
+							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<c:if test="${arrangeShops.shopId == '1'}">
 							                            				<span style="color: #4ad264">${arrangeShops.shopName }</span>
 							                            			</c:if>
@@ -156,6 +160,8 @@
 					                            					<input value="${ArrangeBeautician.beauticianStatus }" type="hidden" class="beauticianStatus">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
+							                            			<input id="id${ArrangeBeautician.userId }${status.index+1 }" name="id${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.arrangeId }" type="hidden" class="id">
+							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<span style="color: #999999">${arrangeShops.shopName }</span>
 						                            			</div>
 						                            		</td>
@@ -166,6 +172,8 @@
 					                            					<input value="${ArrangeBeautician.beauticianStatus }" type="hidden" class="beauticianStatus">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
+							                            			<input id="id${ArrangeBeautician.userId }${status.index+1 }" name="id${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.arrangeId }" type="hidden" class="id">
+							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<span></span>
 						                            			</div>
 						                            		</td>
@@ -182,6 +190,8 @@
 					                            					<input value="${ArrangeBeautician.beauticianStatus }" type="hidden" class="beauticianStatus">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
+							                            			<input id="id${ArrangeBeautician.userId }${status.index+1 }" name="id${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.arrangeId }" type="hidden" class="id">
+							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<span style="color: #5ec4ff">班</span>
 						                            			</div>
 						                            		</td>
@@ -192,6 +202,8 @@
 					                            					<input value="${ArrangeBeautician.beauticianStatus }" type="hidden" class="beauticianStatus">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
+							                            			<input id="id${ArrangeBeautician.userId }${status.index+1 }" name="id${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.arrangeId }" type="hidden" class="id">
+							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<%-- <span>${arrangeShops.shopName }</span> --%>
 							                            			<!-- <span></span> -->
 							                            			<c:if test="${arrangeShops.shopId == '1'}">
@@ -212,6 +224,8 @@
 					                            					<input value="${ArrangeBeautician.beauticianStatus }" type="hidden" class="beauticianStatus">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
+							                            			<input id="id${ArrangeBeautician.userId }${status.index+1 }" name="id${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.arrangeId }" type="hidden" class="id">
+							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<%-- <span>${arrangeShops.shopName }</span> --%><!-- 当用户为特殊美容师时  除在本店铺上班外   在其他店铺上班不展示 -->
 							                            			<span></span>
 						                            			</div>
@@ -223,6 +237,8 @@
 					                            					<input value="${ArrangeBeautician.beauticianStatus }" type="hidden" class="beauticianStatus">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
+							                            			<input id="id${ArrangeBeautician.userId }${status.index+1 }" name="id${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.arrangeId }" type="hidden" class="id">
+							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<span></span>
 						                            			</div>
 						                            		</td>
@@ -272,6 +288,7 @@
 					}else{
 						$this.find('input[class="flag"]').val('0');
 					}
+					$this.find('input[class="isUpdate"]').val('1');
 				}else if($state == 'holiday'){
 					$this.find('span').text('假');
 					$this.find('span').attr('style','color:#ff873f');
@@ -281,6 +298,7 @@
 					}else{
 						$this.find('input[class="flag"]').val('0');
 					}
+					$this.find('input[class="isUpdate"]').val('1');
 				}else if($state == 'weekWork'){
 					$this.find('span').text('休');
 					$this.find('span').attr('style','color:#4ad264');
@@ -290,6 +308,7 @@
 					}else{
 						$this.find('input[class="flag"]').val('0');
 					}
+					$this.find('input[class="isUpdate"]').val('1');
 				}else if($state == 'study'){
 					$this.find('span').text('学');
 					$this.find('span').attr('style','color:#ff3000');
@@ -299,10 +318,12 @@
 					}else{
 						$this.find('input[class="flag"]').val('0');
 					}
+					$this.find('input[class="isUpdate"]').val('1');
 				}else if($state == 'delWork'){
 					$this.find('span').text('');
-					$this.find('input[type="hidden"]').val('');
+					$this.find('input[class="userId"]').val('');
 					$this.find('input[class="flag"]').val('');
+					$this.find('input[class="isUpdate"]').val('1');
 				} 
 			});
 		});

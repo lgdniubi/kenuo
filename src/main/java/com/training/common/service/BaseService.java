@@ -200,8 +200,6 @@ public abstract class BaseService {
 	public static String dataScopeFilter(User user, String officeAlias) {
 		StringBuilder sqlString = new StringBuilder();
 		
-		System.out.println("#####数据范围(1:所在部门及以下数据;2:按明细设置):"+user.getDataScope());
-		
 		if(!user.isAdmin()){
 			//当用户非“管理员”用户时，根据数据权限判断
 			if(User.DATA_SCOPE_OFFICE_AND_CHILD.equals(String.valueOf(user.getDataScope()))){
