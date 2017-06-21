@@ -201,7 +201,7 @@
 									<i class="fa fa-plus"></i>添加实物订单<span style="color: red;font-weight:bold;">&nbsp;&nbsp;*&nbsp;实物订单无法预约！</span>
 								</button>
 							</shiro:hasPermission>
-							<shiro:hasPermission name="ec:orders:importPage">
+							<shiro:hasPermission name="ec:orders:export">
 								<!-- 导出按钮 -->
 								<table:exportExcel url="${ctx}/ec/orders/export"></table:exportExcel>
 							</shiro:hasPermission>
