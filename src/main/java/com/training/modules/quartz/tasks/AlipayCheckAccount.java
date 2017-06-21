@@ -78,7 +78,7 @@ public class AlipayCheckAccount extends CommonService{
 			list.clear();
 			String zipFile = null;	// 调用支付宝 将zip文件下载到本地
 			// 调用支付宝对账接口
-			AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.downloadAccount,AlipayConfig.appid,AlipayConfig.alipay_private_key,"json",AlipayConfig.input_charset,AlipayConfig.alipay_public_key,AlipayConfig.sign_type);
+			AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.downloadAccount,AlipayConfig.appid,AlipayConfig.your_private_key,"json",AlipayConfig.input_charset,AlipayConfig.alipay_public_key,AlipayConfig.sign_type);
 			AlipayDataDataserviceBillDownloadurlQueryRequest request = new AlipayDataDataserviceBillDownloadurlQueryRequest();
 			String date= formatDate();
 			request.setBizContent("{\"bill_type\":\"trade\",\"bill_date\":\""+date+"\"}");	

@@ -13,7 +13,7 @@ public class AlipayConfig {
 	// APP应用ID
 	public static final String appid = "2017042006848196";
 	// 应用私钥
-	public static final String alipay_private_key = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAJ5omdHA4d7iXNb0Z/5f5tHXT"
+	public static final String your_private_key = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAJ5omdHA4d7iXNb0Z/5f5tHXT"
 													+ "/MoH2OZ1SigzTk0Rjd62gWdsadQ7JijatNOFFusa8Pmyv/DLltCeV92CtLmxNR0ZNQDb3GeZ"
 													+ "mMHovaX6bgCSa+y75AVd5ovybZ9W7i6396Z2VUFTl1VvqoKNSAM+UAOZ0nsBM235vV4xiygD"
 													+ "CJDAgMBAAECgYAOTefF9yLuW4aCqqNRZxuSy1ye2nqrJdMHzi16AuxsSh2x8CGAuGAFEIyu9"
