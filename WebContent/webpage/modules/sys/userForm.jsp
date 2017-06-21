@@ -544,7 +544,7 @@
 		  			<input id="userinfo.workYear" name="userinfo.workYear" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${user.userinfo.workYear}" pattern="yyyy-MM-dd"/>"/>
 		  		</td>
 		 		<td class="width-15 active"><label class="pull-right">服务宣言:</label></td>
-				<td class="width-35" colspan="3"><form:textarea path="userinfo.serviceManifesto" htmlEscape="false" rows="3" cols="30" style="width: 100%" class="form-control"/></td>
+				<td class="width-35" colspan="3"><form:textarea path="userinfo.serviceManifesto" htmlEscape="false" rows="3" cols="30" style="width: 100%" readonly="true" class="form-control"/></td>
 		  	</tr>
 		  	<tr >
 		  		<td class="width-15 active"><label class="pull-right" >特长:</label></td>
