@@ -554,7 +554,7 @@ input::-webkit-inner-spin-button{
 									<label><font color="red"> </font>备　　　注:</label>
 								</div>
 								<div class="col-md-6">
-									<input value="${detail.remark}" maxlength="50" name="remark"
+									<input value="${detail.remark}" maxlength="80" name="remark"
 										style="width: 300px;" class="form-control " />
 								</div>
 							</div>
