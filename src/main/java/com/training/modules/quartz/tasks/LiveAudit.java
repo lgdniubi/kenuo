@@ -148,7 +148,7 @@ public class LiveAudit extends CommonService{
 			int value = Integer.parseInt(ParametersFactory.getTrainsParamValues("live_outTime"));
 			//获取没正常结束直播的过期规则
 			int open_live_expiration_time = Integer.parseInt(ParametersFactory.getTrainsParamValues("open_live_expiration_time"));
-			
+			logger.info("[直播定时任务任务],没开直播的过期规则:" + value + ";[直播定时任务任务],没正常结束直播的过期规则：" + open_live_expiration_time);
 			//将没开审核通过且没开直播的直播间作废
 			entryService.upauditstatus(value);
 			
