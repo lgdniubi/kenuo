@@ -21,6 +21,8 @@
 		<result property="updatetime" column="update_time" />
 		<result property="teachersComment" column="teachersComment" />
 		<result property="teachersStarLevel" column="teachersStarLevel" />
+		<result property="workYear" column="workYear" />
+		<result property="serviceManifesto" column="serviceManifesto" />
 		<collection property="infocontlist" resultMap="infocontormPic"></collection>
 
 	</resultMap>
@@ -53,6 +55,8 @@
 		a.update_time,
 		a.teachers_comment AS teachersComment,
 		a.teachers_star_level AS teachersStarLevel,
+		a.work_year AS 'workYear',
+		a.service_manifesto AS 'serviceManifesto',
 		d.user_id as "contuser_id",
 		d.name as "contname",
 		d.url as "conturl",
@@ -92,6 +96,8 @@
 			self_intro,
 			teachers_comment,
 			teachers_star_level,
+			work_year,
+			service_manifesto,
 			create_time,
 			update_time
 		)values(
@@ -108,6 +114,8 @@
 			#{selfintro},
 			#{teachersComment},
 			#{teachersStarLevel},
+			#{workYear},
+			#{serviceManifesto},
 			SYSDATE(),
 			NULL
 		)
@@ -136,6 +144,8 @@
 			self_intro=#{selfintro},
 			teachers_comment=#{teachersComment},
 			teachers_star_level=#{teachersStarLevel},
+			work_year = #{workYear},
+			service_manifesto = #{serviceManifesto},
 			update_time=SYSDATE()
 		where user_id=#{userid}
 	</update>
