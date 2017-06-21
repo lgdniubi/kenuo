@@ -151,8 +151,7 @@ public class WeixinCheckAccount extends CommonService{
 	 * @return
 	 */
 	public static String getXmlInfo(){
-//		String bill_date = formatDate(); 	// 对账单的日期，格式：20140603
-		String bill_date = "20170526"; 	// 对账单的日期，格式：20140603
+		String bill_date = formatDate(); 	// 对账单的日期，格式：20140603
 		String nonce_str = IdGen.uuid();	// 随机字符串
 		String sign = createSign(bill_date,nonce_str);
 		StringBuilder sb = new StringBuilder();
@@ -179,10 +178,5 @@ public class WeixinCheckAccount extends CommonService{
 	public static String createSign(String bill_date,String nonce_str){
 		String stringA="appid="+appid+"&bill_date="+bill_date+"&bill_type="+bill_type+"&mch_id="+mch_id+"&nonce_str="+nonce_str+"&key="+key; 
 		return WebUtils.MD5(stringA);
-	}
-	public static void main(String[] args) {
-		String string = getXmlInfo(); 
-		String result = webUtil(string,downloadAccount);
-		System.out.println(result);
 	}
 }
