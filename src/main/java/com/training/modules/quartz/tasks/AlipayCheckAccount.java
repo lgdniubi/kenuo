@@ -29,6 +29,7 @@ import com.training.common.utils.BeanUtil;
 import com.training.modules.ec.entity.MtmyCheckAccount;
 import com.training.modules.ec.service.CheckAccountService;
 import com.training.modules.quartz.entity.TaskLog;
+import com.training.modules.quartz.tasks.pay.config.alipay.AlipayConfig;
 import com.training.modules.quartz.tasks.utils.CommonService;
 import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.TrainRuleParam;
@@ -49,13 +50,6 @@ public class AlipayCheckAccount extends CommonService{
 	
 	private Logger logger = Logger.getLogger(SubBeforeDay.class);
 	private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
-	public static final String downloadAccount = "https://openapi.alipay.com/gateway.do";	// https统一路径
-	public static final String appid = "2017042006848196"; // APP应用ID
-	public static final String alipay_private_key = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAJ5omdHA4d7iXNb0Z/5f5tHXT/MoH2OZ1SigzTk0Rjd62gWdsadQ7JijatNOFFusa8Pmyv/DLltCeV92CtLmxNR0ZNQDb3GeZmMHovaX6bgCSa+y75AVd5ovybZ9W7i6396Z2VUFTl1VvqoKNSAM+UAOZ0nsBM235vV4xiygDCJDAgMBAAECgYAOTefF9yLuW4aCqqNRZxuSy1ye2nqrJdMHzi16AuxsSh2x8CGAuGAFEIyu9BgGhzVcBVVDbz6aYxBOvHwRu2D+oa2YkgcH4u0yVy271cKWhsqtXC9ezfqYIFpk39Fy5ADUsCwVLuyAyh2NeqxXHbhC+cag8rYD9lw8EeaWB6uZoQJBAOWNNHCirbDQ4cMiadVzcNu9SOsDcuJd58KO1+RDN7a066uHV/s18axTdUlnnERDpa+M16upU/k3oeSouh5RzJsCQQCwqPsJbh7xxsOb4TsGL37kvpL0A4RawCYOpVE44FMZor5JNwX+V8MwXlUvz21ftMtWOAZlFbb7Uui5zriSyZd5AkEAizOLv1oHNhgVL73oq/XrVHV+iHV472i+qC7zIIraeENSPpw+cCoQOc4Ka88W5haXnNMt3f063QAtfnoLE2PLTQJAJDyVOcr31/pAd4IMvGkTq1IYDKuIA6F0bP6mGXeSNCj4xUXfGdvgstQ2vxbaRY5tQyM81JFOtmC8UhjALYPiaQJBALgWz4H3NREZA6XdkKdao2vo7xSKhyUOBdOoHyOMTnzgviFvcnvziVKqZH6OVd5QnxHkiptu2VLNEgbxW1nyOnA="; // 应用私钥
-	public static final String alipay_public_key = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDI6d306Q8fIfCOaTXyiUeJHkrIvYISRcc73s3vF1ZT7XN8RNPwJxo8pWaJMmvyTn9N4HQ632qJBVHf8sxHi/fEsraprwCtzvzQETrNRwVxLO5jVmRGi60j8Ue1efIlzPXV9je9mkjzOmdssymZkh2QhUrCmZYI/FCEa3/cNMW0QIDAQAB"; // 支付宝公钥
-	public static final String sign_type = "RSA";
-	public static final String input_charset = "utf-8"; // 字符编码格式 目前支持utf-8
 	
 	public static List<String> list = new ArrayList<String>();
 	public static String URL;
@@ -84,7 +78,7 @@ public class AlipayCheckAccount extends CommonService{
 			list.clear();
 			String zipFile = null;	// 调用支付宝 将zip文件下载到本地
 			// 调用支付宝对账接口
-			AlipayClient alipayClient = new DefaultAlipayClient(downloadAccount,appid,alipay_private_key,"json",input_charset,alipay_public_key,sign_type);
+			AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.downloadAccount,AlipayConfig.appid,AlipayConfig.your_private_key,"json",AlipayConfig.input_charset,AlipayConfig.alipay_public_key,AlipayConfig.sign_type);
 			AlipayDataDataserviceBillDownloadurlQueryRequest request = new AlipayDataDataserviceBillDownloadurlQueryRequest();
 			String date= formatDate();
 			request.setBizContent("{\"bill_type\":\"trade\",\"bill_date\":\""+date+"\"}");	
@@ -169,26 +163,26 @@ public class AlipayCheckAccount extends CommonService{
 	                		MtmyCheckAccount mtmyCheckAccount = new MtmyCheckAccount();
 	                		for (int i = 0; i < row.length; i++) {
 	                			if("支付宝交易号".equals(t[i])){
-	                				mtmyCheckAccount.setPingId(row[i]);
+	                				mtmyCheckAccount.setPingId(row[i].trim());
 	                			}
 	                			if("商户订单号".equals(t[i])){
-	                				mtmyCheckAccount.setOrderNo(row[i]);
+	                				mtmyCheckAccount.setOrderNo(row[i].trim());
 	                			}
-	                			if("业务类型".equals(t[i]) && (!"交易".equals(row[i]))){
-	            					continue;
+	                			if("业务类型".equals(t[i])){
+	                				mtmyCheckAccount.setGroupFlag(row[i].trim());
 	                			}
 	                			if("完成时间".equals(t[i])){
-	                				mtmyCheckAccount.setPayDate(df.parse(row[i]));
+	                				mtmyCheckAccount.setPayDate(df.parse(row[i].trim()));
 	                			}
 	                			if("商家实收（元）".equals(t[i])){
-	                				mtmyCheckAccount.setPayAmount(row[i]);
+	                				mtmyCheckAccount.setPayAmount(row[i].trim());
 	                			}
 	                			if("商品名称".equals(t[i])){
-	                				mtmyCheckAccount.setPayRemark(row[i]);
+	                				mtmyCheckAccount.setPayRemark(row[i].trim());
 	                			}
 		                	}
 	                		mtmyCheckAccount.setPayChannel("支付宝移动支付(定时任务)");
-	                		if("每天美耶".equals(mtmyCheckAccount.getPayRemark())){
+	                		if("每天美耶".equals(mtmyCheckAccount.getPayRemark()) && "交易".equals(mtmyCheckAccount.getGroupFlag())){
 	                			if(checkAccountService.findByOrderNo(mtmyCheckAccount) == 0){
 	                				mcaList.add(mtmyCheckAccount);
 	                			};

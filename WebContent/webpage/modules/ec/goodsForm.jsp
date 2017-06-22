@@ -75,7 +75,7 @@
 				    area: ['300px', '420px'],
 				    title:"选择商品分类",
 				    ajaxData:{selectIds: $("#goodsCategoryIdId").val()},
-				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/goodscategory/treeData?positionType="+$("input[id='isReal']:checked").val())+"&module=&checked=&extId=&isAll=&selectIds=&positionType="+$("#isReal").val(),
+				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/goodscategory/treeData?positionType=")+"&module=&checked=&extId=&isAll=&selectIds=&positionType="+$("#isReal").val(),
 				    btn: ['确定', '关闭']
 		    	       ,yes: function(index, layero){ //或者使用btn1
 								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
