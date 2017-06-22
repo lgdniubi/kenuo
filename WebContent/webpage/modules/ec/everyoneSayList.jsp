@@ -142,7 +142,7 @@
 									<a href="${ctx}/ec/everyoneSay/del?mtmyEveryoneSayId=${mtmyEveryoneSay.mtmyEveryoneSayId}" onclick="return confirmx('确认要删除吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="ec:everyoneSay:view">
-									<a href="#" onclick="openDialog('${mtmyEveryoneSay.showName}', '${ctx}/ec/everyoneSay/form?mtmyEveryoneSayId=${mtmyEveryoneSay.mtmyEveryoneSayId}','600px', '550px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 查看详情</a>
+									<a href="#" onclick="openDialogView('${mtmyEveryoneSay.showName}', '${ctx}/ec/everyoneSay/form?mtmyEveryoneSayId=${mtmyEveryoneSay.mtmyEveryoneSayId}','600px', '550px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 查看详情</a>
 								</shiro:hasPermission>
 							</td>
 						</tr>
