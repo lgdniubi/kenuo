@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import org.apache.log4j.Logger;
+
 import com.training.common.utils.BeanUtil;
 import com.training.modules.quartz.entity.TaskLog;
 import com.training.modules.quartz.tasks.utils.CommonService;

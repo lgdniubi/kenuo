@@ -228,9 +228,6 @@ public class OfficeController extends BaseController {
 		}else{
 			office.setType("2");
 		}
-		if(office.getOfficeInfo() != null && office.getOfficeInfo().getTags() !=null){
-			office.getOfficeInfo().setTags(office.getOfficeInfo().getTags().replaceAll("#", ","));
-		}
 		model.addAttribute("office", office);
 		return "modules/sys/officeForm";
 	}
@@ -249,6 +246,9 @@ public class OfficeController extends BaseController {
 	@RequestMapping(value = "save")
 	public String save(Office office,OfficeInfo officeInfo, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		//officeInfo中店铺标签 (多个标签用"#"分开)
+		if(office.getOfficeInfo() != null && office.getOfficeInfo().getTags() !=null){
+			office.getOfficeInfo().setTags(office.getOfficeInfo().getTags().replaceAll(",", "#"));
+		}
 		if(Global.isDemoMode()){
 			addMessage(redirectAttributes, "演示模式，不允许操作！");
 			return "redirect:" + adminPath + "/sys/office/";

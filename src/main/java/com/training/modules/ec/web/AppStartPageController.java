@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
@@ -89,6 +90,10 @@ public class AppStartPageController extends BaseController{
 	@RequestMapping(value = "save")
 	public String save(AppStartPage appStartPage,HttpServletRequest request,RedirectAttributes redirectAttributes){
 		try{
+			//当存在链接时,可能会出现转码问题
+			if(appStartPage.getRedirectUrl() != null){
+				appStartPage.setRedirectUrl(HtmlUtils.htmlEscape(appStartPage.getRedirectUrl()));
+			}
 			if(appStartPage.getAppStartPageId()==0){
 				//添加
 				appStartPage.setIsOnSale("0");

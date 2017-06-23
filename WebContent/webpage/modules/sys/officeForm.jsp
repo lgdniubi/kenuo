@@ -26,26 +26,7 @@
 	
 	<!-- 富文本框上传图片样式引用 -->
 	<link rel="stylesheet" type="text/css" href="${ctxStatic}/kindEditor/themes/editCss/edit.css">
-	<!-- 富文本框上传图片样式 -->
 	<style>
-		/* 删除作者样式 */
-		strong{font-weight:bold}
-		.delAuthor{position:relative;}
-		.delAuthor:hover::after{display:block}
-		.delAuthor::after{content:'删除此作者';display:none;cursor:pointer; position:absolute;width:100%;height:100%;text-align:center;line-height:120px;color:#fff;font-size:14px; left:0;top:0; background-color:rgba(0,0,0,.2);background-image:url(${ctxStatic}/kindEditor/themes/default/delAuthor.png);background-position:right top;background-repeat:no-repeat;}
-		.layer-date{vertical-align: middle;}
-		.allImage div{cursor:pointer}
-		.allImage .queryImg{position:relative;}
-		.allImage .queryImg::after{position:absolute;content:'';width:25px;height:25px;right:0;top:-30px;background:url(${ctxStatic}/kindEditor/themes/default/imgGou.png) center;background-size:25px;}
-		/* 预览封面 */
-		.change-cover{width:600px;height:400px;margin:0 auto;position: relative;border:1px solid #cecece;}
-		#inner{width:400px;margin:0 auto;overflow:hidden;}
-		#inner ul{width:400px;height:400px;line-height:400px;overflow:hidden}
-		#inner ul li{width:400px;height:400px;line-height:400px;float:left;}
-		#inner ul img{width:100%;vertical-align:middle}
-		.change-cover .change-ctrl{position:absolute;left:0;top:0;width:100%;height:100%;}
-		.change-cover .change-ctrl .leftBtn{height:100%;width:70px;float:left;background:url(${ctxStatic}/kindEditor/themes/default/left.png) center no-repeat;cursor:pointer}
-		.change-cover .change-ctrl .rightBtn{height:100%;width:70px;float:right;background:url(${ctxStatic}/kindEditor/themes/default/right.png) center no-repeat;cursor:pointer}
 	</style>
 	<script type="text/javascript">
 		var newUploadURL = '<%=uploadURL%>';
@@ -393,7 +374,7 @@
 					 		<%-- <input type="hidden" id="tags" name="officeInfo.tags" value="${office.officeInfo.tags}"> --%>
 							<sys:treeselect id="officeInfotags" name="officeInfotags" value="${office.officeInfo.tags}" 
 								labelName="officeInfo.tags" labelValue="${office.officeInfo.tags}" 
-				     		title="店铺标签" url="/train/shopSpeciality/treeData" cssClass="form-control input-sm" allowClear="true" notAllowSelectParent="true" allowInput="true" checked="true"/>
+				     		title="店铺标签" url="/train/shopSpeciality/treeData" cssClass="form-control" allowClear="true" notAllowSelectParent="true" checked="true"/>
 						 </td>
 						 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>是否推荐：</label></td>
 				         <td class="width-35" id="isRecommend">
@@ -438,7 +419,7 @@
 				        <td class="width-35" colspan="3"><form:textarea path="officeInfo.intro" htmlEscape="false" rows="3" style="width: 100%" maxlength="50" class="form-control"/></td>
 				      </tr>
 				      <tr>
-                        <td><label class="col-sm-2 control-label">详细介绍：</label></td>
+                        <td class="width-15 active"><label class="pull-right">详细介绍：</label></td>
                         <td class="width-35" colspan="3">
                          	<textarea id="editor1" name="content1" rows="9" style="width: 100%" maxlength="2000" class="form-control"></textarea>
 							<textarea id="details" name="officeInfo.details" style="display:none;">${office.officeInfo.details}</textarea>
@@ -570,30 +551,6 @@
 			<div class="ke-dialog-mask ke-add-mask"></div>
 		</div>
 	</div>
-	<!-- 截图弹出框 -->
-	<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="ke-dialog-cutPhoto" >
-		<div class="modal-dialog modal-lg">
-		    <div class="modal-content">
-		    	<div class="modal-header">
-		    		<button type="button" class="close" onclick="closeCutPhoto()"><span aria-hidden="true">&times;</span></button>
-		        	<h4 class="modal-title" id="myModalLabel">裁剪照片</h4>
-				</div>
-				<div class="modal-body" style="background:url(${ctxStatic}/kindEditor/themes/default/cutImgBg.png);background-size:20px;">
-					<div style="width: 350px;height: 350px;line-height:350px;text-align:center; margin: 0 auto">
-						<img alt="" src="" style="max-width: 350px;max-height: 350px;border: 1px solid black;" id="cutphoto">
-						<input id="x1" name="x1" type="hidden">
-						<input id="y1" name="y1" type="hidden">
-						<input id="width" name="width" type="hidden">
-						<input id="height" name="height" type="hidden">
-					</div>
-		      	</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-success" onclick="cutPhoto()">确定</button>
-		      	</div>
-		    </div>
- 		</div>
-	</div>
-	<div class="loading"></div>
 	<script type="text/javascript" src="${ctxStatic}/train/js/jquery.datetimepicker.js"></script>
 	<script>
 	    // 选取时间
