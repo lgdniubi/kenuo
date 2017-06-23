@@ -8,6 +8,7 @@
 			mmu.nickname,
 			mmu.sex AS sex,
 			mmu.mobile,
+			mmu.birthday,
 			mmu.`name`,
 			mmu.level AS userLevel,
 			mmu.office_id AS officeId,
@@ -25,11 +26,9 @@
 	<select id="get" resultType="UserDetail">
 		SELECT
 			mui.mtmy_user_id AS 'userId',
-			mui.nickname AS 'nickname',
 			mui.name AS 'name',
 			mui.mobile AS 'mobile',
 			mui.idcard AS 'idCard',
-			mui.birthday AS 'birthday',
 			mui.lunar_birthday AS 'lunarBirthday',
 			mui.`CHARACTER` AS 'character',
 			mui.constellation AS 'constellation',
@@ -46,10 +45,6 @@
 			mui.weight AS 'weight',
 			mui.height AS 'height',
 			mui.critical_diseases AS 'criticalDiseases',
-			mui.belong_market AS 'bazaarId',
-			mui.belong_store AS 'officeId',
-			mui.belong_beautician_id AS 'beautyId',
-			mui.source AS 'source',
 			mui.promotion_agent AS 'promotionAgent',
 			mui.c_using_brand AS 'usingBrand',
 			mui.c_intrest AS 'intrest',
@@ -66,11 +61,8 @@
 	<insert id="insert">
 		INSERT INTO mtmydb.mtmy_user_info(
 		mtmy_user_id,
-		nickname,
 		name,
-		mobile,
 		idcard,
-		birthday ,
 		lunar_birthday,
 		`character`,
 		constellation,
@@ -87,10 +79,6 @@
 		weight,
 		height,
 		critical_diseases,
-		belong_market,
-		belong_store,
-		belong_beautician_id ,
-		source,
 		promotion_agent,
 		c_using_brand,
 		c_intrest,
@@ -102,11 +90,8 @@
 		)
 		VALUES(
 		#{userId},
-		#{nickname},
 		#{name},
-		#{mobile},
 		#{idCard},
-		#{birthday},
 		#{lunarBirthday},
 		#{character},
 		#{constellation},
@@ -123,10 +108,6 @@
 		#{weight} ,
 		#{height},
 		#{criticalDiseases},
-		#{bazaarId},
-		#{officeId},
-		#{beautyId} ,
-		#{source} ,
 		#{promotionAgent},
 		#{usingBrand},
 		#{intrest},
@@ -141,12 +122,8 @@
 	<!--更新产品使用记录 -->
 	<update id="updateSingle">
 		UPDATE mtmydb.mtmy_user_info SET
-			nickname=#{nickname},
 			name= #{name},
-			mobile= #{mobile},
-			idcard=
-			#{idCard},
-			birthday= #{birthday},
+			idcard=#{idCard},
 			lunar_birthday= #{lunarBirthday},
 			`character`= #{character},
 			constellation= #{constellation},
@@ -163,10 +140,6 @@
 			weight=#{weight},
 			height=#{height},
 			critical_diseases=#{criticalDiseases},
-			belong_market = #{bazaarId},
-			belong_store =#{officeId},
-			belong_beautician_id= #{beautyId},
-			source=#{source},
 			promotion_agent=#{promotionAgent},
 			c_using_brand=#{usingBrand} ,
 			c_intrest=#{intrest},
@@ -265,9 +238,7 @@
 			office_id=#{officeId},
 			office_name=(SELECT name FROM trains.sys_office WHERE id = #{officeId}),
 			beautician_id= #{beautyId},
-			beautician_name=(SELECT name FROM trains.sys_user WHERE id = #{beautyId}),
-			name=#{name},
-			sex=#{sex}
+			beautician_name=(SELECT name FROM trains.sys_user WHERE id = #{beautyId})
 		WHERE  user_id = #{userId}	
 	</update>
 </mapper>

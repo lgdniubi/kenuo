@@ -282,12 +282,12 @@ input::-webkit-inner-spin-button{
 										class="form-control">
 							<div class="col-intems">
 								<label><font color="red"> </font>客户昵称:</label> <input
-									value="${detail.nickname}" maxlength="50" name="nickname"
+									value="${userDetail.nickname}" maxlength="50" name="nickname"
 									style="width: 150px;" class="form-control " disabled="disabled"/>
 							</div>
 							<div class="col-intems">
 								<label><font color="red"> </font>客户性别:</label> <select id="sex"
-									name="sex" style="width: 150px;" class="form-control">
+									name="sex" style="width: 150px;" class="form-control" disabled="disabled">
 									<option value="0"
 										<c:if test="${userDetail.sex=='0'}">selected="true"</c:if>>保密</option>
 									<option value="1"
@@ -299,9 +299,9 @@ input::-webkit-inner-spin-button{
 							<div class="col-intems">
 								<label><font color="red"> </font>出生日期:</label> <input
 									id="birthday" name="birthday" type="text" style="width: 150px"
-									value="<fmt:formatDate value='${detail.birthday}' 
+									value="<fmt:formatDate value='${userDetail.birthday}' 
 									pattern='yyyy-MM-dd'/>"
-									class="form-control">
+									class="form-control" disabled="disabled">
 							</div>
 							<div class="col-intems">
 								<label><font color="red"> </font>阴历生日:</label> <input
@@ -323,8 +323,13 @@ input::-webkit-inner-spin-button{
 							<div class="col-intems">
 								<label><font color="red"> </font>真实姓名:</label>
 								<!--隐藏userId的input框 -->
-								 <input name="name" value="${userDetail.name}" maxlength="50" style="width: 150px;"
-									class="form-control">
+								 <input name="remarkname" value="${userDetail.name}" maxlength="50" style="width: 150px;"
+									class="form-control" readonly="readonly">
+							</div>
+							<div class="col-intems">
+								<label><font color="red"> </font>备   注   名:</label>
+								 <input name="name" value="${detail.name}" maxlength="50" style="width: 150px;"
+									class="form-control" readonly="readonly">
 							</div>
 							<div class="col-intems">
 								<label><font color="red"> </font>客户性格:</label> <select
@@ -549,7 +554,7 @@ input::-webkit-inner-spin-button{
 									<label><font color="red"> </font>备　　　注:</label>
 								</div>
 								<div class="col-md-6">
-									<input value="${detail.remark}" maxlength="50" name="remark"
+									<input value="${detail.remark}" maxlength="80" name="remark"
 										style="width: 300px;" class="form-control " />
 								</div>
 							</div>
@@ -565,7 +570,7 @@ input::-webkit-inner-spin-button{
 							<div class="row" style="padding:10px;">
 								<div class="col-intems">
 									<label><font color="red"> </font>手机号码:</label> <input
-										value="${detail.mobile}" maxlength="50" style="width: 150px;"
+										value="${userDetail.mobile}" maxlength="50" style="width: 150px;"
 									type="number"	class="form-control " readonly="readonly" />
 								</div>
 								<div class="col-intems" >

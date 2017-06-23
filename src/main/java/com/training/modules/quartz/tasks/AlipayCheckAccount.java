@@ -169,26 +169,26 @@ public class AlipayCheckAccount extends CommonService{
 	                		MtmyCheckAccount mtmyCheckAccount = new MtmyCheckAccount();
 	                		for (int i = 0; i < row.length; i++) {
 	                			if("支付宝交易号".equals(t[i])){
-	                				mtmyCheckAccount.setPingId(row[i]);
+	                				mtmyCheckAccount.setPingId(row[i].trim());
 	                			}
 	                			if("商户订单号".equals(t[i])){
-	                				mtmyCheckAccount.setOrderNo(row[i]);
+	                				mtmyCheckAccount.setOrderNo(row[i].trim());
 	                			}
-	                			if("业务类型".equals(t[i]) && (!"交易".equals(row[i]))){
-	            					continue;
+	                			if("业务类型".equals(t[i])){
+	                				mtmyCheckAccount.setGroupFlag(row[i].trim());
 	                			}
 	                			if("完成时间".equals(t[i])){
-	                				mtmyCheckAccount.setPayDate(df.parse(row[i]));
+	                				mtmyCheckAccount.setPayDate(df.parse(row[i].trim()));
 	                			}
 	                			if("商家实收（元）".equals(t[i])){
-	                				mtmyCheckAccount.setPayAmount(row[i]);
+	                				mtmyCheckAccount.setPayAmount(row[i].trim());
 	                			}
 	                			if("商品名称".equals(t[i])){
-	                				mtmyCheckAccount.setPayRemark(row[i]);
+	                				mtmyCheckAccount.setPayRemark(row[i].trim());
 	                			}
 		                	}
 	                		mtmyCheckAccount.setPayChannel("支付宝移动支付(定时任务)");
-	                		if("每天美耶".equals(mtmyCheckAccount.getPayRemark())){
+	                		if("每天美耶".equals(mtmyCheckAccount.getPayRemark()) && "交易".equals(mtmyCheckAccount.getGroupFlag())){
 	                			if(checkAccountService.findByOrderNo(mtmyCheckAccount) == 0){
 	                				mcaList.add(mtmyCheckAccount);
 	                			};

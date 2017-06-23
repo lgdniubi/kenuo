@@ -101,7 +101,7 @@ public class WeixinCheckAccount extends CommonService{
 	            	}
 	            }
 	            mtmyCheckAccount.setPayChannel("微信公众号支付(定时任务)");
-	            if("每天美耶".equals(mtmyCheckAccount.getPayRemark())){
+	            if(!"妃子校".equals(mtmyCheckAccount.getPayRemark())){
 		            if(checkAccountService.findByOrderNo(mtmyCheckAccount) == 0){
 		            	list.add(mtmyCheckAccount);
 	    			};

@@ -33,6 +33,9 @@ public class Userinfo extends DataEntity<Userinfo> {
 	private String teachersComment;       //导师对美容师的评价
 	private int teachersStarLevel;      //美容师星级(一共五颗星，1：一颗星，2：两颗星，以此类推)
 	
+	private Date workYear;            //从业年限
+	private String serviceManifesto;   //服务宣言
+	
 	public List<Userinfocontent> getInfocontlist() {
 		return infocontlist;
 	}
@@ -143,7 +146,16 @@ public class Userinfo extends DataEntity<Userinfo> {
 	public void setTeachersStarLevel(int teachersStarLevel) {
 		this.teachersStarLevel = teachersStarLevel;
 	}
-	
-	
-	
+	public Date getWorkYear() {
+		return workYear;
+	}
+	public void setWorkYear(Date workYear) {
+		this.workYear = workYear;
+	}
+	public String getServiceManifesto() {
+		return serviceManifesto;
+	}
+	public void setServiceManifesto(String serviceManifesto) {
+		this.serviceManifesto = serviceManifesto;
+	}
 }

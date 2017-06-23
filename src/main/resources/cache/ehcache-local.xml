@@ -11,7 +11,8 @@
 	<cache name="sysCache" maxEntriesLocalHeap="100" eternal="true" overflowToDisk="true"/>
 	
 	<!-- 用户缓存 -->
-	<cache name="userCache" maxEntriesLocalHeap="100" eternal="true" overflowToDisk="true"/>
+	<cache name="userCache" maxEntriesLocalHeap="100" eternal="false" overflowToDisk="true"
+			timeToIdleSeconds="300" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LFU"/>
 	
 	<!-- 工作流模块缓存 -->
 	<cache name="actCache" maxEntriesLocalHeap="100" eternal="true" overflowToDisk="true"/>
