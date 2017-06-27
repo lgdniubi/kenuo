@@ -92,7 +92,9 @@ public class LogUtils {
 				log.setTitle(getMenuNamePath(log.getRequestUri(), permission));
 			}
 			// 如果有异常，设置异常信息
-			log.setException(Exceptions.getStackTraceAsString(ex));
+			if(StringUtils.isNotBlank(Exceptions.getStackTraceAsString(ex))){
+				log.setException(Exceptions.getStackTraceAsString(ex).length() > 2000 ? Exceptions.getStackTraceAsString(ex).substring(0,2000) : Exceptions.getStackTraceAsString(ex));
+			}
 			// 如果无标题并无异常日志，则不保存信息
 			if (StringUtils.isBlank(log.getTitle()) && StringUtils.isBlank(log.getException())){
 				return;
