@@ -14,6 +14,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
+
 import com.training.common.utils.BeanUtil;
 import com.training.modules.quartz.entity.TaskLog;
 import com.training.modules.quartz.tasks.utils.CommonService;
@@ -27,6 +29,7 @@ import com.training.modules.sys.utils.QuartzStartConfigUtils;
  * 创建人:	zhanlan 
  * 创建时间:	2017年6月7日 上午11:47:12
  */
+@Component
 public class AppCountAndEvaluationCount extends CommonService {
 
 	private Logger logger = Logger.getLogger(AppCountAndEvaluationCount.class);
