@@ -11,6 +11,10 @@
 			is_on_sale AS isOnSale
 		FROM
 			mtmydb.mtmy_app_start_page
+		WHERE 1 = 1
+			<if test="isOnSale != null and isOnSale != '' and isOnSale != '-1'">
+				AND is_on_sale = #{isOnSale}
+			</if>
 		ORDER BY
 			id DESC
 	</select>

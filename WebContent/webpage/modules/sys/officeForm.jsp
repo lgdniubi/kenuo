@@ -474,53 +474,6 @@
 			<div class="ke-dialog-mask ke-add-mask"></div>
 		</div>
 	</div>
-	<!-- 富文本框自定义商品标签弹出框 -->
-	<div class="ke-dialog-default ke-dialog ke-dalog-addpic" id="ke-dialog-shoptag">
-		<div class="ke-dialog-content">
-			<div class="ke-dialog-header">商品卡片<span class="ke-dialog-icon-close" id="closeShopTag" title="关闭"></span></div>
-			<div class="ke-dialog-body">
-				<div class="ke-tabs navbar-form" style="padding:20px;">
-					<div style="width: 100%;">
-						商品分类：
-						<input id="newGoodsCategoryIdId" class="form-control" type="hidden" value="" name="newGoodsCategoryId" aria-required="true">
-						<div class="input-group">
-							<input id="newGoodsCategoryIdName" class="form-control" type="text" style="" data-msg-required="" value="" readonly="readonly" name="newGoodsCategory.name" aria-required="true"> <span class="input-group-btn">
-								<button id="newGoodsCategoryIdButton" class="btn btn-primary "
-									type="button">
-									<i class="fa fa-search"></i>
-								</button>
-							</span>
-						</div> 
-						<label id="goodsCategoryIdName-error" class="error" style="display: none" for="newGoodsCategoryIdName"></label>
-					</div>
-					<div style="width: 100%;padding-top: 10px;">
-						商品选择：
-						<input id="goodselectId" name="goodsid" class="form-control required" type="hidden" value="" aria-required="true">
-						<div class="input-group">
-							<input id="goodselectName" name="goodsname" readonly="readonly" type="text" value="" data-msg-required="" class="form-control" style="" aria-required="true">
-							<span class="input-group-btn">
-								<button type="button" id="goodselectButton" class="btn   btn-primary  ">
-									<i class="fa fa-search"></i>
-								</button>
-							</span>
-						</div> 
-						<label id="goodselectName-error" class="error" for="goodselectName" style="display: none"></label>
-					</div>
-					<div style="width: 100%;height: 100px" id="goodsdetails"></div>
-				</div>
-			</div>
-			<div class="ke-dialog-footer">
-			    <span class="ke-button-common ke-button-outer ke-dialog-yes" title="确定">
-			        <input class="ke-button-common ke-button" type="button" value="确定" onclick="saveTag()">
-			    </span>
-			    <span class="ke-button-common ke-button-outer ke-dialog-no" title="取消">
-			        <input class="ke-button-common ke-button" id="newCloseShopTag" type="button" value="取消">
-			    </span>
-			</div>
-			<div class="ke-dialog-shadow"></div>
-			<div class="ke-dialog-mask ke-add-mask"></div>
-		</div>
-	</div>
 	<!-- 输入代码弹出框 -->
 	<div class="ke-dialog-default ke-dialog ke-dalog-addpic" id="ke-dialog-code">
 		<div class="ke-dialog-content">
@@ -563,7 +516,7 @@
 		KindEditor.ready(function(K) {
 			editor = K.create('textarea[name="content1"]', {
 				width : "100%",
-				items : ['undo', 'redo', '|','plainpaste','image','media','link','shoptag','fontname','fontsize','forecolor','hilitecolor','bold','italic','underline','|','justifyleft', 'justifycenter', 'justifyright','justifyfull','|','clearhtml','code','source','|','fullscreen']
+				items : ['undo', 'redo', '|','plainpaste','image','media','fontname','fontsize','forecolor','hilitecolor','bold','italic','underline','|','justifyleft', 'justifycenter', 'justifyright','justifyfull','|','clearhtml','code','source','|','fullscreen']
 			});
 		});
 		function LoadOver(){

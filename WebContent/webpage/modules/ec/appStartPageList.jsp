@@ -62,11 +62,29 @@
             <sys:message content="${message}"/>
             <div class="ibox-content">
                 <div class=" clearfix">
-                	<form id="searchForm" action="${ctx}/ec/appStartPage/list" method="post" class="navbar-form navbar-left searcharea">
-						<!-- 翻页隐藏文本框 -->
-						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
-						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-					</form>
+					<div class="row">
+						<div class="col-sm-12">
+							<form:form id="searchForm" modelAttribute="appStartPage" action="${ctx}/ec/appStartPage/list" method="post" class="navbar-form navbar-left searcharea">
+							<div class="pull-left">
+								<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}" />
+								<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
+								<div class="form-group">
+									<label>是否显示：</label>
+									<form:select path="isOnSale" cssClass="form-control">
+										<form:option value="-1">全部</form:option>
+										<form:option value="1">显示</form:option>
+										<form:option value="0">隐藏</form:option>
+									</form:select>
+								</div>
+							</div>	
+							</form:form>
+							<div class="pull-right">
+								<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()"><i class="fa fa-search"></i> 查询</button>
+								<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()"><i class="fa fa-refresh"></i> 重置</button>
+							</div>
+							<br/>
+						</div>
+					</div>
                     <!-- 工具栏 -->
 					<div class="row" style="padding-bottom: 5px;">
 						<div class="col-sm-12">

@@ -18,7 +18,7 @@
     	SELECT
 			beauty_id,
 			COUNT(content) AS evaluation_count,
-			FORMAT((SUM(service_rank) / COUNT(content)),1) AS evaluation_score
+			FORMAT((SUM((IFNULL(service_rank,0) + IFNULL(beauty_rank,0) + IFNULL(skill_rank,0))/3) / COUNT(content)),1) AS evaluation_score
 		FROM
 			mtmydb.mtmy_beauty_comment
 		WHERE
@@ -68,7 +68,7 @@
 		<foreach collection="list" item="item" index="index" separator=";">
 	        UPDATE `trains`.`train_beauty_statistics`
 	        <set>
-	            `evaluation_score` = (evaluation_score + #{item.evaluationScore}) / 2,
+	            `evaluation_score` = ((evaluation_score * evaluation_count + #{item.evaluationScore} * #{item.evaluationCount}) / (evaluation_count + #{item.evaluationCount})),
 				`evaluation_count` = evaluation_count + #{item.evaluationCount},
 		 		`appt_count` = appt_count + #{item.apptCount},
 		 		`update_date` = SYSDATE()
