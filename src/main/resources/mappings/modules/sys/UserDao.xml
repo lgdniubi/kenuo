@@ -97,6 +97,7 @@
 		a.mtmy_user_id AS mtmyUserId,
 		a.data_scope AS 'dataScope',
 		a.sex,
+		a.is_recommend AS 'isRecommend',
     	c.name AS "company.name",
     	c.parent_id AS "company.parent.id",
     	c.parent_ids AS "company.parentIds",
@@ -760,6 +761,16 @@
 	<update id="UpdateUserStatus">
 		UPDATE sys_user SET 
 			status = 1
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 是否推荐 -->
+	<update id="updateStatus">
+		UPDATE sys_user 
+		SET 
+			<if test="isRecommend != null and isRecommend != ''">
+				is_recommend = #{isRecommend}
+			</if>
 		WHERE id = #{id}
 	</update>
 </mapper>

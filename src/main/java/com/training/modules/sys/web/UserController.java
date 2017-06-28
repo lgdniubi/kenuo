@@ -1308,5 +1308,38 @@ public class UserController extends BaseController {
 	// }
 	// });
 	// }
+	
+	/**
+     * 是否推荐
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = {"updateStatus"})
+    @ResponseBody
+    public Map<String, String> updateStatus(User user,HttpServletRequest request){
+    	Map<String, String> jsonMap = new HashMap<String, String>();
+    	try {
+    		String id = request.getParameter("id");
+			String isChange = request.getParameter("isChange");
+			String buttomName = request.getParameter("buttomName");
+			if(!StringUtils.isEmpty(id) && !StringUtils.isEmpty(isChange) && !StringUtils.isEmpty(buttomName)){
+				if("ISRECOMMEND".equals(buttomName)){
+					user.setIsRecommend(isChange);
+				}
+				systemService.updateStatus(user);
+	    		jsonMap.put("FLAG", "OK");
+	    		jsonMap.put("MESSAGE", "修改成功");
+			}else{
+				jsonMap.put("STATUS", "ERROR");
+				jsonMap.put("MESSAGE", "修改失败,必要参数为空");
+			}
+		} catch (Exception e) {
+			logger.error("修改是否推荐出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "修改是否推荐", e);
+			jsonMap.put("FLAG", "ERROR");
+			jsonMap.put("MESSAGE", "修改失败,出现异常");
+		}
+    	return jsonMap;
+    }
 }
 

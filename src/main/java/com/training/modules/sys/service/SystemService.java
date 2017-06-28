@@ -1042,4 +1042,13 @@ public class SystemService extends BaseService implements InitializingBean {
 	public int selectSpecBeautician(String id){
 		return userDao.selectSpecBeautician(id);
 	}
+	
+	/**
+	 * 是否推荐 
+	 * @param user
+	 */
+	@Transactional(readOnly = false)
+	public void updateStatus(User user){
+		userDao.updateStatus(user);
+	}
 }
