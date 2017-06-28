@@ -1,9 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ include file="/webpage/include/taglib.jsp"%>
 <%@ page import="com.training.modules.sys.utils.ParametersFactory"%>
-<%
-	String uploadURL = ParametersFactory.getMtmyParamValues("uploader_url");
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,11 +8,6 @@
    	<meta name="decorator" content="default"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
-    <!-- 图片上传 引用-->
-	<link rel="stylesheet" type="text/css" href="${ctxStatic}/ec/css/custom_uploadImg.css">
-	<link rel="stylesheet" type="text/css" href="${ctxStatic}/train/uploadify/uploadify.css">
-	<script type="text/javascript" src="${ctxStatic}/train/uploadify/lang-cn.js"></script>
-	<script type="text/javascript" src="${ctxStatic}/train/uploadify/jquery.uploadify.min.js"></script>
     <script>
 	    function page(n,s){
 			$("#pageNo").val(n);
@@ -23,14 +15,6 @@
 			$("#searchForm").submit();
 	    	return false;
 	    }
-		$(function(){
-			$(".imgUrl img").each(function(){
-				var $this = $(this),
-					$src = $this.attr('data-src');  
-				$this.attr({'src':$src})
-			});
-			
-		});
 		
 	$(document).ready(function() {
 			var start = {

@@ -225,7 +225,7 @@
 					<input id="labelId" name="labelId" type="hidden"><!-- 获取美容师预约时间 -->
 					<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 						<tr>
-							<td class="active"><label class="pull-right"><font color="red">*</font>订单号：</label></td>
+							<td class="active" width="110px;"><label class="pull-right"><font color="red">*</font>订单号：</label></td>
 							<td>
 								<input class="form-control required" id="orderid" onblur="findOrderGoods()">
 								<input type="hidden" id="oldorderid">
