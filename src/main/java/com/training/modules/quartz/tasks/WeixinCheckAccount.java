@@ -22,6 +22,7 @@ import com.training.modules.ec.entity.MtmyCheckAccount;
 import com.training.modules.ec.service.CheckAccountService;
 import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.quartz.entity.TaskLog;
+import com.training.modules.quartz.tasks.pay.config.weixin.WeixinConfig;
 import com.training.modules.quartz.tasks.utils.CommonService;
 
 /**
@@ -33,12 +34,6 @@ public class WeixinCheckAccount extends CommonService{
 
 	private Logger logger = Logger.getLogger(SubBeforeDay.class);
 	private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
-	public static final String downloadAccount = "https://api.mch.weixin.qq.com/pay/downloadbill"; // 对账接口
-	public static final String appid = "wxa3d2b87d794df255"; // APP应用ID
-	public static final String mch_id = "1364131902"; // 商户号
-	public static final String bill_type = "SUCCESS"; // 账单类型
-	public static final String key = "Dengyun1364131902Xiaomomo1988071"; // 账单类型
 	
 	private static CheckAccountService checkAccountService;
 	static{
@@ -64,7 +59,7 @@ public class WeixinCheckAccount extends CommonService{
 			List<MtmyCheckAccount> list = new ArrayList<MtmyCheckAccount>();
 			
 			String string = getXmlInfo(); 
-			String result = webUtil(string,downloadAccount);
+			String result = webUtil(string,WeixinConfig.downloadAccount);
 			
 			String str = result;// 获取对账报文
 	        String newStr = str.replaceAll(",", " "); // 去空格
@@ -101,7 +96,7 @@ public class WeixinCheckAccount extends CommonService{
 	            	}
 	            }
 	            mtmyCheckAccount.setPayChannel("微信公众号支付(定时任务)");
-	            if("每天美耶".equals(mtmyCheckAccount.getPayRemark())){
+	            if(!"妃子校".equals(mtmyCheckAccount.getPayRemark())){
 		            if(checkAccountService.findByOrderNo(mtmyCheckAccount) == 0){
 		            	list.add(mtmyCheckAccount);
 	    			};
@@ -156,10 +151,10 @@ public class WeixinCheckAccount extends CommonService{
 		String sign = createSign(bill_date,nonce_str);
 		StringBuilder sb = new StringBuilder();
 		sb.append("<xml>");
-		sb.append("<appid>"+appid+"</appid>");
+		sb.append("<appid>"+WeixinConfig.appid+"</appid>");
 		sb.append("<bill_date>"+bill_date+"</bill_date>");
-		sb.append("<bill_type>"+bill_type+"</bill_type>");
-		sb.append("<mch_id>"+mch_id+"</mch_id>");
+		sb.append("<bill_type>"+WeixinConfig.bill_type+"</bill_type>");
+		sb.append("<mch_id>"+WeixinConfig.mch_id+"</mch_id>");
 		sb.append("<nonce_str>"+nonce_str+"</nonce_str>");
 		sb.append("<sign>"+sign+"</sign>");
 		sb.append("</xml>");
@@ -176,7 +171,7 @@ public class WeixinCheckAccount extends CommonService{
 		return defaultStartDate;
 	}
 	public static String createSign(String bill_date,String nonce_str){
-		String stringA="appid="+appid+"&bill_date="+bill_date+"&bill_type="+bill_type+"&mch_id="+mch_id+"&nonce_str="+nonce_str+"&key="+key; 
+		String stringA="appid="+WeixinConfig.appid+"&bill_date="+bill_date+"&bill_type="+WeixinConfig.bill_type+"&mch_id="+WeixinConfig.mch_id+"&nonce_str="+nonce_str+"&key="+WeixinConfig.key; 
 		return WebUtils.MD5(stringA);
 	}
 }

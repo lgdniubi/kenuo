@@ -249,4 +249,10 @@ public interface UserDao extends CrudDao<User> {
 	 * @param user
 	 */
 	public void UpdateUserStatus(String id);
+	
+	/**
+	 * 是否推荐 
+	 * @param user
+	 */
+	public void updateStatus(User user);
 }

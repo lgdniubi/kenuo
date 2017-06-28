@@ -26,26 +26,7 @@
 	
 	<!-- 富文本框上传图片样式引用 -->
 	<link rel="stylesheet" type="text/css" href="${ctxStatic}/kindEditor/themes/editCss/edit.css">
-	<!-- 富文本框上传图片样式 -->
 	<style>
-		/* 删除作者样式 */
-		strong{font-weight:bold}
-		.delAuthor{position:relative;}
-		.delAuthor:hover::after{display:block}
-		.delAuthor::after{content:'删除此作者';display:none;cursor:pointer; position:absolute;width:100%;height:100%;text-align:center;line-height:120px;color:#fff;font-size:14px; left:0;top:0; background-color:rgba(0,0,0,.2);background-image:url(${ctxStatic}/kindEditor/themes/default/delAuthor.png);background-position:right top;background-repeat:no-repeat;}
-		.layer-date{vertical-align: middle;}
-		.allImage div{cursor:pointer}
-		.allImage .queryImg{position:relative;}
-		.allImage .queryImg::after{position:absolute;content:'';width:25px;height:25px;right:0;top:-30px;background:url(${ctxStatic}/kindEditor/themes/default/imgGou.png) center;background-size:25px;}
-		/* 预览封面 */
-		.change-cover{width:600px;height:400px;margin:0 auto;position: relative;border:1px solid #cecece;}
-		#inner{width:400px;margin:0 auto;overflow:hidden;}
-		#inner ul{width:400px;height:400px;line-height:400px;overflow:hidden}
-		#inner ul li{width:400px;height:400px;line-height:400px;float:left;}
-		#inner ul img{width:100%;vertical-align:middle}
-		.change-cover .change-ctrl{position:absolute;left:0;top:0;width:100%;height:100%;}
-		.change-cover .change-ctrl .leftBtn{height:100%;width:70px;float:left;background:url(${ctxStatic}/kindEditor/themes/default/left.png) center no-repeat;cursor:pointer}
-		.change-cover .change-ctrl .rightBtn{height:100%;width:70px;float:right;background:url(${ctxStatic}/kindEditor/themes/default/right.png) center no-repeat;cursor:pointer}
 	</style>
 	<script type="text/javascript">
 		var newUploadURL = '<%=uploadURL%>';
@@ -140,7 +121,7 @@
 				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
 				'uploader' : '<%=uploadURL%>',
 				'fileObjName' : 'file_photo_upload',//<input type="file"/>的name
-				'queueID' : 'file_photo_upload',//与下面HTML的div.id对应
+				'queueID' : 'file_photo_queue',//与下面HTML的div.id对应
 				'method' : 'post',
 				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
 				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
@@ -335,7 +316,7 @@
 		                   	<div class="upload">
 								<input type="file" name="file_photo_upload" id="file_photo_upload">
 							</div>
-							<div id="file_img_queue"></div>
+							<div id="file_photo_queue"></div>
 				         </td>
 				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺短名称：</label></td>
 				         <td class="width-35"><form:input path="officeInfo.shortName" htmlEscape="false" maxlength="50" cssClass="form-control required" /></td>
@@ -393,7 +374,7 @@
 					 		<%-- <input type="hidden" id="tags" name="officeInfo.tags" value="${office.officeInfo.tags}"> --%>
 							<sys:treeselect id="officeInfotags" name="officeInfotags" value="${office.officeInfo.tags}" 
 								labelName="officeInfo.tags" labelValue="${office.officeInfo.tags}" 
-				     		title="店铺标签" url="/train/shopSpeciality/treeData" cssClass="form-control input-sm" allowClear="true" notAllowSelectParent="true" allowInput="true" checked="true"/>
+				     		title="店铺标签" url="/train/shopSpeciality/treeData" cssClass="form-control" allowClear="true" notAllowSelectParent="true" checked="true"/>
 						 </td>
 						 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>是否推荐：</label></td>
 				         <td class="width-35" id="isRecommend">
@@ -438,7 +419,7 @@
 				        <td class="width-35" colspan="3"><form:textarea path="officeInfo.intro" htmlEscape="false" rows="3" style="width: 100%" maxlength="50" class="form-control"/></td>
 				      </tr>
 				      <tr>
-                        <td><label class="col-sm-2 control-label">详细介绍：</label></td>
+                        <td class="width-15 active"><label class="pull-right">详细介绍：</label></td>
                         <td class="width-35" colspan="3">
                          	<textarea id="editor1" name="content1" rows="9" style="width: 100%" maxlength="2000" class="form-control"></textarea>
 							<textarea id="details" name="officeInfo.details" style="display:none;">${office.officeInfo.details}</textarea>
@@ -493,53 +474,6 @@
 			<div class="ke-dialog-mask ke-add-mask"></div>
 		</div>
 	</div>
-	<!-- 富文本框自定义商品标签弹出框 -->
-	<div class="ke-dialog-default ke-dialog ke-dalog-addpic" id="ke-dialog-shoptag">
-		<div class="ke-dialog-content">
-			<div class="ke-dialog-header">商品卡片<span class="ke-dialog-icon-close" id="closeShopTag" title="关闭"></span></div>
-			<div class="ke-dialog-body">
-				<div class="ke-tabs navbar-form" style="padding:20px;">
-					<div style="width: 100%;">
-						商品分类：
-						<input id="newGoodsCategoryIdId" class="form-control" type="hidden" value="" name="newGoodsCategoryId" aria-required="true">
-						<div class="input-group">
-							<input id="newGoodsCategoryIdName" class="form-control" type="text" style="" data-msg-required="" value="" readonly="readonly" name="newGoodsCategory.name" aria-required="true"> <span class="input-group-btn">
-								<button id="newGoodsCategoryIdButton" class="btn btn-primary "
-									type="button">
-									<i class="fa fa-search"></i>
-								</button>
-							</span>
-						</div> 
-						<label id="goodsCategoryIdName-error" class="error" style="display: none" for="newGoodsCategoryIdName"></label>
-					</div>
-					<div style="width: 100%;padding-top: 10px;">
-						商品选择：
-						<input id="goodselectId" name="goodsid" class="form-control required" type="hidden" value="" aria-required="true">
-						<div class="input-group">
-							<input id="goodselectName" name="goodsname" readonly="readonly" type="text" value="" data-msg-required="" class="form-control" style="" aria-required="true">
-							<span class="input-group-btn">
-								<button type="button" id="goodselectButton" class="btn   btn-primary  ">
-									<i class="fa fa-search"></i>
-								</button>
-							</span>
-						</div> 
-						<label id="goodselectName-error" class="error" for="goodselectName" style="display: none"></label>
-					</div>
-					<div style="width: 100%;height: 100px" id="goodsdetails"></div>
-				</div>
-			</div>
-			<div class="ke-dialog-footer">
-			    <span class="ke-button-common ke-button-outer ke-dialog-yes" title="确定">
-			        <input class="ke-button-common ke-button" type="button" value="确定" onclick="saveTag()">
-			    </span>
-			    <span class="ke-button-common ke-button-outer ke-dialog-no" title="取消">
-			        <input class="ke-button-common ke-button" id="newCloseShopTag" type="button" value="取消">
-			    </span>
-			</div>
-			<div class="ke-dialog-shadow"></div>
-			<div class="ke-dialog-mask ke-add-mask"></div>
-		</div>
-	</div>
 	<!-- 输入代码弹出框 -->
 	<div class="ke-dialog-default ke-dialog ke-dalog-addpic" id="ke-dialog-code">
 		<div class="ke-dialog-content">
@@ -570,30 +504,6 @@
 			<div class="ke-dialog-mask ke-add-mask"></div>
 		</div>
 	</div>
-	<!-- 截图弹出框 -->
-	<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="ke-dialog-cutPhoto" >
-		<div class="modal-dialog modal-lg">
-		    <div class="modal-content">
-		    	<div class="modal-header">
-		    		<button type="button" class="close" onclick="closeCutPhoto()"><span aria-hidden="true">&times;</span></button>
-		        	<h4 class="modal-title" id="myModalLabel">裁剪照片</h4>
-				</div>
-				<div class="modal-body" style="background:url(${ctxStatic}/kindEditor/themes/default/cutImgBg.png);background-size:20px;">
-					<div style="width: 350px;height: 350px;line-height:350px;text-align:center; margin: 0 auto">
-						<img alt="" src="" style="max-width: 350px;max-height: 350px;border: 1px solid black;" id="cutphoto">
-						<input id="x1" name="x1" type="hidden">
-						<input id="y1" name="y1" type="hidden">
-						<input id="width" name="width" type="hidden">
-						<input id="height" name="height" type="hidden">
-					</div>
-		      	</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-success" onclick="cutPhoto()">确定</button>
-		      	</div>
-		    </div>
- 		</div>
-	</div>
-	<div class="loading"></div>
 	<script type="text/javascript" src="${ctxStatic}/train/js/jquery.datetimepicker.js"></script>
 	<script>
 	    // 选取时间
@@ -606,7 +516,7 @@
 		KindEditor.ready(function(K) {
 			editor = K.create('textarea[name="content1"]', {
 				width : "100%",
-				items : ['undo', 'redo', '|','plainpaste','image','media','link','shoptag','fontname','fontsize','forecolor','hilitecolor','bold','italic','underline','|','justifyleft', 'justifycenter', 'justifyright','justifyfull','|','clearhtml','code','source','|','fullscreen']
+				items : ['undo', 'redo', '|','plainpaste','image','media','fontname','fontsize','forecolor','hilitecolor','bold','italic','underline','|','justifyleft', 'justifycenter', 'justifyright','justifyfull','|','clearhtml','code','source','|','fullscreen']
 			});
 		});
 		function LoadOver(){

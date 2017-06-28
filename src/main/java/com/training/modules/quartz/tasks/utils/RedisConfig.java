@@ -32,4 +32,7 @@ public class RedisConfig {
 	public static final String mtmy_nowruleuplimit_prefix = "mtmy_nowruleuplimit_"; //用户当天已获得
 	//日志记录器
 	public static final String GOODSCOLLECT_KEY = "GOODSCOLLECT_KEY";//商品收藏
+	
+	public static final String COUNT_ARTICLE_DETAIL_NUM_KEY = "COUNT_ARTICLE_DETAIL_NUM_KEY";//记录文章详情  浏览量
+	public static final String ARTICLE_SHARE_COUNT_KEY = "ARTICLE_SHARE_COUNT_KEY";//记录文章详情分享数
 }

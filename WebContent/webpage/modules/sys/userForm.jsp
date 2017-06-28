@@ -358,10 +358,41 @@
 			 return flag;
 		}
 		
+		function changeTableVal(buttomName,id,isChange){
+			if($("#user"+buttomName).val() == 1){
+				$(".loading").show();//打开展示层
+				$.ajax({
+					type : "POST",
+					url : "${ctx}/sys/user/updateStatus?id="+id+"&isChange="+isChange+"&buttomName="+buttomName,
+					dataType: 'json',
+					success: function(data) {
+						$(".loading").hide(); //关闭加载层
+						var flag = data.FLAG;
+						if("OK" == flag){
+							$("#"+buttomName).html("");//清除DIV内容
+							if(isChange == '0'){
+								//当前状态为【否】
+								$("#"+buttomName).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+buttomName+"','"+id+"','1')\">&nbsp;&nbsp;");
+							}else if(isChange == '1'){
+								//当前状态为【是】
+								$("#"+buttomName).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+buttomName+"','"+id+"','0')\">&nbsp;&nbsp;");
+							}
+						}
+						top.layer.alert(data.MESSAGE, {icon: 0, title:'提醒'}); 
+					}
+				});   
+			}else{
+				top.layer.alert("无此操作权限!", {icon: 0, title:'提醒'}); 
+			}
+		}
 	</script>
 </head>
 <body>
 	<form:form id="inputForm" modelAttribute="user" action="${ctx}/sys/user/save" method="post" class="form-horizontal">
+		<!-- 是否推荐按钮权限 -->
+		<shiro:hasPermission name="sys:user:updateIsRecommend">
+			<input type="hidden" id="userISRECOMMEND" value="1">
+		</shiro:hasPermission>
 		<form:hidden path="id" id="id"/>
 		<input id="result" name="result" type="hidden"/>
 		<input id="layer" name="layer" type="hidden"/>
@@ -540,8 +571,15 @@
 		  		<td class="width-35">
 		  			<input id="userinfo.workYear" name="userinfo.workYear" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${user.userinfo.workYear}" pattern="yyyy-MM-dd"/>"/>
 		  		</td>
-		 		<td class="width-15 active"><label class="pull-right">服务宣言:</label></td>
-				<td class="width-35" colspan="3"><form:textarea path="userinfo.serviceManifesto" htmlEscape="false" rows="3" cols="30" style="width: 100%" class="form-control"/></td>
+		 		<td class="width-15 active"><label class="pull-right">是否推荐：</label></td>
+			    	<td class="width-35" id="ISRECOMMEND">
+		         		<c:if test="${user.isRecommend == 0}">
+							<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('ISRECOMMEND','${user.id}',1)">&nbsp;&nbsp;
+						</c:if>
+						<c:if test="${user.isRecommend == 1}">
+							<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('ISRECOMMEND','${user.id}',0)">&nbsp;&nbsp;
+						</c:if>
+					 </td>
 		  	</tr>
 		  	<tr >
 		  		<td class="width-15 active"><label class="pull-right" >特长:</label></td>
@@ -592,6 +630,10 @@
 					
 					</c:forEach>
 				</td>
+		  	</tr>
+		  	<tr>
+		  		<td class="width-15 active"><label class="pull-right">服务宣言:</label></td>
+				<td class="width-35" colspan="3"><form:textarea path="userinfo.serviceManifesto" htmlEscape="false" rows="3" cols="30" style="width: 100%" class="form-control"/></td>
 		  	</tr>
 		  	<tr>
 		  		<td class="width-15 active"><label class="pull-right">自我评价:</label></td>

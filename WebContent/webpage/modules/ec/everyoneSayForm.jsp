@@ -62,7 +62,7 @@
 				 			<input id="mtmyEveryoneSayId" name="mtmyEveryoneSayId" type="hidden" value="${mtmyEveryoneSay.parentId}"/>
 				 			<div class="talk_area" style="border-bottom: 1px solid #000;">
 					 			<div class="talk_inner">
-									<div class="talk_head">说说用户：</div>
+									<div class="talk_head">回复用户：</div>
 									<div class="talk_con">${mtmyEveryoneSay.userName}　<fmt:formatDate value="${mtmyEveryoneSay.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></div>
 								</div>
 								<div class="talk_inner">
