@@ -14,11 +14,12 @@
 		GROUP BY
 			mao.shop_id
     </sql>
+    
     <sql id="selectShopComment">
     	SELECT
 			shop_id,
 			COUNT(contents) AS evaluation_count,
-			FORMAT((SUM(serve_rank) / COUNT(contents)),1) AS evaluation_score
+			FORMAT((SUM((IFNULL(serve_rank,0) + IFNULL(entertain_rank,0) + IFNULL(environment_rank,0))/3) / COUNT(contents)),1) AS evaluation_score
 		FROM
 			mtmydb.mtmy_shop_comment
 		WHERE
@@ -67,8 +68,8 @@
 		<foreach collection="list" item="item" index="index" open="" close="" separator=";">
 	        UPDATE `trains`.`train_shop_statistics`
 	        <set>
-	            `evaluation_score` = (evaluation_score + #{item.evaluationScore}) / 2,
-				 `evaluation_count` = evaluation_count + #{item.evaluationCount},
+	        	`evaluation_score` = (evaluation_score * evaluation_count + #{item.evaluationScore} * #{item.evaluationCount}) / (evaluation_count + #{item.evaluationCount}),
+				`evaluation_count` = evaluation_count + #{item.evaluationCount},
 		 		`appt_count` = appt_count + #{item.apptCount},
 		 		`update_date` = SYSDATE()
 	        </set>
