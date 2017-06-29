@@ -773,4 +773,22 @@
 			</if>
 		WHERE id = #{id}
 	</update>
+	
+	<!-- 查询user_info中是否存在相应的数据 -->
+	<select id="selectIsExist" resultType="Integer">
+		SELECT COUNT(*) FROM sys_user_info WHERE user_id = #{id}
+	</select>
+	
+	<!-- 当为原来不是排班角色，后来改为排班角色，但是user_info中没有信息时，新增美容师的信息 -->
+	<insert id="insertUserInfo">
+		INSERT INTO sys_user_info(
+			id,
+			user_id,
+			create_time
+		)VALUES(
+			#{uuid},
+			#{id},
+			NOW()
+		)
+	</insert>
 </mapper>
