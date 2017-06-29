@@ -14,11 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import org.apache.log4j.Logger;
-<<<<<<< HEAD
 import org.springframework.stereotype.Component;
-=======
->>>>>>> 43caa52f1eb4ca8697ae7337f94f6d7f0a1c260a
-
 import com.training.common.utils.BeanUtil;
 import com.training.modules.quartz.entity.TaskLog;
 import com.training.modules.quartz.tasks.utils.CommonService;
