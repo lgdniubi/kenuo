@@ -40,7 +40,7 @@ public class QuartzStartConfigUtils {
 	 */
 	public static Integer queryValue(String key){
 		Integer value = dao.queryValue(key);
-		return value;
+		return value == null ? 0 : value;
 	}
 	/**
 	 * 方法说明:	添加定时器起始配置数据

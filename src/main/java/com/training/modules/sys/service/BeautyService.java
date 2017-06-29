@@ -43,13 +43,7 @@ public class BeautyService extends TreeService<BeautyDao, BeautyCountData> {
 	public Map<String, Object> completeBeautyCountData(){
 		//先从数据库中取出上次存入的定位id
 		Integer commId = QuartzStartConfigUtils.queryValue("mtmy_beauty_comment");
-		if(commId == null ){
-			commId = 0;
-		}
 		Integer apptOrderId = QuartzStartConfigUtils.queryValue("mtmy_appt_order_beauty");
-		if(apptOrderId == null){
-			apptOrderId = 0;
-		}
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("commId", commId);
 		map.put("apptOrderId", apptOrderId);
