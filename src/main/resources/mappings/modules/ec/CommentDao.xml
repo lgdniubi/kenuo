@@ -205,6 +205,13 @@
 	</select>
 	<!-- 查询商品星级、总评论数 -->
 	<select id="findCommentByGoodId" resultType="map">
-		SELECT IFNULL(TRUNCATE(AVG(deliver_rank+goods_rank+service_rank)/3,2),0) AS rank,COUNT(1) AS commentNum FROM mtmydb.mtmy_comment WHERE goods_id = #{goodsId}
+		SELECT
+			evaluation_score AS rank,
+			evaluation_count AS commentNum,
+			buy_count AS buyCount
+		FROM
+			mtmydb.mtmy_goods_statistics
+		WHERE
+			goods_id = #{goodsId}
 	</select>
 </mapper>

@@ -114,6 +114,7 @@ public class MtmyArticleController extends BaseController{
 			String rank = nFromat.format(num/10);
 			goods.setRank(rank);
 			goods.setCommentNum(Integer.valueOf(map.get("commentNum").toString()));
+			goods.setBuyCount(Integer.valueOf(map.get("buyCount").toString()));
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "生成商品卡片", e);
 			logger.error("生成商品卡片错误信息:"+e.getMessage());
