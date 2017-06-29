@@ -52,11 +52,11 @@
     <!-- 查询技师的所有统计数据 -->
 	<select id="queryBeautyCountData" resultType="BeautyCountData" parameterType="java.util.Map">
 		SELECT
-			t2.beauty_id AS 'beautyId',
+			t1.beautician_id AS 'beautyId',
 			t1.appt_count AS 'apptCount',
 			t2.evaluation_count AS 'evaluationCount',
 			t2.evaluation_score AS 'evaluationScore',
-			IFNULL((SELECT tbs.beauty_id FROM trains.train_beauty_statistics tbs WHERE tbs.beauty_id = t2.beauty_id),"NULL")AS 'isExist'
+			IFNULL((SELECT tbs.beauty_id FROM trains.train_beauty_statistics tbs WHERE tbs.beauty_id = t1.beautician_id),"NULL")AS 'isExist'
 		FROM
 			(<include refid="selectApptOrder"></include>) t1
 		LEFT JOIN (
