@@ -255,4 +255,15 @@ public interface UserDao extends CrudDao<User> {
 	 * @param user
 	 */
 	public void updateStatus(User user);
+	
+	/**
+	 * 查询user_info中是否存在相应的数据
+	 */
+	public int selectIsExist(String id);
+
+	
+	/**
+	 * 当为原来不是排班角色，后来改为排班角色，但是user_info中没有信息时，新增美容师的信息
+	 */
+	public void insertUserInfo(@Param(value="uuid")String uuid, @Param(value="id")String id);
 }
