@@ -64,18 +64,17 @@
 	</select>
 	
 	<!-- 修改train_beauty_statistics 表中技师的统计数据 -->
-	<update id="updateBeautyCountData" parameterType="java.util.List">
-		<foreach collection="list" item="item" index="index" separator=";">
+	<update id="updateBeautyCountData" parameterType="com.training.modules.sys.entity.BeautyCountData">
 	        UPDATE `trains`.`train_beauty_statistics`
-	        <set>
-	            `evaluation_score` = ((evaluation_score * evaluation_count + #{item.evaluationScore} * #{item.evaluationCount}) / (evaluation_count + #{item.evaluationCount})),
-				`evaluation_count` = evaluation_count + #{item.evaluationCount},
-		 		`appt_count` = appt_count + #{item.apptCount},
+	        SET
+	        	<if test="evaluationCount != 0">
+	            `evaluation_score` = ((evaluation_score * evaluation_count + #{evaluationScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount})),
+	        	</if>
+				`evaluation_count` = evaluation_count + #{evaluationCount},
+		 		`appt_count` = appt_count + #{apptCount},
 		 		`update_date` = SYSDATE()
-	        </set>
 	        WHERE
-				beauty_id = #{item.beautyId}
-    	</foreach>
+				beauty_id = #{beautyId}
 	</update>
 	
 	<!-- 将技师的统计数据插入train_beauty_statistics 表 -->

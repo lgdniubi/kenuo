@@ -49,7 +49,7 @@ public interface ShopCountDataDao extends TreeDao<ShopCountData>{
 	 * 修改记录:	修改人	修改记录	2017年6月7日 下午5:53:52
 	 * @param b
 	 */
-	public int updateShopCountData(List<ShopCountData> list);
+	public int updateShopCountData(ShopCountData shopCountData);
 	/**
 	 * 方法说明:	将店铺的统计数据插入train_shop_statistics 表
 	 * 创建时间:	2017年6月7日 下午5:21:40

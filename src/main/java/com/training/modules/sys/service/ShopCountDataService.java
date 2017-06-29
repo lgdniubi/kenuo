@@ -64,7 +64,9 @@ public class ShopCountDataService extends TreeService<ShopCountDataDao, ShopCoun
 		}
 		//修改的数据不为null  才会执行修改操作
 		if(shopList.size() != 0){
-			dao.updateShopCountData(shopList);
+			for (ShopCountData shopCountData : shopList) {
+				dao.updateShopCountData(shopCountData);
+			}
 		}
 		//需要添加的数据不为null  才执行添加操作
 		if(addList.size() != 0){

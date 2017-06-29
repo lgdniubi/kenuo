@@ -84,7 +84,9 @@ public class BeautyService extends TreeService<BeautyDao, BeautyCountData> {
 		}
 		//修改的数据不是null 才会执行修改操作
 		if(list.size() != 0){
-			dao.updateBeautyCountData(list);
+			for (BeautyCountData beautyCountData : list) {
+				dao.updateBeautyCountData(beautyCountData);
+			}
 		}
 		
 		//获取查询数据的定位id
