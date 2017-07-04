@@ -325,7 +325,6 @@ public class fzxRoleController extends BaseController{
 			model.addAttribute("userList", userList);
 			model.addAttribute("selectIds", Collections3.extractToString(userList, "name", ","));
 			model.addAttribute("officeList", officeService.findAll());
-			System.out.println(Collections3.extractToString(userList, "name", ","));
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "角色分配 -- 打开角色分配对话框", e);
 			logger.error("角色分配 -- 打开角色分配对话框错误信息:"+e.getMessage());
