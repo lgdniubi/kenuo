@@ -7,17 +7,6 @@
 	<meta name="decorator" content="default"/>
 
 	<script type="text/javascript">
-
-		function page(n,s){
-			$("#pageNo").val(n);
-			$("#pageSize").val(s);
-			$("#searchForm").submit();
-	    	return false;
-	    }
-	
-		
-		
-		
 		$(document).ready(function() {
 			
 			var start = {
