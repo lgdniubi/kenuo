@@ -182,6 +182,12 @@
 		<if test="endDate != null and endDate != ''">
 			AND lo.create_date <![CDATA[ <= ]]> #{endDate}
 		</if>
+		<if test="firstDate != null and firstDate != ''">
+			AND lo.pay_date >= #{firstDate}
+		</if>
+		<if test="lastDate != null and lastDate != ''">
+			AND lo.pay_date <![CDATA[ <= ]]> #{lastDate}
+		</if>
 		<if test="type != 0">
 			AND lo.type = #{type} 
 		</if>

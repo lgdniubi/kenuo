@@ -1,6 +1,10 @@
 package com.training.modules.ec.entity;
 
 import com.training.common.persistence.DataEntity;
+import com.training.common.utils.BeanUtil;
+import com.training.common.utils.StringUtils;
+import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.quartz.tasks.utils.RedisConfig;
 
 /**
  * 商品规格价格表
@@ -78,6 +82,11 @@ public class GoodsSpecPrice extends DataEntity<GoodsSpecPrice> {
 		this.marketPrice = marketPrice;
 	}
 	public int getStoreCount() {
+		RedisClientTemplate redisClientTemplate = (RedisClientTemplate) BeanUtil.getBean("redisClientTemplate");
+		String store_count = redisClientTemplate.get(RedisConfig.GOODS_SPECPRICE_PREFIX + this.getGoodsId()+"#"+this.specKey);
+		if(StringUtils.isNotBlank(store_count)){
+			storeCount = Integer.parseInt(store_count);
+		}
 		return storeCount;
 	}
 	public void setStoreCount(int storeCount) {

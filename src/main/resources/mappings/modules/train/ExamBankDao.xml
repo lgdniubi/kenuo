@@ -54,6 +54,7 @@
 			WHERE 
 				a.`category_id`=b.`category_id` 
 				AND a.exercise_type = #{lessontype} 
+				AND a.status = '0'
 				<if test="categoryId !='' and categoryId !=null">
 					AND a.category_id = #{categoryId }
 				</if>

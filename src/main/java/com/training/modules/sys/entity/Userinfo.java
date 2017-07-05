@@ -158,7 +158,4 @@ public class Userinfo extends DataEntity<Userinfo> {
 	public void setServiceManifesto(String serviceManifesto) {
 		this.serviceManifesto = serviceManifesto;
 	}
-	
-	
-	
 }

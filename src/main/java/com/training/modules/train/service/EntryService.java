@@ -53,8 +53,8 @@ public class EntryService {
 		entrymapper.upauditstatus(value);
 	}
 	
-	public List<LiveRoomidAndAuditid> queryRoomidandAuditid(){
-		return entrymapper.queryRoomidandAuditid();
+	public List<LiveRoomidAndAuditid> queryRoomidandAuditid(int times){
+		return entrymapper.queryRoomidandAuditid(times);
 	}
 	
 	public void uplivestatus(int value1,int value2){

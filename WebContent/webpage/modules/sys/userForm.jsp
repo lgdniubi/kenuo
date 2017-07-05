@@ -30,6 +30,9 @@
 			if(val.indexOf("排班")>=0){
 				document.getElementById("hideen").style.display="";
 			}
+			if($("#id").val() == null || $("#id").val() == ""){
+				document.getElementById("hideen").style.display="";
+			}
 			
 		}
 			// 手机号码验证
@@ -322,12 +325,12 @@
 				fixed: true,
 	            elem: '#userinfo.birthday', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
 	            event: 'focus' //响应事件。如果没有传入event，则按照默认的click
-	        }); 	
+	        }); 
 			laydate({
 				fixed: true,
 	            elem: '#userinfo.workYear', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
 	            event: 'focus' //响应事件。如果没有传入event，则按照默认的click
-	        }); 	
+	        }); 
 		});
 
 		window.onload=init;
@@ -572,14 +575,14 @@
 		  			<input id="userinfo.workYear" name="userinfo.workYear" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${user.userinfo.workYear}" pattern="yyyy-MM-dd"/>"/>
 		  		</td>
 		 		<td class="width-15 active"><label class="pull-right">是否推荐：</label></td>
-			    	<td class="width-35" id="ISRECOMMEND">
-		         		<c:if test="${user.isRecommend == 0}">
-							<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('ISRECOMMEND','${user.id}',1)">&nbsp;&nbsp;
-						</c:if>
-						<c:if test="${user.isRecommend == 1}">
-							<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('ISRECOMMEND','${user.id}',0)">&nbsp;&nbsp;
-						</c:if>
-					 </td>
+		    	<td class="width-35" id="ISRECOMMEND">
+	         		<c:if test="${user.isRecommend == 0}">
+						<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('ISRECOMMEND','${user.id}',1)">&nbsp;&nbsp;
+					</c:if>
+					<c:if test="${user.isRecommend == 1}">
+						<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('ISRECOMMEND','${user.id}',0)">&nbsp;&nbsp;
+					</c:if>
+				 </td>
 		  	</tr>
 		  	<tr >
 		  		<td class="width-15 active"><label class="pull-right" >特长:</label></td>
@@ -633,7 +636,7 @@
 		  	</tr>
 		  	<tr>
 		  		<td class="width-15 active"><label class="pull-right">服务宣言:</label></td>
-				<td class="width-35" colspan="3"><form:textarea path="userinfo.serviceManifesto" htmlEscape="false" rows="3" cols="30" style="width: 100%" class="form-control"/></td>
+				<td class="width-35" colspan="3"><form:textarea path="userinfo.serviceManifesto" htmlEscape="false" rows="3" cols="30" style="width: 100%" readonly="true" class="form-control"/></td>
 		  	</tr>
 		  	<tr>
 		  		<td class="width-15 active"><label class="pull-right">自我评价:</label></td>

@@ -462,3 +462,4 @@ public class UserDetailController extends BaseController {
         return str;
 	}
 }
+

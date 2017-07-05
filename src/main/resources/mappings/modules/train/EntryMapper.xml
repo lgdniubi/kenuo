@@ -52,6 +52,7 @@
 		LEFT JOIN trains.train_live_room ro ON au.userId = ro.userId
 	WHERE
 		audit_status = 4
+		AND now() > DATE_ADD(bengtime,INTERVAL ${times} MINUTE)
 	</select>
 	
 	<select id="getliveendbyid" parameterType="java.lang.Integer" resultType="com.training.modules.train.entity.EntrySopCastBean">
