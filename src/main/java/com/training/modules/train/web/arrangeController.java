@@ -254,7 +254,7 @@ public class arrangeController extends BaseController{
 						list.add(arrangeShop);
 					}
 					if("1".equals(isUpdate)){
-						if("" != arrangeId || null != arrangeId || "0".equals(arrangeId)){
+						if(!"".equals(arrangeId) && null != arrangeId && !"0".equals(arrangeId)){
 							isUpdateArrange.add(arrangeId);
 						}
 					}
@@ -384,7 +384,7 @@ public class arrangeController extends BaseController{
 						list.add(arrangeEquipment);
 					}
 					if("1".equals(isUpdate)){
-						if("" != arrangeId || null != arrangeId || "0".equals(arrangeId)){
+						if(!"".equals(arrangeId) && null != arrangeId && !"0".equals(arrangeId)){
 							isUpdateArrange.add(arrangeId);
 						}
 					}
@@ -525,7 +525,7 @@ public class arrangeController extends BaseController{
 						list.add(arrangeShop);
 					}
 					if("1".equals(isUpdate)){
-						if("" != arrangeId || null != arrangeId || "0".equals(arrangeId)){
+						if(!"".equals(arrangeId) && null != arrangeId && !"0".equals(arrangeId)){
 							isUpdateArrange.add(arrangeId);
 						}
 					}
