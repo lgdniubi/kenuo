@@ -301,7 +301,7 @@
 						<tr>
 							<td class="active"><label class="pull-right">消费者备注：</label></td>
 							<td>
-								<textarea rows="7" cols="30" id="remarks" name="remarks" onkeydown="checkEnter(event)" class="form-control"></textarea>
+								<textarea rows="7" cols="30" id="userNote" name="userNote" onkeydown="checkEnter(event)" class="form-control"></textarea>
 							</td>
 						</tr>
 					</table>
