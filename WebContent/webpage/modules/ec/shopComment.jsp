@@ -5,7 +5,13 @@
 <head>
 	<title>店铺评论列表</title>
 	<meta name="decorator" content="default"/>
-
+<link rel="stylesheet" href="${ctxStatic}/train/css/exam.css">
+<link href="${ctxStatic}/train/css/imgbox.css" rel="stylesheet" />
+<script src="${ctxStatic}/train/js/jquery.min.js"></script>
+<script type="text/javascript">
+	var jq = $.noConflict();
+</script>
+<script src="${ctxStatic}/train/js/jquery.imgbox.pack.js"></script>
 	<script type="text/javascript">
 		function page(n,s){
 			$("#pageNo").val(n);
