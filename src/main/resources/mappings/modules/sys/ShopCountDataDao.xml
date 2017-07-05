@@ -19,7 +19,7 @@
     	SELECT
 			shop_id,
 			COUNT(contents) AS evaluation_count,
-			FORMAT((SUM((IFNULL(serve_rank,0) + IFNULL(entertain_rank,0) + IFNULL(environment_rank,0))/3) / COUNT(contents)),1) AS evaluation_score
+			FORMAT((SUM((IFNULL(serve_rank,0) + IFNULL(entertain_rank,0) + IFNULL(environment_rank,0))/3) / COUNT(1)),1) AS evaluation_score
 		FROM
 			mtmydb.mtmy_shop_comment
 		WHERE
@@ -61,6 +61,16 @@
 		FROM
 			(<include refid="selectApptOrder"></include>) t1
 		LEFT JOIN (<include refid="selectShopComment"></include>) t2 ON t2.shop_id = t1.shop_id
+		UNION
+		SELECT
+			t2.shop_id AS 'shopId',
+			t1.appt_count AS 'apptCount',
+			IFNULL(t2.evaluation_count, 0)AS 'evaluationCount',
+			IFNULL(t2.evaluation_score, 0)AS 'evaluationScore',
+			IFNULL((SELECT tss.shop_id FROM trains.train_shop_statistics tss WHERE tss.shop_id = t2.shop_id),"NULL")AS 'isExist'
+		FROM
+			(<include refid="selectApptOrder"></include>) t1
+		RIGHT JOIN (<include refid="selectShopComment"></include>) t2 ON t2.shop_id = t1.shop_id
 	</select>
 	
 	<!-- 修改train_shop_statistics 表中店铺的统计数据 -->

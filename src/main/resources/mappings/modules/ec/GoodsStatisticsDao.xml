@@ -60,6 +60,17 @@
 			(<include refid="selectGoodsMapping"></include>) t1   
 		LEFT JOIN (
 			<include refid="selectComment"></include>) t2 ON t2.goodsId = t1.goodsId
+		UNION
+		SELECT
+			t2.goodsId,
+			evaluationScore,
+			evaluationCount,
+			buyCount,
+			IFNULL((SELECT tbs.goods_id FROM mtmydb.mtmy_goods_statistics tbs WHERE tbs.goods_id = t1.goodsId),"NULL")AS 'isExist'
+		FROM
+			(<include refid="selectGoodsMapping"></include>) t1   
+		RIGHT JOIN (
+			<include refid="selectComment"></include>) t2 ON t2.goodsId = t1.goodsId
 	</select>
 	
 	<!-- 修改mtmy_goods_statistics 表中商品的统计数据 -->

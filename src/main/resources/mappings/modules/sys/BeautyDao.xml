@@ -18,7 +18,7 @@
     	SELECT
 			beauty_id,
 			COUNT(content) AS evaluation_count,
-			FORMAT((SUM((IFNULL(service_rank,0) + IFNULL(beauty_rank,0) + IFNULL(skill_rank,0))/3) / COUNT(content)),1) AS evaluation_score
+			FORMAT((SUM((IFNULL(service_rank,0) + IFNULL(beauty_rank,0) + IFNULL(skill_rank,0))/3) / COUNT(1)),1) AS evaluation_score
 		FROM
 			mtmydb.mtmy_beauty_comment
 		WHERE
@@ -60,6 +60,17 @@
 		FROM
 			(<include refid="selectApptOrder"></include>) t1
 		LEFT JOIN (
+			<include refid="selectBeautyComment"></include>) t2 ON t2.beauty_id = t1.beautician_id
+		UNION
+		SELECT
+			t2.beauty_id AS 'beautyId',
+			t1.appt_count AS 'apptCount',
+			t2.evaluation_count AS 'evaluationCount',
+			t2.evaluation_score AS 'evaluationScore',
+			IFNULL((SELECT tbs.beauty_id FROM trains.train_beauty_statistics tbs WHERE tbs.beauty_id = t2.beauty_id),"NULL")AS 'isExist'
+		FROM
+			(<include refid="selectApptOrder"></include>) t1
+		RIGHT JOIN (
 			<include refid="selectBeautyComment"></include>) t2 ON t2.beauty_id = t1.beautician_id
 	</select>
 	
