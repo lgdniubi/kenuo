@@ -50,9 +50,11 @@ public class ArticlesStatisticsService extends TreeService<ArticlesStatisticsDao
 	public Map<String, Object> completeArticlesStatistics(){
 		//先从数据库中取出上次存入的定位id
 		Integer commentId = QuartzStartConfigUtils.queryValue("mtmy_articles_comment");
+		Integer likeId = QuartzStartConfigUtils.queryValue("mtmy_articles_like");
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("mtmy_articles_comment", commentId);
+		map.put("mtmy_articles_like", likeId);
 		
 		//查询文章的统计数据   并更新mtmy_articles_statistics
 		List<ArticlesStatisticsCountData> articlesList = dao.queryArticlesCountData(map);
@@ -83,10 +85,9 @@ public class ArticlesStatisticsService extends TreeService<ArticlesStatisticsDao
 			//获取查询数据的定位id
 			Map<String, Object> map2 = new HashMap<String, Object>();
 			Integer new_commentId = dao.findCommentId();
-			if(new_commentId == null){
-				new_commentId = 0;
-			}
+			Integer new_likeId = dao.findLikeId();
 			map2.put("mtmy_articles_comment", new_commentId);
+			map2.put("mtmy_articles_like", new_likeId);
 			return map2;
 		}
 		return map;

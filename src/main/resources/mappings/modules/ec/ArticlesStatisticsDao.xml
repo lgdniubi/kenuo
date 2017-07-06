@@ -12,20 +12,31 @@
 			id DESC
 		LIMIT 1
 	</select>
+	<!-- 获取定时器截止的 评论id -->
+	<select id="findLikeId" resultType="int">
+		SELECT
+			id AS likeId
+		FROM
+			mtmydb.mtmy_articles_like
+		ORDER BY
+			id DESC
+		LIMIT 1
+	</select>
 
 	<!-- 查询文章的id,评论数,点赞数 -->
 	<select id="queryArticlesCountData" resultType="ArticlesStatisticsCountData" parameterType="java.util.Map">
-		SELECT
-			articles_id AS articlesId,
+		SELECT 
+			t.articles_id AS articlesId,
 			COUNT(1) AS commonCount,
-			SUM(like_num) AS likeCount,
+			(SELECT COUNT(l.articles_id) AS likeCount FROM mtmydb.mtmy_articles_like AS l WHERE l.articles_id = t.articles_id AND id > #{mtmy_articles_like} ) AS likeCount,
 			IFNULL((SELECT mas.articles_id FROM mtmydb.mtmy_articles_statistics mas WHERE mas.articles_id = t.articles_id),"NULL")AS 'isExist'
 		FROM
 			mtmydb.mtmy_articles_comment t
-		WHERE
-			id > #{mtmy_articles_comment}
+		WHERE 
+			id > #{mtmy_articles_comment} AND del_flag = 0 
 		GROUP BY
-			articles_id
+			t.articles_id
+		ORDER BY t.articles_id
 	</select>
 
 	<!-- 修改mtmy_articles_statistics 表中文章的分享量 -->
@@ -39,11 +50,12 @@
 				share_count = #{shareCount},
 			</if>
 			<if test="commonCount != null and commonCount != '' ">
-				common_count = #{commonCount},
+				common_count = common_count + #{commonCount},
 			</if>
 			<if test="likeCount != null and likeCount != '' ">
-				like_count = #{likeCount},
+				like_count = like_count + #{likeCount},
 			</if>
+			is_sham = 0
 		</set>
 		WHERE
 		articles_id = #{articlesId}
@@ -74,7 +86,7 @@
 			<if test="articlesId != null">
 				#{articlesId},
 			</if>
-			is_sham,
+			0,
 			<if test="lookCount != null">
 				#{lookCount},
 			</if>
