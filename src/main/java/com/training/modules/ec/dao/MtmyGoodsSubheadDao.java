@@ -77,4 +77,10 @@ public interface MtmyGoodsSubheadDao extends CrudDao<GoodsSubhead>{
 	 */
 	public void insertGoodsForGoodsSubhead(@Param(value="goodsSubheadId")int goodsSubheadId,@Param(value="goodsId")int goodsId);
 	
+	/**
+	 * 查询处于开启状态已开始未结束的活动，用于定时器
+	 * @return
+	 */
+	public List<Integer> selectGoodsSubheadForTask();
+	
 }

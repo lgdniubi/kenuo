@@ -112,4 +112,11 @@ public class MtmyGoodsSubheadService extends CrudService<MtmyGoodsSubheadDao, Go
 		mtmyGoodsSubheadDao.insertGoodsForGoodsSubhead(goodsSubheadId, goodsId);
 	}
 	
+	/**
+	 * 查询处于开启状态已开始未结束的活动，用于定时器
+	 * @return
+	 */
+	public List<Integer> selectGoodsSubheadForTask(){
+		return mtmyGoodsSubheadDao.selectGoodsSubheadForTask();
+	}
 }

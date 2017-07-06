@@ -188,4 +188,14 @@
 		)
 	</insert>
 	
+	<!-- 查询处于开启状态已开始未结束的活动，用于定时器 -->
+	<select id="selectGoodsSubheadForTask" resultType="Integer">
+		SELECT id 
+		FROM mtmydb.mtmy_goods_subhead
+		WHERE del_flag = 0
+		<![CDATA[AND start_date <= NOW()]]>
+		AND end_date >= NOW()
+		AND status = '0'
+	</select>
+	
 </mapper>
