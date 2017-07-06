@@ -4,6 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 import com.training.common.persistence.DataEntity;
+import com.training.common.utils.BeanUtil;
+import com.training.common.utils.StringUtils;
+import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.quartz.tasks.utils.RedisConfig;
 import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.entity.Skill;
 
@@ -87,6 +91,7 @@ public class Goods extends DataEntity<Goods> {
 	
 	private String rank;		//商品评论星级
 	private int commentNum;		//商品评论总数
+	private int buyCount;		//商品购买总数
 	/**
 	 * get/set
 	 */
@@ -181,6 +186,11 @@ public class Goods extends DataEntity<Goods> {
 		this.totalStore = totalStore;
 	}
 	public int getStoreCount() {
+		RedisClientTemplate redisClientTemplate = (RedisClientTemplate) BeanUtil.getBean("redisClientTemplate");
+		String store_count = redisClientTemplate.get(RedisConfig.GOODS_STORECOUNT_PREFIX + this.getGoodsId());
+		if(StringUtils.isNotBlank(store_count)){
+			storeCount = Integer.parseInt(store_count);
+		}
 		return storeCount;
 	}
 	public void setStoreCount(int storeCount) {
@@ -451,5 +461,13 @@ public class Goods extends DataEntity<Goods> {
 	public void setSupplierName(String supplierName) {
 		this.supplierName = supplierName;
 	}
+	public int getBuyCount() {
+		return buyCount;
+	}
+	public void setBuyCount(int buyCount) {
+		this.buyCount = buyCount;
+	}
+	
+	
 	
 }

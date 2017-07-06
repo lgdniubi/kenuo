@@ -102,8 +102,55 @@ public class CommentService extends CrudService<CommentDao, Comment>{
 	 * @return
 	 */
 	public List<Comment> findCommentByUserId(Comment comment){
-		
 		return dao.findBeautyByUserId(comment);
+	}
+	/**
+	 * 店铺
+	 * 查询所有用户评论
+	 * @param page
+	 * @param comment
+	 * @return
+	 */
+	public Page<Comment> findShopPage(Page<Comment> page, Comment comment) {
+		comment.setPage(page);
+		List<Comment> list = dao.findShopList(comment);
+		for (Comment com : list) {
+			Float fl = Float.valueOf(com.getShopRank());
+			int fl1 = (int) (fl*10);
+			int c = fl1%10;
+			if(c <= 9 && c >= 6 ){
+				com.setShopRank((float)(fl1/10+1));
+			}else if(c >= 1 && c <= 4){
+				com.setShopRank((float) (fl1/10+0.5));
+			}else{
+				com.setShopRank(fl);
+			}
+		}
+		return page.setList(list);
+	}
+	/**
+	 * 店铺
+	 * 查看单个评论
+	 * @param comment
+	 * @return
+	 */
+	public List<Comment> findShopByCid(Comment comment) {
+		return dao.findShopByid(comment);
+	}
+	/**
+	 * 店铺
+	 * 回复店铺评论
+	 * @param comment
+	 */
+	public void insterShopComment(Comment comment) {
+		dao.insterShopComment(comment);
+	}
+	/**
+	 * 修改单个用户所涉及的店铺评论
+	 * @param comment
+	 */
+	public void updateShopComment(Comment comment) {
+		dao.updateShopComment(comment);
 	}
 	
 }

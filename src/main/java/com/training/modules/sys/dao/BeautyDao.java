@@ -13,8 +13,6 @@ package com.training.modules.sys.dao;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.sys.entity.BeautyCountData;
@@ -59,7 +57,7 @@ public interface BeautyDao extends TreeDao<BeautyCountData>{
 	 * 修改记录:	修改人	修改记录	2017年6月7日 下午5:53:52
 	 * @param b
 	 */
-	public int updateBeautyCountData(@Param("list")List<BeautyCountData> list);
+	public int updateBeautyCountData(BeautyCountData beautyCountData);
 	/**
 	 * 方法说明:	将技师的统计数据插入train_beauty_statistics 表
 	 * 创建时间:	2017年6月7日 下午5:21:40

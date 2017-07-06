@@ -454,8 +454,6 @@ public class UserDetail extends DataEntity<UserDetail> {
 		this.updateDate = updateDate;
 	}
 
-
-
 	public String getSex() {
 		return sex;
 	}
@@ -471,7 +469,5 @@ public class UserDetail extends DataEntity<UserDetail> {
 	public void setRemarkname(String remarkname) {
 		this.remarkname = remarkname;
 	}
-
-	
-
 }
+

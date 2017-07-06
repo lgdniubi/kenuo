@@ -28,6 +28,10 @@ public class TrainLiveOrder extends DataEntity<TrainLiveOrder>{
 	
 	private Date beginDate;         //添加开始时间
 	private Date endDate;           //添加结束时间
+	
+	private Date firstDate;				//开始时间
+	private Date lastDate;				//结束时间
+	
 	public String getTrainLiveOrderId() {
 		return trainLiveOrderId;
 	}
@@ -112,6 +116,18 @@ public class TrainLiveOrder extends DataEntity<TrainLiveOrder>{
 	}
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+	public Date getFirstDate() {
+		return firstDate;
+	}
+	public void setFirstDate(Date firstDate) {
+		this.firstDate = firstDate;
+	}
+	public Date getLastDate() {
+		return lastDate;
+	}
+	public void setLastDate(Date lastDate) {
+		this.lastDate = lastDate;
 	}
 	
 	

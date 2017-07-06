@@ -182,7 +182,7 @@ $(document).ready(function(){
     						+ '<p class="prise"><span>¥<i>'+data.shopPrice+'</i></span><del>¥'+data.marketPrice+'</del></p>'
     						+ '<p class="features">'
     						+ '<span class="score"><span class="score-inner" style="width:'+data.rank+'"></span></span>'
-    						+ '<span class="sales">'+Math.floor(data.commentNum*1.6)+'</span>'
+    						+ '<span class="sales">'+data.buyCount+'</span>'
     						+ '<span class="comment">'+data.commentNum+'</span>'
     						+ '	</p>'
     						+ '</dd>'

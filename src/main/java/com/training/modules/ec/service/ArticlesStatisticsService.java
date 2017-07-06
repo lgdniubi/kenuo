@@ -50,9 +50,6 @@ public class ArticlesStatisticsService extends TreeService<ArticlesStatisticsDao
 	public Map<String, Object> completeArticlesStatistics(){
 		//先从数据库中取出上次存入的定位id
 		Integer commentId = QuartzStartConfigUtils.queryValue("mtmy_articles_comment");
-		if(commentId == null){
-			commentId = 0;
-		}
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("mtmy_articles_comment", commentId);

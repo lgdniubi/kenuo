@@ -10,6 +10,7 @@ import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.ec.dao.CheckAccountDao;
 import com.training.modules.ec.entity.MtmyCheckAccount;
+import com.training.modules.ec.entity.Orders;
 
 /**
  * 对账Service
@@ -66,5 +67,12 @@ public class CheckAccountService extends CrudService<CheckAccountDao, MtmyCheckA
 	 */
 	public int findByOrderNo(MtmyCheckAccount mtmyCheckAccount){
 		return dao.findByOrderNo(mtmyCheckAccount);
+	}
+	/**
+	 * 查询两小时之内支付的订单
+	 * @return
+	 */
+	public List<Orders> findOrder(){
+		return dao.findOrder();
 	}
 }

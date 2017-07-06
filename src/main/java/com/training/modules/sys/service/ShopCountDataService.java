@@ -45,13 +45,7 @@ public class ShopCountDataService extends TreeService<ShopCountDataDao, ShopCoun
 	public Map<String, Object> completeShopCountData(){
 		//先从数据库中取出上次存入的定位id
 		Integer commentId = QuartzStartConfigUtils.queryValue("mtmy_shop_comment");
-		if(commentId == null){
-			commentId = 0;
-		}
 		Integer apptOrderId = QuartzStartConfigUtils.queryValue("mtmy_appt_order_shop");
-		if(apptOrderId == null){
-			apptOrderId = 0;
-		}
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("commentId", commentId);
 		map.put("apptOrderId", apptOrderId);
@@ -70,7 +64,9 @@ public class ShopCountDataService extends TreeService<ShopCountDataDao, ShopCoun
 		}
 		//修改的数据不为null  才会执行修改操作
 		if(shopList.size() != 0){
-			dao.updateShopCountData(shopList);
+			for (ShopCountData shopCountData : shopList) {
+				dao.updateShopCountData(shopCountData);
+			}
 		}
 		//需要添加的数据不为null  才执行添加操作
 		if(addList.size() != 0){

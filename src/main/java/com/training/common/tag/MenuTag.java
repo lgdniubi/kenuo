@@ -7,6 +7,7 @@ import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import com.sun.media.jfxmedia.logging.Logger;
 import com.training.common.config.Global;
 import com.training.common.utils.SpringContextHolder;
 import com.training.modules.sys.entity.Menu;
@@ -59,8 +60,9 @@ public class MenuTag extends TagSupport {
 	public StringBuffer end() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(getChildOfTree(menu,0));
-		
-		System.out.println(sb);
+//	2017年6月15日17:19:48  注释菜单输出日志  咖啡
+//		System.out.println(sb);
+		System.out.println("#####获取菜单项#####");
 		return sb;
 		
 	}

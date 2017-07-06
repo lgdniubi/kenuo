@@ -49,13 +49,7 @@ public class GoodsStatisticsService extends TreeService<GoodsStatisticsDao, Good
 	public Map<String, Object> completeGoodsStatistics(){
 		//先从数据库中取出上次存入的定位id
 		Integer commentId = QuartzStartConfigUtils.queryValue("mtmy_goods_commentId");
-		if(commentId == null ){
-			commentId = 0;
-		}
 		Integer recId = QuartzStartConfigUtils.queryValue("mtmy_goods_recId");
-		if(recId == null){
-			recId = 0;
-		}
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("mtmy_goods_recId", recId);
 		map.put("mtmy_goods_commentId", commentId);

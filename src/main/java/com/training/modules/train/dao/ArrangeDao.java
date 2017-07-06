@@ -34,7 +34,7 @@ public interface ArrangeDao extends CrudDao<ArrangeShop>{
 	//查询特殊美容师排班详情
 	public List<ArrangeShop> findBeautician(@Param(value="id")String id,@Param(value="month")int month);
 	//清空特殊特殊美容师排班
-	public void delBeautician(@Param(value="ids")String[] ids,@Param(value="month")int month);
+	public void delBeautician(@Param(value="ids")List<String> ids);
 	//保存特殊美容师排班
 	public void saveBeautician(List<ArrangeShop> list);
 	
@@ -48,7 +48,7 @@ public interface ArrangeDao extends CrudDao<ArrangeShop>{
 	//查询特殊设备排班详情
 	public List<ArrangeEquipment> findEquipment(@Param(value="equipmentId")int equipmentId,@Param(value="month")int month);
 	//清空特殊设备排班
-	public void delEquipment(@Param(value="ids")String[] ids,@Param(value="month")int month);
+	public void delEquipment(@Param(value="ids")List<String> ids);
 	//保存特殊设备排班
 	public void saveEquipment(List<ArrangeEquipment> list);
 }

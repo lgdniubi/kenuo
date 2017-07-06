@@ -44,8 +44,39 @@
 		        start.max = datas; //结束日选好后，重置开始日的最大日期
 		    }
 		};
+	    var first = {
+		    elem: '#firstDate',
+		    format: 'YYYY-MM-DD hh:mm:ss',
+		    event: 'focus',
+		    max: $("#lastDate").val(),   //最大日期
+		    istime: true,				//是否显示时间
+		    isclear: false,				//是否显示清除
+		    istoday: false,				//是否显示今天
+		    issure: true,				//是否显示确定
+		    festival: true,				//是否显示节日
+		    choose: function(datas){
+		    	last.min = datas; 		//开始日选好后，重置结束日的最小日期
+		    	last.start = datas 		//将结束日的初始值设定为开始日
+		    }
+		};
+		var last = {
+		    elem: '#lastDate',
+		    format: 'YYYY-MM-DD hh:mm:ss',
+		    event: 'focus',
+		    min: $("#firstDate").val(),
+		    istime: true,
+		    isclear: false,
+		    istoday: false,
+		    issure: true,
+		    festival: true,
+		    choose: function(datas){
+		    	first.max = datas; //结束日选好后，重置开始日的最大日期
+		    }
+		};
 		laydate(start);
 		laydate(end);
+		laydate(first);
+		laydate(last);
     })
 	
     function newReset(){
@@ -97,6 +128,9 @@
 								<label>添加时间：</label>
 								<input id="beginDate" name="beginDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${trainLiveOrder.beginDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" placeholder="开始时间" readonly="readonly"/>--
 								<input id="endDate" name="endDate" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${trainLiveOrder.endDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" placeholder="结束时间" readonly="readonly"/>
+								<label>支付时间：</label>
+								<input id="firstDate" name="firstDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${trainLiveOrder.firstDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" placeholder="开始时间" readonly="readonly"/>--
+								<input id="lastDate" name="lastDate" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${trainLiveOrder.lastDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" placeholder="结束时间" readonly="readonly"/>
 							</p>
 							
 						</div>

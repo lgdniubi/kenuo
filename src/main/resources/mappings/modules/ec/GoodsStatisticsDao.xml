@@ -33,7 +33,7 @@
 		FROM
 			mtmydb.mtmy_order_goods_mapping
 		ORDER BY
-			goods_id DESC
+			rec_id DESC
 		LIMIT 1
     </select>
     
@@ -51,22 +51,35 @@
     <!-- 查询商品的所有统计数据 -->
 	<select id="queryGoodsStatisticsCountData" resultType="GoodsStatisticsCountData" parameterType="java.util.Map">
 		SELECT
+			t1.goodsId,
+			evaluationScore,
+			evaluationCount,
+			buyCount,
+			IFNULL((SELECT tbs.goods_id FROM mtmydb.mtmy_goods_statistics tbs WHERE tbs.goods_id = t1.goodsId),"NULL")AS 'isExist'
+		FROM
+			(<include refid="selectGoodsMapping"></include>) t1   
+		LEFT JOIN (
+			<include refid="selectComment"></include>) t2 ON t2.goodsId = t1.goodsId
+		UNION
+		SELECT
 			t2.goodsId,
 			evaluationScore,
 			evaluationCount,
 			buyCount,
-			IFNULL((SELECT tbs.goods_id FROM mtmydb.mtmy_goods_statistics tbs WHERE tbs.goods_id = t2.goodsId),"NULL")AS 'isExist'
+			IFNULL((SELECT tbs.goods_id FROM mtmydb.mtmy_goods_statistics tbs WHERE tbs.goods_id = t1.goodsId),"NULL")AS 'isExist'
 		FROM
-			(<include refid="selectComment"></include>) t1
-		LEFT JOIN (
-			<include refid="selectGoodsMapping"></include>) t2 ON t2.goodsId = t1.goodsId
+			(<include refid="selectGoodsMapping"></include>) t1   
+		RIGHT JOIN (
+			<include refid="selectComment"></include>) t2 ON t2.goodsId = t1.goodsId
 	</select>
 	
 	<!-- 修改mtmy_goods_statistics 表中商品的统计数据 -->
 	<update id="updateGoodsStatisticsCountData" parameterType="GoodsStatisticsCountData">
 	        UPDATE mtmydb.mtmy_goods_statistics
 	        SET
+	        	<if test="evaluationCount != 0">
 	            evaluation_score = ((evaluation_score * evaluation_count) +( #{evaluationScore} * #{evaluationCount})) / (evaluation_count+#{evaluationCount}),
+				</if>
 				evaluation_count = evaluation_count + #{evaluationCount},
 		 		buy_count = buy_count + #{buyCount},
 		 		update_date = SYSDATE()

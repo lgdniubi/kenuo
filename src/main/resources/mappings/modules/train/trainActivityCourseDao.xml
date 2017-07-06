@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.TrainActivityCourseDao">
+
+	 <resultMap id="TrainActivityCourseResult" type="TrainActivityCourse">
+		<id property="acId" column="acId" />
+		<result property="name" column="name" />
+		<result property="startDate" column="startDate" />
+		<result property="endDate" column="endDate" />
+		<result property="amount" column="amount" />
+		<result property="sort" column="sort" />
+		<result property="headImg" column="headImg" />
+		<collection property="trainActivityCourseContentList" ofType="TrainActivityCourseContent">
+			<id property="cId" column="trainActivityCourseContentList.cId" />
+			<result property="type" column="trainActivityCourseContentList.type" />
+			<result property="img" column="trainActivityCourseContentList.img" />
+		</collection>
+	</resultMap>
+	
+	<!-- 妃子校活动课程列表 -->
+	<select id="findList" resultType="TrainActivityCourse">
+		SELECT
+			id AS acId,
+			name,
+			start_date AS startDate,
+			end_date AS endDate,
+			(CASE WHEN (start_date <![CDATA[ < ]]> SYSDATE()) AND (end_date > SYSDATE()) THEN 2
+						WHEN start_date > SYSDATE() THEN 1
+						WHEN end_date <![CDATA[ < ]]> SYSDATE() THEN 3
+						ELSE 0 END) AS status,
+			amount,
+			sort,
+			is_on_sale AS isOnSale
+		FROM
+			train_activity_course
+		WHERE 1 = 1
+			<if test="name != null and name != ''">
+				AND name like 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+			</if>
+			<!-- 课程活动状态 -->
+			<if test="status == 1">
+				AND start_date > SYSDATE()
+			</if>
+			<if test="status == 2">
+				AND start_date <![CDATA[ < ]]> SYSDATE()
+				AND end_date > SYSDATE()
+			</if>
+			<if test="status == 3">
+				AND end_date <![CDATA[ < ]]> SYSDATE()
+			</if>
+			<if test="beginDate != null and beginDate != '' ">
+				AND (DATE_FORMAT(start_date,'%Y-%m-%d') >= DATE_FORMAT(#{beginDate},'%Y-%m-%d')
+				OR ( DATE_FORMAT(start_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{beginDate},'%Y-%m-%d')
+					 AND DATE_FORMAT(end_date,'%Y-%m-%d') >= DATE_FORMAT(#{beginDate},'%Y-%m-%d') ))
+			</if>
+			<if test="lastDate != null and lastDate != '' ">
+				AND (DATE_FORMAT(end_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastDate},'%Y-%m-%d')
+				OR ( DATE_FORMAT(start_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastDate},'%Y-%m-%d')
+					 AND DATE_FORMAT(end_date,'%Y-%m-%d') >= DATE_FORMAT(#{lastDate},'%Y-%m-%d') ))
+			</if>
+			ORDER BY sort DESC
+	</select>
+	<!-- 妃子校活动课程详情 -->
+	<select id="get" resultMap="TrainActivityCourseResult">
+		SELECT 
+			a.id AS acId,
+			a.name,
+			a.start_date AS startDate,
+			a.end_date AS endDate,
+			a.amount,
+			a.sort,
+			a.head_img AS headImg,
+			b.id AS 'trainActivityCourseContentList.cId',
+			b.type AS 'trainActivityCourseContentList.type',
+			b.img AS 'trainActivityCourseContentList.img'
+		FROM 
+			train_activity_course a
+			LEFT JOIN train_activity_course_content b ON a.id = b.ac_id
+		WHERE 
+			a.id = #{acId}
+		ORDER BY b.sort
+	</select>
+	<!-- 保存妃子校课程活动 -->
+	<insert id="insert" parameterType="TrainActivityCourse" useGeneratedKeys="true" keyProperty="acId">
+		INSERT INTO train_activity_course(
+			name,
+			start_date,
+			end_date,
+			amount,
+			is_on_sale,
+			head_img,
+			sort,
+			create_by,
+			create_date,
+			del_flag
+		)VALUES(
+			#{name},
+			#{startDate},
+			#{endDate},
+			#{amount},
+			#{isOnSale},
+			#{headImg},
+			#{sort},
+			#{createBy.id}, 
+			SYSDATE(),
+			0
+		)
+	</insert>
+	<!-- 删除妃子校活动关联的内容 -->
+	<delete id="delContent">
+		DELETE FROM train_activity_course_content WHERE ac_id = #{acId}
+	</delete>
+	<!-- 保存妃子校活动关联的内容 -->
+	<insert id="saveContent">
+		INSERT INTO train_activity_course_content(
+			ac_id,
+			type,
+			img,
+			sort,
+			create_date
+		)
+		<foreach collection="list" item="list" separator="union all ">
+			SELECT 
+				#{list.acId},
+				#{list.type},
+				#{list.img},
+				#{list.sort},
+				SYSDATE()
+			FROM dual
+		</foreach>
+	</insert>
+	<!-- 课程活动上下架 -->
+	<update id="updateFlag">
+		UPDATE train_activity_course
+			SET 
+			  <if test="flag == 'ISONSALE'">
+				is_on_sale = #{isyesno},
+			  </if>
+			  update_by = #{userId},
+			  update_date = SYSDATE()
+			WHERE id = #{acId}
+	</update>
+	<!-- 查询订单 -->
+	<select id="findTrainOrder" resultType="TrainOrder">
+		SELECT
+			a.goods_name AS goodsName,
+			b.name AS "user.name",
+			b.mobile AS "user.mobile",
+			b.sex AS "user.sex",
+			a.pay_time AS payTime,
+			a.amount
+		FROM
+			train_order a
+			LEFT JOIN sys_user b ON a.user_id = b.id
+		WHERE 1 = 1
+			AND a.order_status = 2
+			AND a.order_type = 1
+			<if test="goodsName != null and goodsName != ''">
+				AND a.goods_name like 
+					<if test="dbName == 'oracle'">'%'||#{goodsName}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{goodsName}, '%')</if>
+			</if>
+			<if test="user != null and user.name != null and user.name != ''">
+				AND b.name like 
+					<if test="dbName == 'oracle'">'%'||#{user,name}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{user.name}, '%')</if>
+			</if>
+			<if test="user != null and user.mobile != null and user.mobile != ''">
+				AND b.mobile = #{user.mobile}
+			</if>
+			<if test="beginDate != null and beginDate != '' ">
+				AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') >= DATE_FORMAT(#{beginDate},'%Y-%m-%d')
+			</if>
+			<if test="lastDate != null and lastDate != '' ">
+				AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastDate},'%Y-%m-%d')
+			</if>
+		ORDER BY a.pay_time DESC
+	</select>
+</mapper>

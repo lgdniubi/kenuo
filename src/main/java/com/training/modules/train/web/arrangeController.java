@@ -223,14 +223,20 @@ public class arrangeController extends BaseController{
 			Map<String, Integer> map = calendarDay(date);	//获取月份天数、月份、时间
 			User currentUser = UserUtils.getUser(); 
 			List<ArrangeShop> list = new ArrayList<ArrangeShop>();
-			//美容师id集合
+			// 美容师id集合
 			String idArray[] =arrangeBeautician.getUserids().split(",");
+			// 修改排版id集合
+			List<String> isUpdateArrange = new ArrayList<String>();
+			// 循环美容师id
 			for(String id : idArray){
+				//循环天数
 				for (int i = 1; i <= map.get("maxDay"); i++) {
 					ArrangeShop arrangeShop = new ArrangeShop();
-					String shopId = request.getParameter(id+i);
-					String flag = request.getParameter("flag"+id+i);
-					if(shopId != null && !"".equals(shopId)){
+					String shopId = request.getParameter(id+i);					// 排班（shopIp、假、休、学）
+					String flag = request.getParameter("flag"+id+i);			// 区分（0 店铺排班 1 市场排班）
+					String isUpdate = request.getParameter("isUpdate"+id+i);	// 是否有过修改（0 否 1 是）
+					String arrangeId = request.getParameter("id"+id+i);			// 排班id（train_arrange_shop 主键id）
+					if(shopId != null && !"".equals(shopId) && "1".equals(isUpdate)){	// shopId 不为空 说明有排班 同时 有过修改
 						arrangeShop.setBeauticianId(id);
 						arrangeShop.setShopId(shopId);
 						int d = 1;
@@ -247,9 +253,14 @@ public class arrangeController extends BaseController{
 						arrangeShop.setOfficeId(currentUser.getOffice().getId());
 						list.add(arrangeShop);
 					}
+					if("1".equals(isUpdate)){
+						if("" != arrangeId || null != arrangeId || "0".equals(arrangeId)){
+							isUpdateArrange.add(arrangeId);
+						}
+					}
 				}
 			}
-			arrangeService.saveBeautician(idArray,list,map.get("month"));
+			arrangeService.saveBeautician(isUpdateArrange,list);
 			addMessage(redirectAttributes, "保存美容师排班成功");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "保存特殊美容师排班", e);
@@ -347,11 +358,16 @@ public class arrangeController extends BaseController{
 			List<ArrangeEquipment> list = new ArrayList<ArrangeEquipment>();
 			//美容师id集合
 			String idArray[] =arrangeBeautician.getEquipmentIds().split(",");
+			// 修改排版id集合
+			List<String> isUpdateArrange = new ArrayList<String>();
+			// 循环设备id
 			for(String id : idArray){
 				for (int i = 1; i <= map.get("maxDay"); i++) {
 					ArrangeEquipment arrangeEquipment = new ArrangeEquipment();
-					String shopId = request.getParameter(id+i);
-					if(shopId != null && !"".equals(shopId)){
+					String shopId = request.getParameter(id+i);					// 排班（shopIp、修）
+					String isUpdate = request.getParameter("isUpdate"+id+i);	// 是否有过修改（0 否 1 是）
+					String arrangeId = request.getParameter("id"+id+i);			// 排班id（train_arrange_equipment 主键id）
+					if(shopId != null && !"".equals(shopId) && "1".equals(isUpdate)){	// shopId 不为空 说明有排班 同时 有过修改
 						arrangeEquipment.setEquipmentId(Integer.parseInt(id));
 						arrangeEquipment.setShopId(shopId);
 						int d = 1;
@@ -367,9 +383,14 @@ public class arrangeController extends BaseController{
 						arrangeEquipment.setOfficeId(currentUser.getOffice().getId());
 						list.add(arrangeEquipment);
 					}
+					if("1".equals(isUpdate)){
+						if("" != arrangeId || null != arrangeId || "0".equals(arrangeId)){
+							isUpdateArrange.add(arrangeId);
+						}
+					}
 				}
 			}
-			arrangeService.saveEquipment(idArray,list,map.get("month"));
+			arrangeService.saveEquipment(isUpdateArrange,list);
 			addMessage(redirectAttributes, "保存特殊设备排班成功");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "保存特殊设备排班", e);
@@ -476,12 +497,17 @@ public class arrangeController extends BaseController{
 			List<ArrangeShop> list = new ArrayList<ArrangeShop>();
 			//美容师id集合
 			String idArray[] =arrangeBeautician.getUserids().split(",");
+			// 修改排版id集合
+			List<String> isUpdateArrange = new ArrayList<String>();
+			// 循环美容师id
 			for(String id : idArray){
 				for (int i = 1; i <= map.get("maxDay"); i++) {
 					ArrangeShop arrangeShop = new ArrangeShop();
-					String shopId = request.getParameter(id+i);
-					String flag = request.getParameter("flag"+id+i);
-					if(shopId != null && !"".equals(shopId)){
+					String shopId = request.getParameter(id+i);					// 排班（shopIp、假、休、学）
+					String flag = request.getParameter("flag"+id+i);			// 区分（0 店铺排班 1 市场排班）
+					String isUpdate = request.getParameter("isUpdate"+id+i);	// 是否有过修改（0 否 1 是）
+					String arrangeId = request.getParameter("id"+id+i);			// 排班id（train_arrange_shop 主键id）
+					if(shopId != null && !"".equals(shopId) && "1".equals(isUpdate)){	// shopId 不为空 说明有排班 同时 有过修改
 						arrangeShop.setBeauticianId(id);
 						arrangeShop.setShopId(shopId);
 						int d = 1;
@@ -498,9 +524,14 @@ public class arrangeController extends BaseController{
 						arrangeShop.setOfficeId(currentUser.getOffice().getId());
 						list.add(arrangeShop);
 					}
+					if("1".equals(isUpdate)){
+						if("" != arrangeId || null != arrangeId || "0".equals(arrangeId)){
+							isUpdateArrange.add(arrangeId);
+						}
+					}
 				}
 			}
-			arrangeService.saveBeautician(idArray,list,map.get("month"));
+			arrangeService.saveBeautician(isUpdateArrange,list);
 			addMessage(redirectAttributes, "保存美容师排班成功");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "保存普通美容师排班", e);

@@ -1,0 +1,19 @@
+@charset "utf-8";
+/* css reset*/
+#myTabContent .tab-pane{border:1px solid #ececec;}
+#myTabContent select.form-control{width:auto;margin-right:10px;}
+#myTabContent .imgResult{overflow:hidden;}
+.imgResult .imgItem{float:left;width:120px;height:120px;margin:10px;position:relative;border:1px solid #c6c6c6;overflow:hidden;}
+.imgResult .imgItem img{width:120px;height:90px;}
+#myTabContent .imgResult img{width:100%;}
+#myTabContent .imgResult .contorl-bar{width:100%; height:30px;padding:7px 0; color:#fff;text-align:center;font-size:12px;cursor:pointer;border-bottom:1px solid #c6c6c6;}
+#myTabContent .imgResult .contorl-bar span{float:left;width:16px;height:16px;margin-left:20px;}
+#myTabContent .imgResult .contorl-bar .move-pro{background:url(../images/move-left.png);}
+#myTabContent .imgResult .contorl-bar .move-last{background:url(../images/move-right.png);}
+#myTabContent .imgResult .contorl-bar .move-delelt{background:url(../images/move-delelt.png);}
+#myTabContent .addBtn{position:relative;width:100px;height:75px;float:left;background:url(../images/add-button.jpg) center no-repeat;background-size:45px;overflow:hidden;margin:10px;}
+#myTabContent #addImg,#myTabContent .addImg {position:absolute;width:100px;height:75px;opacity:0;display:block;}
+#myTabContent #goods_spec_table input[type="checkbox"]{float:right;opacity:0}
+#myTabContent #goods_spec_table .btn{margin:0 5px 5px 0;overflow:hidden;}
+#myTabContent .col-md-1,.formArea .col-md-1{width:8.33333333% !important;margin-right:5px;}
+#myTabContent .col-md-2{width:15% !important;margin-right:5px;}
