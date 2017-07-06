@@ -200,24 +200,6 @@
 							</div>
 						</div>
 					</div>
-					
-					
-					
-					
-					<%-- <div class="pull-right">
-						<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
-						<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()" ><i class="fa fa-refresh"></i> 重置</button>
-					</div> 
-					
-					<div>
-						<a href="#" onclick="addGoods(${goodsSubhead.goodsSubheadId})" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加商品</a>
-						
-						<shiro:hasPermission name="ec:goodsSubhead:deleteAll">
-							<!-- 删除按钮 -->
-							<button class="btn btn-white btn-sm" onclick="deleteAll(${goodsSubhead.goodsSubheadId})" data-toggle="tooltip" data-placement="top"><i class="fa fa-trash-o"> ${label==null?'删除':label}</i></button>
-						</shiro:hasPermission>
-					</div>
-				<p></p> --%>
 				<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 					<thead>
 						<tr>
