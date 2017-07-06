@@ -166,7 +166,8 @@
 	<select id="findGroupFlag" resultType="MtmyCheckAccount">
 		select DISTINCT(group_flag) AS groupFlag from mtmydb.mtmy_bank_account ORDER BY group_flag desc
 	</select>
+	<!-- 查询两小时之内支付的订单 -->
 	<select id="findOrder" resultType="Orders">
-		SELECT order_id AS orderid FROM mtmydb.mtmy_orders WHERE pay_time > DATE_SUB(SYSDATE(),INTERVAL 2 HOUR) AND order_status = 4
+		SELECT order_id AS orderid FROM mtmydb.mtmy_orders WHERE pay_time > DATE_SUB(SYSDATE(),INTERVAL 2 HOUR) AND order_status IN (1,2,4) AND channel_flag != 'bm'
 	</select>
 </mapper>
