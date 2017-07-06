@@ -10,9 +10,7 @@
  */
 package com.training.modules.ec.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -56,41 +54,33 @@ public class ArticlesStatisticsService extends TreeService<ArticlesStatisticsDao
 		map.put("mtmy_articles_comment", commentId);
 		map.put("mtmy_articles_like", likeId);
 		
-		//查询文章的统计数据   并更新mtmy_articles_statistics
-		List<ArticlesStatisticsCountData> articlesList = dao.queryArticlesCountData(map);
-		if(articlesList.size() != 0){
-			//遍历查询结果    区别出mtmy_articles_statistics表中   id不存在的数据
-			List<ArticlesStatisticsCountData> addList  = new ArrayList<ArticlesStatisticsCountData>();
-			Iterator<ArticlesStatisticsCountData> iterator = articlesList.iterator();
-			while(iterator.hasNext()){
-				ArticlesStatisticsCountData articlesStatisticsCountData = iterator.next();
-				if(articlesStatisticsCountData.getIsExist().equals("NULL")){
-					addList.add(articlesStatisticsCountData);
-					iterator.remove();
-				}
-			}
+		//查询文章的评论数量   并更新mtmy_articles_statistics
+		List<ArticlesStatisticsCountData> commentList = dao.queryArticlesComment(commentId);
+		if(commentList.size() != 0){
 			//修改的数据不为null  才会执行修改操作
-			if(articlesList.size() != 0){
-				for (ArticlesStatisticsCountData articlesStatisticsCountData : articlesList) {
+			if(commentList.size() != 0){
+				for (ArticlesStatisticsCountData articlesStatisticsCountData : commentList) {
 					dao.updateArticles(articlesStatisticsCountData);
 				}
 			}
-			//需要添加的数据不为null  才执行添加操作
-			if(addList.size() != 0){
-				for (ArticlesStatisticsCountData articlesStatisticsCountData : addList) {
-					dao.addArticles(articlesStatisticsCountData);
+		}
+		//查询文章的点赞数量
+		List<ArticlesStatisticsCountData> likeList = dao.queryArticlesLike(likeId);
+		if(likeList.size() != 0){
+			//修改的数据不为null  才会执行修改操作
+			if(likeList.size() != 0){
+				for (ArticlesStatisticsCountData articlesStatisticsCountData : likeList) {
+					dao.updateArticles(articlesStatisticsCountData);
 				}
 			}
-			
-			//获取查询数据的定位id
-			Map<String, Object> map2 = new HashMap<String, Object>();
-			Integer new_commentId = dao.findCommentId();
-			Integer new_likeId = dao.findLikeId();
-			map2.put("mtmy_articles_comment", new_commentId);
-			map2.put("mtmy_articles_like", new_likeId);
-			return map2;
 		}
-		return map;
+		//获取查询数据的定位id
+		Map<String, Object> map2 = new HashMap<String, Object>();
+		Integer new_commentId = dao.findCommentId();
+		Integer new_likeId = dao.findLikeId();
+		map2.put("mtmy_articles_comment", new_commentId);
+		map2.put("mtmy_articles_like", new_likeId);
+		return map2;
 	}
 	
 	/**
