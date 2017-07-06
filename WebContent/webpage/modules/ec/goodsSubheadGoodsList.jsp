@@ -156,6 +156,9 @@
 	    });
 	});
 	
+	function newReset(){
+		window.location = "${ctx}/ec/goodsSubhead/goodsSubheadGoodsList?goodsSubheadId="+${goodsSubhead.goodsSubheadId};
+	}
 </script>
 </head>
 <body>
@@ -193,7 +196,7 @@
 							</div>
 							<div class="pull-right">
 								<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
-								<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()" ><i class="fa fa-refresh"></i> 重置</button>
+								<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="newReset()" ><i class="fa fa-refresh"></i> 重置</button>
 							</div>
 						</div>
 					</div>

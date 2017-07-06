@@ -66,7 +66,7 @@ import net.sf.json.JSONObject;
 @RequestMapping(value = "${adminPath}/ec/goods")
 public class GoodsController extends BaseController{
 
-	public static final String GOOD_DETAIL_KEY = "GOODS_DETAIL_"; // 商品下架
+	public static final String GOOD_DETAIL_KEY = "GOODS_DETAIL_"; // 商品详情
 	public static final String GOOD_UNSHELVE_KEY = "GOOD_UNSHELVE_KEY"; //商品下架
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;

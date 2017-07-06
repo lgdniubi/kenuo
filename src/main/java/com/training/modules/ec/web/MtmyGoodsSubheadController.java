@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
+import com.training.common.utils.ObjectUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.ec.dao.GoodsDao;
 import com.training.modules.ec.dao.MtmyGoodsSubheadDao;
 import com.training.modules.ec.entity.GoodsSubhead;
 import com.training.modules.ec.entity.GoodsSubheadGoods;
 import com.training.modules.ec.service.MtmyGoodsSubheadService;
+import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.sys.utils.BugLogUtils;
 
 /**
@@ -38,7 +40,10 @@ public class MtmyGoodsSubheadController extends BaseController{
 	private MtmyGoodsSubheadDao mtmyGoodsSubheadDao;
 	@Autowired
 	private GoodsDao goodsDao;
+	@Autowired
+	private RedisClientTemplate redisClientTemplate;
 	
+	public static final String GOOD_DETAIL_KEY = "GOODS_DETAIL_"; // 商品详情
 	/**
 	 *商品副标题列表 
 	 * @param goodsSubhead
@@ -127,7 +132,7 @@ public class MtmyGoodsSubheadController extends BaseController{
 			List<Integer> list = mtmyGoodsSubheadDao.selectGoodsId(goodsSubhead.getGoodsSubheadId());
 			if(list.size() > 0){
 				for(int goodsId:list){
-					//这里清楚商品的缓存，记得添加，咖啡将合并代码的时候再添加，谨记
+					redisClientTemplate.del(ObjectUtils.serialize(GOOD_DETAIL_KEY + goodsId));
 				}
 			}
 		}catch(Exception e){
