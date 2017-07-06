@@ -237,7 +237,6 @@
 			update_date, 
 			remarks, 
 			del_flag,
-			is_new,
 			is_recommend,
 			longitude,
 			latitude,
@@ -266,7 +265,6 @@
 			#{updateDate}, 
 			#{remarks}, 
 			#{delFlag},
-			#{isNew},
 			#{isRecommend},
 			#{longitude},
 			#{latitude},
@@ -312,7 +310,6 @@
 			update_date, 
 			remarks, 
 			del_flag,
-			is_new,
 			is_recommend,
 			longitude,
 			latitude,
@@ -346,7 +343,6 @@
 			#{updateDate}, 
 			#{remarks}, 
 			#{delFlag},
-			#{isNew},
 			#{isRecommend},
 			#{longitude},
 			#{latitude},
@@ -379,7 +375,6 @@
 			update_by = #{updateBy.id}, 
 			update_date = #{updateDate}, 
 			remarks = #{remarks},
-			is_new = #{isNew},
 			is_recommend = #{isRecommend},
 			longitude = #{longitude},
 			latitude = #{latitude},
@@ -468,15 +463,18 @@
 					del_flag         = #{DEL_FLAG_DELETE}
 				</if>
 	</insert>
-	<!-- 隐藏店铺 -->
-	<update id="updateOfficeStatus">
-		UPDATE sys_office_info SET status = #{status} WHERE id = #{id}
+	<!-- 修改店铺是否属性 -->
+	<update id="updateisyesno">
+		<if test="type == 'status'">
+			UPDATE sys_office_info SET status = #{isyesno} WHERE id = #{id}
+		</if> 
+		<if test="type == 'isRecommend'">
+			UPDATE sys_office SET is_recommend = #{isyesno} WHERE id = #{id}
+		</if> 
+		<if test="type == 'isNew'">
+			UPDATE sys_office SET is_new = #{isyesno} WHERE id = #{id}
+		</if> 	
 	</update>
-	<!-- 店铺是否推荐 -->
-	<update id="updateIsRecommend">
-		UPDATE sys_office SET is_recommend = #{isRecommend} WHERE id = #{id}
-	</update>
-	
 	<select id="findFNameByCode" resultType="OfficeInfo">
 		SELECT
 			id  AS franchiseeId,

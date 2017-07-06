@@ -784,60 +784,37 @@ public class OfficeController extends BaseController {
     }
     
     /**
-     * 隐藏店铺
-     * @param office
+     * 修改店铺是否属性
      * @param request
      * @return
      */
-    @RequestMapping(value = {"updateOfficeStatus"})
-    public @ResponseBody Map<String, String> updateOfficeStatus(OfficeInfo officeInfo,HttpServletRequest request){
-    	Map<String, String> jsonMap = new HashMap<String, String>();
-    	try {
-    		int num = reservationDao.findCountByOfficeId(officeInfo.getId());
-    		officeService.updateOfficeStatus(officeInfo);
-    		jsonMap.put("FLAG", "OK");
-    		if(num > 0){
-    			jsonMap.put("MESSAGE", "该店铺存在未完成的预约!");
-    		}else{
-    			jsonMap.put("MESSAGE", "隐藏该店铺成功");
-    		}
-    		
-		} catch (Exception e) {
-			logger.error("修改店铺状态出现异常，异常信息为："+e.getMessage());
-			BugLogUtils.saveBugLog(request, "修改店铺状态", e);
-			jsonMap.put("FLAG", "ERROR");
-			jsonMap.put("MESSAGE", "修改失败,出现异常");
-		}
-    	return jsonMap;
-    }
-    /**
-     * 是否推荐
-     * @param office
-     * @param request
-     * @return
-     */
-    //@RequiresPermissions("sys:office:updateIsRecommend")
-    @RequestMapping(value = {"updateIsRecommend"})
-    public @ResponseBody Map<String, String> updateIsRecommend(Office office,HttpServletRequest request){
+    @RequestMapping(value = {"updateisyesno"})
+    @ResponseBody
+    public Map<String, String> updateisyesno(HttpServletRequest request){
     	Map<String, String> map = new HashMap<String, String>();
     	try {
-    		if(!StringUtils.isEmpty(office.getId()) && !StringUtils.isEmpty(office.getIsRecommend())){
-    			officeService.updateIsRecommend(office);
-    			map.put("FLAG", "OK");
-    			map.put("MESSAGE", "店铺是否推荐,修改成功");
+    		String id = request.getParameter("ID");				// id
+    		String type = request.getParameter("TYPE");			// 类型
+    		String isyesno = request.getParameter("ISYESNO");	// 是否
+    		officeService.updateisyesno(id,type,isyesno);
+    		map.put("FLAG", "OK");
+    		if("status".equals(type)){
+    			int num = reservationDao.findCountByOfficeId(id);
+    			if(num > 0){
+        			map.put("MESSAGE", "该店铺存在未完成的预约!");
+        		}else{
+        			map.put("MESSAGE", "隐藏该店铺成功");
+        		}
     		}else{
-    			map = new HashMap<String, String>();
-    			map.put("FLAG", "ERROR");
-    			map.put("MESSAGE", "店铺是否推荐修改失败,必要参数为空");
+    			map.put("MESSAGE", "修改成功");
     		}
-    	} catch (Exception e) {
-    		logger.error("店铺是否推荐错误信息："+e.getMessage());
-    		BugLogUtils.saveBugLog(request, "店铺是否推荐修改失败", e);
+		} catch (Exception e) {
+			logger.error("修改店铺是否属性错误信息："+e.getMessage());
+    		BugLogUtils.saveBugLog(request, "店铺是否属性修改失败", e);
     		map = new HashMap<String, String>();
     		map.put("FLAG", "ERROR");
-    		map.put("MESSAGE", "店铺是否推荐修改失败");
-    	}
+    		map.put("MESSAGE", "修改失败");
+		}
     	return map;
     }
-	
 }

@@ -151,24 +151,24 @@
 				$("#a1,#a2,#a3,#a4,#a5,#area2").show();
 			}
 		}
-		function changeTableVal(id,status){
-			if($("#officeStatus").val() == 1){
+		function changeTableVal(type,id,isyesno){
+			if($("#office"+type).val() == 1){
 				$(".loading").show();//打开展示层
 				$.ajax({
 					type : "POST",
-					url : "${ctx}/sys/office/updateOfficeStatus?id="+id+"&status="+status,
+					url : "${ctx}/sys/office/updateisyesno?ID="+id+"&ISYESNO="+isyesno+"&TYPE="+type,
 					dataType: 'json',
 					success: function(data) {
 						$(".loading").hide(); //关闭加载层
 						var flag = data.FLAG;
 						if("OK" == flag){
-							$("#status").html("");//清除DIV内容	
-							if(status == '1'){
+							$("#"+type).html("");//清除DIV内容	
+							if(isyesno == '0'){
 								//当前状态为【否】，则打开
-								$("#status").append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+id+"','0')\">&nbsp;&nbsp;隐藏状态");
-							}else if(status == '0'){
+								$("#"+type).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+type+"','"+id+"','0')\">&nbsp;&nbsp;否");
+							}else if(isyesno == '1'){
 								//当前状态为【是】，则取消
-								$("#status").append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+id+"','1')\">&nbsp;&nbsp;正常状态");
+								$("#"+type).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+type+"','"+id+"','1')\">&nbsp;&nbsp;是");
 							}
 						}
 						top.layer.alert(data.MESSAGE, {icon: 0, title:'提醒'}); 
@@ -178,39 +178,17 @@
 				top.layer.alert("无此操作权限!", {icon: 0, title:'提醒'}); 
 			}
 		}
-		//是否推荐
-		function changeIsRecommend(id,isRecommend){
-			$(".loading").show();//打开展示层
-			$.ajax({
-				type : "POST",
-				url : "${ctx}/sys/office/updateIsRecommend?id="+id+"&isRecommend="+isRecommend,
-				dataType: 'json',
-				success: function(data) {
-					$(".loading").hide(); //关闭加载层
-					var flag = data.FLAG;
-					if("OK" == flag){
-						$("#isRecommend").html("");//清除DIV内容	
-						if(isRecommend == '0'){
-							//0：未推荐；1：推荐
-							$("#isRecommend").append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeIsRecommend('"+id+"','1')\">&nbsp;&nbsp;未推荐");
-						}else if(isRecommend == '1'){
-							//
-							$("#isRecommend").append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeIsRecommend('"+id+"','0')\">&nbsp;&nbsp;推荐");
-						}
-					}
-					top.layer.alert(data.MESSAGE, {icon: 0, title:'提醒'}); 
-				}
-			});   
-		}
 	</script>
 </head>
 <body>
 	<div class="ibox-content">
 		<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/save" method="post" class="form-horizontal">
 			<!-- 操作隐藏店铺按钮权限 -->
-			<shiro:hasPermission name="sys:office:updateOfficeStatus">
-				<input type="hidden" id="officeStatus" value="1">
-			</shiro:hasPermission>
+			<shiro:hasPermission name="sys:office:updateOfficeStatus"><input type="hidden" id="officestatus" value="1"></shiro:hasPermission>
+			<!-- 操作是否为新店按钮权限 -->
+			<shiro:hasPermission name="sys:office:updateOfficeIsNew"><input type="hidden" id="officeisNew" value="1"></shiro:hasPermission>
+			<!-- 操作是否推荐按钮权限 -->
+			<shiro:hasPermission name="sys:office:updateIsRecommend"><input type="hidden" id="officeisRecommend" value="1"></shiro:hasPermission>
 			<form:hidden path="id"/>
 			<sys:message content="${message}"/>
 				<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
@@ -361,11 +339,20 @@
 				      	 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>床位：</label></td>
 				         <td class="width-35"><form:input path="officeInfo.bedNum" htmlEscape="false" maxlength="5" cssClass="form-control digits required"/></td>
 						 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>是否新店：</label></td>
-						 <td>
-							<select class="form-control required" id="isNew" name="isNew">
-								<option value='0' <c:if test="${office.isNew == '0'}">selected</c:if>>否</option>
-								<option value='1' <c:if test="${office.isNew == '1'}">selected</c:if>>是</option>
-							</select>
+						 <td id="isNew">
+						 	<c:if test="${not empty office.id }">
+				         		<c:if test="${office.isNew == 0}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('isNew','${office.id}',1)">&nbsp;&nbsp;否
+								</c:if>
+								<c:if test="${office.isNew == 1}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('isNew','${office.id}',0)">&nbsp;&nbsp;是
+								</c:if>
+				         	</c:if>
+				         	<c:if test="${empty office.id }">
+				         		<select class="form-control required" id="isNew" name="isNew">
+									<option value='0'>否</option>
+								</select>
+				         	</c:if>
 						 </td>
 				      </tr>
 				      <tr>
@@ -380,10 +367,10 @@
 				         <td class="width-35" id="isRecommend">
 				         	<c:if test="${not empty office.id }">
 				         		<c:if test="${office.isRecommend == 0}">
-									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeIsRecommend('${office.id}',1)">&nbsp;&nbsp;未推荐
+									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('isRecommend','${office.id}',1)">&nbsp;&nbsp;否
 								</c:if>
 								<c:if test="${office.isRecommend == 1}">
-									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeIsRecommend('${office.id}',0)">&nbsp;&nbsp;推荐
+									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('isRecommend','${office.id}',0)">&nbsp;&nbsp;是
 								</c:if>
 				         	</c:if>
 				         	<c:if test="${empty office.id }">
@@ -394,14 +381,14 @@
 				         </td>
 					  </tr>
 				      <tr>
-				      	 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺状态：</label></td>
+				      	 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺状态(是否隐藏)：</label></td>
 				         <td class="width-35" id="status">
 				         	<c:if test="${not empty office.id }">
-				         		<c:if test="${office.officeInfo.status == 1}">
-									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('${office.id}',0)">&nbsp;&nbsp;隐藏状态
+								<c:if test="${office.officeInfo.status == 1}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('status','${office.id}',0)">&nbsp;&nbsp;是
 								</c:if>
-								<c:if test="${office.officeInfo.status == 0}">
-									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('${office.id}',1)">&nbsp;&nbsp;正常状态
+				         		<c:if test="${office.officeInfo.status == 0}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('status','${office.id}',1)">&nbsp;&nbsp;否
 								</c:if>
 				         	</c:if>
 				         	<c:if test="${empty office.id }">
