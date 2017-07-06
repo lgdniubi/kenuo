@@ -293,20 +293,11 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	}
 	
 	/**
-	 * 隐藏店铺
+	 * 修改店铺是否属性
 	 * @param office
 	 */
 	@Transactional(readOnly = false)
-	public void updateOfficeStatus(OfficeInfo officeInfo){
-		dao.updateOfficeStatus(officeInfo);
-	}
-
-	/**
-	 * 店铺是否推荐
-	 * @param office
-	 */
-	@Transactional(readOnly = false)
-	public void updateIsRecommend(Office office) {
-		dao.updateIsRecommend(office);
+	public void updateisyesno(String id,String type,String isyesno){
+		dao.updateisyesno(id,type,isyesno);
 	}
 }
