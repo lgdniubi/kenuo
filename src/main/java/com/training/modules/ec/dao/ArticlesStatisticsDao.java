@@ -13,6 +13,8 @@ package com.training.modules.ec.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.ArticlesStatisticsCountData;
@@ -27,14 +29,6 @@ import com.training.modules.ec.entity.ArticlesStatisticsCountData;
 public interface ArticlesStatisticsDao extends TreeDao<ArticlesStatisticsCountData>{
 
 	/**
-	 * 方法说明:	获取定时器截止的  预约id
-	 * 创建时间:	2017年6月19日
-	 * 创建人:	土豆
-	 * 修改记录:	修改人	修改记录	2017年6月19日
-	 * @return
-	 */
-	public Integer findApptOrderId();
-	/**
 	 * 方法说明:	获取定时器截止的  评论id
 	 * 创建时间:	2017年6月19日
 	 * 创建人:	土豆
@@ -42,7 +36,14 @@ public interface ArticlesStatisticsDao extends TreeDao<ArticlesStatisticsCountDa
 	 * @return
 	 */
 	public Integer findCommentId();
-	
+	/**
+	 * 方法说明:	获取定时器截止的  点赞数id
+	 * 创建时间:	2017年6月19日
+	 * 创建人:	土豆
+	 * 修改记录:	修改人	修改记录	2017年6月19日
+	 * @return
+	 */
+	public Integer findLikeId();
 	/**
 	 * 方法说明:	查询文章的所有统计数据
 	 * 创建时间:	2017年6月19日
@@ -69,5 +70,17 @@ public interface ArticlesStatisticsDao extends TreeDao<ArticlesStatisticsCountDa
 	 * @param b
 	 */
 	public void updateArticles(ArticlesStatisticsCountData articlesStatisticsCountData);
+	/**
+	 * 查询文章的评论数量
+	 * @param commentId
+	 * @return
+	 */
+	public List<ArticlesStatisticsCountData> queryArticlesComment(@Param("commentId")int commentId);
+	/**
+	 * 查询文章的点赞数量
+	 * @param likeId
+	 * @return
+	 */
+	public List<ArticlesStatisticsCountData> queryArticlesLike(@Param("likeId")int likeId);
 	
 }

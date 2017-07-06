@@ -13,6 +13,8 @@ package com.training.modules.ec.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.GoodsStatisticsCountData;
@@ -74,4 +76,16 @@ public interface GoodsStatisticsDao extends TreeDao<GoodsStatisticsCountData>{
 	 * @param b
 	 */
 	public void addGoodsStatisticsCountData(GoodsStatisticsCountData goodsStatisticsCountData);
+	/**
+	 * 查询商品订单的购买数
+	 * @param recId
+	 * @return
+	 */
+	public List<GoodsStatisticsCountData> selectGoodsMapping(@Param(value="recId")int recId);
+	/**
+	 * 查询商品订单的评分和评论数
+	 * @param commentId
+	 * @return
+	 */
+	public List<GoodsStatisticsCountData> selectComment(@Param(value="commentId")int commentId);
 }
