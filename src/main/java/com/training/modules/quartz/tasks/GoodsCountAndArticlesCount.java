@@ -69,7 +69,7 @@ public class GoodsCountAndArticlesCount extends CommonService {
 			logger.info("[work],商品的定位id 插入数据库数量是：" + a);
 
 			// 查询文章的 浏览量  分享量 评论数  点赞数
-			// 更新 文章统计表数据
+			// 更新 文章统计表数据中的  浏览量
 			ArticlesStatisticsCountData articlesStatisticsCountData = null;
 			Map<String, String> map1 = redisClientTemplate.hgetAll(RedisConfig.COUNT_ARTICLE_DETAIL_NUM_KEY);
 			Iterator<Map.Entry<String, String>> it = map1.entrySet().iterator();

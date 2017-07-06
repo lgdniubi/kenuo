@@ -10,7 +10,6 @@
  */
 package com.training.modules.sys.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -48,47 +47,58 @@ public class BeautyService extends TreeService<BeautyDao, BeautyCountData> {
 		map.put("commId", commId);
 		map.put("apptOrderId", apptOrderId);
 		
-		//查询技师的统计数据   并更新train_beauty_statistics
-		List<BeautyCountData> list = dao.queryBeautyCountData(map);
-		//排除集合中BeautyId为null的数据
-		Iterator<BeautyCountData> iterator = list.iterator();
-		while(iterator.hasNext()){
-			BeautyCountData beautyCountData = iterator.next();
-			if(beautyCountData.getBeautyId() == null){
-				iterator.remove();
-			}
-			if(beautyCountData.getApptCount() == null){
-				beautyCountData.setApptCount(0);
-			}
-			if(beautyCountData.getEvaluationCount() == null){
-				beautyCountData.setEvaluationCount(0);
-			}
-			if(beautyCountData.getEvaluationScore() == null){
-				beautyCountData.setEvaluationScore((float) 0.0);
-			}	
-		}
+		//查询技师的统计数据
+		List<BeautyCountData> apptDataList = dao.queryBeautyApptData(apptOrderId);
+		List<BeautyCountData> commentDataList = dao.queryBeautyCommentData(commId);
 		
-		List<BeautyCountData> addList  = new ArrayList<BeautyCountData>();
-		//遍历查询结果    区别出train_shop_statistics表中   id不存在的数据
-		Iterator<BeautyCountData> iterator2 = list.iterator();
+		//排除预约数据 集合中BeautyId为null的数据
+		Iterator<BeautyCountData> iterator1 = apptDataList.iterator();
+		while(iterator1.hasNext()){
+			BeautyCountData apptData = iterator1.next();
+			if(apptData.getBeautyId() == null){
+				iterator1.remove();
+			}
+			if(apptData.getApptCount() == null){
+				apptData.setApptCount(0);
+			}
+			if(apptData.getEvaluationCount() == null){
+				apptData.setEvaluationCount(0);
+			}
+			if(apptData.getEvaluationScore() == null){
+				apptData.setEvaluationScore((float) 0.0);
+			}
+		}
+		//排除评论数据 集合中BeautyId为null的数据
+		Iterator<BeautyCountData> iterator2 = commentDataList.iterator();
 		while(iterator2.hasNext()){
-			BeautyCountData beautyCountData = iterator2.next();
-			if(beautyCountData.getIsExist().equals("NULL")){
-				addList.add(beautyCountData);
-				iterator2.remove();
-			} 
-		}
-		//有需要添加的数据  执行添加操作
-		if(addList.size() != 0){
-			dao.addBeautyCountData(addList);
-		}
-		//修改的数据不是null 才会执行修改操作
-		if(list.size() != 0){
-			for (BeautyCountData beautyCountData : list) {
-				dao.updateBeautyCountData(beautyCountData);
+			BeautyCountData commentData = iterator2.next();
+			if(commentData.getBeautyId() == null){
+				iterator1.remove();
+			}
+			if(commentData.getEvaluationCount() == null){
+				commentData.setEvaluationCount(0);
+			}
+			if(commentData.getEvaluationScore() == null){
+				commentData.setEvaluationScore((float) 0.0);
+			}
+			if(commentData.getApptCount() == null){
+				commentData.setApptCount(0);
 			}
 		}
 		
+		// 新增或修改 train_beauty_statistics 表统计数据
+		// 更新预约数据
+		if(apptDataList.size() != 0){
+			for (BeautyCountData apptData : apptDataList) {
+				dao.updateBeautyCountData(apptData);
+			}
+		}
+		// 更新评论数据
+		if(commentDataList.size() != 0){
+			for (BeautyCountData commentData : commentDataList) {
+				dao.updateBeautyCountData(commentData);
+			}
+		}
 		//获取查询数据的定位id
 		Map<String, Object> map2 = new HashMap<String, Object>();
 		int new_commId = dao.findCommId();

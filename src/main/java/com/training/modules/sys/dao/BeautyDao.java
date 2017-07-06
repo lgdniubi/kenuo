@@ -11,8 +11,6 @@
 package com.training.modules.sys.dao;
 
 import java.util.List;
-import java.util.Map;
-
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.sys.entity.BeautyCountData;
@@ -42,28 +40,31 @@ public interface BeautyDao extends TreeDao<BeautyCountData>{
 	 * @return
 	 */
 	public int findCommId();
+	
 	/**
-	 * 方法说明:	查询技师的所有统计数据
+	 * 方法说明:	查询技师的预约数 
 	 * 创建时间:	2017年6月7日 下午3:51:47
 	 * 创建人:	zhanlan
 	 * 修改记录:	修改人	修改记录	2017年6月7日 下午3:51:47
 	 * @return
 	 */
-	public List<BeautyCountData> queryBeautyCountData(Map<String, Object> map);
+	public List<BeautyCountData> queryBeautyApptData(Integer apptOrderId);
 	/**
-	 * 方法说明:	修改train_beauty_statistics 表中技师的统计数据
+	 * 方法说明:	查询技师的评论数据
+	 * 创建时间:	2017年7月6日 上午10:15:37
+	 * 创建人:	zhanlan
+	 * 修改记录:	修改人	修改记录	2017年7月6日 上午10:15:37
+	 * @param map
+	 * @return
+	 */
+	public List<BeautyCountData> queryBeautyCommentData(Integer commId);
+	/**
+	 * 方法说明:	新增或修改 train_beauty_statistics 表统计数据
 	 * 创建时间:	2017年6月7日 下午5:53:52
 	 * 创建人:	zhanlan
 	 * 修改记录:	修改人	修改记录	2017年6月7日 下午5:53:52
 	 * @param b
 	 */
 	public int updateBeautyCountData(BeautyCountData beautyCountData);
-	/**
-	 * 方法说明:	将技师的统计数据插入train_beauty_statistics 表
-	 * 创建时间:	2017年6月7日 下午5:21:40
-	 * 创建人:	zhanlan
-	 * 修改记录:	修改人	修改记录	2017年6月7日 下午5:21:40
-	 * @param b
-	 */
-	public int addBeautyCountData(List<BeautyCountData> list);
+	
 }
