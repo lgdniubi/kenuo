@@ -48,6 +48,7 @@
 		<if test="positionType == '' and name != null and name !=''">
 			AND (g.goods_name LIKE CONCAT('%', #{name}, '%') OR u.name LIKE CONCAT('%', #{name}, '%') OR o.name LIKE CONCAT('%', #{name}, '%'))
 		</if>
+		ORDER BY es.create_date DESC
 	</select>
 	
 	<!-- 根据id查找相应的说说 -->
