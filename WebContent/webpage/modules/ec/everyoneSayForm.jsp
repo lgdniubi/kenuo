@@ -33,6 +33,29 @@
 			$("#searchForm").submit();
 			return false;
 		}
+		
+		function delResponse(parentId,mtmyEveryoneSayId){
+			if(confirm('确认要删除吗？')){
+				$.ajax({
+					type:"post",
+					url:"${ctx}/ec/everyoneSay/delResponse?parentId="+parentId+"&mtmyEveryoneSayId="+mtmyEveryoneSayId,
+					success:function(date){
+						if(date=="success"){
+							top.layer.alert('删除成功!', {icon: 1, title:'提醒'});
+							window.location="${ctx}/ec/everyoneSay/form?mtmyEveryoneSayId="+parentId;
+						}
+						if(date=="error"){
+							top.layer.alert('删除失败!', {icon: 2, title:'提醒'});
+							window.location="${ctx}/ec/everyoneSay/form?mtmyEveryoneSayId="+parentId;
+						}
+									
+					},
+					error:function(XMLHttpRequest,textStatus,errorThrown){
+								    
+					}
+				});
+			 } 
+		}
     </script>
 </head>
 <body>
@@ -64,6 +87,9 @@
 					 			<div class="talk_inner">
 									<div class="talk_head">回复用户：</div>
 									<div class="talk_con">${mtmyEveryoneSay.userName}　<fmt:formatDate value="${mtmyEveryoneSay.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></div>
+										<shiro:hasPermission name="ec:everyoneSay:delResponse">
+											<button onclick="delResponse(${mtmyEveryoneSay.parentId},${mtmyEveryoneSay.mtmyEveryoneSayId})" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</button>
+										</shiro:hasPermission>
 								</div>
 								<div class="talk_inner">
 									<div class="talk_head">回：</div>

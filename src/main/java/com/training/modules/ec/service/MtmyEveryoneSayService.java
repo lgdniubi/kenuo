@@ -1,5 +1,6 @@
 package com.training.modules.ec.service;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,5 +48,14 @@ public class MtmyEveryoneSayService extends CrudService<MtmyEveryoneSayDao, Mtmy
 	 */
 	public void delMtmyEveryoneSay(int mtmyEveryoneSayId){
 		mtmyEveryoneSayDao.delMtmyEveryoneSay(mtmyEveryoneSayId);
+	}
+	
+	/**
+	 * 物理删除说说对应的回 
+	 * @param parentId
+	 * @param mtmyEveryoneSayId
+	 */
+	public void deleteResponse(@Param(value="parentId")String parentId,@Param(value="mtmyEveryoneSayId")int mtmyEveryoneSayId){
+		mtmyEveryoneSayDao.deleteResponse(parentId, mtmyEveryoneSayId);
 	}
 }

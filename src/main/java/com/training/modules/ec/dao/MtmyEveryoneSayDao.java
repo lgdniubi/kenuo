@@ -2,6 +2,8 @@ package com.training.modules.ec.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.MtmyEveryoneSay;
@@ -33,4 +35,11 @@ public interface MtmyEveryoneSayDao extends CrudDao<MtmyEveryoneSay>{
 	 * @param mtmyEveryoneSayId
 	 */
 	public void delMtmyEveryoneSay(int mtmyEveryoneSayId);
+	
+	/**
+	 * 物理删除说说对应的回 
+	 * @param parentId
+	 * @param mtmyEveryoneSayId
+	 */
+	public void deleteResponse(@Param(value="parentId")String parentId,@Param(value="mtmyEveryoneSayId")int mtmyEveryoneSayId);
 }

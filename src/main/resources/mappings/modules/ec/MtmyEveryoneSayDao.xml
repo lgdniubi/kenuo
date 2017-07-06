@@ -94,4 +94,11 @@
 		SET del_flag = '1'
 		WHERE id = #{mtmyEveryoneSayId}
 	</update>
+	
+	<!-- 物理删除说说对应的回 -->
+	<delete id="deleteResponse">
+		DELETE FROM mtmydb.mtmy_everyone_say
+		WHERE id = #{mtmyEveryoneSayId}
+		AND parent_id = #{parentId}
+	</delete>
 </mapper>

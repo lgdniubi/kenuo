@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
@@ -89,5 +90,24 @@ public class MtmyEveryoneSayController extends BaseController{
 			addMessage(redirectAttributes, "删除说说失败");
 		}
 		return "redirect:" + adminPath + "/ec/everyoneSay/list";
+	}
+	
+	/**
+	 * 物理删除说说对应的回 
+	 * @param mtmyEveryoneSay
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="delResponse")
+	@ResponseBody
+	public String delResponse(MtmyEveryoneSay mtmyEveryoneSay,HttpServletRequest request){
+		try{
+			mtmyEveryoneSayService.deleteResponse(mtmyEveryoneSay.getParentId(), mtmyEveryoneSay.getMtmyEveryoneSayId());
+			return "success";
+		}catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "物理删除说说对应的回 ", e);
+			logger.error("物理删除说说对应的回 出错信息：" + e.getMessage());
+			return "error";
+		}
 	}
 }
