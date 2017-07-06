@@ -224,7 +224,7 @@
 					editStr = editStr + "<a href=\"#\" onclick=\"openDialog('添加下级机构', '${ctx}/sys/office/form?parent.id="+treeNode.id+"','800px', '620px')\" class=\"btn  btn-primary btn-xs\"><i class=\"fa fa-plus\"></i> 添加下级机构</a>";
 				}
 			}
-			if(treeNode.pId != 1 && treeNode.pId != 0){
+			if(treeNode.id.length > 7){
 				//查看权限
 				if($("#shiroView").val() == 1){
 					editStr = editStr + "<a href=\"#\" onclick=\"openDialogView('查看机构', '${ctx}/sys/office/form?id="+treeNode.id+"&&num="+treeNode.num+"','800px', '620px')\" class=\"btn btn-info btn-xs\"><i class=\"fa fa-search-plus\"></i> 查看</a>";
