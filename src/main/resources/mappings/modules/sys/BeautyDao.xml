@@ -2,31 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.training.modules.sys.dao.BeautyDao">
     
-    <sql id="selectApptOrder">
-    	SELECT
-			COUNT(mao.id) AS appt_count,
-			mao.beautician_id
-		FROM
-			mtmydb.mtmy_appt_order mao
-		WHERE
-			mao.appt_status IN (1, 2)
-			AND id > #{apptOrderId}
-		GROUP BY
-			mao.beautician_id
-    </sql>
-    <sql id="selectBeautyComment">
-    	SELECT
-			beauty_id,
-			COUNT(content) AS evaluation_count,
-			FORMAT((SUM((IFNULL(service_rank,0) + IFNULL(beauty_rank,0) + IFNULL(skill_rank,0))/3) / COUNT(1)),1) AS evaluation_score
-		FROM
-			mtmydb.mtmy_beauty_comment
-		WHERE
-			comm_id > #{commId}
-		GROUP BY
-			beauty_id
-    </sql>
-    
     <!-- 获取定时器截止的  预约id -->
     <select id="findApptOrderId" resultType="int">
     	SELECT
@@ -49,65 +24,75 @@
 		LIMIT 1
     </select>
     
-    <!-- 查询技师的所有统计数据 -->
-	<select id="queryBeautyCountData" resultType="BeautyCountData" parameterType="java.util.Map">
+    <!-- 查询技师的预约数据 -->
+	<select id="queryBeautyApptData" resultType="BeautyCountData" parameterType="java.lang.Integer">
 		SELECT
-			t1.beautician_id AS 'beautyId',
-			t1.appt_count AS 'apptCount',
-			t2.evaluation_count AS 'evaluationCount',
-			t2.evaluation_score AS 'evaluationScore',
-			IFNULL((SELECT tbs.beauty_id FROM trains.train_beauty_statistics tbs WHERE tbs.beauty_id = t1.beautician_id),"NULL")AS 'isExist'
+			COUNT(mao.id) AS 'apptCount',
+			mao.beautician_id AS 'beautyId',
+			IFNULL((SELECT tbs.beauty_id FROM trains.train_beauty_statistics tbs WHERE tbs.beauty_id = mao.beautician_id),"NULL")AS 'isExist'
 		FROM
-			(<include refid="selectApptOrder"></include>) t1
-		LEFT JOIN (
-			<include refid="selectBeautyComment"></include>) t2 ON t2.beauty_id = t1.beautician_id
-		UNION
-		SELECT
-			t2.beauty_id AS 'beautyId',
-			t1.appt_count AS 'apptCount',
-			t2.evaluation_count AS 'evaluationCount',
-			t2.evaluation_score AS 'evaluationScore',
-			IFNULL((SELECT tbs.beauty_id FROM trains.train_beauty_statistics tbs WHERE tbs.beauty_id = t2.beauty_id),"NULL")AS 'isExist'
-		FROM
-			(<include refid="selectApptOrder"></include>) t1
-		RIGHT JOIN (
-			<include refid="selectBeautyComment"></include>) t2 ON t2.beauty_id = t1.beautician_id
+			mtmydb.mtmy_appt_order mao
+		WHERE
+			mao.appt_status IN (1, 2)
+			AND id > #{apptOrderId}
+		GROUP BY
+			mao.beautician_id
 	</select>
 	
-	<!-- 修改train_beauty_statistics 表中技师的统计数据 -->
-	<update id="updateBeautyCountData" parameterType="com.training.modules.sys.entity.BeautyCountData">
-	        UPDATE `trains`.`train_beauty_statistics`
-	        SET
-	        	<if test="evaluationCount != 0">
-	            `evaluation_score` = ((evaluation_score * evaluation_count + #{evaluationScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount})),
-	        	</if>
-				`evaluation_count` = evaluation_count + #{evaluationCount},
-		 		`appt_count` = appt_count + #{apptCount},
-		 		`update_date` = SYSDATE()
-	        WHERE
-				beauty_id = #{beautyId}
-	</update>
+	<!-- 查询技师的评论数据 -->
+	<select id="queryBeautyCommentData" parameterType="java.lang.Integer" resultType="BeautyCountData">
+		SELECT
+			mbc.beauty_id AS 'beautyId',
+			COUNT(content) AS 'evaluationCount',
+			FORMAT((SUM((IFNULL(service_rank,0) + IFNULL(beauty_rank,0) + IFNULL(skill_rank,0))/3) / COUNT(1)),1) AS 'evaluationScore',
+			IFNULL((SELECT tbs.beauty_id FROM trains.train_beauty_statistics tbs WHERE tbs.beauty_id = mbc.beauty_id),"NULL")AS 'isExist'
+		FROM
+			mtmydb.mtmy_beauty_comment mbc
+		WHERE
+			comm_id > #{commId}
+		GROUP BY
+			beauty_id
+	</select>
 	
-	<!-- 将技师的统计数据插入train_beauty_statistics 表 -->
-	<insert id="addBeautyCountData" parameterType="java.util.List">
-		INSERT INTO `trains`.`train_beauty_statistics` (
-			`beauty_id`,
-			`is_sham`,
-			`evaluation_score`,
-			`evaluation_count`,
-			`appt_count`,
-			`update_date`
-		)
-		VALUES
-		<foreach collection="list" item="item" index="index" separator="," >  
-        (
-	        #{item.beautyId},
-	        '0',
-	        #{item.evaluationScore},
-	        #{item.evaluationCount},
-	        #{item.apptCount},
-	        SYSDATE()
-	    )
-	    </foreach>
+	<!-- 新增或修改 train_beauty_statistics 表统计数据 -->
+	<insert id="updateBeautyCountData" parameterType="BeautyCountData">
+		INSERT INTO `trains`.`train_beauty_statistics` 
+			<trim prefix="(" suffix=")" prefixOverrides=",">
+				<if test="beautyId != null">
+					`beauty_id`,
+				</if>
+					`is_sham`,
+				<if test="evaluationScore != null">
+					`evaluation_score`,
+				</if>
+				<if test="evaluationCount != null">
+					`evaluation_count`,
+				</if>
+				<if test="apptCount != null">
+					`appt_count`,
+				</if>
+					`update_date`
+			</trim>
+			<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+				<if test="beautyId != null">
+					#{beautyId},
+				</if>
+					'0',
+				<if test="evaluationScore != null">
+					#{evaluationScore},
+				</if>
+				<if test="evaluationCount != null">
+					#{evaluationCount},
+				</if>
+				<if test="apptCount != null">
+					#{apptCount},
+				</if>
+				    SYSDATE()
+			</trim>
+			ON DUPLICATE KEY UPDATE 
+		       	evaluation_score = (evaluation_score * evaluation_count + #{evaluationScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
+				evaluation_count = evaluation_count + #{evaluationCount},
+				appt_count = appt_count + #{apptCount},
+				update_date = SYSDATE();
 	</insert>
 </mapper>

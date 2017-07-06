@@ -10,7 +10,6 @@
  */
 package com.training.modules.sys.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -50,29 +49,56 @@ public class ShopCountDataService extends TreeService<ShopCountDataDao, ShopCoun
 		map.put("commentId", commentId);
 		map.put("apptOrderId", apptOrderId);
 		
-		//查询店铺的统计数据   并更新train_shop_statistics
-		List<ShopCountData> shopList = dao.queryShopCountData(map);
-		//遍历查询结果    区别出train_shop_statistics表中   id不存在的数据
-		List<ShopCountData> addList  = new ArrayList<ShopCountData>();
-		Iterator<ShopCountData> iterator = shopList.iterator();
-		while(iterator.hasNext()){
-			ShopCountData shopCountData = iterator.next();
-			if(shopCountData.getIsExist().equals("NULL")){
-				addList.add(shopCountData);
-				iterator.remove();
+		//查询店铺的统计数据 
+		List<ShopCountData> apptDataList = dao.queryShopApptData(apptOrderId);
+		List<ShopCountData> commentDataList = dao.queryShopCommentData(commentId);
+		//排除预约数据 集合中BeautyId为null的数据
+		Iterator<ShopCountData> iterator1 = apptDataList.iterator();
+		while(iterator1.hasNext()){
+			ShopCountData shopCountData = iterator1.next();
+			if(shopCountData.getShopId() == null){
+				iterator1.remove();
+			}
+			if(shopCountData.getApptCount() == null){
+				shopCountData.setApptCount(0);
+			}
+			if(shopCountData.getEvaluationCount() == null){
+				shopCountData.setEvaluationCount(0);
+			}
+			if(shopCountData.getEvaluationScore() == null){
+				shopCountData.setEvaluationScore((float) 0.0);
 			}
 		}
-		//修改的数据不为null  才会执行修改操作
-		if(shopList.size() != 0){
-			for (ShopCountData shopCountData : shopList) {
-				dao.updateShopCountData(shopCountData);
+		//排除评论数据 集合中BeautyId为null的数据
+		Iterator<ShopCountData> iterator2 = commentDataList.iterator();
+		while(iterator2.hasNext()){
+			ShopCountData shopCountData = iterator2.next();
+			if(shopCountData.getShopId() == null){
+				iterator2.remove();
+			}
+			if(shopCountData.getApptCount() == null){
+				shopCountData.setApptCount(0);
+			}
+			if(shopCountData.getEvaluationCount() == null){
+				shopCountData.setEvaluationCount(0);
+			}
+			if(shopCountData.getEvaluationScore() == null){
+				shopCountData.setEvaluationScore((float) 0.0);
 			}
 		}
-		//需要添加的数据不为null  才执行添加操作
-		if(addList.size() != 0){
-			dao.addShopCountData(addList);
+		// 新增或修改 train_shop_statistics 表统计数据
+		// 更新预约数据
+		if(apptDataList.size() != 0){
+			for (ShopCountData apptData : apptDataList) {
+				dao.updateShopCountData(apptData);
+			}
 		}
-		
+		// 更新评论数据
+		if(commentDataList.size() != 0){
+			for (ShopCountData commentData : commentDataList) {
+				dao.updateShopCountData(commentData);
+			}
+		}
 		//获取查询数据的定位id
 		Map<String, Object> map2 = new HashMap<String, Object>();
 		Integer new_commentId = dao.findCommentId();

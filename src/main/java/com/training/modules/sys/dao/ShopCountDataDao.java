@@ -11,7 +11,6 @@
 package com.training.modules.sys.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
@@ -43,7 +42,7 @@ public interface ShopCountDataDao extends TreeDao<ShopCountData>{
 	 */
 	public Integer findCommentId();
 	/**
-	 * 方法说明:	修改train_shop_statistics 表中店铺的统计数据
+	 * 方法说明:	新增或修改 train_shop_statistics 表统计数据
 	 * 创建时间:	2017年6月7日 下午5:53:52
 	 * 创建人:	zhanlan
 	 * 修改记录:	修改人	修改记录	2017年6月7日 下午5:53:52
@@ -51,19 +50,20 @@ public interface ShopCountDataDao extends TreeDao<ShopCountData>{
 	 */
 	public int updateShopCountData(ShopCountData shopCountData);
 	/**
-	 * 方法说明:	将店铺的统计数据插入train_shop_statistics 表
-	 * 创建时间:	2017年6月7日 下午5:21:40
-	 * 创建人:	zhanlan
-	 * 修改记录:	修改人	修改记录	2017年6月7日 下午5:21:40
-	 * @param b
-	 */
-	public int addShopCountData(List<ShopCountData> list);
-	/**
-	 * 方法说明:	查询店铺的所有统计数据
+	 * 方法说明:	查询店铺的预约数据
 	 * 创建时间:	2017年6月7日 下午3:51:47
 	 * 创建人:	zhanlan
 	 * 修改记录:	修改人	修改记录	2017年6月7日 下午3:51:47
 	 * @return
 	 */
-	public List<ShopCountData> queryShopCountData(Map<String, Object> map);
+	public List<ShopCountData> queryShopApptData(Integer apptOrderId);
+	/**
+	 * 方法说明:	查询店铺的评论数据
+	 * 创建时间:	2017年7月6日 下午1:46:50
+	 * 创建人:	zhanlan
+	 * 修改记录:	修改人	修改记录	2017年7月6日 下午1:46:50
+	 * @param commentId
+	 * @return
+	 */
+	public List<ShopCountData> queryShopCommentData(Integer commentId);
 }
