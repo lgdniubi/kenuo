@@ -109,6 +109,19 @@
 				#{likeCount},
 			</if>
 		</trim>
-		ON DUPLICATE KEY UPDATE look_count = #{lookCount};
+		ON DUPLICATE KEY UPDATE
+			<if  test="lookCount != null">
+				look_count = #{lookCount},
+			</if> 
+			<if test="shareCount != null">
+				share_count = #{shareCount},
+			</if>
+			<if test="commonCount != null">
+				common_count = common_count + #{commonCount},
+			</if>
+			<if test="likeCount != null">
+				like_count = like_count + #{likeCount},
+			</if>
+			is_sham = 0;
 	</insert>
 </mapper>

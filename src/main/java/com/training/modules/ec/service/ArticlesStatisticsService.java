@@ -60,7 +60,7 @@ public class ArticlesStatisticsService extends TreeService<ArticlesStatisticsDao
 			//修改的数据不为null  才会执行修改操作
 			if(commentList.size() != 0){
 				for (ArticlesStatisticsCountData articlesStatisticsCountData : commentList) {
-					dao.updateArticles(articlesStatisticsCountData);
+					dao.addArticles(articlesStatisticsCountData);
 				}
 			}
 		}
@@ -70,7 +70,7 @@ public class ArticlesStatisticsService extends TreeService<ArticlesStatisticsDao
 			//修改的数据不为null  才会执行修改操作
 			if(likeList.size() != 0){
 				for (ArticlesStatisticsCountData articlesStatisticsCountData : likeList) {
-					dao.updateArticles(articlesStatisticsCountData);
+					dao.addArticles(articlesStatisticsCountData);
 				}
 			}
 		}
