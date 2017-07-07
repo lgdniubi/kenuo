@@ -165,10 +165,10 @@
 							$("#"+type).html("");//清除DIV内容	
 							if(isyesno == '0'){
 								//当前状态为【否】，则打开
-								$("#"+type).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+type+"','"+id+"','0')\">&nbsp;&nbsp;否");
+								$("#"+type).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+type+"','"+id+"','1')\">&nbsp;&nbsp;否");
 							}else if(isyesno == '1'){
 								//当前状态为【是】，则取消
-								$("#"+type).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+type+"','"+id+"','1')\">&nbsp;&nbsp;是");
+								$("#"+type).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+type+"','"+id+"','0')\">&nbsp;&nbsp;是");
 							}
 						}
 						top.layer.alert(data.MESSAGE, {icon: 0, title:'提醒'}); 
@@ -415,6 +415,7 @@
 			      </tbody>
 		      </table>
 		</form:form>
+		<div class="loading"></div>
 	</div>
 	<!-- 富文本框上传图片弹出框 -->
 	<div class="ke-dialog-default ke-dialog ke-dalog-addpic" id="ke-dialog">
