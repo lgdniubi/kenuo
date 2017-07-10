@@ -77,7 +77,9 @@ public class MtmyGoodsSubheadController extends BaseController{
 	public String form(GoodsSubhead goodsSubhead,HttpServletRequest request, HttpServletResponse response,Model model) {
 		try{
 			if(goodsSubhead.getGoodsSubheadId() != 0){
+				String flag = goodsSubhead.getFlag();
 				goodsSubhead = mtmyGoodsSubheadService.getGoodsSubhead(goodsSubhead.getGoodsSubheadId());
+				goodsSubhead.setFlag(flag);
 			}
 			model.addAttribute("goodsSubhead", goodsSubhead);
 		}catch(Exception e){

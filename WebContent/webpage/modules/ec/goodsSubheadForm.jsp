@@ -34,8 +34,17 @@
 	    }
 		
 		$(document).ready(function(){
+			if($("#type").val() == 1){
+				$("#isShow").show();
+			}else{
+				$("#isShow").hide();
+			}
 			validateForm = $("#inputForm").validate();
-
+			
+			if(${goodsSubhead.flag == 'add' || goodsSubhead.flag == 'view'}){
+				$("#time").show();
+			}
+			
 			var start = {
 				    elem: '#startDate',
 				    format: 'YYYY-MM-DD hh:mm:ss',
@@ -67,6 +76,7 @@
 				};
 					laydate(start);
 					laydate(end);
+					
 		});
 		
 		function isShow(value){
@@ -94,18 +104,16 @@
 										<input class="form-control required" id="name" name="name" type="text" value="${goodsSubhead.name }" style="width: 100%"/>
 									</td>
 								</tr>
-								<c:if test="${goodsSubhead.flag == 'add' || goodsSubhead.flag == 'view'}">
-									<tr>
-										<td><label class="pull-right"><font color="red">*</font>生效时间</label></td>
-										<td>
-											<input id="startDate" name="startDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${goodsSubhead.startDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" readonly="readonly"/>
-										</td>
-										<td><label class="pull-right"><font color="red">*</font>失效时间</label></td>
-										<td>
-											<input id="endDate" name="endDate" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${goodsSubhead.endDate}" pattern="yyyy-MM-dd"/>"  style="width:185px;" readonly="readonly"/>&nbsp;&nbsp;
-										</td>
-									</tr>
-								</c:if>
+								<tr id="time">
+									<td><label class="pull-right"><font color="red">*</font>生效时间</label></td>
+									<td>
+										<input id="startDate" name="startDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${goodsSubhead.startDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" readonly="readonly"/>
+									</td>
+									<td><label class="pull-right"><font color="red">*</font>失效时间</label></td>
+									<td>
+										<input id="endDate" name="endDate" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${goodsSubhead.endDate}" pattern="yyyy-MM-dd"/>"  style="width:185px;" readonly="readonly"/>&nbsp;&nbsp;
+									</td>
+								</tr>
 								<tr>
 									<td><label class="pull-right"><font color="red">*</font>副标题文案:</label></td>
 									<td colspan="3"> 

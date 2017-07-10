@@ -36,6 +36,7 @@
 		
 		function delResponse(parentId,mtmyEveryoneSayId){
 			if(confirm('确认要删除吗？')){
+				alert(1111);
 				$.ajax({
 					type:"post",
 					url:"${ctx}/ec/everyoneSay/delResponse?parentId="+parentId+"&mtmyEveryoneSayId="+mtmyEveryoneSayId,
