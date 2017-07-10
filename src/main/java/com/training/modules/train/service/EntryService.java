@@ -104,6 +104,39 @@ public class EntryService {
 		entrymapper.updateauditstatus(auditid);
 	}
 
+	/**
+	 * 获取主播云币
+	 * @param user_id
+	 * @return
+	 */
+	public int queryintegralsnum(int user_id){
+		return this.entrymapper.queryintegralsnum(user_id);
+	}
+	
+	/**
+	 * 添加云币交易日志
+	 * @param user_id
+	 * @return
+	 */
+	public int cloudcoinOrderlog(Map<String,Object> m){
+		return this.entrymapper.cloudcoinOrderlog(m);
+	}
+
+	/**
+	 * 将平台获得云币加到平台账户
+	 * @param map
+	 */
+	public void addofficeaccount(Map<String, Object> m) {
+		this.entrymapper.addofficeaccount(m);
+	}
+
+	/**
+	 * 将云币划分结果信息入库
+	 * @param m
+	 */
+	public void addproportionsmessage(Map<String, Object> m) {
+		this.entrymapper.addproportionsmessage(m);
+	}
 	
 
 }
