@@ -48,16 +48,6 @@ public interface GoodsStatisticsDao extends TreeDao<GoodsStatisticsCountData>{
 	public int findCommentId();
 	
 	/**
-	 * 方法说明:	查询商品的所有统计数据
-	 * 创建时间:	2017年6月19日
-	 * 创建人:	土豆
-	 * 修改记录:	修改人	
-	 * 修改记录	2017年6月19日
-	 * @return
-	 */
-	public List<GoodsStatisticsCountData> queryGoodsStatisticsCountData(Map<String, Object> map);
-	
-	/**
 	 * 方法说明:	修改mtmy_goods_statistics 表中商品的统计数据
 	 * 创建时间:	2017年6月19日
 	 * 创建人:	土豆
@@ -76,12 +66,14 @@ public interface GoodsStatisticsDao extends TreeDao<GoodsStatisticsCountData>{
 	 * @param b
 	 */
 	public void addGoodsStatisticsCountData(GoodsStatisticsCountData goodsStatisticsCountData);
+	
 	/**
 	 * 查询商品订单的购买数
 	 * @param recId
 	 * @return
 	 */
 	public List<GoodsStatisticsCountData> selectGoodsMapping(@Param(value="recId")int recId);
+	
 	/**
 	 * 查询商品订单的评分和评论数
 	 * @param commentId

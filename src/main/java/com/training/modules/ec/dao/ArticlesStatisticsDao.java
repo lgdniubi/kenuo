@@ -11,7 +11,6 @@
 package com.training.modules.ec.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -36,6 +35,7 @@ public interface ArticlesStatisticsDao extends TreeDao<ArticlesStatisticsCountDa
 	 * @return
 	 */
 	public Integer findCommentId();
+	
 	/**
 	 * 方法说明:	获取定时器截止的  点赞数id
 	 * 创建时间:	2017年6月19日
@@ -44,15 +44,7 @@ public interface ArticlesStatisticsDao extends TreeDao<ArticlesStatisticsCountDa
 	 * @return
 	 */
 	public Integer findLikeId();
-	/**
-	 * 方法说明:	查询文章的所有统计数据
-	 * 创建时间:	2017年6月19日
-	 * 创建人:	土豆
-	 * 修改记录:	修改人	修改记录	2017年6月19日
-	 * @return
-	 */
-	public List<ArticlesStatisticsCountData> queryArticlesCountData(Map<String, Object> map);
-
+	
 	/**
 	 * 方法说明:	修改mtmy_articles_statistics 表中文章的统计数据(根据传送的字段进行修改)
 	 * 创建时间:	2017年6月19日
@@ -70,12 +62,14 @@ public interface ArticlesStatisticsDao extends TreeDao<ArticlesStatisticsCountDa
 	 * @param b
 	 */
 	public void updateArticles(ArticlesStatisticsCountData articlesStatisticsCountData);
+	
 	/**
 	 * 查询文章的评论数量
 	 * @param commentId
 	 * @return
 	 */
 	public List<ArticlesStatisticsCountData> queryArticlesComment(@Param("commentId")int commentId);
+	
 	/**
 	 * 查询文章的点赞数量
 	 * @param likeId

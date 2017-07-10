@@ -73,7 +73,7 @@ public class BeautyService extends TreeService<BeautyDao, BeautyCountData> {
 		while(iterator2.hasNext()){
 			BeautyCountData commentData = iterator2.next();
 			if(commentData.getBeautyId() == null){
-				iterator1.remove();
+				iterator2.remove();
 			}
 			if(commentData.getEvaluationCount() == null){
 				commentData.setEvaluationCount(0);
