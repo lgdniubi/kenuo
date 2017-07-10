@@ -39,11 +39,13 @@
 			}else{
 				$("#isShow").hide();
 			}
-			validateForm = $("#inputForm").validate();
 			
-			if(${goodsSubhead.flag == 'add' || goodsSubhead.flag == 'view'}){
-				$("#time").show();
+			if(${goodsSubhead.flag == 'edit'}){
+				$("#startDate").attr("disabled","disabled");
+				$("#endDate").attr("disabled","disabled");
 			}
+			
+			validateForm = $("#inputForm").validate();
 			
 			var start = {
 				    elem: '#startDate',
