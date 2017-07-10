@@ -133,9 +133,9 @@
 									</td>
 								</tr>
 								<tr>
-									<td><label class="pull-right"><font color="red">*</font>文案链接：</label></td>
+									<td><label class="pull-right">文案链接：</label></td>
 									<td colspan="4">
-										<input class="form-control required" id="redirectUrl" name="redirectUrl" type="text" value="${goodsSubhead.redirectUrl }" style="width: 100%"/>
+										<input class="form-control" id="redirectUrl" name="redirectUrl" type="text" value="${goodsSubhead.redirectUrl }" style="width: 100%"/>
 									</td>
 								</tr>
 								<tr id="isShow">
