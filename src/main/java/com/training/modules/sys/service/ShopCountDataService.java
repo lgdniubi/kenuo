@@ -14,11 +14,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.service.TreeService;
+import com.training.common.utils.BeanUtil;
+import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.sys.dao.ShopCountDataDao;
 import com.training.modules.sys.entity.ShopCountData;
 import com.training.modules.sys.utils.QuartzStartConfigUtils;
@@ -33,6 +37,10 @@ import com.training.modules.sys.utils.QuartzStartConfigUtils;
 @Transactional(readOnly = true)
 public class ShopCountDataService extends TreeService<ShopCountDataDao, ShopCountData> {
 
+	protected static RedisClientTemplate redisClientTemplate;
+	static{
+		redisClientTemplate = (RedisClientTemplate) BeanUtil.getBean("redisClientTemplate");
+	}
 	/**
 	 * 方法说明:	查询店铺的所有统计数据   并更新 train_shop_statistics表数据   返回截止数据id
 	 * 创建时间:	2017年6月7日 下午5:12:23
@@ -44,16 +52,18 @@ public class ShopCountDataService extends TreeService<ShopCountDataDao, ShopCoun
 	public Map<String, Object> completeShopCountData(){
 		//先从数据库中取出上次存入的定位id
 		Integer commentId = QuartzStartConfigUtils.queryValue("mtmy_shop_comment");
-		Integer apptOrderId = QuartzStartConfigUtils.queryValue("mtmy_appt_order_shop");
+//		Integer apptOrderId = QuartzStartConfigUtils.queryValue("mtmy_appt_order_shop");
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("commentId", commentId);
-		map.put("apptOrderId", apptOrderId);
+//		map.put("apptOrderId", apptOrderId);
 		
 		//查询店铺的统计数据 
-		List<ShopCountData> apptDataList = dao.queryShopApptData(apptOrderId);
+//		List<ShopCountData> apptDataList = dao.queryShopApptData(apptOrderId);
+		Map<String, String> shopMap = redisClientTemplate.hgetAll("SHOP_SUBSCRIBE_NUM_KEY");
+		
 		List<ShopCountData> commentDataList = dao.queryShopCommentData(commentId);
 		//排除预约数据 集合中BeautyId为null的数据
-		Iterator<ShopCountData> iterator1 = apptDataList.iterator();
+		/*Iterator<ShopCountData> iterator1 = apptDataList.iterator();
 		while(iterator1.hasNext()){
 			ShopCountData shopCountData = iterator1.next();
 			if(shopCountData.getShopId() == null){
@@ -68,7 +78,7 @@ public class ShopCountDataService extends TreeService<ShopCountDataDao, ShopCoun
 			if(shopCountData.getEvaluationScore() == null){
 				shopCountData.setEvaluationScore((float) 0.0);
 			}
-		}
+		}*/
 		//排除评论数据 集合中BeautyId为null的数据
 		Iterator<ShopCountData> iterator2 = commentDataList.iterator();
 		while(iterator2.hasNext()){
@@ -88,11 +98,23 @@ public class ShopCountDataService extends TreeService<ShopCountDataDao, ShopCoun
 		}
 		// 新增或修改 train_shop_statistics 表统计数据
 		// 更新预约数据
-		if(apptDataList.size() != 0){
+		Set<Entry<String, String>> entrySet = shopMap.entrySet();
+		for (Entry<String, String> entry : entrySet) {
+			String shopId = entry.getKey();
+			String apptCount = entry.getValue();
+			int appt_count = Integer.parseInt(apptCount);
+			ShopCountData apptData = new ShopCountData();
+			apptData.setShopId(shopId);
+			apptData.setApptCount(appt_count);
+			apptData.setEvaluationCount(0);
+			apptData.setEvaluationScore((float) 0.0);
+			dao.updateShopCountData(apptData);
+		}
+		/*if(apptDataList.size() != 0){
 			for (ShopCountData apptData : apptDataList) {
 				dao.updateShopCountData(apptData);
 			}
-		}
+		}*/
 		// 更新评论数据
 		if(commentDataList.size() != 0){
 			for (ShopCountData commentData : commentDataList) {
