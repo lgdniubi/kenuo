@@ -13,11 +13,22 @@
 		  if(validateForm.form()){
 			  var liveRemarks=$("#liveRemarks").val();
 			  var auditStatus=$("input[name=auditStatus]:checked").val();
+			  var earningsRatio = $("input[name=earningsRatio]").val();
 			  if(auditStatus==0){
 				  if(liveRemarks==""){
 					  top.layer.alert('审核失败备注说明不能为空!', {icon: 0, title:'提醒'}); 
 					  return;
 				  }
+			  }
+			  
+				if(!/^[1-9]*[1-9][0-9]*$/.test(earningsRatio)){
+					top.layer.alert('平台抽取比例必须为整数!', {icon: 0, title:'提醒'});
+					return;
+				}
+			  
+			  if(earningsRatio > 100 || earningsRatio < 1){
+				  top.layer.alert('平台抽取比例只能在1-100之间!', {icon: 0, title:'提醒'}); 
+				  return;
 			  }
 			  
 			  $("#inputForm").submit();
@@ -29,9 +40,8 @@
 		
 	
 		$(document).ready(function(){
-	
 			
-			$("#reason").focus();
+			/* $("#reason").focus(); */
 			validateForm = $("#inputForm").validate({
 				rules: {
 					
@@ -58,16 +68,32 @@
 			//在ready函数中预先调用一次远程校验函数，是一个无奈的回避案。(刘高峰）
 			//否则打开修改对话框，不做任何更改直接submit,这时再触发远程校验，耗时较长，
 			//submit函数在等待远程校验结果然后再提交，而layer对话框不会阻塞会直接关闭同时会销毁表单，因此submit没有提交就被销毁了导致提交表单失败。
-			$("#inputForm").validate().element($("#reason"));
+			/* $("#inputForm").validate().element($("#reason")); */
 			
 // 			laydate({
 // 	            elem: '#userinfo.birthday', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
 // 	            event: 'focus' //响应事件。如果没有传入event，则按照默认的click
 // 	        });
 			
+			if(${trainLiveAudit.auditStatus == 2}){
+				$("#earningsRatioShow").show();
+			}else{
+				$("#earningsRatioShow").hide();
+			}
+			
+			var earningsRatio = $("#earningsRatio").val();
+			var afterEarningsRatio = parseInt(earningsRatio);
+			$("#earningsRatio").val(afterEarningsRatio);
 			
 		});
-
+		
+		function isShow(){
+			$("#earningsRatioShow").show();
+		}
+		
+		function isHide(){
+			$("#earningsRatioShow").hide();
+		}
 		
 </script>
 </head>
@@ -124,17 +150,17 @@
 					<td><label class="pull-right">审核状态:</label></td>
 					<td><input id="oldStatus" name="oldStatus" type="hidden" value="${trainLiveAudit.auditStatus}" /> 
 						<c:if test="${trainLiveAudit.auditStatus==0}">
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" checked="checked" class="form" />审核失败 </label>
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" class="form" />审核通过</label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" checked="checked" class="form" onclick="isHide()"/>审核失败 </label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" class="form" onclick="isShow()"/>审核通过</label>
 						</c:if> 
 						<c:if test="${trainLiveAudit.auditStatus==1}">
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" class="form" />审核失败 </label>
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="1" checked="checked" class="form" />请求审核</label>
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" class="form" />审核通过</label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" class="form" onclick="isHide()"/>审核失败 </label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="1" checked="checked" class="form" onclick="isHide()"/>请求审核</label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" class="form" onclick="isShow()"/>审核通过</label>
 						</c:if> 
 						<c:if test="${trainLiveAudit.auditStatus==2}">
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" class="form" />审核失败</label>
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" checked="checked" class="form" />审核通过</label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" class="form" onclick="isHide()"/>审核失败</label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" checked="checked" class="form" onclick="isShow()"/>审核通过</label>
 						</c:if> 
 						<c:if test="${trainLiveAudit.auditStatus==3}">
 							<label><input id="auditStatus" name="auditStatus" type="radio" value="3" checked="checked" class="form" />已完成</label>
@@ -142,6 +168,12 @@
 						<c:if test="${trainLiveAudit.auditStatus==4}">
 							<label><input id="auditStatus" name="auditStatus" type="radio" value="4" checked="checked" class="form" />正在直播</label>
 						</c:if>
+					</td>
+				</tr>
+				<tr id="earningsRatioShow">
+					<td><label class="pull-right">平台抽取比例:</label></td>
+					<td> 
+						<label><input id="earningsRatio" name="earningsRatio" type="text" value="${trainLiveAudit.earningsRatio*100}" class="form" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';"/>% </label>
 					</td>
 				</tr>
 				<tr>

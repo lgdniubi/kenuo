@@ -28,6 +28,7 @@
 		a.imgurl,
 		a.live_remarks,
 		r.roomId as "roomId",
+		a.earnings_ratio as "earningsRatio",
 		a.del_flag
 
 	</sql>
@@ -88,6 +89,7 @@
 			audit_status=#{auditStatus},
 			isPay=#{isPay},
 			live_remarks=#{liveRemarks},
+			earnings_ratio = #{earningsRatio},
 			audit_user=#{auditUser}
 		WHERE id=#{id}
 	</update>

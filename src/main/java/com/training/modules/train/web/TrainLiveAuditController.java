@@ -167,6 +167,7 @@ public class TrainLiveAuditController extends BaseController{
 		long time=date.getTime();
 		try {
 			trainLiveAudit.setAuditUser(adminName);
+			trainLiveAudit.setEarningsRatio(trainLiveAudit.getEarningsRatio()/100.0);
 			trainLiveAuditService.update(trainLiveAudit);
 			if(trainLiveAudit.getAuditStatus().equals("2")){
 				int num=trainLiveRoomService.findByUserId(trainLiveAudit.getUserId());
