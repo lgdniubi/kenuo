@@ -225,26 +225,30 @@ public class arrangeController extends BaseController{
 			List<ArrangeShop> list = new ArrayList<ArrangeShop>();
 			// 美容师id集合
 			String idArray[] =arrangeBeautician.getUserids().split(",");
-			// 修改排版id集合
-			List<String> isUpdateArrange = new ArrayList<String>();
+			// 修改排版集合
+			List<ArrangeShop> isUpdateArrange = new ArrayList<ArrangeShop>();
 			// 循环美容师id
 			for(String id : idArray){
 				//循环天数
 				for (int i = 1; i <= map.get("maxDay"); i++) {
 					ArrangeShop arrangeShop = new ArrangeShop();
+					ArrangeShop updateArrangeShop = new ArrangeShop();
 					String shopId = request.getParameter(id+i);					// 排班（shopIp、假、休、学）
 					String flag = request.getParameter("flag"+id+i);			// 区分（0 店铺排班 1 市场排班）
 					String isUpdate = request.getParameter("isUpdate"+id+i);	// 是否有过修改（0 否 1 是）
-					String arrangeId = request.getParameter("id"+id+i);			// 排班id（train_arrange_shop 主键id）
+					// 用于计算排班日期
+					int d = 1;	// 日
+					int t = 0;	// 0：上午  1：下午
+					if(i%2 == 0){
+						d = i/2;
+						t = 1;
+					}else{
+						d = (i/2)+1;
+						t = 0;
+					}
 					if(shopId != null && !"".equals(shopId) && "1".equals(isUpdate)){	// shopId 不为空 说明有排班 同时 有过修改
 						arrangeShop.setBeauticianId(id);
 						arrangeShop.setShopId(shopId);
-						int d = 1;
-						if(i%2 == 0){
-							d = i/2;
-						}else{
-							d = (i/2)+1;
-						}
 						arrangeShop.setApptDate(sdf.parse(map.get("year")+"-"+map.get("month")+"-"+d));
 						arrangeShop.setMonth(map.get("month"));
 						arrangeShop.setDay(i);
@@ -254,9 +258,12 @@ public class arrangeController extends BaseController{
 						list.add(arrangeShop);
 					}
 					if("1".equals(isUpdate)){
-						if(!"".equals(arrangeId) && null != arrangeId && !"0".equals(arrangeId)){
-							isUpdateArrange.add(arrangeId);
-						}
+						updateArrangeShop.setBeauticianId(id);
+						updateArrangeShop.setApptDate(sdf.parse(map.get("year")+"-"+map.get("month")+"-"+d));
+						updateArrangeShop.setMonth(map.get("month"));
+						updateArrangeShop.setDay(d);
+						updateArrangeShop.setTime(t);
+						isUpdateArrange.add(updateArrangeShop);
 					}
 				}
 			}
@@ -358,24 +365,28 @@ public class arrangeController extends BaseController{
 			List<ArrangeEquipment> list = new ArrayList<ArrangeEquipment>();
 			//美容师id集合
 			String idArray[] =arrangeBeautician.getEquipmentIds().split(",");
-			// 修改排版id集合
-			List<String> isUpdateArrange = new ArrayList<String>();
+			// 修改排版集合
+			List<ArrangeEquipment> isUpdateArrange = new ArrayList<ArrangeEquipment>();
 			// 循环设备id
 			for(String id : idArray){
 				for (int i = 1; i <= map.get("maxDay"); i++) {
 					ArrangeEquipment arrangeEquipment = new ArrangeEquipment();
+					ArrangeEquipment updateArrangeEquipment = new ArrangeEquipment();
 					String shopId = request.getParameter(id+i);					// 排班（shopIp、修）
 					String isUpdate = request.getParameter("isUpdate"+id+i);	// 是否有过修改（0 否 1 是）
-					String arrangeId = request.getParameter("id"+id+i);			// 排班id（train_arrange_equipment 主键id）
+					// 用于计算排班日期
+					int d = 1;	// 日
+					int t = 0;	// 0：上午  1：下午
+					if(i%2 == 0){
+						d = i/2;
+						t = 1;
+					}else{
+						d = (i/2)+1;
+						t = 0;
+					}
 					if(shopId != null && !"".equals(shopId) && "1".equals(isUpdate)){	// shopId 不为空 说明有排班 同时 有过修改
 						arrangeEquipment.setEquipmentId(Integer.parseInt(id));
 						arrangeEquipment.setShopId(shopId);
-						int d = 1;
-						if(i%2 == 0){
-							d = i/2;
-						}else{
-							d = (i/2)+1;
-						}
 						arrangeEquipment.setApptDate(sdf.parse(map.get("year")+"-"+map.get("month")+"-"+d));
 						arrangeEquipment.setMonth(map.get("month"));
 						arrangeEquipment.setDay(i);
@@ -384,9 +395,12 @@ public class arrangeController extends BaseController{
 						list.add(arrangeEquipment);
 					}
 					if("1".equals(isUpdate)){
-						if(!"".equals(arrangeId) && null != arrangeId && !"0".equals(arrangeId)){
-							isUpdateArrange.add(arrangeId);
-						}
+						updateArrangeEquipment.setEquipmentId(Integer.parseInt(id));
+						updateArrangeEquipment.setApptDate(sdf.parse(map.get("year")+"-"+map.get("month")+"-"+d));
+						updateArrangeEquipment.setMonth(map.get("month"));
+						updateArrangeEquipment.setDay(d);
+						updateArrangeEquipment.setTime(t);
+						isUpdateArrange.add(updateArrangeEquipment);
 					}
 				}
 			}
@@ -497,25 +511,29 @@ public class arrangeController extends BaseController{
 			List<ArrangeShop> list = new ArrayList<ArrangeShop>();
 			//美容师id集合
 			String idArray[] =arrangeBeautician.getUserids().split(",");
-			// 修改排版id集合
-			List<String> isUpdateArrange = new ArrayList<String>();
+			// 修改排版集合
+			List<ArrangeShop> isUpdateArrange = new ArrayList<ArrangeShop>();
 			// 循环美容师id
 			for(String id : idArray){
 				for (int i = 1; i <= map.get("maxDay"); i++) {
 					ArrangeShop arrangeShop = new ArrangeShop();
+					ArrangeShop updateArrangeShop = new ArrangeShop();
 					String shopId = request.getParameter(id+i);					// 排班（shopIp、假、休、学）
 					String flag = request.getParameter("flag"+id+i);			// 区分（0 店铺排班 1 市场排班）
 					String isUpdate = request.getParameter("isUpdate"+id+i);	// 是否有过修改（0 否 1 是）
-					String arrangeId = request.getParameter("id"+id+i);			// 排班id（train_arrange_shop 主键id）
+					// 用于计算排班日期
+					int d = 1;	// 日
+					int t = 0;	// 0：上午  1：下午
+					if(i%2 == 0){
+						d = i/2;
+						t = 1;
+					}else{
+						d = (i/2)+1;
+						t = 0;
+					}
 					if(shopId != null && !"".equals(shopId) && "1".equals(isUpdate)){	// shopId 不为空 说明有排班 同时 有过修改
 						arrangeShop.setBeauticianId(id);
 						arrangeShop.setShopId(shopId);
-						int d = 1;
-						if(i%2 == 0){
-							d = i/2;
-						}else{
-							d = (i/2)+1;
-						}
 						arrangeShop.setApptDate(sdf.parse(map.get("year")+"-"+map.get("month")+"-"+d));
 						arrangeShop.setMonth(map.get("month"));
 						arrangeShop.setDay(i);
@@ -525,9 +543,12 @@ public class arrangeController extends BaseController{
 						list.add(arrangeShop);
 					}
 					if("1".equals(isUpdate)){
-						if(!"".equals(arrangeId) && null != arrangeId && !"0".equals(arrangeId)){
-							isUpdateArrange.add(arrangeId);
-						}
+						updateArrangeShop.setBeauticianId(id);
+						updateArrangeShop.setApptDate(sdf.parse(map.get("year")+"-"+map.get("month")+"-"+d));
+						updateArrangeShop.setMonth(map.get("month"));
+						updateArrangeShop.setDay(d);
+						updateArrangeShop.setTime(t);
+						isUpdateArrange.add(updateArrangeShop);
 					}
 				}
 			}

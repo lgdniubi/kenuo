@@ -19,6 +19,7 @@
     <script type="text/javascript" src="${ctxStatic}/jquery.scrollbar/optiscroll.js"></script>
     <script type="text/javascript">
     	function save(){
+    		$(".loading").show();
     		$("#searchForm").submit();
     	}
     </script>
@@ -103,7 +104,6 @@
 					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
-							                            			<input id="id${ArrangeBeautician.userId }${status.index+1 }" name="id${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.arrangeId }" type="hidden" class="id">
 							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<span style="color: #5ec4ff">班</span>
 						                            			</div>
@@ -114,7 +114,6 @@
 					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${arrangeShops.shopName }">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
-							                            			<input id="id${ArrangeBeautician.userId }${status.index+1 }" name="id${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.arrangeId }" type="hidden" class="id">
 							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<c:if test="${arrangeShops.shopId == '1'}">
 							                            				<span style="color: #4ad264">${arrangeShops.shopName }</span>
@@ -133,7 +132,6 @@
 					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${arrangeShops.shopName }">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
-							                            			<input id="id${ArrangeBeautician.userId }${status.index+1 }" name="id${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.arrangeId }" type="hidden" class="id">
 							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<span style="color: #999999">${arrangeShops.shopName }</span>
 						                            			</div>
@@ -144,7 +142,6 @@
 					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
-							                            			<input id="id${ArrangeBeautician.userId }${status.index+1 }" name="id${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.arrangeId }" type="hidden" class="id">
 							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<span></span>
 						                            			</div>
@@ -160,7 +157,6 @@
 					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
-							                            			<input id="id${ArrangeBeautician.userId }${status.index+1 }" name="id${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.arrangeId }" type="hidden" class="id">
 							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<span style="color: #5ec4ff">班</span>
 						                            			</div>
@@ -171,7 +167,6 @@
 					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${arrangeShops.shopName }">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
-							                            			<input id="id${ArrangeBeautician.userId }${status.index+1 }" name="id${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.arrangeId }" type="hidden" class="id">
 							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<c:if test="${arrangeShops.shopId == '1'}">
 							                            				<span style="color: #4ad264">${arrangeShops.shopName }</span>
@@ -190,7 +185,6 @@
 					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${arrangeShops.shopName }">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
-							                            			<input id="id${ArrangeBeautician.userId }${status.index+1 }" name="id${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.arrangeId }" type="hidden" class="id">
 							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<span style="color: #999999">${arrangeShops.shopName }</span>
 							                            		</div>
@@ -201,7 +195,6 @@
 					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
-							                            			<input id="id${ArrangeBeautician.userId }${status.index+1 }" name="id${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.arrangeId }" type="hidden" class="id">
 							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<span></span>
 						                            			</div>

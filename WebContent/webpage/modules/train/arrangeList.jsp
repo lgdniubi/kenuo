@@ -175,7 +175,6 @@
 			      $(function(){
 						$('#os1').scroll(function(){
 			    		   var $this = $(this);
-			    		   console.log($this.scrollTop());
 			    		   $(this).find('thead').css({'top':''+$this.scrollTop()+'px'})
 			    		   $(this).find('#osLeft').css({'left':''+$this.scrollLeft()+'px'})
 			    		   $(this).find('.osTop').css({'left':''+$this.scrollLeft()+'px','top':''+$this.scrollTop()+'px'})
