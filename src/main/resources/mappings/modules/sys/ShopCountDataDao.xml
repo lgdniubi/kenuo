@@ -94,7 +94,7 @@
 					evaluation_score = (evaluation_score * evaluation_count + #{evaluationScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
 				</if>
 				evaluation_count = evaluation_count + #{evaluationCount},
-				appt_count = appt_count + #{apptCount},
+				appt_count = #{apptCount},
 				update_date = SYSDATE();
 	</insert>
 

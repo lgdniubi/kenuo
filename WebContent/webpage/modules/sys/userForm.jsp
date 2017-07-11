@@ -17,11 +17,26 @@
 	<script type="text/javascript">
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-		  if(validateForm.form()){
+			var teachersName = $(".teachersName").val().length;
+			var teachersComment = $(".teachersComment").val().length;
+			var val="${user.roleNames}";
+			if(val.indexOf("排班")>=0 || $("#id").val() == null || $("#id").val() == ""){
+				if((teachersName != 0) && (teachersComment == '' || teachersComment == null || teachersComment == undefined || teachersComment == 0)){
+					 top.layer.alert("培训师评价不能为空!", {icon: 0, title:'提醒'}); 
+					 return false;
+				 }
+				  
+				 if((teachersName == '' || teachersName == null || teachersName == undefined || teachersName == 0) && (teachersComment != 0)){
+					 top.layer.alert("培训师姓名不能为空!", {icon: 0, title:'提醒'}); 
+					 return false;
+				 }
+			}
+			
+			if(validateForm.form()){
         	  loading('正在提交，请稍等...');
 		      $("#inputForm").submit();
 	     	  return true;
-		  }
+		  	}
 		  return false;
 		}
 		
@@ -643,8 +658,12 @@
 		  		<td colspan="3"><form:textarea path="userinfo.selfintro" htmlEscape="false" rows="10" cols="60" maxlength="500"/></td>
 		  	</tr>
 		  	<tr>
+		  		<td class="width-15 active"><label class="pull-right">培训师姓名:</label></td>
+		  		<td class="width-35" colspan="3"><form:input path="userinfo.teachersName" class="form-control teachersName" type="text" style="width: 50%" maxlength="4"/></td>
+		  	</tr>
+		  	<tr>
 		  		<td class="width-15 active"><label class="pull-right">培训师评价:</label></td>
-		  		<td colspan="3"><form:textarea path="userinfo.teachersComment" htmlEscape="false" rows="10" cols="60" /></td>
+		  		<td colspan="3"><form:textarea path="userinfo.teachersComment" htmlEscape="false" rows="10" cols="60" class="teachersComment"/></td>
 		  	</tr>
 		 </tbody>
 		 </table> 

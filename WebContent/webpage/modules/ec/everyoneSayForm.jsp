@@ -78,11 +78,12 @@
 					<div class="talk_wrap">
 						<p></p>
 						<form id="searchForm" action="${ctx}/ec/everyoneSay/form" method="post">
-						<c:forEach items="${page.list}" var="mtmyEveryoneSay">
 							<!-- 分页隐藏文本框 -->
 			                <input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 				 			<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-				 			<input id="mtmyEveryoneSayId" name="mtmyEveryoneSayId" type="hidden" value="${mtmyEveryoneSay.parentId}"/>
+				 			<input id="mtmyEveryoneSayId" name="mtmyEveryoneSayId" type="hidden" value="${mtmyEveryoneSayQuest.mtmyEveryoneSayId}"/>
+						</form>
+						<c:forEach items="${page.list}" var="mtmyEveryoneSay">
 				 			<div class="talk_area" style="border-bottom: 1px solid #000;">
 					 			<div class="talk_inner">
 									<div class="talk_head">回复用户：</div>
@@ -97,7 +98,6 @@
 								</div>	
 							</div>
 						</c:forEach>
-						</form>
 					</div>
 					<table:page page="${page}"></table:page>
 				</c:if>
