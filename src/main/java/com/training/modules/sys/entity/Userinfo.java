@@ -36,6 +36,8 @@ public class Userinfo extends DataEntity<Userinfo> {
 	private Date workYear;            //从业年限
 	private String serviceManifesto;   //服务宣言
 	
+	private String teachersName;       //培训师姓名
+	
 	public List<Userinfocontent> getInfocontlist() {
 		return infocontlist;
 	}
@@ -158,4 +160,12 @@ public class Userinfo extends DataEntity<Userinfo> {
 	public void setServiceManifesto(String serviceManifesto) {
 		this.serviceManifesto = serviceManifesto;
 	}
+	public String getTeachersName() {
+		return teachersName;
+	}
+	public void setTeachersName(String teachersName) {
+		this.teachersName = teachersName;
+	}
+	
+	
 }
