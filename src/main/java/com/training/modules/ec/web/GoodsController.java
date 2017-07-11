@@ -66,7 +66,8 @@ import net.sf.json.JSONObject;
 @RequestMapping(value = "${adminPath}/ec/goods")
 public class GoodsController extends BaseController{
 
-	public static final String GOOD_DETAIL_KEY = "GOODS_DETAIL_"; // 商品详情
+	public static final String GOOD_DETAIL_KEY = "GOODS_DETAIL_"; // 商品详情app
+	public static final String GOOD_DETAIL_WAP_KEY = "GOODS_DETAIL_WAP_"; // 商品详情wap
 	public static final String GOOD_UNSHELVE_KEY = "GOOD_UNSHELVE_KEY"; //商品下架
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
@@ -1312,6 +1313,7 @@ public class GoodsController extends BaseController{
 	public String refreshRedis(Goods goods,HttpServletRequest request,RedirectAttributes redirectAttributes){
 		try {
 			redisClientTemplate.del(ObjectUtils.serialize(GOOD_DETAIL_KEY+goods.getGoodsId()));
+			redisClientTemplate.del(ObjectUtils.serialize(GOOD_DETAIL_WAP_KEY+goods.getGoodsId()));
 			addMessage(redirectAttributes, "刷新商品(详情)成功");
 		} catch (Exception e) {
 			logger.error("刷新商品详情缓存出现异常，异常信息为："+e.getMessage());
