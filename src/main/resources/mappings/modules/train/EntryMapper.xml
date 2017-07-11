@@ -151,7 +151,7 @@
     	SELECT user_integral FROM mtmydb.mtmy_user_accounts WHERE user_id = #{send_mtmy_id}
     </select>
     
-    <insert id="cloudcoinOrderlog" parameterType="com.training.modules.order.entity.CloudcoinOrderlog">
+    <insert id="cloudcoinOrderlog" parameterType="map">
 	INSERT INTO mtmydb.mtmy_sale_integrals_log
 	(
 		user_id,

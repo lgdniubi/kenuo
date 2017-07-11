@@ -21,16 +21,6 @@
 				  }
 			  }
 			  
-				if(!/^[1-9]*[1-9][0-9]*$/.test(earningsRatio)){
-					top.layer.alert('平台抽取比例必须为整数!', {icon: 0, title:'提醒'});
-					return;
-				}
-			  
-			  if(earningsRatio > 100 || earningsRatio < 1){
-				  top.layer.alert('平台抽取比例只能在1-100之间!', {icon: 0, title:'提醒'}); 
-				  return;
-			  }
-			  
 			  $("#inputForm").submit();
 			  return true;
 		  }
@@ -44,11 +34,16 @@
 			/* $("#reason").focus(); */
 			validateForm = $("#inputForm").validate({
 				rules: {
-					
+					earningsRatio:{
+						digits:true,
+						range:[1,100]
+					} 
 				},
 				messages: {
-					
-					
+					earningsRatio:{
+						digits: "只能输入整数",
+						range:"请输入一个介于 1 和 100 之间的值"
+					}
 				},
 				submitHandler: function(form){
 				//	loading('正在提交，请稍等...');
@@ -57,11 +52,12 @@
 				errorContainer: "#messageBox",
 				errorPlacement: function(error, element) {
 					$("#messageBox").text("输入有误，请先更正。");
-					if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
+					error.appendTo(element.parent());
+					/* if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
 						error.appendTo(element.parent().parent());
 					} else {
 						error.insertAfter(element);
-					}
+					} */
 				}
 			});
 		
@@ -75,11 +71,7 @@
 // 	            event: 'focus' //响应事件。如果没有传入event，则按照默认的click
 // 	        });
 			
-			if(${trainLiveAudit.auditStatus == 2}){
-				$("#earningsRatioShow").show();
-			}else{
-				$("#earningsRatioShow").hide();
-			}
+			isShow(${trainLiveAudit.auditStatus});
 			
 			var earningsRatio = $("#earningsRatio").val();
 			var afterEarningsRatio = parseInt(earningsRatio);
@@ -87,12 +79,12 @@
 			
 		});
 		
-		function isShow(){
-			$("#earningsRatioShow").show();
-		}
-		
-		function isHide(){
-			$("#earningsRatioShow").hide();
+		function isShow(value){
+			if(value == 2){
+				$("#earningsRatioShow").show();
+			}else{
+				$("#earningsRatioShow").hide();
+			}
 		}
 		
 </script>
@@ -150,17 +142,17 @@
 					<td><label class="pull-right">审核状态:</label></td>
 					<td><input id="oldStatus" name="oldStatus" type="hidden" value="${trainLiveAudit.auditStatus}" /> 
 						<c:if test="${trainLiveAudit.auditStatus==0}">
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" checked="checked" class="form" onclick="isHide()"/>审核失败 </label>
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" class="form" onclick="isShow()"/>审核通过</label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" checked="checked" class="form" onclick="isShow(this.value)"/>审核失败 </label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" class="form" onclick="isShow(this.value)"/>审核通过</label>
 						</c:if> 
 						<c:if test="${trainLiveAudit.auditStatus==1}">
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" class="form" onclick="isHide()"/>审核失败 </label>
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="1" checked="checked" class="form" onclick="isHide()"/>请求审核</label>
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" class="form" onclick="isShow()"/>审核通过</label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" class="form" onclick="isShow(this.value)"/>审核失败 </label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="1" checked="checked" class="form" onclick="isShow(this.value)"/>请求审核</label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" class="form" onclick="isShow(this.value)"/>审核通过</label>
 						</c:if> 
 						<c:if test="${trainLiveAudit.auditStatus==2}">
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" class="form" onclick="isHide()"/>审核失败</label>
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" checked="checked" class="form" onclick="isShow()"/>审核通过</label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" class="form" onclick="isShow(this.value)"/>审核失败</label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" checked="checked" class="form" onclick="isShow(this.value)"/>审核通过</label>
 						</c:if> 
 						<c:if test="${trainLiveAudit.auditStatus==3}">
 							<label><input id="auditStatus" name="auditStatus" type="radio" value="3" checked="checked" class="form" />已完成</label>
