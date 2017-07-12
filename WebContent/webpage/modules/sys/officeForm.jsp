@@ -135,8 +135,8 @@
 				'onUploadSuccess' : function(file, data, response) { 
 					var jsonData = $.parseJSON(data);//text 转 json
 					if(jsonData.result == '200'){
-						$("#img").val(jsonData.file_url);
-						$("#imgsrc").attr('src',jsonData.file_url); 
+						$("#officeInfoimg").val(jsonData.file_url);
+						$("#officeInfoimgsrc").attr('src',jsonData.file_url); 
 					}
 				}
 			});
@@ -288,8 +288,8 @@
 			      	  <tr>
 				      	 <td  class="width-15 active"><label class="pull-right">店铺首图:</label></td>
 				         <td class="width-35">
-				         	<img id="imgsrc" src="${office.officeInfo.img}" alt="" style="width: 200px;height: 100px;"/>
-							<input type="hidden" id="img" name="officeInfo.img" value="${office.officeInfo.img}"><!-- 图片隐藏文本框 -->
+				         	<img id="officeInfoimgsrc" src="${office.officeInfo.img}" alt="" style="width: 200px;height: 100px;"/>
+							<input type="hidden" id="officeInfoimg" name="officeInfo.img" value="${office.officeInfo.img}"><!-- 图片隐藏文本框 -->
 							<p>&nbsp;</p>
 		                   	<div class="upload">
 								<input type="file" name="file_photo_upload" id="file_photo_upload">
