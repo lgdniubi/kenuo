@@ -73,4 +73,10 @@ public interface TrainLiveAuditDao extends TreeDao<TrainLiveAudit>{
 	 * @return
 	 */
 	public List<TrainLiveRewardRecord> findCloudContribution(TrainLiveRewardRecord trainLiveRewardRecord);
+	/**
+	 * 云币贡献管理
+	 * @param trainLiveAudit
+	 * @return
+	 */
+	public List<TrainLiveAudit> liveIntegralsList(TrainLiveAudit trainLiveAudit);
 }

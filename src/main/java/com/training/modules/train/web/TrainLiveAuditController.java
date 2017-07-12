@@ -367,4 +367,26 @@ public class TrainLiveAuditController extends BaseController{
 		}
 		return "modules/train/cloudContribution";
 	}
+	/**
+	 * 云币贡献管理
+	 * @param trainLiveAudit
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value="liveIntegralsList")
+	public String liveIntegralsList(TrainLiveAudit trainLiveAudit, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes){
+		try {
+			Page<TrainLiveAudit> page = trainLiveAuditService.liveIntegralsList(new Page<TrainLiveAudit>(request, response), trainLiveAudit);
+			model.addAttribute("page", page);
+			model.addAttribute("trainLiveAudit",trainLiveAudit);
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "云币贡献管理", e);
+			logger.error("查询云币贡献管理错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
+		}
+		return "modules/train/LiveIntegralsList";
+	}
 }
