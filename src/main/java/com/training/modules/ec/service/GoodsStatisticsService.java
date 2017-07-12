@@ -65,6 +65,10 @@ public class GoodsStatisticsService extends TreeService<GoodsStatisticsDao, Good
 		List<GoodsStatisticsCountData> commentList = goodsStatisticsDao.selectComment(commentId);
 		if(commentList.size() !=0 ){
 			for (GoodsStatisticsCountData goodsStatisticsCountData : commentList) {
+				//是否为第一次插入数据,查询出来的商品评论数为0,默认为5星
+				if(goodsStatisticsCountData.getIsExist().equals("NULL") && goodsStatisticsCountData.getEvaluationCount() == 0){
+					goodsStatisticsCountData.setEvaluationScore((float) 5);
+				}
 				goodsStatisticsDao.updateGoodsStatisticsCountData(goodsStatisticsCountData);
 			}
 		}
