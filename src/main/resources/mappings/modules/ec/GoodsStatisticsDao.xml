@@ -39,11 +39,12 @@
     <!-- 查询商品的评分.评价数 -->
 	<select id="selectComment" resultType="GoodsStatisticsCountData" parameterType="int">
 		SELECT
-    		goods_id AS goodsId,
+    		b.goods_id AS goodsId,
 			SUM(IFNULL(deliver_rank,0) + IFNULL(goods_rank,0) + IFNULL(service_rank,0)) / (COUNT(1) * 3) AS evaluationScore,
-			count(1) AS evaluationCount
+			count(1) AS evaluationCount,
+			IFNULL((SELECT a.goods_id FROM mtmydb.mtmy_goods_statistics a where a.goods_id = b.goods_id),'NULL') AS isExist
 		FROM
-			mtmydb.mtmy_comment 
+			mtmydb.mtmy_comment b
 		WHERE
 			comment_id > ${commentId}
 		GROUP BY
