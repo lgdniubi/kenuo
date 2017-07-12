@@ -32,7 +32,11 @@ public class MtmyGoodsSubheadCleanRedis extends CommonService{
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
 	
-	public static final String GOOD_DETAIL_KEY = "GOODS_DETAIL_"; // 商品详情
+	public static final String GOOD_DETAIL_KEY = "GOODS_DETAIL_"; // 商品详情app
+	public static final String GOOD_DETAIL_WAP_KEY = "GOODS_DETAIL_WAP_"; // 商品详情wap
+	public static final String GOODS_COMM_WAP_KEY = "GOODS_COMM_WAP_"; // 商品详情wap
+	public static final String GOODS_RECOMMEND_KEY = "GOODS_RECOMMEND_"; // 商品详情wap
+	public static final String GOODS_AD_WAP_KEY = "GOODS_AD_WAP_"; // 商品详情wap
 	private DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private Logger logger = Logger.getLogger(SubBeforeDay.class);
 	
@@ -68,6 +72,10 @@ public class MtmyGoodsSubheadCleanRedis extends CommonService{
 					if(goodsIdslist.size() > 0){
 						for(int goodsId:goodsIdslist){
 							redisClientTemplate.del(ObjectUtils.serialize(GOOD_DETAIL_KEY + goodsId));
+							redisClientTemplate.del(ObjectUtils.serialize(GOOD_DETAIL_WAP_KEY + goodsId));
+							redisClientTemplate.del(ObjectUtils.serialize(GOODS_COMM_WAP_KEY + goodsId));
+							redisClientTemplate.del(ObjectUtils.serialize(GOODS_RECOMMEND_KEY + goodsId));
+							redisClientTemplate.del(ObjectUtils.serialize(GOODS_AD_WAP_KEY + goodsId));
 						}
 					}
 				}

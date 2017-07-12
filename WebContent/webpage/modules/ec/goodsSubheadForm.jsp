@@ -109,11 +109,11 @@
 								<tr id="time">
 									<td><label class="pull-right"><font color="red">*</font>生效时间</label></td>
 									<td>
-										<input id="startDate" name="startDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${goodsSubhead.startDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" readonly="readonly"/>
+										<input id="startDate" name="startDate" type="text" maxlength="20" class="laydate-icon form-control required layer-date input-sm" value="<fmt:formatDate value="${goodsSubhead.startDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" readonly="readonly"/>
 									</td>
 									<td><label class="pull-right"><font color="red">*</font>失效时间</label></td>
 									<td>
-										<input id="endDate" name="endDate" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${goodsSubhead.endDate}" pattern="yyyy-MM-dd"/>"  style="width:185px;" readonly="readonly"/>&nbsp;&nbsp;
+										<input id="endDate" name="endDate" type="text" maxlength="20" class=" laydate-icon form-control required layer-date input-sm" value="<fmt:formatDate value="${goodsSubhead.endDate}" pattern="yyyy-MM-dd"/>"  style="width:185px;" readonly="readonly"/>&nbsp;&nbsp;
 									</td>
 								</tr>
 								<tr>
