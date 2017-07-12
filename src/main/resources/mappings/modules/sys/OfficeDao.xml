@@ -25,6 +25,7 @@
 		a.update_date,
 		a.is_new AS "isNew",
 		a.is_recommend AS "isRecommend",
+		a.is_cargo AS "isCargo",
 		a.longitude,
 		a.latitude,
 		a.del_flag,
@@ -473,6 +474,9 @@
 		</if> 
 		<if test="type == 'isNew'">
 			UPDATE sys_office SET is_new = #{isyesno} WHERE id = #{id}
+		</if> 	
+		<if test="type == 'isCargo'">
+			UPDATE sys_office SET is_cargo = #{isyesno} WHERE id = #{id}
 		</if> 	
 	</update>
 	<select id="findFNameByCode" resultType="OfficeInfo">
