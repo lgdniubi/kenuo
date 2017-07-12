@@ -193,8 +193,7 @@
 		SELECT id 
 		FROM mtmydb.mtmy_goods_subhead
 		WHERE del_flag = 0
-		<![CDATA[AND start_date <= NOW()]]>
-		AND end_date >= NOW()
+		AND((<![CDATA[start_date <= NOW()]]> AND end_date >= NOW()) OR (<![CDATA[end_date <= NOW()]]>))
 		AND status = '0'
 	</select>
 	
