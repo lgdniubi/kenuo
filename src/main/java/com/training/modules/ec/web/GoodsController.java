@@ -68,9 +68,9 @@ public class GoodsController extends BaseController{
 
 	public static final String GOOD_DETAIL_KEY = "GOODS_DETAIL_"; // 商品详情app
 	public static final String GOOD_DETAIL_WAP_KEY = "GOODS_DETAIL_WAP_"; // 商品详情wap
-	public static final String GOODS_COMM_WAP_KEY = "GOODS_COMM_WAP_"; // 商品详情wap
-	public static final String GOODS_RECOMMEND_KEY = "GOODS_RECOMMEND_"; // 商品详情wap
-	public static final String GOODS_AD_WAP_KEY = "GOODS_AD_WAP_"; // 商品详情wap
+	public static final String GOODS_COMM_WAP_KEY = "GOODS_COMM_WAP_1_"; // 商品评论wap
+	public static final String GOODS_RECOMMEND_KEY = "GOODS_RECOMMEND_"; // 商品推荐wap
+	public static final String GOODS_AD_WAP_KEY = "GOODS_AD_WAP_"; // 商品副标题wap
 	public static final String GOOD_UNSHELVE_KEY = "GOOD_UNSHELVE_KEY"; //商品下架
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;

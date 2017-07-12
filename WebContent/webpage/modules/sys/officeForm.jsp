@@ -189,6 +189,8 @@
 			<shiro:hasPermission name="sys:office:updateOfficeIsNew"><input type="hidden" id="officeisNew" value="1"></shiro:hasPermission>
 			<!-- 操作是否推荐按钮权限 -->
 			<shiro:hasPermission name="sys:office:updateIsRecommend"><input type="hidden" id="officeisRecommend" value="1"></shiro:hasPermission>
+			<!-- 操作是否可报货按钮权限 -->
+			<shiro:hasPermission name="sys:office:updateIsCargo"><input type="hidden" id="officeisCargo" value="1"></shiro:hasPermission>
 			<form:hidden path="id"/>
 			<sys:message content="${message}"/>
 				<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
@@ -251,6 +253,24 @@
 								<span class="help-inline">存在子类时不可改为是店铺</span>
 							</c:if>
 						</td>
+				     </tr>
+				     <tr>
+				     	<td class="width-15 active"><label class="pull-right">是否可报货</label></td>
+				     	<td colspan="3" id="isCargo">
+				     		<c:if test="${not empty office.id }">
+				         		<c:if test="${office.isCargo == 0}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('isCargo','${office.id}',1)">&nbsp;&nbsp;否
+								</c:if>
+								<c:if test="${office.isCargo == 1}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('isCargo','${office.id}',0)">&nbsp;&nbsp;是
+								</c:if>
+				         	</c:if>
+				         	<c:if test="${empty office.id }">
+				         		<select class="form-control required" id="isCargo" name="isCargo">
+									<option value='0'>否</option>
+								</select>
+				         	</c:if>
+				     	</td>
 				     </tr>
 				     <tr id="a5">
 				         <td class="width-15 active"><label class="pull-right">主负责人:</label></td>
