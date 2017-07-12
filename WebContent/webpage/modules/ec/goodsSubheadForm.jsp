@@ -15,6 +15,9 @@
 	<script type="text/javascript" src="${ctxStatic}/train/uploadify/lang-cn.js"></script>
 	<script type="text/javascript" src="${ctxStatic}/train/uploadify/jquery.uploadify.min.js"></script>
 	
+	<!-- 时间控件引用 -->
+	<script type="text/javascript" src="${ctxStatic}/My97DatePicker/WdatePicker.js"></script>
+
 	<script type="text/javascript">
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
@@ -46,39 +49,6 @@
 			}
 			
 			validateForm = $("#inputForm").validate();
-			
-			var start = {
-				    elem: '#startDate',
-				    format: 'YYYY-MM-DD hh:mm:ss',
-				    event: 'focus',
-				    max: $("#endDate").val(),   //最大日期
-				    istime: true,				//是否显示时间
-				    isclear: true,				//是否显示清除
-				    istoday: true,				//是否显示今天
-				    issure: true,				//是否显示确定
-				    festival: true,				//是否显示节日
-				    choose: function(datas){
-				         end.min = datas; 		//开始日选好后，重置结束日的最小日期
-				         end.start = datas 		//将结束日的初始值设定为开始日
-				    }
-				};
-			var end = {
-				    elem: '#endDate',
-				    format: 'YYYY-MM-DD hh:mm:ss',
-				    event: 'focus',
-				    min: $("#startDate").val(),
-				    istime: true,
-				    isclear: true,
-				    istoday: true,
-				    issure: true,
-				    festival: true,
-				    choose: function(datas){
-				        start.max = datas; //结束日选好后，重置开始日的最大日期
-				    }
-				};
-					laydate(start);
-					laydate(end);
-					
 		});
 		
 		function isShow(value){
@@ -109,12 +79,12 @@
 								<tr id="time">
 									<td><label class="pull-right"><font color="red">*</font>生效时间</label></td>
 									<td>
-										<input id="startDate" name="startDate" type="text" maxlength="20" class="laydate-icon form-control required layer-date input-sm" value="<fmt:formatDate value="${goodsSubhead.startDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" readonly="readonly"/>
+										<input id="startDate" name="startDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" value="<fmt:formatDate value="${goodsSubhead.startDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endDate\')}'})"/>
 									</td>
 									<td><label class="pull-right"><font color="red">*</font>失效时间</label></td>
 									<td>
-										<input id="endDate" name="endDate" type="text" maxlength="20" class=" laydate-icon form-control required layer-date input-sm" value="<fmt:formatDate value="${goodsSubhead.endDate}" pattern="yyyy-MM-dd"/>"  style="width:185px;" readonly="readonly"/>&nbsp;&nbsp;
-									</td>
+										<input id="endDate" name="endDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" value="<fmt:formatDate value="${goodsSubhead.endDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startDate\')}'})"/>
+									</td>	
 								</tr>
 								<tr>
 									<td><label class="pull-right"><font color="red">*</font>副标题文案:</label></td>
