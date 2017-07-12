@@ -121,12 +121,12 @@
 								<form:option value="3">已退款</form:option>
 								<form:option value="4">已完成</form:option>
 							</form:select>
-						<label>是否有欠费：</label>
+						<%-- <label>是否有欠费：</label>
 						<form:select path="orderArrearageType"  class="form-control" style="width:185px;">
 								<form:option value="0">全部</form:option>
 								<form:option value="1">无欠款</form:option>
 								<form:option value="2">有欠款</form:option>
-							</form:select>
+							</form:select> --%>
 						<label>订单区分：</label>	
 						<form:select path="searchIsReal"  class="form-control" style="width:185px;">
 								<form:option value="">全部</form:option>
@@ -219,7 +219,7 @@
 							<th style="text-align: center;">用户名</th>
 							<th style="text-align: center;">订单状态</th>
 							<th style="text-align: center;">取消类型</th>
-							<th style="text-align: center;">订单欠款</th>
+							<!-- <th style="text-align: center;">订单欠款</th> -->
 							<th style="text-align: center;">支付金额</th>
 							<th style="text-align: center;">商品种类</th>
 							<th style="text-align: center;">支付方式</th>
@@ -266,7 +266,7 @@
 							<td>	
 								${orders.cancelType}
 							</td>
-							<td>${orders.orderArrearage}</td>
+							<%-- <td>${orders.orderArrearage}</td> --%>
 							<td>${orders.orderamount}</td>
 							<td>${orders.goodsnum}</td>
 							<td>${orders.payname}</td>
