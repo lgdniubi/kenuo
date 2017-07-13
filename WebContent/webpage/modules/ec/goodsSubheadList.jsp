@@ -144,12 +144,12 @@
 							</td>
 							<td style="text-align: center;">
 								<shiro:hasPermission name="ec:goodsSubhead:open">
-									<c:if test="${goodsSubhead.status==0}">
-										<a href="${ctx}/ec/goodsSubhead/open?status=1&goodsSubheadId=${goodsSubhead.goodsSubheadId}"  class="btn btn-primary btn-xs">
+									<c:if test="${goodsSubhead.status==1}">
+										<a href="${ctx}/ec/goodsSubhead/open?status=0&goodsSubheadId=${goodsSubhead.goodsSubheadId}"  class="btn btn-primary btn-xs">
 										<i class="fa fa-file"></i>开启</a>
 									</c:if>
-									<c:if test="${goodsSubhead.status==1}">
-										<a href="${ctx}/ec/goodsSubhead/open?status=0&goodsSubheadId=${goodsSubhead.goodsSubheadId}"  class="btn btn-danger btn-xs">
+									<c:if test="${goodsSubhead.status==0}">
+										<a href="${ctx}/ec/goodsSubhead/open?status=1&goodsSubheadId=${goodsSubhead.goodsSubheadId}"  class="btn btn-danger btn-xs">
 										<i class="fa fa-close"></i>关闭</a>
 									</c:if>
 								</shiro:hasPermission>
