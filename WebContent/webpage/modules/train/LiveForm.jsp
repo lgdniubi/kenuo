@@ -36,13 +36,13 @@
 				rules: {
 					earningsRatio:{
 						digits:true,
-						range:[1,100]
+						range:[0,99]
 					} 
 				},
 				messages: {
 					earningsRatio:{
 						digits: "只能输入整数",
-						range:"请输入一个介于 1 和 100 之间的值"
+						range:"请输入一个介于 0 和 99 之间的值"
 					}
 				},
 				submitHandler: function(form){
@@ -71,21 +71,11 @@
 // 	            event: 'focus' //响应事件。如果没有传入event，则按照默认的click
 // 	        });
 			
-			isShow(${trainLiveAudit.auditStatus});
-			
 			var earningsRatio = $("#earningsRatio").val();
 			var afterEarningsRatio = parseInt(earningsRatio);
 			$("#earningsRatio").val(afterEarningsRatio);
 			
 		});
-		
-		function isShow(value){
-			if(value == 2){
-				$("#earningsRatioShow").show();
-			}else{
-				$("#earningsRatioShow").hide();
-			}
-		}
 		
 </script>
 </head>
@@ -142,17 +132,17 @@
 					<td><label class="pull-right">审核状态:</label></td>
 					<td><input id="oldStatus" name="oldStatus" type="hidden" value="${trainLiveAudit.auditStatus}" /> 
 						<c:if test="${trainLiveAudit.auditStatus==0}">
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" checked="checked" class="form" onclick="isShow(this.value)"/>审核失败 </label>
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" class="form" onclick="isShow(this.value)"/>审核通过</label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" checked="checked" class="form"/>审核失败 </label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" class="form"/>审核通过</label>
 						</c:if> 
 						<c:if test="${trainLiveAudit.auditStatus==1}">
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" class="form" onclick="isShow(this.value)"/>审核失败 </label>
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="1" checked="checked" class="form" onclick="isShow(this.value)"/>请求审核</label>
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" class="form" onclick="isShow(this.value)"/>审核通过</label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" class="form"/>审核失败 </label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="1" checked="checked" class="form"/>请求审核</label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" class="form"/>审核通过</label>
 						</c:if> 
 						<c:if test="${trainLiveAudit.auditStatus==2}">
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" class="form" onclick="isShow(this.value)"/>审核失败</label>
-							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" checked="checked" class="form" onclick="isShow(this.value)"/>审核通过</label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="0" class="form"/>审核失败</label>
+							<label><input id="auditStatus" name="auditStatus" type="radio" value="2" checked="checked" class="form"/>审核通过</label>
 						</c:if> 
 						<c:if test="${trainLiveAudit.auditStatus==3}">
 							<label><input id="auditStatus" name="auditStatus" type="radio" value="3" checked="checked" class="form" />已完成</label>

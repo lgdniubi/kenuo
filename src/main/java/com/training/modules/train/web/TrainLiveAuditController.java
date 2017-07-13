@@ -380,6 +380,8 @@ public class TrainLiveAuditController extends BaseController{
 	public String liveIntegralsList(TrainLiveAudit trainLiveAudit, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes){
 		try {
 			Page<TrainLiveAudit> page = trainLiveAuditService.liveIntegralsList(new Page<TrainLiveAudit>(request, response), trainLiveAudit);
+			int officeIntegrals = trainLiveAuditService.findOfficeIntegrals();	// 商家总云币(临时版本)
+			model.addAttribute("officeIntegrals", officeIntegrals);
 			model.addAttribute("page", page);
 			model.addAttribute("trainLiveAudit",trainLiveAudit);
 		} catch (Exception e) {

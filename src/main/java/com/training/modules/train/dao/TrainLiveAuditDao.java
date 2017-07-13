@@ -79,4 +79,9 @@ public interface TrainLiveAuditDao extends TreeDao<TrainLiveAudit>{
 	 * @return
 	 */
 	public List<TrainLiveAudit> liveIntegralsList(TrainLiveAudit trainLiveAudit);
+	/**
+	 * 商家总云币(临时版本)
+	 * @return
+	 */
+	public int findOfficeIntegrals();
 }

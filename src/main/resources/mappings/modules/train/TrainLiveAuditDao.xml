@@ -292,4 +292,11 @@
 			</if>
 		ORDER BY a.create_date DESC
 	</select>
+	<!-- 商家总云币(临时版本) -->
+	<select id="findOfficeIntegrals" resultType="int">
+		SELECT
+			IFNULL(SUM(b.integral_earnings),0) AS integral
+		FROM
+			sys_office_account b 
+	</select>
 </mapper>

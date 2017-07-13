@@ -298,4 +298,11 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 		page.setList(trainLiveAuditDao.liveIntegralsList(trainLiveAudit));
 		return page;
 	}
+	/**
+	 * 商家总云币(临时版本)
+	 * @return
+	 */
+	public int findOfficeIntegrals(){
+		return dao.findOfficeIntegrals();
+	}
 }

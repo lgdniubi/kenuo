@@ -16,6 +16,7 @@
 			<!-- 查询条件 -->
 			<div class="ibox-content">
 				<div class="clearfix">
+					<label>账户云币：${officeIntegrals}</label>
 					<form:form id="searchForm" modelAttribute="trainLiveAudit" action="${ctx}/train/live/liveIntegralsList" method="post" class="form-inline">
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
