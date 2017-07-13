@@ -65,6 +65,14 @@ public interface BeautyDao extends TreeDao<BeautyCountData>{
 	 * 修改记录:	修改人	修改记录	2017年6月7日 下午5:53:52
 	 * @param b
 	 */
-	public int updateBeautyCountData(BeautyCountData beautyCountData);
+	public int updateBeautyApptData(BeautyCountData beautyCountData);
+	/**
+	 * 方法说明:	新增或修改 train_beauty_statistics 表统计数据
+	 * 创建时间:	2017年6月7日 下午5:53:52
+	 * 创建人:	zhanlan
+	 * 修改记录:	修改人	修改记录	2017年6月7日 下午5:53:52
+	 * @param b
+	 */
+	public int updateBeautyCommenttData(BeautyCountData beautyCountData);
 	
 }

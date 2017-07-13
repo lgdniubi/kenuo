@@ -51,36 +51,17 @@ public class BeautyService extends TreeService<BeautyDao, BeautyCountData> {
 	public Map<String, Object> completeBeautyCountData(){
 		//先从数据库中取出上次存入的定位id
 		Integer commId = QuartzStartConfigUtils.queryValue("mtmy_beauty_comment");
-//		Integer apptOrderId = QuartzStartConfigUtils.queryValue("mtmy_appt_order_beauty");
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("commId", commId);
-//		map.put("apptOrderId", apptOrderId);
 		
 		//查询技师的统计数据
-//		List<BeautyCountData> apptDataList = dao.queryBeautyApptData(apptOrderId);
 		List<BeautyCountData> commentDataList = dao.queryBeautyCommentData(commId);
 		
-		//排除预约数据 集合中BeautyId为null的数据
-		/*Iterator<BeautyCountData> iterator1 = apptDataList.iterator();
-		while(iterator1.hasNext()){
-			BeautyCountData apptData = iterator1.next();
-			if(apptData.getBeautyId() == null){
-				iterator1.remove();
-			}
-			if(apptData.getApptCount() == null){
-				apptData.setApptCount(0);
-			}
-			if(apptData.getEvaluationCount() == null){
-				apptData.setEvaluationCount(0);
-			}
-			if(apptData.getEvaluationScore() == null){
-				apptData.setEvaluationScore((float) 0.0);
-			}
-		}*/
 		//从redis缓存中取出店铺的已完成订单的数据集合
 		Map<String, String> beautyMap = redisClientTemplate.hgetAll("BEAUTICIAN_SUBSCRIBE_NUM_KEY");
 		
 		//排除评论数据 集合中BeautyId为null的数据
+		// 更新评论数据
 		Iterator<BeautyCountData> iterator2 = commentDataList.iterator();
 		while(iterator2.hasNext()){
 			BeautyCountData commentData = iterator2.next();
@@ -96,15 +77,10 @@ public class BeautyService extends TreeService<BeautyDao, BeautyCountData> {
 			if(commentData.getApptCount() == null){
 				commentData.setApptCount(0);
 			}
+			dao.updateBeautyCommenttData(commentData);
 		}
 		
-		// 新增或修改 train_beauty_statistics 表统计数据
 		// 更新预约数据
-		/*if(apptDataList.size() != 0){
-			for (BeautyCountData apptData : apptDataList) {
-				dao.updateBeautyCountData(apptData); 
-			}
-		}*/
 		Set<Entry<String, String>> entrySet = beautyMap.entrySet();
 		for (Entry<String, String> entry : entrySet) {
 			String beautyId = entry.getKey();
@@ -116,20 +92,13 @@ public class BeautyService extends TreeService<BeautyDao, BeautyCountData> {
 			apptData.setBeautyId(beautyId);
 			apptData.setEvaluationCount(0);
 			apptData.setEvaluationScore((float) 0.0);
-			dao.updateBeautyCountData(apptData); 
+			dao.updateBeautyApptData(apptData); 
 		}
-		// 更新评论数据
-		if(commentDataList.size() != 0){
-			for (BeautyCountData commentData : commentDataList) {
-				dao.updateBeautyCountData(commentData);
-			}
-		}
+	
 		//获取查询数据的定位id
 		Map<String, Object> map2 = new HashMap<String, Object>();
 		int new_commId = dao.findCommId();
-//		int new_apptOrderId = dao.findApptOrderId();
 		map2.put("mtmy_beauty_comment", new_commId);
-//		map2.put("mtmy_appt_order_beauty", new_apptOrderId);
 		return map2;
 	}
 }
