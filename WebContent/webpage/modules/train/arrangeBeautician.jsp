@@ -58,7 +58,7 @@
 								<table id="treeTable" class="osTop table table-bordered table-hover table-striped" style="width:100px;position:absolute;left:0;top:0;z-index:10;">
 									<thead>
 										<tr>
-									 		<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${officeName }">${officeName }</div></th>
+									 		<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;" title="${officeName }">${officeName }</div></th>
 									 	</tr>
 									</thead>
 								</table>
@@ -66,13 +66,13 @@
 									<table id="treeTable" class="table table-bordered table-hover table-striped" style="word-break:keep-all;">
 										<thead>
 										 	<tr>
-										 		<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${officeName }">${officeName }</div></th>
+										 		<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;" title="${officeName }">${officeName }</div></th>
 										 	</tr>
 										 </thead>
 										 <tbody>
 										  	<c:forEach items="${lists}" var="ArrangeBeautician">
 						                        <tr style="text-align: center;">
-						                            <td><div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${ArrangeBeautician.name }">${ArrangeBeautician.name }</div></td>
+						                            <td><div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;" title="${ArrangeBeautician.name }">${ArrangeBeautician.name }</div></td>
 						                        </tr>
 					                        </c:forEach>
 										 </tbody>
@@ -90,7 +90,7 @@
 			                    	<c:forEach items="${lists}" var="ArrangeBeautician"><!-- 循环美容师list -->
 				                        <tr style="text-align: center;">
 				                            <td>
-				                            	<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${ArrangeBeautician.name }">
+				                            	<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;" title="${ArrangeBeautician.name }">
 					                            	${ArrangeBeautician.name }
 					                            	<input value="${ArrangeBeautician.userId }" name="userids" type="hidden">
 				                            	</div>
@@ -101,7 +101,7 @@
 					                            	<c:choose>
 					                            		<c:when test="${officeId eq arrangeShops.shopId }"><!-- 工作店铺在当前店铺 显示班 -->
 					                            			<td class="isYes">
-					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">
+					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
 							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
@@ -111,7 +111,7 @@
 					                            		</c:when>
 					                            		<c:when test="${arrangeShops.shopId == '1' or arrangeShops.shopId == '2' or arrangeShops.shopId == '3'}"><!-- 工作店铺为1、2、3  假、休、学  -->
 					                            			<td class="isYes">
-					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${arrangeShops.shopName }">
+					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;" title="${arrangeShops.shopName }">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
 							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
@@ -129,7 +129,7 @@
 					                            		</c:when>
 					                            		<c:when test="${arrangeShops.shopId != '1' and arrangeShops.shopId != '2' and arrangeShops.shopId != '3' and arrangeShops.shopId != '' and arrangeShops.shopId != null}"><!-- 非本店铺展示店铺名 -->
 					                            			<td class="isNo">
-					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${arrangeShops.shopName }">
+					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;" title="${arrangeShops.shopName }">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
 							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
@@ -139,7 +139,7 @@
 					                            		</c:when>
 					                            		<c:otherwise>
 					                            			<td class="isYes"><!-- 无排班记录 -->
-					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">
+					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
 							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
@@ -154,7 +154,7 @@
 					                            	<c:choose>
 					                            		<c:when test="${officeId eq arrangeShops.shopId and arrangeShops.flag == '1'}"><!-- 工作店铺在当前店铺 显示班 -->
 					                            			<td class="isNo">
-					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">
+					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
 							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
@@ -164,7 +164,7 @@
 					                            		</c:when>
 					                            		<c:when test="${(arrangeShops.shopId == '1' or arrangeShops.shopId == '2' or arrangeShops.shopId == '3') and arrangeShops.flag == '1'}"><!-- 工作店铺为1、2、3  假、休、学  -->
 					                            			<td class="isNo">
-					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${arrangeShops.shopName }">
+					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;" title="${arrangeShops.shopName }">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
 							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
@@ -182,7 +182,7 @@
 					                            		</c:when>
 					                            		<c:when test="${arrangeShops.shopId != '1' and arrangeShops.shopId != '2' and arrangeShops.shopId != '3' and arrangeShops.shopId != '' and arrangeShops.shopId != null and arrangeShops.flag == '1'}"><!-- 非本店铺展示店铺名 -->
 					                            			<td class="isNo">
-					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${arrangeShops.shopName }">
+					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;" title="${arrangeShops.shopName }">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
 							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
@@ -192,7 +192,7 @@
 					                            		</c:when>
 					                            		<c:otherwise>
 					                            			<td class="isNo"><!-- 无排班记录 -->
-					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">
+					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;">
 							                            			<input id="${ArrangeBeautician.userId }${status.index+1 }" name="${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.shopId }" type="hidden" class="userId">
 							                            			<input id="flag${ArrangeBeautician.userId }${status.index+1 }" name="flag${ArrangeBeautician.userId }${status.index+1 }" value="${arrangeShops.flag }" type="hidden" class="flag">
 							                            			<input id="isUpdate${ArrangeBeautician.userId }${status.index+1 }" name="isUpdate${ArrangeBeautician.userId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
