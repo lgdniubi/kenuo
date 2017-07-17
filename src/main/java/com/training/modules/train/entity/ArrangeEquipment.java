@@ -19,6 +19,7 @@ public class ArrangeEquipment extends DataEntity<ArrangeEquipment>{
 	private Date apptDate;			//排班
 	private int month;				//月
 	private int day;				//日
+	private int time;				//上午下午
 	private String shopId;			//店铺ID（office_id：班；1：休；2：假）
 	private String shopName;		//店铺name(对应shopId)
 	private String officeId;		//权限id
@@ -68,6 +69,12 @@ public class ArrangeEquipment extends DataEntity<ArrangeEquipment>{
 	}
 	public void setDay(int day) {
 		this.day = day;
+	}
+	public int getTime() {
+		return time;
+	}
+	public void setTime(int time) {
+		this.time = time;
 	}
 	public String getShopId() {
 		return shopId;

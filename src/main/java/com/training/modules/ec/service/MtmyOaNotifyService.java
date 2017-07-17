@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.training.common.mapper.JsonMapper;
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
+import com.training.common.utils.ListSplitUtils;
 import com.training.common.utils.StringUtils;
 import com.training.modules.ec.dao.MtmyOaNotifyDao;
 import com.training.modules.ec.dao.MtmyOaNotifyRecordDao;
@@ -52,7 +53,12 @@ public class MtmyOaNotifyService extends CrudService<MtmyOaNotifyDao, MtmyOaNoti
 		// 更新发送接受人记录
 		mtmyOaNotifyRecordDao.deleteByOaNotifyId(mtmyOaNotify.getId());
 		if (mtmyOaNotify.getMtmyOaNotifyRecordList().size() > 0){
-			mtmyOaNotifyRecordDao.insertAll(mtmyOaNotify.getMtmyOaNotifyRecordList());
+			List<Object> list = ListSplitUtils.listSplit("mtmy推送更新接收人", mtmyOaNotify.getMtmyOaNotifyRecordList(),500);
+			for (int i = 0; i < list.size(); i++) {
+				@SuppressWarnings("unchecked")
+				List<MtmyOaNotifyRecord> RecordList = (List<MtmyOaNotifyRecord>) list.get(i);
+				mtmyOaNotifyRecordDao.insertAll(RecordList);
+			}
 		}
 	}
 	/**

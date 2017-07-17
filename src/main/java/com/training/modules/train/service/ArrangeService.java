@@ -46,8 +46,10 @@ public class ArrangeService extends CrudService<ArrangeDao,ArrangeShop>{
 		return dao.findBeautician(id,month);
 	}
 	//保存特殊美容师排班
-	public void saveBeautician(List<String> ids,List<ArrangeShop> list){
-		dao.delBeautician(ids);
+	public void saveBeautician(List<ArrangeShop> isUpdateArrange,List<ArrangeShop> list){
+		if(isUpdateArrange.size() > 0){
+			dao.delBeautician(isUpdateArrange);
+		}
 		if(list.size() > 0){
 			dao.saveBeautician(list);
 		}
@@ -65,8 +67,10 @@ public class ArrangeService extends CrudService<ArrangeDao,ArrangeShop>{
 		return dao.findEquipment(equipmentId, month);
 	}
 	//保存特殊设备排班
-	public void saveEquipment(List<String> ids,List<ArrangeEquipment> list){
-		dao.delEquipment(ids);
+	public void saveEquipment(List<ArrangeEquipment> isUpdateArrange,List<ArrangeEquipment> list){
+		if(isUpdateArrange.size() > 0){
+			dao.delEquipment(isUpdateArrange);
+		}
 		if(list.size() > 0){
 			dao.saveEquipment(list);
 		}

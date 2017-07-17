@@ -20,7 +20,11 @@
 					rules: {
 						  nickname: {
 					            required : true,
-					            remote: "${ctx}/ec/mtmyuser/verifynickname"
+				            	remote: {
+									type: "post",
+									async: false,
+									url: "${ctx}/ec/mtmyuser/verifynickname"
+								}
 					      },
 					      password: {
 					        required: true,
@@ -35,7 +39,11 @@
 					            required : true,
 					            minlength : 11,
 					            maxlength : 11,
-					            remote: "${ctx}/ec/mtmyuser/verifymobile"
+				            	remote: {
+									type: "post",
+									async: false,
+									url: "${ctx}/ec/mtmyuser/verifymobile"
+								}
 					      },
 					      officeName:{
 					    	    required:true
