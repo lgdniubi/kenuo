@@ -20,6 +20,7 @@ import com.gexin.rp.sdk.http.IGtPush;
 import com.gexin.rp.sdk.template.TransmissionTemplate;
 import com.training.common.config.Global;
 import com.training.common.utils.BeanUtil;
+import com.training.common.utils.ListSplitUtils;
 import com.training.modules.ec.service.MtmyOaNotifyService;
 import com.training.modules.ec.utils.igtpush.exception.ResponseError;
 import com.training.modules.ec.utils.igtpush.exception.SysConstants;
@@ -118,12 +119,39 @@ public class GetTUtil {
 		}
 		
 		String taskId = push.getContentId(message);
-		IPushResult ret = push.pushMessageToList(taskId, targets);
+		IPushResult ret = null;
+//	2017年6月23日17:36:41 	
+		boolean flag = true;
+//		注释代码可正常推送 
+//        int count= 500;	// 单次推送上限
+//        int num = (int)Math.ceil((double)targets.size()/(double)count);
+//        System.out.println("###推送总人数："+targets.size()+",单次推送人数："+count+",需执行次数："+num);
+//        for(int i=0;i<num;i++){
+//        	List<Target> subList = new ArrayList<>();
+//        	if((i+1) == num){
+//        		subList= targets.subList(i*count,targets.size());
+//        	}else{
+//        		subList= targets.subList(i*count,count*(i+1));
+//        	}
+//        	ret = push.pushMessageToList(taskId, subList);
+//        	System.out.println("循环次数:第"+(i+1)+"次,任务id："+taskId+",推送结果："+ret.getResponse().toString());
+//        	if(!"ok".equals(ret.getResponse().get("result"))){
+//        		System.out.println("####error,推送失败,循环次数:第"+(i+1)+"次,任务id："+taskId+",推送结果："+ret.getResponse().toString());
+//        		flag = false;
+//        	}
+//        }
+		List<Object> list = ListSplitUtils.listSplit("mtmy推送",targets,500);
+        for (int i = 0; i < list.size(); i++) {
+        	@SuppressWarnings("unchecked")
+			List<Target> subList = (List<Target>) list.get(i);
+        	ret = push.pushMessageToList(taskId, subList);
+        	if(!"ok".equals(ret.getResponse().get("result"))){
+        		System.out.println("####error,推送失败,循环次数:第"+(i+1)+"次,任务id："+taskId+",推送结果："+ret.getResponse().toString());
+        		flag = false;
+        	}
+		}
 		
-		
-		log.info("任务id："+taskId+"列表推送结果："+ret.getResponse().toString());
-		
-		if(!"ok".equals(ret.getResponse().get("result"))){
+		if(!flag){
 			throw new ResponseError((String)ret.getResponse().get("result"), SysConstants.ERROR_PUSH_RESULT);
 		}else{
 			persistentContentId(jsonObj,taskId);
@@ -204,7 +232,6 @@ public class GetTUtil {
 		
 		APNPayload apnpayload = new APNPayload();
 		apnpayload.setContentAvailable(1);
-		//apnpayload.setSound("test2.wav");
 		apnpayload.setSound("kenuoPika.wav");	//推送声音配置
 		//apnpayload.setCategory("ACTIONABLE");
 		apnpayload.addCustomMsg("content", json.toString());

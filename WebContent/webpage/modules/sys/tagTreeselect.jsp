@@ -85,7 +85,7 @@
 			key = $("#key");
 			key.bind("focus", focusKey).bind("blur", blurKey).bind("change cut input propertychange", searchNode);
 			key.bind('keydown', function (e){if(e.which == 13){searchNode();}});
-			setTimeout("search();", "300");
+			/* setTimeout("search();", "300"); 2017年6月27日16:16:54 新增弹出等待动画时注释   */
 		});
 		
 		// 默认选择节点

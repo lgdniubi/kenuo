@@ -52,33 +52,13 @@ public class ShopCountDataService extends TreeService<ShopCountDataDao, ShopCoun
 	public Map<String, Object> completeShopCountData(){
 		//先从数据库中取出上次存入的定位id
 		Integer commentId = QuartzStartConfigUtils.queryValue("mtmy_shop_comment");
-//		Integer apptOrderId = QuartzStartConfigUtils.queryValue("mtmy_appt_order_shop");
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("commentId", commentId);
-//		map.put("apptOrderId", apptOrderId);
 		
 		//查询店铺的统计数据 
-//		List<ShopCountData> apptDataList = dao.queryShopApptData(apptOrderId);
 		Map<String, String> shopMap = redisClientTemplate.hgetAll("SHOP_SUBSCRIBE_NUM_KEY");
 		
 		List<ShopCountData> commentDataList = dao.queryShopCommentData(commentId);
-		//排除预约数据 集合中BeautyId为null的数据
-		/*Iterator<ShopCountData> iterator1 = apptDataList.iterator();
-		while(iterator1.hasNext()){
-			ShopCountData shopCountData = iterator1.next();
-			if(shopCountData.getShopId() == null){
-				iterator1.remove();
-			}
-			if(shopCountData.getApptCount() == null){
-				shopCountData.setApptCount(0);
-			}
-			if(shopCountData.getEvaluationCount() == null){
-				shopCountData.setEvaluationCount(0);
-			}
-			if(shopCountData.getEvaluationScore() == null){
-				shopCountData.setEvaluationScore((float) 0.0);
-			}
-		}*/
 		//排除评论数据 集合中BeautyId为null的数据
 		Iterator<ShopCountData> iterator2 = commentDataList.iterator();
 		while(iterator2.hasNext()){
@@ -90,13 +70,12 @@ public class ShopCountDataService extends TreeService<ShopCountDataDao, ShopCoun
 				shopCountData.setApptCount(0);
 			}
 			if(shopCountData.getEvaluationCount() == null){
-				shopCountData.setEvaluationCount(0);
+				shopCountData.setEvaluationCount(shopCountData.getEvaluationCount());
 			}
 			if(shopCountData.getEvaluationScore() == null){
-				shopCountData.setEvaluationScore((float) 0.0);
+				shopCountData.setEvaluationScore(shopCountData.getEvaluationScore());
 			}
 		}
-		// 新增或修改 train_shop_statistics 表统计数据
 		// 更新预约数据
 		Set<Entry<String, String>> entrySet = shopMap.entrySet();
 		for (Entry<String, String> entry : entrySet) {
@@ -108,17 +87,12 @@ public class ShopCountDataService extends TreeService<ShopCountDataDao, ShopCoun
 			apptData.setApptCount(appt_count);
 			apptData.setEvaluationCount(0);
 			apptData.setEvaluationScore((float) 0.0);
-			dao.updateShopCountData(apptData);
+			dao.updateShopApptData(apptData);
 		}
-		/*if(apptDataList.size() != 0){
-			for (ShopCountData apptData : apptDataList) {
-				dao.updateShopCountData(apptData);
-			}
-		}*/
 		// 更新评论数据
 		if(commentDataList.size() != 0){
 			for (ShopCountData commentData : commentDataList) {
-				dao.updateShopCountData(commentData);
+				dao.updateShopCommentData(commentData);
 			}
 		}
 		//获取查询数据的定位id
@@ -127,9 +101,7 @@ public class ShopCountDataService extends TreeService<ShopCountDataDao, ShopCoun
 		if(new_commentId == null){
 			new_commentId = 0;
 		}
-		Integer new_apptOrderId = dao.findApptOrderId();
 		map2.put("mtmy_shop_comment", new_commentId);
-		map2.put("mtmy_appt_order_shop", new_apptOrderId);
 		return map2;
 	}
 }

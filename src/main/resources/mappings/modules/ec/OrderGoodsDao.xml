@@ -94,35 +94,34 @@
 	</select>
 	<!-- 通过订单号查询订单下的虚拟商品及用户信息 -->
 	<select id="findOrderGoods" resultType="OrderGoods">
-		SELECT 
-			a.rec_id,
-			a.order_id,
-			a.user_id,
-			a.goods_name,
-			a.goods_id,
-			a.service_times,
-			a.service_min,
-			u.user_id AS 'users.userid',
-			u.mobile AS 'users.mobile',
-			u.name AS 'users.name',
-			b.service_times AS remainTimes,
-			s.skill_id AS skillId,
-			e.label_id AS labelId
-		FROM 
-			mtmydb.mtmy_order_goods_mapping a
-			LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
-			LEFT JOIN mtmydb.mtmy_orders o ON a.order_id = o.order_id
-			LEFT JOIN (
-						SELECT order_id,goods_mapping_id,SUM(service_times) AS service_times FROM mtmydb.mtmy_order_goods_details GROUP BY order_id,goods_mapping_id
-					) b ON a.rec_id = b.goods_mapping_id
-			LEFT JOIN (SELECT group_concat(skill_id) AS skill_id,goods_id FROM mtmydb.mtmy_goods_skill GROUP BY goods_id) s ON s.goods_id = a.goods_id
-			LEFT JOIN (SELECT group_concat(label_id) AS label_id,goods_id FROM mtmydb.mtmy_goods_equipment GROUP BY goods_id) e ON e.goods_id = a.goods_id
-		WHERE 
-			a.del_flag = 0
-			and a.order_id = #{orderid}
-			and a.is_real = 1
-			and b.service_times > 0
-			AND o.order_status = 4
+		SELECT
+                a.rec_id,
+                a.order_id,
+                a.user_id,
+                a.goods_name,
+                a.goods_id,
+                a.service_times,
+                a.service_min,
+                u.user_id AS 'users.userid',
+                u.mobile AS 'users.mobile',
+                u.name AS 'users.name',
+                SUM(b.service_times) AS remainTimes,
+                group_concat(distinct s.skill_id) AS skillId,
+                group_concat(distinct e.label_id) AS labelId
+        FROM
+                mtmydb.mtmy_order_goods_mapping a
+                LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
+                LEFT JOIN mtmydb.mtmy_orders o ON a.order_id = o.order_id
+                LEFT JOIN mtmydb.mtmy_order_goods_details b ON a.rec_id = b.goods_mapping_id
+                LEFT JOIN mtmydb.mtmy_goods_skill s ON s.goods_id = a.goods_id
+                LEFT JOIN mtmydb.mtmy_goods_equipment e ON e.goods_id = a.goods_id
+        WHERE
+                a.del_flag = 0
+                and a.order_id = #{orderid}
+                and a.is_real = 1
+                and b.service_times > 0
+                AND o.order_status = 4
+		GROUP BY b.goods_mapping_id
 	</select>
 	<insert id="saveOrderGoods"  useGeneratedKeys="true" keyProperty="recid">
 		INSERT INTO mtmydb.mtmy_order_goods_mapping

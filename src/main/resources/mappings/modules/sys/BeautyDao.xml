@@ -54,8 +54,48 @@
 			beauty_id
 	</select>
 	
-	<!-- 新增或修改 train_beauty_statistics 表统计数据 -->
-	<insert id="updateBeautyCountData" parameterType="BeautyCountData">
+	<!-- 新增或修改 train_beauty_statistics 表预约数据 -->
+	<insert id="updateBeautyApptData" parameterType="BeautyCountData">
+		INSERT INTO `trains`.`train_beauty_statistics` 
+			<trim prefix="(" suffix=")" prefixOverrides=",">
+				<if test="beautyId != null">
+					`beauty_id`,
+				</if>
+					`is_sham`,
+				<if test="evaluationScore != null">
+					`evaluation_score`,
+				</if>
+				<if test="evaluationCount != null">
+					`evaluation_count`,
+				</if>
+				<if test="apptCount != null">
+					`appt_count`,
+				</if>
+					`update_date`
+			</trim>
+			<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+				<if test="beautyId != null">
+					#{beautyId},
+				</if>
+					'0',
+				<if test="evaluationScore != null">
+					#{evaluationScore},
+				</if>
+				<if test="evaluationCount != null">
+					#{evaluationCount},
+				</if>
+				<if test="apptCount != null">
+					#{apptCount},
+				</if>
+				    SYSDATE()
+			</trim>
+			ON DUPLICATE KEY UPDATE 
+				appt_count = #{apptCount},
+				update_date = SYSDATE();
+	</insert>
+	
+	<!-- 新增或修改 train_beauty_statistics 表评论数据 -->
+	<insert id="updateBeautyCommenttData" parameterType="BeautyCountData">
 		INSERT INTO `trains`.`train_beauty_statistics` 
 			<trim prefix="(" suffix=")" prefixOverrides=",">
 				<if test="beautyId != null">
@@ -94,7 +134,6 @@
 			       	evaluation_score = (evaluation_score * evaluation_count + #{evaluationScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
 				</if>
 				evaluation_count = evaluation_count + #{evaluationCount},
-				appt_count = #{apptCount},
 				update_date = SYSDATE();
 	</insert>
 </mapper>
