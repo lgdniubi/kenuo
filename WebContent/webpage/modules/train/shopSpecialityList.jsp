@@ -66,7 +66,7 @@
 									<a href="#" onclick="openDialog('修改用户', '${ctx}/train/shopSpeciality/form?shopSpecialityid=${shopSpeciality.shopSpecialityid}','800px','200px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="train:shopSpeciality:del">
-									<a href="${ctx}/train/shopSpeciality/delete?shopSpecialityid=${shopSpeciality.shopSpecialityid}" onclick="return confirmx('确认要删除特长吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
+									<a href="${ctx}/train/shopSpeciality/delete?shopSpecialityid=${shopSpeciality.shopSpecialityid}" onclick="return confirmx('确认要删除标签吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
 								</shiro:hasPermission>
 							</td>
 						</tr>
