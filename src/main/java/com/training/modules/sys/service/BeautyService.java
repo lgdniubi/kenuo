@@ -78,9 +78,11 @@ public class BeautyService extends TreeService<BeautyDao, BeautyCountData> {
 				commentData.setApptCount(0);
 			}
 		}
-		while(iterator2.hasNext()){
-			BeautyCountData commentData = iterator2.next();
-			dao.updateBeautyCommenttData(commentData);
+		// 更新评论数据
+		if(commentDataList.size() != 0){
+			for (BeautyCountData commentData : commentDataList) {
+				dao.updateBeautyCommenttData(commentData);
+			}
 		}
 		
 		// 更新预约数据
