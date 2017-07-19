@@ -195,10 +195,10 @@ public class LiveAudit extends CommonService{
 							//auditid.add(noticelives.get(h));
 							entryService.updateauditstatus(noticelives.get(h).getAuditid());
 							
-							RedisLock redisLock = new RedisLock(redisClientTemplate,"mtmy_id_"+noticelives.get(h).getMtmy_user_id());
+							RedisLock redisLock = new RedisLock(redisClientTemplate,"mtmy_id_"+noticelives.get(h).getMtmyUserId());
 							redisLock.lock();
-							String num = redisClientTemplate.get(noticelives.get(h).getAuditid() + "_"+ noticelives.get(h).getMtmy_user_id());
-							int integrals = Integer.parseInt(num);
+							String num = redisClientTemplate.get(noticelives.get(h).getAuditid() + "_"+ noticelives.get(h).getMtmyUserId());
+							int integrals = num == null ? 0 : Integer.parseInt(num);
 							//获取直播后台设置的收益比例
 							//double proportion = entrymapper.queryproportion(auditId);
 							double x = integrals * noticelives.get(h).getProportion();
@@ -207,7 +207,7 @@ public class LiveAudit extends CommonService{
 							//主播获得云币
 							int proportions = integrals - round;
 							//给平台加上比例云币
-							m.put("office_id",noticelives.get(h).getCompany_id());
+							m.put("office_id",noticelives.get(h).getCompanyId());
 							m.put("integral_earnings",round);
 							//将平台获得云币加到平台账户
 							entryService.addofficeaccount(m);
@@ -221,27 +221,27 @@ public class LiveAudit extends CommonService{
 							
 							entryService.cloudcoinOrderlog(m);
 							//判断缓存中是否有主播的数据
-							Boolean exists = redisClientTemplate.exists("mtmy_id_" + noticelives.get(h).getMtmy_user_id());
+							Boolean exists = redisClientTemplate.exists("mtmy_id_" + noticelives.get(h).getMtmyUserId());
 							if (exists) {
 								//给主播加上云币
-								redisClientTemplate.incrBy("mtmy_id_"+ noticelives.get(h).getMtmy_user_id(), proportions);
-								m.put("user_id", noticelives.get(h).getMtmy_user_id());
+								redisClientTemplate.incrBy("mtmy_id_"+ noticelives.get(h).getMtmyUserId(), proportions);
+								m.put("user_id", noticelives.get(h).getMtmyUserId());
 								m.put("integral", proportions);
 								m.put("remark", "直播编号：" + noticelives.get(h).getAuditid()+ "云币分成主播获得：" + proportions);
 								entryService.cloudcoinOrderlog(m);
 							} else {
 								//将主播的账户加进redis内存
-								int integralsnum = entryService.queryintegralsnum(noticelives.get(h).getMtmy_user_id());
-								redisClientTemplate.set("mtmy_id_"+noticelives.get(h).getMtmy_user_id(),integralsnum+"");
-								redisClientTemplate.hset("MTMY_ID",noticelives.get(h).getMtmy_user_id()+"",noticelives.get(h).getMtmy_user_id()+"");
+								int integralsnum = entryService.queryintegralsnum(noticelives.get(h).getMtmyUserId());
+								redisClientTemplate.set("mtmy_id_"+noticelives.get(h).getMtmyUserId(),integralsnum+"");
+								redisClientTemplate.hset("MTMY_ID",noticelives.get(h).getMtmyUserId()+"",noticelives.get(h).getMtmyUserId()+"");
 								//给主播加上云币
-								redisClientTemplate.incrBy("mtmy_id_"+ noticelives.get(h).getMtmy_user_id(), proportions);
-								m.put("user_id", noticelives.get(h).getMtmy_user_id());
+								redisClientTemplate.incrBy("mtmy_id_"+ noticelives.get(h).getMtmyUserId(), proportions);
+								m.put("user_id", noticelives.get(h).getMtmyUserId());
 								m.put("integral", proportions);
 								m.put("remark", "直播编号：" + noticelives.get(h).getAuditid()+ "云币分成主播获得：" + proportions);
 								entryService.cloudcoinOrderlog(m);
 							}
-							redisClientTemplate.del("mtmy_id_"+ noticelives.get(h).getMtmy_user_id());
+							redisClientTemplate.del("mtmy_id_"+ noticelives.get(h).getMtmyUserId());
 							redisLock.unlock();
 							//将云币划分结果信息入库
 							m.put("total_reward", num);//总收益

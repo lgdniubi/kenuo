@@ -48,8 +48,8 @@
 		a.auditid,
 		a.bengtime,
 		a.proportion,
-		u.mtmy_user_id,
-		u.company_id
+		u.mtmy_user_id AS 'mtmyUserId',
+		u.company_id AS 'companyId'
 	FROM
 	(SELECT
 		ro.roomId AS roomid,
