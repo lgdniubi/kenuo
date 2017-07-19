@@ -77,6 +77,9 @@ public class BeautyService extends TreeService<BeautyDao, BeautyCountData> {
 			if(commentData.getApptCount() == null){
 				commentData.setApptCount(0);
 			}
+		}
+		while(iterator2.hasNext()){
+			BeautyCountData commentData = iterator2.next();
 			dao.updateBeautyCommenttData(commentData);
 		}
 		
