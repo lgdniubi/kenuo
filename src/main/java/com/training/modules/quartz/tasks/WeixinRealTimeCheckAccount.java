@@ -56,7 +56,7 @@ public class WeixinRealTimeCheckAccount extends CommonService{
 		taskLog.setStartDate(startDate);
 		try {
 			List<MtmyCheckAccount> list = new ArrayList<MtmyCheckAccount>();	
-			List<Orders>  OrdersList = checkAccountService.findOrder();		// 查询两小时之内支付的订单
+			List<Orders>  OrdersList = checkAccountService.findOrder("微信");		// 查询两小时之内支付的订单
 			for (int i = 0; i < OrdersList.size(); i++) {
 				String string = getXmlInfo(OrdersList.get(i).getOrderid()); // 请求参数
 				String result = webUtil(string,WeixinConfig.orderquery);	// 请求接口

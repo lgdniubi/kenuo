@@ -168,6 +168,6 @@
 	</select>
 	<!-- 查询两小时之内支付的订单 -->
 	<select id="findOrder" resultType="Orders">
-		SELECT order_id AS orderid FROM mtmydb.mtmy_orders WHERE pay_time > DATE_SUB(SYSDATE(),INTERVAL 2 HOUR) AND order_status IN (1,2,4) AND channel_flag != 'bm'
+		SELECT order_id AS orderid FROM mtmydb.mtmy_orders WHERE pay_time > DATE_SUB(SYSDATE(),INTERVAL 2 HOUR) AND order_status IN (1,2,4) AND channel_flag != 'bm' AND pay_name LIKE CONCAT('%', #{payName }, '%')
 	</select>
 </mapper>

@@ -33,5 +33,5 @@ public interface CheckAccountDao extends CrudDao<MtmyCheckAccount>{
 	 * 查询两小时之内支付的订单
 	 * @return
 	 */
-	public List<Orders> findOrder();
+	public List<Orders> findOrder(String payName);
 }

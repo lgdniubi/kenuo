@@ -72,7 +72,7 @@ public class CheckAccountService extends CrudService<CheckAccountDao, MtmyCheckA
 	 * 查询两小时之内支付的订单
 	 * @return
 	 */
-	public List<Orders> findOrder(){
-		return dao.findOrder();
+	public List<Orders> findOrder(String payName){
+		return dao.findOrder(payName);
 	}
 }

@@ -50,7 +50,7 @@ public class AlipayRealTimeCheckAccount extends CommonService{
 		taskLog.setStartDate(startDate);
 		try {
 			List<MtmyCheckAccount> list = new ArrayList<MtmyCheckAccount>();	
-			List<Orders>  OrdersList = checkAccountService.findOrder();		// 查询两小时之内支付的订单
+			List<Orders>  OrdersList = checkAccountService.findOrder("支付宝");		// 查询两小时之内支付的订单
 			for (int i = 0; i < OrdersList.size(); i++) {
 				AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.downloadAccount,AlipayConfig.appid,AlipayConfig.your_private_key,"json",AlipayConfig.input_charset,AlipayConfig.alipay_public_key,AlipayConfig.sign_type);
 				AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
@@ -74,7 +74,7 @@ public class AlipayRealTimeCheckAccount extends CommonService{
 						};
 					}
 				} else {
-					System.out.println("支付宝移动支付(实时定时任务),调用失败");
+					System.out.println("支付宝移动支付(实时定时任务),调用失败,失败订单号为："+OrdersList.get(i).getOrderid());
 				}
 			}
 			int num = 0;
