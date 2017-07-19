@@ -51,10 +51,9 @@ public class LiveAudit extends CommonService{
 	
 	/**
 	 * 妃子校直播审核
-	 * @author yangyang
-	 * @param rooms 
+	 * @author yangyang 
 	 */
-	public void liveAudit(Object rooms){
+	public void liveAudit(){
 		logger.info("[work0],start,妃子校直播处理，开始时间："+df.format(new Date()));
 		HttpServletRequest request=null;
 		List<TrainLiveAudit> list=new ArrayList<TrainLiveAudit>();
