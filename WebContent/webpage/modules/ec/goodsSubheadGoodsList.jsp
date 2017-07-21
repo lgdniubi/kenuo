@@ -201,7 +201,6 @@
 										<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-trash-o"></i>删除</a>
 								</shiro:hasPermission>
 								</c:if>
-								
 								<p></p>
 							</div>
 							<div class="pull-right">
@@ -236,9 +235,17 @@
 								<td style="text-align: center;">${page.goods.shopPrice}</td>
 								<td style="text-align: center;">${page.goods.storeCount}</td>
 								<td style="text-align: center;">
-									<shiro:hasPermission name="ec:goodsSubhead:deleteGoods">
-										<a href="#" onclick="deleteGoods(${page.goodsSubheadGoodsId},${goodsSubhead.goodsSubheadId})" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>删除</a>
-									</shiro:hasPermission> 
+									<c:set var="nowDate" value="<%=System.currentTimeMillis()%>"></c:set>
+									<c:if test="${nowDate - goodsSubhead.endDate.time <= 0}">
+										<shiro:hasPermission name="ec:goodsSubhead:deleteGoods">
+											<a href="#" onclick="deleteGoods(${page.goodsSubheadGoodsId},${goodsSubhead.goodsSubheadId})" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>删除</a>
+										</shiro:hasPermission> 
+									</c:if>
+									<c:if test="${nowDate - goodsSubhead.endDate.time > 0}">
+										<shiro:hasPermission name="ec:goodsSubhead:deleteGoods">
+											<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-trash-o"></i>删除</a>
+										</shiro:hasPermission> 
+									</c:if>
 								</td>
 							</tr>
 						</c:forEach>
