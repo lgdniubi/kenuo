@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.sys.dao.ShopCountDataDao">
+
+    <!-- 获取定时器截止的  预约id -->
+    <select id="findApptOrderId" resultType="java.lang.Integer">
+    	SELECT
+			id
+		FROM
+			mtmydb.mtmy_appt_order
+		ORDER BY
+			id DESC
+		LIMIT 1
+    </select>
+    
+    <!-- 获取定时器截止的  评论id -->
+    <select id="findCommentId" resultType="java.lang.Integer">
+    	SELECT
+			t1.id
+		FROM
+			mtmydb.mtmy_shop_comment t1
+		ORDER BY
+			id DESC
+		LIMIT 1
+    </select>
+    
+    <!-- 查询店铺的预约数据 -->
+	<select id="queryShopApptData" resultType="ShopCountData" parameterType="java.lang.Integer">
+		SELECT
+			COUNT(mao.id) AS 'apptCount',
+			mao.shop_id AS 'shopId',
+			IFNULL((SELECT tss.shop_id FROM trains.train_shop_statistics tss WHERE tss.shop_id = mao.shop_id),"NULL")AS 'isExist'
+		FROM
+			mtmydb.mtmy_appt_order mao
+		WHERE
+			mao.appt_status IN (1, 2)
+			AND id > #{apptOrderId}
+		GROUP BY
+			mao.shop_id
+	</select>
+	
+	<!-- 查询店铺的评论数据  -->
+	<select id="queryShopCommentData" resultType="ShopCountData" parameterType="java.lang.Integer">
+		SELECT
+			msc.shop_id AS 'shopId',
+			COUNT(contents) AS 'evaluationCount',
+			FORMAT((SUM((IFNULL(serve_rank,0) + IFNULL(entertain_rank,0) + IFNULL(environment_rank,0))/3) / COUNT(1)),1) AS 'evaluationScore',
+			IFNULL((SELECT tss.shop_id FROM trains.train_shop_statistics tss WHERE tss.shop_id = msc.shop_id),"NULL")AS 'isExist'
+		FROM
+			mtmydb.mtmy_shop_comment msc
+		WHERE
+			id > #{commentId}
+		GROUP BY
+			shop_id
+	</select>
+	
+	<!-- 新增或修改 train_shop_statistics 表统计数据 -->
+	<insert id="updateShopApptData" parameterType="ShopCountData">
+		INSERT INTO `trains`.`train_shop_statistics`
+			<trim prefix="(" suffix=")" prefixOverrides=",">
+				<if test="shopId != null">
+					`shop_id`,
+				</if>
+					`is_sham`,
+				<if test="evaluationScore != null">
+					`evaluation_score`,
+				</if>
+				<if test="evaluationCount != null">
+					`evaluation_count`,
+				</if>
+				<if test="apptCount != null">
+					`appt_count`,
+				</if>
+					`update_date`
+			</trim>
+			<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+				<if test="shopId != null">
+					#{shopId},
+				</if>
+					'0',
+				<if test="evaluationScore != null">
+					#{evaluationScore},
+				</if>
+				<if test="evaluationCount != null">
+					#{evaluationCount},
+				</if>
+				<if test="apptCount != null">
+					#{apptCount},
+				</if>
+					SYSDATE()
+			</trim>
+			ON DUPLICATE KEY UPDATE 
+				appt_count = #{apptCount},
+				update_date = SYSDATE();
+	</insert>
+	
+	<!-- 新增或修改 train_shop_statistics 表统计数据 -->
+	<insert id="updateShopCommentData" parameterType="ShopCountData">
+		INSERT INTO `trains`.`train_shop_statistics`
+			<trim prefix="(" suffix=")" prefixOverrides=",">
+				<if test="shopId != null">
+					`shop_id`,
+				</if>
+					`is_sham`,
+				<if test="evaluationScore != null">
+					`evaluation_score`,
+				</if>
+				<if test="evaluationCount != null">
+					`evaluation_count`,
+				</if>
+				<if test="apptCount != null">
+					`appt_count`,
+				</if>
+					`update_date`
+			</trim>
+			<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+				<if test="shopId != null">
+					#{shopId},
+				</if>
+					'0',
+				<if test="evaluationScore != null">
+					#{evaluationScore},
+				</if>
+				<if test="evaluationCount != null">
+					#{evaluationCount},
+				</if>
+				<if test="apptCount != null">
+					#{apptCount},
+				</if>
+					SYSDATE()
+			</trim>
+			ON DUPLICATE KEY UPDATE 
+				<if test="evaluationScore != 0">
+					evaluation_score = (evaluation_score * evaluation_count + #{evaluationScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
+				</if>
+				evaluation_count = evaluation_count + #{evaluationCount},
+				update_date = SYSDATE();
+	</insert>
+
+</mapper>

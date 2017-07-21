@@ -32,6 +32,7 @@ import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.OfficeService;
+import com.training.modules.sys.service.SystemService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
@@ -52,6 +53,8 @@ public class MtmyMnappointmentController extends BaseController{
 	private OrderGoodsService orderGoodsService;
 	@Autowired
 	private OfficeService officeService;
+	@Autowired
+	private SystemService systemService;
 	/**
 	 * 预约管理
 	 * @param model
@@ -227,16 +230,28 @@ public class MtmyMnappointmentController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "saveReservation")
-	public String saveReservation(Users users,String beauticianId,String shopId,String times,String recid,String servicemin,RedirectAttributes redirectAttributes,HttpServletRequest request){
+	public String saveReservation(Users users,String beauticianId,String shopId,String times,String recid,String servicemin,String userNote,RedirectAttributes redirectAttributes,HttpServletRequest request){
 		try {
 			String dateStr = times.replace("星期一", "").replace("星期二","").replace("星期三","").replace("星期四","").replace("星期五","").replace("星期六","").replace("星期日","");
 			Date date = DateUtils.parseDate(dateStr);
 			String appt_date = DateUtils.formatDate(date, "yyyy-MM-dd");
 			String appt_start_time = DateUtils.formatDate(date, "HH:mm");
 			String websaveReservation = ParametersFactory.getMtmyParamValues("mtmy_savereservation");
+			String shopName = null;	// 预约店铺id
+			String beauticianName = null;	// 美容师名称
+			String beaOfficeId = null;		// 美容师所属机构id
+			Office office = officeService.get(shopId);
+			if(null != office){
+				shopName = office.getName();	
+			}
+			User user = systemService.getUser(beauticianId);
+			if(null != user){
+				beauticianName = user.getName();
+				beaOfficeId = user.getOffice().getId();
+			}
 			
 			logger.info("##### web接口路径:"+websaveReservation);
-			String parpm = "{\"beautician_id\":\""+beauticianId+"\",\"user_id\":\""+users.getUserid()+"\",\"user_phone\":\""+users.getMobile()+"\",\"user_name\":\""+users.getName()+"\",\"rec_id\":\""+recid+"\",\"appt_date\":\""+appt_date+"\",\"appt_start_time\":\""+appt_start_time+"\",\"shop_id\":\""+shopId+"\",\"service_min\":\""+servicemin+"\",\"client\":\"bm\"}";
+			String parpm = "{\"beautician_id\":\""+beauticianId+"\",\"beautician_name\":\""+beauticianName+"\",\"bea_office_id\":\""+beaOfficeId+"\",\"user_note\":\""+userNote+"\",\"user_id\":\""+users.getUserid()+"\",\"user_phone\":\""+users.getMobile()+"\",\"user_name\":\""+users.getName()+"\",\"rec_id\":\""+recid+"\",\"appt_date\":\""+appt_date+"\",\"appt_start_time\":\""+appt_start_time+"\",\"shop_id\":\""+shopId+"\",\"shop_name\":\""+shopName+"\",\"service_min\":\""+servicemin+"\",\"client\":\"bm\"}";
 			logger.info("#### 添加预约参数"+parpm);
 			String url=websaveReservation;
 			String result = WebUtils.postObject(parpm, url);

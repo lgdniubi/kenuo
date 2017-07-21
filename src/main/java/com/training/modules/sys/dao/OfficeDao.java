@@ -159,9 +159,11 @@ public interface OfficeDao extends TreeDao<Office> {
 	public int delConfirm(Office office);
 	
 	/**
-	 * 隐藏店铺
-	 * @param office
+	 * 修改店铺是否属性
+	 * @param id
+	 * @param type
+	 * @param isyesno
 	 */
-	public void updateOfficeStatus(OfficeInfo officeInfo);
+	public void updateisyesno(@Param("id")String id,@Param("type")String type,@Param("isyesno")String isyesno);
+	
 }
-

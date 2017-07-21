@@ -64,4 +64,27 @@ public interface CommentDao extends CrudDao<Comment>{
 	 */
 	public Map<String, Object> findCommentByGoodId(int goodsId);
 	
+	/**
+	 * 查询店铺评论
+	 * @param comment
+	 * @return
+	 */
+	public List<Comment> findShopList(Comment comment);
+	/**
+	 * 根据id查询店铺评论
+	 * @param comment
+	 * @return
+	 */
+	public List<Comment> findShopByid(Comment comment);
+	/**
+	 * 回复店铺评论
+	 * @param comment
+	 */
+	public void insterShopComment(Comment comment);
+	/**
+	 * 修改单个用户所涉及的店铺评论
+	 * @param comment
+	 */
+	public void updateShopComment(Comment comment);
+	
 }

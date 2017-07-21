@@ -121,7 +121,7 @@
 	                        		<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/ruleparam/typelist","添加规则分类", false)'><i class="fa fa-plus"></i> 添加规则分类</button>
 		                         </shiro:hasPermission>
 		                         <shiro:hasPermission name="ec:ruletype:refreshparam">
-	                        		<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refreshparam()" title="刷新后台系统参数缓存"><i class="glyphicon glyphicon-repeat"></i> 刷新后台系统参数缓存</button>
+	                        		<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refreshparam()" title="刷新后台系统参数缓存"><i class="glyphicon glyphicon-repeat"></i> <font color="red">刷新后台系统参数缓存</font></button>
 		                         </shiro:hasPermission>
 	                        </div>
 						</div>

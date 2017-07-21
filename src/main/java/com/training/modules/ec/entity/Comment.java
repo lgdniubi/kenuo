@@ -3,6 +3,7 @@ package com.training.modules.ec.entity;
 import java.util.Date;
 
 import com.training.common.persistence.DataEntity;
+import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.User;
 
 /**
@@ -43,6 +44,12 @@ public class Comment extends DataEntity<Comment>{
 	
 	private String userName;	//用户姓名
 	private String usersName;	//美容师姓名
+	
+	private String shopId;		//店铺id
+	private String apptOrderId;	//预约订单ID
+	private float shopRank;		//店铺评价等级
+	private Office office;		//店铺信息
+	private String shopName;	//店铺名称
 	
 	/**
 	 * sharp 所加，用于查询每个预约下的评论 
@@ -199,5 +206,36 @@ public class Comment extends DataEntity<Comment>{
 	public void setUsersName(String usersName) {
 		this.usersName = usersName;
 	}
+	public String getShopId() {
+		return shopId;
+	}
+	public void setShopId(String shopId) {
+		this.shopId = shopId;
+	}
+	public String getApptOrderId() {
+		return apptOrderId;
+	}
+	public void setApptOrderId(String apptOrderId) {
+		this.apptOrderId = apptOrderId;
+	}
+	public float getShopRank() {
+		return shopRank;
+	}
+	public void setShopRank(float shopRank) {
+		this.shopRank = shopRank;
+	}
+	public Office getOffice() {
+		return office;
+	}
+	public void setOffice(Office office) {
+		this.office = office;
+	}
+	public String getShopName() {
+		return shopName;
+	}
+	public void setShopName(String shopName) {
+		this.shopName = shopName;
+	}
+	
 	
 }

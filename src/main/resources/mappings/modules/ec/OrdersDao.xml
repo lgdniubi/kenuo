@@ -181,13 +181,13 @@
 			a.is_real as isReal,
 			a.channel_flag AS channelflag,
 			COUNT(m.rec_id) AS "goodsnum",
-			IFNULL(ogd.order_arrearage,0) AS orderArrearage,
+			<!-- IFNULL(ogd.order_arrearage,0) AS orderArrearage, -->
 			a.del_flag,
 			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
-		LEFT JOIN (SELECT SUM(order_arrearage) AS order_arrearage,order_id FROM mtmydb.mtmy_order_goods_details GROUP BY order_id) ogd ON a.order_id = ogd.order_id
+		<!-- LEFT JOIN (SELECT SUM(order_arrearage) AS order_arrearage,order_id FROM mtmydb.mtmy_order_goods_details GROUP BY order_id) ogd ON a.order_id = ogd.order_id -->
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping m ON a.order_id = m.order_id
 		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=m.goods_id
 		LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
@@ -247,12 +247,12 @@
 			AND a.is_neworder = #{newIsNeworder}
 		</if>
 		GROUP BY a.order_id
-		<if test="orderArrearageType == 2 "> <!-- 没有欠款 -->
+		<!-- <if test="orderArrearageType == 2 "> 没有欠款
 			HAVING orderarrearage > 0
 		</if>
-		<if test="orderArrearageType == 1 "> <!-- 有欠款 -->
+		<if test="orderArrearageType == 1 "> 有欠款
 			HAVING orderarrearage = 0
-		</if>
+		</if> -->
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
@@ -285,13 +285,13 @@
 			a.is_real as isReal,
 			a.channel_flag AS channelflag,
 			COUNT(m.rec_id) AS "goodsnum",
-			IFNULL(ogd.order_arrearage,0) AS orderArrearage,
+			<!-- IFNULL(ogd.order_arrearage,0) AS orderArrearage, -->
 			a.del_flag,
 			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
-		LEFT JOIN (SELECT SUM(order_arrearage) AS order_arrearage,order_id FROM mtmydb.mtmy_order_goods_details GROUP BY order_id) ogd ON a.order_id = ogd.order_id
+		<!-- LEFT JOIN (SELECT SUM(order_arrearage) AS order_arrearage,order_id FROM mtmydb.mtmy_order_goods_details GROUP BY order_id) ogd ON a.order_id = ogd.order_id -->
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping m ON a.order_id = m.order_id
 		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id=m.goods_id
 		LEFT JOIN mtmydb.mtmy_goods_category f ON f.category_id=g.category_id
@@ -348,12 +348,12 @@
 			AND a.del_flag=#{userDelFlag}
 		</if>
 		GROUP BY a.order_id
-		<if test="orderArrearageType == 2 "> <!-- 没有欠款 -->
+		<!-- <if test="orderArrearageType == 2 "> 没有欠款
 			HAVING orderarrearage > 0
 		</if>
-		<if test="orderArrearageType == 1 "> <!-- 有欠款 -->
+		<if test="orderArrearageType == 1 "> 有欠款
 			HAVING orderarrearage = 0
-		</if>
+		</if> -->
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
@@ -901,6 +901,28 @@
 			account_arrearage = #{accountArrearage} 
 		where user_id = #{userid}
 	</update>
+	
+	<!-- 插入新的用户账户 -->
+	<insert id="insertAccount">
+		INSERT INTO mtmydb.mtmy_user_accounts(
+			user_id,
+			user_balance,
+			frozen_balance,
+			total_amount,
+			user_integral,
+			account_balance,
+			account_arrearage
+		)VALUES(
+			#{userid},
+			0,
+			0,
+			0,
+			0,
+			#{accountBalance},
+			#{accountArrearage}
+		)
+		
+	</insert>
 	
 	<!-- 查询当前用户的账户信息 -->
 	<select id="getAccount" resultType="Orders">
