@@ -33,11 +33,6 @@
 	    
 		$(document).ready(function() {
 			validateForm = $("#inputForm").validate({
-					rules:{
-						titleStyle:{
-							isStyle:true
-						}
-					},
 					submitHandler: function(form){
 						loading('正在提交，请稍等...');
 						form.submit();

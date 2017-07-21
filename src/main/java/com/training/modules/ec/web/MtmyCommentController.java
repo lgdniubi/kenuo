@@ -160,5 +160,55 @@ public class MtmyCommentController extends BaseController{
 		}
 		return "redirect:" + adminPath + "/ec/mtmycomment/realComment?repage";
 	}
-
+	
+	/**
+	 * 商品评论列表
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "shopComment")
+	public String shopComment(Comment comment,HttpServletRequest request, HttpServletResponse response,Model model) {
+		Page<Comment> page=commentService.findShopPage(new Page<Comment>(request, response), comment);
+		model.addAttribute("page", page);
+		model.addAttribute("comment", comment);
+		return "modules/ec/shopComment";
+	}
+	/**
+	 * 查看单个店铺评论
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @param comment
+	 * @return
+	 */
+	@RequestMapping(value ="oneShopComment")
+	public @ResponseBody Map<String,List<Comment>> oneShopComment(HttpServletRequest request, HttpServletResponse response,Model model,Comment comment){
+		Map<String,List<Comment>> jsonMap=new HashMap<String, List<Comment>>();
+		List<Comment> nowcomment=commentService.findShopByCid(comment);
+		for (int i = 0; i < nowcomment.size(); i++) {
+			if(nowcomment.get(i).getParentId() == 0){
+				nowcomment.get(i).setNewTime(DateUtils.formatDateTime(nowcomment.get(i).getAddTime()));
+			}
+		}
+		jsonMap.put("nowcomment",nowcomment);
+		return jsonMap;
+	}
+	/**
+	 * 回复店铺评论
+	 * @param comment
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value ="replyShopComment")
+	public String replyShopComment(Comment comment,HttpServletRequest request, HttpServletResponse response,Model model,RedirectAttributes redirectAttributes){
+		User currentUser = UserUtils.getUser();
+		comment.setReplyId(currentUser.getId());
+		commentService.insterShopComment(comment);
+		//修改单个用户所涉及的商品评论
+		commentService.updateShopComment(comment);
+		addMessage(redirectAttributes, "回复用户评论成功");
+		return "redirect:" + adminPath + "/ec/mtmycomment/realComment";
+	}
 }

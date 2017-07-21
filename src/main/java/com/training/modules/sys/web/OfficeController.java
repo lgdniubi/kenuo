@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -209,7 +210,13 @@ public class OfficeController extends BaseController {
 //		}
 		//当为实体店铺时查询其详细信息
 		if("1".equals(office.getGrade())){
-			office.setOfficeInfo(officeService.findbyid(office));
+			OfficeInfo officeInfo = officeService.findbyid(office);
+			//officeInfo中店铺标签 (多个标签用"#"分开)
+			if(officeInfo.getTags() !=null){
+				officeInfo.setTags(officeInfo.getTags().replaceAll("#", ","));
+			}
+			officeInfo.setDetails(HtmlUtils.htmlEscape(officeInfo.getDetails()));//详细介绍转码
+			office.setOfficeInfo(officeInfo);
 		}
 		//界面展示所属加盟商
 		OfficeInfo o=new OfficeInfo();
@@ -242,6 +249,10 @@ public class OfficeController extends BaseController {
 	@RequiresPermissions(value={"sys:office:add","sys:office:edit"},logical=Logical.OR)
 	@RequestMapping(value = "save")
 	public String save(Office office,OfficeInfo officeInfo, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		//officeInfo中店铺标签 (多个标签用"#"分开)
+		if(office.getOfficeInfo() != null && office.getOfficeInfo().getTags() !=null){
+			office.getOfficeInfo().setTags(office.getOfficeInfo().getTags().replaceAll(",", "#"));
+		}
 		if(Global.isDemoMode()){
 			addMessage(redirectAttributes, "演示模式，不允许操作！");
 			return "redirect:" + adminPath + "/sys/office/";
@@ -287,7 +298,6 @@ public class OfficeController extends BaseController {
 				officeService.save(childOffice);
 			}
 		}
-		
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
 		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
 		return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
@@ -774,30 +784,37 @@ public class OfficeController extends BaseController {
     }
     
     /**
-     * 隐藏店铺
-     * @param office
+     * 修改店铺是否属性
      * @param request
      * @return
      */
-    @RequestMapping(value = {"updateOfficeStatus"})
-    public @ResponseBody Map<String, String> updateOfficeStatus(OfficeInfo officeInfo,HttpServletRequest request){
-    	Map<String, String> jsonMap = new HashMap<String, String>();
+    @RequestMapping(value = {"updateisyesno"})
+    @ResponseBody
+    public Map<String, String> updateisyesno(HttpServletRequest request){
+    	Map<String, String> map = new HashMap<String, String>();
     	try {
-    		int num = reservationDao.findCountByOfficeId(officeInfo.getId());
-    		officeService.updateOfficeStatus(officeInfo);
-    		jsonMap.put("FLAG", "OK");
-    		if(num > 0){
-    			jsonMap.put("MESSAGE", "该店铺存在未完成的预约!");
+    		String id = request.getParameter("ID");				// id
+    		String type = request.getParameter("TYPE");			// 类型
+    		String isyesno = request.getParameter("ISYESNO");	// 是否
+    		officeService.updateisyesno(id,type,isyesno);
+    		map.put("FLAG", "OK");
+    		if("status".equals(type)){
+    			int num = reservationDao.findCountByOfficeId(id);
+    			if(num > 0){
+        			map.put("MESSAGE", "该店铺存在未完成的预约!");
+        		}else{
+        			map.put("MESSAGE", "隐藏该店铺成功");
+        		}
     		}else{
-    			jsonMap.put("MESSAGE", "隐藏该店铺成功");
+    			map.put("MESSAGE", "修改成功");
     		}
-    		
 		} catch (Exception e) {
-			logger.error("修改店铺状态出现异常，异常信息为："+e.getMessage());
-			BugLogUtils.saveBugLog(request, "修改店铺状态", e);
-			jsonMap.put("FLAG", "ERROR");
-			jsonMap.put("MESSAGE", "修改失败,出现异常");
+			logger.error("修改店铺是否属性错误信息："+e.getMessage());
+    		BugLogUtils.saveBugLog(request, "店铺是否属性修改失败", e);
+    		map = new HashMap<String, String>();
+    		map.put("FLAG", "ERROR");
+    		map.put("MESSAGE", "修改失败");
 		}
-    	return jsonMap;
+    	return map;
     }
 }

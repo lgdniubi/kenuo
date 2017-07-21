@@ -131,6 +131,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				}
 				ogd.setServiceTimes(returnedGoods.getReturnNum());
 				ogd.setType(0);
+				ogd.setAdvanceFlag("4");
 				ogd.setCreateBy(UserUtils.getUser());
 				orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
 			}
@@ -200,6 +201,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		ogd.setItemCapitalPool(returnedGoods.getServiceTimes()*orderGoods.getSingleNormPrice());
 		ogd.setServiceTimes(-returnedGoods.getServiceTimes());
 		ogd.setType(2);
+		ogd.setAdvanceFlag("4");
 		ogd.setCreateBy(UserUtils.getUser());
 		orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);;
 		

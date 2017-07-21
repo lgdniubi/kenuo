@@ -45,11 +45,14 @@ import com.google.common.collect.Maps;
 import com.training.common.persistence.Page;
 import com.training.common.utils.DateUtils;
 import com.training.common.web.BaseController;
+import com.training.modules.ec.dao.GoodsCategoryDao;
+import com.training.modules.ec.dao.GoodsDao;
 import com.training.modules.ec.entity.ArticleAuthorPhoto;
 import com.training.modules.ec.entity.ArticleImage;
 import com.training.modules.ec.entity.ArticleIssueLogs;
 import com.training.modules.ec.entity.ArticleRepository;
 import com.training.modules.ec.entity.ArticleRepositoryCategory;
+import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.entity.MtmyArticle;
 import com.training.modules.ec.entity.MtmyArticleCategory;
 import com.training.modules.ec.service.ArticleRepositoryService;
@@ -83,6 +86,10 @@ public class ArticleRepositoryController extends BaseController {
 	private ArticlesListService articlesListService;
 	@Autowired
 	private TrainRuleParamDao trainRuleParamDao;
+	@Autowired
+	private GoodsDao goodsDao;
+	@Autowired
+	private GoodsCategoryDao goodsCategoryDao;
 	/**
 	 * 文章列表
 	 * @param articleRepository
@@ -152,6 +159,11 @@ public class ArticleRepositoryController extends BaseController {
 			}else{
 				//查询文章
 				articleRepository = articleRepositoryService.get(articleRepository);
+				if(articleRepository.getLabelGoodsId() != 0){
+					Goods goods = goodsDao.get(String.valueOf(articleRepository.getLabelGoodsId()));
+					articleRepository.setGoodsname(goods.getGoodsName());
+					articleRepository.setGoodsCategoryName(goodsCategoryDao.get(goods.getGoodsCategoryId()).getName());
+				}
 				articleRepository.setContents(HtmlUtils.htmlEscape(articleRepository.getContents()));
 				//查询文章首图
 				List<ArticleImage> imageList = articleRepositoryService.findImages(articleRepository);
@@ -183,6 +195,11 @@ public class ArticleRepositoryController extends BaseController {
 		try {
 			// 文章类型  1 草稿  0 发布
 			articleRepository.setType(1);
+			if("".equals(articleRepository.getNewLabelGoodsId()) || articleRepository.getNewLabelGoodsId() == null ){
+				articleRepository.setLabelGoodsId(0);
+			}else{
+				articleRepository.setLabelGoodsId(Integer.valueOf(articleRepository.getNewLabelGoodsId()));
+			}
 			articleRepositoryService.saveArticle(articleRepository);
 			addMessage(redirectAttributes, "保存/修改文章草稿 "+articleRepository.getTitle()+" 成功！");
 		} catch (Exception e) {
@@ -207,6 +224,11 @@ public class ArticleRepositoryController extends BaseController {
 		try {
 			// 文章类型  1 草稿  0 发布
 			articleRepository.setType(0);
+			if("".equals(articleRepository.getNewLabelGoodsId()) || articleRepository.getNewLabelGoodsId() == null ){
+				articleRepository.setLabelGoodsId(0);
+			}else{
+				articleRepository.setLabelGoodsId(Integer.valueOf(articleRepository.getNewLabelGoodsId()));
+			}
 			articleRepositoryService.saveArticle(articleRepository);
 			String[] strs=request.getParameter("checkType").split(","); 
 			for (int i = 0; i < strs.length; i++) {

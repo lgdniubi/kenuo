@@ -5,6 +5,7 @@ import java.util.List;
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.MtmyCheckAccount;
+import com.training.modules.ec.entity.Orders;
 
 
 /**
@@ -28,5 +29,9 @@ public interface CheckAccountDao extends CrudDao<MtmyCheckAccount>{
 	 * @return
 	 */
 	public List<MtmyCheckAccount> findGroupFlag();
-	
+	/**
+	 * 查询两小时之内支付的订单
+	 * @return
+	 */
+	public List<Orders> findOrder(String payName);
 }

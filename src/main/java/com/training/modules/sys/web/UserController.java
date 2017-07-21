@@ -41,6 +41,7 @@ import com.training.common.persistence.Page;
 import com.training.common.service.ServiceException;
 import com.training.common.utils.DateUtils;
 import com.training.common.utils.FileUtils;
+import com.training.common.utils.IdGen;
 import com.training.common.utils.StringUtils;
 import com.training.common.utils.excel.ExportExcel;
 import com.training.common.utils.excel.ImportExcel;
@@ -482,6 +483,11 @@ public class UserController extends BaseController {
 			}
 			if("1".equals(request.getParameter("isPB"))){
 				userDao.UpdateUserStatus(user.getId());
+				
+				//若用户原来无排班，然后给予排班角色，则查询有没有美容师信息，若无，则插入
+				if(userDao.selectIsExist(user.getId()) == 0){
+					userDao.insertUserInfo(IdGen.uuid(),user.getId());
+				}
 			}
 			// 清除用户缓存
 			UserUtils.clearCache(user);
@@ -1308,5 +1314,38 @@ public class UserController extends BaseController {
 	// }
 	// });
 	// }
+	
+	/**
+     * 是否推荐
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = {"updateStatus"})
+    @ResponseBody
+    public Map<String, String> updateStatus(User user,HttpServletRequest request){
+    	Map<String, String> jsonMap = new HashMap<String, String>();
+    	try {
+    		String id = request.getParameter("id");
+			String isChange = request.getParameter("isChange");
+			String buttomName = request.getParameter("buttomName");
+			if(!StringUtils.isEmpty(id) && !StringUtils.isEmpty(isChange) && !StringUtils.isEmpty(buttomName)){
+				if("ISRECOMMEND".equals(buttomName)){
+					user.setIsRecommend(isChange);
+				}
+				systemService.updateStatus(user);
+	    		jsonMap.put("FLAG", "OK");
+	    		jsonMap.put("MESSAGE", "修改成功");
+			}else{
+				jsonMap.put("STATUS", "ERROR");
+				jsonMap.put("MESSAGE", "修改失败,必要参数为空");
+			}
+		} catch (Exception e) {
+			logger.error("修改是否推荐出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "修改是否推荐", e);
+			jsonMap.put("FLAG", "ERROR");
+			jsonMap.put("MESSAGE", "修改失败,出现异常");
+		}
+    	return jsonMap;
+    }
 }
 

@@ -46,7 +46,7 @@
 							</div>
 						</div>
 					</div>
-					<form:form id="searchForm" action="${ctx}/train/arrange/saveEquipment" method="post" class="" style="padding-top: 10px;height:100%;">
+					<form:form id="searchForm" action="${ctx}/train/arrange/saveEquipment" method="post" class="" style="padding-top: 10px;height:100%;" enctype="multipart/form-data">
 						<input type="hidden" value="${officeId }" id="nowOfficeId" name="nowOfficeId"> <!-- 用于重定向 -->
 						<input type="hidden" value="${officeName }" id="nowOfficeName" name="nowOfficeName"> <!-- 用于重定向 -->
 						<input id="searcTime" name="searcTime" value="${searcTime }" type="hidden">  <!-- 用于区分本月还是下月 -->

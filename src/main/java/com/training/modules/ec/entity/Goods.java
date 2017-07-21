@@ -91,6 +91,7 @@ public class Goods extends DataEntity<Goods> {
 	
 	private String rank;		//商品评论星级
 	private int commentNum;		//商品评论总数
+	private int buyCount;		//商品购买总数
 	/**
 	 * get/set
 	 */
@@ -460,5 +461,13 @@ public class Goods extends DataEntity<Goods> {
 	public void setSupplierName(String supplierName) {
 		this.supplierName = supplierName;
 	}
+	public int getBuyCount() {
+		return buyCount;
+	}
+	public void setBuyCount(int buyCount) {
+		this.buyCount = buyCount;
+	}
+	
+	
 	
 }

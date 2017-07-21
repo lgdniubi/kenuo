@@ -902,6 +902,28 @@
 		where user_id = #{userid}
 	</update>
 	
+	<!-- 插入新的用户账户 -->
+	<insert id="insertAccount">
+		INSERT INTO mtmydb.mtmy_user_accounts(
+			user_id,
+			user_balance,
+			frozen_balance,
+			total_amount,
+			user_integral,
+			account_balance,
+			account_arrearage
+		)VALUES(
+			#{userid},
+			0,
+			0,
+			0,
+			0,
+			#{accountBalance},
+			#{accountArrearage}
+		)
+		
+	</insert>
+	
 	<!-- 查询当前用户的账户信息 -->
 	<select id="getAccount" resultType="Orders">
 		SELECT * FROM mtmydb.mtmy_user_accounts where user_id = #{userid}

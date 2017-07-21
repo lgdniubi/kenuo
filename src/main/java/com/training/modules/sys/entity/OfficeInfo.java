@@ -27,6 +27,10 @@ public class OfficeInfo extends DataEntity<OfficeInfo>{
 	private String endTime;		//结束时间
 	private int	   status;		//状态
 	
+	private String tags;		//店铺标签 (多个标签用"#"分开)
+	private String intro;		//简介
+	private String details;		//详细介绍
+	
 	private Area areaInfo;		//归属区域
 	private String shortName;	//店铺短名称
 	private String OfficeName;	//店铺名称
@@ -240,4 +244,24 @@ public class OfficeInfo extends DataEntity<OfficeInfo>{
 	public void setBedNum(String bedNum) {
 		this.bedNum = bedNum;
 	}
+	
+	public String getTags() {
+		return tags;
+	}
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
+	public String getIntro() {
+		return intro;
+	}
+	public void setIntro(String intro) {
+		this.intro = intro;
+	}
+	public String getDetails() {
+		return details;
+	}
+	public void setDetails(String details) {
+		this.details = details;
+	}
+	
 }

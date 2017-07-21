@@ -81,6 +81,7 @@
 		    	 $('#treeTable tbody tr td input.i-checks').iCheck('uncheck');
 		    });
 		});
+		
 	</script>
 </head>
 <body>

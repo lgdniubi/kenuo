@@ -27,6 +27,8 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 	
 	private String createByName;	//操作人
 	
+	private String advanceFlag;     //（0：否；1：是预约金，2：处理预约金，3：充值，4：退货）
+	
 	public String getCreateByName() {
 		return createByName;
 	}
@@ -153,4 +155,13 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public String getAdvanceFlag() {
+		return advanceFlag;
+	}
+
+	public void setAdvanceFlag(String advanceFlag) {
+		this.advanceFlag = advanceFlag;
+	}
+	
 }
