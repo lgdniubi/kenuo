@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import com.training.common.mapper.JsonMapper;
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
+import com.training.common.utils.ListSplitUtils;
 import com.training.common.utils.StringUtils;
 import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.oa.dao.OaNotifyDao;
@@ -92,7 +93,12 @@ public class OaNotifyService extends CrudService<OaNotifyDao, OaNotify> {
 		// 更新发送接受人记录
 		oaNotifyRecordDao.deleteByOaNotifyId(oaNotify.getId());
 		if (oaNotify.getOaNotifyRecordList().size() > 0){
-			oaNotifyRecordDao.insertAll(oaNotify.getOaNotifyRecordList());
+			List<Object> list = ListSplitUtils.listSplit("妃子校推送更新接收人", oaNotify.getOaNotifyRecordList(),500);
+			for (int i = 0; i < list.size(); i++) {
+				@SuppressWarnings("unchecked")
+				List<OaNotifyRecord> RecordList = (List<OaNotifyRecord>) list.get(i);
+				oaNotifyRecordDao.insertAll(RecordList);
+			}
 		}
 	}
 	

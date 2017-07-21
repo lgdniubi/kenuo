@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.ArticlesStatisticsDao">
+
+	<!-- 获取定时器截止的 评论id -->
+	<select id="findCommentId" resultType="int">
+		SELECT
+			id AS commentId
+		FROM
+			mtmydb.mtmy_articles_comment
+		ORDER BY
+			id DESC
+		LIMIT 1
+	</select>
+	<!-- 获取定时器截止的 评论id -->
+	<select id="findLikeId" resultType="int">
+		SELECT
+			id AS likeId
+		FROM
+			mtmydb.mtmy_articles_like
+		ORDER BY
+			id DESC
+		LIMIT 1
+	</select>
+
+	<!-- 查询文章的id,评论数 -->
+	<select id="queryArticlesComment" resultType="ArticlesStatisticsCountData" parameterType="int">
+		SELECT 
+			articles_id AS articlesId,
+			COUNT(1) AS commonCount 
+		FROM 
+			mtmydb.mtmy_articles_comment 
+		WHERE 
+			id > #{commentId} AND del_flag = 0 
+		GROUP BY
+			articles_id
+	</select>
+	<!-- 查询文章的id,点赞数 -->
+	<select id="queryArticlesLike" resultType="ArticlesStatisticsCountData" parameterType="int">
+		SELECT 
+			articles_id AS articlesId,
+			COUNT(1) AS likeCount 
+		FROM 
+			mtmydb.mtmy_articles_like 
+		WHERE
+			id > #{likeId}
+		GROUP BY
+			articles_id
+	</select>
+
+	<!-- 修改mtmy_articles_statistics 表中文章的分享量 -->
+	<update id="updateArticles" parameterType="ArticlesStatisticsCountData">
+		UPDATE mtmydb.mtmy_articles_statistics
+		<set>
+			<if test="lookCount != null and lookCount != '' ">
+				look_count = #{lookCount},
+			</if>
+			<if test="shareCount != null and shareCount != '' ">
+				share_count = #{shareCount},
+			</if>
+			<if test="commonCount != null and commonCount != '' ">
+				common_count = common_count + #{commonCount},
+			</if>
+			<if test="likeCount != null and likeCount != '' ">
+				like_count = like_count + #{likeCount},
+			</if>
+			is_sham = 0
+		</set>
+		WHERE
+		articles_id = #{articlesId}
+	</update>
+
+	<!-- 将文章的id,浏览量 插入mtmy_articles_statistics 表 -->
+	<insert id="addArticles" parameterType="ArticlesStatisticsCountData">
+		INSERT INTO mtmydb.mtmy_articles_statistics
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="articlesId != null">
+				articles_id,
+			</if>
+			is_sham,
+			<if test="lookCount != null">
+				look_count,
+			</if>
+			<if test="shareCount != null">
+				share_count,
+			</if>
+			<if test="commonCount != null">
+				common_count,
+			</if>
+			<if test="likeCount != null">
+				like_count,
+			</if>
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			<if test="articlesId != null">
+				#{articlesId},
+			</if>
+			0,
+			<if test="lookCount != null">
+				#{lookCount},
+			</if>
+			<if test="shareCount != null">
+				#{shareCount},
+			</if>
+			<if test="commonCount != null">
+				#{commonCount},
+			</if>
+			<if test="likeCount != null">
+				#{likeCount},
+			</if>
+		</trim>
+		ON DUPLICATE KEY UPDATE
+			<if  test="lookCount != null">
+				look_count = #{lookCount},
+			</if> 
+			<if test="shareCount != null">
+				share_count = #{shareCount},
+			</if>
+			<if test="commonCount != null">
+				common_count = common_count + #{commonCount},
+			</if>
+			<if test="likeCount != null">
+				like_count = like_count + #{likeCount},
+			</if>
+			is_sham = 0;
+	</insert>
+</mapper>

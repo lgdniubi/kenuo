@@ -33,6 +33,13 @@ public class ArticleRepository extends DataEntity<ArticleRepository>{
 	
 	private String articleType;		//用于条件查询
 	
+	private int labelGoodsId;           //文章对应的商品id
+	private String newLabelGoodsId;     //用来接收页面传过来的商品id，有可能为空，所以要接受再判断
+	private String labelGoodsName;    //文章对应商品的名称
+	private String labelActionType;    //商品活动类型（0：普通商品；1：限时抢购；2：团购；3：促销优惠；）
+	private String goodsname;         //商品名称（回显用的）
+	private String goodsCategoryName;  //商品分类名称（回显用的）
+	
 	public int getArticleId() {
 		return articleId;
 	}
@@ -141,4 +148,41 @@ public class ArticleRepository extends DataEntity<ArticleRepository>{
 	public void setArticleType(String articleType) {
 		this.articleType = articleType;
 	}
+	public int getLabelGoodsId() {
+		return labelGoodsId;
+	}
+	public void setLabelGoodsId(int labelGoodsId) {
+		this.labelGoodsId = labelGoodsId;
+	}
+	public String getLabelGoodsName() {
+		return labelGoodsName;
+	}
+	public void setLabelGoodsName(String labelGoodsName) {
+		this.labelGoodsName = labelGoodsName;
+	}
+	public String getLabelActionType() {
+		return labelActionType;
+	}
+	public void setLabelActionType(String labelActionType) {
+		this.labelActionType = labelActionType;
+	}
+	public String getNewLabelGoodsId() {
+		return newLabelGoodsId;
+	}
+	public void setNewLabelGoodsId(String newLabelGoodsId) {
+		this.newLabelGoodsId = newLabelGoodsId;
+	}
+	public String getGoodsname() {
+		return goodsname;
+	}
+	public void setGoodsname(String goodsname) {
+		this.goodsname = goodsname;
+	}
+	public String getGoodsCategoryName() {
+		return goodsCategoryName;
+	}
+	public void setGoodsCategoryName(String goodsCategoryName) {
+		this.goodsCategoryName = goodsCategoryName;
+	}
+	
 }

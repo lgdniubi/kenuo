@@ -1,4 +1,5 @@
 
+
 $(document).ready(function() {
 	try{
 		// 链接去掉虚框
@@ -328,12 +329,14 @@ function openDialogView(title,url,width,height){
 }
 
 function search(){//查询，页码清零
+	overShade();
 	$("#pageNo").val(0);
 	$("#searchForm").submit();
 		return false;
 }
 
 function reset(){//重置，页码清零
+	overShade();
 	$("#pageNo").val(0);
 	$("#searchForm div.form-group input").val("");
 	$("#searchForm div.form-group select").val("");
@@ -341,15 +344,24 @@ function reset(){//重置，页码清零
 		return false;
 	 }
 function sortOrRefresh(){//刷新或者排序，页码不清零
-	
+	overShade();
 	$("#searchForm").submit();
 		return false;
 }
 function page(n,s){//翻页
+	overShade();
 	$("#pageNo").val(n);
 	$("#pageSize").val(s);
 	$("#searchForm").submit();
 	$("span.page-size").text(s);
 	return false;
+}
+
+// 2017年6月27日10:55:56 咖啡 新增
+//弹出等待动画
+function overShade(){       
+	layer.load(0, 
+		{shade: [0.1,'#fff'] //0.1透明度的白色背景
+	});
 }
 

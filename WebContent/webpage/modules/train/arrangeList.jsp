@@ -107,8 +107,8 @@
 						<table id="treeTable" class="osTop table table-bordered table-hover table-striped" style="width:200px;position:absolute;left:0;top:0;z-index:10;">
 							<thead>
 								<tr>
-									<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">操作</div></th>
-							 		<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${bazaarName }">${bazaarName }</div></th>
+									<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;">操作</div></th>
+							 		<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;" title="${bazaarName }">${bazaarName }</div></th>
 							 	</tr>
 							</thead>
 						</table>
@@ -116,15 +116,15 @@
 							<table id="treeTable" class="table table-bordered table-hover table-striped" style="word-break:keep-all;">
 								<thead>
 								 	<tr>
-								 		<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">操作</div></th>
-								 		<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${bazaarName }">${bazaarName }</div></th>
+								 		<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;">操作</div></th>
+								 		<th style="text-align:center;"><div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;" title="${bazaarName }">${bazaarName }</div></th>
 								 	</tr>
 								 </thead>
 								 <tbody>
 								  	<c:forEach items="${lists}" var="ArrangeBeautician">
 				                        <tr style="text-align: center;">
 			                        		<td>
-												<div class="btn-group" style="max-height: 17px;">
+												<div class="btn-group" style="height: 17px;line-height:17px;">
 													<button type="button" class="btn btn-success dropdown-toggle btn-xs" data-toggle="dropdown">操作<span class="caret"></span>
 													</button>
 													<ul class="dropdown-menu" role="menu">
@@ -137,7 +137,7 @@
 													</ul>
 												</div>
 			                            	</td>
-				                            <td><div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;" title="${ArrangeBeautician.name }">${ArrangeBeautician.name }</div></td>
+				                            <td><div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;" title="${ArrangeBeautician.name }">${ArrangeBeautician.name }</div></td>
 				                        </tr>
 			                        </c:forEach>
 								 </tbody>
@@ -154,12 +154,12 @@
 							<c:forEach items="${lists}" var="ArrangeBeautician">
 								<tr style="text-align: center;">
 									<td>
-										<div class="btn-group" style="width: 100px;max-height: 17px;"></div>
+										<div class="btn-group" style="width: 100px;height: 17px;line-height:17px;"></div>
 	                            	</td>
-									<td><div style="width:100px;max-width: 100px;overflow: hidden;max-height: 17px;">${ArrangeBeautician.name }</div></td>
+									<td><div style="width:100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;">${ArrangeBeautician.name }</div></td>
 									<c:forEach items="${ArrangeBeautician.arrangeShops}" var="arrangeShops" varStatus="status">
 										<td>
-											<div style="width: 100px;max-width: 100px;overflow: hidden;max-height: 17px;">
+											<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;">
 												<c:if test="${arrangeShops.status == 1}">
 													<a href="#" onclick="show('${ArrangeBeautician.officeId }',${status.index+1 })">班</a>
 												</c:if>
@@ -175,7 +175,6 @@
 			      $(function(){
 						$('#os1').scroll(function(){
 			    		   var $this = $(this);
-			    		   console.log($this.scrollTop());
 			    		   $(this).find('thead').css({'top':''+$this.scrollTop()+'px'})
 			    		   $(this).find('#osLeft').css({'left':''+$this.scrollLeft()+'px'})
 			    		   $(this).find('.osTop').css({'left':''+$this.scrollLeft()+'px','top':''+$this.scrollTop()+'px'})

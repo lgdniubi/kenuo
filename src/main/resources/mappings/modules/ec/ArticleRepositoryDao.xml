@@ -17,6 +17,9 @@
 		a.create_date,
 		a.update_by  AS "updateby.id",
 		a.update_date,
+		a.label_goods_id AS 'labelGoodsId',
+		a.label_goods_name AS 'labelGoodsName',
+		a.label_action_type AS 'labelActionType',
 		a.del_flag
 	</sql>
 	<!-- 分页查询文章 -->
@@ -62,6 +65,9 @@
 			type,
 			create_by,
 			create_date,
+			label_goods_id,
+			label_goods_name,
+			label_action_type,
 			del_flag
 		) VALUES (
 			#{categoryId},
@@ -76,6 +82,9 @@
 			#{type},
 			#{createBy.id}, 
 			SYSDATE(), 
+			#{labelGoodsId},
+			#{labelGoodsName},
+			#{labelActionType},
 			#{DEL_FLAG_NORMAL}
 		)
 	</insert>
@@ -94,6 +103,9 @@
 			type 		= #{type},
 			update_by   = #{updateBy.id},
 			update_date = SYSDATE(), 
+			label_goods_id = #{labelGoodsId},
+			label_goods_name = #{labelGoodsName},
+			label_action_type = #{labelActionType},
 			del_flag	= #{DEL_FLAG_NORMAL}
 		WHERE id = #{articleId}
 	</update>
@@ -218,6 +230,9 @@
 			is_top,
 			is_task,
 			sort,
+			label_goods_id,
+			label_goods_name,
+			label_action_type,
 			create_by,
 			create_date
 		)
@@ -238,6 +253,9 @@
 			1,
 			0,
 			0,
+			label_goods_id,
+			label_goods_name,
+			label_action_type,
 			#{userId},
 			SYSDATE()
 		FROM
@@ -298,6 +316,9 @@
 			 is_task = 0,
 			 task_date = null,
 			 sort = 0,
+			 label_goods_id = #{labelGoodsId},
+			 label_goods_name = #{labelGoodsName},
+			 label_action_type = #{labelActionType},
 			 update_by = #{updateBy.id}, 
 			 update_date = SYSDATE(),
 			 del_flag = 0

@@ -17,6 +17,7 @@
 		r.appt_status AS apptStatus,
 		r.create_date,
 		r.remarks,
+		r.user_note AS userNote,
 		r.channel_flag AS channelFlag
 	</sql>
 	<!-- 返回ec中的实体类 Reservation -->

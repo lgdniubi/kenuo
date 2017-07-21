@@ -97,6 +97,7 @@
 		a.mtmy_user_id AS mtmyUserId,
 		a.data_scope AS 'dataScope',
 		a.sex,
+		a.is_recommend AS 'isRecommend',
     	c.name AS "company.name",
     	c.parent_id AS "company.parent.id",
     	c.parent_ids AS "company.parentIds",
@@ -172,7 +173,7 @@
 		FROM sys_user a
 		<include refid="userJoins"/><!-- 
 		LEFT JOIN sys_role_office ro ON ro.role_id = r.id -->
-		WHERE a.login_name = #{loginName} AND a.del_flag = #{DEL_FLAG_NORMAL}
+		WHERE a.login_name = #{loginName} 
 	</select>
 	<!-- 验证手机号码 -->
 	<select id="getByMobile" resultType="User">
@@ -371,7 +372,7 @@
 		FROM sys_user a
 		<include refid="userJoins"/><!-- 
 		LEFT JOIN sys_role_office ro ON ro.role_id = r.id -->
-		WHERE a.no = #{no} AND a.del_flag =0
+		WHERE a.no = #{no} 
 	</select>
 	<!-- 验证身份证号码 -->
 	<select id="getUserByIdCard" resultType="User">
@@ -762,4 +763,32 @@
 			status = 1
 		WHERE id = #{id}
 	</update>
+	
+	<!-- 是否推荐 -->
+	<update id="updateStatus">
+		UPDATE sys_user 
+		SET 
+			<if test="isRecommend != null and isRecommend != ''">
+				is_recommend = #{isRecommend}
+			</if>
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 查询user_info中是否存在相应的数据 -->
+	<select id="selectIsExist" resultType="Integer">
+		SELECT COUNT(*) FROM sys_user_info WHERE user_id = #{id}
+	</select>
+	
+	<!-- 当为原来不是排班角色，后来改为排班角色，但是user_info中没有信息时，新增美容师的信息 -->
+	<insert id="insertUserInfo">
+		INSERT INTO sys_user_info(
+			id,
+			user_id,
+			create_time
+		)VALUES(
+			#{uuid},
+			#{id},
+			NOW()
+		)
+	</insert>
 </mapper>

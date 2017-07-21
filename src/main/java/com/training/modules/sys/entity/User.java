@@ -92,6 +92,7 @@ public class User extends DataEntity<User> {
 	
 	private FzxRole fzxRole; 	//妃子校菜单
 	
+	private String isRecommend;  //是否推荐（0：未推荐；1：推荐）
 	
 	public int getUserLevel() {
 		return userLevel;
@@ -575,4 +576,11 @@ public class User extends DataEntity<User> {
 	public void setFzxRole(FzxRole fzxRole) {
 		this.fzxRole = fzxRole;
 	}
+	public String getIsRecommend() {
+		return isRecommend;
+	}
+	public void setIsRecommend(String isRecommend) {
+		this.isRecommend = isRecommend;
+	}
+	
 }

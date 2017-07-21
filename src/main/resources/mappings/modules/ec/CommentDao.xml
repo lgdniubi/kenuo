@@ -29,6 +29,19 @@
 		b.add_time AS addTime,
 		b.parent_id AS parentId
 	</sql>
+	<sql id="ShopCommentColumns">
+		a.id AS commentId,
+		a.parent_id AS parentId,
+		a.shop_id AS shopId,
+		a.appt_order_id AS apptOrderId,
+		a.user_id AS userId,
+		ROUND((SUM(IFNULL(a.serve_rank,0)+IFNULL(a.entertain_rank,0)+IFNULL(a.environment_rank,0))/3),1) AS shopRank ,
+		contents,
+		img,
+		is_show AS isShow,
+		a.create_date AS addTime,
+		a.reply_id AS replyId
+	</sql>
 	<select id="findAllList" resultType="Comment">
 		SELECT 
 			 <include refid="CommentColumns"/>,
@@ -207,6 +220,93 @@
 	</select>
 	<!-- 查询商品星级、总评论数 -->
 	<select id="findCommentByGoodId" resultType="map">
-		SELECT IFNULL(TRUNCATE(AVG(deliver_rank+goods_rank+service_rank)/3,2),0) AS rank,COUNT(1) AS commentNum FROM mtmydb.mtmy_comment WHERE goods_id = #{goodsId}
+		SELECT
+			evaluation_score AS rank,
+			evaluation_count AS commentNum,
+			buy_count AS buyCount
+		FROM
+			mtmydb.mtmy_goods_statistics
+		WHERE
+			goods_id = #{goodsId}
 	</select>
+	
+	<!-- 查询店铺评论信息 -->
+	<select id="findShopList" resultType="Comment">
+		SELECT 
+			 <include refid="ShopCommentColumns"/>,
+			 b.name AS shopName,
+			 b.name AS 'office.name',
+			d.nickname AS 'users.name'
+		FROM  
+			mtmydb.mtmy_shop_comment AS a
+		LEFT JOIN trains.sys_office AS b ON b.id = a.shop_id
+		LEFT JOIN mtmydb.mtmy_appt_order AS c ON a.appt_order_id = c.id
+		LEFT JOIN mtmydb.mtmy_users AS d ON a.user_id = d.user_id
+		WHERE 
+			1=1
+			AND a.parent_id = '0'
+			<if test="beginDate != null and beginDate != ''">
+				AND c.create_date >= #{beginDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND c.create_date <![CDATA[ <= ]]> #{endDate}
+			</if>
+			<if test="userName != null and userName != ''">
+				AND d.nickname LIKE 
+					<if test="dbName == 'oracle'">'%'||#{userName}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{userName}, '%')</if>
+			</if>
+			<if test="office != null and office.id != null and office.id != ''">
+				AND a.shop_id = #{office.id} 
+			</if>
+		GROUP BY a.id
+		ORDER BY a.create_date DESC
+	</select>
+	
+	<!-- 查看单个店铺评论 -->
+	<select id="findShopByid" resultType="Comment">
+		SELECT
+			<include refid="ShopCommentColumns"/>,
+			 b.name AS shopName,
+			 b.name AS 'office.name',
+			 d.nickname AS 'users.name',
+			 e.name AS 'user.name'
+			FROM
+				mtmydb.mtmy_shop_comment AS a
+			LEFT JOIN trains.sys_office AS b ON b.id = a.shop_id
+			LEFT JOIN mtmydb.mtmy_appt_order AS c ON a.appt_order_id = c.id
+			LEFT JOIN mtmydb.mtmy_users AS d ON a.user_id = d.user_id
+			LEFT JOIN trains.sys_user AS e ON e.id = a.reply_id
+			WHERE
+				1=1
+				AND ( a.id = #{commentId} OR a.parent_id = #{commentId} )
+			GROUP BY a.id
+			ORDER BY a.create_date ASC
+	</select>
+	<insert id="insterShopComment">
+		INSERT INTO mtmydb.mtmy_shop_comment(
+			contents,
+			create_date,
+			reply_id,
+			is_show,
+			parent_id,
+			shop_id
+		) VALUES (
+			#{contents},
+			SYSDATE(),
+			#{replyId},
+			#{isShow},
+			#{parentId},
+			#{shopId}
+		)
+	</insert>
+	<update id="updateShopComment">
+		UPDATE
+			mtmydb.mtmy_shop_comment
+		SET
+		    is_show = #{isShow}
+		WHERE 
+			id = #{parentId}
+			OR parent_id = #{parentId}
+	</update>
 </mapper>

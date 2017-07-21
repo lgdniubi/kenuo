@@ -42,8 +42,10 @@
 								
 								if(dataObj[i].positionType == 0){
 									html += "<td style=\"text-align: center;\">商城</td>";
-								}else{
+								}else if(dataObj[i].positionType == 1){
 									html += "<td style=\"text-align: center;\">生美</td>";
+								}else if(dataObj[i].positionType == 2){
+									html += "<td style=\"text-align: center;\">医美</td>";
 								}
 								
 								if(dataObj[i].isHot == 0){
@@ -161,12 +163,7 @@
 									<td nowrap style="text-align: left;"><i class="icon-menu.icon"></i>${goodsCategory.name}</td>
 									<td>${goodsCategory.mobileName}</td>
 									<td style="text-align: center;">
-										<c:if test="${goodsCategory.positionType==0}">
-											商城
-										</c:if>
-										<c:if test="${goodsCategory.positionType==1}">
-											生美
-										</c:if>		
+										${fns:getDictLabel(goodsCategory.positionType, 'position_type', '')}
 									</td>
 									<td style="text-align: center;" id="ISHOT${goodsCategory.id}">
 										<c:if test="${goodsCategory.isHot == 0}">

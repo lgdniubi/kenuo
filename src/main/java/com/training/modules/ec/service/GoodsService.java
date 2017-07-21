@@ -19,6 +19,7 @@ import com.training.modules.ec.dao.EquipmentLabelDao;
 import com.training.modules.ec.dao.GoodsAttributeDao;
 import com.training.modules.ec.dao.GoodsDao;
 import com.training.modules.ec.dao.GoodsSpecPriceDao;
+import com.training.modules.ec.dao.GoodsStatisticsDao;
 import com.training.modules.ec.entity.Effect;
 import com.training.modules.ec.entity.EquipmentLabel;
 import com.training.modules.ec.entity.Goods;
@@ -29,6 +30,7 @@ import com.training.modules.ec.entity.GoodsImages;
 import com.training.modules.ec.entity.GoodsSkill;
 import com.training.modules.ec.entity.GoodsSpecImage;
 import com.training.modules.ec.entity.GoodsSpecPrice;
+import com.training.modules.ec.entity.GoodsStatisticsCountData;
 import com.training.modules.ec.utils.GoodsUtil;
 import com.training.modules.quartz.entity.GoodsCollect;
 import com.training.modules.quartz.entity.StoreVo;
@@ -67,6 +69,8 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 	private SkillDao skillDao;
 	@Autowired
 	private EquipmentLabelDao equipmentLabelDao;
+	@Autowired
+	private GoodsStatisticsDao goodsStatisticsDao;
 
 	/**
 	 * 分页展示所有信息
@@ -348,6 +352,8 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 					equipmentLabelDao.insertGoodsEquipmentLabel(list); // 插入设备标签表
 				}
 			}
+			// 新增商品时同时新增到统计表中	
+			addGoodsStatisticsCountData(goodId);
 		} else {
 			// 修改
 			goods.setAttrType((goods.getAttrType() == null || "".equals(goods.getAttrType())) ? null : goods.getAttrType());
@@ -655,6 +661,8 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 
 				}
 			}
+			// 新增商品时同时新增到统计表中	
+			addGoodsStatisticsCountData(goodId);
 		}
 		if (goods.getGoodsImagesList().size() > 0) {
 			List<GoodsImages> imglist = goods.getGoodsImagesList();
@@ -709,7 +717,6 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 			goods.setGoodsAttributeMappingsList(goodsAttributeList);
 			saveattribute(goods);
 		}
-
 	}
 
 	/**
@@ -1135,5 +1142,15 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 			redisClientTemplate.srem(GOODS_SPECPRICE_HASH, goodsId+"#"+goodsSpecPricesList.get(i));
 			redisClientTemplate.del(SPECPRICE+goodsId+"#"+goodsSpecPricesList.get(i));
 		}
+	}
+	// 新增商品时同时新增到统计表中	
+	// 1、新增商品时调用	2、复制商品时调用
+	public void addGoodsStatisticsCountData(int goodId){
+		GoodsStatisticsCountData goodsStatisticsCountData = new GoodsStatisticsCountData();
+		goodsStatisticsCountData.setGoodsId(String.valueOf(goodId));
+		goodsStatisticsCountData.setEvaluationScore((float)5);
+		goodsStatisticsCountData.setEvaluationCount(0);
+		goodsStatisticsCountData.setBuyCount(0);
+		goodsStatisticsDao.addGoodsStatisticsCountData(goodsStatisticsCountData);
 	}
 }

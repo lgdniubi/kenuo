@@ -3,6 +3,7 @@ package com.training.modules.ec.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
@@ -10,11 +11,13 @@ import org.springframework.web.util.HtmlUtils;
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.ec.dao.ArticleRepositoryDao;
+import com.training.modules.ec.dao.GoodsDao;
 import com.training.modules.ec.entity.ArticleAuthorPhoto;
 import com.training.modules.ec.entity.ArticleImage;
 import com.training.modules.ec.entity.ArticleIssueLogs;
 import com.training.modules.ec.entity.ArticleRepository;
 import com.training.modules.ec.entity.ArticleRepositoryCategory;
+import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.entity.MtmyArticleCategory;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.UserUtils;
@@ -29,6 +32,9 @@ import com.training.modules.train.entity.ArticlesCategory;
 @Service
 @Transactional(readOnly = false)
 public class ArticleRepositoryService extends CrudService<ArticleRepositoryDao, ArticleRepository>{
+	
+	@Autowired
+	private GoodsDao goodsDao;
 	/**
 	 * 分页查询文章
 	 */
@@ -43,6 +49,12 @@ public class ArticleRepositoryService extends CrudService<ArticleRepositoryDao, 
 	public void saveArticle(ArticleRepository articleRepository){
 		articleRepository.setContents(HtmlUtils.htmlUnescape(articleRepository.getContents()));
 		User user = UserUtils.getUser();
+		if(articleRepository.getLabelGoodsId() != 0){
+			Goods goods = goodsDao.get(String.valueOf(articleRepository.getLabelGoodsId()));
+			articleRepository.setLabelGoodsName(goods.getGoodsName());
+			articleRepository.setLabelActionType(goods.getActionType());
+		}
+		
 		if(articleRepository.getArticleId() == 0){
 			articleRepository.setCreateBy(user);
 			dao.insert(articleRepository);

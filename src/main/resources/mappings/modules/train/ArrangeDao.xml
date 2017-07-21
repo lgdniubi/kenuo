@@ -69,10 +69,14 @@
 	</select>
 	<!-- 删除特殊美容师当前月所有排班 -->
 	<delete id="delBeautician">
-		DELETE FROM train_arrange_shop WHERE id IN 
-			<foreach collection="ids" item="id" open="(" separator="," close=")">
-	            #{id}
-	        </foreach>
+		DELETE FROM train_arrange_shop WHERE 
+		<foreach collection="list" item="list" separator="or">
+	           (beautician_id = #{list.beauticianId}
+	           AND DATE_FORMAT(appt_date,'%Y-%m-%d') = DATE_FORMAT(#{list.apptDate},'%Y-%m-%d')
+	           AND month =  #{list.month}
+	           AND day =  #{list.day}
+	           AND time = #{list.time})
+        </foreach>
 	</delete>
 	<!-- 插入所有特殊美容师排班 -->
 	<insert id="saveBeautician">
@@ -132,10 +136,14 @@
 	</select>
 	<!-- 删除特殊设备当前月所有排班 -->
 	<delete id="delEquipment">
-		DELETE FROM train_arrange_equipment WHERE id IN 
-			<foreach collection="ids" item="id" open="(" separator="," close=")">
-	            #{id}
-	        </foreach>
+		DELETE FROM train_arrange_equipment WHERE
+		<foreach collection="list" item="list" separator="or">
+	           (equipment_id = #{list.equipmentId}
+	           AND DATE_FORMAT(appt_date,'%Y-%m-%d') = DATE_FORMAT(#{list.apptDate},'%Y-%m-%d')
+	           AND month =  #{list.month}
+	           AND day =  #{list.day}
+	           AND time = #{list.time})
+        </foreach>
 	</delete>
 	<!-- 插入所有特殊设备排班 -->
 	<insert id="saveEquipment">

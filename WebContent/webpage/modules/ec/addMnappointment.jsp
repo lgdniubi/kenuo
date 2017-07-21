@@ -195,6 +195,20 @@
     	   $("#"+val+" option[value !='']").remove();
     	});
     }
+    
+    function checkEnter(e){
+	    var code;  
+	    if (!e) var  e = window.event;  
+	    if (e.keyCode) code = e.keyCode;  
+	    else if (e.which) code = e.which;  
+	    if(code==13 && window.event){  
+	        e.returnValue = false;  
+	        top.layer.alert('禁止换行!', {icon: 0, title:'提醒'}); 
+	    }else if(code==13){  
+	        e.preventDefault();
+	        top.layer.alert('禁止换行!', {icon: 0, title:'提醒'}); 
+	    }  
+    }
     </script>
 </head>
 <body class="gray-bg">
@@ -211,7 +225,7 @@
 					<input id="labelId" name="labelId" type="hidden"><!-- 获取美容师预约时间 -->
 					<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 						<tr>
-							<td class="active"><label class="pull-right"><font color="red">*</font>订单号：</label></td>
+							<td class="active" width="110px;"><label class="pull-right"><font color="red">*</font>订单号：</label></td>
 							<td>
 								<input class="form-control required" id="orderid" onblur="findOrderGoods()">
 								<input type="hidden" id="oldorderid">
@@ -282,6 +296,12 @@
 								<select id="times" name="times" class="form-control required">
 									<option value="">请选择预约时间</option>
 								</select>
+							</td>
+						</tr>
+						<tr>
+							<td class="active"><label class="pull-right">消费者备注：</label></td>
+							<td>
+								<textarea rows="7" cols="30" id="userNote" name="userNote" onkeydown="checkEnter(event)" class="form-control"></textarea>
 							</td>
 						</tr>
 					</table>

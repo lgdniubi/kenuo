@@ -145,6 +145,13 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @param _orders
 	 */
 	public void updateAccount(Orders _orders);
+	
+	/**
+	 * 插入新的用户账户
+	 * @param _orders
+	 */
+	public void insertAccount(Orders _orders);
+	
 	/**
 	 * 根据用户id 查询用户账户信息
 	 * @param _orders

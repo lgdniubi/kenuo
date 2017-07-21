@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.sys.dao.QuartzStartConfigDao">
+    
+	<!-- 根据key获取对应value值 -->
+	<select id="queryValue" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT
+			qsc.value
+		FROM
+			quartz_start_config qsc
+		WHERE
+			qsc.`key`  = #{key}
+		ORDER BY id DESC
+		LIMIT 1
+	</select>
+	
+	<!-- 添加定时器起始配置数据 -->
+	<insert id="addQuartzStartConfig" parameterType="java.util.List">
+		INSERT INTO `trains`.`quartz_start_config` (
+			`id`,
+			`key`,
+			`value`,
+			`create_date`
+		)
+		VALUES
+        <foreach collection="list" item="qsc" index="index" separator=",">  
+            (null,#{qsc.key},#{qsc.value},SYSDATE())  
+        </foreach> 
+	</insert>
+</mapper>

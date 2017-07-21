@@ -13,9 +13,16 @@
 			   return false;
 		   }
 		   if(validateForm.form()){
-			  $("#inputForm").submit();
-			  return true;
-		  }
+			   if($("#pushType").val() == 0){
+				   if(confirm("警告！所有用户都可以收到本次信息内容，请谨慎使用！")){
+				   		$("#inputForm").submit();
+				   		return true;
+				   }
+			   }else{
+			   		$("#inputForm").submit();
+			   		return true;
+			   }
+		   }
 		  return false;
 		}
 		$(document).ready(function() {
@@ -230,7 +237,7 @@
 		        	</td>
 		       		<td colspan="3">
 	       				<a href="#" onclick="newImport()" class="btn btn-white btn-sm"><i class="fa fa-folder-open-o"></i>导入</a><font color="red">若输入用户手机号码，则要“,”分割开</font><br>
-	       				<textarea id='phones' name="phones" rows="6" cols="1" maxlength='2000' class='form-control required' >${mtmyOaNotify.mtmyOaNotifyRecordMobile}</textarea>
+	       				<textarea id='phones' name="phones" rows="6" cols="1" class='form-control required' >${mtmyOaNotify.mtmyOaNotifyRecordMobile}</textarea>
 		       		</td>
 		        </tr>
 		        </c:if>
