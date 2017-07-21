@@ -1178,8 +1178,11 @@ public class GoodsController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "treeGoodsData")
-	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String isReal,String isOnSale,String isAppshow,HttpServletResponse response) {
+	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String goodsId,String isReal,String isOnSale,String isAppshow,HttpServletResponse response) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
+		if("".equals(goodsId) || goodsId == null){
+			goodsId = "0";
+		}
 		Goods goods=new Goods();
 		goods.setGoodsCategoryId(goodsCategory);
 		goods.setGoodsName(goodsName);
@@ -1188,6 +1191,7 @@ public class GoodsController extends BaseController{
 		goods.setIsReal(isReal);
 		goods.setIsOnSale(isOnSale);
 		goods.setIsAppshow(isAppshow);
+		goods.setGoodsId(Integer.valueOf(goodsId));
 		if(actionId!=null){
 			goods.setActionId(Integer.parseInt(actionId));
 		}

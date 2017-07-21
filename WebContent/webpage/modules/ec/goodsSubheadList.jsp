@@ -72,13 +72,13 @@
 							<input id="startDate" name="startDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${goodsSubhead.startDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" readonly="readonly"/>
 							一
 							<input id="endDate" name="endDate" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${goodsSubhead.endDate}" pattern="yyyy-MM-dd"/>"  style="width:185px;" readonly="readonly"/>&nbsp;&nbsp;
-							<label>活动状态：</label>
+							<label>开启状态：</label>
 							<select id="status" name="status" class="form-control" style="width:185px;">
 								<option value="">全部</option>
 								<option value="0" ${(goodsSubhead.status == '0')?'selected="selected"':''}>开启</option>
 								<option value="1" ${(goodsSubhead.status == '1')?'selected="selected"':''}>关闭</option>
 							</select>
-							<label>开启状态：</label>
+							<label>活动状态：</label>
 							<select id="openStatus" name="openStatus" class="form-control" style="width:185px;">
 								<option value="">全部</option>
 								<option value="1" ${(goodsSubhead.openStatus == '1')?'selected="selected"':''}>未开始</option>
@@ -110,6 +110,8 @@
                 			<th style="text-align: center;">副标题文案</th>
                 			<th style="text-align: center;">生效时间</th>
                 			<th style="text-align: center;">失效时间</th>
+                			<th style="text-align: center;">创建时间</th>
+                			<th style="text-align: center;">开启状态</th>
                 			<th style="text-align: center;">活动状态</th>
                 			<th style="text-align: center;">备注</th>
                 			<th style="text-align: center;">操作</th>
@@ -128,8 +130,17 @@
 								<fmt:formatDate value="${goodsSubhead.endDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
 							</td>	
 							<td style="text-align: center;">
+								<fmt:formatDate value="${goodsSubhead.createDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
+							</td>	
+							<td style="text-align: center;">
 								<c:if test="${goodsSubhead.status == '0'}">开启</c:if>
 								<c:if test="${goodsSubhead.status == '1'}">关闭</c:if>
+							</td>
+							<td style="text-align: center;">
+								<c:set var="nowDate" value="<%=System.currentTimeMillis()%>"></c:set>
+								<c:if test="${nowDate - goodsSubhead.startDate.time < 0}">未开始</c:if>
+								<c:if test="${(nowDate - goodsSubhead.startDate.time >= 0) && (nowDate - goodsSubhead.endDate.time <= 0)}">生效中</c:if>
+								<c:if test="${nowDate - goodsSubhead.endDate.time > 0}">已结束</c:if>
 							</td>
 							<td style="text-align: center;">
 								<!-- 当文本内容大于5个字符时，只显示其前五个字符 -->
@@ -144,13 +155,20 @@
 							</td>
 							<td style="text-align: center;">
 								<shiro:hasPermission name="ec:goodsSubhead:open">
-									<c:if test="${goodsSubhead.status==1}">
+									<c:set var="nowDate" value="<%=System.currentTimeMillis()%>"></c:set>
+									<c:if test="${goodsSubhead.status==1 && (nowDate - goodsSubhead.endDate.time <= 0)}">
 										<a href="${ctx}/ec/goodsSubhead/open?status=0&goodsSubheadId=${goodsSubhead.goodsSubheadId}"  class="btn btn-primary btn-xs">
 										<i class="fa fa-file"></i>开启</a>
 									</c:if>
-									<c:if test="${goodsSubhead.status==0}">
+									<c:if test="${(goodsSubhead.status==1) && (nowDate - goodsSubhead.endDate.time > 0)}">
+										<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>开启</a>
+									</c:if>
+									<c:if test="${goodsSubhead.status==0 && (nowDate - goodsSubhead.endDate.time <= 0)}">
 										<a href="${ctx}/ec/goodsSubhead/open?status=1&goodsSubheadId=${goodsSubhead.goodsSubheadId}"  class="btn btn-danger btn-xs">
 										<i class="fa fa-close"></i>关闭</a>
+									</c:if>
+									<c:if test="${(goodsSubhead.status==0) && (nowDate - goodsSubhead.endDate.time > 0)}">
+										<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>关闭</a>
 									</c:if>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="ec:goodsSubhead:view">

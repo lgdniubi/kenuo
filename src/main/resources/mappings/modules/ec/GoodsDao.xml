@@ -181,6 +181,9 @@
 		<if test="isAppshow != null and isAppshow != ''">
 			AND g.is_appshow = #{isAppshow}
 		</if>
+		<if test="goodsId != 0">
+			AND g.goods_id = #{goodsId}
+		</if>
 	</select>
 	<!-- 根据多个分类查询上商品 -->
 	<select id="findByCateList" resultType="Goods">

@@ -42,6 +42,7 @@ import com.training.common.utils.excel.ExportExcel;
 import com.training.common.utils.excel.ImportExcel;
 import com.training.common.web.BaseController;
 import com.training.modules.ec.dao.ReservationDao;
+import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeInfo;
@@ -49,11 +50,13 @@ import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.DictUtils;
+import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.TrainRuleParam;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import net.sf.json.util.CycleDetectionStrategy;
 
@@ -796,18 +799,37 @@ public class OfficeController extends BaseController {
     		String id = request.getParameter("ID");				// id
     		String type = request.getParameter("TYPE");			// 类型
     		String isyesno = request.getParameter("ISYESNO");	// 是否
-    		officeService.updateisyesno(id,type,isyesno);
-    		map.put("FLAG", "OK");
-    		if("status".equals(type)){
-    			int num = reservationDao.findCountByOfficeId(id);
-    			if(num > 0){
-        			map.put("MESSAGE", "该店铺存在未完成的预约!");
-        		}else{
-        			map.put("MESSAGE", "隐藏该店铺成功");
-        		}
+    		if("isCargo".equals(type)){
+    			String weburl = ParametersFactory.getMtmyParamValues("modifyIsCargo");
+    			logger.info("##### web接口路径:"+weburl);
+    			String parpm = "{\"office_id\":"+id+",\"is_cargo\":\""+Integer.valueOf(isyesno)+"\"}";
+    			String url=weburl;
+    			String result = WebUtils.postCSObject(parpm, url);
+    			JSONObject jsonObject = JSONObject.fromObject(result);
+    			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+    			if("200".equals(jsonObject.get("result"))){
+    				officeService.updateisyesno(id,type,isyesno);
+    				map.put("FLAG", "OK");
+    				map.put("MESSAGE", "修改成功");
+    			}else{
+    				map.put("FLAG", "ERROR");
+    				map.put("MESSAGE", "修改失败："+jsonObject.get("msg"));
+    			}
     		}else{
-    			map.put("MESSAGE", "修改成功");
+    			officeService.updateisyesno(id,type,isyesno);
+    			map.put("FLAG", "OK");
+    			if("status".equals(type)){
+    				int num = reservationDao.findCountByOfficeId(id);
+    				if(num > 0){
+    					map.put("MESSAGE", "该店铺存在未完成的预约!");
+    				}else{
+    					map.put("MESSAGE", "隐藏该店铺成功");
+    				}
+    			}else{
+    				map.put("MESSAGE", "修改成功");
+    			}
     		}
+			
 		} catch (Exception e) {
 			logger.error("修改店铺是否属性错误信息："+e.getMessage());
     		BugLogUtils.saveBugLog(request, "店铺是否属性修改失败", e);
