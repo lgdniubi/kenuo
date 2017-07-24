@@ -39,6 +39,7 @@
 		  g.attr_type AS 'attrType',
 		  g.spec_type AS 'specType',
 		  g.give_integral AS 'giveIntegral',
+		  g.integral AS 'integral',
 		  g.sales_sum AS 'salesSum',
 		  g.region_name AS 'regionName',
 		  g.action_type AS 'actionType',
@@ -180,6 +181,9 @@
 		<if test="isAppshow != null and isAppshow != ''">
 			AND g.is_appshow = #{isAppshow}
 		</if>
+		<if test="goodsId != 0">
+			AND g.goods_id = #{goodsId}
+		</if>
 	</select>
 	<!-- 根据多个分类查询上商品 -->
 	<select id="findByCateList" resultType="Goods">
@@ -220,6 +224,7 @@
 		  g.attr_type AS 'attrType',
 		  g.spec_type AS 'specType',
 		  g.give_integral AS 'giveIntegral',
+		  g.integral AS 'integral',
 		  g.sales_sum AS 'salesSum',
 		  g.region_name AS 'regionName',
 		  g.service_min AS 'serviceMin'
@@ -261,6 +266,7 @@
 		  attr_type,
 		  spec_type,
 		  give_integral,
+		  integral,
 		  sales_sum,
 		  region_name,
 		  action_type,
@@ -301,6 +307,7 @@
 		    #{attrType},
 		    #{specType},
 		    #{giveIntegral},
+		    #{integral},
 		    #{salesSum},
 		    #{regionName},
 		    #{actionType},
@@ -351,6 +358,7 @@
 			  attr_type = #{attrType},
 			  spec_type = #{specType},
 			  give_integral = #{giveIntegral},
+			  integral = #{integral},
 			  sales_sum = #{salesSum},
 			  region_name = #{regionName},
 			  service_min = #{serviceMin},

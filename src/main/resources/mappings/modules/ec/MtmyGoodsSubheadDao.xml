@@ -127,7 +127,7 @@
 			g.goods_name AS 'goods.goodsName',
 			c2.name AS 'goods.goodsCategory.name',
 			c1.name AS 'goods.goodsCategory.parent.name',
-			g.cost_price AS 'goods.shopPrice',
+			g.shop_price AS 'goods.shopPrice',
 			g.store_count AS 'goods.storeCount'
 		FROM mtmydb.mtmy_goods_subhead_mapping gsm 
 		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id = gsm.goods_id 
