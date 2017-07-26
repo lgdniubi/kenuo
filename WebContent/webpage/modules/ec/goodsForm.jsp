@@ -517,7 +517,7 @@
 										</c:if>
 									</div>
 								</div>
-								<font color="red">*亲,修改商品规格,请到列表页面修改,谢谢!</font>
+								<font color="red">*亲,修改商品规格,请到列表页面的商品规格修改,谢谢!</font>
 								<!-- 提交按钮 -->
 								<div class="box-footer">   
 									<!-- 商品规格图片上传字段 -->

@@ -84,7 +84,8 @@
 			$("#goodsMappingId").val(id);
 			goodNum=$("#"+id+"goodsnum").val();//购买的数量
 			remaintimes=$("#"+id+"remaintimes").val();//虚拟商品剩余次数
-			//$("#serviceTimes").val(remaintimes);
+			//时限卡售后添加servicetimes
+			servicetimes=$("#"+id+"servicetimes").val();//为了判断是否为时限卡
 			
 			orderArrearage=$("#"+id+"orderArrearage").val();//订单欠款
 			singleRealityPrice=$("#"+id+"singleRealityPrice").val();//实际服务单次价
@@ -97,6 +98,13 @@
 			if(orderArrearage>0){
 				top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
 			}else{
+				if(servicetimes == 999){//是否为时限卡,剩余次数赋值,
+					$("#d1serviceTimes").hide();
+					$("#serviceTimes").val(servicetimes);
+				}else{
+					$("#d1serviceTimes").show();
+					$("#serviceTimes").val(0);
+				}
 				if("bm"==type){//当时后台数据时
 					var orderA=$("#"+id+"orderAmount").val();
 					var totalA=$("#"+id+"total").val();
@@ -299,9 +307,9 @@
 								<th style="text-align: center;">实付款</th>
 								<th style="text-align: center;">实际服务单价</th>
 								<c:if test="${orders.isReal==1}">
+									<th style="text-align: center;">截止时间</th>
 									<th style="text-align: center;">剩余次数</th>
 								</c:if>
-								<!-- <th style="text-align: center;">余额</th> -->
 								<th style="text-align: center;">欠款</th>
 							</tr>
 						</thead>
@@ -326,10 +334,14 @@
 									<td  style="text-align: center;">${orderGood.goodsnum}</td>
 									<td  style="text-align: center;">${orderGood.totalAmount}</td>
 									<td  style="text-align: center;">${orderGood.singleRealityPrice}</td>
-									<c:if test="${orders.isReal==1}">
+									<c:if test="${orders.isReal==1 && orderGood.servicetimes == 999}">
+										<td  style="text-align: center;">${orderGood.expiringdate}</td>
+										<td  style="text-align: center;"></td>
+									</c:if>
+									<c:if test="${orders.isReal==1 && orderGood.servicetimes != 999}">
+										<td  style="text-align: center;"></td>
 										<td  style="text-align: center;">${orderGood.remaintimes}</td>
 									</c:if>
-									<%-- <td  style="text-align: center;">${orderGood.orderBalance}</td> --%>
 									<td  style="text-align: center;">${orderGood.orderArrearage}</td>
 								</tr>
 								<input type="hidden" id="${orderGood.recid}goodsnum" name="${orderGood.recid}goodsnum" value="${orderGood.goodsnum}" />
@@ -341,9 +353,11 @@
 								<c:if test="${orderGood.isreal==0}">
 									<input type="hidden" id="${orderGood.recid}returnedGoodsNum" value="${orderGood.returnNum}" />
 								</c:if>
+								<!-- 时限卡售后添加字段  -->
+								<input type="hidden" id="${orderGood.recid}servicetimes" name="${orderGood.recid}servicetimes" value="${orderGood.servicetimes}" />
 							</c:forEach>
 						</tbody>						
-					</table>	
+					</table>
 					<p></p>					
 				  	<label><font color="red">*</font>售后原因：</label>
 			       	<form:input path="returnReason" htmlEscape="false" maxlength="50" style="width: 300px;height:30px;" class="form-control required"/>
@@ -378,6 +392,7 @@
 				        onchange="returnChangeNum()"/>
 			        </c:if>
 					<c:if test="${orders.isReal==1}">
+					<div id="d1serviceTimes">
 						<p></p>
 						<label><font color="red">*</font>售后次数：</label>
 			        	<form:input path="serviceTimes" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control" 
@@ -386,6 +401,7 @@
 						onfocus="if(value == '0'){value=''}"
 						onblur="if(value == ''){value='0'}"
 			        	onchange="returnChangeTimes()"/>
+			        </div>
 			        </c:if>
 					<p></p>
 					<div id="hideandshow" style="display: display">

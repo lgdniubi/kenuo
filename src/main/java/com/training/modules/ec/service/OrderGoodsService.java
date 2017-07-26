@@ -1,5 +1,8 @@
 package com.training.modules.ec.service;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +32,13 @@ public class OrderGoodsService extends TreeService<OrderGoodsDao,OrderGoods>{
 	 * @return
 	 */
 	public List<OrderGoods> orderlist(String orderid){
-		return orderGoodsDao.findListByOrderid(orderid);
+		List<OrderGoods> list = orderGoodsDao.findListByOrderid(orderid);
+		for (OrderGoods orderGoods : list) {
+			if(orderGoods.getServicetimes() == 999){
+				orderGoods.setExpiringdate(getDate(orderGoods.getAddtime(),orderGoods.getExpiringDate()));
+			}
+		}
+		return list;
 	}
 	
 	/**
@@ -65,4 +74,14 @@ public class OrderGoodsService extends TreeService<OrderGoodsDao,OrderGoods>{
 		return dao.getGoodMapping(orderId);
 	}
 	
+	/**
+	 * 根据给出的月份,判断时限卡的截止日期
+	 */
+	public String getDate(Date date1, int month){
+		Calendar c = Calendar.getInstance();// 获得一个日历的实例
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		c.setTime(date1);// 设置日历时间
+		c.add(Calendar.MONTH, month);// 在日历的月份上增加6个月
+		return sdf.format(c.getTime());	// 返回截止时间
+	}
 }
