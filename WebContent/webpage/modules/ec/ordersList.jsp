@@ -81,6 +81,13 @@
 		function addKindOrder(){
 			openDialog("新增"+'实物订单&nbsp;&nbsp;&nbsp;&nbsp;<span style=\'color:red;\'>实物订单无法预约,如需创建服务项目,请添加虚拟订单</span>',"/kenuo/a/ec/orders/createKindOrder","900px", "650px","");
 		}
+		function addSuitCardOrder(){
+			openDialog("新增"+'套卡订单添加',"/kenuo/a/ec/orders/createSuitCardOrder","900px", "650px","");
+		}        
+		function addCommonCardOrder(){
+			openDialog("新增"+'通用卡订单添加',"/kenuo/a/ec/orders/createCommonCardOrder","900px", "650px","");
+		}
+		
 		//退货列表
 		function returnedGoodsList(orderId,flag){
 			 openDialog('退货商品列表','${ctx}/ec/orders/returnGoddsList?flag='+flag+'&orderid='+orderId,'1000px','650px');
@@ -188,6 +195,12 @@
 								</button>
 								<button class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="left" onclick="addKindOrder()" title="添加实物订单">
 									<i class="fa fa-plus"></i>添加实物订单<span style="color: red;font-weight:bold;">&nbsp;&nbsp;*&nbsp;实物订单无法预约！</span>
+								</button>
+								<button class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="left" onclick="addSuitCardOrder()" title="添加套卡订单">
+									<i class="fa fa-plus"></i>添加套卡订单
+								</button>
+								<button class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="left" onclick="addCommonCardOrder()" title="添加通用卡订单">
+									<i class="fa fa-plus"></i>添加通用卡订单
 								</button>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="ec:orders:export">

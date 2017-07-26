@@ -84,6 +84,8 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	
 	private double goodsBalance;         //商品余额，页面展示用
 	
+	private Date realityAddTime;         //实际下单时间
+	
 	public int getAfterSaleNum() {
 		return afterSaleNum;
 	}
@@ -451,6 +453,12 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setGoodsBalance(double goodsBalance) {
 		this.goodsBalance = goodsBalance;
+	}
+	public Date getRealityAddTime() {
+		return realityAddTime;
+	}
+	public void setRealityAddTime(Date realityAddTime) {
+		this.realityAddTime = realityAddTime;
 	}
 	
 }

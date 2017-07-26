@@ -193,6 +193,8 @@ public class Orders extends TreeEntity<Orders> {
 	private Date payBegTime;    //支付开始时间，用于查询
 	private Date payEndTime;    //支付结束时间，用于查询
 	
+	private List<Date> realityAddTimeList;       //实际下单时间
+	
 	public String getSearchIsReal() {
 		return searchIsReal;
 	}
@@ -1589,6 +1591,12 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setPayEndTime(Date payEndTime) {
 		this.payEndTime = payEndTime;
+	}
+	public List<Date> getRealityAddTimeList() {
+		return realityAddTimeList;
+	}
+	public void setRealityAddTimeList(List<Date> realityAddTimeList) {
+		this.realityAddTimeList = realityAddTimeList;
 	}
 	
 }

@@ -58,6 +58,7 @@
 					var isNeworderSon = obj.document.getElementById("isNeworderSon");	//子弹出层的订单
 					var actualPayment = obj.document.getElementById("actualPayment");	//实际付款（前）
 					var computType = obj.document.getElementById("computType");	//是否计算过费用
+					var realityAddTime = obj.document.getElementById("realityAddTime");  //实际下单时间
 					var r =/^\d+\.?\d{0,2}$/;
 					var reg=/^\+?[1-9]\d*$/;
 					if($(goodselectName).val()==""){
@@ -79,6 +80,10 @@
 					if($(isNeworderSon).val() == 1){ //1老订单
 						if(parseFloat($(actualNum).val()) > parseFloat($(oldactualNum).val())){
 							top.layer.alert('老订单,剩余服务次数不能大于规格次数！', {icon: 0, title:'提醒'}); 
+							return;
+						}
+						if($(realityAddTime).val() == ""){
+							top.layer.alert('实际下单时间不能为空！', {icon: 0, title:'提醒'}); 
 							return;
 						}
 					}
@@ -108,6 +113,7 @@
 						"<td> "+
 							"<a href='#' class='btn btn-danger btn-xs' onclick='delFile(this,"+$(costPrice).val()+","+$(orderAmount).val()+","+$(spareMoney).val()+","+$(afterPayment).val()+","+$(debtMoney).val()+")'><i class='fa fa-trash'></i> 删除</a> "+
 						"</td>"+
+						"<input id='realityAddTime' name='realityAddTimeList' type='hidden' value='"+$(realityAddTime).val()+"'>"+
 					"</tr>").appendTo($("#addZTD"));
 					
 				var goodsprice =parseFloat($("#goodsprice").val())+parseFloat($(costPrice).val());

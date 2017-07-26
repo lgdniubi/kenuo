@@ -154,6 +154,13 @@
 							top.layer.alert('请计算费用！', {icon: 0, title:'提醒'});
 							return;
 						}
+						if(servicetimes == 999){       //当充值的对象时时限卡时，充值时必须将尾款全部补齐
+							if(topUpTotalAmount < orderArrearage){     //充值金额+使用的账户余额<欠款
+								$(loading).hide();
+								top.layer.alert('尾款剩余'+orderArrearage+'元，补齐尾款才能预约！', {icon: 0, title:'提醒'});
+								return;
+							}
+						}
 						
 						//查询用户账户余额
 						$.ajax({
@@ -369,7 +376,7 @@
 	}
 window.onload=initStatus;
 
-	function ToAdvance(recid){
+	function ToAdvance(recid,servicetimes,orderArrearage){
 		var userid = $("#userid").val();
 		var orderid = $("#orderid").val();
 		var isReal = $("#isReal").val();
@@ -377,7 +384,7 @@ window.onload=initStatus;
 		    type: 2, 
 		    area: ['600px', '450px'],
 		    title:"处理预约金",
-		    content: "${ctx}/ec/orders/handleAdvanceFlagForm?recid="+recid+"&userid="+userid,
+		    content: "${ctx}/ec/orders/handleAdvanceFlagForm?recid="+recid+"&userid="+userid+"&servicetimes="+servicetimes+"&orderArrearage="+orderArrearage,
 		    btn: ['确定', '关闭'],
 		    yes: function(index, layero){
 		    	var obj =  layero.find("iframe")[0].contentWindow;
@@ -388,7 +395,9 @@ window.onload=initStatus;
 					data:{
 						sum:sum,
 						recid:recid, 
-						userid:userid
+						userid:userid,
+						servicetimes:servicetimes,
+						orderArrearage:orderArrearage
 					 },
 					url:"${ctx}/ec/orders/handleAdvanceFlag?recid="+recid+"&userid="+userid+"&orderid="+orderid,
 					success:function(date){
@@ -573,7 +582,7 @@ window.onload=initStatus;
 													</c:if>
 													<c:if test="${orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag == 1}">
 														<c:if test="${orders.orderstatus == 4 && orderGood.sumAppt == 1}">
-															<a href="#" onclick="ToAdvance(${orderGood.recid})"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
+															<a href="#" onclick="ToAdvance(${orderGood.recid},${orderGood.servicetimes},${orderGood.orderArrearage })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
 														</c:if>
 														<c:if test="${orders.orderstatus != 4 || orderGood.sumAppt == 0}">
 															<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
