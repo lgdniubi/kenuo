@@ -163,12 +163,22 @@
 						var flag = data.FLAG;
 						if("OK" == flag){
 							$("#"+type).html("");//清除DIV内容	
-							if(isyesno == '0'){
-								//当前状态为【否】，则打开
-								$("#"+type).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+type+"','"+id+"','1')\">&nbsp;&nbsp;否");
-							}else if(isyesno == '1'){
-								//当前状态为【是】，则取消
-								$("#"+type).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+type+"','"+id+"','0')\">&nbsp;&nbsp;是");
+							if(type == "isCargo"){
+								if(isyesno == '1'){
+									//当前状态为【否】，则打开
+									$("#"+type).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+type+"','"+id+"','0')\">&nbsp;&nbsp;否");
+								}else if(isyesno == '0'){
+									//当前状态为【是】，则取消
+									$("#"+type).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+type+"','"+id+"','1')\">&nbsp;&nbsp;是");
+								}
+							}else{
+								if(isyesno == '0'){
+									//当前状态为【否】，则打开
+									$("#"+type).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTableVal('"+type+"','"+id+"','1')\">&nbsp;&nbsp;否");
+								}else if(isyesno == '1'){
+									//当前状态为【是】，则取消
+									$("#"+type).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTableVal('"+type+"','"+id+"','0')\">&nbsp;&nbsp;是");
+								}
 							}
 						}
 						top.layer.alert(data.MESSAGE, {icon: 0, title:'提醒'}); 
@@ -258,16 +268,16 @@
 				     	<td class="width-15 active"><label class="pull-right">是否可报货</label></td>
 				     	<td colspan="3" id="isCargo">
 				     		<c:if test="${not empty office.id }">
-				         		<c:if test="${office.isCargo == 0}">
-									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('isCargo','${office.id}',1)">&nbsp;&nbsp;否
+				         		<c:if test="${office.isCargo == 1}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('isCargo','${office.id}',0)">&nbsp;&nbsp;否
 								</c:if>
-								<c:if test="${office.isCargo == 1}">
-									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('isCargo','${office.id}',0)">&nbsp;&nbsp;是
+								<c:if test="${office.isCargo == 0}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('isCargo','${office.id}',1)">&nbsp;&nbsp;是
 								</c:if>
 				         	</c:if>
 				         	<c:if test="${empty office.id }">
 				         		<select class="form-control required" id="isCargo" name="isCargo">
-									<option value='0'>否</option>
+									<option value='1'>否</option>
 								</select>
 				         	</c:if>
 				     	</td>
