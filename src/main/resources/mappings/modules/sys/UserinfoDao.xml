@@ -99,7 +99,6 @@
 			teachers_comment,
 			teachers_star_level,
 			work_year,
-			service_manifesto,
 			teachers_name,
 			create_time,
 			update_time
@@ -118,7 +117,6 @@
 			#{teachersComment},
 			#{teachersStarLevel},
 			#{workYear},
-			#{serviceManifesto},
 			#{teachersName},
 			SYSDATE(),
 			NULL
@@ -149,7 +147,6 @@
 			teachers_comment=#{teachersComment},
 			teachers_star_level=#{teachersStarLevel},
 			work_year = #{workYear},
-			service_manifesto = #{serviceManifesto},
 			teachers_name = #{teachersName},
 			update_time=SYSDATE()
 		where user_id=#{userid}
