@@ -802,7 +802,7 @@ public class OfficeController extends BaseController {
     		if("isCargo".equals(type)){
     			String weburl = ParametersFactory.getMtmyParamValues("modifyIsCargo");
     			logger.info("##### web接口路径:"+weburl);
-    			String parpm = "{\"office_id\":"+id+",\"is_cargo\":\""+Integer.valueOf(isyesno)+"\"}";
+    			String parpm = "{\"office_id\":\""+id+"\",\"is_cargo\":\""+Integer.valueOf(isyesno)+"\"}";
     			String url=weburl;
     			String result = WebUtils.postCSObject(parpm, url);
     			JSONObject jsonObject = JSONObject.fromObject(result);

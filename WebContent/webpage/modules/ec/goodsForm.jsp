@@ -304,6 +304,14 @@
 											onblur="if(value == ''){value='0'}"/>
 									</li>
 									<li class="form-group">
+										<span class="control-label col-sm-2"><font color="red">*</font>赠送云币数量：</span>
+										<form:input path="integral"  maxlength="4" class="form-control digits required" 
+											onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
+											onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+											onfocus="if(value == '0'){value=''}"
+											onblur="if(value == ''){value='0'}"/>
+									</li>
+									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>商品销量：</span>
 										<form:input path="salesSum"  maxlength="50" class="form-control required" 
 											onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
@@ -509,7 +517,7 @@
 										</c:if>
 									</div>
 								</div>
-								<font color="red">*亲,修改商品规格,请到列表页面修改,谢谢!</font>
+								<font color="red">*亲,修改商品规格,请到列表页面的商品规格修改,谢谢!</font>
 								<!-- 提交按钮 -->
 								<div class="box-footer">   
 									<!-- 商品规格图片上传字段 -->
@@ -881,6 +889,16 @@
 			
 			//表单验证
 			$("#goodsForm").validate({
+				rules:{
+					integral:{
+						digits:true
+					}
+				},
+				messages:{
+					integral:{
+						digits:"请输入正整数"
+					}
+				},
 				submitHandler: function(form){
 					
 					//$("#goodsContent").val($(".note-editable").html());//	原富文本框

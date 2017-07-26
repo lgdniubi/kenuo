@@ -92,6 +92,10 @@ public class Goods extends DataEntity<Goods> {
 	private String rank;		//商品评论星级
 	private int commentNum;		//商品评论总数
 	private int buyCount;		//商品购买总数
+	
+	private int integral ;		//赠送云币数量
+	
+	
 	/**
 	 * get/set
 	 */
@@ -466,6 +470,12 @@ public class Goods extends DataEntity<Goods> {
 	}
 	public void setBuyCount(int buyCount) {
 		this.buyCount = buyCount;
+	}
+	public int getIntegral() {
+		return integral;
+	}
+	public void setIntegral(int integral) {
+		this.integral = integral;
 	}
 	
 	

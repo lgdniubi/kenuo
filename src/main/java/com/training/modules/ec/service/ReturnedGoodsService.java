@@ -203,7 +203,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		ogd.setType(2);
 		ogd.setAdvanceFlag("4");
 		ogd.setCreateBy(UserUtils.getUser());
-		orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);;
+		orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
 		
 	}
 

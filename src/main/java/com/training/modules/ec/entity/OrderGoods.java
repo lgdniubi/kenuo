@@ -52,6 +52,8 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private int isAfterSales;				//是否售后（0：否；1：是）
 	private int expiringDate;				//有效期
 	
+	private String expiringdate;			//截止时间(为了对应时限卡的有效时间而设置) 土豆添加
+	
 	
 	private Users users;					//商品用户
 	private double dealPrice;				//商品成交价格
@@ -459,6 +461,12 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setRealityAddTime(Date realityAddTime) {
 		this.realityAddTime = realityAddTime;
+	}
+	public String getExpiringdate() {
+		return expiringdate;
+	}
+	public void setExpiringdate(String expiringdate) {
+		this.expiringdate = expiringdate;
 	}
 	
 }
