@@ -29,7 +29,7 @@
 						<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">*</font>充值金额：</label>
 						<input type="text" id="rechargeAmount" value="0" name="rechargeAmount" class="form-control required" style="width:150px;"  value="0" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';"/>
 						<p></p>
-						<input type="checkbox" id="ichecks" /><label class="active">账户余额：</label>
+						&nbsp;<input type="checkbox" id="ichecks" /><label class="active">账户余额：</label>
 						<input type="text" id="accountBalance" name="accountBalance" style="width:150px;" value="0" class="form-control required" value="0" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';"/>（可用余额：<label id="ye"></label>）
 						<p></p>
 						<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">*</font>总付款：</label>

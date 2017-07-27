@@ -44,12 +44,14 @@
 	                	<p></p>
 						<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;预约金：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
 						<input type="text" id="advance" name="advance" readonly="readonly" value="${orderGoods.advance}" class="form-control required" style="width:150px;"  />
-						<p></p>
-						<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;服务单次价：</label>
-						<input type="text" id="singleRealityPrice" name="singleRealityPrice" readonly="readonly" value="${orderGoods.singleRealityPrice}" class="form-control required" style="width:150px;"  />
-						<p></p>
-						<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;服务次数：&nbsp;&nbsp;&nbsp;&nbsp;</label>
-						<input type="text" id="advanceServiceTimes" name="advanceServiceTimes" readonly="readonly" value="${orderGoods.advanceServiceTimes}" class="form-control required" style="width:150px;"  />
+						<c:if test="${servicetimes != 999}">
+							<p></p>
+							<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;服务单次价：</label>
+							<input type="text" id="singleRealityPrice" name="singleRealityPrice" readonly="readonly" value="${orderGoods.singleRealityPrice}" class="form-control required" style="width:150px;"  />
+							<p></p>
+							<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;服务次数：&nbsp;&nbsp;&nbsp;&nbsp;</label>
+							<input type="text" id="advanceServiceTimes" name="advanceServiceTimes" readonly="readonly" value="${orderGoods.advanceServiceTimes}" class="form-control required" style="width:150px;"  />	
+						</c:if>
 						<p></p>
 						<c:if test="${orderGoods.advanceServiceTimes == 0}">
 							<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;欠款：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>

@@ -1441,24 +1441,34 @@ public class OrdersController extends BaseController {
 	public String handleAdvanceFlagForm(OrderGoods orderGoods,int userid,HttpServletRequest request,Model model){
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
+			int servicetimes = orderGoods.getServicetimes();         //预计服务次数
+			double orderArrearage = orderGoods.getOrderArrearage();  //欠款
+			
 			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());
 			double advance = orderGoods.getAdvancePrice();                 //预约金
 			
 			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
 			orderGoods.setAdvance(advance);
-			if(advance < singleRealityPrice){
-				double c = Double.parseDouble(formater.format(singleRealityPrice - advance));
+			if(servicetimes == 999){                      //当该商品为时限卡时，需要单独处理
 				orderGoods.setAdvanceServiceTimes(0);        //服务次数
-				orderGoods.setDebt(c);                       //欠款
+				orderGoods.setDebt(orderArrearage);                       //欠款
 			}else{
-				int a = (int)(advance/singleRealityPrice);
-				double b = Double.parseDouble(formater.format(advance - a*singleRealityPrice));
-				orderGoods.setAdvanceServiceTimes(a);        //服务次数 
-				orderGoods.setAdvanceBalance(b);             //余额
+				if(advance < singleRealityPrice){
+					double c = Double.parseDouble(formater.format(singleRealityPrice - advance));
+					orderGoods.setAdvanceServiceTimes(0);        //服务次数
+					orderGoods.setDebt(c);                       //欠款
+				}else{
+					int a = (int)(advance/singleRealityPrice);
+					double b = Double.parseDouble(formater.format(advance - a*singleRealityPrice));
+					orderGoods.setAdvanceServiceTimes(a);        //服务次数 
+					orderGoods.setAdvanceBalance(b);             //余额
+				}
 			}
+			
 			double accountBalance = ordersService.getAccount(userid); //用户账户余额
 			orderGoods.setAccountBalance(accountBalance);
 			model.addAttribute("orderGoods", orderGoods);
+			model.addAttribute("servicetimes", servicetimes);
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "跳转处理预约金页面出错", e);
 			logger.error("跳转处理预约金页面出错："+e.getMessage());
@@ -1496,18 +1506,28 @@ public class OrdersController extends BaseController {
 			oLog.setSingleRealityPrice(orderGoods.getSingleRealityPrice());
 			oLog.setSingleNormPrice(orderGoods.getSingleNormPrice());
 			oLog.setAdvance(advance);
-			//若订金小于单次价，则实付款金额就是单次价，
-			if(advance < singleRealityPrice){
-				oLog.setTotalAmount(singleRealityPrice);
+			
+			if(oLog.getServicetimes() == 999){        //时限卡单独处理
+				oLog.setTotalAmount(oLog.getOrderArrearage());      //当时限卡处理预约金时，实付款金额就是待付尾款（欠款）
 				if(sum == 0){//用了账户余额
-					oLog.setAccountBalance(Double.parseDouble(formater.format(singleRealityPrice-advance))); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+					oLog.setAccountBalance(oLog.getOrderArrearage()); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
 				}else{
 					oLog.setAccountBalance(0);
 				}
-			}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
-				oLog.setTotalAmount(advance);
-				
+			}else{
+				//若订金小于单次价，则实付款金额就是单次价，
+				if(advance < singleRealityPrice){
+					oLog.setTotalAmount(singleRealityPrice);
+					if(sum == 0){//用了账户余额
+						oLog.setAccountBalance(Double.parseDouble(formater.format(singleRealityPrice-advance))); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+					}else{
+						oLog.setAccountBalance(0);
+					}
+				}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
+					oLog.setTotalAmount(advance);
+				}
 			}
+			
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
 			ordersService.handleAdvanceFlag(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId);
 			date = "success";
