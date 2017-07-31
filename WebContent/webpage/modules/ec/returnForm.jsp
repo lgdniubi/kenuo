@@ -47,15 +47,18 @@
 				  }
 			  }
 			  
-			  //虚拟商品的售后次数校验
-			  var st=$("#serviceTimes").val();
-			  if(parseInt(st)<=0){
-				  top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
-				  return;
-			  }else if(parseInt(st)>parseInt(remaintimes)){
-				  top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
-				  return;
+			  //虚拟商品的售后次数校验,时限卡不进行此校验
+			  if(isReal == 1 && servicetimes != 999){
+				  var st=$("#serviceTimes").val();
+				  if(parseInt(st)<=0){
+					  top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
+					  return;
+				  }else if(parseInt(st)>parseInt(remaintimes)){
+					  top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
+					  return;
+				  }
 			  }
+			  
 			  var type=$("#applyType").val();
 			  if(type == 0){
 				  //虚拟商品的退款金额校验
@@ -103,7 +106,6 @@
 					$("#serviceTimes").val(servicetimes);
 				}else{
 					$("#d1serviceTimes").show();
-					$("#serviceTimes").val(0);
 				}
 				if("bm"==type){//当时后台数据时
 					var orderA=$("#"+id+"orderAmount").val();
