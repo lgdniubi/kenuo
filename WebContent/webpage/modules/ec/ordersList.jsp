@@ -88,9 +88,9 @@
 			openDialog("新增"+'通用卡订单添加',"/kenuo/a/ec/orders/createCommonCardOrder","900px", "650px","");
 		}
 		
-		//退货列表
-		function returnedGoodsList(orderId,flag){
-			 openDialog('退货商品列表','${ctx}/ec/orders/returnGoddsList?flag='+flag+'&orderid='+orderId,'1000px','650px');
+		//退货列表111
+		function returnedGoodsList(orderId,flag,isReal){
+			 openDialog('退货商品列表','${ctx}/ec/orders/returnGoddsList?flag='+flag+'&orderid='+orderId+'&isReal='+isReal,'1000px','650px');
 		}
 		
 		
@@ -334,7 +334,7 @@
 			 					</shiro:hasPermission>
 			 				 	<shiro:hasPermission name="ec:orders:return">
 									<c:if test="${orders.orderstatus==4 && orders.flag==1}">
-										<a href="#" onclick="returnedGoodsList('${orders.orderid}','${orders.flag}')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>售后服务</a>
+										<a href="#" onclick="returnedGoodsList('${orders.orderid}','${orders.flag}','${orders.isReal}')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>售后服务</a>
 									</c:if>
 									<c:if test="${orders.orderstatus!=4 || orders.flag!=1}">
 										<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>售后服务</a>

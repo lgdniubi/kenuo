@@ -98,12 +98,7 @@
 		<sys:message content="${message}"/>
 		<div class="warpper-content">
 			<div class="ibox-title">
-				<c:if test="${opflag == 'UPDATE'}">
-					<h5>修改套卡</h5>
-				</c:if>
-				<c:if test="${opflag == 'ADDPARENT'}">
-					<h5>添加套卡</h5>
-				</c:if>
+				<h5>添加套卡</h5>
 				<h5 style="padding-left: 92%;margin-top: -10px;">
 	           		<a href="${ctx}/ec/goods/list?actionId=${goods.actionId}">
 	            		<button type="button" class="btn btn-info">返回</button>
@@ -117,7 +112,7 @@
 		                <li><a href="#tab_goods_card" data-toggle="tab">套卡子项</a></li>                        
 		                <li><a href="#tab_goods_images" data-toggle="tab">商品相册</a></li>
 		            </ul>
-		        <form:form id="goodsForm" modelAttribute="goods" action="${ctx}/ec/goods/save" method="post">
+		        <form:form id="goodsForm" modelAttribute="goods" action="${ctx}/ec/goodsCard/save" method="post">
 	            	<div class="tab-content" id="myTabContent">
 		            	<!-- 通用信息 Begin -->
 						<div class="tab-pane fade in active" id="tab_tongyong">
@@ -126,6 +121,7 @@
 								<form:hidden path="attrType"/>
 								<form:hidden path="specType"/>
 								<form:hidden path="actionId"/>
+								<form:hidden path="isReal" value="2"/>
 								<ul class="formArea">
 									<li class="form-group" id="goodsTypeLi">
 										<span class="control-label col-sm-2"><font color="red">*</font>商品区分：</span>
@@ -225,7 +221,7 @@
 					                </li>
 					                <li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>市场价合计：</span>
-										<form:input path="marketPrice" maxlength="50" class="form-control required" 
+										<form:input path="marketPrice" maxlength="50" class="form-control required" readonly="true"
 											onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
 											onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
 											onfocus="if(value == '0.0'){value=''}"
@@ -233,7 +229,7 @@
 									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>优惠价合计：</span>
-										<form:input path="shopPrice"  maxlength="50" class="form-control required" 
+										<form:input path="shopPrice"  maxlength="50" class="form-control required" readonly="true"
 											onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
 											onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
 											onfocus="if(value == '0.0'){value=''}"
@@ -248,7 +244,7 @@
 											onblur="if(value == ''){value='0.0'}"/>
 									</li>
 									<li class="form-group" id="advancePriceLi">
-										<span class="control-label col-sm-2"><font color="red">*</font>预约金：</span>
+										<span class="control-label col-sm-2">预约金：</span>
 										<form:input path="advancePrice" htmlEscape="false" maxlength="150" class="form-control"
 											onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
 											onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
@@ -257,7 +253,7 @@
 										<span class="control-label cannotEdit">(虚拟商品,预约金必填)</span>
 									</li>
 									<li class="form-group">
-										<span class="control-label col-sm-2"><font color="red">*</font>商品重量：</span>
+										<span class="control-label col-sm-2"><font color="red">*</font>商品总重量：</span>
 										<form:input path="weight"  maxlength="50" class="form-control digits required" 
 											onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
 											onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
@@ -370,14 +366,9 @@
 						<!-- 套卡子项 Begin -->
 						<div class="tab-pane fade" id="tab_goods_card">
 							<div>
-								<a href="#" onclick="addGoods(${goods.goodsId},1)" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加虚拟商品</a>
+								<a href="#" onclick="addGoods(${goods.goodsId},1,2)" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加虚拟商品</a>
+								<a href="#" onclick="addGoods(${goods.goodsId},0,2)" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加实物商品</a>
 							</div>
-							<%-- <a href="${ctx}/ec/goods/form?opflag=ADDPARENT&isReal=2">
-								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" ><i class="fa fa-plus"></i> 添加虚拟商品</button>
-							</a>
-							<a href="${ctx}/ec/goods/form?opflag=ADDPARENT&isReal=3">
-								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" ><i class="fa fa-plus"></i> 添加实物商品</button>
-							</a> --%>
 							<table class="table table-bordered table-hover table-left">
 								<thead>
 									<tr>
@@ -393,6 +384,12 @@
 									</tr>
 								</thead>
 								<tbody id="addZTD" style="text-align:center;">	
+									<tr>
+										<th style="text-align: center;" colspan="6">合&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;计</th>
+										<th style="text-align: center;" class="totalMarketPrices"></th>
+										<th style="text-align: center;" class="totalPrices"></th>
+										<th style="text-align: center;"></th>
+									</tr>
 								</tbody>
 							</table>
 						</div>
@@ -563,49 +560,6 @@
 			return str = str.replace(/\s+/g,"");
 		}
 	
-		//商品类型改变事件
-		var goodsTypeChange = function(goodsidname,typeName,tableName,typeValue){
-			$(".loading").show();//打开展示层
-			
-			if(typeValue == '-1'){
-				//选择所有的时候
-				$("#"+tableName).empty();
-				$("#goods_spec_table2").empty();//清空table里面的值
-				$(".loading").hide(); //关闭加载层
-			}else{
-				var goodsid = $("#"+goodsidname).val();
-				$.ajax({
-					type : "POST",
-					url : "${ctx}/ec/goods/getattrcontent?TYPENAME="+typeName+"&TYPEVALUE="+typeValue+"&GOODSID="+goodsid,
-					dataType: 'json',
-					success: function(data) {
-						$(".loading").hide(); //关闭加载层
-						var status = data.STATUS;
-						var tablecontent = data.TABLECONTENT;
-						$("#"+tableName).empty();//清空table里面的值
-						if("OK" == status){
-							$("#"+tableName).append(tablecontent);//填写table
-							
-							if("SPECTYPEID" == typeName){
-								$("#specarr").empty();
-								$("#goods_spec_table2").empty();//清空table里面的值
-								
-								var specitemcontent = data.SPECITEMCONTENT;
-								if(null != specitemcontent || !"" == specitemcontent){
-									$("#goods_spec_table2").append(specitemcontent);//填写table
-								}else{
-									$("#goods_spec_table2").append("<table class=\"table table-bordered\" id=\"goods_spec_input_table\"><tr><td><b>价格</b></td><td><b>库存</b></td><td><b>条码</b></td><td><b>商品编码</b></td><td><b>服务次数</b></td></tr></table>");//填写table
-								}
-							}
-						}else if("ERROR" == status){
-							//失败
-							alert(data.MESSAGE);
-						}
-					}
-				});   
-			}
-		}	
-		
 		//商品设置(包邮、新品、推荐。。。)
 		var setcheckclick = function(formname){
 			if($("#"+formname).is(':checked')){
@@ -681,8 +635,10 @@
 					var goodsShortName=$("#goodsShortName").val();
 					var goodsRemark=$("#goodsRemark").val();
 					var goodsSn=$("#goodsSn").val();
-					var franchiseeId=$("#franchiseeId").val();
+					var franchiseeId=$("#franchiseeIdId").val();
 					var goodsCategoryId=$("#goodsCategoryId").val();
+					var marketPrice=$("#marketPrice").val();
+					var shopPrice=$("#shopPrice").val();
 					if(goodsName==""){
 						top.layer.alert('商品名称不能为空!', {icon: 0, title:'提醒'});
 						return;
@@ -703,6 +659,17 @@
 						top.layer.alert('所属商家不能为空!', {icon: 0, title:'提醒'});
 						return;
 					}
+					if(marketPrice==0 && shopPrice == 0){
+						top.layer.alert('请填写套卡子项!', {icon: 0, title:'提醒'});
+						return;
+					}
+					if($(newfranchiseeId).val() != franchiseeId){
+						if(confirm("确认要更改所属商家吗?(卡项中的商品将会删除,需要重新添加)","提示框")){
+							$("#addZTD").find("tr").remove();
+							return;
+						}
+						return;
+				    }
 					var content = $(".ke-edit-iframe").contents().find(".ke-content").html();
 					if(content.indexOf("style") >=0){
 						content = content.replace("&lt;style&gt;","<style>");
@@ -874,41 +841,51 @@
 		window.onload = LoadOver;
 		
 		//添加套卡子项
-		function addGoods(goodsId,num){
-			if(num==1){
-				num="虚拟";
-			}else{
-				num="实物";
+		j=0;
+		function addGoods(goodsId,num,isReal){
+			franchiseeId = $("#franchiseeIdId").val();
+			if(franchiseeId==""){
+				top.layer.alert('请先选择 | 所属商家 | !', {icon: 0, title:'提醒'});
+				return;
+			}
+			var type;
+			if(num == 0){
+				type="实物";
+			}else if(num == 1){
+				type="虚拟";
 			}
 			top.layer.open({
 			    type: 2, 
 			    area: ['900px', '550px'],
-			    title:"添加"+num+"商品",
-			    content: "${ctx}/ec/goods/GoodsCardForm?goodsId="+goodsId,
+			    title:"添加"+type+"商品",
+			    content: "${ctx}/ec/goods/GoodsCardForm?goodsId="+goodsId+"&isReal="+num+"&franchiseeId="+franchiseeId,//虚拟和实物商品都是线下
 			    btn: ['确定', '关闭'],
 			    yes: function(index, layero){
 			        var obj =  layero.find("iframe")[0].contentWindow;
 					var goodsId = obj.document.getElementById("select2");
-					var goodsName = obj.document.getElementById("name");
+					newfranchiseeId = obj.document.getElementById("franchiseeId");
 			        var arr = new Array(); //数组定义标准形式，不要写成Array arr = new Array();
-			        
-			       	for(i=0;i<goodsId.length;i++){
-			        	goodsId[i].value
-			        	goodsId[i].text
+			       
+			        if(goodsId.length==0){
+						top.layer.alert('请添加所需要的商品', {icon: 0, title:'提醒'}); 
+						  return;
+					}
+			       	for(var i=0;i<goodsId.length;i++){
 			        	$("<tr> "+
-							"<td> "+goodsId[i].value+"<input id='goodsIds' name='goodsId' type='hidden' value='"+goodsId[i].value+"'></td> "+
-							"<td> "+goodsId[i].text+"<input id='goodsNames' name='goodsName' type='hidden' value='"+goodsId[i].text+"'></td> "+
-							"<td> "+num+"</td> "+
-							"<td> <input id='goodsNums' name='goodsNums' type='hidden' value=''></td> "+
-							"<td> <input id='marketPrices' name='marketPrices' type='hidden' value=''></td> "+
-							"<td> <input id='prices' name='prices' type='hidden' value=''></td> "+
-							"<td> <input id='totalMarketPrices' name='totalMarketPrices' type='hidden' value=''></td> "+
-							"<td> <input id='totalPrices' name='totalPrices' type='hidden' value=''></td> "+
-							"<td> "+
-								"<a href='#' class='btn btn-success btn-xs' onclick='openDialog('填写价格', '${ctx}/ec/goodsCard/fromPrice?goodsId='"+goodsId[i].value+"','600px', '400px')'><i class='fa fa-edit'></i> 填写价格</a> "+
+							"<td> "+goodsId[i].value+"<input id='goodsIds' name='goodsIds' type='hidden' value='"+goodsId[i].value+"'></td> "+
+							"<td> "+goodsId[i].text+"<input id='goodsNames' name='goodsNames' type='hidden' value='"+goodsId[i].text+"'></td> "+
+							"<td> "+type+"</td> "+
+							"<td> <input id='goodsNums"+j+"' name='goodsNums' type='text' value='0' readonly></td> "+
+							"<td> <input id='marketPrices"+j+"' name='marketPrices' type='text' value='0' readonly></td> "+
+							"<td> <input id='prices"+j+"' name='prices' type='text' value='0' readonly='true'></td> "+
+							"<td> <input id='totalMarketPrices"+j+"' name='totalMarketPrices' type='text' value='0' readonly='true'></td> "+
+							"<td> <input id='totalPrices"+j+"' name='totalPrices' type='text' value='0' readonly='true'></td> "+
+							"<td> "+												  
+								"<a href='#' class='btn btn-success btn-xs' onclick='updateByGoodsCard(this,"+goodsId[i].value+","+j+","+isReal+")'><i class='fa fa-edit'></i> 填写价格</a> "+
 								"<a href='#' class='btn btn-danger btn-xs' onclick='delFile(this)'><i class='fa fa-trash'></i> 删除</a> "+
 							"</td>"+										
-						"</tr>").appendTo($("#addZTD"));
+						"</tr>").prependTo($("#addZTD"));
+			        	j++;
 			        } 
 					top.layer.close(index);
 			},
@@ -917,38 +894,59 @@
 			}
 		}); 
 		}
-		
+		function updateByGoodsCard(obj,goodsId,i,isReal){
+			
+			top.layer.open({
+			    type: 2, 
+			    area: ['350px', '550px'],
+			    title:"填写价格",
+			    content: "${ctx}/ec/goodsCard/fromPrice?goodsId="+goodsId+"&isReal="+isReal,
+			    btn: ['确定', '关闭'],
+			    yes: function(index, layero){
+			    	
+			        var obj = layero.find("iframe")[0].contentWindow;
+					var goodsId = obj.document.getElementById("goodsId");
+					var goodsNum = obj.document.getElementById("goodsNum");
+			    	var marketPrice = obj.document.getElementById("marketPrice");
+					var price = obj.document.getElementById("price");
+					
+					//给市场价合计和优惠价合计赋值
+					$("#goodsNums"+i).val($(goodsNum).val());
+					$("#marketPrices"+i).val($(marketPrice).val());
+					$("#prices"+i).val($(price).val());
+					$("#totalMarketPrices"+i).val($(goodsNum).val()*$(marketPrice).val());
+					$("#totalPrices"+i).val($(goodsNum).val()*$(price).val());
+					countPrice();
+					
+					top.layer.close(index);
+				},cancel: function(index){ //或者使用btn2
+					//按钮【按钮二】的回调
+				}
+			}); 
+		}
 		//删除卡项中的商品
 		function delFile(obj){
-			$(obj).parent().parent().remove();
+			if(confirm("确认要删除吗？","提示框")){
+				$(obj).parent().parent().remove();
+				countPrice();
+			}
 	    }
 		
-		//删除卡项中的商品
-		function  deleteGoods(goodsCardId,cardId){
-			if(confirm("确认要删除吗？","提示框")){
-				newDelete(goodsCardId,cardId);			
-			}
-		}
-		function newDelete(goodsCardId,cardId){
-			$.ajax({
-				type:"post",
-				url:"${ctx}/ec/goodsCard/delete?goodsCardId="+goodsCardId,
-				success:function(date){
-					if(date=="success"){
-						top.layer.alert('删除成功!', {icon: 1, title:'提醒'});
-						window.location="${ctx}/ec/goodsCard/list?cardId="+cardId;
-					}
-					if(date=="error"){
-						top.layer.alert('删除失败!', {icon: 2, title:'提醒'});
-						window.location="${ctx}/ec/goodsCard/list?cardId="+cardId;
-					}
-								
-				},
-				error:function(XMLHttpRequest,textStatus,errorThrown){
-							    
-				}
-							 
-		});
+		//计算市场价合计和优惠价合计
+		function countPrice(){
+			var totalMarketPrices = 0;
+			var totalPrices = 0;
+			$("[name='totalMarketPrices']").each(function(){
+				totalMarketPrices += parseInt($(this).val());
+			});
+			$("[name='totalPrices']").each(function(){
+				totalPrices += parseInt($(this).val());
+			});
+			$(".totalMarketPrices").html(totalMarketPrices);
+			$(".totalPrices").html(totalPrices);
+			//为通用信息的市场价合计和优惠价合计赋值
+			$("#marketPrice").val(totalMarketPrices);
+			$("#shopPrice").val(totalPrices);
 		}
     </script>
 </body>

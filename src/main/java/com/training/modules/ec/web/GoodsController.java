@@ -34,6 +34,7 @@ import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.entity.GoodsAttribute;
 import com.training.modules.ec.entity.GoodsAttributeMappings;
 import com.training.modules.ec.entity.GoodsBrand;
+import com.training.modules.ec.entity.GoodsCard;
 import com.training.modules.ec.entity.GoodsCategory;
 import com.training.modules.ec.entity.GoodsSpec;
 import com.training.modules.ec.entity.GoodsSpecImage;
@@ -134,7 +135,7 @@ public class GoodsController extends BaseController{
 	 */
 	@RequiresPermissions(value={"ec:goods:view","ec:goods:add","ec:goods:edit"},logical=Logical.OR)
 	@RequestMapping(value = {"form"})
-	public String form(Goods goods,Model model,HttpServletRequest request){
+	public String form(Goods goods,GoodsCard goodsCard,Model model,HttpServletRequest request, HttpServletResponse response){
 		
 		String opflag = request.getParameter("opflag");
 		String id = request.getParameter("id");
@@ -148,6 +149,7 @@ public class GoodsController extends BaseController{
 			//查询商品品牌
 			List<GoodsBrand> goodsBrandList = goodsBrandService.findAllList(new GoodsBrand());
 			model.addAttribute("goodsBrandList", goodsBrandList);
+			
 			
 			if (null == id || "".equals(id)){
 				//获取商品sort排序
@@ -165,6 +167,15 @@ public class GoodsController extends BaseController{
 				goods.setIsOnSale("0");
 				goods.setIsFreeShipping("1");
 				goods.setIsNew("0");
+				
+				//添加套卡或者通用卡的路径
+				if(StringUtils.isNotEmpty(opflag)){
+					if(opflag.equals("ADDSUIT")){//套卡
+						return "modules/ec/goodsFormSuit";
+					}else if(opflag.equals("ADDCOMMON")){//通用卡
+						return "modules/ec/goodsFormCommon";
+					}
+				}
 				
 			}else{
 				//修改
@@ -205,7 +216,7 @@ public class GoodsController extends BaseController{
 					Map<String, List<String>> specitemmaps = new LinkedHashMap<String, List<String>>();//保存规格的规格项数组
 					
 					StringBuffer tablecontent = new StringBuffer();
-					//商品规格
+					//商品规格 begin
 					GoodsSpec gs = new GoodsSpec();
 					gs.setTypeId(Integer.parseInt(goods.getSpecType()));
 					List<GoodsSpec> gslist = goodsSpecService.findList(gs);
@@ -1332,4 +1343,27 @@ public class GoodsController extends BaseController{
 		}
 		return "redirect:" + adminPath + "/ec/goods/list";
 	};
+	/**
+	 * 添加 修改 套卡子项对应的商品
+	 * @param goods
+	 * @param request
+	 * @param model
+	 * @param flag
+	 * @return
+	 */
+	@RequestMapping(value="GoodsCardForm")
+	public String GoodsCardForm(Goods goods,HttpServletRequest request,Model model,String flag){
+		try{
+			String isReal = request.getParameter("isReal");
+			if(isReal != null && !"".equals(isReal)){
+				//套卡内的项目或商品不可跨商家，同一商家内可以跨品牌
+				model.addAttribute("franchiseeId", goods.getFranchiseeId());//所选商家
+				model.addAttribute("isReal", Integer.valueOf(isReal));
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "跳转增加主题图对应的商品页面", e);
+			logger.error("跳转增加主题图页面对应的商品出错信息：" + e.getMessage());
+		}
+		return "modules/ec/GoodsCardForm";
+	}
 }

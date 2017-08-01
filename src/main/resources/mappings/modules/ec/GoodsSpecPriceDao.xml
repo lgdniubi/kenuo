@@ -60,4 +60,35 @@
 		AND goods_id=#{goodsId}
 		AND del_flag = 0
 	</select>
+	
+	<!-- 保存商品规格项 -->
+	<insert id="savespec">
+		INSERT INTO mtmydb.mtmy_spec_goods_price (
+			goods_id,
+            spec_key,
+            spec_key_name,
+            spec_key_value,
+            cost_price,
+            market_price,
+            price,
+            store_count,
+            service_times,
+            expiring_date,
+            del_flag
+             )
+		VALUES
+		  ( 
+		  	#{goodsId}, 
+			#{specKey}, 
+			#{specKeyName},
+			#{specKeyValue}, 
+			#{costPrice}, 
+			#{marketPrice}, 
+			#{price}, 
+			#{storeCount}, 
+			#{serviceTimes},
+			#{expiringDate},
+			#{delFlag}
+		  )
+	</insert>
 </mapper>

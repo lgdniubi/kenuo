@@ -42,4 +42,10 @@ public interface GoodsSpecPriceDao extends CrudDao<GoodsSpecPrice>{
 	 * 验证商品规格的次数
 	 */
 	public int checkServiceTimes(@Param(value="goodsId")int goodsId,@Param(value="specKey")String specKey);
+
+	/**
+	 * 卡项套卡添加默认规格
+	 * @param gsp
+	 */
+	public void savespec(GoodsSpecPrice gsp);
 }

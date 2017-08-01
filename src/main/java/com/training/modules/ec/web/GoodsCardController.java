@@ -1,57 +1,22 @@
 package com.training.modules.ec.web;
 
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.util.HtmlUtils;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.training.common.persistence.Page;
-import com.training.common.utils.ObjectUtils;
-import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
-import com.training.modules.ec.entity.ActionInfo;
-import com.training.modules.ec.entity.Effect;
 import com.training.modules.ec.entity.Goods;
-import com.training.modules.ec.entity.GoodsAttribute;
-import com.training.modules.ec.entity.GoodsAttributeMappings;
-import com.training.modules.ec.entity.GoodsBrand;
 import com.training.modules.ec.entity.GoodsCard;
-import com.training.modules.ec.entity.GoodsCategory;
-import com.training.modules.ec.entity.GoodsSpec;
-import com.training.modules.ec.entity.GoodsSpecImage;
-import com.training.modules.ec.entity.GoodsSpecItem;
-import com.training.modules.ec.entity.GoodsSpecPrice;
-import com.training.modules.ec.entity.GoodsType;
-import com.training.modules.ec.service.ActionInfoService;
-import com.training.modules.ec.service.GoodsAttributeService;
-import com.training.modules.ec.service.GoodsBrandService;
 import com.training.modules.ec.service.GoodsCardService;
-import com.training.modules.ec.service.GoodsCategoryService;
-import com.training.modules.ec.service.GoodsService;
-import com.training.modules.ec.service.GoodsSpecItemService;
-import com.training.modules.ec.service.GoodsSpecService;
-import com.training.modules.ec.service.GoodsTypeService;
-import com.training.modules.ec.service.OrderGoodsService;
-import com.training.modules.ec.utils.GoodsUtil;
-import com.training.modules.quartz.service.RedisClientTemplate;
-import com.training.modules.quartz.tasks.utils.RedisConfig;
-import com.training.modules.quartz.utils.RedisLock;
 import com.training.modules.sys.utils.BugLogUtils;
-
-import net.sf.json.JSONObject;
 
 /**
  * 卡项-Controller层
@@ -71,7 +36,6 @@ public class GoodsCardController extends BaseController{
 	 * @param model
 	 * @return
 	 */
-	@RequiresPermissions(value={"ec:goods:list"},logical=Logical.OR)
 	@RequestMapping(value = {"list"})
 	public String list(GoodsCard goodsCard,Model model, HttpServletRequest request, HttpServletResponse response){
 		
@@ -82,36 +46,34 @@ public class GoodsCardController extends BaseController{
 	}
 	
 	/**
-	 * 补仓-填写页面
+	 * 添加价格
 	 * @return
 	 */
 	@RequestMapping(value = {"fromPrice"})
-	public String fromPrice(Model model,HttpServletRequest request, RedirectAttributes redirectAttributes){
-		String goodsId = request.getParameter("id");
-		String actionId=request.getParameter("actionId");
-		if(null != goodsId && !"".equals(goodsId.trim())){
-			Goods goods = new Goods();
-			goods.setGoodsId(Integer.parseInt(goodsId));
-			goods = goodsService.get(goods);
-			goods.setActionId(Integer.parseInt(actionId));
-			//获取商品名称，判断是否根据商品ID查询到商品信息
-			if(!StringUtils.isEmpty(goods.getGoodsName())){
-				//根据商品ID，查询所有规格价格信息
-				List<GoodsSpecPrice> gspList = goodsService.findGoodsSpecPrice(goods);
-				model.addAttribute("gspList", gspList);
-				model.addAttribute("goods", goods);
-				
-				return "modules/ec/goodsSpecStocks";
-			}else{
-				addMessage(redirectAttributes, "商品规格:保存/修改失败,未查询到商品信息");
-			}
-		}else{
-			addMessage(redirectAttributes, "商品补仓:保存/修改失败,必要参数为空，请与管理员联系");
+	public String fromPrice(GoodsCard goodsCard,Model model,HttpServletRequest request, RedirectAttributes redirectAttributes){
+		model.addAttribute("goodsCard", goodsCard);
+		return "modules/ec/goodsCardFromPrice";
+	}
+	/**
+	 * 添加套卡信息
+	 * @param goods
+	 * @param model
+	 * @param request
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = {"save"})
+	public String save(Goods goods, Model model,HttpServletRequest request, RedirectAttributes redirectAttributes){
+		try {
+			goodsCardService.saveGoods(goods,request);
+			addMessage(redirectAttributes, "保存/修改 卡项'" + goods.getGoodsName() + "'成功");
+		} catch (Exception e) {
+			logger.error("添加 卡项 出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "添加 卡项 出现异常", e);
+			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
 		return "redirect:" + adminPath + "/ec/goods/list";
 	}
-	
-	
 	
 	
 	/**
@@ -122,7 +84,6 @@ public class GoodsCardController extends BaseController{
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@RequiresPermissions(value={"ec:goods:del"},logical=Logical.OR)
 	@RequestMapping(value = {"delete"})
 	@ResponseBody
 	public String delete(GoodsCard goodsCard, HttpServletRequest request){

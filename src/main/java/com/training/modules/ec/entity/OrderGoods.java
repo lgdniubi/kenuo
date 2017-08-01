@@ -37,6 +37,7 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private int issend;						//0未发货，1已发货，2已换货，3已退货
 	private int deliveryid;					//发货单ID 
 	private Date addtime;					//生成日期
+	private Date realityAddTime;			//实际下单时间
 	private double membergoodsprice;		//会员折扣价（无用）
 	private int remaintimes;				//剩余服务次数
 	private int servicemin;					//服务时长
@@ -86,10 +87,36 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	
 	private double goodsBalance;         //商品余额，页面展示用
 	
-	private Date realityAddTime;         //实际下单时间
+	//卡项所用字段
+	private int goodsCardId;				//套卡子项id
+	private String goodsCardName;			//套卡子项名称
+	private int goodsCardIsReal;			//套卡子项 实物或者虚拟
+	
+	//-----------------------------------------------------------------------------
+	
+	
+	
 	
 	public int getAfterSaleNum() {
 		return afterSaleNum;
+	}
+	public int getGoodsCardId() {
+		return goodsCardId;
+	}
+	public void setGoodsCardId(int goodsCardId) {
+		this.goodsCardId = goodsCardId;
+	}
+	public String getGoodsCardName() {
+		return goodsCardName;
+	}
+	public void setGoodsCardName(String goodsCardName) {
+		this.goodsCardName = goodsCardName;
+	}
+	public int getGoodsCardIsReal() {
+		return goodsCardIsReal;
+	}
+	public void setGoodsCardIsReal(int goodsCardIsReal) {
+		this.goodsCardIsReal = goodsCardIsReal;
 	}
 	public void setAfterSaleNum(int afterSaleNum) {
 		this.afterSaleNum = afterSaleNum;

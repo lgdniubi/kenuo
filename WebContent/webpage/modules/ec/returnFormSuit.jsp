@@ -280,6 +280,21 @@
 			
 			
 		});
+			
+		$(function(){
+		    $('.hebing').each(function(index, element) {
+		        if(!$(this).hasClass('hide')){    
+		        	var next=$(this).parent('tr').next('tr').children('.hebing');//下一个合并的对象
+		            $(this).attr('rowspan',1);
+	                while($(this).text()==next.text()){
+	                    $(this).attr('rowspan',parseInt($(this).attr('rowspan'))+1);
+	                    next.hide();
+	                    next.addClass('hide');
+	                    next=next.parent('tr').next('tr').children('.hebing');//下一个合并的对象
+	                }
+		        }
+		    });
+		});
 </script>
 </head>
 <body>
@@ -299,12 +314,12 @@
 							<tr>
 								<th style="text-align: center;">选择</th>
 								<th style="text-align: center;">商品名称</th>
-								<th style="text-align: center;">子项名称</th>
-								<th style="text-align: center;">子项规格</th>
 								<th style="text-align: center;">商品类型</th>
+								<th style="text-align: center;">子项名称</th>
+								<th style="text-align: center;">子项类型</th>
 								<th style="text-align: center;">市场价</th>
 								<th style="text-align: center;">优惠价</th>
-								<th style="text-align: center;">系统价</th>
+								<th style="text-align: center;">成本价</th>
 								<th style="text-align: center;">购买数量</th>
 								<th style="text-align: center;">应付款</th>
 								<th style="text-align: center;">实付款</th>
@@ -312,35 +327,31 @@
 							</tr>
 						</thead>
 						<tbody>
-							<c:forEach items="${orderGoodList}" var="orderGood">
+							<c:forEach items="${orderGoodList}" var="orderGood" varStatus="index">
 								<tr>
 									<td><input id="selectId" name="selectId" type="radio" value="${orderGood.recid}"  class="form required"  onchange="selectFunction(this)"/></td>
-									<td style="text-align: center;">${orderGood.goodsname}</td>
-									<td style="text-align: center;">${orderGood.speckeyname }</td>
+									<td style="text-align: center;" class="hebing">${orderGood.goodsname}</td>
 									<td  style="text-align: center;">
-										<c:if test="${orderGood.isreal==0}">
+										<c:if test="${orderGood.isreal==2}">
+											套卡
+										</c:if>
+									</td>
+									<td  style="text-align: center;">${orderGood.goodsCardName}</td>
+									<td  style="text-align: center;">
+										<c:if test="${orderGood.goodsCardIsReal==0}">
 											实物
 										</c:if>
-										<c:if test="${orderGood.isreal==1}">
+										<c:if test="${orderGood.goodsCardIsReal==1}">
 											虚拟
 										</c:if>
 									</td>
 									<td  style="text-align: center;">${orderGood.marketprice}</td>
 									<td  style="text-align: center;">${orderGood.goodsprice}</td>
 									<td  style="text-align: center;">${orderGood.costprice}</td>
-									<td  style="text-align: center;">${orderGood.orderAmount}</td>
 									<td  style="text-align: center;">${orderGood.goodsnum}</td>
+									<td  style="text-align: center;">${orderGood.orderAmount}</td>
 									<td  style="text-align: center;">${orderGood.totalAmount}</td>
 									<td  style="text-align: center;">${orderGood.singleRealityPrice}</td>
-									<c:if test="${orders.isReal==1 && orderGood.servicetimes == 999}">
-										<td  style="text-align: center;">${orderGood.expiringdate}</td>
-										<td  style="text-align: center;"></td>
-									</c:if>
-									<c:if test="${orders.isReal==1 && orderGood.servicetimes != 999}">
-										<td  style="text-align: center;"></td>
-										<td  style="text-align: center;">${orderGood.remaintimes}</td>
-									</c:if>
-									<td  style="text-align: center;">${orderGood.orderArrearage}</td>
 								</tr>
 								<input type="hidden" id="${orderGood.recid}goodsnum" name="${orderGood.recid}goodsnum" value="${orderGood.goodsnum}" />
 								<input type="hidden" id="${orderGood.recid}total" name="${orderGood.recid}total" value="${orderGood.totalAmount}" />

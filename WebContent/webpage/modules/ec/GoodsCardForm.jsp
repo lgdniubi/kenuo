@@ -3,7 +3,7 @@
 
 <html>
 <head>
-<title>添加套卡商品</title>
+<title>添加商品</title>
 <meta name="decorator" content="default" />
 <!-- 内容上传 引用-->
 <style type="text/css">
@@ -98,7 +98,7 @@
 	}
 	
 	//根据条件查询商品    搜索按键
-	function findGood(){
+	function findGood(isReal,franchiseeId){
 		var cateid=$("#goodsCategoryId").val();
 		var goodsName=$("#goodsName").val();
 		var arr = new Array(); //数组定义标准形式，不要写成Array arr = new Array();
@@ -113,7 +113,7 @@
 			$.ajax({
 				 type:"get",
 				 dataType:"json",
-				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&goodsName="+goodsName+"&isOnSale=0",
+				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&goodsName="+goodsName+"&isOnSale=0&isReal="+isReal+"&franchiseeId="+franchiseeId,
 				 success:function(date){
 					var data=date;
 					if(arr.length>0){
@@ -151,11 +151,12 @@
 	<div class="wrapper wrapper-content">
 		<div class="ibox">
 			<div class="ibox-title">
-				<h5>添加套卡商品</h5>
+				<h5>添加商品</h5>
 			</div>
 			<div class="ibox-content">
 				<div class="clearfix">
-					<form:form id="inputForm" modelAttribute="goods" action="${ctx}/ec/subject/saveSubjectGoods" method="post" class="form-horizontal">
+					<form:form id="inputForm" modelAttribute="goods" action="" method="post" class="form-horizontal">
+						<input type="hidden" id="franchiseeId" value="${franchiseeId}"/>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 							<tr>
 								<td>
@@ -166,7 +167,8 @@
 								</td>
 								<td>
 									<form:input path="goodsName" placeholder="输入商品名或者编号" maxlength="10"  style="width: 200px;height:35px;"/>
-									<a href="#"  class="btn btn-primary btn-rounded btn-outline btn-sm pull-right" onclick="findGood()" ><i class="fa fa-search"></i> 查询</a></td>
+									<a href="#"  class="btn btn-primary btn-rounded btn-outline btn-sm pull-right" onclick="findGood(${isReal},${franchiseeId})" ><i class="fa fa-search"></i> 查询</a>
+								</td>
 							</tr>
 							<tr style="padding-top:10px">
 								<td><label class="pull-right"><font color="red">*</font>选择：</label></td>

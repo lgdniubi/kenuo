@@ -350,12 +350,6 @@
 								<a href="#" onclick="addGoods(${goods.goodsId},1,3)" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加虚拟商品</a>
 								<a href="#" onclick="addGoods(${goods.goodsId},0,3)" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加实物商品</a>
 							</div>
-							<%-- <a href="${ctx}/ec/goods/form?opflag=ADDPARENT&isReal=2">
-								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" ><i class="fa fa-plus"></i> 添加虚拟商品</button>
-							</a>
-							<a href="${ctx}/ec/goods/form?opflag=ADDPARENT&isReal=3">
-								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" ><i class="fa fa-plus"></i> 添加实物商品</button>
-							</a> --%>
 							<table class="table table-bordered table-hover table-left">
 								<thead>
 									<tr>
@@ -397,65 +391,60 @@
 						<!-- 商品相册 End -->
 						<!-- 商品规格  Begin -->
 						<div class="tab-pane fade" id="tab_goods_spec">
-							<%-- <form action="${ctx}/ec/goods/savespec?actionId=${goods.actionId}" id="goodsSpecForm" method="post"> --%>
-								<table class="table table-bordered table-hover table-left">
-									<tr>
-										<td>商品类型:</td>
-										<td>
-						                    <select class="form-control" style="text-align: center;" id="specTypeId" name="specTypeId" onchange="goodsTypeChange('specgoodsid','SPECTYPEID','goods_spec_table',this.options[this.options.selectedIndex].value)">
-												<option value="-1">所有类型</option>
-												<c:forEach items="${goodsTypeList}" var="goodsType">
-													<option ${(goodsType.id == goods.specType)?'selected="selected"':''} value="${goodsType.id}">${goodsType.name}</option>
-												</c:forEach>
-											</select>
-										</td>
-									</tr>
+							<table class="table table-bordered table-hover table-left">
+								<tr>
+									<td>商品类型:</td>
+									<td>
+					                    <select class="form-control" style="text-align: center;" id="specTypeId" name="specTypeId" onchange="goodsTypeChange('specgoodsid','SPECTYPEID','goods_spec_table',this.options[this.options.selectedIndex].value)">
+											<option value="-1">所有类型</option>
+											<c:forEach items="${goodsTypeList}" var="goodsType">
+												<option ${(goodsType.id == goods.specType)?'selected="selected"':''} value="${goodsType.id}">${goodsType.name}</option>
+											</c:forEach>
+										</select>
+									</td>
+								</tr>
+							</table>
+							<div id="ajax_spec_data">
+								<table class="table table-bordered table-left">
+									<tbody>
+										<tr>
+									        <td colspan="2"><b>商品规格:</b></td>
+									    </tr>
+								    </tbody>
+								    <!-- 根据商品类型 获取商品规格-->
+								    <tbody id="goods_spec_table" style="text-align: center;">
+								    	<c:if test="${not empty goodsSpectablecontent }">
+								    		${goodsSpectablecontent }
+								    	</c:if>
+								    </tbody>
 								</table>
-								<div id="ajax_spec_data">
-									<table class="table table-bordered table-left">
-										<tbody>
+								<div id="goods_spec_table2">
+									<c:if test="${empty goodsSpecItemtablecontent}">
+										<table class="table table-bordered" id="goods_spec_input_table">
 											<tr>
-										        <td colspan="2"><b>商品规格:</b></td>
-										    </tr>
-									    </tbody>
-									    <!-- 根据商品类型 获取商品规格-->
-									    <tbody id="goods_spec_table" style="text-align: center;">
-									    	<c:if test="${not empty goodsSpectablecontent }">
-									    		${goodsSpectablecontent }
-									    	</c:if>
-									    </tbody>
-									</table>
-									<div id="goods_spec_table2">
-										<c:if test="${empty goodsSpecItemtablecontent}">
-											<table class="table table-bordered" id="goods_spec_input_table">
-												<tr>
-													<td><b>优惠价</b></td>
-													<td><b>市场价</b></td>
-													<td><b>系统价</b></td>
-									            	<td><b>库存</b></td>
-									            	<td><b>条码</b></td>
-									            	<td><b>商品编码</b></td>
-									            	<td><b>商品重量(克)</b></td>
-									            	<td><b>服务次数</b></td>
-									            	<td><b>截止时间(月)</b></td>
-									            </tr>
-											</table>
-										</c:if>
-										<c:if test="${not empty goodsSpecItemtablecontent }">
-											${goodsSpecItemtablecontent }
-										</c:if>
-									</div>
+												<td><b>优惠价</b></td>
+												<td><b>市场价</b></td>
+												<td><b>系统价</b></td>
+								            	<td><b>库存</b></td>
+								            	<td><b>条码</b></td>
+								            	<td><b>商品编码</b></td>
+								            	<td><b>商品重量(克)</b></td>
+								            	<td><b>服务次数</b></td>
+								            	<td><b>截止时间(月)</b></td>
+								            </tr>
+										</table>
+									</c:if>
+									<c:if test="${not empty goodsSpecItemtablecontent }">
+										${goodsSpecItemtablecontent }
+									</c:if>
 								</div>
-								<font color="red">*亲,修改商品规格,请到列表页面的商品规格修改,谢谢!</font>
-								<!-- 提交按钮 -->
-								<div class="box-footer">   
-									<!-- 商品规格图片上传字段 -->
-									<%-- <input type="hidden" id="specgoodsid" name="goodsid" value="${goods.goodsId }"> --%>
-									<input type="hidden" id="specarr" name="specarr">  
-									<input type="hidden" id="itemimgid" name="itemimgid" value="">                  	
-						    		<%-- <input type="button" class="btn btn-primary" value="提 交" onclick="goodsspecOnsubmit()">--%>
-						    	</div> 
-							<!-- </form> -->
+							</div>
+							<font color="red">*亲,修改商品规格,请到列表页面的商品规格修改,谢谢!</font>
+							<!-- 提交按钮 -->
+							<div class="box-footer">   
+								<input type="hidden" id="specarr" name="specarr">  
+								<input type="hidden" id="itemimgid" name="itemimgid" value="">                  	
+					    	</div> 
 						</div>
 						<!-- 商品规格  End -->
 		            </div>
@@ -775,6 +764,7 @@
 					var goodsSn=$("#goodsSn").val();
 					var franchiseeId=$("#franchiseeId").val();
 					var goodsCategoryId=$("#goodsCategoryId").val();
+					var goodsIds = $("#goodsIds").val();
 					if(goodsName==""){
 						top.layer.alert('商品名称不能为空!', {icon: 0, title:'提醒'});
 						return;
@@ -795,11 +785,10 @@
 						top.layer.alert('所属商家不能为空!', {icon: 0, title:'提醒'});
 						return;
 					}
-					/* var goodsNum=${goods.goodsNum};
-
-					if(goodsNum>0){
-						top.layer.alert('商品已经有人购买,仅规格数据无法修改!', {icon: 0, title:'提醒'});
-					} */
+					if(goodsIds == undefined){
+						top.layer.alert('商品信息不能为空!', {icon: 0, title:'提醒'}); 
+						return;
+					}
 					var content = $(".ke-edit-iframe").contents().find(".ke-content").html();
 					if(content.indexOf("style") >=0){
 						content = content.replace("&lt;style&gt;","<style>");

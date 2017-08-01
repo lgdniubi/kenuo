@@ -15,5 +15,7 @@ public interface GoodsCardDao extends CrudDao<GoodsCard>{
 
 	List<GoodsCard> findGoodsList(GoodsCard goodsCard);
 
+	GoodsCard findByGoodsCard(GoodsCard goodsCard);
+
 	
 }

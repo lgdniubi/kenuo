@@ -161,6 +161,9 @@
 		<if test="franchiseeId !=null and franchiseeId !=''">
 			AND g.franchisee_id=#{franchiseeId}
 		</if>
+		<if test="goodsBrandId !=null and goodsBrandId !=''">
+			AND g.goodsbrand_id=#{goodsBrandId}
+		</if>
 		<if test="goodsCategoryId != null and goodsCategoryId != ''">
 			AND g.category_id=#{goodsCategoryId} 
 		</if>
@@ -194,6 +197,18 @@
 			<include refid="goodsJoins"/> 
 		WHERE g.del_flag = 0  AND g.category_id in (#{cateId})
 
+	</select>
+	<!-- 通过商品ID查询卡项中需要数据 -->
+	<select id="findGoodsBygoodsId" resultType="Goods">
+		SELECT
+			g.goods_id AS 'goodsId',
+			g.goods_name AS 'goodsName',
+			g.original_img AS 'originalImg',
+			g.service_min AS 'serviceMin',
+			g.is_real AS 'isReal'
+		FROM
+			mtmydb.mtmy_goods g
+		WHERE g.del_flag = 0  AND g.goods_id = #{goodsId}
 	</select>
 	
 	<!-- 根据商品id，查询商品信息 -->

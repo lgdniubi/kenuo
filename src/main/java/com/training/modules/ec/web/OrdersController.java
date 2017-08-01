@@ -623,17 +623,37 @@ public class OrdersController extends BaseController {
 	 */
 	@RequestMapping(value = "returnGoddsList")
 	public String returnGoddsList(ReturnedGoods returnedGoods, String orderid, Model model) {
+		
 		//returnGoods = returnGoodsService.get(orderid);
 		List<OrderGoods> list=new ArrayList<OrderGoods>();
 		Orders orders=new Orders();
+		
 		orders = ordersService.findselectByOrderId(orderid);
 		returnedGoods.setUserId(orders.getUserid());
-		list=ordergoodService.orderlist(orderid);
 		
-		model.addAttribute("orders", orders);
-		model.addAttribute("orderGoodList", list);
-		model.addAttribute("returnedGoods", returnedGoods);
-		return "modules/ec/returnForm";
+		if(returnedGoods.getIsReal() == 2){//套卡售后
+			list=ordergoodService.orderlistCardSuit(orderid);//查询订单中的套卡
+			
+			model.addAttribute("orders", orders);
+			model.addAttribute("orderGoodList", list);
+			model.addAttribute("returnedGoods", returnedGoods);
+			
+			return "modules/ec/returnFormSuit";
+		}else if(returnedGoods.getIsReal() == 3){//通用卡售后
+			
+			return "modules/ec/returnFormCommon";
+		}else{
+			
+			orders = ordersService.findselectByOrderId(orderid);
+			returnedGoods.setUserId(orders.getUserid());
+			list=ordergoodService.orderlist(orderid);
+			
+			model.addAttribute("orders", orders);
+			model.addAttribute("orderGoodList", list);
+			model.addAttribute("returnedGoods", returnedGoods);
+			
+			return "modules/ec/returnForm";
+		}
 	}
 	
 	

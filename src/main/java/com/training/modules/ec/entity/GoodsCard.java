@@ -19,6 +19,7 @@ public class GoodsCard extends DataEntity<GoodsCard> {
 	private int cardId; 			// 卡项ID
 	private int goodsId; 			// 商品ID
 	private String goodsName; 		// 商品名称
+	private String originalImg; 	// 商品上传原始图
 	private int goodsNum; 			// 次（个）数
 	private int serviceMin; 		// 服务时长（虚拟商品）
 	private String isReal; 			// 是否为实物（0：实物；1：虚拟；）
@@ -94,6 +95,12 @@ public class GoodsCard extends DataEntity<GoodsCard> {
 	}
 	public void setTotalPrice(double totalPrice) {
 		this.totalPrice = totalPrice;
+	}
+	public String getOriginalImg() {
+		return originalImg;
+	}
+	public void setOriginalImg(String originalImg) {
+		this.originalImg = originalImg;
 	}
 	
 }
