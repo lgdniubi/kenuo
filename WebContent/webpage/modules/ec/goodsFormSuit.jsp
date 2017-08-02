@@ -90,6 +90,52 @@
 				}); 
 			
 			});
+			$("#franchiseeIdButton").click(function(){
+				// 是否限制选择，如果限制，设置为disabled
+				if ($("#franchiseeIdButton").hasClass("disabled")){
+					return true;
+				}
+				// 正常打开	
+				top.layer.open({
+				    type: 2, 
+				    area: ['300px', '420px'],
+				    title:"选择加盟商",
+				    ajaxData:{selectIds: $("#franchiseeIdId").val()},
+				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/franchisee/treeData")+"&module=&checked=&extId=&isAll=&selectIds=" ,
+				    btn: ['确定', '关闭']
+		    	       ,yes: function(index, layero){ //或者使用btn1
+								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+								var ids = [], names = [], nodes = [];
+								if ("" == "true"){
+									nodes = tree.getCheckedNodes(true);
+								}else{
+									nodes = tree.getSelectedNodes();
+								}
+								for(var i=0; i<nodes.length; i++) {//
+									if (nodes[i].isParent){
+										//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+										//layer.msg('有表情地提示');
+										top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+										return false;
+									}//
+									ids.push(nodes[i].id);
+									names.push(nodes[i].name);//
+									break; // 如果为非复选框选择，则返回第一个选择  
+								}
+								if(confirm("确定要改变所属商家吗?(子项商品可能会被删除)")){
+									$("#franchiseeIdId").val(ids.join(",").replace(/u_/ig,""));
+									$("#franchiseeIdName").val(names.join(","));
+									$("#franchiseeIdName").focus();
+									$("#addZTD").find("tr").remove();
+									$("<tr><th style='text-align: center;' colspan='6'>合&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;计</th><th style='text-align: center;' class='totalMarketPrices'></th><th style='text-align: center;' class='totalPrices'></th><th style='text-align: center;'></th></tr>").appendTo($("#addZTD"));
+								}
+								top.layer.close(index);
+		    	       },
+		    	cancel: function(index){ //或者使用btn2
+		    	           //按钮【按钮二】的回调
+		    	       }
+				}); 
+			});
 		});
 	</script>
 </head>
@@ -183,11 +229,16 @@
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>所属商家：</span>
 										<div style="width: 40%;padding-left: 150px;">
-											<sys:treeselect id="franchiseeId" name="franchiseeId" value="${goods.franchisee.id}"
-												labelName="franchisee.name" labelValue="${goods.franchisee.name}" 
-	 											title="加盟商" url="/sys/franchisee/treeData" 
-	 											cssClass="form-control required" allowClear="true" notAllowSelectParent="true"/> 
-										</div>
+											<input id="franchiseeIdId" name="franchiseeId" class="form-control required" type="hidden" value="${goods.franchisee.id}" aria-required="true" onchange="gai()">
+											<div class="input-group">
+												<input id="franchiseeIdName" name="franchisee.name" readonly="readonly" type="text" value="${goods.franchisee.name}" data-msg-required="" class="form-control required" style="" aria-required="true">
+										       		 <span class="input-group-btn">
+											       		 <button type="button" id="franchiseeIdButton" class="btn   btn-primary  "><i class="fa fa-search"></i>
+											             </button> 
+										       		 </span>
+										    </div>
+											 <label id="franchiseeIdName-error" class="error" for="franchiseeIdName" style="display:none"></label>
+								     	</div>	
 									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>所属供应商：</span>
@@ -875,11 +926,11 @@
 							"<td> "+goodsId[i].value+"<input id='goodsIds' name='goodsIds' type='hidden' value='"+goodsId[i].value+"'></td> "+
 							"<td> "+goodsId[i].text+"<input id='goodsNames' name='goodsNames' type='hidden' value='"+goodsId[i].text+"'></td> "+
 							"<td> "+type+"</td> "+
-							"<td> <input id='goodsNums"+j+"' name='goodsNums' type='text' value='0' readonly></td> "+
-							"<td> <input id='marketPrices"+j+"' name='marketPrices' type='text' value='0' readonly></td> "+
-							"<td> <input id='prices"+j+"' name='prices' type='text' value='0' readonly='true'></td> "+
-							"<td> <input id='totalMarketPrices"+j+"' name='totalMarketPrices' type='text' value='0' readonly='true'></td> "+
-							"<td> <input id='totalPrices"+j+"' name='totalPrices' type='text' value='0' readonly='true'></td> "+
+							"<td> <input id='goodsNums"+j+"' name='goodsNums' type='hidden' value='0' readonly></td> "+
+							"<td> <input id='marketPrices"+j+"' name='marketPrices' type='hidden' value='0' readonly></td> "+
+							"<td> <input id='prices"+j+"' name='prices' type='hidden' value='0' readonly='true'></td> "+
+							"<td> <input id='totalMarketPrices"+j+"' name='totalMarketPrices' type='hidden' value='0' readonly='true'></td> "+
+							"<td> <input id='totalPrices"+j+"' name='totalPrices' type='hidden' value='0' readonly='true'></td> "+
 							"<td> "+												  
 								"<a href='#' class='btn btn-success btn-xs' onclick='updateByGoodsCard(this,"+goodsId[i].value+","+j+","+isReal+")'><i class='fa fa-edit'></i> 填写价格</a> "+
 								"<a href='#' class='btn btn-danger btn-xs' onclick='delFile(this)'><i class='fa fa-trash'></i> 删除</a> "+
@@ -894,6 +945,7 @@
 			}
 		}); 
 		}
+		//给套卡子项填写价格
 		function updateByGoodsCard(obj,goodsId,i,isReal){
 			
 			top.layer.open({
@@ -934,19 +986,20 @@
 		
 		//计算市场价合计和优惠价合计
 		function countPrice(){
-			var totalMarketPrices = 0;
-			var totalPrices = 0;
+			var tmp = 0;
+			var tp = 0;
 			$("[name='totalMarketPrices']").each(function(){
-				totalMarketPrices += parseInt($(this).val());
+				tmp += parseInt($(this).val());
 			});
 			$("[name='totalPrices']").each(function(){
-				totalPrices += parseInt($(this).val());
+				tp += parseInt($(this).val());
 			});
-			$(".totalMarketPrices").html(totalMarketPrices);
-			$(".totalPrices").html(totalPrices);
+			
+			$(".totalMarketPrices").html(tmp);
+			$(".totalPrices").html(tp);
 			//为通用信息的市场价合计和优惠价合计赋值
-			$("#marketPrice").val(totalMarketPrices);
-			$("#shopPrice").val(totalPrices);
+			$("#marketPrice").val(tmp);
+			$("#shopPrice").val(tp);
 		}
     </script>
 </body>

@@ -113,7 +113,7 @@
 			$.ajax({
 				 type:"get",
 				 dataType:"json",
-				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&goodsName="+goodsName+"&isOnSale=0&isReal="+isReal+"&franchiseeId="+franchiseeId,
+				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&goodsName="+goodsName+"&isReal="+isReal+"&franchiseeId="+franchiseeId+"&isAppshow=0",
 				 success:function(date){
 					var data=date;
 					if(arr.length>0){

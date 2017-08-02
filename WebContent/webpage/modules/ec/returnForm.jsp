@@ -29,7 +29,7 @@
 				  return;
 			  }
 			  if(returnAmount==-1){
-				 top.layer.alert('该商品欠款或者没有余款，无法退款!', {icon: 0, title:'提醒'});
+				 top.layer.alert('该商品已申请过售后!', {icon: 0, title:'提醒'});
 				 return;
 			  }else if(returnAmount==-2){
 				 top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
@@ -132,7 +132,7 @@
 								success:function(date){
 									returnAmount=date;
 									if(returnAmount==-1){
-										top.layer.alert('该商品欠款或者没有余款，无法退款!', {icon: 0, title:'提醒'});
+										top.layer.alert('该商品已申请过售后!', {icon: 0, title:'提醒'});
 										return;
 									}else if(returnAmount==-2){
 										top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
@@ -159,7 +159,7 @@
 							success:function(date){
 								returnAmount=date;
 								if(returnAmount==-1){
-									top.layer.alert('该商品欠款或者没有余款，无法退款!', {icon: 0, title:'提醒'});
+									top.layer.alert('该商品已申请过售后!', {icon: 0, title:'提醒'});
 									return;
 								}else if(returnAmount==-2){
 									top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
@@ -335,12 +335,13 @@
 									<td  style="text-align: center;">${orderGood.orderAmount}</td>
 									<td  style="text-align: center;">${orderGood.goodsnum}</td>
 									<td  style="text-align: center;">${orderGood.totalAmount}</td>
-									<td  style="text-align: center;">${orderGood.singleRealityPrice}</td>
 									<c:if test="${orders.isReal==1 && orderGood.servicetimes == 999}">
+									<td  style="text-align: center;"></td>
 										<td  style="text-align: center;">${orderGood.expiringdate}</td>
 										<td  style="text-align: center;"></td>
 									</c:if>
 									<c:if test="${orders.isReal==1 && orderGood.servicetimes != 999}">
+									<td  style="text-align: center;">${orderGood.singleRealityPrice}</td>
 										<td  style="text-align: center;"></td>
 										<td  style="text-align: center;">${orderGood.remaintimes}</td>
 									</c:if>

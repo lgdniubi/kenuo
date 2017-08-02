@@ -762,9 +762,10 @@
 					var goodsShortName=$("#goodsShortName").val();
 					var goodsRemark=$("#goodsRemark").val();
 					var goodsSn=$("#goodsSn").val();
-					var franchiseeId=$("#franchiseeId").val();
+					var franchiseeId=$("#franchiseeIdId").val();
 					var goodsCategoryId=$("#goodsCategoryId").val();
 					var goodsIds = $("#goodsIds").val();
+					var marketPrice = $("#marketPrice").val();
 					if(goodsName==""){
 						top.layer.alert('商品名称不能为空!', {icon: 0, title:'提醒'});
 						return;
@@ -786,9 +787,17 @@
 						return;
 					}
 					if(goodsIds == undefined){
-						top.layer.alert('商品信息不能为空!', {icon: 0, title:'提醒'}); 
+						top.layer.alert('子项信息不能为空!', {icon: 0, title:'提醒'}); 
 						return;
 					}
+					if($(newfranchiseeId).val() != franchiseeId){
+						if(confirm("确认要更改所属商家吗?(卡项中的商品将会删除,需要重新添加)","提示框")){
+							$("#addZTD").find("tr").remove();
+							return;
+						}
+						return;
+				    }
+					
 					var content = $(".ke-edit-iframe").contents().find(".ke-content").html();
 					if(content.indexOf("style") >=0){
 						content = content.replace("&lt;style&gt;","<style>");
@@ -1055,7 +1064,7 @@
 								"<td> "+goodsId[i].value+"<input id='goodsIds' name='goodsIds' type='hidden' value='"+goodsId[i].value+"'></td> "+
 								"<td> "+goodsId[i].text+"<input id='goodsNames' name='goodsNames' type='hidden' value='"+goodsId[i].text+"'></td> "+
 								"<td> "+type+"</td> "+
-								"<td></td> "+
+								"<td><input id='goodsNums"+j+"' name='goodsNums' type='hidden' value='0' readonly></td> "+
 								"<td> "+												  
 									"<a href='#' class='btn btn-danger btn-xs' onclick='delFile(this)'><i class='fa fa-trash'></i> 删除</a> "+
 								"</td>"+										
