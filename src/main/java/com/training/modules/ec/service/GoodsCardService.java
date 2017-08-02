@@ -348,8 +348,34 @@ public class GoodsCardService extends CrudService<GoodsCardDao, GoodsCard> {
 
 				}
 			}
+			//保存卡项子项表 begin
+			GoodsCard goodsCard = new GoodsCard();
+			
+			goodsCard.setCardId(goods.getGoodsId());						//卡项ID
+			
+			List<Integer> goodsIds = goods.getGoodsIds();					//商品ID 集合
+			List<Integer> goodsNums = goods.getGoodsNums();					//数量
+			for (Integer i = 0; i < goodsIds.size(); i++) {
+				Integer goodsId = goodsIds.get(i);					//商品id
+				Integer goodsNum = goodsNums.get(i);				//数量
+				//通过商品id查询商品的商品名称,商品原始图,服务时长（虚拟商品）,是否为实物（0：实物；1：虚拟；）,
+				Goods newgoods = goodsDao.findGoodsBygoodsId(goodsId);
+				
+				goodsCard.setGoodsId(newgoods.getGoodsId());
+				goodsCard.setGoodsName(newgoods.getGoodsName());
+				goodsCard.setOriginalImg(newgoods.getOriginalImg());
+				goodsCard.setGoodsNum(goodsNum);
+				goodsCard.setServiceMin(newgoods.getServiceMin());
+				goodsCard.setIsReal(newgoods.getIsReal());
+				goodsCard.setMarketPrice(0);
+				goodsCard.setPrice(0);
+				goodsCard.setTotalMarketPrice(0);
+				goodsCard.setTotalPrice(0);
+				
+				goodsCardDao.insert(goodsCard);//保存卡项
+			}
+			//保存卡项子项表 end 
 		}
-		
 	}
 	
 	/**

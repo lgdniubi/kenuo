@@ -304,13 +304,12 @@
 	<select id="orderlistCardSuit" resultType="OrderGoods">
 		SELECT 
 			a.rec_id as 'recid',
-			a.order_id as 'orderId',
-			a.goods_id as 'goodsId',
-			a.goods_name as 'goodsName',
-			a.is_real as 'isReal',
-			b.goods_id as 'goodsCardId',
-			b.goods_name as 'goodsCardName',
-			b.is_real as 'goodsCardIsReal' ,
+			a.order_id as 'orderid',
+			a.group_id as 'groupid',
+			a.goods_id as 'goodsid',
+			a.goods_name as 'goodsname',
+			a.is_real as 'isreal',
+			a.spec_key_name as 'speckeyname',
 			a.market_price as 'marketprice',
 			a.goods_price as 'goodsprice',
 			a.cost_price as 'costprice',
@@ -320,9 +319,7 @@
 			a.order_arrearage as 'orderArrearage'
 		
 		 FROM mtmydb.mtmy_order_goods_mapping a 
-		 LEFT JOIN mtmydb.mtmy_order_goods_mapping b on a.rec_id = b.group_id 
 		
 		WHERE a.order_id = #{orderId}
-		AND a.group_id = 0
 	</select>
 </mapper>

@@ -329,6 +329,7 @@
 								<th style="text-align: center;">选择</th>
 								<th style="text-align: center;">商品名称</th>
 								<th style="text-align: center;">商品类型</th>
+								<th style="text-align: center;">商品规格</th>
 								<th style="text-align: center;">子项名称</th>
 								<th style="text-align: center;">子项类型</th>
 								<th style="text-align: center;">市场价</th>

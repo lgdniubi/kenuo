@@ -85,38 +85,20 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private String officeId;              //组织架构ID
 	//-------------------------------------------------------------------------
 	
+	private int groupid;                 //分组id
+	
+	
 	private double goodsBalance;         //商品余额，页面展示用
 	
-	//卡项所用字段
-	private int goodsCardId;				//套卡子项id
-	private String goodsCardName;			//套卡子项名称
-	private int goodsCardIsReal;			//套卡子项 实物或者虚拟
 	
-	//-----------------------------------------------------------------------------
-	
-	
-	
-	
+	public int getGroupid() {
+		return groupid;
+	}
+	public void setGroupid(int groupid) {
+		this.groupid = groupid;
+	}
 	public int getAfterSaleNum() {
 		return afterSaleNum;
-	}
-	public int getGoodsCardId() {
-		return goodsCardId;
-	}
-	public void setGoodsCardId(int goodsCardId) {
-		this.goodsCardId = goodsCardId;
-	}
-	public String getGoodsCardName() {
-		return goodsCardName;
-	}
-	public void setGoodsCardName(String goodsCardName) {
-		this.goodsCardName = goodsCardName;
-	}
-	public int getGoodsCardIsReal() {
-		return goodsCardIsReal;
-	}
-	public void setGoodsCardIsReal(int goodsCardIsReal) {
-		this.goodsCardIsReal = goodsCardIsReal;
 	}
 	public void setAfterSaleNum(int afterSaleNum) {
 		this.afterSaleNum = afterSaleNum;
