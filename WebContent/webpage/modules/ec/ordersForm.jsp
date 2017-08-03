@@ -380,6 +380,7 @@ window.onload=initStatus;
 		var userid = $("#userid").val();
 		var orderid = $("#orderid").val();
 		var isReal = $("#isReal").val();
+		var channelFlag = $("#channelFlag").val();
 		top.layer.open({
 		    type: 2, 
 		    area: ['600px', '450px'],
@@ -397,7 +398,8 @@ window.onload=initStatus;
 						recid:recid, 
 						userid:userid,
 						servicetimes:servicetimes,
-						orderArrearage:orderArrearage
+						orderArrearage:orderArrearage,
+						channelFlag:channelFlag
 					 },
 					url:"${ctx}/ec/orders/handleAdvanceFlag?recid="+recid+"&userid="+userid+"&orderid="+orderid,
 					success:function(date){

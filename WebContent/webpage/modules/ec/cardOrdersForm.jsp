@@ -372,6 +372,7 @@ window.onload=initStatus;
 		var userid = $("#userid").val();
 		var orderid = $("#orderid").val();
 		var isReal = $("#isReal").val();
+		var channelFlag = $("#channelFlag").val();
 		top.layer.open({
 		    type: 2, 
 		    area: ['600px', '450px'],
@@ -390,7 +391,8 @@ window.onload=initStatus;
 						userid:userid,
 						servicetimes:servicetimes,
 						orderArrearage:orderArrearage,
-						isreal:isReal
+						isreal:isReal,
+						channelFlag:channelFlag
 					 },
 					url:"${ctx}/ec/orders/handleCardAdvance?recid="+recid+"&userid="+userid+"&orderid="+orderid,
 					success:function(date){

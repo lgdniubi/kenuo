@@ -1675,7 +1675,14 @@ public class OrdersController extends BaseController {
 			double orderArrearage = orderGoods.getOrderArrearage();  //欠款
 			
 			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());
+			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
 			double advance = orderGoods.getAdvancePrice();                 //预约金
+			
+			if(advance == 0){      //当预约金为0的时候付全款
+				advance = goodsPrice;                 //预约金
+			}else{
+				advance = orderGoods.getAdvancePrice();            //预约金
+			}
 			
 			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
 			orderGoods.setAdvance(advance);
@@ -1723,10 +1730,16 @@ public class OrdersController extends BaseController {
 		try{
 			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());    
 			double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
+			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
 			double advance = orderGoods.getAdvancePrice();                 //预约金
 			
+			if(advance == 0){      //当预约金为0的时候付全款
+				advance = goodsPrice;                 //预约金
+			}else{
+				advance = orderGoods.getAdvancePrice();                 //预约金
+			}
+			
 			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
-			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
 			int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
 			String officeId = orderGoods.getOfficeId();           //组织架构ID
 			
