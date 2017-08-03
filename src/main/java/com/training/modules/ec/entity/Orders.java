@@ -195,6 +195,8 @@ public class Orders extends TreeEntity<Orders> {
 	
 	private List<Date> realityAddTimeList;       //实际下单时间
 	
+	private int userIntegral;                   //充值或者处理预约金全部的欠款后送的云币
+	
 	public String getSearchIsReal() {
 		return searchIsReal;
 	}
@@ -1597,6 +1599,12 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setRealityAddTimeList(List<Date> realityAddTimeList) {
 		this.realityAddTimeList = realityAddTimeList;
+	}
+	public int getUserIntegral() {
+		return userIntegral;
+	}
+	public void setUserIntegral(int userIntegral) {
+		this.userIntegral = userIntegral;
 	}
 	
 }

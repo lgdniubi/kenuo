@@ -3,7 +3,7 @@
 
 <html>
 <head>
-<title>添加红包</title>
+<title>通用卡添加商品</title>
 <meta name="decorator" content="default" />
 <!-- 时间控件引用 -->
 <script type="text/javascript" src="${ctxStatic}/My97DatePicker/WdatePicker.js"></script>
@@ -76,12 +76,7 @@
 				   $("#debtMoney").val("");
 					$("#spareMoney").val("");
 				   if(isNeworderSon == 1){ //老客户
-						//$("#remaintimes").removeAttr("readonly");
 						$("#actualPayment").val(date.price);
-				   		if($("#"+specgoodkey).val() == 999){
-				   			$("#remaintimes").val($("#"+specgoodkey).val());
-							$("#remaintimes").attr("readonly",true);
-				   		}
 					}else{
 						$("#remaintimes").val($("#"+specgoodkey).val());
 						$("#remaintimes").attr("readonly",true);
@@ -122,13 +117,8 @@
 					//console.log(date);
 					isRel=date.isReal;
 					$("#isRel").val(isRel);
-					if(date.isReal==1){
-						$("#goodsNum").attr("readonly",true);
-						$("#goodsNum").val(1);
-					}else{
-						$("#goodsNum").attr("readonly",false);
-						$("#goodsNum").val(1);
-					}
+					$("#goodsNum").attr("readonly",true);
+					$("#goodsNum").val(1);
 				   $("#marketPrice").val(date.marketPrice);
 				   $("#goodsPrice").val(date.shopPrice);
 				   $("#orderAmount").val(date.shopPrice);
@@ -256,7 +246,7 @@
 				    area: ['300px', '420px'],
 				    title:"商品选择",
 				    ajaxData:{selectIds: $("#goodselectId").val()},
-				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?&isReal=1&goodsCategory="+cateid)+"&module=&checked=&extId=&isAll=",
+				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?&isReal=3&goodsCategory="+cateid)+"&module=&checked=&extId=&isAll=",
 				    btn: ['确定', '关闭']
 		    	       ,yes: function(index, layero){ //或者使用btn1
 								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
@@ -331,10 +321,6 @@
 		var goodsPrice = $("#goodsPrice").val(); //优惠价格
 		var specgoods = $("#specgoods").val();
 		//验证必填
-		if(!/^\d+(\.\d{1,2})?$/.test(actualPayment)){
-			top.layer.alert('实际付款（前）小数点后不可以超过2位!', {icon: 0, title:'提醒'});
-			return;
-		}
 		if(specgoods == 0){
 			top.layer.alert('请选择商品规格!', {icon: 0, title:'提醒'});
 			return;
@@ -345,6 +331,11 @@
 		}
 		if(actualPayment == '' || actualPayment == 0){
 			top.layer.alert('实际付款不可为空或者0!', {icon: 0, title:'提醒'});	
+			return;
+		}
+
+		if(!/^\d+(\.\d{1,2})?$/.test(actualPayment)){
+			top.layer.alert('实际付款（前）小数点后不可以超过2位!', {icon: 0, title:'提醒'});
 			return;
 		}
 		//如果实际付款比应付价格大
@@ -383,22 +374,13 @@
 				url:"${ctx}/ec/orders/computingCost",
 				success:function(date){
 					var isNeworderSon = $("#isNeworderSon").val()
-					
-					if($("#oldremaintimes").val() == 999){
-						$("#remaintimes").val(1);
-						$("#afterPayment").val(actualPayment);
-						$("#debtMoney").val(changeTwoDecimal_f(orderAmount-actualPayment));
-						$("#spareMoney").val(0);
-					}else{
-						
-						if(isNeworderSon == 0){ //新订单
-							$("#debtMoney").val(date.debtMoney);
-							$("#spareMoney").val(date.spareMoney);
-							$("#remaintimes").val("");
-						}						
-						$("#remaintimes").val(date.actualNum);
-						$("#afterPayment").val(date.afterPayment);
+					if(isNeworderSon == 0){ //新订单
+						$("#debtMoney").val(date.debtMoney);
+						$("#spareMoney").val(date.spareMoney);
+						$("#remaintimes").val("");
 					}
+					$("#afterPayment").val(date.afterPayment);
+					$("#remaintimes").val(date.actualNum);
 					
 					$("#orderAmount").attr("readonly",true);
 					$("#actualPayment").attr("readonly",true);
@@ -435,9 +417,7 @@
 	//修改费用
 	function updateCompute(){
 		if($("#isNeworderSon").val() == 1){
-			if($("#remaintimes").val() != 999){
-				$("#remaintimes").val("");
-			}
+			$("#remaintimes").val("");
 		}else{
 			$("#orderAmount").removeAttr("readonly");
 			$("#actualPayment").removeAttr("readonly");
@@ -457,6 +437,7 @@
 			$("#compute").show();
 		}
 	}
+	
 	 $(document).ready(function(){
 		if(${orders.isNeworder == 1}){
 			function today(){

@@ -44,7 +44,15 @@
 	                	<p></p>
 						<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;预约金：</label>
 						<input type="text" id="advance" name="advance" readonly="readonly" value="${orderGoods.advance}" class="form-control required" style="width:150px;"  />
-						<c:if test="${servicetimes != 999}">
+						<p></p>
+						<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;服务子项：</label>
+						<input type="text" id="advance" name="advance" readonly="readonly" value="${orderGoodsSon.goodsname}" class="form-control required" style="width:150px;"  />
+						<c:if test="${isReal == 2}">
+							<p></p>
+							<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;服务单次价：</label>
+							<input type="text" id="singleRealityPrice" name="singleRealityPrice" readonly="readonly" value="${orderGoodsSon.singleRealityPrice}" class="form-control required" style="width:150px;"  />
+						</c:if>
+						<c:if test="${isReal == 3}">
 							<p></p>
 							<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;服务单次价：</label>
 							<input type="text" id="singleRealityPrice" name="singleRealityPrice" readonly="readonly" value="${orderGoods.singleRealityPrice}" class="form-control required" style="width:150px;"  />
@@ -53,7 +61,7 @@
 							<input type="text" id="advanceServiceTimes" name="advanceServiceTimes" readonly="readonly" value="${orderGoods.advanceServiceTimes}" class="form-control required" style="width:150px;"  />	
 						</c:if>
 						<p></p>
-						<c:if test="${orderGoods.advanceServiceTimes == 0}">
+						<c:if test="${orderGoods.debt != 0}">
 							<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;欠款：</label>
 							<input type="text" id="debt" name="debt" readonly="readonly" value="${orderGoods.debt}" class="form-control required" style="width:150px;"  />
 							<p></p>
@@ -62,7 +70,7 @@
 							<input type="hidden" id="accountBalance" name="accountBalance" value="${orderGoods.accountBalance}" class="form-control required" style="width:150px;"  />
 						</c:if>
 						<input type="hidden" id="sum" name="sum" value="1"/>
-						<c:if test="${orderGoods.advanceServiceTimes != 0}">
+						<c:if test="${orderGoods.debt == 0}">
 							<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;余额：</label>
 							<input type="text" id="advanceBalance" name="advanceBalance" readonly="readonly" value="${orderGoods.advanceBalance}" class="form-control required" style="width:150px;"  />
 						</c:if>

@@ -98,6 +98,13 @@ public interface OrderGoodsDao extends TreeDao<OrderGoods> {
 	  * @return
 	  */
 	public OrderGoods selectOrderGoodsByRecid(int recId);
+	
+	/**
+	 * 查询卡项被预约的子项的信息 
+	 * @param recId
+	 * @return
+	 */
+	public OrderGoods selectCardSonReservation(int recId);
 
 	/**
 	 * 查询订单中的套卡

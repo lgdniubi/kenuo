@@ -1153,4 +1153,5 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 		goodsStatisticsCountData.setBuyCount(0);
 		goodsStatisticsDao.addGoodsStatisticsCountData(goodsStatisticsCountData);
 	}
+	
 }

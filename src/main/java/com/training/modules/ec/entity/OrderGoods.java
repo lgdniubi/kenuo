@@ -85,18 +85,15 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private String officeId;              //组织架构ID
 	//-------------------------------------------------------------------------
 	
-	private int groupid;                 //分组id
 	
 	
 	private double goodsBalance;         //商品余额，页面展示用
 	
 	
-	public int getGroupid() {
-		return groupid;
-	}
-	public void setGroupid(int groupid) {
-		this.groupid = groupid;
-	}
+	private int groupId;                  //组id，卡项订单，一个卡项商品下有多个子项，每个子项的组id就是那个卡项的recid
+	
+	private double suitCardBalance;       //套卡剩余金额总和（充值时页面展示用）
+	
 	public int getAfterSaleNum() {
 		return afterSaleNum;
 	}
@@ -476,6 +473,18 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setExpiringdate(String expiringdate) {
 		this.expiringdate = expiringdate;
+	}
+	public int getGroupId() {
+		return groupId;
+	}
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
+	}
+	public double getSuitCardBalance() {
+		return suitCardBalance;
+	}
+	public void setSuitCardBalance(double suitCardBalance) {
+		this.suitCardBalance = suitCardBalance;
 	}
 	
 }

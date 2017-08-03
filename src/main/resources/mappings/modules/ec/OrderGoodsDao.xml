@@ -129,6 +129,7 @@
 		INSERT INTO mtmydb.mtmy_order_goods_mapping
 		(
 			order_id,
+			group_id,
 			user_id,
 			goods_id,
 			goods_name,
@@ -155,6 +156,7 @@
 			service_min
 		)VALUES(
 			#{orderid},
+			#{groupId},
 			#{userid},
 			#{goodsid},
 			#{goodsname},
@@ -174,15 +176,9 @@
 			#{singleRealityPrice},
 			#{singleNormPrice},
 			#{servicetimes},
-			<if test="isreal == 0">
-				SYSDATE(),
-				SYSDATE(),
-			</if>
-			<if test="isreal == 1">
-				SYSDATE(),
-				#{realityAddTime},
-			</if>
-			(SELECT expiring_date FROM mtmydb.mtmy_spec_goods_price WHERE goods_id = #{goodsid} AND spec_key = #{speckey} AND del_flag = 0),
+			SYSDATE(),
+			#{realityAddTime},
+			#{expiringDate},
 			#{isreal},
 			#{servicemin}
 		)
@@ -230,6 +226,8 @@
 			discount as discount,
 			advance_price as advancePrice,
 			member_goods_price as membergoodsprice,
+			group_id as groupId,
+			is_real as isreal,
 			(SELECT SUM(a.service_times) FROM mtmydb.mtmy_order_goods_details a WHERE a.goods_mapping_id = rec_id AND type = 0) AS payRemaintimes
 		from 
 		mtmydb.mtmy_order_goods_mapping 
@@ -298,6 +296,20 @@
 		LEFT JOIN mtmydb.mtmy_users u ON u.user_id = ogm.user_id
 		WHERE ogm.rec_id = #{recId}
 		AND ogm.del_flag = 0
+	</select>
+	
+	<!-- 查询卡项被预约的子项的信息 -->
+	<select id="selectCardSonReservation" resultType="OrderGoods">
+		SELECT 
+			ogm.goods_id AS 'goodsid',
+			ogm.goods_name AS 'goodsname',
+			ogm.single_reality_price AS 'singleRealityPrice'
+		FROM mtmydb.mtmy_order_goods_mapping ogm 
+		LEFT JOIN mtmydb.mtmy_order_goods_details ogd ON ogd.goods_mapping_id = ogm.rec_id
+		LEFT JOIN mtmydb.mtmy_appt_order ao ON ao.id = ogd.appt_id
+		WHERE ogd.goods_mapping_id = #{recId}
+		AND ogd.advance_flag = '0' 
+		AND ogd.service_times = -1
 	</select>
 	
 	<!-- 查询订单中的套卡 -->

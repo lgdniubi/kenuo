@@ -102,7 +102,6 @@ public class Goods extends DataEntity<Goods> {
 	private List<Double> totalMarketPrices;	//卡项商品 市场价合计
 	private List<Double> totalPrices;		//卡项商品 优惠价合计
 	
-	
 	/**
 	 * get/set
 	 */
@@ -520,7 +519,5 @@ public class Goods extends DataEntity<Goods> {
 	public void setTotalPrices(List<Double> totalPrices) {
 		this.totalPrices = totalPrices;
 	}
-	
-	
 	
 }
