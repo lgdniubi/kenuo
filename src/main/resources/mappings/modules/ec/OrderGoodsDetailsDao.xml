@@ -21,6 +21,7 @@
 				service_times,
 			</if>
 			advance_flag,
+			surplus_amount,
 			type,
 			create_by,
 			create_date
@@ -42,6 +43,7 @@
 				#{serviceTimes},
 			</if>
 			#{advanceFlag},
+			#{surplusAmount},
 			#{type},
 			#{createBy.id},
 			SYSDATE()
@@ -65,6 +67,7 @@
 			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = #{mid} AND advance_flag = '1') AS 'advanceFlag',
 			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = #{mid} AND advance_flag = '0' AND service_times = -1) AS 'sumAppt',
 			(SELECT SUM(order_balance) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = #{mid}) AS 'goodsBalance',
+			(SELECT SUM(surplus_amount) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = #{mid}) AS 'suitCardBalance',
 			SUM(total_amount) as totalAmount,
 			SUM(order_balance) as orderBalance,
 			SUM(order_arrearage) as orderArrearage,
@@ -196,10 +199,12 @@
 			SUM(ogd.order_balance) AS 'orderBalance',
 			SUM(ogd.app_total_amount) AS 'appTotalAmount',
 			SUM(ogd.app_arrearage) AS 'appArrearage',
+			SUM(ogd.order_arrearage) AS 'sumOrderArrearage',
 			ogm.goods_price AS 'goodsPrice',
-			ogm.order_amount AS 'orderAmount'
+			ogm.order_amount AS 'orderAmount',
+			ogm.integral AS 'integral'
 		FROM mtmydb.mtmy_order_goods_details ogd
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping ogm ON ogm.rec_id = ogd.goods_mapping_id
-		WHERE goods_mapping_id = #{recid}
+		WHERE ogd.goods_mapping_id = #{recid}
 	</select>
 </mapper>

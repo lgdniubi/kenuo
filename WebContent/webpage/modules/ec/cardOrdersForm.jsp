@@ -3,7 +3,7 @@
 
 <html>
 <head>
-	<title>订单修改</title>
+	<title>套卡订单详情页</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		
@@ -40,14 +40,17 @@
 		}, "小数位不能超过三位"); 
 		
 		$(document).ready(function() {
-			if($("#isReal").val() == '1'){
+			var suitCardSons = $("#suitCardSons").val();
+			$(suitCardSons).appendTo($("#addZTD"));
+			
+			/* if($("#isReal").val() == '1'){
 				$("#shipping").hide();
-			}
+			} 
 			if($("#shippingtype").val()== 0 || $("#shippingtype").val()== 1){
 				$("#logistics").show();
 			}else{
 				$("#logistics").hide();
-			}
+			}*/
 			//物流类型来判断是否显示物流地址
 			$("#shippingtype").change(function(){
 				var shippingtype = $(this).val();
@@ -72,10 +75,6 @@
 					postalcode:{
 						digits:true	
 					}
-// 					mobile:{
-// 						digits:true,
-							
-// 					}
 				},
 				messages:{
 					orderamount:{
@@ -123,7 +122,7 @@
 				    type: 2, 
 				    area: ['600px', '450px'],
 				    title:"充值",
-				    content: "${ctx}/ec/orders/addTopUp?orderid="+orderid+"&singleRealityPrice="+singleRealityPrice+"&userid="+userid+"&isReal="+isReal+"&goodsBalance="+goodsBalance+"&servicetimes="+servicetimes,
+				    content: "${ctx}/ec/orders/addCardTopUp?orderid="+orderid+"&singleRealityPrice="+singleRealityPrice+"&userid="+userid+"&isReal="+isReal+"&goodsBalance="+goodsBalance,
 				    btn: ['确定', '关闭'],
 				    yes: function(index, layero){
 				    	var orderid = $("#orderid").val();
@@ -153,13 +152,6 @@
 							$(loading).hide();
 							top.layer.alert('请计算费用！', {icon: 0, title:'提醒'});
 							return;
-						}
-						if(servicetimes == 999){       //当充值的对象时时限卡时，充值时必须将尾款全部补齐
-							if(topUpTotalAmount < orderArrearage){     //充值金额+使用的账户余额<欠款
-								$(loading).hide();
-								top.layer.alert('尾款剩余'+orderArrearage+'元，补齐尾款才能预约！', {icon: 0, title:'提醒'});
-								return;
-							}
 						}
 						
 						//查询用户账户余额
@@ -197,10 +189,10 @@
 											isReal:isReal,
 											channelFlag:channelFlag
 										 },
-										url:"${ctx}/ec/orders/addOrderRechargeLog",
+										url:"${ctx}/ec/orders/addCardOrderRechargeLog",
 										success:function(date){
 												top.layer.alert('保存成功!', {icon: 1, title:'提醒'});
-												window.location="${ctx}/ec/orders/orderform?orderid="+orderid;
+												window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid;
 										},
 										error:function(XMLHttpRequest,textStatus,errorThrown){}
 									});
@@ -301,7 +293,7 @@
          					if(date == 'success'){
          						$(obj).parent().parent().remove();
          						top.layer.alert('添加提成人员成功', {icon: 0, title:'提醒'});
-         						window.location="${ctx}/ec/orders/orderform?orderid="+orderid+"&isReal="+isReal+"&type=edit";
+         						window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid+"&isReal="+isReal+"&type=edit";
          	     				top.layer.close(index);
          					}else{
          						top.layer.alert('添加提成人员失败', {icon: 0, title:'提醒'});
@@ -342,7 +334,7 @@
      				success:function(date){
      					if(date == 'success'){
      						top.layer.alert('添加备注成功', {icon: 0, title:'提醒'});
-     						window.location="${ctx}/ec/orders/orderform?orderid="+orderid+"&isReal="+isReal+"&type=edit";
+     						window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid+"&isReal="+isReal+"&type=edit";
      						top.layer.close(index);
      					}else{
      						top.layer.alert('添加备注失败', {icon: 0, title:'提醒'});
@@ -384,7 +376,7 @@ window.onload=initStatus;
 		    type: 2, 
 		    area: ['600px', '450px'],
 		    title:"处理预约金",
-		    content: "${ctx}/ec/orders/handleAdvanceFlagForm?recid="+recid+"&userid="+userid+"&servicetimes="+servicetimes+"&orderArrearage="+orderArrearage,
+		    content: "${ctx}/ec/orders/handleCardAdvanceForm?recid="+recid+"&userid="+userid+"&servicetimes="+servicetimes+"&orderArrearage="+orderArrearage+"&isreal="+isReal,
 		    btn: ['确定', '关闭'],
 		    yes: function(index, layero){
 		    	var obj =  layero.find("iframe")[0].contentWindow;
@@ -397,17 +389,18 @@ window.onload=initStatus;
 						recid:recid, 
 						userid:userid,
 						servicetimes:servicetimes,
-						orderArrearage:orderArrearage
+						orderArrearage:orderArrearage,
+						isreal:isReal
 					 },
-					url:"${ctx}/ec/orders/handleAdvanceFlag?recid="+recid+"&userid="+userid+"&orderid="+orderid,
+					url:"${ctx}/ec/orders/handleCardAdvance?recid="+recid+"&userid="+userid+"&orderid="+orderid,
 					success:function(date){
 						if(date == 'success'){
 							top.layer.alert('处理成功!', {icon: 1, title:'提醒'});
-							window.location="${ctx}/ec/orders/orderform?orderid="+orderid;
+							window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid;
 							top.layer.close(index);	
 						}else if(date == 'error'){
 							top.layer.alert('处理失败!', {icon: 0, title:'提醒'});
-							window.location="${ctx}/ec/orders/orderform?orderid="+orderid;
+							window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid;
 							top.layer.close(index);
 						}
 						
@@ -419,6 +412,20 @@ window.onload=initStatus;
 			    	           //按钮【按钮二】的回调
 		}
 	}); 
+	}
+	
+	function viewCardOrders(recid,orderid){
+		top.layer.open({
+		    type: 2, 
+		    area: ['800px', '600px'],
+		    title:"商品充值查看",
+		    content: "${ctx}/ec/orders/getMappinfOrderView?recid="+recid+"&orderid="+orderid+"&orderType=mapping",
+		    btn: ['关闭'],
+			cancel: function(index){ //或者使用btn2
+			    	           //按钮【按钮二】的回调
+			}
+		}); 
+		
 	}
 	
 	function getInvoiceRelevancy(orderid){
@@ -437,13 +444,14 @@ window.onload=initStatus;
 			<sys:message content="${message}"/>
 			<div class="ibox-content">
 				<div class="clearfix">
-					<form:form id="inputForm" modelAttribute="orders" action="${ctx}/ec/orders/updateVirtualOrder" method="post" class="form-horizontal">
+					<form:form id="inputForm" modelAttribute="orders" action="${ctx}/ec/orders/updateCardOrder" method="post" class="form-horizontal">
 						<input id="oldAddress" name="oldAddress" type="hidden" value="${orders.address}"/>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 							<input type="hidden" id="channelFlag" value="${orders.channelFlag}" />
 							<input type="hidden" id="isReal" value="${orders.isReal}" />
 							<input type="hidden" id="operationName" value="${user.name}" />
-							<h4>订单基本信息:&nbsp;&nbsp;<c:if test="${orders.isReal == 1}">虚拟订单</c:if>&nbsp;&nbsp;<c:if test="${orders.isReal == 0}">实物订单</c:if></h4><br>
+							<input type="hidden" id="suitCardSons" value="${suitCardSons}" />
+							<h4>订单基本信息:&nbsp;&nbsp;<c:if test="${orders.isReal == 2}">套卡订单</c:if>&nbsp;&nbsp;<c:if test="${orders.isReal == 3}">通用卡订单</c:if></h4><br>
 							<label class="active">订&nbsp;&nbsp;单&nbsp;号:</label>&nbsp;&nbsp;${orders.orderid }
 							<input type="hidden" id="orderid" name="orderid" value="${orders.orderid }" >
 							<input type="hidden" id="userid" name="userid" value="${orders.userid }" >
@@ -463,48 +471,24 @@ window.onload=initStatus;
 							<label class="active">订单状态:</label>&nbsp;&nbsp;
 							<form:hidden path="oldstatus"/>
 							<form:select path="orderstatus"  class="form-control" style="width:180px">
-								<c:if test="${orders.isReal == 0}">
-									<c:if test="${orders.orderstatus == -2}">
-										<form:option value="-2">取消订单</form:option>
-									</c:if>
-									<c:if test="${orders.orderstatus == -1}">
-										<form:option value="-1">待付款</form:option>
-									</c:if>
-									<c:if test="${orders.orderstatus == 1 or orders.orderstatus == 2 or orders.orderstatus == 4}">
-										<form:option value="1">待发货</form:option>
-										<form:option value="2">待收货</form:option>
-										<form:option value="4">已完成</form:option>
-									</c:if>
-									<c:if test="${orders.orderstatus == 3}">
-										<form:option value="3">已退款</form:option>
-									</c:if>
+								<c:if test="${orders.channelFlag != 'bm'}">
+									<form:option value='${orders.orderstatus }'>
+										<c:if test="${orders.orderstatus == -2}">
+											取消订单
+										</c:if>
+										<c:if test="${orders.orderstatus == -1}">
+											待付款
+										</c:if>
+										<c:if test="${orders.orderstatus == 3}">
+											已退款
+										</c:if>
+										<c:if test="${orders.orderstatus == 4}">
+											已完成
+										</c:if>
+									</form:option>
 								</c:if>
-								<c:if test="${orders.isReal == 1}">
-									<c:if test="${orders.channelFlag != 'bm'}">
-										<form:option value='${orders.orderstatus }'>
-											<c:if test="${orders.orderstatus == -2}">
-												取消订单
-											</c:if>
-											<c:if test="${orders.orderstatus == -1}">
-												待付款
-											</c:if>
-											<c:if test="${orders.orderstatus == 1}">
-												待发货
-											</c:if>
-											<c:if test="${orders.orderstatus == 2}">
-												待收货
-											</c:if>
-											<c:if test="${orders.orderstatus == 3}">
-												已退款
-											</c:if>
-											<c:if test="${orders.orderstatus == 4}">
-												已完成
-											</c:if>
-										</form:option>
-									</c:if>
-									<c:if test="${orders.channelFlag == 'bm'}">
-										<form:option value="4">已完成</form:option>
-									</c:if>
+								<c:if test="${orders.channelFlag == 'bm'}">
+									<form:option value="4">已完成</form:option>
 								</c:if>
 							</form:select>&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">付款方式：</label>
@@ -523,6 +507,7 @@ window.onload=initStatus;
 							<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 								<tr>
 									<th style="text-align: center;">商品名称</th>
+									<th style="text-align: center;">子项名称</th>
 									<th style="text-align: center;">商品规格</th>
 									<th style="text-align: center;">系统价</th>
 									<th style="text-align: center;">市场价</th>
@@ -534,70 +519,11 @@ window.onload=initStatus;
 									<th style="text-align: center;">应付金额</th>
 									<th style="text-align: center;">实付金额</th>
 									<th style="text-align: center;">预约金</th>
-									<c:if test="${orders.isReal == 1 }">
-										<th style="text-align: center;">实际次数</th>
-									</c:if>
-									<!-- <th style="text-align: center;">余款</th> -->
 									<th style="text-align: center;">欠款</th>
-									<c:if test="${orders.channelFlag == 'bm' || (orders.channelFlag != 'bm' && orders.isReal==1)}">
-										<th style="text-align: center;">操作</th>
-									</c:if>
+									<th style="text-align: center;">操作</th>
 								</tr>
-								<c:forEach items="${orders.orderGoodList }" var="orderGood">
-									<tr>
-										<td align="center">${orderGood.goodsname }</td>
-										<td align="center">${orderGood.speckeyname }</td>
-										<td align="center">${orderGood.costprice }</td>
-										<td align="center">${orderGood.marketprice }</td>
-										<td align="center">${orderGood.goodsprice }</td>
-										<td align="center">${orderGood.goodsnum }</td>
-										<td align="center">${orderGood.couponPrice }</td>
-										<td align="center">${orderGood.discount }</td>
-										<td align="center">${orderGood.membergoodsprice }</td>
-										<td align="center">${orderGood.orderAmount }</td>
-										<td align="center">${orderGood.totalAmount}</td>
-										<td align="center">
-											<c:if test="${orders.isReal == 1 }">
-												${orderGood.advancePrice}
-											</c:if>
-											<c:if test="${orders.isReal != 1 }">
-												0.0
-											</c:if>
-										</td>
-										<c:if test="${orders.isReal == 1 }">
-											<td align="center">${orderGood.remaintimes }</td>
-										</c:if>
-										<%-- <td>${orderGood.orderBalance }</td> --%>
-										<td align="center">${orderGood.orderArrearage }</td>
-										<c:if test="${orders.channelFlag == 'bm' || (orders.channelFlag != 'bm' && orders.isReal==1)}">
-											<td align="center">
-												<c:if test="${type != 'view' }">
-													<c:if test="${orders.channelFlag == 'bm' || (orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag != 1)}">
-														<c:if test="${orderGood.orderArrearage != 0}">
-															<a href="#" onclick="TopUp(${orderGood.recid},${orderGood.singleRealityPrice },${orderGood.singleNormPrice },${orderGood.orderArrearage },${orderGood.servicetimes },${orderGood.payRemaintimes },${orderGood.goodsBalance})"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>充值</a>
-														</c:if>
-														<c:if test="${orderGood.orderArrearage == 0}">
-															<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>充值</a>
-														</c:if>
-													</c:if>
-													<c:if test="${orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag == 1}">
-														<c:if test="${orders.orderstatus == 4 && orderGood.sumAppt == 1}">
-															<a href="#" onclick="ToAdvance(${orderGood.recid},${orderGood.servicetimes},${orderGood.orderArrearage })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
-														</c:if>
-														<c:if test="${orders.orderstatus != 4 || orderGood.sumAppt == 0}">
-															<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
-														</c:if>
-														
-													</c:if>
-												</c:if>
-												<a href="#" onclick="openDialogView('查看订单', '${ctx}/ec/orders/getMappinfOrderView?recid=${orderGood.recid}&orderid=${orders.orderid }&orderType=mapping','800px','600px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>商品充值查看</a>
-											</td>
-										</c:if>
-									</tr>
-									<input type="hidden" id="orderArrearage" name="orderArrearage" value="${orderGood.orderArrearage }" />
-									<input type="hidden" id="servicetimes" name="servicetimes" value="${orderGood.servicetimes }" />
-									<input type="hidden" id="remaintimes" name="remaintimes" value="${orderGood.remaintimes }" />
-								</c:forEach>
+								<tbody id="addZTD" style="text-align:center;">	
+								</tbody>
 							</table>
 						</div>
 						<p></p>
@@ -623,31 +549,8 @@ window.onload=initStatus;
 									<td align="center">${(orders.totalamount*100 + orders.shippingprice*100)/100}</td>
 								</tr>
 						</table>
-							<%-- <div style="padding-left: 90px;">
-								<p></p>
-								<label>商品总价：￥${orders.goodsprice }</label>
-								<label>红包面值：￥${orders.couponprice }</label>
-								<p></p>
-								<label>折扣率：￥${orders.discount }</label>
-								<label>会员折扣：￥${orders.memberGoodsPrice }</label>
-								<p></p>
-								<label>邮费：￥${orders.shippingprice }</label>
-								<p></p>
-								<label>应付金额：￥${orders.orderamount }</label>
-								<label>实付金额：￥${orders.totalamount }</label>
-								<form:input id="goodsprice" readonly="true" path="goodsprice" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
-								<label>成交总额：</label>
-								<form:input id="orderamount" readonly="true" path="orderamount" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
-								<label >总&nbsp;&nbsp;余&nbsp;&nbsp;额：</label>
-								<form:input id="orderBalance" readonly="true" path="orderBalance" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
-								<p></p>
-								<label>实付总额：</label>
-								<form:input id="totalamount" readonly="true" path="totalamount" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
-								<label>总&nbsp;&nbsp;欠&nbsp;&nbsp;款：</label>
-								<form:input id="orderArrearage" readonly="true" path="orderArrearage" htmlEscape="false" maxlength="11111" class="form-control required" style="width:180px" />
-							</div> --%>
 						</div>
-						<p></p>
+						<%-- <p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="shipping">
 							<label ><font color="red">*</font>物流类型：</label>
 							<form:select path="shippingtype"  class="form-control" style="width:180px">
@@ -664,7 +567,7 @@ window.onload=initStatus;
 								<label ><font color="red">*</font>收货地址：</label>
 								<form:input path="address" htmlEscape="false" maxlength="120" class="form-control required" style="width:180px" />
 							</div>
-						</div>
+						</div> --%>
 						<p></p>
 						<c:if test="${orders.num > 0}">
 								<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
@@ -672,41 +575,6 @@ window.onload=initStatus;
 										<a href="#" onclick="getInvoiceRelevancy('${orders.orderid}')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>发票信息</a>
 									</div>
 									<p></p>
-								<%-- <label class="active">索要发票</label>
-								<p></p>
-								<div id="iType">
-									<label class="active">发票类型：</label>
-									<form:select path="orderInvoice.invoiceType"  class="form-control" style="width:180px">
-										<form:option value="1" disabled="true">个人普票</form:option>
-										<form:option value="2" disabled="true">公司普票</form:option>
-										<form:option value="3" disabled="true">公司专票</form:option>
-									</form:select>
-								</div>
-								<p></p>
-								<label class="active">发票抬头：</label>
-								<input type="text" name="taxNum" class="form-control" style="width:180px" value="${orders.orderInvoice.headContent }"  readonly="readonly" />
-								<c:if test="${orders.orderInvoice.invoiceType == 3}">
-									<label class="active">纳税人识别号：</label>
-									<input type="text" name="taxNum" class="form-control" style="width:180px" value="${orders.orderInvoice.taxNum }"  readonly="readonly" />
-									<label class="active">银行账号：</label>
-									<input type="text" name="bankNo" class="form-control" style="width:180px" value="${orders.orderInvoice.bankNo }"  readonly="readonly" />
-									<p></p>
-									<label class="active">开户银行：</label>
-									<input type="text" name="bankName" class="form-control" style="width:180px" value="${orders.orderInvoice.bankName }"  readonly="readonly" />
-									<label class="active">电&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;话：</label>
-									<input type="text" name="invoicePhone" class="form-control" style="width:180px" value="${orders.orderInvoice.phone }"  readonly="readonly" />
-									<label class="active">地&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;址：</label>
-									<input type="text" name="invoiceAddress" class="form-control" style="width:180px" value="${orders.orderInvoice.address }"  readonly="readonly" />
-								</c:if>
-								<p></p>
-								<label class="active">收货人信息：</label>
-								<p></p>
-								<label class="active">收货人：</label>
-								<input type="text" name="recipientsName" class="form-control" style="width:180px" value="${orders.orderInvoice.recipientsName }"  readonly="readonly" />
-								<label class="active">联系电话：</label>
-								<input type="text" name="recipientsPhone" class="form-control" style="width:180px" value="${orders.orderInvoice.recipientsPhone }"  readonly="readonly" />
-								<label class="active">收货地址：</label>
-								<input type="text" name="recipientsAddress" class="form-control" style="width:180px" value="${orders.orderInvoice.recipientsAddress }"  readonly="readonly" />--%>
 							</div> 
 						</c:if>
 						<p></p>
@@ -746,7 +614,6 @@ window.onload=initStatus;
 												</td>
 												<td>
 													${orderPushmoneyRecord.pushMoney }
-													<%-- <input class="form-control" type="text" id="pushMoney" class="form-control required" name="pushMoney" value="${orderPushmoneyRecord.pushMoney }" /> --%>
 												</td>
 												<td>
 													${orderPushmoneyRecord.createBy.name }
@@ -780,9 +647,6 @@ window.onload=initStatus;
 										<th style="text-align: center;">备注</th>
 										<th style="text-align: center;">操作人</th>
 										<th style="text-align: center;">操作时间</th>
-									<%-- 	<c:if test="${type != 'view' }">
-											<th style="text-align: center;">操作</th>
-										</c:if> --%>
 									</tr>
 								</thead>
 								<tbody id="orderRemarks" style="text-align:center;">	
@@ -801,11 +665,6 @@ window.onload=initStatus;
 													<fmt:formatDate value="${orderRemark.createDate }" pattern="yyyy-MM-dd HH:mm:ss" />
 												</div>
 											</td>
-											<%-- <c:if test="${type != 'view' }">
-												<td>
-													<a href='#' class='btn btn-danger btn-xs' onclick='delOrderRemarks(this)'><i class='fa fa-trash'></i> 删除</a>
-												</td>
-											</c:if> --%>
 										</tr>
 									</c:forEach>
 								</tbody>
@@ -861,41 +720,9 @@ window.onload=initStatus;
 					</shiro:hasPermission>
 					<shiro:hasPermission name="ec:orders:edit">
 						<c:if test="${type != 'view' }">
-							<c:if test="${orders.isReal == 0   and orders.orderstatus==1}">
-								<a href="${ctx}/ec/orders/forcedCancel?orderid=${orders.orderid}" onclick="forcedCancel('${orders.orderid}')" onclick="return confirmx('确认强制取消订单吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-save"></i>强制取消</a>
-							</c:if>
-							<c:if test="${orders.isReal == 0   and orders.orderstatus!=1}">
-								<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>
-							</c:if>
-							<c:if test="${orders.isReal==1}">
-								<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>
-							</c:if>
+							<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>
 						</c:if>	
 					</shiro:hasPermission>
-					<%-- <p></p>
-					<label class="active">操作日志:</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<shiro:hasPermission name="ec:orders:edit">
-							<a href="#" onclick="openDialogView('操作日志', '${ctx}/ec/orders/loglist?id=${orders.orderid}','500px','400px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>操作日志</a>
-					</shiro:hasPermission>
-					
-					<table id="contentTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
-						<thead>
-							<tr>
-							<th>操作者</th>
-							<th>操作时间</th>
-							<th>描述</th>
-							</tr>
-						</thead>
-						<tbody>
-							<c:forEach items="${acountlist}" var="acount">
-								<tr>
-									<td>${acount.operator}</td>
-									<td><fmt:formatDate value="${acount.changetime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-									<td>${acount.logdesc}</td>
-								</tr>
-							</c:forEach>
-						</tbody>
-					</table> --%>
 				</div>
 			</div>	
 		</div>

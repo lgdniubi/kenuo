@@ -3,10 +3,8 @@
 
 <html>
 <head>
-<title>添加红包</title>
+<title>套卡添加商品</title>
 <meta name="decorator" content="default" />
-<!-- 时间控件引用 -->
-<script type="text/javascript" src="${ctxStatic}/My97DatePicker/WdatePicker.js"></script>
 <!-- 内容上传 引用-->
 <style type="text/css">
 #one {
@@ -50,55 +48,6 @@
 		return false;
 	}
 
-	//根据规格查询商品
-	function selectspecprice(o){
-		var isNeworderSon = $("#isNeworderSon").val();
-		var specgoodkey = $(o).val();
-		var val=jQuery("#specgoods").val();
-		var goodid=$("#goodselectId").val();
-		//	alert(val)
-		if(val!=0){
-			$.ajax({
-				 type:"get",
-				 dataType:"json",
-				 url:"${ctx}/ec/orders/getSpecPrce?id="+val+"&goodid="+goodid,
-				 success:function(date){
-				   $("#marketPrice").val(date.marketPrice);
-				   $("#goodsPrice").val(date.price);
-				   $("#orderAmount").val(date.price);
-				   $("#speckey").val(date.specKey);
-				   $("#speckeyname").val(date.specKeyValue);
-				   $("#costPrice").val(date.costPrice);
-				   $("#goodsNo").val(date.goodsNo);
-				   $("#oldremaintimes").val($("#"+specgoodkey).val());
-				   $("#computType").val(1);
-				   $("#afterPayment").val("");
-				   $("#debtMoney").val("");
-					$("#spareMoney").val("");
-				   if(isNeworderSon == 1){ //老客户
-						//$("#remaintimes").removeAttr("readonly");
-						$("#actualPayment").val(date.price);
-				   		if($("#"+specgoodkey).val() == 999){
-				   			$("#remaintimes").val($("#"+specgoodkey).val());
-							$("#remaintimes").attr("readonly",true);
-				   		}
-					}else{
-						$("#remaintimes").val($("#"+specgoodkey).val());
-						$("#remaintimes").attr("readonly",true);
-						$("#actualPayment").val("");
-						$("#orderAmount").removeAttr("readonly")
-						$("#actualPayment").removeAttr("readonly")
-					}
-				 },
-				 error:function(XMLHttpRequest,textStatus,errorThrown){
-				    
-				 }
-				 
-				});
-		}
-		
-	}
-	
 	//计算成交价格
 	function numPrice(o){
 		
@@ -111,7 +60,6 @@
 	//根据商品id 查询商品信息
 	function selectgood(){
 		var val=jQuery("#goodselectId").val();
-		//alert(val);
 		
 		if(val!=0){
 			$.ajax({
@@ -119,19 +67,18 @@
 				 dataType:"json",
 				 url:"${ctx}/ec/orders/Getgood?id="+val,
 				 success:function(date){
-					//console.log(date);
 					isRel=date.isReal;
 					$("#isRel").val(isRel);
-					if(date.isReal==1){
-						$("#goodsNum").attr("readonly",true);
-						$("#goodsNum").val(1);
-					}else{
-						$("#goodsNum").attr("readonly",false);
-						$("#goodsNum").val(1);
-					}
-				   $("#marketPrice").val(date.marketPrice);
-				   $("#goodsPrice").val(date.shopPrice);
-				   $("#orderAmount").val(date.shopPrice);
+					$("#goodsNum").attr("readonly",true);
+					$("#goodsNum").val(1);
+					$("#costPrice").val(date.costPrice);
+				    $("#marketPrice").val(date.marketPrice);
+				    $("#goodsPrice").val(date.shopPrice);
+				    $("#orderAmount").val(date.shopPrice);
+				    
+				    if($("#isNeworderSon").val() == 1){
+				    	$("#actualPayment").val(date.shopPrice);
+				    }
 				     
 				 },
 				 error:function(XMLHttpRequest,textStatus,errorThrown) {
@@ -143,34 +90,6 @@
 		
 	}
 
-	//根据商品 查询商品的规格
-	function selecSpecgood(){
-		var val=jQuery("#goodselectId").val();
-		//	alert(val)
-		$("#specgoods").val(0);
-		$("#specgoods").empty().append("<option value='0'>规格选择</option>");
-		if(val!=0){
-			$.ajax({
-				type:"get",
-				dataType:"json",
-				url:"${ctx}/ec/orders/specgoods?id="+val,
-				success:function(date){
-					$("#serviceTimes").empty();
-					$.each(date,function(i,e){
-						$("#specgoods").append("<option value='"+e.id+"' >"+e.name+"</option>");
-						$("#serviceTimes").append("<input type='hidden' id='"+e.id+"' value='"+e.serviceTimes+"' />");
-						$("#costPrice").val(e.costPrice);
-					})
-				},
-				error:function(XMLHttpRequest,textStatus,errorThrown) {
-				    
-				}
-				 
-			});
-		}
-		
-	}
-	
 	$(document).ready(function() {
 		var isNeworderSon = $("#isNeworderSon").val()
 		if(isNeworderSon == 0){ //订单
@@ -221,8 +140,6 @@
 							$("#consignee").val("");
 
 							$("#service").hide();
-							$("#specgoods").empty().append("<option value='0'>规格选择</option>");
-							$("#specgoods").val(0);
 							$("#speckey").val("");
 							$("#speckeyname").val("");
 							$("#goodsNum").val("");
@@ -256,7 +173,7 @@
 				    area: ['300px', '420px'],
 				    title:"商品选择",
 				    ajaxData:{selectIds: $("#goodselectId").val()},
-				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?&isReal=1&goodsCategory="+cateid)+"&module=&checked=&extId=&isAll=",
+				    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?&isReal=2&goodsCategory="+cateid)+"&module=&checked=&extId=&isAll=",
 				    btn: ['确定', '关闭']
 		    	       ,yes: function(index, layero){ //或者使用btn1
 								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
@@ -281,16 +198,26 @@
 								$("#goodselectId").val(ids.join(",").replace(/u_/ig,""));
 								$("#goodselectName").val(names.join(","));
 								$("#goodselectName").focus();
+								
+								
+								
+								$("#actualPayment").val("");//实付
+								$("#debtMoney").val("");//余额
+								$("#spareMoney").val("");//欠款
 								ceateid=$("#goodselectId").val();
-								$("#orderAmount").val("");
-								$("#actualPayment").val("");
-								$("#afterPayment").val("");
-								$("#remaintimes").val("");
-								$("#debtMoney").val("");
-								$("#spareMoney").val("");
-								$("#oldremaintimes").val("");
+								if($("#isNeworderSon").val() == 0){ //新订单
+									//商品选择时去掉应付和实付 不可以编辑属性
+									$("#orderAmount").removeAttr("readonly");
+									$("#actualPayment").removeAttr("readonly");
+									$("#computType").val(1);						
+								}else{
+									$("#orderAmount").attr("readonly",true);
+									$("#actualPayment").attr("readonly",true);
+									$("#computType").val(1);	
+								}
+								
 								selectgood();
-								selecSpecgood();
+								/* selecSpecgood(); */
 								top.layer.close(index);
 						    	       },
 		    	cancel: function(index){ //或者使用btn2
@@ -321,94 +248,59 @@
 		});
 
 	});
-	
-	//计算费用
 	function compute(){
-		var orderAmount = $("#orderAmount").val();		//应付价
 		var actualPayment = $("#actualPayment").val();	//实际付款
 		var isNeworderSon = $("#isNeworderSon").val();  //新老订单
-		var	remaintimes = $("#oldremaintimes").val();	//服务次数
 		var goodsPrice = $("#goodsPrice").val(); //优惠价格
-		var specgoods = $("#specgoods").val();
-		//验证必填
+		var goodsNum = $("#goodsNum").val(); //购买数量
+		var orderAmount = $("#orderAmount").val(); //应付款
 		if(!/^\d+(\.\d{1,2})?$/.test(actualPayment)){
-			top.layer.alert('实际付款（前）小数点后不可以超过2位!', {icon: 0, title:'提醒'});
-			return;
-		}
-		if(specgoods == 0){
-			top.layer.alert('请选择商品规格!', {icon: 0, title:'提醒'});
+			top.layer.alert('实际付款小数点后不可以超过2位!', {icon: 0, title:'提醒'});
 			return;
 		}
 		if(orderAmount == 'undefined' || orderAmount == 0){
-			top.layer.alert('应付价格不可为空或者0!', {icon: 0, title:'提醒'});
+			top.layer.alert('应付价不可为空或者0!', {icon: 0, title:'提醒'});
 			return;
 		}
-		if(actualPayment == '' || actualPayment == 0){
+		if(actualPayment == 'undefined' || actualPayment == 0){
 			top.layer.alert('实际付款不可为空或者0!', {icon: 0, title:'提醒'});	
 			return;
 		}
-		//如果实际付款比应付价格大
-		if(parseFloat(actualPayment) > parseFloat(orderAmount)){
-			$("#afterPayment").val(changeTwoDecimal_f(orderAmount));
-			$("#debtMoney").val(0);
-			$("#spareMoney").val(changeTwoDecimal_f(actualPayment-orderAmount));
-			$("#remaintimes").val($("#oldremaintimes").val());
-			$("#orderAmount").attr("readonly",true);
-			$("#actualPayment").attr("readonly",true);
-			$("#computType").val(0);//已点击计算费用
+		if(goodsPrice == 'undefined' || goodsPrice == 0){
+			top.layer.alert('优惠价格不可为空或者0!', {icon: 0, title:'提醒'});	
 			return;
 		}
-		
-		//如果成交价等于实际付款
-		if(orderAmount == actualPayment){ //因为涉及到运算有小数点不能都被整除 所以赋值为0
-			$("#afterPayment").val(changeTwoDecimal_f(actualPayment));
+		$("#orderAmount").val(orderAmount);
+		if($("#isNeworderSon").val() == 0){ //新订单
+			if(parseFloat(actualPayment)>parseFloat(orderAmount)){
+				var spareMoney = actualPayment-orderAmount;
+				$("#debtMoney").val(0);
+				$("#spareMoney").val(changeTwoDecimal_f(spareMoney));
+			}
+			if(parseFloat(actualPayment)==parseFloat(orderAmount)){
+				$("#spareMoney").val(0);
+				$("#debtMoney").val(0);
+			}
+			if(parseFloat(actualPayment)<parseFloat(orderAmount)){
+				$("#spareMoney").val(0);
+				$("#debtMoney").val(changeTwoDecimal_f(orderAmount-actualPayment));
+			}
+		}else{
+			var orderAmount = parseFloat(goodsNum)*parseFloat(goodsPrice);		//应付			
+			$("#orderAmount").val(changeTwoDecimal_f(orderAmount));		
+			$("#actualPayment").val(changeTwoDecimal_f(orderAmount));
 			$("#debtMoney").val(0);
 			$("#spareMoney").val(0);
-			if(isNeworderSon == 0){ //新订单
-				$("#remaintimes").val($("#oldremaintimes").val());
-			}
-			$("#orderAmount").attr("readonly",true);
-			$("#actualPayment").attr("readonly",true);
-			$("#computType").val(0);//已点击计算费用
-		}else{
-			$.ajax({
-				type:"get",
-				dataType:"json",
-				data:{
-					transactionPrice:orderAmount,
-					actualPayment:actualPayment,
-					ServiceNum:remaintimes,
-					favourablePrice:goodsPrice
-				},
-				url:"${ctx}/ec/orders/computingCost",
-				success:function(date){
-					var isNeworderSon = $("#isNeworderSon").val()
-					
-					if($("#oldremaintimes").val() == 999){
-						$("#remaintimes").val(1);
-						$("#afterPayment").val(actualPayment);
-						$("#debtMoney").val(changeTwoDecimal_f(orderAmount-actualPayment));
-						$("#spareMoney").val(0);
-					}else{
-						
-						if(isNeworderSon == 0){ //新订单
-							$("#debtMoney").val(date.debtMoney);
-							$("#spareMoney").val(date.spareMoney);
-							$("#remaintimes").val("");
-						}						
-						$("#remaintimes").val(date.actualNum);
-						$("#afterPayment").val(date.afterPayment);
-					}
-					
-					$("#orderAmount").attr("readonly",true);
-					$("#actualPayment").attr("readonly",true);
-					$("#computType").val(0);//已点击计算费用
-				},
-				error:function(XMLHttpRequest,textStatus,errorThrown){
-				    
-				}
-			});		
 		}
+
+		//让数量应付和实付 不可以编辑
+		if($("#isNeworderSon").val() == 1){ //老订单
+			$("#actualPayment").val(orderAmount);
+		}
+		$("#goodsNum").attr("readonly",true);
+		$("#actualPayment").attr("readonly",true);
+		$("#orderAmount").attr("readonly",true);
+		$("#computType").val(0);
 	}
 	
 	//数字计算保留2位小数
@@ -434,43 +326,13 @@
 	
 	//修改费用
 	function updateCompute(){
-		if($("#isNeworderSon").val() == 1){
-			if($("#remaintimes").val() != 999){
-				$("#remaintimes").val("");
-			}
-		}else{
+		
+		$("#computType").val(1);//没有点击计算费用
+		if($("#isNeworderSon").val() == 0){
 			$("#orderAmount").removeAttr("readonly");
 			$("#actualPayment").removeAttr("readonly");
 		}
-		$("#computType").val(1);//没有点击计算费用
 	}
-	
-	function verifyPrice(){
-		var orderAmount = $("#orderAmount").val()
-		var actualPayment = $("#actualPayment").val();
-		if(orderAmount == actualPayment){
-			$("#compute").hide();
-			$("#afterPayment").val(orderAmount);
-			$("#debtMoney").val(0);
-			$("#spareMoney").val(0);
-		}else{
-			$("#compute").show();
-		}
-	}
-	 $(document).ready(function(){
-		if(${orders.isNeworder == 1}){
-			function today(){
-			    var today=new Date();
-			    var h=today.getFullYear();
-			    var m=today.getMonth()+1;
-			    var d=today.getDate();
-			    m= m<10?"0"+m:m;      
-			    d= d<10?"0"+d:d;  
-			    return h+"-"+m+"-"+d;
-			}
-			document.getElementById("realityAddTime").value = today(); 
-		}
-	 });
 </script>
 </head>
 <body>
@@ -521,19 +383,6 @@
 									</td>
 								</tr>
 								<tr>	
-									<td><label class="pull-right">规格选择：</label></td>
-									<td colspan="3">
-										<select id="specgoods" onchange="selectspecprice(this)" style="width: 120px;height:30px;">
-												<option value="0">规格选择</option>
-										</select><font color="red">如果商品有规格必选项</font> 
-										<div id="serviceTimes">
-										</div>
-										<input id="speckey" name="speckey" type="hidden" value="" class="form-control">
-										<input id="speckeyname" name="speckeyname" type="hidden" value="">
-										<input id="isRel" name="isRel" type="hidden" value="">
-									</td>
-								</tr>
-								<tr>	
 									<td><label class="pull-right">商品编号：</label></td>
 									<td colspan="3">
 										<input id="goodsNo" name="goodsNo" readonly="true" type="text" value="" class="form-control" style="width:150px;height:30px;">
@@ -551,14 +400,16 @@
 									<td><label class="pull-right">市场价格：</label></td>
 									<td><input id="marketPrice" name="marketPrice" maxlength="10" class="form-control" readonly="true"  style="width:150px;height:30px;"/></td>
 									<td><label class="pull-right">购买数量：</label></td>
-									<td><input id="goodsNum" value="1" name="goodsNum" maxlength="10" class="form-control required" readonly="true" style="width:150px;height:30px;"/></td>
+									<td>
+										<input id="goodsNum" value="1" name="goodsNum" class="form-control required" style="width:150px;height:30px;" />
+									</td>
 								</tr>
 								<tr>
 									<td><label class="pull-right"><font color="red">*</font>应付价格：</label></td>
 									<td>
 										<input id="orderAmount" name="orderAmount" maxlength="10" class="form-control required" style="width:150px;height:30px;"/>
 									</td>
-									<td><label class="pull-right"><font color="red">*</font>实际付款(前)：</label></td>
+									<td><label class="pull-right"><font color="red">*</font>实际付款：</label></td>
 									<td>
 										<input id="actualPayment" name="actualPayment" maxlength="10" class="form-control required" style="width:150px;height:30px;"/>
 										<a href="#" id="compute" onclick="compute()">计算费用</a>
@@ -569,28 +420,11 @@
 									</td>
 								</tr>
 								<tr>
-									<td><label class="pull-right">实际付款(后)：</label></td>
-									<td><input id="afterPayment" name="afterPayment" maxlength="10" class="form-control required" readonly="true" style="width:150px;height:30px;"/></td>
-									<td><label class="pull-right">实际次数：</label></td>
-									<td>
-										<input id="remaintimes" name="remaintimes" maxlength="10" class="form-control required digits" style="width:150px;height:30px;"/>
-										<input id="oldremaintimes" name="oldremaintimes" type="hidden"/>
-									</td>
-								</tr>
-								<tr>
 									<td><label class="pull-right">欠款：</label></td>
 									<td><input id="debtMoney" name="debtMoney" maxlength="10" class="form-control required" readonly="true"  style="width:150px;height:30px;"/></td>
 									<td><label class="pull-right">余额：</label></td>
 									<td><input id="spareMoney" name="spareMoney" maxlength="10" class="form-control required" readonly="true"  style="width:150px;height:30px;"/></td>
 								</tr>
-								<c:if test="${orders.isNeworder == 1}">
-									<tr>
-										<td><label class="pull-right"><font color="red">*</font>实际下单时间：</label></td>	
-										<td>
-											<input id="realityAddTime" name="realityAddTime" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'%y-%M-%d'})"/>
-										</td>
-									</tr>
-								</c:if>
 							</table>
 						</form:form>
 				</div>

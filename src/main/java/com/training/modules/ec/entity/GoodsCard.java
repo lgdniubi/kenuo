@@ -21,7 +21,7 @@ public class GoodsCard extends DataEntity<GoodsCard> {
 	private String goodsName; 		// 商品名称
 	private int goodsNum; 			// 次（个）数
 	private int serviceMin; 		// 服务时长（虚拟商品）
-	private String isReal; 			// 是否为实物（0：实物；1：虚拟；）
+	private int isReal; 			// 是否为实物（0：实物；1：虚拟；）
 	private double marketPrice;		// 市场单价
 	private double price; 			// 优惠价
 	private double totalMarketPrice;// 市场价合计
@@ -65,10 +65,10 @@ public class GoodsCard extends DataEntity<GoodsCard> {
 	public void setServiceMin(int serviceMin) {
 		this.serviceMin = serviceMin;
 	}
-	public String getIsReal() {
+	public int getIsReal() {
 		return isReal;
 	}
-	public void setIsReal(String isReal) {
+	public void setIsReal(int isReal) {
 		this.isReal = isReal;
 	}
 	public double getMarketPrice() {

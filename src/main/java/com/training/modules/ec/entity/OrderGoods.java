@@ -88,6 +88,10 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	
 	private Date realityAddTime;         //实际下单时间
 	
+	private int groupId;                  //组id，卡项订单，一个卡项商品下有多个子项，每个子项的组id就是那个卡项的recid
+	
+	private double suitCardBalance;       //套卡剩余金额总和（充值时页面展示用）
+	
 	public int getAfterSaleNum() {
 		return afterSaleNum;
 	}
@@ -467,6 +471,18 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setExpiringdate(String expiringdate) {
 		this.expiringdate = expiringdate;
+	}
+	public int getGroupId() {
+		return groupId;
+	}
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
+	}
+	public double getSuitCardBalance() {
+		return suitCardBalance;
+	}
+	public void setSuitCardBalance(double suitCardBalance) {
+		this.suitCardBalance = suitCardBalance;
 	}
 	
 }

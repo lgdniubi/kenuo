@@ -735,4 +735,5 @@
 	<select id="selectByMaxSort" resultType="int">
 		SELECT MAX(sort) as num FROM mtmydb.mtmy_goods 
 	</select>
+	
 </mapper>

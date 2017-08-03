@@ -180,7 +180,7 @@
 			u.nickname AS "username",
 			a.is_real as isReal,
 			a.channel_flag AS channelflag,
-			COUNT(m.rec_id) AS "goodsnum",
+			(select COUNT(gm.rec_id) from mtmydb.mtmy_order_goods_mapping gm where gm.order_id = a.order_id and gm.group_id = 0 ) AS "goodsnum",
 			<!-- IFNULL(ogd.order_arrearage,0) AS orderArrearage, -->
 			a.del_flag,
 			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
@@ -284,7 +284,7 @@
 			u.nickname AS "username",
 			a.is_real as isReal,
 			a.channel_flag AS channelflag,
-			COUNT(m.rec_id) AS "goodsnum",
+			(select COUNT(gm.rec_id) from mtmydb.mtmy_order_goods_mapping gm where gm.order_id = a.order_id and gm.group_id = 0 ) AS "goodsnum",
 			<!-- IFNULL(ogd.order_arrearage,0) AS orderArrearage, -->
 			a.del_flag,
 			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
@@ -863,6 +863,7 @@
 			del_flag,
 			invoice_overtime,
 			user_note,
+			discount,
 			pay_time,
 			create_by
 		)values(
@@ -889,6 +890,7 @@
 			#{delFlag},
 			#{invoiceOvertime},
 			#{usernote},
+			1,
 			SYSDATE(),
 			#{createBy.id}
 		)
@@ -898,7 +900,8 @@
 	<update id="updateAccount">
 		UPDATE mtmydb.mtmy_user_accounts
 		SET account_balance = #{accountBalance}, 
-			account_arrearage = #{accountArrearage} 
+			account_arrearage = #{accountArrearage},
+			user_integral = #{userIntegral}
 		where user_id = #{userid}
 	</update>
 	
@@ -917,7 +920,7 @@
 			0,
 			0,
 			0,
-			0,
+			#{userIntegral},
 			#{accountBalance},
 			#{accountArrearage}
 		)
@@ -1020,6 +1023,7 @@
 			address,
 			user_note,
 			invoice_overtime,
+			discount,
 			pay_time,
 			create_by
 		)values(
@@ -1048,6 +1052,7 @@
 			#{address},
 			#{usernote},
 			#{invoiceOvertime},
+			1,
 			SYSDATE(),
 			#{createBy.id}
 		)
@@ -1239,4 +1244,40 @@
 		FROM mtmydb.mtmy_order_goods_mapping 
 		WHERE order_id = #{orderid}
 	</select>
+	
+	<!-- 查找卡项的子项 -->
+	<select id="selectCardSon" resultType="Goods">
+		SELECT
+			gc.goods_id AS 'goodsId',
+			gc.goods_name AS 'goodsName',
+			gc.market_price AS 'marketPrice',
+			gc.price AS 'shopPrice',
+			gc.original_img AS 'originalImg',
+			gc.is_real AS 'isReal',
+			gc.goods_num AS 'goodsNum',
+			gc.service_min AS 'serviceMin'
+		FROM mtmydb.mtmy_goods_card gc
+		WHERE gc.card_id = #{cradId}
+	</select>
+	
+	<!-- 充值，处理预约金送云币日志 -->
+	<insert id="insertIntegralLog">
+		INSERT INTO mtmydb.mtmy_integrals_log(
+			user_id,
+			integral_type,
+			integral_source,
+			action_type,
+			integral,
+			order_id,
+			create_time
+		)VALUES(
+			#{userId},
+			#{integralType},
+			#{integralSource},
+			#{actionType},
+			#{integral},
+			#{orderId},
+			SYSDATE()
+		) 
+	</insert>
 </mapper>

@@ -95,7 +95,6 @@ public class Goods extends DataEntity<Goods> {
 	
 	private int integral ;		//赠送云币数量
 	
-	
 	/**
 	 * get/set
 	 */
@@ -477,7 +476,5 @@ public class Goods extends DataEntity<Goods> {
 	public void setIntegral(int integral) {
 		this.integral = integral;
 	}
-	
-	
 	
 }
