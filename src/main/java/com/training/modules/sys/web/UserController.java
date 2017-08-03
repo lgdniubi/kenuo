@@ -494,7 +494,7 @@ public class UserController extends BaseController {
 		} catch (Exception e) {
 			logger.error("#####[保存用户数据权限-出现异常：]"+e.getMessage());
 			BugLogUtils.saveBugLog(request, "保存用户数据权限", e);
-			model.addAttribute("message", "保存出现异常，请与管理员联系");
+			addMessage(redirectAttributes, "保存出现异常，请与管理员联系");
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}

@@ -241,7 +241,7 @@ public class LiveAudit extends CommonService{
 								m.put("remark", "直播编号：" + noticelives.get(h).getAuditid()+ "云币分成主播获得：" + proportions);
 								entryService.cloudcoinOrderlog(m);
 							}
-							redisClientTemplate.del("mtmy_id_"+ noticelives.get(h).getMtmyUserId());
+							redisClientTemplate.del(noticelives.get(h).getAuditid() + "_"+ noticelives.get(h).getMtmyUserId());
 							redisLock.unlock();
 							//将云币划分结果信息入库
 							m.put("total_reward", num);//总收益
