@@ -103,7 +103,7 @@
 			}else{
 				if(servicetimes == 999){//是否为时限卡,剩余次数赋值,
 					$("#d1serviceTimes").hide();
-					$("#serviceTimes").val(servicetimes);
+					$("#serviceTimes").val(remaintimes);//时限卡内还剩下多少次就售后多少次
 				}else{
 					$("#d1serviceTimes").show();
 				}

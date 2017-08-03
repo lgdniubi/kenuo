@@ -52,7 +52,7 @@
 				<c:if test="${goodsCard.isReal == 2}">
 					<tr>
 						<td class="width-15 active">
-							<label class="pull-right"><font color="red">*</font>服务次数:</label>
+							<label class="pull-right"><font color="red">*</font>次(个)数:</label>
 						</td>
 						<td class="width-35">
 							<input id="goodsNum" htmlEscape="false" maxlength="3" class="form-control required" value="${goodsCard.goodsNum }"
