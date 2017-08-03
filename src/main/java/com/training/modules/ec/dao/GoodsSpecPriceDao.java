@@ -48,4 +48,10 @@ public interface GoodsSpecPriceDao extends CrudDao<GoodsSpecPrice>{
 	 * @return
 	 */
 	public GoodsSpecPrice selectSuitCard(int id);
+
+	/**
+	 * 卡项套卡添加默认规格
+	 * @param gsp
+	 */
+	public void savespec(GoodsSpecPrice gsp);
 }

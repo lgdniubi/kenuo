@@ -622,17 +622,168 @@ public class OrdersController extends BaseController {
 	 */
 	@RequestMapping(value = "returnGoddsList")
 	public String returnGoddsList(ReturnedGoods returnedGoods, String orderid, Model model) {
+		
 		//returnGoods = returnGoodsService.get(orderid);
 		List<OrderGoods> list=new ArrayList<OrderGoods>();
 		Orders orders=new Orders();
+		
 		orders = ordersService.findselectByOrderId(orderid);
 		returnedGoods.setUserId(orders.getUserid());
-		list=ordergoodService.orderlist(orderid);
 		
-		model.addAttribute("orders", orders);
-		model.addAttribute("orderGoodList", list);
-		model.addAttribute("returnedGoods", returnedGoods);
-		return "modules/ec/returnForm";
+		if(returnedGoods.getIsReal() == 2){//套卡 售后
+			String suitCardSons = "";
+			String isreal = "";
+			int num;
+			List<List<OrderGoods>> result = new ArrayList<List<OrderGoods>>();//存放每个卡项商品和它的子项集合
+			List<OrderGoods> resultSon = new ArrayList<OrderGoods>();//存放一个卡项商品和它的子项
+			
+			list=ordergoodService.orderlistCardSuit(orderid);//根据订单id查询订单中的套卡及其子项
+			for(int i=0;i<list.size();i++){
+				if(list.get(i).getGroupid() == 0 && resultSon.size() > 0){
+					result.add(resultSon);
+					resultSon = new ArrayList<OrderGoods>();
+				}
+				resultSon.add(list.get(i));
+				if(i == (list.size()-1)){                        //将最后一次循环的结果放到集合里
+					result.add(resultSon);
+				}
+			}
+			if(result.size() > 0){
+				for(List<OrderGoods> lists:result){                            
+					if((lists.size() - 1) > 0){
+						num = lists.size() - 1;
+						OrderGoods father = lists.get(0);
+						isreal = lists.get(1).getIsreal()==0?"实物":"虚拟";
+						suitCardSons = suitCardSons +
+								"<tr> "+
+								"<td rowspan='"+num+"'><input id='selectId' name='selectId' type='radio' value='"+father.getRecid()+"'  class='form required'  onchange='selectFunction(this)'/></td>"+
+								"<td align='center' rowspan='"+num+"'> "+father.getGoodsname()+"</td> "+
+								"<td align='center' rowspan='"+num+"'>套卡</td> "+
+								"<td align='center'> "+lists.get(1).getGoodsname()+"</td> "+
+								"<td align='center'> "+isreal+"</td> "+
+								"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
+								"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
+								"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getTotalAmount()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getOrderArrearage()+"</td> "+
+							"</tr> ";
+						suitCardSons = suitCardSons +
+								"<input type='hidden' id='"+father.getRecid()+"orderAmount' name='orderAmount' value="+father.getOrderAmount()+" />"+
+								"<input type='hidden' id='"+father.getRecid()+"totalAmount' name='totalAmount' value="+father.getTotalAmount()+" />"+
+								"<input type='hidden' id='"+father.getRecid()+"orderArrearage' name='orderArrearage' value="+father.getOrderArrearage()+ "/>";
+						for(int i=2;i<lists.size();i++){
+							isreal = lists.get(i).getIsreal()==0?"实物":"虚拟";
+							if(isreal.equals("实物")){
+								suitCardSons = suitCardSons +
+									"<input type='hidden' id='"+lists.get(i).getRecid()+"isReal' name='isReal' value="+father.getOrderArrearage()+ "/>";
+							}
+							suitCardSons = suitCardSons +
+								"<tr> "+
+									"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
+									"<td align='center'> "+isreal+"</td> "+
+									"<td align='center'> "+lists.get(i).getMarketprice()+"</td> "+
+									"<td align='center'> "+lists.get(i).getGoodsprice()+"</td> "+
+									"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
+								"</tr>";
+						}
+			
+					}
+				}
+			}
+			model.addAttribute("orders", orders);
+			model.addAttribute("suitCardSons", suitCardSons);
+			model.addAttribute("returnedGoods", returnedGoods);
+			
+			return "modules/ec/returnFormSuit";
+		}else if(returnedGoods.getIsReal() == 3){//通用卡 售后
+			String suitCardSons = "";
+			String isreal = "";
+			String goodsNum = "";
+			int num;
+			List<List<OrderGoods>> result = new ArrayList<List<OrderGoods>>();//存放每个卡项商品和它的子项集合
+			List<OrderGoods> resultSon = new ArrayList<OrderGoods>();//存放一个卡项商品和它的子项
+			
+			list=ordergoodService.orderlistCardSuit(orderid);//根据订单id查询订单中的通用卡及其子项
+			for(int i=0;i<list.size();i++){
+				if(list.get(i).getGroupid() == 0 && resultSon.size() > 0){
+					result.add(resultSon);
+					resultSon = new ArrayList<OrderGoods>();
+				}
+				resultSon.add(list.get(i));
+				if(i == (list.size()-1)){                        //将最后一次循环的结果放到集合里
+					result.add(resultSon);
+				}
+			}
+			if(result.size() > 0){
+				for(List<OrderGoods> lists:result){                            
+					if((lists.size() - 1) > 0){
+						num = lists.size() - 1;
+						OrderGoods father = lists.get(0);
+						isreal = lists.get(1).getIsreal()==0?"实物":"虚拟";
+						if(isreal.equals("实物")){//通用卡实物存在购买数量,虚拟不存在
+							goodsNum = String.valueOf(lists.get(1).getGoodsnum());
+						}else{
+							goodsNum = "";
+						}
+						suitCardSons = suitCardSons +
+								"<tr> "+
+								"<td rowspan='"+num+"'><input id='selectId' name='selectId' type='radio' value='"+father.getRecid()+"'  class='form required'  onchange='selectFunction(this)'/></td>"+
+								"<td align='center' rowspan='"+num+"'> "+father.getGoodsname()+"</td> "+
+								"<td align='center' rowspan='"+num+"'>通用卡</td> "+
+								"<td align='center' rowspan='"+num+"'>"+father.getSpeckeyname()+"</td> "+
+								"<td align='center'> "+lists.get(1).getGoodsname()+"</td> "+
+								"<td align='center'> "+isreal+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getMarketprice()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getGoodsprice()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
+								"<td align='center'> "+goodsNum+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getTotalAmount()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getOrderArrearage()+"</td> "+
+							"</tr> ";
+						suitCardSons = suitCardSons +
+								"<input type='hidden' id='"+father.getRecid()+"orderAmount' name='orderAmount' value="+father.getOrderAmount()+" />"+
+								"<input type='hidden' id='"+father.getRecid()+"totalAmount' name='totalAmount' value="+father.getTotalAmount()+" />"+
+								"<input type='hidden' id='"+father.getRecid()+"orderArrearage' name='orderArrearage' value="+father.getOrderArrearage()+ "/>";
+						for(int i=2;i<lists.size();i++){
+							isreal = lists.get(i).getIsreal()==0?"实物":"虚拟";
+							if(isreal.equals("实物")){//通用卡实物存在购买数量,虚拟不存在
+								goodsNum = String.valueOf(lists.get(i).getGoodsnum());
+							}else{
+								goodsNum = "";
+							}
+							if(isreal.equals("实物")){
+								suitCardSons = suitCardSons +
+									"<input type='hidden' id='"+lists.get(i).getRecid()+"isReal' name='isReal' value="+father.getOrderArrearage()+ "/>";
+							}
+							suitCardSons = suitCardSons +
+								"<tr> "+
+									"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
+									"<td align='center'> "+isreal+"</td> "+
+									"<td align='center'> "+goodsNum+"</td> "+
+								"</tr>";
+						}
+			
+					}
+				}
+			}
+			model.addAttribute("orders", orders);
+			model.addAttribute("suitCardSons", suitCardSons);
+			model.addAttribute("returnedGoods", returnedGoods);
+			return "modules/ec/returnFormCommon";
+		}else{//虚拟和实物售后时
+			
+			returnedGoods.setUserId(orders.getUserid());
+			list=ordergoodService.orderlist(orderid);
+			
+			model.addAttribute("orders", orders);
+			model.addAttribute("orderGoodList", list);
+			model.addAttribute("returnedGoods", returnedGoods);
+			
+			return "modules/ec/returnForm";
+		}
 	}
 	
 	
@@ -1271,6 +1422,85 @@ public class OrdersController extends BaseController {
 					returnAmount=-1;
 				}
 			}
+			
+			
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "计算欠款错误", e);
+			logger.error("计算欠款错误：" + e.getMessage());
+			
+		}
+		return returnAmount;
+	}
+	/**
+	 * 套卡退货/计算订单欠费(土豆)
+	 * @param id
+	 * @param isReal
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "getOrderGoodsByRecid")
+	public double getOrderGoodsByRecid(String id,String orderid, HttpServletRequest request, HttpServletResponse response) {
+		double returnAmount=0;  // -2 分销 未处理   -1  无退款余额
+		DecimalFormat    df   = new DecimalFormat("######0.00");  
+		try {
+			Orders orders=ordersService.selectByOrderIdSum(orderid);
+			/*if(orders.getFlag()==0){//分销未结算
+				if(orders.getOrderamount()==orders.getTotalamount()){
+					returnAmount=-2;
+				}else{
+					GoodsDetailSum detil=new GoodsDetailSum();
+					detil=ordersService.selectDetaiSum(id);
+					if(detil!=null){
+						if("0".equals(isReal)){
+							if(detil.getOrderAmount()==detil.getDetaiAmount()){
+								returnAmount=detil.getDetaiAmount()/detil.getGoodsNum();
+								returnAmount=Double.parseDouble(df.format(returnAmount));
+							}else{
+								returnAmount=-1;
+							}
+						}else if("1".equals(isReal)){
+							if(detil.getTimes()>0){
+								returnAmount=detil.getSingleRealityPrice()*detil.getTimes();
+								returnAmount=Double.parseDouble(df.format(returnAmount));
+								if(returnAmount>detil.getOrderAmount()){
+									returnAmount=detil.getOrderAmount();
+								}
+							}else{
+								returnAmount=-1;
+							}
+						}
+					}else{
+						returnAmount=-1;
+					}
+				}
+			}else if(orders.getFlag()==1){
+				GoodsDetailSum detil=new GoodsDetailSum();
+				detil=ordersService.selectDetaiSum(id);
+				if(detil!=null){
+					if("0".equals(isReal)){
+						if(detil.getOrderAmount()==detil.getDetaiAmount()){
+							returnAmount=detil.getDetaiAmount()/detil.getGoodsNum();
+							returnAmount=Double.parseDouble(df.format(returnAmount));
+						}else{
+							returnAmount=-1;
+						}
+					}else if("1".equals(isReal)){
+						if(detil.getTimes()>0){
+							returnAmount=detil.getSingleRealityPrice()*detil.getTimes();
+							returnAmount=Double.parseDouble(df.format(returnAmount));
+							if(returnAmount>detil.getOrderAmount()){
+								returnAmount=detil.getOrderAmount();
+							}
+						}else{
+							returnAmount=-1;
+						}
+					}
+				}else{
+					returnAmount=-1;
+				}
+			}*/
 			
 			
 		} catch (Exception e) {

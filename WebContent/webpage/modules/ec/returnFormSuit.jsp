@@ -8,14 +8,6 @@
 	<!-- 内容上传 引用-->
 
 <script type="text/javascript">
-		var isReal=0;//判断是否为实物
-		var goodNum=0;
-		var returnAmount=0;//退款金额
-		var remaintimes=0;//剩余次数
-		var singleRealityPrice=0;//服务单次价
-		var orderArrearage=0;//订单欠款
-		var totalAmount=0;//实付款
-		var returnedGoodsNum = 0;//后台查询出来 "实物" 中正在退货的商品数量
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		  if(validateForm.form()){
@@ -24,12 +16,16 @@
 				  top.layer.alert('请选择退货商品!', {icon: 0, title:'提醒'});
 				  return;
 			  }
+			  var orderArrearage=$("#orderArrearage").val();//欠款
 			  if(orderArrearage>0){
 				  top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
 				  return;
 			  }
+			  
+			  
+			  
 			  if(returnAmount==-1){
-				 top.layer.alert('该商品已申请过售后!', {icon: 0, title:'提醒'});
+				 top.layer.alert('该商品欠款或者没有余款，无法退款!', {icon: 0, title:'提醒'});
 				 return;
 			  }else if(returnAmount==-2){
 				 top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
@@ -80,9 +76,42 @@
 		
 		//选中某个商品时,查询数据
 		function selectFunction(o){
-			var id=$("#selectId:checked").val();
-			var type="${orders.channelFlag}";
-			var orderId=$("#orderId").val();
+			var recid=$("#selectId:checked").val();
+			var orderId=$("#"+recid+"orderId").val();//订单id
+			var orderAmount=$("#"+recid+"orderAmount").val();//应付款
+			var totalAmount=$("#"+recid+"totalAmount").val();//实付款
+			var orderArrearage=$("#"+recid+"orderArrearage").val();//欠款
+			//判断是否存在欠款
+			if(parseInt(orderArrearage)>0){
+				top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
+			}else{
+				//判断商品是否分销,是否已经在售后
+				$.ajax({
+					type:"post",
+					async:false,
+					data:{
+						id:id,
+						orderid:orderId
+					 },
+					url:"${ctx}/ec/orders/getOrderGoodsIsFre",
+					success:function(date){
+						returnAmount=date;
+						if(returnAmount==-1){
+							top.layer.alert('该商品欠款或者没有余款，无法退款!', {icon: 0, title:'提醒'});
+							return;
+						}else if(returnAmount==-2){
+							top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
+							return;
+						}
+						
+					},
+					error:function(XMLHttpRequest,textStatus,errorThrown){
+								    
+					}
+				});
+			}
+			
+			
 			isReal="${orders.isReal}";
 			$("#goodsMappingId").val(id);
 			goodNum=$("#"+id+"goodsnum").val();//购买的数量
@@ -132,7 +161,7 @@
 								success:function(date){
 									returnAmount=date;
 									if(returnAmount==-1){
-										top.layer.alert('该商品已申请过售后!', {icon: 0, title:'提醒'});
+										top.layer.alert('该商品欠款或者没有余款，无法退款!', {icon: 0, title:'提醒'});
 										return;
 									}else if(returnAmount==-2){
 										top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
@@ -159,7 +188,7 @@
 							success:function(date){
 								returnAmount=date;
 								if(returnAmount==-1){
-									top.layer.alert('该商品已申请过售后!', {icon: 0, title:'提醒'});
+									top.layer.alert('该商品欠款或者没有余款，无法退款!', {icon: 0, title:'提醒'});
 									return;
 								}else if(returnAmount==-2){
 									top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
@@ -299,66 +328,20 @@
 							<tr>
 								<th style="text-align: center;">选择</th>
 								<th style="text-align: center;">商品名称</th>
-								<th style="text-align: center;">商品规格</th>
 								<th style="text-align: center;">商品类型</th>
+								<th style="text-align: center;">子项名称</th>
+								<th style="text-align: center;">子项类型</th>
 								<th style="text-align: center;">市场价</th>
 								<th style="text-align: center;">优惠价</th>
-								<th style="text-align: center;">系统价</th>
-								<th style="text-align: center;">成交价</th>
+								<th style="text-align: center;">成本价</th>
 								<th style="text-align: center;">购买数量</th>
+								<th style="text-align: center;">应付款</th>
 								<th style="text-align: center;">实付款</th>
-								<th style="text-align: center;">实际服务单价</th>
-								<c:if test="${orders.isReal==1}">
-									<th style="text-align: center;">截止时间</th>
-									<th style="text-align: center;">剩余次数</th>
-								</c:if>
 								<th style="text-align: center;">欠款</th>
 							</tr>
 						</thead>
 						<tbody>
-							<c:forEach items="${orderGoodList}" var="orderGood">
-								<tr>
-									<td><input id="selectId" name="selectId" type="radio" value="${orderGood.recid}"  class="form required"  onchange="selectFunction(this)"/></td>
-									<td style="text-align: center;">${orderGood.goodsname}</td>
-									<td style="text-align: center;">${orderGood.speckeyname }</td>
-									<td  style="text-align: center;">
-										<c:if test="${orderGood.isreal==0}">
-											实物
-										</c:if>
-										<c:if test="${orderGood.isreal==1}">
-											虚拟
-										</c:if>
-									</td>
-									<td  style="text-align: center;">${orderGood.marketprice}</td>
-									<td  style="text-align: center;">${orderGood.goodsprice}</td>
-									<td  style="text-align: center;">${orderGood.costprice}</td>
-									<td  style="text-align: center;">${orderGood.orderAmount}</td>
-									<td  style="text-align: center;">${orderGood.goodsnum}</td>
-									<td  style="text-align: center;">${orderGood.totalAmount}</td>
-									<c:if test="${orders.isReal==1 && orderGood.servicetimes == 999}">
-									<td  style="text-align: center;"></td>
-										<td  style="text-align: center;">${orderGood.expiringdate}</td>
-										<td  style="text-align: center;"></td>
-									</c:if>
-									<c:if test="${orders.isReal==1 && orderGood.servicetimes != 999}">
-									<td  style="text-align: center;">${orderGood.singleRealityPrice}</td>
-										<td  style="text-align: center;"></td>
-										<td  style="text-align: center;">${orderGood.remaintimes}</td>
-									</c:if>
-									<td  style="text-align: center;">${orderGood.orderArrearage}</td>
-								</tr>
-								<input type="hidden" id="${orderGood.recid}goodsnum" name="${orderGood.recid}goodsnum" value="${orderGood.goodsnum}" />
-								<input type="hidden" id="${orderGood.recid}total" name="${orderGood.recid}total" value="${orderGood.totalAmount}" />
-								<input type="hidden" id="${orderGood.recid}singleRealityPrice" name="${orderGood.recid}singleRealityPrice" value="${orderGood.singleRealityPrice}" />
-								<input type="hidden" id="${orderGood.recid}remaintimes" name="${orderGood.recid}remaintimes" value="${orderGood.remaintimes}" />
-								<input type="hidden" id="${orderGood.recid}orderAmount" name="${orderGood.recid}orderAmount" value="${orderGood.orderAmount}" />
-								<input type="hidden" id="${orderGood.recid}orderArrearage" name="${orderGood.recid}orderArrearage" value="${orderGood.orderArrearage}" />
-								<c:if test="${orderGood.isreal==0}">
-									<input type="hidden" id="${orderGood.recid}returnedGoodsNum" value="${orderGood.returnNum}" />
-								</c:if>
-								<!-- 时限卡售后添加字段  -->
-								<input type="hidden" id="${orderGood.recid}servicetimes" name="${orderGood.recid}servicetimes" value="${orderGood.servicetimes}" />
-							</c:forEach>
+							${suitCardSons}
 						</tbody>						
 					</table>
 					<p></p>					

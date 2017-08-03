@@ -78,6 +78,7 @@
 			a.single_reality_price,
 			a.single_norm_price,
 			a.is_after_sales,
+			a.reality_add_time as "realityAddTime",
 			SUM(b.total_amount) as "totalAmount",
 			SUM(b.order_balance) as "orderBalance",
 			SUM(b.service_times) as "remaintimes",
@@ -309,5 +310,28 @@
 		WHERE ogd.goods_mapping_id = #{recId}
 		AND ogd.advance_flag = '0' 
 		AND ogd.service_times = -1
+	</select>
+	
+	<!-- 查询订单中的套卡 -->
+	<select id="orderlistCardSuit" resultType="OrderGoods">
+		SELECT 
+			a.rec_id as 'recid',
+			a.order_id as 'orderid',
+			a.group_id as 'groupid',
+			a.goods_id as 'goodsid',
+			a.goods_name as 'goodsname',
+			a.is_real as 'isreal',
+			a.spec_key_name as 'speckeyname',
+			a.market_price as 'marketprice',
+			a.goods_price as 'goodsprice',
+			a.cost_price as 'costprice',
+			a.goods_num as 'goodsnum',	
+			a.order_amount as 'orderAmount',
+			a.total_amount as 'totalAmount',
+			a.order_arrearage as 'orderArrearage'
+		
+		 FROM mtmydb.mtmy_order_goods_mapping a 
+		
+		WHERE a.order_id = #{orderId}
 	</select>
 </mapper>

@@ -34,8 +34,8 @@ public class OrderGoodsService extends TreeService<OrderGoodsDao,OrderGoods>{
 	public List<OrderGoods> orderlist(String orderid){
 		List<OrderGoods> list = orderGoodsDao.findListByOrderid(orderid);
 		for (OrderGoods orderGoods : list) {
-			if(orderGoods.getServicetimes() == 999){
-				orderGoods.setExpiringdate(getDate(orderGoods.getAddtime(),orderGoods.getExpiringDate()));
+			if(orderGoods.getServicetimes() == 999){//计算时限卡的截止之间
+				orderGoods.setExpiringdate(getDate(orderGoods.getRealityAddTime(),orderGoods.getExpiringDate()));
 			}
 		}
 		return list;
@@ -83,5 +83,14 @@ public class OrderGoodsService extends TreeService<OrderGoodsDao,OrderGoods>{
 		c.setTime(date1);// 设置日历时间
 		c.add(Calendar.MONTH, month);// 在日历的月份上增加6个月
 		return sdf.format(c.getTime());	// 返回截止时间
+	}
+
+	/**
+	 * 查询订单中套卡
+	 * @param orderid
+	 * @return
+	 */
+	public List<OrderGoods> orderlistCardSuit(String orderid) {
+		return orderGoodsDao.orderlistCardSuit(orderid);
 	}
 }

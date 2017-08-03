@@ -175,6 +175,12 @@
 								<a href="${ctx}/ec/goods/form?opflag=ADDPARENT">
 									<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" ><i class="fa fa-plus"></i> 添加商品</button>
 								</a>
+								<a href="${ctx}/ec/goods/form?opflag=ADDSUIT">
+									<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" ><i class="fa fa-plus"></i> 添加套卡</button>
+								</a>
+								<a href="${ctx}/ec/goods/form?opflag=ADDCOMMON">
+									<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" ><i class="fa fa-plus"></i> 添加通用卡</button>
+								</a>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="ec:goods:updateIsOnSale">
 								<button onclick="update('${ctx}/ec/goods/updateIsOnSale?flag=1')" class="btn btn-white btn-sm"><i class="fa fa-file-text-o"></i> 上架</button>
@@ -269,22 +275,26 @@
 									<td style="text-align: left;">
 										<shiro:hasPermission name="ec:goods:view">
 											<a href="http://wap.idengyun.com/mtmy-wap/goods/queryGoodsDetail.do?user_id=1000014&goods_id=${goods.goodsId}" class="btn btn-info btn-xs" target="_bank"><i class="fa fa-search-plus"></i> 预览</a>
-										</shiro:hasPermission> 
-										<shiro:hasPermission name="ec:goods:edit">
-				    						<a href="${ctx}/ec/goods/form?id=${goods.goodsId}&opflag=UPDATE" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
-					    				</shiro:hasPermission>
+										</shiro:hasPermission>
+										<c:if test="${goods.isReal != 2 && goods.isReal != 3}">
+											<shiro:hasPermission name="ec:goods:edit">
+				    							<a href="${ctx}/ec/goods/form?id=${goods.goodsId}&opflag=UPDATE&isReal=${goods.isReal}" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
+						    				</shiro:hasPermission>
+										</c:if>
 					    				<shiro:hasPermission name="ec:goods:del">
 											<a href="${ctx}/ec/goods/delete?id=${goods.goodsId}" onclick="return confirmx('要删除该商品吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
 										</shiro:hasPermission>
 										<shiro:hasPermission name="ec:goods:del">
 											<a href="#" onclick="openDialog('添加商品库存', '${ctx}/ec/goods/fromspecstocks?id=${goods.goodsId}&actionId=${goods.actionId}','600px', '400px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 补仓</a>
 										</shiro:hasPermission>
-										<shiro:hasPermission name="ec:goods:edit">
-											<a href="${ctx}/ec/goods/copyGood?goodsId=${goods.goodsId}&goodsName=${goods.goodsName}" onclick="return confirmx('确认复制该商品吗？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-file"></i>复制</a>
-										</shiro:hasPermission>
+										<c:if test="${goods.isReal != 2 && goods.isReal != 3}">
+											<shiro:hasPermission name="ec:goods:edit">
+												<a href="${ctx}/ec/goods/copyGood?goodsId=${goods.goodsId}&goodsName=${goods.goodsName}" onclick="return confirmx('确认复制该商品吗？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-file"></i>复制</a>
+											</shiro:hasPermission>
+										</c:if>
 										<shiro:hasPermission name="ec:goods:edit">
 											<a href="#" onclick="openDialogView('商品规格', '${ctx}/ec/goods/goodsBySpecList?goodsId=${goods.goodsId}','800px', '500px')" class="btn btn-danger btn-xs" ><i class="fa fa-edit"></i> 商品规格</a>
-										</shiro:hasPermission>
+										</shiro:hasPermission> 
 										<shiro:hasPermission name="ec:goods:refreshRedis">
 											<a href="${ctx}/ec/goods/refreshRedis?goodsId=${goods.goodsId}" onclick="return confirmx('确认刷新该商品(详情)缓存吗？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-file"></i>刷新缓存</a>
 										</shiro:hasPermission>
