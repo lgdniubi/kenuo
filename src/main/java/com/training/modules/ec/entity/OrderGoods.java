@@ -85,7 +85,6 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private String officeId;              //组织架构ID
 	//-------------------------------------------------------------------------
 	
-	private int groupid;                 //分组id
 	
 	
 	private double goodsBalance;         //商品余额，页面展示用
@@ -95,12 +94,6 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	
 	private double suitCardBalance;       //套卡剩余金额总和（充值时页面展示用）
 	
-	public int getGroupid() {
-		return groupid;
-	}
-	public void setGroupid(int groupid) {
-		this.groupid = groupid;
-	}
 	public int getAfterSaleNum() {
 		return afterSaleNum;
 	}

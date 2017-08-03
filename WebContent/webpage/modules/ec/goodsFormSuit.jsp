@@ -237,7 +237,7 @@
 											             </button> 
 										       		 </span>
 										    </div>
-											 <label id="franchiseeIdName-error" class="error" for="franchiseeIdName" style="display:none"></label>
+											<label id="franchiseeIdName-error" class="error" for="franchiseeIdName" style="display:none"></label>
 								     	</div>	
 									</li>
 									<li class="form-group">
@@ -926,11 +926,11 @@
 							"<td> "+goodsId[i].value+"<input id='goodsIds' name='goodsIds' type='hidden' value='"+goodsId[i].value+"'></td> "+
 							"<td> "+goodsId[i].text+"<input id='goodsNames' name='goodsNames' type='hidden' value='"+goodsId[i].text+"'></td> "+
 							"<td> "+type+"</td> "+
-							"<td> <input id='goodsNums"+j+"' name='goodsNums' type='hidden' value='0' readonly></td> "+
-							"<td> <input id='marketPrices"+j+"' name='marketPrices' type='hidden' value='0' readonly></td> "+
-							"<td> <input id='prices"+j+"' name='prices' type='hidden' value='0' readonly='true'></td> "+
-							"<td> <input id='totalMarketPrices"+j+"' name='totalMarketPrices' type='hidden' value='0' readonly='true'></td> "+
-							"<td> <input id='totalPrices"+j+"' name='totalPrices' type='hidden' value='0' readonly='true'></td> "+
+							"<td> <input id='goodsNums"+j+"' name='goodsNums' type='text' value='0' readonly class='form-control'></td> "+
+							"<td> <input id='marketPrices"+j+"' name='marketPrices' type='text' value='0' readonly class='form-control'></td> "+
+							"<td> <input id='prices"+j+"' name='prices' type='text' value='0' readonly='true' class='form-control'></td> "+
+							"<td> <input id='totalMarketPrices"+j+"' name='totalMarketPrices' type='text' value='0' readonly='true' class='form-control'></td> "+
+							"<td> <input id='totalPrices"+j+"' name='totalPrices' type='text' value='0' readonly='true' class='form-control'></td> "+
 							"<td> "+												  
 								"<a href='#' class='btn btn-success btn-xs' onclick='updateByGoodsCard(this,"+goodsId[i].value+","+j+","+isReal+")'><i class='fa fa-edit'></i> 填写价格</a> "+
 								"<a href='#' class='btn btn-danger btn-xs' onclick='delFile(this)'><i class='fa fa-trash'></i> 删除</a> "+

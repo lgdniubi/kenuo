@@ -639,7 +639,7 @@ public class OrdersController extends BaseController {
 			
 			list=ordergoodService.orderlistCardSuit(orderid);//根据订单id查询订单中的套卡及其子项
 			for(int i=0;i<list.size();i++){
-				if(list.get(i).getGroupid() == 0 && resultSon.size() > 0){
+				if(list.get(i).getGroupId() == 0 && resultSon.size() > 0){
 					result.add(resultSon);
 					resultSon = new ArrayList<OrderGoods>();
 				}
@@ -707,7 +707,7 @@ public class OrdersController extends BaseController {
 			
 			list=ordergoodService.orderlistCardSuit(orderid);//根据订单id查询订单中的通用卡及其子项
 			for(int i=0;i<list.size();i++){
-				if(list.get(i).getGroupid() == 0 && resultSon.size() > 0){
+				if(list.get(i).getGroupId() == 0 && resultSon.size() > 0){
 					result.add(resultSon);
 					resultSon = new ArrayList<OrderGoods>();
 				}

@@ -93,6 +93,52 @@
 				}); 
 			
 			});
+			$("#franchiseeIdButton").click(function(){
+				// 是否限制选择，如果限制，设置为disabled
+				if ($("#franchiseeIdButton").hasClass("disabled")){
+					return true;
+				}
+				// 正常打开	
+				top.layer.open({
+				    type: 2, 
+				    area: ['300px', '420px'],
+				    title:"选择加盟商",
+				    ajaxData:{selectIds: $("#franchiseeIdId").val()},
+				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/franchisee/treeData")+"&module=&checked=&extId=&isAll=&selectIds=" ,
+				    btn: ['确定', '关闭']
+		    	       ,yes: function(index, layero){ //或者使用btn1
+								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+								var ids = [], names = [], nodes = [];
+								if ("" == "true"){
+									nodes = tree.getCheckedNodes(true);
+								}else{
+									nodes = tree.getSelectedNodes();
+								}
+								for(var i=0; i<nodes.length; i++) {//
+									if (nodes[i].isParent){
+										//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+										//layer.msg('有表情地提示');
+										top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+										return false;
+									}//
+									ids.push(nodes[i].id);
+									names.push(nodes[i].name);//
+									break; // 如果为非复选框选择，则返回第一个选择  
+								}
+								if(confirm("确定要改变所属商家吗?(子项商品可能会被删除)")){
+									$("#franchiseeIdId").val(ids.join(",").replace(/u_/ig,""));
+									$("#franchiseeIdName").val(names.join(","));
+									$("#franchiseeIdName").focus();
+									$("#addZTD").find("tr").remove();
+								}
+								top.layer.close(index);
+						    	       },
+		    	cancel: function(index){ //或者使用btn2
+		    	           //按钮【按钮二】的回调
+		    	       }
+				}); 
+			
+			});
 		});
 	</script> 
 </head>
@@ -187,10 +233,14 @@
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>所属商家：</span>
 										<div style="width: 40%;padding-left: 150px;">
-											<sys:treeselect id="franchiseeId" name="franchiseeId" value="${goods.franchisee.id}"
-												labelName="franchisee.name" labelValue="${goods.franchisee.name}" 
-	 											title="加盟商" url="/sys/franchisee/treeData" 
-	 											cssClass="form-control required" allowClear="true" notAllowSelectParent="true"/> 
+											<input id="franchiseeIdId" name="franchiseeId" class="form-control required" type="hidden" value="" aria-required="true">
+											<div class="input-group">
+												<input id="franchiseeIdName" name="franchisee.name" readonly="readonly" type="text" value="" data-msg-required="" class="form-control required" style="" aria-required="true">
+										       	<span class="input-group-btn">
+											    	<button type="button" id="franchiseeIdButton" class="btn   btn-primary  "><i class="fa fa-search"></i></button> 
+										       	</span>
+										    </div>
+											<label id="franchiseeIdName-error" class="error" for="franchiseeIdName" style="display:none"></label>
 										</div>
 									</li>
 									<li class="form-group">
@@ -1061,10 +1111,10 @@
 			        if(num == 1){//添加虚拟商品时,没有数量
 				       	for(var i=0;i<goodsId.length;i++){
 				        	$("<tr> "+
-								"<td> "+goodsId[i].value+"<input id='goodsIds' name='goodsIds' type='hidden' value='"+goodsId[i].value+"'></td> "+
-								"<td> "+goodsId[i].text+"<input id='goodsNames' name='goodsNames' type='hidden' value='"+goodsId[i].text+"'></td> "+
+								"<td> "+goodsId[i].value+"<input id='goodsIds' name='goodsIds' type='hidden' value='"+goodsId[i].value+"' class='form-control'></td> "+
+								"<td> "+goodsId[i].text+"<input id='goodsNames' name='goodsNames' type='hidden' value='"+goodsId[i].text+"' class='form-control'></td> "+
 								"<td> "+type+"</td> "+
-								"<td><input id='goodsNums"+j+"' name='goodsNums' type='hidden' value='0' readonly></td> "+
+								"<td><input id='goodsNums"+j+"' name='goodsNums' type='hidden' value='0' readonly class='form-control'></td> "+
 								"<td> "+												  
 									"<a href='#' class='btn btn-danger btn-xs' onclick='delFile(this)'><i class='fa fa-trash'></i> 删除</a> "+
 								"</td>"+										
@@ -1074,10 +1124,10 @@
 			        }else{
 			        	for(var i=0;i<goodsId.length;i++){
 				        	$("<tr> "+
-								"<td> "+goodsId[i].value+"<input id='goodsIds' name='goodsIds' type='hidden' value='"+goodsId[i].value+"'></td> "+
-								"<td> "+goodsId[i].text+"<input id='goodsNames' name='goodsNames' type='hidden' value='"+goodsId[i].text+"'></td> "+
+								"<td> "+goodsId[i].value+"<input id='goodsIds' name='goodsIds' type='hidden' value='"+goodsId[i].value+"' class='form-control'></td> "+
+								"<td> "+goodsId[i].text+"<input id='goodsNames' name='goodsNames' type='hidden' value='"+goodsId[i].text+"' class='form-control'></td> "+
 								"<td> "+type+"</td> "+
-								"<td> <input id='goodsNums"+j+"' name='goodsNums' type='text' value='0' readonly></td> "+
+								"<td> <input id='goodsNums"+j+"' name='goodsNums' type='text' value='0' readonly class='form-control'></td> "+
 								"<td> "+												  
 									"<a href='#' class='btn btn-success btn-xs' onclick='updateByGoodsCard(this,"+goodsId[i].value+","+j+","+isReal+")'><i class='fa fa-edit'></i> 填写数量</a> "+
 									"<a href='#' class='btn btn-danger btn-xs' onclick='delFile(this)'><i class='fa fa-trash'></i> 删除</a> "+
