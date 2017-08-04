@@ -122,12 +122,18 @@
 									names.push(nodes[i].name);//
 									break; // 如果为非复选框选择，则返回第一个选择  
 								}
-								if(confirm("确定要改变所属商家吗?(子项商品可能会被删除)")){
+								if($("#franchiseeIdId").val() != "" && $("#franchiseeIdId").val() != null){
+									if(confirm("确定要改变所属商家吗?(子项商品会被删除)")){
+										$("#franchiseeIdId").val(ids.join(",").replace(/u_/ig,""));
+										$("#franchiseeIdName").val(names.join(","));
+										$("#franchiseeIdName").focus();
+										$("#addZTD").find("tr").remove();
+										$("<tr><th style='text-align: center;' colspan='6'>合&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;计</th><th style='text-align: center;' class='totalMarketPrices'></th><th style='text-align: center;' class='totalPrices'></th><th style='text-align: center;'></th></tr>").appendTo($("#addZTD"));
+									}
+								}else{
 									$("#franchiseeIdId").val(ids.join(",").replace(/u_/ig,""));
 									$("#franchiseeIdName").val(names.join(","));
 									$("#franchiseeIdName").focus();
-									$("#addZTD").find("tr").remove();
-									$("<tr><th style='text-align: center;' colspan='6'>合&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;计</th><th style='text-align: center;' class='totalMarketPrices'></th><th style='text-align: center;' class='totalPrices'></th><th style='text-align: center;'></th></tr>").appendTo($("#addZTD"));
 								}
 								top.layer.close(index);
 		    	       },
@@ -714,13 +720,6 @@
 						top.layer.alert('请填写套卡子项!', {icon: 0, title:'提醒'});
 						return;
 					}
-					if($(newfranchiseeId).val() != franchiseeId){
-						if(confirm("确认要更改所属商家吗?(卡项中的商品将会删除,需要重新添加)","提示框")){
-							$("#addZTD").find("tr").remove();
-							return;
-						}
-						return;
-				    }
 					var content = $(".ke-edit-iframe").contents().find(".ke-content").html();
 					if(content.indexOf("style") >=0){
 						content = content.replace("&lt;style&gt;","<style>");
