@@ -332,10 +332,10 @@
 		    SYSDATE(),
 		    SYSDATE(),
 		    #{goodsType},
-		    <if test="isReal != 1">
+		    <if test="isReal == 0">
 		    	0,
 		    </if>
-		    <if test="isReal == 1">
+		    <if test="isReal != 0">
 		    	#{advancePrice},
 		    </if>
 		    #{supplierId}

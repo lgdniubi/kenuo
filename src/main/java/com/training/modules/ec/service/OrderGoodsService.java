@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.training.common.service.TreeService;
 import com.training.modules.ec.dao.OrderGoodsDao;
 import com.training.modules.ec.entity.OrderGoods;
+import com.training.modules.ec.entity.ReturnedGoods;
 
 /**
  * 订单商品信息service
@@ -93,4 +94,14 @@ public class OrderGoodsService extends TreeService<OrderGoodsDao,OrderGoods>{
 	public List<OrderGoods> orderlistCardSuit(String orderid) {
 		return orderGoodsDao.orderlistCardSuit(orderid);
 	}
+	
+	/**
+	 * 根据组ID(mapping_id)获取卡项中的实物集合
+	 * @param orderGoods
+	 * @return
+	 */
+	public List<OrderGoods> getOrderGoodsCard(OrderGoods orderGoods) {
+		return orderGoodsDao.getOrderGoodsCard(orderGoods);
+	}
+
 }

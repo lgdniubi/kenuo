@@ -125,11 +125,17 @@
 									names.push(nodes[i].name);//
 									break; // 如果为非复选框选择，则返回第一个选择  
 								}
-								if(confirm("确定要改变所属商家吗?(子项商品可能会被删除)")){
+								if($("#franchiseeIdId").val() != "" && $("#franchiseeIdId").val() != null){
+									if(confirm("确定要改变所属商家吗?(子项商品会被删除)")){
+										$("#franchiseeIdId").val(ids.join(",").replace(/u_/ig,""));
+										$("#franchiseeIdName").val(names.join(","));
+										$("#franchiseeIdName").focus();
+										$("#addZTD").find("tr").remove();
+									}
+								}else{
 									$("#franchiseeIdId").val(ids.join(",").replace(/u_/ig,""));
 									$("#franchiseeIdName").val(names.join(","));
 									$("#franchiseeIdName").focus();
-									$("#addZTD").find("tr").remove();
 								}
 								top.layer.close(index);
 						    	       },
@@ -840,13 +846,6 @@
 						top.layer.alert('子项信息不能为空!', {icon: 0, title:'提醒'}); 
 						return;
 					}
-					if($(newfranchiseeId).val() != franchiseeId){
-						if(confirm("确认要更改所属商家吗?(卡项中的商品将会删除,需要重新添加)","提示框")){
-							$("#addZTD").find("tr").remove();
-							return;
-						}
-						return;
-				    }
 					
 					var content = $(".ke-edit-iframe").contents().find(".ke-content").html();
 					if(content.indexOf("style") >=0){

@@ -82,4 +82,16 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 */
 	public List<ReturnedGoods> findListByUser(ReturnedGoods returnedGoods);
 	
+	/**
+	 * 确定商品是否售后    (是:正在售后    或者   已经售后)
+	 * @param returnedGoods
+	 * @return
+	 */
+	public int getReturnedGoods(ReturnedGoods returnedGoods);
+	/**
+	 * 卡项售后子项添加到mtmy_returned_goods_card
+	 * @param rg
+	 */
+	public void insertReturnGoodsCard(ReturnedGoods rg);
+	
 }

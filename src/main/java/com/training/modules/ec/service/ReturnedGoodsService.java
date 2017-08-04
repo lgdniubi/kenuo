@@ -197,14 +197,38 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		OrderGoodsDetails ogd = new OrderGoodsDetails();
 		ogd.setOrderId(returnedGoods.getOrderId());
 		ogd.setGoodsMappingId(returnedGoods.getGoodsMappingId());
-		ogd.setItemAmount(returnedGoods.getServiceTimes()*orderGoods.getSingleRealityPrice());
-		ogd.setItemCapitalPool(returnedGoods.getServiceTimes()*orderGoods.getSingleNormPrice());
+		//套卡和通用卡中不存入次字段
+		if(orders.getIsReal() == 0 || orders.getIsReal() == 1){
+			ogd.setItemAmount(returnedGoods.getServiceTimes()*orderGoods.getSingleRealityPrice());
+			ogd.setItemCapitalPool(returnedGoods.getServiceTimes()*orderGoods.getSingleNormPrice());
+		}
 		ogd.setServiceTimes(-returnedGoods.getServiceTimes());
 		ogd.setType(2);
 		ogd.setAdvanceFlag("4");
 		ogd.setCreateBy(UserUtils.getUser());
 		orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
 		
+		//套卡和通用卡售后子项保存mtmy_returned_goods_card
+		if(orders.getIsReal() == 2 || orders.getIsReal() == 3){
+			//通过recid查询售后子项
+			List<OrderGoods> og = orderGoodsDao.getOrderGoodsCard(orderGoods);
+			//循环卡项子项,把实物售后数量写入
+			ReturnedGoods rg = new ReturnedGoods();
+			int j = 0 ;
+			for (int i = 0; i < og.size(); i++) {
+				rg.setReturnedId(id);
+				rg.setGoodsMappingId(og.get(i).getRecid()+"");
+				rg.setIsReal(og.get(i).getIsreal());
+				if(og.get(i).getIsreal() == 0){//当子项是实物时,把售后数量写入
+					rg.setReturnNum(returnedGoods.getReturnNums().get(j));
+					j++;
+				}else if(og.get(i).getIsreal() == 1){
+					rg.setReturnNum(1);
+				}
+				rg.setGoodsName(og.get(i).getGoodsname());
+				returnedGoodsDao.insertReturnGoodsCard(rg);
+			}
+		}
 	}
 
 	/**
@@ -280,6 +304,15 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		// 执行分页查询
 		page.setList(returnedGoodsDao.findListByUser(returnedGoods));
 		return page;
+	}
+
+	/**
+	 * 确定商品是否售后    (是:正在售后    或者   已经售后)
+	 * @param returnedGoods
+	 * @return
+	 */
+	public boolean getReturnedGoods(ReturnedGoods returnedGoods) {
+		return returnedGoodsDao.getReturnedGoods(returnedGoods) >0;
 	}
 
 }

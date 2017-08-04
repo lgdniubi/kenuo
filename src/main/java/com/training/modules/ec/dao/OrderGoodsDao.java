@@ -112,4 +112,12 @@ public interface OrderGoodsDao extends TreeDao<OrderGoods> {
 	 * @return
 	 */
 	public List<OrderGoods> orderlistCardSuit(String orderid);
+
+	/**
+	 * 根据组ID(mapping_id)获取卡项中的实物集合
+	 * @param orderGoods
+	 * @return
+	 */
+	public List<OrderGoods> getOrderGoodsCard(OrderGoods orderGoods);
+	
 }
