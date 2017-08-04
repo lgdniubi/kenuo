@@ -2524,8 +2524,15 @@ public class OrdersController extends BaseController {
 			int servicetimes = orderGoods.getServicetimes();         //预计服务次数
 			int isReal = orderGoods.getIsreal();
 			
-			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());   //卡项本身
+			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid()); //卡项本身
+			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
 			double advance = orderGoods.getAdvancePrice();                 //预约金
+			if(advance == 0){      //当预约金为0的时候付全款
+				advance = goodsPrice;                 //预约金
+			}else{
+				advance = orderGoods.getAdvancePrice();            //预约金
+			}
+			
 			orderGoods.setAdvance(advance);
 			
 			//卡项中预约是某一个子项，故处理预约金是针对子项的，但是预约金本身却是卡项本身的
@@ -2591,11 +2598,16 @@ public class OrdersController extends BaseController {
 			
 			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());   //卡项本身  
 			double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
-			double advance = orderGoods.getAdvancePrice();                 //预约金
 			int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
 			String officeId = orderGoods.getOfficeId();           //组织架构ID
-			
 			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
+			
+			double advance = orderGoods.getAdvancePrice();                 //预约金
+			if(advance == 0){      //当预约金为0的时候付全款
+				advance = goodsPrice;                 //预约金
+			}else{
+				advance = orderGoods.getAdvancePrice();            //预约金
+			}
 			
 			//卡项中预约是某一个子项，故处理预约金是针对子项的，但是预约金本身却是卡项本身的
 			OrderGoods orderGoodsSon = ordersService.selectCardSonReservation(orderGoods.getRecid());   //预约的子项

@@ -1088,6 +1088,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					integralsLog.setActionType(21);
 					integralsLog.setIntegral(integral);
 					integralsLog.setOrderId(oLog.getOrderId());
+					integralsLog.setRemark("商品赠送");
 					ordersDao.insertIntegralLog(integralsLog);
 				}
 				
@@ -1736,6 +1737,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			integralsLog.setActionType(21);
 			integralsLog.setIntegral(integral);
 			integralsLog.setOrderId(oLog.getOrderId());
+			integralsLog.setRemark("商品赠送");
 			ordersDao.insertIntegralLog(integralsLog);
 		}
 		
@@ -2485,6 +2487,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					integralsLog.setActionType(21);
 					integralsLog.setIntegral(integral);
 					integralsLog.setOrderId(oLog.getOrderId());
+					integralsLog.setRemark("商品赠送");
 					ordersDao.insertIntegralLog(integralsLog);
 				}
 				
@@ -2537,6 +2540,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					integralsLog.setActionType(21);
 					integralsLog.setIntegral(integral);
 					integralsLog.setOrderId(oLog.getOrderId());
+					integralsLog.setRemark("商品赠送");
 					ordersDao.insertIntegralLog(integralsLog);
 				}
 				
@@ -2715,6 +2719,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			integralsLog.setActionType(21);
 			integralsLog.setIntegral(integral);
 			integralsLog.setOrderId(oLog.getOrderId());
+			integralsLog.setRemark("商品赠送");
 			ordersDao.insertIntegralLog(integralsLog);
 		}
 		
