@@ -167,6 +167,7 @@ public class TrainLiveAuditController extends BaseController{
 		long time=date.getTime();
 		try {
 			trainLiveAudit.setAuditUser(adminName);
+			trainLiveAudit.setEarningsRatio(trainLiveAudit.getEarningsRatio()/100.0);
 			trainLiveAuditService.update(trainLiveAudit);
 			if(trainLiveAudit.getAuditStatus().equals("2")){
 				int num=trainLiveRoomService.findByUserId(trainLiveAudit.getUserId());
@@ -365,5 +366,29 @@ public class TrainLiveAuditController extends BaseController{
 			logger.error("保查看云币贡献榜失败！：" + e.getMessage());
 		}
 		return "modules/train/cloudContribution";
+	}
+	/**
+	 * 云币贡献管理
+	 * @param trainLiveAudit
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value="liveIntegralsList")
+	public String liveIntegralsList(TrainLiveAudit trainLiveAudit, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes){
+		try {
+			Page<TrainLiveAudit> page = trainLiveAuditService.liveIntegralsList(new Page<TrainLiveAudit>(request, response), trainLiveAudit);
+			int officeIntegrals = trainLiveAuditService.findOfficeIntegrals();	// 商家总云币(临时版本)
+			model.addAttribute("officeIntegrals", officeIntegrals);
+			model.addAttribute("page", page);
+			model.addAttribute("trainLiveAudit",trainLiveAudit);
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "云币贡献管理", e);
+			logger.error("查询云币贡献管理错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
+		}
+		return "modules/train/LiveIntegralsList";
 	}
 }
