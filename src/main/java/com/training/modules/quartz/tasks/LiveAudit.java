@@ -1,5 +1,6 @@
 package com.training.modules.quartz.tasks;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,11 +12,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Component;
 
 import com.training.common.utils.BeanUtil;
 import com.training.modules.quartz.entity.TaskLog;
 import com.training.modules.quartz.tasks.utils.CommonService;
+import com.training.modules.quartz.utils.RedisLock;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.train.entity.EntrySopCastBean;
@@ -26,7 +29,7 @@ import com.training.modules.train.entity.rooms;
 import com.training.modules.train.service.EntryService;
 import com.training.modules.train.service.TrainLiveAuditService;
 import com.training.modules.train.utils.EncryptLiveUtils;
-
+import com.training.modules.train.utils.Utils;
 /**
  * 妃子校直播审核
  *	
@@ -48,8 +51,7 @@ public class LiveAudit extends CommonService{
 	
 	/**
 	 * 妃子校直播审核
-	 * @author yangyang
-	 * @param rooms 
+	 * @author yangyang 
 	 */
 	public void liveAudit(){
 		logger.info("[work0],start,妃子校直播处理，开始时间："+df.format(new Date()));
@@ -148,7 +150,7 @@ public class LiveAudit extends CommonService{
 			int value = Integer.parseInt(ParametersFactory.getTrainsParamValues("live_outTime"));
 			//获取没正常结束直播的过期规则
 			int open_live_expiration_time = Integer.parseInt(ParametersFactory.getTrainsParamValues("open_live_expiration_time"));
-			logger.info("[直播定时任务任务],没开直播的过期规则:" + value + ";[直播定时任务任务],没正常结束直播的过期规则：" + open_live_expiration_time);
+			
 			//将没开审核通过且没开直播的直播间作废
 			entryService.upauditstatus(value);
 			
@@ -174,6 +176,7 @@ public class LiveAudit extends CommonService{
 			//定义一个集合
 			//List<LiveRoomidAndAuditid> auditid = new ArrayList<LiveRoomidAndAuditid>();
 			//判断数据库取回的数据和CC放回的数据都不能为空
+			Map<String,Object> m = new HashMap<String,Object>();
 			if (noticelives != null && recommendArr != null) {
 				
 				Map<String,rooms> map = new HashMap<String,rooms>();
@@ -191,6 +194,61 @@ public class LiveAudit extends CommonService{
 							//获取直播间处于关闭状态的直播
 							//auditid.add(noticelives.get(h));
 							entryService.updateauditstatus(noticelives.get(h).getAuditid());
+							
+							RedisLock redisLock = new RedisLock(redisClientTemplate,"mtmy_id_"+noticelives.get(h).getMtmyUserId());
+							redisLock.lock();
+							String num = redisClientTemplate.get(noticelives.get(h).getAuditid() + "_"+ noticelives.get(h).getMtmyUserId());
+							int integrals = num == null ? 0 : Integer.parseInt(num);
+							//获取直播后台设置的收益比例
+							//double proportion = entrymapper.queryproportion(auditId);
+							double x = integrals * noticelives.get(h).getProportion();
+							//平台获得云币
+							int round = Utils.round(x, 0, BigDecimal.ROUND_HALF_UP);
+							//主播获得云币
+							int proportions = integrals - round;
+							//给平台加上比例云币
+							m.put("office_id",noticelives.get(h).getCompanyId());
+							m.put("integral_earnings",round);
+							//将平台获得云币加到平台账户
+							entryService.addofficeaccount(m);
+							
+							m.put("user_id", 0000000);
+							m.put("integral_type", 0);
+							m.put("integral_source", 1);
+							m.put("action_type", 4);
+							m.put("integral", round);
+							m.put("remark", "直播编号：" + noticelives.get(h).getAuditid()+ "云币分成平台获得：" + round);
+							
+							entryService.cloudcoinOrderlog(m);
+							//判断缓存中是否有主播的数据
+							Boolean exists = redisClientTemplate.exists("mtmy_id_" + noticelives.get(h).getMtmyUserId());
+							if (exists) {
+								//给主播加上云币
+								redisClientTemplate.incrBy("mtmy_id_"+ noticelives.get(h).getMtmyUserId(), proportions);
+								m.put("user_id", noticelives.get(h).getMtmyUserId());
+								m.put("integral", proportions);
+								m.put("remark", "直播编号：" + noticelives.get(h).getAuditid()+ "云币分成主播获得：" + proportions);
+								entryService.cloudcoinOrderlog(m);
+							} else {
+								//将主播的账户加进redis内存
+								int integralsnum = entryService.queryintegralsnum(noticelives.get(h).getMtmyUserId());
+								redisClientTemplate.set("mtmy_id_"+noticelives.get(h).getMtmyUserId(),integralsnum+"");
+								redisClientTemplate.hset("MTMY_ID",noticelives.get(h).getMtmyUserId()+"",noticelives.get(h).getMtmyUserId()+"");
+								//给主播加上云币
+								redisClientTemplate.incrBy("mtmy_id_"+ noticelives.get(h).getMtmyUserId(), proportions);
+								m.put("user_id", noticelives.get(h).getMtmyUserId());
+								m.put("integral", proportions);
+								m.put("remark", "直播编号：" + noticelives.get(h).getAuditid()+ "云币分成主播获得：" + proportions);
+								entryService.cloudcoinOrderlog(m);
+							}
+							redisClientTemplate.del(noticelives.get(h).getAuditid() + "_"+ noticelives.get(h).getMtmyUserId());
+							redisLock.unlock();
+							//将云币划分结果信息入库
+							m.put("total_reward", num);//总收益
+							m.put("platform_earnings", round);//平台收益
+							m.put("user_earnings", proportions);//用户收益
+							m.put("auditId", noticelives.get(h).getAuditid());//申请id
+							entryService.addproportionsmessage(m);
 						}
 					}
 				}

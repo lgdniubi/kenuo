@@ -287,4 +287,22 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 		page.setList(trainLiveAuditDao.findCloudContribution(trainLiveRewardRecord));
 		return page;
 	}
+	/**
+	 * 云币贡献管理
+	 * @param page
+	 * @param trainLiveAudit
+	 * @return
+	 */
+	public Page<TrainLiveAudit> liveIntegralsList(Page<TrainLiveAudit> page,TrainLiveAudit trainLiveAudit){
+		trainLiveAudit.setPage(page);
+		page.setList(trainLiveAuditDao.liveIntegralsList(trainLiveAudit));
+		return page;
+	}
+	/**
+	 * 商家总云币(临时版本)
+	 * @return
+	 */
+	public int findOfficeIntegrals(){
+		return dao.findOfficeIntegrals();
+	}
 }

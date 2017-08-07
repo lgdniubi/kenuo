@@ -44,6 +44,10 @@ public class TrainLiveAudit extends TreeEntity<TrainLiveAudit> {
 	private Office organization;       //申请人归属机构
 	private String position;           //申请人职位
 	
+	private double earningsRatio;       //平台云币收益比例
+	private int platformEarnings;		//平台收益比例
+	private int userEarnings;			//用户收益比例
+	
 	public int getIsPay() {
 		return isPay;
 	}
@@ -281,8 +285,29 @@ public class TrainLiveAudit extends TreeEntity<TrainLiveAudit> {
 	public void setPosition(String position) {
 		this.position = position;
 	}
-	
-	
-	
+
+	public double getEarningsRatio() {
+		return earningsRatio;
+	}
+
+	public void setEarningsRatio(double earningsRatio) {
+		this.earningsRatio = earningsRatio;
+	}
+
+	public int getPlatformEarnings() {
+		return platformEarnings;
+	}
+
+	public void setPlatformEarnings(int platformEarnings) {
+		this.platformEarnings = platformEarnings;
+	}
+
+	public int getUserEarnings() {
+		return userEarnings;
+	}
+
+	public void setUserEarnings(int userEarnings) {
+		this.userEarnings = userEarnings;
+	}
 
 }
