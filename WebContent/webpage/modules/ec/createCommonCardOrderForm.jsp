@@ -482,7 +482,7 @@
 								<th style="text-align: center;">优惠价</th>
 								<th style="text-align: center;">系统价</th>
 								<th style="text-align: center;">成交价</th>
-								<th style="text-align: center;">购买数量</th>
+								<th style="text-align: center;">次(个)数</th>
 								<th style="text-align: center;">实付款</th>
 								<th style="text-align: center;">实际次数</th>
 								<th style="text-align: center;">余额</th>

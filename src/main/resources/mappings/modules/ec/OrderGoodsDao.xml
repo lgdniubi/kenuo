@@ -304,10 +304,10 @@
 			ogm.goods_id AS 'goodsid',
 			ogm.goods_name AS 'goodsname',
 			ogm.single_reality_price AS 'singleRealityPrice'
-		FROM mtmydb.mtmy_order_goods_mapping ogm 
-		LEFT JOIN mtmydb.mtmy_order_goods_details ogd ON ogd.goods_mapping_id = ogm.rec_id
+		FROM mtmydb.mtmy_order_goods_details ogd
 		LEFT JOIN mtmydb.mtmy_appt_order ao ON ao.id = ogd.appt_id
-		WHERE ogd.goods_mapping_id = #{recId}
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping ogm ON ogm.rec_id = ao.goods_mapping_id
+		WHERE ogd.goods_mapping_id = 16237
 		AND ogd.advance_flag = '0' 
 		AND ogd.service_times = -1
 	</select>

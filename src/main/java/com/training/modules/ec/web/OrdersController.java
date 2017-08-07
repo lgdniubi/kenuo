@@ -2236,6 +2236,7 @@ public class OrdersController extends BaseController {
 										"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
+										"<td align='center'> "+lists.get(1).getServicetimes()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getCouponPrice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getDiscount()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getMembergoodsprice()+"</td> "+
@@ -2264,10 +2265,7 @@ public class OrdersController extends BaseController {
 								suitCardSons = suitCardSons +
 											"<a href='#' onclick='viewCardOrders("+father.getRecid()+","+orders.getOrderid()+")' class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i>商品充值查看</a>"+
 										"</td>"+
-									"</tr>"+
-									"<input type='hidden' id='orderArrearage' name='orderArrearage' value="+father.getOrderArrearage()+ "/>"+
-									"<input type='hidden' id='servicetimes' name='servicetimes' value="+father.getServicetimes()+" />"+
-									"<input type='hidden' id='remaintimes' name='remaintimes' value="+father.getRemaintimes()+" />";
+									"</tr>";
 								for(int i=2;i<lists.size();i++){
 									suitCardSons = suitCardSons +
 										"<tr> "+
@@ -2275,6 +2273,7 @@ public class OrdersController extends BaseController {
 											"<td align='center'> "+lists.get(i).getMarketprice()+"</td> "+
 											"<td align='center'> "+lists.get(i).getGoodsprice()+"</td> "+
 											"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
+											"<td align='center'> "+lists.get(i).getServicetimes()+"</td> "+
 										"</tr>";
 								}
 						}else if(orders.getIsReal() == 3){   //通用卡
@@ -2287,6 +2286,7 @@ public class OrdersController extends BaseController {
 										"<td align='center' rowspan="+num+"> "+father.getMarketprice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getGoodsprice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
+										"<td align='center'> "+lists.get(1).getServicetimes()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getCouponPrice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getDiscount()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getMembergoodsprice()+"</td> "+
@@ -2316,15 +2316,13 @@ public class OrdersController extends BaseController {
 							suitCardSons = suitCardSons +
 											"<a href='#' onclick='viewCardOrders("+father.getRecid()+","+orders.getOrderid()+")' class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i>商品充值查看</a>"+
 										"</td>"+
-									"</tr>"+
-									"<input type='hidden' id='orderArrearage' name='orderArrearage' value="+father.getOrderArrearage()+ "/>"+
-									"<input type='hidden' id='servicetimes' name='servicetimes' value="+father.getServicetimes()+" />"+
-									"<input type='hidden' id='remaintimes' name='remaintimes' value="+father.getRemaintimes()+" />";
+									"</tr>";
 								for(int i=2;i<lists.size();i++){
 									suitCardSons = suitCardSons +
 										"<tr> "+
 											"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
 											"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
+											"<td align='center'> "+lists.get(i).getServicetimes()+"</td> "+
 										"</tr>";
 								}
 						}

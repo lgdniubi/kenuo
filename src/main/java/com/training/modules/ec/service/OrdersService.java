@@ -931,31 +931,29 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				//计算出当前子订单成本总价
 				double totalPrice = orderGoods.getGoodsprice()*orderGoods.getGoodsnum();
 				goodsprice = goodsprice + totalPrice*100; //总订单的成本价是子订单成本总价的合
-//				if("bm".equals(orders.getChannelFlag())){
-					OrderGoods _orderGoods = orderGoodsDetailsService.getOrderGoodsDetailListByMid(orderGoods.getRecid());
-					if(_orderGoods!=null){
-						//存在预约记录且预约状态为已完成 已评价 爽约
-						if(_orderGoods.getSumAppt() != 0 && _orderGoods.getAdvanceFlag() == 1){
-							if(orderGoodsDetailsService.findApptStatus(orderGoods.getRecid()) != 0){
-								_orderGoods.setSumAppt(1);
-							}else{
-								_orderGoods.setSumAppt(0);
-							}
-						}
-						orderGoods.setTotalAmount(_orderGoods.getTotalAmount());
-						orderGoods.setOrderBalance(_orderGoods.getOrderBalance());
-						orderGoods.setOrderArrearage(_orderGoods.getOrderArrearage());
-						orderGoods.setTotalPrice(totalPrice);
-						orderGoods.setRemaintimes(_orderGoods.getRemaintimes());
-						orderGoods.setAdvanceFlag(_orderGoods.getAdvanceFlag());
-						orderGoods.setSumAppt(_orderGoods.getSumAppt());
-						if(orderGoods.getIsreal() == 2){
-							orderGoods.setGoodsBalance(_orderGoods.getSuitCardBalance());
+				OrderGoods _orderGoods = orderGoodsDetailsService.getOrderGoodsDetailListByMid(orderGoods.getRecid());
+				if(_orderGoods!=null){
+					//存在预约记录且预约状态为已完成 已评价 爽约
+					if(_orderGoods.getSumAppt() != 0 && _orderGoods.getAdvanceFlag() == 1){
+						if(orderGoodsDetailsService.findApptStatus(orderGoods.getRecid()) != 0){
+							_orderGoods.setSumAppt(1);
 						}else{
-							orderGoods.setGoodsBalance(_orderGoods.getGoodsBalance());
+							_orderGoods.setSumAppt(0);
 						}
 					}
-//				}
+					orderGoods.setTotalAmount(_orderGoods.getTotalAmount());
+					orderGoods.setOrderBalance(_orderGoods.getOrderBalance());
+					orderGoods.setOrderArrearage(_orderGoods.getOrderArrearage());
+					orderGoods.setTotalPrice(totalPrice);
+					orderGoods.setRemaintimes(_orderGoods.getRemaintimes());
+					orderGoods.setAdvanceFlag(_orderGoods.getAdvanceFlag());
+					orderGoods.setSumAppt(_orderGoods.getSumAppt());
+					if(orderGoods.getIsreal() == 2){
+						orderGoods.setGoodsBalance(_orderGoods.getSuitCardBalance());
+					}else{
+						orderGoods.setGoodsBalance(_orderGoods.getGoodsBalance());
+					}
+				}
 			}
 		}
 //		if(!"bm".equals(orders.getChannelFlag())){
@@ -1996,7 +1994,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			List<Goods> goodsListSon = ordersDao.selectCardSon(goods.getGoodsId());
 			if(goodsListSon.size() > 0){
 				//添加套卡商品的子项商品的
-				double realityOrderAmountSum = 0d;
+				/*double realityOrderAmountSum = 0d;*/
 				for(int j=0;j<goodsListSon.size();j++){
 					OrderGoods orderGoodsSon = new OrderGoods();
 					orderGoodsSon.setOrderid(orderid);
@@ -2014,16 +2012,17 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 						orderGoodsSon.setGoodsnum(1);	//购买数量
 					}
 					orderGoodsSon.setIsreal(Integer.valueOf(goodsListSon.get(j).getIsReal()));	// 是否为虚拟 0 实物 1虚拟
+					orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
 					
-					if(j < (goodsListSon.size()-1)){   //父类下的（前n-1个）子项商品平分父类的应付价格，
+					/*if(j < (goodsListSon.size()-1)){   //父类下的（前n-1个）子项商品平分父类的应付价格，
 						double sonShopPrice = Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()*goodsListSon.get(j).getGoodsNum()));
 						double ratio = Double.parseDouble(formater.format(sonShopPrice/price));          //子类占父类的比例
 						double realityOrderAmount = Double.parseDouble(formater.format(ratio*orderAmount)); //子类平分父类的应付价
 						realityOrderAmountSum = realityOrderAmountSum + realityOrderAmount;     //子类平分父类的应付价总和      
 						orderGoodsSon.setOrderAmount(realityOrderAmount);		//应付金额
 						if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 1){
-							orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//单次标价
-							orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价
+							orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice())));	//单次标价
+							orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount)));	//实际服务单次价
 							orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
 							orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
 						}
@@ -2031,12 +2030,12 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 						double realityOrderAmount = Double.parseDouble(formater.format(orderAmount - realityOrderAmountSum)); //子类平分父类的应付价
 						orderGoodsSon.setOrderAmount(realityOrderAmount);		//应付金额
 						if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 1){
-							orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//单次标价
-							orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价
+							orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice())));	//单次标价
+							orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount)));	//实际服务单次价
 							orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
 							orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
 						}
-					}
+					}*/
 					
 					//保存 mtmy_order_goods_mapping
 					orderGoodsDao.saveOrderGoods(orderGoodsSon);

@@ -162,9 +162,6 @@
 							 },
 							url:"${ctx}/ec/orders/getAccount",
 							success:function(date){
-							//	var orderArrearage = $("#orderArrearage").val();
-							//	var servicetimes = $("#servicetimes").val();
-							//	var remaintimes = $("#remaintimes").val();
 								var totalAmount = topUpTotalAmount/singleRealityPrice;
 								var _totalAmount = totalAmount - parseInt(totalAmount);
 								if(accountBalance > date){
@@ -515,6 +512,7 @@ window.onload=initStatus;
 									<th style="text-align: center;">市场价</th>
 									<th style="text-align: center;">优惠价</th>
 									<th style="text-align: center;">购买数量</th>
+									<th style="text-align: center;">实际次数</th>
 									<th style="text-align: center;">红包面值</th>
 									<th style="text-align: center;">折扣率</th>
 									<th style="text-align: center;">会员折扣</th>
