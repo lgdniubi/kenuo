@@ -40,6 +40,32 @@ public interface EntryMapper {
 
 	public void updateauditstatus(@Param("auditid") int auditid);
 
+	/**
+	 * 查看云币余额
+	 * @param send_mtmy_id
+	 * @return
+	 */
+	public int queryintegralsnum(@Param("send_mtmy_id")int send_mtmy_id);
+
+	/**
+	 * 添加云币交易日志
+	 * @param user_id
+	 * @return
+	 */
+	public int cloudcoinOrderlog(Map<String, Object> m);
+
+	/**
+	 * 将平台获得云币加到平台账户
+	 * @param map
+	 */
+	public void addofficeaccount(Map<String, Object> m);
+
+	/**
+	 * 将云币划分结果信息入库
+	 * @param m
+	 */
+	public void addproportionsmessage(Map<String, Object> m);
+
 	
 
 

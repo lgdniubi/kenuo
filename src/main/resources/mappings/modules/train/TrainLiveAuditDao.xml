@@ -28,6 +28,7 @@
 		a.imgurl,
 		a.live_remarks,
 		r.roomId as "roomId",
+		a.earnings_ratio as "earningsRatio",
 		a.del_flag
 
 	</sql>
@@ -88,6 +89,7 @@
 			audit_status=#{auditStatus},
 			isPay=#{isPay},
 			live_remarks=#{liveRemarks},
+			earnings_ratio = #{earningsRatio},
 			audit_user=#{auditUser}
 		WHERE id=#{id}
 	</update>
@@ -252,5 +254,49 @@
 				ORDER BY SUM(r.integrals) DESC
 			</otherwise>
 		</choose>
+	</select>
+	<!-- 云币贡献管理 -->
+	<select id="liveIntegralsList" resultType="TrainLiveAudit">
+		SELECT
+			a.id,
+			b.name AS "userName",
+			r.roomId AS "roomId",
+			a.title,
+			a.desc,
+			a.bengtime AS "bengTime",
+			o.name AS "organization.name",
+			a.user_earnings AS "userEarnings",
+			a.earnings_ratio AS "earningsRatio",
+			a.platform_earnings AS "platformEarnings"
+		FROM trains.train_live_audit a 
+			LEFT JOIN trains.sys_user b ON a.userId=b.id
+			LEFT JOIN trains.train_live_room r ON r.userId=a.userId
+			LEFT JOIN trains.sys_office o ON o.id = b.office_id
+		WHERE 
+			a.audit_status IN (3,5) AND a.del_flag=0
+			<if test="userName!=null and userName!=''">
+				AND b.name like
+				<if test="dbName == 'oracle'">'%'||#{userName}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%',#{userName}, '%')</if>
+			</if>
+			<if test="mobile != null and mobile != ''">
+				AND b.mobile = #{mobile}
+			</if>
+			<if test="organization != null and organization.id != null and organization.id != ''">
+				AND (o.id = #{organization.id} OR o.parent_ids LIKE CONCAT('%,', #{organization.id}, ',%'))
+			</if>
+			<if test="title!=null and title!=''">
+				AND a.title like
+				<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%',#{title}, '%')</if>
+			</if>
+		ORDER BY a.create_date DESC
+	</select>
+	<!-- 商家总云币(临时版本) -->
+	<select id="findOfficeIntegrals" resultType="int">
+		SELECT
+			IFNULL(SUM(b.integral_earnings),0) AS integral
+		FROM
+			sys_office_account b 
 	</select>
 </mapper>

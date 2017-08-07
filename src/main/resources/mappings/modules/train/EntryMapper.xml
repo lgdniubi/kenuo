@@ -43,16 +43,27 @@
     </select>
     
 	<select id="queryRoomidandAuditid" resultType="com.training.modules.train.entity.LiveRoomidAndAuditid">
-	SELECT
+	SELECT 
+		a.roomid,
+		a.auditid,
+		a.bengtime,
+		a.proportion,
+		u.mtmy_user_id AS 'mtmyUserId',
+		u.company_id AS 'companyId'
+	FROM
+	(SELECT
 		ro.roomId AS roomid,
 		au.id AS auditid,
-		au.bengtime
+		au.bengtime,
+		au.userId,
+		au.earnings_ratio AS proportion
 	FROM
 		trains.train_live_audit au
 		LEFT JOIN trains.train_live_room ro ON au.userId = ro.userId
 	WHERE
 		audit_status = 4
-		AND now() > DATE_ADD(bengtime,INTERVAL ${times} MINUTE)
+		AND now() > DATE_ADD(bengtime,INTERVAL ${times} MINUTE)) a
+		LEFT JOIN trains.sys_user u ON a.userId = u.id
 	</select>
 	
 	<select id="getliveendbyid" parameterType="java.lang.Integer" resultType="com.training.modules.train.entity.EntrySopCastBean">
@@ -134,5 +145,56 @@
     <update id="updateauditstatus" parameterType="java.lang.Integer">
     	UPDATE trains.train_live_audit SET audit_status = (CASE WHEN (SELECT count(*) FROM trains.train_live_playback WHERE auditId = #{auditid} AND is_show = 0) > 0 THEN 3 ELSE 5 END) WHERE id = #{auditid}
     </update>
+    
+    <!-- 通过id获取云币余额 -->
+    <select id="queryintegralsnum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    	SELECT user_integral FROM mtmydb.mtmy_user_accounts WHERE user_id = #{send_mtmy_id}
+    </select>
+    
+    <insert id="cloudcoinOrderlog" parameterType="map">
+	INSERT INTO mtmydb.mtmy_sale_integrals_log
+	(
+		user_id,
+		integral_type,
+		integral_source,
+		action_type,
+		integral,
+		remark,
+		create_time
+	)
+	values
+	(
+		#{user_id},
+		#{integral_type},
+		#{integral_source},
+		#{action_type},
+		#{integral},
+		#{remark},
+		now()
+	)
+	</insert>
+    
+    <!-- 将平台获得云币加到平台账户 -->
+    <select id="addofficeaccount" parameterType="map">
+	    INSERT INTO trains.sys_office_account(
+				office_id,
+				amount,
+				integral_earnings
+			) VALUES (
+				#{office_id},
+				0,
+				#{integral_earnings}
+			) ON DUPLICATE KEY UPDATE integral_earnings = integral_earnings + #{integral_earnings};
+    </select>
+    <!-- 将云币划分结果信息入库 -->
+    <select id="addproportionsmessage" parameterType="map">
+    	UPDATE trains.train_live_audit 
+    	SET 
+	    	total_reward = #{total_reward},
+	    	platform_earnings = #{platform_earnings},
+	    	user_earnings = #{user_earnings} 
+    	WHERE 
+    		id = #{auditId}
+    </select>
     
 </mapper>
