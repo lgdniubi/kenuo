@@ -388,7 +388,7 @@ window.onload=initStatus;
 						userid:userid,
 						servicetimes:servicetimes,
 						orderArrearage:orderArrearage,
-						isreal:isReal,
+						isReal:isReal,
 						channelFlag:channelFlag
 					 },
 					url:"${ctx}/ec/orders/handleCardAdvance?recid="+recid+"&userid="+userid+"&orderid="+orderid,
