@@ -130,5 +130,41 @@ public class WebUtils {
 		}
 		return result;
 	}
+	/**
+	 * 报货接口
+	 * @param param
+	 * @param url
+	 * @return
+	 */
+	public static String postCSObject(String param, String url){
+		String result = "";
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			HttpHeaders headers = new HttpHeaders();
+			MediaType type = MediaType.parseMediaType("application/json;charset=UTF-8");
+			
+			headers.setContentType(type);
+			headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+			       
+			JSONObject jsonObj = JSONObject.fromObject(param);
+			//jsonObj.put("client_side", "wap");
+			String json=jsonObj.toString();
+			String sign = MD5("cs"+json+"cs");
+			System.err.println(sign);
+			System.err.println("cs"+json+"cs");
+
+			String paramter = "{'sign':'"+sign+"' , 'jsonStr':'cs"+json+"'}";
+			HttpEntity<String> entity = new HttpEntity<String>(paramter, headers);
+			result = restTemplate.postForObject(url, entity, String.class);
+			
+			System.out.println(result);
+			
+
+		} catch (JSONException e) {
+		//	logger.error(e.getMessage(), e);
+			throw e;
+		}
+		return result;
+	}
 }
 
