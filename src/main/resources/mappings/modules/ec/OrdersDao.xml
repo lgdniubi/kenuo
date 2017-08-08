@@ -1250,8 +1250,8 @@
 		SELECT
 			gc.goods_id AS 'goodsId',
 			gc.goods_name AS 'goodsName',
-			gc.market_price AS 'marketPrice',
-			gc.price AS 'shopPrice',
+			gc.total_market_price AS 'marketPrice',
+			gc.total_price AS 'shopPrice',
 			gc.original_img AS 'originalImg',
 			gc.is_real AS 'isReal',
 			gc.goods_num AS 'goodsNum',
