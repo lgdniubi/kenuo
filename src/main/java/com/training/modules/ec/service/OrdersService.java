@@ -2286,24 +2286,35 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					}
 					orderGoodsSon.setIsreal(Integer.valueOf(goodsListSon.get(j).getIsReal()));	// 是否为虚拟 0 实物 1虚拟
 					
-					if(j < (goodsListSon.size()-1)){   //父类下的（前n-1个）子项商品平分父类的应付价格，
-						double sonShopPrice = goodsListSon.get(j).getShopPrice();
-						double ratio = Double.parseDouble(formater.format(sonShopPrice/price));          //子类占父类的比例
-						double realityOrderAmount = Double.parseDouble(formater.format(ratio*orderAmount)); //子类平分父类的应付价
-						realityOrderAmountSum = realityOrderAmountSum + realityOrderAmount;     //子类平分父类的应付价总和      
-						orderGoodsSon.setOrderAmount(realityOrderAmount);		//应付金额
-						if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 1){
-							orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//单次标价
-							orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价
-							orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
-							orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
+					
+					if(orderAmount - price != 0){  //若讨价还价
+						if(j < (goodsListSon.size()-1)){   //父类下的（前n-1个）子项商品平分父类的应付价格，
+							double sonShopPrice = goodsListSon.get(j).getShopPrice();
+							double ratio = Double.parseDouble(formater.format(sonShopPrice/price));          //子类占父类的比例
+							double realityOrderAmount = Double.parseDouble(formater.format(ratio*orderAmount)); //子类平分父类的应付价
+							realityOrderAmountSum = realityOrderAmountSum + realityOrderAmount;     //子类平分父类的应付价总和      
+							orderGoodsSon.setOrderAmount(realityOrderAmount);		//应付金额
+							if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 1){
+								orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//单次标价
+								orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价
+								orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
+								orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
+							}
+						}else{        //最后一个子项的应付价格单独算（用父类的应付-前n个子项平分价格的总和）
+							double realityOrderAmount = Double.parseDouble(formater.format(orderAmount - realityOrderAmountSum)); //子类平分父类的应付价
+							orderGoodsSon.setOrderAmount(realityOrderAmount);		//应付金额
+							if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 1){
+								orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//单次标价
+								orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价
+								orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
+								orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
+							}
 						}
-					}else{        //最后一个子项的应付价格单独算（用父类的应付-前n个子项平分价格的总和）
-						double realityOrderAmount = Double.parseDouble(formater.format(orderAmount - realityOrderAmountSum)); //子类平分父类的应付价
-						orderGoodsSon.setOrderAmount(realityOrderAmount);		//应付金额
+					}else{             //若未讨价还价
+						orderGoodsSon.setOrderAmount(goodsListSon.get(j).getShopPrice());		//应付金额
 						if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 1){
 							orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//单次标价
-							orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价
+							orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价
 							orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
 							orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
 						}
