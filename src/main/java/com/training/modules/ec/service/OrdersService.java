@@ -2287,7 +2287,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setIsreal(Integer.valueOf(goodsListSon.get(j).getIsReal()));	// 是否为虚拟 0 实物 1虚拟
 					
 					if(j < (goodsListSon.size()-1)){   //父类下的（前n-1个）子项商品平分父类的应付价格，
-						double sonShopPrice = Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()*goodsListSon.get(j).getGoodsNum()));
+						double sonShopPrice = goodsListSon.get(j).getShopPrice();
 						double ratio = Double.parseDouble(formater.format(sonShopPrice/price));          //子类占父类的比例
 						double realityOrderAmount = Double.parseDouble(formater.format(ratio*orderAmount)); //子类平分父类的应付价
 						realityOrderAmountSum = realityOrderAmountSum + realityOrderAmount;     //子类平分父类的应付价总和      
