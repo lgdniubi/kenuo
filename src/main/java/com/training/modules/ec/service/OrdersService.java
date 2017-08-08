@@ -2006,7 +2006,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
 					orderGoodsSon.setRealityAddTime(new Date());   //实际下单时间
-					orderGoods.setExpiringDate(goodspec.getExpiringDate());
+					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
 					if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 0){
 						orderGoodsSon.setGoodsnum(goodsListSon.get(j).getGoodsNum());	//购买数量
 					}else{
@@ -2278,7 +2278,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
 					orderGoodsSon.setRealityAddTime(new Date());   //实际下单时间
-					orderGoods.setExpiringDate(goodspec.getExpiringDate());
+					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
 					if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 0){
 						orderGoodsSon.setGoodsnum(goodsListSon.get(j).getGoodsNum());	//购买数量
 					}else{
