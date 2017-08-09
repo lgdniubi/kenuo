@@ -64,27 +64,12 @@ public class ShopReportService extends CrudService<ShopReportDao,ShopReport>{
 	 * 店铺预约统计
 	 * @param jobName
 	 */
-	@SuppressWarnings("unchecked")
 	public void reportShopAppt(String jobName){
-		//查询所有有绑定用户的店铺
-		List<ShopReport> shopList = shopReportDao.findShopList();
-		if(null != shopList){
-			Map<String, Object> map = findNewestTasksLogs(jobName);
-			if((Integer)map.get("status") == 1){
-				System.out.println("###定时器:"+jobName+",当日执行多次!");
-			}else{
-				if(shopList.size() > 500){
-					List<Object> list = ListSplitUtils.listSplit("店务报表-所有有绑定用户的店铺,定时器："+jobName, shopList, 500);
-					for (int i = 0; i < list.size(); i++) {
-						List<ShopReport> listSplit = (List<ShopReport>)list.get(i);
-						shopReportDao.insertShopReport(listSplit,(Date)map.get("data"));
-					}
-				}else{
-					shopReportDao.insertShopReport(shopList,(Date)map.get("data"));
-				}
-			}
+		Map<String, Object> map = findNewestTasksLogs(jobName);
+		if((Integer)map.get("status") == 1){
+			System.out.println("###定时器:"+jobName+",当日执行多次!");
 		}else{
-			System.out.println("###定时器:"+jobName+",无绑定店铺的用户!");
+			shopReportDao.insertShopReport((Date)map.get("data"));
 		}
 	}
 	/**
@@ -110,7 +95,7 @@ public class ShopReportService extends CrudService<ShopReportDao,ShopReport>{
 				}
 				if(newAchievementlist.size() > 0){
 					//插入美容师绩效报表（时限卡）
-					shopReportDao.insertShopReport(newAchievementlist,(Date)map.get("data"));
+					shopReportDao.insertBeauticianAchievementCard(newAchievementlist,(Date)map.get("data"));
 				}else{
 					System.out.println("###定时器:"+jobName+",过期时限卡订单,消耗业绩都无消耗业绩!");
 				}

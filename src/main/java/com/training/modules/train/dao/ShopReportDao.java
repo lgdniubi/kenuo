@@ -31,16 +31,11 @@ public interface ShopReportDao extends CrudDao<ShopReport>{
 	public int insertUserReport(@Param(value="list")List<ShopReport> list,@Param(value="date")Date date);
 	
 	/**
-	 * 查询所有有绑定用户的店铺
-	 * @return
-	 */
-	public List<ShopReport> findShopList();
-	/**
 	 * 插入店铺预约报表
 	 * @param list
 	 * @return
 	 */
-	public int insertShopReport(@Param(value="list")List<ShopReport> list,@Param(value="date")Date date);
+	public int insertShopReport(@Param(value="date")Date date);
 	
 	/**
 	 * 插入美容师绩效报表（不含时限卡）
@@ -58,7 +53,7 @@ public interface ShopReportDao extends CrudDao<ShopReport>{
 	 * @param list
 	 * @return
 	 */
-	public int insertBeauticianAchievementCard(@Param(value="date")Date date);
+	public int insertBeauticianAchievementCard(@Param(value="list")List<ShopReport> list,@Param(value="date")Date date);
 	
 	/**
 	 * 查询所有有绑定用户的店铺

@@ -120,10 +120,9 @@
 			appt_sum,
 			frequency
 		)
-		<foreach collection="list" item="list" separator="union all ">
 			SELECT 
 				a.shop_id,
-				#{list.parentIds},
+				(SELECT parent_ids FROM sys_office WHERE id = a.shop_id) AS 'parentIds',
 				(SELECT YEAR(a.appt_date)) AS 'year',
 				(SELECT QUARTER(a.appt_date)) AS 'quarter',
 				(SELECT MONTH(a.appt_date)) AS 'month',
@@ -139,7 +138,7 @@
 					FROM 
 						mtmydb.mtmy_appt_order 
 					WHERE
-						shop_id = #{list.shopId}
+						1 = 1
 						<if test="list.isExist == 1">
 							AND DATE_FORMAT(appt_date,'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
 							AND DATE_FORMAT(appt_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
@@ -155,8 +154,7 @@
 				FROM
 					mtmydb.mtmy_appt_order 
 				WHERE 
-					appt_status IN (1,2) 
-					AND shop_id = #{list.shopId}
+					appt_status IN (1,2)
 					<if test="list.isExist == 1">
 						AND DATE_FORMAT(appt_date,'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
 						AND DATE_FORMAT(appt_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
@@ -166,7 +164,6 @@
 					</if>
 					GROUP BY shop_id,appt_date
 			) b ON a.shop_id = b.shop_id AND a.appt_date = b.appt_date
-		</foreach>
 	</insert>
 	<!-- end 店铺预约表 end -->
 	
