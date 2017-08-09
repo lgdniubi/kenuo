@@ -29,6 +29,7 @@ public class Franchisee extends TreeEntity<Franchisee>{
 	private String 	tel;			//联系固话
 	private String 	charterUrl;		//营业执照（照片）
 	private String 	taxationUrl;	//税务登记（照片）
+	private String 	iconUrl;		//机构icon
 	private String 	bankBeneficiary;//开户行
 	private String 	bankCode;		//银行卡号
 	private String 	bankName;		//持卡人姓名
@@ -132,6 +133,12 @@ public class Franchisee extends TreeEntity<Franchisee>{
 	}
 	public void setTaxationUrl(String taxationUrl) {
 		this.taxationUrl = taxationUrl;
+	}
+	public String getIconUrl() {
+		return iconUrl;
+	}
+	public void setIconUrl(String iconUrl) {
+		this.iconUrl = iconUrl;
 	}
 	public String getBankBeneficiary() {
 		return bankBeneficiary;

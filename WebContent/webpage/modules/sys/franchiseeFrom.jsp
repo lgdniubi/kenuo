@@ -77,6 +77,34 @@
 				}
 			});
 			
+			
+			//品牌logo图片上传
+			$("#file_iconUrl_upload").uploadify({
+				'buttonText' : '请选择图片',
+				'method' : 'post',
+				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
+				'uploader' : '<%=uploadURL%>',
+				'fileObjName' : 'file_iconUrl_upload',//<input type="file"/>的name
+				'queueID' : 'file_iconUrl_queue',//与下面HTML的div.id对应
+				'method' : 'post',
+				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
+				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
+				'fileSizeLimit' : '10MB',//上传文件的大小限制
+				'multi' : false,//设置为true时可以上传多个文件
+				'auto' : true,//点击上传按钮才上传(false)
+				'onFallback' : function(){
+					//没有兼容的FLASH时触发
+					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
+				},
+				'onUploadSuccess' : function(file, data, response) { 
+					var jsonData = $.parseJSON(data);//text 转 json
+					if(jsonData.result == '200'){
+						$("#iconUrl").val(jsonData.file_url);
+						$("#iconUrlsrc").attr('src',jsonData.file_url); 
+					}
+				}
+			});
+			
 			//表单验证
 			$("#name").focus();
 			validateForm = $("#inputForm").validate({
@@ -146,7 +174,18 @@
 				</tr>
 				<tr>
 					<td class="width-15 active" class="active"><label class="pull-right"><font color="red">*</font>详细地址:</label></td>
-					<td class="width-35" colspan="3"><form:textarea path="address" htmlEscape="false" rows="3" maxlength="200" class="form-control required" /></td>
+					<td class="width-35"><form:textarea path="address" htmlEscape="false" rows="3" maxlength="200" class="form-control required" /></td>
+					<td class="width-15 active" class="active"><label class="pull-right"><font color="red"></font>品牌logo:</label></td>
+					<td class="width-35">
+						<img id="iconUrlsrc" src="${franchisee.iconUrl}" alt="images" style="width: 200px;height: 100px;"/>
+						<input type="hidden" id="iconUrl" name="iconUrl" value="${franchisee.iconUrl}">
+						<c:if test="${opflag == 'UPDATE' || opflag == 'ADD'}">
+							<div class="upload">
+								<input type="file" name="file_iconUrl_upload" id="file_iconUrl_upload">
+							</div>
+							<div id="file_iconUrl_queue"></div>
+						</c:if>
+					</td>
 				</tr>
 				<tr>
 					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>加盟法人:</label></td>

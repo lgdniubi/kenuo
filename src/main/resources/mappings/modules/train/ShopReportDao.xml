@@ -48,7 +48,8 @@
 						mtmydb.mtmy_order_goods_details a
 						LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.goods_mapping_id = b.rec_id
 					WHERE
-						b.is_real = 1
+						b.is_real != 0
+						AND b.group_id = 0 
 		 				AND b.user_id = #{list.userId}
 		 				<if test="list.isExist == 1">
 							AND DATE_FORMAT(a.create_date,'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
@@ -72,7 +73,8 @@
 					FROM
 						mtmydb.mtmy_appt_order
 					WHERE
-						user_id = #{list.userId}
+						appt_status IN (1,2,4)
+						AND user_id = #{list.userId}
 						<if test="list.isExist == 1">
 							AND DATE_FORMAT(appt_date,'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
 							AND DATE_FORMAT(appt_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
@@ -314,11 +316,11 @@
 			SELECT 
 				#{list.shopId},
 				#{list.parentIds},
-				(SELECT YEAR(b.pay_time)) AS 'year',
-				(SELECT QUARTER(b.pay_time)) AS 'quarter',
-				(SELECT MONTH(b.pay_time)) AS 'month',
-				(SELECT WEEKOFYEAR(b.pay_time)) AS 'week',
-				(SELECT DAY(b.pay_time)) AS 'day',
+				(SELECT YEAR(a.reality_add_time)) AS 'year',
+				(SELECT QUARTER(a.reality_add_time)) AS 'quarter',
+				(SELECT MONTH(a.reality_add_time)) AS 'month',
+				(SELECT WEEKOFYEAR(a.reality_add_time)) AS 'week',
+				(SELECT DAY(a.reality_add_time)) AS 'day',
 				a.goods_id AS goodsId,
 				SUM(a.goods_num) AS goodsNum,
 				IF(b.channel_flag != 'bm',SUM(a.goods_price),SUM(a.order_amount)) AS saleSum,
@@ -336,8 +338,10 @@
 				<if test="list.isExist != 1">
 					AND DATE_FORMAT(b.pay_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
 				</if>
-				AND b.user_id = #{list.userId}
-				AND a.is_real = 1
+				AND b.user_id IN (
+					SELECT user_id FROM mtmydb.mtmy_users WHERE office_id = #{list.shopId}
+				)
+				AND a.is_real != 0
 			GROUP BY goodsId,goodsName,originalImg,year,quarter,month,week,day,b.channel_flag
 		</foreach>
 	</insert>

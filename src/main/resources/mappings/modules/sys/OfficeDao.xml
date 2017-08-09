@@ -219,7 +219,9 @@
 		INSERT INTO sys_office(
 			id, 
 			parent_id, 
-			parent_ids, 
+			parent_ids,
+			franchisee_id, 
+			icon_url,
 			area_id, 
 			code, 
 			name, 
@@ -248,6 +250,8 @@
 			#{id}, 
 			#{parent.id}, 
 			#{parentIds}, 
+			#{id}, 
+			#{iconUrl},
 			#{area.id}, 
 			#{code}, 
 			#{name}, 
@@ -277,6 +281,8 @@
 	<update id="franchiseeUpdateOffice">
 		UPDATE sys_office SET 
 			name = #{name},
+			franchisee_id = #{id},
+			icon_url = #{iconUrl},
 			area_id = #{area.id}, 
 			type = #{type}, 
 			update_by = #{updateBy.id}, 
@@ -289,6 +295,7 @@
 			parent_id, 
 			parent_ids, 
 			area_id, 
+			franchisee_id,
 			
 			district,
 			city,
@@ -322,6 +329,7 @@
 			#{parent.id}, 
 			#{parentIds},
 			#{area.id},
+			#{franchisee.id},
 			
 			(SELECT id FROM sys_area WHERE CODE = (SELECT CODE FROM sys_area AS a WHERE a.`id` = #{area.id}) AND TYPE = 4 AND del_flag = 0),
 			(SELECT id FROM sys_area WHERE CODE = LEFT((SELECT CODE FROM sys_area AS a WHERE a.`id` = #{area.id}),9) AND TYPE = 3 AND del_flag = 0),	
@@ -358,6 +366,7 @@
 			parent_id = #{parent.id}, 
 			parent_ids = #{parentIds}, 
 			area_id = #{area.id}, 
+			franchisee_id = #{franchisee.id},
 			
 			district = (SELECT id FROM sys_area WHERE CODE = (SELECT CODE FROM sys_area AS a WHERE a.`id` = #{area.id}) AND TYPE = 4 AND del_flag = 0),
 			city = (SELECT id FROM sys_area WHERE CODE = LEFT((SELECT CODE FROM sys_area AS a WHERE a.`id` = #{area.id}),9) AND TYPE = 3 AND del_flag = 0),	

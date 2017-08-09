@@ -143,7 +143,7 @@ public class FranchiseeController extends BaseController{
 				office.setCreateDate(new Date());
 				office.setUpdateDate(new Date());
 				office.setDelFlag("0");
-				
+				office.setIconUrl(franchisee.getIconUrl());
 				officeService.franchiseeSaveOffice(office);//保存组织结构表
 				
 				addMessage(redirectAttributes, "保存机构'" + franchisee.getName() + "'成功");
@@ -158,6 +158,7 @@ public class FranchiseeController extends BaseController{
 				Office office = new Office();
 				office.setId(franchisee.getId());
 				office.setName(franchisee.getName());
+				office.setIconUrl(franchisee.getIconUrl());
 				office.setArea(franchisee.getArea());
 				office.setType(franchisee.getType());
 				if (StringUtils.isNotBlank(user.getId())){
