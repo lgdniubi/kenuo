@@ -16,6 +16,12 @@ public interface GoodsCardDao extends CrudDao<GoodsCard>{
 	List<GoodsCard> findGoodsList(GoodsCard goodsCard);
 
 	GoodsCard findByGoodsCard(GoodsCard goodsCard);
-
+	
+	/**
+	 * 查询卡项的子项信息
+	 * @param cardId
+	 * @return
+	 */
+	public List<GoodsCard> selectSonsByCardId(int cardId);
 	
 }

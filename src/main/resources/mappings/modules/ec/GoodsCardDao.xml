@@ -81,4 +81,12 @@
 		    #{totalPrice}
 		  )
 	</insert>
+	
+	<!-- 查询卡项的子项信息 -->
+	<select id="selectSonsByCardId" resultType="GoodsCard">
+		SELECT
+			<include refid="goodsCardColumns"/>
+		FROM mtmydb.mtmy_goods_card a
+		WHERE a.card_id=#{cardId}
+	</select>
 </mapper>

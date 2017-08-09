@@ -453,4 +453,14 @@ public class GoodsCardService extends CrudService<GoodsCardDao, GoodsCard> {
 		goodsDao.savespecimg(goods);// 再添加新的商品规格图片
 	}
 	
+	/**
+	 * 查询卡项的子项信息
+	 * @param cardId
+	 * @return
+	 */
+	public List<GoodsCard> selectSonsByCardId(int cardId){
+		return goodsCardDao.selectSonsByCardId(cardId);
+	}
+	
+	
 }

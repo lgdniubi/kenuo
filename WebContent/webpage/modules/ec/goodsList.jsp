@@ -274,7 +274,7 @@
 									<td>${goods.sort}</td>
 									<td style="text-align: left;">
 										<shiro:hasPermission name="ec:goods:view">
-											<a href="http://wap.idengyun.com/mtmy-wap/goods/queryGoodsDetail.do?user_id=1000014&goods_id=${goods.goodsId}" class="btn btn-info btn-xs" target="_bank"><i class="fa fa-search-plus"></i> 预览</a>
+											<a href="http://wap.idengyun.com/mtmy-wap/goods/queryGoodsDetail.do?goods_id=${goods.goodsId}" class="btn btn-info btn-xs" target="_bank"><i class="fa fa-search-plus"></i> 预览</a>
 										</shiro:hasPermission>
 										<c:if test="${goods.isReal != 2 && goods.isReal != 3}">
 											<shiro:hasPermission name="ec:goods:edit">
@@ -293,7 +293,12 @@
 											</shiro:hasPermission>
 										</c:if>
 										<shiro:hasPermission name="ec:goods:edit">
-											<a href="#" onclick="openDialogView('商品规格', '${ctx}/ec/goods/goodsBySpecList?goodsId=${goods.goodsId}','800px', '500px')" class="btn btn-danger btn-xs" ><i class="fa fa-edit"></i> 商品规格</a>
+											<c:if test="${goods.isReal == 0 || goods.isReal == 1}">
+												<a href="#" onclick="openDialogView('商品规格', '${ctx}/ec/goods/goodsBySpecList?goodsId=${goods.goodsId}','800px', '500px')" class="btn btn-danger btn-xs" ><i class="fa fa-edit"></i> 商品规格</a>
+											</c:if>
+											<c:if test="${goods.isReal == 2 || goods.isReal == 3}">
+												<a href="#" onclick="openDialogView('商品规格', '${ctx}/ec/goods/cardGoodsBySpecList?goodsId=${goods.goodsId}&isReal=${goods.isReal}','800px', '500px')" class="btn btn-danger btn-xs" ><i class="fa fa-edit"></i> 商品规格</a>
+											</c:if>
 										</shiro:hasPermission> 
 										<shiro:hasPermission name="ec:goods:refreshRedis">
 											<a href="${ctx}/ec/goods/refreshRedis?goodsId=${goods.goodsId}" onclick="return confirmx('确认刷新该商品(详情)缓存吗？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-file"></i>刷新缓存</a>

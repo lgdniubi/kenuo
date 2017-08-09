@@ -28,6 +28,7 @@ import com.training.common.persistence.Page;
 import com.training.common.utils.ObjectUtils;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
+import com.training.modules.ec.dao.GoodsCardDao;
 import com.training.modules.ec.entity.ActionInfo;
 import com.training.modules.ec.entity.Effect;
 import com.training.modules.ec.entity.Goods;
@@ -44,6 +45,7 @@ import com.training.modules.ec.entity.GoodsType;
 import com.training.modules.ec.service.ActionInfoService;
 import com.training.modules.ec.service.GoodsAttributeService;
 import com.training.modules.ec.service.GoodsBrandService;
+import com.training.modules.ec.service.GoodsCardService;
 import com.training.modules.ec.service.GoodsCategoryService;
 import com.training.modules.ec.service.GoodsService;
 import com.training.modules.ec.service.GoodsSpecItemService;
@@ -94,6 +96,8 @@ public class GoodsController extends BaseController{
 	private ActionInfoService actionInfoService;
 	@Autowired
 	private OrderGoodsService orderGoodsService;
+	@Autowired
+	private GoodsCardService goodsCardService;
 	
 	/**
 	 * 分页查询商品属性
@@ -1282,6 +1286,80 @@ public class GoodsController extends BaseController{
 			addMessage(redirectAttributes, "查看商品规格价格出现异常，请与管理员联系");
 		}
 		return "redirect:" + adminPath + "/ec/goods/list";
+	}
+	
+	/**
+	 * 卡项商品规格价格list
+	 * @param goods
+	 * @param model
+	 * @param request
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequiresPermissions(value={"ec:goods:goodsBySpecList"},logical=Logical.OR)
+	@RequestMapping(value = {"cardGoodsBySpecList"})
+	public String cardGoodsBySpecList(Goods goods,Model model,HttpServletRequest request,RedirectAttributes redirectAttributes){
+		String suitCardSons = "";
+		try {
+			List<GoodsSpecPrice> goodsspecpricelist = goodsService.findGoodsSpecPrice(goods);         //通用卡的规格信息
+			List<GoodsCard> goodsCardSons = goodsCardService.selectSonsByCardId(goods.getGoodsId());  //套卡的子项信息
+			if("2".equals(goods.getIsReal())){       //套卡商品
+				suitCardSons = suitCardSons +
+						"<thead>"+
+							"<tr>"+
+								"<th style='text-align: center;'>子项名称</th>"+
+								"<th style='text-align: center;'>次(个)数</th>"+
+								"<th style='text-align: center;'>市场价</th>"+
+								"<th style='text-align: center;'>优惠价</th>"+
+								"<th style='text-align: center;'>市场价合计</th>"+
+								"<th style='text-align: center;'>优惠价合计</th>"+
+							"</tr>"+
+						"</thead>"+
+						"<tbody>";
+				if(goodsCardSons.size() > 0){
+					for(GoodsCard goodsCard:goodsCardSons){
+						suitCardSons = suitCardSons +
+								"<tr style='text-align: center;'>"+
+									"<td>"+goodsCard.getGoodsName()+"</td>"+
+									"<td>"+goodsCard.getGoodsNum()+"</td>"+
+									"<td>"+goodsCard.getMarketPrice()+"</td>"+
+									"<td>"+goodsCard.getPrice()+"</td>"+
+									"<td>"+goodsCard.getTotalMarketPrice()+"</td>"+
+									"<td>"+goodsCard.getTotalPrice()+"</td>"+
+								"</tr>";
+					}
+				}
+				suitCardSons = suitCardSons +"</tbody>";
+			}else if("3".equals(goods.getIsReal())){   //通用卡商品
+				suitCardSons = suitCardSons +
+						"<thead>"+
+							"<tr>"+
+								"<th style='text-align: center;'>规格ID</th>"+
+								"<th style='text-align: center;'>规格名称</th>"+
+								"<th style='text-align: center;'>市场价</th>"+
+								"<th style='text-align: center;'>优惠价</th>"+
+							"</tr>"+
+						"</thead>"+
+						"<tbody>";
+				if(goodsspecpricelist.size() > 0){
+					for(GoodsSpecPrice goodsSpecPrice:goodsspecpricelist){
+						suitCardSons = suitCardSons +
+								"<tr style='text-align: center;'>"+
+									"<td>"+goodsSpecPrice.getSpecKey()+"</td>"+
+									"<td>"+goodsSpecPrice.getSpecKeyValue()+"</td>"+
+									"<td>"+goodsSpecPrice.getMarketPrice()+"</td>"+
+									"<td>"+goodsSpecPrice.getPrice()+"</td>"+
+								"</tr>";
+					}
+				}
+				suitCardSons = suitCardSons +"</tbody>";
+			}
+		} catch (Exception e) {
+			logger.error("卡项商品规格价格list 出现异常，异常信息为："+e.getMessage());
+			addMessage(redirectAttributes, "查看卡项商品规格价格出现异常，请与管理员联系");
+		}
+		model.addAttribute("suitCardSons", suitCardSons);
+		return "modules/ec/cardGoodsBySpecList";
 	}
 	
 	/**
