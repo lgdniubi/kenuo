@@ -139,11 +139,11 @@
 						mtmydb.mtmy_appt_order 
 					WHERE
 						1 = 1
-						<if test="list.isExist == 1">
+						<if test="date != null">
 							AND DATE_FORMAT(appt_date,'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
 							AND DATE_FORMAT(appt_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
 						</if>	
-						<if test="list.isExist != 1">
+						<if test="date == null">
 							AND DATE_FORMAT(appt_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
 						</if>
 					GROUP BY shop_id,appt_date
@@ -155,11 +155,11 @@
 					mtmydb.mtmy_appt_order 
 				WHERE 
 					appt_status IN (1,2)
-					<if test="list.isExist == 1">
+					<if test="date != null">
 						AND DATE_FORMAT(appt_date,'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
 						AND DATE_FORMAT(appt_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
 					</if>
-					<if test="list.isExist != 1">
+					<if test="date == null">
 						AND DATE_FORMAT(appt_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
 					</if>
 					GROUP BY shop_id,appt_date
