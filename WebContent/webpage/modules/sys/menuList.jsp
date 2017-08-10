@@ -35,7 +35,7 @@
 								var isChildren = dataObj[i].num>0?'hasChild=\"true\"':'';
 								html += "<tr pid=\""+dataObj[i].parentId+"\" id=\""+dataObj[i].id+"\" "+isChildren+" >";
 								/* html += "<td><input type=\"checkbox\" id="+dataObj[i].id+" class=\"i-checks\"></td>"; 批量删除 由于样式问题  取消 */
-								html += "<td nowrap><a href=\"#\" onclick=\"openDialogView('查看机构', '${ctx}/sys/office/form?id="+dataObj[i].id+"','800px', '620px')\">"+dataObj[i].name+"</a></td>";
+								html += "<td nowrap><a href=\"#\" onclick=\"openDialogView('查看菜单', '${ctx}/sys/menu/form?id="+dataObj[i].id+"','800px', '620px')\">"+dataObj[i].name+"</a></td>";
 								html += "<td>"+dataObj[i].href+"</td>";
 								html +="<td style=\"text-align:center;\"><input name=\"sorts\" type=\"text\" value="+dataObj[i].sort+" class=\"form-control\" style=\"width:100px;margin:0;padding:0;text-align:center;\"></td>";
 								if(dataObj[i].isShow == 1){
