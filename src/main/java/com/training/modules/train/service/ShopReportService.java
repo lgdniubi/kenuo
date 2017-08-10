@@ -1,5 +1,7 @@
 package com.training.modules.train.service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -146,7 +148,22 @@ public class ShopReportService extends CrudService<ShopReportDao,ShopReport>{
 		// 2017-7-29 新增  查询店务报表定时器最后一次执行正常的时间
 		TaskLog t = iTaskDao.findNewestTasksLogs(taskLog);
 		if(null != t){
-			int a =(int)DateUtils.getDistanceOfTwoDate(new Date(),t.getCreateDate());
+			
+			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+			//当前时间
+			String afterString=sdf.format(new Date());
+			//最后一次执行正常的时间
+			String beforeString=sdf.format(t.getCreateDate());
+			Date after = new Date();
+			Date before = new Date();
+			try {
+				after = sdf.parse(afterString);
+				before =  sdf.parse(beforeString) ;
+			} catch (ParseException e) {
+				System.out.println("####报表定时器校验时间报错:"+e.getMessage());
+				e.printStackTrace();
+			}
+			int a =(int)DateUtils.getDistanceOfTwoDate(before,after);
 			if(a == 0){
 				// 最后一次执行时间为当天
 				map.put("status", 1);
