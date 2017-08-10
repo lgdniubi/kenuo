@@ -281,6 +281,11 @@
 				    							<a href="${ctx}/ec/goods/form?id=${goods.goodsId}&opflag=UPDATE&isReal=${goods.isReal}" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 						    				</shiro:hasPermission>
 										</c:if>
+										<c:if test="${goods.isReal == 2 || goods.isReal == 3}">
+											<shiro:hasPermission name="ec:goods:view">
+				    							<a href="${ctx}/ec/goods/formCard?id=${goods.goodsId}&isReal=${goods.isReal}" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 查看</a>
+						    				</shiro:hasPermission>
+										</c:if>
 					    				<shiro:hasPermission name="ec:goods:del">
 											<a href="${ctx}/ec/goods/delete?id=${goods.goodsId}" onclick="return confirmx('要删除该商品吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
 										</shiro:hasPermission>

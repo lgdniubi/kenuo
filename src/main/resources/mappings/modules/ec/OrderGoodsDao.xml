@@ -46,6 +46,7 @@
 	<select id="findListByOrderid" resultType="OrderGoods">
 		SELECT
 			a.rec_id,
+			a.group_id AS 'groupId',
 			a.order_id,
 			a.user_id,
 			a.goods_name,
@@ -124,6 +125,16 @@
 			and a.is_real = 1
 			and b.service_times > 0
 			AND o.order_status = 4
+	</select>
+	<!-- 根据recid查询赠送云币数量  -->
+	<select id="getintegralByRecId" resultType="int">
+		SELECT 
+			a.integral
+		FROM 
+			mtmydb.mtmy_order_goods_mapping a
+		WHERE 
+			a.del_flag = 0
+			AND a.rec_id = #{recId}
 	</select>
 	<insert id="saveOrderGoods"  useGeneratedKeys="true" keyProperty="recid">
 		INSERT INTO mtmydb.mtmy_order_goods_mapping
@@ -312,28 +323,6 @@
 		AND ogd.service_times = -1
 	</select>
 	
-	<!-- 查询订单中的套卡 -->
-	<select id="orderlistCardSuit" resultType="OrderGoods">
-		SELECT 
-			a.rec_id as 'recid',
-			a.order_id as 'orderid',
-			a.group_id as 'groupId',
-			a.goods_id as 'goodsid',
-			a.goods_name as 'goodsname',
-			a.is_real as 'isreal',
-			a.spec_key_name as 'speckeyname',
-			a.market_price as 'marketprice',
-			a.goods_price as 'goodsprice',
-			a.cost_price as 'costprice',
-			a.goods_num as 'goodsnum',	
-			a.order_amount as 'orderAmount',
-			a.total_amount as 'totalAmount',
-			a.order_arrearage as 'orderArrearage'
-		
-		 FROM mtmydb.mtmy_order_goods_mapping a 
-		
-		WHERE a.order_id = #{orderId}
-	</select>
 	<!-- 根据组ID(mapping_id)获取卡项中的实物集合 -->
 	<select id="getOrderGoodsCard" resultType="OrderGoods">
 		SELECT 
@@ -352,6 +341,16 @@
 			a.total_amount as 'totalAmount',
 			a.order_arrearage as 'orderArrearage',
 			a.original_img as 'originalImg'
+		 FROM mtmydb.mtmy_order_goods_mapping a 
+		
+		WHERE a.group_id = #{recid}
+	</select>
+	
+	<!-- 根据组ID(mapping_id)获取卡项中的after_sale_num -->
+	<select id="getAfterSaleNumByRid" resultType="OrderGoods">
+		SELECT 
+			a.rec_id as 'recid',
+			a.after_sale_num as 'afterSaleNum'
 		 FROM mtmydb.mtmy_order_goods_mapping a 
 		
 		WHERE a.group_id = #{recid}

@@ -1,6 +1,8 @@
 package com.training.modules.ec.web;
 
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -75,6 +77,19 @@ public class GoodsCardController extends BaseController{
 		return "redirect:" + adminPath + "/ec/goods/list";
 	}
 	
+	/**
+	 * 
+	 * @param goodsCard
+	 * @param model
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = {"cardlist"})
+	public List<GoodsCard> cardlist(GoodsCard goodsCard,Model model, HttpServletRequest request, HttpServletResponse response){
+		return goodsCardService.findList(goodsCard);
+	}
 	
 	/**
 	 * 删除卡项中的商品

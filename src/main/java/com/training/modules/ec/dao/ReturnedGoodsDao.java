@@ -93,5 +93,33 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 * @param rg
 	 */
 	public void insertReturnGoodsCard(ReturnedGoods rg);
+	/**
+	 * 查询套卡子项虚拟商品的剩余次数(购买次数-预约次数)
+	 * @param returnedGoods
+	 * @return
+	 */
+	public List<ReturnedGoods> getReturnNum(ReturnedGoods returnedGoods);
+	/**
+	 * 修改套卡子项虚拟商品的剩余次数
+	 * @param rgn
+	 */
+	public void updateCardNum(ReturnedGoods rgn);
+	/**
+	 * 查询出通用卡的售后次数(mapping表中的service_times - appt_order表中的预约次数)
+	 * @param returnedGoods
+	 * @return
+	 */
+	public ReturnedGoods getCommonNum(ReturnedGoods returnedGoods);
+	/**
+	 * 修改通用卡的售后次数
+	 * @param commonNum
+	 */
+	public void updateCommonNum(ReturnedGoods commonNum);
+	/**
+	 * 查询卡项子项实物的售后数量
+	 * @param returnedGoods
+	 * @return
+	 */
+	public List<ReturnedGoods> getRealnum(ReturnedGoods returnedGoods);
 	
 }

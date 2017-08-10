@@ -629,6 +629,7 @@ public class OrdersController extends BaseController {
 		
 		orders = ordersService.findselectByOrderId(orderid);
 		returnedGoods.setUserId(orders.getUserid());
+		
 		String suitCardSons = "";
 		String isreal = "";
 		String goodsNum = "";
@@ -636,18 +637,21 @@ public class OrdersController extends BaseController {
 		List<List<OrderGoods>> result = new ArrayList<List<OrderGoods>>();//存放每个卡项商品和它的子项集合
 		List<OrderGoods> resultSon = new ArrayList<OrderGoods>();//存放一个卡项商品和它的子项
 		
-		list=ordergoodService.orderlistCardSuit(orderid);//根据订单id查询订单中的套卡及其子项
-		for(int i=0;i<list.size();i++){
-			if(list.get(i).getGroupId() == 0 && resultSon.size() > 0){
-				result.add(resultSon);
-				resultSon = new ArrayList<OrderGoods>();
-			}
-			resultSon.add(list.get(i));
-			if(i == (list.size()-1)){                        //将最后一次循环的结果放到集合里
-				result.add(resultSon);
-			}
-		}
+		//虚拟和实物售后时
+		list=ordergoodService.orderlist(orderid);
+		
 		if(returnedGoods.getIsReal() == 2 || returnedGoods.getIsReal() == 3){
+			
+			for(int i=0;i<list.size();i++){
+				if(list.get(i).getGroupId() == 0 && resultSon.size() > 0){
+					result.add(resultSon);
+					resultSon = new ArrayList<OrderGoods>();
+				}
+				resultSon.add(list.get(i));
+				if(i == (list.size()-1)){                        //将最后一次循环的结果放到集合里
+					result.add(resultSon);
+				}
+			}
 			if(returnedGoods.getIsReal() == 2){//套卡 售后
 				if(result.size() > 0){
 					for(List<OrderGoods> lists:result){                            
@@ -754,9 +758,6 @@ public class OrdersController extends BaseController {
 			
 			return "modules/ec/returnFormCard";
 		}else{
-			//虚拟和实物售后时
-			returnedGoods.setUserId(orders.getUserid());
-			list=ordergoodService.orderlist(orderid);
 			
 			model.addAttribute("orders", orders);
 			model.addAttribute("orderGoodList", list);

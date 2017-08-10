@@ -904,6 +904,13 @@
 			user_integral = #{userIntegral}
 		where user_id = #{userid}
 	</update>
+	<!-- 确认售后,扣减用户云币 -->
+	<update id="updateIntegralAccount">
+		UPDATE mtmydb.mtmy_user_accounts
+		SET 
+			user_integral = (user_integral-#{userIntegral})
+		where user_id = #{userid}
+	</update>
 	
 	<!-- 插入新的用户账户 -->
 	<insert id="insertAccount">

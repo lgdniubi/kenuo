@@ -10,16 +10,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
+import com.training.modules.ec.dao.IntegralLogDao;
 import com.training.modules.ec.dao.OrderGoodsDao;
 import com.training.modules.ec.dao.OrderGoodsDetailsDao;
 import com.training.modules.ec.dao.OrdersDao;
 import com.training.modules.ec.dao.ReturnedGoodsDao;
 import com.training.modules.ec.dao.SaleRebatesLogDao;
+import com.training.modules.ec.entity.IntegralsLog;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderGoodsDetails;
 import com.training.modules.ec.entity.Orders;
 import com.training.modules.ec.entity.ReturnedGoods;
 import com.training.modules.ec.entity.ReturnedGoodsImages;
+import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.quartz.utils.RedisLock;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.utils.ScopeUtils;
 
@@ -43,6 +47,10 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	private SaleRebatesLogDao saleRebatesLogDao;
 	@Autowired
 	private OrderGoodsDetailsDao orderGoodsDetailsDao;
+	@Autowired
+	private RedisClientTemplate redisClientTemplate;
+	@Autowired
+	private IntegralLogDao integralLogDao;
 	
 	/**
 	 * 分页查询
@@ -82,15 +90,15 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		returnedGoods.setAuditBy(currentUser);
 		if ("11".equals(returnedGoods.getReturnStatus())) { // 申请退货退款
 			//判断是否为虚拟商品;是:直接状态为15退款中,入库状态为"空" -1.
-			if(returnedGoods.getIsReal() == 1){
+			if(returnedGoods.getIsReal() == 0){
+				returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
+			}else{
 				if(returnedGoods.getIsConfirm() == -10){//当拒绝退货时
 					returnedGoods.setReturnStatus(-10 + "");
 				}else{
 					returnedGoods.setReturnStatus(15 + "");
 				}
 				returnedGoods.setIsStorage(-1 + "");
-			}else{
-				returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
 			}
 			returnedGoodsDao.saveEdite(returnedGoods);//添加退货信息到mtmy_returned_goods表中
 			
@@ -110,16 +118,18 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				saleRebatesLogDao.updateSale(returnedGoods.getOrderId());// 插入分销日志
 			}
 			if (returnedGoods.getIsConfirm() == -10) {
+				
 				OrderGoods orderGoods = new OrderGoods();
 				orderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
 				orderGoods.setAfterSaleNum(-returnedGoods.getReturnNum());
 				orderGoodsDao.updateIsAfterSales(orderGoods);
 				
-				//退货处理
+				//---------------------------退货处理  detials  begin------------------------------
 				orderGoods = orderGoodsDao.selectOrderGoodsByRecid(orderGoods.getRecid());
 				//把数据存储到mtmy_order_goods_details表中
 				returnedGoods = returnedGoodsDao.get(returnedGoods);//先查询returnedGoods数据
 				OrderGoodsDetails ogd = new OrderGoodsDetails();
+				
 				ogd.setOrderId(returnedGoods.getOrderId());
 				ogd.setGoodsMappingId(returnedGoods.getGoodsMappingId());
 				if(returnedGoods.getIsReal() == 1){
@@ -133,9 +143,60 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				ogd.setType(0);
 				ogd.setAdvanceFlag("4");
 				ogd.setCreateBy(UserUtils.getUser());
+				
+				if(returnedGoods.getIsReal() == 2){//套卡需要把剩余金额加回来,返回金额
+					ogd.setSurplusAmount(returnedGoods.getReturnAmount());
+				}
+				if(returnedGoods.getIsReal() == 3){//通用卡的剩余次数恢复
+					ReturnedGoods commonNum = returnedGoodsDao.getCommonNum(returnedGoods);
+					ogd.setServiceTimes(commonNum.getServiceTimes());
+				}
 				orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
+				//---------------------------退货处理  detials  end---------------------------
+				
+				if(returnedGoods.getIsReal() == 2 || returnedGoods.getIsReal() == 3){//套卡和通用卡的子项售后数量
+					//在mapping表中都存入了after_sale_num售后数量 ,需要在减去
+					List<OrderGoods> oglist = orderGoodsDao.getAfterSaleNumByRid(orderGoods);
+					for (OrderGoods og : oglist) {
+						og.setAfterSaleNum(-og.getAfterSaleNum());
+						orderGoodsDao.updateIsAfterSales(og);
+					}
+				}
 			}
-
+			
+			//------------------------------同意退货  扣减云币----begin--------------------------
+			if (returnedGoods.getIsConfirm() == 12) {
+				//查询mapping表中,云币的数量
+				int integral = orderGoodsDao.getintegralByRecId(returnedGoods.getGoodsMappingId());
+				if(integral != 0){
+					if(returnedGoods.getIsReal() == 0){
+						integral = integral * returnedGoods.getReturnNum();
+					}
+					//查看缓存中,用户是否存在
+					boolean str = redisClientTemplate.exists("mtmy_id_"+returnedGoods.getUserId());
+					if(str){
+						RedisLock redisLock = new RedisLock(redisClientTemplate, "mtmy_id_"+returnedGoods.getUserId());
+						redisLock.lock();
+						redisClientTemplate.incrBy("mtmy_id_"+returnedGoods.getUserId(),-integral);
+						redisLock.unlock();
+					}else{//当用户不存在缓存,直接扣减mtmy_user_accounts表中的云币
+						orders.setUserid(returnedGoods.getUserId());
+						orders.setUserIntegral(integral);
+						ordersDao.updateIntegralAccount(orders);
+					}
+					//把操作的记录存入mtmy_integrals_log表中
+					IntegralsLog integralsLog = new IntegralsLog();
+					integralsLog.setUserId(returnedGoods.getUserId());
+					integralsLog.setIntegralType(1);
+					integralsLog.setIntegralSource(0);
+					integralsLog.setActionType(21);
+					integralsLog.setIntegral(-integral);
+					integralsLog.setOrderId(returnedGoods.getOrderId());
+					integralsLog.setRemark("商品赠送(扣减)");
+					integralLogDao.insertIntegrals(integralsLog);
+				}
+			}
+			//------------------------------同意退货  扣减云币---end---------------------------
 		}
 		
 		if ("21".equals(returnedGoods.getReturnStatus())) { // 申请换货
@@ -191,25 +252,38 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		orderGoods.setAfterSaleNum(returnedGoods.getReturnNum());
 		orderGoodsDao.updateIsAfterSales(orderGoods);
 		
-		//退货处理
+		//退货处理 detials begin
 		orderGoods = orderGoodsDao.selectOrderGoodsByRecid(orderGoods.getRecid());
-
 		OrderGoodsDetails ogd = new OrderGoodsDetails();
+		
 		ogd.setOrderId(returnedGoods.getOrderId());
 		ogd.setGoodsMappingId(returnedGoods.getGoodsMappingId());
-		//套卡和通用卡中不存入次字段
+		//判断是否为套卡,存入剩余金额surplusAmount
+		if(orders.getIsReal() == 2){
+			OrderGoodsDetails ogd1 = orderGoodsDetailsDao.getOrderGoodsDetailSurplusAmountByOid(ogd);
+			ogd.setSurplusAmount(-ogd1.getSurplusAmount());
+		}
+		//查询出通用卡的售后次数(mapping表中的service_times - appt_order表中的预约次数)
+		ReturnedGoods commonNum = returnedGoodsDao.getCommonNum(returnedGoods);
+		if(orders.getIsReal() == 3){
+			ogd.setServiceTimes(-commonNum.getServiceTimes());
+		}else{//除通用卡之外,实物和虚拟商品都会存入售后数量,或者次数
+			ogd.setServiceTimes(-returnedGoods.getServiceTimes());
+		}
+		//套卡和通用卡中不存入此字段
 		if(orders.getIsReal() == 0 || orders.getIsReal() == 1){
 			ogd.setItemAmount(returnedGoods.getServiceTimes()*orderGoods.getSingleRealityPrice());
 			ogd.setItemCapitalPool(returnedGoods.getServiceTimes()*orderGoods.getSingleNormPrice());
 		}
-		ogd.setServiceTimes(-returnedGoods.getServiceTimes());
 		ogd.setType(2);
 		ogd.setAdvanceFlag("4");
 		ogd.setCreateBy(UserUtils.getUser());
-		orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
 		
-		//套卡和通用卡售后子项保存mtmy_returned_goods_card
-		if(orders.getIsReal() == 2 || orders.getIsReal() == 3){
+		orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
+		//退货处理 detials end
+		
+		//套卡售后  子项商品保存mtmy_returned_goods_card
+		if(orders.getIsReal() == 2){
 			//通过recid查询售后子项
 			List<OrderGoods> og = orderGoodsDao.getOrderGoodsCard(orderGoods);
 			//循环卡项子项,把实物售后数量写入
@@ -221,12 +295,64 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				rg.setIsReal(og.get(i).getIsreal());
 				if(og.get(i).getIsreal() == 0){//当子项是实物时,把售后数量写入
 					rg.setReturnNum(returnedGoods.getReturnNums().get(j));
+					
+					//当实物时,给mapping表中插入after_sale_num
+					orderGoods.setRecid(og.get(i).getRecid());
+					orderGoods.setAfterSaleNum(returnedGoods.getReturnNums().get(j));
+					orderGoodsDao.updateIsAfterSales(orderGoods);
+					
 					j++;
-				}else if(og.get(i).getIsreal() == 1){
-					rg.setReturnNum(1);
 				}
 				rg.setGoodsName(og.get(i).getGoodsname());
 				returnedGoodsDao.insertReturnGoodsCard(rg);
+			}
+			//查询套卡子项虚拟商品的剩余次数(购买次数-预约次数)
+			List<ReturnedGoods> returnedGoodsNum = returnedGoodsDao.getReturnNum(returnedGoods);
+			for (ReturnedGoods rgn : returnedGoodsNum) {
+				rgn.setReturnedId(id);
+				//修改套卡子项虚拟商品的剩余次数
+				returnedGoodsDao.updateCardNum(rgn);
+				
+				//当虚拟商品时,给mapping表中插入after_sale_num
+				orderGoods.setRecid(Integer.valueOf(rgn.getGoodsMappingId()));
+				orderGoods.setAfterSaleNum(rgn.getReturnNum());
+				orderGoodsDao.updateIsAfterSales(orderGoods);
+			}
+			
+		}
+		//通用卡售后  子项商品保存mtmy_returned_goods_card
+		if(orders.getIsReal() == 3){
+			//修改通用卡的售后次数
+			commonNum.setId(id);
+			returnedGoodsDao.updateCommonNum(commonNum);
+			//查询出通用卡的子项,并把实物的售后数量写入   虚拟的为0
+			//通过recid查询售后子项
+			List<OrderGoods> og = orderGoodsDao.getOrderGoodsCard(orderGoods);
+			//循环卡项子项,把实物售后数量写入
+			ReturnedGoods rg = new ReturnedGoods();
+			int j = 0 ;
+			for (int i = 0; i < og.size(); i++) {
+				rg.setReturnedId(id);
+				rg.setGoodsMappingId(og.get(i).getRecid()+"");
+				//给mapping插入数据
+				orderGoods.setRecid(og.get(i).getRecid());
+				
+				rg.setIsReal(og.get(i).getIsreal());
+				if(og.get(i).getIsreal() == 0){//当子项是实物时,把售后数量写入
+					rg.setReturnNum(returnedGoods.getReturnNums().get(j));
+					j++;
+					//给mapping表中插入after_sale_num
+					orderGoods.setAfterSaleNum(returnedGoods.getReturnNums().get(j));
+				}else if(og.get(i).getIsreal() == 1){
+					rg.setReturnNum(0);
+					//给mapping表中插入after_sale_num
+					orderGoods.setAfterSaleNum(0);
+				}
+				rg.setGoodsName(og.get(i).getGoodsname());
+				returnedGoodsDao.insertReturnGoodsCard(rg);
+				
+				//mapping和returned_goods及其卡项子项表时对应的,所以售后数量一样
+				orderGoodsDao.updateIsAfterSales(orderGoods);
 			}
 		}
 	}
@@ -313,6 +439,15 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	 */
 	public boolean getReturnedGoods(ReturnedGoods returnedGoods) {
 		return returnedGoodsDao.getReturnedGoods(returnedGoods) >0;
+	}
+
+	/**
+	 * 查询卡项子项实物的售后数量
+	 * @param returnedGoods
+	 * @return
+	 */
+	public List<ReturnedGoods> getRealnum(ReturnedGoods returnedGoods) {
+		return returnedGoodsDao.getRealnum(returnedGoods);
 	}
 
 }

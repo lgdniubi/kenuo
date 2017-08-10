@@ -324,4 +324,10 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @param integralsLog
 	 */
 	public void insertIntegralLog(IntegralsLog integralsLog);
+	
+	/**
+	 * 确认售后,扣减用户云币
+	 * @param orders
+	 */
+	public void updateIntegralAccount(Orders orders);
 }

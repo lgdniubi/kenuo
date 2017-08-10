@@ -229,19 +229,37 @@
 								<td style="text-align: center;">${returnGoods.financialBy}</td>
 								<td style="text-align: center;">${returnGoods.remarks}</td>
 								<td style="text-align: center;">
-									<!-- 查看详情 -->
-				 					<shiro:hasPermission name="ec:returned:view"> 
-				 						<a href="#" onclick="openDialogView('售后详情', '${ctx}/ec/returned/returnform?id=${returnGoods.id}','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看详情</a>
-				 					</shiro:hasPermission>
-				 					<!-- 审核 -->
-									<shiro:hasPermission name="ec:returned:audit">
-										<c:if test="${returnGoods.returnStatus==11 or returnGoods.returnStatus==21}">
-											<a href="#" onclick="openDialog('审核售后申请', '${ctx}/ec/returned/returnform?id=${returnGoods.id}','850px','650px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>
-										</c:if>
-										<c:if test="${returnGoods.returnStatus !=11 and returnGoods.returnStatus !=21}">
-											<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>审核</a>
-										</c:if>
-									</shiro:hasPermission>
+									<c:if test="${returnGoods.isReal != 2 && returnGoods.isReal != 3}">	
+										<!-- 实物或者虚拟商品    售后 -->
+					 					<shiro:hasPermission name="ec:returned:view"> 
+					 						<a href="#" onclick="openDialogView('售后详情', '${ctx}/ec/returned/returnform?id=${returnGoods.id}','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看详情</a>
+					 					</shiro:hasPermission>
+					 					<!-- 审核 -->
+										<shiro:hasPermission name="ec:returned:audit">
+											<c:if test="${returnGoods.returnStatus==11 or returnGoods.returnStatus==21}">
+												<a href="#" onclick="openDialog('审核售后申请', '${ctx}/ec/returned/returnform?id=${returnGoods.id}','850px','650px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>
+											</c:if>
+											<c:if test="${returnGoods.returnStatus !=11 and returnGoods.returnStatus !=21}">
+												<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>审核</a>
+											</c:if>
+										</shiro:hasPermission>
+									</c:if>
+									<!-- 套卡和通用卡   售后 -->
+									<c:if test="${returnGoods.isReal==2 || returnGoods.isReal==3}">
+										<!-- 查看详情 -->
+					 					<shiro:hasPermission name="ec:returned:view"> 
+					 						<a href="#" onclick="openDialogView('售后详情', '${ctx}/ec/returned/returnformCard?id=${returnGoods.id}&flag=','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看详情</a>
+					 					</shiro:hasPermission>
+					 					<!-- 审核 -->
+										<shiro:hasPermission name="ec:returned:audit">
+											<c:if test="${returnGoods.returnStatus==11 or returnGoods.returnStatus==21}">
+												<a href="#" onclick="openDialog('审核售后申请', '${ctx}/ec/returned/returnformCard?id=${returnGoods.id}&flag=${returnGoods.isReal}','850px','650px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>
+											</c:if>
+											<c:if test="${returnGoods.returnStatus !=11 and returnGoods.returnStatus !=21}">
+												<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>审核</a>
+											</c:if>
+										</shiro:hasPermission>
+									</c:if>
 									<!-- 确认收货 -->
 									<shiro:hasPermission name="ec:returned:take">
 										<c:if test="${returnGoods.returnStatus==12 or returnGoods.returnStatus==13 or returnGoods.returnStatus==22 or returnGoods.returnStatus==23}">

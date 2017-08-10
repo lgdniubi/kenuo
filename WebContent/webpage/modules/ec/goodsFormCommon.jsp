@@ -400,7 +400,7 @@
 								
 						</div>
 						<!-- 通用信息 End -->
-						<!-- 套卡子项 Begin -->
+						<!-- 通用卡子项 Begin -->
 						<div class="tab-pane fade" id="tab_goods_card">
 							<div>
 								<a href="#" onclick="addGoods(${goods.goodsId},1,3)" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加虚拟商品</a>
@@ -420,7 +420,7 @@
 								</tbody>
 							</table>
 						</div>
-						<!-- 套卡子项 End -->
+						<!-- 通用卡子项 End -->
 						<!-- 商品相册 Begin -->
 						<div class="tab-pane fade" id="tab_goods_images">
 							<div class="formArea">
