@@ -58,7 +58,7 @@
 		FROM
 			mtmydb.mtmy_order_goods_details
 		WHERE
-			order_id = #{orderId}
+			order_id = #{orderid}
 	</select>
 	
 	
