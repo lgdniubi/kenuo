@@ -82,33 +82,64 @@
 		AND order_id= #{orderId}
 		AND goods_mapping_id= #{goodsMappingId}
 	</select>
-	<!-- 根据orderid 查询退货订单是否存在 -->
-<!-- <select id="retlist" resultType="ReturnedGoods">
+	<!-- 根据编号 -->
+	<select id="getRealnum" resultType="ReturnedGoods">
+		SELECT 
+			id,
+			returned_id AS 'returnedId',
+			mapping_id AS 'goodsMappingId',
+			is_real AS 'isReal',
+			return_num AS 'returnNum',
+			goods_name AS 'goodsName'
+			FROM mtmydb.mtmy_returned_goods_card 
+		WHERE
+			returned_id = #{id}
+		AND is_real = 0
+	</select>
+	<!-- 查询套卡子项虚拟商品的剩余次数(购买次数-预约次数) -->
+	<select id="getReturnNum" resultType="ReturnedGoods">
+		SELECT 
+			a.rec_id as 'goodsMappingId',
+			(a.service_times -IFNULL(b.returnNum,0)) AS 'returnNum'
+		FROM 
+			mtmydb.mtmy_order_goods_mapping a LEFT JOIN (SELECT goods_mapping_id,count(1) returnNum FROM mtmydb.mtmy_appt_order WHERE appt_status in (0,1,2,4) GROUP BY goods_mapping_id) b ON a.rec_id = b.goods_mapping_id
+		WHERE  
+			a.order_id=#{orderId}
+		AND 
+			a.group_id = #{goodsMappingId}
+		AND 
+			a.is_real = 1
+		GROUP BY
+			a.rec_id
+	</select>
+	<!-- 查询出通用卡的售后次数(mapping表中的service_times - appt_order表中的预约次数) -->
+	<select id="getCommonNum" resultType="ReturnedGoods">
 		SELECT
-			a.return_goods_id,
-			a.order_id,
-			a.parent_id,
-			a.order_sn,
-			a.goods_id,
-			a.type,
-			a.reason,
-			a.imgs,
-			a.bank_no,
-			a.bank_name,
-			a.ret_username,
-			a.storage_status,
-			a.return_money,
-			a.return_status,
-			a.remark,
-			a.user_id,
-			a.add_time,
-			a.entry_operator,
-			a.financial_operator
-		FROM  
-		mtmydb.mtmy_return_goods a 
-		WHERE 
-		a.order_id = #{orderid} and a.del_flag=0
-	</select> -->
+			a.rec_id as 'goodsMappingId',
+			(a.service_times -count(b.goods_mapping_id)) AS 'returnNum'
+		FROM 
+			mtmydb.mtmy_order_goods_mapping a LEFT JOIN mtmydb.mtmy_appt_order b on a.rec_id = b.goods_mapping_id
+		WHERE
+			a.order_id=#{orderId}
+		AND 
+			a.rec_id = #{goodsMappingId}
+		AND 
+			b.appt_status in (0,1,2,4)
+	</select>
+	<!-- 修改套卡子项虚拟商品的剩余次数 -->
+	<update id="updateCardNum">
+		UPDATE mtmydb.mtmy_returned_goods_card SET
+			return_num=#{returnNum}
+		WHERE mapping_id=#{goodsMappingId}
+		AND returned_id = #{returnedId}
+	</update>
+	<!-- 修改通用卡的售后次数 -->
+	<update id="updateCommonNum">
+		UPDATE mtmydb.mtmy_returned_goods SET
+			return_num=#{returnNum}
+		WHERE id=#{id} 
+		AND goods_mapping_id = #{goodsMappingId}
+	</update>
 	<!-- 审核 -->
 	<update id="saveEdite">
 		UPDATE mtmydb.mtmy_returned_goods SET

@@ -58,7 +58,17 @@
 		FROM
 			mtmydb.mtmy_order_goods_details
 		WHERE
-			order_id = #{orderid}
+			order_id = #{orderId}
+	</select>
+	
+	
+	<select id="getOrderGoodsDetailSurplusAmountByOid" resultType="OrderGoodsDetails">
+		SELECT
+			SUM(surplus_amount) AS 'surplusAmount'
+		FROM
+			mtmydb.mtmy_order_goods_details
+		WHERE
+			order_id = #{orderId} AND goods_mapping_id = #{goodsMappingId}
 	</select>
 	
 	

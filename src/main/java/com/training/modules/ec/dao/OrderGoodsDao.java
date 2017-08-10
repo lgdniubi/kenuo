@@ -107,17 +107,24 @@ public interface OrderGoodsDao extends TreeDao<OrderGoods> {
 	public OrderGoods selectCardSonReservation(int recId);
 
 	/**
-	 * 查询订单中的套卡
-	 * @param orderid
-	 * @return
-	 */
-	public List<OrderGoods> orderlistCardSuit(String orderid);
-
-	/**
 	 * 根据组ID(mapping_id)获取卡项中的实物集合
 	 * @param orderGoods
 	 * @return
 	 */
 	public List<OrderGoods> getOrderGoodsCard(OrderGoods orderGoods);
+
+	/**
+	 * 根据组ID(mapping_id)获取卡项中的after_sale_num
+	 * @param orderGoods
+	 * @return
+	 */
+	public List<OrderGoods> getAfterSaleNumByRid(OrderGoods orderGoods);
+
+	/**
+	 * 根据recid查询赠送云币数量
+	 * @param goodsMappingId
+	 * @return
+	 */
+	public int getintegralByRecId(String goodsMappingId);
 	
 }

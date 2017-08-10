@@ -6,7 +6,7 @@
 %>
 <html>
 <head>
-	<title>添加套卡</title>
+	<title>查看商品</title>
 	<meta name="decorator" content="default"/>
 	<link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
 	<link rel="stylesheet" href="${ctxStatic}/ec/css/base.css">
@@ -32,6 +32,20 @@
 	<!-- 富文本框上传图片样式引用 -->
 	<link rel="stylesheet" type="text/css" href="${ctxStatic}/kindEditor/themes/editCss/edit.css">
 	
+	<!-- <script type="text/javascript">
+		//页面加载时间
+		$(document).ready(function() {
+			//文本编辑器
+			$('.summernote').summernote({
+		    	height : 200,
+		        lang : 'zh-CN',
+		     	//重写上传图片方法
+		        onImageUpload : function(files, editor, $editable) {
+		        	showTip('请点击图片按钮进行添加图片');
+				}
+		 	});
+		});
+    </script> -->
 	<!-- 富文本框上传图片样式 -->
 	<style>
 		strong{font-weight:bold}
@@ -49,6 +63,7 @@
 		var newUploadURL = '<%=uploadURL%>';
 		var cateid = 0;  // 分类的id  
 		$(document).ready(function(){
+//			$("#goodsCategoryIdButton, #goodsCategoryIdName").click(function(){	    增加  , #goodsCategoryIdName  文本框有点击事件
 			$("#goodsCategoryIdButton").click(function(){
 				// 是否限制选择，如果限制，设置为disabled
 				if ($("#goodsCategoryIdButton").hasClass("disabled")){
@@ -72,6 +87,8 @@
 								}
 								for(var i=0; i<nodes.length; i++) {//
 									if (nodes[i].isParent){
+										//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+										//layer.msg('有表情地提示');
 										top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
 										return false;
 									}//
@@ -90,58 +107,6 @@
 				}); 
 			
 			});
-			$("#franchiseeIdButton").click(function(){
-				// 是否限制选择，如果限制，设置为disabled
-				if ($("#franchiseeIdButton").hasClass("disabled")){
-					return true;
-				}
-				// 正常打开	
-				top.layer.open({
-				    type: 2, 
-				    area: ['300px', '420px'],
-				    title:"选择加盟商",
-				    ajaxData:{selectIds: $("#franchiseeIdId").val()},
-				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/franchisee/treeData")+"&module=&checked=&extId=&isAll=&selectIds=" ,
-				    btn: ['确定', '关闭']
-		    	       ,yes: function(index, layero){ //或者使用btn1
-								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
-								var ids = [], names = [], nodes = [];
-								if ("" == "true"){
-									nodes = tree.getCheckedNodes(true);
-								}else{
-									nodes = tree.getSelectedNodes();
-								}
-								for(var i=0; i<nodes.length; i++) {//
-									if (nodes[i].isParent){
-										//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
-										//layer.msg('有表情地提示');
-										top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
-										return false;
-									}//
-									ids.push(nodes[i].id);
-									names.push(nodes[i].name);//
-									break; // 如果为非复选框选择，则返回第一个选择  
-								}
-								if($("#franchiseeIdId").val() != "" && $("#franchiseeIdId").val() != null){
-									if(confirm("确定要改变所属商家吗?(子项商品会被删除)")){
-										$("#franchiseeIdId").val(ids.join(",").replace(/u_/ig,""));
-										$("#franchiseeIdName").val(names.join(","));
-										$("#franchiseeIdName").focus();
-										$("#addZTD").find("tr").remove();
-										$("<tr><th style='text-align: center;' colspan='6'>合&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;计</th><th style='text-align: center;' class='totalMarketPrices'></th><th style='text-align: center;' class='totalPrices'></th><th style='text-align: center;'></th></tr>").appendTo($("#addZTD"));
-									}
-								}else{
-									$("#franchiseeIdId").val(ids.join(",").replace(/u_/ig,""));
-									$("#franchiseeIdName").val(names.join(","));
-									$("#franchiseeIdName").focus();
-								}
-								top.layer.close(index);
-		    	       },
-		    	cancel: function(index){ //或者使用btn2
-		    	           //按钮【按钮二】的回调
-		    	       }
-				}); 
-			});
 		});
 	</script>
 </head>
@@ -150,7 +115,7 @@
 		<sys:message content="${message}"/>
 		<div class="warpper-content">
 			<div class="ibox-title">
-				<h5>添加套卡</h5>
+				<h5>查看商品</h5>
 				<h5 style="padding-left: 92%;margin-top: -10px;">
 	           		<a href="${ctx}/ec/goods/list?actionId=${goods.actionId}">
 	            		<button type="button" class="btn btn-info">返回</button>
@@ -161,11 +126,19 @@
 				<div class="panel-body">
 					<ul class="nav nav-tabs">
 		                <li class="active"><a href="#tab_tongyong" data-toggle="tab">通用信息</a></li>
-		                <li><a href="#tab_goods_card" data-toggle="tab">套卡子项</a></li>                        
+		                <c:if test="${goods.isReal ==2}">                        
+		                	<li><a href="#tab_goods_suit" data-toggle="tab">子项信息</a></li>                        
+		                </c:if>
+		                <c:if test="${goods.isReal ==3}">                        
+		                	<li><a href="#tab_goods_common" data-toggle="tab">子项信息</a></li>                        
+		                </c:if>
 		                <li><a href="#tab_goods_images" data-toggle="tab">商品相册</a></li>
+		                <c:if test="${goods.isReal ==3}">
+		                	<li><a href="#tab_goods_spec" data-toggle="tab">商品规格</a></li> 
+		                </c:if>                       
 		            </ul>
-		        <form:form id="goodsForm" modelAttribute="goods" action="${ctx}/ec/goodsCard/save" method="post">
-	            	<div class="tab-content" id="myTabContent">
+		          <form:form id="goodsForm" modelAttribute="goods" action="${ctx}/ec/goods/save" method="post">
+		            <div class="tab-content" id="myTabContent">
 		            	<!-- 通用信息 Begin -->
 						<div class="tab-pane fade in active" id="tab_tongyong">
 						
@@ -173,7 +146,6 @@
 								<form:hidden path="attrType"/>
 								<form:hidden path="specType"/>
 								<form:hidden path="actionId"/>
-								<form:hidden path="isReal" value="2"/>
 								<ul class="formArea">
 									<li class="form-group" id="goodsTypeLi">
 										<span class="control-label col-sm-2"><font color="red">*</font>商品区分：</span>
@@ -421,11 +393,7 @@
 						</div>
 						<!-- 通用信息 End -->
 						<!-- 套卡子项 Begin -->
-						<div class="tab-pane fade" id="tab_goods_card">
-							<div>
-								<a href="#" onclick="addGoods(${goods.goodsId},1,2)" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加虚拟商品</a>
-								<a href="#" onclick="addGoods(${goods.goodsId},0,2)" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加实物商品</a>
-							</div>
+						<div class="tab-pane fade" id="tab_goods_suit">
 							<table class="table table-bordered table-hover table-left">
 								<thead>
 									<tr>
@@ -437,7 +405,6 @@
 										<th style="text-align: center;">优惠价</th>
 										<th style="text-align: center;">市场价合计</th>
 										<th style="text-align: center;">优惠价合计</th>
-										<th style="text-align: center;">操作</th>
 									</tr>
 								</thead>
 								<tbody id="addZTD" style="text-align:center;">	
@@ -451,43 +418,137 @@
 							</table>
 						</div>
 						<!-- 套卡子项 End -->
+						<!-- 通用卡子项 Begin -->
+						<div class="tab-pane fade" id="tab_goods_common">
+							<table class="table table-bordered table-hover table-left">
+								<thead>
+									<tr>
+										<th style="text-align: center;">序号</th>
+										<th style="text-align: center;">子项名称</th>
+										<th style="text-align: center;">商品类型</th>
+										<th style="text-align: center;">数量</th>
+									</tr>
+								</thead>
+								<tbody id="addZTD1" style="text-align:center;">	
+								</tbody>
+							</table>
+						</div>
+						<!-- 通用卡子项 End -->
 						<!-- 商品相册 Begin -->
 						<div class="tab-pane fade" id="tab_goods_images">
-							<%-- <form action="${ctx}/ec/goods/savegoodsimages?actionId=${goods.actionId}" id="goodsImagesForm" method="post"> --%>
-								<div class="formArea">
-									<div class="imgResult" id="goodsImages">
-										<c:forEach items="${goods.goodsImagesList }" var="goodsImages">
-											<c:if test="${goodsImages.imageType == 0 }">
-												<div class="imgItem" id="imgItem${goodsImages.imgId }">
-													<img alt="images" src="${goodsImages.imageUrl }">
-													<span class="contorl-bar">
-														<span class="move-pro" onclick="updateImagesDiv('LEFT','goodsImages','imgItem${goodsImages.imgId }')"></span>
-														<span class="move-last" onclick="updateImagesDiv('RIGHT','goodsImages','imgItem${goodsImages.imgId }')"></span>
-														<span class="move-delelt" onclick="updateImagesDiv('DEL','goodsImages','imgItem${goodsImages.imgId }')"></span>
-													</span>	
-													<input type="hidden" value="${goodsImages.imageUrl }" name="goodsImages" id="goodsImages">
-												</div>
-											</c:if>
-										</c:forEach>
-									</div>
-									<input type="file" name="file_goodsImages_upload" id="file_goodsImages_upload">
-									<div id="file_goodsImages_queue"></div>
+							<div class="formArea">
+								<div class="imgResult" id="goodsImages">
+									<c:forEach items="${goods.goodsImagesList }" var="goodsImages">
+										<c:if test="${goodsImages.imageType == 0 }">
+											<div class="imgItem" id="imgItem${goodsImages.imgId }">
+												<img alt="images" src="${goodsImages.imageUrl }">
+												<span class="contorl-bar">
+													<span class="move-pro" onclick="updateImagesDiv('LEFT','goodsImages','imgItem${goodsImages.imgId }')"></span>
+													<span class="move-last" onclick="updateImagesDiv('RIGHT','goodsImages','imgItem${goodsImages.imgId }')"></span>
+													<span class="move-delelt" onclick="updateImagesDiv('DEL','goodsImages','imgItem${goodsImages.imgId }')"></span>
+												</span>	
+												<input type="hidden" value="${goodsImages.imageUrl }" name="goodsImages" id="goodsImages">
+											</div>
+										</c:if>
+									</c:forEach>
 								</div>
-								<div><font color="red" size="2">备注:商品相册在移动端指商品详情里的顶部轮播图</font></div>
+								<input type="file" name="file_goodsImages_upload" id="file_goodsImages_upload">
+								<div id="file_goodsImages_queue"></div>
+							</div>
+							<div><font color="red" size="2">备注:商品相册在移动端指商品详情里的顶部轮播图</font></div>
 						</div>
 						<!-- 商品相册 End -->
+						<!-- 商品规格  Begin -->
+						<div class="tab-pane fade" id="tab_goods_spec">
+							<table class="table table-bordered table-hover table-left">
+								<tr>
+									<td>商品类型:</td>
+									<td>
+					                    <select class="form-control" style="text-align: center;" id="specTypeId" name="specTypeId" onchange="goodsTypeChange('specgoodsid','SPECTYPEID','goods_spec_table',this.options[this.options.selectedIndex].value)">
+											<option value="-1">所有类型</option>
+											<c:forEach items="${goodsTypeList}" var="goodsType">
+												<option ${(goodsType.id == goods.specType)?'selected="selected"':''} value="${goodsType.id}">${goodsType.name}</option>
+											</c:forEach>
+										</select>
+									</td>
+								</tr>
+							</table>
+							<div id="ajax_spec_data">
+								<table class="table table-bordered table-left">
+									<tbody>
+										<tr>
+									        <td colspan="2"><b>商品规格:</b></td>
+									    </tr>
+								    </tbody>
+								    <!-- 根据商品类型 获取商品规格-->
+								    <tbody id="goods_spec_table" style="text-align: center;">
+								    	<c:if test="${not empty goodsSpectablecontent }">
+								    		${goodsSpectablecontent }
+								    	</c:if>
+								    </tbody>
+								</table>
+								<div id="goods_spec_table2">
+									<c:if test="${empty goodsSpecItemtablecontent}">
+										<table class="table table-bordered" id="goods_spec_input_table">
+											<tr>
+												<td><b>价格</b></td>
+								            	<td><b>库存</b></td>
+								            	<td><b>条码</b></td>
+								            	<td><b>商品编码</b></td>
+								            	<td><b>服务次数</b></td>
+								            </tr>
+										</table>
+									</c:if>
+									<c:if test="${not empty goodsSpecItemtablecontent }">
+										${goodsSpecItemtablecontent }
+									</c:if>
+								</div>
+							</div>
+							<font color="red">*亲,修改商品规格,请到列表页面的商品规格修改,谢谢!</font>
+							<!-- 提交按钮 -->
+							<div class="box-footer">   
+								<input type="hidden" id="specarr" name="specarr">  
+								<input type="hidden" id="itemimgid" name="itemimgid" value="">                  	
+					    	</div> 
+						</div>
+						<!-- 商品规格  End -->
 		            </div>
-		            <!-- 提交按钮 -->
-					<div class="box-footer">   
-					    <input type="submit" class="btn btn-primary" value="提 交">
-					</div>
-				</form:form>
+					</form:form>
 				</div>
 			</div>
 		</div>
 		<!-- 页面加载等待 -->
 		<div class="loading"></div>
 	</div>
+	<!-- 商品规格图片上传弹出层 begin -->
+	<div class="W" id="Wrap" style="display: none;">
+		<div class="Wrap">
+			<div class="Title">
+				<h3 class="MainTit" id="MainTit"></h3>
+				<a href="javascript:closeuploadImg()" title="关闭" class="Close"></a>
+			</div>
+			<div class="Cont">
+				<p class="Note">最多上传<strong>1</strong>个附件,单文件最大<strong>10M</strong>,类型<strong>BMP,JPG,PNG,GIF</strong></p>
+				<div class="flashWrap">
+					
+				</div>
+				<input type="file" id="file_specitemimg_upload" name="Filedata"/>
+				<div id="file_specitemimg_queue"></div>
+				<div class="fileWarp">
+					<fieldset>
+						<legend>列表</legend>
+						<img id="specitemimgsrc" src="" style="width: 200px;height: 200px;display: none;"/>
+					</fieldset>
+				</div>
+				<div class="btnBox">
+					<button class="btn" id="SaveBtn" onclick="saveuploadImg()">保存</button>
+					&nbsp;
+					<button class="btn" id="CancelBtn" onclick="closeuploadImg()">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 商品规格图片上传弹出层 end -->
 	<!-- 富文本框上传图片弹出框 -->
 	<div class="ke-dialog-default ke-dialog ke-dalog-addpic" id="ke-dialog">
 		<div class="ke-dialog-content">
@@ -617,6 +678,62 @@
 			return str = str.replace(/\s+/g,"");
 		}
 	
+		//商品类型改变事件
+		var radiochange = function(v){
+			if(v == 0){
+				//实物
+				$("#serviceMin").attr("disabled","disabled"); 
+				$("#goodsTypeLi,#advancePriceLi").hide();
+			}else if(v == 1){
+				//虚拟
+				$("#serviceMin").removeAttr("disabled"); 
+				$("#goodsTypeLi,#advancePriceLi").show();
+			}
+		}
+	
+		//商品类型改变事件
+		var goodsTypeChange = function(goodsidname,typeName,tableName,typeValue){
+			$(".loading").show();//打开展示层
+			
+			if(typeValue == '-1'){
+				//选择所有的时候
+				$("#"+tableName).empty();
+				$("#goods_spec_table2").empty();//清空table里面的值
+				$(".loading").hide(); //关闭加载层
+			}else{
+				var goodsid = $("#"+goodsidname).val();
+				$.ajax({
+					type : "POST",
+					url : "${ctx}/ec/goods/getattrcontent?TYPENAME="+typeName+"&TYPEVALUE="+typeValue+"&GOODSID="+goodsid,
+					dataType: 'json',
+					success: function(data) {
+						$(".loading").hide(); //关闭加载层
+						var status = data.STATUS;
+						var tablecontent = data.TABLECONTENT;
+						$("#"+tableName).empty();//清空table里面的值
+						if("OK" == status){
+							$("#"+tableName).append(tablecontent);//填写table
+							
+							if("SPECTYPEID" == typeName){
+								$("#specarr").empty();
+								$("#goods_spec_table2").empty();//清空table里面的值
+								
+								var specitemcontent = data.SPECITEMCONTENT;
+								if(null != specitemcontent || !"" == specitemcontent){
+									$("#goods_spec_table2").append(specitemcontent);//填写table
+								}else{
+									$("#goods_spec_table2").append("<table class=\"table table-bordered\" id=\"goods_spec_input_table\"><tr><td><b>价格</b></td><td><b>库存</b></td><td><b>条码</b></td><td><b>商品编码</b></td><td><b>服务次数</b></td></tr></table>");//填写table
+								}
+							}
+						}else if("ERROR" == status){
+							//失败
+							alert(data.MESSAGE);
+						}
+					}
+				});   
+			}
+		}	
+		
 		//商品设置(包邮、新品、推荐。。。)
 		var setcheckclick = function(formname){
 			if($("#"+formname).is(':checked')){
@@ -668,6 +785,16 @@
 			}
 		}
 		
+		//图片提交
+		var goodsImgOnsubmit = function(){
+			var goodsid = $("#imggoodsid").val();
+			if("0" != goodsid && goodsid.length > 0){
+				$("#goodsImagesForm").submit();
+			}else{
+				alert("无法提交");
+			}
+		}
+		
 		//上传图片，用户记录div的ID
 		var imagecount = 0;
 		//页面加载事件
@@ -692,10 +819,8 @@
 					var goodsShortName=$("#goodsShortName").val();
 					var goodsRemark=$("#goodsRemark").val();
 					var goodsSn=$("#goodsSn").val();
-					var franchiseeId=$("#franchiseeIdId").val();
+					var franchiseeId=$("#franchiseeId").val();
 					var goodsCategoryId=$("#goodsCategoryId").val();
-					var marketPrice=$("#marketPrice").val();
-					var shopPrice=$("#shopPrice").val();
 					if(goodsName==""){
 						top.layer.alert('商品名称不能为空!', {icon: 0, title:'提醒'});
 						return;
@@ -716,10 +841,11 @@
 						top.layer.alert('所属商家不能为空!', {icon: 0, title:'提醒'});
 						return;
 					}
-					if(marketPrice==0 && shopPrice == 0){
-						top.layer.alert('请填写套卡子项!', {icon: 0, title:'提醒'});
-						return;
-					}
+					/* var goodsNum=${goods.goodsNum};
+
+					if(goodsNum>0){
+						top.layer.alert('商品已经有人购买,仅规格数据无法修改!', {icon: 0, title:'提醒'});
+					} */
 					var content = $(".ke-edit-iframe").contents().find(".ke-content").html();
 					if(content.indexOf("style") >=0){
 						content = content.replace("&lt;style&gt;","<style>");
@@ -875,7 +1001,69 @@
 					}
 				}
 			});
+			
+			
+			//商品规格图片
+			$("#file_specitemimg_upload").uploadify({
+				'buttonText' : '请选择图片',
+				'method' : 'post',
+				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
+				'uploader' : '<%=uploadURL%>',
+				'fileObjName' : 'file_specitemimg_upload',//<input type="file"/>的name
+				'queueID' : 'file_specitemimg_queue',//与下面HTML的div.id对应
+				'method' : 'post',
+				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
+				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
+				'fileSizeLimit' : '10MB',//上传文件的大小限制
+				'multi' : false,//设置为true时可以上传多个文件
+				'auto' : true,//点击上传按钮才上传(false)
+				'onFallback' : function(){
+					//没有兼容的FLASH时触发
+					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
+				},
+				'onUploadSuccess' : function(file, data, response) { 
+					var jsonData = $.parseJSON(data);//text 转 json
+					if(jsonData.result == '200'){
+						$("#specitemimg").val(jsonData.file_url);
+						$("#specitemimgsrc").show();
+						$("#specitemimgsrc").attr('src',jsonData.file_url); 
+					}
+				}
+			});
+			
+			//商品详情回写值
+			radiochange($("#isRealValue").val());
 		});
+		
+		//点击商品规格图片按钮，添加商品图片
+		var specitemupload = function(v){
+			$("#itemimgid").val(v);
+			var itemimgid = $('#itemimgid').val(); 
+			if(!$.trim(itemimgid) == ''){
+				$("#Wrap").show();
+				$("#specitemimgsrc").hide();
+			}else{
+				alert("比较参数为空");
+			}
+		}
+		
+		//保存商品规格图片
+		var saveuploadImg = function(){
+			var itemimgid = $('#itemimgid').val(); 
+			var path = $("#specitemimgsrc")[0].src; 
+			if(!$.trim(itemimgid) == '' && !$.trim(path) == ''){
+				$("#item_img_"+itemimgid).empty();
+				$("#item_img_"+itemimgid).append("<img src=\""+path+"\" style=\"width: 35px;height: 35px;\" onclick=\"specitemupload('"+itemimgid+"')\"><input type=\"hidden\" value=\""+path+"\" name=\"item_img["+itemimgid+"]\">");
+				$("#Wrap").hide();
+				$("#specitemimgsrc").attr('src',''); 
+			}
+		}
+		
+		//关闭上传图片按钮-清楚图片内容
+		var closeuploadImg = function(){
+			$("#specitemimgsrc").attr('src',''); 
+			$("#Wrap").hide();
+		}
 		
 		function LoadOver(){
 			$("#ke-dialog-num").val("1");
@@ -890,116 +1078,65 @@
 		
 		window.onload = LoadOver;
 		
-		//添加套卡子项
-		j=0;
-		function addGoods(goodsId,num,isReal){
-			franchiseeId = $("#franchiseeIdId").val();
-			if(franchiseeId==""){
-				top.layer.alert('请先选择 | 所属商家 | !', {icon: 0, title:'提醒'});
-				return;
-			}
-			var type;
-			if(num == 0){
-				type="实物";
-			}else if(num == 1){
-				type="虚拟";
-			}
-			top.layer.open({
-			    type: 2, 
-			    area: ['900px', '550px'],
-			    title:"添加"+type+"商品",
-			    content: "${ctx}/ec/goods/GoodsCardForm?goodsId="+goodsId+"&isReal="+num+"&franchiseeId="+franchiseeId,//虚拟和实物商品都是线下
-			    btn: ['确定', '关闭'],
-			    yes: function(index, layero){
-			        var obj =  layero.find("iframe")[0].contentWindow;
-					var goodsId = obj.document.getElementById("select2");
-					newfranchiseeId = obj.document.getElementById("franchiseeId");
-			        var arr = new Array(); //数组定义标准形式，不要写成Array arr = new Array();
-			       
-			        if(goodsId.length==0){
-						top.layer.alert('请添加所需要的商品', {icon: 0, title:'提醒'}); 
-						  return;
+		$(function(){
+			
+			var isReal = ${goods.isReal};	
+			var cardId = $("#goodsId").val();
+			$.ajax({
+				type : "POST",
+				url : "${ctx}/ec/goodsCard/cardlist?cardId="+cardId,
+				dataType: 'json',
+				success: function(list) {
+					if(isReal == 2){
+						var totalMarketPrices =0;
+						var totalPrices =0;
+						for(var i in list){
+							var type;
+							if(list[i].isReal == 0){
+								type="实物";
+							}else{
+								type="虚拟";
+							}
+							$("<tr> "+
+									"<td> "+list[i].goodsCardId+"</td> "+
+									"<td> "+list[i].goodsName+"</td> "+
+									"<td> "+type+"</td> "+
+									"<td> <input id='goodsNums' name='goodsNums' type='text' value='"+list[i].goodsNum+"' readonly class='form-control'></td> "+
+									"<td> <input id='marketPrices' name='marketPrices' type='text' value='"+list[i].marketPrice+"' readonly class='form-control'></td> "+
+									"<td> <input id='prices' name='prices' type='text' value='"+list[i].price+"' readonly='true' class='form-control'></td> "+
+									"<td> <input id='totalMarketPrices' name='totalMarketPrices' type='text' value='"+list[i].totalMarketPrice+"' readonly='true' class='form-control'></td> "+
+									"<td> <input id='totalPrices' name='totalPrices' type='text' value='"+list[i].totalPrice+"' readonly='true' class='form-control'></td> "+
+								"</tr>").prependTo($("#addZTD"));
+							totalMarketPrices = totalMarketPrices + list[i].totalMarketPrice;
+							totalPrices = totalPrices + list[i].totalPrice;
+						}
+						$(".totalMarketPrices").html(totalMarketPrices);
+						$(".totalPrices").html(totalPrices);
+					}else{
+						for(var i in list){
+							var type;
+							if(list[i].isReal == 0){
+								type="实物";
+								$("<tr> "+
+										"<td> "+list[i].goodsCardId+"</td> "+
+										"<td> "+list[i].goodsName+"</td> "+
+										"<td> "+type+"</td> "+
+										"<td> <input id='goodsNums' name='goodsNums' type='text' value='"+list[i].goodsNum+"' readonly class='form-control'></td> "+
+									"</tr>").appendTo($("#addZTD1"));
+							}else{
+								type="虚拟";
+								$("<tr style='height:45px;'> "+
+										"<td> "+list[i].goodsCardId+"</td> "+
+										"<td> "+list[i].goodsName+"</td> "+
+										"<td> "+type+"</td> "+
+										"<td><input id='goodsNums' name='goodsNums' type='hidden' readonly class='form-control'></td> "+
+									"</tr>").appendTo($("#addZTD1"));
+							}
+						}
 					}
-			       	for(var i=0;i<goodsId.length;i++){
-			        	$("<tr> "+
-							"<td> "+goodsId[i].value+"<input id='goodsIds' name='goodsIds' type='hidden' value='"+goodsId[i].value+"' class='form-control'></td> "+
-							"<td> "+goodsId[i].text+"<input id='goodsNames' name='goodsNames' type='hidden' value='"+goodsId[i].text+"' class='form-control'></td> "+
-							"<td> "+type+"</td> "+
-							"<td> <input id='goodsNums"+j+"' name='goodsNums' type='text' value='0' readonly class='form-control'></td> "+
-							"<td> <input id='marketPrices"+j+"' name='marketPrices' type='text' value='0' readonly class='form-control'></td> "+
-							"<td> <input id='prices"+j+"' name='prices' type='text' value='0' readonly='true' class='form-control'></td> "+
-							"<td> <input id='totalMarketPrices"+j+"' name='totalMarketPrices' type='text' value='0' readonly='true' class='form-control'></td> "+
-							"<td> <input id='totalPrices"+j+"' name='totalPrices' type='text' value='0' readonly='true' class='form-control'></td> "+
-							"<td> "+												  
-								"<a href='#' class='btn btn-success btn-xs' onclick='updateByGoodsCard(this,"+goodsId[i].value+","+j+","+isReal+")'><i class='fa fa-edit'></i> 填写价格</a> "+
-								"<a href='#' class='btn btn-danger btn-xs' onclick='delFile(this)'><i class='fa fa-trash'></i> 删除</a> "+
-							"</td>"+										
-						"</tr>").prependTo($("#addZTD"));
-			        	j++;
-			        } 
-					top.layer.close(index);
-			},
-			cancel: function(index){ //或者使用btn2
-					    	           //按钮【按钮二】的回调
-			}
-		}); 
-		}
-		//给套卡子项填写价格
-		function updateByGoodsCard(obj,goodsId,i,isReal){
-			
-			top.layer.open({
-			    type: 2, 
-			    area: ['350px', '550px'],
-			    title:"填写价格",
-			    content: "${ctx}/ec/goodsCard/fromPrice?goodsId="+goodsId+"&isReal="+isReal,
-			    btn: ['确定', '关闭'],
-			    yes: function(index, layero){
-			    	
-			        var obj = layero.find("iframe")[0].contentWindow;
-					var goodsId = obj.document.getElementById("goodsId");
-					var goodsNum = obj.document.getElementById("goodsNum");
-			    	var marketPrice = obj.document.getElementById("marketPrice");
-					var price = obj.document.getElementById("price");
-					
-					//给市场价合计和优惠价合计赋值
-					$("#goodsNums"+i).val($(goodsNum).val());
-					$("#marketPrices"+i).val($(marketPrice).val());
-					$("#prices"+i).val($(price).val());
-					$("#totalMarketPrices"+i).val($(goodsNum).val()*$(marketPrice).val());
-					$("#totalPrices"+i).val($(goodsNum).val()*$(price).val());
-					countPrice();
-					
-					top.layer.close(index);
-				},cancel: function(index){ //或者使用btn2
-					//按钮【按钮二】的回调
 				}
-			}); 
-		}
-		//删除卡项中的商品
-		function delFile(obj){
-			if(confirm("确认要删除吗？","提示框")){
-				$(obj).parent().parent().remove();
-				countPrice();
-			}
-	    }
-		
-		//计算市场价合计和优惠价合计
-		function countPrice(){
-			var tmp = 0;
-			var tp = 0;
-			$("[name='totalMarketPrices']").each(function(){
-				tmp += parseInt($(this).val());
-			});
-			$("[name='totalPrices']").each(function(){
-				tp += parseInt($(this).val());
-			});
-			
-			$(".totalMarketPrices").html(tmp);
-			$(".totalPrices").html(tp);
-			//为通用信息的市场价合计和优惠价合计赋值
-			$("#marketPrice").val(tmp);
-			$("#shopPrice").val(tp);
-		}
+			});  
+		});
     </script>
 </body>
 </html>

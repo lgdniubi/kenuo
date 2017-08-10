@@ -67,4 +67,28 @@
 		SYSDATE()
 		)
 	</insert>
+	<!-- 商品售后,扣减云币 -->
+	<insert id="insertIntegrals">
+		INSERT INTO mtmydb.mtmy_integrals_log
+		(
+		user_id,
+		integral_type,
+		integral_source,
+		action_type,
+		integral,
+		order_id,
+		remark,
+		create_time
+		
+		)values(
+		#{userId},
+		#{integralType},
+		#{integralSource},
+		#{actionType},
+		#{integral},
+		#{orderId},
+		#{remark},
+		SYSDATE()
+		)
+	</insert>
 </mapper>
