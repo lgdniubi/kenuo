@@ -194,8 +194,8 @@
 				(SELECT WEEKOFYEAR(a.update_date)) AS 'week',
 				(SELECT DAY(a.update_date)) AS 'day',
 				SUM(a.basis_fee) AS basisFee,
-				SUM(a.post_fee) AS postFee,
-				COUNT(a.beautician_id) 
+				COUNT(a.beautician_id),
+				SUM(a.post_fee) AS postFee
 			FROM
 				mtmydb.mtmy_appt_order a,
 				mtmydb.mtmy_order_goods_mapping b 
