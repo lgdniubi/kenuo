@@ -340,9 +340,11 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				rg.setIsReal(og.get(i).getIsreal());
 				if(og.get(i).getIsreal() == 0){//当子项是实物时,把售后数量写入
 					rg.setReturnNum(returnedGoods.getReturnNums().get(j));
-					j++;
+					
 					//给mapping表中插入after_sale_num
 					orderGoods.setAfterSaleNum(returnedGoods.getReturnNums().get(j));
+					
+					j++;
 				}else if(og.get(i).getIsreal() == 1){
 					rg.setReturnNum(0);
 					//给mapping表中插入after_sale_num

@@ -921,16 +921,16 @@
 						  return;
 					}
 			       	for(var i=0;i<goodsId.length;i++){
-			        	$("<tr> "+
-							"<td> "+goodsId[i].value+"<input id='goodsIds' name='goodsIds' type='hidden' value='"+goodsId[i].value+"' class='form-control'></td> "+
-							"<td> "+goodsId[i].text+"<input id='goodsNames' name='goodsNames' type='hidden' value='"+goodsId[i].text+"' class='form-control'></td> "+
-							"<td> "+type+"</td> "+
-							"<td> <input id='goodsNums"+j+"' name='goodsNums' type='text' value='0' readonly class='form-control'></td> "+
-							"<td> <input id='marketPrices"+j+"' name='marketPrices' type='text' value='0' readonly class='form-control'></td> "+
-							"<td> <input id='prices"+j+"' name='prices' type='text' value='0' readonly='true' class='form-control'></td> "+
-							"<td> <input id='totalMarketPrices"+j+"' name='totalMarketPrices' type='text' value='0' readonly='true' class='form-control'></td> "+
-							"<td> <input id='totalPrices"+j+"' name='totalPrices' type='text' value='0' readonly='true' class='form-control'></td> "+
-							"<td> "+												  
+			        	$("<tr style='text-align: center;'> "+
+							"<td style='text-align: center;'> "+goodsId[i].value+"<input id='goodsIds' name='goodsIds' type='hidden' value='"+goodsId[i].value+"' class='form-control'></td> "+
+							"<td style='text-align: center;width: 200px;'> "+goodsId[i].text+"<input id='goodsNames' name='goodsNames' type='hidden' value='"+goodsId[i].text+"' class='form-control'></td> "+
+							"<td style='text-align: center;'> "+type+"</td> "+
+							"<td style='text-align: center;'> <input id='goodsNums"+j+"' name='goodsNums' type='text' value='0' readonly class='form-control'></td> "+
+							"<td style='text-align: center;'> <input id='marketPrices"+j+"' name='marketPrices' type='text' value='0' readonly class='form-control'></td> "+
+							"<td style='text-align: center;'> <input id='prices"+j+"' name='prices' type='text' value='0' readonly='true' class='form-control'></td> "+
+							"<td style='text-align: center;'> <input id='totalMarketPrices"+j+"' name='totalMarketPrices' type='text' value='0' readonly='true' class='form-control'></td> "+
+							"<td style='text-align: center;'> <input id='totalPrices"+j+"' name='totalPrices' type='text' value='0' readonly='true' class='form-control'></td> "+
+							"<td style='text-align: center;'> "+												  
 								"<a href='#' class='btn btn-success btn-xs' onclick='updateByGoodsCard(this,"+goodsId[i].value+","+j+","+isReal+")'><i class='fa fa-edit'></i> 填写价格</a> "+
 								"<a href='#' class='btn btn-danger btn-xs' onclick='delFile(this)'><i class='fa fa-trash'></i> 删除</a> "+
 							"</td>"+										

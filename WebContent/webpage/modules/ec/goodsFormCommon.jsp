@@ -408,7 +408,7 @@
 							</div>
 							<table class="table table-bordered table-hover table-left">
 								<thead>
-									<tr>
+									<tr style="text-align: center;">
 										<th style="text-align: center;">序号</th>
 										<th style="text-align: center;">子项名称</th>
 										<th style="text-align: center;">商品类型</th>
@@ -1109,12 +1109,12 @@
 					}
 			        if(num == 1){//添加虚拟商品时,没有数量
 				       	for(var i=0;i<goodsId.length;i++){
-				        	$("<tr> "+
-								"<td> "+goodsId[i].value+"<input id='goodsIds' name='goodsIds' type='hidden' value='"+goodsId[i].value+"' class='form-control'></td> "+
-								"<td> "+goodsId[i].text+"<input id='goodsNames' name='goodsNames' type='hidden' value='"+goodsId[i].text+"' class='form-control'></td> "+
-								"<td> "+type+"</td> "+
-								"<td><input id='goodsNums"+j+"' name='goodsNums' type='hidden' value='0' readonly class='form-control'></td> "+
-								"<td> "+												  
+				        	$("<tr style='text-align: center;'> "+
+								"<td style='text-align: center;'> "+goodsId[i].value+"<input id='goodsIds' name='goodsIds' type='hidden' value='"+goodsId[i].value+"' class='form-control'></td> "+
+								"<td style='text-align: center;width: 200px;'> "+goodsId[i].text+"<input id='goodsNames' name='goodsNames' type='hidden' value='"+goodsId[i].text+"' class='form-control'></td> "+
+								"<td style='text-align: center;'> "+type+"</td> "+
+								"<td style='text-align: center;'><input id='goodsNums"+j+"' name='goodsNums' type='hidden' value='0' readonly class='form-control'></td> "+
+								"<td style='text-align: center;'> "+												  
 									"<a href='#' class='btn btn-danger btn-xs' onclick='delFile(this)'><i class='fa fa-trash'></i> 删除</a> "+
 								"</td>"+										
 							"</tr>").appendTo($("#addZTD"));
@@ -1122,12 +1122,12 @@
 				        } 
 			        }else{
 			        	for(var i=0;i<goodsId.length;i++){
-				        	$("<tr> "+
-								"<td> "+goodsId[i].value+"<input id='goodsIds' name='goodsIds' type='hidden' value='"+goodsId[i].value+"' class='form-control'></td> "+
-								"<td> "+goodsId[i].text+"<input id='goodsNames' name='goodsNames' type='hidden' value='"+goodsId[i].text+"' class='form-control'></td> "+
-								"<td> "+type+"</td> "+
-								"<td> <input id='goodsNums"+j+"' name='goodsNums' type='text' value='0' readonly class='form-control'></td> "+
-								"<td> "+												  
+				        	$("<tr style='text-align: center;'> "+
+								"<td style='text-align: center;'> "+goodsId[i].value+"<input id='goodsIds' name='goodsIds' type='hidden' value='"+goodsId[i].value+"' class='form-control'></td> "+
+								"<td style='text-align: center;width: 200px;'> "+goodsId[i].text+"<input id='goodsNames' name='goodsNames' type='hidden' value='"+goodsId[i].text+"' class='form-control'></td> "+
+								"<td style='text-align: center;'> "+type+"</td> "+
+								"<td style='text-align: center;'> <input id='goodsNums"+j+"' name='goodsNums' type='text' value='0' readonly class='form-control'></td> "+
+								"<td style='text-align: center;'> "+												  
 									"<a href='#' class='btn btn-success btn-xs' onclick='updateByGoodsCard(this,"+goodsId[i].value+","+j+","+isReal+")'><i class='fa fa-edit'></i> 填写数量</a> "+
 									"<a href='#' class='btn btn-danger btn-xs' onclick='delFile(this)'><i class='fa fa-trash'></i> 删除</a> "+
 								"</td>"+										
