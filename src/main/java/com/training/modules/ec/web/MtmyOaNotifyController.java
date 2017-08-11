@@ -38,6 +38,7 @@ import com.training.common.utils.IdGen;
 import com.training.common.utils.StringUtils;
 import com.training.common.utils.excel.ImportExcel;
 import com.training.common.web.BaseController;
+import com.training.modules.ec.entity.GoodsSkill;
 import com.training.modules.ec.entity.MtmyOaNotify;
 import com.training.modules.ec.entity.MtmyOaNotifyRecord;
 import com.training.modules.ec.entity.Users;
@@ -272,9 +273,25 @@ public class MtmyOaNotifyController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "oaList")
-	public String oaList(MtmyOaNotify mtmyOaNotify,Model model) {
+	public String oaList(MtmyOaNotify mtmyOaNotify,HttpServletRequest request,Model model) {
+		List<MtmyOaNotifyRecord> list = new ArrayList<MtmyOaNotifyRecord>();
 		if(StringUtils.isNotBlank(mtmyOaNotify.getId())){
-			List<MtmyOaNotifyRecord> list = mtmyOaNotifyService.getUsers(mtmyOaNotify);
+			list = mtmyOaNotifyService.getUsers(mtmyOaNotify);
+			model.addAttribute("list", list);
+		}
+		if("editNames".equals(request.getParameter("flag"))){
+			String mtmyOaNotifyRecordIds = request.getParameter("mtmyOaNotifyRecordIds");
+			String mtmyOaNotifyRecordNames = request.getParameter("mtmyOaNotifyRecordNames");
+			String[] ids = mtmyOaNotifyRecordIds.split(",");
+			String[] names = mtmyOaNotifyRecordNames.split(",");
+			for (int i = 0; i < ids.length; i++) {
+				MtmyOaNotifyRecord mtmyOaNotifyRecord = new MtmyOaNotifyRecord();
+				Users users = new Users();
+				users.setId(ids[i]);
+				users.setNickname(names[i]);
+				mtmyOaNotifyRecord.setUsers(users);
+				list.add(mtmyOaNotifyRecord);
+			}
 			model.addAttribute("list", list);
 		}
 		return "modules/ec/mtmyOaUsersFrom";
