@@ -13,7 +13,7 @@
 		b.cost_price,
 		b.market_price,
 		b.goods_price as "goodsPrice",
-		b.total_amount,
+		a.total_amount,
 		b.order_amount as "orderAmount",
 		b.order_balance,
 		b.order_arrearage,
@@ -78,7 +78,6 @@
 		WHERE 
 			return_status != -10  
 		AND del_flag = 0 
-		AND is_real = #{isReal}
 		AND order_id= #{orderId}
 		AND goods_mapping_id= #{goodsMappingId}
 	</select>
@@ -91,7 +90,7 @@
 			is_real AS 'isReal',
 			return_num AS 'returnNum',
 			goods_name AS 'goodsName'
-			FROM mtmydb.mtmy_returned_goods_card 
+		FROM mtmydb.mtmy_returned_goods_card 
 		WHERE
 			returned_id = #{id}
 		AND is_real = 0

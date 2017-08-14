@@ -166,34 +166,45 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			
 			//------------------------------同意退货  扣减云币----begin--------------------------
 			if (returnedGoods.getIsConfirm() == 12) {
-				//查询mapping表中,云币的数量
-				int integral = orderGoodsDao.getintegralByRecId(returnedGoods.getGoodsMappingId());
-				if(integral != 0){
-					if(returnedGoods.getIsReal() == 0){
-						integral = integral * returnedGoods.getReturnNum();
+				boolean flag = true;
+				//判断商品是否为实物或者虚拟,是则查询商品之前是否有过售后
+				if(returnedGoods.getIsReal() ==0 || returnedGoods.getIsReal() ==1){
+					//先查询订单是否有过退货记录,有记录就不扣减云币
+					int num = returnedGoodsDao.getReturnedGoods(returnedGoods);
+					flag = num>0;
+				}else if(returnedGoods.getIsReal() ==2 || returnedGoods.getIsReal() ==3){
+					flag = false;//套卡和通用卡只能有一次售后
+				}
+				if(!flag){
+					//查询mapping表中,云币的数量
+					int integral = orderGoodsDao.getintegralByRecId(returnedGoods.getGoodsMappingId());
+					if(integral != 0){
+						if(returnedGoods.getIsReal() == 0){
+							integral = integral * returnedGoods.getReturnNum();
+						}
+						//查看缓存中,用户是否存在
+						boolean str = redisClientTemplate.exists("mtmy_id_"+returnedGoods.getUserId());
+						if(str){
+							RedisLock redisLock = new RedisLock(redisClientTemplate, "mtmy_id_"+returnedGoods.getUserId());
+							redisLock.lock();
+							redisClientTemplate.incrBy("mtmy_id_"+returnedGoods.getUserId(),-integral);
+							redisLock.unlock();
+						}else{//当用户不存在缓存,直接扣减mtmy_user_accounts表中的云币
+							orders.setUserid(returnedGoods.getUserId());
+							orders.setUserIntegral(integral);
+							ordersDao.updateIntegralAccount(orders);
+						}
+						//把操作的记录存入mtmy_integrals_log表中
+						IntegralsLog integralsLog = new IntegralsLog();
+						integralsLog.setUserId(returnedGoods.getUserId());
+						integralsLog.setIntegralType(1);
+						integralsLog.setIntegralSource(0);
+						integralsLog.setActionType(21);
+						integralsLog.setIntegral(-integral);
+						integralsLog.setOrderId(returnedGoods.getOrderId());
+						integralsLog.setRemark("商品赠送(扣减)");
+						integralLogDao.insertIntegrals(integralsLog);
 					}
-					//查看缓存中,用户是否存在
-					boolean str = redisClientTemplate.exists("mtmy_id_"+returnedGoods.getUserId());
-					if(str){
-						RedisLock redisLock = new RedisLock(redisClientTemplate, "mtmy_id_"+returnedGoods.getUserId());
-						redisLock.lock();
-						redisClientTemplate.incrBy("mtmy_id_"+returnedGoods.getUserId(),-integral);
-						redisLock.unlock();
-					}else{//当用户不存在缓存,直接扣减mtmy_user_accounts表中的云币
-						orders.setUserid(returnedGoods.getUserId());
-						orders.setUserIntegral(integral);
-						ordersDao.updateIntegralAccount(orders);
-					}
-					//把操作的记录存入mtmy_integrals_log表中
-					IntegralsLog integralsLog = new IntegralsLog();
-					integralsLog.setUserId(returnedGoods.getUserId());
-					integralsLog.setIntegralType(1);
-					integralsLog.setIntegralSource(0);
-					integralsLog.setActionType(21);
-					integralsLog.setIntegral(-integral);
-					integralsLog.setOrderId(returnedGoods.getOrderId());
-					integralsLog.setRemark("商品赠送(扣减)");
-					integralLogDao.insertIntegrals(integralsLog);
 				}
 			}
 			//------------------------------同意退货  扣减云币---end---------------------------
