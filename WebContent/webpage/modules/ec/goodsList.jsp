@@ -107,7 +107,7 @@
 										<option ${(goodsBrand.id == goods.goodsBrandId)?'selected="selected"':''} value="${goodsBrand.id}">${goodsBrand.name}</option>
 									</c:forEach>
 			                    </select>
-								&nbsp;&nbsp;商品名称/关键字：<input id="querytext" name="querytext" maxlength="10" type="text" class="form-control" placeholder="商品名称/关键字" value="${goods.querytext }">
+								&nbsp;&nbsp;商品名称/关键字：<input id="querytext" name="querytext" type="text" class="form-control" placeholder="商品名称/关键字" value="${goods.querytext }">
 								&nbsp;&nbsp;活动名称：
 								<select class="form-control" id="actionId" name="actionId" style="text-align: center;width: 150px;">
 			                        <option value="0">全部活动</option>
@@ -147,11 +147,13 @@
 									<option value="1" ${(goods.isAppshow == '1')?'selected="selected"':''}>是</option>
 									<option value="0" ${(goods.isAppshow == '0')?'selected="selected"':''}>否</option>
 								</select>
-								&nbsp;&nbsp;实物：
+								&nbsp;&nbsp;商品类型：
 								<select class="form-control" style="text-align: center;width: 150px;" id="isReal" name="isReal">
 									<option value="-1" ${(goods.isReal == '-1')?'selected="selected"':''}>全部</option>
-									<option value="0" ${(goods.isReal == '0')?'selected="selected"':''}>是</option>
-									<option value="1" ${(goods.isReal == '1')?'selected="selected"':''}>否</option>
+									<option value="0" ${(goods.isReal == '0')?'selected="selected"':''}>实物</option>
+									<option value="1" ${(goods.isReal == '1')?'selected="selected"':''}>虚拟</option>
+									<option value="2" ${(goods.isReal == '2')?'selected="selected"':''}>套卡</option>
+									<option value="3" ${(goods.isReal == '3')?'selected="selected"':''}>通用卡</option>
 								</select>
 								&nbsp;&nbsp;
 								<shiro:hasPermission name="ec:goods:list">
@@ -205,7 +207,7 @@
 								<th style="text-align: center;">活动名称</th>
 								<th style="text-align: center;">货号</th>
 								<th style="text-align: center;">商品分类</th>
-								<th style="text-align: center;">实物</th>
+								<th style="text-align: center;">商品类型</th>
 								<th style="text-align: center;">价格</th>
 								<th style="text-align: center;">总库存</th>
 								<th style="text-align: center;">剩余库存</th>
@@ -227,7 +229,12 @@
 									<td>${goods.actionName}</td>
 									<td>${goods.goodsSn}</td>
 									<td>${goods.goodsCategory.name}</td>
-									<td>${goods.isReal==0?"是":"否"}</td>
+									<td>
+										<c:if test="${goods.isReal==0}">实物</c:if>
+										<c:if test="${goods.isReal==1}">虚拟</c:if>
+										<c:if test="${goods.isReal==2}">套卡</c:if>
+										<c:if test="${goods.isReal==3}">通用卡</c:if>
+									</td>
 									<td>${goods.shopPrice}</td>
 									<td>${goods.totalStore}</td>
 									<td>${goods.storeCount}</td>
