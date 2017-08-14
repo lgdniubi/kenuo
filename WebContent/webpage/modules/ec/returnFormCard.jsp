@@ -11,6 +11,8 @@
 		var orderArrearage=0;
 		var validateForm;
 		var flag;
+		var goodsNum = 0;//实物售后数量校验用
+		var flagNum = false;//实物售后数量校验用
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		  if(validateForm.form()){
 			  if(flag){
@@ -27,10 +29,15 @@
 				  top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
 				  return;
 			  }
+			  //实物售后数量校验
+			  if(flagNum){
+				  top.layer.alert('实物售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
+				  return;
+			  }
 			  
 			  //退款金额校验
 			  var ra=$("#returnAmount").val();
-			  if(parseFloat(ra)<=0){
+			  if(parseFloat(ra)<0){
 				  top.layer.alert('退款金额必须大于0，小于支付金额!', {icon: 0, title:'提醒'});
 				  return;
 			  }else if(parseFloat(totalAmount) < parseFloat(ra)){
@@ -52,6 +59,7 @@
 			var totalAmount=$("#"+recid+"totalAmount").val();//实付款
 			orderArrearage=$("#"+recid+"orderArrearage").val();//欠款
 			$("#goodsMappingId").val(recid);//为goodsMappingId赋值
+			
 			//判断是否存在欠款
 			if(parseInt(orderArrearage)>0){
 				top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
@@ -82,11 +90,9 @@
 								url:"${ctx}/ec/orders/getOrderGoodsCard",
 								success:function(date){
 									if(date!=null && date!=""){
-										var j=1;
 										for(var i in date){
 											if(date[i].isreal == 0){
-												$("<label><font color='red'>*</font>实物"+(j)+"售后数量：</label><input id='recIds' name='recIds' value='"+date[i].recid+"' type='hidden'/><input id='returnNums' name='returnNums' value='' style='width:180px;' class='form-control required'/> <p></p>").appendTo($("#addReal"));
-												j++;
+												$("<label><font color='red'>*</font>"+date[i].goodsname+"    售后数量：</label><input id='recIds' name='recIds' value='"+date[i].recid+"' type='hidden'/><input id='returnNums' name='returnNums' value='"+date[i].goodsnum+"' style='width:180px;' class='form-control required' onblur='findReturnNum(this,"+date[i].goodsnum+")'/> <p></p>").appendTo($("#addReal"));
 											}
 										}
 									}
@@ -105,11 +111,23 @@
 				$("#totalAmount").val(totalAmount);
 			}
 		}
-		
+		//实物售后数量校验
+		function findReturnNum (id,num){
+			var num1=$(id).val();
+			if(parseInt(num1)<0){
+				top.layer.alert('售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
+				flagNum=true;
+				return;
+			}else if(parseInt(num1) > num){
+				top.layer.alert('售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
+				flagNum=true;
+				return;
+			}
+		}
 		//虚拟商品的退款金额校验
 		function returnChangeAmount(){
 			var ra=$("#returnAmount").val();
-			if(parseFloat(ra)<=0){
+			if(parseFloat(ra)<0){
 				top.layer.alert('退款金额必须大于0，小于支付金额!', {icon: 0, title:'提醒'});
 				return;
 			}else if($(totalAmount).val() < ra){
@@ -119,6 +137,7 @@
 		}
 		
 		$(document).ready(function(){
+			
 			validateForm = $("#inputForm").validate({
 				rules: {
 					returnmoney:{
