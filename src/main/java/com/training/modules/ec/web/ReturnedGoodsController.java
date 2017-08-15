@@ -221,13 +221,11 @@ public class ReturnedGoodsController extends BaseController {
 			
 			//查询卡项子项实物的售后数量
 			String realnum = "";
-			int j=1;
 			List<ReturnedGoods> rgList = returnedGoodsService.getRealnum(returnedGoods);
 			if(rgList.size() != 0){
 				for (ReturnedGoods rg : rgList) {
 					realnum = realnum + 
-						"<label>实物"+j+"售后数量：</label><input style='width: 180px;height:30px;' class='form-control' value='"+rg.getReturnNum()+"' readonly='true'/><p></p>";
-						j++;
+						"<label>"+rg.getGoodsName()+"  售后数量：</label><input style='width: 180px;height:30px;' class='form-control' value='"+rg.getReturnNum()+"' readonly='true'/><p></p>";
 				}
 				model.addAttribute("realnum",realnum);
 			}

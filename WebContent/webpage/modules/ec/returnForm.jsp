@@ -63,7 +63,7 @@
 			  if(type == 0){
 				  //虚拟商品的退款金额校验
 				  var ra=$("#returnAmount").val();
-				  if(parseFloat(ra)<=0){
+				  if(parseFloat(ra)<0){
 					  top.layer.alert('退款金额必须大于0，小于实付款金额!', {icon: 0, title:'提醒'});
 					  return;
 				  }else if(parseFloat(totalAmount) < parseFloat(ra)){
@@ -225,7 +225,7 @@
 		//虚拟商品的退款金额校验
 		function returnChangeAmount(){
 			var ra=$("#returnAmount").val();
-			if(parseFloat(ra)<=0){
+			if(parseFloat(ra)<0){
 				top.layer.alert('退款金额必须大于0，小于实付款金额!', {icon: 0, title:'提醒'});
 				return;
 			}else if(parseFloat(totalAmount)<parseFloat(ra)){
@@ -307,8 +307,8 @@
 								<th style="text-align: center;">成交价</th>
 								<th style="text-align: center;">购买数量</th>
 								<th style="text-align: center;">实付款</th>
-								<th style="text-align: center;">实际服务单价</th>
 								<c:if test="${orders.isReal==1}">
+									<th style="text-align: center;">实际服务单价</th>
 									<th style="text-align: center;">截止时间</th>
 									<th style="text-align: center;">剩余次数</th>
 								</c:if>
@@ -336,12 +336,12 @@
 									<td  style="text-align: center;">${orderGood.goodsnum}</td>
 									<td  style="text-align: center;">${orderGood.totalAmount}</td>
 									<c:if test="${orders.isReal==1 && orderGood.servicetimes == 999}">
-									<td  style="text-align: center;"></td>
+										<td  style="text-align: center;"></td>
 										<td  style="text-align: center;">${orderGood.expiringdate}</td>
 										<td  style="text-align: center;"></td>
 									</c:if>
 									<c:if test="${orders.isReal==1 && orderGood.servicetimes != 999}">
-									<td  style="text-align: center;">${orderGood.singleRealityPrice}</td>
+										<td  style="text-align: center;">${orderGood.singleRealityPrice}</td>
 										<td  style="text-align: center;"></td>
 										<td  style="text-align: center;">${orderGood.remaintimes}</td>
 									</c:if>
