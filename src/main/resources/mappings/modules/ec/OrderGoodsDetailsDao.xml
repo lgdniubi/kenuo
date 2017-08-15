@@ -100,7 +100,8 @@
 			d.service_times as serviceTimes,
 			d.create_by as "createBy.id",
 			u.`name` as createByName,
-			d.create_date as createDate
+			d.create_date as createDate,
+			d.surplus_amount as surplusAmount
 		FROM mtmydb.mtmy_order_goods_details d
 		LEFT JOIN sys_user u ON d.create_by = u.id
 		WHERE goods_mapping_id = #{recid}

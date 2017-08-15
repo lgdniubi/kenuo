@@ -1132,6 +1132,26 @@ public class OrdersController extends BaseController {
 	}
 	
 	/**
+	 * 查看套卡订单充值记录
+	 * @param recid
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "suitCardRechargeLog")
+	public String suitCardRechargeLog(Integer recid, String orderid, String orderType, HttpServletRequest request, Model model) {
+		try {
+			List<OrderGoodsDetails> orderGoodsDetails = ordersService.getMappinfOrderView(recid);
+			model.addAttribute("orderGoodsDetails", orderGoodsDetails);
+			model.addAttribute("orderType", orderType);
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "查看套卡订单充值", e);
+			logger.error("方法：suitCardRechargeLog，查看套卡订单充值出现错误：" + e.getMessage());
+		}
+		return "modules/ec/suitCardRechargeLog";
+	}
+	
+	/**
 	 * 查看主订单充值记录
 	 * @param orderid
 	 * @param request
@@ -1664,9 +1684,13 @@ public class OrdersController extends BaseController {
 			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
 			double advance = orderGoods.getAdvancePrice();                 //预约金
 			
+			double realAdvancePrice = 0;                                //处理预约金给老商品送钱时，判断预约金的真实价格
+			
 			if(advance == 0){      //当预约金为0的时候付全款
+				realAdvancePrice = 0;
 				advance = goodsPrice;                 //预约金
 			}else{
+				realAdvancePrice = advance;
 				advance = orderGoods.getAdvancePrice();                 //预约金
 			}
 			
@@ -1703,7 +1727,7 @@ public class OrdersController extends BaseController {
 			}
 			
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleAdvanceFlag(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId);
+			ordersService.handleAdvanceFlag(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId,realAdvancePrice);
 			date = "success";
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "处理预约金异常", e);
@@ -2264,7 +2288,7 @@ public class OrdersController extends BaseController {
 							}
 							
 								suitCardSons = suitCardSons +
-											"<a href='#' onclick='viewCardOrders("+father.getRecid()+","+orders.getOrderid()+")' class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i>商品充值查看</a>"+
+											"<a href='#' onclick='viewCardOrders("+father.getRecid()+","+orders.getOrderid()+","+orders.getIsReal()+")' class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i>商品充值查看</a>"+
 										"</td>"+
 									"</tr>";
 								for(int i=2;i<lists.size();i++){
@@ -2315,7 +2339,7 @@ public class OrdersController extends BaseController {
 							}
 							
 							suitCardSons = suitCardSons +
-											"<a href='#' onclick='viewCardOrders("+father.getRecid()+","+orders.getOrderid()+")' class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i>商品充值查看</a>"+
+											"<a href='#' onclick='viewCardOrders("+father.getRecid()+","+orders.getOrderid()+","+orders.getIsReal()+")' class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i>商品充值查看</a>"+
 										"</td>"+
 									"</tr>";
 								for(int i=2;i<lists.size();i++){
@@ -2532,9 +2556,13 @@ public class OrdersController extends BaseController {
 			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
 			
 			double advance = orderGoods.getAdvancePrice();                 //预约金
+			double realAdvancePrice = 0;                                //处理预约金给老商品送钱时，判断预约金的真实价格
+			
 			if(advance == 0){      //当预约金为0的时候付全款
+				realAdvancePrice = 0;
 				advance = goodsPrice;                 //预约金
 			}else{
+				realAdvancePrice = advance;
 				advance = orderGoods.getAdvancePrice();            //预约金
 			}
 			
@@ -2568,7 +2596,7 @@ public class OrdersController extends BaseController {
 			}
 			
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleCardAdvance(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId,isReal);
+			ordersService.handleCardAdvance(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId,isReal,realAdvancePrice);
 			date = "success";
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "处理卡项预约金异常", e);
