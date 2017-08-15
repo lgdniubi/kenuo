@@ -1602,7 +1602,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param orderAmount应付款金额
 	 * @param goodsPrice商品优惠单价
 	 */
-	public void handleAdvanceFlag(OrderRechargeLog oLog,double goodsPrice,double detailsTotalAmount,int goodsType,String officeId){
+	public void handleAdvanceFlag(OrderRechargeLog oLog,double goodsPrice,double detailsTotalAmount,int goodsType,String officeId,double realAdvancePrice){
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
 		double totalAmount = oLog.getTotalAmount(); //实付款金额
@@ -1762,54 +1762,57 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		
 		//若为老商品，则对店铺有补偿
 		if(goodsType == 0){
-			//对登云账户进行操作
-			if(detailsTotalAmount > 0){
-				double claimMoney = 0.0;   //补偿金  补助不超过20
-				if(detailsTotalAmount * 0.2 >= 20){
-					claimMoney = detailsTotalAmount + 20;
-				}else{
-					claimMoney = detailsTotalAmount * 1.2;
+			//若有预约金
+			if(realAdvancePrice > 0){
+				//对登云账户进行操作
+				if(detailsTotalAmount > 0){
+					double claimMoney = 0.0;   //补偿金  补助不超过20
+					if(detailsTotalAmount * 0.2 >= 20){
+						claimMoney = detailsTotalAmount + 20;
+					}else{
+						claimMoney = detailsTotalAmount * 1.2;
+					}
+					OfficeAccountLog officeAccountLog = new OfficeAccountLog();
+					User newUser = UserUtils.getUser();
+					
+					double amount = orderGoodsDetailsService.selectByOfficeId("1");   //登云美业公司账户的钱
+					double afterAmount = Double.parseDouble(formater.format(amount - claimMoney));
+					orderGoodsDetailsService.updateByOfficeId(afterAmount, "1");   //更新登云美业的登云账户金额
+					
+					//登云美业的登云账户减少钱时对日志进行操作
+					officeAccountLog.setOrderId(oLog.getOrderId());
+					officeAccountLog.setOfficeId("1");
+					officeAccountLog.setType("1");
+					officeAccountLog.setOfficeFrom("1");
+					officeAccountLog.setAmount(claimMoney);
+					officeAccountLog.setCreateBy(newUser);
+					orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
+					
+					String shopId = "";
+					if("".equals(officeId) || officeId == null){
+						shopId = orderGoodsDetailsService.selectShopId(String.valueOf(oLog.getRecid())); //获取当前用户预约对应的店铺id
+					}else{
+						shopId = officeId;          //获取当前用户的归属店铺（机构）
+					}
+					if(orderGoodsDetailsService.selectShopByOfficeId(shopId) == 0){    //若登云账户中无该店铺的账户
+						OfficeAccount officeAccount = new OfficeAccount();
+						officeAccount.setAmount(claimMoney);
+						officeAccount.setOfficeId(shopId);
+						orderGoodsDetailsService.insertByOfficeId(officeAccount);
+					}else{         
+						double shopAmount = orderGoodsDetailsService.selectByOfficeId(shopId);   //登云账户中店铺的钱
+						double afterShopAmount =  Double.parseDouble(formater.format(shopAmount + claimMoney));
+						orderGoodsDetailsService.updateByOfficeId(afterShopAmount, shopId);
+					}
+					//店铺的登云账户减少钱时对日志进行操作
+					officeAccountLog.setOrderId(oLog.getOrderId());
+					officeAccountLog.setOfficeId(shopId);
+					officeAccountLog.setType("0");
+					officeAccountLog.setOfficeFrom("1");
+					officeAccountLog.setAmount(claimMoney);
+					officeAccountLog.setCreateBy(newUser);
+					orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
 				}
-				OfficeAccountLog officeAccountLog = new OfficeAccountLog();
-				User newUser = UserUtils.getUser();
-				
-				double amount = orderGoodsDetailsService.selectByOfficeId("1");   //登云美业公司账户的钱
-				double afterAmount = Double.parseDouble(formater.format(amount - claimMoney));
-				orderGoodsDetailsService.updateByOfficeId(afterAmount, "1");   //更新登云美业的登云账户金额
-				
-				//登云美业的登云账户减少钱时对日志进行操作
-				officeAccountLog.setOrderId(oLog.getOrderId());
-				officeAccountLog.setOfficeId("1");
-				officeAccountLog.setType("1");
-				officeAccountLog.setOfficeFrom("1");
-				officeAccountLog.setAmount(claimMoney);
-				officeAccountLog.setCreateBy(newUser);
-				orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
-				
-				String shopId = "";
-				if("".equals(officeId) || officeId == null){
-					shopId = orderGoodsDetailsService.selectShopId(String.valueOf(oLog.getRecid())); //获取当前用户预约对应的店铺id
-				}else{
-					shopId = officeId;          //获取当前用户的归属店铺（机构）
-				}
-				if(orderGoodsDetailsService.selectShopByOfficeId(shopId) == 0){    //若登云账户中无该店铺的账户
-					OfficeAccount officeAccount = new OfficeAccount();
-					officeAccount.setAmount(claimMoney);
-					officeAccount.setOfficeId(shopId);
-					orderGoodsDetailsService.insertByOfficeId(officeAccount);
-				}else{         
-					double shopAmount = orderGoodsDetailsService.selectByOfficeId(shopId);   //登云账户中店铺的钱
-					double afterShopAmount =  Double.parseDouble(formater.format(shopAmount + claimMoney));
-					orderGoodsDetailsService.updateByOfficeId(afterShopAmount, shopId);
-				}
-				//店铺的登云账户减少钱时对日志进行操作
-				officeAccountLog.setOrderId(oLog.getOrderId());
-				officeAccountLog.setOfficeId(shopId);
-				officeAccountLog.setType("0");
-				officeAccountLog.setOfficeFrom("1");
-				officeAccountLog.setAmount(claimMoney);
-				officeAccountLog.setCreateBy(newUser);
-				orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
 			}
 		}
 	}
@@ -2163,7 +2166,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param orders
 	 */
 	public void saveSuitCardOrder(Orders orders) {
-		DecimalFormat formater = new DecimalFormat("#0.##");
+		DecimalFormat formater = new DecimalFormat("#0.##");   //四舍五入
 		User user = UserUtils.getUser(); //登陆用户
 		int mtmyUserId = orders.getUserid();	//每天每耶用户id
 		String orderid = createOrder(mtmyUserId, 0, 0);//订单id
@@ -2295,8 +2298,13 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 							realityOrderAmountSum = realityOrderAmountSum + realityOrderAmount;     //子类平分父类的应付价总和      
 							orderGoodsSon.setOrderAmount(realityOrderAmount);		//应付金额
 							if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 1){
-								orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//单次标价
-								orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价
+								//实际服务单次价，单次标价舍弃两位小数后的
+								orderGoodsSon.setSingleNormPrice(((int)((goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())*100))/100.0);	//单次标价
+								orderGoodsSon.setSingleRealityPrice(((int)((realityOrderAmount/goodsListSon.get(j).getGoodsNum())*100))/100.0);	//实际服务单次价
+								
+								//实际服务单次价，单次标价四舍五入
+								/*orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//单次标价
+								orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价*/
 								orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
 								orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
 							}
@@ -2304,17 +2312,29 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 							double realityOrderAmount = Double.parseDouble(formater.format(orderAmount - realityOrderAmountSum)); //子类平分父类的应付价
 							orderGoodsSon.setOrderAmount(realityOrderAmount);		//应付金额
 							if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 1){
-								orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//单次标价
-								orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价
+								//实际服务单次价，单次标价舍弃两位小数后的
+								orderGoodsSon.setSingleNormPrice(((int)((goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())*100))/100.0);	//单次标价
+								orderGoodsSon.setSingleRealityPrice(((int)((realityOrderAmount/goodsListSon.get(j).getGoodsNum())*100))/100.0);	//实际服务单次价
+								
+								
+								//实际服务单次价，单次标价四舍五入
+								/*orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//单次标价
+								orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价*/
 								orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
 								orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
 							}
 						}
-					}else{             //若未讨价还价
+					}else{             //若未讨价还价    ((int)(afs*100))/100.0舍弃两位小数后的
 						orderGoodsSon.setOrderAmount(goodsListSon.get(j).getShopPrice());		//应付金额
 						if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 1){
-							orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//单次标价
-							orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价
+							//实际服务单次价，单次标价舍弃两位小数后的
+							orderGoodsSon.setSingleNormPrice(((int)((goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())*100))/100.0);	//单次标价
+							orderGoodsSon.setSingleRealityPrice(((int)((goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())*100))/100.0);	//实际服务单次价
+							
+							//实际服务单次价，单次标价四舍五入
+							/*orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//单次标价
+							orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价*/							
+							
 							orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
 							orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
 						}
@@ -2613,7 +2633,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param orderAmount应付款金额
 	 * @param goodsPrice商品优惠单价
 	 */
-	public void handleCardAdvance(OrderRechargeLog oLog,double goodsPrice,double detailsTotalAmount,int goodsType,String officeId,int isReal){
+	public void handleCardAdvance(OrderRechargeLog oLog,double goodsPrice,double detailsTotalAmount,int goodsType,String officeId,int isReal,double realAdvancePrice){
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
 		double totalAmount = oLog.getTotalAmount(); //实付款金额
@@ -2760,54 +2780,57 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		
 		//若为老商品，则对店铺有补偿
 		if(goodsType == 0){
-			//对登云账户进行操作
-			if(detailsTotalAmount > 0){
-				double claimMoney = 0.0;   //补偿金  补助不超过20
-				if(detailsTotalAmount * 0.2 >= 20){
-					claimMoney = detailsTotalAmount + 20;
-				}else{
-					claimMoney = detailsTotalAmount * 1.2;
+			//若预约金大于0
+			if(realAdvancePrice > 0){   
+				//对登云账户进行操作
+				if(detailsTotalAmount > 0){
+					double claimMoney = 0.0;   //补偿金  补助不超过20
+					if(detailsTotalAmount * 0.2 >= 20){
+						claimMoney = detailsTotalAmount + 20;
+					}else{
+						claimMoney = detailsTotalAmount * 1.2;
+					}
+					OfficeAccountLog officeAccountLog = new OfficeAccountLog();
+					User newUser = UserUtils.getUser();
+					
+					double amount = orderGoodsDetailsService.selectByOfficeId("1");   //登云美业公司账户的钱
+					double afterAmount = Double.parseDouble(formater.format(amount - claimMoney));
+					orderGoodsDetailsService.updateByOfficeId(afterAmount, "1");   //更新登云美业的登云账户金额
+					
+					//登云美业的登云账户减少钱时对日志进行操作
+					officeAccountLog.setOrderId(oLog.getOrderId());
+					officeAccountLog.setOfficeId("1");
+					officeAccountLog.setType("1");
+					officeAccountLog.setOfficeFrom("1");
+					officeAccountLog.setAmount(claimMoney);
+					officeAccountLog.setCreateBy(newUser);
+					orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
+					
+					String shopId = "";
+					if("".equals(officeId) || officeId == null){
+						shopId = orderGoodsDetailsService.selectShopId(String.valueOf(oLog.getRecid())); //获取当前用户预约对应的店铺id
+					}else{
+						shopId = officeId;          //获取当前用户的归属店铺（机构）
+					}
+					if(orderGoodsDetailsService.selectShopByOfficeId(shopId) == 0){    //若登云账户中无该店铺的账户
+						OfficeAccount officeAccount = new OfficeAccount();
+						officeAccount.setAmount(claimMoney);
+						officeAccount.setOfficeId(shopId);
+						orderGoodsDetailsService.insertByOfficeId(officeAccount);
+					}else{         
+						double shopAmount = orderGoodsDetailsService.selectByOfficeId(shopId);   //登云账户中店铺的钱
+						double afterShopAmount =  Double.parseDouble(formater.format(shopAmount + claimMoney));
+						orderGoodsDetailsService.updateByOfficeId(afterShopAmount, shopId);
+					}
+					//店铺的登云账户减少钱时对日志进行操作
+					officeAccountLog.setOrderId(oLog.getOrderId());
+					officeAccountLog.setOfficeId(shopId);
+					officeAccountLog.setType("0");
+					officeAccountLog.setOfficeFrom("1");
+					officeAccountLog.setAmount(claimMoney);
+					officeAccountLog.setCreateBy(newUser);
+					orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
 				}
-				OfficeAccountLog officeAccountLog = new OfficeAccountLog();
-				User newUser = UserUtils.getUser();
-				
-				double amount = orderGoodsDetailsService.selectByOfficeId("1");   //登云美业公司账户的钱
-				double afterAmount = Double.parseDouble(formater.format(amount - claimMoney));
-				orderGoodsDetailsService.updateByOfficeId(afterAmount, "1");   //更新登云美业的登云账户金额
-				
-				//登云美业的登云账户减少钱时对日志进行操作
-				officeAccountLog.setOrderId(oLog.getOrderId());
-				officeAccountLog.setOfficeId("1");
-				officeAccountLog.setType("1");
-				officeAccountLog.setOfficeFrom("1");
-				officeAccountLog.setAmount(claimMoney);
-				officeAccountLog.setCreateBy(newUser);
-				orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
-				
-				String shopId = "";
-				if("".equals(officeId) || officeId == null){
-					shopId = orderGoodsDetailsService.selectShopId(String.valueOf(oLog.getRecid())); //获取当前用户预约对应的店铺id
-				}else{
-					shopId = officeId;          //获取当前用户的归属店铺（机构）
-				}
-				if(orderGoodsDetailsService.selectShopByOfficeId(shopId) == 0){    //若登云账户中无该店铺的账户
-					OfficeAccount officeAccount = new OfficeAccount();
-					officeAccount.setAmount(claimMoney);
-					officeAccount.setOfficeId(shopId);
-					orderGoodsDetailsService.insertByOfficeId(officeAccount);
-				}else{         
-					double shopAmount = orderGoodsDetailsService.selectByOfficeId(shopId);   //登云账户中店铺的钱
-					double afterShopAmount =  Double.parseDouble(formater.format(shopAmount + claimMoney));
-					orderGoodsDetailsService.updateByOfficeId(afterShopAmount, shopId);
-				}
-				//店铺的登云账户减少钱时对日志进行操作
-				officeAccountLog.setOrderId(oLog.getOrderId());
-				officeAccountLog.setOfficeId(shopId);
-				officeAccountLog.setType("0");
-				officeAccountLog.setOfficeFrom("1");
-				officeAccountLog.setAmount(claimMoney);
-				officeAccountLog.setCreateBy(newUser);
-				orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
 			}
 		}
 	}
