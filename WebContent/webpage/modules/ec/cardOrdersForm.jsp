@@ -413,17 +413,30 @@ window.onload=initStatus;
 	}); 
 	}
 	
-	function viewCardOrders(recid,orderid){
-		top.layer.open({
-		    type: 2, 
-		    area: ['800px', '600px'],
-		    title:"商品充值查看",
-		    content: "${ctx}/ec/orders/getMappinfOrderView?recid="+recid+"&orderid="+orderid+"&orderType=mapping",
-		    btn: ['关闭'],
-			cancel: function(index){ //或者使用btn2
-			    	           //按钮【按钮二】的回调
-			}
-		}); 
+	function viewCardOrders(recid,orderid,isReal){
+		if(isReal == 2){  //套卡
+			top.layer.open({
+			    type: 2, 
+			    area: ['800px', '600px'],
+			    title:"商品充值查看",
+			    content: "${ctx}/ec/orders/suitCardRechargeLog?recid="+recid+"&orderid="+orderid+"&orderType=mapping",
+			    btn: ['关闭'],
+				cancel: function(index){ //或者使用btn2
+				    	           //按钮【按钮二】的回调
+				}
+			}); 			
+		}else{
+			top.layer.open({
+			    type: 2, 
+			    area: ['800px', '600px'],
+			    title:"商品充值查看",
+			    content: "${ctx}/ec/orders/getMappinfOrderView?recid="+recid+"&orderid="+orderid+"&orderType=mapping",
+			    btn: ['关闭'],
+				cancel: function(index){ //或者使用btn2
+				    	           //按钮【按钮二】的回调
+				}
+			}); 
+		}
 		
 	}
 	
