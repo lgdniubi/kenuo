@@ -79,6 +79,7 @@
 			a.single_reality_price,
 			a.single_norm_price,
 			a.is_after_sales,
+			b.advance_flag as "advanceFlag",
 			a.reality_add_time as "realityAddTime",
 			SUM(b.total_amount) as "totalAmount",
 			SUM(b.order_balance) as "orderBalance",
