@@ -17,6 +17,9 @@
 		var totalAmount=0;//实付款
 		var returnedGoodsNum = 0;//后台查询出来 "实物" 中正在退货的商品数量
 		var validateForm;
+		
+		var advanceFlag;
+		
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		  if(validateForm.form()){
 			  var recid=$("#goodsMappingId").val();
@@ -46,7 +49,14 @@
 					  return;
 				  }
 			  }
-			  
+			  //除了实物之外,只要有预约金的,都需要做处理
+			  if(isReal != 0){
+				  if(advanceFlag == 1){
+					  top.layer.alert('当前订单有预约金,无法退款(请先处理预约金)', {icon: 0, title:'提醒'});
+					  return;
+				  }
+			  }
+				  
 			  //虚拟商品的售后次数校验,时限卡不进行此校验
 			  if(isReal == 1 && servicetimes != 999){
 				  var st=$("#serviceTimes").val();
@@ -87,8 +97,11 @@
 			$("#goodsMappingId").val(id);
 			goodNum=$("#"+id+"goodsnum").val();//购买的数量
 			remaintimes=$("#"+id+"remaintimes").val();//虚拟商品剩余次数
+			
 			//时限卡售后添加servicetimes
 			servicetimes=$("#"+id+"servicetimes").val();//为了判断是否为时限卡
+			advanceFlag = $("#"+id+"advanceFlag").val();//判断时限卡是否为预约金,是:先处理预约金
+			
 			
 			orderArrearage=$("#"+id+"orderArrearage").val();//订单欠款
 			singleRealityPrice=$("#"+id+"singleRealityPrice").val();//实际服务单次价
@@ -96,6 +109,13 @@
 			if(isReal==0){
 				returnedGoodsNum = $("#"+id+"returnedGoodsNum").val();//实物中  从后台查出来的退货中的数量
 				$("#returnNum").val(parseInt(goodNum)-parseInt(returnedGoodsNum));//为售后商品数量赋值
+			}
+			//除了实物之外的,当前是否为预约金,是:先处理预约金
+			if(isReal != 0){
+				if(advanceFlag == 1){
+					top.layer.alert('当前订单有预约金,无法退款(请先处理预约金)', {icon: 0, title:'提醒'});
+					return;
+				}
 			}
 			//判断是否有无欠款
 			if(orderArrearage>0){
@@ -209,7 +229,7 @@
 				return;
 			}
 		}
-		
+				
 		 //虚拟商品的售后次数校验
 		function returnChangeTimes(){
 		   var st=$("#serviceTimes").val();
@@ -358,6 +378,7 @@
 								</c:if>
 								<!-- 时限卡售后添加字段  -->
 								<input type="hidden" id="${orderGood.recid}servicetimes" name="${orderGood.recid}servicetimes" value="${orderGood.servicetimes}" />
+								<input type="hidden" id="${orderGood.recid}advanceFlag" name="${orderGood.recid}advanceFlag" value="${orderGood.advanceFlag}" />
 							</c:forEach>
 						</tbody>						
 					</table>
