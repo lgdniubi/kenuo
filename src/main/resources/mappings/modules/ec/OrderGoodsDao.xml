@@ -97,17 +97,24 @@
 	<!-- 通过订单号查询订单下的虚拟商品及用户信息 -->
 	<select id="findOrderGoods" resultType="OrderGoods">
 		SELECT 
-			a.rec_id,
-			a.order_id,
-			a.user_id,
-			a.goods_name,
-			a.goods_id,
-			a.service_times,
-			a.service_min,
+			a.group_id AS groupId,
+			a.rec_id AS recid,
+			a.order_id AS orderid,
+			a.user_id AS userid,
+			a.goods_name AS goodsname,
+			a.goods_id AS goodsid,
+			IF(o.is_real = 3,(SELECT SUM(service_times) FROM mtmydb.mtmy_order_goods_mapping WHERE rec_id = a.group_id),a.service_times) AS 'servicetimes',
+			a.service_min AS servicemin,
 			u.user_id AS 'users.userid',
 			u.mobile AS 'users.mobile',
 			u.name AS 'users.name',
-			b.service_times AS remainTimes,
+			IF(a.group_id != 0,(SELECT SUM(service_times) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = a.group_id),b.service_times) AS 'remaintimes',
+			IF(a.group_id != 0,(SELECT SUM(surplus_amount) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = a.group_id),b.surplus_amount) AS 'surplusAmount',
+			o.is_real AS isreal,
+			(SELECT COUNT(*) FROM mtmydb.mtmy_appt_order b WHERE b.goods_mapping_id = a.rec_id AND appt_status != 3) AS 'useServiceTimes',
+			IF(o.is_real = 2,(SELECT COUNT(*) FROM mtmydb.mtmy_appt_order b WHERE b.group_id = a.group_id AND appt_status != 3),0) AS 'cardUseServiceTimes',
+			(SELECT COUNT(id) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = 1 LIMIT 1) AS 'advanceFlag',
+			IF(o.is_real = 3,(SELECT single_reality_price FROM mtmydb.mtmy_order_goods_mapping WHERE rec_id = a.group_id),a.single_reality_price) AS singleRealityPrice,
 			s.skill_id AS skillId,
 			e.label_id AS labelId
 		FROM 
@@ -115,16 +122,16 @@
 			LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
 			LEFT JOIN mtmydb.mtmy_orders o ON a.order_id = o.order_id
 			LEFT JOIN (
-						SELECT order_id,goods_mapping_id,SUM(service_times) AS service_times FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} GROUP BY order_id,goods_mapping_id
+						SELECT order_id,goods_mapping_id,SUM(service_times) AS service_times,SUM(surplus_amount) AS surplus_amount FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} GROUP BY order_id,goods_mapping_id
 					) b ON a.rec_id = b.goods_mapping_id
 			LEFT JOIN (SELECT group_concat(skill_id) AS skill_id,goods_id FROM mtmydb.mtmy_goods_skill GROUP BY goods_id) s ON s.goods_id = a.goods_id
 			LEFT JOIN (SELECT group_concat(label_id) AS label_id,goods_id FROM mtmydb.mtmy_goods_equipment GROUP BY goods_id) e ON e.goods_id = a.goods_id
 		WHERE 
 			a.del_flag = 0
 			and a.order_id = #{orderid}
-			and a.is_real = 1
-			and b.service_times > 0
+ 			and a.is_real = 1
 			AND o.order_status = 4
+		ORDER BY a.rec_id
 	</select>
 	<!-- 根据recid查询赠送云币数量  -->
 	<select id="getintegralByRecId" resultType="int">
