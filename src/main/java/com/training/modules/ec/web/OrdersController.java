@@ -677,6 +677,7 @@ public class OrdersController extends BaseController {
 							suitCardSons = suitCardSons +
 									"<input type='hidden' id='"+father.getRecid()+"orderAmount' name='orderAmount' value='"+father.getOrderAmount()+"' />"+
 									"<input type='hidden' id='"+father.getRecid()+"totalAmount' name='totalAmount' value='"+father.getTotalAmount()+"' />"+
+									"<input type='hidden' id='"+father.getRecid()+"advanceFlag' name='advanceFlag' value='"+father.getAdvanceFlag()+"' />"+
 									"<input type='hidden' id='"+father.getRecid()+"orderArrearage' name='orderArrearage' value='"+father.getOrderArrearage()+"' />";
 							for(int i=2;i<lists.size();i++){
 								isreal = lists.get(i).getIsreal()==0?"实物":"虚拟";
@@ -728,6 +729,7 @@ public class OrdersController extends BaseController {
 							suitCardSons = suitCardSons +
 									"<input type='hidden' id='"+father.getRecid()+"orderAmount' name='orderAmount' value='"+father.getOrderAmount()+"' />"+
 									"<input type='hidden' id='"+father.getRecid()+"totalAmount' name='totalAmount' value='"+father.getTotalAmount()+"' />"+
+									"<input type='hidden' id='"+father.getRecid()+"advanceFlag' name='advanceFlag' value='"+father.getAdvanceFlag()+"' />"+
 									"<input type='hidden' id='"+father.getRecid()+"orderArrearage' name='orderArrearage' value='"+father.getOrderArrearage()+"' />";
 							for(int i=2;i<lists.size();i++){
 								isreal = lists.get(i).getIsreal()==0?"实物":"虚拟";
