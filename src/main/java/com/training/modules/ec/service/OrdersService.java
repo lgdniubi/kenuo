@@ -1068,26 +1068,28 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				
 				if(!"bm".equals(oLog.getChannelFlag())){   //app或者wap下单，充值大于欠款时送云币
 					//当充值全部欠款以后，对用户进行送云币
-					boolean str = redisClientTemplate.exists(MTMY_ID+oLog.getMtmyUserId());
-					if(str){   //若缓存存在，则操作缓存
-						RedisLock redisLock = new RedisLock(redisClientTemplate, MTMY_ID+oLog.getMtmyUserId());
-						redisLock.lock();
-						redisClientTemplate.incrBy(MTMY_ID+oLog.getMtmyUserId(),integral);
-						redisLock.unlock();
-					}else{         //若缓存不存在，则操作mtmy_user_accounts
-						userIntegral = integral;            //赠送云币
+					if(integral > 0){
+						boolean str = redisClientTemplate.exists(MTMY_ID+oLog.getMtmyUserId());
+						if(str){   //若缓存存在，则操作缓存
+							RedisLock redisLock = new RedisLock(redisClientTemplate, MTMY_ID+oLog.getMtmyUserId());
+							redisLock.lock();
+							redisClientTemplate.incrBy(MTMY_ID+oLog.getMtmyUserId(),integral);
+							redisLock.unlock();
+						}else{         //若缓存不存在，则操作mtmy_user_accounts
+							userIntegral = integral;            //赠送云币
+						}
+						
+						//在mtmy_integrals_log表中插入日志
+						IntegralsLog integralsLog = new IntegralsLog();
+						integralsLog.setUserId(oLog.getMtmyUserId());
+						integralsLog.setIntegralType(0);
+						integralsLog.setIntegralSource(0);
+						integralsLog.setActionType(21);
+						integralsLog.setIntegral(integral);
+						integralsLog.setOrderId(oLog.getOrderId());
+						integralsLog.setRemark("商品赠送");
+						ordersDao.insertIntegralLog(integralsLog);
 					}
-					
-					//在mtmy_integrals_log表中插入日志
-					IntegralsLog integralsLog = new IntegralsLog();
-					integralsLog.setUserId(oLog.getMtmyUserId());
-					integralsLog.setIntegralType(0);
-					integralsLog.setIntegralSource(0);
-					integralsLog.setActionType(21);
-					integralsLog.setIntegral(integral);
-					integralsLog.setOrderId(oLog.getOrderId());
-					integralsLog.setRemark("商品赠送");
-					ordersDao.insertIntegralLog(integralsLog);
 				}
 				
 			}else if(singleRealityPrice > newTotalAmount){//实际单次标价  > 实付款金额
@@ -1717,26 +1719,28 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		
 		if(!"bm".equals(oLog.getChannelFlag()) && newDetails.getSumOrderArrearage() == 0){   //app或者wap处理预约，待付尾款为0的时候，送云币
 			//当充值全部欠款以后，对用户进行送云币
-			boolean str = redisClientTemplate.exists(MTMY_ID+oLog.getMtmyUserId());
-			if(str){   //若缓存存在，则操作缓存
-				RedisLock redisLock = new RedisLock(redisClientTemplate, MTMY_ID+oLog.getMtmyUserId());
-				redisLock.lock();
-				redisClientTemplate.incrBy(MTMY_ID+oLog.getMtmyUserId(),integral);
-				redisLock.unlock();
-			}else{         //若缓存不存在，则操作mtmy_user_accounts
-				userIntegral = integral;            //赠送云币
+			if(integral > 0){
+				boolean str = redisClientTemplate.exists(MTMY_ID+oLog.getMtmyUserId());
+				if(str){   //若缓存存在，则操作缓存
+					RedisLock redisLock = new RedisLock(redisClientTemplate, MTMY_ID+oLog.getMtmyUserId());
+					redisLock.lock();
+					redisClientTemplate.incrBy(MTMY_ID+oLog.getMtmyUserId(),integral);
+					redisLock.unlock();
+				}else{         //若缓存不存在，则操作mtmy_user_accounts
+					userIntegral = integral;            //赠送云币
+				}
+				
+				//在mtmy_integrals_log表中插入日志
+				IntegralsLog integralsLog = new IntegralsLog();
+				integralsLog.setUserId(oLog.getMtmyUserId());
+				integralsLog.setIntegralType(0);
+				integralsLog.setIntegralSource(0);
+				integralsLog.setActionType(21);
+				integralsLog.setIntegral(integral);
+				integralsLog.setOrderId(oLog.getOrderId());
+				integralsLog.setRemark("商品赠送");
+				ordersDao.insertIntegralLog(integralsLog);
 			}
-			
-			//在mtmy_integrals_log表中插入日志
-			IntegralsLog integralsLog = new IntegralsLog();
-			integralsLog.setUserId(oLog.getMtmyUserId());
-			integralsLog.setIntegralType(0);
-			integralsLog.setIntegralSource(0);
-			integralsLog.setActionType(21);
-			integralsLog.setIntegral(integral);
-			integralsLog.setOrderId(oLog.getOrderId());
-			integralsLog.setRemark("商品赠送");
-			ordersDao.insertIntegralLog(integralsLog);
 		}
 		
 		//对用户的账户进行操作
@@ -2501,26 +2505,28 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				
 				if(!"bm".equals(oLog.getChannelFlag())){   //app或者wap下单送云币
 					//当充值全部欠款以后，对用户进行送云币
-					boolean str = redisClientTemplate.exists(MTMY_ID+oLog.getMtmyUserId());
-					if(str){   //若缓存存在，则操作缓存
-						RedisLock redisLock = new RedisLock(redisClientTemplate, MTMY_ID+oLog.getMtmyUserId());
-						redisLock.lock();
-						redisClientTemplate.incrBy(MTMY_ID+oLog.getMtmyUserId(),integral);
-						redisLock.unlock();
-					}else{         //若缓存不存在，则操作mtmy_user_accounts
-						userIntegral = integral;            //赠送云币
+					if(integral > 0){
+						boolean str = redisClientTemplate.exists(MTMY_ID+oLog.getMtmyUserId());
+						if(str){   //若缓存存在，则操作缓存
+							RedisLock redisLock = new RedisLock(redisClientTemplate, MTMY_ID+oLog.getMtmyUserId());
+							redisLock.lock();
+							redisClientTemplate.incrBy(MTMY_ID+oLog.getMtmyUserId(),integral);
+							redisLock.unlock();
+						}else{         //若缓存不存在，则操作mtmy_user_accounts
+							userIntegral = integral;            //赠送云币
+						}
+						
+						//在mtmy_integrals_log表中插入日志
+						IntegralsLog integralsLog = new IntegralsLog();
+						integralsLog.setUserId(oLog.getMtmyUserId());
+						integralsLog.setIntegralType(0);
+						integralsLog.setIntegralSource(0);
+						integralsLog.setActionType(21);
+						integralsLog.setIntegral(integral);
+						integralsLog.setOrderId(oLog.getOrderId());
+						integralsLog.setRemark("商品赠送");
+						ordersDao.insertIntegralLog(integralsLog);
 					}
-					
-					//在mtmy_integrals_log表中插入日志
-					IntegralsLog integralsLog = new IntegralsLog();
-					integralsLog.setUserId(oLog.getMtmyUserId());
-					integralsLog.setIntegralType(0);
-					integralsLog.setIntegralSource(0);
-					integralsLog.setActionType(21);
-					integralsLog.setIntegral(integral);
-					integralsLog.setOrderId(oLog.getOrderId());
-					integralsLog.setRemark("商品赠送");
-					ordersDao.insertIntegralLog(integralsLog);
 				}
 				
 			}else if(singleRealityPrice > newTotalAmount){//实际单次标价  > 实付款金额
@@ -2558,26 +2564,28 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				
 				if(!"bm".equals(oLog.getChannelFlag())){   //app或者wap下单送云币
 					//当充值全部欠款以后，对用户进行送云币
-					boolean str = redisClientTemplate.exists(MTMY_ID+oLog.getMtmyUserId());
-					if(str){   //若缓存存在，则操作缓存
-						RedisLock redisLock = new RedisLock(redisClientTemplate, MTMY_ID+oLog.getMtmyUserId());
-						redisLock.lock();
-						redisClientTemplate.incrBy(MTMY_ID+oLog.getMtmyUserId(),integral);
-						redisLock.unlock();
-					}else{         //若缓存不存在，则操作mtmy_user_accounts
-						userIntegral = integral;            //赠送云币
+					if(integral > 0){
+						boolean str = redisClientTemplate.exists(MTMY_ID+oLog.getMtmyUserId());
+						if(str){   //若缓存存在，则操作缓存
+							RedisLock redisLock = new RedisLock(redisClientTemplate, MTMY_ID+oLog.getMtmyUserId());
+							redisLock.lock();
+							redisClientTemplate.incrBy(MTMY_ID+oLog.getMtmyUserId(),integral);
+							redisLock.unlock();
+						}else{         //若缓存不存在，则操作mtmy_user_accounts
+							userIntegral = integral;            //赠送云币
+						}
+						
+						//在mtmy_integrals_log表中插入日志
+						IntegralsLog integralsLog = new IntegralsLog();
+						integralsLog.setUserId(oLog.getMtmyUserId());
+						integralsLog.setIntegralType(0);
+						integralsLog.setIntegralSource(0);
+						integralsLog.setActionType(21);
+						integralsLog.setIntegral(integral);
+						integralsLog.setOrderId(oLog.getOrderId());
+						integralsLog.setRemark("商品赠送");
+						ordersDao.insertIntegralLog(integralsLog);
 					}
-					
-					//在mtmy_integrals_log表中插入日志
-					IntegralsLog integralsLog = new IntegralsLog();
-					integralsLog.setUserId(oLog.getMtmyUserId());
-					integralsLog.setIntegralType(0);
-					integralsLog.setIntegralSource(0);
-					integralsLog.setActionType(21);
-					integralsLog.setIntegral(integral);
-					integralsLog.setOrderId(oLog.getOrderId());
-					integralsLog.setRemark("商品赠送");
-					ordersDao.insertIntegralLog(integralsLog);
 				}
 				
 			}
@@ -2737,26 +2745,28 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		
 		if(!"bm".equals(oLog.getChannelFlag()) && newDetails.getSumOrderArrearage() == 0){   //app或者wap处理预约，待付尾款为0的时候，送云币
 			//当充值全部欠款以后，对用户进行送云币
-			boolean str = redisClientTemplate.exists(MTMY_ID+oLog.getMtmyUserId());
-			if(str){   //若缓存存在，则操作缓存
-				RedisLock redisLock = new RedisLock(redisClientTemplate, MTMY_ID+oLog.getMtmyUserId());
-				redisLock.lock();
-				redisClientTemplate.incrBy(MTMY_ID+oLog.getMtmyUserId(),integral);
-				redisLock.unlock();
-			}else{         //若缓存不存在，则操作mtmy_user_accounts
-				userIntegral = integral;            //赠送云币
+			if(integral > 0){
+				boolean str = redisClientTemplate.exists(MTMY_ID+oLog.getMtmyUserId());
+				if(str){   //若缓存存在，则操作缓存
+					RedisLock redisLock = new RedisLock(redisClientTemplate, MTMY_ID+oLog.getMtmyUserId());
+					redisLock.lock();
+					redisClientTemplate.incrBy(MTMY_ID+oLog.getMtmyUserId(),integral);
+					redisLock.unlock();
+				}else{         //若缓存不存在，则操作mtmy_user_accounts
+					userIntegral = integral;            //赠送云币
+				}
+				
+				//在mtmy_integrals_log表中插入日志
+				IntegralsLog integralsLog = new IntegralsLog();
+				integralsLog.setUserId(oLog.getMtmyUserId());
+				integralsLog.setIntegralType(0);
+				integralsLog.setIntegralSource(0);
+				integralsLog.setActionType(21);
+				integralsLog.setIntegral(integral);
+				integralsLog.setOrderId(oLog.getOrderId());
+				integralsLog.setRemark("商品赠送");
+				ordersDao.insertIntegralLog(integralsLog);
 			}
-			
-			//在mtmy_integrals_log表中插入日志
-			IntegralsLog integralsLog = new IntegralsLog();
-			integralsLog.setUserId(oLog.getMtmyUserId());
-			integralsLog.setIntegralType(0);
-			integralsLog.setIntegralSource(0);
-			integralsLog.setActionType(21);
-			integralsLog.setIntegral(integral);
-			integralsLog.setOrderId(oLog.getOrderId());
-			integralsLog.setRemark("商品赠送");
-			ordersDao.insertIntegralLog(integralsLog);
 		}
 		
 		//对用户的账户进行操作
