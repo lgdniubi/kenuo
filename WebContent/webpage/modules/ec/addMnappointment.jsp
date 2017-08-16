@@ -32,7 +32,7 @@
     		$("#warning").hide();
     		$("#mytable").empty("");
         	//清除input值
-        	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,skillId,labelId,oldorderid");
+        	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,skillId,labelId,oldorderid,groupId,isReal");
         	//清除下拉框的值
         	clearSelect("serve,shopId,beauticianId,date,times");
     	}
@@ -62,7 +62,7 @@
     function serveChange(num){
     	$("#mytable").empty("");
     	//清除input值
-    	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,skillId,labelId");
+    	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,skillId,labelId,groupId,isReal");
     	//清除下拉框的值
     	clearSelect("shopId,beauticianId,date,times");
     	if(num != ""){
@@ -71,21 +71,98 @@
     		$(".loading").hide(); 
     		top.layer.alert('此订单不存在用户,请仔细核对订单', {icon: 0, title:'提醒'});
     	}else{
-		    	$("#mytable").append("<tr><td class='active'><font color='red'>*</font>订单号</td><td colspan='4'>"+serveList[num].orderid+"</td></tr>"
+	    		if(serveList[num].isreal == 1){ //虚拟商品
+	    			if(serveList[num].remaintimes > 0){ // 有剩余次数
+		    			$("#mytable").append("<tr><td class='active'><font color='red'>*</font>订单号</td><td colspan='4'>"+serveList[num].orderid+"</td></tr>"
+				    			+ "<tr><td class='active'><font color='red'>*</font>商品名称</td><td>"+serveList[num].goodsname+"</td><td class='active'><font color='red'>*</font>服务时长</td><td>"+serveList[num].servicemin+"分钟</td></tr>"
+				    			+ "<tr><td class='active'><font color='red'>*</font>总服务次数</td><td>"+serveList[num].servicetimes+"次</td><td class='active'><font color='red'>*</font>剩余次数</td><td>"+serveList[num].remaintimes+"次</td></tr>"
+				    			+ "<tr><td class='active'><font color='red'></font>真实姓名</td><td>"+serveList[num].users.name+"</td><td class='active'><font color='red'></font>手机号</td><td>"+serveList[num].users.mobile+"</td></tr>"
+		    				);
+				    	$("#userid").val(serveList[num].users.userid);
+				    	$("#name").val(serveList[num].users.name);
+				    	$("#mobile").val(serveList[num].users.mobile);
+				    	$("#recid").val(serveList[num].recid);
+				    	$("#groupId").val(serveList[num].groupId);
+				    	$("#isReal").val(serveList[num].isreal);
+				    	$("#servicemin").val(serveList[num].servicemin);
+				    	$("#goodsId").val(serveList[num].goodsid);
+				    	$("#skillId").val(serveList[num].skillId);
+				    	$("#labelId").val(serveList[num].labelId);
+				    	$(".loading").hide();
+	    			}else{
+	    				$(".loading").hide();
+	    				top.layer.alert('1、此商品无可用次数!<br>2、此商品服务次数已用完!', {icon: 0, title:'提醒'});
+	    			}
+	    		}else if(serveList[num].isreal == 2){ //套卡
+	    			if(serveList[num].advanceFlag != 1){ // 无预约金状态
+	    				if(parseFloat(serveList[num].surplusAmount) >=  parseFloat(serveList[num].singleRealityPrice) && parseInt(serveList[num].servicetimes) > parseInt(serveList[num].useServiceTimes)){	// 套卡内剩余金额大于服务单次价  同时总服务次数大于已使用次数
+	    					$("#mytable").append("<tr><td class='active'><font color='red'>*</font>订单号</td><td colspan='4'>"+serveList[num].orderid+"</td></tr>"
 					    			+ "<tr><td class='active'><font color='red'>*</font>商品名称</td><td>"+serveList[num].goodsname+"</td><td class='active'><font color='red'>*</font>服务时长</td><td>"+serveList[num].servicemin+"分钟</td></tr>"
-					    			+ "<tr><td class='active'><font color='red'>*</font>总服务次数</td><td>"+serveList[num].servicetimes+"次</td><td class='active'><font color='red'>*</font>剩余次数</td><td>"+serveList[num].remaintimes+"次</td></tr>"
+					    			+ "<tr><td class='active'><font color='red'>*</font>总服务次数</td><td>"+serveList[num].servicetimes+"次</td><td class='active'><font color='red'>*</font>已服务次数</td><td>"+serveList[num].useServiceTimes+"次</td></tr>"
 					    			+ "<tr><td class='active'><font color='red'></font>真实姓名</td><td>"+serveList[num].users.name+"</td><td class='active'><font color='red'></font>手机号</td><td>"+serveList[num].users.mobile+"</td></tr>"
 			    				);
-		    	
-		    	$("#userid").val(serveList[num].users.userid);
-		    	$("#name").val(serveList[num].users.name);
-		    	$("#mobile").val(serveList[num].users.mobile);
-		    	$("#recid").val(serveList[num].recid);
-		    	$("#servicemin").val(serveList[num].servicemin);
-		    	$("#goodsId").val(serveList[num].goodsid);
-		    	$("#skillId").val(serveList[num].skillId);
-		    	$("#labelId").val(serveList[num].labelId);
-		    	$(".loading").hide();  
+					    	$("#userid").val(serveList[num].users.userid);
+					    	$("#name").val(serveList[num].users.name);
+					    	$("#mobile").val(serveList[num].users.mobile);
+					    	$("#recid").val(serveList[num].recid);
+					    	$("#groupId").val(serveList[num].groupId);
+					    	$("#isReal").val(serveList[num].isreal);
+					    	$("#servicemin").val(serveList[num].servicemin);
+					    	$("#goodsId").val(serveList[num].goodsid);
+					    	$("#skillId").val(serveList[num].skillId);
+					    	$("#labelId").val(serveList[num].labelId);
+					    	$(".loading").hide();
+	    				}else{
+	    					$(".loading").hide();
+	    					top.layer.alert('1、此套卡商品可用金额不足一次服务!<br>2、此套卡商品服务次数已用完!', {icon: 0, title:'提醒'});
+	    				}
+	    			}else if(serveList[num].advanceFlag == 1 && serveList[num].cardUseServiceTimes == 0){
+	    				$("#mytable").append("<tr><td class='active'><font color='red'>*</font>订单号</td><td colspan='4'>"+serveList[num].orderid+"</td></tr>"
+				    			+ "<tr><td class='active'><font color='red'>*</font>商品名称</td><td>"+serveList[num].goodsname+"</td><td class='active'><font color='red'>*</font>服务时长</td><td>"+serveList[num].servicemin+"分钟</td></tr>"
+				    			+ "<tr><td class='active'><font color='red'>*</font>总服务次数</td><td>"+serveList[num].servicetimes+"次</td><td class='active'><font color='red'>*</font>已服务次数</td><td>"+serveList[num].useServiceTimes+"次</td></tr>"
+				    			+ "<tr><td class='active'><font color='red'></font>真实姓名</td><td>"+serveList[num].users.name+"</td><td class='active'><font color='red'></font>手机号</td><td>"+serveList[num].users.mobile+"</td></tr>"
+		    				);
+				    	$("#userid").val(serveList[num].users.userid);
+				    	$("#name").val(serveList[num].users.name);
+				    	$("#mobile").val(serveList[num].users.mobile);
+				    	$("#recid").val(serveList[num].recid);
+				    	$("#groupId").val(serveList[num].groupId);
+				    	$("#isReal").val(serveList[num].isreal);
+				    	$("#servicemin").val(serveList[num].servicemin);
+				    	$("#goodsId").val(serveList[num].goodsid);
+				    	$("#skillId").val(serveList[num].skillId);
+				    	$("#labelId").val(serveList[num].labelId);
+				    	$(".loading").hide();
+	    			}else{
+	    				$(".loading").hide();
+	    				top.layer.alert('此套卡商品无可用次数!', {icon: 0, title:'提醒'});
+	    			}
+	    		}else if(serveList[num].isreal == 3){ //通用卡
+	    			if(serveList[num].remaintimes > 0){ // 有剩余次数
+		    			$("#mytable").append("<tr><td class='active'><font color='red'>*</font>订单号</td><td colspan='4'>"+serveList[num].orderid+"</td></tr>"
+				    			+ "<tr><td class='active'><font color='red'>*</font>商品名称</td><td>"+serveList[num].goodsname+"</td><td class='active'><font color='red'>*</font>服务时长</td><td>"+serveList[num].servicemin+"分钟</td></tr>"
+				    			+ "<tr><td class='active'><font color='red'>*</font>总服务次数</td><td>"+serveList[num].servicetimes+"次</td><td class='active'><font color='red'>*</font>剩余次数</td><td>"+serveList[num].remaintimes+"次</td></tr>"
+				    			+ "<tr><td class='active'><font color='red'></font>真实姓名</td><td>"+serveList[num].users.name+"</td><td class='active'><font color='red'></font>手机号</td><td>"+serveList[num].users.mobile+"</td></tr>"
+		    				);
+				    	$("#userid").val(serveList[num].users.userid);
+				    	$("#name").val(serveList[num].users.name);
+				    	$("#mobile").val(serveList[num].users.mobile);
+				    	$("#recid").val(serveList[num].recid);
+				    	$("#groupId").val(serveList[num].groupId);
+				    	$("#isReal").val(serveList[num].isreal);
+				    	$("#servicemin").val(serveList[num].servicemin);
+				    	$("#goodsId").val(serveList[num].goodsid);
+				    	$("#skillId").val(serveList[num].skillId);
+				    	$("#labelId").val(serveList[num].labelId);
+				    	$(".loading").hide();
+	    			}else{
+	    				$(".loading").hide();
+	    				top.layer.alert('1、此通用卡商品无可用次数!<br>2、此通用卡商品服务次数已用完!', {icon: 0, title:'提醒'});
+	    			}
+	    		}else{
+	    			$(".loading").hide(); 
+	        		top.layer.alert('此订单类型有误,请仔细核对订单', {icon: 0, title:'提醒'});
+	    		}
 	    	}
     	}
     }
@@ -219,6 +296,8 @@
 					<!-- 用于提交时 验证数据是否有误 -->  
 					<input id="userid" name="userid" type="hidden"> 
 					<input id="recid" name="recid" type="hidden"><!-- 用于添加预约 -->
+					<input id="groupId" name="groupId" value=0 type="hidden"><!--组ID 用于添加预约 -->
+					<input id="isReal" name="isReal" value=1 type="hidden"><!--组ID 用于添加预约 -->
 					<input id="servicemin" name="servicemin" type="hidden"><!-- 1.验证  2.获取美容师预约时间时 传服务时长 -->
 					<input id="goodsId" name="goodsId" type="hidden"><!-- 调用存储过程获取可用店铺数据 -->
 					<input id="skillId" name="skillId" type="hidden"><!-- 获取美容师详情 -->

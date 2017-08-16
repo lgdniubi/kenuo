@@ -42,7 +42,7 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private int remaintimes;				//剩余服务次数
 	private int servicemin;					//服务时长
 	private int iscomment;					//是否评价（0：未评价；1：已评价；）
-	private int isreal;						//是否实物（0：实物商品；1：虚拟商品）
+	private int isreal;						//是否实物（0：实物商品；1：虚拟商品；2：套卡；3：通用卡）
 	private double totalAmount;				//实付款金额
 	private double orderAmount;				//应付金额
 	private double orderBalance;			//订单余款
@@ -93,6 +93,13 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private int groupId;                  //组id，卡项订单，一个卡项商品下有多个子项，每个子项的组id就是那个卡项的recid
 	
 	private double suitCardBalance;       //套卡剩余金额总和（充值时页面展示用）
+	
+	// begin---------------用于预约   2017年8月10日新增-----------------
+	// 使用到的字段 groupId,recid,orderid,userid,goodsname,goodsid,servicetimes,servicemin,users,remaintimes,isreal,advanceFlag,singleRealityPrice,skillId,labelId
+	private double surplusAmount;		// 套卡剩余金额
+	private int useServiceTimes;		// 已经服务的次数 （非套卡）
+	private int cardUseServiceTimes;	// 套卡总已服务次数
+	// end---------------用于预约   2017年8月10日新增-----------------
 	
 	public int getAfterSaleNum() {
 		return afterSaleNum;
@@ -485,6 +492,24 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setSuitCardBalance(double suitCardBalance) {
 		this.suitCardBalance = suitCardBalance;
+	}
+	public double getSurplusAmount() {
+		return surplusAmount;
+	}
+	public void setSurplusAmount(double surplusAmount) {
+		this.surplusAmount = surplusAmount;
+	}
+	public int getUseServiceTimes() {
+		return useServiceTimes;
+	}
+	public void setUseServiceTimes(int useServiceTimes) {
+		this.useServiceTimes = useServiceTimes;
+	}
+	public int getCardUseServiceTimes() {
+		return cardUseServiceTimes;
+	}
+	public void setCardUseServiceTimes(int cardUseServiceTimes) {
+		this.cardUseServiceTimes = cardUseServiceTimes;
 	}
 	
 }
