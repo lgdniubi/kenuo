@@ -79,6 +79,6 @@
 			</div>
 		</div>
 	</div>
-	<div class="loading"></div>
+	<div class="loading" id="loading"></div>
 </body>
 </html>
