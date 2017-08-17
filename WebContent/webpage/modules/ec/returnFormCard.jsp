@@ -13,6 +13,8 @@
 		var flag;
 		var goodsNum = 0;//实物售后数量校验用
 		var flagNum = false;//实物售后数量校验用
+		var advanceFlag;
+		
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		  if(validateForm.form()){
 			  if(flag){
@@ -27,6 +29,11 @@
 			  //订单存在欠款
 			  if(orderArrearage>0){
 				  top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
+				  return;
+			  }
+			  //订单存在预约金,先处理预约金
+			  if(advanceFlag == 1){
+				  top.layer.alert('当前订单有预约金,无法退款(请先处理预约金)', {icon: 0, title:'提醒'});
 				  return;
 			  }
 			  //实物售后数量校验
@@ -57,9 +64,15 @@
 			var orderId=$("#orderId").val();//订单id
 			var orderAmount=$("#"+recid+"orderAmount").val();//应付款
 			var totalAmount=$("#"+recid+"totalAmount").val();//实付款
+			advanceFlag=$("#"+recid+"advanceFlag").val();//是否预约金
 			orderArrearage=$("#"+recid+"orderArrearage").val();//欠款
 			$("#goodsMappingId").val(recid);//为goodsMappingId赋值
 			
+			//判断订单是否存在预约金
+			if(advanceFlag == 1){
+				top.layer.alert('当前订单有预约金,无法退款(请先处理预约金)', {icon: 0, title:'提醒'});
+				return;
+			}
 			//判断是否存在欠款
 			if(parseInt(orderArrearage)>0){
 				top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});

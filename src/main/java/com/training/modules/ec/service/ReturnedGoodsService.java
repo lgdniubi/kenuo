@@ -88,7 +88,22 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	public void saveEdite(ReturnedGoods returnedGoods) {
 		String currentUser = UserUtils.getUser().getName();
 		returnedGoods.setAuditBy(currentUser);
+		boolean flag = true;
+		
 		if ("11".equals(returnedGoods.getReturnStatus())) { // 申请退货退款
+			
+			//当商品同意退货时,使用这个判断.(同意退货会在returned_goods表中插入新的数据,所以需要在插入之前进行查询是否已经售后过)
+			if (returnedGoods.getIsConfirm() == 12) {
+				//判断商品是否为实物或者虚拟,是则查询商品之前是否有过售后
+				if(returnedGoods.getIsReal() ==0 || returnedGoods.getIsReal() ==1){
+					//先查询订单是否有过退货记录,有记录就不扣减云币
+					int num = returnedGoodsDao.getReturnedGoods(returnedGoods);
+					flag = num>0;
+				}else if(returnedGoods.getIsReal() ==2 || returnedGoods.getIsReal() ==3){
+					flag = false;//套卡和通用卡只能有一次售后
+				}
+			}
+			
 			//判断是否为虚拟商品;是:直接状态为15退款中,入库状态为"空" -1.
 			if(returnedGoods.getIsReal() == 0){
 				returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
@@ -166,15 +181,6 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			
 			//------------------------------同意退货  扣减云币----begin--------------------------
 			if (returnedGoods.getIsConfirm() == 12) {
-				boolean flag = true;
-				//判断商品是否为实物或者虚拟,是则查询商品之前是否有过售后
-				if(returnedGoods.getIsReal() ==0 || returnedGoods.getIsReal() ==1){
-					//先查询订单是否有过退货记录,有记录就不扣减云币
-					int num = returnedGoodsDao.getReturnedGoods(returnedGoods);
-					flag = num>0;
-				}else if(returnedGoods.getIsReal() ==2 || returnedGoods.getIsReal() ==3){
-					flag = false;//套卡和通用卡只能有一次售后
-				}
 				if(!flag){
 					//查询mapping表中,云币的数量
 					int integral = orderGoodsDao.getintegralByRecId(returnedGoods.getGoodsMappingId());
