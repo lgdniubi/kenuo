@@ -213,7 +213,10 @@
 			SUM(ogd.order_arrearage) AS 'sumOrderArrearage',
 			ogm.goods_price AS 'goodsPrice',
 			ogm.order_amount AS 'orderAmount',
-			ogm.integral AS 'integral'
+			ogm.integral AS 'integral',
+			ogm.coupon_price AS 'couponPrice',
+			ogm.member_goods_price AS 'memberGoodsPrice',
+			ogm.advance_price AS 'advancePrice'
 		FROM mtmydb.mtmy_order_goods_details ogd
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping ogm ON ogm.rec_id = ogd.goods_mapping_id
 		WHERE ogd.goods_mapping_id = #{recid}
