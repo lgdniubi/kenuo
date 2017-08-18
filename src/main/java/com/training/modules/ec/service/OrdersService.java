@@ -1659,8 +1659,16 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				newSpareMoneySum = Double.parseDouble(formater.format(advance - goodsPrice));    //总余额(实际单次标价  < 商品优惠单价 < 预付金时，将多的存入个人账户余额中)
 				appTotalAmount = 0;                   //app实付金额
 				appArrearage = 0; //app欠款金额
-			}else if(singleRealityPrice < advance && advance <= goodsPrice){
-				// 实际单次标价  < 预付金	<= 商品优惠单价
+			}else if(advance == goodsPrice){     //预约金=商品优惠单价
+				serviceTimes_in = oLog.getServicetimes() - 1;                               //实际的充值次数，因为预约的时候给了一次，入库的时候减少一次
+				totalAmount_in_a = advance;//实付金额
+				accountBalance_in =  0;     //订单余款
+				totalAmount_in = 0;        //存入库的实付款金额
+				newSpareMoneySum = 0;
+				appTotalAmount = 0;                   //app实付金额
+				appArrearage = 0; //app欠款金额
+			}else if(singleRealityPrice < advance && advance < goodsPrice){
+				// 实际单次标价  < 预付金	< 商品优惠单价
 				serviceTimes_in_a = (int)Math.floor(totalAmount/singleRealityPrice);//充值次数
 				serviceTimes_in = serviceTimes_in_a - 1;                                //实际的充值次数，因为预约的时候给了一次，入库的时候减少一次
 				totalAmount_in_a = serviceTimes_in_a * singleRealityPrice;//实付金额
@@ -2714,7 +2722,15 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				newSpareMoneySum = Double.parseDouble(formater.format(advance - goodsPrice));    //总余额(实际单次标价  < 商品优惠单价 < 预付金时，将多的存入个人账户余额中)
 				appTotalAmount = 0;                   //app实付金额
 				appArrearage = 0; //app欠款金额
-			}else if(singleRealityPrice < advance && advance <= goodsPrice){
+			}else if(advance == goodsPrice){     //预约金=商品优惠单价
+				serviceTimes_in = oLog.getServicetimes() - 1;                               //实际的充值次数，因为预约的时候给了一次，入库的时候减少一次
+				totalAmount_in_a = advance;//实付金额
+				accountBalance_in =  0;     //订单余款
+				totalAmount_in = 0;        //存入库的实付款金额
+				newSpareMoneySum = 0;
+				appTotalAmount = 0;                   //app实付金额
+				appArrearage = 0; //app欠款金额
+			}else if(singleRealityPrice < advance && advance < goodsPrice){
 				// 实际单次标价  < 预付金	<= 商品优惠单价
 				serviceTimes_in_a = (int)Math.floor(totalAmount/singleRealityPrice);//充值次数
 				serviceTimes_in = serviceTimes_in_a - 1;                                //实际的充值次数，因为预约的时候给了一次，入库的时候减少一次

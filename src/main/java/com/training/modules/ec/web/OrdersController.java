@@ -1647,6 +1647,9 @@ public class OrdersController extends BaseController {
 					double c = Double.parseDouble(formater.format(singleRealityPrice - advance));
 					orderGoods.setAdvanceServiceTimes(0);        //服务次数
 					orderGoods.setDebt(c);                       //欠款
+				}else if(advance == goodsPrice){                     //预约金为0或者预约金等于商品优惠单价的时
+					orderGoods.setAdvanceServiceTimes(servicetimes);        //服务次数
+					orderGoods.setDebt(0);                       //欠款
 				}else{
 					int a = (int)(advance/singleRealityPrice);
 					double b = Double.parseDouble(formater.format(advance - a*singleRealityPrice));
@@ -2503,8 +2506,6 @@ public class OrdersController extends BaseController {
 					double b = Double.parseDouble(formater.format(advance - singleRealityPrice));
 					orderGoods.setAdvanceBalance(b);             //余额
 				}
-				
-				
 			}else if(isReal == 3){   //通用卡
 				double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
 				
@@ -2512,6 +2513,9 @@ public class OrdersController extends BaseController {
 					double c = Double.parseDouble(formater.format(singleRealityPrice - advance));
 					orderGoods.setAdvanceServiceTimes(0);        //服务次数
 					orderGoods.setDebt(c);                       //欠款
+				}else if(advance == goodsPrice){                     //预约金为0或者预约金等于商品优惠单价的时
+					orderGoods.setAdvanceServiceTimes(servicetimes);        //服务次数
+					orderGoods.setDebt(0);                       //欠款
 				}else{
 					int a = (int)(advance/singleRealityPrice);
 					double b = Double.parseDouble(formater.format(advance - a*singleRealityPrice));
