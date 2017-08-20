@@ -70,7 +70,7 @@
 		WHERE 
 		a.id = #{id} and a.del_flag=0
 	</select>
-	<!-- 根据编号 -->
+	<!-- 查询订单已经售后成功的次数 -->
 	<select id="getReturnedGoods" resultType="int">
 		SELECT
 			COUNT(1)
@@ -78,6 +78,17 @@
 		WHERE 
 			return_status != -10 
 		AND return_status != 11 
+		AND del_flag = 0 
+		AND order_id= #{orderId}
+		AND goods_mapping_id= #{goodsMappingId}
+	</select>
+	<!-- 查询订单是否正在售后 或者 已经售后 的个数 -->
+	<select id="getReturnGoodsNum" resultType="int">
+		SELECT
+			COUNT(1)
+		FROM mtmydb.mtmy_returned_goods 
+		WHERE 
+			return_status != -10 
 		AND del_flag = 0 
 		AND order_id= #{orderId}
 		AND goods_mapping_id= #{goodsMappingId}
@@ -115,16 +126,24 @@
 	<!-- 查询出通用卡的售后次数(mapping表中的service_times - appt_order表中的预约次数) -->
 	<select id="getCommonNum" resultType="ReturnedGoods">
 		SELECT
-			a.rec_id as 'goodsMappingId',
-			(a.service_times -count(b.goods_mapping_id)) AS 'returnNum'
-		FROM 
-			mtmydb.mtmy_order_goods_mapping a LEFT JOIN mtmydb.mtmy_appt_order b on a.rec_id = b.goods_mapping_id
+			a.rec_id AS 'goodsMappingId',
+			(
+				a.service_times - (
+					SELECT
+						COUNT(b.id)
+					FROM
+						mtmydb.mtmy_order_goods_details c
+					LEFT JOIN mtmydb.mtmy_appt_order b ON c.appt_id = b.id
+					WHERE
+						c.order_id = #{orderId}
+					AND b.appt_status IN (0, 1, 2, 4)
+				)
+			) AS 'serviceTimes'
+		FROM
+			mtmydb.mtmy_order_goods_mapping a
 		WHERE
-			a.order_id=#{orderId}
-		AND 
-			a.rec_id = #{goodsMappingId}
-		AND 
-			b.appt_status in (0,1,2,4)
+			a.order_id = #{orderId}
+		AND a.rec_id = #{goodsMappingId}
 	</select>
 	<!-- 修改套卡子项虚拟商品的剩余次数 -->
 	<update id="updateCardNum">
@@ -136,7 +155,7 @@
 	<!-- 修改通用卡的售后次数 -->
 	<update id="updateCommonNum">
 		UPDATE mtmydb.mtmy_returned_goods SET
-			return_num=#{returnNum}
+			return_num=#{serviceTimes}
 		WHERE id=#{id} 
 		AND goods_mapping_id = #{goodsMappingId}
 	</update>
