@@ -96,7 +96,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			if (returnedGoods.getIsConfirm() == 12) {
 				//判断商品是否为实物或者虚拟,是则查询商品之前是否有过售后
 				if(returnedGoods.getIsReal() ==0 || returnedGoods.getIsReal() ==1){
-					//先查询订单是否有过退货记录,有记录就不扣减云币
+					//先查询订单的退货成功记录,有记录就不扣减云币
 					int num = returnedGoodsDao.getReturnedGoods(returnedGoods);
 					flag = num>0;
 				}else if(returnedGoods.getIsReal() ==2 || returnedGoods.getIsReal() ==3){
@@ -160,7 +160,9 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				ogd.setCreateBy(UserUtils.getUser());
 				
 				if(returnedGoods.getIsReal() == 2){//套卡需要把剩余金额加回来,返回金额
-					ogd.setSurplusAmount(returnedGoods.getReturnAmount());
+					//查询details表中AdvanceFlag=4的最新一条记录中SurplusAmount(套卡剩余金额)
+					int SurplusAmount = orderGoodsDetailsDao.getSurplusAmount(returnedGoods.getOrderId());
+					ogd.setSurplusAmount(-SurplusAmount);
 				}
 				if(returnedGoods.getIsReal() == 3){//通用卡的剩余次数恢复
 					ReturnedGoods commonNum = returnedGoodsDao.getCommonNum(returnedGoods);
@@ -456,8 +458,8 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	 * @param returnedGoods
 	 * @return
 	 */
-	public boolean getReturnedGoods(ReturnedGoods returnedGoods) {
-		return returnedGoodsDao.getReturnedGoods(returnedGoods) >0;
+	public boolean getReturnGoodsNum(ReturnedGoods returnedGoods) {
+		return returnedGoodsDao.getReturnGoodsNum(returnedGoods) >0;
 	}
 
 	/**

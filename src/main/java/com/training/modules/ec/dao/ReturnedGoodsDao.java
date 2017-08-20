@@ -89,6 +89,12 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 */
 	public int getReturnedGoods(ReturnedGoods returnedGoods);
 	/**
+	 * 查询订单是否正在售后 或者 已经售后 的个数
+	 * @param returnedGoods
+	 * @return
+	 */
+	public int getReturnGoodsNum(ReturnedGoods returnedGoods);
+	/**
 	 * 卡项售后子项添加到mtmy_returned_goods_card
 	 * @param rg
 	 */
@@ -121,5 +127,11 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 * @return
 	 */
 	public List<ReturnedGoods> getRealnum(ReturnedGoods returnedGoods);
+	/**
+	 * 查询订单是否售后或者正在
+	 * @param returnedGoods
+	 * @return
+	 */
+	public int getReturnedGoodsNum(ReturnedGoods returnedGoods);
 	
 }

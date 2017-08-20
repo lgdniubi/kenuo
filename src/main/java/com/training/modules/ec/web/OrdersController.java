@@ -1444,10 +1444,10 @@ public class OrdersController extends BaseController {
 	 * @return
 	 * 
 	 */
-	@RequestMapping(value = "getReturnedGoods")
+	@RequestMapping(value = "getReturnGoodsNum")
 	@ResponseBody
-	public boolean getReturnedGoods(ReturnedGoods returnedGoods, HttpServletRequest request, HttpServletResponse response) {
-		return returnedGoodsService.getReturnedGoods(returnedGoods);
+	public boolean getReturnGoodsNum(ReturnedGoods returnedGoods, HttpServletRequest request, HttpServletResponse response) {
+		return returnedGoodsService.getReturnGoodsNum(returnedGoods);
 	}
 	/**
 	 * 计算订单欠费(根据组ID(mapping_id)获取卡项中的实物集合)

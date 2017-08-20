@@ -71,6 +71,19 @@
 			order_id = #{orderId} AND goods_mapping_id = #{goodsMappingId}
 	</select>
 	
+	<!-- 查询details表中AdvanceFlag=4的最新一条记录中SurplusAmount(套卡剩余金额) -->
+	<select id="getSurplusAmount" resultType="int">
+		SELECT
+			surplus_amount AS 'surplusAmount'
+		FROM
+			mtmydb.mtmy_order_goods_details
+		WHERE
+			order_id = #{orderId}
+		AND advance_flag = 4
+		ORDER BY create_date DESC
+		LIMIT 1
+	</select>
+	
 	
 	<select id="getOrderGoodsDetailListByMid" resultType="OrderGoods">
 		SELECT
