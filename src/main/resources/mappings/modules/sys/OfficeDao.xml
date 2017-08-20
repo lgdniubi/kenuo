@@ -130,8 +130,7 @@
 			<include refid="officeColumns"/>
 		FROM sys_office a
 		<include refid="officeJoins"/>
-		WHERE a.del_flag = 0
-		and a.parent_id=#{pid}
+		WHERE a.parent_id=#{pid}
 		ORDER BY a.code
 	</select>
 	
