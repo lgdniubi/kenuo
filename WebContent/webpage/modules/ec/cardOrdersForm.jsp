@@ -379,6 +379,8 @@ window.onload=initStatus;
 		    yes: function(index, layero){
 		    	var obj =  layero.find("iframe")[0].contentWindow;
      	    	var sum = obj.document.getElementById("sum").value; //是否使用了账户余额
+     	    	var loading = obj.document.getElementById("loading");
+				$(loading).show();
 				//异步处理预约金
 				$.ajax({
 					type:"post",
@@ -393,6 +395,7 @@ window.onload=initStatus;
 					 },
 					url:"${ctx}/ec/orders/handleCardAdvance?recid="+recid+"&userid="+userid+"&orderid="+orderid,
 					success:function(date){
+						$(loading).hide();
 						if(date == 'success'){
 							top.layer.alert('处理成功!', {icon: 1, title:'提醒'});
 							window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid;

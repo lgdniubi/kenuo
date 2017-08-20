@@ -71,6 +71,19 @@
 			order_id = #{orderId} AND goods_mapping_id = #{goodsMappingId}
 	</select>
 	
+	<!-- 查询details表中AdvanceFlag=4的最新一条记录中SurplusAmount(套卡剩余金额) -->
+	<select id="getSurplusAmount" resultType="int">
+		SELECT
+			surplus_amount AS 'surplusAmount'
+		FROM
+			mtmydb.mtmy_order_goods_details
+		WHERE
+			order_id = #{orderId}
+		AND advance_flag = 4
+		ORDER BY create_date DESC
+		LIMIT 1
+	</select>
+	
 	
 	<select id="getOrderGoodsDetailListByMid" resultType="OrderGoods">
 		SELECT
@@ -213,7 +226,10 @@
 			SUM(ogd.order_arrearage) AS 'sumOrderArrearage',
 			ogm.goods_price AS 'goodsPrice',
 			ogm.order_amount AS 'orderAmount',
-			ogm.integral AS 'integral'
+			ogm.integral AS 'integral',
+			ogm.coupon_price AS 'couponPrice',
+			ogm.member_goods_price AS 'memberGoodsPrice',
+			ogm.advance_price AS 'advancePrice'
 		FROM mtmydb.mtmy_order_goods_details ogd
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping ogm ON ogm.rec_id = ogd.goods_mapping_id
 		WHERE ogd.goods_mapping_id = #{recid}

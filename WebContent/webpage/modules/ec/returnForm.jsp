@@ -31,7 +31,8 @@
 				  top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
 				  return;
 			  }
-			  if(returnAmount==-1){
+			  //remaintimes == 0   当
+			  if(returnAmount==-1 || remaintimes == 0){
 				 top.layer.alert('该商品已申请过售后!', {icon: 0, title:'提醒'});
 				 return;
 			  }else if(returnAmount==-2){
@@ -117,11 +118,17 @@
 					return;
 				}
 			}
+			
 			//判断是否有无欠款
 			if(orderArrearage>0){
 				top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
 			}else{
-				if(servicetimes == 999){//是否为时限卡,剩余次数赋值,
+				if(servicetimes == 999){//是否为时限卡,剩余次数赋值, 
+					//是时限卡的时候, 当remaintimes == 0 ,说明时限卡已经售后过了
+					if(remaintimes == 0){
+						top.layer.alert('该商品已申请过售后!', {icon: 0, title:'提醒'});
+						return;
+					}
 					$("#d1serviceTimes").hide();
 					$("#serviceTimes").val(remaintimes);//时限卡内还剩下多少次就售后多少次
 				}else{
@@ -229,7 +236,7 @@
 				return;
 			}
 		}
-				
+		
 		 //虚拟商品的售后次数校验
 		function returnChangeTimes(){
 		   var st=$("#serviceTimes").val();

@@ -13,6 +13,8 @@
 		var flag;
 		var goodsNum = 0;//实物售后数量校验用
 		var flagNum = false;//实物售后数量校验用
+		var advanceFlag;
+		
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		  if(validateForm.form()){
 			  if(flag){
@@ -29,15 +31,29 @@
 				  top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
 				  return;
 			  }
-			  //实物售后数量校验
-			  if(flagNum){
-				  top.layer.alert('实物售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
+			  //订单存在预约金,先处理预约金
+			  if(advanceFlag == 1){
+				  top.layer.alert('当前订单有预约金,无法退款(请先处理预约金)', {icon: 0, title:'提醒'});
 				  return;
 			  }
 			  
+			  //校验实物售后数量的准确
+			  for(var i=0;i<goodsNum;i++){
+				  var newNum = $("#returnNums"+i).val();
+				  var oldNum = $("#oldreturnNums"+i).val();
+				  if(newNum < 0 || newNum > oldNum){
+					  flagNum = true;
+				  }else{
+					  flagNum = false;
+				  }
+				  if(flagNum){
+					  top.layer.alert('售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
+					  return;
+				  }
+			  }
 			  //退款金额校验
 			  var ra=$("#returnAmount").val();
-			  if(parseFloat(ra)<0){
+			  if(parseFloat(ra)<=0){
 				  top.layer.alert('退款金额必须大于0，小于等于支付金额!', {icon: 0, title:'提醒'});
 				  return;
 			  }else if(parseFloat(totalAmount) < parseFloat(ra)){
@@ -57,9 +73,15 @@
 			var orderId=$("#orderId").val();//订单id
 			var orderAmount=$("#"+recid+"orderAmount").val();//应付款
 			var totalAmount=$("#"+recid+"totalAmount").val();//实付款
+			advanceFlag=$("#"+recid+"advanceFlag").val();//是否预约金
 			orderArrearage=$("#"+recid+"orderArrearage").val();//欠款
 			$("#goodsMappingId").val(recid);//为goodsMappingId赋值
 			
+			//判断订单是否存在预约金
+			if(advanceFlag == 1){
+				top.layer.alert('当前订单有预约金,无法退款(请先处理预约金)', {icon: 0, title:'提醒'});
+				return;
+			}
 			//判断是否存在欠款
 			if(parseInt(orderArrearage)>0){
 				top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
@@ -72,7 +94,7 @@
 						orderId:orderId,
 						goodsMappingId:recid,
 					},
-					url:"${ctx}/ec/orders/getReturnedGoods",
+					url:"${ctx}/ec/orders/getReturnGoodsNum",
 					success:function(obj){
 						flag = obj;
 						if(flag){//正在售后    或者   已经售后
@@ -91,7 +113,8 @@
 									if(date!=null && date!=""){
 										for(var i in date){
 											if(date[i].isreal == 0){
-												$("<label><font color='red'>*</font>"+date[i].goodsname+"    售后数量：</label><input id='recIds' name='recIds' value='"+date[i].recid+"' type='hidden'/><input id='returnNums' name='returnNums' value='"+date[i].goodsnum+"' style='width:180px;' class='form-control required' onblur='findReturnNum(this,"+date[i].goodsnum+")'/> <p></p>").appendTo($("#addReal"));
+												$("<label><font color='red'>*</font>"+date[i].goodsname+"    售后数量：</label><input id='recIds' name='recIds' value='"+date[i].recid+"' type='hidden'/><input id='returnNums"+i+"' name='returnNums' value='"+date[i].goodsnum+"' style='width:180px;' class='form-control required' onblur='findReturnNum(this,"+date[i].goodsnum+")'/><input id='oldreturnNums"+i+"' value='"+date[i].goodsnum+"' type='hidden'/> <p></p>").appendTo($("#addReal"));
+												goodsNum++;
 											}
 										}
 									}
@@ -115,11 +138,9 @@
 			var num1=$(id).val();
 			if(parseInt(num1)<0){
 				top.layer.alert('售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
-				flagNum=true;
 				return;
 			}else if(parseInt(num1) > num){
 				top.layer.alert('售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
-				flagNum=true;
 				return;
 			}
 		}

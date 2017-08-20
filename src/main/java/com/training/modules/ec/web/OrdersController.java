@@ -677,6 +677,7 @@ public class OrdersController extends BaseController {
 							suitCardSons = suitCardSons +
 									"<input type='hidden' id='"+father.getRecid()+"orderAmount' name='orderAmount' value='"+father.getOrderAmount()+"' />"+
 									"<input type='hidden' id='"+father.getRecid()+"totalAmount' name='totalAmount' value='"+father.getTotalAmount()+"' />"+
+									"<input type='hidden' id='"+father.getRecid()+"advanceFlag' name='advanceFlag' value='"+father.getAdvanceFlag()+"' />"+
 									"<input type='hidden' id='"+father.getRecid()+"orderArrearage' name='orderArrearage' value='"+father.getOrderArrearage()+"' />";
 							for(int i=2;i<lists.size();i++){
 								isreal = lists.get(i).getIsreal()==0?"实物":"虚拟";
@@ -728,6 +729,7 @@ public class OrdersController extends BaseController {
 							suitCardSons = suitCardSons +
 									"<input type='hidden' id='"+father.getRecid()+"orderAmount' name='orderAmount' value='"+father.getOrderAmount()+"' />"+
 									"<input type='hidden' id='"+father.getRecid()+"totalAmount' name='totalAmount' value='"+father.getTotalAmount()+"' />"+
+									"<input type='hidden' id='"+father.getRecid()+"advanceFlag' name='advanceFlag' value='"+father.getAdvanceFlag()+"' />"+
 									"<input type='hidden' id='"+father.getRecid()+"orderArrearage' name='orderArrearage' value='"+father.getOrderArrearage()+"' />";
 							for(int i=2;i<lists.size();i++){
 								isreal = lists.get(i).getIsreal()==0?"实物":"虚拟";
@@ -1442,10 +1444,10 @@ public class OrdersController extends BaseController {
 	 * @return
 	 * 
 	 */
-	@RequestMapping(value = "getReturnedGoods")
+	@RequestMapping(value = "getReturnGoodsNum")
 	@ResponseBody
-	public boolean getReturnedGoods(ReturnedGoods returnedGoods, HttpServletRequest request, HttpServletResponse response) {
-		return returnedGoodsService.getReturnedGoods(returnedGoods);
+	public boolean getReturnGoodsNum(ReturnedGoods returnedGoods, HttpServletRequest request, HttpServletResponse response) {
+		return returnedGoodsService.getReturnGoodsNum(returnedGoods);
 	}
 	/**
 	 * 计算订单欠费(根据组ID(mapping_id)获取卡项中的实物集合)
@@ -1645,6 +1647,9 @@ public class OrdersController extends BaseController {
 					double c = Double.parseDouble(formater.format(singleRealityPrice - advance));
 					orderGoods.setAdvanceServiceTimes(0);        //服务次数
 					orderGoods.setDebt(c);                       //欠款
+				}else if(advance == goodsPrice){                     //预约金为0或者预约金等于商品优惠单价的时
+					orderGoods.setAdvanceServiceTimes(servicetimes);        //服务次数
+					orderGoods.setDebt(0);                       //欠款
 				}else{
 					int a = (int)(advance/singleRealityPrice);
 					double b = Double.parseDouble(formater.format(advance - a*singleRealityPrice));
@@ -2501,8 +2506,6 @@ public class OrdersController extends BaseController {
 					double b = Double.parseDouble(formater.format(advance - singleRealityPrice));
 					orderGoods.setAdvanceBalance(b);             //余额
 				}
-				
-				
 			}else if(isReal == 3){   //通用卡
 				double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
 				
@@ -2510,6 +2513,9 @@ public class OrdersController extends BaseController {
 					double c = Double.parseDouble(formater.format(singleRealityPrice - advance));
 					orderGoods.setAdvanceServiceTimes(0);        //服务次数
 					orderGoods.setDebt(c);                       //欠款
+				}else if(advance == goodsPrice){                     //预约金为0或者预约金等于商品优惠单价的时
+					orderGoods.setAdvanceServiceTimes(servicetimes);        //服务次数
+					orderGoods.setDebt(0);                       //欠款
 				}else{
 					int a = (int)(advance/singleRealityPrice);
 					double b = Double.parseDouble(formater.format(advance - a*singleRealityPrice));
