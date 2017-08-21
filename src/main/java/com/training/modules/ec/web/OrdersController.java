@@ -1574,7 +1574,7 @@ public class OrdersController extends BaseController {
 			if(userResult){   //若缓存存在，则操作缓存
 				RedisLock redisLock = new RedisLock(redisClientTemplate, MTMY_ID+orders.getUserid());
 				redisLock.lock();
-				redisClientTemplate.incrBy(MTMY_ID+orders.getUserid(),integral);
+				redisClientTemplate.incrBy(MTMY_ID+orders.getUserid(),-integral);
 				redisLock.unlock();
 			}else{         //若缓存不存在，则操作mtmy_user_accounts
 				orders.setUserid(orders.getUserid());
