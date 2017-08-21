@@ -41,6 +41,7 @@ import com.training.common.utils.excel.ImportExcel;
 import com.training.common.web.BaseController;
 import com.training.modules.ec.dao.GoodsSpecPriceDao;
 import com.training.modules.ec.dao.MtmyUsersDao;
+import com.training.modules.ec.dao.OrderGoodsDao;
 import com.training.modules.ec.dao.OrdersDao;
 import com.training.modules.ec.dao.SaleRebatesLogDao;
 import com.training.modules.ec.entity.AcountLog;
@@ -50,6 +51,7 @@ import com.training.modules.ec.entity.GoodsCategory;
 import com.training.modules.ec.entity.GoodsDetailSum;
 import com.training.modules.ec.entity.GoodsSpecPrice;
 import com.training.modules.ec.entity.ImportVirtualOrders;
+import com.training.modules.ec.entity.IntegralsLog;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderGoodsCoupon;
 import com.training.modules.ec.entity.OrderGoodsDetails;
@@ -121,9 +123,13 @@ public class OrdersController extends BaseController {
 	private MtmyUsersDao mtmyUsersDao;
 	@Autowired
 	private GoodsSpecPriceDao goodsSpecPriceDao;
+	@Autowired
+	private OrderGoodsDao orderGoodsDao;
 	
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
+	
+	public static final String MTMY_ID = "mtmy_id_";//用户云币缓存前缀
 	
 	public static final String buying_limit_prefix = "buying_limit_";				//抢购活动商品限购数量
 	
@@ -1510,6 +1516,7 @@ public class OrdersController extends BaseController {
 	public String forcedCancel(Orders orders, HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
 		try {
 			List<OrderGoods> goodsList=new ArrayList<OrderGoods>();
+			int integral = 0;
 			
 			orders = ordersService.findselectByOrderId(orders.getOrderid());
 			boolean result = returnRepository(orders.getOrderid(),request);
@@ -1555,12 +1562,38 @@ public class OrdersController extends BaseController {
 					//保存到退货表
 					returnedGoodsService.insertForcedCancel(returnedGoods);
 					ordersService.updateOrderStatut(orders.getOrderid());
+					integral = integral + orderGoodsDao.getintegralByRecId(goodsList.get(i).getRecid()+"") * goodsList.get(i).getGoodsnum();
 					//验证是否为抢购活动订单
 					if(goodsList.get(i).getActiontype()==1){
 						redisClientTemplate.hincrBy(buying_limit_prefix+goodsList.get(i).getActionid(), orders.getUserid()+"_"+goodsList.get(i).getGoodsid(),-goodsList.get(i).getGoodsnum());
 					}
 				}
 			}
+			
+			boolean userResult = redisClientTemplate.exists(MTMY_ID+orders.getUserid());
+			if(userResult){   //若缓存存在，则操作缓存
+				RedisLock redisLock = new RedisLock(redisClientTemplate, MTMY_ID+orders.getUserid());
+				redisLock.lock();
+				redisClientTemplate.incrBy(MTMY_ID+orders.getUserid(),integral);
+				redisLock.unlock();
+			}else{         //若缓存不存在，则操作mtmy_user_accounts
+				orders.setUserid(orders.getUserid());
+				orders.setUserIntegral(integral);
+				ordersDao.updateIntegralAccount(orders);
+			}
+			
+			//在mtmy_integrals_log表中插入日志
+			IntegralsLog integralsLog = new IntegralsLog();
+			integralsLog.setUserId(orders.getUserid());
+			integralsLog.setIntegralType(1);
+			integralsLog.setIntegralSource(0);
+			integralsLog.setActionType(21);
+			integralsLog.setIntegral(-integral);
+			integralsLog.setOrderId(orders.getOrderid());
+			integralsLog.setRemark("商品赠送(扣减)");
+			ordersDao.insertIntegralLog(integralsLog);
+			
+			
 			//查询是否有退货记录
 			if(saleRebatesLogDao.selectNumByOrderId(orders.getOrderid()) == 0){//如果无退货记录
 				saleRebatesLogDao.updateSale(orders.getOrderid());// 插入分销日志
