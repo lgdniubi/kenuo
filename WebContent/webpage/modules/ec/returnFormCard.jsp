@@ -13,6 +13,7 @@
 		var flag;
 		var goodsNum = 0;//实物售后数量校验用
 		var flagNum = false;//实物售后数量校验用
+		var totalAmount;
 		var advanceFlag;
 		
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
@@ -37,17 +38,21 @@
 				  return;
 			  }
 			  
+			  
 			  //校验实物售后数量的准确
 			  for(var i=0;i<goodsNum;i++){
 				  var newNum = $("#returnNums"+i).val();
 				  var oldNum = $("#oldreturnNums"+i).val();
-				  alert(newNum);
-				  alert(oldNum);
-				  if(newNum < 0 || newNum > oldNum){
+				  alert(parseInt(newNum));
+				  alert(parseInt(oldNum));
+				  if(parseInt(newNum) >= 0){
+					  flagNum = true;
+				  }else if(parseInt(newNum) <= parseInt(oldNum)){
 					  flagNum = true;
 				  }else{
 					  flagNum = false;
 				  }
+				  alert(flagNum);
 				  if(flagNum){
 					  top.layer.alert('售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
 					  return;
@@ -74,7 +79,8 @@
 			var recid=$("#selectId:checked").val();
 			var orderId=$("#orderId").val();//订单id
 			var orderAmount=$("#"+recid+"orderAmount").val();//应付款
-			var totalAmount=$("#"+recid+"totalAmount").val();//实付款
+			
+			totalAmount=$("#"+recid+"totalAmount").val();//实付款
 			advanceFlag=$("#"+recid+"advanceFlag").val();//是否预约金
 			orderArrearage=$("#"+recid+"orderArrearage").val();//欠款
 			$("#goodsMappingId").val(recid);//为goodsMappingId赋值
@@ -149,10 +155,10 @@
 		//虚拟商品的退款金额校验
 		function returnChangeAmount(){
 			var ra=$("#returnAmount").val();
-			if(parseFloat(ra)<0){
+			if(parseFloat(ra)<=0){
 				top.layer.alert('退款金额必须大于0，小于等于支付金额!', {icon: 0, title:'提醒'});
 				return;
-			}else if($(totalAmount).val() < ra){
+			}else if(parseFloat(totalAmount) < parseFloat(ra)){
 				top.layer.alert('退款金额必须大于0，小于等于支付金额!', {icon: 0, title:'提醒'});
 				return;
 			}
