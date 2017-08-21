@@ -133,29 +133,6 @@
 		WHERE
 			a.order_id = #{orderId}
 	</select>
-	<!-- 查询出通用卡的售后次数(mapping表中的service_times - appt_order表中的预约次数) -->
-	<select id="getCommonNum" resultType="ReturnedGoods">
-		SELECT
-			a.goods_mapping_id AS 'goodsMappingId',
-			(
-				a.service_times - (
-					SELECT
-						COUNT(b.id)
-					FROM
-						mtmydb.mtmy_order_goods_details c
-					LEFT JOIN mtmydb.mtmy_appt_order b ON c.appt_id = b.id
-					WHERE
-						c.order_id = #{orderId}
-					AND b.appt_status IN (0, 1, 2, 4)
-				)
-			) AS 'serviceTimes'
-		FROM
-			mtmydb.mtmy_order_goods_details a
-		WHERE
-			a.order_id = #{orderId}
-		AND a.goods_mapping_id = #{goodsMappingId}
-		LIMIT 1
-	</select>
 	<!-- 修改套卡子项虚拟商品的剩余次数 -->
 	<update id="updateCardNum">
 		UPDATE mtmydb.mtmy_returned_goods_card SET
