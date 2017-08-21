@@ -43,8 +43,6 @@
 			  for(var i=0;i<goodsNum;i++){
 				  var newNum = $("#returnNums"+i).val();
 				  var oldNum = $("#oldreturnNums"+i).val();
-				  alert(parseInt(newNum));
-				  alert(parseInt(oldNum));
 				  if(parseInt(newNum) >= 0){
 					  flagNum = true;
 				  }else if(parseInt(newNum) <= parseInt(oldNum)){
@@ -52,7 +50,6 @@
 				  }else{
 					  flagNum = false;
 				  }
-				  alert(flagNum);
 				  if(flagNum){
 					  top.layer.alert('售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
 					  return;
