@@ -126,7 +126,7 @@
 	<!-- 查询出通用卡的售后次数(mapping表中的service_times - appt_order表中的预约次数) -->
 	<select id="getCommonNum" resultType="ReturnedGoods">
 		SELECT
-			a.rec_id AS 'goodsMappingId',
+			a.goods_mapping_id AS 'goodsMappingId',
 			(
 				a.service_times - (
 					SELECT
@@ -140,10 +140,11 @@
 				)
 			) AS 'serviceTimes'
 		FROM
-			mtmydb.mtmy_order_goods_mapping a
+			mtmydb.mtmy_order_goods_details a
 		WHERE
 			a.order_id = #{orderId}
-		AND a.rec_id = #{goodsMappingId}
+		AND a.goods_mapping_id = #{goodsMappingId}
+		LIMIT 1
 	</select>
 	<!-- 修改套卡子项虚拟商品的剩余次数 -->
 	<update id="updateCardNum">

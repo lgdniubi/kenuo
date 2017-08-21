@@ -31,8 +31,12 @@
 				  top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
 				  return;
 			  }
-			  //remaintimes == 0   当
-			  if(returnAmount==-1 || remaintimes == 0){
+			  //remaintimes == 0   当时限卡时,才会有
+			  if(servicetimes == 999 && remaintimes == 0){
+				  top.layer.alert('该商品已申请过售后!', {icon: 0, title:'提醒'});
+				  return;
+			  }
+			  if(returnAmount==-1){
 				 top.layer.alert('该商品已申请过售后!', {icon: 0, title:'提醒'});
 				 return;
 			  }else if(returnAmount==-2){
