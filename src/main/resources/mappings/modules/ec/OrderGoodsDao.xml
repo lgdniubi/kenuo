@@ -108,7 +108,7 @@
 			a.service_min AS servicemin,
 			u.user_id AS 'users.userid',
 			u.mobile AS 'users.mobile',
-			u.name AS 'users.name',
+			u.nickname AS 'users.name',
 			IF(a.group_id != 0,(SELECT SUM(service_times) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = a.group_id),b.service_times) AS 'remaintimes',
 			IF(a.group_id != 0,(SELECT SUM(surplus_amount) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = a.group_id),b.surplus_amount) AS 'surplusAmount',
 			o.is_real AS isreal,
