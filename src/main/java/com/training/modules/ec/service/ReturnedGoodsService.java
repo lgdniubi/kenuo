@@ -92,8 +92,8 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		
 		if ("11".equals(returnedGoods.getReturnStatus())) { // 申请退货退款
 			
-			//当商品同意退货时,使用这个判断.(同意退货会在returned_goods表中插入新的数据,所以需要在插入之前进行查询是否已经售后过)
-			if (returnedGoods.getIsConfirm() == 12) {
+			//不是实物时,当商品同意退货时,使用这个判断.(同意退货会在returned_goods表中插入新的数据,所以需要在插入之前进行查询是否已经售后过)
+			if (returnedGoods.getIsConfirm() == 12 && returnedGoods.getIsReal() != 0) {
 				//判断商品是否为实物或者虚拟,是则查询商品之前是否有过售后
 				if(returnedGoods.getIsReal() ==0 || returnedGoods.getIsReal() ==1){
 					//先查询订单的退货成功记录,有记录就不扣减云币
@@ -164,10 +164,6 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 					int SurplusAmount = orderGoodsDetailsDao.getSurplusAmount(returnedGoods.getOrderId());
 					ogd.setSurplusAmount(-SurplusAmount);
 				}
-				if(returnedGoods.getIsReal() == 3){//通用卡的剩余次数恢复
-					ReturnedGoods commonNum = returnedGoodsDao.getCommonNum(returnedGoods);
-					ogd.setServiceTimes(commonNum.getServiceTimes());
-				}
 				orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
 				//---------------------------退货处理  detials  end---------------------------
 				
@@ -183,35 +179,17 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			
 			//------------------------------同意退货  扣减云币----begin--------------------------
 			if (returnedGoods.getIsConfirm() == 12) {
-				if(!flag){
-					//查询mapping表中,云币的数量
-					int integral = orderGoodsDao.getintegralByRecId(returnedGoods.getGoodsMappingId());
-					if(integral != 0){
-						if(returnedGoods.getIsReal() == 0){
-							integral = integral * returnedGoods.getReturnNum();
+				//实物可以多次售后,而且是根据购买数量来扣减云币 = 商品云币 * 退货数量
+				int integral = orderGoodsDao.getintegralByRecId(returnedGoods.getGoodsMappingId());
+				if(integral != 0){
+					if(returnedGoods.getIsReal() == 0){
+						integral = integral * returnedGoods.getReturnNum();
+						updateIntegrals(orders, returnedGoods,integral);
+					}else{
+						if(!flag){
+							//查询mapping表中,云币的数量
+							updateIntegrals(orders, returnedGoods,integral);
 						}
-						//查看缓存中,用户是否存在
-						boolean str = redisClientTemplate.exists("mtmy_id_"+returnedGoods.getUserId());
-						if(str){
-							RedisLock redisLock = new RedisLock(redisClientTemplate, "mtmy_id_"+returnedGoods.getUserId());
-							redisLock.lock();
-							redisClientTemplate.incrBy("mtmy_id_"+returnedGoods.getUserId(),-integral);
-							redisLock.unlock();
-						}else{//当用户不存在缓存,直接扣减mtmy_user_accounts表中的云币
-							orders.setUserid(returnedGoods.getUserId());
-							orders.setUserIntegral(integral);
-							ordersDao.updateIntegralAccount(orders);
-						}
-						//把操作的记录存入mtmy_integrals_log表中
-						IntegralsLog integralsLog = new IntegralsLog();
-						integralsLog.setUserId(returnedGoods.getUserId());
-						integralsLog.setIntegralType(1);
-						integralsLog.setIntegralSource(0);
-						integralsLog.setActionType(21);
-						integralsLog.setIntegral(-integral);
-						integralsLog.setOrderId(returnedGoods.getOrderId());
-						integralsLog.setRemark("商品赠送(扣减)");
-						integralLogDao.insertIntegrals(integralsLog);
 					}
 				}
 			}
@@ -378,6 +356,36 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		}
 	}
 
+	/**
+	 * 扣减云币执行方法,并且添加操作记录
+	 * 
+	 * @param returnedGoods
+	 * @return
+	 */
+	public void updateIntegrals(Orders orders,ReturnedGoods returnedGoods ,int integral) {
+		//查看缓存中,用户是否存在
+		boolean str = redisClientTemplate.exists("mtmy_id_"+returnedGoods.getUserId());
+		if(str){
+			RedisLock redisLock = new RedisLock(redisClientTemplate, "mtmy_id_"+returnedGoods.getUserId());
+			redisLock.lock();
+			redisClientTemplate.incrBy("mtmy_id_"+returnedGoods.getUserId(),-integral);
+			redisLock.unlock();
+		}else{//当用户不存在缓存,直接扣减mtmy_user_accounts表中的云币
+			orders.setUserid(returnedGoods.getUserId());
+			orders.setUserIntegral(integral);
+			ordersDao.updateIntegralAccount(orders);
+		}
+		//把操作的记录存入mtmy_integrals_log表中
+		IntegralsLog integralsLog = new IntegralsLog();
+		integralsLog.setUserId(returnedGoods.getUserId());
+		integralsLog.setIntegralType(1);
+		integralsLog.setIntegralSource(0);
+		integralsLog.setActionType(21);
+		integralsLog.setIntegral(-integral);
+		integralsLog.setOrderId(returnedGoods.getOrderId());
+		integralsLog.setRemark("商品赠送(扣减)");
+		integralLogDao.insertIntegrals(integralsLog);
+	}
 	/**
 	 * 强制取消
 	 * 

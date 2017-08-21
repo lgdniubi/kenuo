@@ -41,6 +41,8 @@
 			  for(var i=0;i<goodsNum;i++){
 				  var newNum = $("#returnNums"+i).val();
 				  var oldNum = $("#oldreturnNums"+i).val();
+				  alert(newNum);
+				  alert(oldNum);
 				  if(newNum < 0 || newNum > oldNum){
 					  flagNum = true;
 				  }else{
@@ -113,7 +115,7 @@
 									if(date!=null && date!=""){
 										for(var i in date){
 											if(date[i].isreal == 0){
-												$("<label><font color='red'>*</font>"+date[i].goodsname+"    售后数量：</label><input id='recIds' name='recIds' value='"+date[i].recid+"' type='hidden'/><input id='returnNums"+i+"' name='returnNums' value='"+date[i].goodsnum+"' style='width:180px;' class='form-control required' onblur='findReturnNum(this,"+date[i].goodsnum+")'/><input id='oldreturnNums"+i+"' value='"+date[i].goodsnum+"' type='hidden'/> <p></p>").appendTo($("#addReal"));
+												$("<label><font color='red'>*</font>"+date[i].goodsname+"    售后数量：</label><input id='recIds' name='recIds' value='"+date[i].recid+"' type='hidden'/><input id='returnNums"+goodsNum+"' name='returnNums' value='"+date[i].goodsnum+"' style='width:180px;' class='form-control required' onblur='findReturnNum(this,"+date[i].goodsnum+")'/><input id='oldreturnNums"+goodsNum+"' value='"+date[i].goodsnum+"' type='hidden'/> <p></p>").appendTo($("#addReal"));
 												goodsNum++;
 											}
 										}
