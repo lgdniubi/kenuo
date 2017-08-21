@@ -43,9 +43,9 @@
 			  for(var i=0;i<goodsNum;i++){
 				  var newNum = $("#returnNums"+i).val();
 				  var oldNum = $("#oldreturnNums"+i).val();
-				  if(parseInt(newNum) >= 0){
+				  if(parseInt(newNum) < 0){
 					  flagNum = true;
-				  }else if(parseInt(newNum) <= parseInt(oldNum)){
+				  }else if(parseInt(newNum) > parseInt(oldNum)){
 					  flagNum = true;
 				  }else{
 					  flagNum = false;
