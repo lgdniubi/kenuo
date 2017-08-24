@@ -90,7 +90,7 @@
 					SYSDATE()
 			</trim>
 			ON DUPLICATE KEY UPDATE 
-				appt_count = #{apptCount},
+				appt_count = appt_count + #{apptCount},
 				update_date = SYSDATE();
 	</insert>
 	
