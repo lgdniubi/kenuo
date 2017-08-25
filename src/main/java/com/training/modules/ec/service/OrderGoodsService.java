@@ -94,4 +94,13 @@ public class OrderGoodsService extends TreeService<OrderGoodsDao,OrderGoods>{
 		return orderGoodsDao.getOrderGoodsCard(orderGoods);
 	}
 
+	/**
+	 * 根据recid和订单ID查询商品和子项信息
+	 * @param og
+	 * @return
+	 */
+	public List<OrderGoods> cardOrderid(OrderGoods og) {
+		return orderGoodsDao.cardOrderid(og);
+	}
+
 }

@@ -126,5 +126,12 @@ public interface OrderGoodsDao extends TreeDao<OrderGoods> {
 	 * @return
 	 */
 	public int getintegralByRecId(String goodsMappingId);
-	
+
+	/**
+	 * 根据recid和订单ID查询商品和子项信息
+	 * @param og
+	 * @return
+	 */
+	public List<OrderGoods> cardOrderid(OrderGoods og);
+
 }

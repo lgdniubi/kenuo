@@ -119,12 +119,15 @@ public class ReturnedGoodsController extends BaseController {
 			
 			String suitCardSons = "";
 			String isreal = "";
-			String goodsNum = "";
 			int num;
 			List<List<OrderGoods>> result = new ArrayList<List<OrderGoods>>();//存放每个卡项商品和它的子项集合
 			List<OrderGoods> resultSon = new ArrayList<OrderGoods>();//存放一个卡项商品和它的子项
 			
-			List<OrderGoods> list=ordergoodService.orderlist(returnedGoods.getOrderId());//根据订单id查询订单中的套卡及其子项
+			OrderGoods og = new OrderGoods();
+			og.setOrderid(returnedGoods.getOrderId());
+			og.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
+			
+			List<OrderGoods> list=ordergoodService.cardOrderid(og);//根据订单id和mapping查询订单中的套卡及其子项
 			for(int i=0;i<list.size();i++){
 				if(list.get(i).getGroupId() == 0 && resultSon.size() > 0){
 					result.add(resultSon);
@@ -179,11 +182,6 @@ public class ReturnedGoodsController extends BaseController {
 							num = lists.size() - 1;
 							OrderGoods father = lists.get(0);
 							isreal = lists.get(1).getIsreal()==0?"实物":"虚拟";
-							if(isreal.equals("实物")){//通用卡实物存在购买数量,虚拟不存在
-								goodsNum = String.valueOf(lists.get(1).getGoodsnum());
-							}else{
-								goodsNum = "";
-							}
 							suitCardSons = suitCardSons +
 									"<tr> "+
 									"<td rowspan='"+num+"'>"+father.getRecid()+"</td>"+
@@ -194,23 +192,18 @@ public class ReturnedGoodsController extends BaseController {
 									"<td align='center' rowspan='"+num+"'> "+father.getMarketprice()+"</td> "+
 									"<td align='center' rowspan='"+num+"'> "+father.getGoodsprice()+"</td> "+
 									"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
-									"<td align='center'> "+goodsNum+"</td> "+
+									"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
 									"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
 									"<td align='center' rowspan='"+num+"'> "+father.getTotalAmount()+"</td> "+
 									"<td align='center' rowspan='"+num+"'> "+father.getOrderArrearage()+"</td> "+
 								"</tr> ";
 							for(int i=2;i<lists.size();i++){
 								isreal = lists.get(i).getIsreal()==0?"实物":"虚拟";
-								if(isreal.equals("实物")){//通用卡实物存在购买数量,虚拟不存在
-									goodsNum = String.valueOf(lists.get(i).getGoodsnum());
-								}else{
-									goodsNum = "";
-								}
 								suitCardSons = suitCardSons +
 									"<tr> "+
 										"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
 										"<td align='center'> "+isreal+"</td> "+
-										"<td align='center'> "+goodsNum+"</td> "+
+										"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
 									"</tr>";
 							}
 				

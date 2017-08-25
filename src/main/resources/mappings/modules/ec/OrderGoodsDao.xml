@@ -95,6 +95,60 @@
 		and a.order_id= #{orderId}
 		GROUP BY a.rec_id
 	</select>
+	<!-- 查询数据 -->
+	<select id="cardOrderid" resultType="OrderGoods">
+		SELECT
+			a.rec_id,
+			a.group_id AS 'groupId',
+			a.order_id,
+			a.user_id,
+			a.goods_name,
+			a.goods_id,
+			a.goods_sn,
+			a.goods_num,
+			a.original_img,
+			a.market_price,
+			a.goods_price,
+			a.cost_price,
+			a.coupon_price,
+			a.member_goods_price,
+			a.discount,
+			a.give_integral,
+			a.spec_key,
+			a.spec_key_name,
+			a.bar_code,
+			a.is_comment,
+			a.action_type,
+			a.action_id,
+			a.is_send,
+			a.delivery_id,
+			a.add_time,
+			a.service_times,
+			a.remain_times,
+			a.service_min,
+			a.is_real,
+			a.expiring_date,
+			a.order_amount,
+			a.single_reality_price,
+			a.single_norm_price,
+			a.is_after_sales,
+			b.advance_flag as "advanceFlag",
+			a.reality_add_time as "realityAddTime",
+			SUM(b.total_amount) as "totalAmount",
+			SUM(b.order_balance) as "orderBalance",
+			SUM(b.service_times) as "remaintimes",
+			SUM(b.order_arrearage) as "orderArrearage",
+			IFNULL(c.return_num,0) as "returnNum"
+		FROM
+			mtmydb.mtmy_order_goods_mapping a
+		LEFT JOIN mtmydb.mtmy_order_goods_details b ON a.rec_id=b.goods_mapping_id
+		LEFT JOIN (SELECT IFNULL(SUM(return_num),0) AS return_num,goods_mapping_id FROM mtmydb.mtmy_returned_goods WHERE order_id = #{orderid} AND return_status in (11,12,13,14,15,21,22,23,24,25) GROUP BY order_id,goods_mapping_id) c ON c.goods_mapping_id = a.rec_id
+		WHERE
+			a.del_flag = 0
+		AND a.order_id= #{orderid}
+		AND a.group_id = #{recid} or a.rec_id = #{recid}
+		GROUP BY a.rec_id
+	</select>
 	<!-- 通过订单号查询订单下的虚拟商品及用户信息 -->
 	<select id="findOrderGoods" resultType="OrderGoods">
 		SELECT 

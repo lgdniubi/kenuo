@@ -132,6 +132,7 @@
 			mtmydb.mtmy_order_goods_details a
 		WHERE
 			a.order_id = #{orderId}
+		AND a.goods_mapping_id = #{goodsMappingId}
 	</select>
 	<!-- 修改套卡子项虚拟商品的剩余次数 -->
 	<update id="updateCardNum">
