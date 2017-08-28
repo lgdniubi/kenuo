@@ -40,8 +40,8 @@
 		}, "小数位不能超过三位"); 
 		
 		$(document).ready(function() {
-			var suitCardSons = $("#suitCardSons").val();
-			$(suitCardSons).appendTo($("#addZTD"));
+			/* var suitCardSons = $("#suitCardSons").val();
+			$(suitCardSons).appendTo($("#addZTD")); */
 			
 			/* if($("#isReal").val() == '1'){
 				$("#shipping").hide();
@@ -539,6 +539,7 @@ window.onload=initStatus;
 									<th style="text-align: center;">操作</th>
 								</tr>
 								<tbody id="addZTD" style="text-align:center;">	
+									<tr>${suitCardSons}</tr>
 								</tbody>
 							</table>
 						</div>
