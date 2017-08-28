@@ -5,6 +5,7 @@
 <head>
 	<title>订单修改</title>
 	<meta name="decorator" content="default"/>
+	<link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
 	<script type="text/javascript">
 		
 		var validateForm;
@@ -427,6 +428,20 @@ window.onload=initStatus;
 		top.openTab("${ctx}/ec/invoice/list?orderId="+orderid,"发票列表", false);
 		var index = parent.layer.getFrameIndex(window.name);
 		top.layer.close(index);
+	}
+	// 强制取消
+	function forcedCancel(orderId){
+		layer.confirm('确认强制取消订单吗？', {
+			btn: ['确定','取消'], //按钮  可以设置多个按钮 具体可参考 http://layer.layui.com/api.html
+			icon: 3, 
+			title:'系统提示'
+		},function(index){	// 点击确认事件
+			layer.close(index);	// 关闭弹出框  若不关闭 则可以点击多次确认按钮
+			$(".loading").show();
+			window.location = "${ctx}/ec/orders/forcedCancel?orderid="+orderId;
+	    }, function(){ // 点击取消事件
+	    		
+	    }); 
 	}
 </script>
 </head>
@@ -864,7 +879,7 @@ window.onload=initStatus;
 					<shiro:hasPermission name="ec:orders:edit">
 						<c:if test="${type != 'view' }">
 							<c:if test="${orders.isReal == 0   and orders.orderstatus==1}">
-								<a href="${ctx}/ec/orders/forcedCancel?orderid=${orders.orderid}" onclick="forcedCancel('${orders.orderid}')" onclick="return confirmx('确认强制取消订单吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-save"></i>强制取消</a>
+								<a href="#" onclick="forcedCancel('${orders.orderid}')" class="btn btn-danger btn-xs"><i class="fa fa-save"></i>强制取消</a>
 							</c:if>
 							<c:if test="${orders.isReal == 0   and orders.orderstatus!=1}">
 								<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>
