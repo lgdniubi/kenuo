@@ -99,6 +99,7 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private double surplusAmount;		// 套卡剩余金额
 	private int useServiceTimes;		// 已经服务的次数 （非套卡）
 	private int cardUseServiceTimes;	// 套卡总已服务次数
+	private int isExpiring;				// 是非已过期 （0：正常 1：过期）
 	// end---------------用于预约   2017年8月10日新增-----------------
 	
 	public int getAfterSaleNum() {
@@ -511,5 +512,10 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	public void setCardUseServiceTimes(int cardUseServiceTimes) {
 		this.cardUseServiceTimes = cardUseServiceTimes;
 	}
-	
+	public int getIsExpiring() {
+		return isExpiring;
+	}
+	public void setIsExpiring(int isExpiring) {
+		this.isExpiring = isExpiring;
+	}
 }

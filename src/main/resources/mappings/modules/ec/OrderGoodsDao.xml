@@ -171,7 +171,8 @@
 			(SELECT COUNT(id) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = 1 LIMIT 1) AS 'advanceFlag',
 			IF(o.is_real = 3,(SELECT single_reality_price FROM mtmydb.mtmy_order_goods_mapping WHERE rec_id = a.group_id),a.single_reality_price) AS singleRealityPrice,
 			s.skill_id AS skillId,
-			e.label_id AS labelId
+			e.label_id AS labelId,
+			IF((DATE_FORMAT(DATE_ADD(a.reality_add_time, interval a.expiring_date MONTH),'%Y-%m-%d')) >= DATE_FORMAT(SYSDATE(),'%Y-%m-%d'),0,1) AS isExpiring
 		FROM 
 			mtmydb.mtmy_order_goods_mapping a
 			LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
