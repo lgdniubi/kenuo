@@ -163,6 +163,12 @@
 			officeTree.showNodes(nodeList);
 			for(var i=0, l=nodeList.length; i<l; i++) {
 				
+				//2017年8月29日09:24:26   小叶添加   搜索上级条件时，若有子类则能看到子类
+				nodes = officeTree.transformToArray(nodeList[i].children);
+				for(var j=nodes.length-1; j>=0; j--) {
+					officeTree.showNode(nodes[j]);
+				}
+				
 				//展开当前节点的父节点
 				officeTree.showNode(nodeList[i].getParentNode()); 
 				//tree.expandNode(nodeList[i].getParentNode(), true, false, false);
