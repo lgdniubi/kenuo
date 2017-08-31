@@ -26,7 +26,6 @@ public class Reservation extends DataEntity<Reservation>{
 	private String apptStartTime;		//预约开始时间
 	private String apptEndTime;			//预约结束时间
 	private String shopId;				//预约店铺id
-	private double performance;			//业绩
 	private String apptStatus;			//预约状态	0：等待服务；1：已完成；2：已评价；3：已取消；4：客户爽约
 	private String channelFlag;			//渠道标识（wap：wap端；ios：苹果手机；android：安卓手机；bm：后台管理）
 	
@@ -118,12 +117,6 @@ public class Reservation extends DataEntity<Reservation>{
 	}
 	public void setShopId(String shopId) {
 		this.shopId = shopId;
-	}
-	public double getPerformance() {
-		return performance;
-	}
-	public void setPerformance(double performance) {
-		this.performance = performance;
 	}
 	public String getApptStatus() {
 		return apptStatus;
