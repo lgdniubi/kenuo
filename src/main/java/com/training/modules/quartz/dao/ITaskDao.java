@@ -79,4 +79,10 @@ public interface ITaskDao extends CrudDao<Task>{
 	 * @return
 	 */
 	public TaskLog findLogById(String id);
+
+	/**
+	 * 2017-7-29 新增  查询店务报表定时器最后一次执行正常的时间
+	 * @return
+	 */
+	public TaskLog findNewestTasksLogs(TaskLog taskLog);
 }

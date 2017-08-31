@@ -13,7 +13,6 @@
 		r.appt_start_time AS apptStartTime,
 		r.appt_end_time AS apptEndTime,
 		r.shop_id AS shopId,
-		r.performance,
 		r.appt_status AS apptStatus,
 		r.create_date,
 		r.remarks,
