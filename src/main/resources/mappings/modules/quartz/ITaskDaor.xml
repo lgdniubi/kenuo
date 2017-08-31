@@ -158,4 +158,28 @@
 		        #{exceptionMsg},
 		        #{remarks})
 	</insert>
+	<!-- 2017-7-29 新增  查询店务报表定时器最后一次执行正常的时间 -->
+	<select id="findNewestTasksLogs" parameterType="TaskLog" resultType="TaskLog">
+		SELECT 
+		  id,
+		  job_name AS 'jobName',
+		  job_description AS 'jobDescription',
+		  start_date AS 'startDate',
+		  end_date AS 'endDate',
+		  run_time AS 'runTime',
+		  create_date AS 'createDate',
+		  status,
+		  LEFT(exception_msg,20) AS 'exceptionMsg',
+		  remarks
+		FROM
+		  quartz_schedulejob_log
+		WHERE 1 = 1
+		<if test="jobName != null and jobName != ''">
+			AND job_name = #{jobName}
+		</if> 
+		<if test="status != null and status != '' and status != '-1'">
+			AND status = #{status}
+		</if> 
+		ORDER BY id DESC LIMIT 1
+	</select>
 </mapper>

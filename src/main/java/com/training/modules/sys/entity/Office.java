@@ -51,6 +51,8 @@ public class Office extends TreeEntity<Office> {
 	private Double longitude;            //经度
 	private Double latitude;            //纬度
 	
+	private String 	iconUrl;		//机构icon
+	
 	public Office(){
 		super();
 //		this.sort = 30;
@@ -296,5 +298,12 @@ public class Office extends TreeEntity<Office> {
 		this.latitude = latitude;
 	}
 
+	public String getIconUrl() {
+		return iconUrl;
+	}
+
+	public void setIconUrl(String iconUrl) {
+		this.iconUrl = iconUrl;
+	}
 	
 }

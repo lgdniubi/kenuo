@@ -12,6 +12,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.training.common.service.TreeService;
 import com.training.common.utils.StringUtils;
 import com.training.modules.sys.dao.OfficeDao;
+import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.utils.UserUtils;
@@ -128,6 +129,17 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 			String code = insterCode(office);
 			office.setCode(code);
 		}
+		//begin  用于查询当前机构 所属商家
+		int codenum=office.getCode().length();
+		int b=codenum%4;
+		String c=office.getCode().substring(0, b+4);
+		OfficeInfo o = new OfficeInfo();
+		o.setFranchiseeCode(c);
+		String a=findFNameByCode(o).getFranchiseeId();
+		Franchisee franchisee = new Franchisee();
+		franchisee.setId(a);
+		office.setFranchisee(franchisee);
+		//end 
 		super.save(office);
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 	}

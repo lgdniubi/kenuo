@@ -330,7 +330,7 @@ public class fzxRoleController extends BaseController{
 			logger.error("角色分配 -- 打开角色分配对话框错误信息:"+e.getMessage());
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
-		return "modules/sys/selectUserToRole";
+		return "modules/train/fzxSelectUserToRole";
 	}
 	
 	/**
