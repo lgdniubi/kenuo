@@ -328,9 +328,10 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			returnedGoodsDao.updateCommonNum(commonNum);
 			
 			//往mapping表中插入通用卡的售后数量
-			orderGoods.setRecid(Integer.parseInt(commonNum.getGoodsMappingId()));
-			orderGoods.setAfterSaleNum(commonNum.getServiceTimes());
-			orderGoodsDao.updateIsAfterSales(orderGoods);
+			OrderGoods  OG= new OrderGoods();
+			OG.setRecid(Integer.parseInt(commonNum.getGoodsMappingId()));
+			OG.setAfterSaleNum(commonNum.getServiceTimes());
+			orderGoodsDao.updateIsAfterSales(OG);
 			
 			//查询出通用卡的子项,并把实物的售后数量写入   虚拟的为0
 			//通过recid查询售后子项
