@@ -244,10 +244,14 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			returnedGoods.setReturnAmount(0);
 		}
 		returnedGoodsDao.insertReturn(returnedGoods);
+		
+		//当实物和虚拟时,会需要商品售后数量插入mapping表中的after_sale_num.(而通用卡本身也需要,但是售后数量在后面查询)
 		OrderGoods orderGoods = new OrderGoods();
-		orderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
-		orderGoods.setAfterSaleNum(returnedGoods.getReturnNum());
-		orderGoodsDao.updateIsAfterSales(orderGoods);
+		if(orders.getIsReal() == 0 || orders.getIsReal() == 1){
+			orderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
+			orderGoods.setAfterSaleNum(returnedGoods.getReturnNum());
+			orderGoodsDao.updateIsAfterSales(orderGoods);
+		}
 		
 		//退货处理 detials begin
 		orderGoods = orderGoodsDao.selectOrderGoodsByRecid(orderGoods.getRecid());
@@ -319,11 +323,19 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		}
 		//通用卡售后  子项商品保存mtmy_returned_goods_card
 		if(orders.getIsReal() == 3){
-			//修改通用卡的售后次数
+			//修改售后表中通用卡的售后次数
 			commonNum.setId(id);
 			returnedGoodsDao.updateCommonNum(commonNum);
+			
+			//往mapping表中插入通用卡的售后数量
+			OrderGoods  OG= new OrderGoods();
+			OG.setRecid(Integer.parseInt(commonNum.getGoodsMappingId()));
+			OG.setAfterSaleNum(commonNum.getServiceTimes());
+			orderGoodsDao.updateIsAfterSales(OG);
+			
 			//查询出通用卡的子项,并把实物的售后数量写入   虚拟的为0
 			//通过recid查询售后子项
+			
 			List<OrderGoods> og = orderGoodsDao.getOrderGoodsCard(orderGoods);
 			//循环卡项子项,把实物售后数量写入
 			ReturnedGoods rg = new ReturnedGoods();
