@@ -254,7 +254,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		}
 		
 		//退货处理 detials begin
-		orderGoods = orderGoodsDao.selectOrderGoodsByRecid(orderGoods.getRecid());
+		orderGoods = orderGoodsDao.selectOrderGoodsByRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
 		OrderGoodsDetails ogd = new OrderGoodsDetails();
 		
 		ogd.setOrderId(returnedGoods.getOrderId());
