@@ -101,8 +101,13 @@
 				var returnVal = true;
 	            var inputZ = value;
 	            var ArrMen= inputZ.split(".");    //截取字符串
-	            if(ArrMen.length==2){
-	                if(ArrMen[1].length>6 || ArrMen[0].length>3){    //判断小数点后面的字符串长度
+	            if(ArrMen.length==1){
+	            	if(ArrMen[0].length>3 || ArrMen[0].length<1){    //判断小数点后面的字符串长度
+	                    returnVal = false;
+	                    return false;
+	                }
+	            }else if(ArrMen.length==2){
+	                if(ArrMen[1].length>6 || ArrMen[1].length<1 || ArrMen[0].length>3 || ArrMen[0].length<1){    //判断小数点后面的字符串长度
 	                    returnVal = false;
 	                    return false;
 	                }
