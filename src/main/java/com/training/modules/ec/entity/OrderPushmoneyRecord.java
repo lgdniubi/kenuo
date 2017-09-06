@@ -11,7 +11,7 @@ public class OrderPushmoneyRecord extends TreeEntity<OrderPushmoneyRecord> {
 	private static final long serialVersionUID = 1L;
 	private int pushmoneyRecordId;	//主键自动增长
 	private String orderId;			//订单ID
-	private int pushmoneyUserId;	//提成人员ID
+	private String pushmoneyUserId;	//提成人员ID
 	private String pushmoneyUserName;	//提成人员name
 	private String pushmoneyUserMobile;	//提成人员手机
 	private double pushMoney;		//提成金额
@@ -42,11 +42,11 @@ public class OrderPushmoneyRecord extends TreeEntity<OrderPushmoneyRecord> {
 		this.pushmoneyUserMobile = pushmoneyUserMobile;
 	}
 
-	public int getPushmoneyUserId() {
+	public String getPushmoneyUserId() {
 		return pushmoneyUserId;
 	}
 
-	public void setPushmoneyUserId(int pushmoneyUserId) {
+	public void setPushmoneyUserId(String pushmoneyUserId) {
 		this.pushmoneyUserId = pushmoneyUserId;
 	}
 

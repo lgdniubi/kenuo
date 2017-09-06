@@ -1007,6 +1007,19 @@ public class OrdersController extends BaseController {
 		Orders orders = ordersService.getUser(mobile);
 		return orders;
 	}
+	
+	/**
+	 * 获取妃子校用户信息
+	 * @param mobile
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "getSysUser")
+	public Orders getSysUser(String mobile){
+		Orders orders = ordersService.getSysUser(mobile);
+		return orders;
+	}
+	
 	/**
 	 * 跳转充值页面
 	 * @param orderid
@@ -1273,11 +1286,11 @@ public class OrdersController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "deleteMtmyUserInfo")
-	public String deleteMtmyUserInfo(Integer mtmyUserId, HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "deleteSysUserInfo")
+	public String deleteSysUserInfo(int pushmoneyRecordId,HttpServletRequest request, HttpServletResponse response) {
 		String type="";
 		try {
-			ordersService.deleteMtmyUserInfo(mtmyUserId);
+			ordersService.deleteSysUserInfo(pushmoneyRecordId);
 			type = "success";
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "删除提成人员信息错误", e);

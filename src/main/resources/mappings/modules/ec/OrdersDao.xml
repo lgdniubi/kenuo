@@ -1289,4 +1289,16 @@
 			SYSDATE()
 		) 
 	</insert>
+	
+	<!-- 获取提成人员信息（妃子校） -->
+	<select id="getSysUser" resultType="Orders">
+		SELECT
+			u.id AS "user.id",
+			u.name AS "user.name",
+			u.mobile AS "user.mobile"
+		FROM
+			sys_user u
+		WHERE
+			u.mobile = #{mobile};
+	</select>
 </mapper>

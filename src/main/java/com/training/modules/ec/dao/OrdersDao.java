@@ -330,4 +330,11 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @param orders
 	 */
 	public void updateIntegralAccount(Orders orders);
+	
+	/**
+	 * 查询妃子校用户信息
+	 * @param mobile
+	 * @return
+	 */
+	public Orders getSysUser(String mobile);
 }

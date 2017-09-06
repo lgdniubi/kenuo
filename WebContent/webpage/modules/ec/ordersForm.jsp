@@ -18,6 +18,13 @@
 				  top.layer.alert('订单成交价格不能小于0元!', {icon: 0, title:'提醒'}); 
 				  return;
 			}
+			
+			var sysUserId = $("#sysUserId").val(); 
+			if(sysUserId == undefined){
+				top.layer.alert('提成人员信息不能为空!', {icon: 0, title:'提醒'}); 
+				return;
+			}
+			
 			 $("#inputForm").submit();
 			 return true;
 				 
@@ -221,14 +228,13 @@
          $(obj).parent().parent().remove();
      }
 	//删除提成人员
-     function delFileMtmyUserInfo(obj){
-		var mtmyUserId = $("#mtmyUserId").val();
+     function delFileSysUserInfo(obj,pushmoneyRecordId){
 		$.ajax({
 			type:"post",
 			data:{
-				mtmyUserId:mtmyUserId
+				pushmoneyRecordId:pushmoneyRecordId
 			 },
-			url:"${ctx}/ec/orders/deleteMtmyUserInfo",
+			url:"${ctx}/ec/orders/deleteSysUserInfo",
 			success:function(date){
 				if(date == 'success'){
 					$(obj).parent().parent().remove();
@@ -265,14 +271,14 @@
 		});
      }
 	
-     function getMtmyUserInfo(){
+     function getSysUserInfo(){
     	var operationName = $("#operationName").val();
  		if ($("#mtmyUserButton").hasClass("disabled")){
  			return true;
  		}
  		// 正常打开	
  		top.layer.open({
- 		    type: 2, 
+ 			type: 2, 
  		    area: ['550px', '420px'],
  		    title:"提成人员选择",
  		    ajaxData:{selectIds: $("#goodselectId").val()},
@@ -280,9 +286,9 @@
  		    btn: ['确定', '关闭']
      	    ,yes: function(index, layero){
      	    	var obj =  layero.find("iframe")[0].contentWindow;
-     	    	var mtmyUserId = obj.document.getElementById("mtmyUserId").value; //员工id
-     	    	var mtmyUserMobile = obj.document.getElementById("mtmyUserMobile").value; //员工电话
-     	    	var mtmyUserName = obj.document.getElementById("mtmyUserName").value; //员工名称
+     	    	var sysUserId = obj.document.getElementById("sysUserId").value; //员工id
+     	    	var sysMobile = obj.document.getElementById("sysMobile").value; //员工电话
+     	    	var sysName = obj.document.getElementById("sysName").value; //员工名称
      	    	var pushMoney = obj.document.getElementById("pushMoney").value; //提成金额
      	    	var orderid =  $("#orderid").val();
      	    	var isReal =  $("#isReal").val();
@@ -294,7 +300,7 @@
          				type:"post",
          				data:{
          					orderId:orderid,
-         					pushmoneyUserId:mtmyUserId,
+         					pushmoneyUserId:sysUserId,
          					pushMoney:pushMoney
          				 },
          				url:"${ctx}/ec/orders/saveOrderPushmoneyRecord",
@@ -730,11 +736,11 @@ window.onload=initStatus;
 						<c:if test="${orders.isNeworder == 0}">
 							<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 								<div class="pull-left">
-									<h4>人员提成信息：</h4>
+									<h4><font color="red">*</font>人员提成信息：</h4>
 								</div>
 								<c:if test="${type != 'view' }">
 									<div class="pull-right">
-										<a href="#" onclick="getMtmyUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
+										<a href="#" onclick="getSysUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
 									</div>
 								</c:if>
 								<p></p>
@@ -751,15 +757,16 @@ window.onload=initStatus;
 											</c:if>
 										</tr>
 									</thead>
-									<tbody id="mtmyUserInfo" style="text-align:center;">
+									<tbody id="sysUserInfo" style="text-align:center;">
 										<c:forEach items="${orders.orderPushmoneyRecords }" var="orderPushmoneyRecord" varStatus="stauts">
 											<tr>
 												<td>
-													<input type="hidden" id="mtmyUserId" name="mtmyUserId" value="${orderPushmoneyRecord.pushmoneyUserId }" />
-													<input id="mtmyUserName" name="mtmyUserName" type="text" value="${orderPushmoneyRecord.pushmoneyUserName }" class='form-control' readonly='readonly'>
+													<input type="hidden" id="sysUserId" name="sysUserId" value="${orderPushmoneyRecord.pushmoneyUserId }" />
+													<input type="hidden" id="pushmoneyRecordId" name="pushmoneyRecordId" value="${orderPushmoneyRecord.pushmoneyRecordId }" />
+													<input id="sysName" name="sysName" type="text" value="${orderPushmoneyRecord.pushmoneyUserName }" class='form-control' readonly='readonly'>
 												</td>
 												<td>
-													<input id="mtmyUserMobile" name="mtmyUserMobile" type="text" value="${orderPushmoneyRecord.pushmoneyUserMobile }" class='form-control' readonly='readonly'>
+													<input id="sysMobile" name="sysMobile" type="text" value="${orderPushmoneyRecord.pushmoneyUserMobile }" class='form-control' readonly='readonly'>
 												</td>
 												<td>
 													${orderPushmoneyRecord.pushMoney }
@@ -772,7 +779,7 @@ window.onload=initStatus;
 													<fmt:formatDate value="${orderPushmoneyRecord.createDate }" pattern="yyyy-MM-dd HH:mm:ss" />
 												</td>
 												<c:if test="${type != 'view' }">
-													<td><a href="#" class="btn btn-danger btn-xs" onclick="delFileMtmyUserInfo(this)"><i class='fa fa-trash'></i> 删除</a></td>
+													<td><a href="#" class="btn btn-danger btn-xs" onclick="delFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId })"><i class='fa fa-trash'></i> 删除</a></td>
 												</c:if>
 											</tr>
 										</c:forEach>

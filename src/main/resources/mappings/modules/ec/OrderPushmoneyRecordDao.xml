@@ -29,13 +29,13 @@
 			r.push_money as pushMoney,
 			r.create_by as "createBy.id",
 			r.create_date as createDate,
-			u.`name` as pushmoneyUserName,
-			u.mobile as pushmoneyUserMobile,
-			su.`name` as "createBy.name"
+			su1.`name` as pushmoneyUserName,
+			su1.mobile as pushmoneyUserMobile,
+			su2.`name` as "createBy.name"
 		FROM
-			mtmydb.mtmy_order_pushmoney_record r,mtmydb.mtmy_users u,trains.sys_user su
-		WHERE r.user_id = u.user_id
-		AND r.create_by = su.id
+			mtmydb.mtmy_order_pushmoney_record r,trains.sys_user su1,trains.sys_user su2
+		WHERE r.user_id = su1.id
+		AND r.create_by = su2.id
 		AND order_id = #{orderid}
 	</select>
 	
@@ -45,7 +45,7 @@
 	</delete>
 	
 	<!-- 删除指定提成人员 -->
-	<delete id="deleteMtmyUserInfo">
-		DELETE FROM mtmydb.mtmy_order_pushmoney_record WHERE user_id= #{mtmyUserId}
+	<delete id="deleteSysUserInfo">
+		DELETE FROM mtmydb.mtmy_order_pushmoney_record WHERE id= #{pushmoneyRecordId}
 	</delete>
 </mapper>

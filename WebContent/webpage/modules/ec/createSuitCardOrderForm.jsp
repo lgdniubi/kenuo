@@ -23,6 +23,13 @@
 				top.layer.alert('商品信息不能为空!', {icon: 0, title:'提醒'}); 
 				return;
 			}
+			
+			var sysUserId = $("#sysUserId").val(); 
+			if(sysUserId == undefined){
+				top.layer.alert('提成人员信息不能为空!', {icon: 0, title:'提醒'}); 
+				return;
+			}
+			
 			$("#inputForm").submit();
 			 return true;	
 		  }
@@ -297,7 +304,7 @@
 			}
 		});
 	}
-	function getMtmyUserInfo(){
+	function getSysUserInfo(){
 		// 正常打开	
 		top.layer.open({
 		    type: 2, 
@@ -308,21 +315,21 @@
 		    btn: ['确定', '关闭']
     	    ,yes: function(index, layero){
     	    	var obj =  layero.find("iframe")[0].contentWindow;
-    	    	var mtmyUserId = obj.document.getElementById("mtmyUserId").value; //员工id
-    	    	var mtmyUserMobile = obj.document.getElementById("mtmyUserMobile").value; //员工电话
-    	    	var mtmyUserName = obj.document.getElementById("mtmyUserName").value; //员工名称
+    	    	var sysUserId = obj.document.getElementById("sysUserId").value; //员工id
+    	    	var sysMobile = obj.document.getElementById("sysMobile").value; //员工电话
+    	    	var sysName = obj.document.getElementById("sysName").value; //员工名称
     	    	var pushMoney = obj.document.getElementById("pushMoney").value; //提成金额
     	    	if(pushMoney==""){
     	    		top.layer.alert('填写提成金额！', {icon: 0, title:'提醒'});
      	    		return;
     	    	}else{
-	    	    	$("#mtmyUserInfo").append(
+	    	    	$("#sysUserInfo").append(
 	    	    			"<tr>"+
 	    					"<td>"+
-	    						"<input id='mtmyUserId' name='mtmyUserId' type='hidden' value='"+mtmyUserId+"' class='form-control' readonly='readonly'>"+
-	    						"<input id='mtmyUserName' name='mtmyUserName' type='text' value='"+mtmyUserName+"' class='form-control' readonly='readonly'>"+
+	    						"<input id='sysUserId' name='sysUserId' type='hidden' value='"+sysUserId+"' class='form-control' readonly='readonly'>"+
+	    						"<input id='sysName' name='sysName' type='text' value='"+sysName+"' class='form-control' readonly='readonly'>"+
 	    					"</td>"+
-	    					"<td><input id='mtmyUserMobile' name='mtmyUserMobile' type='text' value='"+mtmyUserMobile+"' class='form-control' readonly='readonly'></td>"+
+	    					"<td><input id='sysMobile' name='sysMobile' type='text' value='"+sysMobile+"' class='form-control' readonly='readonly'></td>"+
 	    					"<td><input id='pushMoney' name='pushMoney' value='"+pushMoney+"' readonly='readonly' class='form-control required' type='text' class='form-control'></td>"+
 	    					"<td><a href='#' class='btn btn-danger btn-xs' onclick='deleteFile(this)'><i class='fa fa-trash'></i> 删除</a></td>"+
 	    					"</tr>"
@@ -369,10 +376,10 @@
 			$("#fpinfo").hide();
 			$("#Ichecks").attr("checked",false);
 			$("#Ichecks").attr("disabled",true);
-			$("#mtmyUserPush").hide();
-			$("#mtmyUserInfo").empty();
+			$("#sysUserPush").hide();
+			$("#sysUserInfo").empty();
 		}else{
-			$("#mtmyUserPush").show();
+			$("#sysUserPush").show();
 		}
 	}
 	</script>
@@ -505,12 +512,12 @@
 					</div>
 				</div>
 				<p></p>
-				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="mtmyUserPush">
+				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="sysUserPush">
 					<div class="pull-left">
-						<h4>人员提成信息：</h4>
+						<h4><font color="red">*</font>人员提成信息：</h4>
 					</div>
 					<div class="pull-right">
-						<a href="#" onclick="getMtmyUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
+						<a href="#" onclick="getSysUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
 					</div>
 					<p></p>
 					<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
@@ -522,7 +529,7 @@
 								<th style="text-align: center;">操作</th>
 							</tr>
 						</thead>
-						<tbody id="mtmyUserInfo" style="text-align:center;">	
+						<tbody id="sysUserInfo" style="text-align:center;">	
 						</tbody>
 					</table>
 				</div>

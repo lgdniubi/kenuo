@@ -607,6 +607,15 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	public Orders getUser(String mobile) {
 		return ordersDao.getUser(mobile);
 	}
+	
+	/**
+	 * 通过手机号码 查询妃子校用户信息
+	 * @param mobile
+	 * @return
+	 */
+	public Orders getSysUser(String mobile) {
+		return ordersDao.getSysUser(mobile);
+	}
 
 	/**
 	 * 保存虚拟订单saveVirtualOrder
@@ -853,13 +862,13 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		
 		
 		//保存提成人员信息 
-		List<Integer> _mtmyUserId = orders.getMtmyUserId();	//提成人员id
+		List<String> sysUserId = orders.getSysUserId();	//提成人员id
 		List<Double> pushMoney = orders.getPushMoney();	//提成金额
-		if(_mtmyUserId!=null && _mtmyUserId.size()>0){
-			for (int i = 0; i < _mtmyUserId.size(); i++) {
+		if(sysUserId!=null && sysUserId.size()>0){
+			for (int i = 0; i < sysUserId.size(); i++) {
 				OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
 				orderPushmoneyRecord.setOrderId(orderid);
-				orderPushmoneyRecord.setPushmoneyUserId(_mtmyUserId.get(i));
+				orderPushmoneyRecord.setPushmoneyUserId(sysUserId.get(i));
 				orderPushmoneyRecord.setPushMoney(pushMoney.get(i));
 				orderPushmoneyRecord.setCreateBy(user);
 				orderPushmoneyRecord.setDelFlag("0");
@@ -1429,13 +1438,13 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		}
 		
 		//保存提成人员信息 
-		List<Integer> _mtmyUserId = orders.getMtmyUserId();	//提成人员id
+		List<String> sysUserId = orders.getSysUserId();	//提成人员id
 		List<Double> pushMoney = orders.getPushMoney();	//提成金额
-		if(_mtmyUserId!=null && _mtmyUserId.size()>0){
-			for (int i = 0; i < _mtmyUserId.size(); i++) {
+		if(sysUserId!=null && sysUserId.size()>0){
+			for (int i = 0; i < sysUserId.size(); i++) {
 				OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
 				orderPushmoneyRecord.setOrderId(orderid);
-				orderPushmoneyRecord.setPushmoneyUserId(_mtmyUserId.get(i));
+				orderPushmoneyRecord.setPushmoneyUserId(sysUserId.get(i));
 				orderPushmoneyRecord.setPushMoney(pushMoney.get(i));
 				orderPushmoneyRecord.setCreateBy(user);
 				orderPushmoneyRecord.setDelFlag("0");
@@ -1504,8 +1513,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * 删除提成人员信息
 	 * @param mtmyUserId
 	 */
-	public void deleteMtmyUserInfo(Integer mtmyUserId) {
-		orderPushmoneyRecordService.deleteMtmyUserInfo(mtmyUserId);
+	public void deleteSysUserInfo(int pushmoneyRecordId) {
+		orderPushmoneyRecordService.deleteSysUserInfo(pushmoneyRecordId);
 	}
 	/**
 	 * 删除订单备注
@@ -2147,13 +2156,13 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		
 		
 		//保存提成人员信息 
-		List<Integer> _mtmyUserId = orders.getMtmyUserId();	//提成人员id
+		List<String> sysUserId = orders.getSysUserId();	//提成人员id
 		List<Double> pushMoney = orders.getPushMoney();	//提成金额
-		if(_mtmyUserId!=null && _mtmyUserId.size()>0){
-			for (int i = 0; i < _mtmyUserId.size(); i++) {
+		if(sysUserId!=null && sysUserId.size()>0){
+			for (int i = 0; i < sysUserId.size(); i++) {
 				OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
 				orderPushmoneyRecord.setOrderId(orderid);
-				orderPushmoneyRecord.setPushmoneyUserId(_mtmyUserId.get(i));
+				orderPushmoneyRecord.setPushmoneyUserId(sysUserId.get(i));
 				orderPushmoneyRecord.setPushMoney(pushMoney.get(i));
 				orderPushmoneyRecord.setCreateBy(user);
 				orderPushmoneyRecord.setDelFlag("0");
@@ -2429,13 +2438,13 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		}
 		
 		//保存提成人员信息 
-		List<Integer> _mtmyUserId = orders.getMtmyUserId();	//提成人员id
+		List<String> sysUserId = orders.getSysUserId();	//提成人员id
 		List<Double> pushMoney = orders.getPushMoney();	//提成金额
-		if(_mtmyUserId!=null && _mtmyUserId.size()>0){
-			for (int i = 0; i < _mtmyUserId.size(); i++) {
+		if(sysUserId!=null && sysUserId.size()>0){
+			for (int i = 0; i < sysUserId.size(); i++) {
 				OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
 				orderPushmoneyRecord.setOrderId(orderid);
-				orderPushmoneyRecord.setPushmoneyUserId(_mtmyUserId.get(i));
+				orderPushmoneyRecord.setPushmoneyUserId(sysUserId.get(i));
 				orderPushmoneyRecord.setPushMoney(pushMoney.get(i));
 				orderPushmoneyRecord.setCreateBy(user);
 				orderPushmoneyRecord.setDelFlag("0");
