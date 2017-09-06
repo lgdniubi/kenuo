@@ -102,7 +102,7 @@
 	            var inputZ = value;
 	            var ArrMen= inputZ.split(".");    //截取字符串
 	            if(ArrMen.length==2){
-	                if(ArrMen[1].length>6){    //判断小数点后面的字符串长度
+	                if(ArrMen[1].length>6 && ArrMen[0].length>3){    //判断小数点后面的字符串长度
 	                    returnVal = false;
 	                    return false;
 	                }
