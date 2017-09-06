@@ -30,6 +30,17 @@
 				return;
 			}
 			
+			var orderamount = $("#orderamount").val();
+			var pushMoneys = document.getElementsByName("pushMoney");
+			var pushMoneySum = 0;
+			for(i=0;i<pushMoneys.length;i++){
+   				pushMoneySum = parseFloat(pushMoneySum) + parseFloat(pushMoneys[i].value);
+	    	 }
+			if(parseFloat(pushMoneySum) - parseFloat(orderamount) > 0){
+				top.layer.alert('提成人员的提成金额总和不能大于订单应付总价!', {icon: 0, title:'提醒'}); 
+				return;
+			}
+			
 			$("#inputForm").submit();
 			 return true;	
 		  }
@@ -180,6 +191,10 @@
 		}
 	}
        
+	function deleteFile(obj){
+		$(obj).parent().parent().remove();
+	}
+	
 	$(document).ready(function(){
 		$("#defaultRadio").click(function(){
 			$("#recipientsName").val($("#consignee").val());
@@ -291,6 +306,8 @@
 		});
 	}
 	function getSysUserInfo(){
+		var orderamount = $("#orderamount").val();
+		var sysUserIds = document.getElementsByName("sysUserId");
 		if ($("#mtmyUserButton").hasClass("disabled")){
 			return true;
 		}
@@ -308,18 +325,38 @@
     	    	var sysMobile = obj.document.getElementById("sysMobile").value; //员工电话
     	    	var sysName = obj.document.getElementById("sysName").value; //员工名称
     	    	var pushMoney = obj.document.getElementById("pushMoney").value; //提成金额
-    	    	$("#sysUserInfo").append(
-    	    			"<tr>"+
-    					"<td>"+
-    						"<input id='sysUserId' name='sysUserId' type='hidden' value='"+sysUserId+"' class='form-control' readonly='readonly'>"+
-    						"<input id='sysName' name='sysName' type='text' value='"+sysName+"' class='form-control' readonly='readonly'>"+
-    					"</td>"+
-    					"<td><input id='sysMobile' name='sysMobile' type='text' value='"+sysMobile+"' class='form-control' readonly='readonly'></td>"+
-    					"<td><input id='pushMoney' name='pushMoney' value='"+pushMoney+"' readonly='readonly' class='form-control required' type='text' class='form-control'></td>"+
-    					"<td><a href='#' class='btn btn-danger btn-xs' onclick='delFile(this)'><i class='fa fa-trash'></i> 删除</a></td>"+
-    					"</tr>"
-    			);
-				top.layer.close(index);
+    	    	if(pushMoney==""){
+    	    		top.layer.alert('填写提成金额！', {icon: 0, title:'提醒'});
+     	    		return;
+    	    	}else if(sysUserId == ""){
+    	    		top.layer.alert('填写提成人员！', {icon: 0, title:'提醒'});
+     	    		return;
+    	    	}else if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
+    	    		top.layer.alert('提成金额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
+     	    		return;
+    	    	}else{
+    	    		if(sysUserIds.length > 0){
+    	    			for(i=0;i<sysUserIds.length;i++){
+         	    	        if(sysUserId == sysUserIds[i].value){
+         	    	        	top.layer.alert('提成人员不能相同！', {icon: 0, title:'提醒'});
+         	     	    		return;
+         	    	        }
+         	    	    }
+    	    		}
+    	    		
+	    	    	$("#sysUserInfo").append(
+	    	    			"<tr>"+
+	    					"<td>"+
+	    						"<input id='sysUserId' name='sysUserId' type='hidden' value='"+sysUserId+"' class='form-control' readonly='readonly'>"+
+	    						"<input id='sysName' name='sysName' type='text' value='"+sysName+"' class='form-control' readonly='readonly'>"+
+	    					"</td>"+
+	    					"<td><input id='sysMobile' name='sysMobile' type='text' value='"+sysMobile+"' class='form-control' readonly='readonly'></td>"+
+	    					"<td><input id='pushMoney' name='pushMoney' value='"+pushMoney+"' readonly='readonly' class='form-control required' type='text' class='form-control'></td>"+
+	    					"<td><a href='#' class='btn btn-danger btn-xs' onclick='deleteFile(this)'><i class='fa fa-trash'></i> 删除</a></td>"+
+	    					"</tr>"
+	    			);
+					top.layer.close(index);
+    	    	}
 			}
 		}); 
 	}
@@ -583,7 +620,7 @@
 				<p></p>
 				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="sysUserPush">
 					<div class="pull-left">
-						<h4><font color="red">*</font>人员提成信息：</h4>
+						<h4><font color="red">*</font>人员提成信息<span style="color:red;">(注：订单一旦创建将无法删除业务员)</span>：</h4>
 					</div>
 					<div class="pull-right">
 						<a href="#" onclick="getSysUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
