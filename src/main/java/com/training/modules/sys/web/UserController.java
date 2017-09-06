@@ -426,6 +426,9 @@ public class UserController extends BaseController {
 		if(u != null ){
 			user.setOfficeIdList(u.getOfficeIdList());
 		}
+		Map<String, Object> map = userDao.findFranchiseeAuth(user);	// 查询用户商家权限
+		user.setCompanyIds((String)map.get("companyIds"));
+		user.setCompanyNames((String)map.get("companyNames"));
 		model.addAttribute("isSpecBeautician", systemService.selectSpecBeautician(user.getId()));	
 		model.addAttribute("user", user);
 		model.addAttribute("officeList", officeService.findAll());
@@ -489,6 +492,14 @@ public class UserController extends BaseController {
 					userDao.insertUserInfo(IdGen.uuid(),user.getId());
 				}
 			}
+//			目前先不做
+			/*userDao.deleteFranchiseeAuth(user);
+			if(null != user.getCompanyIds() || !"".equals(user.getCompanyIds())){
+				String idArray[] =user.getCompanyIds().split(",");
+				for(String id : idArray){
+					userDao.insertFranchiseeAuth(user.getId(),id);
+				}
+			}*/
 			// 清除用户缓存
 			UserUtils.clearCache(user);
 		} catch (Exception e) {

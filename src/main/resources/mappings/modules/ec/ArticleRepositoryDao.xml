@@ -163,6 +163,7 @@
 	<insert id="sendTrainArticle">
 		INSERT INTO train_articles(
 			id,
+			company_id,
 			category_id,
 			author_name,
 			author_photo,
@@ -182,28 +183,29 @@
 			create_date
 		)
 		SELECT
-			id,
+			a.id,
+			(SELECT b.company_id FROM sys_user b WHERE b.id = a.create_by),
 			#{categoryId},
-			author_name,
-			author_photo,
-			title,
-			short_title,
-			image_type,
-			keywords,
-			digest,
-			contents,
+			a.author_name,
+			a.author_photo,
+			a.title,
+			a.short_title,
+			a.image_type,
+			a.keywords,
+			a.digest,
+			a.contents,
 			1,
 			1,
 			1,
 			0,
 			0,
 			0,
-			#{userId},
+			a.create_by,
 			SYSDATE()
 		FROM
-			article_repository
+			article_repository a
 		WHERE
-			id = #{articleId}
+			a.id = #{articleId}
 	</insert>
 	<insert id="sendTrainArticleImg">
 		INSERT INTO train_articles_images(article_id, img_url,create_date)
@@ -256,7 +258,7 @@
 			label_goods_id,
 			label_goods_name,
 			label_action_type,
-			#{userId},
+			create_by,
 			SYSDATE()
 		FROM
 			article_repository

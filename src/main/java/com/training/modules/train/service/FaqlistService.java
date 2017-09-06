@@ -2,12 +2,15 @@ package com.training.modules.train.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.common.utils.DateUtils;
+import com.training.modules.sys.dao.UserDao;
+import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.FaqlistDao;
 import com.training.modules.train.entity.LessonAskComments;
 import com.training.modules.train.entity.LessonAskContent;
@@ -22,6 +25,10 @@ import com.training.modules.train.entity.LessonAsks;
 @Service
 @Transactional(readOnly = false)
 public class FaqlistService extends CrudService<FaqlistDao,LessonAsks>{
+	
+	@Autowired
+	private UserDao userDao;
+	
 	/**
 	 * 问答列表查询所有问题
 	 */
@@ -33,6 +40,7 @@ public class FaqlistService extends CrudService<FaqlistDao,LessonAsks>{
 		if (lessonAsks.getEndDate() == null){
 			lessonAsks.setEndDate(DateUtils.addMonths(lessonAsks.getBeginDate(), 1));
 		}
+		lessonAsks.getSqlMap().put("dsf", companyDateScope((String)userDao.findFranchiseeAuth(UserUtils.getUser()).get("companyIds"),UserUtils.getUser()));
 		//lessonAsks.setPage(page);
 		//page.setList(dao.findList(lessonAsks));
 		return super.findPage(page, lessonAsks);

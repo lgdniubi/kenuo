@@ -94,6 +94,9 @@ public class User extends DataEntity<User> {
 	
 	private String isRecommend;  //是否推荐（0：未推荐；1：推荐）
 	
+	private String companyIds; // 数据范围按商家区分
+	private String companyNames; // 数据范围按商家区分
+	
 	public int getUserLevel() {
 		return userLevel;
 	}
@@ -581,6 +584,18 @@ public class User extends DataEntity<User> {
 	}
 	public void setIsRecommend(String isRecommend) {
 		this.isRecommend = isRecommend;
+	}
+	public String getCompanyIds() {
+		return companyIds;
+	}
+	public void setCompanyIds(String companyIds) {
+		this.companyIds = companyIds;
+	}
+	public String getCompanyNames() {
+		return companyNames;
+	}
+	public void setCompanyNames(String companyNames) {
+		this.companyNames = companyNames;
 	}
 	
 }
