@@ -74,11 +74,11 @@
 				messages:{
 					longitude:{
 						number:"输入正确的经度",
-						lrunlv:"请输入六位小数"
+						lrunlv:"小数点前不能超过三位，小数点后不能超过六位"
 					},
 					latitude:{
 						number:"输入正确的纬度",
-						lrunlv:"请输入六位小数"
+						lrunlv:"小数点前不能超过三位，小数点后不能超过六位"
 					},
 					name: {remote: "机构名称已存在"}
 				},
@@ -102,13 +102,13 @@
 	            var inputZ = value;
 	            var ArrMen= inputZ.split(".");    //截取字符串
 	            if(ArrMen.length==2){
-	                if(ArrMen[1].length>6 && ArrMen[0].length>3){    //判断小数点后面的字符串长度
+	                if(ArrMen[1].length>6 || ArrMen[0].length>3){    //判断小数点后面的字符串长度
 	                    returnVal = false;
 	                    return false;
 	                }
 	            }
 	            return returnVal;
-			}, "小数位不能超过六位");//验证错误信息
+			}, "小数点前不能超过三位，小数点后不能超过六位");//验证错误信息
 
 			//在ready函数中预先调用一次远程校验函数，是一个无奈的回避案。(刘高峰）
 			//否则打开修改对话框，不做任何更改直接submit,这时再触发远程校验，耗时较长，
