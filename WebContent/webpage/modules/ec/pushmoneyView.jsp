@@ -70,7 +70,7 @@
 		                	<input id="sysMobile" name="sysMobile" class="form-control" readonly="readonly" type="text" value="" aria-required="true">
 		                	<p></p>
 		                	<label class="active"><font color="red">*</font>提成金额：</label>
-		                	<input id="pushMoney" name="pushMoney" class="form-control" type="text" value="" aria-required="true">
+		                	<input id="pushMoney" name="pushMoney" class="form-control" type="text" value="" aria-required="true" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';">
 					</div>
 				</div>
 			</div>

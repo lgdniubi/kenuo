@@ -30,6 +30,17 @@
 				return;
 			}
 			
+			var orderamount = $("#orderamount").val();
+			var pushMoneys = document.getElementsByName("pushMoney");
+			var pushMoneySum = 0;
+   			for(i=0;i<pushMoneys.length;i++){
+   				pushMoneySum = parseFloat(pushMoneySum) + parseFloat(pushMoneys[i].value);
+	    	 }
+			if(parseFloat(pushMoneySum) - parseFloat(orderamount) > 0){
+				top.layer.alert('提成人员的提成金额总和不能大于订单应付总价!', {icon: 0, title:'提醒'}); 
+				return;
+			}
+			
 			$("#inputForm").submit();
 			 return true;	
 		  }
@@ -191,7 +202,7 @@
 	function deleteFile(obj){
 		$(obj).parent().parent().remove();
 	}
-
+	
 	$(document).ready(function(){
 		$("#Ichecks").attr("disabled",true);
 		$("#Ichecks").val(0);
@@ -305,6 +316,8 @@
 		});
 	}
 	function getSysUserInfo(){
+		var orderamount = $("#orderamount").val();
+		var sysUserIds = document.getElementsByName("sysUserId");
 		// 正常打开	
 		top.layer.open({
 		    type: 2, 
@@ -322,7 +335,22 @@
     	    	if(pushMoney==""){
     	    		top.layer.alert('填写提成金额！', {icon: 0, title:'提醒'});
      	    		return;
+    	    	}else if(sysUserId == ""){
+    	    		top.layer.alert('填写提成人员！', {icon: 0, title:'提醒'});
+     	    		return;
+    	    	}else if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
+    	    		top.layer.alert('提成金额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
+     	    		return;
     	    	}else{
+    	    		if(sysUserIds.length > 0){
+    	    			for(i=0;i<sysUserIds.length;i++){
+         	    	        if(sysUserId == sysUserIds[i].value){
+         	    	        	top.layer.alert('提成人员不能相同！', {icon: 0, title:'提醒'});
+         	     	    		return;
+         	    	        }
+         	    	    }
+    	    		}
+    	    		
 	    	    	$("#sysUserInfo").append(
 	    	    			"<tr>"+
 	    					"<td>"+
@@ -514,7 +542,7 @@
 				<p></p>
 				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="sysUserPush">
 					<div class="pull-left">
-						<h4><font color="red">*</font>人员提成信息：</h4>
+						<h4><font color="red">*</font>人员提成信息<span style="color:red;">(注：订单一旦创建将无法删除业务员)</span>：</h4>
 					</div>
 					<div class="pull-right">
 						<a href="#" onclick="getSysUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>

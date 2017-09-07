@@ -283,6 +283,9 @@
      	    	if(pushMoney==""){
      	    		top.layer.alert('填写提成金额！', {icon: 0, title:'提醒'});
      	    		return;
+     	    	}else if(sysUserId == ""){
+    	    		top.layer.alert('填写提成人员！', {icon: 0, title:'提醒'});
+     	    		return;
      	    	}else{
      	    		$.ajax({
          				type:"post",
@@ -606,11 +609,11 @@ window.onload=initStatus;
 								<div class="pull-left">
 									<h4><font color="red">*</font>人员提成信息：</h4>
 								</div>
-								<c:if test="${type != 'view' }">
+								<%-- <c:if test="${type != 'view' }">
 									<div class="pull-right">
 										<a href="#" onclick="getSysUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
 									</div>
-								</c:if>
+								</c:if> --%>
 								<p></p>
 								<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
 									<thead>
@@ -620,9 +623,9 @@ window.onload=initStatus;
 											<th style="text-align: center;">提成金额</th>
 											<th style="text-align: center;">操作人</th>
 											<th style="text-align: center;">操作时间</th>
-											<c:if test="${type != 'view' }">
+											<%-- <c:if test="${type != 'view' }">
 												<th style="text-align: center;">操作</th>
-											</c:if>
+											</c:if> --%>
 										</tr>
 									</thead>
 									<tbody id="sysUserInfo" style="text-align:center;">
@@ -645,9 +648,9 @@ window.onload=initStatus;
 												<td>
 													<fmt:formatDate value="${orderPushmoneyRecord.createDate }" pattern="yyyy-MM-dd HH:mm:ss" />
 												</td>
-												<c:if test="${type != 'view' }">
+												<%-- <c:if test="${type != 'view' }">
 													<td><a href="#" class="btn btn-danger btn-xs" onclick="delFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId })"><i class='fa fa-trash'></i> 删除</a></td>
-												</c:if>
+												</c:if> --%>
 											</tr>
 										</c:forEach>
 									</tbody>
