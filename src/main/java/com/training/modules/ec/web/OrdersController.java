@@ -41,6 +41,7 @@ import com.training.common.utils.excel.ImportExcel;
 import com.training.common.web.BaseController;
 import com.training.modules.ec.dao.GoodsSpecPriceDao;
 import com.training.modules.ec.dao.MtmyUsersDao;
+import com.training.modules.ec.dao.OrderGoodsDao;
 import com.training.modules.ec.dao.OrdersDao;
 import com.training.modules.ec.dao.SaleRebatesLogDao;
 import com.training.modules.ec.entity.AcountLog;
@@ -50,6 +51,7 @@ import com.training.modules.ec.entity.GoodsCategory;
 import com.training.modules.ec.entity.GoodsDetailSum;
 import com.training.modules.ec.entity.GoodsSpecPrice;
 import com.training.modules.ec.entity.ImportVirtualOrders;
+import com.training.modules.ec.entity.IntegralsLog;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderGoodsCoupon;
 import com.training.modules.ec.entity.OrderGoodsDetails;
@@ -121,9 +123,13 @@ public class OrdersController extends BaseController {
 	private MtmyUsersDao mtmyUsersDao;
 	@Autowired
 	private GoodsSpecPriceDao goodsSpecPriceDao;
+	@Autowired
+	private OrderGoodsDao orderGoodsDao;
 	
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
+	
+	public static final String MTMY_ID = "mtmy_id_";//用户云币缓存前缀
 	
 	public static final String buying_limit_prefix = "buying_limit_";				//抢购活动商品限购数量
 	
@@ -520,7 +526,6 @@ public class OrdersController extends BaseController {
 			mapList.add(map);
 
 		}
-		// System.out.println(list.toString());
 		JSONArray jsonarray = JSONArray.fromObject(mapList);
 
 		return jsonarray.toString();
@@ -623,17 +628,140 @@ public class OrdersController extends BaseController {
 	 */
 	@RequestMapping(value = "returnGoddsList")
 	public String returnGoddsList(ReturnedGoods returnedGoods, String orderid, Model model) {
+		
 		//returnGoods = returnGoodsService.get(orderid);
 		List<OrderGoods> list=new ArrayList<OrderGoods>();
 		Orders orders=new Orders();
+		
 		orders = ordersService.findselectByOrderId(orderid);
 		returnedGoods.setUserId(orders.getUserid());
+		
+		String suitCardSons = "";
+		String isreal = "";
+		int num;
+		List<List<OrderGoods>> result = new ArrayList<List<OrderGoods>>();//存放每个卡项商品和它的子项集合
+		List<OrderGoods> resultSon = new ArrayList<OrderGoods>();//存放一个卡项商品和它的子项
+		
+		//虚拟和实物售后时
 		list=ordergoodService.orderlist(orderid);
 		
-		model.addAttribute("orders", orders);
-		model.addAttribute("orderGoodList", list);
-		model.addAttribute("returnedGoods", returnedGoods);
-		return "modules/ec/returnForm";
+		if(returnedGoods.getIsReal() == 2 || returnedGoods.getIsReal() == 3){
+			
+			for(int i=0;i<list.size();i++){
+				if(list.get(i).getGroupId() == 0 && resultSon.size() > 0){
+					result.add(resultSon);
+					resultSon = new ArrayList<OrderGoods>();
+				}
+				resultSon.add(list.get(i));
+				if(i == (list.size()-1)){                        //将最后一次循环的结果放到集合里
+					result.add(resultSon);
+				}
+			}
+			if(returnedGoods.getIsReal() == 2){//套卡 售后
+				if(result.size() > 0){
+					for(List<OrderGoods> lists:result){                            
+						if((lists.size() - 1) > 0){
+							num = lists.size() - 1;
+							OrderGoods father = lists.get(0);
+							isreal = lists.get(1).getIsreal()==0?"实物":"虚拟";
+							suitCardSons = suitCardSons +
+									"<tr> "+
+									"<td rowspan='"+num+"'><input id='selectId' name='selectId' type='radio' value='"+father.getRecid()+"'  class='form'  onchange='selectFunction(this)'/></td>"+
+									"<td align='center' rowspan='"+num+"'> "+father.getGoodsname()+"</td> "+
+									"<td align='center' rowspan='"+num+"'>套卡</td> "+
+									"<td align='center'> "+lists.get(1).getGoodsname()+"</td> "+
+									"<td align='center'> "+isreal+"</td> "+
+									"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
+									"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
+									"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getTotalAmount()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getOrderArrearage()+"</td> "+
+								"</tr> ";
+							suitCardSons = suitCardSons +
+									"<input type='hidden' id='"+father.getRecid()+"orderAmount' name='orderAmount' value='"+father.getOrderAmount()+"' />"+
+									"<input type='hidden' id='"+father.getRecid()+"totalAmount' name='totalAmount' value='"+father.getTotalAmount()+"' />"+
+									"<input type='hidden' id='"+father.getRecid()+"advanceFlag' name='advanceFlag' value='"+father.getAdvanceFlag()+"' />"+
+									"<input type='hidden' id='"+father.getRecid()+"orderArrearage' name='orderArrearage' value='"+father.getOrderArrearage()+"' />";
+							for(int i=2;i<lists.size();i++){
+								isreal = lists.get(i).getIsreal()==0?"实物":"虚拟";
+								if(isreal.equals("实物")){
+									suitCardSons = suitCardSons +
+										"<input type='hidden' id='"+lists.get(i).getRecid()+"isReal' name='isReal' value='"+father.getOrderArrearage()+"' />";
+								}
+								suitCardSons = suitCardSons +
+									"<tr> "+
+										"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
+										"<td align='center'> "+isreal+"</td> "+
+										"<td align='center'> "+lists.get(i).getMarketprice()+"</td> "+
+										"<td align='center'> "+lists.get(i).getGoodsprice()+"</td> "+
+										"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
+									"</tr>";
+							}
+				
+						}
+					}
+				}
+			}else if(returnedGoods.getIsReal() == 3){//通用卡 售后
+				if(result.size() > 0){
+					for(List<OrderGoods> lists:result){                            
+						if((lists.size() - 1) > 0){
+							num = lists.size() - 1;
+							OrderGoods father = lists.get(0);
+							isreal = lists.get(1).getIsreal()==0?"实物":"虚拟";
+							suitCardSons = suitCardSons +
+									"<tr> "+
+									"<td rowspan='"+num+"'><input id='selectId' name='selectId' type='radio' value='"+father.getRecid()+"'  class='form'  onchange='selectFunction(this)'/></td>"+
+									"<td align='center' rowspan='"+num+"'> "+father.getGoodsname()+"</td> "+
+									"<td align='center' rowspan='"+num+"'>通用卡</td> "+
+									"<td align='center' rowspan='"+num+"'>"+father.getSpeckeyname()+"</td> "+
+									"<td align='center'> "+lists.get(1).getGoodsname()+"</td> "+
+									"<td align='center'> "+isreal+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getMarketprice()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getGoodsprice()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
+									"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getTotalAmount()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getOrderArrearage()+"</td> "+
+								"</tr> ";
+							suitCardSons = suitCardSons +
+									"<input type='hidden' id='"+father.getRecid()+"orderAmount' name='orderAmount' value='"+father.getOrderAmount()+"' />"+
+									"<input type='hidden' id='"+father.getRecid()+"totalAmount' name='totalAmount' value='"+father.getTotalAmount()+"' />"+
+									"<input type='hidden' id='"+father.getRecid()+"advanceFlag' name='advanceFlag' value='"+father.getAdvanceFlag()+"' />"+
+									"<input type='hidden' id='"+father.getRecid()+"orderArrearage' name='orderArrearage' value='"+father.getOrderArrearage()+"' />";
+							for(int i=2;i<lists.size();i++){
+								isreal = lists.get(i).getIsreal()==0?"实物":"虚拟";
+								if(isreal.equals("实物")){
+									suitCardSons = suitCardSons +
+										"<input type='hidden' id='"+lists.get(i).getRecid()+"isReal' name='isReal' value='"+father.getOrderArrearage()+"' />";
+								}
+								suitCardSons = suitCardSons +
+									"<tr> "+
+										"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
+										"<td align='center'> "+isreal+"</td> "+
+										"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
+									"</tr>";
+							}
+				
+						}
+					}
+				}
+			}
+			model.addAttribute("orders", orders);
+			model.addAttribute("suitCardSons", suitCardSons);
+			model.addAttribute("returnedGoods", returnedGoods);
+			
+			return "modules/ec/returnFormCard";
+		}else{
+			
+			model.addAttribute("orders", orders);
+			model.addAttribute("orderGoodList", list);
+			model.addAttribute("returnedGoods", returnedGoods);
+			
+			return "modules/ec/returnForm";
+		}
 	}
 	
 	
@@ -879,6 +1007,19 @@ public class OrdersController extends BaseController {
 		Orders orders = ordersService.getUser(mobile);
 		return orders;
 	}
+	
+	/**
+	 * 获取妃子校用户信息
+	 * @param mobile
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "getSysUser")
+	public Orders getSysUser(String mobile){
+		Orders orders = ordersService.getSysUser(mobile);
+		return orders;
+	}
+	
 	/**
 	 * 跳转充值页面
 	 * @param orderid
@@ -888,12 +1029,13 @@ public class OrdersController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "addTopUp")
-	public String addTopUp(String orderid,double singleRealityPrice,int userid,int isReal,double goodsBalance,Model model){
+	public String addTopUp(String orderid,double singleRealityPrice,int userid,int isReal,double goodsBalance,int servicetimes,Model model){
 		model.addAttribute("orderid", orderid);
 		model.addAttribute("singleRealityPrice", singleRealityPrice);
 		model.addAttribute("userid", userid);
 		model.addAttribute("isReal", isReal);
 		model.addAttribute("goodsBalance",goodsBalance);
+		model.addAttribute("servicetimes",servicetimes);
 		return "modules/ec/addTopUp";
 	}
 	/**
@@ -997,6 +1139,26 @@ public class OrdersController extends BaseController {
 			logger.error("方法：mappinfOrderView，查看商品订单充值出现错误：" + e.getMessage());
 		}
 		return "modules/ec/mappinfOrderView";
+	}
+	
+	/**
+	 * 查看套卡订单充值记录
+	 * @param recid
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "suitCardRechargeLog")
+	public String suitCardRechargeLog(Integer recid, String orderid, String orderType, HttpServletRequest request, Model model) {
+		try {
+			List<OrderGoodsDetails> orderGoodsDetails = ordersService.getMappinfOrderView(recid);
+			model.addAttribute("orderGoodsDetails", orderGoodsDetails);
+			model.addAttribute("orderType", orderType);
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "查看套卡订单充值", e);
+			logger.error("方法：suitCardRechargeLog，查看套卡订单充值出现错误：" + e.getMessage());
+		}
+		return "modules/ec/suitCardRechargeLog";
 	}
 	
 	/**
@@ -1124,11 +1286,11 @@ public class OrdersController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "deleteMtmyUserInfo")
-	public String deleteMtmyUserInfo(Integer mtmyUserId, HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "deleteSysUserInfo")
+	public String deleteSysUserInfo(int pushmoneyRecordId,HttpServletRequest request, HttpServletResponse response) {
 		String type="";
 		try {
-			ordersService.deleteMtmyUserInfo(mtmyUserId);
+			ordersService.deleteSysUserInfo(pushmoneyRecordId);
 			type = "success";
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "删除提成人员信息错误", e);
@@ -1282,6 +1444,35 @@ public class OrdersController extends BaseController {
 	}
 	
 	/**
+	 * 确定商品是否售后    (是:正在售后    或者   已经售后)
+	 * @param goodsMappingId
+	 * @param orderid
+	 * @param request
+	 * @param response
+	 * @return
+	 * 
+	 */
+	@RequestMapping(value = "getReturnGoodsNum")
+	@ResponseBody
+	public boolean getReturnGoodsNum(ReturnedGoods returnedGoods, HttpServletRequest request, HttpServletResponse response) {
+		return returnedGoodsService.getReturnGoodsNum(returnedGoods);
+	}
+	/**
+	 * 计算订单欠费(根据组ID(mapping_id)获取卡项中的实物集合)
+	 * @param recid
+	 * @param isReal
+	 * @param request
+	 * @param response
+	 * @return
+	 * 
+	 */
+	@RequestMapping(value = "getOrderGoodsCard")
+	@ResponseBody
+	public List<OrderGoods> getOrderGoodsCard(OrderGoods orderGoods, HttpServletRequest request, HttpServletResponse response) {
+		return ordergoodService.getOrderGoodsCard(orderGoods);
+	}
+	
+	/**
 	 * 取消订单
 	 * @param request
 	 * @param orders
@@ -1327,6 +1518,7 @@ public class OrdersController extends BaseController {
 	public String forcedCancel(Orders orders, HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
 		try {
 			List<OrderGoods> goodsList=new ArrayList<OrderGoods>();
+			int integral = 0;
 			
 			orders = ordersService.findselectByOrderId(orders.getOrderid());
 			boolean result = returnRepository(orders.getOrderid(),request);
@@ -1372,12 +1564,38 @@ public class OrdersController extends BaseController {
 					//保存到退货表
 					returnedGoodsService.insertForcedCancel(returnedGoods);
 					ordersService.updateOrderStatut(orders.getOrderid());
+					integral = integral + orderGoodsDao.getintegralByRecId(goodsList.get(i).getRecid()+"") * goodsList.get(i).getGoodsnum();
 					//验证是否为抢购活动订单
 					if(goodsList.get(i).getActiontype()==1){
 						redisClientTemplate.hincrBy(buying_limit_prefix+goodsList.get(i).getActionid(), orders.getUserid()+"_"+goodsList.get(i).getGoodsid(),-goodsList.get(i).getGoodsnum());
 					}
 				}
 			}
+			
+			boolean userResult = redisClientTemplate.exists(MTMY_ID+orders.getUserid());
+			if(userResult){   //若缓存存在，则操作缓存
+				RedisLock redisLock = new RedisLock(redisClientTemplate, MTMY_ID+orders.getUserid());
+				redisLock.lock();
+				redisClientTemplate.incrBy(MTMY_ID+orders.getUserid(),-integral);
+				redisLock.unlock();
+			}else{         //若缓存不存在，则操作mtmy_user_accounts
+				orders.setUserid(orders.getUserid());
+				orders.setUserIntegral(integral);
+				ordersDao.updateIntegralAccount(orders);
+			}
+			
+			//在mtmy_integrals_log表中插入日志
+			IntegralsLog integralsLog = new IntegralsLog();
+			integralsLog.setUserId(orders.getUserid());
+			integralsLog.setIntegralType(1);
+			integralsLog.setIntegralSource(0);
+			integralsLog.setActionType(21);
+			integralsLog.setIntegral(-integral);
+			integralsLog.setOrderId(orders.getOrderid());
+			integralsLog.setRemark("商品赠送(扣减)");
+			ordersDao.insertIntegralLog(integralsLog);
+			
+			
 			//查询是否有退货记录
 			if(saleRebatesLogDao.selectNumByOrderId(orders.getOrderid()) == 0){//如果无退货记录
 				saleRebatesLogDao.updateSale(orders.getOrderid());// 插入分销日志
@@ -1441,24 +1659,44 @@ public class OrdersController extends BaseController {
 	public String handleAdvanceFlagForm(OrderGoods orderGoods,int userid,HttpServletRequest request,Model model){
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
+			int servicetimes = orderGoods.getServicetimes();         //预计服务次数
+			double orderArrearage = orderGoods.getOrderArrearage();  //欠款
+			
 			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());
+			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
 			double advance = orderGoods.getAdvancePrice();                 //预约金
+			
+			if(advance == 0){      //当预约金为0的时候付全款
+				advance = goodsPrice;                 //预约金
+			}else{
+				advance = orderGoods.getAdvancePrice();            //预约金
+			}
 			
 			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
 			orderGoods.setAdvance(advance);
-			if(advance < singleRealityPrice){
-				double c = Double.parseDouble(formater.format(singleRealityPrice - advance));
+			if(servicetimes == 999){                      //当该商品为时限卡时，需要单独处理
 				orderGoods.setAdvanceServiceTimes(0);        //服务次数
-				orderGoods.setDebt(c);                       //欠款
+				orderGoods.setDebt(orderArrearage);                       //欠款
 			}else{
-				int a = (int)(advance/singleRealityPrice);
-				double b = Double.parseDouble(formater.format(advance - a*singleRealityPrice));
-				orderGoods.setAdvanceServiceTimes(a);        //服务次数 
-				orderGoods.setAdvanceBalance(b);             //余额
+				if(advance < singleRealityPrice){
+					double c = Double.parseDouble(formater.format(singleRealityPrice - advance));
+					orderGoods.setAdvanceServiceTimes(0);        //服务次数
+					orderGoods.setDebt(c);                       //欠款
+				}else if(advance == goodsPrice){                     //预约金为0或者预约金等于商品优惠单价的时
+					orderGoods.setAdvanceServiceTimes(servicetimes);        //服务次数
+					orderGoods.setDebt(0);                       //欠款
+				}else{
+					int a = (int)(advance/singleRealityPrice);
+					double b = Double.parseDouble(formater.format(advance - a*singleRealityPrice));
+					orderGoods.setAdvanceServiceTimes(a);        //服务次数 
+					orderGoods.setAdvanceBalance(b);             //余额
+				}
 			}
+			
 			double accountBalance = ordersService.getAccount(userid); //用户账户余额
 			orderGoods.setAccountBalance(accountBalance);
 			model.addAttribute("orderGoods", orderGoods);
+			model.addAttribute("servicetimes", servicetimes);
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "跳转处理预约金页面出错", e);
 			logger.error("跳转处理预约金页面出错："+e.getMessage());
@@ -1483,10 +1721,20 @@ public class OrdersController extends BaseController {
 		try{
 			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());    
 			double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
+			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
 			double advance = orderGoods.getAdvancePrice();                 //预约金
 			
+			double realAdvancePrice = 0;                                //处理预约金给老商品送钱时，判断预约金的真实价格
+			
+			if(advance == 0){      //当预约金为0的时候付全款
+				realAdvancePrice = 0;
+				advance = goodsPrice;                 //预约金
+			}else{
+				realAdvancePrice = advance;
+				advance = orderGoods.getAdvancePrice();                 //预约金
+			}
+			
 			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
-			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
 			int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
 			String officeId = orderGoods.getOfficeId();           //组织架构ID
 			
@@ -1496,20 +1744,30 @@ public class OrdersController extends BaseController {
 			oLog.setSingleRealityPrice(orderGoods.getSingleRealityPrice());
 			oLog.setSingleNormPrice(orderGoods.getSingleNormPrice());
 			oLog.setAdvance(advance);
-			//若订金小于单次价，则实付款金额就是单次价，
-			if(advance < singleRealityPrice){
-				oLog.setTotalAmount(singleRealityPrice);
+			
+			if(oLog.getServicetimes() == 999){        //时限卡单独处理
+				oLog.setTotalAmount(oLog.getOrderArrearage());      //当时限卡处理预约金时，实付款金额就是待付尾款（欠款）
 				if(sum == 0){//用了账户余额
-					oLog.setAccountBalance(Double.parseDouble(formater.format(singleRealityPrice-advance))); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+					oLog.setAccountBalance(oLog.getOrderArrearage()); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
 				}else{
 					oLog.setAccountBalance(0);
 				}
-			}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
-				oLog.setTotalAmount(advance);
-				
+			}else{
+				//若订金小于单次价，则实付款金额就是单次价，
+				if(advance < singleRealityPrice){
+					oLog.setTotalAmount(singleRealityPrice);
+					if(sum == 0){//用了账户余额
+						oLog.setAccountBalance(Double.parseDouble(formater.format(singleRealityPrice-advance))); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+					}else{
+						oLog.setAccountBalance(0);
+					}
+				}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
+					oLog.setTotalAmount(advance);
+				}
 			}
+			
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleAdvanceFlag(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId);
+			ordersService.handleAdvanceFlag(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId,realAdvancePrice);
 			date = "success";
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "处理预约金异常", e);
@@ -1728,4 +1986,663 @@ public class OrdersController extends BaseController {
 		return "redirect:" + adminPath + "/ec/orders/list";
 	}
 	
+	/**
+	 * 跳转添加套卡订单页
+	 * @param orders
+	 * @param model
+	 * @return
+	 */
+
+	@RequiresPermissions(value = { "ec:orders:add" }, logical = Logical.OR)
+	@RequestMapping(value = "createSuitCardOrder")
+	public String createSuitCardOrder(HttpServletRequest request,Orders orders,Model model){
+		try {
+
+			List<Payment> paylist = paymentService.paylist();
+			List<GoodsCategory> cateList = ordersService.cateList();
+			model.addAttribute("orders", orders);
+			model.addAttribute("paylist", paylist);
+			model.addAttribute("cateList", cateList);
+
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "跳转创建套卡订单页面", e);
+			logger.error("方法：createSuitCardOrder，跳转创建套卡订单页面出错：" + e.getMessage());
+		}
+
+		return "modules/ec/createSuitCardOrderForm";
+	}
+	
+	/**
+	 * 套卡订单添加商品
+	 * @param request
+	 * @param orders
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "addSuitCardOderGoods")
+	public String addSuitCardOderGoods(HttpServletRequest request, Orders orders, Model model) {
+		try {
+			model.addAttribute("orders", orders);
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "跳转套卡添加商品页面", e);
+			logger.error("跳转套卡添加商品页面：" + e.getMessage());
+		}
+
+		return "modules/ec/addSuitCardOderGoodsForm";
+	}
+	
+	/**
+	 * 查找套卡的子项
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="selectSuitCardSon")
+	@ResponseBody
+	public String selectSuitCardSon(Goods goods,HttpServletRequest request,Model model){
+		String suitCardSons = "";
+		int num;
+		try{
+			double orderAmount = Double.valueOf(request.getParameter("orderAmount"));  //卡项成交价
+			double actualPayment = Double.valueOf(request.getParameter("actualPayment"));  //卡项实际付款
+			double costPrice = Double.valueOf(request.getParameter("costPrice"));  //卡项系统价
+			double debtMoney = Double.valueOf(request.getParameter("debtMoney"));  //卡项欠款
+			double spareMoney = Double.valueOf(request.getParameter("spareMoney"));  //卡项余款
+			int tail = Integer.valueOf(request.getParameter("tail"));  //用来表示添加的卡项商品
+			int goodsId = goods.getGoodsId();
+			List<Goods> goodsList = ordersService.selectCardSon(goodsId);
+			if(goodsList.size() > 0){
+				num = goodsList.size();
+				
+				suitCardSons =
+					"<tr class=suitCard"+tail+"> "+
+						"<td rowspan="+num+"> "+goods.getGoodsName()+"<input id='goodselectIds' name='goodselectIds' type='hidden' value='"+goodsId+"'></td> "+
+						"<td> "+goodsList.get(0).getGoodsName()+"</td> "+
+						"<td rowspan="+num+"> "+costPrice+"</td> "+
+						"<td> "+goodsList.get(0).getMarketPrice()+"<input id='orderAmounts' name='orderAmounts' type='hidden' value='"+orderAmount+"'></td> "+
+						"<td> "+goodsList.get(0).getShopPrice()+"<input id='actualPayments' name='actualPayments' type='hidden' value='"+actualPayment+"'></td> "+
+						"<td> "+goodsList.get(0).getGoodsNum()+"</td> "+
+						"<td rowspan="+num+"> "+spareMoney+"</td> "+
+						"<td rowspan="+num+"> "+debtMoney+"</td> "+
+						"<td rowspan="+num+"> "+
+							"<a href='#' class='btn btn-danger btn-xs' onclick='delFile("+tail+","+costPrice+","+orderAmount+","+spareMoney+","+actualPayment+","+debtMoney+")'><i class='fa fa-trash'></i> 删除</a> "+
+						"</td>"+
+					"</tr>";
+				for(int i=1;i<num;i++){
+					suitCardSons = suitCardSons +
+						"<tr class=suitCard"+tail+"> "+
+							"<td> "+goodsList.get(i).getGoodsName()+"</td> "+
+							"<td> "+goodsList.get(i).getMarketPrice()+"</td> "+
+							"<td> "+goodsList.get(i).getShopPrice()+"</td> "+
+							"<td> "+goodsList.get(i).getGoodsNum()+"</td> "+
+						"</tr>";
+				}
+				
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "查找套卡子项", e);
+			logger.error("查找套卡子项出错信息：" + e.getMessage());
+		}
+		return suitCardSons.toString();
+	}
+	
+	
+	
+	/**
+	 * 添加套卡订单
+	 * @param speciality
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+
+	@RequiresPermissions(value = { "ec:orders:add" }, logical = Logical.OR)
+	@RequestMapping(value = "saveSuitCardOrder")
+	public String saveSuitCardOrder(Orders orders, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
+		try {
+			ordersService.saveSuitCardOrder(orders);
+			addMessage(redirectAttributes, "创建套卡订单'" + orders.getOrderid() + "'成功");
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "创建套卡订单", e);
+			logger.error("方法：saveSuitCardOrder，创建套卡订单出现错误：" + e.getMessage());
+			addMessage(redirectAttributes, "创建套卡订单失败！");
+		}
+
+		return "redirect:" + adminPath + "/ec/orders/list";
+	}
+	
+	
+	/**
+	 * 跳转添加通用卡订单页
+	 * @param orders
+	 * @param model
+	 * @return
+	 */
+
+	@RequiresPermissions(value = { "ec:orders:add" }, logical = Logical.OR)
+	@RequestMapping(value = "createCommonCardOrder")
+	public String createCommonCardOrder(HttpServletRequest request,Orders orders,Model model){
+		try {
+
+			List<Payment> paylist = paymentService.paylist();
+			List<GoodsCategory> cateList = ordersService.cateList();
+			model.addAttribute("orders", orders);
+			model.addAttribute("paylist", paylist);
+			model.addAttribute("cateList", cateList);
+
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "跳转创建通用卡订单页面", e);
+			logger.error("方法：createSuitCardOrder，跳转创建通用卡订单页面出错：" + e.getMessage());
+		}
+
+		return "modules/ec/createCommonCardOrderForm";
+	}
+	
+	/**
+	 * 通用卡订单添加商品
+	 * @param request
+	 * @param orders
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "addCommonOderGoods")
+	public String addCommonOderGoods(HttpServletRequest request, Orders orders, Model model) {
+		try {
+			model.addAttribute("orders", orders);
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "跳转通用卡添加商品页面", e);
+			logger.error("跳转通用卡添加商品页面：" + e.getMessage());
+		}
+
+		return "modules/ec/addCommonOderGoodsForm";
+	}
+	
+	/**
+	 * 查找通用卡的子项
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="selectCommonCardSon")
+	@ResponseBody
+	public String selectCommonCardSon(Goods goods,HttpServletRequest request,Model model){
+		String suitCardSons = "";
+		int num;
+		try{
+			double actualPayment = Double.valueOf(request.getParameter("actualPayment"));  //卡项实际付款（前）
+			String speckeyname = request.getParameter("speckeyname");                     //卡项规格名称
+			String speckey = request.getParameter("speckey");                     //卡项规格key
+			double marketPrice = Double.valueOf(request.getParameter("marketPrice"));  //卡项市场价
+			double goodsPrice = Double.valueOf(request.getParameter("goodsPrice"));  //卡项优惠价
+			double costPrice = Double.valueOf(request.getParameter("costPrice"));  //卡项系统价
+			double orderAmount = Double.valueOf(request.getParameter("orderAmount"));  //卡项成交价
+			double afterPayment = Double.valueOf(request.getParameter("afterPayment"));  //卡项实际付款（后）
+			String actualNum = request.getParameter("actualNum");  //卡项实际次数
+			double debtMoney = Double.valueOf(request.getParameter("debtMoney"));  //卡项欠款
+			double spareMoney = Double.valueOf(request.getParameter("spareMoney"));  //卡项余款
+			int isNeworderSon = Integer.valueOf(request.getParameter("isNeworderSon"));  //新老订单（0：新订单，1：老订单）
+			int tail = Integer.valueOf(request.getParameter("tail"));  //用来表示添加的卡项商品
+			Date realityAddTime;
+			if(isNeworderSon == 1){
+				realityAddTime =  new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("realityAddTime"));  //实际下单时间
+			}else{
+				realityAddTime =  new Date();  //实际下单时间
+			}
+			int goodsId = goods.getGoodsId();
+			List<Goods> goodsList = ordersService.selectCardSon(goodsId);
+			if(goodsList.size() > 0){
+				num = goodsList.size();
+				
+				suitCardSons =
+					"<tr class= commonCard"+tail+"> "+
+						"<td rowspan="+num+"> "+goods.getGoodsName()+"<input id='goodselectIds' name='goodselectIds' type='hidden' value='"+goodsId+"'></td> "+
+						"<td> "+goodsList.get(0).getGoodsName()+"</td> "+
+						"<td rowspan="+num+"> "+speckeyname+"<input id='speckeys' name='speckeys' type='hidden' value='"+speckey+"'></td> "+
+						"<td rowspan="+num+"> "+marketPrice+"</td> "+
+						"<td rowspan="+num+"> "+goodsPrice+"</td> "+
+						"<td rowspan="+num+"> "+costPrice+"</td> "+
+						"<td rowspan="+num+"> "+orderAmount+"<input id='orderAmounts' name='orderAmounts' type='hidden' value='"+orderAmount+"'></td> "+
+						"<td> "+goodsList.get(0).getGoodsNum()+"</td> "+
+						"<td rowspan="+num+"> "+afterPayment+"<input id='actualPayments' name='actualPayments' type='hidden' value='"+actualPayment+"'></td> "+
+						"<td rowspan="+num+"> "+actualNum+"<input id='remaintimes' name='remaintimeNums' type='hidden' value='"+actualNum+"'></td> "+
+						"<td rowspan="+num+"> "+spareMoney+"</td> "+
+						"<td rowspan="+num+"> "+debtMoney+"</td> "+
+						"<td rowspan="+num+"> "+
+							"<a href='#' class='btn btn-danger btn-xs' onclick='delFile("+tail+","+costPrice+","+orderAmount+","+spareMoney+","+afterPayment+","+debtMoney+")'><i class='fa fa-trash'></i> 删除</a> "+
+						"</td>"+
+						"<input id='realityAddTime' name='realityAddTimeList' type='hidden' value='"+realityAddTime+"'>"+
+					"</tr>";
+				for(int i=1;i<num;i++){
+					suitCardSons = suitCardSons +
+						"<tr class= commonCard"+tail+"> "+
+							"<td> "+goodsList.get(i).getGoodsName()+"</td> "+
+							"<td> "+goodsList.get(i).getGoodsNum()+"</td> "+
+						"</tr>";
+				}
+				
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "查找套卡子项", e);
+			logger.error("查找套卡子项出错信息：" + e.getMessage());
+		}
+		return suitCardSons.toString();
+	}
+	
+	/**
+	 * 添加通用卡订单
+	 * @param speciality
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+
+	@RequiresPermissions(value = { "ec:orders:add" }, logical = Logical.OR)
+	@RequestMapping(value = "saveCommonCardlOrder")
+	public String saveCommonCardlOrder(Orders orders, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
+		try {
+			ordersService.saveCommonCardlOrder(orders);
+			addMessage(redirectAttributes, "创建通用卡订单'" + orders.getOrderid() + "'成功");
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "创建通用卡订单", e);
+			logger.error("方法：saveCommonCardlOrder，创建通用卡订单出现错误：" + e.getMessage());
+			addMessage(redirectAttributes, "创建通用卡订单失败！");
+		}
+
+		return "redirect:" + adminPath + "/ec/orders/list";
+	}
+	
+	/**
+	 * 跳转修改卡项订单页面
+	 * @param orders
+	 * @param model
+	 * @return
+	 */
+	@RequiresPermissions(value = { "ec:orders:edit", "ec:orders:view" }, logical = Logical.OR)
+	@RequestMapping(value = "cardOrdersForm")
+	public String suitCardOrdersForm(HttpServletRequest request, Orders orders,String type, Model model) {
+		try {
+			String suitCardSons = "";
+			int num;
+			List<List<OrderGoods>> result = new ArrayList<List<OrderGoods>>();    //分开存放每个卡项商品和它的子项
+			List<OrderGoods> resultSon = new ArrayList<OrderGoods>();              //存放每个卡项商品和它的子项
+			User user = UserUtils.getUser(); //登陆用户
+			List<Payment> paylist = paymentService.paylist();
+			orders = ordersService.selectOrderById(orders.getOrderid());
+			
+			List<OrderGoods> list = orders.getOrderGoodList();                   //根据订单id查找所有的mapping中的记录（每个卡项和子项都在里面）
+			for(int i=0;i<list.size();i++){
+				if(list.get(i).getGroupId() == 0 && resultSon.size() > 0){
+					result.add(resultSon);
+					resultSon = new ArrayList<OrderGoods>();
+				}
+				resultSon.add(list.get(i));
+				if(i == (list.size()-1)){                                       //将最后一次循环的结果放到集合里
+					result.add(resultSon);
+				}
+			}
+			
+			if(result.size() > 0){                                             //若该订单有商品
+				for(List<OrderGoods> lists:result){                            
+					if((lists.size() - 1) > 0){                               //若该卡项有子项
+						num = lists.size() - 1;
+						OrderGoods father = lists.get(0);
+						
+						if(orders.getIsReal() == 2){        //套卡
+							suitCardSons = suitCardSons +
+									"<tr> "+
+										"<td align='center' rowspan="+num+"> "+father.getGoodsname()+"</td> "+
+										"<td align='center'> "+lists.get(1).getGoodsname()+"</td> "+
+										"<td align='center' rowspan="+num+">默认规格</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getCostprice()+"</td> "+
+										"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
+										"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
+										"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
+										"<td align='center'> "+lists.get(1).getServicetimes()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getCouponPrice()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getDiscount()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getMembergoodsprice()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getOrderAmount()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getTotalAmount()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getAdvancePrice()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getOrderArrearage()+"</td> "+
+										"<td align='center' rowspan="+num+">";
+							if(!"view".equals(type)){
+								if(father.getAdvanceFlag() != 1){                //不是预约金
+									if(father.getOrderArrearage() != 0){         //有欠款
+										suitCardSons = suitCardSons + "<a href='#' onclick='TopUp("+father.getRecid()+","+father.getSingleRealityPrice()+","+father.getSingleNormPrice()+","+father.getOrderArrearage()+","+father.getServicetimes()+","+father.getPayRemaintimes()+","+father.getGoodsBalance()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>充值</a>";
+									}else if(father.getOrderArrearage() == 0){   //无欠款
+										suitCardSons = suitCardSons + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs' ><i class='fa fa-edit'></i>充值</a>";
+									} 
+								}else if(father.getAdvanceFlag() == 1){        //是预约金   
+									if(orders.getOrderstatus() == 4 && father.getSumAppt() == 1){    //已完成且预约已完成
+										suitCardSons = suitCardSons + "<a href='#' onclick='ToAdvance("+father.getRecid()+","+father.getServicetimes()+","+father.getOrderArrearage()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
+									}else if(orders.getOrderstatus() != 4 || father.getSumAppt() == 0){   //无预约或订单未完成
+										suitCardSons = suitCardSons + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
+									}
+									
+								}
+							}
+							
+								suitCardSons = suitCardSons +
+											"<a href='#' onclick='viewCardOrders("+father.getRecid()+","+orders.getOrderid()+","+orders.getIsReal()+")' class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i>商品充值查看</a>"+
+										"</td>"+
+									"</tr>";
+								for(int i=2;i<lists.size();i++){
+									suitCardSons = suitCardSons +
+										"<tr> "+
+											"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
+											"<td align='center'> "+lists.get(i).getMarketprice()+"</td> "+
+											"<td align='center'> "+lists.get(i).getGoodsprice()+"</td> "+
+											"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
+											"<td align='center'> "+lists.get(i).getServicetimes()+"</td> "+
+										"</tr>";
+								}
+						}else if(orders.getIsReal() == 3){   //通用卡
+							suitCardSons = suitCardSons +
+									"<tr> "+
+										"<td align='center' rowspan="+num+"> "+father.getGoodsname()+"</td> "+
+										"<td align='center'> "+lists.get(1).getGoodsname()+"</td> "+
+										"<td align='center' rowspan="+num+">"+father.getSpeckeyname()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getCostprice()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getMarketprice()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getGoodsprice()+"</td> "+
+										"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
+										"<td align='center'> "+lists.get(1).getServicetimes()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getCouponPrice()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getDiscount()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getMembergoodsprice()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getOrderAmount()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getTotalAmount()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getAdvancePrice()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getOrderArrearage()+"</td> "+
+										"<td align='center' rowspan="+num+">";
+							
+							if(!"view".equals(type)){
+								if(father.getAdvanceFlag() != 1){                //不是预约金
+									if(father.getOrderArrearage() != 0){         //有欠款
+										suitCardSons = suitCardSons + "<a href='#' onclick='TopUp("+father.getRecid()+","+father.getSingleRealityPrice()+","+father.getSingleNormPrice()+","+father.getOrderArrearage()+","+father.getServicetimes()+","+father.getPayRemaintimes()+","+father.getGoodsBalance()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>充值</a>";
+									}else if(father.getOrderArrearage() == 0){   //无欠款
+										suitCardSons = suitCardSons + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs' ><i class='fa fa-edit'></i>充值</a>";
+									} 
+								}else if(father.getAdvanceFlag() == 1){        //是预约金   
+									if(orders.getOrderstatus() == 4 && father.getSumAppt() == 1){    //已完成且预约已完成
+										suitCardSons = suitCardSons + "<a href='#' onclick='ToAdvance("+father.getRecid()+","+father.getServicetimes()+","+father.getOrderArrearage()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
+									}else if(orders.getOrderstatus() != 4 || father.getSumAppt() == 0){   //无预约或订单未完成
+										suitCardSons = suitCardSons + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
+									}
+									
+								}
+							}
+							
+							suitCardSons = suitCardSons +
+											"<a href='#' onclick='viewCardOrders("+father.getRecid()+","+orders.getOrderid()+","+orders.getIsReal()+")' class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i>商品充值查看</a>"+
+										"</td>"+
+									"</tr>";
+								for(int i=2;i<lists.size();i++){
+									suitCardSons = suitCardSons +
+										"<tr> "+
+											"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
+											"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
+											"<td align='center'> "+lists.get(i).getServicetimes()+"</td> "+
+										"</tr>";
+								}
+						}
+						
+					}
+					
+				}
+			
+			}
+			
+			model.addAttribute("orders", orders);
+			model.addAttribute("paylist", paylist);
+			model.addAttribute("user", user);
+			model.addAttribute("type", type);
+			model.addAttribute("suitCardSons", suitCardSons);
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "跳转修改卡项订单页面", e);
+			logger.error("跳转修改卡项订单页面出错：" + e.getMessage());
+		}
+		return "modules/ec/cardOrdersForm";
+	}
+	
+	/**
+	 * 修改卡项订单
+	 * @param orders
+	 * @param request
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = "updateCardOrder")
+	public String updateCardOrder(Orders orders, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
+		try {
+			Orders newOrders = ordersService.selectOrderById(orders.getOrderid());
+			orders.setInvoiceOvertime(newOrders.getInvoiceOvertime());
+			orders.setIsReal(newOrders.getIsReal());
+			//判断收货地址是否修改了，若未修改则xml中不对address更新，若不修改，则将省市县详细地址存到相应的地方
+			if(!orders.getOldAddress().equals(orders.getAddress())){
+				ordersDao.updateAddress(orders);
+			}
+			
+			if(orders.getOldstatus() != orders.getOrderstatus()){ //2次订单修改状态不一致
+				if(-2 == orders.getOrderstatus()){//新订单状态 等于“取消订单”
+					boolean result = returnRepository(orders.getOrderid(),request);
+					if(result){
+						// 取消订单  修改订单取消类型为后台取消
+						orders.setCancelType("1");
+						ordersService.updateVirtualOrder(orders);
+						addMessage(redirectAttributes, "修改卡项订单'" + orders.getOrderid() + "'成功");
+					}else{
+						addMessage(redirectAttributes, "修改卡项订单'" + orders.getOrderid() + "'失败");
+					}
+					logger.info("商品退还仓库是否成功："+result);
+				}else if(orders.getOrderstatus() == 2){
+					ordersService.updateVirtualOrder(orders);
+					OrdersStatusChangeUtils.pushMsg(orders, 3); //推送已发货信息给用户
+					addMessage(redirectAttributes, "修改卡项订单'" + orders.getOrderid() + "'成功");
+				}else{//不是取消订单
+					ordersService.updateVirtualOrder(orders);
+					addMessage(redirectAttributes, "修改卡项订单'" + orders.getOrderid() + "'成功");
+				}
+			}else{
+				ordersService.updateVirtualOrder(orders);
+				addMessage(redirectAttributes, "修改卡项订单'" + orders.getOrderid() + "'成功");
+			}
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "修改卡项订单", e);
+			logger.error("方法：updateCardOrder，修改卡项订单出现错误：" + e.getMessage());
+			addMessage(redirectAttributes, "修改卡项订单失败！");
+		}
+		
+		return "redirect:" + adminPath + "/ec/orders/list";
+	}
+	
+	/**
+	 * 跳转卡项充值页面
+	 * @param orderid
+	 * @param recid
+	 * @param userid
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "addCardTopUp")
+	public String addCardTopUp(String orderid,double singleRealityPrice,int userid,int isReal,double goodsBalance,HttpServletRequest request,Model model,RedirectAttributes redirectAttributes){
+		try{
+			model.addAttribute("orderid", orderid);
+			model.addAttribute("singleRealityPrice", singleRealityPrice);
+			model.addAttribute("userid", userid);
+			model.addAttribute("isReal", isReal);
+			model.addAttribute("goodsBalance",goodsBalance);
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "跳转卡项充值页面", e);
+			logger.error("方法：addCardTopUp，跳转卡项充值页面出现错误：" + e.getMessage());
+			addMessage(redirectAttributes, "跳转卡项充值页面失败！");
+		}
+		return "modules/ec/addCardTopUp";
+	}
+	
+	/**
+	 * 新增卡项订单充值日志记录
+	 * @param oLog
+	 */
+	@ResponseBody
+	@RequestMapping(value = "addCardOrderRechargeLog")
+	public String addCardOrderRechargeLog(OrderRechargeLog oLog){
+		String success="";
+		try{
+			ordersService.addCardOrderRechargeLog(oLog);
+			success = "success";
+		}catch(Exception e){
+			e.printStackTrace();
+			success = "error";
+		}
+		return success;
+	}
+	
+	/**
+	 * 跳转处理卡项预约金页面
+	 * @param orderGoods
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="handleCardAdvanceForm")
+	public String handleCardAdvanceForm(OrderGoods orderGoods,int userid,HttpServletRequest request,Model model){
+		DecimalFormat formater = new DecimalFormat("#0.##");
+		try{
+			int servicetimes = orderGoods.getServicetimes();         //预计服务次数
+			int isReal = orderGoods.getIsreal();
+			
+			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid()); //卡项本身
+			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
+			double advance = orderGoods.getAdvancePrice();                 //预约金
+			if(advance == 0){      //当预约金为0的时候付全款
+				advance = goodsPrice;                 //预约金
+			}else{
+				advance = orderGoods.getAdvancePrice();            //预约金
+			}
+			
+			orderGoods.setAdvance(advance);
+			
+			//卡项中预约是某一个子项，故处理预约金是针对子项的，但是预约金本身却是卡项本身的
+			OrderGoods orderGoodsSon = ordersService.selectCardSonReservation(orderGoods.getRecid());   //预约的子项
+		
+			if(isReal == 2){   //套卡
+				double singleRealityPrice = orderGoodsSon.getSingleRealityPrice();   //子项服务单次价
+				
+				if(advance < singleRealityPrice){
+					double c = Double.parseDouble(formater.format(singleRealityPrice - advance));
+					orderGoods.setDebt(c);                       //欠款
+				}else{
+					double b = Double.parseDouble(formater.format(advance - singleRealityPrice));
+					orderGoods.setAdvanceBalance(b);             //余额
+				}
+			}else if(isReal == 3){   //通用卡
+				double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
+				
+				if(advance < singleRealityPrice){
+					double c = Double.parseDouble(formater.format(singleRealityPrice - advance));
+					orderGoods.setAdvanceServiceTimes(0);        //服务次数
+					orderGoods.setDebt(c);                       //欠款
+				}else if(advance == goodsPrice){                     //预约金为0或者预约金等于商品优惠单价的时
+					orderGoods.setAdvanceServiceTimes(servicetimes);        //服务次数
+					orderGoods.setDebt(0);                       //欠款
+				}else{
+					int a = (int)(advance/singleRealityPrice);
+					double b = Double.parseDouble(formater.format(advance - a*singleRealityPrice));
+					orderGoods.setAdvanceServiceTimes(a);        //服务次数 
+					orderGoods.setAdvanceBalance(b);             //余额
+				}
+			}
+			
+			double accountBalance = ordersService.getAccount(userid); //用户账户余额
+			orderGoods.setAccountBalance(accountBalance);
+			model.addAttribute("orderGoods", orderGoods);
+			model.addAttribute("servicetimes", servicetimes);
+			model.addAttribute("isReal", isReal);
+			model.addAttribute("orderGoodsSon", orderGoodsSon);    //卡项预约的子项
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "跳转处理卡项预约金页面出错", e);
+			logger.error("跳转处理卡项预约金页面出错："+e.getMessage());
+		}
+		return "modules/ec/handleCardAdvanceForm";
+	}
+	
+	/**
+	 * 处理卡项预约金
+	 * @param oLog
+	 * @param orderGoods
+	 * @param userid
+	 * @param orderid
+	 * @param sum
+	 * @return
+	 */
+	@RequestMapping(value="handleCardAdvance")
+	@ResponseBody
+	public String handleCardAdvance(OrderRechargeLog oLog,OrderGoods orderGoods,int sum,int userid,String orderid,HttpServletRequest request){
+		String date="";
+		double singleRealityPrice = 0;     //实际服务单次价
+		DecimalFormat formater = new DecimalFormat("#0.##");
+		try{
+			int isReal = oLog.getIsReal();
+			
+			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());   //卡项本身  
+			double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
+			int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
+			String officeId = orderGoods.getOfficeId();           //组织架构ID
+			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
+			
+			double advance = orderGoods.getAdvancePrice();                 //预约金
+			double realAdvancePrice = 0;                                //处理预约金给老商品送钱时，判断预约金的真实价格
+			
+			if(advance == 0){      //当预约金为0的时候付全款
+				realAdvancePrice = 0;
+				advance = goodsPrice;                 //预约金
+			}else{
+				realAdvancePrice = advance;
+				advance = orderGoods.getAdvancePrice();            //预约金
+			}
+			
+			//卡项中预约是某一个子项，故处理预约金是针对子项的，但是预约金本身却是卡项本身的
+			OrderGoods orderGoodsSon = ordersService.selectCardSonReservation(orderGoods.getRecid());   //预约的子项
+			
+			if(isReal == 2){    //套卡
+				singleRealityPrice = orderGoodsSon.getSingleRealityPrice();   //子项的实际服务单次价
+			}else if(isReal == 3){  //通用卡
+				singleRealityPrice = orderGoods.getSingleRealityPrice();   //卡项本身的实际服务单次价
+				
+			}
+			
+			oLog.setMtmyUserId(userid);
+			oLog.setOrderId(orderid);
+			oLog.setRecid(orderGoods.getRecid());
+			oLog.setSingleRealityPrice(singleRealityPrice);
+			oLog.setAdvance(advance);
+			
+			
+			//若订金小于单次价，则实付款金额就是单次价，
+			if(advance < singleRealityPrice){
+				oLog.setTotalAmount(singleRealityPrice);
+				if(sum == 0){//用了账户余额
+					oLog.setAccountBalance(Double.parseDouble(formater.format(singleRealityPrice-advance))); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+				}else{
+					oLog.setAccountBalance(0);
+				}
+			}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
+				oLog.setTotalAmount(advance);
+			}
+			
+			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
+			ordersService.handleCardAdvance(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId,isReal,realAdvancePrice);
+			date = "success";
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "处理卡项预约金异常", e);
+			date = "error";
+		}
+		return date;
+	}
 }

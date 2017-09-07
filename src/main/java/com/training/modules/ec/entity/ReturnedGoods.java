@@ -72,9 +72,23 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	private String address;						//仓库地址	
     
 	private String keyword;                     //搜索用关键字
+	//---------------------------套卡使用字段-----------------------------------
+	private List<Integer> recIds;			//卡项实物商品 id集合(mapping_id)
+	private List<Integer> returnNums;		//卡项实物商品 售后数量集合
 	
 	
-	
+	public List<Integer> getRecIds() {
+		return recIds;
+	}
+	public void setRecIds(List<Integer> recIds) {
+		this.recIds = recIds;
+	}
+	public List<Integer> getReturnNums() {
+		return returnNums;
+	}
+	public void setReturnNums(List<Integer> returnNums) {
+		this.returnNums = returnNums;
+	}
 	public String getReturnedId() {
 		return returnedId;
 	}

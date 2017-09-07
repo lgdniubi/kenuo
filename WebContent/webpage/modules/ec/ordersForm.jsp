@@ -5,6 +5,7 @@
 <head>
 	<title>订单修改</title>
 	<meta name="decorator" content="default"/>
+	<link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
 	<script type="text/javascript">
 		
 		var validateForm;
@@ -17,6 +18,13 @@
 				  top.layer.alert('订单成交价格不能小于0元!', {icon: 0, title:'提醒'}); 
 				  return;
 			}
+			
+			var sysUserId = $("#sysUserId").val(); 
+			if(sysUserId == undefined){
+				top.layer.alert('提成人员信息不能为空!', {icon: 0, title:'提醒'}); 
+				return;
+			}
+			
 			 $("#inputForm").submit();
 			 return true;
 				 
@@ -123,7 +131,7 @@
 				    type: 2, 
 				    area: ['600px', '450px'],
 				    title:"充值",
-				    content: "${ctx}/ec/orders/addTopUp?orderid="+orderid+"&singleRealityPrice="+singleRealityPrice+"&userid="+userid+"&isReal="+isReal+"&goodsBalance="+goodsBalance,
+				    content: "${ctx}/ec/orders/addTopUp?orderid="+orderid+"&singleRealityPrice="+singleRealityPrice+"&userid="+userid+"&isReal="+isReal+"&goodsBalance="+goodsBalance+"&servicetimes="+servicetimes,
 				    btn: ['确定', '关闭'],
 				    yes: function(index, layero){
 				    	var orderid = $("#orderid").val();
@@ -153,6 +161,13 @@
 							$(loading).hide();
 							top.layer.alert('请计算费用！', {icon: 0, title:'提醒'});
 							return;
+						}
+						if(servicetimes == 999){       //当充值的对象时时限卡时，充值时必须将尾款全部补齐
+							if(topUpTotalAmount < orderArrearage){     //充值金额+使用的账户余额<欠款
+								$(loading).hide();
+								top.layer.alert('尾款剩余'+orderArrearage+'元，补齐尾款才能预约！', {icon: 0, title:'提醒'});
+								return;
+							}
 						}
 						
 						//查询用户账户余额
@@ -213,14 +228,13 @@
          $(obj).parent().parent().remove();
      }
 	//删除提成人员
-     function delFileMtmyUserInfo(obj){
-		var mtmyUserId = $("#mtmyUserId").val();
+     function delFileSysUserInfo(obj,pushmoneyRecordId){
 		$.ajax({
 			type:"post",
 			data:{
-				mtmyUserId:mtmyUserId
+				pushmoneyRecordId:pushmoneyRecordId
 			 },
-			url:"${ctx}/ec/orders/deleteMtmyUserInfo",
+			url:"${ctx}/ec/orders/deleteSysUserInfo",
 			success:function(date){
 				if(date == 'success'){
 					$(obj).parent().parent().remove();
@@ -257,14 +271,14 @@
 		});
      }
 	
-     function getMtmyUserInfo(){
+     function getSysUserInfo(){
     	var operationName = $("#operationName").val();
  		if ($("#mtmyUserButton").hasClass("disabled")){
  			return true;
  		}
  		// 正常打开	
  		top.layer.open({
- 		    type: 2, 
+ 			type: 2, 
  		    area: ['550px', '420px'],
  		    title:"提成人员选择",
  		    ajaxData:{selectIds: $("#goodselectId").val()},
@@ -272,21 +286,24 @@
  		    btn: ['确定', '关闭']
      	    ,yes: function(index, layero){
      	    	var obj =  layero.find("iframe")[0].contentWindow;
-     	    	var mtmyUserId = obj.document.getElementById("mtmyUserId").value; //员工id
-     	    	var mtmyUserMobile = obj.document.getElementById("mtmyUserMobile").value; //员工电话
-     	    	var mtmyUserName = obj.document.getElementById("mtmyUserName").value; //员工名称
+     	    	var sysUserId = obj.document.getElementById("sysUserId").value; //员工id
+     	    	var sysMobile = obj.document.getElementById("sysMobile").value; //员工电话
+     	    	var sysName = obj.document.getElementById("sysName").value; //员工名称
      	    	var pushMoney = obj.document.getElementById("pushMoney").value; //提成金额
      	    	var orderid =  $("#orderid").val();
      	    	var isReal =  $("#isReal").val();
      	    	if(pushMoney==""){
      	    		top.layer.alert('填写提成金额！', {icon: 0, title:'提醒'});
      	    		return;
+     	    	}else if(sysUserId == ""){
+    	    		top.layer.alert('填写提成人员！', {icon: 0, title:'提醒'});
+     	    		return;
      	    	}else{
      	    		$.ajax({
          				type:"post",
          				data:{
          					orderId:orderid,
-         					pushmoneyUserId:mtmyUserId,
+         					pushmoneyUserId:sysUserId,
          					pushMoney:pushMoney
          				 },
          				url:"${ctx}/ec/orders/saveOrderPushmoneyRecord",
@@ -369,15 +386,16 @@
 	}
 window.onload=initStatus;
 
-	function ToAdvance(recid){
+	function ToAdvance(recid,servicetimes,orderArrearage){
 		var userid = $("#userid").val();
 		var orderid = $("#orderid").val();
 		var isReal = $("#isReal").val();
+		var channelFlag = $("#channelFlag").val();
 		top.layer.open({
 		    type: 2, 
 		    area: ['600px', '450px'],
 		    title:"处理预约金",
-		    content: "${ctx}/ec/orders/handleAdvanceFlagForm?recid="+recid+"&userid="+userid,
+		    content: "${ctx}/ec/orders/handleAdvanceFlagForm?recid="+recid+"&userid="+userid+"&servicetimes="+servicetimes+"&orderArrearage="+orderArrearage,
 		    btn: ['确定', '关闭'],
 		    yes: function(index, layero){
 		    	var obj =  layero.find("iframe")[0].contentWindow;
@@ -388,7 +406,10 @@ window.onload=initStatus;
 					data:{
 						sum:sum,
 						recid:recid, 
-						userid:userid
+						userid:userid,
+						servicetimes:servicetimes,
+						orderArrearage:orderArrearage,
+						channelFlag:channelFlag
 					 },
 					url:"${ctx}/ec/orders/handleAdvanceFlag?recid="+recid+"&userid="+userid+"&orderid="+orderid,
 					success:function(date){
@@ -416,6 +437,20 @@ window.onload=initStatus;
 		top.openTab("${ctx}/ec/invoice/list?orderId="+orderid,"发票列表", false);
 		var index = parent.layer.getFrameIndex(window.name);
 		top.layer.close(index);
+	}
+	// 强制取消
+	function forcedCancel(orderId){
+		layer.confirm('确认强制取消订单吗？', {
+			btn: ['确定','取消'], //按钮  可以设置多个按钮 具体可参考 http://layer.layui.com/api.html
+			icon: 3, 
+			title:'系统提示'
+		},function(index){	// 点击确认事件
+			layer.close(index);	// 关闭弹出框  若不关闭 则可以点击多次确认按钮
+			$(".loading").show();
+			window.location = "${ctx}/ec/orders/forcedCancel?orderid="+orderId;
+	    }, function(){ // 点击取消事件
+	    		
+	    }); 
 	}
 </script>
 </head>
@@ -573,7 +608,7 @@ window.onload=initStatus;
 													</c:if>
 													<c:if test="${orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag == 1}">
 														<c:if test="${orders.orderstatus == 4 && orderGood.sumAppt == 1}">
-															<a href="#" onclick="ToAdvance(${orderGood.recid})"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
+															<a href="#" onclick="ToAdvance(${orderGood.recid},${orderGood.servicetimes},${orderGood.orderArrearage })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
 														</c:if>
 														<c:if test="${orders.orderstatus != 4 || orderGood.sumAppt == 0}">
 															<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
@@ -704,13 +739,13 @@ window.onload=initStatus;
 						<c:if test="${orders.isNeworder == 0}">
 							<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 								<div class="pull-left">
-									<h4>人员提成信息：</h4>
+									<h4><font color="red">*</font>人员提成信息：</h4>
 								</div>
-								<c:if test="${type != 'view' }">
+								<%-- <c:if test="${type != 'view' }">
 									<div class="pull-right">
-										<a href="#" onclick="getMtmyUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
+										<a href="#" onclick="getSysUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
 									</div>
-								</c:if>
+								</c:if> --%>
 								<p></p>
 								<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
 									<thead>
@@ -720,20 +755,21 @@ window.onload=initStatus;
 											<th style="text-align: center;">提成金额</th>
 											<th style="text-align: center;">操作人</th>
 											<th style="text-align: center;">操作时间</th>
-											<c:if test="${type != 'view' }">
+											<%-- <c:if test="${type != 'view' }">
 												<th style="text-align: center;">操作</th>
-											</c:if>
+											</c:if> --%>
 										</tr>
 									</thead>
-									<tbody id="mtmyUserInfo" style="text-align:center;">
+									<tbody id="sysUserInfo" style="text-align:center;">
 										<c:forEach items="${orders.orderPushmoneyRecords }" var="orderPushmoneyRecord" varStatus="stauts">
 											<tr>
 												<td>
-													<input type="hidden" id="mtmyUserId" name="mtmyUserId" value="${orderPushmoneyRecord.pushmoneyUserId }" />
-													<input id="mtmyUserName" name="mtmyUserName" type="text" value="${orderPushmoneyRecord.pushmoneyUserName }" class='form-control' readonly='readonly'>
+													<input type="hidden" id="sysUserId" name="sysUserId" value="${orderPushmoneyRecord.pushmoneyUserId }" />
+													<input type="hidden" id="pushmoneyRecordId" name="pushmoneyRecordId" value="${orderPushmoneyRecord.pushmoneyRecordId }" />
+													<input id="sysName" name="sysName" type="text" value="${orderPushmoneyRecord.pushmoneyUserName }" class='form-control' readonly='readonly'>
 												</td>
 												<td>
-													<input id="mtmyUserMobile" name="mtmyUserMobile" type="text" value="${orderPushmoneyRecord.pushmoneyUserMobile }" class='form-control' readonly='readonly'>
+													<input id="sysMobile" name="sysMobile" type="text" value="${orderPushmoneyRecord.pushmoneyUserMobile }" class='form-control' readonly='readonly'>
 												</td>
 												<td>
 													${orderPushmoneyRecord.pushMoney }
@@ -745,9 +781,9 @@ window.onload=initStatus;
 												<td>
 													<fmt:formatDate value="${orderPushmoneyRecord.createDate }" pattern="yyyy-MM-dd HH:mm:ss" />
 												</td>
-												<c:if test="${type != 'view' }">
-													<td><a href="#" class="btn btn-danger btn-xs" onclick="delFileMtmyUserInfo(this)"><i class='fa fa-trash'></i> 删除</a></td>
-												</c:if>
+												<%-- <c:if test="${type != 'view' }">
+													<td><a href="#" class="btn btn-danger btn-xs" onclick="delFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId })"><i class='fa fa-trash'></i> 删除</a></td>
+												</c:if> --%>
 											</tr>
 										</c:forEach>
 									</tbody>
@@ -853,7 +889,7 @@ window.onload=initStatus;
 					<shiro:hasPermission name="ec:orders:edit">
 						<c:if test="${type != 'view' }">
 							<c:if test="${orders.isReal == 0   and orders.orderstatus==1}">
-								<a href="${ctx}/ec/orders/forcedCancel?orderid=${orders.orderid}" onclick="forcedCancel('${orders.orderid}')" onclick="return confirmx('确认强制取消订单吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-save"></i>强制取消</a>
+								<a href="#" onclick="forcedCancel('${orders.orderid}')" class="btn btn-danger btn-xs"><i class="fa fa-save"></i>强制取消</a>
 							</c:if>
 							<c:if test="${orders.isReal == 0   and orders.orderstatus!=1}">
 								<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>

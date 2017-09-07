@@ -39,6 +39,7 @@
 		  g.attr_type AS 'attrType',
 		  g.spec_type AS 'specType',
 		  g.give_integral AS 'giveIntegral',
+		  g.integral AS 'integral',
 		  g.sales_sum AS 'salesSum',
 		  g.region_name AS 'regionName',
 		  g.action_type AS 'actionType',
@@ -160,6 +161,9 @@
 		<if test="franchiseeId !=null and franchiseeId !=''">
 			AND g.franchisee_id=#{franchiseeId}
 		</if>
+		<if test="goodsBrandId !=null and goodsBrandId !=''">
+			AND g.goodsbrand_id=#{goodsBrandId}
+		</if>
 		<if test="goodsCategoryId != null and goodsCategoryId != ''">
 			AND g.category_id=#{goodsCategoryId} 
 		</if>
@@ -167,9 +171,10 @@
 			AND g.action_type=#{actionType}
 		</if>
 		<if test="goodsName !=null and goodsName!=''">
-			AND g.goods_name like
+			AND g.goods_name like 
 			<if test="dbName == 'oracle'">'%'||#{goodsName} ||'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{goodsName} , '%')</if>
+			OR g.goods_id = #{goodsName}
 		</if>
 		<if test="isReal !=null and isReal!=''">
 			AND g.is_real = #{isReal}
@@ -179,6 +184,9 @@
 		</if>
 		<if test="isAppshow != null and isAppshow != ''">
 			AND g.is_appshow = #{isAppshow}
+		</if>
+		<if test="goodsId != 0">
+			AND g.goods_id = #{goodsId}
 		</if>
 	</select>
 	<!-- 根据多个分类查询上商品 -->
@@ -190,6 +198,18 @@
 			<include refid="goodsJoins"/> 
 		WHERE g.del_flag = 0  AND g.category_id in (#{cateId})
 
+	</select>
+	<!-- 通过商品ID查询卡项中需要数据 -->
+	<select id="findGoodsBygoodsId" resultType="Goods">
+		SELECT
+			g.goods_id AS 'goodsId',
+			g.goods_name AS 'goodsName',
+			g.original_img AS 'originalImg',
+			g.service_min AS 'serviceMin',
+			g.is_real AS 'isReal'
+		FROM
+			mtmydb.mtmy_goods g
+		WHERE g.del_flag = 0  AND g.goods_id = #{goodsId}
 	</select>
 	
 	<!-- 根据商品id，查询商品信息 -->
@@ -220,6 +240,7 @@
 		  g.attr_type AS 'attrType',
 		  g.spec_type AS 'specType',
 		  g.give_integral AS 'giveIntegral',
+		  g.integral AS 'integral',
 		  g.sales_sum AS 'salesSum',
 		  g.region_name AS 'regionName',
 		  g.service_min AS 'serviceMin'
@@ -261,6 +282,7 @@
 		  attr_type,
 		  spec_type,
 		  give_integral,
+		  integral,
 		  sales_sum,
 		  region_name,
 		  action_type,
@@ -301,6 +323,7 @@
 		    #{attrType},
 		    #{specType},
 		    #{giveIntegral},
+		    #{integral},
 		    #{salesSum},
 		    #{regionName},
 		    #{actionType},
@@ -309,10 +332,10 @@
 		    SYSDATE(),
 		    SYSDATE(),
 		    #{goodsType},
-		    <if test="isReal != 1">
+		    <if test="isReal == 0">
 		    	0,
 		    </if>
-		    <if test="isReal == 1">
+		    <if test="isReal != 0">
 		    	#{advancePrice},
 		    </if>
 		    #{supplierId}
@@ -351,6 +374,7 @@
 			  attr_type = #{attrType},
 			  spec_type = #{specType},
 			  give_integral = #{giveIntegral},
+			  integral = #{integral},
 			  sales_sum = #{salesSum},
 			  region_name = #{regionName},
 			  service_min = #{serviceMin},
@@ -727,4 +751,5 @@
 	<select id="selectByMaxSort" resultType="int">
 		SELECT MAX(sort) as num FROM mtmydb.mtmy_goods 
 	</select>
+	
 </mapper>

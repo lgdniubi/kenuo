@@ -92,6 +92,16 @@ public class Goods extends DataEntity<Goods> {
 	private String rank;		//商品评论星级
 	private int commentNum;		//商品评论总数
 	private int buyCount;		//商品购买总数
+	
+	private int integral ;		//赠送云币数量
+	//---------------------------套卡使用字段-----------------------------------
+	private List<Integer> goodsIds;			//卡项商品 ID
+	private List<Integer> goodsNums;		//卡项商品 次（个）数
+	private List<Double> marketPrices;		//卡项商品 市场单价
+	private List<Double> prices;			//卡项商品 优惠价
+	private List<Double> totalMarketPrices;	//卡项商品 市场价合计
+	private List<Double> totalPrices;		//卡项商品 优惠价合计
+	
 	/**
 	 * get/set
 	 */
@@ -467,7 +477,47 @@ public class Goods extends DataEntity<Goods> {
 	public void setBuyCount(int buyCount) {
 		this.buyCount = buyCount;
 	}
-	
-	
+	public int getIntegral() {
+		return integral;
+	}
+	public void setIntegral(int integral) {
+		this.integral = integral;
+	}
+	public List<Integer> getGoodsIds() {
+		return goodsIds;
+	}
+	public void setGoodsIds(List<Integer> goodsIds) {
+		this.goodsIds = goodsIds;
+	}
+	public List<Integer> getGoodsNums() {
+		return goodsNums;
+	}
+	public void setGoodsNums(List<Integer> goodsNums) {
+		this.goodsNums = goodsNums;
+	}
+	public List<Double> getMarketPrices() {
+		return marketPrices;
+	}
+	public void setMarketPrices(List<Double> marketPrices) {
+		this.marketPrices = marketPrices;
+	}
+	public List<Double> getPrices() {
+		return prices;
+	}
+	public void setPrices(List<Double> prices) {
+		this.prices = prices;
+	}
+	public List<Double> getTotalMarketPrices() {
+		return totalMarketPrices;
+	}
+	public void setTotalMarketPrices(List<Double> totalMarketPrices) {
+		this.totalMarketPrices = totalMarketPrices;
+	}
+	public List<Double> getTotalPrices() {
+		return totalPrices;
+	}
+	public void setTotalPrices(List<Double> totalPrices) {
+		this.totalPrices = totalPrices;
+	}
 	
 }

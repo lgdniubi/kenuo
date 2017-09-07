@@ -38,6 +38,6 @@ public interface OrderPushmoneyRecordDao extends TreeDao<OrderPushmoneyRecord> {
 	 * 删除订单提成人员信息
 	 * @param mtmyUserId
 	 */
-	void deleteMtmyUserInfo(@Param("mtmyUserId")Integer mtmyUserId);
+	void deleteSysUserInfo(int pushmoneyRecordId);
 
 }

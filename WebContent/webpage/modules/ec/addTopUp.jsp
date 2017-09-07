@@ -18,7 +18,7 @@
 				<div class="tab-content" id="tab-content">
 	                <div class="tab-inner">
 	                	<input type="hidden" id="userid" name="userid" value="${userid }" />
-	                	<c:if test="${isReal == 1 }"> <!-- 0实物 -->
+	                	<c:if test="${isReal == 1 && servicetimes != 999}"> <!-- 0实物 -->
 		                	<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">*</font>服务单次价：</label>
 		                	${singleRealityPrice }<font color="red">&nbsp;&nbsp;充值金额要满足单次价的倍数！</font>
 	                	</c:if>
@@ -29,8 +29,8 @@
 						<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">*</font>充值金额：</label>
 						<input type="text" id="rechargeAmount" value="0" name="rechargeAmount" class="form-control required" style="width:150px;"  value="0" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';"/>
 						<p></p>
-						<input type="checkbox" id="ichecks" /><label class="active">账户余额：</label>
-						<input type="text" id="accountBalance" name="accountBalance" style="width:150px;" value="0" class="form-control required" value="0" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';"/>（可用余额：<label id="ye"></label>）
+						&nbsp;<input type="checkbox" id="ichecks" /><label class="active">账户余额：</label>
+						<input type="text" id="accountBalance" name="accountBalance" readonly="readonly" style="width:150px;" value="0" class="form-control required" value="0" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';"/>（可用余额：<label id="ye"></label>）
 						<p></p>
 						<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">*</font>总付款：</label>
 						<input type="hidden" id="topUpTotalAmount" name="topUpTotalAmount" readonly="readonly" class="form-control required" style="width:150px;" />
@@ -70,6 +70,7 @@
 		$(document).ready(function() {
 			$("#ichecks").change(function(){
 				if($(this).is(":checked")){
+					$("#accountBalance").removeAttr("readonly");
 					var userid = $("#userid").val();
 					$.ajax({
 						type:"post",
@@ -86,6 +87,7 @@
 					}); 
 				}else{
 					$("#accountBalance").val(0);
+					$("#accountBalance").attr("readonly",true);
 				}
 			});
 		});

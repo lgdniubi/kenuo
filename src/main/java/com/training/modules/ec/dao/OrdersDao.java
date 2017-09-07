@@ -8,6 +8,8 @@ import org.apache.ibatis.annotations.Param;
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.crm.entity.CrmOrders;
+import com.training.modules.ec.entity.Goods;
+import com.training.modules.ec.entity.IntegralsLog;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderInvoice;
 import com.training.modules.ec.entity.OrderInvoiceRelevancy;
@@ -309,4 +311,30 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @return
 	 */
 	public List<OrderGoods> selectOrdersToUser(Orders orders);
+	
+	/**
+	 * 查找卡项的子项
+	 * @param cardId
+	 * @return
+	 */
+	public List<Goods> selectCardSon(int cardId);
+	
+	/**
+	 * 充值，处理预约金送云币日志
+	 * @param integralsLog
+	 */
+	public void insertIntegralLog(IntegralsLog integralsLog);
+	
+	/**
+	 * 确认售后,扣减用户云币
+	 * @param orders
+	 */
+	public void updateIntegralAccount(Orders orders);
+	
+	/**
+	 * 查询妃子校用户信息
+	 * @param mobile
+	 * @return
+	 */
+	public Orders getSysUser(String mobile);
 }

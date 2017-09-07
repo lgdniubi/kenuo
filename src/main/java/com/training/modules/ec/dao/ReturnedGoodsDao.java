@@ -82,4 +82,56 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 */
 	public List<ReturnedGoods> findListByUser(ReturnedGoods returnedGoods);
 	
+	/**
+	 * 确定商品是否售后    (是:正在售后    或者   已经售后)
+	 * @param returnedGoods
+	 * @return
+	 */
+	public int getReturnedGoods(ReturnedGoods returnedGoods);
+	/**
+	 * 查询订单是否正在售后 或者 已经售后 的个数
+	 * @param returnedGoods
+	 * @return
+	 */
+	public int getReturnGoodsNum(ReturnedGoods returnedGoods);
+	/**
+	 * 卡项售后子项添加到mtmy_returned_goods_card
+	 * @param rg
+	 */
+	public void insertReturnGoodsCard(ReturnedGoods rg);
+	/**
+	 * 查询套卡子项虚拟商品的剩余次数(购买次数-预约次数)
+	 * @param returnedGoods
+	 * @return
+	 */
+	public List<ReturnedGoods> getReturnNum(ReturnedGoods returnedGoods);
+	/**
+	 * 修改套卡子项虚拟商品的剩余次数
+	 * @param rgn
+	 */
+	public void updateCardNum(ReturnedGoods rgn);
+	/**
+	 * 查询出通用卡的售后次数(mapping表中的service_times - appt_order表中的预约次数)
+	 * @param returnedGoods
+	 * @return
+	 */
+	public ReturnedGoods getCommonNum(ReturnedGoods returnedGoods);
+	/**
+	 * 修改通用卡的售后次数
+	 * @param commonNum
+	 */
+	public void updateCommonNum(ReturnedGoods commonNum);
+	/**
+	 * 查询卡项子项实物的售后数量
+	 * @param returnedGoods
+	 * @return
+	 */
+	public List<ReturnedGoods> getRealnum(ReturnedGoods returnedGoods);
+	/**
+	 * 查询订单是否售后或者正在
+	 * @param returnedGoods
+	 * @return
+	 */
+	public int getReturnedGoodsNum(ReturnedGoods returnedGoods);
+	
 }

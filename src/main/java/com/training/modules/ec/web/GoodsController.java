@@ -34,6 +34,7 @@ import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.entity.GoodsAttribute;
 import com.training.modules.ec.entity.GoodsAttributeMappings;
 import com.training.modules.ec.entity.GoodsBrand;
+import com.training.modules.ec.entity.GoodsCard;
 import com.training.modules.ec.entity.GoodsCategory;
 import com.training.modules.ec.entity.GoodsSpec;
 import com.training.modules.ec.entity.GoodsSpecImage;
@@ -43,6 +44,7 @@ import com.training.modules.ec.entity.GoodsType;
 import com.training.modules.ec.service.ActionInfoService;
 import com.training.modules.ec.service.GoodsAttributeService;
 import com.training.modules.ec.service.GoodsBrandService;
+import com.training.modules.ec.service.GoodsCardService;
 import com.training.modules.ec.service.GoodsCategoryService;
 import com.training.modules.ec.service.GoodsService;
 import com.training.modules.ec.service.GoodsSpecItemService;
@@ -93,6 +95,8 @@ public class GoodsController extends BaseController{
 	private ActionInfoService actionInfoService;
 	@Autowired
 	private OrderGoodsService orderGoodsService;
+	@Autowired
+	private GoodsCardService goodsCardService;
 	
 	/**
 	 * 分页查询商品属性
@@ -134,7 +138,7 @@ public class GoodsController extends BaseController{
 	 */
 	@RequiresPermissions(value={"ec:goods:view","ec:goods:add","ec:goods:edit"},logical=Logical.OR)
 	@RequestMapping(value = {"form"})
-	public String form(Goods goods,Model model,HttpServletRequest request){
+	public String form(Goods goods,GoodsCard goodsCard,Model model,HttpServletRequest request, HttpServletResponse response){
 		
 		String opflag = request.getParameter("opflag");
 		String id = request.getParameter("id");
@@ -148,6 +152,7 @@ public class GoodsController extends BaseController{
 			//查询商品品牌
 			List<GoodsBrand> goodsBrandList = goodsBrandService.findAllList(new GoodsBrand());
 			model.addAttribute("goodsBrandList", goodsBrandList);
+			
 			
 			if (null == id || "".equals(id)){
 				//获取商品sort排序
@@ -165,6 +170,15 @@ public class GoodsController extends BaseController{
 				goods.setIsOnSale("0");
 				goods.setIsFreeShipping("1");
 				goods.setIsNew("0");
+				
+				//添加套卡或者通用卡的路径
+				if(StringUtils.isNotEmpty(opflag)){
+					if(opflag.equals("ADDSUIT")){//套卡
+						return "modules/ec/goodsFormSuit";
+					}else if(opflag.equals("ADDCOMMON")){//通用卡
+						return "modules/ec/goodsFormCommon";
+					}
+				}
 				
 			}else{
 				//修改
@@ -205,7 +219,7 @@ public class GoodsController extends BaseController{
 					Map<String, List<String>> specitemmaps = new LinkedHashMap<String, List<String>>();//保存规格的规格项数组
 					
 					StringBuffer tablecontent = new StringBuffer();
-					//商品规格
+					//商品规格 begin
 					GoodsSpec gs = new GoodsSpec();
 					gs.setTypeId(Integer.parseInt(goods.getSpecType()));
 					List<GoodsSpec> gslist = goodsSpecService.findList(gs);
@@ -389,6 +403,179 @@ public class GoodsController extends BaseController{
 
 		model.addAttribute("goods", goods);
 		return "modules/ec/goodsForm";
+	}
+	/**
+	 * 商品 查看、修改、添加
+	 * @param goods
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequiresPermissions(value={"ec:goods:view","ec:goods:add","ec:goods:edit"},logical=Logical.OR)
+	@RequestMapping(value = {"formCard"})
+	public String formCard(Goods goods,GoodsCard goodsCard,Model model,HttpServletRequest request, HttpServletResponse response){
+		
+		String id = request.getParameter("id");
+		
+		//查询商品类型
+		List<GoodsType> goodsTypeList = goodsTypeService.findAllList(new GoodsType());
+		model.addAttribute("goodsTypeList", goodsTypeList);
+		
+		//查询商品品牌
+		List<GoodsBrand> goodsBrandList = goodsBrandService.findAllList(new GoodsBrand());
+		model.addAttribute("goodsBrandList", goodsBrandList);
+		try {
+			//根据商品ID，查询商品信息
+			goods.setGoodsId(Integer.parseInt(id));
+			goods = goodsService.get(goods);
+			goods.setGoodsContent(HtmlUtils.htmlEscape(goods.getGoodsContent()));
+			int goodsNum=orderGoodsService.numByGoodsId(goods.getGoodsId()+"");
+			goods.setGoodsNum(goodsNum);
+			//查询商品相册、商品护理流程 begin
+			goods.setGoodsImagesList(goodsService.findGoodsImages(goods));
+			//查询商品相册、商品护理流程 end
+			
+			//通用卡存在商品规格 begin
+			//根据商品ID，查询所有规格价格信息
+			if(goods.getIsReal().equals("3")){
+				List<GoodsSpecPrice> gspList = goodsService.findGoodsSpecPrice(goods);
+				List<String> gspList2 = new ArrayList<String>();
+				if(gspList.size() > 0){
+					for (int i = 0; i < gspList.size(); i++) {
+						GoodsSpecPrice gsp = gspList.get(i);
+						String[] value = gsp.getSpecKey().split("_");
+						for (int j = 0; j < value.length; j++) {
+							gspList2.add(value[j]);
+						}
+					}
+				}
+				logger.debug("#####[gspList2]去重前:"+gspList2.toString());
+				
+				if(gspList2.size() > 0){
+					//进行去重
+					gspList2 = GoodsUtil.removeDuplicateWithOrder(gspList2);
+					logger.debug("#####[gspList2]去重后:"+gspList2.toString());
+					
+					//根据商品id，查询出商品规格图片
+					List<GoodsSpecImage> goodsSpecImagesList = goodsService.findspecimgbyid(goods);
+					
+					Map<String, List<String>> specitemmaps = new LinkedHashMap<String, List<String>>();//保存规格的规格项数组
+					
+					StringBuffer tablecontent = new StringBuffer();
+					//商品规格 begin
+					GoodsSpec gs = new GoodsSpec();
+					gs.setTypeId(Integer.parseInt(goods.getSpecType()));
+					List<GoodsSpec> gslist = goodsSpecService.findList(gs);
+					if(gslist.size() > 0){
+						for (int i = 0; i < gslist.size(); i++) {
+							gs = gslist.get(i);
+							tablecontent.append("<tr>");
+							tablecontent.append("<td>"+gs.getName()+"：</td>");
+							tablecontent.append("<td>");
+							List<GoodsSpecItem> gsilist = gs.getSpecItemList();
+							if(gsilist.size() > 0){
+								List<String> itesList = new ArrayList<String>();
+								for (int j = 0; j < gsilist.size(); j++) {
+									GoodsSpecItem gsi = gsilist.get(j);
+									
+									if(gspList2.contains(String.valueOf(gsi.getSpecItemId()))){
+										tablecontent.append("<span class='btn btn-success' data-spec_id='"+gs.getId()+"' data-item_id='"+gsi.getSpecItemId()+"'><input type='checkbox' name='"+gsi.getSpecItemId()+"'>"+gsi.getItem()+"</span>");
+										
+										GoodsSpecImage goodsSpecImage = GoodsUtil.getSpecImgObject(String.valueOf(gsi.getSpecItemId()), goodsSpecImagesList);
+										//若商品规格图片不为null时，则回写商品规格图片
+										if(null != goodsSpecImage){
+											tablecontent.append("<span id=\"item_img_"+gsi.getSpecItemId()+"\" style=\"margin-right: 8px;\" > ");
+											tablecontent.append("<img src=\""+goodsSpecImage.getSrc()+"\" style=\"width: 35px;height: 35px;\" onclick=\"specitemupload('"+gsi.getSpecItemId()+"')\">");
+											tablecontent.append("<input type=\"hidden\" value=\""+goodsSpecImage.getSrc()+"\" name=\"item_img["+gsi.getSpecItemId()+"]\">");
+											tablecontent.append("</span>");
+										}else{
+											tablecontent.append("<span id=\"item_img_"+gsi.getSpecItemId()+"\" style=\"margin-right: 8px;\" >");
+											tablecontent.append("<img src=\"/kenuo/static/ec/images/add-button.jpg\" style=\"width: 35px;height: 35px;\" onclick=\"specitemupload('"+gsi.getSpecItemId()+"')\">");
+											tablecontent.append("<input type=\"hidden\" value=\"\" name=\"item_img["+gsi.getSpecItemId()+"]\">");
+											tablecontent.append("</span>");
+										}
+										
+										itesList.add(String.valueOf(gsi.getSpecItemId()));
+									}else{
+										tablecontent.append("<span class='btn btn-default' data-spec_id='"+gs.getId()+"' data-item_id='"+gsi.getSpecItemId()+"'><input type='checkbox' name='"+gsi.getSpecItemId()+"'>"+gsi.getItem()+"</span>");
+										tablecontent.append("<span id=\"item_img_"+gsi.getSpecItemId()+"\" style=\"margin-right: 8px;\" >");
+										tablecontent.append("<img src=\"/kenuo/static/ec/images/add-button.jpg\" style=\"width: 35px;height: 35px;\" onclick=\"specitemupload('"+gsi.getSpecItemId()+"')\">");
+										tablecontent.append("<input type=\"hidden\" value=\"\" name=\"item_img["+gsi.getSpecItemId()+"]\">");
+										tablecontent.append("</span>");
+									}
+								}
+								specitemmaps.put(gs.getId(), itesList);
+							}
+							tablecontent.append("</td>");
+							tablecontent.append("</tr>");
+						}
+					}
+					//提交到页面展示
+					model.addAttribute("goodsSpectablecontent", tablecontent.toString());
+					
+					//除去map中value为空的数组
+					specitemmaps = GoodsUtil.removeMapNull(specitemmaps);
+					
+					if(specitemmaps.size() > 0 ){
+						
+						//根据选择的规格项，生成table内容
+						tablecontent = new StringBuffer();
+						tablecontent.append("<table class=\"table table-bordered\" id=\"goods_spec_input_table\">");//开始
+						tablecontent.append("<tr>");
+						
+						List<String[]> list = new ArrayList<String[]>();//保存规格的规格项数组
+						
+						for(Entry<String, List<String>> entry: specitemmaps.entrySet()) {
+							String key = entry.getKey();
+							GoodsSpec goodsSpec = new GoodsSpec();
+							goodsSpec.setId(key);
+							goodsSpec = goodsSpecService.get(goodsSpec);
+							tablecontent.append("<td><b>"+goodsSpec.getName()+"</b></td>");
+							
+							List<String> itemlists = entry.getValue();
+							String[] str = new String[itemlists.size()];
+							for (int i = 0; i < itemlists.size(); i++) {
+								str[i] = itemlists.get(i);
+							}
+							list.add(str);
+						}
+						
+						tablecontent.append("<td><b>优惠价</b></td>");
+						tablecontent.append("<td><b>市场价</b></td>");
+						tablecontent.append("<td><b>系统价</b></td>");
+						tablecontent.append("<td><b>报货价</b></td>");
+						tablecontent.append("<td><b>采购价</b></td>");
+						tablecontent.append("<td><b>库存</b></td>");
+						tablecontent.append("<td><b>条码</b></td>");
+						tablecontent.append("<td><b>商品编码</b></td>");
+						tablecontent.append("<td><b>供应商商品编码</b></td>");
+						tablecontent.append("<td><b>商品重量（克）</b></td>");
+						tablecontent.append("<td><b>服务次数</b></td>");
+						tablecontent.append("<td><b>截止时间（月）</b></td>");
+						tablecontent.append("</tr>");
+						
+						//判断规格项有值时，才进行查询
+						if(list.size() >0){
+							//规格项数组，排列组合
+							String str = "";
+							GoodsUtil.updategoodsSpecItem(list, list.get(0), str,gspList,tablecontent,goodsSpecItemService);
+						}
+						tablecontent.append("</table>");//结尾
+						//提交到页面展示
+						model.addAttribute("goodsSpecItemtablecontent", tablecontent.toString());
+					}
+					
+				}
+			}
+			//商品规格 end
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			BugLogUtils.saveBugLog(request, "查看套卡和通用卡  页面出现异常!", e);
+			logger.error("查看套卡和通用卡   页面出现异常，异常信息为："+e.getMessage());
+		}
+		model.addAttribute("goods", goods);
+		return "modules/ec/goodsFormView";
 	}
 	
 	/**
@@ -1178,8 +1365,11 @@ public class GoodsController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "treeGoodsData")
-	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String isReal,String isOnSale,String isAppshow,HttpServletResponse response) {
+	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String goodsId,String isReal,String isOnSale,String isAppshow,HttpServletResponse response) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
+		if("".equals(goodsId) || goodsId == null){
+			goodsId = "0";
+		}
 		Goods goods=new Goods();
 		goods.setGoodsCategoryId(goodsCategory);
 		goods.setGoodsName(goodsName);
@@ -1188,6 +1378,7 @@ public class GoodsController extends BaseController{
 		goods.setIsReal(isReal);
 		goods.setIsOnSale(isOnSale);
 		goods.setIsAppshow(isAppshow);
+		goods.setGoodsId(Integer.valueOf(goodsId));
 		if(actionId!=null){
 			goods.setActionId(Integer.parseInt(actionId));
 		}
@@ -1270,6 +1461,80 @@ public class GoodsController extends BaseController{
 	}
 	
 	/**
+	 * 卡项商品规格价格list
+	 * @param goods
+	 * @param model
+	 * @param request
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequiresPermissions(value={"ec:goods:goodsBySpecList"},logical=Logical.OR)
+	@RequestMapping(value = {"cardGoodsBySpecList"})
+	public String cardGoodsBySpecList(Goods goods,Model model,HttpServletRequest request,RedirectAttributes redirectAttributes){
+		String suitCardSons = "";
+		try {
+			List<GoodsSpecPrice> goodsspecpricelist = goodsService.findGoodsSpecPrice(goods);         //通用卡的规格信息
+			List<GoodsCard> goodsCardSons = goodsCardService.selectSonsByCardId(goods.getGoodsId());  //套卡的子项信息
+			if("2".equals(goods.getIsReal())){       //套卡商品
+				suitCardSons = suitCardSons +
+						"<thead>"+
+							"<tr>"+
+								"<th style='text-align: center;'>子项名称</th>"+
+								"<th style='text-align: center;'>次(个)数</th>"+
+								"<th style='text-align: center;'>市场价</th>"+
+								"<th style='text-align: center;'>优惠价</th>"+
+								"<th style='text-align: center;'>市场价合计</th>"+
+								"<th style='text-align: center;'>优惠价合计</th>"+
+							"</tr>"+
+						"</thead>"+
+						"<tbody>";
+				if(goodsCardSons.size() > 0){
+					for(GoodsCard goodsCard:goodsCardSons){
+						suitCardSons = suitCardSons +
+								"<tr style='text-align: center;'>"+
+									"<td>"+goodsCard.getGoodsName()+"</td>"+
+									"<td>"+goodsCard.getGoodsNum()+"</td>"+
+									"<td>"+goodsCard.getMarketPrice()+"</td>"+
+									"<td>"+goodsCard.getPrice()+"</td>"+
+									"<td>"+goodsCard.getTotalMarketPrice()+"</td>"+
+									"<td>"+goodsCard.getTotalPrice()+"</td>"+
+								"</tr>";
+					}
+				}
+				suitCardSons = suitCardSons +"</tbody>";
+			}else if("3".equals(goods.getIsReal())){   //通用卡商品
+				suitCardSons = suitCardSons +
+						"<thead>"+
+							"<tr>"+
+								"<th style='text-align: center;'>规格ID</th>"+
+								"<th style='text-align: center;'>规格名称</th>"+
+								"<th style='text-align: center;'>市场价</th>"+
+								"<th style='text-align: center;'>优惠价</th>"+
+							"</tr>"+
+						"</thead>"+
+						"<tbody>";
+				if(goodsspecpricelist.size() > 0){
+					for(GoodsSpecPrice goodsSpecPrice:goodsspecpricelist){
+						suitCardSons = suitCardSons +
+								"<tr style='text-align: center;'>"+
+									"<td>"+goodsSpecPrice.getSpecKey()+"</td>"+
+									"<td>"+goodsSpecPrice.getSpecKeyValue()+"</td>"+
+									"<td>"+goodsSpecPrice.getMarketPrice()+"</td>"+
+									"<td>"+goodsSpecPrice.getPrice()+"</td>"+
+								"</tr>";
+					}
+				}
+				suitCardSons = suitCardSons +"</tbody>";
+			}
+		} catch (Exception e) {
+			logger.error("卡项商品规格价格list 出现异常，异常信息为："+e.getMessage());
+			addMessage(redirectAttributes, "查看卡项商品规格价格出现异常，请与管理员联系");
+		}
+		model.addAttribute("suitCardSons", suitCardSons);
+		return "modules/ec/cardGoodsBySpecList";
+	}
+	
+	/**
 	 * 商品规格价格Form
 	 * @param goods
 	 * @param model
@@ -1328,4 +1593,27 @@ public class GoodsController extends BaseController{
 		}
 		return "redirect:" + adminPath + "/ec/goods/list";
 	};
+	/**
+	 * 添加 修改 套卡子项对应的商品
+	 * @param goods
+	 * @param request
+	 * @param model
+	 * @param flag
+	 * @return
+	 */
+	@RequestMapping(value="GoodsCardForm")
+	public String GoodsCardForm(Goods goods,HttpServletRequest request,Model model,String flag){
+		try{
+			String isReal = request.getParameter("isReal");
+			if(isReal != null && !"".equals(isReal)){
+				//套卡内的项目或商品不可跨商家，同一商家内可以跨品牌
+				model.addAttribute("franchiseeId", goods.getFranchiseeId());//所选商家
+				model.addAttribute("isReal", Integer.valueOf(isReal));
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "跳转增加主题图对应的商品页面", e);
+			logger.error("跳转增加主题图页面对应的商品出错信息：" + e.getMessage());
+		}
+		return "modules/ec/GoodsCardForm";
+	}
 }

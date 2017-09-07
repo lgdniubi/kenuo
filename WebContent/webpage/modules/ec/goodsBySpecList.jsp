@@ -85,17 +85,19 @@
 				<div class="ibox-content">
 					<table id="treeTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
 						<thead>
-							<th style="text-align: center;">规格ID</th>
-							<th style="text-align: center;">规格名称</th>
-							<th style="text-align: center;">优惠价</th>
-							<th style="text-align: center;">市场价</th>
-							<th style="text-align: center;">库存</th>
-							<th style="text-align: center;">条形码</th>
-							<th style="text-align: center;">规格编码</th>
-							<th style="text-align: center;">商品重量（克）</th>
-							<th style="text-align: center;">服务次数</th>
-							<th style="text-align: center;">截止时间（月）</th>
-							<th style="text-align: center;">操作</th>
+							<tr>
+								<th style="text-align: center;">规格ID</th>
+								<th style="text-align: center;">规格名称</th>
+								<th style="text-align: center;">优惠价</th>
+								<th style="text-align: center;">市场价</th>
+								<th style="text-align: center;">库存</th>
+								<th style="text-align: center;">条形码</th>
+								<th style="text-align: center;">规格编码</th>
+								<th style="text-align: center;">商品重量（克）</th>
+								<th style="text-align: center;">服务次数</th>
+								<th style="text-align: center;">截止时间（月）</th>
+								<th style="text-align: center;">操作</th>
+							</tr>
 						</thead>
 						<tbody>
 							<c:forEach items="${goodsspecpricelist}" var="goodsspecprice">
