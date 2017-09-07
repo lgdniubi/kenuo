@@ -24,21 +24,23 @@
 				return;
 			}
 			
-			var sysUserId = $("#sysUserId").val(); 
-			if(sysUserId == undefined){
-				top.layer.alert('提成人员信息不能为空!', {icon: 0, title:'提醒'}); 
-				return;
-			}
-			
-			var orderamount = $("#orderamount").val();
-			var pushMoneys = document.getElementsByName("pushMoney");
-			var pushMoneySum = 0;
-   			for(i=0;i<pushMoneys.length;i++){
-   				pushMoneySum = parseFloat(pushMoneySum) + parseFloat(pushMoneys[i].value);
-	    	 }
-			if(parseFloat(pushMoneySum) - parseFloat(orderamount) > 0){
-				top.layer.alert('提成人员的提成金额总和不能大于订单应付总价!', {icon: 0, title:'提醒'}); 
-				return;
+			if($("#isNeworder").val() == 0){
+				var sysUserId = $("#sysUserId").val(); 
+				if(sysUserId == undefined){
+					top.layer.alert('提成人员信息不能为空!', {icon: 0, title:'提醒'}); 
+					return;
+				}
+				
+				var orderamount = $("#orderamount").val();
+				var pushMoneys = document.getElementsByName("pushMoney");
+				var pushMoneySum = 0;
+	   			for(i=0;i<pushMoneys.length;i++){
+	   				pushMoneySum = parseFloat(pushMoneySum) + parseFloat(pushMoneys[i].value);
+		    	 }
+				if(parseFloat(pushMoneySum) - parseFloat(orderamount) > 0){
+					top.layer.alert('提成人员的提成金额总和不能大于订单应付总价!', {icon: 0, title:'提醒'}); 
+					return;
+				}
 			}
 			
 			$("#inputForm").submit();
