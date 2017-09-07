@@ -108,4 +108,18 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @return
 	 */
 	public OrderGoodsDetails selectOrderBalance(int recId);
+
+	/**
+	 * 根据订单号查询套卡的剩余金额
+	 * @param ogd
+	 * @return
+	 */
+	OrderGoodsDetails getOrderGoodsDetailSurplusAmountByOid(OrderGoodsDetails ogd);
+	
+	/**
+	 * 查询details表中AdvanceFlag=4的最新一条记录中SurplusAmount(套卡剩余金额)
+	 * @param orderId
+	 * @return
+	 */
+	public int getSurplusAmount(String orderId);
 }

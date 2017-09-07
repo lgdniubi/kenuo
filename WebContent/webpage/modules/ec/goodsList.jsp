@@ -107,7 +107,7 @@
 										<option ${(goodsBrand.id == goods.goodsBrandId)?'selected="selected"':''} value="${goodsBrand.id}">${goodsBrand.name}</option>
 									</c:forEach>
 			                    </select>
-								&nbsp;&nbsp;商品名称/关键字：<input id="querytext" name="querytext" maxlength="10" type="text" class="form-control" placeholder="商品名称/关键字" value="${goods.querytext }">
+								&nbsp;&nbsp;商品名称/关键字：<input id="querytext" name="querytext" type="text" class="form-control" placeholder="商品名称/关键字" value="${goods.querytext }">
 								&nbsp;&nbsp;活动名称：
 								<select class="form-control" id="actionId" name="actionId" style="text-align: center;width: 150px;">
 			                        <option value="0">全部活动</option>
@@ -147,11 +147,13 @@
 									<option value="1" ${(goods.isAppshow == '1')?'selected="selected"':''}>是</option>
 									<option value="0" ${(goods.isAppshow == '0')?'selected="selected"':''}>否</option>
 								</select>
-								&nbsp;&nbsp;实物：
+								&nbsp;&nbsp;商品类型：
 								<select class="form-control" style="text-align: center;width: 150px;" id="isReal" name="isReal">
 									<option value="-1" ${(goods.isReal == '-1')?'selected="selected"':''}>全部</option>
-									<option value="0" ${(goods.isReal == '0')?'selected="selected"':''}>是</option>
-									<option value="1" ${(goods.isReal == '1')?'selected="selected"':''}>否</option>
+									<option value="0" ${(goods.isReal == '0')?'selected="selected"':''}>实物</option>
+									<option value="1" ${(goods.isReal == '1')?'selected="selected"':''}>虚拟</option>
+									<option value="2" ${(goods.isReal == '2')?'selected="selected"':''}>套卡</option>
+									<option value="3" ${(goods.isReal == '3')?'selected="selected"':''}>通用卡</option>
 								</select>
 								&nbsp;&nbsp;
 								<shiro:hasPermission name="ec:goods:list">
@@ -174,6 +176,12 @@
 							<shiro:hasPermission name="ec:goods:add">
 								<a href="${ctx}/ec/goods/form?opflag=ADDPARENT">
 									<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" ><i class="fa fa-plus"></i> 添加商品</button>
+								</a>
+								<a href="${ctx}/ec/goods/form?opflag=ADDSUIT">
+									<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" ><i class="fa fa-plus"></i> 添加套卡</button>
+								</a>
+								<a href="${ctx}/ec/goods/form?opflag=ADDCOMMON">
+									<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" ><i class="fa fa-plus"></i> 添加通用卡</button>
 								</a>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="ec:goods:updateIsOnSale">
@@ -199,7 +207,7 @@
 								<th style="text-align: center;">活动名称</th>
 								<th style="text-align: center;">货号</th>
 								<th style="text-align: center;">商品分类</th>
-								<th style="text-align: center;">实物</th>
+								<th style="text-align: center;">商品类型</th>
 								<th style="text-align: center;">价格</th>
 								<th style="text-align: center;">总库存</th>
 								<th style="text-align: center;">剩余库存</th>
@@ -221,7 +229,12 @@
 									<td>${goods.actionName}</td>
 									<td>${goods.goodsSn}</td>
 									<td>${goods.goodsCategory.name}</td>
-									<td>${goods.isReal==0?"是":"否"}</td>
+									<td>
+										<c:if test="${goods.isReal==0}">实物</c:if>
+										<c:if test="${goods.isReal==1}">虚拟</c:if>
+										<c:if test="${goods.isReal==2}">套卡</c:if>
+										<c:if test="${goods.isReal==3}">通用卡</c:if>
+									</td>
 									<td>${goods.shopPrice}</td>
 									<td>${goods.totalStore}</td>
 									<td>${goods.storeCount}</td>
@@ -268,23 +281,37 @@
 									<td>${goods.sort}</td>
 									<td style="text-align: left;">
 										<shiro:hasPermission name="ec:goods:view">
-											<a href="http://wap.idengyun.com/mtmy-wap/goods/queryGoodsDetail.do?user_id=1000014&goods_id=${goods.goodsId}" class="btn btn-info btn-xs" target="_bank"><i class="fa fa-search-plus"></i> 预览</a>
-										</shiro:hasPermission> 
-										<shiro:hasPermission name="ec:goods:edit">
-				    						<a href="${ctx}/ec/goods/form?id=${goods.goodsId}&opflag=UPDATE" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
-					    				</shiro:hasPermission>
+											<a href="http://wap.idengyun.com/mtmy-wap/goods/queryGoodsDetail.do?goods_id=${goods.goodsId}" class="btn btn-info btn-xs" target="_bank"><i class="fa fa-search-plus"></i> 预览</a>
+										</shiro:hasPermission>
+										<c:if test="${goods.isReal != 2 && goods.isReal != 3}">
+											<shiro:hasPermission name="ec:goods:edit">
+				    							<a href="${ctx}/ec/goods/form?id=${goods.goodsId}&opflag=UPDATE&isReal=${goods.isReal}" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
+						    				</shiro:hasPermission>
+										</c:if>
+										<c:if test="${goods.isReal == 2 || goods.isReal == 3}">
+											<shiro:hasPermission name="ec:goods:view">
+				    							<a href="${ctx}/ec/goods/formCard?id=${goods.goodsId}&isReal=${goods.isReal}" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 查看</a>
+						    				</shiro:hasPermission>
+										</c:if>
 					    				<shiro:hasPermission name="ec:goods:del">
 											<a href="${ctx}/ec/goods/delete?id=${goods.goodsId}" onclick="return confirmx('要删除该商品吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
 										</shiro:hasPermission>
 										<shiro:hasPermission name="ec:goods:del">
 											<a href="#" onclick="openDialog('添加商品库存', '${ctx}/ec/goods/fromspecstocks?id=${goods.goodsId}&actionId=${goods.actionId}','600px', '400px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 补仓</a>
 										</shiro:hasPermission>
+										<c:if test="${goods.isReal != 2 && goods.isReal != 3}">
+											<shiro:hasPermission name="ec:goods:edit">
+												<a href="${ctx}/ec/goods/copyGood?goodsId=${goods.goodsId}&goodsName=${goods.goodsName}" onclick="return confirmx('确认复制该商品吗？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-file"></i>复制</a>
+											</shiro:hasPermission>
+										</c:if>
 										<shiro:hasPermission name="ec:goods:edit">
-											<a href="${ctx}/ec/goods/copyGood?goodsId=${goods.goodsId}&goodsName=${goods.goodsName}" onclick="return confirmx('确认复制该商品吗？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-file"></i>复制</a>
-										</shiro:hasPermission>
-										<shiro:hasPermission name="ec:goods:edit">
-											<a href="#" onclick="openDialogView('商品规格', '${ctx}/ec/goods/goodsBySpecList?goodsId=${goods.goodsId}','800px', '500px')" class="btn btn-danger btn-xs" ><i class="fa fa-edit"></i> 商品规格</a>
-										</shiro:hasPermission>
+											<c:if test="${goods.isReal == 0 || goods.isReal == 1}">
+												<a href="#" onclick="openDialogView('商品规格', '${ctx}/ec/goods/goodsBySpecList?goodsId=${goods.goodsId}','800px', '500px')" class="btn btn-danger btn-xs" ><i class="fa fa-edit"></i> 商品规格</a>
+											</c:if>
+											<c:if test="${goods.isReal == 2 || goods.isReal == 3}">
+												<a href="#" onclick="openDialogView('商品规格', '${ctx}/ec/goods/cardGoodsBySpecList?goodsId=${goods.goodsId}&isReal=${goods.isReal}','800px', '500px')" class="btn btn-danger btn-xs" ><i class="fa fa-edit"></i> 商品规格</a>
+											</c:if>
+										</shiro:hasPermission> 
 										<shiro:hasPermission name="ec:goods:refreshRedis">
 											<a href="${ctx}/ec/goods/refreshRedis?goodsId=${goods.goodsId}" onclick="return confirmx('确认刷新该商品(详情)缓存吗？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-file"></i>刷新缓存</a>
 										</shiro:hasPermission>

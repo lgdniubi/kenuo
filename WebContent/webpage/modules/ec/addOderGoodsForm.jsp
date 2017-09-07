@@ -5,6 +5,8 @@
 <head>
 <title>添加红包</title>
 <meta name="decorator" content="default" />
+<!-- 时间控件引用 -->
+<script type="text/javascript" src="${ctxStatic}/My97DatePicker/WdatePicker.js"></script>
 <!-- 内容上传 引用-->
 <style type="text/css">
 #one {
@@ -76,7 +78,10 @@
 				   if(isNeworderSon == 1){ //老客户
 						//$("#remaintimes").removeAttr("readonly");
 						$("#actualPayment").val(date.price);
-				   		
+				   		if($("#"+specgoodkey).val() == 999){
+				   			$("#remaintimes").val($("#"+specgoodkey).val());
+							$("#remaintimes").attr("readonly",true);
+				   		}
 					}else{
 						$("#remaintimes").val($("#"+specgoodkey).val());
 						$("#remaintimes").attr("readonly",true);
@@ -378,13 +383,23 @@
 				url:"${ctx}/ec/orders/computingCost",
 				success:function(date){
 					var isNeworderSon = $("#isNeworderSon").val()
-					if(isNeworderSon == 0){ //新订单
-						$("#debtMoney").val(date.debtMoney);
-						$("#spareMoney").val(date.spareMoney);
-						$("#remaintimes").val("");
+					
+					if($("#oldremaintimes").val() == 999){
+						$("#remaintimes").val(1);
+						$("#afterPayment").val(actualPayment);
+						$("#debtMoney").val(changeTwoDecimal_f(orderAmount-actualPayment));
+						$("#spareMoney").val(0);
+					}else{
+						
+						if(isNeworderSon == 0){ //新订单
+							$("#debtMoney").val(date.debtMoney);
+							$("#spareMoney").val(date.spareMoney);
+							$("#remaintimes").val("");
+						}						
+						$("#remaintimes").val(date.actualNum);
+						$("#afterPayment").val(date.afterPayment);
 					}
-					$("#afterPayment").val(date.afterPayment);
-					$("#remaintimes").val(date.actualNum);
+					
 					$("#orderAmount").attr("readonly",true);
 					$("#actualPayment").attr("readonly",true);
 					$("#computType").val(0);//已点击计算费用
@@ -420,7 +435,9 @@
 	//修改费用
 	function updateCompute(){
 		if($("#isNeworderSon").val() == 1){
-			$("#remaintimes").val("");
+			if($("#remaintimes").val() != 999){
+				$("#remaintimes").val("");
+			}
 		}else{
 			$("#orderAmount").removeAttr("readonly");
 			$("#actualPayment").removeAttr("readonly");
@@ -440,6 +457,20 @@
 			$("#compute").show();
 		}
 	}
+	 $(document).ready(function(){
+		if(${orders.isNeworder == 1}){
+			function today(){
+			    var today=new Date();
+			    var h=today.getFullYear();
+			    var m=today.getMonth()+1;
+			    var d=today.getDate();
+			    m= m<10?"0"+m:m;      
+			    d= d<10?"0"+d:d;  
+			    return h+"-"+m+"-"+d;
+			}
+			document.getElementById("realityAddTime").value = today(); 
+		}
+	 });
 </script>
 </head>
 <body>
@@ -552,6 +583,14 @@
 									<td><label class="pull-right">余额：</label></td>
 									<td><input id="spareMoney" name="spareMoney" maxlength="10" class="form-control required" readonly="true"  style="width:150px;height:30px;"/></td>
 								</tr>
+								<c:if test="${orders.isNeworder == 1}">
+									<tr>
+										<td><label class="pull-right"><font color="red">*</font>实际下单时间：</label></td>	
+										<td>
+											<input id="realityAddTime" name="realityAddTime" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'%y-%M-%d'})"/>
+										</td>
+									</tr>
+								</c:if>
 							</table>
 						</form:form>
 				</div>

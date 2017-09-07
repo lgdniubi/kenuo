@@ -118,7 +118,7 @@
 								document.getElementById("userName").innerHTML += names;
 								$("#mtmyOaNotifyRecordId").val(ids);
 								$("#mtmyOaNotifyRecordName").val(names);
-								
+								$("<a href='#' class='btn btn-success btn-xs' onclick='editNames()'><i class='fa fa-edit'></i> 修改</a> ").appendTo($("#userName"));
 								top.layer.close(index);
 						    	       },
 		    	cancel: function(index){ //或者使用btn2
@@ -182,6 +182,51 @@
 		function importFileTemplate(){
 			window.location.href= '${ctx}/ec/mtmyOaNotify/importPhonesOrders/template';
 		}
+		
+		//修改列推的用户
+		function editNames(){
+			top.layer.open({
+			    type: 2, 
+			    area: ['800px', '620px'],
+			    title:"列推用户选择",
+			    content: "${ctx}/ec/mtmyOaNotify/oaList?flag=editNames"+"&mtmyOaNotifyRecordIds="+$("#mtmyOaNotifyRecordId").val()+"&mtmyOaNotifyRecordNames="+$("#mtmyOaNotifyRecordName").val(),
+			    btn: ['确定', '关闭'],
+			    	yes: function(index, layero){
+			    			//  点击确定之后再删除其内容
+				    		$("#mtmyOaNotifyRecord").val("");
+							$("#mtmyOaNotifyRecordId").val("");
+							$("#mtmyOaNotifyRecordName").val("");
+							document.getElementById("userName").innerHTML="";
+			    		
+	    	    	   		var ids = [];
+	    	    	   		var names = [];
+							var obj = layero.find("iframe")[0].contentWindow;  
+							var ifmObj = obj.document.getElementById("select2"); 
+						
+						    var options = ifmObj.options;
+						    for(var i=0,len=options.length;i<len;i++){
+						        var opt = options[i];
+						        //jquery 数组去重
+						        if($.inArray(opt.value,ids)==-1) {
+						        	ids.push(opt.value);
+								}
+						        if($.inArray(opt.text,names)==-1) {
+						        	names.push(opt.text);
+								}
+						    }
+						   
+						    $("#mtmyOaNotifyRecord").val(ids);
+							document.getElementById("userName").innerHTML += names;
+							$("#mtmyOaNotifyRecordId").val(ids);
+							$("#mtmyOaNotifyRecordName").val(names);
+							$("<a href='#' class='btn btn-success btn-xs' onclick='editNames()'><i class='fa fa-edit'></i> 修改</a> ").appendTo($("#userName"));
+							top.layer.close(index);
+					    	       },
+	    	cancel: function(index){ //或者使用btn2
+	    	           //按钮【按钮二】的回调
+	    	       }
+			}); 
+		}
 	</script>
 </head>
 <body>
@@ -225,6 +270,7 @@
 			        	</td>
 			       		<td id="userName" class="width-35" colspan="3">
 			       			${mtmyOaNotify.mtmyOaNotifyRecordNames}
+			       			<a href='#' class='btn btn-success btn-xs' onclick='editNames()'><i class='fa fa-edit'></i> 修改</a>
 			       		</td>
 			        </tr>
 		        </c:if>

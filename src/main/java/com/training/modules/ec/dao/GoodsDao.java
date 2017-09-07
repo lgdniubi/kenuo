@@ -221,4 +221,10 @@ public interface GoodsDao extends CrudDao<Goods>{
 	 */
 	public int selectByMaxSort();
 	
+	/**
+	 * 通过商品ID查询卡项中需要数据
+	 * @param goodsId
+	 */
+	public Goods findGoodsBygoodsId(Integer goodsId);
+	
 }

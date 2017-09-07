@@ -23,21 +23,6 @@
 			id DESC
 		LIMIT 1
     </select>
-    
-    <!-- 查询店铺的预约数据 -->
-	<select id="queryShopApptData" resultType="ShopCountData" parameterType="java.lang.Integer">
-		SELECT
-			COUNT(mao.id) AS 'apptCount',
-			mao.shop_id AS 'shopId',
-			IFNULL((SELECT tss.shop_id FROM trains.train_shop_statistics tss WHERE tss.shop_id = mao.shop_id),"NULL")AS 'isExist'
-		FROM
-			mtmydb.mtmy_appt_order mao
-		WHERE
-			mao.appt_status IN (1, 2)
-			AND id > #{apptOrderId}
-		GROUP BY
-			mao.shop_id
-	</select>
 	
 	<!-- 查询店铺的评论数据  -->
 	<select id="queryShopCommentData" resultType="ShopCountData" parameterType="java.lang.Integer">

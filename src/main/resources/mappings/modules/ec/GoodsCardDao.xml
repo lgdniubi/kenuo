@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.GoodsCardDao">
+	
+	<sql id="goodsCardColumns">
+		  a.id AS 'goodsCardId',
+		  a.card_id AS 'cardId',
+		  a.goods_id AS 'goodsId',
+		  a.goods_name AS 'goodsName',
+		  a.goods_num AS 'goodsNum',
+		  a.service_min AS 'serviceMin',
+		  a.is_real AS 'isReal',
+		  a.market_price AS 'marketPrice',
+  		  a.price AS 'price',
+		  a.total_market_price AS 'totalMarketPrice',
+		  a.total_price AS 'totalPrice'
+	</sql>
+	
+	<sql id="goodsCardJoins">
+		LEFT JOIN mtmydb.mtmy_goods_category c ON c.category_id = g.category_id
+  		LEFT JOIN trains.sys_franchisee f ON f.id = g.franchisee_id
+    </sql>
+	
+	<!-- 分页查询数据 -->
+	<select id="findList" resultType="GoodsCard">
+		SELECT 
+			<include refid="goodsCardColumns"/>
+		FROM
+			mtmydb.mtmy_goods_card a 
+		WHERE 1=1
+			<if test="cardId !=null and cardId !=''">
+				AND a.card_id=#{cardId}
+			</if>
+		ORDER BY a.id DESC 
+	</select>
+	
+	<!-- 删除卡项 -->
+	<delete id="delete">
+		DELETE
+			FROM mtmydb.mtmy_goods_card
+		WHERE 
+			id = #{goodsCardId}
+	</delete>
+	
+	<!-- 根据商品ID查询价格 -->
+	<select id="findByGoodsCard" resultType="GoodsCard">
+		SELECT 
+			<include refid="goodsCardColumns"/>
+		FROM
+			mtmydb.mtmy_goods_card a
+		WHERE 
+			a.goods_id = #{goodsId}
+	</select>
+	
+	<!-- 保存-卡项信息 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="goodsId">
+		INSERT INTO mtmydb.mtmy_goods_card (
+		  card_id,
+		  goods_id,
+		  goods_name,
+		  original_img,
+		  goods_num,
+		  service_min,
+		  is_real,
+		  market_price,
+		  price,
+		  total_market_price,
+		  total_price
+		) 
+		VALUES
+		  ( #{cardId},
+		    #{goodsId},
+		    #{goodsName},
+		    #{originalImg},
+		    #{goodsNum},
+		    #{serviceMin},
+		    #{isReal},
+		    #{marketPrice},
+		    #{price},
+		    #{totalMarketPrice},
+		    #{totalPrice}
+		  )
+	</insert>
+	
+	<!-- 查询卡项的子项信息 -->
+	<select id="selectSonsByCardId" resultType="GoodsCard">
+		SELECT
+			<include refid="goodsCardColumns"/>
+		FROM mtmydb.mtmy_goods_card a
+		WHERE a.card_id=#{cardId}
+	</select>
+</mapper>

@@ -60,10 +60,6 @@ public class AppStartPageService extends CrudService<AppStartPageDao, AppStartPa
 		
 		if("1".equals(appStartPage.getIsOnSale())){//当前下架,要上架
 			appStartPageDao.changIsShowByType(appStartPage);
-		}else if("0".equals(appStartPage.getIsOnSale())){//启动页广告图下架,查询最近修改的数据
-			appStartPage = appStartPageDao.selectIdByType();
-			appStartPage.setIsOnSale("1");
-			appStartPageDao.changIsShowByType(appStartPage);
 		}
 		map.put("STATUS", "OK");
 		return map;

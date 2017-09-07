@@ -29,6 +29,23 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 	
 	private String advanceFlag;     //（0：否；1：是预约金，2：处理预约金，3：充值，4：退货）
 	
+	private double surplusAmount;   //套卡剩余金额
+	
+	private int integral;            //充值全部或者处理预约金等于全部价钱时赠送的云币，对应于mapping中的integral
+	private double sumOrderArrearage;    //待付尾款（充值全部或者处理预约金等于全部价钱时赠送云币时用的）
+	
+	private double couponPrice;         //红包面值
+	private double memberGoodsPrice;     //会员折扣优惠了多少钱
+	private double advancePrice;         //预约金
+	
+	public double getSurplusAmount() {
+		return surplusAmount;
+	}
+
+	public void setSurplusAmount(double surplusAmount) {
+		this.surplusAmount = surplusAmount;
+	}
+
 	public String getCreateByName() {
 		return createByName;
 	}
@@ -162,6 +179,46 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 
 	public void setAdvanceFlag(String advanceFlag) {
 		this.advanceFlag = advanceFlag;
+	}
+
+	public int getIntegral() {
+		return integral;
+	}
+
+	public void setIntegral(int integral) {
+		this.integral = integral;
+	}
+
+	public double getSumOrderArrearage() {
+		return sumOrderArrearage;
+	}
+
+	public void setSumOrderArrearage(double sumOrderArrearage) {
+		this.sumOrderArrearage = sumOrderArrearage;
+	}
+
+	public double getCouponPrice() {
+		return couponPrice;
+	}
+
+	public void setCouponPrice(double couponPrice) {
+		this.couponPrice = couponPrice;
+	}
+
+	public double getMemberGoodsPrice() {
+		return memberGoodsPrice;
+	}
+
+	public void setMemberGoodsPrice(double memberGoodsPrice) {
+		this.memberGoodsPrice = memberGoodsPrice;
+	}
+
+	public double getAdvancePrice() {
+		return advancePrice;
+	}
+
+	public void setAdvancePrice(double advancePrice) {
+		this.advancePrice = advancePrice;
 	}
 	
 }

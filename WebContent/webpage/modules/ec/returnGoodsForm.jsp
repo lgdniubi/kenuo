@@ -227,7 +227,7 @@
 				        <form:input path="returnAmount" htmlEscape="false" maxlength="10"  style="width:180px;" class="form-control required" readonly="true"/>
 					</c:if>
 					<p></p>
-					<c:if test="${returnedGoods.isReal==1}">
+					<c:if test="${returnedGoods.isReal==1 && returnedGoods.serviceTimes != 999}">
 						<label><!-- <font color="red">*</font> -->售后次数：</label>
 				        <form:input path="returnNum" htmlEscape="false" maxlength="10"  style="width:180px;" class="form-control required" readonly="true"/>
 					</c:if>

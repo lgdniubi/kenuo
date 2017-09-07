@@ -11,6 +11,15 @@
 		if(($("#districtId").val() != null && $("#districtId").val() != "" )||($("#nickname").val() != null && $("#nickname").val() != "")||($("#mobile").val() != null && $("#mobile").val() != "")){
 			$(".loading").show();
 			$("#select1").empty();
+			var arr = new Array(); //数组定义标准形式，不要写成Array arr = new Array();
+		    var all = new Array(); //定义变量全部保存
+			 $("#select2 option").each(function (){
+		          var txt = $(this).text(); //获取单个text
+		          var val = $(this).val(); //获取单个value
+		          arr.push(val);
+		          all.push(txt);
+		      });
+			
 			$.ajax({
 				 type:"get",
 				 data : $("#searchForm").serialize(),     //此处表单序列化
@@ -19,8 +28,22 @@
 				 success:function(date){
 					$(".loading").hide();
 					if(date.list.length>0){
-						for(var i=0;i<date.list.length;i++){
-							$("#select1").append("<option value='"+date.list[i].userid+"'>"+date.list[i].nickname+" ("+date.list[i].mobile+")</option>");
+						if(arr.length>0){
+							for(var j=0;j<arr.length;j++){
+								for(var i=0;i<date.list.length;i++){
+									if(arr[j]==date.list[i].userid){
+										date.list.splice(i,1);
+										break;
+									}
+								}
+							}	
+							for(var i=0;i<date.list.length;i++){
+								$("#select1").append("<option value='"+date.list[i].userid+"'>"+date.list[i].nickname+" ("+date.list[i].mobile+")</option>");
+							}
+						}else{
+							for(var i=0;i<date.list.length;i++){
+								$("#select1").append("<option value='"+date.list[i].userid+"'>"+date.list[i].nickname+" ("+date.list[i].mobile+")</option>");
+							}
 						}
 					}
 				 },
@@ -28,6 +51,41 @@
 					$(".loading").hide();
 				 }
 			});
+			
+			
+			/* $.ajax({
+				 type:"get",
+				 dataType:"json",
+				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&actionType="+actionType+"&isOnSale=1"+"&isReal="+isReal,
+				 success:function(date){
+					var data=date;
+					if(arr.length>0){
+						for(var j=0;j<arr.length;j++){
+							for(var i=0;i<data.length;i++){
+								if(arr[j]==data[i].id){
+									data.splice(i,1);
+									break;
+								}
+							}
+						
+						}	
+						for(var i=0;i<data.length;i++){
+							$("#select1").append("<option value='"+data[i].id+"'>"+data[i].name+"</option>");
+						}
+						
+					}else{
+						for(var i=0;i<data.length;i++){
+							$("#select1").append("<option value='"+data[i].id+"'>"+data[i].name+"</option>");
+						}
+					}
+						
+						
+				 },
+				 error:function(XMLHttpRequest,textStatus,errorThrown) {
+				    
+				 }
+				 
+				}); */
 		}else{
 			top.layer.alert('请至少填写一个条件！', {icon: 0, title:'提醒'});
 		}

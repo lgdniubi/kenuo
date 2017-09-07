@@ -14,30 +14,37 @@
 		}
 		
 		function selectUser(){
-			var mtmyMobile = $("#mtmyMobile").val();
-			if(mtmyMobile == ""){
+			
+			$("#sysName").val("");
+			$("#sysMobile").val("");
+			$("#sysUserId").val("");
+			$("#pushMoney").val("");
+			
+			var searchMobile = $("#searchMobile").val();
+			if(searchMobile == ""){
 				return;
 			}
 			$.ajax({
 				type:"get",
 				dataType:"json",
 				data:{
-					mobile:mtmyMobile
+					mobile:searchMobile
 				},
-				url:"${ctx}/ec/orders/getUser",
+				url:"${ctx}/ec/orders/getSysUser",
 				success:function(date){
-					$("#mtmyUserName").val(date.users.nickname);
-					$("#mtmyUserMobile").val(date.users.mobile);
-					$("#mtmyUserId").val(date.users.userid);
-					$("#mtmyMobile").val(date.users.mobile);
+					$("#sysName").val(date.user.name);
+					$("#sysMobile").val(date.user.mobile);
+					$("#sysUserId").val(date.user.id);
+					$("#searchMobile").val(date.user.mobile);
 				},
 				error:function(XMLHttpRequest,textStatus,errorThrown){
+					top.layer.alert('请确定手机号的正确性以及该手机号是否属于妃子校', {icon: 0, title:'提醒'});
 				}
 			});
 		}
 		
 		function empty(){
-			$("#mtmyMobile").val("");
+			$("#searchMobile").val("");
 		}
 	</script>
 </head>
@@ -49,21 +56,21 @@
 				<div class="tab-content" id="tab-content">
 	                <div class="tab-inner">
 		                	<label class="active"><font color="red">*</font>业务员手机号：</label>
-		                	<input type="text" id="mtmyMobile" name="mtmyMobile" class="form-control required" />
+		                	<input type="text" id="searchMobile" name="searchMobile" class="form-control required" />
 		                	<div class="pull-right">
 			                	<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="selectUser()" ><i class="fa fa-search"></i> 查询</button>
 			                	<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="empty()" ><i class="fa fa-refresh"></i> 重置</button>
 		                	</div>
 		                	<p></p>
 		                	<label class="active">业务员姓名：</label>
-		                	<input id="mtmyUserName" name="mtmyUserName" class="form-control" readonly="readonly" type="text" value="" aria-required="true">
-		                	<input id="mtmyUserId" name="mtmyUserId" class="form-control" readonly="readonly" type="hidden" value="" aria-required="true">
+		                	<input id="sysName" name="sysName" class="form-control" readonly="readonly" type="text" value="" aria-required="true">
+		                	<input id="sysUserId" name="sysUserId" class="form-control" readonly="readonly" type="hidden" value="" aria-required="true">
 		                	<p></p>
 		                	<label class="active">业务员手机：</label>
-		                	<input id="mtmyUserMobile" name="mtmyUserMobile" class="form-control" readonly="readonly" type="text" value="" aria-required="true">
+		                	<input id="sysMobile" name="sysMobile" class="form-control" readonly="readonly" type="text" value="" aria-required="true">
 		                	<p></p>
 		                	<label class="active"><font color="red">*</font>提成金额：</label>
-		                	<input id="pushMoney" name="pushMoney" class="form-control" type="text" value="" aria-required="true">
+		                	<input id="pushMoney" name="pushMoney" class="form-control" type="text" value="" aria-required="true" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';">
 					</div>
 				</div>
 			</div>

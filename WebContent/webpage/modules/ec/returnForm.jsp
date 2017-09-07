@@ -17,6 +17,9 @@
 		var totalAmount=0;//实付款
 		var returnedGoodsNum = 0;//后台查询出来 "实物" 中正在退货的商品数量
 		var validateForm;
+		
+		var advanceFlag;
+		
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		  if(validateForm.form()){
 			  var recid=$("#goodsMappingId").val();
@@ -28,8 +31,13 @@
 				  top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
 				  return;
 			  }
+			  //remaintimes == 0   当时限卡时,才会有
+			  if(servicetimes == 999 && remaintimes == 0){
+				  top.layer.alert('该商品已申请过售后!', {icon: 0, title:'提醒'});
+				  return;
+			  }
 			  if(returnAmount==-1){
-				 top.layer.alert('该商品欠款或者没有余款，无法退款!', {icon: 0, title:'提醒'});
+				 top.layer.alert('该商品已申请过售后!', {icon: 0, title:'提醒'});
 				 return;
 			  }else if(returnAmount==-2){
 				 top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
@@ -46,16 +54,26 @@
 					  return;
 				  }
 			  }
-			  
-			  //虚拟商品的售后次数校验
-			  var st=$("#serviceTimes").val();
-			  if(parseInt(st)<=0){
-				  top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
-				  return;
-			  }else if(parseInt(st)>parseInt(remaintimes)){
-				  top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
-				  return;
+			  //除了实物之外,只要有预约金的,都需要做处理
+			  if(isReal != 0){
+				  if(advanceFlag == 1){
+					  top.layer.alert('当前订单有预约金,无法退款(请先处理预约金)', {icon: 0, title:'提醒'});
+					  return;
+				  }
 			  }
+				  
+			  //虚拟商品的售后次数校验,时限卡不进行此校验
+			  if(isReal == 1 && servicetimes != 999){
+				  var st=$("#serviceTimes").val();
+				  if(parseInt(st)<=0){
+					  top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
+					  return;
+				  }else if(parseInt(st)>parseInt(remaintimes)){
+					  top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
+					  return;
+				  }
+			  }
+			  
 			  var type=$("#applyType").val();
 			  if(type == 0){
 				  //虚拟商品的退款金额校验
@@ -84,7 +102,11 @@
 			$("#goodsMappingId").val(id);
 			goodNum=$("#"+id+"goodsnum").val();//购买的数量
 			remaintimes=$("#"+id+"remaintimes").val();//虚拟商品剩余次数
-			//$("#serviceTimes").val(remaintimes);
+			
+			//时限卡售后添加servicetimes
+			servicetimes=$("#"+id+"servicetimes").val();//为了判断是否为时限卡
+			advanceFlag = $("#"+id+"advanceFlag").val();//判断时限卡是否为预约金,是:先处理预约金
+			
 			
 			orderArrearage=$("#"+id+"orderArrearage").val();//订单欠款
 			singleRealityPrice=$("#"+id+"singleRealityPrice").val();//实际服务单次价
@@ -93,10 +115,29 @@
 				returnedGoodsNum = $("#"+id+"returnedGoodsNum").val();//实物中  从后台查出来的退货中的数量
 				$("#returnNum").val(parseInt(goodNum)-parseInt(returnedGoodsNum));//为售后商品数量赋值
 			}
+			//除了实物之外的,当前是否为预约金,是:先处理预约金
+			if(isReal != 0){
+				if(advanceFlag == 1){
+					top.layer.alert('当前订单有预约金,无法退款(请先处理预约金)', {icon: 0, title:'提醒'});
+					return;
+				}
+			}
+			
 			//判断是否有无欠款
 			if(orderArrearage>0){
 				top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
 			}else{
+				if(servicetimes == 999){//是否为时限卡,剩余次数赋值, 
+					//是时限卡的时候, 当remaintimes == 0 ,说明时限卡已经售后过了
+					if(remaintimes == 0){
+						top.layer.alert('该商品已申请过售后!', {icon: 0, title:'提醒'});
+						return;
+					}
+					$("#d1serviceTimes").hide();
+					$("#serviceTimes").val(remaintimes);//时限卡内还剩下多少次就售后多少次
+				}else{
+					$("#d1serviceTimes").show();
+				}
 				if("bm"==type){//当时后台数据时
 					var orderA=$("#"+id+"orderAmount").val();
 					var totalA=$("#"+id+"total").val();
@@ -122,7 +163,7 @@
 								success:function(date){
 									returnAmount=date;
 									if(returnAmount==-1){
-										top.layer.alert('该商品欠款或者没有余款，无法退款!', {icon: 0, title:'提醒'});
+										top.layer.alert('该商品已申请过售后!', {icon: 0, title:'提醒'});
 										return;
 									}else if(returnAmount==-2){
 										top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
@@ -149,7 +190,7 @@
 							success:function(date){
 								returnAmount=date;
 								if(returnAmount==-1){
-									top.layer.alert('该商品欠款或者没有余款，无法退款!', {icon: 0, title:'提醒'});
+									top.layer.alert('该商品已申请过售后!', {icon: 0, title:'提醒'});
 									return;
 								}else if(returnAmount==-2){
 									top.layer.alert('该订单还没有进行分销，请稍后再试!', {icon: 0, title:'提醒'});
@@ -215,7 +256,7 @@
 		//虚拟商品的退款金额校验
 		function returnChangeAmount(){
 			var ra=$("#returnAmount").val();
-			if(parseFloat(ra)<=0){
+			if(parseFloat(ra)<0){
 				top.layer.alert('退款金额必须大于0，小于实付款金额!', {icon: 0, title:'提醒'});
 				return;
 			}else if(parseFloat(totalAmount)<parseFloat(ra)){
@@ -297,11 +338,11 @@
 								<th style="text-align: center;">成交价</th>
 								<th style="text-align: center;">购买数量</th>
 								<th style="text-align: center;">实付款</th>
-								<th style="text-align: center;">实际服务单价</th>
 								<c:if test="${orders.isReal==1}">
+									<th style="text-align: center;">实际服务单价</th>
+									<th style="text-align: center;">截止时间</th>
 									<th style="text-align: center;">剩余次数</th>
 								</c:if>
-								<!-- <th style="text-align: center;">余额</th> -->
 								<th style="text-align: center;">欠款</th>
 							</tr>
 						</thead>
@@ -325,11 +366,16 @@
 									<td  style="text-align: center;">${orderGood.orderAmount}</td>
 									<td  style="text-align: center;">${orderGood.goodsnum}</td>
 									<td  style="text-align: center;">${orderGood.totalAmount}</td>
-									<td  style="text-align: center;">${orderGood.singleRealityPrice}</td>
-									<c:if test="${orders.isReal==1}">
+									<c:if test="${orders.isReal==1 && orderGood.servicetimes == 999}">
+										<td  style="text-align: center;"></td>
+										<td  style="text-align: center;">${orderGood.expiringdate}</td>
+										<td  style="text-align: center;"></td>
+									</c:if>
+									<c:if test="${orders.isReal==1 && orderGood.servicetimes != 999}">
+										<td  style="text-align: center;">${orderGood.singleRealityPrice}</td>
+										<td  style="text-align: center;"></td>
 										<td  style="text-align: center;">${orderGood.remaintimes}</td>
 									</c:if>
-									<%-- <td  style="text-align: center;">${orderGood.orderBalance}</td> --%>
 									<td  style="text-align: center;">${orderGood.orderArrearage}</td>
 								</tr>
 								<input type="hidden" id="${orderGood.recid}goodsnum" name="${orderGood.recid}goodsnum" value="${orderGood.goodsnum}" />
@@ -341,9 +387,12 @@
 								<c:if test="${orderGood.isreal==0}">
 									<input type="hidden" id="${orderGood.recid}returnedGoodsNum" value="${orderGood.returnNum}" />
 								</c:if>
+								<!-- 时限卡售后添加字段  -->
+								<input type="hidden" id="${orderGood.recid}servicetimes" name="${orderGood.recid}servicetimes" value="${orderGood.servicetimes}" />
+								<input type="hidden" id="${orderGood.recid}advanceFlag" name="${orderGood.recid}advanceFlag" value="${orderGood.advanceFlag}" />
 							</c:forEach>
 						</tbody>						
-					</table>	
+					</table>
 					<p></p>					
 				  	<label><font color="red">*</font>售后原因：</label>
 			       	<form:input path="returnReason" htmlEscape="false" maxlength="50" style="width: 300px;height:30px;" class="form-control required"/>
@@ -378,6 +427,7 @@
 				        onchange="returnChangeNum()"/>
 			        </c:if>
 					<c:if test="${orders.isReal==1}">
+					<div id="d1serviceTimes">
 						<p></p>
 						<label><font color="red">*</font>售后次数：</label>
 			        	<form:input path="serviceTimes" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control" 
@@ -386,6 +436,7 @@
 						onfocus="if(value == '0'){value=''}"
 						onblur="if(value == ''){value='0'}"
 			        	onchange="returnChangeTimes()"/>
+			        </div>
 			        </c:if>
 					<p></p>
 					<div id="hideandshow" style="display: display">

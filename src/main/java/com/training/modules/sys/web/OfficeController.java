@@ -214,12 +214,14 @@ public class OfficeController extends BaseController {
 		//当为实体店铺时查询其详细信息
 		if("1".equals(office.getGrade())){
 			OfficeInfo officeInfo = officeService.findbyid(office);
-			//officeInfo中店铺标签 (多个标签用"#"分开)
-			if(officeInfo.getTags() !=null){
-				officeInfo.setTags(officeInfo.getTags().replaceAll("#", ","));
+			if(officeInfo != null){
+				//officeInfo中店铺标签 (多个标签用"#"分开)
+				if(officeInfo.getTags() !=null){
+					officeInfo.setTags(officeInfo.getTags().replaceAll("#", ","));
+				}
+				officeInfo.setDetails(HtmlUtils.htmlEscape(officeInfo.getDetails()));//详细介绍转码
+				office.setOfficeInfo(officeInfo);
 			}
-			officeInfo.setDetails(HtmlUtils.htmlEscape(officeInfo.getDetails()));//详细介绍转码
-			office.setOfficeInfo(officeInfo);
 		}
 		//界面展示所属加盟商
 		OfficeInfo o=new OfficeInfo();
