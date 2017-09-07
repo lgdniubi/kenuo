@@ -48,8 +48,8 @@ public class Office extends TreeEntity<Office> {
 	
 	private String isRecommend;            //是否推荐（0：未推荐；1：推荐）
 	private String isCargo;				//是否可售后(0:是；1否)
-	private Double longitude;            //经度
-	private Double latitude;            //纬度
+	private String longitude;            //经度
+	private String latitude;            //纬度
 	
 	private String 	iconUrl;		//机构icon
 	
@@ -282,19 +282,19 @@ public class Office extends TreeEntity<Office> {
 		this.isCargo = isCargo;
 	}
 
-	public Double getLongitude() {
+	public String getLongitude() {
 		return longitude;
 	}
 
-	public void setLongitude(Double longitude) {
+	public void setLongitude(String longitude) {
 		this.longitude = longitude;
 	}
 
-	public Double getLatitude() {
+	public String getLatitude() {
 		return latitude;
 	}
 
-	public void setLatitude(Double latitude) {
+	public void setLatitude(String latitude) {
 		this.latitude = latitude;
 	}
 
