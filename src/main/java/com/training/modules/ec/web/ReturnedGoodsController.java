@@ -20,9 +20,11 @@ import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.ec.dao.PdWareHouseDao;
 import com.training.modules.ec.entity.CourierResultXML;
+import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.PdWareHouse;
 import com.training.modules.ec.entity.ReturnedGoods;
 import com.training.modules.ec.entity.ReturnedGoodsImages;
+import com.training.modules.ec.service.OrderGoodsService;
 import com.training.modules.ec.service.ReturnedGoodsService;
 import com.training.modules.ec.utils.CourierUtils;
 import com.training.modules.sys.utils.BugLogUtils;
@@ -42,6 +44,8 @@ public class ReturnedGoodsController extends BaseController {
 	private ReturnedGoodsService returnedGoodsService;
 	@Autowired
 	private PdWareHouseDao wareHouseDao;
+	@Autowired
+	private OrderGoodsService ordergoodService;
 
 	@ModelAttribute
 	public ReturnedGoods get(@RequestParam(required = false) String id) {
@@ -94,6 +98,141 @@ public class ReturnedGoodsController extends BaseController {
 		}
 		
 		return "modules/ec/returnGoodsForm";
+	}
+	/**
+	 * 卡项售后
+	 * 
+	 * @param orders
+	 * @param model
+	 * @return
+	 **/
+	
+	@RequestMapping(value = "returnformCard")
+	public String returnformCard(ReturnedGoods returnedGoods, String id, HttpServletRequest request,HttpServletResponse response, Model model) {
+		String flag = request.getParameter("flag");
+		try {
+			//查询的售后图片添加到退货中
+			List<ReturnedGoodsImages> imgList=new ArrayList<ReturnedGoodsImages>();
+			returnedGoods = returnedGoodsService.get(id);
+			imgList=returnedGoodsService.selectImgById(id);
+			returnedGoods.setImgList(imgList);
+			
+			String suitCardSons = "";
+			String isreal = "";
+			int num;
+			List<List<OrderGoods>> result = new ArrayList<List<OrderGoods>>();//存放每个卡项商品和它的子项集合
+			List<OrderGoods> resultSon = new ArrayList<OrderGoods>();//存放一个卡项商品和它的子项
+			
+			OrderGoods og = new OrderGoods();
+			og.setOrderid(returnedGoods.getOrderId());
+			og.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
+			
+			List<OrderGoods> list=ordergoodService.cardOrderid(og);//根据订单id和mapping查询订单中的套卡及其子项
+			for(int i=0;i<list.size();i++){
+				if(list.get(i).getGroupId() == 0 && resultSon.size() > 0){
+					result.add(resultSon);
+					resultSon = new ArrayList<OrderGoods>();
+				}
+				resultSon.add(list.get(i));
+				if(i == (list.size()-1)){                        //将最后一次循环的结果放到集合里
+					result.add(resultSon);
+				}
+			}
+			if(returnedGoods.getIsReal() == 2){//套卡 售后
+				if(result.size() > 0){
+					for(List<OrderGoods> lists:result){                            
+						if((lists.size() - 1) > 0){
+							num = lists.size() - 1;
+							OrderGoods father = lists.get(0);
+							isreal = lists.get(1).getIsreal()==0?"实物":"虚拟";
+							suitCardSons = suitCardSons +
+									"<tr> "+
+									"<td rowspan='"+num+"'>"+father.getRecid()+"</td>"+
+									"<td align='center' rowspan='"+num+"'> "+father.getGoodsname()+"</td> "+
+									"<td align='center' rowspan='"+num+"'>套卡</td> "+
+									"<td align='center'> "+lists.get(1).getGoodsname()+"</td> "+
+									"<td align='center'> "+isreal+"</td> "+
+									"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
+									"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
+									"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getTotalAmount()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getOrderArrearage()+"</td> "+
+								"</tr> ";
+							for(int i=2;i<lists.size();i++){
+								isreal = lists.get(i).getIsreal()==0?"实物":"虚拟";
+								suitCardSons = suitCardSons +
+									"<tr> "+
+										"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
+										"<td align='center'> "+isreal+"</td> "+
+										"<td align='center'> "+lists.get(i).getMarketprice()+"</td> "+
+										"<td align='center'> "+lists.get(i).getGoodsprice()+"</td> "+
+										"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
+									"</tr>";
+							}
+				
+						}
+					}
+				}
+			}else if(returnedGoods.getIsReal() == 3){//通用卡 售后
+				if(result.size() > 0){
+					for(List<OrderGoods> lists:result){                            
+						if((lists.size() - 1) > 0){
+							num = lists.size() - 1;
+							OrderGoods father = lists.get(0);
+							isreal = lists.get(1).getIsreal()==0?"实物":"虚拟";
+							suitCardSons = suitCardSons +
+									"<tr> "+
+									"<td rowspan='"+num+"'>"+father.getRecid()+"</td>"+
+									"<td align='center' rowspan='"+num+"'> "+father.getGoodsname()+"</td> "+
+									"<td align='center' rowspan='"+num+"'>通用卡</td> "+
+									"<td align='center'> "+lists.get(1).getGoodsname()+"</td> "+
+									"<td align='center'> "+isreal+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getMarketprice()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getGoodsprice()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
+									"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getTotalAmount()+"</td> "+
+									"<td align='center' rowspan='"+num+"'> "+father.getOrderArrearage()+"</td> "+
+								"</tr> ";
+							for(int i=2;i<lists.size();i++){
+								isreal = lists.get(i).getIsreal()==0?"实物":"虚拟";
+								suitCardSons = suitCardSons +
+									"<tr> "+
+										"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
+										"<td align='center'> "+isreal+"</td> "+
+										"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
+									"</tr>";
+							}
+				
+						}
+					}
+				}
+			}
+			
+			//查询卡项子项实物的售后数量
+			String realnum = "";
+			List<ReturnedGoods> rgList = returnedGoodsService.getRealnum(returnedGoods);
+			if(rgList.size() != 0){
+				for (ReturnedGoods rg : rgList) {
+					realnum = realnum + 
+						"<label>"+rg.getGoodsName()+"  售后数量：</label><input style='width: 180px;height:30px;' class='form-control' value='"+rg.getReturnNum()+"' readonly='true'/><p></p>";
+				}
+				model.addAttribute("realnum",realnum);
+			}
+			
+			model.addAttribute("flag",flag);
+			model.addAttribute("returnGoodsCard",suitCardSons.toString());
+			model.addAttribute("returnedGoods", returnedGoods);
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "审核页面", e);
+			logger.error("方法：returnform,审核页面" + e.getMessage());
+			// TODO: handle exception
+		}
+		
+		return "modules/ec/returnGoodsFormCard";
 	}
 
 	/**

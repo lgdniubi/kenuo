@@ -76,14 +76,21 @@
 	    });
 		
 		function addVirtualOrder(){
-			openDialog("新增"+'虚拟订单添加',"/kenuo/a/ec/orders/createOrder","900px", "650px","");
+			openDialog("新增"+'虚拟订单',"/kenuo/a/ec/orders/createOrder","900px", "650px","");
 		}
 		function addKindOrder(){
 			openDialog("新增"+'实物订单&nbsp;&nbsp;&nbsp;&nbsp;<span style=\'color:red;\'>实物订单无法预约,如需创建服务项目,请添加虚拟订单</span>',"/kenuo/a/ec/orders/createKindOrder","900px", "650px","");
 		}
-		//退货列表
-		function returnedGoodsList(orderId,flag){
-			 openDialog('退货商品列表','${ctx}/ec/orders/returnGoddsList?flag='+flag+'&orderid='+orderId,'1000px','650px');
+		function addSuitCardOrder(){
+			openDialog("新增"+'套卡订单',"/kenuo/a/ec/orders/createSuitCardOrder","900px", "650px","");
+		}        
+		function addCommonCardOrder(){
+			openDialog("新增"+'通用卡订单',"/kenuo/a/ec/orders/createCommonCardOrder","900px", "650px","");
+		}
+		
+		//退货列表111
+		function returnedGoodsList(orderId,flag,isReal){
+			 openDialog('退货商品列表','${ctx}/ec/orders/returnGoddsList?flag='+flag+'&orderid='+orderId+'&isReal='+isReal,'1000px','650px');
 		}
 		
 		
@@ -132,6 +139,8 @@
 								<form:option value="">全部</form:option>
 								<form:option value="0">实物</form:option>
 								<form:option value="1">虚拟</form:option>
+								<form:option value="2">套卡</form:option>
+								<form:option value="3">通用卡</form:option>
 						</form:select>	
 						<p></p>
 						<label>订单类型：</label>	
@@ -189,6 +198,12 @@
 								<button class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="left" onclick="addKindOrder()" title="添加实物订单">
 									<i class="fa fa-plus"></i>添加实物订单<span style="color: red;font-weight:bold;">&nbsp;&nbsp;*&nbsp;实物订单无法预约！</span>
 								</button>
+								<button class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="left" onclick="addSuitCardOrder()" title="添加套卡订单">
+									<i class="fa fa-plus"></i>添加套卡订单
+								</button>
+								<button class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="left" onclick="addCommonCardOrder()" title="添加通用卡订单">
+									<i class="fa fa-plus"></i>添加通用卡订单
+								</button>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="ec:orders:export">
 								<!-- 导出按钮 -->
@@ -237,6 +252,8 @@
 							<td>
 								<c:if test="${orders.isReal==0}">实物订单</c:if>
 								<c:if test="${orders.isReal==1}">虚拟订单</c:if>
+								<c:if test="${orders.isReal==2}">套卡订单</c:if>
+								<c:if test="${orders.isReal==3}">通用卡订单</c:if>
 								<input type="hidden" id="isReal" value="${orders.isReal==0}" />
 							</td>
 							<td>${orders.username}</td>		
@@ -296,11 +313,19 @@
 							<td><div style="width:100px;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${orders.userNote}</div></td>
 							<td>
 			 					<shiro:hasPermission name="ec:orders:view"> 
-			 						<a href="#" onclick="openDialogView('查看订单', '${ctx}/ec/orders/orderform?orderid=${orders.orderid}&isReal=${orders.isReal}&type=view','1100px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 订单详情</a>
+			 						<c:if test="${orders.isReal == 0 || orders.isReal == 1}">
+				 						<a href="#" onclick="openDialogView('查看订单', '${ctx}/ec/orders/orderform?orderid=${orders.orderid}&isReal=${orders.isReal}&type=view','1100px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 订单详情</a>
+			 						</c:if>
+			 						<c:if test="${orders.isReal == 2 || orders.isReal == 3}">
+			 					 		<a href="#" onclick="openDialogView('查看订单', '${ctx}/ec/orders/cardOrdersForm?orderid=${orders.orderid}&isReal=${orders.isReal}&type=view','1100px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 订单详情</a>
+			 						</c:if>
 			 					</shiro:hasPermission>
 								<shiro:hasPermission name="ec:orders:edit">
-									<c:if test="${orders.channelFlag=='bm' || (orders.channelFlag != 'bm' && orders.isReal==1)}">
+									<c:if test="${(orders.channelFlag=='bm' && orders.isReal==0) || (orders.channelFlag=='bm' && orders.isReal==1) || (orders.channelFlag != 'bm' && orders.isReal==1)}">
 										<a href="#" onclick="openDialog('编辑订单', '${ctx}/ec/orders/orderform?orderid=${orders.orderid}&isReal=${orders.isReal}&type=edit','1100px','650px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>修改</a>
+									</c:if>
+									<c:if test="${orders.isReal==2 || orders.isReal==3}">
+										<a href="#" onclick="openDialog('编辑订单', '${ctx}/ec/orders/cardOrdersForm?orderid=${orders.orderid}&isReal=${orders.isReal}&type=edit','1100px','650px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>修改</a>
 									</c:if>
 									<c:if test="${orders.channelFlag!='bm' && orders.isReal==0}">
 										<c:if test="${orders.orderstatus==4 or orders.orderstatus==-2}">
@@ -321,7 +346,7 @@
 			 					</shiro:hasPermission>
 			 				 	<shiro:hasPermission name="ec:orders:return">
 									<c:if test="${orders.orderstatus==4 && orders.flag==1}">
-										<a href="#" onclick="returnedGoodsList('${orders.orderid}','${orders.flag}')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>售后服务</a>
+										<a href="#" onclick="returnedGoodsList('${orders.orderid}','${orders.flag}','${orders.isReal}')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>售后服务</a>
 									</c:if>
 									<c:if test="${orders.orderstatus!=4 || orders.flag!=1}">
 										<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>售后服务</a>

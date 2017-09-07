@@ -83,7 +83,7 @@
 			                        <a class="btn btn-success btn-xs" href="#" onclick="show(1,' ${categoryList.id}','${categoryList.name}','${categoryList.sort}')"><i class="fa fa-edit"></i>修改</a>
 		                        </shiro:hasPermission>
 		                        <shiro:hasPermission name="ec:mtmyArticleList:deleteCategory">
-									<c:if test="${categoryList.id < 50 or categoryList.id > 53}">
+									<c:if test="${categoryList.id < 50 or categoryList.id > 54}">
 										<a href="${ctx}/ec/mtmyArticleList/deleteCategory?id=${categoryList.id}" onclick="return confirmx('确认要删除该类别吗？', this.href)"   class="btn btn-info btn-xs btn-danger"><i class="fa fa-trash"></i> 删除</a>
 									</c:if>
 								</shiro:hasPermission>

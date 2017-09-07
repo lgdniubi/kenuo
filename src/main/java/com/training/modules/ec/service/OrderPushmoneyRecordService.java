@@ -48,8 +48,8 @@ public class OrderPushmoneyRecordService extends TreeService<OrderPushmoneyRecor
 	 * 删除订单提成人员信息
 	 * @param mtmyUserId
 	 */
-	public void deleteMtmyUserInfo(Integer mtmyUserId) {
-		dao.deleteMtmyUserInfo(mtmyUserId);
+	public void deleteSysUserInfo(int pushmoneyRecordId) {
+		dao.deleteSysUserInfo(pushmoneyRecordId);
 	}
 
 }

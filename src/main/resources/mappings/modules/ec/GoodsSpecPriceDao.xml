@@ -22,7 +22,7 @@
 		FROM
 		mtmydb.mtmy_spec_goods_price a
 		WHERE a.goods_id=#{id}
-		AND del_flag = 0
+		AND a.del_flag = 0
 	</select>
 	<!-- 根据规格查询 -->
 	<select id="getSpecPrce" resultType="GoodsSpecPrice">
@@ -31,7 +31,7 @@
 		FROM
 		mtmydb.mtmy_spec_goods_price a
 		WHERE a.spec_key=#{specKey} AND a.goods_id=#{goodsId}
-		AND del_flag = 0
+		AND a.del_flag = 0
 	</select>
 	<update id="modifySpecStoreCount" parameterType="map">
 		UPDATE mtmydb.mtmy_spec_goods_price 
@@ -60,4 +60,44 @@
 		AND goods_id=#{goodsId}
 		AND del_flag = 0
 	</select>
+	
+	<!-- 套卡根据商品id查相关信息（只有一个默认规格，因此只查到一条） -->
+	<select id="selectSuitCard" resultType="GoodsSpecPrice">
+		SELECT
+		<include refid="specpriceColunm"></include>
+		FROM mtmydb.mtmy_spec_goods_price a
+		WHERE a.goods_id=#{id}
+		AND a.del_flag = 0
+	</select>
+	
+	<!-- 保存商品规格项 -->
+	<insert id="savespec">
+		INSERT INTO mtmydb.mtmy_spec_goods_price (
+			goods_id,
+            spec_key,
+            spec_key_name,
+            spec_key_value,
+            cost_price,
+            market_price,
+            price,
+            store_count,
+            service_times,
+            expiring_date,
+            del_flag
+             )
+		VALUES
+		  ( 
+		  	#{goodsId}, 
+			#{specKey}, 
+			#{specKeyName},
+			#{specKeyValue}, 
+			#{costPrice}, 
+			#{marketPrice}, 
+			#{price}, 
+			#{storeCount}, 
+			#{serviceTimes},
+			#{expiringDate},
+			#{delFlag}
+		  )
+	</insert>
 </mapper>

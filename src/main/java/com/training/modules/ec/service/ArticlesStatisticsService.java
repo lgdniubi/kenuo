@@ -56,22 +56,18 @@ public class ArticlesStatisticsService extends TreeService<ArticlesStatisticsDao
 		
 		//查询文章的评论数量   并更新mtmy_articles_statistics
 		List<ArticlesStatisticsCountData> commentList = dao.queryArticlesComment(commentId);
+		//修改的数据不为null  才会执行修改操作
 		if(commentList.size() != 0){
-			//修改的数据不为null  才会执行修改操作
-			if(commentList.size() != 0){
-				for (ArticlesStatisticsCountData articlesStatisticsCountData : commentList) {
-					dao.addArticles(articlesStatisticsCountData);
-				}
+			for (ArticlesStatisticsCountData articlesStatisticsCountData : commentList) {
+				dao.addArticles(articlesStatisticsCountData);
 			}
 		}
 		//查询文章的点赞数量
 		List<ArticlesStatisticsCountData> likeList = dao.queryArticlesLike(likeId);
+		//修改的数据不为null  才会执行修改操作
 		if(likeList.size() != 0){
-			//修改的数据不为null  才会执行修改操作
-			if(likeList.size() != 0){
-				for (ArticlesStatisticsCountData articlesStatisticsCountData : likeList) {
-					dao.addArticles(articlesStatisticsCountData);
-				}
+			for (ArticlesStatisticsCountData articlesStatisticsCountData : likeList) {
+				dao.addArticles(articlesStatisticsCountData);
 			}
 		}
 		//获取查询数据的定位id

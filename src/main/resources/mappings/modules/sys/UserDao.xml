@@ -630,6 +630,7 @@
 			u.id as userid
 		FROM sys_user u 
 		LEFT JOIN sys_office o ON o.id = u.office_id
+		WHERE o.id IS NOT NULL
 	</select>
 	
 	<select id="queryUserAll" resultType="UserVo">

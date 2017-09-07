@@ -46,6 +46,7 @@
 	<select id="findListByOrderid" resultType="OrderGoods">
 		SELECT
 			a.rec_id,
+			a.group_id AS 'groupId',
 			a.order_id,
 			a.user_id,
 			a.goods_name,
@@ -78,6 +79,8 @@
 			a.single_reality_price,
 			a.single_norm_price,
 			a.is_after_sales,
+			b.advance_flag as "advanceFlag",
+			a.reality_add_time as "realityAddTime",
 			SUM(b.total_amount) as "totalAmount",
 			SUM(b.order_balance) as "orderBalance",
 			SUM(b.service_times) as "remaintimes",
@@ -92,42 +95,115 @@
 		and a.order_id= #{orderId}
 		GROUP BY a.rec_id
 	</select>
-	<!-- 通过订单号查询订单下的虚拟商品及用户信息 -->
-	<select id="findOrderGoods" resultType="OrderGoods">
-		SELECT 
+	<!-- 查询数据 -->
+	<select id="cardOrderid" resultType="OrderGoods">
+		SELECT
 			a.rec_id,
+			a.group_id AS 'groupId',
 			a.order_id,
 			a.user_id,
 			a.goods_name,
 			a.goods_id,
+			a.goods_sn,
+			a.goods_num,
+			a.original_img,
+			a.market_price,
+			a.goods_price,
+			a.cost_price,
+			a.coupon_price,
+			a.member_goods_price,
+			a.discount,
+			a.give_integral,
+			a.spec_key,
+			a.spec_key_name,
+			a.bar_code,
+			a.is_comment,
+			a.action_type,
+			a.action_id,
+			a.is_send,
+			a.delivery_id,
+			a.add_time,
 			a.service_times,
+			a.remain_times,
 			a.service_min,
+			a.is_real,
+			a.expiring_date,
+			a.order_amount,
+			a.single_reality_price,
+			a.single_norm_price,
+			a.is_after_sales,
+			b.advance_flag as "advanceFlag",
+			a.reality_add_time as "realityAddTime",
+			SUM(b.total_amount) as "totalAmount",
+			SUM(b.order_balance) as "orderBalance",
+			SUM(b.service_times) as "remaintimes",
+			SUM(b.order_arrearage) as "orderArrearage",
+			IFNULL(c.return_num,0) as "returnNum"
+		FROM
+			mtmydb.mtmy_order_goods_mapping a
+		LEFT JOIN mtmydb.mtmy_order_goods_details b ON a.rec_id=b.goods_mapping_id
+		LEFT JOIN (SELECT IFNULL(SUM(return_num),0) AS return_num,goods_mapping_id FROM mtmydb.mtmy_returned_goods WHERE order_id = #{orderid} AND return_status in (11,12,13,14,15,21,22,23,24,25) GROUP BY order_id,goods_mapping_id) c ON c.goods_mapping_id = a.rec_id
+		WHERE
+			a.del_flag = 0
+		AND a.order_id= #{orderid}
+		AND a.group_id = #{recid} or a.rec_id = #{recid}
+		GROUP BY a.rec_id
+	</select>
+	<!-- 通过订单号查询订单下的虚拟商品及用户信息 -->
+	<select id="findOrderGoods" resultType="OrderGoods">
+		SELECT 
+			a.group_id AS groupId,
+			a.rec_id AS recid,
+			a.order_id AS orderid,
+			a.user_id AS userid,
+			a.goods_name AS goodsname,
+			a.goods_id AS goodsid,
+			IF(o.is_real = 3,(SELECT SUM(service_times) FROM mtmydb.mtmy_order_goods_mapping WHERE rec_id = a.group_id),a.service_times) AS 'servicetimes',
+			a.service_min AS servicemin,
 			u.user_id AS 'users.userid',
 			u.mobile AS 'users.mobile',
-			u.name AS 'users.name',
-			b.service_times AS remainTimes,
+			u.nickname AS 'users.name',
+			IF(a.group_id != 0,(SELECT SUM(service_times) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = a.group_id),b.service_times) AS 'remaintimes',
+			IF(a.group_id != 0,(SELECT SUM(surplus_amount) FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = a.group_id),b.surplus_amount) AS 'surplusAmount',
+			o.is_real AS isreal,
+			(SELECT COUNT(*) FROM mtmydb.mtmy_appt_order b WHERE b.goods_mapping_id = a.rec_id AND appt_status != 3) AS 'useServiceTimes',
+			IF(o.is_real = 2,(SELECT COUNT(*) FROM mtmydb.mtmy_appt_order b WHERE b.group_id = a.group_id AND appt_status != 3),0) AS 'cardUseServiceTimes',
+			(SELECT COUNT(id) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = 1 LIMIT 1) AS 'advanceFlag',
+			IF(o.is_real = 3,(SELECT single_reality_price FROM mtmydb.mtmy_order_goods_mapping WHERE rec_id = a.group_id),a.single_reality_price) AS singleRealityPrice,
 			s.skill_id AS skillId,
-			e.label_id AS labelId
+			e.label_id AS labelId,
+			IF((DATE_FORMAT(DATE_ADD(a.reality_add_time, interval a.expiring_date MONTH),'%Y-%m-%d')) >= DATE_FORMAT(SYSDATE(),'%Y-%m-%d'),0,1) AS isExpiring
 		FROM 
 			mtmydb.mtmy_order_goods_mapping a
 			LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
 			LEFT JOIN mtmydb.mtmy_orders o ON a.order_id = o.order_id
 			LEFT JOIN (
-						SELECT order_id,goods_mapping_id,SUM(service_times) AS service_times FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} GROUP BY order_id,goods_mapping_id
+						SELECT order_id,goods_mapping_id,SUM(service_times) AS service_times,SUM(surplus_amount) AS surplus_amount FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} GROUP BY order_id,goods_mapping_id
 					) b ON a.rec_id = b.goods_mapping_id
 			LEFT JOIN (SELECT group_concat(skill_id) AS skill_id,goods_id FROM mtmydb.mtmy_goods_skill GROUP BY goods_id) s ON s.goods_id = a.goods_id
 			LEFT JOIN (SELECT group_concat(label_id) AS label_id,goods_id FROM mtmydb.mtmy_goods_equipment GROUP BY goods_id) e ON e.goods_id = a.goods_id
 		WHERE 
 			a.del_flag = 0
 			and a.order_id = #{orderid}
-			and a.is_real = 1
-			and b.service_times > 0
+ 			and a.is_real = 1
 			AND o.order_status = 4
+		ORDER BY a.rec_id
+	</select>
+	<!-- 根据recid查询赠送云币数量  -->
+	<select id="getintegralByRecId" resultType="int">
+		SELECT 
+			a.integral
+		FROM 
+			mtmydb.mtmy_order_goods_mapping a
+		WHERE 
+			a.del_flag = 0
+			AND a.rec_id = #{recId}
 	</select>
 	<insert id="saveOrderGoods"  useGeneratedKeys="true" keyProperty="recid">
 		INSERT INTO mtmydb.mtmy_order_goods_mapping
 		(
 			order_id,
+			group_id,
 			user_id,
 			goods_id,
 			goods_name,
@@ -139,7 +215,6 @@
 			cost_price,
 			market_price,
 			goods_price,
-			advance_price,
 			order_amount,
 			total_amount,
 			order_arrearage,
@@ -148,11 +223,13 @@
 			single_norm_price,
 			service_times,
 			add_time,
+			reality_add_time,
 			expiring_date,
 			is_real,
 			service_min
 		)VALUES(
 			#{orderid},
+			#{groupId},
 			#{userid},
 			#{goodsid},
 			#{goodsname},
@@ -164,7 +241,6 @@
 			#{costprice},
 			#{marketprice},
 			#{goodsprice},
-			(SELECT advance_price FROM mtmydb.mtmy_goods WHERE goods_id = #{goodsid}),
 			#{orderAmount},
 			#{totalAmount},
 			#{orderArrearage},
@@ -173,7 +249,8 @@
 			#{singleNormPrice},
 			#{servicetimes},
 			SYSDATE(),
-			(SELECT expiring_date FROM mtmydb.mtmy_spec_goods_price WHERE goods_id = #{goodsid} AND spec_key = #{speckey} AND del_flag = 0),
+			#{realityAddTime},
+			#{expiringDate},
 			#{isreal},
 			#{servicemin}
 		)
@@ -221,6 +298,8 @@
 			discount as discount,
 			advance_price as advancePrice,
 			member_goods_price as membergoodsprice,
+			group_id as groupId,
+			is_real as isreal,
 			(SELECT SUM(a.service_times) FROM mtmydb.mtmy_order_goods_details a WHERE a.goods_mapping_id = rec_id AND type = 0) AS payRemaintimes
 		from 
 		mtmydb.mtmy_order_goods_mapping 
@@ -289,5 +368,52 @@
 		LEFT JOIN mtmydb.mtmy_users u ON u.user_id = ogm.user_id
 		WHERE ogm.rec_id = #{recId}
 		AND ogm.del_flag = 0
+	</select>
+	
+	<!-- 查询卡项被预约的子项的信息 -->
+	<select id="selectCardSonReservation" resultType="OrderGoods">
+		SELECT 
+			ogm.goods_id AS 'goodsid',
+			ogm.goods_name AS 'goodsname',
+			ogm.single_reality_price AS 'singleRealityPrice'
+		FROM mtmydb.mtmy_order_goods_details ogd
+		LEFT JOIN mtmydb.mtmy_appt_order ao ON ao.id = ogd.appt_id
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping ogm ON ogm.rec_id = ao.goods_mapping_id
+		WHERE ogd.goods_mapping_id = #{recId}
+		AND ogd.advance_flag = '0' 
+		AND ogd.service_times = -1
+	</select>
+	
+	<!-- 根据组ID(mapping_id)获取卡项中的实物集合 -->
+	<select id="getOrderGoodsCard" resultType="OrderGoods">
+		SELECT 
+			a.rec_id as 'recid',
+			a.order_id as 'orderid',
+			a.group_id as 'groupId',
+			a.goods_id as 'goodsid',
+			a.goods_name as 'goodsname',
+			a.is_real as 'isreal',
+			a.spec_key_name as 'speckeyname',
+			a.market_price as 'marketprice',
+			a.goods_price as 'goodsprice',
+			a.cost_price as 'costprice',
+			a.goods_num as 'goodsnum',	
+			a.order_amount as 'orderAmount',
+			a.total_amount as 'totalAmount',
+			a.order_arrearage as 'orderArrearage',
+			a.original_img as 'originalImg'
+		 FROM mtmydb.mtmy_order_goods_mapping a 
+		
+		WHERE a.group_id = #{recid}
+	</select>
+	
+	<!-- 根据组ID(mapping_id)获取卡项中的after_sale_num -->
+	<select id="getAfterSaleNumByRid" resultType="OrderGoods">
+		SELECT 
+			a.rec_id as 'recid',
+			a.after_sale_num as 'afterSaleNum'
+		 FROM mtmydb.mtmy_order_goods_mapping a 
+		
+		WHERE a.group_id = #{recid}
 	</select>
 </mapper>

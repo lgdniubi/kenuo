@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.training.common.persistence.TreeEntity;
 import com.training.common.utils.excel.annotation.ExcelField;
 import com.training.modules.sys.entity.Office;
+import com.training.modules.sys.entity.User;
 /**
  * 订单实体
  * @author zhangyang
@@ -153,13 +154,15 @@ public class Orders extends TreeEntity<Orders> {
 	private String recipientsAddress;		//发票收件人地址
 	private int invoiceId;					//发票自增id
 	//提成人员信息
-	private List<Integer> mtmyUserId;		//提成人员ID
+	/*private List<Integer> mtmyUserId;		//提成人员ID*/	 //小叶删除   提成人员由每天美耶改成妃子校
+	private List<String> sysUserId;		//提成人员ID
 	private List<Double> pushMoney;			//提成金额
 	private List<OrderRemarksLog> orderRemarksLog;		//订单备注返回对象
 	private List<String> orderRemarks;		//订单备注信息存储数据
 	private String orderRemark;				//单条订单备注信息存储数据
 	private List<Integer> remaintimeNums;		//实际次数  --新加属性
 	private OrderInvoice orderInvoice;		//订单发票对象
+	private User user;                       //妃子校用户
 	//--------------------用户账户需要字段------------------------------------------
 	private double accountBalance;		//账户余额
 	private double accountArrearage;	//账户欠款
@@ -192,6 +195,10 @@ public class Orders extends TreeEntity<Orders> {
 	
 	private Date payBegTime;    //支付开始时间，用于查询
 	private Date payEndTime;    //支付结束时间，用于查询
+	
+	private List<Date> realityAddTimeList;       //实际下单时间
+	
+	private int userIntegral;                   //充值或者处理预约金全部的欠款后送的云币
 	
 	public String getSearchIsReal() {
 		return searchIsReal;
@@ -485,14 +492,6 @@ public class Orders extends TreeEntity<Orders> {
 
 	public void setOrderPushmoneyRecords(List<OrderPushmoneyRecord> orderPushmoneyRecords) {
 		this.orderPushmoneyRecords = orderPushmoneyRecords;
-	}
-
-	public List<Integer> getMtmyUserId() {
-		return mtmyUserId;
-	}
-
-	public void setMtmyUserId(List<Integer> mtmyUserId) {
-		this.mtmyUserId = mtmyUserId;
 	}
 
 	public List<Double> getPushMoney() {
@@ -1589,6 +1588,30 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setPayEndTime(Date payEndTime) {
 		this.payEndTime = payEndTime;
+	}
+	public List<Date> getRealityAddTimeList() {
+		return realityAddTimeList;
+	}
+	public void setRealityAddTimeList(List<Date> realityAddTimeList) {
+		this.realityAddTimeList = realityAddTimeList;
+	}
+	public int getUserIntegral() {
+		return userIntegral;
+	}
+	public void setUserIntegral(int userIntegral) {
+		this.userIntegral = userIntegral;
+	}
+	public List<String> getSysUserId() {
+		return sysUserId;
+	}
+	public void setSysUserId(List<String> sysUserId) {
+		this.sysUserId = sysUserId;
+	}
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User user) {
+		this.user = user;
 	}
 	
 }

@@ -35,6 +35,7 @@
 
 <script type="text/javascript">
 	var validateForm;
+	var newValidateForm;
 	function doSubmit() {//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		if (validateForm.form()) {
 			var arr = new Array(); //数组定义标准形式，不要写成Array arr = new Array();
@@ -103,6 +104,7 @@
 	function findGood(){
 		var cateid=$("#goodsCategoryId").val();
 		var goodsName = $("#goodsName").val();
+		var newGoodsId = $("#newGoodsId").val();
 		var arr = new Array(); //数组定义标准形式，不要写成Array arr = new Array();
 	    var all = new Array(); //定义变量全部保存
 		$("#select1").empty();	
@@ -118,13 +120,16 @@
 	          arr.push(val);
 	          all.push(txt);
 	      });
-		 
+		 if(newValidateForm.form()){
 			$.ajax({
 				 type:"get",
 				 dataType:"json",
-				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&goodsName="+goodsName+"&isOnSale=1",
+				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&goodsName="+goodsName+"&goodsId="+newGoodsId+"&isOnSale=1",
 				 success:function(date){
 					var data=date;
+					if(data.length < 1){
+						top.layer.alert('商品不存在!', {icon: 0, title:'警告'});
+					}
 					if(arr.length>0){
 						for(var j=0;j<arr.length;j++){
 							for(var i=0;i<data.length;i++){
@@ -152,8 +157,31 @@
 				 }
 				 
 				});
-		}
+		 }
+	}
 
+	$(document).ready(function(){
+			newValidateForm = $("#inputForm").validate({
+			rules: {
+				newGoodsId:{
+					max:2147483647
+				} 
+			},
+			messages: {
+				newGoodsId:{
+					max: "请输入小于2147483647的数"
+				}
+			},
+			submitHandler: function(form){
+				form.submit();
+			},
+			errorContainer: "#messageBox",
+			errorPlacement: function(error, element) {
+				$("#messageBox").text("输入有误，请先更正。");
+				error.appendTo(element.parent());
+			}
+		});
+	});
 </script>
 </head>
 <body>
@@ -171,7 +199,7 @@
 									<label class="pull-right" >选择分类：</label>
 								</td>
 								<td>
-									<sys:treeselect id="goodsCategory" name="goodsCategoryId" value="" labelName="goodsCategory.name" labelValue="" title="商品分类" url="/ec/goodscategory/treeData" cssClass="form-control required" allowClear="true" notAllowSelectParent="true"/>
+									<sys:treeselect id="goodsCategory" name="goodsCategoryId" value="" labelName="goodsCategory.name" labelValue="" title="商品分类" url="/ec/goodscategory/treeData" cssClass="form-control" allowClear="true" notAllowSelectParent="true"/>
 								</td>
 							</tr>
 							<tr>
@@ -180,6 +208,14 @@
 								</td>
 								<td>
 									<input id="goodsName" name="goodsName" type="text" value="" class="input-sm" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<label class="pull-right" >商品ID：</label>
+								</td>
+								<td>
+									<input id="newGoodsId" name="newGoodsId" type="text" value="" class="input-sm" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" />
 									<a href="#"  class="btn btn-primary btn-rounded btn-outline btn-sm pull-right" onclick="findGood()" ><i class="fa fa-search"></i> 查询</a>
 								</td>
 							</tr>

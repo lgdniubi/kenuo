@@ -37,11 +37,12 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private int issend;						//0未发货，1已发货，2已换货，3已退货
 	private int deliveryid;					//发货单ID 
 	private Date addtime;					//生成日期
+	private Date realityAddTime;			//实际下单时间
 	private double membergoodsprice;		//会员折扣价（无用）
 	private int remaintimes;				//剩余服务次数
 	private int servicemin;					//服务时长
 	private int iscomment;					//是否评价（0：未评价；1：已评价；）
-	private int isreal;						//是否实物（0：实物商品；1：虚拟商品）
+	private int isreal;						//是否实物（0：实物商品；1：虚拟商品；2：套卡；3：通用卡）
 	private double totalAmount;				//实付款金额
 	private double orderAmount;				//应付金额
 	private double orderBalance;			//订单余款
@@ -51,6 +52,8 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private int servicetimes;				//预计服务次数
 	private int isAfterSales;				//是否售后（0：否；1：是）
 	private int expiringDate;				//有效期
+	
+	private String expiringdate;			//截止时间(为了对应时限卡的有效时间而设置) 土豆添加
 	
 	
 	private Users users;					//商品用户
@@ -82,7 +85,22 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private String officeId;              //组织架构ID
 	//-------------------------------------------------------------------------
 	
+	
+	
 	private double goodsBalance;         //商品余额，页面展示用
+	
+	
+	private int groupId;                  //组id，卡项订单，一个卡项商品下有多个子项，每个子项的组id就是那个卡项的recid
+	
+	private double suitCardBalance;       //套卡剩余金额总和（充值时页面展示用）
+	
+	// begin---------------用于预约   2017年8月10日新增-----------------
+	// 使用到的字段 groupId,recid,orderid,userid,goodsname,goodsid,servicetimes,servicemin,users,remaintimes,isreal,advanceFlag,singleRealityPrice,skillId,labelId
+	private double surplusAmount;		// 套卡剩余金额
+	private int useServiceTimes;		// 已经服务的次数 （非套卡）
+	private int cardUseServiceTimes;	// 套卡总已服务次数
+	private int isExpiring;				// 是非已过期 （0：正常 1：过期）
+	// end---------------用于预约   2017年8月10日新增-----------------
 	
 	public int getAfterSaleNum() {
 		return afterSaleNum;
@@ -452,5 +470,52 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	public void setGoodsBalance(double goodsBalance) {
 		this.goodsBalance = goodsBalance;
 	}
-	
+	public Date getRealityAddTime() {
+		return realityAddTime;
+	}
+	public void setRealityAddTime(Date realityAddTime) {
+		this.realityAddTime = realityAddTime;
+	}
+	public String getExpiringdate() {
+		return expiringdate;
+	}
+	public void setExpiringdate(String expiringdate) {
+		this.expiringdate = expiringdate;
+	}
+	public int getGroupId() {
+		return groupId;
+	}
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
+	}
+	public double getSuitCardBalance() {
+		return suitCardBalance;
+	}
+	public void setSuitCardBalance(double suitCardBalance) {
+		this.suitCardBalance = suitCardBalance;
+	}
+	public double getSurplusAmount() {
+		return surplusAmount;
+	}
+	public void setSurplusAmount(double surplusAmount) {
+		this.surplusAmount = surplusAmount;
+	}
+	public int getUseServiceTimes() {
+		return useServiceTimes;
+	}
+	public void setUseServiceTimes(int useServiceTimes) {
+		this.useServiceTimes = useServiceTimes;
+	}
+	public int getCardUseServiceTimes() {
+		return cardUseServiceTimes;
+	}
+	public void setCardUseServiceTimes(int cardUseServiceTimes) {
+		this.cardUseServiceTimes = cardUseServiceTimes;
+	}
+	public int getIsExpiring() {
+		return isExpiring;
+	}
+	public void setIsExpiring(int isExpiring) {
+		this.isExpiring = isExpiring;
+	}
 }
