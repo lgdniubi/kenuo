@@ -163,7 +163,7 @@
 					<td> 
 						<label>
 							<sys:treeselect id="trainLiveAudit" name="companyIds" value="${trainLiveAudit.companyIds }" labelName="companyNames" labelValue="${trainLiveAudit.companyNames }"
-								title="公司" url="/sys/franchisee/treeData" cssClass="form-control required" checked="true" notAllowSelectParent="false"/>
+								title="公司" url="/sys/franchisee/treeData" cssClass="form-control" checked="true" extId="1"/>
 						</label>
 					</td>
 				</tr>
