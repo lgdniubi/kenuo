@@ -242,7 +242,7 @@ public abstract class BaseService {
 		if(!user.isAdmin()){
 			if(null != companyIds && !"".equals(companyIds)){
 				if("1".equals(companyIds)){
-					dsf = "="+companyIds;
+					dsf = "";
 				}else{
 					String idArray[] = companyIds.split(",");
 					if(idArray.length == 1){
