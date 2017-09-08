@@ -19,11 +19,11 @@
 				  return;
 			}
 			
-			var sysUserId = $("#sysUserId").val(); 
+			/* var sysUserId = $("#sysUserId").val(); 
 			if(sysUserId == undefined){
 				top.layer.alert('提成人员信息不能为空!', {icon: 0, title:'提醒'}); 
 				return;
-			}
+			} */
 			
 			 $("#inputForm").submit();
 			 return true;
@@ -739,7 +739,7 @@ window.onload=initStatus;
 						<c:if test="${orders.isNeworder == 0}">
 							<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 								<div class="pull-left">
-									<h4><font color="red">*</font>人员提成信息：</h4>
+									<h4>人员提成信息：</h4>
 								</div>
 								<%-- <c:if test="${type != 'view' }">
 									<div class="pull-right">
