@@ -492,14 +492,13 @@ public class UserController extends BaseController {
 					userDao.insertUserInfo(IdGen.uuid(),user.getId());
 				}
 			}
-//			目前先不做
-			/*userDao.deleteFranchiseeAuth(user);
+			userDao.deleteFranchiseeAuth(user);
 			if(null != user.getCompanyIds() || !"".equals(user.getCompanyIds())){
 				String idArray[] =user.getCompanyIds().split(",");
 				for(String id : idArray){
 					userDao.insertFranchiseeAuth(user.getId(),id);
 				}
-			}*/
+			}
 			// 清除用户缓存
 			UserUtils.clearCache(user);
 		} catch (Exception e) {

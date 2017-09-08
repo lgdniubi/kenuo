@@ -135,19 +135,18 @@
 						<form:hidden path="officeIds"/>
 					</div></td>
 		      </tr>
-		      <!-- 目前先不做商家权限 -->
-		      <%-- <tr>
+		      <tr>
 		         <td class="width-15 active" style="vertical-align: top;">
 		         	<label class="pull-right">商家数据范围:</label>
 		         </td>
 		         <td class="width-35">
 					<div class="controls" style="margin-top:3px;margin-left: 10px;">
 						<sys:treeselect id="company" name="companyIds" value="${user.companyIds }" labelName="companyNames" labelValue="${user.companyNames }"
-						title="公司" url="/sys/franchisee/treeData" cssClass="form-control required" checked="true" notAllowSelectParent="true"/>
+						title="公司" url="/sys/franchisee/treeData" cssClass="form-control required" checked="true" notAllowSelectParent="true" extId="1"/>
 						<span class="help-inline">注:此权限仅适用于发现、直播、问答</span>
 					</div>
 				</td>
-		      </tr> --%>
+		      </tr>
 			</tbody>
 		</table>
 	</form:form>

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mysql.jdbc.Util;
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.ec.utils.WebUtils;
