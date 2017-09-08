@@ -35,12 +35,11 @@
 				var pushMoneys = document.getElementsByName("pushMoney");
 				var pushMoneySum = 0;
 	   			for(i=0;i<pushMoneys.length;i++){
-	   				pushMoneySum = parseFloat(pushMoneySum) + parseFloat(pushMoneys[i].value);
-		    	 }
-				if(parseFloat(pushMoneySum) - parseFloat(orderamount) > 0){
-					top.layer.alert('提成人员的提成金额总和不能大于订单应付总价!', {icon: 0, title:'提醒'}); 
-					return;
-				}
+	   				if(parseFloat(pushMoneys[i].value) - parseFloat(orderamount) > 0){
+	   					top.layer.alert('单个提成人员的提成金额不能大于订单应付总价!', {icon: 0, title:'提醒'}); 
+						return;
+	   				}
+	   			}
 			}
 			
 			$("#inputForm").submit();
@@ -215,11 +214,11 @@
 	//afterPayment 实际付款
 	//debtMoney 欠款
 	function delFile(id,costPrice,orderAmount,spareMoney,afterPayment,debtMoney){
-		$("#goodsprice").val($("#goodsprice").val()-costPrice); //系统总额
-		$("#orderamount").val($("#orderamount").val()-orderAmount); //成交总价
-		$("#orderBalance").val($("#orderBalance").val()-spareMoney); //总余额
-		$("#totalamount").val($("#totalamount").val()-afterPayment); //实付总额
-		$("#orderArrearage").val($("#orderArrearage").val()-debtMoney)//总欠款
+		$("#goodsprice").val(changeTwoDecimal_f(parseFloat($("#goodsprice").val())-parseFloat(costPrice))); //系统总额
+		$("#orderamount").val(changeTwoDecimal_f(parseFloat($("#orderamount").val())-parseFloat(orderAmount))); //成交总价
+		$("#orderBalance").val(changeTwoDecimal_f(parseFloat($("#orderBalance").val())-parseFloat(spareMoney))); //总余额
+		$("#totalamount").val(changeTwoDecimal_f(parseFloat($("#totalamount").val())-parseFloat(afterPayment))); //实付总额
+		$("#orderArrearage").val(changeTwoDecimal_f(parseFloat($("#orderArrearage").val())-parseFloat(debtMoney)));//总欠款
 		$("tr").remove(".commonCard"+id);
 		var goodselectIds = $("#goodselectIds").val();
 		if(goodselectIds == undefined){
