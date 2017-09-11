@@ -18,12 +18,6 @@
 				  return;
 			}
 			
-			/* var sysUserId = $("#sysUserId").val(); 
-			if(sysUserId == undefined){
-				top.layer.alert('提成人员信息不能为空!', {icon: 0, title:'提醒'}); 
-				return;
-			} */
-			
 			 $("#inputForm").submit();
 			 return true;
 				 
@@ -215,6 +209,58 @@
      function delFile(obj){
          $(obj).parent().parent().remove();
      }
+	
+   //修改提成人员信息
+ 	function updateFileSysUserInfo(obj,pushmoneyRecordId){
+ 		var orderamount = $("#orderamount").val();
+ 		top.layer.open({
+  			type: 2, 
+  		    area: ['550px', '420px'],
+  		    title:"提成人员选择",
+  		    content: "${ctx}/ec/orders/getPushmoneyView?pushmoneyRecordId="+pushmoneyRecordId,
+  		    btn: ['确定', '关闭']
+      	    ,yes: function(index, layero){
+      	    	var obj =  layero.find("iframe")[0].contentWindow;
+      	    	var sysUserId = obj.document.getElementById("sysUserId").value; //员工id
+      	    	var sysMobile = obj.document.getElementById("sysMobile").value; //员工电话
+      	    	var sysName = obj.document.getElementById("sysName").value; //员工名称
+      	    	var pushMoney = obj.document.getElementById("pushMoney").value; //提成金额
+      	    	var orderid =  $("#orderid").val();
+      	    	var isReal =  $("#isReal").val();
+      	    	if(pushMoney==""){
+      	    		top.layer.alert('填写提成金额！', {icon: 0, title:'提醒'});
+      	    		return;
+      	    	}else if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
+    	    		top.layer.alert('提成金额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
+     	    		return;
+      	    	}else{
+      	    		$.ajax({
+          				type:"post",
+          				data:{
+          					orderId:orderid,
+          					pushmoneyUserId:sysUserId,
+          					pushMoney:pushMoney
+          				 },
+          				url:"${ctx}/ec/orders/saveOrderPushmoneyRecord?flag=edit"+"&pushmoneyRecordId="+pushmoneyRecordId,
+          				success:function(date){
+          					if(date == 'success'){
+          						$(obj).parent().parent().remove();
+          						top.layer.alert('修改提成人员成功', {icon: 0, title:'提醒'});
+          						window.location="${ctx}/ec/orders/orderform?orderid="+orderid+"&isReal="+isReal+"&type=edit";
+          	     				top.layer.close(index);
+          					}else{
+          						top.layer.alert('修改提成人员失败', {icon: 0, title:'提醒'});
+          					}
+          				},
+          				error:function(XMLHttpRequest,textStatus,errorThrown){
+          					
+          				}
+          			});
+      	    	}
+  			}
+  		}); 
+ 	}
+	
 	//删除提成人员
      function delFileSysUserInfo(obj,pushmoneyRecordId){
 		$.ajax({
@@ -260,6 +306,8 @@
      }
 	
      function getSysUserInfo(){
+   		var orderamount = $("#orderamount").val();
+    	var sysUserIds = document.getElementsByName("sysUserId");
     	var operationName = $("#operationName").val();
  		if ($("#mtmyUserButton").hasClass("disabled")){
  			return true;
@@ -286,7 +334,19 @@
      	    	}else if(sysUserId == ""){
     	    		top.layer.alert('填写提成人员！', {icon: 0, title:'提醒'});
      	    		return;
+     	    	}else if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
+    	    		top.layer.alert('提成金额必须大于等于0，小于等于订单应付总额！', {icon: 0, title:'提醒'});
+     	    		return;
      	    	}else{
+     	    		if(sysUserIds.length > 0){
+    	    			for(i=0;i<sysUserIds.length;i++){
+         	    	        if(sysUserId == sysUserIds[i].value){
+         	    	        	top.layer.alert('提成人员不能相同！', {icon: 0, title:'提醒'});
+         	     	    		return;
+         	    	        }
+         	    	    }
+    	    		}
+     	    		
      	    		$.ajax({
          				type:"post",
          				data:{
@@ -294,7 +354,7 @@
          					pushmoneyUserId:sysUserId,
          					pushMoney:pushMoney
          				 },
-         				url:"${ctx}/ec/orders/saveOrderPushmoneyRecord",
+         				url:"${ctx}/ec/orders/saveOrderPushmoneyRecord?flag=add",
          				success:function(date){
          					if(date == 'success'){
          						$(obj).parent().parent().remove();
@@ -470,6 +530,7 @@ window.onload=initStatus;
 				<div class="clearfix">
 					<form:form id="inputForm" modelAttribute="orders" action="${ctx}/ec/orders/updateCardOrder" method="post" class="form-horizontal">
 						<input id="oldAddress" name="oldAddress" type="hidden" value="${orders.address}"/>
+						<input id="orderamount" name="orderamount" type="hidden" value="${orders.orderamount}"/>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 							<input type="hidden" id="channelFlag" value="${orders.channelFlag}" />
 							<input type="hidden" id="isReal" value="${orders.isReal}" />
@@ -609,11 +670,11 @@ window.onload=initStatus;
 								<div class="pull-left">
 									<h4>人员提成信息：</h4>
 								</div>
-								<%-- <c:if test="${type != 'view' }">
+								<c:if test="${type != 'view' }">
 									<div class="pull-right">
 										<a href="#" onclick="getSysUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
 									</div>
-								</c:if> --%>
+								</c:if>
 								<p></p>
 								<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
 									<thead>
@@ -623,9 +684,9 @@ window.onload=initStatus;
 											<th style="text-align: center;">提成金额</th>
 											<th style="text-align: center;">操作人</th>
 											<th style="text-align: center;">操作时间</th>
-											<%-- <c:if test="${type != 'view' }">
-												<th style="text-align: center;">操作</th>
-											</c:if> --%>
+											<c:if test="${type != 'view' }">
+												<th style="text-align: center;" colspan="2">操作</th>
+											</c:if>
 										</tr>
 									</thead>
 									<tbody id="sysUserInfo" style="text-align:center;">
@@ -648,9 +709,12 @@ window.onload=initStatus;
 												<td>
 													<fmt:formatDate value="${orderPushmoneyRecord.createDate }" pattern="yyyy-MM-dd HH:mm:ss" />
 												</td>
-												<%-- <c:if test="${type != 'view' }">
-													<td><a href="#" class="btn btn-danger btn-xs" onclick="delFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId })"><i class='fa fa-trash'></i> 删除</a></td>
-												</c:if> --%>
+												<c:if test="${type != 'view' }">
+													<td colspan="2">
+														<a href="#" class="btn btn-success btn-xs" onclick="updateFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId })"><i class='fa fa-edit'></i> 修改</a>
+														<a href="#" class="btn btn-danger btn-xs" onclick="delFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId })"><i class='fa fa-trash'></i> 删除</a>
+													</td>
+												</c:if>
 											</tr>
 										</c:forEach>
 									</tbody>

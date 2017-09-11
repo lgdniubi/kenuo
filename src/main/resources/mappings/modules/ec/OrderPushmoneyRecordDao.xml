@@ -36,16 +36,63 @@
 			mtmydb.mtmy_order_pushmoney_record r,trains.sys_user su1,trains.sys_user su2
 		WHERE r.user_id = su1.id
 		AND r.create_by = su2.id
-		AND order_id = #{orderid}
+		AND r.order_id = #{orderid}
+		AND r.del_flag = '0'
 	</select>
 	
-	<!-- 删除当前订单下的所有业务员提成信息 -->
-	<delete id="deleteOrderPushmoneyRecord">
-		DELETE FROM mtmydb.mtmy_order_pushmoney_record WHERE order_id = #{orderid}
-	</delete>
+	<!-- 根据pushmoneyRecordId查询相关业务员提成信息 -->
+	<select id="getOrderPushmoneyRecordById" resultType="OrderPushmoneyRecord">
+		SELECT
+			r.order_id as orderId,
+			r.user_id as pushmoneyUserId,
+			r.push_money as pushMoney,
+			r.create_by as "createBy.id",
+			r.create_date as createDate,
+			su1.`name` as pushmoneyUserName,
+			su1.mobile as pushmoneyUserMobile,
+			su2.`name` as "createBy.name"
+		FROM
+			mtmydb.mtmy_order_pushmoney_record r,trains.sys_user su1,trains.sys_user su2
+		WHERE r.user_id = su1.id
+		AND r.create_by = su2.id
+		AND r.id = #{pushmoneyRecordId}
+		AND r.del_flag = '0'
+	</select>
 	
+	<!-- 修改提成人员的提成金额 -->
+	<update id="updatePushMoney">
+		UPDATE mtmydb.mtmy_order_pushmoney_record
+		SET 
+			push_money = #{pushMoney},
+			update_by = #{updateBy.id},
+			update_date = SYSDATE()
+		WHERE id = #{pushmoneyRecordId}
+	</update>
+		
 	<!-- 删除指定提成人员 -->
-	<delete id="deleteSysUserInfo">
-		DELETE FROM mtmydb.mtmy_order_pushmoney_record WHERE id= #{pushmoneyRecordId}
-	</delete>
+	<update id="deleteSysUserInfo">
+		UPDATE mtmydb.mtmy_order_pushmoney_record
+		SET 
+			update_by = #{updateBy.id},
+			update_date = SYSDATE(),
+			del_flag = '1'
+		WHERE id = #{pushmoneyRecordId}
+	</update>
+	
+	<!-- 保存修改订单的提成人员的提成金额日志 -->
+	<insert id="insertPushMoneyLog">
+		INSERT INTO mtmydb.mtmy_order_pushmoney_record_log(
+			order_id,
+			pushmoney_record_id,
+			content,
+			create_by,
+			create_date
+		)values(
+			#{orderId},
+			#{pushmoneyRecordId},
+			#{content},
+			#{createBy.id},
+			SYSDATE()
+		)
+	</insert>
 </mapper>

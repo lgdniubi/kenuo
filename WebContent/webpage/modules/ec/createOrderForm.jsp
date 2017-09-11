@@ -387,7 +387,7 @@
     	    		top.layer.alert('填写提成人员！', {icon: 0, title:'提醒'});
      	    		return;
     	    	}else if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-    	    		top.layer.alert('提成金额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
+    	    		top.layer.alert('提成金额必须大于等于0，小于等于订单应付总额！', {icon: 0, title:'提醒'});
      	    		return;
     	    	}else{
     	    		if(sysUserIds.length > 0){
