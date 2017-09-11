@@ -2,11 +2,13 @@ package com.training.modules.train.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
+import com.training.modules.sys.dao.UserDao;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.ArticlesListDao;
@@ -24,10 +26,14 @@ import com.training.modules.train.entity.ArticlesComment;
 @Transactional(readOnly = false)
 public class ArticlesListService extends CrudService<ArticlesListDao, Articles>{
 	
+	@Autowired
+	private UserDao userDao;
+	
 	/**
 	 * 分页查询文章
 	 */
 	public Page<Articles> findPage(Page<Articles> page, Articles articles) {
+		articles.getSqlMap().put("dsf", companyDateScope((String)userDao.findFranchiseeAuth(UserUtils.getUser()).get("companyIds"),UserUtils.getUser()));
 		articles.setPage(page);
 		page.setList(dao.findList(articles));
 		return page;

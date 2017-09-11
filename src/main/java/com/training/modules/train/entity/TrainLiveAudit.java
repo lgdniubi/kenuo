@@ -48,6 +48,9 @@ public class TrainLiveAudit extends TreeEntity<TrainLiveAudit> {
 	private int platformEarnings;		//平台收益比例
 	private int userEarnings;			//用户收益比例
 	
+	private String companyIds; // 数据范围按商家区分
+	private String companyNames; // 数据范围按商家区分
+	
 	public int getIsPay() {
 		return isPay;
 	}
@@ -308,6 +311,22 @@ public class TrainLiveAudit extends TreeEntity<TrainLiveAudit> {
 
 	public void setUserEarnings(int userEarnings) {
 		this.userEarnings = userEarnings;
+	}
+
+	public String getCompanyIds() {
+		return companyIds;
+	}
+
+	public void setCompanyIds(String companyIds) {
+		this.companyIds = companyIds;
+	}
+
+	public String getCompanyNames() {
+		return companyNames;
+	}
+
+	public void setCompanyNames(String companyNames) {
+		this.companyNames = companyNames;
 	}
 
 }

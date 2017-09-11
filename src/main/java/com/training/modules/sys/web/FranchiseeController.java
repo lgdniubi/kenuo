@@ -219,7 +219,8 @@ public class FranchiseeController extends BaseController{
 			//&& (type == null || (type != null && (type.equals("1") ? type.equals(e.getType()) : true)))
 			//&& (grade == null || (grade != null && Global.YES.equals(e.getStatus())))
 			if ((StringUtils.isBlank(extId) || 
-					(extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1))){
+					/*(extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1))){*/
+					(extId!=null && !extId.equals(e.getId())))){
 				Map<String, Object> map = Maps.newHashMap();
 				map.put("id", e.getId());
 				map.put("pId", e.getParentId());

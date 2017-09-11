@@ -73,6 +73,9 @@
 		<if test="playbackId != null and playbackId != ''">
 			AND a.playbackId=#{playbackId}
 		</if>
+		<if test="sqlMap.dsf != null and sqlMap.dsf != ''">
+			AND d.company_id ${sqlMap.dsf}
+		</if>
 		ORDER BY a.id DESC
 	</select>
 	<!-- 回看显示隐藏 -->

@@ -2,6 +2,8 @@ package com.training.modules.train.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.TrainLiveAudit;
@@ -84,4 +86,14 @@ public interface TrainLiveAuditDao extends TreeDao<TrainLiveAudit>{
 	 * @return
 	 */
 	public int findOfficeIntegrals();
+	/**
+	 * 删除直播商家权限ID
+	 * @param id
+	 */
+	public void deleteJurisdiction(String id);
+	/**
+	 * 插入直播商家权限ID
+	 * @param id
+	 */
+	public void insertJurisdiction(@Param("auditId")String auditId,@Param("id")String id);
 }

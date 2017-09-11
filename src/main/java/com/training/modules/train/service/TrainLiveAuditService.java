@@ -13,7 +13,9 @@ import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.oa.dao.OaNotifyDao;
+import com.training.modules.sys.dao.UserDao;
 import com.training.modules.sys.utils.ParametersFactory;
+import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.TrainLiveAuditDao;
 import com.training.modules.train.dao.TrainLivePlaybackDao;
 import com.training.modules.train.dao.TrainLiveUserDao;
@@ -37,7 +39,8 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 	private OaNotifyDao oaNotifyDao;
 	@Autowired
 	private TrainLiveUserDao trainLiveUserDao;
-	
+	@Autowired
+	private UserDao userDao;
 	
 	/**
 	 * 分页查询
@@ -48,6 +51,8 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 	public Page<TrainLiveAudit> findLive(Page<TrainLiveAudit> page, TrainLiveAudit trainLiveAudit) {
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
 		//redEnvelope.getSqlMap().put("dsf", dataScopeFilter(redEnvelope.getCurrentUser(), "o", "a"));
+		//获取当前登录用户
+		trainLiveAudit.getSqlMap().put("dsf", companyDateScope((String)userDao.findFranchiseeAuth(UserUtils.getUser()).get("companyIds"),UserUtils.getUser()));
 		// 设置分页参数
 		trainLiveAudit.setPage(page);
 		// 执行分页查询
@@ -78,6 +83,13 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 	 * @return
 	 */
 	public int update(TrainLiveAudit trainLiveAudit){
+		trainLiveAuditDao.deleteJurisdiction(trainLiveAudit.getId());	// 删除直播商家权限ID
+		if(null != trainLiveAudit.getCompanyIds() || !"".equals(trainLiveAudit.getCompanyIds())){
+			String idArray[] =trainLiveAudit.getCompanyIds().split(",");
+			for(String id : idArray){
+				trainLiveAuditDao.insertJurisdiction(trainLiveAudit.getId(),id);	// 插入直播商家权限ID
+			}
+		}
 		return trainLiveAuditDao.update(trainLiveAudit);
 	}
 	/**
