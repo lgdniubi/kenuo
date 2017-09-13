@@ -129,5 +129,18 @@
 	<delete id="delOffice">
 		DELETE FROM sys_office_recommend_mapping WHERE id = #{OfficeRecommendMappingId}
 	</delete>
+	
+	<!-- 将所有的推荐组都设置为不显示 -->
+	<update id="changeAll">
+		UPDATE sys_office_recommend
+		SET is_show = 0
+	</update>
+	
+	<!-- 查询最近创建的那个推荐组 -->
+	<select id="selectIdByCreatDate" resultType="Integer">
+		SELECT id
+		FROM sys_office_recommend
+		ORDER BY create_date DESC limit 1
+	</select>
 </mapper>
 

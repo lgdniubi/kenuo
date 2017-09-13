@@ -78,4 +78,15 @@ public interface OfficeRecommendDao extends CrudDao<OfficeRecommend> {
 	 * @param officeRecommendMapping
 	 */
 	public void updateOfficeMessage(OfficeRecommendMapping officeRecommendMapping);
+	
+	/**
+	 * 将所有的推荐组都设置为不显示
+	 */
+	public void changeAll();
+	
+	/**
+	 * 查询最近创建的那个推荐组
+	 * @return
+	 */
+	public int selectIdByCreatDate();
 }

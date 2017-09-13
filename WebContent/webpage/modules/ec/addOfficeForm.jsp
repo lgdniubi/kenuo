@@ -25,7 +25,7 @@
 								<label class="pull-right" >选择店铺：</label>
 							</td>
 							<td>
-								<sys:treeselect id="office" name="officeId" value="${officeRecommendMapping.officeId}" labelName="officeName" labelValue="${officeRecommendMapping.officeName}" title="店铺" url="/sys/office/treeData?type=2" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="true" notAllowSelectParent="true"/>
+								<sys:treeselect id="office" name="officeId" value="${officeRecommendMapping.officeId}" labelName="officeName" labelValue="${officeRecommendMapping.officeName}" title="店铺" url="/sys/office/treeData?type=2" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="true"/>
 							</td>
 						</tr>
 						<tr>

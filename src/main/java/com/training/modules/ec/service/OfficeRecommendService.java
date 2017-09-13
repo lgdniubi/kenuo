@@ -123,4 +123,19 @@ public class OfficeRecommendService extends CrudService<OfficeRecommendDao, Offi
 	public void updateOfficeMessage(OfficeRecommendMapping officeRecommendMapping){
 		officeRecommendDao.updateOfficeMessage(officeRecommendMapping);
 	}
+	
+	/**
+	 * 将所有的推荐组都设置为不显示
+	 */
+	public void changeAll(){
+		officeRecommendDao.changeAll();
+	}
+	
+	/**
+	 * 查询最近创建的那个推荐组
+	 * @return
+	 */
+	public int selectIdByCreatDate(){
+		return officeRecommendDao.selectIdByCreatDate();
+	}
 }

@@ -132,8 +132,16 @@ public class OfficeRecommendController extends BaseController{
 	@RequestMapping(value="updateType")
 	public String updateType(OfficeRecommend officeRecommend,HttpServletRequest request,RedirectAttributes redirectAttributes){
 		try{
+			officeRecommendService.changeAll();
 			if(officeRecommend.getOfficeRecommendId() != 0){
-				officeRecommendService.updateIsShow(officeRecommend);
+				if(officeRecommend.getIsShow() == 1){
+					officeRecommendService.updateIsShow(officeRecommend);
+				}else if(officeRecommend.getIsShow() == 0){
+					int officeRecommendId = officeRecommendService.selectIdByCreatDate();
+					officeRecommend = officeRecommendService.getOfficeRecommend(officeRecommendId);
+					officeRecommend.setIsShow(1);
+					officeRecommendService.updateIsShow(officeRecommend);
+				}
 			}
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "修改店铺推荐组是否显示", e);
