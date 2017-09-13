@@ -54,7 +54,7 @@
 								<span>归属机构：</span>
 								<sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}" title="部门"
 									url="/sys/office/treeData?type=2" cssClass=" form-control input-sm" allowClear="true"
-									notAllowSelectRoot="false" notAllowSelectParent="false" />
+									notAllowSelectRoot="false" notAllowSelectParent="true" />
 								<span>姓&nbsp;&nbsp;&nbsp;名：</span>
 								<form:input path="name" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
 								<span>手机号码：</span>

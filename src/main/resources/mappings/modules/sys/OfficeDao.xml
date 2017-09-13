@@ -24,7 +24,6 @@
 		a.update_by AS "updateBy.id",
 		a.update_date,
 		a.is_new AS "isNew",
-		a.is_recommend AS "isRecommend",
 		a.is_cargo AS "isCargo",
 		a.longitude,
 		a.latitude,
@@ -89,7 +88,6 @@
 			a.update_date,
 			a.del_flag,
 			a.is_new,
-			a.is_recommend AS isRecommend,
 			a.longitude AS longitude,
 			a.latitude AS latitude,
 			a.useable AS useable,
@@ -239,7 +237,6 @@
 			update_date, 
 			remarks, 
 			del_flag,
-			is_recommend,
 			longitude,
 			latitude,
 			useable,
@@ -269,7 +266,6 @@
 			#{updateDate}, 
 			#{remarks}, 
 			#{delFlag},
-			#{isRecommend},
 			#{longitude},
 			#{latitude},
 			#{useable},
@@ -317,7 +313,6 @@
 			update_date, 
 			remarks, 
 			del_flag,
-			is_recommend,
 			longitude,
 			latitude,
 			useable,
@@ -351,7 +346,6 @@
 			#{updateDate}, 
 			#{remarks}, 
 			#{delFlag},
-			#{isRecommend},
 			#{longitude},
 			#{latitude},
 			#{useable},
@@ -384,7 +378,6 @@
 			update_by = #{updateBy.id}, 
 			update_date = #{updateDate}, 
 			remarks = #{remarks},
-			is_recommend = #{isRecommend},
 			longitude = #{longitude},
 			latitude = #{latitude},
 			useable=#{useable},
@@ -476,9 +469,6 @@
 	<update id="updateisyesno">
 		<if test="type == 'status'">
 			UPDATE sys_office_info SET status = #{isyesno} WHERE id = #{id}
-		</if> 
-		<if test="type == 'isRecommend'">
-			UPDATE sys_office SET is_recommend = #{isyesno} WHERE id = #{id}
 		</if> 
 		<if test="type == 'isNew'">
 			UPDATE sys_office SET is_new = #{isyesno} WHERE id = #{id}
