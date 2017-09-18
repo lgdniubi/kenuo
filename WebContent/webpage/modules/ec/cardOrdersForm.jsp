@@ -246,7 +246,7 @@
           					if(date == 'success'){
           						$(obj).parent().parent().remove();
           						top.layer.alert('修改提成人员成功', {icon: 0, title:'提醒'});
-          						window.location="${ctx}/ec/orders/orderform?orderid="+orderid+"&isReal="+isReal+"&type=edit";
+          						window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid+"&isReal="+isReal+"&type=edit";
           	     				top.layer.close(index);
           					}else{
           						top.layer.alert('修改提成人员失败', {icon: 0, title:'提醒'});
