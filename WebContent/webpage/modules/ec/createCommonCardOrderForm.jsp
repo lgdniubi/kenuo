@@ -609,7 +609,7 @@
 				<p></p>
 				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="sysUserPush">
 					<div class="pull-left">
-						<h4><font color="red">*</font>人员提成信息<span style="color:red;">(注：订单一旦创建将无法删除业务员)</span>：</h4>
+						<h4><font color="red">*</font>人员提成信息：</h4>
 					</div>
 					<div class="pull-right">
 						<a href="#" onclick="getSysUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
