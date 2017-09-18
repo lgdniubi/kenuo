@@ -177,6 +177,51 @@
 			   }); 
 		
 			});
+        
+		$("#appellationButton").click(function(){
+			// 是否限制选择，如果限制，设置为disabled
+			if ($("#appellationButton").hasClass("disabled")){
+				return true;
+			}
+			// 正常打开	
+			top.layer.open({
+			    type: 2, 
+			    area: ['300px', '420px'],
+			    title:"选择称谓标签",
+			    ajaxData:{selectIds: $("#appellationId").val()},
+			    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/crm/appellation/treeData")+"&module=&checked=&extId=&isAll=" ,
+			    btn: ['确定', '关闭']
+	    	       ,yes: function(index, layero){ //或者使用btn1
+							var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+							var ids = [], names = [], nodes = [];
+							if ("" == "true"){
+								nodes = tree.getCheckedNodes(true);
+							}else{
+								nodes = tree.getSelectedNodes();
+							}
+							for(var i=0; i<nodes.length; i++) {//
+								
+								if (nodes[i].isParent){
+									//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+									//layer.msg('有表情地提示');
+									top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+									return false;
+								}//
+								ids.push(nodes[i].id);
+								names.push(nodes[i].name);//
+								break; // 如果为非复选框选择，则返回第一个选择  
+							}
+							$("#appellationId").val(ids.join(",").replace(/u_/ig,""));
+							$("#appellationName").val(names.join(","));
+							$("#appellationName").focus();
+							top.layer.close(index);
+					    	       },
+	    	cancel: function(index){ //或者使用btn2
+	    	           //按钮【按钮二】的回调
+	    	       }
+			   }); 
+		
+			});
 		
 		});
 	</script>
@@ -235,6 +280,15 @@
 												<i class="fa fa-search"></i>
 											</button>
 								</li>
+								<li>
+		  							<span class="col-sm-2">选择称谓标签：</span>
+		  							<%-- <sys:treeselect id="appellation" name="appellationId" value="${users.appellationId}" labelName="appellationName" labelValue="${users.appellationName}" title="称谓标签" url="/crm/appellation/treeData" cssClass="form-control" notAllowSelectParent="true"/> --%>
+								    <input id="appellationId" class="form-control" name="appellationId" type="hidden">
+									<input id="appellationName" class=" form-control" name="appellationName" readonly="readonly" type="text">
+									<button id="appellationButton" class="btn btn-primary " type="button">
+										<i class="fa fa-search"></i>
+									</button>
+		  						</li>
 							</ul>
 						</form>
 					</div>

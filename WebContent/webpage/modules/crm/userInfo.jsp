@@ -501,6 +501,10 @@ input::-webkit-inner-spin-button{
 									name="criticalDiseases" style="width: 413px; float: left"
 									class="form-control " /><br />
 							</div>
+							<div class="col-intems">
+								<label style="margin-left: -10px; float: left">称谓标签:</label>
+		  						<sys:treeselect id="appellation" name="appellationId" value="${detail.appellationId}" labelName="appellationName" labelValue="${detail.appellationName}" title="称谓标签" url="/crm/appellation/treeData" cssClass="form-control" notAllowSelectParent="true"/>
+							</div>
 							
 						</div>
 					</div>
