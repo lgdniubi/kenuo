@@ -232,5 +232,27 @@ public abstract class BaseService {
 		sqlString.append(" AND "+officeAlias+".grade = 2 ");
 		return sqlString.toString();
 	}
-
+	/**
+	 * 用于商家权限(由于开发周期短,此为临时方案)
+	 * 咖啡  2017年9月2日16:20:13 
+	 * @return
+	 */
+	public static String companyDateScope(String companyIds,User user){
+		String dsf = "";
+		if(!user.isAdmin()){
+			if(null != companyIds && !"".equals(companyIds)){
+				if("1".equals(companyIds)){
+					dsf = "";
+				}else{
+					String idArray[] = companyIds.split(",");
+					if(idArray.length == 1){
+						dsf = "= "+companyIds+"";
+					}else{
+						dsf = "IN ("+companyIds+")";
+					}
+				}
+			}
+		}
+		return dsf;
+	}
 }

@@ -49,6 +49,7 @@ import com.training.modules.ec.entity.OrderRechargeLog;
 import com.training.modules.ec.entity.OrderRemarksLog;
 import com.training.modules.ec.entity.Orders;
 import com.training.modules.ec.entity.Payment;
+import com.training.modules.ec.entity.PushmoneyRecordLog;
 import com.training.modules.ec.entity.TradingLog;
 import com.training.modules.ec.entity.Users;
 import com.training.modules.quartz.service.RedisClientTemplate;
@@ -1511,10 +1512,11 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 
 	/**
 	 * 删除提成人员信息
-	 * @param mtmyUserId
+	 * @param orderPushmoneyRecord
 	 */
-	public void deleteSysUserInfo(int pushmoneyRecordId) {
-		orderPushmoneyRecordService.deleteSysUserInfo(pushmoneyRecordId);
+	public void deleteSysUserInfo(OrderPushmoneyRecord orderPushmoneyRecord) {
+		orderPushmoneyRecord.setUpdateBy(UserUtils.getUser());
+		orderPushmoneyRecordService.deleteSysUserInfo(orderPushmoneyRecord);
 	}
 	/**
 	 * 删除订单备注
@@ -1541,10 +1543,43 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param orderPushmoneyRecord
 	 */
 	public void saveOrderPushmoneyRecord(OrderPushmoneyRecord orderPushmoneyRecord) {
-		User user = UserUtils.getUser();
-		orderPushmoneyRecord.setCreateBy(user);
-		orderPushmoneyRecord.setDelFlag("0");
-		orderPushmoneyRecordService.saveOrderPushmoneyRecord(orderPushmoneyRecord);
+		if("edit".equals(orderPushmoneyRecord.getFlag())){
+			OrderPushmoneyRecord oldOrderPushmoneyRecord = orderPushmoneyRecordService.getOrderPushmoneyRecordById(orderPushmoneyRecord.getPushmoneyRecordId());
+			//保存订单提成人员修改日志
+			String str = specialLog(oldOrderPushmoneyRecord,orderPushmoneyRecord);
+			if(!"".equals(str) && null != str){
+				PushmoneyRecordLog pushmoneyRecordLog = new PushmoneyRecordLog();
+				pushmoneyRecordLog.setOrderId(orderPushmoneyRecord.getOrderId());
+				pushmoneyRecordLog.setPushmoneyRecordId(orderPushmoneyRecord.getPushmoneyRecordId());
+				pushmoneyRecordLog.setContent(str);
+				pushmoneyRecordLog.setCreateBy(UserUtils.getUser());
+				orderPushmoneyRecordService.insertPushMoneyLog(pushmoneyRecordLog);
+			}
+			
+			User user = UserUtils.getUser();
+			orderPushmoneyRecord.setUpdateBy(user);
+			orderPushmoneyRecordService.updatePushMoney(orderPushmoneyRecord);
+		}else if("add".equals(orderPushmoneyRecord.getFlag())){
+			User user = UserUtils.getUser();
+			orderPushmoneyRecord.setCreateBy(user);
+			orderPushmoneyRecord.setDelFlag("0");
+			orderPushmoneyRecordService.saveOrderPushmoneyRecord(orderPushmoneyRecord);
+		}
+	}
+	
+	/**
+	 * 订单提成人员修改日志
+	 * @param oldOrderPushmoneyRecord
+	 * @param orderPushmoneyRecord
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	public String specialLog(OrderPushmoneyRecord oldOrderPushmoneyRecord,OrderPushmoneyRecord orderPushmoneyRecord){
+		StringBuffer str = new StringBuffer();	// 用于存储一些特殊的日志
+		if(oldOrderPushmoneyRecord.getPushMoney() != orderPushmoneyRecord.getPushMoney()){
+			str.append("业务员姓名："+oldOrderPushmoneyRecord.getPushmoneyUserName()+",提成金额:修改前("+oldOrderPushmoneyRecord.getPushMoney()+"),修改后("+orderPushmoneyRecord.getPushMoney()+")--");
+		}
+		return str.toString();
 	}
 
 	/**

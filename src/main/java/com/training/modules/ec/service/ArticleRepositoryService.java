@@ -106,12 +106,12 @@ public class ArticleRepositoryService extends CrudService<ArticleRepositoryDao, 
 		List<ArticleImage> imageList = findImages(a);
 		if(num == 0){
 			if("train".equals(type)){
-				dao.sendTrainArticle(articleId, categoryId,currentUser.getId());
+				dao.sendTrainArticle(articleId, categoryId,currentUser.getId());	// 2017年9月2日 currentUser.getId() 暂时无用 
 				if(imageList.size() > 0){
 					dao.sendTrainArticleImg(imageList);
 				}
 			}else if("mtmy".equals(type)){
-				dao.sendMtmyArticle(articleId, categoryId,currentUser.getId());
+				dao.sendMtmyArticle(articleId, categoryId,currentUser.getId());		// 2017年9月2日 currentUser.getId() 暂时无用 
 				if(imageList.size() > 0){
 					dao.sendMtmyArticleImg(imageList);					
 				}

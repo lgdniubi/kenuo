@@ -426,6 +426,9 @@ public class UserController extends BaseController {
 		if(u != null ){
 			user.setOfficeIdList(u.getOfficeIdList());
 		}
+		Map<String, Object> map = userDao.findFranchiseeAuth(user);	// 查询用户商家权限
+		user.setCompanyIds((String)map.get("companyIds"));
+		user.setCompanyNames((String)map.get("companyNames"));
 		model.addAttribute("isSpecBeautician", systemService.selectSpecBeautician(user.getId()));	
 		model.addAttribute("user", user);
 		model.addAttribute("officeList", officeService.findAll());
@@ -487,6 +490,13 @@ public class UserController extends BaseController {
 				//若用户原来无排班，然后给予排班角色，则查询有没有美容师信息，若无，则插入
 				if(userDao.selectIsExist(user.getId()) == 0){
 					userDao.insertUserInfo(IdGen.uuid(),user.getId());
+				}
+			}
+			userDao.deleteFranchiseeAuth(user);
+			if(null != user.getCompanyIds() || !"".equals(user.getCompanyIds())){
+				String idArray[] =user.getCompanyIds().split(",");
+				for(String id : idArray){
+					userDao.insertFranchiseeAuth(user.getId(),id);
 				}
 			}
 			// 清除用户缓存
