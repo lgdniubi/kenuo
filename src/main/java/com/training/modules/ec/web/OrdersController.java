@@ -67,6 +67,7 @@ import com.training.modules.ec.entity.Shipping;
 import com.training.modules.ec.service.AcountLogService;
 import com.training.modules.ec.service.OrderGoodsDetailsService;
 import com.training.modules.ec.service.OrderGoodsService;
+import com.training.modules.ec.service.OrderPushmoneyRecordService;
 import com.training.modules.ec.service.OrdersLogService;
 import com.training.modules.ec.service.OrdersService;
 import com.training.modules.ec.service.PaymentService;
@@ -125,7 +126,8 @@ public class OrdersController extends BaseController {
 	private GoodsSpecPriceDao goodsSpecPriceDao;
 	@Autowired
 	private OrderGoodsDao orderGoodsDao;
-	
+	@Autowired
+	private OrderPushmoneyRecordService orderPushmoneyRecordService;
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
 	
@@ -1188,9 +1190,12 @@ public class OrdersController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "getPushmoneyView")
-	public String getPushmoneyView(String orderid, HttpServletRequest request, Model model) {
+	public String getPushmoneyView(OrderPushmoneyRecord orderPushmoneyRecord, HttpServletRequest request, Model model) {
 		try {
-			
+			if(orderPushmoneyRecord.getPushmoneyRecordId() != 0){
+				orderPushmoneyRecord = orderPushmoneyRecordService.getOrderPushmoneyRecordById(Integer.valueOf(orderPushmoneyRecord.getPushmoneyRecordId()));
+				model.addAttribute("orderPushmoneyRecord", orderPushmoneyRecord);
+			}
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转提成页面错误", e);
 			logger.error("方法：getPushmoneyView，跳转提成页面出现错误：" + e.getMessage());
@@ -1282,15 +1287,15 @@ public class OrdersController extends BaseController {
 	/**
 	 * 删除提成人员信息
 	 * 
-	 * @param id
+	 * @param orderPushmoneyRecord
 	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping(value = "deleteSysUserInfo")
-	public String deleteSysUserInfo(int pushmoneyRecordId,HttpServletRequest request, HttpServletResponse response) {
+	public String deleteSysUserInfo(OrderPushmoneyRecord orderPushmoneyRecord,HttpServletRequest request, HttpServletResponse response) {
 		String type="";
 		try {
-			ordersService.deleteSysUserInfo(pushmoneyRecordId);
+			ordersService.deleteSysUserInfo(orderPushmoneyRecord);
 			type = "success";
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "删除提成人员信息错误", e);

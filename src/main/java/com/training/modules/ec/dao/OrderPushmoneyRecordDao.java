@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.OrderPushmoneyRecord;
+import com.training.modules.ec.entity.PushmoneyRecordLog;
 /**
  * 订单提成记录Dao
  * @author dalong
@@ -23,6 +24,13 @@ public interface OrderPushmoneyRecordDao extends TreeDao<OrderPushmoneyRecord> {
 	void saveOrderPushmoneyRecord(OrderPushmoneyRecord orderPushmoneyRecord);
 
 	/**
+	 * 根据pushmoneyRecordId查询相关业务员
+	 * @param pushmoneyRecordId
+	 * @return
+	 */
+	OrderPushmoneyRecord getOrderPushmoneyRecordById(@Param("pushmoneyRecordId")int pushmoneyRecordId);
+	
+	/**
 	 * 根据订单id查询相关业务员
 	 * @param orderid
 	 * @return
@@ -30,14 +38,21 @@ public interface OrderPushmoneyRecordDao extends TreeDao<OrderPushmoneyRecord> {
 	List<OrderPushmoneyRecord> getOrderPushmoneyRecordByOrderId(@Param("orderid")String orderid);
 
 	/**
-	 * 删除当前订单下所有业务员提成
-	 * @param orderid
-	 */
-	void deleteOrderPushmoneyRecord(@Param("orderid")String orderid);
-	/**
 	 * 删除订单提成人员信息
-	 * @param mtmyUserId
+	 * @param orderPushmoneyRecord
 	 */
-	void deleteSysUserInfo(int pushmoneyRecordId);
+	void deleteSysUserInfo(OrderPushmoneyRecord orderPushmoneyRecord);
+	
+	/**
+	 * 修改提成人员的提成金额
+	 * @param orderPushmoneyRecord
+	 */
+	void updatePushMoney(OrderPushmoneyRecord orderPushmoneyRecord);
+	
+	/**
+	 * 保存修改订单的提成人员的提成金额日志
+	 * @param pushmoneyRecordLog
+	 */
+	void insertPushMoneyLog(PushmoneyRecordLog pushmoneyRecordLog);
 
 }

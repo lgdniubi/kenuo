@@ -6,12 +6,13 @@
 	<meta name="decorator" content="default"/>
 	<link rel="stylesheet" href="${ctxStatic}/train/css/exam.css">
 	<script type="text/javascript">
-		function sum(){
-			var rechargeAmount = parseFloat($("#rechargeAmount").val());
-			var  accountBalance = parseFloat($("#accountBalance").val());
-			var  topUpTotalAmount = (rechargeAmount+accountBalance).toFixed(2);
-			$("#topUpTotalAmount").val(topUpTotalAmount);
-		}
+		$(document).ready(function(){
+			if($("#sysUserId").val() != 0){
+				$("#search").hide();
+				$("#condition").hide();
+				$("#searchMobile").hide();
+			}	
+		});
 		
 		function selectUser(){
 			
@@ -55,22 +56,22 @@
 	    	<div class="ibox-content">
 				<div class="tab-content" id="tab-content">
 	                <div class="tab-inner">
-		                	<label class="active"><font color="red">*</font>业务员手机号：</label>
+		                	<label class="active" id="search"><font color="red">*</font>业务员手机号：</label>
 		                	<input type="text" id="searchMobile" name="searchMobile" class="form-control required" />
-		                	<div class="pull-right">
+		                	<div class="pull-right" id="condition">
 			                	<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="selectUser()" ><i class="fa fa-search"></i> 查询</button>
 			                	<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="empty()" ><i class="fa fa-refresh"></i> 重置</button>
 		                	</div>
 		                	<p></p>
 		                	<label class="active">业务员姓名：</label>
-		                	<input id="sysName" name="sysName" class="form-control" readonly="readonly" type="text" value="" aria-required="true">
-		                	<input id="sysUserId" name="sysUserId" class="form-control" readonly="readonly" type="hidden" value="" aria-required="true">
+		                	<input id="sysName" name="sysName" class="form-control" readonly="readonly" type="text" value="${orderPushmoneyRecord.pushmoneyUserName}" aria-required="true">
+		                	<input id="sysUserId" name="sysUserId" class="form-control" readonly="readonly" type="hidden" value="${orderPushmoneyRecord.pushmoneyUserId}" aria-required="true">
 		                	<p></p>
 		                	<label class="active">业务员手机：</label>
-		                	<input id="sysMobile" name="sysMobile" class="form-control" readonly="readonly" type="text" value="" aria-required="true">
+		                	<input id="sysMobile" name="sysMobile" class="form-control" readonly="readonly" type="text" value="${orderPushmoneyRecord.pushmoneyUserMobile}" aria-required="true">
 		                	<p></p>
 		                	<label class="active"><font color="red">*</font>提成金额：</label>
-		                	<input id="pushMoney" name="pushMoney" class="form-control" type="text" value="" aria-required="true" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';">
+		                	<input id="pushMoney" name="pushMoney" class="form-control" type="text" value="${orderPushmoneyRecord.pushMoney}" aria-required="true" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';">
 					</div>
 				</div>
 			</div>

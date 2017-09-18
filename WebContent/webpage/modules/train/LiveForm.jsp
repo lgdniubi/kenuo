@@ -158,6 +158,15 @@
 						<label><input id="earningsRatio" name="earningsRatio" type="text" value="${trainLiveAudit.earningsRatio*100}" class="form" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';"/>% </label>
 					</td>
 				</tr>
+				<tr id="earningsRatioShow">
+					<td><label class="pull-right">权限设置:</label></td>
+					<td> 
+						<label>
+							<sys:treeselect id="trainLiveAudit" name="companyIds" value="${trainLiveAudit.companyIds }" labelName="companyNames" labelValue="${trainLiveAudit.companyNames }"
+								title="公司" url="/sys/franchisee/treeData" cssClass="form-control" checked="true" extId="1"/>
+						</label>
+					</td>
+				</tr>
 				<tr>
 					<td><label class="pull-right">是否付费:</label></td>
 					<td>
