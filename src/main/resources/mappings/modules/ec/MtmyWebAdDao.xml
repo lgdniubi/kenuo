@@ -9,18 +9,21 @@
 			category_id AS 'categoryId',
 			align,
 			name,
+			subhead,
 			head_img AS 'headImg',
 			suboriginal_img AS 'suboriginalImg',
 			position_type AS 'positionType',
 			data_type AS 'dataType',
 			redirect_url AS 'redirectUrl',
 			is_show AS 'isShow',
+			sort,
 			remarks,
 			create_date AS 'createDate',
 			del_flag AS 'delFlag'
 		FROM mtmydb.mtmy_web_ad
 		WHERE category_id = #{categoryId}
 		AND del_flag = '0'
+		ORDER BY	sort DESC
 	</select>
 	
 	<!-- 根据mtmyWebAdId获取相应的首页广告图 -->
@@ -30,12 +33,14 @@
 			category_id AS 'categoryId',
 			align,
 			name,
+			subhead,
 			head_img AS 'headImg',
 			suboriginal_img AS 'suboriginalImg',
 			position_type AS 'positionType',
 			data_type AS 'dataType',
 			redirect_url AS 'redirectUrl',
 			is_show AS 'isShow',
+			sort,
 			remarks,
 			create_date AS 'createDate',
 			del_flag AS 'delFlag'
@@ -56,26 +61,28 @@
 		INSERT INTO mtmydb.mtmy_web_ad(
 			category_id,
 			name,
+			subhead,
 			position_type,
-			align,
 			suboriginal_img,
 			head_img,
 			data_type,
 			redirect_url,
 			is_show,
+			sort,
 			create_by,
 			create_date,
 			del_flag
 		)values(
 			#{categoryId},
 			#{name},
+			#{subhead},
 			#{positionType},
-			#{align},
 			#{suboriginalImg},
 			#{headImg},
 			#{dataType},
 			#{redirectUrl},
 			'1',
+			#{sort},
 			#{createBy.id},
 			NOW(),
 			'0'
@@ -87,10 +94,11 @@
 		UPDATE mtmydb.mtmy_web_ad
 		SET 
 			name = #{name},
-			align = #{align},
+			subhead = #{subhead},
 			suboriginal_img = #{suboriginalImg},
 			head_img = #{headImg},
 			data_type = #{dataType},
+			sort = #{sort},
 			redirect_url = #{redirectUrl},
 			update_by = #{updateBy.id},
 			update_date = NOW()
