@@ -14,11 +14,14 @@
 			mmu.office_id AS officeId,
 			tso.name AS officeName,
 			mmu.beautician_id AS beautyId,
-			tsu.`name` AS beautyName
+			tsu.`name` AS beautyName,
+			mal.id AS 'appellationId',
+			mal.name AS 'appellationName'
 		FROM
 			mtmydb.mtmy_users mmu
 		LEFT JOIN trains.sys_office tso ON mmu.office_id = tso.id
 		LEFT JOIN trains.sys_user tsu ON mmu.beautician_id = tsu.id
+		LEFT JOIN mtmydb.mtmy_appellation_label mal ON mal.id = mmu.appellation_id
 		WHERE
 			user_id =#{userId}
 	</select>
@@ -50,9 +53,13 @@
 			mui.c_intrest AS 'intrest',
 			mui.c_taboo AS 'taboo',
 			mui.c_hate AS 'hate',
-			mui.remark AS 'remark'
+			mui.remark AS 'remark',
+			mal.id AS 'appellationId',
+			mal.name AS 'appellationName'
 		FROM
 			mtmydb.mtmy_user_info mui
+		LEFT JOIN mtmydb.mtmy_users u ON u.user_id = mui.mtmy_user_id
+		LEFT JOIN mtmydb.mtmy_appellation_label mal ON mal.id = u.appellation_id
 		WHERE
 			mui.mtmy_user_id=#{userId}
 	</select>
@@ -238,7 +245,8 @@
 			office_id=#{officeId},
 			office_name=(SELECT name FROM trains.sys_office WHERE id = #{officeId}),
 			beautician_id= #{beautyId},
-			beautician_name=(SELECT name FROM trains.sys_user WHERE id = #{beautyId})
+			beautician_name=(SELECT name FROM trains.sys_user WHERE id = #{beautyId}),
+			appellation_id = #{appellationId}
 		WHERE  user_id = #{userId}	
 	</update>
 </mapper>

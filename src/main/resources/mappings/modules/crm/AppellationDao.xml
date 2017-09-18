@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.crm.dao.AppellationDao">
+	
+	<!-- 查询称谓标签列表 -->
+	<select id="findList" resultType="Appellation">
+		SELECT 
+			id AS 'appellationId',
+			name,
+			create_by AS 'createBy.id',
+			create_date AS 'createDate'
+		FROM mtmydb.mtmy_appellation_label
+		WHERE del_flag = 0
+		ORDER BY create_date DESC
+	</select>
+	
+	<!-- 根据id查找称谓标签 -->
+	<select id="getAppellation" resultType="Appellation">
+		SELECT  
+			id AS 'appellationId',
+			name,
+			create_by AS 'createBy.id',
+			create_date AS 'createDate',
+			update_by AS 'updateBy.id',
+			update_date AS 'updateDate'
+		FROM mtmydb.mtmy_appellation_label
+		WHERE id = #{appellationId}
+		AND del_flag = '0'
+	</select>
+	
+	<!-- 新增称谓标签 -->
+	<insert id="insertAppellation">
+		INSERT INTO mtmydb.mtmy_appellation_label(
+			name,
+			create_by,
+			create_date
+		)VALUES(
+			#{name},
+			#{createBy.id},
+			SYSDATE()
+		)
+	</insert>
+	
+	<!-- 修改称谓标签 -->
+	<update id="updateAppellation">
+		UPDATE mtmydb.mtmy_appellation_label
+		SET 
+			name = #{name},
+			update_by = #{updateBy.id},
+			update_date = SYSDATE()
+		WHERE id = #{appellationId}
+	</update>
+	
+	<!-- 逻辑删除称谓 -->
+	<update id="delAppellation">
+		UPDATE mtmydb.mtmy_appellation_label SET del_flag = '1' WHERE id = #{appellationId}
+	</update>
+</mapper>

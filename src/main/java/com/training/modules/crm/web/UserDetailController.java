@@ -245,6 +245,9 @@ public class UserDetailController extends BaseController {
 		String userId = entity.getUserId();
 		if (null!=userId && userId.trim().length()>0) {
 			try {
+				if("".equals(entity.getAppellationId()) || entity.getAppellationId() == null){
+					entity.setAppellationId("0");
+				}
 				UserDetail exists =  userDetailService.get(entity.getUserId());
 				UserContactInfo exists2 = contactInfoService.get(entity.getUserId());
 				UserOperatorLog log = new UserOperatorLog();
@@ -378,7 +381,9 @@ public class UserDetailController extends BaseController {
 	 */
 	@RequestMapping(value = "adduser")
 	public String adduser(Users users,HttpServletRequest request, HttpServletResponse response,Model model, RedirectAttributes redirectAttributes) {
-	
+		if("".equals(users.getAppellationId()) || users.getAppellationId() == null){
+			users.setAppellationId("0");
+		}
 		if(mtmyUsersService.findUserBynickName(users)>0){
 			addMessage(redirectAttributes, "添加用户"+users.getName()+"失败,昵称重复");
 		}else{
