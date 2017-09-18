@@ -721,6 +721,17 @@
 			sys_user_office
 			WHERE user_id = #{id}
 	</select>
+	<!-- 查询用户商家权限 -->
+	<select id="findFranchiseeAuth" resultType="map">
+		SELECT
+			GROUP_CONCAT(a.company_id) AS companyIds,
+			GROUP_CONCAT(b.`name`) AS companyNames
+		FROM 
+			sys_user_company a
+			LEFT JOIN sys_franchisee b ON a.company_id = b.id
+		WHERE 
+			a.user_id  = #{id}
+	</select>
 	<!-- 通过角色查看用户 -->
 	<select id="findRoleUser" resultType="User">
 		SELECT
@@ -790,6 +801,21 @@
 			#{uuid},
 			#{id},
 			NOW()
+		)
+	</insert>
+	
+	<!-- 物理删除商家权限表 -->
+	<delete id="deleteFranchiseeAuth">
+		DELETE FROM sys_user_company WHERE user_id = #{id}
+	</delete>
+	<!-- 新增用户商家权限 -->
+	<insert id="insertFranchiseeAuth">
+		INSERT INTO sys_user_company(
+			user_id,
+			company_id
+		)VALUES(
+			#{userId},
+			#{id}
 		)
 	</insert>
 </mapper>

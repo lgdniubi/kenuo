@@ -7,9 +7,9 @@
 			AS NUM,
 			(SELECT C.NAME FROM SYS_USER AS C WHERE C.ID=A.USER_ID )
 			AS NAME
-			FROM  TRAIN_LESSON_ASKS
-			AS A
-			WHERE A.STATUS=0
+		FROM  
+			TRAIN_LESSON_ASKS AS A
+		WHERE A.STATUS=0
 			<if test="beginDate != null and beginDate != ''">
 				AND DATE_FORMAT(a.createtime,'%Y-%m-%d') >= DATE_FORMAT(#{beginDate},'%Y-%m-%d')
 			</if>
@@ -20,6 +20,9 @@
 			AND a.title LIKE 
 					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+			</if>
+			<if test="sqlMap.dsf != null and sqlMap.dsf != ''">
+				AND a.company_id ${sqlMap.dsf}
 			</if>
 			ORDER BY A.is_top DESC,A.CREATETIME DESC 
 	</select>

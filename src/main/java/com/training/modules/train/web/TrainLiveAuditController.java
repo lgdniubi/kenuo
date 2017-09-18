@@ -75,9 +75,15 @@ public class TrainLiveAuditController extends BaseController{
 	 */
 	@RequiresPermissions("train:live:view")
 	@RequestMapping(value = { "list", "" })
-	public String list(TrainLiveAudit trainLiveAudit, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<TrainLiveAudit> page = trainLiveAuditService.findLive(new Page<TrainLiveAudit>(request, response), trainLiveAudit);
-		model.addAttribute("page", page);
+	public String list(TrainLiveAudit trainLiveAudit, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes) {
+		try{
+			Page<TrainLiveAudit> page = trainLiveAuditService.findLive(new Page<TrainLiveAudit>(request, response), trainLiveAudit);
+			model.addAttribute("page", page);
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "直播列表页", e);
+			logger.error("直播列表页：" + e.getMessage());
+			addMessage(redirectAttributes, "直播查询失败");
+		}
 		return "modules/train/LiveList";
 	}
 	

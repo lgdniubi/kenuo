@@ -68,6 +68,9 @@
 				<if test="endDate != null and endDate != ''">
 					<![CDATA[AND DATE_FORMAT(a.create_date,'%Y-%m-%d') <= DATE_FORMAT(#{endDate},'%Y-%m-%d')]]>
 				</if>
+				<if test="sqlMap.dsf != null and sqlMap.dsf != ''">
+					AND a.company_id ${sqlMap.dsf}
+				</if>
 				ORDER BY a.is_top,a.sort DESC,a.create_date DESC
 	</select>
 	<!-- 查看文章详情 -->

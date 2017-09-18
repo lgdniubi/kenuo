@@ -16,6 +16,7 @@ public class OrderPushmoneyRecord extends TreeEntity<OrderPushmoneyRecord> {
 	private String pushmoneyUserMobile;	//提成人员手机
 	private double pushMoney;		//提成金额
 	private String operatorName;	//操作人
+	private String flag;            //标识
 	
 	
 	public String getOperatorName() {
@@ -85,4 +86,13 @@ public class OrderPushmoneyRecord extends TreeEntity<OrderPushmoneyRecord> {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public String getFlag() {
+		return flag;
+	}
+
+	public void setFlag(String flag) {
+		this.flag = flag;
+	}
+	
 }
