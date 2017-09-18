@@ -7,7 +7,7 @@
 	<script type="text/javascript">
 		//刷新
 		function refresh(){
-			window.location="${ctx}/crm/appellation/list";
+			window.location="${ctx}/sys/appellation/list";
 		}
 	</script>
 </head>
@@ -20,7 +20,7 @@
 				<!-- 查询条件 -->
 				<div class="row">
 					<div class="col-sm-12">
-						<form:form id="searchForm" modelAttribute="appellation" action="${ctx}/crm/appellation/list" method="post" class="form-inline">
+						<form:form id="searchForm" modelAttribute="appellation" action="${ctx}/sys/appellation/list" method="post" class="form-inline">
 							<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 							<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 							<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();"/><!-- 支持排序 -->
@@ -32,8 +32,8 @@
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="pull-left">
-							<shiro:hasPermission name="crm:appellation:add">
-								<table:addRow url="${ctx}/crm/appellation/form" title="称谓标签" width="600px" height="200px" ></table:addRow><!-- 增加按钮 -->
+							<shiro:hasPermission name="sys:appellation:add">
+								<table:addRow url="${ctx}/sys/appellation/form" title="称谓标签" width="600px" height="200px" ></table:addRow><!-- 增加按钮 -->
 							</shiro:hasPermission>
 							<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新">
 								<i class="glyphicon glyphicon-repeat"></i> 刷新
@@ -55,14 +55,14 @@
 								${appellation.name}
 							</td>
 							<td>
-								<shiro:hasPermission name="crm:appellation:view">
-									<a href="#" onclick="openDialogView('查看称谓', '${ctx}/crm/appellation/form?appellationId=${appellation.appellationId}','800px','200px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>
+								<shiro:hasPermission name="sys:appellation:view">
+									<a href="#" onclick="openDialogView('查看称谓', '${ctx}/sys/appellation/form?appellationId=${appellation.appellationId}','800px','200px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>
 								</shiro:hasPermission>
-								<shiro:hasPermission name="crm:appellation:edit">
-									<a href="#" onclick="openDialog('修改称谓', '${ctx}/crm/appellation/form?appellationId=${appellation.appellationId}','800px','200px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
+								<shiro:hasPermission name="sys:appellation:edit">
+									<a href="#" onclick="openDialog('修改称谓', '${ctx}/sys/appellation/form?appellationId=${appellation.appellationId}','800px','200px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 								</shiro:hasPermission>
-								<shiro:hasPermission name="crm:appellation:del">
-									<a href="${ctx}/crm/appellation/del?appellationId=${appellation.appellationId}" onclick="return confirmx('确认要删除称谓吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
+								<shiro:hasPermission name="sys:appellation:del">
+									<a href="${ctx}/sys/appellation/del?appellationId=${appellation.appellationId}" onclick="return confirmx('确认要删除称谓吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
 								</shiro:hasPermission>
 							</td>
 						</tr>

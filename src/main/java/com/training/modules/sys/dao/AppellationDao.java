@@ -1,10 +1,10 @@
-package com.training.modules.crm.dao;
+package com.training.modules.sys.dao;
 
 import java.util.List;
 
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
-import com.training.modules.crm.entity.Appellation;
+import com.training.modules.sys.entity.Appellation;
 
 /**
  * 称谓标签Dao

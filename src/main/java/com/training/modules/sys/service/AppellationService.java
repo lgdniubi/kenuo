@@ -1,12 +1,12 @@
-package com.training.modules.crm.service;
+package com.training.modules.sys.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.service.CrudService;
-import com.training.modules.crm.dao.AppellationDao;
-import com.training.modules.crm.entity.Appellation;
+import com.training.modules.sys.dao.AppellationDao;
+import com.training.modules.sys.entity.Appellation;
 
 /**
  * 称谓标签Service

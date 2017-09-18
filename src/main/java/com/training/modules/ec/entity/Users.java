@@ -61,9 +61,6 @@ public class Users extends TreeEntity<Users> {
 	private String officeId ;		//所属门店
 	private String beautyId;	    //所属美容师
 	
-	private String appellationId;  //称谓标签id
-	private String appellationName; //称谓名称
-	
 	public String getOfficeId() {
 		return officeId;
 	}
@@ -328,18 +325,6 @@ public class Users extends TreeEntity<Users> {
 	public void setParent(Users parent) {
 		// TODO Auto-generated method stub
 		
-	}
-	public String getAppellationId() {
-		return appellationId;
-	}
-	public void setAppellationId(String appellationId) {
-		this.appellationId = appellationId;
-	}
-	public String getAppellationName() {
-		return appellationName;
-	}
-	public void setAppellationName(String appellationName) {
-		this.appellationName = appellationName;
 	}
 	
 }

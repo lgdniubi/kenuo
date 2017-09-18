@@ -1,4 +1,4 @@
-package com.training.modules.crm.entity;
+package com.training.modules.sys.entity;
 
 import com.training.common.persistence.DataEntity;
 

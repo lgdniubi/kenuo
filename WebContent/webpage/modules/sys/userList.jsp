@@ -114,6 +114,11 @@
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/sys/specBeautician/list","特殊美容师管理", false)'><i class="fa fa-plus"></i> 特殊美容师管理</button>	
 							</shiro:hasPermission>
 							
+							<!--称谓标签管理 -->
+							<shiro:hasPermission name="sys:appellation:list">
+								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/sys/appellation/list","称谓标签管理", false)'><i class="fa fa-plus"></i> 称谓标签管理</button>	
+							</shiro:hasPermission>
+							
 							<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="sortOrRefresh()" title="刷新">
 								<i class="glyphicon glyphicon-repeat"></i> 刷新
 							</button>

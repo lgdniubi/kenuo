@@ -68,9 +68,6 @@ public class UserDetail extends DataEntity<UserDetail> {
   	//新添字段(对应mtmy_users中真实姓名remarkname)
   	private String remarkname;
   	
-	private String appellationId;  //称谓标签id
-	private String appellationName; //称谓名称
-  	
   	public String getNickname() {
 		return nickname;
 	}
@@ -473,22 +470,5 @@ public class UserDetail extends DataEntity<UserDetail> {
 		this.remarkname = remarkname;
 	}
 
-	public String getAppellationId() {
-		return appellationId;
-	}
-
-	public void setAppellationId(String appellationId) {
-		this.appellationId = appellationId;
-	}
-
-	public String getAppellationName() {
-		return appellationName;
-	}
-
-	public void setAppellationName(String appellationName) {
-		this.appellationName = appellationName;
-	}
-	
-	
 }
 

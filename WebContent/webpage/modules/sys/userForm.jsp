@@ -524,7 +524,9 @@
 		         </td>
 		         <td>${user.parendNames}<form:input path="delFlag" cssStyle="display:none;"></form:input></td>
 		      </tr>
-		       <tr>
+		      <tr>
+		       	 <td class="active"><label class="pull-right">称谓标签：</label></td>
+		       	 <td><sys:treeselect id="appellation" name="appellationId" value="${user.appellationId}" labelName="appellationName" labelValue="${user.appellationName}" title="称谓标签" url="/sys/appellation/treeData" cssClass="form-control" notAllowSelectParent="true"/></td>
 		         <td class="active"><label class="pull-right">备注:</label></td>
 		         <td colspan="3"><form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" class="form-control"/></td>
 		      </tr>

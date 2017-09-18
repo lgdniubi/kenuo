@@ -21,7 +21,7 @@
 <!-- 内容上传 引用-->
 </head>
 <body>
-	<form:form id="inputForm" modelAttribute="appellation" action="${ctx}/crm/appellation/save" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="appellation" action="${ctx}/sys/appellation/save" method="post" class="form-horizontal">
 		<form:hidden path="appellationId" />
 		<sys:message content="${message}" />
 		<table

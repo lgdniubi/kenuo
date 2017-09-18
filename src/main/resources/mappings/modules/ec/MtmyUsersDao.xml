@@ -17,7 +17,6 @@
     <insert id="insert" parameterType="Users" useGeneratedKeys="true" keyProperty="userid">
 		INSERT INTO mtmydb.mtmy_users(
 			name, 
-			appellation_id,
 			nickname, 
 			password, 
 			mobile, 
@@ -30,7 +29,6 @@
 			del_flag
 		) VALUES (
 			#{name}, 
-			#{appellationId},
 			#{nickname}, 
 			#{password}, 
 			#{mobile}, 

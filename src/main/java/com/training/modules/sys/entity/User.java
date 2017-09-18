@@ -94,6 +94,9 @@ public class User extends DataEntity<User> {
 	
 	private String isRecommend;  //是否推荐（0：未推荐；1：推荐）
 	
+	private String appellationId;  //称谓标签id
+	private String appellationName; //称谓名称
+	
 	public int getUserLevel() {
 		return userLevel;
 	}
@@ -581,6 +584,18 @@ public class User extends DataEntity<User> {
 	}
 	public void setIsRecommend(String isRecommend) {
 		this.isRecommend = isRecommend;
+	}
+	public String getAppellationId() {
+		return appellationId;
+	}
+	public void setAppellationId(String appellationId) {
+		this.appellationId = appellationId;
+	}
+	public String getAppellationName() {
+		return appellationName;
+	}
+	public void setAppellationName(String appellationName) {
+		this.appellationName = appellationName;
 	}
 	
 }

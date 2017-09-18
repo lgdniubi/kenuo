@@ -1,4 +1,4 @@
-package com.training.modules.crm.web;
+package com.training.modules.sys.web;
 
 import java.util.List;
 import java.util.Map;
@@ -17,9 +17,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.training.common.persistence.Page;
 import com.training.common.web.BaseController;
-import com.training.modules.crm.dao.AppellationDao;
-import com.training.modules.crm.entity.Appellation;
-import com.training.modules.crm.service.AppellationService;
+import com.training.modules.sys.dao.AppellationDao;
+import com.training.modules.sys.entity.Appellation;
+import com.training.modules.sys.service.AppellationService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
 
@@ -28,7 +28,7 @@ import com.training.modules.sys.utils.UserUtils;
  * @author xiaoye   2017年9月15日
  */
 @Controller
-@RequestMapping(value = "${adminPath}/crm/appellation")
+@RequestMapping(value = "${adminPath}/sys/appellation")
 public class AppellationController extends BaseController{
 
 	@Autowired
@@ -53,7 +53,7 @@ public class AppellationController extends BaseController{
 			BugLogUtils.saveBugLog(request, "称谓标签列表", e);
 			logger.error("称谓标签列表出错信息：" + e.getMessage());
 		}
-		return "modules/crm/appellationList";
+		return "modules/sys/appellationList";
 	}
 	
 	/**
@@ -74,7 +74,7 @@ public class AppellationController extends BaseController{
 			BugLogUtils.saveBugLog(request, "跳转编辑称谓标签页面", e);
 			logger.error("跳转编辑称谓标签页面出错信息：" + e.getMessage());
 		}
-		return "modules/crm/appellationForm";
+		return "modules/sys/appellationForm";
 	}
 	
 	/**
@@ -102,7 +102,7 @@ public class AppellationController extends BaseController{
 			logger.error("保存称谓标签失败：" + e.getMessage());
 			addMessage(redirectAttributes,"保存称谓标签失败");
 		}
-		return "redirect:" + adminPath + "/crm/appellation/list";
+		return "redirect:" + adminPath + "/sys/appellation/list";
 	}
 	
 	/**
@@ -124,7 +124,7 @@ public class AppellationController extends BaseController{
 			logger.error("删除称谓标签失败：" + e.getMessage());
 			addMessage(redirectAttributes,"删除称谓标签失败");
 		}
-		return "redirect:" + adminPath + "/crm/appellation/list";
+		return "redirect:" + adminPath + "/sys/appellation/list";
 	}
 	
 	/**
