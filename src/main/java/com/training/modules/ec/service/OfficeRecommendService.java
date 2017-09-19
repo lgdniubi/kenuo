@@ -138,4 +138,13 @@ public class OfficeRecommendService extends CrudService<OfficeRecommendDao, Offi
 	public int selectIdByCreatDate(){
 		return officeRecommendDao.selectIdByCreatDate();
 	}
+	
+	/**
+	 * 查询推荐组对应的推荐店铺id
+	 * @param recommendId
+	 * @return
+	 */
+	public String selectOfficeId(int recommendId){
+		return officeRecommendDao.selectOfficeId(recommendId);
+	}
 }
