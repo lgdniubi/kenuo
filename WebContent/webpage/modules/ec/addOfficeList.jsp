@@ -127,7 +127,7 @@
 								<input id="oldOfficeIds" name="oldOfficeIds" type="hidden" value="${oldOfficeIds}"/>
 							</form>
 							<div class="pull-left">
-								<a href="#" onclick="editOffice(${officeRecommendMapping.recommendId},0,'add')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加商品</a>
+								<a href="#" onclick="editOffice(${officeRecommendMapping.recommendId},0,'add')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加店铺</a>
 							</div>
 						</div>
 					</div>
