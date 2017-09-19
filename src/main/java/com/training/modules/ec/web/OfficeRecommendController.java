@@ -29,7 +29,7 @@ public class OfficeRecommendController extends BaseController{
 	
 	@Autowired
 	private OfficeRecommendService officeRecommendService;
-	
+
 	/**
 	 * 店铺推荐列表
 	 * @param officeRecommend
@@ -189,8 +189,10 @@ public class OfficeRecommendController extends BaseController{
 			if(officeRecommend.getOfficeRecommendId() != 0){
 				officeRecommendMapping.setRecommendId(officeRecommend.getOfficeRecommendId());
 				Page<OfficeRecommendMapping> page = officeRecommendService.findNewPage(new Page<OfficeRecommendMapping>(request, response), officeRecommendMapping);
+				String oldOfficeIds = officeRecommendService.selectOfficeId(officeRecommend.getOfficeRecommendId());
 				model.addAttribute("page",page);
 				model.addAttribute("officeRecommendMapping",officeRecommendMapping);
+				model.addAttribute("oldOfficeIds",oldOfficeIds);
 			}
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "店铺推荐组对应的店铺列表", e);

@@ -89,4 +89,11 @@ public interface OfficeRecommendDao extends CrudDao<OfficeRecommend> {
 	 * @return
 	 */
 	public int selectIdByCreatDate();
+	
+	/**
+	 * 查询推荐组对应的推荐店铺id
+	 * @param recommendId
+	 * @return
+	 */
+	public String selectOfficeId(int recommendId);
 }

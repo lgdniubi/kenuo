@@ -51,7 +51,7 @@
 	}
 	
 	function editOffice(id,mappingId,flag){
-		var oldOfficeIds = document.getElementsByName("oldOfficeId");
+		var oldOfficeIds = $("#oldOfficeIds").val();
 		top.layer.open({
 		    type: 2, 
 		    area: ['500px', '300px'],
@@ -75,12 +75,10 @@
 		        
 		        if(flag == 'add'){
 			        if(oldOfficeIds.length > 0){
-						for(i=0;i<oldOfficeIds.length;i++){
-							if(officeId.value == oldOfficeIds[i].value){
-								top.layer.alert('该店铺已添加，请重新选择！', {icon: 0, title:'提醒'});
-	     	     	    		return;
-							}
-						}
+			        	if(oldOfficeIds.indexOf(officeId.value) >= 0){
+			        		top.layer.alert('该店铺已添加，请重新选择！', {icon: 0, title:'提醒'});
+     	     	    		return;
+			        	}
 			        }
 		        }
 		        
@@ -126,6 +124,7 @@
 								<!-- 翻页隐藏文本框 -->
 								<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 								<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+								<input id="oldOfficeIds" name="oldOfficeIds" type="hidden" value="${oldOfficeIds}"/>
 							</form>
 							<div class="pull-left">
 								<a href="#" onclick="editOffice(${officeRecommendMapping.recommendId},0,'add')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加商品</a>
@@ -146,9 +145,7 @@
 						<c:forEach items="${page.list}" var="page">
 							<tr>
 								<td style="text-align: center;">${page.officeRecommendMappingId}</td>
-								<td style="text-align: center;">
-									<input id="officeId" name="oldOfficeId" type="text" value="${page.officeId }" class='form-control' readonly='readonly'>
-								</td>
+								<td style="text-align: center;">${page.officeId}</td>
 								<td style="text-align: center;">${page.officeName}</td>
 								<td style="text-align: center;">${page.sort}</td>
 								<td style="text-align: center;">

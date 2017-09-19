@@ -142,5 +142,13 @@
 		FROM sys_office_recommend
 		ORDER BY create_date DESC limit 1
 	</select>
+	
+	<!-- 查询推荐组对应的推荐店铺id -->
+	<select id="selectOfficeId" resultType="String">
+		SELECT GROUP_CONCAT(orm.office_id)
+		FROM sys_office_recommend_mapping orm
+		LEFT JOIN sys_office o ON o.id = orm.office_id
+		WHERE orm.recommend_id = #{recommendId}
+	</select>
 </mapper>
 
