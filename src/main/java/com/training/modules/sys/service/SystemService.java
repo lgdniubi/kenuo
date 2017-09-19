@@ -494,7 +494,8 @@ public class SystemService extends BaseService implements InitializingBean {
 					skillDao.insertUserSkill(list);     // 插入技能标签表
 				}
 			}
-
+			// 2017年9月1日 新用户默认商家权限为当前商家
+			userDao.insertFranchiseeAuth(user.getId(), user.getCompany().getId());
 		} else {
 //			saveUserLog1(user);
 			// 清除原用户机构用户缓存

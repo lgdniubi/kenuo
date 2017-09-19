@@ -4,6 +4,7 @@
 package com.training.modules.sys.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -74,6 +75,20 @@ public interface UserDao extends CrudDao<User> {
 	 * @return
 	 */
 	public int insertUserRole(User user);
+	
+	/**
+	 * 删除用户关联商家数据
+	 * @param user
+	 * @return
+	 */
+	public int deleteFranchiseeAuth(User user);
+	
+	/**
+	 * 插入用户用户关联商家数据
+	 * @param user
+	 * @return
+	 */
+	public int insertFranchiseeAuth(@Param("userId")String userId,@Param("id")String id);
 	
 	/**
 	 * 更新用户信息
@@ -221,6 +236,12 @@ public interface UserDao extends CrudDao<User> {
 	 * @return
 	 */
 	public User findAuth(User user);
+	/**
+	 * 查询用户商家权限
+	 * @param user
+	 * @return
+	 */
+	public Map<String, Object> findFranchiseeAuth(User user);
 	/**
 	 * 查询角色下的用户
 	 * @param user

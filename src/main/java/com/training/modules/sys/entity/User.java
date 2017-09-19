@@ -96,6 +96,9 @@ public class User extends DataEntity<User> {
 	
 	private String appellationId;  //称谓标签id
 	private String appellationName; //称谓名称
+
+	private String companyIds; // 数据范围按商家区分
+	private String companyNames; // 数据范围按商家区分
 	
 	public int getUserLevel() {
 		return userLevel;
@@ -596,6 +599,18 @@ public class User extends DataEntity<User> {
 	}
 	public void setAppellationName(String appellationName) {
 		this.appellationName = appellationName;
+	}
+	public String getCompanyIds() {
+		return companyIds;
+	}
+	public void setCompanyIds(String companyIds) {
+		this.companyIds = companyIds;
+	}
+	public String getCompanyNames() {
+		return companyNames;
+	}
+	public void setCompanyNames(String companyNames) {
+		this.companyNames = companyNames;
 	}
 	
 }

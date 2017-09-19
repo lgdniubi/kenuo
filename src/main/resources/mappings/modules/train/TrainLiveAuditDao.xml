@@ -36,11 +36,15 @@
 	<!-- 根据编号获特长 -->
 	<select id="get" resultType="TrainLiveAudit">
 		SELECT
-		<include refid="sqlColumns" />
-		FROM trains.train_live_audit a 
+		<include refid="sqlColumns" />,
+		GROUP_CONCAT(f.id) AS companyIds,
+		GROUP_CONCAT(f.`name`) AS companyNames
+	FROM trains.train_live_audit a 
 		LEFT JOIN trains.sys_user b ON a.userId=b.id
 		LEFT JOIN trains.sys_dict c ON c.`value`=b.user_type
 		LEFT JOIN trains.train_live_room r ON r.userId=a.userId
+		LEFT JOIN trains.train_live_jurisdiction j ON a.id = j.audit_id
+		LEFT JOIN trains.sys_franchisee f ON j.company_id = f.id
 		WHERE a.del_flag=0 AND c.type='sys_user_type'and a.id=#{id}
 
 	</select>
@@ -78,7 +82,9 @@
 		<if test="position != null and position != ''">
 			AND c.label = #{position}
 		</if>
-
+		<if test="sqlMap.dsf != null and sqlMap.dsf != ''">
+			AND a.company_id ${sqlMap.dsf}
+		</if>
 		ORDER BY a.create_date DESC
 
 	</select>
@@ -299,4 +305,18 @@
 		FROM
 			sys_office_account b 
 	</select>
+	<!-- 删除直播商家权限 -->
+	<delete id="deleteJurisdiction">
+		DELETE FROM train_live_jurisdiction WHERE audit_id = #{id}
+	</delete>
+	<!-- 插入直播商家权限 -->
+	<insert id="insertJurisdiction">
+		INSERT INTO train_live_jurisdiction(
+			audit_id,
+			company_id
+		)VALUES(
+			#{auditId},
+			#{id}
+		)
+	</insert>
 </mapper>

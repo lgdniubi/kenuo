@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.training.common.service.TreeService;
 import com.training.modules.ec.dao.OrderPushmoneyRecordDao;
 import com.training.modules.ec.entity.OrderPushmoneyRecord;
+import com.training.modules.ec.entity.PushmoneyRecordLog;
 
 /**
  * 订单提成记录Service
@@ -29,6 +30,15 @@ public class OrderPushmoneyRecordService extends TreeService<OrderPushmoneyRecor
 	}
 
 	/**
+	 * 根据pushmoneyRecordId查询相关业务员
+	 * @param pushmoneyRecordId
+	 * @return
+	 */
+	public OrderPushmoneyRecord getOrderPushmoneyRecordById(int pushmoneyRecordId) {
+		return dao.getOrderPushmoneyRecordById(pushmoneyRecordId);
+	}
+	
+	/**
 	 * 根据订单id查询相关业务员
 	 * @param orderid
 	 * @return
@@ -38,18 +48,27 @@ public class OrderPushmoneyRecordService extends TreeService<OrderPushmoneyRecor
 	}
 	
 	/**
-	 * 删除订单下的所有业务员
-	 * @param orderid
-	 */
-	public void deleteOrderPushmoneyRecord(String orderid) {
-		dao.deleteOrderPushmoneyRecord(orderid);
-	}
-	/**
 	 * 删除订单提成人员信息
-	 * @param mtmyUserId
+	 * @param orderPushmoneyRecord
 	 */
-	public void deleteSysUserInfo(int pushmoneyRecordId) {
-		dao.deleteSysUserInfo(pushmoneyRecordId);
+	public void deleteSysUserInfo(OrderPushmoneyRecord orderPushmoneyRecord) {
+		dao.deleteSysUserInfo(orderPushmoneyRecord);
+	}
+	
+	/**
+	 * 修改提成人员的提成金额
+	 * @param orderPushmoneyRecord
+	 */
+	public void updatePushMoney(OrderPushmoneyRecord orderPushmoneyRecord){
+		dao.updatePushMoney(orderPushmoneyRecord);
+	}
+	
+	/**
+	 * 保存修改订单的提成人员的提成金额日志
+	 * @param pushmoneyRecordLog
+	 */
+	public void insertPushMoneyLog(PushmoneyRecordLog pushmoneyRecordLog){
+		dao.insertPushMoneyLog(pushmoneyRecordLog);
 	}
 
 }
