@@ -165,11 +165,12 @@ public class MtmyMnappointmentController extends BaseController{
 				setMap.put("officeName", list1.get(i).getName());
 				set2.add(setMap);
 			}
-			
 			setMain.clear();
 			setMain.addAll(set1);
 			setMain.retainAll(set2);
 		}
+		User loginUser = UserUtils.getUser();	//获取登录用户
+		jsonMap.put("loginOfficeId", loginUser.getOffice().getId());
 		jsonMap.put("office", setMain);
 		return jsonMap;
 	}
@@ -191,6 +192,8 @@ public class MtmyMnappointmentController extends BaseController{
 			String url=webReservationTime;
 			String result = WebUtils.postObject(parpm, url);
 			jsonObject = JSONObject.fromObject(result);
+			User loginUser = UserUtils.getUser();	//获取登录用户
+			jsonObject.put("loginUserId", loginUser.getId());
 			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "调用接口:异步加载当前美容师", e);
