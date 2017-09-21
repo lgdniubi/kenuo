@@ -121,8 +121,8 @@
                     	<c:forEach items="${page.list}" var="goodsSubhead">
 						<tr>
 							<td style="text-align: center;">${goodsSubhead.goodsSubheadId}</td>
-							<td style="text-align: center;">${goodsSubhead.name}</td>
-							<td style="text-align: center;">${goodsSubhead.subheading}</td>
+							<td style="text-align: center;"><c:out value="${goodsSubhead.name}"></c:out></td>
+							<td style="text-align: center;"><c:out value="${goodsSubhead.subheading}"></c:out></td>
 							<td style="text-align: center;">
 								<fmt:formatDate value="${goodsSubhead.startDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
 							</td>	

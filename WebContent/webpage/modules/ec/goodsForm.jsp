@@ -168,11 +168,11 @@
 					                </li>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>商品名称：</span>
-										<form:input path="goodsName" htmlEscape="false" maxlength="150" class="form-control required"/>
+										<form:input path="goodsName" maxlength="150" class="form-control required"/>
 									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>短标题：</span>
-										<form:input path="goodsShortName" htmlEscape="false" maxlength="50" class="form-control required"/>
+										<form:input path="goodsShortName" maxlength="50" class="form-control required"/>
 									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2">商品SEO：</span>
@@ -199,7 +199,7 @@
 									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2">商品标签：</span>
-										<form:input path="goodsTags" htmlEscape="false" maxlength="17" onblur="this.value=ignoreSpaces(this.value);" class="form-control"/>
+										<form:input path="goodsTags" maxlength="17" onblur="this.value=ignoreSpaces(this.value);" class="form-control"/>
 										<span class="control-label cannotEdit">(多个标签用"#"分开)</span>
 									</li>
 									

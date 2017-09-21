@@ -94,7 +94,10 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 	public void saveGoods(Goods goods, HttpServletRequest request) {
 		// 商品详情转换
 		goods.setGoodsContent(HtmlUtils.htmlUnescape(goods.getGoodsContent()));
-
+		goods.setGoodsName(HtmlUtils.htmlUnescape(goods.getGoodsName()));
+		goods.setGoodsShortName(HtmlUtils.htmlUnescape(goods.getGoodsShortName()));
+		goods.setGoodsTags(HtmlUtils.htmlUnescape(goods.getGoodsTags()));
+		
 		if (0 == goods.getGoodsId()) {
 			// 添加
 			goods.setAttrType((goods.getAttrType() == null || "".equals(goods.getAttrType())) ? null : goods.getAttrType());

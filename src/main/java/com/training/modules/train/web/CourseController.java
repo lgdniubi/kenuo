@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import com.training.common.config.Global;
 import com.training.common.persistence.Page;
@@ -149,6 +150,7 @@ public class CourseController extends BaseController{
 	public String savecourse(TrainLessons trainLessons, HttpServletRequest request, HttpServletResponse response, Model model, RedirectAttributes redirectAttributes) throws IllegalStateException, IOException{
 		
 		try {
+			trainLessons.setName(HtmlUtils.htmlUnescape(trainLessons.getName()));
 			if(null == trainLessons.getLessonId() || "".equals(trainLessons.getLessonId())){
 				trainLessons.setLessonId(IdGen.uuid());
 			}
@@ -162,7 +164,7 @@ public class CourseController extends BaseController{
 			
 			trainLessonsService.save(trainLessons);
 			addMessage(redirectAttributes, "保存课程'" + trainLessons.getName() + "'成功");
-			return "redirect:" + adminPath + "/train/course/listcourse?name="+trainLessons.getName()+"&beginDate=''&endDate=''";
+			return "redirect:" + adminPath + "/train/course/listcourse?beginDate=''&endDate=''";
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "保存课程出现异常,请与管理员联系");
 			logger.error("保存课程出现异常,异常信息为："+e.getMessage());
@@ -179,9 +181,10 @@ public class CourseController extends BaseController{
 	@RequiresPermissions(value={"train:course:updatecourse"},logical=Logical.OR)
 	@RequestMapping(value = {"updatecourse", ""})
 	public String updatecourse(TrainLessons trainLessons,RedirectAttributes redirectAttributes) throws IllegalStateException, IOException{
+		trainLessons.setName(HtmlUtils.htmlUnescape(trainLessons.getName()));
 		trainLessonsService.updatecourse(trainLessons);
 		addMessage(redirectAttributes, "修改课程'" + trainLessons.getName() + "'修改成功");
-		return "redirect:" + adminPath + "/train/course/listcourse?name="+trainLessons.getName()+"&beginDate=''&endDate=''";
+		return "redirect:" + adminPath + "/train/course/listcourse?beginDate=''&endDate=''";
 	}
 	
 	/**

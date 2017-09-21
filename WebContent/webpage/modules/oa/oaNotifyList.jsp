@@ -159,7 +159,7 @@
 			<tr>
 				<td> <input type="checkbox" id="${oaNotify.id}" class="i-checks"></td>
 				<td><a  href="#" onclick="openDialogView('查看通知', '${ctx}/oa/oaNotify/view?id=${oaNotify.id}','800px', '500px')">
-					${fns:abbr(oaNotify.title,50)}
+					<c:out value="${fns:abbr(oaNotify.title,50)}"></c:out>
 				</a></td>
 				<td>
 					${fns:getDictLabel(oaNotify.type, 'oa_notify_type', '')}
