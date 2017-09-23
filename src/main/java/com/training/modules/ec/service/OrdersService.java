@@ -801,6 +801,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			}
 			details.setType(0);
 			details.setAdvanceFlag("0");
+			details.setCreateOfficeId(user.getOffice().getId());
 			details.setCreateBy(user);
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
@@ -1169,6 +1170,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setAppArrearage(appArrearage);//app欠款金额
 		details.setType(0);
 		details.setAdvanceFlag("3");
+		details.setCreateOfficeId(user.getOffice().getId());
 		details.setCreateBy(user);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
@@ -1376,6 +1378,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			details.setAppArrearage(appArrearage);   //app欠款金额
 			details.setType(0);
 			details.setAdvanceFlag("0");
+			details.setCreateOfficeId(user.getOffice().getId());
 			details.setCreateBy(user);
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
@@ -1777,6 +1780,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setAppArrearage(appArrearage);        //app欠款金额
 		details.setType(0);
 		details.setAdvanceFlag("2");
+		details.setCreateOfficeId(user.getOffice().getId());
 		details.setCreateBy(user);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
@@ -2148,6 +2152,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			}
 			details.setType(0);
 			details.setAdvanceFlag("0");
+			details.setCreateOfficeId(user.getOffice().getId());
 			details.setCreateBy(user);
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
@@ -2429,6 +2434,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			details.setSurplusAmount(actualPayment_on); //套卡剩余金额
 			details.setType(0);
 			details.setAdvanceFlag("0");
+			details.setCreateOfficeId(user.getOffice().getId());
 			details.setCreateBy(user);
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
@@ -2691,6 +2697,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setSurplusAmount(surplusAmount); //套卡剩余金额
 		details.setType(0);
 		details.setAdvanceFlag("3");
+		details.setCreateOfficeId(user.getOffice().getId());
 		details.setCreateBy(user);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
@@ -2823,6 +2830,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setSurplusAmount(surplusAmount);   //套卡剩余金额(套卡的才存)
 		details.setType(0);
 		details.setAdvanceFlag("2");
+		details.setCreateOfficeId(user.getOffice().getId());
 		details.setCreateBy(user);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);

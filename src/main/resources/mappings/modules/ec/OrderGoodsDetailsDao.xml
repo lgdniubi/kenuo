@@ -23,6 +23,7 @@
 			advance_flag,
 			surplus_amount,
 			type,
+			create_office_id,
 			create_by,
 			create_date
 		)VALUES(
@@ -45,6 +46,7 @@
 			#{advanceFlag},
 			#{surplusAmount},
 			#{type},
+			#{createOfficeId},
 			#{createBy.id},
 			SYSDATE()
 		)

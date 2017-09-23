@@ -18,6 +18,7 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 	private double itemCapitalPool;	//项目资金池
 	private int serviceTimes;		//剩余服务次数
 	private int type;				//详情类型（0：充值；1：使用；2：退款）
+	private String createOfficeId;   //创建者机构id
 	
 	private double appTotalAmount;   //app实付金额
 	private double appArrearage;      //app欠款金额
@@ -219,6 +220,14 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 
 	public void setAdvancePrice(double advancePrice) {
 		this.advancePrice = advancePrice;
+	}
+
+	public String getCreateOfficeId() {
+		return createOfficeId;
+	}
+
+	public void setCreateOfficeId(String createOfficeId) {
+		this.createOfficeId = createOfficeId;
 	}
 	
 }
