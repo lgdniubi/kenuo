@@ -104,6 +104,7 @@
 				a.total_amount,
 				0 as "isFre"
 		FROM mtmydb.mtmy_orders a
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping ogm ON ogm.order_id = a.order_id
 		WHERE
 				 a.user_id=#{userId}
 				AND a.order_status>0
@@ -111,6 +112,7 @@
 				AND a.parent_id=0
 				AND a.channel_flag !='bm'
 				AND a.is_real = 0
+				AND ogm.advance_price = 0
 		<!-- SELECT * FROM (
 			SELECT	
 					a.order_id,
@@ -175,6 +177,7 @@
 			a.admin_note AS adminnote,
 			a.create_logo AS createlogo,
 			a.postal_code AS postalcode,
+			a.shipping_type AS shippingtype,
 			a.flag AS flag,
 			a.mobile AS mobile,
 			u.nickname AS "username",
@@ -279,6 +282,7 @@
 			a.admin_note AS adminnote,
 			a.create_logo AS createlogo,
 			a.postal_code AS postalcode,
+			a.shipping_type AS shippingtype,
 			a.flag AS flag,
 			a.mobile AS mobile,
 			u.nickname AS "username",
@@ -1301,4 +1305,11 @@
 		WHERE
 			u.mobile = #{mobile};
 	</select>
+	
+	<!-- 实物带预约金的商品确认收货更改物流状态 -->
+	<update id="updateOrderstatusForReal">
+		UPDATE mtmydb.mtmy_orders
+		SET order_status = '4'
+		WHERE order_id = #{orderid}
+	</update>
 </mapper>

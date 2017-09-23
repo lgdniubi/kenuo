@@ -625,9 +625,7 @@ window.onload=initStatus;
 									</c:if>
 									<!-- <th style="text-align: center;">余款</th> -->
 									<th style="text-align: center;">欠款</th>
-									<c:if test="${orders.channelFlag == 'bm' || (orders.channelFlag != 'bm' && orders.isReal==1)}">
-										<th style="text-align: center;">操作</th>
-									</c:if>
+									<th style="text-align: center;">操作</th>
 								</tr>
 								<c:forEach items="${orders.orderGoodList }" var="orderGood">
 									<tr>
@@ -655,30 +653,28 @@ window.onload=initStatus;
 										</c:if>
 										<%-- <td>${orderGood.orderBalance }</td> --%>
 										<td align="center">${orderGood.orderArrearage }</td>
-										<c:if test="${orders.channelFlag == 'bm' || (orders.channelFlag != 'bm' && orders.isReal==1)}">
-											<td align="center">
-												<c:if test="${type != 'view' }">
-													<c:if test="${orders.channelFlag == 'bm' || (orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag != 1)}">
-														<c:if test="${orderGood.orderArrearage != 0}">
-															<a href="#" onclick="TopUp(${orderGood.recid},${orderGood.singleRealityPrice },${orderGood.singleNormPrice },${orderGood.orderArrearage },${orderGood.servicetimes },${orderGood.payRemaintimes },${orderGood.goodsBalance})"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>充值</a>
-														</c:if>
-														<c:if test="${orderGood.orderArrearage == 0}">
-															<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>充值</a>
-														</c:if>
+										<td align="center">
+											<c:if test="${type != 'view' }">
+												<c:if test="${orders.channelFlag == 'bm' || (orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag != 1) || (orders.channelFlag != 'bm' && orders.isReal==0)}">
+													<c:if test="${orderGood.orderArrearage != 0}">
+														<a href="#" onclick="TopUp(${orderGood.recid},${orderGood.singleRealityPrice },${orderGood.singleNormPrice },${orderGood.orderArrearage },${orderGood.servicetimes },${orderGood.payRemaintimes },${orderGood.goodsBalance})"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>充值</a>
 													</c:if>
-													<c:if test="${orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag == 1}">
-														<c:if test="${orders.orderstatus == 4 && orderGood.sumAppt == 1}">
-															<a href="#" onclick="ToAdvance(${orderGood.recid},${orderGood.servicetimes},${orderGood.orderArrearage })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
-														</c:if>
-														<c:if test="${orders.orderstatus != 4 || orderGood.sumAppt == 0}">
-															<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
-														</c:if>
-														
+													<c:if test="${orderGood.orderArrearage == 0}">
+														<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>充值</a>
 													</c:if>
 												</c:if>
-												<a href="#" onclick="openDialogView('查看订单', '${ctx}/ec/orders/getMappinfOrderView?recid=${orderGood.recid}&orderid=${orders.orderid }&orderType=mapping','800px','600px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>商品充值查看</a>
-											</td>
-										</c:if>
+												<c:if test="${orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag == 1}">
+													<c:if test="${orders.orderstatus == 4 && orderGood.sumAppt == 1}">
+														<a href="#" onclick="ToAdvance(${orderGood.recid},${orderGood.servicetimes},${orderGood.orderArrearage })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
+													</c:if>
+													<c:if test="${orders.orderstatus != 4 || orderGood.sumAppt == 0}">
+														<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
+													</c:if>
+													
+												</c:if>
+											</c:if>
+											<a href="#" onclick="openDialogView('查看订单', '${ctx}/ec/orders/getMappinfOrderView?recid=${orderGood.recid}&orderid=${orders.orderid }&orderType=mapping','800px','600px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>商品充值查看</a>
+										</td>
 									</tr>
 									<input type="hidden" id="orderArrearage" name="orderArrearage" value="${orderGood.orderArrearage }" />
 									<input type="hidden" id="servicetimes" name="servicetimes" value="${orderGood.servicetimes }" />

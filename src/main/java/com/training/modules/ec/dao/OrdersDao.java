@@ -337,4 +337,9 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @return
 	 */
 	public Orders getSysUser(String mobile);
+	
+	/**
+	 * 实物带预约金的商品确认收货更改物流状态
+	 */
+	public void updateOrderstatusForReal(String orderid);
 }

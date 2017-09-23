@@ -328,10 +328,10 @@
 										<a href="#" onclick="openDialog('编辑订单', '${ctx}/ec/orders/cardOrdersForm?orderid=${orders.orderid}&isReal=${orders.isReal}&type=edit','1100px','650px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>修改</a>
 									</c:if>
 									<c:if test="${orders.channelFlag!='bm' && orders.isReal==0}">
-										<c:if test="${orders.orderstatus==4 or orders.orderstatus==-2}">
+										<c:if test="${orders.orderstatus==-2}">
 											<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>修改</a>
 										</c:if>
-										<c:if test="${orders.orderstatus!=4 and orders.orderstatus!=-2}">
+										<c:if test="${orders.orderstatus!=-2}">
 											<a href="#" onclick="openDialog('编辑订单', '${ctx}/ec/orders/orderform?orderid=${orders.orderid}&isReal=${orders.isReal}&type=edit','1100px','650px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>修改</a>
 										</c:if>
 									</c:if>
@@ -364,6 +364,14 @@
 								<c:if test="${orders.orderstatus != -1}">
 									<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-trash"></i>取消订单</a>
 								</c:if>
+								<shiro:hasPermission name="ec:orders:affirmReceive">
+									<c:if test="${orders.orderstatus == 2 && orders.shippingtype == 1}">
+										<a href="${ctx}/ec/orders/affirmReceive?orderid=${orders.orderid}" onclick="return confirmx('确认要收货吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-edit"></i>确认收货</a>
+									</c:if>
+									<c:if test="${orders.orderstatus != 2 || orders.shippingtype != 1}">
+										<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>确认收货</a>
+									</c:if>
+								</shiro:hasPermission>
 							</td>
 						</tr>
 					</c:forEach>

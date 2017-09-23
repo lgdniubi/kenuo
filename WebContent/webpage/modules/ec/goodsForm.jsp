@@ -736,11 +736,11 @@
 			if(v == 0){
 				//实物
 				$("#serviceMin").attr("disabled","disabled"); 
-				$("#goodsTypeLi,#advancePriceLi").hide();
+				$("#goodsTypeLi").hide();
 			}else if(v == 1){
 				//虚拟
 				$("#serviceMin").removeAttr("disabled"); 
-				$("#goodsTypeLi,#advancePriceLi").show();
+				$("#goodsTypeLi").show();
 			}
 		}
 	

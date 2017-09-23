@@ -1613,6 +1613,13 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	}
 	
 	/**
+	 * 实物带预约金的商品确认收货更改物流状态
+	 */
+	public void updateOrderstatusForReal(String orderid){
+		dao.updateOrderstatusForReal(orderid);
+	}
+	
+	/**
 	 * 计算订单是否欠款
 	 * @param orderid
 	 * @return

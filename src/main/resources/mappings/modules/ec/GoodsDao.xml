@@ -332,12 +332,7 @@
 		    SYSDATE(),
 		    SYSDATE(),
 		    #{goodsType},
-		    <if test="isReal == 0">
-		    	0,
-		    </if>
-		    <if test="isReal != 0">
-		    	#{advancePrice},
-		    </if>
+		    #{advancePrice},
 		    #{supplierId}
 		  )
 	</insert>
@@ -381,12 +376,7 @@
 			  action_type = #{actionType},
 			  last_update = SYSDATE(),
 			  goods_type = #{goodsType},
-			  <if test="isReal != 1">
-				advance_price = 0,
-			  </if>
-			  <if test="isReal == 1">
-		    	advance_price = #{advancePrice},
-			  </if>
+		      advance_price = #{advancePrice},
 			  supplier_id = #{supplierId}
 			WHERE del_flag = 0 AND goods_id = #{goodsId}
 	</update>

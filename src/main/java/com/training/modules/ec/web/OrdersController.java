@@ -2650,4 +2650,27 @@ public class OrdersController extends BaseController {
 		}
 		return date;
 	}
+	
+	/**
+	 * 实物有预约金确认收货
+	 * @param orders
+	 * @param request
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value="affirmReceive")
+	public String affirmReceive(Orders orders,HttpServletRequest request,Model model,RedirectAttributes redirectAttributes){
+		try{
+			if((!"".equals(orders.getOrderid()) && (orders.getOrderid() != null))){
+				ordersService.updateOrderstatusForReal(orders.getOrderid());
+				addMessage(redirectAttributes, "确认收货成功！");
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "实物有预约金确认收货", e);
+			logger.error("方法：affirmReceive，实物有预约金确认收货出现错误：" + e.getMessage());
+			addMessage(redirectAttributes, "确认收货失败！");
+		}
+		return "redirect:" + adminPath + "/ec/orders/list";
+	}
 }
