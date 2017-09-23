@@ -92,6 +92,7 @@
 					    	$("#skillId").val(serveList[num].skillId);
 					    	$("#labelId").val(serveList[num].labelId);
 					    	$(".loading").hide();
+					    	findOffice();	// 若选中商品后则自动加载店铺
 		    			}else{
 		    				$(".loading").hide();
 		    				top.layer.alert('1、此商品无可用次数!<br>2、此商品服务次数已用完!', {icon: 0, title:'提醒'});
@@ -115,6 +116,7 @@
 						    	$("#skillId").val(serveList[num].skillId);
 						    	$("#labelId").val(serveList[num].labelId);
 						    	$(".loading").hide();
+						    	findOffice();	// 若选中商品后则自动加载店铺
 		    				}else{
 		    					$(".loading").hide();
 		    					top.layer.alert('1、此套卡商品可用金额不足一次服务!<br>2、此套卡商品服务次数已用完!', {icon: 0, title:'提醒'});
@@ -136,6 +138,7 @@
 					    	$("#skillId").val(serveList[num].skillId);
 					    	$("#labelId").val(serveList[num].labelId);
 					    	$(".loading").hide();
+					    	findOffice();	// 若选中商品后则自动加载店铺
 		    			}else{
 		    				$(".loading").hide();
 		    				top.layer.alert('此套卡商品无可用次数!', {icon: 0, title:'提醒'});
@@ -158,6 +161,7 @@
 					    	$("#skillId").val(serveList[num].skillId);
 					    	$("#labelId").val(serveList[num].labelId);
 					    	$(".loading").hide();
+					    	findOffice();	// 若选中商品后则自动加载店铺
 		    			}else{
 		    				$(".loading").hide();
 		    				top.layer.alert('1、此通用卡商品无可用次数!<br>2、此通用卡商品服务次数已用完!', {icon: 0, title:'提醒'});
@@ -183,9 +187,18 @@
    	       		dateType: 'text',
    	       		success:function(data){
    	   				$.each(data.office,function(index,item){
-   	   					$("#shopId").append("<option value="+item.officeId+">"+item.officeName+"</option>");
+   	   					if(data.loginOfficeId == item.officeId){
+   	   						$("#shopId").append("<option value="+item.officeId+" selected=\"selected\" >"+item.officeName+"</option>");
+   	   					}else{
+	   	   					$("#shopId").append("<option value="+item.officeId+">"+item.officeName+"</option>");
+   	   					}
    	       			}); 
    	   				$(".loading").hide();
+   	   				if($("#shopId").val() != ""){	// 若选中店铺则自动加载美容师
+   	   					changeShop();
+   	   				}else{
+   	   					$("#shopId").focus();	// 若无选中店铺 则自动定位到 选中店铺 下拉框
+   	   				}
    	       		}
    	       	})
    		}else{
@@ -210,10 +223,20 @@
 						top.layer.alert('数据加载失败！', {icon: 0, title:'提醒'});
 					}else{
 						$.each(data.data.beautys,function(index,item){
-							$("#beauticianId").append("<option value="+item.beauty_id+">"+item.name+"</option>");
+							if(item.beauty_id == data.loginUserId){
+								$("#beauticianId").append("<option value="+item.beauty_id+" selected=\"selected\">"+item.name+"</option>");
+							}else{
+								$("#beauticianId").append("<option value="+item.beauty_id+">"+item.name+"</option>");
+							}
 		    			}); 
 					}
    	   				$(".loading").hide();
+   	   				if($("#beauticianId").val() != ""){	// 若选中技师后 则自动加载美容师时间
+   	   					ReservationTime();
+   	   					$("#date").focus();	// 定位到 选择美容师时间 下拉框
+   	   				}else{
+   	   					$("#beauticianId").focus();	// 定位到 选择美容师 下拉框
+   	   				}
    	       		}
    	       	})
     	}else{
