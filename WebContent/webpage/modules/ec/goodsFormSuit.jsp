@@ -960,13 +960,36 @@
 					var goodsNum = obj.document.getElementById("goodsNum");
 			    	var marketPrice = obj.document.getElementById("marketPrice");
 					var price = obj.document.getElementById("price");
+				
+					if(!/^[1-9]\d{0,2}$/.test($(goodsNum).val()) || $(goodsNum).val() == 0){
+						top.layer.alert('次(个)数 必须大于0且必须小于三位数的整数', {icon: 0, title:'提醒'});
+						return;
+					}
+					if($(marketPrice).val() == 0){
+						top.layer.alert('市场价  必须大于0', {icon: 0, title:'提醒'});
+						return;
+					}
+					if(!/^\d+(\.\d{1,2})?$/.test($(marketPrice).val())){
+						top.layer.alert('市场价  小数点后不可以超过2位!', {icon: 0, title:'提醒'});
+						return;
+					}
+					if($(price).val() == 0){
+						top.layer.alert('优惠价  必须大于0', {icon: 0, title:'提醒'});
+						return;
+					}
+					if(!/^\d+(\.\d{1,2})?$/.test($(price).val())){
+						top.layer.alert('优惠价  小数点后不可以超过2位!', {icon: 0, title:'提醒'});
+						return;
+					}
 					
 					//给市场价合计和优惠价合计赋值
 					$("#goodsNums"+i).val($(goodsNum).val());
-					$("#marketPrices"+i).val($(marketPrice).val());
-					$("#prices"+i).val($(price).val());
-					$("#totalMarketPrices"+i).val($(goodsNum).val()*$(marketPrice).val());
-					$("#totalPrices"+i).val($(goodsNum).val()*$(price).val());
+					$("#marketPrices"+i).val(Number($(marketPrice).val()));
+					$("#prices"+i).val(Number($(price).val()));
+					var tmp = Number($(goodsNum).val()*$(marketPrice).val()).toFixed(2);
+					var tp = Number($(goodsNum).val()*$(price).val()).toFixed(2);
+					$("#totalMarketPrices"+i).val(tmp);
+					$("#totalPrices"+i).val(tp);
 					countPrice();
 					
 					top.layer.close(index);
@@ -985,20 +1008,20 @@
 		
 		//计算市场价合计和优惠价合计
 		function countPrice(){
-			var tmp = 0;
-			var tp = 0;
+			var tmp=0;
+			var tp=0;
 			$("[name='totalMarketPrices']").each(function(){
-				tmp += parseInt($(this).val());
+				tmp += parseFloat($(this).val());
 			});
 			$("[name='totalPrices']").each(function(){
-				tp += parseInt($(this).val());
+				tp += parseFloat($(this).val());
 			});
 			
-			$(".totalMarketPrices").html(tmp);
-			$(".totalPrices").html(tp);
+			$(".totalMarketPrices").html(Number(tmp).toFixed(2));
+			$(".totalPrices").html(Number(tp).toFixed(2));
 			//为通用信息的市场价合计和优惠价合计赋值
-			$("#marketPrice").val(tmp);
-			$("#shopPrice").val(tp);
+			$("#marketPrice").val(Number(tmp).toFixed(2));
+			$("#shopPrice").val(Number(tp).toFixed(2));
 		}
     </script>
 </body>
