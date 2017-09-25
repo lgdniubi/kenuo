@@ -393,7 +393,7 @@
 						</div>
 						<!-- 通用信息 End -->
 						<!-- 套卡子项 Begin -->
-						<div class="tab-pane fade" id="tab_goods_suit">
+						<div class="tab-pane fade" id="tab_goods_suit" style="border: 0">
 							<table class="table table-bordered table-hover table-left">
 								<thead>
 									<tr>
@@ -412,14 +412,13 @@
 										<th style="text-align: center;" colspan="6">合&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;计</th>
 										<th style="text-align: center;" class="totalMarketPrices"></th>
 										<th style="text-align: center;" class="totalPrices"></th>
-										<th style="text-align: center;"></th>
 									</tr>
 								</tbody>
 							</table>
 						</div>
 						<!-- 套卡子项 End -->
 						<!-- 通用卡子项 Begin -->
-						<div class="tab-pane fade" id="tab_goods_common">
+						<div class="tab-pane fade" id="tab_goods_common" style="border: 0">
 							<table class="table table-bordered table-hover table-left">
 								<thead>
 									<tr>
@@ -1098,44 +1097,44 @@
 								type="虚拟";
 							}
 							$("<tr> "+
-									"<td> "+list[i].goodsCardId+"</td> "+
-									"<td> "+list[i].goodsName+"</td> "+
-									"<td> "+type+"</td> "+
-									"<td> <input id='goodsNums' name='goodsNums' type='text' value='"+list[i].goodsNum+"' readonly class='form-control'></td> "+
-									"<td> <input id='marketPrices' name='marketPrices' type='text' value='"+list[i].marketPrice+"' readonly class='form-control'></td> "+
-									"<td> <input id='prices' name='prices' type='text' value='"+list[i].price+"' readonly='true' class='form-control'></td> "+
-									"<td> <input id='totalMarketPrices' name='totalMarketPrices' type='text' value='"+list[i].totalMarketPrice+"' readonly='true' class='form-control'></td> "+
-									"<td> <input id='totalPrices' name='totalPrices' type='text' value='"+list[i].totalPrice+"' readonly='true' class='form-control'></td> "+
+									"<td style='text-align: center;'> "+list[i].goodsCardId+"</td> "+
+									"<td style='text-align: center;'> "+list[i].goodsName+"</td> "+
+									"<td style='text-align: center;'> "+type+"</td> "+
+									"<td style='text-align: center;'> <input id='goodsNums' name='goodsNums' type='text' value='"+list[i].goodsNum+"' readonly class='form-control'></td> "+
+									"<td style='text-align: center;'> <input id='marketPrices' name='marketPrices' type='text' value='"+list[i].marketPrice+"' readonly class='form-control'></td> "+
+									"<td style='text-align: center;'> <input id='prices' name='prices' type='text' value='"+list[i].price+"' readonly='true' class='form-control'></td> "+
+									"<td style='text-align: center;'> <input id='totalMarketPrices' name='totalMarketPrices' type='text' value='"+list[i].totalMarketPrice+"' readonly='true' class='form-control'></td> "+
+									"<td style='text-align: center;'> <input id='totalPrices' name='totalPrices' type='text' value='"+list[i].totalPrice+"' readonly='true' class='form-control'></td> "+
 								"</tr>").prependTo($("#addZTD"));
 							totalMarketPrices = totalMarketPrices + list[i].totalMarketPrice;
 							totalPrices = totalPrices + list[i].totalPrice;
 						}
-						$(".totalMarketPrices").html(totalMarketPrices);
-						$(".totalPrices").html(totalPrices);
+						$(".totalMarketPrices").html(Number(totalMarketPrices).toFixed(2));
+						$(".totalPrices").html(Number(totalPrices).toFixed(2));
 					}else{
 						for(var i in list){
 							var type;
 							if(list[i].isReal == 0){
 								type="实物";
 								$("<tr> "+
-										"<td> "+list[i].goodsCardId+"</td> "+
-										"<td> "+list[i].goodsName+"</td> "+
-										"<td> "+type+"</td> "+
-										"<td> <input id='goodsNums' name='goodsNums' type='text' value='"+list[i].goodsNum+"' readonly class='form-control'></td> "+
+										"<td style='text-align: center;'> "+list[i].goodsCardId+"</td> "+
+										"<td style='text-align: center;'> "+list[i].goodsName+"</td> "+
+										"<td style='text-align: center;'> "+type+"</td> "+
+										"<td style='text-align: center;'> <input id='goodsNums' name='goodsNums' type='text' value='"+list[i].goodsNum+"' readonly class='form-control'></td> "+
 									"</tr>").appendTo($("#addZTD1"));
 							}else{
 								type="虚拟";
 								$("<tr style='height:45px;'> "+
-										"<td> "+list[i].goodsCardId+"</td> "+
-										"<td> "+list[i].goodsName+"</td> "+
-										"<td> "+type+"</td> "+
-										"<td><input id='goodsNums' name='goodsNums' type='hidden' readonly class='form-control'></td> "+
+										"<td style='text-align: center;'> "+list[i].goodsCardId+"</td> "+
+										"<td style='text-align: center;'> "+list[i].goodsName+"</td> "+
+										"<td style='text-align: center;'> "+type+"</td> "+
+										"<td style='text-align: center;'><input id='goodsNums' name='goodsNums' type='hidden' readonly class='form-control'></td> "+
 									"</tr>").appendTo($("#addZTD1"));
 							}
 						}
 					}
 				}
-			});  
+			});
 		});
     </script>
 </body>
