@@ -7,6 +7,8 @@
 			order_id,
 			user_id,
 			push_money,
+			position_key,
+			position_value,
 			create_by,
 			create_date,
 			del_flag
@@ -14,6 +16,8 @@
 			#{orderId},
 			#{pushmoneyUserId},
 			#{pushMoney},
+			(SELECT d.label FROM sys_user u LEFT JOIN sys_dict d ON d.value = u.user_type WHERE u.id = #{pushmoneyUserId} AND d.type = 'sys_user_type'),
+			(SELECT d.value FROM sys_user u LEFT JOIN sys_dict d ON d.value = u.user_type WHERE u.id = #{pushmoneyUserId} AND d.type = 'sys_user_type'),
 			#{createBy.id},
 			SYSDATE(),
 			#{delFlag}			
