@@ -966,7 +966,7 @@
 			o.member_goods_price as membergoodsprice,
 			o.invoice_overtime as invoiceOvertime,
 			o.shipping_price as shippingprice,
-			u.office_id as officeId
+			IFNULL(u.office_id,'') AS officeId 
 		FROM
 			mtmydb.mtmy_orders o,
 			mtmydb.mtmy_users u

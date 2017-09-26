@@ -541,7 +541,6 @@ window.onload=initStatus;
 							<input type="hidden" id="channelFlag" value="${orders.channelFlag}" />
 							<input type="hidden" id="isReal" value="${orders.isReal}" />
 							<input type="hidden" id="operationName" value="${user.name}" />
-							<input type="hidden" id="suitCardSons" value="${suitCardSons}" />
 							<h4>订单基本信息:&nbsp;&nbsp;<c:if test="${orders.isReal == 2}">套卡订单</c:if>&nbsp;&nbsp;<c:if test="${orders.isReal == 3}">通用卡订单</c:if></h4><br>
 							<label class="active">订&nbsp;&nbsp;单&nbsp;号:</label>&nbsp;&nbsp;${orders.orderid }
 							<input type="hidden" id="orderid" name="orderid" value="${orders.orderid }" >
