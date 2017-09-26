@@ -445,11 +445,17 @@
 	}
 window.onload=initStatus;
 
-	function ToAdvance(recid,servicetimes,orderArrearage){
+	function ToAdvance(officeId,recid,servicetimes,orderArrearage){
 		var userid = $("#userid").val();
 		var orderid = $("#orderid").val();
 		var isReal = $("#isReal").val();
 		var channelFlag = $("#channelFlag").val();
+		
+		if(officeId == "" || officeId == null){
+			top.layer.alert('该用户未绑定店铺,请在CRM中为该用户绑定！', {icon: 0, title:'提醒'});
+	    	return;
+		}
+		
 		top.layer.open({
 		    type: 2, 
 		    area: ['600px', '450px'],
@@ -668,7 +674,7 @@ window.onload=initStatus;
 													</c:if>
 													<c:if test="${orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag == 1}">
 														<c:if test="${orders.orderstatus == 4 && orderGood.sumAppt == 1}">
-															<a href="#" onclick="ToAdvance(${orderGood.recid},${orderGood.servicetimes},${orderGood.orderArrearage })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
+															<a href="#" onclick="ToAdvance('${orders.officeId}',${orderGood.recid},${orderGood.servicetimes},${orderGood.orderArrearage })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
 														</c:if>
 														<c:if test="${orders.orderstatus != 4 || orderGood.sumAppt == 0}">
 															<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
