@@ -213,6 +213,10 @@
    //修改业务员信息
  	function updateFileSysUserInfo(obj,pushmoneyRecordId){
  		var orderamount = $("#orderamount").val();
+ 		var channelFlag = $("#channelFlag").val();
+    	var ordersGoodsprice = $("#ordersGoodsprice").val();
+    	var couponprice = $("#couponprice").val();
+    	var memberGoodsPrice = $("#memberGoodsPrice").val();
  		top.layer.open({
   			type: 2, 
   		    area: ['550px', '420px'],
@@ -230,33 +234,41 @@
       	    	if(pushMoney==""){
       	    		top.layer.alert('填写营业额！', {icon: 0, title:'提醒'});
       	    		return;
-      	    	}else if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-    	    		top.layer.alert('营业额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
-     	    		return;
-      	    	}else{
-      	    		$.ajax({
-          				type:"post",
-          				data:{
-          					orderId:orderid,
-          					pushmoneyUserId:sysUserId,
-          					pushMoney:pushMoney
-          				 },
-          				url:"${ctx}/ec/orders/saveOrderPushmoneyRecord?flag=edit"+"&pushmoneyRecordId="+pushmoneyRecordId,
-          				success:function(date){
-          					if(date == 'success'){
-          						$(obj).parent().parent().remove();
-          						top.layer.alert('修改业务员成功', {icon: 0, title:'提醒'});
-          						window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid+"&isReal="+isReal+"&type=edit";
-          	     				top.layer.close(index);
-          					}else{
-          						top.layer.alert('修改业务员失败', {icon: 0, title:'提醒'});
-          					}
-          				},
-          				error:function(XMLHttpRequest,textStatus,errorThrown){
-          					
-          				}
-          			});
       	    	}
+      	    	if(channelFlag == 'bm'){
+   	    			if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
+    	    			top.layer.alert('营业额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
+     	    			return;
+     	    		}
+   	    		}else{
+   	    			if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(ordersGoodsprice - couponprice - memberGoodsPrice) > 0){
+    	    			top.layer.alert('营业额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
+     	    			return;
+     	    		}
+   	    		}
+   	    		
+      	    	$.ajax({
+       				type:"post",
+       				data:{
+       					orderId:orderid,
+       					pushmoneyUserId:sysUserId,
+       					pushMoney:pushMoney
+       				 },
+       				url:"${ctx}/ec/orders/saveOrderPushmoneyRecord?flag=edit"+"&pushmoneyRecordId="+pushmoneyRecordId,
+       				success:function(date){
+       					if(date == 'success'){
+       						$(obj).parent().parent().remove();
+       						top.layer.alert('修改业务员成功', {icon: 0, title:'提醒'});
+       						window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid+"&isReal="+isReal+"&type=edit";
+       	     				top.layer.close(index);
+       					}else{
+       						top.layer.alert('修改业务员失败', {icon: 0, title:'提醒'});
+       					}
+       				},
+       				error:function(XMLHttpRequest,textStatus,errorThrown){
+       					
+       				}
+       			});
   			}
   		}); 
  	}
@@ -309,6 +321,10 @@
    		var orderamount = $("#orderamount").val();
     	var sysUserIds = document.getElementsByName("sysUserId");
     	var operationName = $("#operationName").val();
+    	var channelFlag = $("#channelFlag").val();
+    	var ordersGoodsprice = $("#ordersGoodsprice").val();
+    	var couponprice = $("#couponprice").val();
+    	var memberGoodsPrice = $("#memberGoodsPrice").val();
  		if ($("#mtmyUserButton").hasClass("disabled")){
  			return true;
  		}
@@ -331,45 +347,54 @@
      	    	if(pushMoney==""){
      	    		top.layer.alert('填写营业额！', {icon: 0, title:'提醒'});
      	    		return;
-     	    	}else if(sysUserId == ""){
+     	    	}
+     	    	if(sysUserId == ""){
     	    		top.layer.alert('填写业务员！', {icon: 0, title:'提醒'});
      	    		return;
-     	    	}else if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-    	    		top.layer.alert('营业额必须大于等于0，小于等于订单应付总额！', {icon: 0, title:'提醒'});
-     	    		return;
-     	    	}else{
-     	    		if(sysUserIds.length > 0){
-    	    			for(i=0;i<sysUserIds.length;i++){
-         	    	        if(sysUserId == sysUserIds[i].value){
-         	    	        	top.layer.alert('业务员不能相同！', {icon: 0, title:'提醒'});
-         	     	    		return;
-         	    	        }
-         	    	    }
-    	    		}
-     	    		
-     	    		$.ajax({
-         				type:"post",
-         				data:{
-         					orderId:orderid,
-         					pushmoneyUserId:sysUserId,
-         					pushMoney:pushMoney
-         				 },
-         				url:"${ctx}/ec/orders/saveOrderPushmoneyRecord?flag=add",
-         				success:function(date){
-         					if(date == 'success'){
-         						$(obj).parent().parent().remove();
-         						top.layer.alert('添加业务员成功', {icon: 0, title:'提醒'});
-         						window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid+"&isReal="+isReal+"&type=edit";
-         	     				top.layer.close(index);
-         					}else{
-         						top.layer.alert('添加业务员失败', {icon: 0, title:'提醒'});
-         					}
-         				},
-         				error:function(XMLHttpRequest,textStatus,errorThrown){
-         					
-         				}
-         			});
      	    	}
+     	    	if(channelFlag == 'bm'){
+   	    			if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
+    	    			top.layer.alert('营业额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
+     	    			return;
+     	    		}
+   	    		}else{
+   	    			if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(ordersGoodsprice - couponprice - memberGoodsPrice) > 0){
+    	    			top.layer.alert('营业额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
+     	    			return;
+     	    		}
+   	    		}
+     	    	
+   	    		if(sysUserIds.length > 0){
+  	    			for(i=0;i<sysUserIds.length;i++){
+       	    	        if(sysUserId == sysUserIds[i].value){
+       	    	        	top.layer.alert('业务员不能相同！', {icon: 0, title:'提醒'});
+       	     	    		return;
+       	    	        }
+       	    	    }
+  	    		}
+   	    		
+   	    		$.ajax({
+       				type:"post",
+       				data:{
+       					orderId:orderid,
+       					pushmoneyUserId:sysUserId,
+       					pushMoney:pushMoney
+       				 },
+       				url:"${ctx}/ec/orders/saveOrderPushmoneyRecord?flag=add",
+       				success:function(date){
+       					if(date == 'success'){
+       						$(obj).parent().parent().remove();
+       						top.layer.alert('添加业务员成功', {icon: 0, title:'提醒'});
+       						window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid+"&isReal="+isReal+"&type=edit";
+       	     				top.layer.close(index);
+       					}else{
+       						top.layer.alert('添加业务员失败', {icon: 0, title:'提醒'});
+       					}
+       				},
+       				error:function(XMLHttpRequest,textStatus,errorThrown){
+       					
+       				}
+       			});
  			}
  		}); 
  	}
@@ -545,6 +570,9 @@ window.onload=initStatus;
 							<label class="active">订&nbsp;&nbsp;单&nbsp;号:</label>&nbsp;&nbsp;${orders.orderid }
 							<input type="hidden" id="orderid" name="orderid" value="${orders.orderid }" >
 							<input type="hidden" id="userid" name="userid" value="${orders.userid }" >
+							<input type="hidden" id="ordersGoodsprice" name="ordersGoodsprice" value="${orders.goodsprice}">
+							<input type="hidden" id="couponprice" name="couponprice" value="${orders.couponprice}">
+							<input type="hidden" id="membergoodsprice" name="membergoodsprice" value="${orders.memberGoodsPrice}">
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">新老订单:</label>&nbsp;&nbsp;
 							<c:if test="${orders.isNeworder == 0}">新订单</c:if>
