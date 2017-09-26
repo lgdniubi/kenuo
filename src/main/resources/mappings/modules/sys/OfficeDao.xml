@@ -24,7 +24,6 @@
 		a.update_by AS "updateBy.id",
 		a.update_date,
 		a.is_new AS "isNew",
-		a.is_recommend AS "isRecommend",
 		a.is_cargo AS "isCargo",
 		a.longitude,
 		a.latitude,
@@ -64,6 +63,19 @@
 		AND a.del_flag = 0
 	</select>
 	
+	<!-- 根据id查询本身及其子类 -->
+	<select id="getOfficeListById" resultType="Office">
+		SELECT
+			<include refid="officeColumns"/>
+		FROM sys_office a
+		<include refid="officeJoins"/>
+		WHERE (a.id = #{id} OR a.parent_ids LIKE 
+					<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>)
+		AND a.del_flag = 0
+		AND a.grade=1
+	</select>
+	
 	<!-- 根据roleID找到office对象 -->
 	<select id="getRolebyOff" resultType="Office">
 		SELECT
@@ -89,7 +101,6 @@
 			a.update_date,
 			a.del_flag,
 			a.is_new,
-			a.is_recommend AS isRecommend,
 			a.longitude AS longitude,
 			a.latitude AS latitude,
 			a.useable AS useable,
@@ -239,7 +250,6 @@
 			update_date, 
 			remarks, 
 			del_flag,
-			is_recommend,
 			longitude,
 			latitude,
 			useable,
@@ -269,7 +279,6 @@
 			#{updateDate}, 
 			#{remarks}, 
 			#{delFlag},
-			#{isRecommend},
 			#{longitude},
 			#{latitude},
 			#{useable},
@@ -317,7 +326,6 @@
 			update_date, 
 			remarks, 
 			del_flag,
-			is_recommend,
 			longitude,
 			latitude,
 			useable,
@@ -351,7 +359,6 @@
 			#{updateDate}, 
 			#{remarks}, 
 			#{delFlag},
-			#{isRecommend},
 			#{longitude},
 			#{latitude},
 			#{useable},
@@ -384,7 +391,6 @@
 			update_by = #{updateBy.id}, 
 			update_date = #{updateDate}, 
 			remarks = #{remarks},
-			is_recommend = #{isRecommend},
 			longitude = #{longitude},
 			latitude = #{latitude},
 			useable=#{useable},
@@ -476,9 +482,6 @@
 	<update id="updateisyesno">
 		<if test="type == 'status'">
 			UPDATE sys_office_info SET status = #{isyesno} WHERE id = #{id}
-		</if> 
-		<if test="type == 'isRecommend'">
-			UPDATE sys_office SET is_recommend = #{isyesno} WHERE id = #{id}
 		</if> 
 		<if test="type == 'isNew'">
 			UPDATE sys_office SET is_new = #{isyesno} WHERE id = #{id}
@@ -638,6 +641,22 @@
 				#{intro},
 				#{details},
 				#{DEL_FLAG_NORMAL}
+			)
+	</insert>
+	<!-- 操作店铺时保存日志记录 -->
+	<insert id="saveOfficeLog" parameterType="OfficeLog">
+		insert into sys_office_log(
+				office_id,
+				type,
+				content,
+				update_by,
+				update_date
+			) values (
+				#{officeId},
+				#{type},
+				#{content},
+				#{updateBy.id},
+				SYSDATE()
 			)
 	</insert>
 	<!-- 替换code前先在code前拼接特定的字符 -->

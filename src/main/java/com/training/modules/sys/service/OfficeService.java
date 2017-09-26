@@ -15,6 +15,7 @@ import com.training.modules.sys.dao.OfficeDao;
 import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeInfo;
+import com.training.modules.sys.entity.OfficeLog;
 import com.training.modules.sys.utils.UserUtils;
 
 /**
@@ -311,5 +312,23 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Transactional(readOnly = false)
 	public void updateisyesno(String id,String type,String isyesno){
 		dao.updateisyesno(id,type,isyesno);
+	}
+
+	/**
+	 * 操作店铺时保存日志记录
+	 * @param officeLog
+	 */
+	@Transactional(readOnly = false)
+	public void saveOfficeLog(OfficeLog officeLog) {
+		dao.saveOfficeLog(officeLog);
+	}
+
+	/**
+	 * 根据id查询本身及其子类
+	 * @param office
+	 * @return
+	 */
+	public List<Office> getOfficeListById(Office office) {
+		return dao.getOfficeListById(office);
 	}
 }

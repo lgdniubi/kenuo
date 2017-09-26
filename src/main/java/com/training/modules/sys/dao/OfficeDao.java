@@ -11,6 +11,7 @@ import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeInfo;
+import com.training.modules.sys.entity.OfficeLog;
 
 /**
  * 机构DAO接口
@@ -165,5 +166,18 @@ public interface OfficeDao extends TreeDao<Office> {
 	 * @param isyesno
 	 */
 	public void updateisyesno(@Param("id")String id,@Param("type")String type,@Param("isyesno")String isyesno);
+	
+	/**
+	 * 操作店铺时保存日志记录
+	 * @param officeLog
+	 */
+	public void saveOfficeLog(OfficeLog officeLog);
+	
+	/**
+	 * 根据id查询本身及其子类
+	 * @param office
+	 * @return
+	 */
+	public List<Office> getOfficeListById(Office office);
 	
 }
