@@ -325,7 +325,7 @@
     	var ordersGoodsprice = $("#ordersGoodsprice").val();
     	var couponprice = $("#couponprice").val();
     	var memberGoodsPrice = $("#memberGoodsPrice").val();
- 		if ($("#mtmyUserButton").hasClass("disabled")){
+    	if ($("#mtmyUserButton").hasClass("disabled")){
  			return true;
  		}
  		// 正常打开	
@@ -572,7 +572,7 @@ window.onload=initStatus;
 							<input type="hidden" id="userid" name="userid" value="${orders.userid }" >
 							<input type="hidden" id="ordersGoodsprice" name="ordersGoodsprice" value="${orders.goodsprice}">
 							<input type="hidden" id="couponprice" name="couponprice" value="${orders.couponprice}">
-							<input type="hidden" id="membergoodsprice" name="membergoodsprice" value="${orders.memberGoodsPrice}">
+							<input type="hidden" id="memberGoodsPrice" name="memberGoodsPrice" value="${orders.memberGoodsPrice}">
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">新老订单:</label>&nbsp;&nbsp;
 							<c:if test="${orders.isNeworder == 0}">新订单</c:if>
