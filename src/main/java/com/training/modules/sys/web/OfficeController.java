@@ -335,18 +335,16 @@ public class OfficeController extends BaseController {
 //		if (Office.isRoot(id)){
 //			addMessage(redirectAttributes, "删除机构失败, 不允许删除顶级机构或编号空");
 //		}else{
-			List<Office> officelist= officeService.getOfficeListById(office);
+			//操作店铺保存记录日志(添加日志记录必须在删除之前,因为对应的del_flag=0,如果是删除之后,就不符合条件)
+			OfficeLog officeLog = new OfficeLog();
+			officeLog.setOfficeId(office.getId());
+			officeLog.setType(1);
+			officeLog.setContent("删除店铺");
+			officeService.saveOfficeLogDel(officeLog);
+			
+			//删除操作
 			officeService.delete(office);
 			
-			for (Office off : officelist) {
-					//操作店铺保存记录日志
-					OfficeLog officeLog = new OfficeLog();
-					officeLog.setOfficeId(off.getId());
-					officeLog.setType(1);
-					officeLog.setContent("删除店铺");
-					officeLog.setUpdateBy(off.getUpdateBy());
-					officeService.saveOfficeLog(officeLog);
-			}
 			//删除机构时关联删除实体店铺信息
 			officeService.deleteOfficeInfo(office);
 			addMessage(redirectAttributes, "删除机构成功");
