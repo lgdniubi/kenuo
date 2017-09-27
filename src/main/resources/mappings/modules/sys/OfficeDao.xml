@@ -656,10 +656,7 @@
 				SYSDATE()
 			)
 	</insert>
-<<<<<<< HEAD
 	
-=======
->>>>>>> 0a5d8c6a1ef5623c306f735a57a1adab9c318626
 	<!-- 删除店铺时保存日志记录 -->
 	<insert id="saveOfficeLogDel" parameterType="OfficeLog">
 		insert into sys_office_log(
@@ -668,26 +665,16 @@
 				type,
 				content,
 				update_date
-<<<<<<< HEAD
 			) (SELECT
 				a.id,a.update_by,#{type},#{content},SYSDATE()
-=======
-			) SELECT
-				a.id,a.update_by,1,'删除店铺',SYSDATE()
->>>>>>> 0a5d8c6a1ef5623c306f735a57a1adab9c318626
 			FROM sys_office a
 			WHERE (a.id = #{officeId} OR a.parent_ids LIKE 
 				<if test="dbName == 'oracle'">'%,'||#{officeId}||',%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%,', #{officeId}, ',%')</if>)
 			AND a.del_flag = 0
-<<<<<<< HEAD
 			AND a.grade=1);
 	</insert>
 	
-=======
-			AND a.grade=1;
-	</insert>
->>>>>>> 0a5d8c6a1ef5623c306f735a57a1adab9c318626
 	<!-- 替换code前先在code前拼接特定的字符 -->
 	<update id="updateCodeFirst">
 		UPDATE sys_office SET code = CONCAT('coffee',code) WHERE code LIKE CONCAT(#{oldCode}, '%')

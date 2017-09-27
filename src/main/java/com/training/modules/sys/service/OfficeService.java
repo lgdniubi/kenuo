@@ -334,12 +334,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
 	/**
 	 * 删除店铺时保存日志记录
-<<<<<<< HEAD
-	 * @param office
-	 * @return
-=======
 	 * @param officeLog
->>>>>>> 0a5d8c6a1ef5623c306f735a57a1adab9c318626
+	 * @return
 	 */
 	@Transactional(readOnly = false)
 	public void saveOfficeLogDel(OfficeLog officeLog) {
