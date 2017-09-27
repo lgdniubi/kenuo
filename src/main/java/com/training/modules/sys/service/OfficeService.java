@@ -312,4 +312,13 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public void updateisyesno(String id,String type,String isyesno){
 		dao.updateisyesno(id,type,isyesno);
 	}
+	
+	/**
+	 * 实物订单发货到店查询店铺详情
+	 * @param id
+	 * @return
+	 */
+	public OfficeInfo selectOfficeDetails(String id){
+		return dao.selectOfficeDetails(id);
+	}
 }

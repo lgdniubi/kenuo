@@ -79,7 +79,9 @@ import com.training.modules.ec.utils.OrdersStatusChangeUtils;
 import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.quartz.tasks.utils.RedisConfig;
 import com.training.modules.quartz.utils.RedisLock;
+import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.User;
+import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
@@ -130,6 +132,8 @@ public class OrdersController extends BaseController {
 	private OrderPushmoneyRecordService orderPushmoneyRecordService;
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
+	@Autowired
+	private OfficeService officeService;
 	
 	public static final String MTMY_ID = "mtmy_id_";//用户云币缓存前缀
 	
@@ -2672,5 +2676,26 @@ public class OrdersController extends BaseController {
 			addMessage(redirectAttributes, "确认收货失败！");
 		}
 		return "redirect:" + adminPath + "/ec/orders/list";
+	}
+	
+	/**
+	 * 获取店铺详情
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="getOfficeDetails")
+	@ResponseBody
+	public OfficeInfo getOfficeDetails(HttpServletRequest request){
+		OfficeInfo officeInfo = new OfficeInfo();
+		try{
+			String officeId = request.getParameter("officeId");
+			if(!"".equals(officeId) && officeId != null){
+				officeInfo = officeService.selectOfficeDetails(officeId);
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "获取店铺详情", e);
+			logger.error("方法：getOfficeDetails，获取店铺详情出现错误：" + e.getMessage());
+		}
+		return officeInfo;
 	}
 }

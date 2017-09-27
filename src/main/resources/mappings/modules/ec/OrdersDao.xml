@@ -186,7 +186,8 @@
 			(select COUNT(gm.rec_id) from mtmydb.mtmy_order_goods_mapping gm where gm.order_id = a.order_id and gm.group_id = 0 ) AS "goodsnum",
 			<!-- IFNULL(ogd.order_arrearage,0) AS orderArrearage, -->
 			a.del_flag,
-			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
+			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType,
+			IFNULL(u.office_id,'') as officeId
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
@@ -291,7 +292,8 @@
 			(select COUNT(gm.rec_id) from mtmydb.mtmy_order_goods_mapping gm where gm.order_id = a.order_id and gm.group_id = 0 ) AS "goodsnum",
 			<!-- IFNULL(ogd.order_arrearage,0) AS orderArrearage, -->
 			a.del_flag,
-			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType
+			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType,
+			IFNULL(u.office_id,'') as officeId
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id

@@ -678,4 +678,17 @@
 			<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
 		AND a.del_flag = 0
 	</select>
+	
+	<!-- 实物订单发货到店查询店铺详情 -->
+	<select id="selectOfficeDetails" resultType="OfficeInfo">
+		SELECT
+			o.name AS 'shopName',
+			oi.store_phone AS 'shopPhone',
+			oi.detailed_address AS 'address'
+		FROM sys_office o
+		LEFT JOIN sys_office_info oi ON oi.id =o.id
+		WHERE o.id = #{id}
+		AND o.del_flag = 0
+		AND oi.del_flag = 0
+	</select>
 </mapper>

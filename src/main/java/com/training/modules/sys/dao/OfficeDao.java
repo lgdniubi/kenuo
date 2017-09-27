@@ -166,4 +166,11 @@ public interface OfficeDao extends TreeDao<Office> {
 	 */
 	public void updateisyesno(@Param("id")String id,@Param("type")String type,@Param("isyesno")String isyesno);
 	
+	/**
+	 * 实物订单发货到店查询店铺详情
+	 * @param id
+	 * @return
+	 */
+	public OfficeInfo selectOfficeDetails(String id);
+	
 }
