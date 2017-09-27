@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeInfo;
+import com.training.modules.sys.entity.OfficeLog;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.utils.BugLogUtils;
@@ -278,6 +280,15 @@ public class OfficeController extends BaseController {
 				officeService.save(office);
 				office.setId(officeService.getByCode(office.getCode()).getId());
 				officeService.saveOfficeInfo(office);
+				
+				//操作店铺保存记录日志
+				OfficeLog officeLog = new OfficeLog();
+				officeLog.setOfficeId(office.getId());
+				officeLog.setType(0);
+				officeLog.setContent("添加店铺");
+				officeLog.setUpdateBy(office.getCreateBy());
+				officeService.saveOfficeLog(officeLog);
+				
 			}
 		}else{
 			//修改机构或修改实体店
@@ -324,7 +335,16 @@ public class OfficeController extends BaseController {
 //		if (Office.isRoot(id)){
 //			addMessage(redirectAttributes, "删除机构失败, 不允许删除顶级机构或编号空");
 //		}else{
+			//操作店铺保存记录日志(添加日志记录必须在删除之前,因为对应的del_flag=0,如果是删除之后,就不符合条件)
+			OfficeLog officeLog = new OfficeLog();
+			officeLog.setOfficeId(office.getId());
+			officeLog.setType(1);
+			officeLog.setContent("删除店铺");
+			officeService.saveOfficeLogDel(officeLog);
+			
+			//删除操作
 			officeService.delete(office);
+			
 			//删除机构时关联删除实体店铺信息
 			officeService.deleteOfficeInfo(office);
 			addMessage(redirectAttributes, "删除机构成功");
@@ -587,6 +607,14 @@ public class OfficeController extends BaseController {
 							officeInfo.setId(officeService.getByCode(office.getCode()).getId());
 							officeService.saveOfficeInfo2(officeInfo);
 							
+							//操作店铺保存记录日志
+							OfficeLog officeLog = new OfficeLog();
+							officeLog.setOfficeId(office.getId());
+							officeLog.setType(0);
+							officeLog.setContent("导入店铺");
+							officeLog.setUpdateBy(office.getCreateBy());
+							officeService.saveOfficeLog(officeLog);
+							
 							successNum++;
 						}else if("officeFalse".equals(str)){
 							failureMsg.append("<br/>机构名 "+officeInfo.getOfficeName()+" 导入失败：上级机构编码有误;");
@@ -827,6 +855,18 @@ public class OfficeController extends BaseController {
     				}else{
     					map.put("MESSAGE", "隐藏该店铺成功");
     				}
+    				//操作店铺保存记录日志
+    				OfficeLog officeLog = new OfficeLog();
+    				officeLog.setOfficeId(id);
+    				if(isyesno.equals("0")){//开启店铺
+    					officeLog.setType(2);
+    					officeLog.setContent("开启店铺");
+    				}else if(isyesno.equals("1")){//隐藏店铺
+    					officeLog.setType(3);
+    					officeLog.setContent("隐藏店铺");
+    				}
+    				officeLog.setUpdateBy(UserUtils.getUser());
+    				officeService.saveOfficeLog(officeLog);
     			}else{
     				map.put("MESSAGE", "修改成功");
     			}

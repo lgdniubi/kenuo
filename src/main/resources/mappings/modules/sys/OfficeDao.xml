@@ -479,7 +479,7 @@
 		</if> 
 		<if test="type == 'isRecommend'">
 			UPDATE sys_office SET is_recommend = #{isyesno} WHERE id = #{id}
-		</if> 
+		</if>
 		<if test="type == 'isNew'">
 			UPDATE sys_office SET is_new = #{isyesno} WHERE id = #{id}
 		</if> 	
@@ -639,6 +639,39 @@
 				#{details},
 				#{DEL_FLAG_NORMAL}
 			)
+	</insert>
+	<!-- 操作店铺时保存日志记录 -->
+	<insert id="saveOfficeLog" parameterType="OfficeLog">
+		insert into sys_office_log(
+				office_id,
+				type,
+				content,
+				update_by,
+				update_date
+			) values (
+				#{officeId},
+				#{type},
+				#{content},
+				#{updateBy.id},
+				SYSDATE()
+			)
+	</insert>
+	<!-- 删除店铺时保存日志记录 -->
+	<insert id="saveOfficeLogDel" parameterType="OfficeLog">
+		insert into sys_office_log(
+				office_id,
+				update_by,
+				type,
+				content,
+				update_date
+			) SELECT
+				a.id,a.update_by,1,'删除店铺',SYSDATE()
+			FROM sys_office a
+			WHERE (a.id = #{officeId} OR a.parent_ids LIKE 
+				<if test="dbName == 'oracle'">'%,'||#{officeId}||',%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%,', #{officeId}, ',%')</if>)
+			AND a.del_flag = 0
+			AND a.grade=1;
 	</insert>
 	<!-- 替换code前先在code前拼接特定的字符 -->
 	<update id="updateCodeFirst">
