@@ -93,6 +93,16 @@
 			 openDialog('退货商品列表','${ctx}/ec/orders/returnGoddsList?flag='+flag+'&orderid='+orderId+'&isReal='+isReal,'1000px','650px');
 		}
 		
+		function affirmReceive(officeId,orderid){
+			if(officeId == "" || officeId == null){
+				top.layer.alert('该用户未绑定店铺,请在CRM中为该用户绑定！', {icon: 0, title:'提醒'});
+		    	return;
+			}
+
+			if(confirm("确认要收货吗？","提示框")){
+				window.location="${ctx}/ec/orders/affirmReceive?orderid="+orderid;		
+			}
+		}
 		
 </script>
 </head>
@@ -366,7 +376,7 @@
 								</c:if>
 								<shiro:hasPermission name="ec:orders:affirmReceive">
 									<c:if test="${orders.orderstatus == 2 && orders.shippingtype == 1}">
-										<a href="${ctx}/ec/orders/affirmReceive?orderid=${orders.orderid}" onclick="return confirmx('确认要收货吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-edit"></i>确认收货</a>
+										<a href="#" onclick="affirmReceive('${orders.officeId}','${orders.orderid}')"  class="btn btn-danger btn-xs" ><i class="fa fa-edit"></i>确认收货</a>
 									</c:if>
 									<c:if test="${orders.orderstatus != 2 || orders.shippingtype != 1}">
 										<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>确认收货</a>

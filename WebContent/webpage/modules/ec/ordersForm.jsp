@@ -45,17 +45,32 @@
 			if($("#isReal").val() == '1'){
 				$("#shipping").hide();
 			}
-			if($("#shippingtype").val()== 0 || $("#shippingtype").val()== 1){
+			if($("#shippingtype").val()== 0){
+				$("#shop").hide();
+				$("#logistics").show();
+			}else if($("#shippingtype").val()== 1){
+				$("#shop").show();
 				$("#logistics").show();
 			}else{
+				$("#shop").hide();
 				$("#logistics").hide();
 			}
 			//物流类型来判断是否显示物流地址
 			$("#shippingtype").change(function(){
+				$("#consignee").val("");	
+				$("#mobile").val("");	
+				$("#address").val("");
+				$("#bazaarId").val("");
+				$("#bazaarName").val("");
 				var shippingtype = $(this).val();
-				if(shippingtype == 0 || $("#shippingtype").val()== 1){
+				if(shippingtype == 0){
+					$("#logistics").show();
+					$("#shop").hide();
+				}else if(shippingtype == 1){
+					$("#shop").show();
 					$("#logistics").show();
 				}else{
+					$("#shop").hide();
 					$("#logistics").hide();
 				}
 			});
@@ -113,6 +128,79 @@
 			//submit函数在等待远程校验结果然后再提交，而layer对话框不会阻塞会直接关闭同时会销毁表单，因此submit没有提交就被销毁了导致提交表单失败。
 			/* $("#inputForm").validate().element($("#orderamount")); */
 	  
+			$("#bazaarButton").click(function(){
+				$("#consignee").val("");	
+				$("#mobile").val("");	
+				$("#address").val("");
+				$("#bazaarId").val("");
+				$("#bazaarName").val("");
+				// 是否限制选择，如果限制，设置为disabled
+				if ($("#bazaarButton").hasClass("disabled")){
+					return true;
+				}
+				// 正常打开	
+				top.layer.open({
+				    type: 2, 
+				    area: ['300px', '420px'],
+				    title:"选择店铺",
+				    ajaxData:{selectIds: $("#bazaarId").val()},
+				    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/sys/office/treeData")+"&module=&checked=&extId=&isAll=" ,
+				    btn: ['确定', '关闭']
+		    	       ,yes: function(index, layero){ //或者使用btn1
+								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+								var ids = [], names = [], nodes = [];
+								if ("" == "true"){
+									nodes = tree.getCheckedNodes(true);
+								}else{
+									nodes = tree.getSelectedNodes();
+								}
+								for(var i=0; i<nodes.length; i++) {//
+									/* if (nodes[i].level == 0){
+										//top.$.jBox.tip("不能选择根节点（"+nodes[i].name+"）请重新选择。");
+										top.layer.msg("不能选择根节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+										return false;
+									}// */
+									if (nodes[i].isParent){
+										//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+										//layer.msg('有表情地提示');
+										top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+										return false;
+									}//
+									ids.push(nodes[i].id);
+									names.push(nodes[i].name);//
+									break; // 如果为非复选框选择，则返回第一个选择  
+								}
+								$("#bazaarId").val(ids.join(",").replace(/u_/ig,""));
+								$("#bazaarName").val(names.join(","));
+								$("#bazaarName").focus();
+								
+								$.ajax({
+									type:"post",
+									data:{
+										officeId:$("#bazaarId").val()
+									},
+									url:"${ctx}/ec/orders/getOfficeDetails",
+									success:function(data){
+										if(data){
+											$("#consignee").val(data.shopName);	
+											$("#mobile").val(data.shopPhone);	
+											$("#address").val(data.address);
+										}else{
+											top.layer.alert('该店铺详情异常!', {icon: 0, title:'提醒'}); 
+										}
+									},
+									error:function(XMLHttpRequest,textStatus,errorThrown){
+									}
+								});
+								
+								top.layer.close(index);
+						    	       },
+		    	cancel: function(index){ //或者使用btn2
+		    	           //按钮【按钮二】的回调
+		    	       }
+				}); 
+			
+			});
 	    });
 			
 	    	
@@ -737,12 +825,26 @@ window.onload=initStatus;
 									<form:option value="1">到店自取</form:option>
 									<form:option value="2">无需发货</form:option>
 							</form:select>
+							<div class="input-group" id="shop">
+								<p></p>
+								<label><!-- <font color="red">*</font> -->选择店铺:</label>&nbsp;&nbsp;&nbsp;&nbsp;
+								<div class="input-group" style="float:right">
+									<input id="bazaarId" class=" form-control input-sm required" name="bazaarId" value="" aria-required="true" type="hidden">
+									<input id="bazaarName" class="form-control input-sm valid" name="bazaarName" readonly="readonly" value="" data-msg-required="" style="" aria-required="true" aria-invalid="false" type="text">
+									<span class="input-group-btn">
+										<button id="bazaarButton" class="btn btn-sm btn-primary " type="button">
+											<i class="fa fa-search"></i>
+										</button>
+									</span>
+									<label id="bazaarName-error" class="error" for="bazaarName" style="display: none"></label>
+								</div>
+							</div>
 							<div id="logistics">
 								<p></p>
 								<label ><font color="red">*</font>收&nbsp;&nbsp;货&nbsp;&nbsp;人：</label>
 								<form:input path="consignee" htmlEscape="false" maxlength="10" class="form-control required" style="width:180px" />
 								<label ><font color="red">*</font>联系电话：</label>
-								<form:input path="mobile" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
+								<form:input path="mobile" htmlEscape="false" class="form-control required" style="width:180px" />
 								<label ><font color="red">*</font>收货地址：</label>
 								<form:input path="address" htmlEscape="false" maxlength="120" class="form-control required" style="width:180px" />
 							</div>

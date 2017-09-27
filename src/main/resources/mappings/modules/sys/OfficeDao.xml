@@ -656,7 +656,10 @@
 				SYSDATE()
 			)
 	</insert>
+<<<<<<< HEAD
 	
+=======
+>>>>>>> 0a5d8c6a1ef5623c306f735a57a1adab9c318626
 	<!-- 删除店铺时保存日志记录 -->
 	<insert id="saveOfficeLogDel" parameterType="OfficeLog">
 		insert into sys_office_log(
@@ -665,16 +668,26 @@
 				type,
 				content,
 				update_date
+<<<<<<< HEAD
 			) (SELECT
 				a.id,a.update_by,#{type},#{content},SYSDATE()
+=======
+			) SELECT
+				a.id,a.update_by,1,'删除店铺',SYSDATE()
+>>>>>>> 0a5d8c6a1ef5623c306f735a57a1adab9c318626
 			FROM sys_office a
 			WHERE (a.id = #{officeId} OR a.parent_ids LIKE 
 				<if test="dbName == 'oracle'">'%,'||#{officeId}||',%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%,', #{officeId}, ',%')</if>)
 			AND a.del_flag = 0
+<<<<<<< HEAD
 			AND a.grade=1);
 	</insert>
 	
+=======
+			AND a.grade=1;
+	</insert>
+>>>>>>> 0a5d8c6a1ef5623c306f735a57a1adab9c318626
 	<!-- 替换code前先在code前拼接特定的字符 -->
 	<update id="updateCodeFirst">
 		UPDATE sys_office SET code = CONCAT('coffee',code) WHERE code LIKE CONCAT(#{oldCode}, '%')
@@ -712,5 +725,18 @@
 			<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
 		AND a.del_flag = 0
+	</select>
+	
+	<!-- 实物订单发货到店查询店铺详情 -->
+	<select id="selectOfficeDetails" resultType="OfficeInfo">
+		SELECT
+			o.name AS 'shopName',
+			oi.store_phone AS 'shopPhone',
+			oi.detailed_address AS 'address'
+		FROM sys_office o
+		LEFT JOIN sys_office_info oi ON oi.id =o.id
+		WHERE o.id = #{id}
+		AND o.del_flag = 0
+		AND oi.del_flag = 0
 	</select>
 </mapper>

@@ -168,6 +168,13 @@ public interface OfficeDao extends TreeDao<Office> {
 	public void updateisyesno(@Param("id")String id,@Param("type")String type,@Param("isyesno")String isyesno);
 	
 	/**
+	 * 实物订单发货到店查询店铺详情
+	 * @param id
+	 * @return
+	 */
+	public OfficeInfo selectOfficeDetails(String id);
+	
+	/**
 	 * 操作店铺时保存日志记录
 	 * @param officeLog
 	 */
@@ -175,9 +182,15 @@ public interface OfficeDao extends TreeDao<Office> {
 	
 	/**
 	 * 删除店铺时保存日志记录
+<<<<<<< HEAD
 	 * @param office
 	 * @return
 	 */
 	public void saveOfficeLogDel(OfficeLog officeLog);
 	
+=======
+	 * @param officeLog
+	 */
+	public void saveOfficeLogDel(OfficeLog officeLog);
+>>>>>>> 0a5d8c6a1ef5623c306f735a57a1adab9c318626
 }

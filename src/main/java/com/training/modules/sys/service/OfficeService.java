@@ -313,6 +313,15 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public void updateisyesno(String id,String type,String isyesno){
 		dao.updateisyesno(id,type,isyesno);
 	}
+	
+	/**
+	 * 实物订单发货到店查询店铺详情
+	 * @param id
+	 * @return
+	 */
+	public OfficeInfo selectOfficeDetails(String id){
+		return dao.selectOfficeDetails(id);
+	}
 
 	/**
 	 * 操作店铺时保存日志记录
@@ -325,11 +334,16 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 
 	/**
 	 * 删除店铺时保存日志记录
+<<<<<<< HEAD
 	 * @param office
 	 * @return
+=======
+	 * @param officeLog
+>>>>>>> 0a5d8c6a1ef5623c306f735a57a1adab9c318626
 	 */
 	@Transactional(readOnly = false)
 	public void saveOfficeLogDel(OfficeLog officeLog) {
 		dao.saveOfficeLogDel(officeLog);
 	}
+
 }

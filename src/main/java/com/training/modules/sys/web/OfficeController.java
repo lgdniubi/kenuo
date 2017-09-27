@@ -334,7 +334,10 @@ public class OfficeController extends BaseController {
 //		if (Office.isRoot(id)){
 //			addMessage(redirectAttributes, "删除机构失败, 不允许删除顶级机构或编号空");
 //		}else{
+<<<<<<< HEAD
 		
+=======
+>>>>>>> 0a5d8c6a1ef5623c306f735a57a1adab9c318626
 			//操作店铺保存记录日志(添加日志记录必须在删除之前,因为对应的del_flag=0,如果是删除之后,就不符合条件)
 			OfficeLog officeLog = new OfficeLog();
 			officeLog.setOfficeId(office.getId());
