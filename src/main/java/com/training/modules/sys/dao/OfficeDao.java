@@ -174,10 +174,10 @@ public interface OfficeDao extends TreeDao<Office> {
 	public void saveOfficeLog(OfficeLog officeLog);
 	
 	/**
-	 * 根据id查询本身及其子类
+	 * 删除店铺时保存日志记录
 	 * @param office
 	 * @return
 	 */
-	public List<Office> getOfficeListById(Office office);
+	public void saveOfficeLogDel(OfficeLog officeLog);
 	
 }
