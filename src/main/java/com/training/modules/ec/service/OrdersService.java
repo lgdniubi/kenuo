@@ -1156,13 +1156,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setOrderId(oLog.getOrderId());
 		details.setGoodsMappingId(oLog.getRecid()+"");
 		details.setOrderBalance(newOrderBalance);	//订单余款
-		if(1 == oLog.getIsReal() && singleRealityPrice > newTotalAmount){
-			details.setOrderArrearage(0);	//订单欠款
-			details.setTotalAmount(0);	//实付款金额
-		}else{
-			details.setOrderArrearage(-totalAmount_in);	//订单欠款
-			details.setTotalAmount(totalAmount_in);	//实付款金额
-		}
+		details.setTotalAmount(totalAmount_in);	//实付款金额
+		details.setOrderArrearage(-totalAmount_in);	//订单欠款
 		details.setItemAmount(itemAmount);	//项目金额
 		details.setItemCapitalPool(itemCapitalPool); //项目资金池
 		details.setServiceTimes(serviceTimes_in);	//剩余服务次数
@@ -2682,13 +2677,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setOrderId(oLog.getOrderId());
 		details.setGoodsMappingId(oLog.getRecid()+"");
 		details.setOrderBalance(newOrderBalance);	//商品余额
-		if(3 == oLog.getIsReal() && singleRealityPrice > newTotalAmount){
-			details.setOrderArrearage(0);	//订单欠款
-			details.setTotalAmount(0);	//实付款金额
-		}else{
-			details.setOrderArrearage(-totalAmount_in);	//订单欠款
-			details.setTotalAmount(totalAmount_in);	//实付款金额
-		}
+		details.setTotalAmount(totalAmount_in);	//实付款金额
+		details.setOrderArrearage(-totalAmount_in);	//订单欠款
 		details.setItemAmount(0);	//项目金额
 		details.setItemCapitalPool(0); //项目资金池
 		details.setServiceTimes(serviceTimes_in);	//剩余服务次数
