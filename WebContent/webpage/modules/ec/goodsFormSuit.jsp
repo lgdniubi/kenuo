@@ -958,8 +958,8 @@
 			        var obj = layero.find("iframe")[0].contentWindow;
 					var goodsId = obj.document.getElementById("goodsId");
 					var goodsNum = obj.document.getElementById("goodsNum");
-			    	var marketPrice = obj.document.getElementById("marketPrice");
-					var price = obj.document.getElementById("price");
+			    	var totalMarketPrices = obj.document.getElementById("totalMarketPrices");
+					var totalPrices = obj.document.getElementById("totalPrices");
 				
 					if(!/^[1-9]\d{0,2}$/.test($(goodsNum).val()) || $(goodsNum).val() == 0){
 						top.layer.alert('次(个)数 必须大于0且必须小于三位数的整数', {icon: 0, title:'提醒'});
@@ -969,27 +969,29 @@
 						top.layer.alert('市场价  必须大于0', {icon: 0, title:'提醒'});
 						return;
 					} */
-					if(!/^\d+(\.\d{1,2})?$/.test($(marketPrice).val())){
-						top.layer.alert('市场价  小数点后不可以超过2位!', {icon: 0, title:'提醒'});
+					if(!/^\d+(\.\d{1,2})?$/.test($(totalMarketPrices).val())){
+						top.layer.alert('市场价合计  小数点后不可以超过2位!', {icon: 0, title:'提醒'});
 						return;
 					}
 					/* if($(price).val() == 0){
 						top.layer.alert('优惠价  必须大于0', {icon: 0, title:'提醒'});
 						return;
 					} */
-					if(!/^\d+(\.\d{1,2})?$/.test($(price).val())){
-						top.layer.alert('优惠价  小数点后不可以超过2位!', {icon: 0, title:'提醒'});
+					if(!/^\d+(\.\d{1,2})?$/.test($(totalPrices).val())){
+						top.layer.alert('优惠价合计  小数点后不可以超过2位!', {icon: 0, title:'提醒'});
 						return;
 					}
 					
 					//给市场价合计和优惠价合计赋值
 					$("#goodsNums"+i).val($(goodsNum).val());
-					$("#marketPrices"+i).val(Number($(marketPrice).val()));
-					$("#prices"+i).val(Number($(price).val()));
-					var tmp = Number($(goodsNum).val()*$(marketPrice).val()).toFixed(2);
-					var tp = Number($(goodsNum).val()*$(price).val()).toFixed(2);
-					$("#totalMarketPrices"+i).val(tmp);
-					$("#totalPrices"+i).val(tp);
+					$("#totalMarketPrices"+i).val(Number($(totalMarketPrices).val()));
+					$("#totalPrices"+i).val(Number($(totalPrices).val()));
+					var tmp = Number($(totalMarketPrices).val()/$(goodsNum).val()).toFixed(3);
+					var tp = Number($(totalPrices).val()/$(goodsNum).val()).toFixed(3);
+					tmp = tmp.substring(0,tmp.lastIndexOf('.')+3);
+					tp = tp.substring(0,tp.lastIndexOf('.')+3);
+					$("#marketPrices"+i).val(tmp);
+					$("#prices"+i).val(tp);
 					countPrice();
 					
 					top.layer.close(index);
