@@ -98,10 +98,9 @@
 				top.layer.alert('该用户未绑定店铺,请在CRM中为该用户绑定！', {icon: 0, title:'提醒'});
 		    	return;
 			}
-
-			if(confirm("确认要收货吗？","提示框")){
-				window.location="${ctx}/ec/orders/affirmReceive?orderid="+orderid;		
-			}
+			
+			confirmx("确认要收货吗？", "${ctx}/ec/orders/affirmReceive?orderid="+orderid)
+				
 		}
 		
 </script>
