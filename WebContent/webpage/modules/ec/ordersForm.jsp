@@ -728,14 +728,7 @@ window.onload=initStatus;
 										<td align="center">${orderGood.membergoodsprice }</td>
 										<td align="center">${orderGood.orderAmount }</td>
 										<td align="center">${orderGood.totalAmount}</td>
-										<td align="center">
-											<c:if test="${orders.isReal == 1 }">
-												${orderGood.advancePrice}
-											</c:if>
-											<c:if test="${orders.isReal != 1 }">
-												0.0
-											</c:if>
-										</td>
+										<td align="center">${orderGood.advancePrice}</td>
 										<c:if test="${orders.isReal == 1 }">
 											<td align="center">${orderGood.remaintimes }</td>
 										</c:if>

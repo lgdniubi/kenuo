@@ -931,6 +931,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @return
 	 */
 	public Orders selectOrderById(String orderid) {
+		DecimalFormat formater = new DecimalFormat("#0.##");   //四舍五入
 		Orders orders = dao.selectOrderById(orderid);
 		double goodsprice = 0;		//主订单成本总价
 		//查询主订单的计费信息
@@ -940,8 +941,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		if(orderGoodList!=null && orderGoodList.size()>0){
 			for (OrderGoods orderGoods : orderGoodList) {
 				//计算出当前子订单成本总价
-				double totalPrice = orderGoods.getGoodsprice()*orderGoods.getGoodsnum();
-				goodsprice = goodsprice + totalPrice*100; //总订单的成本价是子订单成本总价的合
+				double totalPrice = Double.parseDouble(formater.format(orderGoods.getGoodsprice()*orderGoods.getGoodsnum()));
+				goodsprice = Double.parseDouble(formater.format(goodsprice + totalPrice*100)); //总订单的成本价是子订单成本总价的合
 				OrderGoods _orderGoods = orderGoodsDetailsService.getOrderGoodsDetailListByMid(orderGoods.getRecid());
 				if(_orderGoods!=null){
 					//存在预约记录且预约状态为已完成 已评价 爽约
