@@ -33,6 +33,8 @@ public class Orders extends TreeEntity<Orders> {
 //	private String zipcode;				//邮政编码
 	private String phone;				//收货者固定电话
 //	private String email;				//邮箱
+	private String shopId;              //店铺id
+	private String shopName;            //店铺名称
 	private int shippingtype;    	 	//0 快递发货 1到店自取 2 无需发货
 	private String shippingcode;		//物流code
 	private Date shippingtime;			//发货时间
@@ -1612,6 +1614,18 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setUser(User user) {
 		this.user = user;
+	}
+	public String getShopId() {
+		return shopId;
+	}
+	public void setShopId(String shopId) {
+		this.shopId = shopId;
+	}
+	public String getShopName() {
+		return shopName;
+	}
+	public void setShopName(String shopName) {
+		this.shopName = shopName;
 	}
 	
 }

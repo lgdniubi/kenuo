@@ -60,8 +60,8 @@
 				$("#consignee").val("");	
 				$("#mobile").val("");	
 				$("#address").val("");
-				$("#bazaarId").val("");
-				$("#bazaarName").val("");
+				$("#shopId").val("");
+				$("#shopName").val("");
 				var shippingtype = $(this).val();
 				if(shippingtype == 0){
 					$("#logistics").show();
@@ -132,8 +132,8 @@
 				$("#consignee").val("");	
 				$("#mobile").val("");	
 				$("#address").val("");
-				$("#bazaarId").val("");
-				$("#bazaarName").val("");
+				$("#shopId").val("");
+				$("#shopName").val("");
 				// 是否限制选择，如果限制，设置为disabled
 				if ($("#bazaarButton").hasClass("disabled")){
 					return true;
@@ -143,7 +143,7 @@
 				    type: 2, 
 				    area: ['300px', '420px'],
 				    title:"选择店铺",
-				    ajaxData:{selectIds: $("#bazaarId").val()},
+				    ajaxData:{selectIds: $("#shopId").val()},
 				    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/sys/office/treeData")+"&module=&checked=&extId=&isAll=" ,
 				    btn: ['确定', '关闭']
 		    	       ,yes: function(index, layero){ //或者使用btn1
@@ -170,14 +170,14 @@
 									names.push(nodes[i].name);//
 									break; // 如果为非复选框选择，则返回第一个选择  
 								}
-								$("#bazaarId").val(ids.join(",").replace(/u_/ig,""));
-								$("#bazaarName").val(names.join(","));
-								$("#bazaarName").focus();
+								$("#shopId").val(ids.join(",").replace(/u_/ig,""));
+								$("#shopName").val(names.join(","));
+								$("#shopName").focus();
 								
 								$.ajax({
 									type:"post",
 									data:{
-										officeId:$("#bazaarId").val()
+										officeId:$("#shopId").val()
 									},
 									url:"${ctx}/ec/orders/getOfficeDetails",
 									success:function(data){
@@ -820,16 +820,16 @@ window.onload=initStatus;
 							</form:select>
 							<div class="input-group" id="shop">
 								<p></p>
-								<label><!-- <font color="red">*</font> -->选择店铺:</label>&nbsp;&nbsp;&nbsp;&nbsp;
+								<label><font color="red">*</font>选择店铺:</label>&nbsp;&nbsp;&nbsp;&nbsp;
 								<div class="input-group" style="float:right">
-									<input id="bazaarId" class=" form-control input-sm required" name="bazaarId" value="" aria-required="true" type="hidden">
-									<input id="bazaarName" class="form-control input-sm valid" name="bazaarName" readonly="readonly" value="" data-msg-required="" style="" aria-required="true" aria-invalid="false" type="text">
+									<input id="shopId" class=" form-control input-sm required" name="shopId" value="${orders.shopId}" aria-required="true" type="hidden">
+									<input id="shopName" class="form-control input-sm required valid" name="shopName" readonly="readonly" value="${orders.shopName}" data-msg-required="" style="" aria-required="true" aria-invalid="false" type="text">
 									<span class="input-group-btn">
 										<button id="bazaarButton" class="btn btn-sm btn-primary " type="button">
 											<i class="fa fa-search"></i>
 										</button>
 									</span>
-									<label id="bazaarName-error" class="error" for="bazaarName" style="display: none"></label>
+									<label id="shopName-error" class="error" for="shopName" style="display: none"></label>
 								</div>
 							</div>
 							<div id="logistics">

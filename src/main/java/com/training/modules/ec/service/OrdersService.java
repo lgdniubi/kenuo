@@ -1434,6 +1434,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setDelFlag("0");
 		_orders.setChannelFlag("bm");
 		_orders.setShippingtype(orders.getShippingtype());
+		_orders.setShopId(orders.getShopId());
 		_orders.setConsignee(orders.getConsignee());
 		_orders.setPhone(orders.getPhone());
 		_orders.setAddress(orders.getAddress());

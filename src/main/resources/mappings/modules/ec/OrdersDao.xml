@@ -958,6 +958,8 @@
 			o.mobile as mobile,
 			o.consignee as consignee,
 			CONCAT(IFNULL(o.province,''),IFNULL(o.city,''),IFNULL(o.district,''),IFNULL(o.address,'')) AS address,
+			o.shop_id as shopId,
+			(select f.name from sys_office f where f.id = o.shop_id) as shopName,
 			o.shipping_type as shippingtype,
 			o.user_note as usernote,
 			o.is_real as isReal,
@@ -1003,7 +1005,8 @@
 			address = #{address},
 			province = null,
 			city = null,
-			district = null
+			district = null,
+			shop_id = #{shopId}
 		WHERE order_id = #{orderid}
 	</update>
 	
@@ -1031,6 +1034,7 @@
 			channel_flag,
 			del_flag,
 			shipping_type,
+			shop_id,
 			consignee,
 			mobile,
 			address,
@@ -1060,6 +1064,7 @@
 			#{channelFlag},
 			#{delFlag},
 			#{shippingtype},
+			#{shopId},
 			#{consignee},
 			#{phone},
 			#{address},
