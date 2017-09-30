@@ -617,6 +617,15 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	public Orders getSysUser(String mobile) {
 		return ordersDao.getSysUser(mobile);
 	}
+	
+	/**
+	 * 根据Orderid查找相应的商品信息
+	 * @param orderId
+	 * @return
+	 */
+	public List<OrderGoods> selectOrderGoodsByOrderid(String orderId){
+		return orderGoodsDao.selectOrderGoodsByOrderid(orderId);
+	}
 
 	/**
 	 * 保存虚拟订单saveVirtualOrder
@@ -1044,6 +1053,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		double couponPrice = newDetails.getCouponPrice();      //红包面值
 		double memberGoodsPrice = newDetails.getMemberGoodsPrice(); //使用了会员折扣优惠的钱 
 		double advancePrice = newDetails.getAdvancePrice();        //预约金
+		int goodsNum = newDetails.getGoodsNum();                  //购买的数量
 		
 		double newTotalAmount = Double.parseDouble(formater.format(totalAmount + sumOrderBalance));//实付款金额 =充值金额+使用的账户余额+必须使用的商品剩余可用余额
 		int serviceTimes_in = 0;//剩余服务次数
@@ -1140,7 +1150,18 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				
 				newSpareMoneySum = Double.parseDouble(formater.format(newTotalAmount - orderArrearage - accountBalance));//商品总余额(当实付大于欠款时，将多的存入个人账户余额中)
 				newOrderBalance = 0;//商品余额（只放在details里的OrderBalance）
-				appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount));//app实付金额
+				
+				if("bm".equals(oLog.getChannelFlag())){
+					appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount));//app实付金额
+				}else{
+					if(couponPrice < advancePrice){
+						appTotalAmount =  Double.parseDouble(formater.format(goodsPrice*goodsNum - sumAppTotalAmount - couponPrice - memberGoodsPrice));//app实付金额
+					}else{
+						appTotalAmount =  Double.parseDouble(formater.format(goodsPrice*goodsNum - sumAppTotalAmount - advancePrice - memberGoodsPrice));//app实付金额
+					}
+				}
+				/*appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount));//app实付金额*/				
+			
 				appArrearage = -sumAppArrearage;//app欠款金额
 			}
 		}

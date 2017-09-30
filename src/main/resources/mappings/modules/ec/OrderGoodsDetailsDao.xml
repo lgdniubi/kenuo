@@ -231,7 +231,8 @@
 			ogm.integral AS 'integral',
 			ogm.coupon_price AS 'couponPrice',
 			ogm.member_goods_price AS 'memberGoodsPrice',
-			ogm.advance_price AS 'advancePrice'
+			ogm.advance_price AS 'advancePrice',
+			ogm.goods_num AS 'goodsNum'
 		FROM mtmydb.mtmy_order_goods_details ogd
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping ogm ON ogm.rec_id = ogd.goods_mapping_id
 		WHERE ogd.goods_mapping_id = #{recid}

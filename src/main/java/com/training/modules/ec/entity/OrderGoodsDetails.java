@@ -25,6 +25,7 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 	private double orderAmount;       //应付金额（讨价还价的价格）
 	
 	private double goodsPrice;       //商品的价格
+	private int goodsNum;            //购买的数量
 	
 	private String createByName;	//操作人
 	
@@ -228,6 +229,14 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 
 	public void setCreateOfficeId(String createOfficeId) {
 		this.createOfficeId = createOfficeId;
+	}
+
+	public int getGoodsNum() {
+		return goodsNum;
+	}
+
+	public void setGoodsNum(int goodsNum) {
+		this.goodsNum = goodsNum;
 	}
 	
 }

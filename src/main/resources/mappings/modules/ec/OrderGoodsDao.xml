@@ -416,4 +416,24 @@
 		
 		WHERE a.group_id = #{recid}
 	</select>
+	
+	<!-- 根据Orderid查找相应的商品信息 -->
+	<select id="selectOrderGoodsByOrderid" resultType="OrderGoods">
+		SELECT
+			ogm.coupon_price AS 'couponPrice',
+			ogm.member_goods_price AS 'membergoodsprice', 
+			ogm.total_amount AS 'totalAmount',
+			ogm.goods_price AS 'goodsPrice',
+			ogm.single_norm_price AS 'singleNormPrice',
+			ogm.rec_id AS 'recid',
+			ogm.single_reality_price AS 'singleRealityPrice',
+			ogm.advance_price AS 'advancePrice',
+			g.goods_type AS 'goodsType',
+			u.office_id AS 'officeId'
+		FROM mtmydb.mtmy_order_goods_mapping ogm
+		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id = ogm.goods_id
+		LEFT JOIN mtmydb.mtmy_users u ON u.user_id = ogm.user_id
+		WHERE ogm.order_id = #{orderId}
+		AND ogm.del_flag = 0
+	</select>
 </mapper>

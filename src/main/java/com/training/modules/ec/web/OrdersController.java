@@ -52,6 +52,8 @@ import com.training.modules.ec.entity.GoodsDetailSum;
 import com.training.modules.ec.entity.GoodsSpecPrice;
 import com.training.modules.ec.entity.ImportVirtualOrders;
 import com.training.modules.ec.entity.IntegralsLog;
+import com.training.modules.ec.entity.OfficeAccount;
+import com.training.modules.ec.entity.OfficeAccountLog;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderGoodsCoupon;
 import com.training.modules.ec.entity.OrderGoodsDetails;
@@ -2665,9 +2667,72 @@ public class OrdersController extends BaseController {
 	 */
 	@RequestMapping(value="affirmReceive")
 	public String affirmReceive(Orders orders,HttpServletRequest request,Model model,RedirectAttributes redirectAttributes){
+		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
 			if((!"".equals(orders.getOrderid()) && (orders.getOrderid() != null))){
 				ordersService.updateOrderstatusForReal(orders.getOrderid());
+				
+				double detailsTotalAmount = 0;       //预约金用了红包、折扣以后实际付款的钱
+				int goodsType = 0;                    //商品区分(0: 老商品 1: 新商品)
+				String officeId = "";           //组织架构ID
+				double advancePrice = 0;    //单个实物的预约金
+				List<OrderGoods> lists = ordersService.selectOrderGoodsByOrderid(orders.getOrderid());   //卡项本身  
+				if(lists.size() > 0){
+					detailsTotalAmount = lists.get(0).getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
+					goodsType = lists.get(0).getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
+					officeId = lists.get(0).getOfficeId();           //组织架构ID
+					advancePrice = lists.get(0).getAdvancePrice();    //单个实物的预约金
+				}
+				
+				//若为老商品，则对店铺有补偿
+				if(goodsType == 0){
+					//若预约金大于0
+					if(advancePrice > 0){   
+						//对登云账户进行操作
+						if(detailsTotalAmount > 0){
+							double claimMoney = 0.0;   //补偿金  补助不超过20
+							if(detailsTotalAmount * 0.2 >= 20){
+								claimMoney = detailsTotalAmount + 20;
+							}else{
+								claimMoney = detailsTotalAmount * 1.2;
+							}
+							OfficeAccountLog officeAccountLog = new OfficeAccountLog();
+							User newUser = UserUtils.getUser();
+							
+							double amount = orderGoodsDetailsService.selectByOfficeId("1");   //登云美业公司账户的钱
+							double afterAmount = Double.parseDouble(formater.format(amount - claimMoney));
+							orderGoodsDetailsService.updateByOfficeId(afterAmount, "1");   //更新登云美业的登云账户金额
+							
+							//登云美业的登云账户减少钱时对日志进行操作
+							officeAccountLog.setOrderId(orders.getOrderid());
+							officeAccountLog.setOfficeId("1");
+							officeAccountLog.setType("1");
+							officeAccountLog.setOfficeFrom("1");
+							officeAccountLog.setAmount(claimMoney);
+							officeAccountLog.setCreateBy(newUser);
+							orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
+							
+							if(orderGoodsDetailsService.selectShopByOfficeId(officeId) == 0){    //若登云账户中无该店铺的账户
+								OfficeAccount officeAccount = new OfficeAccount();
+								officeAccount.setAmount(claimMoney);
+								officeAccount.setOfficeId(officeId);
+								orderGoodsDetailsService.insertByOfficeId(officeAccount);
+							}else{         
+								double shopAmount = orderGoodsDetailsService.selectByOfficeId(officeId);   //登云账户中店铺的钱
+								double afterShopAmount =  Double.parseDouble(formater.format(shopAmount + claimMoney));
+								orderGoodsDetailsService.updateByOfficeId(afterShopAmount, officeId);
+							}
+							//店铺的登云账户减少钱时对日志进行操作
+							officeAccountLog.setOrderId(orders.getOrderid());
+							officeAccountLog.setOfficeId(officeId);
+							officeAccountLog.setType("0");
+							officeAccountLog.setOfficeFrom("1");
+							officeAccountLog.setAmount(claimMoney);
+							officeAccountLog.setCreateBy(newUser);
+							orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
+						}
+					}
+				}
 				addMessage(redirectAttributes, "确认收货成功！");
 			}
 		}catch(Exception e){
