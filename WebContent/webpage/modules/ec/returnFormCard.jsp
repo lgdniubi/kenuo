@@ -57,11 +57,11 @@
 			  }
 			  //退款金额校验
 			  var ra=$("#returnAmount").val();
-			  if(parseFloat(ra)<=0){
-				  top.layer.alert('退款金额必须大于0，小于等于支付金额!', {icon: 0, title:'提醒'});
+			  if(parseFloat(ra)<0){
+				  top.layer.alert('退款金额必须大于等于0，小于等于支付金额!', {icon: 0, title:'提醒'});
 				  return;
 			  }else if(parseFloat(totalAmount) < parseFloat(ra)){
-				  top.layer.alert('退款金额必须大于0，小于等于支付金额!', {icon: 0, title:'提醒'});
+				  top.layer.alert('退款金额必须大于等于0，小于等于支付金额!', {icon: 0, title:'提醒'});
 				  return;
 			  }
 			  $("#inputForm").submit();
@@ -152,11 +152,11 @@
 		//虚拟商品的退款金额校验
 		function returnChangeAmount(){
 			var ra=$("#returnAmount").val();
-			if(parseFloat(ra)<=0){
-				top.layer.alert('退款金额必须大于0，小于等于支付金额!', {icon: 0, title:'提醒'});
+			if(parseFloat(ra)<0){
+				top.layer.alert('退款金额必须大于等于0，小于等于支付金额!', {icon: 0, title:'提醒'});
 				return;
 			}else if(parseFloat(totalAmount) < parseFloat(ra)){
-				top.layer.alert('退款金额必须大于0，小于等于支付金额!', {icon: 0, title:'提醒'});
+				top.layer.alert('退款金额必须大于等于0，小于等于支付金额!', {icon: 0, title:'提醒'});
 				return;
 			}
 		}

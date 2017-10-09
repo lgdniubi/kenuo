@@ -2,7 +2,7 @@
 <%@ include file="/webpage/include/taglib.jsp"%>
 <html>
 <head>
-	<title>提成人员查询页面</title>
+	<title>业务员查询页面</title>
 	<meta name="decorator" content="default"/>
 	<link rel="stylesheet" href="${ctxStatic}/train/css/exam.css">
 	<script type="text/javascript">
@@ -70,7 +70,7 @@
 		                	<label class="active">业务员手机：</label>
 		                	<input id="sysMobile" name="sysMobile" class="form-control" readonly="readonly" type="text" value="${orderPushmoneyRecord.pushmoneyUserMobile}" aria-required="true">
 		                	<p></p>
-		                	<label class="active"><font color="red">*</font>提成金额：</label>
+		                	<label class="active"><font color="red">*</font>营业额：</label>
 		                	<input id="pushMoney" name="pushMoney" class="form-control" type="text" value="${orderPushmoneyRecord.pushMoney}" aria-required="true" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';">
 					</div>
 				</div>

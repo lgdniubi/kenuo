@@ -171,10 +171,10 @@
 			AND g.action_type=#{actionType}
 		</if>
 		<if test="goodsName !=null and goodsName!=''">
-			AND g.goods_name like 
+			AND (g.goods_name like 
 			<if test="dbName == 'oracle'">'%'||#{goodsName} ||'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{goodsName} , '%')</if>
-			OR g.goods_id = #{goodsName}
+			OR g.goods_id = #{goodsName})
 		</if>
 		<if test="isReal !=null and isReal!=''">
 			AND g.is_real = #{isReal}
