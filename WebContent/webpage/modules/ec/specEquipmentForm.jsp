@@ -241,7 +241,10 @@
 		});
 		function select(obj){
 			$("#shopId").val("");	
-			$("#shopName").val("");		
+			$("#shopName").val("");	
+			$("#labelId").val("");
+			$("#name").val("");
+			$("#labelName").val("");
 			if(obj == 1 || obj == 0){
 				$("#shop").show();
 			}else if(obj == 2){

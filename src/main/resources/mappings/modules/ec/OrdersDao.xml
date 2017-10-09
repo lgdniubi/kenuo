@@ -973,7 +973,8 @@
 			o.discount as discount,
 			o.member_goods_price as membergoodsprice,
 			o.invoice_overtime as invoiceOvertime,
-			o.shipping_price as shippingprice
+			o.shipping_price as shippingprice,
+			IFNULL(u.office_id,'') AS officeId 
 		FROM
 			mtmydb.mtmy_orders o,
 			mtmydb.mtmy_users u
