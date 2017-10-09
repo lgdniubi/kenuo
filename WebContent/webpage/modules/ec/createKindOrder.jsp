@@ -290,11 +290,6 @@
 		//$("#inputForm").validate().element($("#phone"));
 		
 		$("#bazaarButton").click(function(){
-			$("#consignee").val("");	
-			$("#phone").val("");	
-			$("#address").val("");
-			$("#shopId").val("");
-			$("#shopName").val("");
 			// 是否限制选择，如果限制，设置为disabled
 			if ($("#bazaarButton").hasClass("disabled")){
 				return true;
@@ -319,7 +314,7 @@
 								/* if (nodes[i].level == 0){
 									//top.$.jBox.tip("不能选择根节点（"+nodes[i].name+"）请重新选择。");
 									top.layer.msg("不能选择根节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
-									return false;
+									return false;	
 								}// */
 								if (nodes[i].isParent){
 									//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
@@ -331,10 +326,17 @@
 								names.push(nodes[i].name);//
 								break; // 如果为非复选框选择，则返回第一个选择  
 							}
+							$("#consignee").val("");	
+							$("#phone").val("");	
+							$("#address").val("");
+							$("#shopId").val("");
+							$("#shopName").val("");
+
 							$("#shopId").val(ids.join(",").replace(/u_/ig,""));
 							$("#shopName").val(names.join(","));
 							$("#shopName").focus();
 							
+							var mask = layer.load(0, {shade: false}); //0代表加载的风格，支持0-2
 							$.ajax({
 								type:"post",
 								data:{
@@ -342,6 +344,7 @@
 								},
 								url:"${ctx}/ec/orders/getOfficeDetails",
 								success:function(data){
+									layer.close(mask);
 									if(data){
 										$("#consignee").val(data.shopName);	
 										$("#phone").val(data.shopPhone);	
@@ -353,9 +356,8 @@
 								error:function(XMLHttpRequest,textStatus,errorThrown){
 								}
 							});
-							
 							top.layer.close(index);
-					    	       },
+					},
 	    	cancel: function(index){ //或者使用btn2
 	    	           //按钮【按钮二】的回调
 	    	       }
@@ -365,6 +367,8 @@
 		
 	});
 	function selectUser(){
+		$("#username").val("");
+		$("#userid").val("");
 		var mobile = $("#mobile").val();
 		
 		if(mobile == ""){
@@ -388,6 +392,7 @@
 				}
 			},
 			error:function(XMLHttpRequest,textStatus,errorThrown){
+				top.layer.alert('昵称查询失败!', {icon: 0, title:'提醒'}); 
 			}
 		});
 	}

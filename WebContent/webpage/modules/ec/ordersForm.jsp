@@ -129,11 +129,6 @@
 			/* $("#inputForm").validate().element($("#orderamount")); */
 	  
 			$("#bazaarButton").click(function(){
-				$("#consignee").val("");	
-				$("#mobile").val("");	
-				$("#address").val("");
-				$("#shopId").val("");
-				$("#shopName").val("");
 				// 是否限制选择，如果限制，设置为disabled
 				if ($("#bazaarButton").hasClass("disabled")){
 					return true;
@@ -170,10 +165,17 @@
 									names.push(nodes[i].name);//
 									break; // 如果为非复选框选择，则返回第一个选择  
 								}
+								$("#consignee").val("");	
+								$("#mobile").val("");	
+								$("#address").val("");
+								$("#shopId").val("");
+								$("#shopName").val("");
+								
 								$("#shopId").val(ids.join(",").replace(/u_/ig,""));
 								$("#shopName").val(names.join(","));
 								$("#shopName").focus();
 								
+								var mask = layer.load(0, {shade: false}); //0代表加载的风格，支持0-2
 								$.ajax({
 									type:"post",
 									data:{
@@ -181,6 +183,7 @@
 									},
 									url:"${ctx}/ec/orders/getOfficeDetails",
 									success:function(data){
+										layer.close(mask);
 										if(data){
 											$("#consignee").val(data.shopName);	
 											$("#mobile").val(data.shopPhone);	

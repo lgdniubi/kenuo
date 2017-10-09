@@ -337,6 +337,8 @@
 		
 	});
 	function selectUser(){
+		$("#username").val("");
+		$("#userid").val("");
 		var mobile = $("#mobile").val();
 		
 		if(mobile == ""){
@@ -360,6 +362,7 @@
 				}
 			},
 			error:function(XMLHttpRequest,textStatus,errorThrown){
+				top.layer.alert('昵称查询失败!', {icon: 0, title:'提醒'}); 
 			}
 		});
 	}
