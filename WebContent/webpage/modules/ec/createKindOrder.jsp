@@ -27,7 +27,7 @@
 			if($("#isNeworder").val() == 0){
 				var sysUserId = $("#sysUserId").val(); 
 				if(sysUserId == undefined){
-					top.layer.alert('提成人员信息不能为空!', {icon: 0, title:'提醒'}); 
+					top.layer.alert('业务员信息不能为空!', {icon: 0, title:'提醒'}); 
 					return;
 				}
 				
@@ -36,7 +36,7 @@
 				var pushMoneySum = 0;
 				for(i=0;i<pushMoneys.length;i++){
 					if(parseFloat(pushMoneys[i].value) - parseFloat(orderamount) > 0){
-	   					top.layer.alert('单个提成人员的提成金额不能大于订单应付总价!', {icon: 0, title:'提醒'}); 
+	   					top.layer.alert('单个业务员的营业额不能大于订单应付总价!', {icon: 0, title:'提醒'}); 
 						return;
 	   				}
 		    	 }
@@ -316,7 +316,7 @@
 		top.layer.open({
 		    type: 2, 
 		    area: ['550px', '420px'],
-		    title:"提成人员选择",
+		    title:"业务员选择",
 		    ajaxData:{selectIds: $("#goodselectId").val()},
 		    content: "${ctx}/ec/orders/getPushmoneyView",
 		    btn: ['确定', '关闭']
@@ -325,21 +325,21 @@
     	    	var sysUserId = obj.document.getElementById("sysUserId").value; //员工id
     	    	var sysMobile = obj.document.getElementById("sysMobile").value; //员工电话
     	    	var sysName = obj.document.getElementById("sysName").value; //员工名称
-    	    	var pushMoney = obj.document.getElementById("pushMoney").value; //提成金额
+    	    	var pushMoney = obj.document.getElementById("pushMoney").value; //营业额
     	    	if(pushMoney==""){
-    	    		top.layer.alert('填写提成金额！', {icon: 0, title:'提醒'});
+    	    		top.layer.alert('填写营业额！', {icon: 0, title:'提醒'});
      	    		return;
     	    	}else if(sysUserId == ""){
-    	    		top.layer.alert('填写提成人员！', {icon: 0, title:'提醒'});
+    	    		top.layer.alert('填写业务员！', {icon: 0, title:'提醒'});
      	    		return;
     	    	}else if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-    	    		top.layer.alert('提成金额必须大于等于0，小于等于订单应付总额！', {icon: 0, title:'提醒'});
+    	    		top.layer.alert('营业额必须大于等于0，小于等于订单应付总额！', {icon: 0, title:'提醒'});
      	    		return;
     	    	}else{
     	    		if(sysUserIds.length > 0){
     	    			for(i=0;i<sysUserIds.length;i++){
          	    	        if(sysUserId == sysUserIds[i].value){
-         	    	        	top.layer.alert('提成人员不能相同！', {icon: 0, title:'提醒'});
+         	    	        	top.layer.alert('业务员不能相同！', {icon: 0, title:'提醒'});
          	     	    		return;
          	    	        }
          	    	    }
@@ -621,7 +621,7 @@
 				<p></p>
 				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="sysUserPush">
 					<div class="pull-left">
-						<h4><font color="red">*</font>人员提成信息：</h4>
+						<h4><font color="red">*</font>业务员信息：</h4>
 					</div>
 					<div class="pull-right">
 						<a href="#" onclick="getSysUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
@@ -632,7 +632,7 @@
 							<tr>
 								<th style="text-align: center;">业务员</th>
 								<th style="text-align: center;">手机号</th>
-								<th style="text-align: center;">提成金额</th>
+								<th style="text-align: center;">营业额</th>
 								<th style="text-align: center;">操作</th>
 							</tr>
 						</thead>
