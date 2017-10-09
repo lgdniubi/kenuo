@@ -593,6 +593,17 @@ public class SystemService extends BaseService implements InitializingBean {
 			}
 //end     修改妃子校用户同时更新每天美耶用户结束
 			
+//			用户商家发生变化时,数据权限跟着变化
+			if(oldUser.getCompany() != null){
+				if(!oldUser.getCompany().getId().equals(user.getCompany().getId())){
+					userDao.deleteFranchiseeAuth(user);
+					userDao.insertFranchiseeAuth(user.getId(), user.getCompany().getId());
+				}
+			}else{
+				userDao.deleteFranchiseeAuth(user);
+				userDao.insertFranchiseeAuth(user.getId(), user.getCompany().getId());
+			}
+			
 			user.preUpdate();
 			userDao.update(user);
 		}

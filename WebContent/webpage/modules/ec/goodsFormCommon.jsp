@@ -1155,6 +1155,11 @@
 					var goodsId = obj.document.getElementById("goodsId");
 					var goodsNum = obj.document.getElementById("goodsNum");
 					
+					if(!/^[1-9][0-9]*$/.test($(goodsNum).val()) || $(goodsNum).val() == 0){
+						top.layer.alert('数量  必须大于0的正整数', {icon: 0, title:'提醒'});
+						return;
+					}
+					
 					$("#goodsNums"+i).val($(goodsNum).val());
 					
 					top.layer.close(index);

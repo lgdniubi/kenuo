@@ -61,19 +61,19 @@
 					</tr>
 					<tr>
 						<td class="width-15 active">
-							<label class="pull-right"><font color="red">*</font>市场价:</label>
+							<label class="pull-right"><font color="red">*</font>市场价合计:</label>
 						</td>
 						<td class="width-35">
-							<input id="marketPrice" htmlEscape="false" maxlength="50" class="form-control required" value="${goodsCard.marketPrice }"
+							<input id="totalMarketPrices" htmlEscape="false" maxlength="50" class="form-control required" value="${goodsCard.marketPrice }"
 								onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')" onfocus="if(value == '0.0')value=''" onblur="if(this.value == '')this.value='0.0';"/>
 						</td>
 					</tr>
 					<tr>
 						<td class="width-15 active">
-							<label class="pull-right"><font color="red">*</font>优惠价:</label>
+							<label class="pull-right"><font color="red">*</font>优惠价合计:</label>
 						</td>
 						<td class="width-35">
-							<input id="price" htmlEscape="false" maxlength="50" class="form-control required" value="${goodsCard.price }"
+							<input id="totalPrices" htmlEscape="false" maxlength="50" class="form-control required" value="${goodsCard.price }"
 								onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')" onfocus="if(value == '0.0')value=''" onblur="if(this.value == '')this.value='0.0';"/>
 						</td>
 					</tr>
