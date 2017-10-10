@@ -780,13 +780,13 @@ window.onload=initStatus;
 													<c:if test="${orderGood.orderArrearage == 0}">
 														<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>充值</a>
 													</c:if>
-													<c:if test="${orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag == 1}">
-														<c:if test="${orders.orderstatus == 4 && orderGood.sumAppt == 1}">
-															<a href="#" onclick="ToAdvance('${orders.officeId}',${orderGood.recid},${orderGood.servicetimes},${orderGood.orderArrearage })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
-														</c:if>
-														<c:if test="${orders.orderstatus != 4 || orderGood.sumAppt == 0}">
-															<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
-														</c:if>
+												</c:if>
+												<c:if test="${orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag == 1}">
+													<c:if test="${orders.orderstatus == 4 && orderGood.sumAppt == 1}">
+														<a href="#" onclick="ToAdvance('${orders.officeId}',${orderGood.recid},${orderGood.servicetimes},${orderGood.orderArrearage })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
+													</c:if>
+													<c:if test="${orders.orderstatus != 4 || orderGood.sumAppt == 0}">
+														<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
 													</c:if>
 												</c:if>
 											</c:if>
