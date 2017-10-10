@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.GoodsPositionDao">
+	
+	<sql id="goodspositionColumns">
+		  a.id,
+		  a.parent_id AS 'parent.id',
+		  a.parent_ids AS 'parentIds',
+		  a.name,
+		  a.level
+	</sql>
+	
+	<!-- 查询所有level=2的数据  -->		
+	<select id="findList" resultType="GoodsPosition">
+		SELECT 
+		  <include refid="goodspositionColumns"/>
+		FROM
+			mtmydb.mtmy_goods_position AS a
+		WHERE a.del_flag = 0 
+		AND a.level = 2
+	</select>
+	<!-- 查询所有数据  -->		
+	<select id="findAllList" resultType="GoodsPosition">
+		SELECT 
+		  <include refid="goodspositionColumns"/>,
+		  (SELECT COUNT(*) FROM mtmydb.mtmy_goods_position AS b WHERE a.id = b.parent_id AND b.del_flag = 0 ) AS 'num'
+		FROM
+			mtmydb.mtmy_goods_position AS a
+		WHERE a.del_flag = 0 
+		<if test="parent != null and parent.id != null and parent.id != ''">
+			AND a.parent_id = #{parent.id}
+		</if>
+	</select>
+	
+	<!-- 查询code下一个值 -->
+	<select id="findListbyPID" resultType="GoodsPosition">
+		SELECT
+			<include refid="goodspositionColumns"/>
+		FROM 
+			mtmydb.mtmy_goods_position a 
+		WHERE a.del_flag = 0 
+			AND a.parent_id= #{parent.id}
+	</select>
+	
+	<!-- 保存 -->
+	<insert id="insert">
+		INSERT INTO mtmydb.mtmy_goods_position (
+		  parent_id,
+		  parent_ids,
+		  name,
+		  level,
+		  create_by,
+		  create_date,
+		  update_by,
+		  update_date,
+		  del_flag
+		) 
+		VALUES
+		  (
+		    #{parent.id},
+		    #{parentIds},
+		    #{name},
+		    #{level},
+		    #{createBy.id},
+			SYSDATE(),
+		    #{createBy.id},
+			SYSDATE(),
+		    0
+		  )
+	</insert>
+	
+	<!-- 修改 -->
+	<insert id="update">
+		UPDATE mtmydb.mtmy_goods_position
+		SET 
+		  name = #{name},
+		  level = #{level},
+		  update_by = #{updateBy.id},
+		  update_date = SYSDATE()
+		WHERE id = #{id}
+	</insert>
+	
+	<!-- 查询详细信息 -->
+	<select id="get" resultType="GoodsPosition">
+		SELECT 
+		   <include refid="goodspositionColumns"/>
+		FROM
+		  mtmydb.mtmy_goods_position a
+		WHERE a.del_flag = 0 
+			AND a.id = #{id}
+	</select>
+	
+	<!-- 逻辑删除 -->
+	<update id="deleteByLogic">
+		UPDATE mtmydb.mtmy_goods_position
+		SET 
+		  del_flag = 1
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
