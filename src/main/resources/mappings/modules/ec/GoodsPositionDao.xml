@@ -95,7 +95,7 @@
 		UPDATE mtmydb.mtmy_goods_position
 		SET 
 		  del_flag = 1
-		WHERE id = #{id}
+		WHERE (id = #{id} OR parent_id = #{id})
 	</update>
 	
 </mapper>
