@@ -2953,5 +2953,22 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			}
 		}
 	}
+
+	/**
+	 * 判断修改物流之前是否存在物流信息
+	 * @param orders
+	 * @return
+	 */
+	public String getShippingcodeByid(Orders orders) {
+		return ordersDao.getShippingcodeByid(orders);
+	}
+
+	/**
+	 * 第一次修改物流信息时,修改订单状态
+	 * @param orders
+	 */
+	public void updateOrdersStatus(Orders orders) {
+		ordersDao.updateOrdersStatus(orders);
+	}
 	
 }

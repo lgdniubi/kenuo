@@ -342,4 +342,17 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * 实物带预约金的商品确认收货更改物流状态
 	 */
 	public void updateOrderstatusForReal(String orderid);
+	
+	/**
+	 * 判断修改物流之前是否存在物流信息
+	 * @param orders
+	 * @return
+	 */
+	public String getShippingcodeByid(Orders orders);
+	
+	/**
+	 * 第一次修改物流信息时,修改订单状态
+	 * @param orders
+	 */
+	public void updateOrdersStatus(Orders orders);
 }

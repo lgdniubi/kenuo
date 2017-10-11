@@ -675,12 +675,27 @@
 		shipping_code=#{shippingcode},
 		shipping_name=#{shippingname},
 		shipping_time=#{shippingtime},
-		return_time = #{returnTime},
+		return_time = #{returnTime}
+		where order_id=#{orderid}
+
+	</update>
+		<!-- 第一次物流信息修改时,订单状态要改为2 -->
+	<update id="updateOrdersStatus">
+		UPDATE mtmydb.mtmy_orders SET
 		order_status=2
 		where order_id=#{orderid}
 
 	</update>
-	
+	<!-- 判断修改物流之前是否存在物流信息 -->
+	<select id="getShippingcodeByid" resultType="string">
+		SELECT
+			shipping_code AS shippingcode
+		FROM 
+			mtmydb.mtmy_orders 
+		WHERE
+			order_id=#{orderid}
+		
+	</select>
 	<!-- 	插入退货数据 -->
 	<insert id="insertReturn">
 		INSERT INTO mtmydb.mtmy_orders

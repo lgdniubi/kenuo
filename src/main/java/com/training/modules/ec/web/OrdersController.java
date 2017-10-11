@@ -369,8 +369,14 @@ public class OrdersController extends BaseController {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date returnTime = sdf.parse(OrderUtils.plusDay(returnDay, sdf.format(orders.getShippingtime())));
 			orders.setReturnTime(returnTime);
-			ordersService.UpdateShipping(orders);
-			OrdersStatusChangeUtils.pushMsg(orders, 3); //推送已发货信息给用户
+			
+			//判断修改物流之前是否存在物流单号信息
+			String shopcodes = ordersService.getShippingcodeByid(orders);
+			ordersService.UpdateShipping(orders);//修改物流信息
+			if(StringUtils.isEmpty(shopcodes)){//为空:推送消息,修改订单状态
+				ordersService.updateOrdersStatus(orders);//第一次修改物流信息时,修改订单状态
+				OrdersStatusChangeUtils.pushMsg(orders, 3); //推送已发货信息给用户
+			}
 			addMessage(redirectAttributes, "订单：" + orders.getOrderid() + "物流修改成功");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "物流信息保存", e);
@@ -935,17 +941,21 @@ public class OrdersController extends BaseController {
 						}
 						Date returnTime = sdf.parse(OrderUtils.plusDay(returnDay, sdf.format(orders.getShippingtime())));
 						orders.setReturnTime(returnTime);
-						
-						int index = ordersService.UpdateShipping(orders);
-						
-						if (index > 0) {		
-							successNum++;
-							OrdersStatusChangeUtils.pushMsg(orders, 3);//推送已发货信息给用户
-						} else {
-							failureMsg.append("<br/>订单" + shipping.getOrderid() + "更新物流失败; ");
-							failureNum++;
-						}	
 
+						//判断修改物流之前是否存在物流信息
+						String shopcodes = ordersService.getShippingcodeByid(orders);
+						int index = ordersService.UpdateShipping(orders);
+						if(StringUtils.isEmpty(shopcodes)){//为空:推送消息,修改订单状态
+							if (index > 0) {		
+								ordersService.updateOrdersStatus(orders);//第一次修改物流信息时,修改订单状态
+								successNum++;
+								OrdersStatusChangeUtils.pushMsg(orders, 3);//推送已发货信息给用户
+							} else {
+								failureMsg.append("<br/>订单" + shipping.getOrderid() + "更新物流失败; ");
+								failureNum++;
+							}	
+						}
+						
 					} catch (ConstraintViolationException ex) {
 						BugLogUtils.saveBugLog(request, "导入物流出错", ex);
 						logger.error("导入物流出错："+ex.getMessage());
