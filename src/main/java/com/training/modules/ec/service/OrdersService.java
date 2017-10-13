@@ -26,6 +26,7 @@ import com.training.modules.ec.dao.MtmyRuleParamDao;
 import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.dao.OrderGoodsDao;
 import com.training.modules.ec.dao.OrderGoodsDetailsDao;
+import com.training.modules.ec.dao.OrderPushmoneyRecordDao;
 import com.training.modules.ec.dao.OrdersDao;
 import com.training.modules.ec.dao.PaymentDao;
 import com.training.modules.ec.dao.TradingLogDao;
@@ -112,6 +113,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	private OrderInvoiceService orderInvoiceService;
 	@Autowired
 	private OrderGoodsDetailsDao orderGoodsDetailsDao;
+	@Autowired
+	private OrderPushmoneyRecordDao orderPushmoneyRecordDao;
 	
 	public static final String MTMY_ID = "mtmy_id_";//用户云币缓存前缀
 	
@@ -881,6 +884,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushmoneyUserId(sysUserId.get(i));
 				orderPushmoneyRecord.setPushMoney(pushMoney.get(i));
+				orderPushmoneyRecord.setOfficeId(user.getOffice().getId());
 				orderPushmoneyRecord.setCreateBy(user);
 				orderPushmoneyRecord.setDelFlag("0");
 				orderPushmoneyRecordService.saveOrderPushmoneyRecord(orderPushmoneyRecord);
@@ -1468,6 +1472,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushmoneyUserId(sysUserId.get(i));
 				orderPushmoneyRecord.setPushMoney(pushMoney.get(i));
+				orderPushmoneyRecord.setOfficeId(user.getOffice().getId());
 				orderPushmoneyRecord.setCreateBy(user);
 				orderPushmoneyRecord.setDelFlag("0");
 				orderPushmoneyRecordService.saveOrderPushmoneyRecord(orderPushmoneyRecord);
@@ -1582,6 +1587,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderPushmoneyRecordService.updatePushMoney(orderPushmoneyRecord);
 		}else if("add".equals(orderPushmoneyRecord.getFlag())){
 			User user = UserUtils.getUser();
+			orderPushmoneyRecord.setOfficeId(user.getOffice().getId());
 			orderPushmoneyRecord.setCreateBy(user);
 			orderPushmoneyRecord.setDelFlag("0");
 			orderPushmoneyRecordService.saveOrderPushmoneyRecord(orderPushmoneyRecord);
@@ -2229,6 +2235,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushmoneyUserId(sysUserId.get(i));
 				orderPushmoneyRecord.setPushMoney(pushMoney.get(i));
+				orderPushmoneyRecord.setOfficeId(user.getOffice().getId());
 				orderPushmoneyRecord.setCreateBy(user);
 				orderPushmoneyRecord.setDelFlag("0");
 				orderPushmoneyRecordService.saveOrderPushmoneyRecord(orderPushmoneyRecord);
@@ -2512,6 +2519,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushmoneyUserId(sysUserId.get(i));
 				orderPushmoneyRecord.setPushMoney(pushMoney.get(i));
+				orderPushmoneyRecord.setOfficeId(user.getOffice().getId());
 				orderPushmoneyRecord.setCreateBy(user);
 				orderPushmoneyRecord.setDelFlag("0");
 				orderPushmoneyRecordService.saveOrderPushmoneyRecord(orderPushmoneyRecord);
@@ -2969,6 +2977,21 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 */
 	public void updateOrdersStatus(Orders orders) {
 		ordersDao.updateOrdersStatus(orders);
+	}
+
+	/**
+	 * 查询提成人员日志记录
+	 * @param page
+	 * @param orderPushmoneyRecord
+	 * @return
+	 */
+	public Page<OrderPushmoneyRecord> getOrderPushmoneyRecordList(Page<OrderPushmoneyRecord> page,
+			OrderPushmoneyRecord orderPushmoneyRecord) {
+		// 设置分页参数
+		orderPushmoneyRecord.setPage(page);
+		// 执行分页查询
+		page.setList(orderPushmoneyRecordDao.findList(orderPushmoneyRecord));
+		return page;
 	}
 	
 }

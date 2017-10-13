@@ -314,7 +314,7 @@
      }
 	
 	//修改业务员信息
-	function updateFileSysUserInfo(obj,pushmoneyRecordId){
+	/* function updateFileSysUserInfo(obj,pushmoneyRecordId){
 		var orderamount = $("#orderamount").val();
 		var channelFlag = $("#channelFlag").val();
     	var ordersGoodsprice = $("#ordersGoodsprice").val();
@@ -374,10 +374,10 @@
        			});
  			}
  		}); 
-	}
+	} */
      
 	//删除业务员
-     function delFileSysUserInfo(obj,pushmoneyRecordId){
+    /*  function delFileSysUserInfo(obj,pushmoneyRecordId){
 		$.ajax({
 			type:"post",
 			data:{
@@ -396,7 +396,7 @@
 				
 			}
 		});
-     }
+     } */
 	//删除备注信息
      function delOrderRemarks(obj){
 		var orderRemarksId = $("#orderRemarksId").val();
@@ -446,34 +446,40 @@
      	    	var pushMoney = obj.document.getElementById("pushMoney").value; //营业额
      	    	var orderid =  $("#orderid").val();
      	    	var isReal =  $("#isReal").val();
-     	    	if(pushMoney==""){
-     	    		top.layer.alert('填写营业额！', {icon: 0, title:'提醒'});
+     	    	if(pushMoney==""){	
+    	    		top.layer.alert('填写营业额！', {icon: 0, title:'提醒'});
      	    		return;
-     	    	}
+    	    	}else{
+	   	    		var re = /^([+-]?)\d*\.?\d{0,2}$/; 
+	   				if(!re.test(pushMoney)){
+	   					top.layer.alert('请输入正确的营业额(最多两位小数)', {icon: 0, title:'提醒'});
+	     	    		return;
+	   				}
+    	    	}
      	    	if(sysUserId == ""){
     	    		top.layer.alert('填写业务员！', {icon: 0, title:'提醒'});
      	    		return;
      	    	}
    	    		if(channelFlag == 'bm'){
-   	    			if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-    	    			top.layer.alert('营业额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
+   	    			if(parseFloat(pushMoney) - parseFloat(orderamount) > 0){
+    	    			top.layer.alert('营业额小于订单应付总额！', {icon: 0, title:'提醒'});
      	    			return;
      	    		}
    	    		}else{
-   	    			if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(ordersGoodsprice - couponprice - memberGoodsPrice) > 0){
-    	    			top.layer.alert('营业额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
+   	    			if(parseFloat(pushMoney) - parseFloat(ordersGoodsprice - couponprice - memberGoodsPrice) > 0){
+    	    			top.layer.alert('营业额小于订单应付总额！', {icon: 0, title:'提醒'});
      	    			return;
      	    		}
    	    		}
      	    		
-   	    		if(sysUserIds.length > 0){
+   	    		/* if(sysUserIds.length > 0){
   	    			for(i=0;i<sysUserIds.length;i++){
        	    	        if(sysUserId == sysUserIds[i].value){
        	    	        	top.layer.alert('业务员不能相同！', {icon: 0, title:'提醒'});
        	     	    		return;
        	    	        }
        	    	    }
-  	    		}
+  	    		} */
      	    		
    	    		$.ajax({
        				type:"post",
@@ -933,6 +939,11 @@ window.onload=initStatus;
 										<a href="#" onclick="getSysUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
 									</div>
 								</c:if>
+								<shiro:hasPermission name="ec:orders:pushmoney">
+									<div class="pull-right">
+										<a href="#" onclick="openDialogView('查看日志记录', '${ctx}/ec/orders/getOrderPushmoneyRecordList?orderId=${orders.orderid }','800px','600px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>日志记录</a>
+									</div>
+								</shiro:hasPermission>
 								<p></p>
 								<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
 									<thead>
@@ -940,11 +951,11 @@ window.onload=initStatus;
 											<th style="text-align: center;">业务员</th>
 											<th style="text-align: center;">手机号</th>
 											<th style="text-align: center;">营业额</th>
-											<th style="text-align: center;">操作人</th>
+											<%-- <th style="text-align: center;">操作人</th>
 											<th style="text-align: center;">操作时间</th>
 											<c:if test="${type != 'view' }">
 												<th style="text-align: center;" colspan="2">操作</th>
-											</c:if>
+											</c:if> --%>
 										</tr>
 									</thead>
 									<tbody id="sysUserInfo" style="text-align:center;">
@@ -960,9 +971,8 @@ window.onload=initStatus;
 												</td>
 												<td>
 													${orderPushmoneyRecord.pushMoney }
-													<%-- <input class="form-control" type="text" id="pushMoney" class="form-control required" name="pushMoney" value="${orderPushmoneyRecord.pushMoney }" /> --%>
 												</td>
-												<td>
+												<%-- <td>
 													${orderPushmoneyRecord.createBy.name }
 												</td>
 												<td>
@@ -973,7 +983,7 @@ window.onload=initStatus;
 														<a href="#" class="btn btn-success btn-xs" onclick="updateFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId})"><i class='fa fa-edit'></i> 修改</a>
 														<a href="#" class="btn btn-danger btn-xs" onclick="delFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId })"><i class='fa fa-trash'></i> 删除</a>
 													</td>
-												</c:if>
+												</c:if> --%>
 											</tr>
 										</c:forEach>
 									</tbody>

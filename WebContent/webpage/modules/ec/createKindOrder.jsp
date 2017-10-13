@@ -416,24 +416,32 @@
     	    	var sysMobile = obj.document.getElementById("sysMobile").value; //员工电话
     	    	var sysName = obj.document.getElementById("sysName").value; //员工名称
     	    	var pushMoney = obj.document.getElementById("pushMoney").value; //营业额
-    	    	if(pushMoney==""){
+    	    	
+    	    	if(pushMoney==""){	
     	    		top.layer.alert('填写营业额！', {icon: 0, title:'提醒'});
      	    		return;
-    	    	}else if(sysUserId == ""){
+    	    	}else{
+	   	    		var re = /^([+-]?)\d*\.?\d{0,2}$/; 
+	   				if(!re.test(pushMoney)){
+	   					top.layer.alert('请输入正确的营业额(最多两位小数)', {icon: 0, title:'提醒'});
+	     	    		return;
+	   				}
+    	    	}
+    	    	if(sysUserId == ""){
     	    		top.layer.alert('填写业务员！', {icon: 0, title:'提醒'});
      	    		return;
-    	    	}else if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-    	    		top.layer.alert('营业额必须大于等于0，小于等于订单应付总额！', {icon: 0, title:'提醒'});
+    	    	}else if(parseFloat(pushMoney) - parseFloat(orderamount) > 0){
+    	    		top.layer.alert('营业额小于等于订单应付总额！', {icon: 0, title:'提醒'});
      	    		return;
     	    	}else{
-    	    		if(sysUserIds.length > 0){
+    	    		/* if(sysUserIds.length > 0){
     	    			for(i=0;i<sysUserIds.length;i++){
          	    	        if(sysUserId == sysUserIds[i].value){
          	    	        	top.layer.alert('业务员不能相同！', {icon: 0, title:'提醒'});
          	     	    		return;
          	    	        }
          	    	    }
-    	    		}
+    	    		} */
     	    		
 	    	    	$("#sysUserInfo").append(
 	    	    			"<tr>"+
@@ -738,7 +746,7 @@
 								<th style="text-align: center;">业务员</th>
 								<th style="text-align: center;">手机号</th>
 								<th style="text-align: center;">营业额</th>
-								<th style="text-align: center;">操作</th>
+								<!-- <th style="text-align: center;">操作</th> -->
 							</tr>
 						</thead>
 						<tbody id="sysUserInfo" style="text-align:center;">	

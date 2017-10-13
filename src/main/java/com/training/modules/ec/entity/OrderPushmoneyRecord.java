@@ -18,6 +18,7 @@ public class OrderPushmoneyRecord extends TreeEntity<OrderPushmoneyRecord> {
 	private String operatorName;	//操作人
 	private String flag;            //标识
 	
+	private String officeId;		//操作用户当前机构ID  2017-10-12 土豆添加
 	
 	public String getOperatorName() {
 		return operatorName;
@@ -93,6 +94,14 @@ public class OrderPushmoneyRecord extends TreeEntity<OrderPushmoneyRecord> {
 
 	public void setFlag(String flag) {
 		this.flag = flag;
+	}
+
+	public String getOfficeId() {
+		return officeId;
+	}
+
+	public void setOfficeId(String officeId) {
+		this.officeId = officeId;
 	}
 	
 }

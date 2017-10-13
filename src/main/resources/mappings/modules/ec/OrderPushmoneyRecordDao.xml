@@ -9,6 +9,7 @@
 			push_money,
 			position_key,
 			position_value,
+			office_id,
 			create_by,
 			create_date,
 			del_flag
@@ -18,30 +19,53 @@
 			#{pushMoney},
 			(SELECT d.label FROM sys_user u LEFT JOIN sys_dict d ON d.value = u.user_type WHERE u.id = #{pushmoneyUserId} AND d.type = 'sys_user_type'),
 			(SELECT d.value FROM sys_user u LEFT JOIN sys_dict d ON d.value = u.user_type WHERE u.id = #{pushmoneyUserId} AND d.type = 'sys_user_type'),
+			#{officeId},
 			#{createBy.id},
 			SYSDATE(),
 			#{delFlag}			
 		)
 	</insert>
 	
-	<!-- 根据订单id查询相关业务员提成信息 -->
+	<!-- 根据订单id查询所有提成信息 -->
+	<select id="findList" resultType="OrderPushmoneyRecord">
+		SELECT
+			r.id AS pushmoneyRecordId,
+			r.order_id AS orderId,
+			r.user_id AS pushmoneyUserId,
+			r.push_money AS pushMoney,
+			r.create_by AS "createBy.id",
+			r.create_date AS createDate,
+			su1.`name` AS pushmoneyUserName,
+			su1.mobile AS pushmoneyUserMobile,
+			su2.`name` AS "createBy.name"
+		FROM
+			mtmydb.mtmy_order_pushmoney_record r,trains.sys_user su1,trains.sys_user su2
+		WHERE r.user_id = su1.id
+		AND r.create_by = su2.id
+		AND r.order_id = #{orderId}
+		AND r.del_flag = '0'
+		ORDER BY r.create_date DESC
+	</select>
+	<!-- 根据订单id查询业务员每个的提成总额 -->
 	<select id="getOrderPushmoneyRecordByOrderId" resultType="OrderPushmoneyRecord">
 		SELECT
-			r.id as pushmoneyRecordId,
-			r.order_id as orderId,
-			r.user_id as pushmoneyUserId,
-			r.push_money as pushMoney,
-			r.create_by as "createBy.id",
-			r.create_date as createDate,
-			su1.`name` as pushmoneyUserName,
-			su1.mobile as pushmoneyUserMobile,
-			su2.`name` as "createBy.name"
+			r.id AS pushmoneyRecordId,
+			r.order_id AS orderId,
+			r.user_id AS pushmoneyUserId,
+			SUM(r.push_money) AS pushMoney,
+			r.create_by AS "createBy.id",
+			r.create_date AS createDate,
+			su1.`name` AS pushmoneyUserName,
+			su1.mobile AS pushmoneyUserMobile,
+			su2.`name` AS "createBy.name"
 		FROM
 			mtmydb.mtmy_order_pushmoney_record r,trains.sys_user su1,trains.sys_user su2
 		WHERE r.user_id = su1.id
 		AND r.create_by = su2.id
 		AND r.order_id = #{orderid}
 		AND r.del_flag = '0'
+		GROUP BY
+			r.user_id
 	</select>
 	
 	<!-- 根据pushmoneyRecordId查询相关业务员提成信息 -->

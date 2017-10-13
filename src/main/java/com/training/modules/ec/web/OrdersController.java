@@ -1385,6 +1385,27 @@ public class OrdersController extends BaseController {
 	}
 	
 	/**
+	 * 查询提成人员日志记录
+	 * @param orderPushmoneyRecord
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "getOrderPushmoneyRecordList")
+	public String getOrderPushmoneyRecordList(OrderPushmoneyRecord orderPushmoneyRecord, HttpServletRequest request, HttpServletResponse response, Model model) {
+		try {
+			if(StringUtils.isNotBlank(orderPushmoneyRecord.getOrderId())){
+				Page<OrderPushmoneyRecord>  page = ordersService.getOrderPushmoneyRecordList(new Page<OrderPushmoneyRecord>(request, response), orderPushmoneyRecord);
+				model.addAttribute("page", page);
+			}
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "提成人员日志记录列表", e);
+			logger.error("提成人员日志记录列表：" + e.getMessage());
+		}
+		return "modules/ec/pushmoneyList";
+	}
+	
+	/**
 	 * 计算订单欠费
 	 * @param id
 	 * @param isReal
