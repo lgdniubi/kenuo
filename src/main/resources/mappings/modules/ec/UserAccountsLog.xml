@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.UserAccountsLogDao">
+	<sql id="userAccountsLogColmun">
+		id,
+		mtmy_user_id AS mtmyUserId,
+		price,
+		type,
+		status,
+		channel_flag AS channelFlag,
+		source_flag AS sourceFlag,
+		remarks,
+		create_office_id AS createOfficeId,
+		create_by AS createBy,
+		create_date AS createDate
+	</sql>
+
+	<!-- 插入用户账户充值记录表 -->
+	<insert id="insertUserAccountsLog" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO mtmydb.mtmy_user_accounts_log(	
+			mtmy_user_id,
+			price,
+			type,
+			status,
+			channel_flag,
+			source_flag,
+			remarks,
+			create_office_id,
+			create_by,
+			create_date
+		)values(
+			#{mtmyUserId},
+			#{price},
+			#{type},
+			#{status},
+			#{channelFlag},
+			#{sourceFlag},
+			#{remarks},
+			#{createOfficeId},
+			#{createBy.id},
+			SYSDATE()
+		)
+	</insert>
+</mapper>
