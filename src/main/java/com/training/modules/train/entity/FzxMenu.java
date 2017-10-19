@@ -28,7 +28,7 @@ public class FzxMenu extends DataEntity<FzxMenu> {
 	private String enname;	//英文名称
 	private String href;	//链接
 	private String icon;	//图标
-	private char isShow;	//是否在菜单中显示（0：显示；1：隐藏；）
+	private String isShow;	//是否在菜单中显示（0：显示；1：隐藏；）
 	private int sort;		//排序
 	private int num;    //是否有子类
 	/*private String permission; // 权限标识*/
@@ -42,7 +42,7 @@ public class FzxMenu extends DataEntity<FzxMenu> {
 	public FzxMenu(){
 		super();
 		this.sort = 30;
-		this.isShow = '1';
+		this.isShow = "0";
 	}
 	
 	
@@ -109,11 +109,11 @@ public class FzxMenu extends DataEntity<FzxMenu> {
 		this.icon = icon;
 	}
 	
-	public char getIsShow() {
+	public String getIsShow() {
 		return isShow;
 	}
 
-	public void setIsShow(char isShow) {
+	public void setIsShow(String isShow) {
 		this.isShow = isShow;
 	}
 	public int getSort() {
@@ -151,7 +151,7 @@ public class FzxMenu extends DataEntity<FzxMenu> {
 			return false;
 		}
 		for(FzxMenu child:children){
-			if(child.getIsShow()=='0'){
+			if(child.getIsShow()=="0"){
 				return true;
 			}
 		}
