@@ -169,7 +169,10 @@
 								  	<i class="icon-${not empty menu.icon?menu.icon:' hide'}"></i><a  href="#" onclick="openDialogView('查看菜单', '${ctx}/train/fzxMenu/form?menuId=${menu.menuId}','800px', '500px')">${menu.name}</a></td>
 								  	<td>${menu.enname }</td>
 								  	<td class="imgUrl"><img alt="" src="${not empty menu.icon?menu.icon:' hide'}" data-src="${menu.icon }" style="max-width: 100px;max-height: 100px;"></td>  <%-- ${ctxStatic}/images/lazylode.png --%>
-								  	<td>${menu.isShow == 0?'显示':'隐藏'}</td>
+								  	<td><%-- ${menu.isShow eq '0'?"显示":"隐藏"} --%>
+								  		<c:if test="${menu.isShow == 0}">显示</c:if>
+								  		<c:if test="${menu.isShow == 1}">隐藏</c:if>
+								  	</td>
 								  	<td style="text-align:center;">
 										<input name="sorts" type="text" value="${menu.sort}" class="form-control" style="width:100px;margin:0;padding:0;text-align:center;">
 									</td>
