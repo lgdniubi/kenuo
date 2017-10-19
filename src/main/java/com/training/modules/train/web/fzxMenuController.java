@@ -220,7 +220,7 @@ public class fzxMenuController extends BaseController{
 		for (int i=0; i<list.size(); i++){
 			FzxMenu e = list.get(i);
 			if (StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getMenuId()) && e.getParentIds().indexOf(","+extId+",")==-1)){
-				if(isShowHide != null && isShowHide.equals("0") && e.getIsShow() == '0'){
+				if(isShowHide != null && isShowHide.equals("0") && e.getIsShow().equals("0")){
 					continue;
 				}
 				Map<String, Object> map = Maps.newHashMap();
