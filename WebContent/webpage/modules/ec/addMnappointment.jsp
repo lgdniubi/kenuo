@@ -32,7 +32,7 @@
     		$("#warning").hide();
     		$("#mytable").empty("");
         	//清除input值
-        	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,skillId,labelId,oldorderid,groupId,isReal");
+        	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,goodsName,skillId,labelId,oldorderid,groupId,isReal");
         	//清除下拉框的值
         	clearSelect("serve,shopId,beauticianId,date,times");
     	}
@@ -62,7 +62,7 @@
     function serveChange(num){
     	$("#mytable").empty("");
     	//清除input值
-    	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,skillId,labelId,groupId,isReal");
+    	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,goodsName,skillId,labelId,groupId,isReal");
     	//清除下拉框的值
     	clearSelect("shopId,beauticianId,date,times");
     	if(serveList[num].isExpiring == 1){
@@ -89,6 +89,7 @@
 					    	$("#isReal").val(serveList[num].isreal);
 					    	$("#servicemin").val(serveList[num].servicemin);
 					    	$("#goodsId").val(serveList[num].goodsid);
+					    	$("#goodsName").val(serveList[num].goodsname);
 					    	$("#skillId").val(serveList[num].skillId);
 					    	$("#labelId").val(serveList[num].labelId);
 					    	$(".loading").hide();
@@ -113,6 +114,7 @@
 						    	$("#isReal").val(serveList[num].isreal);
 						    	$("#servicemin").val(serveList[num].servicemin);
 						    	$("#goodsId").val(serveList[num].goodsid);
+						    	$("#goodsName").val(serveList[num].goodsname);
 						    	$("#skillId").val(serveList[num].skillId);
 						    	$("#labelId").val(serveList[num].labelId);
 						    	$(".loading").hide();
@@ -135,6 +137,7 @@
 					    	$("#isReal").val(serveList[num].isreal);
 					    	$("#servicemin").val(serveList[num].servicemin);
 					    	$("#goodsId").val(serveList[num].goodsid);
+					    	$("#goodsName").val(serveList[num].goodsname);
 					    	$("#skillId").val(serveList[num].skillId);
 					    	$("#labelId").val(serveList[num].labelId);
 					    	$(".loading").hide();
@@ -158,6 +161,7 @@
 					    	$("#isReal").val(serveList[num].isreal);
 					    	$("#servicemin").val(serveList[num].servicemin);
 					    	$("#goodsId").val(serveList[num].goodsid);
+					    	$("#goodsName").val(serveList[num].goodsname);
 					    	$("#skillId").val(serveList[num].skillId);
 					    	$("#labelId").val(serveList[num].labelId);
 					    	$(".loading").hide();
@@ -183,7 +187,7 @@
    	       	$.ajax({
    	       		type : 'post',
    	       		url : '${ctx}/ec/mtmyMnappointment/loadOffice',
-   	       		data:{'areaId':$('#areaId').val(),'goodsId':$("#goodsId").val()},
+   	       		data:{'areaId':$('#areaId').val(),'goodsIds':$("#goodsId").val()},
    	       		dateType: 'text',
    	       		success:function(data){
    	   				$.each(data.office,function(index,item){
@@ -327,6 +331,7 @@
 					<input id="isReal" name="isReal" value=1 type="hidden"><!--组ID 用于添加预约 -->
 					<input id="servicemin" name="servicemin" type="hidden"><!-- 1.验证  2.获取美容师预约时间时 传服务时长 -->
 					<input id="goodsId" name="goodsId" type="hidden"><!-- 调用存储过程获取可用店铺数据 -->
+					<input id="goodsName" name="goodsName" type="hidden">
 					<input id="skillId" name="skillId" type="hidden"><!-- 获取美容师详情 -->
 					<input id="labelId" name="labelId" type="hidden"><!-- 获取美容师预约时间 -->
 					<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">

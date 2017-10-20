@@ -83,7 +83,7 @@
 	</select>
 	<!-- 查询可用的店铺 -->
 	<select id="loadOffice" resultType="Office">
-		CALL mtmydb.find_goods_for_shop(#{goodsId},0,#{nationName},#{provinceId},#{cityId},#{districtId},0,10000)
+		CALL mtmydb.find_goods_for_shop(#{goodsIds},0,#{nationName},#{provinceId},#{cityId},#{districtId},0,10000)
 	</select>
 
 	<!-- 单个用户的预约记录-->	
@@ -134,5 +134,88 @@
 	<!-- 隐藏店铺时  验证店铺下是否有预约 -->
 	<select id="findCountByOfficeId" resultType="int">
 		SELECT COUNT(*) FROM mtmydb.mtmy_appt_order WHERE shop_id = #{id} AND appt_status = 0;
+	</select>
+	
+	<resultMap type="OrderGoods" id="ogMap">
+		<id column="rec_id" property="recid"/>
+		<result column="order_id" property="orderid"/>
+		<result column="user_id" property="userid"/>
+		<result column="goods_name" property="goodsname"/>
+		<result column="goods_id" property="goodsid"/>
+		<result column="goods_sn" property="goodssn"/>
+		<result column="goods_num" property="goodsnum"/>
+		<result column="goods_price" property="goodsprice"/>
+		<result column="spec_key" property="speckey"/>
+		<result column="spec_key_name" property="speckeyname"/>
+		<result column="service_times" property="servicetimes"/>
+		<result column="service_min" property="servicemin"/>
+		<result column="original_img" property="originalimg"/>
+		<result column="is_real" property="isreal"/>
+		<result column="add_time" property="addtime"/>
+		<result column="reality_add_time" property="realityAddTime"/>
+		<result column="remain_times" property="remaintimes"/>
+		<result column="account_arrearage" property="accountArrearage"/>
+		<result column="surplus_amount" property="surplusAmount"/>
+		<result column="advance_flag" property="advanceFlag"/>
+		<result column="franchisee_id" property="franchiseeId"/>
+		<result column="position_id" property="positionId"/>
+		<result column="position_ids" property="positionIds"/>
+		<result column="cards_used_num" property="usedServiceTimes"/>
+		<collection property="goodsCards" fetchType="lazy" column="rec_id" javaType="Arraylist" select="queryChildrenMapping"></collection>
+	</resultMap>
+	
+	<!-- 查询用户可服务的订单 -->
+	<select id="findOrderGoodsByUserId" parameterType="map" resultMap="ogMap" flushCache="true" useCache="false">
+		SELECT 
+			ogm.rec_id, ogm.order_id, ogm.user_id, ogm.goods_name, ogm.goods_id, ogm.goods_sn, ogm.goods_num,
+			ogm.goods_price, ogm.spec_key, ogm.spec_key_name, ogm.service_times, ogm.service_min, ogm.original_img,
+			ogm.is_real, ogm.add_time, ogm.reality_add_time, ogm.advance_price,g.franchisee_id,g.position_id,g.position_ids,
+			CASE 
+				WHEN ogm.is_real = 2 
+				THEN ((SELECT SUM(m.service_times - m.after_sale_num) FROM mtmydb.mtmy_order_goods_mapping m WHERE m.group_id = ogm.rec_id AND m.order_id = ogm.order_id AND m.is_real = 1)
+					- (SELECT COUNT(1) FROM mtmydb.mtmy_appt_order ao WHERE ao.group_id = ogm.rec_id AND ao.appt_status != 3)) 
+			ELSE
+				(SELECT SUM(d.service_times) FROM mtmydb.mtmy_order_goods_details d WHERE d.goods_mapping_id = ogm.rec_id AND d.order_id = ogm.order_id)
+			END AS remain_times,
+			(SELECT SUM(d.app_arrearage) FROM mtmydb.mtmy_order_goods_details d WHERE d.goods_mapping_id = ogm.rec_id AND d.order_id = ogm.order_id) AS account_arrearage,
+			(SELECT SUM(d.surplus_amount) FROM mtmydb.mtmy_order_goods_details d WHERE d.goods_mapping_id = ogm.rec_id AND d.order_id = ogm.order_id) AS surplus_amount,
+			(SELECT COUNT(1) FROM mtmydb.mtmy_order_goods_details d WHERE d.goods_mapping_id = ogm.rec_id AND d.order_id = ogm.order_id AND d.advance_flag = 1) AS advance_flag,
+			(SELECT COUNT(1) FROM mtmydb.mtmy_appt_order ao WHERE ao.group_id = ogm.rec_id AND ao.appt_status != 3) AS cards_used_num,
+			(SELECT group_concat(skill_id) FROM mtmydb.mtmy_goods_skill s WHERE s.goods_id = g.goods_id GROUP BY goods_id) AS 'skillId',
+			(SELECT group_concat(label_id) FROM mtmydb.mtmy_goods_equipment e WHERE e.goods_id = g.goods_id GROUP BY goods_id) AS 'labelId'
+		FROM mtmydb.mtmy_order_goods_mapping ogm
+		LEFT JOIN mtmydb.mtmy_orders o ON o.order_id = ogm.order_id
+		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id = ogm.goods_id
+		WHERE o.order_status in (1,2,4) 
+		AND ogm.is_real != 0 
+		AND ogm.user_id = #{userId} 
+		AND ogm.group_id = 0
+		AND DATE_FORMAT(date_add(ogm.reality_add_time,INTERVAL ogm.expiring_date MONTH),'%Y-%m-%d') >= DATE_FORMAT(SYSDATE(),'%Y-%m-%d')
+		HAVING remain_times != 0 
+		ORDER BY account_arrearage DESC,ogm.add_time DESC
+	</select>
+
+	<select id="queryChildrenMapping" parameterType="int" flushCache="true" useCache="false" resultType="GoodsCard">
+		SELECT 
+			m.rec_id AS 'recId', 
+		   	m.group_id AS 'groupId', 
+		   	m.goods_id AS 'goodsId', 
+		  	m.goods_name AS 'goodsName', 
+		   	m.original_img AS 'originalImg', 
+		   	m.goods_num AS 'goodsNum', 
+		   	m.single_reality_price AS 'price', 
+		   	m.service_min AS 'serviceMin', 
+		   	m.is_real AS 'isReal',
+		   	m.service_times AS 'serviceTimes',
+		   	(SELECT COUNT(1) FROM mtmydb.mtmy_appt_order ao WHERE ao.goods_mapping_id = m.rec_id AND ao.appt_status != 3) AS 'usedNum',
+		   	g.franchisee_id AS 'franchiseeId',
+		   	(SELECT group_concat(skill_id) FROM mtmydb.mtmy_goods_skill s WHERE s.goods_id = g.goods_id GROUP BY goods_id) AS 'skillId',
+			(SELECT group_concat(label_id) FROM mtmydb.mtmy_goods_equipment e WHERE e.goods_id = g.goods_id GROUP BY goods_id) AS 'labelId',
+			g.position_id AS 'positionId',
+			g.position_ids AS 'positionIds'
+		FROM mtmydb.mtmy_order_goods_mapping m 
+		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id = m.goods_id
+		WHERE m.group_id = #{value} 
+		AND m.is_real = 1
 	</select>
 </mapper>
