@@ -172,8 +172,14 @@
 			ogm.is_real, ogm.add_time, ogm.reality_add_time, ogm.advance_price,g.franchisee_id,g.position_id,g.position_ids,
 			CASE 
 				WHEN ogm.is_real = 2 
-				THEN ((SELECT SUM(m.service_times - m.after_sale_num) FROM mtmydb.mtmy_order_goods_mapping m WHERE m.group_id = ogm.rec_id AND m.order_id = ogm.order_id AND m.is_real = 1)
-					- (SELECT COUNT(1) FROM mtmydb.mtmy_appt_order ao WHERE ao.group_id = ogm.rec_id AND ao.appt_status != 3)) 
+				THEN 
+					CASE 
+						WHEN (SELECT COUNT(1) FROM mtmydb.mtmy_order_goods_details d WHERE d.order_id = ogm.order_id AND d.goods_mapping_id = ogm.rec_id AND d.advance_flag = 1) > 0
+						THEN (SELECT 1 - COUNT(1) FROM mtmydb.mtmy_appt_order ao WHERE ao.group_id = ogm.rec_id AND ao.appt_status != 3) 
+					ELSE
+						((SELECT SUM(m.service_times - m.after_sale_num) FROM mtmydb.mtmy_order_goods_mapping m WHERE m.group_id = ogm.rec_id AND m.order_id = ogm.order_id AND m.is_real = 1)
+							- (SELECT COUNT(1) FROM mtmydb.mtmy_appt_order ao WHERE ao.group_id = ogm.rec_id AND ao.appt_status != 3)) 
+					END
 			ELSE
 				(SELECT SUM(d.service_times) FROM mtmydb.mtmy_order_goods_details d WHERE d.goods_mapping_id = ogm.rec_id AND d.order_id = ogm.order_id)
 			END AS remain_times,
