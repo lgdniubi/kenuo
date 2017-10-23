@@ -28,7 +28,17 @@ public class GoodsCard extends DataEntity<GoodsCard> {
 	private double totalMarketPrice;// 市场价合计
 	private double totalPrice; 		// 优惠价合计
 	
-	
+	//---------------------多项目预约新加的字段--------
+	private int groupId;				//组ID
+	private int recId;					//mappingID
+	private int serviceTimes;			//预约总次数
+	private int usedNum;				//已预约次数
+	private int franchiseeId;                 //归属商家
+	private String skillId;              //技能标签 （多个id , 隔开）
+	private String labelId;              //设备标签（多个id , 隔开）
+	//---------------------end--------
+	private String positionId;			//项目部位ID
+	private String positionIds;		//项目部位ids,包含父类
 	
 	public int getGoodsCardId() {
 		return goodsCardId;
@@ -101,6 +111,60 @@ public class GoodsCard extends DataEntity<GoodsCard> {
 	}
 	public void setOriginalImg(String originalImg) {
 		this.originalImg = originalImg;
+	}
+	public int getGroupId() {
+		return groupId;
+	}
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
+	}
+	public int getRecId() {
+		return recId;
+	}
+	public void setRecId(int recId) {
+		this.recId = recId;
+	}
+	public int getServiceTimes() {
+		return serviceTimes;
+	}
+	public void setServiceTimes(int serviceTimes) {
+		this.serviceTimes = serviceTimes;
+	}
+	public int getUsedNum() {
+		return usedNum;
+	}
+	public void setUsedNum(int usedNum) {
+		this.usedNum = usedNum;
+	}
+	public int getFranchiseeId() {
+		return franchiseeId;
+	}
+	public void setFranchiseeId(int franchiseeId) {
+		this.franchiseeId = franchiseeId;
+	}
+	public String getSkillId() {
+		return skillId;
+	}
+	public void setSkillId(String skillId) {
+		this.skillId = skillId;
+	}
+	public String getLabelId() {
+		return labelId;
+	}
+	public void setLabelId(String labelId) {
+		this.labelId = labelId;
+	}
+	public String getPositionId() {
+		return positionId;
+	}
+	public void setPositionId(String positionId) {
+		this.positionId = positionId;
+	}
+	public String getPositionIds() {
+		return positionIds;
+	}
+	public void setPositionIds(String positionIds) {
+		this.positionIds = positionIds;
 	}
 	
 }
