@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -269,6 +270,12 @@ public class OfficeController extends BaseController {
 		if(office.getGrade().equals("2")){
 			office.getArea().setId(officeInfo.getAreaInfo().getId());
 		}
+		
+		//记录店铺首图图片上传相关信息所需要的数据
+		User currentUser = UserUtils.getUser();//获取当前登录用户
+		List<String> lifeImgUrls = new ArrayList<String>();//店铺首图需要用到
+		String img = "";
+		
 		if("".equals(office.getId())){
 			if(office.getGrade().equals("2")){
 				//添加机构
@@ -278,6 +285,12 @@ public class OfficeController extends BaseController {
 				officeService.save(office);
 				office.setId(officeService.getByCode(office.getCode()).getId());
 				officeService.saveOfficeInfo(office);
+				
+				//店铺首图
+				img = office.getOfficeInfo().getImg();
+				if(img != null && img != ""){
+					reservationTime(3, currentUser.getCreateBy().getId(), img, "", lifeImgUrls, office.getId(), "bm", null);
+				}
 			}
 		}else{
 			//修改机构或修改实体店
@@ -285,9 +298,18 @@ public class OfficeController extends BaseController {
 				//修改机构
 				officeService.save(office);
 			}else{
+				//查询出修改前修改前店铺首图信息
+				OfficeInfo oldOffice = officeService.findbyid(office);
+				
 				//修改实体店
 				officeService.save(office);
 				officeService.saveOfficeInfo(office);
+				
+				//店铺首图
+				img = office.getOfficeInfo().getImg();
+				if(img != null && img != "" && !oldOffice.getImg().equals(img)){
+					reservationTime(3, currentUser.getCreateBy().getId(), img, oldOffice.getImg(), lifeImgUrls, office.getId(), "bm", null);
+				}
 			}
 		}
 		if(office.getChildDeptList()!=null){
@@ -841,4 +863,29 @@ public class OfficeController extends BaseController {
 		}
     	return map;
     }
+    
+    /**
+	 * 记录店铺首图图片上传相关信息
+	 * @param beauticianId
+	 * @param serviceMin
+	 * @param shopId
+	 * @param labelId
+	 * @param request
+	 * @return
+	 */
+	private void reservationTime(int type, String createBy, String fileUrl, String oldUrl, List<String> lifeImgUrls, String userId, String client, HttpServletRequest request) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			String webReservationTime =	ParametersFactory.getMtmyParamValues("uploader_picture_url");	
+			logger.info("##### web接口路径:"+webReservationTime);
+			String parpm = "{\"type\":\""+type+"\",\"create_by\":\""+createBy+"\",\"file_url\":\""+fileUrl+"\",\"old_url\":\""+oldUrl+"\",\"life_img_urls\":\""+lifeImgUrls+"\",\"user_id\":\""+userId+"\",\"client\":\""+client+"\"}";
+			String url=webReservationTime;
+			String result = WebUtils.postTrainObject(parpm, url);
+			jsonObject = JSONObject.fromObject(result);
+			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "记录店铺首图、美容院和美容师图片上传相关信息", e);
+			logger.error("调用接口:记录店铺首图、美容院和美容师图片上传相关信息:"+e.getMessage());
+		}
+	}
 }
