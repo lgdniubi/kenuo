@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%@ include file="/webpage/include/taglib.jsp"%>
-
 <head>
 <title>创建订单</title>
 <meta name="decorator" content="default" />
@@ -24,7 +23,7 @@
 				return;
 			}
 			
-			if($("#isNeworder").val() == 0){
+			/* if($("#isNeworder").val() == 0){
 				var sysUserId = $("#sysUserId").val(); 
 				if(sysUserId == undefined){
 					top.layer.alert('业务员信息不能为空!', {icon: 0, title:'提醒'}); 
@@ -40,14 +39,13 @@
 						return;
 	   				}
 		    	 }
-			}
+			} */
 			
 			$("#inputForm").submit();
 			 return true;	
 		  }
 		  return false;
 		}
-
 		//添加商品
 		function addActionGoods(){
 			var isNeworder = $("#isNeworder option:selected").val();
@@ -168,7 +166,6 @@
 				    	           //按钮【按钮二】的回调
 			}
 		}); 
-
 		}
 		//数字计算保留2位小数
 		changeTwoDecimal_f= function (floatvar){
@@ -409,6 +406,16 @@
          	    	        }
          	    	    }
     	    		} */
+    	    		var pushMoneySum = 0;
+    	    		$("[name='"+sysUserId+"pushMoney']").each(function(){
+    	    			pushMoneySum += parseFloat($(this).val());
+    	    		});
+    	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) - parseFloat(orderamount) > 0){
+    	    			top.layer.alert('营业总额小于等于订单应付总额！', {icon: 0, title:'提醒'});
+    	    			pushMoneySum = 0;
+    	    			pushMoney = 0;
+    	    			return;
+    	    		}
     	    		
 	    	    	$("#sysUserInfo").append(
 	    	    			"<tr>"+
@@ -418,9 +425,12 @@
 	    					"</td>"+
 	    					"<td><input id='sysMobile' name='sysMobile' type='text' value='"+sysMobile+"' class='form-control' readonly='readonly'></td>"+
 	    					"<td><input id='pushMoney' name='pushMoney' value='"+pushMoney+"' readonly='readonly' class='form-control required' type='text' class='form-control'></td>"+
+	    					"<input id='pushMoney' name='"+sysUserId+"pushMoney'  type='hidden' value='"+pushMoney+"' readonly='readonly' class='form-control required' type='text' class='form-control'>"+
 	    					"<td><a href='#' class='btn btn-danger btn-xs' onclick='deleteFile(this)'><i class='fa fa-trash'></i> 删除</a></td>"+
 	    					"</tr>"
 	    			);
+    	    		
+    	    		
 					top.layer.close(index);
     	    	}
 			}
@@ -615,7 +625,7 @@
 								<th style="text-align: center;">业务员</th>
 								<th style="text-align: center;">手机号</th>
 								<th style="text-align: center;">营业额</th>
-								<!-- <th style="text-align: center;">操作</th> -->
+								<th style="text-align: center;">操作</th>
 							</tr>
 						</thead>
 						<tbody id="sysUserInfo" style="text-align:center;">	
