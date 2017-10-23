@@ -146,12 +146,19 @@
 										</tr>
 										<c:forEach items="${orderGoods.goodsCards}" var="goodsCard">
 											<tr>
-												<c:if test="${(goodsCard.serviceTimes - goodsCard.usedNum <= 0) || (orderGoods.surplusAmount - goodsCard.price < 0)}">
-													<td style="text-align: center;" width="10px"><input type="checkbox" name="box1" id="${goodsCard.recId}" value="${orderGoods.recid}" disabled="disabled" onchange="change(${goodsCard.recId},${orderGoods.recid})"></td>
-												</c:if>
-												<c:if test="${(goodsCard.serviceTimes - goodsCard.usedNum > 0) && (orderGoods.surplusAmount - goodsCard.price >= 0)}">
-													<td style="text-align: center;" width="10px"><input type="checkbox" name="box" id="${goodsCard.recId}" value="${orderGoods.recid}" onchange="change(${goodsCard.recId},${orderGoods.recid})" ></td>
-												</c:if>
+												<c:choose>
+													<c:when test="${orderGoods.advanceFlag == 1}">
+														<td style="text-align: center;" width="10px"><input type="checkbox" name="box" id="${goodsCard.recId}" value="${orderGoods.recid}" onchange="change(${goodsCard.recId},${orderGoods.recid})" ></td>
+													</c:when> 
+													<c:otherwise>
+														<c:if test="${(goodsCard.serviceTimes - goodsCard.usedNum <= 0) || (orderGoods.surplusAmount - goodsCard.price < 0)}">
+															<td style="text-align: center;" width="10px"><input type="checkbox" name="box1" id="${goodsCard.recId}" value="${orderGoods.recid}" disabled="disabled" onchange="change(${goodsCard.recId},${orderGoods.recid})"></td>
+														</c:if>
+														<c:if test="${(goodsCard.serviceTimes - goodsCard.usedNum > 0) && (orderGoods.surplusAmount - goodsCard.price >= 0)}">
+															<td style="text-align: center;" width="10px"><input type="checkbox" name="box" id="${goodsCard.recId}" value="${orderGoods.recid}" onchange="change(${goodsCard.recId},${orderGoods.recid})" ></td>
+														</c:if>
+													</c:otherwise>
+												</c:choose>
 												<td >
 													${goodsCard.goodsName}
 													<input id="franchiseeId_${goodsCard.recId}" name="franchiseeId" value="${goodsCard.franchiseeId}" type="hidden"/>

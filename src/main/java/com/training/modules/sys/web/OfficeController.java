@@ -852,7 +852,7 @@ public class OfficeController extends BaseController {
     				if(num > 0){
     					map.put("MESSAGE", "该店铺存在未完成的预约!");
     				}else{
-    					map.put("MESSAGE", "隐藏该店铺成功");
+    					map.put("MESSAGE", "操作成功");
     				}
     				//操作店铺保存记录日志
     				OfficeLog officeLog = new OfficeLog();
