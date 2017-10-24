@@ -131,6 +131,23 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 	public List<String> selectWantLiveUser(String auditId){
 		return trainLiveUserDao.selectWantLiveUser(auditId);
 	}
+	/**
+	 * 查询每天美耶直播预约的用户cid
+	 * @param auditId
+	 * @return
+	 */
+	public List<String> selectMtmyLiveUserClient(String auditId){
+		return trainLiveUserDao.selectMtmyLiveUserClient(auditId);
+	}
+	
+	/**
+	 * 查询每天美耶直播预约直播间信息
+	 * @param auditId
+	 * @return
+	 */
+	public String selectLiveAuitMessage(String auditId){
+		return trainLiveUserDao.selectLiveAuitMessage(auditId);
+	}
 	
 	/**
 	 * 推送
