@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
     <script type="text/javascript">
     var validateForm;
-    var dates;
+    var map = {};
     var serveList;
     function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
     	
@@ -166,7 +166,7 @@
 				    			    	"<select id='times_"+chooseId+"' name='times' class='form-control required' onchange='queryCanReservation("+chooseId+","+positionId+","+serviceMin+")'><option value=''>请选择预约时间</option></select>"+
 				    			    "</td>"+
 				    			    "<td>"+
-				    			  		"<a href='#' class='btn btn-danger btn-xs' onclick='delFile(this)'><i class='fa fa-trash'></i> 删除</a> "+
+				    			  		"<a href='#' class='btn btn-danger btn-xs' onclick='delFile(this,"+chooseId+")'><i class='fa fa-trash'></i> 删除</a> "+
 				    			    "</td>"+
 				    			"</tr>").appendTo($("#addZTD"));
 					    }
@@ -184,11 +184,12 @@
     	
     }
     
-    function delFile(obj){
+    function delFile(obj,recId){
     	//清除input值
     	clearInput("areaId,areaName");
     	//清除下拉框的值
     	clearSelectByName("shopId,beauticianId,date,times");
+    	delete(map[recId]);
     	$(obj).parent().parent().remove();
     	
     }
@@ -293,8 +294,8 @@
     					$(".loading").hide();
     					top.layer.alert('数据加载失败！', {icon: 0, title:'提醒'});
     				}else{
-    					dates = data.data.odts;
-    					$.each(dates,function(index,item){
+    					map[recId] = data.data.odts;
+    					$.each(map[recId],function(index,item){
     						$("#date_"+recId).append("<option value="+index+">"+item.key+"</option>");
     	    			}); 
     				}
@@ -311,9 +312,9 @@
     	var num = $("#date_"+recId).val();
     	if(num != ""){
     		$(".loading").show();
-	    	$.each(dates[num].times, function(index,item){
+	    	$.each((map[recId])[num].times, function(index,item){
 				if(item.is_use == 0) {
-					$('#times_'+recId).append('<option value="'+dates[num].key+item.name+'">'+item.name+'</option>');
+					$('#times_'+recId).append('<option value="'+(map[recId])[num].key+item.name+'">'+item.name+'</option>');
 				}else{
 					$('#times_'+recId).append('<option disabled="disabled">'+item.name+'(已预约)</option>');
 				}
