@@ -2,6 +2,7 @@ package com.training.modules.ec.service;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -658,6 +659,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		double spareMoneySum = 0d;	//总余额
 		double newSpareMoneySum = 0d;  //商品总余额(当实付大于应付时，将多的存入个人账户余额中)
 		double goodsprice = 0;  //商品总价
+		
+		String recid = "";//保存mappingid到账户充值记录表中
+		
 		for (Integer i = 0; i < goodselectIds.size(); i++) {
 			Integer goodselectId = goodselectIds.get(i);		//商品id
 			String speckey = speckeys.get(i);					//规格key
@@ -776,6 +780,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
 			
+			recid += "," + orderGoods.getRecid();//保存mappingid到账户充值记录表中
 			
 			//订单商品详情记录表
 			int _serviceTimes = 0;//剩余服务次数
@@ -872,7 +877,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			ordersDao.insertAccount(newAccount);
 			//插入用户账户充值记录表(属于订单)
 			int type = 0;//类型是订单
-			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user);
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
 		}else{
 			/*double accountArrearage = account.getAccountArrearage()+debtMoneySum;	//账户欠款信息*/		
 			double accountBalance = account.getAccountBalance()+newSpareMoneySum;	//账户余额信息
@@ -881,7 +886,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			ordersDao.updateAccount(account);
 			//插入用户账户充值记录表(属于订单)
 			int type = 0;//类型是订单
-			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user);
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
 		}
 		
 		
@@ -1226,7 +1231,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//插入用户账户充值记录表(属于订单)
 			int type = 0;//类型是订单
-			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user);
+			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}else{
 			double accountBalance_ = 0;
 			accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()+newSpareMoneySum));
@@ -1236,7 +1241,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//插入用户账户充值记录表(属于订单)
 			int type = 0;//类型是订单
-			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user);
+			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}
 		
 	}
@@ -1330,6 +1335,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		double spareMoneySum = 0d;	//总余额
 		double newSpareMoneySum = 0d;  //商品总余额(当实付大于应付时，将多的存入个人账户余额中)
 		double goodsprice = 0;  //商品总价
+		
+		String recid = "";//保存mappingid到账户充值记录表中
+		
 		for (Integer i = 0; i < goodselectIds.size(); i++) {
 			Integer goodselectId = goodselectIds.get(i);		//商品id
 			String speckey = speckeys.get(i);					//规格key
@@ -1406,6 +1414,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
 			
+			recid += "," + orderGoods.getRecid();//保存mappingid到账户充值记录表中
+			
 			//订单商品详情记录表
 			OrderGoodsDetails details = new OrderGoodsDetails();
 			details.setOrderId(orderid);
@@ -1476,7 +1486,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			ordersDao.insertAccount(newAccount);
 			//插入用户账户充值记录表(属于订单)
 			int type = 0;//类型是订单
-			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user);
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
 		}else{
 			double accountBalance = account.getAccountBalance()+newSpareMoneySum;	//账户余额信息
 			/*account.setAccountArrearage(accountArrearage);*/
@@ -1484,7 +1494,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			ordersDao.updateAccount(account);
 			//插入用户账户充值记录表(属于订单)
 			int type = 0;//类型是订单
-			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user);
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
 		}
 		
 		//保存提成人员信息 
@@ -1879,7 +1889,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//插入用户账户充值记录表(属于订单)
 			int type = 0;//类型是订单
-			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user);
+			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}else{
 			double accountBalance_ = 0;
 			accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()+newSpareMoneySum));
@@ -1889,7 +1899,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//插入用户账户充值记录表(属于订单)
 			int type = 0;//类型是订单
-			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user);
+			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}
 		
 		//若为老商品，则对店铺有补偿
@@ -2016,6 +2026,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		double spareMoneySum = 0d;	//总余额
 		double newSpareMoneySum = 0d;  //商品总余额(当实付大于应付时，将多的存入个人账户余额中)
 		double goodsprice = 0;  //商品总价
+		
+		String recid = "";//保存mappingid到账户充值记录表中
+		
 		for (Integer i = 0; i < goodselectIds.size(); i++) {
 			Integer goodselectId = goodselectIds.get(i);		//商品id
 			String speckey = speckeys.get(i);					//规格key
@@ -2124,6 +2137,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
+			
+			recid += "," + orderGoods.getRecid();//保存mappingid到账户充值记录表中
 			
 			int groupId = orderGoods.getRecid();
 			List<Goods> goodsListSon = ordersDao.selectCardSon(goods.getGoodsId());
@@ -2254,7 +2269,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//插入用户账户充值记录表(属于订单)
 			int type = 0;//类型是订单
-			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user);
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
 		}else{
 			double accountBalance = account.getAccountBalance()+newSpareMoneySum;	//账户余额信息
 			account.setAccountBalance(accountBalance);
@@ -2262,7 +2277,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//插入用户账户充值记录表(属于订单)
 			int type = 0;//类型是订单
-			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user);
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
 		}
 		
 		
@@ -2319,13 +2334,15 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<Double> orderAmounts = orders.getOrderAmounts();		//成交价集合
 		List<Double> actualPayments = orders.getActualPayments();	//实际付款集合
 		
-		
 		double orderAmountSum = 0d;  //应付总额
 		double afterPaymentSum = 0d;  //实际付款总额
 		double debtMoneySum = 0d;	//总欠款
 		double spareMoneySum = 0d;	//总余额
 		double newSpareMoneySum = 0d;  //商品总余额(当实付大于应付时，将多的存入个人账户余额中)
 		double goodsprice = 0;  //商品总价
+		
+		String recid = "";//保存mappingid到账户充值记录表中
+		
 		for (Integer i = 0; i < goodselectIds.size(); i++) {
 			Integer goodselectId = goodselectIds.get(i);		//商品id
 			//通过商品id获取当前商品
@@ -2404,8 +2421,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
 			
-			
-			
+			recid += "," + orderGoods.getRecid();//保存mappingid到账户充值记录表中
 			
 			int groupId = orderGoods.getRecid();
 			List<Goods> goodsListSon = ordersDao.selectCardSon(goods.getGoodsId());
@@ -2547,7 +2563,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//插入用户账户充值记录表(属于订单)
 			int type = 0;//类型是订单
-			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user);
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
 		}else{
 			double accountBalance = account.getAccountBalance()+newSpareMoneySum;	//账户余额信息
 			account.setAccountBalance(accountBalance);
@@ -2555,7 +2571,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//插入用户账户充值记录表(属于订单)
 			int type = 0;//类型是订单
-			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user);
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
 		}
 		
 		//保存提成人员信息 
@@ -2784,7 +2800,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//插入用户账户充值记录表(属于订单)
 			int type = 0;//类型是订单
-			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user);
+			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}else{
 			double accountBalance_ = 0;
 			accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()+newSpareMoneySum));
@@ -2794,7 +2810,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//插入用户账户充值记录表(属于订单)
 			int type = 0;//类型是订单
-			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user);
+			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}
 		
 	}
@@ -2956,7 +2972,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//插入用户账户充值记录表(属于订单)
 			int type = 0;//类型是订单
-			insertUserAccountsLog(oLog.getOrderId() ,oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user);
+			insertUserAccountsLog(oLog.getOrderId() ,oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}else{
 			double accountBalance_ = 0;
 			accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()+newSpareMoneySum));
@@ -2966,7 +2982,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//插入用户账户充值记录表(属于订单)
 			int type = 0;//类型是订单
-			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user);
+			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}
 		
 		//若为老商品，则对店铺有补偿
@@ -3066,9 +3082,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param type 类型(0:订单,1:账户充值)
 	 * @param channelFlag 渠道标示(wap：wap端；ios：苹果手机；android：安卓手机；bm：后台管理) 
 	 * @param user 操作者
+	 * @param recidList 
 	 * 
 	 */
-	public void insertUserAccountsLog(String orderId, int mtmyUserId, double newSpareMoneySum, int type, String channelFlag, User user) {
+	public void insertUserAccountsLog(String orderId, int mtmyUserId, double newSpareMoneySum, int type, String channelFlag, User user, String recid) {
 		if(newSpareMoneySum != 0){
 			UserAccountsLog userAccountsLog = new UserAccountsLog();
 			userAccountsLog.setMtmyUserId(mtmyUserId);
@@ -3076,11 +3093,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			userAccountsLog.setType(type);
 			if(newSpareMoneySum >= 0){//当金额大于等于0,表示账户有收入记录
 				userAccountsLog.setStatus(0);
-				userAccountsLog.setRemarks("订单ID:"+orderId);
 			}else{
 				userAccountsLog.setStatus(1);
-				userAccountsLog.setRemarks("订单ID:"+orderId);
 			}
+			userAccountsLog.setRemarks("订单ID:"+orderId+",商品匹配ID:"+recid);
 			userAccountsLog.setChannelFlag(channelFlag);
 			userAccountsLog.setSourceFlag("mtmy");
 			userAccountsLog.setCreateOfficeId(user.getOffice().getId());

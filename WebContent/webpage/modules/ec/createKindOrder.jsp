@@ -447,10 +447,12 @@
     	    		$("[name='"+sysUserId+"pushMoney']").each(function(){
     	    			pushMoneySum += parseFloat($(this).val());
     	    		});
+    	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) < 0){
+    	    			top.layer.alert('营业总额必须大于0！', {icon: 0, title:'提醒'});
+    	    			return;
+    	    		}
     	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) - parseFloat(orderamount) > 0){
     	    			top.layer.alert('营业总额小于等于订单应付总额！', {icon: 0, title:'提醒'});
-    	    			pushMoneySum = 0;
-    	    			pushMoney = 0;
     	    			return;
     	    		}
     	    		
