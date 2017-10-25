@@ -25,7 +25,9 @@
 			type,
 			create_office_id,
 			create_by,
-			create_date
+			create_date,
+			belong_office_id,
+			belong_user_id
 		)VALUES(
 			#{orderId},
 			#{goodsMappingId},
@@ -48,7 +50,9 @@
 			#{type},
 			#{createOfficeId},
 			#{createBy.id},
-			SYSDATE()
+			SYSDATE(),
+			#{belongOfficeId},
+			#{belongUserId}
 		)
 	</insert>
 	
