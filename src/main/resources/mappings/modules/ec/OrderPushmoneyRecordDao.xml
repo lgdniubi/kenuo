@@ -7,6 +7,8 @@
 			order_id,
 			user_id,
 			push_money,
+			user_office_id,
+			user_office_ids,
 			position_key,
 			position_value,
 			office_id,
@@ -17,6 +19,8 @@
 			#{orderId},
 			#{pushmoneyUserId},
 			#{pushMoney},
+			#{userOfficeId},
+			#{userOfficeIds},
 			(SELECT d.label FROM sys_user u LEFT JOIN sys_dict d ON d.value = u.user_type WHERE u.id = #{pushmoneyUserId} AND d.type = 'sys_user_type'),
 			(SELECT d.value FROM sys_user u LEFT JOIN sys_dict d ON d.value = u.user_type WHERE u.id = #{pushmoneyUserId} AND d.type = 'sys_user_type'),
 			#{officeId},
@@ -33,6 +37,8 @@
 			r.order_id AS orderId,
 			r.user_id AS pushmoneyUserId,
 			r.push_money AS pushMoney,
+			r.user_office_id as userOfficeId,
+			r.user_office_ids as userOfficeIds,
 			r.create_by AS "createBy.id",
 			r.create_date AS createDate,
 			su1.`name` AS pushmoneyUserName,
@@ -52,6 +58,8 @@
 			r.id AS pushmoneyRecordId,
 			r.order_id AS orderId,
 			r.user_id AS pushmoneyUserId,
+			r.user_office_id as userOfficeId,
+			r.user_office_ids as userOfficeIds,
 			SUM(r.push_money) AS pushMoney,
 			r.create_by AS "createBy.id",
 			r.create_date AS createDate,
@@ -74,6 +82,8 @@
 			r.order_id as orderId,
 			r.user_id as pushmoneyUserId,
 			r.push_money as pushMoney,
+			r.user_office_id as userOfficeId,
+			r.user_office_ids as userOfficeIds,
 			r.create_by as "createBy.id",
 			r.create_date as createDate,
 			su1.`name` as pushmoneyUserName,
@@ -123,4 +133,18 @@
 			SYSDATE()
 		)
 	</insert>
+	
+	<!-- 通过业务员id(属于妃子校的)查询业务员归属机构 -->
+	<select id="getOfficeIdByUserId" resultType="OrderPushmoneyRecord">
+		SELECT
+			a.id AS pushmoneyUserId,
+			b.id AS userOfficeId,
+			b.parent_ids AS userOfficeIds
+		FROM
+			trains.sys_user a 
+		LEFT JOIN
+			trains.sys_office b on a.office_id = b.id
+		WHERE
+			a.id=#{pushmoneyUserId}
+	</select>
 </mapper>

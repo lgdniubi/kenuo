@@ -898,10 +898,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<String> sysUserId = orders.getSysUserId();	//提成人员id
 		List<Double> pushMoney = orders.getPushMoney();	//提成金额
 		if(sysUserId!=null && sysUserId.size()>0){
+			OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
 			for (int i = 0; i < sysUserId.size(); i++) {
-				OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
-				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushmoneyUserId(sysUserId.get(i));
+				
+				//通过业务员id(属于妃子校的)查询业务员归属机构
+				orderPushmoneyRecord = orderPushmoneyRecordService.getOfficeIdByUserId(orderPushmoneyRecord);
+				
+				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushMoney(pushMoney.get(i));
 				orderPushmoneyRecord.setOfficeId(user.getOffice().getId());
 				orderPushmoneyRecord.setCreateBy(user);
@@ -1509,10 +1513,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<String> sysUserId = orders.getSysUserId();	//提成人员id
 		List<Double> pushMoney = orders.getPushMoney();	//提成金额
 		if(sysUserId!=null && sysUserId.size()>0){
+			OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
 			for (int i = 0; i < sysUserId.size(); i++) {
-				OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
-				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushmoneyUserId(sysUserId.get(i));
+
+				//通过业务员id(属于妃子校的)查询业务员归属机构
+				orderPushmoneyRecord = orderPushmoneyRecordService.getOfficeIdByUserId(orderPushmoneyRecord);
+				
+				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushMoney(pushMoney.get(i));
 				orderPushmoneyRecord.setOfficeId(user.getOffice().getId());
 				orderPushmoneyRecord.setCreateBy(user);
@@ -1628,6 +1636,11 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderPushmoneyRecord.setUpdateBy(user);
 			orderPushmoneyRecordService.updatePushMoney(orderPushmoneyRecord);
 		}else if("add".equals(orderPushmoneyRecord.getFlag())){
+			//通过业务员id(属于妃子校的)查询业务员归属机构
+			OrderPushmoneyRecord opr = orderPushmoneyRecordService.getOfficeIdByUserId(orderPushmoneyRecord);
+			orderPushmoneyRecord.setUserOfficeId(opr.getUserOfficeId());
+			orderPushmoneyRecord.setUserOfficeIds(opr.getUserOfficeIds());
+			
 			User user = UserUtils.getUser();
 			orderPushmoneyRecord.setOfficeId(user.getOffice().getId());
 			orderPushmoneyRecord.setCreateBy(user);
@@ -2297,10 +2310,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<String> sysUserId = orders.getSysUserId();	//提成人员id
 		List<Double> pushMoney = orders.getPushMoney();	//提成金额
 		if(sysUserId!=null && sysUserId.size()>0){
+			OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
 			for (int i = 0; i < sysUserId.size(); i++) {
-				OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
-				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushmoneyUserId(sysUserId.get(i));
+
+				//通过业务员id(属于妃子校的)查询业务员归属机构
+				orderPushmoneyRecord = orderPushmoneyRecordService.getOfficeIdByUserId(orderPushmoneyRecord);				
+				
+				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushMoney(pushMoney.get(i));
 				orderPushmoneyRecord.setOfficeId(user.getOffice().getId());
 				orderPushmoneyRecord.setCreateBy(user);
@@ -2594,10 +2611,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<String> sysUserId = orders.getSysUserId();	//提成人员id
 		List<Double> pushMoney = orders.getPushMoney();	//提成金额
 		if(sysUserId!=null && sysUserId.size()>0){
+			OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
 			for (int i = 0; i < sysUserId.size(); i++) {
-				OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
-				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushmoneyUserId(sysUserId.get(i));
+
+				//通过业务员id(属于妃子校的)查询业务员归属机构
+				orderPushmoneyRecord = orderPushmoneyRecordService.getOfficeIdByUserId(orderPushmoneyRecord);				
+				
+				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushMoney(pushMoney.get(i));
 				orderPushmoneyRecord.setOfficeId(user.getOffice().getId());
 				orderPushmoneyRecord.setCreateBy(user);

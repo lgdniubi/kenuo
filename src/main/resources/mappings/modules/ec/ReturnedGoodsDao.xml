@@ -51,6 +51,8 @@
 		a.shipping_code,
 		a.shipping_time,
 		a.shipper_date,
+		a.belong_user_id,
+		a.belong_office_id,
 		e.`name` as "hoseName",
 		e.governor,
 		e.address
@@ -64,7 +66,9 @@
 	<!-- 根据编号 -->
 	<select id="get" resultType="ReturnedGoods">
 		SELECT
-			<include refid="returnColunm"/>
+			<include refid="returnColunm"/>,
+			(select so.name from sys_office so where so.id = a.belong_office_id) as belongOfficeName,
+			(select su.name from sys_user su where su.id = a.belong_user_id) as belongUserName
 		FROM mtmydb.mtmy_returned_goods a
 		<include refid="returnJion"/>
 		WHERE 
@@ -245,6 +249,8 @@
 			return_amount,
 			office_id,
 			remarks,
+			belong_user_id,
+			belong_office_id,
 			return_status
 		)VALUES(
 			#{id},
@@ -262,6 +268,8 @@
 			#{returnAmount},
 			#{officeId},
 			#{remarks},
+			#{belongUserId},
+			#{belongOfficeId},
 			#{returnStatus}
 		)
 	</insert>
