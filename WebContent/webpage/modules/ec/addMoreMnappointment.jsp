@@ -185,10 +185,10 @@
     }
     
     function delFile(obj,recId){
-    	//清除input值
+    	/* //清除input值
     	clearInput("areaId,areaName");
     	//清除下拉框的值
-    	clearSelectByName("shopId,beauticianId,date,times");
+    	clearSelectByName("shopId,beauticianId,date,times"); */
     	delete(map[recId]);
     	$(obj).parent().parent().remove();
     	
