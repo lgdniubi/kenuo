@@ -23,23 +23,28 @@
 				return;
 			}
 			
-			/* if($("#isNeworder").val() == 0){
+			if($("#isNeworder").val() == 0){
 				var sysUserId = $("#sysUserId").val(); 
+				var belongUserId = $("#belongUserId").val(); 
+				if(sysUserId == belongUserId){
+					top.layer.alert('归属人和业务员不能是同一个人!', {icon: 0, title:'提醒'}); 
+					return;
+				}
 				if(sysUserId == undefined){
 					top.layer.alert('业务员信息不能为空!', {icon: 0, title:'提醒'}); 
 					return;
 				}
 				
+				var sumPushMoney = 0;
 				var orderamount = $("#orderamount").val();
-				var pushMoneys = document.getElementsByName("pushMoney");
-				var pushMoneySum = 0;
-	   			for(i=0;i<pushMoneys.length;i++){
-	   				if(parseFloat(pushMoneys[i].value) - parseFloat(orderamount) > 0){
-	   					top.layer.alert('单个业务员的营业额不能大于订单应付总价!', {icon: 0, title:'提醒'}); 
-						return;
-	   				}
-		    	 }
-			} */
+	   			$("[name='"+sysUserId+"pushMoney']").each(function(){
+	   				sumPushMoney += parseFloat($(this).val());
+	    		});
+	   			if(parseFloat(sumPushMoney) - parseFloat(orderamount) > 0){
+	    			top.layer.alert('营业总额小于等于订单应付总额！', {icon: 0, title:'提醒'});
+	    			return;
+	    		}
+			}
 			
 			$("#inputForm").submit();
 			 return true;	
@@ -491,6 +496,12 @@
     	    		$("[name='"+sysUserId+"pushMoney']").each(function(){
     	    			pushMoneySum += parseFloat($(this).val());
     	    		});
+    	    		
+    	    		var belongUserId = $("#belongUserId").val(); 
+    				if(sysUserId == belongUserId){
+    					top.layer.alert('归属人和业务员不能是同一个人!', {icon: 0, title:'提醒'}); 
+    					return;
+    				}
     	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) < 0){
     	    			top.layer.alert('营业总额必须大于0！', {icon: 0, title:'提醒'});
     	    			return;

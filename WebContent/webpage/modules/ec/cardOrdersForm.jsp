@@ -324,7 +324,17 @@
       	    	if(pushMoney==""){
       	    		top.layer.alert('填写营业额！', {icon: 0, title:'提醒'});
       	    		return;
-      	    	}
+      	    	}else{
+	   	    		var re = /^([+-]?)\d*\.?\d{0,2}$/; 
+	   				if(!re.test(pushMoney)){
+	   					top.layer.alert('请输入正确的营业额(最多两位小数)', {icon: 0, title:'提醒'});
+	     	    		return;
+	   				}
+    	    	}
+      	    	if(sysUserId == ""){
+    	    		top.layer.alert('填写业务员！', {icon: 0, title:'提醒'});
+     	    		return;
+     	    	}
       	    	if(channelFlag == 'bm'){
    	    			if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
     	    			top.layer.alert('营业额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
@@ -336,7 +346,28 @@
      	    			return;
      	    		}
    	    		}
-   	    		
+      	    	
+      	    	var belongUserId = $("#belongUserId").val(); 
+      	    	alert(belongUserId);
+      	    	alert(sysUserId);
+      	    	
+				if(sysUserId == belongUserId){
+					top.layer.alert('归属人和业务员不能是同一个人!', {icon: 0, title:'提醒'}); 
+					return;
+				}
+   	    		var pushMoneySum = $("#"+sysUserId+"pushMoneySum").val();
+  	    		if(pushMoneySum == undefined){
+  	    			pushMoneySum=0;
+  	    		}
+	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) < 0){
+	    			top.layer.alert('营业总额必须大于0！', {icon: 0, title:'提醒'});
+	    			return;
+	    		}
+	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) - parseFloat(orderamount) > 0){
+	    			top.layer.alert('营业总额小于等于订单应付总额！', {icon: 0, title:'提醒'});
+	    			return;
+	    		}
+      	    	
       	    	$.ajax({
        				type:"post",
        				data:{
@@ -469,7 +500,13 @@
        	    	        }
        	    	    }
   	    		} */
-   	    		
+  	    		
+     	    	var belongUserId = $("#belongUserId").val(); 
+				if(sysUserId == belongUserId){
+					top.layer.alert('归属人和业务员不能是同一个人!', {icon: 0, title:'提醒'}); 
+					return;
+				}
+  	    		
      	    	var pushMoneySum = $("#"+sysUserId+"pushMoneySum").val();
   	    		if(pushMoneySum == undefined){
   	    			pushMoneySum=0;

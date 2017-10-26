@@ -18,7 +18,9 @@ public class OrderPushmoneyRecord extends TreeEntity<OrderPushmoneyRecord> {
 	private String operatorName;	//操作人
 	private String flag;            //标识
 	
-	private String officeId;		//操作用户当前机构ID  2017-10-12 土豆添加
+	private String officeId;		//操作用户当前机构ID   2017-10-12 土豆添加
+	private String userOfficeId;	//业务员机构ID  	 2017-10-25 土豆添加
+	private String userOfficeIds;	//业务员机构IDS  	 2017-10-25 土豆添加
 	
 	public String getOperatorName() {
 		return operatorName;
@@ -102,6 +104,22 @@ public class OrderPushmoneyRecord extends TreeEntity<OrderPushmoneyRecord> {
 
 	public void setOfficeId(String officeId) {
 		this.officeId = officeId;
+	}
+
+	public String getUserOfficeId() {
+		return userOfficeId;
+	}
+
+	public void setUserOfficeId(String userOfficeId) {
+		this.userOfficeId = userOfficeId;
+	}
+
+	public String getUserOfficeIds() {
+		return userOfficeIds;
+	}
+
+	public void setUserOfficeIds(String userOfficeIds) {
+		this.userOfficeIds = userOfficeIds;
 	}
 	
 }

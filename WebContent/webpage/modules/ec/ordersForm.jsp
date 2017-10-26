@@ -18,7 +18,6 @@
 				  top.layer.alert('订单成交价格不能小于0元!', {icon: 0, title:'提醒'}); 
 				  return;
 			}
-			
 			 $("#inputForm").submit();
 			 return true;
 				 
@@ -571,7 +570,12 @@
        	    	        }
        	    	    }
   	    		} */
-  	    		
+   	    		var belongUserId = $("#belongUserId").val(); 
+				if(sysUserId == belongUserId){
+					top.layer.alert('归属人和业务员不能是同一个人!', {icon: 0, title:'提醒'}); 
+					return;
+				}
+				
    	    		var pushMoneySum = $("#"+sysUserId+"pushMoneySum").val();
   	    		if(pushMoneySum == undefined){
   	    			pushMoneySum=0;
