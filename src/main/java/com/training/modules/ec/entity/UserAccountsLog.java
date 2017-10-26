@@ -11,13 +11,16 @@ public class UserAccountsLog extends TreeEntity<UserAccountsLog> {
 	private static final long serialVersionUID = 1L;
 	
 	private int mtmyUserId;				//充值账户ID(每天美耶用户ID)
-	private double price;				//金额(支持负数)
+	private double amount;				//金额(支持负数)
 	private int type;					//类型(0:订单,1:账户充值)
 	private int status;					//状态(0:收入,1:支出)
 	private String channelFlag;			//渠道标示(wap：wap端；ios：苹果手机；android：安卓手机；bm：后台管理)
 	private String sourceFlag;			//来源渠道(mtmy/fzx)
 	private String remarks;				//备注
 	private String createOfficeId;		//操作者当前所属机构
+
+	private String belongUserId;		//操作者当前所属机构
+	private String belongOfficeId;		//操作者当前所属机构
 	
 	
 	public int getMtmyUserId() {
@@ -25,12 +28,6 @@ public class UserAccountsLog extends TreeEntity<UserAccountsLog> {
 	}
 	public void setMtmyUserId(int mtmyUserId) {
 		this.mtmyUserId = mtmyUserId;
-	}
-	public double getPrice() {
-		return price;
-	}
-	public void setPrice(double price) {
-		this.price = price;
 	}
 	public int getType() {
 		return type;
@@ -71,6 +68,24 @@ public class UserAccountsLog extends TreeEntity<UserAccountsLog> {
 	}
 	public void setCreateOfficeId(String createOfficeId) {
 		this.createOfficeId = createOfficeId;
+	}
+	public double getAmount() {
+		return amount;
+	}
+	public void setAmount(double amount) {
+		this.amount = amount;
+	}
+	public String getBelongUserId() {
+		return belongUserId;
+	}
+	public void setBelongUserId(String belongUserId) {
+		this.belongUserId = belongUserId;
+	}
+	public String getBelongOfficeId() {
+		return belongOfficeId;
+	}
+	public void setBelongOfficeId(String belongOfficeId) {
+		this.belongOfficeId = belongOfficeId;
 	}
 	@Override
 	public UserAccountsLog getParent() {
