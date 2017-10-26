@@ -26,6 +26,7 @@
 			create_office_id,
 			create_by,
 			create_date,
+			use_balance,
 			belong_office_id,
 			belong_user_id
 		)VALUES(
@@ -51,6 +52,7 @@
 			#{createOfficeId},
 			#{createBy.id},
 			SYSDATE(),
+			#{useBalance},
 			#{belongOfficeId},
 			#{belongUserId}
 		)
