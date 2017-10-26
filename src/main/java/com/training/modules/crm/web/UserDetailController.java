@@ -39,6 +39,7 @@ import com.training.modules.crm.utils.Comparison;
 import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.entity.Users;
 import com.training.modules.ec.entity.UsersAccounts;
+import com.training.modules.ec.service.CustomerService;
 import com.training.modules.ec.service.MtmyUsersService;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.User;
@@ -71,6 +72,8 @@ public class UserDetailController extends BaseController {
 	private MtmyUsersDao mtmyUsersDao;
 	@Autowired
 	private AvaliableCouponDao couponService;
+	@Autowired
+	private CustomerService customerService;
 	
 	@ModelAttribute
 	public UserDetail  get(@RequestParam(required = false) String userId) {
@@ -251,6 +254,9 @@ public class UserDetailController extends BaseController {
 				if (null!=exists && null!=exists2 ) {
 					try {
 						userDetailService.updateMtmyUsers(entity);
+						if(!"".equals(entity.getOfficeId()) && entity.getOfficeId() != null){
+							customerService.saveCustomerOfficeBrauty(Integer.valueOf(entity.getUserId()),entity.getOfficeId(),entity.getBeautyId());
+						}
 						userDetailService.updateSingle(entity);
 						contactInfoService.updateSingle(info);
 						String detailChange = Comparison.compareObj(exists,entity);
@@ -273,6 +279,9 @@ public class UserDetailController extends BaseController {
 				}else if (null!=exists && null==exists2 ) {
 					try {
 						userDetailService.updateMtmyUsers(entity);
+						if(!"".equals(entity.getOfficeId()) && entity.getOfficeId() != null){
+							customerService.saveCustomerOfficeBrauty(Integer.valueOf(entity.getUserId()),entity.getOfficeId(),entity.getBeautyId());
+						}
 						contactInfoService.save(info);
 						userDetailService.updateSingle(entity);
 						String detailChange = Comparison.compareObj(exists,entity);
@@ -290,6 +299,9 @@ public class UserDetailController extends BaseController {
 						contactInfoService.updateSingle(info);
 						userDetailService.save(entity);
 						userDetailService.updateMtmyUsers(entity);
+						if(!"".equals(entity.getOfficeId()) && entity.getOfficeId() != null){
+							customerService.saveCustomerOfficeBrauty(Integer.valueOf(entity.getUserId()),entity.getOfficeId(),entity.getBeautyId());
+						}
 						String infoChange = Comparison.compareObj(exists2,info);
 						log.setUserId(userId);
 						log.setOperatorType("1");
@@ -305,6 +317,9 @@ public class UserDetailController extends BaseController {
 						contactInfoService.save(info);
 						userDetailService.save(entity);
 						userDetailService.updateMtmyUsers(entity);
+						if(!"".equals(entity.getOfficeId()) && entity.getOfficeId() != null){
+							customerService.saveCustomerOfficeBrauty(Integer.valueOf(entity.getUserId()),entity.getOfficeId(),entity.getBeautyId());
+						}
 						log.setUserId(userId);
 						log.setOperatorType("1");
 						log.setContent("创建新的用户详细记录");
@@ -388,6 +403,8 @@ public class UserDetailController extends BaseController {
 			mtmyUsersDao.insertAccounts(users);
 			//新增用户时插入用户统计表
 			mtmyUsersDao.insterSaleStats(users);
+			//新增用户时插入新客表、新客日志表，统计绑定店铺、绑定的美容师
+			customerService.saveCustomer(users.getUserid(),users.getOfficeId(),users.getBeautyId());
 			addMessage(redirectAttributes, "添加用户"+users.getName()+"成功");
 		}
 		return "redirect:" + adminPath + "/crm/user/userList";
