@@ -1216,6 +1216,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setAdvanceFlag("3");
 		details.setCreateOfficeId(user.getOffice().getId());
 		details.setCreateBy(user);
+		details.setBelongOfficeId(oLog.getBelongOfficeId());
+		details.setBelongUserId(oLog.getBelongUserId());
+		details.setUseBalance(accountBalance);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
 		//根据用户id查询用户账户信息
@@ -1861,6 +1864,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setAdvanceFlag("2");
 		details.setCreateOfficeId(user.getOffice().getId());
 		details.setCreateBy(user);
+		details.setBelongOfficeId(oLog.getBelongOfficeId());
+		details.setBelongUserId(oLog.getBelongUserId());
+		details.setUseBalance(accountBalance);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
 		
@@ -2821,6 +2827,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setAdvanceFlag("3");
 		details.setCreateOfficeId(user.getOffice().getId());
 		details.setCreateBy(user);
+		details.setBelongOfficeId(oLog.getBelongOfficeId());
+		details.setBelongUserId(oLog.getBelongUserId());
+		details.setUseBalance(accountBalance);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
 		//根据用户id查询用户账户信息
@@ -2962,6 +2971,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setAdvanceFlag("2");
 		details.setCreateOfficeId(user.getOffice().getId());
 		details.setCreateBy(user);
+		details.setBelongOfficeId(oLog.getBelongOfficeId());
+		details.setBelongUserId(oLog.getBelongUserId());
+		details.setUseBalance(accountBalance);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
 		

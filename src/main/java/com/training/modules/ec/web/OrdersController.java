@@ -1808,7 +1808,7 @@ public class OrdersController extends BaseController {
 				}
 			}
 			
-			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
+			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"",oLog.getBelongOfficeId(),oLog.getBelongUserId());
 			ordersService.handleAdvanceFlag(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId,realAdvancePrice);
 			date = "success";
 		}catch(Exception e){
@@ -2678,7 +2678,7 @@ public class OrdersController extends BaseController {
 				oLog.setTotalAmount(advance);
 			}
 			
-			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
+			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"",oLog.getBelongOfficeId(),oLog.getBelongUserId());
 			ordersService.handleCardAdvance(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId,isReal,realAdvancePrice);
 			date = "success";
 		}catch(Exception e){

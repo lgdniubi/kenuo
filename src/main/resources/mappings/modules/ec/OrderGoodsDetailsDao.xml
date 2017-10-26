@@ -26,6 +26,7 @@
 			create_office_id,
 			create_by,
 			create_date,
+			use_balance,
 			belong_office_id,
 			belong_user_id
 		)VALUES(
@@ -51,6 +52,7 @@
 			#{createOfficeId},
 			#{createBy.id},
 			SYSDATE(),
+			#{useBalance},
 			#{belongOfficeId},
 			#{belongUserId}
 		)
@@ -149,8 +151,11 @@
 	<update id="updateAdvanceFlag">
 		UPDATE mtmydb.mtmy_order_goods_details
 		SET 
-			advance_flag = '0'
-		WHERE goods_mapping_id = #{recid}
+			advance_flag = '0',
+			belong_office_id = #{belongOfficeId},
+			belong_user_id = #{belongUserId}
+		WHERE goods_mapping_id = #{recId}
+		AND advance_flag = '1'
 	</update>
 	
 	<!-- 根据office_id查找其对应的登云账户的金额 -->

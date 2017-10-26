@@ -307,6 +307,8 @@
 						var topUpTotalAmount = obj.document.getElementById("topUpTotalAmount").value;
 						var jsmoney = obj.document.getElementById("jsmoney").value;
 						var loading = obj.document.getElementById("loading");
+						var belongOfficeId = obj.document.getElementById("belongOfficeId").value;
+						var belongUserId = obj.document.getElementById("belongUserId").value;
 						$(loading).show();
 						if(accountBalance == ''){
 							$(loading).hide();
@@ -326,6 +328,11 @@
 						if(jsmoney == 0){
 							$(loading).hide();
 							top.layer.alert('请计算费用！', {icon: 0, title:'提醒'});
+							return;
+						}
+						if(belongOfficeId == ''){
+							$(loading).hide();
+							top.layer.alert('归属机构必填！', {icon: 0, title:'提醒'});
 							return;
 						}
 						if(servicetimes == 999){       //当充值的对象时时限卡时，充值时必须将尾款全部补齐
@@ -369,7 +376,9 @@
 											servicetimes:servicetimes,
 											remaintimes:remaintimes,
 											isReal:isReal,
-											channelFlag:channelFlag
+											channelFlag:channelFlag,
+											belongOfficeId:belongOfficeId,        
+											belongUserId:belongUserId          
 										 },
 										url:"${ctx}/ec/orders/addOrderRechargeLog",
 										success:function(date){
@@ -686,6 +695,18 @@ window.onload=initStatus;
 		    yes: function(index, layero){
 		    	var obj =  layero.find("iframe")[0].contentWindow;
      	    	var sum = obj.document.getElementById("sum").value; //是否使用了账户余额
+				var loading = obj.document.getElementById("loading");
+     	    	var belongOfficeId = obj.document.getElementById("belongOfficeId").value;
+				var belongUserId = obj.document.getElementById("belongUserId").value;
+				$(loading).show();
+				
+				
+				if(belongOfficeId == ''){
+					$(loading).hide();
+					top.layer.alert('归属机构必填！', {icon: 0, title:'提醒'});
+					return;
+				}
+				
 				//异步处理预约金
 				$.ajax({
 					type:"post",
@@ -695,10 +716,13 @@ window.onload=initStatus;
 						userid:userid,
 						servicetimes:servicetimes,
 						orderArrearage:orderArrearage,
-						channelFlag:channelFlag
+						channelFlag:channelFlag,
+						belongOfficeId:belongOfficeId,
+						belongUserId:belongUserId
 					 },
 					url:"${ctx}/ec/orders/handleAdvanceFlag?recid="+recid+"&userid="+userid+"&orderid="+orderid,
 					success:function(date){
+						$(loading).hide();
 						if(date == 'success'){
 							top.layer.alert('处理成功!', {icon: 1, title:'提醒'});
 							window.location="${ctx}/ec/orders/orderform?orderid="+orderid;
