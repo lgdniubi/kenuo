@@ -30,6 +30,7 @@ import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.Orders;
 import com.training.modules.ec.entity.Users;
 import com.training.modules.ec.entity.UsersAccounts;
+import com.training.modules.ec.service.CustomerService;
 import com.training.modules.ec.service.MtmyUsersService;
 import com.training.modules.ec.service.OrderGoodsService;
 import com.training.modules.ec.service.OrdersService;
@@ -54,6 +55,8 @@ public class MtmyUsersController extends BaseController{
 	private OrderGoodsService ordergoodService;
 	@Autowired
 	private MtmyUsersDao mtmyUsersDao;
+	@Autowired
+	private CustomerService customerService;
 	
 	/**
 	 * 查询所有用户数据
@@ -217,6 +220,8 @@ public class MtmyUsersController extends BaseController{
 			mtmyUsersDao.insertAccounts(users);
 			//新增用户时插入用户统计表
 			mtmyUsersDao.insterSaleStats(users);
+			//新增用户时插入新客表、新客日志表，统计绑定店铺、绑定的美容师
+			customerService.saveCustomerFranchisee(users.getUserid(),UserUtils.getUser().getOffice().getId());
 			addMessage(redirectAttributes, "添加用户"+users.getName()+"成功");
 		}
 		return "redirect:" + adminPath + "/ec/mtmyuser/list";

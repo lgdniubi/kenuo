@@ -51,6 +51,8 @@ public class Comment extends DataEntity<Comment>{
 	private Office office;		//店铺信息
 	private String shopName;	//店铺名称
 	
+	private String whetherImg;   //是否有图
+	
 	/**
 	 * sharp 所加，用于查询每个预约下的评论 
 	 */
@@ -235,6 +237,12 @@ public class Comment extends DataEntity<Comment>{
 	}
 	public void setShopName(String shopName) {
 		this.shopName = shopName;
+	}
+	public String getWhetherImg() {
+		return whetherImg;
+	}
+	public void setWhetherImg(String whetherImg) {
+		this.whetherImg = whetherImg;
 	}
 	
 	

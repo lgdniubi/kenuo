@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.CustomerDao">
+
+	<!-- 插入新客 -->
+	<insert id="insertCustomer" useGeneratedKeys="true" keyProperty="cusId">
+		INSERT INTO mtmydb.mtmy_customer(
+			user_id,
+			franchisee_id,
+			<if test="officeId != null and officeId != ''">
+				office_id,
+				office_pids,
+				office_time,
+			</if>
+			<if test="beautyId != null and beautyId != ''">
+				beauty_id,
+				beauty_time,
+			</if>
+			franchisee_time
+		)VALUES(
+			#{userId},
+			#{franchiseeId},
+			<if test="officeId != null and officeId != ''">
+				#{officeId},
+				#{officePids},
+				SYSDATE(),
+			</if>
+			<if test="beautyId != null and beautyId != ''">
+				#{beautyId},
+				SYSDATE(),
+			</if>
+			SYSDATE()
+		)
+	</insert>
+	
+	<!-- 每天美耶用户绑定商家的基础上绑定店铺或店铺和美容师 -->
+	<update id="insertOfficeOrBeauty">
+		UPDATE mtmydb.mtmy_customer
+		SET 
+			<if test="beautyId != null and beautyId != ''">
+				beauty_id = #{beautyId},
+				beauty_time = SYSDATE(),
+			</if>
+			office_id = #{officeId},
+			office_pids = #{officePids},
+			office_time = SYSDATE()
+		WHERE user_id = #{userId}
+		AND franchisee_id = #{franchiseeId}
+	</update>
+	
+	<!-- 查询每天美耶用户是否绑定商家 -->
+	<select id="selectFranchisee" resultType="Integer">
+		SELECT COUNT(1)
+		FROM mtmydb.mtmy_customer
+		WHERE user_id = #{userId}
+		AND franchisee_id = #{franchiseeId}
+	</select>
+	
+	<!-- 查询每天美耶用户绑定的商家对应的店铺 -->
+	<select id="selectFranchiseeOffice" resultType="Customer">
+		SELECT 
+			cus_id as 'cusId',
+			office_id as 'officeId'
+		FROM mtmydb.mtmy_customer
+		WHERE user_id = #{userId}
+		AND franchisee_id = #{franchiseeId}
+	</select>
+	
+	<!-- 插入新客日志 -->
+	<insert id="insertCustomerLog">
+		INSERT INTO mtmydb.mtmy_customer_log(
+			cus_id,
+			franchisee_id,
+			<if test="officeId != null and officeId != ''">
+				office_id,
+			</if>
+			<if test="beautyId != null and beautyId != ''">
+				beauty_id,
+			</if>
+			cusl_type,
+			create_time
+		)VALUES(
+			#{cusId},
+			#{franchiseeId},
+			<if test="officeId != null and officeId != ''">
+				#{officeId},
+			</if>
+			<if test="beautyId != null and beautyId != ''">
+				#{beautyId},
+			</if>
+			0,
+			SYSDATE()
+		)
+	</insert>
+	
+	
+</mapper>

@@ -70,6 +70,15 @@
 					<if test="dbName == 'oracle'">'%'||#{usersName}||'%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%', #{usersName}, '%')</if>
 			</if>
+			<if test="whetherImg != null and whetherImg != ''">
+				<if test="whetherImg == 0">
+					AND c.img != ''
+					AND c.img is not null
+				</if>
+				<if test="whetherImg == 1">
+					AND (c.img = '' OR c.img is null)
+				</if>
+			</if>
 			ORDER BY c.add_time DESC
 	</select>
 	<select id="findRealByCid" parameterType="Comment" resultType="Comment">
@@ -129,6 +138,15 @@
 						AND u.nickname LIKE
 							<if test="dbName == 'oracle'">'%'||#{usersName}||'%'</if>
 							<if test="dbName == 'mysql'">CONCAT('%', #{usersName}, '%')</if>
+					</if>
+					<if test="whetherImg != null and whetherImg != ''">
+						<if test="whetherImg == 0">
+							AND b.img != ''
+							AND b.img is not null
+						</if>
+						<if test="whetherImg == 1">
+							AND (b.img = '' OR b.img is null)
+						</if>
 					</if>
 			) t join sys_user tt
 			on t.beautyId = tt.id
@@ -258,6 +276,15 @@
 			</if>
 			<if test="office != null and office.id != null and office.id != ''">
 				AND a.shop_id = #{office.id} 
+			</if>
+			<if test="whetherImg != null and whetherImg != ''">
+				<if test="whetherImg == 0">
+					AND a.img != ''
+					AND a.img is not null
+				</if>
+				<if test="whetherImg == 1">
+					AND (a.img = '' OR a.img is null)
+				</if>
 			</if>
 		GROUP BY a.id
 		ORDER BY a.create_date DESC
