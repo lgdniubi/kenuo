@@ -163,6 +163,12 @@
 							<input id="beginDate" name="beginDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${comment.beginDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" placeholder="开始时间" readonly="readonly"/>
 							<label>&nbsp;&nbsp;--&nbsp;&nbsp;</label>
 							<input id="endDate" name="endDate" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${comment.endDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" placeholder="结束时间" readonly="readonly"/>
+							<label>是否有图：</label>	
+							<select id ="whetherImg" name="whetherImg" class="form-control" style="width:185px;">
+								<option value="" <c:if test="${comment.whetherImg == ''}">selected</c:if>>全部</option>
+								<option value="0" <c:if test="${comment.whetherImg == '0'}">selected</c:if>>有图</option>
+								<option value="1" <c:if test="${comment.whetherImg == '1'}">selected</c:if>>无图</option>
+							</select>
 						</div>
 	    			</form:form>
 	    			<!-- 工具栏 -->
