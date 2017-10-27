@@ -45,6 +45,10 @@
 						$("[name='"+str[i]+"pushMoney']").each(function(){
 							sumPushMoney += parseFloat($(this).val());
 			    		});
+						if(parseFloat(sumPushMoney)<0){
+							top.layer.alert('营业总额必须大于0！', {icon: 0, title:'提醒'});
+							return;
+						}
 						if(parseFloat(sumPushMoney) - parseFloat(orderamount) > 0){
 							top.layer.alert('营业总额小于等于订单应付总额！', {icon: 0, title:'提醒'});
 							return;
