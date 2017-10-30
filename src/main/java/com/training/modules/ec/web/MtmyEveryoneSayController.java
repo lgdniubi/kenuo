@@ -110,4 +110,23 @@ public class MtmyEveryoneSayController extends BaseController{
 			return "error";
 		}
 	}
+	
+	/**
+	 * 修改说说是否显示
+	 * @param mtmyEveryoneSay
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="updateIsShow")
+	@ResponseBody
+	public String updateIsShow(MtmyEveryoneSay mtmyEveryoneSay,HttpServletRequest request){
+		try{
+			mtmyEveryoneSayService.updateIsShow(mtmyEveryoneSay);
+			return "SUCCESS";
+		}catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "修改说说是否显示 ", e);
+			logger.error("修改说说是否显示 出错信息：" + e.getMessage());
+			return "ERROR";
+		}
+	}
 }
