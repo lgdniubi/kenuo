@@ -222,14 +222,11 @@
    	   					}
    	       			}); 
    	   				$(".loading").hide();
-   	   				if($("#shopId").val() == ""){
-   	   					$("#shopId").focus();	// 若无选中店铺 则自动定位到 选中店铺 下拉框
-   	   				}
-   	   				/* if($("#shopId").val() != ""){	// 若选中店铺则自动加载美容师
+   	   				if($("#shopId").val() != ""){	// 若选中店铺则自动加载美容师
    	   					changeShop();
    	   				}else{
    	   					$("#shopId").focus();	// 若无选中店铺 则自动定位到 选中店铺 下拉框
-   	   				} */
+   	   				}
    	       		}
    	       	})
    		}else{
@@ -257,11 +254,13 @@
 							top.layer.alert('数据加载失败！', {icon: 0, title:'提醒'});
 						}else{
 							$.each(data.data.beautys,function(index,item){
-								if(item.beauty_id == data.loginUserId){
+								$("#beauticianId_"+data.recId).append("<option value="+item.beauty_id+">"+item.name+"</option>");
+								
+								/* if(item.beauty_id == data.loginUserId){
 									$("#beauticianId_"+data.recId).append("<option value="+item.beauty_id+" selected=\"selected\">"+item.name+"</option>");
 								}else{
 									$("#beauticianId_"+data.recId).append("<option value="+item.beauty_id+">"+item.name+"</option>");
-								}
+								} */
 			    			}); 
 						}
 	   	   				$(".loading").hide();
