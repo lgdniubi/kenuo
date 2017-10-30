@@ -2707,12 +2707,41 @@ public class OrdersController extends BaseController {
 				int goodsType = 0;                    //商品区分(0: 老商品 1: 新商品)
 				String officeId = "";           //组织架构ID
 				double advancePrice = 0;    //单个实物的预约金
+				int recId = 0;
 				List<OrderGoods> lists = ordersService.selectOrderGoodsByOrderid(orders.getOrderid());   //卡项本身  
 				if(lists.size() > 0){
 					detailsTotalAmount = lists.get(0).getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
 					goodsType = lists.get(0).getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
 					officeId = lists.get(0).getOfficeId();           //组织架构ID
 					advancePrice = lists.get(0).getAdvancePrice();    //单个实物的预约金
+					recId = lists.get(0).getRecid();
+				}
+				
+				if(!"bm".equals(orders.getChannelFlag())){
+					//实物带预约金，点击确认收货，按照虚拟有预约金处理的方法入库
+					orderGoodsDetailsService.updateAdvanceFlag(recId+"",orders.getBelongOfficeId(),orders.getBelongUserId());
+					
+					//保存订单商品详情记录表
+					OrderGoodsDetails details = new OrderGoodsDetails();
+					details.setOrderId(orders.getOrderid());
+					details.setGoodsMappingId(recId+"");
+					details.setTotalAmount(0);	//实付款金额
+					details.setOrderBalance(0);	//订单余款
+					details.setOrderArrearage(0);	//订单欠款
+					details.setItemAmount(0);	//项目金额
+					details.setItemCapitalPool(0); //项目资金池
+					details.setServiceTimes(0);	//剩余服务次数
+					details.setAppTotalAmount(0);   //app实付金额
+					details.setAppArrearage(0);        //app欠款金额
+					details.setSurplusAmount(0);   //套卡剩余金额(套卡的才存)
+					details.setType(0);
+					details.setAdvanceFlag("2");
+					details.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
+					details.setCreateBy(UserUtils.getUser());
+					details.setBelongOfficeId(orders.getBelongOfficeId());
+					details.setBelongUserId(orders.getBelongUserId());
+					//保存订单商品详情记录
+					orderGoodsDetailsService.saveOrderGoodsDetails(details);
 				}
 				
 				//若为老商品，则对店铺有补偿
