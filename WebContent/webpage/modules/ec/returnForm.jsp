@@ -479,7 +479,7 @@
 			        <label><font color="red">*</font>问题描述：</label>
 			        <form:textarea path="problemDesc" htmlEscape="false" rows="3"  style="width:300px;" maxlength="200" class="form-control required"/>
 			        <p></p>
-					<table>
+					<table id="contentTable" class="table-condensed dataTable no-footer">
 						<tr>
 							<td>
 								<label><font color="red">*</font>归属机构：</label>

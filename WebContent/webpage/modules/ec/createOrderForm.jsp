@@ -16,39 +16,48 @@
 		var discount=1;
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-		  if(validateForm.form()){
-			var goodselectIds = $("#goodselectIds").val(); 
-			if(goodselectIds == undefined){
-				top.layer.alert('商品信息不能为空!', {icon: 0, title:'提醒'}); 
-				return;
-			}
-			
-			if($("#isNeworder").val() == 0){
-				var sysUserId = $("#sysUserId").val(); 
-				var belongUserId = $("#belongUserId").val(); 
-				if(sysUserId == belongUserId){
-					top.layer.alert('归属人和业务员不能是同一个人!', {icon: 0, title:'提醒'}); 
+			if(validateForm.form()){
+				var goodselectIds = $("#goodselectIds").val(); 
+				if(goodselectIds == undefined){
+					top.layer.alert('商品信息不能为空!', {icon: 0, title:'提醒'}); 
 					return;
 				}
-				if(sysUserId == undefined){
-					top.layer.alert('业务员信息不能为空!', {icon: 0, title:'提醒'}); 
-					return;
+				//新订单,业务员校验
+				if($("#isNeworder").val() == 0){
+					var sysUserId = $("#sysUserId").val(); 
+					var belongUserId = $("#belongUserId").val(); 
+					var orderamount = $("#orderamount").val();
+					
+					if(sysUserId == belongUserId){
+						top.layer.alert('归属人和业务员不能是同一个人!', {icon: 0, title:'提醒'}); 
+						return;
+					}
+					if(sysUserId == undefined){
+						top.layer.alert('业务员信息不能为空!', {icon: 0, title:'提醒'}); 
+						return;
+					}else{
+						var str = $("#strval").val();
+						str = str.split(",");
+						var sumPushMoney = 0;
+						for(var i = 0; i < str.length-1; i++){
+							$("[name='"+str[i]+"pushMoney']").each(function(){
+								sumPushMoney += parseFloat($(this).val());
+				    		});
+							if(parseFloat(sumPushMoney)<0){
+								top.layer.alert('营业总额必须大于0！', {icon: 0, title:'提醒'});
+								return;
+							}
+							if(parseFloat(sumPushMoney) - parseFloat(orderamount) > 0){
+								top.layer.alert('营业总额小于等于订单应付总额！', {icon: 0, title:'提醒'});
+								return;
+							}
+							sumPushMoney = 0;
+						}
+					}
 				}
-				
-				var sumPushMoney = 0;
-				var orderamount = $("#orderamount").val();
-	   			$("[name='"+sysUserId+"pushMoney']").each(function(){
-	   				sumPushMoney += parseFloat($(this).val());
-	    		});
-	   			if(parseFloat(sumPushMoney) - parseFloat(orderamount) > 0){
-	    			top.layer.alert('营业总额小于等于订单应付总额！', {icon: 0, title:'提醒'});
-	    			return;
-	    		}
-			}
-			
-			$("#inputForm").submit();
-			 return true;	
-		  }
+				$("#inputForm").submit();
+				return true;	
+			  }
 		  return false;
 		}
 		//添加商品
@@ -216,8 +225,20 @@
 		   $("#Ichecks").attr("disabled",false);
 	   }
     }
-    
-	function deleteFile(obj){
+	//删除业务员
+	function deleteFile(obj,id){
+		$(obj).parent().parent().remove();
+		//删除业务员时,同时对比隐藏域是否需存在该值
+		var idstr = id+"pushMoney";
+		var strval = $("#strval").val();
+		if($("[name='"+idstr+"']").val() == undefined){
+			id = id+",";
+			strval = strval.replace(id,"");
+		} 
+		$("#strval").val(strval);
+	}
+	//删除备注
+	function deleteFileRemarks(obj){
 		$(obj).parent().parent().remove();
 	}
 	
@@ -520,10 +541,17 @@
 	    					"<td><input id='sysMobile' name='sysMobile' type='text' value='"+sysMobile+"' class='form-control' readonly='readonly'></td>"+
 	    					"<td><input id='pushMoney' name='pushMoney' value='"+pushMoney+"' readonly='readonly' class='form-control required' type='text' class='form-control'></td>"+
 	    					"<input id='pushMoney' name='"+sysUserId+"pushMoney'  type='hidden' value='"+pushMoney+"' readonly='readonly' class='form-control required' type='text' class='form-control'>"+
-	    					"<td><a href='#' class='btn btn-danger btn-xs' onclick='deleteFile(this)'><i class='fa fa-trash'></i> 删除</a></td>"+
+	    					"<td><a href='#' class='btn btn-danger btn-xs' onclick='deleteFile(this,\""+sysUserId+"\")'><i class='fa fa-trash'></i> 删除</a></td>"+
 	    					"</tr>"
 	    			);
-    	    		
+	    	    	//把获取到的sysUserId存放到隐藏域中
+	    	    	var strval = $("#strval").val();
+	    	    	//判断sysUserId是否存在strval中
+	    	    	var sysUserIdStr = sysUserId+",";
+	    	    	if(strval.indexOf(sysUserIdStr) < 0){
+		    	    	strval += sysUserIdStr;
+		    	    	$("#strval").val(strval);
+	    	    	}
     	    		
 					top.layer.close(index);
     	    	}
@@ -549,7 +577,7 @@
     					"<td align='center'>"+
     						"<div style='width:260px;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;'>"+remarks+"</div><input id='orderRemarks' name='orderRemarks' type='hidden' value='"+remarks+"' class='form-control' readonly='readonly'>"+
     					"</td>"+
-    					"<td><a href='#' class='btn btn-danger btn-xs' onclick='deleteFile(this)'><i class='fa fa-trash'></i> 删除</a></td>"+
+    					"<td><a href='#' class='btn btn-danger btn-xs' onclick='deleteFileRemarks(this)'><i class='fa fa-trash'></i> 删除</a></td>"+
     					"</tr>"
     			);
 				top.layer.close(index);
@@ -592,6 +620,7 @@
 				<label><font color="red">*</font>昵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：</label>
 				<input id="username" name="username" type="text" class="form-control required" readonly="true" style="width:200px" />
 				<input type="hidden" name="userid" id="userid" />
+				<input type="hidden" name="strval" id="strval" /><!-- 多个业务员校验用 -->
 				<p></p>
 				<label><font color="red">*</font>订单性质：</label>
 				<form:select path="distinction"  class="form-control" style="width:200px">
