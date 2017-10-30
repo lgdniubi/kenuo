@@ -56,6 +56,27 @@
 				});
 			 } 
 		}
+		//是否显示
+		function updateIsShow(id,isShow){
+			$(".loading").show();//打开展示层
+			$.ajax({
+				type : "POST",
+				url : "${ctx}/ec/everyoneSay/updateIsShow?mtmyEveryoneSayId="+id+"&isShow="+isShow,
+				success: function(obj) {
+					$(".loading").hide(); //关闭加载层
+					if("SUCCESS" == obj){
+						$("#"+id).html("");//清除DIV内容	
+						if(isShow == '0'){//isShow代表的改变之后的当前状态
+							$("#"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"updateIsShow('"+id+"','1')\">");
+						}else if(isShow == '1'){
+							$("#"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"updateIsShow('"+id+"','0')\">");
+						}
+					}else if("ERROR" == obj){
+						top.layer.alert('修改失败!', {icon: 1, title:'提醒'});
+					}
+				}
+			});  
+		}
     </script>
 </head>
 <body>
@@ -88,6 +109,15 @@
 					 			<div class="talk_inner">
 									<div class="talk_head">回复用户：</div>
 									<div class="talk_con">${mtmyEveryoneSay.userName}　<fmt:formatDate value="${mtmyEveryoneSay.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></div>
+									<div id="${mtmyEveryoneSay.mtmyEveryoneSayId}">
+										<c:if test="${mtmyEveryoneSay.isShow  eq '0'}">
+											<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="updateIsShow('${mtmyEveryoneSay.mtmyEveryoneSayId}','1')">
+										</c:if>
+										<c:if test="${mtmyEveryoneSay.isShow eq '1'}">
+											<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="updateIsShow('${mtmyEveryoneSay.mtmyEveryoneSayId}','0')">
+										</c:if>
+									</div>
+										<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 										<shiro:hasPermission name="ec:everyoneSay:delResponse">
 											<button onclick="delResponse(${mtmyEveryoneSay.parentId},${mtmyEveryoneSay.mtmyEveryoneSayId})" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</button>
 										</shiro:hasPermission>

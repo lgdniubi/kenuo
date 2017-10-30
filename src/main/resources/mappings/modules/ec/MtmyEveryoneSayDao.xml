@@ -14,6 +14,7 @@
 			es.user_id AS 'userId',
 			es.user_name AS 'userName',
 			es.user_photo AS 'userPhoto',
+			es.is_show AS 'isShow',
 			es.user_level AS 'userLevel',
 			es.create_date AS 'createDate',
 			(CASE WHEN g.goods_name IS NOT NULL THEN g.goods_name
@@ -63,6 +64,7 @@
 			user_id AS 'userId',
 			user_name AS 'userName',
 			user_photo AS 'userPhoto',
+			is_show AS 'isShow',
 			user_level AS 'userLevel',
 			create_date AS 'createDate'
 		FROM mtmydb.mtmy_everyone_say
@@ -81,6 +83,7 @@
 			user_id AS 'userId',
 			user_name AS 'userName',
 			user_photo AS 'userPhoto',
+			is_show AS 'isShow',
 			user_level AS 'userLevel',
 			create_date AS 'createDate'
 		FROM mtmydb.mtmy_everyone_say
@@ -102,4 +105,11 @@
 		WHERE id = #{mtmyEveryoneSayId}
 		AND parent_id = #{parentId}
 	</delete>
+	
+	<!-- 修改说说是否显示 -->
+	<update id="updateIsShow">
+		UPDATE mtmydb.mtmy_everyone_say
+		SET is_show = #{isShow}
+		WHERE id = #{mtmyEveryoneSayId}
+	</update>
 </mapper>

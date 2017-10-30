@@ -49,6 +49,28 @@
 					laydate(start);
 					laydate(end);
 	    });
+	
+		//是否显示
+		function updateIsShow(id,isShow){
+			$(".loading").show();//打开展示层
+			$.ajax({
+				type : "POST",
+				url : "${ctx}/ec/everyoneSay/updateIsShow?mtmyEveryoneSayId="+id+"&isShow="+isShow,
+				success: function(obj) {
+					$(".loading").hide(); //关闭加载层
+					if("SUCCESS" == obj){
+						$("#"+id).html("");//清除DIV内容	
+						if(isShow == '0'){//isShow代表的改变之后的当前状态
+							$("#"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"updateIsShow('"+id+"','1')\">");
+						}else if(isShow == '1'){
+							$("#"+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"updateIsShow('"+id+"','0')\">");
+						}
+					}else if("ERROR" == obj){
+						top.layer.alert('修改失败!', {icon: 1, title:'提醒'});
+					}
+				}
+			}); 
+		}
     </script>
     <title>说说管理</title>
 </head>
@@ -93,6 +115,7 @@
                 			<th style="text-align: center;">点赞数</th>
                 			<th style="text-align: center;">位置类型</th>
                 			<th style="text-align: center;">时间</th>
+                			<th style="text-align: center;">是否显示</th>
                 			<th style="text-align: center;">操作</th>
                 		</tr>
                 	</thead>
@@ -120,6 +143,14 @@
 							</td>
 							<td style="text-align: center;">
 								<fmt:formatDate value="${mtmyEveryoneSay.createDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
+							</td>
+							<td style="text-align: center;" id="${mtmyEveryoneSay.mtmyEveryoneSayId}">
+								<c:if test="${mtmyEveryoneSay.isShow  eq '0'}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="updateIsShow('${mtmyEveryoneSay.mtmyEveryoneSayId}','1')">
+								</c:if>
+								<c:if test="${mtmyEveryoneSay.isShow eq '1'}">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="updateIsShow('${mtmyEveryoneSay.mtmyEveryoneSayId}','0')">
+								</c:if>
 							</td>	
 							<td style="text-align: center;">
 								<shiro:hasPermission name="ec:everyoneSay:del">
