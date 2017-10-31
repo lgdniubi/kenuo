@@ -859,7 +859,7 @@
 	
 	<select id="findOfficeListById" resultType="String">
 		SELECT 
-			o.id
+			GROUP_CONCAT(o.id)
 		FROM 
 			sys_office o 
 		LEFT JOIN 
