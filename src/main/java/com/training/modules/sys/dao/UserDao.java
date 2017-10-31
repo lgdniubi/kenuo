@@ -325,7 +325,7 @@ public interface UserDao extends CrudDao<User> {
 	 * @param id
 	 * @return
 	 */
-	public List<String> findOfficeListById(Integer id);
+	public String findOfficeListById(Integer id);
 	/**
 	 * 修改用户权限
 	 * @param valueOf
