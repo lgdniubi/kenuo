@@ -49,7 +49,7 @@
 			
 			// 用户-菜单
 			var zNodes=[
-					<c:forEach items="${fzxMenu}" var="fzxMenu">{id:"${fzxMenu.menuId}", pId:"0", name:"${fzxMenu.name}"},
+					<c:forEach items="${fzxMenu}" var="fzxMenu">{id:"${fzxMenu.menuId}", pId:"${fzxMenu.parent.menuId}", name:"${fzxMenu.name}"},
 		            </c:forEach>];
 			// 初始化树结构
 			var tree = $.fn.zTree.init($("#menuTree"), setting, zNodes);
