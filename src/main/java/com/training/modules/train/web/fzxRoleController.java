@@ -192,7 +192,7 @@ public class fzxRoleController extends BaseController{
 	@RequestMapping(value = "auth")
 	public String auth(Model model,FzxRole fzxRole,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
-			model.addAttribute("fzxMenu", fzxMenuService.findAllList());
+			model.addAttribute("fzxMenu", fzxMenuService.findAllMenu());
 			model.addAttribute("fzxRole", fzxRoleService.findRoleMenu(fzxRole));
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "妃子校角色权限设置", e);
