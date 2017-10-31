@@ -28,8 +28,9 @@
 						for (var i = 0; i < officeTreeIds.length; i++) {
 							officeIds.push(officeTreeIds[i].id); 
 						}
-						$("#fzxRoleId").val(fzxRoleId[0].id);
-						$("#officeIds").val(officeIds);
+						$("#addfzxRoleId").val(fzxRoleId[0].id);
+						$("#addofficeIds").val(officeIds);
+						var a = $("#addofficeIds").val();
 				    	$('#saveFzxRoleFrom').submit();
 					    top.layer.close(index);
 					  },
@@ -89,8 +90,8 @@
 									<%-- <table:addRow url="${ctx}/train/fzxRole/addFzxRoleForm" title="添加角色" width="800px" height="600px"></table:addRow> --%>
 									<form id="saveFzxRoleFrom" action="${ctx}/sys/user/saveFzxRoleOfficeById" method="post" class="hide">
 										<input type="hidden" name="userId" value="${user.id}"/>
-										<input type="hidden" name="fzxRoleId" id="fzxRoleId"/>
-										<input type="hidden" name="officeIds" id="officeIds"/>
+										<input type="hidden" name="fzxRoleId" id="addfzxRoleId"/>
+										<input type="hidden" name="officeIds" id="addofficeIds"/>
 									</form>
 									<button id="addRoleButton" type="submit"  class="btn btn-outline btn-primary btn-sm" title="添加" onclick="addRoleButton()"><i class="fa fa-plus"></i> 添加</button>
 									<%-- <a href="#" onclick="openDialog('添加权限', '${ctx}/train/fzxRole/addFzxRoleForm?fzxRoleIds=${fzxRoleIds}&userId=${user.id}','800px', '600px')"  class="btn btn-outline btn-primary btn-sm" ><i class="fa fa-plus"></i>添加</a>
