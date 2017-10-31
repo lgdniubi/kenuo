@@ -1450,7 +1450,7 @@ public class UserController extends BaseController {
      */
     @RequestMapping(value="editOfficeFrom")
     public String editOfficeFrom(String userId,String roleId,Model model){
-    	List<String> officeIds = Lists.newArrayList();
+    	String officeIds = null;
     	Integer id = userDao.findIdByUserFzxRoleId(userId,roleId);
     	if (id != null) {
     		officeIds =  userDao.findOfficeListById(id);
