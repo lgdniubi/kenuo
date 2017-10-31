@@ -5,6 +5,7 @@ package com.training.modules.sys.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
@@ -25,6 +26,9 @@ import com.training.modules.sys.utils.UserUtils;
 @Service
 @Transactional(readOnly = true)
 public class OfficeService extends TreeService<OfficeDao, Office> {
+	
+	@Autowired
+	private OfficeDao officeDao;
 
 	public List<Office> findAll(){
 		return UserUtils.getOfficeList();
@@ -312,4 +316,20 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public void updateisyesno(String id,String type,String isyesno){
 		dao.updateisyesno(id,type,isyesno);
 	}
+
+	/**
+	 * 
+	 * @Title: findOfficeByUserIdAndFzxRoleId
+	 * @Description: TODO 查询当前用户下角色的权限
+	 * @param roleId
+	 * @param id
+	 * @return:
+	 * @return: List<Office>
+	 * @throws
+	 * 2017年10月27日
+	 */
+	public List<Office> findOfficeByUserIdAndFzxRoleId(int roleId, String id) {
+		return officeDao.findOfficeByUserIdAndFzxRoleId(roleId,id);
+	}
+
 }

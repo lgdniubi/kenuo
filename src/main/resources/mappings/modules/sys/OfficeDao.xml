@@ -678,4 +678,24 @@
 			<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
 		AND a.del_flag = 0
 	</select>
+	
+	<select id="findOfficeByUserIdAndFzxRoleId" resultType="Office">
+		SELECT
+		o.id,
+		o.parent_id AS "parent.id",
+		o.parent_ids,
+		o.area_id AS "area.id",
+		o.code,
+		o.name,
+		r.id AS "fzxRole.roleId",
+		r.name AS "fzxRole.name",
+		u.id AS "user.id",
+		u.name AS "user.name"
+		FROM sys_office o LEFT JOIN fzx_user_role_office uro ON o.id = uro.office_id
+		JOIN fzx_user_role ur ON ur.id = uro.u_r_id
+		JOIN fzx_role r ON ur.fzx_role_id = r.id
+		JOIN sys_user u ON u.id = ur.user_id 
+		WHERE u.id =#{1}  AND r.id = #{0};
+	</select>
+	
 </mapper>

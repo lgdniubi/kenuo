@@ -8,8 +8,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.shiro.session.Session;
 import org.restlet.engine.util.DateUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -29,7 +27,6 @@ import com.training.common.utils.StringUtils;
 import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.entity.Users;
 import com.training.modules.ec.utils.SaveLogUtils;
-import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.sys.dao.DictDao;
 import com.training.modules.sys.dao.MenuDao;
@@ -54,12 +51,10 @@ import com.training.modules.sys.entity.UserSpeciality;
 import com.training.modules.sys.entity.UserVo;
 import com.training.modules.sys.entity.Userinfo;
 import com.training.modules.sys.entity.Userinfocontent;
-import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.LogUtils;
-import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.entity.FzxRole;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -444,10 +439,6 @@ public class SystemService extends BaseService implements InitializingBean {
 	public void saveUser(User user) {
 		// UserLog userLog = new UserLog();
 		
-		User currentUser = UserUtils.getUser();//记录图片上传时,获取当前登录用户的信息
-		String lifeImgUrls = "";//记录图片上传时,图片格式为string类型(格式必须如此)
-		List<String> oldLifeImgUrls = new ArrayList<String>();//生活照调用接口(必传数据,修改之前的照片信息,格式必须如此)
-		
 		if (StringUtils.isBlank(user.getId())) {
 			user.preInsert();
 			if("2".equals(user.getResult())){
@@ -470,12 +461,6 @@ public class SystemService extends BaseService implements InitializingBean {
 				userDao.insert(user);
 			}
 			
-			//美容师头像
-			if(user.getPhoto() != null && user.getPhoto().length() != 0){
-				reservationTime(1, currentUser.getCreateBy().getId(), user.getPhoto(), "", lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
-			}
-			
-			
 			// userinfo.preInsert();
 			if (user.getUserinfo() != null) {
 				user.getUserinfo().preInsert();
@@ -496,15 +481,8 @@ public class SystemService extends BaseService implements InitializingBean {
 				List<Userinfocontent> contlist = livePicTolist(user); // 获取图片信息list
 				if (contlist.size() > 0) {
 					userinfocontentDao.insertPiclive(contlist);
-					
-					//美容师生活图
-					for (Userinfocontent ufc : contlist) {
-						lifeImgUrls +="," + ufc.getUrl();
-					}
-					lifeImgUrls = lifeImgUrls.substring(1);
-					reservationTime(2, currentUser.getCreateBy().getId(), null, null, lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
 				}
-				
+
 			}
 			
 			if(user.getSkill() != null){
@@ -521,14 +499,6 @@ public class SystemService extends BaseService implements InitializingBean {
 			User oldUser = userDao.get(user.getId());
 			//保存用户日志
 			String str = specialLog(oldUser,user);
-			
-			//判断美容师头像是否修改   和之前的美容师头像进行比较
-			String photo = user.getPhoto();//修改之后的美容师头像
-			String oldPhoto = oldUser.getPhoto();//修改之前的美容师头像
-			if(photo != null && photo != "" && !oldPhoto.equals(photo)){
-				reservationTime(1, currentUser.getCreateBy().getId(), user.getPhoto(), oldUser.getPhoto(), lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
-			}
-			
 			JSONObject json = new JSONObject();
 			json.put("property", "[\"no\",\"name\",\"loginName\",\"idCard\",\"inductionTime\",\"email\",\"phone\",\"mobile\"]");
 			json.put("name", "[\"工号\",\"姓名\",\"登录名\",\"身份证号码\",\"入职日期\",\"邮箱\",\"电话\",\"手机号码\"]");
@@ -582,20 +552,14 @@ public class SystemService extends BaseService implements InitializingBean {
 
 				List<Userinfocontent> contlist = livePicTolist(user); // 获取图片信息list
 				if (contlist.size() > 0) {
-					//美容师生活照修改之前,先查询是否存在旧照片
-					oldLifeImgUrls = userinfocontentDao.findByUserId(user.getId());
-					
 					userinfocontentDao.deletPicByuser(user.getId());
 					userinfocontentDao.insertPiclive(contlist);
-					
-					//美容师生活图
-					lifeImgUrls = user.getUserinfocontent().getUrl();//必须是String类型的数据
-					reservationTime(2, currentUser.getCreateBy().getId(), null, null, lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
 				}
 			}
 			
 //begin     修改妃子校用户同时更新每天美耶用户开始   修改时间2017年1月23日
 			//用于验证每天美耶用户   
+			User currentUser = UserUtils.getUser();
 			Users u = new Users();
 			u.setId(currentUser.getId());
 			u.setUserid(user.getMtmyUserId());
@@ -1100,35 +1064,68 @@ public class SystemService extends BaseService implements InitializingBean {
 	public void updateStatus(User user){
 		userDao.updateStatus(user);
 	}
-	
+
 	/**
-	 * 记录店铺首图、美容院和美容师图片上传相关信息
-	 * @param beauticianId
-	 * @param serviceMin
-	 * @param shopId
-	 * @param labelId
-	 * @param request
-	 * @return
+	 * 
+	 * @Title: saveUserAndFzxRole
+	 * @Description: TODO 保存用户权限
+	 * @param user
+	 * @return:
+	 * @return: Integer
+	 * @throws
+	 * 2017年10月26日
 	 */
-	private void reservationTime(int type, String createBy, String fileUrl, String oldUrl, String lifeImgUrls, String userId, String client, HttpServletRequest request, List<String> oldLifeImgUrls) {
-		JSONObject jsonObject = new JSONObject();
-		try {
-			String webReservationTime =	ParametersFactory.getMtmyParamValues("uploader_picture_url");	
-			logger.info("##### web接口路径:"+webReservationTime);
-			String parpm = "";
-			if(type == 1){
-				parpm = "{\"type\":\""+type+"\",\"create_by\":\""+createBy+"\",\"file_url\":\""+fileUrl+"\",\"old_url\":\""+oldUrl+"\",\"life_img_urls\":\""+lifeImgUrls+"\",\"user_id\":\""+userId+"\",\"client\":\""+client+"\"}";
-			}else if(type == 2){
-				parpm = "{\"type\":\""+type+"\",\"create_by\":\""+createBy+"\",\"file_url\":\"\",\"old_url\":"+JSONArray.fromObject(oldLifeImgUrls)+",\"life_img_urls\":\""+lifeImgUrls+"\",\"user_id\":\""+userId+"\",\"client\":\""+client+"\"}";
+	public Integer saveUserAndFzxRole(User user) {
+		
+		return null;
+	}
+
+	/**
+	 * 保存用户的角色和权限
+	 * @param fzxRoleId
+	 * @param officeIds
+	 * @param userId
+	 */
+	@Transactional(readOnly = false)
+	public void saveFzxRoleOfficeById(String fzxRoleId, String officeIds, String userId) {
+		User user  = new User();
+		FzxRole fzxRole  = new FzxRole();
+		fzxRole.setRoleId(Integer.valueOf(fzxRoleId));
+		user.setId(userId);
+		user.setFzxRole(fzxRole);
+		Integer returnId =  userDao.saveFzxRoleByUser(user);
+		if (user.getReturnId() != null && officeIds != null && officeIds != "") {
+			String[] officeId = officeIds.split(",");
+			for (String offId : officeId) {
+				userDao.saveOfficeById(user.getReturnId(),offId);
 			}
-			String url=webReservationTime;
-			System.out.println(parpm);
-			String result = WebUtils.postTrainObject(parpm, url);
-			jsonObject = JSONObject.fromObject(result);
-			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
-		} catch (Exception e) {
-			BugLogUtils.saveBugLog(request, "记录店铺首图、美容院和美容师图片上传相关信息", e);
-			logger.error("调用接口:记录店铺首图、美容院和美容师图片上传相关信息:"+e.getMessage());
+		}
+		
+	}
+
+	/**
+	 * 根据id删除权限
+	 * @param id
+	 */
+	@Transactional(readOnly = false)
+	public void delFzxRoleByUser(Integer id,String userId,String roleId) {
+		//先删除权限
+		userDao.deleteOfficeById(id);
+		//然后删除角色
+		userDao.deleteFzxRoleByUser(userId,roleId);
+	}
+
+	/**
+	 * 修改用户权限
+	 * @param id
+	 */
+	@Transactional(readOnly = false)
+	public void updateOfficeById(String id,String officeIds) {
+		String[] offIds = officeIds.split(",");
+		userDao.deleteOfficeById(Integer.valueOf(id));
+		for (String ofId : offIds) {
+			userDao.updateOfficeById(Integer.valueOf(id),ofId);
 		}
 	}
+
 }

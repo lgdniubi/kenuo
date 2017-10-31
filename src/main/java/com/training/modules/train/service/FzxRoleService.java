@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.sys.entity.Role;
 import com.training.modules.sys.entity.User;
 import com.training.modules.train.dao.FzxRoleDao;
 import com.training.modules.train.entity.FzxRole;
@@ -24,7 +25,9 @@ import com.training.modules.train.entity.FzxRole;
 public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 	
 	@Autowired
-	private RedisClientTemplate redisClientTemplate;		//redis缓存Service
+	private RedisClientTemplate redisClientTemplate; //redis缓存Service
+	@Autowired
+	private FzxRoleDao fzxRoleDao;
 	
 	/**
 	 * 妃子校角色list
@@ -169,4 +172,19 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 	public int checkEnname(String enname){
 		return dao.checkEnname(enname);
 	}
+
+	/**
+	 * 
+	 * @Title: findFzxRoleByUserId
+	 * @Description: TODO 获取用户的所有角色
+	 * @param user
+	 * @return:
+	 * @return: List<User>
+	 * @throws
+	 * 2017年10月27日
+	 */
+	public List<FzxRole> findFzxRoleByUserId(User user) {
+		return fzxRoleDao.findFzxRoleByUserId(user);
+	}
+
 }

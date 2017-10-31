@@ -818,4 +818,64 @@
 			#{id}
 		)
 	</insert>
+	<!-- 保存用户的角色返回主键id -->
+	<insert id="saveFzxRoleByUser" parameterType="user" useGeneratedKeys="true" keyProperty="returnId">
+		INSERT INTO fzx_user_role(
+			user_id,
+			fzx_role_id
+		) VALUES(
+			#{id},
+			#{fzxRole.roleId}
+		)
+	</insert>
+	<!-- 保存用户权限 -->
+	<insert id="saveOfficeById">
+		INSERT INTO fzx_user_role_office(
+			u_r_id,
+			office_id
+		) VALUES(
+			#{id},
+			#{offId}
+		)
+	</insert>
+	<!-- 根据用户id以及角色id查询 -->
+	<select id="findIdByUserFzxRoleId" resultType="Integer">
+		SELECT 
+			id
+		FROM fzx_user_role 
+		WHERE 
+			user_id = #{userId} 
+		AND 
+			fzx_role_id = #{roleId}
+	</select>
+	<!-- 删除权限 -->
+	<delete id="deleteOfficeById">
+		DELETE FROM fzx_user_role_office WHERE u_r_id = #{id}
+	</delete>
+	<!-- 删除用户的指定角色 -->
+	<delete id="deleteFzxRoleByUser">
+		DELETE FROM fzx_user_role WHERE user_id = #{userId} AND fzx_role_id = #{roleId}
+	</delete>
+	
+	<select id="findOfficeListById" resultType="String">
+		SELECT 
+			o.id
+		FROM 
+			sys_office o 
+		LEFT JOIN 
+			fzx_user_role_office uro 
+		ON 
+			o.id = uro.office_id 
+		WHERE uro.u_r_id = #{id}
+	</select>
+	
+	<insert id="updateOfficeById">
+		INSERT INTO fzx_user_role_office(
+			u_r_id,
+			office_id
+		)VALUES(
+			#{id},
+			#{ofId}
+		)
+	</insert>
 </mapper>

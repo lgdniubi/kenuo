@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.management.relation.RoleList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
@@ -34,6 +35,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.thoughtworks.xstream.mapper.Mapper.Null;
 import com.training.common.beanvalidator.BeanValidators;
 import com.training.common.config.Global;
 import com.training.common.json.AjaxJson;
@@ -70,6 +72,7 @@ import com.training.modules.sys.utils.SMSUtils;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.tools.utils.TwoDimensionCode;
 import com.training.modules.train.dao.TrainRuleParamDao;
+import com.training.modules.train.entity.FzxRole;
 import com.training.modules.train.entity.TrainRuleParam;
 import com.training.modules.train.service.FzxRoleService;
 
@@ -1356,6 +1359,125 @@ public class UserController extends BaseController {
 			jsonMap.put("MESSAGE", "修改失败,出现异常");
 		}
     	return jsonMap;
+    }
+    
+    /**
+     * 
+     * @Title: addFzxRole
+     * @Description: TODO 妃子校角色列表查询
+     * @param user
+     * @return:
+     * @return: String
+     * @throws
+     * 2017年10月27日
+     */
+    @RequestMapping(value="addFzxRole")
+    public String addFzxRole(User user,Model model) {
+    	List<FzxRole> fzxRoleList = Lists.newArrayList();
+    	List<Office> officeList = Lists.newArrayList();
+    	Map<Integer, List<Office>> map = new HashMap<>();
+    	StringBuffer fzxRoleIds = new StringBuffer(); 
+    	if (user != null && user.getId() != null) {
+    		fzxRoleList =  fzxRoleService.findFzxRoleByUserId(user);
+		}
+    	if (fzxRoleList != null) {
+			for (FzxRole fzxRole : fzxRoleList) {
+				String str = String.valueOf(fzxRole.getRoleId());
+				fzxRoleIds.append(str);
+				fzxRoleIds.append(",");
+				officeList = officeService.findOfficeByUserIdAndFzxRoleId(fzxRole.getRoleId(),user.getId());
+				if (officeList != null) {
+					map.put(fzxRole.getRoleId(), officeList);
+				}
+			}
+		}
+    	model.addAttribute("fzxRoleIds", fzxRoleIds);
+    	model.addAttribute("user", user);
+    	model.addAttribute("fzxRoleList", fzxRoleList);
+    	model.addAttribute("map", map);
+    	return "modules/sys/userRole";
+    }
+    
+    /**
+     * 保存添加的角色和权限，添加完之后将页面跳转到添加页面
+     * @param fzxRoleId
+     * @param officeIds
+     * @param userId
+     * @return
+     */
+    @RequestMapping(value="saveFzxRoleOfficeById")
+    public String saveFzxRoleOfficeById(String fzxRoleId,String officeIds,String userId,RedirectAttributes redirectAttributes){
+    	try {
+			if (fzxRoleId != null && officeIds != null && userId != null) {
+				systemService.saveFzxRoleOfficeById(fzxRoleId,officeIds,userId);
+				addMessage(redirectAttributes, "添加角色及权限成功!");
+			}
+		} catch (Exception e) {
+			logger.error("保存用户妃子校权限错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "添加角色及权限失败!");
+		}
+    	return "redirect:" + adminPath + "/sys/user/addFzxRole?id="+userId;
+    }
+    
+    /**
+     * 删除指定用户的角色以及权限
+     * @param userId
+     * @param roleId
+     * @return
+     */
+    @RequestMapping(value="delFzxRoleByUser")
+    public String delFzxRoleByUser(String userId,String roleId,RedirectAttributes redirectAttributes){
+    	try {
+			if (!"".equals(userId) && !"".equals(roleId)) {
+				Integer id = userDao.findIdByUserFzxRoleId(userId,roleId);
+				if (id != null) {
+					systemService.delFzxRoleByUser(id,userId,roleId);
+					addMessage(redirectAttributes, "删除角色及权限成功!");
+				}
+			}
+		} catch (Exception e) {
+			logger.error("删除用户妃子校权限错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "删除权限失败，请重新操作!");
+		}
+    	return "redirect:" + adminPath + "/sys/user/addFzxRole?id="+userId;
+    }
+    
+    /**
+     * 修改页面跳转
+     * @param userId
+     * @param roleId
+     * @return
+     */
+    @RequestMapping(value="editOfficeFrom")
+    public String editOfficeFrom(String userId,String roleId,Model model){
+    	List<String> officeIds = Lists.newArrayList();
+    	Integer id = userDao.findIdByUserFzxRoleId(userId,roleId);
+    	if (id != null) {
+    		officeIds =  userDao.findOfficeListById(id);
+			
+		}
+    	model.addAttribute("officeIds", officeIds);
+    	model.addAttribute("userId", userId);
+    	model.addAttribute("roleId", roleId);
+    	model.addAttribute("id", id);
+    	return "modules/sys/editOfficeFrom";
+    }
+    
+    /**
+     * 更新用户的权限
+     * @param id
+     * @return
+     */
+    @RequestMapping(value="updateOffice")
+    public String updateOffice(String id,String officeIds,String userId,RedirectAttributes redirectAttributes){
+    	try {
+			systemService.updateOfficeById(id,officeIds);
+			addMessage(redirectAttributes, "修改角色及权限成功!");
+		} catch (Exception e) {
+			logger.error("修改用户妃子校权限错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "修改权限失败，请重新操作!");
+		}
+    	return "redirect:" + adminPath + "/sys/user/addFzxRole?id="+userId;
     }
 }
 

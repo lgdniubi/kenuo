@@ -91,12 +91,19 @@ public class User extends DataEntity<User> {
 	public static final String DATA_SCOPE_CUSTOM = "2";
 	
 	private FzxRole fzxRole; 	//妃子校菜单
+	private Integer returnId;
 	
 	private String isRecommend;  //是否推荐（0：未推荐；1：推荐）
 	
 	private String companyIds; // 数据范围按商家区分
 	private String companyNames; // 数据范围按商家区分
 	
+	public Integer getReturnId() {
+		return returnId;
+	}
+	public void setReturnId(Integer returnId) {
+		this.returnId = returnId;
+	}
 	public int getUserLevel() {
 		return userLevel;
 	}

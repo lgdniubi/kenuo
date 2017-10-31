@@ -166,4 +166,17 @@ public interface OfficeDao extends TreeDao<Office> {
 	 */
 	public void updateisyesno(@Param("id")String id,@Param("type")String type,@Param("isyesno")String isyesno);
 	
+	/**
+	 * 
+	 * @Title: findOfficeByUserIdAndFzxRoleId
+	 * @Description: TODO 查询当前用户拥有的角色对应的权限
+	 * @param roleId
+	 * @param id
+	 * @return:
+	 * @return: List<Office>
+	 * @throws
+	 * 2017年10月27日
+	 */
+	public List<Office> findOfficeByUserIdAndFzxRoleId(int roleId, String id);
+	
 }

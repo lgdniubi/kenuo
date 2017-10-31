@@ -223,6 +223,36 @@ public class fzxRoleController extends BaseController{
 		return mapList;
 	}
 	/**
+	 * 查询所有菜单(未删除、显示)
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "newTreeData")
+	public List<Map<String, Object>> newTreeData(HttpServletResponse response,String fzxRoleIds) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<FzxRole> list = fzxRoleDao.findList(null);
+		for (int i = 0; i < list.size(); i++) {
+			Map<String, Object> map = Maps.newHashMap();
+			FzxRole e = list.get(i);
+			map.put("id", e.getRoleId());
+			map.put("pId", 0);
+			map.put("name", e.getName());
+			if (!"".equals(fzxRoleIds) && fzxRoleIds != null) {
+				String[] fzxids = fzxRoleIds.split(",");
+				for (int j = 0; j < fzxids.length; j++) {
+					if (e.getRoleId() == Integer.valueOf(fzxids[j])) {
+						map.clear();
+					}
+				}
+			}
+			if (map.get("id") != null) {
+				mapList.add(map);
+			}
+		}
+		return mapList;
+	}
+	/**
 	 * 保存角色菜单权限
 	 * @param model
 	 * @param fzxRole
@@ -366,4 +396,21 @@ public class fzxRoleController extends BaseController{
 		}
 		return "redirect:" + adminPath + "/train/fzxRole/assign?fzxRole.roleId="+fzxRole.getRoleId();
 	}
+	
+	/**
+	 * 
+	 * @Title: addFzxRoleForm
+	 * @Description: TODO 添加页面跳转
+	 * @return:
+	 * @return: String
+	 * @throws
+	 * 2017年10月27日
+	 */
+	@RequestMapping(value="addFzxRoleForm")
+	public String addFzxRoleForm(String userId,String fzxRoleIds,Model model){
+		model.addAttribute("userId", userId);
+		model.addAttribute("fzxRoleIds", fzxRoleIds);
+		return "modules/sys/addFzxRoleForm";
+	}
+	
 }
