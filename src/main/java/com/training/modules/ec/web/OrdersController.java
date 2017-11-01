@@ -2107,7 +2107,7 @@ public class OrdersController extends BaseController {
 						"<td> "+goodsList.get(0).getGoodsNum()+"</td> ";
 				if(isNeworder == 0){
 					suitCardSons = suitCardSons + 
-						"<td> "+goodsList.get(0).getGoodsNum()+"</td> ";
+						"<td></td> ";
 				}else if(isNeworder == 1){
 					suitCardSons = suitCardSons + 
 						"<td><input id='remaintimes_0' value='"+goodsList.get(0).getGoodsNum()+"' name='remaintimeNums' min='0' max='"+goodsList.get(0).getGoodsNum()+"' onkeyup='this.value=this.value.replace(/[^\\d]/g,&quot;&quot;)' class='form-control required'/></td> ";
@@ -2128,7 +2128,7 @@ public class OrdersController extends BaseController {
 							"<td> "+goodsList.get(i).getGoodsNum()+"</td> ";
 					if(isNeworder == 0){
 						suitCardSons = suitCardSons + 
-							"<td> "+goodsList.get(i).getGoodsNum()+"</td></tr> ";
+							"<td></td></tr> ";
 					}else if(isNeworder == 1){
 						suitCardSons = suitCardSons + 
 							"<td><input id='remaintimes_"+i+"' value='"+goodsList.get(i).getGoodsNum()+"' name='remaintimeNums' min='0' max='"+goodsList.get(i).getGoodsNum()+"' onkeyup='this.value=this.value.replace(/[^\\d]/g,&quot;&quot;)' class='form-control required'/></td></tr> ";
@@ -2358,8 +2358,12 @@ public class OrdersController extends BaseController {
 										"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getSpeckeyname()+"</td> "+
-										"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
-										"<td align='center'> "+lists.get(1).getServicetimes()+"</td> "+
+										"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> ";
+									if(orders.getIsNeworder() == 1){
+										suitCardSons = suitCardSons +
+												"<td align='center'> "+lists.get(1).getServicetimes()+"</td> ";
+									}
+									suitCardSons = suitCardSons +			
 										"<td align='center' rowspan="+num+"> "+father.getCouponPrice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getDiscount()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getMembergoodsprice()+"</td> "+
@@ -2396,9 +2400,12 @@ public class OrdersController extends BaseController {
 											"<td align='center'> "+lists.get(i).getMarketprice()+"</td> "+
 											"<td align='center'> "+lists.get(i).getGoodsprice()+"</td> "+
 											"<td align='center'> "+lists.get(i).getSpeckeyname()+"</td> "+
-											"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
-											"<td align='center'> "+lists.get(i).getServicetimes()+"</td> "+
-										"</tr>";
+											"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> ";
+									if(orders.getIsNeworder() == 1){
+										suitCardSons = suitCardSons +
+												"<td align='center'> "+lists.get(i).getServicetimes()+"</td> ";
+									}
+									suitCardSons = suitCardSons + "</tr>";
 								}
 						}else if(orders.getIsReal() == 3){   //通用卡
 							suitCardSons = suitCardSons +
