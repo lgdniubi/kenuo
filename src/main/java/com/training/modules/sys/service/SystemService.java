@@ -499,7 +499,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			fzxRole.setRoleId(4);
 			//user.setId(user.getId());
 			user.setFzxRole(fzxRole);
-			Integer returnId =  userDao.saveFzxRoleByUser(user);
+			userDao.saveFzxRoleByUser(user);
 			userDao.saveOfficeById(user.getReturnId(),user.getOffice().getId());
 		} else {
 //			saveUserLog1(user);
@@ -1101,7 +1101,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		fzxRole.setRoleId(Integer.valueOf(fzxRoleId));
 		user.setId(userId);
 		user.setFzxRole(fzxRole);
-		Integer returnId =  userDao.saveFzxRoleByUser(user);
+		userDao.saveFzxRoleByUser(user);
 		if (user.getReturnId() != null && officeIds != null && officeIds != "") {
 			String[] officeId = officeIds.split(",");
 			for (String offId : officeId) {
