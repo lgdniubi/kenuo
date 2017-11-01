@@ -493,6 +493,14 @@ public class SystemService extends BaseService implements InitializingBean {
 			}
 			// 2017年9月1日 新用户默认商家权限为当前商家
 			userDao.insertFranchiseeAuth(user.getId(), user.getCompany().getId());
+			//saveFzxRoleOfficeById("4",user.getOffice().getId(),user.getId());
+			//给用户设置默认的妃子校角色和权限
+			FzxRole fzxRole  = new FzxRole();
+			fzxRole.setRoleId(4);
+			//user.setId(user.getId());
+			user.setFzxRole(fzxRole);
+			Integer returnId =  userDao.saveFzxRoleByUser(user);
+			userDao.saveOfficeById(user.getReturnId(),user.getOffice().getId());
 		} else {
 //			saveUserLog1(user);
 			// 清除原用户机构用户缓存
