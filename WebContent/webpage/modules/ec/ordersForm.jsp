@@ -9,6 +9,7 @@
 	<script type="text/javascript">
 		
 		var validateForm;
+		
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		  if(validateForm.form()){
 			//  $(".loading").show();
@@ -289,6 +290,7 @@
 			
 	    	
 		    function TopUp(recid,singleRealityPrice,singleNormPrice,orderArrearage,servicetimes,remaintimes,goodsBalance){
+		    	var isCommitted = false;		//表单是否已经提交标识，默认为false
 		    	var orderid = $("#orderid").val();
 		    	var userid = $("#userid").val();
 		    	var isReal = $("#isReal").val();
@@ -361,6 +363,14 @@
 									top.layer.alert('您输入的余额不能大于当前账户的余额！', {icon: 0, title:'提醒'});
 								}else{
 									top.layer.close(index);
+									
+									//防止表单多次提交
+								    if(isCommitted == false){
+								    	isCommitted = true;		//提交表单后，将表单是否已经提交标识设置为true
+								   	}else{
+								       	return false;			
+									}
+									
 									$.ajax({
 										type:"post",
 										data:{
@@ -686,6 +696,7 @@ window.onload=initStatus;
 	    	return;
 		}
 		
+		var isHandled = false;		//表单是否已经提交标识，默认为false
 		top.layer.open({
 		    type: 2, 
 		    area: ['600px', '450px'],
@@ -705,6 +716,13 @@ window.onload=initStatus;
 					$(loading).hide();
 					top.layer.alert('归属机构必填！', {icon: 0, title:'提醒'});
 					return;
+				}
+				
+				//防止表单多次提交
+			    if(isHandled == false){
+			    	isHandled = true;		//提交表单后，将表单是否已经提交标识设置为true
+			   	}else{
+			       	return false;			
 				}
 				
 				//异步处理预约金
