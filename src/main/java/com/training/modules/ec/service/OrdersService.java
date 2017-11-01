@@ -2359,6 +2359,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 */
 	public void saveSuitCardOrder(Orders orders) {
 		DecimalFormat formater = new DecimalFormat("#0.##");   //四舍五入
+		int numSum = 0;
 		User user = UserUtils.getUser(); //登陆用户
 		int mtmyUserId = orders.getUserid();	//每天每耶用户id
 		String orderid = createOrder(mtmyUserId, 0, 0);//订单id
@@ -2368,6 +2369,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<Integer> goodselectIds = orders.getGoodselectIds();	//商品id集合
 		List<Double> orderAmounts = orders.getOrderAmounts();		//成交价集合
 		List<Double> actualPayments = orders.getActualPayments();	//实际付款集合
+		List<Integer> remaintimeNums = orders.getRemaintimeNums();	//套卡订单老产品-实际次数
 		
 		double orderAmountSum = 0d;  //应付总额
 		double afterPaymentSum = 0d;  //实际付款总额
@@ -2378,6 +2380,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		
 		String recid = "";//保存mappingid到账户充值记录表中
 		
+		double usedSurplusAmount = 0;
 		for (Integer i = 0; i < goodselectIds.size(); i++) {
 			Integer goodselectId = goodselectIds.get(i);		//商品id
 			//通过商品id获取当前商品
@@ -2471,15 +2474,12 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setGoodsid(goodsListSon.get(j).getGoodsId());
 					orderGoodsSon.setGoodsname(goodsListSon.get(j).getGoodsName());
 					orderGoodsSon.setOriginalimg(goodsListSon.get(j).getOriginalImg());
+					orderGoodsSon.setSpeckeyname(String.valueOf(goodsListSon.get(j).getGoodsNum()));  //套卡将子项的规格放到spec_key_name
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
 					orderGoodsSon.setRealityAddTime(new Date());   //实际下单时间
 					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
-					if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 0){
-						orderGoodsSon.setGoodsnum(goodsListSon.get(j).getGoodsNum());	//购买数量
-					}else{
-						orderGoodsSon.setGoodsnum(1);	//购买数量
-					}
+					
 					orderGoodsSon.setIsreal(Integer.valueOf(goodsListSon.get(j).getIsReal()));	// 是否为虚拟 0 实物 1虚拟
 					
 					
@@ -2500,6 +2500,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 								orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价*/
 								orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
 								orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
+								orderGoodsSon.setGoodsnum(1);	//购买数量
+							}else{
+								orderGoodsSon.setGoodsnum(goodsListSon.get(j).getGoodsNum());	//购买数量
 							}
 						}else{        //最后一个子项的应付价格单独算（用父类的应付-前n个子项平分价格的总和）
 							double realityOrderAmount = Double.parseDouble(formater.format(orderAmount - realityOrderAmountSum)); //子类平分父类的应付价
@@ -2515,6 +2518,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 								orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价*/
 								orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
 								orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
+								orderGoodsSon.setGoodsnum(1);	//购买数量
+							}else{
+								orderGoodsSon.setGoodsnum(goodsListSon.get(j).getGoodsNum());	//购买数量
 							}
 						}
 					}else{             //若未讨价还价    ((int)(afs*100))/100.0舍弃两位小数后的
@@ -2528,8 +2534,22 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 							/*orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//单次标价
 							orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价*/							
 							
-							orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
+							if(orders.getIsNeworder() == 0){//新订单
+								orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
+							}else if(orders.getIsNeworder() == 1){//老订单
+								orderGoodsSon.setServicetimes(remaintimeNums.get(numSum));
+								usedSurplusAmount = usedSurplusAmount + Double.parseDouble(formater.format((goodsListSon.get(j).getGoodsNum()-remaintimeNums.get(numSum))*orderGoodsSon.getSingleRealityPrice()));
+								numSum = numSum + 1;
+							}
 							orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
+							orderGoodsSon.setGoodsnum(1);	//购买数量
+						}else{
+							if(orders.getIsNeworder() == 0){//新订单
+								orderGoodsSon.setGoodsnum(goodsListSon.get(j).getGoodsNum());	//购买数量
+							}else if(orders.getIsNeworder() == 1){//老订单
+								orderGoodsSon.setGoodsnum(remaintimeNums.get(numSum));	//购买数量
+								numSum = numSum + 1;
+							}
 						}
 					}
 					
@@ -2547,7 +2567,11 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			details.setOrderArrearage(orderArrearage_on);	//订单欠款
 			details.setAppTotalAmount(appTotalAmount);  //app实付金额
 			details.setAppArrearage(appArrearage);   //app欠款金额
-			details.setSurplusAmount(actualPayment_on); //套卡剩余金额
+			if(orders.getIsNeworder() == 0){
+				details.setSurplusAmount(actualPayment_on); //套卡剩余金额
+			}else{
+				details.setSurplusAmount(Double.parseDouble(formater.format(actualPayment_on-usedSurplusAmount))); //套卡剩余金额
+			}
 			details.setType(0);
 			details.setAdvanceFlag("0");
 			details.setCreateOfficeId(user.getOffice().getId());
@@ -2556,6 +2580,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			details.setBelongUserId(orders.getBelongUserId());
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
+			
+			usedSurplusAmount = 0;
 		}
 		
 		Payment payment = paymentDao.getByCode(orders.getPaycode());

@@ -2091,6 +2091,7 @@ public class OrdersController extends BaseController {
 			double debtMoney = Double.valueOf(request.getParameter("debtMoney"));  //卡项欠款
 			double spareMoney = Double.valueOf(request.getParameter("spareMoney"));  //卡项余款
 			int tail = Integer.valueOf(request.getParameter("tail"));  //用来表示添加的卡项商品
+			int isNeworder = Integer.valueOf(request.getParameter("isNeworder"));  //区分新老订单
 			int goodsId = goods.getGoodsId();
 			List<Goods> goodsList = ordersService.selectCardSon(goodsId);
 			if(goodsList.size() > 0){
@@ -2103,7 +2104,15 @@ public class OrdersController extends BaseController {
 						"<td rowspan="+num+"> "+costPrice+"</td> "+
 						"<td> "+goodsList.get(0).getMarketPrice()+"<input id='orderAmounts' name='orderAmounts' type='hidden' value='"+orderAmount+"'></td> "+
 						"<td> "+goodsList.get(0).getShopPrice()+"<input id='actualPayments' name='actualPayments' type='hidden' value='"+actualPayment+"'></td> "+
-						"<td> "+goodsList.get(0).getGoodsNum()+"</td> "+
+						"<td> "+goodsList.get(0).getGoodsNum()+"</td> ";
+				if(isNeworder == 0){
+					suitCardSons = suitCardSons + 
+						"<td> "+goodsList.get(0).getGoodsNum()+"</td> ";
+				}else if(isNeworder == 1){
+					suitCardSons = suitCardSons + 
+						"<td><input id='remaintimes_0' value='"+goodsList.get(0).getGoodsNum()+"' name='remaintimeNums' min='0' max='"+goodsList.get(0).getGoodsNum()+"' onkeyup='this.value=this.value.replace(/[^\\d]/g,&quot;&quot;)' class='form-control required'/></td> ";
+				}
+				suitCardSons = suitCardSons + 
 						"<td rowspan="+num+"> "+spareMoney+"</td> "+
 						"<td rowspan="+num+"> "+debtMoney+"</td> "+
 						"<td rowspan="+num+"> "+
@@ -2116,8 +2125,14 @@ public class OrdersController extends BaseController {
 							"<td> "+goodsList.get(i).getGoodsName()+"</td> "+
 							"<td> "+goodsList.get(i).getMarketPrice()+"</td> "+
 							"<td> "+goodsList.get(i).getShopPrice()+"</td> "+
-							"<td> "+goodsList.get(i).getGoodsNum()+"</td> "+
-						"</tr>";
+							"<td> "+goodsList.get(i).getGoodsNum()+"</td> ";
+					if(isNeworder == 0){
+						suitCardSons = suitCardSons + 
+							"<td> "+goodsList.get(i).getGoodsNum()+"</td></tr> ";
+					}else if(isNeworder == 1){
+						suitCardSons = suitCardSons + 
+							"<td><input id='remaintimes_"+i+"' value='"+goodsList.get(i).getGoodsNum()+"' name='remaintimeNums' min='0' max='"+goodsList.get(i).getGoodsNum()+"' onkeyup='this.value=this.value.replace(/[^\\d]/g,&quot;&quot;)' class='form-control required'/></td></tr> ";
+					}
 				}
 				
 			}
@@ -2142,7 +2157,7 @@ public class OrdersController extends BaseController {
 
 	@RequiresPermissions(value = { "ec:orders:add" }, logical = Logical.OR)
 	@RequestMapping(value = "saveSuitCardOrder")
-	public String saveSuitCardOrder(Orders orders, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
+	public String saveSuitCardOrder(Orders orders,HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
 		try {
 			ordersService.saveSuitCardOrder(orders);
 			addMessage(redirectAttributes, "创建套卡订单'" + orders.getOrderid() + "'成功");
@@ -2342,6 +2357,7 @@ public class OrdersController extends BaseController {
 										"<td align='center' rowspan="+num+"> "+father.getCostprice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
+										"<td align='center'> "+lists.get(1).getSpeckeyname()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
 										"<td align='center'> "+lists.get(1).getServicetimes()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getCouponPrice()+"</td> "+
@@ -2379,6 +2395,7 @@ public class OrdersController extends BaseController {
 											"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
 											"<td align='center'> "+lists.get(i).getMarketprice()+"</td> "+
 											"<td align='center'> "+lists.get(i).getGoodsprice()+"</td> "+
+											"<td align='center'> "+lists.get(i).getSpeckeyname()+"</td> "+
 											"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
 											"<td align='center'> "+lists.get(i).getServicetimes()+"</td> "+
 										"</tr>";
@@ -2393,7 +2410,7 @@ public class OrdersController extends BaseController {
 										"<td align='center' rowspan="+num+"> "+father.getMarketprice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getGoodsprice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
-										"<td align='center'> "+lists.get(1).getServicetimes()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getRemaintimes()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getCouponPrice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getDiscount()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getMembergoodsprice()+"</td> "+
@@ -2429,7 +2446,6 @@ public class OrdersController extends BaseController {
 										"<tr> "+
 											"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
 											"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
-											"<td align='center'> "+lists.get(i).getServicetimes()+"</td> "+
 										"</tr>";
 								}
 						}

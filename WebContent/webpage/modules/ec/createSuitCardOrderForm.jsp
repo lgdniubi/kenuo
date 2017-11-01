@@ -122,7 +122,8 @@
 							costPrice:$(costPrice).val(),
 							debtMoney:$(debtMoney).val(),
 							spareMoney:$(spareMoney).val(),
-							tail:$("#tail").val()
+							tail:$("#tail").val(),
+							isNeworder:isNeworder
 						 },
 						success:function(date){
 							
@@ -612,6 +613,7 @@
 								<th style="text-align: center;">市场价</th>
 								<th style="text-align: center;">优惠价</th>
 								<th style="text-align: center;">次(个)数</th>
+								<th style="text-align: center;">实际次(个)数</th>
 								<th style="text-align: center;">余额</th>
 								<th style="text-align: center;">欠款</th>
 								<th style="text-align: center;">操作</th>

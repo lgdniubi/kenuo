@@ -788,6 +788,9 @@ window.onload=initStatus;
 									<th style="text-align: center;">系统价</th>
 									<th style="text-align: center;">市场价</th>
 									<th style="text-align: center;">优惠价</th>
+									<c:if test="${orders.isReal == 2}">
+										<th style="text-align: center;">次(个)数</th>
+									</c:if>
 									<th style="text-align: center;">购买数量</th>
 									<th style="text-align: center;">实际次数</th>
 									<th style="text-align: center;">红包面值</th>
