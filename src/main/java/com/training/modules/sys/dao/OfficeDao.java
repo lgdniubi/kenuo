@@ -179,4 +179,16 @@ public interface OfficeDao extends TreeDao<Office> {
 	 */
 	public List<Office> findOfficeByUserIdAndFzxRoleId(int roleId, String id);
 	
+	/**
+	 * 
+	 * @Title: newOfficeTreeData
+	 * @Description: TODO 根据商家id查询此商家的下的归属机构
+	 * @param compId
+	 * @return:
+	 * @return: List<Office>
+	 * @throws
+	 * 2017年11月1日
+	 */
+	public List<Office> newOfficeTreeData(Office office);
+	
 }
