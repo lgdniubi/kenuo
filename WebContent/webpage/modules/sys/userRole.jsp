@@ -24,15 +24,19 @@
 				    yes: function(index, layero){
 		    	       var fzxRoleId = layero.find("iframe")[0].contentWindow.$.fn.zTree.getZTreeObj("fzxRoleTree").getCheckedNodes(true);
 						var officeTreeIds = layero.find("iframe")[0].contentWindow.$.fn.zTree.getZTreeObj("officeTree").getCheckedNodes(true);
-						var officeIds = [];
-						for (var i = 0; i < officeTreeIds.length; i++) {
-							officeIds.push(officeTreeIds[i].id); 
+						if (fzxRoleId != "") {
+							var officeIds = [];
+							for (var i = 0; i < officeTreeIds.length; i++) {
+								officeIds.push(officeTreeIds[i].id); 
+							}
+							$("#addfzxRoleId").val(fzxRoleId[0].id);
+							$("#addofficeIds").val(officeIds);
+							var a = $("#addofficeIds").val();
+					    	$('#saveFzxRoleFrom').submit();
+						    top.layer.close(index);
+						}else{
+							alert("角色不能为空");
 						}
-						$("#addfzxRoleId").val(fzxRoleId[0].id);
-						$("#addofficeIds").val(officeIds);
-						var a = $("#addofficeIds").val();
-				    	$('#saveFzxRoleFrom').submit();
-					    top.layer.close(index);
 					  },
 					  cancel: function(index){ 
 		    	       }
