@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.management.relation.RoleList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
@@ -35,7 +34,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.thoughtworks.xstream.mapper.Mapper.Null;
 import com.training.common.beanvalidator.BeanValidators;
 import com.training.common.config.Global;
 import com.training.common.json.AjaxJson;
@@ -140,12 +138,12 @@ public class UserController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(User user, Model model) {
 		List<UserLog> userLogs = new ArrayList<UserLog>();
-		if (user.getCompany() == null || user.getCompany().getId() == null) {
+		/*if (user.getCompany() == null || user.getCompany().getId() == null) {  在进入添加页面时不需要进行查询初始化，因为页面要根据商家去查询权限内的机构，所以不能将商家初始化为登云
 			user.setCompany(UserUtils.getUser().getCompany());
 		}
 		if (user.getOffice() == null || user.getOffice().getId() == null) {
 			user.setOffice(UserUtils.getUser().getOffice());
-		}
+		}*/
 		if (user.getUserinfo() == null || user.getUserinfo().getId() == null) {
 			user.setUserinfo(systemService.getUserInfoByUserId(user.getId()));		
 		}
