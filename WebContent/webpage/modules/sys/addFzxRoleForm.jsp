@@ -45,7 +45,7 @@
 		<table class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
 			<thead>
 				<tr>
-					<th style="text-align: center;">角色</th>
+					<th style="text-align: center;"><font color="red">*</font>角色</th>
 					<th style="text-align: center;">权限</th>
 				</tr>
 			</thead>
