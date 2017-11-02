@@ -1102,7 +1102,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		user.setId(userId);
 		user.setFzxRole(fzxRole);
 		userDao.saveFzxRoleByUser(user);
-		if (user.getReturnId() != null && officeIds != null && officeIds != "") {
+		if (user.getReturnId() != null && !"".equals(officeIds)) {
 			String[] officeId = officeIds.split(",");
 			for (String offId : officeId) {
 				userDao.saveOfficeById(user.getReturnId(),offId);
