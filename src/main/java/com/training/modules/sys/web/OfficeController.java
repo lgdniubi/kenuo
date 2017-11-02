@@ -53,7 +53,6 @@ import com.training.modules.sys.utils.DictUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.TrainRuleParamDao;
-import com.training.modules.train.entity.FzxRole;
 import com.training.modules.train.entity.TrainRuleParam;
 
 import net.sf.json.JSONArray;
@@ -341,7 +340,6 @@ public class OfficeController extends BaseController {
 	 * @param response
 	 * @return
 	 */
-	@RequiresPermissions("user")
 	@ResponseBody
 	@RequestMapping(value = "treeData")
 	public List<Map<String, Object>> treeData(@RequestParam(required=false) String extId, @RequestParam(required=false) String type,
@@ -841,6 +839,49 @@ public class OfficeController extends BaseController {
     		map.put("MESSAGE", "修改失败");
 		}
     	return map;
+    }
+    
+    /**
+     * 
+     * @Title: newUserOffice
+     * @Description: TODO 机构树跳转页面
+     * @param compId
+     * @return:
+     * @return: String
+     * @throws
+     * 2017年11月2日 兵子
+     */
+    @RequestMapping(value="newUserOffice")
+    public String newUserOffice(String compId,Model model) {
+    	model.addAttribute("compId", compId);
+    	return "modules/sys/newUserOffice";
+	}
+    
+    /**
+     * 
+     * @Title: newOfficeTreeData
+     * @Description: TODO 根据商家id查询此商家下的机构
+     * @param compId
+     * @return:
+     * @return: List<Map<String,Object>>
+     * @throws
+     * 2017年11月2日 兵子
+     */
+    @ResponseBody
+    @RequestMapping(value="newOfficeTreeData")
+    public List<Map<String, Object>> newOfficeTreeData(String compId){
+    	List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<Office> list = officeService.newOfficeTreeData(compId);
+		for (int i=0; i<list.size(); i++){
+			Office e = list.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("id", e.getId());
+			map.put("pId", e.getParentId());
+			map.put("pIds", e.getParentIds());
+			map.put("name", e.getName());
+			mapList.add(map);
+		}
+    	return mapList;
     }
     
 }
