@@ -698,4 +698,45 @@
 		WHERE u.id =#{1}  AND r.id = #{0};
 	</select>
 	
+	<!-- 根据商家id在拥有的数据权限内查询此商家下的机构 -->
+	<select id="newOfficeTreeData" resultType="Office">
+		SELECT 
+			a.id,
+			a.parent_id AS "parent.id",
+			a.parent_ids,
+			a.area_id AS "area.id",
+			a.code,
+			a.name,
+			a.sort,
+			a.type,
+			a.grade,
+			a.address, 
+			a.zip_code, 
+			a.master, 
+			a.phone, 
+			a.fax, 
+			a.email, 
+			a.remarks,
+			a.create_by AS "createBy.id",
+			a.create_date,
+			a.update_by AS "updateBy.id",
+			a.update_date,
+			a.del_flag,
+			a.is_new,
+			a.is_recommend AS isRecommend,
+			a.longitude AS longitude,
+			a.latitude AS latitude,
+			a.useable AS useable,
+			a.primary_person AS "primaryPerson.id",
+			a.deputy_person AS "deputyPerson.id"
+		FROM sys_office AS a 
+		${sqlMap.dsf}
+		<if test="id != null and id != ''">
+			AND a.parent_ids LIKE 
+			<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+			OR a.id = #{id}
+		</if>
+	</select>
+	
 </mapper>
