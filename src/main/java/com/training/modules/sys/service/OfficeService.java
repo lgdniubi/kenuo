@@ -10,12 +10,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
+import com.google.common.collect.Lists;
+import com.training.common.service.BaseService;
 import com.training.common.service.TreeService;
 import com.training.common.utils.StringUtils;
 import com.training.modules.sys.dao.OfficeDao;
 import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeInfo;
+import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.UserUtils;
 
 /**
@@ -330,6 +333,26 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	 */
 	public List<Office> findOfficeByUserIdAndFzxRoleId(int roleId, String id) {
 		return officeDao.findOfficeByUserIdAndFzxRoleId(roleId,id);
+	}
+
+	/**
+	 * 
+	 * @Title: newOfficeTreeData
+	 * @Description: TODO 根据商家id查询此商家下的归属机构
+	 * @param compId
+	 * @return:
+	 * @return: List<Office>
+	 * @throws
+	 * 2017年11月1日
+	 */
+	public List<Office> newOfficeTreeData(String compId) {
+		List<Office> officeList = Lists.newArrayList();
+		User user = UserUtils.getUser();
+		Office office = new Office();
+		office.setId(compId);
+		office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a"));
+		officeList = officeDao.newOfficeTreeData(office);
+		return officeList;
 	}
 
 }
