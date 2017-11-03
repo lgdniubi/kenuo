@@ -810,7 +810,9 @@ window.onload=initStatus;
 										<th style="text-align: center;">次(个)数</th>
 									</c:if>
 									<th style="text-align: center;">购买数量</th>
-									<th style="text-align: center;">实际次数</th>
+									<c:if test="${(orders.isReal == 3) || (orders.isReal == 2 && orders.isNeworder == 1)}">
+										<th style="text-align: center;">实际次数</th>
+									</c:if>
 									<th style="text-align: center;">红包面值</th>
 									<th style="text-align: center;">折扣率</th>
 									<th style="text-align: center;">会员折扣</th>
