@@ -264,10 +264,10 @@
 			1=1
 			AND a.parent_id = '0'
 			<if test="beginDate != null and beginDate != ''">
-				AND c.create_date >= #{beginDate}
+				AND a.create_date >= #{beginDate}
 			</if>
 			<if test="endDate != null and endDate != ''">
-				AND c.create_date <![CDATA[ <= ]]> #{endDate}
+				AND a.create_date <![CDATA[ <= ]]> #{endDate}
 			</if>
 			<if test="userName != null and userName != ''">
 				AND d.nickname LIKE 
