@@ -228,6 +228,8 @@
 								$("#belongOfficeName").val(names.join(","));
 								$("#belongOfficeName").focus();
 								top.layer.close(index);
+								$("#belongUserId").val("");
+								$("#belongUserName").val("");
 						    	       },
 		    	cancel: function(index){ //或者使用btn2
 		    	           //按钮【按钮二】的回调
