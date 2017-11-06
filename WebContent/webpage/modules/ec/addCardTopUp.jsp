@@ -142,6 +142,10 @@
 									names.push(nodes[i].name);//
 									break; // 如果为非复选框选择，则返回第一个选择  
 								}
+								
+								$("#belongUserId").val("");
+								$("#belongUserName").val("");
+								
 								$("#belongOfficeId").val(ids.join(",").replace(/u_/ig,""));
 								$("#belongOfficeName").val(names.join(","));
 								$("#belongOfficeName").focus();
