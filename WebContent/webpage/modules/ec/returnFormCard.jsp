@@ -198,7 +198,7 @@
 				}
 			});
 			
-			$("#belongOfficeButton").click(function(){
+			/* $("#belongOfficeButton").click(function(){
 				// 是否限制选择，如果限制，设置为disabled
 				if ($("#belongOfficeButton").hasClass("disabled")){
 					return true;
@@ -279,7 +279,7 @@
 			    	       }
 					}); 
 				}
-			});
+			}); */
 		});
 </script>
 </head>
@@ -327,7 +327,7 @@
 			        <label><font color="red">*</font>问题描述：</label>
 			        <form:textarea path="problemDesc" htmlEscape="false" rows="3"  style="width:300px;" maxlength="200" class="form-control required"/>
 			        <p></p>
-			        <table id="contentTable" class="table-condensed dataTable no-footer">
+			        <!-- <table id="contentTable" class="table-condensed dataTable no-footer">
 						<tr>
 							<td>
 								<label><font color="red">*</font>归属机构：</label>
@@ -363,7 +363,7 @@
 							</td>
 						</tr>
 					</table>
-					<p></p>
+					<p></p> -->
 			        <label><font color="red">*</font>申请类型：</label>
 		        	<form:select path="applyType" class="form-control" style="width:185px;" >
 						<form:option value="0">退货并退款</form:option>

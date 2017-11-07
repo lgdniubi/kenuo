@@ -112,7 +112,7 @@
 			        <label>问题描述：</label>
 			        <form:textarea path="problemDesc" htmlEscape="false" rows="3"  style="width:300px;" maxlength="200" class="form-control"/>
 			        <p></p>
-			        <table id="contentTable" class="table-condensed dataTable no-footer">
+			        <%-- <table id="contentTable" class="table-condensed dataTable no-footer">
 						<tr>
 							<td width="70px"><label>归属机构：</label></td>
 							<td width="300px">
@@ -144,7 +144,7 @@
 							</td>
 						</tr>
 					</table>
-			       	<p></p>
+			       	<p></p> --%>
 			        <label>申请类型：</label>
 			        <label>
 						退货并退款
