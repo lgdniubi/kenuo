@@ -44,7 +44,7 @@
 						&nbsp;&nbsp;<a href="#" onclick="sum()">计算金额</a>
 						<a href="#" onclick="update()">修改金额</a>
 						<input type="hidden" name="jsmoney" id="jsmoney" />
-						<p></p>
+						<!-- <p></p>
 						<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">*</font>归属机构：</label>	
 						<input id="belongOfficeId" class=" form-control" name="belongOfficeId" value="" type="hidden">
 						<input id="belongOfficeName" class=" form-control required" name="belongOfficeName" readonly="readonly" type="text">
@@ -57,7 +57,7 @@
 						<input id="belongUserName" class=" form-control" name="belongUserName" readonly="readonly" value="" data-msg-required="" style="" type="text">
 						<button id="belongUserButton" class="btn btn-primary " type="button">
 							<i class="fa fa-search"></i>
-						</button>
+						</button> -->
 					</div>
 				</div>
 			</div>
@@ -116,7 +116,7 @@
 				}
 			});
 			
-			$("#belongOfficeButton").click(function(){
+			/* $("#belongOfficeButton").click(function(){
 				// 是否限制选择，如果限制，设置为disabled
 				if ($("#belongOfficeButton").hasClass("disabled")){
 					return true;
@@ -199,7 +199,7 @@
 			    	       }
 					}); 
 				}
-			});
+			}); */
 		});
 	</script>
 </body>

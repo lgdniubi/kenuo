@@ -24,7 +24,7 @@
 			$("#ichecks").attr("disabled",true);
 		}
 		
-		$("#belongOfficeButton").click(function(){
+		/* $("#belongOfficeButton").click(function(){
 			// 是否限制选择，如果限制，设置为disabled
 			if ($("#belongOfficeButton").hasClass("disabled")){
 				return true;
@@ -107,7 +107,7 @@
 		    	       }
 				}); 
 			}
-		});
+		}); */
 	}); 
 	
 	function sum(){
@@ -151,7 +151,7 @@
 							<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;余额：</label>
 							<input type="text" id="advanceBalance" name="advanceBalance" readonly="readonly" value="${orderGoods.advanceBalance}" class="form-control required" style="width:150px;"  />
 						</c:if>
-						<p></p>
+						<!-- <p></p>
 						<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">*</font>归属机构：</label>	
 						<input id="belongOfficeId" class=" form-control" name="belongOfficeId" value="" type="hidden">
 						<input id="belongOfficeName" class=" form-control required" name="belongOfficeName" readonly="readonly" type="text">
@@ -164,7 +164,7 @@
 						<input id="belongUserName" class=" form-control" name="belongUserName" readonly="readonly" value="" data-msg-required="" style="" type="text">
 						<button id="belongUserButton" class="btn btn-primary " type="button">
 							<i class="fa fa-search"></i>
-						</button>
+						</button> -->
 					</div>
 				</div>
 			</div>

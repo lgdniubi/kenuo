@@ -378,7 +378,7 @@
 		//submit函数在等待远程校验结果然后再提交，而layer对话框不会阻塞会直接关闭同时会销毁表单，因此submit没有提交就被销毁了导致提交表单失败。
 		//$("#inputForm").validate().element($("#phone"));
 		
-		$("#belongOfficeButton").click(function(){
+		/* $("#belongOfficeButton").click(function(){
 			// 是否限制选择，如果限制，设置为disabled
 			if ($("#belongOfficeButton").hasClass("disabled")){
 				return true;
@@ -461,7 +461,7 @@
 		    	       }
 				}); 
 			}
-		});
+		}); */
 		
 	});
 	function selectUser(){
@@ -720,7 +720,7 @@
 					<label >留言备注：</label>
 					<textarea name="usernote" rows="5" cols="60"></textarea>
 				</div>
-				<p></p>
+				<!-- <p></p>
 				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 				<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
 					<tr>
@@ -756,7 +756,7 @@
 						<td colspan="2" width="100px"></td>
 					</tr>
 				</table>
-				</div>
+				</div> -->
 				<p></p>
 				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 					<input type="checkbox" id="Ichecks" name="Ichecks" /><label class="active">索要发票</label>

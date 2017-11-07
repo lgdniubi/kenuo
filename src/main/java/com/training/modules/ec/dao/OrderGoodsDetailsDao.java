@@ -62,7 +62,7 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * 处理预约金
 	 * @param recId
 	 */
-	public void updateAdvanceFlag(@Param(value="recId")String recId,@Param(value="belongOfficeId")String belongOfficeId,@Param(value="belongUserId")String belongUserId);
+	public void updateAdvanceFlag(@Param(value="recId")String recId);
 	
 	/**
 	 * 根据office_id查找其对应的登云账户的金额

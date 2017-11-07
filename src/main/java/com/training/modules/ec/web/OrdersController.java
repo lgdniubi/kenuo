@@ -1808,7 +1808,7 @@ public class OrdersController extends BaseController {
 				}
 			}
 			
-			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"",oLog.getBelongOfficeId(),oLog.getBelongUserId());
+			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
 			ordersService.handleAdvanceFlag(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId,realAdvancePrice);
 			date = "success";
 		}catch(Exception e){
@@ -2701,7 +2701,7 @@ public class OrdersController extends BaseController {
 				oLog.setTotalAmount(advance);
 			}
 			
-			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"",oLog.getBelongOfficeId(),oLog.getBelongUserId());
+			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
 			ordersService.handleCardAdvance(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId,isReal,realAdvancePrice);
 			date = "success";
 		}catch(Exception e){
@@ -2742,7 +2742,7 @@ public class OrdersController extends BaseController {
 				
 				if(!"bm".equals(orders.getChannelFlag())){
 					//实物带预约金，点击确认收货，按照虚拟有预约金处理的方法入库
-					orderGoodsDetailsService.updateAdvanceFlag(recId+"",orders.getBelongOfficeId(),orders.getBelongUserId());
+					orderGoodsDetailsService.updateAdvanceFlag(recId+"");
 					
 					//保存订单商品详情记录表
 					OrderGoodsDetails details = new OrderGoodsDetails();
@@ -2761,8 +2761,8 @@ public class OrdersController extends BaseController {
 					details.setAdvanceFlag("2");
 					details.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
 					details.setCreateBy(UserUtils.getUser());
-					details.setBelongOfficeId(orders.getBelongOfficeId());
-					details.setBelongUserId(orders.getBelongUserId());
+					/*details.setBelongOfficeId(orders.getBelongOfficeId());
+					details.setBelongUserId(orders.getBelongUserId());*/
 					//保存订单商品详情记录
 					orderGoodsDetailsService.saveOrderGoodsDetails(details);
 				}

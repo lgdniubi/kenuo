@@ -202,11 +202,11 @@ public class Orders extends TreeEntity<Orders> {
 	
 	private int userIntegral;                   //充值或者处理预约金全部的欠款后送的云币
 	
-	private String belongOfficeId;           //归属机构id
+/*	private String belongOfficeId;           //归属机构id
 	private String belongOfficeName;         //归属机构名称
 	private String belongUserId;            //归属人id
 	private String belongUserName;          //归属人名称
-	
+*/	
 	public String getSearchIsReal() {
 		return searchIsReal;
 	}
@@ -1632,7 +1632,7 @@ public class Orders extends TreeEntity<Orders> {
 	public void setShopName(String shopName) {
 		this.shopName = shopName;
 	}
-	public String getBelongOfficeId() {
+	/*public String getBelongOfficeId() {
 		return belongOfficeId;
 	}
 	public void setBelongOfficeId(String belongOfficeId) {
@@ -1655,6 +1655,6 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setBelongUserName(String belongUserName) {
 		this.belongUserName = belongUserName;
-	}
+	}*/
 	
 }
