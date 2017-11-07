@@ -10,7 +10,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,10 +144,10 @@ public class MtmyMnappointmentController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "loadOffice")
-	public Map<String, Object> loadOffice(String areaId,String goodsIds,Boolean isAll,HttpServletRequest request, HttpServletResponse response){
+	public Map<String, Object> loadOffice(String areaId,String goodsIds,String franchiseeId,Boolean isAll,HttpServletRequest request, HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		Set<Map<String, Object>> setMain = new HashSet<Map<String, Object>>();
-		List<Office> list1= reservationService.loadOffice(goodsIds,areaId);  	// 可用店铺
+		List<Office> list1= reservationService.loadOffice(goodsIds,franchiseeId,areaId);  	// 可用店铺
 		List<Office> list2 = officeService.findList(isAll);		//有权限机构
 		if(list1.size() > 0 && list2.size() > 0){		// 当两个集合都存在值时  取交集 
 			Map<String, Object> setMap = new HashMap<String, Object>();

@@ -32,7 +32,7 @@
     		$("#warning").hide();
     		$("#mytable").empty("");
         	//清除input值
-        	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,goodsName,skillId,labelId,oldorderid,groupId,isReal");
+        	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,goodsName,skillId,labelId,franchiseeId,oldorderid,groupId,isReal");
         	//清除下拉框的值
         	clearSelect("serve,shopId,beauticianId,date,times");
     	}
@@ -62,7 +62,7 @@
     function serveChange(num){
     	$("#mytable").empty("");
     	//清除input值
-    	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,goodsName,skillId,labelId,groupId,isReal");
+    	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,goodsName,skillId,labelId,franchiseeId,groupId,isReal");
     	//清除下拉框的值
     	clearSelect("shopId,beauticianId,date,times");
     	if(serveList[num].isExpiring == 1){
@@ -92,6 +92,7 @@
 					    	$("#goodsName").val(serveList[num].goodsname);
 					    	$("#skillId").val(serveList[num].skillId);
 					    	$("#labelId").val(serveList[num].labelId);
+					    	$("#franchiseeId").val(serveList[num].franchiseeId);
 					    	$(".loading").hide();
 					    	findOffice();	// 若选中商品后则自动加载店铺
 		    			}else{
@@ -117,6 +118,7 @@
 						    	$("#goodsName").val(serveList[num].goodsname);
 						    	$("#skillId").val(serveList[num].skillId);
 						    	$("#labelId").val(serveList[num].labelId);
+						    	$("#franchiseeId").val(serveList[num].franchiseeId);
 						    	$(".loading").hide();
 						    	findOffice();	// 若选中商品后则自动加载店铺
 		    				}else{
@@ -140,6 +142,7 @@
 					    	$("#goodsName").val(serveList[num].goodsname);
 					    	$("#skillId").val(serveList[num].skillId);
 					    	$("#labelId").val(serveList[num].labelId);
+					    	$("#franchiseeId").val(serveList[num].franchiseeId);
 					    	$(".loading").hide();
 					    	findOffice();	// 若选中商品后则自动加载店铺
 		    			}else{
@@ -164,6 +167,7 @@
 					    	$("#goodsName").val(serveList[num].goodsname);
 					    	$("#skillId").val(serveList[num].skillId);
 					    	$("#labelId").val(serveList[num].labelId);
+					    	$("#franchiseeId").val(serveList[num].franchiseeId);
 					    	$(".loading").hide();
 					    	findOffice();	// 若选中商品后则自动加载店铺
 		    			}else{
@@ -187,7 +191,7 @@
    	       	$.ajax({
    	       		type : 'post',
    	       		url : '${ctx}/ec/mtmyMnappointment/loadOffice',
-   	       		data:{'areaId':$('#areaId').val(),'goodsIds':$("#goodsId").val()},
+   	       		data:{'areaId':$('#areaId').val(),'goodsIds':$("#goodsId").val(),'franchiseeId':$("#franchiseeId").val()},
    	       		dateType: 'text',
    	       		success:function(data){
    	   				$.each(data.office,function(index,item){
@@ -334,6 +338,7 @@
 					<input id="goodsName" name="goodsName" type="hidden">
 					<input id="skillId" name="skillId" type="hidden"><!-- 获取美容师详情 -->
 					<input id="labelId" name="labelId" type="hidden"><!-- 获取美容师预约时间 -->
+					<input id="franchiseeId" name="franchiseeId" type="hidden"><!-- 商品的归属商家   用于加载店铺时选择同一个商家 -->
 					<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 						<tr>
 							<td class="active" width="110px;"><label class="pull-right"><font color="red">*</font>订单号：</label></td>

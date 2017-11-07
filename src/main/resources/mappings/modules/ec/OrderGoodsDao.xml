@@ -172,7 +172,8 @@
 			IF(o.is_real = 3,(SELECT single_reality_price FROM mtmydb.mtmy_order_goods_mapping WHERE rec_id = a.group_id),a.single_reality_price) AS singleRealityPrice,
 			s.skill_id AS skillId,
 			e.label_id AS labelId,
-			IF((DATE_FORMAT(DATE_ADD(a.reality_add_time, interval a.expiring_date MONTH),'%Y-%m-%d')) >= DATE_FORMAT(SYSDATE(),'%Y-%m-%d'),0,1) AS isExpiring
+			IF((DATE_FORMAT(DATE_ADD(a.reality_add_time, interval a.expiring_date MONTH),'%Y-%m-%d')) >= DATE_FORMAT(SYSDATE(),'%Y-%m-%d'),0,1) AS isExpiring,
+			g.franchisee_id AS franchiseeId
 		FROM 
 			mtmydb.mtmy_order_goods_mapping a
 			LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
@@ -182,6 +183,7 @@
 					) b ON a.rec_id = b.goods_mapping_id
 			LEFT JOIN (SELECT group_concat(skill_id) AS skill_id,goods_id FROM mtmydb.mtmy_goods_skill GROUP BY goods_id) s ON s.goods_id = a.goods_id
 			LEFT JOIN (SELECT group_concat(label_id) AS label_id,goods_id FROM mtmydb.mtmy_goods_equipment GROUP BY goods_id) e ON e.goods_id = a.goods_id
+			LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id = a.goods_id
 		WHERE 
 			a.del_flag = 0
 			and a.order_id = #{orderid}

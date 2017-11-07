@@ -74,7 +74,7 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 	 * 加载美容师
 	 * @return
 	 */
-	public List<Office> loadOffice(String goodsIds,String areaId){
+	public List<Office> loadOffice(String goodsIds,String franchiseeId,String areaId){
 		String nationName = "";
 		String provinceId = "";
 		String cityId = "";
@@ -91,7 +91,7 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 				districtId = area.getId();
 			}
 		}
-		return dao.loadOffice(goodsIds,nationName,provinceId,cityId,districtId);
+		return dao.loadOffice(goodsIds,franchiseeId,nationName,provinceId,cityId,districtId);
 	}
 	
 	/**

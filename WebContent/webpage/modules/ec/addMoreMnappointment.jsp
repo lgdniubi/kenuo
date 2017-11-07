@@ -151,10 +151,11 @@
 					    	var positionId = obj.document.getElementById("positionId_"+chooseId).value;
 					    	var positionIds = obj.document.getElementById("positionIds_"+chooseId).value;
 					    	var isReal = obj.document.getElementById("isreal_"+chooseId).value;
+					    	var franchiseeId = obj.document.getElementById("franchiseeId_"+chooseId).value;
 					    	recIdsAndSkillId = chooseId + "_" + skillId;
 					    	$("<tr>"+
 						    		"<td>"+goodsName+"<input id='chooseRecId' name='chooseRecId' type='hidden' value='"+chooseId+"'><input id='positionId_"+chooseId+"' name='positionId' type='hidden' value='"+positionId+"'><input id='positionIds_"+chooseId+"' name='positionIds' type='hidden' value='"+positionIds+"'><input id='goodsName_"+chooseId+"' name='goodsName' type='hidden' value='"+goodsName+"'></td>"+
-				    			    "<td>"+serviceMin+"分钟<input id='serviceMin_"+chooseId+"' name='serviceMin' type='hidden' value='"+serviceMin+"'><input id='labelId_"+chooseId+"' name='labelId' type='hidden' value='"+labelId+"'><input id='goodsId_"+chooseId+"' name='goodsId' type='hidden' value='"+goodsId+"'></td>"+
+				    			    "<td>"+serviceMin+"分钟<input id='serviceMin_"+chooseId+"' name='serviceMin' type='hidden' value='"+serviceMin+"'><input id='labelId_"+chooseId+"' name='labelId' type='hidden' value='"+labelId+"'><input id='goodsId_"+chooseId+"' name='goodsId' type='hidden' value='"+goodsId+"'><input id='franchiseeId' name='franchiseeId' type='hidden' value='"+franchiseeId+"'></td>"+
 				    			    "<td>"+serviceTimes+"<input id='chooseParentRecId_"+chooseId+"' name='chooseParentRecId' type='hidden' value='"+chooseValue+"'><input id='recIdsAndSkillId_"+chooseId+"' name='recIdsAndSkillId' type='hidden' value='"+recIdsAndSkillId+"'><input id='isReal_"+chooseId+"' name='isReal' type='hidden' value='"+isReal+"'></td>"+
 				    			    "<td>"+
 				    			    	"<select id='beauticianId_"+chooseId+"' name='beauticianId' class='form-control required' onchange='ReservationTime("+chooseId+")'><option value=''>请选择美容师</option></select>"+
@@ -211,7 +212,7 @@
    	       	$.ajax({
    	       		type : 'post',
    	       		url : '${ctx}/ec/mtmyMnappointment/loadOffice',
-   	       		data:{'areaId':$('#areaId').val(),'goodsIds':newGoodsIds},
+   	       		data:{'areaId':$('#areaId').val(),'goodsIds':newGoodsIds,'franchiseeId':$("#franchiseeId").val()},
    	       		dateType: 'text',
    	       		success:function(data){
    	   				$.each(data.office,function(index,item){
