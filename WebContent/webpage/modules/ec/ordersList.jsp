@@ -178,38 +178,40 @@
 			 openDialog('退货商品列表','${ctx}/ec/orders/returnGoddsList?flag='+flag+'&orderid='+orderId+'&isReal='+isReal,'1000px','650px');
 		}
 		
-		function affirmReceive(channelFlag,officeId,orderid){
+		function affirmReceive(officeId,orderid){
 			if(officeId == "" || officeId == null){
 				top.layer.alert('该用户未绑定店铺,请在CRM中为该用户绑定！', {icon: 0, title:'提醒'});
 		    	return;
 			}
 			
-			if(channelFlag == 'bm'){
+			confirmx("确认要收货吗？", "${ctx}/ec/orders/affirmReceive?orderid="+orderid)
+			
+			/* if(channelFlag == 'bm'){
 				confirmx("确认要收货吗？", "${ctx}/ec/orders/affirmReceive?orderid="+orderid+"&channelFlag="+channelFlag)
 			}else{
 				$('#confirmOffice').modal("show");
 				$("#selectOrderid").val(orderid);
 				$("#selectChannelFlag").val(channelFlag);
 				closeTip();
-			}
+			} */
 		}
 		
 		
-		function saveConfirmOffice(){
+		/* function saveConfirmOffice(){
 			if($("#belongOfficeId").val() == ""){
 				top.layer.alert('归属机构必填!', {icon: 0, title:'提醒'});
 				return;
 			}
 			loading('正在提交，请稍等...');
 	    	window.location="${ctx}/ec/orders/affirmReceive?orderid="+$("#selectOrderid").val()+"&belongOfficeId="+$("#belongOfficeId").val()+"&belongUserId="+$("#belongUserId").val()+"&channelFlag="+$("#selectChannelFlag").val(); 
-		}
+		} */
 </script>
-<style type="text/css">
+<!-- <style type="text/css">
 	.modal-content{
 		margin:0 auto;
 		width: 500px;
 	}
-</style>
+</style> -->
 </head>
 
 
@@ -481,7 +483,7 @@
 								</c:if>
 								<shiro:hasPermission name="ec:orders:affirmReceive">
 									<c:if test="${orders.orderstatus == 2 && orders.shippingtype == 1}">
-										<a href="#" onclick="affirmReceive('${orders.channelFlag}','${orders.officeId}','${orders.orderid}')"  class="btn btn-danger btn-xs" ><i class="fa fa-edit"></i>确认收货</a>
+										<a href="#" onclick="affirmReceive('${orders.officeId}','${orders.orderid}')"  class="btn btn-danger btn-xs" ><i class="fa fa-edit"></i>确认收货</a>
 									</c:if>
 									<c:if test="${orders.orderstatus != 2 || orders.shippingtype != 1}">
 										<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>确认收货</a>
@@ -506,8 +508,8 @@
 			</div>
 		 </div>	
 		</div>
-		<!--确认收货绑定归属人归属机构-->
-		<div class="modal fade bs-example-modal-lg in" id="confirmOffice" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" style="display: none; padding-right: 17px;">
+		 <!--确认收货绑定归属人归属机构-->
+		<!--<div class="modal fade bs-example-modal-lg in" id="confirmOffice" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" style="display: none; padding-right: 17px;">
 	   		<form id="confirmOfficeFrom" class="modal-dialog modal-lg">
 	     		<div class="modal-content">
 	       			<div class="modal-header">
@@ -556,7 +558,7 @@
 	       			</div>
 	     		</div>
 	   		</form>
-	 	</div>
+	 	</div> -->
 	
 </body>
 </html>

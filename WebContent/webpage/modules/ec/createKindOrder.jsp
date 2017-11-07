@@ -387,7 +387,7 @@
 		
 		});
 		
-		$("#belongOfficeButton").click(function(){
+	/* 	$("#belongOfficeButton").click(function(){
 			// 是否限制选择，如果限制，设置为disabled
 			if ($("#belongOfficeButton").hasClass("disabled")){
 				return true;
@@ -470,7 +470,7 @@
 		    	       }
 				}); 
 			}
-		});
+		}); */
 		
 	});
 	function selectUser(){
@@ -793,7 +793,7 @@
 					<label >留言备注：</label>
 					<textarea name="usernote" rows="5" cols="60"></textarea>
 				</div>
-				<p></p>
+				<!-- <p></p>
 				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 				<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
 					<tr>
@@ -829,7 +829,7 @@
 						<td colspan="2" width="100px"></td>
 					</tr>
 				</table>
-				</div>
+				</div> -->
 				<p></p>
 				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;"> 
 					<label ><font color="red">*</font>物流类型：</label>

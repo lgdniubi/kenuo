@@ -66,8 +66,8 @@ public class OrderGoodsDetailsService extends TreeService<OrderGoodsDetailsDao, 
 	 * 处理预约金
 	 * @param recId
 	 */
-	public void updateAdvanceFlag(String recId,String belongOfficeId,String belongUserId){
-		dao.updateAdvanceFlag(recId,belongOfficeId,belongUserId);
+	public void updateAdvanceFlag(String recId){
+		dao.updateAdvanceFlag(recId);
 	}
 	
 	/**

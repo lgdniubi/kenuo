@@ -111,7 +111,7 @@
 			//submit函数在等待远程校验结果然后再提交，而layer对话框不会阻塞会直接关闭同时会销毁表单，因此submit没有提交就被销毁了导致提交表单失败。
 			/* $("#inputForm").validate().element($("#orderamount")); */
 	  	
-			$("#belongOfficeButton").click(function(){
+			/* $("#belongOfficeButton").click(function(){
 				// 是否限制选择，如果限制，设置为disabled
 				if ($("#belongOfficeButton").hasClass("disabled")){
 					return true;
@@ -191,7 +191,7 @@
 					}); 
 				}
 			});
-			
+			 */
 	    });
 			
 	    	
@@ -215,8 +215,8 @@
 						var topUpTotalAmount = obj.document.getElementById("topUpTotalAmount").value;
 						var jsmoney = obj.document.getElementById("jsmoney").value;
 						var loading = obj.document.getElementById("loading");
-						var belongOfficeId = obj.document.getElementById("belongOfficeId").value;
-						var belongUserId = obj.document.getElementById("belongUserId").value;
+						/* var belongOfficeId = obj.document.getElementById("belongOfficeId").value;
+						var belongUserId = obj.document.getElementById("belongUserId").value; */
 						$(loading).show();
 						if(accountBalance == ''){
 							$(loading).hide();
@@ -238,11 +238,11 @@
 							top.layer.alert('请计算费用！', {icon: 0, title:'提醒'});
 							return;
 						}
-						if(belongOfficeId == ''){
+						/* if(belongOfficeId == ''){
 							$(loading).hide();
 							top.layer.alert('归属机构必填！', {icon: 0, title:'提醒'});
 							return;
-						}
+						} */
 						
 						//查询用户账户余额
 						$.ajax({
@@ -282,9 +282,9 @@
 											servicetimes:servicetimes,
 											remaintimes:remaintimes,
 											isReal:isReal,
-											channelFlag:channelFlag,
-											belongOfficeId:belongOfficeId,        
-											belongUserId:belongUserId    
+											channelFlag:channelFlag
+											/* belongOfficeId:belongOfficeId,        
+											belongUserId:belongUserId     */
 										 },
 										url:"${ctx}/ec/orders/addCardOrderRechargeLog",
 										success:function(date){
@@ -638,15 +638,15 @@ window.onload=initStatus;
 		    	var obj =  layero.find("iframe")[0].contentWindow;
      	    	var sum = obj.document.getElementById("sum").value; //是否使用了账户余额
      	    	var loading = obj.document.getElementById("loading");
-     	    	var belongOfficeId = obj.document.getElementById("belongOfficeId").value;
-				var belongUserId = obj.document.getElementById("belongUserId").value;
+     	    	/* var belongOfficeId = obj.document.getElementById("belongOfficeId").value;
+				var belongUserId = obj.document.getElementById("belongUserId").value; */
 				$(loading).show();
 				
-				if(belongOfficeId == ''){
+				/* if(belongOfficeId == ''){
 					$(loading).hide();
 					top.layer.alert('归属机构必填！', {icon: 0, title:'提醒'});
 					return;
-				}
+				} */
 				
 				//防止表单多次提交
 			    if(isHandled == false){
@@ -665,9 +665,9 @@ window.onload=initStatus;
 						servicetimes:servicetimes,
 						orderArrearage:orderArrearage,
 						isReal:isReal,
-						channelFlag:channelFlag,
-						belongOfficeId:belongOfficeId,
-						belongUserId:belongUserId
+						channelFlag:channelFlag
+						/* belongOfficeId:belongOfficeId,
+						belongUserId:belongUserId */
 					 },
 					url:"${ctx}/ec/orders/handleCardAdvance?recid="+recid+"&userid="+userid+"&orderid="+orderid,
 					success:function(date){
@@ -869,7 +869,7 @@ window.onload=initStatus;
 								<form:input path="address" htmlEscape="false" maxlength="120" class="form-control required" style="width:180px" />
 							</div>
 						</div> --%>
-						<p></p>
+						<%-- <p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 						<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
 							<tr>
@@ -907,7 +907,7 @@ window.onload=initStatus;
 							</tr>
 							</c:if>
 						</table>
-						</div>
+						</div> --%>
 						<p></p>
 						<c:if test="${orders.num > 0}">
 								<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">

@@ -824,8 +824,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			details.setAdvanceFlag("0");
 			details.setCreateOfficeId(user.getOffice().getId());
 			details.setCreateBy(user);
-			details.setBelongOfficeId(orders.getBelongOfficeId());
-			details.setBelongUserId(orders.getBelongUserId());
+			/*details.setBelongOfficeId(orders.getBelongOfficeId());
+			details.setBelongUserId(orders.getBelongUserId());*/
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
 		}
@@ -867,8 +867,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setShippingtype(2);
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
-		_orders.setBelongOfficeId(orders.getBelongOfficeId());
-		_orders.setBelongUserId(orders.getBelongUserId());
+		/*_orders.setBelongOfficeId(orders.getBelongOfficeId());
+		_orders.setBelongUserId(orders.getBelongUserId());*/
 		ordersDao.saveVirtualOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -1216,8 +1216,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setAdvanceFlag("3");
 		details.setCreateOfficeId(user.getOffice().getId());
 		details.setCreateBy(user);
-		details.setBelongOfficeId(oLog.getBelongOfficeId());
-		details.setBelongUserId(oLog.getBelongUserId());
+		/*details.setBelongOfficeId(oLog.getBelongOfficeId());
+		details.setBelongUserId(oLog.getBelongUserId());*/
 		details.setUseBalance(accountBalance);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
@@ -1440,8 +1440,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			details.setAdvanceFlag("0");
 			details.setCreateOfficeId(user.getOffice().getId());
 			details.setCreateBy(user);
-			details.setBelongOfficeId(orders.getBelongOfficeId());
-			details.setBelongUserId(orders.getBelongUserId());
+			/*details.setBelongOfficeId(orders.getBelongOfficeId());
+			details.setBelongUserId(orders.getBelongUserId());*/
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
 		}
@@ -1486,8 +1486,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setCreateBy(user);
-		_orders.setBelongOfficeId(orders.getBelongOfficeId());
-		_orders.setBelongUserId(orders.getBelongUserId());
+		/*_orders.setBelongOfficeId(orders.getBelongOfficeId());
+		_orders.setBelongUserId(orders.getBelongUserId());*/
 		ordersDao.saveKindOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -1864,8 +1864,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setAdvanceFlag("2");
 		details.setCreateOfficeId(user.getOffice().getId());
 		details.setCreateBy(user);
-		details.setBelongOfficeId(oLog.getBelongOfficeId());
-		details.setBelongUserId(oLog.getBelongUserId());
+		/*details.setBelongOfficeId(oLog.getBelongOfficeId());
+		details.setBelongUserId(oLog.getBelongUserId());*/
 		details.setUseBalance(accountBalance);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
@@ -2252,8 +2252,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			details.setAdvanceFlag("0");
 			details.setCreateOfficeId(user.getOffice().getId());
 			details.setCreateBy(user);
-			details.setBelongOfficeId(orders.getBelongOfficeId());
-			details.setBelongUserId(orders.getBelongUserId());
+			/*details.setBelongOfficeId(orders.getBelongOfficeId());
+			details.setBelongUserId(orders.getBelongUserId());*/
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
 		}
@@ -2285,8 +2285,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setShippingtype(2);
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
-		_orders.setBelongOfficeId(orders.getBelongOfficeId());
-		_orders.setBelongUserId(orders.getBelongUserId());
+		/*_orders.setBelongOfficeId(orders.getBelongOfficeId());
+		_orders.setBelongUserId(orders.getBelongUserId());*/
 		ordersDao.saveVirtualOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -2576,8 +2576,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			details.setAdvanceFlag("0");
 			details.setCreateOfficeId(user.getOffice().getId());
 			details.setCreateBy(user);
-			details.setBelongOfficeId(orders.getBelongOfficeId());
-			details.setBelongUserId(orders.getBelongUserId());
+			/*details.setBelongOfficeId(orders.getBelongOfficeId());
+			details.setBelongUserId(orders.getBelongUserId());*/
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
 			
@@ -2613,8 +2613,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setCreateBy(user);
-		_orders.setBelongOfficeId(orders.getBelongOfficeId());
-		_orders.setBelongUserId(orders.getBelongUserId());
+		/*_orders.setBelongOfficeId(orders.getBelongOfficeId());
+		_orders.setBelongUserId(orders.getBelongUserId());*/
 		ordersDao.saveVirtualOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -2853,8 +2853,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setAdvanceFlag("3");
 		details.setCreateOfficeId(user.getOffice().getId());
 		details.setCreateBy(user);
-		details.setBelongOfficeId(oLog.getBelongOfficeId());
-		details.setBelongUserId(oLog.getBelongUserId());
+		/*details.setBelongOfficeId(oLog.getBelongOfficeId());
+		details.setBelongUserId(oLog.getBelongUserId());*/
 		details.setUseBalance(accountBalance);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
@@ -2997,8 +2997,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setAdvanceFlag("2");
 		details.setCreateOfficeId(user.getOffice().getId());
 		details.setCreateBy(user);
-		details.setBelongOfficeId(oLog.getBelongOfficeId());
-		details.setBelongUserId(oLog.getBelongUserId());
+		/*details.setBelongOfficeId(oLog.getBelongOfficeId());
+		details.setBelongUserId(oLog.getBelongUserId());*/
 		details.setUseBalance(accountBalance);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
