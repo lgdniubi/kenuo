@@ -4,8 +4,8 @@
 	<sql id="userAccountsLogColmun">
 		id,
 		mtmy_user_id AS mtmyUserId,
-		belong_user_id AS belongUserId,
-		belong_office_id AS belongOfficeId,
+		<!-- belong_user_id AS belongUserId,
+		belong_office_id AS belongOfficeId, -->
 		amount,
 		type,
 		status,
@@ -21,8 +21,8 @@
 	<insert id="insertUserAccountsLog" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO mtmydb.mtmy_user_accounts_log(	
 			mtmy_user_id,
-			belong_user_id,
-			belong_office_id,
+			<!-- belong_user_id,
+			belong_office_id, -->
 			amount,
 			type,
 			status,
@@ -34,8 +34,8 @@
 			create_date
 		)values(
 			#{mtmyUserId},
-			#{belongUserId},
-			#{belongOfficeId},
+			<!-- #{belongUserId},
+			#{belongOfficeId}, -->
 			#{amount},
 			#{type},
 			#{status},

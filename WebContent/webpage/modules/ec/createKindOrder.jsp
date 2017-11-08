@@ -26,13 +26,13 @@
 			//新订单,业务员校验
 			if($("#isNeworder").val() == 0){
 				var sysUserId = $("#sysUserId").val(); 
-				var belongUserId = $("#belongUserId").val(); 
+				//var belongUserId = $("#belongUserId").val(); 
 				var orderamount = $("#orderamount").val();
 				
-				if(sysUserId == belongUserId){
+				/* if(sysUserId == belongUserId){
 					top.layer.alert('归属人和业务员不能是同一个人!', {icon: 0, title:'提醒'}); 
 					return;
-				}
+				} */
 				if(sysUserId == undefined){
 					top.layer.alert('业务员信息不能为空!', {icon: 0, title:'提醒'}); 
 					return;
@@ -555,11 +555,11 @@
     	    			pushMoneySum += parseFloat($(this).val());
     	    		});
     	    		
-    	    		var belongUserId = $("#belongUserId").val(); 
+    	    		/* var belongUserId = $("#belongUserId").val(); 
     				if(sysUserId == belongUserId){
     					top.layer.alert('归属人和业务员不能是同一个人!', {icon: 0, title:'提醒'}); 
     					return;
-    				}
+    				} */
     	    		
     	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) < 0){
     	    			top.layer.alert('营业总额必须大于0！', {icon: 0, title:'提醒'});

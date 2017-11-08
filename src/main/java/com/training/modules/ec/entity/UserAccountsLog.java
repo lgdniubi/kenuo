@@ -19,9 +19,9 @@ public class UserAccountsLog extends TreeEntity<UserAccountsLog> {
 	private String remarks;				//备注
 	private String createOfficeId;		//操作者当前所属机构
 
-	private String belongUserId;		//操作者当前所属机构
+	/*private String belongUserId;		//操作者当前所属机构
 	private String belongOfficeId;		//操作者当前所属机构
-	
+*/	
 	
 	public int getMtmyUserId() {
 		return mtmyUserId;
@@ -75,7 +75,7 @@ public class UserAccountsLog extends TreeEntity<UserAccountsLog> {
 	public void setAmount(double amount) {
 		this.amount = amount;
 	}
-	public String getBelongUserId() {
+	/*public String getBelongUserId() {
 		return belongUserId;
 	}
 	public void setBelongUserId(String belongUserId) {
@@ -86,7 +86,7 @@ public class UserAccountsLog extends TreeEntity<UserAccountsLog> {
 	}
 	public void setBelongOfficeId(String belongOfficeId) {
 		this.belongOfficeId = belongOfficeId;
-	}
+	}*/
 	@Override
 	public UserAccountsLog getParent() {
 		// TODO Auto-generated method stub
