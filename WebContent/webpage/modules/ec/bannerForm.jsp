@@ -116,10 +116,7 @@
 									<td><label class="pull-right">跳转类型：</label></td>
 									<td>
 										<form:select path="pageType" class="form-control">
-											<form:option value="0">活动页</form:option>
-											<form:option value="1">商品</form:option>
-											<form:option value="2">专题页</form:option>
-											<form:option value="3">文章</form:option>
+											<form:options items="${fns:getDictList('pageType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 										</form:select>
 									</td>
 								</tr>
