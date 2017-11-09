@@ -77,21 +77,21 @@
 			
 			//初始化权限树时让其父节点下的子节点禁止选中
 			function initOffice(node,treeObj) {
-				if (node.checked) {
-					if (node.isParent) {
-						var nodes = node.children;
-						for (var j = 0; j < nodes.length; j++) {
-							nodes[j].checked = false;
-							setFontCss(true,nodes[j],treeObj);
-							nodes[j].chkDisabled = true;
-							treeObj.updateNode(nodes[j]);
-							if (nodes[j].isParent) {
-								initOffice(nodes[j],treeObj);
-							}
-							
+				if (node.isParent) {
+					var nodes = node.children;
+					for (var j = 0; j < nodes.length; j++) {
+						nodes[j].checked = false;
+						setFontCss(true,nodes[j],treeObj);
+						nodes[j].chkDisabled = true;
+						treeObj.updateNode(nodes[j]);
+						if (nodes[j].isParent) {
+							initOffice(nodes[j],treeObj);
 						}
+						
 					}
-				} 
+				}else{
+					setFontCss(false,node,treeObj);
+				}
 			}
 			
 			//递归遍历取消勾选的父节点下的所有的子节点并更新所有的节点让其可勾选并将字体颜色恢复
