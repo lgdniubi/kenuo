@@ -1167,8 +1167,10 @@ public class SystemService extends BaseService implements InitializingBean {
 	public void updateOfficeById(String id,String officeIds) {
 		String[] offIds = officeIds.split(",");
 		userDao.deleteOfficeById(Integer.valueOf(id));
-		for (String ofId : offIds) {
-			userDao.updateOfficeById(Integer.valueOf(id),ofId);
+		if (!"".equals(officeIds)) {
+			for (String ofId : offIds) {
+				userDao.updateOfficeById(Integer.valueOf(id),ofId);
+			}
 		}
 	}
 
