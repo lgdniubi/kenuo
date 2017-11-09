@@ -34,6 +34,29 @@
 				}else{
 					$("#isUpdateRole").val(1);	
 				}
+				
+				//当自媒体权限  选择 是,下面的字段都是必填;选择 否,下面的字段全部为空
+				var isLogin = $("[name='mediaLoginAuth.isLogin']:checked").val();
+				var userType = $("[name='mediaLoginAuth.userType']").val();
+				var userTag = $("[name='mediaLoginAuth.userTag']").val();
+				if(isLogin == 1){
+					if(userType == 3){//当用户类型是超级管理员,默认平台全选
+						$("input[name='mediaLoginAuth.platform']").each(function(){ 
+							$(this).attr("checked",true); 
+						});
+					}else{
+						var platform = $("[name='mediaLoginAuth.platform']:checked").val();
+						if(platform == undefined){
+							top.layer.alert('平台为必选', {icon: 0, title:'提醒'});
+							return;
+						}
+					}
+					if($("[name='mediaLoginAuth.userTag']").val() == null || $("[name='mediaLoginAuth.userTag']").val() == ""){
+						top.layer.alert('标签为必填', {icon: 0, title:'提醒'});
+						return;
+					}
+				}
+				
 				if($("#dataScope").val()==2){
 					  if(ids2.length > 0){
 						  $("#officeIds").val(ids2);
@@ -49,7 +72,7 @@
 				    $("#inputForm").submit();
 				    return true;
 				 }
-		  	} 
+			} 
 		  return false;
 		}
 		$(document).ready(function(){
@@ -91,12 +114,58 @@
 			$("#dataScope").change(function(){
 				refreshOfficeTree();
 			});
+			
+			//自媒体权限下面的数据暂时不显示
+			var login = $("[name='mediaLoginAuth.isLogin']:checked").val();
+			if(login == 0){
+				$("#user_type").hide();
+				$("#platform").hide();
+				$("#userTag").hide();
+			}
+			
+			//自媒体权限    是(为了回显)
+			var checkeds = $("#_platform").val();
+			var checkArray  = checkeds.split(",");
+			var checkBoxAll = $("input[name='mediaLoginAuth.platform']");
+			if(checkArray.length > 1){
+				for(var i=0;i<checkArray.length;i++){
+					//获取所有复选框对象的value属性，然后，用checkArray[i]和他们匹配，如果有，则说明他应被选中
+					$.each(checkBoxAll,function(j,checkbox){
+				        //获取复选框的value属性
+				        var checkValue=$(checkbox).val();
+				        if(checkArray[i]==checkValue){
+				            $(checkbox).attr("checked",true);
+				        }
+				    })
+				}
+			}
 		});
 		function refreshOfficeTree(){
 			if($("#dataScope").val()==2){
 				$("#officeTree").show();
 			}else{
 				$("#officeTree").hide();
+			}
+		}
+		//自媒体权限 是:用户类型.平台.标签才会显示  否:全部隐藏
+		var updateIsLogin = function (val){
+			if(val == 1){
+				$("#user_type").show();
+				$("#platform").show();
+				$("#userTag").show();
+			}else if(val == 0){//自媒体权限下面的数据暂时不显示
+				$("#user_type").hide();
+				$("#platform").hide();
+				$("#userTag").hide();
+			}
+		}
+		//用户类型  选择  超级管理员 默认平台全选
+		var updateUserType = function (obj){
+			var type = $(obj).val();
+			if(type == 3){
+				$("#platform").hide();
+			}else{
+				$("#platform").show();
 			}
 		}
 	</script>
@@ -146,6 +215,47 @@
 						<span class="help-inline">注:此权限仅适用于发现、直播、问答</span>
 					</div>
 				</td>
+		      </tr>
+		      <tr>
+		         <td class="width-15 active" style="vertical-align: top;"><label class="pull-right">自媒体权限:</label></td>
+		         <td class="width-35">
+		         	<c:if test="${not empty user.mediaLoginAuth.isLogin}">
+				        <c:if test="${user.mediaLoginAuth.isLogin==1}">
+							<label><input id="isLogin" name="mediaLoginAuth.isLogin" type="radio" value="1" class="form" onclick="updateIsLogin(1)" <c:if test="${user.mediaLoginAuth.isLogin==1}">checked="checked"</c:if>/>是</label>
+							<label><input id="isLogin" name="mediaLoginAuth.isLogin" type="radio" value="0" class="form" onclick="updateIsLogin(0)" <c:if test="${user.mediaLoginAuth.isLogin==0}">checked="checked"</c:if>/>否</label>
+						</c:if>
+						<c:if test="${user.mediaLoginAuth.isLogin==0}">
+							<label><input id="isLogin" name="mediaLoginAuth.isLogin" type="radio" value="1" class="form" onclick="updateIsLogin(1)" <c:if test="${user.mediaLoginAuth.isLogin==1}">checked="checked"</c:if>/>是</label>
+							<label><input id="isLogin" name="mediaLoginAuth.isLogin" type="radio" value="0" class="form" onclick="updateIsLogin(0)" <c:if test="${user.mediaLoginAuth.isLogin==0}">checked="checked"</c:if>/>否</label>
+						</c:if>
+					</c:if>
+					<c:if test="${empty user.mediaLoginAuth.isLogin}">
+						<label><input id="isLogin" name="mediaLoginAuth.isLogin" type="radio" value="1" class="form" onclick="updateIsLogin(1)" checked="checked"/>是</label>
+						<label><input id="isLogin" name="mediaLoginAuth.isLogin" type="radio" value="0" class="form" onclick="updateIsLogin(0)"/>否</label>
+					</c:if>
+				</td>
+		      </tr>
+		      <tr id="user_type">
+		         <td class="width-15 active" style="vertical-align: top;"><label class="pull-right"><font color="red">*</font>用户类型:</label></td>
+		         <td class="width-35">
+		         	<form:select path="mediaLoginAuth.userType" class="form-control" onchange="updateUserType(this)">
+						<form:options items="${fns:getDictList('media_user_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+					</form:select>
+				 </td>
+		      </tr>
+		      <tr id="platform">
+		         <td class="width-15 active" style="vertical-align: top;"><label class="pull-right"><font color="red">*</font>平台:</label></td>
+		         <td class="width-35">
+					<form:checkboxes items="${fns:getDictList('media_platform')}" itemLabel="label" itemValue="value" path="mediaLoginAuth.platform" />
+					<input type="hidden" id="_platform" name="_platform" value="${user.mediaLoginAuth.platform}" />
+				 </td>
+		      </tr>
+		      <tr id="userTag">
+		         <td class="width-15 active" style="vertical-align: top;"><label class="pull-right"><font color="red">*</font>标签:</label></td>
+		         <td class="width-35">
+		         	<form:input path="mediaLoginAuth.userTag" htmlEscape="false" maxlength="6" class="form-control"/>
+		         	<span class="help-inline">每人一个标签,最多6个字</span>
+		         </td>
 		      </tr>
 			</tbody>
 		</table>
