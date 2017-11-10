@@ -334,4 +334,13 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 	public int findOfficeIntegrals(){
 		return dao.findOfficeIntegrals();
 	}
+
+	/**
+	 * 添加直播推荐(只有一个能够推荐)
+	 * @param trainLiveAudit
+	 */
+	public void addRecommend(TrainLiveAudit trainLiveAudit) {
+		trainLiveAuditDao.updateRecommend();//修改全部直播为不推荐
+		trainLiveAuditDao.addRecommend(trainLiveAudit);//给唯一的直播添加推荐
+	}
 }
