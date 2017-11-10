@@ -40,16 +40,16 @@
 				var userType = $("[name='mediaLoginAuth.userType']").val();
 				var userTag = $("[name='mediaLoginAuth.userTag']").val();
 				if(isLogin == 1){
-					if(userType == 3){//当用户类型是超级管理员,默认平台全选
-						$("input[name='mediaLoginAuth.platform']").each(function(){ 
-							$(this).attr("checked",true); 
-						});
-					}else{
+					if(userType == 1){//用户类型:管理员,默认平台不选
 						var platform = $("[name='mediaLoginAuth.platform']:checked").val();
 						if(platform == undefined){
 							top.layer.alert('平台为必选', {icon: 0, title:'提醒'});
 							return;
 						}
+					}else if(userType == 2){//当用户类型:平台为空
+						$("input[name='mediaLoginAuth.platform']").each(function(){ 
+							$(this).attr("checked",false); 
+						});
 					}
 					if($("[name='mediaLoginAuth.userTag']").val() == null || $("[name='mediaLoginAuth.userTag']").val() == ""){
 						top.layer.alert('标签为必填', {icon: 0, title:'提醒'});
@@ -122,9 +122,14 @@
 				$("#platform").hide();
 				$("#userTag").hide();
 			}
+			//自媒体权限 用户类型是:管理员  平台不显
+			var _userType = $("#_userType").val();
+			if(_userType == 2){
+				$("#platform").hide();
+			}
 			
-			//自媒体权限    是(为了回显)
 			var checkeds = $("#_platform").val();
+			//自媒体权限    是(为了回显)
 			var checkArray  = checkeds.split(",");
 			var checkBoxAll = $("input[name='mediaLoginAuth.platform']");
 			if(checkArray.length > 1){
@@ -162,7 +167,7 @@
 		//用户类型  选择  超级管理员 默认平台全选
 		var updateUserType = function (obj){
 			var type = $(obj).val();
-			if(type == 3){
+			if(type == 2){
 				$("#platform").hide();
 			}else{
 				$("#platform").show();
@@ -241,6 +246,7 @@
 		         	<form:select path="mediaLoginAuth.userType" class="form-control" onchange="updateUserType(this)">
 						<form:options items="${fns:getDictList('media_user_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 					</form:select>
+					<input type="hidden" id="_userType" name="_userType" value="${user.mediaLoginAuth.userType}" />
 				 </td>
 		      </tr>
 		      <tr id="platform">
