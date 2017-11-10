@@ -438,10 +438,6 @@ public class SystemService extends BaseService implements InitializingBean {
 	public void saveUser(User user) {
 		// UserLog userLog = new UserLog();
 		
-		if("".equals(user.getAppellationId()) || user.getAppellationId() == null){
-			user.setAppellationId("0");
-		}
-		
 		if (StringUtils.isBlank(user.getId())) {
 			user.preInsert();
 			if("2".equals(user.getResult())){

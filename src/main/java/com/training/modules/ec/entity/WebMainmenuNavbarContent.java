@@ -16,6 +16,7 @@ public class WebMainmenuNavbarContent extends DataEntity<WebMainmenuNavbarConten
 	private String name;						//名称
 	private String imgUrl;						//图片链接
 	private String redirectUrl;					//链接地址
+	private int categoryId;                    //（文章、商品）分类id
 	private String sort;						//排序
 	
 	
@@ -54,6 +55,12 @@ public class WebMainmenuNavbarContent extends DataEntity<WebMainmenuNavbarConten
 	}
 	public void setSort(String sort) {
 		this.sort = sort;
+	}
+	public int getCategoryId() {
+		return categoryId;
+	}
+	public void setCategoryId(int categoryId) {
+		this.categoryId = categoryId;
 	}
 	
 }

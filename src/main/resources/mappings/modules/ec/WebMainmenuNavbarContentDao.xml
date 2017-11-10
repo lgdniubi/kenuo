@@ -11,6 +11,7 @@
 			img_url AS imgUrl,
 			redirect_url AS redirectUrl,
 		    sort,
+		    category_id AS categoryId,
 			create_date AS createDate
 		FROM
 			mtmydb.mtmy_web_mainmenu_navbar_content
@@ -43,6 +44,7 @@
 			img_url AS imgUrl,
 			redirect_url AS redirectUrl,
 		    sort,
+		    category_id AS categoryId,
 			create_date AS createDate
 		FROM
 			mtmydb.mtmy_web_mainmenu_navbar_content
@@ -58,6 +60,7 @@
 			img_url,
 			redirect_url,
 			sort,
+			category_id,
 			create_date
 		) VALUES (
 			#{mainmenuId},
@@ -65,6 +68,7 @@
 			#{imgUrl},
 			#{redirectUrl},
 			#{sort},
+			#{categoryId},
 			SYSDATE()
 		)
 	</insert>
@@ -76,7 +80,16 @@
 			name = #{name},
 			img_url = #{imgUrl},
 			redirect_url = #{redirectUrl},
-			sort = #{sort}
+			sort = #{sort},
+			category_id = #{categoryId}
 		WHERE id = #{webMainmenuNavbarContentId}
 	</update>
+	
+	<!-- 查询中部导航栏对应的分类id -->
+	<select id="selectCategoryId" resultType="String">
+		SELECT GROUP_CONCAT(category_id)
+		FROM mtmydb.mtmy_web_mainmenu_navbar_content
+		WHERE mainmenu_id = #{mainmenuId}
+		AND category_id != 0
+	</select>
 </mapper>

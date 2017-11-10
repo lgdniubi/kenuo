@@ -94,9 +94,6 @@ public class User extends DataEntity<User> {
 	
 	private String isRecommend;  //是否推荐（0：未推荐；1：推荐）
 	
-	private String appellationId;  //称谓标签id
-	private String appellationName; //称谓名称
-
 	private String companyIds; // 数据范围按商家区分
 	private String companyNames; // 数据范围按商家区分
 	
@@ -592,18 +589,6 @@ public class User extends DataEntity<User> {
 	}
 	public void setIsRecommend(String isRecommend) {
 		this.isRecommend = isRecommend;
-	}
-	public String getAppellationId() {
-		return appellationId;
-	}
-	public void setAppellationId(String appellationId) {
-		this.appellationId = appellationId;
-	}
-	public String getAppellationName() {
-		return appellationName;
-	}
-	public void setAppellationName(String appellationName) {
-		this.appellationName = appellationName;
 	}
 	public String getCompanyIds() {
 		return companyIds;

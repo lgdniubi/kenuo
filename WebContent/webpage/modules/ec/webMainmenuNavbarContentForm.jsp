@@ -32,6 +32,72 @@
 	    };
 	    
 		$(document).ready(function() {
+			$("#categoryIsShow").hide();
+			$("#goods").hide();
+
+			if($("#type").val() == 3){
+				if($("#flag").val() != 'add' && $("#oldIds").val() > 0){
+					$("#categoryIsShow").show();
+					$("#goods").show();
+					
+					$("#name").attr("readonly",true);
+					$("#categoryId").attr("readonly",true);
+					$("#goodsCategoryIdButton").attr("disabled","disabled");
+				}
+			}
+			
+			//商品分类选择框
+			$("#goodsCategoryIdButton").click(function(){
+				// 是否限制选择，如果限制，设置为disabled
+				if ($("#goodsCategoryIdButton").hasClass("disabled")){
+					return true;
+				}
+				
+				$("#name").val("");
+				$("#categoryId").val("");
+				
+				// 正常打开	
+				top.layer.open({
+				    type: 2, 
+				    area: ['300px', '420px'],
+				    title:"选择商品分类",
+				    ajaxData:{selectIds: $("#goodsCategoryIdId").val()},
+				    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/ec/goodscategory/treeData?positionType=1")+"&module=&checked=&extId=&isAll=" ,
+				    btn: ['确定', '关闭']
+		    	       ,yes: function(index, layero){ //或者使用btn1
+								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+								var ids = [], names = [], nodes = [];
+								if ("" == "true"){
+									nodes = tree.getCheckedNodes(true);
+								}else{
+									nodes = tree.getSelectedNodes();
+								}
+								for(var i=0; i<nodes.length; i++) {//
+									if (nodes[i].isParent){
+										//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+										//layer.msg('有表情地提示');
+										top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+										return false;
+									}//
+									ids.push(nodes[i].id);
+									names.push(nodes[i].name);//
+									break; // 如果为非复选框选择，则返回第一个选择  
+								}
+								$("#goodsCategoryIdId").val(ids.join(",").replace(/u_/ig,""));
+								$("#goodsCategoryIdName").val(names.join(","));
+								$("#goodsCategoryIdName").focus();
+								
+								$("#name").val($("#goodsCategoryIdName").val());
+								$("#categoryId").val($("#goodsCategoryIdId").val());
+								top.layer.close(index);
+						 },
+		    		cancel: function(index){ //或者使用btn2
+		    	           //按钮【按钮二】的回调
+		    	 	 }
+				}); 
+			
+			});
+			
 			validateForm = $("#inputForm").validate({
 					submitHandler: function(form){
 						loading('正在提交，请稍等...');
@@ -49,6 +115,26 @@
 				}
 			);
 		});
+		
+		function selectKind(obj){
+			$("#name").val("");
+			$("#categoryId").val("");
+			
+			if(obj == 1){
+				$("#categoryIsShow").hide();
+				$("#goods").hide();
+				$("#name").attr("readonly",false);
+				$("#categoryId").val("0");
+			}else if(obj == 2){
+				if($("#type").val() == 3){
+					$("#categoryIsShow").show();
+					$("#goods").show();
+					
+					$("#name").attr("readonly",true);
+					$("#categoryId").attr("readonly",true);
+				}
+			}
+		}
 	</script>
 </head>
 <body class="gray-bg">
@@ -61,11 +147,48 @@
 						<form:form id="inputForm" modelAttribute="webMainmenuNavbarContent" action="${ctx}/ec/webMainmenuNavbarContent/save">
 							<form:hidden path="webMainmenuNavbarContentId"/>
 							<form:hidden path="mainmenuId"/>
+							<input id="type" name="type" value="${type}" type="hidden"/>
+							<input id="flag" name="flag" value="${flag}" type="hidden"/>
+							<input id="oldIds" name="oldIds" value="${webMainmenuNavbarContent.categoryId}" type="hidden"/>
+							
 							<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
+								<c:if test="${type == 3 && flag == 'add'}">
+									<tr>
+										<td><label class="pull-right"><font color="red">*</font>选择类型：</label></td>
+										<td>
+											<select id="kind" name="kind" class="form-control" style="width:185px;" onchange="selectKind(this.value)">
+												<option value="1">普通</option>
+												<option value="2">特殊</option>
+											</select>
+										</td>
+									</tr>
+								</c:if>
+								<tr id="goods">
+									<td><label class="pull-right"><font color="red">*</font>商品分类：</label></td>
+									<td>
+										<div  style="width:200px;">
+											<input id="goodsCategoryIdId" class="form-control required" type="hidden" value="" name="goodsCategoryId" aria-required="true">
+											<div class="input-group">
+												<input id="goodsCategoryIdName" class="form-control required" type="text" style="" data-msg-required="" value="${webMainmenuNavbarContent.name}" readonly="readonly" name="goodsCategory.name" aria-required="true"> <span class="input-group-btn">
+													<button id="goodsCategoryIdButton" class="btn btn-primary " type="button">
+														<i class="fa fa-search"></i>
+													</button>
+												</span>
+											</div> 
+											<label id="goodsCategoryIdName-error" class="error" style="display: none" for="goodsCategoryIdName"></label>
+										</div>
+									</td>
+								</tr>
 								<tr>
 									<td><label class="pull-right"><font color="red">*</font>名称：</label></td>
 									<td>
 										<form:input path="name" id="name" class="form-control required" style="width: 300px"/>
+									</td>
+								</tr>
+								<tr id="categoryIsShow">
+									<td><label class="pull-right"><font color="red">*</font>分类id：</label></td>
+									<td>
+										<form:input path="categoryId" class="form-control" style="width: 300px"/>
 									</td>
 								</tr>
 								<tr>
