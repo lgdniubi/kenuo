@@ -139,8 +139,8 @@
 						</c:if>
 						<p></p>
 						<c:if test="${orderGoods.advanceServiceTimes == 0}">
-							<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;欠款：</label>
-							<input type="text" id="debt" name="debt" readonly="readonly" value="${orderGoods.debt}" class="form-control required" style="width:150px;"  />
+							<label class="active" style="color: red;font-weight:bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;欠款：</label>
+							<input type="text" id="debt" name="debt" readonly="readonly" value="${orderGoods.debt}" class="form-control required" style="width:150px;border:1px solid red;"  />
 							<p></p>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="ichecks" onchange="sum()" name="ichecks"/><label class="active">是否使用</label>
 							（账户可用余额：${orderGoods.accountBalance}）
