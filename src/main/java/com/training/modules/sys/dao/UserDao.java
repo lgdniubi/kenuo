@@ -10,7 +10,6 @@ import org.apache.ibatis.annotations.Param;
 
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
-import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.Role;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.entity.UserLog;
@@ -288,6 +287,7 @@ public interface UserDao extends CrudDao<User> {
 	 * 当为原来不是排班角色，后来改为排班角色，但是user_info中没有信息时，新增美容师的信息
 	 */
 	public void insertUserInfo(@Param(value="uuid")String uuid, @Param(value="id")String id);
+
 	/**
 	 * 保存用户的妃子笑角色
 	 * @param fzxRoleId
@@ -332,4 +332,11 @@ public interface UserDao extends CrudDao<User> {
 	 */
 	public void updateOfficeById(@Param(value="id")Integer id,@Param(value="ofId")String ofId);
 	
+	/**
+	 * 根据OfficeId获取用户(树查询用户时用)
+	 * @param officeId
+	 * @return
+	 */
+	public List<User> findUsersByOfficeId(String officeId);
+
 }

@@ -73,6 +73,91 @@
 					laydate(payBeg);
 					laydate(payEnd);
 	       
+					
+				$("#belongOfficeButton").click(function(){
+					// 是否限制选择，如果限制，设置为disabled
+					if ($("#belongOfficeButton").hasClass("disabled")){
+						return true;
+					}
+					// 正常打开	
+					top.layer.open({
+					    type: 2, 
+					    area: ['300px', '420px'],
+					    title:"选择部门",
+					    ajaxData:{selectIds: $("#belongOfficeId").val()},
+					    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/office/treeData?type=2")+"&module=&checked=&extId=&isAll=&selectIds=" ,
+					    btn: ['确定', '关闭']
+			    	       ,yes: function(index, layero){ //或者使用btn1
+									var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+									var ids = [], names = [], nodes = [];
+									if ("" == "true"){
+										nodes = tree.getCheckedNodes(true);
+									}else{
+										nodes = tree.getSelectedNodes();
+									}
+									for(var i=0; i<nodes.length; i++) {//
+										ids.push(nodes[i].id);
+										names.push(nodes[i].name);//
+										break; // 如果为非复选框选择，则返回第一个选择  
+									}
+									
+									$("#belongUserId").val("");
+									$("#belongUserName").val("");
+									
+									$("#belongOfficeId").val(ids.join(",").replace(/u_/ig,""));
+									$("#belongOfficeName").val(names.join(","));
+									$("#belongOfficeName").focus();
+									top.layer.close(index);
+							    	       },
+			    	cancel: function(index){ //或者使用btn2
+			    	           //按钮【按钮二】的回调
+			    	       }
+					}); 
+				
+				});
+				
+				$("#belongUserButton").click(function(){
+					var belongOfficeId = $("#belongOfficeId").val();
+					// 是否限制选择，如果限制，设置为disabled
+					if ($("#belongUserButton").hasClass("disabled")){
+						return true;
+					}
+					
+					if(belongOfficeId == null || belongOfficeId == ""){
+						top.layer.alert('请先选择归属机构!', {icon: 0, title:'提醒'});
+					}else{
+						// 正常打开	
+						top.layer.open({
+						    type: 2, 
+						    area: ['300px', '420px'],
+						    title:"选择人员",
+						    ajaxData:{belongOfficeId:belongOfficeId},
+						    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/user/officeUserTreeData?belongOfficeId="+belongOfficeId),
+						    btn: ['确定', '关闭']
+				    	       ,yes: function(index, layero){ //或者使用btn1
+										var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+										var ids = [], names = [], nodes = [];
+										if ("" == "true"){
+											nodes = tree.getCheckedNodes(true);
+										}else{
+											nodes = tree.getSelectedNodes();
+										}
+										for(var i=0; i<nodes.length; i++) {//
+											ids.push(nodes[i].id);
+											names.push(nodes[i].name);//
+											break; // 如果为非复选框选择，则返回第一个选择  
+										}
+										$("#belongUserId").val(ids.join(",").replace(/u_/ig,""));
+										$("#belongUserName").val(names.join(","));
+										$("#belongUserName").focus();
+										top.layer.close(index);
+								    	       },
+				    	cancel: function(index){ //或者使用btn2
+				    	           //按钮【按钮二】的回调
+				    	       }
+						}); 
+					}
+				});
 	    });
 		
 		function addVirtualOrder(){
@@ -93,8 +178,40 @@
 			 openDialog('退货商品列表','${ctx}/ec/orders/returnGoddsList?flag='+flag+'&orderid='+orderId+'&isReal='+isReal,'1000px','650px');
 		}
 		
+		function affirmReceive(officeId,orderid){
+			if(officeId == "" || officeId == null){
+				top.layer.alert('该用户未绑定店铺,请在CRM中为该用户绑定！', {icon: 0, title:'提醒'});
+		    	return;
+			}
+			
+			confirmx("确认要收货吗？", "${ctx}/ec/orders/affirmReceive?orderid="+orderid)
+			
+			/* if(channelFlag == 'bm'){
+				confirmx("确认要收货吗？", "${ctx}/ec/orders/affirmReceive?orderid="+orderid+"&channelFlag="+channelFlag)
+			}else{
+				$('#confirmOffice').modal("show");
+				$("#selectOrderid").val(orderid);
+				$("#selectChannelFlag").val(channelFlag);
+				closeTip();
+			} */
+		}
 		
+		
+		/* function saveConfirmOffice(){
+			if($("#belongOfficeId").val() == ""){
+				top.layer.alert('归属机构必填!', {icon: 0, title:'提醒'});
+				return;
+			}
+			loading('正在提交，请稍等...');
+	    	window.location="${ctx}/ec/orders/affirmReceive?orderid="+$("#selectOrderid").val()+"&belongOfficeId="+$("#belongOfficeId").val()+"&belongUserId="+$("#belongUserId").val()+"&channelFlag="+$("#selectChannelFlag").val(); 
+		} */
 </script>
+<!-- <style type="text/css">
+	.modal-content{
+		margin:0 auto;
+		width: 500px;
+	}
+</style> -->
 </head>
 
 
@@ -328,10 +445,10 @@
 										<a href="#" onclick="openDialog('编辑订单', '${ctx}/ec/orders/cardOrdersForm?orderid=${orders.orderid}&isReal=${orders.isReal}&type=edit','1100px','650px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>修改</a>
 									</c:if>
 									<c:if test="${orders.channelFlag!='bm' && orders.isReal==0}">
-										<c:if test="${orders.orderstatus==4 or orders.orderstatus==-2}">
+										<c:if test="${orders.orderstatus==-2}">
 											<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>修改</a>
 										</c:if>
-										<c:if test="${orders.orderstatus!=4 and orders.orderstatus!=-2}">
+										<c:if test="${orders.orderstatus!=-2}">
 											<a href="#" onclick="openDialog('编辑订单', '${ctx}/ec/orders/orderform?orderid=${orders.orderid}&isReal=${orders.isReal}&type=edit','1100px','650px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>修改</a>
 										</c:if>
 									</c:if>
@@ -364,6 +481,14 @@
 								<c:if test="${orders.orderstatus != -1}">
 									<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-trash"></i>取消订单</a>
 								</c:if>
+								<shiro:hasPermission name="ec:orders:affirmReceive">
+									<c:if test="${orders.orderstatus == 2 && orders.shippingtype == 1}">
+										<a href="#" onclick="affirmReceive('${orders.officeId}','${orders.orderid}')"  class="btn btn-danger btn-xs" ><i class="fa fa-edit"></i>确认收货</a>
+									</c:if>
+									<c:if test="${orders.orderstatus != 2 || orders.shippingtype != 1}">
+										<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>确认收货</a>
+									</c:if>
+								</shiro:hasPermission>
 							</td>
 						</tr>
 					</c:forEach>
@@ -383,7 +508,57 @@
 			</div>
 		 </div>	
 		</div>
-	
+		 <!--确认收货绑定归属人归属机构-->
+		<!--<div class="modal fade bs-example-modal-lg in" id="confirmOffice" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" style="display: none; padding-right: 17px;">
+	   		<form id="confirmOfficeFrom" class="modal-dialog modal-lg">
+	     		<div class="modal-content">
+	       			<div class="modal-header">
+	       				<span>选择归属机构、归属人</span>
+	         			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+	       			</div>
+	       			<div class="modal-body">
+		       		<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
+						<tr>
+							<td><span><font color="red">*</font>归属机构：</span></td>
+							<td>
+								<input id="belongOfficeId" class=" form-control input-sm" name="belongOfficeId" value="" type="hidden">
+								<div class="input-group">
+									<input id="belongOfficeName" class=" form-control required input-sm" name="belongOfficeName" readonly="readonly" value="" data-msg-required="" style="" type="text">
+										<span class="input-group-btn">
+											<button id="belongOfficeButton" class="btn btn-sm btn-primary " type="button">
+												<i class="fa fa-search"></i>
+											</button>
+										</span>
+								</div>
+								<label id="belongOfficeName-error" class="error" for="belongOfficeName" style="display:none"></label>
+							</td>
+						</tr>
+						<tr id="belongUser">
+							<td><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;归属人：</span></td>
+							<td>
+								<input id="belongUserId" class=" form-control input-sm" name="belongUserId" value="" type="hidden">
+								<div class="input-group">
+									<input id="belongUserName" class=" form-control input-sm" name="belongUserName" readonly="readonly" value="" data-msg-required="" style="" type="text">
+										<span class="input-group-btn">
+											<button id="belongUserButton" class="btn btn-sm btn-primary " type="button">
+												<i class="fa fa-search"></i>
+											</button>
+										</span>
+								</div>
+								<label id="belongUserName-error" class="error" for="belongUserName" style="display:none"></label>
+							</td>
+						</tr>
+					</table>
+	       			</div>
+	       			<div class="modal-footer">
+	       				<button onclick="saveConfirmOffice()" class="btn btn-success" type="button">保 存</button>
+						<a href="#" class="btn btn-primary" data-dismiss="modal">关   闭</a>
+						<input id="selectOrderid" name="selectOrderid" type="hidden">
+						<input id="selectChannelFlag" name="selectChannelFlag" type="hidden">
+	       			</div>
+	     		</div>
+	   		</form>
+	 	</div> -->
 	
 </body>
 </html>

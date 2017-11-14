@@ -2,6 +2,7 @@ package com.training.modules.ec.service;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -26,9 +27,11 @@ import com.training.modules.ec.dao.MtmyRuleParamDao;
 import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.dao.OrderGoodsDao;
 import com.training.modules.ec.dao.OrderGoodsDetailsDao;
+import com.training.modules.ec.dao.OrderPushmoneyRecordDao;
 import com.training.modules.ec.dao.OrdersDao;
 import com.training.modules.ec.dao.PaymentDao;
 import com.training.modules.ec.dao.TradingLogDao;
+import com.training.modules.ec.dao.UserAccountsLogDao;
 import com.training.modules.ec.entity.AcountLog;
 import com.training.modules.ec.entity.CouponUser;
 import com.training.modules.ec.entity.Goods;
@@ -51,6 +54,7 @@ import com.training.modules.ec.entity.Orders;
 import com.training.modules.ec.entity.Payment;
 import com.training.modules.ec.entity.PushmoneyRecordLog;
 import com.training.modules.ec.entity.TradingLog;
+import com.training.modules.ec.entity.UserAccountsLog;
 import com.training.modules.ec.entity.Users;
 import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.quartz.tasks.OrderTimeOut;
@@ -112,6 +116,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	private OrderInvoiceService orderInvoiceService;
 	@Autowired
 	private OrderGoodsDetailsDao orderGoodsDetailsDao;
+	@Autowired
+	private OrderPushmoneyRecordDao orderPushmoneyRecordDao;
+	@Autowired
+	private UserAccountsLogDao userAccountsLogDao;
 	
 	public static final String MTMY_ID = "mtmy_id_";//用户云币缓存前缀
 	
@@ -617,6 +625,15 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	public Orders getSysUser(String mobile) {
 		return ordersDao.getSysUser(mobile);
 	}
+	
+	/**
+	 * 根据Orderid查找相应的商品信息
+	 * @param orderId
+	 * @return
+	 */
+	public List<OrderGoods> selectOrderGoodsByOrderid(String orderId){
+		return orderGoodsDao.selectOrderGoodsByOrderid(orderId);
+	}
 
 	/**
 	 * 保存虚拟订单saveVirtualOrder
@@ -642,6 +659,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		double spareMoneySum = 0d;	//总余额
 		double newSpareMoneySum = 0d;  //商品总余额(当实付大于应付时，将多的存入个人账户余额中)
 		double goodsprice = 0;  //商品总价
+		
+		String recid = "";//保存mappingid到账户充值记录表中
+		
 		for (Integer i = 0; i < goodselectIds.size(); i++) {
 			Integer goodselectId = goodselectIds.get(i);		//商品id
 			String speckey = speckeys.get(i);					//规格key
@@ -760,6 +780,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
 			
+			recid += "," + orderGoods.getRecid();//保存mappingid到账户充值记录表中
 			
 			//订单商品详情记录表
 			int _serviceTimes = 0;//剩余服务次数
@@ -801,7 +822,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			}
 			details.setType(0);
 			details.setAdvanceFlag("0");
+			details.setCreateOfficeId(user.getOffice().getId());
 			details.setCreateBy(user);
+			/*details.setBelongOfficeId(orders.getBelongOfficeId());
+			details.setBelongUserId(orders.getBelongUserId());*/
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
 		}
@@ -843,6 +867,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setShippingtype(2);
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		/*_orders.setBelongOfficeId(orders.getBelongOfficeId());
+		_orders.setBelongUserId(orders.getBelongUserId());*/
 		ordersDao.saveVirtualOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -853,12 +879,18 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			newAccount.setAccountBalance(accountBalance);
 			newAccount.setUserid(_orders.getUserid());
 			ordersDao.insertAccount(newAccount);
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
 		}else{
 			/*double accountArrearage = account.getAccountArrearage()+debtMoneySum;	//账户欠款信息*/		
 			double accountBalance = account.getAccountBalance()+newSpareMoneySum;	//账户余额信息
 			/*account.setAccountArrearage(accountArrearage);*/
 			account.setAccountBalance(accountBalance);
 			ordersDao.updateAccount(account);
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
 		}
 		
 		
@@ -866,11 +898,16 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<String> sysUserId = orders.getSysUserId();	//提成人员id
 		List<Double> pushMoney = orders.getPushMoney();	//提成金额
 		if(sysUserId!=null && sysUserId.size()>0){
+			OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
 			for (int i = 0; i < sysUserId.size(); i++) {
-				OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
-				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushmoneyUserId(sysUserId.get(i));
+				
+				//通过业务员id(属于妃子校的)查询业务员归属机构
+				orderPushmoneyRecord = orderPushmoneyRecordService.getOfficeIdByUserId(orderPushmoneyRecord);
+				
+				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushMoney(pushMoney.get(i));
+				orderPushmoneyRecord.setOfficeId(user.getOffice().getId());
 				orderPushmoneyRecord.setCreateBy(user);
 				orderPushmoneyRecord.setDelFlag("0");
 				orderPushmoneyRecordService.saveOrderPushmoneyRecord(orderPushmoneyRecord);
@@ -930,6 +967,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @return
 	 */
 	public Orders selectOrderById(String orderid) {
+		DecimalFormat formater = new DecimalFormat("#0.##");   //四舍五入
 		Orders orders = dao.selectOrderById(orderid);
 		double goodsprice = 0;		//主订单成本总价
 		//查询主订单的计费信息
@@ -939,8 +977,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		if(orderGoodList!=null && orderGoodList.size()>0){
 			for (OrderGoods orderGoods : orderGoodList) {
 				//计算出当前子订单成本总价
-				double totalPrice = orderGoods.getGoodsprice()*orderGoods.getGoodsnum();
-				goodsprice = goodsprice + totalPrice*100; //总订单的成本价是子订单成本总价的合
+				double totalPrice = Double.parseDouble(formater.format(orderGoods.getGoodsprice()*orderGoods.getGoodsnum()));
+				goodsprice = Double.parseDouble(formater.format(goodsprice + totalPrice*100)); //总订单的成本价是子订单成本总价的合
 				OrderGoods _orderGoods = orderGoodsDetailsService.getOrderGoodsDetailListByMid(orderGoods.getRecid());
 				if(_orderGoods!=null){
 					//存在预约记录且预约状态为已完成 已评价 爽约
@@ -1042,6 +1080,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		double couponPrice = newDetails.getCouponPrice();      //红包面值
 		double memberGoodsPrice = newDetails.getMemberGoodsPrice(); //使用了会员折扣优惠的钱 
 		double advancePrice = newDetails.getAdvancePrice();        //预约金
+		int goodsNum = newDetails.getGoodsNum();                  //购买的数量
 		
 		double newTotalAmount = Double.parseDouble(formater.format(totalAmount + sumOrderBalance));//实付款金额 =充值金额+使用的账户余额+必须使用的商品剩余可用余额
 		int serviceTimes_in = 0;//剩余服务次数
@@ -1138,7 +1177,18 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				
 				newSpareMoneySum = Double.parseDouble(formater.format(newTotalAmount - orderArrearage - accountBalance));//商品总余额(当实付大于欠款时，将多的存入个人账户余额中)
 				newOrderBalance = 0;//商品余额（只放在details里的OrderBalance）
-				appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount));//app实付金额
+				
+				if("bm".equals(oLog.getChannelFlag())){
+					appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount));//app实付金额
+				}else{
+					if(couponPrice < advancePrice){
+						appTotalAmount =  Double.parseDouble(formater.format(goodsPrice*goodsNum - sumAppTotalAmount - couponPrice - memberGoodsPrice));//app实付金额
+					}else{
+						appTotalAmount =  Double.parseDouble(formater.format(goodsPrice*goodsNum - sumAppTotalAmount - advancePrice - memberGoodsPrice));//app实付金额
+					}
+				}
+				/*appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount));//app实付金额*/				
+			
 				appArrearage = -sumAppArrearage;//app欠款金额
 			}
 		}
@@ -1155,13 +1205,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setOrderId(oLog.getOrderId());
 		details.setGoodsMappingId(oLog.getRecid()+"");
 		details.setOrderBalance(newOrderBalance);	//订单余款
-		if(1 == oLog.getIsReal() && singleRealityPrice > newTotalAmount){
-			details.setOrderArrearage(0);	//订单欠款
-			details.setTotalAmount(0);	//实付款金额
-		}else{
-			details.setOrderArrearage(-totalAmount_in);	//订单欠款
-			details.setTotalAmount(totalAmount_in);	//实付款金额
-		}
+		details.setTotalAmount(totalAmount_in);	//实付款金额
+		details.setOrderArrearage(-totalAmount_in);	//订单欠款
 		details.setItemAmount(itemAmount);	//项目金额
 		details.setItemCapitalPool(itemCapitalPool); //项目资金池
 		details.setServiceTimes(serviceTimes_in);	//剩余服务次数
@@ -1169,7 +1214,11 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setAppArrearage(appArrearage);//app欠款金额
 		details.setType(0);
 		details.setAdvanceFlag("3");
+		details.setCreateOfficeId(user.getOffice().getId());
 		details.setCreateBy(user);
+		/*details.setBelongOfficeId(oLog.getBelongOfficeId());
+		details.setBelongUserId(oLog.getBelongUserId());*/
+		details.setUseBalance(accountBalance);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
 		//根据用户id查询用户账户信息
@@ -1190,12 +1239,20 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			newAccount.setUserid(_orders.getUserid());
 			newAccount.setUserIntegral(userIntegral);    //要赠送的云币
 			ordersDao.insertAccount(newAccount);
+			
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}else{
 			double accountBalance_ = 0;
 			accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()+newSpareMoneySum));
 			account.setAccountBalance(accountBalance_);
 			account.setUserIntegral(account.getUserIntegral() + userIntegral);   //要赠送的云币
 			ordersDao.updateAccount(account);
+			
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}
 		
 	}
@@ -1289,6 +1346,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		double spareMoneySum = 0d;	//总余额
 		double newSpareMoneySum = 0d;  //商品总余额(当实付大于应付时，将多的存入个人账户余额中)
 		double goodsprice = 0;  //商品总价
+		
+		String recid = "";//保存mappingid到账户充值记录表中
+		
 		for (Integer i = 0; i < goodselectIds.size(); i++) {
 			Integer goodselectId = goodselectIds.get(i);		//商品id
 			String speckey = speckeys.get(i);					//规格key
@@ -1365,6 +1425,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
 			
+			recid += "," + orderGoods.getRecid();//保存mappingid到账户充值记录表中
+			
 			//订单商品详情记录表
 			OrderGoodsDetails details = new OrderGoodsDetails();
 			details.setOrderId(orderid);
@@ -1376,7 +1438,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			details.setAppArrearage(appArrearage);   //app欠款金额
 			details.setType(0);
 			details.setAdvanceFlag("0");
+			details.setCreateOfficeId(user.getOffice().getId());
 			details.setCreateBy(user);
+			/*details.setBelongOfficeId(orders.getBelongOfficeId());
+			details.setBelongUserId(orders.getBelongUserId());*/
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
 		}
@@ -1414,12 +1479,15 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setDelFlag("0");
 		_orders.setChannelFlag("bm");
 		_orders.setShippingtype(orders.getShippingtype());
+		_orders.setShopId(orders.getShopId());
 		_orders.setConsignee(orders.getConsignee());
 		_orders.setPhone(orders.getPhone());
 		_orders.setAddress(orders.getAddress());
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setCreateBy(user);
+		/*_orders.setBelongOfficeId(orders.getBelongOfficeId());
+		_orders.setBelongUserId(orders.getBelongUserId());*/
 		ordersDao.saveKindOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -1431,22 +1499,33 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			newAccount.setAccountBalance(accountBalance);
 			newAccount.setUserid(_orders.getUserid());
 			ordersDao.insertAccount(newAccount);
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
 		}else{
 			double accountBalance = account.getAccountBalance()+newSpareMoneySum;	//账户余额信息
 			/*account.setAccountArrearage(accountArrearage);*/
 			account.setAccountBalance(accountBalance);
 			ordersDao.updateAccount(account);
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
 		}
 		
 		//保存提成人员信息 
 		List<String> sysUserId = orders.getSysUserId();	//提成人员id
 		List<Double> pushMoney = orders.getPushMoney();	//提成金额
 		if(sysUserId!=null && sysUserId.size()>0){
+			OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
 			for (int i = 0; i < sysUserId.size(); i++) {
-				OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
-				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushmoneyUserId(sysUserId.get(i));
+
+				//通过业务员id(属于妃子校的)查询业务员归属机构
+				orderPushmoneyRecord = orderPushmoneyRecordService.getOfficeIdByUserId(orderPushmoneyRecord);
+				
+				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushMoney(pushMoney.get(i));
+				orderPushmoneyRecord.setOfficeId(user.getOffice().getId());
 				orderPushmoneyRecord.setCreateBy(user);
 				orderPushmoneyRecord.setDelFlag("0");
 				orderPushmoneyRecordService.saveOrderPushmoneyRecord(orderPushmoneyRecord);
@@ -1560,7 +1639,13 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderPushmoneyRecord.setUpdateBy(user);
 			orderPushmoneyRecordService.updatePushMoney(orderPushmoneyRecord);
 		}else if("add".equals(orderPushmoneyRecord.getFlag())){
+			//通过业务员id(属于妃子校的)查询业务员归属机构
+			OrderPushmoneyRecord opr = orderPushmoneyRecordService.getOfficeIdByUserId(orderPushmoneyRecord);
+			orderPushmoneyRecord.setUserOfficeId(opr.getUserOfficeId());
+			orderPushmoneyRecord.setUserOfficeIds(opr.getUserOfficeIds());
+			
 			User user = UserUtils.getUser();
+			orderPushmoneyRecord.setOfficeId(user.getOffice().getId());
 			orderPushmoneyRecord.setCreateBy(user);
 			orderPushmoneyRecord.setDelFlag("0");
 			orderPushmoneyRecordService.saveOrderPushmoneyRecord(orderPushmoneyRecord);
@@ -1610,6 +1695,13 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 */
 	public void cancellationOrder(Orders orders) {
 		dao.cancellationOrder(orders);
+	}
+	
+	/**
+	 * 实物带预约金的商品确认收货更改物流状态
+	 */
+	public void updateOrderstatusForReal(String orderid){
+		dao.updateOrderstatusForReal(orderid);
 	}
 	
 	/**
@@ -1770,7 +1862,11 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setAppArrearage(appArrearage);        //app欠款金额
 		details.setType(0);
 		details.setAdvanceFlag("2");
+		details.setCreateOfficeId(user.getOffice().getId());
 		details.setCreateBy(user);
+		/*details.setBelongOfficeId(oLog.getBelongOfficeId());
+		details.setBelongUserId(oLog.getBelongUserId());*/
+		details.setUseBalance(accountBalance);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
 		
@@ -1817,12 +1913,20 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			newAccount.setUserid(_orders.getUserid());
 			newAccount.setUserIntegral(userIntegral);                 //要赠送的云币
 			ordersDao.insertAccount(newAccount);
+			
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}else{
 			double accountBalance_ = 0;
 			accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()+newSpareMoneySum));
 			account.setAccountBalance(accountBalance_);
 			account.setUserIntegral(account.getUserIntegral() + userIntegral);   //要赠送的云币
 			ordersDao.updateAccount(account);
+			
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}
 		
 		//若为老商品，则对店铺有补偿
@@ -1949,6 +2053,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		double spareMoneySum = 0d;	//总余额
 		double newSpareMoneySum = 0d;  //商品总余额(当实付大于应付时，将多的存入个人账户余额中)
 		double goodsprice = 0;  //商品总价
+		
+		String recid = "";//保存mappingid到账户充值记录表中
+		
 		for (Integer i = 0; i < goodselectIds.size(); i++) {
 			Integer goodselectId = goodselectIds.get(i);		//商品id
 			String speckey = speckeys.get(i);					//规格key
@@ -2058,6 +2165,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
 			
+			recid += "," + orderGoods.getRecid();//保存mappingid到账户充值记录表中
+			
 			int groupId = orderGoods.getRecid();
 			List<Goods> goodsListSon = ordersDao.selectCardSon(goods.getGoodsId());
 			if(goodsListSon.size() > 0){
@@ -2141,7 +2250,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			}
 			details.setType(0);
 			details.setAdvanceFlag("0");
+			details.setCreateOfficeId(user.getOffice().getId());
 			details.setCreateBy(user);
+			/*details.setBelongOfficeId(orders.getBelongOfficeId());
+			details.setBelongUserId(orders.getBelongUserId());*/
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
 		}
@@ -2173,6 +2285,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setShippingtype(2);
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		/*_orders.setBelongOfficeId(orders.getBelongOfficeId());
+		_orders.setBelongUserId(orders.getBelongUserId());*/
 		ordersDao.saveVirtualOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -2183,10 +2297,18 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			newAccount.setAccountBalance(accountBalance);
 			newAccount.setUserid(_orders.getUserid());
 			ordersDao.insertAccount(newAccount);
+			
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
 		}else{
 			double accountBalance = account.getAccountBalance()+newSpareMoneySum;	//账户余额信息
 			account.setAccountBalance(accountBalance);
 			ordersDao.updateAccount(account);
+			
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
 		}
 		
 		
@@ -2194,11 +2316,16 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<String> sysUserId = orders.getSysUserId();	//提成人员id
 		List<Double> pushMoney = orders.getPushMoney();	//提成金额
 		if(sysUserId!=null && sysUserId.size()>0){
+			OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
 			for (int i = 0; i < sysUserId.size(); i++) {
-				OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
-				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushmoneyUserId(sysUserId.get(i));
+
+				//通过业务员id(属于妃子校的)查询业务员归属机构
+				orderPushmoneyRecord = orderPushmoneyRecordService.getOfficeIdByUserId(orderPushmoneyRecord);				
+				
+				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushMoney(pushMoney.get(i));
+				orderPushmoneyRecord.setOfficeId(user.getOffice().getId());
 				orderPushmoneyRecord.setCreateBy(user);
 				orderPushmoneyRecord.setDelFlag("0");
 				orderPushmoneyRecordService.saveOrderPushmoneyRecord(orderPushmoneyRecord);
@@ -2232,6 +2359,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 */
 	public void saveSuitCardOrder(Orders orders) {
 		DecimalFormat formater = new DecimalFormat("#0.##");   //四舍五入
+		int numSum = 0;
 		User user = UserUtils.getUser(); //登陆用户
 		int mtmyUserId = orders.getUserid();	//每天每耶用户id
 		String orderid = createOrder(mtmyUserId, 0, 0);//订单id
@@ -2241,7 +2369,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<Integer> goodselectIds = orders.getGoodselectIds();	//商品id集合
 		List<Double> orderAmounts = orders.getOrderAmounts();		//成交价集合
 		List<Double> actualPayments = orders.getActualPayments();	//实际付款集合
-		
+		List<Integer> remaintimeNums = orders.getRemaintimeNums();	//套卡订单老产品-实际次数
 		
 		double orderAmountSum = 0d;  //应付总额
 		double afterPaymentSum = 0d;  //实际付款总额
@@ -2249,6 +2377,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		double spareMoneySum = 0d;	//总余额
 		double newSpareMoneySum = 0d;  //商品总余额(当实付大于应付时，将多的存入个人账户余额中)
 		double goodsprice = 0;  //商品总价
+		
+		String recid = "";//保存mappingid到账户充值记录表中
+		
+		double usedSurplusAmount = 0;
 		for (Integer i = 0; i < goodselectIds.size(); i++) {
 			Integer goodselectId = goodselectIds.get(i);		//商品id
 			//通过商品id获取当前商品
@@ -2327,8 +2459,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
 			
-			
-			
+			recid += "," + orderGoods.getRecid();//保存mappingid到账户充值记录表中
 			
 			int groupId = orderGoods.getRecid();
 			List<Goods> goodsListSon = ordersDao.selectCardSon(goods.getGoodsId());
@@ -2343,15 +2474,12 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setGoodsid(goodsListSon.get(j).getGoodsId());
 					orderGoodsSon.setGoodsname(goodsListSon.get(j).getGoodsName());
 					orderGoodsSon.setOriginalimg(goodsListSon.get(j).getOriginalImg());
+					orderGoodsSon.setSpeckeyname(String.valueOf(goodsListSon.get(j).getGoodsNum()));  //套卡将子项的规格放到spec_key_name
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
 					orderGoodsSon.setRealityAddTime(new Date());   //实际下单时间
 					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
-					if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 0){
-						orderGoodsSon.setGoodsnum(goodsListSon.get(j).getGoodsNum());	//购买数量
-					}else{
-						orderGoodsSon.setGoodsnum(1);	//购买数量
-					}
+					
 					orderGoodsSon.setIsreal(Integer.valueOf(goodsListSon.get(j).getIsReal()));	// 是否为虚拟 0 实物 1虚拟
 					
 					
@@ -2372,6 +2500,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 								orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价*/
 								orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
 								orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
+								orderGoodsSon.setGoodsnum(1);	//购买数量
+							}else{
+								orderGoodsSon.setGoodsnum(goodsListSon.get(j).getGoodsNum());	//购买数量
 							}
 						}else{        //最后一个子项的应付价格单独算（用父类的应付-前n个子项平分价格的总和）
 							double realityOrderAmount = Double.parseDouble(formater.format(orderAmount - realityOrderAmountSum)); //子类平分父类的应付价
@@ -2387,6 +2518,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 								orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价*/
 								orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
 								orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
+								orderGoodsSon.setGoodsnum(1);	//购买数量
+							}else{
+								orderGoodsSon.setGoodsnum(goodsListSon.get(j).getGoodsNum());	//购买数量
 							}
 						}
 					}else{             //若未讨价还价    ((int)(afs*100))/100.0舍弃两位小数后的
@@ -2400,8 +2534,22 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 							/*orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//单次标价
 							orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价*/							
 							
-							orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
+							if(orders.getIsNeworder() == 0){//新订单
+								orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
+							}else if(orders.getIsNeworder() == 1){//老订单
+								orderGoodsSon.setServicetimes(remaintimeNums.get(numSum));
+								usedSurplusAmount = usedSurplusAmount + Double.parseDouble(formater.format((goodsListSon.get(j).getGoodsNum()-remaintimeNums.get(numSum))*orderGoodsSon.getSingleRealityPrice()));
+								numSum = numSum + 1;
+							}
 							orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
+							orderGoodsSon.setGoodsnum(1);	//购买数量
+						}else{
+							if(orders.getIsNeworder() == 0){//新订单
+								orderGoodsSon.setGoodsnum(goodsListSon.get(j).getGoodsNum());	//购买数量
+							}else if(orders.getIsNeworder() == 1){//老订单
+								orderGoodsSon.setGoodsnum(remaintimeNums.get(numSum));	//购买数量
+								numSum = numSum + 1;
+							}
 						}
 					}
 					
@@ -2419,12 +2567,21 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			details.setOrderArrearage(orderArrearage_on);	//订单欠款
 			details.setAppTotalAmount(appTotalAmount);  //app实付金额
 			details.setAppArrearage(appArrearage);   //app欠款金额
-			details.setSurplusAmount(actualPayment_on); //套卡剩余金额
+			if(orders.getIsNeworder() == 0){
+				details.setSurplusAmount(actualPayment_on); //套卡剩余金额
+			}else{
+				details.setSurplusAmount(Double.parseDouble(formater.format(actualPayment_on-usedSurplusAmount))); //套卡剩余金额
+			}
 			details.setType(0);
 			details.setAdvanceFlag("0");
+			details.setCreateOfficeId(user.getOffice().getId());
 			details.setCreateBy(user);
+			/*details.setBelongOfficeId(orders.getBelongOfficeId());
+			details.setBelongUserId(orders.getBelongUserId());*/
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
+			
+			usedSurplusAmount = 0;
 		}
 		
 		Payment payment = paymentDao.getByCode(orders.getPaycode());
@@ -2456,6 +2613,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setCreateBy(user);
+		/*_orders.setBelongOfficeId(orders.getBelongOfficeId());
+		_orders.setBelongUserId(orders.getBelongUserId());*/
 		ordersDao.saveVirtualOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -2466,21 +2625,34 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			newAccount.setAccountBalance(accountBalance);
 			newAccount.setUserid(_orders.getUserid());
 			ordersDao.insertAccount(newAccount);
+			
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
 		}else{
 			double accountBalance = account.getAccountBalance()+newSpareMoneySum;	//账户余额信息
 			account.setAccountBalance(accountBalance);
 			ordersDao.updateAccount(account);
+			
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
 		}
 		
 		//保存提成人员信息 
 		List<String> sysUserId = orders.getSysUserId();	//提成人员id
 		List<Double> pushMoney = orders.getPushMoney();	//提成金额
 		if(sysUserId!=null && sysUserId.size()>0){
+			OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
 			for (int i = 0; i < sysUserId.size(); i++) {
-				OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
-				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushmoneyUserId(sysUserId.get(i));
+
+				//通过业务员id(属于妃子校的)查询业务员归属机构
+				orderPushmoneyRecord = orderPushmoneyRecordService.getOfficeIdByUserId(orderPushmoneyRecord);				
+				
+				orderPushmoneyRecord.setOrderId(orderid);
 				orderPushmoneyRecord.setPushMoney(pushMoney.get(i));
+				orderPushmoneyRecord.setOfficeId(user.getOffice().getId());
 				orderPushmoneyRecord.setCreateBy(user);
 				orderPushmoneyRecord.setDelFlag("0");
 				orderPushmoneyRecordService.saveOrderPushmoneyRecord(orderPushmoneyRecord);
@@ -2669,13 +2841,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setOrderId(oLog.getOrderId());
 		details.setGoodsMappingId(oLog.getRecid()+"");
 		details.setOrderBalance(newOrderBalance);	//商品余额
-		if(3 == oLog.getIsReal() && singleRealityPrice > newTotalAmount){
-			details.setOrderArrearage(0);	//订单欠款
-			details.setTotalAmount(0);	//实付款金额
-		}else{
-			details.setOrderArrearage(-totalAmount_in);	//订单欠款
-			details.setTotalAmount(totalAmount_in);	//实付款金额
-		}
+		details.setTotalAmount(totalAmount_in);	//实付款金额
+		details.setOrderArrearage(-totalAmount_in);	//订单欠款
 		details.setItemAmount(0);	//项目金额
 		details.setItemCapitalPool(0); //项目资金池
 		details.setServiceTimes(serviceTimes_in);	//剩余服务次数
@@ -2684,7 +2851,11 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setSurplusAmount(surplusAmount); //套卡剩余金额
 		details.setType(0);
 		details.setAdvanceFlag("3");
+		details.setCreateOfficeId(user.getOffice().getId());
 		details.setCreateBy(user);
+		/*details.setBelongOfficeId(oLog.getBelongOfficeId());
+		details.setBelongUserId(oLog.getBelongUserId());*/
+		details.setUseBalance(accountBalance);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
 		//根据用户id查询用户账户信息
@@ -2698,12 +2869,20 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			newAccount.setUserid(_orders.getUserid());
 			newAccount.setUserIntegral(userIntegral);    //要赠送的云币
 			ordersDao.insertAccount(newAccount);
+			
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}else{
 			double accountBalance_ = 0;
 			accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()+newSpareMoneySum));
 			account.setAccountBalance(accountBalance_);
 			account.setUserIntegral(account.getUserIntegral() + userIntegral);   //要赠送的云币
 			ordersDao.updateAccount(account);
+			
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}
 		
 	}
@@ -2816,7 +2995,11 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setSurplusAmount(surplusAmount);   //套卡剩余金额(套卡的才存)
 		details.setType(0);
 		details.setAdvanceFlag("2");
+		details.setCreateOfficeId(user.getOffice().getId());
 		details.setCreateBy(user);
+		/*details.setBelongOfficeId(oLog.getBelongOfficeId());
+		details.setBelongUserId(oLog.getBelongUserId());*/
+		details.setUseBalance(accountBalance);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
 		
@@ -2861,12 +3044,20 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			newAccount.setUserid(_orders.getUserid());
 			newAccount.setUserIntegral(userIntegral);                 //要赠送的云币
 			ordersDao.insertAccount(newAccount);
+			
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(oLog.getOrderId() ,oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}else{
 			double accountBalance_ = 0;
 			accountBalance_ = Double.parseDouble(formater.format(account.getAccountBalance()+newSpareMoneySum));
 			account.setAccountBalance(accountBalance_);
 			account.setUserIntegral(account.getUserIntegral() + userIntegral);   //要赠送的云币
 			ordersDao.updateAccount(account);
+			
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}
 		
 		//若为老商品，则对店铺有补偿
@@ -2923,6 +3114,73 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
 				}
 			}
+		}
+	}
+
+	/**
+	 * 判断修改物流之前是否存在物流信息
+	 * @param orders
+	 * @return
+	 */
+	public String getShippingcodeByid(Orders orders) {
+		return ordersDao.getShippingcodeByid(orders);
+	}
+
+	/**
+	 * 第一次修改物流信息时,修改订单状态
+	 * @param orders
+	 */
+	public void updateOrdersStatus(Orders orders) {
+		ordersDao.updateOrdersStatus(orders);
+	}
+
+	/**
+	 * 查询提成人员日志记录
+	 * @param page
+	 * @param orderPushmoneyRecord
+	 * @return
+	 */
+	public Page<OrderPushmoneyRecord> getOrderPushmoneyRecordList(Page<OrderPushmoneyRecord> page,
+			OrderPushmoneyRecord orderPushmoneyRecord) {
+		// 设置分页参数
+		orderPushmoneyRecord.setPage(page);
+		// 执行分页查询
+		page.setList(orderPushmoneyRecordDao.findList(orderPushmoneyRecord));
+		return page;
+	}
+	
+	/**
+	 * 插入用户账户充值记录表(type:订单)
+	 * @param orderId 订单ID
+	 * @param mtmyUserId 充值账户ID
+	 * @param belongOfficeId 
+	 * @param belongUserId 
+	 * @param newSpareMoneySum 输入或支付的金额(支持负数)
+	 * @param type 类型(0:订单,1:账户充值)
+	 * @param channelFlag 渠道标示(wap：wap端；ios：苹果手机；android：安卓手机；bm：后台管理) 
+	 * @param user 操作者
+	 * @param recidList 
+	 * 
+	 */
+	public void insertUserAccountsLog(String orderId, int mtmyUserId, double newSpareMoneySum, int type, String channelFlag, User user, String recid) {
+		if(newSpareMoneySum != 0){
+			UserAccountsLog userAccountsLog = new UserAccountsLog();
+			userAccountsLog.setMtmyUserId(mtmyUserId);
+			/*userAccountsLog.setBelongUserId(belongUserId);;
+			userAccountsLog.setBelongOfficeId(belongOfficeId);*/
+			userAccountsLog.setAmount(newSpareMoneySum);
+			userAccountsLog.setType(type);
+			if(newSpareMoneySum >= 0){//当金额大于等于0,表示账户有收入记录
+				userAccountsLog.setStatus(0);
+			}else{
+				userAccountsLog.setStatus(1);
+			}
+			userAccountsLog.setRemarks("订单ID:"+orderId+",商品匹配ID:"+recid);
+			userAccountsLog.setChannelFlag(channelFlag);
+			userAccountsLog.setSourceFlag("mtmy");
+			userAccountsLog.setCreateOfficeId(user.getOffice().getId());
+			userAccountsLog.setCreateBy(user);
+			userAccountsLogDao.insertUserAccountsLog(userAccountsLog);
 		}
 	}
 	

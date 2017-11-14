@@ -19,6 +19,7 @@ import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.User;
+import com.training.modules.sys.entity.OfficeLog;
 import com.training.modules.sys.utils.UserUtils;
 
 /**
@@ -353,6 +354,34 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a"));
 		officeList = officeDao.newOfficeTreeData(office);
 		return officeList;
+	}
+	
+	/**
+	 * 实物订单发货到店查询店铺详情
+	 * @param id
+	 * @return
+	 */
+	public OfficeInfo selectOfficeDetails(String id){
+		return dao.selectOfficeDetails(id);
+	}
+
+	/**
+	 * 操作店铺时保存日志记录
+	 * @param officeLog
+	 */
+	@Transactional(readOnly = false)
+	public void saveOfficeLog(OfficeLog officeLog) {
+		dao.saveOfficeLog(officeLog);
+	}
+
+	/**
+	 * 删除店铺时保存日志记录
+	 * @param officeLog
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	public void saveOfficeLogDel(OfficeLog officeLog) {
+		dao.saveOfficeLogDel(officeLog);
 	}
 
 }

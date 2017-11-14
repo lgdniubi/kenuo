@@ -133,5 +133,11 @@ public interface OrderGoodsDao extends TreeDao<OrderGoods> {
 	 * @return
 	 */
 	public List<OrderGoods> cardOrderid(OrderGoods og);
-
+	
+	/**
+	 * 根据Orderid查找相应的商品信息
+	 * @param orderId
+	 * @return
+	 */
+	public List<OrderGoods> selectOrderGoodsByOrderid(String orderId);
 }

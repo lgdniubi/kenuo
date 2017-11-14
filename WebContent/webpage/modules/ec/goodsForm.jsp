@@ -238,6 +238,15 @@
 											 <label id="goodsCategoryIdName-error" class="error" for="goodsCategoryIdName" style="display:none"></label>
 								     	</div>	
 									</li>
+									<li class="form-group" id="position">
+										<span class="control-label col-sm-2"><font color="red">*</font>项目部位：</span>
+										<select class="form-control" id="positionId" name="positionId">
+											<option value="">请选择部位</option>
+											<c:forEach items="${goodsPositionList}" var="goodsPosition">
+												<option ${(goodsPosition.id == goods.positionId)?'selected="selected"':''} value="${goodsPosition.id}">${goodsPosition.name}</option>
+					                   		</c:forEach>
+					                    </select>
+					                </li>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>商品品牌：</span>
 										<select class="form-control" id="goodsBrandId" name="goodsBrandId">
@@ -736,11 +745,11 @@
 			if(v == 0){
 				//实物
 				$("#serviceMin").attr("disabled","disabled"); 
-				$("#goodsTypeLi,#advancePriceLi").hide();
+				$("#position").hide();
 			}else if(v == 1){
 				//虚拟
 				$("#serviceMin").removeAttr("disabled"); 
-				$("#goodsTypeLi,#advancePriceLi").show();
+				$("#position").show();
 			}
 		}
 	
@@ -908,6 +917,7 @@
 					var goodsSn=$("#goodsSn").val();
 					var franchiseeId=$("#franchiseeId").val();
 					var goodsCategoryId=$("#goodsCategoryId").val();
+					var positionId=$("#positionId").val();
 					if(goodsName==""){
 						top.layer.alert('商品名称不能为空!', {icon: 0, title:'提醒'});
 						return;
@@ -927,6 +937,13 @@
 					if(franchiseeId==""){
 						top.layer.alert('所属商家不能为空!', {icon: 0, title:'提醒'});
 						return;
+					}
+					//当虚拟商品时,项目部位是必选
+					if($("#isReal:checked").val() == 1){
+						if(positionId==""){
+							top.layer.alert('请选择项目部位!', {icon: 0, title:'提醒'});
+							return;
+						}
 					}
 					/* var goodsNum=${goods.goodsNum};
 

@@ -1477,5 +1477,27 @@ public class UserController extends BaseController {
 		}
     	return "redirect:" + adminPath + "/sys/user/addFzxRole?id="+userId;
     }
+    
+	/**
+	 * 获取机构对应的用户JSON数据。
+	 * @param belongOfficeId
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "officeUserTreeData")
+	public List<Map<String, Object>> officeUserTreeData(HttpServletRequest request,HttpServletResponse response) {
+		String belongOfficeId = request.getParameter("belongOfficeId");
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<User> list = userDao.findUsersByOfficeId(belongOfficeId);
+		for (int i=0; i<list.size(); i++){
+			User e = list.get(i);
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("name", e.getName());
+				mapList.add(map);
+		}
+		return mapList;
+	}
 }
 
