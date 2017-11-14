@@ -82,6 +82,9 @@
 <body>
 	<div class="wrapper-content">
         <div class="ibox">
+        	<div class="ibox-title">
+                <h5>${mtmyEveryoneSayQuest.showName}</h5>
+            </div>
             <sys:message content="${message}"/>
 				<div class="talk_wrap">
 					<div class="talk_area">
