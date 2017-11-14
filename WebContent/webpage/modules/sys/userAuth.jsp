@@ -235,8 +235,8 @@
 						</c:if>
 					</c:if>
 					<c:if test="${empty user.mediaLoginAuth.isLogin}">
-						<label><input id="isLogin" name="mediaLoginAuth.isLogin" type="radio" value="1" class="form" onclick="updateIsLogin(1)" checked="checked"/>是</label>
-						<label><input id="isLogin" name="mediaLoginAuth.isLogin" type="radio" value="0" class="form" onclick="updateIsLogin(0)"/>否</label>
+						<label><input id="isLogin" name="mediaLoginAuth.isLogin" type="radio" value="1" class="form" onclick="updateIsLogin(1)"/>是</label>
+						<label><input id="isLogin" name="mediaLoginAuth.isLogin" type="radio" value="0" class="form" onclick="updateIsLogin(0)" checked="checked"/>否</label>
 					</c:if>
 				</td>
 		      </tr>
