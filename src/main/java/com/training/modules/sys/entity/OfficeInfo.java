@@ -47,6 +47,13 @@ public class OfficeInfo extends DataEntity<OfficeInfo>{
 	private String grade;		//是否为店铺 1 是 2 否
 	private String code;		//机构code
 	
+	//-------------------实物订单店铺收货时选择店铺时查询店铺详情-----------
+	private String shopName;
+	private String address;
+	private String shopPhone;
+	
+	//------------------------------------------------------------
+	
 	@JsonIgnore
 	@NotNull(message="上级机构编码不能为空")
 	@ExcelField(title="上级机构编码", type=0, align=2, sort=40)
@@ -262,6 +269,24 @@ public class OfficeInfo extends DataEntity<OfficeInfo>{
 	}
 	public void setDetails(String details) {
 		this.details = details;
+	}
+	public String getShopName() {
+		return shopName;
+	}
+	public void setShopName(String shopName) {
+		this.shopName = shopName;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public String getShopPhone() {
+		return shopPhone;
+	}
+	public void setShopPhone(String shopPhone) {
+		this.shopPhone = shopPhone;
 	}
 	
 }

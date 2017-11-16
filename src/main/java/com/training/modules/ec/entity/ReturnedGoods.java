@@ -76,7 +76,11 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	private List<Integer> recIds;			//卡项实物商品 id集合(mapping_id)
 	private List<Integer> returnNums;		//卡项实物商品 售后数量集合
 	
-	
+	/*private String belongUserId;			//归属人ID
+	private String belongUserName;          //归属人名称
+	private String belongOfficeId;			//归属机构ID
+	private String belongOfficeName;         //归属机构名称
+*/	
 	public List<Integer> getRecIds() {
 		return recIds;
 	}
@@ -407,9 +411,31 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
+	/*public String getBelongUserId() {
+		return belongUserId;
+	}
+	public void setBelongUserId(String belongUserId) {
+		this.belongUserId = belongUserId;
+	}
+	public String getBelongOfficeId() {
+		return belongOfficeId;
+	}
+	public void setBelongOfficeId(String belongOfficeId) {
+		this.belongOfficeId = belongOfficeId;
+	}
 	
-	
-	
+	public String getBelongUserName() {
+		return belongUserName;
+	}
+	public void setBelongUserName(String belongUserName) {
+		this.belongUserName = belongUserName;
+	}
+	public String getBelongOfficeName() {
+		return belongOfficeName;
+	}
+	public void setBelongOfficeName(String belongOfficeName) {
+		this.belongOfficeName = belongOfficeName;
+	}*/
 	@Override
 	public ReturnedGoods getParent() {
 		// TODO Auto-generated method stub

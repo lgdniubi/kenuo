@@ -287,4 +287,11 @@ public interface UserDao extends CrudDao<User> {
 	 * 当为原来不是排班角色，后来改为排班角色，但是user_info中没有信息时，新增美容师的信息
 	 */
 	public void insertUserInfo(@Param(value="uuid")String uuid, @Param(value="id")String id);
+	
+	/**
+	 * 根据OfficeId获取用户(树查询用户时用)
+	 * @param officeId
+	 * @return
+	 */
+	public List<User> findUsersByOfficeId(String officeId);
 }

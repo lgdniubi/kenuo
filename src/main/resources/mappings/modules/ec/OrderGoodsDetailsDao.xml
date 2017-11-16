@@ -23,8 +23,12 @@
 			advance_flag,
 			surplus_amount,
 			type,
+			create_office_id,
 			create_by,
-			create_date
+			create_date,
+			use_balance
+			<!-- belong_office_id,
+			belong_user_id -->
 		)VALUES(
 			#{orderId},
 			#{goodsMappingId},
@@ -45,8 +49,12 @@
 			#{advanceFlag},
 			#{surplusAmount},
 			#{type},
+			#{createOfficeId},
 			#{createBy.id},
-			SYSDATE()
+			SYSDATE(),
+			#{useBalance}
+			<!-- #{belongOfficeId},
+			#{belongUserId} -->
 		)
 	</insert>
 	
@@ -144,7 +152,8 @@
 		UPDATE mtmydb.mtmy_order_goods_details
 		SET 
 			advance_flag = '0'
-		WHERE goods_mapping_id = #{recid}
+		WHERE goods_mapping_id = #{recId}
+		AND advance_flag = '1'
 	</update>
 	
 	<!-- 根据office_id查找其对应的登云账户的金额 -->
@@ -229,7 +238,8 @@
 			ogm.integral AS 'integral',
 			ogm.coupon_price AS 'couponPrice',
 			ogm.member_goods_price AS 'memberGoodsPrice',
-			ogm.advance_price AS 'advancePrice'
+			ogm.advance_price AS 'advancePrice',
+			ogm.goods_num AS 'goodsNum'
 		FROM mtmydb.mtmy_order_goods_details ogd
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping ogm ON ogm.rec_id = ogd.goods_mapping_id
 		WHERE ogd.goods_mapping_id = #{recid}
