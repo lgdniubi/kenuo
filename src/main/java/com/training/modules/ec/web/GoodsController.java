@@ -36,6 +36,7 @@ import com.training.modules.ec.entity.GoodsAttributeMappings;
 import com.training.modules.ec.entity.GoodsBrand;
 import com.training.modules.ec.entity.GoodsCard;
 import com.training.modules.ec.entity.GoodsCategory;
+import com.training.modules.ec.entity.GoodsPosition;
 import com.training.modules.ec.entity.GoodsSpec;
 import com.training.modules.ec.entity.GoodsSpecImage;
 import com.training.modules.ec.entity.GoodsSpecItem;
@@ -46,6 +47,7 @@ import com.training.modules.ec.service.GoodsAttributeService;
 import com.training.modules.ec.service.GoodsBrandService;
 import com.training.modules.ec.service.GoodsCardService;
 import com.training.modules.ec.service.GoodsCategoryService;
+import com.training.modules.ec.service.GoodsPositionService;
 import com.training.modules.ec.service.GoodsService;
 import com.training.modules.ec.service.GoodsSpecItemService;
 import com.training.modules.ec.service.GoodsSpecService;
@@ -97,6 +99,8 @@ public class GoodsController extends BaseController{
 	private OrderGoodsService orderGoodsService;
 	@Autowired
 	private GoodsCardService goodsCardService;
+	@Autowired
+	private GoodsPositionService goodsPositionService;
 	
 	/**
 	 * 分页查询商品属性
@@ -152,6 +156,10 @@ public class GoodsController extends BaseController{
 			//查询商品品牌
 			List<GoodsBrand> goodsBrandList = goodsBrandService.findAllList(new GoodsBrand());
 			model.addAttribute("goodsBrandList", goodsBrandList);
+			
+			//查询项目部位
+			List<GoodsPosition> goodsPositionList = goodsPositionService.findList(new GoodsPosition());
+			model.addAttribute("goodsPositionList", goodsPositionList);
 			
 			
 			if (null == id || "".equals(id)){

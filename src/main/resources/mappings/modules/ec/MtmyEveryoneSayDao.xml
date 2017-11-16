@@ -14,17 +14,11 @@
 			es.user_id AS 'userId',
 			es.user_name AS 'userName',
 			es.user_photo AS 'userPhoto',
+			es.is_show AS 'isShow',
 			es.user_level AS 'userLevel',
-			es.create_date AS 'createDate',
-			(CASE WHEN g.goods_name IS NOT NULL THEN g.goods_name
-				  WHEN u.name IS NOT NULL THEN u.name
-				  WHEN o.name IS NOT NULL THEN o.name
-				  ELSE '无' END) AS 'showName'
+			es.create_date AS 'createDate'
 		FROM mtmydb.mtmy_everyone_say es
 		LEFT JOIN mtmydb.mtmy_everyone_say_like esl ON esl.say_id = es.id 
-		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id = es.content_id
-		LEFT JOIN trains.sys_user u ON u.id = es.content_id
-		LEFT JOIN trains.sys_office o ON o.id = es.content_id
 		WHERE es.del_flag = '0'
 		AND es.say_type = '1'
 		<if test="begtime != null and begtime != ''">
@@ -54,19 +48,24 @@
 	<!-- 根据id查找相应的说说 -->
 	<select id="getMtmyEveryoneSay" resultType="MtmyEveryoneSay">
 		SELECT
-			id AS 'mtmyEveryoneSayId',
-			parent_id AS 'parentId',
-			say_type,
-			position_type AS 'positionType',
-			content_id AS 'contentId',
-			content,
-			user_id AS 'userId',
-			user_name AS 'userName',
-			user_photo AS 'userPhoto',
-			user_level AS 'userLevel',
-			create_date AS 'createDate'
-		FROM mtmydb.mtmy_everyone_say
-		WHERE id = #{mtmyEveryoneSayId}
+			es.id AS 'mtmyEveryoneSayId',
+			es.parent_id AS 'parentId',
+			es.say_type,
+			es.position_type AS 'positionType',
+			es.content_id AS 'contentId',
+			es.content,
+			es.user_id AS 'userId',
+			es.user_name AS 'userName',
+			es.user_photo AS 'userPhoto',
+			es.is_show AS 'isShow',
+			es.user_level AS 'userLevel',
+			es.create_date AS 'createDate',
+			(CASE WHEN position_type = 3 THEN (SELECT goods_name FROM mtmydb.mtmy_goods WHERE goods_id = es.content_id)
+				  WHEN position_type = 2 THEN (SELECT name FROM trains.sys_user WHERE id = es.content_id)
+				  WHEN position_type = 1 THEN (SELECT name FROM trains.sys_office WHERE id = es.content_id)
+				  ELSE '无' END) AS 'showName'
+		FROM mtmydb.mtmy_everyone_say es
+		WHERE es.id = #{mtmyEveryoneSayId}
 	</select>
 	
 	<!-- 根据id查找相应说说的回复 -->
@@ -81,6 +80,7 @@
 			user_id AS 'userId',
 			user_name AS 'userName',
 			user_photo AS 'userPhoto',
+			is_show AS 'isShow',
 			user_level AS 'userLevel',
 			create_date AS 'createDate'
 		FROM mtmydb.mtmy_everyone_say
@@ -102,4 +102,11 @@
 		WHERE id = #{mtmyEveryoneSayId}
 		AND parent_id = #{parentId}
 	</delete>
+	
+	<!-- 修改说说是否显示 -->
+	<update id="updateIsShow">
+		UPDATE mtmydb.mtmy_everyone_say
+		SET is_show = #{isShow}
+		WHERE id = #{mtmyEveryoneSayId}
+	</update>
 </mapper>
