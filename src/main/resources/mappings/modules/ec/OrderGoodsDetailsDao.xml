@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.training.modules.ec.dao.OrderGoodsDetailsDao">
 	<!-- 保存商品规格项 -->
-	<insert id="saveOrderGoodsDetails">
+	<insert id="saveOrderGoodsDetails" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO mtmydb.mtmy_order_goods_details (
 			order_id,
 			goods_mapping_id,
@@ -241,5 +241,18 @@
 		FROM mtmydb.mtmy_order_goods_details ogd
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping ogm ON ogm.rec_id = ogd.goods_mapping_id
 		WHERE ogd.goods_mapping_id = #{recid}
+	</select>
+	
+	<!-- 查询details表中预约金那条的记录 -->
+	<select id="selectDetailsForAdvance" resultType="OrderGoodsDetails">
+		SELECT 
+			d.id as id,
+			d.order_id as orderId,
+			d.goods_mapping_id as goodsMappingId,
+			d.app_total_amount as appTotalAmount,
+			d.use_balance as useBalance
+		FROM mtmydb.mtmy_order_goods_details d
+		WHERE d.order_id = #{orderId}
+		AND d.advance_flag = '1'
 	</select>
 </mapper>

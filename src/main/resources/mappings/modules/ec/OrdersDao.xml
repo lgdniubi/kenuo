@@ -187,7 +187,8 @@
 			<!-- IFNULL(ogd.order_arrearage,0) AS orderArrearage, -->
 			a.del_flag,
 			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType,
-			IFNULL(u.office_id,'') as officeId
+			IFNULL(u.office_id,'') as officeId,
+			u.user_id as userid
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
@@ -293,7 +294,8 @@
 			<!-- IFNULL(ogd.order_arrearage,0) AS orderArrearage, -->
 			a.del_flag,
 			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType,
-			IFNULL(u.office_id,'') as officeId
+			IFNULL(u.office_id,'') as officeId,
+			u.user_id as userid
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
@@ -886,6 +888,7 @@
 			user_note,
 			discount,
 			pay_time,
+			belong_office_id,
 			create_by
 		)values(
 			#{orderid},
@@ -913,6 +916,7 @@
 			#{usernote},
 			1,
 			SYSDATE(),
+			#{belongOfficeId},
 			#{createBy.id}
 		)
 	</insert>
@@ -1058,6 +1062,7 @@
 			invoice_overtime,
 			discount,
 			pay_time,
+			belong_office_id,
 			create_by
 		)values(
 			#{orderid},
@@ -1088,6 +1093,7 @@
 			#{invoiceOvertime},
 			1,
 			SYSDATE(),
+			#{belongOfficeId},
 			#{createBy.id}
 		)
 	</insert>

@@ -66,6 +66,7 @@ import com.training.modules.ec.entity.Payment;
 import com.training.modules.ec.entity.ReturnGoods;
 import com.training.modules.ec.entity.ReturnedGoods;
 import com.training.modules.ec.entity.Shipping;
+import com.training.modules.ec.entity.TurnOverDetails;
 import com.training.modules.ec.service.AcountLogService;
 import com.training.modules.ec.service.OrderGoodsDetailsService;
 import com.training.modules.ec.service.OrderGoodsService;
@@ -75,6 +76,7 @@ import com.training.modules.ec.service.OrdersService;
 import com.training.modules.ec.service.PaymentService;
 import com.training.modules.ec.service.ReturnGoodsService;
 import com.training.modules.ec.service.ReturnedGoodsService;
+import com.training.modules.ec.service.TurnOverDetailsService;
 import com.training.modules.ec.utils.CourierUtils;
 import com.training.modules.ec.utils.OrderUtils;
 import com.training.modules.ec.utils.OrdersStatusChangeUtils;
@@ -136,6 +138,8 @@ public class OrdersController extends BaseController {
 	private RedisClientTemplate redisClientTemplate;
 	@Autowired
 	private OfficeService officeService;
+	@Autowired
+	private TurnOverDetailsService turnOverDetailsService;
 	
 	public static final String MTMY_ID = "mtmy_id_";//用户云币缓存前缀
 	
@@ -1807,9 +1811,9 @@ public class OrdersController extends BaseController {
 					oLog.setTotalAmount(advance);
 				}
 			}
-			
+			OrderGoodsDetails oldDetails = orderGoodsDetailsService.selectDetailsForAdvance(oLog.getOrderId());
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleAdvanceFlag(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId,realAdvancePrice);
+			ordersService.handleAdvanceFlag(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId,realAdvancePrice,oldDetails);
 			date = "success";
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "处理预约金异常", e);
@@ -2700,9 +2704,9 @@ public class OrdersController extends BaseController {
 			}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
 				oLog.setTotalAmount(advance);
 			}
-			
+			OrderGoodsDetails oldDetails = orderGoodsDetailsService.selectDetailsForAdvance(oLog.getOrderId());
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleCardAdvance(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId,isReal,realAdvancePrice);
+			ordersService.handleCardAdvance(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId,isReal,realAdvancePrice,oldDetails);
 			date = "success";
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "处理卡项预约金异常", e);
@@ -2741,6 +2745,9 @@ public class OrdersController extends BaseController {
 				}
 				
 				if(!"bm".equals(orders.getChannelFlag())){
+					
+					OrderGoodsDetails oldDetails = orderGoodsDetailsService.selectDetailsForAdvance(orders.getOrderid());
+					
 					//实物带预约金，点击确认收货，按照虚拟有预约金处理的方法入库
 					orderGoodsDetailsService.updateAdvanceFlag(recId+"");
 					
@@ -2761,10 +2768,36 @@ public class OrdersController extends BaseController {
 					details.setAdvanceFlag("2");
 					details.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
 					details.setCreateBy(UserUtils.getUser());
-					/*details.setBelongOfficeId(orders.getBelongOfficeId());
-					details.setBelongUserId(orders.getBelongUserId());*/
 					//保存订单商品详情记录
 					orderGoodsDetailsService.saveOrderGoodsDetails(details);
+					
+					//同步数据到营业额明细表
+					//第一次，同步下单的那条数据
+					TurnOverDetails turnOverDetails1 = new TurnOverDetails();
+					turnOverDetails1.setOrderId(details.getOrderId());
+					turnOverDetails1.setMappingId(Integer.valueOf(oldDetails.getGoodsMappingId()));
+					turnOverDetails1.setDetailsId(oldDetails.getId());
+					turnOverDetails1.setType(1);
+					turnOverDetails1.setAmount(oldDetails.getAppTotalAmount());
+					turnOverDetails1.setUseBalance(oldDetails.getUseBalance());
+					turnOverDetails1.setStatus(1);
+					turnOverDetails1.setUserId(orders.getUserid());
+					turnOverDetails1.setBelongOfficeId(officeId);
+					turnOverDetails1.setCreateBy(UserUtils.getUser());
+					turnOverDetailsService.saveTurnOverDetails(turnOverDetails1);
+					
+					//第一次，同步处理预约金的那条数据
+					TurnOverDetails turnOverDetails2 = new TurnOverDetails();
+					turnOverDetails2.setOrderId(details.getOrderId());
+					turnOverDetails2.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
+					turnOverDetails2.setDetailsId(details.getId());
+					turnOverDetails2.setType(2);
+					turnOverDetails2.setAmount(details.getAppTotalAmount());
+					turnOverDetails2.setUseBalance(details.getUseBalance());
+					turnOverDetails2.setStatus(2);
+					turnOverDetails2.setUserId(orders.getUserid());
+					turnOverDetails2.setCreateBy(UserUtils.getUser());
+					turnOverDetailsService.saveTurnOverDetails(turnOverDetails2);
 				}
 				
 				//若为老商品，则对店铺有补偿

@@ -305,7 +305,8 @@
 											remaintimes:remaintimes,
 											isReal:isReal,
 											channelFlag:channelFlag,
-											belongOfficeId:belongOfficeId        
+											belongOfficeId:belongOfficeId,
+											mtmyUserId:userid
 										 },
 										url:"${ctx}/ec/orders/addOrderRechargeLog",
 										success:function(date){
@@ -624,16 +625,7 @@ window.onload=initStatus;
 		    	var obj =  layero.find("iframe")[0].contentWindow;
      	    	var sum = obj.document.getElementById("sum").value; //是否使用了账户余额
 				var loading = obj.document.getElementById("loading");
-     	    	/* var belongOfficeId = obj.document.getElementById("belongOfficeId").value;
-				var belongUserId = obj.document.getElementById("belongUserId").value; */
 				$(loading).show();
-				
-				
-				/* if(belongOfficeId == ''){
-					$(loading).hide();
-					top.layer.alert('归属机构必填！', {icon: 0, title:'提醒'});
-					return;
-				} */
 				
 				//防止表单多次提交
 			    if(isHandled == false){
@@ -651,10 +643,9 @@ window.onload=initStatus;
 						userid:userid,
 						servicetimes:servicetimes,
 						orderArrearage:orderArrearage,
-						channelFlag:channelFlag
-						/* belongOfficeId:belongOfficeId,
-						belongUserId:belongUserId */
-					 },
+						channelFlag:channelFlag,
+						mtmyUserId:userid
+					},
 					url:"${ctx}/ec/orders/handleAdvanceFlag?recid="+recid+"&userid="+userid+"&orderid="+orderid,
 					success:function(date){
 						$(loading).hide();

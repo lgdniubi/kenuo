@@ -130,4 +130,13 @@ public class OrderGoodsDetailsService extends TreeService<OrderGoodsDetailsDao, 
 	public OrderGoodsDetails selectOrderBalance(int recId){
 		return dao.selectOrderBalance(recId);
 	}
+	
+	/**
+	 * 查询details表中预约金那条的记录
+	 * @param orderId
+	 * @return
+	 */
+	public OrderGoodsDetails selectDetailsForAdvance(String orderId){
+		return dao.selectDetailsForAdvance(orderId);
+	}
 }

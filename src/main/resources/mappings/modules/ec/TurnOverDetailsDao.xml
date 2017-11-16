@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.TurnOverDetailsDao">
+	<!-- 同步details表的数据到营业额明细表中 -->
+	<insert id="saveTurnOverDetails">
+		INSERT INTO ydatadb.mtmy_turnover_details (
+			order_id,
+			mapping_id,
+			details_id,
+			type,
+			amount,
+			use_balance,
+			status,
+			user_id,
+			user_office_id,
+			user_beautician_id,
+			belong_office_id,
+			belong_office_ids,
+			create_by,
+			create_date,
+			settle_by,
+			settle_date
+		)VALUES(
+			#{orderId},
+			#{mappingId},
+			#{detailsId},
+			#{type},
+			#{amount},
+			#{useBalance},
+			#{status},
+			#{userId},
+			(select office_id from mtmydb.mtmy_users where user_id = #{userId}),
+			(select beautician_id from mtmydb.mtmy_users where user_id = #{userId}),
+			#{belongOfficeId},
+			(select parent_ids from trains.sys_office where id = #{belongOfficeId}),
+			#{createBy.id},
+			SYSDATE(),
+			#{createBy.id},
+			SYSDATE()
+		)
+	</insert>
+	
+</mapper>

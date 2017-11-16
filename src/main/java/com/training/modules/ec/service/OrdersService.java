@@ -53,6 +53,7 @@ import com.training.modules.ec.entity.Orders;
 import com.training.modules.ec.entity.Payment;
 import com.training.modules.ec.entity.PushmoneyRecordLog;
 import com.training.modules.ec.entity.TradingLog;
+import com.training.modules.ec.entity.TurnOverDetails;
 import com.training.modules.ec.entity.UserAccountsLog;
 import com.training.modules.ec.entity.Users;
 import com.training.modules.quartz.service.RedisClientTemplate;
@@ -119,6 +120,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	private OrderPushmoneyRecordDao orderPushmoneyRecordDao;
 	@Autowired
 	private UserAccountsLogDao userAccountsLogDao;
+	@Autowired
+	private TurnOverDetailsService turnOverDetailsService;
 	
 	public static final String MTMY_ID = "mtmy_id_";//用户云币缓存前缀
 	
@@ -826,6 +829,21 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			details.setBelongOfficeId(orders.getBelongOfficeId());
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
+			
+			//同步数据到营业额明细表
+			TurnOverDetails turnOverDetails = new TurnOverDetails();
+			turnOverDetails.setOrderId(orderid);
+			turnOverDetails.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
+			turnOverDetails.setDetailsId(details.getId());
+			turnOverDetails.setType(1);
+			turnOverDetails.setAmount(details.getAppTotalAmount());
+			turnOverDetails.setUseBalance(details.getUseBalance());
+			turnOverDetails.setStatus(0);
+			turnOverDetails.setUserId(mtmyUserId);
+			turnOverDetails.setBelongOfficeId(details.getBelongOfficeId());
+			turnOverDetails.setCreateBy(UserUtils.getUser());
+			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
 		}
 		
 		/*//订单充值日志表
@@ -865,6 +883,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setShippingtype(2);
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		ordersDao.saveVirtualOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -1216,6 +1235,21 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setUseBalance(accountBalance);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
+		
+		//同步数据到营业额明细表
+		TurnOverDetails turnOverDetails = new TurnOverDetails();
+		turnOverDetails.setOrderId(details.getOrderId());
+		turnOverDetails.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
+		turnOverDetails.setDetailsId(details.getId());
+		turnOverDetails.setType(2);
+		turnOverDetails.setAmount(details.getAppTotalAmount());
+		turnOverDetails.setUseBalance(details.getUseBalance());
+		turnOverDetails.setStatus(3);
+		turnOverDetails.setUserId(oLog.getMtmyUserId());
+		turnOverDetails.setBelongOfficeId(details.getBelongOfficeId());
+		turnOverDetails.setCreateBy(UserUtils.getUser());
+		turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+		
 		//根据用户id查询用户账户信息
 		Orders _orders = new Orders();
 		/*double accountArrearage = 0;*/
@@ -1438,6 +1472,21 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			details.setBelongOfficeId(orders.getBelongOfficeId());
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
+			
+			//同步数据到营业额明细表
+			TurnOverDetails turnOverDetails = new TurnOverDetails();
+			turnOverDetails.setOrderId(orderid);
+			turnOverDetails.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
+			turnOverDetails.setDetailsId(details.getId());
+			turnOverDetails.setType(1);
+			turnOverDetails.setAmount(details.getAppTotalAmount());
+			turnOverDetails.setUseBalance(details.getUseBalance());
+			turnOverDetails.setStatus(0);
+			turnOverDetails.setUserId(mtmyUserId);
+			turnOverDetails.setBelongOfficeId(details.getBelongOfficeId());
+			turnOverDetails.setCreateBy(UserUtils.getUser());
+			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
 		}
 		
 		/*//订单充值日志表
@@ -1480,6 +1529,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setCreateBy(user);
+		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		ordersDao.saveKindOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -1741,7 +1791,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param orderAmount应付款金额
 	 * @param goodsPrice商品优惠单价
 	 */
-	public void handleAdvanceFlag(OrderRechargeLog oLog,double goodsPrice,double detailsTotalAmount,int goodsType,String officeId,double realAdvancePrice){
+	public void handleAdvanceFlag(OrderRechargeLog oLog,double goodsPrice,double detailsTotalAmount,int goodsType,String officeId,double realAdvancePrice,OrderGoodsDetails oldDetails){
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
 		double totalAmount = oLog.getTotalAmount(); //实付款金额
@@ -1859,6 +1909,34 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setUseBalance(accountBalance);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
+		
+		//同步数据到营业额明细表
+		//第一次，同步下单的那条数据
+		TurnOverDetails turnOverDetails1 = new TurnOverDetails();
+		turnOverDetails1.setOrderId(details.getOrderId());
+		turnOverDetails1.setMappingId(Integer.valueOf(oldDetails.getGoodsMappingId()));
+		turnOverDetails1.setDetailsId(oldDetails.getId());
+		turnOverDetails1.setType(1);
+		turnOverDetails1.setAmount(oldDetails.getAppTotalAmount());
+		turnOverDetails1.setUseBalance(oldDetails.getUseBalance());
+		turnOverDetails1.setStatus(1);
+		turnOverDetails1.setUserId(oLog.getMtmyUserId());
+		turnOverDetails1.setBelongOfficeId(officeId);
+		turnOverDetails1.setCreateBy(UserUtils.getUser());
+		turnOverDetailsService.saveTurnOverDetails(turnOverDetails1);
+		
+		//第一次，同步处理预约金的那条数据
+		TurnOverDetails turnOverDetails2 = new TurnOverDetails();
+		turnOverDetails2.setOrderId(details.getOrderId());
+		turnOverDetails2.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
+		turnOverDetails2.setDetailsId(details.getId());
+		turnOverDetails2.setType(2);
+		turnOverDetails2.setAmount(details.getAppTotalAmount());
+		turnOverDetails2.setUseBalance(details.getUseBalance());
+		turnOverDetails2.setStatus(2);
+		turnOverDetails2.setUserId(oLog.getMtmyUserId());
+		turnOverDetails2.setCreateBy(UserUtils.getUser());
+		turnOverDetailsService.saveTurnOverDetails(turnOverDetails2);
 		
 		OrderGoodsDetails newDetails = orderGoodsDetailsService.selectOrderBalance(oLog.getRecid());
 		int integral = newDetails.getIntegral();        //处理完预约金以后，待付尾款为0的时候，处理预约金以后送的云币
@@ -2245,6 +2323,20 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			details.setBelongOfficeId(orders.getBelongOfficeId());
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
+			
+			//同步数据到营业额明细表
+			TurnOverDetails turnOverDetails = new TurnOverDetails();
+			turnOverDetails.setOrderId(orderid);
+			turnOverDetails.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
+			turnOverDetails.setDetailsId(details.getId());
+			turnOverDetails.setType(1);
+			turnOverDetails.setAmount(details.getAppTotalAmount());
+			turnOverDetails.setUseBalance(details.getUseBalance());
+			turnOverDetails.setStatus(0);
+			turnOverDetails.setUserId(mtmyUserId);
+			turnOverDetails.setBelongOfficeId(details.getBelongOfficeId());
+			turnOverDetails.setCreateBy(UserUtils.getUser());
+			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
 		}
 		
 		
@@ -2274,6 +2366,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setShippingtype(2);
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		ordersDao.saveVirtualOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -2567,6 +2660,20 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
 			
+			//同步数据到营业额明细表
+			TurnOverDetails turnOverDetails = new TurnOverDetails();
+			turnOverDetails.setOrderId(orderid);
+			turnOverDetails.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
+			turnOverDetails.setDetailsId(details.getId());
+			turnOverDetails.setType(1);
+			turnOverDetails.setAmount(details.getAppTotalAmount());
+			turnOverDetails.setUseBalance(details.getUseBalance());
+			turnOverDetails.setStatus(0);
+			turnOverDetails.setUserId(mtmyUserId);
+			turnOverDetails.setBelongOfficeId(details.getBelongOfficeId());
+			turnOverDetails.setCreateBy(UserUtils.getUser());
+			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
 			usedSurplusAmount = 0;
 		}
 		
@@ -2599,6 +2706,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setCreateBy(user);
+		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		ordersDao.saveVirtualOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -2841,6 +2949,21 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setUseBalance(accountBalance);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
+		
+		//同步数据到营业额明细表
+		TurnOverDetails turnOverDetails = new TurnOverDetails();
+		turnOverDetails.setOrderId(details.getOrderId());
+		turnOverDetails.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
+		turnOverDetails.setDetailsId(details.getId());
+		turnOverDetails.setType(2);
+		turnOverDetails.setAmount(details.getAppTotalAmount());
+		turnOverDetails.setUseBalance(details.getUseBalance());
+		turnOverDetails.setStatus(3);
+		turnOverDetails.setUserId(oLog.getMtmyUserId());
+		turnOverDetails.setBelongOfficeId(details.getBelongOfficeId());
+		turnOverDetails.setCreateBy(UserUtils.getUser());
+		turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+		
 		//根据用户id查询用户账户信息
 		Orders _orders = new Orders();
 		_orders.setUserid(oLog.getMtmyUserId());
@@ -2876,7 +2999,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param orderAmount应付款金额
 	 * @param goodsPrice商品优惠单价
 	 */
-	public void handleCardAdvance(OrderRechargeLog oLog,double goodsPrice,double detailsTotalAmount,int goodsType,String officeId,int isReal,double realAdvancePrice){
+	public void handleCardAdvance(OrderRechargeLog oLog,double goodsPrice,double detailsTotalAmount,int goodsType,String officeId,int isReal,double realAdvancePrice,OrderGoodsDetails oldDetails){
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
 		double totalAmount = oLog.getTotalAmount(); //实付款金额
@@ -2983,6 +3106,34 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setUseBalance(accountBalance);
 		//保存订单商品详情记录
 		orderGoodsDetailsService.saveOrderGoodsDetails(details);
+		
+		//同步数据到营业额明细表
+		//第一次，同步下单的那条数据
+		TurnOverDetails turnOverDetails1 = new TurnOverDetails();
+		turnOverDetails1.setOrderId(details.getOrderId());
+		turnOverDetails1.setMappingId(Integer.valueOf(oldDetails.getGoodsMappingId()));
+		turnOverDetails1.setDetailsId(oldDetails.getId());
+		turnOverDetails1.setType(1);
+		turnOverDetails1.setAmount(oldDetails.getAppTotalAmount());
+		turnOverDetails1.setUseBalance(oldDetails.getUseBalance());
+		turnOverDetails1.setStatus(1);
+		turnOverDetails1.setUserId(oLog.getMtmyUserId());
+		turnOverDetails1.setBelongOfficeId(officeId);
+		turnOverDetails1.setCreateBy(UserUtils.getUser());
+		turnOverDetailsService.saveTurnOverDetails(turnOverDetails1);
+		
+		//第一次，同步处理预约金的那条数据
+		TurnOverDetails turnOverDetails2 = new TurnOverDetails();
+		turnOverDetails2.setOrderId(details.getOrderId());
+		turnOverDetails2.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
+		turnOverDetails2.setDetailsId(details.getId());
+		turnOverDetails2.setType(2);
+		turnOverDetails2.setAmount(details.getAppTotalAmount());
+		turnOverDetails2.setUseBalance(details.getUseBalance());
+		turnOverDetails2.setStatus(2);
+		turnOverDetails2.setUserId(oLog.getMtmyUserId());
+		turnOverDetails2.setCreateBy(UserUtils.getUser());
+		turnOverDetailsService.saveTurnOverDetails(turnOverDetails2);
 		
 		OrderGoodsDetails newDetails = orderGoodsDetailsService.selectOrderBalance(oLog.getRecid());
 		int integral = newDetails.getIntegral();        //处理完预约金以后，待付尾款为0的时候，处理预约金以后送的云币
