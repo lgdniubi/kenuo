@@ -421,7 +421,7 @@
 						</div>
 						<!-- 通用信息 End -->
 						<!-- 套卡子项 Begin -->
-						<div class="tab-pane fade" id="tab_goods_card">
+						<div class="tab-pane fade" id="tab_goods_card" style="border: 0">
 							<div>
 								<a href="#" onclick="addGoods(${goods.goodsId},1,2)" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加虚拟商品</a>
 								<a href="#" onclick="addGoods(${goods.goodsId},0,2)" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加实物商品</a>
