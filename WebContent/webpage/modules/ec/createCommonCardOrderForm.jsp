@@ -378,7 +378,7 @@
 		//submit函数在等待远程校验结果然后再提交，而layer对话框不会阻塞会直接关闭同时会销毁表单，因此submit没有提交就被销毁了导致提交表单失败。
 		//$("#inputForm").validate().element($("#phone"));
 		
-		/* $("#belongOfficeButton").click(function(){
+		$("#belongOfficeButton").click(function(){
 			// 是否限制选择，如果限制，设置为disabled
 			if ($("#belongOfficeButton").hasClass("disabled")){
 				return true;
@@ -399,15 +399,23 @@
 							}else{
 								nodes = tree.getSelectedNodes();
 							}
-							for(var i=0; i<nodes.length; i++) {//
+							for(var i=0; i<nodes.length; i++) {
+								if (nodes[i].level == 0){
+									//top.$.jBox.tip("不能选择根节点（"+nodes[i].name+"）请重新选择。");
+									top.layer.msg("不能选择根节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+									return false;
+								}
+								if (nodes[i].isParent){
+									//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+									//layer.msg('有表情地提示');
+									top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+									return false;
+								}//
 								ids.push(nodes[i].id);
 								names.push(nodes[i].name);//
 								break; // 如果为非复选框选择，则返回第一个选择  
 							}
-							
-							$("#belongUserId").val("");
-							$("#belongUserName").val("");
-							
+
 							$("#belongOfficeId").val(ids.join(",").replace(/u_/ig,""));
 							$("#belongOfficeName").val(names.join(","));
 							$("#belongOfficeName").focus();
@@ -419,49 +427,6 @@
 			}); 
 		
 		});
-		
-		$("#belongUserButton").click(function(){
-			var belongOfficeId = $("#belongOfficeId").val();
-			// 是否限制选择，如果限制，设置为disabled
-			if ($("#belongUserButton").hasClass("disabled")){
-				return true;
-			}
-			
-			if(belongOfficeId == null || belongOfficeId == ""){
-				top.layer.alert('请先选择归属机构!', {icon: 0, title:'提醒'});
-			}else{
-				// 正常打开	
-				top.layer.open({
-				    type: 2, 
-				    area: ['300px', '420px'],
-				    title:"选择人员",
-				    ajaxData:{belongOfficeId:belongOfficeId},
-				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/user/officeUserTreeData?belongOfficeId="+belongOfficeId),
-				    btn: ['确定', '关闭']
-		    	       ,yes: function(index, layero){ //或者使用btn1
-								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
-								var ids = [], names = [], nodes = [];
-								if ("" == "true"){
-									nodes = tree.getCheckedNodes(true);
-								}else{
-									nodes = tree.getSelectedNodes();
-								}
-								for(var i=0; i<nodes.length; i++) {//
-									ids.push(nodes[i].id);
-									names.push(nodes[i].name);//
-									break; // 如果为非复选框选择，则返回第一个选择  
-								}
-								$("#belongUserId").val(ids.join(",").replace(/u_/ig,""));
-								$("#belongUserName").val(names.join(","));
-								$("#belongUserName").focus();
-								top.layer.close(index);
-						    	       },
-		    	cancel: function(index){ //或者使用btn2
-		    	           //按钮【按钮二】的回调
-		    	       }
-				}); 
-			}
-		}); */
 		
 	});
 	function selectUser(){
@@ -720,11 +685,11 @@
 					<label >留言备注：</label>
 					<textarea name="usernote" rows="5" cols="60"></textarea>
 				</div>
-				<!-- <p></p>
+				<p></p>
 				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 				<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
 					<tr>
-						<td width="100px"><span><font color="red">*</font>归属机构：</span></td>
+						<td width="100px"><span><font color="red">*</font>归属店铺：</span></td>
 						<td width="300px">
 							<input id="belongOfficeId" class=" form-control input-sm" name="belongOfficeId" value="" type="hidden">
 							<div class="input-group">
@@ -739,24 +704,8 @@
 						</td>
 						<td colspan="2" width="100px"></td>
 					</tr>
-					<tr id="belongUser">
-						<td width="100px"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;归属人：</span></td>
-						<td width="300px">
-							<input id="belongUserId" class=" form-control input-sm" name="belongUserId" value="" type="hidden">
-							<div class="input-group">
-								<input id="belongUserName" class=" form-control input-sm" name="belongUserName" readonly="readonly" value="" data-msg-required="" style="" type="text">
-									<span class="input-group-btn">
-										<button id="belongUserButton" class="btn btn-sm btn-primary " type="button">
-											<i class="fa fa-search"></i>
-										</button>
-									</span>
-							</div>
-							<label id="belongUserName-error" class="error" for="belongUserName" style="display:none"></label>
-						</td>
-						<td colspan="2" width="100px"></td>
-					</tr>
 				</table>
-				</div> -->
+				</div>
 				<p></p>
 				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 					<input type="checkbox" id="Ichecks" name="Ichecks" /><label class="active">索要发票</label>

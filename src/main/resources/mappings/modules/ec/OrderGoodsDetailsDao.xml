@@ -26,9 +26,8 @@
 			create_office_id,
 			create_by,
 			create_date,
+			belong_office_id,
 			use_balance
-			<!-- belong_office_id,
-			belong_user_id -->
 		)VALUES(
 			#{orderId},
 			#{goodsMappingId},
@@ -52,9 +51,8 @@
 			#{createOfficeId},
 			#{createBy.id},
 			SYSDATE(),
+			#{belongOfficeId},
 			#{useBalance}
-			<!-- #{belongOfficeId},
-			#{belongUserId} -->
 		)
 	</insert>
 	

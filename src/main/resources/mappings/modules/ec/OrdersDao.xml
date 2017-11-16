@@ -887,8 +887,6 @@
 			discount,
 			pay_time,
 			create_by
-			<!-- belong_office_id,
-			belong_user_id -->
 		)values(
 			#{orderid},
 			#{parentid},
@@ -916,8 +914,6 @@
 			1,
 			SYSDATE(),
 			#{createBy.id}
-			<!-- #{belongOfficeId},
-			#{belongUserId} -->
 		)
 	</insert>
 	
@@ -994,10 +990,6 @@
 			o.invoice_overtime as invoiceOvertime,
 			o.shipping_price as shippingprice,
 			IFNULL(u.office_id,'') AS officeId
-			<!-- o.belong_office_id as 'belongOfficeId',
-			o.belong_user_id as 'belongUserId',
-			(select so.name from sys_office so where so.id = o.belong_office_id) as belongOfficeName,
-			(select su.name from sys_user su where su.id = o.belong_user_id) as belongUserName -->
 		FROM
 			mtmydb.mtmy_orders o,
 			mtmydb.mtmy_users u
@@ -1067,8 +1059,6 @@
 			discount,
 			pay_time,
 			create_by
-			<!-- belong_office_id,
-			belong_user_id -->
 		)values(
 			#{orderid},
 			#{parentid},
@@ -1099,8 +1089,6 @@
 			1,
 			SYSDATE(),
 			#{createBy.id}
-			<!-- #{belongOfficeId},
-			#{belongUserId} -->
 		)
 	</insert>
 	<!-- 插入备注信息 -->

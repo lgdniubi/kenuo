@@ -111,87 +111,6 @@
 			//submit函数在等待远程校验结果然后再提交，而layer对话框不会阻塞会直接关闭同时会销毁表单，因此submit没有提交就被销毁了导致提交表单失败。
 			/* $("#inputForm").validate().element($("#orderamount")); */
 	  	
-			/* $("#belongOfficeButton").click(function(){
-				// 是否限制选择，如果限制，设置为disabled
-				if ($("#belongOfficeButton").hasClass("disabled")){
-					return true;
-				}
-				// 正常打开	
-				top.layer.open({
-				    type: 2, 
-				    area: ['300px', '420px'],
-				    title:"选择部门",
-				    ajaxData:{selectIds: $("#belongOfficeId").val()},
-				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/office/treeData?type=2")+"&module=&checked=&extId=&isAll=&selectIds=" ,
-				    btn: ['确定', '关闭']
-		    	       ,yes: function(index, layero){ //或者使用btn1
-								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
-								var ids = [], names = [], nodes = [];
-								if ("" == "true"){
-									nodes = tree.getCheckedNodes(true);
-								}else{
-									nodes = tree.getSelectedNodes();
-								}
-								for(var i=0; i<nodes.length; i++) {//
-									ids.push(nodes[i].id);
-									names.push(nodes[i].name);//
-									break; // 如果为非复选框选择，则返回第一个选择  
-								}
-								$("#belongOfficeId").val(ids.join(",").replace(/u_/ig,""));
-								$("#belongOfficeName").val(names.join(","));
-								$("#belongOfficeName").focus();
-								top.layer.close(index);
-						    	       },
-		    	cancel: function(index){ //或者使用btn2
-		    	           //按钮【按钮二】的回调
-		    	       }
-				}); 
-			
-			});
-			
-			$("#belongUserButton").click(function(){
-				var belongOfficeId = $("#belongOfficeId").val();
-				// 是否限制选择，如果限制，设置为disabled
-				if ($("#belongUserButton").hasClass("disabled")){
-					return true;
-				}
-				
-				if(belongOfficeId == null || belongOfficeId == ""){
-					top.layer.alert('请先选择归属机构!', {icon: 0, title:'提醒'});
-				}else{
-					// 正常打开	
-					top.layer.open({
-					    type: 2, 
-					    area: ['300px', '420px'],
-					    title:"选择人员",
-					    ajaxData:{belongOfficeId:belongOfficeId},
-					    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/user/officeUserTreeData?belongOfficeId="+belongOfficeId),
-					    btn: ['确定', '关闭']
-			    	       ,yes: function(index, layero){ //或者使用btn1
-									var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
-									var ids = [], names = [], nodes = [];
-									if ("" == "true"){
-										nodes = tree.getCheckedNodes(true);
-									}else{
-										nodes = tree.getSelectedNodes();
-									}
-									for(var i=0; i<nodes.length; i++) {//
-										ids.push(nodes[i].id);
-										names.push(nodes[i].name);//
-										break; // 如果为非复选框选择，则返回第一个选择  
-									}
-									$("#belongUserId").val(ids.join(",").replace(/u_/ig,""));
-									$("#belongUserName").val(names.join(","));
-									$("#belongUserName").focus();
-									top.layer.close(index);
-							    	       },
-			    	cancel: function(index){ //或者使用btn2
-			    	           //按钮【按钮二】的回调
-			    	       }
-					}); 
-				}
-			});
-			 */
 	    });
 			
 	    	
@@ -215,8 +134,7 @@
 						var topUpTotalAmount = obj.document.getElementById("topUpTotalAmount").value;
 						var jsmoney = obj.document.getElementById("jsmoney").value;
 						var loading = obj.document.getElementById("loading");
-						/* var belongOfficeId = obj.document.getElementById("belongOfficeId").value;
-						var belongUserId = obj.document.getElementById("belongUserId").value; */
+						var belongOfficeId = obj.document.getElementById("belongOfficeId").value;
 						$(loading).show();
 						if(accountBalance == ''){
 							$(loading).hide();
@@ -238,11 +156,11 @@
 							top.layer.alert('请计算费用！', {icon: 0, title:'提醒'});
 							return;
 						}
-						/* if(belongOfficeId == ''){
+						if(belongOfficeId == ''){
 							$(loading).hide();
-							top.layer.alert('归属机构必填！', {icon: 0, title:'提醒'});
+							top.layer.alert('归属店铺必填！', {icon: 0, title:'提醒'});
 							return;
-						} */
+						}
 						
 						//查询用户账户余额
 						$.ajax({
@@ -282,9 +200,8 @@
 											servicetimes:servicetimes,
 											remaintimes:remaintimes,
 											isReal:isReal,
-											channelFlag:channelFlag
-											/* belongOfficeId:belongOfficeId,        
-											belongUserId:belongUserId     */
+											channelFlag:channelFlag,
+											belongOfficeId:belongOfficeId        
 										 },
 										url:"${ctx}/ec/orders/addCardOrderRechargeLog",
 										success:function(date){
@@ -865,45 +782,6 @@ window.onload=initStatus;
 								<label ><font color="red">*</font>收货地址：</label>
 								<form:input path="address" htmlEscape="false" maxlength="120" class="form-control required" style="width:180px" />
 							</div>
-						</div> --%>
-						<%-- <p></p>
-						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
-						<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
-							<tr>
-								<td width="100px"><span>归属机构：</span></td>
-								<td width="300px">
-									<input id="belongOfficeId" class=" form-control input-sm" name="belongOfficeId" value="${orders.belongOfficeId}" type="hidden">
-									<div class="input-group">
-										<input id="belongOfficeName" class=" form-control input-sm" name="belongOfficeName" readonly="readonly" value="${orders.belongOfficeName}" data-msg-required="" style="" type="text">
-											<span class="input-group-btn">
-												<button id="belongOfficeButton" class="btn btn-sm btn-primary " disabled="disabled" type="button">
-													<i class="fa fa-search"></i>
-												</button>
-											</span>
-									</div>
-									<label id="belongOfficeName-error" class="error" for="belongOfficeName" style="display:none"></label>
-								</td>
-								<td colspan="2" width="100px"></td>
-							</tr>
-							<c:if test="${orders.isNeworder == 0}">
-							<tr>
-								<td width="100px"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;归属人：</span></td>
-								<td width="300px">
-									<input id="belongUserId" class=" form-control input-sm" name="belongUserId" value="${orders.belongUserId}" type="hidden">
-									<div class="input-group">
-										<input id="belongUserName" class=" form-control input-sm" name="belongUserName" readonly="readonly" value="${orders.belongUserName}" data-msg-required="" style="" type="text">
-											<span class="input-group-btn">
-												<button id="belongUserButton" class="btn btn-sm btn-primary " disabled="disabled" type="button">
-													<i class="fa fa-search"></i>
-												</button>
-											</span>
-									</div>
-									<label id="belongUserName-error" class="error" for="belongUserName" style="display:none"></label>
-								</td>
-								<td colspan="2" width="100px"></td>
-							</tr>
-							</c:if>
-						</table>
 						</div> --%>
 						<p></p>
 						<c:if test="${orders.num > 0}">
