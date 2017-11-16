@@ -6,6 +6,7 @@
 		a.id,
 		a.parent_id AS "parent.id",
 		a.parent_ids,
+		a.franchisee_id AS 'franchisee.id',
 		a.area_id AS "area.id",
 		a.code,
 		a.name,
@@ -470,6 +471,9 @@
 		<if test="type == 'status'">
 			UPDATE sys_office_info SET status = #{isyesno} WHERE id = #{id}
 		</if> 
+		<if test="type == 'isRecommend'">
+			UPDATE sys_office SET is_recommend = #{isyesno} WHERE id = #{id}
+		</if>
 		<if test="type == 'isNew'">
 			UPDATE sys_office SET is_new = #{isyesno} WHERE id = #{id}
 		</if> 	
@@ -630,6 +634,41 @@
 				#{DEL_FLAG_NORMAL}
 			)
 	</insert>
+	<!-- 操作店铺时保存日志记录 -->
+	<insert id="saveOfficeLog" parameterType="OfficeLog">
+		insert into sys_office_log(
+				office_id,
+				type,
+				content,
+				update_by,
+				update_date
+			) values (
+				#{officeId},
+				#{type},
+				#{content},
+				#{updateBy.id},
+				SYSDATE()
+			)
+	</insert>
+	
+	<!-- 删除店铺时保存日志记录 -->
+	<insert id="saveOfficeLogDel" parameterType="OfficeLog">
+		insert into sys_office_log(
+				office_id,
+				update_by,
+				type,
+				content,
+				update_date
+			) (SELECT
+				a.id,a.update_by,#{type},#{content},SYSDATE()
+			FROM sys_office a
+			WHERE (a.id = #{officeId} OR a.parent_ids LIKE 
+				<if test="dbName == 'oracle'">'%,'||#{officeId}||',%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%,', #{officeId}, ',%')</if>)
+			AND a.del_flag = 0
+			AND a.grade=1);
+	</insert>
+	
 	<!-- 替换code前先在code前拼接特定的字符 -->
 	<update id="updateCodeFirst">
 		UPDATE sys_office SET code = CONCAT('coffee',code) WHERE code LIKE CONCAT(#{oldCode}, '%')
@@ -667,5 +706,18 @@
 			<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
 		AND a.del_flag = 0
+	</select>
+	
+	<!-- 实物订单发货到店查询店铺详情 -->
+	<select id="selectOfficeDetails" resultType="OfficeInfo">
+		SELECT
+			o.name AS 'shopName',
+			oi.store_phone AS 'shopPhone',
+			oi.detailed_address AS 'address'
+		FROM sys_office o
+		LEFT JOIN sys_office_info oi ON oi.id =o.id
+		WHERE o.id = #{id}
+		AND o.del_flag = 0
+		AND oi.del_flag = 0
 	</select>
 </mapper>

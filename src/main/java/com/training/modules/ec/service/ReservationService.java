@@ -11,6 +11,7 @@ import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.ec.dao.ReservationDao;
 import com.training.modules.ec.entity.Comment;
+import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.Reservation;
 import com.training.modules.ec.utils.CommonScopeUtils;
 import com.training.modules.sys.dao.AreaDao;
@@ -73,7 +74,7 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 	 * 加载美容师
 	 * @return
 	 */
-	public List<Office> loadOffice(int goodsId,String areaId){
+	public List<Office> loadOffice(String goodsIds,String franchiseeId,String areaId){
 		String nationName = "";
 		String provinceId = "";
 		String cityId = "";
@@ -90,6 +91,15 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 				districtId = area.getId();
 			}
 		}
-		return dao.loadOffice(goodsId,nationName,provinceId,cityId,districtId);
+		return dao.loadOffice(goodsIds,franchiseeId,nationName,provinceId,cityId,districtId);
 	}
+	
+	/**
+	 * 查询用户可服务的订单
+	 * @return
+	 */
+	public List<OrderGoods> findOrderGoodsByUserId(int userId){
+		return dao.findOrderGoodsByUserId(userId);
+	}
+	
 }

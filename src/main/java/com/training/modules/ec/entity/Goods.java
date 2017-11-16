@@ -101,6 +101,9 @@ public class Goods extends DataEntity<Goods> {
 	private List<Double> prices;			//卡项商品 优惠价
 	private List<Double> totalMarketPrices;	//卡项商品 市场价合计
 	private List<Double> totalPrices;		//卡项商品 优惠价合计
+	//---------------------------项目部位-----------------------------------
+	private String positionId;			//项目部位ID
+	private String positionIds;		//项目部位IDS（以下划线隔开）
 	
 	/**
 	 * get/set
@@ -519,5 +522,18 @@ public class Goods extends DataEntity<Goods> {
 	public void setTotalPrices(List<Double> totalPrices) {
 		this.totalPrices = totalPrices;
 	}
+	public String getPositionId() {
+		return positionId;
+	}
+	public void setPositionId(String positionId) {
+		this.positionId = positionId;
+	}
+	public String getPositionIds() {
+		return positionIds;
+	}
+	public void setPositionIds(String positionIds) {
+		this.positionIds = positionIds;
+	}
+	
 	
 }

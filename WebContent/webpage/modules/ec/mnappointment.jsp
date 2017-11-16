@@ -67,8 +67,13 @@
 					<div class="col-sm-12">
                         <div class="pull-left">
                         	<shiro:hasPermission name="ec:mtmyMnappointment:addReservation">
-	                        	<button class="btn btn-white btn-sm" title="添加预约" onclick="openDialog('添加预约', '${ctx}/ec/mtmyMnappointment/addReservation','750px', '600px')" data-placement="left" data-toggle="tooltip">
+	                        	<button class="btn btn-white btn-sm" title="添加预约" onclick="openDialog('添加预约', '${ctx}/ec/mtmyMnappointment/addReservation','800px', '600px')" data-placement="left" data-toggle="tooltip">
 									<i class="fa fa-plus"></i>添加预约
+								</button>
+							</shiro:hasPermission>
+							<shiro:hasPermission name="ec:mtmyMnappointment:addMoreReservation">
+	                        	<button class="btn btn-white btn-sm" title="添加多项目预约" onclick="openDialog('添加多项目预约', '${ctx}/ec/mtmyMnappointment/addMoreReservation','800px', '600px')" data-placement="left" data-toggle="tooltip">
+									<i class="fa fa-plus"></i>添加多项目预约
 								</button>
 							</shiro:hasPermission>
                         </div>

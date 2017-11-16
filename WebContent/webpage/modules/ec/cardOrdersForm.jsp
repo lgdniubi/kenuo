@@ -110,11 +110,93 @@
 			//否则打开修改对话框，不做任何更改直接submit,这时再触发远程校验，耗时较长，
 			//submit函数在等待远程校验结果然后再提交，而layer对话框不会阻塞会直接关闭同时会销毁表单，因此submit没有提交就被销毁了导致提交表单失败。
 			/* $("#inputForm").validate().element($("#orderamount")); */
-	  
+	  	
+			/* $("#belongOfficeButton").click(function(){
+				// 是否限制选择，如果限制，设置为disabled
+				if ($("#belongOfficeButton").hasClass("disabled")){
+					return true;
+				}
+				// 正常打开	
+				top.layer.open({
+				    type: 2, 
+				    area: ['300px', '420px'],
+				    title:"选择部门",
+				    ajaxData:{selectIds: $("#belongOfficeId").val()},
+				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/office/treeData?type=2")+"&module=&checked=&extId=&isAll=&selectIds=" ,
+				    btn: ['确定', '关闭']
+		    	       ,yes: function(index, layero){ //或者使用btn1
+								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+								var ids = [], names = [], nodes = [];
+								if ("" == "true"){
+									nodes = tree.getCheckedNodes(true);
+								}else{
+									nodes = tree.getSelectedNodes();
+								}
+								for(var i=0; i<nodes.length; i++) {//
+									ids.push(nodes[i].id);
+									names.push(nodes[i].name);//
+									break; // 如果为非复选框选择，则返回第一个选择  
+								}
+								$("#belongOfficeId").val(ids.join(",").replace(/u_/ig,""));
+								$("#belongOfficeName").val(names.join(","));
+								$("#belongOfficeName").focus();
+								top.layer.close(index);
+						    	       },
+		    	cancel: function(index){ //或者使用btn2
+		    	           //按钮【按钮二】的回调
+		    	       }
+				}); 
+			
+			});
+			
+			$("#belongUserButton").click(function(){
+				var belongOfficeId = $("#belongOfficeId").val();
+				// 是否限制选择，如果限制，设置为disabled
+				if ($("#belongUserButton").hasClass("disabled")){
+					return true;
+				}
+				
+				if(belongOfficeId == null || belongOfficeId == ""){
+					top.layer.alert('请先选择归属机构!', {icon: 0, title:'提醒'});
+				}else{
+					// 正常打开	
+					top.layer.open({
+					    type: 2, 
+					    area: ['300px', '420px'],
+					    title:"选择人员",
+					    ajaxData:{belongOfficeId:belongOfficeId},
+					    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/user/officeUserTreeData?belongOfficeId="+belongOfficeId),
+					    btn: ['确定', '关闭']
+			    	       ,yes: function(index, layero){ //或者使用btn1
+									var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+									var ids = [], names = [], nodes = [];
+									if ("" == "true"){
+										nodes = tree.getCheckedNodes(true);
+									}else{
+										nodes = tree.getSelectedNodes();
+									}
+									for(var i=0; i<nodes.length; i++) {//
+										ids.push(nodes[i].id);
+										names.push(nodes[i].name);//
+										break; // 如果为非复选框选择，则返回第一个选择  
+									}
+									$("#belongUserId").val(ids.join(",").replace(/u_/ig,""));
+									$("#belongUserName").val(names.join(","));
+									$("#belongUserName").focus();
+									top.layer.close(index);
+							    	       },
+			    	cancel: function(index){ //或者使用btn2
+			    	           //按钮【按钮二】的回调
+			    	       }
+					}); 
+				}
+			});
+			 */
 	    });
 			
 	    	
 		    function TopUp(recid,singleRealityPrice,singleNormPrice,orderArrearage,servicetimes,remaintimes,goodsBalance){
+		    	var isCommitted = false;		//表单是否已经提交标识，默认为false
 		    	var orderid = $("#orderid").val();
 		    	var userid = $("#userid").val();
 		    	var isReal = $("#isReal").val();
@@ -133,6 +215,8 @@
 						var topUpTotalAmount = obj.document.getElementById("topUpTotalAmount").value;
 						var jsmoney = obj.document.getElementById("jsmoney").value;
 						var loading = obj.document.getElementById("loading");
+						/* var belongOfficeId = obj.document.getElementById("belongOfficeId").value;
+						var belongUserId = obj.document.getElementById("belongUserId").value; */
 						$(loading).show();
 						if(accountBalance == ''){
 							$(loading).hide();
@@ -154,6 +238,11 @@
 							top.layer.alert('请计算费用！', {icon: 0, title:'提醒'});
 							return;
 						}
+						/* if(belongOfficeId == ''){
+							$(loading).hide();
+							top.layer.alert('归属机构必填！', {icon: 0, title:'提醒'});
+							return;
+						} */
 						
 						//查询用户账户余额
 						$.ajax({
@@ -170,6 +259,14 @@
 									top.layer.alert('您输入的余额不能大于当前账户的余额！', {icon: 0, title:'提醒'});
 								}else{
 									top.layer.close(index);
+									
+									//防止表单多次提交
+								    if(isCommitted == false){
+								    	isCommitted = true;		//提交表单后，将表单是否已经提交标识设置为true
+								   	}else{
+								       	return false;			
+									}
+									
 									$.ajax({
 										type:"post",
 										data:{
@@ -186,6 +283,8 @@
 											remaintimes:remaintimes,
 											isReal:isReal,
 											channelFlag:channelFlag
+											/* belongOfficeId:belongOfficeId,        
+											belongUserId:belongUserId     */
 										 },
 										url:"${ctx}/ec/orders/addCardOrderRechargeLog",
 										success:function(date){
@@ -234,7 +333,17 @@
       	    	if(pushMoney==""){
       	    		top.layer.alert('填写营业额！', {icon: 0, title:'提醒'});
       	    		return;
-      	    	}
+      	    	}else{
+	   	    		var re = /^([+-]?)\d*\.?\d{0,2}$/; 
+	   				if(!re.test(pushMoney)){
+	   					top.layer.alert('请输入正确的营业额(最多两位小数)', {icon: 0, title:'提醒'});
+	     	    		return;
+	   				}
+    	    	}
+      	    	if(sysUserId == ""){
+    	    		top.layer.alert('填写业务员！', {icon: 0, title:'提醒'});
+     	    		return;
+     	    	}
       	    	if(channelFlag == 'bm'){
    	    			if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
     	    			top.layer.alert('营业额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
@@ -246,7 +355,25 @@
      	    			return;
      	    		}
    	    		}
-   	    		
+      	    	
+      	    	/* var belongUserId = $("#belongUserId").val(); 
+				if(sysUserId == belongUserId){
+					top.layer.alert('归属人和业务员不能是同一个人!', {icon: 0, title:'提醒'}); 
+					return;
+				} */
+   	    		var pushMoneySum = $("#"+sysUserId+"pushMoneySum").val();
+  	    		if(pushMoneySum == undefined){
+  	    			pushMoneySum=0;
+  	    		}
+	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) < 0){
+	    			top.layer.alert('营业总额必须大于0！', {icon: 0, title:'提醒'});
+	    			return;
+	    		}
+	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) - parseFloat(orderamount) > 0){
+	    			top.layer.alert('营业总额小于等于订单应付总额！', {icon: 0, title:'提醒'});
+	    			return;
+	    		}
+      	    	
       	    	$.ajax({
        				type:"post",
        				data:{
@@ -344,35 +471,61 @@
      	    	var pushMoney = obj.document.getElementById("pushMoney").value; //营业额
      	    	var orderid =  $("#orderid").val();
      	    	var isReal =  $("#isReal").val();
-     	    	if(pushMoney==""){
-     	    		top.layer.alert('填写营业额！', {icon: 0, title:'提醒'});
+     	    	
+     	    	if(pushMoney==""){	
+    	    		top.layer.alert('填写营业额！', {icon: 0, title:'提醒'});
      	    		return;
-     	    	}
+    	    	}else{
+	   	    		var re = /^([+-]?)\d*\.?\d{0,2}$/; 
+	   				if(!re.test(pushMoney)){
+	   					top.layer.alert('请输入正确的营业额(最多两位小数)', {icon: 0, title:'提醒'});
+	     	    		return;
+	   				}
+    	    	}
      	    	if(sysUserId == ""){
     	    		top.layer.alert('填写业务员！', {icon: 0, title:'提醒'});
      	    		return;
      	    	}
      	    	if(channelFlag == 'bm'){
-   	    			if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-    	    			top.layer.alert('营业额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
+   	    			if(parseFloat(pushMoney) - parseFloat(orderamount) > 0){
+    	    			top.layer.alert('营业额小于等于订单应付总额！', {icon: 0, title:'提醒'});
      	    			return;
      	    		}
    	    		}else{
-   	    			if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(ordersGoodsprice - couponprice - memberGoodsPrice) > 0){
-    	    			top.layer.alert('营业额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
+   	    			if(parseFloat(pushMoney) - parseFloat(ordersGoodsprice - couponprice - memberGoodsPrice) > 0){
+    	    			top.layer.alert('营业额小于等于订单应付总额！', {icon: 0, title:'提醒'});
      	    			return;
      	    		}
    	    		}
      	    	
-   	    		if(sysUserIds.length > 0){
+   	    		/* if(sysUserIds.length > 0){
   	    			for(i=0;i<sysUserIds.length;i++){
        	    	        if(sysUserId == sysUserIds[i].value){
        	    	        	top.layer.alert('业务员不能相同！', {icon: 0, title:'提醒'});
        	     	    		return;
        	    	        }
        	    	    }
+  	    		} */
+  	    		
+     	    	var belongUserId = $("#belongUserId").val(); 
+				if(sysUserId == belongUserId){
+					top.layer.alert('归属人和业务员不能是同一个人!', {icon: 0, title:'提醒'}); 
+					return;
+				}
+  	    		
+     	    	var pushMoneySum = $("#"+sysUserId+"pushMoneySum").val();
+  	    		if(pushMoneySum == undefined){
+  	    			pushMoneySum=0;
   	    		}
-   	    		
+	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) < 0){
+	    			top.layer.alert('营业总额必须大于0！', {icon: 0, title:'提醒'});
+	    			return;
+	    		}
+	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) - parseFloat(orderamount) > 0){
+	    			top.layer.alert('营业总额小于等于订单应付总额！', {icon: 0, title:'提醒'});
+	    			return;
+	    		}
+  	    		
    	    		$.ajax({
        				type:"post",
        				data:{
@@ -470,6 +623,8 @@ window.onload=initStatus;
 	    	return;
 		}
 		
+		var isHandled = false;		//表单是否已经提交标识，默认为false
+		
 		top.layer.open({
 		    type: 2, 
 		    area: ['600px', '450px'],
@@ -480,7 +635,23 @@ window.onload=initStatus;
 		    	var obj =  layero.find("iframe")[0].contentWindow;
      	    	var sum = obj.document.getElementById("sum").value; //是否使用了账户余额
      	    	var loading = obj.document.getElementById("loading");
+     	    	/* var belongOfficeId = obj.document.getElementById("belongOfficeId").value;
+				var belongUserId = obj.document.getElementById("belongUserId").value; */
 				$(loading).show();
+				
+				/* if(belongOfficeId == ''){
+					$(loading).hide();
+					top.layer.alert('归属机构必填！', {icon: 0, title:'提醒'});
+					return;
+				} */
+				
+				//防止表单多次提交
+			    if(isHandled == false){
+			    	isHandled = true;		//提交表单后，将表单是否已经提交标识设置为true
+			   	}else{
+			       	return false;			
+				}
+				
 				//异步处理预约金
 				$.ajax({
 					type:"post",
@@ -492,6 +663,8 @@ window.onload=initStatus;
 						orderArrearage:orderArrearage,
 						isReal:isReal,
 						channelFlag:channelFlag
+						/* belongOfficeId:belongOfficeId,
+						belongUserId:belongUserId */
 					 },
 					url:"${ctx}/ec/orders/handleCardAdvance?recid="+recid+"&userid="+userid+"&orderid="+orderid,
 					success:function(date){
@@ -630,8 +803,13 @@ window.onload=initStatus;
 									<th style="text-align: center;">系统价</th>
 									<th style="text-align: center;">市场价</th>
 									<th style="text-align: center;">优惠价</th>
+									<c:if test="${orders.isReal == 2}">
+										<th style="text-align: center;">次(个)数</th>
+									</c:if>
 									<th style="text-align: center;">购买数量</th>
-									<th style="text-align: center;">实际次数</th>
+									<c:if test="${(orders.isReal == 3) || (orders.isReal == 2 && orders.isNeworder == 1)}">
+										<th style="text-align: center;">实际次数</th>
+									</c:if>
 									<th style="text-align: center;">红包面值</th>
 									<th style="text-align: center;">折扣率</th>
 									<th style="text-align: center;">会员折扣</th>
@@ -688,6 +866,45 @@ window.onload=initStatus;
 								<form:input path="address" htmlEscape="false" maxlength="120" class="form-control required" style="width:180px" />
 							</div>
 						</div> --%>
+						<%-- <p></p>
+						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+						<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
+							<tr>
+								<td width="100px"><span>归属机构：</span></td>
+								<td width="300px">
+									<input id="belongOfficeId" class=" form-control input-sm" name="belongOfficeId" value="${orders.belongOfficeId}" type="hidden">
+									<div class="input-group">
+										<input id="belongOfficeName" class=" form-control input-sm" name="belongOfficeName" readonly="readonly" value="${orders.belongOfficeName}" data-msg-required="" style="" type="text">
+											<span class="input-group-btn">
+												<button id="belongOfficeButton" class="btn btn-sm btn-primary " disabled="disabled" type="button">
+													<i class="fa fa-search"></i>
+												</button>
+											</span>
+									</div>
+									<label id="belongOfficeName-error" class="error" for="belongOfficeName" style="display:none"></label>
+								</td>
+								<td colspan="2" width="100px"></td>
+							</tr>
+							<c:if test="${orders.isNeworder == 0}">
+							<tr>
+								<td width="100px"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;归属人：</span></td>
+								<td width="300px">
+									<input id="belongUserId" class=" form-control input-sm" name="belongUserId" value="${orders.belongUserId}" type="hidden">
+									<div class="input-group">
+										<input id="belongUserName" class=" form-control input-sm" name="belongUserName" readonly="readonly" value="${orders.belongUserName}" data-msg-required="" style="" type="text">
+											<span class="input-group-btn">
+												<button id="belongUserButton" class="btn btn-sm btn-primary " disabled="disabled" type="button">
+													<i class="fa fa-search"></i>
+												</button>
+											</span>
+									</div>
+									<label id="belongUserName-error" class="error" for="belongUserName" style="display:none"></label>
+								</td>
+								<td colspan="2" width="100px"></td>
+							</tr>
+							</c:if>
+						</table>
+						</div> --%>
 						<p></p>
 						<c:if test="${orders.num > 0}">
 								<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
@@ -708,6 +925,11 @@ window.onload=initStatus;
 										<a href="#" onclick="getSysUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
 									</div>
 								</c:if>
+								<shiro:hasPermission name="ec:orders:pushmoney">
+									<div class="pull-right">
+										<a href="#" onclick="openDialogView('查看日志记录', '${ctx}/ec/orders/getOrderPushmoneyRecordList?orderId=${orders.orderid }','800px','600px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>日志记录</a>
+									</div>
+								</shiro:hasPermission>
 								<p></p>
 								<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
 									<thead>
@@ -715,11 +937,11 @@ window.onload=initStatus;
 											<th style="text-align: center;">业务员</th>
 											<th style="text-align: center;">手机号</th>
 											<th style="text-align: center;">营业额</th>
-											<th style="text-align: center;">操作人</th>
+											<%-- <th style="text-align: center;">操作人</th>
 											<th style="text-align: center;">操作时间</th>
 											<c:if test="${type != 'view' }">
 												<th style="text-align: center;" colspan="2">操作</th>
-											</c:if>
+											</c:if> --%>
 										</tr>
 									</thead>
 									<tbody id="sysUserInfo" style="text-align:center;">
@@ -735,8 +957,9 @@ window.onload=initStatus;
 												</td>
 												<td>
 													${orderPushmoneyRecord.pushMoney }
+													<input type="hidden" id="${orderPushmoneyRecord.pushmoneyUserId }pushMoneySum" value="${orderPushmoneyRecord.pushMoney }" />
 												</td>
-												<td>
+												<%-- <td>
 													${orderPushmoneyRecord.createBy.name }
 												</td>
 												<td>
@@ -747,7 +970,7 @@ window.onload=initStatus;
 														<a href="#" class="btn btn-success btn-xs" onclick="updateFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId })"><i class='fa fa-edit'></i> 修改</a>
 														<a href="#" class="btn btn-danger btn-xs" onclick="delFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId })"><i class='fa fa-trash'></i> 删除</a>
 													</td>
-												</c:if>
+												</c:if> --%>
 											</tr>
 										</c:forEach>
 									</tbody>

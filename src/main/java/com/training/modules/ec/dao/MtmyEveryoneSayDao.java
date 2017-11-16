@@ -42,4 +42,10 @@ public interface MtmyEveryoneSayDao extends CrudDao<MtmyEveryoneSay>{
 	 * @param mtmyEveryoneSayId
 	 */
 	public void deleteResponse(@Param(value="parentId")String parentId,@Param(value="mtmyEveryoneSayId")int mtmyEveryoneSayId);
+
+	/**
+	 * 修改说说是否显示
+	 * @param mtmyEveryoneSay
+	 */
+	public void updateIsShow(MtmyEveryoneSay mtmyEveryoneSay);
 }

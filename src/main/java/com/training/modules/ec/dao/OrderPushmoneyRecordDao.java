@@ -55,4 +55,11 @@ public interface OrderPushmoneyRecordDao extends TreeDao<OrderPushmoneyRecord> {
 	 */
 	void insertPushMoneyLog(PushmoneyRecordLog pushmoneyRecordLog);
 
+	/**
+	 * 通过业务员id(属于妃子校的)查询业务员归属机构
+	 * @param orderPushmoneyRecord
+	 * @return
+	 */
+	OrderPushmoneyRecord getOfficeIdByUserId(OrderPushmoneyRecord orderPushmoneyRecord);
+
 }

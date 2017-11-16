@@ -10,6 +10,8 @@
 		  g.category_id AS 'goodsCategory.id',
 		  g.franchisee_id AS 'franchisee.id',
 		  g.goodsbrand_id AS 'goodsBrand.id',
+		  g.position_id AS 'positionId',
+		  g.position_ids AS 'positionIds',
 		  c.name AS 'goodsCategory.name',
   		  f.name AS 'franchisee.name',
 		  g.goods_sn AS 'goodsSn',
@@ -257,6 +259,10 @@
 		  category_id,
 		  franchisee_id,
 		  goodsbrand_id,
+		  <if test="positionId != null and positionId != ''">
+		 	 position_id,
+		  	 position_ids,
+		  </if>
 		  goods_sn,
 		  goods_short_name,
 		  goods_description,
@@ -298,6 +304,10 @@
 		  ( #{goodsCategoryId},
 		    #{franchiseeId},
 		    #{goodsBrandId},
+		    <if test="positionId != null and positionId != ''">
+		    	#{positionId},
+		   	 	#{positionIds},
+		    </if>
 		    #{goodsSn},
 		    #{goodsShortName},
 		    #{goodsDescription},
@@ -332,12 +342,7 @@
 		    SYSDATE(),
 		    SYSDATE(),
 		    #{goodsType},
-		    <if test="isReal == 0">
-		    	0,
-		    </if>
-		    <if test="isReal != 0">
-		    	#{advancePrice},
-		    </if>
+		    #{advancePrice},
 		    #{supplierId}
 		  )
 	</insert>
@@ -349,6 +354,10 @@
 			  category_id = #{goodsCategoryId},
 			  franchisee_id = #{franchiseeId},
 			  goodsbrand_id = #{goodsBrandId},
+			  <if test="positionId != null and positionId != ''">
+			  	position_id = #{positionId},
+			  	position_ids = #{positionIds},
+			  </if>
 			  goods_sn = #{goodsSn},
 			  goods_short_name = #{goodsShortName},
 			  goods_description = #{goodsDescription},
@@ -381,12 +390,7 @@
 			  action_type = #{actionType},
 			  last_update = SYSDATE(),
 			  goods_type = #{goodsType},
-			  <if test="isReal != 1">
-				advance_price = 0,
-			  </if>
-			  <if test="isReal == 1">
-		    	advance_price = #{advancePrice},
-			  </if>
+		      advance_price = #{advancePrice},
 			  supplier_id = #{supplierId}
 			WHERE del_flag = 0 AND goods_id = #{goodsId}
 	</update>
