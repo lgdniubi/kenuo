@@ -157,6 +157,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				ogd.setServiceTimes(returnedGoods.getReturnNum());
 				ogd.setType(0);
 				ogd.setAdvanceFlag("4");
+				ogd.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
 				ogd.setCreateBy(UserUtils.getUser());
 				
 				if(returnedGoods.getIsReal() == 2){//套卡需要把剩余金额加回来,返回金额
@@ -278,6 +279,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		}
 		ogd.setType(2);
 		ogd.setAdvanceFlag("4");
+		ogd.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
 		ogd.setCreateBy(UserUtils.getUser());
 		
 		orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);

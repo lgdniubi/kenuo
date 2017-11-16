@@ -112,6 +112,39 @@
 			        <label>问题描述：</label>
 			        <form:textarea path="problemDesc" htmlEscape="false" rows="3"  style="width:300px;" maxlength="200" class="form-control"/>
 			        <p></p>
+			        <%-- <table id="contentTable" class="table-condensed dataTable no-footer">
+						<tr>
+							<td width="70px"><label>归属机构：</label></td>
+							<td width="300px">
+								<input id="belongOfficeId" class=" form-control input-sm" name="belongOfficeId" value="${returnedGoods.belongOfficeId}" type="hidden">
+								<div class="input-group">
+									<input id="belongOfficeName" class=" form-control input-sm" name="belongOfficeName" readonly="readonly" value="${returnedGoods.belongOfficeName}" data-msg-required="" style="" type="text">
+										<span class="input-group-btn">
+											<button id="belongOfficeButton" class="btn btn-sm btn-primary " disabled="disabled" type="button">
+												<i class="fa fa-search"></i>
+											</button>
+										</span>
+								</div>
+								<label id="belongOfficeName-error" class="error" for="belongOfficeName" style="display:none"></label>
+							</td>
+						</tr>
+						<tr>
+							<td width="70px"><label>归&nbsp;&nbsp;属&nbsp;&nbsp;人：</label></td>
+							<td width="300px">
+								<input id="belongUserId" class=" form-control input-sm" name="belongUserId" value="${returnedGoods.belongUserId}" type="hidden">
+								<div class="input-group">
+									<input id="belongUserName" class=" form-control input-sm" name="belongUserName" readonly="readonly" value="${returnedGoods.belongUserName}" data-msg-required="" style="" type="text">
+										<span class="input-group-btn">
+											<button id="belongUserButton" class="btn btn-sm btn-primary " disabled="disabled" type="button">
+												<i class="fa fa-search"></i>
+											</button>
+										</span>
+								</div>
+								<label id="belongUserName-error" class="error" for="belongUserName" style="display:none"></label>
+							</td>
+						</tr>
+					</table>
+			       	<p></p> --%>
 			        <label>申请类型：</label>
 			        <label>
 						退货并退款

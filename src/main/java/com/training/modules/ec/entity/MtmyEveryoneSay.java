@@ -31,6 +31,8 @@ public class MtmyEveryoneSay extends DataEntity<MtmyEveryoneSay>{
 	private String name;          //查询条件
 	private String showName;      //详情的头上
 	
+	private String  isShow;			//是否显示（0：可见；1：隐藏；）  
+	
 	public int getMtmyEveryoneSayId() {
 		return mtmyEveryoneSayId;
 	}
@@ -127,7 +129,12 @@ public class MtmyEveryoneSay extends DataEntity<MtmyEveryoneSay>{
 	public void setShowName(String showName) {
 		this.showName = showName;
 	}
-	
+	public String getIsShow() {
+		return isShow;
+	}
+	public void setIsShow(String isShow) {
+		this.isShow = isShow;
+	}
 	
 
 }

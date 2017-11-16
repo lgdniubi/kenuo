@@ -2,6 +2,7 @@ package com.training.modules.ec.entity;
 
 
 import java.util.Date;
+import java.util.List;
 
 import com.training.common.persistence.TreeEntity;
 /**
@@ -101,6 +102,19 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private int cardUseServiceTimes;	// 套卡总已服务次数
 	private int isExpiring;				// 是非已过期 （0：正常 1：过期）
 	// end---------------用于预约   2017年8月10日新增-----------------
+	
+	
+	//------------------多项目预约新增加的字段------------------
+	//使用到的字段recid，orderid，userid，goodsname，goodsid，goodssn，goodsnum，goodsprice，speckey，
+	//speckeyname，servicetimes,servicemin,originalimg,isreal,addtime,realityAddTime,
+	//advancePrice,remaintimes,surplusAmount,advanceFlag,cards_used_num
+	private int usedServiceTimes;	// 已服务(预约)次数
+	private double accountArrearage;   //app欠款
+	private List<GoodsCard> goodsCards;        //卡项的子项
+	private int franchiseeId;                 //归属商家
+	private String positionId;			//项目部位ID
+	private String positionIds;		//项目部位ids,包含父类
+	//--------------------end------------------------------
 	
 	public int getAfterSaleNum() {
 		return afterSaleNum;
@@ -517,5 +531,41 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setIsExpiring(int isExpiring) {
 		this.isExpiring = isExpiring;
+	}
+	public int getUsedServiceTimes() {
+		return usedServiceTimes;
+	}
+	public void setUsedServiceTimes(int usedServiceTimes) {
+		this.usedServiceTimes = usedServiceTimes;
+	}
+	public double getAccountArrearage() {
+		return accountArrearage;
+	}
+	public void setAccountArrearage(double accountArrearage) {
+		this.accountArrearage = accountArrearage;
+	}
+	public List<GoodsCard> getGoodsCards() {
+		return goodsCards;
+	}
+	public void setGoodsCards(List<GoodsCard> goodsCards) {
+		this.goodsCards = goodsCards;
+	}
+	public int getFranchiseeId() {
+		return franchiseeId;
+	}
+	public void setFranchiseeId(int franchiseeId) {
+		this.franchiseeId = franchiseeId;
+	}
+	public String getPositionId() {
+		return positionId;
+	}
+	public void setPositionId(String positionId) {
+		this.positionId = positionId;
+	}
+	public String getPositionIds() {
+		return positionIds;
+	}
+	public void setPositionIds(String positionIds) {
+		this.positionIds = positionIds;
 	}
 }

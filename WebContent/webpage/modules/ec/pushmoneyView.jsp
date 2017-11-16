@@ -47,6 +47,14 @@
 		function empty(){
 			$("#searchMobile").val("");
 		}
+		
+		//判断输入的营业额
+		function checknum(obj){
+			var re = /^([+-]?)\d*\.?\d{0,2}$/; 
+			if(!re.test(obj)){
+				top.layer.alert('请输入正确的营业额(最多两位小数)', {icon: 0, title:'提醒'});
+			}
+		}
 	</script>
 </head>
 <body class="gray-bg">
@@ -71,7 +79,7 @@
 		                	<input id="sysMobile" name="sysMobile" class="form-control" readonly="readonly" type="text" value="${orderPushmoneyRecord.pushmoneyUserMobile}" aria-required="true">
 		                	<p></p>
 		                	<label class="active"><font color="red">*</font>营业额：</label>
-		                	<input id="pushMoney" name="pushMoney" class="form-control" type="text" value="${orderPushmoneyRecord.pushMoney}" aria-required="true" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';">
+		                	<input id="pushMoney" name="pushMoney" class="form-control" type="text" value="${orderPushmoneyRecord.pushMoney}" aria-required="true" onblur="checknum(this.value)" />
 					</div>
 				</div>
 			</div>

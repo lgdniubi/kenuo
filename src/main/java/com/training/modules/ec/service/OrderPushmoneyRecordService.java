@@ -71,4 +71,13 @@ public class OrderPushmoneyRecordService extends TreeService<OrderPushmoneyRecor
 		dao.insertPushMoneyLog(pushmoneyRecordLog);
 	}
 
+	/**
+	 * 通过业务员id(属于妃子校的)查询业务员归属机构
+	 * @param orderPushmoneyRecord 
+	 * @return
+	 */
+	public OrderPushmoneyRecord getOfficeIdByUserId(OrderPushmoneyRecord orderPushmoneyRecord) {
+		return dao.getOfficeIdByUserId(orderPushmoneyRecord);
+	}
+
 }
