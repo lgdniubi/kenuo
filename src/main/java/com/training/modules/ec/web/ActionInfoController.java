@@ -74,7 +74,6 @@ public class ActionInfoController extends BaseController {
 	//	System.err.println("更新过期数据" + num);
 		// UpdateStatus=1;
 		// }
-
 		Page<ActionInfo> page = actionInfoService.findAction(new Page<ActionInfo>(request, response), actionInfo);
 		model.addAttribute("page", page);
 		return "modules/ec/actionInfoList";
