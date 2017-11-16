@@ -55,6 +55,7 @@ import com.training.modules.sys.dao.SpecBeauticianDao;
 import com.training.modules.sys.dao.UserDao;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.Dict;
+import com.training.modules.sys.entity.MediaLoginAuth;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.Role;
@@ -63,6 +64,7 @@ import com.training.modules.sys.entity.UserDelete;
 import com.training.modules.sys.entity.UserLog;
 import com.training.modules.sys.service.AreaService;
 import com.training.modules.sys.service.DictService;
+import com.training.modules.sys.service.MediaLoginAuthService;
 import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.service.SystemService;
 import com.training.modules.sys.utils.BugLogUtils;
@@ -108,6 +110,8 @@ public class UserController extends BaseController {
 	private SpecBeauticianDao specBeauticianDao;	//特殊美容师
 	@Autowired
 	private FzxRoleService fzxRoleService;
+	@Autowired
+	private MediaLoginAuthService mediaLoginAuthService;
 	
 	@ModelAttribute
 	public User get(@RequestParam(required = false) String id) {
@@ -426,6 +430,8 @@ public class UserController extends BaseController {
 		if(u != null ){
 			user.setOfficeIdList(u.getOfficeIdList());
 		}
+		MediaLoginAuth mediaLoginAuth = mediaLoginAuthService.findMediaLoginAuthByUserId(user.getId());//查询自媒体权限
+		user.setMediaLoginAuth(mediaLoginAuth);
 		Map<String, Object> map = userDao.findFranchiseeAuth(user);	// 查询用户商家权限
 		user.setCompanyIds((String)map.get("companyIds"));
 		user.setCompanyNames((String)map.get("companyNames"));
@@ -499,6 +505,16 @@ public class UserController extends BaseController {
 					userDao.insertFranchiseeAuth(user.getId(),id);
 				}
 			}
+			//更新用户的自媒体权限
+			user.getMediaLoginAuth().setUserId(user.getId());
+			//当自媒体权限:否
+			if(user.getMediaLoginAuth().getIsLogin().equals("0")){
+				user.getMediaLoginAuth().setUserType("");
+				user.getMediaLoginAuth().setPlatform("");
+				user.getMediaLoginAuth().setUserTag("");
+			}
+			mediaLoginAuthService.saveMediaLoginAuth(user.getMediaLoginAuth());
+			
 			// 清除用户缓存
 			UserUtils.clearCache(user);
 		} catch (Exception e) {
