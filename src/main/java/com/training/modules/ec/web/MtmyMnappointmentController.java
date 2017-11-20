@@ -277,7 +277,7 @@ public class MtmyMnappointmentController extends BaseController{
 			
 			JSONArray jsonArray = JSONArray.fromObject(mapList);
 			logger.info("##### web接口路径:"+websaveReservation);
-			String parpm = "{\"shop_id\":\""+shopId+"\",\"shop_name\":\""+shopName+"\",\"user_id\":\""+users.getUserid()+"\",\"user_name\":\""+users.getName()+"\",\"user_phone\":\""+users.getMobile()+"\",\"client\":\"bm\",\"subscribes\":"+jsonArray.toString()+",\"user_note\":\""+userNote+"\",\"create_by\":\""+loginUser.getId()+"\"}";
+			String parpm = "{\"shop_id\":\""+shopId+"\",\"shop_name\":\""+shopName+"\",\"user_id\":\""+users.getUserid()+"\",\"user_name\":\""+users.getName()+"\",\"user_phone\":\""+users.getMobile()+"\",\"client\":\"bm\",\"subscribes\":"+jsonArray.toString()+",\"user_note\":\""+userNote+"\",\"create_by\":\""+loginUser.getId()+"\",\"sendToUserFlag\":1}";
 			logger.info("#### 添加预约参数"+parpm);
 			String url=websaveReservation;
 			String result = WebUtils.postObject(parpm, url);
@@ -461,7 +461,7 @@ public class MtmyMnappointmentController extends BaseController{
 			}
 			String websaveReservation = ParametersFactory.getMtmyParamValues("mtmy_savereservation");
 			logger.info("##### web接口路径:"+websaveReservation);
-			String parpm = "{\"shop_id\":\""+shopId+"\",\"shop_name\":\""+shopName+"\",\"user_id\":\""+users.getUserid()+"\",\"user_name\":\""+users.getName()+"\",\"user_phone\":\""+users.getMobile()+"\",\"client\":\"bm\",\"subscribes\":"+jsonArray.toString()+",\"user_note\":\""+userNote+"\",\"create_by\":\""+loginUser.getId()+"\"}";
+			String parpm = "{\"shop_id\":\""+shopId+"\",\"shop_name\":\""+shopName+"\",\"user_id\":\""+users.getUserid()+"\",\"user_name\":\""+users.getName()+"\",\"user_phone\":\""+users.getMobile()+"\",\"client\":\"bm\",\"subscribes\":"+jsonArray.toString()+",\"user_note\":\""+userNote+"\",\"create_by\":\""+loginUser.getId()+"\",\"sendToUserFlag\":1}";
 			logger.info("#### 添加预约参数"+parpm);
 			String url=websaveReservation;
 			String result = WebUtils.postObject(parpm, url);
