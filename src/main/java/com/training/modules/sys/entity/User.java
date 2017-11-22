@@ -98,6 +98,11 @@ public class User extends DataEntity<User> {
 	private String companyIds; // 数据范围按商家区分
 	private String companyNames; // 数据范围按商家区分
 	
+	private int departmentId;       //部门id
+	private String departmentName; //部门名称
+	private String positonName;        //职位
+	private String officeName;         //归属机构名
+	
 	public Integer getReturnId() {
 		return returnId;
 	}
@@ -603,6 +608,30 @@ public class User extends DataEntity<User> {
 	}
 	public void setCompanyNames(String companyNames) {
 		this.companyNames = companyNames;
+	}
+	public String getDepartmentName() {
+		return departmentName;
+	}
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
+	}
+	public String getPositonName() {
+		return positonName;
+	}
+	public void setPositonName(String positonName) {
+		this.positonName = positonName;
+	}
+	public String getOfficeName() {
+		return officeName;
+	}
+	public void setOfficeName(String officeName) {
+		this.officeName = officeName;
+	}
+	public int getDepartmentId() {
+		return departmentId;
+	}
+	public void setDepartmentId(int departmentId) {
+		this.departmentId = departmentId;
 	}
 	
 }

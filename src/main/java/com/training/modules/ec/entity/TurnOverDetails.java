@@ -1,5 +1,9 @@
 package com.training.modules.ec.entity;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import com.training.common.persistence.DataEntity;
 
 /**
@@ -21,10 +25,17 @@ public class TurnOverDetails extends DataEntity<TurnOverDetails> {
 	private int status;                        //状态(0:正常下单，1:预约金，2:处理预约金，3:充值，4:退款)
 	private int userId;                    //消费者ID
 	
-	private String userOfficeId;              //消费者绑定店铺
-	private String userBeauticianId;           //绑定技师
-	private String belongOfficeId;               //归属店铺
-	private String belongOfficeIds;           //归属店铺所有父类
+	private String userOfficeId;              //消费者绑定店铺ID
+	private String userBeauticianId;           //绑定技师ID
+	private String belongOfficeId;               //归属店铺ID
+	private String belongOfficeName;            //归属店铺名称
+	private String belongOfficeIds;           //归属店铺所有父类ids
+	
+	private String settleBy;                    //结算人id
+	private String settleName;                   //结算人名称
+	private Date settleDate;                     //结算时间
+	
+	public List<OrderPushmoneyRecord> pushMoneyList;   //点营业额对应的业务员营业额列表
 	
 	public int getTurnOverDetailsId() {
 		return turnOverDetailsId;
@@ -104,7 +115,39 @@ public class TurnOverDetails extends DataEntity<TurnOverDetails> {
 	public void setBelongOfficeIds(String belongOfficeIds) {
 		this.belongOfficeIds = belongOfficeIds;
 	}
-	
-	
+	public String getSettleBy() {
+		return settleBy;
+	}
+	public void setSettleBy(String settleBy) {
+		this.settleBy = settleBy;
+	}
+	public Date getSettleDate() {
+		return settleDate;
+	}
+	public void setSettleDate(Date settleDate) {
+		this.settleDate = settleDate;
+	}
+	public String getBelongOfficeName() {
+		return belongOfficeName;
+	}
+	public void setBelongOfficeName(String belongOfficeName) {
+		this.belongOfficeName = belongOfficeName;
+	}
+	public String getSettleName() {
+		return settleName;
+	}
+	public void setSettleName(String settleName) {
+		this.settleName = settleName;
+	}
+	public List<OrderPushmoneyRecord> getPushMoneyList() {
+		return pushMoneyList;
+	}
+	public void setPushMoneyList(List<OrderPushmoneyRecord> pushMoneyList) {
+		if(pushMoneyList == null){
+			this.pushMoneyList = new ArrayList<OrderPushmoneyRecord>();
+		}else{
+			this.pushMoneyList = pushMoneyList;
+		}
+	}
 	
 }

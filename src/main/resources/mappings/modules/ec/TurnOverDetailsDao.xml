@@ -40,4 +40,155 @@
 		)
 	</insert>
 	
+	<!-- 根据订单id查询该订单的店营业额 -->
+	<select id="selectDetailsByOrderId" resultType="TurnOverDetails">
+		SELECT 
+			id AS 'turnOverDetailsId',
+			order_id AS 'orderId',
+			mapping_id AS 'mappingId',
+			details_id AS 'detailsId',
+			type,
+			amount,
+			status,
+			belong_office_id AS 'belongOfficeId',
+			(select o.name from trains.sys_office o where o.id = belong_office_id) AS 'belongOfficeName',
+			create_date AS 'createDate',
+			settle_by AS 'settleBy',
+			(select u.name from trains.sys_user u where u.id = settleBy) AS 'settleName',
+			settle_date AS 'settleDate'
+		FROM ydatadb.mtmy_turnover_details 
+		WHERE order_id = #{orderId}
+	</select>
+	
+	<!-- 保存店营业额中处理预约金的那条记录的归属店铺 -->
+	<update id="updateBelongOffice">
+		UPDATE ydatadb.mtmy_turnover_details 
+		SET 
+			belong_office_id = #{belongOfficeId},
+			belong_office_ids = (select parent_ids from trains.sys_office where id = #{belongOfficeId}),
+			settle_by = #{settleBy},
+			settle_date = SYSDATE()
+		WHERE id = #{turnOverDetailsId}
+	</update>
+	
+	<resultMap type="TurnOverDetails" id="push">
+		<id column="id" property="turnOverDetailsId"></id>
+		<result column="create_date" property="createDate"/>
+		<result column="order_id" property="orderId"/>
+		<result column="type" property="type"/>
+		<result column="amount" property="amount"/>
+		<collection property="pushMoneyList" column="id" ofType="OrderPushmoneyRecord" select="queryPushMoneryDetails"></collection>
+	</resultMap>
+	
+	<!-- 根据店营业额详情表查询业务员营业额详情 -->
+	<select id="selectPushDetails" resultMap="push">
+		SELECT 
+			mtd.id,
+			mtd.create_date,
+			mtd.order_id,
+			mtd.type,
+			mtd.amount
+		FROM ydatadb.mtmy_turnover_details mtd
+		WHERE mtd.order_id = #{orderId}
+		ORDER BY mtd.create_date DESC
+	</select>
+	
+	<select id="queryPushMoneryDetails" resultType="OrderPushmoneyRecord">
+		SELECT
+			u.id AS 'pushmoneyUserId',
+			u.name AS 'pushmoneyUserName',
+			d.name AS 'departmentName',
+			d.id AS 'departmentId',
+			u.mobile AS 'pushmoneyUserMobile',
+			SUM(mbt.push_money) AS 'pushMoney',
+			(select sum(mbt1.push_money) from mtmydb.mtmy_beautician_turnover mbt1 where mbt1.order_id = mbt.order_id and mbt1.user_id = mbt.user_id) AS 'pushMoneySum'  
+		FROM mtmydb.mtmy_beautician_turnover mbt
+		LEFT JOIN trains.sys_user u ON u.id = mbt.user_id
+		LEFT JOIN trains.train_department d ON d.id = mbt.department_id
+		WHERE mbt.turnover_details_id = #{id}
+		GROUP BY u.id
+	</select>
+	
+	<!-- 查询单个店营业额对应的业务员营业额详情 -->
+	<select id="selectOneDetails" resultMap="push">
+		SELECT 
+			mtd.id,
+			mtd.create_date,
+			mtd.order_id,
+			mtd.type,
+			mtd.amount
+		FROM ydatadb.mtmy_turnover_details mtd
+		WHERE mtd.id = #{turnOverDetailsId}
+		ORDER BY mtd.create_date DESC
+	</select>
+	
+	
+	<insert id="insertActivityCouponCategory">
+		INSERT INTO mtmydb.mtmy_activity_coupon_category
+		(
+		coupon_id,
+		category_id,
+		category_name
+		)
+		<foreach collection="list" item="list" separator="union all ">
+			SELECT 
+				#{list.couponId},#{list.categoryId},#{list.categoryName}
+			FROM dual
+		</foreach>
+	</insert>
+	
+	<!-- 保存业务员提成营业额 -->
+	<insert id="savePushMoneyRecord">
+		INSERT INTO mtmydb.mtmy_beautician_turnover(
+			order_id,
+			turnover_details_id,
+			type,
+			user_id,
+			user_office_id,
+			user_office_ids,
+			push_money,
+			position_key,
+			position_value,
+			department_id,
+			office_id,
+			create_by,
+			create_date
+		)
+		<foreach collection="list" item="list" separator="union all ">
+			SELECT 
+				#{list.orderId},
+				#{list.turnOverDetailsId},
+				#{list.type},
+				#{list.pushmoneyUserId},
+				(select o.id from trains.sys_office o left join trains.sys_user u on u.office_id = o.id where u.id = #{list.pushmoneyUserId}),
+				(select o.parent_ids from trains.sys_office o left join trains.sys_user u on u.office_id = o.id where u.id = #{list.pushmoneyUserId}),
+				#{list.pushMoney},
+				(SELECT d.label FROM sys_user u LEFT JOIN sys_dict d ON d.value = u.user_type WHERE u.id = #{list.pushmoneyUserId} AND d.type = 'sys_user_type'),
+				(SELECT d.value FROM sys_user u LEFT JOIN sys_dict d ON d.value = u.user_type WHERE u.id = #{list.pushmoneyUserId} AND d.type = 'sys_user_type'),
+				#{list.departmentId},
+				#{list.officeId},
+				#{list.createBy.id},
+				SYSDATE()
+			FROM dual
+		</foreach>
+	</insert>
+	
+	<!-- 查看业务员营业额明细 -->
+	<select id="queryDetailsForPush" resultType="OrderPushmoneyRecord">
+		SELECT
+			u.id AS 'pushmoneyUserId',
+			u.name AS 'pushmoneyUserName',
+			d.name AS 'departmentName',
+			u.mobile AS 'pushmoneyUserMobile',
+			mbt.push_money AS 'pushMoney',
+			mbt.create_by AS 'createBy.id',
+			u1.name AS 'createBy.name',
+			mbt.create_date AS 'createDate'
+		FROM mtmydb.mtmy_beautician_turnover mbt
+		LEFT JOIN trains.sys_user u ON u.id = mbt.user_id
+		LEFT JOIN trains.train_department d ON d.id = mbt.department_id
+		LEFT JOIN trains.sys_user u1 ON u1.id = mbt.create_by
+		WHERE mbt.turnover_details_id = #{id}
+		GROUP BY u.id
+	</select>
 </mapper>

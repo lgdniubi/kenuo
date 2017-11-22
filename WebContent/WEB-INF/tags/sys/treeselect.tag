@@ -30,11 +30,11 @@
 	       		 <button type="button"  id="${id}Button" class="btn <c:if test="${fn:contains(cssClass, 'input-sm')}"> btn-sm </c:if><c:if test="${fn:contains(cssClass, 'input-lg')}"> btn-lg </c:if>  btn-primary ${disabled} ${hideBtn ? 'hide' : ''}"><i class="fa fa-search"></i>
 	             </button> 
        		 </span>
+       		
     </div>
 	 <label id="${id}Name-error" class="error" for="${id}Name" style="display:none"></label>
 <script type="text/javascript">
-//	$("#${id}Button, #${id}Name").click(function(){	    增加  , #${id}Name  文本框有点击事件
-	$("#${id}Button").click(function(){
+	$("#${id}Button, #${id}Name").click(function(){
 		// 是否限制选择，如果限制，设置为disabled
 		if ($("#${id}Button").hasClass("disabled")){
 			return true;
@@ -45,7 +45,7 @@
 		    area: ['300px', '420px'],
 		    title:"选择${title}",
 		    ajaxData:{selectIds: $("#${id}Id").val()},
-		    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("${url}")+"&module=${module}&checked=${checked}&extId=${extId}&isAll=${isAll}&selectIds=${value}" ,
+		    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("${url}")+"&module=${module}&checked=${checked}&extId=${extId}&isAll=${isAll}" ,
 		    btn: ['确定', '关闭']
     	       ,yes: function(index, layero){ //或者使用btn1
 						var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();

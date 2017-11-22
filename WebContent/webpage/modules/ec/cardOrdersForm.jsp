@@ -630,6 +630,54 @@ window.onload=initStatus;
 		var index = parent.layer.getFrameIndex(window.name);
 		top.layer.close(index);
 	}
+	
+	function updateDetails(detailsId,orderId){
+    	var isCommitted = false;		//表单是否已经提交标识，默认为false
+		top.layer.open({
+		    type: 2, 
+		    area: ['500px', '350px'],
+		    title:"选择归属店铺",
+		    content: "${ctx}/ec/orders/addBelongOffice",
+		    btn: ['确定', '关闭'],
+		    yes: function(index, layero){
+		        var obj =  layero.find("iframe")[0].contentWindow;
+		        var loading = obj.document.getElementById("loading");
+				var belongOfficeId = obj.document.getElementById("belongOfficeId").value;
+				$(loading).show();
+				if(belongOfficeId == ''){
+					$(loading).hide();
+					top.layer.alert('归属店铺必填！', {icon: 0, title:'提醒'});
+					return;
+				} 
+				
+				//防止表单多次提交
+			    if(isCommitted == false){
+			    	isCommitted = true;		//提交表单后，将表单是否已经提交标识设置为true
+			   	}else{
+			       	return false;			
+				}
+			    
+			    top.layer.close(index);
+			    $.ajax({
+					type:"post",
+					data:{
+						turnOverDetailsId:detailsId,
+						belongOfficeId:belongOfficeId
+					 },
+					url:"${ctx}/ec/orders/saveBelongOffice",
+					success:function(date){
+						console.log(loading);
+						top.layer.alert('保存成功!', {icon: 1, title:'提醒'});
+						window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderId;
+					},
+					error:function(XMLHttpRequest,textStatus,errorThrown){}
+				});
+			},
+			cancel: function(index){ //或者使用btn2
+			    	           //按钮【按钮二】的回调
+			}
+		}); 
+	}
 </script>
 </head>
 
@@ -757,24 +805,6 @@ window.onload=initStatus;
 								</tr>
 						</table>
 						</div>
-						<%-- <p></p>
-						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="shipping">
-							<label ><font color="red">*</font>物流类型：</label>
-							<form:select path="shippingtype"  class="form-control" style="width:180px">
-									<form:option value="0">快递发货</form:option>
-									<form:option value="1">到店自取</form:option>
-									<form:option value="2">无需发货</form:option>
-							</form:select>
-							<div id="logistics">
-								<p></p>
-								<label ><font color="red">*</font>收&nbsp;&nbsp;货&nbsp;&nbsp;人：</label>
-								<form:input path="consignee" htmlEscape="false" maxlength="10" class="form-control required" style="width:180px" />
-								<label ><font color="red">*</font>联系电话：</label>
-								<form:input path="mobile" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
-								<label ><font color="red">*</font>收货地址：</label>
-								<form:input path="address" htmlEscape="false" maxlength="120" class="form-control required" style="width:180px" />
-							</div>
-						</div> --%>
 						<p></p>
 						<c:if test="${orders.num > 0}">
 								<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
@@ -785,6 +815,48 @@ window.onload=initStatus;
 							</div> 
 						</c:if>
 						<p></p>
+						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+						<h4>店营业额:</h4>
+						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+								<tr>
+									<th style="text-align: center;">时间</th>
+									<th style="text-align: center;">类型</th>
+									<th style="text-align: center;">金额</th>
+									<th style="text-align: center;">归属店铺</th>
+									<th style="text-align: center;">操作时间</th>
+									<th style="text-align: center;">操作人</th>
+									<th style="text-align: center;">操作</th>
+								</tr>
+								<c:forEach items="${turnOverDetailsList}" var="turnOverDetails">
+									<tr>
+										<td align="center">
+											<fmt:formatDate value="${turnOverDetails.createDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
+										</td>
+										<td align="center">
+											<c:if test="${turnOverDetails.type == 1}">下单</c:if>
+											<c:if test="${turnOverDetails.type == 2}">还款</c:if>
+										</td>
+										<td align="center">${turnOverDetails.amount}</td>
+										<td align="center">${turnOverDetails.belongOfficeName}</td>
+										<td align="center">
+											<fmt:formatDate value="${turnOverDetails.settleDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
+										</td>
+										<td align="center">${turnOverDetails.settleName}</td>
+										<td align="center">
+											<c:choose>
+												<c:when test="${turnOverDetails.status == 2 && (turnOverDetails.belongOfficeId == '' || turnOverDetails.belongOfficeId == null)}">
+													<a href="#" class="btn btn-success btn-xs" onclick="updateDetails('${turnOverDetails.turnOverDetailsId}','${turnOverDetails.orderId}')"><i class='fa fa-edit'></i>编辑</a>
+												</c:when>
+												<c:otherwise>
+													<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>编辑</a>
+												</c:otherwise>
+											</c:choose>
+										</td>
+									</tr>
+								</c:forEach>
+						</table>
+						</div>
+						<%-- <p></p>
 						<c:if test="${orders.isNeworder == 0}">
 							<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 								<div class="pull-left">
@@ -807,11 +879,11 @@ window.onload=initStatus;
 											<th style="text-align: center;">业务员</th>
 											<th style="text-align: center;">手机号</th>
 											<th style="text-align: center;">营业额</th>
-											<%-- <th style="text-align: center;">操作人</th>
+											<th style="text-align: center;">操作人</th>
 											<th style="text-align: center;">操作时间</th>
 											<c:if test="${type != 'view' }">
 												<th style="text-align: center;" colspan="2">操作</th>
-											</c:if> --%>
+											</c:if>
 										</tr>
 									</thead>
 									<tbody id="sysUserInfo" style="text-align:center;">
@@ -829,7 +901,7 @@ window.onload=initStatus;
 													${orderPushmoneyRecord.pushMoney }
 													<input type="hidden" id="${orderPushmoneyRecord.pushmoneyUserId }pushMoneySum" value="${orderPushmoneyRecord.pushMoney }" />
 												</td>
-												<%-- <td>
+												<td>
 													${orderPushmoneyRecord.createBy.name }
 												</td>
 												<td>
@@ -840,13 +912,13 @@ window.onload=initStatus;
 														<a href="#" class="btn btn-success btn-xs" onclick="updateFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId })"><i class='fa fa-edit'></i> 修改</a>
 														<a href="#" class="btn btn-danger btn-xs" onclick="delFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId })"><i class='fa fa-trash'></i> 删除</a>
 													</td>
-												</c:if> --%>
+												</c:if>
 											</tr>
 										</c:forEach>
 									</tbody>
 								</table>
 							</div>
-						</c:if>
+						</c:if> --%>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 							<div class="pull-left">

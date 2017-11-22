@@ -338,5 +338,11 @@ public interface UserDao extends CrudDao<User> {
 	 * @return
 	 */
 	public List<User> findUsersByOfficeId(String officeId);
-
+	
+	/**
+	 * 分享营业额查询提成人员信息
+	 * @param user
+	 * @return
+	 */
+	public List<User> querySysUser(User user);
 }

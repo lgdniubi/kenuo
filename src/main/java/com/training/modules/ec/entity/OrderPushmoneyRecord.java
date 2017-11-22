@@ -18,6 +18,12 @@ public class OrderPushmoneyRecord extends TreeEntity<OrderPushmoneyRecord> {
 	private String operatorName;	//操作人
 	private String flag;            //标识
 	
+	private String departmentName;    //提成人员部门
+	private int departmentId;       //部门id
+	private int turnOverDetailsId;    //店营业额详情表id
+	private double pushMoneySum;     //该用户在某一订单的总提成金额
+	private int type;                  //类型(1:下单，2:充值/还欠款，3:退款，4:账户充值)
+	
 	private String officeId;		//操作用户当前机构ID   2017-10-12 土豆添加
 	private String userOfficeId;	//业务员机构ID  	 2017-10-25 土豆添加
 	private String userOfficeIds;	//业务员机构IDS  	 2017-10-25 土豆添加
@@ -120,6 +126,46 @@ public class OrderPushmoneyRecord extends TreeEntity<OrderPushmoneyRecord> {
 
 	public void setUserOfficeIds(String userOfficeIds) {
 		this.userOfficeIds = userOfficeIds;
+	}
+
+	public String getDepartmentName() {
+		return departmentName;
+	}
+
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
+	}
+
+	public int getTurnOverDetailsId() {
+		return turnOverDetailsId;
+	}
+
+	public void setTurnOverDetailsId(int turnOverDetailsId) {
+		this.turnOverDetailsId = turnOverDetailsId;
+	}
+
+	public double getPushMoneySum() {
+		return pushMoneySum;
+	}
+
+	public void setPushMoneySum(double pushMoneySum) {
+		this.pushMoneySum = pushMoneySum;
+	}
+
+	public int getDepartmentId() {
+		return departmentId;
+	}
+
+	public void setDepartmentId(int departmentId) {
+		this.departmentId = departmentId;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
 	}
 	
 }

@@ -331,90 +331,6 @@
          $(obj).parent().parent().remove();
      }
 	
-	//修改业务员信息
-	/* function updateFileSysUserInfo(obj,pushmoneyRecordId){
-		var orderamount = $("#orderamount").val();
-		var channelFlag = $("#channelFlag").val();
-    	var ordersGoodsprice = $("#ordersGoodsprice").val();
-    	var couponprice = $("#couponprice").val();
-    	var memberGoodsPrice = $("#memberGoodsPrice").val();
-		top.layer.open({
- 			type: 2, 
- 		    area: ['550px', '420px'],
- 		    title:"业务员选择",
- 		    content: "${ctx}/ec/orders/getPushmoneyView?pushmoneyRecordId="+pushmoneyRecordId,
- 		    btn: ['确定', '关闭']
-     	    ,yes: function(index, layero){
-     	    	var obj =  layero.find("iframe")[0].contentWindow;
-     	    	var sysUserId = obj.document.getElementById("sysUserId").value; //员工id
-     	    	var sysMobile = obj.document.getElementById("sysMobile").value; //员工电话
-     	    	var sysName = obj.document.getElementById("sysName").value; //员工名称
-     	    	var pushMoney = obj.document.getElementById("pushMoney").value; //营业额
-     	    	var orderid =  $("#orderid").val();
-     	    	var isReal =  $("#isReal").val();
-     	    	if(pushMoney==""){
-     	    		top.layer.alert('填写营业额！', {icon: 0, title:'提醒'});
-     	    		return;
-     	    	}
-     	    	if(channelFlag == 'bm'){
-   	    			if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-    	    			top.layer.alert('营业额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
-     	    			return;
-     	    		}
-   	    		}else{
-   	    			if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(ordersGoodsprice - couponprice - memberGoodsPrice) > 0){
-    	    			top.layer.alert('营业额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
-     	    			return;
-     	    		}
-   	    		}
-     	    	
-   	    		$.ajax({
-       				type:"post",
-       				data:{
-       					orderId:orderid,
-       					pushmoneyUserId:sysUserId,
-       					pushMoney:pushMoney
-       				 },
-       				url:"${ctx}/ec/orders/saveOrderPushmoneyRecord?flag=edit"+"&pushmoneyRecordId="+pushmoneyRecordId,
-       				success:function(date){
-       					if(date == 'success'){
-       						$(obj).parent().parent().remove();
-       						top.layer.alert('修改业务员成功', {icon: 0, title:'提醒'});
-       						window.location="${ctx}/ec/orders/orderform?orderid="+orderid+"&isReal="+isReal+"&type=edit";
-       	     				top.layer.close(index);
-       					}else{
-       						top.layer.alert('修改业务员失败', {icon: 0, title:'提醒'});
-       					}
-       				},
-       				error:function(XMLHttpRequest,textStatus,errorThrown){
-       					
-       				}
-       			});
- 			}
- 		}); 
-	} */
-     
-	//删除业务员
-    /*  function delFileSysUserInfo(obj,pushmoneyRecordId){
-		$.ajax({
-			type:"post",
-			data:{
-				pushmoneyRecordId:pushmoneyRecordId
-			 },
-			url:"${ctx}/ec/orders/deleteSysUserInfo",
-			success:function(date){
-				if(date == 'success'){
-					$(obj).parent().parent().remove();
-					top.layer.alert('删除业务员成功', {icon: 0, title:'提醒'});
-				}else{
-					top.layer.alert('删除业务员失败', {icon: 0, title:'提醒'});
-				}
-			},
-			error:function(XMLHttpRequest,textStatus,errorThrown){
-				
-			}
-		});
-     } */
 	//删除备注信息
      function delOrderRemarks(obj){
 		var orderRemarksId = $("#orderRemarksId").val();
@@ -438,98 +354,58 @@
 		});
      }
 	
-     function getSysUserInfo(){
-    	var orderamount = $("#orderamount").val();
- 		var sysUserIds = document.getElementsByName("sysUserId");
-    	var operationName = $("#operationName").val();
-    	var channelFlag = $("#channelFlag").val();
-    	var ordersGoodsprice = $("#ordersGoodsprice").val();
-    	var couponprice = $("#couponprice").val();
-    	var memberGoodsPrice = $("#memberGoodsPrice").val();
- 		if ($("#mtmyUserButton").hasClass("disabled")){
- 			return true;
- 		}
- 		// 正常打开	
- 		top.layer.open({
- 			type: 2, 
- 		    area: ['550px', '420px'],
- 		    title:"业务员选择",
- 		    content: "${ctx}/ec/orders/getPushmoneyView",
- 		    btn: ['确定', '关闭']
-     	    ,yes: function(index, layero){
-     	    	var obj =  layero.find("iframe")[0].contentWindow;
-     	    	var sysUserId = obj.document.getElementById("sysUserId").value; //员工id
-     	    	var sysMobile = obj.document.getElementById("sysMobile").value; //员工电话
-     	    	var sysName = obj.document.getElementById("sysName").value; //员工名称
-     	    	var pushMoney = obj.document.getElementById("pushMoney").value; //营业额
-     	    	var orderid =  $("#orderid").val();
-     	    	var isReal =  $("#isReal").val();
-     	    	if(pushMoney==""){	
-    	    		top.layer.alert('填写营业额！', {icon: 0, title:'提醒'});
-     	    		return;
-    	    	}else{
-	   	    		var re = /^([+-]?)\d*\.?\d{0,2}$/; 
-	   				if(!re.test(pushMoney)){
-	   					top.layer.alert('请输入正确的营业额(最多两位小数)', {icon: 0, title:'提醒'});
-	     	    		return;
-	   				}
-    	    	}
-     	    	if(sysUserId == ""){
-    	    		top.layer.alert('填写业务员！', {icon: 0, title:'提醒'});
-     	    		return;
-     	    	}
-   	    		if(channelFlag == 'bm'){
-   	    			if(parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-    	    			top.layer.alert('营业额小于订单应付总额！', {icon: 0, title:'提醒'});
-     	    			return;
-     	    		}
-   	    		}else{
-   	    			if(parseFloat(pushMoney) - parseFloat(ordersGoodsprice - couponprice - memberGoodsPrice) > 0){
-    	    			top.layer.alert('营业额小于订单应付总额！', {icon: 0, title:'提醒'});
-     	    			return;
-     	    		}
-   	    		}
-     	    		
-   	    		/* if(sysUserIds.length > 0){
-  	    			for(i=0;i<sysUserIds.length;i++){
-       	    	        if(sysUserId == sysUserIds[i].value){
-       	    	        	top.layer.alert('业务员不能相同！', {icon: 0, title:'提醒'});
-       	     	    		return;
-       	    	        }
-       	    	    }
-  	    		} */
-   	    		/* var belongUserId = $("#belongUserId").val(); 
-				if(sysUserId == belongUserId){
-					top.layer.alert('归属人和业务员不能是同一个人!', {icon: 0, title:'提醒'}); 
-					return;
-				} */
+     function editSysUserInfo(turnOverDetailsId){
+    	 var orderid = $("#orderid").val();
+  		// 正常打开	
+  		top.layer.open({
+  			type: 2, 
+  		    area: ['800px', '520px'],
+  		    title:"新增/修改营业额：(提示：营业额数字不能修改，但可以插入正负数增减)",
+  		    content: "${ctx}/ec/orders/editPushmoneyUser?turnOverDetailsId="+turnOverDetailsId,
+  		    btn: ['确定', '关闭']
+      	    ,yes: function(index, layero){
+      	    	var map = {};
+      	    	var obj =  layero.find("iframe")[0].contentWindow;
+      	    	var amount = obj.document.getElementById("amount").value; //提成总金额
+      	    	var orderId = obj.document.getElementById("orderId").value; //订单id
+      	    	var pushmoneyUserId = obj.document.getElementsByName("pushmoneyUserId"); //提成人员id
+      	    	var departmentId = obj.document.getElementsByName("departmentId"); //提成人员部门id
+      	    	var departmentName = obj.document.getElementsByName("departmentName"); //提成人员部门
+      	    	var pushMoney = obj.document.getElementsByName("pushMoney"); //提成金额
+      	    	var changeValue = obj.document.getElementsByName("changeValue"); //加减额
+      	    	var pushMoneyTotal = obj.document.getElementsByName("pushMoneySum"); //单个营业员该订单的提成总额，下单+充值-退款
+      	    	for(i=0;i<pushmoneyUserId.length;i++){
+					var pushMoneySum = parseFloat(pushMoney[i].value) + parseFloat(changeValue[i].value);
+					if(parseFloat(pushMoneyTotal[i].value) + parseFloat(changeValue[i].value) < 0){
+						top.layer.alert('单个业务员的营业额不能小于其在该笔订单中的营业总额！', {icon: 0, title:'提醒'});
+	 	    			return;
+					}
+					if(pushMoneySum < 0){
+						top.layer.alert('单个业务员的营业额不能小于0！', {icon: 0, title:'提醒'});
+	 	    			return;
+					}
+					map[departmentName[i].value] = departmentId[i].value;
+				}     
 				
-   	    		var pushMoneySum = $("#"+sysUserId+"pushMoneySum").val();
-  	    		if(pushMoneySum == undefined){
-  	    			pushMoneySum=0;
-  	    		}
-	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) < 0){
-	    			top.layer.alert('营业总额必须大于0！', {icon: 0, title:'提醒'});
-	    			return;
-	    		}
-	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-	    			top.layer.alert('营业总额小于等于订单应付总额！', {icon: 0, title:'提醒'});
-	    			return;
-	    		}
-     	    		
+				for(var j in map){
+					var sum = 0;
+					var result = obj.document.getElementsByClassName(map[j]);
+					for(k=0;k<result.length;k++){
+						sum = parseFloat(sum) + parseFloat(result[k].value); 
+					}
+      	    		if(parseFloat(sum) - parseFloat(amount) != 0){
+      	    			top.layer.alert('每个部门的营业额之和必须等于分享营业额！', {icon: 0, title:'提醒'});
+	 	    			return;
+      	    		}
+      	    	}
    	    		$.ajax({
        				type:"post",
-       				data:{
-       					orderId:orderid,
-       					pushmoneyUserId:sysUserId,
-       					pushMoney:pushMoney
-       				 },
-       				url:"${ctx}/ec/orders/saveOrderPushmoneyRecord?flag=add",
+       				data:$(obj.document.getElementById("mosaic")).serialize(),
+       				url:"${ctx}/ec/orders/savePushMoneyRecord",
        				success:function(date){
        					if(date == 'success'){
-       						$(obj).parent().parent().remove();
        						top.layer.alert('添加业务员成功', {icon: 0, title:'提醒'});
-       						window.location="${ctx}/ec/orders/orderform?orderid="+orderid+"&isReal="+isReal+"&type=edit";
+       						window.location="${ctx}/ec/orders/orderform?orderid="+orderId+"&type=edit";
        	     				top.layer.close(index);
        					}else{
        						top.layer.alert('添加业务员失败', {icon: 0, title:'提醒'});
@@ -539,9 +415,9 @@
        					
        				}
        			});
- 			}
- 		}); 
- 	}
+  			}
+  		});  
+  	}
      
      function getRemarks(){
     	 var operationName = $("#operationName").val();
@@ -687,6 +563,53 @@ window.onload=initStatus;
 	    }, function(){ // 点击取消事件
 	    		
 	    }); 
+	}
+	
+	function updateDetails(detailsId,orderId){
+    	var isCommitted = false;		//表单是否已经提交标识，默认为false
+		top.layer.open({
+		    type: 2, 
+		    area: ['500px', '350px'],
+		    title:"选择归属店铺",
+		    content: "${ctx}/ec/orders/addBelongOffice",
+		    btn: ['确定', '关闭'],
+		    yes: function(index, layero){
+		        var obj =  layero.find("iframe")[0].contentWindow;
+		        var loading = obj.document.getElementById("loading");
+				var belongOfficeId = obj.document.getElementById("belongOfficeId").value;
+				$(loading).show();
+				if(belongOfficeId == ''){
+					$(loading).hide();
+					top.layer.alert('归属店铺必填！', {icon: 0, title:'提醒'});
+					return;
+				} 
+				
+				//防止表单多次提交
+			    if(isCommitted == false){
+			    	isCommitted = true;		//提交表单后，将表单是否已经提交标识设置为true
+			   	}else{
+			       	return false;			
+				}
+				
+			    top.layer.close(index);
+			    $.ajax({
+					type:"post",
+					data:{
+						turnOverDetailsId:detailsId,
+						belongOfficeId:belongOfficeId
+					 },
+					url:"${ctx}/ec/orders/saveBelongOffice",
+					success:function(date){
+						top.layer.alert('保存成功!', {icon: 1, title:'提醒'});
+						window.location="${ctx}/ec/orders/orderform?orderid="+orderId;
+					},
+					error:function(XMLHttpRequest,textStatus,errorThrown){}
+				});
+			},
+			cancel: function(index){ //或者使用btn2
+			    	           //按钮【按钮二】的回调
+			}
+		}); 
 	}
 </script>
 </head>
@@ -874,29 +797,6 @@ window.onload=initStatus;
 									<td align="center">${(orders.totalamount*100 + orders.shippingprice*100)/100}</td>
 								</tr>
 						</table>
-							<%-- <div style="padding-left: 90px;">
-								<p></p>
-								<label>商品总价：￥${orders.goodsprice }</label>
-								<label>红包面值：￥${orders.couponprice }</label>
-								<p></p>
-								<label>折扣率：￥${orders.discount }</label>
-								<label>会员折扣：￥${orders.memberGoodsPrice }</label>
-								<p></p>
-								<label>邮费：￥${orders.shippingprice }</label>
-								<p></p>
-								<label>应付金额：￥${orders.orderamount }</label>
-								<label>实付金额：￥${orders.totalamount }</label>
-								<form:input id="goodsprice" readonly="true" path="goodsprice" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
-								<label>成交总额：</label>
-								<form:input id="orderamount" readonly="true" path="orderamount" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
-								<label >总&nbsp;&nbsp;余&nbsp;&nbsp;额：</label>
-								<form:input id="orderBalance" readonly="true" path="orderBalance" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
-								<p></p>
-								<label>实付总额：</label>
-								<form:input id="totalamount" readonly="true" path="totalamount" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
-								<label>总&nbsp;&nbsp;欠&nbsp;&nbsp;款：</label>
-								<form:input id="orderArrearage" readonly="true" path="orderArrearage" htmlEscape="false" maxlength="11111" class="form-control required" style="width:180px" />
-							</div> --%>
 						</div>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="shipping">
@@ -937,106 +837,93 @@ window.onload=initStatus;
 										<a href="#" onclick="getInvoiceRelevancy('${orders.orderid}')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>发票信息</a>
 									</div>
 									<p></p>
-								<%-- <label class="active">索要发票</label>
-								<p></p>
-								<div id="iType">
-									<label class="active">发票类型：</label>
-									<form:select path="orderInvoice.invoiceType"  class="form-control" style="width:180px">
-										<form:option value="1" disabled="true">个人普票</form:option>
-										<form:option value="2" disabled="true">公司普票</form:option>
-										<form:option value="3" disabled="true">公司专票</form:option>
-									</form:select>
-								</div>
-								<p></p>
-								<label class="active">发票抬头：</label>
-								<input type="text" name="taxNum" class="form-control" style="width:180px" value="${orders.orderInvoice.headContent }"  readonly="readonly" />
-								<c:if test="${orders.orderInvoice.invoiceType == 3}">
-									<label class="active">纳税人识别号：</label>
-									<input type="text" name="taxNum" class="form-control" style="width:180px" value="${orders.orderInvoice.taxNum }"  readonly="readonly" />
-									<label class="active">银行账号：</label>
-									<input type="text" name="bankNo" class="form-control" style="width:180px" value="${orders.orderInvoice.bankNo }"  readonly="readonly" />
-									<p></p>
-									<label class="active">开户银行：</label>
-									<input type="text" name="bankName" class="form-control" style="width:180px" value="${orders.orderInvoice.bankName }"  readonly="readonly" />
-									<label class="active">电&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;话：</label>
-									<input type="text" name="invoicePhone" class="form-control" style="width:180px" value="${orders.orderInvoice.phone }"  readonly="readonly" />
-									<label class="active">地&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;址：</label>
-									<input type="text" name="invoiceAddress" class="form-control" style="width:180px" value="${orders.orderInvoice.address }"  readonly="readonly" />
-								</c:if>
-								<p></p>
-								<label class="active">收货人信息：</label>
-								<p></p>
-								<label class="active">收货人：</label>
-								<input type="text" name="recipientsName" class="form-control" style="width:180px" value="${orders.orderInvoice.recipientsName }"  readonly="readonly" />
-								<label class="active">联系电话：</label>
-								<input type="text" name="recipientsPhone" class="form-control" style="width:180px" value="${orders.orderInvoice.recipientsPhone }"  readonly="readonly" />
-								<label class="active">收货地址：</label>
-								<input type="text" name="recipientsAddress" class="form-control" style="width:180px" value="${orders.orderInvoice.recipientsAddress }"  readonly="readonly" />--%>
 							</div> 
 						</c:if>
 						<p></p>
-						<c:if test="${orders.isNeworder == 0}">
-							<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
-								<div class="pull-left">
-									<h4>业务员信息：</h4>
-								</div>
-								<c:if test="${type != 'view' }">
-									<div class="pull-right">
-										<a href="#" onclick="getSysUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
-									</div>
-								</c:if>
-								<shiro:hasPermission name="ec:orders:pushmoney">
-									<div class="pull-right">
-										<a href="#" onclick="openDialogView('查看日志记录', '${ctx}/ec/orders/getOrderPushmoneyRecordList?orderId=${orders.orderid }','800px','600px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>日志记录</a>
-									</div>
-								</shiro:hasPermission>
-								<p></p>
-								<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
-									<thead>
-										<tr>
-											<th style="text-align: center;">业务员</th>
-											<th style="text-align: center;">手机号</th>
-											<th style="text-align: center;">营业额</th>
-											<%-- <th style="text-align: center;">操作人</th>
-											<th style="text-align: center;">操作时间</th>
-											<c:if test="${type != 'view' }">
-												<th style="text-align: center;" colspan="2">操作</th>
-											</c:if> --%>
-										</tr>
-									</thead>
-									<tbody id="sysUserInfo" style="text-align:center;">
-										<c:forEach items="${orders.orderPushmoneyRecords }" var="orderPushmoneyRecord" varStatus="stauts">
-											<tr>
-												<td>
-													<input type="hidden" id="sysUserId" name="sysUserId" value="${orderPushmoneyRecord.pushmoneyUserId }" />
-													<input type="hidden" id="pushmoneyRecordId" name="pushmoneyRecordId" value="${orderPushmoneyRecord.pushmoneyRecordId }" />
-													<input id="sysName" name="sysName" type="text" value="${orderPushmoneyRecord.pushmoneyUserName }" class='form-control' readonly='readonly'>
-												</td>
-												<td>
-													<input id="sysMobile" name="sysMobile" type="text" value="${orderPushmoneyRecord.pushmoneyUserMobile }" class='form-control' readonly='readonly'>
-												</td>
-												<td>
-													${orderPushmoneyRecord.pushMoney }
-													<input type="hidden" id="${orderPushmoneyRecord.pushmoneyUserId }pushMoneySum" value="${orderPushmoneyRecord.pushMoney }" />
-												</td>
-												<%-- <td>
-													${orderPushmoneyRecord.createBy.name }
-												</td>
-												<td>
-													<fmt:formatDate value="${orderPushmoneyRecord.createDate }" pattern="yyyy-MM-dd HH:mm:ss" />
-												</td>
-												<c:if test="${type != 'view' }">
-													<td colspan="2">
-														<a href="#" class="btn btn-success btn-xs" onclick="updateFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId})"><i class='fa fa-edit'></i> 修改</a>
-														<a href="#" class="btn btn-danger btn-xs" onclick="delFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId })"><i class='fa fa-trash'></i> 删除</a>
-													</td>
-												</c:if> --%>
-											</tr>
-										</c:forEach>
-									</tbody>
-								</table>
-							</div>
-						</c:if>
+						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+						<h4>业务员营业额:</h4>
+						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+								<tr>
+									<th style="text-align: center;">商品总价</th>
+									<th style="text-align: center;">红包面值</th>
+									<th style="text-align: center;">折扣率</th>
+									<th style="text-align: center;">会员折扣</th>
+									<th style="text-align: center;">邮费</th>
+									<th style="text-align: center;">应付金额</th>
+									<th style="text-align: center;">实付金额</th>
+								</tr>
+								<tr>
+									<td align="center">${orders.goodsprice }</td>
+									<td align="center">${orders.couponprice }</td>
+									<td align="center">${orders.discount }</td>
+									<td align="center">${orders.memberGoodsPrice }</td>
+									<td align="center">${orders.shippingprice }</td>
+									<td align="center">${orders.orderamount }</td>
+									<td align="center">${(orders.totalamount*100 + orders.shippingprice*100)/100}</td>
+								</tr>
+						</table>
+						</div>
+						<p></p>
+						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+						<h4>业务员营业额:</h4>
+						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+								<tr>
+									<th style="text-align: center;">时间</th>
+									<th style="text-align: center;">类型</th>
+									<th style="text-align: center;">金额</th>
+									<th style="text-align: center;">业务员</th>
+									<th style="text-align: center;">部门</th>
+									<th style="text-align: center;">手机号</th>
+									<th style="text-align: center;">营业额</th>
+									<th style="text-align: center;">操作</th>
+								</tr>
+								<tbody style="text-align:center;">	
+									<tr>${pushMoneryDetails}</tr>
+								</tbody>
+						</table>
+						</div>
+						<p></p>
+						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+						<h4>店营业额:</h4>
+						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+								<tr>
+									<th style="text-align: center;">时间</th>
+									<th style="text-align: center;">类型</th>
+									<th style="text-align: center;">金额</th>
+									<th style="text-align: center;">归属店铺</th>
+									<th style="text-align: center;">操作时间</th>
+									<th style="text-align: center;">操作人</th>
+									<th style="text-align: center;">操作</th>
+								</tr>
+								<c:forEach items="${turnOverDetailsList}" var="turnOverDetails">
+									<tr>
+										<td align="center">
+											<fmt:formatDate value="${turnOverDetails.createDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
+										</td>
+										<td align="center">
+											<c:if test="${turnOverDetails.type == 1}">下单</c:if>
+											<c:if test="${turnOverDetails.type == 2}">还款</c:if>
+										</td>
+										<td align="center">${turnOverDetails.amount}</td>
+										<td align="center">${turnOverDetails.belongOfficeName}</td>
+										<td align="center">
+											<fmt:formatDate value="${turnOverDetails.settleDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
+										</td>
+										<td align="center">${turnOverDetails.settleName}</td>
+										<td align="center">
+											<c:choose>
+												<c:when test="${turnOverDetails.status == 2 && (turnOverDetails.belongOfficeId == '' || turnOverDetails.belongOfficeId == null)}">
+													<a href="#" class="btn btn-success btn-xs" onclick="updateDetails('${turnOverDetails.turnOverDetailsId}','${turnOverDetails.orderId}')"><i class='fa fa-edit'></i>编辑</a>
+												</c:when>
+												<c:otherwise>
+													<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>编辑</a>
+												</c:otherwise>
+											</c:choose>
+										</td>
+									</tr>
+								</c:forEach>
+						</table>
+						</div>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 							<div class="pull-left">
