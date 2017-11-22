@@ -651,6 +651,23 @@ public class SystemService extends BaseService implements InitializingBean {
 			
 			user.preUpdate();
 			userDao.update(user);
+			/**
+			 * 此处更新完用户之后将用户数据同步到报货，调用报货接口
+			 */
+			if (StringUtils.isNotBlank(user.getId())) {
+				User toUser = userDao.get(user);
+				String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
+    			logger.info("##### web接口路径:"+weburl);
+    			String parpm = "{\"user_id\":\""+toUser.getId()+"\",\"user_name\":\""+toUser.getName()+"\",\"franchisee_id\":\""+toUser.getCompany().getId()+"\","
+    					+ "\" user_mobile\":\""+toUser.getMobile()+"\",\" login_name\":\""+toUser.getLoginName()+"\"}";
+    			String url=weburl;
+    			String result = WebUtils.postCSObject(parpm, url);
+    			JSONObject jsonObject = JSONObject.fromObject(result);
+    			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+    			if(!"200".equals(jsonObject.get("result"))){
+    				return;
+    			}
+			}
 		}
 		if (StringUtils.isNotBlank(user.getId())) {
 			// 更新用户与角色关联
