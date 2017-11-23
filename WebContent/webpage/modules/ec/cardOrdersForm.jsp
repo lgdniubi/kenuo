@@ -281,12 +281,12 @@
       	    	var pushMoneyTotal = obj.document.getElementsByName("pushMoneySum"); //单个营业员该订单的提成总额，下单+充值-退款
       	    	for(i=0;i<pushmoneyUserId.length;i++){
 					var pushMoneySum = parseFloat(pushMoney[i].value) + parseFloat(changeValue[i].value);
-					if(parseFloat(pushMoneyTotal[i].value) + parseFloat(changeValue[i].value) < 0){
-						top.layer.alert('单个业务员的营业额不能小于其在该笔订单中的营业总额！', {icon: 0, title:'提醒'});
-	 	    			return;
-					}
 					if(pushMoneySum < 0){
 						top.layer.alert('单个业务员的营业额不能小于0！', {icon: 0, title:'提醒'});
+	 	    			return;
+					}
+					if(parseFloat(pushMoneyTotal[i].value) + parseFloat(changeValue[i].value) < 0){
+						top.layer.alert('单个业务员的营业额不能小于其在该笔订单中的营业总额！', {icon: 0, title:'提醒'});
 	 	    			return;
 					}
 					map[departmentName[i].value] = departmentId[i].value;
