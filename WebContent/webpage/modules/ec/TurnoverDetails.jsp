@@ -56,7 +56,7 @@
 	  				    	pushMoneys += $(dept[j]).val() + ",";
 	  				    }
 	  				    if(parseFloat(returnAmount) + parseFloat(turnover) + parseFloat(add) != 0){
-	  				        top.layer.alert('请注意输入的增减值!', {icon: 0, title:'提醒'});
+	  				        top.layer.alert('每个部门的营业额之和必须等于售后金额！', {icon: 0, title:'提醒'});
 	  					    return;
 	  				    }
 	  				  	add = 0;
@@ -131,7 +131,7 @@
   				    	amounts += $(turnovers[j]).val() + ",";
   				    }
   				    if(parseFloat(amount) + parseFloat(added) + parseFloat(returnAmount) != 0){
-  					    top.layer.alert('请注意输入的增减值!', {icon: 0, title:'提醒'});
+  					    top.layer.alert('每个店铺的营业额之和必须等于售后金额！', {icon: 0, title:'提醒'});
   					    return;
   				    }
 	   	    		$.ajax({
@@ -177,7 +177,12 @@
 					</thead>
 					<tbody id="pushMoneyList">
 						<tr>
-							<th style="text-align: center;"><fmt:formatDate value="${mtmyTurnoverDetails.createDate}" pattern="yyyy-MM-dd HH:mm:ss" /></th>
+							<c:if test="${empty mtmyTurnoverDetails.createDate}">
+								<th style="text-align: center;"><fmt:formatDate value="${mtmyTurnoverDetails.applyDate}" pattern="yyyy-MM-dd HH:mm:ss" /></th>
+							</c:if>
+							<c:if test="${not empty mtmyTurnoverDetails.createDate}">
+								<th style="text-align: center;"><fmt:formatDate value="${mtmyTurnoverDetails.createDate}" pattern="yyyy-MM-dd HH:mm:ss" /></th>
+							</c:if>
 							<th style="text-align: center;">售后</th>
 							<th style="text-align: center;">${mtmyTurnoverDetails.amount}</th>
 							<th style="text-align: center;">
@@ -199,7 +204,12 @@
 					</thead>
 					<tbody id="officeList">
 						<tr>
-							<th style="text-align: center;"><fmt:formatDate value="${mtmyTurnoverDetails.createDate}" pattern="yyyy-MM-dd HH:mm:ss" /></th>
+							<c:if test="${empty mtmyTurnoverDetails.createDate}">
+								<th style="text-align: center;"><fmt:formatDate value="${mtmyTurnoverDetails.applyDate}" pattern="yyyy-MM-dd HH:mm:ss" /></th>
+							</c:if>
+							<c:if test="${not empty mtmyTurnoverDetails.createDate}">
+								<th style="text-align: center;"><fmt:formatDate value="${mtmyTurnoverDetails.createDate}" pattern="yyyy-MM-dd HH:mm:ss" /></th>
+							</c:if>
 							<th style="text-align: center;">售后</th>
 							<th style="text-align: center;">${mtmyTurnoverDetails.amount}</th>
 							<th style="text-align: center;">

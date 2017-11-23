@@ -195,6 +195,7 @@
 			a.order_id AS orderId,
 			a.goods_mapping_id AS mappingId,
 			SUM(a.return_amount) AS amount,
+			a.apply_date AS applyDate,
 			a.audit_date AS createDate
 		FROM
 			mtmydb.mtmy_returned_goods a
