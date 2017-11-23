@@ -119,13 +119,13 @@
 					ROUND(#{evaluationScore},1),
 				</if>
 				<if test="serveScore != null">
-					ROUND(#{serveScore},1),
+					#{serveScore},
 				</if>
 				<if test="entertainScore != null">
-					ROUND(#{entertainScore},1),
+					#{entertainScore},
 				</if>
 				<if test="environmentScore != null">
-					ROUND(#{environmentScore},1),
+					#{environmentScore},
 				</if>
 				<if test="evaluationCount != null">
 					#{evaluationCount},
@@ -137,13 +137,13 @@
 			</trim>
 			ON DUPLICATE KEY UPDATE 
 				<if test="serveScore != 0">
-					serve_score = ROUND((serve_score * evaluation_count + #{serveScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),1),
+					serve_score = (serve_score * evaluation_count + #{serveScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
 				</if>
 				<if test="entertainScore != 0">
-					entertain_score = ROUND((entertain_score * evaluation_count + #{entertainScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),1),
+					entertain_score = (entertain_score * evaluation_count + #{entertainScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
 				</if>
 				<if test="environmentScore != 0">
-					environment_score = ROUND((environment_score * evaluation_count + #{environmentScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),1),
+					environment_score = (environment_score * evaluation_count + #{environmentScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
 				</if>
 				<if test="evaluationScore != 0">
 					evaluation_score = ROUND((evaluation_score * evaluation_count + #{evaluationScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),1),
