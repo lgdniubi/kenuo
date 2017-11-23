@@ -635,19 +635,19 @@ public class ReturnedGoodsController extends BaseController {
 		returnedGoods.setOrderId(turnOverDetails.getOrderId());
 		returnedGoods.setReturnedId(turnOverDetails.getDetailsId());
 		turnOverDetails = returnedGoodsService.getTurnover(returnedGoods);
+		String shopTurnover = "";//jsp界面的页面展示字符串
 		//获取店营业额明细列表
 		List<TurnOverDetails> list = returnedGoodsService.getMtmyTurnoverDetailsList(turnOverDetails);
-		//查询店的售后审核扣减的营业额
-		List<TurnOverDetails> amountList = returnedGoodsService.getReturnedAmountList(turnOverDetails);
-		
-		double returnAmount = turnOverDetails.getAmount();//退款金额
-		//获取营业额占比 = （店铺营业额-店铺已退营业额）/(店铺合计营业额-店铺已退营业额)*退款
-		double storeTurnover = 0;//单个（店铺营业额-店铺已退营业额）
-		double sumTurnover= 0;//合计的(店铺合计营业额-店铺已退营业额)
-		double turnoverRatio= 0;//获取营业额占比
-		double added = 0;//数据库查询的原始营业额
-		String shopTurnover = "";//jsp界面的页面展示字符串
 		if(list.size() != 0 ){
+			//查询店的售后审核扣减的营业额
+			List<TurnOverDetails> amountList = returnedGoodsService.getReturnedAmountList(turnOverDetails);
+			
+			double returnAmount = turnOverDetails.getAmount();//退款金额
+			//获取营业额占比 = （店铺营业额-店铺已退营业额）/(店铺合计营业额-店铺已退营业额)*退款
+			double storeTurnover = 0;//单个（店铺营业额-店铺已退营业额）
+			double sumTurnover= 0;//合计的(店铺合计营业额-店铺已退营业额)
+			double turnoverRatio= 0;//获取营业额占比
+			double added = 0;//数据库查询的原始营业额
 			//之前的老订单会存在售后没有审核时间,由申请时间替代
 			Date createDate = turnOverDetails.getCreateDate();
 			if(createDate == null){
@@ -698,9 +698,9 @@ public class ReturnedGoodsController extends BaseController {
 						"</td> "+
 					"</tr>";
 			}
+			model.addAttribute("returnAmount",returnAmount);
+			model.addAttribute("turnOverDetails",turnOverDetails);
 		}
-		model.addAttribute("returnAmount",returnAmount);
-		model.addAttribute("turnOverDetails",turnOverDetails);
 		model.addAttribute("shopTurnover",shopTurnover);
 		
 		return "modules/ec/mtmyTurnoverDetailsForm";

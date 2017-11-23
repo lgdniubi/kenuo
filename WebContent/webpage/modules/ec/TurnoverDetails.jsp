@@ -23,6 +23,11 @@
 	     	    	var orderId = obj.document.getElementById("orderId").value; //订单id
 	     	    	var returnedId = obj.document.getElementById("returnedId").value; //售后id
 	     	    	
+	     	    	//判断是否存在数据
+	     	    	if(returnAmount==""){
+	     	    		top.layer.alert('该订单无数据', {icon: 0, title:'提醒'});
+	     	    		return;
+	     	    	}
 	     	    	//校验输入营业额+增减值+数据库的增减值>=0
 	     	    	var num = obj.document.getElementById("num").value; //数据列表的个数
 	     	    	for(var k = 0; k < num; k++){
@@ -62,6 +67,9 @@
 	  				  	add = 0;
 	  				    turnover = 0;
 	  			    }
+	  			    
+	  			  return;
+	  			    
 	   	    		$.ajax({
 	       				type:"post",
 	       				data:{
@@ -102,6 +110,11 @@
 	     	    	var orderId = obj.document.getElementById("orderId").value; //订单id
 	     	    	var detailsId = obj.document.getElementById("detailsId").value; //售后id
 	     	    	
+	     	    	//判断是否存在数据
+	     	    	if(returnAmount==''){
+	     	    		top.layer.alert('该订单无数据', {icon: 0, title:'提醒'});
+	     	    		return;
+	     	    	}
 	     	    	//校验输入营业额+增减值+数据库的增减值>=0
 	     	    	var num = obj.document.getElementById("num").value; //数据列表的个数
 	     	    	for(var k = 0; k < num; k++){
