@@ -2382,6 +2382,9 @@ public class OrdersController extends BaseController {
 		try {
 			String suitCardSons = "";
 			int num;
+			String pushMoneryDetails = "";
+			int newNum = 0;
+			
 			List<List<OrderGoods>> result = new ArrayList<List<OrderGoods>>();    //分开存放每个卡项商品和它的子项
 			List<OrderGoods> resultSon = new ArrayList<OrderGoods>();              //存放每个卡项商品和它的子项
 			User user = UserUtils.getUser(); //登陆用户
@@ -2522,12 +2525,59 @@ public class OrdersController extends BaseController {
 			
 			}
 			
+			List<TurnOverDetails> pushmoneyRecordList = turnOverDetailsService.selectPushDetails(orders.getOrderid());
+			if(pushmoneyRecordList.size() > 0){
+				for(TurnOverDetails turnOverDetails:pushmoneyRecordList){
+					newNum = turnOverDetails.getPushMoneyList().size();
+					if(newNum == 0){
+						newNum = 1;
+					}
+					String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(turnOverDetails.getCreateDate());
+					pushMoneryDetails = pushMoneryDetails + 
+							"<tr> "+
+								"<td align='center' rowspan="+newNum+">"+date+"</td> ";
+					if(turnOverDetails.getType() == 1){
+						pushMoneryDetails = pushMoneryDetails + "<td align='center' rowspan="+newNum+">下单</td> ";
+					}else if(turnOverDetails.getType() == 2){
+						pushMoneryDetails = pushMoneryDetails + "<td align='center' rowspan="+newNum+">还款</td> ";
+					}
+					pushMoneryDetails = pushMoneryDetails + "<td align='center' rowspan="+newNum+">"+turnOverDetails.getAmount()+"</td> ";
+					if(turnOverDetails.getPushMoneyList().size() == 0){
+						pushMoneryDetails = pushMoneryDetails + "<td align='center'></td><td align='center'></td><td align='center'></td><td align='center'></td><td align='center'>"
+								+"<a href='#' onclick='editSysUserInfo("+"\""+turnOverDetails.getTurnOverDetailsId()+"\")' class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>"
+								+ "</td>"
+							+"</tr>";
+					}else{
+						List<OrderPushmoneyRecord> newList = turnOverDetails.getPushMoneyList();
+							pushMoneryDetails = pushMoneryDetails + "<td align='center'>"+newList.get(0).getPushmoneyUserName()+"</td>"
+								+"<td align='center'>"+newList.get(0).getDepartmentName()+"</td>"
+							    +"<td align='center'>"+newList.get(0).getPushmoneyUserMobile()+"</td>"
+								+"<td align='center'>"+newList.get(0).getPushMoney()+"</td>"
+								+"<td align='center'rowspan="+newNum+">"
+									+"<a href='#' onclick='editSysUserInfo("+"\""+turnOverDetails.getTurnOverDetailsId()+"\")' class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>"
+									+"<a href=\"#\" onclick=\"openDialogView('操作日志', '/kenuo/a/ec/orders/operationLog?turnOverDetailsId="+turnOverDetails.getTurnOverDetailsId()+"','800px','550px')\" class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i>操作日志</a>"
+								+"</td>"                                                                                
+							+"</tr>";
+						for(int i= 1;i<newList.size();i++){
+							pushMoneryDetails = pushMoneryDetails + 
+									"<tr>"
+										+"<td align='center'>"+newList.get(i).getPushmoneyUserName()+"</td>"
+										+"<td align='center'>"+newList.get(i).getDepartmentName()+"</td>"
+										+"<td align='center'>"+newList.get(i).getPushmoneyUserMobile()+"</td>"
+										+"<td align='center'>"+newList.get(i).getPushMoney()+"</td>"
+									+"</tr>";
+						}
+					}
+				}	
+			}
+			
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
 			model.addAttribute("user", user);
 			model.addAttribute("type", type);
 			model.addAttribute("suitCardSons", suitCardSons);
 			model.addAttribute("turnOverDetailsList",turnOverDetailsList);
+			model.addAttribute("pushMoneryDetails",pushMoneryDetails);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转修改卡项订单页面", e);
 			logger.error("跳转修改卡项订单页面出错：" + e.getMessage());

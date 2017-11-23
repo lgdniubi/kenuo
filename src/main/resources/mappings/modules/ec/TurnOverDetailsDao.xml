@@ -188,7 +188,7 @@
 		LEFT JOIN trains.sys_user u ON u.id = mbt.user_id
 		LEFT JOIN trains.train_department d ON d.id = mbt.department_id
 		LEFT JOIN trains.sys_user u1 ON u1.id = mbt.create_by
-		WHERE mbt.turnover_details_id = #{id}
-		GROUP BY u.id
+		WHERE mbt.turnover_details_id = #{turnOverDetailsId}
+		ORDER BY mbt.create_date DESC
 	</select>
 </mapper>

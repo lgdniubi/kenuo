@@ -24,39 +24,6 @@
 				return;
 			}
 			
-			//新订单,业务员校验
-			if($("#isNeworder").val() == 0){
-				var sysUserId = $("#sysUserId").val(); 
-				//var belongUserId = $("#belongUserId").val(); 
-				var orderamount = $("#orderamount").val();
-				
-				/* if(sysUserId == belongUserId){
-					top.layer.alert('归属人和业务员不能是同一个人!', {icon: 0, title:'提醒'}); 
-					return;
-				} */
-				if(sysUserId == undefined){
-					top.layer.alert('业务员信息不能为空!', {icon: 0, title:'提醒'}); 
-					return;
-				}else{
-					var str = $("#strval").val();
-					str = str.split(",");
-					var sumPushMoney = 0;
-					for(var i = 0; i < str.length-1; i++){
-						$("[name='"+str[i]+"pushMoney']").each(function(){
-							sumPushMoney += parseFloat($(this).val());
-			    		});
-						if(parseFloat(sumPushMoney)<0){
-							top.layer.alert('营业总额必须大于0！', {icon: 0, title:'提醒'});
-							return;
-						}
-						if(parseFloat(sumPushMoney) - parseFloat(orderamount) > 0){
-							top.layer.alert('营业总额小于等于订单应付总额！', {icon: 0, title:'提醒'});
-							return;
-						}
-						sumPushMoney = 0;
-					}
-				}
-			}
 			$("#inputForm").submit();
 			 return true;	
 		  }
@@ -459,98 +426,6 @@
 			}
 		});
 	}
-	function getSysUserInfo(){
-		var orderamount = $("#orderamount").val();
-		var sysUserIds = document.getElementsByName("sysUserId");
-	   
-		// 正常打开	
-		top.layer.open({
-		    type: 2, 
-		    area: ['550px', '420px'],
-		    title:"业务员选择",
-		    ajaxData:{selectIds: $("#goodselectId").val()},
-		    content: "${ctx}/ec/orders/getPushmoneyView",
-		    btn: ['确定', '关闭']
-    	    ,yes: function(index, layero){
-    	    	var obj =  layero.find("iframe")[0].contentWindow;
-    	    	var sysUserId = obj.document.getElementById("sysUserId").value; //员工id
-    	    	var sysMobile = obj.document.getElementById("sysMobile").value; //员工电话
-    	    	var sysName = obj.document.getElementById("sysName").value; //员工名称
-    	    	var pushMoney = obj.document.getElementById("pushMoney").value; //营业额
-    	    	
-    	    	if(pushMoney==""){	
-    	    		top.layer.alert('填写营业额！', {icon: 0, title:'提醒'});
-     	    		return;
-    	    	}else{
-	   	    		var re = /^([+-]?)\d*\.?\d{0,2}$/; 
-	   				if(!re.test(pushMoney)){
-	   					top.layer.alert('请输入正确的营业额(最多两位小数)', {icon: 0, title:'提醒'});
-	     	    		return;
-	   				}
-    	    	}
-    	    	if(sysUserId == ""){
-    	    		top.layer.alert('填写业务员！', {icon: 0, title:'提醒'});
-     	    		return;
-    	    	}else if(parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-    	    		top.layer.alert('营业额小于等于订单应付总额！', {icon: 0, title:'提醒'});
-     	    		return;
-    	    	}else{
-    	    		/* if(sysUserIds.length > 0){
-    	    			for(i=0;i<sysUserIds.length;i++){
-         	    	        if(sysUserId == sysUserIds[i].value){
-         	    	        	top.layer.alert('业务员不能相同！', {icon: 0, title:'提醒'});
-         	     	    		return;
-         	    	        }
-         	    	    }
-    	    		} */
-    	    		
-    	    		var pushMoneySum = 0;
-    	    		$("[name='"+sysUserId+"pushMoney']").each(function(){
-    	    			pushMoneySum += parseFloat($(this).val());
-    	    		});
-    	    		
-    	    		/* var belongUserId = $("#belongUserId").val(); 
-    				if(sysUserId == belongUserId){
-    					top.layer.alert('归属人和业务员不能是同一个人!', {icon: 0, title:'提醒'}); 
-    					return;
-    				} */
-    	    		
-    	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) < 0){
-    	    			top.layer.alert('营业总额必须大于0！', {icon: 0, title:'提醒'});
-    	    			return;
-    	    		}
-    	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-    	    			top.layer.alert('营业总额小于等于订单应付总额！', {icon: 0, title:'提醒'});
-    	    			return;
-    	    		}
-    	    		
-	    	    	$("#sysUserInfo").append(
-	    	    			"<tr>"+
-	    					"<td>"+
-	    						"<input id='sysUserId' name='sysUserId' type='hidden' value='"+sysUserId+"' class='form-control' readonly='readonly'>"+
-	    						"<input id='sysName' name='sysName' type='text' value='"+sysName+"' class='form-control' readonly='readonly'>"+
-	    					"</td>"+
-	    					"<td><input id='sysMobile' name='sysMobile' type='text' value='"+sysMobile+"' class='form-control' readonly='readonly'></td>"+
-	    					"<td><input id='pushMoney' name='pushMoney' value='"+pushMoney+"' readonly='readonly' class='form-control required' type='text' class='form-control'></td>"+
-	    					"<input id='pushMoney' name='"+sysUserId+"pushMoney'  type='hidden' value='"+pushMoney+"' readonly='readonly' class='form-control required' type='text' class='form-control'>"+
-	    					"<td><a href='#' class='btn btn-danger btn-xs' onclick='deleteFile(this,\""+sysUserId+"\")'><i class='fa fa-trash'></i> 删除</a></td>"+
-	    					"</tr>"
-	    			);
-	    	    	//把获取到的sysUserId存放到隐藏域中
-	    	    	var strval = $("#strval").val();
-	    	    	//判断sysUserId是否存在strval中
-	    	    	var sysUserIdStr = sysUserId+",";
-	    	    	if(strval.indexOf(sysUserIdStr) < 0){
-		    	    	strval += sysUserIdStr;
-		    	    	$("#strval").val(strval);
-	    	    	}
-	    	    	
-					top.layer.close(index);
-    	    	}
-			}
-		}); 
-	}
-	
 	
 	function getRemarks(){
 		// 正常打开	
@@ -580,8 +455,6 @@
 	function choose(value){
 		$("#belongOfficeId").val("");
 		$("#belongOfficeName").val("");
-		$("#belongUserId").val("");
-		$("#belongUserName").val("");
 		if(value == 1){
 			
 			$("#iType").hide();
@@ -591,13 +464,10 @@
 			$("#fpinfo").hide();
 			$("#Ichecks").attr("checked",false);
 			$("#Ichecks").attr("disabled",true);
-			$("#sysUserPush").hide();
-			$("#sysUserInfo").empty();
-			$("#belongUser").hide();
+			$("#belongOffice").hide();
 		}else{
-			$("#sysUserPush").show();
-			$("#belongUser").show();
-		}
+			$("#belongOffice").show();
+		} 
 	}
 	</script>
 </head>
@@ -686,7 +556,7 @@
 					<textarea name="usernote" rows="5" cols="60"></textarea>
 				</div>
 				<p></p>
-				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="belongOffice">
 				<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
 					<tr>
 						<td width="100px"><span><font color="red">*</font>归属店铺：</span></td>
@@ -752,28 +622,6 @@
 						<label class="active"><font color="red">*</font>收货地址：</label>
 						<input type="text" name="recipientsAddress" class="form-control required" maxlength="50" style="width:180px" />
 					</div>
-				</div>
-				<p></p>
-				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="sysUserPush">
-					<div class="pull-left">
-						<h4><font color="red">*</font>业务员信息：</h4>
-					</div>
-					<div class="pull-right">
-						<a href="#" onclick="getSysUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
-					</div>
-					<p></p>
-					<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
-						<thead>
-							<tr>
-								<th style="text-align: center;">业务员</th>
-								<th style="text-align: center;">手机号</th>
-								<th style="text-align: center;">营业额</th>
-								<th style="text-align: center;">操作</th>
-							</tr>
-						</thead>
-						<tbody id="sysUserInfo" style="text-align:center;">	
-						</tbody>
-					</table>
 				</div>
 				<p></p>
 				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">

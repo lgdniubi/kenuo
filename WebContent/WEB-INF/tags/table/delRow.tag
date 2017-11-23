@@ -3,6 +3,7 @@
 <%@ attribute name="id" type="java.lang.String" required="true"%>
 <%@ attribute name="url" type="java.lang.String" required="true"%>
 <%@ attribute name="label" type="java.lang.String" required="false"%>
+<%@ attribute name="isSelf" type="java.lang.Boolean" required="false" %>
 <button class="btn btn-white btn-sm" onclick="deleteAll()" data-toggle="tooltip" data-placement="top"><i class="fa fa-trash-o"> ${label==null?'删除':label}</i>
                         </button>
 <%-- 使用方法： 1.将本tag写在查询的form之前；2.传入table的id和controller的url --%>
@@ -36,7 +37,10 @@ $(document).ready(function() {
 			return;
 		  }
 			top.layer.confirm('确认要彻底删除数据吗?', {icon: 3, title:'系统提示'}, function(index){
-			window.location = "${url}?ids="+ids;
+				var url = "${url}?ids="+ids;
+				if('${isSelf}')
+					url +="&isSelf=${isSelf}"
+			window.location = url;
 		    top.layer.close(index);
 		});
 		 
