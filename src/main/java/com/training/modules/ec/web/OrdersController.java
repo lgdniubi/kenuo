@@ -309,8 +309,13 @@ public class OrdersController extends BaseController {
 					}
 					pushMoneryDetails = pushMoneryDetails + "<td align='center' rowspan="+num+">"+turnOverDetails.getAmount()+"</td> ";
 					if(turnOverDetails.getPushMoneyList().size() == 0){
-						pushMoneryDetails = pushMoneryDetails + "<td align='center'></td><td align='center'></td><td align='center'></td><td align='center'></td><td align='center'>"
-								+"<a href='#' onclick='editSysUserInfo("+"\""+turnOverDetails.getTurnOverDetailsId()+"\")' class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>"
+						pushMoneryDetails = pushMoneryDetails + "<td align='center'></td><td align='center'></td><td align='center'></td><td align='center'></td><td align='center'>";
+						if("view".equals(type)){
+							pushMoneryDetails = pushMoneryDetails + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs'><i class='fa fa-edit'></i>编辑</a>";
+						}else{
+							pushMoneryDetails = pushMoneryDetails +"<a href='#' onclick='editSysUserInfo("+"\""+turnOverDetails.getTurnOverDetailsId()+"\")' class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>";
+						}
+						pushMoneryDetails = pushMoneryDetails	
 								+ "</td>"
 							+"</tr>";
 					}else{
@@ -319,9 +324,14 @@ public class OrdersController extends BaseController {
 								+"<td align='center'>"+list.get(0).getDepartmentName()+"</td>"
 							    +"<td align='center'>"+list.get(0).getPushmoneyUserMobile()+"</td>"
 								+"<td align='center'>"+list.get(0).getPushMoney()+"</td>"
-								+"<td align='center'rowspan="+num+">"
-									+"<a href='#' onclick='editSysUserInfo("+"\""+turnOverDetails.getTurnOverDetailsId()+"\")' class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>"
-									+"<a href=\"#\" onclick=\"openDialogView('操作日志', '/kenuo/a/ec/orders/operationLog?turnOverDetailsId="+turnOverDetails.getTurnOverDetailsId()+"','800px','550px')\" class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i>操作日志</a>"
+								+"<td align='center'rowspan="+num+">";
+								if("view".equals(type)){
+									pushMoneryDetails = pushMoneryDetails + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs'><i class='fa fa-edit'></i>编辑</a>";
+								}else{
+									pushMoneryDetails = pushMoneryDetails +"<a href='#' onclick='editSysUserInfo("+"\""+turnOverDetails.getTurnOverDetailsId()+"\")' class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>";
+								}
+								pushMoneryDetails = pushMoneryDetails 
+										+"<a href=\"#\" onclick=\"openDialogView('操作日志', '/kenuo/a/ec/orders/operationLog?turnOverDetailsId="+turnOverDetails.getTurnOverDetailsId()+"','800px','550px')\" class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i>操作日志</a>"
 								+"</td>"                                                                                
 							+"</tr>";
 						for(int i= 1;i<list.size();i++){
@@ -2543,8 +2553,13 @@ public class OrdersController extends BaseController {
 					}
 					pushMoneryDetails = pushMoneryDetails + "<td align='center' rowspan="+newNum+">"+turnOverDetails.getAmount()+"</td> ";
 					if(turnOverDetails.getPushMoneyList().size() == 0){
-						pushMoneryDetails = pushMoneryDetails + "<td align='center'></td><td align='center'></td><td align='center'></td><td align='center'></td><td align='center'>"
-								+"<a href='#' onclick='editSysUserInfo("+"\""+turnOverDetails.getTurnOverDetailsId()+"\")' class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>"
+						pushMoneryDetails = pushMoneryDetails + "<td align='center'></td><td align='center'></td><td align='center'></td><td align='center'></td><td align='center'>";
+						if("view".equals(type)){
+							pushMoneryDetails = pushMoneryDetails + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs'><i class='fa fa-edit'></i>编辑</a>";
+						}else{
+							pushMoneryDetails = pushMoneryDetails +"<a href='#' onclick='editSysUserInfo("+"\""+turnOverDetails.getTurnOverDetailsId()+"\")' class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>";
+						}
+						pushMoneryDetails = pushMoneryDetails	
 								+ "</td>"
 							+"</tr>";
 					}else{
@@ -2553,8 +2568,13 @@ public class OrdersController extends BaseController {
 								+"<td align='center'>"+newList.get(0).getDepartmentName()+"</td>"
 							    +"<td align='center'>"+newList.get(0).getPushmoneyUserMobile()+"</td>"
 								+"<td align='center'>"+newList.get(0).getPushMoney()+"</td>"
-								+"<td align='center'rowspan="+newNum+">"
-									+"<a href='#' onclick='editSysUserInfo("+"\""+turnOverDetails.getTurnOverDetailsId()+"\")' class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>"
+								+"<td align='center'rowspan="+newNum+">";
+								if("view".equals(type)){
+									pushMoneryDetails = pushMoneryDetails + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs'><i class='fa fa-edit'></i>编辑</a>";
+								}else{
+									pushMoneryDetails = pushMoneryDetails +"<a href='#' onclick='editSysUserInfo("+"\""+turnOverDetails.getTurnOverDetailsId()+"\")' class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>";
+								}
+								pushMoneryDetails = pushMoneryDetails 
 									+"<a href=\"#\" onclick=\"openDialogView('操作日志', '/kenuo/a/ec/orders/operationLog?turnOverDetailsId="+turnOverDetails.getTurnOverDetailsId()+"','800px','550px')\" class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i>操作日志</a>"
 								+"</td>"                                                                                
 							+"</tr>";

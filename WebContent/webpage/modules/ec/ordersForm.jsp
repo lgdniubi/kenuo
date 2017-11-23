@@ -857,30 +857,6 @@ window.onload=initStatus;
 							</div> 
 						</c:if>
 						<p></p>
-						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
-						<h4>业务员营业额:</h4>
-						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
-								<tr>
-									<th style="text-align: center;">商品总价</th>
-									<th style="text-align: center;">红包面值</th>
-									<th style="text-align: center;">折扣率</th>
-									<th style="text-align: center;">会员折扣</th>
-									<th style="text-align: center;">邮费</th>
-									<th style="text-align: center;">应付金额</th>
-									<th style="text-align: center;">实付金额</th>
-								</tr>
-								<tr>
-									<td align="center">${orders.goodsprice }</td>
-									<td align="center">${orders.couponprice }</td>
-									<td align="center">${orders.discount }</td>
-									<td align="center">${orders.memberGoodsPrice }</td>
-									<td align="center">${orders.shippingprice }</td>
-									<td align="center">${orders.orderamount }</td>
-									<td align="center">${(orders.totalamount*100 + orders.shippingprice*100)/100}</td>
-								</tr>
-						</table>
-						</div>
-						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="beauticianMoney">
 						<h4>业务员营业额:</h4>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
