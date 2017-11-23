@@ -82,7 +82,7 @@ public class TurnOverDetailsService extends CrudService<TurnOverDetailsDao, Turn
 		// 设置分页参数
 		orderPushmoneyRecord.setPage(page);
 		// 执行分页查询
-		page.setList(turnOverDetailsDao.queryDetailsForPush(orderPushmoneyRecord.getTurnOverDetailsId()));
+		page.setList(turnOverDetailsDao.queryDetailsForPush(orderPushmoneyRecord));
 		return page;
 	}
 }
