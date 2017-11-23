@@ -116,16 +116,16 @@
 				</if>
 					'0',
 				<if test="evaluationScore != null">
-					#{evaluationScore},
+					ROUND(#{evaluationScore},1),
 				</if>
 				<if test="serveScore != null">
-					#{serveScore},
+					ROUND(#{serveScore},1),
 				</if>
 				<if test="entertainScore != null">
-					#{entertainScore},
+					ROUND(#{entertainScore},1),
 				</if>
 				<if test="environmentScore != null">
-					#{environmentScore},
+					ROUND(#{environmentScore},1),
 				</if>
 				<if test="evaluationCount != null">
 					#{evaluationCount},
@@ -137,16 +137,16 @@
 			</trim>
 			ON DUPLICATE KEY UPDATE 
 				<if test="serveScore != 0">
-					serve_score = (serve_score * evaluation_count + #{serveScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
+					serve_score = ROUND((serve_score * evaluation_count + #{serveScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),1),
 				</if>
 				<if test="entertainScore != 0">
-					entertain_score = (entertain_score * evaluation_count + #{entertainScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
+					entertain_score = ROUND((entertain_score * evaluation_count + #{entertainScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),1),
 				</if>
 				<if test="environmentScore != 0">
-					environment_score = (environment_score * evaluation_count + #{environmentScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
+					environment_score = ROUND((environment_score * evaluation_count + #{environmentScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),1),
 				</if>
 				<if test="evaluationScore != 0">
-					evaluation_score = (evaluation_score * evaluation_count + #{evaluationScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
+					evaluation_score = ROUND((evaluation_score * evaluation_count + #{evaluationScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),1),
 				</if>
 				evaluation_count = evaluation_count + #{evaluationCount},
 				update_date = SYSDATE();
