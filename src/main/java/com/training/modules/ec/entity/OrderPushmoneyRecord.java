@@ -28,6 +28,12 @@ public class OrderPushmoneyRecord extends TreeEntity<OrderPushmoneyRecord> {
 	private String userOfficeId;	//业务员机构ID  	 2017-10-25 土豆添加
 	private String userOfficeIds;	//业务员机构IDS  	 2017-10-25 土豆添加
 	
+	//------------------售后添加字段-------------
+	private String returnedId;		//退货订单号		 2017-11-16 土豆添加
+	private String pushMoneys;		//获取编辑营业额的增减值字符串	2017-11-16 土豆添加
+	private String positionKey;		//职位标签名		 2017-11-16 土豆添加
+	private String positionValue;	//职位标签键值		 2017-11-16 土豆添加
+	
 	public String getOperatorName() {
 		return operatorName;
 	}
@@ -166,6 +172,38 @@ public class OrderPushmoneyRecord extends TreeEntity<OrderPushmoneyRecord> {
 
 	public void setType(int type) {
 		this.type = type;
+	}
+
+	public String getReturnedId() {
+		return returnedId;
+	}
+
+	public void setReturnedId(String returnedId) {
+		this.returnedId = returnedId;
+	}
+
+	public String getPushMoneys() {
+		return pushMoneys;
+	}
+
+	public void setPushMoneys(String pushMoneys) {
+		this.pushMoneys = pushMoneys;
+	}
+
+	public String getPositionKey() {
+		return positionKey;
+	}
+
+	public void setPositionKey(String positionKey) {
+		this.positionKey = positionKey;
+	}
+
+	public String getPositionValue() {
+		return positionValue;
+	}
+
+	public void setPositionValue(String positionValue) {
+		this.positionValue = positionValue;
 	}
 	
 }

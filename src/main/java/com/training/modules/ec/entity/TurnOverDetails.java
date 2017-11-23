@@ -34,8 +34,15 @@ public class TurnOverDetails extends DataEntity<TurnOverDetails> {
 	private String settleBy;                    //结算人id
 	private String settleName;                   //结算人名称
 	private Date settleDate;                     //结算时间
-	
 	public List<OrderPushmoneyRecord> pushMoneyList;   //点营业额对应的业务员营业额列表
+	
+	//----------------售后审核编辑店营业额---------------
+	private String amounts;			 	//获取编辑营业额的增减值字符串	2017-11-16   土豆添加
+	private double returnAmount;		//金额(区分正负)
+	private String userName;			//消费者
+	private String officeName;			//归属店铺名称
+	private String beauticianName;		//绑定技师
+	private String createName;			//操作人
 	
 	public int getTurnOverDetailsId() {
 		return turnOverDetailsId;
@@ -148,6 +155,42 @@ public class TurnOverDetails extends DataEntity<TurnOverDetails> {
 		}else{
 			this.pushMoneyList = pushMoneyList;
 		}
+	}
+	public String getAmounts() {
+		return amounts;
+	}
+	public void setAmounts(String amounts) {
+		this.amounts = amounts;
+	}
+	public double getReturnAmount() {
+		return returnAmount;
+	}
+	public void setReturnAmount(double returnAmount) {
+		this.returnAmount = returnAmount;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getOfficeName() {
+		return officeName;
+	}
+	public void setOfficeName(String officeName) {
+		this.officeName = officeName;
+	}
+	public String getBeauticianName() {
+		return beauticianName;
+	}
+	public void setBeauticianName(String beauticianName) {
+		this.beauticianName = beauticianName;
+	}
+	public String getCreateName() {
+		return createName;
+	}
+	public void setCreateName(String createName) {
+		this.createName = createName;
 	}
 	
 }

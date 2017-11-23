@@ -138,6 +138,129 @@
 			a.order_id = #{orderId}
 		AND a.goods_mapping_id = #{goodsMappingId}
 	</select>
+	<!-- 获取订单商品中的已退款金额 -->
+	<select id="getSurplusReturnAmount" resultType="Double">
+		SELECT
+			IFNULL(SUM(a.return_amount),0)
+		FROM
+			mtmydb.mtmy_returned_goods a
+		WHERE
+			a.order_id = #{orderId}
+		AND a.goods_mapping_id = #{goodsMappingId}
+	</select>
+	<!-- 获取店营业额明细列表 -->
+	<select id="getMtmyTurnoverDetailsList" resultType="TurnOverDetails">
+		SELECT
+			a.order_id AS orderId,
+			a.mapping_id AS mappingId,
+			a.details_id AS detailsId,
+			SUM(a.amount) AS amount,
+			a.use_balance AS useBalance,
+			a.user_id AS userId,
+			a.user_office_id AS userOfficeId,
+			a.user_beautician_id AS userBeauticianId,
+			a.belong_office_id AS belongOfficeId,
+			b.name AS belongOfficeName,
+			a.belong_office_ids AS belongOfficeIds,
+			a.create_by AS createBy,
+			a.create_date AS createDate
+		FROM
+			ydatadb.mtmy_turnover_details a
+		LEFT JOIN
+			trains.sys_office b ON a.belong_office_id = b.id
+		WHERE 
+			a.order_id = #{orderId}
+		GROUP BY a.belong_office_id
+	</select>
+	<!-- 查询店的售后审核扣减的营业额 -->
+	<select id="getReturnedAmountList" resultType="TurnOverDetails">
+		SELECT
+			a.order_id AS orderId,
+			a.mapping_id AS mappingId,
+			a.details_id AS detailsId,
+			SUM(a.amount) AS amount
+		FROM
+			ydatadb.mtmy_turnover_details a
+		LEFT JOIN
+			trains.sys_office b ON a.belong_office_id = b.id
+		WHERE 
+			a.order_id = #{orderId}
+		AND a.details_id = #{detailsId}
+		GROUP BY a.belong_office_id
+	</select>
+	<!-- 获取营业额信息 -->
+	<select id="getTurnover" resultType="TurnOverDetails">
+		SELECT
+			a.id AS detailsId,
+			a.order_id AS orderId,
+			a.goods_mapping_id AS mappingId,
+			SUM(a.return_amount) AS amount,
+			a.audit_date AS createDate
+		FROM
+			mtmydb.mtmy_returned_goods a
+		WHERE 
+			a.order_id = #{orderId}
+		AND a.id = #{returnedId}
+	</select>
+	<!-- 查询业务员提成总额 -->
+	<select id="getOrderPushmoneyRecord" resultType="OrderPushmoneyRecord">
+		SELECT
+			r.id AS pushmoneyRecordId,
+			r.order_id AS orderId,
+			r.user_id AS pushmoneyUserId,
+			r.user_office_id as userOfficeId,
+			r.user_office_ids as userOfficeIds,
+			SUM(r.push_money) AS pushMoney,
+			r.create_by AS "createBy.id",
+			r.create_date AS createDate,
+			su1.`name` AS pushmoneyUserName,
+			su1.mobile AS pushmoneyUserMobile,
+			su2.`name` AS "createBy.name",
+			td.`name` AS "departmentName"
+		FROM
+			mtmydb.mtmy_beautician_turnover r,trains.sys_user su1,trains.sys_user su2,trains.train_department td
+		WHERE r.user_id = su1.id
+		AND r.create_by = su2.id
+		AND r.department_id = td.id
+		AND r.order_id = #{orderId}
+		AND r.del_flag = '0'
+		GROUP BY
+			r.department_id,r.user_id
+	</select>
+	<!-- 获取每个店铺的营业额 -->
+	<select id="getSumTurnover" resultType="TurnOverDetails">
+		SELECT
+			SUM(a.amount) AS amount,
+			a.belong_office_id
+		FROM
+			ydatadb.mtmy_turnover_details a
+		WHERE
+			a.order_id = #{orderId}
+		AND a.mapping_id = #{mappingId}
+	</select>
+	<!-- 获取店营业额明细列表 -->
+	<select id="getMtmyTurnoverDetails" resultType="TurnOverDetails">
+		SELECT
+			a.order_id AS orderId,
+			a.mapping_id AS mappingId,
+			a.details_id AS detailsId,
+			a.type,
+			a.amount,
+			a.use_balance AS useBalance,
+			a.status,
+			a.belong_office_id AS belongOfficeId,
+			b.name AS officeName
+		FROM
+			ydatadb.mtmy_turnover_details a
+		LEFT JOIN 
+			trains.sys_office b on a.belong_office_id = b.id
+		WHERE 
+			a.order_id = #{orderId}
+		AND a.mapping_id = #{goodsMappingId}
+		AND a.type = 3
+		GROUP BY
+			a.belong_office_id
+	</select>
 	<!-- 修改套卡子项虚拟商品的剩余次数 -->
 	<update id="updateCardNum">
 		UPDATE mtmydb.mtmy_returned_goods_card SET
@@ -419,4 +542,191 @@
 			</otherwise>
 		</choose>
 	</select>
+	<!-- 获取店铺营业额的操作日志 -->
+	<select id="findMtmyTurnoverDetailsList" resultType="TurnOverDetails">
+		SELECT
+			a.order_id AS orderId,
+			a.mapping_id AS mappingId,
+			a.details_id AS detailsId,
+			a.type,
+			a.amount,
+			a.use_balance AS useBalance,
+			a.status,
+			a.user_id AS userId,
+			a.user_office_id AS userOfficeId,
+			a.user_beautician_id AS userBeauticianId,
+			a.belong_office_id AS belongOfficeId,
+			a.belong_office_ids AS belongOfficeIds,
+			a.create_by AS createBy,
+			a.create_date AS createDate,
+			b.name AS userName,
+			c.name AS officeName,
+			d.name AS beauticianName,
+			e.name AS belongOfficeName,
+			f.name AS createName
+		FROM
+			ydatadb.mtmy_turnover_details a
+		LEFT JOIN 
+			mtmydb.mtmy_users b on a.user_id = b.user_id
+		LEFT JOIN 
+			trains.sys_office c on a.user_office_id = c.id
+		LEFT JOIN 
+			trains.sys_user d on a.user_beautician_id = d.id
+		LEFT JOIN 
+			trains.sys_office e on a.belong_office_id = e.id
+		LEFT JOIN 
+			trains.sys_user f on a.create_by = f.id
+		WHERE 
+			a.order_id = #{orderId}
+	</select>
+	<!-- 保存店营业额增减值 -->
+	<insert id="saveMtmyTurnoverDetails">
+		INSERT INTO ydatadb.mtmy_turnover_details (
+			order_id,
+			mapping_id,
+			details_id,
+			type,
+			amount,
+			use_balance,
+			status,
+			user_id,
+			user_office_id,
+			user_beautician_id,
+			belong_office_id,
+			belong_office_ids,
+			create_by,
+			create_date,
+			settle_by,
+			settle_date
+		)VALUES(
+			#{orderId},
+			#{mappingId},
+			#{detailsId},
+			#{type},
+			#{amount},
+			#{useBalance},
+			#{status},
+			#{userId},
+			#{userOfficeId},
+			#{userBeauticianId},
+			#{belongOfficeId},
+			#{belongOfficeIds},
+			#{createBy.id},
+			SYSDATE(),
+			#{createBy.id},
+			SYSDATE()
+		)
+	</insert>
+	
+	<!-- 查询业务员提成总额 -->
+	<select id="findOrderPushmoneyRecordList" resultType="OrderPushmoneyRecord">
+		SELECT
+			r.order_id AS orderId,
+			r.user_id AS pushmoneyUserId,
+			SUM(r.push_money) AS pushMoney,
+			r.department_id AS departmentId,
+			su1.`name` AS pushmoneyUserName,
+			su1.mobile AS pushmoneyUserMobile,
+			td.`name` AS "departmentName"
+		FROM
+			mtmydb.mtmy_beautician_turnover r
+		LEFT JOIN
+			trains.sys_user su1 ON r.user_id = su1.id
+		LEFT JOIN
+			trains.sys_user su2 ON r.create_by = su2.id
+		LEFT JOIN
+			trains.train_department td ON r.department_id = td.id
+		WHERE
+			r.order_id = #{orderId}
+		GROUP BY
+			r.department_id,r.user_id
+	</select>
+	
+	<!-- 查询每个业务员的售后审核扣减的营业额 -->
+	<select id="getReturnedPushmoneyList" resultType="OrderPushmoneyRecord">
+		SELECT
+			r.order_id AS orderId,
+			r.user_id AS pushmoneyUserId,
+			SUM(r.push_money) AS pushMoney
+		FROM
+			mtmydb.mtmy_beautician_turnover r
+		WHERE
+			r.order_id = #{orderId}
+		AND r.returned_id = #{detailsId}
+		GROUP BY
+			r.department_id,r.user_id
+	</select>
+	
+	<!-- 获取每个业务员部门的营业额合计 -->
+	<select id="getSumBeauticianTurnover" resultType="OrderPushmoneyRecord">
+		SELECT
+			SUM(r.push_money) AS pushMoney,
+			r.department_id AS departmentId
+		FROM
+			mtmydb.mtmy_beautician_turnover r
+		LEFT JOIN
+			trains.train_department td ON r.department_id = td.id
+		WHERE
+			r.order_id = #{orderId}
+		GROUP BY
+			r.department_id
+	</select>
+	
+	<!-- 查询业务员营业额明细列表-->
+	<select id="getBeauticianTurnoverList" resultType="OrderPushmoneyRecord">
+		SELECT
+			r.id AS pushmoneyRecordId,
+			r.order_id AS orderId,
+			r.returned_id AS returnedId,
+			r.turnover_details_id AS turnoverDetailsId,
+			r.user_id AS pushmoneyUserId,
+			r.user_office_id as userOfficeId,
+			r.user_office_ids as userOfficeIds,
+			r.position_key as positionKey,
+			r.position_value as positionValue,
+			r.department_id as departmentId,
+			r.office_id as officeId
+		FROM
+			mtmydb.mtmy_beautician_turnover r
+		WHERE
+			r.order_id = #{orderId}
+		GROUP BY
+			r.department_id,r.user_id
+	</select>
+	
+	<!-- 保存业务员营业额增减值 -->
+	<insert id="saveBeauticianTurnover">
+		INSERT INTO mtmydb.mtmy_beautician_turnover (
+			order_id,
+			returned_id,
+			turnover_details_id,
+			type,
+			user_id,
+			push_money,
+			user_office_id,
+			user_office_ids,
+			position_key,
+			position_value,
+			department_id,
+			office_id,
+			create_by,
+			create_date
+		)VALUES(
+			#{orderId},
+			#{returnedId},
+			#{pushmoneyRecordId},
+			#{type},
+			#{pushmoneyUserId},
+			#{pushMoney},
+			#{userOfficeId},
+			#{userOfficeIds},
+			#{positionKey},
+			#{positionValue},
+			#{departmentId},
+			#{officeId},
+			#{createBy.id},
+			SYSDATE()
+		)
+	</insert>
+	
 </mapper>

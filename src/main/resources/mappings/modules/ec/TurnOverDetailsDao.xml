@@ -188,7 +188,12 @@
 		LEFT JOIN trains.sys_user u ON u.id = mbt.user_id
 		LEFT JOIN trains.train_department d ON d.id = mbt.department_id
 		LEFT JOIN trains.sys_user u1 ON u1.id = mbt.create_by
-		WHERE mbt.turnover_details_id = #{id}
-		GROUP BY u.id
+		WHERE 
+		<if test="turnOverDetailsId !=null and turnOverDetailsId !=''">
+			mbt.turnover_details_id = #{turnOverDetailsId}
+		</if>
+		<if test="orderId != null and orderId !=''">
+			mbt.order_id = #{orderId}
+		</if>
 	</select>
 </mapper>

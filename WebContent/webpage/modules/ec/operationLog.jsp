@@ -19,6 +19,7 @@
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 						<input id="turnOverDetailsId" name="turnOverDetailsId" type="hidden" value="${turnOverDetailsId}"/>
+						<input id="orderId" name="orderId" type="hidden" value="${orderId}"/>
 					</form:form>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 							<tr>
