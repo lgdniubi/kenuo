@@ -657,7 +657,6 @@ public class SystemService extends BaseService implements InitializingBean {
 			if (StringUtils.isNotBlank(user.getId())) {
 				User toUser = userDao.get(user);
 				String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
-//				String weburl = "172.50.3.21:8081/cs_service/syncDB/syncUser.htm";
     			logger.info("##### web接口路径:"+weburl);
     			String parpm = "{\"user_id\":\""+toUser.getId()+"\",\"user_name\":\""+toUser.getName()+"\",\"franchisee_id\":"+toUser.getCompany().getId()+","
     					+ "\"user_mobile\":\""+toUser.getMobile()+"\",\"login_name\":\""+toUser.getLoginName()+"\"}";

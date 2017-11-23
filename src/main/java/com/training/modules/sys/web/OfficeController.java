@@ -325,7 +325,6 @@ public class OfficeController extends BaseController {
 			 * 此处调用报货接口，在修改机构父项时将修改的机构数据同步到报货（只同步修改父项机构时）
 			 */
 			String weburl = ParametersFactory.getMtmyParamValues("modifyToOffice");
-//					String weburl = "172.50.3.21:8081/cs_service/syncDB/syncOffice.htm";
 			logger.info("##### web接口路径:"+weburl);
 			String parpm = "{\"office_id\":\""+office.getId()+"\",\"office_name\":\""+office.getName()+"\","
 					+ "\"franchisee_id\":"+office.getFranchisee().getId()+","
