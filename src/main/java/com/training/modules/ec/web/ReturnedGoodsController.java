@@ -2,6 +2,7 @@ package com.training.modules.ec.web;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -532,6 +533,11 @@ public class ReturnedGoodsController extends BaseController {
 			String departmentIds = "";//所有部门的id字符串
 			beauticianTurnover = list.get(0).getPushMoney();
 			
+			//之前的老订单会存在售后没有审核时间,由申请时间替代
+			Date createDate = turnOverDetails.getCreateDate();
+			if(createDate == null){
+				createDate = turnOverDetails.getApplyDate();
+			}
 			if(pushmoneyList.size() !=0){//判断营业额是否为第一次编辑,为营业额赋值
 				added = pushmoneyList.get(0).getPushMoney();
 			}
@@ -543,7 +549,7 @@ public class ReturnedGoodsController extends BaseController {
 					turnoverRatio = Double.parseDouble(formater.format(beauticianTurnover/sumTurnover*returnAmount));//占比
 					userTurnover = userTurnover + 
 							"<tr style='text-align: center;'> "+
-							"<td rowspan='"+num+"'>"+DateUtils.formatDate(turnOverDetails.getCreateDate(), "yyyy-MM-dd HH:mm:ss")+"</td> "+
+							"<td rowspan='"+num+"'>"+DateUtils.formatDate(createDate, "yyyy-MM-dd HH:mm:ss")+"</td> "+
 							"<td rowspan='"+num+"'>售后</td> "+
 							"<td rowspan='"+num+"'>"+returnAmount+"</td> "+
 							"<td style='text-align: center;'>"+list.get(0).getPushmoneyUserName()+"</td> "+
@@ -642,6 +648,11 @@ public class ReturnedGoodsController extends BaseController {
 		double added = 0;//数据库查询的原始营业额
 		String shopTurnover = "";//jsp界面的页面展示字符串
 		if(list.size() != 0 ){
+			//之前的老订单会存在售后没有审核时间,由申请时间替代
+			Date createDate = turnOverDetails.getCreateDate();
+			if(createDate == null){
+				createDate = turnOverDetails.getApplyDate();
+			}
 			storeTurnover = list.get(0).getAmount();
 			//获取每个店铺的营业额
 			List<TurnOverDetails> sumTurnoverList = returnedGoodsService.getSumTurnover(turnOverDetails);
@@ -656,7 +667,7 @@ public class ReturnedGoodsController extends BaseController {
 			int num = list.size(); //集合的长度
 			shopTurnover = shopTurnover + 
 					"<tr style='text-align: center;'> "+
-						"<td rowspan='"+num+"'>"+DateUtils.formatDate(turnOverDetails.getCreateDate(), "yyyy-MM-dd HH:mm:ss")+"</td> "+
+						"<td rowspan='"+num+"'>"+DateUtils.formatDate(createDate, "yyyy-MM-dd HH:mm:ss")+"</td> "+
 						"<td rowspan='"+num+"'>售后</td> "+
 						"<td rowspan='"+num+"'>"+returnAmount+"</td> "+
 						"<td style='text-align: center;'>"+list.get(0).getBelongOfficeName()+"</td> "+
