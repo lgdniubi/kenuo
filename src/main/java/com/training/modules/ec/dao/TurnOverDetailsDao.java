@@ -56,7 +56,7 @@ public interface TurnOverDetailsDao extends CrudDao<TurnOverDetails>{
 	
 	/**
 	 * 查看业务员营业额明细 
-	 * @param turnOverDetailsId
+	 * @param orderPushmoneyRecord
 	 * @return
 	 */
 	public List<OrderPushmoneyRecord> queryDetailsForPush(OrderPushmoneyRecord orderPushmoneyRecord);

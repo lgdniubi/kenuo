@@ -60,7 +60,7 @@
 			  if(parseFloat(ra)<0){
 				  top.layer.alert('退款金额必须大于等于0，小于等于支付金额!', {icon: 0, title:'提醒'});
 				  return;
-			  }else if(parseFloat(totalAmount) < parseFloat(ra)){
+			  }else if(parseFloat(surplusReturnAmount) < parseFloat(ra)){
 				  top.layer.alert('退款金额必须大于等于0，小于等于支付金额!', {icon: 0, title:'提醒'});
 				  return;
 			  }
@@ -137,6 +137,23 @@
 				$("#orderAmount").val(orderAmount);
 				$("#totalAmount").val(totalAmount);
 			}
+			//售后金额 <= 实付金额-已售后
+			$.ajax({
+				type:"post",
+				async:false,
+				data:{
+					goodsMappingId:recid,
+					orderId:orderId
+				 },
+				url:"${ctx}/ec/returned/getSurplusReturnAmount",
+				success:function(obj){
+					//计算商品剩余可退款金额
+					surplusReturnAmount = totalAmount - obj;
+				},
+				error:function(XMLHttpRequest,textStatus,errorThrown){
+							    
+				}
+			});
 		}
 		//实物售后数量校验
 		function findReturnNum (id,num){
@@ -155,7 +172,7 @@
 			if(parseFloat(ra)<0){
 				top.layer.alert('退款金额必须大于等于0，小于等于支付金额!', {icon: 0, title:'提醒'});
 				return;
-			}else if(parseFloat(totalAmount) < parseFloat(ra)){
+			}else if(parseFloat(surplusReturnAmount) < parseFloat(ra)){
 				top.layer.alert('退款金额必须大于等于0，小于等于支付金额!', {icon: 0, title:'提醒'});
 				return;
 			}
@@ -312,7 +329,7 @@
 								<th style="text-align: center;">成本价</th>
 								<th style="text-align: center;">购买数量</th>
 								<th style="text-align: center;">应付款</th>
-								<th style="text-align: center;">实付款</th>
+								<th style="text-align: center;">实付金额</th>
 								<th style="text-align: center;">欠款</th>
 							</tr>
 						</thead>

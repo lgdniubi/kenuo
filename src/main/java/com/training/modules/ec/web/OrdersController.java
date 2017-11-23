@@ -3118,6 +3118,7 @@ public class OrdersController extends BaseController {
 			Page<OrderPushmoneyRecord> page = turnOverDetailsService.queryDetailsForPush(new Page<OrderPushmoneyRecord>(request, response), orderPushmoneyRecord);
 			model.addAttribute("page",page);
 			model.addAttribute("turnOverDetailsId",orderPushmoneyRecord.getTurnOverDetailsId());
+			model.addAttribute("orderId",orderPushmoneyRecord.getOrderId());
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "查看营业额操作日志页面", e);
 			logger.error("查看营业额操作日志出错信息：" + e.getMessage());

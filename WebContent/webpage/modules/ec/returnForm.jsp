@@ -16,6 +16,7 @@
 		var orderArrearage=0;//订单欠款
 		var totalAmount=0;//实付款
 		var returnedGoodsNum = 0;//后台查询出来 "实物" 中正在退货的商品数量
+		var surplusReturnAmount = 0;//剩余退款可退款金额
 		var validateForm;
 		
 		var advanceFlag;
@@ -81,7 +82,7 @@
 				  if(parseFloat(ra)<0){
 					  top.layer.alert('退款金额必须大于等于0，小于实付款金额!', {icon: 0, title:'提醒'});
 					  return;
-				  }else if(parseFloat(totalAmount) < parseFloat(ra)){
+				  }else if(parseFloat(surplusReturnAmount) < parseFloat(ra)){
 					  top.layer.alert('退款金额必须大于等于0，小于实付款金额!', {icon: 0, title:'提醒'});
 					  return;
 				  }
@@ -216,7 +217,23 @@
 					
 				}
 			}
-			
+			//售后金额 <= 实付金额-已售后
+			$.ajax({
+				type:"post",
+				async:false,
+				data:{
+					goodsMappingId:id,
+					orderId:orderId
+				 },
+				url:"${ctx}/ec/returned/getSurplusReturnAmount",
+				success:function(obj){
+					//计算商品剩余可退款金额
+					surplusReturnAmount = totalAmount - obj;
+				},
+				error:function(XMLHttpRequest,textStatus,errorThrown){
+							    
+				}
+			});
 		}
 		
 		//退款 换货 展示隐藏 退款数量
@@ -259,7 +276,7 @@
 			if(parseFloat(ra)<0){
 				top.layer.alert('退款金额必须大于等于0，小于实付款金额!', {icon: 0, title:'提醒'});
 				return;
-			}else if(parseFloat(totalAmount)<parseFloat(ra)){
+			}else if(parseFloat(surplusReturnAmount)<parseFloat(ra)){
 				top.layer.alert('退款金额必须大于等于0，小于实付款金额!', {icon: 0, title:'提醒'});
 				return;
 			}
@@ -418,7 +435,7 @@
 								<th style="text-align: center;">系统价</th>
 								<th style="text-align: center;">成交价</th>
 								<th style="text-align: center;">购买数量</th>
-								<th style="text-align: center;">实付款</th>
+								<th style="text-align: center;">实付金额</th>
 								<c:if test="${orders.isReal==1}">
 									<th style="text-align: center;">实际服务单价</th>
 									<th style="text-align: center;">截止时间</th>
