@@ -6,6 +6,9 @@
 	<meta name="decorator" content="default"/>
 	<link rel="stylesheet" href="${ctxStatic}/train/css/exam.css">
 	<script type="text/javascript">
+		function test(){
+			$("#num").val(1);
+		}
 		
 		function selectUser(){
 			var sysName = $("#sysName").val();
@@ -22,9 +25,10 @@
 				url:"${ctx}/ec/orders/querySysUser",
 				success:function(data){
 					$("#addSon").html("");
+					$("#num").val(0);
 					if(data.length > 0){
 						$.each(data,function(index,item){
-							$("#addSon").append("<tr><td><input type='radio' name='coffee' value='"+item.id+"'></td><td style='text-align: center;'>"+item.name+"<input id='userId' name='userId' type='hidden' value='"+item.id+"'></td>"
+							$("#addSon").append("<tr><td><input type='radio' name='coffee' value='"+item.id+"' onchange='test()'></td><td style='text-align: center;'>"+item.name+"<input id='userId' name='userId' type='hidden' value='"+item.id+"'></td>"
 											   +"<td style='text-align: center;'>"+item.positonName+"</td>"
 											   +"<td style='text-align: center;'>"+item.departmentName+"<input id='departmentId' name='departmentId' type='hidden' value='"+item.departmentId+"'></td>"
 											   +"<td style='text-align: center;'>"+item.officeName+"</td>"
@@ -56,6 +60,7 @@
 	                <div class="tab-inner">
 	                	<label class="active" id="search"><font color="red">*</font>业务员姓名：</label>
 	                	<input type="text" id="sysName" name="sysName" class="form-control required" />
+	                	<input id="num" name="num" value="0" type="hidden">
 	                	<div class="pull-right" id="condition">
 		                	<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="selectUser()" ><i class="fa fa-search"></i> 查询</button>
 		                	<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="empty()" ><i class="fa fa-refresh"></i> 重置</button>

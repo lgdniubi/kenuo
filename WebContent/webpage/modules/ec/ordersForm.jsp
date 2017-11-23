@@ -42,6 +42,13 @@
 		}, "小数位不能超过三位"); 
 		
 		$(document).ready(function() {
+			if($("#isNeworder").val() == 0){
+				$("#beauticianMoney").show();
+				$("#shopMoney").show();
+			}else{
+				$("#beauticianMoney").hide();
+				$("#shopMoney").hide();
+			}
 			if($("#isReal").val() == '1'){
 				$("#shipping").hide();
 			}
@@ -356,6 +363,7 @@
 	
      function editSysUserInfo(turnOverDetailsId){
     	 var orderid = $("#orderid").val();
+    	 var isDecided = false;		//表单是否已经提交标识，默认为false
   		// 正常打开	
   		top.layer.open({
   			type: 2, 
@@ -398,6 +406,14 @@
 	 	    			return;
       	    		}
       	    	}
+				
+				//防止表单多次提交
+			    if(isDecided == false){
+			    	isDecided = true;		//提交表单后，将表单是否已经提交标识设置为true
+			   	}else{
+			       	return false;			
+				}
+				
    	    		$.ajax({
        				type:"post",
        				data:$(obj.document.getElementById("mosaic")).serialize(),
@@ -629,6 +645,7 @@ window.onload=initStatus;
 							<input type="hidden" id="channelFlag" value="${orders.channelFlag}" />
 							<input type="hidden" id="isReal" value="${orders.isReal}" />
 							<input type="hidden" id="operationName" value="${user.name}" />
+							<input type="hidden" id="isNeworder" name="isNeworder" value="${orders.isNeworder}" >
 							<h4>订单基本信息:&nbsp;&nbsp;<c:if test="${orders.isReal == 1}">虚拟订单</c:if>&nbsp;&nbsp;<c:if test="${orders.isReal == 0}">实物订单</c:if></h4><br>
 							<label class="active">订&nbsp;&nbsp;单&nbsp;号:</label>&nbsp;&nbsp;${orders.orderid }
 							<input type="hidden" id="orderid" name="orderid" value="${orders.orderid }" >
@@ -864,7 +881,7 @@ window.onload=initStatus;
 						</table>
 						</div>
 						<p></p>
-						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="beauticianMoney">
 						<h4>业务员营业额:</h4>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 								<tr>
@@ -883,7 +900,7 @@ window.onload=initStatus;
 						</table>
 						</div>
 						<p></p>
-						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="shopMoney">
 						<h4>店营业额:</h4>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 								<tr>

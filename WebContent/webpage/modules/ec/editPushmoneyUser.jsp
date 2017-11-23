@@ -21,13 +21,17 @@
 	     	    ,yes: function(index, layero){
 	     	    	var obj =  layero.find("iframe")[0].contentWindow;
 	     	    	var coffee = obj.document.getElementsByName("coffee"); //单选框
-	     	    	var departmentId = obj.document.getElementsByName("departmentId"); //单选框
+	     	    	var num = obj.document.getElementById("num").value; //单选框是否被选中
+	     	    	var departmentId = obj.document.getElementsByName("departmentId"); //部门id
 	     	    	var userId = '';
-					if(coffee.length <= 0){
-						top.layer.alert('请选择一条数据', {icon: 0, title:'提醒'});
+	     	    	if(coffee.length <= 0){
+						top.layer.alert('请选择一条数据!', {icon: 0, title:'提醒'});
 	     	    		return;
 					}
-					
+				 	if(num == 0){
+			        	top.layer.alert('请选择一条数据!', {icon: 0, title:'提醒'}); 
+			        	return;
+				 	}
 	     	    	for (i=0;i<coffee.length;i++){
 	 		       		if(coffee[i].checked == true){
 	 		       			userId = coffee[i].value;
@@ -66,7 +70,7 @@
 	    						$("#mytable").append("<tr><td style='text-align: center;'>"+item.name+"<input id='pushmoneyUserId' name='pushmoneyUserId' type='hidden' value='"+item.id+"'></td>"
 	    										   +"<td style='text-align: center;'>"+item.departmentName+"<input id='departmentName' name='departmentName' type='hidden' value='"+item.departmentName+"'><input id='departmentId' name='departmentId' type='hidden' value='"+item.departmentId+"'></td>"
 	    										   +"<td style='text-align: center;'>"+item.mobile+"</td>"
-	    										   +"<td style='text-align: center;'><input width='10px' id='changeValue' name='changeValue' value='0' style='text-align: center;' class='"+item.departmentId+"'></td>"
+	    										   +"<td style='text-align: center;'><input width='10px' id='changeValue' name='changeValue' value='0' style='text-align: center;' onblur='checknum(this.value)' class='"+item.departmentId+"'></td>"
 	    										   +"<td style='text-align: center;'><input width='10px' id='pushMoney' name='pushMoney' value='0' disabled='disabled' style='text-align: center;' class='"+item.departmentId+"'><input id='pushMoneySum' name='pushMoneySum' value='0' type='hidden'></td>"
 	    										   +"<td style='text-align: center;'><a href='#' onclick='delSysUserInfo(this)' class='btn btn-danger btn-xs' ><i class='fa fa-edit'></i>删除</a></td></tr>"
 	    						);                                                                           
@@ -83,6 +87,18 @@
 		
 		function delSysUserInfo(obj){
 			$(obj).parent().parent().remove();
+		}
+		
+		//判断输入的营业额
+		function checknum(obj){
+			var re = /^([+-]?)\d*\.?\d{0,2}$/; 
+			if(obj == ''){
+				$("#changeValue").val(0);
+			}
+			if(!re.test(obj)){
+				top.layer.alert('请输入正确的金额(最多两位小数)', {icon: 0, title:'提醒'});
+				return;
+			}
 		}
 	</script>
 </head>
@@ -146,7 +162,7 @@
 														<input id="pushMoney" name="pushMoney" value="${orderPushmoneyRecord.pushMoney}" type="hidden" class="${orderPushmoneyRecord.departmentId}">
 													</td>
 													<td align="center">
-														<input width="10px" id="changeValue" name="changeValue" value="0" style="text-align: center;" class="${orderPushmoneyRecord.departmentId}" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';">
+														<input width="10px" id="changeValue" name="changeValue" value="0" style="text-align: center;" class="${orderPushmoneyRecord.departmentId}" onblur="checknum(this.value)">
 														<input id="pushMoneySum" name="pushMoneySum" value="${orderPushmoneyRecord.pushMoneySum}" type="hidden">
 													</td>
 													<td align="center">

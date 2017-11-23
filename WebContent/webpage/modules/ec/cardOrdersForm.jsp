@@ -52,6 +52,13 @@
 			}else{
 				$("#logistics").hide();
 			}*/
+			if($("#isNeworder").val() == 0){
+				$("#beauticianMoney").show();
+				$("#shopMoney").show();
+			}else{
+				$("#beauticianMoney").hide();
+				$("#shopMoney").hide();
+			}
 			//物流类型来判断是否显示物流地址
 			$("#shippingtype").change(function(){
 				var shippingtype = $(this).val();
@@ -227,118 +234,7 @@
          $(obj).parent().parent().remove();
      }
 	
-   //修改业务员信息
- 	function updateFileSysUserInfo(obj,pushmoneyRecordId){
- 		var orderamount = $("#orderamount").val();
- 		var channelFlag = $("#channelFlag").val();
-    	var ordersGoodsprice = $("#ordersGoodsprice").val();
-    	var couponprice = $("#couponprice").val();
-    	var memberGoodsPrice = $("#memberGoodsPrice").val();
- 		top.layer.open({
-  			type: 2, 
-  		    area: ['550px', '420px'],
-  		    title:"业务员选择",
-  		    content: "${ctx}/ec/orders/getPushmoneyView?pushmoneyRecordId="+pushmoneyRecordId,
-  		    btn: ['确定', '关闭']
-      	    ,yes: function(index, layero){
-      	    	var obj =  layero.find("iframe")[0].contentWindow;
-      	    	var sysUserId = obj.document.getElementById("sysUserId").value; //员工id
-      	    	var sysMobile = obj.document.getElementById("sysMobile").value; //员工电话
-      	    	var sysName = obj.document.getElementById("sysName").value; //员工名称
-      	    	var pushMoney = obj.document.getElementById("pushMoney").value; //营业额
-      	    	var orderid =  $("#orderid").val();
-      	    	var isReal =  $("#isReal").val();
-      	    	if(pushMoney==""){
-      	    		top.layer.alert('填写营业额！', {icon: 0, title:'提醒'});
-      	    		return;
-      	    	}else{
-	   	    		var re = /^([+-]?)\d*\.?\d{0,2}$/; 
-	   				if(!re.test(pushMoney)){
-	   					top.layer.alert('请输入正确的营业额(最多两位小数)', {icon: 0, title:'提醒'});
-	     	    		return;
-	   				}
-    	    	}
-      	    	if(sysUserId == ""){
-    	    		top.layer.alert('填写业务员！', {icon: 0, title:'提醒'});
-     	    		return;
-     	    	}
-      	    	if(channelFlag == 'bm'){
-   	    			if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-    	    			top.layer.alert('营业额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
-     	    			return;
-     	    		}
-   	    		}else{
-   	    			if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(ordersGoodsprice - couponprice - memberGoodsPrice) > 0){
-    	    			top.layer.alert('营业额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
-     	    			return;
-     	    		}
-   	    		}
-      	    	
-      	    	/* var belongUserId = $("#belongUserId").val(); 
-				if(sysUserId == belongUserId){
-					top.layer.alert('归属人和业务员不能是同一个人!', {icon: 0, title:'提醒'}); 
-					return;
-				} */
-   	    		var pushMoneySum = $("#"+sysUserId+"pushMoneySum").val();
-  	    		if(pushMoneySum == undefined){
-  	    			pushMoneySum=0;
-  	    		}
-	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) < 0){
-	    			top.layer.alert('营业总额必须大于0！', {icon: 0, title:'提醒'});
-	    			return;
-	    		}
-	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-	    			top.layer.alert('营业总额小于等于订单应付总额！', {icon: 0, title:'提醒'});
-	    			return;
-	    		}
-      	    	
-      	    	$.ajax({
-       				type:"post",
-       				data:{
-       					orderId:orderid,
-       					pushmoneyUserId:sysUserId,
-       					pushMoney:pushMoney
-       				 },
-       				url:"${ctx}/ec/orders/saveOrderPushmoneyRecord?flag=edit"+"&pushmoneyRecordId="+pushmoneyRecordId,
-       				success:function(date){
-       					if(date == 'success'){
-       						$(obj).parent().parent().remove();
-       						top.layer.alert('修改业务员成功', {icon: 0, title:'提醒'});
-       						window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid+"&isReal="+isReal+"&type=edit";
-       	     				top.layer.close(index);
-       					}else{
-       						top.layer.alert('修改业务员失败', {icon: 0, title:'提醒'});
-       					}
-       				},
-       				error:function(XMLHttpRequest,textStatus,errorThrown){
-       					
-       				}
-       			});
-  			}
-  		}); 
- 	}
 	
-	//删除业务员
-     function delFileSysUserInfo(obj,pushmoneyRecordId){
-		$.ajax({
-			type:"post",
-			data:{
-				pushmoneyRecordId:pushmoneyRecordId
-			 },
-			url:"${ctx}/ec/orders/deleteSysUserInfo",
-			success:function(date){
-				if(date == 'success'){
-					$(obj).parent().parent().remove();
-					top.layer.alert('删除业务员成功', {icon: 0, title:'提醒'});
-				}else{
-					top.layer.alert('删除业务员失败', {icon: 0, title:'提醒'});
-				}
-			},
-			error:function(XMLHttpRequest,textStatus,errorThrown){
-				
-			}
-		});
-     }
 	//删除备注信息
      function delOrderRemarks(obj){
 		var orderRemarksId = $("#orderRemarksId").val();
@@ -362,101 +258,67 @@
 		});
      }
 	
-     function getSysUserInfo(){
-   		var orderamount = $("#orderamount").val();
-    	var sysUserIds = document.getElementsByName("sysUserId");
-    	var operationName = $("#operationName").val();
-    	var channelFlag = $("#channelFlag").val();
-    	var ordersGoodsprice = $("#ordersGoodsprice").val();
-    	var couponprice = $("#couponprice").val();
-    	var memberGoodsPrice = $("#memberGoodsPrice").val();
-    	if ($("#mtmyUserButton").hasClass("disabled")){
- 			return true;
- 		}
- 		// 正常打开	
- 		top.layer.open({
- 		    type: 2, 
- 		    area: ['550px', '420px'],
- 		    title:"业务员选择",
- 		    ajaxData:{selectIds: $("#goodselectId").val()},
- 		    content: "${ctx}/ec/orders/getPushmoneyView",
- 		    btn: ['确定', '关闭']
-     	    ,yes: function(index, layero){
-     	    	var obj =  layero.find("iframe")[0].contentWindow;
-     	    	var sysUserId = obj.document.getElementById("sysUserId").value; //员工id
-     	    	var sysMobile = obj.document.getElementById("sysMobile").value; //员工电话
-     	    	var sysName = obj.document.getElementById("sysName").value; //员工名称
-     	    	var pushMoney = obj.document.getElementById("pushMoney").value; //营业额
-     	    	var orderid =  $("#orderid").val();
-     	    	var isReal =  $("#isReal").val();
-     	    	
-     	    	if(pushMoney==""){	
-    	    		top.layer.alert('填写营业额！', {icon: 0, title:'提醒'});
-     	    		return;
-    	    	}else{
-	   	    		var re = /^([+-]?)\d*\.?\d{0,2}$/; 
-	   				if(!re.test(pushMoney)){
-	   					top.layer.alert('请输入正确的营业额(最多两位小数)', {icon: 0, title:'提醒'});
-	     	    		return;
-	   				}
-    	    	}
-     	    	if(sysUserId == ""){
-    	    		top.layer.alert('填写业务员！', {icon: 0, title:'提醒'});
-     	    		return;
-     	    	}
-     	    	if(channelFlag == 'bm'){
-   	    			if(parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-    	    			top.layer.alert('营业额小于等于订单应付总额！', {icon: 0, title:'提醒'});
-     	    			return;
-     	    		}
-   	    		}else{
-   	    			if(parseFloat(pushMoney) - parseFloat(ordersGoodsprice - couponprice - memberGoodsPrice) > 0){
-    	    			top.layer.alert('营业额小于等于订单应付总额！', {icon: 0, title:'提醒'});
-     	    			return;
-     	    		}
-   	    		}
-     	    	
-   	    		/* if(sysUserIds.length > 0){
-  	    			for(i=0;i<sysUserIds.length;i++){
-       	    	        if(sysUserId == sysUserIds[i].value){
-       	    	        	top.layer.alert('业务员不能相同！', {icon: 0, title:'提醒'});
-       	     	    		return;
-       	    	        }
-       	    	    }
-  	    		} */
-  	    		
-     	    	var belongUserId = $("#belongUserId").val(); 
-				if(sysUserId == belongUserId){
-					top.layer.alert('归属人和业务员不能是同一个人!', {icon: 0, title:'提醒'}); 
-					return;
+     function editSysUserInfo(turnOverDetailsId){
+    	 var orderid = $("#orderid").val();
+    	 var isDecided = false;		//表单是否已经提交标识，默认为false
+  		// 正常打开	
+  		top.layer.open({
+  			type: 2, 
+  		    area: ['800px', '520px'],
+  		    title:"新增/修改营业额：(提示：营业额数字不能修改，但可以插入正负数增减)",
+  		    content: "${ctx}/ec/orders/editPushmoneyUser?turnOverDetailsId="+turnOverDetailsId,
+  		    btn: ['确定', '关闭']
+      	    ,yes: function(index, layero){
+      	    	var map = {};
+      	    	var obj =  layero.find("iframe")[0].contentWindow;
+      	    	var amount = obj.document.getElementById("amount").value; //提成总金额
+      	    	var orderId = obj.document.getElementById("orderId").value; //订单id
+      	    	var pushmoneyUserId = obj.document.getElementsByName("pushmoneyUserId"); //提成人员id
+      	    	var departmentId = obj.document.getElementsByName("departmentId"); //提成人员部门id
+      	    	var departmentName = obj.document.getElementsByName("departmentName"); //提成人员部门
+      	    	var pushMoney = obj.document.getElementsByName("pushMoney"); //提成金额
+      	    	var changeValue = obj.document.getElementsByName("changeValue"); //加减额
+      	    	var pushMoneyTotal = obj.document.getElementsByName("pushMoneySum"); //单个营业员该订单的提成总额，下单+充值-退款
+      	    	for(i=0;i<pushmoneyUserId.length;i++){
+					var pushMoneySum = parseFloat(pushMoney[i].value) + parseFloat(changeValue[i].value);
+					if(parseFloat(pushMoneyTotal[i].value) + parseFloat(changeValue[i].value) < 0){
+						top.layer.alert('单个业务员的营业额不能小于其在该笔订单中的营业总额！', {icon: 0, title:'提醒'});
+	 	    			return;
+					}
+					if(pushMoneySum < 0){
+						top.layer.alert('单个业务员的营业额不能小于0！', {icon: 0, title:'提醒'});
+	 	    			return;
+					}
+					map[departmentName[i].value] = departmentId[i].value;
+				}     
+				
+				for(var j in map){
+					var sum = 0;
+					var result = obj.document.getElementsByClassName(map[j]);
+					for(k=0;k<result.length;k++){
+						sum = parseFloat(sum) + parseFloat(result[k].value); 
+					}
+      	    		if(parseFloat(sum) - parseFloat(amount) != 0){
+      	    			top.layer.alert('每个部门的营业额之和必须等于分享营业额！', {icon: 0, title:'提醒'});
+	 	    			return;
+      	    		}
+      	    	}
+				
+				//防止表单多次提交
+			    if(isDecided == false){
+			    	isDecided = true;		//提交表单后，将表单是否已经提交标识设置为true
+			   	}else{
+			       	return false;			
 				}
-  	    		
-     	    	var pushMoneySum = $("#"+sysUserId+"pushMoneySum").val();
-  	    		if(pushMoneySum == undefined){
-  	    			pushMoneySum=0;
-  	    		}
-	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) < 0){
-	    			top.layer.alert('营业总额必须大于0！', {icon: 0, title:'提醒'});
-	    			return;
-	    		}
-	    		if(parseFloat(pushMoneySum) + parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-	    			top.layer.alert('营业总额小于等于订单应付总额！', {icon: 0, title:'提醒'});
-	    			return;
-	    		}
-  	    		
+				
    	    		$.ajax({
        				type:"post",
-       				data:{
-       					orderId:orderid,
-       					pushmoneyUserId:sysUserId,
-       					pushMoney:pushMoney
-       				 },
-       				url:"${ctx}/ec/orders/saveOrderPushmoneyRecord?flag=add",
+       				data:$(obj.document.getElementById("mosaic")).serialize(),
+       				url:"${ctx}/ec/orders/savePushMoneyRecord",
        				success:function(date){
        					if(date == 'success'){
-       						$(obj).parent().parent().remove();
        						top.layer.alert('添加业务员成功', {icon: 0, title:'提醒'});
-       						window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid+"&isReal="+isReal+"&type=edit";
+       						window.location="${ctx}/ec/orders/orderform?orderid="+orderId+"&type=edit";
        	     				top.layer.close(index);
        					}else{
        						top.layer.alert('添加业务员失败', {icon: 0, title:'提醒'});
@@ -466,9 +328,9 @@
        					
        				}
        			});
- 			}
- 		}); 
- 	}
+  			}
+  		});  
+  	}
      
      function getRemarks(){
     	 var operationName = $("#operationName").val();
@@ -696,6 +558,7 @@ window.onload=initStatus;
 							<input type="hidden" id="channelFlag" value="${orders.channelFlag}" />
 							<input type="hidden" id="isReal" value="${orders.isReal}" />
 							<input type="hidden" id="operationName" value="${user.name}" />
+							<input type="hidden" id="isNeworder" name="isNeworder" value="${orders.isNeworder}" >
 							<h4>订单基本信息:&nbsp;&nbsp;<c:if test="${orders.isReal == 2}">套卡订单</c:if>&nbsp;&nbsp;<c:if test="${orders.isReal == 3}">通用卡订单</c:if></h4><br>
 							<label class="active">订&nbsp;&nbsp;单&nbsp;号:</label>&nbsp;&nbsp;${orders.orderid }
 							<input type="hidden" id="orderid" name="orderid" value="${orders.orderid }" >
@@ -815,7 +678,26 @@ window.onload=initStatus;
 							</div> 
 						</c:if>
 						<p></p>
-						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="beauticianMoney">
+						<h4>业务员营业额:</h4>
+						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+								<tr>
+									<th style="text-align: center;">时间</th>
+									<th style="text-align: center;">类型</th>
+									<th style="text-align: center;">金额</th>
+									<th style="text-align: center;">业务员</th>
+									<th style="text-align: center;">部门</th>
+									<th style="text-align: center;">手机号</th>
+									<th style="text-align: center;">营业额</th>
+									<th style="text-align: center;">操作</th>
+								</tr>
+								<tbody style="text-align:center;">	
+									<tr>${pushMoneryDetails}</tr>
+								</tbody>
+						</table>
+						</div>
+						<p></p>
+						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="shopMoney">
 						<h4>店营业额:</h4>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 								<tr>
