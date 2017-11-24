@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.ThemeDao">
+	
+	<!-- 查询热门主题列表 -->
+	<select id="findList" resultType="Theme">
+		SELECT 
+			id AS 'themeId',
+			name,
+			primary_name AS 'primaryName',
+			deputy_name AS 'deputyName',
+			content,
+			img,
+			sort,
+			is_recommend AS 'isRecommend',
+			is_show AS 'isShow',
+			create_by AS 'createBy.id',
+			create_date AS 'createDate'
+		FROM mtmydb.mtmy_theme 
+		WHERE del_flag = 0
+		ORDER BY create_date DESC
+	</select>
+	
+	<!-- 根据themeId获取热门主题 -->
+	<select id="getTheme" resultType="Theme">
+		SELECT 
+			id AS 'themeId',
+			name,
+			primary_name AS 'primaryName',
+			deputy_name AS 'deputyName',
+			content,
+			img,
+			sort,
+			is_recommend AS 'isRecommend',
+			is_show AS 'isShow',
+			create_by AS 'createBy.id',
+			create_date AS 'createDate',
+			update_by AS 'updateBy.id',
+			update_date AS 'updateDate'
+		FROM mtmydb.mtmy_theme
+		WHERE id = #{themeId}
+	</select>
+
+	<!-- 添加热门主题 -->
+	<insert id="insertTheme">
+		INSERT INTO mtmydb.mtmy_theme(
+			name,
+			primary_name,
+			deputy_name,
+			content,
+			img,
+			sort,
+			is_recommend,
+			is_show,
+			create_by,
+			create_date
+		)VALUES(
+			#{name},
+			#{primaryName},
+			#{deputyName},
+			#{content},
+			#{img},
+			#{sort},
+			0,
+			0,
+			#{createBy.id},
+			SYSDATE()
+		)
+	</insert>
+	
+	<!-- 修改热门主题 -->
+	<update id="updateTheme">
+		UPDATE mtmydb.mtmy_theme
+		SET 
+			name = #{name},
+			primary_name = #{primaryName},
+			deputy_name = #{deputyName},
+			content = #{content},
+			img = #{img},
+			sort = #{sort},
+			update_by = #{updateBy.id},
+			update_date = SYSDATE()
+		WHERE id = #{themeId}
+	</update>
+	
+	<!-- 逻辑删除热门主题 -->
+	<update id="delTheme">
+		UPDATE mtmydb.mtmy_theme
+		SET del_flag = 1
+		WHERE id = #{themeId}
+	</update>
+	
+	<!-- 修改热门主题是否显示或是否推荐 -->
+	<update id="updateType">
+		<if test="flag == 'isShow'">
+				UPDATE mtmydb.mtmy_theme SET is_show = #{isShow} WHERE id = #{themeId}
+		</if>
+		<if test="flag == 'isRecommend'">
+				UPDATE mtmydb.mtmy_theme SET is_recommend = #{isRecommend} WHERE id = #{themeId}
+		</if>
+	</update>
+	
+	<!-- 查询热门主题对应的商品 -->
+	<select id="selectGoodsForTheme" resultType="ThemeMapping">
+		SELECT
+			mta.id AS 'themeMappingId',
+			mta.theme_id AS 'themeId',
+			c2.name AS 'goods.goodsCategory.name',
+			c1.name AS 'goods.goodsCategory.parent.name',
+			g.goods_id AS 'goods.goodsId',
+			g.goods_name AS 'goods.goodsName'
+		FROM mtmydb.mtmy_theme_mapping mta
+		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id = mta.some_id
+		LEFT JOIN mtmydb.mtmy_goods_category c2 ON c2.category_id = g.category_id
+		LEFT JOIN mtmydb.mtmy_goods_category c1 ON c1.category_id = c2.parent_id
+		WHERE mta.theme_id = #{themeId}
+		AND g.del_flag = 0
+		AND c1.del_flag = 0
+		AND mta.type = 1
+		<if test="newGoodsId != null and newGoodsId != ''">
+			AND g.goods_id = #{newGoodsId}
+		</if>
+		<if test="newGoodsName != null and newGoodsName != ''">
+			AND g.goods_name like CONCAT('%', #{newGoodsName}, '%')
+		</if>
+		<if test="newGoodsCategoryId != null and newGoodsCategoryId != ''">
+			AND c2.category_id = #{newGoodsCategoryId}
+		</if> 
+	</select>
+	
+	<!-- 热门主题添加商品或文章 -->
+	<insert id="insertSomeThing">
+		INSERT INTO mtmydb.mtmy_theme_mapping(
+			theme_id,
+			type,
+			some_id
+		)VALUES(
+			#{themeId},
+			#{type},
+			#{someId}
+		)
+	</insert>
+	
+	<!-- 删除热门主题对应的商品或文章 -->
+	<delete id="delSomeThing">
+		DELETE FROM mtmydb.mtmy_theme_mapping WHERE id =#{themeMappingId}
+	</delete>
+	
+	<!-- 查询热门主题对应的文章 -->
+	<select id="selectArticlesIds" resultType="String">
+		SELECT GROUP_CONCAT(some_id)
+		FROM mtmydb.mtmy_theme_mapping
+		WHERE theme_id = #{themeId}
+		AND type = 0
+	</select>
+	
+	<!-- 批量删除热门主题对应的文章 -->
+	<delete id="deleteArticles">
+		DELETE FROM mtmydb.mtmy_theme_mapping WHERE theme_id =#{themeId} AND some_id = #{someId}
+	</delete>
+</mapper>
