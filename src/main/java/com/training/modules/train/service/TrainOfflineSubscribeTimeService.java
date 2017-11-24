@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.service.CrudService;
 import com.training.modules.train.dao.TrainOfflineSubscribeTimeDao;
-import com.training.modules.train.entity.Subscribe;
 import com.training.modules.train.entity.TrainOfflineSubscribeTime;
 
 /**
