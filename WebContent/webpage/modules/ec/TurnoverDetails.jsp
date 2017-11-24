@@ -25,7 +25,7 @@
 	     	    	
 	     	    	//判断是否存在数据
 	     	    	if(returnAmount==""){
-	     	    		top.layer.alert('该订单无数据', {icon: 0, title:'提醒'});
+	     	    		top.layer.alert('该订单无营业额数据', {icon: 0, title:'提醒'});
 	     	    		return;
 	     	    	}
 	     	    	//校验输入营业额+增减值+数据库的增减值>=0
@@ -67,8 +67,6 @@
 	  				  	add = 0;
 	  				    turnover = 0;
 	  			    }
-	  			    
-	  			  return;
 	  			    
 	   	    		$.ajax({
 	       				type:"post",
@@ -112,7 +110,7 @@
 	     	    	
 	     	    	//判断是否存在数据
 	     	    	if(returnAmount==''){
-	     	    		top.layer.alert('该订单无数据', {icon: 0, title:'提醒'});
+	     	    		top.layer.alert('该订单无营业额数据', {icon: 0, title:'提醒'});
 	     	    		return;
 	     	    	}
 	     	    	//校验输入营业额+增减值+数据库的增减值>=0
