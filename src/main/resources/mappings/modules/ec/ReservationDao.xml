@@ -224,4 +224,27 @@
 		WHERE m.group_id = #{value} 
 		AND m.is_real = 1
 	</select>
+	
+	<!-- 获取预约时间服务已过没有完成状态的预约 -->
+	<select id="querySubscribelist" resultType="com.training.modules.train.entity.Subscribe">
+		SELECT 
+			id AS appt_id,
+			beautician_id,
+			shop_id,
+			gd.service_min
+		FROM mtmydb.mtmy_appt_order re
+		LEFT JOIN mtmydb.mtmy_goods gd ON gd.goods_id = re.goods_id
+		WHERE 
+			re.appt_status = 0
+		AND DATE_ADD(CONCAT(re.appt_date,' ',re.appt_start_time),INTERVAL gd.service_min+60 MINUTE) < NOW()
+	</select>
+	
+	<!-- 修改预约状态 -->
+	<update id="updateapptstatus" parameterType="java.lang.Integer">
+		UPDATE 
+			mtmydb.mtmy_appt_order 
+		SET appt_status = 1 
+		WHERE id = #{appt_id}
+		AND appt_status = 0
+	</update>
 </mapper>
