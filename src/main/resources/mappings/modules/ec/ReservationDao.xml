@@ -224,4 +224,25 @@
 		WHERE m.group_id = #{value} 
 		AND m.is_real = 1
 	</select>
+	<!-- 查询预约的实际服务时间 -->
+	<select id="getServiceTime" resultType="Reservation">
+		SELECT 
+			r.id AS reservationId,
+			r.service_start_time AS serviceStartTime,
+			r.service_end_time AS serviceEndTime
+		FROM
+			mtmydb.mtmy_appt_order r
+		WHERE 
+			r.id = #{reservationId}
+	</select>
+	
+	<!-- 添加/修改  实际服务时长 -->
+	<update id="editServiceTime">
+		UPDATE mtmydb.mtmy_appt_order
+		SET 
+			service_start_time = #{serviceStartTime},
+			service_end_time = #{serviceEndTime}
+		WHERE 
+			id = #{reservationId}	
+	</update>
 </mapper>
