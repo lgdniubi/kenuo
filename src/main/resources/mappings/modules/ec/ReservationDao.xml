@@ -236,7 +236,7 @@
 		LEFT JOIN mtmydb.mtmy_goods gd ON gd.goods_id = re.goods_id
 		WHERE 
 			re.appt_status = 0
-		AND DATE_ADD(CONCAT(re.appt_date,' ',re.appt_start_time),INTERVAL gd.service_min+60 MINUTE) < NOW()
+		<![CDATA[AND DATE_ADD(CONCAT(re.appt_date,' ',re.appt_start_time),INTERVAL gd.service_min+60 MINUTE) < NOW()]]>
 	</select>
 	
 	<!-- 修改预约状态 -->
