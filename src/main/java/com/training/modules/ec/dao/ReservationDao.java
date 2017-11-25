@@ -10,6 +10,7 @@ import com.training.modules.ec.entity.Comment;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.Reservation;
 import com.training.modules.sys.entity.Office;
+import com.training.modules.train.entity.Subscribe;
 /**
  * 预约dao
  * @author coffee
@@ -73,5 +74,18 @@ public interface ReservationDao extends CrudDao<Reservation>{
 	 * @param reservation
 	 */
 	public void editServiceTime(Reservation reservation);
+	
+	/**
+	 * 获取预约时间服务已过没有完成状态的预约
+	 * @return
+	 */
+	public List<Subscribe> querySubscribelist();
+
+	/**
+	 * 修改预约状态
+	 * @param appt_id
+	 * @return
+	 */
+	public int updateapptstatus(@Param("appt_id")int appt_id);
 	
 }

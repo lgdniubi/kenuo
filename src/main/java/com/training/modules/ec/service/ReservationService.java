@@ -16,6 +16,7 @@ import com.training.modules.ec.utils.CommonScopeUtils;
 import com.training.modules.sys.dao.AreaDao;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.Office;
+import com.training.modules.train.entity.Subscribe;
 
 
 /**
@@ -118,4 +119,20 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 		dao.editServiceTime(reservation);
 	}
 	
+	/**
+	 * 获取预约时间服务已过没有完成状态的预约
+	 * @return
+	 */
+	public List<Subscribe> querySubscribelist() {
+		return dao.querySubscribelist();
+	}
+	
+	/**
+	 * 修改预约状态
+	 * @param appt_id
+	 * @return
+	 */
+	public int updateapptstatus(int appt_id) {
+		return dao.updateapptstatus(appt_id);
+	}
 }

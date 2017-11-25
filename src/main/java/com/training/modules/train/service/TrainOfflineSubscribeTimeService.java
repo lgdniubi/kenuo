@@ -35,4 +35,5 @@ public class TrainOfflineSubscribeTimeService extends CrudService<TrainOfflineSu
 	public int updateStatus(TrainOfflineSubscribeTime trainOfflineSubscribeTime){
 		return dao.update(trainOfflineSubscribeTime);
 	}
+
 }
