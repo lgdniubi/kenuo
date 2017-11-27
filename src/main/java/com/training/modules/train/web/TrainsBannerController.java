@@ -4,6 +4,7 @@
 package com.training.modules.train.web;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +19,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
 import com.training.common.web.BaseController;
+import com.training.modules.sys.entity.Dict;
 import com.training.modules.sys.utils.BugLogUtils;
+import com.training.modules.sys.utils.DictUtils;
 import com.training.modules.train.entity.TrainsBanner;
 import com.training.modules.train.service.TrainsBannerService;
 
@@ -78,5 +81,22 @@ public class TrainsBannerController extends BaseController {
 			map.put("MESSAGE", "修改失败,出现异常");
 		}
 		return map;
+	}
+	
+	/**
+	 * 
+	 * @Title: dictTypeList
+	 * @Description: TODO 查询字典banner图类型
+	 * @param type
+	 * @return:
+	 * @return: List<Dict>
+	 * @throws
+	 * 2017年11月24日 兵子
+	 */
+	@ResponseBody
+	@RequestMapping("dictTypeList")
+	public List<Dict> dictTypeList(String type){
+		List<Dict> dictList = DictUtils.getDictList(type);
+		return dictList;
 	}
 }
