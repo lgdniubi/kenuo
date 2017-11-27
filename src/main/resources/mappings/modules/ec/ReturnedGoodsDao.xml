@@ -170,6 +170,37 @@
 			trains.sys_office b ON a.belong_office_id = b.id
 		WHERE 
 			a.order_id = #{orderId}
+		AND
+			a.belong_office_id IS NOT NULL
+		GROUP BY a.belong_office_id
+	</select>
+	
+	<!-- 获取店铺退款营业额(type=3) -->
+	<select id="getMtmyTurnoverDetailsListView" resultType="TurnOverDetails">
+		SELECT
+			a.order_id AS orderId,
+			a.mapping_id AS mappingId,
+			a.details_id AS detailsId,
+			SUM(a.amount) AS amount,
+			a.use_balance AS useBalance,
+			a.user_id AS userId,
+			a.user_office_id AS userOfficeId,
+			a.user_beautician_id AS userBeauticianId,
+			a.belong_office_id AS belongOfficeId,
+			b.name AS belongOfficeName,
+			a.belong_office_ids AS belongOfficeIds,
+			a.create_by AS createBy,
+			a.create_date AS createDate
+		FROM
+			ydatadb.mtmy_turnover_details a
+		LEFT JOIN
+			trains.sys_office b ON a.belong_office_id = b.id
+		WHERE 
+			a.order_id = #{orderId}
+		AND 
+			a.type = 3
+		AND
+			a.belong_office_id IS NOT NULL
 		GROUP BY a.belong_office_id
 	</select>
 	<!-- 查询店的售后审核扣减的营业额 -->
@@ -186,6 +217,8 @@
 		WHERE 
 			a.order_id = #{orderId}
 		AND a.details_id = #{detailsId}
+		AND
+			a.belong_office_id IS NOT NULL
 		GROUP BY a.belong_office_id
 	</select>
 	<!-- 获取营业额信息 -->
@@ -639,6 +672,32 @@
 			trains.train_department td ON r.department_id = td.id
 		WHERE
 			r.order_id = #{orderId}
+		GROUP BY
+			r.department_id,r.user_id
+	</select>
+	
+	<!-- 获取业务员退款营业额(type=3) -->
+	<select id="getOrderPushmoneyRecordListView" resultType="OrderPushmoneyRecord">
+		SELECT
+			r.order_id AS orderId,
+			r.user_id AS pushmoneyUserId,
+			SUM(r.push_money) AS pushMoney,
+			r.department_id AS departmentId,
+			su1.`name` AS pushmoneyUserName,
+			su1.mobile AS pushmoneyUserMobile,
+			td.`name` AS "departmentName"
+		FROM
+			mtmydb.mtmy_beautician_turnover r
+		LEFT JOIN
+			trains.sys_user su1 ON r.user_id = su1.id
+		LEFT JOIN
+			trains.sys_user su2 ON r.create_by = su2.id
+		LEFT JOIN
+			trains.train_department td ON r.department_id = td.id
+		WHERE
+			r.order_id = #{orderId}
+		AND 
+			r.type=3
 		GROUP BY
 			r.department_id,r.user_id
 	</select>

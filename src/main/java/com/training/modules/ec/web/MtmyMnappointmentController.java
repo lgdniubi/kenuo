@@ -474,4 +474,34 @@ public class MtmyMnappointmentController extends BaseController{
 		}
 		return jsonObject.toString();
 	}
+	
+	/**
+	 * 跳转到 添加/修改  实际服务时长
+	 * @param reservation
+	 * @return
+	 */
+	@RequestMapping(value = "getServiceTime")
+	public String getServiceTime(Reservation reservation, Model model){
+		reservation = reservationService.getServiceTime(reservation);
+		model.addAttribute("reservation",reservation);
+		return "modules/ec/editServiceTime";
+	}
+	
+	/**
+	 * 添加/修改  实际服务时长
+	 * @param reservation
+	 * @return
+	 */
+	@RequestMapping(value = "editServiceTime")
+	public String editServiceTime(Reservation reservation, HttpServletRequest request, RedirectAttributes redirectAttributes){
+		try {
+			reservationService.editServiceTime(reservation);
+			addMessage(redirectAttributes, "预约管理  添加/修改实际服务时间'" + reservation.getReservationId() + "'成功");
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "预约管理  添加/修改实际服务时间", e);
+			logger.error("预约管理  添加/修改实际服务时间错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "预约管理  添加/修改实际服务时间");
+		}
+		return "redirect:" + adminPath + "/ec/mtmyMnappointment/mnappointment";
+	}
 }
