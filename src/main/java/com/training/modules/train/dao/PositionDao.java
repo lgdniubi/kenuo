@@ -40,7 +40,7 @@ public interface PositionDao extends CrudDao<Position>{
 	 * @throws
 	 * 2017年11月17日 兵子
 	 */
-	public List<Position> findPositionNotValues(String[] pValues);
+	public List<Position> findPositionNotValues(List<String> pValues);
 
 	/**
 	 * 
@@ -63,6 +63,18 @@ public interface PositionDao extends CrudDao<Position>{
 	 * 2017年11月20日 兵子
 	 */
 	public void savePosition(Position position);
+
+	/**
+	 * 
+	 * @Title: getPositionkey
+	 * @Description: TODO 获取当前商家已存在的职位key
+	 * @param user
+	 * @return:
+	 * @return: List<String>
+	 * @throws
+	 * 2017年11月24日 兵子
+	 */
+	public List<String> getPositionkey(String userId);
 
 	
 }

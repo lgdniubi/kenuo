@@ -33,6 +33,21 @@
 		$(document).ready(function() {
 			validateForm = $("#inputForm").validate();
 		});
+		
+		$(function(){
+			var tradtype = "${trainsBanner.adType}";
+			$.post("${ctx}/trains/banner/dictTypeList",{type:'banner_type'},function(data){
+				for (var i = 0; i < data.length; i++) {
+					if (data[i].value == tradtype) {
+						var options = "<option value='"+data[i].value+"' selected='selected'>"+data[i].label+"</option>";
+						$("#adType").append(options);
+					}else{
+						var opt = "<option value='"+data[i].value+"'>"+data[i].label+"</option>";
+						$("#adType").append(opt);
+					}
+				}
+			})
+		})
 	</script>
 </head>
 <body class="gray-bg">
@@ -64,14 +79,6 @@
 									<td><label class="pull-right"><font color="red">*</font>类型：</label></td>
 									<td>
 										<select class="form-control" id="adType" name="adType">
-											<c:if test="${trainsBanner.adType == 1 }">
-												<option value="0">首页</option>
-												<option value="1" selected="selected">提问</option>
-											</c:if>
-											<c:if test="${trainsBanner.adType != 1 }">
-												<option value="0">首页</option>
-												<option value="1">提问</option>
-											</c:if>
 										</select>
 									</td>
 								</tr>

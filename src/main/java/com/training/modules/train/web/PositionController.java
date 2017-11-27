@@ -14,7 +14,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.common.collect.Lists;
 import com.training.common.web.BaseController;
+import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
+import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.Position;
 import com.training.modules.train.service.PositionService;
 
@@ -109,7 +111,8 @@ public class PositionController extends BaseController{
 					exiPosition.add(ePosition);
 				}
 			}
-			notPosition = positionService.findPositionNotValues(values);
+			User user = UserUtils.getUser();
+			notPosition = positionService.findPositionNotValues(values,user);
 		}
 		model.addAttribute("exiPosition", exiPosition);
 		model.addAttribute("notPosition", notPosition);

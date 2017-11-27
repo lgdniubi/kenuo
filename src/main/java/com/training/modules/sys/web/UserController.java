@@ -1406,7 +1406,7 @@ public class UserController extends BaseController {
     @RequestMapping(value="saveFzxRoleOfficeById")
     public String saveFzxRoleOfficeById(String fzxRoleId,String officeIds,String userId,RedirectAttributes redirectAttributes){
     	try {
-			if (fzxRoleId != null && officeIds != null && userId != null) {
+			if (StringUtils.isNotBlank(fzxRoleId) && StringUtils.isNotBlank(officeIds) && StringUtils.isNotBlank(userId)) {
 				systemService.saveFzxRoleOfficeById(fzxRoleId,officeIds,userId);
 				addMessage(redirectAttributes, "添加角色及权限成功!");
 			}
@@ -1469,7 +1469,7 @@ public class UserController extends BaseController {
     @RequestMapping(value="updateOffice")
     public String updateOffice(String id,String officeIds,String userId,RedirectAttributes redirectAttributes){
     	try {
-			systemService.updateOfficeById(id,officeIds);
+			systemService.updateOfficeById(id,officeIds,userId);
 			addMessage(redirectAttributes, "修改角色及权限成功!");
 		} catch (Exception e) {
 			logger.error("修改用户妃子校权限错误信息:"+e.getMessage());

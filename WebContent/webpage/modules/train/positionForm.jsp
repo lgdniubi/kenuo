@@ -20,7 +20,7 @@
 							 <td class="width-35">
 								<input name="value" type="text" value="${position.value}" class="form-control"/>
 							 </td>
-					         <td  class="width-15" class="active"><label class="pull-right">职位名称:</label></td>
+					         <td  class="width-15 active" class="active"><label class="pull-right">职位名称:</label></td>
 					         <td class="width-35">
 					         	<input name="label" type="text" value="${position.label}" class="form-control"/>
 							 </td>

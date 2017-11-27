@@ -306,34 +306,6 @@ public class OfficeController extends BaseController {
 			if(office.getGrade().equals("2")){
 				//修改机构
 				officeService.save(office);
-				/**
-				 * 此处调用报货接口，在修改机构父项时将修改的机构数据同步到报货（只同步修改父项机构时）
-				 */
-				try {
-					Office toOffice = officeService.get(office);
-					if (toOffice != null) {
-						String weburl = ParametersFactory.getMtmyParamValues("modifyToOffice");
-						logger.info("##### web接口路径:"+weburl);
-						String parpm = "{\"office_id\":\""+toOffice.getId()+"\",\"office_name\":\""+toOffice.getName()+"\","
-								+ "\"franchisee_id\":\""+toOffice.getFranchisee().getId()+"\",\"franchisee_id\":\""+toOffice.getFranchisee().getId()+"\","
-										+ "\"office_pid\":\""+toOffice.getParent().getId()+"\",\"office_pids\":\""+toOffice.getParentIds()+"\"}";
-						String url=weburl;
-						String result = WebUtils.postCSObject(parpm, url);
-						JSONObject jsonObject = JSONObject.fromObject(result);
-						logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
-						if(!"200".equals(jsonObject.get("result"))){
-							addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
-							String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
-				    		return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
-		    			}
-					}
-				} catch (Exception e) {
-					logger.error("修改店铺是否属性错误信息："+e.getMessage());
-		    		BugLogUtils.saveBugLog(request, "店铺是否属性修改失败", e);
-		    		addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
-		    		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
-		    		return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
-				}
 			}else{
 				//查询出修改前修改前店铺首图信息
 				OfficeInfo oldOffice = officeService.findbyid(office);
@@ -348,6 +320,20 @@ public class OfficeController extends BaseController {
 					reservationTime(3, currentUser.getCreateBy().getId(), img, oldOffice.getImg(), lifeImgUrls, office.getId(), "bm", null);
 				}
 			}
+			
+			/**
+			 * 此处调用报货接口，在修改机构父项时将修改的机构数据同步到报货（只同步修改父项机构时）
+			 */
+			String weburl = ParametersFactory.getMtmyParamValues("modifyToOffice");
+			logger.info("##### web接口路径:"+weburl);
+			String parpm = "{\"office_id\":\""+office.getId()+"\",\"office_name\":\""+office.getName()+"\","
+					+ "\"franchisee_id\":"+office.getFranchisee().getId()+","
+					+ "\"office_pid\":\""+office.getParent().getId()+"\",\"office_pids\":\""+office.getParentIds()+"\"}";
+			String url=weburl;
+			String result = WebUtils.postCSObject(parpm, url);
+			JSONObject jsonObject = JSONObject.fromObject(result);
+			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+				
 		}
 		if(office.getChildDeptList()!=null){
 			Office childOffice = null;

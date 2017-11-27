@@ -23,6 +23,11 @@
 	     	    	var orderId = obj.document.getElementById("orderId").value; //订单id
 	     	    	var returnedId = obj.document.getElementById("returnedId").value; //售后id
 	     	    	
+	     	    	//判断是否存在数据
+	     	    	if(returnAmount==""){
+	     	    		top.layer.alert('该订单无营业额数据', {icon: 0, title:'提醒'});
+	     	    		return;
+	     	    	}
 	     	    	//校验输入营业额+增减值+数据库的增减值>=0
 	     	    	var num = obj.document.getElementById("num").value; //数据列表的个数
 	     	    	for(var k = 0; k < num; k++){
@@ -62,6 +67,7 @@
 	  				  	add = 0;
 	  				    turnover = 0;
 	  			    }
+	  			    
 	   	    		$.ajax({
 	       				type:"post",
 	       				data:{
@@ -102,6 +108,11 @@
 	     	    	var orderId = obj.document.getElementById("orderId").value; //订单id
 	     	    	var detailsId = obj.document.getElementById("detailsId").value; //售后id
 	     	    	
+	     	    	//判断是否存在数据
+	     	    	if(returnAmount==''){
+	     	    		top.layer.alert('该订单无营业额数据', {icon: 0, title:'提醒'});
+	     	    		return;
+	     	    	}
 	     	    	//校验输入营业额+增减值+数据库的增减值>=0
 	     	    	var num = obj.document.getElementById("num").value; //数据列表的个数
 	     	    	for(var k = 0; k < num; k++){
@@ -172,24 +183,15 @@
 							<th style="text-align: center;">时间</th>
 							<th style="text-align: center;">类型</th>
 							<th style="text-align: center;">金额</th>
+							<th style="text-align: center;">业务员</th>
+							<th style="text-align: center;">部门</th>
+							<th style="text-align: center;">手机号</th>
+							<th style="text-align: center;">营业额</th>
 							<th style="text-align: center;">操作</th>
 						</tr>
 					</thead>
-					<tbody id="pushMoneyList">
-						<tr>
-							<c:if test="${empty mtmyTurnoverDetails.createDate}">
-								<th style="text-align: center;"><fmt:formatDate value="${mtmyTurnoverDetails.applyDate}" pattern="yyyy-MM-dd HH:mm:ss" /></th>
-							</c:if>
-							<c:if test="${not empty mtmyTurnoverDetails.createDate}">
-								<th style="text-align: center;"><fmt:formatDate value="${mtmyTurnoverDetails.createDate}" pattern="yyyy-MM-dd HH:mm:ss" /></th>
-							</c:if>
-							<th style="text-align: center;">售后</th>
-							<th style="text-align: center;">${mtmyTurnoverDetails.amount}</th>
-							<th style="text-align: center;">
-								<a href="#" onclick="editOrderPushmoneyRecord('${mtmyTurnoverDetails.orderId}','${mtmyTurnoverDetails.detailsId}')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>编辑</a>
-								<a href="#" onclick="openDialogView('查看日志记录', '${ctx}/ec/orders/operationLog?orderId=${mtmyTurnoverDetails.orderId}','800px','600px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 日志记录</a>
-							</th>
-						</tr>
+					<tbody>
+						${pushmoneyTurnover}
 					</tbody>						
 				</table>
 				<h5>店营业额：</h5>
@@ -199,24 +201,13 @@
 							<th style="text-align: center;">时间</th>
 							<th style="text-align: center;">类型</th>
 							<th style="text-align: center;">金额</th>
+							<th style="text-align: center;">店</th>
+							<th style="text-align: center;">营业额</th>
 							<th style="text-align: center;">操作</th>
 						</tr>
 					</thead>
-					<tbody id="officeList">
-						<tr>
-							<c:if test="${empty mtmyTurnoverDetails.createDate}">
-								<th style="text-align: center;"><fmt:formatDate value="${mtmyTurnoverDetails.applyDate}" pattern="yyyy-MM-dd HH:mm:ss" /></th>
-							</c:if>
-							<c:if test="${not empty mtmyTurnoverDetails.createDate}">
-								<th style="text-align: center;"><fmt:formatDate value="${mtmyTurnoverDetails.createDate}" pattern="yyyy-MM-dd HH:mm:ss" /></th>
-							</c:if>
-							<th style="text-align: center;">售后</th>
-							<th style="text-align: center;">${mtmyTurnoverDetails.amount}</th>
-							<th style="text-align: center;">
-								<a href="#" onclick="editMtmyTurnoverDetails('${mtmyTurnoverDetails.orderId}','${mtmyTurnoverDetails.detailsId}',${mtmyTurnoverDetails.mappingId})"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>编辑</a>
-								<a href="#" onclick="openDialogView('操作日志', '${ctx}/ec/returned/findMtmyTurnoverDetailsList?orderId=${mtmyTurnoverDetails.orderId}&mappingId=${mtmyTurnoverDetails.mappingId}','750px','600px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 操作日志</a>
-							</th>
-						</tr>
+					<tbody>
+						${shopTurnover}
 					</tbody>						
 				</table>
 			</div>
