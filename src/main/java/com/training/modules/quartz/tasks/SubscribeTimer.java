@@ -40,7 +40,7 @@ public class SubscribeTimer extends CommonService{
 	 * regulation:	预约时间 (yyyy-MM-dd HH:mm) + 项目服务时长 (mm) + 一个小时 (mm) ---- 将未完成状态的预约改成已完成状态
 	 * @author fengfeng 
 	 */
-	public void SubscribeTimer(){
+	public void subscribeTimer(){
 		logger.info("[work0],start,预约自动完成定时器开始执行，开始时间："+df.format(new Date()));
 		HttpServletRequest request=null;
 		List<Subscribe> list = new ArrayList<Subscribe>();
