@@ -830,22 +830,22 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
 			
-			if(orders.getIsNeworder() == 0){
-				//同步数据到营业额明细表
-				TurnOverDetails turnOverDetails = new TurnOverDetails();
-				turnOverDetails.setOrderId(orderid);
-				turnOverDetails.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
-				turnOverDetails.setDetailsId(details.getId());
-				turnOverDetails.setType(1);
-				turnOverDetails.setAmount(details.getAppTotalAmount());
-				turnOverDetails.setUseBalance(details.getUseBalance());
-				turnOverDetails.setStatus(0);
-				turnOverDetails.setUserId(mtmyUserId);
-				turnOverDetails.setBelongOfficeId(details.getBelongOfficeId());
-				turnOverDetails.setCreateBy(UserUtils.getUser());
-				turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
-			}
-			
+		}
+		
+		double appSum = orderGoodsDetailsService.queryAppSum(orderid);
+		if(orders.getIsNeworder() == 0){
+			//同步数据到营业额明细表
+			TurnOverDetails turnOverDetails = new TurnOverDetails();
+			turnOverDetails.setOrderId(orderid);
+			turnOverDetails.setDetailsId(orderid);
+			turnOverDetails.setType(1);
+			turnOverDetails.setAmount(appSum);
+			turnOverDetails.setUseBalance(0);
+			turnOverDetails.setStatus(0);
+			turnOverDetails.setUserId(mtmyUserId);
+			turnOverDetails.setBelongOfficeId(orders.getBelongOfficeId());
+			turnOverDetails.setCreateBy(UserUtils.getUser());
+			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
 		}
 		
 		/*//订单充值日志表
@@ -1241,7 +1241,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		//同步数据到营业额明细表
 		TurnOverDetails turnOverDetails = new TurnOverDetails();
 		turnOverDetails.setOrderId(details.getOrderId());
-		turnOverDetails.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
 		turnOverDetails.setDetailsId(details.getId());
 		turnOverDetails.setType(2);
 		turnOverDetails.setAmount(details.getAppTotalAmount());
@@ -1474,22 +1473,22 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			details.setBelongOfficeId(orders.getBelongOfficeId());
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
-			
-			if(orders.getIsNeworder() == 0){
-				//同步数据到营业额明细表
-				TurnOverDetails turnOverDetails = new TurnOverDetails();
-				turnOverDetails.setOrderId(orderid);
-				turnOverDetails.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
-				turnOverDetails.setDetailsId(details.getId());
-				turnOverDetails.setType(1);
-				turnOverDetails.setAmount(details.getAppTotalAmount());
-				turnOverDetails.setUseBalance(details.getUseBalance());
-				turnOverDetails.setStatus(0);
-				turnOverDetails.setUserId(mtmyUserId);
-				turnOverDetails.setBelongOfficeId(details.getBelongOfficeId());
-				turnOverDetails.setCreateBy(UserUtils.getUser());
-				turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
-			}
+		}
+		
+		double appSum = orderGoodsDetailsService.queryAppSum(orderid);
+		if(orders.getIsNeworder() == 0){
+			//同步数据到营业额明细表
+			TurnOverDetails turnOverDetails = new TurnOverDetails();
+			turnOverDetails.setOrderId(orderid);
+			turnOverDetails.setDetailsId(orderid);
+			turnOverDetails.setType(1);
+			turnOverDetails.setAmount(appSum);
+			turnOverDetails.setUseBalance(0);
+			turnOverDetails.setStatus(0);
+			turnOverDetails.setUserId(mtmyUserId);
+			turnOverDetails.setBelongOfficeId(orders.getBelongOfficeId());
+			turnOverDetails.setCreateBy(UserUtils.getUser());
+			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
 		}
 		
 		/*//订单充值日志表
@@ -1794,7 +1793,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param orderAmount应付款金额
 	 * @param goodsPrice商品优惠单价
 	 */
-	public void handleAdvanceFlag(OrderRechargeLog oLog,double goodsPrice,double detailsTotalAmount,int goodsType,String officeId,double realAdvancePrice,OrderGoodsDetails oldDetails){
+	public void handleAdvanceFlag(OrderRechargeLog oLog,double goodsPrice,double detailsTotalAmount,int goodsType,String officeId,double realAdvancePrice){
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
 		double totalAmount = oLog.getTotalAmount(); //实付款金额
@@ -1915,23 +1914,22 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		
 		//同步数据到营业额明细表
 		//第一次，同步下单的那条数据
+		double appSum = orderGoodsDetailsService.queryAppSum(details.getOrderId());
 		TurnOverDetails turnOverDetails1 = new TurnOverDetails();
 		turnOverDetails1.setOrderId(details.getOrderId());
-		turnOverDetails1.setMappingId(Integer.valueOf(oldDetails.getGoodsMappingId()));
-		turnOverDetails1.setDetailsId(oldDetails.getId());
+		turnOverDetails1.setDetailsId(details.getOrderId());
 		turnOverDetails1.setType(1);
-		turnOverDetails1.setAmount(oldDetails.getAppTotalAmount());
-		turnOverDetails1.setUseBalance(oldDetails.getUseBalance());
+		turnOverDetails1.setAmount(appSum);
+		turnOverDetails1.setUseBalance(0);
 		turnOverDetails1.setStatus(1);
 		turnOverDetails1.setUserId(oLog.getMtmyUserId());
 		turnOverDetails1.setBelongOfficeId(officeId);
 		turnOverDetails1.setCreateBy(UserUtils.getUser());
 		turnOverDetailsService.saveTurnOverDetails(turnOverDetails1);
 		
-		//第一次，同步处理预约金的那条数据
+		//第二次，同步处理预约金的那条数据
 		TurnOverDetails turnOverDetails2 = new TurnOverDetails();
 		turnOverDetails2.setOrderId(details.getOrderId());
-		turnOverDetails2.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
 		turnOverDetails2.setDetailsId(details.getId());
 		turnOverDetails2.setType(2);
 		turnOverDetails2.setAmount(details.getAppTotalAmount());
@@ -2327,23 +2325,23 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
 			
-			if(orders.getIsNeworder() == 0){
-				//同步数据到营业额明细表
-				TurnOverDetails turnOverDetails = new TurnOverDetails();
-				turnOverDetails.setOrderId(orderid);
-				turnOverDetails.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
-				turnOverDetails.setDetailsId(details.getId());
-				turnOverDetails.setType(1);
-				turnOverDetails.setAmount(details.getAppTotalAmount());
-				turnOverDetails.setUseBalance(details.getUseBalance());
-				turnOverDetails.setStatus(0);
-				turnOverDetails.setUserId(mtmyUserId);
-				turnOverDetails.setBelongOfficeId(details.getBelongOfficeId());
-				turnOverDetails.setCreateBy(UserUtils.getUser());
-				turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
-			}
 		}
 		
+		double appSum = orderGoodsDetailsService.queryAppSum(orderid);
+		if(orders.getIsNeworder() == 0){
+			//同步数据到营业额明细表
+			TurnOverDetails turnOverDetails = new TurnOverDetails();
+			turnOverDetails.setOrderId(orderid);
+			turnOverDetails.setDetailsId(orderid);
+			turnOverDetails.setType(1);
+			turnOverDetails.setAmount(appSum);
+			turnOverDetails.setUseBalance(0);
+			turnOverDetails.setStatus(0);
+			turnOverDetails.setUserId(mtmyUserId);
+			turnOverDetails.setBelongOfficeId(orders.getBelongOfficeId());
+			turnOverDetails.setCreateBy(UserUtils.getUser());
+			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+		}
 		
 		Payment payment = paymentDao.getByCode(orders.getPaycode());
 		//主订单信息
@@ -2665,23 +2663,23 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			//保存订单商品详情记录
 			orderGoodsDetailsService.saveOrderGoodsDetails(details);
 			
-			if(orders.getIsNeworder() == 0){
-				//同步数据到营业额明细表
-				TurnOverDetails turnOverDetails = new TurnOverDetails();
-				turnOverDetails.setOrderId(orderid);
-				turnOverDetails.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
-				turnOverDetails.setDetailsId(details.getId());
-				turnOverDetails.setType(1);
-				turnOverDetails.setAmount(details.getAppTotalAmount());
-				turnOverDetails.setUseBalance(details.getUseBalance());
-				turnOverDetails.setStatus(0);
-				turnOverDetails.setUserId(mtmyUserId);
-				turnOverDetails.setBelongOfficeId(details.getBelongOfficeId());
-				turnOverDetails.setCreateBy(UserUtils.getUser());
-				turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
-			}
-			
 			usedSurplusAmount = 0;
+		}
+		
+		double appSum = orderGoodsDetailsService.queryAppSum(orderid);
+		if(orders.getIsNeworder() == 0){
+			//同步数据到营业额明细表
+			TurnOverDetails turnOverDetails = new TurnOverDetails();
+			turnOverDetails.setOrderId(orderid);
+			turnOverDetails.setDetailsId(orderid);
+			turnOverDetails.setType(1);
+			turnOverDetails.setAmount(appSum);
+			turnOverDetails.setUseBalance(0);
+			turnOverDetails.setStatus(0);
+			turnOverDetails.setUserId(mtmyUserId);
+			turnOverDetails.setBelongOfficeId(orders.getBelongOfficeId());
+			turnOverDetails.setCreateBy(UserUtils.getUser());
+			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
 		}
 		
 		Payment payment = paymentDao.getByCode(orders.getPaycode());
@@ -2960,7 +2958,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		//同步数据到营业额明细表
 		TurnOverDetails turnOverDetails = new TurnOverDetails();
 		turnOverDetails.setOrderId(details.getOrderId());
-		turnOverDetails.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
 		turnOverDetails.setDetailsId(details.getId());
 		turnOverDetails.setType(2);
 		turnOverDetails.setAmount(details.getAppTotalAmount());
@@ -3006,7 +3003,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param orderAmount应付款金额
 	 * @param goodsPrice商品优惠单价
 	 */
-	public void handleCardAdvance(OrderRechargeLog oLog,double goodsPrice,double detailsTotalAmount,int goodsType,String officeId,int isReal,double realAdvancePrice,OrderGoodsDetails oldDetails){
+	public void handleCardAdvance(OrderRechargeLog oLog,double goodsPrice,double detailsTotalAmount,int goodsType,String officeId,int isReal,double realAdvancePrice){
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
 		double totalAmount = oLog.getTotalAmount(); //实付款金额
@@ -3116,23 +3113,22 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		
 		//同步数据到营业额明细表
 		//第一次，同步下单的那条数据
+		double appSum = orderGoodsDetailsService.queryAppSum(details.getOrderId());
 		TurnOverDetails turnOverDetails1 = new TurnOverDetails();
 		turnOverDetails1.setOrderId(details.getOrderId());
-		turnOverDetails1.setMappingId(Integer.valueOf(oldDetails.getGoodsMappingId()));
-		turnOverDetails1.setDetailsId(oldDetails.getId());
+		turnOverDetails1.setDetailsId(details.getOrderId());
 		turnOverDetails1.setType(1);
-		turnOverDetails1.setAmount(oldDetails.getAppTotalAmount());
-		turnOverDetails1.setUseBalance(oldDetails.getUseBalance());
+		turnOverDetails1.setAmount(appSum);
+		turnOverDetails1.setUseBalance(0);
 		turnOverDetails1.setStatus(1);
 		turnOverDetails1.setUserId(oLog.getMtmyUserId());
 		turnOverDetails1.setBelongOfficeId(officeId);
 		turnOverDetails1.setCreateBy(UserUtils.getUser());
 		turnOverDetailsService.saveTurnOverDetails(turnOverDetails1);
 		
-		//第一次，同步处理预约金的那条数据
+		//第二次，同步处理预约金的那条数据
 		TurnOverDetails turnOverDetails2 = new TurnOverDetails();
 		turnOverDetails2.setOrderId(details.getOrderId());
-		turnOverDetails2.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
 		turnOverDetails2.setDetailsId(details.getId());
 		turnOverDetails2.setType(2);
 		turnOverDetails2.setAmount(details.getAppTotalAmount());

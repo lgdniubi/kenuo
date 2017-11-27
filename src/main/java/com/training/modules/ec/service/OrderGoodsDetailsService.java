@@ -132,11 +132,11 @@ public class OrderGoodsDetailsService extends TreeService<OrderGoodsDetailsDao, 
 	}
 	
 	/**
-	 * 查询details表中预约金那条的记录
+	 * 根据订单id查询下单时候的总的app实付
 	 * @param orderId
 	 * @return
 	 */
-	public OrderGoodsDetails selectDetailsForAdvance(String orderId){
-		return dao.selectDetailsForAdvance(orderId);
+	public double queryAppSum(String orderId){
+		return dao.queryAppSum(orderId);
 	}
 }
