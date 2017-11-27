@@ -10,9 +10,43 @@
 	
 	<script type="text/javascript">
 		$(function() {
+			var userOffId = "${user.office.id}"; 
 			var setting = {check:{enable:true,autoCheckTrigger: true,chkStyle: "radio"},view:{selectedMulti:false},
-					data:{simpleData:{enable:true}},callback:{onClick: function (event, treeId, treeNode) { 
-						tree1.checkNode(treeNode, !treeNode.checked, true);
+					data:{simpleData:{enable:true}},callback:{onCheck: function (event, treeId, treeNode) {
+						//tree1.checkNode(treeNode, !treeNode.checked, true);
+						var offTreeObj = $.fn.zTree.getZTreeObj("officeTree");
+						var checked = treeNode.checked;
+						if (checked) {
+							if (treeNode.id == '1') {
+								var offNode = offTreeObj.getNodeByParam("id", userOffId, null);
+								if (offNode != null) {
+									offTreeObj.checkNode(offNode, true, false,true);
+									var offNoChecks = offTreeObj.getCheckedNodes(false);
+									//offTreeObj.setChkDisabled(offNode, true);
+									for (var i = 0; i < offNoChecks.length; i++) {
+										offNoChecks[i].chkDisabled = true;
+										offNoChecks[i].nocheck = true;
+									}
+									var offNodeAll = offTreeObj.getNodes();
+									for (var j = 0; j < offNodeAll.length; j++) {
+										offNodeAll[j].chkDisabled = true;
+									}
+									if (offNode.pId != '0') {
+										// 展开选中的节点
+										var nodeP = offTreeObj.getNodeByParam("id",offNode.pId);
+										offTreeObj.expandNode(nodeP,true,false); 
+									}
+								}
+							}else{
+								$.post("${ctx}/sys/office/newTreeData",null,function(officeData){
+									// 初始化树结构
+									var tree = $.fn.zTree.init($("#officeTree"), setting2, officeData);
+									// 不选择父节点
+									tree.setting.check.chkboxType = { "Y" : "", "N" : "" };
+								},"json")
+							}
+
+						}
 					}}};
 					
 			/* 加载妃子校角色 */
