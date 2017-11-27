@@ -25,29 +25,69 @@
 	</insert>
 	<select id="findList" resultType="TrainsBanner">
 		SELECT
-			ad_id AS adId,
-			ad_name AS adName,
-			ad_type AS adType,
-			ad_pic AS adPic,
-			sort,
-			del_flag	
+			a.ad_id AS adId,
+			a.ad_name AS adName,
+			a.ad_type AS adType,
+			a.ad_pic AS adPic,
+			a.sort,
+			a.del_flag,
+			c.id AS "dict.id",
+			c.label AS "dict.label",
+			c.type AS "dict.type",
+			c.description AS "dict.description",
+			c.sort AS "dict.sort",
+			c.parent_id AS "dict.parentId",
+			c.create_by AS "dict.createBy",
+			c.create_date AS "dict.createDate",
+			c.update_by AS "dict.updateBy",
+			c.update_date AS "dict.updateDate",
+			c.remarks AS "dict.remarks",
+			c.del_flag AS "dict.delFlag"
 		FROM
-			train_advert
+			train_advert a
+		LEFT JOIN 
+			sys_dict c 
+		ON 
+			a.ad_type = c.value
+		WHERE 
+			c.type = 'banner_type' 
+		AND 
+			c.del_flag = 0
 		ORDER BY
 			sort DESC
 	</select>
 	<select id="getBanner" resultType="TrainsBanner">
 		SELECT
-			ad_id AS adId,
-			ad_name AS adName,
-			ad_type AS adType,
-			ad_pic AS adPic,
-			ad_url AS adUrl,
-			remark,
-			sort	
+			a.ad_id AS adId,
+			a.ad_name AS adName,
+			a.ad_type AS adType,
+			a.ad_pic AS adPic,
+			a.ad_url AS adUrl,
+			a.remark,
+			a.sort,
+			c.id AS "dict.id",
+			c.label AS "dict.label",
+			c.type AS "dict.type",
+			c.description AS "dict.description",
+			c.sort AS "dict.sort",
+			c.parent_id AS "dict.parentId",
+			c.create_by AS "dict.createBy",
+			c.create_date AS "dict.createDate",
+			c.update_by AS "dict.updateBy",
+			c.update_date AS "dict.updateDate",
+			c.remarks AS "dict.remarks",
+			c.del_flag AS "dict.delFlag"	
 		FROM
-			train_advert
+			train_advert a
+		LEFT JOIN 
+			sys_dict c 
+		ON 
+			a.ad_type = c.value
 		WHERE 
+			c.type = 'banner_type' 
+		AND 
+			c.del_flag = 0
+		AND
 			ad_id = #{adId}
 	</select>
 	<update id="update">
