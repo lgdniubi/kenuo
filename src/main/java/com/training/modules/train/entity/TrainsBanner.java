@@ -3,6 +3,7 @@ package com.training.modules.train.entity;
 import java.util.Date;
 
 import com.training.common.persistence.DataEntity;
+import com.training.modules.sys.entity.Dict;
 
 /**
  * TrainsBanner实体类
@@ -21,6 +22,8 @@ public class TrainsBanner extends DataEntity<TrainsBanner>{
 	private String sort;		//排序
 	private String flag;
 	private Date createTime;    //创建时间
+	
+	private Dict dict;
 	public int getAdId() {
 		return adId;
 	}
@@ -75,4 +78,11 @@ public class TrainsBanner extends DataEntity<TrainsBanner>{
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
+	public Dict getDict() {
+		return dict;
+	}
+	public void setDict(Dict dict) {
+		this.dict = dict;
+	}
+	
 }
