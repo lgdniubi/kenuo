@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.quartz.service.RedisClientTemplate;
-import com.training.modules.sys.entity.Role;
 import com.training.modules.sys.entity.User;
 import com.training.modules.train.dao.FzxRoleDao;
 import com.training.modules.train.entity.FzxRole;

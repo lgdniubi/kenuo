@@ -21,6 +21,7 @@ import com.training.common.persistence.Page;
 import com.training.common.utils.Collections3;
 import com.training.common.web.BaseController;
 import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.sys.dao.UserDao;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.service.SystemService;
@@ -53,6 +54,8 @@ public class fzxRoleController extends BaseController{
 	private OfficeService officeService;
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;		//redis缓存Service
+	@Autowired
+	private UserDao UserDao;
 	
 	/**
 	 * 妃子校角色list
@@ -408,6 +411,8 @@ public class fzxRoleController extends BaseController{
 	 */
 	@RequestMapping(value="addFzxRoleForm")
 	public String addFzxRoleForm(String userId,String fzxRoleIds,Model model){
+		User user = UserDao.get(userId);
+		model.addAttribute("user", user);
 		model.addAttribute("userId", userId);
 		model.addAttribute("fzxRoleIds", fzxRoleIds);
 		return "modules/sys/addFzxRoleForm";

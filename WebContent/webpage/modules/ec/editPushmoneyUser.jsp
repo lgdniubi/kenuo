@@ -70,8 +70,8 @@
 	    						$("#mytable").append("<tr><td style='text-align: center;'>"+item.name+"<input id='pushmoneyUserId' name='pushmoneyUserId' type='hidden' value='"+item.id+"'></td>"
 	    										   +"<td style='text-align: center;'>"+item.departmentName+"<input id='departmentName' name='departmentName' type='hidden' value='"+item.departmentName+"'><input id='departmentId' name='departmentId' type='hidden' value='"+item.departmentId+"'></td>"
 	    										   +"<td style='text-align: center;'>"+item.mobile+"</td>"
-	    										   +"<td style='text-align: center;'><input width='10px' id='changeValue' name='changeValue' value='0' style='text-align: center;' onblur='checknum(this.value)' class='"+item.departmentId+"'></td>"
-	    										   +"<td style='text-align: center;'><input width='10px' id='pushMoney' name='pushMoney' value='0' disabled='disabled' style='text-align: center;' class='"+item.departmentId+"'><input id='pushMoneySum' name='pushMoneySum' value='0' type='hidden'></td>"
+	    										   +"<td style='text-align: center;'><input id='changeValue' name='changeValue' value='0' style='text-align: center;width:60px;' onblur='checknum(this.value)' class='"+item.departmentId+"'></td>"
+	    										   +"<td style='text-align: center;'><input id='pushMoney' name='pushMoney' value='0' disabled='disabled' style='text-align: center;width:60px;' class='"+item.departmentId+"'><input id='pushMoneySum' name='pushMoneySum' value='0' type='hidden'></td>"
 	    										   +"<td style='text-align: center;'><a href='#' onclick='delSysUserInfo(this)' class='btn btn-danger btn-xs' ><i class='fa fa-edit'></i>删除</a></td></tr>"
 	    						);                                                                           
 	    					}); 
@@ -162,7 +162,7 @@
 														<input id="pushMoney" name="pushMoney" value="${orderPushmoneyRecord.pushMoney}" type="hidden" class="${orderPushmoneyRecord.departmentId}">
 													</td>
 													<td align="center">
-														<input width="10px" id="changeValue" name="changeValue" value="0" style="text-align: center;" class="${orderPushmoneyRecord.departmentId}" onblur="checknum(this.value)">
+														<input id="changeValue" name="changeValue" value="0" style="text-align: center;width:60px;" class="${orderPushmoneyRecord.departmentId}" onblur="checknum(this.value)">
 														<input id="pushMoneySum" name="pushMoneySum" value="${orderPushmoneyRecord.pushMoneySum}" type="hidden">
 													</td>
 													<td align="center">

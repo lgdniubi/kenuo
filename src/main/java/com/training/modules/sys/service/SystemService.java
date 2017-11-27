@@ -1161,7 +1161,7 @@ public class SystemService extends BaseService implements InitializingBean {
 				userDao.saveOfficeById(user.getReturnId(),offId);
 			}
 		}
-		
+		redisClientTemplate.del("UTOKEN_"+userId);
 	}
 
 	/**
@@ -1174,6 +1174,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		userDao.deleteOfficeById(id);
 		//然后删除角色
 		userDao.deleteFzxRoleByUser(userId,roleId);
+		redisClientTemplate.del("UTOKEN_"+userId);
 	}
 
 	/**
@@ -1181,7 +1182,7 @@ public class SystemService extends BaseService implements InitializingBean {
 	 * @param id
 	 */
 	@Transactional(readOnly = false)
-	public void updateOfficeById(String id,String officeIds) {
+	public void updateOfficeById(String id,String officeIds,String userId) {
 		String[] offIds = officeIds.split(",");
 		userDao.deleteOfficeById(Integer.valueOf(id));
 		if (!"".equals(officeIds)) {
@@ -1189,6 +1190,7 @@ public class SystemService extends BaseService implements InitializingBean {
 				userDao.updateOfficeById(Integer.valueOf(id),ofId);
 			}
 		}
+		redisClientTemplate.del("UTOKEN_"+userId);
 	}
 
 	

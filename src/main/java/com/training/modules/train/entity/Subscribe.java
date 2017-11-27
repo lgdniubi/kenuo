@@ -1,10 +1,15 @@
 package com.training.modules.train.entity;
 
-import com.training.common.persistence.TreeEntity;
 
-public class Subscribe extends TreeEntity<Subscribe> {
+import com.training.common.persistence.BaseEntity;
 
-	private static final long serialVersionUID = 1L;
+
+public class Subscribe extends BaseEntity<Subscribe> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 17864556466665L;
 	private int appt_id;					//预约id
 	private String beautician_id;			//预约美容师id
 	private String shop_id;					//预约店铺id
@@ -36,12 +41,12 @@ public class Subscribe extends TreeEntity<Subscribe> {
 		this.service_min = service_min;
 	}
 	@Override
-	public Subscribe getParent() {
+	public void preInsert() {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
 	@Override
-	public void setParent(Subscribe parent) {
+	public void preUpdate() {
 		// TODO Auto-generated method stub
 		
 	}
