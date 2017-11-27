@@ -55,6 +55,7 @@
 			settle_date AS 'settleDate'
 		FROM ydatadb.mtmy_turnover_details 
 		WHERE order_id = #{orderId}
+		AND del_flag = 0
 		ORDER BY create_date DESC
 	</select>
 	
@@ -88,6 +89,7 @@
 			mtd.amount
 		FROM ydatadb.mtmy_turnover_details mtd
 		WHERE mtd.order_id = #{orderId}
+		AND mtd.del_flag = 0
 		ORDER BY mtd.create_date DESC
 	</select>
 	
@@ -99,11 +101,12 @@
 			d.id AS 'departmentId',
 			u.mobile AS 'pushmoneyUserMobile',
 			SUM(mbt.push_money) AS 'pushMoney',
-			(select sum(mbt1.push_money) from mtmydb.mtmy_beautician_turnover mbt1 where mbt1.order_id = mbt.order_id and mbt1.user_id = mbt.user_id) AS 'pushMoneySum'  
+			(select sum(mbt1.push_money) from mtmydb.mtmy_beautician_turnover mbt1 where mbt1.order_id = mbt.order_id and mbt1.user_id = mbt.user_id and mbt1.del_flag = 0) AS 'pushMoneySum'  
 		FROM mtmydb.mtmy_beautician_turnover mbt
 		LEFT JOIN trains.sys_user u ON u.id = mbt.user_id
 		LEFT JOIN trains.train_department d ON d.id = mbt.department_id
 		WHERE mbt.turnover_details_id = #{id}
+		AND mbt.del_flag = 0
 		GROUP BY u.id
 	</select>
 	
@@ -117,6 +120,7 @@
 			mtd.amount
 		FROM ydatadb.mtmy_turnover_details mtd
 		WHERE mtd.id = #{turnOverDetailsId}
+		AND mtd.del_flag = 0
 		ORDER BY mtd.create_date DESC
 	</select>
 	
@@ -187,6 +191,7 @@
 		LEFT JOIN trains.train_department d ON d.id = mbt.department_id
 		LEFT JOIN trains.sys_user u1 ON u1.id = mbt.create_by
 		WHERE mbt.turnover_details_id = #{turnOverDetailsId}
+		AND mbt.del_flag = 0
 		ORDER BY mbt.create_date DESC
 	</select>
 </mapper>
