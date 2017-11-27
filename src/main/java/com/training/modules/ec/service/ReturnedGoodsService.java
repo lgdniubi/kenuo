@@ -577,15 +577,6 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	}
 
 	/**
-	 * 获取每个店铺的营业额
-	 * @param turnOverDetails
-	 * @return
-	 */
-	public List<TurnOverDetails> getSumTurnover(TurnOverDetails turnOverDetails) {
-		return dao.getSumTurnover(turnOverDetails);
-	}
-
-	/**
 	 * 查询每个业务员的售后审核扣减的营业额
 	 * @param turnOverDetails
 	 * @return
@@ -659,5 +650,19 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	 */
 	public List<TurnOverDetails> getMtmyTurnoverDetailsListView(TurnOverDetails turnOverDetails) {
 		return dao.getMtmyTurnoverDetailsListView(turnOverDetails);
+	}
+
+	/**
+	 * 获取业务员退货营业额的操作日志记录
+	 * @param page
+	 * @param orderPushmoneyRecord
+	 * @return
+	 */
+	public Page<OrderPushmoneyRecord> getReturnedBeauticianLog(Page<OrderPushmoneyRecord> page, OrderPushmoneyRecord orderPushmoneyRecord) {
+		// 设置分页参数
+		orderPushmoneyRecord.setPage(page);
+		// 执行分页查询
+		page.setList(returnedGoodsDao.getReturnedBeauticianLog(orderPushmoneyRecord));
+		return page;
 	}
 }

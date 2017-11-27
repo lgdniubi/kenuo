@@ -28,7 +28,7 @@
 	     	    		top.layer.alert('该订单无营业额数据', {icon: 0, title:'提醒'});
 	     	    		return;
 	     	    	}
-	     	    	//校验输入营业额+增减值+数据库的增减值>=0
+	     	    	//校验当前每个业务员sum营业额+增减值>=0
 	     	    	var num = obj.document.getElementById("num").value; //数据列表的个数
 	     	    	for(var k = 0; k < num; k++){
 		     	    	var y = obj.document.getElementById("Amount"+k).value; //获取每条对应输入的增减值
@@ -94,12 +94,12 @@
 	 		}); 
 		}
 		//编辑店铺营业额
-		function editMtmyTurnoverDetails(orderId,detailsId,mappingId){
+		function editMtmyTurnoverDetails(orderId,detailsId){
 			top.layer.open({
 	 			type: 2, 
 	 		    area: ['800px', '600px'],
 	 		    title:"新增/修改营业额：（提示：营业额数字不能修改，但可以插入正负数增减）",
-	 		    content: "${ctx}/ec/returned/editMtmyTurnoverDetails?orderId="+orderId+"&detailsId="+detailsId+"&mappingId="+mappingId,
+	 		    content: "${ctx}/ec/returned/editMtmyTurnoverDetails?orderId="+orderId+"&detailsId="+detailsId,
 	 		    btn: ['确定', '关闭']
 	     	    ,yes: function(index, layero){
 	     	    	var obj =  layero.find("iframe")[0].contentWindow;
@@ -130,7 +130,7 @@
 	     					return;
 	     	    		}
 	     	    	}
-	     	    	//校验同部门的营业额的值 = 售后金额
+	     	    	//校验所有店铺营业额合计值  = 售后金额
 		  			var amount = 0;//店铺营业额
 		  			var added = 0;
 					var amounts = "";//店营业额增减值字符串
@@ -142,7 +142,7 @@
   				    	amounts += $(turnovers[j]).val() + ",";
   				    }
   				    if(parseFloat(amount) + parseFloat(added) + parseFloat(returnAmount) != 0){
-  					    top.layer.alert('每个店铺的营业额之和必须等于售后金额！', {icon: 0, title:'提醒'});
+  					    top.layer.alert('店铺的营业额之和必须等于售后金额！', {icon: 0, title:'提醒'});
   					    return;
   				    }
 	   	    		$.ajax({
