@@ -63,6 +63,17 @@ public interface ReservationDao extends CrudDao<Reservation>{
 	 * @return
 	 */
 	public List<OrderGoods> findOrderGoodsByUserId(int userId);
+	/**
+	 * 查询预约的实际服务时间
+	 * @param reservation
+	 * @return
+	 */
+	public Reservation getServiceTime(Reservation reservation);
+	/**
+	 * 添加/修改  实际服务时长
+	 * @param reservation
+	 */
+	public void editServiceTime(Reservation reservation);
 	
 	/**
 	 * 获取预约时间服务已过没有完成状态的预约

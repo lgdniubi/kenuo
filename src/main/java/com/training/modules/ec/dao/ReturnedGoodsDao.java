@@ -217,4 +217,16 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 * @param orderPushmoneyRecord
 	 */
 	public void saveBeauticianTurnover(OrderPushmoneyRecord orderPushmoneyRecord);
+	/**
+	 * 获取业务员退款营业额(type=3)
+	 * @param turnOverDetails
+	 * @return
+	 */
+	public List<OrderPushmoneyRecord> getOrderPushmoneyRecordListView(TurnOverDetails turnOverDetails);
+	/**
+	 * 获取店铺退款营业额(type=3)
+	 * @param turnOverDetails
+	 * @return
+	 */
+	public List<TurnOverDetails> getMtmyTurnoverDetailsListView(TurnOverDetails turnOverDetails);
 }

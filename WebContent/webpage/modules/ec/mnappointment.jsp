@@ -122,6 +122,9 @@
 											<a class="btn btn-success btn-xs btn-danger" href="${ctx}/ec/mtmyMnappointment/cancel?reservationId=${reservation.reservationId }" onclick="return confirmx('确定要取消此预约吗？', this.href)"><i class="fa fa-close"></i>取消</a>
 										</shiro:hasAnyPermissions>
 									</c:if>
+									<c:if test="${reservation.apptStatus == '1' or reservation.apptStatus == '2'}">
+										<a href="#" onclick="openDialog('编辑实际服务时间', '${ctx}/ec/mtmyMnappointment/getServiceTime?reservationId=${reservation.reservationId }','750px', '400px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 添加服务时长</a>
+									</c:if>
 							  	</td>
 							</tr>
 						</c:forEach>

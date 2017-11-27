@@ -1,6 +1,5 @@
 package com.training.modules.ec.service;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,6 +100,23 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 	 */
 	public List<OrderGoods> findOrderGoodsByUserId(int userId){
 		return dao.findOrderGoodsByUserId(userId);
+	}
+
+	/**
+	 * 查询预约的实际服务时间
+	 * @param reservation
+	 * @return
+	 */
+	public Reservation getServiceTime(Reservation reservation) {
+		return dao.getServiceTime(reservation);
+	}
+
+	/**
+	 * 添加/修改  实际服务时长
+	 * @param reservation
+	 */
+	public void editServiceTime(Reservation reservation) {
+		dao.editServiceTime(reservation);
 	}
 	
 	/**
