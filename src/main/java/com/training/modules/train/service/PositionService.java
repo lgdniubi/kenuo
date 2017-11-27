@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.service.CrudService;
+import com.training.modules.sys.entity.User;
 import com.training.modules.train.dao.PositionDao;
 import com.training.modules.train.entity.Position;
 
@@ -60,9 +61,15 @@ public class PositionService extends CrudService<PositionDao,Position>{
 	 * @throws
 	 * 2017年11月17日 兵子
 	 */
-	public List<Position> findPositionNotValues(String values) {
+	public List<Position> findPositionNotValues(String values,User user) {
 		String[] pValues = values.split(",");
-		return positionDao.findPositionNotValues(pValues);
+		List<String> positionList = positionDao.getPositionkey(user.getId());
+		if (pValues != null && pValues.length > 0) {
+			for (String value : pValues) {
+				positionList.add(value);
+			}
+		}
+		return positionDao.findPositionNotValues(positionList);
 	}
 
 	/**
