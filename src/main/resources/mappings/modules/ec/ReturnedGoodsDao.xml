@@ -152,7 +152,6 @@
 	<select id="getMtmyTurnoverDetailsList" resultType="TurnOverDetails">
 		SELECT
 			a.order_id AS orderId,
-			a.mapping_id AS mappingId,
 			a.details_id AS detailsId,
 			SUM(a.amount) AS amount,
 			a.use_balance AS useBalance,
@@ -171,15 +170,16 @@
 		WHERE 
 			a.order_id = #{orderId}
 		AND
+			a.del_flag = 0
+		AND
 			a.belong_office_id IS NOT NULL
 		GROUP BY a.belong_office_id
 	</select>
 	
-	<!-- 获取店铺退款营业额(type=3) -->
+	<!-- 获取当前订单id和退款id的店铺sum营业额 -->
 	<select id="getMtmyTurnoverDetailsListView" resultType="TurnOverDetails">
 		SELECT
 			a.order_id AS orderId,
-			a.mapping_id AS mappingId,
 			a.details_id AS detailsId,
 			SUM(a.amount) AS amount,
 			a.use_balance AS useBalance,
@@ -198,7 +198,9 @@
 		WHERE 
 			a.order_id = #{orderId}
 		AND 
-			a.type = 3
+			a.details_id = #{detailsId}
+		AND 
+			a.del_flag = 0
 		AND
 			a.belong_office_id IS NOT NULL
 		GROUP BY a.belong_office_id
@@ -207,16 +209,14 @@
 	<select id="getReturnedAmountList" resultType="TurnOverDetails">
 		SELECT
 			a.order_id AS orderId,
-			a.mapping_id AS mappingId,
 			a.details_id AS detailsId,
 			SUM(a.amount) AS amount
 		FROM
 			ydatadb.mtmy_turnover_details a
-		LEFT JOIN
-			trains.sys_office b ON a.belong_office_id = b.id
 		WHERE 
 			a.order_id = #{orderId}
 		AND a.details_id = #{detailsId}
+		AND a.del_flag = 0
 		AND
 			a.belong_office_id IS NOT NULL
 		GROUP BY a.belong_office_id
@@ -226,7 +226,6 @@
 		SELECT
 			a.id AS detailsId,
 			a.order_id AS orderId,
-			a.goods_mapping_id AS mappingId,
 			SUM(a.return_amount) AS amount,
 			a.apply_date AS applyDate,
 			a.audit_date AS createDate
@@ -235,6 +234,7 @@
 		WHERE 
 			a.order_id = #{orderId}
 		AND a.id = #{returnedId}
+		AND a.del_flag = 0
 	</select>
 	<!-- 查询业务员提成总额 -->
 	<select id="getOrderPushmoneyRecord" resultType="OrderPushmoneyRecord">
@@ -257,43 +257,9 @@
 		AND r.create_by = su2.id
 		AND r.department_id = td.id
 		AND r.order_id = #{orderId}
-		AND r.del_flag = '0'
+		AND r.del_flag = 0
 		GROUP BY
 			r.department_id,r.user_id
-	</select>
-	<!-- 获取每个店铺的营业额 -->
-	<select id="getSumTurnover" resultType="TurnOverDetails">
-		SELECT
-			SUM(a.amount) AS amount,
-			a.belong_office_id
-		FROM
-			ydatadb.mtmy_turnover_details a
-		WHERE
-			a.order_id = #{orderId}
-		AND a.mapping_id = #{mappingId}
-	</select>
-	<!-- 获取店营业额明细列表 -->
-	<select id="getMtmyTurnoverDetails" resultType="TurnOverDetails">
-		SELECT
-			a.order_id AS orderId,
-			a.mapping_id AS mappingId,
-			a.details_id AS detailsId,
-			a.type,
-			a.amount,
-			a.use_balance AS useBalance,
-			a.status,
-			a.belong_office_id AS belongOfficeId,
-			b.name AS officeName
-		FROM
-			ydatadb.mtmy_turnover_details a
-		LEFT JOIN 
-			trains.sys_office b on a.belong_office_id = b.id
-		WHERE 
-			a.order_id = #{orderId}
-		AND a.mapping_id = #{goodsMappingId}
-		AND a.type = 3
-		GROUP BY
-			a.belong_office_id
 	</select>
 	<!-- 修改套卡子项虚拟商品的剩余次数 -->
 	<update id="updateCardNum">
@@ -576,11 +542,30 @@
 			</otherwise>
 		</choose>
 	</select>
+	<!-- 获取业务员退货营业额的操作日志记录 -->
+	<select id="getReturnedBeauticianLog" resultType="OrderPushmoneyRecord">
+		SELECT
+			u.id AS 'pushmoneyUserId',
+			u.name AS 'pushmoneyUserName',
+			d.name AS 'departmentName',
+			u.mobile AS 'pushmoneyUserMobile',
+			mbt.push_money AS 'pushMoney',
+			mbt.create_by AS 'createBy.id',
+			u1.name AS 'createBy.name',
+			mbt.create_date AS 'createDate'
+		FROM mtmydb.mtmy_beautician_turnover mbt
+		LEFT JOIN trains.sys_user u ON u.id = mbt.user_id
+		LEFT JOIN trains.train_department d ON d.id = mbt.department_id
+		LEFT JOIN trains.sys_user u1 ON u1.id = mbt.create_by
+		WHERE
+			mbt.order_id = #{orderId}
+		AND 
+			mbt.returned_id = #{returnedId}
+	</select>
 	<!-- 获取店铺营业额的操作日志 -->
 	<select id="findMtmyTurnoverDetailsList" resultType="TurnOverDetails">
 		SELECT
 			a.order_id AS orderId,
-			a.mapping_id AS mappingId,
 			a.details_id AS detailsId,
 			a.type,
 			a.amount,
@@ -612,12 +597,15 @@
 			trains.sys_user f on a.create_by = f.id
 		WHERE 
 			a.order_id = #{orderId}
+		AND 
+			a.details_id = #{detailsId}
+		AND 
+			a.del_flag = 0
 	</select>
 	<!-- 保存店营业额增减值 -->
 	<insert id="saveMtmyTurnoverDetails">
 		INSERT INTO ydatadb.mtmy_turnover_details (
 			order_id,
-			mapping_id,
 			details_id,
 			type,
 			amount,
@@ -631,10 +619,10 @@
 			create_by,
 			create_date,
 			settle_by,
-			settle_date
+			settle_date,
+			del_flag
 		)VALUES(
 			#{orderId},
-			#{mappingId},
 			#{detailsId},
 			#{type},
 			#{amount},
@@ -648,7 +636,8 @@
 			#{createBy.id},
 			SYSDATE(),
 			#{createBy.id},
-			SYSDATE()
+			SYSDATE(),
+			0
 		)
 	</insert>
 	
@@ -672,11 +661,13 @@
 			trains.train_department td ON r.department_id = td.id
 		WHERE
 			r.order_id = #{orderId}
+		AND 
+			r.del_flag = 0
 		GROUP BY
 			r.department_id,r.user_id
 	</select>
 	
-	<!-- 获取业务员退款营业额(type=3) -->
+	<!-- 根据订单id和退货id获取业务员退款sum营业额 -->
 	<select id="getOrderPushmoneyRecordListView" resultType="OrderPushmoneyRecord">
 		SELECT
 			r.order_id AS orderId,
@@ -697,7 +688,9 @@
 		WHERE
 			r.order_id = #{orderId}
 		AND 
-			r.type=3
+			r.returned_id = #{detailsId}
+		AND 
+			r.del_flag = 0
 		GROUP BY
 			r.department_id,r.user_id
 	</select>
@@ -713,6 +706,7 @@
 		WHERE
 			r.order_id = #{orderId}
 		AND r.returned_id = #{detailsId}
+		AND r.del_flag = 0
 		GROUP BY
 			r.department_id,r.user_id
 	</select>
@@ -728,6 +722,7 @@
 			trains.train_department td ON r.department_id = td.id
 		WHERE
 			r.order_id = #{orderId}
+		AND r.del_flag = 0
 		GROUP BY
 			r.department_id
 	</select>
@@ -750,6 +745,7 @@
 			mtmydb.mtmy_beautician_turnover r
 		WHERE
 			r.order_id = #{orderId}
+		AND r.del_flag = 0
 		GROUP BY
 			r.department_id,r.user_id
 	</select>
@@ -770,7 +766,8 @@
 			department_id,
 			office_id,
 			create_by,
-			create_date
+			create_date,
+			del_flag
 		)VALUES(
 			#{orderId},
 			#{returnedId},
@@ -785,7 +782,8 @@
 			#{departmentId},
 			#{officeId},
 			#{createBy.id},
-			SYSDATE()
+			SYSDATE(),
+			0
 		)
 	</insert>
 	

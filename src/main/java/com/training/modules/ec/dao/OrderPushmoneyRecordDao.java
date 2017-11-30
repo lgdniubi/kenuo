@@ -84,13 +84,6 @@ public interface OrderPushmoneyRecordDao extends TreeDao<OrderPushmoneyRecord> {
 	void save(OrderPushmoneyRecord orderPushmoneyRecord);
 
 	/**
-	 * 获取各个部门的营业额合计
-	 * @param orderId
-	 * @return
-	 */
-	List<OrderPushmoneyRecord> getSumTurnover(String orderId);
-
-	/**
 	 * 查询每个业务员的售后审核扣减的营业额
 	 * @param turnOverDetails
 	 * @return

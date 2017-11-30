@@ -177,12 +177,6 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 */
 	public void saveMtmyTurnoverDetails(TurnOverDetails turnOverDetails);
 	/**
-	 * 获取每个店铺的营业额
-	 * @param turnOverDetails
-	 * @return
-	 */
-	public List<TurnOverDetails> getSumTurnover(TurnOverDetails turnOverDetails);
-	/**
 	 * 查询每个业务员的售后审核扣减的营业额
 	 * @param turnOverDetails
 	 * @return
@@ -229,4 +223,10 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 * @return
 	 */
 	public List<TurnOverDetails> getMtmyTurnoverDetailsListView(TurnOverDetails turnOverDetails);
+	/**
+	 * 获取业务员退货营业额的操作记录
+	 * @param orderPushmoneyRecord
+	 * @return
+	 */
+	public List<OrderPushmoneyRecord> getReturnedBeauticianLog(OrderPushmoneyRecord orderPushmoneyRecord);
 }

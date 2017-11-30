@@ -115,15 +115,6 @@ public class OrderPushmoneyRecordService extends TreeService<OrderPushmoneyRecor
 	}
 
 	/**
-	 * 获取各个部门的营业额合计
-	 * @param orderId
-	 * @return
-	 */
-	public List<OrderPushmoneyRecord> getSumTurnover(String orderId) {
-		return dao.getSumTurnover(orderId);
-	}
-
-	/**
 	 * 查询每个业务员的售后审核扣减的营业额
 	 * @param turnOverDetails
 	 * @return

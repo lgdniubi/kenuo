@@ -76,21 +76,6 @@
 			r.user_id
 	</select>
 	
-	<!-- 获取各个部门的营业额合计 -->
-	<select id="getSumTurnover" resultType="OrderPushmoneyRecord">
-		SELECT
-			SUM(r.push_money) AS pushMoney,
-			r.department_id AS departmentId
-		FROM
-			mtmydb.mtmy_beautician_turnover r
-		LEFT JOIN
-			trains.train_department td ON r.department_id = td.id
-		WHERE
-			r.order_id = #{orderid}
-		GROUP BY
-			r.department_id
-	</select>
-	
 	<!-- 查询业务员营业额明细列表-->
 	<select id="getList" resultType="OrderPushmoneyRecord">
 		SELECT
@@ -104,11 +89,12 @@
 			r.position_key as positionKey,
 			r.position_value as positionValue,
 			r.department_id as departmentId,
-			r.office_id as officeId
+			r.office_id as officeId,
 		FROM
 			mtmydb.mtmy_beautician_turnover r
 		WHERE
 			r.order_id = #{orderId}
+		AND r.del_flag = 0
 		GROUP BY
 			r.department_id,r.user_id
 	</select>
