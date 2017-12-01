@@ -235,7 +235,7 @@ public class MtmyMnappointmentController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "saveReservation")
-	public String saveReservation(Users users,String beauticianId,String shopId,String times,String recid,String servicemin,String userNote,String groupId,String isReal,String goodsName,RedirectAttributes redirectAttributes,HttpServletRequest request){
+	public String saveReservation(Users users,String beauticianId,String shopId,String times,String recid,String servicemin,String userNote,String groupId,String isReal,String goodsName,int sendToUserFlag,RedirectAttributes redirectAttributes,HttpServletRequest request){
 		try {
 			List<Map<String, Object>> mapList = Lists.newArrayList();
 			Map<String, Object> map = Maps.newHashMap();
@@ -277,7 +277,7 @@ public class MtmyMnappointmentController extends BaseController{
 			
 			JSONArray jsonArray = JSONArray.fromObject(mapList);
 			logger.info("##### web接口路径:"+websaveReservation);
-			String parpm = "{\"shop_id\":\""+shopId+"\",\"shop_name\":\""+shopName+"\",\"user_id\":\""+users.getUserid()+"\",\"user_name\":\""+users.getName()+"\",\"user_phone\":\""+users.getMobile()+"\",\"client\":\"bm\",\"subscribes\":"+jsonArray.toString()+",\"user_note\":\""+userNote+"\",\"create_by\":\""+loginUser.getId()+"\",\"sendToUserFlag\":1}";
+			String parpm = "{\"shop_id\":\""+shopId+"\",\"shop_name\":\""+shopName+"\",\"user_id\":\""+users.getUserid()+"\",\"user_name\":\""+users.getName()+"\",\"user_phone\":\""+users.getMobile()+"\",\"client\":\"bm\",\"subscribes\":"+jsonArray.toString()+",\"user_note\":\""+userNote+"\",\"create_by\":\""+loginUser.getId()+"\",\"sendToUserFlag\":"+sendToUserFlag+"}";
 			logger.info("#### 添加预约参数"+parpm);
 			String url=websaveReservation;
 			String result = WebUtils.postObject(parpm, url);
@@ -407,7 +407,7 @@ public class MtmyMnappointmentController extends BaseController{
 	 */
 	@RequestMapping(value = "saveMoreReservation")
 	@ResponseBody
-	public String saveMoreReservation(Users users,String beauticianId,String shopId,String times,String chooseRecId,String serviceMin,String userNote,String chooseParentRecId,String isReal,String goodsName,RedirectAttributes redirectAttributes,HttpServletRequest request){
+	public String saveMoreReservation(Users users,String beauticianId,String shopId,String times,String chooseRecId,String serviceMin,String userNote,String chooseParentRecId,String isReal,String goodsName,int sendToUserFlag,RedirectAttributes redirectAttributes,HttpServletRequest request){
 		JSONObject jsonObject = new JSONObject();
 		try {
 			String[] beauticianIds = beauticianId.split(",");
@@ -461,7 +461,7 @@ public class MtmyMnappointmentController extends BaseController{
 			}
 			String websaveReservation = ParametersFactory.getMtmyParamValues("mtmy_savereservation");
 			logger.info("##### web接口路径:"+websaveReservation);
-			String parpm = "{\"shop_id\":\""+shopId+"\",\"shop_name\":\""+shopName+"\",\"user_id\":\""+users.getUserid()+"\",\"user_name\":\""+users.getName()+"\",\"user_phone\":\""+users.getMobile()+"\",\"client\":\"bm\",\"subscribes\":"+jsonArray.toString()+",\"user_note\":\""+userNote+"\",\"create_by\":\""+loginUser.getId()+"\",\"sendToUserFlag\":1}";
+			String parpm = "{\"shop_id\":\""+shopId+"\",\"shop_name\":\""+shopName+"\",\"user_id\":\""+users.getUserid()+"\",\"user_name\":\""+users.getName()+"\",\"user_phone\":\""+users.getMobile()+"\",\"client\":\"bm\",\"subscribes\":"+jsonArray.toString()+",\"user_note\":\""+userNote+"\",\"create_by\":\""+loginUser.getId()+"\",\"sendToUserFlag\":"+sendToUserFlag+"}";
 			logger.info("#### 添加预约参数"+parpm);
 			String url=websaveReservation;
 			String result = WebUtils.postObject(parpm, url);

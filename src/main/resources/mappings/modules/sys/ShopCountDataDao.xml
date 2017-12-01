@@ -116,7 +116,7 @@
 				</if>
 					'0',
 				<if test="evaluationScore != null">
-					#{evaluationScore},
+					ROUND(#{evaluationScore},1),
 				</if>
 				<if test="serveScore != null">
 					#{serveScore},
@@ -146,7 +146,7 @@
 					environment_score = (environment_score * evaluation_count + #{environmentScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
 				</if>
 				<if test="evaluationScore != 0">
-					evaluation_score = (evaluation_score * evaluation_count + #{evaluationScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
+					evaluation_score = ROUND((evaluation_score * evaluation_count + #{evaluationScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),1),
 				</if>
 				evaluation_count = evaluation_count + #{evaluationCount},
 				update_date = SYSDATE();
