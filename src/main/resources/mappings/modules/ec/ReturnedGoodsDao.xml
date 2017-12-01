@@ -374,7 +374,8 @@
 			remarks,
 			<!-- belong_user_id,
 			belong_office_id, -->
-			return_status
+			return_status,
+			apply_by
 		)VALUES(
 			#{id},
 			#{orderId},
@@ -393,7 +394,8 @@
 			#{remarks},
 			<!-- #{belongUserId},
 			#{belongOfficeId}, -->
-			#{returnStatus}
+			#{returnStatus},
+			#{applyBy}
 		)
 	</insert>
 	<!-- 强制取消 -->
