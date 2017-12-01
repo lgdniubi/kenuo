@@ -83,7 +83,7 @@
 	</select>
 	<!-- 查询可用的店铺 -->
 	<select id="loadOffice" resultType="Office">
-		CALL mtmydb.find_goods_for_shop(#{goodsIds},0,#{franchiseeId},#{nationName},#{provinceId},#{cityId},#{districtId},0,10000)
+		CALL mtmydb.findShopByGoods(#{goodsIds},#{franchiseeId},#{nationName},#{provinceId},#{cityId},#{districtId},0,10000)
 	</select>
 
 	<!-- 单个用户的预约记录-->	
