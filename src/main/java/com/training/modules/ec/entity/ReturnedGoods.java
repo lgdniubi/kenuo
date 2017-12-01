@@ -76,6 +76,7 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	private List<Integer> recIds;			//卡项实物商品 id集合(mapping_id)
 	private List<Integer> returnNums;		//卡项实物商品 售后数量集合
 	
+	private String applyBy;                 //申请人
 	/*private String belongUserId;			//归属人ID
 	private String belongUserName;          //归属人名称
 	private String belongOfficeId;			//归属机构ID
@@ -446,7 +447,11 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 		// TODO Auto-generated method stub
 		
 	}
-	
-	
+	public String getApplyBy() {
+		return applyBy;
+	}
+	public void setApplyBy(String applyBy) {
+		this.applyBy = applyBy;
+	}
 	
 }

@@ -250,7 +250,9 @@
 	<update id="updateapptstatus" parameterType="java.lang.Integer">
 		UPDATE 
 			mtmydb.mtmy_appt_order 
-		SET appt_status = 1 
+		SET 
+			appt_status = 1,
+		 	update_date = SYSDATE()
 		WHERE id = #{appt_id}
 		AND appt_status = 0
 	</update>
