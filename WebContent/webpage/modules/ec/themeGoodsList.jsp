@@ -106,7 +106,6 @@
 		        var all = new Array(); //定义变量全部保存
 		        
 		       	for(i=0;i<select2.length;i++){
-		       		alert();
 		        	arr.push(select2[i].value);
 		        } 
 		        //异步添加商品
