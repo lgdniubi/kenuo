@@ -626,8 +626,12 @@ public class ReturnedGoodsController extends BaseController {
 		List<OrderPushmoneyRecord> list = returnedGoodsService.findOrderPushmoneyRecordList(turnOverDetails);//获取业务员信息集合
 		if(list.size() != 0){
 			List<OrderPushmoneyRecord> pushmoneyList = returnedGoodsService.getReturnedPushmoneyList(turnOverDetails);//在该售后ID查询每个业务员的售后审核扣减的营业额
-			//查询业务员营业额
-			int num = list.size();
+			
+			int num = 0;//获取编辑界面的数字
+			for (OrderPushmoneyRecord op : list) {
+				num += op.getChildren().size(); 
+			}
+			int j = num;//校验营业额+增减值>=0
 			double returnAmount = turnOverDetails.getAmount();//退款金额
 			double beauticianTurnover= 0;//单个的（美容师营业额-该美容师已退营业额）
 			double sumTurnover= 0;//合计的(美容师合计营业额-所有美容师已退营业额)
@@ -646,50 +650,65 @@ public class ReturnedGoodsController extends BaseController {
 				if(list.get(0).getDepartmentId() == opr.getDepartmentId()){//判断第一条信息属于哪个部门
 					
 					if(pushmoneyList.size() !=0){//判断在该退货id中'已经扣减的营业额',不存在'赋值为0'
-						added = pushmoneyList.get(0).getPushMoney();
+						added = pushmoneyList.get(0).getPushMoney();//按部门和用户id区分的每个业务员的当前营业额
 					}
 					beauticianTurnover = list.get(0).getPushMoney();//单个业务员的sum营业额
 					sumTurnover = opr.getPushMoney();//部门的营业额
 					turnoverRatio = Double.parseDouble(formater.format(beauticianTurnover/sumTurnover*returnAmount));//占比
 					userTurnover = userTurnover + 
+						"<input id='pushMoney' name='pushMoney"+list.get(0).getDepartmentId()+"' type='hidden' value='"+added+"' class='form-control'>"+
+						"<input id='num' name='num' value='"+num+"' type='hidden' class='form-control'>";
+					userTurnover = userTurnover + 
 						"<tr style='text-align: center;'> "+
 							"<td rowspan='"+num+"'>"+DateUtils.formatDate(createDate, "yyyy-MM-dd HH:mm:ss")+"</td> "+
 							"<td rowspan='"+num+"'>售后</td> "+
 							"<td rowspan='"+num+"'>"+returnAmount+"</td> "+
-							"<td style='text-align: center;'>"+list.get(0).getPushmoneyUserName()+"</td> "+
-							"<td style='text-align: center;'>"+list.get(0).getDepartmentName()+"</td> "+
-							"<td style='text-align: center;'>"+list.get(0).getPushmoneyUserMobile()+"</td> "+
-							"<td style='text-align: center;'>"+added+"</td> "+
-							"<td style='text-align: center;'>"+turnoverRatio+"</td> "+
-							"<td style='text-align: center;'>"+
-								"<input id='added0' name='added"+list.get(0).getDepartmentId()+"' type='hidden' value='"+added+"' class='form-control'>"+
-								"<input id='Amount0' name='Amount"+list.get(0).getDepartmentId()+"' value='' class='form-control'>"+
-								"<input id='beauticianTurnover0' value='"+beauticianTurnover+"' type='hidden' class='form-control'>"+
-								"<input id='num' name='num' value='"+num+"' type='hidden' class='form-control'>"+
-							"</td> "+
-						"</tr>";
+							"<td style='text-align: center;' rowspan='"+(list.get(0).getChildren().size())+"'>"+list.get(0).getPushmoneyUserName()+"</td> "+
+							"<td style='text-align: center;' rowspan='"+(list.get(0).getChildren().size())+"'>"+list.get(0).getDepartmentName()+"</td> "+
+							"<td style='text-align: center;' rowspan='"+(list.get(0).getChildren().size())+"'>"+list.get(0).getPushmoneyUserMobile()+"</td> "+
+							"<td style='text-align: center;' rowspan='"+(list.get(0).getChildren().size())+"'>"+added+"</td> "+
+							"<td style='text-align: center;' rowspan='"+(list.get(0).getChildren().size())+"'>"+turnoverRatio+"</td> ";
+							
+					for(int i =0; i<list.get(0).getChildren().size(); i++){
+						userTurnover = userTurnover + 
+								"<td style='text-align: center;'>"+list.get(0).getChildren().get(i).getBelongOfficeName()+"</td> "+
+								"<td style='text-align: center;'>"+list.get(0).getChildren().get(i).getPushMoney()+"</td> "+
+								"<td style='text-align: center;'>"+
+									"<input id='added"+j+"' name='added"+list.get(0).getDepartmentId()+"' type='hidden' value='"+list.get(0).getChildren().get(i).getPushMoney()+"' class='form-control'>"+
+									"<input id='Amount"+j+"' name='Amount"+list.get(0).getDepartmentId()+"' value='' class='form-control'>"+
+								"</td> "+
+							"</tr>";
+						j--;
+					}
 				}
 				for (int i = 1; i < list.size(); i++) {//循环除第一条之外的业务员营业额,并且比较在哪个部门,计算营业额占比
 					if(list.get(i).getDepartmentId() == opr.getDepartmentId()){
 						if(pushmoneyList.size() !=0){//判断营业额是否为第一次编辑,为营业额赋值
-							added = pushmoneyList.get(i).getPushMoney();
+							added = pushmoneyList.get(i).getPushMoney();//按部门和用户id区分的每个业务员的当前营业额
 						}
 						sumTurnover = opr.getPushMoney();//部门的营业额
 						beauticianTurnover = list.get(i).getPushMoney();//单个业务员营业额
 						turnoverRatio = Double.parseDouble(formater.format(beauticianTurnover/sumTurnover*returnAmount));//占比
 						userTurnover = userTurnover + 
+							"<input id='pushMoney' name='pushMoney"+list.get(i).getDepartmentId()+"' type='hidden' value='"+added+"' class='form-control'>";
+						userTurnover = userTurnover + 
 							"<tr style='text-align: center;'> "+
-								"<td style='text-align: center;'>"+list.get(i).getPushmoneyUserName()+"</td> "+
-								"<td style='text-align: center;'>"+list.get(i).getDepartmentName()+"</td> "+
-								"<td style='text-align: center;'>"+list.get(i).getPushmoneyUserMobile()+"</td> "+
-								"<td style='text-align: center;'>"+added+"</td> "+
-								"<td style='text-align: center;'>"+turnoverRatio+"</td> "+
-								"<td style='text-align: center;'>"+
-									"<input id='added"+i+"' name='added"+list.get(i).getDepartmentId()+"' type='hidden' value='"+added+"' class='form-control'>"+
-									"<input id='Amount"+i+"' name='Amount"+list.get(i).getDepartmentId()+"' value='' class='form-control'>"+
-									"<input id='beauticianTurnover"+i+"' value='"+beauticianTurnover+"' type='hidden' class='form-control'>"+
-								"</td> "+
-							"</tr>";
+								"<td style='text-align: center;' rowspan='"+(list.get(i).getChildren().size())+"'>"+list.get(i).getPushmoneyUserName()+"</td> "+
+								"<td style='text-align: center;' rowspan='"+(list.get(i).getChildren().size())+"'>"+list.get(i).getDepartmentName()+"</td> "+
+								"<td style='text-align: center;' rowspan='"+(list.get(i).getChildren().size())+"'>"+list.get(i).getPushmoneyUserMobile()+"</td> "+
+								"<td style='text-align: center;' rowspan='"+(list.get(i).getChildren().size())+"'>"+added+"</td> "+
+								"<td style='text-align: center;' rowspan='"+(list.get(i).getChildren().size())+"'>"+turnoverRatio+"</td> ";
+						for(int k =0; k<list.get(0).getChildren().size(); k++){
+							userTurnover = userTurnover + 
+									"<td style='text-align: center;'>"+list.get(i).getChildren().get(k).getBelongOfficeName()+"</td> "+
+									"<td style='text-align: center;'>"+list.get(i).getChildren().get(k).getPushMoney()+"</td> "+
+									"<td style='text-align: center;'>"+
+										"<input id='added"+j+"' name='added"+list.get(i).getDepartmentId()+"' type='hidden' value='"+list.get(i).getChildren().get(k).getPushMoney()+"' class='form-control'>"+
+										"<input id='Amount"+j+"' name='Amount"+list.get(i).getDepartmentId()+"' value='' class='form-control'>"+
+									"</td> "+
+								"</tr>";
+							j--;
+						}
 					}
 				}
 				//拼接部门字符串

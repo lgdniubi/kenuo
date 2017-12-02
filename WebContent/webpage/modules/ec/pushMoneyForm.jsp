@@ -89,8 +89,10 @@
 								<th style="text-align: center;">业务员</th>
 								<th style="text-align: center;">部门</th>
 								<th style="text-align: center;">手机号</th>
+								<th style="text-align: center;">个人总营业额</th>
+								<th style="text-align: center;">个人营业额占比</th>
+								<th style="text-align: center;">收益归属店</th>
 								<th style="text-align: center;">营业额</th>
-								<th style="text-align: center;">营业额占比</th>
 								<th style="text-align: center;">增减值</th>
 							</tr>
 						</thead>
