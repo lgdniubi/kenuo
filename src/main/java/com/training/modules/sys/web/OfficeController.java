@@ -419,6 +419,60 @@ public class OfficeController extends BaseController {
 		}
 		return mapList;
 	}
+	
+	/**
+	 * 
+	 * @Title: parentTreeData
+	 * @Description: TODO 选择上级机构排除死循环
+	 * @param extId
+	 * @param type
+	 * @param grade
+	 * @param isAll
+	 * @param isGrade
+	 * @param response
+	 * @return:
+	 * @return: List<Map<String,Object>>
+	 * @throws
+	 * 2017年12月1日 兵子
+	 */
+	@ResponseBody
+	@RequestMapping(value = "parentTreeData")
+	public List<Map<String, Object>> parentTreeData(@RequestParam(required=false) String extId, @RequestParam(required=false) String type,
+			@RequestParam(required=false) Long grade, @RequestParam(required=false) Boolean isAll,@RequestParam(required=false) String isGrade, HttpServletResponse response) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<Office> list = officeService.findList(isAll);
+		for (int i=0; i<list.size(); i++){
+			Office e = list.get(i);
+				//选择上级机构时      上级机构为非店铺
+				if("true".equals(isGrade) && "1".equals(e.getGrade())){
+					continue;
+				}
+				Map<String, Object> map = Maps.newHashMap();
+				if (!"".equals(extId) && !"0".equals(e.getParentId()) && !extId.equals(e.getId()) && !e.getParentIds().contains(extId)) {
+					map.put("id", e.getId());
+					map.put("pId", e.getParentId());
+					map.put("pIds", e.getParentIds());
+					map.put("name", e.getName());
+					if (type != null && "3".equals(type)){
+						map.put("isParent", true);
+					}
+					mapList.add(map);
+					}
+				if ("".equals(extId)){
+					map.put("id", e.getId());
+					map.put("pId", e.getParentId());
+					map.put("pIds", e.getParentIds());
+					map.put("name", e.getName());
+					if (type != null && "3".equals(type)){
+						map.put("isParent", true);
+					}
+					mapList.add(map);
+					}
+		}
+		return mapList;
+	}
+	
+	
 	/**
 	 * 新机构
 	 * 获取机构JSON数据。
