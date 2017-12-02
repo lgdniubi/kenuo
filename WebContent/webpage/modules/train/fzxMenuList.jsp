@@ -54,7 +54,7 @@
 								var isChildren = dataObj[i].num>0?'hasChild=\"true\"':'';
 								html += "<tr pId=\""+dataObj[i].parentId+"\" id=\""+dataObj[i].menuId+"\" "+isChildren+" >";
 								/* html += "<td><input type=\"checkbox\" id="+dataObj[i].id+" class=\"i-checks\"></td>"; 批量删除 由于样式问题  取消 */
-								html += "<td nowrap><a href=\"#\" onclick=\"openDialogView('查看菜单', '${ctx}/train/fzxMenu/form?menuId="+dataObj[i].menuId+"','800px', '620px')\">"+dataObj[i].name+"</a></td>";
+								html += "<td><a href=\"#\" onclick=\"openDialogView('查看菜单', '${ctx}/train/fzxMenu/form?menuId="+dataObj[i].menuId+"','800px', '620px')\">"+dataObj[i].name+"</a></td>";
 								html += "<td>"+dataObj[i].enname+"</td>";
 								html += "<td class=\"imgUrl\"><img src=\""+dataObj[i].icon+"\" data-src=\""+dataObj[i].icon+"\" style=\"max-width: 100px;max-height: 100px;\"></td>";
 								if(dataObj[i].isShow == 0){
