@@ -40,7 +40,7 @@
 						<div class="pull-left">
 							<shiro:hasPermission name="train:department:add">
 								<!-- 增加按钮 -->
-								<table:addRow url="${ctx}/train/department/form" title="用户" width="800px" height="650px"></table:addRow>
+								<table:addRow url="${ctx}/train/department/form" title="部门" width="800px" height="650px"></table:addRow>
 							</shiro:hasPermission>
 							<shiro:hasPermission name="train:department:del">
 								<!-- 删除按钮 -->

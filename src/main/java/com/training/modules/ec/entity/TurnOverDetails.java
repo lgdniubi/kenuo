@@ -43,7 +43,6 @@ public class TurnOverDetails extends DataEntity<TurnOverDetails> {
 	private String officeName;			//归属店铺名称
 	private String beauticianName;		//绑定技师
 	private String createName;			//操作人
-	private Date applyDate;             //申请时间
 	
 	public int getTurnOverDetailsId() {
 		return turnOverDetailsId;
@@ -193,11 +192,4 @@ public class TurnOverDetails extends DataEntity<TurnOverDetails> {
 	public void setCreateName(String createName) {
 		this.createName = createName;
 	}
-	public Date getApplyDate() {
-		return applyDate;
-	}
-	public void setApplyDate(Date applyDate) {
-		this.applyDate = applyDate;
-	}
-	
 }

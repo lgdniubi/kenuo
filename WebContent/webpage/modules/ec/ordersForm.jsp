@@ -413,7 +413,6 @@
 			   	}else{
 			       	return false;			
 				}
-				
    	    		$.ajax({
        				type:"post",
        				data:$(obj.document.getElementById("mosaic")).serialize(),

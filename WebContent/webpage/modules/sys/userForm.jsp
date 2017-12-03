@@ -130,7 +130,7 @@
 				top.layer.open({
 				    type: 2, 
 				    area: ['300px', '420px'],
-				    title:"选择部门",
+				    title:"选择职位",
 				    ajaxData:{selectIds: $("#userTypeId").val()},
 				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/dict/dictTree?type=sys_user_type")+"&module=&checked=&extId=&isAll=" ,
 				    btn: ['确定', '关闭']
