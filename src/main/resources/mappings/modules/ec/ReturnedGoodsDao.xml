@@ -684,6 +684,8 @@
 			r.order_id = #{orderId}
 		AND 
 			r.del_flag = 0
+		AND
+			r.belong_office_id IS NOT NULL
 		GROUP BY
 			r.department_id,r.user_id
 	</select>
@@ -715,6 +717,8 @@
 			r.user_id = #{pushmoneyUserId}
 		AND 
 			r.del_flag = 0
+		AND
+			r.belong_office_id IS NOT NULL
 		GROUP BY
 			r.belong_office_id
 	</select>
