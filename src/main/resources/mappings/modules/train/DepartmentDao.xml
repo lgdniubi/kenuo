@@ -49,7 +49,7 @@
 			d.sort 
 		FROM train_department d 
 		WHERE 
-			d.del_flag = 0 AND d.name = #{name} 
+			d.del_flag = 0 AND d.name = #{name} AND d.office_id = #{companyId} 
 	</select>
 	
 	<!-- 保存部门 -->

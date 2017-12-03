@@ -18,7 +18,9 @@ import com.google.common.collect.Lists;
 import com.training.common.config.Global;
 import com.training.common.persistence.Page;
 import com.training.common.web.BaseController;
+import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
+import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.Department;
 import com.training.modules.train.entity.Position;
 import com.training.modules.train.service.DepartmentService;
@@ -76,6 +78,10 @@ public class DepartmentController extends BaseController{
 		if (department.getdId() != null) {
 			department =  departmentService.getDepartment(department);
 		}
+		if (department.getdId() == null) {
+			User user = UserUtils.getUser();
+			department.setOffice(user.getCompany());
+		}
 		model.addAttribute("department", department);
 		return "modules/train/departmentForm";
 	}
@@ -93,10 +99,10 @@ public class DepartmentController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value="checkName")
-	public String checkName(String oldName,String name){
+	public String checkName(String oldName,String name,String companyId){
 		if (name != null && name.equals(oldName)) {
 			return "true";
-		} else if (name != null && departmentService.getDepartmentName(name) == null) {
+		} else if (name != null && departmentService.getDepartmentName(name,companyId) == null) {
 			return "true";
 		}
 		return "false";
@@ -123,7 +129,9 @@ public class DepartmentController extends BaseController{
 				addMessage(redirectAttributes, "演示模式，不允许操作！");
 				return "redirect:" + adminPath + "/train/department/list?repage";
 			}
-			if (!"true".equals(checkName(oldName, department.getName()))){
+			User user = UserUtils.getUser();
+			department.setOffice(user.getCompany());
+			if (!"true".equals(checkName(oldName, department.getName(),department.getOffice().getId()))){
 				addMessage(model, "保存部门'" + department.getName() + "'失败, 部门已存在");
 				return form(department, model);
 			}

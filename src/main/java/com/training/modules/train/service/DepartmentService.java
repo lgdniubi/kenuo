@@ -64,8 +64,8 @@ public class DepartmentService  extends CrudService<DepartmentDao, Department>{
 	 * @throws
 	 * 2017年11月15日 兵子
 	 */
-	public Department getDepartmentName(String name) {
-		return departmentDao.getDepartmentName(name);
+	public Department getDepartmentName(String name,String companyId) {
+		return departmentDao.getDepartmentName(name,companyId);
 	}
 
 	/**
