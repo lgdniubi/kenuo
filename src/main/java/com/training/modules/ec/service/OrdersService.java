@@ -1036,9 +1036,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orders.setGoodsprice(goodsprice/100);
 		}
 		orders.setOrderGoodList(orderGoodList);
-		//查询订单提成人员信息
+		/*//查询订单提成人员信息
 		List<OrderPushmoneyRecord> orderPushmoneyRecords = orderPushmoneyRecordService.getOrderPushmoneyRecordByOrderId(orderid);
-		orders.setOrderPushmoneyRecords(orderPushmoneyRecords);
+		orders.setOrderPushmoneyRecords(orderPushmoneyRecords);*/
 		//查询订单日志信息
 		List<OrderRemarksLog> orderRemarks = dao.getOrderRemarksLog(orderid);
 		orders.setOrderRemarksLog(orderRemarks);
