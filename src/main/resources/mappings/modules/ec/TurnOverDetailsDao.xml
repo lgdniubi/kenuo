@@ -107,7 +107,7 @@
 		LEFT JOIN trains.train_department d ON d.id = mbt.department_id
 		WHERE mbt.turnover_details_id = #{id}
 		AND mbt.del_flag = 0
-		GROUP BY u.id
+		GROUP BY u.id,d.id,mbt.order_id,mbt.user_id
 	</select>
 	
 	<!-- 查询单个店营业额对应的业务员营业额详情 -->
