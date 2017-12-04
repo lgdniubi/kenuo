@@ -76,6 +76,9 @@ public class BannerController extends BaseController {
 	@RequestMapping(value = "save")
 	public String save(Banner banner,RedirectAttributes redirectAttributes){
 		banner.setBannerName(HtmlUtils.htmlUnescape(banner.getBannerName()));
+		if(!"".equals(banner.getRedirectUrl()) && banner.getRedirectUrl() != null){
+			banner.setRedirectUrl(HtmlUtils.htmlUnescape(banner.getRedirectUrl()));
+		}
 		if(banner.getBannerId()==0){
 			bannerService.save(banner);
 			addMessage(redirectAttributes, "添加banner图成功！");
