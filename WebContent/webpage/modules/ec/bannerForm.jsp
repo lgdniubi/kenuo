@@ -98,7 +98,7 @@
 								<tr>
 									<td><label class="pull-right">商品id：</label></td>
 									<td>
-										<form:input path="goodsId" class="form-control" style="width: 300px"/>
+										<form:input path="goodsId" class="form-control" style="width: 300px" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';"/>
 									</td>
 								</tr>
 								<tr>
