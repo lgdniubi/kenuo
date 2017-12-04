@@ -1,6 +1,7 @@
 package com.training.modules.ec.service;
 
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,10 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 	 * 查看所有预约
 	 */
 	public Page<Reservation> findPage(Page<Reservation> page,Reservation reservation){
+		if(reservation.getBeginDate() == null && reservation.getEndDate() == null){
+			reservation.setBeginDate(new Date());
+			reservation.setEndDate(new Date());
+		}
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
 		reservation.getSqlMap().put("dsf", CommonScopeUtils.newDataScopeFilter("r"));
 		reservation.setPage(page);
