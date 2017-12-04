@@ -161,12 +161,6 @@
 		<div class="ibox">
 			<div class="ibox-content">
 				<div class="clearfix">
-					<form id="searchForm" action="${ctx}/ec/theme/themeArticlesList?themeId=${themeMapping.themeId}" method="post" class="form-inline">
-						<!-- 翻页隐藏文本框 -->
-						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
-						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-						<input id="articlesIds" name="articlesIds" type="hidden" value="${articlesIds}"/>
-					</form>
 					<!-- 工具栏 -->
 					<div class="row" style="padding-top: 10px;">
 						<div class="col-sm-12">
@@ -203,14 +197,6 @@
 							</tr>
 						</c:forEach>
 					</tbody>
-					<tfoot>
-						<tr>
-	                    	<td colspan="20">
-	                        	<!-- 分页代码 --> 
-	                            <table:page page="${page}"></table:page>
-	                        </td>	
-	                    </tr>
-                   </tfoot>
 				</table>
 			</div>
 			</div>
