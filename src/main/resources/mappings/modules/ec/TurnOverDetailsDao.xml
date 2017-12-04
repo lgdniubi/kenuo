@@ -56,6 +56,7 @@
 		FROM ydatadb.mtmy_turnover_details 
 		WHERE order_id = #{orderId}
 		AND del_flag = 0
+		AND (type = 1 or type = 2)
 		ORDER BY create_date DESC
 	</select>
 	
@@ -90,6 +91,7 @@
 		FROM ydatadb.mtmy_turnover_details mtd
 		WHERE mtd.order_id = #{orderId}
 		AND mtd.del_flag = 0
+		AND (mtd.type = 1 or mtd.type = 2)
 		ORDER BY mtd.create_date DESC
 	</select>
 	
