@@ -652,7 +652,9 @@ public class ReturnedGoodsController extends BaseController {
 					}
 					beauticianTurnover = list.get(0).getPushMoney();//单个业务员的sum营业额
 					sumTurnover = opr.getPushMoney();//部门的营业额
-					turnoverRatio = Double.parseDouble(formater.format(beauticianTurnover/sumTurnover*returnAmount));//占比
+					if(sumTurnover != 0 ){
+						turnoverRatio = Double.parseDouble(formater.format(beauticianTurnover/sumTurnover*returnAmount));//占比
+					}
 					userTurnover = userTurnover + 
 						"<input id='pushMoney' name='pushMoney"+list.get(0).getDepartmentId()+"' type='hidden' value='"+added+"' class='form-control'>"+
 						"<input id='num' name='num' value='"+num+"' type='hidden' class='form-control'>";
@@ -686,7 +688,9 @@ public class ReturnedGoodsController extends BaseController {
 						}
 						sumTurnover = opr.getPushMoney();//部门的营业额
 						beauticianTurnover = list.get(i).getPushMoney();//单个业务员营业额
-						turnoverRatio = Double.parseDouble(formater.format(beauticianTurnover/sumTurnover*returnAmount));//占比
+						if(sumTurnover != 0 ){
+							turnoverRatio = Double.parseDouble(formater.format(beauticianTurnover/sumTurnover*returnAmount));//占比
+						}
 						userTurnover = userTurnover + 
 							"<input id='pushMoney' name='pushMoney"+list.get(i).getDepartmentId()+"' type='hidden' value='"+added+"' class='form-control'>";
 						userTurnover = userTurnover + 
@@ -776,8 +780,9 @@ public class ReturnedGoodsController extends BaseController {
 			for (TurnOverDetails mtd : list) {
 				sumTurnover += mtd.getAmount(); //得到店铺营业额合计
 			}
-			turnoverRatio = Double.parseDouble(formater.format(storeTurnover/sumTurnover*returnAmount));//店铺营业额占比
-	
+			if(sumTurnover != 0 ){
+				turnoverRatio = Double.parseDouble(formater.format(storeTurnover/sumTurnover*returnAmount));//店铺营业额占比
+			}
 			if(amountList.size() != 0){//判断营业额是否为第一次编辑,为营业额赋值
 				added = amountList.get(0).getAmount();
 			}
@@ -802,7 +807,9 @@ public class ReturnedGoodsController extends BaseController {
 					added = amountList.get(i).getAmount();
 				}
 				storeTurnover = list.get(i).getAmount();//单个店铺营业额合计之后的金额
-				turnoverRatio = Double.parseDouble(formater.format(storeTurnover/sumTurnover*returnAmount));
+				if(sumTurnover != 0 ){
+					turnoverRatio = Double.parseDouble(formater.format(storeTurnover/sumTurnover*returnAmount));
+				}
 				shopTurnover = shopTurnover + 
 					"<tr style='text-align: center;'> "+
 						"<td style='text-align: center;'>"+list.get(i).getBelongOfficeName()+"</td> "+

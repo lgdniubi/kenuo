@@ -100,6 +100,8 @@
 							${userTurnover}
 						</tbody>						
 					</table>
+					<p><font color="red">备注：<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;正数是增加营业额，如：填写90，代表营业额增加90;<br/>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;负数是减少营业额，如：填写-90，代表营业额扣减90</font></p>
 				</form:form>
 			</div>
 		</div>
