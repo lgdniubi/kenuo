@@ -13,7 +13,7 @@
 			top.layer.open({
 	 			type: 2, 
 	 		    area: ['1000px', '800px'],
-	 		    title:"新增/修改营业额：（提示：营业额数字不能修改，但可以插入正负数增减）",
+	 		    title:"新增/修改营业额",
 	 		    content: "${ctx}/ec/returned/editOrderPushmoneyRecord?orderId="+orderId+"&detailsId="+detailsId,
 	 		    btn: ['确定', '关闭']
 	     	    ,yes: function(index, layero){
@@ -101,7 +101,7 @@
 			top.layer.open({
 	 			type: 2, 
 	 		    area: ['800px', '600px'],
-	 		    title:"新增/修改营业额：（提示：营业额数字不能修改，但可以插入正负数增减）",
+	 		    title:"新增/修改营业额",
 	 		    content: "${ctx}/ec/returned/editMtmyTurnoverDetails?orderId="+orderId+"&detailsId="+detailsId,
 	 		    btn: ['确定', '关闭']
 	     	    ,yes: function(index, layero){
@@ -185,7 +185,7 @@
 						<tr>
 							<th style="text-align: center;">时间</th>
 							<th style="text-align: center;">类型</th>
-							<th style="text-align: center;">金额</th>
+							<th style="text-align: center;">售后金额</th>
 							<th style="text-align: center;">业务员</th>
 							<th style="text-align: center;">部门</th>
 							<th style="text-align: center;">手机号</th>
@@ -203,8 +203,8 @@
 						<tr>
 							<th style="text-align: center;">时间</th>
 							<th style="text-align: center;">类型</th>
-							<th style="text-align: center;">金额</th>
-							<th style="text-align: center;">店</th>
+							<th style="text-align: center;">售后金额</th>
+							<th style="text-align: center;">店名</th>
 							<th style="text-align: center;">营业额</th>
 							<th style="text-align: center;">操作</th>
 						</tr>
