@@ -44,6 +44,7 @@
 		  g.integral AS 'integral',
 		  g.sales_sum AS 'salesSum',
 		  g.region_name AS 'regionName',
+		  g.region_id AS 'regionId',
 		  g.action_type AS 'actionType',
 		  g.action_id AS 'actionId',
 		  g.service_min AS 'serviceMin',
@@ -245,6 +246,7 @@
 		  g.integral AS 'integral',
 		  g.sales_sum AS 'salesSum',
 		  g.region_name AS 'regionName',
+		  g.region_id AS 'regionId',
 		  g.service_min AS 'serviceMin'
 		FROM
 		  mtmydb.mtmy_goods g
@@ -291,6 +293,7 @@
 		  integral,
 		  sales_sum,
 		  region_name,
+		  region_id,
 		  action_type,
 		  action_id,
 		  service_min,
@@ -336,6 +339,7 @@
 		    #{integral},
 		    #{salesSum},
 		    #{regionName},
+		    #{regionId},
 		    #{actionType},
 		    #{actionId},
 		    #{serviceMin},
@@ -386,6 +390,7 @@
 			  integral = #{integral},
 			  sales_sum = #{salesSum},
 			  region_name = #{regionName},
+			  region_id = #{regionId},
 			  service_min = #{serviceMin},
 			  action_type = #{actionType},
 			  last_update = SYSDATE(),
