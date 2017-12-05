@@ -956,7 +956,6 @@
 					}
 					$("#goodsContent").val(content);
 					$("#keywords").val($("#keywordsSelectName").val());//关键词，功效
-					$("#regionName").val($("#regionNameSelectName").val());//适用区域
 					var spec_arr = {};// 用户选择的规格数组
 					$("#goods_spec_table  span").each(function(){
 						if($(this).hasClass('btn-success')){
