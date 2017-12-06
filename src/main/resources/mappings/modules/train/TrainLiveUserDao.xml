@@ -137,14 +137,4 @@
 		AND uc.client_id is not null
 	</select>
 	
-	<!-- 查询每天美耶直播预约直播间信息 -->
-	<select id="selectLiveAuitMessage" resultType="String">
-		SELECT c.name
-		FROM mtmydb.mtmy_live_reminds a
-		LEFT JOIN train_live_audit c ON c.id = a.audit_id
-		WHERE a.audit_id = #{auditId}
-		AND a.status = 0 
-		AND c.del_flag = 0
-	</select>
-	
 </mapper>

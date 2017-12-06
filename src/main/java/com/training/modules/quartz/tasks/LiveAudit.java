@@ -141,9 +141,7 @@ public class LiveAudit extends CommonService{
 					//每天美耶直播预约推送
 					mtmyUsersClient = trainLiveAuditService.selectMtmyLiveUserClient(liveAudit.getId());
 					if(mtmyUsersClient.size() > 0){
-						String name = trainLiveAuditService.selectLiveAuitMessage(liveAudit.getId()); //直播间名称
-						
-						messageMap.put("title","您预约的"+name+"直播间还有5分钟就要开始啦，快去围观～");
+						messageMap.put("title","您预约的"+liveAudit.getName()+"直播间还有5分钟就要开始啦，快去围观～");
 						messageMap.put("notify_type", "4");
 						messageMap.put("push_type",3);
 						messageMap.put("push_time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
