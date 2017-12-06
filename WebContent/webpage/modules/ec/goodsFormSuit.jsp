@@ -391,11 +391,10 @@
 									
 									<li class="form-group">
 										<span class="control-label col-sm-2">适用地区：</span>
-										<div style="width: 40%;">
-											<input type="hidden" id="regionName" name="regionName" value="${goods.regionName }">
-											<sys:treeselect id="regionNameSelect" name="regionNameSelect" value="${goods.regionName }" 
-												labelName="regionNameSelect" labelValue="${goods.regionName }" 
-									     		title="地区" url="/sys/area/findListByPID" cssClass="form-control" notAllowSelectParent="true" checked="true"/>
+								     	<div style="width: 40%;">
+											<sys:treeselect id="regionNameSelect" name="regionId" value="${goods.regionId}" 
+												labelName="regionName" labelValue="${goods.regionName}" 
+									     		title="地区" url="/sys/area/findListByPID" cssClass="form-control" allowClear="true" notAllowSelectParent="true" checked="true"/>
 								     	</div>
 									</li>
 									<li>
@@ -727,7 +726,6 @@
 					}
 					$("#goodsContent").val(content);
 					$("#keywords").val($("#keywordsSelectName").val());//关键词，功效
-					$("#regionName").val($("#regionNameSelectName").val());//适用区域
 					var spec_arr = {};// 用户选择的规格数组
 					$("#goods_spec_table  span").each(function(){
 						if($(this).hasClass('btn-success')){
