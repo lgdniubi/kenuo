@@ -982,12 +982,14 @@ public class OfficeController extends BaseController {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			String webReservationTime =	ParametersFactory.getMtmyParamValues("uploader_picture_url");	
-			logger.info("##### web接口路径:"+webReservationTime);
-			String parpm = "{\"type\":\""+type+"\",\"create_by\":\""+createBy+"\",\"file_url\":\""+fileUrl+"\",\"old_url\":\""+oldUrl+"\",\"life_img_urls\":\""+lifeImgUrls+"\",\"user_id\":\""+userId+"\",\"client\":\""+client+"\"}";
-			String url=webReservationTime;
-			String result = WebUtils.postTrainObject(parpm, url);
-			jsonObject = JSONObject.fromObject(result);
-			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			if(!"-1".equals(webReservationTime)){
+				logger.info("##### web接口路径:"+webReservationTime);
+				String parpm = "{\"type\":\""+type+"\",\"create_by\":\""+createBy+"\",\"file_url\":\""+fileUrl+"\",\"old_url\":\""+oldUrl+"\",\"life_img_urls\":\""+lifeImgUrls+"\",\"user_id\":\""+userId+"\",\"client\":\""+client+"\"}";
+				String url=webReservationTime;
+				String result = WebUtils.postTrainObject(parpm, url);
+				jsonObject = JSONObject.fromObject(result);
+				logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			}
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "记录店铺首图、美容院和美容师图片上传相关信息", e);
 			logger.error("调用接口:记录店铺首图、美容院和美容师图片上传相关信息:"+e.getMessage());
