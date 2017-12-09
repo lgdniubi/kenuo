@@ -768,11 +768,12 @@
 		FROM sys_office AS a 
 		${sqlMap.dsf}
 		<if test="id != null and id != ''">
-			AND a.parent_ids LIKE 
+			AND (a.parent_ids LIKE 
 			<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
-			OR a.id = #{id}
+			OR a.id = #{id})
 		</if>
+		AND a.del_flag = #{DEL_FLAG_NORMAL}
 	</select>
 
 	<!-- 实物订单发货到店查询店铺详情 -->
