@@ -10,6 +10,16 @@
 		a.status,
 		a.create_time
 	</sql>
+	
+	<select id="findByUserId" resultType="string">
+		SELECT
+			url
+		FROM
+			sys_userinfo_content 
+		WHERE
+			user_id=#{id}
+	</select>
+	
 	<!-- 保存一个 -->
 	<insert id="insert">
 		INSERT INTO sys_userinfo_content(

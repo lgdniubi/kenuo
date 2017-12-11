@@ -83,7 +83,7 @@
 	</select>
 	<!-- 查询可用的店铺 -->
 	<select id="loadOffice" resultType="Office">
-		CALL mtmydb.find_goods_for_shop(#{goodsIds},0,#{franchiseeId},#{nationName},#{provinceId},#{cityId},#{districtId},0,10000)
+		CALL mtmydb.findShopByGoods(#{goodsIds},#{franchiseeId},#{nationName},#{provinceId},#{cityId},#{districtId},0,10000)
 	</select>
 
 	<!-- 单个用户的预约记录-->	
@@ -224,4 +224,58 @@
 		WHERE m.group_id = #{value} 
 		AND m.is_real = 1
 	</select>
+		
+	<resultMap type="com.training.modules.train.entity.Subscribe" id="subscribeMap">
+		<id column="id" property="appt_id"></id>
+		<result column="beautician_id" property="beautician_id"></result>
+		<result column="shop_id" property="shop_id"></result>
+		<result column="service_min" property="service_min"></result>
+	</resultMap>
+	
+	<!-- 获取预约时间服务已过没有完成状态的预约 -->
+	<select id="querySubscribelist" resultMap="subscribeMap">
+		SELECT 
+			id,
+			beautician_id,
+			shop_id,
+			gd.service_min
+		FROM mtmydb.mtmy_appt_order re
+		LEFT JOIN mtmydb.mtmy_goods gd ON gd.goods_id = re.goods_id
+		WHERE 
+			re.appt_status = 0
+		AND DATE_ADD(CONCAT(re.appt_date,' ',re.appt_start_time),INTERVAL gd.service_min+60 MINUTE) <![CDATA[<]]> NOW()
+	</select>
+	
+	<!-- 修改预约状态 -->
+	<update id="updateapptstatus" parameterType="java.lang.Integer">
+		UPDATE 
+			mtmydb.mtmy_appt_order 
+		SET 
+			appt_status = 1,
+		 	update_date = SYSDATE()
+		WHERE id = #{appt_id}
+		AND appt_status = 0
+	</update>
+	
+	<!-- 查询预约的实际服务时间 -->
+	<select id="getServiceTime" resultType="Reservation">
+		SELECT 
+			r.id AS reservationId,
+			r.service_start_time AS serviceStartTime,
+			r.service_end_time AS serviceEndTime
+		FROM
+			mtmydb.mtmy_appt_order r
+		WHERE 
+			r.id = #{reservationId}
+	</select>
+	
+	<!-- 添加/修改  实际服务时长 -->
+	<update id="editServiceTime">
+		UPDATE mtmydb.mtmy_appt_order
+		SET 
+			service_start_time = #{serviceStartTime},
+			service_end_time = #{serviceEndTime}
+		WHERE 
+			id = #{reservationId}
+	</update>	
 </mapper>

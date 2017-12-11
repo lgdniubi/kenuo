@@ -66,6 +66,7 @@ import com.training.modules.ec.entity.Payment;
 import com.training.modules.ec.entity.ReturnGoods;
 import com.training.modules.ec.entity.ReturnedGoods;
 import com.training.modules.ec.entity.Shipping;
+import com.training.modules.ec.entity.TurnOverDetails;
 import com.training.modules.ec.service.AcountLogService;
 import com.training.modules.ec.service.OrderGoodsDetailsService;
 import com.training.modules.ec.service.OrderGoodsService;
@@ -75,12 +76,14 @@ import com.training.modules.ec.service.OrdersService;
 import com.training.modules.ec.service.PaymentService;
 import com.training.modules.ec.service.ReturnGoodsService;
 import com.training.modules.ec.service.ReturnedGoodsService;
+import com.training.modules.ec.service.TurnOverDetailsService;
 import com.training.modules.ec.utils.CourierUtils;
 import com.training.modules.ec.utils.OrderUtils;
 import com.training.modules.ec.utils.OrdersStatusChangeUtils;
 import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.quartz.tasks.utils.RedisConfig;
 import com.training.modules.quartz.utils.RedisLock;
+import com.training.modules.sys.dao.UserDao;
 import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.OfficeService;
@@ -136,7 +139,11 @@ public class OrdersController extends BaseController {
 	private RedisClientTemplate redisClientTemplate;
 	@Autowired
 	private OfficeService officeService;
-	
+	@Autowired
+	private TurnOverDetailsService turnOverDetailsService;
+	@Autowired
+	private UserDao userDao;
+
 	public static final String MTMY_ID = "mtmy_id_";//用户云币缓存前缀
 	
 	public static final String buying_limit_prefix = "buying_limit_";				//抢购活动商品限购数量
@@ -276,14 +283,75 @@ public class OrdersController extends BaseController {
 	@RequiresPermissions(value = { "ec:orders:edit", "ec:orders:view" }, logical = Logical.OR)
 	@RequestMapping(value = "orderform")
 	public String orderform(HttpServletRequest request, Orders orders,String type, Model model) {
+		String pushMoneryDetails = "";
+		int num = 0;
 		try {
 			User user = UserUtils.getUser(); //登陆用户
 			List<Payment> paylist = paymentService.paylist();
 			orders = ordersService.selectOrderById(orders.getOrderid());
+			List<TurnOverDetails> turnOverDetailsList = turnOverDetailsService.selectDetailsByOrderId(orders.getOrderid());
+			
+			List<TurnOverDetails> pushmoneyRecordList = turnOverDetailsService.selectPushDetails(orders.getOrderid());
+			if(pushmoneyRecordList.size() > 0){
+				for(TurnOverDetails turnOverDetails:pushmoneyRecordList){
+					num = turnOverDetails.getPushMoneyList().size();
+					if(num == 0){
+						num = 1;
+					}
+					String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(turnOverDetails.getCreateDate());
+					pushMoneryDetails = pushMoneryDetails + 
+							"<tr> "+
+								"<td align='center' rowspan="+num+">"+date+"</td> ";
+					if(turnOverDetails.getType() == 1){
+						pushMoneryDetails = pushMoneryDetails + "<td align='center' rowspan="+num+">下单</td> ";
+					}else if(turnOverDetails.getType() == 2){
+						pushMoneryDetails = pushMoneryDetails + "<td align='center' rowspan="+num+">还款</td> ";
+					}
+					pushMoneryDetails = pushMoneryDetails + "<td align='center' rowspan="+num+">"+turnOverDetails.getAmount()+"</td> ";
+					if(turnOverDetails.getPushMoneyList().size() == 0){
+						pushMoneryDetails = pushMoneryDetails + "<td align='center'></td><td align='center'></td><td align='center'></td><td align='center'></td><td align='center'>";
+						if("view".equals(type)){
+							pushMoneryDetails = pushMoneryDetails + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs'><i class='fa fa-edit'></i>编辑</a>";
+						}else{
+							pushMoneryDetails = pushMoneryDetails +"<a href='#' onclick='editSysUserInfo("+"\""+turnOverDetails.getTurnOverDetailsId()+"\")' class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>";
+						}
+						pushMoneryDetails = pushMoneryDetails	
+								+ "</td>"
+							+"</tr>";
+					}else{
+						List<OrderPushmoneyRecord> list = turnOverDetails.getPushMoneyList();
+							pushMoneryDetails = pushMoneryDetails + "<td align='center'>"+list.get(0).getPushmoneyUserName()+"</td>"
+								+"<td align='center'>"+list.get(0).getDepartmentName()+"</td>"
+							    +"<td align='center'>"+list.get(0).getPushmoneyUserMobile()+"</td>"
+								+"<td align='center'>"+list.get(0).getPushMoney()+"</td>"
+								+"<td align='center'rowspan="+num+">";
+								if("view".equals(type)){
+									pushMoneryDetails = pushMoneryDetails + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs'><i class='fa fa-edit'></i>编辑</a>";
+								}else{
+									pushMoneryDetails = pushMoneryDetails +"<a href='#' onclick='editSysUserInfo("+"\""+turnOverDetails.getTurnOverDetailsId()+"\")' class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>";
+								}
+								pushMoneryDetails = pushMoneryDetails 
+										+"<a href=\"#\" onclick=\"openDialogView('操作日志', '/kenuo/a/ec/orders/operationLog?turnOverDetailsId="+turnOverDetails.getTurnOverDetailsId()+"','800px','550px')\" class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i>操作日志</a>"
+								+"</td>"                                                                                
+							+"</tr>";
+						for(int i= 1;i<list.size();i++){
+							pushMoneryDetails = pushMoneryDetails + 
+									"<tr>"
+										+"<td align='center'>"+list.get(i).getPushmoneyUserName()+"</td>"
+										+"<td align='center'>"+list.get(i).getDepartmentName()+"</td>"
+										+"<td align='center'>"+list.get(i).getPushmoneyUserMobile()+"</td>"
+										+"<td align='center'>"+list.get(i).getPushMoney()+"</td>"
+									+"</tr>";
+						}
+					}
+				}	
+			}
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
 			model.addAttribute("user", user);
 			model.addAttribute("type", type);
+			model.addAttribute("turnOverDetailsList",turnOverDetailsList);
+			model.addAttribute("pushMoneryDetails",pushMoneryDetails);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "订单跳转修改页面", e);
 			logger.error("跳转修改页面出错：" + e.getMessage());
@@ -1807,7 +1875,6 @@ public class OrdersController extends BaseController {
 					oLog.setTotalAmount(advance);
 				}
 			}
-			
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
 			ordersService.handleAdvanceFlag(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId,realAdvancePrice);
 			date = "success";
@@ -2324,11 +2391,15 @@ public class OrdersController extends BaseController {
 		try {
 			String suitCardSons = "";
 			int num;
+			String pushMoneryDetails = "";
+			int newNum = 0;
+			
 			List<List<OrderGoods>> result = new ArrayList<List<OrderGoods>>();    //分开存放每个卡项商品和它的子项
 			List<OrderGoods> resultSon = new ArrayList<OrderGoods>();              //存放每个卡项商品和它的子项
 			User user = UserUtils.getUser(); //登陆用户
 			List<Payment> paylist = paymentService.paylist();
 			orders = ordersService.selectOrderById(orders.getOrderid());
+			List<TurnOverDetails> turnOverDetailsList = turnOverDetailsService.selectDetailsByOrderId(orders.getOrderid());
 			
 			List<OrderGoods> list = orders.getOrderGoodList();                   //根据订单id查找所有的mapping中的记录（每个卡项和子项都在里面）
 			for(int i=0;i<list.size();i++){
@@ -2463,11 +2534,69 @@ public class OrdersController extends BaseController {
 			
 			}
 			
+			List<TurnOverDetails> pushmoneyRecordList = turnOverDetailsService.selectPushDetails(orders.getOrderid());
+			if(pushmoneyRecordList.size() > 0){
+				for(TurnOverDetails turnOverDetails:pushmoneyRecordList){
+					newNum = turnOverDetails.getPushMoneyList().size();
+					if(newNum == 0){
+						newNum = 1;
+					}
+					String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(turnOverDetails.getCreateDate());
+					pushMoneryDetails = pushMoneryDetails + 
+							"<tr> "+
+								"<td align='center' rowspan="+newNum+">"+date+"</td> ";
+					if(turnOverDetails.getType() == 1){
+						pushMoneryDetails = pushMoneryDetails + "<td align='center' rowspan="+newNum+">下单</td> ";
+					}else if(turnOverDetails.getType() == 2){
+						pushMoneryDetails = pushMoneryDetails + "<td align='center' rowspan="+newNum+">还款</td> ";
+					}
+					pushMoneryDetails = pushMoneryDetails + "<td align='center' rowspan="+newNum+">"+turnOverDetails.getAmount()+"</td> ";
+					if(turnOverDetails.getPushMoneyList().size() == 0){
+						pushMoneryDetails = pushMoneryDetails + "<td align='center'></td><td align='center'></td><td align='center'></td><td align='center'></td><td align='center'>";
+						if("view".equals(type)){
+							pushMoneryDetails = pushMoneryDetails + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs'><i class='fa fa-edit'></i>编辑</a>";
+						}else{
+							pushMoneryDetails = pushMoneryDetails +"<a href='#' onclick='editSysUserInfo("+"\""+turnOverDetails.getTurnOverDetailsId()+"\")' class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>";
+						}
+						pushMoneryDetails = pushMoneryDetails	
+								+ "</td>"
+							+"</tr>";
+					}else{
+						List<OrderPushmoneyRecord> newList = turnOverDetails.getPushMoneyList();
+							pushMoneryDetails = pushMoneryDetails + "<td align='center'>"+newList.get(0).getPushmoneyUserName()+"</td>"
+								+"<td align='center'>"+newList.get(0).getDepartmentName()+"</td>"
+							    +"<td align='center'>"+newList.get(0).getPushmoneyUserMobile()+"</td>"
+								+"<td align='center'>"+newList.get(0).getPushMoney()+"</td>"
+								+"<td align='center'rowspan="+newNum+">";
+								if("view".equals(type)){
+									pushMoneryDetails = pushMoneryDetails + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs'><i class='fa fa-edit'></i>编辑</a>";
+								}else{
+									pushMoneryDetails = pushMoneryDetails +"<a href='#' onclick='editSysUserInfo("+"\""+turnOverDetails.getTurnOverDetailsId()+"\")' class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>";
+								}
+								pushMoneryDetails = pushMoneryDetails 
+									+"<a href=\"#\" onclick=\"openDialogView('操作日志', '/kenuo/a/ec/orders/operationLog?turnOverDetailsId="+turnOverDetails.getTurnOverDetailsId()+"','800px','550px')\" class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i>操作日志</a>"
+								+"</td>"                                                                                
+							+"</tr>";
+						for(int i= 1;i<newList.size();i++){
+							pushMoneryDetails = pushMoneryDetails + 
+									"<tr>"
+										+"<td align='center'>"+newList.get(i).getPushmoneyUserName()+"</td>"
+										+"<td align='center'>"+newList.get(i).getDepartmentName()+"</td>"
+										+"<td align='center'>"+newList.get(i).getPushmoneyUserMobile()+"</td>"
+										+"<td align='center'>"+newList.get(i).getPushMoney()+"</td>"
+									+"</tr>";
+						}
+					}
+				}	
+			}
+			
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
 			model.addAttribute("user", user);
 			model.addAttribute("type", type);
 			model.addAttribute("suitCardSons", suitCardSons);
+			model.addAttribute("turnOverDetailsList",turnOverDetailsList);
+			model.addAttribute("pushMoneryDetails",pushMoneryDetails);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转修改卡项订单页面", e);
 			logger.error("跳转修改卡项订单页面出错：" + e.getMessage());
@@ -2700,7 +2829,6 @@ public class OrdersController extends BaseController {
 			}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
 				oLog.setTotalAmount(advance);
 			}
-			
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
 			ordersService.handleCardAdvance(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId,isReal,realAdvancePrice);
 			date = "success";
@@ -2741,6 +2869,7 @@ public class OrdersController extends BaseController {
 				}
 				
 				if(!"bm".equals(orders.getChannelFlag())){
+					
 					//实物带预约金，点击确认收货，按照虚拟有预约金处理的方法入库
 					orderGoodsDetailsService.updateAdvanceFlag(recId+"");
 					
@@ -2761,10 +2890,35 @@ public class OrdersController extends BaseController {
 					details.setAdvanceFlag("2");
 					details.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
 					details.setCreateBy(UserUtils.getUser());
-					/*details.setBelongOfficeId(orders.getBelongOfficeId());
-					details.setBelongUserId(orders.getBelongUserId());*/
 					//保存订单商品详情记录
 					orderGoodsDetailsService.saveOrderGoodsDetails(details);
+					
+					//同步数据到营业额明细表
+					//第一次，同步下单的那条数据
+					double appSum = orderGoodsDetailsService.queryAppSum(details.getOrderId());
+					TurnOverDetails turnOverDetails1 = new TurnOverDetails();
+					turnOverDetails1.setOrderId(details.getOrderId());
+					turnOverDetails1.setDetailsId(details.getOrderId());
+					turnOverDetails1.setType(1);
+					turnOverDetails1.setAmount(appSum);
+					turnOverDetails1.setUseBalance(0);
+					turnOverDetails1.setStatus(1);
+					turnOverDetails1.setUserId(orders.getUserid());
+					turnOverDetails1.setBelongOfficeId(officeId);
+					turnOverDetails1.setCreateBy(UserUtils.getUser());
+					turnOverDetailsService.saveTurnOverDetails(turnOverDetails1);
+					
+					//第二次，同步处理预约金的那条数据
+					TurnOverDetails turnOverDetails2 = new TurnOverDetails();
+					turnOverDetails2.setOrderId(details.getOrderId());
+					turnOverDetails2.setDetailsId(details.getId());
+					turnOverDetails2.setType(2);
+					turnOverDetails2.setAmount(details.getAppTotalAmount());
+					turnOverDetails2.setUseBalance(details.getUseBalance());
+					turnOverDetails2.setStatus(2);
+					turnOverDetails2.setUserId(orders.getUserid());
+					turnOverDetails2.setCreateBy(UserUtils.getUser());
+					turnOverDetailsService.saveTurnOverDetails(turnOverDetails2);
 				}
 				
 				//若为老商品，则对店铺有补偿
@@ -2845,5 +2999,125 @@ public class OrdersController extends BaseController {
 			logger.error("方法：getOfficeDetails，获取店铺详情出现错误：" + e.getMessage());
 		}
 		return officeInfo;
+	}
+	
+	/**
+	 * 给店营业额处理预约金的那条记录选择归属店铺
+	 * @return
+	 */
+	@RequestMapping(value="addBelongOffice")
+	public String addBelongOffice(){
+		return "modules/ec/addBelongOffice";
+	}
+	
+	/**
+	 * 保存店营业额处理预约金的那条记录选择归属店铺
+	 * @param turnOverDetails
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "saveBelongOffice")
+	public String saveBelongOffice(TurnOverDetails turnOverDetails,HttpServletRequest request){
+		String success="";
+		try{
+			turnOverDetailsService.updateBelongOffice(turnOverDetails.getBelongOfficeId(), turnOverDetails.getTurnOverDetailsId(),UserUtils.getUser().getId());
+			success = "success";
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "保存店营业额处理预约金的那条记录选择归属店铺", e);
+			logger.error("方法：saveBelongOffice，保存店营业额处理预约金的那条记录选择归属店铺出现错误：" + e.getMessage());
+			success = "error";
+		}
+		return success;
+	}
+	
+	/**
+	 * 分享营业额查询提成人员信息 
+	 * @param name
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "querySysUser")
+	public List<User> querySysUser(User user){
+		List<User> userList = userDao.querySysUser(user);
+		return userList;
+	}
+	
+	
+	/**
+	 * 新增/修改业务员营业额
+	 * @param orders
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "editPushmoneyUser")
+	public String editPushmoneyUser(HttpServletRequest request, Orders orders,String type, Model model) {
+		try {
+			String turnOverDetailsId = request.getParameter("turnOverDetailsId");
+			TurnOverDetails turnOverDetails = turnOverDetailsService.selectOneDetails(Integer.valueOf(turnOverDetailsId));
+			model.addAttribute("turnOverDetails",turnOverDetails);
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "新增/修改业务员营业额页面", e);
+			logger.error("新增/修改业务员营业额出错：" + e.getMessage());
+		}
+		return "modules/ec/editPushmoneyUser";
+	}
+	
+	/**
+	 * 保存业务员提成营业额
+	 * @param id
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "savePushMoneyRecord")
+	public String savePushMoneyRecord(String orderId,String turnOverDetailsId,String type,String pushmoneyUserId,String changeValue,String departmentId,HttpServletRequest request, HttpServletResponse response) {
+		try {
+			String[] pushmoneyUserIds = pushmoneyUserId.split(",");
+			String[] changeValues = changeValue.split(",");
+			String[] departmentIds = departmentId.split(",");
+			
+			List<OrderPushmoneyRecord> list = new ArrayList<OrderPushmoneyRecord>();
+			if(pushmoneyUserIds.length > 0){
+				for(int i=0;i<pushmoneyUserIds.length;i++){
+					OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
+					orderPushmoneyRecord.setOrderId(orderId);
+					orderPushmoneyRecord.setTurnOverDetailsId(Integer.valueOf(turnOverDetailsId));
+					orderPushmoneyRecord.setType(Integer.valueOf(type));
+					orderPushmoneyRecord.setPushmoneyUserId(pushmoneyUserIds[i]);
+					orderPushmoneyRecord.setPushMoney(Double.valueOf(changeValues[i]));
+					orderPushmoneyRecord.setDepartmentId(Integer.valueOf(departmentIds[i]));
+					orderPushmoneyRecord.setOfficeId(UserUtils.getUser().getOffice().getId());
+					orderPushmoneyRecord.setCreateBy(UserUtils.getUser());
+					list.add(orderPushmoneyRecord);
+				}
+			}
+			
+			turnOverDetailsService.savePushMoneyRecord(list);
+			type = "success";
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "保存业务员提成营业额信息错误", e);
+			logger.error("保存业务员提成营业额信息错误：" + e.getMessage());
+			type = "error";
+		}
+		return type;
+	}
+	
+	/**
+	 * 查看营业额操作日志
+	 * @param orders
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "operationLog")
+	public String operationLog(OrderPushmoneyRecord orderPushmoneyRecord,HttpServletRequest request,HttpServletResponse response,Model model) {
+		try {
+			Page<OrderPushmoneyRecord> page = turnOverDetailsService.queryDetailsForPush(new Page<OrderPushmoneyRecord>(request, response), orderPushmoneyRecord);
+			model.addAttribute("page",page);
+			model.addAttribute("turnOverDetailsId",orderPushmoneyRecord.getTurnOverDetailsId());
+			model.addAttribute("orderId",orderPushmoneyRecord.getOrderId());
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "查看营业额操作日志页面", e);
+			logger.error("查看营业额操作日志出错信息：" + e.getMessage());
+		}
+		return "modules/ec/operationLog";
 	}
 }

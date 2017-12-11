@@ -187,7 +187,8 @@
 			<!-- IFNULL(ogd.order_arrearage,0) AS orderArrearage, -->
 			a.del_flag,
 			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType,
-			IFNULL(u.office_id,'') as officeId
+			IFNULL(u.office_id,'') as officeId,
+			u.user_id as userid
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
@@ -293,7 +294,8 @@
 			<!-- IFNULL(ogd.order_arrearage,0) AS orderArrearage, -->
 			a.del_flag,
 			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType,
-			IFNULL(u.office_id,'') as officeId
+			IFNULL(u.office_id,'') as officeId,
+			u.user_id as userid
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
@@ -886,9 +888,8 @@
 			user_note,
 			discount,
 			pay_time,
+			belong_office_id,
 			create_by
-			<!-- belong_office_id,
-			belong_user_id -->
 		)values(
 			#{orderid},
 			#{parentid},
@@ -915,9 +916,8 @@
 			#{usernote},
 			1,
 			SYSDATE(),
+			#{belongOfficeId},
 			#{createBy.id}
-			<!-- #{belongOfficeId},
-			#{belongUserId} -->
 		)
 	</insert>
 	
@@ -994,10 +994,6 @@
 			o.invoice_overtime as invoiceOvertime,
 			o.shipping_price as shippingprice,
 			IFNULL(u.office_id,'') AS officeId
-			<!-- o.belong_office_id as 'belongOfficeId',
-			o.belong_user_id as 'belongUserId',
-			(select so.name from sys_office so where so.id = o.belong_office_id) as belongOfficeName,
-			(select su.name from sys_user su where su.id = o.belong_user_id) as belongUserName -->
 		FROM
 			mtmydb.mtmy_orders o,
 			mtmydb.mtmy_users u
@@ -1066,9 +1062,8 @@
 			invoice_overtime,
 			discount,
 			pay_time,
+			belong_office_id,
 			create_by
-			<!-- belong_office_id,
-			belong_user_id -->
 		)values(
 			#{orderid},
 			#{parentid},
@@ -1098,9 +1093,8 @@
 			#{invoiceOvertime},
 			1,
 			SYSDATE(),
+			#{belongOfficeId},
 			#{createBy.id}
-			<!-- #{belongOfficeId},
-			#{belongUserId} -->
 		)
 	</insert>
 	<!-- 插入备注信息 -->

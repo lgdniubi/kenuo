@@ -2,6 +2,7 @@ package com.training.modules.train.dao;
 
 import java.util.List;
 
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.TrainOfflineSubscribeTime;
@@ -20,5 +21,6 @@ public interface TrainOfflineSubscribeTimeDao extends CrudDao<TrainOfflineSubscr
 	 * @return
 	 */
 	public List<TrainOfflineSubscribeTime> findStatusList(TrainOfflineSubscribeTime trainOfflineSubscribeTime);
+	
 	
 }

@@ -95,9 +95,9 @@
 										<shiro:hasPermission name="train:fzxRole:auth"> 
 											<a href="#" onclick="openDialog('权限设置', '${ctx}/train/fzxRole/auth?roleId=${list.roleId}','350px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a> 
 										</shiro:hasPermission>
-										<shiro:hasPermission name="sys:role:assign"> 
+										<%-- <shiro:hasPermission name="sys:role:assign"> 
 											<a href="#" onclick="openDialogView('分配用户', '${ctx}/train/fzxRole/assign?fzxRole.roleId=${list.roleId}','800px', '600px')"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i> 分配用户</a>
-										</shiro:hasPermission>
+										</shiro:hasPermission> --%>
 								    </td>
 								</tr>
 							</c:forEach>

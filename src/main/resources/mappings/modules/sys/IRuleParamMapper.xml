@@ -14,6 +14,7 @@
 			param_value AS 'paramValue'
 		FROM
 			trains.train_rule_param
+		WHERE del_flag = 0
 	</select>
 	
 	<!-- 查询所有Mtmy系统规则参数 -->
@@ -23,6 +24,7 @@
 			param_value AS 'paramValue'
 		FROM
 			mtmydb.mtmy_rule_param
+		WHERE del_flag = 0
 	</select>
 	
 </mapper>

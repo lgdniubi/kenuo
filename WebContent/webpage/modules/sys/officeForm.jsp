@@ -227,7 +227,7 @@
 				      	<tr>
 					         <td class="width-15 active"><label class="pull-right">上级机构:</label></td>
 					         <td class="width-35"><sys:treeselect id="office" name="parent.id" value="${office.parent.id}" labelName="parent.name" labelValue="${office.parent.name}"
-								title="机构" url="/sys/office/treeData?isGrade=true" extId="${office.id}"  cssClass="form-control" allowClear="${office.currentUser.admin}"/></td>
+								title="机构" url="/sys/office/parentTreeData?isGrade=true" extId="${office.id}"  cssClass="form-control" allowClear="${office.currentUser.admin}"/></td>
 					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>归属区域:</label></td>
 					         <td class="width-35">
 						        <div id="area1">
