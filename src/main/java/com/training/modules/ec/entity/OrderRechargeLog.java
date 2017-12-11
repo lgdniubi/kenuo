@@ -29,9 +29,8 @@ public class OrderRechargeLog extends TreeEntity<OrderRechargeLog> {
 	
 	private String channelFlag;//渠道标识（wap：wap端；ios：苹果手机；android：安卓手机；bm：后台管理）
 	
-	/*private String belongOfficeId;           //归属机构id
-	private String belongUserId;            //归属人id
-*/	
+	private String belongOfficeId;           //归属机构id
+	
 	public int getIsReal() {
 		return isReal;
 	}
@@ -173,7 +172,7 @@ public class OrderRechargeLog extends TreeEntity<OrderRechargeLog> {
 		this.channelFlag = channelFlag;
 	}
 
-	/*public String getBelongOfficeId() {
+	public String getBelongOfficeId() {
 		return belongOfficeId;
 	}
 
@@ -181,12 +180,4 @@ public class OrderRechargeLog extends TreeEntity<OrderRechargeLog> {
 		this.belongOfficeId = belongOfficeId;
 	}
 
-	public String getBelongUserId() {
-		return belongUserId;
-	}
-
-	public void setBelongUserId(String belongUserId) {
-		this.belongUserId = belongUserId;
-	}*/
-	
 }

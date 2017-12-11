@@ -4,6 +4,7 @@
 package com.training.modules.train.entity;
 
 import com.training.common.persistence.DataEntity;
+import com.training.modules.sys.entity.User;
 
 /**
  * 角色Entity
@@ -24,6 +25,14 @@ public class FzxRole extends DataEntity<FzxRole> {
 	private String fzxRoleIds;		//角色IDS
 	private String fzxRoleNames;	//角色名称S
 	
+	private User user;				//用户
+	
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User user) {
+		this.user = user;
+	}
 	public int getRoleId() {
 		return roleId;
 	}

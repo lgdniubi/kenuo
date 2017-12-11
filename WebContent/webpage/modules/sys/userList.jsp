@@ -23,6 +23,11 @@
 	function parentDelchange() {
 		parent.$('#parentDel').val($('#parentDel').val());
 	}
+	
+	/* 添加权限 */
+	function addFzxRole(title,url) {
+		window.location=url;
+	}
 </script>
 </head>
 <body>
@@ -172,6 +177,9 @@
 									</shiro:hasPermission>
 									<shiro:hasPermission name="sys:user:auth">
 										<a href="#" onclick="openDialog('权限设置', '${ctx}/sys/user/auth?id=${user.id}','800px', '650px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a>
+									</shiro:hasPermission>
+									<shiro:hasPermission name="sys:user:auth">
+										<a href="#" onclick="openDialogView('添加角色','${ctx}/sys/user/addFzxRole?id=${user.id}','800px', '650px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>添加角色</a>
 									</shiro:hasPermission>
 								</td>
 							</tr>

@@ -21,6 +21,7 @@ import com.training.common.persistence.Page;
 import com.training.common.utils.Collections3;
 import com.training.common.web.BaseController;
 import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.sys.dao.UserDao;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.service.SystemService;
@@ -53,6 +54,8 @@ public class fzxRoleController extends BaseController{
 	private OfficeService officeService;
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;		//redis缓存Service
+	@Autowired
+	private UserDao UserDao;
 	
 	/**
 	 * 妃子校角色list
@@ -192,7 +195,7 @@ public class fzxRoleController extends BaseController{
 	@RequestMapping(value = "auth")
 	public String auth(Model model,FzxRole fzxRole,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
-			model.addAttribute("fzxMenu", fzxMenuService.findAllList());
+			model.addAttribute("fzxMenu", fzxMenuService.findAllMenu());
 			model.addAttribute("fzxRole", fzxRoleService.findRoleMenu(fzxRole));
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "妃子校角色权限设置", e);
@@ -219,6 +222,36 @@ public class fzxRoleController extends BaseController{
 			map.put("pId", 0);
 			map.put("name", e.getName());
 			mapList.add(map);
+		}
+		return mapList;
+	}
+	/**
+	 * 查询所有菜单(未删除、显示)
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "newTreeData")
+	public List<Map<String, Object>> newTreeData(HttpServletResponse response,String fzxRoleIds) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<FzxRole> list = fzxRoleDao.findList(null);
+		for (int i = 0; i < list.size(); i++) {
+			Map<String, Object> map = Maps.newHashMap();
+			FzxRole e = list.get(i);
+			map.put("id", e.getRoleId());
+			map.put("pId", 0);
+			map.put("name", e.getName());
+			if (!"".equals(fzxRoleIds) && fzxRoleIds != null) {
+				String[] fzxids = fzxRoleIds.split(",");
+				for (int j = 0; j < fzxids.length; j++) {
+					if (e.getRoleId() == Integer.valueOf(fzxids[j])) {
+						map.clear();
+					}
+				}
+			}
+			if (map.get("id") != null) {
+				mapList.add(map);
+			}
 		}
 		return mapList;
 	}
@@ -366,4 +399,23 @@ public class fzxRoleController extends BaseController{
 		}
 		return "redirect:" + adminPath + "/train/fzxRole/assign?fzxRole.roleId="+fzxRole.getRoleId();
 	}
+	
+	/**
+	 * 
+	 * @Title: addFzxRoleForm
+	 * @Description: TODO 添加页面跳转
+	 * @return:
+	 * @return: String
+	 * @throws
+	 * 2017年10月27日
+	 */
+	@RequestMapping(value="addFzxRoleForm")
+	public String addFzxRoleForm(String userId,String fzxRoleIds,Model model){
+		User user = UserDao.get(userId);
+		model.addAttribute("user", user);
+		model.addAttribute("userId", userId);
+		model.addAttribute("fzxRoleIds", fzxRoleIds);
+		return "modules/sys/addFzxRoleForm";
+	}
+	
 }

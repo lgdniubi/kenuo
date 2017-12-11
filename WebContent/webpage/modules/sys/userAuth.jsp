@@ -190,16 +190,9 @@
 						url="/sys/role/treeData" cssClass=" form-control input-sm required" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="false" checked="true"/>
 				 </td>
 		      </tr>
+		      <!-- 用户后台数据范围 -->
 		      <tr>
-		         <td class="width-15 active"><label class="pull-right">用户妃子校角色</label></td>
-		         <td class="width-35">
-		         	<sys:treeselect id="fzxRole" name="fzxRoleIds" value="${fzxRole.fzxRoleIds }" labelName="fzxRoleNames" labelValue="${fzxRole.fzxRoleNames}" title="妃子校角色"
-						url="/train/fzxRole/treeData" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="false" checked="true"/>
-					<input type="hidden" id="oldFzxRoleIds" name="oldFzxRoleIds" value="${fzxRole.fzxRoleIds }">
-				 </td>
-		      </tr>
-		      <tr>
-		         <td class="width-15 active" style="vertical-align: top;"><label class="pull-right">数据范围:</label></td>
+		         <td class="width-15 active" style="vertical-align: top;"><label class="pull-right">后台数据范围:</label></td>
 		         <td class="width-35"><form:select path="dataScope" class="form-control ">
 					<form:options items="${fns:getDictList('sys_data_scope2')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 					</form:select>

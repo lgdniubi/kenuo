@@ -287,6 +287,50 @@ public interface UserDao extends CrudDao<User> {
 	 * 当为原来不是排班角色，后来改为排班角色，但是user_info中没有信息时，新增美容师的信息
 	 */
 	public void insertUserInfo(@Param(value="uuid")String uuid, @Param(value="id")String id);
+
+	/**
+	 * 保存用户的妃子笑角色
+	 * @param fzxRoleId
+	 * @param userId
+	 * @return
+	 */
+	public Integer saveFzxRoleByUser(User user);
+	/**
+	 * 保存用户的权限
+	 * @param id
+	 * @param offId
+	 * @return
+	 */
+	public void saveOfficeById(@Param(value="id")Integer id,@Param(value="offId")String offId);
+	/**
+	 * 根据用户和角色id查询
+	 * @param userId
+	 * @param roleId
+	 * @return
+	 */
+	public Integer findIdByUserFzxRoleId(@Param(value="userId")String userId, @Param(value="roleId")String roleId);
+	/**
+	 * 根据id删除权限
+	 * @param id
+	 */
+	public void deleteOfficeById(Integer id);
+	/**
+	 * 删除角色
+	 * @param userId
+	 * @param roleId
+	 */
+	public void deleteFzxRoleByUser(@Param(value="userId")String userId, @Param(value="roleId")String roleId);
+	/**
+	 * 根据id查询用户权限
+	 * @param id
+	 * @return
+	 */
+	public String findOfficeListById(Integer id);
+	/**
+	 * 修改用户权限
+	 * @param valueOf
+	 */
+	public void updateOfficeById(@Param(value="id")Integer id,@Param(value="ofId")String ofId);
 	
 	/**
 	 * 根据OfficeId获取用户(树查询用户时用)
@@ -294,4 +338,11 @@ public interface UserDao extends CrudDao<User> {
 	 * @return
 	 */
 	public List<User> findUsersByOfficeId(String officeId);
+	
+	/**
+	 * 分享营业额查询提成人员信息
+	 * @param user
+	 * @return
+	 */
+	public List<User> querySysUser(User user);
 }

@@ -30,11 +30,9 @@
 						<!-- 翻页隐藏文本框 -->
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-						<input id="subId" type="hidden" name="subId" value="${subject.subId}">
 						<input type="hidden" id="orderId" name="orderId" value="${orderPushmoneyRecord.orderId}" />
 					</form>
 				</div>
-				<p></p>
 				<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 					<thead>
 						<tr>

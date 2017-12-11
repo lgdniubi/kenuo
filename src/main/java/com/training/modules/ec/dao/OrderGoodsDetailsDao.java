@@ -122,4 +122,11 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @return
 	 */
 	public int getSurplusAmount(String orderId);
+	
+	/**
+	 * 根据订单id查询下单时候的总的app实付
+	 * @param orderId
+	 * @return
+	 */
+	public double queryAppSum(String orderId);
 }

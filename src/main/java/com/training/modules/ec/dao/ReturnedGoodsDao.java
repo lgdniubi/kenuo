@@ -4,8 +4,10 @@ import java.util.List;
 
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
+import com.training.modules.ec.entity.OrderPushmoneyRecord;
 import com.training.modules.ec.entity.ReturnedGoods;
 import com.training.modules.ec.entity.ReturnedGoodsImages;
+import com.training.modules.ec.entity.TurnOverDetails;
 
 
 /**
@@ -133,5 +135,98 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 * @return
 	 */
 	public int getReturnedGoodsNum(ReturnedGoods returnedGoods);
-	
+	/**
+	 * 获取订单商品中的已退款金额
+	 * @param returnedGoods
+	 * @return
+	 */
+	public double getSurplusReturnAmount(ReturnedGoods returnedGoods);
+	/**
+	 * 获取营业额信息
+	 * @param returnedGoods
+	 * @return
+	 */
+	public TurnOverDetails getTurnover(ReturnedGoods returnedGoods);
+	/**
+	 * 获取业务员营业额
+	 * @param returnedGoods
+	 * @return
+	 */
+	public OrderPushmoneyRecord getOrderPushmoneyRecord(ReturnedGoods returnedGoods);
+	/**
+	 * 获取店营业额
+	 * @param returnedGoods
+	 * @return
+	 */
+	public TurnOverDetails getMtmyTurnoverDetails(ReturnedGoods returnedGoods);
+	/**
+	 * 获取店铺营业额的操作日志
+	 * @param turnOverDetails
+	 * @return
+	 */
+	public List<TurnOverDetails> findMtmyTurnoverDetailsList(TurnOverDetails turnOverDetails);
+	/**
+	 * 获取店营业额明细列表
+	 * @param turnOverDetails
+	 * @return
+	 */
+	public List<TurnOverDetails> getMtmyTurnoverDetailsList(TurnOverDetails turnOverDetails);
+	/**
+	 * 保存店营业额增减值
+	 * @param turnOverDetails
+	 */
+	public void saveMtmyTurnoverDetails(TurnOverDetails turnOverDetails);
+	/**
+	 * 查询每个业务员的售后审核扣减的营业额
+	 * @param turnOverDetails
+	 * @return
+	 */
+	public List<TurnOverDetails> getReturnedAmountList(TurnOverDetails turnOverDetails);
+	/**
+	 * 查询营业额是否为第二次编辑(根据售后id是否存在)
+	 * @param turnOverDetails
+	 * @return
+	 */
+	List<OrderPushmoneyRecord> findOrderPushmoneyRecordList(TurnOverDetails turnOverDetails);
+	/**
+	 * 查询每个业务员的售后审核扣减的营业额
+	 * @param turnOverDetails
+	 * @return
+	 */
+	List<OrderPushmoneyRecord> getReturnedPushmoneyList(TurnOverDetails turnOverDetails);
+	/**
+	 * 获取各个部门的营业额合计
+	 * @param orderId
+	 * @return
+	 */
+	public List<OrderPushmoneyRecord> getSumBeauticianTurnover(String orderId);
+	/**
+	 * 根据id获取修改业务员营业额的所有数据
+	 * @param orderId
+	 * @return
+	 */
+	public List<OrderPushmoneyRecord> getBeauticianTurnoverList(String orderId);
+	/**
+	 * 添加业务员营业额
+	 * @param orderPushmoneyRecord
+	 */
+	public void saveBeauticianTurnover(OrderPushmoneyRecord orderPushmoneyRecord);
+	/**
+	 * 获取业务员退款营业额(type=3)
+	 * @param turnOverDetails
+	 * @return
+	 */
+	public List<OrderPushmoneyRecord> getOrderPushmoneyRecordListView(TurnOverDetails turnOverDetails);
+	/**
+	 * 获取店铺退款营业额(type=3)
+	 * @param turnOverDetails
+	 * @return
+	 */
+	public List<TurnOverDetails> getMtmyTurnoverDetailsListView(TurnOverDetails turnOverDetails);
+	/**
+	 * 获取业务员退货营业额的操作记录
+	 * @param orderPushmoneyRecord
+	 * @return
+	 */
+	public List<OrderPushmoneyRecord> getReturnedBeauticianLog(OrderPushmoneyRecord orderPushmoneyRecord);
 }

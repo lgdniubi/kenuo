@@ -51,4 +51,5 @@
 		  status = #{status}
 		WHERE subscribe_id = '${subscribeId}'
 	</update>
+	
 </mapper>

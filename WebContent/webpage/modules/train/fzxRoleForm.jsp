@@ -23,7 +23,7 @@
 		}
 		$(document).ready(function(){
 			validateForm = $("#inputForm").validate({
-				rules: {
+				/* rules: {   英文名称校验修改为下拉选，不用再进行验证,如需进行校验，将此注释打开即可
 					enname:{
 						remote:{
 							type: "post",
@@ -34,7 +34,7 @@
 				},
 				messages:{
 					enname:{remote:"英文名称已存在"}
-				},
+				}, */
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
 					form.submit();
@@ -64,8 +64,12 @@
 		      <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 英文名称:</label></td>
 		         <td  class="width-35" >
-		         	<form:input path="enname" htmlEscape="false" maxlength="20" class="required form-control "/>
-		         	<input type="hidden" id="oldEnname" name="oldEnname" value="${fzxRole.enname }">
+		         	<!-- 将英文名称改为下拉选 -->
+		         	<form:select path="enname"  class="form-control">
+						<form:options items="${fns:getDictList('fzx_role_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+					</form:select>
+		         	<%-- <form:input path="enname" htmlEscape="false" maxlength="20" class="required form-control "/>
+		         	<input type="hidden" id="oldEnname" name="oldEnname" value="${fzxRole.enname }"> --%>
 		         </td>
 		      </tr>
 		       <tr>

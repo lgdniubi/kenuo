@@ -19,11 +19,14 @@ import com.training.modules.ec.dao.SaleRebatesLogDao;
 import com.training.modules.ec.entity.IntegralsLog;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderGoodsDetails;
+import com.training.modules.ec.entity.OrderPushmoneyRecord;
 import com.training.modules.ec.entity.Orders;
 import com.training.modules.ec.entity.ReturnedGoods;
 import com.training.modules.ec.entity.ReturnedGoodsImages;
+import com.training.modules.ec.entity.TurnOverDetails;
 import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.quartz.utils.RedisLock;
+import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.utils.ScopeUtils;
 
@@ -216,6 +219,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	 * @param returnedGoods
 	 */
 	public void saveReturn(ReturnedGoods returnedGoods) {
+		User user = UserUtils.getUser();//获取当前操作用户
 		Date date = new Date();
 		SimpleDateFormat simd = new SimpleDateFormat("YYYYMMddHHmmssSSS");
 		String str = simd.format(date);
@@ -233,7 +237,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		}
 
 		returnedGoods.setId(id);
-		returnedGoods.setApplyDate(date);
+		returnedGoods.setApplyDate(date);//添加申请日期
 		//虚拟商品退货时,由于在returnForm.jsp中,虚拟商品售后次数使用ServiceTimes.
 		if(orders.getIsReal() == 1){
 			returnedGoods.setReturnNum(returnedGoods.getServiceTimes());
@@ -244,6 +248,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			returnedGoods.setReturnStatus("21");
 			returnedGoods.setReturnAmount(0);
 		}
+		returnedGoods.setApplyBy(user.getId());//添加申请人(获取当前登录人的信息)
 		returnedGoodsDao.insertReturn(returnedGoods);
 		
 		//当实物和虚拟时,会需要商品售后数量插入mapping表中的after_sale_num.(而通用卡本身也需要,但是售后数量在后面查询)
@@ -279,8 +284,8 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		}
 		ogd.setType(2);
 		ogd.setAdvanceFlag("4");
-		ogd.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
-		ogd.setCreateBy(UserUtils.getUser());
+		ogd.setCreateOfficeId(user.getOffice().getId());
+		ogd.setCreateBy(user);
 		
 		orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
 		//退货处理 detials end
@@ -493,4 +498,173 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		return returnedGoodsDao.getRealnum(returnedGoods);
 	}
 
+	/**
+	 * 获取订单商品中的已退款金额
+	 * @param returnedGoods
+	 * @return
+	 */
+	public double getSurplusReturnAmount(ReturnedGoods returnedGoods) {
+		return returnedGoodsDao.getSurplusReturnAmount(returnedGoods);
+	}
+
+	/**
+	 * 获取营业额信息
+	 * @param returnedGoods
+	 * @return
+	 */
+	public TurnOverDetails getTurnover(ReturnedGoods returnedGoods) {
+		return returnedGoodsDao.getTurnover(returnedGoods);
+	}
+	
+	/**
+	 * 获取业务员营业额
+	 * @param returnedGoods
+	 * @return
+	 */
+	public OrderPushmoneyRecord getOrderPushmoneyRecord(ReturnedGoods returnedGoods) {
+		return returnedGoodsDao.getOrderPushmoneyRecord(returnedGoods);
+	}
+
+	/**
+	 * 获取店营业额
+	 * @param returnedGoods
+	 * @return
+	 */
+	public TurnOverDetails getMtmyTurnoverDetails(ReturnedGoods returnedGoods) {
+		return returnedGoodsDao.getMtmyTurnoverDetails(returnedGoods);
+	}
+
+	/**
+	 * 获取店铺营业额的操作日志
+	 * @param page
+	 * @param turnOverDetails
+	 * @return
+	 */
+	public Page<TurnOverDetails> findMtmyTurnoverDetailsList(Page<TurnOverDetails> page,
+			TurnOverDetails turnOverDetails) {
+		// 设置分页参数
+		turnOverDetails.setPage(page);
+		// 执行分页查询
+		page.setList(returnedGoodsDao.findMtmyTurnoverDetailsList(turnOverDetails));
+		return page;
+	}
+
+	/**
+	 * 获取店营业额明细列表
+	 * @param turnOverDetails
+	 * @return
+	 */
+	public List<TurnOverDetails> getMtmyTurnoverDetailsList(TurnOverDetails turnOverDetails) {
+		return returnedGoodsDao.getMtmyTurnoverDetailsList(turnOverDetails);
+	}
+
+	/**
+	 * 保存店营业额增减值
+	 * @param turnOverDetails
+	 */
+	public void saveMtmyTurnoverDetails(TurnOverDetails turnOverDetails) {
+		User user = UserUtils.getUser();
+		//业务员的营业额信息添加到表中   (先查询信息)
+		List<TurnOverDetails> list = dao.getMtmyTurnoverDetailsList(turnOverDetails);
+		String amounts = turnOverDetails.getAmounts();
+		String[] amount = amounts.split(",");
+		for (int i = 0; i < amount.length; i++) {
+			list.get(i).setDetailsId(turnOverDetails.getDetailsId());
+			list.get(i).setType(3);
+			list.get(i).setStatus(4);
+			list.get(i).setAmount(Double.parseDouble(amount[i]));
+			list.get(i).setCreateBy(user);
+			dao.saveMtmyTurnoverDetails(list.get(i));
+		}
+	}
+
+	/**
+	 * 查询每个业务员的售后审核扣减的营业额
+	 * @param turnOverDetails
+	 * @return
+	 */
+	public List<TurnOverDetails> getReturnedAmountList(TurnOverDetails turnOverDetails) {
+		return dao.getReturnedAmountList(turnOverDetails);
+	}
+
+	/**
+	 * 查询营业额是否为第二次编辑(根据售后id是否存在)
+	 * @param turnOverDetails
+	 * @return
+	 */
+	public List<OrderPushmoneyRecord> findOrderPushmoneyRecordList(TurnOverDetails turnOverDetails) {
+		return dao.findOrderPushmoneyRecordList(turnOverDetails);
+	}
+
+	/**
+	 * 查询每个业务员的售后审核扣减的营业额
+	 * @param turnOverDetails
+	 * @return
+	 */
+	public List<OrderPushmoneyRecord> getReturnedPushmoneyList(TurnOverDetails turnOverDetails) {
+		return dao.getReturnedPushmoneyList(turnOverDetails);
+	}
+
+	/**
+	 * 获取各个部门的营业额合计
+	 * @param orderId
+	 * @return
+	 */
+	public List<OrderPushmoneyRecord> getSumBeauticianTurnover(String orderId) {
+		return dao.getSumBeauticianTurnover(orderId);
+	}
+
+	/**
+	 * 保存业务员营业额
+	 * @param orderPushmoneyRecord
+	 */
+	public void saveBeauticianTurnover(OrderPushmoneyRecord orderPushmoneyRecord) {
+		User user = UserUtils.getUser();
+		//业务员的营业额信息添加到表中   (先查询信息)
+		List<OrderPushmoneyRecord> list = dao.getBeauticianTurnoverList(orderPushmoneyRecord.getOrderId());
+		//把获取到的金额全部切割
+		String pushMoneys = orderPushmoneyRecord.getPushMoneys();
+		String[] split = pushMoneys.split(",");
+		for (int i = 0; i < split.length; i++) {
+			list.get(i).setOrderId(orderPushmoneyRecord.getOrderId());//
+			list.get(i).setReturnedId(orderPushmoneyRecord.getReturnedId());
+			list.get(i).setTurnOverDetailsId(list.get(i).getPushmoneyRecordId());
+			list.get(i).setType(3);
+			list.get(i).setPushMoney(Double.parseDouble(split[i]));
+			list.get(i).setCreateBy(user);
+			dao.saveBeauticianTurnover(list.get(i));
+		}
+	}
+
+	/**
+	 * 获取业务员退款营业额(type=3)
+	 * @param turnOverDetails
+	 * @return
+	 */
+	public List<OrderPushmoneyRecord> getOrderPushmoneyRecordListView(TurnOverDetails turnOverDetails) {
+		return dao.getOrderPushmoneyRecordListView(turnOverDetails);
+	}
+
+	/**
+	 * 获取店铺退款营业额(type=3)
+	 * @param turnOverDetails
+	 * @return
+	 */
+	public List<TurnOverDetails> getMtmyTurnoverDetailsListView(TurnOverDetails turnOverDetails) {
+		return dao.getMtmyTurnoverDetailsListView(turnOverDetails);
+	}
+
+	/**
+	 * 获取业务员退货营业额的操作日志记录
+	 * @param page
+	 * @param orderPushmoneyRecord
+	 * @return
+	 */
+	public Page<OrderPushmoneyRecord> getReturnedBeauticianLog(Page<OrderPushmoneyRecord> page, OrderPushmoneyRecord orderPushmoneyRecord) {
+		// 设置分页参数
+		orderPushmoneyRecord.setPage(page);
+		// 执行分页查询
+		page.setList(returnedGoodsDao.getReturnedBeauticianLog(orderPushmoneyRecord));
+		return page;
+	}
 }

@@ -168,6 +168,31 @@ public interface OfficeDao extends TreeDao<Office> {
 	public void updateisyesno(@Param("id")String id,@Param("type")String type,@Param("isyesno")String isyesno);
 	
 	/**
+	 * 
+	 * @Title: findOfficeByUserIdAndFzxRoleId
+	 * @Description: TODO 查询当前用户拥有的角色对应的权限
+	 * @param roleId
+	 * @param id
+	 * @return:
+	 * @return: List<Office>
+	 * @throws
+	 * 2017年10月27日
+	 */
+	public List<Office> findOfficeByUserIdAndFzxRoleId(int roleId, String id);
+	
+	/**
+	 * 
+	 * @Title: newOfficeTreeData
+	 * @Description: TODO 根据商家id查询此商家的下的归属机构
+	 * @param compId
+	 * @return:
+	 * @return: List<Office>
+	 * @throws
+	 * 2017年11月1日
+	 */
+	public List<Office> newOfficeTreeData(Office office);
+	
+	/**
 	 * 实物订单发货到店查询店铺详情
 	 * @param id
 	 * @return
@@ -185,4 +210,5 @@ public interface OfficeDao extends TreeDao<Office> {
 	 * @param officeLog
 	 */
 	public void saveOfficeLogDel(OfficeLog officeLog);
+
 }
