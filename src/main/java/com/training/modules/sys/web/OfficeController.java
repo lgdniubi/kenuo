@@ -289,7 +289,7 @@ public class OfficeController extends BaseController {
 
 				//店铺首图
 				img = office.getOfficeInfo().getImg();
-				if(img != null && img != ""){
+				if(img != null && !"".equals(img)){
 					reservationTime(3, currentUser.getCreateBy().getId(), img, "", lifeImgUrls, office.getId(), "bm", null);
 				}
 				
@@ -315,8 +315,8 @@ public class OfficeController extends BaseController {
 				officeService.saveOfficeInfo(office);
 
 				//店铺首图
-				img = office.getOfficeInfo().getImg();
-				if(img != null && img != "" && !oldOffice.getImg().equals(img)){
+				img = (office.getOfficeInfo().getImg() == null || "".equals(office.getOfficeInfo().getImg())) ? null : office.getOfficeInfo().getImg();
+				if(img != null && !oldOffice.getImg().equals(img)){
 					reservationTime(3, currentUser.getCreateBy().getId(), img, oldOffice.getImg(), lifeImgUrls, office.getId(), "bm", null);
 				}
 			}
