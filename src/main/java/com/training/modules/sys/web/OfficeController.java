@@ -315,8 +315,9 @@ public class OfficeController extends BaseController {
 				officeService.saveOfficeInfo(office);
 
 				//店铺首图
-				img = office.getOfficeInfo().getImg() == null ? "" : office.getOfficeInfo().getImg();
-				if(!"".equals(img) && !oldOffice.getImg().equals(img)){
+				img = office.getOfficeInfo().getImg() == null ? "" : office.getOfficeInfo().getImg();//修改后的首图信息
+				String oldImg = oldOffice.getImg() == null ? "" : oldOffice.getImg();//修改前的首图信息
+				if(!oldImg.equals(img)){
 					reservationTime(3, currentUser.getCreateBy().getId(), img, oldOffice.getImg(), lifeImgUrls, office.getId(), "bm", null);
 				}
 			}
