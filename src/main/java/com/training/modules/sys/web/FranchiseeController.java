@@ -21,12 +21,17 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
+import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.FranchiseeService;
 import com.training.modules.sys.service.OfficeService;
+import com.training.modules.sys.utils.BugLogUtils;
+import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
+
+import net.sf.json.JSONObject;
 
 /**
  * 加盟商管理Controller
@@ -119,7 +124,7 @@ public class FranchiseeController extends BaseController{
 				franchisee.setUpdateDate(new Date());
 				
 				//保存商家表,id自动增长，修改成功后返回id
-				String id = franchiseeService.saveFranchisee(franchisee);
+				String id = franchiseeService.saveFranchisee(franchisee,request);
 				logger.debug("#####id:"+id);
 				
 				//保存组织机构信息，给组织机构添加一条父类数据
@@ -185,17 +190,36 @@ public class FranchiseeController extends BaseController{
 	 */
 	@RequiresPermissions(value={"sys:franchisee:del"},logical=Logical.OR)
 	@RequestMapping(value = {"delete"})
-	public String delete(Franchisee franchisee, RedirectAttributes redirectAttributes) {
+	public String delete(Franchisee franchisee, RedirectAttributes redirectAttributes,HttpServletRequest request) {
 		
-		//删除商家信息
-		franchiseeService.delete(franchisee);
-		
-		//删除组织结构信息（office）
-		Office office = new Office();
-		office.setId(franchisee.getId());
-		officeService.delete(office);
-		
-		addMessage(redirectAttributes, "删除商家信息成功");
+		try {
+			if (StringUtils.isNotBlank(franchisee.getId())) {
+				Franchisee fran = franchiseeService.get(franchisee);
+				//删除商家信息
+				franchiseeService.delete(franchisee);
+				
+				//删除组织结构信息（office）
+				Office office = new Office();
+				office.setId(franchisee.getId());
+				officeService.delete(office);
+				
+				//删除商家同步数据到供应链
+				String weburl = ParametersFactory.getMtmyParamValues("fzx_equally_franchisee");
+				logger.info("##### web接口路径:"+weburl);
+				String parpm = "{\"id\":"+Integer.valueOf(fran.getId())+",\"name\":\""+fran.getName()+"\",\"type\":\""+fran.getType()+"\","
+						+ "\"address\":\""+fran.getAddress()+"\",\"legal_name\":\""+fran.getLegalName()+"\",\"contacts\":\""+fran.getContacts()+"\",\"mobile\":\""+fran.getMobile()+"\","
+						+ "\"tel\":\""+fran.getTel()+"\",\"charter_url\":\""+fran.getCharterUrl()+"\",\"taxation_url\":\""+fran.getTaxationUrl()+"\","
+						+ "\"bank_beneficiary\":\""+fran.getBankBeneficiary()+"\",\"bank_code\":\""+fran.getBankCode()+"\",\"bank_owner\":\""+fran.getBankName()+"\",\"is_delete\":"+1+",\"function\":\""+1+"\"}";
+				String url=weburl;
+				String result = WebUtils.postCSObject(parpm, url);
+				JSONObject jsonObject = JSONObject.fromObject(result);
+				logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+				addMessage(redirectAttributes, "删除商家信息成功");
+			}
+		} catch (Exception e) {
+			logger.error("删除商家错误信息："+e.getMessage());
+    		BugLogUtils.saveBugLog(request, "删除商家失败", e);
+		}
 		return "redirect:" + adminPath + "/sys/franchisee/list";
 	}
 	

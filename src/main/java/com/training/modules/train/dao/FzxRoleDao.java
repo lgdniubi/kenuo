@@ -88,4 +88,27 @@ public interface FzxRoleDao extends CrudDao<FzxRole>{
 	 * @return
 	 */
 	public int checkEnname(String enname);
+
+	/**
+	 * 
+	 * @Title: findByRoleId
+	 * @Description: TODO 根据角色id查询
+	 * @param rId:
+	 * @return: void
+	 * @throws
+	 * 2017年10月24日
+	 */
+	public FzxRole findByRoleId(Integer rId);
+
+	/**
+	 * 
+	 * @Title: findFzxRoleByUserId
+	 * @Description: TODO 查询当前 用户下的所有角色
+	 * @param user
+	 * @return:
+	 * @return: List<User>
+	 * @throws
+	 * 2017年10月27日
+	 */
+	public List<FzxRole> findFzxRoleByUserId(User user);
 }

@@ -1,6 +1,8 @@
 package com.training.modules.ec.web;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,17 +15,21 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
+import com.training.common.utils.DateUtils;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.ec.dao.PdWareHouseDao;
 import com.training.modules.ec.entity.CourierResultXML;
 import com.training.modules.ec.entity.OrderGoods;
+import com.training.modules.ec.entity.OrderPushmoneyRecord;
 import com.training.modules.ec.entity.PdWareHouse;
 import com.training.modules.ec.entity.ReturnedGoods;
 import com.training.modules.ec.entity.ReturnedGoodsImages;
+import com.training.modules.ec.entity.TurnOverDetails;
 import com.training.modules.ec.service.OrderGoodsService;
 import com.training.modules.ec.service.ReturnedGoodsService;
 import com.training.modules.ec.utils.CourierUtils;
@@ -461,5 +467,386 @@ public class ReturnedGoodsController extends BaseController {
 
 		return "redirect:" + adminPath + "/ec/returned/list";
 	}
-
+	/**
+	 * 获取订单商品中的已退款金额
+	 * @param returnGoods
+	 * @param redirectAttributes
+	 * @return  
+	 */
+	@ResponseBody
+	@RequestMapping(value = "getSurplusReturnAmount")
+	public double getSurplusReturnAmount(HttpServletRequest request,ReturnedGoods returnedGoods, RedirectAttributes redirectAttributes) {
+		return returnedGoodsService.getSurplusReturnAmount(returnedGoods);
+	}
+	/**
+	 * 进入营业额界面
+	 * @param returnGoods
+	 * @param redirectAttributes
+	 * @return  
+	 */
+	@RequestMapping(value = "getTurnoverByOrderId")
+	public String getUserTurnoverByOrderId(ReturnedGoods returnedGoods, HttpServletRequest request, RedirectAttributes redirectAttributes, Model model) {
+		try {
+			//获取售后信息
+			TurnOverDetails turnOverDetails = returnedGoodsService.getTurnover(returnedGoods);
+			//获取售后审核时间(老数据没审核时间,用申请时间代替)
+			Date createDate = turnOverDetails.getCreateDate();//获取售后审核时间(老数据没审核时间,用申请时间代替)
+			double returnAmount = turnOverDetails.getAmount();//退款金额
+			String pushmoneyTurnover = "";//业务员jsp展示
+			String shopTurnover = "";//店铺jsp展示
+			
+			//获取业务员营业额信息
+			List<OrderPushmoneyRecord> userList = returnedGoodsService.getOrderPushmoneyRecordListView(turnOverDetails);//获取业务员信息集合
+			int userNum = userList.size();//查询到数据的个数
+			if(userList.size() > 0){//当存在数据时
+				pushmoneyTurnover = pushmoneyTurnover + 
+					"<tr style='text-align: center;' > "+
+						"<td rowspan='"+userNum+"'>"+DateUtils.formatDate(createDate, "yyyy-MM-dd HH:mm:ss")+"</td> "+
+						"<td rowspan='"+userNum+"'>售后</td> "+
+						"<td rowspan='"+userNum+"'>"+returnAmount+"</td> "+
+						"<td style='text-align: center;'>"+userList.get(0).getPushmoneyUserName()+"</td> "+
+						"<td style='text-align: center;'>"+userList.get(0).getDepartmentName()+"</td> "+
+						"<td style='text-align: center;'>"+userList.get(0).getPushmoneyUserMobile()+"</td> "+
+						"<td style='text-align: center;'>"+userList.get(0).getPushMoney()+"</td> "+
+						"<td style='text-align: center;' rowspan='"+userNum+"'>"+
+							"<a href='#' onclick='editOrderPushmoneyRecord(\""+turnOverDetails.getOrderId()+"\",\""+turnOverDetails.getDetailsId()+"\")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>"+
+							"<a href=\"#\" onclick=\"openDialogView('查看日志记录', '/kenuo/a/ec/returned/getReturnedBeauticianLog?orderId="+turnOverDetails.getOrderId()+"&returnedId="+turnOverDetails.getDetailsId()+"','800px','600px')\" class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i> 日志记录</a>"+
+						"</td> "+
+					"</tr>";
+				for (int i = 1; i < userList.size(); i++) {
+					pushmoneyTurnover = pushmoneyTurnover + 
+							"<tr style='text-align: center;' > "+
+								"<td style='text-align: center;'>"+userList.get(i).getPushmoneyUserName()+"</td> "+
+								"<td style='text-align: center;'>"+userList.get(i).getDepartmentName()+"</td> "+
+								"<td style='text-align: center;'>"+userList.get(i).getPushmoneyUserMobile()+"</td> "+
+								"<td style='text-align: center;'>"+userList.get(i).getPushMoney()+"</td> "+
+							"</tr>";
+				}
+			}else{//没有业务员营业额
+				pushmoneyTurnover = pushmoneyTurnover + 
+						"<tr style='text-align: center;' > "+
+							"<td>"+DateUtils.formatDate(createDate, "yyyy-MM-dd HH:mm:ss")+"</td> "+
+							"<td>售后</td> "+
+							"<td>"+returnAmount+"</td> "+
+							"<td></td> "+
+							"<td></td> "+
+							"<td></td> "+
+							"<td></td> "+
+							"<td style='text-align: center;'>"+
+								"<a href='#' onclick='editOrderPushmoneyRecord(\""+turnOverDetails.getOrderId()+"\",\""+turnOverDetails.getDetailsId()+"\")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>"+
+								"<a href=\"#\" onclick=\"openDialogView('查看日志记录', '/kenuo/a/ec/returned/getReturnedBeauticianLog?orderId="+turnOverDetails.getOrderId()+"&returnedId="+turnOverDetails.getDetailsId()+"','800px','600px')\" class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i> 日志记录</a>"+
+							"</td> "+
+						"</tr>";
+			}
+			//获取店铺营业额信息
+			List<TurnOverDetails> officelist = returnedGoodsService.getMtmyTurnoverDetailsListView(turnOverDetails);
+			if(officelist.size() > 0){//当存在数据时
+				int shopNum = officelist.size();//查询到数据的个数
+				shopTurnover = shopTurnover + 
+						"<tr style='text-align: center;'> "+
+							"<td rowspan='"+shopNum+"'>"+DateUtils.formatDate(createDate, "yyyy-MM-dd HH:mm:ss")+"</td> "+
+							"<td rowspan='"+shopNum+"'>售后</td> "+
+							"<td rowspan='"+shopNum+"'>"+returnAmount+"</td> "+
+							"<td style='text-align: center;'>"+officelist.get(0).getBelongOfficeName()+"</td> "+
+							"<td style='text-align: center;'>"+officelist.get(0).getAmount()+"</td> "+
+							"<td style='text-align: center;' rowspan='"+shopNum+"'>"+
+								"<a href='#' onclick='editMtmyTurnoverDetails(\""+turnOverDetails.getOrderId()+"\",\""+turnOverDetails.getDetailsId()+"\")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>"+
+								"<a href=\"#\" onclick=\"openDialogView('查看日志记录', '/kenuo/a/ec/returned/findMtmyTurnoverDetailsList?orderId="+turnOverDetails.getOrderId()+"&detailsId="+turnOverDetails.getDetailsId()+"','800px','600px')\" class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i> 操作日志</a>"+
+							"</td> "+
+						"</tr>";
+				for (int i = 1; i < officelist.size(); i++) {
+					shopTurnover = shopTurnover + 
+							"<tr style='text-align: center;'> "+
+								"<td style='text-align: center;'>"+officelist.get(i).getBelongOfficeName()+"</td> "+
+								"<td style='text-align: center;'>"+officelist.get(i).getAmount()+"</td> "+
+							"</tr>";
+				}
+				
+			}else{//没有店铺营业额
+				shopTurnover = shopTurnover + 
+						"<tr style='text-align: center;'> "+
+							"<td style='text-align: center;'>"+DateUtils.formatDate(createDate, "yyyy-MM-dd HH:mm:ss")+"</td> "+
+							"<td style='text-align: center;'>售后</td> "+
+							"<td style='text-align: center;'>"+returnAmount+"</td> "+
+							"<td style='text-align: center;'></td> "+
+							"<td style='text-align: center;'></td> "+
+							"<td style='text-align: center;'>"+
+								"<a href='#' onclick='editMtmyTurnoverDetails(\""+turnOverDetails.getOrderId()+"\",\""+turnOverDetails.getDetailsId()+"\")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>编辑</a>"+
+								"<a href=\"#\" onclick=\"openDialogView('查看日志记录', '/kenuo/a/ec/returned/findMtmyTurnoverDetailsList?orderId="+turnOverDetails.getOrderId()+"&detailsId="+turnOverDetails.getDetailsId()+"','800px','600px')\" class='btn btn-info btn-xs' ><i class='fa fa-search-plus'></i> 操作日志</a>"+
+							"</td> "+
+						"</tr>";
+			}
+			model.addAttribute("pushmoneyTurnover", pushmoneyTurnover);
+			model.addAttribute("shopTurnover", shopTurnover);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "modules/ec/TurnoverDetails";
+	}
+	/**
+	 * 获取业务员退货的营业额操作日志
+	 * @param returnGoods
+	 * @param redirectAttributes
+	 * @return  
+	 */
+	@RequestMapping(value = "getReturnedBeauticianLog")
+	public String getReturnedBeauticianLog(OrderPushmoneyRecord orderPushmoneyRecord, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes, Model model) {
+		Page<OrderPushmoneyRecord> page = returnedGoodsService.getReturnedBeauticianLog(new Page<OrderPushmoneyRecord>(request, response),orderPushmoneyRecord);
+		model.addAttribute("page", page);
+		return "modules/ec/beauticianTurnoverList";
+	}
+	/**
+	 * 获取店铺营业额的操作日志
+	 * @param returnGoods
+	 * @param redirectAttributes
+	 * @return  
+	 */
+	@RequestMapping(value = "findMtmyTurnoverDetailsList")
+	public String findMtmyTurnoverDetailsList(TurnOverDetails turnOverDetails, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes, Model model) {
+		Page<TurnOverDetails> page = returnedGoodsService.findMtmyTurnoverDetailsList(new Page<TurnOverDetails>(request, response),turnOverDetails);
+		model.addAttribute("page", page);
+		return "modules/ec/mtmyTurnoverDetailsList";
+	}
+	/**
+	 * 编辑业务员营业额
+	 * @param returnGoods
+	 * @param redirectAttributes
+	 * @return  
+	 */
+	@RequestMapping(value = "editOrderPushmoneyRecord")
+	public String editOrderPushmoneyRecord(TurnOverDetails turnOverDetails, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes, Model model) {
+		DecimalFormat formater = new DecimalFormat("#0.##");
+		
+		//获取审核售后信息
+		ReturnedGoods returnedGoods = new ReturnedGoods();
+		returnedGoods.setOrderId(turnOverDetails.getOrderId());
+		returnedGoods.setReturnedId(turnOverDetails.getDetailsId());
+		turnOverDetails = returnedGoodsService.getTurnover(returnedGoods);
+		
+		String userTurnover = "";//传递jsp界面的页面展示
+		List<OrderPushmoneyRecord> list = returnedGoodsService.findOrderPushmoneyRecordList(turnOverDetails);//获取业务员信息集合
+		if(list.size() != 0){
+			List<OrderPushmoneyRecord> pushmoneyList = returnedGoodsService.getReturnedPushmoneyList(turnOverDetails);//在该售后ID查询每个业务员的售后审核扣减的营业额
+			
+			int num = 0;//获取编辑界面的数字
+			for (OrderPushmoneyRecord op : list) {
+				num += op.getChildren().size(); 
+			}
+			int j = num;//校验营业额+增减值>=0
+			double returnAmount = turnOverDetails.getAmount();//退款金额
+			double beauticianTurnover= 0;//单个的（美容师营业额-该美容师已退营业额）
+			double sumTurnover= 0;//合计的(美容师合计营业额-所有美容师已退营业额)
+			double turnoverRatio= 0;//营业额占比
+			double added = 0;//数据库查询的原始营业额
+			String departmentIds = "";//所有部门的id字符串
+			
+			//之前的老订单会存在售后没有审核时间,由申请时间替代
+			Date createDate = turnOverDetails.getCreateDate();
+			//获取各个部门的营业额合计
+			List<OrderPushmoneyRecord> sumTurnoverList = returnedGoodsService.getSumBeauticianTurnover(turnOverDetails.getOrderId());
+			for (OrderPushmoneyRecord opr : sumTurnoverList) {//循环所有部门的营业总额
+				if(list.get(0).getDepartmentId() == opr.getDepartmentId()){//判断第一条信息属于哪个部门
+					
+					if(pushmoneyList.size() !=0){//判断在该退货id中'已经扣减的营业额',不存在'赋值为0'
+						added = pushmoneyList.get(0).getPushMoney();//按部门和用户id区分的每个业务员的当前营业额
+					}
+					beauticianTurnover = list.get(0).getPushMoney();//单个业务员的sum营业额
+					sumTurnover = opr.getPushMoney();//部门的营业额
+					if(sumTurnover != 0 ){
+						turnoverRatio = Double.parseDouble(formater.format(beauticianTurnover/sumTurnover*returnAmount));//占比
+					}
+					userTurnover = userTurnover + 
+						"<input id='pushMoney' name='pushMoney"+list.get(0).getDepartmentId()+"' type='hidden' value='"+added+"' class='form-control'>"+
+						"<input id='num' name='num' value='"+num+"' type='hidden' class='form-control'>";
+					userTurnover = userTurnover + 
+						"<tr style='text-align: center;'> "+
+							"<td rowspan='"+num+"'>"+DateUtils.formatDate(createDate, "yyyy-MM-dd HH:mm:ss")+"</td> "+
+							"<td rowspan='"+num+"'>售后</td> "+
+							"<td rowspan='"+num+"'>"+returnAmount+"</td> "+
+							"<td style='text-align: center;' rowspan='"+(list.get(0).getChildren().size())+"'>"+list.get(0).getPushmoneyUserName()+"</td> "+
+							"<td style='text-align: center;' rowspan='"+(list.get(0).getChildren().size())+"'>"+list.get(0).getDepartmentName()+"</td> "+
+							"<td style='text-align: center;' rowspan='"+(list.get(0).getChildren().size())+"'>"+list.get(0).getPushmoneyUserMobile()+"</td> "+
+							"<td style='text-align: center;' rowspan='"+(list.get(0).getChildren().size())+"'>"+added+"</td> "+
+							"<td style='text-align: center;' rowspan='"+(list.get(0).getChildren().size())+"'>"+turnoverRatio+"</td> ";
+							
+					for(int i =0; i<list.get(0).getChildren().size(); i++){
+						userTurnover = userTurnover + 
+								"<td style='text-align: center;'>"+list.get(0).getChildren().get(i).getBelongOfficeName()+"</td> "+
+								"<td style='text-align: center;'>"+list.get(0).getChildren().get(i).getPushMoney()+"</td> "+
+								"<td style='text-align: center;'>"+
+									"<input id='added"+j+"' name='added"+list.get(0).getDepartmentId()+"' type='hidden' value='"+list.get(0).getChildren().get(i).getPushMoney()+"' class='form-control'>"+
+									"<input id='Amount"+j+"' name='Amount"+list.get(0).getDepartmentId()+"' value='' class='form-control'>"+
+								"</td> "+
+							"</tr>";
+						j--;
+					}
+				}
+				for (int i = 1; i < list.size(); i++) {//循环除第一条之外的业务员营业额,并且比较在哪个部门,计算营业额占比
+					if(list.get(i).getDepartmentId() == opr.getDepartmentId()){
+						if(pushmoneyList.size() !=0){//判断营业额是否为第一次编辑,为营业额赋值
+							added = pushmoneyList.get(i).getPushMoney();//按部门和用户id区分的每个业务员的当前营业额
+						}
+						sumTurnover = opr.getPushMoney();//部门的营业额
+						beauticianTurnover = list.get(i).getPushMoney();//单个业务员营业额
+						if(sumTurnover != 0 ){
+							turnoverRatio = Double.parseDouble(formater.format(beauticianTurnover/sumTurnover*returnAmount));//占比
+						}
+						userTurnover = userTurnover + 
+							"<input id='pushMoney' name='pushMoney"+list.get(i).getDepartmentId()+"' type='hidden' value='"+added+"' class='form-control'>";
+						userTurnover = userTurnover + 
+							"<tr style='text-align: center;'> "+
+								"<td style='text-align: center;' rowspan='"+(list.get(i).getChildren().size())+"'>"+list.get(i).getPushmoneyUserName()+"</td> "+
+								"<td style='text-align: center;' rowspan='"+(list.get(i).getChildren().size())+"'>"+list.get(i).getDepartmentName()+"</td> "+
+								"<td style='text-align: center;' rowspan='"+(list.get(i).getChildren().size())+"'>"+list.get(i).getPushmoneyUserMobile()+"</td> "+
+								"<td style='text-align: center;' rowspan='"+(list.get(i).getChildren().size())+"'>"+added+"</td> "+
+								"<td style='text-align: center;' rowspan='"+(list.get(i).getChildren().size())+"'>"+turnoverRatio+"</td> ";
+						for(int k =0; k<list.get(i).getChildren().size(); k++){
+							userTurnover = userTurnover + 
+									"<td style='text-align: center;'>"+list.get(i).getChildren().get(k).getBelongOfficeName()+"</td> "+
+									"<td style='text-align: center;'>"+list.get(i).getChildren().get(k).getPushMoney()+"</td> "+
+									"<td style='text-align: center;'>"+
+										"<input id='added"+j+"' name='added"+list.get(i).getDepartmentId()+"' type='hidden' value='"+list.get(i).getChildren().get(k).getPushMoney()+"' class='form-control'>"+
+										"<input id='Amount"+j+"' name='Amount"+list.get(i).getDepartmentId()+"' value='' class='form-control'>"+
+									"</td> "+
+								"</tr>";
+							j--;
+						}
+					}
+				}
+				//拼接部门字符串
+				departmentIds += opr.getDepartmentId()+",";
+			}
+			model.addAttribute("departmentIds",departmentIds);
+			model.addAttribute("returnAmount",returnAmount);
+			model.addAttribute("orderId",turnOverDetails.getOrderId());
+			model.addAttribute("returnedId",turnOverDetails.getDetailsId());
+			model.addAttribute("userTurnover",userTurnover);
+		}else{
+			model.addAttribute("userTurnover",userTurnover);
+		}
+		return "modules/ec/pushMoneyForm";
+	}
+	/**
+	 * 保存业务员营业额
+	 * @param orderPushmoneyRecord
+	 * @param redirectAttributes
+	 * @return  
+	 */
+	@ResponseBody
+	@RequestMapping(value = "saveOrderPushmoneyRecord")
+	public String saveOrderPushmoneyRecord(OrderPushmoneyRecord orderPushmoneyRecord, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes, Model model) {
+		String flag="";
+		try {
+			returnedGoodsService.saveBeauticianTurnover(orderPushmoneyRecord); 
+			flag = "success";
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "保存业务员营业额", e);
+			logger.error("方法：save,保存业务员营业额" + e.getMessage());
+			flag = "error";
+		}
+		return flag;
+	}
+	/**
+	 * 编辑店铺营业额
+	 * @param orderPushmoneyRecord
+	 * @param redirectAttributes
+	 * @return  
+	 */
+	@RequestMapping(value = "editMtmyTurnoverDetails")
+	public String editMtmyTurnoverDetails(TurnOverDetails turnOverDetails, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes, Model model) {
+		DecimalFormat formater = new DecimalFormat("#0.##");
+		//获取营业额明细表
+		ReturnedGoods returnedGoods = new ReturnedGoods();
+		returnedGoods.setOrderId(turnOverDetails.getOrderId());
+		returnedGoods.setReturnedId(turnOverDetails.getDetailsId());
+		turnOverDetails = returnedGoodsService.getTurnover(returnedGoods);
+		String shopTurnover = "";//jsp界面的页面展示字符串
+		//获取店营业额明细列表(sum营业额)
+		List<TurnOverDetails> list = returnedGoodsService.getMtmyTurnoverDetailsList(turnOverDetails);
+		if(list.size() != 0 ){
+			//查询店铺售后  sum增减值
+			List<TurnOverDetails> amountList = returnedGoodsService.getReturnedAmountList(turnOverDetails);
+			
+			double returnAmount = turnOverDetails.getAmount();//退款金额
+			//获取营业额占比 = （店铺营业额-店铺已退营业额）/(店铺合计营业额-店铺已退营业额)*退款
+			double storeTurnover = 0;//单个店铺当前的营业额（店铺营业额-店铺已退营业额）
+			double sumTurnover= 0;//合计的(店铺合计营业额-店铺已退营业额)
+			double turnoverRatio= 0;//获取营业额占比
+			double added = 0;//数据库查询的原始营业额
+			
+			//之前的老订单会存在售后没有审核时间,由申请时间替代
+			Date createDate = turnOverDetails.getCreateDate();
+			storeTurnover = list.get(0).getAmount();//店铺当前的营业额
+			for (TurnOverDetails mtd : list) {
+				sumTurnover += mtd.getAmount(); //得到店铺营业额合计
+			}
+			if(sumTurnover != 0 ){
+				turnoverRatio = Double.parseDouble(formater.format(storeTurnover/sumTurnover*returnAmount));//店铺营业额占比
+			}
+			if(amountList.size() != 0){//判断营业额是否为第一次编辑,为营业额赋值
+				added = amountList.get(0).getAmount();
+			}
+			int num = list.size(); //集合的长度
+			shopTurnover = shopTurnover + 
+					"<tr style='text-align: center;'> "+
+						"<td rowspan='"+num+"'>"+DateUtils.formatDate(createDate, "yyyy-MM-dd HH:mm:ss")+"</td> "+
+						"<td rowspan='"+num+"'>售后</td> "+
+						"<td rowspan='"+num+"'>"+returnAmount+"</td> "+
+						"<td style='text-align: center;'>"+list.get(0).getBelongOfficeName()+"</td> "+
+						"<td style='text-align: center;'>"+added+"</td> "+
+						"<td style='text-align: center;'>"+turnoverRatio+"</td> "+
+						"<td style='text-align: center;'>"+
+							"<input id='addeds0' name='addeds' type='hidden' value='"+added+"' class='form-control'>"+
+							"<input id='amount0' name='amount' value='' class='form-control'>"+
+							"<input id='storeTurnover0' value='"+storeTurnover+"' type='hidden' class='form-control'>"+
+							"<input id='num' name='num' value='"+num+"' type='hidden' class='form-control'>"+
+						"</td> "+
+					"</tr>";
+			for (int i = 1; i < list.size(); i++) {
+				if(amountList.size() != 0){//判断营业额是否为第一次编辑,为营业额赋值
+					added = amountList.get(i).getAmount();
+				}
+				storeTurnover = list.get(i).getAmount();//单个店铺营业额合计之后的金额
+				if(sumTurnover != 0 ){
+					turnoverRatio = Double.parseDouble(formater.format(storeTurnover/sumTurnover*returnAmount));
+				}
+				shopTurnover = shopTurnover + 
+					"<tr style='text-align: center;'> "+
+						"<td style='text-align: center;'>"+list.get(i).getBelongOfficeName()+"</td> "+
+						"<td style='text-align: center;'>"+added+"</td> "+
+						"<td style='text-align: center;'>"+turnoverRatio+"</td> "+
+						"<td style='text-align: center;'>"+
+							"<input id='addeds"+i+"' name='addeds' type='hidden' value='"+added+"' class='form-control'>"+
+							"<input id='amount"+i+"' name='amount' value='' class='form-control'>"+
+							"<input id='storeTurnover"+i+"' value='"+storeTurnover+"' type='hidden' class='form-control'>"+
+						"</td> "+
+					"</tr>";
+			}
+			model.addAttribute("returnAmount",returnAmount);
+			model.addAttribute("turnOverDetails",turnOverDetails);
+		}
+		model.addAttribute("shopTurnover",shopTurnover);
+		
+		return "modules/ec/mtmyTurnoverDetailsForm";
+	}
+	/**
+	 * 保存店铺营业额
+	 * @param orderPushmoneyRecord
+	 * @param redirectAttributes
+	 * @return  
+	 */
+	@ResponseBody
+	@RequestMapping(value = "saveMtmyTurnoverDetails")
+	public String saveMtmyTurnoverDetails(TurnOverDetails turnOverDetails, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes, Model model) {
+		String flag="";
+		try {
+			returnedGoodsService.saveMtmyTurnoverDetails(turnOverDetails); 
+			flag = "success";
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "保存店营业额", e);
+			logger.error("方法：save,保存店营业额" + e.getMessage());
+			flag = "error";
+		}
+		return flag;
+	}
 }

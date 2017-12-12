@@ -40,9 +40,8 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 	private double memberGoodsPrice;     //会员折扣优惠了多少钱
 	private double advancePrice;         //预约金
 	
-	/*private String belongOfficeId;           //归属机构id
-	private String belongUserId;            //归属人id
-*/	private double useBalance;              //使用账户余额
+	private String belongOfficeId;           //归属机构id
+	private double useBalance;              //使用账户余额
 	
 	public double getSurplusAmount() {
 		return surplusAmount;
@@ -243,21 +242,13 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 		this.goodsNum = goodsNum;
 	}
 
-	/*public String getBelongOfficeId() {
+	public String getBelongOfficeId() {
 		return belongOfficeId;
 	}
 
 	public void setBelongOfficeId(String belongOfficeId) {
 		this.belongOfficeId = belongOfficeId;
 	}
-
-	public String getBelongUserId() {
-		return belongUserId;
-	}
-
-	public void setBelongUserId(String belongUserId) {
-		this.belongUserId = belongUserId;
-	}*/
 
 	public double getUseBalance() {
 		return useBalance;

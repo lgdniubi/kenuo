@@ -1,6 +1,5 @@
 package com.training.modules.ec.service;
 
-
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +17,7 @@ import com.training.modules.ec.utils.CommonScopeUtils;
 import com.training.modules.sys.dao.AreaDao;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.Office;
+import com.training.modules.train.entity.Subscribe;
 
 
 /**
@@ -106,5 +106,38 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 	public List<OrderGoods> findOrderGoodsByUserId(int userId){
 		return dao.findOrderGoodsByUserId(userId);
 	}
+
+	/**
+	 * 查询预约的实际服务时间
+	 * @param reservation
+	 * @return
+	 */
+	public Reservation getServiceTime(Reservation reservation) {
+		return dao.getServiceTime(reservation);
+	}
+
+	/**
+	 * 添加/修改  实际服务时长
+	 * @param reservation
+	 */
+	public void editServiceTime(Reservation reservation) {
+		dao.editServiceTime(reservation);
+	}
 	
+	/**
+	 * 获取预约时间服务已过没有完成状态的预约
+	 * @return
+	 */
+	public List<Subscribe> querySubscribelist() {
+		return dao.querySubscribelist();
+	}
+	
+	/**
+	 * 修改预约状态
+	 * @param appt_id
+	 * @return
+	 */
+	public int updateapptstatus(int appt_id) {
+		return dao.updateapptstatus(appt_id);
+	}
 }

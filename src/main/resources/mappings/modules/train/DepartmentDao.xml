@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.DepartmentDao">
+	
+	<!-- 分页查询 -->
+	<select id="findList" resultType="Department">
+		SELECT
+			DISTINCT(d.id) AS dId,
+			d.name,
+			d.sort,
+			d.office_id AS "office.id",
+			d.remarks
+		FROM
+			train_department d
+		LEFT JOIN 
+			sys_user u 
+		ON d.office_id = u.company_id
+		<!-- 数据范围过滤 -->
+		<!-- ${sqlMap.dsf} -->
+		WHERE
+		<!-- WHERE -->
+		 d.del_flag = 0
+		<!-- 如果不是超级管理员，则根据所属商家查询 -->
+		<if test="!currentUser.admin">
+			<if test="office != null and office.id != ''">
+				AND d.office_id = #{office.id}
+			</if>
+		</if>
+		<if test="name != null and name != ''">
+			AND d.name like 
+			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY  d.sort
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 验证部门名称 -->
+	<select id="getDepartmentName" resultType="Department">
+		SELECT 
+			d.id AS dId,
+			d.name,
+			d.sort 
+		FROM train_department d 
+		WHERE 
+			d.del_flag = 0 AND d.name = #{name} AND d.office_id = #{companyId} 
+	</select>
+	
+	<!-- 保存部门 -->
+	<insert id="saveDepartment">
+		INSERT INTO train_department(
+			name,
+			sort,
+			office_id,
+			create_by,
+			create_date,
+			del_flag,
+			remarks
+		)VALUES(
+			#{name},
+			#{sort},
+			#{office.id},
+			#{createBy.id},
+			#{createDate},
+			#{delFlag},
+			#{remarks}
+			)
+	</insert>
+	<!-- 获取单个部门数据 -->
+	<select id="getDepartment" resultType="Department">
+		SELECT 
+			d.id AS dId,
+			d.name,
+			d.sort, 
+			d.office_id AS "office.id",
+			d.remarks
+		FROM train_department d 
+		WHERE 
+			d.del_flag = 0 
+		AND d.id = #{dId} 
+	</select>
+	<!-- 删除相应部门下的全部职位 -->
+	<delete id="deletePositionById">
+		DELETE FROM train_department_position WHERE department_id = #{dId}
+	</delete>
+	<!-- 删除部门 -->
+	<update id="deleteDepartment">
+		UPDATE train_department SET 
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{dId}
+	</update>
+	<!-- 部门修改 -->
+	<update id="editDepartment">
+		UPDATE train_department SET 
+			name = #{name},
+			sort = #{sort},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{dId}
+	</update>
+	
+	<!-- 查询相关部门的职位 -->
+	<select id="getPosition" resultType="Position">
+		SELECT 
+			c.id,
+			c.value,
+			c.label,
+			c.type,
+			c.description,
+			c.remarks,
+			c.sort,
+			c.del_flag,
+			d.id AS "department.dId", 
+			d.name AS "department.name",
+			d.office_id AS "department.office.id"
+		FROM sys_dict c 
+		LEFT JOIN train_department_position p 
+		ON c.value = p.position_key 
+		JOIN train_department d 
+		ON p.department_id = d.id 
+		WHERE 
+			d.id = #{dId} 
+		AND 
+			c.del_flag = #{delFlag}
+		AND 
+			c.type = 'sys_user_type'
+		ORDER BY c.sort
+	</select>
+	
+</mapper>

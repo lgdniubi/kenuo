@@ -76,6 +76,29 @@
 			r.user_id,su1.id,su2.id,r.id
 	</select>
 	
+	<!-- 查询业务员营业额明细列表-->
+	<select id="getList" resultType="OrderPushmoneyRecord">
+		SELECT
+			r.id AS pushmoneyRecordId,
+			r.order_id AS orderId,
+			r.returned_id AS returnedId,
+			r.turnover_details_id AS turnoverDetailsId,
+			r.user_id AS pushmoneyUserId,
+			r.user_office_id as userOfficeId,
+			r.user_office_ids as userOfficeIds,
+			r.position_key as positionKey,
+			r.position_value as positionValue,
+			r.department_id as departmentId,
+			r.office_id as officeId,
+		FROM
+			mtmydb.mtmy_beautician_turnover r
+		WHERE
+			r.order_id = #{orderId}
+		AND r.del_flag = 0
+		GROUP BY
+			r.department_id,r.user_id
+	</select>
+	
 	<!-- 根据pushmoneyRecordId查询相关业务员提成信息 -->
 	<select id="getOrderPushmoneyRecordById" resultType="OrderPushmoneyRecord">
 		SELECT
@@ -147,4 +170,39 @@
 		WHERE
 			a.id=#{pushmoneyUserId}
 	</select>
+	
+	<!-- 保存业务员营业额增减值 -->
+	<insert id="save">
+		INSERT INTO mtmydb.mtmy_order_pushmoney_record (
+			order_id,
+			returned_id,
+			turnover_details_id,
+			user_id,
+			push_money,
+			user_office_id,
+			user_office_ids,
+			position_key,
+			position_value,
+			department_id,
+			office_id,
+			create_by,
+			create_date,
+			del_flag
+		)VALUES(
+			#{orderId},
+			#{returnedId},
+			#{pushmoneyRecordId},
+			#{pushmoneyUserId},
+			#{pushMoney},
+			#{userOfficeId},
+			#{userOfficeIds},
+			#{positionKey},
+			#{positionValue},
+			#{departmentId},
+			#{officeId},
+			#{createBy.id},
+			SYSDATE(),
+			0			
+		)
+	</insert>
 </mapper>

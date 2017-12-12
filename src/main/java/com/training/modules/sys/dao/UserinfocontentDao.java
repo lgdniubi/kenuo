@@ -27,5 +27,12 @@ public interface UserinfocontentDao extends CrudDao<Userinfocontent> {
 	 */
 	
 	public int deletPicByuser(String userid);
+	
+	/**
+	 * 根据用户id查询用户的生活照集合信息
+	 * @param id
+	 * @return
+	 */
+	public List<String> findByUserId(String id);
 
 }

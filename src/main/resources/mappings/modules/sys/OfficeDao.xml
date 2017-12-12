@@ -708,6 +708,67 @@
 		AND a.del_flag = 0
 	</select>
 	
+	<select id="findOfficeByUserIdAndFzxRoleId" resultType="Office">
+		SELECT
+		o.id,
+		o.parent_id AS "parent.id",
+		o.parent_ids,
+		o.area_id AS "area.id",
+		o.code,
+		o.name,
+		r.id AS "fzxRole.roleId",
+		r.name AS "fzxRole.name",
+		u.id AS "user.id",
+		u.name AS "user.name"
+		FROM sys_office o LEFT JOIN fzx_user_role_office uro ON o.id = uro.office_id
+		JOIN fzx_user_role ur ON ur.id = uro.u_r_id
+		JOIN fzx_role r ON ur.fzx_role_id = r.id
+		JOIN sys_user u ON u.id = ur.user_id 
+		WHERE u.id =#{1}  AND r.id = #{0};
+	</select>
+	
+	<!-- 根据商家id在拥有的数据权限内查询此商家下的机构 -->
+	<select id="newOfficeTreeData" resultType="Office">
+		SELECT 
+			a.id,
+			a.parent_id AS "parent.id",
+			a.parent_ids,
+			a.area_id AS "area.id",
+			a.code,
+			a.name,
+			a.sort,
+			a.type,
+			a.grade,
+			a.address, 
+			a.zip_code, 
+			a.master, 
+			a.phone, 
+			a.fax, 
+			a.email, 
+			a.remarks,
+			a.create_by AS "createBy.id",
+			a.create_date,
+			a.update_by AS "updateBy.id",
+			a.update_date,
+			a.del_flag,
+			a.is_new,
+			a.is_recommend AS isRecommend,
+			a.longitude AS longitude,
+			a.latitude AS latitude,
+			a.useable AS useable,
+			a.primary_person AS "primaryPerson.id",
+			a.deputy_person AS "deputyPerson.id"
+		FROM sys_office AS a 
+		${sqlMap.dsf}
+		<if test="id != null and id != ''">
+			AND (a.parent_ids LIKE 
+			<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+			OR a.id = #{id})
+		</if>
+		AND a.del_flag = #{DEL_FLAG_NORMAL}
+	</select>
+
 	<!-- 实物订单发货到店查询店铺详情 -->
 	<select id="selectOfficeDetails" resultType="OfficeInfo">
 		SELECT
