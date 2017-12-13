@@ -9,7 +9,7 @@ import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
 
 @Controller
-@RequestMapping(value = "${adminPath}/kf")
+@RequestMapping(value = "${adminPath}/ec/kf")
 public class KfController extends BaseController {
 	
 	/**
@@ -32,7 +32,7 @@ public class KfController extends BaseController {
 		
 		model.addAttribute("zcUrl", zcUrl);
 		
-		return "modules/kf/goKfPage";
+		return "modules/ec/goKfPage";
 	}
 	
 	/**
@@ -46,6 +46,6 @@ public class KfController extends BaseController {
 		String kefuFeedbackSuggestUrl = ParametersFactory.getMtmyParamValues("zc_feedbackSuggestList");
 		
 		model.addAttribute("kefuFeedbackSuggestUrl", kefuFeedbackSuggestUrl);
-		return "modules/kf/goKefuFeedbackSuggest";
+		return "modules/ec/goKefuFeedbackSuggest";
 	}
 }
