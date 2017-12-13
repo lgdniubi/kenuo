@@ -659,7 +659,8 @@ public class SystemService extends BaseService implements InitializingBean {
 				String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
     			logger.info("##### web接口路径:"+weburl);
     			String parpm = "{\"user_id\":\""+toUser.getId()+"\",\"user_name\":\""+toUser.getName()+"\",\"franchisee_id\":"+toUser.getCompany().getId()+","
-    					+ "\"user_mobile\":\""+toUser.getMobile()+"\",\"login_name\":\""+toUser.getLoginName()+"\"}";
+    					+ "\"user_mobile\":\""+toUser.getMobile()+"\",\"login_name\":\""+toUser.getLoginName()+"\","
+    							+ "\"office_id\":\""+toUser.getOffice().getId()+"\",\"office_name\":\""+toUser.getOffice().getName()+"\"}";
     			String url=weburl;
     			String result = WebUtils.postCSObject(parpm, url);
     			JSONObject jsonObject = JSONObject.fromObject(result);
@@ -707,6 +708,19 @@ public class SystemService extends BaseService implements InitializingBean {
 		UserUtils.clearCache(user);
 		// // 清除权限缓存
 		// systemRealm.clearAllCachedAuthorizationInfo();
+		
+		/**
+		 * 删除用户时将用户数据t同步到供应链
+		 */
+		String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
+		logger.info("##### web接口路径:"+weburl);
+		String parpm = "{\"user_id\":\""+user.getId()+"\",\"user_name\":\""+user.getName()+"\",\"franchisee_id\":"+user.getCompany().getId()+","
+				+ "\"user_mobile\":\""+user.getMobile()+"\",\"login_name\":\""+user.getLoginName()+"\",\"user_status\":"+1+","
+						+ "\"office_id\":\""+user.getOffice().getId()+"\",\"office_name\":\""+user.getOffice().getName()+"\"}";
+		String url=weburl;
+		String result = WebUtils.postCSObject(parpm, url);
+		JSONObject jsonObject = JSONObject.fromObject(result);
+		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
 	}
 
 	@Transactional(readOnly = false)
