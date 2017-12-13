@@ -9,16 +9,12 @@
 			d.name,
 			d.sort,
 			d.office_id AS "office.id",
-			d.remarks
+			d.remarks,
+			o.name AS 'office.name'
 		FROM
 			train_department d
-		LEFT JOIN 
-			sys_user u 
-		ON d.office_id = u.company_id
-		<!-- 数据范围过滤 -->
-		<!-- ${sqlMap.dsf} -->
+		LEFT JOIN sys_office o ON o.id = d.office_id
 		WHERE
-		<!-- WHERE -->
 		 d.del_flag = 0
 		<!-- 如果不是超级管理员，则根据所属商家查询 -->
 		<if test="!currentUser.admin">
