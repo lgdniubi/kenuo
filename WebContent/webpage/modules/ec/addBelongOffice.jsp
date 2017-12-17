@@ -52,11 +52,11 @@
 									nodes = tree.getSelectedNodes();
 								}
 								for(var i=0; i<nodes.length; i++) {
-									if (nodes[i].level == 0){
+									/* if (nodes[i].level == 0){
 										//top.$.jBox.tip("不能选择根节点（"+nodes[i].name+"）请重新选择。");
 										top.layer.msg("不能选择根节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
 										return false;
-									}
+									} */
 									if (nodes[i].isParent){
 										//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
 										//layer.msg('有表情地提示');
