@@ -66,6 +66,7 @@
 						<tr>
 							<th><input type="checkbox" class="i-checks"></th>
 							<th class="sort-column name">部门名称</th>
+							<th class="sort-column name">归属商家</th>
 							<th class="sort-column sort">排序</th>
 							<th>操作</th>
 						</tr>
@@ -75,6 +76,7 @@
 							<tr>
 								<td><input type="checkbox" id="${department.dId}" class="i-checks"></td>
 								<td><a href="#" onclick="openDialogView('查看部门', '${ctx}/train/department/form?dId=${department.dId}','800px', '650px')">${department.name}</a></td>
+								<td>${department.office.name}</td>
 								<td>${department.sort}</td>
 								<td>
 									<shiro:hasPermission name="train:department:view">

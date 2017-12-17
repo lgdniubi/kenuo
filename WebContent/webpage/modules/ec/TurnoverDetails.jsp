@@ -12,7 +12,7 @@
 		function editOrderPushmoneyRecord(orderId,detailsId){
 			top.layer.open({
 	 			type: 2, 
-	 		    area: ['1000px', '800px'],
+	 		    area: ['800px', '600px'],
 	 		    title:"新增/修改营业额",
 	 		    content: "${ctx}/ec/returned/editOrderPushmoneyRecord?orderId="+orderId+"&detailsId="+detailsId,
 	 		    btn: ['确定', '关闭']
