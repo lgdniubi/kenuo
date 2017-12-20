@@ -399,4 +399,3 @@
 		UPDATE trains.train_live_audit SET category_id = #{categoryId} WHERE id = #{auditId}
 	</update>
 </mapper>
-</mapper>
