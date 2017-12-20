@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
@@ -74,6 +75,10 @@ public class BannerController extends BaseController {
 	 */
 	@RequestMapping(value = "save")
 	public String save(Banner banner,RedirectAttributes redirectAttributes){
+		banner.setBannerName(HtmlUtils.htmlUnescape(banner.getBannerName()));
+		if(!"".equals(banner.getRedirectUrl()) && banner.getRedirectUrl() != null){
+			banner.setRedirectUrl(HtmlUtils.htmlUnescape(banner.getRedirectUrl()));
+		}
 		if(banner.getBannerId()==0){
 			bannerService.save(banner);
 			addMessage(redirectAttributes, "添加banner图成功！");

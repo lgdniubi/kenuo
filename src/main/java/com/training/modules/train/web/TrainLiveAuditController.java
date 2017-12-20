@@ -3,6 +3,7 @@ package com.training.modules.train.web;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -396,5 +397,28 @@ public class TrainLiveAuditController extends BaseController{
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
 		return "modules/train/LiveIntegralsList";
+	}
+	/**
+	 * 添加直播推荐
+	 * @param trainLiveAudit
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="addRecommend")
+	public String addRecommend(TrainLiveAudit trainLiveAudit, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes){
+		try {
+			trainLiveAuditService.addRecommend(trainLiveAudit);
+			addMessage(redirectAttributes, "推荐直播成功！");
+			return "OK";
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "推荐直播失败!", e);
+			logger.error("推荐直播失败错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "推荐直播失败！");
+			return "ERROR";
+		}
 	}
 }

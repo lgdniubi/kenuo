@@ -565,7 +565,7 @@
 		         </td>
 		         <td>${user.parendNames}<form:input path="delFlag" cssStyle="display:none;"></form:input></td>
 		      </tr>
-		       <tr>
+		      <tr>
 		         <td class="active"><label class="pull-right">备注:</label></td>
 		         <td colspan="3"><form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" class="form-control"/></td>
 		      </tr>

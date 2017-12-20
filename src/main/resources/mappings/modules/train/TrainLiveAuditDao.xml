@@ -29,6 +29,8 @@
 		a.live_remarks,
 		r.roomId as "roomId",
 		a.earnings_ratio as "earningsRatio",
+		a.is_open as isOpen,
+		a.is_recommend as isRecommend,
 		a.del_flag
 
 	</sql>
@@ -96,6 +98,7 @@
 			isPay=#{isPay},
 			live_remarks=#{liveRemarks},
 			earnings_ratio = #{earningsRatio},
+			is_open = #{isOpen},
 			audit_user=#{auditUser}
 		WHERE id=#{id}
 	</update>
@@ -319,4 +322,21 @@
 			#{id}
 		)
 	</insert>
+	
+	<!-- 修改全部直播为不推荐 -->
+	<update id="updateRecommend">
+		UPDATE trains.train_live_audit
+		SET 
+			is_recommend=0
+		WHERE 
+			is_recommend = 1
+	</update>
+	
+	<!-- 添加直播推荐(只有一个能够推荐) -->
+	<update id="addRecommend">
+		UPDATE trains.train_live_audit
+		SET 
+			is_recommend = 1
+		WHERE id = #{id}
+	</update>
 </mapper>

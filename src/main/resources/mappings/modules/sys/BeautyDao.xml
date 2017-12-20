@@ -43,6 +43,9 @@
 	<select id="queryBeautyCommentData" parameterType="java.lang.Integer" resultType="BeautyCountData">
 		SELECT
 			mbc.beauty_id AS 'beautyId',
+			AVG(IFNULL(beauty_rank,0)) AS beautyScore,
+			AVG(IFNULL(service_rank,0)) AS serviceScore,
+			AVG(IFNULL(skill_rank,0)) AS skillScore,
 			COUNT(content) AS 'evaluationCount',
 			FORMAT((SUM((IFNULL(service_rank,0) + IFNULL(beauty_rank,0) + IFNULL(skill_rank,0))/3) / COUNT(1)),1) AS 'evaluationScore',
 			IFNULL((SELECT tbs.beauty_id FROM trains.train_beauty_statistics tbs WHERE tbs.beauty_id = mbc.beauty_id),"NULL")AS 'isExist'
@@ -105,6 +108,15 @@
 				<if test="evaluationScore != null">
 					`evaluation_score`,
 				</if>
+				<if test="beautyScore != null">
+					`beauty_score`,
+				</if>
+				<if test="serviceScore != null">
+					`service_score`,
+				</if>
+				<if test="skillScore != null">
+					`skill_score`,
+				</if>
 				<if test="evaluationCount != null">
 					`evaluation_count`,
 				</if>
@@ -121,6 +133,15 @@
 				<if test="evaluationScore != null">
 					#{evaluationScore},
 				</if>
+				<if test="beautyScore != null">
+					#{beautyScore},
+				</if>
+				<if test="serviceScore != null">
+					#{serviceScore},
+				</if>
+				<if test="skillScore != null">
+					#{skillScore},
+				</if>
 				<if test="evaluationCount != null">
 					#{evaluationCount},
 				</if>
@@ -130,6 +151,15 @@
 				    SYSDATE()
 			</trim>
 			ON DUPLICATE KEY UPDATE 
+				<if test="beautyScore != 0">
+					beauty_score = (beauty_score * evaluation_count + #{beautyScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
+				</if>
+				<if test="serviceScore != 0">
+					service_score = (service_score * evaluation_count + #{serviceScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
+				</if>
+				<if test="skillScore != 0">
+					skill_score = (skill_score * evaluation_count + #{skillScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
+				</if>
 				<if test="evaluationScore != 0">
 			       	evaluation_score = (evaluation_score * evaluation_count + #{evaluationScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
 				</if>

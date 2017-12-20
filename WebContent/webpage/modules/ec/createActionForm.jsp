@@ -243,6 +243,9 @@
 							<form:option value="9">9级以上</form:option>
 							<form:option value="10">10级以上</form:option>
  						</form:select><font color="red">*</font>
+ 						<p></p>
+ 						<label>排&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;序：</label>
+						<input id="sort" name="sort" maxlength="10" style="width:200px;" class="form-control" value="${actionInfo.sort}"/><font color="red">*</font>
 					</form:form>
 				</div>
 				
