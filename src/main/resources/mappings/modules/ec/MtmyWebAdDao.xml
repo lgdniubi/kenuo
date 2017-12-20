@@ -118,10 +118,12 @@
 			mg.goods_id,
 			mg.goods_name,
 			mg.market_price,
-			mg.original_img
+			mg.original_img,
+			wag.sort
 		FROM mtmydb.mtmy_goods mg
 		LEFT JOIN mtmydb.mtmy_web_ad_goods wag ON wag.goods_id = mg.goods_id
 		WHERE wag.ad_id = #{adId}
+		ORDER BY sort DESC
 	</select>
 	
 	<!-- 保存首页广告图对应的商品 -->
@@ -173,5 +175,13 @@
 		DELETE FROM mtmydb.mtmy_web_ad_goods 
 		WHERE ad_id IN(SELECT id FROM mtmydb.mtmy_web_ad WHERE category_id IN(SELECT id FROM mtmydb.mtmy_web_ad_category WHERE parent_ids LIKE CONCAT('%', #{categoryId}, '%') OR parent_id = #{categoryId}))
 	</delete>
+	
+	<!-- 保存广告图对应商品的排序 -->
+	<update id="insertGoodsSort">
+		UPDATE mtmydb.mtmy_web_ad_goods
+		SET sort = #{sort}
+		WHERE ad_id = #{adId}
+		AND goods_id = #{goodsId}
+	</update>
 	
 </mapper>
