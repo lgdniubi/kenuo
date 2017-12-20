@@ -97,7 +97,11 @@ public class User extends DataEntity<User> {
 	
 	private String companyIds; // 数据范围按商家区分
 	private String companyNames; // 数据范围按商家区分
+
+	//-------------自媒体权限-----土豆------2017-11-8--------------------------------
+	private MediaLoginAuth mediaLoginAuth;	// 自媒体权限实体类
 	
+
 	private int departmentId;       //部门id
 	private String departmentName; //部门名称
 	private String positonName;        //职位
@@ -608,6 +612,12 @@ public class User extends DataEntity<User> {
 	}
 	public void setCompanyNames(String companyNames) {
 		this.companyNames = companyNames;
+	}
+	public MediaLoginAuth getMediaLoginAuth() {
+		return mediaLoginAuth;
+	}
+	public void setMediaLoginAuth(MediaLoginAuth mediaLoginAuth) {
+		this.mediaLoginAuth = mediaLoginAuth;
 	}
 	public String getDepartmentName() {
 		return departmentName;

@@ -2,9 +2,9 @@ package com.training.modules.ec.entity;
 
 import java.util.Date;
 
-import com.training.common.persistence.TreeEntity;
+import com.training.common.persistence.DataEntity;
 
-public class ActionInfo extends TreeEntity<ActionInfo>{
+public class ActionInfo extends DataEntity<ActionInfo>{
 	
 	private static final long serialVersionUID = 1L;
 	private int actionId;				//活动id	
@@ -22,7 +22,7 @@ public class ActionInfo extends TreeEntity<ActionInfo>{
 	private String goodsId;				//商品id 集合
 	private String goodsName;			//商品名称集合
 	private int executeStatus;			//定时器执行状态 0 未执行 1已执行
-
+	private int sort;	// 排序
 	
 	
 	public int getExecuteStatus() {
@@ -153,16 +153,12 @@ public class ActionInfo extends TreeEntity<ActionInfo>{
 		this.goodsName = goodsName;
 	}
 
-	@Override
-	public ActionInfo getParent() {
-		// TODO Auto-generated method stub
-		return null;
+	public int getSort() {
+		return sort;
 	}
 
-	@Override
-	public void setParent(ActionInfo parent) {
-		// TODO Auto-generated method stub
-		
+	public void setSort(int sort) {
+		this.sort = sort;
 	}
 
 }

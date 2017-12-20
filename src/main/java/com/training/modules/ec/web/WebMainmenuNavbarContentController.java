@@ -43,9 +43,12 @@ public class WebMainmenuNavbarContentController extends BaseController{
 		try{
 			webMainmenuNavbarContent.setMainmenuId(webMainmenuNavbar.getWebMainmenuNavbarId());
 			Page<WebMainmenuNavbarContent> page = webMainmenuNavbarContentService.findPage(new Page<WebMainmenuNavbarContent>(request, response), webMainmenuNavbarContent);
+			String categoryIds = webMainmenuNavbarContentService.selectCategoryId(webMainmenuNavbar.getWebMainmenuNavbarId());
 			model.addAttribute("page", page);
 			model.addAttribute("mainmenuId", webMainmenuNavbar.getWebMainmenuNavbarId());
 			model.addAttribute("webMainmenuNavbarContent", webMainmenuNavbarContent);	
+			model.addAttribute("type",request.getParameter("type"));
+			model.addAttribute("categoryIds",categoryIds);
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "查看中部导航栏内容列表失败!", e);
 			logger.error("查看中部导航栏表内容列表失败：" + e.getMessage());
@@ -62,6 +65,7 @@ public class WebMainmenuNavbarContentController extends BaseController{
 	@RequestMapping(value = "form")
 	public String newWebMainmenuNavbarContentForm(WebMainmenuNavbarContent webMainmenuNavbarContent,HttpServletRequest request,Model model,String flag){
 		try{
+			String type = request.getParameter("type");
 			if("add".equals(flag)){//添加
 				model.addAttribute("mainmenuId", webMainmenuNavbarContent.getMainmenuId());
 				model.addAttribute("webMainmenuNavbarContent", webMainmenuNavbarContent);
@@ -69,6 +73,8 @@ public class WebMainmenuNavbarContentController extends BaseController{
 				webMainmenuNavbarContent = webMainmenuNavbarContentService.getWebMainmenuNavbarContentById(webMainmenuNavbarContent);
 				model.addAttribute("webMainmenuNavbarContent", webMainmenuNavbarContent);
 			}
+			model.addAttribute("type",type);
+			model.addAttribute("flag",flag);
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "查看中部导航栏内容表图失败!", e);
 			logger.error("查看中部导航栏内容表图失败：" + e.getMessage());
@@ -130,20 +136,24 @@ public class WebMainmenuNavbarContentController extends BaseController{
 	 * @param webMainmenuNavbarContent
 	 * @param model
 	 * @return
-	 */
+	 *//*
 	@RequestMapping(value = "newlist")
 	public String newAddBannerList(HttpServletRequest request,HttpServletResponse response,WebMainmenuNavbarContent webMainmenuNavbarContent, Model model) {
 		try{
+			String type = request.getParameter("type");
 			Integer mainmenuId = Integer.valueOf(request.getParameter("mainmenuId"));
 			webMainmenuNavbarContent.setMainmenuId(mainmenuId);
 			Page<WebMainmenuNavbarContent> page = webMainmenuNavbarContentService.findPage(new Page<WebMainmenuNavbarContent>(request, response), webMainmenuNavbarContent);
+			String categoryIds = webMainmenuNavbarContentService.selectCategoryId(mainmenuId);
 			model.addAttribute("page", page);
 			model.addAttribute("mainmenuId", mainmenuId);
 			model.addAttribute("webMainmenuNavbarContent", webMainmenuNavbarContent);	
+			model.addAttribute("type",type);
+			model.addAttribute("categoryIds",categoryIds);
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "查看中部导航图内容列表失败!", e);
 			logger.error("查看查看中部导航图内容列表失败：" + e.getMessage());
 		}
 		return "modules/ec/webMainmenuNavbarContentList";
-	}
+	}*/
 }

@@ -160,7 +160,7 @@
 		   <tbody>
 		      <tr>
 		      	 <td  class="width-15 active">	<label class="pull-right"><font color="red">*</font>标题：</label></td>
-		         <td class="width-35" ><form:input path="title" htmlEscape="false" maxlength="200" class="form-control required"/></td>
+		         <td class="width-35" ><form:input path="title" maxlength="200" class="form-control required"/></td>
 		         <td  class="width-15 active">	<label class="pull-right"><font color="red">*</font>类型：</label></td>
 		         <td class="width-35" ><form:select path="type" class="form-control required" id="typeVal" onclick="push(this.value)">
 					<form:option value="" label=""/>

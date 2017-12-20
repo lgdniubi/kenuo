@@ -393,7 +393,6 @@ public class UserDetailController extends BaseController {
 	 */
 	@RequestMapping(value = "adduser")
 	public String adduser(Users users,HttpServletRequest request, HttpServletResponse response,Model model, RedirectAttributes redirectAttributes) {
-	
 		if(mtmyUsersService.findUserBynickName(users)>0){
 			addMessage(redirectAttributes, "添加用户"+users.getName()+"失败,昵称重复");
 		}else{

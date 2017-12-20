@@ -129,7 +129,7 @@
                     	<c:forEach items="${page.list}" var="banner">
 						<tr>
 							<td style="text-align: center;">${banner.bannerId}</td>
-							<td style="text-align: center;">${banner.bannerName}</td>
+							<td style="text-align: center;"><c:out value="${banner.bannerName}"></c:out></td>
 							<td style="text-align: center;" class="imgUrl">
 								<img alt="" src="${ctxStatic}/images/lazylode.png" data-src="${banner.imgUrl}" style="width: 150px;height: 100px;">
 							</td>

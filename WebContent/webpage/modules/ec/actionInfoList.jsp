@@ -153,6 +153,7 @@
 							<th style="text-align: center;">创建时间</th>
 							<th style="text-align: center;">开启时间</th>
 							<th style="text-align: center;">关闭时间</th>
+							<th style="text-align: center;">排序</th>
 							<th style="text-align: center;">活动状态</th>
 							<th style="text-align: center;">操作</th>
 						</tr>
@@ -173,6 +174,7 @@
 										pattern="yyyy-MM-dd HH:mm:ss" /></td>
 								<td><fmt:formatDate value="${action.closeTime}"
 										pattern="yyyy-MM-dd HH:mm:ss" /></td>		
+								<td>${action.sort}</td>
 								<c:if test="${action.status==1}">
 									<td>开启</td>
 								</c:if>
@@ -182,7 +184,6 @@
 								<c:if test="${action.status==3}">
 									<td>已结束</td>
 								</c:if>
-								
 								<td>
 									<shiro:hasPermission name="ec:action:edit">
 										<c:if test="${action.status==1}">

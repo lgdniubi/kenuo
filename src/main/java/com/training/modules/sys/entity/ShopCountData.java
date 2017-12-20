@@ -35,6 +35,9 @@ public class ShopCountData extends TreeEntity<ShopCountData> {
 	
 	private String isExist;				//是否在train_shop_statistics 表中存在（为NULL 不存在）
 	
+	private Float serveScore;			//服务准时评价评分(1.5到5)   土豆添加
+	private Float entertainScore;		//接待礼仪评价评分(1.5到5)   土豆添加
+	private Float environmentScore;		//环境设备评价评分(1.5到5)   土豆添加
 	
 	
 	public String getIsExist() {
@@ -95,7 +98,23 @@ public class ShopCountData extends TreeEntity<ShopCountData> {
 		// TODO Auto-generated method stub
 		
 	}
-	
-	
+	public Float getServeScore() {
+		return serveScore;
+	}
+	public void setServeScore(Float serveScore) {
+		this.serveScore = serveScore;
+	}
+	public Float getEntertainScore() {
+		return entertainScore;
+	}
+	public void setEntertainScore(Float entertainScore) {
+		this.entertainScore = entertainScore;
+	}
+	public Float getEnvironmentScore() {
+		return environmentScore;
+	}
+	public void setEnvironmentScore(Float environmentScore) {
+		this.environmentScore = environmentScore;
+	}
 	
 }
