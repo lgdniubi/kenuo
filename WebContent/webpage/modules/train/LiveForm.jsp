@@ -102,6 +102,12 @@
 					</td>
 				</tr>
 				<tr>
+					<td><label class="pull-right">直播分类:</label></td>
+					<td><sys:treeselect id="category" name="category.trainLiveCategoryId" value="${trainLiveAudit.category.trainLiveCategoryId}" labelName="categorye.name" labelValue="${trainLiveAudit.category.name}" title="直播分类"
+									url="/train/category/treeData" cssClass=" form-control input-sm"/>
+					</td>
+				</tr>
+				<tr>
 					<td><label class="pull-right">直播房间名称:</label></td>
 					<td><label>${trainLiveAudit.name}</label> <%-- <form:input path="name" htmlEscape="false" maxlength="300" class="form-control"  readonly="true"/> --%>
 					</td>

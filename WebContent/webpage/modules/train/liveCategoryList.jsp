@@ -46,11 +46,15 @@
 								}
 								//操作权限-删除
 								if($("#shiroDel").val() == 1){
-									html += "&nbsp;<a href=\"${ctx}/train/category/delete?trainLiveCategoryId="+dataObj[i].trainLiveCategoryId+"\" onclick=\"return confirmx('要删除该分类及所有子分类吗？', this.href)\" class=\"btn btn-danger btn-xs\" ><i class=\"fa fa-trash\"></i> 删除</a>";
+									html += "&nbsp;<a href=\"#\" onclick=\"delCategory('"+dataObj[i].trainLiveCategoryId+"')\" class=\"btn btn-danger btn-xs\" ><i class=\"fa fa-trash\"></i> 删除</a>";
 								}
 								//操作权限-添加
 								if($("#shiroAddChild").val() == 1 && dataObj[i].type != 3){
 									html += "&nbsp;<a href=\"#\" onclick=\"openDialog('添加下级分类', '${ctx}/train/category/form?parentId="+dataObj[i].trainLiveCategoryId+"','430px', '480px')\" class=\"btn btn-primary btn-xs\" ><i class=\"fa fa-plus\"></i> 添加下级分类</a>";
+								}
+								//操作权限-转移分类
+								if($("#shiroTransfer").val() == 1){
+									html += "&nbsp;<a href=\"#\" onclick=\"openDialogView('直播列表', '${ctx}/train/live/transferForm?category.trainLiveCategoryId="+dataObj[i].trainLiveCategoryId+"','1400px', '800px')\" class=\"btn btn-success btn-xs\" ><i class=\"fa fa-edit\"></i> 转移直播</a>";
 								}
 								html += "</td>";
 								html += "</tr>";
@@ -69,6 +73,20 @@
 		function refresh(){
 			window.location="${ctx}/train/category/list";
     	} 
+    	
+    	function delCategory(id){
+			$.post("${ctx}/train/live/delCheck",{"category.trainLiveCategoryId":id},function(data){
+				if (data == "yes") {
+					top.layer.confirm('确认要删除该分类吗?', {icon: 3, title:'提醒'}, function(index){
+					window.location="${ctx}/train/category/delete?trainLiveCategoryId="+id;
+				    top.layer.close(index);
+					});
+				}else if(data == "no"){
+					top.layer.alert('删除失败!分类中还有直播，无法删除', {icon: 2, title:'提醒'});
+				}
+				
+			})
+    	}
 	</script>
 </head>
 <body>
@@ -131,14 +149,21 @@
 								<shiro:hasPermission name="train:category:edit">
 									<a href="#" onclick="openDialog('修改分类', '${ctx}/train/category/form?flag=3&trainLiveCategoryId=${row.trainLiveCategoryId}','430px', '480px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 修改</a>
 								</shiro:hasPermission>
-								<shiro:hasPermission name="train:category:del">
-									<a href="${ctx}/train/category/delete?trainLiveCategoryId=${row.trainLiveCategoryId}" onclick="return confirmx('要删除该分类及所有子分类吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
-								</shiro:hasPermission>
-								<c:if test="${row.type != 3}">
-									<shiro:hasPermission name="train:category:addChild">
-										<a href="#" onclick="openDialog('添加下级分类', '${ctx}/train/category/form?parentId=${row.trainLiveCategoryId}','430px', '480px')" class="btn  btn-primary btn-xs"><i class="fa fa-plus"></i> 添加下级分类</a>
+								<c:if test="${row.name != '其他' }">
+									<shiro:hasPermission name="train:category:del">
+										<a href="#" onclick="delCategory('${row.trainLiveCategoryId}')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
 									</shiro:hasPermission>
 								</c:if>
+								<c:if test="${row.name != '其他' }">
+									<c:if test="${row.type != 3}">
+										<shiro:hasPermission name="train:category:addChild">
+											<a href="#" onclick="openDialog('添加下级分类', '${ctx}/train/category/form?parentId=${row.trainLiveCategoryId}','430px', '480px')" class="btn  btn-primary btn-xs"><i class="fa fa-plus"></i> 添加下级分类</a>
+										</shiro:hasPermission>
+									</c:if>
+								</c:if>
+								<shiro:hasPermission name="train:category:transfer">
+									<a href="#" onclick="openDialogView('直播列表', '${ctx}/train/live/transferForm?category.trainLiveCategoryId=${row.trainLiveCategoryId}','1400px', '800px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 转移直播</a>
+								</shiro:hasPermission>
 							</td>
 						</tr>
 						</c:forEach>
@@ -160,6 +185,9 @@
 	</shiro:hasPermission>
 	<shiro:hasPermission name="train:category:addChild">
 		<input type="hidden" id="shiroAddChild" value="1">
+	</shiro:hasPermission>
+	<shiro:hasPermission name="train:category:transfer">
+		<input type="hidden" id="shiroTransfer" value="1">
 	</shiro:hasPermission>
 </body>
 </html>
