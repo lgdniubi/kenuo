@@ -22,7 +22,7 @@ import com.training.modules.ec.entity.CourierResultXML;
 
 public class CourierUtils {
 	
-	private static final String FIND_COUR = "http://58.32.246.70:8002";   //走件流程查询接口
+	private static final String FIND_COUR = "http://marketinginterface.yto.net.cn";   //走件流程查询接口
 	
 	public static String findCourierPost(String shipcode){
 		Mademd5 md5=new Mademd5();

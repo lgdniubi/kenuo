@@ -1,5 +1,6 @@
 package com.training.modules.ec.service;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -130,6 +131,15 @@ public class MtmyWebAdService extends CrudService<MtmyWebAdDao,MtmyWebAd>{
 	 */
 	public void delAllGoodsByCategoryIdForFirst(int categoryId){
 		mtmyWebAdDao.delAllGoodsByCategoryIdForFirst(categoryId);
+	}
+	
+	/**
+	 * 保存广告图对应商品的排序
+	 * @param adId
+	 * @param goodsId
+	 */
+	public void insertGoodsSort(@Param(value="sort")int sort,@Param("adId")int adId,@Param(value="goodsId")int goodsId){
+		mtmyWebAdDao.insertGoodsSort(sort, adId, goodsId);
 	}
 	
 }
