@@ -137,11 +137,12 @@
 		                	<li><a href="#tab_goods_spec" data-toggle="tab">商品规格</a></li> 
 		                </c:if>                       
 		            </ul>
-		          <form:form id="goodsForm" modelAttribute="goods" action="${ctx}/ec/goods/save" method="post">
+		          <form:form id="goodsForm" modelAttribute="goods" action="${ctx}/ec/goods/saveCard" method="post">
 		            <div class="tab-content" id="myTabContent">
 		            	<!-- 通用信息 Begin -->
 						<div class="tab-pane fade in active" id="tab_tongyong">
 						
+								<form:hidden path="isReal" value="${goods.isReal}"/>
 								<form:hidden path="goodsId"/>
 								<form:hidden path="attrType"/>
 								<form:hidden path="specType"/>
@@ -511,6 +512,10 @@
 						</div>
 						<!-- 商品规格  End -->
 		            </div>
+		            <!-- 提交按钮 -->
+		            <div class="box-footer">   
+					    <input type="submit" class="btn btn-primary" value="提 交">
+					</div>
 					</form:form>
 				</div>
 			</div>
