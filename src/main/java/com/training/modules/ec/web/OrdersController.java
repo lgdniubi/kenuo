@@ -2429,6 +2429,7 @@ public class OrdersController extends BaseController {
 										"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getSpeckeyname()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getAdvancePrice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> ";
 									if(orders.getIsNeworder() == 1){
 										suitCardSons = suitCardSons +
@@ -2440,7 +2441,6 @@ public class OrdersController extends BaseController {
 										"<td align='center' rowspan="+num+"> "+father.getMembergoodsprice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getOrderAmount()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getTotalAmount()+"</td> "+
-										"<td align='center' rowspan="+num+"> "+father.getAdvancePrice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getOrderArrearage()+"</td> "+
 										"<td align='center' rowspan="+num+">";
 							if(!"view".equals(type)){
@@ -2487,6 +2487,7 @@ public class OrdersController extends BaseController {
 										"<td align='center' rowspan="+num+"> "+father.getCostprice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getMarketprice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getGoodsprice()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getAdvancePrice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getRemaintimes()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getCouponPrice()+"</td> "+
@@ -2494,7 +2495,6 @@ public class OrdersController extends BaseController {
 										"<td align='center' rowspan="+num+"> "+father.getMembergoodsprice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getOrderAmount()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getTotalAmount()+"</td> "+
-										"<td align='center' rowspan="+num+"> "+father.getAdvancePrice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getOrderArrearage()+"</td> "+
 										"<td align='center' rowspan="+num+">";
 							

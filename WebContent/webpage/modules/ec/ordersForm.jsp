@@ -732,13 +732,13 @@ window.onload=initStatus;
 									<th style="text-align: center;">系统价</th>
 									<th style="text-align: center;">市场价</th>
 									<th style="text-align: center;">优惠价</th>
+									<th style="text-align: center;">预约金</th>
 									<th style="text-align: center;">购买数量</th>
 									<th style="text-align: center;">红包面值</th>
 									<th style="text-align: center;">折扣率</th>
 									<th style="text-align: center;">会员折扣</th>
 									<th style="text-align: center;">应付金额</th>
 									<th style="text-align: center;">实付金额</th>
-									<th style="text-align: center;">预约金</th>
 									<c:if test="${orders.isReal == 1 }">
 										<th style="text-align: center;">实际次数</th>
 									</c:if>
@@ -753,13 +753,13 @@ window.onload=initStatus;
 										<td align="center">${orderGood.costprice }</td>
 										<td align="center">${orderGood.marketprice }</td>
 										<td align="center">${orderGood.goodsprice }</td>
+										<td align="center">${orderGood.advancePrice}</td>
 										<td align="center">${orderGood.goodsnum }</td>
 										<td align="center">${orderGood.couponPrice }</td>
 										<td align="center">${orderGood.discount }</td>
 										<td align="center">${orderGood.membergoodsprice }</td>
 										<td align="center">${orderGood.orderAmount }</td>
 										<td align="center">${orderGood.totalAmount}</td>
-										<td align="center">${orderGood.advancePrice}</td>
 										<c:if test="${orders.isReal == 1 }">
 											<td align="center">${orderGood.remaintimes }</td>
 										</c:if>
@@ -795,13 +795,13 @@ window.onload=initStatus;
 						<h4>订单支付信息:</h4>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 								<tr>
-									<th style="text-align: center;">商品总价</th>
+									<th style="text-align: center;">商品总额</th>
 									<th style="text-align: center;">红包面值</th>
 									<th style="text-align: center;">折扣率</th>
 									<th style="text-align: center;">会员折扣</th>
 									<th style="text-align: center;">邮费</th>
-									<th style="text-align: center;">应付金额</th>
-									<th style="text-align: center;">实付金额</th>
+									<th style="text-align: center;">应付总额</th>
+									<th style="text-align: center;">实付总额</th>
 								</tr>
 								<tr>
 									<td align="center">${orders.goodsprice }</td>

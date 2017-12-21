@@ -625,6 +625,7 @@ window.onload=initStatus;
 									<c:if test="${orders.isReal == 2}">
 										<th style="text-align: center;">次(个)数</th>
 									</c:if>
+									<th style="text-align: center;">预约金</th>
 									<th style="text-align: center;">购买数量</th>
 									<c:if test="${(orders.isReal == 3) || (orders.isReal == 2 && orders.isNeworder == 1)}">
 										<th style="text-align: center;">实际次数</th>
@@ -634,7 +635,6 @@ window.onload=initStatus;
 									<th style="text-align: center;">会员折扣</th>
 									<th style="text-align: center;">应付金额</th>
 									<th style="text-align: center;">实付金额</th>
-									<th style="text-align: center;">预约金</th>
 									<th style="text-align: center;">欠款</th>
 									<th style="text-align: center;">操作</th>
 								</tr>
@@ -648,13 +648,13 @@ window.onload=initStatus;
 						<h4>订单支付信息:</h4>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 								<tr>
-									<th style="text-align: center;">商品总价</th>
+									<th style="text-align: center;">商品总额</th>
 									<th style="text-align: center;">红包面值</th>
 									<th style="text-align: center;">折扣率</th>
 									<th style="text-align: center;">会员折扣</th>
 									<th style="text-align: center;">邮费</th>
-									<th style="text-align: center;">应付金额</th>
-									<th style="text-align: center;">实付金额</th>
+									<th style="text-align: center;">应付总额</th>
+									<th style="text-align: center;">实付总额</th>
 								</tr>
 								<tr>
 									<td align="center">${orders.goodsprice }</td>
