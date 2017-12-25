@@ -197,4 +197,10 @@
     		id = #{auditId}
     </select>
     
+     <!--  直播浏览数量和浏览人数 -->
+    <update id="updatebrowsenumber" parameterType="java.util.Map">
+    	UPDATE trains.train_live_playback SET browsenum = ${browsenum},browsetime = ${browsetime} WHERE auditId = ${audit_id}
+    </update>
+    
+    
 </mapper>

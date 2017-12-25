@@ -195,6 +195,21 @@ public class LiveAudit extends CommonService{
 							//auditid.add(noticelives.get(h));
 							entryService.updateauditstatus(noticelives.get(h).getAuditid());
 							
+							//计算直播浏览数量和浏览人数
+							Map<String, Object> maps = new HashMap<String,Object>();
+							maps.put("audit_id", noticelives.get(h).getAuditid());
+							//获取直播浏览次数
+							String browsetime = redisClientTemplate.get("browsetime_"+noticelives.get(h).getAuditid());
+							maps.put("browsetime", browsetime == null ? 0 : Integer.parseInt(browsetime));
+							//获取直播浏览人数
+							Long scard = redisClientTemplate.scard("browsenum_"+noticelives.get(h).getAuditid());
+							maps.put("browsenum", scard == null ? 0 : scard);
+							//将数据保存在对应的直播信息表中
+							entryService.updatebrowsenumber(map);
+							//清除暂存数据
+							redisClientTemplate.del("browsetime_"+noticelives.get(h).getAuditid());
+							redisClientTemplate.del("browsenum_"+noticelives.get(h).getAuditid());
+							
 							RedisLock redisLock = new RedisLock(redisClientTemplate,"mtmy_id_"+noticelives.get(h).getMtmyUserId());
 							redisLock.lock();
 							String num = redisClientTemplate.get(noticelives.get(h).getAuditid() + "_"+ noticelives.get(h).getMtmyUserId());
@@ -215,7 +230,7 @@ public class LiveAudit extends CommonService{
 							m.put("user_id", 0000000);
 							m.put("integral_type", 0);
 							m.put("integral_source", 1);
-							m.put("action_type", 4);
+							m.put("action_type", 5);
 							m.put("integral", round);
 							m.put("remark", "直播编号：" + noticelives.get(h).getAuditid()+ "云币分成平台获得：" + round);
 							
