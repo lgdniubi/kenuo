@@ -85,12 +85,14 @@
 							<tr>
 								<th style="text-align: center;">时间</th>
 								<th style="text-align: center;">类型</th>
-								<th style="text-align: center;">金额</th>
+								<th style="text-align: center;">售后金额</th>
 								<th style="text-align: center;">业务员</th>
 								<th style="text-align: center;">部门</th>
 								<th style="text-align: center;">手机号</th>
-								<th style="text-align: center;">营业额</th>
-								<th style="text-align: center;">营业额占比</th>
+								<th style="text-align: center;">个人增减营业额</th>
+								<th style="text-align: center;">个人营业额占比</th>
+								<th style="text-align: center;">收益归属店</th>
+								<th style="text-align: center;">个人总营业额</th>
 								<th style="text-align: center;">增减值</th>
 							</tr>
 						</thead>
@@ -98,6 +100,8 @@
 							${userTurnover}
 						</tbody>						
 					</table>
+					<p><font color="red">备注：<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;正数是增加营业额，如：填写90，代表营业额增加90;<br/>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;负数是减少营业额，如：填写-90，代表营业额扣减90</font></p>
 				</form:form>
 			</div>
 		</div>

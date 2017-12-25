@@ -35,6 +35,9 @@ public class BeautyCountData extends TreeEntity<BeautyCountData> {
 	
 	private String isExist;				//是否在train_beauty_statistics 表中存在（为NULL 不存在）
 	
+	private Float beautyScore;			//个人形象评价评分(1.5到5)  	 土豆添加
+	private Float serviceScore;			//服务评价评分(1.5到5)		 土豆添加
+	private Float skillScore;			//技能手法评价评分(1.5到5)	 土豆添加
 	
 	public String getIsExist() {
 		return isExist;
@@ -100,7 +103,24 @@ public class BeautyCountData extends TreeEntity<BeautyCountData> {
 				+ ", evaluationCount=" + evaluationCount + ", apptCount=" + apptCount + ", updateDate=" + updateDate
 				+ ", isExist=" + isExist + "]";
 	}
-	
+	public Float getBeautyScore() {
+		return beautyScore;
+	}
+	public void setBeautyScore(Float beautyScore) {
+		this.beautyScore = beautyScore;
+	}
+	public Float getServiceScore() {
+		return serviceScore;
+	}
+	public void setServiceScore(Float serviceScore) {
+		this.serviceScore = serviceScore;
+	}
+	public Float getSkillScore() {
+		return skillScore;
+	}
+	public void setSkillScore(Float skillScore) {
+		this.skillScore = skillScore;
+	}
 	
 	
 }

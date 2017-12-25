@@ -227,7 +227,7 @@
 				      	<tr>
 					         <td class="width-15 active"><label class="pull-right">上级机构:</label></td>
 					         <td class="width-35"><sys:treeselect id="office" name="parent.id" value="${office.parent.id}" labelName="parent.name" labelValue="${office.parent.name}"
-								title="机构" url="/sys/office/treeData?isGrade=true" extId="${office.id}"  cssClass="form-control" allowClear="${office.currentUser.admin}"/></td>
+								title="机构" url="/sys/office/parentTreeData?isGrade=true" extId="${office.id}"  cssClass="form-control" allowClear="${office.currentUser.admin}"/></td>
 					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>归属区域:</label></td>
 					         <td class="width-35">
 						        <div id="area1">
@@ -398,25 +398,7 @@
 								labelName="officeInfo.tags" labelValue="${office.officeInfo.tags}" 
 				     		title="店铺标签" url="/train/shopSpeciality/treeData" cssClass="form-control" allowClear="true" notAllowSelectParent="true" checked="true"/>
 						 </td>
-						 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>是否推荐：</label></td>
-				         <td class="width-35" id="isRecommend">
-				         	<c:if test="${not empty office.id }">
-				         		<c:if test="${office.isRecommend == 0}">
-									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('isRecommend','${office.id}',1)">&nbsp;&nbsp;否
-								</c:if>
-								<c:if test="${office.isRecommend == 1}">
-									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('isRecommend','${office.id}',0)">&nbsp;&nbsp;是
-								</c:if>
-				         	</c:if>
-				         	<c:if test="${empty office.id }">
-				         		<select id="isRecommend" name="isRecommend" class="form-control">
-				         			<option value="0">未推荐</option>
-				         		</select>
-				         	</c:if>
-				         </td>
-					  </tr>
-				      <tr>
-				      	 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺状态(是否隐藏)：</label></td>
+						 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺状态(是否隐藏)：</label></td>
 				         <td class="width-35" id="status">
 				         	<c:if test="${not empty office.id }">
 								<c:if test="${office.officeInfo.status == 1}">
@@ -433,8 +415,10 @@
 				         		</select>
 				         	</c:if>
 				         </td>
+					  </tr>
+				      <tr>
 				      	 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>详细地址:</label></td>
-				         <td class="width-35"><form:textarea path="officeInfo.detailedAddress" htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required"/></td>
+				         <td class="width-35" colspan="3"><form:textarea path="officeInfo.detailedAddress" htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required"/></td>
 				      </tr>
 				      <tr>
 				        <td class="width-15 active"><label class="pull-right">简介：</label></td>

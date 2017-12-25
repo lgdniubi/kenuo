@@ -26,7 +26,7 @@
 						remote:{
 							type: "post",
 							async: false,
-							url:"${ctx}/train/department/checkName?oldName=" + encodeURIComponent("${department.name}")
+							url:"${ctx}/train/department/checkName?oldName=" + encodeURIComponent("${department.name}")+"&companyId=${department.office.id}"
 						}
 				},
 				messages: {

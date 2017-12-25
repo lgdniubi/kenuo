@@ -415,6 +415,15 @@
 							</td>
 						</tr>
 						<tr>
+							<td class="active"><label class="pull-right"><font color="red">*</font>预约短信：</label></td>
+							<td> 
+								<label class="checked"><input type="radio" id="sendToUserFlag" name="sendToUserFlag" value=0 class="required">否</label>
+                                <label class="checked"><input type="radio" id="sendToUserFlag" name="sendToUserFlag" value=1 class="required">是</label>
+								<br>
+								<span class="help-inline">是否将预约信息的短信发到手机上</span>
+							</td>
+						</tr>
+						<tr>
 							<td class="active"><label class="pull-right">消费者备注：</label></td>
 							<td>
 								<textarea rows="7" cols="30" id="userNote" name="userNote" onkeydown="checkEnter(event)" class="form-control"></textarea>

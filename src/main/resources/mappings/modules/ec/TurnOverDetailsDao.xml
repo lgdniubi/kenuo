@@ -3,9 +3,8 @@
 <mapper namespace="com.training.modules.ec.dao.TurnOverDetailsDao">
 	<!-- 同步details表的数据到营业额明细表中 -->
 	<insert id="saveTurnOverDetails">
-		INSERT INTO ydatadb.mtmy_turnover_details (
+		INSERT INTO mtmydb.mtmy_turnover_details (
 			order_id,
-			mapping_id,
 			details_id,
 			type,
 			amount,
@@ -22,7 +21,6 @@
 			settle_date
 		)VALUES(
 			#{orderId},
-			#{mappingId},
 			#{detailsId},
 			#{type},
 			#{amount},
@@ -45,7 +43,6 @@
 		SELECT 
 			id AS 'turnOverDetailsId',
 			order_id AS 'orderId',
-			mapping_id AS 'mappingId',
 			details_id AS 'detailsId',
 			type,
 			amount,
@@ -56,13 +53,16 @@
 			settle_by AS 'settleBy',
 			(select u.name from trains.sys_user u where u.id = settleBy) AS 'settleName',
 			settle_date AS 'settleDate'
-		FROM ydatadb.mtmy_turnover_details 
+		FROM mtmydb.mtmy_turnover_details 
 		WHERE order_id = #{orderId}
+		AND del_flag = 0
+		AND (type = 1 or type = 2)
+		ORDER BY create_date DESC
 	</select>
 	
 	<!-- 保存店营业额中处理预约金的那条记录的归属店铺 -->
 	<update id="updateBelongOffice">
-		UPDATE ydatadb.mtmy_turnover_details 
+		UPDATE mtmydb.mtmy_turnover_details 
 		SET 
 			belong_office_id = #{belongOfficeId},
 			belong_office_ids = (select parent_ids from trains.sys_office where id = #{belongOfficeId}),
@@ -88,8 +88,10 @@
 			mtd.order_id,
 			mtd.type,
 			mtd.amount
-		FROM ydatadb.mtmy_turnover_details mtd
+		FROM mtmydb.mtmy_turnover_details mtd
 		WHERE mtd.order_id = #{orderId}
+		AND mtd.del_flag = 0
+		AND (mtd.type = 1 or mtd.type = 2)
 		ORDER BY mtd.create_date DESC
 	</select>
 	
@@ -101,12 +103,13 @@
 			d.id AS 'departmentId',
 			u.mobile AS 'pushmoneyUserMobile',
 			SUM(mbt.push_money) AS 'pushMoney',
-			(select sum(mbt1.push_money) from mtmydb.mtmy_beautician_turnover mbt1 where mbt1.order_id = mbt.order_id and mbt1.user_id = mbt.user_id) AS 'pushMoneySum'  
+			(select sum(mbt1.push_money) from mtmydb.mtmy_beautician_turnover mbt1 where mbt1.order_id = mbt.order_id and mbt1.user_id = mbt.user_id and mbt1.del_flag = 0) AS 'pushMoneySum'  
 		FROM mtmydb.mtmy_beautician_turnover mbt
 		LEFT JOIN trains.sys_user u ON u.id = mbt.user_id
 		LEFT JOIN trains.train_department d ON d.id = mbt.department_id
 		WHERE mbt.turnover_details_id = #{id}
-		GROUP BY u.id
+		AND mbt.del_flag = 0
+		GROUP BY u.id,d.id,mbt.order_id,mbt.user_id
 	</select>
 	
 	<!-- 查询单个店营业额对应的业务员营业额详情 -->
@@ -117,25 +120,11 @@
 			mtd.order_id,
 			mtd.type,
 			mtd.amount
-		FROM ydatadb.mtmy_turnover_details mtd
+		FROM mtmydb.mtmy_turnover_details mtd
 		WHERE mtd.id = #{turnOverDetailsId}
+		AND mtd.del_flag = 0
 		ORDER BY mtd.create_date DESC
 	</select>
-	
-	
-	<insert id="insertActivityCouponCategory">
-		INSERT INTO mtmydb.mtmy_activity_coupon_category
-		(
-		coupon_id,
-		category_id,
-		category_name
-		)
-		<foreach collection="list" item="list" separator="union all ">
-			SELECT 
-				#{list.couponId},#{list.categoryId},#{list.categoryName}
-			FROM dual
-		</foreach>
-	</insert>
 	
 	<!-- 保存业务员提成营业额 -->
 	<insert id="savePushMoneyRecord">
@@ -146,6 +135,8 @@
 			user_id,
 			user_office_id,
 			user_office_ids,
+			belong_office_id,
+			belong_office_ids,
 			push_money,
 			position_key,
 			position_value,
@@ -162,6 +153,8 @@
 				#{list.pushmoneyUserId},
 				(select o.id from trains.sys_office o left join trains.sys_user u on u.office_id = o.id where u.id = #{list.pushmoneyUserId}),
 				(select o.parent_ids from trains.sys_office o left join trains.sys_user u on u.office_id = o.id where u.id = #{list.pushmoneyUserId}),
+				(select belong_office_id from mtmydb.mtmy_turnover_details where id = #{list.turnOverDetailsId} and del_flag = 0),
+				(select belong_office_ids from mtmydb.mtmy_turnover_details where id = #{list.turnOverDetailsId} and del_flag = 0),
 				#{list.pushMoney},
 				(SELECT d.label FROM sys_user u LEFT JOIN sys_dict d ON d.value = u.user_type WHERE u.id = #{list.pushmoneyUserId} AND d.type = 'sys_user_type'),
 				(SELECT d.value FROM sys_user u LEFT JOIN sys_dict d ON d.value = u.user_type WHERE u.id = #{list.pushmoneyUserId} AND d.type = 'sys_user_type'),
@@ -188,13 +181,8 @@
 		LEFT JOIN trains.sys_user u ON u.id = mbt.user_id
 		LEFT JOIN trains.train_department d ON d.id = mbt.department_id
 		LEFT JOIN trains.sys_user u1 ON u1.id = mbt.create_by
-		WHERE 1=1
-		<if test="turnOverDetailsId !=null and turnOverDetailsId !=''">
-			AND mbt.turnover_details_id = #{turnOverDetailsId}
-		</if>
-		<if test="orderId != null and orderId !=''">
-			AND mbt.order_id = #{orderId}
-		</if>
-
+		WHERE mbt.turnover_details_id = #{turnOverDetailsId}
+		AND mbt.del_flag = 0
+		ORDER BY mbt.create_date DESC
 	</select>
 </mapper>

@@ -310,7 +310,6 @@
 			   	}else{
 			       	return false;			
 				}
-				
    	    		$.ajax({
        				type:"post",
        				data:$(obj.document.getElementById("mosaic")).serialize(),
@@ -318,7 +317,7 @@
        				success:function(date){
        					if(date == 'success'){
        						top.layer.alert('添加业务员成功', {icon: 0, title:'提醒'});
-       						window.location="${ctx}/ec/orders/orderform?orderid="+orderId+"&type=edit";
+       						window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderId+"&type=edit";
        	     				top.layer.close(index);
        					}else{
        						top.layer.alert('添加业务员失败', {icon: 0, title:'提醒'});

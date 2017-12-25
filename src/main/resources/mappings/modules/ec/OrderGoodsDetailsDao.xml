@@ -243,16 +243,11 @@
 		WHERE ogd.goods_mapping_id = #{recid}
 	</select>
 	
-	<!-- 查询details表中预约金那条的记录 -->
-	<select id="selectDetailsForAdvance" resultType="OrderGoodsDetails">
-		SELECT 
-			d.id as id,
-			d.order_id as orderId,
-			d.goods_mapping_id as goodsMappingId,
-			d.app_total_amount as appTotalAmount,
-			d.use_balance as useBalance
-		FROM mtmydb.mtmy_order_goods_details d
-		WHERE d.order_id = #{orderId}
-		AND d.advance_flag = '1'
+	<!-- 根据订单id查询下单时候的总的app实付 -->
+	<select id="queryAppSum" resultType="Double">
+		SELECT SUM(app_total_amount)
+		FROM mtmydb.mtmy_order_goods_details
+		WHERE order_id = #{orderId}
+		AND advance_flag = '0'
 	</select>
 </mapper>

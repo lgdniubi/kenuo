@@ -130,7 +130,7 @@
 				top.layer.open({
 				    type: 2, 
 				    area: ['300px', '420px'],
-				    title:"选择部门",
+				    title:"选择职位",
 				    ajaxData:{selectIds: $("#userTypeId").val()},
 				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/dict/dictTree?type=sys_user_type")+"&module=&checked=&extId=&isAll=" ,
 				    btn: ['确定', '关闭']
@@ -565,7 +565,7 @@
 		         </td>
 		         <td>${user.parendNames}<form:input path="delFlag" cssStyle="display:none;"></form:input></td>
 		      </tr>
-		       <tr>
+		      <tr>
 		         <td class="active"><label class="pull-right">备注:</label></td>
 		         <td colspan="3"><form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" class="form-control"/></td>
 		      </tr>

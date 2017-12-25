@@ -70,7 +70,7 @@ public class GoodsCountAndArticlesCount extends CommonService {
 
 			// 查询文章的 浏览量  分享量 评论数  点赞数
 			// 更新 文章统计表数据中的  浏览量
-			ArticlesStatisticsCountData articlesStatisticsCountData = null;
+			/*ArticlesStatisticsCountData articlesStatisticsCountData = null;
 			Map<String, String> map1 = redisClientTemplate.hgetAll(RedisConfig.COUNT_ARTICLE_DETAIL_NUM_KEY);
 			Iterator<Map.Entry<String, String>> it = map1.entrySet().iterator();
 			while (it.hasNext()) {
@@ -98,7 +98,7 @@ public class GoodsCountAndArticlesCount extends CommonService {
 			logger.info("[work],查询出的 文章 的定位id是："+map3.toString());
 			//将查询的最新定位id存入数据库 
 			int b = QuartzStartConfigUtils.addQuartzStartConfig(map3);
-			logger.info("[work],查询出的  文章 的定位id 插入数据库数量是："+b);
+			logger.info("[work],查询出的  文章 的定位id 插入数据库数量是："+b);*/
 			 
 
 			taskLog.setJobDescription("[work],：定时统计商品、文章评论数以及评分  时间：" + df.format(new Date()));

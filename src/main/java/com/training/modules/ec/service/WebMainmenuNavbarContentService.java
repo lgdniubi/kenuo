@@ -54,6 +54,13 @@ public class WebMainmenuNavbarContentService extends CrudService<WebMainmenuNavb
 		webMainmenuNavbarContentdao.deleteWebMainmenuNavbarContentById(webMainmenuNavbarContent);
 	}
 
-	
+	/**
+	 * 查询中部导航栏对应的分类id
+	 * @param mainmenuId
+	 * @return
+	 */
+	public String selectCategoryId(int mainmenuId){
+		return webMainmenuNavbarContentdao.selectCategoryId(mainmenuId);
+	}
 	
 }

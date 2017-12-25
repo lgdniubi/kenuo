@@ -26,12 +26,13 @@
 		<div class="ibox">
 			<div class="ibox-content">
 				<div class="clearfix">
-					<form id="searchForm"  modelAttribute="turnOverDetails" action="${ctx}/ec/orders/findMtmyTurnoverDetailsList" method="post" class="navbar-form navbar-left searcharea">
+					<form:form id="searchForm"  modelAttribute="turnOverDetails" action="${ctx}/ec/returned/findMtmyTurnoverDetailsList" method="post" class="navbar-form navbar-left searcharea">
 						<!-- 翻页隐藏文本框 -->
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 						<input type="hidden" id="orderId" name="orderId" value="${turnOverDetails.orderId}" />
-					</form>
+						<input type="hidden" id="detailsId" name="detailsId" value="${turnOverDetails.detailsId}" />
+					</form:form>
 				</div>
 				<p></p>
 				<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">

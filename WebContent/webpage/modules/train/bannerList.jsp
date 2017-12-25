@@ -101,12 +101,13 @@
 							<td style="text-align: center;">${trainsBanner.adName}</td>
 							<td style="text-align: center;" class="imgUrl"><img alt="" src="${ctxStatic}/images/lazylode.png" data-src="${trainsBanner.adPic}" style="width: 150px;height: 100px;"></td>
 							<td style="text-align: center;">
-								<c:if test="${trainsBanner.adType == 0}">
+								<%-- <c:if test="${trainsBanner.adType == 0}">
 									首页
 								</c:if>
 								<c:if test="${trainsBanner.adType == 1}">
 									提问
-								</c:if>
+								</c:if> --%>
+								${trainsBanner.dict.label }
 							</td>
 							<td style="text-align: center;" id="${trainsBanner.adId}">
 								<shiro:hasPermission name="trains:banner:update">

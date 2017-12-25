@@ -46,7 +46,7 @@
 			c.remarks,
 			c.del_flag
 		 FROM sys_dict c WHERE c.value NOT IN
-		 	<foreach collection="array" open="(" close=")" separator="," item="value" index="index">
+		 	<foreach collection="list" open="(" close=")" separator="," item="value" index="index">
 				 #{value} 
 		 	</foreach>
 		 AND c.type = 'sys_user_type'
@@ -66,4 +66,22 @@
 			#{value}
 		); 
 	</insert>
+	<!-- 获取当前商家已存在的职位 -->
+	<select id="getPositionkey" resultType="String">
+		SELECT 
+			p.position_key 
+		FROM 
+			train_department_position p 
+		LEFT JOIN 
+			train_department d 
+		ON 
+			p.department_id = d.id 
+		JOIN 
+			sys_user u 
+		ON 
+			d.office_id = u.company_id 
+		WHERE 
+			u.id = #{userId}
+		AND d.del_flag = 0
+	</select>
 </mapper>

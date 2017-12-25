@@ -1,6 +1,7 @@
 package com.training.modules.train.web;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.training.common.web.BaseController;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.train.entity.TrainLiveCategory;
@@ -137,5 +140,38 @@ public class TrainLiveCategoryController extends BaseController{
 	  	jsonConfig.setCycleDetectionStrategy(CycleDetectionStrategy.LENIENT);
 	  	JSONArray json = JSONArray.fromObject(trainLiveCategory, jsonConfig);
 		return json.toString();
+	}
+	
+	/**
+	 * 
+	 * @Title: treeData
+	 * @Description: TODO 直播分类树
+	 * @param extId
+	 * @param type
+	 * @param grade
+	 * @param isAll
+	 * @param isGrade
+	 * @param response
+	 * @return:
+	 * @return: List<Map<String,Object>>
+	 * @throws
+	 * 2017年12月18日 兵子
+	 */
+	@ResponseBody
+	@RequestMapping(value = "treeData")
+	public List<Map<String, Object>> treeData(@RequestParam(required=false) String extId, @RequestParam(required=false) String type,
+			@RequestParam(required=false) Long grade, @RequestParam(required=false) Boolean isAll,@RequestParam(required=false) String isGrade, HttpServletResponse response) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<TrainLiveCategory> list = trainLiveCategoryService.findAllList();
+		for (int i=0; i<list.size(); i++){
+			TrainLiveCategory e = list.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("id", e.getTrainLiveCategoryId());
+			map.put("pId", e.getParentId());
+			map.put("pIds", e.getParentIds());
+			map.put("name", e.getName());
+			mapList.add(map);
+		}
+		return mapList;
 	}
 }

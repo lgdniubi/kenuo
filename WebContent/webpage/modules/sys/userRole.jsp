@@ -25,17 +25,21 @@
 		    	       var fzxRoleId = layero.find("iframe")[0].contentWindow.$.fn.zTree.getZTreeObj("fzxRoleTree").getCheckedNodes(true);
 						var officeTreeIds = layero.find("iframe")[0].contentWindow.$.fn.zTree.getZTreeObj("officeTree").getCheckedNodes(true);
 						if (fzxRoleId != "") {
-							var officeIds = [];
-							for (var i = 0; i < officeTreeIds.length; i++) {
-								officeIds.push(officeTreeIds[i].id); 
+							if (officeTreeIds != "") {
+								var officeIds = [];
+								for (var i = 0; i < officeTreeIds.length; i++) {
+									officeIds.push(officeTreeIds[i].id); 
+								}
+								$("#addfzxRoleId").val(fzxRoleId[0].id);
+								$("#addofficeIds").val(officeIds);
+								var a = $("#addofficeIds").val();
+						    	$('#saveFzxRoleFrom').submit();
+							    top.layer.close(index);
+							}else{
+								top.layer.alert("权限不能为空",{icon: 6});
 							}
-							$("#addfzxRoleId").val(fzxRoleId[0].id);
-							$("#addofficeIds").val(officeIds);
-							var a = $("#addofficeIds").val();
-					    	$('#saveFzxRoleFrom').submit();
-						    top.layer.close(index);
 						}else{
-							alert("角色不能为空");
+							top.layer.alert("角色不能为空",{icon: 6});
 						}
 					  },
 					  cancel: function(index){ 

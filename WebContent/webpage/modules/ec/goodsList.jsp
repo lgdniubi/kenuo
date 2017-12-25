@@ -225,7 +225,7 @@
 								<tr style="text-align: center;">
 									<td><input type="checkbox" id="${goods.goodsId}" class="i-checks" name="box"></td>
 									<td>${goods.goodsId}</td>
-									<td>${goods.goodsName}</td>
+									<td><c:out value="${goods.goodsName}"></c:out></td>
 									<td>${goods.actionName}</td>
 									<td>${goods.goodsSn}</td>
 									<td>${goods.goodsCategory.name}</td>

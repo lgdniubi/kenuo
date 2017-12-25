@@ -1,5 +1,7 @@
 package com.training.modules.ec.entity;
 
+import java.util.List;
+
 import com.training.common.persistence.TreeEntity;
 /**
  * 订单提成记录表
@@ -33,6 +35,11 @@ public class OrderPushmoneyRecord extends TreeEntity<OrderPushmoneyRecord> {
 	private String pushMoneys;		//获取编辑营业额的增减值字符串	2017-11-16 土豆添加
 	private String positionKey;		//职位标签名		 2017-11-16 土豆添加
 	private String positionValue;	//职位标签键值		 2017-11-16 土豆添加
+	private String belongOfficeId;	//归属店铺id
+	private String belongOfficeIds;	//归属店铺ids
+	private String belongOfficeName;//归属店铺名称
+	
+	private List<OrderPushmoneyRecord> children;	// 父级菜单(售后服务营业额)
 	
 	public String getOperatorName() {
 		return operatorName;
@@ -204,6 +211,38 @@ public class OrderPushmoneyRecord extends TreeEntity<OrderPushmoneyRecord> {
 
 	public void setPositionValue(String positionValue) {
 		this.positionValue = positionValue;
+	}
+
+	public List<OrderPushmoneyRecord> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<OrderPushmoneyRecord> children) {
+		this.children = children;
+	}
+
+	public String getBelongOfficeId() {
+		return belongOfficeId;
+	}
+
+	public void setBelongOfficeId(String belongOfficeId) {
+		this.belongOfficeId = belongOfficeId;
+	}
+
+	public String getBelongOfficeName() {
+		return belongOfficeName;
+	}
+
+	public void setBelongOfficeName(String belongOfficeName) {
+		this.belongOfficeName = belongOfficeName;
+	}
+
+	public String getBelongOfficeIds() {
+		return belongOfficeIds;
+	}
+
+	public void setBelongOfficeIds(String belongOfficeIds) {
+		this.belongOfficeIds = belongOfficeIds;
 	}
 	
 }

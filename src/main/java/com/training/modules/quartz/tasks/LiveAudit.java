@@ -15,7 +15,10 @@ import org.apache.log4j.Logger;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Component;
 
+import com.training.common.mapper.JsonMapper;
 import com.training.common.utils.BeanUtil;
+import com.training.common.utils.IdGen;
+import com.training.modules.ec.utils.igtpush.GetTUtil;
 import com.training.modules.quartz.entity.TaskLog;
 import com.training.modules.quartz.tasks.utils.CommonService;
 import com.training.modules.quartz.utils.RedisLock;
@@ -30,6 +33,8 @@ import com.training.modules.train.service.EntryService;
 import com.training.modules.train.service.TrainLiveAuditService;
 import com.training.modules.train.utils.EncryptLiveUtils;
 import com.training.modules.train.utils.Utils;
+
+import net.sf.json.JSONObject;
 /**
  * 妃子校直播审核
  *	
@@ -61,9 +66,13 @@ public class LiveAudit extends CommonService{
 		List<String> liveUsers=new ArrayList<String>();
 		List<String> yuUser=new ArrayList<String>();
 		List<String> pushList=new ArrayList<String>();
+		List<String> mtmyUsersClient = new ArrayList<String>();
+		Map<String, Object> messageMap = new HashMap<String, Object>();
+		Map<String, Object> putMap = new HashMap<String, Object>();
 		int yueNum=0;
 		int gouNum=0;
 		int jiaNum=0;
+		int mtmyNum=0;
 		//添加日志
 		TaskLog taskLog = new TaskLog();
 		Date startDate;	//开始时间
@@ -128,11 +137,30 @@ public class LiveAudit extends CommonService{
 							yuUser.clear(); 
 						}
 					}
+					
+					//每天美耶直播预约推送
+					mtmyUsersClient = trainLiveAuditService.selectMtmyLiveUserClient(liveAudit.getId());
+					if(mtmyUsersClient.size() > 0){
+						messageMap.put("title","您预约的"+liveAudit.getName()+"直播间还有5分钟就要开始啦，快去围观～");
+						messageMap.put("notify_type", "4");
+						messageMap.put("push_type",3);
+						messageMap.put("push_time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+						messageMap.put("content","");
+						messageMap.put("notify_id", IdGen.uuid());
+						
+						putMap.put("content", messageMap);
+						putMap.put("cid_list", mtmyUsersClient);
+						
+						GetTUtil.list(JSONObject.fromObject(JsonMapper.toJsonString(putMap)));
+						
+						mtmyNum = mtmyNum + mtmyUsersClient.size();
+						mtmyUsersClient.clear();
+					}
 				}
 			}
 
 			taskLog.setJobDescription("[work],妃子校直播审核过期个数："+list.size()+"直播将要开始的个数："+wantlist.size()
-										+"将要直播的用户推送数："+jiaNum+",购买的直播个数："+gouNum+",预约直播个数："+yueNum);
+										+"将要直播的用户推送数："+jiaNum+",购买的直播个数："+gouNum+",预约直播个数："+yueNum+",每天美耶预约的个数："+mtmyNum);
 			//任务状态
 			taskLog.setStatus(0);
 			

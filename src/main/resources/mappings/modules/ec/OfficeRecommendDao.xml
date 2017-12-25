@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.OfficeRecommendDao">
+	
+	<!-- 查询推荐店铺列表 -->
+	<select id="findList" resultType="OfficeRecommend">
+		SELECT 
+			id AS 'officeRecommendId', 
+			name,
+			img,
+			is_show AS 'isShow',
+			create_by AS 'createBy.id',
+			create_date AS 'createDate',
+			update_by AS 'updateBy.id',
+			update_date AS 'updateDate'
+		FROM sys_office_recommend
+		WHERE del_flag = 0
+		ORDER BY create_date DESC
+	</select>
+	
+	<!-- 根据id获取店铺推荐组 -->
+	<select id="getOfficeRecommend" resultType="OfficeRecommend">
+		SELECT
+			id AS 'officeRecommendId', 
+			name,
+			img,
+			is_show AS 'isShow',
+			create_by AS 'createBy.id',
+			create_date AS 'createDate',
+			update_by AS 'updateBy.id',
+			update_date AS 'updateDate'
+		FROM sys_office_recommend
+		WHERE id = #{officeRecommendId}
+		AND del_flag = 0
+	</select>
+	
+	<!-- 新增店铺推荐组 -->
+	<insert id="insertOfficeRecommend">
+		INSERT INTO sys_office_recommend(
+			name,
+			img,
+			is_show,
+			create_by,
+			create_date,
+			del_flag
+		)VALUES(
+			#{name},
+			#{img},
+			0,
+			#{createBy.id},
+			SYSDATE(),
+			0
+		)
+	</insert>
+	
+	<!-- 修改店铺推荐组 -->
+	<update id="updateOfficeRecommend">
+		UPDATE sys_office_recommend
+		SET 
+			name = #{name},
+			img = #{img},
+			update_by = #{updateBy.id},
+			update_date = SYSDATE()
+		WHERE id = #{officeRecommendId}
+	</update>
+	
+	<!-- 逻辑删除店铺推荐组 -->
+	<update id="deleteOfficeRecommend">
+		UPDATE sys_office_recommend
+		SET del_flag = 1
+		WHERE id = #{officeRecommendId}
+	</update>
+	
+	<!-- 店铺推荐组是否显示 -->
+	<update id="updateIsShow">
+		UPDATE sys_office_recommend
+		SET is_show = #{isShow}
+		WHERE id = #{officeRecommendId}
+	</update>
+	
+	<!-- 店铺推荐组对应的店铺列表 -->
+	<select id="selectOfficeForRecommend" resultType="OfficeRecommendMapping">
+		SELECT
+			orm.id AS 'officeRecommendMappingId',
+			orm.recommend_id AS 'recommendId',
+			orm.office_id AS 'officeId',
+			orm.sort,
+			o.name AS 'officeName'
+		FROM sys_office_recommend_mapping orm
+		LEFT JOIN sys_office o ON o.id = orm.office_id
+		WHERE orm.recommend_id = #{recommendId}
+		ORDER BY orm.sort DESC
+	</select>
+	
+	<!-- 店铺推荐组添加店铺 -->
+	<insert id="insertOffice">
+		INSERT INTO sys_office_recommend_mapping(
+			recommend_id,
+			office_id,
+			sort	
+		)VALUES(
+			#{recommendId},
+			#{officeId},
+			#{sort}
+		)
+	</insert>
+		
+	<!-- 根据officeRecommendMappingId获得推荐组中的某个店铺 -->
+	<select id="getOfficeRecommendMapping" resultType="OfficeRecommendMapping">
+		SELECT
+			orm.id AS 'officeRecommendMappingId',
+			orm.recommend_id AS 'recommendId',
+			orm.office_id AS 'officeId',
+			orm.sort,
+			o.name AS 'officeName'
+		FROM sys_office_recommend_mapping orm
+		LEFT JOIN sys_office o ON o.id = orm.office_id
+		WHERE orm.id = #{officeRecommendMappingId}
+	</select>
+	
+	<!-- 修改某组中某店铺的信息 -->
+	<update id="updateOfficeMessage">
+		UPDATE sys_office_recommend_mapping
+		SET sort = #{sort}
+		WHERE id = #{officeRecommendMappingId}
+	</update>
+		
+	<!-- 删除某一组推荐店铺组中的某个店铺 -->
+	<delete id="delOffice">
+		DELETE FROM sys_office_recommend_mapping WHERE id = #{OfficeRecommendMappingId}
+	</delete>
+	
+	<!-- 将所有的推荐组都设置为不显示 -->
+	<update id="changeAll">
+		UPDATE sys_office_recommend
+		SET is_show = 0
+	</update>
+	
+	<!-- 查询最近创建的那个推荐组 -->
+	<select id="selectIdByCreatDate" resultType="Integer">
+		SELECT id
+		FROM sys_office_recommend
+		ORDER BY create_date DESC limit 1
+	</select>
+	
+	<!-- 查询推荐组对应的推荐店铺id -->
+	<select id="selectOfficeId" resultType="String">
+		SELECT GROUP_CONCAT(orm.office_id)
+		FROM sys_office_recommend_mapping orm
+		LEFT JOIN sys_office o ON o.id = orm.office_id
+		WHERE orm.recommend_id = #{recommendId}
+	</select>
+</mapper>
+

@@ -6,6 +6,7 @@
 	<meta name="decorator" content="default"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no">
     <link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
+    <link rel="stylesheet" href="${ctxStatic}/train/css/exam.css">
     <script type="text/javascript">
     var validateForm;
     var map = {};
@@ -488,15 +489,24 @@
 							<td class="active"><label class="pull-right"><font color="red">*</font>店铺：</label></td>
 							<td colspan="3">
 								<a href="#" onclick="findOffice()" class="btn btn-primary btn-xs">获取店铺信息</a><p></p>
-								<select id="shopId" name="shopId" class="form-control required" onchange="changeShop()">
+								<select id="shopId" name="shopId" style = "width:570px;" class="form-control required" onchange="changeShop()">
 									<option value="">请选择店铺</option>
 								</select>
 							</td>
 						</tr>
 						<tr>
+							<td class="active"><label class="pull-right"><font color="red">*</font>预约短信：</label></td>
+							<td colspan="3"> 
+								<label class="checked"><input type="radio" id="sendToUserFlag" name="sendToUserFlag" value=0 class="required">否</label>
+                                <label class="checked"><input type="radio" id="sendToUserFlag" name="sendToUserFlag" value=1 class="required">是</label>
+								<br>
+								<span class="help-inline">是否将预约信息的短信发到手机上</span>
+							</td>
+						</tr>
+						<tr>
 							<td class="active"><label class="pull-right">消费者备注：</label></td>
 							<td colspan="3">
-								<textarea rows="7" cols="30" id="userNote" name="userNote" onkeydown="checkEnter(event)" class="form-control"></textarea>
+								<textarea rows="7" cols="75" id="userNote" name="userNote" onkeydown="checkEnter(event)" class="form-control"></textarea>
 							</td>
 						</tr>
 					</table>

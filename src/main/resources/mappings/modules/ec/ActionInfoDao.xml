@@ -12,6 +12,7 @@
 		a.close_time,
 		a.ceiling,
 		a.level,
+		a.sort,
 		a.status,
 		a.execute_status,
 		a.create_by AS "createBy.name",
@@ -77,6 +78,7 @@
 		close_time,
 		ceiling,
 		level,
+		sort,
 		status,
 		create_by,
 		create_date
@@ -90,6 +92,7 @@
 		#{closeTime},
 		#{ceiling},
 		#{level},
+		#{sort},
 		#{status},
 		#{createBy.name},
 		SYSDATE()
@@ -108,6 +111,7 @@
 		close_time=#{closeTime},
 		ceiling=#{ceiling},
 		level=#{level},
+		sort=#{sort},
 		update_by=#{createBy.name},
 		update_date=SYSDATE()
 		WHERE action_id=#{actionId}
