@@ -69,7 +69,18 @@
 			            		'oldOfficeName': function(){return $("#oldOfficeName").val();}
 		                    }
 						 }
-					}//设置了远程验证，在初始化时必须预先调用一次。
+					},//设置了远程验证，在初始化时必须预先调用一次。
+					//添加唯一编码唯一性验证
+					officeCode:{
+						maxlength:20,						
+						remote:{
+							url:"${ctx}/sys/office/checkOfficeCode",
+							type:"post",
+							data:{
+								'officeCode':function(){return $("#officeCode").val();}
+							}
+						}
+					}
 				},
 				messages:{
 					longitude:{
@@ -80,7 +91,10 @@
 						number:"输入正确的纬度",
 						lrunlv:"小数点前不能超过三位，小数点后不能超过六位"
 					},
-					name: {remote: "机构名称已存在"}
+					name: {remote: "机构名称已存在"},
+					officeCode: {
+						maxlength:"机构编码不能超过20个字符",
+						remote: "机构编码已存在"}
 				},
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
@@ -271,7 +285,7 @@
 				     </tr>
 				     <tr>
 				     	<td class="width-15 active"><label class="pull-right">是否可报货</label></td>
-				     	<td colspan="3" id="isCargo">
+				     	<td id="isCargo">
 				     		<c:if test="${not empty office.id }">
 				         		<c:if test="${office.isCargo == 1}">
 									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('isCargo','${office.id}',0)">&nbsp;&nbsp;否
@@ -286,6 +300,8 @@
 								</select>
 				         	</c:if>
 				     	</td>
+				     	<td class="width-15 active"><label class="pull-right">唯一编码:</label></td>
+				        <td class="width-35"><input id="officeCode" name="officeCode" value="${office.officeCode }" class="form-control"></td>
 				     </tr>
 				     <tr id="a5">
 				         <td class="width-15 active"><label class="pull-right">主负责人:</label></td>
