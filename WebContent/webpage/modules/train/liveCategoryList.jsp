@@ -54,7 +54,7 @@
 								}
 								//操作权限-转移分类
 								if($("#shiroTransfer").val() == 1){
-									html += "&nbsp;<a href=\"#\" onclick=\"openDialogView('直播列表', '${ctx}/train/live/transferForm?category.trainLiveCategoryId="+dataObj[i].trainLiveCategoryId+"','1400px', '800px')\" class=\"btn btn-success btn-xs\" ><i class=\"fa fa-edit\"></i> 转移直播</a>";
+									html += "&nbsp;<a href=\"#\" onclick=\"openDialogView('直播列表', '${ctx}/train/live/transferForm?category.trainLiveCategoryId="+dataObj[i].trainLiveCategoryId+"','80%', '90%')\" class=\"btn btn-success btn-xs\" ><i class=\"fa fa-edit\"></i> 转移直播</a>";
 								}
 								html += "</td>";
 								html += "</tr>";
@@ -82,7 +82,7 @@
 				    top.layer.close(index);
 					});
 				}else if(data == "no"){
-					top.layer.alert('删除失败!分类中还有直播，无法删除', {icon: 2, title:'提醒'});
+					top.layer.alert('删除失败!该分类或子分类中还有直播，无法删除', {icon: 2, title:'提醒'});
 				}
 				
 			})
@@ -162,7 +162,7 @@
 									</c:if>
 								</c:if>
 								<shiro:hasPermission name="train:category:transfer">
-									<a href="#" onclick="openDialogView('直播列表', '${ctx}/train/live/transferForm?category.trainLiveCategoryId=${row.trainLiveCategoryId}','1400px', '800px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 转移直播</a>
+									<a href="#" onclick="openDialogView('直播列表', '${ctx}/train/live/transferForm?category.trainLiveCategoryId=${row.trainLiveCategoryId}','80%', '90%')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 转移直播</a>
 								</shiro:hasPermission>
 							</td>
 						</tr>
