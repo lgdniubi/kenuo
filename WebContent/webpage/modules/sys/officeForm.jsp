@@ -77,7 +77,8 @@
 							url:"${ctx}/sys/office/checkOfficeCode",
 							type:"post",
 							data:{
-								'officeCode':function(){return $("#officeCode").val();}
+								'officeCode':function(){return $("#officeCode").val();},
+								'oldOfficeCode': function(){return $("#oldOfficeCode").val();}
 							}
 						}
 					}
@@ -133,6 +134,7 @@
 			//否则打开修改对话框，不做任何更改直接submit,这时再触发远程校验，耗时较长，
 			//submit函数在等待远程校验结果然后再提交，而layer对话框不会阻塞会直接关闭同时会销毁表单，因此submit没有提交就被销毁了导致提交表单失败。
 			$("#inputForm").validate().element($("#name"));
+			$("#inputForm").validate().element($("#officeCode"));
 			
 			$("#file_photo_upload").uploadify({
 				'buttonText' : ' 请选择图片',
@@ -301,7 +303,11 @@
 				         	</c:if>
 				     	</td>
 				     	<td class="width-15 active"><label class="pull-right">唯一编码:</label></td>
-				        <td class="width-35"><input id="officeCode" name="officeCode" value="${office.officeCode }" class="form-control"></td>
+				        <td class="width-35">
+				        	<input id="oldOfficeCode" value="${office.officeCode }" type="hidden">
+				        	<input id="officeCode" name="officeCode" value="${office.officeCode }" class="form-control" onkeyup="this.value=this.value.replace(/[^\w\.\/]/ig,'')">
+				        	<span class="help-inline">只能输入数字字母和下划线</span>
+				        </td>
 				     </tr>
 				     <tr id="a5">
 				         <td class="width-15 active"><label class="pull-right">主负责人:</label></td>

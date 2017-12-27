@@ -1052,14 +1052,11 @@ public class OfficeController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "checkOfficeCode")
-    public String checkOfficeCode(Office office){
-    	if (StringUtils.isNotBlank(office.getOfficeCode())) {
-    		Office off = officeService.checkOfficeCode(office);
-    		if (off != null) {
-				return "false";
-			}else{
-				return "true";
-			}
+    public String checkOfficeCode(Office office,String oldOfficeCode){
+    	if (StringUtils.isNotBlank(office.getOfficeCode()) && office.getOfficeCode().equals(oldOfficeCode)) {
+    		return "true";
+		}else if(StringUtils.isNotBlank(office.getOfficeCode()) && officeService.checkOfficeCode(office) == null){
+			return "true";
 		}
     	return "false";
     }
