@@ -100,7 +100,7 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @param recId
 	 * @return
 	 */
-	public int findApptStatus(int recId);
+	public int findApptStatus(String orderid);
 	
 	/**
 	 * 根据mapping_id获取其订单余款

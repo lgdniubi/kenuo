@@ -989,6 +989,15 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	public Orders selectOrderById(String orderid) {
 		DecimalFormat formater = new DecimalFormat("#0.##");   //四舍五入
 		Orders orders = dao.selectOrderById(orderid);
+		//未处理预约金且存在预约记录
+		if(orders.getSumAppt() != 0 && orders.getAdvanceFlag() > 0){
+			//预约状态为已完成 已评价 爽约
+			if(orderGoodsDetailsDao.findApptStatus(orders.getOrderid()) != 0){
+				orders.setSumAppt(1);
+			}else{
+				orders.setSumAppt(0);
+			}
+		}
 		double goodsprice = 0;		//主订单成本总价
 		//查询主订单的计费信息
 		Orders _orders = orderGoodsDetailsService.getOrderGoodsDetailListByOid(orders.getOrderid());
@@ -1002,13 +1011,13 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				OrderGoods _orderGoods = orderGoodsDetailsService.getOrderGoodsDetailListByMid(orderGoods.getRecid());
 				if(_orderGoods!=null){
 					//存在预约记录且预约状态为已完成 已评价 爽约
-					if(_orderGoods.getSumAppt() != 0 && _orderGoods.getAdvanceFlag() == 1){
+					/*if(_orderGoods.getSumAppt() != 0 && _orderGoods.getAdvanceFlag() == 1){
 						if(orderGoodsDetailsService.findApptStatus(orderGoods.getRecid()) != 0){
 							_orderGoods.setSumAppt(1);
 						}else{
 							_orderGoods.setSumAppt(0);
 						}
-					}
+					}*/
 					orderGoods.setTotalAmount(_orderGoods.getTotalAmount());
 					orderGoods.setOrderBalance(_orderGoods.getOrderBalance());
 					orderGoods.setOrderArrearage(_orderGoods.getOrderArrearage());

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.GoodsPriceRatioDao">
+
+	<!-- 查询所有的城市异价比例 -->
+	<select id="findList" resultType="GoodsPriceRatio">
+		SELECT 
+			r.id AS 'goodsPriceRatioId',
+			r.ratio,
+			r.create_by AS 'createBy.id',
+			(select u.name from trains.sys_user u where u.id = r.create_by) AS 'createBy.name',
+			r.create_date AS 'createDate',
+			r.update_by AS 'updateBy.id',
+			r.update_date AS 'updateDate',
+			r.del_flag AS 'delflag'
+		FROM mtmydb.mtmy_goods_price_ratio r
+		LEFT JOIN mtmydb.mtmy_goods_price_ratio_details d ON d.ratio_id = r.id
+		WHERE r.del_flag = 0
+		<if test="cityIds != null and cityIds != ''">
+			AND FIND_IN_SET(#{cityIds},d.city_ids)
+		</if>
+		<if test="newRatio != null and newRatio != ''">
+			AND r.ratio >= #{minRatio}
+			<![CDATA[AND r.ratio <= #{maxRatio}]]>
+		</if>
+		GROUP BY r.id
+	</select>
+	
+	<!-- 根据异价比例id查看对应的城市和商品 -->
+	<select id="queryCityAndGoods" resultType="GoodsPriceRatio">
+		SELECT 
+			d.ratio_id AS 'goodsPriceRatioId',
+			GROUP_CONCAT(d.goods_id) AS 'goodsIds',
+			GROUP_CONCAT(g.goods_name) AS 'goodsNames',
+			d.city_ids AS 'cityIds',
+			d.city_names AS 'cityNames',
+			d.ratio,
+			d.del_flag AS 'delflag'
+		FROM mtmydb.mtmy_goods_price_ratio_details d
+		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id = d.goods_id
+		WHERE d.ratio_id = #{goodsPriceRatioId}
+ 	</select>
+ 	
+ 	<!-- 插入异价比例 -->
+ 	<insert id="insertRatio" useGeneratedKeys="true" keyProperty="goodsPriceRatioId">
+ 		INSERT INTO mtmydb.mtmy_goods_price_ratio(
+			ratio,
+			create_by,
+			create_date,
+			del_flag
+ 		)VALUES(
+ 			#{ratio},
+ 			#{createBy.id},
+ 			SYSDATE(),
+ 			0
+ 		)
+ 	</insert>
+ 	
+ 	<!-- 修改异价比例 -->
+ 	<update id="updateRatio">
+ 		UPDATE mtmydb.mtmy_goods_price_ratio
+ 		SET 
+			ratio = #{ratio},
+			update_by = #{updateBy.id},
+			update_date = SYSDATE()
+		WHERE id = #{goodsPriceRatioId}
+ 	</update>
+ 	
+ 	<!-- 插入异价比例对应的城市和商品 -->
+	<insert id="insertCityAndGoods">
+		INSERT INTO mtmydb.mtmy_goods_price_ratio_details(
+			ratio_id,
+			goods_id,
+			city_ids,
+			city_names,
+			ratio,
+			del_flag
+		)
+		<foreach collection="goodsIdsList" item="list" separator="union all">
+			SELECT #{goodsPriceRatioId},#{list},#{cityIds},#{cityNames},#{ratio},0 FROM dual
+		</foreach>
+ 	</insert>
+ 	
+ 	<!-- 删除某一比例异价 -->
+ 	<delete id="deleteRatio">
+ 		DELETE FROM mtmydb.mtmy_goods_price_ratio WHERE id = #{goodsPriceRatioId}
+ 	</delete>
+ 	
+ 	<!-- 删除某一比例异价对应的商品和城市 -->
+ 	<delete id="deleteAll">
+ 		DELETE FROM mtmydb.mtmy_goods_price_ratio_details WHERE ratio_id = #{goodsPriceRatioId}
+ 	</delete>
+</mapper>

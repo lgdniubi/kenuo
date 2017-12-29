@@ -1014,16 +1014,15 @@ window.onload=initStatus;
 					</shiro:hasPermission>
 					<shiro:hasPermission name="ec:orders:edit">
 						<c:if test="${type != 'view' }">
-							<c:if test="${orders.isReal == 0   and orders.orderstatus==1}">
-								<a href="#" onclick="forcedCancel('${orders.orderid}')" class="btn btn-danger btn-xs"><i class="fa fa-save"></i>强制取消</a>
-							</c:if>
-							<c:if test="${orders.isReal == 0   and orders.orderstatus!=1}">
-								<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>
-							</c:if>
-							<c:if test="${orders.isReal==1}">
-								<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>
-							</c:if>
-						</c:if>	
+							<c:choose>
+								<c:when test="${(orders.isReal == 0 && (orders.orderstatus==1 || orders.orderstatus==2)) || (orders.channelFlag != 'bm' && orders.isReal==1 && orders.advanceFlag == 1 && orders.sumAppt == 0 && orders.orderstatus==4)}">
+									<a href="#" onclick="forcedCancel('${orders.orderid}')" class="btn btn-danger btn-xs"><i class="fa fa-save"></i>强制取消</a>
+								</c:when>
+								<c:otherwise>
+									<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>
+								</c:otherwise>
+							</c:choose>
+						</c:if>
 					</shiro:hasPermission>
 					<%-- <p></p>
 					<label class="active">操作日志:</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

@@ -205,6 +205,11 @@ public class Orders extends TreeEntity<Orders> {
 	private String belongOfficeId;           //归属机构id
 	private String belongOfficeName;         //归属机构名称
 	
+	
+	//-----------------------------强制取消需要的字段------------------------
+	private int advanceFlag;         //是否预约金,等于1说明查到advance_flag=1,若不为1，则说明是advance_flag=0
+	private int sumAppt;                  //处理预约金前是否有预约
+	//-------------------------------------------------------------------
 	public String getSearchIsReal() {
 		return searchIsReal;
 	}
@@ -1642,4 +1647,17 @@ public class Orders extends TreeEntity<Orders> {
 	public void setBelongOfficeName(String belongOfficeName) {
 		this.belongOfficeName = belongOfficeName;
 	}
+	public int getAdvanceFlag() {
+		return advanceFlag;
+	}
+	public void setAdvanceFlag(int advanceFlag) {
+		this.advanceFlag = advanceFlag;
+	}
+	public int getSumAppt() {
+		return sumAppt;
+	}
+	public void setSumAppt(int sumAppt) {
+		this.sumAppt = sumAppt;
+	}
+	
 }

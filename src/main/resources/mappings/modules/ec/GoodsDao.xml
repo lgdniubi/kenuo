@@ -191,6 +191,12 @@
 		<if test="goodsId != 0">
 			AND g.goods_id = #{goodsId}
 		</if>
+		<if test="goodsIds != null and goodsIds != '' and goodsIds.size() > 0">
+			AND g.goods_id in  
+       		<foreach item="item" index="index" collection="goodsIds" open="(" separator="," close=")">  
+            	#{item}  
+        	</foreach> 
+		</if>
 	</select>
 	<!-- 根据多个分类查询上商品 -->
 	<select id="findByCateList" resultType="Goods">
@@ -761,4 +767,41 @@
 		SELECT MAX(sort) as num FROM mtmydb.mtmy_goods 
 	</select>
 	
+	<!-- 根据goods_ids查询多个商品 -->
+	<select id="selectGoodsList" resultType="Goods">
+		SELECT 
+			goods_id AS 'goodsId',
+			goods_name AS 'goodsName'
+		FROM mtmydb.mtmy_goods
+		WHERE goods_id IN (${_parameter})
+	</select>
+	
+	<!-- 城市异价中根据条件查询能参加异价的商品 -->
+	<select id="queryGoodsCanRatio"  resultType="Goods">
+		SELECT 
+		  <include refid="goodsColumns"/>
+		FROM
+		  mtmydb.mtmy_goods g
+		  <include refid="goodsJoins"/> 
+		WHERE g.del_flag = 0 
+		<if test="goodsCategoryId != null and goodsCategoryId != '' and goodsCategoryId != 0">
+			AND g.category_id=#{goodsCategoryId} 
+		</if>
+		<if test="goodsName !=null and goodsName!=''">
+			AND (g.goods_name like CONCAT('%', #{goodsName} , '%'))
+		</if>
+		<if test="goodsIds != null and goodsIds != '' and goodsIds.size() > 0">
+			AND g.goods_id IN  
+       		<foreach collection="goodsIds" item="item" index="index" open="(" separator="," close=")">  
+            	#{item}  
+        	</foreach> 
+		</if>
+		<if test="cityIds != null and cityIds != '' and cityIds.size() > 0">
+			AND g.goods_id NOT IN (
+				select DISTINCT goods_id from mtmydb.mtmy_goods_price_ratio_details where 
+			<foreach collection="cityIds" item="item" index="index" separator="OR">  
+            	city_ids like CONCAT('%',#{item},'%')
+        	</foreach>)
+		</if>
+	</select>
 </mapper>

@@ -118,8 +118,8 @@ public class OrderGoodsDetailsService extends TreeService<OrderGoodsDetailsDao, 
 	 * @param recId
 	 * @return
 	 */
-	public int findApptStatus(int recId){
-		return dao.findApptStatus(recId);
+	public int findApptStatus(String orderid){
+		return dao.findApptStatus(orderid);
 	}
 	
 	/**
