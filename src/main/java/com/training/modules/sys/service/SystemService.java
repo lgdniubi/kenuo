@@ -531,9 +531,9 @@ public class SystemService extends BaseService implements InitializingBean {
 			String str = specialLog(oldUser,user);
 
 			//判断美容师头像是否修改   和之前的美容师头像进行比较
-			String photo = user.getPhoto();//修改之后的美容师头像
-			String oldPhoto = oldUser.getPhoto();//修改之前的美容师头像
-			if(photo != null && photo != "" && !oldPhoto.equals(photo)){
+			String photo = user.getPhoto() == null ? "" : user.getPhoto();//修改之后的美容师头像
+			String oldPhoto = oldUser.getPhoto() == null ? "" : oldUser.getPhoto();//修改之前的美容师头像
+			if(!oldPhoto.equals(photo)){
 				reservationTime(1, currentUser.getCreateBy().getId(), user.getPhoto(), oldUser.getPhoto(), lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
 			}
 			
@@ -659,7 +659,8 @@ public class SystemService extends BaseService implements InitializingBean {
 				String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
     			logger.info("##### web接口路径:"+weburl);
     			String parpm = "{\"user_id\":\""+toUser.getId()+"\",\"user_name\":\""+toUser.getName()+"\",\"franchisee_id\":"+toUser.getCompany().getId()+","
-    					+ "\"user_mobile\":\""+toUser.getMobile()+"\",\"login_name\":\""+toUser.getLoginName()+"\"}";
+    					+ "\"user_mobile\":\""+toUser.getMobile()+"\",\"login_name\":\""+toUser.getLoginName()+"\","
+    							+ "\"office_id\":\""+toUser.getOffice().getId()+"\",\"office_name\":\""+toUser.getOffice().getName()+"\"}";
     			String url=weburl;
     			String result = WebUtils.postCSObject(parpm, url);
     			JSONObject jsonObject = JSONObject.fromObject(result);
@@ -707,6 +708,19 @@ public class SystemService extends BaseService implements InitializingBean {
 		UserUtils.clearCache(user);
 		// // 清除权限缓存
 		// systemRealm.clearAllCachedAuthorizationInfo();
+		
+		/**
+		 * 删除用户时将用户数据t同步到供应链
+		 */
+		String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
+		logger.info("##### web接口路径:"+weburl);
+		String parpm = "{\"user_id\":\""+user.getId()+"\",\"user_name\":\""+user.getName()+"\",\"franchisee_id\":"+user.getCompany().getId()+","
+				+ "\"user_mobile\":\""+user.getMobile()+"\",\"login_name\":\""+user.getLoginName()+"\",\"user_status\":"+1+","
+						+ "\"office_id\":\""+user.getOffice().getId()+"\",\"office_name\":\""+user.getOffice().getName()+"\"}";
+		String url=weburl;
+		String result = WebUtils.postCSObject(parpm, url);
+		JSONObject jsonObject = JSONObject.fromObject(result);
+		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
 	}
 
 	@Transactional(readOnly = false)
@@ -1207,18 +1221,21 @@ public class SystemService extends BaseService implements InitializingBean {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			String webReservationTime =	ParametersFactory.getMtmyParamValues("uploader_picture_url");
-			logger.info("##### web接口路径:"+webReservationTime);
-			String parpm = "";
-			if(type == 1){
-				parpm = "{\"type\":\""+type+"\",\"create_by\":\""+createBy+"\",\"file_url\":\""+fileUrl+"\",\"old_url\":\""+oldUrl+"\",\"life_img_urls\":\""+lifeImgUrls+"\",\"user_id\":\""+userId+"\",\"client\":\""+client+"\"}";
-			}else if(type == 2){
-				parpm = "{\"type\":\""+type+"\",\"create_by\":\""+createBy+"\",\"file_url\":\"\",\"old_url\":"+JSONArray.fromObject(oldLifeImgUrls)+",\"life_img_urls\":\""+lifeImgUrls+"\",\"user_id\":\""+userId+"\",\"client\":\""+client+"\"}";
+			if(!"-1".equals(webReservationTime)){
+				logger.info("##### web接口路径:"+webReservationTime);
+				String parpm = "";
+				if(type == 1){
+					parpm = "{\"type\":\""+type+"\",\"create_by\":\""+createBy+"\",\"file_url\":\""+fileUrl+"\",\"old_url\":\""+oldUrl+"\",\"life_img_urls\":\""+lifeImgUrls+"\",\"user_id\":\""+userId+"\",\"client\":\""+client+"\"}";
+				}else if(type == 2){
+					parpm = "{\"type\":\""+type+"\",\"create_by\":\""+createBy+"\",\"file_url\":\"\",\"old_url\":"+JSONArray.fromObject(oldLifeImgUrls)+",\"life_img_urls\":\""+lifeImgUrls+"\",\"user_id\":\""+userId+"\",\"client\":\""+client+"\"}";
+				}
+				String url=webReservationTime;
+				System.out.println(parpm);
+				String result = WebUtils.postTrainObject(parpm, url);
+				jsonObject = JSONObject.fromObject(result);
+				logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
 			}
-			String url=webReservationTime;
-			System.out.println(parpm);
-			String result = WebUtils.postTrainObject(parpm, url);
-			jsonObject = JSONObject.fromObject(result);
-			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "记录店铺首图、美容院和美容师图片上传相关信息", e);
 			logger.error("调用接口:记录店铺首图、美容院和美容师图片上传相关信息:"+e.getMessage());

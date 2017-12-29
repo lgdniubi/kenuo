@@ -413,7 +413,6 @@
 			    type: 2, 
 			    area: ['300px', '420px'],
 			    title:"选择机构",
-			  //  ajaxData:{selectIds: $("#${id}Id").val()},
 			    content: "${ctx}/sys/office/newUserOffice?compId="+compId,
 			    btn: ['确定', '关闭'],
 	    	    yes: function(index, layero){ //或者使用btn1
@@ -429,9 +428,32 @@
 			}); 
 			
 		}else{
-			alert("请先选择归属商家");
+			top.layer.alert("请先选择归属商家",{icon: 6});
 		}
 		
+	}
+	
+	/* 选择归属商家时清空机构中的数据，防止错误数据 */
+	function companyButtion(){
+		top.layer.open({
+		    type: 2, 
+		    area: ['300px', '420px'],
+		    title:"选择${title}",
+		    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/sys/franchisee/treeData")+"" ,
+		    btn: ['确定', '关闭'],
+		    yes: function(index, layero){
+		    	var tree = layero.find("iframe")[0].contentWindow.tree;
+		    	var nodes = tree.getSelectedNodes();
+		    	$("#officeId").val("");//清空机构id
+				$("#officeName").val("");//选择归属商家之前将归属机构清空
+		    	$("#companyId").val(nodes[0].id);
+		    	$("#companyName").val(nodes[0].name);
+		    	top.layer.close(index);
+		    },
+		    cancel: function(index){ //或者使用btn2
+ 	           //按钮【按钮二】的回调
+ 	       }
+		})
 	}
 		
 	</script>
@@ -459,21 +481,26 @@
 					<div id="file_user_queue"></div>
 				</td>
 		         <td class="active"><label class="pull-right"><font color="red">*</font>归属商家:</label></td>
-		         <td class="width-35"><sys:treeselect id="company" name="company.id" value="${user.company.id}" labelName="company.name" labelValue="${user.company.name}"
-						title="公司" url="/sys/franchisee/treeData" cssClass="form-control required"/></td>
+		         <td class="width-35">
+					<input id="companyId" name="company.id" class="form-control required" type="hidden" value="${user.company.id}"/>
+					<div class="input-group">
+						<input id="companyName" name="company.name"  type="text" value="${user.company.name}" readonly="readonly" class="form-control required"/>
+			       		 <span class="input-group-btn">
+				       		 <button type="button"  id="companyButton" class="btn  btn-primary" onclick="companyButtion()"><i class="fa fa-search"></i></button> 
+			       		 </span>
+			    	</div>
+				</td>
 		      </tr>
 		      
 		      <tr>
 		         <td class="active"><label class="pull-right"><font color="red">*</font>归属机构:</label></td> <!-- url="/sys/office/treeData?type=2" -->
-		         <td><%-- <sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}"
-					title="部门" url="/sys/office/treeData?type=2"  cssClass="form-control required" notAllowSelectParent="false" notAllowSelectRoot="false"/> --%>
-					
+		         <td>
 					<input id="officeId" name="office.id" class="form-control required" type="hidden" value="${user.office.id}"/>
 					<div class="input-group">
 						<input id="officeName" name="office.name"  type="text" value="${user.office.name}" readonly="readonly" class="form-control required"/>
-				       		 <span class="input-group-btn">
-					       		 <button type="button"  id="officeButton" class="btn  btn-primary" onclick="officeButtion()"><i class="fa fa-search"></i></button> 
-				       		 </span>
+			       		 <span class="input-group-btn">
+				       		 <button type="button"  id="officeButton" class="btn  btn-primary" onclick="officeButtion()"><i class="fa fa-search"></i></button> 
+			       		 </span>
 				    </div>
 					
 					</td>
@@ -565,7 +592,7 @@
 		         </td>
 		         <td>${user.parendNames}<form:input path="delFlag" cssStyle="display:none;"></form:input></td>
 		      </tr>
-		       <tr>
+		      <tr>
 		         <td class="active"><label class="pull-right">备注:</label></td>
 		         <td colspan="3"><form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" class="form-control"/></td>
 		      </tr>

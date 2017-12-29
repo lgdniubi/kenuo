@@ -13,9 +13,25 @@
 		$("#searchForm").submit();
 		return false;
 	}
-	
-	
-	
+	//推荐直播按钮	
+	function addRecommend(id) {
+		$(".loading").show();//打开展示层
+		$.ajax({
+			type : "POST",
+			url : "${ctx}/train/live/addRecommend?id="+id,
+			success: function(data) {
+				$(".loading").hide(); //关闭加载层
+				if(data=="OK"){
+					top.layer.alert('推荐成功!', {icon: 1, title:'提醒'});
+					window.location="${ctx}/train/live/list";
+				}
+				if(data=="ERROR"){
+					top.layer.alert('推荐失败!', {icon: 2, title:'提醒'});
+					window.location="${ctx}/train/live/list";
+				}
+			}
+		});   
+	}
 	
 </script>
 </head>
@@ -29,6 +45,8 @@
 			<div class="ibox-title">
 				<h5>直播列表</h5>
 			</div>
+			<!-- 页面加载等待 -->
+			<div class="loading"></div>
 			<sys:message content="${message}" />
 			<!-- 查询条件 -->
 			<div class="ibox-content">
@@ -158,6 +176,9 @@
 										<a href="#" onclick="openDialogView('云币贡献榜', '${ctx}/train/live/cloudContribution?auditId=${live.id}','800px','500px')"
 											 class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>云币贡献榜</a>
 									</shiro:hasPermission>
+									<c:if test="${live.isOpen==1}">
+										<a href="#" onclick="addRecommend(${live.id})" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i>推荐</a>
+									</c:if>
 								</td>
 							</tr>
 						</c:forEach>

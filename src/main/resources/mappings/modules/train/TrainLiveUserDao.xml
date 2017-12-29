@@ -127,4 +127,14 @@
 		WHERE
 			a.`status` = 0 AND a.audit_id=#{auditId}
 	</select>
+	<!-- 查询每天美耶直播预约的用户cid -->
+	<select id="selectMtmyLiveUserClient" resultType="String">
+		SELECT uc.client_id
+		FROM mtmydb.mtmy_live_reminds a
+		LEFT JOIN mtmydb.mtmy_oa_user_client uc ON uc.user_id = a.user_id
+		WHERE a.status = 0 
+		AND a.audit_id=#{auditId}
+		AND uc.client_id is not null
+	</select>
+	
 </mapper>

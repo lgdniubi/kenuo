@@ -61,6 +61,7 @@ public class Goods extends DataEntity<Goods> {
 	private int giveIntegral; // 购买商品赠送积分
 	private int salesSum; // 商品销量
 	private String regionName; // 商品适合城市
+	private String regionId;    //商品适合城市id（用于界面回写）
 	private String actionType = "0"; // 活动类型 (0 普通商品,1 限时抢购, 2 团购 , 3 促销优惠)
 	private int actionId; // 优惠活动id
 	private String actionName;	//活动名称
@@ -533,6 +534,12 @@ public class Goods extends DataEntity<Goods> {
 	}
 	public void setPositionIds(String positionIds) {
 		this.positionIds = positionIds;
+	}
+	public String getRegionId() {
+		return regionId;
+	}
+	public void setRegionId(String regionId) {
+		this.regionId = regionId;
 	}
 	
 	

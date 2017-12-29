@@ -501,7 +501,6 @@ input::-webkit-inner-spin-button{
 									name="criticalDiseases" style="width: 413px; float: left"
 									class="form-control " /><br />
 							</div>
-							
 						</div>
 					</div>
 					<div class="ibox-content">

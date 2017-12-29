@@ -384,4 +384,18 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		dao.saveOfficeLogDel(officeLog);
 	}
 
+	/**
+	 * 
+	 * @Title: checkOfficeCode
+	 * @Description: TODO 验证机构唯一编码
+	 * @param office
+	 * @return:
+	 * @return: Office
+	 * @throws
+	 * 2017年12月26日 兵子
+	 */
+	public Office checkOfficeCode(Office office) {
+		return officeDao.checkOfficeCode(office);
+	}
+
 }

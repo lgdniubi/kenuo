@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import com.google.common.collect.Lists;
 import com.training.common.mapper.JsonMapper;
@@ -122,6 +123,7 @@ public class MtmyOaNotifyController extends BaseController {
 	@RequestMapping(value = "save")
 	public String save(MtmyOaNotify mtmyOaNotify,Model model,HttpServletRequest request, RedirectAttributes redirectAttributes){
 		try {
+			mtmyOaNotify.setTitle(HtmlUtils.htmlUnescape(mtmyOaNotify.getTitle()));
 			//当推送方式为组推时
 			if(mtmyOaNotify.getPushType() == 2){
 				List<MtmyOaNotifyRecord> mtmyOaNotifyRecordList = Lists.newArrayList();

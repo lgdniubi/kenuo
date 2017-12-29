@@ -70,10 +70,22 @@ public class ShopCountDataService extends TreeService<ShopCountDataDao, ShopCoun
 				shopCountData.setApptCount(0);
 			}
 			if(shopCountData.getEvaluationCount() == null){
-				shopCountData.setEvaluationCount(shopCountData.getEvaluationCount());
+				shopCountData.setEvaluationCount(0);
 			}
 			if(shopCountData.getEvaluationScore() == null){
-				shopCountData.setEvaluationScore(shopCountData.getEvaluationScore());
+				shopCountData.setEvaluationScore((float) 0.0);
+			}
+			//服务准时评价评分(1.5到5)
+			if(shopCountData.getServeScore() == null){
+				shopCountData.setServeScore((float) 0.0);
+			}
+			//接待礼仪评价评分(1.5到5)
+			if(shopCountData.getEntertainScore() == null){
+				shopCountData.setEntertainScore((float) 0.0);
+			}
+			//环境设备评价评分(1.5到5)
+			if(shopCountData.getEnvironmentScore() == null){
+				shopCountData.setEnvironmentScore((float) 0.0);
 			}
 		}
 		// 更新预约数据

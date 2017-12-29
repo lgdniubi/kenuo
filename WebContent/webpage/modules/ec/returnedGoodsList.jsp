@@ -260,13 +260,15 @@
 											</c:if>
 										</shiro:hasPermission>
 									</c:if>
-									<!-- 编辑营业额 -->
-									<c:if test="${returnGoods.returnStatus==12 || returnGoods.returnStatus==15}">
-										<a href="#" onclick="openDialogView('营业额明细表', '${ctx}/ec/returned/getTurnoverByOrderId?returnedId=${returnGoods.id}&orderId=${returnGoods.orderId}','850px','650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 编辑营业额</a>
-									</c:if>
-									<c:if test="${returnGoods.returnStatus!=12 && returnGoods.returnStatus!=15}">
-										<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>编辑营业额</a>
-									</c:if>
+									<shiro:hasPermission name="ec:returned:turnover">
+										<!-- 编辑营业额 -->
+										<c:if test="${returnGoods.returnStatus >= 12 && returnGoods.returnStatus <= 16}">
+											<a href="#" onclick="openDialogView('营业额明细表', '${ctx}/ec/returned/getTurnoverByOrderId?returnedId=${returnGoods.id}&orderId=${returnGoods.orderId}','850px','650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 编辑营业额</a>
+										</c:if>
+										<c:if test="${returnGoods.returnStatus<12 || returnGoods.returnStatus > 16}">
+											<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>编辑营业额</a>
+										</c:if>
+									</shiro:hasPermission>
 									<!-- 确认收货 -->
 									<shiro:hasPermission name="ec:returned:take">
 										<c:if test="${returnGoods.returnStatus==12 or returnGoods.returnStatus==13 or returnGoods.returnStatus==22 or returnGoods.returnStatus==23}">

@@ -28,6 +28,9 @@
 	<select id="queryShopCommentData" resultType="ShopCountData" parameterType="java.lang.Integer">
 		SELECT
 			msc.shop_id AS 'shopId',
+			AVG(IFNULL(serve_rank,0)) AS serveScore,
+			AVG(IFNULL(entertain_rank,0)) AS entertainScore,
+			AVG(IFNULL(environment_rank,0)) AS environmentScore,
 			COUNT(contents) AS 'evaluationCount',
 			FORMAT((SUM((IFNULL(serve_rank,0) + IFNULL(entertain_rank,0) + IFNULL(environment_rank,0))/3) / COUNT(1)),1) AS 'evaluationScore',
 			IFNULL((SELECT tss.shop_id FROM trains.train_shop_statistics tss WHERE tss.shop_id = msc.shop_id),"NULL")AS 'isExist'
@@ -90,6 +93,15 @@
 				<if test="evaluationScore != null">
 					`evaluation_score`,
 				</if>
+				<if test="serveScore != null">
+					`serve_score`,
+				</if>
+				<if test="entertainScore != null">
+					`entertain_score`,
+				</if>
+				<if test="environmentScore != null">
+					`environment_score`,
+				</if>
 				<if test="evaluationCount != null">
 					`evaluation_count`,
 				</if>
@@ -104,7 +116,16 @@
 				</if>
 					'0',
 				<if test="evaluationScore != null">
-					#{evaluationScore},
+					ROUND(#{evaluationScore},1),
+				</if>
+				<if test="serveScore != null">
+					#{serveScore},
+				</if>
+				<if test="entertainScore != null">
+					#{entertainScore},
+				</if>
+				<if test="environmentScore != null">
+					#{environmentScore},
 				</if>
 				<if test="evaluationCount != null">
 					#{evaluationCount},
@@ -115,8 +136,17 @@
 					SYSDATE()
 			</trim>
 			ON DUPLICATE KEY UPDATE 
+				<if test="serveScore != 0">
+					serve_score = (serve_score * evaluation_count + #{serveScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
+				</if>
+				<if test="entertainScore != 0">
+					entertain_score = (entertain_score * evaluation_count + #{entertainScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
+				</if>
+				<if test="environmentScore != 0">
+					environment_score = (environment_score * evaluation_count + #{environmentScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
+				</if>
 				<if test="evaluationScore != 0">
-					evaluation_score = (evaluation_score * evaluation_count + #{evaluationScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),
+					evaluation_score = ROUND((evaluation_score * evaluation_count + #{evaluationScore} * #{evaluationCount}) / (evaluation_count + #{evaluationCount}),1),
 				</if>
 				evaluation_count = evaluation_count + #{evaluationCount},
 				update_date = SYSDATE();

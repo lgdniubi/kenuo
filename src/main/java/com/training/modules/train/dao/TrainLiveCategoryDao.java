@@ -37,4 +37,16 @@ public interface TrainLiveCategoryDao extends CrudDao<TrainLiveCategory>{
 	 * @param trainLiveCategory
 	 */
 	public void deleteCategory(TrainLiveCategory trainLiveCategory);
+
+	/**
+	 * 
+	 * @Title: getCategory
+	 * @Description: TODO 查询parentIds包含此id的分类
+	 * @param trainLiveCategoryId
+	 * @return:
+	 * @return: List<TrainLiveCategory>
+	 * @throws
+	 * 2017年12月19日 兵子
+	 */
+	public List<TrainLiveCategory> getCategory(String trainLiveCategoryId);
 }
