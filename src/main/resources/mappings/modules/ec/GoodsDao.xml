@@ -121,7 +121,10 @@
 	<select id="get" resultType="Goods">
 		SELECT 
 		  <include refid="goodsColumns"/>,
-		  s.name AS supplierName
+		  s.name AS supplierName,
+		 (CASE WHEN
+		  	(select count(*) from mtmydb.mtmy_goods_price_ratio_details where goods_id = #{goodsId} and del_flag = 0) > 0 THEN 1 ELSE 0 END
+		  )AS 'isRatio'
 		FROM
 		  mtmydb.mtmy_goods g
 		  <include refid="goodsJoins"/> 

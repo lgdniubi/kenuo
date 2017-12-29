@@ -107,6 +107,7 @@ public class Goods extends DataEntity<Goods> {
 	private String positionIds;		//项目部位IDS（以下划线隔开）
 	
 	private List<String> cityIds;    //城市异价商品的归属城市
+	private int isRatio;          //是否参与了城市异价（0：否，1：是）
 	
 	/**
 	 * get/set
@@ -548,6 +549,12 @@ public class Goods extends DataEntity<Goods> {
 	}
 	public void setCityIds(List<String> cityIds) {
 		this.cityIds = cityIds;
+	}
+	public int getIsRatio() {
+		return isRatio;
+	}
+	public void setIsRatio(int isRatio) {
+		this.isRatio = isRatio;
 	}
 	
 }
