@@ -1,6 +1,4 @@
-package com.training.modules.reportforms.service;
-
-import com.training.modules.reportforms.dao.ReportMapper;
+package com.training.modules.quartz.tasks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
