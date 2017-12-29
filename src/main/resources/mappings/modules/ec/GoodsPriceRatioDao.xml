@@ -24,6 +24,7 @@
 			<![CDATA[AND r.ratio <= #{maxRatio}]]>
 		</if>
 		GROUP BY r.id
+		ORDER BY r.create_date DESC
 	</select>
 	
 	<!-- 根据异价比例id查看对应的城市和商品 -->
