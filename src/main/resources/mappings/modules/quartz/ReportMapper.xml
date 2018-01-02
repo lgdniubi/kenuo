@@ -9,51 +9,60 @@
 		TRUNCATE TABLE mtmydb.office_app_arrearage;
 	</select>
 
-	<select id="insertTableUserAppArrearge"><!--统计会员欠款(区分商家)-->
-		INSERT INTO mtmydb.user_app_arrearage
+	<insert id="insertTableUserAppArrearge"><!--统计会员欠款(区分商家)-->
+		INSERT INTO mtmydb.user_app_arrearage 
 		(user_id,user_name,beautician_id,beautician_name,user_office_id,total_app_arrearage)
-		SELECT
-			u.user_id as user_id,
-			u.`name` as user_name,
-			u.beautician_id as beautician_id,
-			u.beautician_name as beautician_name,
-			u.office_id as user_office_id,
-			IFNULL(SUM(de.app_arrearage),0) AS total_app_arrearage
-		FROM
+		SELECT 
+			u.user_id,
+			u.`name`,
+			u.beautician_id,
+			u.beautician_name,
+			u.office_id,
+			IFNULL(SUM(de.app_arrearage),0) as app_arrearage
+		FROM 
 			mtmydb.mtmy_order_goods_details de
 		INNER JOIN mtmydb.mtmy_order_goods_mapping gm ON gm.rec_id = de.goods_mapping_id
-		RIGHT JOIN mtmydb.mtmy_users u ON u.user_id = gm.user_id AND u.del_flag = 0
+		INNER JOIN mtmydb.mtmy_users u ON u.user_id = gm.user_id
 		INNER JOIN trains.sys_office s ON s.id = u.office_id
-		AND de.status = 1
-		AND (u.office_id is not null OR u.office_id <![CDATA[<>]]> '')
-		AND s.del_flag = 0
-		AND gm.del_flag =  0
-		AND u.del_flag = 0
+		WHERE de.`status` =1 
+		AND gm.del_flag =0
+		AND u.del_flag =0
+		AND (u.office_id is not null OR u.office_id != '')
+		AND s.del_flag =0
 		AND gm.goods_franchisee_id = s.franchisee_id
-		GROUP BY u.user_id HAVING total_app_arrearage != 0;
-	</select>
+		GROUP BY u.user_id HAVING app_arrearage >0;
+	</insert>
 
-	<select id="insertTableOfficeAppArrearge"><!--统计机构欠款(区分商家)-->
-		INSERT INTO mtmydb.office_app_arrearage
+	<insert id="insertTableOfficeAppArrearge"><!--统计机构欠款(区分商家)-->
+		INSERT INTO mtmydb.office_app_arrearage 
 		(office_id,office_parent_id,office_name,total_app_arrearage)
-		SELECT
+		SELECT 
 			o.id as office_id,
 			o.parent_id as office_parent_id,
 			o.name as office_name,
-			IFNULL(SUM(de.app_arrearage),0) AS total_app_arrearage
+			IFNULL(SUM(t.app_arrearage),0)
 		FROM
-		mtmydb.mtmy_order_goods_details de
+		(SELECT 
+			u.user_id,
+			u.office_id,
+			gm.goods_franchisee_id,
+			s.parent_ids,
+			IFNULL(SUM(de.app_arrearage),0) as app_arrearage
+		FROM 
+			mtmydb.mtmy_order_goods_details de
 		INNER JOIN mtmydb.mtmy_order_goods_mapping gm ON gm.rec_id = de.goods_mapping_id
-		INNER JOIN mtmydb.mtmy_users u ON u.user_id = gm.user_id AND u.del_flag = 0
-		INNER JOIN (SELECT id,parent_ids from trains.sys_office WHERE del_flag = 0)s ON s.id = u.office_id
-		RIGHT JOIN (SELECT id,parent_id,`name`,franchisee_id from trains.sys_office WHERE del_flag = 0)o ON (s.parent_ids LIKE CONCAT('%',o.id,'%') or s.id = o.id)
-		AND de.status = 1
-		AND (u.office_id is not null OR u.office_id <![CDATA[<>]]> '')
-		AND gm.del_flag =  0
+		INNER JOIN mtmydb.mtmy_users u ON u.user_id = gm.user_id
+		INNER JOIN trains.sys_office s ON s.id = u.office_id
+		WHERE de.`status` =1 
+		AND gm.del_flag = 0
 		AND u.del_flag = 0
-		AND gm.goods_franchisee_id = o.franchisee_id
+		AND (u.office_id is not null OR u.office_id != '')
+		AND s.del_flag = 0
+		AND gm.goods_franchisee_id = s.franchisee_id
+		GROUP BY u.user_id HAVING app_arrearage >0) as t
+		RIGHT JOIN (SELECT id,parent_id,`name`,franchisee_id from trains.sys_office WHERE del_flag = 0)o ON (t.parent_ids LIKE CONCAT('%',o.id,'%') or t.office_id = o.id)
 		GROUP BY o.id
 		ORDER BY o.id;
-	</select>
+	</insert>
 
 </mapper>
