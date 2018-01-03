@@ -393,7 +393,6 @@ public class MtmyOaNotifyController extends BaseController {
 				}
 				jsonO.put("data", str.toString());
 				jsonO.put("type", "success");
-				System.out.println(str.toString());
 			}
 			addMessage(redirectAttributes, "成功！");
 		}catch(Exception e){
