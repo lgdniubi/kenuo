@@ -506,11 +506,16 @@ public class ActivityController extends BaseController {
 				}
 				if(activity.getSendType()==4){
 					if(activity.getMobileNum().length()>0 && activity.getCouponId().length()>0){
-						String moblie=activity.getMobileNum().replace("，", ",");
-						String[] mobile = moblie.split(",");
+						String data=activity.getMobileNum().replace("，", ",");
+						String[] newData = data.split(",");
 						String[] couponId=activity.getCouponId().split(",");
-						for (int i = 0; i < mobile.length; i++) {
-							Users users=activityService.findByMobile(mobile[i]);
+						for (int i = 0; i < newData.length; i++) {
+							Users users= new Users();
+							if("0".equals(activity.getMoreType())){   //通过手机号
+								users = activityService.findByMobile(newData[i]);
+							}else if("1".equals(activity.getMoreType())){    //通过用户id
+								users = activityService.findByUserId(newData[i]);
+							}
 							if(users!=null){
 								for (int j = 0; j < couponId.length; j++) {
 									ActivityCouponUser select=new ActivityCouponUser();
@@ -518,7 +523,7 @@ public class ActivityController extends BaseController {
 									select.setUserId(users.getUserid()+"");
 									int num=activityService.findByAIdandUserId(select);
 									if(num>0){
-										failureMsg.append("<br/>手机号："+mobile[i]+"的用户已发放。");
+										failureMsg.append("<br/>手机号或用户ID："+newData[i]+"的用户已发放。");
 										fail++;
 									}else{
 										ActivityCouponUser couponUser=new ActivityCouponUser();
@@ -533,7 +538,7 @@ public class ActivityController extends BaseController {
 								
 								
 							}else{
-								failureMsg.append("<br/>手机号码："+mobile[i]+" 不存在");
+								failureMsg.append("<br/>手机号码或用户ID："+newData[i]+" 不存在");
 								fail++;
 							}
 						}

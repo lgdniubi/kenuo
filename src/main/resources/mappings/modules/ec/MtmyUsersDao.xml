@@ -350,6 +350,9 @@
 					<if test="dbName == 'oracle'">'%'||#{nickname}||'%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%', #{nickname}, '%')</if>
 			</if>
+			<if test="userid != null">
+				AND u.user_id = #{userid} 
+			</if>
 			<if test="mobile != null and mobile != ''">
 				AND u.mobile LIKE 
 					<if test="dbName == 'oracle'">'%'||#{mobile}||'%'</if>
