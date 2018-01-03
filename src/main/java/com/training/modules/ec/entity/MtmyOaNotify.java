@@ -307,8 +307,6 @@ public class MtmyOaNotify extends DataEntity<MtmyOaNotify> {
 		this.users = users;
 	}
 	
-	@JsonIgnore
-	@ExcelField(title="手机号码", align=2, sort=1,type=2)
 	public String getPhones() {
 		return phones;
 	}
