@@ -80,9 +80,24 @@
 </head>
 <body>
 	<form:form id="inputForm" modelAttribute="fzxMenu" action="${ctx}/train/fzxMenu/save" method="post" class="form-horizontal">
+		<c:if test="${not empty fzxMenu.menuId }">
 		<form:hidden path="menuId"/>
+		</c:if>
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		   <tbody>
+		   		
+		   	  <tr>
+		         <td  class="width-15 active"><label class="pull-right">上级菜单:</label></td>
+		         <td  class="width-35" >
+		         	<%-- <c:if test="${empty fzxMenu.parent.menuId }"> --%>
+		         	<%-- <form:hidden path="parent.menuId"/> --%>
+		         	<%-- </c:if> --%>
+		         	<%-- <form:input path="parent.name" htmlEscape="false" maxlength="20" class="required form-control "/> --%>
+		         	<sys:treeselect id="fzxMenu" name="parent.menuId" value="${fzxMenu.parent.menuId}" labelName="parent.name" labelValue="${fzxMenu.parent.name}"
+					title="菜单" url="/train/fzxMenu/treeData" extId="${fzxMenu.menuId}" cssClass="form-control required"/>
+		         </td>
+		      </tr>
+		      
 		      <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 名称:</label></td>
 		         <td  class="width-35" ><form:input path="name" htmlEscape="false" maxlength="20" class="required form-control "/></td>

@@ -818,4 +818,96 @@
 			#{id}
 		)
 	</insert>
+
+	<!-- 保存用户的角色返回主键id -->
+	<insert id="saveFzxRoleByUser" parameterType="user" useGeneratedKeys="true" keyProperty="returnId">
+		INSERT INTO fzx_user_role(
+			user_id,
+			fzx_role_id
+		) VALUES(
+			#{id},
+			#{fzxRole.roleId}
+		)
+	</insert>
+	<!-- 保存用户权限 -->
+	<insert id="saveOfficeById">
+		INSERT INTO fzx_user_role_office(
+			u_r_id,
+			office_id
+		) VALUES(
+			#{id},
+			#{offId}
+		)
+	</insert>
+	<!-- 根据用户id以及角色id查询 -->
+	<select id="findIdByUserFzxRoleId" resultType="Integer">
+		SELECT 
+			id
+		FROM fzx_user_role 
+		WHERE 
+			user_id = #{userId} 
+		AND 
+			fzx_role_id = #{roleId}
+	</select>
+	<!-- 删除权限 -->
+	<delete id="deleteOfficeById">
+		DELETE FROM fzx_user_role_office WHERE u_r_id = #{id}
+	</delete>
+	<!-- 删除用户的指定角色 -->
+	<delete id="deleteFzxRoleByUser">
+		DELETE FROM fzx_user_role WHERE user_id = #{userId} AND fzx_role_id = #{roleId}
+	</delete>
+	
+	<select id="findOfficeListById" resultType="String">
+		SELECT 
+			GROUP_CONCAT(o.id)
+		FROM 
+			sys_office o 
+		LEFT JOIN 
+			fzx_user_role_office uro 
+		ON 
+			o.id = uro.office_id 
+		WHERE uro.u_r_id = #{id}
+	</select>
+	
+	<insert id="updateOfficeById">
+		INSERT INTO fzx_user_role_office(
+			u_r_id,
+			office_id
+		)VALUES(
+			#{id},
+			#{ofId}
+		)
+	</insert>
+
+	<!-- 根据OfficeId获取用户（树查询用户时用） -->
+	<select id="findUsersByOfficeId" resultType="User">
+		SELECT
+			a.id, a.name, a.login_name
+		FROM sys_user a
+		LEFT JOIN sys_office o ON o.id = a.office_id
+		WHERE a.del_flag = '0'
+		AND (o.id = #{office.id} OR o.parent_ids LIKE CONCAT('%,', #{office.id}, ',%'))
+		ORDER BY a.name
+	</select>
+	
+	<!-- 分享营业额查询提成人员信息 -->
+	<select id="querySysUser" resultType="User">
+		SELECT 
+			u.id,
+			u.name,
+			(SELECT d.label FROM trains.sys_dict d WHERE d.value = u.user_type AND d.type='sys_user_type') AS 'positonName',
+			IFNULL((SELECT de.name FROM trains.train_department de LEFT JOIN trains.train_department_position p ON p.department_id = de.id WHERE p.position_key = u.user_type AND u.company_id = de.office_id),'') AS 'departmentName',
+			(SELECT de.id FROM trains.train_department de LEFT JOIN trains.train_department_position p ON p.department_id = de.id WHERE p.position_key = u.user_type AND u.company_id = de.office_id) AS 'departmentId',
+			(SELECT o.name FROM trains.sys_office o WHERE o.id = u.office_id) AS 'officeName',
+			u.mobile
+		FROM trains.sys_user u
+		WHERE u.del_flag = '0'
+		<if test="name != '' and name != null">
+			AND u.name like CONCAT('%', #{name}, '%')
+		</if>
+		<if test="id != '' and id != null">
+			AND u.id = #{id}
+		</if>
+	</select>
 </mapper>

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeInfo;
+import com.training.modules.sys.entity.OfficeLog;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.utils.BugLogUtils;
@@ -269,6 +271,12 @@ public class OfficeController extends BaseController {
 		if(office.getGrade().equals("2")){
 			office.getArea().setId(officeInfo.getAreaInfo().getId());
 		}
+
+		//记录店铺首图图片上传相关信息所需要的数据
+		User currentUser = UserUtils.getUser();//获取当前登录用户
+		List<String> lifeImgUrls = new ArrayList<String>();//店铺首图需要用到
+		String img = "";
+				
 		if("".equals(office.getId())){
 			if(office.getGrade().equals("2")){
 				//添加机构
@@ -278,6 +286,20 @@ public class OfficeController extends BaseController {
 				officeService.save(office);
 				office.setId(officeService.getByCode(office.getCode()).getId());
 				officeService.saveOfficeInfo(office);
+
+				//店铺首图
+				img = office.getOfficeInfo().getImg();
+				if(img != null && !"".equals(img)){
+					reservationTime(3, currentUser.getCreateBy().getId(), img, "", lifeImgUrls, office.getId(), "bm", null);
+				}
+				
+				//操作店铺保存记录日志
+				OfficeLog officeLog = new OfficeLog();
+				officeLog.setOfficeId(office.getId());
+				officeLog.setType(0);
+				officeLog.setContent("添加店铺");
+				officeLog.setUpdateBy(office.getCreateBy());
+				officeService.saveOfficeLog(officeLog);
 			}
 		}else{
 			//修改机构或修改实体店
@@ -285,10 +307,34 @@ public class OfficeController extends BaseController {
 				//修改机构
 				officeService.save(office);
 			}else{
+				//查询出修改前修改前店铺首图信息
+				OfficeInfo oldOffice = officeService.findbyid(office);
+				
 				//修改实体店
 				officeService.save(office);
 				officeService.saveOfficeInfo(office);
+
+				//店铺首图
+				img = office.getOfficeInfo().getImg() == null ? "" : office.getOfficeInfo().getImg();//修改后的首图信息
+				String oldImg = oldOffice.getImg() == null ? "" : oldOffice.getImg();//修改前的首图信息
+				if(!oldImg.equals(img)){
+					reservationTime(3, currentUser.getCreateBy().getId(), img, oldOffice.getImg(), lifeImgUrls, office.getId(), "bm", null);
+				}
 			}
+			
+			/**
+			 * 此处调用报货接口，在修改机构父项时将修改的机构数据同步到报货（只同步修改父项机构时）
+			 */
+			String weburl = ParametersFactory.getMtmyParamValues("modifyToOffice");
+			logger.info("##### web接口路径:"+weburl);
+			String parpm = "{\"office_id\":\""+office.getId()+"\",\"office_name\":\""+office.getName()+"\","
+					+ "\"franchisee_id\":"+office.getFranchisee().getId()+","
+					+ "\"office_pid\":\""+office.getParent().getId()+"\",\"office_pids\":\""+office.getParentIds()+"\"}";
+			String url=weburl;
+			String result = WebUtils.postCSObject(parpm, url);
+			JSONObject jsonObject = JSONObject.fromObject(result);
+			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+				
 		}
 		if(office.getChildDeptList()!=null){
 			Office childOffice = null;
@@ -324,7 +370,16 @@ public class OfficeController extends BaseController {
 //		if (Office.isRoot(id)){
 //			addMessage(redirectAttributes, "删除机构失败, 不允许删除顶级机构或编号空");
 //		}else{
+			//操作店铺保存记录日志(添加日志记录必须在删除之前,因为对应的del_flag=0,如果是删除之后,就不符合条件)
+			OfficeLog officeLog = new OfficeLog();
+			officeLog.setOfficeId(office.getId());
+			officeLog.setType(1);
+			officeLog.setContent("删除店铺");
+			officeService.saveOfficeLogDel(officeLog);
+			
+			//删除操作
 			officeService.delete(office);
+			
 			//删除机构时关联删除实体店铺信息
 			officeService.deleteOfficeInfo(office);
 			addMessage(redirectAttributes, "删除机构成功");
@@ -340,7 +395,6 @@ public class OfficeController extends BaseController {
 	 * @param response
 	 * @return
 	 */
-	@RequiresPermissions("user")
 	@ResponseBody
 	@RequestMapping(value = "treeData")
 	public List<Map<String, Object>> treeData(@RequestParam(required=false) String extId, @RequestParam(required=false) String type,
@@ -366,6 +420,60 @@ public class OfficeController extends BaseController {
 		}
 		return mapList;
 	}
+	
+	/**
+	 * 
+	 * @Title: parentTreeData
+	 * @Description: TODO 选择上级机构排除死循环
+	 * @param extId
+	 * @param type
+	 * @param grade
+	 * @param isAll
+	 * @param isGrade
+	 * @param response
+	 * @return:
+	 * @return: List<Map<String,Object>>
+	 * @throws
+	 * 2017年12月1日 兵子
+	 */
+	@ResponseBody
+	@RequestMapping(value = "parentTreeData")
+	public List<Map<String, Object>> parentTreeData(@RequestParam(required=false) String extId, @RequestParam(required=false) String type,
+			@RequestParam(required=false) Long grade, @RequestParam(required=false) Boolean isAll,@RequestParam(required=false) String isGrade, HttpServletResponse response) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<Office> list = officeService.findList(isAll);
+		for (int i=0; i<list.size(); i++){
+			Office e = list.get(i);
+				//选择上级机构时      上级机构为非店铺
+				if("true".equals(isGrade) && "1".equals(e.getGrade())){
+					continue;
+				}
+				Map<String, Object> map = Maps.newHashMap();
+				if (!"".equals(extId) && !"0".equals(e.getParentId()) && !extId.equals(e.getId()) && !e.getParentIds().contains(extId)) {
+					map.put("id", e.getId());
+					map.put("pId", e.getParentId());
+					map.put("pIds", e.getParentIds());
+					map.put("name", e.getName());
+					if (type != null && "3".equals(type)){
+						map.put("isParent", true);
+					}
+					mapList.add(map);
+					}
+				if ("".equals(extId)){
+					map.put("id", e.getId());
+					map.put("pId", e.getParentId());
+					map.put("pIds", e.getParentIds());
+					map.put("name", e.getName());
+					if (type != null && "3".equals(type)){
+						map.put("isParent", true);
+					}
+					mapList.add(map);
+					}
+		}
+		return mapList;
+	}
+	
+	
 	/**
 	 * 新机构
 	 * 获取机构JSON数据。
@@ -586,6 +694,14 @@ public class OfficeController extends BaseController {
 							//保存店铺同时保存到sys_office_info
 							officeInfo.setId(officeService.getByCode(office.getCode()).getId());
 							officeService.saveOfficeInfo2(officeInfo);
+							
+							//操作店铺保存记录日志
+							OfficeLog officeLog = new OfficeLog();
+							officeLog.setOfficeId(office.getId());
+							officeLog.setType(0);
+							officeLog.setContent("导入店铺");
+							officeLog.setUpdateBy(office.getCreateBy());
+							officeService.saveOfficeLog(officeLog);
 							
 							successNum++;
 						}else if("officeFalse".equals(str)){
@@ -825,8 +941,20 @@ public class OfficeController extends BaseController {
     				if(num > 0){
     					map.put("MESSAGE", "该店铺存在未完成的预约!");
     				}else{
-    					map.put("MESSAGE", "隐藏该店铺成功");
+    					map.put("MESSAGE", "操作成功");
     				}
+    				//操作店铺保存记录日志
+    				OfficeLog officeLog = new OfficeLog();
+    				officeLog.setOfficeId(id);
+    				if(isyesno.equals("0")){//开启店铺
+    					officeLog.setType(2);
+    					officeLog.setContent("开启店铺");
+    				}else if(isyesno.equals("1")){//隐藏店铺
+    					officeLog.setType(3);
+    					officeLog.setContent("隐藏店铺");
+    				}
+    				officeLog.setUpdateBy(UserUtils.getUser());
+    				officeService.saveOfficeLog(officeLog);
     			}else{
     				map.put("MESSAGE", "修改成功");
     			}
@@ -841,4 +969,75 @@ public class OfficeController extends BaseController {
 		}
     	return map;
     }
+    
+    /**
+	 * 记录店铺首图图片上传相关信息
+	 * @param beauticianId
+	 * @param serviceMin
+	 * @param shopId
+	 * @param labelId
+	 * @param request
+	 * @return
+	 */
+	private void reservationTime(int type, String createBy, String fileUrl, String oldUrl, List<String> lifeImgUrls, String userId, String client, HttpServletRequest request) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			String webReservationTime =	ParametersFactory.getMtmyParamValues("uploader_picture_url");	
+			if(!"-1".equals(webReservationTime)){
+				logger.info("##### web接口路径:"+webReservationTime);
+				String parpm = "{\"type\":\""+type+"\",\"create_by\":\""+createBy+"\",\"file_url\":\""+fileUrl+"\",\"old_url\":\""+oldUrl+"\",\"life_img_urls\":\""+lifeImgUrls+"\",\"user_id\":\""+userId+"\",\"client\":\""+client+"\"}";
+				String url=webReservationTime;
+				String result = WebUtils.postTrainObject(parpm, url);
+				jsonObject = JSONObject.fromObject(result);
+				logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			}
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "记录店铺首图、美容院和美容师图片上传相关信息", e);
+			logger.error("调用接口:记录店铺首图、美容院和美容师图片上传相关信息:"+e.getMessage());
+		}
+	}
+	
+    /**
+     * 
+     * @Title: newUserOffice
+     * @Description: TODO 机构树跳转页面
+     * @param compId
+     * @return:
+     * @return: String
+     * @throws
+     * 2017年11月2日 兵子
+     */
+    @RequestMapping(value="newUserOffice")
+    public String newUserOffice(String compId,Model model) {
+    	model.addAttribute("compId", compId);
+    	return "modules/sys/newUserOffice";
+	}
+    
+    /**
+     * 
+     * @Title: newOfficeTreeData
+     * @Description: TODO 根据商家id查询此商家下的机构
+     * @param compId
+     * @return:
+     * @return: List<Map<String,Object>>
+     * @throws
+     * 2017年11月2日 兵子
+     */
+    @ResponseBody
+    @RequestMapping(value="newOfficeTreeData")
+    public List<Map<String, Object>> newOfficeTreeData(String compId){
+    	List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<Office> list = officeService.newOfficeTreeData(compId);
+		for (int i=0; i<list.size(); i++){
+			Office e = list.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("id", e.getId());
+			map.put("pId", e.getParentId());
+			map.put("pIds", e.getParentIds());
+			map.put("name", e.getName());
+			mapList.add(map);
+		}
+    	return mapList;
+    }
+    
 }

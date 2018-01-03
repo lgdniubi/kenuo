@@ -391,11 +391,10 @@
 									
 									<li class="form-group">
 										<span class="control-label col-sm-2">适用地区：</span>
-										<div style="width: 40%;">
-											<input type="hidden" id="regionName" name="regionName" value="${goods.regionName }">
-											<sys:treeselect id="regionNameSelect" name="regionNameSelect" value="${goods.regionName }" 
-												labelName="regionNameSelect" labelValue="${goods.regionName }" 
-									     		title="地区" url="/sys/area/findListByPID" cssClass="form-control" notAllowSelectParent="true" checked="true"/>
+								     	<div style="width: 40%;">
+											<sys:treeselect id="regionNameSelect" name="regionId" value="${goods.regionId}" 
+												labelName="regionName" labelValue="${goods.regionName}" 
+									     		title="地区" url="/sys/area/findListByPID" cssClass="form-control" allowClear="true" notAllowSelectParent="true" checked="true"/>
 								     	</div>
 									</li>
 									<li>
@@ -421,7 +420,7 @@
 						</div>
 						<!-- 通用信息 End -->
 						<!-- 套卡子项 Begin -->
-						<div class="tab-pane fade" id="tab_goods_card">
+						<div class="tab-pane fade" id="tab_goods_card" style="border: 0">
 							<div>
 								<a href="#" onclick="addGoods(${goods.goodsId},1,2)" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加虚拟商品</a>
 								<a href="#" onclick="addGoods(${goods.goodsId},0,2)" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加实物商品</a>
@@ -727,7 +726,6 @@
 					}
 					$("#goodsContent").val(content);
 					$("#keywords").val($("#keywordsSelectName").val());//关键词，功效
-					$("#regionName").val($("#regionNameSelectName").val());//适用区域
 					var spec_arr = {};// 用户选择的规格数组
 					$("#goods_spec_table  span").each(function(){
 						if($(this).hasClass('btn-success')){
@@ -958,15 +956,40 @@
 			        var obj = layero.find("iframe")[0].contentWindow;
 					var goodsId = obj.document.getElementById("goodsId");
 					var goodsNum = obj.document.getElementById("goodsNum");
-			    	var marketPrice = obj.document.getElementById("marketPrice");
-					var price = obj.document.getElementById("price");
+			    	var totalMarketPrices = obj.document.getElementById("totalMarketPrices");
+					var totalPrices = obj.document.getElementById("totalPrices");
+				
+					if(!/^[1-9]\d{0,2}$/.test($(goodsNum).val()) || $(goodsNum).val() == 0){
+						top.layer.alert('次(个)数 必须大于0且必须小于三位数的整数', {icon: 0, title:'提醒'});
+						return;
+					}
+					/* if($(marketPrice).val() == 0){
+						top.layer.alert('市场价  必须大于0', {icon: 0, title:'提醒'});
+						return;
+					} */
+					if(!/^\d+(\.\d{1,2})?$/.test($(totalMarketPrices).val())){
+						top.layer.alert('市场价合计  小数点后不可以超过2位!', {icon: 0, title:'提醒'});
+						return;
+					}
+					/* if($(price).val() == 0){
+						top.layer.alert('优惠价  必须大于0', {icon: 0, title:'提醒'});
+						return;
+					} */
+					if(!/^\d+(\.\d{1,2})?$/.test($(totalPrices).val())){
+						top.layer.alert('优惠价合计  小数点后不可以超过2位!', {icon: 0, title:'提醒'});
+						return;
+					}
 					
 					//给市场价合计和优惠价合计赋值
 					$("#goodsNums"+i).val($(goodsNum).val());
-					$("#marketPrices"+i).val($(marketPrice).val());
-					$("#prices"+i).val($(price).val());
-					$("#totalMarketPrices"+i).val($(goodsNum).val()*$(marketPrice).val());
-					$("#totalPrices"+i).val($(goodsNum).val()*$(price).val());
+					$("#totalMarketPrices"+i).val(Number($(totalMarketPrices).val()));
+					$("#totalPrices"+i).val(Number($(totalPrices).val()));
+					var tmp = Number($(totalMarketPrices).val()/$(goodsNum).val()).toFixed(3);
+					var tp = Number($(totalPrices).val()/$(goodsNum).val()).toFixed(3);
+					tmp = tmp.substring(0,tmp.lastIndexOf('.')+3);
+					tp = tp.substring(0,tp.lastIndexOf('.')+3);
+					$("#marketPrices"+i).val(tmp);
+					$("#prices"+i).val(tp);
 					countPrice();
 					
 					top.layer.close(index);
@@ -985,20 +1008,20 @@
 		
 		//计算市场价合计和优惠价合计
 		function countPrice(){
-			var tmp = 0;
-			var tp = 0;
+			var tmp=0;
+			var tp=0;
 			$("[name='totalMarketPrices']").each(function(){
-				tmp += parseInt($(this).val());
+				tmp += parseFloat($(this).val());
 			});
 			$("[name='totalPrices']").each(function(){
-				tp += parseInt($(this).val());
+				tp += parseFloat($(this).val());
 			});
 			
-			$(".totalMarketPrices").html(tmp);
-			$(".totalPrices").html(tp);
+			$(".totalMarketPrices").html(Number(tmp).toFixed(2));
+			$(".totalPrices").html(Number(tp).toFixed(2));
 			//为通用信息的市场价合计和优惠价合计赋值
-			$("#marketPrice").val(tmp);
-			$("#shopPrice").val(tp);
+			$("#marketPrice").val(Number(tmp).toFixed(2));
+			$("#shopPrice").val(Number(tp).toFixed(2));
 		}
     </script>
 </body>

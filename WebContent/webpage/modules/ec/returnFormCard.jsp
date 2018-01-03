@@ -57,11 +57,11 @@
 			  }
 			  //退款金额校验
 			  var ra=$("#returnAmount").val();
-			  if(parseFloat(ra)<=0){
-				  top.layer.alert('退款金额必须大于0，小于等于支付金额!', {icon: 0, title:'提醒'});
+			  if(parseFloat(ra)<0){
+				  top.layer.alert('退款金额必须大于等于0，小于等于支付金额!', {icon: 0, title:'提醒'});
 				  return;
-			  }else if(parseFloat(totalAmount) < parseFloat(ra)){
-				  top.layer.alert('退款金额必须大于0，小于等于支付金额!', {icon: 0, title:'提醒'});
+			  }else if(parseFloat(surplusReturnAmount) < parseFloat(ra)){
+				  top.layer.alert('退款金额必须大于等于0，小于等于支付金额!', {icon: 0, title:'提醒'});
 				  return;
 			  }
 			  $("#inputForm").submit();
@@ -137,6 +137,23 @@
 				$("#orderAmount").val(orderAmount);
 				$("#totalAmount").val(totalAmount);
 			}
+			//售后金额 <= 实付金额-已售后
+			$.ajax({
+				type:"post",
+				async:false,
+				data:{
+					goodsMappingId:recid,
+					orderId:orderId
+				 },
+				url:"${ctx}/ec/returned/getSurplusReturnAmount",
+				success:function(obj){
+					//计算商品剩余可退款金额
+					surplusReturnAmount = totalAmount - obj;
+				},
+				error:function(XMLHttpRequest,textStatus,errorThrown){
+							    
+				}
+			});
 		}
 		//实物售后数量校验
 		function findReturnNum (id,num){
@@ -152,11 +169,11 @@
 		//虚拟商品的退款金额校验
 		function returnChangeAmount(){
 			var ra=$("#returnAmount").val();
-			if(parseFloat(ra)<=0){
-				top.layer.alert('退款金额必须大于0，小于等于支付金额!', {icon: 0, title:'提醒'});
+			if(parseFloat(ra)<0){
+				top.layer.alert('退款金额必须大于等于0，小于等于支付金额!', {icon: 0, title:'提醒'});
 				return;
-			}else if(parseFloat(totalAmount) < parseFloat(ra)){
-				top.layer.alert('退款金额必须大于0，小于等于支付金额!', {icon: 0, title:'提醒'});
+			}else if(parseFloat(surplusReturnAmount) < parseFloat(ra)){
+				top.layer.alert('退款金额必须大于等于0，小于等于支付金额!', {icon: 0, title:'提醒'});
 				return;
 			}
 		}
@@ -197,6 +214,89 @@
 					}
 				}
 			});
+			
+			/* $("#belongOfficeButton").click(function(){
+				// 是否限制选择，如果限制，设置为disabled
+				if ($("#belongOfficeButton").hasClass("disabled")){
+					return true;
+				}
+				// 正常打开	
+				top.layer.open({
+				    type: 2, 
+				    area: ['300px', '420px'],
+				    title:"选择部门",
+				    ajaxData:{selectIds: $("#belongOfficeId").val()},
+				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/office/treeData?type=2")+"&module=&checked=&extId=&isAll=&selectIds=" ,
+				    btn: ['确定', '关闭']
+		    	       ,yes: function(index, layero){ //或者使用btn1
+								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+								var ids = [], names = [], nodes = [];
+								if ("" == "true"){
+									nodes = tree.getCheckedNodes(true);
+								}else{
+									nodes = tree.getSelectedNodes();
+								}
+								for(var i=0; i<nodes.length; i++) {//
+									ids.push(nodes[i].id);
+									names.push(nodes[i].name);//
+									break; // 如果为非复选框选择，则返回第一个选择  
+								}
+								$("#belongOfficeId").val(ids.join(",").replace(/u_/ig,""));
+								$("#belongOfficeName").val(names.join(","));
+								$("#belongOfficeName").focus();
+								top.layer.close(index);
+								$("#belongUserId").val("");
+								$("#belongUserName").val("");
+						    	       },
+		    	cancel: function(index){ //或者使用btn2
+		    	           //按钮【按钮二】的回调
+		    	       }
+				}); 
+			
+			});
+			
+			$("#belongUserButton").click(function(){
+				var belongOfficeId = $("#belongOfficeId").val();
+				// 是否限制选择，如果限制，设置为disabled
+				if ($("#belongUserButton").hasClass("disabled")){
+					return true;
+				}
+				
+				if(belongOfficeId == null || belongOfficeId == ""){
+					top.layer.alert('请先选择归属机构!', {icon: 0, title:'提醒'});
+				}else{
+					// 正常打开	
+					top.layer.open({
+					    type: 2, 
+					    area: ['300px', '420px'],
+					    title:"选择人员",
+					    ajaxData:{belongOfficeId:belongOfficeId},
+					    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/user/officeUserTreeData?belongOfficeId="+belongOfficeId),
+					    btn: ['确定', '关闭']
+			    	       ,yes: function(index, layero){ //或者使用btn1
+									var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+									var ids = [], names = [], nodes = [];
+									if ("" == "true"){
+										nodes = tree.getCheckedNodes(true);
+									}else{
+										nodes = tree.getSelectedNodes();
+									}
+									for(var i=0; i<nodes.length; i++) {//
+										ids.push(nodes[i].id);
+										names.push(nodes[i].name);//
+										break; // 如果为非复选框选择，则返回第一个选择  
+									}
+									$("#belongUserId").val(ids.join(",").replace(/u_/ig,""));
+									$("#belongUserName").val(names.join(","));
+									$("#belongUserName").focus();
+									top.layer.close(index);
+							    	       },
+			    	cancel: function(index){ //或者使用btn2
+			    	           //按钮【按钮二】的回调
+			    	       }
+					}); 
+				}
+			}); */
 		});
 </script>
 </head>
@@ -229,7 +329,7 @@
 								<th style="text-align: center;">成本价</th>
 								<th style="text-align: center;">购买数量</th>
 								<th style="text-align: center;">应付款</th>
-								<th style="text-align: center;">实付款</th>
+								<th style="text-align: center;">实付金额</th>
 								<th style="text-align: center;">欠款</th>
 							</tr>
 						</thead>
@@ -244,6 +344,43 @@
 			        <label><font color="red">*</font>问题描述：</label>
 			        <form:textarea path="problemDesc" htmlEscape="false" rows="3"  style="width:300px;" maxlength="200" class="form-control required"/>
 			        <p></p>
+			        <!-- <table id="contentTable" class="table-condensed dataTable no-footer">
+						<tr>
+							<td>
+								<label><font color="red">*</font>归属机构：</label>
+							</td>
+							<td width="300px" height="30px">
+								<input id="belongOfficeId" class=" form-control input-sm" name="belongOfficeId" value="" type="hidden">
+								<div class="input-group">
+									<input id="belongOfficeName" class=" form-control required input-sm" name="belongOfficeName" readonly="readonly" value="" data-msg-required="" style="" type="text">
+										<span class="input-group-btn">
+											<button id="belongOfficeButton" class="btn btn-sm btn-primary " type="button">
+												<i class="fa fa-search"></i>
+											</button>
+										</span>
+								</div>
+								<label id="belongOfficeName-error" class="error" for="belongOfficeName" style="display:none"></label>
+							</td>	
+						</tr>
+						<tr>
+							<td>
+								<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;归属人：</label>
+							</td>
+							<td width="300px" height="30px">
+								<input id="belongUserId" class=" form-control input-sm" name="belongUserId" value="" type="hidden">
+								<div class="input-group">
+									<input id="belongUserName" class=" form-control input-sm" name="belongUserName" readonly="readonly" value="" data-msg-required="" style="" type="text">
+										<span class="input-group-btn">
+											<button id="belongUserButton" class="btn btn-sm btn-primary " type="button">
+												<i class="fa fa-search"></i>
+											</button>
+										</span>
+								</div>
+								<label id="belongUserName-error" class="error" for="belongUserName" style="display:none"></label>
+							</td>
+						</tr>
+					</table>
+					<p></p> -->
 			        <label><font color="red">*</font>申请类型：</label>
 		        	<form:select path="applyType" class="form-control" style="width:185px;" >
 						<form:option value="0">退货并退款</form:option>

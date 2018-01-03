@@ -130,4 +130,13 @@ public class OrderGoodsDetailsService extends TreeService<OrderGoodsDetailsDao, 
 	public OrderGoodsDetails selectOrderBalance(int recId){
 		return dao.selectOrderBalance(recId);
 	}
+	
+	/**
+	 * 根据订单id查询下单时候的总的app实付
+	 * @param orderId
+	 * @return
+	 */
+	public double queryAppSum(String orderId){
+		return dao.queryAppSum(orderId);
+	}
 }

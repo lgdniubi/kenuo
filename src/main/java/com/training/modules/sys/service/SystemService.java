@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.shiro.session.Session;
 import org.restlet.engine.util.DateUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -27,6 +29,7 @@ import com.training.common.utils.StringUtils;
 import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.entity.Users;
 import com.training.modules.ec.utils.SaveLogUtils;
+import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.sys.dao.DictDao;
 import com.training.modules.sys.dao.MenuDao;
@@ -51,9 +54,13 @@ import com.training.modules.sys.entity.UserSpeciality;
 import com.training.modules.sys.entity.UserVo;
 import com.training.modules.sys.entity.Userinfo;
 import com.training.modules.sys.entity.Userinfocontent;
+import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.LogUtils;
+import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.entity.FzxRole;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -438,6 +445,10 @@ public class SystemService extends BaseService implements InitializingBean {
 	public void saveUser(User user) {
 		// UserLog userLog = new UserLog();
 		
+		User currentUser = UserUtils.getUser();//记录图片上传时,获取当前登录用户的信息
+		String lifeImgUrls = "";//记录图片上传时,图片格式为string类型(格式必须如此)
+		List<String> oldLifeImgUrls = new ArrayList<String>();//生活照调用接口(必传数据,修改之前的照片信息,格式必须如此)
+
 		if (StringUtils.isBlank(user.getId())) {
 			user.preInsert();
 			if("2".equals(user.getResult())){
@@ -460,6 +471,11 @@ public class SystemService extends BaseService implements InitializingBean {
 				userDao.insert(user);
 			}
 			
+			//美容师头像
+			if(user.getPhoto() != null && user.getPhoto().length() != 0){
+				reservationTime(1, currentUser.getCreateBy().getId(), user.getPhoto(), "", lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
+			}
+			
 			// userinfo.preInsert();
 			if (user.getUserinfo() != null) {
 				user.getUserinfo().preInsert();
@@ -480,8 +496,15 @@ public class SystemService extends BaseService implements InitializingBean {
 				List<Userinfocontent> contlist = livePicTolist(user); // 获取图片信息list
 				if (contlist.size() > 0) {
 					userinfocontentDao.insertPiclive(contlist);
+					
+					//美容师生活图
+					for (Userinfocontent ufc : contlist) {
+						lifeImgUrls +="," + ufc.getUrl();
+					}
+					lifeImgUrls = lifeImgUrls.substring(1);
+					reservationTime(2, currentUser.getCreateBy().getId(), null, null, lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
 				}
-
+				
 			}
 			
 			if(user.getSkill() != null){
@@ -492,12 +515,28 @@ public class SystemService extends BaseService implements InitializingBean {
 			}
 			// 2017年9月1日 新用户默认商家权限为当前商家
 			userDao.insertFranchiseeAuth(user.getId(), user.getCompany().getId());
+			//saveFzxRoleOfficeById("4",user.getOffice().getId(),user.getId());
+			//给用户设置默认的妃子校角色和权限
+			FzxRole fzxRole  = new FzxRole();
+			fzxRole.setRoleId(4);
+			//user.setId(user.getId());
+			user.setFzxRole(fzxRole);
+			userDao.saveFzxRoleByUser(user);
+			userDao.saveOfficeById(user.getReturnId(),user.getOffice().getId());
 		} else {
 //			saveUserLog1(user);
 			// 清除原用户机构用户缓存
 			User oldUser = userDao.get(user.getId());
 			//保存用户日志
 			String str = specialLog(oldUser,user);
+
+			//判断美容师头像是否修改   和之前的美容师头像进行比较
+			String photo = user.getPhoto() == null ? "" : user.getPhoto();//修改之后的美容师头像
+			String oldPhoto = oldUser.getPhoto() == null ? "" : oldUser.getPhoto();//修改之前的美容师头像
+			if(!oldPhoto.equals(photo)){
+				reservationTime(1, currentUser.getCreateBy().getId(), user.getPhoto(), oldUser.getPhoto(), lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
+			}
+			
 			JSONObject json = new JSONObject();
 			json.put("property", "[\"no\",\"name\",\"loginName\",\"idCard\",\"inductionTime\",\"email\",\"phone\",\"mobile\"]");
 			json.put("name", "[\"工号\",\"姓名\",\"登录名\",\"身份证号码\",\"入职日期\",\"邮箱\",\"电话\",\"手机号码\"]");
@@ -551,14 +590,20 @@ public class SystemService extends BaseService implements InitializingBean {
 
 				List<Userinfocontent> contlist = livePicTolist(user); // 获取图片信息list
 				if (contlist.size() > 0) {
+					//美容师生活照修改之前,先查询是否存在旧照片
+					oldLifeImgUrls = userinfocontentDao.findByUserId(user.getId());
+					
 					userinfocontentDao.deletPicByuser(user.getId());
 					userinfocontentDao.insertPiclive(contlist);
+
+					//美容师生活图
+					lifeImgUrls = user.getUserinfocontent().getUrl();//必须是String类型的数据
+					reservationTime(2, currentUser.getCreateBy().getId(), null, null, lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
 				}
 			}
 			
 //begin     修改妃子校用户同时更新每天美耶用户开始   修改时间2017年1月23日
 			//用于验证每天美耶用户   
-			User currentUser = UserUtils.getUser();
 			Users u = new Users();
 			u.setId(currentUser.getId());
 			u.setUserid(user.getMtmyUserId());
@@ -593,8 +638,36 @@ public class SystemService extends BaseService implements InitializingBean {
 			}
 //end     修改妃子校用户同时更新每天美耶用户结束
 			
+//			用户商家发生变化时,数据权限跟着变化
+			if(oldUser.getCompany() != null){
+				if(!oldUser.getCompany().getId().equals(user.getCompany().getId())){
+					userDao.deleteFranchiseeAuth(user);
+					userDao.insertFranchiseeAuth(user.getId(), user.getCompany().getId());
+				}
+			}else{
+				userDao.deleteFranchiseeAuth(user);
+				userDao.insertFranchiseeAuth(user.getId(), user.getCompany().getId());
+			}
+			
 			user.preUpdate();
 			userDao.update(user);
+			/**
+			 * 此处更新完用户之后将用户数据同步到报货，调用报货接口
+			 */
+			if (StringUtils.isNotBlank(user.getId())) {
+				User toUser = userDao.get(user);
+				String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
+    			logger.info("##### web接口路径:"+weburl);
+    			String parpm = "{\"user_id\":\""+toUser.getId()+"\",\"user_name\":\""+toUser.getName()+"\",\"franchisee_id\":"+toUser.getCompany().getId()+","
+    					+ "\"user_mobile\":\""+toUser.getMobile()+"\",\"login_name\":\""+toUser.getLoginName()+"\"}";
+    			String url=weburl;
+    			String result = WebUtils.postCSObject(parpm, url);
+    			JSONObject jsonObject = JSONObject.fromObject(result);
+    			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+    			if(!"200".equals(jsonObject.get("result"))){
+    				return;
+    			}
+			}
 		}
 		if (StringUtils.isNotBlank(user.getId())) {
 			// 更新用户与角色关联
@@ -1051,5 +1124,107 @@ public class SystemService extends BaseService implements InitializingBean {
 	@Transactional(readOnly = false)
 	public void updateStatus(User user){
 		userDao.updateStatus(user);
+	}
+
+	/**
+	 * 
+	 * @Title: saveUserAndFzxRole
+	 * @Description: TODO 保存用户权限
+	 * @param user
+	 * @return:
+	 * @return: Integer
+	 * @throws
+	 * 2017年10月26日
+	 */
+	public Integer saveUserAndFzxRole(User user) {
+		
+		return null;
+	}
+
+	/**
+	 * 保存用户的角色和权限
+	 * @param fzxRoleId
+	 * @param officeIds
+	 * @param userId
+	 */
+	@Transactional(readOnly = false)
+	public void saveFzxRoleOfficeById(String fzxRoleId, String officeIds, String userId) {
+		User user  = new User();
+		FzxRole fzxRole  = new FzxRole();
+		fzxRole.setRoleId(Integer.valueOf(fzxRoleId));
+		user.setId(userId);
+		user.setFzxRole(fzxRole);
+		userDao.saveFzxRoleByUser(user);
+		if (user.getReturnId() != null && !"".equals(officeIds)) {
+			String[] officeId = officeIds.split(",");
+			for (String offId : officeId) {
+				userDao.saveOfficeById(user.getReturnId(),offId);
+			}
+		}
+		redisClientTemplate.del("UTOKEN_"+userId);
+	}
+
+	/**
+	 * 根据id删除权限
+	 * @param id
+	 */
+	@Transactional(readOnly = false)
+	public void delFzxRoleByUser(Integer id,String userId,String roleId) {
+		//先删除权限
+		userDao.deleteOfficeById(id);
+		//然后删除角色
+		userDao.deleteFzxRoleByUser(userId,roleId);
+		redisClientTemplate.del("UTOKEN_"+userId);
+	}
+
+	/**
+	 * 修改用户权限
+	 * @param id
+	 */
+	@Transactional(readOnly = false)
+	public void updateOfficeById(String id,String officeIds,String userId) {
+		String[] offIds = officeIds.split(",");
+		userDao.deleteOfficeById(Integer.valueOf(id));
+		if (!"".equals(officeIds)) {
+			for (String ofId : offIds) {
+				userDao.updateOfficeById(Integer.valueOf(id),ofId);
+			}
+		}
+		redisClientTemplate.del("UTOKEN_"+userId);
+	}
+
+	
+	/**
+	 * 记录店铺首图、美容院和美容师图片上传相关信息
+	 * @param beauticianId
+	 * @param serviceMin
+	 * @param shopId
+	 * @param labelId
+	 * @param request
+	 * @return
+	 */
+	private void reservationTime(int type, String createBy, String fileUrl, String oldUrl, String lifeImgUrls, String userId, String client, HttpServletRequest request, List<String> oldLifeImgUrls) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			String webReservationTime =	ParametersFactory.getMtmyParamValues("uploader_picture_url");
+			if(!"-1".equals(webReservationTime)){
+				logger.info("##### web接口路径:"+webReservationTime);
+				String parpm = "";
+				if(type == 1){
+					parpm = "{\"type\":\""+type+"\",\"create_by\":\""+createBy+"\",\"file_url\":\""+fileUrl+"\",\"old_url\":\""+oldUrl+"\",\"life_img_urls\":\""+lifeImgUrls+"\",\"user_id\":\""+userId+"\",\"client\":\""+client+"\"}";
+				}else if(type == 2){
+					parpm = "{\"type\":\""+type+"\",\"create_by\":\""+createBy+"\",\"file_url\":\"\",\"old_url\":"+JSONArray.fromObject(oldLifeImgUrls)+",\"life_img_urls\":\""+lifeImgUrls+"\",\"user_id\":\""+userId+"\",\"client\":\""+client+"\"}";
+				}
+				String url=webReservationTime;
+				System.out.println(parpm);
+				String result = WebUtils.postTrainObject(parpm, url);
+				jsonObject = JSONObject.fromObject(result);
+				logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			}
+			
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "记录店铺首图、美容院和美容师图片上传相关信息", e);
+			logger.error("调用接口:记录店铺首图、美容院和美容师图片上传相关信息:"+e.getMessage());
+		}
 	}
 }

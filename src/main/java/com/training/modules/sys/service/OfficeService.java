@@ -5,16 +5,21 @@ package com.training.modules.sys.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
+import com.google.common.collect.Lists;
+import com.training.common.service.BaseService;
 import com.training.common.service.TreeService;
 import com.training.common.utils.StringUtils;
 import com.training.modules.sys.dao.OfficeDao;
 import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeInfo;
+import com.training.modules.sys.entity.User;
+import com.training.modules.sys.entity.OfficeLog;
 import com.training.modules.sys.utils.UserUtils;
 
 /**
@@ -25,6 +30,9 @@ import com.training.modules.sys.utils.UserUtils;
 @Service
 @Transactional(readOnly = true)
 public class OfficeService extends TreeService<OfficeDao, Office> {
+	
+	@Autowired
+	private OfficeDao officeDao;
 
 	public List<Office> findAll(){
 		return UserUtils.getOfficeList();
@@ -312,4 +320,68 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public void updateisyesno(String id,String type,String isyesno){
 		dao.updateisyesno(id,type,isyesno);
 	}
+
+	/**
+	 * 
+	 * @Title: findOfficeByUserIdAndFzxRoleId
+	 * @Description: TODO 查询当前用户下角色的权限
+	 * @param roleId
+	 * @param id
+	 * @return:
+	 * @return: List<Office>
+	 * @throws
+	 * 2017年10月27日
+	 */
+	public List<Office> findOfficeByUserIdAndFzxRoleId(int roleId, String id) {
+		return officeDao.findOfficeByUserIdAndFzxRoleId(roleId,id);
+	}
+
+	/**
+	 * 
+	 * @Title: newOfficeTreeData
+	 * @Description: TODO 根据商家id查询此商家下的归属机构
+	 * @param compId
+	 * @return:
+	 * @return: List<Office>
+	 * @throws
+	 * 2017年11月1日
+	 */
+	public List<Office> newOfficeTreeData(String compId) {
+		List<Office> officeList = Lists.newArrayList();
+		User user = UserUtils.getUser();
+		Office office = new Office();
+		office.setId(compId);
+		office.getSqlMap().put("dsf", BaseService.dataScopeFilter(user, "a"));
+		officeList = officeDao.newOfficeTreeData(office);
+		return officeList;
+	}
+	
+	/**
+	 * 实物订单发货到店查询店铺详情
+	 * @param id
+	 * @return
+	 */
+	public OfficeInfo selectOfficeDetails(String id){
+		return dao.selectOfficeDetails(id);
+	}
+
+	/**
+	 * 操作店铺时保存日志记录
+	 * @param officeLog
+	 */
+	@Transactional(readOnly = false)
+	public void saveOfficeLog(OfficeLog officeLog) {
+		dao.saveOfficeLog(officeLog);
+	}
+
+	/**
+	 * 删除店铺时保存日志记录
+	 * @param officeLog
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	public void saveOfficeLogDel(OfficeLog officeLog) {
+		dao.saveOfficeLogDel(officeLog);
+	}
+
 }

@@ -168,11 +168,11 @@
 					                </li>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>商品名称：</span>
-										<form:input path="goodsName" htmlEscape="false" maxlength="150" class="form-control required"/>
+										<form:input path="goodsName" maxlength="150" class="form-control required"/>
 									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>短标题：</span>
-										<form:input path="goodsShortName" htmlEscape="false" maxlength="50" class="form-control required"/>
+										<form:input path="goodsShortName" maxlength="50" class="form-control required"/>
 									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2">商品SEO：</span>
@@ -199,7 +199,7 @@
 									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2">商品标签：</span>
-										<form:input path="goodsTags" htmlEscape="false" maxlength="17" onblur="this.value=ignoreSpaces(this.value);" class="form-control"/>
+										<form:input path="goodsTags" maxlength="17" onblur="this.value=ignoreSpaces(this.value);" class="form-control"/>
 										<span class="control-label cannotEdit">(多个标签用"#"分开)</span>
 									</li>
 									
@@ -238,6 +238,15 @@
 											 <label id="goodsCategoryIdName-error" class="error" for="goodsCategoryIdName" style="display:none"></label>
 								     	</div>	
 									</li>
+									<li class="form-group" id="position">
+										<span class="control-label col-sm-2"><font color="red">*</font>项目部位：</span>
+										<select class="form-control" id="positionId" name="positionId">
+											<option value="">请选择部位</option>
+											<c:forEach items="${goodsPositionList}" var="goodsPosition">
+												<option ${(goodsPosition.id == goods.positionId)?'selected="selected"':''} value="${goodsPosition.id}">${goodsPosition.name}</option>
+					                   		</c:forEach>
+					                    </select>
+					                </li>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>商品品牌：</span>
 										<select class="form-control" id="goodsBrandId" name="goodsBrandId">
@@ -389,9 +398,8 @@
 									<li class="form-group">
 										<span class="control-label col-sm-2">适用地区：</span>
 										<div style="width: 40%;">
-											<input type="hidden" id="regionName" name="regionName" value="${goods.regionName }">
-											<sys:treeselect id="regionNameSelect" name="regionNameSelect" value="${goods.regionName }" 
-												labelName="regionNameSelect" labelValue="${goods.regionName }" 
+											<sys:treeselect id="regionNameSelect" name="regionId" value="${goods.regionId}" 
+												labelName="regionName" labelValue="${goods.regionName}" 
 									     		title="地区" url="/sys/area/findListByPID" cssClass="form-control" notAllowSelectParent="true" checked="true"/>
 								     	</div>
 									</li>
@@ -736,11 +744,11 @@
 			if(v == 0){
 				//实物
 				$("#serviceMin").attr("disabled","disabled"); 
-				$("#goodsTypeLi,#advancePriceLi").hide();
+				$("#position").hide();
 			}else if(v == 1){
 				//虚拟
 				$("#serviceMin").removeAttr("disabled"); 
-				$("#goodsTypeLi,#advancePriceLi").show();
+				$("#position").show();
 			}
 		}
 	
@@ -908,6 +916,7 @@
 					var goodsSn=$("#goodsSn").val();
 					var franchiseeId=$("#franchiseeId").val();
 					var goodsCategoryId=$("#goodsCategoryId").val();
+					var positionId=$("#positionId").val();
 					if(goodsName==""){
 						top.layer.alert('商品名称不能为空!', {icon: 0, title:'提醒'});
 						return;
@@ -928,6 +937,13 @@
 						top.layer.alert('所属商家不能为空!', {icon: 0, title:'提醒'});
 						return;
 					}
+					//当虚拟商品时,项目部位是必选
+					if($("#isReal:checked").val() == 1){
+						if(positionId==""){
+							top.layer.alert('请选择项目部位!', {icon: 0, title:'提醒'});
+							return;
+						}
+					}
 					/* var goodsNum=${goods.goodsNum};
 
 					if(goodsNum>0){
@@ -940,7 +956,6 @@
 					}
 					$("#goodsContent").val(content);
 					$("#keywords").val($("#keywordsSelectName").val());//关键词，功效
-					$("#regionName").val($("#regionNameSelectName").val());//适用区域
 					var spec_arr = {};// 用户选择的规格数组
 					$("#goods_spec_table  span").each(function(){
 						if($(this).hasClass('btn-success')){

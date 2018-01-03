@@ -50,11 +50,11 @@
 								</c:forEach>
 							</select>
 							<p></p>
-				 时间范围：<input id="beginDate" name="beginDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" 
-								value="<fmt:formatDate value="${reservation.beginDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endDate\')}'})" readonly="readonly"/>
+				 时间范围：<input id="beginDate" name="beginDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 185px" type="text" 
+								value="<fmt:formatDate value="${reservation.beginDate}" pattern="yyyy-MM-dd"/>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endDate\')}'})" readonly="readonly"/>
 							<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-							<input id="endDate" name="endDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" 
-								value="<fmt:formatDate value="${reservation.endDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'beginDate\')}'})" readonly="readonly"/>		
+							<input id="endDate" name="endDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 185px" type="text" 
+								value="<fmt:formatDate value="${reservation.endDate}" pattern="yyyy-MM-dd"/>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'beginDate\')}'})" readonly="readonly"/>		
 						 </div>	
 					</form>
 					 <div class="pull-right">
@@ -67,8 +67,13 @@
 					<div class="col-sm-12">
                         <div class="pull-left">
                         	<shiro:hasPermission name="ec:mtmyMnappointment:addReservation">
-	                        	<button class="btn btn-white btn-sm" title="添加预约" onclick="openDialog('添加预约', '${ctx}/ec/mtmyMnappointment/addReservation','750px', '600px')" data-placement="left" data-toggle="tooltip">
+	                        	<button class="btn btn-white btn-sm" title="添加预约" onclick="openDialog('添加预约', '${ctx}/ec/mtmyMnappointment/addReservation','800px', '600px')" data-placement="left" data-toggle="tooltip">
 									<i class="fa fa-plus"></i>添加预约
+								</button>
+							</shiro:hasPermission>
+							<shiro:hasPermission name="ec:mtmyMnappointment:addMoreReservation">
+	                        	<button class="btn btn-white btn-sm" title="添加多项目预约" onclick="openDialog('添加多项目预约', '${ctx}/ec/mtmyMnappointment/addMoreReservation','800px', '600px')" data-placement="left" data-toggle="tooltip">
+									<i class="fa fa-plus"></i>添加多项目预约
 								</button>
 							</shiro:hasPermission>
                         </div>
@@ -116,6 +121,9 @@
 								  		<shiro:hasAnyPermissions name="ec:mtmyMnappointment:cancel">
 											<a class="btn btn-success btn-xs btn-danger" href="${ctx}/ec/mtmyMnappointment/cancel?reservationId=${reservation.reservationId }" onclick="return confirmx('确定要取消此预约吗？', this.href)"><i class="fa fa-close"></i>取消</a>
 										</shiro:hasAnyPermissions>
+									</c:if>
+									<c:if test="${reservation.apptStatus == '1' or reservation.apptStatus == '2'}">
+										<a href="#" onclick="openDialog('编辑实际服务时间', '${ctx}/ec/mtmyMnappointment/getServiceTime?reservationId=${reservation.reservationId }','750px', '400px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 添加服务时长</a>
 									</c:if>
 							  	</td>
 							</tr>

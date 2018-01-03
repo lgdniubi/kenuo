@@ -27,6 +27,7 @@ import com.training.modules.ec.entity.GoodsAttribute;
 import com.training.modules.ec.entity.GoodsAttributeMappings;
 import com.training.modules.ec.entity.GoodsEquipmentLabel;
 import com.training.modules.ec.entity.GoodsImages;
+import com.training.modules.ec.entity.GoodsPosition;
 import com.training.modules.ec.entity.GoodsSkill;
 import com.training.modules.ec.entity.GoodsSpecImage;
 import com.training.modules.ec.entity.GoodsSpecPrice;
@@ -71,6 +72,8 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 	private EquipmentLabelDao equipmentLabelDao;
 	@Autowired
 	private GoodsStatisticsDao goodsStatisticsDao;
+	@Autowired
+	private GoodsPositionService goodsPositionService;
 
 	/**
 	 * 分页展示所有信息
@@ -94,7 +97,10 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 	public void saveGoods(Goods goods, HttpServletRequest request) {
 		// 商品详情转换
 		goods.setGoodsContent(HtmlUtils.htmlUnescape(goods.getGoodsContent()));
-
+		goods.setGoodsName(HtmlUtils.htmlUnescape(goods.getGoodsName()));
+		goods.setGoodsShortName(HtmlUtils.htmlUnescape(goods.getGoodsShortName()));
+		goods.setGoodsTags(HtmlUtils.htmlUnescape(goods.getGoodsTags()));
+		
 		if (0 == goods.getGoodsId()) {
 			// 添加
 			goods.setAttrType((goods.getAttrType() == null || "".equals(goods.getAttrType())) ? null : goods.getAttrType());
@@ -106,6 +112,15 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 			goods.setIsFreeShipping(goods.getIsFreeShipping() == null ? "0" : goods.getIsFreeShipping());
 			goods.setIsNew(goods.getIsNew() == null ? "0" : goods.getIsNew());
 
+			//虚拟商品 查询项目部位的父级id
+			if(goods.getIsReal().equals("1")){
+				GoodsPosition goodsPosition = new GoodsPosition();
+				goodsPosition.setId(goods.getPositionId());
+				goodsPosition = goodsPositionService.get(goodsPosition);
+				//项目部位IDS（以下划线隔开）
+				goods.setPositionIds(goodsPosition.getParentId()+"_"+goodsPosition.getId());
+			}
+			
 			// 保存
 			dao.insert(goods);
 			int goodId = goods.getGoodsId();
@@ -365,6 +380,14 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 			goods.setIsFreeShipping(goods.getIsFreeShipping() == null ? "0" : goods.getIsFreeShipping());
 			goods.setIsNew(goods.getIsNew() == null ? "0" : goods.getIsNew());
 
+			//虚拟商品 查询项目部位的父级id
+			if(goods.getIsReal().equals("1")){
+				GoodsPosition goodsPosition = new GoodsPosition();
+				goodsPosition.setId(goods.getPositionId());
+				goodsPosition = goodsPositionService.get(goodsPosition);
+				//项目部位IDS（以下划线隔开）
+				goods.setPositionIds(goodsPosition.getParentId()+"_"+goodsPosition.getId());
+			}
 			updateGoods(goods);
 
 			// 用户商品上下架Regis缓存

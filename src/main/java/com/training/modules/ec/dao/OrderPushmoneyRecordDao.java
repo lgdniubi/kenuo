@@ -8,6 +8,7 @@ import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.OrderPushmoneyRecord;
 import com.training.modules.ec.entity.PushmoneyRecordLog;
+import com.training.modules.ec.entity.TurnOverDetails;
 /**
  * 订单提成记录Dao
  * @author dalong
@@ -54,5 +55,39 @@ public interface OrderPushmoneyRecordDao extends TreeDao<OrderPushmoneyRecord> {
 	 * @param pushmoneyRecordLog
 	 */
 	void insertPushMoneyLog(PushmoneyRecordLog pushmoneyRecordLog);
+
+	/**
+	 * 通过业务员id(属于妃子校的)查询业务员归属机构
+	 * @param orderPushmoneyRecord
+	 * @return
+	 */
+	OrderPushmoneyRecord getOfficeIdByUserId(OrderPushmoneyRecord orderPushmoneyRecord);
+
+	/**
+	 * 查询营业额是否为第二次编辑(根据售后id是否存在)
+	 * @param turnOverDetails
+	 * @return
+	 */
+	List<OrderPushmoneyRecord> findOrderPushmoneyRecordList(TurnOverDetails turnOverDetails);
+
+	/**
+	 * 根据id获取修改营业额的所有数据
+	 * @param orderId
+	 * @return
+	 */
+	List<OrderPushmoneyRecord> getList(String orderId);
+
+	/**
+	 * 添加业务员营业额
+	 * @param orderPushmoneyRecord
+	 */
+	void save(OrderPushmoneyRecord orderPushmoneyRecord);
+
+	/**
+	 * 查询每个业务员的售后审核扣减的营业额
+	 * @param turnOverDetails
+	 * @return
+	 */
+	List<OrderPushmoneyRecord> getReturnedPushmoneyList(TurnOverDetails turnOverDetails);
 
 }

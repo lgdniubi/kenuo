@@ -73,7 +73,7 @@
 								<tr>
 									<td><label class="pull-right"><font color="red">*</font>活动名称：</label></td>
 									<td colspan="4">
-										<input class="form-control required" id="name" name="name" type="text" value="${goodsSubhead.name }" style="width: 100%"/>
+										<input class="form-control required" id="name" name="name" type="text" value="<c:out value="${goodsSubhead.name}"></c:out>" style="width: 100%"/>
 									</td>
 								</tr>
 								<tr id="time">
@@ -89,7 +89,7 @@
 								<tr>
 									<td><label class="pull-right"><font color="red">*</font>副标题文案:</label></td>
 									<td colspan="3"> 
-										<textarea rows="3" cols="30" id="subheading" name="subheading" style="width: 100%" class="form-control required">${goodsSubhead.subheading}</textarea>
+										<textarea rows="3" cols="30" id="subheading" name="subheading" style="width: 100%" class="form-control required"><c:out value="${goodsSubhead.subheading}"></c:out></textarea>
 									</td>
 								</tr>
 								<tr>

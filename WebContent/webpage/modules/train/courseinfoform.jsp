@@ -142,7 +142,7 @@
 				<div class="form-group">
 					<span style="color: red;">*</span>
 					<span>课程名称：</span> 
-					<input id="name" name="name" type="text" class="text-item required" value="${trainLessons.name}">
+					<input id="name" name="name" type="text" class="text-item required" value="<c:out value="${trainLessons.name}"></c:out>">
 				</div>
 			</div>
 			<div class="form-inline">

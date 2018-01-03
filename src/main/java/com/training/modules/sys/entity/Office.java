@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 import com.training.common.persistence.TreeEntity;
+import com.training.modules.train.entity.FzxRole;
 
 /**
  * 机构Entity
@@ -53,6 +54,25 @@ public class Office extends TreeEntity<Office> {
 	
 	private String 	iconUrl;		//机构icon
 	
+	private User user;				//用户
+	private FzxRole fzxRole;		//妃子校角色
+	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public FzxRole getFzxRole() {
+		return fzxRole;
+	}
+
+	public void setFzxRole(FzxRole fzxRole) {
+		this.fzxRole = fzxRole;
+	}
+
 	public Office(){
 		super();
 //		this.sort = 30;

@@ -23,20 +23,24 @@
 	
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
+			 if($("#sort").val() == null || $("#sort").val() == ""){
+				   top.layer.alert('排序不可为空！', {icon: 0, title:'提醒'});
+				   return false;
+			 }
 			 if($("#headImg").val() == null || $("#headImg").val() == ""){
 				   top.layer.alert('头图不可为空！', {icon: 0, title:'提醒'});
 				   return false;
-			    }
+			 }
 		
-		    if($("#suboriginalImg").val() == null || $("#suboriginalImg").val() == ""){
-			   top.layer.alert('原始图不可为空！', {icon: 0, title:'提醒'});
-			   return false;
-		    }
-	    	if(validateForm.form()){
-	    		loading("正在提交，请稍候...");
-				$("#inputForm").submit();
-		    	return true;
-	    	}
+		     if($("#suboriginalImg").val() == null || $("#suboriginalImg").val() == ""){
+			     top.layer.alert('原始图不可为空！', {icon: 0, title:'提醒'});
+			     return false;
+		     }
+	    	 if(validateForm.form()){
+	    		 loading("正在提交，请稍候...");
+				 $("#inputForm").submit();
+		    	 return true;
+	    	 }
 	    	return false;
 	    }
 		
@@ -61,14 +65,15 @@
 									</td>
 								</tr>
 								<tr>
-									<td><label class="pull-right"><font color="red">*</font>方向:</label></td>
+									<td><label class="pull-right"><font color="red">*</font>副标题：</label></td>
 									<td>
-										<select class="form-control required" id="align" name="align">
-											<option value='0' <c:if test="${mtmyWebAd.align == '0'}">selected</c:if>>居中</option>
-											<option value='1' <c:if test="${mtmyWebAd.align == '1'}">selected</c:if>>左边</option>
-											<option value='2' <c:if test="${mtmyWebAd.align == '2'}">selected</c:if>>右上</option>
-											<option value='3' <c:if test="${mtmyWebAd.align == '3'}">selected</c:if>>右下</option>
-										</select>
+										<input class="form-control required" id="subhead" name="subhead" type="text" value="${mtmyWebAd.subhead }" style="width: 300px"/>
+									</td>
+								</tr>
+								<tr>
+									<td><label class="pull-right"><font color="red">*</font>排序：</label></td>
+									<td>
+										<input class="form-control required" id="sort" name="sort" type="text" value="${mtmyWebAd.sort }" style="width: 300px"/>
 									</td>
 								</tr>
 								<tr>

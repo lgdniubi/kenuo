@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.training.modules.ec.dao.OrderGoodsDetailsDao">
 	<!-- 保存商品规格项 -->
-	<insert id="saveOrderGoodsDetails">
+	<insert id="saveOrderGoodsDetails" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO mtmydb.mtmy_order_goods_details (
 			order_id,
 			goods_mapping_id,
@@ -23,8 +23,11 @@
 			advance_flag,
 			surplus_amount,
 			type,
+			create_office_id,
 			create_by,
-			create_date
+			create_date,
+			belong_office_id,
+			use_balance
 		)VALUES(
 			#{orderId},
 			#{goodsMappingId},
@@ -45,8 +48,11 @@
 			#{advanceFlag},
 			#{surplusAmount},
 			#{type},
+			#{createOfficeId},
 			#{createBy.id},
-			SYSDATE()
+			SYSDATE(),
+			#{belongOfficeId},
+			#{useBalance}
 		)
 	</insert>
 	
@@ -144,7 +150,8 @@
 		UPDATE mtmydb.mtmy_order_goods_details
 		SET 
 			advance_flag = '0'
-		WHERE goods_mapping_id = #{recid}
+		WHERE goods_mapping_id = #{recId}
+		AND advance_flag = '1'
 	</update>
 	
 	<!-- 根据office_id查找其对应的登云账户的金额 -->
@@ -229,9 +236,18 @@
 			ogm.integral AS 'integral',
 			ogm.coupon_price AS 'couponPrice',
 			ogm.member_goods_price AS 'memberGoodsPrice',
-			ogm.advance_price AS 'advancePrice'
+			ogm.advance_price AS 'advancePrice',
+			ogm.goods_num AS 'goodsNum'
 		FROM mtmydb.mtmy_order_goods_details ogd
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping ogm ON ogm.rec_id = ogd.goods_mapping_id
 		WHERE ogd.goods_mapping_id = #{recid}
+	</select>
+	
+	<!-- 根据订单id查询下单时候的总的app实付 -->
+	<select id="queryAppSum" resultType="Double">
+		SELECT SUM(app_total_amount)
+		FROM mtmydb.mtmy_order_goods_details
+		WHERE order_id = #{orderId}
+		AND advance_flag = '0'
 	</select>
 </mapper>

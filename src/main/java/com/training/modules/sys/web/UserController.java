@@ -55,6 +55,7 @@ import com.training.modules.sys.dao.SpecBeauticianDao;
 import com.training.modules.sys.dao.UserDao;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.Dict;
+import com.training.modules.sys.entity.MediaLoginAuth;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.Role;
@@ -63,6 +64,7 @@ import com.training.modules.sys.entity.UserDelete;
 import com.training.modules.sys.entity.UserLog;
 import com.training.modules.sys.service.AreaService;
 import com.training.modules.sys.service.DictService;
+import com.training.modules.sys.service.MediaLoginAuthService;
 import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.service.SystemService;
 import com.training.modules.sys.utils.BugLogUtils;
@@ -70,6 +72,7 @@ import com.training.modules.sys.utils.SMSUtils;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.tools.utils.TwoDimensionCode;
 import com.training.modules.train.dao.TrainRuleParamDao;
+import com.training.modules.train.entity.FzxRole;
 import com.training.modules.train.entity.TrainRuleParam;
 import com.training.modules.train.service.FzxRoleService;
 
@@ -108,6 +111,8 @@ public class UserController extends BaseController {
 	private SpecBeauticianDao specBeauticianDao;	//特殊美容师
 	@Autowired
 	private FzxRoleService fzxRoleService;
+	@Autowired
+	private MediaLoginAuthService mediaLoginAuthService;
 	
 	@ModelAttribute
 	public User get(@RequestParam(required = false) String id) {
@@ -137,12 +142,12 @@ public class UserController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(User user, Model model) {
 		List<UserLog> userLogs = new ArrayList<UserLog>();
-		if (user.getCompany() == null || user.getCompany().getId() == null) {
+		/*if (user.getCompany() == null || user.getCompany().getId() == null) {  在进入添加页面时不需要进行查询初始化，因为页面要根据商家去查询权限内的机构，所以不能将商家初始化为登云
 			user.setCompany(UserUtils.getUser().getCompany());
 		}
 		if (user.getOffice() == null || user.getOffice().getId() == null) {
 			user.setOffice(UserUtils.getUser().getOffice());
-		}
+		}*/
 		if (user.getUserinfo() == null || user.getUserinfo().getId() == null) {
 			user.setUserinfo(systemService.getUserInfoByUserId(user.getId()));		
 		}
@@ -426,6 +431,8 @@ public class UserController extends BaseController {
 		if(u != null ){
 			user.setOfficeIdList(u.getOfficeIdList());
 		}
+		MediaLoginAuth mediaLoginAuth = mediaLoginAuthService.findMediaLoginAuthByUserId(user.getId());//查询自媒体权限
+		user.setMediaLoginAuth(mediaLoginAuth);
 		Map<String, Object> map = userDao.findFranchiseeAuth(user);	// 查询用户商家权限
 		user.setCompanyIds((String)map.get("companyIds"));
 		user.setCompanyNames((String)map.get("companyNames"));
@@ -499,6 +506,16 @@ public class UserController extends BaseController {
 					userDao.insertFranchiseeAuth(user.getId(),id);
 				}
 			}
+			//更新用户的自媒体权限
+			user.getMediaLoginAuth().setUserId(user.getId());
+			//当自媒体权限:否
+			if(user.getMediaLoginAuth().getIsLogin().equals("0")){
+				user.getMediaLoginAuth().setUserType("");
+				user.getMediaLoginAuth().setPlatform("");
+				user.getMediaLoginAuth().setUserTag("");
+			}
+			mediaLoginAuthService.saveMediaLoginAuth(user.getMediaLoginAuth());
+			
 			// 清除用户缓存
 			UserUtils.clearCache(user);
 		} catch (Exception e) {
@@ -1357,5 +1374,146 @@ public class UserController extends BaseController {
 		}
     	return jsonMap;
     }
+    
+    /**
+     * 
+     * @Title: addFzxRole
+     * @Description: TODO 妃子校角色列表查询
+     * @param user
+     * @return:
+     * @return: String
+     * @throws
+     * 2017年10月27日
+     */
+    @RequestMapping(value="addFzxRole")
+    public String addFzxRole(User user,Model model) {
+    	List<FzxRole> fzxRoleList = Lists.newArrayList();
+    	List<Office> officeList = Lists.newArrayList();
+    	Map<Integer, List<Office>> map = new HashMap<>();
+    	StringBuffer fzxRoleIds = new StringBuffer(); 
+    	if (user != null && user.getId() != null) {
+    		fzxRoleList =  fzxRoleService.findFzxRoleByUserId(user);
+		}
+    	if (fzxRoleList != null) {
+			for (FzxRole fzxRole : fzxRoleList) {
+				String str = String.valueOf(fzxRole.getRoleId());
+				fzxRoleIds.append(str);
+				fzxRoleIds.append(",");
+				officeList = officeService.findOfficeByUserIdAndFzxRoleId(fzxRole.getRoleId(),user.getId());
+				if (officeList != null) {
+					map.put(fzxRole.getRoleId(), officeList);
+				}
+			}
+		}
+    	model.addAttribute("fzxRoleIds", fzxRoleIds);
+    	model.addAttribute("user", user);
+    	model.addAttribute("fzxRoleList", fzxRoleList);
+    	model.addAttribute("map", map);
+    	return "modules/sys/userRole";
+    }
+    
+    /**
+     * 保存添加的角色和权限，添加完之后将页面跳转到添加页面
+     * @param fzxRoleId
+     * @param officeIds
+     * @param userId
+     * @return
+     */
+    @RequestMapping(value="saveFzxRoleOfficeById")
+    public String saveFzxRoleOfficeById(String fzxRoleId,String officeIds,String userId,RedirectAttributes redirectAttributes){
+    	try {
+			if (StringUtils.isNotBlank(fzxRoleId) && StringUtils.isNotBlank(officeIds) && StringUtils.isNotBlank(userId)) {
+				systemService.saveFzxRoleOfficeById(fzxRoleId,officeIds,userId);
+				addMessage(redirectAttributes, "添加角色及权限成功!");
+			}
+		} catch (Exception e) {
+			logger.error("保存用户妃子校权限错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "添加角色及权限失败!");
+		}
+    	return "redirect:" + adminPath + "/sys/user/addFzxRole?id="+userId;
+    }
+    
+    /**
+     * 删除指定用户的角色以及权限
+     * @param userId
+     * @param roleId
+     * @return
+     */
+    @RequestMapping(value="delFzxRoleByUser")
+    public String delFzxRoleByUser(String userId,String roleId,RedirectAttributes redirectAttributes){
+    	try {
+			if (!"".equals(userId) && !"".equals(roleId)) {
+				Integer id = userDao.findIdByUserFzxRoleId(userId,roleId);
+				if (id != null) {
+					systemService.delFzxRoleByUser(id,userId,roleId);
+					addMessage(redirectAttributes, "删除角色及权限成功!");
+				}
+			}
+		} catch (Exception e) {
+			logger.error("删除用户妃子校权限错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "删除权限失败，请重新操作!");
+		}
+    	return "redirect:" + adminPath + "/sys/user/addFzxRole?id="+userId;
+    }
+    
+    /**
+     * 修改页面跳转
+     * @param userId
+     * @param roleId
+     * @return
+     */
+    @RequestMapping(value="editOfficeFrom")
+    public String editOfficeFrom(String userId,String roleId,Model model){
+    	String officeIds = null;
+    	Integer id = userDao.findIdByUserFzxRoleId(userId,roleId);
+    	if (id != null) {
+    		officeIds =  userDao.findOfficeListById(id);
+			
+		}
+    	model.addAttribute("officeIds", officeIds);
+    	model.addAttribute("userId", userId);
+    	model.addAttribute("roleId", roleId);
+    	model.addAttribute("id", id);
+    	return "modules/sys/editOfficeFrom";
+    }
+    
+    /**
+     * 更新用户的权限
+     * @param id
+     * @return
+     */
+    @RequestMapping(value="updateOffice")
+    public String updateOffice(String id,String officeIds,String userId,RedirectAttributes redirectAttributes){
+    	try {
+			systemService.updateOfficeById(id,officeIds,userId);
+			addMessage(redirectAttributes, "修改角色及权限成功!");
+		} catch (Exception e) {
+			logger.error("修改用户妃子校权限错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "修改权限失败，请重新操作!");
+		}
+    	return "redirect:" + adminPath + "/sys/user/addFzxRole?id="+userId;
+    }
+    
+	/**
+	 * 获取机构对应的用户JSON数据。
+	 * @param belongOfficeId
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "officeUserTreeData")
+	public List<Map<String, Object>> officeUserTreeData(HttpServletRequest request,HttpServletResponse response) {
+		String belongOfficeId = request.getParameter("belongOfficeId");
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<User> list = userDao.findUsersByOfficeId(belongOfficeId);
+		for (int i=0; i<list.size(); i++){
+			User e = list.get(i);
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("name", e.getName());
+				mapList.add(map);
+		}
+		return mapList;
+	}
 }
 

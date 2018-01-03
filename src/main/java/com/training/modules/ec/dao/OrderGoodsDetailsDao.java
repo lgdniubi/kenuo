@@ -62,7 +62,7 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * 处理预约金
 	 * @param recId
 	 */
-	public void updateAdvanceFlag(String recId);
+	public void updateAdvanceFlag(@Param(value="recId")String recId);
 	
 	/**
 	 * 根据office_id查找其对应的登云账户的金额
@@ -122,4 +122,11 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @return
 	 */
 	public int getSurplusAmount(String orderId);
+	
+	/**
+	 * 根据订单id查询下单时候的总的app实付
+	 * @param orderId
+	 * @return
+	 */
+	public double queryAppSum(String orderId);
 }

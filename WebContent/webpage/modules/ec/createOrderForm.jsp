@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%@ include file="/webpage/include/taglib.jsp"%>
-
 <head>
 <title>创建订单</title>
 <meta name="decorator" content="default" />
@@ -17,37 +16,17 @@
 		var discount=1;
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-		  if(validateForm.form()){
-			var goodselectIds = $("#goodselectIds").val(); 
-			if(goodselectIds == undefined){
-				top.layer.alert('商品信息不能为空!', {icon: 0, title:'提醒'}); 
-				return;
-			}
-			
-			if($("#isNeworder").val() == 0){
-				var sysUserId = $("#sysUserId").val(); 
-				if(sysUserId == undefined){
-					top.layer.alert('提成人员信息不能为空!', {icon: 0, title:'提醒'}); 
+			if(validateForm.form()){
+				var goodselectIds = $("#goodselectIds").val(); 
+				if(goodselectIds == undefined){
+					top.layer.alert('商品信息不能为空!', {icon: 0, title:'提醒'}); 
 					return;
 				}
-				
-				var orderamount = $("#orderamount").val();
-				var pushMoneys = document.getElementsByName("pushMoney");
-				var pushMoneySum = 0;
-	   			for(i=0;i<pushMoneys.length;i++){
-	   				if(parseFloat(pushMoneys[i].value) - parseFloat(orderamount) > 0){
-	   					top.layer.alert('单个提成人员的提成金额不能大于订单应付总价!', {icon: 0, title:'提醒'}); 
-						return;
-	   				}
-		    	 }
-			}
-			
-			$("#inputForm").submit();
-			 return true;	
-		  }
+				$("#inputForm").submit();
+				return true;	
+			  }
 		  return false;
 		}
-
 		//添加商品
 		function addActionGoods(){
 			var isNeworder = $("#isNeworder option:selected").val();
@@ -168,7 +147,6 @@
 				    	           //按钮【按钮二】的回调
 			}
 		}); 
-
 		}
 		//数字计算保留2位小数
 		changeTwoDecimal_f= function (floatvar){
@@ -214,8 +192,20 @@
 		   $("#Ichecks").attr("disabled",false);
 	   }
     }
-    
-	function deleteFile(obj){
+	//删除业务员
+	function deleteFile(obj,id){
+		$(obj).parent().parent().remove();
+		//删除业务员时,同时对比隐藏域是否需存在该值
+		var idstr = id+"pushMoney";
+		var strval = $("#strval").val();
+		if($("[name='"+idstr+"']").val() == undefined){
+			id = id+",";
+			strval = strval.replace(id,"");
+		} 
+		$("#strval").val(strval);
+	}
+	//删除备注
+	function deleteFileRemarks(obj){
 		$(obj).parent().parent().remove();
 	}
 	
@@ -335,8 +325,60 @@
 		//submit函数在等待远程校验结果然后再提交，而layer对话框不会阻塞会直接关闭同时会销毁表单，因此submit没有提交就被销毁了导致提交表单失败。
 		//$("#inputForm").validate().element($("#phone"));
 		
+		$("#belongOfficeButton").click(function(){
+			// 是否限制选择，如果限制，设置为disabled
+			if ($("#belongOfficeButton").hasClass("disabled")){
+				return true;
+			}
+			// 正常打开	
+			top.layer.open({
+			    type: 2, 
+			    area: ['300px', '420px'],
+			    title:"选择店铺",
+			    ajaxData:{selectIds: $("#belongOfficeId").val()},
+			    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/office/treeData?type=2")+"&module=&checked=&extId=&isAll=&selectIds=" ,
+			    btn: ['确定', '关闭']
+	    	       ,yes: function(index, layero){ //或者使用btn1
+							var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+							var ids = [], names = [], nodes = [];
+							if ("" == "true"){
+								nodes = tree.getCheckedNodes(true);
+							}else{
+								nodes = tree.getSelectedNodes();
+							}
+							for(var i=0; i<nodes.length; i++) {
+								/* if (nodes[i].level == 0){
+									//top.$.jBox.tip("不能选择根节点（"+nodes[i].name+"）请重新选择。");
+									top.layer.msg("不能选择根节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+									return false;
+								} */
+								if (nodes[i].isParent){
+									//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+									//layer.msg('有表情地提示');
+									top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+									return false;
+								}//
+								ids.push(nodes[i].id);
+								names.push(nodes[i].name);//
+								break; // 如果为非复选框选择，则返回第一个选择  
+							}
+							
+							$("#belongOfficeId").val(ids.join(",").replace(/u_/ig,""));
+							$("#belongOfficeName").val(names.join(","));
+							$("#belongOfficeName").focus();
+							top.layer.close(index);
+					    	       },
+	    	cancel: function(index){ //或者使用btn2
+	    	           //按钮【按钮二】的回调
+	    	       }
+			}); 
+		
+		});
+		
 	});
 	function selectUser(){
+		$("#username").val("");
+		$("#userid").val("");
 		var mobile = $("#mobile").val();
 		
 		if(mobile == ""){
@@ -360,60 +402,9 @@
 				}
 			},
 			error:function(XMLHttpRequest,textStatus,errorThrown){
+				top.layer.alert('昵称查询失败!', {icon: 0, title:'提醒'}); 
 			}
 		});
-	}
-	function getSysUserInfo(){
-		var orderamount = $("#orderamount").val();
-		var sysUserIds = document.getElementsByName("sysUserId");
-		// 正常打开	
-		top.layer.open({
-		    type: 2, 
-		    area: ['550px', '420px'],
-		    title:"提成人员选择",
-		    ajaxData:{selectIds: $("#goodselectId").val()},
-		    content: "${ctx}/ec/orders/getPushmoneyView",
-		    btn: ['确定', '关闭']
-    	    ,yes: function(index, layero){
-    	    	var obj =  layero.find("iframe")[0].contentWindow;
-    	    	var sysUserId = obj.document.getElementById("sysUserId").value; //员工id
-    	    	var sysMobile = obj.document.getElementById("sysMobile").value; //员工电话
-    	    	var sysName = obj.document.getElementById("sysName").value; //员工名称
-    	    	var pushMoney = obj.document.getElementById("pushMoney").value; //提成金额
-    	    	if(pushMoney==""){
-    	    		top.layer.alert('填写提成金额！', {icon: 0, title:'提醒'});
-     	    		return;
-    	    	}else if(sysUserId == ""){
-    	    		top.layer.alert('填写提成人员！', {icon: 0, title:'提醒'});
-     	    		return;
-    	    	}else if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-    	    		top.layer.alert('提成金额必须大于等于0，小于等于订单应付总额！', {icon: 0, title:'提醒'});
-     	    		return;
-    	    	}else{
-    	    		if(sysUserIds.length > 0){
-    	    			for(i=0;i<sysUserIds.length;i++){
-         	    	        if(sysUserId == sysUserIds[i].value){
-         	    	        	top.layer.alert('提成人员不能相同！', {icon: 0, title:'提醒'});
-         	     	    		return;
-         	    	        }
-         	    	    }
-    	    		}
-    	    		
-	    	    	$("#sysUserInfo").append(
-	    	    			"<tr>"+
-	    					"<td>"+
-	    						"<input id='sysUserId' name='sysUserId' type='hidden' value='"+sysUserId+"' class='form-control' readonly='readonly'>"+
-	    						"<input id='sysName' name='sysName' type='text' value='"+sysName+"' class='form-control' readonly='readonly'>"+
-	    					"</td>"+
-	    					"<td><input id='sysMobile' name='sysMobile' type='text' value='"+sysMobile+"' class='form-control' readonly='readonly'></td>"+
-	    					"<td><input id='pushMoney' name='pushMoney' value='"+pushMoney+"' readonly='readonly' class='form-control required' type='text' class='form-control'></td>"+
-	    					"<td><a href='#' class='btn btn-danger btn-xs' onclick='deleteFile(this)'><i class='fa fa-trash'></i> 删除</a></td>"+
-	    					"</tr>"
-	    			);
-					top.layer.close(index);
-    	    	}
-			}
-		}); 
 	}
 	
 	
@@ -434,7 +425,7 @@
     					"<td align='center'>"+
     						"<div style='width:260px;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;'>"+remarks+"</div><input id='orderRemarks' name='orderRemarks' type='hidden' value='"+remarks+"' class='form-control' readonly='readonly'>"+
     					"</td>"+
-    					"<td><a href='#' class='btn btn-danger btn-xs' onclick='deleteFile(this)'><i class='fa fa-trash'></i> 删除</a></td>"+
+    					"<td><a href='#' class='btn btn-danger btn-xs' onclick='deleteFileRemarks(this)'><i class='fa fa-trash'></i> 删除</a></td>"+
     					"</tr>"
     			);
 				top.layer.close(index);
@@ -443,8 +434,9 @@
 	}
 	
 	function choose(value){
+		$("#belongOfficeId").val("");
+		$("#belongOfficeName").val("");
 		if(value == 1){
-			
 			$("#iType").hide();
 			$("#personheadContent").hide();
 			$("#invoiceRecipient").hide();
@@ -452,12 +444,12 @@
 			$("#fpinfo").hide();
 			$("#Ichecks").attr("checked",false);
 			$("#Ichecks").attr("disabled",true);
-			$("#sysUserPush").hide();
-			$("#sysUserInfo").empty();
+			$("#belongOffice").hide();
 		}else{
-			$("#sysUserPush").show();
-		}
+			$("#belongOffice").show();
+		} 
 	}
+	
 	</script>
 </head>
 <body>
@@ -470,6 +462,7 @@
 				<label><font color="red">*</font>昵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：</label>
 				<input id="username" name="username" type="text" class="form-control required" readonly="true" style="width:200px" />
 				<input type="hidden" name="userid" id="userid" />
+				<input type="hidden" name="strval" id="strval" /><!-- 多个业务员校验用 -->
 				<p></p>
 				<label><font color="red">*</font>订单性质：</label>
 				<form:select path="distinction"  class="form-control" style="width:200px">
@@ -543,6 +536,27 @@
 					<textarea name="usernote" rows="5" cols="60"></textarea>
 				</div>
 				<p></p>
+				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="belongOffice">
+				<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
+					<tr>
+						<td width="100px"><span><font color="red">*</font>归属店铺：</span></td>
+						<td width="300px">
+							<input id="belongOfficeId" class=" form-control input-sm" name="belongOfficeId" value="" type="hidden">
+							<div class="input-group">
+								<input id="belongOfficeName" class=" form-control required input-sm" name="belongOfficeName" readonly="readonly" value="" data-msg-required="" style="" type="text">
+									<span class="input-group-btn">
+										<button id="belongOfficeButton" class="btn btn-sm btn-primary " type="button">
+											<i class="fa fa-search"></i>
+										</button>
+									</span>
+							</div>
+							<label id="belongOfficeName-error" class="error" for="belongOfficeName" style="display:none"></label>
+						</td>
+						<td colspan="2" width="100px"></td>
+					</tr>
+				</table>
+				</div>
+				<p></p>
 				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 					<input type="checkbox" id="Ichecks" name="Ichecks" /><label class="active">索要发票</label>
 					<input type="hidden" name="invoiceContent" id="invoiceContent" />
@@ -588,28 +602,6 @@
 						<label class="active"><font color="red">*</font>收货地址：</label>
 						<input type="text" name="recipientsAddress" class="form-control required" maxlength="50" style="width:180px" />
 					</div>
-				</div>
-				<p></p>
-				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="sysUserPush">
-					<div class="pull-left">
-						<h4><font color="red">*</font>人员提成信息：</h4>
-					</div>
-					<div class="pull-right">
-						<a href="#" onclick="getSysUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
-					</div>
-					<p></p>
-					<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
-						<thead>
-							<tr>
-								<th style="text-align: center;">业务员</th>
-								<th style="text-align: center;">手机号</th>
-								<th style="text-align: center;">提成金额</th>
-								<th style="text-align: center;">操作</th>
-							</tr>
-						</thead>
-						<tbody id="sysUserInfo" style="text-align:center;">	
-						</tbody>
-					</table>
 				</div>
 				<p></p>
 				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">

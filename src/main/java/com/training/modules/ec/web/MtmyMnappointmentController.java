@@ -10,7 +10,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.training.common.persistence.Page;
 import com.training.common.utils.DateUtils;
 import com.training.common.web.BaseController;
@@ -37,6 +38,7 @@ import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 /**
  * 预约 Controller
@@ -118,7 +120,7 @@ public class MtmyMnappointmentController extends BaseController{
 	 * @return
 	 */
 	@RequiresPermissions("ec:mtmyMnappointment:addReservation")
-	@RequestMapping(value = "addReservation")
+	@RequestMapping(value = "addReservation")     //addMnappointment
 	public String addReservation(){
 		return "modules/ec/addMnappointment";
 	}
@@ -142,10 +144,10 @@ public class MtmyMnappointmentController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "loadOffice")
-	public Map<String, Object> loadOffice(String areaId,int goodsId,Boolean isAll,HttpServletRequest request, HttpServletResponse response){
+	public Map<String, Object> loadOffice(String areaId,String goodsIds,String franchiseeId,Boolean isAll,HttpServletRequest request, HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		Set<Map<String, Object>> setMain = new HashSet<Map<String, Object>>();
-		List<Office> list1= reservationService.loadOffice(goodsId,areaId);  	// 可用店铺
+		List<Office> list1= reservationService.loadOffice(goodsIds,franchiseeId,areaId);  	// 可用店铺
 		List<Office> list2 = officeService.findList(isAll);		//有权限机构
 		if(list1.size() > 0 && list2.size() > 0){		// 当两个集合都存在值时  取交集 
 			Map<String, Object> setMap = new HashMap<String, Object>();
@@ -165,11 +167,12 @@ public class MtmyMnappointmentController extends BaseController{
 				setMap.put("officeName", list1.get(i).getName());
 				set2.add(setMap);
 			}
-			
 			setMain.clear();
 			setMain.addAll(set1);
 			setMain.retainAll(set2);
 		}
+		User loginUser = UserUtils.getUser();	//获取登录用户
+		jsonMap.put("loginOfficeId", loginUser.getOffice().getId());
 		jsonMap.put("office", setMain);
 		return jsonMap;
 	}
@@ -191,6 +194,8 @@ public class MtmyMnappointmentController extends BaseController{
 			String url=webReservationTime;
 			String result = WebUtils.postObject(parpm, url);
 			jsonObject = JSONObject.fromObject(result);
+			User loginUser = UserUtils.getUser();	//获取登录用户
+			jsonObject.put("loginUserId", loginUser.getId());
 			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "调用接口:异步加载当前美容师", e);
@@ -208,9 +213,9 @@ public class MtmyMnappointmentController extends BaseController{
 	public String ReservationTime(String beauticianId,String serviceMin,String shopId,String labelId,HttpServletRequest request){
 		JSONObject jsonObject = new JSONObject();
 		try {
-			if(StringUtils.isEmpty(labelId)){
-				labelId = "100000";
-			}
+//			if(StringUtils.isEmpty(labelId)){
+//				labelId = "100000";
+//			}
 			String webReservationTime =	ParametersFactory.getMtmyParamValues("mtmy_reservationtime");	
 			logger.info("##### web接口路径:"+webReservationTime);
 			String parpm = "{\"beauty_id\":\""+beauticianId+"\",\"service_min\":\""+serviceMin+"\",\"shop_id\":\""+shopId+"\",\"label_id\":\""+labelId+"\"}";
@@ -230,8 +235,10 @@ public class MtmyMnappointmentController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "saveReservation")
-	public String saveReservation(Users users,String beauticianId,String shopId,String times,String recid,String servicemin,String userNote,String groupId,String isReal,RedirectAttributes redirectAttributes,HttpServletRequest request){
+	public String saveReservation(Users users,String beauticianId,String shopId,String times,String recid,String servicemin,String userNote,String groupId,String isReal,String goodsName,int sendToUserFlag,RedirectAttributes redirectAttributes,HttpServletRequest request){
 		try {
+			List<Map<String, Object>> mapList = Lists.newArrayList();
+			Map<String, Object> map = Maps.newHashMap();
 			User loginUser = UserUtils.getUser();	//获取登录用户
 			String dateStr = times.replace("星期一", "").replace("星期二","").replace("星期三","").replace("星期四","").replace("星期五","").replace("星期六","").replace("星期日","");
 			Date date = DateUtils.parseDate(dateStr);
@@ -241,6 +248,7 @@ public class MtmyMnappointmentController extends BaseController{
 			String shopName = null;	// 预约店铺id
 			String beauticianName = null;	// 美容师名称
 			String beaOfficeId = null;		// 美容师所属机构id
+			String beauticianPhoto = null;   //美容师照片
 			Office office = officeService.get(shopId);
 			if(null != office){
 				shopName = office.getName();	
@@ -249,10 +257,27 @@ public class MtmyMnappointmentController extends BaseController{
 			if(null != user){
 				beauticianName = user.getName();
 				beaOfficeId = user.getOffice().getId();
+				beauticianPhoto = user.getPhoto();
 			}
 			
+			map.put("beautician_id",beauticianId);
+			map.put("beautician_name",beauticianName);
+			map.put("beautician_photo",beauticianPhoto);
+			map.put("bea_office_id",beaOfficeId);
+			map.put("group_id",Integer.valueOf(groupId));
+			map.put("appt_start_time",appt_start_time);
+			map.put("rec_id",recid);
+			map.put("is_real",isReal);
+			map.put("service_min",servicemin);
+			map.put("appt_date",appt_date);
+			map.put("goods_name",goodsName);
+			
+			mapList.add(map);
+			
+			
+			JSONArray jsonArray = JSONArray.fromObject(mapList);
 			logger.info("##### web接口路径:"+websaveReservation);
-			String parpm = "{\"beautician_id\":\""+beauticianId+"\",\"beautician_name\":\""+beauticianName+"\",\"bea_office_id\":\""+beaOfficeId+"\",\"user_note\":\""+userNote+"\",\"user_id\":\""+users.getUserid()+"\",\"user_phone\":\""+users.getMobile()+"\",\"user_name\":\""+users.getName()+"\",\"rec_id\":\""+recid+"\",\"appt_date\":\""+appt_date+"\",\"appt_start_time\":\""+appt_start_time+"\",\"shop_id\":\""+shopId+"\",\"shop_name\":\""+shopName+"\",\"service_min\":\""+servicemin+"\",\"group_id\":"+Integer.valueOf(groupId)+",\"is_real\":"+Integer.valueOf(isReal)+",\"client\":\"bm\",\"create_by\":\""+loginUser.getId()+"\"}";
+			String parpm = "{\"shop_id\":\""+shopId+"\",\"shop_name\":\""+shopName+"\",\"user_id\":\""+users.getUserid()+"\",\"user_name\":\""+users.getName()+"\",\"user_phone\":\""+users.getMobile()+"\",\"client\":\"bm\",\"subscribes\":"+jsonArray.toString()+",\"user_note\":\""+userNote+"\",\"create_by\":\""+loginUser.getId()+"\",\"sendToUserFlag\":"+sendToUserFlag+"}";
 			logger.info("#### 添加预约参数"+parpm);
 			String url=websaveReservation;
 			String result = WebUtils.postObject(parpm, url);
@@ -311,6 +336,171 @@ public class MtmyMnappointmentController extends BaseController{
 			BugLogUtils.saveBugLog(request, "调用接口:修改预约", e);
 			logger.error("调用接口:修改预约错误信息:"+e.getMessage());
 			addMessage(redirectAttributes, "修改预约出现异常，请与管理员联系");
+		}
+		return "redirect:" + adminPath + "/ec/mtmyMnappointment/mnappointment";
+	}
+	/**
+	 * 添加预约界面跳转
+	 * @return
+	 */
+	@RequiresPermissions("ec:mtmyMnappointment:addMoreReservation")
+	@RequestMapping(value = "addMoreReservation")     //addMoreReservation
+	public String addMoreReservation(){
+		return "modules/ec/addMoreMnappointment";
+	}
+	/**
+	 * 多项目预约查询用户已购买的项目
+	 * @param userid
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="alreadyBuyProject")
+	public String alreadyBuyProject(String userid,String chooseRecIds,String chooseParentRecIds,HttpServletRequest request,Model model){
+		try{
+			if(!"".equals(userid) && userid != null){
+				List<OrderGoods> lists = reservationService.findOrderGoodsByUserId(Integer.valueOf(userid));
+				model.addAttribute("lists",lists);
+				model.addAttribute("chooseRecIds",chooseRecIds);
+				model.addAttribute("chooseParentRecIds",chooseParentRecIds);
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "多项目预约查询用户已购买的项目", e);
+			logger.error("多项目预约查询用户已购买的项目错误信息:"+e.getMessage());
+		}
+		return "modules/ec/alreadyBuyProject";
+	}
+	
+	/**
+	 * 多项目预约加载美容师
+	 * @param shopIp
+	 * @param skillId
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "loadMoreBeaut")
+	public String loadMoreBeaut(String shopId,String skillId,String recId,HttpServletRequest request){
+		JSONObject jsonObject = new JSONObject();
+		try {
+			String webReservationTime =	ParametersFactory.getMtmyParamValues("mtmy_querySubscribeShopDetai");	
+			logger.info("##### web接口路径:"+webReservationTime);
+			String parpm = "{\"shop_id\":\""+shopId+"\",\"skill_id\":\""+skillId+"\"}";
+			String url=webReservationTime;
+			String result = WebUtils.postObject(parpm, url);
+			jsonObject = JSONObject.fromObject(result);
+			User loginUser = UserUtils.getUser();	//获取登录用户
+			jsonObject.put("loginUserId", loginUser.getId());
+			jsonObject.put("recId", recId);
+			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "调用接口:多项目预约异步加载当前美容师", e);
+			logger.error("调用接口:多项目预约异步加载当前美容师错误信息:"+e.getMessage());
+		}
+		return jsonObject.toString();
+	}
+	
+	/**
+	 * 添加多项目预约
+	 * @param orderGoods
+	 * @return
+	 */
+	@RequestMapping(value = "saveMoreReservation")
+	@ResponseBody
+	public String saveMoreReservation(Users users,String beauticianId,String shopId,String times,String chooseRecId,String serviceMin,String userNote,String chooseParentRecId,String isReal,String goodsName,int sendToUserFlag,RedirectAttributes redirectAttributes,HttpServletRequest request){
+		JSONObject jsonObject = new JSONObject();
+		try {
+			String[] beauticianIds = beauticianId.split(",");
+			String[] newTimes = times.split(",");
+			String[] chooseRecIds = chooseRecId.split(",");
+			String[] serviceMins = serviceMin.split(",");
+			String[] chooseParentRecIds = chooseParentRecId.split(",");
+			String[] isReals = isReal.split(",");
+			String[] goodsNames = goodsName.split(",");
+			
+			List<Map<String, Object>> mapList = Lists.newArrayList();
+			if(chooseRecIds.length > 0){
+				for(int i=0;i<chooseRecIds.length;i++){
+					Map<String, Object> map = Maps.newHashMap();
+					String dateStr = newTimes[i].replace("星期一", "").replace("星期二","").replace("星期三","").replace("星期四","").replace("星期五","").replace("星期六","").replace("星期日","");
+					Date date = DateUtils.parseDate(dateStr);
+					String appt_date = DateUtils.formatDate(date, "yyyy-MM-dd");
+					String appt_start_time = DateUtils.formatDate(date, "HH:mm");
+					String beauticianName = null;	// 美容师名称
+					String beaOfficeId = null;		// 美容师所属机构id
+					String beauticianPhoto = null;   //美容师照片
+					User user = systemService.getUser(beauticianIds[i]);
+					if(null != user){
+						beauticianName = user.getName();
+						beauticianPhoto = user.getPhoto();
+						beaOfficeId = user.getOffice().getId();
+					}
+					map.put("beautician_id",beauticianIds[i]);
+					map.put("beautician_name",beauticianName);
+					map.put("beautician_photo",beauticianPhoto);
+					map.put("bea_office_id",beaOfficeId);
+					map.put("group_id",Integer.valueOf(chooseParentRecIds[i]));
+					map.put("appt_start_time",appt_start_time);
+					map.put("rec_id",chooseRecIds[i]);
+					map.put("is_real",isReals[i]);
+					map.put("service_min",serviceMins[i]);
+					map.put("appt_date",appt_date);
+					map.put("goods_name",goodsNames[i]);
+					
+					
+					mapList.add(map);
+				}
+			}
+			
+			JSONArray jsonArray = JSONArray.fromObject(mapList);
+			User loginUser = UserUtils.getUser();	//获取登录用户
+			String shopName = null;	// 预约店铺名称
+			Office office = officeService.get(shopId);
+			if(null != office){
+				shopName = office.getName();	
+			}
+			String websaveReservation = ParametersFactory.getMtmyParamValues("mtmy_savereservation");
+			logger.info("##### web接口路径:"+websaveReservation);
+			String parpm = "{\"shop_id\":\""+shopId+"\",\"shop_name\":\""+shopName+"\",\"user_id\":\""+users.getUserid()+"\",\"user_name\":\""+users.getName()+"\",\"user_phone\":\""+users.getMobile()+"\",\"client\":\"bm\",\"subscribes\":"+jsonArray.toString()+",\"user_note\":\""+userNote+"\",\"create_by\":\""+loginUser.getId()+"\",\"sendToUserFlag\":"+sendToUserFlag+"}";
+			logger.info("#### 添加预约参数"+parpm);
+			String url=websaveReservation;
+			String result = WebUtils.postObject(parpm, url);
+			jsonObject = JSONObject.fromObject(result);
+			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg"));
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "调用接口:添加多项目预约", e);
+			logger.error("调用接口:添加多项目预约错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "添加多项目预约出现异常，请与管理员联系");
+		}
+		return jsonObject.toString();
+	}
+	
+	/**
+	 * 跳转到 添加/修改  实际服务时长
+	 * @param reservation
+	 * @return
+	 */
+	@RequestMapping(value = "getServiceTime")
+	public String getServiceTime(Reservation reservation, Model model){
+		reservation = reservationService.getServiceTime(reservation);
+		model.addAttribute("reservation",reservation);
+		return "modules/ec/editServiceTime";
+	}
+	
+	/**
+	 * 添加/修改  实际服务时长
+	 * @param reservation
+	 * @return
+	 */
+	@RequestMapping(value = "editServiceTime")
+	public String editServiceTime(Reservation reservation, HttpServletRequest request, RedirectAttributes redirectAttributes){
+		try {
+			reservationService.editServiceTime(reservation);
+			addMessage(redirectAttributes, "预约管理  添加/修改实际服务时间'" + reservation.getReservationId() + "'成功");
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "预约管理  添加/修改实际服务时间", e);
+			logger.error("预约管理  添加/修改实际服务时间错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "预约管理  添加/修改实际服务时间");
 		}
 		return "redirect:" + adminPath + "/ec/mtmyMnappointment/mnappointment";
 	}

@@ -371,11 +371,10 @@
 									
 									<li class="form-group">
 										<span class="control-label col-sm-2">适用地区：</span>
-										<div style="width: 40%;">
-											<input type="hidden" id="regionName" name="regionName" value="${goods.regionName }">
-											<sys:treeselect id="regionNameSelect" name="regionNameSelect" value="${goods.regionName }" 
-												labelName="regionNameSelect" labelValue="${goods.regionName }" 
-									     		title="地区" url="/sys/area/findListByPID" cssClass="form-control" notAllowSelectParent="true" checked="true"/>
+								     	<div style="width: 40%;">
+											<sys:treeselect id="regionNameSelect" name="regionId" value="${goods.regionId}" 
+												labelName="regionName" labelValue="${goods.regionName}" 
+									     		title="地区" url="/sys/area/findListByPID" cssClass="form-control" allowClear="true" notAllowSelectParent="true" checked="true"/>
 								     	</div>
 									</li>
 									<li>
@@ -401,7 +400,7 @@
 						</div>
 						<!-- 通用信息 End -->
 						<!-- 通用卡子项 Begin -->
-						<div class="tab-pane fade" id="tab_goods_card">
+						<div class="tab-pane fade" id="tab_goods_card" style="border: 0">
 							<div>
 								<a href="#" onclick="addGoods(${goods.goodsId},1,3)" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加虚拟商品</a>
 								<a href="#" onclick="addGoods(${goods.goodsId},0,3)" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加实物商品</a>
@@ -854,7 +853,6 @@
 					}
 					$("#goodsContent").val(content);
 					$("#keywords").val($("#keywordsSelectName").val());//关键词，功效
-					$("#regionName").val($("#regionNameSelectName").val());//适用区域
 					var spec_arr = {};// 用户选择的规格数组
 					$("#goods_spec_table  span").each(function(){
 						if($(this).hasClass('btn-success')){
@@ -1154,6 +1152,11 @@
 			        var obj = layero.find("iframe")[0].contentWindow;
 					var goodsId = obj.document.getElementById("goodsId");
 					var goodsNum = obj.document.getElementById("goodsNum");
+					
+					if(!/^[1-9][0-9]*$/.test($(goodsNum).val()) || $(goodsNum).val() == 0){
+						top.layer.alert('数量  必须大于0的正整数', {icon: 0, title:'提醒'});
+						return;
+					}
 					
 					$("#goodsNums"+i).val($(goodsNum).val());
 					

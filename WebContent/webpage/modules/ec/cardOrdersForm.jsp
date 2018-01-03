@@ -52,6 +52,13 @@
 			}else{
 				$("#logistics").hide();
 			}*/
+			if($("#isNeworder").val() == 0){
+				$("#beauticianMoney").show();
+				$("#shopMoney").show();
+			}else{
+				$("#beauticianMoney").hide();
+				$("#shopMoney").hide();
+			}
 			//物流类型来判断是否显示物流地址
 			$("#shippingtype").change(function(){
 				var shippingtype = $(this).val();
@@ -110,11 +117,12 @@
 			//否则打开修改对话框，不做任何更改直接submit,这时再触发远程校验，耗时较长，
 			//submit函数在等待远程校验结果然后再提交，而layer对话框不会阻塞会直接关闭同时会销毁表单，因此submit没有提交就被销毁了导致提交表单失败。
 			/* $("#inputForm").validate().element($("#orderamount")); */
-	  
+	  	
 	    });
 			
 	    	
 		    function TopUp(recid,singleRealityPrice,singleNormPrice,orderArrearage,servicetimes,remaintimes,goodsBalance){
+		    	var isCommitted = false;		//表单是否已经提交标识，默认为false
 		    	var orderid = $("#orderid").val();
 		    	var userid = $("#userid").val();
 		    	var isReal = $("#isReal").val();
@@ -133,6 +141,7 @@
 						var topUpTotalAmount = obj.document.getElementById("topUpTotalAmount").value;
 						var jsmoney = obj.document.getElementById("jsmoney").value;
 						var loading = obj.document.getElementById("loading");
+						var belongOfficeId = obj.document.getElementById("belongOfficeId").value;
 						$(loading).show();
 						if(accountBalance == ''){
 							$(loading).hide();
@@ -154,6 +163,11 @@
 							top.layer.alert('请计算费用！', {icon: 0, title:'提醒'});
 							return;
 						}
+						if(belongOfficeId == ''){
+							$(loading).hide();
+							top.layer.alert('归属店铺必填！', {icon: 0, title:'提醒'});
+							return;
+						}
 						
 						//查询用户账户余额
 						$.ajax({
@@ -170,6 +184,14 @@
 									top.layer.alert('您输入的余额不能大于当前账户的余额！', {icon: 0, title:'提醒'});
 								}else{
 									top.layer.close(index);
+									
+									//防止表单多次提交
+								    if(isCommitted == false){
+								    	isCommitted = true;		//提交表单后，将表单是否已经提交标识设置为true
+								   	}else{
+								       	return false;			
+									}
+									
 									$.ajax({
 										type:"post",
 										data:{
@@ -185,7 +207,9 @@
 											servicetimes:servicetimes,
 											remaintimes:remaintimes,
 											isReal:isReal,
-											channelFlag:channelFlag
+											channelFlag:channelFlag,
+											belongOfficeId:belongOfficeId,
+											mtmyUserId:userid
 										 },
 										url:"${ctx}/ec/orders/addCardOrderRechargeLog",
 										success:function(date){
@@ -210,78 +234,7 @@
          $(obj).parent().parent().remove();
      }
 	
-   //修改提成人员信息
- 	function updateFileSysUserInfo(obj,pushmoneyRecordId){
- 		var orderamount = $("#orderamount").val();
- 		top.layer.open({
-  			type: 2, 
-  		    area: ['550px', '420px'],
-  		    title:"提成人员选择",
-  		    content: "${ctx}/ec/orders/getPushmoneyView?pushmoneyRecordId="+pushmoneyRecordId,
-  		    btn: ['确定', '关闭']
-      	    ,yes: function(index, layero){
-      	    	var obj =  layero.find("iframe")[0].contentWindow;
-      	    	var sysUserId = obj.document.getElementById("sysUserId").value; //员工id
-      	    	var sysMobile = obj.document.getElementById("sysMobile").value; //员工电话
-      	    	var sysName = obj.document.getElementById("sysName").value; //员工名称
-      	    	var pushMoney = obj.document.getElementById("pushMoney").value; //提成金额
-      	    	var orderid =  $("#orderid").val();
-      	    	var isReal =  $("#isReal").val();
-      	    	if(pushMoney==""){
-      	    		top.layer.alert('填写提成金额！', {icon: 0, title:'提醒'});
-      	    		return;
-      	    	}else if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-    	    		top.layer.alert('提成金额必须大于等于0，小于订单应付总额！', {icon: 0, title:'提醒'});
-     	    		return;
-      	    	}else{
-      	    		$.ajax({
-          				type:"post",
-          				data:{
-          					orderId:orderid,
-          					pushmoneyUserId:sysUserId,
-          					pushMoney:pushMoney
-          				 },
-          				url:"${ctx}/ec/orders/saveOrderPushmoneyRecord?flag=edit"+"&pushmoneyRecordId="+pushmoneyRecordId,
-          				success:function(date){
-          					if(date == 'success'){
-          						$(obj).parent().parent().remove();
-          						top.layer.alert('修改提成人员成功', {icon: 0, title:'提醒'});
-          						window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid+"&isReal="+isReal+"&type=edit";
-          	     				top.layer.close(index);
-          					}else{
-          						top.layer.alert('修改提成人员失败', {icon: 0, title:'提醒'});
-          					}
-          				},
-          				error:function(XMLHttpRequest,textStatus,errorThrown){
-          					
-          				}
-          			});
-      	    	}
-  			}
-  		}); 
- 	}
 	
-	//删除提成人员
-     function delFileSysUserInfo(obj,pushmoneyRecordId){
-		$.ajax({
-			type:"post",
-			data:{
-				pushmoneyRecordId:pushmoneyRecordId
-			 },
-			url:"${ctx}/ec/orders/deleteSysUserInfo",
-			success:function(date){
-				if(date == 'success'){
-					$(obj).parent().parent().remove();
-					top.layer.alert('删除提成人员成功', {icon: 0, title:'提醒'});
-				}else{
-					top.layer.alert('删除提成人员失败', {icon: 0, title:'提醒'});
-				}
-			},
-			error:function(XMLHttpRequest,textStatus,errorThrown){
-				
-			}
-		});
-     }
 	//删除备注信息
      function delOrderRemarks(obj){
 		var orderRemarksId = $("#orderRemarksId").val();
@@ -305,74 +258,78 @@
 		});
      }
 	
-     function getSysUserInfo(){
-   		var orderamount = $("#orderamount").val();
-    	var sysUserIds = document.getElementsByName("sysUserId");
-    	var operationName = $("#operationName").val();
- 		if ($("#mtmyUserButton").hasClass("disabled")){
- 			return true;
- 		}
- 		// 正常打开	
- 		top.layer.open({
- 		    type: 2, 
- 		    area: ['550px', '420px'],
- 		    title:"提成人员选择",
- 		    ajaxData:{selectIds: $("#goodselectId").val()},
- 		    content: "${ctx}/ec/orders/getPushmoneyView",
- 		    btn: ['确定', '关闭']
-     	    ,yes: function(index, layero){
-     	    	var obj =  layero.find("iframe")[0].contentWindow;
-     	    	var sysUserId = obj.document.getElementById("sysUserId").value; //员工id
-     	    	var sysMobile = obj.document.getElementById("sysMobile").value; //员工电话
-     	    	var sysName = obj.document.getElementById("sysName").value; //员工名称
-     	    	var pushMoney = obj.document.getElementById("pushMoney").value; //提成金额
-     	    	var orderid =  $("#orderid").val();
-     	    	var isReal =  $("#isReal").val();
-     	    	if(pushMoney==""){
-     	    		top.layer.alert('填写提成金额！', {icon: 0, title:'提醒'});
-     	    		return;
-     	    	}else if(sysUserId == ""){
-    	    		top.layer.alert('填写提成人员！', {icon: 0, title:'提醒'});
-     	    		return;
-     	    	}else if(pushMoney < 0 || parseFloat(pushMoney) - parseFloat(orderamount) > 0){
-    	    		top.layer.alert('提成金额必须大于等于0，小于等于订单应付总额！', {icon: 0, title:'提醒'});
-     	    		return;
-     	    	}else{
-     	    		if(sysUserIds.length > 0){
-    	    			for(i=0;i<sysUserIds.length;i++){
-         	    	        if(sysUserId == sysUserIds[i].value){
-         	    	        	top.layer.alert('提成人员不能相同！', {icon: 0, title:'提醒'});
-         	     	    		return;
-         	    	        }
-         	    	    }
-    	    		}
-     	    		
-     	    		$.ajax({
-         				type:"post",
-         				data:{
-         					orderId:orderid,
-         					pushmoneyUserId:sysUserId,
-         					pushMoney:pushMoney
-         				 },
-         				url:"${ctx}/ec/orders/saveOrderPushmoneyRecord?flag=add",
-         				success:function(date){
-         					if(date == 'success'){
-         						$(obj).parent().parent().remove();
-         						top.layer.alert('添加提成人员成功', {icon: 0, title:'提醒'});
-         						window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid+"&isReal="+isReal+"&type=edit";
-         	     				top.layer.close(index);
-         					}else{
-         						top.layer.alert('添加提成人员失败', {icon: 0, title:'提醒'});
-         					}
-         				},
-         				error:function(XMLHttpRequest,textStatus,errorThrown){
-         					
-         				}
-         			});
-     	    	}
- 			}
- 		}); 
- 	}
+     function editSysUserInfo(turnOverDetailsId){
+    	 var orderid = $("#orderid").val();
+    	 var isDecided = false;		//表单是否已经提交标识，默认为false
+  		// 正常打开	
+  		top.layer.open({
+  			type: 2, 
+  		    area: ['800px', '520px'],
+  		    title:"新增/修改营业额：(提示：营业额数字不能修改，但可以插入正负数增减)",
+  		    content: "${ctx}/ec/orders/editPushmoneyUser?turnOverDetailsId="+turnOverDetailsId,
+  		    btn: ['确定', '关闭']
+      	    ,yes: function(index, layero){
+      	    	var map = {};
+      	    	var obj =  layero.find("iframe")[0].contentWindow;
+      	    	var amount = obj.document.getElementById("amount").value; //提成总金额
+      	    	var orderId = obj.document.getElementById("orderId").value; //订单id
+      	    	var pushmoneyUserId = obj.document.getElementsByName("pushmoneyUserId"); //提成人员id
+      	    	var departmentId = obj.document.getElementsByName("departmentId"); //提成人员部门id
+      	    	var departmentName = obj.document.getElementsByName("departmentName"); //提成人员部门
+      	    	var pushMoney = obj.document.getElementsByName("pushMoney"); //提成金额
+      	    	var changeValue = obj.document.getElementsByName("changeValue"); //加减额
+      	    	var pushMoneyTotal = obj.document.getElementsByName("pushMoneySum"); //单个营业员该订单的提成总额，下单+充值-退款
+      	    	for(i=0;i<pushmoneyUserId.length;i++){
+					var pushMoneySum = parseFloat(pushMoney[i].value) + parseFloat(changeValue[i].value);
+					if(pushMoneySum < 0){
+						top.layer.alert('单个业务员的营业额不能小于0！', {icon: 0, title:'提醒'});
+	 	    			return;
+					}
+					if(parseFloat(pushMoneyTotal[i].value) + parseFloat(changeValue[i].value) < 0){
+						top.layer.alert('单个业务员的营业额不能小于其在该笔订单中的营业总额！', {icon: 0, title:'提醒'});
+	 	    			return;
+					}
+					map[departmentName[i].value] = departmentId[i].value;
+				}     
+				
+				for(var j in map){
+					var sum = 0;
+					var result = obj.document.getElementsByClassName(map[j]);
+					for(k=0;k<result.length;k++){
+						sum = parseFloat(sum) + parseFloat(result[k].value); 
+					}
+      	    		if(parseFloat(sum) - parseFloat(amount) != 0){
+      	    			top.layer.alert('每个部门的营业额之和必须等于分享营业额！', {icon: 0, title:'提醒'});
+	 	    			return;
+      	    		}
+      	    	}
+				
+				//防止表单多次提交
+			    if(isDecided == false){
+			    	isDecided = true;		//提交表单后，将表单是否已经提交标识设置为true
+			   	}else{
+			       	return false;			
+				}
+   	    		$.ajax({
+       				type:"post",
+       				data:$(obj.document.getElementById("mosaic")).serialize(),
+       				url:"${ctx}/ec/orders/savePushMoneyRecord",
+       				success:function(date){
+       					if(date == 'success'){
+       						top.layer.alert('添加业务员成功', {icon: 0, title:'提醒'});
+       						window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderId+"&type=edit";
+       	     				top.layer.close(index);
+       					}else{
+       						top.layer.alert('添加业务员失败', {icon: 0, title:'提醒'});
+       					}
+       				},
+       				error:function(XMLHttpRequest,textStatus,errorThrown){
+       					
+       				}
+       			});
+  			}
+  		});  
+  	}
      
      function getRemarks(){
     	 var operationName = $("#operationName").val();
@@ -434,11 +391,19 @@
 	}
 window.onload=initStatus;
 
-	function ToAdvance(recid,servicetimes,orderArrearage){
+	function ToAdvance(officeId,recid,servicetimes,orderArrearage){
 		var userid = $("#userid").val();
 		var orderid = $("#orderid").val();
 		var isReal = $("#isReal").val();
 		var channelFlag = $("#channelFlag").val();
+		
+		if(officeId == "" || officeId == null){
+			top.layer.alert('该用户未绑定店铺,请在CRM中为该用户绑定！', {icon: 0, title:'提醒'});
+	    	return;
+		}
+		
+		var isHandled = false;		//表单是否已经提交标识，默认为false
+		
 		top.layer.open({
 		    type: 2, 
 		    area: ['600px', '450px'],
@@ -450,6 +415,14 @@ window.onload=initStatus;
      	    	var sum = obj.document.getElementById("sum").value; //是否使用了账户余额
      	    	var loading = obj.document.getElementById("loading");
 				$(loading).show();
+				
+				//防止表单多次提交
+			    if(isHandled == false){
+			    	isHandled = true;		//提交表单后，将表单是否已经提交标识设置为true
+			   	}else{
+			       	return false;			
+				}
+				
 				//异步处理预约金
 				$.ajax({
 					type:"post",
@@ -460,7 +433,8 @@ window.onload=initStatus;
 						servicetimes:servicetimes,
 						orderArrearage:orderArrearage,
 						isReal:isReal,
-						channelFlag:channelFlag
+						channelFlag:channelFlag,
+						mtmyUserId:userid
 					 },
 					url:"${ctx}/ec/orders/handleCardAdvance?recid="+recid+"&userid="+userid+"&orderid="+orderid,
 					success:function(date){
@@ -517,6 +491,54 @@ window.onload=initStatus;
 		var index = parent.layer.getFrameIndex(window.name);
 		top.layer.close(index);
 	}
+	
+	function updateDetails(detailsId,orderId){
+    	var isCommitted = false;		//表单是否已经提交标识，默认为false
+		top.layer.open({
+		    type: 2, 
+		    area: ['500px', '350px'],
+		    title:"选择归属店铺",
+		    content: "${ctx}/ec/orders/addBelongOffice",
+		    btn: ['确定', '关闭'],
+		    yes: function(index, layero){
+		        var obj =  layero.find("iframe")[0].contentWindow;
+		        var loading = obj.document.getElementById("loading");
+				var belongOfficeId = obj.document.getElementById("belongOfficeId").value;
+				$(loading).show();
+				if(belongOfficeId == ''){
+					$(loading).hide();
+					top.layer.alert('归属店铺必填！', {icon: 0, title:'提醒'});
+					return;
+				} 
+				
+				//防止表单多次提交
+			    if(isCommitted == false){
+			    	isCommitted = true;		//提交表单后，将表单是否已经提交标识设置为true
+			   	}else{
+			       	return false;			
+				}
+			    
+			    top.layer.close(index);
+			    $.ajax({
+					type:"post",
+					data:{
+						turnOverDetailsId:detailsId,
+						belongOfficeId:belongOfficeId
+					 },
+					url:"${ctx}/ec/orders/saveBelongOffice",
+					success:function(date){
+						console.log(loading);
+						top.layer.alert('保存成功!', {icon: 1, title:'提醒'});
+						window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderId;
+					},
+					error:function(XMLHttpRequest,textStatus,errorThrown){}
+				});
+			},
+			cancel: function(index){ //或者使用btn2
+			    	           //按钮【按钮二】的回调
+			}
+		}); 
+	}
 </script>
 </head>
 
@@ -535,11 +557,14 @@ window.onload=initStatus;
 							<input type="hidden" id="channelFlag" value="${orders.channelFlag}" />
 							<input type="hidden" id="isReal" value="${orders.isReal}" />
 							<input type="hidden" id="operationName" value="${user.name}" />
-							<input type="hidden" id="suitCardSons" value="${suitCardSons}" />
+							<input type="hidden" id="isNeworder" name="isNeworder" value="${orders.isNeworder}" >
 							<h4>订单基本信息:&nbsp;&nbsp;<c:if test="${orders.isReal == 2}">套卡订单</c:if>&nbsp;&nbsp;<c:if test="${orders.isReal == 3}">通用卡订单</c:if></h4><br>
 							<label class="active">订&nbsp;&nbsp;单&nbsp;号:</label>&nbsp;&nbsp;${orders.orderid }
 							<input type="hidden" id="orderid" name="orderid" value="${orders.orderid }" >
 							<input type="hidden" id="userid" name="userid" value="${orders.userid }" >
+							<input type="hidden" id="ordersGoodsprice" name="ordersGoodsprice" value="${orders.goodsprice}">
+							<input type="hidden" id="couponprice" name="couponprice" value="${orders.couponprice}">
+							<input type="hidden" id="memberGoodsPrice" name="memberGoodsPrice" value="${orders.memberGoodsPrice}">
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">新老订单:</label>&nbsp;&nbsp;
 							<c:if test="${orders.isNeworder == 0}">新订单</c:if>
@@ -597,8 +622,13 @@ window.onload=initStatus;
 									<th style="text-align: center;">系统价</th>
 									<th style="text-align: center;">市场价</th>
 									<th style="text-align: center;">优惠价</th>
+									<c:if test="${orders.isReal == 2}">
+										<th style="text-align: center;">次(个)数</th>
+									</c:if>
 									<th style="text-align: center;">购买数量</th>
-									<th style="text-align: center;">实际次数</th>
+									<c:if test="${(orders.isReal == 3) || (orders.isReal == 2 && orders.isNeworder == 1)}">
+										<th style="text-align: center;">实际次数</th>
+									</c:if>
 									<th style="text-align: center;">红包面值</th>
 									<th style="text-align: center;">折扣率</th>
 									<th style="text-align: center;">会员折扣</th>
@@ -637,24 +667,6 @@ window.onload=initStatus;
 								</tr>
 						</table>
 						</div>
-						<%-- <p></p>
-						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="shipping">
-							<label ><font color="red">*</font>物流类型：</label>
-							<form:select path="shippingtype"  class="form-control" style="width:180px">
-									<form:option value="0">快递发货</form:option>
-									<form:option value="1">到店自取</form:option>
-									<form:option value="2">无需发货</form:option>
-							</form:select>
-							<div id="logistics">
-								<p></p>
-								<label ><font color="red">*</font>收&nbsp;&nbsp;货&nbsp;&nbsp;人：</label>
-								<form:input path="consignee" htmlEscape="false" maxlength="10" class="form-control required" style="width:180px" />
-								<label ><font color="red">*</font>联系电话：</label>
-								<form:input path="mobile" htmlEscape="false" maxlength="11" class="form-control required" style="width:180px" />
-								<label ><font color="red">*</font>收货地址：</label>
-								<form:input path="address" htmlEscape="false" maxlength="120" class="form-control required" style="width:180px" />
-							</div>
-						</div> --%>
 						<p></p>
 						<c:if test="${orders.num > 0}">
 								<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
@@ -665,23 +677,89 @@ window.onload=initStatus;
 							</div> 
 						</c:if>
 						<p></p>
+						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="beauticianMoney">
+						<h4>业务员营业额:</h4>
+						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+								<tr>
+									<th style="text-align: center;">时间</th>
+									<th style="text-align: center;">类型</th>
+									<th style="text-align: center;">金额</th>
+									<th style="text-align: center;">业务员</th>
+									<th style="text-align: center;">部门</th>
+									<th style="text-align: center;">手机号</th>
+									<th style="text-align: center;">营业额</th>
+									<th style="text-align: center;">操作</th>
+								</tr>
+								<tbody style="text-align:center;">	
+									<tr>${pushMoneryDetails}</tr>
+								</tbody>
+						</table>
+						</div>
+						<p></p>
+						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="shopMoney">
+						<h4>店营业额:</h4>
+						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+								<tr>
+									<th style="text-align: center;">时间</th>
+									<th style="text-align: center;">类型</th>
+									<th style="text-align: center;">金额</th>
+									<th style="text-align: center;">归属店铺</th>
+									<th style="text-align: center;">操作时间</th>
+									<th style="text-align: center;">操作人</th>
+									<th style="text-align: center;">操作</th>
+								</tr>
+								<c:forEach items="${turnOverDetailsList}" var="turnOverDetails">
+									<tr>
+										<td align="center">
+											<fmt:formatDate value="${turnOverDetails.createDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
+										</td>
+										<td align="center">
+											<c:if test="${turnOverDetails.type == 1}">下单</c:if>
+											<c:if test="${turnOverDetails.type == 2}">还款</c:if>
+										</td>
+										<td align="center">${turnOverDetails.amount}</td>
+										<td align="center">${turnOverDetails.belongOfficeName}</td>
+										<td align="center">
+											<fmt:formatDate value="${turnOverDetails.settleDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
+										</td>
+										<td align="center">${turnOverDetails.settleName}</td>
+										<td align="center">
+											<c:choose>
+												<c:when test="${turnOverDetails.status == 2 && (turnOverDetails.belongOfficeId == '' || turnOverDetails.belongOfficeId == null)}">
+													<a href="#" class="btn btn-success btn-xs" onclick="updateDetails('${turnOverDetails.turnOverDetailsId}','${turnOverDetails.orderId}')"><i class='fa fa-edit'></i>编辑</a>
+												</c:when>
+												<c:otherwise>
+													<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>编辑</a>
+												</c:otherwise>
+											</c:choose>
+										</td>
+									</tr>
+								</c:forEach>
+						</table>
+						</div>
+						<%-- <p></p>
 						<c:if test="${orders.isNeworder == 0}">
 							<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 								<div class="pull-left">
-									<h4>人员提成信息：</h4>
+									<h4>业务员信息：</h4>
 								</div>
 								<c:if test="${type != 'view' }">
 									<div class="pull-right">
 										<a href="#" onclick="getSysUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
 									</div>
 								</c:if>
+								<shiro:hasPermission name="ec:orders:pushmoney">
+									<div class="pull-right">
+										<a href="#" onclick="openDialogView('查看日志记录', '${ctx}/ec/orders/getOrderPushmoneyRecordList?orderId=${orders.orderid }','800px','600px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>日志记录</a>
+									</div>
+								</shiro:hasPermission>
 								<p></p>
 								<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
 									<thead>
 										<tr>
 											<th style="text-align: center;">业务员</th>
 											<th style="text-align: center;">手机号</th>
-											<th style="text-align: center;">提成金额</th>
+											<th style="text-align: center;">营业额</th>
 											<th style="text-align: center;">操作人</th>
 											<th style="text-align: center;">操作时间</th>
 											<c:if test="${type != 'view' }">
@@ -702,6 +780,7 @@ window.onload=initStatus;
 												</td>
 												<td>
 													${orderPushmoneyRecord.pushMoney }
+													<input type="hidden" id="${orderPushmoneyRecord.pushmoneyUserId }pushMoneySum" value="${orderPushmoneyRecord.pushMoney }" />
 												</td>
 												<td>
 													${orderPushmoneyRecord.createBy.name }
@@ -720,7 +799,7 @@ window.onload=initStatus;
 									</tbody>
 								</table>
 							</div>
-						</c:if>
+						</c:if> --%>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 							<div class="pull-left">

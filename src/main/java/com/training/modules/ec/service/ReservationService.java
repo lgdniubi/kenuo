@@ -1,6 +1,6 @@
 package com.training.modules.ec.service;
 
-
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +11,13 @@ import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.ec.dao.ReservationDao;
 import com.training.modules.ec.entity.Comment;
+import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.Reservation;
 import com.training.modules.ec.utils.CommonScopeUtils;
 import com.training.modules.sys.dao.AreaDao;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.Office;
+import com.training.modules.train.entity.Subscribe;
 
 
 /**
@@ -44,6 +46,10 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 	 * 查看所有预约
 	 */
 	public Page<Reservation> findPage(Page<Reservation> page,Reservation reservation){
+		if(reservation.getBeginDate() == null && reservation.getEndDate() == null){
+			reservation.setBeginDate(new Date());
+			reservation.setEndDate(new Date());
+		}
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
 		reservation.getSqlMap().put("dsf", CommonScopeUtils.newDataScopeFilter("r"));
 		reservation.setPage(page);
@@ -73,7 +79,7 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 	 * 加载美容师
 	 * @return
 	 */
-	public List<Office> loadOffice(int goodsId,String areaId){
+	public List<Office> loadOffice(String goodsIds,String franchiseeId,String areaId){
 		String nationName = "";
 		String provinceId = "";
 		String cityId = "";
@@ -90,6 +96,48 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 				districtId = area.getId();
 			}
 		}
-		return dao.loadOffice(goodsId,nationName,provinceId,cityId,districtId);
+		return dao.loadOffice(goodsIds,franchiseeId,nationName,provinceId,cityId,districtId);
+	}
+	
+	/**
+	 * 查询用户可服务的订单
+	 * @return
+	 */
+	public List<OrderGoods> findOrderGoodsByUserId(int userId){
+		return dao.findOrderGoodsByUserId(userId);
+	}
+
+	/**
+	 * 查询预约的实际服务时间
+	 * @param reservation
+	 * @return
+	 */
+	public Reservation getServiceTime(Reservation reservation) {
+		return dao.getServiceTime(reservation);
+	}
+
+	/**
+	 * 添加/修改  实际服务时长
+	 * @param reservation
+	 */
+	public void editServiceTime(Reservation reservation) {
+		dao.editServiceTime(reservation);
+	}
+	
+	/**
+	 * 获取预约时间服务已过没有完成状态的预约
+	 * @return
+	 */
+	public List<Subscribe> querySubscribelist() {
+		return dao.querySubscribelist();
+	}
+	
+	/**
+	 * 修改预约状态
+	 * @param appt_id
+	 * @return
+	 */
+	public int updateapptstatus(int appt_id) {
+		return dao.updateapptstatus(appt_id);
 	}
 }

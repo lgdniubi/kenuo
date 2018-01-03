@@ -32,7 +32,7 @@
     		$("#warning").hide();
     		$("#mytable").empty("");
         	//清除input值
-        	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,skillId,labelId,oldorderid,groupId,isReal");
+        	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,goodsName,skillId,labelId,franchiseeId,oldorderid,groupId,isReal");
         	//清除下拉框的值
         	clearSelect("serve,shopId,beauticianId,date,times");
     	}
@@ -62,7 +62,7 @@
     function serveChange(num){
     	$("#mytable").empty("");
     	//清除input值
-    	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,skillId,labelId,groupId,isReal");
+    	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,goodsName,skillId,labelId,franchiseeId,groupId,isReal");
     	//清除下拉框的值
     	clearSelect("shopId,beauticianId,date,times");
     	if(serveList[num].isExpiring == 1){
@@ -89,9 +89,12 @@
 					    	$("#isReal").val(serveList[num].isreal);
 					    	$("#servicemin").val(serveList[num].servicemin);
 					    	$("#goodsId").val(serveList[num].goodsid);
+					    	$("#goodsName").val(serveList[num].goodsname);
 					    	$("#skillId").val(serveList[num].skillId);
 					    	$("#labelId").val(serveList[num].labelId);
+					    	$("#franchiseeId").val(serveList[num].franchiseeId);
 					    	$(".loading").hide();
+					    	findOffice();	// 若选中商品后则自动加载店铺
 		    			}else{
 		    				$(".loading").hide();
 		    				top.layer.alert('1、此商品无可用次数!<br>2、此商品服务次数已用完!', {icon: 0, title:'提醒'});
@@ -112,9 +115,12 @@
 						    	$("#isReal").val(serveList[num].isreal);
 						    	$("#servicemin").val(serveList[num].servicemin);
 						    	$("#goodsId").val(serveList[num].goodsid);
+						    	$("#goodsName").val(serveList[num].goodsname);
 						    	$("#skillId").val(serveList[num].skillId);
 						    	$("#labelId").val(serveList[num].labelId);
+						    	$("#franchiseeId").val(serveList[num].franchiseeId);
 						    	$(".loading").hide();
+						    	findOffice();	// 若选中商品后则自动加载店铺
 		    				}else{
 		    					$(".loading").hide();
 		    					top.layer.alert('1、此套卡商品可用金额不足一次服务!<br>2、此套卡商品服务次数已用完!', {icon: 0, title:'提醒'});
@@ -133,9 +139,12 @@
 					    	$("#isReal").val(serveList[num].isreal);
 					    	$("#servicemin").val(serveList[num].servicemin);
 					    	$("#goodsId").val(serveList[num].goodsid);
+					    	$("#goodsName").val(serveList[num].goodsname);
 					    	$("#skillId").val(serveList[num].skillId);
 					    	$("#labelId").val(serveList[num].labelId);
+					    	$("#franchiseeId").val(serveList[num].franchiseeId);
 					    	$(".loading").hide();
+					    	findOffice();	// 若选中商品后则自动加载店铺
 		    			}else{
 		    				$(".loading").hide();
 		    				top.layer.alert('此套卡商品无可用次数!', {icon: 0, title:'提醒'});
@@ -155,9 +164,12 @@
 					    	$("#isReal").val(serveList[num].isreal);
 					    	$("#servicemin").val(serveList[num].servicemin);
 					    	$("#goodsId").val(serveList[num].goodsid);
+					    	$("#goodsName").val(serveList[num].goodsname);
 					    	$("#skillId").val(serveList[num].skillId);
 					    	$("#labelId").val(serveList[num].labelId);
+					    	$("#franchiseeId").val(serveList[num].franchiseeId);
 					    	$(".loading").hide();
+					    	findOffice();	// 若选中商品后则自动加载店铺
 		    			}else{
 		    				$(".loading").hide();
 		    				top.layer.alert('1、此通用卡商品无可用次数!<br>2、此通用卡商品服务次数已用完!', {icon: 0, title:'提醒'});
@@ -179,13 +191,22 @@
    	       	$.ajax({
    	       		type : 'post',
    	       		url : '${ctx}/ec/mtmyMnappointment/loadOffice',
-   	       		data:{'areaId':$('#areaId').val(),'goodsId':$("#goodsId").val()},
+   	       		data:{'areaId':$('#areaId').val(),'goodsIds':$("#goodsId").val(),'franchiseeId':$("#franchiseeId").val()},
    	       		dateType: 'text',
    	       		success:function(data){
    	   				$.each(data.office,function(index,item){
-   	   					$("#shopId").append("<option value="+item.officeId+">"+item.officeName+"</option>");
+   	   					if(data.loginOfficeId == item.officeId){
+   	   						$("#shopId").append("<option value="+item.officeId+" selected=\"selected\" >"+item.officeName+"</option>");
+   	   					}else{
+	   	   					$("#shopId").append("<option value="+item.officeId+">"+item.officeName+"</option>");
+   	   					}
    	       			}); 
    	   				$(".loading").hide();
+   	   				if($("#shopId").val() != ""){	// 若选中店铺则自动加载美容师
+   	   					changeShop();
+   	   				}else{
+   	   					$("#shopId").focus();	// 若无选中店铺 则自动定位到 选中店铺 下拉框
+   	   				}
    	       		}
    	       	})
    		}else{
@@ -210,10 +231,20 @@
 						top.layer.alert('数据加载失败！', {icon: 0, title:'提醒'});
 					}else{
 						$.each(data.data.beautys,function(index,item){
-							$("#beauticianId").append("<option value="+item.beauty_id+">"+item.name+"</option>");
+							if(item.beauty_id == data.loginUserId){
+								$("#beauticianId").append("<option value="+item.beauty_id+" selected=\"selected\">"+item.name+"</option>");
+							}else{
+								$("#beauticianId").append("<option value="+item.beauty_id+">"+item.name+"</option>");
+							}
 		    			}); 
 					}
    	   				$(".loading").hide();
+   	   				if($("#beauticianId").val() != ""){	// 若选中技师后 则自动加载美容师时间
+   	   					ReservationTime();
+   	   					$("#date").focus();	// 定位到 选择美容师时间 下拉框
+   	   				}else{
+   	   					$("#beauticianId").focus();	// 定位到 选择美容师 下拉框
+   	   				}
    	       		}
    	       	})
     	}else{
@@ -304,8 +335,10 @@
 					<input id="isReal" name="isReal" value=1 type="hidden"><!--组ID 用于添加预约 -->
 					<input id="servicemin" name="servicemin" type="hidden"><!-- 1.验证  2.获取美容师预约时间时 传服务时长 -->
 					<input id="goodsId" name="goodsId" type="hidden"><!-- 调用存储过程获取可用店铺数据 -->
+					<input id="goodsName" name="goodsName" type="hidden">
 					<input id="skillId" name="skillId" type="hidden"><!-- 获取美容师详情 -->
 					<input id="labelId" name="labelId" type="hidden"><!-- 获取美容师预约时间 -->
+					<input id="franchiseeId" name="franchiseeId" type="hidden"><!-- 商品的归属商家   用于加载店铺时选择同一个商家 -->
 					<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 						<tr>
 							<td class="active" width="110px;"><label class="pull-right"><font color="red">*</font>订单号：</label></td>
@@ -379,6 +412,15 @@
 								<select id="times" name="times" class="form-control required">
 									<option value="">请选择预约时间</option>
 								</select>
+							</td>
+						</tr>
+						<tr>
+							<td class="active"><label class="pull-right"><font color="red">*</font>预约短信：</label></td>
+							<td> 
+								<label class="checked"><input type="radio" id="sendToUserFlag" name="sendToUserFlag" value=0 class="required">否</label>
+                                <label class="checked"><input type="radio" id="sendToUserFlag" name="sendToUserFlag" value=1 class="required">是</label>
+								<br>
+								<span class="help-inline">是否将预约信息的短信发到手机上</span>
 							</td>
 						</tr>
 						<tr>

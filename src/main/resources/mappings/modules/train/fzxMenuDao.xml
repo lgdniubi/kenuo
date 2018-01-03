@@ -1,6 +1,56 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.training.modules.train.dao.FzxMenuDao">
+
+	<resultMap id="fzxMenuResult" type="FzxMenu">
+		<id property="menuId" column="id" />
+		<result property="parentIds" column="parentIds" />
+		<result property="enname" column="enname" />
+		<result property="name" column="name" />
+		<result property="href" column="href" />
+		<result property="icon" column="icon" />
+		<result property="sort" column="sort" />
+		<result property="isShow" column="isShow" />
+		<!-- 查询父模块   -->
+        <association property="parent" column="parent_id" select="getParent" />   
+          
+       <!--  查询子模块   -->
+        <collection property="children" column="id" select="getChildren" />  
+	</resultMap>
+
+	<sql id="menuColumns">
+		a.id AS "menuId",
+		a.parent_id AS "parent.menuId",
+		a.parent_ids,
+		a.enname,
+		a.name,
+		a.href,
+		a.icon,
+		a.sort,
+		a.is_show,
+		<!-- a.permission, -->
+		a.remarks,
+		a.create_by AS "createBy.id",
+		a.create_date,
+		a.update_by AS "updateBy.id",
+		a.update_date,
+		a.del_flag,
+		p.name AS "parent.name"
+	</sql>
+	
+	<sql id="menuJoins">
+		LEFT JOIN fzx_menu p ON p.id = a.parent_id
+    </sql>
+    
+    <!-- 查询父模块 -->
+    <select id="getChildren" parameterType="Integer" resultMap="fzxMenuResult">  
+        SELECT * FROM fzx_menu WHERE parent_id = #{menuId} ORDER BY sort 
+    </select>  
+   <!--  查询子模块 -->
+    <select id="getParent" parameterType="Integer" resultMap="fzxMenuResult">  
+        SELECT * FROM fzx_menu WHERE id = #{menuId}  
+    </select>  
+	
 	<!-- 菜单列表 -->
 	<select id="findList" resultType="FzxMenu">
 		SELECT 
@@ -22,8 +72,8 @@
 			ORDER BY sort DESC
 	</select>
 	<!-- 查询所有菜单(未删除、显示) -->
-	<select id="findAllList" resultType="FzxMenu">
-		SELECT 
+	<select id="findAllList" resultMap="fzxMenuResult">
+		<!-- SELECT 
 			id AS menuId,
 			name
 		FROM 
@@ -31,12 +81,29 @@
 		WHERE 
 			del_flag = 0 
 			AND is_show = 0
-			ORDER BY sort DESC
+			ORDER BY sort DESC -->
+			
+			SELECT
+			<include refid="menuColumns"/>
+			,(SELECT COUNT(*) FROM fzx_menu AS B WHERE a.id = B.parent_id AND B.del_flag=0) AS 'num'
+		FROM fzx_menu a
+		<include refid="menuJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		ORDER BY a.sort
 	</select>
 	<!-- 菜单详情 -->
-	<select id="get" resultType="FzxMenu">
+	<!-- <select id="get" resultType="FzxMenu">
 		SELECT id AS menuId,name,enname,href,icon,is_show AS isShow,sort,remarks FROM fzx_menu WHERE id = #{menuId}
+	</select> -->
+	
+	<select id="get" resultMap="fzxMenuResult">
+		SELECT
+			<include refid="menuColumns"/>
+		FROM fzx_menu a
+		<include refid="menuJoins"/>
+		WHERE a.id = #{menuId}
 	</select>
+	
 	<!-- 插入菜单 -->
 	<insert id="insert">
 		INSERT INTO fzx_menu(
@@ -53,8 +120,8 @@
 			remarks,
 			del_flag
 		) VALUES (
-			0,
-			'0,',
+			#{parent.menuId},
+			#{parentIds},
 			#{enname},
 			#{name},
 			#{href},
@@ -70,7 +137,25 @@
 	<!-- 修改菜单 -->
 	<update id="update">
 		UPDATE fzx_menu SET 
+			parent_id = #{parent.menuId},
+			parent_ids = #{parentIds},
 			enname = #{enname}, 
+			name = #{name}, 
+			href = #{href}, 
+			icon = #{icon}, 
+			is_show = #{isShow}, 
+			sort = #{sort},
+			update_by = #{updateBy.id}, 
+			update_date = #{updateDate}, 
+			remarks = #{remarks},
+			del_flag = 0
+		WHERE id = #{menuId}
+	</update>
+		
+	<update id="updateNotEnname">
+		UPDATE fzx_menu SET 
+			parent_id = #{parent.menuId},
+			parent_ids = #{parentIds},
 			name = #{name}, 
 			href = #{href}, 
 			icon = #{icon}, 
@@ -105,4 +190,40 @@
 	<select id="checkEnname" resultType="int">
 		SELECT COUNT(1) FROM fzx_menu WHERE enname = #{enname} AND del_flag = 0
 	</select>
+	
+	<!-- 根据id加载子类 -->
+	<select id="findByPidforChild" parameterType="Integer" resultMap="fzxMenuResult">
+		SELECT
+			<include refid="menuColumns"/>
+			,(SELECT COUNT(*) FROM fzx_menu AS B WHERE a.id = B.parent_id AND B.del_flag=0) AS 'num'
+		FROM fzx_menu a
+		<include refid="menuJoins"/>
+		WHERE a.del_flag = '0'
+		AND a.parent_id = #{menuId}
+		ORDER BY a.sort
+	</select>
+	
+	<!-- 根据ids查询所有的数据 -->
+	<select id="findByParentIdsLike" parameterType="String" resultMap="fzxMenuResult">
+		SELECT
+		a.id,
+		a.parent_id AS "parent.menuId",
+		a.parent_ids
+		FROM fzx_menu a
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL} AND a.parent_ids LIKE #{parentIds}
+		ORDER BY a.sort
+	</select>
+	
+	<update id="updateParentIds">
+		UPDATE sys_menu SET 
+		parent_id = #{parent.menuId}, 
+		parent_ids = #{parentIds}
+		WHERE id = #{menuId}
+	</update>
+	<!-- 批量修改菜单 -->
+	<update id="updateMenuSort">
+		UPDATE fzx_menu SET 
+			sort = #{sort}
+		WHERE id = #{menuId}
+	</update>
 </mapper>

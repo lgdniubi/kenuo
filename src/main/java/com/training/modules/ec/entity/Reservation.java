@@ -43,6 +43,8 @@ public class Reservation extends DataEntity<Reservation>{
 	private Integer teachersStarLevel;  //sharp 3月27所加，美容师评级
 	
 	private String userNote;           //消费者备注
+	private Date serviceStartTime;		//实际服务开始时间（YYYY-MM-DD hh:mm）
+	private Date serviceEndTime;		//实际服务结束时间（YYYY-MM-DD hh:mm）
 	
 	public Integer getTeachersStarLevel() {
 		return teachersStarLevel;
@@ -183,6 +185,18 @@ public class Reservation extends DataEntity<Reservation>{
 	}
 	public void setUserNote(String userNote) {
 		this.userNote = userNote;
+	}
+	public Date getServiceStartTime() {
+		return serviceStartTime;
+	}
+	public void setServiceStartTime(Date serviceStartTime) {
+		this.serviceStartTime = serviceStartTime;
+	}
+	public Date getServiceEndTime() {
+		return serviceEndTime;
+	}
+	public void setServiceEndTime(Date serviceEndTime) {
+		this.serviceEndTime = serviceEndTime;
 	}
 	
 }

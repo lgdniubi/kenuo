@@ -89,8 +89,9 @@
                 		<tr>
                 			<th style="text-align: center;">ID</th>
                 			<th style="text-align: center;">名称</th>
+                			<th style="text-align: center;">副标题</th>
                 			<th style="text-align: center;">位置</th>
-                			<th style="text-align: center;">方向</th>
+                			<th style="text-align: center;">排序</th>
                 			<th style="text-align: center;">原始图</th>
                 			<th style="text-align: center;">头图</th>
                 			<th width="130" style="text-align: center;">是否显示</th>
@@ -102,17 +103,13 @@
 						<tr>
 							<td style="text-align: center;">${mtmyWebAd.mtmyWebAdId}</td>
 							<td style="text-align: center;">${mtmyWebAd.name}</td>
+							<td style="text-align: center;">${mtmyWebAd.subhead}</td>
 							<td style="text-align: center;">
 								<c:if test="${mtmyWebAd.positionType == '1'}">首页</c:if>
 								<c:if test="${mtmyWebAd.positionType == '2'}">商城</c:if>
 								<c:if test="${mtmyWebAd.positionType == '3'}">生活美容</c:if>							
 							</td>
-							<td style="text-align: center;">
-								<c:if test="${mtmyWebAd.align == '0'}">居中</c:if>
-								<c:if test="${mtmyWebAd.align == '1'}">左边</c:if>
-								<c:if test="${mtmyWebAd.align == '2'}">右上</c:if>
-								<c:if test="${mtmyWebAd.align == '3'}">右下</c:if>								
-							</td>
+							<td style="text-align: center;">${mtmyWebAd.sort}</td>
 							<td style="text-align: center;" class="imgUrl" ><img alt="" src="${ctxStatic}/images/lazylode.png"  data-src="${mtmyWebAd.suboriginalImg}" style="width: 150px;height: 100px;border:1px solid black; "></td>
 							<td style="text-align: center;" class="imgUrl" ><img alt="" src="${ctxStatic}/images/lazylode.png"  data-src="${mtmyWebAd.headImg}" style="width: 150px;height: 100px;border:1px solid black; "></td>
 							<td style="text-align: center;" id="isShow${mtmyWebAd.mtmyWebAdId}">
