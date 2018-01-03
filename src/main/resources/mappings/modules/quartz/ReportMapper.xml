@@ -11,14 +11,17 @@
 
 	<insert id="insertTableUserAppArrearge"><!--统计会员欠款(区分商家)-->
 		INSERT INTO mtmydb.user_app_arrearage 
-		(user_id,user_name,beautician_id,beautician_name,user_office_id,total_app_arrearage)
+		(user_id,user_name,beautician_id,beautician_name,user_office_id,user_office_name,goods_franchisee_id,total_app_arrearage,create_day)
 		SELECT 
 			u.user_id,
 			u.`name`,
 			u.beautician_id,
 			u.beautician_name,
 			u.office_id,
-			IFNULL(SUM(de.app_arrearage),0) as app_arrearage
+			u.office_name,
+			gm.goods_franchisee_id,
+			IFNULL(SUM(de.app_arrearage),0) as app_arrearage,
+			MAX(de.create_date) as create_day
 		FROM 
 			mtmydb.mtmy_order_goods_details de
 		INNER JOIN mtmydb.mtmy_order_goods_mapping gm ON gm.rec_id = de.goods_mapping_id
@@ -35,19 +38,21 @@
 
 	<insert id="insertTableOfficeAppArrearge"><!--统计机构欠款(区分商家)-->
 		INSERT INTO mtmydb.office_app_arrearage 
-		(office_id,office_parent_id,office_name,total_app_arrearage)
+		(office_id,office_parent_id,office_name,total_app_arrearage,create_day)
 		SELECT 
 			o.id as office_id,
 			o.parent_id as office_parent_id,
 			o.name as office_name,
-			IFNULL(SUM(t.app_arrearage),0)
+			IFNULL(SUM(t.app_arrearage),0),
+			t.create_day
 		FROM
 		(SELECT 
 			u.user_id,
 			u.office_id,
 			gm.goods_franchisee_id,
 			s.parent_ids,
-			IFNULL(SUM(de.app_arrearage),0) as app_arrearage
+			IFNULL(SUM(de.app_arrearage),0) as app_arrearage,
+			MAX(de.create_date) as create_day
 		FROM 
 			mtmydb.mtmy_order_goods_details de
 		INNER JOIN mtmydb.mtmy_order_goods_mapping gm ON gm.rec_id = de.goods_mapping_id
