@@ -142,45 +142,48 @@
 		}
 	
 		 function newImport(){
+			$("#templateType").val($("#groupImportType").val());
 			$("#newComment").empty();
 			$('#commentModal').modal('show');
 			closeTip(); 
 		 }
 		 
 		 $(function(){
-	          var options = {
-	              url : "${ctx}/ec/mtmyOaNotify/importPhones",
-	              dataType : "text",
-	              type : "post",
-	              success : function(data){
-	            	  $('#commentModal').modal('hide');
-	                  var newDate = $.parseJSON(data);
-				 	  var type = newDate.type;
-					  var phones = newDate.phones;
-					  if(type =="success"){
-						  var a = $("#phones").val();
-						  if(a.endsWith(",") || a.length == 0){
-							  $("#phones").val(phones);
-						  }else{
-							  $("#phones").val(a + "," + phones);
-						  }
-						
-					  }
-					  if(type=="error"){
-						 top.layer.alert('导入手机号失败!', {icon: 2, title:'提醒'});
-					  }
-	              },
-	              error:function(XMLHttpRequest,textStatus,errorThrown){
-				  }
-	          };
 	          $("#yes").click(function(){
+	        	  var options = {                                         
+    	              url : "${ctx}/ec/mtmyOaNotify/importPhonesOrUserIds",
+    	              dataType : "text",
+    	              type : "post",
+    	              success : function(data){
+    	            	  $('#commentModal').modal('hide');
+    	                  var newDate = $.parseJSON(data);
+    				 	  var type = newDate.type;
+    				 	  var data = newDate.data;
+    					  if(type =="success"){
+    						  var a = $("#data").val();
+    						  if(a.endsWith(",") || a.length == 0){
+    							  $("#data").val(data);
+    						  }else{
+    							  $("#data").val(a + "," + data);
+    						  }
+    						
+    					  }
+    					  if(type=="error"){
+    						 top.layer.alert('导入失败!', {icon: 2, title:'提醒'});
+    					  }
+    	              },
+    	              error:function(XMLHttpRequest,textStatus,errorThrown){
+    				  }
+    	          };
+	        	  
 	             $("#inputForm2").ajaxSubmit(options)
 	          });
 	      });
 		 
 		//导出下载模板	
 		function importFileTemplate(){
-			window.location.href= '${ctx}/ec/mtmyOaNotify/importPhonesOrders/template';
+			var type = $("#templateType").val();
+			window.location.href= '${ctx}/ec/mtmyOaNotify/importPhonesOrders/template?type='+type;
 		}
 		
 		//修改列推的用户
@@ -226,6 +229,10 @@
 	    	           //按钮【按钮二】的回调
 	    	       }
 			}); 
+		}
+		
+		function selectImportType(){
+			$("#data").val("");
 		}
 	</script>
 </head>
@@ -282,8 +289,13 @@
 		        		<input id="mtmyOaNotifyRecordMobile" name="mtmyOaNotifyRecordMobile" value="${mtmyOaNotify.mtmyOaNotifyRecordMobile}" type="hidden">
 		        	</td>
 		       		<td colspan="3">
-	       				<a href="#" onclick="newImport()" class="btn btn-white btn-sm"><i class="fa fa-folder-open-o"></i>导入</a><font color="red">若输入用户手机号码，则要“,”分割开</font><br>
-	       				<textarea id='phones' name="phones" rows="6" cols="1" class='form-control required' >${mtmyOaNotify.mtmyOaNotifyRecordMobile}</textarea>
+		       			<select class="form-control required" id="groupImportType" name="groupImportType" style="width:200px" onchange="selectImportType(this.value)">
+		       				<option ${(mtmyOaNotify.groupImportType == 0)?'selected="selected"':''} value="0">批量导入手机号</option>
+		       				<option ${(mtmyOaNotify.groupImportType == 1)?'selected="selected"':''} value="1">批量导入用户ID</option>
+		       			</select>
+		       			<p></p>
+	       				<a href="#" onclick="newImport()" class="btn btn-white btn-sm"><i class="fa fa-folder-open-o"></i>导入</a><font color="red">若要手动输入，则要“,”分割开</font><br>
+	       				<textarea id='data' name="data" rows="6" cols="1" class='form-control required' ><c:if test="${mtmyOaNotify.groupImportType == 0}">${mtmyOaNotify.mtmyOaNotifyRecordMobile}</c:if><c:if test="${mtmyOaNotify.groupImportType == 1}">${mtmyOaNotify.mtmyOaNotifyRecordUserIds}</c:if></textarea>
 		       		</td>
 		        </tr>
 		        </c:if>
@@ -353,7 +365,7 @@
 		</table>
 	</form:form>
 	<div class="loading"></div>
-	<!-- 评论对话框 -->
+	<!-- 组推批量导入手机号或者id的对话框 -->
 	<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="commentModal">
  		<div class="modal-dialog modal-lg">
 		    <div class="modal-content">
@@ -366,6 +378,7 @@
 						<input id="uploadFile" accept=".xls,.xlsx" name="file" type="file" style="width:330px"/>
 						导入文件不能超过5M，仅允许导入“xls”或“xlsx”格式文件！
 					</form>
+					<input id="templateType" name="templateType" type="hidden">
 					<input class="btn" style="margin-left: 150px;margin-top: 7px;" type="button" value="下载模板" onclick="importFileTemplate()">
 		      	</div>
 				<div class="modal-footer">

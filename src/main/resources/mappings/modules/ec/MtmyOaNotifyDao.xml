@@ -16,6 +16,7 @@
 		a.REMARKS AS "remarks",
 		a.DEL_FLAG AS "delFlag",
 		a.PUSH_TYPE AS "pushType",
+		a.group_import_type AS 'groupImportType',
 		a.RESULT AS "result",
 		a.MSG_TOTAL AS "msgTotal",
 		a.MSG_PROCESS AS "msgProcess",
@@ -81,6 +82,7 @@
 			REMARKS,
 			DEL_FLAG,
 			PUSH_TYPE,
+			group_import_type,
 			START_TIME,
 			END_TIME
 			
@@ -98,6 +100,7 @@
 			#{remarks},
 			#{delFlag},
 			#{pushType},
+			#{groupImportType},
 			#{startTime},
 			#{endTime}
 		)
@@ -114,6 +117,7 @@
 			UPDATE_DATE = #{updateDate},
 			REMARKS = #{remarks},
 			PUSH_TYPE = #{pushType},
+			group_import_type = #{groupImportType},
 			START_TIME = #{startTime},
 			END_TIME = #{endTime}
 		WHERE id = #{id}
