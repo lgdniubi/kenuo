@@ -13,7 +13,7 @@
 			top.layer.open({
 	 			type: 2, 
 	 		    area: ['800px', '600px'],
-	 		    title:"新增/修改营业额：（提示：营业额数字不能修改，但可以插入正负数增减）",
+	 		    title:"新增/修改营业额",
 	 		    content: "${ctx}/ec/returned/editOrderPushmoneyRecord?orderId="+orderId+"&detailsId="+detailsId,
 	 		    btn: ['确定', '关闭']
 	     	    ,yes: function(index, layero){
@@ -28,14 +28,14 @@
 	     	    		top.layer.alert('该订单无营业额数据', {icon: 0, title:'提醒'});
 	     	    		return;
 	     	    	}
-	     	    	//校验当前每个业务员sum营业额+增减值>=0
+	     	    	//校验当前每个业务员所在店铺的营业额+增减值>=0
 	     	    	var num = obj.document.getElementById("num").value; //数据列表的个数
-	     	    	for(var k = 0; k < num; k++){
-		     	    	var y = obj.document.getElementById("Amount"+k).value; //获取每条对应输入的增减值
-		     	    	var z = obj.document.getElementById("beauticianTurnover"+k).value; //获取业务员SUM营业额(存在已退)
+	     	    	for(var k = num; k > 0; k--){
+		     	    	var y = obj.document.getElementById("added"+k).value; //每个业务员所在店铺的营业额
+		     	    	var z = obj.document.getElementById("Amount"+k).value; //每条营业额对应输入的增减值
 		     	    	
 		     	    	var re = /^([+-]?)\d*\.?\d{0,2}$/; 
-		     	    	if(!re.test(y)){
+		     	    	if(!re.test(z)){
 		     	    		top.layer.alert('请输入正确的营业额(最多两位小数)', {icon: 0, title:'提醒'});
 		     	    		return;
 		     	    	}
@@ -45,20 +45,24 @@
 	     					return;
 	     	    		}
 	     	    	}
-	     	    	//校验同部门的营业额的值 = 售后金额
-	  			    var turnover = 0;//部门营业额
-	  			    var pushMoneys = "";//当前营业额
-	  			    var add = 0;
+	     	    	//校验同部门的营业额总和  = 售后金额
+	  			    var add = 0;//已扣减的值
+	  			    var turnover = 0;//增减值
+	  			    var pushMoneys = "";//输入的增减值拼接字符串
 	  			    departmentId = departmentId.split(",");
 	  			    for(var i = 0; i < departmentId.length-1; i++){
+	  			    	var addeds = "pushMoney"+departmentId[i];
+	  			    	var added = obj.document.getElementsByName(addeds); //已扣减的值
 	  			    	var departmentIds = "Amount"+departmentId[i];
-	     	    		var dept = obj.document.getElementsByName(departmentIds); //部门id
-	  			    	var addeds = "added"+departmentId[i];//获取数据库查询的原本就有的营业额增减值
-	  			    	var added = obj.document.getElementsByName(addeds); //部门id
-	  				    for(var j = 0; j < dept.length; j++){
-	  				    	turnover += parseFloat($(dept[j]).val());
-	  				    	add += parseFloat($(added[j]).val());
-	  				    	pushMoneys += $(dept[j]).val() + ",";
+	     	    		var dept = obj.document.getElementsByName(departmentIds); //当前输入的增减值
+	     	    		
+	  				    for(var j = 0; j < added.length; j++){
+	  				    	add += parseFloat($(added[j]).val());//已扣减的值
+	  				    }
+	  			    	
+	  				    for(var k = 0; k < dept.length; k++){
+	  				    	turnover += parseFloat($(dept[k]).val());//增减值
+	  				    	pushMoneys += $(dept[k]).val() + ",";//输入的增减值拼接字符串
 	  				    }
 	  				    if(parseFloat(returnAmount) + parseFloat(turnover) + parseFloat(add) != 0){
 	  				        top.layer.alert('每个部门的营业额之和必须等于售后金额！', {icon: 0, title:'提醒'});
@@ -67,7 +71,6 @@
 	  				  	add = 0;
 	  				    turnover = 0;
 	  			    }
-	  			    
 	   	    		$.ajax({
 	       				type:"post",
 	       				data:{
@@ -98,7 +101,7 @@
 			top.layer.open({
 	 			type: 2, 
 	 		    area: ['800px', '600px'],
-	 		    title:"新增/修改营业额：（提示：营业额数字不能修改，但可以插入正负数增减）",
+	 		    title:"新增/修改营业额",
 	 		    content: "${ctx}/ec/returned/editMtmyTurnoverDetails?orderId="+orderId+"&detailsId="+detailsId,
 	 		    btn: ['确定', '关闭']
 	     	    ,yes: function(index, layero){
@@ -182,7 +185,7 @@
 						<tr>
 							<th style="text-align: center;">时间</th>
 							<th style="text-align: center;">类型</th>
-							<th style="text-align: center;">金额</th>
+							<th style="text-align: center;">售后金额</th>
 							<th style="text-align: center;">业务员</th>
 							<th style="text-align: center;">部门</th>
 							<th style="text-align: center;">手机号</th>
@@ -200,8 +203,8 @@
 						<tr>
 							<th style="text-align: center;">时间</th>
 							<th style="text-align: center;">类型</th>
-							<th style="text-align: center;">金额</th>
-							<th style="text-align: center;">店</th>
+							<th style="text-align: center;">售后金额</th>
+							<th style="text-align: center;">店名</th>
 							<th style="text-align: center;">营业额</th>
 							<th style="text-align: center;">操作</th>
 						</tr>

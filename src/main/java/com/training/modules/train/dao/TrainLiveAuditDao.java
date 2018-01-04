@@ -96,4 +96,51 @@ public interface TrainLiveAuditDao extends TreeDao<TrainLiveAudit>{
 	 * @param id
 	 */
 	public void insertJurisdiction(@Param("auditId")String auditId,@Param("id")String id);
+
+	/**
+	 * 添加直播推荐(只有一个能够推荐)
+	 * @param trainLiveAudit
+	 */
+	public void addRecommend(TrainLiveAudit trainLiveAudit);
+
+	/**
+	 * 修改全部直播为不推荐
+	 */
+	public void updateRecommend();
+	
+	/**
+	 * 
+	 * @Title: delCheck
+	 * @Description: TODO 删除校验
+	 * @param trainLiveCategoryId
+	 * @return:
+	 * @return: List<TrainLiveAudit>
+	 * @throws
+	 * 2017年12月19日 兵子
+	 */
+	public Integer delCheck(String trainLiveCategoryId);
+
+	/**
+	 * 
+	 * @Title: findAuditList
+	 * @Description: TODO 根据分类id查询所有直播
+	 * @param trainLiveAudit
+	 * @return:
+	 * @return: List<TrainLiveAudit>
+	 * @throws
+	 * 2017年12月20日 兵子
+	 */
+	public List<TrainLiveAudit> findAuditList(TrainLiveAudit trainLiveAudit);
+
+	/**
+	 * 
+	 * @Title: transferCategory
+	 * @Description: TODO 修改直播分类
+	 * @param auditId
+	 * @param categoryId:
+	 * @return: void
+	 * @throws
+	 * 2017年12月20日 兵子
+	 */
+	public int transferCategory(@Param(value = "auditId") String auditId, @Param(value = "categoryId") String categoryId);
 }

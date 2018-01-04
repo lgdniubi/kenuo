@@ -166,5 +166,34 @@ public class WebUtils {
 		}
 		return result;
 	}
+	
+	/**
+	 * 自媒体传参调用方法
+	 * @param param
+	 * @param url
+	 * @return
+	 */
+	public static String postMediaObject(String param, String url){
+		String result = "";
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			HttpHeaders headers = new HttpHeaders();
+			MediaType type = MediaType.parseMediaType("application/json;charset=UTF-8");
+			headers.setContentType(type);
+			headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+			JSONObject jsonObj = JSONObject.fromObject(param);
+			String json = jsonObj.toString();
+			String sign = MD5("media"+json+"media");
+			
+			String paramter = "{'sign':'"+sign+"' , 'jsonStr':'media"+json+"'}";
+			HttpEntity<String> entity = new HttpEntity<String>(paramter, headers);
+			result = restTemplate.postForObject(url, entity, String.class);
+
+		} catch (JSONException e) {
+		//	logger.error(e.getMessage(), e);
+			throw e;
+		}
+		return result;
+	}
 }
 

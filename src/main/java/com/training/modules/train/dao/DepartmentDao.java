@@ -2,6 +2,8 @@ package com.training.modules.train.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.Department;
@@ -29,7 +31,7 @@ public interface DepartmentDao extends CrudDao<Department>{
 	 * @throws
 	 * 2017年11月15日 兵子
 	 */
-	public Department getDepartmentName(String name);
+	public Department getDepartmentName(@Param(value="name") String name,@Param(value="companyId") String companyId);
 
 	/**
 	 * 

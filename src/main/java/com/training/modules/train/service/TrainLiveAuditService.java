@@ -131,6 +131,14 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 	public List<String> selectWantLiveUser(String auditId){
 		return trainLiveUserDao.selectWantLiveUser(auditId);
 	}
+	/**
+	 * 查询每天美耶直播预约的用户cid
+	 * @param auditId
+	 * @return
+	 */
+	public List<String> selectMtmyLiveUserClient(String auditId){
+		return trainLiveUserDao.selectMtmyLiveUserClient(auditId);
+	}
 	
 	/**
 	 * 推送
@@ -316,5 +324,56 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 	 */
 	public int findOfficeIntegrals(){
 		return dao.findOfficeIntegrals();
+	}
+
+	/**
+	 * 添加直播推荐(只有一个能够推荐)
+	 * @param trainLiveAudit
+	 */
+	public void addRecommend(TrainLiveAudit trainLiveAudit) {
+		trainLiveAuditDao.updateRecommend();//修改全部直播为不推荐
+		trainLiveAuditDao.addRecommend(trainLiveAudit);//给唯一的直播添加推荐
+	}
+	
+	/**
+	 * 
+	 * @Title: delCheck
+	 * @Description: TODO 删除校验
+	 * @param trainLiveCategoryId
+	 * @return:
+	 * @return: List<TrainLiveAudit>
+	 * @throws
+	 * 2017年12月19日 兵子
+	 */
+	public Integer delCheck(String trainLiveCategoryId) {
+		return trainLiveAuditDao.delCheck(trainLiveCategoryId);
+	}
+
+	/**
+	 * 
+	 * @Title: findAuditList
+	 * @Description: TODO 根据分类id查询所有直播
+	 * @param trainLiveAudit
+	 * @return:
+	 * @return: List<TrainLiveAudit>
+	 * @throws
+	 * 2017年12月20日 兵子
+	 */
+	public List<TrainLiveAudit> findAuditList(TrainLiveAudit trainLiveAudit) {
+		return trainLiveAuditDao.findAuditList(trainLiveAudit);
+	}
+
+	/**
+	 * 
+	 * @Title: transferCategory
+	 * @Description: TODO 修改直播分类
+	 * @param auditId
+	 * @param categoryId:
+	 * @return: void
+	 * @throws
+	 * 2017年12月20日 兵子
+	 */
+	public int transferCategory(String auditId, String categoryId) {
+		return trainLiveAuditDao.transferCategory(auditId,categoryId);
 	}
 }

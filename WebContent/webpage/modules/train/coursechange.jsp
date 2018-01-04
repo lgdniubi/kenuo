@@ -291,7 +291,7 @@
 							<c:forEach items="${page.list}" var="trainLessons">
 								<tr>
 									<td><input class="i-checks" type="checkbox" id="${trainLessons.lessonId}" name="ids"></td>
-									<td>${trainLessons.name}</td>
+									<td><c:out value="${trainLessons.name}"></c:out></td>
 									<td>
 										<c:if test="${trainLessons.lessontype == 1}">
 											线上课程

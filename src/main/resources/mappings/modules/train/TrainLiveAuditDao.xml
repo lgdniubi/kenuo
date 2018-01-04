@@ -29,6 +29,8 @@
 		a.live_remarks,
 		r.roomId as "roomId",
 		a.earnings_ratio as "earningsRatio",
+		a.is_open as isOpen,
+		a.is_recommend as isRecommend,
 		a.del_flag
 
 	</sql>
@@ -37,15 +39,21 @@
 	<select id="get" resultType="TrainLiveAudit">
 		SELECT
 		<include refid="sqlColumns" />,
+		y.id AS "category.trainLiveCategoryId",
+		y.parent_id AS "category.parent_id",
+		y.parent_ids AS "category.parent_ids",
+		y.name AS "category.name",
+		y.type AS "category.type",
 		GROUP_CONCAT(f.id) AS companyIds,
 		GROUP_CONCAT(f.`name`) AS companyNames
 	FROM trains.train_live_audit a 
+		LEFT JOIN trains.train_live_category y ON a.category_id = y.id
 		LEFT JOIN trains.sys_user b ON a.userId=b.id
 		LEFT JOIN trains.sys_dict c ON c.`value`=b.user_type
 		LEFT JOIN trains.train_live_room r ON r.userId=a.userId
 		LEFT JOIN trains.train_live_jurisdiction j ON a.id = j.audit_id
 		LEFT JOIN trains.sys_franchisee f ON j.company_id = f.id
-		WHERE a.del_flag=0 AND c.type='sys_user_type'and a.id=#{id}
+		WHERE a.del_flag=0 AND y.del_flag = 0 AND c.type='sys_user_type' AND a.id=#{id}
 
 	</select>
 
@@ -92,10 +100,12 @@
 	<update id="update">
 		UPDATE train_live_audit 
 		SET
+			category_id = #{category.trainLiveCategoryId},
 			audit_status=#{auditStatus},
 			isPay=#{isPay},
 			live_remarks=#{liveRemarks},
 			earnings_ratio = #{earningsRatio},
+			is_open = #{isOpen},
 			audit_user=#{auditUser}
 		WHERE id=#{id}
 	</update>
@@ -319,4 +329,73 @@
 			#{id}
 		)
 	</insert>
+	
+	<!-- 修改全部直播为不推荐 -->
+	<update id="updateRecommend">
+		UPDATE trains.train_live_audit
+		SET 
+			is_recommend=0
+		WHERE 
+			is_recommend = 1
+	</update>
+	
+	<!-- 添加直播推荐(只有一个能够推荐) -->
+	<update id="addRecommend">
+		UPDATE trains.train_live_audit
+		SET 
+			is_recommend = 1
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 删除校验 -->
+	<select id="delCheck" resultType="int">
+		SELECT COUNT(id) FROM trains.train_live_audit a WHERE a.del_flag = 0 AND a.category_id = #{trainLiveCategoryId}
+	</select>
+	
+	<!-- 根据分类id查询所属的直播 -->
+	<select id="findAuditList" resultType="TrainLiveAudit">
+		SELECT 
+			a.id,
+			a.category_id AS 'category.trainLiveCategoryId',
+			a.title,
+			a.`name`,
+			a.`desc`,
+			u.id AS 'userId',
+			u.`name` AS 'userName',
+			r.roomId 
+		FROM trains.train_live_audit a 
+		LEFT JOIN trains.sys_user u 
+		ON a.userId = u.id
+		LEFT JOIN trains.train_live_room r 
+		ON u.id = r.userId
+		LEFT JOIN trains.sys_office o 
+		ON u.office_id = o.id
+ 		WHERE a.category_id = #{category.trainLiveCategoryId} 
+ 		AND a.del_flag = 0
+ 		<if test="userName!=null and userName!=''">
+			AND u.name LIKE
+			<if test="dbName == 'oracle'">'%'||#{userName}||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%',#{userName}, '%')</if>
+		</if>
+		<if test="title!=null and title!=''">
+			AND a.title LIKE
+			<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%',#{title}, '%')</if>
+		</if>
+		<if test="name != null and name != ''">
+			AND a.name LIKE CONCAT('%',#{name},'%') 
+		</if>
+		<if test="mobile != null and mobile != ''">
+			AND u.mobile = #{mobile}
+		</if>
+		<if test="organization != null and organization.id != null and organization.id != ''">
+			AND o.id = #{organization.id}
+		</if>
+ 		ORDER BY a.id
+	</select>
+	
+	<!-- 修改直播分类 -->
+	<update id="transferCategory">
+		UPDATE trains.train_live_audit SET category_id = #{categoryId} WHERE id = #{auditId}
+	</update>
 </mapper>

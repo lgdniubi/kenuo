@@ -233,12 +233,13 @@
 		//根据商品分类查询商品
 		//$("#goodselectButton, #goodselectName").click(function(){	    增加  , #goodselectName  文本框有点击事件
 		$("#goodselectButton").click(function(){
-		// 是否限制选择，如果限制，设置为disabled
+			var goodsName = $("#goodsName").val();
+			// 是否限制选择，如果限制，设置为disabled
 			if ($("#goodselectButton").hasClass("disabled")){
 				return true;
 			}
-			if(cateid == "0" || cateid == ""){
-				top.layer.alert('请先选择商品分类!', {icon: 0, title:'提醒'});
+			if((cateid == "0" || cateid == "") && (goodsName == "")){
+				top.layer.alert('请先选择一个条件!', {icon: 0, title:'提醒'});
 			}else{
 				// 正常打开	
 				top.layer.open({
@@ -246,7 +247,7 @@
 				    area: ['300px', '420px'],
 				    title:"商品选择",
 				    ajaxData:{selectIds: $("#goodselectId").val()},
-				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?&isReal=3&goodsCategory="+cateid)+"&module=&checked=&extId=&isAll=",
+				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?&isReal=3&goodsCategory="+cateid+"&goodsName="+goodsName)+"&module=&checked=&extId=&isAll=",
 				    btn: ['确定', '关闭']
 		    	       ,yes: function(index, layero){ //或者使用btn1
 								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
@@ -470,7 +471,7 @@
 								</tr>
 								<tr>
 									<td  style="width:120px;"><label class="pull-right">分类选择：</label></td>
-									<td colspan="3">
+									<td>
 										<div  style="width:200px;">
 											<input id="goodsCategoryIdId" class="form-control required" type="hidden" value="" name="goodsCategoryId" aria-required="true">
 											<div class="input-group">
@@ -482,6 +483,10 @@
 											</div> 
 											<label id="goodsCategoryIdName-error" class="error" style="display: none" for="goodsCategoryIdName"></label>
 										</div>
+									</td>
+									<td><label class="pull-right">商品名称：</label></td>
+									<td>
+										<input id="goodsName" name="goodsName" type="text" value="" class="input-sm"/>
 									</td>
 								</tr>
 								<tr>

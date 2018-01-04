@@ -116,4 +116,32 @@
 	SET del_flag = 1
 	WHERE parent_ids LIKE CONCAT('%', #{trainLiveCategoryId}, '%') OR id = #{trainLiveCategoryId}
 	</delete>
+	
+	<!-- 查询所有分类 -->
+	<select id="findAllList" resultType="TrainLiveCategory">
+		SELECT 
+			y.id AS 'trainLiveCategoryId',
+			y.parent_id AS 'parentId',
+			y.parent_ids AS 'parentIds',
+			y.name,
+			y.type,
+			y.sort,
+			y.create_by,
+			y.create_date,
+			y.update_by,
+			y.update_date
+		FROM trains.train_live_category y 
+		WHERE y.del_flag = 0 
+		ORDER BY y.sort DESC
+	</select>
+	
+	<!-- 查询parentIds包含此id的分类 -->
+	<select id="getCategory" resultType="TrainLiveCategory">
+		SELECT 
+			y.id AS 'trainLiveCategoryId'
+		FROM trains.train_live_category y 
+		WHERE y.parent_ids LIKE  CONCAT('%',#{trainLiveCategoryId},'%')  
+		OR y.id = #{trainLiveCategoryId}
+		AND y.del_flag = 0 
+	</select>
 </mapper>

@@ -168,11 +168,11 @@
 					                </li>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>商品名称：</span>
-										<form:input path="goodsName" htmlEscape="false" maxlength="150" class="form-control required"/>
+										<form:input path="goodsName" maxlength="150" class="form-control required"/>
 									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>短标题：</span>
-										<form:input path="goodsShortName" htmlEscape="false" maxlength="50" class="form-control required"/>
+										<form:input path="goodsShortName" maxlength="50" class="form-control required"/>
 									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2">商品SEO：</span>
@@ -199,7 +199,7 @@
 									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2">商品标签：</span>
-										<form:input path="goodsTags" htmlEscape="false" maxlength="17" onblur="this.value=ignoreSpaces(this.value);" class="form-control"/>
+										<form:input path="goodsTags" maxlength="17" onblur="this.value=ignoreSpaces(this.value);" class="form-control"/>
 										<span class="control-label cannotEdit">(多个标签用"#"分开)</span>
 									</li>
 									
@@ -398,9 +398,8 @@
 									<li class="form-group">
 										<span class="control-label col-sm-2">适用地区：</span>
 										<div style="width: 40%;">
-											<input type="hidden" id="regionName" name="regionName" value="${goods.regionName }">
-											<sys:treeselect id="regionNameSelect" name="regionNameSelect" value="${goods.regionName }" 
-												labelName="regionNameSelect" labelValue="${goods.regionName }" 
+											<sys:treeselect id="regionNameSelect" name="regionId" value="${goods.regionId}" 
+												labelName="regionName" labelValue="${goods.regionName}" 
 									     		title="地区" url="/sys/area/findListByPID" cssClass="form-control" notAllowSelectParent="true" checked="true"/>
 								     	</div>
 									</li>
@@ -957,7 +956,6 @@
 					}
 					$("#goodsContent").val(content);
 					$("#keywords").val($("#keywordsSelectName").val());//关键词，功效
-					$("#regionName").val($("#regionNameSelectName").val());//适用区域
 					var spec_arr = {};// 用户选择的规格数组
 					$("#goods_spec_table  span").each(function(){
 						if($(this).hasClass('btn-success')){

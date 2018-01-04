@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.training.modules.ec.dao.ReturnedGoodsDao">
+
+	<resultMap id="result" type="OrderPushmoneyRecord">
+		<id property="pushmoneyRecordId" column="pushmoneyRecordId" />
+		<result property="orderId" column="orderId" />
+		<result property="pushmoneyUserId" column="pushmoneyUserId" />
+		<result property="pushMoney" column="pushMoney" />
+		<result property="departmentId" column="departmentId" />
+		<result property="pushmoneyUserName" column="pushmoneyUserName" />
+		<result property="pushmoneyUserMobile" column="pushmoneyUserMobile" />
+		<result property="departmentName" column="departmentName" />
+		<result property="belongOfficeId" column="belongOfficeId" />
+		<result property="belongOfficeName" column="belongOfficeName" /> 
+          
+        <!-- 查询子模块 -->  
+        <collection property="children" column="{pushmoneyUserId=pushmoneyUserId,orderId=orderId}"  ofType="OrderPushmoneyRecord" select="getChildren" />  
+	</resultMap>
 	<sql id="returnColunm">
 		a.id,
 		a.order_id,
@@ -164,7 +180,7 @@
 			a.create_by AS createBy,
 			a.create_date AS createDate
 		FROM
-			ydatadb.mtmy_turnover_details a
+			mtmydb.mtmy_turnover_details a
 		LEFT JOIN
 			trains.sys_office b ON a.belong_office_id = b.id
 		WHERE 
@@ -192,7 +208,7 @@
 			a.create_by AS createBy,
 			a.create_date AS createDate
 		FROM
-			ydatadb.mtmy_turnover_details a
+			mtmydb.mtmy_turnover_details a
 		LEFT JOIN
 			trains.sys_office b ON a.belong_office_id = b.id
 		WHERE 
@@ -212,7 +228,7 @@
 			a.details_id AS detailsId,
 			SUM(a.amount) AS amount
 		FROM
-			ydatadb.mtmy_turnover_details a
+			mtmydb.mtmy_turnover_details a
 		WHERE 
 			a.order_id = #{orderId}
 		AND a.details_id = #{detailsId}
@@ -227,8 +243,7 @@
 			a.id AS detailsId,
 			a.order_id AS orderId,
 			SUM(a.return_amount) AS amount,
-			a.apply_date AS applyDate,
-			a.audit_date AS createDate
+			IFNULL(a.audit_date,a.apply_date) AS createDate
 		FROM
 			mtmydb.mtmy_returned_goods a
 		WHERE 
@@ -586,7 +601,7 @@
 			e.name AS belongOfficeName,
 			f.name AS createName
 		FROM
-			ydatadb.mtmy_turnover_details a
+			mtmydb.mtmy_turnover_details a
 		LEFT JOIN 
 			mtmydb.mtmy_users b on a.user_id = b.user_id
 		LEFT JOIN 
@@ -606,7 +621,7 @@
 	</select>
 	<!-- 保存店营业额增减值 -->
 	<insert id="saveMtmyTurnoverDetails">
-		INSERT INTO ydatadb.mtmy_turnover_details (
+		INSERT INTO mtmydb.mtmy_turnover_details (
 			order_id,
 			details_id,
 			type,
@@ -644,7 +659,7 @@
 	</insert>
 	
 	<!-- 查询业务员提成总额 -->
-	<select id="findOrderPushmoneyRecordList" resultType="OrderPushmoneyRecord">
+	<select id="findOrderPushmoneyRecordList" resultMap="result" parameterType="TurnOverDetails">
 		SELECT
 			r.order_id AS orderId,
 			r.user_id AS pushmoneyUserId,
@@ -652,7 +667,9 @@
 			r.department_id AS departmentId,
 			su1.`name` AS pushmoneyUserName,
 			su1.mobile AS pushmoneyUserMobile,
-			td.`name` AS "departmentName"
+			td.`name` AS "departmentName",
+			r.belong_office_id AS belongOfficeId,
+			so.name AS belongOfficeName
 		FROM
 			mtmydb.mtmy_beautician_turnover r
 		LEFT JOIN
@@ -661,12 +678,49 @@
 			trains.sys_user su2 ON r.create_by = su2.id
 		LEFT JOIN
 			trains.train_department td ON r.department_id = td.id
+		LEFT JOIN
+			trains.sys_office so ON r.belong_office_id = so.id
 		WHERE
 			r.order_id = #{orderId}
 		AND 
 			r.del_flag = 0
+		AND
+			r.belong_office_id IS NOT NULL
 		GROUP BY
 			r.department_id,r.user_id
+	</select>
+	<!-- 子查询 -->
+	<select id="getChildren" resultMap="result" parameterType="java.util.Map">
+		SELECT
+			r.order_id AS orderId,
+			r.user_id AS pushmoneyUserId,
+			SUM(r.push_money) AS pushMoney,
+			r.department_id AS departmentId,
+			su1.`name` AS pushmoneyUserName,
+			su1.mobile AS pushmoneyUserMobile,
+			td.`name` AS "departmentName",
+			r.belong_office_id AS belongOfficeId,
+			so.name AS belongOfficeName
+		FROM
+			mtmydb.mtmy_beautician_turnover r
+		LEFT JOIN
+			trains.sys_user su1 ON r.user_id = su1.id
+		LEFT JOIN
+			trains.sys_user su2 ON r.create_by = su2.id
+		LEFT JOIN
+			trains.train_department td ON r.department_id = td.id
+		LEFT JOIN
+			trains.sys_office so ON r.belong_office_id = so.id
+		WHERE
+			r.order_id = #{orderId}
+		AND 
+			r.user_id = #{pushmoneyUserId}
+		AND 
+			r.del_flag = 0
+		AND
+			r.belong_office_id IS NOT NULL
+		GROUP BY
+			r.belong_office_id
 	</select>
 	
 	<!-- 根据订单id和退货id获取业务员退款sum营业额 -->
@@ -739,17 +793,28 @@
 			r.user_id AS pushmoneyUserId,
 			r.user_office_id as userOfficeId,
 			r.user_office_ids as userOfficeIds,
+			r.belong_office_id as belongOfficeId,
+			r.belong_office_ids as belongOfficeIds,
 			r.position_key as positionKey,
 			r.position_value as positionValue,
 			r.department_id as departmentId,
 			r.office_id as officeId
 		FROM
 			mtmydb.mtmy_beautician_turnover r
+		LEFT JOIN
+			trains.sys_user su1 ON r.user_id = su1.id
+		LEFT JOIN
+			trains.sys_user su2 ON r.create_by = su2.id
+		LEFT JOIN
+			trains.train_department td ON r.department_id = td.id
+		LEFT JOIN
+			trains.sys_office so ON r.belong_office_id = so.id
 		WHERE
 			r.order_id = #{orderId}
-		AND r.del_flag = 0
+		AND 
+			r.del_flag = 0
 		GROUP BY
-			r.department_id,r.user_id
+			r.department_id,r.user_id,r.belong_office_id
 	</select>
 	
 	<!-- 保存业务员营业额增减值 -->
@@ -760,9 +825,11 @@
 			turnover_details_id,
 			type,
 			user_id,
-			push_money,
 			user_office_id,
 			user_office_ids,
+			belong_office_id,
+			belong_office_ids,
+			push_money,
 			position_key,
 			position_value,
 			department_id,
@@ -773,12 +840,14 @@
 		)VALUES(
 			#{orderId},
 			#{returnedId},
-			#{pushmoneyRecordId},
+			#{turnOverDetailsId},
 			#{type},
 			#{pushmoneyUserId},
-			#{pushMoney},
 			#{userOfficeId},
 			#{userOfficeIds},
+			#{belongOfficeId},
+			#{belongOfficeIds},
+			#{pushMoney},
 			#{positionKey},
 			#{positionValue},
 			#{departmentId},

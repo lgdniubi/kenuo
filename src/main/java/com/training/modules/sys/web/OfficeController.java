@@ -289,7 +289,7 @@ public class OfficeController extends BaseController {
 
 				//店铺首图
 				img = office.getOfficeInfo().getImg();
-				if(img != null && img != ""){
+				if(img != null && !"".equals(img)){
 					reservationTime(3, currentUser.getCreateBy().getId(), img, "", lifeImgUrls, office.getId(), "bm", null);
 				}
 				
@@ -315,8 +315,9 @@ public class OfficeController extends BaseController {
 				officeService.saveOfficeInfo(office);
 
 				//店铺首图
-				img = office.getOfficeInfo().getImg();
-				if(img != null && img != "" && !oldOffice.getImg().equals(img)){
+				img = office.getOfficeInfo().getImg() == null ? "" : office.getOfficeInfo().getImg();//修改后的首图信息
+				String oldImg = oldOffice.getImg() == null ? "" : oldOffice.getImg();//修改前的首图信息
+				if(!oldImg.equals(img)){
 					reservationTime(3, currentUser.getCreateBy().getId(), img, oldOffice.getImg(), lifeImgUrls, office.getId(), "bm", null);
 				}
 			}
@@ -419,6 +420,60 @@ public class OfficeController extends BaseController {
 		}
 		return mapList;
 	}
+	
+	/**
+	 * 
+	 * @Title: parentTreeData
+	 * @Description: TODO 选择上级机构排除死循环
+	 * @param extId
+	 * @param type
+	 * @param grade
+	 * @param isAll
+	 * @param isGrade
+	 * @param response
+	 * @return:
+	 * @return: List<Map<String,Object>>
+	 * @throws
+	 * 2017年12月1日 兵子
+	 */
+	@ResponseBody
+	@RequestMapping(value = "parentTreeData")
+	public List<Map<String, Object>> parentTreeData(@RequestParam(required=false) String extId, @RequestParam(required=false) String type,
+			@RequestParam(required=false) Long grade, @RequestParam(required=false) Boolean isAll,@RequestParam(required=false) String isGrade, HttpServletResponse response) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<Office> list = officeService.findList(isAll);
+		for (int i=0; i<list.size(); i++){
+			Office e = list.get(i);
+				//选择上级机构时      上级机构为非店铺
+				if("true".equals(isGrade) && "1".equals(e.getGrade())){
+					continue;
+				}
+				Map<String, Object> map = Maps.newHashMap();
+				if (!"".equals(extId) && !"0".equals(e.getParentId()) && !extId.equals(e.getId()) && !e.getParentIds().contains(extId)) {
+					map.put("id", e.getId());
+					map.put("pId", e.getParentId());
+					map.put("pIds", e.getParentIds());
+					map.put("name", e.getName());
+					if (type != null && "3".equals(type)){
+						map.put("isParent", true);
+					}
+					mapList.add(map);
+					}
+				if ("".equals(extId)){
+					map.put("id", e.getId());
+					map.put("pId", e.getParentId());
+					map.put("pIds", e.getParentIds());
+					map.put("name", e.getName());
+					if (type != null && "3".equals(type)){
+						map.put("isParent", true);
+					}
+					mapList.add(map);
+					}
+		}
+		return mapList;
+	}
+	
+	
 	/**
 	 * 新机构
 	 * 获取机构JSON数据。
@@ -928,12 +983,14 @@ public class OfficeController extends BaseController {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			String webReservationTime =	ParametersFactory.getMtmyParamValues("uploader_picture_url");	
-			logger.info("##### web接口路径:"+webReservationTime);
-			String parpm = "{\"type\":\""+type+"\",\"create_by\":\""+createBy+"\",\"file_url\":\""+fileUrl+"\",\"old_url\":\""+oldUrl+"\",\"life_img_urls\":\""+lifeImgUrls+"\",\"user_id\":\""+userId+"\",\"client\":\""+client+"\"}";
-			String url=webReservationTime;
-			String result = WebUtils.postTrainObject(parpm, url);
-			jsonObject = JSONObject.fromObject(result);
-			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			if(!"-1".equals(webReservationTime)){
+				logger.info("##### web接口路径:"+webReservationTime);
+				String parpm = "{\"type\":\""+type+"\",\"create_by\":\""+createBy+"\",\"file_url\":\""+fileUrl+"\",\"old_url\":\""+oldUrl+"\",\"life_img_urls\":\""+lifeImgUrls+"\",\"user_id\":\""+userId+"\",\"client\":\""+client+"\"}";
+				String url=webReservationTime;
+				String result = WebUtils.postTrainObject(parpm, url);
+				jsonObject = JSONObject.fromObject(result);
+				logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			}
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "记录店铺首图、美容院和美容师图片上传相关信息", e);
 			logger.error("调用接口:记录店铺首图、美容院和美容师图片上传相关信息:"+e.getMessage());
@@ -981,6 +1038,27 @@ public class OfficeController extends BaseController {
 			mapList.add(map);
 		}
     	return mapList;
+    }
+    
+    /**
+     * 
+     * @Title: checkOfficeCode
+     * @Description: TODO 验证机构唯一编码
+     * @param office
+     * @return:
+     * @return: String
+     * @throws
+     * 2017年12月26日 兵子
+     */
+    @ResponseBody
+    @RequestMapping(value = "checkOfficeCode")
+    public String checkOfficeCode(Office office,String oldOfficeCode){
+    	if (StringUtils.isNotBlank(office.getOfficeCode()) && office.getOfficeCode().equals(oldOfficeCode)) {
+    		return "true";
+		}else if(StringUtils.isNotBlank(office.getOfficeCode()) && officeService.checkOfficeCode(office) == null){
+			return "true";
+		}
+    	return "false";
     }
     
 }

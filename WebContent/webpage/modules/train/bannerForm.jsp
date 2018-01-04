@@ -112,7 +112,7 @@
 		$(document).ready(function() {
 			$("#file_img_upload").uploadify({
 				'buttonText' : '请选择banner图片',
-				'width' : 140,
+				'width' : 155,
 				'method' : 'post',
 				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
 				'uploader' : '<%=uploadURL%>',

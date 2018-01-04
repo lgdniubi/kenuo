@@ -31,6 +31,12 @@ public interface WebMainmenuNavbarContentDao extends CrudDao<WebMainmenuNavbarCo
 	 * @param webMainmenuNavbarContent
 	 */
 	public void deleteWebMainmenuNavbarContentById(WebMainmenuNavbarContent webMainmenuNavbarContent);
-
+	
+	/**
+	 * 查询中部导航栏对应的分类id
+	 * @param mainmenuId
+	 * @return
+	 */
+	public String selectCategoryId(int mainmenuId);
 
 }

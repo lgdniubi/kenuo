@@ -41,5 +41,12 @@ public interface TrainLiveUserDao extends CrudDao<TrainLiveUser>{
 	 * @return
 	 */
 	public List<String> selectWantLiveUser(String auditId);
-
+	
+	/**
+	 * 查询每天美耶直播预约的用户cid
+	 * @param auditId
+	 * @return
+	 */
+	public List<String> selectMtmyLiveUserClient(String auditId);
+	
 }
