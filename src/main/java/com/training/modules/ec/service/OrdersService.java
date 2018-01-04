@@ -765,6 +765,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderGoods.setCostprice(costprice);		//成本单价
 			orderGoods.setMarketprice(marketPrice);		//市场单价
 			orderGoods.setGoodsprice(price);	//优惠价
+			orderGoods.setRailPrice(orderAmount);  //异价后的价格，因后台订单无异价，故该价格就是应付价格
 			orderGoods.setGoodsnum(1);	//成交数量
 			orderGoods.setOrderAmount(orderAmount);		//应付金额
 			orderGoods.setTotalAmount(totalAmount);	//计算后实付款金额
@@ -1451,6 +1452,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderGoods.setCostprice(goodspec.getCostPrice());		//成本单价
 			orderGoods.setMarketprice(marketPrice);		//市场单价
 			orderGoods.setGoodsprice(price);	//优惠价
+			orderGoods.setRailPrice(orderAmount);  //异价后的价格，因后台订单无异价，故该价格就是应付价格
 			orderGoods.setGoodsnum(goodsnum);	//购买数量
 			orderGoods.setOrderAmount(orderAmount);		//应付金额
 			orderGoods.setTotalAmount(actualPayment_on);	//计算后实付款金额
@@ -2222,6 +2224,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderGoods.setCostprice(costprice);		//成本单价
 			orderGoods.setMarketprice(marketPrice);		//市场单价
 			orderGoods.setGoodsprice(price);	//优惠价
+			orderGoods.setRailPrice(orderAmount);  //异价后的价格，因后台订单无异价，故该价格就是应付价格
 			orderGoods.setGoodsnum(1);	//成交数量
 			orderGoods.setOrderAmount(orderAmount);		//应付金额
 			orderGoods.setTotalAmount(totalAmount);	//计算后实付款金额
@@ -2538,6 +2541,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderGoods.setCostprice(costPrice);		//系统价
 			orderGoods.setMarketprice(marketPrice);		//市场单价
 			orderGoods.setGoodsprice(price);	//优惠价
+			orderGoods.setRailPrice(orderAmount);  //异价后的价格，因后台订单无异价，故该价格就是应付价格
 			orderGoods.setGoodsnum(1);	//购买数量
 			orderGoods.setOrderAmount(orderAmount);		//应付金额
 			orderGoods.setTotalAmount(actualPayment_on);	//计算后实付款金额
