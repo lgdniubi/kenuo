@@ -506,7 +506,7 @@ public class ActivityController extends BaseController {
 				}
 				if(activity.getSendType()==4){
 					if(activity.getMobileNum().length()>0 && activity.getCouponId().length()>0){
-						String data=activity.getMobileNum().replace("，", ",");
+						String data=activity.getMobileNum().trim().replace(" ", ",").replace("，", ",").replace("\r\n","");
 						String[] newData = data.split(",");
 						String[] couponId=activity.getCouponId().split(",");
 						for (int i = 0; i < newData.length; i++) {

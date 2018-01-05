@@ -125,9 +125,10 @@ public class MtmyOaNotifyController extends BaseController {
 			//当推送方式为组推时
 			if(mtmyOaNotify.getPushType() == 2){
 				List<MtmyOaNotifyRecord> mtmyOaNotifyRecordList = Lists.newArrayList();
-				String data = mtmyOaNotify.getData();
+				String newData = mtmyOaNotify.getData().trim();
 				//当导入的数据（手机号或者用户id）不为空时
-				if(!"".equals(data) && data != null){
+				if(!"".equals(newData) && newData != null){
+					String data=newData.replace("，", ",").replace(" ", "").replace("\r\n","");
 					//手机号码去重
 					String[] strs = data.split(",");
 					Set<String> set = new HashSet<>();  
