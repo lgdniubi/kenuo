@@ -332,7 +332,7 @@
 											</c:if>
 										</c:if>
 									</shiro:hasPermission>
-									
+									<a href="#" onclick="openDialog('售后转单', '${ctx}/ec/orders/afterSaleOrdersForm?returnedId=${returnGoods.id}&mobile=${returnGoods.mobile}&username=${returnGoods.userName}&userid=${returnGoods.userId}','900px','650px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>售后转单</a>
 								</td>
 							</tr>
 						</c:forEach>

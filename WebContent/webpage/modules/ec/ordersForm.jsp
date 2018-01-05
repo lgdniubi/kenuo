@@ -662,6 +662,7 @@ window.onload=initStatus;
 							<c:if test="${orders.distinction == 1}">售前卖</c:if>
 							<c:if test="${orders.distinction == 2}">售后卖</c:if>
 							<c:if test="${orders.distinction == 3}">老带新</c:if>
+							<c:if test="${orders.distinction == 4}">售后转单</c:if>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">手机号码:</label>&nbsp;&nbsp;${orders.users.mobile }
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -729,6 +730,9 @@ window.onload=initStatus;
 								<tr>
 									<th style="text-align: center;">商品名称</th>
 									<th style="text-align: center;">商品规格</th>
+									<c:if test="${orders.isReal == 1 }">
+										<th style="text-align: center;">实际规格次</th>
+									</c:if>
 									<th style="text-align: center;">系统价</th>
 									<th style="text-align: center;">市场价</th>
 									<th style="text-align: center;">优惠价</th>
@@ -750,6 +754,9 @@ window.onload=initStatus;
 									<tr>
 										<td align="center">${orderGood.goodsname }</td>
 										<td align="center">${orderGood.speckeyname }</td>
+										<c:if test="${orders.isReal == 1 }">
+											<td align="center">${orderGood.servicetimes }</td>
+										</c:if>
 										<td align="center">${orderGood.costprice }</td>
 										<td align="center">${orderGood.marketprice }</td>
 										<td align="center">${orderGood.goodsprice }</td>

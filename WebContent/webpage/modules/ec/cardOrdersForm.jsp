@@ -575,6 +575,7 @@ window.onload=initStatus;
 							<c:if test="${orders.distinction == 1}">售前卖</c:if>
 							<c:if test="${orders.distinction == 2}">售后卖</c:if>
 							<c:if test="${orders.distinction == 3}">老带新</c:if>
+							<c:if test="${orders.distinction == 4}">售后转单</c:if>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">手机号码:</label>&nbsp;&nbsp;${orders.users.mobile }
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

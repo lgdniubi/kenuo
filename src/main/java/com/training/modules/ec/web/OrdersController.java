@@ -3120,4 +3120,71 @@ public class OrdersController extends BaseController {
 		}
 		return "modules/ec/operationLog";
 	}
+	
+	/**
+	 * 跳转售后转单页面
+	 * @param orders
+	 * @param model
+	 * @return
+	 */
+
+	@RequestMapping(value = "afterSaleOrdersForm")
+	public String afterSaleOrdersForm(HttpServletRequest request,Orders orders,Model model){
+		try {
+			
+			List<Payment> paylist = paymentService.paylist();
+			List<GoodsCategory> cateList = ordersService.cateList();
+			model.addAttribute("orders", orders);
+			model.addAttribute("paylist", paylist);
+			model.addAttribute("cateList", cateList);
+
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "跳转售后转单页面", e);
+			logger.error("方法：afterSaleOrdersForm，跳转售后转单页面出错：" + e.getMessage());
+		}
+
+		return "modules/ec/afterSaleOrdersForm";
+	}
+	
+	/**
+	 * 售后转单虚拟订单添加商品页面
+	 * @param request
+	 * @param orders
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "addAfterSaleGoods")
+	public String addAfterSaleGoods(HttpServletRequest request, Orders orders, Model model) {
+		try {
+			
+			model.addAttribute("orders", orders);
+
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "跳转售后转单添加商品页面", e);
+			logger.error("跳转售后转单添加商品页面出错信息：" + e.getMessage());
+		}
+
+		return "modules/ec/addAfterSaleGoods";
+	}
+	
+	/**
+	 * 保存售后转单的虚拟订单
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = "saveAfterSaleVirtualOrder")
+	public String saveAfterSaleVirtualOrder(Orders orders, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
+		try {
+			ordersService.saveAfterSaleVirtualOrder(orders);
+			addMessage(redirectAttributes, "创建订单'" + orders.getOrderid() + "'成功,若想查看请到订单列表页");
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "添加售后转单的虚拟订单", e);
+			logger.error("方法：saveAfterSaleVirtualOrder，添加售后转单的虚拟订单出现错误：" + e.getMessage());
+			addMessage(redirectAttributes, "创建订单失败！");
+		}
+		return "redirect:" + adminPath + "/ec/returned/list";
+	}
 }
