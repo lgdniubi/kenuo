@@ -2484,6 +2484,7 @@ public class OrdersController extends BaseController {
 										"<td align='center' rowspan="+num+"> "+father.getGoodsname()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsname()+"</td> "+
 										"<td align='center' rowspan="+num+">"+father.getSpeckeyname()+"</td> "+
+										"<td align='center' rowspan="+num+">"+father.getServicetimes()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getCostprice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getMarketprice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getGoodsprice()+"</td> "+
@@ -3385,12 +3386,150 @@ public class OrdersController extends BaseController {
 	public String saveAfterSaleSuitCardOrder(Orders orders, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
 		try {
 			ordersService.saveAfterSaleSuitCardOrder(orders);
-			addMessage(redirectAttributes, "创建订单'" + orders.getOrderid() + "'成功,若想查看请到订单列表页");
+			addMessage(redirectAttributes, "创建套卡订单'" + orders.getOrderid() + "'成功,若想查看请到订单列表页");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "添加售后转单的套卡订单", e);
 			logger.error("方法：saveAfterSaleSuitCardOrder，添加售后转单的套卡订单出现错误：" + e.getMessage());
 			addMessage(redirectAttributes, "创建订单失败！");
 		}
+		return "redirect:" + adminPath + "/ec/returned/list";
+	}
+	
+	
+	/**
+	 * 跳转售后转通用卡订单页面
+	 * @param orders
+	 * @param model
+	 * @return
+	 */
+
+	@RequestMapping(value = "afterSaleCommonCardOrdersForm")
+	public String afterSaleCommonCardOrdersForm(HttpServletRequest request,Orders orders,Model model){
+		try {
+
+			List<Payment> paylist = paymentService.paylist();
+			List<GoodsCategory> cateList = ordersService.cateList();
+			model.addAttribute("orders", orders);
+			model.addAttribute("paylist", paylist);
+			model.addAttribute("cateList", cateList);
+
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "跳转售后转通用卡订单页面", e);
+			logger.error("方法：afterSaleCommonCardOrdersForm，跳转售后转通用卡订单页面出错：" + e.getMessage());
+		}
+
+		return "modules/ec/afterSaleCommonCardOrdersForm";
+	}
+	
+	/**
+	 * 售后转单通用卡订单添加商品页面
+	 * @param request
+	 * @param orders
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "addAfterSaleCommonOderGoods")
+	public String addAfterSaleCommonOderGoods(HttpServletRequest request, Orders orders, Model model) {
+		try {
+			
+			model.addAttribute("orders", orders);
+
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "跳转售后转单添加通用卡商品页面", e);
+			logger.error("跳转售后转单添加通用卡商品页面出错信息：" + e.getMessage());
+		}
+
+		return "modules/ec/addAfterSaleCommonOderGoods";
+	}
+	
+	/**
+	 * 售后转单查找通用卡的子项
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="selectAfterSaleCommonCardSon")
+	@ResponseBody
+	public String selectAfterSaleCommonCardSon(Goods goods,HttpServletRequest request,Model model){
+		String suitCardSons = "";
+		int num;
+		try{
+			double actualPayment = Double.valueOf(request.getParameter("actualPayment"));  //卡项实际付款（前）
+			String speckeyname = request.getParameter("speckeyname");                     //卡项规格名称
+			String speckey = request.getParameter("speckey");                     //卡项规格key
+			double marketPrice = Double.valueOf(request.getParameter("marketPrice"));  //卡项市场价
+			double goodsPrice = Double.valueOf(request.getParameter("goodsPrice"));  //卡项优惠价
+			double costPrice = Double.valueOf(request.getParameter("costPrice"));  //卡项系统价
+			double orderAmount = Double.valueOf(request.getParameter("orderAmount"));  //卡项成交价
+			double afterPayment = Double.valueOf(request.getParameter("afterPayment"));  //卡项实际付款（后）
+			String actualNum = request.getParameter("actualNum");  //卡项实际次数
+			double debtMoney = Double.valueOf(request.getParameter("debtMoney"));  //卡项欠款
+			double spareMoney = Double.valueOf(request.getParameter("spareMoney"));  //卡项余款
+			int tail = Integer.valueOf(request.getParameter("tail"));  //用来表示添加的卡项商品
+			Date realityAddTime =  new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("realityAddTime"));  //实际下单时间
+			Integer actualSpeckeyNum = Integer.valueOf(request.getParameter("actualSpeckeyNum"));     //售后转单订单自定的实际规格次数
+			
+			int goodsId = goods.getGoodsId();
+			List<Goods> goodsList = ordersService.selectCardSon(goodsId);
+			if(goodsList.size() > 0){
+				num = goodsList.size();
+				
+				suitCardSons =
+					"<tr class= commonCard"+tail+"> "+
+						"<td rowspan="+num+"> "+goods.getGoodsName()+"<input id='goodselectIds' name='goodselectIds' type='hidden' value='"+goodsId+"'></td> "+
+						"<td> "+goodsList.get(0).getGoodsName()+"</td> "+
+						"<td rowspan="+num+"> "+speckeyname+"<input id='speckeys' name='speckeys' type='hidden' value='"+speckey+"'></td> "+
+						"<td rowspan="+num+"> "+actualSpeckeyNum+"<input id='actualSpeckeyNum' name='actualSpeckeyNums' type='hidden' value='"+actualSpeckeyNum+"'></td> "+
+						"<td rowspan="+num+"> "+marketPrice+"</td> "+
+						"<td rowspan="+num+"> "+goodsPrice+"</td> "+
+						"<td rowspan="+num+"> "+costPrice+"</td> "+
+						"<td rowspan="+num+"> "+orderAmount+"<input id='orderAmounts' name='orderAmounts' type='hidden' value='"+orderAmount+"'></td> "+
+						"<td> "+goodsList.get(0).getGoodsNum()+"</td> "+
+						"<td rowspan="+num+"> "+afterPayment+"<input id='actualPayments' name='actualPayments' type='hidden' value='"+actualPayment+"'></td> "+
+						"<td rowspan="+num+"> "+actualNum+"<input id='remaintimes' name='remaintimeNums' type='hidden' value='"+actualNum+"'></td> "+
+						"<td rowspan="+num+"> "+spareMoney+"</td> "+
+						"<td rowspan="+num+"> "+debtMoney+"</td> "+
+						"<td rowspan="+num+"> "+
+							"<a href='#' class='btn btn-danger btn-xs' onclick='delFile("+tail+","+costPrice+","+orderAmount+","+spareMoney+","+afterPayment+","+debtMoney+")'><i class='fa fa-trash'></i> 删除</a> "+
+						"</td>"+
+						"<input id='realityAddTime' name='realityAddTimeList' type='hidden' value='"+realityAddTime+"'>"+
+					"</tr>";
+				for(int i=1;i<num;i++){
+					suitCardSons = suitCardSons +
+						"<tr class= commonCard"+tail+"> "+
+							"<td> "+goodsList.get(i).getGoodsName()+"</td> "+
+							"<td> "+goodsList.get(i).getGoodsNum()+"</td> "+
+						"</tr>";
+				}
+				
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "查找通用卡子项", e);
+			logger.error("查找通用卡子项出错信息：" + e.getMessage());
+		}
+		return suitCardSons.toString();
+	}
+	
+	/**
+	 * 保存售后转单的通用卡订单
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+
+	@RequestMapping(value = "saveAfterSaleCommonCardlOrder")
+	public String saveAfterSaleCommonCardlOrder(Orders orders, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
+		try {
+			ordersService.saveAfterSaleCommonCardlOrder(orders);
+			addMessage(redirectAttributes, "创建通用卡订单'" + orders.getOrderid() + "'成功");
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "创建售后转单通用卡订单", e);
+			logger.error("方法：saveAfterSaleCommonCardlOrder，创建售后转单通用卡订单出现错误：" + e.getMessage());
+			addMessage(redirectAttributes, "创建售后转单通用卡订单失败！");
+		}
+
 		return "redirect:" + adminPath + "/ec/returned/list";
 	}
 }

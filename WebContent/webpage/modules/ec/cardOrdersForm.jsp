@@ -620,6 +620,9 @@ window.onload=initStatus;
 									<th style="text-align: center;">商品名称</th>
 									<th style="text-align: center;">子项名称</th>
 									<th style="text-align: center;">商品规格</th>
+									<c:if test="${orders.isReal == 3}">
+										<th style="text-align: center;">实际规格次</th>
+									</c:if>
 									<th style="text-align: center;">系统价</th>
 									<th style="text-align: center;">市场价</th>
 									<th style="text-align: center;">优惠价</th>
