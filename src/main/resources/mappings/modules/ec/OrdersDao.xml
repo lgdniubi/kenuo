@@ -1040,6 +1040,7 @@
 		(
 			order_id,
 			parent_id,
+			returned_id,
 			user_id,
 			order_status,
 			pay_id,
@@ -1071,6 +1072,7 @@
 		)values(
 			#{orderid},
 			#{parentid},
+			#{returnedId},
 			#{userid},
 			#{orderstatus},
 			#{payid},

@@ -3122,7 +3122,7 @@ public class OrdersController extends BaseController {
 	}
 	
 	/**
-	 * 跳转售后转单页面
+	 * 跳转售后转虚拟订单页面
 	 * @param orders
 	 * @param model
 	 * @return
@@ -3139,15 +3139,15 @@ public class OrdersController extends BaseController {
 			model.addAttribute("cateList", cateList);
 
 		} catch (Exception e) {
-			BugLogUtils.saveBugLog(request, "跳转售后转单页面", e);
-			logger.error("方法：afterSaleOrdersForm，跳转售后转单页面出错：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "跳转售后转虚拟订单页面", e);
+			logger.error("方法：afterSaleOrdersForm，跳转售后转虚拟订单页面出错：" + e.getMessage());
 		}
 
 		return "modules/ec/afterSaleOrdersForm";
 	}
 	
 	/**
-	 * 售后转单虚拟订单添加商品页面
+	 * 售后转单虚拟订单添加虚拟商品页面
 	 * @param request
 	 * @param orders
 	 * @param model
@@ -3160,8 +3160,8 @@ public class OrdersController extends BaseController {
 			model.addAttribute("orders", orders);
 
 		} catch (Exception e) {
-			BugLogUtils.saveBugLog(request, "跳转售后转单添加商品页面", e);
-			logger.error("跳转售后转单添加商品页面出错信息：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "跳转售后转单添加虚拟商品页面", e);
+			logger.error("跳转售后转单添加虚拟商品页面出错信息：" + e.getMessage());
 		}
 
 		return "modules/ec/addAfterSaleGoods";
@@ -3183,6 +3183,73 @@ public class OrdersController extends BaseController {
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "添加售后转单的虚拟订单", e);
 			logger.error("方法：saveAfterSaleVirtualOrder，添加售后转单的虚拟订单出现错误：" + e.getMessage());
+			addMessage(redirectAttributes, "创建订单失败！");
+		}
+		return "redirect:" + adminPath + "/ec/returned/list";
+	}
+	
+	/**
+	 * 跳转售后转实物订单页面
+	 * @param orders
+	 * @param model
+	 * @return
+	 */
+
+	@RequestMapping(value = "afterSaleKindOrdersForm")
+	public String afterSaleKindOrdersForm(HttpServletRequest request,Orders orders,Model model){
+		try {
+			
+			List<Payment> paylist = paymentService.paylist();
+			List<GoodsCategory> cateList = ordersService.cateList();
+			model.addAttribute("orders", orders);
+			model.addAttribute("paylist", paylist);
+			model.addAttribute("cateList", cateList);
+
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "跳转售后转实物订单页面", e);
+			logger.error("方法：afterSaleKindOrdersForm，跳转售后转实物订单页面出错：" + e.getMessage());
+		}
+
+		return "modules/ec/afterSaleKindOrdersForm";
+	}
+	
+	/**
+	 * 售后转单实物订单添加商品页面
+	 * @param request
+	 * @param orders
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "addAfterSaleKindOderGoods")
+	public String addAfterSaleKindOderGoods(HttpServletRequest request, Orders orders, Model model) {
+		try {
+			
+			model.addAttribute("orders", orders);
+
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "跳转售后转单添加实物商品页面", e);
+			logger.error("跳转售后转单添加实物商品页面出错信息：" + e.getMessage());
+		}
+
+		return "modules/ec/addAfterSaleKindOderGoods";
+	}
+	
+	/**
+	 * 保存售后转单的实物订单
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = "saveAfterSaleKindOrder")
+	public String saveAfterSaleKindOrder(Orders orders, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
+		try {
+			ordersService.saveAfterSaleKindOrder(orders);
+			addMessage(redirectAttributes, "创建订单'" + orders.getOrderid() + "'成功,若想查看请到订单列表页");
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "添加售后转单的实物订单", e);
+			logger.error("方法：saveAfterSaleKindOrder，添加售后转单的实物订单出现错误：" + e.getMessage());
 			addMessage(redirectAttributes, "创建订单失败！");
 		}
 		return "redirect:" + adminPath + "/ec/returned/list";
