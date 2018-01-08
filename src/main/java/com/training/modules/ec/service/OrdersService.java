@@ -3815,4 +3815,339 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			ordersDao.saveOrderInvoiceRelevancy(orderInvoiceRelevancy);
 		}
 	}
+	
+	/**
+	 * 保存售后转单的套卡订单
+	 * @param orders
+	 */
+	public void saveAfterSaleSuitCardOrder(Orders orders) {
+		DecimalFormat formater = new DecimalFormat("#0.##");   //四舍五入
+		int numSum = 0;
+		User user = UserUtils.getUser(); //登陆用户
+		int mtmyUserId = orders.getUserid();	//每天每耶用户id
+		String orderid = createOrder(mtmyUserId, 0, 0);//订单id
+		orders.setOrderid(orderid);
+		orders.setCreateBy(user);
+		//页面传递到后台的数据
+		List<Integer> goodselectIds = orders.getGoodselectIds();	//商品id集合
+		List<Double> orderAmounts = orders.getOrderAmounts();		//成交价集合
+		List<Double> actualPayments = orders.getActualPayments();	//实际付款集合
+		List<Integer> remaintimeNums = orders.getRemaintimeNums();	//套卡订单老产品-实际次数
+		List<Date> realityAddTimeList = orders.getRealityAddTimeList();  //实际下单时间集合
+		
+		double orderAmountSum = 0d;  //应付总额
+		double afterPaymentSum = 0d;  //实际付款总额
+		double debtMoneySum = 0d;	//总欠款
+		double spareMoneySum = 0d;	//总余额
+		double newSpareMoneySum = 0d;  //商品总余额(当实付大于应付时，将多的存入个人账户余额中)
+		double goodsprice = 0;  //商品总价
+		
+		String recid = "";//保存mappingid到账户充值记录表中
+		
+		double usedSurplusAmount = 0;
+		for (Integer i = 0; i < goodselectIds.size(); i++) {
+			Integer goodselectId = goodselectIds.get(i);		//商品id
+			//通过商品id获取当前商品
+			Goods goods = goodsDao.getgoods(goodselectId.toString());
+			
+			GoodsSpecPrice goodspec = goodsSpecPriceDao.selectSuitCard(goodselectId);//查询当前套卡默认规格对应的数据信息
+			
+			Double orderAmount = orderAmounts.get(i);			//应付金额
+			orderAmountSum = orderAmountSum + orderAmount;		//应付总额
+			Double actualPayment = actualPayments.get(i);		//实际付款
+			afterPaymentSum = afterPaymentSum + actualPayment;	//实际付款总额
+			
+			double costPrice = goods.getCostPrice();  //     系统价
+			double price = goods.getShopPrice();	//优惠价格
+			double marketPrice = goods.getMarketPrice();	//市场单价
+			
+			double actualPayment_on = 0;		//实付款（入库）
+			double orderArrearage_on = 0;		//欠款（入库）
+			double orderBalance_on = 0;			//余额（入库）
+			double newOrderBalance = 0; //商品余额（只放在details里的OrderBalance）
+			double appTotalAmount = 0; //app实付金额
+			double appArrearage = 0;   //app欠款金额
+			goodsprice += price;
+			if(orderAmount > actualPayment){
+				//应付 > 实付
+				actualPayment_on = actualPayment;
+				orderArrearage_on = Double.parseDouble(formater.format(orderAmount - actualPayment_on));
+				orderBalance_on = 0;
+				newOrderBalance = 0;                              //商品余额（只放在details里的OrderBalance）
+				appTotalAmount = actualPayment;                   //app实付金额
+				appArrearage = Double.parseDouble(formater.format(orderAmount - actualPayment)); //app欠款金额
+			}else if(orderAmount.equals(actualPayment)){
+				//应付 = 实付
+				actualPayment_on = actualPayment;
+				orderArrearage_on = 0;
+				orderBalance_on = 0;
+				newOrderBalance = 0;                              //商品余额（只放在details里的OrderBalance）
+				appTotalAmount = actualPayment;                   //app实付金额
+				appArrearage = 0;                                 //app欠款金额
+			}
+			spareMoneySum = spareMoneySum + orderBalance_on;	//总余额
+			debtMoneySum = debtMoneySum + orderArrearage_on;	//总欠款
+			
+ 			//添加商品订单"mtmy_order_goods_mapping"
+			
+			//添加套卡商品本身的
+			OrderGoods orderGoods = new OrderGoods();
+			orderGoods.setOrderid(orderid);
+			orderGoods.setUserid(orders.getUserid());
+			orderGoods.setGoodsid(goods.getGoodsId());
+			orderGoods.setGoodsname(goods.getGoodsName());
+			orderGoods.setGoodssn(goods.getGoodsSn());
+			orderGoods.setOriginalimg(goods.getOriginalImg());
+			orderGoods.setSpeckey(goodspec.getSpecKey());
+			orderGoods.setSpeckeyname(goodspec.getSpecKeyValue());
+			orderGoods.setCostprice(costPrice);		//系统价
+			orderGoods.setMarketprice(marketPrice);		//市场单价
+			orderGoods.setGoodsprice(price);	//优惠价
+			orderGoods.setRatioPrice(orderAmount);  //异价后的价格，因后台订单无异价，故该价格就是应付价格
+			orderGoods.setGoodsnum(1);	//购买数量
+			orderGoods.setOrderAmount(orderAmount);		//应付金额
+			orderGoods.setTotalAmount(actualPayment_on);	//计算后实付款金额
+			orderGoods.setOrderBalance(orderBalance_on);	//订单余款
+			orderGoods.setOrderArrearage(orderArrearage_on);	//订单欠款
+			orderGoods.setExpiringDate(goodspec.getExpiringDate());
+			orderGoods.setRealityAddTime(new Date());   //实际下单时间
+			orderGoods.setIsreal(2);	// 是否为虚拟 0 实物 1虚拟 2套卡 3通用卡
+			orderGoods.setRealityAddTime(realityAddTimeList.get(i));   //实际下单时间
+			//保存 mtmy_order_goods_mapping
+			orderGoodsDao.saveOrderGoods(orderGoods);
+			
+			recid += "," + orderGoods.getRecid();//保存mappingid到账户充值记录表中
+			
+			int groupId = orderGoods.getRecid();
+			List<Goods> goodsListSon = ordersDao.selectCardSon(goods.getGoodsId());
+			if(goodsListSon.size() > 0){
+				//添加套卡商品的子项商品的
+				double realityOrderAmountSum = 0d;
+				for(int j=0;j<goodsListSon.size();j++){
+					OrderGoods orderGoodsSon = new OrderGoods();
+					orderGoodsSon.setOrderid(orderid);
+					orderGoodsSon.setGroupId(groupId);
+					orderGoodsSon.setUserid(orders.getUserid());
+					orderGoodsSon.setGoodsid(goodsListSon.get(j).getGoodsId());
+					orderGoodsSon.setGoodsname(goodsListSon.get(j).getGoodsName());
+					orderGoodsSon.setOriginalimg(goodsListSon.get(j).getOriginalImg());
+					orderGoodsSon.setSpeckeyname(String.valueOf(goodsListSon.get(j).getGoodsNum()));  //套卡将子项的规格放到spec_key_name
+					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
+					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
+					orderGoodsSon.setRealityAddTime(new Date());   //实际下单时间
+					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
+					
+					orderGoodsSon.setIsreal(Integer.valueOf(goodsListSon.get(j).getIsReal()));	// 是否为虚拟 0 实物 1虚拟
+					
+					
+					if(orderAmount - price != 0){  //若讨价还价
+						if(j < (goodsListSon.size()-1)){   //父类下的（前n-1个）子项商品平分父类的应付价格，
+							double sonShopPrice = goodsListSon.get(j).getShopPrice();
+							double ratio = Double.parseDouble(formater.format(sonShopPrice/price));          //子类占父类的比例
+							double realityOrderAmount = Double.parseDouble(formater.format(ratio*orderAmount)); //子类平分父类的应付价
+							realityOrderAmountSum = realityOrderAmountSum + realityOrderAmount;     //子类平分父类的应付价总和      
+							orderGoodsSon.setOrderAmount(realityOrderAmount);		//应付金额
+							if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 1){
+								//实际服务单次价，单次标价舍弃两位小数后的
+								orderGoodsSon.setSingleNormPrice(((int)((goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())*100))/100.0);	//单次标价
+								orderGoodsSon.setSingleRealityPrice(((int)((realityOrderAmount/goodsListSon.get(j).getGoodsNum())*100))/100.0);	//实际服务单次价
+								
+								//实际服务单次价，单次标价四舍五入
+								/*orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//单次标价
+								orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价*/
+								orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
+								orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
+								orderGoodsSon.setGoodsnum(1);	//购买数量
+							}else{
+								orderGoodsSon.setGoodsnum(goodsListSon.get(j).getGoodsNum());	//购买数量
+							}
+						}else{        //最后一个子项的应付价格单独算（用父类的应付-前n个子项平分价格的总和）
+							double realityOrderAmount = Double.parseDouble(formater.format(orderAmount - realityOrderAmountSum)); //子类平分父类的应付价
+							orderGoodsSon.setOrderAmount(realityOrderAmount);		//应付金额
+							if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 1){
+								//实际服务单次价，单次标价舍弃两位小数后的
+								orderGoodsSon.setSingleNormPrice(((int)((goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())*100))/100.0);	//单次标价
+								orderGoodsSon.setSingleRealityPrice(((int)((realityOrderAmount/goodsListSon.get(j).getGoodsNum())*100))/100.0);	//实际服务单次价
+								
+								
+								//实际服务单次价，单次标价四舍五入
+								/*orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//单次标价
+								orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(realityOrderAmount/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价*/
+								orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
+								orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
+								orderGoodsSon.setGoodsnum(1);	//购买数量
+							}else{
+								orderGoodsSon.setGoodsnum(goodsListSon.get(j).getGoodsNum());	//购买数量
+							}
+						}
+					}else{             //若未讨价还价    ((int)(afs*100))/100.0舍弃两位小数后的
+						orderGoodsSon.setOrderAmount(goodsListSon.get(j).getShopPrice());		//应付金额
+						if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 1){
+							//实际服务单次价，单次标价舍弃两位小数后的
+							orderGoodsSon.setSingleNormPrice(((int)((goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())*100))/100.0);	//单次标价
+							orderGoodsSon.setSingleRealityPrice(((int)((goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())*100))/100.0);	//实际服务单次价
+							
+							//实际服务单次价，单次标价四舍五入
+							/*orderGoodsSon.setSingleNormPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//单次标价
+							orderGoodsSon.setSingleRealityPrice(Double.parseDouble(formater.format(goodsListSon.get(j).getShopPrice()/goodsListSon.get(j).getGoodsNum())));	//实际服务单次价*/							
+							
+							if(orders.getIsNeworder() == 0){//新订单
+								orderGoodsSon.setServicetimes(goodsListSon.get(j).getGoodsNum());	//预计服务次数
+							}else if(orders.getIsNeworder() == 1){//老订单
+								orderGoodsSon.setServicetimes(remaintimeNums.get(numSum));
+								usedSurplusAmount = usedSurplusAmount + Double.parseDouble(formater.format((goodsListSon.get(j).getGoodsNum()-remaintimeNums.get(numSum))*orderGoodsSon.getSingleRealityPrice()));
+								numSum = numSum + 1;
+							}
+							orderGoodsSon.setServicemin(goodsListSon.get(j).getServiceMin());//服务时长
+							orderGoodsSon.setGoodsnum(1);	//购买数量
+						}else{
+							if(orders.getIsNeworder() == 0){//新订单
+								orderGoodsSon.setGoodsnum(goodsListSon.get(j).getGoodsNum());	//购买数量
+							}else if(orders.getIsNeworder() == 1){//老订单
+								orderGoodsSon.setGoodsnum(remaintimeNums.get(numSum));	//购买数量
+								numSum = numSum + 1;
+							}
+						}
+					}
+					
+					//保存 mtmy_order_goods_mapping
+					orderGoodsDao.saveOrderGoods(orderGoodsSon);
+				}
+			}
+			
+			//订单商品详情记录表
+			OrderGoodsDetails details = new OrderGoodsDetails();
+			details.setOrderId(orderid);
+			details.setGoodsMappingId(orderGoods.getRecid()+"");
+			details.setTotalAmount(actualPayment_on);	//计算后实付款金额
+			details.setOrderBalance(newOrderBalance);	//商品余额
+			details.setOrderArrearage(orderArrearage_on);	//订单欠款
+			details.setAppTotalAmount(appTotalAmount);  //app实付金额
+			details.setAppArrearage(appArrearage);   //app欠款金额
+			if(orders.getIsNeworder() == 0){
+				details.setSurplusAmount(actualPayment_on); //套卡剩余金额
+			}else{
+				details.setSurplusAmount(Double.parseDouble(formater.format(actualPayment_on-usedSurplusAmount))); //套卡剩余金额
+			}
+			details.setType(0);
+			details.setAdvanceFlag("0");
+			details.setCreateOfficeId(user.getOffice().getId());
+			details.setCreateBy(user);
+			details.setBelongOfficeId(orders.getBelongOfficeId());
+			//保存订单商品详情记录
+			orderGoodsDetailsService.saveOrderGoodsDetails(details);
+			
+			usedSurplusAmount = 0;
+		}
+		
+		double appSum = orderGoodsDetailsService.queryAppSum(orderid);
+		if(orders.getIsNeworder() == 0){
+			//同步数据到营业额明细表
+			TurnOverDetails turnOverDetails = new TurnOverDetails();
+			turnOverDetails.setOrderId(orderid);
+			turnOverDetails.setDetailsId(orderid);
+			turnOverDetails.setType(1);
+			turnOverDetails.setAmount(appSum);
+			turnOverDetails.setUseBalance(0);
+			turnOverDetails.setStatus(0);
+			turnOverDetails.setUserId(mtmyUserId);
+			turnOverDetails.setBelongOfficeId(orders.getBelongOfficeId());
+			turnOverDetails.setCreateBy(UserUtils.getUser());
+			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+		}
+		
+		Payment payment = paymentDao.getByCode(orders.getPaycode());
+		//主订单信息
+		Orders _orders = new Orders();
+		_orders.setOrderid(orderid);
+		_orders.setParentid("0");
+		_orders.setReturnedId(orders.getReturnedId());
+		_orders.setUserid(mtmyUserId);
+		_orders.setOrderstatus(orders.getOrderstatus());
+		_orders.setPayid(payment.getPayid());
+		_orders.setPaycode(payment.getPaycode());
+		_orders.setPayname(payment.getPayname());
+		_orders.setGoodsprice(goodsprice);	//商品总价
+		_orders.setOrderamount(orderAmountSum); //应付总金额
+		_orders.setTotalamount(afterPaymentSum); //实付总额
+		_orders.setOrderArrearage(debtMoneySum); //总欠款
+		_orders.setOrderBalance(spareMoneySum); //总余额
+		_orders.setIsReal(2);	//是否实物（0：实物商品；1：虚拟商品；2：套卡；3：通用卡）
+		_orders.setIsNeworder(orders.getIsNeworder()); //是否新订单（0：新订单；1：老订单）
+		_orders.setDistinction(orders.getDistinction()); //订单性质
+		_orders.setOffice(user.getOffice());
+		_orders.setDelFlag("0");
+		_orders.setChannelFlag("bm");
+		_orders.setShippingstatus(2);
+		_orders.setShippingtype(2);
+		_orders.setConsignee(orders.getConsignee());
+		_orders.setPhone(orders.getPhone());
+		_orders.setAddress(orders.getAddress());
+		_orders.setUsernote(orders.getUsernote());
+		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		_orders.setCreateBy(user);
+		_orders.setBelongOfficeId(orders.getBelongOfficeId());
+		ordersDao.saveVirtualOrder(_orders);
+		
+		//根据用户id查询用户账户信息
+		Orders account = ordersDao.getAccount(_orders);
+		if(account == null){
+			Orders newAccount = new Orders();
+			double accountBalance = newSpareMoneySum;	//账户余额信息
+			newAccount.setAccountBalance(accountBalance);
+			newAccount.setUserid(_orders.getUserid());
+			ordersDao.insertAccount(newAccount);
+			
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
+		}else{
+			double accountBalance = account.getAccountBalance()+newSpareMoneySum;	//账户余额信息
+			account.setAccountBalance(accountBalance);
+			ordersDao.updateAccount(account);
+			
+			//插入用户账户充值记录表(属于订单)
+			int type = 0;//类型是订单
+			insertUserAccountsLog(orderid, mtmyUserId, newSpareMoneySum, type, _orders.getChannelFlag(), user, recid);
+		}
+		
+		//保存提成人员信息 
+		List<String> sysUserId = orders.getSysUserId();	//提成人员id
+		List<Double> pushMoney = orders.getPushMoney();	//提成金额
+		if(sysUserId!=null && sysUserId.size()>0){
+			OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
+			for (int i = 0; i < sysUserId.size(); i++) {
+				orderPushmoneyRecord.setPushmoneyUserId(sysUserId.get(i));
+
+				//通过业务员id(属于妃子校的)查询业务员归属机构
+				orderPushmoneyRecord = orderPushmoneyRecordService.getOfficeIdByUserId(orderPushmoneyRecord);				
+				
+				orderPushmoneyRecord.setOrderId(orderid);
+				orderPushmoneyRecord.setPushMoney(pushMoney.get(i));
+				orderPushmoneyRecord.setOfficeId(user.getOffice().getId());
+				orderPushmoneyRecord.setCreateBy(user);
+				orderPushmoneyRecord.setDelFlag("0");
+				orderPushmoneyRecordService.saveOrderPushmoneyRecord(orderPushmoneyRecord);
+			}
+		}
+		//批量添加订单备注
+		if (orders.getOrderRemarks()!=null && orders.getOrderRemarks().size()>0) {
+			ordersDao.saveOrderRemarksLog(orders);
+		}
+		if(orders.getIchecks() == 1){
+			String personheadContent = orders.getPersonheadContent();
+			String companyheadContent = orders.getCompanyheadContent();//公司发票抬头
+			if(!"".equals(companyheadContent)){//等于空 就是个人  不等于空就是 公司
+				orders.setHeadContent(companyheadContent);
+			}else{
+				orders.setHeadContent(personheadContent);
+			}
+			//保存发票信息
+			orderInvoiceService.saveOrderInvoice(orders);
+			OrderInvoiceRelevancy orderInvoiceRelevancy = new OrderInvoiceRelevancy();
+			orderInvoiceRelevancy.setOrderId(orderid);
+			orderInvoiceRelevancy.setInvoiceId(orders.getInvoiceId());
+			ordersDao.saveOrderInvoiceRelevancy(orderInvoiceRelevancy);
+		}
+	}
 }

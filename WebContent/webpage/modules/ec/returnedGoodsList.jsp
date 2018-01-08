@@ -334,6 +334,7 @@
 									</shiro:hasPermission>
 									<a href="#" onclick="openDialog('售后转虚拟订单', '${ctx}/ec/orders/afterSaleOrdersForm?returnedId=${returnGoods.id}&mobile=${returnGoods.mobile}&username=${returnGoods.userName}&userid=${returnGoods.userId}','900px','650px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>售后转虚拟订单</a>
 									<a href="#" onclick="openDialog('售后转实物订单', '${ctx}/ec/orders/afterSaleKindOrdersForm?returnedId=${returnGoods.id}&mobile=${returnGoods.mobile}&username=${returnGoods.userName}&userid=${returnGoods.userId}','900px','650px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>售后转实物订单</a>
+									<a href="#" onclick="openDialog('售后转套卡订单', '${ctx}/ec/orders/afterSaleSuitCardOrdersForm?returnedId=${returnGoods.id}&mobile=${returnGoods.mobile}&username=${returnGoods.userName}&userid=${returnGoods.userId}','900px','650px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>售后转套卡订单</a>
 								</td>
 							</tr>
 						</c:forEach>
