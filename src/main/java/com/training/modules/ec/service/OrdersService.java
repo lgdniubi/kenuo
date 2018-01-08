@@ -3910,7 +3910,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderGoods.setOrderBalance(orderBalance_on);	//订单余款
 			orderGoods.setOrderArrearage(orderArrearage_on);	//订单欠款
 			orderGoods.setExpiringDate(goodspec.getExpiringDate());
-			orderGoods.setRealityAddTime(new Date());   //实际下单时间
 			orderGoods.setIsreal(2);	// 是否为虚拟 0 实物 1虚拟 2套卡 3通用卡
 			orderGoods.setRealityAddTime(realityAddTimeList.get(i));   //实际下单时间
 			//保存 mtmy_order_goods_mapping
@@ -3934,7 +3933,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setSpeckeyname(String.valueOf(goodsListSon.get(j).getGoodsNum()));  //套卡将子项的规格放到spec_key_name
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
-					orderGoodsSon.setRealityAddTime(new Date());   //实际下单时间
+					orderGoodsSon.setRealityAddTime(realityAddTimeList.get(i));   //实际下单时间
 					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
 					
 					orderGoodsSon.setIsreal(Integer.valueOf(goodsListSon.get(j).getIsReal()));	// 是否为虚拟 0 实物 1虚拟
