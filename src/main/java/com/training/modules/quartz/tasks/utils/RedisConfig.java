@@ -25,7 +25,7 @@ public class RedisConfig {
 	public static final String coupon_store_prefix = "coupon_store_";//面值库存
 	public static final String AREA_CODE_KEY = "AREA_CODE";//区code集合
 	public static final String office_area_ids_key = "office_area_ids"; //区id集合
-	public static final String AREA_WEEK_BEAUTIFUL_KEY = "AREA_WEEK_BEAUTIFUL";//区域美容师周数据
+	public static final String AREA_WEEK_BEAUTIFUL_KEY = "AREA_WEEK_BEAUTIFUL_";//区域美容师周数据
 	public static final String train_uplimit_set = "train_uplimit_set";//用户当天上限用户id
 	public static final String train_nowruleuplimit_prefix = "train_nowruleuplimit_";//用户当前获得分数
 	public static final String mtmy_uplimit_set = "mtmy_uplimit_set"; //用户id
