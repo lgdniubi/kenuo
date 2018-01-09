@@ -87,7 +87,7 @@ public class WeekScorePersistent extends CommonService{
 						bws.setAreaid(Integer.parseInt(aredId));
 						beautyWeekScoreService.insertWeekScore(bws);
 						
-						redisClientTemplate.zadd(RedisConfig.AREA_WEEK_BEAUTIFUL_KEY+yaw+"_"+aredId, 0, t.getElement());
+						//redisClientTemplate.zadd(RedisConfig.AREA_WEEK_BEAUTIFUL_KEY+yaw+"_"+aredId, 0, t.getElement());
 						rank--;
 						//officeWeekScoreService.statisOfficeWeekScoreByOfficeCode(BeanUtil.getOfficeCode( t.getElement()), t.getScore());
 					}
