@@ -347,6 +347,10 @@ public class ActivityService extends TreeService<ActivityDao,Activity> {
 	public Users findByMobile(String mobile){
 		return mtmyUsersDao.getUsersBy(mobile);
 	}
+	
+	public Users findByUserId(String userid){
+		return mtmyUsersDao.get(userid);
+	}
 	/**
 	 * 获取数据红包list
 	 * @param id

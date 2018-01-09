@@ -336,6 +336,9 @@
 					or u.province = #{district }
 					)
 			</if>
+			<if test="userid != null">
+				AND u.user_id = #{userid} 
+			</if>
 			AND u.del_flag = #{DEL_FLAG_NORMAL}
 			AND u.user_id is NOT NULL
 		ORDER BY u.reg_time DESC
@@ -352,6 +355,9 @@
 				AND u.nickname LIKE 
 					<if test="dbName == 'oracle'">'%'||#{nickname}||'%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%', #{nickname}, '%')</if>
+			</if>
+			<if test="userid != null">
+				AND u.user_id = #{userid} 
 			</if>
 			<if test="mobile != null and mobile != ''">
 				AND u.mobile LIKE 
