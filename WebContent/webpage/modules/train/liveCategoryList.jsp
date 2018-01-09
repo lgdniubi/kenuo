@@ -38,7 +38,7 @@
 								html += "<td>";
 								//操作权限-查看
 								if($("#shiroView").val() == 1){
-									html += "<a href=\"#\" onclick=\"openDialogView('查看分类', '${ctx}/train/category/form?trainLiveCategoryId="+dataObj[i].trainLiveCategoryId+"','430px', '4800px')\" class=\"btn btn-info btn-xs\" ><i class=\"fa fa-search-plus\"></i> 查看</a>";
+									html += "<a href=\"#\" onclick=\"openDialogView('查看分类', '${ctx}/train/category/form?trainLiveCategoryId="+dataObj[i].trainLiveCategoryId+"','430px', '480px')\" class=\"btn btn-info btn-xs\" ><i class=\"fa fa-search-plus\"></i> 查看</a>";
 								}
 								//操作权限-修改
 								if($("#shiroEdit").val() == 1){
@@ -149,12 +149,11 @@
 								<shiro:hasPermission name="train:category:edit">
 									<a href="#" onclick="openDialog('修改分类', '${ctx}/train/category/form?flag=3&trainLiveCategoryId=${row.trainLiveCategoryId}','430px', '480px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 修改</a>
 								</shiro:hasPermission>
+								<!-- 当分类中一级分类有其他分类时不能删除和添加下级分类 -->
 								<c:if test="${row.name != '其他' }">
 									<shiro:hasPermission name="train:category:del">
 										<a href="#" onclick="delCategory('${row.trainLiveCategoryId}')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
 									</shiro:hasPermission>
-								</c:if>
-								<c:if test="${row.name != '其他' }">
 									<c:if test="${row.type != 3}">
 										<shiro:hasPermission name="train:category:addChild">
 											<a href="#" onclick="openDialog('添加下级分类', '${ctx}/train/category/form?parentId=${row.trainLiveCategoryId}','430px', '480px')" class="btn  btn-primary btn-xs"><i class="fa fa-plus"></i> 添加下级分类</a>
