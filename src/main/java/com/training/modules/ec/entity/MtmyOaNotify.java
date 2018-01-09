@@ -54,6 +54,9 @@ public class MtmyOaNotify extends DataEntity<MtmyOaNotify> {
 	private Users users;
 	
 	private String phones;      //组推人员的手机号
+	private String data;           //组推的时候接受的数据（手机号或用户id）
+	private String groupImportType;     //组推时导入类型（0：手机号，1：用户id）
+	
 	public MtmyOaNotify() {
 		super();
 	}
@@ -179,6 +182,13 @@ public class MtmyOaNotify extends DataEntity<MtmyOaNotify> {
 	public String getMtmyOaNotifyRecordMobile() {
 		return Collections3.extractToString(mtmyOaNotifyRecordList, "mtmyOaNotify.phones", ",") ;
 	}
+	/**
+	 * 获取通知发送记录用户IDS
+	 * @return
+	 */
+	public String getMtmyOaNotifyRecordUserIds() {
+		return Collections3.extractToString(mtmyOaNotifyRecordList, "mtmyOaNotify.users.userid", ",") ;
+	}
 		
 	public boolean isSelf() {
 		return isSelf;
@@ -297,8 +307,6 @@ public class MtmyOaNotify extends DataEntity<MtmyOaNotify> {
 		this.users = users;
 	}
 	
-	@JsonIgnore
-	@ExcelField(title="手机号码", align=2, sort=1,type=2)
 	public String getPhones() {
 		return phones;
 	}
@@ -306,5 +314,24 @@ public class MtmyOaNotify extends DataEntity<MtmyOaNotify> {
 	public void setPhones(String phones) {
 		this.phones = phones;
 	}
+	
+	@JsonIgnore
+	@ExcelField(title="数据", align=2, sort=1,type=2)
+	public String getData() {
+		return data;
+	}
+
+	public void setData(String data) {
+		this.data = data;
+	}
+
+	public String getGroupImportType() {
+		return groupImportType;
+	}
+
+	public void setGroupImportType(String groupImportType) {
+		this.groupImportType = groupImportType;
+	}
+	
 	
 }

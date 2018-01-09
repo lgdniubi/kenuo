@@ -36,6 +36,7 @@ public class Activity extends TreeEntity<Activity> {
 	private String mobileNum;					//多用户手机号
 	private int sendType;						//推送方式
 	
+	private String moreType;                    //多用户推送方式（0：手机号；1：用户ID）
 	
 	public int getSendType() {
 		return sendType;
@@ -207,6 +208,14 @@ public class Activity extends TreeEntity<Activity> {
 	public void setParent(Activity parent) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public String getMoreType() {
+		return moreType;
+	}
+
+	public void setMoreType(String moreType) {
+		this.moreType = moreType;
 	}
 	
 

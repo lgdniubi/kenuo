@@ -8,6 +8,7 @@
 		a.READ_FLAG AS "readFlag",
 		a.READ_DATE AS "readDate",
 		u.mobile AS 'mtmyOaNotify.phones',
+		a.user_id AS 'mtmyOaNotify.users.userid',
 		concat(u.nickname,' (',u.mobile,')') AS "users.nickname"
 	</sql>
 	
