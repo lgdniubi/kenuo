@@ -37,7 +37,7 @@
 			    area: ['300px', '420px'],
 			    title:"选择城市",
 			    ajaxData:{selectIds: $("#cityIds").val()},
-			    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/area/findListByPID")+"&module=&checked=true&extId=&isAll=&selectIds=" ,
+			    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/area/findListByPID")+"&module=&checked=true&extId=&isAll=&selectIds="+$("#cityIds").val(),
 			    btn: ['确定', '关闭'],
 			    yes: function(index, layero){ //或者使用btn1
 						var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
