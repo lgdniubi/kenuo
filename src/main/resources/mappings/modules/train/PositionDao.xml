@@ -100,6 +100,7 @@
 			trains.sys_dict c 
 		WHERE 
 			c.type = 'sys_user_type' 
+			AND c.del_flag = 0
 			AND c.`value` NOT IN
 			<if test="positionkey.size() != 0">
 				<foreach collection="positionkey" open="(" close=")" separator="," item="value" index="index">
