@@ -539,6 +539,21 @@ window.onload=initStatus;
 			}
 		}); 
 	}
+	
+	// 强制取消
+	function forcedCancel(orderId){
+		layer.confirm('确认强制取消订单吗？', {
+			btn: ['确定','取消'], //按钮  可以设置多个按钮 具体可参考 http://layer.layui.com/api.html
+			icon: 3, 
+			title:'系统提示'
+		},function(index){	// 点击确认事件
+			layer.close(index);	// 关闭弹出框  若不关闭 则可以点击多次确认按钮
+			$(".loading").show();
+			window.location = "${ctx}/ec/orders/forcedCancel?orderid="+orderId;
+	    }, function(){ // 点击取消事件
+	    		
+	    }); 
+	}
 </script>
 </head>
 

@@ -333,6 +333,7 @@
 										</c:if>
 									</shiro:hasPermission>
 									<shiro:hasPermission name="ec:returned:afterSaleOrders">
+									<c:if test="${returnGoods.returnStatus==12 || returnGoods.returnStatus==13 || returnGoods.returnStatus==14 || (returnGoods.returnStatus==15 && returnGoods.problemDesc != '强制取消' && returnGoods.returnReason != '强制取消' && returnGoods.remarks != '强制取消') || returnGoods.returnStatus==16 || returnGoods.returnStatus==22 || returnGoods.returnStatus==23 || returnGoods.returnStatus==24 || returnGoods.returnStatus==25 || returnGoods.returnStatus==26}">
 										<div class="btn-group">
 											<button type="button" class="btn btn-success dropdown-toggle btn-xs" data-toggle="dropdown">售后转单<span class="caret"></span>
 											</button>
@@ -343,6 +344,7 @@
 												<li><a href="#" onclick="openDialog('售后转通用卡订单', '${ctx}/ec/orders/afterSaleCommonCardOrdersForm?returnedId=${returnGoods.id}&mobile=${returnGoods.mobile}&username=${returnGoods.userName}&userid=${returnGoods.userId}','900px','650px')"  class="btn" ><i class="fa fa-edit"></i>售后转通用卡订单</a></li>
 											</ul>
 										</div>
+									</c:if>
 									</shiro:hasPermission>	
 								</td>
 							</tr>
