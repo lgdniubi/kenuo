@@ -89,7 +89,7 @@
 		FROM
 			mtmydb.mtmy_order_goods_mapping a
 		LEFT JOIN mtmydb.mtmy_order_goods_details b ON a.rec_id=b.goods_mapping_id
-		LEFT JOIN (SELECT IFNULL(SUM(return_num),0) AS return_num,goods_mapping_id FROM mtmydb.mtmy_returned_goods WHERE order_id = #{orderId} AND return_status in (11,12,13,14,15,21,22,23,24,25) GROUP BY order_id,goods_mapping_id) c ON c.goods_mapping_id = a.rec_id
+		LEFT JOIN (SELECT IFNULL(SUM(return_num),0) AS return_num,goods_mapping_id FROM mtmydb.mtmy_returned_goods WHERE order_id = #{orderId} AND return_status in (11,12,13,14,15,16,21,22,23,24,25) GROUP BY order_id,goods_mapping_id) c ON c.goods_mapping_id = a.rec_id
 		WHERE
 			a.del_flag = 0
 		and a.order_id= #{orderId}
@@ -388,7 +388,7 @@
 		AND ogd.service_times = -1
 	</select>
 	
-	<!-- 根据组ID(mapping_id)获取卡项中的实物集合 -->
+	<!-- 根据组ID(mapping_id)获取卡项中的子项集合 -->
 	<select id="getOrderGoodsCard" resultType="OrderGoods">
 		SELECT 
 			a.rec_id as 'recid',
@@ -409,6 +409,30 @@
 		 FROM mtmydb.mtmy_order_goods_mapping a 
 		
 		WHERE a.group_id = #{recid}
+	</select>
+	<!-- 获取实物子项的可售后数量(根据组ID(mapping_id)获取卡项中的实物集合) -->
+	<select id="getCardRealNum" resultType="OrderGoods">
+		SELECT 
+			a.rec_id as 'recid',
+			a.order_id as 'orderid',
+			a.group_id as 'groupId',
+			a.goods_id as 'goodsid',
+			a.goods_name as 'goodsname',
+			a.is_real as 'isreal',
+			a.spec_key_name as 'speckeyname',
+			a.market_price as 'marketprice',
+			a.goods_price as 'goodsprice',
+			a.cost_price as 'costprice',
+			(a.goods_num-IFNULL(SUM(b.return_num),0)) as 'goodsnum',	
+			a.order_amount as 'orderAmount',
+			a.total_amount as 'totalAmount',
+			a.order_arrearage as 'orderArrearage',
+			a.original_img as 'originalImg'
+		FROM mtmydb.mtmy_order_goods_mapping a 
+		LEFT JOIN mtmydb.mtmy_returned_goods_card b ON a.rec_id = b.mapping_id
+		WHERE a.group_id = #{recid}
+		AND a.is_real = 0
+		GROUP BY a.rec_id
 	</select>
 	
 	<!-- 根据组ID(mapping_id)获取卡项中的after_sale_num -->
@@ -439,5 +463,42 @@
 		LEFT JOIN mtmydb.mtmy_users u ON u.user_id = ogm.user_id
 		WHERE ogm.order_id = #{orderId}
 		AND ogm.del_flag = 0
+	</select>
+	<!-- 实物:获取mapping表中的总购买数量 -->
+	<select id="getGoodsNum" resultType="int">
+		SELECT
+			a.goods_num
+		FROM
+			mtmydb.mtmy_order_goods_mapping a
+		WHERE
+			a.order_id =#{orderId}
+		AND
+			a.rec_id = #{goodsMappingId}
+	</select>
+	<!-- 获取商品的实付金额和剩余服务次数 -->
+	<select id="getTotalAmountAndTimes" resultType="OrderGoods">
+		SELECT 
+			b.service_times AS servicetimes,
+			SUM(b.total_amount) AS "totalAmount",
+			SUM(b.service_times) AS "remaintimes"
+		FROM 
+			mtmydb.mtmy_order_goods_mapping a 
+		LEFT JOIN
+			mtmydb.mtmy_order_goods_details b ON a.rec_id = b.goods_mapping_id
+		WHERE 
+			a.order_id = #{orderId}
+		AND
+			a.rec_id = #{goodsMappingId}
+	</select>
+	<!-- 获取该订单中商品总购买数量 -->
+	<select id="getOrderNum" resultType="OrderGoods">
+		SELECT 
+			a.rec_id AS 'recid',
+			a.order_id AS 'orderid',
+			a.goods_num AS 'goodsnum'
+		FROM 
+			mtmydb.mtmy_order_goods_mapping a
+		WHERE 
+			a.order_id = #{orderId}
 	</select>
 </mapper>

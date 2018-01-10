@@ -14,11 +14,11 @@
 	<script src="${ctxStatic}/train/js/jquery.imgbox.pack.js"></script>
 <script type="text/javascript">
 		var validateForm;
-		var returnNum;//商品原始的售后数量
-		var returnAmount;//商品原始的售后金额
-		var goodsNum;//商品可售后数量
-		var amount;//商品的可售后金额
+		var returnNum = 0;//售后次数
+		var returnAmount = 0;//售后金额
 		var applyType;//申请类型
+		var j = 0;//校验通用卡子项实物输入的数量是否都为0
+		var flag = false;//校验通用卡子项实物输入的数量是否都为0
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		  if(validateForm.form()){
 			  //判断是同意还是拒绝,需要清空数据
@@ -27,6 +27,31 @@
 				  $("#refusalCause").val("");
 			  }else{//拒绝,清空仓库信息
 				  $("#warehouseId").val(0);
+			  }
+			  
+			  //校验通用卡子项实物售后数量的准确
+			  realnum = "${realnum}";
+			  for(var i=0;i<realnum;i++){
+				  var newNum = $("#returnNums"+i).val();
+				  var oldNum = $("#oldreturnNums"+i).val();
+				  if(parseInt(newNum) < 0){
+					  flagNum = true;
+				  }else if(parseInt(newNum) > parseInt(oldNum)){
+					  flagNum = true;
+				  }else{
+					  flagNum = false;
+				  }
+				  if(flagNum){
+					  top.layer.alert('售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
+					  return;
+				  }
+				  //当实物售后数量=0,做记录
+				  if(parseInt(newNum) == 0){
+					  j++;
+				  }
+				  if(j == realnum){
+					  flag = true;
+				  }
 			  }
 			  returnNum = $("#returnNum").val();//售后次数
 			  returnAmount = $("#returnAmount").val();//售后金额
@@ -37,6 +62,12 @@
 				  }else if(parseInt(goodsNum)<parseInt(returnNum)){
 					  top.layer.alert('售后次数必须大于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
 					  return;
+				  }
+				  if(flag){
+					  if(parseInt(returnNum) == 0){
+						  top.layer.alert('售后商品数量和售后次数不能都为0!', {icon: 0, title:'提醒'});
+						  return;
+					  }
 				  }
 			  }else{//退货并退款和仅退款   售后数量和售后金额不能为0.
 				  //校验售后次数
@@ -55,10 +86,12 @@
 					  top.layer.alert('退款金额必须大于等于0，小于等于可售后金额!', {icon: 0, title:'提醒'});
 					  return;
 				  }
-   			  	  //当售后数量和售后金额都为0,不能审核通过
-				  if(parseInt(returnNum) == 0 && parseFloat(returnAmount) == 0){
-					  top.layer.alert('售后次数和退款金额不能都为0!', {icon: 0, title:'提醒'});
-					  return;
+				  //通用卡子项实物售后数量,售后次数,售后金额都是0,不能售后
+				  if(flag){
+					  if(parseInt(returnNum) == 0 && parseFloat(returnAmount) == 0){
+						  top.layer.alert('售后商品数量、售后次数和退款金额不能都为0!', {icon: 0, title:'提醒'});
+						  return;			  
+					  }
 				  }
 				  //退款方式是"银行卡账户"需要填写收款人和收款方式
 				  var returnType=$("#returnType").val();
@@ -81,9 +114,9 @@
 			  $("#inputForm").submit();
 			  return true;
 		  }
-	
 		  return false;
 		}
+		
 		//同意时,显示地址,隐藏原因
 		function seletAddreess(){
 			applyType="${returnedGoods.applyType}";
@@ -100,8 +133,40 @@
 			$("#addreess").hide();
 			$("#refusal").show();
 		}
+		//退款并退货 全部展示,仅退货 展示数量,仅退款 展示退款金额
+		function selectType(o){
+			var type=$("#applyType").val();
+			if(type==1){//仅换货,不显示"退款金额"和"退款方式";
+				$("#returnAmountIsShow").hide();//退款金额
+				$("#returnTypeIsShow").hide();//退款方式
+			}else {
+				$("#returnAmountIsShow").show();//退款金额
+				$("#returnTypeIsShow").show();//退款方式
+			}
+		}
+		//选择退款方式,只有选择"银行卡账户",需要填写收款人和收款账号
+		function selectReturnType(o){
+			var type=$("#returnType").val();
+			if(type==4){
+				$("#selectReceive").show();
+			}else if(type!=4){
+				$("#selectReceive").hide();
+			}
+		}
+		
+		//实物售后数量校验
+		function findReturnNum (id,num){
+			var num1=$(id).val();
+			if(parseInt(num1)<0){
+				top.layer.alert('售后数量必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
+				return;
+			}else if(parseInt(num1) > num){
+				top.layer.alert('售后数量必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
+				return;
+			}
+		}
 		//售后次数校验
-		function returnChangeNum(){
+		function returnChangeTimes(){
 			returnNum=$("#returnNum").val();
 			goodsNum = $("#goodsNum").val();//商品的可售后数量
 			if(parseInt(returnNum)<0){
@@ -132,26 +197,8 @@
 				'overlayShow'	: true,
 				'allowMultiple'	: false
 			});
+			/* $("#reason").focus(); */
 			validateForm = $("#inputForm").validate({
-				rules: {
-					returnmoney:{
-						number:true,
-						min:0
-						},
-					bankno:{
-						digits:true
-					}
-				},
-				messages: {
-					returnmoney:{
-						number:"输入合法的价格",
-						min:"价格最小为0"
-						},
-						bankno:{
-							digits:"输入合法的银行卡号"
-						}
-					
-				},
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
 					form.submit();
@@ -166,6 +213,15 @@
 					}
 				}
 			});
+			//在ready函数中预先调用一次远程校验函数，是一个无奈的回避案。(刘高峰）
+			//否则打开修改对话框，不做任何更改直接submit,这时再触发远程校验，耗时较长，
+			//submit函数在等待远程校验结果然后再提交，而layer对话框不会阻塞会直接关闭同时会销毁表单，因此submit没有提交就被销毁了导致提交表单失败。
+			/* $("#inputForm").validate().element($("#reason")); */
+			
+// 			laydate({
+// 	            elem: '#userinfo.birthday', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
+// 	            event: 'focus' //响应事件。如果没有传入event，则按照默认的click
+// 	        });
 			applyType = "${returnedGoods.applyType}";//申请类型
 			if(applyType == 1){//仅换货
 				$("#returnNum").attr("readonly",false);//当仅换货,数量时可以输入的,即使存在欠款
@@ -178,6 +234,7 @@
 			}else{
 				$("#selectReceive").hide();
 			}
+			//记录原始的售后次数
 			var oldReturnNum = "${returnedGoods.returnNum}";
 			$("#oldReturnNum").val(oldReturnNum)//记录原始的售后次数
 		});
@@ -197,45 +254,40 @@
 		<div class="ibox">
 			<div class="ibox-content">
 				<div class="clearfix">
-				<form:form id="inputForm" modelAttribute="returnedGoods" action="${ctx}/ec/returned/saveReturned" method="post" class="form-horizontal">
+				<form:form id="inputForm" modelAttribute="returnedGoods" action="${ctx}/ec/returned/saveReturnedCommon" method="post" class="form-horizontal">
 					<input type="hidden" id="amount" value="${amount}"/>
 					<input type="hidden" id="goodsNum" value="${times}"/>
 					<input type="hidden" id="oldReturnNum" name="oldReturnNum"/>
 					<form:hidden path="id"/>
+					<form:hidden path="isReal"/>
 			        <label>退货单号：</label><label>${returnedGoods.id}</label>&nbsp;&nbsp;
 			        <label>原订单号：</label><label>${returnedGoods.orderId}</label>
 			   		<p></p>
 			      	<label>用户名：</label><label>${returnedGoods.userName}</label>&nbsp;&nbsp;
 			        <label>手机号：</label><label>${returnedGoods.mobile}</label>
 			        <table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
-			        	<thead>
-			        		<tr>
-			        			<th style="text-align: center;">商品名称</th>
-			        			<th style="text-align: center;">商品类型</th>
-								<th style="text-align: center;">规格</th>
-								<th style="text-align: center;">价格</th>
-								<th style="text-align: center;">数量</th>
-								<th style="text-align: center;">实付金额</th>
-			        		</tr>
-			        	</thead>
-			        	<tbody>
-			        		<tr style="text-align: center;">
-			        			<td>${returnedGoods.goodsName}</td>
-			        			<td>
-			        				<c:if test="${returnedGoods.isReal==0}">
-			        					实物
-			        				</c:if>
-			        				<c:if test="${returnedGoods.isReal==1}">
-			        					虚拟
-			        				</c:if>
-			        			</td>
-			        			<td>${returnedGoods.specName}</td>
-			        			<td>${returnedGoods.goodsPrice}</td>
-			        			<td>${returnedGoods.goodsNum}</td>
-			        			<td>${returnedGoods.totalAmount}</td>
-			        		</tr>
-			        	</tbody>
-			        </table>
+						<thead>
+							<tr>
+								<th style="text-align: center;">商品编号</th>
+								<th style="text-align: center;">商品名称</th>
+								<th style="text-align: center;">商品类型</th>
+								<th style="text-align: center;">子项名称</th>
+								<th style="text-align: center;">子项类型</th>
+								<th style="text-align: center;">市场价</th>
+								<th style="text-align: center;">优惠价</th>
+								<th style="text-align: center;">成本价</th>
+								<th style="text-align: center;">购买数量</th>
+								<th style="text-align: center;">应付款</th>
+								<th style="text-align: center;">实付款</th>
+								<th style="text-align: center;">欠款</th>
+							</tr>
+						</thead>
+						<c:if test="${not empty returnGoodsCard}">
+							<tbody>
+								${returnGoodsCard}
+							</tbody>
+						</c:if>						
+					</table>
 			        <label>售后商品图片：</label>
 			        <c:forEach items="${returnedGoods.imgList}" var="imgList">
 			        	<label>
@@ -251,7 +303,7 @@
 			        <p></p>
 			        <label>申请类型：</label>
 			        <label>
-				        <c:if test="${returnedGoods.applyType==0}">
+						<c:if test="${returnedGoods.applyType==0}">
 							退货并退款
 						</c:if>		
 						<c:if test="${returnedGoods.applyType==1}">
@@ -259,17 +311,6 @@
 						</c:if>
 						<c:if test="${returnedGoods.applyType==2}">
 							仅退款
-						</c:if>
-					</label>
-					<p></p>
-					<p></p>
-					<label>入库状态：</label>
-					<label>
-						<c:if test="${returnedGoods.isStorage==0}">
-							未入库
-						</c:if>		
-						<c:if test="${returnedGoods.isStorage==1}">
-							已入库
 						</c:if>
 					</label>
 					<p></p>
@@ -319,31 +360,32 @@
 							换货完成
 						</c:if>
 					</label>
+					<c:if test="${not empty realnum}">
+						<p></p>
+						${realGoods}
+					</c:if>
 					<p></p>
 					<label>支付金额：</label>
 			        <form:input path="totalAmount" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control" readonly="true"/>
 					<p></p>
-					<c:if test="${serviceTimes != 999}">
-				        <label>售后商品次数：</label>
-       					<form:input path="returnNum" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control"
-					        onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
-							onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
-							onfocus="if(value == '0'){value=''}"
-							onblur="if(value == ''){value='0'}"
-					        onchange="returnChangeNum()"/>
-       				</c:if>
+					<label>售后次数：</label>
+		        	<form:input path="returnNum" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control" 
+		        	onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
+					onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+					onfocus="if(value == '0'){value=''}"
+					onblur="if(value == ''){value='0'}"
+		        	onchange="returnChangeTimes()"/>
 					<p></p>
-					<div id="returnAmountIsShow" style="display: display">
-						<label>退款金额：</label>
-				        <form:input path="returnAmount" htmlEscape="false" maxlength="10"  style="width:180px;" class="form-control required"
-							onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
-							onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
-							onfocus="if(value == '0.0'){value=''}"
-							onblur="if(value == ''){value='0.0'}"
-							onchange="returnChangeAmount()"/>
-				        <p></p>
-				    </div>
-				    <div id="returnTypeIsShow" style="display: display">
+			        <label>退款金额：</label>
+						<form:input path="returnAmount" htmlEscape="false" maxlength="10"  style="width:180px;" class="form-control required"
+						onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
+						onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+						onfocus="if(value == '0.0'){value=''}"
+						onblur="if(value == ''){value='0.0'}"
+						onchange="returnChangeAmount()"/>
+						<p></p>
+					<p></p>
+					<div id="returnTypeIsShow" style="display: display">
 				        <label>退款方式：</label>
 			        	<form:select path="returnType" class="form-control" style="width:185px;" onchange="selectReturnType(this)">
 							<form:option value="0">原路退回</form:option>
@@ -365,22 +407,24 @@
 						</div>
 						<p></p>
 					</div>
-			        <c:if test="${returnedGoods.returnStatus==11}">
+					<c:if test="${flag != 1}">
+				        <c:if test="${returnedGoods.returnStatus==11}">
 			        		<label>是否同意申请：</label>
 							<label><input id="isConfirm" name="isConfirm" type="radio" value="12"  class="form required" onclick="seletAddreess()"/>同意退货 </label>
 							<label><input id="isConfirm" name="isConfirm" type="radio" value="-10"  class="form required"  onclick="shuoRefusal()"/>拒绝退货</label>
-					</c:if> 
-					<c:if test="${returnedGoods.returnStatus==21}">
+						</c:if> 
+						<c:if test="${returnedGoods.returnStatus==21}">
 							<label>是否同意申请：</label>
 							<label><input id="isConfirm" name="isConfirm" type="radio" value="22"  class="form required" onclick="seletAddreess()"/>同意换货</label>
 							<label><input id="isConfirm" name="isConfirm" type="radio" value="-20"  class="form required"  onclick="shuoRefusal()"/>拒绝换货</label>
+						</c:if>
 					</c:if>
 					<div id="refusal" style="display:none;">
 						<label>拒绝原因：</label>
 						<form:textarea path="refusalCause" htmlEscape="false" rows="3" maxlength="30" style="width:300px;" class="form-control required"/>
 						<label><font color="red">如果拒绝请说明原因</font></label>
 					</div>
-					<div id="addreess" style="display:none;">
+			        <div id="addreess" style="display:none;">
 						<hr>
 						<label>仓库地址选择：</label>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">

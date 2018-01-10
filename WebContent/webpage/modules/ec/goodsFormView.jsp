@@ -6,7 +6,7 @@
 %>
 <html>
 <head>
-	<title>查看商品</title>
+	<title>卡项商品</title>
 	<meta name="decorator" content="default"/>
 	<link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
 	<link rel="stylesheet" href="${ctxStatic}/ec/css/base.css">

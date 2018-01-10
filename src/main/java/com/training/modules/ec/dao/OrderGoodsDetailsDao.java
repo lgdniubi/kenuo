@@ -6,12 +6,12 @@ import org.apache.ibatis.annotations.Param;
 
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
-import com.training.modules.ec.entity.GoodsDetailSum;
 import com.training.modules.ec.entity.OfficeAccount;
 import com.training.modules.ec.entity.OfficeAccountLog;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderGoodsDetails;
 import com.training.modules.ec.entity.Orders;
+import com.training.modules.ec.entity.ReturnedGoods;
 /**
  * 订单商品详情记录表
  * @author dalong
@@ -50,13 +50,6 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @return
 	 */
 	List<OrderGoodsDetails> getMappinfOrderView(@Param("recid")Integer recid);
-	
-	/**
-	 * 计算欠款
-	 * @param recId
-	 * @return
-	 */
-	public  GoodsDetailSum selectDetaiSum(String recId);
 	
 	/**
 	 * 处理预约金
@@ -129,4 +122,43 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @return
 	 */
 	public double queryAppSum(String orderId);
+
+	/**
+	 * 根据订单id获取订单余额,订单欠款和app欠款金额
+	 * @param returnedGoods
+	 * @return
+	 */
+	OrderGoodsDetails getArrearageByOrderId(ReturnedGoods returnedGoods);
+
+	/**
+	 * 查询审核需要的条件,判断有无'平欠款'记录
+	 * @param returnedGoods
+	 * @return
+	 */
+	OrderGoodsDetails getCountArrearage(ReturnedGoods returnedGoods);
+
+	/**
+	 * 查询'平预约金'记录
+	 * @param returnedGoods
+	 * @return
+	 */
+	int getCountAdvanceFlag(ReturnedGoods returnedGoods);
+
+	/**
+	 * 取消'平预约金'记录
+	 * @param returnedGoods
+	 */
+	void cancelAdvanceFlag(ReturnedGoods returnedGoods);
+
+	/**
+	 * 平预约金状态
+	 * @param orderGoods
+	 */
+	void editAdvanceFlag(OrderGoods orderGoods);
+
+	/**
+	 * 在审核时,可能修改了售后次数,需要相应的修改detail表
+	 * @param returnedGoods
+	 */
+	void updateDetailServiceTimes(ReturnedGoods returnedGoods);
 }

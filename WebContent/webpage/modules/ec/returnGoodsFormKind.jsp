@@ -28,23 +28,23 @@
 			  }else{//拒绝,清空仓库信息
 				  $("#warehouseId").val(0);
 			  }
-			  returnNum = $("#returnNum").val();//售后次数
+			  returnNum = $("#returnNum").val();//售后数量
 			  returnAmount = $("#returnAmount").val();//售后金额
 			  if(applyType==1){//仅换货  换货数量不能为0.
 				  if(parseInt(returnNum) <= 0){
-					  top.layer.alert('售后次数必须大于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
+					  top.layer.alert('售后商品数量必须大于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
 					  return;
 				  }else if(parseInt(goodsNum)<parseInt(returnNum)){
-					  top.layer.alert('售后次数必须大于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
+					  top.layer.alert('售后商品数量必须大于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
 					  return;
 				  }
 			  }else{//退货并退款和仅退款   售后数量和售后金额不能为0.
-				  //校验售后次数
+				  //校验售后数量
 				  if(parseInt(returnNum)<0){
-					  top.layer.alert('售后次数必须大于等于0，小于等于可售后次数!', {icon: 0, title:'提醒'});
+					  top.layer.alert('售后商品数量必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
 					  return;
 				  }else if(parseInt(goodsNum)<parseInt(returnNum)){
-					  top.layer.alert('售后次数必须大于等于0，小于等于可售后次数!', {icon: 0, title:'提醒'});
+					  top.layer.alert('售后商品数量必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
 					  return;
 				  }
 				  //校验退款金额
@@ -57,7 +57,7 @@
 				  }
    			  	  //当售后数量和售后金额都为0,不能审核通过
 				  if(parseInt(returnNum) == 0 && parseFloat(returnAmount) == 0){
-					  top.layer.alert('售后次数和退款金额不能都为0!', {icon: 0, title:'提醒'});
+					  top.layer.alert('售后商品数量和退款金额不能都为0!', {icon: 0, title:'提醒'});
 					  return;
 				  }
 				  //退款方式是"银行卡账户"需要填写收款人和收款方式
@@ -86,7 +86,7 @@
 		}
 		//同意时,显示地址,隐藏原因
 		function seletAddreess(){
-			applyType="${returnedGoods.applyType}";
+			applyType=$("#applyType").val();
 			if(applyType == 2){
 				$("#refusal").hide();
 				$("#addreess").hide();
@@ -100,15 +100,15 @@
 			$("#addreess").hide();
 			$("#refusal").show();
 		}
-		//售后次数校验
+		//售后数量校验
 		function returnChangeNum(){
 			returnNum=$("#returnNum").val();
 			goodsNum = $("#goodsNum").val();//商品的可售后数量
 			if(parseInt(returnNum)<0){
-				top.layer.alert('售后次数必须大于等于0，小于等于可申请的售后次数!', {icon: 0, title:'提醒'});
+				top.layer.alert('退货数量必须大于等于0，小于等于可申请的售后数量!', {icon: 0, title:'提醒'});
 				return;
 			}else if(parseInt(goodsNum)<parseInt(returnNum)){
-				top.layer.alert('售后次数必须大于等于0，小于等于可申请的售后次数!', {icon: 0, title:'提醒'});
+				top.layer.alert('退货数量必须大于等于0，小于等于可申请的售后数量!', {icon: 0, title:'提醒'});
 				return;
 			}
 		}
@@ -197,9 +197,9 @@
 		<div class="ibox">
 			<div class="ibox-content">
 				<div class="clearfix">
-				<form:form id="inputForm" modelAttribute="returnedGoods" action="${ctx}/ec/returned/saveReturned" method="post" class="form-horizontal">
+				<form:form id="inputForm" modelAttribute="returnedGoods" action="${ctx}/ec/returned/saveReturnedKind" method="post" class="form-horizontal">
 					<input type="hidden" id="amount" value="${amount}"/>
-					<input type="hidden" id="goodsNum" value="${times}"/>
+					<input type="hidden" id="goodsNum" value="${goodsNum}"/>
 					<input type="hidden" id="oldReturnNum" name="oldReturnNum"/>
 					<form:hidden path="id"/>
 			        <label>退货单号：</label><label>${returnedGoods.id}</label>&nbsp;&nbsp;
@@ -214,7 +214,7 @@
 			        			<th style="text-align: center;">商品类型</th>
 								<th style="text-align: center;">规格</th>
 								<th style="text-align: center;">价格</th>
-								<th style="text-align: center;">数量</th>
+								<th style="text-align: center;">购买数量</th>
 								<th style="text-align: center;">实付金额</th>
 			        		</tr>
 			        	</thead>
@@ -323,8 +323,17 @@
 					<label>支付金额：</label>
 			        <form:input path="totalAmount" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control" readonly="true"/>
 					<p></p>
-					<c:if test="${serviceTimes != 999}">
-				        <label>售后商品次数：</label>
+					<c:if test="${count == 1}">
+				        <label>售后商品数量：</label>
+       					<form:input path="returnNum" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control"  readonly="true"
+					        onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
+							onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+							onfocus="if(value == '0'){value=''}"
+							onblur="if(value == ''){value='0'}"
+					        onchange="returnChangeNum()"/>
+       				</c:if>
+					<c:if test="${count == 0}">
+				        <label>售后商品数量：</label>
        					<form:input path="returnNum" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control"
 					        onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
 							onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
@@ -381,34 +390,36 @@
 						<label><font color="red">如果拒绝请说明原因</font></label>
 					</div>
 					<div id="addreess" style="display:none;">
-						<hr>
-						<label>仓库地址选择：</label>
-						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
-							<thead>
-				        		<tr>
-				        			<th>选择</th>
-				        			<th>仓库名称</th>
-									<th>管理员</th>
-									<th>地址</th>
-				        		</tr>
-				        	</thead>
-							<tbody>
-								<c:forEach items="${pdlist}" var="pdlist">
-									<tr>
-										<td><input id="warehouseId" name="warehouseId" type="radio" value="${pdlist.wareHouseId}"  class="form required" /></td>
-										<td>${pdlist.name}</td>
-										<td>${pdlist.governor}</td>
-										<td>${pdlist.address}</td>
-									</tr>
-								</c:forEach>
-							</tbody>
-						</table>			
+						<c:if test="${returnedGoods.isReal==0}">
+							<hr>
+							<label>仓库地址选择：</label>
+							<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+								<thead>
+					        		<tr>
+					        			<th>选择</th>
+					        			<th>仓库名称</th>
+										<th>管理员</th>
+										<th>地址</th>
+					        		</tr>
+					        	</thead>
+								<tbody>
+									<c:forEach items="${pdlist}" var="pdlist">
+										<tr>
+											<td><input id="warehouseId" name="warehouseId" type="radio" value="${pdlist.wareHouseId}"  class="form required" /></td>
+											<td>${pdlist.name}</td>
+											<td>${pdlist.governor}</td>
+											<td>${pdlist.address}</td>
+										</tr>
+									</c:forEach>
+								</tbody>
+							</table>			
+			        	</c:if>
 					</div>
 			        <p></p>
 			        <label>客服备注：</label>
 			        <form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" style="width:300px;" class="form-control"/>
 			        <p></p>
-			        <c:if test="${returnedGoods.returnStatus > 11 and returnedGoods.returnStatus != 21}">
+			        <c:if test="${returnedGoods.returnStatus > 11 and returnedGoods.returnStatus != 21 and returnedGoods.isReal==0}">
 						<hr>
 						<label>退货仓库地址：</label>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
@@ -428,7 +439,7 @@
 							</tbody>
 						</table>
 					</c:if>
-					<c:if test="${returnedGoods.returnStatus > 12 and returnedGoods.returnStatus != 21 and returnedGoods.returnStatus != 22}">
+					<c:if test="${returnedGoods.returnStatus > 12 and returnedGoods.returnStatus != 21 and returnedGoods.returnStatus != 22 and returnedGoods.isReal==0}">
 						<hr>
 						<label>用户退货物流信息：</label>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">

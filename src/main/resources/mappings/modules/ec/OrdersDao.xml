@@ -78,22 +78,6 @@
 		GROUP BY
 		a.order_id,a.pay_id,a.pay_code,a.pay_name
 	</select>
-	
-	<select id="selectByOrderIdSum" resultType="Orders">
-		SELECT
-			a.order_id,
-			a.order_amount,
-			a.channel_flag,
-			a.flag,
-			SUM(b.total_amount) as "total_amount"
-		
-		FROM
-			mtmydb.mtmy_orders a
-		LEFT JOIN mtmydb.mtmy_order_goods_details b ON a.order_id=b.order_id
-		WHERE a.order_id=#{orderid}
-		GROUP BY a.order_id
-	</select>
-	
 	<!-- 查询用户可以开发票的订单 -->
 	<select id="selectByOrderId" resultType="Orders">
 		SELECT 
@@ -1346,5 +1330,12 @@
 		UPDATE mtmydb.mtmy_orders
 		SET order_status = '4'
 		WHERE order_id = #{orderid}
+	</update>
+	<!-- 实物订单状态'待发货'和'待收货'修改为'已完成'状态(同意售后审核) -->
+	<update id="editOrderstatusForfinish">
+		UPDATE mtmydb.mtmy_orders
+		SET order_status = '4'
+		WHERE order_id = #{orderid}
+		AND order_status NOT IN (1,2)
 	</update>
 </mapper>

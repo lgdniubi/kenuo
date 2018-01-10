@@ -40,6 +40,9 @@ public class MtmyOaNotifyService extends CrudService<MtmyOaNotifyDao, MtmyOaNoti
 
 	@Autowired
 	private MtmyOaNotifyRecordDao mtmyOaNotifyRecordDao;
+	@Autowired
+	private MtmyOaNotifyDao mtmyOaNotifyDao;
+
 
 	public MtmyOaNotify get(String id) {
 		MtmyOaNotify entity = dao.get(id);
@@ -79,6 +82,7 @@ public class MtmyOaNotifyService extends CrudService<MtmyOaNotifyDao, MtmyOaNoti
 	 * @return
 	 */
 	public MtmyOaNotify getRecordList(MtmyOaNotify mtmyOaNotify) {
+		mtmyOaNotify = mtmyOaNotifyDao.get(mtmyOaNotify.getId());
 		mtmyOaNotify.setMtmyOaNotifyRecordList(mtmyOaNotifyRecordDao.findList(new MtmyOaNotifyRecord(mtmyOaNotify)));
 		return mtmyOaNotify;
 	}

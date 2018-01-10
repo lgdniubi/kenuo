@@ -355,4 +355,9 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @param orders
 	 */
 	public void updateOrdersStatus(Orders orders);
+	/**
+	 * 实物订单状态'待发货'和'待收货'修改为'已完成'状态(同意售后审核)
+	 * @param orderId
+	 */
+	public void editOrderstatusForfinish(String orderId);
 }
