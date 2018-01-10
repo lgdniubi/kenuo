@@ -741,69 +741,6 @@ window.onload=initStatus;
 								</c:forEach>
 						</table>
 						</div>
-						<%-- <p></p>
-						<c:if test="${orders.isNeworder == 0}">
-							<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
-								<div class="pull-left">
-									<h4>业务员信息：</h4>
-								</div>
-								<c:if test="${type != 'view' }">
-									<div class="pull-right">
-										<a href="#" onclick="getSysUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
-									</div>
-								</c:if>
-								<shiro:hasPermission name="ec:orders:pushmoney">
-									<div class="pull-right">
-										<a href="#" onclick="openDialogView('查看日志记录', '${ctx}/ec/orders/getOrderPushmoneyRecordList?orderId=${orders.orderid }','800px','600px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>日志记录</a>
-									</div>
-								</shiro:hasPermission>
-								<p></p>
-								<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
-									<thead>
-										<tr>
-											<th style="text-align: center;">业务员</th>
-											<th style="text-align: center;">手机号</th>
-											<th style="text-align: center;">营业额</th>
-											<th style="text-align: center;">操作人</th>
-											<th style="text-align: center;">操作时间</th>
-											<c:if test="${type != 'view' }">
-												<th style="text-align: center;" colspan="2">操作</th>
-											</c:if>
-										</tr>
-									</thead>
-									<tbody id="sysUserInfo" style="text-align:center;">
-										<c:forEach items="${orders.orderPushmoneyRecords }" var="orderPushmoneyRecord" varStatus="stauts">
-											<tr>
-												<td>
-													<input type="hidden" id="sysUserId" name="sysUserId" value="${orderPushmoneyRecord.pushmoneyUserId }" />
-													<input type="hidden" id="pushmoneyRecordId" name="pushmoneyRecordId" value="${orderPushmoneyRecord.pushmoneyRecordId }" />
-													<input id="sysName" name="sysName" type="text" value="${orderPushmoneyRecord.pushmoneyUserName }" class='form-control' readonly='readonly'>
-												</td>
-												<td>
-													<input id="sysMobile" name="sysMobile" type="text" value="${orderPushmoneyRecord.pushmoneyUserMobile }" class='form-control' readonly='readonly'>
-												</td>
-												<td>
-													${orderPushmoneyRecord.pushMoney }
-													<input type="hidden" id="${orderPushmoneyRecord.pushmoneyUserId }pushMoneySum" value="${orderPushmoneyRecord.pushMoney }" />
-												</td>
-												<td>
-													${orderPushmoneyRecord.createBy.name }
-												</td>
-												<td>
-													<fmt:formatDate value="${orderPushmoneyRecord.createDate }" pattern="yyyy-MM-dd HH:mm:ss" />
-												</td>
-												<c:if test="${type != 'view' }">
-													<td colspan="2">
-														<a href="#" class="btn btn-success btn-xs" onclick="updateFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId })"><i class='fa fa-edit'></i> 修改</a>
-														<a href="#" class="btn btn-danger btn-xs" onclick="delFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId })"><i class='fa fa-trash'></i> 删除</a>
-													</td>
-												</c:if>
-											</tr>
-										</c:forEach>
-									</tbody>
-								</table>
-							</div>
-						</c:if> --%>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 							<div class="pull-left">
@@ -894,8 +831,16 @@ window.onload=initStatus;
 					</shiro:hasPermission>
 					<shiro:hasPermission name="ec:orders:edit">
 						<c:if test="${type != 'view' }">
-							<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>
-						</c:if>	
+							<c:choose>
+								<!-- 1.app套卡、通用卡订单，未处理预约金且（未预约或预约了但预约状态不为等待服务、已完成、 已评价 、爽约的预约）；2.后台套卡、通用卡订单，未预约或预约了但预约状态不为等待服务、已完成、 已评价 、爽约的预约 -->
+								<c:when test="${(orders.channelFlag != 'bm' && orders.advanceFlag == 1 && ((orders.sumAppt == 0) || (orders.sumAppt > 0 && orders.apptFlag == 0)))||(orders.channelFlag == 'bm' && ((orders.sumAppt == 0) || (orders.sumAppt > 0 && orders.apptFlag == 0))) || (orders.channelFlag != 'bm' && orders.isReal==1 && orders.advanceFlag == 1 && ((orders.sumAppt == 0) || (orders.sumAppt > 0 && orders.apptFlag == 0)))||(orders.channelFlag == 'bm' && orders.isReal==1 && ((orders.sumAppt == 0) || (orders.sumAppt > 0 && orders.apptFlag == 0)))}">
+									<a href="#" onclick="forcedCancel('${orders.orderid}')" class="btn btn-danger btn-xs"><i class="fa fa-save"></i>强制取消</a>
+								</c:when>
+								<c:otherwise>
+									<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>
+								</c:otherwise>
+							</c:choose>
+						</c:if>
 					</shiro:hasPermission>
 				</div>
 			</div>	

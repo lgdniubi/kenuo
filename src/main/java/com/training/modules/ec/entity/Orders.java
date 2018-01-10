@@ -208,7 +208,8 @@ public class Orders extends TreeEntity<Orders> {
 	
 	//-----------------------------强制取消需要的字段------------------------
 	private int advanceFlag;         //是否预约金,等于1说明查到advance_flag=1,若不为1，则说明是advance_flag=0
-	private int sumAppt;                  //处理预约金前是否有预约
+	private int sumAppt;                  //是否有预约
+	private int apptFlag;                 //预约标识（预约状态为等待服务、已完成、 已评价 、爽约，则为1，不是这几个状态的为0）
 	//-------------------------------------------------------------------
 	
 	//----------------------------售后转单新字段-----------------------------
@@ -1676,6 +1677,12 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setReturnedId(String returnedId) {
 		this.returnedId = returnedId;
+	}
+	public int getApptFlag() {
+		return apptFlag;
+	}
+	public void setApptFlag(int apptFlag) {
+		this.apptFlag = apptFlag;
 	}
 	
 }

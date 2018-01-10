@@ -990,13 +990,16 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	public Orders selectOrderById(String orderid) {
 		DecimalFormat formater = new DecimalFormat("#0.##");   //四舍五入
 		Orders orders = dao.selectOrderById(orderid);
-		//未处理预约金且存在预约记录
-		if(orders.getSumAppt() != 0 && orders.getAdvanceFlag() > 0){
-			//预约状态为已完成 已评价 爽约
-			if(orderGoodsDetailsDao.findApptStatus(orders.getOrderid()) != 0){
-				orders.setSumAppt(1);
-			}else{
-				orders.setSumAppt(0);
+		//未处理预约金
+		if(orders.getAdvanceFlag() > 0){
+			//存在预约记录
+			if(orders.getSumAppt() > 0){
+				//预约状态为等待服务、已完成、 已评价 、爽约
+				if(orderGoodsDetailsDao.findApptStatus(orders.getOrderid()) != 0){
+					orders.setApptFlag(1);
+				}else{
+					orders.setApptFlag(0);
+				}
 			}
 		}
 		double goodsprice = 0;		//主订单成本总价
