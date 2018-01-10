@@ -25,6 +25,7 @@ import com.training.modules.ec.dao.IntegralLogDao;
 import com.training.modules.ec.dao.MtmyRuleParamDao;
 import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.dao.OrderGoodsDao;
+import com.training.modules.ec.dao.OrderGoodsDetailsDao;
 import com.training.modules.ec.dao.OrderPushmoneyRecordDao;
 import com.training.modules.ec.dao.OrdersDao;
 import com.training.modules.ec.dao.PaymentDao;
@@ -113,6 +114,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	private OrderPushmoneyRecordService orderPushmoneyRecordService;
 	@Autowired
 	private OrderInvoiceService orderInvoiceService;
+	@Autowired
+	private OrderGoodsDetailsDao orderGoodsDetailsDao;
 	@Autowired
 	private OrderPushmoneyRecordDao orderPushmoneyRecordDao;
 	@Autowired
