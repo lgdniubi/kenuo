@@ -34,15 +34,17 @@
 			/* 查询 */
 			function searchPosition() {
 				var searchValue = $("#search_position").val();
-				var arr = new Array();
-				if (searchValue != "" && searchValue.length > 0) {
-					$("#notPosition option").each(function(){
-						if($(this).text().indexOf(searchValue) != -1){
-							$("#notPosition option[value='"+$(this).val()+"']").attr("selected","selected");  
-						}
-					});
-				}
-				
+				var exiPositionValues = $("#exiPosition option").map(function(){return $(this).val();}).get().join(",");//获得所有的value
+				$.post("${ctx}/train/position/searchPosition",{searchValue:searchValue,exiPositionValues:exiPositionValues},function(data){
+					$("#notPosition").empty();
+					for (var i = 0; i < data.length; i++) {
+						var val = data[i].value;
+						var text = data[i].label;
+						var appHtml = '<option id="'+val+'" value="'+val+'" >'+text+'</option>';
+						$("#notPosition").append(appHtml);
+					}
+					
+				},"json")
 			}
 		</script>
 	</head>

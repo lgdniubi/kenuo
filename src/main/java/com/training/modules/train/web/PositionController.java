@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.common.collect.Lists;
@@ -17,6 +18,7 @@ import com.training.common.web.BaseController;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.dao.PositionDao;
 import com.training.modules.train.entity.Position;
 import com.training.modules.train.service.PositionService;
 
@@ -35,6 +37,8 @@ public class PositionController extends BaseController{
 	
 	@Autowired
 	private PositionService positionService;
+	@Autowired
+	private PositionDao positionDao;
 	
 	/**
 	 * 
@@ -142,5 +146,29 @@ public class PositionController extends BaseController{
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
 		return  "redirect:" + adminPath + "/train/department/positionList?dId="+position.getDepartment().getdId();
+	}
+	
+	/**
+	 * 
+	 * @Title: searchPosition
+	 * @Description: TODO 职位查询
+	 * @return:
+	 * @return: String
+	 * @throws
+	 * 2018年1月9日 兵子
+	 */
+	@ResponseBody
+	@RequestMapping(value = "searchPosition")
+	public List<Position> searchPosition(String searchValue,String exiPositionValues){
+		List<Position> positions = Lists.newArrayList();
+		List<String> positionkey = Lists.newArrayList();
+		User user = UserUtils.getUser();
+		String[] exValues = exiPositionValues.split(",");
+		//如果是admin用户查询时只过滤当前已选中的职位,如果不是admin用户则过滤已选中的和当前用户所属部门的职位
+		if (!"admin".equals(user.getLoginName())) {
+			positionkey = positionDao.getPositionkey(user.getId());
+		}
+		positions = positionService.searchPosition(exValues,searchValue,positionkey);
+		return positions;
 	}
 }
