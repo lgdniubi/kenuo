@@ -8,28 +8,17 @@
 	<!-- 内容上传 引用-->
 
 <script type="text/javascript">
-		var orderArrearage=0;
 		var validateForm;
-		var flag;
 		var goodsNum = 0;//实物售后数量校验用
+		var orderArrearage=0;//订单欠款
 		var flagNum = false;//实物售后数量校验用
-		var totalAmount;
 		var advanceFlag;
 		
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		  if(validateForm.form()){
-			  if(flag){
-				  top.layer.alert('当前商品已申请售后!', {icon: 0, title:'提醒'});
-				  return;
-			  }
 			  var recid=$("#goodsMappingId").val();
 			  if(recid==""){
 				  top.layer.alert('请选择退货商品!', {icon: 0, title:'提醒'});
-				  return;
-			  }
-			  //订单存在欠款
-			  if(orderArrearage>0){
-				  top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
 				  return;
 			  }
 			  //订单存在预约金,先处理预约金
@@ -87,56 +76,51 @@
 				top.layer.alert('当前订单有预约金,无法退款(请先处理预约金)', {icon: 0, title:'提醒'});
 				return;
 			}
-			//判断是否存在欠款
-			if(parseInt(orderArrearage)>0){
-				top.layer.alert('当前订单有欠款,无法退款(请先补齐欠款)', {icon: 0, title:'提醒'});
-			}else{
-				//判断商品是否售后    (是:正在售后    或者   已经售后)
-				$.ajax({
-					type:"post",
-					async:false,
-					data:{
-						orderId:orderId,
-						goodsMappingId:recid,
-					},
-					url:"${ctx}/ec/orders/getReturnGoodsNum",
-					success:function(obj){
-						flag = obj;
-						if(flag){//正在售后    或者   已经售后
-							top.layer.alert('当前商品已申请售后', {icon: 0, title:'提醒'});
-							return;
-						}else{
-							$("#addReal").empty();
-							$.ajax({
-								type:"post",
-								async:false,
-								data:{
-									recid:recid,
-								},
-								url:"${ctx}/ec/orders/getOrderGoodsCard",
-								success:function(date){
-									if(date!=null && date!=""){
-										for(var i in date){
-											if(date[i].isreal == 0){
-												$("<label><font color='red'>*</font>"+date[i].goodsname+"    售后数量：</label><input id='recIds' name='recIds' value='"+date[i].recid+"' type='hidden'/><input id='returnNums"+goodsNum+"' name='returnNums' value='"+date[i].goodsnum+"' style='width:180px;' class='form-control required' onblur='findReturnNum(this,"+date[i].goodsnum+")'/><input id='oldreturnNums"+goodsNum+"' value='"+date[i].goodsnum+"' type='hidden'/> <p></p>").appendTo($("#addReal"));
-												goodsNum++;
-											}
+			//判断商品是否售后    (是:正在售后    或者   已经售后)
+			$.ajax({
+				type:"post",
+				async:false,
+				data:{
+					orderId:orderId,
+					goodsMappingId:recid,
+				},
+				url:"${ctx}/ec/orders/getReturnGoodsNum",
+				success:function(obj){
+					flag = obj;
+					if(flag){//正在售后    或者   已经售后
+						top.layer.alert('当前商品已申请售后', {icon: 0, title:'提醒'});
+						return;
+					}else{
+						$("#addReal").empty();
+						$.ajax({
+							type:"post",
+							async:false,
+							data:{
+								recid:recid,
+							},
+							url:"${ctx}/ec/orders/getCardRealNum",
+							success:function(date){
+								if(date!=null && date!=""){
+									for(var i in date){
+										if(date[i].isreal == 0){
+											$("<label><font color='red'>*</font>"+date[i].goodsname+"    售后数量：</label><input id='recIds' name='recIds' value='"+date[i].recid+"' type='hidden'/><input id='returnNums"+goodsNum+"' name='returnNums' value='"+date[i].goodsnum+"' style='width:180px;' class='form-control required' onblur='findReturnNum(this,"+date[i].goodsnum+")'/><input id='oldreturnNums"+goodsNum+"' value='"+date[i].goodsnum+"' type='hidden'/> <p></p>").appendTo($("#addReal"));
+											goodsNum++;
 										}
 									}
-								},
-								error:function(XMLHttpRequest,textStatus,errorThrown){
-											    
 								}
-							});
-						}
-					},
-					error:function(XMLHttpRequest,textStatus,errorThrown){
-								    
+							},
+							error:function(XMLHttpRequest,textStatus,errorThrown){
+										    
+							}
+						});
 					}
-				});
-				$("#orderAmount").val(orderAmount);
-				$("#totalAmount").val(totalAmount);
-			}
+				},
+				error:function(XMLHttpRequest,textStatus,errorThrown){
+							    
+				}
+			});
+			$("#orderAmount").val(orderAmount);
+			$("#totalAmount").val(totalAmount);
 			//售后金额 <= 实付金额-已售后
 			$.ajax({
 				type:"post",
@@ -223,7 +207,7 @@
 	<div class="ibox">
 		<div class="ibox-content">
 			<div class="clearfix">
-				<form:form id="inputForm" modelAttribute="returnedGoods" action="${ctx}/ec/orders/saveReturn" method="post" class="form-horizontal">
+				<form:form id="inputForm" modelAttribute="returnedGoods" action="${ctx}/ec/orders/saveReturnSuit" method="post" class="form-horizontal">
 					<form:hidden path="userId"/>
 					<form:hidden path="orderId" value="${orders.orderid}"/>
 					<form:hidden path="goodsMappingId"/>
@@ -237,16 +221,13 @@
 								<th style="text-align: center;">选择</th>
 								<th style="text-align: center;">商品名称</th>
 								<th style="text-align: center;">商品类型</th>
-								<c:if test="${orders.isReal == 3}">
-									<th style="text-align: center;">商品规格</th>
-								</c:if>
 								<th style="text-align: center;">子项名称</th>
 								<th style="text-align: center;">子项类型</th>
 								<th style="text-align: center;">市场价</th>
 								<th style="text-align: center;">优惠价</th>
 								<th style="text-align: center;">成本价</th>
 								<th style="text-align: center;">购买数量</th>
-								<th style="text-align: center;">应付款</th>
+								<th style="text-align: center;">应付金额</th>
 								<th style="text-align: center;">实付金额</th>
 								<th style="text-align: center;">欠款</th>
 							</tr>
@@ -260,7 +241,7 @@
 			       	<form:input path="returnReason" htmlEscape="false" maxlength="50" style="width: 300px;height:30px;" class="form-control required"/>
 			       	<p></p>
 			        <label><font color="red">*</font>问题描述：</label>
-			        <form:textarea path="problemDesc" htmlEscape="false" rows="3"  style="width:300px;" maxlength="200" class="form-control required"/>
+			        <form:textarea path="problemDesc" htmlEscape="false" rows="3" style="width:300px;" maxlength="200" class="form-control required"/>
 			        <p></p>
 			        <label><font color="red">*</font>申请类型：</label>
 		        	<form:select path="applyType" class="form-control" style="width:185px;" >
@@ -284,6 +265,8 @@
 					<label>客服备注：</label>
 					<form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" style="width:300px;" class="form-control"/>
 				</form:form>
+				<p></p>
+				<font color="red">如需用户寄回所退商品,请选择"退货并退款"或者"仅换货";"仅退款"表示售后商品是不需要用户寄回所退商品</font>
 			</div>
 		</div>
 	</div>

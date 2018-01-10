@@ -25,7 +25,6 @@ import com.training.modules.ec.dao.IntegralLogDao;
 import com.training.modules.ec.dao.MtmyRuleParamDao;
 import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.dao.OrderGoodsDao;
-import com.training.modules.ec.dao.OrderGoodsDetailsDao;
 import com.training.modules.ec.dao.OrderPushmoneyRecordDao;
 import com.training.modules.ec.dao.OrdersDao;
 import com.training.modules.ec.dao.PaymentDao;
@@ -35,7 +34,6 @@ import com.training.modules.ec.entity.AcountLog;
 import com.training.modules.ec.entity.CouponUser;
 import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.entity.GoodsCategory;
-import com.training.modules.ec.entity.GoodsDetailSum;
 import com.training.modules.ec.entity.GoodsSpecPrice;
 import com.training.modules.ec.entity.IntegralLog;
 import com.training.modules.ec.entity.IntegralsLog;
@@ -114,8 +112,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	private OrderPushmoneyRecordService orderPushmoneyRecordService;
 	@Autowired
 	private OrderInvoiceService orderInvoiceService;
-	@Autowired
-	private OrderGoodsDetailsDao orderGoodsDetailsDao;
 	@Autowired
 	private OrderPushmoneyRecordDao orderPushmoneyRecordDao;
 	@Autowired
@@ -1710,16 +1706,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		}
 		return str.toString();
 	}
-
-	/**
-	 * 计算欠款
-	 * @param recId
-	 * @return
-	 */
-	public GoodsDetailSum selectDetaiSum(String recId){
-		return orderGoodsDetailsDao.selectDetaiSum(recId);
-	}
-
 	
 	/**
 	 * 根据退货期时间，订单为（1：待发货；2：待收货；）的订单修改状态为（4：已完成）
@@ -1746,15 +1732,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 */
 	public void updateOrderstatusForReal(String orderid){
 		dao.updateOrderstatusForReal(orderid);
-	}
-	
-	/**
-	 * 计算订单是否欠款
-	 * @param orderid
-	 * @return
-	 */
-	public Orders selectByOrderIdSum(String orderid){
-		return dao.selectByOrderIdSum(orderid);
 	}
 	
 	/**

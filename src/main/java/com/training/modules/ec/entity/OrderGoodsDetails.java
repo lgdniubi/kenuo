@@ -43,6 +43,9 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 	private String belongOfficeId;           //归属机构id
 	private double useBalance;              //使用账户余额
 	
+	private String returnedId;              //退货订单ID
+	
+	
 	public double getSurplusAmount() {
 		return surplusAmount;
 	}
@@ -256,6 +259,14 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 
 	public void setUseBalance(double useBalance) {
 		this.useBalance = useBalance;
+	}
+
+	public String getReturnedId() {
+		return returnedId;
+	}
+
+	public void setReturnedId(String returnedId) {
+		this.returnedId = returnedId;
 	}
 	
 }

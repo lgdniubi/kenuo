@@ -12,6 +12,7 @@ import com.training.modules.ec.entity.OfficeAccountLog;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderGoodsDetails;
 import com.training.modules.ec.entity.Orders;
+import com.training.modules.ec.entity.ReturnedGoods;
 
 /**
  * 订单商品详情记录表service
@@ -138,5 +139,13 @@ public class OrderGoodsDetailsService extends TreeService<OrderGoodsDetailsDao, 
 	 */
 	public double queryAppSum(String orderId){
 		return dao.queryAppSum(orderId);
+	}
+	/**
+	 * 查询审核需要的条件,判断有无'平欠款'记录
+	 * @param returnedGoods
+	 * @return
+	 */
+	public OrderGoodsDetails getCountArrearage(ReturnedGoods returnedGoods) {
+		return dao.getCountArrearage(returnedGoods);
 	}
 }

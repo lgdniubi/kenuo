@@ -6,6 +6,7 @@
 		INSERT INTO mtmydb.mtmy_order_goods_details (
 			order_id,
 			goods_mapping_id,
+			returned_id,
 			total_amount,
 			order_balance,
 			order_arrearage,
@@ -31,6 +32,7 @@
 		)VALUES(
 			#{orderId},
 			#{goodsMappingId},
+			#{returnedId},
 			#{totalAmount},
 			#{orderBalance},
 			#{orderArrearage},
@@ -124,25 +126,6 @@
 		FROM mtmydb.mtmy_order_goods_details d
 		LEFT JOIN sys_user u ON d.create_by = u.id
 		WHERE goods_mapping_id = #{recid}
-	</select>
-	<select id="selectDetaiSum" resultType="GoodsDetailSum">
-		SELECT
-			a.rec_id,
-			a.single_reality_price,
-			a.goods_num,
-			a.order_amount,
-			a.total_amount,
-			(a.order_amount - SUM(c.total_amount)) AS "isFre",
-			SUM(c.total_amount) AS "detaiAmount",
-			SUM(c.service_times) as "times"
-
-		FROM
-			mtmydb.mtmy_order_goods_mapping a
-		LEFT JOIN mtmydb.mtmy_order_goods_details c ON c.goods_mapping_id = a.rec_id
-		WHERE
-			a.rec_id =#{recId}
-		GROUP BY a.rec_id
-	
 	</select>
 	
 	<!-- 处理预约金 -->
@@ -250,4 +233,82 @@
 		WHERE order_id = #{orderId}
 		AND advance_flag = '0'
 	</select>
+	<!-- 根据订单id查询 -->
+	<select id="getArrearageByOrderId" resultType="OrderGoodsDetails">
+		SELECT
+			order_id AS orderId,
+			goods_mapping_id AS goodsMappingId,
+			SUM(order_balance) AS  orderBalance,
+			SUM(order_arrearage) AS  orderArrearage,
+			SUM(app_arrearage) AS  appArrearage
+		FROM
+			mtmydb.mtmy_order_goods_details 
+		WHERE
+			order_id= #{orderId}
+		AND
+			goods_mapping_id = #{goodsMappingId}
+	</select>
+	<!-- 查询'平预约金'记录 -->
+	<select id="getCountAdvanceFlag" resultType="int">
+		SELECT 
+			COUNT(1)
+		FROM 
+			mtmydb.mtmy_order_goods_details a 
+		WHERE 
+			a.order_id = #{orderId}
+		AND
+			a.goods_mapping_id = #{goodsMappingId}
+		AND
+			a.advance_flag = 6
+	</select>
+	<!-- 查询审核需要的条件,判断无'平欠款'记录 -->
+	<select id="getCountArrearage" resultType="OrderGoodsDetails">
+		SELECT 
+			order_id AS 'orderId',
+			goods_mapping_id AS 'goodsMappingId',
+			IFNULL(SUM(order_balance),0) AS 'orderBalance',
+			IFNULL(SUM(order_arrearage),0) AS 'orderArrearage',
+			IFNULL(SUM(app_arrearage),0) AS 'appArrearage',
+			IFNULL(SUM(service_times),0) AS 'serviceTimes'
+		FROM 
+			mtmydb.mtmy_order_goods_details a 
+		WHERE 
+			a.order_id = #{orderId}
+		AND
+			a.goods_mapping_id = #{goodsMappingId}
+		AND
+			a.advance_flag = 5
+	</select>
+	<!-- 处理预约金 -->
+	<update id="cancelAdvanceFlag">
+		UPDATE mtmydb.mtmy_order_goods_details
+		SET 
+			advance_flag = '1'
+		WHERE 
+			order_id = #{orderId}
+		AND
+			goods_mapping_id = #{goodsMappingId}
+	</update>
+	<!-- 处理预约金 -->
+	<update id="editAdvanceFlag">
+		UPDATE mtmydb.mtmy_order_goods_details
+		SET 
+			advance_flag = '6'
+		WHERE 
+			order_id = #{orderid}
+		AND
+			goods_mapping_id = #{recid}
+	</update>
+	<!-- 在审核时,可能修改了售后次数,需要相应的修改detail表 -->
+	<update id="updateDetailServiceTimes">
+		UPDATE mtmydb.mtmy_order_goods_details
+		SET 
+			service_times = (-#{returnNum})
+		WHERE 
+			order_id = #{orderId}
+		AND
+			returned_id = #{id}
+		AND 
+			advance_flag = 4
+	</update>
 </mapper>

@@ -48,7 +48,6 @@ import com.training.modules.ec.entity.AcountLog;
 import com.training.modules.ec.entity.CourierResultXML;
 import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.entity.GoodsCategory;
-import com.training.modules.ec.entity.GoodsDetailSum;
 import com.training.modules.ec.entity.GoodsSpecPrice;
 import com.training.modules.ec.entity.ImportVirtualOrders;
 import com.training.modules.ec.entity.IntegralsLog;
@@ -502,35 +501,76 @@ public class OrdersController extends BaseController {
 	}
 
 	/**
-	 * 保存退货订单数据
-	 * 
-	 * @param speciality
+	 * 保存退货订单数据(实物商品)
 	 * @param request
-	 * @param response
-	 * @param model
 	 * @param redirectAttributes
 	 * @return
 	 */
-
-
-	@RequestMapping(value = "saveReturn")
-	public String saveReturn(ReturnedGoods returnedGoods, HttpServletRequest request, Model model,
-			RedirectAttributes redirectAttributes) {
+	@RequestMapping(value = "saveReturnKind")
+	public String saveReturnKind(ReturnedGoods returnedGoods, HttpServletRequest request,RedirectAttributes redirectAttributes) {
 		try {
-			
-			returnedGoodsService.saveReturn(returnedGoods);
-
-			addMessage(redirectAttributes, "保存退货订单'" + returnedGoods.getOrderId() + "'成功");
-
+			returnedGoodsService.saveReturnKind(returnedGoods);
+			addMessage(redirectAttributes, "保存实物商品退货订单'" + returnedGoods.getOrderId() + "'成功");
 		} catch (Exception e) {
-			BugLogUtils.saveBugLog(request, "保存退货订单", e);
-			logger.error("方法：saveReturn,保存退货订单出错：" + e.getMessage());
-			addMessage(redirectAttributes, "保存退货订单失败！");
+			BugLogUtils.saveBugLog(request, "保存实物商品退货订单", e);
+			logger.error("方法：saveReturn,保存实物商品退货订单出错：" + e.getMessage());
+			addMessage(redirectAttributes, "保存实物商品退货订单失败！");
 		}
-		// String currentUser = UserUtils.getUser().getName();
-
 		return "redirect:" + adminPath + "/ec/orders/list";
-
+	}
+	/**
+	 * 保存退货订单数据(虚拟商品)
+	 * @param request
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = "saveReturn")
+	public String saveReturn(ReturnedGoods returnedGoods, HttpServletRequest request,RedirectAttributes redirectAttributes) {
+		try {
+			returnedGoodsService.saveReturn(returnedGoods);
+			addMessage(redirectAttributes, "保存虚拟商品退货订单'" + returnedGoods.getOrderId() + "'成功");
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "保存虚拟商品退货订单", e);
+			logger.error("方法：saveReturn,保存虚拟商品退货订单出错：" + e.getMessage());
+			addMessage(redirectAttributes, "保存虚拟商品退货订单失败！");
+		}
+		return "redirect:" + adminPath + "/ec/orders/list";
+	}
+	/**
+	 * 保存退货订单数据(套卡商品)
+	 * @param request
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = "saveReturnSuit")
+	public String saveReturnSuit(ReturnedGoods returnedGoods, HttpServletRequest request,RedirectAttributes redirectAttributes) {
+		try {
+			returnedGoodsService.saveReturnSuit(returnedGoods);
+			addMessage(redirectAttributes, "保存套卡商品退货订单'" + returnedGoods.getOrderId() + "'成功");
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "保存套卡商品退货订单", e);
+			logger.error("方法：saveReturn,保存套卡商品退货订单出错：" + e.getMessage());
+			addMessage(redirectAttributes, "保存套卡商品退货订单失败！");
+		}
+		return "redirect:" + adminPath + "/ec/orders/list";
+	}
+	/**
+	 * 保存退货订单数据(通用卡商品)
+	 * @param request
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = "saveReturnCommon")
+	public String saveReturnCommon(ReturnedGoods returnedGoods, HttpServletRequest request,RedirectAttributes redirectAttributes) {
+		try {
+			returnedGoodsService.saveReturnCommon(returnedGoods);
+			addMessage(redirectAttributes, "保存通用卡商品退货订单'" + returnedGoods.getOrderId() + "'成功");
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "保存通用卡商品退货订单", e);
+			logger.error("方法：saveReturn,保存通用卡商品退货订单出错：" + e.getMessage());
+			addMessage(redirectAttributes, "保存通用卡商品退货订单失败！");
+		}
+		return "redirect:" + adminPath + "/ec/orders/list";
 	}
 
 	/**
@@ -711,24 +751,24 @@ public class OrdersController extends BaseController {
 	@RequestMapping(value = "returnGoddsList")
 	public String returnGoddsList(ReturnedGoods returnedGoods, String orderid, Model model) {
 		
-		//returnGoods = returnGoodsService.get(orderid);
 		List<OrderGoods> list=new ArrayList<OrderGoods>();
-		Orders orders=new Orders();
-		
-		orders = ordersService.findselectByOrderId(orderid);
+		Orders orders = ordersService.findselectByOrderId(orderid);
 		returnedGoods.setUserId(orders.getUserid());
+		
+		model.addAttribute("orders", orders);
+		model.addAttribute("returnedGoods", returnedGoods);
 		
 		String suitCardSons = "";
 		String isreal = "";
 		int num;
-		List<List<OrderGoods>> result = new ArrayList<List<OrderGoods>>();//存放每个卡项商品和它的子项集合
 		List<OrderGoods> resultSon = new ArrayList<OrderGoods>();//存放一个卡项商品和它的子项
+		List<List<OrderGoods>> result = new ArrayList<List<OrderGoods>>();//存放每个卡项商品和它的子项集合
 		
 		//虚拟和实物售后时
 		list=ordergoodService.orderlist(orderid);
+		model.addAttribute("orderGoodList", list);
 		
 		if(returnedGoods.getIsReal() == 2 || returnedGoods.getIsReal() == 3){
-			
 			for(int i=0;i<list.size();i++){
 				if(list.get(i).getGroupId() == 0 && resultSon.size() > 0){
 					result.add(resultSon);
@@ -739,110 +779,100 @@ public class OrdersController extends BaseController {
 					result.add(resultSon);
 				}
 			}
-			if(returnedGoods.getIsReal() == 2){//套卡 售后
-				if(result.size() > 0){
-					for(List<OrderGoods> lists:result){                            
-						if((lists.size() - 1) > 0){
-							num = lists.size() - 1;
-							OrderGoods father = lists.get(0);
-							isreal = lists.get(1).getIsreal()==0?"实物":"虚拟";
+		}
+		if(returnedGoods.getIsReal() == 2){//套卡 售后
+			if(result.size() > 0){
+				for(List<OrderGoods> lists:result){                            
+					if((lists.size() - 1) > 0){
+						num = lists.size() - 1;
+						OrderGoods father = lists.get(0);
+						isreal = lists.get(1).getIsreal()==0?"实物":"虚拟";
+						suitCardSons = suitCardSons +
+								"<tr> "+
+								"<td rowspan='"+num+"'><input id='selectId' name='selectId' type='radio' value='"+father.getRecid()+"'  class='form'  onchange='selectFunction(this)'/></td>"+
+								"<td align='center' rowspan='"+num+"'> "+father.getGoodsname()+"</td> "+
+								"<td align='center' rowspan='"+num+"'>套卡</td> "+
+								"<td align='center'> "+lists.get(1).getGoodsname()+"</td> "+
+								"<td align='center'> "+isreal+"</td> "+
+								"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
+								"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
+								"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getTotalAmount()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getOrderArrearage()+"</td> "+
+							"</tr> ";
+						suitCardSons = suitCardSons +
+								"<input type='hidden' id='"+father.getRecid()+"orderAmount' name='orderAmount' value='"+father.getOrderAmount()+"' />"+
+								"<input type='hidden' id='"+father.getRecid()+"totalAmount' name='totalAmount' value='"+father.getTotalAmount()+"' />"+
+								"<input type='hidden' id='"+father.getRecid()+"advanceFlag' name='advanceFlag' value='"+father.getAdvanceFlag()+"' />"+
+								"<input type='hidden' id='"+father.getRecid()+"orderArrearage' name='orderArrearage' value='"+father.getOrderArrearage()+"' />";
+						for(int i=2;i<lists.size();i++){
+							isreal = lists.get(i).getIsreal()==0?"实物":"虚拟";
 							suitCardSons = suitCardSons +
-									"<tr> "+
-									"<td rowspan='"+num+"'><input id='selectId' name='selectId' type='radio' value='"+father.getRecid()+"'  class='form'  onchange='selectFunction(this)'/></td>"+
-									"<td align='center' rowspan='"+num+"'> "+father.getGoodsname()+"</td> "+
-									"<td align='center' rowspan='"+num+"'>套卡</td> "+
-									"<td align='center'> "+lists.get(1).getGoodsname()+"</td> "+
+								"<tr> "+
+									"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
 									"<td align='center'> "+isreal+"</td> "+
-									"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
-									"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
-									"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
-									"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
-									"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
-									"<td align='center' rowspan='"+num+"'> "+father.getTotalAmount()+"</td> "+
-									"<td align='center' rowspan='"+num+"'> "+father.getOrderArrearage()+"</td> "+
-								"</tr> ";
-							suitCardSons = suitCardSons +
-									"<input type='hidden' id='"+father.getRecid()+"orderAmount' name='orderAmount' value='"+father.getOrderAmount()+"' />"+
-									"<input type='hidden' id='"+father.getRecid()+"totalAmount' name='totalAmount' value='"+father.getTotalAmount()+"' />"+
-									"<input type='hidden' id='"+father.getRecid()+"advanceFlag' name='advanceFlag' value='"+father.getAdvanceFlag()+"' />"+
-									"<input type='hidden' id='"+father.getRecid()+"orderArrearage' name='orderArrearage' value='"+father.getOrderArrearage()+"' />";
-							for(int i=2;i<lists.size();i++){
-								isreal = lists.get(i).getIsreal()==0?"实物":"虚拟";
-								if(isreal.equals("实物")){
-									suitCardSons = suitCardSons +
-										"<input type='hidden' id='"+lists.get(i).getRecid()+"isReal' name='isReal' value='"+father.getOrderArrearage()+"' />";
-								}
-								suitCardSons = suitCardSons +
-									"<tr> "+
-										"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
-										"<td align='center'> "+isreal+"</td> "+
-										"<td align='center'> "+lists.get(i).getMarketprice()+"</td> "+
-										"<td align='center'> "+lists.get(i).getGoodsprice()+"</td> "+
-										"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
-									"</tr>";
-							}
-				
+									"<td align='center'> "+lists.get(i).getMarketprice()+"</td> "+
+									"<td align='center'> "+lists.get(i).getGoodsprice()+"</td> "+
+									"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
+								"</tr>";
 						}
-					}
-				}
-			}else if(returnedGoods.getIsReal() == 3){//通用卡 售后
-				if(result.size() > 0){
-					for(List<OrderGoods> lists:result){                            
-						if((lists.size() - 1) > 0){
-							num = lists.size() - 1;
-							OrderGoods father = lists.get(0);
-							isreal = lists.get(1).getIsreal()==0?"实物":"虚拟";
-							suitCardSons = suitCardSons +
-									"<tr> "+
-									"<td rowspan='"+num+"'><input id='selectId' name='selectId' type='radio' value='"+father.getRecid()+"'  class='form'  onchange='selectFunction(this)'/></td>"+
-									"<td align='center' rowspan='"+num+"'> "+father.getGoodsname()+"</td> "+
-									"<td align='center' rowspan='"+num+"'>通用卡</td> "+
-									"<td align='center' rowspan='"+num+"'>"+father.getSpeckeyname()+"</td> "+
-									"<td align='center'> "+lists.get(1).getGoodsname()+"</td> "+
-									"<td align='center'> "+isreal+"</td> "+
-									"<td align='center' rowspan='"+num+"'> "+father.getMarketprice()+"</td> "+
-									"<td align='center' rowspan='"+num+"'> "+father.getGoodsprice()+"</td> "+
-									"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
-									"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
-									"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
-									"<td align='center' rowspan='"+num+"'> "+father.getTotalAmount()+"</td> "+
-									"<td align='center' rowspan='"+num+"'> "+father.getOrderArrearage()+"</td> "+
-								"</tr> ";
-							suitCardSons = suitCardSons +
-									"<input type='hidden' id='"+father.getRecid()+"orderAmount' name='orderAmount' value='"+father.getOrderAmount()+"' />"+
-									"<input type='hidden' id='"+father.getRecid()+"totalAmount' name='totalAmount' value='"+father.getTotalAmount()+"' />"+
-									"<input type='hidden' id='"+father.getRecid()+"advanceFlag' name='advanceFlag' value='"+father.getAdvanceFlag()+"' />"+
-									"<input type='hidden' id='"+father.getRecid()+"orderArrearage' name='orderArrearage' value='"+father.getOrderArrearage()+"' />";
-							for(int i=2;i<lists.size();i++){
-								isreal = lists.get(i).getIsreal()==0?"实物":"虚拟";
-								if(isreal.equals("实物")){
-									suitCardSons = suitCardSons +
-										"<input type='hidden' id='"+lists.get(i).getRecid()+"isReal' name='isReal' value='"+father.getOrderArrearage()+"' />";
-								}
-								suitCardSons = suitCardSons +
-									"<tr> "+
-										"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
-										"<td align='center'> "+isreal+"</td> "+
-										"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
-									"</tr>";
-							}
-				
-						}
+			
 					}
 				}
 			}
-			model.addAttribute("orders", orders);
 			model.addAttribute("suitCardSons", suitCardSons);
-			model.addAttribute("returnedGoods", returnedGoods);
+			return "modules/ec/returnFormCardSuit";
+		}else if(returnedGoods.getIsReal() == 3){//通用卡 售后
+			if(result.size() > 0){
+				for(List<OrderGoods> lists:result){                            
+					if((lists.size() - 1) > 0){
+						num = lists.size() - 1;
+						OrderGoods father = lists.get(0);
+						isreal = lists.get(1).getIsreal()==0?"实物":"虚拟";
+						suitCardSons = suitCardSons +
+								"<tr> "+
+								"<td rowspan='"+num+"'><input id='selectId' name='selectId' type='radio' value='"+father.getRecid()+"'  class='form'  onchange='selectFunction(this)'/></td>"+
+								"<td align='center' rowspan='"+num+"'> "+father.getGoodsname()+"</td> "+
+								"<td align='center' rowspan='"+num+"'>通用卡</td> "+
+								"<td align='center' rowspan='"+num+"'>"+father.getSpeckeyname()+"</td> "+
+								"<td align='center'> "+lists.get(1).getGoodsname()+"</td> "+
+								"<td align='center'> "+isreal+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getMarketprice()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getGoodsprice()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
+								"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getTotalAmount()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getRemaintimes()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getOrderArrearage()+"</td> "+
+							"</tr> ";
+						suitCardSons = suitCardSons +
+								"<input type='hidden' id='"+father.getRecid()+"orderAmount' name='orderAmount' value='"+father.getOrderAmount()+"' />"+
+								"<input type='hidden' id='"+father.getRecid()+"totalAmount' name='totalAmount' value='"+father.getTotalAmount()+"' />"+
+								"<input type='hidden' id='"+father.getRecid()+"advanceFlag' name='advanceFlag' value='"+father.getAdvanceFlag()+"' />"+
+								"<input type='hidden' id='"+father.getRecid()+"remaintimes' name='remaintimes' value='"+father.getRemaintimes()+"' />"+
+								"<input type='hidden' id='"+father.getRecid()+"orderArrearage' name='orderArrearage' value='"+father.getOrderArrearage()+"' />";
+						for(int i=2;i<lists.size();i++){
+							isreal = lists.get(i).getIsreal()==0?"实物":"虚拟";
+							suitCardSons = suitCardSons +
+								"<tr> "+
+									"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
+									"<td align='center'> "+isreal+"</td> "+
+									"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
+								"</tr>";
+						}
 			
-			return "modules/ec/returnFormCard";
-		}else{
-			
-			model.addAttribute("orders", orders);
-			model.addAttribute("orderGoodList", list);
-			model.addAttribute("returnedGoods", returnedGoods);
-			
+					}
+				}
+			}
+			model.addAttribute("suitCardSons", suitCardSons);
+			return "modules/ec/returnFormCardCommon";
+		}else if(returnedGoods.getIsReal() == 1){
 			return "modules/ec/returnForm";
+		}else{
+			return "modules/ec/returnFormKind";
 		}
 	}
 	
@@ -1474,86 +1504,6 @@ public class OrdersController extends BaseController {
 	}
 	
 	/**
-	 * 计算订单欠费
-	 * @param id
-	 * @param isReal
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value = "getOrderGoodsIsFre")
-	public double getOrderGoodsIsFre(String id,String isReal,String orderid, HttpServletRequest request, HttpServletResponse response) {
-		double returnAmount=0;  // -2 分销 未处理   -1  无退款余额
-		DecimalFormat    df   = new DecimalFormat("######0.00");  
-		try {
-			Orders orders=ordersService.selectByOrderIdSum(orderid);
-			if(orders.getFlag()==0){
-				if(orders.getOrderamount()==orders.getTotalamount()){
-					returnAmount=-2;
-				}else{
-					GoodsDetailSum detil=new GoodsDetailSum();
-					detil=ordersService.selectDetaiSum(id);
-					if(detil!=null){
-						if("0".equals(isReal)){
-							if(detil.getOrderAmount()==detil.getDetaiAmount()){
-								returnAmount=detil.getDetaiAmount()/detil.getGoodsNum();
-								returnAmount=Double.parseDouble(df.format(returnAmount));
-							}else{
-								returnAmount=-1;
-							}
-						}else if("1".equals(isReal)){
-							if(detil.getTimes()>0){
-								returnAmount=detil.getSingleRealityPrice()*detil.getTimes();
-								returnAmount=Double.parseDouble(df.format(returnAmount));
-								if(returnAmount>detil.getOrderAmount()){
-									returnAmount=detil.getOrderAmount();
-								}
-							}else{
-								returnAmount=-1;
-							}
-						}
-					}else{
-						returnAmount=-1;
-					}
-				}
-			}else if(orders.getFlag()==1){
-				GoodsDetailSum detil=new GoodsDetailSum();
-				detil=ordersService.selectDetaiSum(id);
-				if(detil!=null){
-					if("0".equals(isReal)){
-						if(detil.getOrderAmount()==detil.getDetaiAmount()){
-							returnAmount=detil.getDetaiAmount()/detil.getGoodsNum();
-							returnAmount=Double.parseDouble(df.format(returnAmount));
-						}else{
-							returnAmount=-1;
-						}
-					}else if("1".equals(isReal)){
-						if(detil.getTimes()>0){
-							returnAmount=detil.getSingleRealityPrice()*detil.getTimes();
-							returnAmount=Double.parseDouble(df.format(returnAmount));
-							if(returnAmount>detil.getOrderAmount()){
-								returnAmount=detil.getOrderAmount();
-							}
-						}else{
-							returnAmount=-1;
-						}
-					}
-				}else{
-					returnAmount=-1;
-				}
-			}
-			
-			
-		} catch (Exception e) {
-			BugLogUtils.saveBugLog(request, "计算欠款错误", e);
-			logger.error("计算欠款错误：" + e.getMessage());
-			
-		}
-		return returnAmount;
-	}
-	
-	/**
 	 * 确定商品是否售后    (是:正在售后    或者   已经售后)
 	 * @param goodsMappingId
 	 * @param orderid
@@ -1568,7 +1518,7 @@ public class OrdersController extends BaseController {
 		return returnedGoodsService.getReturnGoodsNum(returnedGoods);
 	}
 	/**
-	 * 计算订单欠费(根据组ID(mapping_id)获取卡项中的实物集合)
+	 * 获取实物子项的可售后数量(根据组ID(mapping_id)获取卡项中的实物集合)
 	 * @param recid
 	 * @param isReal
 	 * @param request
@@ -1576,10 +1526,10 @@ public class OrdersController extends BaseController {
 	 * @return
 	 * 
 	 */
-	@RequestMapping(value = "getOrderGoodsCard")
+	@RequestMapping(value = "getCardRealNum")
 	@ResponseBody
-	public List<OrderGoods> getOrderGoodsCard(OrderGoods orderGoods, HttpServletRequest request, HttpServletResponse response) {
-		return ordergoodService.getOrderGoodsCard(orderGoods);
+	public List<OrderGoods> getCardRealNum(OrderGoods orderGoods, HttpServletRequest request, HttpServletResponse response) {
+		return ordergoodService.getCardRealNum(orderGoods);
 	}
 	
 	/**
