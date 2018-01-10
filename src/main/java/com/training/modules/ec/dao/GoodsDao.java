@@ -3,6 +3,8 @@ package com.training.modules.ec.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.Effect;
@@ -227,4 +229,16 @@ public interface GoodsDao extends CrudDao<Goods>{
 	 */
 	public Goods findGoodsBygoodsId(Integer goodsId);
 	
+	/**
+	 * 根据goods_ids查询多个商品
+	 * @param goodsIds
+	 * @return
+	 */
+	public List<Goods> selectGoodsList(String goodsIds);
+	
+	/**
+	 * 城市异价中根据条件查询能参加异价的商品
+	 * @return
+	 */
+	public List<Goods> queryGoodsCanRatio(Goods goods);
 }

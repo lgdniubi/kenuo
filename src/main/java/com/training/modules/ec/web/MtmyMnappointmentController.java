@@ -24,9 +24,11 @@ import com.google.common.collect.Maps;
 import com.training.common.persistence.Page;
 import com.training.common.utils.DateUtils;
 import com.training.common.web.BaseController;
+import com.training.modules.ec.entity.Comment;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.Reservation;
 import com.training.modules.ec.entity.Users;
+import com.training.modules.ec.service.CommentService;
 import com.training.modules.ec.service.OrderGoodsService;
 import com.training.modules.ec.service.ReservationService;
 import com.training.modules.ec.utils.WebUtils;
@@ -57,6 +59,8 @@ public class MtmyMnappointmentController extends BaseController{
 	private OfficeService officeService;
 	@Autowired
 	private SystemService systemService;
+	@Autowired
+	private CommentService commentService;
 	/**
 	 * 预约管理
 	 * @param model
@@ -503,5 +507,77 @@ public class MtmyMnappointmentController extends BaseController{
 			addMessage(redirectAttributes, "预约管理  添加/修改实际服务时间");
 		}
 		return "redirect:" + adminPath + "/ec/mtmyMnappointment/mnappointment";
+	}
+	
+	/**
+	 * 查看美容师和店铺的评价
+	 * @param reservation
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "viewComments")
+	public String viewComments(Reservation reservation, Model model,HttpServletRequest request,RedirectAttributes redirectAttributes){
+		try {
+			List<Comment> beautyComment = commentService.queryBeautyForReservation(reservation.getReservationId());
+			List<Comment> shopComment = commentService.queryShopForReservation(reservation.getReservationId());
+			model.addAttribute("beautyComment",beautyComment);
+			model.addAttribute("shopComment",shopComment);
+			model.addAttribute("reservationId",reservation.getReservationId());
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "查看美容师和店铺的评价", e);
+			logger.error("查看美容师和店铺的评价错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "查看美容师和店铺的评价");
+		}
+		return "modules/ec/viewComments";
+	}
+	
+	/**
+	 * 回复美容师评论
+	 * @param comment
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value ="replybeautyComment")
+	public String replybeautyComment(Comment comment,HttpServletRequest request, HttpServletResponse response,Model model,RedirectAttributes redirectAttributes){
+		try {
+			User currentUser = UserUtils.getUser();
+			comment.setReplyId(currentUser.getId());
+			commentService.insterbeautyComment(comment);
+			//修改单个用户所涉及的商品评论
+			commentService.updateBeautyComment(comment);
+			addMessage(redirectAttributes, "回复用户评论成功");
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "回复美容师评论", e);
+			logger.error("回复美容师评论错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "回复美容师评论");
+		}
+		return "redirect:" + adminPath + "/ec/mtmyMnappointment/viewComments?reservationId="+comment.getReservationId();
+	}
+	
+	/**
+	 * 回复店铺评论
+	 * @param comment
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value ="replyShopComment")
+	public String replyShopComment(Comment comment,HttpServletRequest request, HttpServletResponse response,Model model,RedirectAttributes redirectAttributes){
+		try {
+			User currentUser = UserUtils.getUser();
+			comment.setReplyId(currentUser.getId());
+			commentService.insterShopComment(comment);
+			//修改单个用户所涉及的商品评论
+			commentService.updateShopComment(comment);
+			addMessage(redirectAttributes, "回复用户评论成功");
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "回复店铺评论", e);
+			logger.error("回复店铺评论错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "回复店铺评论");
+		}
+		return "redirect:" + adminPath + "/ec/mtmyMnappointment/viewComments?reservationId="+comment.getReservationId();
 	}
 }

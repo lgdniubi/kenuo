@@ -662,6 +662,7 @@ window.onload=initStatus;
 							<c:if test="${orders.distinction == 1}">售前卖</c:if>
 							<c:if test="${orders.distinction == 2}">售后卖</c:if>
 							<c:if test="${orders.distinction == 3}">老带新</c:if>
+							<c:if test="${orders.distinction == 4}">售后转单</c:if>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">手机号码:</label>&nbsp;&nbsp;${orders.users.mobile }
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -729,16 +730,19 @@ window.onload=initStatus;
 								<tr>
 									<th style="text-align: center;">商品名称</th>
 									<th style="text-align: center;">商品规格</th>
+									<c:if test="${orders.isReal == 1 }">
+										<th style="text-align: center;">实际规格次</th>
+									</c:if>
 									<th style="text-align: center;">系统价</th>
 									<th style="text-align: center;">市场价</th>
 									<th style="text-align: center;">优惠价</th>
+									<th style="text-align: center;">预约金</th>
 									<th style="text-align: center;">购买数量</th>
 									<th style="text-align: center;">红包面值</th>
 									<th style="text-align: center;">折扣率</th>
 									<th style="text-align: center;">会员折扣</th>
 									<th style="text-align: center;">应付金额</th>
 									<th style="text-align: center;">实付金额</th>
-									<th style="text-align: center;">预约金</th>
 									<c:if test="${orders.isReal == 1 }">
 										<th style="text-align: center;">实际次数</th>
 									</c:if>
@@ -750,16 +754,19 @@ window.onload=initStatus;
 									<tr>
 										<td align="center">${orderGood.goodsname }</td>
 										<td align="center">${orderGood.speckeyname }</td>
+										<c:if test="${orders.isReal == 1 }">
+											<td align="center">${orderGood.servicetimes }</td>
+										</c:if>
 										<td align="center">${orderGood.costprice }</td>
 										<td align="center">${orderGood.marketprice }</td>
 										<td align="center">${orderGood.goodsprice }</td>
+										<td align="center">${orderGood.advancePrice}</td>
 										<td align="center">${orderGood.goodsnum }</td>
 										<td align="center">${orderGood.couponPrice }</td>
 										<td align="center">${orderGood.discount }</td>
 										<td align="center">${orderGood.membergoodsprice }</td>
 										<td align="center">${orderGood.orderAmount }</td>
 										<td align="center">${orderGood.totalAmount}</td>
-										<td align="center">${orderGood.advancePrice}</td>
 										<c:if test="${orders.isReal == 1 }">
 											<td align="center">${orderGood.remaintimes }</td>
 										</c:if>
@@ -795,13 +802,13 @@ window.onload=initStatus;
 						<h4>订单支付信息:</h4>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 								<tr>
-									<th style="text-align: center;">商品总价</th>
+									<th style="text-align: center;">商品总额</th>
 									<th style="text-align: center;">红包面值</th>
 									<th style="text-align: center;">折扣率</th>
 									<th style="text-align: center;">会员折扣</th>
 									<th style="text-align: center;">邮费</th>
-									<th style="text-align: center;">应付金额</th>
-									<th style="text-align: center;">实付金额</th>
+									<th style="text-align: center;">应付总额</th>
+									<th style="text-align: center;">实付总额</th>
 								</tr>
 								<tr>
 									<td align="center">${orders.goodsprice }</td>
@@ -1014,16 +1021,15 @@ window.onload=initStatus;
 					</shiro:hasPermission>
 					<shiro:hasPermission name="ec:orders:edit">
 						<c:if test="${type != 'view' }">
-							<c:if test="${orders.isReal == 0   and orders.orderstatus==1}">
-								<a href="#" onclick="forcedCancel('${orders.orderid}')" class="btn btn-danger btn-xs"><i class="fa fa-save"></i>强制取消</a>
-							</c:if>
-							<c:if test="${orders.isReal == 0   and orders.orderstatus!=1}">
-								<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>
-							</c:if>
-							<c:if test="${orders.isReal==1}">
-								<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>
-							</c:if>
-						</c:if>	
+							<c:choose>
+								<c:when test="${(orders.isReal == 0 && (orders.orderstatus==1 || orders.orderstatus==2)) || (orders.channelFlag != 'bm' && orders.isReal==1 && orders.advanceFlag == 1 && orders.sumAppt == 0 && orders.orderstatus==4)}">
+									<a href="#" onclick="forcedCancel('${orders.orderid}')" class="btn btn-danger btn-xs"><i class="fa fa-save"></i>强制取消</a>
+								</c:when>
+								<c:otherwise>
+									<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>
+								</c:otherwise>
+							</c:choose>
+						</c:if>
 					</shiro:hasPermission>
 					<%-- <p></p>
 					<label class="active">操作日志:</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

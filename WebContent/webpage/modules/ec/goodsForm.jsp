@@ -157,6 +157,15 @@
 										<input type="radio" id="goodsType" name="goodsType" value="1" ${(goods.goodsType == '1')?'checked="checked"':''}>新商品
 										<input type="radio" id="goodsType" name="goodsType" value="0" ${(goods.goodsType == '0' || goods.goodsType == null)?'checked="checked"':''}>老商品
 									</li>
+									<c:if test="${opflag == 'UPDATE'}">
+										<li class="form-group">
+											<span class="control-label col-sm-2">是否参与城市异价：</span>
+											<select class="form-control" disabled="disabled">
+						                        <option ${(goods.isRatio == 0)?'selected="selected"':''}>否</option>
+						                        <option ${(goods.isRatio == 1)?'selected="selected"':''}>是</option>
+						                    </select>
+										</li>
+									</c:if>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>活动类型：</span>
 										<select class="form-control" id="actionType" name="actionType">

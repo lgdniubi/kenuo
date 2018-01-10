@@ -1272,4 +1272,11 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 		goodsStatisticsDao.addGoodsStatisticsCountData(goodsStatisticsCountData);
 	}
 	
+	/**
+	 * 城市异价中根据条件查询能参加异价的商品
+	 * @return
+	 */
+	public List<Goods> queryGoodsCanRatio(Goods goods){
+		return goodsDao.queryGoodsCanRatio(goods);
+	}
 }

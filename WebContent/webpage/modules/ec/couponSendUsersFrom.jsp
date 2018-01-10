@@ -38,7 +38,7 @@
 	
 	//将分类下商品加载到左侧的下拉框
 	function addSelectUser(){
-		if(($("#nickname").val() != null && $("#nickname").val() != "" )||($("#districtId").val() != null && $("#districtId").val() != "" )||($("#sendType").val() != null && $("#sendType").val() != "")||($("#mobile").val() != null && $("#mobile").val() != "")){
+		if(($("#nickname").val() != null && $("#nickname").val() != "" )||($("#userid").val() != null && $("#userid").val() != "" )||($("#districtId").val() != null && $("#districtId").val() != "" )||($("#sendType").val() != null && $("#sendType").val() != "")||($("#mobile").val() != null && $("#mobile").val() != "")){
 			$(".loading").show();
 			$("#select1").empty();
 			var arr = new Array(); //数组定义标准形式，不要写成Array arr = new Array();
@@ -165,6 +165,10 @@
 		
 	}
 	
+	function selectType(value){
+		$("#mobileNum").val("");
+		$("#moreType").val(value);
+	}
 	
 	$(document).ready(function() {
 		
@@ -252,7 +256,10 @@
 						<div id="sendForm" style="display:none;width:700px;padding-top:10px;border:2px solid #DDDDDD">
 							<div style="margin-left:10px">
 							<label>手机号码：</label>
-							<input id="mobile" name="mobile" type="text" style="width:205px;" class="form-control" >
+							<input id="mobile" name="mobile" type="text" style="width:200px;" class="form-control" >
+							<label>用户ID：</label>
+							<input id="userid" name="userid" type="text" style="width:200px;" class="form-control" >
+							<p></p>
 							<label>用户等级：</label>
 							<select id="level" name="level" class="form-control" style="width:200px;">
 								<option value="1">1级以上</option>
@@ -266,12 +273,12 @@
 								<option value="9">9级以上</option>
 								<option value="10">10级以上</option>
 							</select>
-							<p></p>
-							<label>选择区域：</label>
+							<label>用  户  名 :</label>
+					        <input id="nickname" name="nickname" type="text" style="width:200px;" class="form-control" >
+						    <p></p>
+					        <label>选择区域：</label>
 							<sys:treeselect id="district" name="district" value="" labelName="areaName" labelValue="" 
 						     	title="地区" url="/sys/area/treeData" cssClass="area1 form-control"  allowClear="true" notAllowSelectRoot="true"/>
-						     <label>用 户 名:</label>
-						     <input id="nickname" name="nickname" type="text" style="width:200px;" class="form-control" >
 							<div class="pull-right">
 								<a href="#" class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="addSelectUser()" ><i class="fa fa-search"></i> 查询</a>
 							</div>
@@ -306,7 +313,14 @@
 						</div>
 					</div>
 					<div id="textMobile" style="display:none;width:700px;padding-top:10px;border:2px">
-						<label>输入用户手机号：<font color="red">输入用户手机号码并且要“,”分割开</font></label>
+						<label>选择方式：</label>
+						<select class="form-control required" style="width:200px" onchange="selectType(this.value)">
+		       				<option value="0">输入手机号</option>
+		       				<option value="1">输入用户ID</option>
+		       			</select>
+		       			<input id="moreType" name="moreType" type="hidden" value="0">
+						<p></p>
+						<label>输入用户手机号或用户ID：<font color="red">输入用户手机号码或用户ID并且要“,”分割开</font></label>
 						<form:textarea path="mobileNum" class="form-control" rows="8" cols="60"/>
 						
 					</div>

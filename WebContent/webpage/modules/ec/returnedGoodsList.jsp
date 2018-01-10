@@ -332,7 +332,18 @@
 											</c:if>
 										</c:if>
 									</shiro:hasPermission>
-									
+									<shiro:hasPermission name="ec:returned:afterSaleOrders">
+										<div class="btn-group">
+											<button type="button" class="btn btn-success dropdown-toggle btn-xs" data-toggle="dropdown">售后转单<span class="caret"></span>
+											</button>
+											<ul class="dropdown-menu" role="menu">
+												<li><a href="#" onclick="openDialog('售后转虚拟订单', '${ctx}/ec/orders/afterSaleOrdersForm?returnedId=${returnGoods.id}&mobile=${returnGoods.mobile}&username=${returnGoods.userName}&userid=${returnGoods.userId}','900px','650px')"  class="btn" ><i class="fa fa-edit"></i>售后转虚拟订单</a></li>
+												<li><a href="#" onclick="openDialog('售后转实物订单', '${ctx}/ec/orders/afterSaleKindOrdersForm?returnedId=${returnGoods.id}&mobile=${returnGoods.mobile}&username=${returnGoods.userName}&userid=${returnGoods.userId}','900px','650px')"  class="btn" ><i class="fa fa-edit"></i>售后转实物订单</a></li>
+												<li><a href="#" onclick="openDialog('售后转套卡订单', '${ctx}/ec/orders/afterSaleSuitCardOrdersForm?returnedId=${returnGoods.id}&mobile=${returnGoods.mobile}&username=${returnGoods.userName}&userid=${returnGoods.userId}','900px','650px')"  class="btn" ><i class="fa fa-edit"></i>售后转套卡订单</a></li>
+												<li><a href="#" onclick="openDialog('售后转通用卡订单', '${ctx}/ec/orders/afterSaleCommonCardOrdersForm?returnedId=${returnGoods.id}&mobile=${returnGoods.mobile}&username=${returnGoods.userName}&userid=${returnGoods.userId}','900px','650px')"  class="btn" ><i class="fa fa-edit"></i>售后转通用卡订单</a></li>
+											</ul>
+										</div>
+									</shiro:hasPermission>	
 								</td>
 							</tr>
 						</c:forEach>

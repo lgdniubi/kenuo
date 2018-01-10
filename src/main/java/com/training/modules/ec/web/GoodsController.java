@@ -1643,4 +1643,47 @@ public class GoodsController extends BaseController{
 		}
 		return "modules/ec/GoodsCardForm";
 	}
+	
+	/**
+	 * 根据分类，关键字，商品id查询商品
+	 * @param extId
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "queryGoods")
+	public List<Map<String, Object>> queryGoods(String goodsCategory,String goodsName,String goodsIds,String cityIds,HttpServletResponse response) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<Integer> goodsIdsList = new ArrayList<Integer>();
+		List<String> cityIdsList = new ArrayList<String>();
+		if(!"".equals(goodsIds) && goodsIds != null){
+			String[] newGoodsIds = goodsIds.split(",");
+			for(String newGoodsId:newGoodsIds){
+				goodsIdsList.add(Integer.valueOf(newGoodsId));
+			}
+		}
+		
+		if(!"".equals(cityIds) && cityIds != null){
+			String[] newCityIds = cityIds.split(","); 
+			for(String newCityId:newCityIds){
+				cityIdsList.add(newCityId);
+			}
+		}
+		
+		Goods goods=new Goods();
+		goods.setGoodsCategoryId(goodsCategory);
+		goods.setGoodsName(goodsName);
+		goods.setGoodsIds(goodsIdsList);
+		goods.setCityIds(cityIdsList);
+		
+		List<Goods> list = goodsService.queryGoodsCanRatio(goods);
+		for (int i=0; i<list.size(); i++){
+			Goods e = list.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("id", e.getGoodsId());
+			map.put("name", e.getGoodsName());
+			mapList.add(map);
+		}
+ 		return mapList;
+	}
 }

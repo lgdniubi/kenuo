@@ -849,6 +849,7 @@
 		(
 			order_id,
 			parent_id,
+			returned_id,
 			user_id,
 			order_status,
 			pay_id,
@@ -877,6 +878,7 @@
 		)values(
 			#{orderid},
 			#{parentid},
+			#{returnedId},
 			#{userid},
 			#{orderstatus},
 			#{payid},
@@ -977,7 +979,9 @@
 			o.member_goods_price as membergoodsprice,
 			o.invoice_overtime as invoiceOvertime,
 			o.shipping_price as shippingprice,
-			IFNULL(u.office_id,'') AS officeId
+			IFNULL(u.office_id,'') AS officeId,
+			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '1') AS 'advanceFlag',
+			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '0' AND service_times = -1) AS 'sumAppt'
 		FROM
 			mtmydb.mtmy_orders o,
 			mtmydb.mtmy_users u
@@ -1020,6 +1024,7 @@
 		(
 			order_id,
 			parent_id,
+			returned_id,
 			user_id,
 			order_status,
 			pay_id,
@@ -1051,6 +1056,7 @@
 		)values(
 			#{orderid},
 			#{parentid},
+			#{returnedId},
 			#{userid},
 			#{orderstatus},
 			#{payid},
