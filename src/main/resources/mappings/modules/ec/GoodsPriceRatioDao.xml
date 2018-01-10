@@ -36,6 +36,7 @@
 			d.city_ids AS 'cityIds',
 			d.city_names AS 'cityNames',
 			d.ratio,
+			COUNT(d.goods_id) AS 'num',
 			d.del_flag AS 'delflag'
 		FROM mtmydb.mtmy_goods_price_ratio_details d
 		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id = d.goods_id

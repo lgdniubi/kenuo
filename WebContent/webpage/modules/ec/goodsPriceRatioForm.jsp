@@ -97,6 +97,7 @@
 		        	all.push(select2[i].text);
 		        } 
 				
+		        $("#num").val(select2.length);
 		        $("#goodsIds").val(arr);
 		        $("#goodsNames").val(all);
 		    top.layer.close(index);
@@ -143,6 +144,14 @@
 									<td><label class="pull-right"><font color="red">*</font>商品：</label></td>
 									<td>
 										<a href="#" onclick="addGoods()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加商品</a>
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										一共<span style="color:red;"><input id="num" name="num" value="${goodsPriceRatio.num}" style="width:50px;text-align:center;" disabled="disabled"></span>件商品
 										<p></p>
 										<input id="goodsIds" name="goodsIds" value="${goodsPriceRatio.goodsIds}" type="hidden">
 										<textarea rows="7" cols="65" id="goodsNames" name="goodsNames" readonly="readonly" class="form-control required">${goodsPriceRatio.goodsNames}</textarea>
