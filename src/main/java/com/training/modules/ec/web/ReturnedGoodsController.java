@@ -25,7 +25,6 @@ import com.training.common.web.BaseController;
 import com.training.modules.ec.dao.PdWareHouseDao;
 import com.training.modules.ec.entity.CourierResultXML;
 import com.training.modules.ec.entity.OrderGoods;
-import com.training.modules.ec.entity.OrderGoodsDetails;
 import com.training.modules.ec.entity.OrderPushmoneyRecord;
 import com.training.modules.ec.entity.PdWareHouse;
 import com.training.modules.ec.entity.ReturnedGoods;
@@ -105,10 +104,7 @@ public class ReturnedGoodsController extends BaseController {
 			List<PdWareHouse> pdlist=wareHouseDao.findAllList(new PdWareHouse());//查询仓库信息
 			returnedGoods.setImgList(imgList);
 			
-			OrderGoodsDetails orderGoodsDetails = orderGoodsDetailsService.getCountArrearage(returnedGoods);//查询审核需要的条件,判断有无'平欠款'记录(查询记录只会两中<0:平欠款记录;=0没有记录)
-			if(orderGoodsDetails.getOrderArrearage() < 0){//存在记录
-				count = 1;
-			}
+			count = orderGoodsDetailsService.getCountArrearage(returnedGoods);//查询审核需要的条件,判断有无'平欠款'记录(查询记录只会两中<0:平欠款记录;=0没有记录)
 			//计算可售后数量(售后次数)和售后金额
 			OrderGoods orderGoods = ordergoodService.getTotalAmountAndTimes(returnedGoods);//获取商品的实付金额和剩余服务次数
 			ReturnedGoods rg = returnedGoodsService.getAmountAndNum(returnedGoods);//获取不包含自己本身的总的售后金额和售后数量
@@ -121,7 +117,6 @@ public class ReturnedGoodsController extends BaseController {
 				times = orderGoods.getRemaintimes() + returnedGoods.getReturnNum();//售后次数 = 剩余次数+售后次数
 			}
 			
-			model.addAttribute("count",count);//有无平欠款记录
 			model.addAttribute("amount",amount);//商品的扣售后金额
 			model.addAttribute("pdlist",pdlist);//查询仓库信息
 			model.addAttribute("returnedGoods", returnedGoods);//申请售后信息
@@ -130,6 +125,7 @@ public class ReturnedGoodsController extends BaseController {
 			logger.error("方法：returnform,审核页面" + e.getMessage());
 		}
 		if(returnedGoods.getIsReal() == 0){
+			model.addAttribute("count",count);//有无平欠款记录
 			model.addAttribute("goodsNum",goodsNum);//商品的金额可售后数量
 			return "modules/ec/returnGoodsFormKind";
 		}else{
@@ -166,8 +162,9 @@ public class ReturnedGoodsController extends BaseController {
 		OrderGoods og = new OrderGoods();
 		og.setOrderid(returnedGoods.getOrderId());
 		og.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
-		
 		List<OrderGoods> list=ordergoodService.cardOrderid(og);//根据订单id和mapping查询订单中的套卡及其子项
+		//获得卡项的实付金额和剩余服务次数(主要用于通用卡的,套卡只是得到金额)
+		OrderGoods orderGoods = ordergoodService.getTotalAmountAndTimes(returnedGoods);//获取商品的实付金额和剩余服务次数
 		for(int i=0;i<list.size();i++){
 			if(list.get(i).getGroupId() == 0 && resultSon.size() > 0){
 				result.add(resultSon);
@@ -215,16 +212,7 @@ public class ReturnedGoodsController extends BaseController {
 					}
 				}
 			}
-			//查询卡项子项实物的售后数量
-			String realnum = "";
-			List<ReturnedGoods> rgList = returnedGoodsService.getRealnum(returnedGoods);
-			if(rgList.size() != 0){
-				for (ReturnedGoods rg : rgList) {
-					realnum = realnum + 
-						"<label>"+rg.getGoodsName()+"  售后数量：</label><input style='width: 180px;height:30px;' class='form-control' value='"+rg.getReturnNum()+"' readonly='true'/><p></p>";
-				}
-				model.addAttribute("realnum",realnum);
-			}
+			model.addAttribute("amount",orderGoods.getTotalAmount());
 			model.addAttribute("flag",flag);
 			model.addAttribute("returnGoodsCard",suitCardSons.toString());
 			model.addAttribute("returnedGoods", returnedGoods);
@@ -268,7 +256,6 @@ public class ReturnedGoodsController extends BaseController {
 			//计算通用卡可售后次数(查询的剩余次数+此次售后的次数)和售后金额(实付金额-退款金额)
 			double amount = 0.0;//实物的可售后金额
 			int times = 0;//通用卡的可售后次数
-			OrderGoods orderGoods = ordergoodService.getTotalAmountAndTimes(returnedGoods);//获取商品的实付金额和剩余服务次数
 			ReturnedGoods returned = returnedGoodsService.getAmountAndNum(returnedGoods);//获取不包含自己本身的总的售后金额和售后数量
 			amount = orderGoods.getTotalAmount() - returned.getReturnAmount();//可售后金额;
 			times = result.get(0).get(0).getRemaintimes() + returnedGoods.getReturnNum();//可售后次数
@@ -354,7 +341,7 @@ public class ReturnedGoodsController extends BaseController {
 		
 	}
 	/**
-	 * 保存数据(卡项)
+	 * 保存数据(通用卡)
 	 * 
 	 * @param returnedGoods
 	 * @param request
@@ -381,7 +368,7 @@ public class ReturnedGoodsController extends BaseController {
 		
 	}
 	/**
-	 * 保存数据(卡项)
+	 * 保存数据(套卡)
 	 * 
 	 * @param returnedGoods
 	 * @param request
@@ -390,8 +377,8 @@ public class ReturnedGoodsController extends BaseController {
 	 * @return
 	 */
 	
-	@RequestMapping(value = "save")
-	public String save(ReturnedGoods returnedGoods, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
+	@RequestMapping(value = "saveReturnedSuit")
+	public String saveReturnedSuit(ReturnedGoods returnedGoods, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
 		try {
 			
 			returnedGoodsService.saveEditeSuit(returnedGoods); 

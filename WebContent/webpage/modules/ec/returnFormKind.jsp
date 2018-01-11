@@ -54,6 +54,10 @@
 					  top.layer.alert('售后商品数量必须大于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
 					  return;
 				  }
+				  //仅换货:收款人和收款账户默认空,且退款方式为'0'
+				  $("#returnType").val(0);//默认选择原路返回
+				  $("#receiveName").val("");//清空收款人信息
+				  $("#receiveAccount").val("");//清空收款账号
 			  }else {//退货并退款      仅退款
 				  //当售后数量和售后金额都为0,商品不能售后
 				  if(parseInt(rn) == 0 && parseInt(ra) == 0){

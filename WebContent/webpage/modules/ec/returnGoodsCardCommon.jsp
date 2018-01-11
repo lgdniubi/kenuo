@@ -376,14 +376,16 @@
 					onblur="if(value == ''){value='0'}"
 		        	onchange="returnChangeTimes()"/>
 					<p></p>
-			        <label>退款金额：</label>
+					<div id="returnAmountIsShow" style="display: display">
+						<label>退款金额：</label>
 						<form:input path="returnAmount" htmlEscape="false" maxlength="10"  style="width:180px;" class="form-control required"
-						onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
-						onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
-						onfocus="if(value == '0.0'){value=''}"
-						onblur="if(value == ''){value='0.0'}"
-						onchange="returnChangeAmount()"/>
+							onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
+							onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+							onfocus="if(value == '0.0'){value=''}"
+							onblur="if(value == ''){value='0.0'}"
+							onchange="returnChangeAmount()"/>
 						<p></p>
+					</div>
 					<p></p>
 					<div id="returnTypeIsShow" style="display: display">
 				        <label>退款方式：</label>

@@ -70,7 +70,7 @@
 	</select>
 	
 	
-	<select id="getOrderGoodsDetailSurplusAmountByOid" resultType="OrderGoodsDetails">
+	<select id="getOrderGoodsDetailSurplusAmountByOid" resultType="double">
 		SELECT
 			SUM(surplus_amount) AS 'surplusAmount'
 		FROM
@@ -262,14 +262,9 @@
 			a.advance_flag = 6
 	</select>
 	<!-- 查询审核需要的条件,判断无'平欠款'记录 -->
-	<select id="getCountArrearage" resultType="OrderGoodsDetails">
+	<select id="getCountArrearage" resultType="int">
 		SELECT 
-			order_id AS 'orderId',
-			goods_mapping_id AS 'goodsMappingId',
-			IFNULL(SUM(order_balance),0) AS 'orderBalance',
-			IFNULL(SUM(order_arrearage),0) AS 'orderArrearage',
-			IFNULL(SUM(app_arrearage),0) AS 'appArrearage',
-			IFNULL(SUM(service_times),0) AS 'serviceTimes'
+			COUNT(1)
 		FROM 
 			mtmydb.mtmy_order_goods_details a 
 		WHERE 
@@ -311,4 +306,11 @@
 		AND 
 			advance_flag = 4
 	</update>
+	<!-- 删除平欠款记录 -->
+	<delete id="deleteArrearage">
+		DELETE
+			FROM mtmydb.mtmy_order_goods_details
+		WHERE 
+			advance_flag = 5
+	</delete>
 </mapper>

@@ -66,6 +66,10 @@
 					  top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
 					  return;
 				  }
+				  //仅换货:收款人和收款账户默认空,且
+				  $("#returnType").val(0);//清空收款人信息
+				  $("#receiveName").val("");//清空收款人信息
+				  $("#receiveAccount").val("");//清空收款账号
 			  }else{//退货并退款     仅退款
 				//校验通用卡本身的售后次数
 				  var rn=$("#returnNum").val();
@@ -146,6 +150,7 @@
 				async:false,
 				data:{
 					recid:recid,
+					orderid:orderId
 				},
 				url:"${ctx}/ec/orders/getCardRealNum",
 				success:function(date){

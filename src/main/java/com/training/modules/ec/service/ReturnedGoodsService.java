@@ -218,11 +218,16 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			//------审核之后,售后次数和售后金额可能会修改--end-------
 			
 			//----------- 售后表中插入售后信息     begin---------
-			//判断是否为虚拟商品;是:直接状态为15退款中,入库状态为"空" -1.
+			//申请类型只会是退货并退款或者仅退款-->仅退款:售后状态为15
 			if(returnedGoods.getIsConfirm() == -10){//当拒绝退货时
 				returnedGoods.setReturnStatus(-10 + "");
 			}else{
-				returnedGoods.setReturnStatus(15 + "");
+				if(returnedGoods.getApplyType() == 2){//审核同意后,仅退款:售后状态:退款中,仓库状态:未入库
+					returnedGoods.setReturnStatus(15 + "");
+					returnedGoods.setIsStorage(0 + "");
+				}else{
+					returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
+				}
 			}
 			returnedGoodsDao.saveEdite(returnedGoods);//添加退货信息到mtmy_returned_goods表中
 			//----------- 售后表中插入售后信息     end---------
@@ -283,7 +288,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		//---------------申请换货---end---------------------------
 	}
 	/**
-	 * 审核
+	 * 套卡审核
 	 * 
 	 * @param returnedGoods
 	 * @return
@@ -291,32 +296,19 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	public void saveEditeSuit(ReturnedGoods returnedGoods) {
 		String currentUser = UserUtils.getUser().getName();
 		returnedGoods.setAuditBy(currentUser);
-		boolean flag = true;
 		
 		if ("11".equals(returnedGoods.getReturnStatus())) { // 申请退货退款
 			
-			//不是实物时,当商品同意退货时,使用这个判断.(同意退货会在returned_goods表中插入新的数据,所以需要在插入之前进行查询是否已经售后过)
-			if (returnedGoods.getIsConfirm() == 12 && returnedGoods.getIsReal() != 0) {
-				//判断商品是否为实物或者虚拟,是则查询商品之前是否有过售后
-				if(returnedGoods.getIsReal() ==0 || returnedGoods.getIsReal() ==1){
-					//先查询订单的退货成功记录,有记录就不扣减云币
-					int num = returnedGoodsDao.getReturnedGoods(returnedGoods);
-					flag = num>0;
-				}else if(returnedGoods.getIsReal() ==2 || returnedGoods.getIsReal() ==3){
-					flag = false;//套卡和通用卡只能有一次售后
-				}
-			}
-			
-			//判断是否为虚拟商品;是:直接状态为15退款中,入库状态为"空" -1.
-			if(returnedGoods.getIsReal() == 0){
-				returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
+			//申请类型只会是退货并退款或者仅退款-->仅退款:售后状态为15
+			if(returnedGoods.getIsConfirm() == -10){//当拒绝退货时
+				returnedGoods.setReturnStatus(-10 + "");
 			}else{
-				if(returnedGoods.getIsConfirm() == -10){//当拒绝退货时
-					returnedGoods.setReturnStatus(-10 + "");
-				}else{
+				if(returnedGoods.getApplyType() == 2){//审核同意后,仅退款:售后状态:退款中,仓库状态:未入库
 					returnedGoods.setReturnStatus(15 + "");
+					returnedGoods.setIsStorage(0 + "");
+				}else{
+					returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
 				}
-				returnedGoods.setIsStorage(-1 + "");
 			}
 			returnedGoodsDao.saveEdite(returnedGoods);//添加退货信息到mtmy_returned_goods表中
 			
@@ -335,45 +327,44 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			if(saleRebatesLogDao.selectNumByOrderId(returnedGoods.getOrderId()) == 0 && returnedGoods.getIsConfirm() != -10){//如果无退货记录
 				saleRebatesLogDao.updateSale(returnedGoods.getOrderId());// 插入分销日志
 			}
+			
 			if (returnedGoods.getIsConfirm() == -10) {
 				
+				refuseService(returnedGoods);//取消 平欠款和平预约金记录
+				
+				//套卡和通用卡的子项售后数量
 				OrderGoods orderGoods = new OrderGoods();
 				orderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
-				orderGoods.setAfterSaleNum(-returnedGoods.getReturnNum());
-				orderGoodsDao.updateIsAfterSales(orderGoods);
-				
-				//---------------------------退货处理  detials  begin------------------------------
-				orderGoods = orderGoodsDao.selectOrderGoodsByRecid(orderGoods.getRecid());
-				//把数据存储到mtmy_order_goods_details表中
-				returnedGoods = returnedGoodsDao.get(returnedGoods);//先查询returnedGoods数据
-				OrderGoodsDetails ogd = new OrderGoodsDetails();
-				
-				ogd.setOrderId(returnedGoods.getOrderId());
-				ogd.setGoodsMappingId(returnedGoods.getGoodsMappingId());
-				if(returnedGoods.getIsReal() != 0){//实物不需要返回售后数量
-					ogd.setServiceTimes(returnedGoods.getReturnNum());
-				}
-				ogd.setType(0);
-				ogd.setAdvanceFlag("4");
-				ogd.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
-				ogd.setCreateBy(UserUtils.getUser());
-				
-				if(returnedGoods.getIsReal() == 2){//套卡需要把剩余金额加回来,返回金额
-					//查询details表中AdvanceFlag=4的最新一条记录中SurplusAmount(套卡剩余金额)
-					int SurplusAmount = orderGoodsDetailsDao.getSurplusAmount(returnedGoods.getOrderId());
-					ogd.setSurplusAmount(-SurplusAmount);
-				}
-				orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
-				//---------------------------退货处理  detials  end---------------------------
-				
-				if(returnedGoods.getIsReal() == 2 || returnedGoods.getIsReal() == 3){//套卡和通用卡的子项售后数量
-					//在mapping表中都存入了after_sale_num售后数量 ,需要在减去
-					List<OrderGoods> oglist = orderGoodsDao.getAfterSaleNumByRid(orderGoods.getRecid()+"");
-					for (OrderGoods og : oglist) {
-						og.setAfterSaleNum(-og.getAfterSaleNum());
-						orderGoodsDao.updateIsAfterSales(og);
+				List<OrderGoods> oglist = orderGoodsDao.getOrderGoodsCard(orderGoods);
+				for (int i = 0; i < oglist.size(); i++) {
+					if(oglist.get(i).getIsreal() == 0){//当子项为实物,存入售后数量
+						orderGoods.setRecid(oglist.get(i).getRecid());
+						orderGoods.setAfterSaleNum(-oglist.get(i).getAfterSaleNum());
+						orderGoodsDao.updateIsAfterSales(orderGoods);//在mapping表中都存入了after_sale_num售后数量 ,需要在减去
+						
+						ReturnedGoods rg = new ReturnedGoods();
+						rg.setReturnedId(returnedGoods.getId());
+						rg.setGoodsMappingId(oglist.get(i).getRecid()+"");
+						rg.setIsReal(oglist.get(i).getIsreal());
+							rg.setReturnNum(-oglist.get(i).getGoodsnum());
+						rg.setGoodsName(oglist.get(i).getGoodsname());
+						returnedGoodsDao.insertReturnGoodsCard(rg);
 					}
 				}
+				//查询套卡子项虚拟商品的剩余次数(购买次数-预约次数)
+				List<ReturnedGoods> returnedGoodsNum = returnedGoodsDao.getReturnNum(returnedGoods);
+				for (ReturnedGoods rgn : returnedGoodsNum) {
+					rgn.setReturnedId(returnedGoods.getId());
+					//修改套卡子项虚拟商品的剩余次数
+					rgn.setReturnNum(-rgn.getReturnNum());
+					returnedGoodsDao.insertReturnGoodsCard(rgn);
+					
+					//当虚拟商品时,给mapping表中插入after_sale_num
+					orderGoods.setRecid(Integer.valueOf(rgn.getGoodsMappingId()));
+					orderGoods.setAfterSaleNum(rgn.getReturnNum());
+					orderGoodsDao.updateIsAfterSales(orderGoods);
+				}
+				
 			}
 			
 			//------------------------------同意退货  扣减云币----begin--------------------------
@@ -381,15 +372,8 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				//实物可以多次售后,而且是根据购买数量来扣减云币 = 商品云币 * 退货数量
 				int integral = orderGoodsDao.getintegralByRecId(returnedGoods.getGoodsMappingId());
 				if(integral != 0){
-					if(returnedGoods.getIsReal() == 0){
-						integral = integral * returnedGoods.getReturnNum();
-						updateIntegrals(orders, returnedGoods,integral);
-					}else{
-						if(!flag){
-							//查询mapping表中,云币的数量
-							updateIntegrals(orders, returnedGoods,integral);
-						}
-					}
+					//查询mapping表中,云币的数量
+					updateIntegrals(orders, returnedGoods,integral);
 				}
 			}
 			//------------------------------同意退货  扣减云币---end---------------------------
@@ -457,11 +441,16 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				}
 			}
 				
-			//判断是否为虚拟商品;是:直接状态为15退款中,入库状态为"空" -1.
+			//申请类型只会是退货并退款或者仅退款-->仅退款:售后状态为15
 			if(returnedGoods.getIsConfirm() == -10){//当拒绝退货时
 				returnedGoods.setReturnStatus(-10 + "");
 			}else{
-				returnedGoods.setReturnStatus(15 + "");
+				if(returnedGoods.getApplyType() == 2){//审核同意后,仅退款:售后状态:退款中,仓库状态:未入库
+					returnedGoods.setReturnStatus(15 + "");
+					returnedGoods.setIsStorage(0 + "");
+				}else{
+					returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
+				}
 			}
 			returnedGoodsDao.saveEdite(returnedGoods);//添加退货信息到mtmy_returned_goods表中
 			//-----------修改售后表中的状态-----e----------------------------------------------
@@ -489,7 +478,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			//-----------拒绝售后-----begin----------------------------------------------
 			if (returnedGoods.getIsConfirm() == -10) {
 				refuseService(returnedGoods);//取消 平欠款和平预约金记录
-				//------------------套卡和通用卡的子项售后数量------begin------------
+				//----------通用卡的子项售后数量------begin------------
 				//审核拒绝时,子项的售后数量需要返还
 				//循环卡项子项,把实物售后数量写入
 				int k = 0 ;
@@ -510,7 +499,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 					rg.setGoodsName(ogList.get(i).getGoodsname());
 					returnedGoodsDao.insertReturnGoodsCard(rg);
 				}
-				//------------------套卡和通用卡的子项售后数量------end------------
+				//----------通用卡的子项售后数量------end------------
 			}
 			//-----------拒绝售后-----begin----------------------------------------------
 			
@@ -573,6 +562,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		} else {//退货并退款或者仅退款
 			returnedGoods.setReturnStatus("11");
 		}
+		returnedGoods.setChannelFlag("bm");
 		returnedGoods.setApplyBy(user.getId());//添加申请人(获取当前登录人的信息)
 		returnedGoodsDao.insertReturn(returnedGoods);
 		//------------------售后表插入新数据-----end-------------------------------
@@ -609,6 +599,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		} else {
 			returnedGoods.setReturnStatus("11");
 		}
+		returnedGoods.setChannelFlag("bm");
 		returnedGoods.setApplyBy(user.getId());//添加申请人(获取当前登录人的信息)
 		returnedGoodsDao.insertReturn(returnedGoods);
 		//--------售后表插入新数据-----end-------------------------------
@@ -640,65 +631,49 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		
 		returnedGoods.setId(id);
 		returnedGoods.setApplyDate(date);//添加申请日期
-		//虚拟商品退货时,由于在returnForm.jsp中,虚拟商品售后次数使用ServiceTimes.
-		if(orders.getIsReal() == 1){
-			returnedGoods.setReturnNum(returnedGoods.getServiceTimes());
-		}
 		if (returnedGoods.getApplyType() == 1) {
 			returnedGoods.setReturnStatus("21");
 			returnedGoods.setReturnAmount(0);
 		} else {
 			returnedGoods.setReturnStatus("11");
 		}
+		returnedGoods.setChannelFlag("bm");
 		returnedGoods.setApplyBy(user.getId());//添加申请人(获取当前登录人的信息)
 		returnedGoodsDao.insertReturn(returnedGoods);
 		
-		//退货处理 detials begin
-		OrderGoods orderGoods = orderGoodsDao.selectOrderGoodsByRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
-		OrderGoodsDetails ogd = new OrderGoodsDetails();
-		
-		ogd.setOrderId(returnedGoods.getOrderId());
-		ogd.setGoodsMappingId(returnedGoods.getGoodsMappingId());
-		ogd.setReturnedId(returnedGoods.getId());
-		//判断是否为套卡,存入剩余金额surplusAmount
-		OrderGoodsDetails ogd1 = orderGoodsDetailsDao.getOrderGoodsDetailSurplusAmountByOid(ogd);
-		ogd.setSurplusAmount(-ogd1.getSurplusAmount());
-		ogd.setType(2);
-		ogd.setAdvanceFlag("4");
-		ogd.setCreateOfficeId(user.getOffice().getId());
-		ogd.setCreateBy(user);
-		orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
-		//退货处理 detials end
+		//
+		applyReturn(returnedGoods,user);//售后申请,插入mapping表中和detail表中
 		
 		//套卡售后  子项商品保存mtmy_returned_goods_card
 		//通过recid查询售后子项
+		OrderGoods orderGoods = new OrderGoods();
+		orderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
 		List<OrderGoods> og = orderGoodsDao.getOrderGoodsCard(orderGoods);
 		//循环卡项子项,把实物售后数量写入
 		ReturnedGoods rg = new ReturnedGoods();
-		int j = 0 ;
 		for (int i = 0; i < og.size(); i++) {
-			rg.setReturnedId(id);
-			rg.setGoodsMappingId(og.get(i).getRecid()+"");
-			rg.setIsReal(og.get(i).getIsreal());
-			if(og.get(i).getIsreal() == 0){//当子项是实物时,把售后数量写入
-				rg.setReturnNum(returnedGoods.getReturnNums().get(j));
+			if(og.get(i).getIsreal() == 0){
+				//当子项是实物时,把售后数量写入
+				rg.setReturnedId(id);
+				rg.setGoodsMappingId(og.get(i).getRecid()+"");
+				rg.setIsReal(og.get(i).getIsreal());
+				rg.setReturnNum(og.get(i).getGoodsnum());
+				rg.setGoodsName(og.get(i).getGoodsname());
+				returnedGoodsDao.insertReturnGoodsCard(rg);
 				
 				//当实物时,给mapping表中插入after_sale_num
 				orderGoods.setRecid(og.get(i).getRecid());
-				orderGoods.setAfterSaleNum(returnedGoods.getReturnNums().get(j));
+				orderGoods.setAfterSaleNum(og.get(i).getGoodsnum());
 				orderGoodsDao.updateIsAfterSales(orderGoods);
-				
-				j++;
 			}
-			rg.setGoodsName(og.get(i).getGoodsname());
-			returnedGoodsDao.insertReturnGoodsCard(rg);
 		}
 		//查询套卡子项虚拟商品的剩余次数(购买次数-预约次数)
 		List<ReturnedGoods> returnedGoodsNum = returnedGoodsDao.getReturnNum(returnedGoods);
 		for (ReturnedGoods rgn : returnedGoodsNum) {
-			rgn.setReturnedId(id);
+			rgn.setReturnedId(returnedGoods.getId());
 			//修改套卡子项虚拟商品的剩余次数
-			returnedGoodsDao.updateCardNum(rgn);
+			rgn.setReturnNum(rgn.getReturnNum());
+			returnedGoodsDao.insertReturnGoodsCard(rgn);
 			
 			//当虚拟商品时,给mapping表中插入after_sale_num
 			orderGoods.setRecid(Integer.valueOf(rgn.getGoodsMappingId()));
@@ -737,6 +712,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		} else {
 			returnedGoods.setReturnStatus("11");
 		}
+		returnedGoods.setChannelFlag("bm");
 		returnedGoods.setApplyBy(user.getId());//添加申请人(获取当前登录人的信息)
 		returnedGoodsDao.insertReturn(returnedGoods);
 		//--------售后表插入新记录----end--------------------------------------------------
@@ -795,8 +771,6 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		//------------------修改mapping表中售后商品数量-----end-------------------------------
 		
 		//------------------退货处理 detials-----begin-------------------------------
-		orderGoods = orderGoodsDao.selectOrderGoodsByRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
-		
 		//------------------平欠款记录 detials-----begin-------------------------------
 		//判断申请类型不是仅换货且存在欠款,需要平欠款,存入detail表中
 		if(returnedGoods.getApplyType() != 1 && returnedGoods.getOrderArrearage() > 0){
@@ -804,7 +778,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			ogd1.setOrderBalance(-ogd1.getOrderBalance());//平欠款,扣除订单余款
 			ogd1.setOrderArrearage(-ogd1.getOrderArrearage());//平欠款,扣除订单欠款
 			ogd1.setAppArrearage(-ogd1.getAppArrearage());//平欠款,扣除app欠款金额
-			ogd1.setType(2);
+			ogd1.setType(3);
 			ogd1.setAdvanceFlag("5");
 			ogd1.setCreateOfficeId(user.getOffice().getId());
 			ogd1.setCreateBy(user);
@@ -820,6 +794,11 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		if(returnedGoods.getIsReal() != 0){//实物不需要存入detail表中,虚拟和通用卡需要
 			ogd.setReturnedId(returnedGoods.getId());
 			ogd.setServiceTimes(-returnedGoods.getReturnNum());
+		}
+		if(returnedGoods.getIsReal() == 2){//套卡需要存入'套卡剩余金额'
+			//判断是否为套卡,存入剩余金额surplusAmount
+			double surplusAmount = orderGoodsDetailsDao.getOrderGoodsDetailSurplusAmountByOid(ogd);
+			ogd.setSurplusAmount(-surplusAmount);
 		}
 		ogd.setType(2);
 		ogd.setAdvanceFlag("4");
@@ -849,22 +828,14 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			if(countAdvanceFlag>0){
 				orderGoodsDetailsDao.cancelAdvanceFlag(returnedGoods);//取消'平预约金'记录
 			}
-			OrderGoodsDetails countArrearage = orderGoodsDetailsDao.getCountArrearage(returnedGoods);//查询审核需要的条件,判断无'平欠款'记录
-			if(countArrearage.getOrderArrearage() < 0){//平欠款是-欠款.小于0
-				countArrearage.setOrderBalance(-countArrearage.getOrderBalance());
-				countArrearage.setOrderArrearage(-countArrearage.getOrderArrearage());
-				countArrearage.setAppArrearage(-countArrearage.getAppArrearage());
-				countArrearage.setType(0);
-				countArrearage.setAdvanceFlag("5");
-				countArrearage.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
-				countArrearage.setCreateBy(UserUtils.getUser());
-				orderGoodsDetailsDao.saveOrderGoodsDetails(countArrearage);//取消'平欠款'记录
+			int countArrearage = orderGoodsDetailsDao.getCountArrearage(returnedGoods);//查询审核需要的条件,判断无'平欠款'记录
+			if(countArrearage > 0){//平欠款是-欠款.小于0
+				orderGoodsDetailsDao.deleteArrearage();//删除'平欠款'记录
 			}
 		}
 		//---------------------------取消 平欠款和平预约金记录 end------------------------------
 		
 		//---------------------------退货处理  detials  begin------------------------------
-		orderGoods = orderGoodsDao.selectOrderGoodsByRecid(orderGoods.getRecid());
 		//把数据存储到mtmy_order_goods_details表中
 		returnedGoods = returnedGoodsDao.get(returnedGoods);//先查询returnedGoods数据
 		OrderGoodsDetails ogd = new OrderGoodsDetails();
@@ -873,10 +844,15 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		if(returnedGoods.getIsReal() != 0){//实物不需要存入detail表字段,但是虚拟和通用卡需要存入次数.
 			ogd.setServiceTimes(returnedGoods.getReturnNum());			
 		}
-		ogd.setType(0);
+		ogd.setType(2);
 		ogd.setAdvanceFlag("4");
 		ogd.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
 		ogd.setCreateBy(UserUtils.getUser());
+		if(returnedGoods.getIsReal() == 2){//拒绝套卡售后,退还'套卡剩余金额'
+			//查询details表中AdvanceFlag=4的最新一条记录中SurplusAmount(套卡剩余金额)
+			int SurplusAmount = orderGoodsDetailsDao.getSurplusAmount(returnedGoods.getOrderId());
+			ogd.setSurplusAmount(-SurplusAmount);
+		}
 		orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
 		//---------------------------退货处理  detials  end---------------------------
 	}

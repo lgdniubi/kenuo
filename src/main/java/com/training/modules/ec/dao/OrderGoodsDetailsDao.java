@@ -107,7 +107,7 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @param ogd
 	 * @return
 	 */
-	OrderGoodsDetails getOrderGoodsDetailSurplusAmountByOid(OrderGoodsDetails ogd);
+	double getOrderGoodsDetailSurplusAmountByOid(OrderGoodsDetails ogd);
 	
 	/**
 	 * 查询details表中AdvanceFlag=4的最新一条记录中SurplusAmount(套卡剩余金额)
@@ -135,7 +135,7 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @param returnedGoods
 	 * @return
 	 */
-	OrderGoodsDetails getCountArrearage(ReturnedGoods returnedGoods);
+	int getCountArrearage(ReturnedGoods returnedGoods);
 
 	/**
 	 * 查询'平预约金'记录
@@ -161,4 +161,9 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @param returnedGoods
 	 */
 	void updateDetailServiceTimes(ReturnedGoods returnedGoods);
+
+	/**
+	 * 删除平欠款记录
+	 */
+	void deleteArrearage();
 }

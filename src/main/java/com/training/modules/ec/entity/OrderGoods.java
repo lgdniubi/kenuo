@@ -575,5 +575,4 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	public void setRatioPrice(double ratioPrice) {
 		this.ratioPrice = ratioPrice;
 	}
-	
 }
