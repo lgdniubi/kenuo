@@ -341,7 +341,7 @@ public class ReturnedGoodsController extends BaseController {
 		
 	}
 	/**
-	 * 保存数据(卡项)
+	 * 保存数据(通用卡)
 	 * 
 	 * @param returnedGoods
 	 * @param request
@@ -368,7 +368,7 @@ public class ReturnedGoodsController extends BaseController {
 		
 	}
 	/**
-	 * 保存数据(卡项)
+	 * 保存数据(套卡)
 	 * 
 	 * @param returnedGoods
 	 * @param request
@@ -377,8 +377,8 @@ public class ReturnedGoodsController extends BaseController {
 	 * @return
 	 */
 	
-	@RequestMapping(value = "save")
-	public String save(ReturnedGoods returnedGoods, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
+	@RequestMapping(value = "saveReturnedSuit")
+	public String saveReturnedSuit(ReturnedGoods returnedGoods, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
 		try {
 			
 			returnedGoodsService.saveEditeSuit(returnedGoods); 

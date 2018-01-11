@@ -222,7 +222,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			if(returnedGoods.getIsConfirm() == -10){//当拒绝退货时
 				returnedGoods.setReturnStatus(-10 + "");
 			}else{
-				if(returnedGoods.getApplyType() == 2){//当是
+				if(returnedGoods.getApplyType() == 2){//审核同意后,仅退款:售后状态:退款中,仓库状态:未入库
 					returnedGoods.setReturnStatus(15 + "");
 					returnedGoods.setIsStorage(0 + "");
 				}else{
@@ -303,7 +303,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			if(returnedGoods.getIsConfirm() == -10){//当拒绝退货时
 				returnedGoods.setReturnStatus(-10 + "");
 			}else{
-				if(returnedGoods.getApplyType() == 2){//
+				if(returnedGoods.getApplyType() == 2){//审核同意后,仅退款:售后状态:退款中,仓库状态:未入库
 					returnedGoods.setReturnStatus(15 + "");
 					returnedGoods.setIsStorage(0 + "");
 				}else{
@@ -445,7 +445,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			if(returnedGoods.getIsConfirm() == -10){//当拒绝退货时
 				returnedGoods.setReturnStatus(-10 + "");
 			}else{
-				if(returnedGoods.getApplyType() == 2){//当是
+				if(returnedGoods.getApplyType() == 2){//审核同意后,仅退款:售后状态:退款中,仓库状态:未入库
 					returnedGoods.setReturnStatus(15 + "");
 					returnedGoods.setIsStorage(0 + "");
 				}else{
