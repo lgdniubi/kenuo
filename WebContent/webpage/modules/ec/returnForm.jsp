@@ -41,7 +41,12 @@
 			  //退货并退款:注意当售后数量和金额都为0,不能售后
 			  //当是退货并退款或者仅退款,退款方式需要校验
 			  applyType=$("#applyType").val();
-			  if(applyType != 1){//退货并退款      仅退款
+			  if(applyType == 1){//仅换货
+				  //仅换货:收款人和收款账户默认空,且
+				  $("#returnType").val(0);//默认选择原路返回
+				  $("#receiveName").val("");//清空收款人信息
+				  $("#receiveAccount").val("");//清空收款账号
+			  }else{//退货并退款      仅退款
 				  if(servicetimes == 999){//时限卡,金额不能为0
 					  //虚拟商品的退款金额校验
 					  var ra=$("#returnAmount").val();

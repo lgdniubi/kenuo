@@ -145,7 +145,7 @@ public class OrderGoodsDetailsService extends TreeService<OrderGoodsDetailsDao, 
 	 * @param returnedGoods
 	 * @return
 	 */
-	public OrderGoodsDetails getCountArrearage(ReturnedGoods returnedGoods) {
+	public int getCountArrearage(ReturnedGoods returnedGoods) {
 		return dao.getCountArrearage(returnedGoods);
 	}
 }

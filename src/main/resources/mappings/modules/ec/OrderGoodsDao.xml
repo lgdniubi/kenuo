@@ -412,39 +412,37 @@
 	</select>
 	<!-- 获取实物子项的可售后数量(根据组ID(mapping_id)获取卡项中的实物集合) -->
 	<select id="getCardRealNum" resultType="OrderGoods">
-		SELECT 
+		SELECT
 			a.rec_id as 'recid',
 			a.order_id as 'orderid',
 			a.group_id as 'groupId',
 			a.goods_id as 'goodsid',
 			a.goods_name as 'goodsname',
 			a.is_real as 'isreal',
-			a.spec_key_name as 'speckeyname',
 			a.market_price as 'marketprice',
 			a.goods_price as 'goodsprice',
 			a.cost_price as 'costprice',
-			(a.goods_num-IFNULL(SUM(b.return_num),0)) as 'goodsnum',	
+			(a.goods_num-IFNULL(SUM(d.return_num),0)) as 'goodsnum',
 			a.order_amount as 'orderAmount',
 			a.total_amount as 'totalAmount',
-			a.order_arrearage as 'orderArrearage',
-			a.original_img as 'originalImg'
-		FROM mtmydb.mtmy_order_goods_mapping a 
-		LEFT JOIN mtmydb.mtmy_returned_goods_card b ON a.rec_id = b.mapping_id
-		WHERE a.group_id = #{recid}
-		AND a.is_real = 0
+			a.order_arrearage as 'orderArrearage'
+		FROM
+				mtmydb.mtmy_order_goods_mapping a 
+		LEFT JOIN
+		(
+			SELECT
+				c.mapping_id,
+				SUM(c.return_num) AS  return_num
+			FROM	mtmydb.mtmy_returned_goods b
+			LEFT JOIN mtmydb.mtmy_returned_goods_card c ON b.id = c.returned_id
+			WHERE	b.order_id = #{orderid}
+			AND	b.return_status IN (11,12,13,14,15,16)
+			GROUP BY c.mapping_id
+		) d ON a.rec_id = d.mapping_id
+		WHERE	a.group_id = #{recid}
 		GROUP BY a.rec_id
+
 	</select>
-	
-	<!-- 根据组ID(mapping_id)获取卡项中的after_sale_num -->
-	<select id="getAfterSaleNumByRid" resultType="OrderGoods">
-		SELECT 
-			a.rec_id as 'recid',
-			a.after_sale_num as 'afterSaleNum'
-		 FROM mtmydb.mtmy_order_goods_mapping a 
-		
-		WHERE a.group_id = #{recid}
-	</select>
-	
 	<!-- 根据Orderid查找相应的商品信息 -->
 	<select id="selectOrderGoodsByOrderid" resultType="OrderGoods">
 		SELECT

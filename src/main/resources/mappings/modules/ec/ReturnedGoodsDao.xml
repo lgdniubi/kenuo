@@ -148,15 +148,19 @@
 			IFNULL(SUM(a.return_num),0) AS 'goodsNum'
 		FROM mtmydb.mtmy_returned_goods_card a 
 		LEFT JOIN  mtmydb.mtmy_order_goods_mapping b ON a.mapping_id = b.rec_id
+		LEFT JOIN  mtmydb.mtmy_returned_goods c ON a.returned_id = c.id
 		WHERE
 			a.mapping_id = #{goodsMappingId}
 		AND a.returned_id != #{returnedId}
 		AND a.is_real = 0
+		AND c.return_status IN (11,12,13,14,15,16)
 	</select>
 	<!-- 查询套卡子项虚拟商品的剩余次数(购买次数-预约次数) -->
 	<select id="getReturnNum" resultType="ReturnedGoods">
 		SELECT 
-			a.rec_id as 'goodsMappingId',
+			a.rec_id AS 'goodsMappingId',
+			a.is_real AS 'isReal',
+			a.goods_name AS 'goodsName',
 			(a.service_times -IFNULL(b.returnNum,0)) AS 'returnNum'
 		FROM 
 			mtmydb.mtmy_order_goods_mapping a LEFT JOIN (SELECT goods_mapping_id,count(1) returnNum FROM mtmydb.mtmy_appt_order WHERE appt_status in (0,1,2,4) GROUP BY goods_mapping_id) b ON a.rec_id = b.goods_mapping_id
@@ -414,6 +418,7 @@
 			belong_office_id, -->
 			return_status,
 			apply_by,
+			channel_flag,
 			return_type,
 			receive_name,
 			receive_account
@@ -437,6 +442,7 @@
 			#{belongOfficeId}, -->
 			#{returnStatus},
 			#{applyBy},
+			#{channelFlag},
 			#{returnType},
 			#{receiveName},
 			#{receiveAccount}

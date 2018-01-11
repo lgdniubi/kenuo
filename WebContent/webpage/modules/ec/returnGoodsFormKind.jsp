@@ -323,7 +323,7 @@
 					<label>支付金额：</label>
 			        <form:input path="totalAmount" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control" readonly="true"/>
 					<p></p>
-					<c:if test="${count == 1}">
+					<c:if test="${count > 1}">
 				        <label>售后商品数量：</label>
        					<form:input path="returnNum" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control"  readonly="true"
 					        onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 

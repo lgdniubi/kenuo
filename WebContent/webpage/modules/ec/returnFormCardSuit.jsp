@@ -27,9 +27,8 @@
 				  return;
 			  }
 			  
-			  
 			  //校验实物售后数量的准确
-			  for(var i=0;i<goodsNum;i++){
+			  /* for(var i=0;i<goodsNum;i++){
 				  var newNum = $("#returnNums"+i).val();
 				  var oldNum = $("#oldreturnNums"+i).val();
 				  if(parseInt(newNum) < 0){
@@ -43,7 +42,7 @@
 					  top.layer.alert('售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
 					  return;
 				  }
-			  }
+			  } */
 			  //退款金额校验
 			  var ra=$("#returnAmount").val();
 			  if(parseFloat(ra)<0){
@@ -52,6 +51,32 @@
 			  }else if(parseFloat(surplusReturnAmount) < parseFloat(ra)){
 				  top.layer.alert('退款金额必须大于等于0，小于等于支付金额!', {icon: 0, title:'提醒'});
 				  return;
+			  }
+			  //校验申请类型
+			  var type=$("#applyType").val();
+			  if(type == 1){//仅换货展示 '实物数量'和'售后次数'   售后次数不能为0
+				  //仅换货:收款人和收款账户默认空,且
+				  $("#returnType").val(0);//默认选择原路返回
+				  $("#receiveName").val("");//清空收款人信息
+				  $("#receiveAccount").val("");//清空收款账号
+			  }else{
+				  //退款方式是"银行卡账户"需要填写收款人和收款方式
+				  var returnType=$("#returnType").val();
+				  if(returnType == 4){
+					  var receiveName = $("#receiveName").val();//收款人	
+					  var receiveAccount = $("#receiveAccount").val();//收款账户	
+					  if(null == receiveName || "" == receiveName){
+						  top.layer.alert('收款人或者收款账号不能为空!', {icon: 0, title:'提醒'});
+						  return;
+					  }
+					  if(null == receiveAccount || "" == receiveAccount){
+						  top.layer.alert('收款人或者收款账号不能为空!', {icon: 0, title:'提醒'});
+						  return;
+					  }
+				  }else{
+					  $("#receiveName").val("");//清空收款人信息
+					  $("#receiveAccount").val("");//清空收款账号
+				  }
 			  }
 			  $("#inputForm").submit();
 			  return true;
@@ -90,7 +115,7 @@
 					if(flag){//正在售后    或者   已经售后
 						top.layer.alert('当前商品已申请售后', {icon: 0, title:'提醒'});
 						return;
-					}else{
+					}/* else{
 						$("#addReal").empty();
 						$.ajax({
 							type:"post",
@@ -113,7 +138,7 @@
 										    
 							}
 						});
-					}
+					} */
 				},
 				error:function(XMLHttpRequest,textStatus,errorThrown){
 							    
@@ -140,7 +165,28 @@
 				}
 			});
 		}
-		//实物售后数量校验
+		
+		//退款并退货 全部展示,仅退货 展示数量,仅退款 展示退款金额
+		function selectType(o){
+			var type=$("#applyType").val();
+			if(type==1){//仅换货,不显示"退款金额"和"退款方式";
+				$("#returnAmountIsShow").hide();//退款金额
+				$("#returnTypeIsShow").hide();//退款方式
+			}else {
+				$("#returnAmountIsShow").show();//退款金额
+				$("#returnTypeIsShow").show();//退款方式
+			}
+		}
+		//选择退款方式,只有选择"银行卡账户",需要填写收款人和收款账号
+		function selectReturnType(o){
+			var type=$("#returnType").val();
+			if(type==4){
+				$("#selectReceive").show();
+			}else if(type!=4){
+				$("#selectReceive").hide();
+			}
+		}
+		/* //实物售后数量校验
 		function findReturnNum (id,num){
 			var num1=$(id).val();
 			if(parseInt(num1)<0){
@@ -150,7 +196,7 @@
 				top.layer.alert('售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
 				return;
 			}
-		}
+		} */
 		//虚拟商品的退款金额校验
 		function returnChangeAmount(){
 			var ra=$("#returnAmount").val();
@@ -164,7 +210,6 @@
 		}
 		
 		$(document).ready(function(){
-			
 			validateForm = $("#inputForm").validate({
 				rules: {
 					returnmoney:{
@@ -199,6 +244,7 @@
 					}
 				}
 			});
+			$("#selectReceive").hide();//收款人和收款账户首先隐藏
 		});
 </script>
 </head>
@@ -244,23 +290,52 @@
 			        <form:textarea path="problemDesc" htmlEscape="false" rows="3" style="width:300px;" maxlength="200" class="form-control required"/>
 			        <p></p>
 			        <label><font color="red">*</font>申请类型：</label>
-		        	<form:select path="applyType" class="form-control" style="width:185px;" >
+		        	<form:select path="applyType" class="form-control" style="width:185px;" onchange="selectType(this)">
 						<form:option value="0">退货并退款</form:option>
+						<form:option value="1">仅换货</form:option>
+						<form:option value="2">仅退款</form:option>
 					</form:select>
 					<p></p>
-					<div id="addReal"></div>
+					<label><font color="red">*</font>售后次数：全部</label>
+					<p></p>
+					<label><font color="red">*</font>售后数量：全部</label>
 					<p></p>
 					<form:hidden path="orderAmount"/>
 			        <label><font color="red">*</font>支付金额：</label>
 			        <form:input path="totalAmount" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control" readonly="true"/>
 					<p></p>
-					<label><font color="red">*</font>退款金额：</label>
-					<form:input path="returnAmount" htmlEscape="false" maxlength="10"  style="width:180px;" class="form-control required"
-					onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
-					onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
-					onfocus="if(value == '0.0'){value=''}"
-					onblur="if(value == ''){value='0.0'}"
-					onchange="returnChangeAmount()"/><font color="red">（最大可退¥<span id="showReturn"></span>元）</font>
+					<div id="returnAmountIsShow" style="display: display">
+						<label><font color="red">*</font>退款金额：</label>
+						<form:input path="returnAmount" htmlEscape="false" maxlength="10"  style="width:180px;" class="form-control required"
+							onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
+							onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+							onfocus="if(value == '0.0'){value=''}"
+							onblur="if(value == ''){value='0.0'}"
+							onchange="returnChangeAmount()"/><font color="red" id="changeIsShow">（最大可退¥<span id="showReturn"></span>元）</font>
+						<p></p>
+					</div>
+			        <p></p>
+			        <div id="returnTypeIsShow" style="display: display">
+				        <label><font color="red">*</font>退款方式：</label>
+			        	<form:select path="returnType" class="form-control" style="width:185px;" onchange="selectReturnType(this)">
+							<form:option value="0">原路退回</form:option>
+							<form:option value="1">现金</form:option>
+							<form:option value="2">微信</form:option>
+							<form:option value="3">支付宝</form:option>
+							<form:option value="4">银行卡账户</form:option>
+							<form:option value="5">充值到每天美耶账户</form:option>
+						</form:select>
+						<p></p>
+						<div id="selectReceive" style="display: display">
+							<label><font color="red">*</font>收&nbsp;&nbsp;款&nbsp;&nbsp;人：</label>
+							<form:input path="receiveName" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control"/>
+				        	<p></p>
+							<label><font color="red">*</font>收款账号：</label>
+							<form:input path="receiveAccount" htmlEscape="false" maxlength="19" style="width: 180px;height:30px;" class="form-control"
+							onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
+							onpaste="this.value=this.value.replace(/[^\d.]/g,'')"/>
+						</div>
+					</div>
 			        <p></p>
 					<label>客服备注：</label>
 					<form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" style="width:300px;" class="form-control"/>

@@ -82,6 +82,7 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	private String receiveName;				//收款人姓名
 	private String receiveAccount;			//收款人账号
 	private int oldReturnNum;				//退货数量
+	private String channelFlag;				//渠道标识
 		
 	public List<Integer> getRecIds() {
 		return recIds;
@@ -483,6 +484,12 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	}
 	public void setOldReturnNums(List<Integer> oldReturnNums) {
 		this.oldReturnNums = oldReturnNums;
+	}
+	public String getChannelFlag() {
+		return channelFlag;
+	}
+	public void setChannelFlag(String channelFlag) {
+		this.channelFlag = channelFlag;
 	}
 	
 }

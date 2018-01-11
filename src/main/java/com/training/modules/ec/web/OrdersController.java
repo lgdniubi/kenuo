@@ -513,7 +513,7 @@ public class OrdersController extends BaseController {
 			addMessage(redirectAttributes, "保存实物商品退货订单'" + returnedGoods.getOrderId() + "'成功");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "保存实物商品退货订单", e);
-			logger.error("方法：saveReturn,保存实物商品退货订单出错：" + e.getMessage());
+			logger.error("方法：saveReturnKind,保存实物商品退货订单出错：" + e.getMessage());
 			addMessage(redirectAttributes, "保存实物商品退货订单失败！");
 		}
 		return "redirect:" + adminPath + "/ec/orders/list";
@@ -549,7 +549,7 @@ public class OrdersController extends BaseController {
 			addMessage(redirectAttributes, "保存套卡商品退货订单'" + returnedGoods.getOrderId() + "'成功");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "保存套卡商品退货订单", e);
-			logger.error("方法：saveReturn,保存套卡商品退货订单出错：" + e.getMessage());
+			logger.error("方法：saveReturnSuit,保存套卡商品退货订单出错：" + e.getMessage());
 			addMessage(redirectAttributes, "保存套卡商品退货订单失败！");
 		}
 		return "redirect:" + adminPath + "/ec/orders/list";
@@ -567,7 +567,7 @@ public class OrdersController extends BaseController {
 			addMessage(redirectAttributes, "保存通用卡商品退货订单'" + returnedGoods.getOrderId() + "'成功");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "保存通用卡商品退货订单", e);
-			logger.error("方法：saveReturn,保存通用卡商品退货订单出错：" + e.getMessage());
+			logger.error("方法：saveReturnCommon,保存通用卡商品退货订单出错：" + e.getMessage());
 			addMessage(redirectAttributes, "保存通用卡商品退货订单失败！");
 		}
 		return "redirect:" + adminPath + "/ec/orders/list";
