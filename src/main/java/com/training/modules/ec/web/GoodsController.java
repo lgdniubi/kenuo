@@ -111,6 +111,11 @@ public class GoodsController extends BaseController{
 	@RequiresPermissions(value={"ec:goods:list"},logical=Logical.OR)
 	@RequestMapping(value = {"list"})
 	public String list(Goods goods,Model model, HttpServletRequest request, HttpServletResponse response){
+		if(!"".equals(goods.getNewRatio()) && goods.getNewRatio() != null){
+			String[] result = goods.getNewRatio().split("-");
+			goods.setMinRatio(Double.valueOf(result[0]));
+			goods.setMaxRatio(Double.valueOf(result[1]));
+		}
 		
 		//查询商品品牌
 		List<GoodsBrand> goodsBrandList = goodsBrandService.findAllList(new GoodsBrand());

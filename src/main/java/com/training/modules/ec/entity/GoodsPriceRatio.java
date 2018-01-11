@@ -27,6 +27,8 @@ public class GoodsPriceRatio extends DataEntity<GoodsPriceRatio> {
 	private double minRatio;           //异价比例的小值
 	private double maxRatio;           //异价比例的大值
 	
+	private int num;                   //商品的个数
+	
 	public int getGoodsPriceRatioId() {
 		return goodsPriceRatioId;
 	}
@@ -99,6 +101,12 @@ public class GoodsPriceRatio extends DataEntity<GoodsPriceRatio> {
 	}
 	public void setMaxRatio(double maxRatio) {
 		this.maxRatio = maxRatio;
+	}
+	public int getNum() {
+		return num;
+	}
+	public void setNum(int num) {
+		this.num = num;
 	}
 	
 	

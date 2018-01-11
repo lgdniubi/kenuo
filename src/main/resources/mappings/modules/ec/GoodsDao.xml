@@ -113,6 +113,21 @@
 			<if test="querytext != null and querytext != ''">
 				AND (g.goods_name LIKE CONCAT('%', #{querytext}, '%') OR g.keywords LIKE CONCAT('%', #{querytext}, '%'))
 			</if>
+			<if test="whetherRatio != null and whetherRatio != ''">
+				<if test="whetherRatio == 0">
+					AND g.goods_id NOT IN (select d.goods_id from mtmydb.mtmy_goods_price_ratio_details d where d.goods_id = g.goods_id and d.del_flag = 0)
+				</if>
+				<if test="whetherRatio == 1">
+					<choose>
+						<when test="newRatio != null and newRatio != ''">
+							AND g.goods_id IN (select d.goods_id from mtmydb.mtmy_goods_price_ratio_details d where d.goods_id = g.goods_id and d.del_flag = 0 and d.ratio >= #{minRatio} <![CDATA[AND d.ratio <= #{maxRatio}]]>)
+						</when>
+						<otherwise>
+							AND g.goods_id IN (select d.goods_id from mtmydb.mtmy_goods_price_ratio_details d where d.goods_id = g.goods_id and d.del_flag = 0)
+						</otherwise>
+					</choose>
+				</if>
+			</if>
 			AND g.del_flag = 0 
 			ORDER BY g.sort DESC 
 	</select>
