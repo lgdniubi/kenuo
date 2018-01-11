@@ -43,6 +43,7 @@ import com.training.modules.ec.dao.GoodsSpecPriceDao;
 import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.dao.OrderGoodsDao;
 import com.training.modules.ec.dao.OrdersDao;
+import com.training.modules.ec.dao.ReturnedGoodsDao;
 import com.training.modules.ec.dao.SaleRebatesLogDao;
 import com.training.modules.ec.entity.AcountLog;
 import com.training.modules.ec.entity.CourierResultXML;
@@ -142,6 +143,8 @@ public class OrdersController extends BaseController {
 	private TurnOverDetailsService turnOverDetailsService;
 	@Autowired
 	private UserDao userDao;
+	@Autowired
+	private ReturnedGoodsDao returnedGoodsDao;
 
 	public static final String MTMY_ID = "mtmy_id_";//用户云币缓存前缀
 	
@@ -1588,6 +1591,22 @@ public class OrdersController extends BaseController {
 				return "redirect:" + adminPath + "/ec/orders/orderform?type=view&orderid="+orders.getOrderid();
 			}
 			logger.info("商品退还仓库是否成功："+result);
+			
+			List<ReturnedGoods> list = returnedGoodsDao.queryAfterSaleList(orders.getOrderid());
+			if(list.size() > 0){
+				for(ReturnedGoods returnedGoods:list){
+					if(orders.getIsReal() == 0){
+						returnedGoodsService.saveReturnedKind(returnedGoods);
+					}else if(orders.getIsReal() == 1){
+						returnedGoodsService.saveReturned(returnedGoods);
+					}else if(orders.getIsReal() == 2){
+						returnedGoodsService.
+					}else if(orders.getIsReal() == 3){
+						returnedGoodsService.saveReturnedCommon(returnedGoods);
+					}
+				}
+			}
+			
 			goodsList=ordergoodService.orderlist(orders.getOrderid());
 			if(goodsList.size()>0){
 				for (int i = 0; i < goodsList.size(); i++) {

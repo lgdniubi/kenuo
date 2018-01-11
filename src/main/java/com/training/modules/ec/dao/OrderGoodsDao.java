@@ -168,5 +168,5 @@ public interface OrderGoodsDao extends TreeDao<OrderGoods> {
 	 * @return
 	 */
 	public List<OrderGoods> getCardRealNum(OrderGoods orderGoods);
-
+	
 }

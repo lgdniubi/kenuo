@@ -989,6 +989,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	public Orders selectOrderById(String orderid) {
 		DecimalFormat formater = new DecimalFormat("#0.##");   //四舍五入
 		Orders orders = dao.selectOrderById(orderid);
+	
 		//未处理预约金
 		if(orders.getAdvanceFlag() > 0){
 			//存在预约记录

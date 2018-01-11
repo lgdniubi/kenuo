@@ -207,9 +207,11 @@ public class Orders extends TreeEntity<Orders> {
 	
 	
 	//-----------------------------强制取消需要的字段------------------------
-	private int advanceFlag;         //是否预约金,等于1说明查到advance_flag=1,若不为1，则说明是advance_flag=0
+	private int advanceFlag;         //是否预约金,等于1说明查到advance_flag=1
 	private int sumAppt;                  //是否有预约
 	private int apptFlag;                 //预约标识（预约状态为等待服务、已完成、 已评价 、爽约，则为1，不是这几个状态的为0）
+	private int changeAdvanceFlag;        //是否平预约金，等于1说明查到advance_flag=6
+	private int returnedFlag;             //平预约金的前提下，看是否出现售后已通过（12：同意退货；13：退货中；14：退货完成；15：退款中；16：已退款；）的售后订单
 	//-------------------------------------------------------------------
 	
 	//----------------------------售后转单新字段-----------------------------
@@ -1683,6 +1685,18 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setApptFlag(int apptFlag) {
 		this.apptFlag = apptFlag;
+	}
+	public int getChangeAdvanceFlag() {
+		return changeAdvanceFlag;
+	}
+	public void setChangeAdvanceFlag(int changeAdvanceFlag) {
+		this.changeAdvanceFlag = changeAdvanceFlag;
+	}
+	public int getReturnedFlag() {
+		return returnedFlag;
+	}
+	public void setReturnedFlag(int returnedFlag) {
+		this.returnedFlag = returnedFlag;
 	}
 	
 }

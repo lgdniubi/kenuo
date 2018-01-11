@@ -1019,11 +1019,11 @@ window.onload=initStatus;
 					<shiro:hasPermission name="ec:orders:edit">
 						<a href="#" onclick="openDialogView('操作日志', '${ctx}/ec/orders/orderlist?id=${orders.orderid}','900px','450px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>订单流程</a>
 					</shiro:hasPermission>
-					<%-- <shiro:hasPermission name="ec:orders:edit">
+					<shiro:hasPermission name="ec:orders:edit">
+						<!-- 1.实物订单待发货或待收货；2.app虚拟订单，未处理预约金且（未预约或预约了但预约状态不为等待服务、已完成、 已评价 、爽约的预约）或平预约金但不存在售后完成的订单；3.后台虚拟订单，未预约或预约了但预约状态不为等待服务、已完成、 已评价 、爽约的预约或不存在售后完成的订单 -->
 						<c:if test="${type != 'view' }">
-							<!-- 1.实物订单待发货或待收货；2.app虚拟订单，未处理预约金且（未预约或预约了但预约状态不为等待服务、已完成、 已评价 、爽约的预约）；3.后台虚拟订单，未预约或预约了但预约状态不为等待服务、已完成、 已评价 、爽约的预约 -->
 							<c:choose>
-								<c:when test="${(orders.isReal == 0 && (orders.orderstatus ==1 || orders.orderstatus==2)) || (orders.channelFlag != 'bm' && orders.isReal==1 && orders.advanceFlag == 1 && ((orders.sumAppt == 0) || (orders.sumAppt > 0 && orders.apptFlag == 0)))||(orders.channelFlag == 'bm' && orders.isReal==1 && ((orders.sumAppt == 0) || (orders.sumAppt > 0 && orders.apptFlag == 0)))}">
+								<c:when test="${(orders.isReal == 0 && (orders.orderstatus ==1 || orders.orderstatus==2)) || (orders.channelFlag != 'bm' && orders.isReal==1 && ((orders.advanceFlag > 0  && ((orders.sumAppt == 0) || (orders.sumAppt > 0 && orders.apptFlag == 0))) || (orders.changeAdvanceFlag > 0 && orders.returnedFlag == 0))) || (orders.channelFlag == 'bm' && orders.isReal==1 && (((orders.sumAppt == 0) || (orders.sumAppt > 0 && orders.apptFlag == 0)) && orders.returnedFlag == 0))}">
 									<a href="#" onclick="forcedCancel('${orders.orderid}')" class="btn btn-danger btn-xs"><i class="fa fa-save"></i>强制取消</a>
 								</c:when>
 								<c:otherwise>
@@ -1031,7 +1031,7 @@ window.onload=initStatus;
 								</c:otherwise>
 							</c:choose>
 						</c:if>
-					</shiro:hasPermission> --%>
+					</shiro:hasPermission>
 					<%-- <p></p>
 					<label class="active">操作日志:</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					<shiro:hasPermission name="ec:orders:edit">
