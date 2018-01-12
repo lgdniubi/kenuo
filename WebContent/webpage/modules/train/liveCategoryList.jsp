@@ -150,7 +150,7 @@
 									<a href="#" onclick="openDialog('修改分类', '${ctx}/train/category/form?flag=3&trainLiveCategoryId=${row.trainLiveCategoryId}','430px', '480px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 修改</a>
 								</shiro:hasPermission>
 								<!-- 当分类中一级分类有其他分类时不能删除和添加下级分类 -->
-								<c:if test="${row.name != '其他' }">
+								<c:if test="${row.name ne '其它' }">
 									<shiro:hasPermission name="train:category:del">
 										<a href="#" onclick="delCategory('${row.trainLiveCategoryId}')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
 									</shiro:hasPermission>
