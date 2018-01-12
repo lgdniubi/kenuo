@@ -117,6 +117,9 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private String positionIds;		//项目部位ids,包含父类
 	//--------------------end------------------------------
 	
+	private double appArrearage;                    //app欠款
+	private double appTotalAmount;                 //app实付
+	
 	public int getAfterSaleNum() {
 		return afterSaleNum;
 	}
@@ -575,4 +578,17 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	public void setRatioPrice(double ratioPrice) {
 		this.ratioPrice = ratioPrice;
 	}
+	public double getAppArrearage() {
+		return appArrearage;
+	}
+	public void setAppArrearage(double appArrearage) {
+		this.appArrearage = appArrearage;
+	}
+	public double getAppTotalAmount() {
+		return appTotalAmount;
+	}
+	public void setAppTotalAmount(double appTotalAmount) {
+		this.appTotalAmount = appTotalAmount;
+	}
+	
 }

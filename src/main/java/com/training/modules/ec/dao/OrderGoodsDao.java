@@ -162,4 +162,10 @@ public interface OrderGoodsDao extends TreeDao<OrderGoods> {
 	 */
 	public List<OrderGoods> getCardRealNum(OrderGoods orderGoods);
 	
+	/**
+	 * 根据mapping关联details查询订单的详情
+	 * @param orderId
+	 * @return
+	 */
+	public List<OrderGoods> findOrderDetails(String orderId);
 }

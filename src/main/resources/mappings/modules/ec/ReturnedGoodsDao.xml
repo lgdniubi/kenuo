@@ -468,7 +468,9 @@
 			office_id,
 			remarks,
 			return_status,
-			is_storage
+			is_storage,
+			apply_by,
+			channel_flag
 		)VALUES(
 			#{id},
 			#{orderId},
@@ -486,7 +488,9 @@
 			#{officeId},
 			#{remarks},
 			#{returnStatus},
-			#{isStorage}
+			#{isStorage},
+			#{applyBy},
+			#{channelFlag}
 		)
 	</insert>
 	<!-- 分页查询 -->

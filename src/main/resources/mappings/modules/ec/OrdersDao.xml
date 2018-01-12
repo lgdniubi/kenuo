@@ -873,6 +873,7 @@
 			user_note,
 			discount,
 			pay_time,
+			return_time,
 			belong_office_id,
 			create_by
 		)values(
@@ -902,6 +903,7 @@
 			#{usernote},
 			1,
 			SYSDATE(),
+			DATE_ADD(NOW(),INTERVAL #{returnDay} DAY),
 			#{belongOfficeId},
 			#{createBy.id}
 		)
@@ -1053,6 +1055,7 @@
 			invoice_overtime,
 			discount,
 			pay_time,
+			return_time,
 			belong_office_id,
 			create_by
 		)values(
@@ -1085,6 +1088,7 @@
 			#{invoiceOvertime},
 			1,
 			SYSDATE(),
+			DATE_ADD(NOW(),INTERVAL #{returnDay} DAY),
 			#{belongOfficeId},
 			#{createBy.id}
 		)

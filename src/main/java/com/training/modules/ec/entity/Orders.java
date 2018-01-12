@@ -219,6 +219,8 @@ public class Orders extends TreeEntity<Orders> {
 	private String returnedId;                      //售后订单id
 	//-------------------------------------------------------------------
 	
+	private int returnDay;                           //退货日期
+	
 	public String getSearchIsReal() {
 		return searchIsReal;
 	}
@@ -1697,6 +1699,12 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setReturnedFlag(int returnedFlag) {
 		this.returnedFlag = returnedFlag;
+	}
+	public int getReturnDay() {
+		return returnDay;
+	}
+	public void setReturnDay(int returnDay) {
+		this.returnDay = returnDay;
 	}
 	
 }

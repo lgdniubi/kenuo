@@ -62,7 +62,8 @@
 		SELECT
 			SUM(total_amount) as totalAmount,
 			SUM(order_balance) as orderBalance,
-			SUM(order_arrearage) as orderArrearage
+			SUM(order_arrearage) as orderArrearage,
+			SUM(app_arrearage) AS  appArrearage
 		FROM
 			mtmydb.mtmy_order_goods_details
 		WHERE
@@ -313,4 +314,20 @@
 		WHERE 
 			advance_flag = 5
 	</delete>
+	
+	<!-- 是否有未处理预约金的 -->
+	<select id="whetherAdvanceFlag" resultType="Integer">
+		SELECT COUNT(*) 
+		FROM mtmydb.mtmy_order_goods_details
+		WHERE order_id = #{orderId}
+		AND advance_flag = '1'
+	</select>
+	
+	<!-- 平预约金 -->
+	<update id="flatOutAdvance">
+		UPDATE mtmydb.mtmy_order_goods_details
+		SET advance_flag = '6'
+		WHERE order_id = #{orderId}
+		AND advance_flag = '1'
+	</update>
 </mapper>

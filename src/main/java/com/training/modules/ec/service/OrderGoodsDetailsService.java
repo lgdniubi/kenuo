@@ -148,4 +148,21 @@ public class OrderGoodsDetailsService extends TreeService<OrderGoodsDetailsDao, 
 	public int getCountArrearage(ReturnedGoods returnedGoods) {
 		return dao.getCountArrearage(returnedGoods);
 	}
+	
+	/**
+	 * 是否有未处理预约金的 
+	 * @param orderId
+	 * @return
+	 */
+	public int whetherAdvanceFlag(String orderId){
+		return dao.whetherAdvanceFlag(orderId);
+	}
+	
+	/**
+	 * 平预约金
+	 * @param orderId
+	 */
+	public void flatOutAdvance(String orderId){
+		dao.flatOutAdvance(orderId);
+	}
 }
