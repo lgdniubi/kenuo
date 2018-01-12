@@ -121,4 +121,13 @@ public class OrderGoodsService extends TreeService<OrderGoodsDao,OrderGoods>{
 	public int getGoodsNum(ReturnedGoods returnedGoods) {
 		return orderGoodsDao.getGoodsNum(returnedGoods);
 	}
+	
+	/**
+	 * 根据mapping关联details查询订单的详情
+	 * @param orderId
+	 * @return
+	 */
+	public List<OrderGoods> findOrderDetails(String orderId){
+		return orderGoodsDao.findOrderDetails(orderId);
+	}
 }

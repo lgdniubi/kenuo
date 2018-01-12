@@ -85,6 +85,7 @@
 			SUM(b.order_balance) as "orderBalance",
 			SUM(b.service_times) as "remaintimes",
 			SUM(b.order_arrearage) as "orderArrearage",
+			SUM(b.app_arrearage) AS  appArrearage,
 			IFNULL(c.return_num,0) as "returnNum"
 		FROM
 			mtmydb.mtmy_order_goods_mapping a
@@ -498,5 +499,59 @@
 			mtmydb.mtmy_order_goods_mapping a
 		WHERE 
 			a.order_id = #{orderId}
+	</select>
+	
+	<!-- 根据mapping关联details查询订单的详情 -->
+	<select id="findOrderDetails" resultType="OrderGoods">
+		SELECT
+			a.rec_id,
+			a.group_id AS 'groupId',
+			a.order_id,
+			a.user_id,
+			a.goods_name,
+			a.goods_id,
+			a.goods_sn,
+			a.goods_num,
+			a.original_img,
+			a.market_price,
+			a.goods_price,
+			a.cost_price,
+			a.coupon_price,
+			a.member_goods_price,
+			a.discount,
+			a.give_integral,
+			a.spec_key,
+			a.spec_key_name,
+			a.bar_code,
+			a.is_comment,
+			a.action_type,
+			a.action_id,
+			a.is_send,
+			a.delivery_id,
+			a.add_time,
+			a.service_times,
+			a.remain_times,
+			a.service_min,
+			a.is_real,
+			a.expiring_date,
+			a.order_amount,
+			a.single_reality_price,
+			a.single_norm_price,
+			a.is_after_sales,
+			b.advance_flag as "advanceFlag",
+			a.reality_add_time as "realityAddTime",
+			SUM(b.total_amount) as "totalAmount",
+			SUM(b.order_balance) as "orderBalance",
+			SUM(b.service_times) as "remaintimes",
+			SUM(b.order_arrearage) as "orderArrearage",
+			SUM(b.app_arrearage) AS  "appArrearage",
+			SUM(b.app_total_amount) AS  "appTotalAmount"
+		FROM
+			mtmydb.mtmy_order_goods_mapping a
+		LEFT JOIN mtmydb.mtmy_order_goods_details b ON a.rec_id=b.goods_mapping_id
+		WHERE a.del_flag = 0
+		AND a.order_id= #{orderId}
+		AND a.group_id = 0
+		GROUP BY a.rec_id
 	</select>
 </mapper>

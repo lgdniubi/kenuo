@@ -166,4 +166,17 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * 删除平欠款记录
 	 */
 	void deleteArrearage();
+	
+	/**
+	 * 是否有未处理预约金的 
+	 * @param orderId
+	 * @return
+	 */
+	public int whetherAdvanceFlag(String orderId);
+	
+	/**
+	 * 平预约金
+	 * @param orderId
+	 */
+	public void flatOutAdvance(String orderId);
 }

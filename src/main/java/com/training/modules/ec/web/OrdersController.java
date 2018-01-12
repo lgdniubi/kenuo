@@ -42,7 +42,9 @@ import com.training.common.web.BaseController;
 import com.training.modules.ec.dao.GoodsSpecPriceDao;
 import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.dao.OrderGoodsDao;
+import com.training.modules.ec.dao.OrderGoodsDetailsDao;
 import com.training.modules.ec.dao.OrdersDao;
+import com.training.modules.ec.dao.ReturnedGoodsDao;
 import com.training.modules.ec.dao.SaleRebatesLogDao;
 import com.training.modules.ec.entity.AcountLog;
 import com.training.modules.ec.entity.CourierResultXML;
@@ -142,6 +144,10 @@ public class OrdersController extends BaseController {
 	private TurnOverDetailsService turnOverDetailsService;
 	@Autowired
 	private UserDao userDao;
+	@Autowired
+	private ReturnedGoodsDao returnedGoodsDao;
+	@Autowired
+	private OrderGoodsDetailsDao orderGoodsDetailsDao;
 
 	public static final String MTMY_ID = "mtmy_id_";//用户云币缓存前缀
 	
@@ -1577,7 +1583,6 @@ public class OrdersController extends BaseController {
 	@RequestMapping(value = "forcedCancel")
 	public String forcedCancel(Orders orders, HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
 		try {
-			List<OrderGoods> goodsList=new ArrayList<OrderGoods>();
 			int integral = 0;
 			
 			orders = ordersService.findselectByOrderId(orders.getOrderid());
@@ -1588,9 +1593,38 @@ public class OrdersController extends BaseController {
 				return "redirect:" + adminPath + "/ec/orders/orderform?type=view&orderid="+orders.getOrderid();
 			}
 			logger.info("商品退还仓库是否成功："+result);
-			goodsList=ordergoodService.orderlist(orders.getOrderid());
-			if(goodsList.size()>0){
-				for (int i = 0; i < goodsList.size(); i++) {
+			
+			//强制取消的时候若存在处于正在申请的售后（0：退货并退款；1：仅换货；2：仅退款），则调土豆的售后审核将这些申请审核未拒绝
+			List<ReturnedGoods> list = returnedGoodsDao.queryAfterSaleList(orders.getOrderid());
+			if(list.size() > 0){
+				for(ReturnedGoods returnedGoods:list){
+					if("11".equals(returnedGoods.getReturnStatus())){
+						returnedGoods.setIsConfirm(-10);
+					}else if("21".equals(returnedGoods.getReturnStatus())){
+						returnedGoods.setIsConfirm(-20);
+					}
+					
+					if(orders.getIsReal() == 0){
+						returnedGoodsService.saveReturnedKind(returnedGoods);
+					}else if(orders.getIsReal() == 1){
+						returnedGoodsService.saveReturned(returnedGoods);
+					}else if(orders.getIsReal() == 2){
+						returnedGoodsService.saveEditeSuit(returnedGoods);
+					}else if(orders.getIsReal() == 3){
+						returnedGoodsService.saveReturnedCommon(returnedGoods);
+					}
+				}
+			}
+			
+			//将整个订单进行强制取消
+			
+			if(orderGoodsDetailsService.whetherAdvanceFlag(orders.getOrderid()) > 0){  //若存在预约金
+				orderGoodsDetailsService.flatOutAdvance(orders.getOrderid());          //平预约金
+			}
+			
+			List<OrderGoods> orderGoodsList = ordergoodService.findOrderDetails(orders.getOrderid());     
+			if(orderGoodsList.size() > 0){    
+				for(OrderGoods orderGoods:orderGoodsList){
 					Date date=new Date();
 					SimpleDateFormat simd=new SimpleDateFormat("YYYYMMddHHmmssSSS");
 					String str=simd.format(date);
@@ -1605,7 +1639,7 @@ public class OrdersController extends BaseController {
 						
 						returnedGoods.setIsReal(orders.getIsReal());
 					}
-					returnedGoods.setGoodsMappingId(goodsList.get(i).getRecid()+"");
+					returnedGoods.setGoodsMappingId(orderGoods.getRecid()+"");
 					returnedGoods.setIsStorage("1");
 					returnedGoods.setReturnStatus("15");
 					returnedGoods.setIsReal(orders.getIsReal());
@@ -1614,20 +1648,103 @@ public class OrdersController extends BaseController {
 					returnedGoods.setReturnReason("强制取消");
 					returnedGoods.setProblemDesc("强制取消");
 					returnedGoods.setRemarks("强制取消");
-					returnedGoods.setReturnNum(goodsList.get(i).getGoodsnum());
-					returnedGoods.setTotalAmount(goodsList.get(i).getTotalAmount());
-					returnedGoods.setOrderAmount(goodsList.get(i).getOrderAmount());
-					returnedGoods.setReturnAmount(goodsList.get(i).getTotalAmount());
+					if(orders.getIsReal() == 0){
+						returnedGoods.setReturnNum(orderGoods.getGoodsnum());
+					}else if(orders.getIsReal() == 1){
+						returnedGoods.setReturnNum(orderGoods.getRemaintimes());
+					}else if(orders.getIsReal() == 2){
+						returnedGoods.setReturnNum(0);
+					}else if(orders.getIsReal() == 3){
+						returnedGoods.setReturnNum(orderGoods.getRemaintimes());
+					}
+					returnedGoods.setTotalAmount(orderGoods.getAppTotalAmount());
+					returnedGoods.setOrderAmount(orderGoods.getOrderAmount());
+					returnedGoods.setReturnAmount(orderGoods.getAppTotalAmount());
 					returnedGoods.setId(id);
 					returnedGoods.setApplyType(0);
 					returnedGoods.setApplyDate(date);
+					returnedGoods.setApplyBy(UserUtils.getUser().getId());//添加申请人(获取当前登录人的信息)
+					returnedGoods.setChannelFlag("bm");
 					//保存到退货表
 					returnedGoodsService.insertForcedCancel(returnedGoods);
 					ordersService.updateOrderStatut(orders.getOrderid());
-					integral = integral + orderGoodsDao.getintegralByRecId(goodsList.get(i).getRecid()+"") * goodsList.get(i).getGoodsnum();
+					integral = integral + orderGoodsDao.getintegralByRecId(orderGoods.getRecid()+"") * orderGoods.getGoodsnum();
 					//验证是否为抢购活动订单
-					if(goodsList.get(i).getActiontype()==1){
-						redisClientTemplate.hincrBy(buying_limit_prefix+goodsList.get(i).getActionid(), orders.getUserid()+"_"+goodsList.get(i).getGoodsid(),-goodsList.get(i).getGoodsnum());
+					if(orderGoods.getActiontype()==1){
+						redisClientTemplate.hincrBy(buying_limit_prefix+orderGoods.getActionid(), orders.getUserid()+"_"+orderGoods.getGoodsid(),-orderGoods.getGoodsnum());
+					}
+					
+					cancelOrders(orderGoods,id);   //平欠款，平次个数
+					
+					if(orders.getIsReal() == 2){
+						//套卡售后  子项商品保存mtmy_returned_goods_card
+						//通过recid查询售后子项
+						OrderGoods newOrderGoods = new OrderGoods();
+						newOrderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
+						List<OrderGoods> og = orderGoodsDao.getOrderGoodsCard(newOrderGoods);
+						//循环卡项子项,把实物售后数量写入
+						ReturnedGoods rg = new ReturnedGoods();
+						for (int i = 0; i < og.size(); i++) {
+							if(og.get(i).getIsreal() == 0){
+								//当子项是实物时,把售后数量写入
+								rg.setReturnedId(id);
+								rg.setGoodsMappingId(og.get(i).getRecid()+"");
+								rg.setIsReal(og.get(i).getIsreal());
+								rg.setReturnNum(og.get(i).getGoodsnum());
+								rg.setGoodsName(og.get(i).getGoodsname());
+								returnedGoodsDao.insertReturnGoodsCard(rg);
+								
+								//当实物时,给mapping表中插入after_sale_num
+								newOrderGoods.setRecid(og.get(i).getRecid());
+								newOrderGoods.setAfterSaleNum(og.get(i).getGoodsnum());
+								orderGoodsDao.updateIsAfterSales(newOrderGoods);
+							}
+						}
+						//查询套卡子项虚拟商品的剩余次数(购买次数-预约次数)
+						List<ReturnedGoods> returnedGoodsNum = returnedGoodsDao.getReturnNum(returnedGoods);
+						for (ReturnedGoods rgn : returnedGoodsNum) {
+							rgn.setReturnedId(returnedGoods.getId());
+							//修改套卡子项虚拟商品的剩余次数
+							rgn.setReturnNum(rgn.getReturnNum());
+							returnedGoodsDao.insertReturnGoodsCard(rgn);
+							
+							//当虚拟商品时,给mapping表中插入after_sale_num
+							newOrderGoods.setRecid(Integer.valueOf(rgn.getGoodsMappingId()));
+							newOrderGoods.setAfterSaleNum(rgn.getReturnNum());
+							orderGoodsDao.updateIsAfterSales(newOrderGoods);
+						}
+					}else if(orders.getIsReal() == 3){
+						//--------查询出通用卡的子项,并把实物的售后数量写入   虚拟的为0-----------------
+						//通过recid查询售后子项
+						OrderGoods newOrderGoods = new OrderGoods();
+						newOrderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
+						List<OrderGoods> og = orderGoodsDao.getOrderGoodsCard(newOrderGoods);
+						//循环卡项子项,把实物售后数量写入
+						ReturnedGoods rg = new ReturnedGoods();
+						for (int i = 0; i < og.size(); i++) {
+							rg.setReturnedId(id);
+							rg.setGoodsMappingId(og.get(i).getRecid()+"");
+							//给mapping插入数据
+							newOrderGoods.setRecid(og.get(i).getRecid());
+							
+							rg.setIsReal(og.get(i).getIsreal());
+							if(og.get(i).getIsreal() == 0){//当子项是实物时,把售后数量写入
+								rg.setReturnNum(og.get(i).getGoodsnum());
+								
+								//给mapping表中插入after_sale_num
+								newOrderGoods.setAfterSaleNum(og.get(i).getGoodsnum());
+							}else if(og.get(i).getIsreal() == 1){
+								rg.setReturnNum(0);
+								//给mapping表中插入after_sale_num
+								newOrderGoods.setAfterSaleNum(0);
+							}
+							rg.setGoodsName(og.get(i).getGoodsname());
+							returnedGoodsDao.insertReturnGoodsCard(rg);
+							
+							//mapping和returned_goods及其卡项子项表时对应的,所以售后数量一样
+							orderGoodsDao.updateIsAfterSales(newOrderGoods);
+						}
+						//--------查询出通用卡的子项,并把实物的售后数量写入   虚拟的为0-------------------
 					}
 				}
 			}
@@ -1669,6 +1786,49 @@ public class OrdersController extends BaseController {
 		//return "redirect:" + adminPath + "/ec/orders/list";
 		return "redirect:" + adminPath + "/ec/orders/orderform?type=view&orderid="+orders.getOrderid();
 	}
+	
+	/**
+	 * 强制取消的统一方法(detail表插入售后记录)(平欠款)
+	 * @param orderGoods,
+	 * @param id,售后订单id
+	 * @return
+	 */
+	public void cancelOrders(OrderGoods orderGoods,String id) {
+		if(orderGoods.getOrderArrearage() > 0){  //若存在欠款,则平欠款
+			OrderGoodsDetails ogd1 = new OrderGoodsDetails();
+			ogd1.setOrderId(orderGoods.getOrderid());
+			ogd1.setGoodsMappingId(String.valueOf(orderGoods.getRecid()));
+			ogd1.setOrderBalance(-orderGoods.getOrderBalance());//平欠款,扣除订单余款
+			ogd1.setOrderArrearage(-orderGoods.getOrderArrearage());//平欠款,扣除订单欠款
+			ogd1.setAppArrearage(-orderGoods.getAppArrearage());//平欠款,扣除app欠款金额
+			ogd1.setType(3);
+			ogd1.setAdvanceFlag("5");
+			ogd1.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
+			ogd1.setCreateBy(UserUtils.getUser());
+			orderGoodsDetailsDao.saveOrderGoodsDetails(ogd1);
+		}
+		
+		//平次数，details插入虚拟、套卡、通用卡平掉的次数或者实物的空记录
+		OrderGoodsDetails ogd = new OrderGoodsDetails();
+		ogd.setOrderId(orderGoods.getOrderid());
+		ogd.setGoodsMappingId(String.valueOf(orderGoods.getRecid()));
+		if(orderGoods.getIsreal() != 0){//实物不需要存入detail表中,虚拟和通用卡需要
+			ogd.setReturnedId(id);
+			ogd.setServiceTimes(-orderGoods.getRemaintimes());
+		}
+		
+		if(orderGoods.getIsreal() == 2){//套卡需要存入'套卡剩余金额'
+			//判断是否为套卡,存入剩余金额surplusAmount
+			double surplusAmount = orderGoodsDetailsDao.getOrderGoodsDetailSurplusAmountByOid(ogd);
+			ogd.setSurplusAmount(-surplusAmount);
+		}
+		ogd.setType(2);
+		ogd.setAdvanceFlag("4");
+		ogd.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
+		ogd.setCreateBy(UserUtils.getUser());
+		orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
+	}
+	
 	/**
 	 * 归还仓库
 	 * @return

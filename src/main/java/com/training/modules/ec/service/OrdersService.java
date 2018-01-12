@@ -62,6 +62,7 @@ import com.training.modules.quartz.utils.RedisLock;
 import com.training.modules.sys.dao.AreaDao;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.User;
+import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.utils.ScopeUtils;
 
@@ -889,6 +890,12 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
+		//修改退货日期
+		int returnDay = Integer.parseInt(ParametersFactory.getMtmyParamValues("returngoods_date"));
+		if(-1 == returnDay){
+			returnDay = 10;	//默认给一个10天（快递3天+7天退货）
+		}
+		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -989,6 +996,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	public Orders selectOrderById(String orderid) {
 		DecimalFormat formater = new DecimalFormat("#0.##");   //四舍五入
 		Orders orders = dao.selectOrderById(orderid);
+	
 		//未处理预约金
 		if(orders.getAdvanceFlag() > 0){
 			//存在预约记录
@@ -1543,6 +1551,12 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setCreateBy(user);
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
+		//修改退货日期
+		int returnDay = Integer.parseInt(ParametersFactory.getMtmyParamValues("returngoods_date"));
+		if(-1 == returnDay){
+			returnDay = 10;	//默认给一个10天（快递3天+7天退货）
+		}
+		_orders.setReturnDay(returnDay);
 		ordersDao.saveKindOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -2363,6 +2377,12 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
+		//修改退货日期
+		int returnDay = Integer.parseInt(ParametersFactory.getMtmyParamValues("returngoods_date"));
+		if(-1 == returnDay){
+			returnDay = 10;	//默认给一个10天（快递3天+7天退货）
+		}
+		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -2706,6 +2726,12 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setCreateBy(user);
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
+		//修改退货日期
+		int returnDay = Integer.parseInt(ParametersFactory.getMtmyParamValues("returngoods_date"));
+		if(-1 == returnDay){
+			returnDay = 10;	//默认给一个10天（快递3天+7天退货）
+		}
+		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -3537,6 +3563,12 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
+		//修改退货日期
+		int returnDay = Integer.parseInt(ParametersFactory.getMtmyParamValues("returngoods_date"));
+		if(-1 == returnDay){
+			returnDay = 10;	//默认给一个10天（快递3天+7天退货）
+		}
+		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -3754,6 +3786,12 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setCreateBy(user);
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
+		//修改退货日期
+		int returnDay = Integer.parseInt(ParametersFactory.getMtmyParamValues("returngoods_date"));
+		if(-1 == returnDay){
+			returnDay = 10;	//默认给一个10天（快递3天+7天退货）
+		}
+		_orders.setReturnDay(returnDay);
 		ordersDao.saveKindOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -4069,6 +4107,12 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setCreateBy(user);
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
+		//修改退货日期
+		int returnDay = Integer.parseInt(ParametersFactory.getMtmyParamValues("returngoods_date"));
+		if(-1 == returnDay){
+			returnDay = 10;	//默认给一个10天（快递3天+7天退货）
+		}
+		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
 		
 		//根据用户id查询用户账户信息
@@ -4370,6 +4414,12 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
+		//修改退货日期
+		int returnDay = Integer.parseInt(ParametersFactory.getMtmyParamValues("returngoods_date"));
+		if(-1 == returnDay){
+			returnDay = 10;	//默认给一个10天（快递3天+7天退货）
+		}
+		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
 		
 		//根据用户id查询用户账户信息

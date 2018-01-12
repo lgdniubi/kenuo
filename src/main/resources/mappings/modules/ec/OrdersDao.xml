@@ -873,6 +873,7 @@
 			user_note,
 			discount,
 			pay_time,
+			return_time,
 			belong_office_id,
 			create_by
 		)values(
@@ -902,6 +903,7 @@
 			#{usernote},
 			1,
 			SYSDATE(),
+			DATE_ADD(NOW(),INTERVAL #{returnDay} DAY),
 			#{belongOfficeId},
 			#{createBy.id}
 		)
@@ -981,7 +983,9 @@
 			o.shipping_price as shippingprice,
 			IFNULL(u.office_id,'') AS officeId,
 			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '1') AS 'advanceFlag',
-			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '0' AND service_times = -1) AS 'sumAppt'
+			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '6') AS 'changeAdvanceFlag',
+			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '0' AND service_times = -1) AS 'sumAppt',
+			(SELECT COUNT(*) FROM mtmydb.mtmy_returned_goods WHERE order_id = #{orderid} AND del_flag = 0 AND return_status IN (12,13,14,15,16,22,23,24,25,26)) AS 'returnedFlag'
 		FROM
 			mtmydb.mtmy_orders o,
 			mtmydb.mtmy_users u
@@ -1051,6 +1055,7 @@
 			invoice_overtime,
 			discount,
 			pay_time,
+			return_time,
 			belong_office_id,
 			create_by
 		)values(
@@ -1083,6 +1088,7 @@
 			#{invoiceOvertime},
 			1,
 			SYSDATE(),
+			DATE_ADD(NOW(),INTERVAL #{returnDay} DAY),
 			#{belongOfficeId},
 			#{createBy.id}
 		)

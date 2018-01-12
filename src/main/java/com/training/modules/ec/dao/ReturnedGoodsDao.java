@@ -243,4 +243,11 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 * @return
 	 */
 	public int getRealReturnNum(ReturnedGoods returnedGoods);
+	
+	/**
+	 * 查询处于申请状态的售后订单
+	 * @param orderIds
+	 * @return
+	 */
+	public List<ReturnedGoods> queryAfterSaleList(String orderIds);
 }

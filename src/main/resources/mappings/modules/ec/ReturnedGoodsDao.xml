@@ -458,7 +458,9 @@
 			office_id,
 			remarks,
 			return_status,
-			is_storage
+			is_storage,
+			apply_by,
+			channel_flag
 		)VALUES(
 			#{id},
 			#{orderId},
@@ -476,7 +478,9 @@
 			#{officeId},
 			#{remarks},
 			#{returnStatus},
-			#{isStorage}
+			#{isStorage},
+			#{applyBy},
+			#{channelFlag}
 		)
 	</insert>
 	<!-- 分页查询 -->
@@ -910,5 +914,19 @@
 			a.goods_mapping_id = #{recid}
 		AND
 			return_status IN (12,13,14,15,16)
+	</select>
+	
+	<!-- 查询处于申请状态的售后订单 -->
+	<select id="queryAfterSaleList" resultType="ReturnedGoods">
+		SELECT
+			<include refid="returnColunm"/>
+		FROM mtmydb.mtmy_returned_goods a 
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.goods_mapping_id=b.rec_id
+		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
+		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
+		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
+		WHERE a.order_id = #{orderid}
+		AND a.return_status IN (11,21)
+		AND a.del_flag=0
 	</select>
 </mapper>
