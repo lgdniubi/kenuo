@@ -90,7 +90,7 @@
 				mtmydb.mtmy_appt_order a,
 				mtmydb.mtmy_order_goods_mapping b 
 			WHERE
-				appt_status IN (1, 2, 4)
+				appt_status IN (1, 2)
 				AND a.goods_mapping_id = b.rec_id
 				AND b.service_times != '999'
 				AND b.is_real = 1
@@ -153,7 +153,7 @@
 			FROM
 				mtmydb.mtmy_appt_order a
 			WHERE
-				appt_status IN (1, 2, 4)
+				appt_status IN (1, 2)
 				AND a.goods_mapping_id = #{list.mappingId}
 			GROUP BY beauticianId,beaOfficeId,year,quarter,month,week,day
 		</foreach>
