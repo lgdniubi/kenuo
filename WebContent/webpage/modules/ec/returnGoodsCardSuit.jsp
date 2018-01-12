@@ -132,7 +132,7 @@
 		<div class="ibox">
 			<div class="ibox-content">
 				<div class="clearfix">
-				<form:form id="inputForm" modelAttribute="returnedGoods" action="${ctx}/ec/returned/save" method="post" class="form-horizontal">
+				<form:form id="inputForm" modelAttribute="returnedGoods" action="${ctx}/ec/returned/saveReturnedSuit" method="post" class="form-horizontal">
 					<input type="hidden" id="amount" value="${amount}"/>
 					<form:hidden path="id"/>
 					<form:hidden path="isReal"/>
