@@ -92,6 +92,8 @@ public class ReturnedGoodsController extends BaseController {
 
 	@RequestMapping(value = "returnform")
 	public String returnform(ReturnedGoods returnedGoods, String id, HttpServletRequest request,HttpServletResponse response, Model model) {
+		String flag = request.getParameter("flag");
+		model.addAttribute("flag",flag);
 		int goodsNum = 0;//实物的可售后数量
 		double amount = 0.0;//实物的可售后金额
 		int times = 0;//虚拟的可售后次数
@@ -145,6 +147,7 @@ public class ReturnedGoodsController extends BaseController {
 	@RequestMapping(value = "returnformCard")
 	public String returnformCard(ReturnedGoods returnedGoods, String id, HttpServletRequest request,HttpServletResponse response, Model model) {
 		String flag = request.getParameter("flag");
+		model.addAttribute("flag",flag);
 		//查询的售后图片添加到退货中
 		List<ReturnedGoodsImages> imgList=new ArrayList<ReturnedGoodsImages>();
 		returnedGoods = returnedGoodsService.get(id);
@@ -213,7 +216,6 @@ public class ReturnedGoodsController extends BaseController {
 				}
 			}
 			model.addAttribute("amount",orderGoods.getTotalAmount());
-			model.addAttribute("flag",flag);
 			model.addAttribute("returnGoodsCard",suitCardSons.toString());
 			model.addAttribute("returnedGoods", returnedGoods);
 			
@@ -276,7 +278,6 @@ public class ReturnedGoodsController extends BaseController {
 				model.addAttribute("realGoods",realGoods);
 			}
 			
-			model.addAttribute("flag",flag);
 			model.addAttribute("amount",amount);//通用卡可售后金额
 			model.addAttribute("times",times);//通用卡可售后次数
 			model.addAttribute("returnGoodsCard",suitCardSons.toString());
@@ -970,15 +971,5 @@ public class ReturnedGoodsController extends BaseController {
 			flag = "error";
 		}
 		return flag;
-	}
-	/**
-	 * 查询商品是否有过未取消的预约(通过mappingid查询预约表)
-	 * @param goodsMappingId
-	 * @return  
-	 */
-	@ResponseBody
-	@RequestMapping(value = "getCountApptOrder")
-	public int getCountApptOrder(String goodsMappingId) {
-		return returnedGoodsService.getCountApptOrder(goodsMappingId);
 	}
 }

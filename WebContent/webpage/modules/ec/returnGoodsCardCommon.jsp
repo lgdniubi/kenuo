@@ -409,7 +409,7 @@
 						</div>
 						<p></p>
 					</div>
-					<c:if test="${flag != 1}">
+					<c:if test="${flag == 'edit'}">
 				        <c:if test="${returnedGoods.returnStatus==11}">
 			        		<label>是否同意申请：</label>
 							<label><input id="isConfirm" name="isConfirm" type="radio" value="12"  class="form required" onclick="seletAddreess()"/>同意退货 </label>

@@ -11,6 +11,7 @@
 		var validateForm;
 		var goodsNum = 0;//实物售后数量校验用
 		var orderArrearage=0;//订单欠款
+		var flag = false;//判断套卡商品是否已售后
 		var flagNum = false;//实物售后数量校验用
 		var advanceFlag;
 		
@@ -19,6 +20,11 @@
 			  var recid=$("#goodsMappingId").val();
 			  if(recid==""){
 				  top.layer.alert('请选择退货商品!', {icon: 0, title:'提醒'});
+				  return;
+			  }
+			  //该商品已申请售后
+			  if(flag){
+				  top.layer.alert('当前商品已申请售后', {icon: 0, title:'提醒'});
 				  return;
 			  }
 			  //订单存在预约金,先处理预约金

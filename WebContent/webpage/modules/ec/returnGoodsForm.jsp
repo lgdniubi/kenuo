@@ -365,15 +365,17 @@
 						</div>
 						<p></p>
 					</div>
-			        <c:if test="${returnedGoods.returnStatus==11}">
-			        		<label>是否同意申请：</label>
-							<label><input id="isConfirm" name="isConfirm" type="radio" value="12"  class="form required" onclick="seletAddreess()"/>同意退货 </label>
-							<label><input id="isConfirm" name="isConfirm" type="radio" value="-10"  class="form required"  onclick="shuoRefusal()"/>拒绝退货</label>
-					</c:if> 
-					<c:if test="${returnedGoods.returnStatus==21}">
-							<label>是否同意申请：</label>
-							<label><input id="isConfirm" name="isConfirm" type="radio" value="22"  class="form required" onclick="seletAddreess()"/>同意换货</label>
-							<label><input id="isConfirm" name="isConfirm" type="radio" value="-20"  class="form required"  onclick="shuoRefusal()"/>拒绝换货</label>
+					<c:if test="${flag == 'edit'}">
+				        <c:if test="${returnedGoods.returnStatus==11}">
+				        		<label>是否同意申请：</label>
+								<label><input id="isConfirm" name="isConfirm" type="radio" value="12"  class="form required" onclick="seletAddreess()"/>同意退货 </label>
+								<label><input id="isConfirm" name="isConfirm" type="radio" value="-10"  class="form required"  onclick="shuoRefusal()"/>拒绝退货</label>
+						</c:if> 
+						<c:if test="${returnedGoods.returnStatus==21}">
+								<label>是否同意申请：</label>
+								<label><input id="isConfirm" name="isConfirm" type="radio" value="22"  class="form required" onclick="seletAddreess()"/>同意换货</label>
+								<label><input id="isConfirm" name="isConfirm" type="radio" value="-20"  class="form required"  onclick="shuoRefusal()"/>拒绝换货</label>
+						</c:if>
 					</c:if>
 					<div id="refusal" style="display:none;">
 						<label>拒绝原因：</label>

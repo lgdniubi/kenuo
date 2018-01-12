@@ -220,12 +220,6 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 */
 	public List<OrderPushmoneyRecord> getReturnedBeauticianLog(OrderPushmoneyRecord orderPushmoneyRecord);
 	/**
-	 * 查询商品是否有过未取消的预约(通过mappingid查询预约表)
-	 * @param goodsMappingId
-	 * @return
-	 */
-	public int getCountApptOrder(String goodsMappingId);
-	/**
 	 * 获取不包含自己本身的总的售后金额和售后数量
 	 * @param returnedGoods
 	 * @return

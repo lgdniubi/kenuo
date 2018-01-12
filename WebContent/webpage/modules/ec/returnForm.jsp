@@ -47,39 +47,28 @@
 				  $("#receiveName").val("");//清空收款人信息
 				  $("#receiveAccount").val("");//清空收款账号
 			  }else{//退货并退款      仅退款
-				  if(servicetimes == 999){//时限卡,金额不能为0
-					  //虚拟商品的退款金额校验
-					  var ra=$("#returnAmount").val();
-					  if(parseFloat(ra)<=0){
-						  top.layer.alert('退款金额必须大于0，小于实付款金额!', {icon: 0, title:'提醒'});
-						  return;
-					  }else if(parseFloat(surplusReturnAmount) < parseFloat(ra)){
-						  top.layer.alert('退款金额必须大于0，小于实付款金额!', {icon: 0, title:'提醒'});
-						  return;
-					  }
-				  }else{//普通虚拟商品,金额和次数不能都为0
-					  var st=$("#returnNum").val();
-					  if(parseInt(st)<0){
-						  top.layer.alert('售后次数必须大于等于0，小于剩余次数!', {icon: 0, title:'提醒'});
-						  return;
-					  }else if(parseInt(st)>parseInt(remaintimes)){
-						  top.layer.alert('售后次数必须大于等于0，小于剩余次数!', {icon: 0, title:'提醒'});
-						  return;
-					  }
-					  //虚拟商品的退款金额校验
-					  var ra=$("#returnAmount").val();
-					  if(parseFloat(ra)<0){
-						  top.layer.alert('退款金额必须大于等于0，小于实付款金额!', {icon: 0, title:'提醒'});
-						  return;
-					  }else if(parseFloat(surplusReturnAmount) < parseFloat(ra)){
-						  top.layer.alert('退款金额必须大于等于0，小于实付款金额!', {icon: 0, title:'提醒'});
-						  return;
-					  }
-					  //当售后数量和售后金额都为0,商品不能售后
-					  if(parseInt(st) == 0 && parseInt(ra) == 0){
-						  top.layer.alert('售后商品数量和退款金额不能都为0!', {icon: 0, title:'提醒'});
-						  return;
-					  }
+				  //虚拟商品的退款次数校验
+				  var st=$("#returnNum").val();
+				  if(parseInt(st)<0){
+					  top.layer.alert('售后次数必须大于等于0，小于剩余次数!', {icon: 0, title:'提醒'});
+					  return;
+				  }else if(parseInt(st)>parseInt(remaintimes)){
+					  top.layer.alert('售后次数必须大于等于0，小于剩余次数!', {icon: 0, title:'提醒'});
+					  return;
+				  }
+				  //虚拟商品的退款金额校验
+				  var ra=$("#returnAmount").val();
+				  if(parseFloat(ra)<0){
+					  top.layer.alert('退款金额必须大于等于0，小于实付款金额!', {icon: 0, title:'提醒'});
+					  return;
+				  }else if(parseFloat(surplusReturnAmount) < parseFloat(ra)){
+					  top.layer.alert('退款金额必须大于等于0，小于实付款金额!', {icon: 0, title:'提醒'});
+					  return;
+				  }
+				  //当售后数量和售后金额都为0,商品不能售后
+				  if(parseInt(st) == 0 && parseInt(ra) == 0){
+					  top.layer.alert('售后商品数量和退款金额不能都为0!', {icon: 0, title:'提醒'});
+					  return;
 				  }
 				  //退款方式是"银行卡账户"需要填写收款人和收款方式
 				  var returnType=$("#returnType").val();
@@ -130,25 +119,7 @@
 			singleRealityPrice=$("#"+id+"singleRealityPrice").val();//实际服务单次价
 			totalAmount=$("#"+id+"totalAmount").val();//实付款
 			orderAmount=$("#"+id+"orderAmount").val();//应付款
-			
-			//查询商品是否有预约(通过mappingid查询预约表)
-			$.ajax({
-				type:"post",
-				async:false,
-				data:{
-					goodsMappingId:id
-				},
-				url:"${ctx}/ec/returned/getCountApptOrder",
-				success:function(date){
-					if(date == 0 && advanceFlag == 1){
-						top.layer.alert('当前订单可以强制取消!', {icon: 0, title:'提醒'});
-						return;
-					}
-				},
-				error:function(XMLHttpRequest,textStatus,errorThrown){
-							    
-				}
-			});
+
 			//判断是否为时限卡
 			if(servicetimes == 999){//是否为时限卡,剩余次数赋值,
 				//是时限卡的时候, 当remaintimes == 0 ,说明时限卡已经售后过了
@@ -208,10 +179,6 @@
 		 //虚拟商品的售后次数校验
 		function returnChangeTimes(){
 		   var st=$("#returnNum").val();
-		   if(parseInt(remaintimes) == 0){
-			   top.layer.alert('请先选择商品', {icon: 0, title:'提醒'});
-			   return;
-		   }
 		   if(parseInt(st)<0){
 			   top.layer.alert('售后次数必须大于等于0，小于等于可售后次数!', {icon: 0, title:'提醒'});
 			   return;
@@ -224,10 +191,6 @@
 		//虚拟商品的退款金额校验
 		function returnChangeAmount(){
 			var ra=$("#returnAmount").val();
-			if(parseFloat(surplusReturnAmount) == 0){
-			    top.layer.alert('请先选择商品', {icon: 0, title:'提醒'});
-			    return;
-		    }
 			if(parseFloat(ra)<0){
 				top.layer.alert('退款金额必须大于等于0，小于等于可售后金额!', {icon: 0, title:'提醒'});
 				return;

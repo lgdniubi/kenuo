@@ -220,7 +220,7 @@
 				return;
 			}
 		}
-		//虚拟商品的退款金额校验
+		//虚拟商品的售后次数校验
 		function returnChangeTimes(){
 			var rn=$("#returnNum").val();
 			if(parseFloat(rn)<0){

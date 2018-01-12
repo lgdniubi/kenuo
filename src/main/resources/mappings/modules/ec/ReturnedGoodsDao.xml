@@ -173,16 +173,6 @@
 		GROUP BY
 			a.rec_id
 	</select>
-	<!-- 查询商品是否有过未取消的预约(通过mappingid查询预约表) -->
-	<select id="getCountApptOrder" resultType="int">
-		SELECT 
-			count(1)
-		FROM 
-			mtmydb.mtmy_appt_order 
-		WHERE 
-			appt_status in (0,1,2,4) 
-		AND goods_mapping_id = #{goodsMappingId}
-	</select>
 	<!-- 获取订单商品中的已退款金额 -->
 	<select id="getSurplusReturnAmount" resultType="Double">
 		SELECT

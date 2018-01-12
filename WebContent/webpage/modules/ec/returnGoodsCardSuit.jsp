@@ -23,7 +23,15 @@
 			  }else{//拒绝,清空仓库信息
 				  $("#warehouseId").val(0);
 			  }
-			  
+			  returnAmount=$("#returnAmount").val();
+			  amount = $("#amount").val();//商品的可售后金额
+			  if(parseFloat(returnAmount)<0){
+				  top.layer.alert('退款金额必须大于等于0，小于等于可售后金额!', {icon: 0, title:'提醒'});
+				  return;
+			  }else if(parseFloat(amount)<parseFloat(returnAmount)){
+				  top.layer.alert('退款金额必须大于等于0，小于等于可售后金额!', {icon: 0, title:'提醒'});
+				  return;
+			  }
 			  
 			  $("#inputForm").submit();
 			  return true;
@@ -277,7 +285,7 @@
 						</div>
 						<p></p>
 					</div>
-					<c:if test="${flag != 1}">
+					<c:if test="${flag == 'edit'}">
 				        <c:if test="${returnedGoods.returnStatus==11}">
 			        		<label>是否同意申请：</label>
 							<label><input id="isConfirm" name="isConfirm" type="radio" value="12"  class="form required" onclick="seletAddreess()"/>同意退货 </label>

@@ -139,7 +139,7 @@
 				$("#returnNum").attr("readonly",false);//仅换货,商品数量都可以输入
 				$("#returnAmountIsShow").hide();//退款金额
 				$("#returnTypeIsShow").hide();//退款方式
-			}else {
+			}else{
 				if(orderArrearage>0){
 					$("#returnNum").attr("readonly",true);//实物存在欠款,售后数量全部写入
 				}else{
@@ -177,10 +177,6 @@
 		//退款金额校验
 		function returnChangeAmount(){
 			var ra=$("#returnAmount").val();
-			if(parseFloat(surplusReturnAmount) == 0){
-			    top.layer.alert('请先选择商品', {icon: 0, title:'提醒'});
-			    return;
-		    }
 			if(parseFloat(ra)<0){
 				top.layer.alert('退款金额必须大于等于0，小于等于可售后金额!', {icon: 0, title:'提醒'});
 				return;
