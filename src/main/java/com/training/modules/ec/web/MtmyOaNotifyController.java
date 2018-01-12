@@ -183,7 +183,8 @@ public class MtmyOaNotifyController extends BaseController {
 					return "redirect:" + adminPath + "/ec/mtmyOaNotify/list";
 				}
 			}
-			
+			//将内容转码
+			mtmyOaNotify.setContent(HtmlUtils.htmlUnescape(mtmyOaNotify.getContent()));
 			mtmyOaNotifyService.save(mtmyOaNotify);
 			addMessage(redirectAttributes, "保存/修改通知'" + mtmyOaNotify.getTitle() + "'成功");
 		} catch (Exception e) {

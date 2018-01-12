@@ -129,6 +129,8 @@ public class OaNotifyController extends BaseController {
 		}else{
 			oaNotify.setContent(oaNotify.getContent());
 		}
+		//内容转码 
+		oaNotify.setContent(HtmlUtils.htmlUnescape(oaNotify.getContent()));
 		oaNotifyService.save(oaNotify);
 		addMessage(redirectAttributes, "保存通知'" + oaNotify.getTitle() + "'成功");
 		if(isSelf)
