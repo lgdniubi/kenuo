@@ -25,6 +25,7 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 	private double orderAmount;       //应付金额（讨价还价的价格）
 	
 	private double goodsPrice;       //商品的价格
+	private double ratioPrice;       //异价后的价格
 	private int goodsNum;            //购买的数量
 	
 	private String createByName;	//操作人
@@ -267,6 +268,14 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 
 	public void setReturnedId(String returnedId) {
 		this.returnedId = returnedId;
+	}
+
+	public double getRatioPrice() {
+		return ratioPrice;
+	}
+
+	public void setRatioPrice(double ratioPrice) {
+		this.ratioPrice = ratioPrice;
 	}
 	
 }

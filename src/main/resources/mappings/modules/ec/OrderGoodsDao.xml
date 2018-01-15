@@ -362,6 +362,7 @@
 			ogm.member_goods_price AS 'membergoodsprice', 
 			ogm.total_amount AS 'totalAmount',
 			ogm.goods_price AS 'goodsPrice',
+			ogm.ratio_price AS 'ratioPrice',
 			ogm.single_norm_price AS 'singleNormPrice',
 			ogm.rec_id AS 'recid',
 			ogm.single_reality_price AS 'singleRealityPrice',
