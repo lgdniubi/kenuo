@@ -1598,6 +1598,7 @@ public class OrdersController extends BaseController {
 			List<ReturnedGoods> list = returnedGoodsDao.queryAfterSaleList(orders.getOrderid());
 			if(list.size() > 0){
 				for(ReturnedGoods returnedGoods:list){
+					returnedGoods.setRefusalCause("强制取消");
 					if("11".equals(returnedGoods.getReturnStatus())){
 						returnedGoods.setIsConfirm(-10);
 					}else if("21".equals(returnedGoods.getReturnStatus())){
@@ -2536,8 +2537,11 @@ public class OrdersController extends BaseController {
 										"<td align='center'> "+lists.get(1).getGoodsname()+"</td> "+
 										"<td align='center' rowspan="+num+">默认规格</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getCostprice()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getRatio()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getRatioPrice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
+										"<td align='center'> "+lists.get(1).getRatioPrice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getSpeckeyname()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getAdvancePrice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> ";
@@ -2580,6 +2584,7 @@ public class OrdersController extends BaseController {
 											"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
 											"<td align='center'> "+lists.get(i).getMarketprice()+"</td> "+
 											"<td align='center'> "+lists.get(i).getGoodsprice()+"</td> "+
+											"<td align='center'> "+lists.get(i).getRatioPrice()+"</td> "+
 											"<td align='center'> "+lists.get(i).getSpeckeyname()+"</td> "+
 											"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> ";
 									if(orders.getIsNeworder() == 1){
@@ -2598,6 +2603,8 @@ public class OrdersController extends BaseController {
 										"<td align='center' rowspan="+num+"> "+father.getCostprice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getMarketprice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getGoodsprice()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getRatio()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getRatioPrice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getAdvancePrice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getRemaintimes()+"</td> "+

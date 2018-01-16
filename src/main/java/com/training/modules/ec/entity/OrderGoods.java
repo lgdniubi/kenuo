@@ -120,6 +120,7 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private double appArrearage;                    //app欠款
 	private double appTotalAmount;                 //app实付
 	
+	private double ratio;                          //异价比例
 	public int getAfterSaleNum() {
 		return afterSaleNum;
 	}
@@ -589,6 +590,12 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setAppTotalAmount(double appTotalAmount) {
 		this.appTotalAmount = appTotalAmount;
+	}
+	public double getRatio() {
+		return ratio;
+	}
+	public void setRatio(double ratio) {
+		this.ratio = ratio;
 	}
 	
 }

@@ -290,6 +290,8 @@
 			spec_key_name as speckeyname,
 			market_price as marketprice,
 			goods_price as goodsprice,
+			ratio,
+			ratio_price as ratioPrice,
 			cost_price as costprice,
 			order_amount as orderAmount,
 			goods_num as goodsnum,

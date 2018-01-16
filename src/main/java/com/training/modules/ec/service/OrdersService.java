@@ -2258,6 +2258,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setOriginalimg(goodsListSon.get(j).getOriginalImg());
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
+					orderGoodsSon.setRatioPrice(goodsListSon.get(j).getShopPrice());    //异价后的价格
 					orderGoodsSon.setRealityAddTime(new Date());   //实际下单时间
 					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
 					if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 0){
@@ -2574,6 +2575,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setSpeckeyname(String.valueOf(goodsListSon.get(j).getGoodsNum()));  //套卡将子项的规格放到spec_key_name
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
+					orderGoodsSon.setRatioPrice(goodsListSon.get(j).getShopPrice());     //异价价格
 					orderGoodsSon.setRealityAddTime(new Date());   //实际下单时间
 					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
 					
@@ -3954,6 +3956,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setSpeckeyname(String.valueOf(goodsListSon.get(j).getGoodsNum()));  //套卡将子项的规格放到spec_key_name
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
+					orderGoodsSon.setRatioPrice(goodsListSon.get(j).getShopPrice());     //异价价格
 					orderGoodsSon.setRealityAddTime(realityAddTimeList.get(i));   //实际下单时间
 					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
 					
@@ -4317,6 +4320,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setOriginalimg(goodsListSon.get(j).getOriginalImg());
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
+					orderGoodsSon.setRatioPrice(goodsListSon.get(j).getShopPrice());    //异价后的价格
 					orderGoodsSon.setRealityAddTime(realityAddTimeList.get(i));   //实际下单时间
 					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
 					if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 0){
