@@ -142,7 +142,7 @@ public class EntryService {
 	 * 直播浏览数量和浏览人数
 	 * @param map
 	 */
-	public void updatebrowsenumber(Map<String, rooms> map) {
+	public void updatebrowsenumber(Map<String, Object> map) {
 		this.entrymapper.updatebrowsenumber(map);
 	}
 	

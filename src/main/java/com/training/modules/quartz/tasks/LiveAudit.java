@@ -233,7 +233,7 @@ public class LiveAudit extends CommonService{
 							Long scard = redisClientTemplate.scard("browsenum_"+noticelives.get(h).getAuditid());
 							maps.put("browsenum", scard == null ? 0 : scard);
 							//将数据保存在对应的直播信息表中
-							entryService.updatebrowsenumber(map);
+							entryService.updatebrowsenumber(maps);
 							//清除暂存数据
 							redisClientTemplate.del("browsetime_"+noticelives.get(h).getAuditid());
 							redisClientTemplate.del("browsenum_"+noticelives.get(h).getAuditid());
