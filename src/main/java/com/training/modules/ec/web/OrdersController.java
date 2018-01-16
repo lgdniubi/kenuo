@@ -1598,6 +1598,7 @@ public class OrdersController extends BaseController {
 			List<ReturnedGoods> list = returnedGoodsDao.queryAfterSaleList(orders.getOrderid());
 			if(list.size() > 0){
 				for(ReturnedGoods returnedGoods:list){
+					returnedGoods.setRefusalCause("强制取消");
 					if("11".equals(returnedGoods.getReturnStatus())){
 						returnedGoods.setIsConfirm(-10);
 					}else if("21".equals(returnedGoods.getReturnStatus())){
@@ -1883,11 +1884,11 @@ public class OrdersController extends BaseController {
 			double orderArrearage = orderGoods.getOrderArrearage();  //欠款
 			
 			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());
-			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
 			double advance = orderGoods.getAdvancePrice();                 //预约金
+			double ratioPrice = orderGoods.getRatioPrice();        //异价后的价格
 			
 			if(advance == 0){      //当预约金为0的时候付全款
-				advance = goodsPrice;                 //预约金
+				advance = ratioPrice;                 //预约金
 			}else{
 				advance = orderGoods.getAdvancePrice();            //预约金
 			}
@@ -1902,7 +1903,7 @@ public class OrdersController extends BaseController {
 					double c = Double.parseDouble(formater.format(singleRealityPrice - advance));
 					orderGoods.setAdvanceServiceTimes(0);        //服务次数
 					orderGoods.setDebt(c);                       //欠款
-				}else if(advance == goodsPrice){                     //预约金为0或者预约金等于商品优惠单价的时
+				}else if(advance == ratioPrice){                     //预约金为0或者预约金等于商品优惠单价（现在用异价后的价格，若不参与异价，则异价后的价格就是原优惠价格）的时
 					orderGoods.setAdvanceServiceTimes(servicetimes);        //服务次数
 					orderGoods.setDebt(0);                       //欠款
 				}else{
@@ -1941,14 +1942,14 @@ public class OrdersController extends BaseController {
 		try{
 			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());    
 			double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
-			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
 			double advance = orderGoods.getAdvancePrice();                 //预约金
+			double ratioPrice = orderGoods.getRatioPrice();        //异价后的价格
 			
 			double realAdvancePrice = 0;                                //处理预约金给老商品送钱时，判断预约金的真实价格
 			
 			if(advance == 0){      //当预约金为0的时候付全款
 				realAdvancePrice = 0;
-				advance = goodsPrice;                 //预约金
+				advance = ratioPrice;                 //预约金
 			}else{
 				realAdvancePrice = advance;
 				advance = orderGoods.getAdvancePrice();                 //预约金
@@ -1986,7 +1987,7 @@ public class OrdersController extends BaseController {
 				}
 			}
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleAdvanceFlag(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId,realAdvancePrice);
+			ordersService.handleAdvanceFlag(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,realAdvancePrice);
 			date = "success";
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "处理预约金异常", e);
@@ -2536,8 +2537,11 @@ public class OrdersController extends BaseController {
 										"<td align='center'> "+lists.get(1).getGoodsname()+"</td> "+
 										"<td align='center' rowspan="+num+">默认规格</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getCostprice()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getRatio()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getRatioPrice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
+										"<td align='center'> "+lists.get(1).getRatioPrice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getSpeckeyname()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getAdvancePrice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> ";
@@ -2580,6 +2584,7 @@ public class OrdersController extends BaseController {
 											"<td align='center'> "+lists.get(i).getGoodsname()+"</td> "+
 											"<td align='center'> "+lists.get(i).getMarketprice()+"</td> "+
 											"<td align='center'> "+lists.get(i).getGoodsprice()+"</td> "+
+											"<td align='center'> "+lists.get(i).getRatioPrice()+"</td> "+
 											"<td align='center'> "+lists.get(i).getSpeckeyname()+"</td> "+
 											"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> ";
 									if(orders.getIsNeworder() == 1){
@@ -2598,6 +2603,8 @@ public class OrdersController extends BaseController {
 										"<td align='center' rowspan="+num+"> "+father.getCostprice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getMarketprice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getGoodsprice()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getRatio()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+father.getRatioPrice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getAdvancePrice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getRemaintimes()+"</td> "+
@@ -2823,10 +2830,10 @@ public class OrdersController extends BaseController {
 			int isReal = orderGoods.getIsreal();
 			
 			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid()); //卡项本身
-			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
 			double advance = orderGoods.getAdvancePrice();                 //预约金
+			double ratioPrice = orderGoods.getRatioPrice();        //异价后的价格
 			if(advance == 0){      //当预约金为0的时候付全款
-				advance = goodsPrice;                 //预约金
+				advance = ratioPrice;                 //预约金
 			}else{
 				advance = orderGoods.getAdvancePrice();            //预约金
 			}
@@ -2853,7 +2860,7 @@ public class OrdersController extends BaseController {
 					double c = Double.parseDouble(formater.format(singleRealityPrice - advance));
 					orderGoods.setAdvanceServiceTimes(0);        //服务次数
 					orderGoods.setDebt(c);                       //欠款
-				}else if(advance == goodsPrice){                     //预约金为0或者预约金等于商品优惠单价的时
+				}else if(advance == ratioPrice){                     //预约金为0或者预约金等于商品优惠单价的时
 					orderGoods.setAdvanceServiceTimes(servicetimes);        //服务次数
 					orderGoods.setDebt(0);                       //欠款
 				}else{
@@ -2899,14 +2906,14 @@ public class OrdersController extends BaseController {
 			double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
 			int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
 			String officeId = orderGoods.getOfficeId();           //组织架构ID
-			double goodsPrice = orderGoods.getGoodsprice();        //商品优惠单价
+			double ratioPrice = orderGoods.getRatioPrice();        //异价后的价格
 			
 			double advance = orderGoods.getAdvancePrice();                 //预约金
 			double realAdvancePrice = 0;                                //处理预约金给老商品送钱时，判断预约金的真实价格
 			
 			if(advance == 0){      //当预约金为0的时候付全款
 				realAdvancePrice = 0;
-				advance = goodsPrice;                 //预约金
+				advance = ratioPrice;                 //预约金
 			}else{
 				realAdvancePrice = advance;
 				advance = orderGoods.getAdvancePrice();            //预约金
@@ -2941,7 +2948,7 @@ public class OrdersController extends BaseController {
 				oLog.setTotalAmount(advance);
 			}
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleCardAdvance(oLog,goodsPrice,detailsTotalAmount,goodsType,officeId,isReal,realAdvancePrice);
+			ordersService.handleCardAdvance(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,isReal,realAdvancePrice);
 			date = "success";
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "处理卡项预约金异常", e);

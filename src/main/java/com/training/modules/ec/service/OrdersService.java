@@ -1113,7 +1113,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		double sumOrderBalance = newDetails.getOrderBalance();//该订单的该商品剩余的可用余额，充值时必须用
 		double sumAppTotalAmount = newDetails.getAppTotalAmount();//该订单的已付金额
 		double sumAppArrearage = newDetails.getAppArrearage();  //该订单仍欠的款
-		double goodsPrice = newDetails.getGoodsPrice();   //商品的优惠价格
+		double ratioPrice = newDetails.getRatioPrice();    //异价后的价格
 		double orderAmount = newDetails.getOrderAmount();//商品应付价格
 		int integral = newDetails.getIntegral();        //充值完全以后送的云币
 		
@@ -1154,9 +1154,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount));//app实付金额
 				}else{
 					if(couponPrice < advancePrice){
-						appTotalAmount =  Double.parseDouble(formater.format(goodsPrice - sumAppTotalAmount - couponPrice - memberGoodsPrice));//app实付金额
+						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - couponPrice - memberGoodsPrice));//app实付金额
 					}else{
-						appTotalAmount =  Double.parseDouble(formater.format(goodsPrice - sumAppTotalAmount - advancePrice - memberGoodsPrice));//app实付金额
+						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - advancePrice - memberGoodsPrice));//app实付金额
 					}
 				}
 				appArrearage = -sumAppArrearage;//app欠款金额
@@ -1217,9 +1217,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount));//app实付金额
 				}else{
 					if(couponPrice < advancePrice){
-						appTotalAmount =  Double.parseDouble(formater.format(goodsPrice*goodsNum - sumAppTotalAmount - couponPrice - memberGoodsPrice));//app实付金额
+						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice*goodsNum - sumAppTotalAmount - couponPrice - memberGoodsPrice));//app实付金额
 					}else{
-						appTotalAmount =  Double.parseDouble(formater.format(goodsPrice*goodsNum - sumAppTotalAmount - advancePrice - memberGoodsPrice));//app实付金额
+						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice*goodsNum - sumAppTotalAmount - advancePrice - memberGoodsPrice));//app实付金额
 					}
 				}
 				/*appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount));//app实付金额*/				
@@ -1797,9 +1797,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * app虚拟订单处理预约金
 	 * @param oLog
 	 * @param orderAmount应付款金额
-	 * @param goodsPrice商品优惠单价
+	 * @param ratioPrice异价后的价格
 	 */
-	public void handleAdvanceFlag(OrderRechargeLog oLog,double goodsPrice,double detailsTotalAmount,int goodsType,String officeId,double realAdvancePrice){
+	public void handleAdvanceFlag(OrderRechargeLog oLog,double ratioPrice,double detailsTotalAmount,int goodsType,String officeId,double realAdvancePrice){
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
 		double totalAmount = oLog.getTotalAmount(); //实付款金额
@@ -1835,17 +1835,17 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			itemCapitalPool = 0; //项目资金池
 			
 		}else{
-			if(singleRealityPrice < advance && advance > goodsPrice){
+			if(singleRealityPrice < advance && advance > ratioPrice){
 				// 实际单次标价  < 商品优惠单价 < 预付金
 				serviceTimes_in_a = (int)Math.floor(totalAmount/singleRealityPrice);//充值次数
 				serviceTimes_in = serviceTimes_in_a - 1;                                //实际的充值次数，因为预约的时候给了一次，入库的时候减少一次
 				totalAmount_in_a = serviceTimes_in_a * singleRealityPrice;//实付金额
 				accountBalance_in = 0;                                      //订单余款
 				totalAmount_in = Double.parseDouble(formater.format(totalAmount_in_a - advance));        //存入库的实付款金额=实付款金额-订金
-				newSpareMoneySum = Double.parseDouble(formater.format(advance - goodsPrice));    //总余额(实际单次标价  < 商品优惠单价 < 预付金时，将多的存入个人账户余额中)
+				newSpareMoneySum = Double.parseDouble(formater.format(advance - ratioPrice));    //总余额(实际单次标价  < 商品异价后的价格 < 预付金时，将多的存入个人账户余额中)
 				appTotalAmount = 0;                   //app实付金额
 				appArrearage = 0; //app欠款金额
-			}else if(advance == goodsPrice){     //预约金=商品优惠单价
+			}else if(advance == ratioPrice){     //预约金=商品优惠单价
 				serviceTimes_in = oLog.getServicetimes() - 1;                               //实际的充值次数，因为预约的时候给了一次，入库的时候减少一次
 				totalAmount_in_a = advance;//实付金额
 				accountBalance_in =  0;     //订单余款
@@ -1853,7 +1853,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				newSpareMoneySum = 0;
 				appTotalAmount = 0;                   //app实付金额
 				appArrearage = 0; //app欠款金额
-			}else if(singleRealityPrice < advance && advance < goodsPrice){
+			}else if(singleRealityPrice < advance && advance < ratioPrice){
 				// 实际单次标价  < 预付金	< 商品优惠单价
 				serviceTimes_in_a = (int)Math.floor(totalAmount/singleRealityPrice);//充值次数
 				serviceTimes_in = serviceTimes_in_a - 1;                                //实际的充值次数，因为预约的时候给了一次，入库的时候减少一次
@@ -2258,6 +2258,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setOriginalimg(goodsListSon.get(j).getOriginalImg());
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
+					orderGoodsSon.setRatioPrice(goodsListSon.get(j).getShopPrice());    //异价后的价格
 					orderGoodsSon.setRealityAddTime(new Date());   //实际下单时间
 					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
 					if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 0){
@@ -2574,6 +2575,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setSpeckeyname(String.valueOf(goodsListSon.get(j).getGoodsNum()));  //套卡将子项的规格放到spec_key_name
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
+					orderGoodsSon.setRatioPrice(goodsListSon.get(j).getShopPrice());     //异价价格
 					orderGoodsSon.setRealityAddTime(new Date());   //实际下单时间
 					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
 					
@@ -2814,7 +2816,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		double sumOrderBalance = newDetails.getOrderBalance();//该订单的该商品剩余的可用余额，充值时必须用
 		double sumAppTotalAmount = newDetails.getAppTotalAmount();//该订单的已付金额
 		double sumAppArrearage = newDetails.getAppArrearage();  //该订单仍欠的款
-		double goodsPrice = newDetails.getGoodsPrice();   //商品的优惠价格
+		double ratioPrice = newDetails.getRatioPrice();    //异价后的价格
 		double orderAmount = newDetails.getOrderAmount();//商品应付价格
 		int integral = newDetails.getIntegral();        //充值完全以后送的云币
 		
@@ -2854,9 +2856,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount));//app实付金额
 				}else{
 					if(couponPrice < advancePrice){
-						appTotalAmount =  Double.parseDouble(formater.format(goodsPrice - sumAppTotalAmount - couponPrice - memberGoodsPrice));//app实付金额
+						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - couponPrice - memberGoodsPrice));//app实付金额
 					}else{
-						appTotalAmount =  Double.parseDouble(formater.format(goodsPrice - sumAppTotalAmount - advancePrice - memberGoodsPrice));//app实付金额
+						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - advancePrice - memberGoodsPrice));//app实付金额
 					}
 				}
 				appArrearage = -sumAppArrearage;//app欠款金额
@@ -2916,9 +2918,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount));//app实付金额
 				}else{
 					if(couponPrice < advancePrice){
-						appTotalAmount =  Double.parseDouble(formater.format(goodsPrice - sumAppTotalAmount - couponPrice - memberGoodsPrice));//app实付金额
+						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - couponPrice - memberGoodsPrice));//app实付金额
 					}else{
-						appTotalAmount =  Double.parseDouble(formater.format(goodsPrice - sumAppTotalAmount - advancePrice - memberGoodsPrice));//app实付金额
+						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - advancePrice - memberGoodsPrice));//app实付金额
 					}
 				}
 				appArrearage = -sumAppArrearage;//app欠款金额
@@ -3021,9 +3023,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * 卡项处理预约金
 	 * @param oLog
 	 * @param orderAmount应付款金额
-	 * @param goodsPrice商品优惠单价
+	 * @param ratioPrice异价后的价格
 	 */
-	public void handleCardAdvance(OrderRechargeLog oLog,double goodsPrice,double detailsTotalAmount,int goodsType,String officeId,int isReal,double realAdvancePrice){
+	public void handleCardAdvance(OrderRechargeLog oLog,double ratioPrice,double detailsTotalAmount,int goodsType,String officeId,int isReal,double realAdvancePrice){
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
 		double totalAmount = oLog.getTotalAmount(); //实付款金额
@@ -3065,17 +3067,17 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				surplusAmount = 0;  //套卡剩余金额(套卡的才存)
 			}
 		}else if(isReal == 3){   //通用卡
-			if(singleRealityPrice < advance && advance > goodsPrice){
+			if(singleRealityPrice < advance && advance > ratioPrice){
 				// 实际单次标价  < 商品优惠单价 < 预付金
 				serviceTimes_in_a = (int)Math.floor(totalAmount/singleRealityPrice);//充值次数
 				serviceTimes_in = serviceTimes_in_a - 1;                                //实际的充值次数，因为预约的时候给了一次，入库的时候减少一次
 				totalAmount_in_a = serviceTimes_in_a * singleRealityPrice;//实付金额
 				accountBalance_in = 0;                                      //订单余款
 				totalAmount_in = Double.parseDouble(formater.format(totalAmount_in_a - advance));        //存入库的实付款金额=实付款金额-订金
-				newSpareMoneySum = Double.parseDouble(formater.format(advance - goodsPrice));    //总余额(实际单次标价  < 商品优惠单价 < 预付金时，将多的存入个人账户余额中)
+				newSpareMoneySum = Double.parseDouble(formater.format(advance - ratioPrice));    //总余额(实际单次标价  < 商品优惠单价 < 预付金时，将多的存入个人账户余额中)
 				appTotalAmount = 0;                   //app实付金额
 				appArrearage = 0; //app欠款金额
-			}else if(advance == goodsPrice){     //预约金=商品优惠单价
+			}else if(advance == ratioPrice){     //预约金=商品优惠单价
 				serviceTimes_in = oLog.getServicetimes() - 1;                               //实际的充值次数，因为预约的时候给了一次，入库的时候减少一次
 				totalAmount_in_a = advance;//实付金额
 				accountBalance_in =  0;     //订单余款
@@ -3083,7 +3085,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				newSpareMoneySum = 0;
 				appTotalAmount = 0;                   //app实付金额
 				appArrearage = 0; //app欠款金额
-			}else if(singleRealityPrice < advance && advance < goodsPrice){
+			}else if(singleRealityPrice < advance && advance < ratioPrice){
 				// 实际单次标价  < 预付金	<= 商品优惠单价
 				serviceTimes_in_a = (int)Math.floor(totalAmount/singleRealityPrice);//充值次数
 				serviceTimes_in = serviceTimes_in_a - 1;                                //实际的充值次数，因为预约的时候给了一次，入库的时候减少一次
@@ -3954,6 +3956,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setSpeckeyname(String.valueOf(goodsListSon.get(j).getGoodsNum()));  //套卡将子项的规格放到spec_key_name
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
+					orderGoodsSon.setRatioPrice(goodsListSon.get(j).getShopPrice());     //异价价格
 					orderGoodsSon.setRealityAddTime(realityAddTimeList.get(i));   //实际下单时间
 					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
 					
@@ -4317,6 +4320,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setOriginalimg(goodsListSon.get(j).getOriginalImg());
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
+					orderGoodsSon.setRatioPrice(goodsListSon.get(j).getShopPrice());    //异价后的价格
 					orderGoodsSon.setRealityAddTime(realityAddTimeList.get(i));   //实际下单时间
 					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
 					if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 0){

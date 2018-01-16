@@ -639,8 +639,16 @@ window.onload=initStatus;
 										<th style="text-align: center;">实际规格次</th>
 									</c:if>
 									<th style="text-align: center;">系统价</th>
+									<c:if test="${orders.isReal == 2}">
+										<th style="text-align: center;">异价比例</th>
+										<th style="text-align: center;">异价价格</th>
+									</c:if>
 									<th style="text-align: center;">市场价</th>
 									<th style="text-align: center;">优惠价</th>
+									<c:if test="${orders.isReal == 3}">
+										<th style="text-align: center;">异价比例</th>
+									</c:if>
+									<th style="text-align: center;">异价价格</th>
 									<c:if test="${orders.isReal == 2}">
 										<th style="text-align: center;">次(个)数</th>
 									</c:if>
