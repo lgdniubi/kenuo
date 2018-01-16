@@ -1342,6 +1342,6 @@
 		UPDATE mtmydb.mtmy_orders
 		SET order_status = '4'
 		WHERE order_id = #{orderid}
-		AND order_status NOT IN (1,2)
+		AND order_status IN (1,2)
 	</update>
 </mapper>

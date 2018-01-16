@@ -81,7 +81,7 @@
 	</select>
 	
 	<!-- 查询details表中AdvanceFlag=4的最新一条记录中SurplusAmount(套卡剩余金额) -->
-	<select id="getSurplusAmount" resultType="int">
+	<select id="getSurplusAmount" resultType="double">
 		SELECT
 			surplus_amount AS 'surplusAmount'
 		FROM
@@ -234,7 +234,7 @@
 		WHERE order_id = #{orderId}
 		AND advance_flag = '0'
 	</select>
-	<!-- 根据订单id查询 -->
+	<!-- 根据订单id查询商品的订单余额,订单欠款和app欠款 -->
 	<select id="getArrearageByOrderId" resultType="OrderGoodsDetails">
 		SELECT
 			order_id AS orderId,
@@ -275,6 +275,18 @@
 		AND
 			a.advance_flag = 5
 	</select>
+	<!-- 查询审核需要的条件,判断无'平欠款'记录 -->
+	<select id="getSumArrearage" resultType="double">
+		SELECT 
+			a.order_arrearage AS 'orderArrearage'
+		FROM 
+			mtmydb.mtmy_order_goods_details a 
+		WHERE 
+			a.order_id = #{orderId}
+		AND
+			a.goods_mapping_id = #{goodsMappingId}
+		LIMIT 1
+	</select>
 	<!-- 处理预约金 -->
 	<update id="cancelAdvanceFlag">
 		UPDATE mtmydb.mtmy_order_goods_details
@@ -284,16 +296,20 @@
 			order_id = #{orderId}
 		AND
 			goods_mapping_id = #{goodsMappingId}
+		AND 
+			advance_flag = '6'
 	</update>
-	<!-- 处理预约金 -->
+	<!-- 平预约金 -->
 	<update id="editAdvanceFlag">
 		UPDATE mtmydb.mtmy_order_goods_details
 		SET 
 			advance_flag = '6'
 		WHERE 
-			order_id = #{orderid}
+			order_id = #{orderId}
 		AND
-			goods_mapping_id = #{recid}
+			goods_mapping_id = #{goodsMappingId}
+		AND
+			advance_flag = '1'
 	</update>
 	<!-- 在审核时,可能修改了售后次数,需要相应的修改detail表 -->
 	<update id="updateDetailServiceTimes">
@@ -313,6 +329,8 @@
 			FROM mtmydb.mtmy_order_goods_details
 		WHERE 
 			advance_flag = 5
+		AND
+			order_id = #{orderId}
 	</delete>
 	
 	<!-- 是否有未处理预约金的 -->
