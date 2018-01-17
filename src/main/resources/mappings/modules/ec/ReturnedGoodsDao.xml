@@ -72,6 +72,7 @@
 		e.`name` as "hoseName",
 		e.governor,
 		e.address,
+		a.channel_flag AS 'channelFlag',
 		a.receive_name,
 		a.receive_account,
 		a.return_type

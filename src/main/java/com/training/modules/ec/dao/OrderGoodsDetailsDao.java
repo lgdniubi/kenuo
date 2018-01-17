@@ -114,7 +114,7 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @param orderId
 	 * @return
 	 */
-	public int getSurplusAmount(String orderId);
+	public double getSurplusAmount(String orderId);
 	
 	/**
 	 * 根据订单id查询下单时候的总的app实付
@@ -131,11 +131,11 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	OrderGoodsDetails getArrearageByOrderId(ReturnedGoods returnedGoods);
 
 	/**
-	 * 查询审核需要的条件,判断有无'平欠款'记录
+	 * 查询该商品的欠款金额
 	 * @param returnedGoods
 	 * @return
 	 */
-	int getCountArrearage(ReturnedGoods returnedGoods);
+	double getSumArrearage(ReturnedGoods returnedGoods);
 
 	/**
 	 * 查询'平预约金'记录
@@ -152,9 +152,9 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 
 	/**
 	 * 平预约金状态
-	 * @param orderGoods
+	 * @param returnedGoods
 	 */
-	void editAdvanceFlag(OrderGoods orderGoods);
+	void editAdvanceFlag(ReturnedGoods returnedGoods);
 
 	/**
 	 * 在审核时,可能修改了售后次数,需要相应的修改detail表
@@ -164,8 +164,9 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 
 	/**
 	 * 删除平欠款记录
+	 * @param returnedGoods 
 	 */
-	void deleteArrearage();
+	void deleteArrearage(ReturnedGoods returnedGoods);
 	
 	/**
 	 * 是否有未处理预约金的 
@@ -179,4 +180,11 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @param orderId
 	 */
 	public void flatOutAdvance(String orderId);
+
+	/**
+	 * 查询审核需要的条件,判断有无'平欠款'记录
+	 * @param returnedGoods
+	 * @return
+	 */
+	int getCountArrearage(ReturnedGoods returnedGoods);
 }

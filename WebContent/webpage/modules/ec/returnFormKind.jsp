@@ -136,7 +136,7 @@
 		function selectType(o){
 			var type=$("#applyType").val();
 			if(type==1){//仅换货,不显示"退款金额"和"退款方式";
-				$("#returnNum").attr("readonly",false);//仅换货,商品数量都可以输入
+				$("#returnNum").attr("readonly",true);//仅换货,商品数量都可以输入
 				$("#returnAmountIsShow").hide();//退款金额
 				$("#returnTypeIsShow").hide();//退款方式
 			}else{

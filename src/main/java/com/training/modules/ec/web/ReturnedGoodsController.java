@@ -97,7 +97,7 @@ public class ReturnedGoodsController extends BaseController {
 		int goodsNum = 0;//实物的可售后数量
 		double amount = 0.0;//实物的可售后金额
 		int times = 0;//虚拟的可售后次数
-		int count = 0;//判断有无'平欠款'记录  存在:不能修改售后数量,不存在:能修改售后数量(实物平欠款,购买数量全部退)
+		double orderArrearage = 0;//判断有无'平欠款'记录  存在:不能修改售后数量,不存在:能修改售后数量(实物平欠款,购买数量全部退)
 		int serviceTimes = 0;//判断是否为时限卡
 		try {
 			List<ReturnedGoodsImages> imgList=new ArrayList<ReturnedGoodsImages>();
@@ -106,7 +106,7 @@ public class ReturnedGoodsController extends BaseController {
 			List<PdWareHouse> pdlist=wareHouseDao.findAllList(new PdWareHouse());//查询仓库信息
 			returnedGoods.setImgList(imgList);
 			
-			count = orderGoodsDetailsService.getCountArrearage(returnedGoods);//查询审核需要的条件,判断有无'平欠款'记录(查询记录只会两中<0:平欠款记录;=0没有记录)
+			orderArrearage = orderGoodsDetailsService.getSumArrearage(returnedGoods);//查询该商品是否存在欠款
 			//计算可售后数量(售后次数)和售后金额
 			OrderGoods orderGoods = ordergoodService.getTotalAmountAndTimes(returnedGoods);//获取商品的实付金额和剩余服务次数
 			ReturnedGoods rg = returnedGoodsService.getAmountAndNum(returnedGoods);//获取不包含自己本身的总的售后金额和售后数量
@@ -127,7 +127,7 @@ public class ReturnedGoodsController extends BaseController {
 			logger.error("方法：returnform,审核页面" + e.getMessage());
 		}
 		if(returnedGoods.getIsReal() == 0){
-			model.addAttribute("count",count);//有无平欠款记录
+			model.addAttribute("orderArrearage",orderArrearage);//有无平欠款记录
 			model.addAttribute("goodsNum",goodsNum);//商品的金额可售后数量
 			return "modules/ec/returnGoodsFormKind";
 		}else{

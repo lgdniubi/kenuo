@@ -91,7 +91,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	public void saveReturnedKind(ReturnedGoods returnedGoods) {
 		String currentUser = UserUtils.getUser().getName();
 		returnedGoods.setAuditBy(currentUser);
-		if ("11".equals(returnedGoods.getReturnStatus())) { // 申请退货退款
+		if (returnedGoods.getIsConfirm() == 12 || returnedGoods.getIsConfirm() == -10) { // 申请退货退款
 			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");//改变售后状态
 			returnedGoodsDao.saveEdite(returnedGoods);//添加退货信息到mtmy_returned_goods表中
 			
@@ -112,12 +112,19 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				if(flag){
 					//实物订单状态'待发货'和'待收货'修改为'已完成'状态(同意售后审核)
 					ordersDao.editOrderstatusForfinish(returnedGoods.getOrderId());
+					
 					//平预约金状态
 					for (OrderGoods orderGoods : orderGoodsList) {
-						orderGoodsDetailsDao.editAdvanceFlag(orderGoods);
+						returnedGoods.setOrderId(orderGoods.getOrderid());
+						returnedGoods.setGoodsMappingId(orderGoods.getRecid()+"");
+						orderGoodsDetailsDao.editAdvanceFlag(returnedGoods);
 					}
 				}
 				
+				//审核同意,平欠款(出现的情况:申请时,仅换货(此状态不平欠款和不处理预约金),而在审核时,更改为退货并退款或者仅退款,需要平欠款记录)
+				if(returnedGoods.getApplyType() != 1){
+					applyArrearage(returnedGoods);//平欠款方法
+				}
 			}
 			
 			//------审核之后,售后数量和售后金额可能会修改--begin-------
@@ -170,17 +177,13 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		}
 		
 		//---------------申请换货---begin---------------------------
-		if ("21".equals(returnedGoods.getReturnStatus())) { // 申请换货
+		if (returnedGoods.getIsConfirm() == 22 || returnedGoods.getIsConfirm() == -20) { // 申请换货
+			cancelArrearage(returnedGoods);//取消平预约金和平欠款记录(申请类型是仅换货(请查看方法具体说明))
+			
 			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
-			returnedGoodsDao.saveEdite(returnedGoods);
-			//----------拒绝换货----begin----------
-			if (returnedGoods.getIsConfirm() == -20) {
-				OrderGoods orderGoods = new OrderGoods();
-				orderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
-				orderGoods.setAfterSaleNum(-returnedGoods.getReturnNum());
-				orderGoodsDao.updateIsAfterSales(orderGoods);
-			}
-			//----------拒绝换货----end----------
+			returnedGoodsDao.saveEdite(returnedGoods);//修改换货状态
+			
+			refuseService(returnedGoods);//退还申请扣减的数据
 		}
 		//---------------申请换货---end---------------------------
 	}
@@ -195,13 +198,18 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		returnedGoods.setAuditBy(currentUser);
 		boolean flag = true;
 		
-		if ("11".equals(returnedGoods.getReturnStatus())) { // 申请退货退款
+		if (returnedGoods.getIsConfirm() == 12 || returnedGoods.getIsConfirm() == -10) { // 申请退货退款
 			
 			//虚拟商品同意退货时,扣减云币(只有第一次售后扣减).(同意退货会在returned_goods表中插入新的数据,所以需要在插入之前进行查询是否已经售后过)
 			if (returnedGoods.getIsConfirm() == 12) {
 				//虚拟商品之前是否有过售后
 				//先查询订单的退货成功记录,有记录就不扣减云币
 				flag = returnedGoodsDao.getReturnedGoods(returnedGoods)>0;
+				
+				//审核同意,平欠款(出现的情况:申请时,仅换货(此状态不平欠款和不处理预约金),而在审核时,更改为退货并退款或者仅退款,需要平欠款记录)
+				if(returnedGoods.getApplyType() != 1){
+					applyArrearage(returnedGoods);//平欠款方法
+				}
 			}
 			
 			//------审核之后,售后次数和售后金额可能会修改--begin-------
@@ -273,17 +281,14 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		}
 		
 		//---------------申请换货---begin---------------------------
-		if ("21".equals(returnedGoods.getReturnStatus())) { // 申请换货
+		if (returnedGoods.getIsConfirm() == 22 || returnedGoods.getIsConfirm() == -20) { // 申请换货
+			
+			cancelArrearage(returnedGoods);//申请类型是仅换货(请查看方法具体说明)
+			
 			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
 			returnedGoodsDao.saveEdite(returnedGoods);
-			//----------拒绝换货----begin----------
-			if (returnedGoods.getIsConfirm() == -20) {
-				OrderGoods orderGoods = new OrderGoods();
-				orderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
-				orderGoods.setAfterSaleNum(-returnedGoods.getReturnNum());
-				orderGoodsDao.updateIsAfterSales(orderGoods);
-			}
-			//----------拒绝换货----end----------
+			
+			refuseService(returnedGoods);//退还申请扣减的数据(detail表和mapping表)
 		}
 		//---------------申请换货---end---------------------------
 	}
@@ -297,7 +302,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		String currentUser = UserUtils.getUser().getName();
 		returnedGoods.setAuditBy(currentUser);
 		
-		if ("11".equals(returnedGoods.getReturnStatus())) { // 申请退货退款
+		if (returnedGoods.getIsConfirm() == 12 || returnedGoods.getIsConfirm() == -10) { // 申请退货退款
 			
 			//申请类型只会是退货并退款或者仅退款-->仅退款:售后状态为15
 			if(returnedGoods.getIsConfirm() == -10){//当拒绝退货时
@@ -308,6 +313,11 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 					returnedGoods.setIsStorage(0 + "");
 				}else{
 					returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
+				}
+				
+				//审核同意,平欠款(出现的情况:申请时,仅换货(此状态不平欠款和不处理预约金),而在审核时,更改为退货并退款或者仅退款,需要平欠款记录)
+				if(returnedGoods.getApplyType() != 1){
+					applyArrearage(returnedGoods);//平欠款方法
 				}
 			}
 			returnedGoodsDao.saveEdite(returnedGoods);//添加退货信息到mtmy_returned_goods表中
@@ -379,15 +389,14 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			//------------------------------同意退货  扣减云币---end---------------------------
 		}
 		
-		if ("21".equals(returnedGoods.getReturnStatus())) { // 申请换货
+		if (returnedGoods.getIsConfirm() == 22 || returnedGoods.getIsConfirm() == -20) { // 申请换货
+			
+			cancelArrearage(returnedGoods);//取消平预约金和平欠款记录(申请类型是仅换货(请查看方法具体说明))
+			
 			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
-			returnedGoodsDao.saveEdite(returnedGoods);
-			if (returnedGoods.getIsConfirm() == -20) {
-				OrderGoods orderGoods = new OrderGoods();
-				orderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
-				orderGoods.setAfterSaleNum(-returnedGoods.getReturnNum());
-				orderGoodsDao.updateIsAfterSales(orderGoods);
-			}
+			returnedGoodsDao.saveEdite(returnedGoods);//修改换货状态
+			
+			refuseService(returnedGoods);//退还申请扣减的数据
 		}
 		
 	}
@@ -402,13 +411,18 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		returnedGoods.setAuditBy(currentUser);
 		boolean flag = true;
 		
-		if ("11".equals(returnedGoods.getReturnStatus())) { // 申请退货退款
+		if (returnedGoods.getIsConfirm() == 12 || returnedGoods.getIsConfirm() == -10) { // 申请退货退款
 			//-----------修改售后表中的状态-----begin----------------------------------------------
 			//不是实物时,当商品同意退货时,使用这个判断.(同意退货会在returned_goods表中插入新的数据,所以需要在插入之前进行查询是否已经售后过)
 			if (returnedGoods.getIsConfirm() == 12) {
 				//判断商品是否为实物或者虚拟,是则查询商品之前是否有过售后
 				//先查询订单的退货成功记录,有记录就不扣减云币
 				flag = returnedGoodsDao.getReturnedGoods(returnedGoods)>0;
+				
+				//审核同意,平欠款(出现的情况:申请时,仅换货(此状态不平欠款和不处理预约金),而在审核时,更改为退货并退款或者仅退款,需要平欠款记录)
+				if(returnedGoods.getApplyType() != 1){
+					applyArrearage(returnedGoods);//平欠款方法
+				}
 			}
 			//售后次数和售后金额可能会修改(实物子项数量也可能修改.)
 			//修改mapping表中通用卡本身的次数
@@ -517,17 +531,15 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			//------------------------------同意退货  扣减云币---end---------------------------
 		}
 		
-		if ("21".equals(returnedGoods.getReturnStatus())) { // 申请换货
+		if (returnedGoods.getIsConfirm() == 22 || returnedGoods.getIsConfirm() == -20) { // 申请换货
+			
+			cancelArrearage(returnedGoods);//取消平预约金和平欠款记录(申请类型是仅换货(请查看方法具体说明))
+			
 			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
-			returnedGoodsDao.saveEdite(returnedGoods);
-			if (returnedGoods.getIsConfirm() == -20) {
-				OrderGoods orderGoods = new OrderGoods();
-				orderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
-				orderGoods.setAfterSaleNum(-returnedGoods.getReturnNum());
-				orderGoodsDao.updateIsAfterSales(orderGoods);
-			}
+			returnedGoodsDao.saveEdite(returnedGoods);//修改换货状态
+			
+			refuseService(returnedGoods);//退还申请扣减的数据
 		}
-		
 	}
 
 	/**
@@ -773,8 +785,8 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		//------------------退货处理 detials-----begin-------------------------------
 		//------------------平欠款记录 detials-----begin-------------------------------
 		//判断申请类型不是仅换货且存在欠款,需要平欠款,存入detail表中
-		if(returnedGoods.getApplyType() != 1 && returnedGoods.getOrderArrearage() > 0){
-			OrderGoodsDetails ogd1 = orderGoodsDetailsDao.getArrearageByOrderId(returnedGoods);//根据订单id获取订单余额,订单欠款和app欠款金额
+		OrderGoodsDetails ogd1 = orderGoodsDetailsDao.getArrearageByOrderId(returnedGoods);//根据订单id获取订单余额,订单欠款和app欠款金额
+		if(returnedGoods.getApplyType() != 1 && ogd1.getOrderArrearage() > 0){
 			ogd1.setOrderBalance(-ogd1.getOrderBalance());//平欠款,扣除订单余款
 			ogd1.setOrderArrearage(-ogd1.getOrderArrearage());//平欠款,扣除订单欠款
 			ogd1.setAppArrearage(-ogd1.getAppArrearage());//平欠款,扣除app欠款金额
@@ -787,24 +799,24 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		//------------------平欠款记录 detials-----end-------------------------------
 		
 		//------------------申请退货记录 detials-----begin-------------------------------
-		OrderGoodsDetails ogd = new OrderGoodsDetails();
-		//退货商品信息存入detials中
-		ogd.setOrderId(returnedGoods.getOrderId());
-		ogd.setGoodsMappingId(returnedGoods.getGoodsMappingId());
 		if(returnedGoods.getIsReal() != 0){//实物不需要存入detail表中,虚拟和通用卡需要
+			OrderGoodsDetails ogd = new OrderGoodsDetails();
+			//退货商品信息存入detials中
+			ogd.setOrderId(returnedGoods.getOrderId());
+			ogd.setGoodsMappingId(returnedGoods.getGoodsMappingId());
 			ogd.setReturnedId(returnedGoods.getId());
 			ogd.setServiceTimes(-returnedGoods.getReturnNum());
+			if(returnedGoods.getIsReal() == 2){//套卡需要存入'套卡剩余金额'
+				//判断是否为套卡,存入剩余金额surplusAmount
+				double surplusAmount = orderGoodsDetailsDao.getOrderGoodsDetailSurplusAmountByOid(ogd);
+				ogd.setSurplusAmount(-surplusAmount);
+			}
+			ogd.setType(2);
+			ogd.setAdvanceFlag("4");
+			ogd.setCreateOfficeId(user.getOffice().getId());
+			ogd.setCreateBy(user);
+			orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
 		}
-		if(returnedGoods.getIsReal() == 2){//套卡需要存入'套卡剩余金额'
-			//判断是否为套卡,存入剩余金额surplusAmount
-			double surplusAmount = orderGoodsDetailsDao.getOrderGoodsDetailSurplusAmountByOid(ogd);
-			ogd.setSurplusAmount(-surplusAmount);
-		}
-		ogd.setType(2);
-		ogd.setAdvanceFlag("4");
-		ogd.setCreateOfficeId(user.getOffice().getId());
-		ogd.setCreateBy(user);
-		orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
 		//------------------申请退货记录 detials-----end-------------------------------
 		//------------------退货处理 detials-----end-------------------------------
 	}
@@ -830,31 +842,89 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			}
 			int countArrearage = orderGoodsDetailsDao.getCountArrearage(returnedGoods);//查询审核需要的条件,判断无'平欠款'记录
 			if(countArrearage > 0){//平欠款是-欠款.小于0
-				orderGoodsDetailsDao.deleteArrearage();//删除'平欠款'记录
+				orderGoodsDetailsDao.deleteArrearage(returnedGoods);//删除'平欠款'记录
 			}
 		}
 		//---------------------------取消 平欠款和平预约金记录 end------------------------------
 		
 		//---------------------------退货处理  detials  begin------------------------------
 		//把数据存储到mtmy_order_goods_details表中
-		returnedGoods = returnedGoodsDao.get(returnedGoods);//先查询returnedGoods数据
-		OrderGoodsDetails ogd = new OrderGoodsDetails();
-		ogd.setOrderId(returnedGoods.getOrderId());
-		ogd.setGoodsMappingId(returnedGoods.getGoodsMappingId());
 		if(returnedGoods.getIsReal() != 0){//实物不需要存入detail表字段,但是虚拟和通用卡需要存入次数.
-			ogd.setServiceTimes(returnedGoods.getReturnNum());			
+			returnedGoods = returnedGoodsDao.get(returnedGoods);//先查询returnedGoods数据
+			OrderGoodsDetails ogd = new OrderGoodsDetails();
+			ogd.setOrderId(returnedGoods.getOrderId());
+			ogd.setGoodsMappingId(returnedGoods.getGoodsMappingId());
+			if(returnedGoods.getIsReal() == 2){
+				ogd.setServiceTimes(1);
+			}else{
+				ogd.setServiceTimes(returnedGoods.getReturnNum());			
+			}
+			ogd.setType(2);
+			ogd.setAdvanceFlag("4");
+			ogd.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
+			ogd.setCreateBy(UserUtils.getUser());
+			if(returnedGoods.getIsReal() == 2){//拒绝套卡售后,退还'套卡剩余金额'
+				//查询details表中AdvanceFlag=4的最新一条记录中SurplusAmount(套卡剩余金额)
+				double SurplusAmount = orderGoodsDetailsDao.getSurplusAmount(returnedGoods.getOrderId());
+				ogd.setSurplusAmount(-SurplusAmount);
+			}
+			orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
 		}
-		ogd.setType(2);
-		ogd.setAdvanceFlag("4");
-		ogd.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
-		ogd.setCreateBy(UserUtils.getUser());
-		if(returnedGoods.getIsReal() == 2){//拒绝套卡售后,退还'套卡剩余金额'
-			//查询details表中AdvanceFlag=4的最新一条记录中SurplusAmount(套卡剩余金额)
-			int SurplusAmount = orderGoodsDetailsDao.getSurplusAmount(returnedGoods.getOrderId());
-			ogd.setSurplusAmount(-SurplusAmount);
-		}
-		orderGoodsDetailsDao.saveOrderGoodsDetails(ogd);
 		//---------------------------退货处理  detials  end---------------------------
+	}
+	
+	/**
+	 * 平预约金和平欠款的方法
+	 * 审核同意后,没有平欠款和平预约金记录
+	 * (前端先申请换货,在审核时更改为退货并退款或者仅退款时,如果存在欠款和预约金未处理,审核同意时需要平欠款和平预约记录)
+	 * @param returnedGoods
+	 * @return
+	 */
+	public void applyArrearage(ReturnedGoods returnedGoods) {
+		User user = UserUtils.getUser();//获取当前操作用户
+		if(returnedGoods.getIsReal() != 0){
+			//先查看是否未处理预约金
+			int countAdvanceFlag = orderGoodsDetailsDao.getCountAdvanceFlag(returnedGoods);
+			if(countAdvanceFlag == 0){//没有平预约金记录
+				orderGoodsDetailsDao.editAdvanceFlag(returnedGoods);//平预约金方法
+			}
+		}
+		//查询是否有平欠款记录
+		int countArrearage = orderGoodsDetailsDao.getCountArrearage(returnedGoods);//查询审核需要的条件,判断无'平欠款'记录
+		if(countArrearage == 0){//没有平预约金记录
+			OrderGoodsDetails ogd1 = orderGoodsDetailsDao.getArrearageByOrderId(returnedGoods);//根据订单id获取订单余额,订单欠款和app欠款金额
+			if(returnedGoods.getApplyType() != 1 && ogd1.getOrderArrearage() > 0){//存在欠款和存在预约金
+				ogd1.setOrderBalance(-ogd1.getOrderBalance());//平欠款,扣除订单余款
+				ogd1.setOrderArrearage(-ogd1.getOrderArrearage());//平欠款,扣除订单欠款
+				ogd1.setAppArrearage(-ogd1.getAppArrearage());//平欠款,扣除app欠款金额
+				ogd1.setType(3);
+				ogd1.setAdvanceFlag("5");
+				ogd1.setCreateOfficeId(user.getOffice().getId());
+				ogd1.setCreateBy(user);
+				orderGoodsDetailsDao.saveOrderGoodsDetails(ogd1);
+			}
+		}
+	}
+	/**
+	 * 取消平预约金和取消平欠款的方法
+	 * 考虑一下存在多个售后或者只有一次售后
+	 * (前端先申请退货并退款(仅退款),在审核时更改为仅换货时,如果存在平欠款和平预约金记录,审核同意时需要取消平欠款和取消平预约记录)
+	 * @param returnedGoods
+	 * @return
+	 */
+	public void cancelArrearage(ReturnedGoods returnedGoods) {
+		//先查询商品是否存在申请售后记录或者已同意的记录
+		if(returnedGoodsDao.getReturnSaleNum(returnedGoods) == 0){//查询是否除本身之外的售后记录,没有:查看是否有平欠款和平预约金记录,有就取消记录.  存在:不需要取消记录
+			//查询'平预约金'和'平欠款'记录
+			int countAdvanceFlag = orderGoodsDetailsDao.getCountAdvanceFlag(returnedGoods);//查询'平预约金'记录
+			if(countAdvanceFlag>0){
+				orderGoodsDetailsDao.cancelAdvanceFlag(returnedGoods);//取消'平预约金'记录
+			}
+			int countArrearage = orderGoodsDetailsDao.getCountArrearage(returnedGoods);//查询审核需要的条件,判断无'平欠款'记录
+			if(countArrearage > 0){//平欠款是-欠款.小于0
+				orderGoodsDetailsDao.deleteArrearage(returnedGoods);//删除'平欠款'记录
+			}
+		}
 	}
 	/**
 	 * 扣减云币执行方法,并且添加操作记录
