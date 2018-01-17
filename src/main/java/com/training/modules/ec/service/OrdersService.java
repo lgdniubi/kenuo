@@ -4487,4 +4487,18 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			ordersDao.saveOrderInvoiceRelevancy(orderInvoiceRelevancy);
 		}
 	}
+	
+	/**
+	 * 查看售后的转单信息
+	 * @param page
+	 * @param user分页查询
+	 * @return
+	 */
+	public Page<Orders> returnedOrdersList(Page<Orders> page, Orders orders) {
+		// 设置分页参数
+		orders.setPage(page);
+		// 执行分页查询
+		page.setList(ordersDao.newFindList(orders));
+		return page;
+	}
 }

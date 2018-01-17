@@ -1244,4 +1244,13 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	public List<ReturnedGoods> selectKinderSon(String orderIds){
 		return returnedGoodsDao.selectKinderSon(orderIds);
 	}
+	
+	/**
+	 * 根据订单id查询该订单的售后订单信息
+	 * @param orderIds
+	 * @return
+	 */
+	public List<ReturnedGoods> queryReturnList(String orderIds){
+		return returnedGoodsDao.queryReturnList(orderIds);
+	}
 }

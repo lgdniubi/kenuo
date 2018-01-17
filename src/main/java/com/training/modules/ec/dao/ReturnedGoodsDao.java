@@ -257,4 +257,11 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 * @return
 	 */
 	public List<ReturnedGoods> selectKinderSon(String orderIds);
+	
+	/**
+	 * 根据订单id查询该订单的售后订单信息
+	 * @param orderIds
+	 * @return
+	 */
+	public List<ReturnedGoods> queryReturnList(String orderIds);
 }

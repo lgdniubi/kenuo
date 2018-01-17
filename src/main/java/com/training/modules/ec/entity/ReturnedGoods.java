@@ -83,6 +83,8 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	private String receiveAccount;			//收款人账号
 	private int oldReturnNum;				//退货数量
 	private String channelFlag;				//渠道标识
+	
+	private double floatArreageMoney;      //平欠款的钱
 		
 	public List<Integer> getRecIds() {
 		return recIds;
@@ -490,6 +492,12 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	}
 	public void setChannelFlag(String channelFlag) {
 		this.channelFlag = channelFlag;
+	}
+	public double getFloatArreageMoney() {
+		return floatArreageMoney;
+	}
+	public void setFloatArreageMoney(double floatArreageMoney) {
+		this.floatArreageMoney = floatArreageMoney;
 	}
 	
 }
