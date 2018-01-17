@@ -319,6 +319,7 @@
 	<!-- 审核 -->
 	<update id="saveEdite">
 		UPDATE mtmydb.mtmy_returned_goods SET
+			apply_type=#{applyType},
 			return_num=#{returnNum},
 			receive_name=#{receiveName},
 			receive_account=#{receiveAccount},
