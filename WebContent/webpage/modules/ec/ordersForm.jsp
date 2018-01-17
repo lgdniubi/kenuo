@@ -927,10 +927,7 @@ window.onload=initStatus;
 								</c:forEach>
 						</table>
 						</div>
-						
-						
-						
-						<%-- <p></p>
+						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 						<h4>售后信息:</h4>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
@@ -938,8 +935,7 @@ window.onload=initStatus;
 									<th style="text-align: center;">时间</th>
 									<th style="text-align: center;">商品名称</th>
 									<th style="text-align: center;">商品规格</th>
-									<th style="text-align: center;">售后数量</th>
-									<th style="text-align: center;">售后次数</th>
+									<th style="text-align: center;">售后次(个)数</th>
 									<th style="text-align: center;">退款金额</th>
 									<th style="text-align: center;">平欠款</th>
 									<th style="text-align: center;">操作</th>
@@ -952,22 +948,16 @@ window.onload=initStatus;
 										<td align="center">${returnedGoods.goodsName}</td>
 										<td align="center">${returnedGoods.specName}</td>
 										<td align="center">${returnedGoods.returnNum}</td>
-										<td align="center">${returnedGoods.settleName}</td>
+										<td align="center">${returnedGoods.returnAmount}</td>
+										<td align="center">${returnedGoods.floatArreageMoney}</td>
 										<td align="center">
-											<c:choose>
-												<c:when test="${turnOverDetails.status == 2 && (turnOverDetails.belongOfficeId == '' || turnOverDetails.belongOfficeId == null)}">
-													<a href="#" class="btn btn-success btn-xs" onclick="updateDetails('${turnOverDetails.turnOverDetailsId}','${turnOverDetails.orderId}')"><i class='fa fa-edit'></i>编辑</a>
-												</c:when>
-												<c:otherwise>
-													<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>编辑</a>
-												</c:otherwise>
-											</c:choose>
+											<a href="#" onclick="openDialogView('售后详情', '${ctx}/ec/returned/returnform?id=${returnedGoods.id}&flag=view','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>查看</a>
+											<a href="#" onclick="openDialogView('查看转单', '${ctx}/ec/orders/returnedOrdersList?returnedId=${returnedGoods.id}','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>查看转单</a>
 										</td>
 									</tr>
 								</c:forEach>
 						</table>
-						</div> --%>
-						
+						</div>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 							<div class="pull-left">
