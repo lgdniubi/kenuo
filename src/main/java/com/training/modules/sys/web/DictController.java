@@ -28,7 +28,6 @@ import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.sys.entity.Dict;
 import com.training.modules.sys.service.DictService;
-import com.training.modules.sys.utils.DictUtils;
 
 /**
  * 字典Controller

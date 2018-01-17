@@ -53,6 +53,8 @@
 				<form:select id="type" path="type" class="form-control m-b"><form:option value="" label=""/><form:options items="${typeList}" htmlEscape="false"/></form:select>
 			<span>描述 ：</span>
 				<form:input path="description" htmlEscape="false" maxlength="50" class="form-control"/>
+			<span>标签 ：</span>
+				<form:input path="label" htmlEscape="false" maxlength="50" class="form-control"/>
 		 </div>	
 	</form:form>
 	<br/>

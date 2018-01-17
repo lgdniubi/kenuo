@@ -40,13 +40,13 @@
 				var userType = $("[name='mediaLoginAuth.userType']").val();
 				var userTag = $("[name='mediaLoginAuth.userTag']").val();
 				if(isLogin == 1){
-					if(userType == 1){//用户类型:管理员,默认平台不选
+					if(userType == 1){//用户类型:写手,平台必选
 						var platform = $("[name='mediaLoginAuth.platform']:checked").val();
 						if(platform == undefined){
 							top.layer.alert('平台为必选', {icon: 0, title:'提醒'});
 							return;
 						}
-					}else if(userType == 2){//当用户类型:平台为空
+					}else if(userType == 2){//用户类型:管理员,默认平台不展示
 						$("input[name='mediaLoginAuth.platform']").each(function(){ 
 							$(this).attr("checked",false); 
 						});
@@ -155,8 +155,13 @@
 		//自媒体权限 是:用户类型.平台.标签才会显示  否:全部隐藏
 		var updateIsLogin = function (val){
 			if(val == 1){
+				var _userType = $("[name='mediaLoginAuth.userType']").val();
+				if(_userType == 2){
+					$("#platform").hide();
+				}else{
+					$("#platform").show();
+				}
 				$("#user_type").show();
-				$("#platform").show();
 				$("#userTag").show();
 			}else if(val == 0){//自媒体权限下面的数据暂时不显示
 				$("#user_type").hide();
@@ -164,7 +169,7 @@
 				$("#userTag").hide();
 			}
 		}
-		//用户类型  选择  超级管理员 默认平台全选
+		//用户类型  选择  管理员 默认平台全选
 		var updateUserType = function (obj){
 			var type = $(obj).val();
 			if(type == 2){

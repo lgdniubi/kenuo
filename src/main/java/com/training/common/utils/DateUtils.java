@@ -210,6 +210,26 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 		yaw.setYear(year);
 		return yaw;
 	}
+	public static YearAndWeek getWeekOfYear0(){
+		YearAndWeek yaw = new YearAndWeek();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setFirstDayOfWeek(Calendar.MONDAY); 
+		//设置一号所在的周为年的第一周
+		calendar.setMinimalDaysInFirstWeek(1); 
+		
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH)+1;
+		int weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR);
+		
+		
+		if(month == 12 && weekOfYear == 1){
+			year += 1;
+		}
+		
+		yaw.setWeek(weekOfYear);
+		yaw.setYear(year);
+		return yaw;
+	}
 	/**
 	 * 获取指定年的最大周
 	 * @param year
@@ -225,7 +245,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 	 * @throws ParseException
 	 */
 	public static void main(String[] args) throws ParseException {
-		//System.out.println(getWeekOfYear());
+		System.out.println(getWeekOfYear0());
 //		System.out.println(formatDate(parseDate("2010/3/6")));
 //		System.out.println(getDate("yyyy年MM月dd日 E"));
 //		long time = new Date().getTime()-parseDate("2012-11-19").getTime();
@@ -249,8 +269,58 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 		@Override
 		public String toString() {
 			// TODO Auto-generated method stub
-			return "year:"+year+",week:"+week;
+			return year+""+week;
 		}
 		
+	}
+	
+	/**
+	 * 获取当前时间是那一年的第几周
+	 * @return
+	 */
+	public static YearAndWeek getNowWeekOfYear(){
+		YearAndWeek yaw = new YearAndWeek();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setFirstDayOfWeek(Calendar.MONDAY); 
+		//设置一号所在的周为年的第一周
+		calendar.setMinimalDaysInFirstWeek(1); 
+		
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH)+1;
+		int weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR);
+		
+		
+		if(month == 12 && weekOfYear == 1){
+			year += 1;
+		}
+		
+		yaw.setWeek(weekOfYear);
+		yaw.setYear(year);
+		return yaw;
+	}
+	/**
+	 * 获取当前时间的上一周是那一年那一周
+	 * @return
+	 */
+	public static YearAndWeek getLastWeekOfYear(int flag){
+		YearAndWeek yaw = new YearAndWeek();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setFirstDayOfWeek(Calendar.MONDAY); 
+		
+		calendar.setMinimalDaysInFirstWeek(1); 
+		calendar.add(Calendar.WEEK_OF_YEAR, flag);
+		
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH)+1;
+		int weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR);
+		
+		
+		if(month == 12 && weekOfYear == 1){
+			year += 1;
+		}
+		
+		yaw.setWeek(weekOfYear);
+		yaw.setYear(year);
+		return yaw;
 	}
 }

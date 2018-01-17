@@ -210,5 +210,16 @@ public interface OfficeDao extends TreeDao<Office> {
 	 * @param officeLog
 	 */
 	public void saveOfficeLogDel(OfficeLog officeLog);
+	/**
+	 * 
+	 * @Title: checkOfficeCode
+	 * @Description: TODO 验证机构唯一编码
+	 * @param office
+	 * @return:
+	 * @return: Office
+	 * @throws
+	 * 2017年12月26日 兵子
+	 */
+	public Office checkOfficeCode(Office office);
 
 }

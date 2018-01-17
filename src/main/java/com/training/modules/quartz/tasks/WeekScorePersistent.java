@@ -59,16 +59,19 @@ public class WeekScorePersistent extends CommonService{
 		taskLog.setStartDate(startDate);
 		
 		try {
+			DateUtils.YearAndWeek yaw = DateUtils.getLastWeekOfYear(-1);
+			DateUtils.YearAndWeek week = DateUtils.getLastWeekOfYear(-2);
 			//获取全部的区域code
 			Set<String> set = redisClientTemplate.smembers(RedisConfig.office_area_ids_key);
 			Iterator<String> iter = set.iterator();
 			while(iter.hasNext()){
 				String aredId = iter.next();
-				Set<Tuple> st = redisClientTemplate.zrangeWithScores(RedisConfig.AREA_WEEK_BEAUTIFUL_KEY+aredId, 0, -1);
+				//获取商家下所有人的排行列表
+				Set<Tuple> st = redisClientTemplate.zrangeWithScores(RedisConfig.AREA_WEEK_BEAUTIFUL_KEY+yaw+"_"+aredId, 0, -1);
 				if(st.size()>0){
 					int rank = st.size();
 					Iterator<Tuple> it = st.iterator();
-					DateUtils.YearAndWeek yaw = DateUtils.getWeekOfYear();
+					
 					while(it.hasNext()){
 						Tuple t = it.next();
 						//long area_rank = redisClientTemplate.zrank(RedisConfig.AREA_WEEK_BEAUTIFUL_KEY+code, t.getElement());
@@ -81,10 +84,10 @@ public class WeekScorePersistent extends CommonService{
 						bws.setYear(yaw.getYear());
 						bws.setWeek(yaw.getWeek());
 						bws.setOfficeid(redisClientTemplate.hget(RedisConfig.OFFICE_IDS_KEY, t.getElement()));
-						bws.setAreaid(aredId);
+						bws.setAreaid(Integer.parseInt(aredId));
 						beautyWeekScoreService.insertWeekScore(bws);
 						
-						redisClientTemplate.zadd(RedisConfig.AREA_WEEK_BEAUTIFUL_KEY+aredId, 0, t.getElement());
+						//redisClientTemplate.zadd(RedisConfig.AREA_WEEK_BEAUTIFUL_KEY+yaw+"_"+aredId, 0, t.getElement());
 						rank--;
 						//officeWeekScoreService.statisOfficeWeekScoreByOfficeCode(BeanUtil.getOfficeCode( t.getElement()), t.getScore());
 					}
@@ -109,7 +112,10 @@ public class WeekScorePersistent extends CommonService{
 					//清除美容师 缓存数据
 					//this.redisClientTemplate.del(AREA_WEEK_BEAUTIFUL_KEY+code);
 				}
+				//删除上上周的数据
+				redisClientTemplate.del(RedisConfig.AREA_WEEK_BEAUTIFUL_KEY+week+"_"+aredId);
 			}
+			
 			
 			taskLog.setJobDescription("[work],[积分排行榜任务]，备份本周数据,个数："+set.size());
 			taskLog.setStatus(0);//任务状态
