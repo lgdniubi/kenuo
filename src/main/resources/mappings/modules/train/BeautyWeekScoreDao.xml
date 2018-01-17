@@ -10,9 +10,9 @@
 	<select id="queryWeekScoreByGroupByOfficeCode" parameterType="map" resultType="BeautyWeekScore">
 		SELECT 
 			office_id as officeid,
-			FORMAT(avg(week_score),2) as weekscore,
+			convert(avg( week_score ),decimal(10,2)) as weekscore,
 			area_id as areaid
 		FROM train_lesson_week_score  
-		WHERE year =#{year} AND week=#{week} AND area_id=#{area_id} GROUP BY office_id ORDER BY  weekscore DESC
+		WHERE year =#{year} AND week=#{week} AND area_id=#{area_id} GROUP BY office_id ORDER BY  weekscore desc
 	</select>
 </mapper>
