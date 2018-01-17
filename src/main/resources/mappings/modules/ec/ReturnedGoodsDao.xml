@@ -391,7 +391,7 @@
 			return_num,
 			goods_name
 		)VALUES(
-			#{returnedId},
+			#{id},
 			#{goodsMappingId},
 			#{isReal},
 			#{returnNum},
