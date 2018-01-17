@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.training.modules.quartz.tasks.ReportMapper">
+
+	<select id="dropTableUserAppArrearge"><!--清空会员欠款统计表-->
+		TRUNCATE TABLE mtmydb.user_app_arrearage;
+	</select>
+	<select id="dropTableOfficeAppArrearge"><!--清空机构欠款统计表-->
+		TRUNCATE TABLE mtmydb.office_app_arrearage;
+	</select>
+
+	<insert id="insertTableUserAppArrearge"><!--统计会员欠款(区分商家)-->
+		INSERT INTO mtmydb.user_app_arrearage 
+		(user_id,user_name,beautician_id,beautician_name,user_office_id,user_office_name,goods_franchisee_id,total_app_arrearage,create_day)
+		SELECT 
+			u.user_id,
+			u.`name`,
+			u.beautician_id,
+			u.beautician_name,
+			u.office_id,
+			u.office_name,
+			gm.goods_franchisee_id,
+			IFNULL(SUM(de.app_arrearage),0) as app_arrearage,
+			MAX(de.create_date) as create_day
+		FROM 
+			mtmydb.mtmy_order_goods_details de
+		INNER JOIN mtmydb.mtmy_order_goods_mapping gm ON gm.rec_id = de.goods_mapping_id
+		INNER JOIN mtmydb.mtmy_users u ON u.user_id = gm.user_id
+		INNER JOIN trains.sys_office s ON s.id = u.office_id
+		WHERE 
+		gm.del_flag =0
+		AND u.del_flag =0
+		AND (u.office_id is not null OR u.office_id != '')
+		AND s.del_flag =0
+		AND gm.goods_franchisee_id = s.franchisee_id
+		GROUP BY u.user_id HAVING app_arrearage >0;
+	</insert>
+
+	<insert id="insertTableOfficeAppArrearge"><!--统计机构欠款(区分商家)-->
+		INSERT INTO mtmydb.office_app_arrearage 
+		(office_id,office_parent_id,office_name,total_app_arrearage,create_day)
+		SELECT 
+			o.id as office_id,
+			o.parent_id as office_parent_id,
+			o.name as office_name,
+			IFNULL(SUM(t.app_arrearage),0),
+			t.create_day
+		FROM
+		(SELECT 
+			u.user_id,
+			u.office_id,
+			gm.goods_franchisee_id,
+			s.parent_ids,
+			IFNULL(SUM(de.app_arrearage),0) as app_arrearage,
+			MAX(de.create_date) as create_day
+		FROM 
+			mtmydb.mtmy_order_goods_details de
+		INNER JOIN mtmydb.mtmy_order_goods_mapping gm ON gm.rec_id = de.goods_mapping_id
+		INNER JOIN mtmydb.mtmy_users u ON u.user_id = gm.user_id
+		INNER JOIN trains.sys_office s ON s.id = u.office_id
+		WHERE  
+		gm.del_flag = 0
+		AND u.del_flag = 0
+		AND (u.office_id is not null OR u.office_id != '')
+		AND s.del_flag = 0
+		AND gm.goods_franchisee_id = s.franchisee_id
+		GROUP BY u.user_id HAVING app_arrearage >0) as t
+		RIGHT JOIN (SELECT id,parent_id,`name`,franchisee_id from trains.sys_office WHERE del_flag = 0)o ON (t.parent_ids LIKE CONCAT('%',o.id,'%') or t.office_id = o.id)
+		GROUP BY o.id
+		ORDER BY o.id;
+	</insert>
+
+</mapper>

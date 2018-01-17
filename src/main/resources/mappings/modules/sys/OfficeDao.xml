@@ -32,6 +32,7 @@
 		a.useable AS useable,
 		a.primary_person AS "primaryPerson.id",
 		a.deputy_person AS "deputyPerson.id",
+		a.office_code AS "officeCode",
 		p.name AS "parent.name",
 		ar.name AS "area.name",
 		ar.parent_ids AS "area.parentIds",
@@ -318,7 +319,8 @@
 			latitude,
 			useable,
 			primary_person,
-			deputy_person
+			deputy_person,
+			office_code
 		) VALUES (
 			#{id}, 
 			#{parent.id}, 
@@ -351,7 +353,8 @@
 			#{latitude},
 			#{useable},
 			#{primaryPerson.id},
-			#{deputyPerson.id}
+			#{deputyPerson.id},
+			#{officeCode}
 		)
 	</insert>
 	
@@ -383,7 +386,8 @@
 			latitude = #{latitude},
 			useable=#{useable},
 			primary_person=#{primaryPerson.id},
-			deputy_person=#{deputyPerson.id}
+			deputy_person=#{deputyPerson.id},
+			office_code=#{officeCode}
 		WHERE id = #{id}
 	</update>
 	
@@ -780,5 +784,26 @@
 		WHERE o.id = #{id}
 		AND o.del_flag = 0
 		AND oi.del_flag = 0
+	</select>
+	
+	<!-- 验证机构唯一编码 -->
+	<select id="checkOfficeCode" resultType="Office">
+		SELECT 
+			o.id,
+			o.parent_id AS "parent.id",
+			o.parent_ids,
+			o.franchisee_id AS 'franchisee.id',
+			o.icon_url,
+			o.name,
+			o.sort,
+			o.area_id AS "area.id",
+			o.code,
+			o.type,
+			o.grade,
+			o.address,
+			o.is_new,
+			o.office_code AS "officeCode"
+		FROM trains.sys_office o 
+		WHERE o.office_code = #{officeCode}
 	</select>
 </mapper>

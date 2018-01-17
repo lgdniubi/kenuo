@@ -183,7 +183,6 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
 			returnedGoodsDao.saveEdite(returnedGoods);//修改换货状态
 			
-			refuseService(returnedGoods);//退还申请扣减的数据
 		}
 		//---------------申请换货---end---------------------------
 	}
@@ -287,8 +286,6 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			
 			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
 			returnedGoodsDao.saveEdite(returnedGoods);
-			
-			refuseService(returnedGoods);//退还申请扣减的数据(detail表和mapping表)
 		}
 		//---------------申请换货---end---------------------------
 	}
@@ -342,39 +339,19 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				
 				refuseService(returnedGoods);//取消 平欠款和平预约金记录
 				
-				//套卡和通用卡的子项售后数量
+				//审核拒绝,退还套卡子项的商品数量(只插入不做删除)
+				List<ReturnedGoods> oglist = returnedGoodsDao.getSuitCard(returnedGoods);
 				OrderGoods orderGoods = new OrderGoods();
-				orderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
-				List<OrderGoods> oglist = orderGoodsDao.getOrderGoodsCard(orderGoods);
-				for (int i = 0; i < oglist.size(); i++) {
-					if(oglist.get(i).getIsreal() == 0){//当子项为实物,存入售后数量
-						orderGoods.setRecid(oglist.get(i).getRecid());
-						orderGoods.setAfterSaleNum(-oglist.get(i).getAfterSaleNum());
-						orderGoodsDao.updateIsAfterSales(orderGoods);//在mapping表中都存入了after_sale_num售后数量 ,需要在减去
-						
-						ReturnedGoods rg = new ReturnedGoods();
-						rg.setReturnedId(returnedGoods.getId());
-						rg.setGoodsMappingId(oglist.get(i).getRecid()+"");
-						rg.setIsReal(oglist.get(i).getIsreal());
-							rg.setReturnNum(-oglist.get(i).getGoodsnum());
-						rg.setGoodsName(oglist.get(i).getGoodsname());
-						returnedGoodsDao.insertReturnGoodsCard(rg);
-					}
-				}
-				//查询套卡子项虚拟商品的剩余次数(购买次数-预约次数)
-				List<ReturnedGoods> returnedGoodsNum = returnedGoodsDao.getReturnNum(returnedGoods);
-				for (ReturnedGoods rgn : returnedGoodsNum) {
-					rgn.setReturnedId(returnedGoods.getId());
-					//修改套卡子项虚拟商品的剩余次数
-					rgn.setReturnNum(-rgn.getReturnNum());
-					returnedGoodsDao.insertReturnGoodsCard(rgn);
+				for (ReturnedGoods rg : oglist) {
+					//拒绝:减去mapping表中扣减的数量
+					orderGoods.setRecid(Integer.parseInt(rg.getGoodsMappingId()));
+					orderGoods.setAfterSaleNum(-rg.getReturnNum());
+					orderGoodsDao.updateIsAfterSales(orderGoods);//在mapping表中都存入了after_sale_num售后数量 ,需要在减去
 					
-					//当虚拟商品时,给mapping表中插入after_sale_num
-					orderGoods.setRecid(Integer.valueOf(rgn.getGoodsMappingId()));
-					orderGoods.setAfterSaleNum(rgn.getReturnNum());
-					orderGoodsDao.updateIsAfterSales(orderGoods);
+					//拒绝:退还套卡的子项记录
+					rg.setReturnNum(-rg.getReturnNum());
+					returnedGoodsDao.insertReturnGoodsCard(rg);
 				}
-				
 			}
 			
 			//------------------------------同意退货  扣减云币----begin--------------------------
@@ -395,8 +372,6 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			
 			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
 			returnedGoodsDao.saveEdite(returnedGoods);//修改换货状态
-			
-			refuseService(returnedGoods);//退还申请扣减的数据
 		}
 		
 	}
@@ -537,8 +512,6 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			
 			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
 			returnedGoodsDao.saveEdite(returnedGoods);//修改换货状态
-			
-			refuseService(returnedGoods);//退还申请扣减的数据
 		}
 	}
 
@@ -854,7 +827,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			OrderGoodsDetails ogd = new OrderGoodsDetails();
 			ogd.setOrderId(returnedGoods.getOrderId());
 			ogd.setGoodsMappingId(returnedGoods.getGoodsMappingId());
-			if(returnedGoods.getIsReal() == 2){
+			if(returnedGoods.getIsReal() == 2 && !"bm".equals(returnedGoods.getChannelFlag())){
 				ogd.setServiceTimes(1);
 			}else{
 				ogd.setServiceTimes(returnedGoods.getReturnNum());			
@@ -882,16 +855,16 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	 */
 	public void applyArrearage(ReturnedGoods returnedGoods) {
 		User user = UserUtils.getUser();//获取当前操作用户
-		if(returnedGoods.getIsReal() != 0){
-			//先查看是否未处理预约金
-			int countAdvanceFlag = orderGoodsDetailsDao.getCountAdvanceFlag(returnedGoods);
+		if(returnedGoods.getIsReal() != 0){//除实物之外的商品都需要处理预约金(实物不用处理预约金)
+			//平预约金方法
+			int countAdvanceFlag = orderGoodsDetailsDao.getCountAdvanceFlag(returnedGoods);//查询是否存在平预约金记录
 			if(countAdvanceFlag == 0){//没有平预约金记录
 				orderGoodsDetailsDao.editAdvanceFlag(returnedGoods);//平预约金方法
 			}
 		}
-		//查询是否有平欠款记录
+		//平欠款方法(1.先确认是否存在'平欠款记录'. 2.执行平欠款)
 		int countArrearage = orderGoodsDetailsDao.getCountArrearage(returnedGoods);//查询审核需要的条件,判断无'平欠款'记录
-		if(countArrearage == 0){//没有平预约金记录
+		if(countArrearage == 0){//没有平欠款记录
 			OrderGoodsDetails ogd1 = orderGoodsDetailsDao.getArrearageByOrderId(returnedGoods);//根据订单id获取订单余额,订单欠款和app欠款金额
 			if(returnedGoods.getApplyType() != 1 && ogd1.getOrderArrearage() > 0){//存在欠款和存在预约金
 				ogd1.setOrderBalance(-ogd1.getOrderBalance());//平欠款,扣除订单余款
@@ -913,7 +886,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	 * @return
 	 */
 	public void cancelArrearage(ReturnedGoods returnedGoods) {
-		//先查询商品是否存在申请售后记录或者已同意的记录
+		//先查询商品是否存在申请售后记录或者已同意的记录(除当前售后订单外的记录)
 		if(returnedGoodsDao.getReturnSaleNum(returnedGoods) == 0){//查询是否除本身之外的售后记录,没有:查看是否有平欠款和平预约金记录,有就取消记录.  存在:不需要取消记录
 			//查询'平预约金'和'平欠款'记录
 			int countAdvanceFlag = orderGoodsDetailsDao.getCountAdvanceFlag(returnedGoods);//查询'平预约金'记录

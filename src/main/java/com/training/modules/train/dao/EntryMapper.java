@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.EntrySopCastBean;
 import com.training.modules.train.entity.LiveRoomidAndAuditid;
+import com.training.modules.train.entity.rooms;
 
 
 
@@ -65,6 +66,12 @@ public interface EntryMapper {
 	 * @param m
 	 */
 	public void addproportionsmessage(Map<String, Object> m);
+
+	/**
+	 * 直播浏览数量和浏览人数
+	 * @param map
+	 */
+	public void updatebrowsenumber(Map<String, Object> map);
 
 	
 

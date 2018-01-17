@@ -2,6 +2,8 @@ package com.training.modules.train.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.Position;
@@ -76,5 +78,17 @@ public interface PositionDao extends CrudDao<Position>{
 	 */
 	public List<String> getPositionkey(String userId);
 
+	/**
+	 * 
+	 * @Title: searchPosition
+	 * @Description: TODO 职位查询
+	 * @param searchValue
+	 * @param positionkey
+	 * @return:
+	 * @return: List<Position>
+	 * @throws
+	 * 2018年1月9日 兵子
+	 */
+	public List<Position> searchPosition(@Param(value = "searchValue")String searchValue, @Param(value = "positionkey") List<String> positionkey);
 	
 }

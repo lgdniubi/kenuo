@@ -28,145 +28,37 @@
 			month,
 			week,
 			day,
-			consume_sum,
-			arrears_sum,
-			appt_times
+			arrears_sum
 		)
 		<foreach collection="list" item="list" separator="union all ">
-			SELECT t.user_id,#{list.shopId},#{list.parentIds},t.year,t.quarter,t.month,t.week,t.day,SUM(t.consumeSum),SUM(t.arrearsSum),SUM(t.apptTimes) FROM (
-				(	SELECT
-						b.user_id,
-						(SELECT YEAR(a.create_date)) AS 'year',
-						(SELECT QUARTER(a.create_date)) AS 'quarter',
-						(SELECT MONTH(a.create_date)) AS 'month',
-						(SELECT WEEKOFYEAR(a.create_date)) AS 'week',
-						(SELECT DAY(a.create_date)) AS 'day',
-						SUM(a.app_total_amount) AS consumeSum,
-						SUM(a.app_arrearage) AS arrearsSum,
-						0 AS apptTimes
-					FROM
-						mtmydb.mtmy_order_goods_details a
-						LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.goods_mapping_id = b.rec_id
-					WHERE
-						b.is_real != 0
-						AND b.group_id = 0 
-		 				AND b.user_id = #{list.userId}
-		 				<if test="list.isExist == 1">
-							AND DATE_FORMAT(a.create_date,'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
-							AND DATE_FORMAT(a.create_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
-						</if>
-						<if test="list.isExist != 1">
-							AND DATE_FORMAT(a.create_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
-						</if>
-						GROUP BY a.goods_mapping_id,b.goods_id,b.user_id,year,quarter,month,week,day
-				)UNION(
-					SELECT
-						user_id,
-						(SELECT YEAR(appt_date)) AS 'year',
-						(SELECT QUARTER(appt_date)) AS 'quarter',
-						(SELECT MONTH(appt_date)) AS 'month',
-						(SELECT WEEKOFYEAR(appt_date)) AS 'week',
-						(SELECT DAY(appt_date)) AS 'day',
-						0 AS consumeSum,
-						0 AS arrearsSum,
-						COUNT(1) AS apptTimes
-					FROM
-						mtmydb.mtmy_appt_order
-					WHERE
-						appt_status IN (1,2,4)
-						AND user_id = #{list.userId}
-						<if test="list.isExist == 1">
-							AND DATE_FORMAT(appt_date,'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
-							AND DATE_FORMAT(appt_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
-						</if>
-						<if test="list.isExist != 1">
-							AND DATE_FORMAT(appt_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
-						</if>
-						GROUP BY user_id,year,quarter,month,week,day
-				)
-			) AS t
-			GROUP BY user_id,year,quarter,month,week,day
+			SELECT
+				b.user_id,
+				#{list.shopId},
+				#{list.parentIds},
+				(SELECT YEAR(a.create_date)) AS 'year',
+				(SELECT QUARTER(a.create_date)) AS 'quarter',
+				(SELECT MONTH(a.create_date)) AS 'month',
+				(SELECT WEEKOFYEAR(a.create_date)) AS 'week',
+				(SELECT DAY(a.create_date)) AS 'day',
+				SUM(a.app_arrearage) AS arrearsSum
+			FROM
+				mtmydb.mtmy_order_goods_details a
+				LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.goods_mapping_id = b.rec_id
+			WHERE
+				b.is_real != 0
+				AND b.group_id = 0 
+ 				AND b.user_id = #{list.userId}
+ 				<if test="list.isExist == 1">
+					AND DATE_FORMAT(a.create_date,'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
+					AND DATE_FORMAT(a.create_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
+				</if>
+				<if test="list.isExist != 1">
+					AND DATE_FORMAT(a.create_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
+				</if>
+				GROUP BY a.goods_mapping_id,b.goods_id,b.user_id,year,quarter,month,week,day
 		</foreach>
 	</insert>
 	<!-- end 用户消费表 end -->
-	
-	
-	<!-- begin 店铺预约表 begin -->
-	<!-- 查询所有有绑定用户的店铺 -->
-	<select id="findShopList" resultType="ShopReport">
-		SELECT
-			b.id AS shopId,
-			b.parent_ids AS parentIds,
-			IF((SELECT id FROM trains.report_shop_appt WHERE shop_id = a.office_id LIMIT 1),1,0) AS isExist
-		FROM
-			mtmydb.mtmy_users a
-		LEFT JOIN trains.sys_office b ON a.office_id = b.id
-		WHERE
-			a.office_id IS NOT NULL
-			AND a.office_id != ''
-			GROUP BY a.office_id
-	</select>
-	<!-- 插入店铺预约报表 -->
-	<insert id="insertShopReport">
-		INSERT INTO report_shop_appt(
-			shop_id,
-			parent_ids,
-			year,
-			quarter,
-			month,
-			week,
-			day,
-			customer_sum,
-			appt_sum,
-			frequency
-		)
-			SELECT 
-				a.shop_id,
-				(SELECT parent_ids FROM sys_office WHERE id = a.shop_id) AS 'parentIds',
-				(SELECT YEAR(a.appt_date)) AS 'year',
-				(SELECT QUARTER(a.appt_date)) AS 'quarter',
-				(SELECT MONTH(a.appt_date)) AS 'month',
-				(SELECT WEEKOFYEAR(a.appt_date)) AS 'week',
-				(SELECT DAY(a.appt_date)) AS 'day',
-				IFNULL(b.customerSum,0),
-				IFNULL(a.apptSum,0),
-				IFNULL(b.frequency,0)
-			FROM
-				(
-					SELECT 
-						shop_id,appt_date,COUNT(1) AS 'apptSum' 
-					FROM 
-						mtmydb.mtmy_appt_order 
-					WHERE
-						1 = 1
-						<if test="date != null">
-							AND DATE_FORMAT(appt_date,'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
-							AND DATE_FORMAT(appt_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
-						</if>	
-						<if test="date == null">
-							AND DATE_FORMAT(appt_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
-						</if>
-					GROUP BY shop_id,appt_date
-				) a
-			LEFT JOIN (
-				SELECT 
-					shop_id,appt_date,COUNT(1) AS 'frequency',COUNT(DISTINCT user_id) AS 'customerSum' 
-				FROM
-					mtmydb.mtmy_appt_order 
-				WHERE 
-					appt_status IN (1,2)
-					<if test="date != null">
-						AND DATE_FORMAT(appt_date,'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
-						AND DATE_FORMAT(appt_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
-					</if>
-					<if test="date == null">
-						AND DATE_FORMAT(appt_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
-					</if>
-					GROUP BY shop_id,appt_date
-			) b ON a.shop_id = b.shop_id AND a.appt_date = b.appt_date
-	</insert>
-	<!-- end 店铺预约表 end -->
-	
 	
 	<!-- begin 美容师绩效表 begin -->
 	<!-- 插入美容师绩效表   预约的规格不为时限卡 -->
@@ -181,7 +73,6 @@
 			week,
 			day,
 			achievement,
-			service_times,
 			service_charge
 		)
 			SELECT
@@ -194,13 +85,12 @@
 				(SELECT WEEKOFYEAR(a.update_date)) AS 'week',
 				(SELECT DAY(a.update_date)) AS 'day',
 				SUM(a.basis_fee) AS basisFee,
-				COUNT(a.beautician_id),
 				SUM(a.post_fee) AS postFee
 			FROM
 				mtmydb.mtmy_appt_order a,
 				mtmydb.mtmy_order_goods_mapping b 
 			WHERE
-				appt_status IN (1, 2, 4)
+				appt_status IN (1, 2)
 				AND a.goods_mapping_id = b.rec_id
 				AND b.service_times != '999'
 				AND b.is_real = 1
@@ -217,7 +107,6 @@
 	<select id="findExpirationOrder" resultType="ShopReport">
 		SELECT
 			a.rec_id AS mappingId,
-			IF(SUM(c.basis_fee) > SUM(b.total_amount),0,1) AS isExist,
 			SUM(b.total_amount) AS totalAmount,
 			IFNULL(SUM(c.basis_fee),0) AS basisFee
 		FROM
@@ -247,7 +136,6 @@
 			week,
 			day,
 			achievement,
-			service_times,
 			service_charge
 		)
 		<foreach collection="list" item="list" separator="union all ">
@@ -260,18 +148,12 @@
 				(SELECT MONTH(a.update_date)) AS 'month',
 				(SELECT WEEKOFYEAR(a.update_date)) AS 'week',
 				(SELECT DAY(a.update_date)) AS 'day',
-				<if test="list.isExist == 1">
-					(SUM(a.basis_fee)*#{list.totalAmount}/#{list.basisFee}) AS basisFee,
-				</if>
-				<if test="list.isExist == 0">
-					SUM(a.basis_fee) AS basisFee,
-				</if>
-				SUM(a.post_fee) AS postFee,
-				COUNT(a.beautician_id) 
+				SUM(a.basis_fee) AS basisFee,
+				SUM(a.post_fee) AS postFee
 			FROM
 				mtmydb.mtmy_appt_order a
 			WHERE
-				appt_status IN (1, 2, 4)
+				appt_status IN (1, 2)
 				AND a.goods_mapping_id = #{list.mappingId}
 			GROUP BY beauticianId,beaOfficeId,year,quarter,month,week,day
 		</foreach>

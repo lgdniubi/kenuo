@@ -38,7 +38,6 @@ import com.training.modules.oa.service.OaNotifyService;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.train.service.TrainCategorysService;
 
-import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
 /**
@@ -129,6 +128,8 @@ public class OaNotifyController extends BaseController {
 		}else{
 			oaNotify.setContent(oaNotify.getContent());
 		}
+		//内容转码 
+		oaNotify.setContent(HtmlUtils.htmlUnescape(oaNotify.getContent()));
 		oaNotifyService.save(oaNotify);
 		addMessage(redirectAttributes, "保存通知'" + oaNotify.getTitle() + "'成功");
 		if(isSelf)

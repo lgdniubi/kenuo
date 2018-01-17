@@ -12,7 +12,7 @@ public class BeautyWeekScore extends BaseEntity<BeautyWeekScore> {
 	private int year;
 	private long arearank;
 	private String officeid;
-	private String areaid;
+	private int areaid;
 
 
 	public int getBws_id() {
@@ -72,11 +72,11 @@ public class BeautyWeekScore extends BaseEntity<BeautyWeekScore> {
 	}
 
 
-	public String getAreaid() {
+	public int getAreaid() {
 		return areaid;
 	}
 
-	public void setAreaid(String areaid) {
+	public void setAreaid(int areaid) {
 		this.areaid = areaid;
 	}
 
