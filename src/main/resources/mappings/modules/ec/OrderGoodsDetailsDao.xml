@@ -203,7 +203,7 @@
 	</insert>
 	<select id="findApptStatus" resultType="Integer">
 		SELECT ( CASE WHEN 
-					(SELECT COUNT(1) FROM mtmydb.mtmy_appt_order WHERE id IN (SELECT appt_id FROM mtmydb.mtmy_order_goods_details WHERE order_id = '00201801171758107972000007' AND advance_flag = '0' AND service_times = -1 AND appt_status IN (0,1,2,4))) > 0
+					(SELECT COUNT(1) FROM mtmydb.mtmy_appt_order WHERE id IN (SELECT appt_id FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '0' AND service_times = -1 AND appt_status IN (0,1,2,4))) > 0
 					 THEN 1 ELSE 0 END
 				) AS num
 	</select>
