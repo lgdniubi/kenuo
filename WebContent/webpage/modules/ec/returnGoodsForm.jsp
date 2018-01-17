@@ -388,13 +388,8 @@
 				    <div id="returnTypeIsShow" style="display: display">
 				        <label>售后方式：</label>
 			        	<form:select path="returnType" class="form-control" style="width:185px;" onchange="selectReturnType(this)">
-							<form:option value="0">原路退回</form:option>
-							<form:option value="1">现金</form:option>
-							<form:option value="2">微信</form:option>
-							<form:option value="3">支付宝</form:option>
-							<form:option value="4">银行卡账户</form:option>
-							<form:option value="5">充值到每天美耶账户</form:option>
-						</form:select>
+							<form:options items="${fns:getDictList('returnType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+						</form:select><font color="red">所有退款方式仅用于记录!我们退款打款都是由人工手动操作,系统并没有自动打款功能!</font>
 						<p></p>
 						<div id="selectReceive" style="display: display">
 							<label>收&nbsp;&nbsp;款&nbsp;&nbsp;人：</label>

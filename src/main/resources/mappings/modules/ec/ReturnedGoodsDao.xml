@@ -143,6 +143,18 @@
 		AND a.is_real = 0
 		GROUP BY a.mapping_id
 	</select>
+	<!-- 根据售后id查询套卡子项商品的售后数量(套卡只能售后一次,所以此时的售后数量没有进行SUM) -->
+	<select id="getSuitCard" resultType="ReturnedGoods">
+		SELECT 
+			a.returned_id AS 'id',
+			a.mapping_id AS 'goodsMappingId',
+			a.is_real AS 'isReal',
+			a.return_num AS 'returnNum',
+			a.goods_name AS 'goodsName'
+		FROM mtmydb.mtmy_returned_goods_card a 
+		WHERE
+			a.returned_id = #{id}
+	</select>
 	<!-- 根据商品id查询不是当前售后订单id的实物售后数量 -->
 	<select id="getRealReturnNum" resultType="int">
 		SELECT 

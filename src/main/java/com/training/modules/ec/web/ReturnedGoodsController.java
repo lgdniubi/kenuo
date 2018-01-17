@@ -529,6 +529,9 @@ public class ReturnedGoodsController extends BaseController {
 			returnedGoods.setShipperBy(currentUser);
 			returnedGoods.setReturnStatus("26");
 			returnedGoodsService.UpdateShipping(returnedGoods);
+			if(returnedGoods.getIsReal() != 0){//除了实物之外的商品换货时,扣减次数是在detail表中,所以在换货完成之后,要退还次数.
+				returnedGoodsService.refuseService(returnedGoods);//退还申请扣减的数据(detail表和mapping表)
+			}
 			addMessage(redirectAttributes, "退货单：" + returnedGoods.getId() + "'物流保存成功");
 		} catch (Exception e) {
 			// TODO: handle exception

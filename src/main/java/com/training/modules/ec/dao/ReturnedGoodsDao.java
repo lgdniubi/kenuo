@@ -250,4 +250,10 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 * @return
 	 */
 	public List<ReturnedGoods> queryAfterSaleList(String orderIds);
+	/**
+	 * 审核拒绝,退还套卡子项的商品数量
+	 * @param returnedGoods
+	 * @return
+	 */
+	public List<ReturnedGoods> getSuitCard(ReturnedGoods returnedGoods);
 }
