@@ -146,7 +146,7 @@
 	<!-- 根据售后id查询套卡子项商品的售后数量(套卡只能售后一次,所以此时的售后数量没有进行SUM) -->
 	<select id="getSuitCard" resultType="ReturnedGoods">
 		SELECT 
-			a.returned_id AS 'id',
+			a.returned_id AS 'returnedId',
 			a.mapping_id AS 'goodsMappingId',
 			a.is_real AS 'isReal',
 			a.return_num AS 'returnNum',
@@ -391,7 +391,7 @@
 			return_num,
 			goods_name
 		)VALUES(
-			#{id},
+			#{returnedId},
 			#{goodsMappingId},
 			#{isReal},
 			#{returnNum},
