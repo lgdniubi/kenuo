@@ -1784,8 +1784,12 @@ public class OrdersController extends BaseController {
 			logger.error("强制取消错误：" + e.getMessage());
 			addMessage(redirectAttributes, "强制取消'" + orders.getOrderid() + "'失败！");
 		}
-		//return "redirect:" + adminPath + "/ec/orders/list";
-		return "redirect:" + adminPath + "/ec/orders/orderform?type=view&orderid="+orders.getOrderid();
+		
+		if(orders.getIsReal() == 0 || orders.getIsReal() == 1){
+			return "redirect:" + adminPath + "/ec/orders/orderform?type=view&orderid="+orders.getOrderid();
+		}else{
+			return "redirect:" + adminPath + "/ec/orders/cardOrdersForm?type=view&orderid="+orders.getOrderid();
+		}
 	}
 	
 	/**

@@ -687,29 +687,29 @@ window.onload=initStatus;
 								</c:if>
 								<c:if test="${orders.isReal == 1}">
 									<c:if test="${orders.channelFlag != 'bm'}">
-										<form:option value='${orders.orderstatus }'>
-											<c:if test="${orders.orderstatus == -2}">
-												取消订单
-											</c:if>
-											<c:if test="${orders.orderstatus == -1}">
-												待付款
-											</c:if>
-											<c:if test="${orders.orderstatus == 1}">
-												待发货
-											</c:if>
-											<c:if test="${orders.orderstatus == 2}">
-												待收货
-											</c:if>
-											<c:if test="${orders.orderstatus == 3}">
-												已退款
-											</c:if>
-											<c:if test="${orders.orderstatus == 4}">
-												已完成
-											</c:if>
-										</form:option>
+										<c:if test="${orders.orderstatus == -2}">
+											<form:option value="-2">取消订单</form:option>
+										</c:if>
+										<c:if test="${orders.orderstatus == -1}">
+											<form:option value="-1">待付款</form:option>
+										</c:if>
+										<c:if test="${orders.orderstatus == 3}">
+											<form:option value="3">已退款</form:option>
+										</c:if>
+										<c:if test="${orders.orderstatus == 4}">
+											<form:option value="4">已完成</form:option>
+										</c:if>
 									</c:if>
 									<c:if test="${orders.channelFlag == 'bm'}">
-										<form:option value="4">已完成</form:option>
+										<c:if test="${orders.orderstatus == -2}">
+											<form:option value="-2">取消订单</form:option>
+										</c:if>
+										<c:if test="${orders.orderstatus == 3}">
+											<form:option value="3">已退款</form:option>
+										</c:if>
+										<c:if test="${orders.orderstatus == 4}">
+											<form:option value="4">已完成</form:option>
+										</c:if>
 									</c:if>
 								</c:if>
 							</form:select>&nbsp;&nbsp;&nbsp;&nbsp;
