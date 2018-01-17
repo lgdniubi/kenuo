@@ -930,4 +930,15 @@
 		AND a.return_status IN (11,21)
 		AND a.del_flag=0
 	</select>
+	
+	<!-- 根据退货id查询子项实物的售后数量 -->
+	<select id="selectKinderSon" resultType="ReturnedGoods">
+		SELECT 
+			returned_id AS 'returnedId',
+			mapping_id AS 'goodsMappingId',
+			return_num AS 'returnNum'
+		FROM mtmydb.mtmy_returned_goods_card
+		WHERE returned_id = #{returnedId}
+		AND is_real = 0
+	</select>
 </mapper>

@@ -294,6 +294,12 @@ public class OrdersController extends BaseController {
 			User user = UserUtils.getUser(); //登陆用户
 			List<Payment> paylist = paymentService.paylist();
 			orders = ordersService.selectOrderById(orders.getOrderid());
+			
+			//查看退货信息
+			ReturnedGoods returnedGoods = new ReturnedGoods();
+			returnedGoods.setOrderId(orders.getOrderid());
+			List<ReturnedGoods> returnedList = returnedGoodsDao.findList(returnedGoods);
+			
 			List<TurnOverDetails> turnOverDetailsList = turnOverDetailsService.selectDetailsByOrderId(orders.getOrderid());
 			
 			List<TurnOverDetails> pushmoneyRecordList = turnOverDetailsService.selectPushDetails(orders.getOrderid());
@@ -357,6 +363,7 @@ public class OrdersController extends BaseController {
 			model.addAttribute("type", type);
 			model.addAttribute("turnOverDetailsList",turnOverDetailsList);
 			model.addAttribute("pushMoneryDetails",pushMoneryDetails);
+			model.addAttribute("returnedList",returnedList);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "订单跳转修改页面", e);
 			logger.error("跳转修改页面出错：" + e.getMessage());
@@ -1606,12 +1613,26 @@ public class OrdersController extends BaseController {
 					}
 					
 					if(orders.getIsReal() == 0){
+						returnedGoods.setOldReturnNum(returnedGoods.getReturnNum());
 						returnedGoodsService.saveReturnedKind(returnedGoods);
 					}else if(orders.getIsReal() == 1){
+						returnedGoods.setOldReturnNum(returnedGoods.getReturnNum());
 						returnedGoodsService.saveReturned(returnedGoods);
 					}else if(orders.getIsReal() == 2){
 						returnedGoodsService.saveEditeSuit(returnedGoods);
 					}else if(orders.getIsReal() == 3){
+						List<ReturnedGoods> kinderSons = returnedGoodsService.selectKinderSon(returnedGoods.getId());
+						List<Integer> list1 = new ArrayList<Integer>();
+						List<Integer> list2 = new ArrayList<Integer>();
+						if(kinderSons.size() > 0){
+							for(ReturnedGoods son:kinderSons){
+								list1.add(Integer.valueOf(son.getGoodsMappingId()));
+								list2.add(Integer.valueOf(son.getReturnNum()));
+							}
+							returnedGoods.setRecIds(list1);
+							returnedGoods.setReturnNums(list2);
+							returnedGoods.setOldReturnNums(list2);
+						}
 						returnedGoodsService.saveReturnedCommon(returnedGoods);
 					}
 				}
