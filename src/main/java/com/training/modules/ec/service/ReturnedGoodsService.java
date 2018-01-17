@@ -1208,4 +1208,13 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	public int getRealReturnNum(ReturnedGoods returnedGoods) {
 		return returnedGoodsDao.getRealReturnNum(returnedGoods);
 	}
+	
+	/**
+	 * 根据退货id查询子项实物的售后数量
+	 * @param orderIds
+	 * @return
+	 */
+	public List<ReturnedGoods> selectKinderSon(String orderIds){
+		return returnedGoodsDao.selectKinderSon(orderIds);
+	}
 }

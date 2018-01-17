@@ -687,29 +687,29 @@ window.onload=initStatus;
 								</c:if>
 								<c:if test="${orders.isReal == 1}">
 									<c:if test="${orders.channelFlag != 'bm'}">
-										<form:option value='${orders.orderstatus }'>
-											<c:if test="${orders.orderstatus == -2}">
-												取消订单
-											</c:if>
-											<c:if test="${orders.orderstatus == -1}">
-												待付款
-											</c:if>
-											<c:if test="${orders.orderstatus == 1}">
-												待发货
-											</c:if>
-											<c:if test="${orders.orderstatus == 2}">
-												待收货
-											</c:if>
-											<c:if test="${orders.orderstatus == 3}">
-												已退款
-											</c:if>
-											<c:if test="${orders.orderstatus == 4}">
-												已完成
-											</c:if>
-										</form:option>
+										<c:if test="${orders.orderstatus == -2}">
+											<form:option value="-2">取消订单</form:option>
+										</c:if>
+										<c:if test="${orders.orderstatus == -1}">
+											<form:option value="-1">待付款</form:option>
+										</c:if>
+										<c:if test="${orders.orderstatus == 3}">
+											<form:option value="3">已退款</form:option>
+										</c:if>
+										<c:if test="${orders.orderstatus == 4}">
+											<form:option value="4">已完成</form:option>
+										</c:if>
 									</c:if>
 									<c:if test="${orders.channelFlag == 'bm'}">
-										<form:option value="4">已完成</form:option>
+										<c:if test="${orders.orderstatus == -2}">
+											<form:option value="-2">取消订单</form:option>
+										</c:if>
+										<c:if test="${orders.orderstatus == 3}">
+											<form:option value="3">已退款</form:option>
+										</c:if>
+										<c:if test="${orders.orderstatus == 4}">
+											<form:option value="4">已完成</form:option>
+										</c:if>
 									</c:if>
 								</c:if>
 							</form:select>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -927,6 +927,47 @@ window.onload=initStatus;
 								</c:forEach>
 						</table>
 						</div>
+						
+						
+						
+						<%-- <p></p>
+						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+						<h4>售后信息:</h4>
+						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+								<tr>
+									<th style="text-align: center;">时间</th>
+									<th style="text-align: center;">商品名称</th>
+									<th style="text-align: center;">商品规格</th>
+									<th style="text-align: center;">售后数量</th>
+									<th style="text-align: center;">售后次数</th>
+									<th style="text-align: center;">退款金额</th>
+									<th style="text-align: center;">平欠款</th>
+									<th style="text-align: center;">操作</th>
+								</tr>
+								<c:forEach items="${returnedList}" var="returnedGoods">
+									<tr>
+										<td align="center">
+											<fmt:formatDate value="${returnedGoods.applyDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
+										</td>
+										<td align="center">${returnedGoods.goodsName}</td>
+										<td align="center">${returnedGoods.specName}</td>
+										<td align="center">${returnedGoods.returnNum}</td>
+										<td align="center">${returnedGoods.settleName}</td>
+										<td align="center">
+											<c:choose>
+												<c:when test="${turnOverDetails.status == 2 && (turnOverDetails.belongOfficeId == '' || turnOverDetails.belongOfficeId == null)}">
+													<a href="#" class="btn btn-success btn-xs" onclick="updateDetails('${turnOverDetails.turnOverDetailsId}','${turnOverDetails.orderId}')"><i class='fa fa-edit'></i>编辑</a>
+												</c:when>
+												<c:otherwise>
+													<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>编辑</a>
+												</c:otherwise>
+											</c:choose>
+										</td>
+									</tr>
+								</c:forEach>
+						</table>
+						</div> --%>
+						
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 							<div class="pull-left">
