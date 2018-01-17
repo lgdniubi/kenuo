@@ -1040,4 +1040,25 @@ public class OfficeController extends BaseController {
     	return mapList;
     }
     
+    /**
+     * 
+     * @Title: checkOfficeCode
+     * @Description: TODO 验证机构唯一编码
+     * @param office
+     * @return:
+     * @return: String
+     * @throws
+     * 2017年12月26日 兵子
+     */
+    @ResponseBody
+    @RequestMapping(value = "checkOfficeCode")
+    public String checkOfficeCode(Office office,String oldOfficeCode){
+    	if (StringUtils.isNotBlank(office.getOfficeCode()) && office.getOfficeCode().equals(oldOfficeCode)) {
+    		return "true";
+		}else if(StringUtils.isNotBlank(office.getOfficeCode()) && officeService.checkOfficeCode(office) == null){
+			return "true";
+		}
+    	return "false";
+    }
+    
 }

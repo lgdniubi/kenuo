@@ -54,6 +54,15 @@ public class TrainLiveAudit extends TreeEntity<TrainLiveAudit> {
 	private int isOpen;					//是否公开到每天美耶     2017-11-7  土豆添加
 	private int isRecommend;			//是否推荐	        2017-11-7  土豆添加
 	
+	private TrainLiveCategory category;		//直播分类
+	public TrainLiveCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(TrainLiveCategory category) {
+		this.category = category;
+	}
+
 	public int getIsPay() {
 		return isPay;
 	}

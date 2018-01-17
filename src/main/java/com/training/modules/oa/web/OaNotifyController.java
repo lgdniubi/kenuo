@@ -38,7 +38,6 @@ import com.training.modules.oa.service.OaNotifyService;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.train.service.TrainCategorysService;
 
-import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
 /**

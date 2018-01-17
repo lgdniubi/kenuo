@@ -92,8 +92,26 @@ public class PositionService extends CrudService<PositionDao,Position>{
 			}
 		}
 	}
-	
-	
-	
+
+	/**
+	 * 
+	 * @param exValues 
+	 * @Title: searchPosition
+	 * @Description: TODO 职位查询
+	 * @param searchValue
+	 * @param positionkey
+	 * @return:
+	 * @return: List<Position>
+	 * @throws
+	 * 2018年1月9日 兵子
+	 */
+	public List<Position> searchPosition(String[] exValues, String searchValue, List<String> positionkey) {
+		if (exValues != null && exValues.length > 0) {
+			for (String values : exValues) {
+				positionkey.add(values);
+			}
+		}
+		return positionDao.searchPosition(searchValue,positionkey);
+	}
 	
 }

@@ -84,4 +84,31 @@
 			u.id = #{userId}
 		AND d.del_flag = 0
 	</select>
+	
+	<!-- 查询职位 -->
+	<select id="searchPosition" resultType="Position">
+		SELECT 
+			c.id ,
+			c.value,
+			c.label,
+			c.type,
+			c.description,
+			c.sort,
+			c.remarks,
+			c.del_flag
+		FROM 
+			trains.sys_dict c 
+		WHERE 
+			c.type = 'sys_user_type' 
+			AND c.del_flag = 0
+			AND c.`value` NOT IN
+			<if test="positionkey.size() != 0">
+				<foreach collection="positionkey" open="(" close=")" separator="," item="value" index="index">
+					 #{value} 
+			 	</foreach>
+		 	</if>
+			<if test="searchValue != null and searchValue != ''">
+				AND c.label LIKE CONCAT('%', #{searchValue}, '%')
+			</if>
+	</select>
 </mapper>

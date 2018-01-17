@@ -57,6 +57,16 @@ public class Office extends TreeEntity<Office> {
 	private User user;				//用户
 	private FzxRole fzxRole;		//妃子校角色
 	
+	private String officeCode;		//机构唯一编码（和编码不一样，是固定的）
+	
+	public String getOfficeCode() {
+		return officeCode;
+	}
+
+	public void setOfficeCode(String officeCode) {
+		this.officeCode = officeCode;
+	}
+
 	public User getUser() {
 		return user;
 	}

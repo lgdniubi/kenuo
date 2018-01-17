@@ -137,6 +137,14 @@ public class EntryService {
 	public void addproportionsmessage(Map<String, Object> m) {
 		this.entrymapper.addproportionsmessage(m);
 	}
+
+	/**
+	 * 直播浏览数量和浏览人数
+	 * @param map
+	 */
+	public void updatebrowsenumber(Map<String, Object> map) {
+		this.entrymapper.updatebrowsenumber(map);
+	}
 	
 
 }
