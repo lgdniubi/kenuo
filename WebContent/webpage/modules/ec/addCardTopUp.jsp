@@ -17,6 +17,7 @@
 	    	<div class="ibox-content">
 				<div class="tab-content" id="tab-content">
 	                <div class="tab-inner">
+	                	<input type="hidden" id="orderArrearage" name="orderArrearage" value="${orderArrearage }" />
 	                	<input type="hidden" id="userid" name="userid" value="${userid }" />
 	                	<input type="hidden" id="isReal" name="isReal" value="${isReal }" />
 	                	<c:if test="${isReal == 3 }"> <!-- 通用卡 -->
@@ -68,6 +69,11 @@
 				var newTopUpTotalAmount = (rechargeAmount+accountBalance+goodsBalance).toFixed(2);
 			}else if(isReal == 2){
 				var newTopUpTotalAmount = (rechargeAmount+accountBalance).toFixed(2);
+			}
+			// 不可多充值
+			if(newTopUpTotalAmount > parseFloat($("#orderArrearage").val())){
+				top.layer.alert('充值总金额不可大于欠款!', {icon: 0, title:'提醒'});
+				return;
 			}
 			
 			$("#rechargeAmount").attr("readonly",true);

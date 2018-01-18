@@ -271,6 +271,10 @@
 			top.layer.alert('优惠价格不可为空或者0!', {icon: 0, title:'提醒'});	
 			return;
 		}
+		if(parseFloat(actualPayment) > parseFloat(orderAmount)){
+			top.layer.alert('实际付款不可大于应付款!', {icon: 0, title:'提醒'});	
+			return;
+		}
 		$("#orderAmount").val(orderAmount);
 		if($("#isNeworderSon").val() == 0){ //新订单
 			if(parseFloat(actualPayment)>parseFloat(orderAmount)){

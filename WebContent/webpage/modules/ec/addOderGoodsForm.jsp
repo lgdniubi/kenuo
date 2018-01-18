@@ -348,6 +348,10 @@
 			top.layer.alert('实际付款不可为空或者0!', {icon: 0, title:'提醒'});	
 			return;
 		}
+		if(parseFloat(actualPayment) > parseFloat(orderAmount)){
+			top.layer.alert('实际付款不可大于应付款!', {icon: 0, title:'提醒'});	
+			return;
+		}
 		//如果实际付款比应付价格大
 		if(parseFloat(actualPayment) > parseFloat(orderAmount)){
 			$("#afterPayment").val(changeTwoDecimal_f(orderAmount));
