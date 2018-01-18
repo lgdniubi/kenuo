@@ -178,10 +178,15 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		
 		//---------------申请换货---begin---------------------------
 		if (returnedGoods.getIsConfirm() == 22 || returnedGoods.getIsConfirm() == -20) { // 申请换货
+			
 			cancelArrearage(returnedGoods);//取消平预约金和平欠款记录(申请类型是仅换货(请查看方法具体说明))
 			
 			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
 			returnedGoodsDao.saveEdite(returnedGoods);//修改换货状态
+			
+			if(returnedGoods.getIsConfirm() == -20){//拒绝换货,直接退还数量(实物换货,只需要扣减mapping表中的几率.detail表中不需要)
+				refuseService(returnedGoods);//退还申请扣减的数据(detail表和mapping表)
+			}
 			
 		}
 		//---------------申请换货---end---------------------------
@@ -282,10 +287,14 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		//---------------申请换货---begin---------------------------
 		if (returnedGoods.getIsConfirm() == 22 || returnedGoods.getIsConfirm() == -20) { // 申请换货
 			
-			cancelArrearage(returnedGoods);//申请类型是仅换货(请查看方法具体说明)
+			cancelArrearage(returnedGoods);//取消平预约金和平欠款记录(申请类型是仅换货(请查看方法具体说明))
 			
 			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
-			returnedGoodsDao.saveEdite(returnedGoods);
+			returnedGoodsDao.saveEdite(returnedGoods);//修改换货状态
+			
+			if(returnedGoods.getIsConfirm() == -20){//拒绝换货,直接退还数量
+				refuseService(returnedGoods);//退还申请扣减的数据(detail表和mapping表)
+			}
 		}
 		//---------------申请换货---end---------------------------
 	}
@@ -372,6 +381,10 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			
 			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
 			returnedGoodsDao.saveEdite(returnedGoods);//修改换货状态
+			
+			if(returnedGoods.getIsConfirm() == -20){//拒绝换货,直接退还数量
+				refuseService(returnedGoods);//退还申请扣减的数据(detail表和mapping表)
+			}
 		}
 		
 	}
@@ -512,6 +525,10 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			
 			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
 			returnedGoodsDao.saveEdite(returnedGoods);//修改换货状态
+			
+			if(returnedGoods.getIsConfirm() == -20){//拒绝换货,直接退还数量
+				refuseService(returnedGoods);//退还申请扣减的数据(detail表和mapping表)
+			}
 		}
 	}
 
