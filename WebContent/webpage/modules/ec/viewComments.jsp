@@ -179,6 +179,7 @@
 						    <th style="text-align: center;">用户名</th>
 						    <th style="text-align: center;">评价时间</th>
 						    <th style="text-align: center;">评价对象</th>
+						    <th style="text-align: center;">类型</th>
 						    <th style="text-align: center;">评价内容</th>
 						    <th style="text-align: center;">操作</th>
 						</tr>
@@ -190,6 +191,7 @@
 							  	<td>${comment.users.name }</td>
 							    <td><fmt:formatDate value="${comment.addTime}" pattern="yyyy-MM-dd"/></td>
 							  	<td>${comment.user.name}</td>
+							  	<td>技师</td>
 							  	<td>
 							  		<!-- 当文本内容大于5个字符时，只显示其前五个字符 -->
 								  	<c:choose>  
@@ -213,6 +215,7 @@
 							  	<td>${comment.users.name }</td>
 							    <td><fmt:formatDate value="${comment.addTime}" pattern="yyyy-MM-dd"/></td>
 							  	<td>${comment.shopName}</td>
+							  	<td>店铺</td>
 							  	<td>
 							  		<!-- 当文本内容大于5个字符时，只显示其前五个字符 -->
 								  	<c:choose>  
