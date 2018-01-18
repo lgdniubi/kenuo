@@ -66,7 +66,7 @@
 					  return;
 				  }
 				  //当售后数量和售后金额都为0,商品不能售后
-				  if(parseInt(st) == 0 && parseInt(ra) == 0){
+				  if(parseInt(st) == 0 && parseFloat(ra) == 0){
 					  top.layer.alert('售后商品数量和退款金额不能都为0!', {icon: 0, title:'提醒'});
 					  return;
 				  }

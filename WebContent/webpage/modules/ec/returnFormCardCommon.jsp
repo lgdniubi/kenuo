@@ -92,7 +92,7 @@
 				  
 				  //通用卡子项实物售后数量,售后次数,售后金额都是0,不能售后
 				  if(flag){
-					  if(ra == 0 && rn ==0){
+					  if(parseFloat(ra) == 0 && parseInt(rn) ==0){
 						  top.layer.alert('售后商品数量和退款金额不能都为0!', {icon: 0, title:'提醒'});
 						  return;			  
 					  }
