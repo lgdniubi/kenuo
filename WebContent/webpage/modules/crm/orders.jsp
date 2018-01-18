@@ -162,12 +162,20 @@
 						<c:forEach items="${page.list}" var="order">
 							<tr>
 							  	<td>${order.orderid}</td>
-							  	<c:if test="${order.isReal=='0'}">
-							  	<td>实物订单</td>
-							  	</c:if>
-							  	<c:if test="${order.isReal=='1'}">
-							  	<td>虚拟订单</td>
-							  	</c:if>
+							  	<td>
+								  	<c:if test="${order.isReal=='0'}">
+								  		实物订单
+								  	</c:if>
+								  	<c:if test="${order.isReal=='1'}">
+									  	虚拟订单
+							  		</c:if>
+								  	<c:if test="${order.isReal=='2'}">
+									  	套卡
+							  		</c:if>
+								  	<c:if test="${order.isReal=='3'}">
+									  	通用卡
+							  		</c:if>
+							  	</td>
 								<td>${order.username}</td>	
 								<td><fmt:formatDate value="${order.addtime }" pattern="yyyy-MM-dd "/></td>
 							    <td><fmt:formatDate value="${order.paytime }" pattern="yyyy-MM-dd "/></td>	
@@ -226,7 +234,7 @@
 								  	</c:if>
 							  	</td>
 							  	<td>
-			 						<a href="#" onclick="openDialogView('查看订单', '${ctx}/crm/orders/orderform?orderid=${order.orderid}&isReal=${order.isReal}&type=view','1100px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 订单详情</a>
+			 						<a href="#" onclick="openDialogView('查看订单', '${ctx}/ec/orders/orderform?orderid=${order.orderid}&isReal=${order.isReal}&type=view','1100px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 订单详情</a>
 					  			</td>
 							</tr>
 						</c:forEach>
