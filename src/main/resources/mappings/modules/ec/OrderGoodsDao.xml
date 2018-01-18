@@ -483,7 +483,7 @@
 	<select id="getTotalAmountAndTimes" resultType="OrderGoods">
 		SELECT 
 			b.service_times AS servicetimes,
-			SUM(b.total_amount) AS "totalAmount",
+			SUM(b.app_total_amount) AS "totalAmount",
 			SUM(b.service_times) AS "remaintimes"
 		FROM 
 			mtmydb.mtmy_order_goods_mapping a 

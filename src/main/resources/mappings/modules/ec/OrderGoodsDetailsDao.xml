@@ -332,6 +332,8 @@
 			advance_flag = 5
 		AND
 			order_id = #{orderId}
+		AND
+			goods_mapping_id = #{goodsMappingId}
 	</delete>
 	
 	<!-- 是否有未处理预约金的 -->
