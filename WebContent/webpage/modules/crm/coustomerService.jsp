@@ -231,7 +231,7 @@
 					<tbody>
 						<c:forEach items="${page.list}" var="returnGoods">
 							<tr>
-								<td style="text-align: center;">${returnGoods.orderId}</td>
+								<td style="text-align: center;">${returnGoods.id}</td>
 								<td style="text-align: center;">${returnGoods.userName}</td>
 								<td style="text-align: center;"><c:if
 										test="${returnGoods.returnStatus==-10}">
