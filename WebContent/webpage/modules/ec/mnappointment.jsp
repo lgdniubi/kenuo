@@ -126,7 +126,7 @@
 										<a href="#" onclick="openDialog('编辑实际服务时间', '${ctx}/ec/mtmyMnappointment/getServiceTime?reservationId=${reservation.reservationId }','750px', '400px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 添加服务时长</a>
 									</c:if>
 									<c:if test="${reservation.apptStatus == '2'}">
-										<a href="#" onclick="openDialog('查看评价', '${ctx}/ec/mtmyMnappointment/viewComments?reservationId=${reservation.reservationId }','800px', '650px')" class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>查看评价</a>
+										<a href="#" onclick="openDialogView('查看评价', '${ctx}/ec/mtmyMnappointment/viewComments?reservationId=${reservation.reservationId }','800px', '650px')" class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>查看评价</a>
 									</c:if>
 							  	</td>
 							</tr>
