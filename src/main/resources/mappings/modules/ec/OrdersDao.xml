@@ -235,6 +235,9 @@
 		<if test="newIsNeworder != null and newIsNeworder !=''">
 			AND a.is_neworder = #{newIsNeworder}
 		</if>
+		<if test="returnedId != null and returnedId != ''">
+			AND a.returned_id = #{returnedId}
+		</if>
 		GROUP BY a.order_id
 		<!-- <if test="orderArrearageType == 2 "> 没有欠款
 			HAVING orderarrearage > 0
@@ -338,9 +341,6 @@
 		</if>
 		<if test="userDelFlag !=null and userDelFlag !=''">
 			AND a.del_flag=#{userDelFlag}
-		</if>
-		<if test="returnedId != null and returnedId != ''">
-			AND a.returned_id = #{returnedId}
 		</if>
 		GROUP BY a.order_id
 		<choose>

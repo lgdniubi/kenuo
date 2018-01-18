@@ -4495,10 +4495,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @return
 	 */
 	public Page<Orders> returnedOrdersList(Page<Orders> page, Orders orders) {
+		
+		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
+		orders.getSqlMap().put("dsf",ScopeUtils.dataScopeFilter("a", "orderOrRet"));
 		// 设置分页参数
 		orders.setPage(page);
 		// 执行分页查询
-		page.setList(ordersDao.newFindList(orders));
+		page.setList(ordersDao.findList(orders));
+
 		return page;
 	}
 }
