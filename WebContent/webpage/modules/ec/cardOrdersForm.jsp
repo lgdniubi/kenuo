@@ -892,8 +892,8 @@ window.onload=initStatus;
 					<shiro:hasPermission name="ec:orders:edit">
 						<!-- 1.app套卡、通用卡订单，未处理预约金且（未预约或预约了但预约状态不为等待服务、已完成、 已评价 、爽约的预约）；2.后台套卡、通用卡订单，未预约或预约了但预约状态不为等待服务、已完成、 已评价 、爽约的预约 -->
 						<c:if test="${type != 'view' }">
-							<c:choose>         
-								<c:when test="${(orders.channelFlag != 'bm' && (orders.orderstatus ==1 || orders.orderstatus==2 || orders.orderstatus==4) && ((orders.advanceFlag > 0) || (orders.changeAdvanceFlag > 0 && orders.returnedFlag == 0)) && ((orders.sumAppt == 0) || (orders.sumAppt > 0 && orders.apptFlag == 0))) || (orders.channelFlag == 'bm' && (orders.orderstatus ==1 || orders.orderstatus==2 || orders.orderstatus==4) && (((orders.sumAppt == 0) || (orders.sumAppt > 0 && orders.apptFlag == 0)) && orders.returnedFlag == 0))}">
+							<c:choose>                                                                                                                                                                     
+								<c:when test="${(orders.channelFlag != 'bm' && (orders.orderstatus ==1 || orders.orderstatus==2 || orders.orderstatus==4) && (((orders.advanceFlag > 0) || (orders.changeAdvanceFlag > 0)) && orders.returnedFlag == 0) && ((orders.sumAppt == 0) || (orders.sumAppt > 0 && orders.apptFlag == 0))) || (orders.channelFlag == 'bm' && (orders.orderstatus ==1 || orders.orderstatus==2 || orders.orderstatus==4) && (((orders.sumAppt == 0) || (orders.sumAppt > 0 && orders.apptFlag == 0)) && orders.returnedFlag == 0))}">
 									<a href="#" onclick="forcedCancel('${orders.orderid}')" class="btn btn-danger btn-xs"><i class="fa fa-save"></i>强制取消</a>
 								</c:when>
 								<c:otherwise>
