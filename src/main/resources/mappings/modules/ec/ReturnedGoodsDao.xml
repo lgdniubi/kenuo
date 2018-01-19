@@ -67,8 +67,6 @@
 		a.shipping_code,
 		a.shipping_time,
 		a.shipper_date,
-		<!-- a.belong_user_id,
-		a.belong_office_id, -->
 		e.`name` as "hoseName",
 		e.governor,
 		e.address,
@@ -86,13 +84,70 @@
 	<!-- 根据编号 -->
 	<select id="get" resultType="ReturnedGoods">
 		SELECT
-			<include refid="returnColunm"/>
-			<!-- (select so.name from sys_office so where so.id = a.belong_office_id) as belongOfficeName,
-			(select su.name from sys_user su where su.id = a.belong_user_id) as belongUserName -->
+			a.id,
+			a.order_id,
+			a.goods_mapping_id,
+			b.goods_id,
+			b.goods_name as "goodsName",
+			b.goods_num as "goodsNum",
+			b.spec_key,
+			b.spec_key_name as "specName",
+			b.cost_price,
+			b.market_price,
+			b.goods_price as "goodsPrice",
+			SUM(f.app_total_amount) AS 'totalAmount',
+			b.order_amount as "orderAmount",
+			b.order_balance,
+			b.order_arrearage,
+			b.service_times as "serviceTimes",
+			a.user_id,
+			d.nickname as "userName",
+			d.mobile,
+			b.is_real,
+			a.problem_desc as "problemDesc",
+			a.refusal_cause as "refusalCause",
+			a.audit_by,
+			a.audit_date,
+			a.apply_type,
+			a.return_num,
+			a.apply_date,
+			a.return_reason,
+			a.return_amount,
+			a.warehouse_id,
+			a.is_storage,
+			a.return_status,
+			a.receipt_by,
+			a.financial_by,
+			a.update_by,
+			a.update_date,
+			a.office_id,
+			a.remarks,
+			a.shipper_by,
+			a.consigner_name,
+			a.consigner_address,
+			a.consigner_shipping_name,
+			a.consigner_shipping_code,
+			a.consigner_shipping_time,
+			a.consigner_shipping_img,
+			a.shipping_name,
+			a.shipping_code,
+			a.shipping_time,
+			a.shipper_date,
+			e.`name` as "hoseName",
+			e.governor,
+			e.address,
+			a.channel_flag AS 'channelFlag',
+			a.receive_name,
+			a.receive_account,
+			a.return_type
 		FROM mtmydb.mtmy_returned_goods a
-		<include refid="returnJion"/>
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.goods_mapping_id=b.rec_id
+		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
+		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
+		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
+		LEFT JOIN mtmydb.mtmy_order_goods_details f ON a.order_id=f.order_id
 		WHERE 
-		a.id = #{id} and a.del_flag=0
+			a.id = #{id} AND a.del_flag = 0 
 	</select>
 	<!-- 查询订单中商品已经售后成功的个数 -->
 	<select id="getReturnedGoods" resultType="int">
