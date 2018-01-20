@@ -124,11 +124,11 @@
 									<td><label class="pull-right"><font color="red">*</font>异价比例：</label></td>           
 									<td>                                                                                                                                                 
 										<input class="form-control required" id="ratio" name="ratio" type="text" value="${goodsPriceRatio.ratio}" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)"/>
-										（设置下浮比例在0.01~1之间）
+										（设置上调比例在0.01~1之间）
 										<p></p>
-										异价公式：异价后商品的价格=商品优惠价*（1-异价比例）
+										异价公式：异价后商品的价格=商品优惠价*（1+异价比例）
 										<p></p>
-										异价比例是根据不同城市进行的价格下浮，下浮比例在0.01~1之间（即1%~100%）
+										异价比例是根据不同城市进行的价格上调，上调比例在0.01~1之间（即1%~100%）
 									</td>
 								</tr>
 								<tr>
