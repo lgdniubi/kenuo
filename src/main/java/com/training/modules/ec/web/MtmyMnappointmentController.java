@@ -304,8 +304,8 @@ public class MtmyMnappointmentController extends BaseController{
 	 */
 	@RequestMapping(value = "updateMnappointment")
 	public String updateMnappointment(Reservation reservation,RedirectAttributes redirectAttributes,HttpServletRequest request){
-		String oldApptDate = DateUtils.formatDate(DateUtils.parseDate(request.getParameter("oldApptDate")), "yyyy-MM-dd");
 		try {
+			String oldApptDate = DateUtils.formatDate(DateUtils.parseDate(request.getParameter("oldApptDate")), "yyyy-MM-dd");
 			if(!"0".equals(reservation.getApptStatus())){
 				User user = UserUtils.getUser();
 				String url= null; 
