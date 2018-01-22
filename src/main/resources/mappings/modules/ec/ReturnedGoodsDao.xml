@@ -1014,7 +1014,9 @@
 	<select id="queryReturnList" resultType="ReturnedGoods">
 		SELECT
 			<include refid="returnColunm"/>,
-			(select de.app_arrearage from mtmydb.mtmy_order_goods_details de where de.order_id = a.order_id and de.returned_id = a.id and de.goods_mapping_id = a.goods_mapping_id and de.advance_flag = '5') AS 'floatArreageMoney'
+			IF(a.id = (SELECT aa.id FROM mtmydb.mtmy_returned_goods aa WHERE aa.order_id = a.order_id AND aa.goods_mapping_id = a.goods_mapping_id AND aa.return_status IN (12,13,14,15,16) ORDER BY aa.apply_date ASC LIMIT 1),
+			(SELECT -SUM(de.app_arrearage) FROM mtmydb.mtmy_order_goods_details de WHERE de.order_id = a.order_id AND de.goods_mapping_id = a.goods_mapping_id AND de.advance_flag = '5')
+			,0) AS 'floatArreageMoney'
 		FROM mtmydb.mtmy_returned_goods a 
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.goods_mapping_id=b.rec_id
 		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
