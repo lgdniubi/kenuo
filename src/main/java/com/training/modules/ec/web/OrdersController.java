@@ -496,22 +496,6 @@ public class OrdersController extends BaseController {
 	}
 
 	/**
-	 * 生成退货订单
-	 * 
-	 * @param orders
-	 * @param model
-	 * @return
-	 */
-
-
-	@RequestMapping(value = "returnGoddsform")
-	public String returnGoddsform(ReturnGoods returnGoods, String orderid, Model model) {
-		returnGoods = returnGoodsService.get(orderid);
-		model.addAttribute("returnGoods", returnGoods);
-		return "modules/ec/returnForm";
-	}
-
-	/**
 	 * 保存退货订单数据(实物商品)
 	 * @param request
 	 * @param redirectAttributes
@@ -807,6 +791,7 @@ public class OrdersController extends BaseController {
 								"<td align='center'> "+isreal+"</td> "+
 								"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
 								"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
+								"<td align='center'> "+lists.get(1).getRatioPrice()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getRatio()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getRatioPrice()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
@@ -828,6 +813,7 @@ public class OrdersController extends BaseController {
 									"<td align='center'> "+isreal+"</td> "+
 									"<td align='center'> "+lists.get(i).getMarketprice()+"</td> "+
 									"<td align='center'> "+lists.get(i).getGoodsprice()+"</td> "+
+									"<td align='center'> "+lists.get(i).getRatioPrice()+"</td> "+
 									"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
 								"</tr>";
 						}

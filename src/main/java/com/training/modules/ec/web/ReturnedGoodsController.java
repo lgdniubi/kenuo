@@ -194,6 +194,7 @@ public class ReturnedGoodsController extends BaseController {
 								"<td align='center'> "+isreal+"</td> "+
 								"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
 								"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
+								"<td align='center'> "+lists.get(1).getRatioPrice()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getRatio()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getRatioPrice()+"</td> "+
@@ -210,6 +211,7 @@ public class ReturnedGoodsController extends BaseController {
 									"<td align='center'> "+isreal+"</td> "+
 									"<td align='center'> "+lists.get(i).getMarketprice()+"</td> "+
 									"<td align='center'> "+lists.get(i).getGoodsprice()+"</td> "+
+									"<td align='center'> "+lists.get(i).getRatioPrice()+"</td> "+
 									"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
 								"</tr>";
 						}
