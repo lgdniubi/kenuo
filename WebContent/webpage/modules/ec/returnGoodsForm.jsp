@@ -154,6 +154,9 @@
 					}
 				}
 			});
+			amount = $("#amount").val();//可售后金额
+			$("#showReturn").text(amount);//显示可售后金额
+			
 			applyType = $("#applyType").val();//申请类型
 			if(applyType == 1){//仅换货
 				$("#returnAmountIsShow").hide();//售后金额
@@ -383,6 +386,9 @@
 							onfocus="if(value == '0.0'){value=''}"
 							onblur="if(value == ''){value='0.0'}"
 							onchange="returnChangeAmount()"/>
+						<c:if test="${flag == 'edit'}">
+							<font color="red">（最大可退¥<span id="showReturn"></span>元）</font>
+						</c:if>
 				        <p></p>
 				    </div>
 				    <div id="returnTypeIsShow" style="display: display">

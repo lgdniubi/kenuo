@@ -154,6 +154,9 @@
 					}
 				}
 			});
+			amount = $("#amount").val();//可售后金额
+			$("#showReturn").text(amount);//显示可售后金额
+			
 			applyType = $("#applyType").val();//申请类型
 			orderArrearage = "${returnedGoods.orderArrearage}";//判断该商品售后是否存在欠款,存在欠款:退货并退款和仅退款-->数量不能输入
 			//订单存在欠款:实物的售后数量都是不能输入
@@ -177,7 +180,6 @@
 			}
 			var oldReturnNum = "${returnedGoods.returnNum}";
 			$("#oldReturnNum").val(oldReturnNum)//记录原始的售后次数
-			
 		});
 		//选择:申请类型
 		function selectType(o){
@@ -397,6 +399,9 @@
 							onfocus="if(value == '0.0'){value=''}"
 							onblur="if(value == ''){value='0.0'}"
 							onchange="returnChangeAmount()"/>
+						<c:if test="${flag == 'edit'}">
+							<font color="red">（最大可退¥<span id="showReturn"></span>元）</font>
+						</c:if>
 				        <p></p>
 				    </div>
 				    <div id="returnTypeIsShow" style="display: display">
