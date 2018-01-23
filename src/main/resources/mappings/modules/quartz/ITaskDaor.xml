@@ -119,7 +119,7 @@
 		<if test="jobName != null and jobName != ''">
 			AND job_name = #{jobName}
 		</if> 
-		<if test="status != null and status != '' and status != '-1'">
+		<if test="status != null and status != '-1'">
 			AND status = #{status}
 		</if> 
 		ORDER BY id DESC
@@ -177,7 +177,7 @@
 		<if test="jobName != null and jobName != ''">
 			AND job_name = #{jobName}
 		</if> 
-		<if test="status != null and status != '' and status != '-1'">
+		<if test="status != null and status != '-1'">
 			AND status = #{status}
 		</if> 
 		ORDER BY id DESC LIMIT 1

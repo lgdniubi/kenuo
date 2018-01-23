@@ -305,6 +305,7 @@ public class MtmyMnappointmentController extends BaseController{
 	@RequestMapping(value = "updateMnappointment")
 	public String updateMnappointment(Reservation reservation,RedirectAttributes redirectAttributes,HttpServletRequest request){
 		try {
+			String oldApptDate = DateUtils.formatDate(DateUtils.parseDate(request.getParameter("oldApptDate")), "yyyy-MM-dd");
 			if(!"0".equals(reservation.getApptStatus())){
 				User user = UserUtils.getUser();
 				String url= null; 
@@ -313,6 +314,10 @@ public class MtmyMnappointmentController extends BaseController{
 					url = ParametersFactory.getMtmyParamValues("mtmy_finishSubscribeStatus");	//修改预约时间且状态为已完成
 					String appt_date = DateUtils.formatDate(reservation.getApptDate(), "yyyy-MM-dd");
 					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"appt_date\":\""+appt_date+"\",\"appt_start_time\":\""+reservation.getApptStartTime()+"\",\"appt_end_time\":\""+reservation.getApptEndTime()+"\",\"client\":\"bm\",\"remarks\":\""+reservation.getRemarks()+"\",\"update_by\":\""+user.getId()+"\"}";
+					if(appt_date != null && !appt_date.equals(oldApptDate)){
+						adddata_log(oldApptDate, appt_date, request.getParameter("shopId"), request.getParameter("beauticianId"));
+					}
+					
 				}else if("3".equals(reservation.getApptStatus())){
 					url = ParametersFactory.getMtmyParamValues("mtmy_delphysubscribe_url");
 					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"client\":\"bm\"}";
@@ -325,7 +330,7 @@ public class MtmyMnappointmentController extends BaseController{
 				JSONObject jsonObject = JSONObject.fromObject(result);
 				logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
 				if("200".equals(jsonObject.get("code"))){
-					addMessage(redirectAttributes, "修改预约成功");
+					addMessage(redirectAttributes, "修改预约成功");										
 				}else{
 					addMessage(redirectAttributes, "修改预约失败:"+jsonObject.get("msg"));
 				}
@@ -504,4 +509,25 @@ public class MtmyMnappointmentController extends BaseController{
 		}
 		return "redirect:" + adminPath + "/ec/mtmyMnappointment/mnappointment";
 	}
+	
+	/**
+	 * 记录预约时间变更时,调用接口
+	 * @param oldApptDate
+	 * @param newApptdate
+	 * @param userId
+	 * @param officeId
+	 */
+	public void adddata_log(String oldApptDate,String newApptdate,String officeId,String userId){
+		String websaveReservation = ParametersFactory.getMtmyParamValues("adddata_log");
+		System.out.println("##### 记录预约时间变更时，调用接口  web接口路径:"+websaveReservation);
+		if(!"-1".equals(websaveReservation)){
+			String parpm = "{\"old_time\":\""+oldApptDate+"\",\"fresh_time\":\""+newApptdate+"\",\"office_id\":\""+officeId+"\",\"user_id\":\""+userId+"\"}";
+			System.out.println("##### 记录预约时间变更时，调用接口,参数:"+parpm);
+			String url=websaveReservation;
+			String result = WebUtils.webUtilsPostObject(parpm, url);
+			JSONObject jsonObject = JSONObject.fromObject(result);
+			System.out.println("##### 记录预约时间变更时,web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg"));
+		}
+	}
+	
 }
