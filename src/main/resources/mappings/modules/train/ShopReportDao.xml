@@ -103,28 +103,7 @@
 				</if>
 			GROUP BY beauticianId,beaOfficeId,year,quarter,month,week,day
 	</insert>
-	<!-- 查询当前过期的时限卡 -->
-	<select id="findExpirationOrder" resultType="ShopReport">
-		SELECT
-			a.rec_id AS mappingId,
-			SUM(b.total_amount) AS totalAmount,
-			IFNULL(SUM(c.basis_fee),0) AS basisFee
-		FROM
-			mtmydb.mtmy_order_goods_mapping a
-			LEFT JOIN mtmydb.mtmy_order_goods_details b ON a.rec_id = b.goods_mapping_id
-			LEFT JOIN mtmydb.mtmy_appt_order c ON a.rec_id = c.goods_mapping_id AND c.appt_status IN (1,2,4)
-		WHERE
-			a.service_times = 999
-			AND a.is_real = 1
-			<if test="date != null">
-				AND DATE_FORMAT(date_add(a.reality_add_time,INTERVAL a.expiring_date MONTH),'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
-				AND DATE_FORMAT(date_add(a.reality_add_time,INTERVAL a.expiring_date MONTH),'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
-			</if>
-			<if test="date == null">
-		    	AND DATE_FORMAT(date_add(a.reality_add_time,INTERVAL a.expiring_date MONTH),'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
-		    </if>
-			GROUP BY a.rec_id
-	</select>
+	<!-- 插入美容师绩效表   预约的规格为过期的时限卡 -->
 	<insert id="insertBeauticianAchievementCard">
 		INSERT INTO trains.report_beautician_achievement (
 			beautician_id,
@@ -137,9 +116,7 @@
 			day,
 			achievement,
 			service_charge
-		)
-		<foreach collection="list" item="list" separator="union all ">
-			SELECT
+		) SELECT
 				a.beautician_id AS beauticianId,
 				a.bea_office_id AS beaOfficeId,
 				(SELECT parent_ids FROM trains.sys_office WHERE id = a.bea_office_id) AS parentIds,
@@ -154,9 +131,19 @@
 				mtmydb.mtmy_appt_order a
 			WHERE
 				appt_status IN (1, 2)
-				AND a.goods_mapping_id = #{list.mappingId}
+				AND a.goods_mapping_id IN (
+					SELECT rec_id AS mappingId FROM mtmydb.mtmy_order_goods_mapping
+					WHERE service_times = 999 AND is_real = 1
+					<if test="date != null">
+						AND DATE_FORMAT(date_add(reality_add_time,INTERVAL expiring_date MONTH),'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
+						AND DATE_FORMAT(date_add(reality_add_time,INTERVAL expiring_date MONTH),'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
+					</if>
+					<if test="date == null">
+				    	AND DATE_FORMAT(date_add(reality_add_time,INTERVAL expiring_date MONTH),'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
+				    </if>
+					GROUP BY rec_id
+				)
 			GROUP BY beauticianId,beaOfficeId,year,quarter,month,week,day
-		</foreach>
 	</insert>
 	<!-- end 美容师绩效表 end -->
 	

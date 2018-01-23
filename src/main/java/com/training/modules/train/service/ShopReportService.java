@@ -73,14 +73,8 @@ public class ShopReportService extends CrudService<ShopReportDao,ShopReport>{
 		}else{
 			//插入美容师绩效报表（不含时限卡）
 			shopReportDao.insertBeauticianAchievement((Date)map.get("data"));
-			//查询当前过期的时限卡
-			List<ShopReport> achievementlist = shopReportDao.findExpirationOrder((Date)map.get("data"));
-			if(null != achievementlist){
-				//插入美容师绩效报表（时限卡）
-				shopReportDao.insertBeauticianAchievementCard(achievementlist,(Date)map.get("data"));
-			}else{
-				System.out.println("###定时器:"+jobName+",无过期时限卡订单!");
-			}
+			//插入美容师绩效报表（时限卡）
+			shopReportDao.insertBeauticianAchievementCard((Date)map.get("data"));
 		}
 	}
 	

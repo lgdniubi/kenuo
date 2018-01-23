@@ -163,6 +163,7 @@
 		WHERE
 			a.order_id = #{orderId}
 		AND a.goods_mapping_id = #{goodsMappingId}
+		AND a.return_status NOT IN (-10,-20,26)
 	</select>
 	<!-- 获取店营业额明细列表 -->
 	<select id="getMtmyTurnoverDetailsList" resultType="TurnOverDetails">

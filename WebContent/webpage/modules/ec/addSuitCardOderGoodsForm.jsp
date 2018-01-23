@@ -174,7 +174,7 @@
 				    area: ['300px', '420px'],
 				    title:"商品选择",
 				    ajaxData:{selectIds: $("#goodselectId").val()},
-				    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?&isReal=2&goodsCategory="+cateid+"&goodsName="+goodsName)+"&module=&checked=&extId=&isAll=",
+				    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?&isReal=2&goodsCategory="+cateid+"&goodsName="+goodsName+"&type=1")+"&module=&checked=&extId=&isAll=",
 				    btn: ['确定', '关闭']
 		    	       ,yes: function(index, layero){ //或者使用btn1
 								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
@@ -269,6 +269,10 @@
 		}
 		if(goodsPrice == 'undefined' || goodsPrice == 0){
 			top.layer.alert('优惠价格不可为空或者0!', {icon: 0, title:'提醒'});	
+			return;
+		}
+		if(parseFloat(actualPayment) > parseFloat(orderAmount)){
+			top.layer.alert('实际付款不可大于应付款!', {icon: 0, title:'提醒'});	
 			return;
 		}
 		$("#orderAmount").val(orderAmount);

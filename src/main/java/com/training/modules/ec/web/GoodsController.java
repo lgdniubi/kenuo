@@ -58,6 +58,7 @@ import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.quartz.tasks.utils.RedisConfig;
 import com.training.modules.quartz.utils.RedisLock;
 import com.training.modules.sys.utils.BugLogUtils;
+import com.training.modules.sys.utils.UserUtils;
 
 import net.sf.json.JSONObject;
 
@@ -1373,7 +1374,14 @@ public class GoodsController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "treeGoodsData")
-	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String goodsId,String isReal,String isOnSale,String isAppshow,HttpServletResponse response) {
+	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String goodsId,String isReal,String isOnSale,String isAppshow,String type,HttpServletResponse response) {
+		// 注： type属于临时方案，目前仅用于下单时查询商品  type=1表示下单时下单需区分用户商家
+		if(type != null && !"".equals(type)){
+			String companyId = UserUtils.getUser().getCompany().getId();
+			if(!"1".equals(companyId)){
+				franchiseeId = companyId;
+			}
+		}
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		if("".equals(goodsId) || goodsId == null){
 			goodsId = "0";
