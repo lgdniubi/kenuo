@@ -1146,13 +1146,14 @@ public class OrdersController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "addTopUp")
-	public String addTopUp(String orderid,double singleRealityPrice,int userid,int isReal,double goodsBalance,int servicetimes,Model model){
+	public String addTopUp(String orderid,double singleRealityPrice,int userid,int isReal,double goodsBalance,int servicetimes,double orderArrearage,Model model){
 		model.addAttribute("orderid", orderid);
 		model.addAttribute("singleRealityPrice", singleRealityPrice);
 		model.addAttribute("userid", userid);
 		model.addAttribute("isReal", isReal);
 		model.addAttribute("goodsBalance",goodsBalance);
 		model.addAttribute("servicetimes",servicetimes);
+		model.addAttribute("orderArrearage",orderArrearage);
 		return "modules/ec/addTopUp";
 	}
 	/**
@@ -2802,13 +2803,14 @@ public class OrdersController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "addCardTopUp")
-	public String addCardTopUp(String orderid,double singleRealityPrice,int userid,int isReal,double goodsBalance,HttpServletRequest request,Model model,RedirectAttributes redirectAttributes){
+	public String addCardTopUp(String orderid,double singleRealityPrice,int userid,int isReal,double goodsBalance,double orderArrearage,HttpServletRequest request,Model model,RedirectAttributes redirectAttributes){
 		try{
 			model.addAttribute("orderid", orderid);
 			model.addAttribute("singleRealityPrice", singleRealityPrice);
 			model.addAttribute("userid", userid);
 			model.addAttribute("isReal", isReal);
 			model.addAttribute("goodsBalance",goodsBalance);
+			model.addAttribute("orderArrearage",orderArrearage);
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "跳转卡项充值页面", e);
 			logger.error("方法：addCardTopUp，跳转卡项充值页面出现错误：" + e.getMessage());

@@ -81,8 +81,8 @@
 						$("#remaintimes").val($("#"+specgoodkey).val());
 						$("#remaintimes").attr("readonly",true);
 						$("#actualPayment").val("");
-						$("#orderAmount").removeAttr("readonly")
-						$("#actualPayment").removeAttr("readonly")
+						$("#orderAmount").removeAttr("readonly");
+						$("#actualPayment").removeAttr("readonly");
 					}
 				 },
 				 error:function(XMLHttpRequest,textStatus,errorThrown){
@@ -247,7 +247,7 @@
 				    area: ['300px', '420px'],
 				    title:"商品选择",
 				    ajaxData:{selectIds: $("#goodselectId").val()},
-				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?&isReal=3&goodsCategory="+cateid+"&goodsName="+goodsName)+"&module=&checked=&extId=&isAll=",
+				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?&isReal=3&goodsCategory="+cateid+"&goodsName="+goodsName+"&type=1")+"&module=&checked=&extId=&isAll=",
 				    btn: ['确定', '关闭']
 		    	       ,yes: function(index, layero){ //或者使用btn1
 								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
@@ -337,6 +337,10 @@
 
 		if(!/^\d+(\.\d{1,2})?$/.test(actualPayment)){
 			top.layer.alert('实际付款（前）小数点后不可以超过2位!', {icon: 0, title:'提醒'});
+			return;
+		}
+		if(parseFloat(actualPayment) > parseFloat(orderAmount)){
+			top.layer.alert('实际付款不可大于应付款!', {icon: 0, title:'提醒'});	
 			return;
 		}
 		//如果实际付款比应付价格大
