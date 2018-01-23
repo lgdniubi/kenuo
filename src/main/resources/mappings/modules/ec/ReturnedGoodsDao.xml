@@ -145,7 +145,7 @@
 		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
 		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
 		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
-		LEFT JOIN mtmydb.mtmy_order_goods_details f ON a.order_id=f.order_id
+		LEFT JOIN mtmydb.mtmy_order_goods_details f ON a.order_id=f.order_id AND a.goods_mapping_id = f.goods_mapping_id
 		WHERE 
 			a.id = #{id} AND a.del_flag = 0 
 	</select>
