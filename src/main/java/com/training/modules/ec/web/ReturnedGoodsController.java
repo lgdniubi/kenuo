@@ -123,8 +123,8 @@ public class ReturnedGoodsController extends BaseController {
 			model.addAttribute("pdlist",pdlist);//查询仓库信息
 			model.addAttribute("returnedGoods", returnedGoods);//申请售后信息
 		} catch (Exception e) {
-			BugLogUtils.saveBugLog(request, "审核页面", e);
-			logger.error("方法：returnform,审核页面" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "实物虚拟审核页面", e);
+			logger.error("方法：实物虚拟,审核页面" + e.getMessage());
 		}
 		if(returnedGoods.getIsReal() == 0){
 			model.addAttribute("orderArrearage",orderArrearage);//有无平欠款记录
@@ -195,6 +195,8 @@ public class ReturnedGoodsController extends BaseController {
 								"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
 								"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getRatio()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getRatioPrice()+"</td> "+
 								"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getTotalAmount()+"</td> "+
@@ -237,6 +239,8 @@ public class ReturnedGoodsController extends BaseController {
 								"<td align='center' rowspan='"+num+"'> "+father.getMarketprice()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getGoodsprice()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getRatio()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getRatioPrice()+"</td> "+
 								"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getTotalAmount()+"</td> "+

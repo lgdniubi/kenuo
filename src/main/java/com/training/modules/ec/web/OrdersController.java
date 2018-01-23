@@ -807,6 +807,8 @@ public class OrdersController extends BaseController {
 								"<td align='center'> "+isreal+"</td> "+
 								"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
 								"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getRatio()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getRatioPrice()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
 								"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
@@ -852,6 +854,8 @@ public class OrdersController extends BaseController {
 								"<td align='center'> "+isreal+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getMarketprice()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getGoodsprice()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getRatio()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getRatioPrice()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
 								"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+

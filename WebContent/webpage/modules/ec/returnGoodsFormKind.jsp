@@ -196,11 +196,20 @@
 				//清空是否同意申请
 				$("#confirm1").hide();//是否同意退款
 				$("#confirm2").show();//是否同意换货
+				
+				$("#returnNum").attr("readonly",false);//仅换货,商品数量都可以输入
 			}else{
 				$("#returnAmountIsShow").show();//退款金额
 				$("#returnTypeIsShow").show();//退款方式
 				$("#confirm1").show();//是否同意退款
 				$("#confirm2").hide();//是否同意换货
+				
+				//存在欠款,售后数量不能手动输入,只能全部退
+				if(orderArrearage>0){
+					$("#returnNum").attr("readonly",true);//实物存在欠款,售后数量全部写入
+				}else{
+					$("#returnNum").attr("readonly",false);
+				}
 			}
 			
 			//申请类型变化,是否同意申请,仓库地址,拒绝原因都清空数据 			
@@ -266,7 +275,11 @@
 			        			<th style="text-align: center;">商品名称</th>
 			        			<th style="text-align: center;">商品类型</th>
 								<th style="text-align: center;">规格</th>
-								<th style="text-align: center;">价格</th>
+								<th style="text-align: center;">市场价</th>
+								<th style="text-align: center;">优惠价</th>
+								<th style="text-align: center;">系统价</th>
+								<th style="text-align: center;">异价比例</th>
+								<th style="text-align: center;">异价后价格</th>
 								<th style="text-align: center;">购买数量</th>
 								<th style="text-align: center;">实付金额</th>
 			        		</tr>
@@ -283,7 +296,11 @@
 			        				</c:if>
 			        			</td>
 			        			<td>${returnedGoods.specName}</td>
-			        			<td>${returnedGoods.goodsPrice}</td>
+			        			<td>${returnedGoods.marketPrice}</td>
+								<td>${returnedGoods.goodsPrice}</td>
+								<td>${returnedGoods.costPrice}</td>
+			        			<td>${returnedGoods.ratio}</td>
+			        			<td>${returnedGoods.ratioPrice}</td>
 			        			<td>${returnedGoods.goodsNum}</td>
 			        			<td>${returnedGoods.totalAmount}</td>
 			        		</tr>
@@ -372,24 +389,13 @@
 					<label>支付金额：</label>
 			        <form:input path="totalAmount" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control" readonly="true"/>
 					<p></p>
-					<c:if test="${orderArrearage > 0}">
-				        <label>售后商品数量：</label>
-       					<form:input path="returnNum" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control"  readonly="true"
-					        onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
-							onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
-							onfocus="if(value == '0'){value=''}"
-							onblur="if(value == ''){value='0'}"
-					        onchange="returnChangeNum()"/>
-       				</c:if>
-					<c:if test="${orderArrearage == 0}">
-				        <label>售后商品数量：</label>
-       					<form:input path="returnNum" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control"
-					        onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
-							onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
-							onfocus="if(value == '0'){value=''}"
-							onblur="if(value == ''){value='0'}"
-					        onchange="returnChangeNum()"/>
-       				</c:if>
+			        <label>售后商品数量：</label>
+      					<form:input path="returnNum" htmlEscape="false" maxlength="10" style="width: 180px;height:30px;" class="form-control"
+				        onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
+						onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+						onfocus="if(value == '0'){value=''}"
+						onblur="if(value == ''){value='0'}"
+				        onchange="returnChangeNum()"/>
 					<p></p>
 					<div id="returnAmountIsShow" style="display: display">
 						<label>售后金额：</label>

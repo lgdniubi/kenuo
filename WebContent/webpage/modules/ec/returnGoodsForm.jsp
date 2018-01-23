@@ -262,7 +262,11 @@
 			        			<th style="text-align: center;">商品名称</th>
 			        			<th style="text-align: center;">商品类型</th>
 								<th style="text-align: center;">规格</th>
-								<th style="text-align: center;">价格</th>
+								<th style="text-align: center;">市场价</th>
+								<th style="text-align: center;">优惠价</th>
+								<th style="text-align: center;">系统价</th>
+								<th style="text-align: center;">异价比例</th>
+								<th style="text-align: center;">异价后价格</th>
 								<th style="text-align: center;">数量</th>
 								<th style="text-align: center;">实付金额</th>
 			        		</tr>
@@ -279,7 +283,11 @@
 			        				</c:if>
 			        			</td>
 			        			<td>${returnedGoods.specName}</td>
-			        			<td>${returnedGoods.goodsPrice}</td>
+			        			<td>${returnedGoods.marketPrice}</td>
+								<td>${returnedGoods.goodsPrice}</td>
+								<td>${returnedGoods.costPrice}</td>
+			        			<td>${returnedGoods.ratio}</td>
+			        			<td>${returnedGoods.ratioPrice}</td>
 			        			<td>${returnedGoods.goodsNum}</td>
 			        			<td>${returnedGoods.totalAmount}</td>
 			        		</tr>
