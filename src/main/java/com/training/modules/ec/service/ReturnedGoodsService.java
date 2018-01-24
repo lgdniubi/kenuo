@@ -95,7 +95,6 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			//申请类型只会是退货并退款或者仅退款-->仅退款:售后状态为15
 			if(returnedGoods.getApplyType() == 2 && returnedGoods.getIsConfirm() == 12){//同意审核且仅退款-->售后状态直接变成15
 				returnedGoods.setReturnStatus("15");//改变售后状态
-				returnedGoods.setIsStorage(0 + "");
 			}else{
 				returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");//改变售后状态
 			}
