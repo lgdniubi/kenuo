@@ -89,7 +89,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	 * @return
 	 */
 	public void saveReturnedKind(ReturnedGoods returnedGoods) {
-		String currentUser = UserUtils.getUser().getName();
+		String currentUser = UserUtils.getUser().getId();
 		returnedGoods.setAuditBy(currentUser);
 		if (returnedGoods.getIsConfirm() == 12 || returnedGoods.getIsConfirm() == -10) { // 申请退货退款
 			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");//改变售后状态
@@ -198,7 +198,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	 * @return
 	 */
 	public void saveReturned(ReturnedGoods returnedGoods) {
-		String currentUser = UserUtils.getUser().getName();
+		String currentUser = UserUtils.getUser().getId();
 		returnedGoods.setAuditBy(currentUser);
 		boolean flag = true;
 		
@@ -305,7 +305,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	 * @return
 	 */
 	public void saveEditeSuit(ReturnedGoods returnedGoods) {
-		String currentUser = UserUtils.getUser().getName();
+		String currentUser = UserUtils.getUser().getId();
 		returnedGoods.setAuditBy(currentUser);
 		
 		if (returnedGoods.getIsConfirm() == 12 || returnedGoods.getIsConfirm() == -10) { // 申请退货退款
@@ -395,7 +395,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	 * @return
 	 */
 	public void saveReturnedCommon(ReturnedGoods returnedGoods) {
-		String currentUser = UserUtils.getUser().getName();
+		String currentUser = UserUtils.getUser().getId();
 		returnedGoods.setAuditBy(currentUser);
 		boolean flag = true;
 		

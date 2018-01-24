@@ -412,7 +412,7 @@ public class ReturnedGoodsController extends BaseController {
 	@RequestMapping(value = "confirmTake")
 	public String confirmTake(HttpServletRequest request,ReturnedGoods returnedGoods, RedirectAttributes redirectAttributes) {
 		try {
-			String currentUser = UserUtils.getUser().getName();
+			String currentUser = UserUtils.getUser().getId();
 			returnedGoods = returnedGoodsService.get(returnedGoods.getId());
 			if("12".equals(returnedGoods.getReturnStatus()) || "13".equals(returnedGoods.getReturnStatus())){
 				returnedGoods.setReceiptBy(currentUser);
@@ -531,7 +531,7 @@ public class ReturnedGoodsController extends BaseController {
 	@RequestMapping(value = "UpdateShipping")
 	public String UpdateShipping(ReturnedGoods returnedGoods, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
 		try {
-			String currentUser = UserUtils.getUser().getName();
+			String currentUser = UserUtils.getUser().getId();
 			returnedGoods.setShipperBy(currentUser);
 			returnedGoods.setReturnStatus("26");
 			returnedGoodsService.UpdateShipping(returnedGoods);
@@ -584,7 +584,7 @@ public class ReturnedGoodsController extends BaseController {
 	@RequestMapping(value = "confirm")
 	public String confirm(HttpServletRequest request,ReturnedGoods returnedGoods, RedirectAttributes redirectAttributes) {
 		try {
-			String currentUser = UserUtils.getUser().getName();
+			String currentUser = UserUtils.getUser().getId();
 			returnedGoods.setFinancialBy(currentUser);
 			returnedGoods.setReturnStatus("16");
 			returnedGoodsService.updateReturnMomeny(returnedGoods);
