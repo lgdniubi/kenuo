@@ -123,7 +123,7 @@
 				url:"${ctx}/ec/returned/getSurplusReturnAmount",
 				success:function(obj){
 					//计算商品剩余可退款金额(注意:拒绝售后,拒绝换货和换货完成的金额要排除)
-					surplusReturnAmount = totalAmount - obj;
+					surplusReturnAmount = parseFloat(totalAmount) - parseFloat(obj);
 					$("#showReturn").text(surplusReturnAmount);
 				},
 				error:function(XMLHttpRequest,textStatus,errorThrown){
