@@ -225,7 +225,7 @@
 				    type: 2, 
 				    area: ['600px', '450px'],
 				    title:"充值",
-				    content: "${ctx}/ec/orders/addTopUp?orderid="+orderid+"&singleRealityPrice="+singleRealityPrice+"&userid="+userid+"&isReal="+isReal+"&goodsBalance="+goodsBalance+"&servicetimes="+servicetimes,
+				    content: "${ctx}/ec/orders/addTopUp?orderid="+orderid+"&singleRealityPrice="+singleRealityPrice+"&userid="+userid+"&isReal="+isReal+"&goodsBalance="+goodsBalance+"&servicetimes="+servicetimes+"&orderArrearage="+orderArrearage,
 				    btn: ['确定', '关闭'],
 				    yes: function(index, layero){
 				    	var orderid = $("#orderid").val();

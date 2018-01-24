@@ -17,6 +17,7 @@
 	    	<div class="ibox-content">
 				<div class="tab-content" id="tab-content">
 	                <div class="tab-inner">
+	                	<input type="hidden" id="orderArrearage" name="orderArrearage" value="${orderArrearage }" />
 	                	<input type="hidden" id="userid" name="userid" value="${userid }" />
 	                	<input type="hidden" id="isReal" name="isReal" value="${isReal }" />
 	                	<c:if test="${isReal == 3 }"> <!-- 通用卡 -->
@@ -69,6 +70,14 @@
 			}else if(isReal == 2){
 				var newTopUpTotalAmount = (rechargeAmount+accountBalance).toFixed(2);
 			}
+			if(!checknum($("#rechargeAmount").val(),$("#accountBalance").val())){
+				return;
+			}
+			// 不可多充值
+			if(newTopUpTotalAmount > parseFloat($("#orderArrearage").val())){
+				top.layer.alert('充值总金额不可大于欠款!', {icon: 0, title:'提醒'});
+				return;
+			}
 			
 			$("#rechargeAmount").attr("readonly",true);
 			$("#accountBalance").attr("readonly",true);
@@ -84,6 +93,18 @@
 			$("#newTopUpTotalAmount").val("");
 			$("#jsmoney").val(0); //未计算过
 			$("#ichecks").attr("disabled",false);
+		}
+		//判断输入的营业额
+		function checknum(obj1,obj2){
+			var re = /^([+-]?)\d*\.?\d{0,2}$/; 
+			if(obj1 == ''){ obj1 = 0; }
+			if(obj2 == ''){ obj2 = 0; }
+			if(!re.test(obj1) || !re.test(obj2)){
+				top.layer.alert('请输入正确的金额(最多两位小数)', {icon: 0, title:'提醒'});
+				return false;
+			}else{
+				return true;
+			}
 		}
 		$(document).ready(function() {
 			$("#ichecks").change(function(){

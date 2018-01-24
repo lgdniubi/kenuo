@@ -36,17 +36,13 @@ public interface ShopReportDao extends CrudDao<ShopReport>{
 	 * @return
 	 */
 	public int insertBeauticianAchievement(@Param(value="date")Date date);
-	/**
-	 * 查询当前过期的时限卡
-	 * @return
-	 */
-	public List<ShopReport> findExpirationOrder(@Param(value="date")Date date);
+
 	/**
 	 * 插入美容师绩效报表（时限卡）
 	 * @param list
 	 * @return
 	 */
-	public int insertBeauticianAchievementCard(@Param(value="list")List<ShopReport> list,@Param(value="date")Date date);
+	public int insertBeauticianAchievementCard(@Param(value="date")Date date);
 	
 	/**
 	 * 查询所有有绑定用户的店铺
