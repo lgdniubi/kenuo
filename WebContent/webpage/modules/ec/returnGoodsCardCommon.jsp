@@ -58,10 +58,10 @@
 			  returnAmount = $("#returnAmount").val();//售后金额
 			  if(applyType==1){//仅换货  换货数量不能为0.
 				  if(parseInt(returnNum) < 0){
-					  top.layer.alert('售后次数必须大于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
+					  top.layer.alert('售后次数必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
 					  return;
 				  }else if(parseInt(goodsNum)<parseInt(returnNum)){
-					  top.layer.alert('售后次数必须大于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
+					  top.layer.alert('售后次数必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
 					  return;
 				  }
 				  if(flag){
