@@ -89,10 +89,15 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	 * @return
 	 */
 	public void saveReturnedKind(ReturnedGoods returnedGoods) {
-		String currentUser = UserUtils.getUser().getName();
+		String currentUser = UserUtils.getUser().getId();
 		returnedGoods.setAuditBy(currentUser);
 		if (returnedGoods.getIsConfirm() == 12 || returnedGoods.getIsConfirm() == -10) { // 申请退货退款
-			returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");//改变售后状态
+			//申请类型只会是退货并退款或者仅退款-->仅退款:售后状态为15
+			if(returnedGoods.getApplyType() == 2 && returnedGoods.getIsConfirm() == 12){//同意审核且仅退款-->售后状态直接变成15
+				returnedGoods.setReturnStatus("15");//改变售后状态
+			}else{
+				returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");//改变售后状态
+			}
 			returnedGoodsDao.saveEdite(returnedGoods);//添加退货信息到mtmy_returned_goods表中
 			
 			//所有商品全部售后审核通过,订单状态改为'已完成',将预约金状态默认平掉.注意一个订单多个商品
@@ -198,7 +203,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	 * @return
 	 */
 	public void saveReturned(ReturnedGoods returnedGoods) {
-		String currentUser = UserUtils.getUser().getName();
+		String currentUser = UserUtils.getUser().getId();
 		returnedGoods.setAuditBy(currentUser);
 		boolean flag = true;
 		
@@ -231,15 +236,11 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			
 			//----------- 售后表中插入售后信息     begin---------
 			//申请类型只会是退货并退款或者仅退款-->仅退款:售后状态为15
-			if(returnedGoods.getIsConfirm() == -10){//当拒绝退货时
-				returnedGoods.setReturnStatus(-10 + "");
+			if(returnedGoods.getApplyType() == 2 && returnedGoods.getIsConfirm() == 12){//同意审核且仅退款-->售后状态直接变成15
+				returnedGoods.setReturnStatus("15");//改变售后状态
+				returnedGoods.setIsStorage(0 + "");
 			}else{
-				if(returnedGoods.getApplyType() == 2){//审核同意后,仅退款:售后状态:退款中,仓库状态:未入库
-					returnedGoods.setReturnStatus(15 + "");
-					returnedGoods.setIsStorage(0 + "");
-				}else{
-					returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
-				}
+				returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");//改变售后状态
 			}
 			returnedGoodsDao.saveEdite(returnedGoods);//添加退货信息到mtmy_returned_goods表中
 			//----------- 售后表中插入售后信息     end---------
@@ -305,7 +306,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	 * @return
 	 */
 	public void saveEditeSuit(ReturnedGoods returnedGoods) {
-		String currentUser = UserUtils.getUser().getName();
+		String currentUser = UserUtils.getUser().getId();
 		returnedGoods.setAuditBy(currentUser);
 		
 		if (returnedGoods.getIsConfirm() == 12 || returnedGoods.getIsConfirm() == -10) { // 申请退货退款
@@ -395,7 +396,7 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	 * @return
 	 */
 	public void saveReturnedCommon(ReturnedGoods returnedGoods) {
-		String currentUser = UserUtils.getUser().getName();
+		String currentUser = UserUtils.getUser().getId();
 		returnedGoods.setAuditBy(currentUser);
 		boolean flag = true;
 		
@@ -444,15 +445,11 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			}
 				
 			//申请类型只会是退货并退款或者仅退款-->仅退款:售后状态为15
-			if(returnedGoods.getIsConfirm() == -10){//当拒绝退货时
-				returnedGoods.setReturnStatus(-10 + "");
+			if(returnedGoods.getApplyType() == 2 && returnedGoods.getIsConfirm() == 12){//同意审核且仅退款-->售后状态直接变成15
+				returnedGoods.setReturnStatus("15");//改变售后状态
+				returnedGoods.setIsStorage(0 + "");
 			}else{
-				if(returnedGoods.getApplyType() == 2){//审核同意后,仅退款:售后状态:退款中,仓库状态:未入库
-					returnedGoods.setReturnStatus(15 + "");
-					returnedGoods.setIsStorage(0 + "");
-				}else{
-					returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");
-				}
+				returnedGoods.setReturnStatus(returnedGoods.getIsConfirm() + "");//改变售后状态
 			}
 			returnedGoodsDao.saveEdite(returnedGoods);//添加退货信息到mtmy_returned_goods表中
 			//-----------修改售后表中的状态-----e----------------------------------------------

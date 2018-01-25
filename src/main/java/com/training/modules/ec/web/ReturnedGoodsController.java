@@ -123,8 +123,8 @@ public class ReturnedGoodsController extends BaseController {
 			model.addAttribute("pdlist",pdlist);//查询仓库信息
 			model.addAttribute("returnedGoods", returnedGoods);//申请售后信息
 		} catch (Exception e) {
-			BugLogUtils.saveBugLog(request, "审核页面", e);
-			logger.error("方法：returnform,审核页面" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "实物虚拟审核页面", e);
+			logger.error("方法：实物虚拟,审核页面" + e.getMessage());
 		}
 		if(returnedGoods.getIsReal() == 0){
 			model.addAttribute("orderArrearage",orderArrearage);//有无平欠款记录
@@ -194,7 +194,10 @@ public class ReturnedGoodsController extends BaseController {
 								"<td align='center'> "+isreal+"</td> "+
 								"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
 								"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
+								"<td align='center'> "+lists.get(1).getRatioPrice()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getRatio()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getRatioPrice()+"</td> "+
 								"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getTotalAmount()+"</td> "+
@@ -208,6 +211,7 @@ public class ReturnedGoodsController extends BaseController {
 									"<td align='center'> "+isreal+"</td> "+
 									"<td align='center'> "+lists.get(i).getMarketprice()+"</td> "+
 									"<td align='center'> "+lists.get(i).getGoodsprice()+"</td> "+
+									"<td align='center'> "+lists.get(i).getRatioPrice()+"</td> "+
 									"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
 								"</tr>";
 						}
@@ -237,6 +241,8 @@ public class ReturnedGoodsController extends BaseController {
 								"<td align='center' rowspan='"+num+"'> "+father.getMarketprice()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getGoodsprice()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getRatio()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getRatioPrice()+"</td> "+
 								"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getTotalAmount()+"</td> "+
@@ -406,7 +412,7 @@ public class ReturnedGoodsController extends BaseController {
 	@RequestMapping(value = "confirmTake")
 	public String confirmTake(HttpServletRequest request,ReturnedGoods returnedGoods, RedirectAttributes redirectAttributes) {
 		try {
-			String currentUser = UserUtils.getUser().getName();
+			String currentUser = UserUtils.getUser().getId();
 			returnedGoods = returnedGoodsService.get(returnedGoods.getId());
 			if("12".equals(returnedGoods.getReturnStatus()) || "13".equals(returnedGoods.getReturnStatus())){
 				returnedGoods.setReceiptBy(currentUser);
@@ -525,7 +531,7 @@ public class ReturnedGoodsController extends BaseController {
 	@RequestMapping(value = "UpdateShipping")
 	public String UpdateShipping(ReturnedGoods returnedGoods, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
 		try {
-			String currentUser = UserUtils.getUser().getName();
+			String currentUser = UserUtils.getUser().getId();
 			returnedGoods.setShipperBy(currentUser);
 			returnedGoods.setReturnStatus("26");
 			returnedGoodsService.UpdateShipping(returnedGoods);
@@ -578,7 +584,7 @@ public class ReturnedGoodsController extends BaseController {
 	@RequestMapping(value = "confirm")
 	public String confirm(HttpServletRequest request,ReturnedGoods returnedGoods, RedirectAttributes redirectAttributes) {
 		try {
-			String currentUser = UserUtils.getUser().getName();
+			String currentUser = UserUtils.getUser().getId();
 			returnedGoods.setFinancialBy(currentUser);
 			returnedGoods.setReturnStatus("16");
 			returnedGoodsService.updateReturnMomeny(returnedGoods);

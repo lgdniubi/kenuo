@@ -163,7 +163,7 @@
 				url:"${ctx}/ec/returned/getSurplusReturnAmount",
 				success:function(obj){
 					//计算商品剩余可退款金额
-					surplusReturnAmount = totalAmount - obj;
+					surplusReturnAmount = parseFloat(totalAmount*100-obj*100)/100;
 					$("#showReturn").text(surplusReturnAmount);
 				},
 				error:function(XMLHttpRequest,textStatus,errorThrown){
@@ -192,17 +192,6 @@
 				$("#selectReceive").hide();
 			}
 		}
-		/* //实物售后数量校验
-		function findReturnNum (id,num){
-			var num1=$(id).val();
-			if(parseInt(num1)<0){
-				top.layer.alert('售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
-				return;
-			}else if(parseInt(num1) > num){
-				top.layer.alert('售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
-				return;
-			}
-		} */
 		//虚拟商品的退款金额校验
 		function returnChangeAmount(){
 			var ra=$("#returnAmount").val();
@@ -277,6 +266,9 @@
 								<th style="text-align: center;">子项类型</th>
 								<th style="text-align: center;">市场价</th>
 								<th style="text-align: center;">优惠价</th>
+								<th style="text-align: center;">异价后价格</th>
+								<th style="text-align: center;">异价比例</th>
+								<th style="text-align: center;">异价后价格</th>
 								<th style="text-align: center;">成本价</th>
 								<th style="text-align: center;">购买数量</th>
 								<th style="text-align: center;">应付金额</th>

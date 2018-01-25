@@ -17,6 +17,7 @@
 	    	<div class="ibox-content">
 				<div class="tab-content" id="tab-content">
 	                <div class="tab-inner">
+	                	<input type="hidden" id="orderArrearage" name="orderArrearage" value="${orderArrearage }" />
 	                	<input type="hidden" id="userid" name="userid" value="${userid }" />
 	                	<c:if test="${isReal == 1 && servicetimes != 999}"> <!-- 0实物 -->
 		                	<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">*</font>服务单次价：</label>
@@ -53,11 +54,19 @@
 	<div class="loading" id="loading"></div>
 	<script type="text/javascript">
 		function sum(){
-			var rechargeAmount = parseFloat($("#rechargeAmount").val());
-			var accountBalance = parseFloat($("#accountBalance").val());
-			var goodsBalance = parseFloat($("#goodsBalance").val());
+			var rechargeAmount = parseFloat($("#rechargeAmount").val());  	// 充值金额
+			var accountBalance = parseFloat($("#accountBalance").val());	// 账户余额
+			var goodsBalance = parseFloat($("#goodsBalance").val());		// 商品余额
 			var topUpTotalAmount = (rechargeAmount+accountBalance).toFixed(2);
 			var newTopUpTotalAmount = (rechargeAmount+accountBalance+goodsBalance).toFixed(2);
+			if(!checknum($("#rechargeAmount").val(),$("#accountBalance").val())){
+				return;
+			}
+			// 不可多充值
+			if(newTopUpTotalAmount > parseFloat($("#orderArrearage").val())){
+				top.layer.alert('充值总金额不可大于欠款!', {icon: 0, title:'提醒'});
+				return;
+			}
 			
 			$("#rechargeAmount").attr("readonly",true);
 			$("#accountBalance").attr("readonly",true);
@@ -73,6 +82,18 @@
 			$("#newTopUpTotalAmount").val("");
 			$("#jsmoney").val(0); //未计算过
 			$("#ichecks").attr("disabled",false);
+		}
+		//判断输入的营业额
+		function checknum(obj1,obj2){
+			var re = /^([+-]?)\d*\.?\d{0,2}$/; 
+			if(obj1 == ''){ obj1 = 0; }
+			if(obj2 == ''){ obj2 = 0; }
+			if(!re.test(obj1) || !re.test(obj2)){
+				top.layer.alert('请输入正确的金额(最多两位小数)', {icon: 0, title:'提醒'});
+				return false;
+			}else{
+				return true;
+			}
 		}
 		$(document).ready(function() {
 			$("#ichecks").change(function(){

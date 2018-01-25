@@ -154,6 +154,9 @@
 					}
 				}
 			});
+			amount = $("#amount").val();//可售后金额
+			$("#showReturn").text(amount);//显示可售后金额
+			
 			applyType = $("#applyType").val();//申请类型
 			if(applyType == 1){//仅换货
 				$("#returnAmountIsShow").hide();//售后金额
@@ -259,7 +262,11 @@
 			        			<th style="text-align: center;">商品名称</th>
 			        			<th style="text-align: center;">商品类型</th>
 								<th style="text-align: center;">规格</th>
-								<th style="text-align: center;">价格</th>
+								<th style="text-align: center;">市场价</th>
+								<th style="text-align: center;">优惠价</th>
+								<th style="text-align: center;">系统价</th>
+								<th style="text-align: center;">异价比例</th>
+								<th style="text-align: center;">异价后价格</th>
 								<th style="text-align: center;">数量</th>
 								<th style="text-align: center;">实付金额</th>
 			        		</tr>
@@ -276,7 +283,11 @@
 			        				</c:if>
 			        			</td>
 			        			<td>${returnedGoods.specName}</td>
-			        			<td>${returnedGoods.goodsPrice}</td>
+			        			<td>${returnedGoods.marketPrice}</td>
+								<td>${returnedGoods.goodsPrice}</td>
+								<td>${returnedGoods.costPrice}</td>
+			        			<td>${returnedGoods.ratio}</td>
+			        			<td>${returnedGoods.ratioPrice}</td>
 			        			<td>${returnedGoods.goodsNum}</td>
 			        			<td>${returnedGoods.totalAmount}</td>
 			        		</tr>
@@ -383,6 +394,9 @@
 							onfocus="if(value == '0.0'){value=''}"
 							onblur="if(value == ''){value='0.0'}"
 							onchange="returnChangeAmount()"/>
+						<c:if test="${flag == 'edit'}">
+							<font color="red">（最大可退¥<span id="showReturn"></span>元）</font>
+						</c:if>
 				        <p></p>
 				    </div>
 				    <div id="returnTypeIsShow" style="display: display">

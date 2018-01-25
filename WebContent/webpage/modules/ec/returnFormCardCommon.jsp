@@ -59,11 +59,11 @@
 			  var type=$("#applyType").val();
 			  if(type == 1){//仅换货展示 '实物数量'和'售后次数'   售后次数不能为0
 				  var rn=$("#returnNum").val();
-				  if(parseInt(rn)<=0){
-					  top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
+				  if(parseInt(rn)<0){
+					  top.layer.alert('售后次数必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
 					  return;
 				  }else if(parseInt(rn)>parseInt(remaintimes)){
-					  top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
+					  top.layer.alert('售后次数必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
 					  return;
 				  }
 				  //仅换货:收款人和收款账户默认空,且
@@ -74,19 +74,19 @@
 				//校验通用卡本身的售后次数
 				  var rn=$("#returnNum").val();
 				  if(parseInt(rn)<0){
-					  top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
+					  top.layer.alert('售后次数必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
 					  return;
 				  }else if(parseInt(rn)>parseInt(remaintimes)){
-					  top.layer.alert('售后次数必须大于0，小于剩余次数!', {icon: 0, title:'提醒'});
+					  top.layer.alert('售后次数必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
 					  return;
 				  }
 				  //虚拟商品的退款金额校验
 				  var ra=$("#returnAmount").val();
 				  if(parseFloat(ra)<0){
-					  top.layer.alert('退款金额必须大于等于0，小于实付款金额!', {icon: 0, title:'提醒'});
+					  top.layer.alert('售后金额必须大于等于0，小于等于可售后金额!', {icon: 0, title:'提醒'});
 					  return;
 				  }else if(parseFloat(surplusReturnAmount) < parseFloat(ra)){
-					  top.layer.alert('退款金额必须大于等于0，小于实付款金额!', {icon: 0, title:'提醒'});
+					  top.layer.alert('售后金额必须大于等于0，小于等于可售后金额!', {icon: 0, title:'提醒'});
 					  return;
 				  }
 				  
@@ -179,7 +179,7 @@
 				url:"${ctx}/ec/returned/getSurplusReturnAmount",
 				success:function(obj){
 					//计算商品剩余可退款金额
-					surplusReturnAmount = totalAmount - obj;
+					surplusReturnAmount = parseFloat(totalAmount*100-obj*100)/100;
 					$("#showReturn").text(surplusReturnAmount);
 				},
 				error:function(XMLHttpRequest,textStatus,errorThrown){
@@ -215,7 +215,7 @@
 			if(parseInt(num1)<0){
 				top.layer.alert('售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
 				return;
-			}else if(parseInt(num1) > num){
+			}else if(parseInt(num1) > parseInt(num)){
 				top.layer.alert('售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
 				return;
 			}
@@ -223,10 +223,10 @@
 		//虚拟商品的售后次数校验
 		function returnChangeTimes(){
 			var rn=$("#returnNum").val();
-			if(parseFloat(rn)<0){
+			if(parseInt(rn)<0){
 				top.layer.alert('售后次数必须大于等于0，小于等于售后次数!', {icon: 0, title:'提醒'});
 				return;
-			}else if(parseFloat(remaintimes) < parseFloat(rn)){
+			}else if(parseInt(remaintimes) < parseInt(rn)){
 				top.layer.alert('售后次数必须大于等于0，小于等于售后次数!', {icon: 0, title:'提醒'});
 				return;
 			}
@@ -308,6 +308,8 @@
 								<th style="text-align: center;">子项类型</th>
 								<th style="text-align: center;">市场价</th>
 								<th style="text-align: center;">优惠价</th>
+								<th style="text-align: center;">异价比例</th>
+								<th style="text-align: center;">异价后价格</th>
 								<th style="text-align: center;">成本价</th>
 								<th style="text-align: center;">购买数量</th>
 								<th style="text-align: center;">应付金额</th>
