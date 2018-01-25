@@ -2,11 +2,14 @@ package com.training.modules.ec.utils;
 
 import java.security.MessageDigest;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
+import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 
 import net.sf.json.JSONException;
@@ -209,6 +212,88 @@ public class WebUtils {
 		} catch (JSONException e) {
 		//	logger.error(e.getMessage(), e);
 			throw e;
+		}
+		return result;
+	}
+	
+	/**
+	 * 请求接口共用方法
+	 * @param type  1、每天美耶  2、妃子校  3、报货  4、自媒体    --其他,不需要加密
+	 * @param title	标题
+	 * @param parpm	请求参数
+	 * @param url	请求地址
+	 * @return
+	 */
+	public static String webUtilsPostObject(HttpServletRequest request, String title,int type,String parpm,String url){
+		String result = "";
+		String typeName = "";
+
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			HttpHeaders headers = new HttpHeaders();
+			MediaType contentType = MediaType.parseMediaType("application/json;charset=UTF-8");
+			
+			headers.setContentType(contentType);
+			headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+			       
+			JSONObject jsonObj = JSONObject.fromObject(parpm);
+			String paramter = null,json = null,sign = null;
+			switch (type) {
+				case 1:	// 每天美耶
+					
+					typeName = "每天美耶";
+					String connector = ParametersFactory.getMtmyParamValues("mtmy_connector");
+					jsonObj.put("version", connector);
+					json = jsonObj.toString();
+					sign = MD5("mtmy"+json+"mtmy");
+					paramter = "{'sign':'"+sign+"' , 'jsonStr':'mtmy"+json+"'}";
+					
+					break;
+				case 2:	// 妃子校
+					
+					typeName = "妃子校";
+					json=jsonObj.toString();
+					sign = MD5("train"+json+"train");
+					paramter = "{'sign':'"+sign+"' , 'jsonStr':'train"+json+"'}";
+					
+					break;
+				case 3:	// 报货
+					
+					typeName = "报货";
+					json=jsonObj.toString();
+					sign = MD5("cs"+json+"cs");
+					paramter = "{'sign':'"+sign+"' , 'jsonStr':'cs"+json+"'}";
+					
+					break;
+				case 4:	// 自媒体
+					
+					typeName = "自媒体";
+					json = jsonObj.toString();
+					sign = MD5("media"+json+"media");
+					paramter = "{'sign':'"+sign+"' , 'jsonStr':'media"+json+"'}";
+					
+					break;
+	
+				default: // 其他,不需要加密
+					
+					typeName = "其他,不需要加密";
+					paramter = jsonObj.toString();
+					
+					break;
+			}
+			
+			System.out.println("#######调用接口：调用类型"+typeName+"_"+type+"_"+title+","+"请求地址"+url+",请求参数："+paramter);
+			
+			HttpEntity<String> entity = new HttpEntity<String>(paramter, headers);
+			result = restTemplate.postForObject(url, entity, String.class);
+			
+			System.out.println("#######调用接口返回参数：调用类型"+typeName+"_"+type+"_"+title+","+"请求地址"+url+",返回数据："+result);
+
+		} catch (Exception e) {
+			System.out.println("#######调用接口错误日志：调用类型"+typeName+"_"+type+"_"+title+","+"请求地址"+url+",出现异常："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "每天美耶版本管理-查看所有", e);
+		}finally {
+			
 		}
 		return result;
 	}
