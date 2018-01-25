@@ -903,6 +903,9 @@ window.onload=initStatus;
 							</c:choose>
 						</c:if>
 					</shiro:hasPermission>
+					<shiro:hasPermission name="ec:orders:editLog">
+						<a href="#" onclick="openDialogView('订单操作日志', '${ctx}/ec/orders/editLog?orderid=${orders.orderid}','1100px','650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>订单操作日志</a>
+					</shiro:hasPermission>
 				</div>
 			</div>	
 		</div>

@@ -3876,4 +3876,25 @@ public class OrdersController extends BaseController {
 			logger.error("订单操作日志报错信息：" + e.getMessage());
 		}
 	}
+	
+	/**
+	 * 订单操作日志
+	 * @param orders
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "editLog")
+	public String editLog(OrdersLog ordersLog, HttpServletRequest request, HttpServletResponse response, Model model) {
+		try {
+			Page<OrdersLog> page = ordersLogService.editLog(new Page<OrdersLog>(request, response), ordersLog);
+			model.addAttribute("page", page);
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "订单操作日志", e);
+			logger.error("订单操作日志：" + e.getMessage());
+		}
+		return "modules/ec/editLogList";
+	}
+
 }

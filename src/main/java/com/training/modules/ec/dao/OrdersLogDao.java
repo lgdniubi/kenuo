@@ -28,5 +28,11 @@ public interface OrdersLogDao extends TreeDao<OrdersLog>{
 	 * @param ordersLog
 	 */
 	public void saveOrdersLog(OrdersLog ordersLog);
-
+	
+	/**
+	 * 根据订单id查询该订单的日志
+	 * @param orderid
+	 * @return
+	 */
+	public List<OrdersLog> editLog(String orderid);
 }
