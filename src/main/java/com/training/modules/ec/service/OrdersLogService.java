@@ -11,7 +11,7 @@ import com.training.modules.ec.dao.OrdersLogDao;
 import com.training.modules.ec.entity.OrdersLog;
 /**
  * 操作日志
- * @author yangyang
+ * @author 小叶    2018年1月24日
  *
  */
 @Service
@@ -29,5 +29,5 @@ public class OrdersLogService extends TreeService<OrdersLogDao,OrdersLog> {
 	public List<OrdersLog> findByOrderid(String orderid){
 		return ordersLogDao.findByOrderid(orderid);
 	}
-
+	
 }

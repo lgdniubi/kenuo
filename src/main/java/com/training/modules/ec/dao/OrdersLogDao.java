@@ -9,7 +9,7 @@ import com.training.modules.ec.entity.OrdersLog;
 
 /**
  *操作日志dao
- * @author yangyang
+ * @author 小叶   2018年1月24日
  *
  */
 
@@ -23,6 +23,10 @@ public interface OrdersLogDao extends TreeDao<OrdersLog>{
 	 */
 	public List<OrdersLog> findByOrderid(String orderid);
 	
-
+	/**
+	 * 插入订单日志
+	 * @param ordersLog
+	 */
+	public void saveOrdersLog(OrdersLog ordersLog);
 
 }

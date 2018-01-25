@@ -721,7 +721,7 @@ window.onload=initStatus;
 							</form:select>
 							<p></p>
 							<label >留言备注：</label>
-							<textarea name="usernote" rows="5" cols="60">${orders.userNote }</textarea>
+							<textarea name="userNote" rows="5" cols="60">${orders.userNote }</textarea>
 						</div>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
@@ -827,7 +827,7 @@ window.onload=initStatus;
 						</div>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="shipping">
-							<label ><font color="red">*</font>物流类型：</label>
+							<label ><font color="red">*</font>发货类型：</label>
 							<form:select path="shippingtype"  class="form-control" style="width:180px">
 									<form:option value="0">快递发货</form:option>
 									<form:option value="1">到店自取</form:option>

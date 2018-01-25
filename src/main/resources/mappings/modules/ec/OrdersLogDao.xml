@@ -27,5 +27,29 @@
 		ORDER BY a.add_time desc
 
 	</select>
-
+	
+	<!-- 插入订单日志 -->
+	<insert id="saveOrdersLog">
+		INSERT INTO mtmydb.mtmy_orders_operate_log(
+			order_id,
+			title,
+			content,
+			content_record,
+			channel_flag,
+			platform_flag,
+			create_by,
+			create_office_ids,
+			create_date
+		)VALUES(
+			#{orderid},
+			#{title},
+			#{content},
+			#{contentRecord},
+			#{channelFlag},
+			#{platformFlag},
+			#{createBy.id},
+			#{createOfficeIds},
+			SYSDATE()
+		)
+	</insert>
 </mapper>

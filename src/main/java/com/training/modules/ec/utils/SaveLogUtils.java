@@ -38,9 +38,19 @@ public class SaveLogUtils {
 							//属性为时间格式  则进行格式化时间
 							Object valOldT;
 							Object valNewT;
+							
 							if(mOldT.getReturnType().getName().contains("Date")){
-								valOldT = DateUtils.formatDateTime((Date) mOldT.invoke(oldT));
-								valNewT = DateUtils.formatDateTime((Date) mNewT.invoke(newT));
+								if(mOldT.invoke(oldT) == null || "".equals(mOldT.invoke(oldT))){
+									valOldT = "无";
+								}else{
+									valOldT = DateUtils.formatDateTime((Date) mOldT.invoke(oldT));
+								}
+								
+								if(mNewT.invoke(newT) == null || "".equals(mNewT.invoke(newT))){
+									valNewT = "无";
+								}else{
+									valNewT = DateUtils.formatDateTime((Date) mNewT.invoke(newT));
+								}
 							}else{
 								valOldT = mOldT.invoke(oldT);
 								valNewT = mNewT.invoke(newT);

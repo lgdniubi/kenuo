@@ -44,6 +44,7 @@ import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.dao.OrderGoodsDao;
 import com.training.modules.ec.dao.OrderGoodsDetailsDao;
 import com.training.modules.ec.dao.OrdersDao;
+import com.training.modules.ec.dao.OrdersLogDao;
 import com.training.modules.ec.dao.ReturnedGoodsDao;
 import com.training.modules.ec.dao.SaleRebatesLogDao;
 import com.training.modules.ec.entity.AcountLog;
@@ -79,8 +80,10 @@ import com.training.modules.ec.service.ReturnGoodsService;
 import com.training.modules.ec.service.ReturnedGoodsService;
 import com.training.modules.ec.service.TurnOverDetailsService;
 import com.training.modules.ec.utils.CourierUtils;
+import com.training.modules.ec.utils.NameUtil;
 import com.training.modules.ec.utils.OrderUtils;
 import com.training.modules.ec.utils.OrdersStatusChangeUtils;
+import com.training.modules.ec.utils.SaveLogUtils;
 import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.quartz.tasks.utils.RedisConfig;
 import com.training.modules.quartz.utils.RedisLock;
@@ -95,6 +98,7 @@ import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.TrainRuleParam;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * 订单Controller
@@ -148,7 +152,9 @@ public class OrdersController extends BaseController {
 	private ReturnedGoodsDao returnedGoodsDao;
 	@Autowired
 	private OrderGoodsDetailsDao orderGoodsDetailsDao;
-
+	@Autowired
+	private OrdersLogDao ordersLogDao;
+	
 	public static final String MTMY_ID = "mtmy_id_";//用户云币缓存前缀
 	
 	public static final String buying_limit_prefix = "buying_limit_";				//抢购活动商品限购数量
@@ -439,6 +445,7 @@ public class OrdersController extends BaseController {
 	@RequestMapping(value = "UpdateShipping")
 	public String UpdateShipping(Orders orders, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		try {
+			Orders oldOrders = ordersService.selectOrderById(orders.getOrderid());
 			
 			int returnDay = Integer.parseInt(ParametersFactory.getMtmyParamValues("returngoods_date"));
 			if(-1 == returnDay){
@@ -454,6 +461,12 @@ public class OrdersController extends BaseController {
 			if(StringUtils.isEmpty(shopcodes)){//为空:推送消息,修改订单状态
 				ordersService.updateOrdersStatus(orders);//第一次修改物流信息时,修改订单状态
 				OrdersStatusChangeUtils.pushMsg(orders, 3); //推送已发货信息给用户
+				
+				//调用日志的公用方法
+				ordersLog("2",oldOrders,orders,request);
+			}else{
+				//调用日志的公用方法
+				ordersLog("6",oldOrders,orders,request);
 			}
 			addMessage(redirectAttributes, "订单：" + orders.getOrderid() + "物流修改成功");
 		} catch (Exception e) {
@@ -1032,6 +1045,9 @@ public class OrdersController extends BaseController {
 						}
 						
 						BeanValidators.validateWithException(validator, shipping);
+
+						Orders oldOrders = ordersService.selectOrderById(shipping.getOrderid());
+						
 						Orders orders=new Orders();
 						if(shipping.getShippingtime()!=null){
 							date=sdf.parse(shipping.getShippingtime());
@@ -1059,10 +1075,16 @@ public class OrdersController extends BaseController {
 								ordersService.updateOrdersStatus(orders);//第一次修改物流信息时,修改订单状态
 								successNum++;
 								OrdersStatusChangeUtils.pushMsg(orders, 3);//推送已发货信息给用户
-							} else {
+								
+								//调用日志的公用方法
+								ordersLog("5",oldOrders,orders,request);
+							}else{
 								failureMsg.append("<br/>订单" + shipping.getOrderid() + "更新物流失败; ");
 								failureNum++;
 							}	
+						}else{
+							//调用日志的公用方法
+							ordersLog("7",oldOrders,orders,request);
 						}
 						
 					} catch (ConstraintViolationException ex) {
@@ -1206,6 +1228,7 @@ public class OrdersController extends BaseController {
 			RedirectAttributes redirectAttributes) {
 		try {
 			Orders newOrders = ordersService.selectOrderById(orders.getOrderid());
+			
 			orders.setInvoiceOvertime(newOrders.getInvoiceOvertime());
 			orders.setIsReal(newOrders.getIsReal());
 			//判断收货地址是否修改了，若未修改则xml中不对address更新，若不修改，则将省市县详细地址存到相应的地方
@@ -1237,6 +1260,10 @@ public class OrdersController extends BaseController {
 				ordersService.updateVirtualOrder(orders);
 				addMessage(redirectAttributes, "修改订单'" + orders.getOrderid() + "'成功");
 			}
+			
+			//调用日志的公用方法
+			ordersLog("1",newOrders,orders,request);
+			
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "修改订单", e);
 			logger.error("方法：updateVirtualOrder，修改订单出现错误：" + e.getMessage());
@@ -1589,6 +1616,7 @@ public class OrdersController extends BaseController {
 	public String forcedCancel(Orders orders, HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
 		try {
 			int integral = 0;
+			Orders oldOrders = ordersService.selectOrderById(orders.getOrderid());
 			
 			orders = ordersService.findselectByOrderId(orders.getOrderid());
 			boolean result = returnRepository(orders.getOrderid(),request);
@@ -1798,6 +1826,10 @@ public class OrdersController extends BaseController {
 			if(saleRebatesLogDao.selectNumByOrderId(orders.getOrderid()) == 0){//如果无退货记录
 				saleRebatesLogDao.updateSale(orders.getOrderid());// 插入分销日志
 			}
+			
+			//调用日志的公用方法
+			ordersLog("8",oldOrders,orders,request);
+			
 			addMessage(redirectAttributes, "强制取消'" + orders.getOrderid() + "'成功！");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "强制取消错误", e);
@@ -2149,7 +2181,7 @@ public class OrdersController extends BaseController {
 												orders.setIsNeworder(1);
 												orders.setOrderstatus(4);
 												if(!"".equals(note) || note != null){
-													orders.setUsernote(note);
+													orders.setUserNote(note);
 												}
 												
 												if("微信支付".equals(payCode)){
@@ -2794,6 +2826,9 @@ public class OrdersController extends BaseController {
 				ordersService.updateVirtualOrder(orders);
 				addMessage(redirectAttributes, "修改卡项订单'" + orders.getOrderid() + "'成功");
 			}
+			
+			//调用日志的公用方法
+			ordersLog("1",newOrders,orders,request);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "修改卡项订单", e);
 			logger.error("方法：updateCardOrder，修改卡项订单出现错误：" + e.getMessage());
@@ -2999,7 +3034,12 @@ public class OrdersController extends BaseController {
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
 			if((!"".equals(orders.getOrderid()) && (orders.getOrderid() != null))){
+				Orders oldOrders = ordersService.selectOrderById(orders.getOrderid());
+
 				ordersService.updateOrderstatusForReal(orders.getOrderid());
+
+				//调用日志的公用方法
+				ordersLog("3",oldOrders,orders,request);
 				
 				double detailsTotalAmount = 0;       //预约金用了红包、折扣以后实际付款的钱
 				int goodsType = 0;                    //商品区分(0: 老商品 1: 新商品)
@@ -3699,5 +3739,149 @@ public class OrdersController extends BaseController {
 		}
 		return "modules/ec/returnedOrdersList";
 	}
+	
+	/**
+	 * 实物发货到店确认收货以后用户已取货
+	 * @param orders
+	 * @param request
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value="isPickUp")
+	public String isPickUp(Orders orders,HttpServletRequest request,Model model,RedirectAttributes redirectAttributes){
+		try{
+			if((!"".equals(orders.getOrderid()) && (orders.getOrderid() != null))){
+				Orders oldOrders = ordersService.selectOrderById(orders.getOrderid());
+				
+				ordersService.updateIsPickUp(orders); 
 
+				//调用日志的公用方法
+				ordersLog("4",oldOrders,orders,request);
+				
+				addMessage(redirectAttributes, "取货成功！");
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "实物发货到店确认收货以后确认取货", e);
+			logger.error("方法：isPickUp,实物发货到店确认收货以后确认取货出现错误：" + e.getMessage());
+			addMessage(redirectAttributes, "取货失败！");
+		}
+		return "redirect:" + adminPath + "/ec/orders/list";
+	}
+	
+	/**
+	 * 订单操作日志           注：6.7是咖啡非得让加，区分开，没办法，一个物流的日志分为四块。。。。。。。。。。。
+	 * @param type  1:修改订单  2:修改物流  3:确认收货  4:用户取货  5：导入物流  6：非第一次修改物流  7：非第一次导入物流  8：强制取消
+	 * @param oldOrders
+	 * @param orders
+	 * @param request
+	 */
+	public void ordersLog(String type,Orders oldOrders,Orders orders,HttpServletRequest request){
+		try{
+			User user = UserUtils.getUser();
+			StringBuffer str = new StringBuffer();	// 用于存储一些特殊的日志
+			StringBuffer newStr = new StringBuffer();	// 用于存储一些特殊的日志的数据
+			JSONObject json = new JSONObject();
+			String title = "";
+			
+			if("1".equals(type)){     //修改订单
+				//判断订单状态是否修改 和之前的订单状态进行比较
+				if(orders.getOrderstatus() != oldOrders.getOrderstatus()){
+					str.append("订单状态:修改前("+NameUtil.typeNames("0",String.valueOf(oldOrders.getOrderstatus()))+"),修改后("+NameUtil.typeNames("0",String.valueOf(orders.getOrderstatus()))+")--");
+					newStr.append("订单状态:修改前("+oldOrders.getOrderstatus()+"),修改后("+orders.getOrderstatus()+")--");
+				}
+				
+				//判断付款方式是否修改和之前的付款方式进行比较
+				String payCode = orders.getPaycode() == null ? "" : orders.getPaycode();//修改之后的付款方式
+				String oldPayCode = oldOrders.getPaycode() == null ? "" : oldOrders.getPaycode();//修改之前的付款方式
+				if(!oldPayCode.equals(payCode)){
+					str.append("付款方式:修改前("+NameUtil.typeNames("1",oldPayCode)+"),修改后("+NameUtil.typeNames("1",payCode)+")--");
+					newStr.append("付款方式:修改前("+oldPayCode+"),修改后("+payCode+")--");
+				}
+				
+				//判断发货类型是否修改和之前的发货类型进行比较
+				if(orders.getShippingtype() != oldOrders.getShippingtype()){
+					str.append("发货类型:修改前("+NameUtil.typeNames("3",String.valueOf(oldOrders.getShippingtype()))+"),修改后("+NameUtil.typeNames("3",String.valueOf(orders.getShippingtype()))+")--");
+					newStr.append("发货类型:修改前("+oldOrders.getShippingtype()+"),修改后("+orders.getShippingtype()+")--");
+				}
+				
+				json.put("property", "[\"userNote\",\"consignee\",\"mobile\",\"address\"]");
+				json.put("name", "[\"留言备注\",\"收货人\",\"联系电话\",\"收货地址\"]");
+				title = "修改订单";
+				
+			}else if("2".equals(type)){    //第一次修改物流
+				if(oldOrders.getOrderstatus() != 2){
+					str.append("订单状态:修改前("+NameUtil.typeNames("0",String.valueOf(oldOrders.getOrderstatus()))+"),修改后(待收货)--");
+					newStr.append("订单状态:修改前("+oldOrders.getOrderstatus()+"),修改后(2)--");
+				}
+				
+				json.put("property", "[\"shippingtime\",\"shippingcode\",\"shippingname\"]");
+				json.put("name", "[\"发货时间\",\"快递单号\",\"快递公司\"]");
+				title = "修改物流";
+				
+			}else if("3".equals(type)){    //确认收货
+				str.append("订单状态:修改前("+NameUtil.typeNames("0",String.valueOf(oldOrders.getOrderstatus()))+"),修改后(已完成)--");
+				newStr.append("订单状态:修改前("+oldOrders.getOrderstatus()+"),修改后(4)--");
+
+				json.put("property", "[]");
+				json.put("name", "[]");
+				title = "确认收货";
+				
+			}else if("4".equals(type)){   //用户取货
+				//判断是否用户已取货
+				str.append("用户已取货:修改前(未取货),修改后(已取货)--");
+				newStr.append("用户已取货:修改前("+oldOrders.getIsPickUp()+"),修改后(1)--");
+				
+				json.put("property", "[\"pickUpNote\"]");
+				json.put("name", "[\"确认取货备注\"]");
+				title = "用户取货";
+				
+			}else if("5".equals(type)){    //第一次导入物流
+				if(oldOrders.getOrderstatus() != 2){
+					str.append("订单状态:修改前("+NameUtil.typeNames("0",String.valueOf(oldOrders.getOrderstatus()))+"),修改后(待收货)--");
+					newStr.append("订单状态:修改前("+oldOrders.getOrderstatus()+"),修改后(2)--");
+				}
+				
+				json.put("property", "[\"shippingtime\",\"shippingcode\",\"shippingname\"]");
+				json.put("name", "[\"发货时间\",\"快递单号\",\"快递公司\"]");
+				
+				title = "导入物流";
+			}else if("6".equals(type)){    //非第一次修改物流
+				json.put("property", "[\"shippingtime\",\"shippingcode\",\"shippingname\"]");
+				json.put("name", "[\"发货时间\",\"快递单号\",\"快递公司\"]");
+				
+				title = "修改物流";
+			}else if("7".equals(type)){    //非第一次导入物流
+				json.put("property", "[\"shippingtime\",\"shippingcode\",\"shippingname\"]");
+				json.put("name", "[\"发货时间\",\"快递单号\",\"快递公司\"]");
+			
+				title = "导入物流";
+			}else if("8".equals(type)){    //强制取消
+				str.append("订单状态:修改前("+NameUtil.typeNames("0",String.valueOf(oldOrders.getOrderstatus()))+"),修改后(取消订单)--");
+				newStr.append("订单状态:修改前("+oldOrders.getOrderstatus()+"),修改后(-2)--");
+
+				json.put("property", "[]");
+				json.put("name", "[]");
+				title = "强制取消";
+			}
+			
+			String string = SaveLogUtils.saveLog(json,str.toString(),oldOrders,orders);
+			String newString = SaveLogUtils.saveLog(json,newStr.toString(),oldOrders,orders);
+			if(!"".equals(string) && null != string && !"".equals(newString) && null != newString){
+				OrdersLog ordersLog = new OrdersLog();
+				ordersLog.setOrderid(orders.getOrderid());
+				ordersLog.setTitle(title);
+				ordersLog.setContent(string);
+				ordersLog.setContentRecord(newString);
+				ordersLog.setChannelFlag("bm");
+				ordersLog.setPlatformFlag("mtmy");
+				ordersLog.setCreateBy(user);
+				ordersLog.setCreateOfficeIds(user.getOffice().getParentIds() + user.getOffice().getId() + ",");
+				ordersLogDao.saveOrdersLog(ordersLog);
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "订单操作日志", e);
+			logger.error("订单操作日志报错信息：" + e.getMessage());
+		}
+	}
 }

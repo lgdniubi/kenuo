@@ -360,4 +360,10 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @param orderId
 	 */
 	public void editOrderstatusForfinish(String orderId);
+	
+	/**
+	 * 是否取货 
+	 * @param orders
+	 */
+	public void updateIsPickUp(Orders orders);
 }

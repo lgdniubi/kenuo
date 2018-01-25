@@ -63,7 +63,6 @@ public class Orders extends TreeEntity<Orders> {
 	private int actionid;				//活动id
 	private	double orderactionamount;	//活动优惠金额
 	private double discount;			//价格调整
-	private String usernote;			//用户备注
 	private String adminnote;			//管理员备注
 	private String parentid;			//父单号id
 	private String username;			//购买者姓名
@@ -220,6 +219,9 @@ public class Orders extends TreeEntity<Orders> {
 	//-------------------------------------------------------------------
 	
 	private int returnDay;                           //退货日期
+	
+	private int isPickUp;                           //是否已取货（0：否；1：是）
+	private String pickUpNote;                    //确认取货备注
 	
 	public String getSearchIsReal() {
 		return searchIsReal;
@@ -1208,14 +1210,6 @@ public class Orders extends TreeEntity<Orders> {
 		this.discount = discount;
 	}
 
-	public String getUsernote() {
-		return usernote;
-	}
-
-	public void setUsernote(String usernote) {
-		this.usernote = usernote;
-	}
-
 	public String getAdminnote() {
 		return adminnote;
 	}
@@ -1705,6 +1699,18 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setReturnDay(int returnDay) {
 		this.returnDay = returnDay;
+	}
+	public int getIsPickUp() {
+		return isPickUp;
+	}
+	public void setIsPickUp(int isPickUp) {
+		this.isPickUp = isPickUp;
+	}
+	public String getPickUpNote() {
+		return pickUpNote;
+	}
+	public void setPickUpNote(String pickUpNote) {
+		this.pickUpNote = pickUpNote;
 	}
 	
 }
