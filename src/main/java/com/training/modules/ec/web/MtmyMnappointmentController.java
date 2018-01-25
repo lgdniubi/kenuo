@@ -100,9 +100,10 @@ public class MtmyMnappointmentController extends BaseController{
 	@RequestMapping(value = "cancel")
 	public String cancel(Reservation reservation,HttpServletRequest request, HttpServletResponse response,Model model,RedirectAttributes redirectAttributes){
 		try {
+			User user = UserUtils.getUser(); // 当前登录人
 			String weburl = ParametersFactory.getMtmyParamValues("mtmy_delphysubscribe_url");
 			logger.info("##### web接口路径:"+weburl);
-			String parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"client\":\"bm\"}";
+			String parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"client\":\"bm\",\"update_by\":\""+user.getId()+"\",\"create_office_ids\":\""+user.getOffice().getParentIds()+user.getOffice().getId()+","+"\"}";
 			String url=weburl;
 			String result = WebUtils.postObject(parpm, url);
 			JSONObject jsonObject = JSONObject.fromObject(result);
@@ -316,13 +317,13 @@ public class MtmyMnappointmentController extends BaseController{
 				if("1".equals(reservation.getApptStatus())){
 					url = ParametersFactory.getMtmyParamValues("mtmy_finishSubscribeStatus");	//修改预约时间且状态为已完成
 					String appt_date = DateUtils.formatDate(reservation.getApptDate(), "yyyy-MM-dd");
-					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"appt_date\":\""+appt_date+"\",\"appt_start_time\":\""+reservation.getApptStartTime()+"\",\"appt_end_time\":\""+reservation.getApptEndTime()+"\",\"client\":\"bm\",\"remarks\":\""+reservation.getRemarks()+"\",\"update_by\":\""+user.getId()+"\"}";
+					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"appt_date\":\""+appt_date+"\",\"appt_start_time\":\""+reservation.getApptStartTime()+"\",\"appt_end_time\":\""+reservation.getApptEndTime()+"\",\"client\":\"bm\",\"remarks\":\""+reservation.getRemarks()+"\",\"update_by\":\""+user.getId()+"\",\"create_office_ids\":\""+user.getOffice().getParentIds()+user.getOffice().getId()+","+"\"}";
 				}else if("3".equals(reservation.getApptStatus())){
 					url = ParametersFactory.getMtmyParamValues("mtmy_delphysubscribe_url");
-					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"client\":\"bm\"}";
+					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"client\":\"bm\",\"update_by\":\""+user.getId()+"\",\"create_office_ids\":\""+user.getOffice().getParentIds()+user.getOffice().getId()+","+"\"}";
 				}else{
 					url = ParametersFactory.getMtmyParamValues("mtmy_updateSubscribeStatus");	//修改预约状态
-					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"appt_status\":"+reservation.getApptStatus()+",\"client\":\"bm\",\"remarks\":\""+reservation.getRemarks()+"\",\"update_by\":\""+user.getId()+"\"}";
+					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"appt_status\":"+reservation.getApptStatus()+",\"client\":\"bm\",\"remarks\":\""+reservation.getRemarks()+"\",\"update_by\":\""+user.getId()+"\",\"create_office_ids\":\""+user.getOffice().getParentIds()+user.getOffice().getId()+","+"\"}";
 				}
 				logger.info("##### web接口路径:"+url);
 				String result = WebUtils.postObject(parpm, url);
