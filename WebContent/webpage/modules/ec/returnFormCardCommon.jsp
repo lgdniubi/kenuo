@@ -215,7 +215,7 @@
 			if(parseInt(num1)<0){
 				top.layer.alert('售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
 				return;
-			}else if(parseInt(num1) > num){
+			}else if(parseInt(num1) > parseInt(num)){
 				top.layer.alert('售后数量必须大于等于0，小于等于购买数量!', {icon: 0, title:'提醒'});
 				return;
 			}
@@ -223,10 +223,10 @@
 		//虚拟商品的售后次数校验
 		function returnChangeTimes(){
 			var rn=$("#returnNum").val();
-			if(parseFloat(rn)<0){
+			if(parseInt(rn)<0){
 				top.layer.alert('售后次数必须大于等于0，小于等于售后次数!', {icon: 0, title:'提醒'});
 				return;
-			}else if(parseFloat(remaintimes) < parseFloat(rn)){
+			}else if(parseInt(remaintimes) < parseInt(rn)){
 				top.layer.alert('售后次数必须大于等于0，小于等于售后次数!', {icon: 0, title:'提醒'});
 				return;
 			}
