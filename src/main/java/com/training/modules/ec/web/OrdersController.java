@@ -496,22 +496,6 @@ public class OrdersController extends BaseController {
 	}
 
 	/**
-	 * 生成退货订单
-	 * 
-	 * @param orders
-	 * @param model
-	 * @return
-	 */
-
-
-	@RequestMapping(value = "returnGoddsform")
-	public String returnGoddsform(ReturnGoods returnGoods, String orderid, Model model) {
-		returnGoods = returnGoodsService.get(orderid);
-		model.addAttribute("returnGoods", returnGoods);
-		return "modules/ec/returnForm";
-	}
-
-	/**
 	 * 保存退货订单数据(实物商品)
 	 * @param request
 	 * @param redirectAttributes
@@ -807,6 +791,9 @@ public class OrdersController extends BaseController {
 								"<td align='center'> "+isreal+"</td> "+
 								"<td align='center'> "+lists.get(1).getMarketprice()+"</td> "+
 								"<td align='center'> "+lists.get(1).getGoodsprice()+"</td> "+
+								"<td align='center'> "+lists.get(1).getRatioPrice()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getRatio()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getRatioPrice()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
 								"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
@@ -826,6 +813,7 @@ public class OrdersController extends BaseController {
 									"<td align='center'> "+isreal+"</td> "+
 									"<td align='center'> "+lists.get(i).getMarketprice()+"</td> "+
 									"<td align='center'> "+lists.get(i).getGoodsprice()+"</td> "+
+									"<td align='center'> "+lists.get(i).getRatioPrice()+"</td> "+
 									"<td align='center'> "+lists.get(i).getGoodsnum()+"</td> "+
 								"</tr>";
 						}
@@ -852,6 +840,8 @@ public class OrdersController extends BaseController {
 								"<td align='center'> "+isreal+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getMarketprice()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getGoodsprice()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getRatio()+"</td> "+
+								"<td align='center' rowspan='"+num+"'> "+father.getRatioPrice()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getCostprice()+"</td> "+
 								"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
 								"<td align='center' rowspan='"+num+"'> "+father.getOrderAmount()+"</td> "+
@@ -1156,13 +1146,14 @@ public class OrdersController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "addTopUp")
-	public String addTopUp(String orderid,double singleRealityPrice,int userid,int isReal,double goodsBalance,int servicetimes,Model model){
+	public String addTopUp(String orderid,double singleRealityPrice,int userid,int isReal,double goodsBalance,int servicetimes,double orderArrearage,Model model){
 		model.addAttribute("orderid", orderid);
 		model.addAttribute("singleRealityPrice", singleRealityPrice);
 		model.addAttribute("userid", userid);
 		model.addAttribute("isReal", isReal);
 		model.addAttribute("goodsBalance",goodsBalance);
 		model.addAttribute("servicetimes",servicetimes);
+		model.addAttribute("orderArrearage",orderArrearage);
 		return "modules/ec/addTopUp";
 	}
 	/**
@@ -2812,13 +2803,14 @@ public class OrdersController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "addCardTopUp")
-	public String addCardTopUp(String orderid,double singleRealityPrice,int userid,int isReal,double goodsBalance,HttpServletRequest request,Model model,RedirectAttributes redirectAttributes){
+	public String addCardTopUp(String orderid,double singleRealityPrice,int userid,int isReal,double goodsBalance,double orderArrearage,HttpServletRequest request,Model model,RedirectAttributes redirectAttributes){
 		try{
 			model.addAttribute("orderid", orderid);
 			model.addAttribute("singleRealityPrice", singleRealityPrice);
 			model.addAttribute("userid", userid);
 			model.addAttribute("isReal", isReal);
 			model.addAttribute("goodsBalance",goodsBalance);
+			model.addAttribute("orderArrearage",orderArrearage);
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "跳转卡项充值页面", e);
 			logger.error("方法：addCardTopUp，跳转卡项充值页面出现错误：" + e.getMessage());

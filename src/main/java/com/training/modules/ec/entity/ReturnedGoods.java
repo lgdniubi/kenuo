@@ -16,14 +16,14 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	private String returnedId;					//退货订单(主要用于接收退货订单中退货单号)
 	private String orderId	;					//原订单id
 	private String goodsMappingId	;			//退货商品 订单-商品ID
-	private int userId;						//用户id
-	private int isReal;					//是否为实物 0 实物 1 虚拟
+	private int userId;							//用户id
+	private int isReal;							//是否为实物 0 实物 1 虚拟
 	private int applyType;						//申请类型（0：退货并退款；1：仅换货;2：仅退款）
 	private Date applyDate	;					//申请日期audit_by
 	private String returnReason;				//退货原因
 	private int returnNum;						//退货数量
-	private double totalAmount;				//商品金额
-	private double orderAmount;				//实付金额
+	private double totalAmount;					//商品金额
+	private double orderAmount;					//实付金额
 	private double orderArrearage;				//欠款金额
 	private double returnAmount;				//退款金额
 	private String isStorage;					//货品状态（0：未入库；1：已入库）
@@ -60,7 +60,7 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	private String consignerShippingImg;		//发货物流单图片（消费者）
 	private String shippingName;				//物流公司名称（换货）
 	private String shippingCode;				//物流单号（换货）
-	private Date shippingTime;				//发货时间
+	private Date shippingTime;					//发货时间
 	private String shipperBy;					//换货人
 	private Date shipperDate;					//换货时间			
 
@@ -85,6 +85,11 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	private String channelFlag;				//渠道标识
 	
 	private double floatArreageMoney;      //平欠款的钱
+	
+	private double ratio;                   //异价比例
+	private double ratioPrice;              //异价后价格
+	private double costPrice;				//商品成本价
+	private double marketPrice;				//商品市场价
 		
 	public List<Integer> getRecIds() {
 		return recIds;
@@ -498,6 +503,30 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	}
 	public void setFloatArreageMoney(double floatArreageMoney) {
 		this.floatArreageMoney = floatArreageMoney;
+	}
+	public double getRatio() {
+		return ratio;
+	}
+	public void setRatio(double ratio) {
+		this.ratio = ratio;
+	}
+	public double getRatioPrice() {
+		return ratioPrice;
+	}
+	public void setRatioPrice(double ratioPrice) {
+		this.ratioPrice = ratioPrice;
+	}
+	public double getCostPrice() {
+		return costPrice;
+	}
+	public void setCostPrice(double costPrice) {
+		this.costPrice = costPrice;
+	}
+	public double getMarketPrice() {
+		return marketPrice;
+	}
+	public void setMarketPrice(double marketPrice) {
+		this.marketPrice = marketPrice;
 	}
 	
 }

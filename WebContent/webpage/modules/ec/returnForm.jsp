@@ -145,7 +145,7 @@
 				url:"${ctx}/ec/returned/getSurplusReturnAmount",
 				success:function(obj){
 					//计算商品剩余可退款金额
-					surplusReturnAmount = totalAmount - obj;
+					surplusReturnAmount = parseFloat(totalAmount*100-obj*100)/100;
 					$("#showReturn").text(surplusReturnAmount);
 				},
 				error:function(XMLHttpRequest,textStatus,errorThrown){
@@ -271,6 +271,8 @@
 								<th style="text-align: center;">市场价</th>
 								<th style="text-align: center;">优惠价</th>
 								<th style="text-align: center;">系统价</th>
+								<th style="text-align: center;">异价比例</th>
+								<th style="text-align: center;">异价后价格</th>
 								<th style="text-align: center;">成交价</th>
 								<th style="text-align: center;">购买数量</th>
 								<th style="text-align: center;">实付金额</th>
@@ -290,6 +292,8 @@
 									<td  style="text-align: center;">${orderGood.marketprice}</td>
 									<td  style="text-align: center;">${orderGood.goodsprice}</td>
 									<td  style="text-align: center;">${orderGood.costprice}</td>
+									<td  style="text-align: center;">${orderGood.ratio}</td>
+									<td  style="text-align: center;">${orderGood.ratioPrice}</td>
 									<td  style="text-align: center;">${orderGood.orderAmount}</td>
 									<td  style="text-align: center;">${orderGood.goodsnum}</td>
 									<td  style="text-align: center;">${orderGood.totalAmount}</td>

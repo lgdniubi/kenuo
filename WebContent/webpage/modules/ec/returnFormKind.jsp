@@ -123,7 +123,7 @@
 				url:"${ctx}/ec/returned/getSurplusReturnAmount",
 				success:function(obj){
 					//计算商品剩余可退款金额(注意:拒绝售后,拒绝换货和换货完成的金额要排除)
-					surplusReturnAmount = totalAmount - obj;
+					surplusReturnAmount = parseFloat(totalAmount*100-obj*100)/100;
 					$("#showReturn").text(surplusReturnAmount);
 				},
 				error:function(XMLHttpRequest,textStatus,errorThrown){
@@ -136,7 +136,7 @@
 		function selectType(o){
 			var type=$("#applyType").val();
 			if(type==1){//仅换货,不显示"退款金额"和"退款方式";
-				$("#returnNum").attr("readonly",true);//仅换货,商品数量都可以输入
+				$("#returnNum").attr("readonly",false);//仅换货,商品数量都可以输入
 				$("#returnAmountIsShow").hide();//退款金额
 				$("#returnTypeIsShow").hide();//退款方式
 			}else{
@@ -257,6 +257,8 @@
 								<th style="text-align: center;">市场价</th>
 								<th style="text-align: center;">优惠价</th>
 								<th style="text-align: center;">系统价</th>
+								<th style="text-align: center;">异价比例</th>
+								<th style="text-align: center;">异价后价格</th>
 								<th style="text-align: center;">成交价</th>
 								<th style="text-align: center;">购买数量</th>
 								<th style="text-align: center;">实付金额</th>
@@ -273,6 +275,8 @@
 									<td  style="text-align: center;">${orderGood.marketprice}</td>
 									<td  style="text-align: center;">${orderGood.goodsprice}</td>
 									<td  style="text-align: center;">${orderGood.costprice}</td>
+									<td  style="text-align: center;">${orderGood.ratio}</td>
+									<td  style="text-align: center;">${orderGood.ratioPrice}</td>
 									<td  style="text-align: center;">${orderGood.orderAmount}</td>
 									<td  style="text-align: center;">${orderGood.goodsnum}</td>
 									<td  style="text-align: center;">${orderGood.totalAmount}</td>

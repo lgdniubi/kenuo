@@ -92,9 +92,11 @@
 			b.goods_num as "goodsNum",
 			b.spec_key,
 			b.spec_key_name as "specName",
-			b.cost_price,
-			b.market_price,
-			b.goods_price as "goodsPrice",
+			b.cost_price AS "costPrice",
+			b.market_price AS "marketPrice",
+			b.goods_price AS "goodsPrice",
+			b.ratio,
+			b.ratio_price as "ratioPrice",
 			SUM(f.app_total_amount) AS 'totalAmount',
 			b.order_amount as "orderAmount",
 			b.order_balance,
@@ -145,7 +147,7 @@
 		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
 		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
 		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
-		LEFT JOIN mtmydb.mtmy_order_goods_details f ON a.order_id=f.order_id
+		LEFT JOIN mtmydb.mtmy_order_goods_details f ON a.order_id=f.order_id AND a.goods_mapping_id = f.goods_mapping_id
 		WHERE 
 			a.id = #{id} AND a.del_flag = 0 
 	</select>
@@ -1014,7 +1016,9 @@
 	<select id="queryReturnList" resultType="ReturnedGoods">
 		SELECT
 			<include refid="returnColunm"/>,
-			(select de.app_arrearage from mtmydb.mtmy_order_goods_details de where de.order_id = a.order_id and de.returned_id = a.id and de.goods_mapping_id = a.goods_mapping_id and de.advance_flag = '5') AS 'floatArreageMoney'
+			IF(a.id = (SELECT aa.id FROM mtmydb.mtmy_returned_goods aa WHERE aa.order_id = a.order_id AND aa.goods_mapping_id = a.goods_mapping_id AND aa.return_status IN (12,13,14,15,16) ORDER BY aa.apply_date ASC LIMIT 1),
+			(SELECT -SUM(de.app_arrearage) FROM mtmydb.mtmy_order_goods_details de WHERE de.order_id = a.order_id AND de.goods_mapping_id = a.goods_mapping_id AND de.advance_flag = '5')
+			,0) AS 'floatArreageMoney'
 		FROM mtmydb.mtmy_returned_goods a 
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.goods_mapping_id=b.rec_id
 		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id

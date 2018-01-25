@@ -144,7 +144,7 @@
 		//退款金额校验
 		function returnChangeAmount(){
 			returnAmount=$("#returnAmount").val();
-			amount = $("#amount").val();//商品的可售后金额
+			var amount = $("#amount").val();//商品的可售后金额
 			if(parseFloat(returnAmount)<0){
 				top.layer.alert('售后金额必须大于等于0，小于等于可售后金额!', {icon: 0, title:'提醒'});
 				return;
@@ -177,6 +177,9 @@
 					}
 				}
 			});
+			var amount = $("#amount").val();//可售后金额
+			$("#showReturn").text(amount);//显示可售后金额
+			
 			applyType = $("#applyType").val();//申请类型
 			if(applyType == 1){//仅换货
 				$("#returnAmountIsShow").hide();//隐藏退款金额
@@ -287,6 +290,8 @@
 								<th style="text-align: center;">市场价</th>
 								<th style="text-align: center;">优惠价</th>
 								<th style="text-align: center;">成本价</th>
+								<th style="text-align: center;">异价比例</th>
+								<th style="text-align: center;">异价后价格</th>
 								<th style="text-align: center;">购买数量</th>
 								<th style="text-align: center;">应付款</th>
 								<th style="text-align: center;">实付款</th>
@@ -389,6 +394,9 @@
 							onfocus="if(value == '0.0'){value=''}"
 							onblur="if(value == ''){value='0.0'}"
 							onchange="returnChangeAmount()"/>
+						<c:if test="${flag == 'edit'}">
+							<font color="red">（最大可退¥<span id="showReturn"></span>元）</font>
+						</c:if>
 						<p></p>
 					</div>
 					<p></p>
