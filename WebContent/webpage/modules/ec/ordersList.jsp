@@ -7,6 +7,20 @@
 	<meta name="decorator" content="default"/>
 
 	<script type="text/javascript">
+		function promptx(title, lable, href, closed) {
+			top.layer.prompt({
+				title : title,
+				maxlength : 100,
+				formType : 2,
+				//prompt风格，支持0-2  0 文本框  1 密码框 2 多行文本
+				yes:function(index,layero){
+					window.location = href + '&pickUpNote=' + layero.find(".layui-layer-input").val();
+					top.layer.close(index);
+				}
+			});
+			return false;
+		}
+		
 		$(document).ready(function() {
 			
 			var start = {
@@ -376,6 +390,14 @@
 										<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>确认收货</a>
 									</c:if>
 								</shiro:hasPermission>
+								<c:choose>
+									<c:when test="${orders.isReal == 0 && orders.orderstatus == 4 && orders.shippingtype == 1 && orders.isPickUp == 0}">
+										<a href="${ctx}/ec/orders/isPickUp?orderid=${orders.orderid}" onclick="return promptx('请填写取货备注信息！','',this.href)"  class="btn btn-danger btn-xs" ><i class="fa fa-edit"></i>顾客已取货</a>
+									</c:when>
+									<c:otherwise>
+										<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>顾客已取货</a>
+									</c:otherwise>
+								</c:choose>
 							</td>
 						</tr>
 					</c:forEach>

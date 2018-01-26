@@ -887,7 +887,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setChannelFlag("bm");
 		_orders.setShippingstatus(2);
 		_orders.setShippingtype(2);
-		_orders.setUsernote(orders.getUsernote());
+		_orders.setUserNote(orders.getUserNote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		//修改退货日期
@@ -1545,7 +1545,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setConsignee(orders.getConsignee());
 		_orders.setPhone(orders.getPhone());
 		_orders.setAddress(orders.getAddress());
-		_orders.setUsernote(orders.getUsernote());
+		_orders.setUserNote(orders.getUserNote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setCreateBy(user);
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
@@ -2373,7 +2373,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setChannelFlag("bm");
 		_orders.setShippingstatus(2);
 		_orders.setShippingtype(2);
-		_orders.setUsernote(orders.getUsernote());
+		_orders.setUserNote(orders.getUserNote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		//修改退货日期
@@ -2722,7 +2722,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setConsignee(orders.getConsignee());
 		_orders.setPhone(orders.getPhone());
 		_orders.setAddress(orders.getAddress());
-		_orders.setUsernote(orders.getUsernote());
+		_orders.setUserNote(orders.getUserNote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setCreateBy(user);
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
@@ -3560,7 +3560,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setChannelFlag("bm");
 		_orders.setShippingstatus(2);
 		_orders.setShippingtype(2);
-		_orders.setUsernote(orders.getUsernote());
+		_orders.setUserNote(orders.getUserNote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		//修改退货日期
@@ -3782,7 +3782,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setConsignee(orders.getConsignee());
 		_orders.setPhone(orders.getPhone());
 		_orders.setAddress(orders.getAddress());
-		_orders.setUsernote(orders.getUsernote());
+		_orders.setUserNote(orders.getUserNote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setCreateBy(user);
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
@@ -4104,7 +4104,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setConsignee(orders.getConsignee());
 		_orders.setPhone(orders.getPhone());
 		_orders.setAddress(orders.getAddress());
-		_orders.setUsernote(orders.getUsernote());
+		_orders.setUserNote(orders.getUserNote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setCreateBy(user);
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
@@ -4413,7 +4413,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setChannelFlag("bm");
 		_orders.setShippingstatus(2);
 		_orders.setShippingtype(2);
-		_orders.setUsernote(orders.getUsernote());
+		_orders.setUserNote(orders.getUserNote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		//修改退货日期
@@ -4504,5 +4504,13 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		page.setList(ordersDao.findList(orders));
 
 		return page;
+	}
+	
+	/**
+	 * 是否取货 
+	 * @param orders
+	 */
+	public void updateIsPickUp(Orders orders){
+		ordersDao.updateIsPickUp(orders);
 	}
 }

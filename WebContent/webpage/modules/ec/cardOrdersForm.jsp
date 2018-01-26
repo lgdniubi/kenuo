@@ -568,6 +568,7 @@ window.onload=initStatus;
 					<form:form id="inputForm" modelAttribute="orders" action="${ctx}/ec/orders/updateCardOrder" method="post" class="form-horizontal">
 						<input id="oldAddress" name="oldAddress" type="hidden" value="${orders.address}"/>
 						<input id="orderamount" name="orderamount" type="hidden" value="${orders.orderamount}"/>
+						<input id="shippingtype" name="shippingtype" type="hidden" value="${orders.shippingtype}"/>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 							<input type="hidden" id="channelFlag" value="${orders.channelFlag}" />
 							<input type="hidden" id="isReal" value="${orders.isReal}" />
@@ -631,7 +632,7 @@ window.onload=initStatus;
 							</form:select>
 							<p></p>
 							<label >留言备注：</label>
-							<textarea name="usernote" rows="5" cols="60">${orders.userNote }</textarea>
+							<textarea name="userNote" rows="5" cols="60">${orders.userNote }</textarea>
 						</div>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
@@ -901,6 +902,9 @@ window.onload=initStatus;
 								</c:otherwise>
 							</c:choose>
 						</c:if>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="ec:orders:editLog">
+						<a href="#" onclick="openDialogView('订单操作日志', '${ctx}/ec/orders/editLog?orderid=${orders.orderid}','1100px','650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>订单操作日志</a>
 					</shiro:hasPermission>
 				</div>
 			</div>	

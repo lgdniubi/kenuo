@@ -721,7 +721,7 @@ window.onload=initStatus;
 							</form:select>
 							<p></p>
 							<label >留言备注：</label>
-							<textarea name="usernote" rows="5" cols="60">${orders.userNote }</textarea>
+							<textarea name="userNote" rows="5" cols="60">${orders.userNote }</textarea>
 						</div>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
@@ -827,7 +827,7 @@ window.onload=initStatus;
 						</div>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="shipping">
-							<label ><font color="red">*</font>物流类型：</label>
+							<label ><font color="red">*</font>发货类型：</label>
 							<form:select path="shippingtype"  class="form-control" style="width:180px">
 									<form:option value="0">快递发货</form:option>
 									<form:option value="1">到店自取</form:option>
@@ -1067,30 +1067,9 @@ window.onload=initStatus;
 							</c:choose>
 						</c:if>
 					</shiro:hasPermission>
-					<%-- <p></p>
-					<label class="active">操作日志:</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<shiro:hasPermission name="ec:orders:edit">
-							<a href="#" onclick="openDialogView('操作日志', '${ctx}/ec/orders/loglist?id=${orders.orderid}','500px','400px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>操作日志</a>
+					<shiro:hasPermission name="ec:orders:editLog">
+						<a href="#" onclick="openDialogView('订单操作日志', '${ctx}/ec/orders/editLog?orderid=${orders.orderid}','1100px','650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>订单操作日志</a>
 					</shiro:hasPermission>
-					
-					<table id="contentTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
-						<thead>
-							<tr>
-							<th>操作者</th>
-							<th>操作时间</th>
-							<th>描述</th>
-							</tr>
-						</thead>
-						<tbody>
-							<c:forEach items="${acountlist}" var="acount">
-								<tr>
-									<td>${acount.operator}</td>
-									<td><fmt:formatDate value="${acount.changetime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-									<td>${acount.logdesc}</td>
-								</tr>
-							</c:forEach>
-						</tbody>
-					</table> --%>
 				</div>
 			</div>	
 		</div>
