@@ -56,29 +56,23 @@
 			  }
 			  returnNum = $("#returnNum").val();//售后次数
 			  returnAmount = $("#returnAmount").val();//售后金额
-			  if(applyType==1){//仅换货  换货数量不能为0.
-				  if(parseInt(returnNum) < 0){
-					  top.layer.alert('售后次数必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
-					  return;
-				  }else if(parseInt(goodsNum)<parseInt(returnNum)){
-					  top.layer.alert('售后次数必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
-					  return;
-				  }
+			  //校验售后次数
+			  if(parseInt(returnNum) < 0){
+				  top.layer.alert('售后次数必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
+				  return;
+			  }else if(parseInt(goodsNum)<parseInt(returnNum)){
+				  top.layer.alert('售后次数必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
+				  return;
+			  }
+			  
+			  if(applyType==1){//仅换货  换货实物数量或者次数不能同时0.
 				  if(flag){
 					  if(parseInt(returnNum) == 0){
-						  top.layer.alert('售后商品数量和售后次数不能都为0!', {icon: 0, title:'提醒'});
+						  top.layer.alert('售后实物商品数量和售后次数不能都为0!', {icon: 0, title:'提醒'});
 						  return;
 					  }
 				  }
 			  }else{//退货并退款和仅退款   售后数量和售后金额不能为0.
-				  //校验售后次数
-				  if(parseInt(returnNum)<0){
-					  top.layer.alert('售后次数必须大于等于0，小于等于可售后次数!', {icon: 0, title:'提醒'});
-					  return;
-				  }else if(parseInt(goodsNum)<parseInt(returnNum)){
-					  top.layer.alert('售后次数必须大于等于0，小于等于可售后次数!', {icon: 0, title:'提醒'});
-					  return;
-				  }
 				  //校验退款金额
 				  if(parseFloat(returnAmount)<0){
 					  top.layer.alert('售后金额必须大于等于0，小于等于可售后金额!', {icon: 0, title:'提醒'});
@@ -90,7 +84,7 @@
 				  //通用卡子项实物售后数量,售后次数,售后金额都是0,不能售后
 				  if(flag){
 					  if(parseInt(returnNum) == 0 && parseFloat(returnAmount) == 0){
-						  top.layer.alert('售后商品数量、售后次数和售后金额不能都为0!', {icon: 0, title:'提醒'});
+						  top.layer.alert('售后实物商品数量、售后次数和售后金额不能都为0!', {icon: 0, title:'提醒'});
 						  return;			  
 					  }
 				  }
@@ -112,6 +106,7 @@
 					  $("#receiveAccount").val("");//清空收款账号
 				  }
 			  }
+			  
 			  $("#inputForm").submit();
 			  return true;
 		  }

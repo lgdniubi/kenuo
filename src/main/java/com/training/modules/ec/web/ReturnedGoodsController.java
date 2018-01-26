@@ -276,9 +276,9 @@ public class ReturnedGoodsController extends BaseController {
 				for (ReturnedGoods rg : rgList) {
 					int returnNum = returnedGoodsService.getRealReturnNum(rg);//查询除当前售后id之外,该通用卡商品实物子项的售后数量
 					remainNum = rg.getGoodsNum()-returnNum;
-					j++;
 					realGoods = realGoods + 
 						"<label>"+rg.getGoodsName()+"  售后数量：</label><input id='recIds' name='recIds' value='"+rg.getGoodsMappingId()+"' type='hidden'/><input id='returnNums"+j+"' name='returnNums' value='"+rg.getReturnNum()+"' style='width:180px;' class='form-control required' onblur='findReturnNum(this,"+remainNum+")'/><input id='oldReturnNums"+j+"' name='oldReturnNums' value='"+rg.getReturnNum()+"' type='hidden'/><p></p>";
+					j++;
 				}
 				model.addAttribute("realnum",j);
 				model.addAttribute("realGoods",realGoods);

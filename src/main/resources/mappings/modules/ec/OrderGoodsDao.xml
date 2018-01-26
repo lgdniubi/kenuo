@@ -446,7 +446,7 @@
 			FROM	mtmydb.mtmy_returned_goods b
 			LEFT JOIN mtmydb.mtmy_returned_goods_card c ON b.id = c.returned_id
 			WHERE	b.order_id = #{orderid}
-			AND	b.return_status IN (11,12,13,14,15,16)
+			AND	b.return_status NOT IN (-10,-20,26)
 			GROUP BY c.mapping_id
 		) d ON a.rec_id = d.mapping_id
 		WHERE	a.group_id = #{recid}

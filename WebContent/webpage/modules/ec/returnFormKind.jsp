@@ -161,10 +161,6 @@
 		//售后商品数量改变校验
 		function returnChangeNum(){
 			var num=$("#returnNum").val();
-			if(parseInt(goodNum) == 0){
-				top.layer.alert('请先选择商品', {icon: 0, title:'提醒'});
-				return;
-			}
 			if(parseInt(num)<0){
 				top.layer.alert('退货数量必须大于等于0，小于等于可申请的售后数量!', {icon: 0, title:'提醒'});
 				return;

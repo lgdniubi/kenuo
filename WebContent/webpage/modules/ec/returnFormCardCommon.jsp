@@ -55,9 +55,11 @@
 					  flag = true;
 				  }
 			  }
+			  
 			  //校验申请类型
 			  var type=$("#applyType").val();
 			  if(type == 1){//仅换货展示 '实物数量'和'售后次数'   售后次数不能为0
+				  //校验售后次数
 				  var rn=$("#returnNum").val();
 				  if(parseInt(rn)<0){
 					  top.layer.alert('售后次数必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
@@ -65,13 +67,20 @@
 				  }else if(parseInt(rn)>parseInt(remaintimes)){
 					  top.layer.alert('售后次数必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
 					  return;
+				  }
+				  
+				  if(flag){
+					  if(parseInt(rn) ==0){
+						  top.layer.alert('实物商品数量和售后次数不能都为0!', {icon: 0, title:'提醒'});
+						  return;			  
+					  }
 				  }
 				  //仅换货:收款人和收款账户默认空,且
 				  $("#returnType").val(0);//清空收款人信息
 				  $("#receiveName").val("");//清空收款人信息
 				  $("#receiveAccount").val("");//清空收款账号
 			  }else{//退货并退款     仅退款
-				//校验通用卡本身的售后次数
+				  //校验售后次数
 				  var rn=$("#returnNum").val();
 				  if(parseInt(rn)<0){
 					  top.layer.alert('售后次数必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
@@ -80,6 +89,7 @@
 					  top.layer.alert('售后次数必须大于等于0，小于等于可售后数量!', {icon: 0, title:'提醒'});
 					  return;
 				  }
+				  
 				  //虚拟商品的退款金额校验
 				  var ra=$("#returnAmount").val();
 				  if(parseFloat(ra)<0){
@@ -93,7 +103,7 @@
 				  //通用卡子项实物售后数量,售后次数,售后金额都是0,不能售后
 				  if(flag){
 					  if(parseFloat(ra) == 0 && parseInt(rn) ==0){
-						  top.layer.alert('售后商品数量和退款金额不能都为0!', {icon: 0, title:'提醒'});
+						  top.layer.alert('售后商品数量、售后次数和售后金额不能都为0!', {icon: 0, title:'提醒'});
 						  return;			  
 					  }
 				  }

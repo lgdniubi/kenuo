@@ -207,6 +207,19 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		returnedGoods.setAuditBy(currentUser);
 		boolean flag = true;
 		
+		//------审核之后,售后次数和售后金额可能会修改--begin-------
+		//修改mapping表中商品本身的次数
+		int afterSaleNum = returnedGoods.getReturnNum()-returnedGoods.getOldReturnNum();
+		if(afterSaleNum != 0){
+			//修改detail表中的扣减的次数
+			orderGoodsDetailsDao.updateDetailServiceTimes(returnedGoods);//修改detail表中的扣减的次数
+			OrderGoods og = new OrderGoods();
+			og.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
+			og.setAfterSaleNum(afterSaleNum);
+			orderGoodsDao.updateIsAfterSales(og);
+		}
+		//------审核之后,售后次数和售后金额可能会修改--end-------
+		
 		if (returnedGoods.getIsConfirm() == 12 || returnedGoods.getIsConfirm() == -10) { // 申请退货退款
 			
 			//虚拟商品同意退货时,扣减云币(只有第一次售后扣减).(同意退货会在returned_goods表中插入新的数据,所以需要在插入之前进行查询是否已经售后过)
@@ -221,18 +234,6 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 				}
 			}
 			
-			//------审核之后,售后次数和售后金额可能会修改--begin-------
-			//修改mapping表中商品本身的次数
-			int afterSaleNum = returnedGoods.getReturnNum()-returnedGoods.getOldReturnNum();
-			if(afterSaleNum != 0){
-				//修改detail表中的扣减的次数
-				orderGoodsDetailsDao.updateDetailServiceTimes(returnedGoods);//修改detail表中的扣减的次数
-				OrderGoods og = new OrderGoods();
-				og.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
-				og.setAfterSaleNum(afterSaleNum);
-				orderGoodsDao.updateIsAfterSales(og);
-			}
-			//------审核之后,售后次数和售后金额可能会修改--end-------
 			
 			//----------- 售后表中插入售后信息     begin---------
 			//申请类型只会是退货并退款或者仅退款-->仅退款:售后状态为15
@@ -385,6 +386,19 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			
 			if(returnedGoods.getIsConfirm() == -20){//拒绝换货,直接退还数量
 				refuseService(returnedGoods);//退还申请扣减的数据(detail表和mapping表)
+				//审核拒绝,退还套卡子项的商品数量(只插入不做删除)
+				List<ReturnedGoods> oglist = returnedGoodsDao.getSuitCard(returnedGoods);
+				OrderGoods orderGoods = new OrderGoods();
+				for (ReturnedGoods rg : oglist) {
+					//拒绝:减去mapping表中扣减的数量
+					orderGoods.setRecid(Integer.parseInt(rg.getGoodsMappingId()));
+					orderGoods.setAfterSaleNum(-rg.getReturnNum());
+					orderGoodsDao.updateIsAfterSales(orderGoods);//在mapping表中都存入了after_sale_num售后数量 ,需要在减去
+					
+					//拒绝:退还套卡的子项记录
+					rg.setReturnNum(-rg.getReturnNum());
+					returnedGoodsDao.insertReturnGoodsCard(rg);
+				}
 			}
 		}
 		
@@ -400,6 +414,37 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		returnedGoods.setAuditBy(currentUser);
 		boolean flag = true;
 		
+		//售后次数和售后金额可能会修改(实物子项数量也可能修改.)
+		//修改mapping表中通用卡本身的次数
+		int afterSaleNum = returnedGoods.getReturnNum()-returnedGoods.getOldReturnNum();
+		OrderGoods orderGoods = new OrderGoods();
+		orderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
+		if(afterSaleNum != 0){
+			//修改detail表中的扣减的次数
+			orderGoodsDetailsDao.updateDetailServiceTimes(returnedGoods);
+			orderGoods.setAfterSaleNum(afterSaleNum);
+			orderGoodsDao.updateIsAfterSales(orderGoods);
+		}
+		//实物子项数量也可能修改.
+		List<OrderGoods> ogList = orderGoodsDao.getOrderGoodsCard(orderGoods);
+		//循环卡项子项,把实物售后数量写入
+		ReturnedGoods rg = new ReturnedGoods();
+		int j = 0 ;
+		for (int i = 0; i < ogList.size(); i++) {
+			if(ogList.get(i).getIsreal() == 0){//子项为实物,存入mapping表中修改售后数量
+				//根据售后id和子项商品id,修改实物数量
+				rg.setReturnedId(returnedGoods.getId());
+				rg.setGoodsMappingId(returnedGoods.getRecIds().get(j)+"");
+				rg.setReturnNum(returnedGoods.getReturnNums().get(j)-returnedGoods.getOldReturnNums().get(j));
+				returnedGoodsDao.updateCardNum(rg);//修改子项表中的数据
+				//修改mapping表中子项售后数据
+				orderGoods.setRecid(returnedGoods.getRecIds().get(j));
+				orderGoods.setAfterSaleNum(returnedGoods.getReturnNums().get(j)-returnedGoods.getOldReturnNums().get(j));
+				orderGoodsDao.updateIsAfterSales(orderGoods);
+				j++;
+			}
+		}
+		
 		if (returnedGoods.getIsConfirm() == 12 || returnedGoods.getIsConfirm() == -10) { // 申请退货退款
 			//-----------修改售后表中的状态-----begin----------------------------------------------
 			//不是实物时,当商品同意退货时,使用这个判断.(同意退货会在returned_goods表中插入新的数据,所以需要在插入之前进行查询是否已经售后过)
@@ -413,37 +458,6 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 					applyArrearage(returnedGoods);//平欠款方法
 				}
 			}
-			//售后次数和售后金额可能会修改(实物子项数量也可能修改.)
-			//修改mapping表中通用卡本身的次数
-			int afterSaleNum = returnedGoods.getReturnNum()-returnedGoods.getOldReturnNum();
-			OrderGoods orderGoods = new OrderGoods();
-			orderGoods.setRecid(Integer.parseInt(returnedGoods.getGoodsMappingId()));
-			if(afterSaleNum != 0){
-				//修改detail表中的扣减的次数
-				orderGoodsDetailsDao.updateDetailServiceTimes(returnedGoods);
-				orderGoods.setAfterSaleNum(afterSaleNum);
-				orderGoodsDao.updateIsAfterSales(orderGoods);
-			}
-			//实物子项数量也可能修改.
-			List<OrderGoods> ogList = orderGoodsDao.getOrderGoodsCard(orderGoods);
-			//循环卡项子项,把实物售后数量写入
-			ReturnedGoods rg = new ReturnedGoods();
-			int j = 0 ;
-			for (int i = 0; i < ogList.size(); i++) {
-				if(ogList.get(i).getIsreal() == 0){//子项为实物,存入mapping表中修改售后数量
-					//根据售后id和子项商品id,修改实物数量
-					rg.setReturnedId(returnedGoods.getId());
-					rg.setGoodsMappingId(returnedGoods.getRecIds().get(j)+"");
-					rg.setReturnNum(returnedGoods.getReturnNums().get(j)-returnedGoods.getOldReturnNums().get(j));
-					returnedGoodsDao.updateCardNum(rg);//修改子项表中的数据
-					//修改mapping表中子项售后数据
-					orderGoods.setRecid(returnedGoods.getRecIds().get(j));
-					orderGoods.setAfterSaleNum(returnedGoods.getReturnNums().get(j)-returnedGoods.getOldReturnNums().get(j));
-					orderGoodsDao.updateIsAfterSales(orderGoods);
-					j++;
-				}
-			}
-				
 			//申请类型只会是退货并退款或者仅退款-->仅退款:售后状态为15
 			if(returnedGoods.getApplyType() == 2 && returnedGoods.getIsConfirm() == 12){//同意审核且仅退款-->售后状态直接变成15
 				returnedGoods.setReturnStatus("15");//改变售后状态
@@ -525,6 +539,29 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 			
 			if(returnedGoods.getIsConfirm() == -20){//拒绝换货,直接退还数量
 				refuseService(returnedGoods);//退还申请扣减的数据(detail表和mapping表)
+				
+				//----------通用卡的子项售后数量------begin------------
+				//审核拒绝时,子项的售后数量需要返还
+				//循环卡项子项,把实物售后数量写入
+				int k = 0 ;
+				for (int i = 0; i < ogList.size(); i++) {
+					rg.setReturnedId(returnedGoods.getId());
+					rg.setGoodsMappingId(ogList.get(i).getRecid()+"");
+					rg.setIsReal(ogList.get(i).getIsreal());
+					if(ogList.get(i).getIsreal() == 0){//当子项是实物时,把售后数量写入
+						rg.setReturnNum(-returnedGoods.getReturnNums().get(k));
+						//修改mapping表中实物子项售后数据
+						orderGoods.setRecid(returnedGoods.getRecIds().get(k));
+						orderGoods.setAfterSaleNum(-returnedGoods.getReturnNums().get(k));
+						orderGoodsDao.updateIsAfterSales(orderGoods);
+						k++;
+					}else if(ogList.get(i).getIsreal() == 1){
+						rg.setReturnNum(0);
+					}
+					rg.setGoodsName(ogList.get(i).getGoodsname());
+					returnedGoodsDao.insertReturnGoodsCard(rg);
+				}
+				//----------通用卡的子项售后数量------end------------
 			}
 		}
 	}
