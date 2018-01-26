@@ -27,6 +27,7 @@ import com.training.common.web.BaseController;
 import com.training.modules.ec.entity.Comment;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.Reservation;
+import com.training.modules.ec.entity.ReservationLog;
 import com.training.modules.ec.entity.Users;
 import com.training.modules.ec.service.CommentService;
 import com.training.modules.ec.service.OrderGoodsService;
@@ -616,4 +617,19 @@ public class MtmyMnappointmentController extends BaseController{
 		}
 	}
 	
+	/**
+	 * 查询预约操作日志
+	 * @param reservationLog
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "findReservationLog")
+	public String findReservationLog(ReservationLog reservationLog,HttpServletRequest request, HttpServletResponse response,Model model) {
+		Page<ReservationLog> page=reservationService.findReservationLog(new Page<ReservationLog>(request, response), reservationLog);
+		model.addAttribute("page", page);
+		model.addAttribute("reservationLog", reservationLog);
+		return "modules/ec/mnappointmentLogForm";
+	}
 }

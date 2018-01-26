@@ -294,7 +294,7 @@
 			create_office_ids,
 			create_date
 		) VALUES (
-			#{apptId},
+			#{reservationId},
 			#{title},
 			#{content},
 			#{contentRecord},
@@ -305,5 +305,20 @@
 			SYSDATE()
 		);
 	</insert>
-	
+	<!-- 查询预约操作日志 -->
+	<select id="findReservationLog" resultType="ReservationLog">
+		SELECT
+			a.title,
+			a.content,
+			a.channel_flag AS channelFlag,
+			a.platform_flag AS platformFlag,
+			b.`name` AS 'createby.name',
+			a.create_date
+		FROM
+			mtmydb.mtmy_appt_order_log AS a
+			LEFT JOIN trains.sys_user AS b ON a.create_by = b.id
+		WHERE
+			a.appt_id = #{reservationId}
+		ORDER BY a.create_date DESC
+	</select>
 </mapper>

@@ -13,6 +13,7 @@ import com.training.modules.ec.dao.ReservationDao;
 import com.training.modules.ec.entity.Comment;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.Reservation;
+import com.training.modules.ec.entity.ReservationLog;
 import com.training.modules.ec.utils.CommonScopeUtils;
 import com.training.modules.sys.dao.AreaDao;
 import com.training.modules.sys.entity.Area;
@@ -140,4 +141,16 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 	public int updateapptstatus(int appt_id) {
 		return dao.updateapptstatus(appt_id);
 	}
+	
+	/**
+	 * 查询预约操作日志
+	 * @param appt_id
+	 * @return
+	 */
+	public Page<ReservationLog> findReservationLog(Page<ReservationLog> page,ReservationLog reservationLog){
+		reservationLog.setPage(page);
+		page.setList(dao.findReservationLog(reservationLog));
+		return page;
+	}
+
 }

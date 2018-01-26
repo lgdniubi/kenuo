@@ -10,10 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.training.modules.ec.dao.OrdersLogDao;
 import com.training.modules.ec.dao.ReservationDao;
-import com.training.modules.ec.entity.ApptOrderLog;
 import com.training.modules.ec.entity.Orders;
 import com.training.modules.ec.entity.OrdersLog;
 import com.training.modules.ec.entity.Reservation;
+import com.training.modules.ec.entity.ReservationLog;
 import com.training.modules.ec.utils.NameUtil;
 import com.training.modules.ec.utils.SaveLogUtils;
 import com.training.modules.sys.entity.User;
@@ -209,16 +209,16 @@ public class SaveLogService {
 		// 保存操作日志
 		if ((null != content && !"".equals(content)) || (null != contentRecord && !"".equals(contentRecord))) {
 			User user = UserUtils.getUser();
-			ApptOrderLog apptOrderLog = new ApptOrderLog();
-			apptOrderLog.setApptId(reservationId);
-			apptOrderLog.setTitle(title);
-			apptOrderLog.setContent(content);
-			apptOrderLog.setContentRecord(contentRecord);
-			apptOrderLog.setChannelFlag("bm");
-			apptOrderLog.setPlatformFlag("mtmy");
-			apptOrderLog.setCreateBy(user);
-			apptOrderLog.setCreateOfficeIds(user.getOffice().getParentIds()+user.getOffice().getId()+",");
-			reservationDao.saveApptOrderLog(apptOrderLog);
+			ReservationLog reservationLog = new ReservationLog();
+			reservationLog.setReservationId(reservationId);
+			reservationLog.setTitle(title);
+			reservationLog.setContent(content);
+			reservationLog.setContentRecord(contentRecord);
+			reservationLog.setChannelFlag("bm");
+			reservationLog.setPlatformFlag("mtmy");
+			reservationLog.setCreateBy(user);
+			reservationLog.setCreateOfficeIds(user.getOffice().getParentIds()+user.getOffice().getId()+",");
+			reservationDao.saveApptOrderLog(reservationLog);
 		}
 		
 	}
