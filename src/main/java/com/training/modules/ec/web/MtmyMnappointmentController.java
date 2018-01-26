@@ -38,6 +38,7 @@ import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.service.SystemService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
+import com.training.modules.sys.utils.ThreadUtils;
 import com.training.modules.sys.utils.UserUtils;
 
 import net.sf.json.JSONArray;
@@ -329,6 +330,13 @@ public class MtmyMnappointmentController extends BaseController{
 					url = ParametersFactory.getMtmyParamValues("mtmy_updateSubscribeStatus");	//修改预约状态
 					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"appt_status\":"+reservation.getApptStatus()+",\"client\":\"bm\",\"remarks\":\""+reservation.getRemarks()+"\",\"update_by\":\""+user.getId()+"\",\"create_office_ids\":\""+user.getOffice().getParentIds()+user.getOffice().getId()+","+"\"}";
 				}
+				
+				// 记录日志
+				if(!"3".equals(reservation.getApptStatus())){
+					Reservation oldReservation = reservationService.oneMnappointment(reservation);
+					ThreadUtils.saveLog(request, "修改预约", 2, 2,oldReservation,reservation);
+				}
+				
 				logger.info("##### web接口路径:"+url);
 				String result = WebUtils.postObject(parpm, url);
 				JSONObject jsonObject = JSONObject.fromObject(result);
@@ -504,7 +512,10 @@ public class MtmyMnappointmentController extends BaseController{
 	@RequestMapping(value = "editServiceTime")
 	public String editServiceTime(Reservation reservation, HttpServletRequest request, RedirectAttributes redirectAttributes){
 		try {
+			Reservation oldReservation = reservationService.oneMnappointment(reservation);
 			reservationService.editServiceTime(reservation);
+			// 保存操作日志
+			ThreadUtils.saveLog(request, "添加/修改实际服务时间", 2, 2,oldReservation,reservation);
 			addMessage(redirectAttributes, "预约管理  添加/修改实际服务时间'" + reservation.getReservationId() + "'成功");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "预约管理  添加/修改实际服务时间", e);

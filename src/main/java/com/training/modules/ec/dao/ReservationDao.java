@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
+import com.training.modules.ec.entity.ApptOrderLog;
 import com.training.modules.ec.entity.Comment;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.Reservation;
@@ -87,5 +88,11 @@ public interface ReservationDao extends CrudDao<Reservation>{
 	 * @return
 	 */
 	public int updateapptstatus(@Param("appt_id")int appt_id);
+	
+	/**
+	 * 保存修改预约日志
+	 * @param apptOrderLog
+	 */
+	public void saveApptOrderLog(ApptOrderLog apptOrderLog);
 	
 }

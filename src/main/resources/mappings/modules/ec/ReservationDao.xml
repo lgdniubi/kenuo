@@ -17,7 +17,9 @@
 		r.create_date,
 		r.remarks,
 		r.user_note AS userNote,
-		r.channel_flag AS channelFlag
+		r.channel_flag AS channelFlag,
+		r.service_start_time AS serviceStartTime,
+		r.service_end_time AS serviceEndTime
 	</sql>
 	<!-- 返回ec中的实体类 Reservation -->
 	<select id="findAllList" resultType="Reservation">
@@ -277,5 +279,31 @@
 			service_end_time = #{serviceEndTime}
 		WHERE 
 			id = #{reservationId}
-	</update>	
+	</update>
+	
+	<!-- 记录预约日志 -->
+	<insert id="saveApptOrderLog">
+		INSERT INTO mtmydb.mtmy_appt_order_log (
+			appt_id,
+			title,
+			content,
+			content_record,
+			channel_flag,
+			platform_flag,
+			create_by,
+			create_office_ids,
+			create_date
+		) VALUES (
+			#{apptId},
+			#{title},
+			#{content},
+			#{contentRecord},
+			#{channelFlag},
+			#{platformFlag},
+			#{createBy.id},
+			#{createOfficeIds},
+			SYSDATE()
+		);
+	</insert>
+	
 </mapper>
