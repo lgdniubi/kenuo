@@ -248,7 +248,7 @@
     <form:form class="navbar-form navbar-left searcharea"  id="delAllData" modelAttribute="exercise" action="${ctx}/train/exambank/delete" method="post">
     	<input id="categoryId" name="categoryId" value="${categoryId}" />
 		<input id="lessontype" name="lessontype" value="${lessontype}" />	
-	    <input id="lessonId" name="lessonId" value="${lessonId}" />
+	    <input id="lessonId" name="lessonId" value="${lessonsId}" />
 		<input id="exerciseIds" name="exerciseIds"/>
 	</form:form>
 	</div>

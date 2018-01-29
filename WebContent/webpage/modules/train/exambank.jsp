@@ -3,8 +3,8 @@
 <html lang="en">
 <head>
     <meta name="decorator" content="default"/>
-    <link rel="stylesheet" href="${ctxStatic}/train/css/exam.css">
-    <script type="text/javascript" src="${ctxStatic}/train/js/jquery-1.11.3.js"></script>
+   <%--  <link rel="stylesheet" href="${ctxStatic}/train/css/exam.css"> --%>
+    <%-- <script type="text/javascript" src="${ctxStatic}/train/js/jquery-1.11.3.js"></script> --%>
     <script type="text/javascript">
 		function page(n,s){
 			$("#pageNo").val(n);
@@ -46,13 +46,17 @@
 					success: function(data) {
 						$("#categoryId").empty();
 						$.each(data.listtow, function(index,item){
-							$("#categoryId").prepend("<option value='"+item.categoryId+"'>"+item.name+"</option>");
+							if (item.categoryId == v) {
+								$("#categoryId").prepend("<option value='"+item.categoryId+"' selected='selected'>"+item.name+"</option>");
+							}else{
+								$("#categoryId").prepend("<option value='"+item.categoryId+"'>"+item.name+"</option>");
+							}
 							document.getElementById("categoryId").value=v;
 						});
 						$(".loading").hide();//隐藏展示层
 					}
 				});   
-				document.getElementById("s1").value=n;
+				document.getElementById("parentId").value=n;
 			}else{
 				$("#categoryId").empty();
 				$('#categoryId').css('display', 'none');
@@ -61,14 +65,27 @@
 		//页面加载事件
 		$(document).ready(function() {
 			//默认加载显示后台传过来的值
-				categorychange($("#categoryid1").val(),$("#parentId").val());
+				categorychange($("#categoryId1").val(),$("#parentId").val());
 				if($("#examLessionMapping").val().length>0){
 					check($("#examLessionMapping").val());	
 				}
 		});
-		function addAllExam(){
-			$("#all").submit();
+		
+		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
+        	var exerciseIds =  $('textarea').text();
+			if(exerciseIds == ''){
+				 top.layer.alert("请选择一条数据！", {icon: 0, title:'提醒'}); 
+				 return false;
+			}else{
+        	  loading('正在提交，请稍等...');
+		      $("#inputForm").submit();
+	     	  return true;
+			}
+			return false;
 		}
+		/* function addAllExam(){
+			$("#all").submit();
+		} */
 		//默认选中已添加的试题
 		/* function check(num){
 			var arr=new Array();
@@ -113,22 +130,22 @@
                     	<!-- 分页隐藏文本框 -->
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-		 				<input id="parentId" name="parentId" value="${parentId}"  type="hidden"/>	<!-- 一级父类ID   -->
-		 				<input id="categoryid1" name="categoryid1" value="${categoryid1}" type="hidden"/>	<!--二级子类ID  -->
-		 				<input id="lessonId" name="lessonId" value="${lessonId}" type="hidden"/>  <!--添加课程习题 翻页是提交课程ID  -->
-		 				<input id="ziCategoryId" name="ziCategoryId" value="${ziCategoryId}" type="hidden"/>  <!--添加单元试题 翻页是提交二级类别ID  -->
-						<input id="lessontype" name="lessontype" value="${lessontype}" type="hidden"/>	<!-- 判断课程习题还是单元试题 -->
+		 				<%-- <input id="parentId" name="parentId" value="${parentId}"  type="hidden"/> --%>	<!-- 一级父类ID   -->
+		 				<input id="categoryId1" name="ziCategoryId" value="${ziCategoryId}" type="hidden"/>	<!--二级子类ID  -->
+		 				<input id="lessonId" name="lessonId" value="${exercisesCategorys.lessonId}" type="hidden"/>  <!--添加课程习题 翻页是提交课程ID  -->
+		 				<%-- <input id="ziCategoryId" name="ziCategoryId" value="${ziCategoryId}" type="hidden"/> --%>  <!--添加单元试题 翻页是提交二级类别ID  -->
+						<input id="lessontype" name="lessontype" value="${exercisesCategorys.lessontype}" type="hidden"/>	<!-- 判断课程习题还是单元试题 -->
 						<input type="hidden" name="restNum" id="restNum"><!-- 重置表单  为了不影响批量添加提交课程id -->
                         <div class="form-group">
                             <label>关键字：<input id="exerciseTitle" name="exerciseTitle" type="text" value="${exerciseTitle}" class="form-control" placeholder="请输入关键字" maxlength="10"></label> 
                             <!-- 下拉框二级联动 -->
-                            <select class="form-control" id="s1" name="s1" onchange="nowcategorychange(this.options[this.options.selectedIndex].value)">
+                            <select class="form-control" id="parentId" name="parentId" onchange="nowcategorychange(this.options[this.options.selectedIndex].value)">
                             	<option value="null">请选择分类</option>
 								<c:forEach items="${listone}" var="trainCategorys">
-									<option value="${trainCategorys.categoryId}">${trainCategorys.name}</option>
+									<option ${trainCategorys.categoryId == parentId?'selected="selected"':'' } value="${trainCategorys.categoryId}">${trainCategorys.name}</option>
 								</c:forEach>
 							</select>
-							<select class="form-control" id="categoryId" name="name" ></select>
+							<select class="form-control" id="categoryId" name="categoryId" ></select>
 							<select class="form-control" id="exerciseType" name="exerciseType">
 								<option value=0>请选择试题类型</option>
 								<c:forEach items="${fns:getDictList('exercise_type')}" var="exercise_type">
@@ -193,13 +210,13 @@
     <div class="loading"></div> 
     <div style="display: none">
     <!-- 点击批量添加提交对应的from -->
-    <%-- <form:form class="navbar-form navbar-left searcharea"  id="all" modelAttribute="exercise" action="${ctx}/train/exambank/addAllExam" method="post">
-    	<input id="ziCategoryId" name="ziCategoryId" value="${ziCategoryId}" />  <!--添加单元试题 翻页是提交二级类别ID  -->
-		<input id="lessontype" name="lessontype" value="${lessontype}" />	<!-- 判断课程习题还是单元试题 -->
-	    <input id="lessonId" name="lessonId" value="${lessonId}" />
+    <form:form class="navbar-form navbar-left searcharea"  id="inputForm" modelAttribute="exercise" action="${ctx}/train/exambank/addAllExam" method="post">
+    	<input id="ziCategoryId" name="ziCategoryId" value="${ziCategoryId}" />  
+		<input id="lessontype" name="lessontype" value="${exercisesCategorys.lessontype}" />	
+	    <input id="lessonId" name="lessonId" value="${exercisesCategorys.lessonId}" />
 		<input id="text" name="exerciseId1"/>
 		<textarea rows="5px" cols="200px" name="exerciseId2"></textarea>
-	</form:form> --%>
+	</form:form>
 	</div>
 	<script type="text/javascript" src="./js/bootstrap.js"></script>
 	<script type="text/javascript">
@@ -232,12 +249,7 @@
 		              	result+=$(this).val()+',';
 		        }); 
 		        $('textarea').text(result);
-		    });
-	        // 弹出框
-	        $('.btn-xg').click(function(){
-	            alert("添加按钮！")
-	        });
-	  //  });
+		    })
 	</script>
 </body>
 </html>

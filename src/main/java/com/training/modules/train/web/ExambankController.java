@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
+import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.train.entity.ExamLessionMapping;
@@ -103,13 +104,19 @@ public class ExambankController extends BaseController{
 	 */
 	
 	@RequestMapping(value = "exambank")
-	public String exambank(String exerciseType,ExercisesCategorys exercisesCategorys,HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String exambank(String exerciseType,String ziCategoryId,ExercisesCategorys exercisesCategorys,HttpServletRequest request, HttpServletResponse response, Model model) {
 //		List<String> typeList = exercisesService.findTypeList();
 //		model.addAttribute("typeList", typeList);
 		
 		
 		model.addAttribute("exerciseType", exerciseType);
+		model.addAttribute("ziCategoryId", exercisesCategorys.getCategoryId());
+		model.addAttribute("exercisesCategorys", exercisesCategorys);
+		model.addAttribute("parentId", exercisesCategorys.getParentId());
 		exercisesCategorys.getSqlMap().put("dsf", ScopeUtils.dataScopeFilter("a",""));
+		if (StringUtils.isNotBlank(ziCategoryId)) {
+			exercisesCategorys.setName(exercisesCategorys.getCategoryId());
+		}
 		Page<ExercisesCategorys> page=exercisesService.findPage(new Page<ExercisesCategorys>(request, response), exercisesCategorys);
 		if(exercisesCategorys.getExerciseTitle()!=null || exercisesCategorys.getExerciseTitle()!=""){
 			model.addAttribute("exerciseTitle", exercisesCategorys.getExerciseTitle());
@@ -134,7 +141,7 @@ public class ExambankController extends BaseController{
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@RequestMapping(value = { "addAllExam", "" })
+	@RequestMapping(value = { "addAllExam"})
 	public String addAllExam(ExamLessionMapping examLession,HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes){
 		String idArray1[] =request.getParameter("exerciseId1").split(",");
 		String idArray2[]=request.getParameter("exerciseId2").split(",");
@@ -197,7 +204,7 @@ public class ExambankController extends BaseController{
 			
 		}
 		addMessage(redirectAttributes, "批量添加试题成功");
-		return "redirect:" + adminPath + "/train/course/listcourse";
+		return "redirect:" + adminPath + "/train/exambank/exambankFrom?lessonId="+examLession.getLessonId()+"&categoryId="+examLession.getCategoryId()+"&lessontype="+examLession.getLessontype();
 	}
 	/**
 	 * 跳转到随机试题界面
