@@ -26,9 +26,9 @@
 						}else{
 							$("#categoryId").prepend("<option value='"+item.categoryId+"'>"+item.name+"</option>");
 						}
-					});
+					})
 				}
-			});   
+			})  
 		}
 		//页面加载
 		$(document).ready(function() {
@@ -200,6 +200,59 @@
 				}
 			});   
 		}
+		
+		/* 页面加载，登云去分分类权限 */
+		$(function(){
+			var comId = "${user.company.id}";
+			if (comId == '1' && $("#companyName").val() == "" && $("#pageNo").val() == 1) {
+				top.layer.alert("分类查询前请先选择商家范围!", {icon: 0, title:'提醒'});
+			}else{
+				var parId = $("#parentId").val();
+				oneCategorys($("#companyId").val(),parId);
+				$("#franchange").css('display','block');
+			}
+		})
+		
+		//选择归属商家
+		function companyButtion(){
+		top.layer.open({
+		    type: 2, 
+		    area: ['300px', '420px'],
+		    title:"选择商家",
+		    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/sys/franchisee/treeData")+"" ,
+		    btn: ['确定', '关闭'],
+		    yes: function(index, layero){
+		    	var tree = layero.find("iframe")[0].contentWindow.tree;
+		    	var nodes = tree.getSelectedNodes();
+		    	$("#companyId").val(nodes[0].id);
+		    	$("#companyName").val(nodes[0].name);
+		    	top.layer.close(index);
+		    	if ($("#companyName").val() != "") {
+		    		oneCategorys($("#companyId").val());
+		    		$("#franchange").css('display','block'); 
+				}
+		    },
+		    cancel: function(index){ //或者使用btn2
+		    	if ($("#companyName").val() != "") {
+		    		$("#franchange").css('display','block'); 
+				}
+ 	       }
+		})
+	}
+		/* 根据商家id查询以及分类 */
+		function oneCategorys(value,parId) {
+			$("#parentId").empty();
+			$("#parentId").append("<option value='-1'>请选择分类</option>");
+			$.post("${ctx}/train/categorys/oneCategory",{compId:value},function(data){
+				for (var i = 0; i < data.length; i++) {
+					if (data[i].categoryId == parId) {
+						$("#parentId").prepend("<option value='"+data[i].categoryId+"' selected='selected'>"+data[i].name+"</option>");
+					}else{
+						$("#parentId").append("<option value="+data[i].categoryId+">"+data[i].name+"</option>");
+					}
+				}
+			},"json")
+		}
 	</script>
 </head>
 <body>
@@ -215,17 +268,29 @@
 						<form:form id="searchForm" action="${ctx}/train/course/listcourse" method="post" class="navbar-form navbar-left searcharea">
 							<div class="form-group">
 								<label>关键字：<input id="name" name="name" maxlength="10" type="text" class="form-control" value="${trainLessons.name}"></label> 
-								<input type="hidden" id="parentIdval" name="parentIdval" value="${trainLessons.parentId}"/>
-								<select class="form-control" id="parentId" name="parentId" onchange="categorychange(this.options[this.options.selectedIndex].value)">
-									<option value="-1">请选择分类</option>
-									<c:forEach items="${listone}" var="trainCategorys">
-										<option ${trainCategorys.categoryId == trainLessons.parentId?'selected="selected"':'' } value="${trainCategorys.categoryId}">${trainCategorys.name}</option>
-									</c:forEach>
-								</select>
-								<input type="hidden" id="categoryIdval" name="categoryIdval" value="${trainLessons.categoryId}"/>
-								<select class="form-control" id="categoryId" name="categoryId">
-									<option value='-1'>请选择分类</option>
-								</select> 
+								<c:if test="${user.company.id eq '1' }">
+									<label>商家范围：</label> 
+									<input id="companyId" name="trainCategorys.franchisee.id" class="form-control required" type="hidden" value="${trainLessons.trainCategorys.franchisee.id }"/>
+									<div class="input-group">
+										<input id="companyName" name="trainCategorys.franchisee.name" value="${trainLessons.trainCategorys.franchisee.name }"  type="text" readonly="readonly" class="form-control required"/>
+							       		 <span class="input-group-btn">
+								       		 <button type="button"  id="companyButton" class="btn  btn-primary" onclick="companyButtion()"><i class="fa fa-search"></i></button> 
+							       		 </span>
+							    	</div>
+								</c:if> 
+								<div id="franchange" style="display: none;" class="pull-right">
+									<input type="hidden" id="parentIdval" name="parentIdval" value="${trainLessons.parentId}"/>
+									<select class="form-control" id="parentId" name="parentId" onchange="categorychange(this.options[this.options.selectedIndex].value)">
+										<option value="-1">请选择分类</option>
+										<%-- <c:forEach items="${listone}" var="trainCategorys">
+											<option ${trainCategorys.categoryId == trainLessons.parentId?'selected="selected"':'' } value="${trainCategorys.categoryId}">${trainCategorys.name}</option>
+										</c:forEach> --%>
+									</select>
+									<input type="hidden" id="categoryIdval" name="categoryIdval" value="${trainLessons.categoryId}"/>
+									<select class="form-control" id="categoryId" name="categoryId">
+										<option value='-1'>请选择分类</option>
+									</select>
+								</div>
 								时间范围：
 								<input id="beginDate" name="beginDate" type="text" class="datetimepicker form-control" value="<fmt:formatDate value="${trainLessons.beginDate}" pattern="yyyy-MM-dd HH:mm"/>" /> -- 
 								<input id="endDate" name="endDate" type="text" class="datetimepicker form-control" value="<fmt:formatDate value="${trainLessons.endDate}" pattern="yyyy-MM-dd HH:mm"/>" />
@@ -322,7 +387,7 @@
 											<shiro:hasPermission name="train:exambank:index">
 												<br/>
 												<br/>
-												<a href="#" onclick='top.openTab("${ctx}/train/exambank/exambank?lessonId=${trainLessons.lessonId}&lessontype=${trainLessons.lessontype}","添加课后习题", false)'>添加课后习题</a>
+												<a href="#" onclick='top.openTab("${ctx}/train/exambank/exambankFrom?lessonId=${trainLessons.lessonId}&categoryId=${trainLessons.trainCategorys.categoryId}&lessontype=${trainLessons.lessontype}","课后习题管理", false)'>课后习题管理</a>
 											</shiro:hasPermission>
 											<shiro:hasPermission name="train:exambank:index">
 												<br/>
@@ -332,7 +397,7 @@
 										</c:if>
 										<c:if test="${trainLessons.lessontype == 2}">
 											<shiro:hasPermission name="train:exambank:index">
-												<a href="#" onclick='top.openTab("${ctx}/train/exambank/exambank?ziCategoryId=${trainLessons.trainCategorys.categoryId}&lessontype=${trainLessons.lessontype}","添加单元测试", false)'>添加单元测试</a>
+												<a href="#" onclick='top.openTab("${ctx}/train/exambank/exambankFrom?lessonId=${trainLessons.lessonId}&categoryId=${trainLessons.trainCategorys.categoryId}&lessontype=${trainLessons.lessontype}","单元测试管理", false)'>单元测试管理</a>
 											</shiro:hasPermission>
 										</c:if>
 										<c:if test="${trainLessons.lessontype == 3}">

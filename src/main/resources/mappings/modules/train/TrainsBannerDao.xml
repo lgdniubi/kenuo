@@ -133,8 +133,7 @@
 			  ad_url = #{adUrl},
 			  remark = #{remark},
 			  sort = #{sort},
-			  parent_ids = #{parentIds},
-			  del_flag = 1
+			  parent_ids = #{parentIds}
 			WHERE ad_id = #{adId}
 	</update>
 	<update id="deleteBanner">

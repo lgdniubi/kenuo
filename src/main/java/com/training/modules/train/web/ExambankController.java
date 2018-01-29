@@ -19,11 +19,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
 import com.training.common.web.BaseController;
+import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.train.entity.ExamLessionMapping;
 import com.training.modules.train.entity.ExercisesCategorys;
 import com.training.modules.train.entity.TrainCategorys;
 import com.training.modules.train.service.ExamBankService;
 import com.training.modules.train.service.ExercisesService;
+import com.training.modules.train.service.ExercisesTuBeService;
 import com.training.modules.train.service.TrainCategorysService;
 import com.training.modules.train.utils.ScopeUtils;
 
@@ -41,34 +43,72 @@ public class ExambankController extends BaseController{
 	private TrainCategorysService trainCategorysService;
 	@Autowired
 	private ExamBankService examBankService;
+	@Autowired
+	private ExercisesTuBeService exTuBeService;
+	
+	/**
+	 * 
+	 * @Title: exambankFrom
+	 * @Description: TODO 根据课程id查询此课程下的习题或单元测试
+	 * @param exerciseType
+	 * @param s1
+	 * @param trainCategorys
+	 * @param exercisesCategorys
+	 * @param examLession
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return:
+	 * @return: String
+	 * @throws
+	 * 2018年1月24日 兵子
+	 */
+	@RequiresPermissions(value={"train:exambank:index"},logical=Logical.OR)
+	@RequestMapping(value = { "exambankFrom", "" })
+	public String exambankFrom(ExercisesCategorys exercisesCategorys,HttpServletRequest request, HttpServletResponse response, Model model){
+		model.addAttribute("lessonsId", exercisesCategorys.getLessonId());
+		model.addAttribute("categoryId", exercisesCategorys.getCategoryId());
+		model.addAttribute("lessontype",exercisesCategorys.getLessontype());
+		Page<ExercisesCategorys> page=exTuBeService.findPage(new Page<ExercisesCategorys>(request, response), exercisesCategorys);
+		model.addAttribute("page", page);	
+		return "modules/train/exambankFrom";
+	}
+	
+	/**
+	 * 
+	 * @Title: delete
+	 * @Description: TODO 删除以及批量删除
+	 * @throws
+	 * 2018年1月25日 兵子
+	 */
+	@RequestMapping(value ="delete")
+	public String delete(ExercisesCategorys exercisesCategorys,String exerciseIds, Model model,RedirectAttributes redirectAttributes,HttpServletRequest request){
+			try {
+				int num = exTuBeService.deleteExercises(exerciseIds,exercisesCategorys);
+				if (num > 0) {
+					addMessage(redirectAttributes, "删除试题成功");
+				}else{
+					addMessage(redirectAttributes, "删除试题失败，没有此试题，请联系管理员");
+				}
+			} catch (Exception e) {
+				addMessage(redirectAttributes, "删除试题失败！");
+				logger.error("删除 出现异常，异常信息为："+e.getMessage());
+				BugLogUtils.saveBugLog(request, "删除试题错误信息", e);
+			}
+		return "redirect:" + adminPath + "/train/exambank/exambankFrom?lessonId="+exercisesCategorys.getLessonId()+"&categoryId="+exercisesCategorys.getCategoryId()+"&lessontype="+exercisesCategorys.getLessontype();
+	}
+	
 	/**
 	 * 	查看试题库
 	 */
-	@RequiresPermissions(value={"train:exambank:index"},logical=Logical.OR)
-	@RequestMapping(value = { "exambank", "" })
-	public String exambank(String exerciseType,String s1,TrainCategorys trainCategorys,ExercisesCategorys exercisesCategorys,ExamLessionMapping examLession,HttpServletRequest request, HttpServletResponse response, Model model) {
+	
+	@RequestMapping(value = "exambank")
+	public String exambank(String exerciseType,ExercisesCategorys exercisesCategorys,HttpServletRequest request, HttpServletResponse response, Model model) {
 //		List<String> typeList = exercisesService.findTypeList();
 //		model.addAttribute("typeList", typeList);
+		
+		
 		model.addAttribute("exerciseType", exerciseType);
-		if(exercisesCategorys.getName()!=null || s1 != null){
-			//试题库通过categoryid查询试题
-			model.addAttribute("categoryid1",exercisesCategorys.getName());
-			model.addAttribute("parentId",s1);
-		}else if(null == request.getParameter("restNum")){
-			//点击添加单元测试、课后习题 默认选中当前分类
-			if(request.getParameter("lessontype").equals("1")){
-				TrainCategorys cate=examBankService.findByLessonid(request.getParameter("lessonId"));
-				model.addAttribute("categoryid1",cate.getCategoryId());
-				model.addAttribute("parentId",cate.getParentId());
-				exercisesCategorys.setName(cate.getCategoryId());
-			}else if(request.getParameter("lessontype").equals("2")){
-				TrainCategorys cate=examBankService.findByziCategoryId(request.getParameter("ziCategoryId"));
-				model.addAttribute("categoryid1",request.getParameter("ziCategoryId"));
-				model.addAttribute("parentId",cate.getParentId());
-				exercisesCategorys.setName(request.getParameter("ziCategoryId"));
-			}
-		}
-//		exercisesCategorys=ExamUtils.examFilter(exercisesCategorys);
 		exercisesCategorys.getSqlMap().put("dsf", ScopeUtils.dataScopeFilter("a",""));
 		Page<ExercisesCategorys> page=exercisesService.findPage(new Page<ExercisesCategorys>(request, response), exercisesCategorys);
 		if(exercisesCategorys.getExerciseTitle()!=null || exercisesCategorys.getExerciseTitle()!=""){
@@ -77,43 +117,12 @@ public class ExambankController extends BaseController{
 		//添加数据权限
 		TrainCategorys t=new TrainCategorys();
 		t.setPriority(1);
-//		t = CategorysUtils.categorysFilter(t);
 		t.getSqlMap().put("dsf", ScopeUtils.dataScopeFilter("t","category"));
 		
 		//查询1级分类
 		List<TrainCategorys> listone = trainCategorysService.findcategoryslist(t);
 		model.addAttribute("listone", listone);
-		if(exercisesCategorys.getName()!=null && s1 != null){
-			model.addAttribute("categoryid1",exercisesCategorys.getName());
-			model.addAttribute("parentId",s1);
-		}
-//		查询当前课程下的所有试题
-		if(request.getParameter("lessontype").equals("1")){
-			examLession.setLessonId(request.getParameter("lessonId"));
-			examLession.setLessontype(request.getParameter("lessontype"));
-			List<ExamLessionMapping> examLessionMapping=examBankService.lookAll(examLession);
-			String a="";
-			for(ExamLessionMapping e:examLessionMapping){
-				a=e.getExerciseId()+","+a;
-			}
-			model.addAttribute("lessontype",1);
-			model.addAttribute("examLessionMapping",a);
-			model.addAttribute("lessonId", exercisesCategorys.getLessonId());
-			model.addAttribute("page", page);
-		}else if(request.getParameter("lessontype").equals("2")){
-//			查询当前单元下的所有试题
-			examLession.setCategoryId(request.getParameter("ziCategoryId"));
-			examLession.setLessontype(request.getParameter("lessontype"));
-				List<ExamLessionMapping> examLessionMapping=examBankService.lookAll(examLession);
-				String a="";
-				for(ExamLessionMapping e:examLessionMapping){
-					a=e.getExerciseId()+","+a;
-				}
-				model.addAttribute("lessontype",2);
-				model.addAttribute("examLessionMapping",a);
-				model.addAttribute("ziCategoryId", examLession.getCategoryId());
-				model.addAttribute("page", page);	
-		}
+		model.addAttribute("page", page);
 		return "modules/train/exambank";
 	}
 	/**
@@ -195,7 +204,7 @@ public class ExambankController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value ="random")
-	public String random(String lessonId,String ziCategoryId,String lessontype,Model model){
+	public String random(String lessonId,String categoryId,String lessontype,Model model){
 		
 		//添加数据权限
 		TrainCategorys t=new TrainCategorys();
@@ -214,10 +223,10 @@ public class ExambankController extends BaseController{
 			model.addAttribute("Tid",lessonId);
 		}else{
 //		当前单元
-			model.addAttribute("parentIdval",examBankService.findByziCategoryId(ziCategoryId).getParentId());
-			System.out.println(examBankService.findByziCategoryId(ziCategoryId).getParentId()+"=======");
+			model.addAttribute("parentIdval",examBankService.findByziCategoryId(categoryId).getParentId());
+			System.out.println(examBankService.findByziCategoryId(categoryId).getParentId()+"=======");
 			model.addAttribute("lessontype",2);
-			model.addAttribute("Tid",ziCategoryId);
+			model.addAttribute("Tid",categoryId);
 		}
 		return "modules/train/examBankForm";
 	}
@@ -314,6 +323,6 @@ public class ExambankController extends BaseController{
 			}
 		}
 		addMessage(redirectAttributes, "批量添加随机试题成功");
-		return "redirect:" + adminPath + "/train/course/listcourse";
+		return "redirect:" + adminPath + "/train/exambank/exambankFrom?lessonId="+Tid+"&categoryId="+Tid+"&lessontype="+examLession.getLessontype();
 	}
 }

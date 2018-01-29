@@ -2,6 +2,7 @@ package com.training.modules.train.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,8 @@ import com.training.modules.train.entity.TrainCategorys;
 @Transactional(readOnly = false)
 public class TrainCategorysService extends CrudService<TrainCategorysDao,TrainCategorys> {
 	
+	@Autowired
+	private TrainCategorysDao tCategorysDao;
 	/**
 	 * 根据优先级，查询课程分类
 	 * @param priority	优先级（1：一级分类； 2：二级分类）
@@ -82,5 +85,16 @@ public class TrainCategorysService extends CrudService<TrainCategorysDao,TrainCa
 	 */
 	public void updateIsShow(String[] ids,int isShow){
 		dao.updateIsShow(ids,isShow);
+	}
+
+	/**
+	 * 
+	 * @Title: findsonCategoryslist
+	 * @Description: TODO 根据商家id和以及分类查询二级分类
+	 * @throws
+	 * 2018年1月26日 兵子
+	 */
+	public List<TrainCategorys> findOneCategoryslist(TrainCategorys trainCategorys) {
+		return tCategorysDao.findOneCategoryslist(trainCategorys);
 	}
 }
