@@ -9,6 +9,7 @@ import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.Comment;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.Reservation;
+import com.training.modules.ec.entity.ReservationLog;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.train.entity.Subscribe;
 /**
@@ -88,4 +89,15 @@ public interface ReservationDao extends CrudDao<Reservation>{
 	 */
 	public int updateapptstatus(@Param("appt_id")int appt_id);
 	
+	/**
+	 * 保存修改预约日志
+	 * @param apptOrderLog
+	 */
+	public void saveApptOrderLog(ReservationLog reservationLog);
+	/**
+	 * 查询预约操作日志
+	 * @param appt_id
+	 * @return
+	 */
+	public List<ReservationLog> findReservationLog(ReservationLog reservationLog);
 }

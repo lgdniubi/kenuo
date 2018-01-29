@@ -291,7 +291,7 @@ public class WebUtils {
 
 		} catch (Exception e) {
 			System.out.println("#######调用接口错误日志：调用类型"+typeName+"_"+type+"_"+title+","+"请求地址"+url+",出现异常："+e.getMessage());
-			BugLogUtils.saveBugLog(request, "每天美耶版本管理-查看所有", e);
+			BugLogUtils.saveBugLog(request, "调用接口错误日志", e);
 		}finally {
 			
 		}

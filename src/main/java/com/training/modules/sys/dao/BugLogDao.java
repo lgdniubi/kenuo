@@ -3,6 +3,7 @@ package com.training.modules.sys.dao;
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.sys.entity.BugLog;
+import com.training.modules.sys.entity.SaveLog;
 
 /**
  * bug日志dao
@@ -18,4 +19,9 @@ public interface BugLogDao extends CrudDao<BugLog>{
 	 */
 	public void empty();
 	
+	/**
+	 * 保存日志报错log
+	 * @param saveLog
+	 */
+	public void insertSaveLog(SaveLog saveLog);
 }
