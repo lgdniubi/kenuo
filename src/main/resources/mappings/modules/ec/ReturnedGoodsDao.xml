@@ -223,7 +223,7 @@
 			a.mapping_id = #{goodsMappingId}
 		AND a.returned_id != #{returnedId}
 		AND a.is_real = 0
-		AND c.return_status IN (11,12,13,14,15,16)
+		AND c.return_status NOT IN (-10,-20,26)
 	</select>
 	<!-- 查询套卡子项虚拟商品的剩余次数(购买次数-预约次数) -->
 	<select id="getReturnNum" resultType="ReturnedGoods">
