@@ -83,30 +83,6 @@
 			}
 			return false;
 		}
-		/* function addAllExam(){
-			$("#all").submit();
-		} */
-		//默认选中已添加的试题
-		/* function check(num){
-			var arr=new Array();
-            arr=num.split(',');//注split可以用字符或字符串分割
-            for(var i=0;i<arr.length;i++){
-          	  $("input[type=checkbox][name=exerciseId][value="+arr[i]+"]").attr("checked",'checked');
-          	  		if( $("input[type=checkbox][name=exerciseId][value="+arr[i]+"]").is(':checked')){
-          	  			//将当前页面复选框选中的值用，替代 
-          	  			num=num.replace($("input[type=checkbox][name=exerciseId][value="+arr[i]+"]").val(),",");  
-          	  		}
-          	  	document.getElementById("text").value=num;
-            } 
-        }  */
-		//重置
-		/* function nowreset(){
-			 $("#exerciseTitle").val(""); //清空
-			 $("#s1").val(""); //清空
-			 $("#categoryId").val(""); //清空
-			 $("#exerciseType").val(""); //清空
-			 $("#restNum").val("-1");
-		} */
 	</script>
     <title>试题库</title>
 </head>
@@ -133,7 +109,6 @@
 		 				<%-- <input id="parentId" name="parentId" value="${parentId}"  type="hidden"/> --%>	<!-- 一级父类ID   -->
 		 				<input id="categoryId1" name="ziCategoryId" value="${ziCategoryId}" type="hidden"/>	<!--二级子类ID  -->
 		 				<input id="lessonId" name="lessonId" value="${exercisesCategorys.lessonId}" type="hidden"/>  <!--添加课程习题 翻页是提交课程ID  -->
-		 				<%-- <input id="ziCategoryId" name="ziCategoryId" value="${ziCategoryId}" type="hidden"/> --%>  <!--添加单元试题 翻页是提交二级类别ID  -->
 						<input id="lessontype" name="lessontype" value="${exercisesCategorys.lessontype}" type="hidden"/>	<!-- 判断课程习题还是单元试题 -->
 						<input type="hidden" name="restNum" id="restNum"><!-- 重置表单  为了不影响批量添加提交课程id -->
                         <div class="form-group">

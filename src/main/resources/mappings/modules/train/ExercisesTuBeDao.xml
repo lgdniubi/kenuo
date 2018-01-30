@@ -22,6 +22,21 @@
 			<if test="lessontype == 2 ">
 				AND m.CATEGORY_ID = #{categoryId}
 			</if>
+			<if test="exerciseTitle != null and exerciseTitle != ''">
+				AND ( e.exercise_title LIKE 
+						<if test="dbName == 'oracle'">'%'||#{exerciseTitle}||'%'</if>
+						<if test="dbName == 'mysql'">CONCAT('%', #{exerciseTitle}, '%')</if>
+				OR e.tags LIKE 
+						<if test="dbName == 'oracle'">'%'||#{exerciseTitle}||'%'</if>
+						<if test="dbName == 'mysql'">CONCAT('%', #{exerciseTitle}, '%')</if>
+						)
+			</if>
+			<if test="exerciseType != null and exerciseType !=''">
+				AND e.exercise_type = #{exerciseType }
+			</if>
+			<if test="id != null and id != ''">
+				AND e.category_id = #{id}
+			</if>
  			GROUP BY e.exercise_id
 			ORDER BY e.CREATETIME DESC 
 	</select>

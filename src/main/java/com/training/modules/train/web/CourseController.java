@@ -93,13 +93,13 @@ public class CourseController extends BaseController{
 		trainCategorys.setPriority(1);
 		model.addAttribute("trainLessons", trainLessons);
 		//添加数据权限
-//		trainCategorys = CategorysUtils.categorysFilter(trainCategorys);
+    	//trainCategorys = CategorysUtils.categorysFilter(trainCategorys);
 		
-		//trainCategorys.getSqlMap().put("dsf", ScopeUtils.dataScopeFilter("t","category"));
+		trainCategorys.getSqlMap().put("dsf", ScopeUtils.dataScopeFilter("t","category"));
 		
 		//查询1级分类
-	//	List<TrainCategorys> listone = trainCategorysService.findcategoryslist(trainCategorys);
-	//	model.addAttribute("listone", listone);
+		List<TrainCategorys> listone = trainCategorysService.findcategoryslist(trainCategorys);
+		model.addAttribute("listone", listone);
 		
 		
 		

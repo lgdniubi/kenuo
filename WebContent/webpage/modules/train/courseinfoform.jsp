@@ -148,8 +148,21 @@
 			<div class="form-inline">
 				<div class="form-group input-item">
 					<span style="color: red;">*</span>
-					<span>课程学分：</span> 
-					<input id="lessonScore" name="lessonScore" type="text" class="text-item required digits" value="${trainLessons.lessonScore}">
+					<%-- <span>课程学分：</span> 
+					<input id="lessonScore" name="lessonScore" type="text" class="text-item required digits" value="${trainLessons.lessonScore}"> --%>
+					<span>推荐类型：</span> 
+					<select class="form-control" id="showType" name="showType">
+						<c:forEach items="${fns:getDictList('lesson_show_type')}" var="show_type">
+							<c:choose>
+								<c:when test="${show_type.value eq trainLessons.showType}">
+									<option value="${show_type.value }" selected="selected">${show_type.label }</option>
+								</c:when>
+								<c:otherwise>
+									<option value="${show_type.value }">${show_type.label }</option>
+								</c:otherwise>
+							</c:choose>
+						</c:forEach>
+					</select>
 				</div>
 			</div>
 			<div class="form-inline">

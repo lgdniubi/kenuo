@@ -201,18 +201,6 @@
 			});   
 		}
 		
-		/* 页面加载，登云去分分类权限 */
-		$(function(){
-			var comId = "${user.company.id}";
-			if (comId == '1' && $("#companyName").val() == "" && $("#pageNo").val() == 1) {
-				top.layer.alert("分类查询前请先选择商家范围!", {icon: 0, title:'提醒'});
-			}else{
-				var parId = $("#parentId").val();
-				oneCategorys($("#companyId").val(),parId);
-				$("#franchange").css('display','block');
-			}
-		})
-		
 		//选择归属商家
 		function companyButtion(){
 		top.layer.open({
@@ -229,13 +217,11 @@
 		    	top.layer.close(index);
 		    	if ($("#companyName").val() != "") {
 		    		oneCategorys($("#companyId").val());
-		    		$("#franchange").css('display','block'); 
 				}
+		    	$("#categoryId").empty();
+		    	$("#categoryId").append("<option value='-1'>请选择分类</option>");
 		    },
 		    cancel: function(index){ //或者使用btn2
-		    	if ($("#companyName").val() != "") {
-		    		$("#franchange").css('display','block'); 
-				}
  	       }
 		})
 	}
@@ -253,6 +239,12 @@
 				}
 			},"json")
 		}
+		
+		$(function(){
+			if ($("#companyId").val() != '') {
+				oneCategorys($("#companyId").val());
+			};
+		})
 	</script>
 </head>
 <body>
@@ -270,39 +262,54 @@
 								<label>关键字：<input id="name" name="name" maxlength="10" type="text" class="form-control" value="${trainLessons.name}"></label> 
 								<c:if test="${user.company.id eq '1' }">
 									<label>商家范围：</label> 
-									<input id="companyId" name="trainCategorys.franchisee.id" class="form-control required" type="hidden" value="${trainLessons.trainCategorys.franchisee.id }"/>
+									<input id="companyId" name="franchisee.id" class="form-control required" type="hidden" value="${trainLessons.franchisee.id }"/>
 									<div class="input-group">
-										<input id="companyName" name="trainCategorys.franchisee.name" value="${trainLessons.trainCategorys.franchisee.name }"  type="text" readonly="readonly" class="form-control required"/>
+										<input id="companyName" name="franchisee.name" value="${trainLessons.franchisee.name }"  type="text" readonly="readonly" class="form-control required"/>
 							       		 <span class="input-group-btn">
 								       		 <button type="button"  id="companyButton" class="btn  btn-primary" onclick="companyButtion()"><i class="fa fa-search"></i></button> 
 							       		 </span>
 							    	</div>
 								</c:if> 
-								<div id="franchange" style="display: none;" class="pull-right">
-									<input type="hidden" id="parentIdval" name="parentIdval" value="${trainLessons.parentId}"/>
-									<select class="form-control" id="parentId" name="parentId" onchange="categorychange(this.options[this.options.selectedIndex].value)">
-										<option value="-1">请选择分类</option>
-										<%-- <c:forEach items="${listone}" var="trainCategorys">
-											<option ${trainCategorys.categoryId == trainLessons.parentId?'selected="selected"':'' } value="${trainCategorys.categoryId}">${trainCategorys.name}</option>
-										</c:forEach> --%>
-									</select>
-									<input type="hidden" id="categoryIdval" name="categoryIdval" value="${trainLessons.categoryId}"/>
-									<select class="form-control" id="categoryId" name="categoryId">
-										<option value='-1'>请选择分类</option>
-									</select>
-								</div>
+								<input type="hidden" id="parentIdval" name="parentIdval" value="${trainLessons.parentId}"/>
+								<select class="form-control" id="parentId" name="parentId" onchange="categorychange(this.options[this.options.selectedIndex].value)">
+									<option value="-1">请选择分类</option>
+									<c:forEach items="${listone}" var="trainCategorys">
+										<option ${trainCategorys.categoryId == trainLessons.parentId?'selected="selected"':'' } value="${trainCategorys.categoryId}">${trainCategorys.name}</option>
+									</c:forEach>
+								</select>
+								<input type="hidden" id="categoryIdval" name="categoryIdval" value="${trainLessons.categoryId}"/>
+								<select class="form-control" id="categoryId" name="categoryId">
+									<option value='-1'>请选择分类</option>
+								</select>
 								时间范围：
 								<input id="beginDate" name="beginDate" type="text" class="datetimepicker form-control" value="<fmt:formatDate value="${trainLessons.beginDate}" pattern="yyyy-MM-dd HH:mm"/>" /> -- 
 								<input id="endDate" name="endDate" type="text" class="datetimepicker form-control" value="<fmt:formatDate value="${trainLessons.endDate}" pattern="yyyy-MM-dd HH:mm"/>" />
+								推荐类型：
+								<%-- <form:select path="showType"  class="form-control">
+									<form:options items="${fns:getDictList('lesson_show_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+								</form:select> --%>
+								<select class="form-control" id="showType" name="showType">
+									<!-- <option value='null'>请选择课程类型</option> -->
+									<c:forEach items="${fns:getDictList('lesson_show_type')}" var="show_type">
+										<c:choose>
+											<c:when test="${show_type.value eq trainLessons.showType}">
+												<option value="${show_type.value }" selected="selected">${show_type.label }</option>
+											</c:when>
+											<c:otherwise>
+												<option value="${show_type.value }">${show_type.label }</option>
+											</c:otherwise>
+										</c:choose>
+									</c:forEach>
+								</select>
 							</div>
-							<shiro:hasPermission name="train:course:listcourse">
+							<%-- <shiro:hasPermission name="train:course:listcourse">
 								<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
 									<i class="fa fa-search"></i> 搜索
 								</button>
 								<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="resetnew()" >
 									<i class="fa fa-refresh"></i> 重置
 								</button>
-							</shiro:hasPermission>
+							</shiro:hasPermission> --%>
 							<!-- 分页必要字段 -->
 							<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 							<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
@@ -335,6 +342,16 @@
 								</shiro:hasPermission>
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新">
 									<i class="glyphicon glyphicon-repeat"></i> 刷新</button>
+							</div>
+							<div class="pull-right">
+								<shiro:hasPermission name="train:course:listcourse">
+									<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
+										<i class="fa fa-search"></i> 搜索
+									</button>
+									<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="resetnew()" >
+										<i class="fa fa-refresh"></i> 重置
+									</button>
+								</shiro:hasPermission>
 							</div>
 						</div>
 					</div>

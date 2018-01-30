@@ -66,10 +66,22 @@ public class ExambankController extends BaseController{
 	 */
 	@RequiresPermissions(value={"train:exambank:index"},logical=Logical.OR)
 	@RequestMapping(value = { "exambankFrom", "" })
-	public String exambankFrom(ExercisesCategorys exercisesCategorys,HttpServletRequest request, HttpServletResponse response, Model model){
+	public String exambankFrom(ExercisesCategorys exercisesCategorys,String lessCategoryId,HttpServletRequest request, HttpServletResponse response, Model model){
 		model.addAttribute("lessonsId", exercisesCategorys.getLessonId());
 		model.addAttribute("categoryId", exercisesCategorys.getCategoryId());
 		model.addAttribute("lessontype",exercisesCategorys.getLessontype());
+		model.addAttribute("exercisesCategorys", exercisesCategorys);
+		TrainCategorys trainCategorys = new TrainCategorys();
+		trainCategorys.setPriority(1);
+		trainCategorys.getSqlMap().put("dsf", ScopeUtils.dataScopeFilter("t","category"));
+		
+		//查询1级分类
+		List<TrainCategorys> listone = trainCategorysService.findcategoryslist(trainCategorys);
+		model.addAttribute("listone", listone);
+		if (StringUtils.isNotBlank(lessCategoryId)) {
+			exercisesCategorys.setId(lessCategoryId);
+		}
+		model.addAttribute("lessCategoryId", lessCategoryId);
 		Page<ExercisesCategorys> page=exTuBeService.findPage(new Page<ExercisesCategorys>(request, response), exercisesCategorys);
 		model.addAttribute("page", page);	
 		return "modules/train/exambankFrom";

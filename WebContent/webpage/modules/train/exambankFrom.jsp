@@ -16,80 +16,55 @@
 		function nowcategorychange(v){
 			if(v!="null"){
 				$(".loading").show();//打开展示层
-				$('#categoryId').css('display', '');
+				$('#lessCategoryId').css('display', '');
 				$.ajax({
 					type : "POST",   
 					url : "${ctx}/train/categorys/listtow?categoryId="+v,
 					dataType: 'json',
 					success: function(data) {
 						$(".loading").hide();//隐藏展示层
-						$("#categoryId").empty();
+						$("#lessCategoryId").empty();
 						$.each(data.listtow, function(index,item){
-							$("#categoryId").prepend("<option value='"+item.categoryId+"'>"+item.name+"</option>");
+							$("#lessCategoryId").prepend("<option value='"+item.categoryId+"'>"+item.name+"</option>");
 						});
 					}
 				});  
-			}else{
-				$("#categoryId").empty();
-				$('#categoryId').css('display', 'none');
 			}
 		}
 		//显示后台传过来的值
-		/* function categorychange(v,n){
+		function categorychange(v,n){
 			if((v !='')){
 				$(".loading").show();//打开展示层
-				$('#categoryId').css('display', '');
+				$('#lessCategoryId').css('display', '');
 				$.ajax({
 					type : "POST",   
 					url : "${ctx}/train/categorys/listtow?categoryId="+n,
 					dataType: 'json',
 					success: function(data) {
-						$("#categoryId").empty();
+						$("#lessCategoryId").empty();
 						$.each(data.listtow, function(index,item){
-							$("#categoryId").prepend("<option value='"+item.categoryId+"'>"+item.name+"</option>");
-							document.getElementById("categoryId").value=v;
+							if (item.categoryId == v) {
+								$("#lessCategoryId").prepend("<option value='"+item.categoryId+"' selected='selected'>"+item.name+"</option>");
+							}else{
+								$("#lessCategoryId").append("<option value='"+item.categoryId+"'>"+item.name+"</option>");
+							}
+							document.getElementById("lessCategoryId").value=v;
 						});
 						$(".loading").hide();//隐藏展示层
 					}
 				});   
-				document.getElementById("s1").value=n;
-			}else{
-				$("#categoryId").empty();
-				$('#categoryId').css('display', 'none');
+				document.getElementById("parentId").value=n;
 			}
 		}
 		//页面加载事件
 		$(document).ready(function() {
 			//默认加载显示后台传过来的值
-				categorychange($("#categoryid1").val(),$("#parentId").val());
+				var lessCateId = "${lessCategoryId}";
+				categorychange(lessCateId,$("#parentId").val());
 				if($("#examLessionMapping").val().length>0){
 					check($("#examLessionMapping").val());	
 				}
 		});
-		function addAllExam(){
-			$("#all").submit();
-		} */
-		//默认选中已添加的试题
-		/* function check(num){
-			var arr=new Array();
-            arr=num.split(',');//注split可以用字符或字符串分割
-            for(var i=0;i<arr.length;i++){
-          	  $("input[type=checkbox][name=exerciseId][value="+arr[i]+"]").attr("checked",'checked');
-          	  		if( $("input[type=checkbox][name=exerciseId][value="+arr[i]+"]").is(':checked')){
-          	  			//将当前页面复选框选中的值用，替代 
-          	  			num=num.replace($("input[type=checkbox][name=exerciseId][value="+arr[i]+"]").val(),",");  
-          	  		}
-          	  	document.getElementById("text").value=num;
-            } 
-        }  */
-		//重置
-		/* function nowreset(){
-			 $("#exerciseTitle").val(""); //清空
-			 $("#s1").val(""); //清空
-			 $("#categoryId").val(""); //清空
-			 $("#exerciseType").val(""); //清空
-			 $("#restNum").val("-1");
-		} */
 		$(function() {
 		    $('#treeTable thead tr th input.i-checks').on('ifChecked', function(event){ //ifCreated 事件应该在插件初始化之前绑定 
 		    	  $('#treeTable tbody tr td input.i-checks').iCheck('check');
@@ -146,27 +121,26 @@
                     	<!-- 分页隐藏文本框 -->
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-		 				<input id="parentId" name="parentId" value="${parentId}"  type="hidden"/>	<!-- 一级父类ID   -->
-		 				<input id="sonCategoryId" name="sonCategoryId" value="${sonCategoryId}" type="hidden"/>	<!--二级子类ID  -->
+		 				<%-- <input id="parentId" name="parentId" value="${parentId}"  type="hidden"/>	 --%><!-- 一级父类ID   -->
+		 				<input id="categoryId" name="categoryId" value="${categoryId}" type="hidden"/>	<!--课程分类ID  -->
 		 				<input id="lessonId" name="lessonId" value="${lessonsId}" type="hidden"/>  <!--添加课程习题 翻页是提交课程ID  -->
-		 				<input id="categoryId" name="categoryId" value="${categoryId}" type="hidden"/>  <!--添加单元试题 翻页是提交二级类别ID  -->
 						<input id="lessontype" name="lessontype" value="${lessontype}" type="hidden"/>	<!-- 判断课程习题还是单元试题 -->
 						<input type="hidden" name="restNum" id="restNum"><!-- 重置表单  为了不影响批量添加提交课程id -->
                         <div class="form-group">
-                            <label>关键字：<input id="exerciseTitle" name="exerciseTitle" type="text" value="${exerciseTitle}" class="form-control" placeholder="请输入关键字" maxlength="10"></label> 
+                            <label>关键字：<input id="exerciseTitle" name="exerciseTitle" type="text" value="${exercisesCategorys.exerciseTitle}" class="form-control" placeholder="请输入关键字" maxlength="10"></label> 
                             <!-- 下拉框二级联动 -->
-                            <select class="form-control" id="s1" name="s1" onchange="nowcategorychange(this.options[this.options.selectedIndex].value)">
+                            <select class="form-control" id="parentId" name="parentId" onchange="nowcategorychange(this.options[this.options.selectedIndex].value)">
                             	<option value="null">请选择分类</option>
 								<c:forEach items="${listone}" var="trainCategorys">
-									<option value="${trainCategorys.categoryId}">${trainCategorys.name}</option>
+									<option ${trainCategorys.categoryId == exercisesCategorys.parentId?'selected="selected"':'' } value="${trainCategorys.categoryId}">${trainCategorys.name}</option>
 								</c:forEach>
 							</select>
-							<select class="form-control" id="categoryId" name="name" ></select>
+							<select class="form-control" id="lessCategoryId" name="lessCategoryId" ></select>
 							<select class="form-control" id="exerciseType" name="exerciseType">
 								<option value=0>请选择试题类型</option>
 								<c:forEach items="${fns:getDictList('exercise_type')}" var="exercise_type">
 									<c:choose>
-										<c:when test="${exercise_type.value eq exerciseType}">
+										<c:when test="${exercise_type.value eq exercisesCategorys.exerciseType}">
 											<option value="${exercise_type.value }" selected="selected">${exercise_type.label }</option>
 										</c:when>
 										<c:otherwise>

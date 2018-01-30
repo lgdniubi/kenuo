@@ -81,7 +81,6 @@
 		$(function(){
 			var comId = "${user.company.id}";			
 			var ids = "${trainsBanner.soFranchiseeIds}".split(",");
-			alert(ids);
 			if (comId == '1') {
 				var setting = {check:{enable:true,autoCheckTrigger: true},view:{selectedMulti:false},
 						data:{simpleData:{enable:true}},callback:{beforeClick:function(id, node){
@@ -98,7 +97,7 @@
 					// 不选择父节点
 					tree2.setting.check.chkboxType = { "Y" : "", "N" : "" };
 					// 默认选择节点
-					if (ids.length > 0 && ids != '') {
+					if (ids.length > 0 && ids != '' && ids != '1') {
 						for(var i=0; i<ids.length; i++) {
 							var node = tree2.getNodeByParam("id", ids[i]);
 							try{tree2.checkNode(node, true, false);}catch(e){}

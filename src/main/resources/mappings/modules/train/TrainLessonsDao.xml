@@ -17,7 +17,9 @@
 			t.lesson_score AS 'lessonScore',
 			T.CREATETIME,
 			t.sort,
-			t.is_show AS isShow
+			t.is_show AS isShow,
+			t.office_id AS "franchisee.id",
+			t.show_type AS 'showType'
 		FROM
 			train_categorys c,
 			train_lessons t
@@ -41,8 +43,20 @@
 		<if test="parentId !='-1' and categoryId =='-1'">
 			AND t.category_id IN (SELECT category_id FROM train_categorys WHERE parent_id = #{parentId})
 		</if>
+		<if test="franchisee != null and franchisee.id != null and franchisee.id != ''">
+			AND t.office_id = #{franchisee.id}  
+		</if>
+		<if test="showType == 0">
+			AND t.show_type = #{showType}
+		</if>
+		<if test="showType == 1 or showType == 2">
+			AND t.show_type IN(#{showType},3)
+		</if>
+		<if test="showType == 3">
+			AND t.show_type = #{showType}
+		</if>
 			AND T.STATUS != -1
-		ORDER BY t.sort DESC,T.CREATETIME DESC
+		ORDER BY t.sort DESC
 	</select>
 
 	<!-- 查询单个信息 --><!-- cuoqu -->
@@ -58,7 +72,8 @@
 			t.lesson_type AS 'lessontype',
 			t.lesson_score AS 'lessonScore',
 			t.sort,
-			t.is_show AS isShow
+			t.is_show AS isShow,
+			t.show_type AS 'showType'
 		FROM
 			train_categorys c,
 			train_lessons t
@@ -92,7 +107,8 @@
 			LESSON_SCORE,
 			office_id,
 			sort,
-			is_show
+			is_show,
+			show_type
 		)
 		VALUES
 		(
@@ -109,7 +125,8 @@
 			#{lessonScore},
 			(SELECT office_id FROM trains.train_categorys WHERE category_id = #{trainCategorys.categoryId}),
 			#{sort},
-			#{isShow}
+			#{isShow},
+			#{showType}
 		)
 	</insert>
 	
@@ -123,7 +140,7 @@
 		  cover_pic = #{coverPic},
 		  introduce = #{introduce},
 		  lesson_type = #{lessontype},
-		  lesson_score = #{lessonScore},
+		  show_type = #{showType},
 		  office_id = (SELECT office_id FROM trains.train_categorys WHERE category_id = #{categoryId}),
 		  sort = #{sort},
 		  is_show = #{isShow}
