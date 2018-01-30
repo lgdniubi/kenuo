@@ -3765,6 +3765,7 @@ public class OrdersController extends BaseController {
 		try {
 			Page<OrdersLog> page = ordersLogService.editLog(new Page<OrdersLog>(request, response), ordersLog);
 			model.addAttribute("page", page);
+			model.addAttribute("orderid",ordersLog.getOrderid());
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "订单操作日志", e);
 			logger.error("订单操作日志：" + e.getMessage());

@@ -175,7 +175,7 @@
 									<option <c:if test="${(goods.minRatio == 0.91) && (goods.maxRatio == 1)}">selected="selected"</c:if> value="0.91-1">91%-100%</option>
 								</select>
 								&nbsp;&nbsp;
-								</div>
+							</div>
 								<!-- 分页必要字段 -->
 								<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 								<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
@@ -348,6 +348,7 @@
 			</div>
 		</div>
 		<div class="loading"></div>
+	</div>
 	</div>
 </body>
 </html>
