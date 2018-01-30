@@ -34,5 +34,5 @@ public interface OrdersLogDao extends TreeDao<OrdersLog>{
 	 * @param orderid
 	 * @return
 	 */
-	public List<OrdersLog> editLog(String orderid);
+	public List<OrdersLog> editLog(OrdersLog ordersLog);
 }
