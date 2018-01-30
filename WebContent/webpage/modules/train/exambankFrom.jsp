@@ -59,11 +59,8 @@
 		//页面加载事件
 		$(document).ready(function() {
 			//默认加载显示后台传过来的值
-				var lessCateId = "${lessCategoryId}";
-				categorychange(lessCateId,$("#parentId").val());
-				if($("#examLessionMapping").val().length>0){
-					check($("#examLessionMapping").val());	
-				}
+			var lessCateId = "${lessCategoryId}";
+			categorychange(lessCateId,$("#parentId").val());
 		});
 		$(function() {
 		    $('#treeTable thead tr th input.i-checks').on('ifChecked', function(event){ //ifCreated 事件应该在插件初始化之前绑定 

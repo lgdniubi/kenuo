@@ -6,12 +6,6 @@
    <%--  <link rel="stylesheet" href="${ctxStatic}/train/css/exam.css"> --%>
     <%-- <script type="text/javascript" src="${ctxStatic}/train/js/jquery-1.11.3.js"></script> --%>
     <script type="text/javascript">
-		function page(n,s){
-			$("#pageNo").val(n);
-			$("#pageSize").val(s);
-			$("#searchForm").submit();
-	    	return false;
-	    }
 		//一级分类改变事件，联动二级分类
 		function nowcategorychange(v){
 			if(v!="null"){
@@ -36,7 +30,7 @@
 		}
 		//显示后台传过来的值
 		function categorychange(v,n){
-			if((v !='')){
+			if(v !=''){
 				$(".loading").show();//打开展示层
 				$('#categoryId').css('display', '');
 				$.ajax({
@@ -65,11 +59,8 @@
 		//页面加载事件
 		$(document).ready(function() {
 			//默认加载显示后台传过来的值
-				categorychange($("#categoryId1").val(),$("#parentId").val());
-				if($("#examLessionMapping").val().length>0){
-					check($("#examLessionMapping").val());	
-				}
-		});
+			categorychange($("#categoryId1").val(),$("#parentId").val());
+		})
 		
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
         	var exerciseIds =  $('textarea').text();
@@ -82,6 +73,16 @@
 	     	  return true;
 			}
 			return false;
+		}
+		
+		function resetExam(){
+			$("#exerciseTitle").val('');
+			$("#parentId").empty();
+			$("#categoryId").empty();
+			$("#exerciseType").empty();
+			$("#pageNo").val('');
+			$("#pageSize").val('');
+			$("#searchForm").submit();
 		}
 	</script>
     <title>试题库</title>
@@ -106,7 +107,6 @@
                     	<!-- 分页隐藏文本框 -->
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-		 				<%-- <input id="parentId" name="parentId" value="${parentId}"  type="hidden"/> --%>	<!-- 一级父类ID   -->
 		 				<input id="categoryId1" name="ziCategoryId" value="${ziCategoryId}" type="hidden"/>	<!--二级子类ID  -->
 		 				<input id="lessonId" name="lessonId" value="${exercisesCategorys.lessonId}" type="hidden"/>  <!--添加课程习题 翻页是提交课程ID  -->
 						<input id="lessontype" name="lessontype" value="${exercisesCategorys.lessontype}" type="hidden"/>	<!-- 判断课程习题还是单元试题 -->
@@ -137,7 +137,7 @@
                         </div>
                         <div class="pull-right">
 							<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
-							<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()" ><i class="fa fa-refresh"></i> 重置</button>
+							<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="resetExam()" ><i class="fa fa-refresh"></i> 重置</button>
 						</div>
                     </form:form>
                 </div>
@@ -155,7 +155,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                		<input id="examLessionMapping" value="${examLessionMapping}" type="hidden"/>	<!-- 课程ID  -->
 	                    <c:forEach items="${page.list}" var="Exercises">
 	                        <tr style="text-align: center;">
 	                            <td><input type="checkbox" name="exerciseId" class="checkall" value="${Exercises.exerciseId}"></td>
@@ -193,7 +192,6 @@
 		<textarea rows="5px" cols="200px" name="exerciseId2"></textarea>
 	</form:form>
 	</div>
-	<script type="text/javascript" src="./js/bootstrap.js"></script>
 	<script type="text/javascript">
 	  //  $(function(){
 	   //     var $load = $('#loading');
