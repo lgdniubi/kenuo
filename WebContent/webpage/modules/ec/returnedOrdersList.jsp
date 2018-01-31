@@ -31,7 +31,7 @@
 							<th style="text-align: center;">用户名</th>
 							<th style="text-align: center;">订单状态</th>
 							<th style="text-align: center;">取消类型</th>
-							<th style="text-align: center;">支付金额</th>
+							<th style="text-align: center;">应付金额</th>
 							<th style="text-align: center;">商品种类</th>
 							<th style="text-align: center;">支付方式</th>
 							<th style="text-align: center;">创建类型</th>
