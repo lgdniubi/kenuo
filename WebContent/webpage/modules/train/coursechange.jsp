@@ -241,7 +241,7 @@
 		}
 		
 		$(function(){
-			if ($("#companyId").val() != '') {
+			if ($("#companyId").val() != '' && $("#parentId").val() == '-1') {
 				oneCategorys($("#companyId").val());
 			};
 		})
@@ -274,7 +274,7 @@
 								<select class="form-control" id="parentId" name="parentId" onchange="categorychange(this.options[this.options.selectedIndex].value)">
 									<option value="-1">请选择分类</option>
 									<c:forEach items="${listone}" var="trainCategorys">
-										<option ${trainCategorys.categoryId == trainLessons.parentId?'selected="selected"':'' } value="${trainCategorys.categoryId}">${trainCategorys.name}</option>
+											<option ${trainCategorys.categoryId == trainLessons.parentId?'selected="selected"':'' } value="${trainCategorys.categoryId}">${trainCategorys.name}</option>
 									</c:forEach>
 								</select>
 								<input type="hidden" id="categoryIdval" name="categoryIdval" value="${trainLessons.categoryId}"/>
@@ -285,9 +285,6 @@
 								<input id="beginDate" name="beginDate" type="text" class="datetimepicker form-control" value="<fmt:formatDate value="${trainLessons.beginDate}" pattern="yyyy-MM-dd HH:mm"/>" /> -- 
 								<input id="endDate" name="endDate" type="text" class="datetimepicker form-control" value="<fmt:formatDate value="${trainLessons.endDate}" pattern="yyyy-MM-dd HH:mm"/>" />
 								推荐类型：
-								<%-- <form:select path="showType"  class="form-control">
-									<form:options items="${fns:getDictList('lesson_show_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-								</form:select> --%>
 								<select class="form-control" id="showType" name="showType">
 									<option value='-1'>请选择推荐类型</option>
 									<c:forEach items="${fns:getDictList('lesson_show_type')}" var="show_type">
@@ -302,14 +299,6 @@
 									</c:forEach>
 								</select>
 							</div>
-							<%-- <shiro:hasPermission name="train:course:listcourse">
-								<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
-									<i class="fa fa-search"></i> 搜索
-								</button>
-								<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="resetnew()" >
-									<i class="fa fa-refresh"></i> 重置
-								</button>
-							</shiro:hasPermission> --%>
 							<!-- 分页必要字段 -->
 							<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 							<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
