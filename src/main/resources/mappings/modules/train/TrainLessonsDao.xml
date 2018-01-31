@@ -23,6 +23,9 @@
 		FROM
 			train_categorys c,
 			train_lessons t
+			<if test="franchisee != null and franchisee.id != null and franchisee.id != ''">
+				,(SELECT id FROM sys_office WHERE franchisee_id = #{franchisee.id} AND del_flag = 0) AS e
+			</if>
 		<!-- 数据范围过滤 -->
 		${sqlMap.dsf}	
 			AND t.category_id = c.category_id
@@ -44,7 +47,7 @@
 			AND t.category_id IN (SELECT category_id FROM train_categorys WHERE parent_id = #{parentId})
 		</if>
 		<if test="franchisee != null and franchisee.id != null and franchisee.id != ''">
-			AND t.office_id = #{franchisee.id}  
+			AND t.office_id = e.id 
 		</if>
 		<if test="showType == 0">
 			AND t.show_type = #{showType}

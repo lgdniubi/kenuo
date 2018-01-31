@@ -289,7 +289,7 @@
 									<form:options items="${fns:getDictList('lesson_show_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 								</form:select> --%>
 								<select class="form-control" id="showType" name="showType">
-									<!-- <option value='null'>请选择课程类型</option> -->
+									<option value='-1'>请选择推荐类型</option>
 									<c:forEach items="${fns:getDictList('lesson_show_type')}" var="show_type">
 										<c:choose>
 											<c:when test="${show_type.value eq trainLessons.showType}">
