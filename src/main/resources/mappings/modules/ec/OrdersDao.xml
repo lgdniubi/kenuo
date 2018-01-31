@@ -43,8 +43,8 @@
 		a.postal_code,
 		a.is_real,
 		b.nickname as "username",
-		COUNT(c.order_id) as "goodsnum"
-
+		COUNT(c.order_id) as "goodsnum",
+		a.office_id AS "officeId"
 	</sql>
 
 	<sql id="ordersJoins">
