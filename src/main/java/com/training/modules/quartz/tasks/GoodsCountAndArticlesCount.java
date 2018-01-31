@@ -4,7 +4,7 @@
  * 创建时间:	2017年6月19日 
  * 修改人:	
  * 修改时间:	2017年6月19日
- * 修改备注:	
+ * 修改备注:	2018/1/31	土豆	暂时注释,等待确认不需要时删除(商品统计还在使用.)
  * @Version
  */
 package com.training.modules.quartz.tasks;
@@ -12,19 +12,15 @@ package com.training.modules.quartz.tasks;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.training.common.utils.BeanUtil;
-import com.training.modules.ec.entity.ArticlesStatisticsCountData;
-import com.training.modules.ec.service.ArticlesStatisticsService;
 import com.training.modules.ec.service.GoodsStatisticsService;
 import com.training.modules.quartz.entity.TaskLog;
 import com.training.modules.quartz.tasks.utils.CommonService;
-import com.training.modules.quartz.tasks.utils.RedisConfig;
 import com.training.modules.sys.utils.QuartzStartConfigUtils;
 
 /**
@@ -40,11 +36,14 @@ public class GoodsCountAndArticlesCount extends CommonService {
 	private Logger logger = Logger.getLogger(GoodsCountAndArticlesCount.class);
 	private DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static GoodsStatisticsService goodsStatisticsService;
-	private static ArticlesStatisticsService articlesStatisticsService;
+	/*
+	 * 文章定时统计任务	2018/1/31	土豆	暂时注释,等待确认不需要时删除
+	private static ArticlesStatisticsService articlesStatisticsService;*/
 
 	static {
 		goodsStatisticsService = (GoodsStatisticsService) BeanUtil.getBean("goodsStatisticsService");
-		articlesStatisticsService = (ArticlesStatisticsService) BeanUtil.getBean("articlesStatisticsService");
+		/* 
+		 * articlesStatisticsService = (ArticlesStatisticsService) BeanUtil.getBean("articlesStatisticsService");*/
 	}
 
 	public void goodsCountAndArticlesCount() {
