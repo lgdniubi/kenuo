@@ -13,8 +13,13 @@
 	    	<div class="ibox-content">
 				<div class="tab-content" id="tab-content">
 	                <div class="tab-inner">
-		                <table id="contentTable" 
-		                	class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
+		                <form:form id="searchForm" action="${ctx}/ec/orders/editLog" style="width: 100%;" modelAttribute="goods" method="post" class="navbar-form navbar-left searcharea">
+							<input id="orderid" name="orderid" value="${orderid}" type="hidden">
+		               		<!-- 分页必要字段 -->
+							<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+							<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+		                </form:form>
+		                <table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 								<tr>
 									<th style="text-align: center;">时间</th>
 									<th style="text-align: center;">操作人</th>
@@ -54,6 +59,8 @@
 									</tr>
 								</c:forEach>
 						</table>
+						<!-- 分页代码 -->
+						<table:page page="${page}"></table:page>
 					</div>
 				</div>
 			</div>

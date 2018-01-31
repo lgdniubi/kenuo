@@ -68,6 +68,9 @@
 			create_date AS 'createDate',
 			(select name from trains.sys_user where id = create_by) AS 'createBy.name'
 		FROM mtmydb.mtmy_orders_operate_log
-		WHERE order_id = #{orderid}
+		WHERE 1=1
+		<if test="orderid != null and orderid != ''">
+			AND order_id = #{orderid}
+		</if>
 	</select>
 </mapper>

@@ -41,7 +41,7 @@ public class OrdersLogService extends TreeService<OrdersLogDao,OrdersLog> {
 		// 设置分页参数
 		ordersLog.setPage(page);
 		// 执行分页查询
-		page.setList(ordersLogDao.editLog(ordersLog.getOrderid()));
+		page.setList(ordersLogDao.editLog(ordersLog));
 		return page;
 	}
 	
