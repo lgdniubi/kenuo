@@ -24,9 +24,12 @@ import com.google.common.collect.Maps;
 import com.training.common.persistence.Page;
 import com.training.common.utils.DateUtils;
 import com.training.common.web.BaseController;
+import com.training.modules.ec.entity.Comment;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.Reservation;
+import com.training.modules.ec.entity.ReservationLog;
 import com.training.modules.ec.entity.Users;
+import com.training.modules.ec.service.CommentService;
 import com.training.modules.ec.service.OrderGoodsService;
 import com.training.modules.ec.service.ReservationService;
 import com.training.modules.ec.utils.WebUtils;
@@ -36,6 +39,7 @@ import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.service.SystemService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
+import com.training.modules.sys.utils.ThreadUtils;
 import com.training.modules.sys.utils.UserUtils;
 
 import net.sf.json.JSONArray;
@@ -57,6 +61,8 @@ public class MtmyMnappointmentController extends BaseController{
 	private OfficeService officeService;
 	@Autowired
 	private SystemService systemService;
+	@Autowired
+	private CommentService commentService;
 	/**
 	 * 预约管理
 	 * @param model
@@ -96,9 +102,10 @@ public class MtmyMnappointmentController extends BaseController{
 	@RequestMapping(value = "cancel")
 	public String cancel(Reservation reservation,HttpServletRequest request, HttpServletResponse response,Model model,RedirectAttributes redirectAttributes){
 		try {
+			User user = UserUtils.getUser(); // 当前登录人
 			String weburl = ParametersFactory.getMtmyParamValues("mtmy_delphysubscribe_url");
 			logger.info("##### web接口路径:"+weburl);
-			String parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"client\":\"bm\"}";
+			String parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"client\":\"bm\",\"update_by\":\""+user.getId()+"\",\"create_office_ids\":\""+user.getOffice().getParentIds()+user.getOffice().getId()+","+"\"}";
 			String url=weburl;
 			String result = WebUtils.postObject(parpm, url);
 			JSONObject jsonObject = JSONObject.fromObject(result);
@@ -313,18 +320,24 @@ public class MtmyMnappointmentController extends BaseController{
 				if("1".equals(reservation.getApptStatus())){
 					url = ParametersFactory.getMtmyParamValues("mtmy_finishSubscribeStatus");	//修改预约时间且状态为已完成
 					String appt_date = DateUtils.formatDate(reservation.getApptDate(), "yyyy-MM-dd");
-					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"appt_date\":\""+appt_date+"\",\"appt_start_time\":\""+reservation.getApptStartTime()+"\",\"appt_end_time\":\""+reservation.getApptEndTime()+"\",\"client\":\"bm\",\"remarks\":\""+reservation.getRemarks()+"\",\"update_by\":\""+user.getId()+"\"}";
+					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"appt_date\":\""+appt_date+"\",\"appt_start_time\":\""+reservation.getApptStartTime()+"\",\"appt_end_time\":\""+reservation.getApptEndTime()+"\",\"client\":\"bm\",\"remarks\":\""+reservation.getRemarks()+"\",\"update_by\":\""+user.getId()+"\",\"create_office_ids\":\""+user.getOffice().getParentIds()+user.getOffice().getId()+","+"\"}";
 					if(appt_date != null && !appt_date.equals(oldApptDate)){
 						adddata_log(oldApptDate, appt_date, request.getParameter("shopId"), request.getParameter("beauticianId"));
 					}
-					
 				}else if("3".equals(reservation.getApptStatus())){
 					url = ParametersFactory.getMtmyParamValues("mtmy_delphysubscribe_url");
-					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"client\":\"bm\"}";
+					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"client\":\"bm\",\"update_by\":\""+user.getId()+"\",\"create_office_ids\":\""+user.getOffice().getParentIds()+user.getOffice().getId()+","+"\"}";
 				}else{
 					url = ParametersFactory.getMtmyParamValues("mtmy_updateSubscribeStatus");	//修改预约状态
-					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"appt_status\":"+reservation.getApptStatus()+",\"client\":\"bm\",\"remarks\":\""+reservation.getRemarks()+"\",\"update_by\":\""+user.getId()+"\"}";
+					parpm = "{\"appt_id\":"+reservation.getReservationId()+",\"appt_status\":"+reservation.getApptStatus()+",\"client\":\"bm\",\"remarks\":\""+reservation.getRemarks()+"\",\"update_by\":\""+user.getId()+"\",\"create_office_ids\":\""+user.getOffice().getParentIds()+user.getOffice().getId()+","+"\"}";
 				}
+				
+				// 记录日志
+				if(!"3".equals(reservation.getApptStatus())){
+					Reservation oldReservation = reservationService.oneMnappointment(reservation);
+					ThreadUtils.saveLog(request, "修改预约", 2, 2,oldReservation,reservation);
+				}
+				
 				logger.info("##### web接口路径:"+url);
 				String result = WebUtils.postObject(parpm, url);
 				JSONObject jsonObject = JSONObject.fromObject(result);
@@ -500,7 +513,10 @@ public class MtmyMnappointmentController extends BaseController{
 	@RequestMapping(value = "editServiceTime")
 	public String editServiceTime(Reservation reservation, HttpServletRequest request, RedirectAttributes redirectAttributes){
 		try {
+			Reservation oldReservation = reservationService.oneMnappointment(reservation);
 			reservationService.editServiceTime(reservation);
+			// 保存操作日志
+			ThreadUtils.saveLog(request, "添加/修改实际服务时间", 2, 2,oldReservation,reservation);
 			addMessage(redirectAttributes, "预约管理  添加/修改实际服务时间'" + reservation.getReservationId() + "'成功");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "预约管理  添加/修改实际服务时间", e);
@@ -510,6 +526,77 @@ public class MtmyMnappointmentController extends BaseController{
 		return "redirect:" + adminPath + "/ec/mtmyMnappointment/mnappointment";
 	}
 	
+	/**
+	 * 查看美容师和店铺的评价
+	 * @param reservation
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "viewComments")
+	public String viewComments(Reservation reservation, Model model,HttpServletRequest request,RedirectAttributes redirectAttributes){
+		try {
+			List<Comment> beautyComment = commentService.queryBeautyForReservation(reservation.getReservationId());
+			List<Comment> shopComment = commentService.queryShopForReservation(reservation.getReservationId());
+			model.addAttribute("beautyComment",beautyComment);
+			model.addAttribute("shopComment",shopComment);
+			model.addAttribute("reservationId",reservation.getReservationId());
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "查看美容师和店铺的评价", e);
+			logger.error("查看美容师和店铺的评价错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "查看美容师和店铺的评价");
+		}
+		return "modules/ec/viewComments";
+	}
+	
+	/**
+	 * 回复美容师评论
+	 * @param comment
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value ="replybeautyComment")
+	public String replybeautyComment(Comment comment,HttpServletRequest request, HttpServletResponse response,Model model,RedirectAttributes redirectAttributes){
+		try {
+			User currentUser = UserUtils.getUser();
+			comment.setReplyId(currentUser.getId());
+			commentService.insterbeautyComment(comment);
+			//修改单个用户所涉及的商品评论
+			commentService.updateBeautyComment(comment);
+			addMessage(redirectAttributes, "回复用户评论成功");
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "回复美容师评论", e);
+			logger.error("回复美容师评论错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "回复美容师评论");
+		}
+		return "redirect:" + adminPath + "/ec/mtmyMnappointment/viewComments?reservationId="+comment.getReservationId();
+	}
+	
+	/**
+	 * 回复店铺评论
+	 * @param comment
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value ="replyShopComment")
+	public String replyShopComment(Comment comment,HttpServletRequest request, HttpServletResponse response,Model model,RedirectAttributes redirectAttributes){
+		try {
+			User currentUser = UserUtils.getUser();
+			comment.setReplyId(currentUser.getId());
+			commentService.insterShopComment(comment);
+			//修改单个用户所涉及的商品评论
+			commentService.updateShopComment(comment);
+			addMessage(redirectAttributes, "回复用户评论成功");
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "回复店铺评论", e);
+			logger.error("回复店铺评论错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "回复店铺评论");
+		}
+		return "redirect:" + adminPath + "/ec/mtmyMnappointment/viewComments?reservationId="+comment.getReservationId();
+	}
 	/**
 	 * 记录预约时间变更时,调用接口
 	 * @param oldApptDate
@@ -530,4 +617,19 @@ public class MtmyMnappointmentController extends BaseController{
 		}
 	}
 	
+	/**
+	 * 查询预约操作日志
+	 * @param reservationLog
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "findReservationLog")
+	public String findReservationLog(ReservationLog reservationLog,HttpServletRequest request, HttpServletResponse response,Model model) {
+		Page<ReservationLog> page=reservationService.findReservationLog(new Page<ReservationLog>(request, response), reservationLog);
+		model.addAttribute("page", page);
+		model.addAttribute("reservationLog", reservationLog);
+		return "modules/ec/mnappointmentLogForm";
+	}
 }

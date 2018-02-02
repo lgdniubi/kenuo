@@ -84,4 +84,26 @@
 		)
 	</insert>
 	
+	<!-- 记录保存日志时错误日志 -->
+	<insert id="insertSaveLog">
+		INSERT INTO `trains`.`saveLog_bug_log` (
+			`title`,
+			`content`,
+			`start_date`,
+			`end_date`,
+			`run_time`,
+			`create_by`,
+			`create_date`,
+			`exception_msg`
+		) VALUES (
+			#{title},
+			#{content},
+			#{startDate},
+			#{endDate},
+			#{runTime},
+			#{createBy.id},
+			SYSDATE(),
+			#{exceptionMsg}
+		)
+	</insert>
 </mapper>

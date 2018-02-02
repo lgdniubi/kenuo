@@ -87,4 +87,18 @@ public interface CommentDao extends CrudDao<Comment>{
 	 */
 	public void updateShopComment(Comment comment);
 	
+	/**
+	 * 查询某一预约下对美容师的评论
+	 * @param reservationId
+	 * @return
+	 */
+	public List<Comment> queryBeautyForReservation(int reservationId);
+	
+	/**
+	 * 查询某一预约下对店铺的评论
+	 * @param reservationId
+	 * @return
+	 */
+	public List<Comment> queryShopForReservation(int reservationId);
+	
 }

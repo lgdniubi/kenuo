@@ -9,6 +9,7 @@ import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.Orders;
+import com.training.modules.ec.entity.ReturnedGoods;
 
 /**
  * 创建订单dao
@@ -107,18 +108,11 @@ public interface OrderGoodsDao extends TreeDao<OrderGoods> {
 	public OrderGoods selectCardSonReservation(int recId);
 
 	/**
-	 * 根据组ID(mapping_id)获取卡项中的实物集合
+	 * 根据组ID(mapping_id)获取卡项中的子项集合
 	 * @param orderGoods
 	 * @return
 	 */
 	public List<OrderGoods> getOrderGoodsCard(OrderGoods orderGoods);
-
-	/**
-	 * 根据组ID(mapping_id)获取卡项中的after_sale_num
-	 * @param orderGoods
-	 * @return
-	 */
-	public List<OrderGoods> getAfterSaleNumByRid(OrderGoods orderGoods);
 
 	/**
 	 * 根据recid查询赠送云币数量
@@ -140,4 +134,38 @@ public interface OrderGoodsDao extends TreeDao<OrderGoods> {
 	 * @return
 	 */
 	public List<OrderGoods> selectOrderGoodsByOrderid(String orderId);
+
+	/**
+	 * 获取商品的实付金额和剩余服务次数
+	 * @param returnedGoods
+	 * @return
+	 */
+	public OrderGoods getTotalAmountAndTimes(ReturnedGoods returnedGoods);
+
+	/**
+	 * 实物:获取mapping表中的总购买数量
+	 * @param returnedGoods
+	 * @return
+	 */
+	public int getGoodsNum(ReturnedGoods returnedGoods);
+	/**
+	 * 获取该订单中商品总购买数量
+	 * @param returnedGoods
+	 * @return
+	 */
+	public List<OrderGoods> getOrderNum(ReturnedGoods returnedGoods);
+
+	/**
+	 * 获取实物子项的可售后数量(根据组ID(mapping_id)获取卡项中的实物集合)
+	 * @param orderGoods
+	 * @return
+	 */
+	public List<OrderGoods> getCardRealNum(OrderGoods orderGoods);
+	
+	/**
+	 * 根据mapping关联details查询订单的详情
+	 * @param orderId
+	 * @return
+	 */
+	public List<OrderGoods> findOrderDetails(String orderId);
 }

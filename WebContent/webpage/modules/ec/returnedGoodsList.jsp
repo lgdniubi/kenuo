@@ -199,6 +199,9 @@
 									<c:if test="${returnGoods.applyType==1}">
 										仅换货
 									</c:if>
+									<c:if test="${returnGoods.applyType==2}">
+										仅退款
+									</c:if>
 								</td>
 								<td style="text-align: center;">
 									<fmt:formatDate value="${returnGoods.applyDate}" pattern="yyyy-MM-dd HH:mm:ss" /> 
@@ -232,12 +235,12 @@
 									<c:if test="${returnGoods.isReal != 2 && returnGoods.isReal != 3}">	
 										<!-- 实物或者虚拟商品    售后 -->
 					 					<shiro:hasPermission name="ec:returned:view"> 
-					 						<a href="#" onclick="openDialogView('售后详情', '${ctx}/ec/returned/returnform?id=${returnGoods.id}','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看详情</a>
+					 						<a href="#" onclick="openDialogView('售后详情', '${ctx}/ec/returned/returnform?id=${returnGoods.id}&flag=view','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看详情</a>
 					 					</shiro:hasPermission>
 					 					<!-- 审核 -->
 										<shiro:hasPermission name="ec:returned:audit">
 											<c:if test="${returnGoods.returnStatus==11 or returnGoods.returnStatus==21}">
-												<a href="#" onclick="openDialog('审核售后申请', '${ctx}/ec/returned/returnform?id=${returnGoods.id}','850px','650px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>
+												<a href="#" onclick="openDialog('审核售后申请', '${ctx}/ec/returned/returnform?id=${returnGoods.id}&flag=edit','850px','650px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>
 											</c:if>
 											<c:if test="${returnGoods.returnStatus !=11 and returnGoods.returnStatus !=21}">
 												<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>审核</a>
@@ -248,12 +251,12 @@
 									<c:if test="${returnGoods.isReal==2 || returnGoods.isReal==3}">
 										<!-- 查看详情 -->
 					 					<shiro:hasPermission name="ec:returned:view"> 
-					 						<a href="#" onclick="openDialogView('售后详情', '${ctx}/ec/returned/returnformCard?id=${returnGoods.id}&flag=','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看详情</a>
+					 						<a href="#" onclick="openDialogView('售后详情', '${ctx}/ec/returned/returnformCard?id=${returnGoods.id}&flag=view','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看详情</a>
 					 					</shiro:hasPermission>
 					 					<!-- 审核 -->
 										<shiro:hasPermission name="ec:returned:audit">
 											<c:if test="${returnGoods.returnStatus==11 or returnGoods.returnStatus==21}">
-												<a href="#" onclick="openDialog('审核售后申请', '${ctx}/ec/returned/returnformCard?id=${returnGoods.id}&flag=${returnGoods.isReal}','850px','650px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>
+												<a href="#" onclick="openDialog('审核售后申请', '${ctx}/ec/returned/returnformCard?id=${returnGoods.id}&flag=edit','850px','650px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>
 											</c:if>
 											<c:if test="${returnGoods.returnStatus !=11 and returnGoods.returnStatus !=21}">
 												<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>审核</a>
@@ -332,7 +335,20 @@
 											</c:if>
 										</c:if>
 									</shiro:hasPermission>
-									
+									<shiro:hasPermission name="ec:returned:afterSaleOrders">
+									<c:if test="${returnGoods.returnStatus==12 || returnGoods.returnStatus==13 || returnGoods.returnStatus==14 || (returnGoods.returnStatus==15 && returnGoods.problemDesc != '强制取消' && returnGoods.returnReason != '强制取消' && returnGoods.remarks != '强制取消') || returnGoods.returnStatus==16 || returnGoods.returnStatus==22 || returnGoods.returnStatus==23 || returnGoods.returnStatus==24 || returnGoods.returnStatus==25 || returnGoods.returnStatus==26}">
+										<div class="btn-group">
+											<button type="button" class="btn btn-success dropdown-toggle btn-xs" data-toggle="dropdown">售后转单<span class="caret"></span>
+											</button>
+											<ul class="dropdown-menu" role="menu">
+												<li><a href="#" onclick="openDialog('售后转虚拟订单', '${ctx}/ec/orders/afterSaleOrdersForm?returnedId=${returnGoods.id}&mobile=${returnGoods.mobile}&username=${returnGoods.userName}&userid=${returnGoods.userId}','900px','650px')"  class="btn" ><i class="fa fa-edit"></i>售后转虚拟订单</a></li>
+												<li><a href="#" onclick="openDialog('售后转实物订单', '${ctx}/ec/orders/afterSaleKindOrdersForm?returnedId=${returnGoods.id}&mobile=${returnGoods.mobile}&username=${returnGoods.userName}&userid=${returnGoods.userId}','900px','650px')"  class="btn" ><i class="fa fa-edit"></i>售后转实物订单</a></li>
+												<li><a href="#" onclick="openDialog('售后转套卡订单', '${ctx}/ec/orders/afterSaleSuitCardOrdersForm?returnedId=${returnGoods.id}&mobile=${returnGoods.mobile}&username=${returnGoods.userName}&userid=${returnGoods.userId}','900px','650px')"  class="btn" ><i class="fa fa-edit"></i>售后转套卡订单</a></li>
+												<li><a href="#" onclick="openDialog('售后转通用卡订单', '${ctx}/ec/orders/afterSaleCommonCardOrdersForm?returnedId=${returnGoods.id}&mobile=${returnGoods.mobile}&username=${returnGoods.userName}&userid=${returnGoods.userId}','900px','650px')"  class="btn" ><i class="fa fa-edit"></i>售后转通用卡订单</a></li>
+											</ul>
+										</div>
+									</c:if>
+									</shiro:hasPermission>	
 								</td>
 							</tr>
 						</c:forEach>

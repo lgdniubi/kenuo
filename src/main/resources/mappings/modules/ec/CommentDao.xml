@@ -336,4 +336,44 @@
 			id = #{parentId}
 			OR parent_id = #{parentId}
 	</update>
+	
+	<!-- 查询某一预约下对美容师的评论 -->
+	<select id="queryBeautyForReservation" resultType="Comment">
+		SELECT 
+			mbc.comm_id AS commentId,
+			mbc.beauty_id AS beautyId,
+			mbc.user_id AS userId,
+			mbc.is_show AS isShow,
+			mbc.content AS contents,
+			mbc.img,
+			mbc.beauty_rank AS goodsRank,
+			mbc.add_time AS addTime,
+			mbc.parent_id AS parentId,
+			(select mu.nickname from mtmydb.mtmy_users mu where mu.user_id = mbc.user_id) AS 'users.name',
+			(select su.name from trains.sys_user su where su.id = mbc.beauty_id) AS 'user.name'
+		FROM mtmydb.mtmy_beauty_comment mbc
+		WHERE mbc.reservation_id = #{reservationId}
+		AND mbc.parent_id = 0
+		ORDER BY mbc.add_time DESC
+	</select>
+	
+	<!-- 查询某一预约下对店铺的评论 -->
+	<select id="queryShopForReservation" resultType="Comment">
+		SELECT 
+			msc.id AS commentId,
+			msc.parent_id AS parentId,
+			msc.shop_id AS shopId,
+			msc.appt_order_id AS apptOrderId,
+			msc.user_id AS userId,
+			msc.contents,
+			msc.img,
+			msc.is_show AS isShow,
+			msc.create_date AS addTime,
+			(select mu.nickname from mtmydb.mtmy_users mu where mu.user_id = msc.user_id) AS 'users.name',
+			(select o.name from trains.sys_office o where o.id = msc.shop_id) AS 'shopName'
+		FROM mtmydb.mtmy_shop_comment msc
+		WHERE msc.appt_order_id = #{reservationId}
+		AND msc.parent_id = 0
+		ORDER BY msc.create_date DESC
+	</select>
 </mapper>

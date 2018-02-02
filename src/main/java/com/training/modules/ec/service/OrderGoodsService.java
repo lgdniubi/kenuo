@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.training.common.service.TreeService;
 import com.training.modules.ec.dao.OrderGoodsDao;
 import com.training.modules.ec.entity.OrderGoods;
+import com.training.modules.ec.entity.ReturnedGoods;
 
 /**
  * 订单商品信息service
@@ -86,12 +87,12 @@ public class OrderGoodsService extends TreeService<OrderGoodsDao,OrderGoods>{
 	}
 
 	/**
-	 * 根据组ID(mapping_id)获取卡项中的实物集合
+	 * 获取实物子项的可售后数量(根据组ID(mapping_id)获取卡项中的实物集合)
 	 * @param orderGoods
 	 * @return
 	 */
-	public List<OrderGoods> getOrderGoodsCard(OrderGoods orderGoods) {
-		return orderGoodsDao.getOrderGoodsCard(orderGoods);
+	public List<OrderGoods> getCardRealNum(OrderGoods orderGoods) {
+		return orderGoodsDao.getCardRealNum(orderGoods);
 	}
 
 	/**
@@ -103,4 +104,30 @@ public class OrderGoodsService extends TreeService<OrderGoodsDao,OrderGoods>{
 		return orderGoodsDao.cardOrderid(og);
 	}
 
+	/**
+	 * 获取商品的实付金额和剩余服务次数
+	 * @param returnedGoods
+	 * @return
+	 */
+	public OrderGoods getTotalAmountAndTimes(ReturnedGoods returnedGoods) {
+		return orderGoodsDao.getTotalAmountAndTimes(returnedGoods);
+	}
+
+	/**
+	 * 实物:获取mapping表中的总购买数量
+	 * @param returnedGoods
+	 * @return
+	 */
+	public int getGoodsNum(ReturnedGoods returnedGoods) {
+		return orderGoodsDao.getGoodsNum(returnedGoods);
+	}
+	
+	/**
+	 * 根据mapping关联details查询订单的详情
+	 * @param orderId
+	 * @return
+	 */
+	public List<OrderGoods> findOrderDetails(String orderId){
+		return orderGoodsDao.findOrderDetails(orderId);
+	}
 }

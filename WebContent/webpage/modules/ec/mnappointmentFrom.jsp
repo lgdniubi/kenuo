@@ -168,6 +168,9 @@
 						</tr>
 					</table>
 				</form:form>
+				<shiro:hasPermission name="ec:mtmyMnappointment:editLog">
+					<a href="#" onclick="openDialogView('预约操作日志', '${ctx}/ec/mtmyMnappointment/findReservationLog?reservationId=${reservation.reservationId }','800px','650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>预约操作日志</a>
+				</shiro:hasPermission>
 			</div>
 		</div>
 	</div>

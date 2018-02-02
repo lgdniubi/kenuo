@@ -106,6 +106,14 @@ public class Goods extends DataEntity<Goods> {
 	private String positionId;			//项目部位ID
 	private String positionIds;		//项目部位IDS（以下划线隔开）
 	
+	private List<String> cityIds;    //城市异价商品的归属城市
+	private int isRatio;          //是否参与了城市异价（0：否，1：是）
+	
+	private String whetherRatio;        //查询条件是否参加了城市异价
+	private String newRatio;           //异价比例（list页面查询条件用）
+	private double minRatio;           //异价比例的小值
+	private double maxRatio;           //异价比例的大值
+	
 	/**
 	 * get/set
 	 */
@@ -541,6 +549,41 @@ public class Goods extends DataEntity<Goods> {
 	public void setRegionId(String regionId) {
 		this.regionId = regionId;
 	}
-	
+	public List<String> getCityIds() {
+		return cityIds;
+	}
+	public void setCityIds(List<String> cityIds) {
+		this.cityIds = cityIds;
+	}
+	public int getIsRatio() {
+		return isRatio;
+	}
+	public void setIsRatio(int isRatio) {
+		this.isRatio = isRatio;
+	}
+	public String getNewRatio() {
+		return newRatio;
+	}
+	public void setNewRatio(String newRatio) {
+		this.newRatio = newRatio;
+	}
+	public double getMinRatio() {
+		return minRatio;
+	}
+	public void setMinRatio(double minRatio) {
+		this.minRatio = minRatio;
+	}
+	public double getMaxRatio() {
+		return maxRatio;
+	}
+	public void setMaxRatio(double maxRatio) {
+		this.maxRatio = maxRatio;
+	}
+	public String getWhetherRatio() {
+		return whetherRatio;
+	}
+	public void setWhetherRatio(String whetherRatio) {
+		this.whetherRatio = whetherRatio;
+	}
 	
 }

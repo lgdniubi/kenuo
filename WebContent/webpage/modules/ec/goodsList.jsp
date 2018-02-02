@@ -115,15 +115,14 @@
 										<option ${(list.actionId == goods.actionId)?'selected="selected"':''} value="${list.actionId}">${list.actionName}</option>
 									</c:forEach>
 			                    </select>
-			                </div>
-			                <div class="form-group" style="width: 100%;margin-top: 5px;">
-			                	上架/下架：
+			                	&nbsp;&nbsp;上架/下架：
 								<select class="form-control" style="text-align: center;width: 150px;" id="isOnSale" name="isOnSale">
 									<option value="-1" ${(goods.isOnSale == '-1')?'selected="selected"':''}>全部</option>
 									<option value="1" ${(goods.isOnSale == '1')?'selected="selected"':''}>上架</option>
 									<option value="0" ${(goods.isOnSale == '0')?'selected="selected"':''}>下架</option>
 								</select>
-								&nbsp;&nbsp;推荐：
+								<p></p>
+								推荐：
 								<select class="form-control" style="text-align: center;width: 150px;" id="isRecommend" name="isRecommend">
 									<option value="-1" ${(goods.isRecommend == '-1')?'selected="selected"':''}>全部</option>
 									<option value="1" ${(goods.isRecommend == '1')?'selected="selected"':''}>是</option>
@@ -155,7 +154,62 @@
 									<option value="2" ${(goods.isReal == '2')?'selected="selected"':''}>套卡</option>
 									<option value="3" ${(goods.isReal == '3')?'selected="selected"':''}>通用卡</option>
 								</select>
+								&nbsp;&nbsp;是否异价：
+								<select class="form-control" style="text-align: center;width: 150px;" id="whetherRatio" name="whetherRatio">
+									<option value="">全部</option>
+									<option value="0" ${(goods.whetherRatio == '0')?'selected="selected"':''}>否</option>
+									<option value="1" ${(goods.whetherRatio == '1')?'selected="selected"':''}>是</option>
+								</select>
+								&nbsp;&nbsp;异价比例：
+								<select class="form-control" style="text-align: center;width: 150px;" id="newRatio" name="newRatio">
+									<option value="">全部</option>
+									<option <c:if test="${(goods.minRatio == 0.01) && (goods.maxRatio == 0.1)}">selected="selected"</c:if> value="0.01-0.1">1%-10%</option>
+									<option <c:if test="${(goods.minRatio == 0.11) && (goods.maxRatio == 0.2)}">selected="selected"</c:if> value="0.11-0.2">11%-20%</option>
+									<option <c:if test="${(goods.minRatio == 0.21) && (goods.maxRatio == 0.3)}">selected="selected"</c:if> value="0.21-0.3">21%-30%</option>
+									<option <c:if test="${(goods.minRatio == 0.31) && (goods.maxRatio == 0.4)}">selected="selected"</c:if> value="0.31-0.4">31%-40%</option>
+									<option <c:if test="${(goods.minRatio == 0.41) && (goods.maxRatio == 0.5)}">selected="selected"</c:if> value="0.41-0.5">41%-50%</option>
+									<option <c:if test="${(goods.minRatio == 0.51) && (goods.maxRatio == 0.6)}">selected="selected"</c:if> value="0.51-0.6">51%-60%</option>
+									<option <c:if test="${(goods.minRatio == 0.61) && (goods.maxRatio == 0.7)}">selected="selected"</c:if> value="0.61-0.7">61%-70%</option>
+									<option <c:if test="${(goods.minRatio == 0.71) && (goods.maxRatio == 0.8)}">selected="selected"</c:if> value="0.71-0.8">71%-80%</option>
+									<option <c:if test="${(goods.minRatio == 0.81) && (goods.maxRatio == 0.9)}">selected="selected"</c:if> value="0.81-0.9">81%-90%</option>
+									<option <c:if test="${(goods.minRatio == 0.91) && (goods.maxRatio == 1)}">selected="selected"</c:if> value="0.91-1">91%-100%</option>
+								</select>
 								&nbsp;&nbsp;
+							</div>
+								<!-- 分页必要字段 -->
+								<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+								<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+						</form:form>
+					</div>
+					<!-- 工具栏 -->
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="pull-left">
+								<shiro:hasPermission name="ec:goods:add">
+									<a href="${ctx}/ec/goods/form?opflag=ADDPARENT">
+										<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" ><i class="fa fa-plus"></i> 添加商品</button>
+									</a>
+									<a href="${ctx}/ec/goods/form?opflag=ADDSUIT">
+										<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" ><i class="fa fa-plus"></i> 添加套卡</button>
+									</a>
+									<a href="${ctx}/ec/goods/form?opflag=ADDCOMMON">
+										<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" ><i class="fa fa-plus"></i> 添加通用卡</button>
+									</a>
+								</shiro:hasPermission>
+								<shiro:hasPermission name="ec:goods:updateIsOnSale">
+									<button onclick="update('${ctx}/ec/goods/updateIsOnSale?flag=1')" class="btn btn-white btn-sm"><i class="fa fa-file-text-o"></i> 上架</button>
+									<button onclick="update('${ctx}/ec/goods/updateIsOnSale?flag=2')" class="btn btn-white btn-sm"><i class="fa fa-file-text-o"></i> 下架</button>
+								</shiro:hasPermission>
+								<shiro:hasPermission name="ec:goods:updateIsRecommend">
+									<button onclick="update('${ctx}/ec/goods/updateIsOnSale?flag=3')" class="btn btn-white btn-sm"><i class="fa fa-file-text-o"></i> 是推荐</button>
+									<button onclick="update('${ctx}/ec/goods/updateIsOnSale?flag=4')" class="btn btn-white btn-sm"><i class="fa fa-file-text-o"></i> 否推荐</button>
+								</shiro:hasPermission>
+								<shiro:hasPermission name="ec:goods:generateStaticIndex">
+									<a href="#" onclick="openDialog('主页静态化', '${ctx}/ec/staticIndex/previews','600px', '500px')" class="btn btn-white btn-sm"><i class="fa fa-folder-open-o"></i>主页静态化</a>
+								</shiro:hasPermission>
+								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新"><i class="glyphicon glyphicon-repeat"></i> 刷新</button>
+							</div>
+							<div class="pull-right">
 								<shiro:hasPermission name="ec:goods:list">
 									<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
 										<i class="fa fa-search"></i> 搜索
@@ -164,39 +218,7 @@
 										<i class="fa fa-refresh"></i> 重置
 									</button>
 								</shiro:hasPermission>
-								<!-- 分页必要字段 -->
-								<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
-								<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 							</div>
-						</form:form>
-					</div>
-					<!-- 工具栏 -->
-					<div class="row">
-						<div class="col-sm-12">
-							<shiro:hasPermission name="ec:goods:add">
-								<a href="${ctx}/ec/goods/form?opflag=ADDPARENT">
-									<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" ><i class="fa fa-plus"></i> 添加商品</button>
-								</a>
-								<a href="${ctx}/ec/goods/form?opflag=ADDSUIT">
-									<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" ><i class="fa fa-plus"></i> 添加套卡</button>
-								</a>
-								<a href="${ctx}/ec/goods/form?opflag=ADDCOMMON">
-									<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" ><i class="fa fa-plus"></i> 添加通用卡</button>
-								</a>
-							</shiro:hasPermission>
-							<shiro:hasPermission name="ec:goods:updateIsOnSale">
-								<button onclick="update('${ctx}/ec/goods/updateIsOnSale?flag=1')" class="btn btn-white btn-sm"><i class="fa fa-file-text-o"></i> 上架</button>
-								<button onclick="update('${ctx}/ec/goods/updateIsOnSale?flag=2')" class="btn btn-white btn-sm"><i class="fa fa-file-text-o"></i> 下架</button>
-							</shiro:hasPermission>
-							<shiro:hasPermission name="ec:goods:updateIsRecommend">
-								<button onclick="update('${ctx}/ec/goods/updateIsOnSale?flag=3')" class="btn btn-white btn-sm"><i class="fa fa-file-text-o"></i> 是推荐</button>
-								<button onclick="update('${ctx}/ec/goods/updateIsOnSale?flag=4')" class="btn btn-white btn-sm"><i class="fa fa-file-text-o"></i> 否推荐</button>
-							</shiro:hasPermission>
-							<shiro:hasPermission name="ec:goods:generateStaticIndex">
-								<a href="#" onclick="openDialog('主页静态化', '${ctx}/ec/staticIndex/previews','600px', '500px')" class="btn btn-white btn-sm"><i class="fa fa-folder-open-o"></i>主页静态化</a>
-							</shiro:hasPermission>
-							<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新"><i class="glyphicon glyphicon-repeat"></i> 刷新</button>
-						</div>
 					</div>
 					<table id="treeTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
 						<thead>
@@ -290,7 +312,7 @@
 										</c:if>
 										<c:if test="${goods.isReal == 2 || goods.isReal == 3}">
 											<shiro:hasPermission name="ec:goods:view">
-				    							<a href="${ctx}/ec/goods/formCard?id=${goods.goodsId}&isReal=${goods.isReal}" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 查看</a>
+				    							<a href="${ctx}/ec/goods/formCard?id=${goods.goodsId}&isReal=${goods.isReal}" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 						    				</shiro:hasPermission>
 										</c:if>
 					    				<shiro:hasPermission name="ec:goods:del">
@@ -326,6 +348,7 @@
 			</div>
 		</div>
 		<div class="loading"></div>
+	</div>
 	</div>
 </body>
 </html>
