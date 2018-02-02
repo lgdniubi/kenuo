@@ -67,11 +67,13 @@
 		a.shipping_code,
 		a.shipping_time,
 		a.shipper_date,
-		<!-- a.belong_user_id,
-		a.belong_office_id, -->
 		e.`name` as "hoseName",
 		e.governor,
-		e.address
+		e.address,
+		a.channel_flag AS 'channelFlag',
+		a.receive_name,
+		a.receive_account,
+		a.return_type
 	</sql>
 	<sql id="returnJion">
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.goods_mapping_id=b.rec_id
@@ -82,55 +84,153 @@
 	<!-- 根据编号 -->
 	<select id="get" resultType="ReturnedGoods">
 		SELECT
-			<include refid="returnColunm"/>
-			<!-- (select so.name from sys_office so where so.id = a.belong_office_id) as belongOfficeName,
-			(select su.name from sys_user su where su.id = a.belong_user_id) as belongUserName -->
+			a.id,
+			a.order_id,
+			a.goods_mapping_id,
+			b.goods_id,
+			b.goods_name as "goodsName",
+			b.goods_num as "goodsNum",
+			b.spec_key,
+			b.spec_key_name as "specName",
+			b.cost_price AS "costPrice",
+			b.market_price AS "marketPrice",
+			b.goods_price AS "goodsPrice",
+			b.ratio,
+			b.ratio_price as "ratioPrice",
+			SUM(f.app_total_amount) AS 'totalAmount',
+			b.order_amount as "orderAmount",
+			b.order_balance,
+			b.order_arrearage,
+			b.service_times as "serviceTimes",
+			a.user_id,
+			d.nickname as "userName",
+			d.mobile,
+			b.is_real,
+			a.problem_desc as "problemDesc",
+			a.refusal_cause as "refusalCause",
+			a.audit_by,
+			a.audit_date,
+			a.apply_type,
+			a.return_num,
+			a.apply_date,
+			a.return_reason,
+			a.return_amount,
+			a.warehouse_id,
+			a.is_storage,
+			a.return_status,
+			a.receipt_by,
+			a.financial_by,
+			a.update_by,
+			a.update_date,
+			a.office_id,
+			a.remarks,
+			a.shipper_by,
+			a.consigner_name,
+			a.consigner_address,
+			a.consigner_shipping_name,
+			a.consigner_shipping_code,
+			a.consigner_shipping_time,
+			a.consigner_shipping_img,
+			a.shipping_name,
+			a.shipping_code,
+			a.shipping_time,
+			a.shipper_date,
+			e.`name` as "hoseName",
+			e.governor,
+			e.address,
+			a.channel_flag AS 'channelFlag',
+			a.receive_name,
+			a.receive_account,
+			a.return_type
 		FROM mtmydb.mtmy_returned_goods a
-		<include refid="returnJion"/>
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.goods_mapping_id=b.rec_id
+		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
+		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
+		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
+		LEFT JOIN mtmydb.mtmy_order_goods_details f ON a.order_id=f.order_id AND a.goods_mapping_id = f.goods_mapping_id
 		WHERE 
-		a.id = #{id} and a.del_flag=0
+			a.id = #{id} AND a.del_flag = 0 
 	</select>
-	<!-- 查询订单已经售后成功的次数 -->
+	<!-- 查询订单中商品已经售后成功的个数 -->
 	<select id="getReturnedGoods" resultType="int">
 		SELECT
 			COUNT(1)
 		FROM mtmydb.mtmy_returned_goods 
 		WHERE 
-			return_status != -10 
-		AND return_status != 11 
+			return_status IN (12,13,14,15,16) 
 		AND del_flag = 0 
 		AND order_id= #{orderId}
 		AND goods_mapping_id= #{goodsMappingId}
 	</select>
-	<!-- 查询订单是否正在售后 或者 已经售后 的个数 -->
+	<!-- 查询订单中商品正在售后 或者 已经售后 的个数 -->
 	<select id="getReturnGoodsNum" resultType="int">
 		SELECT
 			COUNT(1)
 		FROM mtmydb.mtmy_returned_goods 
 		WHERE 
-			return_status != -10 
+			return_status IN (11,12,13,14,15,16)
 		AND del_flag = 0 
 		AND order_id= #{orderId}
 		AND goods_mapping_id= #{goodsMappingId}
 	</select>
-	<!-- 根据编号 -->
+	<!-- 查询订单中商品正在售后 或者 已经售后 的个数(但不包含自身.平预约金和平欠款用到) -->
+	<select id="getReturnSaleNum" resultType="int">
+		SELECT
+			COUNT(1)
+		FROM mtmydb.mtmy_returned_goods 
+		WHERE 
+			return_status IN (11,12,13,14,15,16)
+		AND del_flag = 0 
+		AND order_id= #{orderId}
+		AND goods_mapping_id= #{goodsMappingId}
+		AND id != #{id}
+	</select>
+	<!-- 根据售后id查询子项实物商品的售后数量 -->
 	<select id="getRealnum" resultType="ReturnedGoods">
 		SELECT 
-			id,
-			returned_id AS 'returnedId',
-			mapping_id AS 'goodsMappingId',
-			is_real AS 'isReal',
-			return_num AS 'returnNum',
-			goods_name AS 'goodsName'
-		FROM mtmydb.mtmy_returned_goods_card 
+			a.mapping_id AS 'goodsMappingId',
+			a.returned_id AS 'returnedId',
+			a.goods_name AS 'goodsName',
+			b.goods_num AS 'goodsNum',
+			SUM(a.return_num) AS 'returnNum'
+		FROM mtmydb.mtmy_returned_goods_card a 
+		LEFT JOIN  mtmydb.mtmy_order_goods_mapping b ON a.mapping_id = b.rec_id
 		WHERE
-			returned_id = #{id}
-		AND is_real = 0
+			a.returned_id = #{id}
+		AND a.is_real = 0
+		GROUP BY a.mapping_id
+	</select>
+	<!-- 根据售后id查询套卡子项商品的售后数量(套卡只能售后一次,所以此时的售后数量没有进行SUM) -->
+	<select id="getSuitCard" resultType="ReturnedGoods">
+		SELECT 
+			a.returned_id AS 'returnedId',
+			a.mapping_id AS 'goodsMappingId',
+			a.is_real AS 'isReal',
+			a.return_num AS 'returnNum',
+			a.goods_name AS 'goodsName'
+		FROM mtmydb.mtmy_returned_goods_card a 
+		WHERE
+			a.returned_id = #{id}
+	</select>
+	<!-- 根据商品id查询不是当前售后订单id的实物售后数量 -->
+	<select id="getRealReturnNum" resultType="int">
+		SELECT 
+			IFNULL(SUM(a.return_num),0) AS 'goodsNum'
+		FROM mtmydb.mtmy_returned_goods_card a 
+		LEFT JOIN  mtmydb.mtmy_order_goods_mapping b ON a.mapping_id = b.rec_id
+		LEFT JOIN  mtmydb.mtmy_returned_goods c ON a.returned_id = c.id
+		WHERE
+			a.mapping_id = #{goodsMappingId}
+		AND a.returned_id != #{returnedId}
+		AND a.is_real = 0
+		AND c.return_status NOT IN (-10,-20,26)
 	</select>
 	<!-- 查询套卡子项虚拟商品的剩余次数(购买次数-预约次数) -->
 	<select id="getReturnNum" resultType="ReturnedGoods">
 		SELECT 
-			a.rec_id as 'goodsMappingId',
+			a.rec_id AS 'goodsMappingId',
+			a.is_real AS 'isReal',
+			a.goods_name AS 'goodsName',
 			(a.service_times -IFNULL(b.returnNum,0)) AS 'returnNum'
 		FROM 
 			mtmydb.mtmy_order_goods_mapping a LEFT JOIN (SELECT goods_mapping_id,count(1) returnNum FROM mtmydb.mtmy_appt_order WHERE appt_status in (0,1,2,4) GROUP BY goods_mapping_id) b ON a.rec_id = b.goods_mapping_id
@@ -142,17 +242,6 @@
 			a.is_real = 1
 		GROUP BY
 			a.rec_id
-	</select>
-	<!-- 查询出通用卡的售后次数(detail表中的service_times - appt_order表中的预约次数) -->
-	<select id="getCommonNum" resultType="ReturnedGoods">
-		SELECT
-			a.goods_mapping_id AS 'goodsMappingId',
-			SUM(a.service_times) AS 'serviceTimes'
-		FROM
-			mtmydb.mtmy_order_goods_details a
-		WHERE
-			a.order_id = #{orderId}
-		AND a.goods_mapping_id = #{goodsMappingId}
 	</select>
 	<!-- 获取订单商品中的已退款金额 -->
 	<select id="getSurplusReturnAmount" resultType="Double">
@@ -277,23 +366,21 @@
 		GROUP BY
 			r.department_id,r.user_id
 	</select>
-	<!-- 修改套卡子项虚拟商品的剩余次数 -->
+	<!-- 修改子项商品的售后数量 -->
 	<update id="updateCardNum">
 		UPDATE mtmydb.mtmy_returned_goods_card SET
-			return_num=#{returnNum}
+			return_num=(return_num + (#{returnNum}))
 		WHERE mapping_id=#{goodsMappingId}
 		AND returned_id = #{returnedId}
-	</update>
-	<!-- 修改通用卡的售后次数 -->
-	<update id="updateCommonNum">
-		UPDATE mtmydb.mtmy_returned_goods SET
-			return_num=#{serviceTimes}
-		WHERE id=#{id} 
-		AND goods_mapping_id = #{goodsMappingId}
 	</update>
 	<!-- 审核 -->
 	<update id="saveEdite">
 		UPDATE mtmydb.mtmy_returned_goods SET
+			apply_type=#{applyType},
+			return_num=#{returnNum},
+			receive_name=#{receiveName},
+			receive_account=#{receiveAccount},
+			return_type=#{returnType},
 			return_status=#{returnStatus},
 			return_amount=#{returnAmount},
 			refusal_cause=#{refusalCause},
@@ -391,7 +478,11 @@
 			<!-- belong_user_id,
 			belong_office_id, -->
 			return_status,
-			apply_by
+			apply_by,
+			channel_flag,
+			return_type,
+			receive_name,
+			receive_account
 		)VALUES(
 			#{id},
 			#{orderId},
@@ -411,7 +502,11 @@
 			<!-- #{belongUserId},
 			#{belongOfficeId}, -->
 			#{returnStatus},
-			#{applyBy}
+			#{applyBy},
+			#{channelFlag},
+			#{returnType},
+			#{receiveName},
+			#{receiveAccount}
 		)
 	</insert>
 	<!-- 强制取消 -->
@@ -434,7 +529,9 @@
 			office_id,
 			remarks,
 			return_status,
-			is_storage
+			is_storage,
+			apply_by,
+			channel_flag
 		)VALUES(
 			#{id},
 			#{orderId},
@@ -452,18 +549,79 @@
 			#{officeId},
 			#{remarks},
 			#{returnStatus},
-			#{isStorage}
+			#{isStorage},
+			#{applyBy},
+			#{channelFlag}
 		)
 	</insert>
 	<!-- 分页查询 -->
 	<select id="findList" resultType="ReturnedGoods">
 		SELECT
-			<include refid="returnColunm"/>
+			a.id,
+			a.order_id,
+			a.goods_mapping_id,
+			b.goods_id,
+			b.goods_name as "goodsName",
+			b.goods_num as "goodsNum",
+			b.spec_key,
+			b.spec_key_name as "specName",
+			b.cost_price,
+			b.market_price,
+			b.goods_price as "goodsPrice",
+			a.total_amount,
+			b.order_amount as "orderAmount",
+			b.order_balance,
+			b.order_arrearage,
+			b.service_times as "serviceTimes",
+			a.user_id,
+			d.nickname as "userName",
+			d.mobile,
+			b.is_real,
+			a.problem_desc as "problemDesc",
+			a.refusal_cause as "refusalCause",
+			IFNULL(f.name,a.audit_by) AS "audit_by",
+			a.audit_date,
+			a.apply_type,
+			a.return_num,
+			a.apply_date,
+			a.return_reason,
+			a.return_amount,
+			a.warehouse_id,
+			a.is_storage,
+			a.return_status,
+			IFNULL(g.name,a.receipt_by) AS "receipt_by",
+			IFNULL(j.name,a.financial_by) AS "financial_by",
+			a.update_by,
+			a.update_date,
+			a.office_id,
+			a.remarks,
+			IFNULL(h.name,a.shipper_by) AS "shipper_by",
+			a.consigner_name,
+			a.consigner_address,
+			a.consigner_shipping_name,
+			a.consigner_shipping_code,
+			a.consigner_shipping_time,
+			a.consigner_shipping_img,
+			a.shipping_name,
+			a.shipping_code,
+			a.shipping_time,
+			a.shipper_date,
+			e.`name` as "hoseName",
+			e.governor,
+			e.address,
+			a.channel_flag AS 'channelFlag',
+			a.receive_name,
+			a.receive_account,
+			a.return_type
 		FROM mtmydb.mtmy_returned_goods a 
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.goods_mapping_id=b.rec_id
 		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
 		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
 		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
+		LEFT JOIN trains.sys_user f ON f.id=a.audit_by
+		LEFT JOIN trains.sys_user g ON g.id=a.receipt_by
+		LEFT JOIN trains.sys_user h ON h.id=a.shipper_by
+		LEFT JOIN trains.sys_user j ON j.id=a.financial_by
 		${sqlMap.dsf}	and a.del_flag=0
 		<if test="userName != null and userName!=''">
 			AND d.nickname like
@@ -858,5 +1016,75 @@
 			0
 		)
 	</insert>
+	<!-- 获取不包含自己本身的总售后金额和总售后数量 -->
+	<select id="getAmountAndNum" resultType="ReturnedGoods">
+		SELECT
+			IFNULL(SUM(a.return_amount),0) AS returnAmount,
+			IFNULL(SUM(a.return_num),0) AS returnNum
+		FROM
+			mtmydb.mtmy_returned_goods a 
+		WHERE
+			a.order_id = #{orderId}
+		AND
+			a.goods_mapping_id = #{goodsMappingId}
+		AND
+			a.id != #{id}
+		AND 
+			a.return_status NOT IN (-10,-20,26)
+	</select>
+	<!-- 获取该订单中单个实物商品总售后数量 -->
+	<select id="getOrderGoodsReturnNum" resultType="int">
+		SELECT
+			IFNULL(SUM(a.return_num),0) AS 'returnNum'
+		FROM
+			mtmydb.mtmy_returned_goods a 
+		WHERE
+			a.order_id = #{orderid}
+		AND
+			a.goods_mapping_id = #{recid}
+		AND
+			return_status IN (12,13,14,15,16)
+	</select>
 	
+	<!-- 查询处于申请状态的售后订单 -->
+	<select id="queryAfterSaleList" resultType="ReturnedGoods">
+		SELECT
+			<include refid="returnColunm"/>
+		FROM mtmydb.mtmy_returned_goods a 
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.goods_mapping_id=b.rec_id
+		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
+		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
+		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
+		WHERE a.order_id = #{orderid}
+		AND a.return_status IN (11,21)
+		AND a.del_flag=0
+	</select>
+	
+	<!-- 根据退货id查询子项实物的售后数量 -->
+	<select id="selectKinderSon" resultType="ReturnedGoods">
+		SELECT 
+			returned_id AS 'returnedId',
+			mapping_id AS 'goodsMappingId',
+			return_num AS 'returnNum'
+		FROM mtmydb.mtmy_returned_goods_card
+		WHERE returned_id = #{returnedId}
+		AND is_real = 0
+	</select>
+	
+	<!-- 根据订单id查询该订单的售后订单信息 -->
+	<select id="queryReturnList" resultType="ReturnedGoods">
+		SELECT
+			<include refid="returnColunm"/>,
+			IF(a.id = (SELECT aa.id FROM mtmydb.mtmy_returned_goods aa WHERE aa.order_id = a.order_id AND aa.goods_mapping_id = a.goods_mapping_id AND aa.return_status IN (12,13,14,15,16) ORDER BY aa.apply_date ASC LIMIT 1),
+			(SELECT -SUM(de.app_arrearage) FROM mtmydb.mtmy_order_goods_details de WHERE de.order_id = a.order_id AND de.goods_mapping_id = a.goods_mapping_id AND de.advance_flag = '5')
+			,0) AS 'floatArreageMoney'
+		FROM mtmydb.mtmy_returned_goods a 
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.goods_mapping_id=b.rec_id
+		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
+		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
+		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
+		WHERE a.order_id = #{orderId}
+		AND a.del_flag=0
+		ORDER BY a.apply_date DESC
+	</select>
 </mapper>

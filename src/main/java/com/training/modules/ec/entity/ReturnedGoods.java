@@ -16,14 +16,14 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	private String returnedId;					//退货订单(主要用于接收退货订单中退货单号)
 	private String orderId	;					//原订单id
 	private String goodsMappingId	;			//退货商品 订单-商品ID
-	private int userId;						//用户id
-	private int isReal;					//是否为实物 0 实物 1 虚拟
-	private int applyType;						//申请类型（0：退货并退款；1：仅换货）
+	private int userId;							//用户id
+	private int isReal;							//是否为实物 0 实物 1 虚拟
+	private int applyType;						//申请类型（0：退货并退款；1：仅换货;2：仅退款）
 	private Date applyDate	;					//申请日期audit_by
 	private String returnReason;				//退货原因
 	private int returnNum;						//退货数量
-	private double totalAmount;				//商品金额
-	private double orderAmount;				//实付金额
+	private double totalAmount;					//商品金额
+	private double orderAmount;					//实付金额
 	private double orderArrearage;				//欠款金额
 	private double returnAmount;				//退款金额
 	private String isStorage;					//货品状态（0：未入库；1：已入库）
@@ -60,7 +60,7 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	private String consignerShippingImg;		//发货物流单图片（消费者）
 	private String shippingName;				//物流公司名称（换货）
 	private String shippingCode;				//物流单号（换货）
-	private Date shippingTime;				//发货时间
+	private Date shippingTime;					//发货时间
 	private String shipperBy;					//换货人
 	private Date shipperDate;					//换货时间			
 
@@ -75,13 +75,22 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	//---------------------------套卡使用字段-----------------------------------
 	private List<Integer> recIds;			//卡项实物商品 id集合(mapping_id)
 	private List<Integer> returnNums;		//卡项实物商品 售后数量集合
+	private List<Integer> oldReturnNums;	//记录审核之前卡项实物商品 售后数量集合
 	
 	private String applyBy;                 //申请人
-	/*private String belongUserId;			//归属人ID
-	private String belongUserName;          //归属人名称
-	private String belongOfficeId;			//归属机构ID
-	private String belongOfficeName;         //归属机构名称
-*/	
+	private int returnType;					//退款方式（0：现金；1：微信；2：支付宝；3:银行账号；4:充值到每天美耶账户；5：原路退回）
+	private String receiveName;				//收款人姓名
+	private String receiveAccount;			//收款人账号
+	private int oldReturnNum;				//退货数量
+	private String channelFlag;				//渠道标识
+	
+	private double floatArreageMoney;      //平欠款的钱
+	
+	private double ratio;                   //异价比例
+	private double ratioPrice;              //异价后价格
+	private double costPrice;				//商品成本价
+	private double marketPrice;				//商品市场价
+		
 	public List<Integer> getRecIds() {
 		return recIds;
 	}
@@ -452,6 +461,72 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	}
 	public void setApplyBy(String applyBy) {
 		this.applyBy = applyBy;
+	}
+	public int getReturnType() {
+		return returnType;
+	}
+	public void setReturnType(int returnType) {
+		this.returnType = returnType;
+	}
+	public String getReceiveName() {
+		return receiveName;
+	}
+	public void setReceiveName(String receiveName) {
+		this.receiveName = receiveName;
+	}
+	public String getReceiveAccount() {
+		return receiveAccount;
+	}
+	public void setReceiveAccount(String receiveAccount) {
+		this.receiveAccount = receiveAccount;
+	}
+	public int getOldReturnNum() {
+		return oldReturnNum;
+	}
+	public void setOldReturnNum(int oldReturnNum) {
+		this.oldReturnNum = oldReturnNum;
+	}
+	public List<Integer> getOldReturnNums() {
+		return oldReturnNums;
+	}
+	public void setOldReturnNums(List<Integer> oldReturnNums) {
+		this.oldReturnNums = oldReturnNums;
+	}
+	public String getChannelFlag() {
+		return channelFlag;
+	}
+	public void setChannelFlag(String channelFlag) {
+		this.channelFlag = channelFlag;
+	}
+	public double getFloatArreageMoney() {
+		return floatArreageMoney;
+	}
+	public void setFloatArreageMoney(double floatArreageMoney) {
+		this.floatArreageMoney = floatArreageMoney;
+	}
+	public double getRatio() {
+		return ratio;
+	}
+	public void setRatio(double ratio) {
+		this.ratio = ratio;
+	}
+	public double getRatioPrice() {
+		return ratioPrice;
+	}
+	public void setRatioPrice(double ratioPrice) {
+		this.ratioPrice = ratioPrice;
+	}
+	public double getCostPrice() {
+		return costPrice;
+	}
+	public void setCostPrice(double costPrice) {
+		this.costPrice = costPrice;
+	}
+	public double getMarketPrice() {
+		return marketPrice;
+	}
+	public void setMarketPrice(double marketPrice) {
+		this.marketPrice = marketPrice;
 	}
 	
 }

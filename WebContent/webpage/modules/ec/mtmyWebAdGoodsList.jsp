@@ -103,6 +103,50 @@
 
 	}
 	
+	function editSort(goodsId,mtmyWebAdId,sort){
+		top.layer.open({
+		    type: 2, 
+		    area: ['600px', '250px'],
+		    title:"修改排序",
+		    content: "${ctx}/ec/webAd/editSortForm?sort="+sort,
+		    btn: ['确定', '关闭'],
+		    yes: function(index, layero){
+		        var obj =  layero.find("iframe")[0].contentWindow;
+				var sort = obj.document.getElementById("sort").value;
+
+				if(sort == '' || sort == null){
+					top.layer.alert('排序不能为空!', {icon: 0, title:'提醒'}); 
+					return;
+				}
+		        //异步商品的排序
+				$.ajax({
+					type:"post",
+					url:"${ctx}/ec/webAd/saveGoodsSort?goodsId="+goodsId+"&adId="+mtmyWebAdId+"&sort="+sort,
+					success:function(date){
+						if(date=="success"){
+							top.layer.alert('保存成功!', {icon: 1, title:'提醒'});
+							window.location="${ctx}/ec/webAd/mtmyWebAdGoodsList?mtmyWebAdId="+mtmyWebAdId;
+						}
+						if(date=="error"){
+							top.layer.alert('保存失败!', {icon: 2, title:'提醒'});
+							window.location="${ctx}/ec/webAd/mtmyWebAdGoodsList?mtmyWebAdId="+mtmyWebAdId;
+						}
+									
+					},
+					error:function(XMLHttpRequest,textStatus,errorThrown){
+								    
+					}
+							 
+			});
+		top.layer.close(index);
+		},
+		cancel: function(index){ //或者使用btn2
+			    	           //按钮【按钮二】的回调
+		  }
+	}); 
+
+	}
+	
 	$(function(){
 		$(".imgUrl img").each(function(){
 			var $this = $(this),
@@ -140,6 +184,7 @@
 							<th style="text-align: center;">商品名称</th>
 							<th style="text-align: center;">市场价</th>
 							<th style="text-align: center;">商品图片</th>
+							<th style="text-align: center;">排序</th>
 							<th style="text-align: center;">操作</th>
 						</tr>
 					</thead>
@@ -150,7 +195,9 @@
 								<td style="text-align: center;">${page.goodsName}</td>
 								<td style="text-align: center;">${page.marketPrice}</td>
 								<td style="text-align: center;" class="imgUrl" ><img alt="" src="${ctxStatic}/images/lazylode.png"  data-src="${page.originalImg}" style="width: 150px;height: 100px;border:1px solid black; "></td>
+								<td style="text-align: center;">${page.sort}</td>
 								<td style="text-align: center;">
+									<a href="#" onclick="editSort(${page.goodsId},${mtmyWebAd.mtmyWebAdId},${page.sort})" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>修改排序</a>
 									<shiro:hasPermission name="ec:webAd:deleteGoods">
 										<a href="#" onclick="deleteGoods(${page.goodsId},${mtmyWebAd.mtmyWebAdId})" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>删除</a>
 									</shiro:hasPermission> 

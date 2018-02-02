@@ -6,6 +6,7 @@
 		INSERT INTO mtmydb.mtmy_order_goods_details (
 			order_id,
 			goods_mapping_id,
+			returned_id,
 			total_amount,
 			order_balance,
 			order_arrearage,
@@ -24,6 +25,7 @@
 			surplus_amount,
 			type,
 			create_office_id,
+			create_office_ids,
 			create_by,
 			create_date,
 			belong_office_id,
@@ -31,6 +33,7 @@
 		)VALUES(
 			#{orderId},
 			#{goodsMappingId},
+			#{returnedId},
 			#{totalAmount},
 			#{orderBalance},
 			#{orderArrearage},
@@ -49,6 +52,7 @@
 			#{surplusAmount},
 			#{type},
 			#{createOfficeId},
+			(select GROUP_CONCAT(parent_ids,id,',') from trains.sys_office where id = #{createOfficeId}),
 			#{createBy.id},
 			SYSDATE(),
 			#{belongOfficeId},
@@ -60,7 +64,8 @@
 		SELECT
 			SUM(total_amount) as totalAmount,
 			SUM(order_balance) as orderBalance,
-			SUM(order_arrearage) as orderArrearage
+			SUM(order_arrearage) as orderArrearage,
+			SUM(app_arrearage) AS  appArrearage
 		FROM
 			mtmydb.mtmy_order_goods_details
 		WHERE
@@ -68,7 +73,7 @@
 	</select>
 	
 	
-	<select id="getOrderGoodsDetailSurplusAmountByOid" resultType="OrderGoodsDetails">
+	<select id="getOrderGoodsDetailSurplusAmountByOid" resultType="double">
 		SELECT
 			SUM(surplus_amount) AS 'surplusAmount'
 		FROM
@@ -78,7 +83,7 @@
 	</select>
 	
 	<!-- 查询details表中AdvanceFlag=4的最新一条记录中SurplusAmount(套卡剩余金额) -->
-	<select id="getSurplusAmount" resultType="int">
+	<select id="getSurplusAmount" resultType="double">
 		SELECT
 			surplus_amount AS 'surplusAmount'
 		FROM
@@ -124,25 +129,6 @@
 		FROM mtmydb.mtmy_order_goods_details d
 		LEFT JOIN sys_user u ON d.create_by = u.id
 		WHERE goods_mapping_id = #{recid}
-	</select>
-	<select id="selectDetaiSum" resultType="GoodsDetailSum">
-		SELECT
-			a.rec_id,
-			a.single_reality_price,
-			a.goods_num,
-			a.order_amount,
-			a.total_amount,
-			(a.order_amount - SUM(c.total_amount)) AS "isFre",
-			SUM(c.total_amount) AS "detaiAmount",
-			SUM(c.service_times) as "times"
-
-		FROM
-			mtmydb.mtmy_order_goods_mapping a
-		LEFT JOIN mtmydb.mtmy_order_goods_details c ON c.goods_mapping_id = a.rec_id
-		WHERE
-			a.rec_id =#{recId}
-		GROUP BY a.rec_id
-	
 	</select>
 	
 	<!-- 处理预约金 -->
@@ -219,8 +205,8 @@
 	</insert>
 	<select id="findApptStatus" resultType="Integer">
 		SELECT ( CASE WHEN 
-					(SELECT appt_status FROM mtmydb.mtmy_appt_order WHERE id = (SELECT appt_id FROM mtmydb.mtmy_order_goods_details WHERE goods_mapping_id = #{recId} AND advance_flag = '0' AND service_times = -1)) 
-					IN (1,2,4) THEN 1 ELSE 0 END
+					(SELECT COUNT(1) FROM mtmydb.mtmy_appt_order WHERE id IN (SELECT appt_id FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '0' AND service_times = -1 AND appt_status IN (0,1,2,4))) > 0
+					 THEN 1 ELSE 0 END
 				) AS num
 	</select>
 	
@@ -232,6 +218,7 @@
 			SUM(ogd.app_arrearage) AS 'appArrearage',
 			SUM(ogd.order_arrearage) AS 'sumOrderArrearage',
 			ogm.goods_price AS 'goodsPrice',
+			ogm.ratio_price AS 'ratioPrice',
 			ogm.order_amount AS 'orderAmount',
 			ogm.integral AS 'integral',
 			ogm.coupon_price AS 'couponPrice',
@@ -250,4 +237,120 @@
 		WHERE order_id = #{orderId}
 		AND advance_flag = '0'
 	</select>
+	<!-- 根据订单id查询商品的订单余额,订单欠款和app欠款 -->
+	<select id="getArrearageByOrderId" resultType="OrderGoodsDetails">
+		SELECT
+			order_id AS orderId,
+			goods_mapping_id AS goodsMappingId,
+			SUM(order_balance) AS  orderBalance,
+			SUM(order_arrearage) AS  orderArrearage,
+			SUM(app_arrearage) AS  appArrearage
+		FROM
+			mtmydb.mtmy_order_goods_details 
+		WHERE
+			order_id= #{orderId}
+		AND
+			goods_mapping_id = #{goodsMappingId}
+	</select>
+	<!-- 查询'平预约金'记录 -->
+	<select id="getCountAdvanceFlag" resultType="int">
+		SELECT 
+			COUNT(1)
+		FROM 
+			mtmydb.mtmy_order_goods_details a 
+		WHERE 
+			a.order_id = #{orderId}
+		AND
+			a.goods_mapping_id = #{goodsMappingId}
+		AND
+			a.advance_flag = 6
+	</select>
+	<!-- 查询审核需要的条件,判断无'平欠款'记录 -->
+	<select id="getCountArrearage" resultType="int">
+		SELECT 
+			COUNT(1)
+		FROM 
+			mtmydb.mtmy_order_goods_details a 
+		WHERE 
+			a.order_id = #{orderId}
+		AND
+			a.goods_mapping_id = #{goodsMappingId}
+		AND
+			a.advance_flag = 5
+	</select>
+	<!-- 查询审核需要的条件,判断无'平欠款'记录 -->
+	<select id="getSumArrearage" resultType="double">
+		SELECT 
+			a.order_arrearage AS 'orderArrearage'
+		FROM 
+			mtmydb.mtmy_order_goods_details a 
+		WHERE 
+			a.order_id = #{orderId}
+		AND
+			a.goods_mapping_id = #{goodsMappingId}
+		LIMIT 1
+	</select>
+	<!-- 处理预约金 -->
+	<update id="cancelAdvanceFlag">
+		UPDATE mtmydb.mtmy_order_goods_details
+		SET 
+			advance_flag = '1'
+		WHERE 
+			order_id = #{orderId}
+		AND
+			goods_mapping_id = #{goodsMappingId}
+		AND 
+			advance_flag = '6'
+	</update>
+	<!-- 平预约金 -->
+	<update id="editAdvanceFlag">
+		UPDATE mtmydb.mtmy_order_goods_details
+		SET 
+			advance_flag = '6'
+		WHERE 
+			order_id = #{orderId}
+		AND
+			goods_mapping_id = #{goodsMappingId}
+		AND
+			advance_flag = '1'
+	</update>
+	<!-- 在审核时,可能修改了售后次数,需要相应的修改detail表 -->
+	<update id="updateDetailServiceTimes">
+		UPDATE mtmydb.mtmy_order_goods_details
+		SET 
+			service_times = (-#{returnNum})
+		WHERE 
+			order_id = #{orderId}
+		AND
+			returned_id = #{id}
+		AND 
+			advance_flag = 4
+	</update>
+	<!-- 删除平欠款记录 -->
+	<delete id="deleteArrearage">
+		DELETE
+			FROM mtmydb.mtmy_order_goods_details
+		WHERE 
+			advance_flag = 5
+		AND
+			order_id = #{orderId}
+		AND
+			goods_mapping_id = #{goodsMappingId}
+	</delete>
+	
+	<!-- 是否有未处理预约金的 -->
+	<select id="whetherAdvanceFlag" resultType="Integer">
+		SELECT COUNT(*) 
+		FROM mtmydb.mtmy_order_goods_details
+		WHERE order_id = #{orderId}
+		AND advance_flag = '1'
+	</select>
+	
+	<!-- 平预约金 -->
+	<update id="flatOutAdvance">
+		UPDATE mtmydb.mtmy_order_goods_details
+		SET advance_flag = '6'
+		WHERE order_id = #{orderId}
+		AND advance_flag = '1'
+	</update>
 </mapper>

@@ -29,7 +29,8 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private double costprice;				//商品成本价格
 	private double marketprice;				//商品市场单价
 	private double goodsprice;				//商品优惠单价
-	private String barcode;					//条形码
+	private double ratioPrice;               //异价后价格
+ 	private String barcode;					//条形码
 	private double discount;				//折扣比例
 	private double couponPrice;				//红包优惠价格
 	private int giveintegral;				//购买商品赠送积分
@@ -116,6 +117,10 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private String positionIds;		//项目部位ids,包含父类
 	//--------------------end------------------------------
 	
+	private double appArrearage;                    //app欠款
+	private double appTotalAmount;                 //app实付
+	
+	private double ratio;                          //异价比例
 	public int getAfterSaleNum() {
 		return afterSaleNum;
 	}
@@ -568,4 +573,29 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	public void setPositionIds(String positionIds) {
 		this.positionIds = positionIds;
 	}
+	public double getRatioPrice() {
+		return ratioPrice;
+	}
+	public void setRatioPrice(double ratioPrice) {
+		this.ratioPrice = ratioPrice;
+	}
+	public double getAppArrearage() {
+		return appArrearage;
+	}
+	public void setAppArrearage(double appArrearage) {
+		this.appArrearage = appArrearage;
+	}
+	public double getAppTotalAmount() {
+		return appTotalAmount;
+	}
+	public void setAppTotalAmount(double appTotalAmount) {
+		this.appTotalAmount = appTotalAmount;
+	}
+	public double getRatio() {
+		return ratio;
+	}
+	public void setRatio(double ratio) {
+		this.ratio = ratio;
+	}
+	
 }

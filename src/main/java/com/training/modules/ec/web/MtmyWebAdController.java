@@ -255,4 +255,43 @@ public class MtmyWebAdController extends BaseController{
 			return "error";
 		}
 	}
+	
+	/**
+	 * 跳转修改广告图商品排序页面
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="editSortForm")
+	public String editSortForm(HttpServletRequest request,Model model){
+		try{
+			String sort = request.getParameter("sort");
+			model.addAttribute("sort",sort);
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "跳转修改广告图商品排序页面", e);
+			logger.error("跳转修改广告图商品排序页面出错信息：" + e.getMessage());
+		}
+		return "modules/ec/editSortForm";
+	}
+	
+	/**
+	 * 保存广告图对应商品的排序 
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="saveGoodsSort")
+	@ResponseBody
+	public String saveGoodsSort(HttpServletRequest request,RedirectAttributes redirectAttributes){
+		try{
+			int goodsId = Integer.valueOf(request.getParameter("goodsId"));
+			int adId = Integer.valueOf(request.getParameter("adId"));
+			int sort = Integer.valueOf(request.getParameter("sort"));
+			mtmyWebAdService.insertGoodsSort(sort,adId, goodsId);
+			return "success";
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "保存广告图对应商品的排序 ", e);
+			logger.error("保存广告图对应商品的排序 出错信息：" + e.getMessage());
+			return "error";
+		}
+	}
 }

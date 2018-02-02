@@ -79,17 +79,20 @@
 			a.single_reality_price,
 			a.single_norm_price,
 			a.is_after_sales,
-			b.advance_flag as "advanceFlag",
-			a.reality_add_time as "realityAddTime",
-			SUM(b.total_amount) as "totalAmount",
+			a.ratio,
+			a.ratio_price AS "ratioPrice",
+			b.advance_flag AS "advanceFlag",
+			a.reality_add_time AS "realityAddTime",
+			SUM(b.app_total_amount) as "totalAmount",
 			SUM(b.order_balance) as "orderBalance",
 			SUM(b.service_times) as "remaintimes",
 			SUM(b.order_arrearage) as "orderArrearage",
+			SUM(b.app_arrearage) AS  appArrearage,
 			IFNULL(c.return_num,0) as "returnNum"
 		FROM
 			mtmydb.mtmy_order_goods_mapping a
 		LEFT JOIN mtmydb.mtmy_order_goods_details b ON a.rec_id=b.goods_mapping_id
-		LEFT JOIN (SELECT IFNULL(SUM(return_num),0) AS return_num,goods_mapping_id FROM mtmydb.mtmy_returned_goods WHERE order_id = #{orderId} AND return_status in (11,12,13,14,15,21,22,23,24,25) GROUP BY order_id,goods_mapping_id) c ON c.goods_mapping_id = a.rec_id
+		LEFT JOIN (SELECT IFNULL(SUM(return_num),0) AS return_num,goods_mapping_id FROM mtmydb.mtmy_returned_goods WHERE order_id = #{orderId} AND return_status in (11,12,13,14,15,16,21,22,23,24,25) GROUP BY order_id,goods_mapping_id) c ON c.goods_mapping_id = a.rec_id
 		WHERE
 			a.del_flag = 0
 		and a.order_id= #{orderId}
@@ -132,9 +135,11 @@
 			a.single_reality_price,
 			a.single_norm_price,
 			a.is_after_sales,
+			a.ratio,
+			a.ratio_price AS "ratioPrice",
 			b.advance_flag as "advanceFlag",
 			a.reality_add_time as "realityAddTime",
-			SUM(b.total_amount) as "totalAmount",
+			SUM(b.app_total_amount) as "totalAmount",
 			SUM(b.order_balance) as "orderBalance",
 			SUM(b.service_times) as "remaintimes",
 			SUM(b.order_arrearage) as "orderArrearage",
@@ -218,6 +223,7 @@
 			cost_price,
 			market_price,
 			goods_price,
+			ratio_price,
 			order_amount,
 			total_amount,
 			order_arrearage,
@@ -245,6 +251,7 @@
 			#{costprice},
 			#{marketprice},
 			#{goodsprice},
+			#{ratioPrice},
 			#{orderAmount},
 			#{totalAmount},
 			#{orderArrearage},
@@ -289,6 +296,8 @@
 			spec_key_name as speckeyname,
 			market_price as marketprice,
 			goods_price as goodsprice,
+			ratio,
+			ratio_price as ratioPrice,
 			cost_price as costprice,
 			order_amount as orderAmount,
 			goods_num as goodsnum,
@@ -361,6 +370,7 @@
 			ogm.member_goods_price AS 'membergoodsprice', 
 			ogm.total_amount AS 'totalAmount',
 			ogm.goods_price AS 'goodsPrice',
+			ogm.ratio_price AS 'ratioPrice',
 			ogm.single_norm_price AS 'singleNormPrice',
 			ogm.rec_id AS 'recid',
 			ogm.single_reality_price AS 'singleRealityPrice',
@@ -388,7 +398,7 @@
 		AND ogd.service_times = -1
 	</select>
 	
-	<!-- 根据组ID(mapping_id)获取卡项中的实物集合 -->
+	<!-- 根据组ID(mapping_id)获取卡项中的子项集合 -->
 	<select id="getOrderGoodsCard" resultType="OrderGoods">
 		SELECT 
 			a.rec_id as 'recid',
@@ -410,17 +420,39 @@
 		
 		WHERE a.group_id = #{recid}
 	</select>
-	
-	<!-- 根据组ID(mapping_id)获取卡项中的after_sale_num -->
-	<select id="getAfterSaleNumByRid" resultType="OrderGoods">
-		SELECT 
+	<!-- 获取实物子项的可售后数量(根据组ID(mapping_id)获取卡项中的实物集合) -->
+	<select id="getCardRealNum" resultType="OrderGoods">
+		SELECT
 			a.rec_id as 'recid',
-			a.after_sale_num as 'afterSaleNum'
-		 FROM mtmydb.mtmy_order_goods_mapping a 
-		
-		WHERE a.group_id = #{recid}
+			a.order_id as 'orderid',
+			a.group_id as 'groupId',
+			a.goods_id as 'goodsid',
+			a.goods_name as 'goodsname',
+			a.is_real as 'isreal',
+			a.market_price as 'marketprice',
+			a.goods_price as 'goodsprice',
+			a.cost_price as 'costprice',
+			(a.goods_num-IFNULL(SUM(d.return_num),0)) as 'goodsnum',
+			a.order_amount as 'orderAmount',
+			a.total_amount as 'totalAmount',
+			a.order_arrearage as 'orderArrearage'
+		FROM
+				mtmydb.mtmy_order_goods_mapping a 
+		LEFT JOIN
+		(
+			SELECT
+				c.mapping_id,
+				SUM(c.return_num) AS  return_num
+			FROM	mtmydb.mtmy_returned_goods b
+			LEFT JOIN mtmydb.mtmy_returned_goods_card c ON b.id = c.returned_id
+			WHERE	b.order_id = #{orderid}
+			AND	b.return_status NOT IN (-10,-20,26)
+			GROUP BY c.mapping_id
+		) d ON a.rec_id = d.mapping_id
+		WHERE	a.group_id = #{recid}
+		GROUP BY a.rec_id
+
 	</select>
-	
 	<!-- 根据Orderid查找相应的商品信息 -->
 	<select id="selectOrderGoodsByOrderid" resultType="OrderGoods">
 		SELECT
@@ -439,5 +471,96 @@
 		LEFT JOIN mtmydb.mtmy_users u ON u.user_id = ogm.user_id
 		WHERE ogm.order_id = #{orderId}
 		AND ogm.del_flag = 0
+	</select>
+	<!-- 实物:获取mapping表中的总购买数量 -->
+	<select id="getGoodsNum" resultType="int">
+		SELECT
+			a.goods_num
+		FROM
+			mtmydb.mtmy_order_goods_mapping a
+		WHERE
+			a.order_id =#{orderId}
+		AND
+			a.rec_id = #{goodsMappingId}
+	</select>
+	<!-- 获取商品的实付金额和剩余服务次数 -->
+	<select id="getTotalAmountAndTimes" resultType="OrderGoods">
+		SELECT 
+			b.service_times AS servicetimes,
+			SUM(b.app_total_amount) AS "totalAmount",
+			SUM(b.service_times) AS "remaintimes"
+		FROM 
+			mtmydb.mtmy_order_goods_mapping a 
+		LEFT JOIN
+			mtmydb.mtmy_order_goods_details b ON a.rec_id = b.goods_mapping_id
+		WHERE 
+			a.order_id = #{orderId}
+		AND
+			a.rec_id = #{goodsMappingId}
+	</select>
+	<!-- 获取该订单中商品总购买数量 -->
+	<select id="getOrderNum" resultType="OrderGoods">
+		SELECT 
+			a.rec_id AS 'recid',
+			a.order_id AS 'orderid',
+			a.goods_num AS 'goodsnum'
+		FROM 
+			mtmydb.mtmy_order_goods_mapping a
+		WHERE 
+			a.order_id = #{orderId}
+	</select>
+	
+	<!-- 根据mapping关联details查询订单的详情 -->
+	<select id="findOrderDetails" resultType="OrderGoods">
+		SELECT
+			a.rec_id,
+			a.group_id AS 'groupId',
+			a.order_id,
+			a.user_id,
+			a.goods_name,
+			a.goods_id,
+			a.goods_sn,
+			a.goods_num,
+			a.original_img,
+			a.market_price,
+			a.goods_price,
+			a.cost_price,
+			a.coupon_price,
+			a.member_goods_price,
+			a.discount,
+			a.give_integral,
+			a.spec_key,
+			a.spec_key_name,
+			a.bar_code,
+			a.is_comment,
+			a.action_type,
+			a.action_id,
+			a.is_send,
+			a.delivery_id,
+			a.add_time,
+			a.service_times,
+			a.remain_times,
+			a.service_min,
+			a.is_real,
+			a.expiring_date,
+			a.order_amount,
+			a.single_reality_price,
+			a.single_norm_price,
+			a.is_after_sales,
+			b.advance_flag as "advanceFlag",
+			a.reality_add_time as "realityAddTime",
+			SUM(b.total_amount) as "totalAmount",
+			SUM(b.order_balance) as "orderBalance",
+			SUM(b.service_times) as "remaintimes",
+			SUM(b.order_arrearage) as "orderArrearage",
+			SUM(b.app_arrearage) AS  "appArrearage",
+			SUM(b.app_total_amount) AS  "appTotalAmount"
+		FROM
+			mtmydb.mtmy_order_goods_mapping a
+		LEFT JOIN mtmydb.mtmy_order_goods_details b ON a.rec_id=b.goods_mapping_id
+		WHERE a.del_flag = 0
+		AND a.order_id= #{orderId}
+		AND a.group_id = 0
+		GROUP BY a.rec_id
 	</select>
 </mapper>

@@ -112,6 +112,11 @@ public class GoodsController extends BaseController{
 	@RequiresPermissions(value={"ec:goods:list"},logical=Logical.OR)
 	@RequestMapping(value = {"list"})
 	public String list(Goods goods,Model model, HttpServletRequest request, HttpServletResponse response){
+		if(!"".equals(goods.getNewRatio()) && goods.getNewRatio() != null){
+			String[] result = goods.getNewRatio().split("-");
+			goods.setMinRatio(Double.valueOf(result[0]));
+			goods.setMaxRatio(Double.valueOf(result[1]));
+		}
 		
 		//查询商品品牌
 		List<GoodsBrand> goodsBrandList = goodsBrandService.findAllList(new GoodsBrand());
@@ -598,6 +603,25 @@ public class GoodsController extends BaseController{
 	public String save(Goods goods, Model model,HttpServletRequest request, RedirectAttributes redirectAttributes){
 		try {
 			goodsService.saveGoods(goods,request);
+			addMessage(redirectAttributes, "保存/修改 商品'" + goods.getGoodsName() + "'成功");
+		} catch (Exception e) {
+			logger.error("保存/修改 商品通用信息 出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "保存/修改 商品通用信息 出现异常", e);
+			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
+		}
+		return "redirect:" + adminPath + "/ec/goods/list?actionId="+goods.getActionId();
+	}
+	/**
+	 * 保存/修改 - 商品通用信息
+	 * @param goods
+	 * @param model
+	 * @return
+	 */
+	@RequiresPermissions(value={"ec:goods:save"},logical=Logical.OR)
+	@RequestMapping(value = {"saveCard"})
+	public String saveCard(Goods goods, Model model,HttpServletRequest request, RedirectAttributes redirectAttributes){
+		try {
+			goodsService.saveGoodsCard(goods,request);
 			addMessage(redirectAttributes, "保存/修改 商品'" + goods.getGoodsName() + "'成功");
 		} catch (Exception e) {
 			logger.error("保存/修改 商品通用信息 出现异常，异常信息为："+e.getMessage());
@@ -1631,5 +1655,48 @@ public class GoodsController extends BaseController{
 			logger.error("跳转增加主题图页面对应的商品出错信息：" + e.getMessage());
 		}
 		return "modules/ec/GoodsCardForm";
+	}
+	
+	/**
+	 * 根据分类，关键字，商品id查询商品
+	 * @param extId
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "queryGoods")
+	public List<Map<String, Object>> queryGoods(String goodsCategory,String goodsName,String goodsIds,String cityIds,HttpServletResponse response) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<Integer> goodsIdsList = new ArrayList<Integer>();
+		List<String> cityIdsList = new ArrayList<String>();
+		if(!"".equals(goodsIds) && goodsIds != null){
+			String[] newGoodsIds = goodsIds.split(",");
+			for(String newGoodsId:newGoodsIds){
+				goodsIdsList.add(Integer.valueOf(newGoodsId));
+			}
+		}
+		
+		if(!"".equals(cityIds) && cityIds != null){
+			String[] newCityIds = cityIds.split(","); 
+			for(String newCityId:newCityIds){
+				cityIdsList.add(newCityId);
+			}
+		}
+		
+		Goods goods=new Goods();
+		goods.setGoodsCategoryId(goodsCategory);
+		goods.setGoodsName(goodsName);
+		goods.setGoodsIds(goodsIdsList);
+		goods.setCityIds(cityIdsList);
+		
+		List<Goods> list = goodsService.queryGoodsCanRatio(goods);
+		for (int i=0; i<list.size(); i++){
+			Goods e = list.get(i);
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("id", e.getGoodsId());
+			map.put("name", e.getGoodsName());
+			mapList.add(map);
+		}
+ 		return mapList;
 	}
 }

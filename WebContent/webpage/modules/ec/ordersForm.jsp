@@ -662,6 +662,7 @@ window.onload=initStatus;
 							<c:if test="${orders.distinction == 1}">售前卖</c:if>
 							<c:if test="${orders.distinction == 2}">售后卖</c:if>
 							<c:if test="${orders.distinction == 3}">老带新</c:if>
+							<c:if test="${orders.distinction == 4}">售后转单</c:if>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">手机号码:</label>&nbsp;&nbsp;${orders.users.mobile }
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -686,29 +687,29 @@ window.onload=initStatus;
 								</c:if>
 								<c:if test="${orders.isReal == 1}">
 									<c:if test="${orders.channelFlag != 'bm'}">
-										<form:option value='${orders.orderstatus }'>
-											<c:if test="${orders.orderstatus == -2}">
-												取消订单
-											</c:if>
-											<c:if test="${orders.orderstatus == -1}">
-												待付款
-											</c:if>
-											<c:if test="${orders.orderstatus == 1}">
-												待发货
-											</c:if>
-											<c:if test="${orders.orderstatus == 2}">
-												待收货
-											</c:if>
-											<c:if test="${orders.orderstatus == 3}">
-												已退款
-											</c:if>
-											<c:if test="${orders.orderstatus == 4}">
-												已完成
-											</c:if>
-										</form:option>
+										<c:if test="${orders.orderstatus == -2}">
+											<form:option value="-2">取消订单</form:option>
+										</c:if>
+										<c:if test="${orders.orderstatus == -1}">
+											<form:option value="-1">待付款</form:option>
+										</c:if>
+										<c:if test="${orders.orderstatus == 3}">
+											<form:option value="3">已退款</form:option>
+										</c:if>
+										<c:if test="${orders.orderstatus == 4}">
+											<form:option value="4">已完成</form:option>
+										</c:if>
 									</c:if>
 									<c:if test="${orders.channelFlag == 'bm'}">
-										<form:option value="4">已完成</form:option>
+										<c:if test="${orders.orderstatus == -2}">
+											<form:option value="-2">取消订单</form:option>
+										</c:if>
+										<c:if test="${orders.orderstatus == 3}">
+											<form:option value="3">已退款</form:option>
+										</c:if>
+										<c:if test="${orders.orderstatus == 4}">
+											<form:option value="4">已完成</form:option>
+										</c:if>
 									</c:if>
 								</c:if>
 							</form:select>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -720,7 +721,7 @@ window.onload=initStatus;
 							</form:select>
 							<p></p>
 							<label >留言备注：</label>
-							<textarea name="usernote" rows="5" cols="60">${orders.userNote }</textarea>
+							<textarea name="userNote" rows="5" cols="60">${orders.userNote }</textarea>
 						</div>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
@@ -729,16 +730,21 @@ window.onload=initStatus;
 								<tr>
 									<th style="text-align: center;">商品名称</th>
 									<th style="text-align: center;">商品规格</th>
+									<c:if test="${orders.isReal == 1 }">
+										<th style="text-align: center;">实际规格次</th>
+									</c:if>
 									<th style="text-align: center;">系统价</th>
 									<th style="text-align: center;">市场价</th>
 									<th style="text-align: center;">优惠价</th>
+									<th style="text-align: center;">异价比例</th>
+									<th style="text-align: center;">异价价格</th>
+									<th style="text-align: center;">预约金</th>
 									<th style="text-align: center;">购买数量</th>
 									<th style="text-align: center;">红包面值</th>
 									<th style="text-align: center;">折扣率</th>
 									<th style="text-align: center;">会员折扣</th>
 									<th style="text-align: center;">应付金额</th>
 									<th style="text-align: center;">实付金额</th>
-									<th style="text-align: center;">预约金</th>
 									<c:if test="${orders.isReal == 1 }">
 										<th style="text-align: center;">实际次数</th>
 									</c:if>
@@ -750,16 +756,21 @@ window.onload=initStatus;
 									<tr>
 										<td align="center">${orderGood.goodsname }</td>
 										<td align="center">${orderGood.speckeyname }</td>
+										<c:if test="${orders.isReal == 1 }">
+											<td align="center">${orderGood.servicetimes }</td>
+										</c:if>
 										<td align="center">${orderGood.costprice }</td>
 										<td align="center">${orderGood.marketprice }</td>
 										<td align="center">${orderGood.goodsprice }</td>
+										<td align="center">${orderGood.ratio }</td>
+										<td align="center">${orderGood.ratioPrice }</td>
+										<td align="center">${orderGood.advancePrice}</td>
 										<td align="center">${orderGood.goodsnum }</td>
 										<td align="center">${orderGood.couponPrice }</td>
 										<td align="center">${orderGood.discount }</td>
 										<td align="center">${orderGood.membergoodsprice }</td>
 										<td align="center">${orderGood.orderAmount }</td>
 										<td align="center">${orderGood.totalAmount}</td>
-										<td align="center">${orderGood.advancePrice}</td>
 										<c:if test="${orders.isReal == 1 }">
 											<td align="center">${orderGood.remaintimes }</td>
 										</c:if>
@@ -795,13 +806,13 @@ window.onload=initStatus;
 						<h4>订单支付信息:</h4>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 								<tr>
-									<th style="text-align: center;">商品总价</th>
+									<th style="text-align: center;">商品总额</th>
 									<th style="text-align: center;">红包面值</th>
 									<th style="text-align: center;">折扣率</th>
 									<th style="text-align: center;">会员折扣</th>
 									<th style="text-align: center;">邮费</th>
-									<th style="text-align: center;">应付金额</th>
-									<th style="text-align: center;">实付金额</th>
+									<th style="text-align: center;">应付总额</th>
+									<th style="text-align: center;">实付总额</th>
 								</tr>
 								<tr>
 									<td align="center">${orders.goodsprice }</td>
@@ -816,7 +827,7 @@ window.onload=initStatus;
 						</div>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;" id="shipping">
-							<label ><font color="red">*</font>物流类型：</label>
+							<label ><font color="red">*</font>发货类型：</label>
 							<form:select path="shippingtype"  class="form-control" style="width:180px">
 									<form:option value="0">快递发货</form:option>
 									<form:option value="1">到店自取</form:option>
@@ -911,6 +922,37 @@ window.onload=initStatus;
 													<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>编辑</a>
 												</c:otherwise>
 											</c:choose>
+										</td>
+									</tr>
+								</c:forEach>
+						</table>
+						</div>
+						<p></p>
+						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+						<h4>售后信息:</h4>
+						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+								<tr>
+									<th style="text-align: center;">时间</th>
+									<th style="text-align: center;">商品名称</th>
+									<th style="text-align: center;">商品规格</th>
+									<th style="text-align: center;">售后次(个)数</th>
+									<th style="text-align: center;">退款金额</th>
+									<th style="text-align: center;">平欠款</th>
+									<th style="text-align: center;">操作</th>
+								</tr>
+								<c:forEach items="${returnedList}" var="returnedGoods">
+									<tr>
+										<td align="center">
+											<fmt:formatDate value="${returnedGoods.applyDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
+										</td>
+										<td align="center">${returnedGoods.goodsName}</td>
+										<td align="center">${returnedGoods.specName}</td>
+										<td align="center">${returnedGoods.returnNum}</td>
+										<td align="center">${returnedGoods.returnAmount}</td>
+										<td align="center">${returnedGoods.floatArreageMoney}</td>
+										<td align="center">
+											<a href="#" onclick="openDialogView('售后详情', '${ctx}/ec/returned/returnform?id=${returnedGoods.id}&flag=view','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>查看</a>
+											<a href="#" onclick="openDialogView('查看转单', '${ctx}/ec/orders/returnedOrdersList?returnedId=${returnedGoods.id}','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>查看转单</a>
 										</td>
 									</tr>
 								</c:forEach>
@@ -1013,42 +1055,21 @@ window.onload=initStatus;
 						<a href="#" onclick="openDialogView('操作日志', '${ctx}/ec/orders/orderlist?id=${orders.orderid}','900px','450px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>订单流程</a>
 					</shiro:hasPermission>
 					<shiro:hasPermission name="ec:orders:edit">
+						<!-- 1.实物订单待发货或待收货；2.app虚拟订单，未处理预约金且（未预约或预约了但预约状态不为等待服务、已完成、 已评价 、爽约的预约）或平预约金但不存在售后完成的订单；3.后台虚拟订单，未预约或预约了但预约状态不为等待服务、已完成、 已评价 、爽约的预约或不存在售后完成的订单 -->
 						<c:if test="${type != 'view' }">
-							<c:if test="${orders.isReal == 0   and orders.orderstatus==1}">
-								<a href="#" onclick="forcedCancel('${orders.orderid}')" class="btn btn-danger btn-xs"><i class="fa fa-save"></i>强制取消</a>
-							</c:if>
-							<c:if test="${orders.isReal == 0   and orders.orderstatus!=1}">
-								<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>
-							</c:if>
-							<c:if test="${orders.isReal==1}">
-								<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>
-							</c:if>
-						</c:if>	
+							<c:choose>                                                                                                                                                                                                                                                   
+								<c:when test="${(orders.isReal == 0 && orders.returnedFlag == 0 && (orders.orderstatus ==1 || orders.orderstatus==2)) || (orders.channelFlag != 'bm' && orders.isReal==1 && (orders.orderstatus ==1 || orders.orderstatus==2 || orders.orderstatus==4) && (((orders.advanceFlag > 0) || (orders.changeAdvanceFlag > 0)) && orders.returnedFlag == 0) && ((orders.sumAppt == 0) || (orders.sumAppt > 0 && orders.apptFlag == 0))) || (orders.channelFlag == 'bm' && orders.isReal==1 && (orders.orderstatus ==1 || orders.orderstatus==2 || orders.orderstatus==4) && (((orders.sumAppt == 0) || (orders.sumAppt > 0 && orders.apptFlag == 0)) && orders.returnedFlag == 0))}">
+									<a href="#" onclick="forcedCancel('${orders.orderid}')" class="btn btn-danger btn-xs"><i class="fa fa-save"></i>强制取消</a>
+								</c:when>
+								<c:otherwise>
+									<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>
+								</c:otherwise>
+							</c:choose>
+						</c:if>
 					</shiro:hasPermission>
-					<%-- <p></p>
-					<label class="active">操作日志:</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<shiro:hasPermission name="ec:orders:edit">
-							<a href="#" onclick="openDialogView('操作日志', '${ctx}/ec/orders/loglist?id=${orders.orderid}','500px','400px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>操作日志</a>
+					<shiro:hasPermission name="ec:orders:editLog">
+						<a href="#" onclick="openDialogView('订单操作日志', '${ctx}/ec/orders/editLog?orderid=${orders.orderid}','1100px','650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>订单操作日志</a>
 					</shiro:hasPermission>
-					
-					<table id="contentTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
-						<thead>
-							<tr>
-							<th>操作者</th>
-							<th>操作时间</th>
-							<th>描述</th>
-							</tr>
-						</thead>
-						<tbody>
-							<c:forEach items="${acountlist}" var="acount">
-								<tr>
-									<td>${acount.operator}</td>
-									<td><fmt:formatDate value="${acount.changetime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-									<td>${acount.logdesc}</td>
-								</tr>
-							</c:forEach>
-						</tbody>
-					</table> --%>
 				</div>
 			</div>	
 		</div>
