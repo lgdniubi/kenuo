@@ -221,5 +221,13 @@ public interface OfficeDao extends TreeDao<Office> {
 	 * 2017年12月26日 兵子
 	 */
 	public Office checkOfficeCode(Office office);
+	/**
+	 * 
+	 * @Title: finAllByPId
+	 * @Description: TODO 根据id查询所有的子类
+	 * @throws
+	 * 2018年2月1日 兵子
+	 */
+	public List<Office> finAllByPId(Object obj);
 
 }

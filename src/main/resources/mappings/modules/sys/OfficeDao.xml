@@ -806,4 +806,34 @@
 		FROM trains.sys_office o 
 		WHERE o.office_code = #{officeCode}
 	</select>
+	
+	<!-- 根据id查询所有子机构 -->
+	<select id="finAllByPId" resultType="Office">
+		SELECT 
+			o.id,
+			o.parent_id AS "parent.id",
+			o.parent_ids,
+			o.franchisee_id AS 'franchisee.id',
+			o.icon_url,
+			o.name,
+			o.sort,
+			o.area_id AS "area.id",
+			o.code,
+			o.type,
+			o.grade,
+			o.address,
+			o.is_new,
+			o.office_code AS "officeCode"
+		FROM 
+			sys_office o 
+		WHERE 
+			<if test="id != null and id != ''">
+				(o.parent_ids LIKE 
+			<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+				OR o.id = #{id})
+		</if>
+			AND o.del_flag = 0  
+			GROUP BY o.id
+	</select>
 </mapper>
