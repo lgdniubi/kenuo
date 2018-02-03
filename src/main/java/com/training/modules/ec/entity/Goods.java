@@ -114,6 +114,8 @@ public class Goods extends DataEntity<Goods> {
 	private double minRatio;           //异价比例的小值
 	private double maxRatio;           //异价比例的大值
 	
+	private int isOpen;                //是否公开
+	
 	/**
 	 * get/set
 	 */
@@ -584,6 +586,12 @@ public class Goods extends DataEntity<Goods> {
 	}
 	public void setWhetherRatio(String whetherRatio) {
 		this.whetherRatio = whetherRatio;
+	}
+	public int getIsOpen() {
+		return isOpen;
+	}
+	public void setIsOpen(int isOpen) {
+		this.isOpen = isOpen;
 	}
 	
 }
