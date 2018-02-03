@@ -557,12 +557,71 @@
 	<!-- 分页查询 -->
 	<select id="findList" resultType="ReturnedGoods">
 		SELECT
-			<include refid="returnColunm"/>
+			a.id,
+			a.order_id,
+			a.goods_mapping_id,
+			b.goods_id,
+			b.goods_name as "goodsName",
+			b.goods_num as "goodsNum",
+			b.spec_key,
+			b.spec_key_name as "specName",
+			b.cost_price,
+			b.market_price,
+			b.goods_price as "goodsPrice",
+			a.total_amount,
+			b.order_amount as "orderAmount",
+			b.order_balance,
+			b.order_arrearage,
+			b.service_times as "serviceTimes",
+			a.user_id,
+			d.nickname as "userName",
+			d.mobile,
+			b.is_real,
+			a.problem_desc as "problemDesc",
+			a.refusal_cause as "refusalCause",
+			IFNULL(f.name,a.audit_by) AS "audit_by",
+			a.audit_date,
+			a.apply_type,
+			a.return_num,
+			a.apply_date,
+			a.return_reason,
+			a.return_amount,
+			a.warehouse_id,
+			a.is_storage,
+			a.return_status,
+			IFNULL(g.name,a.receipt_by) AS "receipt_by",
+			IFNULL(j.name,a.financial_by) AS "financial_by",
+			a.update_by,
+			a.update_date,
+			a.office_id,
+			a.remarks,
+			IFNULL(h.name,a.shipper_by) AS "shipper_by",
+			a.consigner_name,
+			a.consigner_address,
+			a.consigner_shipping_name,
+			a.consigner_shipping_code,
+			a.consigner_shipping_time,
+			a.consigner_shipping_img,
+			a.shipping_name,
+			a.shipping_code,
+			a.shipping_time,
+			a.shipper_date,
+			e.`name` as "hoseName",
+			e.governor,
+			e.address,
+			a.channel_flag AS 'channelFlag',
+			a.receive_name,
+			a.receive_account,
+			a.return_type
 		FROM mtmydb.mtmy_returned_goods a 
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.goods_mapping_id=b.rec_id
 		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
 		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
 		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
+		LEFT JOIN trains.sys_user f ON f.id=a.audit_by
+		LEFT JOIN trains.sys_user g ON g.id=a.receipt_by
+		LEFT JOIN trains.sys_user h ON h.id=a.shipper_by
+		LEFT JOIN trains.sys_user j ON j.id=a.financial_by
 		${sqlMap.dsf}	and a.del_flag=0
 		<if test="userName != null and userName!=''">
 			AND d.nickname like
