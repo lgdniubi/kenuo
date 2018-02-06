@@ -229,5 +229,14 @@ public interface OfficeDao extends TreeDao<Office> {
 	 * 2018年2月1日 兵子
 	 */
 	public List<Office> finAllByPId(Object obj);
+	
+	/**
+	 * 
+	 * @Title: updateFranchisee
+	 * @Description: TODO 修改机构时更新机构的商家id
+	 * @throws
+	 * 2018年2月6日 兵子
+	 */
+	public void updateFranchisee(Office off);
 
 }

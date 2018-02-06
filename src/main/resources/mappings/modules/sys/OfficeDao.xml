@@ -836,4 +836,8 @@
 			AND o.del_flag = 0  
 			GROUP BY o.id
 	</select>
+	<!-- 更新机构时更新子机构的商家 -->
+	<update id="updateFranchisee">
+		UPDATE sys_office SET franchisee_id = #{franchisee.id} WHERE id = #{id}
+	</update>
 </mapper>
