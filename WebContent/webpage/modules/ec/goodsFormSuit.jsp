@@ -182,6 +182,11 @@
 										<input type="radio" id="goodsType" name="goodsType" value="0" ${(goods.goodsType == '0' || goods.goodsType == null)?'checked="checked"':''}>老商品
 									</li>
 									<li class="form-group">
+										<span class="control-label col-sm-2"><font color="red">*</font>是否公开：</span>
+										<input type="radio" id="isOpen" name="isOpen" value="0" ${(goods.isOpen == '0')?'checked="checked"':''}>是：公开
+										<input type="radio" id="isOpen" name="isOpen" value="1" ${(goods.isOpen == '1')?'checked="checked"':''}>否：非公开
+									</li>
+									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>活动类型：</span>
 										<select class="form-control" id="actionType" name="actionType">
 					                        <option ${(goods.actionType == 0)?'selected="selected"':''} value="0">普通商品</option>

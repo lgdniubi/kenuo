@@ -155,6 +155,11 @@
 										<input type="radio" id="goodsType" name="goodsType" value="0" ${(goods.goodsType == '0' || goods.goodsType == null)?'checked="checked"':''}>老商品
 									</li>
 									<li class="form-group">
+										<span class="control-label col-sm-2"><font color="red">*</font>是否公开：</span>
+										<input type="radio" id="isOpen" name="isOpen" value="0" ${(goods.isOpen == '0')?'checked="checked"':''}>是：公开
+										<input type="radio" id="isOpen" name="isOpen" value="1" ${(goods.isOpen == '1')?'checked="checked"':''}>否：非公开
+									</li>
+									<li class="form-group">
 											<span class="control-label col-sm-2">是否参与城市异价：</span>
 											<select class="form-control" disabled="disabled">
 						                        <option ${(goods.isRatio == 0)?'selected="selected"':''}>否</option>
