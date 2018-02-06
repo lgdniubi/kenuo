@@ -110,7 +110,7 @@ public class ReturnedGoodsController extends BaseController {
 			//计算可售后数量(售后次数)和售后金额
 			OrderGoods orderGoods = ordergoodService.getTotalAmountAndTimes(returnedGoods);//获取商品的实付金额和剩余服务次数
 			ReturnedGoods rg = returnedGoodsService.getAmountAndNum(returnedGoods);//获取不包含自己本身的总的售后金额和售后数量
-			amount = orderGoods.getTotalAmount() - rg.getReturnAmount();//可售后金额
+			amount = ((orderGoods.getTotalAmount()*100) - (rg.getReturnAmount()*100))/100;//可售后金额
 			if(returnedGoods.getIsReal() == 0){//实物查询的数据
 				goodsNum = ordergoodService.getGoodsNum(returnedGoods);//实物:获取mapping表中的总购买数量
 				goodsNum = goodsNum - rg.getReturnNum();//可售后的数量
@@ -265,7 +265,7 @@ public class ReturnedGoodsController extends BaseController {
 			double amount = 0.0;//实物的可售后金额
 			int times = 0;//通用卡的可售后次数
 			ReturnedGoods returned = returnedGoodsService.getAmountAndNum(returnedGoods);//获取不包含自己本身的总的售后金额和售后数量
-			amount = orderGoods.getTotalAmount() - returned.getReturnAmount();//可售后金额;
+			amount = ((orderGoods.getTotalAmount()*100) - (returned.getReturnAmount()*100))/100;//可售后金额;
 			times = result.get(0).get(0).getRemaintimes() + returnedGoods.getReturnNum();//可售后次数
 			//查询卡项子项实物的售后数量
 			String realGoods = "";
