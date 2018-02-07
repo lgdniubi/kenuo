@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.training.common.persistence.DataEntity;
 import com.training.modules.sys.entity.Dict;
+import com.training.modules.sys.entity.User;
 
 /**
  * TrainsBanner实体类
@@ -24,6 +25,12 @@ public class TrainsBanner extends DataEntity<TrainsBanner>{
 	private Date createTime;    //创建时间
 	
 	private Dict dict;
+	
+	private User user;			//用户
+	private FranchiseeBanner franchiseeBanner;	//banner商家权限
+	private String soFranchiseeIds;		//可见商家ids
+	private String parentIds;	//添加者的机构及父节点
+	
 	public int getAdId() {
 		return adId;
 	}
@@ -83,6 +90,30 @@ public class TrainsBanner extends DataEntity<TrainsBanner>{
 	}
 	public void setDict(Dict dict) {
 		this.dict = dict;
+	}
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User user) {
+		this.user = user;
+	}
+	public FranchiseeBanner getFranchiseeBanner() {
+		return franchiseeBanner;
+	}
+	public void setFranchiseeBanner(FranchiseeBanner franchiseeBanner) {
+		this.franchiseeBanner = franchiseeBanner;
+	}
+	public String getSoFranchiseeIds() {
+		return soFranchiseeIds;
+	}
+	public void setSoFranchiseeIds(String soFranchiseeIds) {
+		this.soFranchiseeIds = soFranchiseeIds;
+	}
+	public String getParentIds() {
+		return parentIds;
+	}
+	public void setParentIds(String parentIds) {
+		this.parentIds = parentIds;
 	}
 	
 }

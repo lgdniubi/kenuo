@@ -27,6 +27,7 @@ import com.training.common.utils.IdGen;
 import com.training.common.utils.StringUtils;
 import com.training.common.utils.excel.ExportExcel;
 import com.training.common.web.BaseController;
+import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.StatisticsCollectionExport;
@@ -87,10 +88,13 @@ public class CourseController extends BaseController{
 	@RequestMapping(value = {"listcourse", ""})
 	public String listcourse(TrainLessons trainLessons, HttpServletRequest request, HttpServletResponse response, Model model) {
 		
+		User user = UserUtils.getUser();
 		TrainCategorys trainCategorys = new TrainCategorys();
 		trainCategorys.setPriority(1);
+		model.addAttribute("trainLessons", trainLessons);
 		//添加数据权限
-//		trainCategorys = CategorysUtils.categorysFilter(trainCategorys);
+    	//trainCategorys = CategorysUtils.categorysFilter(trainCategorys);
+		
 		trainCategorys.getSqlMap().put("dsf", ScopeUtils.dataScopeFilter("t","category"));
 		
 		//查询1级分类
@@ -112,6 +116,7 @@ public class CourseController extends BaseController{
 		trainLessons.getSqlMap().put("dsf", ScopeUtils.dataScopeFilter("t",""));
 		Page<TrainLessons> page = trainLessonsService.find(new Page<TrainLessons>(request, response), trainLessons);
 		model.addAttribute("page", page);
+		model.addAttribute("user", user);
 		return "modules/train/coursechange";
 	}
 	
