@@ -205,6 +205,7 @@ public class ThemeController extends BaseController{
 			model.addAttribute("page", page);
 			model.addAttribute("themeMapping",themeMapping);
 			model.addAttribute("articlesIds",articlesIds);
+			model.addAttribute("isOpen", theme.getIsOpen());
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "热门主题对应的文章列表", e);
 			logger.error("热门主题对应的文章列表出错信息：" + e.getMessage());
@@ -242,7 +243,7 @@ public class ThemeController extends BaseController{
 	@RequestMapping(value="themeArticlesForm")
 	public String themeArticlesForm(ThemeMapping themeMapping,HttpServletRequest request,Model model){
 		try{
-
+			model.addAttribute("isOpen", request.getParameter("isOpen"));
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "跳转热门主题添加文章页面", e);
 			logger.error("跳转热门主题添加文章页面出错信息：" + e.getMessage());
@@ -372,13 +373,30 @@ public class ThemeController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "treeArticlesData")
-	public List<Map<String, Object>> treeArticlesData(HttpServletRequest request,String categoryId,String title,HttpServletResponse response) {
+	public List<Map<String, Object>> treeArticlesData(HttpServletRequest request,String categoryId,String title,String isOpen,HttpServletResponse response) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		try{
 			JSONObject jsonObject = new JSONObject();
-			String queryMediaArticleDetailList =	ParametersFactory.getMtmyParamValues("mtmy_queryMediaArticleDetailList");	
+			String queryMediaArticleDetailList = ParametersFactory.getMtmyParamValues("mtmy_queryMediaArticleDetailList");	
 			logger.info("##### web接口路径:"+queryMediaArticleDetailList);	
-			String parpm = "{\"sourcePlatform\":\"mtmy\",\"articleCateId\":\""+categoryId+"\",\"articleTitle\":\""+title+"\"}";
+			
+			String isPublic = "";
+			String franchiseeId = "";
+			if(!"".equals(isOpen) && isOpen != null){
+				if("0,".equals(isOpen)){                //若活动或者主题是公开的，则商品就是公开的
+					isPublic = "0";
+				}else{
+					String[] franchiseeIds = isOpen.split(",");
+					if(franchiseeIds.length == 1){      //若不是公开的且只有一个商家
+						franchiseeId = franchiseeIds[0];
+					}else if(franchiseeIds.length >= 2){  //若不是公开的且多个商家
+						isPublic = "0";
+						franchiseeId = isOpen.substring(0, isOpen.lastIndexOf(","));
+					}
+				}
+			}
+			
+			String parpm = "{\"sourcePlatform\":\"mtmy\",\"articleCateId\":\""+categoryId+"\",\"articleTitle\":\""+title+"\",\"isPublic\":\""+isPublic+"\",\"franchiseeId\":\""+franchiseeId+"\"}";
 			String url=queryMediaArticleDetailList;
 			String result = WebUtils.postMediaObject(parpm, url);
 			jsonObject = JSONObject.fromObject(result);

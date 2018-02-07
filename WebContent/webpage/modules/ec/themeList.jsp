@@ -125,7 +125,7 @@
 									<a href="#" onclick="openDialogView('添加商品', '${ctx}/ec/theme/themeGoodsList?themeId=${theme.themeId}&isOpen=${theme.isOpen}','700px', '550px')" class="btn btn-info btn-xs"><i class="fa fa-edit"></i>添加商品</a>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="ec:theme:addArticles">
-									<a href="#" onclick="openDialogView('添加文章', '${ctx}/ec/theme/themeArticlesList?themeId=${theme.themeId}','700px', '550px')" class="btn btn-info btn-xs"><i class="fa fa-edit"></i>添加文章</a>
+									<a href="#" onclick="openDialogView('添加文章', '${ctx}/ec/theme/themeArticlesList?themeId=${theme.themeId}&isOpen=${theme.isOpen}','700px', '550px')" class="btn btn-info btn-xs"><i class="fa fa-edit"></i>添加文章</a>
 								</shiro:hasPermission>
 							</td>
 						</tr>

@@ -164,5 +164,4 @@
 		DELETE FROM mtmydb.mtmy_theme_mapping WHERE theme_id =#{themeId} AND some_id = #{someId}
 	</delete>
 	
-	<!--  -->
 </mapper>
