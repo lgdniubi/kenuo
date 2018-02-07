@@ -37,6 +37,53 @@
 		ORDER BY t.sort DESC,T.CREATETIME DESC 
 	</select>
 
+	<!-- 根据商家id查询一级分类 -->
+	<select id="findOneCategoryslist" resultType="TrainCategorys">
+		SELECT
+			DISTINCT
+			t.category_id AS 'categoryId',
+			t.parent_id AS 'parentId',
+			t.name,
+			t.priority,
+			t.cover_pic AS 'coverPic',
+			t.introduce,
+			t.cate_type AS 'cateType',
+			t.office_code AS 'officeCode',
+			t.createuser,
+			t.status,
+			T.CREATETIME,
+			t.is_show AS isShow,
+			t.sort,
+			so.name AS "office.name"
+		FROM
+			train_categorys t
+			LEFT JOIN sys_office so ON t.office_id = so.id
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		<!-- 若priority为空或者null,则表示查询所有分类 -->
+		<if test="priority != null and priority != ''">
+			AND t.priority = #{priority}
+		</if>
+		<choose>
+			<when test="franchisee.id != null and franchisee.id != ''">
+				AND t.office_id = #{franchisee.id}
+			</when>
+			<!-- <otherwise>
+				AND t.office_id = (SELECT franchisee_id FROM sys_office WHERE id = #{id})
+			</otherwise> -->
+		</choose>
+		
+		<!-- <if test="franchisee.id != null and franchisee.id != ''">
+			AND t.office_id = #{franchisee.id}
+		</if>
+		<if test="id != null and id != ''">
+			AND t.office_id = (SELECT franchisee_id AS 'id' FROM sys_office WHERE id = #{id})
+		</if> -->
+			AND t.parent_id = "0"
+			AND t.status != -1
+		ORDER BY t.sort DESC,T.CREATETIME DESC 
+	</select>
+
 	<insert id="insert">
 		INSERT INTO train_categorys (
 		  category_id,

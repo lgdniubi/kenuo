@@ -9,6 +9,7 @@
 	<title>banner图</title>
 	<meta name="decorator" content="default"/>
 	<link rel="stylesheet" href="${ctxStatic}/train/css/exam.css">
+	<%@include file="/webpage/include/treeview.jsp" %>
 	
 	<!-- 图片上传 引用-->
 	<link rel="stylesheet" type="text/css" href="${ctxStatic}/ec/css/custom_uploadImg.css">
@@ -18,15 +19,42 @@
 	
 	<script type="text/javascript">
 		var validateForm;
+		var tree2;
+		var comId = "${user.company.id}";	
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		    if($("#adPic").val() == null || $("#adPic").val() == ""){
 			   top.layer.alert('banner图不可为空！', {icon: 0, title:'提醒'});
 			   return false;
 		    }
+			
 	    	if(validateForm.form()){
-	    		loading("正在提交，请稍候...");
-				$("#inputForm").submit();
-		    	return true;
+	    		if (comId == '1') {
+				    var ids2 = [], nodes2 = tree2.getCheckedNodes(true);
+					for (var i=0; i<nodes2.length; i++) {
+						ids2.push(nodes2[i].id);
+					}
+		    		if($("#franchiseeIds").val() == '2'){
+						  if(ids2.length > 0){
+							  $("#franchiseIds").val(ids2);
+							  loading('正在提交，请稍等...');
+							  $("#inputForm").submit();
+							  return true;
+						  }else{
+							  top.layer.alert('按权限设置时，商家不可为空', {icon: 0, title:'提醒'});
+							  return false;
+						  }
+					 }else{
+						$("#franchiseIds").val('1')
+					    loading('正在提交，请稍等...');
+					    $("#inputForm").submit();
+					    return true;
+					 }
+				}else{
+					$("#franchiseIds").val(comId);
+		    		loading("正在提交，请稍候...");
+					$("#inputForm").submit();
+			    	return true;
+				}
 	    	}
 	    	return false;
 	    }
@@ -48,6 +76,59 @@
 				}
 			})
 		})
+		
+		// 页面加载商家tree
+		$(function(){
+			var comId = "${user.company.id}";			
+			var ids = "${trainsBanner.soFranchiseeIds}".split(",");
+			if (comId == '1') {
+				var setting = {check:{enable:true,autoCheckTrigger: true},view:{selectedMulti:false},
+						data:{simpleData:{enable:true}},callback:{beforeClick:function(id, node){
+							tree2.checkNode(node, !node.checked, true, true);
+							return false;
+						}}};
+				$.post("${ctx}/sys/franchisee/treeData",null,function(data){
+					// 初始化树结构
+					tree2 = $.fn.zTree.init($("#franchiseTree"), setting, data);
+					var treeObj = $.fn.zTree.getZTreeObj("franchiseTree");
+					var treeNode = treeObj.getNodes();
+					treeNode[0].nocheck = true; //父节点不可选
+					treeObj.updateNode(treeNode[0]);
+					// 不选择父节点
+					tree2.setting.check.chkboxType = { "Y" : "", "N" : "" };
+					// 默认选择节点
+					if (ids.length > 0 && ids != '' && ids != '1') {
+						for(var i=0; i<ids.length; i++) {
+							var node = tree2.getNodeByParam("id", ids[i]);
+							try{tree2.checkNode(node, true, false);}catch(e){}
+						}
+						$("#franchiseeIds option:last").attr("selected","selected");
+					}else{
+						$("#franchiseeIds option:first").attr("selected","selected");
+					}
+					tree2.selectNode(node,true,false);//  展开选中的节点
+					// 刷新（显示/隐藏）机构
+					refreshFranchisee();
+				},"json");
+			}
+		})
+		//刷新，选择隐藏或者显示ztree
+		function refreshFranchisee(){
+			if($("#franchiseeIds").val()== '2'){
+				$("#franchiseTree").show();
+			}else{
+				$("#franchiseTree").hide();
+			}
+		}
+		
+		//根据选择banner权限
+		function bannerFranchisee(value){
+			if (value == '2') {
+				$("#franchiseTree").show();
+			}else{
+				$("#franchiseTree").hide();
+			}
+		}
 	</script>
 </head>
 <body class="gray-bg">
@@ -82,6 +163,22 @@
 										</select>
 									</td>
 								</tr>
+								<!-- banner权限,只有登云身份的才可见 -->
+								<c:if test="${user.company.id eq '1' }">
+									 <tr>
+								         <td style="vertical-align: top;"><label class="pull-right"><font color="red">*</font>广告图权限:</label></td>
+								         <td>
+								         	<select id="franchiseeIds" class="form-control required" onchange="bannerFranchisee(this.value)">
+								         		<option value="1">所有人可见</option>
+												<option value="2">部分商家可见</option>
+								         	</select>
+											<div class="controls" style="margin-top:3px;margin-left: 10px;">
+									         	<span class="help-inline">权限为可让那些商家看见</span>
+												<div id="franchiseTree" class="ztree" style="margin-top:3px;margin-left: 10px;"></div>
+												<input type="hidden" id="franchiseIds" name="soFranchiseeIds">
+											</div></td>
+								     </tr>
+							     </c:if>
 								<tr>
 									<td><label class="pull-right">链接：</label></td>
 									<td>

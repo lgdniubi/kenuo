@@ -1,11 +1,14 @@
 package com.training.modules.train.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
+import com.training.common.utils.StringUtils;
 import com.training.modules.train.dao.TrainsBannerDao;
+import com.training.modules.train.entity.FranchiseeBanner;
 import com.training.modules.train.entity.TrainsBanner;
 
 
@@ -17,6 +20,9 @@ import com.training.modules.train.entity.TrainsBanner;
 @Service
 @Transactional(readOnly = false)
 public class TrainsBannerService extends CrudService<TrainsBannerDao, TrainsBanner>{
+	
+	@Autowired
+	private TrainsBannerDao trainsBannerDao;
 	
 	/**
 	 * 分页查询banner图
@@ -37,15 +43,43 @@ public class TrainsBannerService extends CrudService<TrainsBannerDao, TrainsBann
 	/**
 	 * 保存
 	 */
-	public void save(TrainsBanner trainsBanner){
-		dao.insert(trainsBanner);
+	public void save(TrainsBanner trainsBanner,FranchiseeBanner fBanner){
+		trainsBannerDao.insertBanner(trainsBanner);
+		String soFranchiseeIds = trainsBanner.getSoFranchiseeIds();
+		fBanner.setBannerId(trainsBanner.getAdId());
+		if (StringUtils.isNotBlank(trainsBanner.getUser().getCompany().getId()) && "1".equals(trainsBanner.getUser().getCompany().getId())) {
+			String[] soFIds = soFranchiseeIds.split(",");
+			for (String soFId : soFIds) {
+				fBanner.setSoFranchisee(Integer.valueOf(soFId));
+				trainsBannerDao.insertFranchiseeBanner(fBanner);
+			}
+		}else{
+			fBanner.setSoFranchisee(fBanner.getCreateFranchisee());
+			trainsBannerDao.insertFranchiseeBanner(fBanner);
+		}
 	}
 	/**
 	 * 修改
 	 * @param trainsBanner
+	 * @param fBanner 
 	 */
-	public void update(TrainsBanner trainsBanner){
-		dao.update(trainsBanner);
+	public void update(TrainsBanner trainsBanner, FranchiseeBanner fBanner){
+		Integer num = dao.update(trainsBanner);
+		fBanner.setBannerId(trainsBanner.getAdId());
+		if (num > 0 && num != null) {
+			fBanner.setCreateFranchisee(Integer.valueOf(trainsBanner.getUser().getCompany().getId()));
+			trainsBannerDao.delteFranchiseeBanner(fBanner);
+			if (StringUtils.isNotBlank(trainsBanner.getUser().getCompany().getId()) && "1".equals(trainsBanner.getUser().getCompany().getId())) {
+				String[] soFIds = trainsBanner.getSoFranchiseeIds().split(",");
+				for (String soId : soFIds) {
+					fBanner.setSoFranchisee(Integer.valueOf(soId));
+					trainsBannerDao.insertFranchiseeBanner(fBanner);
+				}
+			}else{
+				fBanner.setSoFranchisee(fBanner.getCreateFranchisee());
+				trainsBannerDao.insertFranchiseeBanner(fBanner);
+			}
+		}
 	}
 	
 	public void deleteBanner(TrainsBanner trainsBanner){

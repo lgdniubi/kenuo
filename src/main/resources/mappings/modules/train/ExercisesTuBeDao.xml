@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.ExercisesTuBeDao">
+	<!-- 分页查询当前课程下的所属习题或测试 -->
+	<select id="findList" resultType="ExercisesCategorys">
+		SELECT 
+			e.*,
+			c.name 
+		FROM 
+			trains.train_exercises e 
+		LEFT JOIN 
+			train_exercises_lesson_mapping m 
+		ON 
+			e.exercise_id = m.exercise_id 
+		LEFT JOIN 
+			train_categorys c ON e.category_id = c.category_id
+		WHERE
+			m.status = 0
+			<if test="lessontype == 1">
+				AND m.LESSON_ID = #{lessonId}
+			</if>
+			<if test="lessontype == 2 ">
+				AND m.CATEGORY_ID = #{categoryId}
+			</if>
+			<if test="exerciseTitle != null and exerciseTitle != ''">
+				AND ( e.exercise_title LIKE 
+						<if test="dbName == 'oracle'">'%'||#{exerciseTitle}||'%'</if>
+						<if test="dbName == 'mysql'">CONCAT('%', #{exerciseTitle}, '%')</if>
+				OR e.tags LIKE 
+						<if test="dbName == 'oracle'">'%'||#{exerciseTitle}||'%'</if>
+						<if test="dbName == 'mysql'">CONCAT('%', #{exerciseTitle}, '%')</if>
+						)
+			</if>
+			<if test="exerciseType != null and exerciseType !=''">
+				AND e.exercise_type = #{exerciseType }
+			</if>
+			<if test="id != null and id != ''">
+				AND e.category_id = #{id}
+			</if>
+ 			GROUP BY e.exercise_id
+			ORDER BY e.CREATETIME DESC 
+	</select>
+	
+	<!-- 删除试题，修改为不显示即可 -->
+	<update id="deleteExercises">
+		UPDATE 
+			trains.train_exercises_lesson_mapping 
+		SET 
+			status = -1 
+		WHERE 
+			exercise_id = #{exerciseId} 
+		<if test="lessontype == 1">
+			AND lesson_id = #{lessonId}
+		</if>
+		<if test="lessontype == 2 ">
+			AND category_id = #{categoryId}
+		</if>
+	</update>
+</mapper>
