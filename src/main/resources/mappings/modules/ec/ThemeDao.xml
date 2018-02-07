@@ -14,6 +14,7 @@
 			sort,
 			is_recommend AS 'isRecommend',
 			is_show AS 'isShow',
+			is_open AS 'isOpen',
 			create_by AS 'createBy.id',
 			create_date AS 'createDate'
 		FROM mtmydb.mtmy_theme 
@@ -33,6 +34,7 @@
 			sort,
 			is_recommend AS 'isRecommend',
 			is_show AS 'isShow',
+			is_open AS 'isOpen',
 			create_by AS 'createBy.id',
 			create_date AS 'createDate',
 			update_by AS 'updateBy.id',
@@ -52,6 +54,7 @@
 			sort,
 			is_recommend,
 			is_show,
+			is_open,
 			create_by,
 			create_date
 		)VALUES(
@@ -63,6 +66,7 @@
 			#{sort},
 			0,
 			0,
+			#{isOpen},
 			#{createBy.id},
 			SYSDATE()
 		)
@@ -78,6 +82,7 @@
 			content = #{content},
 			img = #{img},
 			sort = #{sort},
+			is_open = #{isOpen},
 			update_by = #{updateBy.id},
 			update_date = SYSDATE()
 		WHERE id = #{themeId}
@@ -158,4 +163,6 @@
 	<delete id="deleteArticles">
 		DELETE FROM mtmydb.mtmy_theme_mapping WHERE theme_id =#{themeId} AND some_id = #{someId}
 	</delete>
+	
+	<!--  -->
 </mapper>

@@ -22,6 +22,8 @@ import com.training.modules.ec.entity.Theme;
 import com.training.modules.ec.entity.ThemeMapping;
 import com.training.modules.ec.service.ThemeService;
 import com.training.modules.ec.utils.WebUtils;
+import com.training.modules.sys.entity.Franchisee;
+import com.training.modules.sys.service.FranchiseeService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
@@ -42,6 +44,8 @@ public class ThemeController extends BaseController{
 	private ThemeService themeService;
 	@Autowired
 	private ThemeDao themeDao;
+	@Autowired
+	private FranchiseeService franchiseeService;
 	
 	/**
 	 * 热门主题列表
@@ -73,10 +77,12 @@ public class ThemeController extends BaseController{
 	@RequestMapping(value="form")
 	public String form(Theme theme,HttpServletRequest request,Model model){
 		try{
+			List<Franchisee> list = franchiseeService.findList(new Franchisee());
 			if(theme.getThemeId() != 0){
 				theme = themeService.getTheme(theme.getThemeId());
 			}
 			model.addAttribute("theme",theme);
+			model.addAttribute("list",list);
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "跳转编辑热门主题页面", e);
 			logger.error("跳转编辑热门主题页面出错信息：" + e.getMessage());
@@ -173,6 +179,7 @@ public class ThemeController extends BaseController{
 			Page<ThemeMapping> page = themeService.selectGoodsForTheme(new Page<ThemeMapping>(request,response),themeMapping);
 			model.addAttribute("page", page);
 			model.addAttribute("themeMapping",themeMapping);
+			model.addAttribute("isOpen", theme.getIsOpen());
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "热门主题对应的商品列表", e);
 			logger.error("热门主题对应的商品列表出错信息：" + e.getMessage());
@@ -217,6 +224,7 @@ public class ThemeController extends BaseController{
 		try{
 			List<ThemeMapping> goodsList = themeDao.selectGoodsForTheme(themeMapping);
 			model.addAttribute("goodsList",goodsList);
+			model.addAttribute("isOpen", request.getParameter("isOpen"));
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "跳转热门主题添加商品页面", e);
 			logger.error("跳转热门主题添加商品页面出错信息：" + e.getMessage());

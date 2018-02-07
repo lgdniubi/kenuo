@@ -1426,7 +1426,7 @@ public class GoodsController extends BaseController{
 		}
 		
 		if(!"".equals(isOpen) && isOpen != null){
-			if("0".equals(isOpen)){                //若活动或者主题是公开的，则商品就是公开的
+			if("0,".equals(isOpen)){                //若活动或者主题是公开的，则商品就是公开的
 				goods.setOpenFlag("0");
 			}else{
 				String[] franchiseeIds = isOpen.split(",");
