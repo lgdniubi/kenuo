@@ -51,7 +51,7 @@
 		  g.goods_type AS 'goodsType',
 		  g.advance_price AS 'advancePrice',
 		  g.supplier_id AS 'supplierId',
-		  g.is_open AS 'isOpen'
+		  g.is_open AS 'goodsIsOpen'
 	</sql>
 	
 	<sql id="goodsJoins">
@@ -78,7 +78,7 @@
 		  g.sort,
 		  g.action_id as "actionId",
 		  b.action_name as "actionName",
-		  g.is_open as "isOpen"
+		  g.is_open as "goodsIsOpen"
 		FROM
 		  mtmydb.mtmy_goods g 
 		  LEFT JOIN mtmydb.mtmy_goods_category c 
@@ -211,6 +211,15 @@
 		<if test="goodsId != 0">
 			AND g.goods_id = #{goodsId}
 		</if>
+		<if test="openFlag != null and openFlag != ''">
+			AND g.is_open = #{openFlag}
+		</if>
+		<if test="franchiseeIdsList != null and franchiseeIdsList != '' and franchiseeIdsList.size() > 0">
+			AND g.franchisee_id IN  
+       		<foreach collection="franchiseeIdsList" item="item" index="index" open="(" separator="," close=")">  
+            	#{item}  
+        	</foreach> 
+		</if>
 	</select>
 	<!-- 根据多个分类查询上商品 -->
 	<select id="findByCateList" resultType="Goods">
@@ -230,7 +239,7 @@
 			g.original_img AS 'originalImg',
 			g.service_min AS 'serviceMin',
 			g.is_real AS 'isReal',
-			g.is_open AS 'isOpen'
+			g.is_open AS 'goodsIsOpen'
 		FROM
 			mtmydb.mtmy_goods g
 		WHERE g.del_flag = 0  AND g.goods_id = #{goodsId}
@@ -269,7 +278,7 @@
 		  g.region_name AS 'regionName',
 		  g.region_id AS 'regionId',
 		  g.service_min AS 'serviceMin',
-		  g.is_open AS 'isOpen'
+		  g.is_open AS 'goodsIsOpen'
 		FROM
 		  mtmydb.mtmy_goods g
 		 
@@ -371,7 +380,7 @@
 		    #{goodsType},
 		    #{advancePrice},
 		    #{supplierId},
-		    #{isOpen}
+		    #{goodsIsOpen}
 		  )
 	</insert>
 	
@@ -421,7 +430,7 @@
 			  goods_type = #{goodsType},
 		      advance_price = #{advancePrice},
 			  supplier_id = #{supplierId},
-			  is_open = #{isOpen}
+			  is_open = #{goodsIsOpen}
 			WHERE del_flag = 0 AND goods_id = #{goodsId}
 	</update>
 	<update id="updateTotalstore">
