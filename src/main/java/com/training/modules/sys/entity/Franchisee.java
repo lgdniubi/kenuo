@@ -35,6 +35,8 @@ public class Franchisee extends TreeEntity<Franchisee>{
 	private String 	bankName;		//持卡人姓名
 	private String 	status = "0";	//状态(未用)
 	
+	private String isRealFranchisee;  //是否真实的商家（0：否；1：是）
+	
 	@Override
 	public Franchisee getParent() {
 		return parent;
@@ -164,4 +166,11 @@ public class Franchisee extends TreeEntity<Franchisee>{
 	public void setStatus(String status) {
 		this.status = status;
 	}
+	public String getIsRealFranchisee() {
+		return isRealFranchisee;
+	}
+	public void setIsRealFranchisee(String isRealFranchisee) {
+		this.isRealFranchisee = isRealFranchisee;
+	}
+	
 }

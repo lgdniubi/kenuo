@@ -81,7 +81,9 @@ public class MtmyWebAdController extends BaseController{
 	@RequestMapping(value="form")
 	public String form(MtmyWebAd mtmyWebAd,HttpServletRequest request, HttpServletResponse response,Model model) {
 		try{
-			List<Franchisee> list = franchiseeService.findList(new Franchisee());
+			Franchisee franchisee = new Franchisee();
+			franchisee.setIsRealFranchisee("1");
+			List<Franchisee> list = franchiseeService.findList(franchisee);
 			if(mtmyWebAd.getMtmyWebAdId() != 0){
 				mtmyWebAd = mtmyWebAdService.getMtmyWebAd(mtmyWebAd.getMtmyWebAdId());
 			}else{

@@ -77,7 +77,9 @@ public class ThemeController extends BaseController{
 	@RequestMapping(value="form")
 	public String form(Theme theme,HttpServletRequest request,Model model){
 		try{
-			List<Franchisee> list = franchiseeService.findList(new Franchisee());
+			Franchisee franchisee = new Franchisee();
+			franchisee.setIsRealFranchisee("1");
+			List<Franchisee> list = franchiseeService.findList(franchisee);
 			if(theme.getThemeId() != 0){
 				theme = themeService.getTheme(theme.getThemeId());
 			}
