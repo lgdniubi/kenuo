@@ -57,5 +57,14 @@ public interface TrainCategorysDao extends CrudDao<TrainCategorys>{
 	 * @param trainCategorys
 	 */
 	public void updateIsShow(@Param(value="ids")String[] ids,@Param(value="isShow")int isShow);
+
+	/**
+	 * 
+	 * @Title: findsonCategoryslist
+	 * @Description: TODO 根据商家和以及分类查询二级分类
+	 * @throws
+	 * 2018年1月26日 兵子
+	 */
+	public List<TrainCategorys> findOneCategoryslist(TrainCategorys trainCategorys);
 	
 }

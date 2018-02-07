@@ -24,6 +24,7 @@ public class ActionInfo extends DataEntity<ActionInfo>{
 	private int executeStatus;			//定时器执行状态 0 未执行 1已执行
 	private int sort;	// 排序
 	
+	private String isOpen;				//是否公开(0：公开；不公开则保存相应的商家id，以,拼接)
 	
 	public int getExecuteStatus() {
 		return executeStatus;
@@ -161,4 +162,12 @@ public class ActionInfo extends DataEntity<ActionInfo>{
 		this.sort = sort;
 	}
 
+	public String getIsOpen() {
+		return isOpen;
+	}
+
+	public void setIsOpen(String isOpen) {
+		this.isOpen = isOpen;
+	}
+	
 }

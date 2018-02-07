@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -20,8 +21,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.training.common.persistence.Page;
 import com.training.common.web.BaseController;
 import com.training.modules.sys.entity.Dict;
+import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.DictUtils;
+import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.entity.FranchiseeBanner;
 import com.training.modules.train.entity.TrainsBanner;
 import com.training.modules.train.service.TrainsBannerService;
 
@@ -37,9 +41,15 @@ public class TrainsBannerController extends BaseController {
 	@Autowired
 	private TrainsBannerService trainsBannerService;
 	
+	@ModelAttribute
+	public User getUser(){
+		User user = UserUtils.getUser();
+		return user;
+	}
+	
 	@RequestMapping(value = "list")
-	public String list(TrainsBanner trainsBanner,HttpServletRequest request, HttpServletResponse response,Model model) {
-		
+	public String list(TrainsBanner trainsBanner,User user,HttpServletRequest request, HttpServletResponse response,Model model) {
+		trainsBanner.setUser(user);
 		Page<TrainsBanner> page=trainsBannerService.findPage(new Page<TrainsBanner>(request, response), trainsBanner);
 		model.addAttribute("page", page);
 		
@@ -47,21 +57,27 @@ public class TrainsBannerController extends BaseController {
 	}
 	
 	@RequestMapping(value = "form")
-	public String form(TrainsBanner trainsBanner,Model model){
+	public String form(TrainsBanner trainsBanner,User user,Model model,FranchiseeBanner franchiseeBanner){
+		trainsBanner.setUser(user);
 		if(trainsBanner.getAdId()!=0){
 			trainsBanner = trainsBannerService.getBanner(trainsBanner.getAdId());
 			model.addAttribute("trainsBanner", trainsBanner);
 		}
+		model.addAttribute("user", user);
 		return "modules/train/bannerForm";
 	}
 	
 	@RequestMapping(value = "save")
-	public String save(TrainsBanner trainsBanner,RedirectAttributes redirectAttributes){
+	public String save(TrainsBanner trainsBanner,User user,FranchiseeBanner fBanner,RedirectAttributes redirectAttributes){
+		String parentIds = user.getOffice().getParentIds()+","+user.getOffice().getId();
+		trainsBanner.setParentIds(parentIds);
+		fBanner.setCreateFranchisee(Integer.valueOf(user.getCompany().getId()));
+		trainsBanner.setUser(user);
 		if(trainsBanner.getAdId()==0){
-			trainsBannerService.save(trainsBanner);
+			trainsBannerService.save(trainsBanner,fBanner);
 			addMessage(redirectAttributes, "添加banner图成功！");
 		}else{
-			trainsBannerService.update(trainsBanner);
+			trainsBannerService.update(trainsBanner,fBanner);
 			addMessage(redirectAttributes, "修改banner图成功！");
 		}
 		return "redirect:" + adminPath + "/trains/banner/list";

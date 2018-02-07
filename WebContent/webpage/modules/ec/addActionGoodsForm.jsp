@@ -90,6 +90,7 @@
 	//将分类下商品加载到左侧的下拉框
 	function addselectgoods(){
 		var goodsName=jQuery("#goodsName").val();
+		var isOpen=$("#isOpen").val();
 		var cateid=$("#categoryId").val();
 		var name=$("#categoryName").val();
 		$("#select1").empty();
@@ -108,6 +109,7 @@
 				  data:{
 					  goodsCategory:cateid,
 					  goodsName:goodsName,
+					  isOpen:isOpen,
 					  actionId:5
 					  },
 				  url:"${ctx}/ec/goods/treeGoodsData",
@@ -275,6 +277,7 @@
 				<div class="clearfix">
 					<form:form id="inputForm" modelAttribute="actionInfo" action="${ctx}/ec/action/saveGoods" method="post" class="form-horizontal">
 						<form:hidden path="actionId"/>
+						<form:hidden path="isOpen"/>
 						
 						<div id="categ" style="width:300px;float: left;">
 						<label style="float:left;padding-top:10px;">选择分类：</label>

@@ -24,6 +24,7 @@ import com.google.common.collect.Maps;
 import com.training.common.utils.IdGen;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
+import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.CategoryLesson;
@@ -175,6 +176,27 @@ public class CategorysController extends BaseController{
 		List<TrainCategorys> listtow = trainCategorysService.findcategoryslist(trainCategorys);//二级分类
 		jsonMap.put("listtow",listtow);
 		return jsonMap;
+	}
+	
+	/**
+	 * 
+	 * @Title: newlisttow
+	 * @Description: TODO 根据商家id一级分类
+	 * @throws
+	 * 2018年1月26日 兵子
+	 */
+	@ResponseBody
+	@RequestMapping(value = "oneCategory")
+	public List<TrainCategorys> oneCategory(TrainCategorys trainCategorys,String compId, HttpServletRequest request, HttpServletResponse response){
+		trainCategorys.setPriority(1);//一级分类
+		//添加数据权限
+		trainCategorys.getSqlMap().put("dsf", ScopeUtils.dataScopeFilter("t","category"));
+
+		Franchisee franchisee = new Franchisee();
+		franchisee.setId(compId);
+		trainCategorys.setFranchisee(franchisee);
+		List<TrainCategorys> listtow = trainCategorysService.findOneCategoryslist(trainCategorys);//二级分类
+		return listtow;
 	}
 	
 	/**

@@ -15,7 +15,7 @@
 	}
 	
 	
-	function  addGoods(show,close,actionId){
+	function  addGoods(show,close,actionId,isOpen){
 		var newDate=new Date();
 		var showDate =new Date(show);
 		var closeDate=new Date(close);
@@ -28,7 +28,7 @@
 			 return;
 		}
 		if(newDate.getTime()<showDate.getTime()){
-			 openDialogView('活动商品列表', '${ctx}/ec/action/addActionGoodsList?actionId='+actionId,'900px','700px');
+			 openDialogView('活动商品列表', '${ctx}/ec/action/addActionGoodsList?actionId='+actionId+'&isOpen='+isOpen,'900px','700px');
 		}
 	
 	}           
@@ -222,7 +222,7 @@
 										<c:if test="${action.status==2}">
 											<a href="#" onclick="addGoods('<fmt:formatDate value="${action.showTime}"
 										pattern="yyyy-MM-dd HH:mm:ss" /> ','<fmt:formatDate value="${action.closeTime}"
-										pattern="yyyy-MM-dd HH:mm:ss" />','${action.actionId }')" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i>添加活动商品</a>
+										pattern="yyyy-MM-dd HH:mm:ss" />','${action.actionId }','${action.isOpen}')" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i>添加活动商品</a>
 										</c:if>
 										<c:if test="${action.status==1}">
 											<a href="#" style="background: #C0C0C0; color: #FFF"
