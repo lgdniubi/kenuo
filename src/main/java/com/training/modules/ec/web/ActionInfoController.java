@@ -98,7 +98,9 @@ public class ActionInfoController extends BaseController {
 			if(actionInfo.getActionId()>0){
 				actionInfo=get(actionInfo.getActionId()+"");
 			}
-			List<Franchisee> franchiseeList = franchiseeService.findList(new Franchisee());//查询所有商家(不包括"登云美业"且没有删除的)
+			Franchisee franchisee = new Franchisee();//商家区分是否真实商家
+			franchisee.setIsRealFranchisee("1");
+			List<Franchisee> franchiseeList = franchiseeService.findList(franchisee);//查询所有商家(不包括"登云美业"且没有删除的)
 			model.addAttribute("actionInfo",actionInfo);
 			model.addAttribute("franchiseeList",franchiseeList);
 		} catch (Exception e) {
@@ -125,7 +127,9 @@ public class ActionInfoController extends BaseController {
 				actionInfo=get(actionInfo.getActionId()+"");
 			}
 			List<Goods> list=actionInfoService.ActionGoodslist(actionInfo.getActionId());
-			List<Franchisee> franchiseeList = franchiseeService.findList(new Franchisee());//查询所有商家(不包括"登云美业"且没有删除的)
+			Franchisee franchisee = new Franchisee();//商家区分是否真实商家
+			franchisee.setIsRealFranchisee("1");
+			List<Franchisee> franchiseeList = franchiseeService.findList(franchisee);//查询所有商家(不包括"登云美业"且没有删除的)
 			model.addAttribute("list",list);
 			model.addAttribute("actionInfo",actionInfo);
 			model.addAttribute("franchiseeList",franchiseeList);
