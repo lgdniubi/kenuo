@@ -1277,4 +1277,13 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 	public List<ReturnedGoods> queryReturnList(String orderIds){
 		return returnedGoodsDao.queryReturnList(orderIds);
 	}
+
+	/**
+	 * 异步获取除本次售后外,该部门剩余分享的营业额
+	 * @param orderPushmoneyRecord
+	 * @return
+	 */
+	public double getDeptPushmoney(OrderPushmoneyRecord orderPushmoneyRecord) {
+		return returnedGoodsDao.getDeptPushmoney(orderPushmoneyRecord);
+	}
 }

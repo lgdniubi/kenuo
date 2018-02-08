@@ -980,4 +980,14 @@ public class ReturnedGoodsController extends BaseController {
 		}
 		return flag;
 	}
+	/**
+	 * 异步获取除本次售后外,该部门剩余分享的营业额
+	 * @param orderPushmoneyRecord
+	 * @return  
+	 */
+	@ResponseBody
+	@RequestMapping(value = "getDeptPushmoney")
+	public double getDeptPushmoney(OrderPushmoneyRecord orderPushmoneyRecord) {
+		return returnedGoodsService.getDeptPushmoney(orderPushmoneyRecord); 
+	}
 }

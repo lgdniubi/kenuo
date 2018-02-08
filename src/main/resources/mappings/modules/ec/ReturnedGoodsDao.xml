@@ -936,6 +936,20 @@
 		GROUP BY
 			r.department_id
 	</select>
+	<!-- 异步获取除本次售后外,该部门剩余分享的营业额 -->
+	<select id="getDeptPushmoney" resultType="Double">
+		SELECT
+			SUM(r.push_money) AS pushMoney
+		FROM
+			mtmydb.mtmy_beautician_turnover r
+		LEFT JOIN
+			trains.train_department td ON r.department_id = td.id
+		WHERE
+			r.order_id = #{orderId}
+		AND r.del_flag = 0
+		AND r.department_id = #{departmentId}
+		AND	(r.returned_id != #{returnedId} OR r.returned_id IS NULL)
+	</select>
 	
 	<!-- 查询业务员营业额明细列表-->
 	<select id="getBeauticianTurnoverList" resultType="OrderPushmoneyRecord">
