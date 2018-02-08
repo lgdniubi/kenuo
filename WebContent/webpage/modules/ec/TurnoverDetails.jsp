@@ -47,7 +47,7 @@
 	     	    	//校验同部门的营业额总和  = 售后金额
 	  			    var add = 0;//已扣减的值
 	  			    var turnover = 0;//增减值
-	  			    var surplusMoney = 0;//个人当前剩余的总营业额
+	  			    var surplusMoney = 0;//除本次售后外,该部门剩余分享的营业额
 	  			    var pushMoneys = "";//输入的增减值拼接字符串
 	  			    departmentId = departmentId.split(",");
 	  			    for(var i = 0; i < departmentId.length-1; i++){
@@ -55,8 +55,8 @@
 	  			    	var added = obj.document.getElementsByName(addeds); //已扣减的值
 	  			    	var departmentIds = "Amount"+departmentId[i];
 	     	    		var dept = obj.document.getElementsByName(departmentIds); //当前输入的增减值
-	  			    	var surplusAddeds = "added"+departmentId[i];
-	     	    		var surplusAdded = obj.document.getElementsByName(surplusAddeds); //个人当前剩余的总营业额
+	  			    	/* var surplusAddeds = "added"+departmentId[i];
+	     	    		var surplusAdded = obj.document.getElementsByName(surplusAddeds); //个人当前剩余的总营业额 */
 
 	     	    		for(var j = 0; j < added.length; j++){
 	  				    	add += parseFloat($(added[j]).val());//已扣减的值
@@ -67,9 +67,6 @@
 	  				    	pushMoneys += $(dept[k]).val() + ",";//输入的增减值拼接字符串
 	  				    }
 	  				    
-	  				    for(var l = 0; l < surplusAdded.length; l++){
-	  				    	surplusMoney += parseFloat($(surplusAdded[l]).val());//增减值
-	  				    }
 	  				    //退款金额<除本次售后外,该部门剩余分享的营业额  --> 0<=部门业务员扣减营业额之和<=退款金额
 	  				    if(parseFloat(returnAmount) < parseFloat(surplusMoney)){
 		  				    if(parseFloat(turnover) + parseFloat(add) > 0){
