@@ -383,12 +383,12 @@
       	    	var changeValue = obj.document.getElementsByName("changeValue"); //加减额
       	    	var pushMoneyTotal = obj.document.getElementsByName("pushMoneySum"); //单个营业员该订单的提成总额，下单+充值-退款
       	    	for(i=0;i<pushmoneyUserId.length;i++){
-					var pushMoneySum = parseFloat(pushMoney[i].value) + parseFloat(changeValue[i].value);
+					var pushMoneySum = (parseFloat(pushMoney[i].value)*100 + parseFloat(changeValue[i].value)*100)/100;
 					if(pushMoneySum < 0){
 						top.layer.alert('单个业务员的营业额不能小于0！', {icon: 0, title:'提醒'});
 	 	    			return;
 					}
-					if(parseFloat(pushMoneyTotal[i].value) + parseFloat(changeValue[i].value) < 0){
+					if(((parseFloat(pushMoneyTotal[i].value)*100 + parseFloat(changeValue[i].value)*100)/100) < 0){
 						top.layer.alert('单个业务员的营业额不能小于其在该笔订单中的营业总额！', {icon: 0, title:'提醒'});
 	 	    			return;
 					}
@@ -399,14 +399,13 @@
 					var sum = 0;
 					var result = obj.document.getElementsByClassName(map[j]);
 					for(k=0;k<result.length;k++){
-						sum = parseFloat(sum) + parseFloat(result[k].value); 
+						sum = (parseFloat(sum)*100 + parseFloat(result[k].value)*100)/100; 
 					}
-      	    		if(parseFloat(sum) - parseFloat(amount) != 0){
+      	    		if(((parseFloat(sum)*100 - parseFloat(amount)*100)/100) != 0){
       	    			top.layer.alert('每个部门的营业额之和必须等于分享营业额！', {icon: 0, title:'提醒'});
 	 	    			return;
       	    		}
       	    	}
-				
 				//防止表单多次提交
 			    if(isDecided == false){
 			    	isDecided = true;		//提交表单后，将表单是否已经提交标识设置为true
