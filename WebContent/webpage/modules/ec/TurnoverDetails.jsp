@@ -49,15 +49,14 @@
 	  			    var turnover = 0;//增减值
 	  			    var surplusMoney = 0;//除本次售后外,该部门剩余分享的营业额
 	  			    var pushMoneys = "";//输入的增减值拼接字符串
+	  			    var flag = false;//判断部门业务员扣减营业额之和是否符合要求
 	  			    departmentId = departmentId.split(",");
 	  			    for(var i = 0; i < departmentId.length-1; i++){
 	  			    	var addeds = "pushMoney"+departmentId[i];
 	  			    	var added = obj.document.getElementsByName(addeds); //已扣减的值
 	  			    	var departmentIds = "Amount"+departmentId[i];
 	     	    		var dept = obj.document.getElementsByName(departmentIds); //当前输入的增减值
-	  			    	/* var surplusAddeds = "added"+departmentId[i];
-	     	    		var surplusAdded = obj.document.getElementsByName(surplusAddeds); //个人当前剩余的总营业额 */
-
+	     	    		
 	     	    		for(var j = 0; j < added.length; j++){
 	  				    	add += parseFloat($(added[j]).val());//已扣减的值
 	  				    }
@@ -67,7 +66,8 @@
 	  				    	pushMoneys += $(dept[k]).val() + ",";//输入的增减值拼接字符串
 	  				    }
 	  				    
-	  				    //退款金额<除本次售后外,该部门剩余分享的营业额  --> 0<=部门业务员扣减营业额之和<=退款金额
+	     	    		surplusMoney = obj.document.getElementById(departmentId[i]).value; //除本次售后外,该部门剩余分享的营业额
+				    	//退款金额<除本次售后外,该部门剩余分享的营业额  --> 0<=部门业务员扣减营业额之和<=退款金额
 	  				    if(parseFloat(returnAmount) < parseFloat(surplusMoney)){
 		  				    if(parseFloat(turnover) + parseFloat(add) > 0){
 		  				        top.layer.alert('每个部门的营业额之和大于等于0,小于等于售后金额！', {icon: 0, title:'提醒'});
@@ -79,11 +79,11 @@
 	  				    }
 	  				    //退款金额>=除本次售后外,该部门剩余分享的营业额  --> 0<=部门业务员扣减营业额之和<=除本次售后外,该部门剩余分享的营业额
 	  				    if(parseFloat(returnAmount) >= parseFloat(surplusMoney)){
-	  				    	if(parseFloat(turnover) + parseFloat(add) > 0){
-		  				        top.layer.alert('每个部门的营业额之和大于等于0,小于等于除本次售后外该部门剩余的分享营业额！', {icon: 0, title:'提醒'});
+	  				    	if(-(parseFloat(turnover) + parseFloat(add)) < 0){
+		  				        top.layer.alert('每个部门的营业额之和大于等于0,小于等于该部门剩余的分享营业额！', {icon: 0, title:'提醒'});
 		  					    return;
-		  				    }else if(parseFloat(surplusMoney) + parseFloat(turnover) + parseFloat(add) < 0){
-		  				    	top.layer.alert('每个部门的营业额之和大于等于0,小于等于除本次售后外该部门剩余的分享营业额！', {icon: 0, title:'提醒'});
+		  				    }else if(parseFloat(returnAmount) < -(parseFloat(turnover) + parseFloat(add))){
+		  				    	top.layer.alert('每个部门的营业额之和大于等于0,小于等于该部门剩余的分享营业额！', {icon: 0, title:'提醒'});
 		  					    return;
 		  				    }
 	  				    }

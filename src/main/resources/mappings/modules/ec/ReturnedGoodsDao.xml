@@ -732,6 +732,7 @@
 			mbt.order_id = #{orderId}
 		AND 
 			mbt.returned_id = #{returnedId}
+		ORDER BY mbt.id DESC
 	</select>
 	<!-- 获取店铺营业额的操作日志 -->
 	<select id="findMtmyTurnoverDetailsList" resultType="TurnOverDetails">

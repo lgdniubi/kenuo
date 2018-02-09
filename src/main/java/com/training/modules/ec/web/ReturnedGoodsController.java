@@ -776,8 +776,8 @@ public class ReturnedGoodsController extends BaseController {
 			//获取各个部门的营业额合计
 			List<OrderPushmoneyRecord> sumTurnoverList = returnedGoodsService.getSumBeauticianTurnover(turnOverDetails.getOrderId());
 			for (OrderPushmoneyRecord opr : sumTurnoverList) {//循环所有部门的营业总额
+				
 				if(list.get(0).getDepartmentId() == opr.getDepartmentId()){//判断第一条信息属于哪个部门
-					
 					if(pushmoneyList.size() !=0){//判断在该退货id中'已经扣减的营业额',不存在'赋值为0'
 						added = pushmoneyList.get(0).getPushMoney();//按部门和用户id区分的每个业务员的当前营业额
 					}
@@ -844,6 +844,14 @@ public class ReturnedGoodsController extends BaseController {
 						}
 					}
 				}
+				//除本次售后外,该部门剩余分享的营业额
+				OrderPushmoneyRecord orderPushmoneyRecord = new OrderPushmoneyRecord();
+				orderPushmoneyRecord.setOrderId(turnOverDetails.getOrderId());
+				orderPushmoneyRecord.setReturnedId(turnOverDetails.getDetailsId());
+				orderPushmoneyRecord.setDepartmentId(opr.getDepartmentId());
+				double deptPushmoney = returnedGoodsService.getDeptPushmoney(orderPushmoneyRecord);
+				userTurnover = userTurnover + 
+						"<input id='"+opr.getDepartmentId()+"' name='"+opr.getDepartmentId()+"' type='hidden' value='"+deptPushmoney+"' class='form-control'>";
 				//拼接部门字符串
 				departmentIds += opr.getDepartmentId()+",";
 			}
@@ -979,15 +987,5 @@ public class ReturnedGoodsController extends BaseController {
 			flag = "error";
 		}
 		return flag;
-	}
-	/**
-	 * 异步获取除本次售后外,该部门剩余分享的营业额
-	 * @param orderPushmoneyRecord
-	 * @return  
-	 */
-	@ResponseBody
-	@RequestMapping(value = "getDeptPushmoney")
-	public double getDeptPushmoney(OrderPushmoneyRecord orderPushmoneyRecord) {
-		return returnedGoodsService.getDeptPushmoney(orderPushmoneyRecord); 
 	}
 }
