@@ -91,7 +91,7 @@ public class ThreadUtils {
 		private List<Object> obj;
 		
 		public SaveLogThread(HttpServletRequest request, String title,int type1,Object... objects){
-			super(PostObjectThread.class.getSimpleName());
+			super(SaveLogThread.class.getSimpleName());
 			
 			this.request = request;
 			this.title = title;
