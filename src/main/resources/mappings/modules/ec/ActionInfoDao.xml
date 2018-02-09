@@ -15,7 +15,6 @@
 		a.sort,
 		a.status,
 		a.execute_status,
-		a.is_open,
 		a.create_by AS "createBy.name",
 		a.create_date,
 		a.update_by AS "updateBy.name",
@@ -81,7 +80,6 @@
 		level,
 		sort,
 		status,
-		is_open,
 		create_by,
 		create_date
 		)VALUES
@@ -96,7 +94,6 @@
 		#{level},
 		#{sort},
 		#{status},
-		#{isOpen},
 		#{createBy.name},
 		SYSDATE()
 		
@@ -115,7 +112,6 @@
 		ceiling=#{ceiling},
 		level=#{level},
 		sort=#{sort},
-		is_open=#{isOpen},
 		update_by=#{createBy.name},
 		update_date=SYSDATE()
 		WHERE action_id=#{actionId}

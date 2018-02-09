@@ -24,9 +24,7 @@ import com.training.modules.ec.entity.ActionInfo;
 import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.service.ActionInfoService;
 import com.training.modules.quartz.service.RedisClientTemplate;
-import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.entity.User;
-import com.training.modules.sys.service.FranchiseeService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
 
@@ -48,8 +46,6 @@ public class ActionInfoController extends BaseController {
 	private ActionInfoService actionInfoService;
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
-	@Autowired
-	private FranchiseeService franchiseeService;
 
 	@ModelAttribute
 	public ActionInfo get(@RequestParam(required = false) String id) {
@@ -98,11 +94,7 @@ public class ActionInfoController extends BaseController {
 			if(actionInfo.getActionId()>0){
 				actionInfo=get(actionInfo.getActionId()+"");
 			}
-			Franchisee franchisee = new Franchisee();//商家区分是否真实商家
-			franchisee.setIsRealFranchisee("1");
-			List<Franchisee> franchiseeList = franchiseeService.findList(franchisee);//查询所有商家(不包括"登云美业"且没有删除的)
 			model.addAttribute("actionInfo",actionInfo);
-			model.addAttribute("franchiseeList",franchiseeList);
 		} catch (Exception e) {
 			// TODO: handle exception
 			BugLogUtils.saveBugLog(request, "创建活动", e);
@@ -127,12 +119,8 @@ public class ActionInfoController extends BaseController {
 				actionInfo=get(actionInfo.getActionId()+"");
 			}
 			List<Goods> list=actionInfoService.ActionGoodslist(actionInfo.getActionId());
-			Franchisee franchisee = new Franchisee();//商家区分是否真实商家
-			franchisee.setIsRealFranchisee("1");
-			List<Franchisee> franchiseeList = franchiseeService.findList(franchisee);//查询所有商家(不包括"登云美业"且没有删除的)
 			model.addAttribute("list",list);
 			model.addAttribute("actionInfo",actionInfo);
-			model.addAttribute("franchiseeList",franchiseeList);
 		} catch (Exception e) {
 			// TODO: handle exception
 			BugLogUtils.saveBugLog(request, "创建活动", e);
