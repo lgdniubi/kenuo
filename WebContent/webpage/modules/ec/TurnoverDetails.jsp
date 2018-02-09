@@ -164,7 +164,7 @@
   				    	added += parseFloat($(addeds[j]).val()) * 100;
   				    	amounts += $(turnovers[j]).val() + ",";
   				    }
-  				    if((parseFloat(amount) + parseFloat(added) + (parseFloat(returnAmount) * 100))/100　!= 0){
+  				    if(((parseFloat(amount) + parseFloat(added) + parseFloat(returnAmount)*100)/100)　!= 0){
   					    top.layer.alert('店铺的营业额之和必须等于售后金额！', {icon: 0, title:'提醒'});
   					    return;
   				    }
