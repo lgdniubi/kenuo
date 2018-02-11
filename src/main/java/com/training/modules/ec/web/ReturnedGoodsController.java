@@ -806,7 +806,7 @@ public class ReturnedGoodsController extends BaseController {
 								"<td style='text-align: center;'>"+list.get(0).getChildren().get(i).getPushMoney()+"</td> "+
 								"<td style='text-align: center;'>"+
 									"<input id='added"+j+"' name='added"+list.get(0).getDepartmentId()+"' type='hidden' value='"+list.get(0).getChildren().get(i).getPushMoney()+"' class='form-control'>"+
-									"<input id='Amount"+j+"' name='Amount"+list.get(0).getDepartmentId()+"' value='' class='form-control'>"+
+									"<input id='Amount"+j+"' name='Amount"+list.get(0).getDepartmentId()+"' type='number' value='' class='form-control'>"+
 								"</td> "+
 							"</tr>";
 						j--;
@@ -837,7 +837,7 @@ public class ReturnedGoodsController extends BaseController {
 									"<td style='text-align: center;'>"+list.get(i).getChildren().get(k).getPushMoney()+"</td> "+
 									"<td style='text-align: center;'>"+
 										"<input id='added"+j+"' name='added"+list.get(i).getDepartmentId()+"' type='hidden' value='"+list.get(i).getChildren().get(k).getPushMoney()+"' class='form-control'>"+
-										"<input id='Amount"+j+"' name='Amount"+list.get(i).getDepartmentId()+"' value='' class='form-control'>"+
+										"<input id='Amount"+j+"' name='Amount"+list.get(i).getDepartmentId()+"' type='number' value='' class='form-control'>"+
 									"</td> "+
 								"</tr>";
 							j--;
@@ -936,7 +936,7 @@ public class ReturnedGoodsController extends BaseController {
 						"<td style='text-align: center;'>"+turnoverRatio+"</td> "+
 						"<td style='text-align: center;'>"+
 							"<input id='addeds0' name='addeds' type='hidden' value='"+added+"' class='form-control'>"+
-							"<input id='amount0' name='amount' value='' class='form-control'>"+
+							"<input id='amount0' name='amount' value='' type='number' class='form-control'>"+
 							"<input id='storeTurnover0' value='"+storeTurnover+"' type='hidden' class='form-control'>"+
 							"<input id='num' name='num' value='"+num+"' type='hidden' class='form-control'>"+
 						"</td> "+
@@ -956,7 +956,7 @@ public class ReturnedGoodsController extends BaseController {
 						"<td style='text-align: center;'>"+turnoverRatio+"</td> "+
 						"<td style='text-align: center;'>"+
 							"<input id='addeds"+i+"' name='addeds' type='hidden' value='"+added+"' class='form-control'>"+
-							"<input id='amount"+i+"' name='amount' value='' class='form-control'>"+
+							"<input id='amount"+i+"' name='amount' value='' type='number' class='form-control'>"+
 							"<input id='storeTurnover"+i+"' value='"+storeTurnover+"' type='hidden' class='form-control'>"+
 						"</td> "+
 					"</tr>";
