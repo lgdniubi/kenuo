@@ -75,47 +75,11 @@
 		        if(obj[k].checked)
 		            check_val.push(obj[k].value);
 		    }
-			//可见范围必选校验
-			if(check_val.length == 0){
-				top.layer.alert('|可见范围| 必选!', {icon: 0, title:'提醒'}); 
-				  return;
-			}
-			check_val = check_val + ",";//数据库是结尾有",",所以追加
-			$("input[name='isOpen']").val(check_val);
-			
 			$("#inputForm").submit();
 			return true;
 		}
 
 		return false;
-	}
-	
-	//可见范围:公开,其他商家禁止选择  不是非公开:其他商家可以选择
-	function selectOpen(o){
-		var isOpen = $("#isOpen:checked").val();
-		if(o == 0){
-			if(isOpen == 0){//公开:其他商家禁止选择
-				$("input[name='isOpen_'][id='isOpen']").attr("disabled", false);//公开:可选
-				$("input[name='isOpen_'][id='isNotOpen']").attr("disabled", true);//商家:禁选
-			}else{
-				$("input[name='isOpen_'][id='isOpen']").attr("disabled", false);//公开:可选
-				$("input[name='isOpen_'][id='isNotOpen']").attr("disabled", false);//商家:可选
-			}
-		}else{
-			obj = document.getElementsByName("isOpen_");
-		    check_val = [];
-		    for(k in obj){
-		        if(obj[k].checked)
-		            check_val.push(obj[k].value);
-		    }
-		    if(check_val.length == 0){
-		    	$("input[name='isOpen_'][id='isOpen']").attr("disabled", false);//公开:可选
-				$("input[name='isOpen_'][id='isNotOpen']").attr("disabled", false);//商家:可选
-		    }else{
-		    	$("input[name='isOpen_'][id='isOpen']").attr("disabled", true);//公开:禁选
-				$("input[name='isOpen_'][id='isNotOpen']").attr("disabled", false);//商家:可选
-		    }
-		}
 	}
 	
 	$(document).ready(function() {
@@ -223,25 +187,6 @@
 // 					elem : '#expirationDate', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
 // 					event : 'focus' //响应事件。如果没有传入event，则按照默认的click
 // 				});
-				if($("#actionId").val() > 0){
-					//可见范围赋值
-					var checkBox = $("input[name='isOpen']").val();
-					if(checkBox == "0,"){
-				    	$("input[name='isOpen_'][id='isOpen']").attr("disabled", false);//公开:可选
-						$("input[name='isOpen_'][id='isNotOpen']").attr("disabled", true);//商家:禁选
-				    }else{
-				    	$("input[name='isOpen_'][id='isOpen']").attr("disabled", true);//公开:禁选
-						$("input[name='isOpen_'][id='isNotOpen']").attr("disabled", false);//商家:可选
-				    }
-					var checkBoxArray = checkBox.split(",");  
-			        for(var i=0;i<checkBoxArray.length-1;i++){  
-			            $("input[name='isOpen_']").each(function(){  
-			                if($(this).val()==checkBoxArray[i]){  
-			                    $(this).attr("checked","checked");  
-			                }  
-			            })  
-			        }  
-				}
 			});
 </script>
 </head>
@@ -304,13 +249,6 @@
 							<form:option value="9">9级以上</form:option>
 							<form:option value="10">10级以上</form:option>
  						</form:select><font color="red">*</font>
- 						<p></p>
- 						<label>可见范围：&nbsp;</label>
- 						<label><input type="checkbox" id="isOpen" name="isOpen_" class="onoffswitch-checkbox" value="0" onclick="selectOpen(0)">公开</label>
- 						<c:forEach items="${franchiseeList}" var="franchisee">
- 							<label><input type="checkbox" id="isNotOpen" name="isOpen_" class="onoffswitch-checkbox" value="${franchisee.id}" onclick="selectOpen(1)">${franchisee.name}</label>
- 						</c:forEach>
- 						<input type="hidden" name="isOpen" class="onoffswitch-checkbox" value="${actionInfo.isOpen}">
  						<p></p>
  						<label>排&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;序：</label>
 						<input id="sort" name="sort" maxlength="10" style="width:200px;" class="form-control" value="${actionInfo.sort}"/><font color="red">*</font>
