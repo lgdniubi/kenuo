@@ -393,7 +393,6 @@ public class ThemeController extends BaseController{
 						franchiseeId = franchiseeIds[0];
 					}else if(franchiseeIds.length >= 2){  //若不是公开的且多个商家
 						isPublic = "0";
-						franchiseeId = isOpen.substring(0, isOpen.lastIndexOf(","));
 					}
 				}
 			}

@@ -1411,7 +1411,6 @@ public class GoodsController extends BaseController{
 			goodsId = "0";
 		}
 		
-		List<String> franchiseeIdsList = new ArrayList<String>();
 		Goods goods=new Goods();
 		goods.setGoodsCategoryId(goodsCategory);
 		goods.setGoodsName(goodsName);
@@ -1433,10 +1432,6 @@ public class GoodsController extends BaseController{
 				if(franchiseeIds.length == 1){      //若活动或者主题不是公开的且只有一个商家
 					goods.setFranchiseeId(franchiseeIds[0]);
 				}else if(franchiseeIds.length >= 2){  //若活动或者主题不是公开的且多个商家
-					for(String id:franchiseeIds){
-						franchiseeIdsList.add(id);
-					}
-					goods.setFranchiseeIdsList(franchiseeIdsList);
 					goods.setOpenFlag("0");
 				}
 			}
