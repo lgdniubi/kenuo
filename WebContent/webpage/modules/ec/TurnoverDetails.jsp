@@ -58,11 +58,11 @@
 	     	    		var dept = obj.document.getElementsByName(departmentIds); //当前输入的增减值
 	     	    		
 	     	    		for(var j = 0; j < added.length; j++){
-	  				    	add += parseFloat($(added[j]).val()) * 100;//已扣减的值(*100 防止精度问题)
+	  				    	add += parseFloat($(added[j]).val()) * 10000;//已扣减的值(*100 防止精度问题)
 	  				    }
 	  			    	
 	  				    for(var k = 0; k < dept.length; k++){
-	  				    	turnover += parseFloat($(dept[k]).val()) * 100;//增减值(*100 防止精度问题)
+	  				    	turnover += parseFloat($(dept[k]).val()) * 10000;//增减值(*100 防止精度问题)
 	  				    	pushMoneys += $(dept[k]).val() + ",";//输入的增减值拼接字符串
 	  				    }
 	  				    
@@ -72,7 +72,7 @@
 		  				    if(parseFloat(turnover) + parseFloat(add) > 0){
 		  				        top.layer.alert('每个部门的营业额之和大于等于0,小于等于售后金额！', {icon: 0, title:'提醒'});
 		  					    return;
-		  				    }else if((parseFloat(returnAmount) * 100 + parseFloat(turnover) + parseFloat(add))/100 < 0){
+		  				    }else if((parseFloat(returnAmount) * 10000 + parseFloat(turnover) + parseFloat(add))/10000 < 0){
 		  				    	top.layer.alert('每个部门的营业额之和大于等于0,小于等于售后金额！', {icon: 0, title:'提醒'});
 		  					    return;
 		  				    }
@@ -82,7 +82,7 @@
 	  				    	if(-(parseFloat(turnover) + parseFloat(add)) < 0){
 		  				        top.layer.alert('每个部门的营业额之和大于等于0,小于等于该部门剩余的分享营业额！', {icon: 0, title:'提醒'});
 		  					    return;
-		  				    }else if((parseFloat(returnAmount) * 100 + parseFloat(turnover) + parseFloat(add))/100 < 0){
+		  				    }else if((parseFloat(returnAmount) * 10000 + parseFloat(turnover) + parseFloat(add))/10000 < 0){
 		  				    	top.layer.alert('每个部门的营业额之和大于等于0,小于等于该部门剩余的分享营业额！', {icon: 0, title:'提醒'});
 		  					    return;
 		  				    }
@@ -160,11 +160,11 @@
   			    	var turnovers = obj.document.getElementsByName("amount"); //部门id
      	    		var addeds = obj.document.getElementsByName("addeds"); //获取数据库查询的原本就有的营业额增减值
      	    		for(var j = 0; j < turnovers.length; j++){
-  				    	amount += parseFloat($(turnovers[j]).val()) * 100;
-  				    	added += parseFloat($(addeds[j]).val()) * 100;
+  				    	amount += parseFloat($(turnovers[j]).val()) * 10000;
+  				    	added += parseFloat($(addeds[j]).val()) * 10000;
   				    	amounts += $(turnovers[j]).val() + ",";
   				    }
-  				    if(((parseFloat(amount) + parseFloat(added) + parseFloat(returnAmount)*100)/100)　!= 0){
+  				    if(((parseFloat(amount) + parseFloat(added) + parseFloat(returnAmount)*10000)/10000)!=0){
   					    top.layer.alert('店铺的营业额之和必须等于售后金额！', {icon: 0, title:'提醒'});
   					    return;
   				    }
