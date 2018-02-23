@@ -6,8 +6,6 @@
 	<meta name="decorator" content="default"/>
 	<link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
 	<script type="text/javascript">
-		$(document).ready(function() {
-	    });
 		//编辑业务员营业额
 		function editOrderPushmoneyRecord(orderId,detailsId){
 			var lock = true;
@@ -49,6 +47,7 @@
 		     	    	//校验同部门的营业额总和  = 售后金额
 		  			    var add = 0;//已扣减的值
 		  			    var turnover = 0;//增减值
+		  			    var totalAdd = 0;//增减值的合计
 		  			    var surplusMoney = 0;//除本次售后外,该部门剩余分享的营业额
 		  			    var pushMoneys = "";//输入的增减值拼接字符串
 		  			    var flag = false;//判断部门业务员扣减营业额之和是否符合要求
@@ -60,20 +59,22 @@
 		     	    		var dept = obj.document.getElementsByName(departmentIds); //当前输入的增减值
 		     	    		
 		     	    		for(var j = 0; j < added.length; j++){
-		  				    	add += parseFloat($(added[j]).val()) * 10000;//已扣减的值(*100 防止精度问题)
+		  				    	add += parseFloat($(added[j]).val())*10000;//已扣减的值(*10000 防止精度问题)
 		  				    }
 		  			    	
 		  				    for(var k = 0; k < dept.length; k++){
-		  				    	turnover += parseFloat($(dept[k]).val()) * 10000;//增减值(*100 防止精度问题)
+		  				    	turnover += parseFloat($(dept[k]).val())*10000;//增减值(*10000 防止精度问题)
 		  				    	pushMoneys += $(dept[k]).val() + ",";//输入的增减值拼接字符串
 		  				    }
+		  				    totalAdd = (add + turnover) / 10000;
+		  				    totalAdd = totalAdd.toFixed(2);//扣减营业额合计-->可能出现精度丢失问题
 		     	    		surplusMoney = obj.document.getElementById(departmentId[i]).value; //除本次售后外,该部门剩余分享的营业额
 					    	//退款金额<除本次售后外,该部门剩余分享的营业额  --> 0<=部门业务员扣减营业额之和<=退款金额
 		  				    if(parseFloat(returnAmount) < parseFloat(surplusMoney)){
-			  				    if(parseFloat(turnover) + parseFloat(add) > 0){
+			  				    if(parseFloat(totalAdd) > 0){
 			  				        top.layer.alert('每个部门的营业额之和大于等于0,小于等于售后金额！', {icon: 0, title:'提醒'});
 			  					    return;
-			  				    }else if((parseFloat(returnAmount) * 10000 + parseFloat(turnover) + parseFloat(add))/10000 < 0){
+			  				    }else if(parseFloat(returnAmount) + parseFloat(totalAdd) < 0){
 			  				    	top.layer.alert('每个部门的营业额之和大于等于0,小于等于售后金额！', {icon: 0, title:'提醒'});
 			  					    return;
 			  				    }
@@ -81,16 +82,17 @@
 
 		  				    //退款金额>=除本次售后外,该部门剩余分享的营业额  --> 0<=部门业务员扣减营业额之和<=除本次售后外,该部门剩余分享的营业额
 		  				    if(parseFloat(returnAmount) >= parseFloat(surplusMoney)){
-		  				    	if(-(parseFloat(turnover) + parseFloat(add)) < 0){
+		  				    	if(parseFloat(totalAdd) > 0){
 			  				        top.layer.alert('每个部门的营业额之和大于等于0,小于等于该部门剩余的分享营业额！', {icon: 0, title:'提醒'});
 			  					    return;
-			  				    }else if((parseFloat(returnAmount) * 10000 + parseFloat(turnover) + parseFloat(add))/10000 < 0){
+			  				    }else if(parseFloat(surplusMoney) + parseFloat(totalAdd) < 0){
 			  				    	top.layer.alert('每个部门的营业额之和大于等于0,小于等于该部门剩余的分享营业额！', {icon: 0, title:'提醒'});
 			  					    return;
 			  				    }
 		  				    }
 		  				  	add = 0;
 		  				    turnover = 0;
+		  				    totalAdd = 0;
 		  				  	surplusMoney = 0;
 		  			    }
 	     	    		lock = false;//上锁
@@ -163,6 +165,7 @@
 		     	    	//校验所有店铺营业额合计值  = 售后金额
 			  			var amount = 0;//店铺营业额
 			  			var added = 0;
+			  			var totalAdd = 0;//扣减的营业额总计
 						var amounts = "";//店营业额增减值字符串
 	  			    	var turnovers = obj.document.getElementsByName("amount"); //部门id
 	     	    		var addeds = obj.document.getElementsByName("addeds"); //获取数据库查询的原本就有的营业额增减值
@@ -171,7 +174,9 @@
 	  				    	added += parseFloat($(addeds[j]).val()) * 10000;
 	  				    	amounts += $(turnovers[j]).val() + ",";
 	  				    }
-	  				    if(((parseFloat(amount) + parseFloat(added) + parseFloat(returnAmount)*10000)/10000)!=0){
+  				    	totalAdd = (amount + added)/10000;
+	     	    		totalAdd = totalAdd.toFixed(2);
+	  				    if((parseFloat(totalAdd) + parseFloat(returnAmount))!=0){
 	  					    top.layer.alert('店铺的营业额之和必须等于售后金额！', {icon: 0, title:'提醒'});
 	  					    return;
 	  				    }
