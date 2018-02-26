@@ -991,7 +991,6 @@
 		INSERT INTO mtmydb.mtmy_beautician_turnover (
 			order_id,
 			returned_id,
-			turnover_details_id,
 			type,
 			user_id,
 			user_office_id,
@@ -1009,7 +1008,6 @@
 		)VALUES(
 			#{orderId},
 			#{returnedId},
-			#{turnOverDetailsId},
 			#{type},
 			#{pushmoneyUserId},
 			#{userOfficeId},

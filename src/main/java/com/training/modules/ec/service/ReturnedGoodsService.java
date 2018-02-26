@@ -1201,9 +1201,8 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		String pushMoneys = orderPushmoneyRecord.getPushMoneys();
 		String[] split = pushMoneys.split(",");
 		for (int i = 0; i < split.length; i++) {
-			list.get(i).setOrderId(orderPushmoneyRecord.getOrderId());//
+			list.get(i).setOrderId(orderPushmoneyRecord.getOrderId());
 			list.get(i).setReturnedId(orderPushmoneyRecord.getReturnedId());
-			list.get(i).setTurnOverDetailsId(list.get(i).getPushmoneyRecordId());
 			list.get(i).setType(3);
 			list.get(i).setPushMoney(Double.parseDouble(split[i]));
 			list.get(i).setCreateBy(user);
