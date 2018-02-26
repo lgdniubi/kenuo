@@ -25,6 +25,8 @@ import com.google.common.collect.Lists;
 import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
+import com.training.modules.sys.entity.Franchisee;
+import com.training.modules.sys.service.FranchiseeService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.TrainLiveAudit;
@@ -55,6 +57,9 @@ public class TrainLiveAuditController extends BaseController{
 	private TrainLiveUserService trainLiveUserService;
 	@Autowired
 	private TrainLiveCategoryService trainLiveCategoryService;
+	@Autowired
+	private FranchiseeService franchiseeService;
+	
 
 	public static String LIVE_USERID="E8F7E756412DC768";   //直播用户id   E8F7E756412DC768
 	public static String API_KEY="K4MV4Mv4Q90FaEEQYclkz0XJIqEZf5rK";  	//API KEY  K4MV4Mv4Q90FaEEQYclkz0XJIqEZf5rK
@@ -138,7 +143,12 @@ public class TrainLiveAuditController extends BaseController{
 	@RequestMapping(value = "form")
 	public String form(HttpServletRequest request,TrainLiveAudit trainLiveAudit, Model model) {
 		try{
+			Franchisee franchisee = new Franchisee();
+			franchisee.setIsRealFranchisee("1");
+			List<Franchisee> list = franchiseeService.findList(franchisee);
+			
 			model.addAttribute("trainLiveAudit", trainLiveAudit);
+			model.addAttribute("list",list);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "直播编辑", e);
 			logger.error("直播编辑：" + e.getMessage());
