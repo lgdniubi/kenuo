@@ -2,7 +2,7 @@ package com.training.modules.ec.dao;
 
 import java.util.List;
 
-import com.training.common.persistence.TreeDao;
+import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.ActionInfo;
 
@@ -14,7 +14,7 @@ import com.training.modules.ec.entity.ActionInfo;
  */
 
 @MyBatisDao
-public interface ActionInfoDao extends TreeDao<ActionInfo>{
+public interface ActionInfoDao extends CrudDao<ActionInfo>{
 	
 	
 	

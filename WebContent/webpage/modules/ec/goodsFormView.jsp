@@ -6,7 +6,7 @@
 %>
 <html>
 <head>
-	<title>查看商品</title>
+	<title>卡项商品</title>
 	<meta name="decorator" content="default"/>
 	<link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
 	<link rel="stylesheet" href="${ctxStatic}/ec/css/base.css">
@@ -137,11 +137,12 @@
 		                	<li><a href="#tab_goods_spec" data-toggle="tab">商品规格</a></li> 
 		                </c:if>                       
 		            </ul>
-		          <form:form id="goodsForm" modelAttribute="goods" action="${ctx}/ec/goods/save" method="post">
+		          <form:form id="goodsForm" modelAttribute="goods" action="${ctx}/ec/goods/saveCard" method="post">
 		            <div class="tab-content" id="myTabContent">
 		            	<!-- 通用信息 Begin -->
 						<div class="tab-pane fade in active" id="tab_tongyong">
 						
+								<form:hidden path="isReal" value="${goods.isReal}"/>
 								<form:hidden path="goodsId"/>
 								<form:hidden path="attrType"/>
 								<form:hidden path="specType"/>
@@ -153,6 +154,13 @@
 										<input type="radio" id="goodsType" name="goodsType" value="1" ${(goods.goodsType == '1')?'checked="checked"':''}>新商品
 										<input type="radio" id="goodsType" name="goodsType" value="0" ${(goods.goodsType == '0' || goods.goodsType == null)?'checked="checked"':''}>老商品
 									</li>
+									<li class="form-group">
+											<span class="control-label col-sm-2">是否参与城市异价：</span>
+											<select class="form-control" disabled="disabled">
+						                        <option ${(goods.isRatio == 0)?'selected="selected"':''}>否</option>
+						                        <option ${(goods.isRatio == 1)?'selected="selected"':''}>是</option>
+						                    </select>
+										</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>活动类型：</span>
 										<select class="form-control" id="actionType" name="actionType">
@@ -363,10 +371,9 @@
 									
 									<li class="form-group">
 										<span class="control-label col-sm-2">适用地区：</span>
-										<div style="width: 40%;">
-											<input type="hidden" id="regionName" name="regionName" value="${goods.regionName }">
-											<sys:treeselect id="regionNameSelect" name="regionNameSelect" value="${goods.regionName }" 
-												labelName="regionNameSelect" labelValue="${goods.regionName }" 
+								     	<div style="width: 40%;">
+											<sys:treeselect id="regionNameSelect" name="regionId" value="${goods.regionId}" 
+												labelName="regionName" labelValue="${goods.regionName}" 
 									     		title="地区" url="/sys/area/findListByPID" cssClass="form-control" notAllowSelectParent="true" checked="true"/>
 								     	</div>
 									</li>
@@ -512,6 +519,10 @@
 						</div>
 						<!-- 商品规格  End -->
 		            </div>
+		            <!-- 提交按钮 -->
+		            <div class="box-footer">   
+					    <input type="submit" class="btn btn-primary" value="提 交">
+					</div>
 					</form:form>
 				</div>
 			</div>
@@ -852,7 +863,6 @@
 					}
 					$("#goodsContent").val(content);
 					$("#keywords").val($("#keywordsSelectName").val());//关键词，功效
-					$("#regionName").val($("#regionNameSelectName").val());//适用区域
 					var spec_arr = {};// 用户选择的规格数组
 					$("#goods_spec_table  span").each(function(){
 						if($(this).hasClass('btn-success')){

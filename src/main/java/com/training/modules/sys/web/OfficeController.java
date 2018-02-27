@@ -52,6 +52,7 @@ import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.DictUtils;
+import com.training.modules.sys.utils.OfficeThreadUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.TrainRuleParamDao;
@@ -302,6 +303,7 @@ public class OfficeController extends BaseController {
 				officeService.saveOfficeLog(officeLog);
 			}
 		}else{
+			Office eqold = officeService.get(office.getId());
 			//修改机构或修改实体店
 			if(office.getGrade().equals("2")){
 				//修改机构
@@ -323,17 +325,11 @@ public class OfficeController extends BaseController {
 			}
 			
 			/**
-			 * 此处调用报货接口，在修改机构父项时将修改的机构数据同步到报货（只同步修改父项机构时）
+			 * 此处调用报货接口，在修改机构项时将修改的机构数据循环同步到报货
 			 */
-			String weburl = ParametersFactory.getMtmyParamValues("modifyToOffice");
-			logger.info("##### web接口路径:"+weburl);
-			String parpm = "{\"office_id\":\""+office.getId()+"\",\"office_name\":\""+office.getName()+"\","
-					+ "\"franchisee_id\":"+office.getFranchisee().getId()+","
-					+ "\"office_pid\":\""+office.getParent().getId()+"\",\"office_pids\":\""+office.getParentIds()+"\"}";
-			String url=weburl;
-			String result = WebUtils.postCSObject(parpm, url);
-			JSONObject jsonObject = JSONObject.fromObject(result);
-			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+			//String weburl = ParametersFactory.getMtmyParamValues("modifyToOffice");
+			OfficeLog officeLog = new OfficeLog();
+			OfficeThreadUtils.equalBH(office,eqold,officeLog);
 				
 		}
 		if(office.getChildDeptList()!=null){
@@ -353,6 +349,7 @@ public class OfficeController extends BaseController {
 		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
 		return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
 	}
+	
 	
 	/**
 	 * 机构管理-删除
@@ -1038,6 +1035,27 @@ public class OfficeController extends BaseController {
 			mapList.add(map);
 		}
     	return mapList;
+    }
+    
+    /**
+     * 
+     * @Title: checkOfficeCode
+     * @Description: TODO 验证机构唯一编码
+     * @param office
+     * @return:
+     * @return: String
+     * @throws
+     * 2017年12月26日 兵子
+     */
+    @ResponseBody
+    @RequestMapping(value = "checkOfficeCode")
+    public String checkOfficeCode(Office office,String oldOfficeCode){
+    	if (StringUtils.isNotBlank(office.getOfficeCode()) && office.getOfficeCode().equals(oldOfficeCode)) {
+    		return "true";
+		}else if(StringUtils.isNotBlank(office.getOfficeCode()) && officeService.checkOfficeCode(office) == null){
+			return "true";
+		}
+    	return "false";
     }
     
 }

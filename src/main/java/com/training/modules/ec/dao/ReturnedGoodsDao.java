@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
+import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderPushmoneyRecord;
 import com.training.modules.ec.entity.ReturnedGoods;
 import com.training.modules.ec.entity.ReturnedGoodsImages;
@@ -113,17 +114,6 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 */
 	public void updateCardNum(ReturnedGoods rgn);
 	/**
-	 * 查询出通用卡的售后次数(mapping表中的service_times - appt_order表中的预约次数)
-	 * @param returnedGoods
-	 * @return
-	 */
-	public ReturnedGoods getCommonNum(ReturnedGoods returnedGoods);
-	/**
-	 * 修改通用卡的售后次数
-	 * @param commonNum
-	 */
-	public void updateCommonNum(ReturnedGoods commonNum);
-	/**
 	 * 查询卡项子项实物的售后数量
 	 * @param returnedGoods
 	 * @return
@@ -229,4 +219,61 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 * @return
 	 */
 	public List<OrderPushmoneyRecord> getReturnedBeauticianLog(OrderPushmoneyRecord orderPushmoneyRecord);
+	/**
+	 * 获取不包含自己本身的总的售后金额和售后数量
+	 * @param returnedGoods
+	 * @return
+	 */
+	public ReturnedGoods getAmountAndNum(ReturnedGoods returnedGoods);
+	/**
+	 * 获取该订单中单个实物商品总售后数量
+	 * @param orderGoods
+	 * @return
+	 */
+	public int getOrderGoodsReturnNum(OrderGoods orderGoods);
+	/**
+	 * 查询订单中商品正在售后 或者 已经售后 的个数(但不包含自身.平预约金和平欠款用到)
+	 * @param returnedGoods
+	 * @return
+	 */
+	public int getReturnSaleNum(ReturnedGoods returnedGoods);
+	/**
+	 * 根据商品id查询不是当前售后订单id的实物售后数量
+	 * @param returnedGoods
+	 * @return
+	 */
+	public int getRealReturnNum(ReturnedGoods returnedGoods);
+	
+	/**
+	 * 查询处于申请状态的售后订单
+	 * @param orderIds
+	 * @return
+	 */
+	public List<ReturnedGoods> queryAfterSaleList(String orderIds);
+	/**
+	 * 审核拒绝,退还套卡子项的商品数量
+	 * @param returnedGoods
+	 * @return
+	 */
+	public List<ReturnedGoods> getSuitCard(ReturnedGoods returnedGoods);
+	
+	/**
+	 * 根据退货id查询子项实物的售后数量
+	 * @param orderIds
+	 * @return
+	 */
+	public List<ReturnedGoods> selectKinderSon(String orderIds);
+	
+	/**
+	 * 根据订单id查询该订单的售后订单信息
+	 * @param orderIds
+	 * @return
+	 */
+	public List<ReturnedGoods> queryReturnList(String orderIds);
+	/**
+	 * 异步获取除本次售后外,该部门剩余分享的营业额
+	 * @param orderPushmoneyRecord
+	 * @return
+	 */
+	public double getDeptPushmoney(OrderPushmoneyRecord orderPushmoneyRecord);
 }

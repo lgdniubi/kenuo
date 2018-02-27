@@ -73,7 +73,7 @@
 		AND r.order_id = #{orderid}
 		AND r.del_flag = '0'
 		GROUP BY
-			r.user_id
+			r.user_id,su1.id,su2.id,r.id
 	</select>
 	
 	<!-- 查询业务员营业额明细列表-->

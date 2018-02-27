@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.persistence.Page;
-import com.training.common.service.TreeService;
+import com.training.common.service.CrudService;
 import com.training.modules.ec.dao.ActionInfoDao;
 import com.training.modules.ec.dao.GoodsDao;
 import com.training.modules.ec.dao.OrderGoodsDao;
@@ -20,7 +20,7 @@ import com.training.modules.ec.entity.Goods;
  */
 @Service
 @Transactional(readOnly = false)
-public class ActionInfoService extends TreeService<ActionInfoDao,ActionInfo> {
+public class ActionInfoService extends CrudService<ActionInfoDao,ActionInfo> {
 	
 	@Autowired
 	private ActionInfoDao actionInfoDao;

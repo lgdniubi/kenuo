@@ -44,6 +44,7 @@
 		  g.integral AS 'integral',
 		  g.sales_sum AS 'salesSum',
 		  g.region_name AS 'regionName',
+		  g.region_id AS 'regionId',
 		  g.action_type AS 'actionType',
 		  g.action_id AS 'actionId',
 		  g.service_min AS 'serviceMin',
@@ -112,6 +113,21 @@
 			<if test="querytext != null and querytext != ''">
 				AND (g.goods_name LIKE CONCAT('%', #{querytext}, '%') OR g.keywords LIKE CONCAT('%', #{querytext}, '%'))
 			</if>
+			<if test="whetherRatio != null and whetherRatio != ''">
+				<if test="whetherRatio == 0">
+					AND g.goods_id NOT IN (select d.goods_id from mtmydb.mtmy_goods_price_ratio_details d where d.goods_id = g.goods_id and d.del_flag = 0)
+				</if>
+				<if test="whetherRatio == 1">
+					<choose>
+						<when test="newRatio != null and newRatio != ''">
+							AND g.goods_id IN (select d.goods_id from mtmydb.mtmy_goods_price_ratio_details d where d.goods_id = g.goods_id and d.del_flag = 0 and d.ratio >= #{minRatio} <![CDATA[AND d.ratio <= #{maxRatio}]]>)
+						</when>
+						<otherwise>
+							AND g.goods_id IN (select d.goods_id from mtmydb.mtmy_goods_price_ratio_details d where d.goods_id = g.goods_id and d.del_flag = 0)
+						</otherwise>
+					</choose>
+				</if>
+			</if>
 			AND g.del_flag = 0 
 			ORDER BY g.sort DESC 
 	</select>
@@ -120,7 +136,10 @@
 	<select id="get" resultType="Goods">
 		SELECT 
 		  <include refid="goodsColumns"/>,
-		  s.name AS supplierName
+		  s.name AS supplierName,
+		 (CASE WHEN
+		  	(select count(*) from mtmydb.mtmy_goods_price_ratio_details where goods_id = #{goodsId} and del_flag = 0) > 0 THEN 1 ELSE 0 END
+		  )AS 'isRatio'
 		FROM
 		  mtmydb.mtmy_goods g
 		  <include refid="goodsJoins"/> 
@@ -166,7 +185,7 @@
 		<if test="goodsBrandId !=null and goodsBrandId !=''">
 			AND g.goodsbrand_id=#{goodsBrandId}
 		</if>
-		<if test="goodsCategoryId != null and goodsCategoryId != ''">
+		<if test="goodsCategoryId != null and goodsCategoryId != '' and goodsCategoryId != 0">
 			AND g.category_id=#{goodsCategoryId} 
 		</if>
 		<if test="actionType !=null and actionType != ''">
@@ -245,6 +264,7 @@
 		  g.integral AS 'integral',
 		  g.sales_sum AS 'salesSum',
 		  g.region_name AS 'regionName',
+		  g.region_id AS 'regionId',
 		  g.service_min AS 'serviceMin'
 		FROM
 		  mtmydb.mtmy_goods g
@@ -291,6 +311,7 @@
 		  integral,
 		  sales_sum,
 		  region_name,
+		  region_id,
 		  action_type,
 		  action_id,
 		  service_min,
@@ -336,6 +357,7 @@
 		    #{integral},
 		    #{salesSum},
 		    #{regionName},
+		    #{regionId},
 		    #{actionType},
 		    #{actionId},
 		    #{serviceMin},
@@ -386,6 +408,7 @@
 			  integral = #{integral},
 			  sales_sum = #{salesSum},
 			  region_name = #{regionName},
+			  region_id = #{regionId},
 			  service_min = #{serviceMin},
 			  action_type = #{actionType},
 			  last_update = SYSDATE(),
@@ -756,4 +779,41 @@
 		SELECT MAX(sort) as num FROM mtmydb.mtmy_goods 
 	</select>
 	
+	<!-- 根据goods_ids查询多个商品 -->
+	<select id="selectGoodsList" resultType="Goods">
+		SELECT 
+			goods_id AS 'goodsId',
+			goods_name AS 'goodsName'
+		FROM mtmydb.mtmy_goods
+		WHERE goods_id IN (${_parameter})
+	</select>
+	
+	<!-- 城市异价中根据条件查询能参加异价的商品 -->
+	<select id="queryGoodsCanRatio"  resultType="Goods">
+		SELECT 
+		  <include refid="goodsColumns"/>
+		FROM
+		  mtmydb.mtmy_goods g
+		  <include refid="goodsJoins"/> 
+		WHERE g.del_flag = 0 
+		<if test="goodsCategoryId != null and goodsCategoryId != '' and goodsCategoryId != 0">
+			AND g.category_id=#{goodsCategoryId} 
+		</if>
+		<if test="goodsName !=null and goodsName!=''">
+			AND (g.goods_name like CONCAT('%', #{goodsName} , '%'))
+		</if>
+		<if test="goodsIds != null and goodsIds != '' and goodsIds.size() > 0">
+			AND g.goods_id IN  
+       		<foreach collection="goodsIds" item="item" index="index" open="(" separator="," close=")">  
+            	#{item}  
+        	</foreach> 
+		</if>
+		<if test="cityIds != null and cityIds != '' and cityIds.size() > 0">
+			AND g.goods_id NOT IN (
+				select DISTINCT goods_id from mtmydb.mtmy_goods_price_ratio_details where 
+			<foreach collection="cityIds" item="item" index="index" separator="OR">  
+            	city_ids like CONCAT('%',#{item},'%')
+        	</foreach>)
+		</if>
+	</select>
 </mapper>

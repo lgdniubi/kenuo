@@ -351,8 +351,13 @@
 									<p>
 										<font color="red">*</font>课程名称：<input type="text" id="name" name="name" maxlength="20" class="text-item required">
 									</p>
-									<p>
+									<!-- <p>
 										<font color="red">*</font>课程学分：<input type="text" id="lessonScore" name="lessonScore" maxlength="3" class="text-item required digits">
+									</p> -->
+									<p>
+										<font color="red">*</font>推荐类型：<form:select path="showType"  class="form-control">
+											<form:options items="${fns:getDictList('lesson_show_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+										</form:select>
 									</p>
 									<p>
 										<font color="red">*</font>课程介绍：<input type="text" id="introduce" name="introduce" maxlength="200" class="text-item required">

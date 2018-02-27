@@ -153,4 +153,22 @@ public class CommentService extends CrudService<CommentDao, Comment>{
 		dao.updateShopComment(comment);
 	}
 	
+	/**
+	 * 查询某一预约下对美容师的评论
+	 * @param reservationId
+	 * @return
+	 */
+	public List<Comment> queryBeautyForReservation(int reservationId){
+		return dao.queryBeautyForReservation(reservationId);
+	}
+	
+	/**
+	 * 查询某一预约下对店铺的评论
+	 * @param reservationId
+	 * @return
+	 */
+	public List<Comment> queryShopForReservation(int reservationId){
+		return dao.queryShopForReservation(reservationId);
+	}
+	
 }

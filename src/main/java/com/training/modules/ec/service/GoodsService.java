@@ -97,7 +97,10 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 	public void saveGoods(Goods goods, HttpServletRequest request) {
 		// 商品详情转换
 		goods.setGoodsContent(HtmlUtils.htmlUnescape(goods.getGoodsContent()));
-
+		goods.setGoodsName(HtmlUtils.htmlUnescape(goods.getGoodsName()));
+		goods.setGoodsShortName(HtmlUtils.htmlUnescape(goods.getGoodsShortName()));
+		goods.setGoodsTags(HtmlUtils.htmlUnescape(goods.getGoodsTags()));
+		
 		if (0 == goods.getGoodsId()) {
 			// 添加
 			goods.setAttrType((goods.getAttrType() == null || "".equals(goods.getAttrType())) ? null : goods.getAttrType());
@@ -644,6 +647,101 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 			}
 		}
 	}
+	/**
+	 * 商品卡项-通用信息-修改
+	 * 
+	 * @param goods
+	 * @return
+	 */
+	public void saveGoodsCard(Goods goods, HttpServletRequest request) {
+		// 商品详情转换
+		goods.setGoodsContent(HtmlUtils.htmlUnescape(goods.getGoodsContent()));
+		goods.setGoodsName(HtmlUtils.htmlUnescape(goods.getGoodsName()));
+		goods.setGoodsShortName(HtmlUtils.htmlUnescape(goods.getGoodsShortName()));
+		goods.setGoodsTags(HtmlUtils.htmlUnescape(goods.getGoodsTags()));
+			
+		// 修改
+		goods.setAttrType((goods.getAttrType() == null || "".equals(goods.getAttrType())) ? null : goods.getAttrType());
+		goods.setSpecType((goods.getSpecType() == null || "".equals(goods.getSpecType())) ? null : goods.getSpecType());
+		goods.setIsRecommend(goods.getIsRecommend() == null ? "0" : goods.getIsRecommend());
+		goods.setIsHot(goods.getIsHot() == null ? "0" : goods.getIsHot());
+		goods.setIsAppshow(goods.getIsAppshow() == null ? "0" : goods.getIsAppshow());
+		goods.setIsOnSale(goods.getIsOnSale() == null ? "0" : goods.getIsOnSale());
+		goods.setIsFreeShipping(goods.getIsFreeShipping() == null ? "0" : goods.getIsFreeShipping());
+		goods.setIsNew(goods.getIsNew() == null ? "0" : goods.getIsNew());
+		
+		//虚拟商品 查询项目部位的父级id
+		if(goods.getIsReal().equals("1")){
+			GoodsPosition goodsPosition = new GoodsPosition();
+			goodsPosition.setId(goods.getPositionId());
+			goodsPosition = goodsPositionService.get(goodsPosition);
+			//项目部位IDS（以下划线隔开）
+			goods.setPositionIds(goodsPosition.getParentId()+"_"+goodsPosition.getId());
+		}
+		updateGoods(goods);
+		
+		// 用户商品上下架Regis缓存
+		if (goods.getIsOnSale().equals("0")) {
+			// 下架
+			redisClientTemplate.hset(GOOD_UNSHELVE_KEY, goods.getGoodsId() + "", "0");
+		} else if (goods.getIsOnSale().equals("1")) {
+			// 上架
+			redisClientTemplate.hdel(GOOD_UNSHELVE_KEY, goods.getGoodsId() + "");
+		}
+		
+		// 保存护理流程图
+		String[] goodsNurseImages = request.getParameterValues("goodsNurseImages");
+		String[] goodsNurseImagesText = request.getParameterValues("goodsNurseImagesText");
+		if (0 != goods.getGoodsId()) {
+			if (null != goodsNurseImages && goodsNurseImages.length > 0) {
+				List<GoodsImages> giList = new ArrayList<GoodsImages>();
+				for (int i = 0; i < goodsNurseImages.length; i++) {
+					GoodsImages goodsImg = new GoodsImages();
+					goodsImg.setGoodsId(String.valueOf(goods.getGoodsId()));
+					goodsImg.setImageUrl(goodsNurseImages[i]);
+					goodsImg.setImageDesc((null != goodsNurseImagesText[i] && !"".equals(goodsNurseImagesText[i])? goodsNurseImagesText[i] : ""));// 商品描述
+					goodsImg.setImageType(1);// 图片类型 0 是商品图 1 护理流程图
+					goodsImg.setSort(i + 1 + "0");// 10、20
+					giList.add(goodsImg);
+				}
+				goods.setGoodsImagesList(giList);
+				goods.setImageType(1);// 商品图片类型[0:是商品图;1:护理流程图;]
+				savegoodsimages(goods);
+			} else {
+				// 当没有图片时，删除原有的图片
+				goods.setImageType(1);// 商品图片类型[0:是商品图;1:护理流程图;]
+				deletegoodsimages(goods);
+			}
+		}
+		
+		String[] goodsImages = request.getParameterValues("goodsImages");
+		
+		if (goods.getGoodsId() > 0) {
+			// 获取商品名称，判断是否根据商品ID查询到商品信息
+			if (!StringUtils.isEmpty(goods.getGoodsName())) {
+				if (null != goodsImages && goodsImages.length > 0) {
+					List<GoodsImages> giList = new ArrayList<GoodsImages>();
+					for (int i = 0; i < goodsImages.length; i++) {
+						GoodsImages goodsImg = new GoodsImages();
+						goodsImg.setGoodsId(goods.getGoodsId() + "");
+						goodsImg.setImageUrl(goodsImages[i]);
+						goodsImg.setImageDesc("");// 商品描述
+						goodsImg.setImageType(0);// 图片类型 0 是商品图 1 护理流程图
+						goodsImg.setSort(i + 1 + "0");// 10、20
+						giList.add(goodsImg);
+					}
+					goods.setGoodsImagesList(giList);
+					goods.setImageType(0);// 商品图片类型[0:是商品图;1:护理流程图;]
+					savegoodsimages(goods);
+				} else {
+					// 当商品相册为空时，删除以前全部数据
+					goods.setImageType(0);// 商品图片类型[0:是商品图;1:护理流程图;]
+					deletegoodsimages(goods);
+				}
+				
+			}
+		}
+	}
 
 	/**
 	 * 复制商品
@@ -1174,4 +1272,11 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 		goodsStatisticsDao.addGoodsStatisticsCountData(goodsStatisticsCountData);
 	}
 	
+	/**
+	 * 城市异价中根据条件查询能参加异价的商品
+	 * @return
+	 */
+	public List<Goods> queryGoodsCanRatio(Goods goods){
+		return goodsDao.queryGoodsCanRatio(goods);
+	}
 }

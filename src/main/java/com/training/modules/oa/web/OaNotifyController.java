@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import com.training.common.mapper.JsonMapper;
 import com.training.common.persistence.Page;
@@ -37,7 +38,6 @@ import com.training.modules.oa.service.OaNotifyService;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.train.service.TrainCategorysService;
 
-import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
 /**
@@ -105,6 +105,7 @@ public class OaNotifyController extends BaseController {
 	@RequiresPermissions(value={"oa:oaNotify:add","oa:oaNotify:edit"},logical=Logical.OR)
 	@RequestMapping(value = "save")
 	public String save(OaNotify oaNotify,Model model,boolean isSelf, RedirectAttributes redirectAttributes) {
+		oaNotify.setTitle(HtmlUtils.htmlUnescape(oaNotify.getTitle()));
 		if (!beanValidator(model, oaNotify)){
 			return form(oaNotify, model, isSelf);
 		}
@@ -127,6 +128,8 @@ public class OaNotifyController extends BaseController {
 		}else{
 			oaNotify.setContent(oaNotify.getContent());
 		}
+		//内容转码 
+		oaNotify.setContent(HtmlUtils.htmlUnescape(oaNotify.getContent()));
 		oaNotifyService.save(oaNotify);
 		addMessage(redirectAttributes, "保存通知'" + oaNotify.getTitle() + "'成功");
 		if(isSelf)

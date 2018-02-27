@@ -131,7 +131,7 @@
 				    type: 2, 
 				    area: ['600px', '450px'],
 				    title:"充值",
-				    content: "${ctx}/ec/orders/addCardTopUp?orderid="+orderid+"&singleRealityPrice="+singleRealityPrice+"&userid="+userid+"&isReal="+isReal+"&goodsBalance="+goodsBalance,
+				    content: "${ctx}/ec/orders/addCardTopUp?orderid="+orderid+"&singleRealityPrice="+singleRealityPrice+"&userid="+userid+"&isReal="+isReal+"&goodsBalance="+goodsBalance+"&orderArrearage="+orderArrearage,
 				    btn: ['确定', '关闭'],
 				    yes: function(index, layero){
 				    	var orderid = $("#orderid").val();
@@ -285,7 +285,7 @@
 						top.layer.alert('单个业务员的营业额不能小于0！', {icon: 0, title:'提醒'});
 	 	    			return;
 					}
-					if(parseFloat(pushMoneyTotal[i].value) + parseFloat(changeValue[i].value) < 0){
+					if((parseFloat(pushMoneyTotal[i].value) + parseFloat(changeValue[i].value)) < 0){
 						top.layer.alert('单个业务员的营业额不能小于其在该笔订单中的营业总额！', {icon: 0, title:'提醒'});
 	 	    			return;
 					}
@@ -296,9 +296,10 @@
 					var sum = 0;
 					var result = obj.document.getElementsByClassName(map[j]);
 					for(k=0;k<result.length;k++){
-						sum = parseFloat(sum) + parseFloat(result[k].value); 
+						sum = (parseFloat(sum)*10000 + parseFloat(result[k].value)*10000)/10000; 
 					}
-      	    		if(parseFloat(sum) - parseFloat(amount) != 0){
+					sum = sum.toFixed(2);
+					if((parseFloat(sum) - parseFloat(amount)) != 0){
       	    			top.layer.alert('每个部门的营业额之和必须等于分享营业额！', {icon: 0, title:'提醒'});
 	 	    			return;
       	    		}
@@ -539,6 +540,21 @@ window.onload=initStatus;
 			}
 		}); 
 	}
+	
+	// 强制取消
+	function forcedCancel(orderId){
+		layer.confirm('确认强制取消订单吗？', {
+			btn: ['确定','取消'], //按钮  可以设置多个按钮 具体可参考 http://layer.layui.com/api.html
+			icon: 3, 
+			title:'系统提示'
+		},function(index){	// 点击确认事件
+			layer.close(index);	// 关闭弹出框  若不关闭 则可以点击多次确认按钮
+			$(".loading").show();
+			window.location = "${ctx}/ec/orders/forcedCancel?orderid="+orderId;
+	    }, function(){ // 点击取消事件
+	    		
+	    }); 
+	}
 </script>
 </head>
 
@@ -553,6 +569,7 @@ window.onload=initStatus;
 					<form:form id="inputForm" modelAttribute="orders" action="${ctx}/ec/orders/updateCardOrder" method="post" class="form-horizontal">
 						<input id="oldAddress" name="oldAddress" type="hidden" value="${orders.address}"/>
 						<input id="orderamount" name="orderamount" type="hidden" value="${orders.orderamount}"/>
+						<input id="shippingtype" name="shippingtype" type="hidden" value="${orders.shippingtype}"/>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 							<input type="hidden" id="channelFlag" value="${orders.channelFlag}" />
 							<input type="hidden" id="isReal" value="${orders.isReal}" />
@@ -575,6 +592,7 @@ window.onload=initStatus;
 							<c:if test="${orders.distinction == 1}">售前卖</c:if>
 							<c:if test="${orders.distinction == 2}">售后卖</c:if>
 							<c:if test="${orders.distinction == 3}">老带新</c:if>
+							<c:if test="${orders.distinction == 4}">售后转单</c:if>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">手机号码:</label>&nbsp;&nbsp;${orders.users.mobile }
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -582,23 +600,29 @@ window.onload=initStatus;
 							<form:hidden path="oldstatus"/>
 							<form:select path="orderstatus"  class="form-control" style="width:180px">
 								<c:if test="${orders.channelFlag != 'bm'}">
-									<form:option value='${orders.orderstatus }'>
-										<c:if test="${orders.orderstatus == -2}">
-											取消订单
-										</c:if>
-										<c:if test="${orders.orderstatus == -1}">
-											待付款
-										</c:if>
-										<c:if test="${orders.orderstatus == 3}">
-											已退款
-										</c:if>
-										<c:if test="${orders.orderstatus == 4}">
-											已完成
-										</c:if>
-									</form:option>
+									<c:if test="${orders.orderstatus == -2}">
+										<form:option value="-2">取消订单</form:option>
+									</c:if>
+									<c:if test="${orders.orderstatus == -1}">
+										<form:option value="-1">待付款</form:option>
+									</c:if>
+									<c:if test="${orders.orderstatus == 3}">
+										<form:option value="3">已退款</form:option>
+									</c:if>
+									<c:if test="${orders.orderstatus == 4}">
+										<form:option value="4">已完成</form:option>
+									</c:if>
 								</c:if>
 								<c:if test="${orders.channelFlag == 'bm'}">
-									<form:option value="4">已完成</form:option>
+									<c:if test="${orders.orderstatus == -2}">
+										<form:option value="-2">取消订单</form:option>
+									</c:if>
+									<c:if test="${orders.orderstatus == 3}">
+										<form:option value="3">已退款</form:option>
+									</c:if>
+									<c:if test="${orders.orderstatus == 4}">
+										<form:option value="4">已完成</form:option>
+									</c:if>
 								</c:if>
 							</form:select>&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="active">付款方式：</label>
@@ -609,7 +633,7 @@ window.onload=initStatus;
 							</form:select>
 							<p></p>
 							<label >留言备注：</label>
-							<textarea name="usernote" rows="5" cols="60">${orders.userNote }</textarea>
+							<textarea name="userNote" rows="5" cols="60">${orders.userNote }</textarea>
 						</div>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
@@ -619,12 +643,24 @@ window.onload=initStatus;
 									<th style="text-align: center;">商品名称</th>
 									<th style="text-align: center;">子项名称</th>
 									<th style="text-align: center;">商品规格</th>
+									<c:if test="${orders.isReal == 3}">
+										<th style="text-align: center;">实际规格次</th>
+									</c:if>
 									<th style="text-align: center;">系统价</th>
+									<c:if test="${orders.isReal == 2}">
+										<th style="text-align: center;">异价比例</th>
+										<th style="text-align: center;">异价价格</th>
+									</c:if>
 									<th style="text-align: center;">市场价</th>
 									<th style="text-align: center;">优惠价</th>
+									<c:if test="${orders.isReal == 3}">
+										<th style="text-align: center;">异价比例</th>
+									</c:if>
+									<th style="text-align: center;">异价价格</th>
 									<c:if test="${orders.isReal == 2}">
 										<th style="text-align: center;">次(个)数</th>
 									</c:if>
+									<th style="text-align: center;">预约金</th>
 									<th style="text-align: center;">购买数量</th>
 									<c:if test="${(orders.isReal == 3) || (orders.isReal == 2 && orders.isNeworder == 1)}">
 										<th style="text-align: center;">实际次数</th>
@@ -634,7 +670,6 @@ window.onload=initStatus;
 									<th style="text-align: center;">会员折扣</th>
 									<th style="text-align: center;">应付金额</th>
 									<th style="text-align: center;">实付金额</th>
-									<th style="text-align: center;">预约金</th>
 									<th style="text-align: center;">欠款</th>
 									<th style="text-align: center;">操作</th>
 								</tr>
@@ -648,13 +683,13 @@ window.onload=initStatus;
 						<h4>订单支付信息:</h4>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 								<tr>
-									<th style="text-align: center;">商品总价</th>
+									<th style="text-align: center;">商品总额</th>
 									<th style="text-align: center;">红包面值</th>
 									<th style="text-align: center;">折扣率</th>
 									<th style="text-align: center;">会员折扣</th>
 									<th style="text-align: center;">邮费</th>
-									<th style="text-align: center;">应付金额</th>
-									<th style="text-align: center;">实付金额</th>
+									<th style="text-align: center;">应付总额</th>
+									<th style="text-align: center;">实付总额</th>
 								</tr>
 								<tr>
 									<td align="center">${orders.goodsprice }</td>
@@ -737,69 +772,37 @@ window.onload=initStatus;
 								</c:forEach>
 						</table>
 						</div>
-						<%-- <p></p>
-						<c:if test="${orders.isNeworder == 0}">
-							<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
-								<div class="pull-left">
-									<h4>业务员信息：</h4>
-								</div>
-								<c:if test="${type != 'view' }">
-									<div class="pull-right">
-										<a href="#" onclick="getSysUserInfo()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加业务员</a>
-									</div>
-								</c:if>
-								<shiro:hasPermission name="ec:orders:pushmoney">
-									<div class="pull-right">
-										<a href="#" onclick="openDialogView('查看日志记录', '${ctx}/ec/orders/getOrderPushmoneyRecordList?orderId=${orders.orderid }','800px','600px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>日志记录</a>
-									</div>
-								</shiro:hasPermission>
-								<p></p>
-								<table id="contentTable" class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
-									<thead>
-										<tr>
-											<th style="text-align: center;">业务员</th>
-											<th style="text-align: center;">手机号</th>
-											<th style="text-align: center;">营业额</th>
-											<th style="text-align: center;">操作人</th>
-											<th style="text-align: center;">操作时间</th>
-											<c:if test="${type != 'view' }">
-												<th style="text-align: center;" colspan="2">操作</th>
-											</c:if>
-										</tr>
-									</thead>
-									<tbody id="sysUserInfo" style="text-align:center;">
-										<c:forEach items="${orders.orderPushmoneyRecords }" var="orderPushmoneyRecord" varStatus="stauts">
-											<tr>
-												<td>
-													<input type="hidden" id="sysUserId" name="sysUserId" value="${orderPushmoneyRecord.pushmoneyUserId }" />
-													<input type="hidden" id="pushmoneyRecordId" name="pushmoneyRecordId" value="${orderPushmoneyRecord.pushmoneyRecordId }" />
-													<input id="sysName" name="sysName" type="text" value="${orderPushmoneyRecord.pushmoneyUserName }" class='form-control' readonly='readonly'>
-												</td>
-												<td>
-													<input id="sysMobile" name="sysMobile" type="text" value="${orderPushmoneyRecord.pushmoneyUserMobile }" class='form-control' readonly='readonly'>
-												</td>
-												<td>
-													${orderPushmoneyRecord.pushMoney }
-													<input type="hidden" id="${orderPushmoneyRecord.pushmoneyUserId }pushMoneySum" value="${orderPushmoneyRecord.pushMoney }" />
-												</td>
-												<td>
-													${orderPushmoneyRecord.createBy.name }
-												</td>
-												<td>
-													<fmt:formatDate value="${orderPushmoneyRecord.createDate }" pattern="yyyy-MM-dd HH:mm:ss" />
-												</td>
-												<c:if test="${type != 'view' }">
-													<td colspan="2">
-														<a href="#" class="btn btn-success btn-xs" onclick="updateFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId })"><i class='fa fa-edit'></i> 修改</a>
-														<a href="#" class="btn btn-danger btn-xs" onclick="delFileSysUserInfo(this,${orderPushmoneyRecord.pushmoneyRecordId })"><i class='fa fa-trash'></i> 删除</a>
-													</td>
-												</c:if>
-											</tr>
-										</c:forEach>
-									</tbody>
-								</table>
-							</div>
-						</c:if> --%>
+						<p></p>
+						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
+						<h4>售后信息:</h4>
+						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+								<tr>
+									<th style="text-align: center;">时间</th>
+									<th style="text-align: center;">商品名称</th>
+									<th style="text-align: center;">商品规格</th>
+									<th style="text-align: center;">售后次(个)数</th>
+									<th style="text-align: center;">退款金额</th>
+									<th style="text-align: center;">平欠款</th>
+									<th style="text-align: center;">操作</th>
+								</tr>
+								<c:forEach items="${returnedList}" var="returnedGoods">
+									<tr>
+										<td align="center">
+											<fmt:formatDate value="${returnedGoods.applyDate}"  pattern="yyyy-MM-dd HH:mm:ss" />
+										</td>
+										<td align="center">${returnedGoods.goodsName}</td>
+										<td align="center">${returnedGoods.specName}</td>
+										<td align="center">${returnedGoods.returnNum}</td>
+										<td align="center">${returnedGoods.returnAmount}</td>
+										<td align="center">${returnedGoods.floatArreageMoney}</td>
+										<td align="center">
+											<a href="#" onclick="openDialogView('售后详情', '${ctx}/ec/returned/returnform?id=${returnedGoods.id}&flag=view','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>查看</a>
+											<a href="#" onclick="openDialogView('查看转单', '${ctx}/ec/orders/returnedOrdersList?returnedId=${returnedGoods.id}','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i>查看转单</a>
+										</td>
+									</tr>
+								</c:forEach>
+						</table>
+						</div>
 						<p></p>
 						<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 							<div class="pull-left">
@@ -889,9 +892,20 @@ window.onload=initStatus;
 						<a href="#" onclick="openDialogView('操作日志', '${ctx}/ec/orders/orderlist?id=${orders.orderid}','900px','450px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>订单流程</a>
 					</shiro:hasPermission>
 					<shiro:hasPermission name="ec:orders:edit">
+						<!-- 1.app套卡、通用卡订单，未处理预约金且（未预约或预约了但预约状态不为等待服务、已完成、 已评价 、爽约的预约）；2.后台套卡、通用卡订单，未预约或预约了但预约状态不为等待服务、已完成、 已评价 、爽约的预约 -->
 						<c:if test="${type != 'view' }">
-							<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>
-						</c:if>	
+							<c:choose>                                                                                                                                                                     
+								<c:when test="${(orders.channelFlag != 'bm' && (orders.orderstatus ==1 || orders.orderstatus==2 || orders.orderstatus==4) && (((orders.advanceFlag > 0) || (orders.changeAdvanceFlag > 0)) && orders.returnedFlag == 0) && ((orders.sumAppt == 0) || (orders.sumAppt > 0 && orders.apptFlag == 0))) || (orders.channelFlag == 'bm' && (orders.orderstatus ==1 || orders.orderstatus==2 || orders.orderstatus==4) && (((orders.sumAppt == 0) || (orders.sumAppt > 0 && orders.apptFlag == 0)) && orders.returnedFlag == 0))}">
+									<a href="#" onclick="forcedCancel('${orders.orderid}')" class="btn btn-danger btn-xs"><i class="fa fa-save"></i>强制取消</a>
+								</c:when>
+								<c:otherwise>
+									<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-save"></i>强制取消</a>
+								</c:otherwise>
+							</c:choose>
+						</c:if>
+					</shiro:hasPermission>
+					<shiro:hasPermission name="ec:orders:editLog">
+						<a href="#" onclick="openDialogView('订单操作日志', '${ctx}/ec/orders/editLog?orderid=${orders.orderid}','1100px','650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>订单操作日志</a>
 					</shiro:hasPermission>
 				</div>
 			</div>	

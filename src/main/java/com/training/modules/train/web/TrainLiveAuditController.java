@@ -21,12 +21,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.common.collect.Lists;
 import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.TrainLiveAudit;
+import com.training.modules.train.entity.TrainLiveCategory;
 import com.training.modules.train.entity.TrainLiveOrder;
 import com.training.modules.train.entity.TrainLivePlayback;
 import com.training.modules.train.entity.TrainLiveRewardRecord;
@@ -34,6 +36,7 @@ import com.training.modules.train.entity.TrainLiveRoom;
 import com.training.modules.train.entity.TrainLiveSku;
 import com.training.modules.train.entity.TrainLiveUser;
 import com.training.modules.train.service.TrainLiveAuditService;
+import com.training.modules.train.service.TrainLiveCategoryService;
 import com.training.modules.train.service.TrainLiveRoomService;
 import com.training.modules.train.service.TrainLiveUserService;
 import com.training.modules.train.utils.EncryptLiveUtil;
@@ -50,6 +53,8 @@ public class TrainLiveAuditController extends BaseController{
 	private TrainLiveRoomService trainLiveRoomService;
 	@Autowired
 	private TrainLiveUserService trainLiveUserService;
+	@Autowired
+	private TrainLiveCategoryService trainLiveCategoryService;
 
 	public static String LIVE_USERID="E8F7E756412DC768";   //直播用户id   E8F7E756412DC768
 	public static String API_KEY="K4MV4Mv4Q90FaEEQYclkz0XJIqEZf5rK";  	//API KEY  K4MV4Mv4Q90FaEEQYclkz0XJIqEZf5rK
@@ -396,5 +401,125 @@ public class TrainLiveAuditController extends BaseController{
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
 		return "modules/train/LiveIntegralsList";
+	}
+	/**
+	 * 添加直播推荐
+	 * @param trainLiveAudit
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="addRecommend")
+	public String addRecommend(TrainLiveAudit trainLiveAudit, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes){
+		try {
+			trainLiveAuditService.addRecommend(trainLiveAudit);
+			addMessage(redirectAttributes, "推荐直播成功！");
+			return "OK";
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "推荐直播失败!", e);
+			logger.error("推荐直播失败错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "推荐直播失败！");
+			return "ERROR";
+		}
+	}
+	
+	/**
+	 * 
+	 * @Title: delCheck
+	 * @Description: TODO 删除校验
+	 * @param trainLiveAudit
+	 * @return:
+	 * @return: String
+	 * @throws
+	 * 2017年12月19日 兵子
+	 */
+	@ResponseBody
+	@RequestMapping(value = "delCheck")
+	public String delCheck(TrainLiveAudit trainLiveAudit,RedirectAttributes redirectAttributes){
+		String result;
+		List<Integer> list = Lists.newArrayList();
+		if (StringUtils.isNotBlank(trainLiveAudit.getCategory().getTrainLiveCategoryId())) {
+			List<TrainLiveCategory> categoryIds = trainLiveCategoryService.getCategory(trainLiveAudit.getCategory().getTrainLiveCategoryId());
+			if (categoryIds != null && categoryIds.size() > 0) {
+				for (TrainLiveCategory trainLiveCategory : categoryIds) {
+					Integer num = trainLiveAuditService.delCheck(trainLiveCategory.getTrainLiveCategoryId());
+					if (num > 0) {
+						list.add(num);
+					}
+				}
+			}
+		}else{
+			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
+			return "redirect:" + adminPath + "/train/category/list";
+		}
+		if (list != null && list.size() > 0) {
+			result = "no";
+		}else{
+			result = "yes";
+		}
+		return result;
+	}
+	
+	/**
+	 * 
+	 * @Title: transferForm
+	 * @Description: TODO 转移直播跳转
+	 * @param trainLiveAudit
+	 * @param model
+	 * @return:
+	 * @return: String
+	 * @throws
+	 * 2017年12月20日 兵子
+	 */
+	@RequiresPermissions(value = {"train:category:transfer"})
+	@RequestMapping(value = "transferForm")
+	public String transferForm(TrainLiveAudit trainLiveAudit,Model model){
+		List<TrainLiveAudit> list =  Lists.newArrayList();
+		if (StringUtils.isNotBlank(trainLiveAudit.getCategory().getTrainLiveCategoryId())) {
+			list = trainLiveAuditService.findAuditList(trainLiveAudit);
+		}
+		model.addAttribute("list", list);
+		model.addAttribute("liveCatrgoryId", trainLiveAudit.getCategory().getTrainLiveCategoryId());
+		return "modules/train/transferForm";
+	}
+	
+	/**
+	 * 
+	 * @Title: transferCategory
+	 * @Description: TODO 转移当前分类下的直播
+	 * @param ids
+	 * @param categoryId
+	 * @param liveCategoryId
+	 * @param model
+	 * @param redirectAttributes
+	 * @param request
+	 * @return:
+	 * @return: String
+	 * @throws
+	 * 2017年12月20日 兵子
+	 */
+	@RequestMapping(value = "transferCategory")
+	public String transferCategory(String ids,String categoryId,String liveCategoryId,Model model,RedirectAttributes redirectAttributes,HttpServletRequest request){
+		try {
+			int num = 0;
+			if (StringUtils.isNotBlank(ids) && StringUtils.isNotBlank(categoryId)) {
+				String[] auditIds = ids.split(",");
+				for (String auditId : auditIds) {
+					num = trainLiveAuditService.transferCategory(auditId,categoryId);
+					num += num;
+				}
+				if (num > 0) {
+					addMessage(redirectAttributes, "转移成功！");
+				}
+			}
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "转移直播", e);
+			logger.error("转移直播错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
+		}
+		return "redirect:" + adminPath + "/train/live/transferForm?category.trainLiveCategoryId="+liveCategoryId;
 	}
 }

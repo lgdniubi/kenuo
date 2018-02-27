@@ -469,5 +469,6 @@ public class UserDetail extends DataEntity<UserDetail> {
 	public void setRemarkname(String remarkname) {
 		this.remarkname = remarkname;
 	}
+
 }
 

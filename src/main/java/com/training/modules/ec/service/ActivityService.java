@@ -1,6 +1,7 @@
 package com.training.modules.ec.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -142,6 +143,11 @@ public class ActivityService extends TreeService<ActivityDao,Activity> {
 	public Page<ActivityCouponUser> findCouponUser(Page<ActivityCouponUser> page, ActivityCouponUser activityCouponUser) {
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
 		//redEnvelope.getSqlMap().put("dsf", dataScopeFilter(redEnvelope.getCurrentUser(), "o", "a"));
+		if(activityCouponUser.getBegtime() == null && activityCouponUser.getEndtime() == null){
+			activityCouponUser.setBegtime(new Date());
+			activityCouponUser.setEndtime(new Date());
+		}
+		
 		// 设置分页参数
 		activityCouponUser.setPage(page);
 		// 执行分页查询
@@ -346,6 +352,10 @@ public class ActivityService extends TreeService<ActivityDao,Activity> {
 	
 	public Users findByMobile(String mobile){
 		return mtmyUsersDao.getUsersBy(mobile);
+	}
+	
+	public Users findByUserId(String userid){
+		return mtmyUsersDao.get(userid);
 	}
 	/**
 	 * 获取数据红包list

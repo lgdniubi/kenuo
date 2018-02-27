@@ -50,11 +50,11 @@
 								</c:forEach>
 							</select>
 							<p></p>
-				 时间范围：<input id="beginDate" name="beginDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" 
-								value="<fmt:formatDate value="${reservation.beginDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endDate\')}'})" readonly="readonly"/>
+				 时间范围：<input id="beginDate" name="beginDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 185px" type="text" 
+								value="<fmt:formatDate value="${reservation.beginDate}" pattern="yyyy-MM-dd"/>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endDate\')}'})" readonly="readonly"/>
 							<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-							<input id="endDate" name="endDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" 
-								value="<fmt:formatDate value="${reservation.endDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'beginDate\')}'})" readonly="readonly"/>		
+							<input id="endDate" name="endDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 185px" type="text" 
+								value="<fmt:formatDate value="${reservation.endDate}" pattern="yyyy-MM-dd"/>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'beginDate\')}'})" readonly="readonly"/>		
 						 </div>	
 					</form>
 					 <div class="pull-right">
@@ -124,6 +124,9 @@
 									</c:if>
 									<c:if test="${reservation.apptStatus == '1' or reservation.apptStatus == '2'}">
 										<a href="#" onclick="openDialog('编辑实际服务时间', '${ctx}/ec/mtmyMnappointment/getServiceTime?reservationId=${reservation.reservationId }','750px', '400px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 添加服务时长</a>
+									</c:if>
+									<c:if test="${reservation.apptStatus == '2'}">
+										<a href="#" onclick="openDialogView('查看评价', '${ctx}/ec/mtmyMnappointment/viewComments?reservationId=${reservation.reservationId }','800px', '650px')" class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>查看评价</a>
 									</c:if>
 							  	</td>
 							</tr>

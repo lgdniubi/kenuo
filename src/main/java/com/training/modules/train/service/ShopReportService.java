@@ -2,7 +2,6 @@ package com.training.modules.train.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -62,18 +61,7 @@ public class ShopReportService extends CrudService<ShopReportDao,ShopReport>{
 			System.out.println("###定时器:"+jobName+",无绑定店铺的用户!");
 		}
 	} 
-	/**
-	 * 店铺预约统计
-	 * @param jobName
-	 */
-	public void reportShopAppt(String jobName){
-		Map<String, Object> map = findNewestTasksLogs(jobName);
-		if((Integer)map.get("status") == 1){
-			System.out.println("###定时器:"+jobName+",当日执行多次!");
-		}else{
-			shopReportDao.insertShopReport((Date)map.get("data"));
-		}
-	}
+
 	/**
 	 * 美容师绩效统计
 	 * @param jobName
@@ -85,25 +73,8 @@ public class ShopReportService extends CrudService<ShopReportDao,ShopReport>{
 		}else{
 			//插入美容师绩效报表（不含时限卡）
 			shopReportDao.insertBeauticianAchievement((Date)map.get("data"));
-			//查询当前过期的时限卡
-			List<ShopReport> achievementlist = shopReportDao.findExpirationOrder((Date)map.get("data"));
-			if(null != achievementlist){
-				List<ShopReport> newAchievementlist = new ArrayList<>();
-				for (int i = 0; i < achievementlist.size(); i++) {
-					if(achievementlist.get(i).getBasisFee() > 0){ 
-						// 存在消耗业绩的时限卡 
-						newAchievementlist.add(achievementlist.get(i));
-					}
-				}
-				if(newAchievementlist.size() > 0){
-					//插入美容师绩效报表（时限卡）
-					shopReportDao.insertBeauticianAchievementCard(newAchievementlist,(Date)map.get("data"));
-				}else{
-					System.out.println("###定时器:"+jobName+",过期时限卡订单,消耗业绩都无消耗业绩!");
-				}
-			}else{
-				System.out.println("###定时器:"+jobName+",无过期时限卡订单!");
-			}
+			//插入美容师绩效报表（时限卡）
+			shopReportDao.insertBeauticianAchievementCard((Date)map.get("data"));
 		}
 	}
 	

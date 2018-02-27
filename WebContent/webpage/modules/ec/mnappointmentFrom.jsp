@@ -89,7 +89,10 @@
 	    	<div class="ibox-content">
 				<form:form id="inputForm" modelAttribute="reservation" action="${ctx }/ec/mtmyMnappointment/updateMnappointment">
 					<input type="hidden" value="${reservation.reservationId }" id="reservationId" name="reservationId"><!-- 预约id -->
-					<input type="hidden" value="${reservation.apptStatus}" id="oldStatus">
+					<input type="hidden" value="${reservation.apptStatus}" id="oldStatus" name="oldStatus">
+					<input type="hidden" value="<fmt:formatDate value="${reservation.apptDate}" pattern="yyyy-MM-dd"/>" id="oldApptDate" name="oldApptDate">
+					<input type="hidden" value="${reservation.beauticianId}" id=beauticianId name=beauticianId>
+					<input type="hidden" value="${reservation.shopId}" id="shopId" name="shopId">  
 					<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 						<tr>
 							<td width="100px"><label class="pull-right">店铺：</label></td>
@@ -165,6 +168,9 @@
 						</tr>
 					</table>
 				</form:form>
+				<shiro:hasPermission name="ec:mtmyMnappointment:editLog">
+					<a href="#" onclick="openDialogView('预约操作日志', '${ctx}/ec/mtmyMnappointment/findReservationLog?reservationId=${reservation.reservationId }','800px','650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>预约操作日志</a>
+				</shiro:hasPermission>
 			</div>
 		</div>
 	</div>

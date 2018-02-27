@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import com.google.common.collect.Lists;
 import com.training.common.mapper.JsonMapper;
@@ -38,13 +39,11 @@ import com.training.common.utils.IdGen;
 import com.training.common.utils.StringUtils;
 import com.training.common.utils.excel.ImportExcel;
 import com.training.common.web.BaseController;
-import com.training.modules.ec.entity.GoodsSkill;
 import com.training.modules.ec.entity.MtmyOaNotify;
 import com.training.modules.ec.entity.MtmyOaNotifyRecord;
 import com.training.modules.ec.entity.Users;
 import com.training.modules.ec.service.MtmyOaNotifyService;
 import com.training.modules.ec.service.MtmyUsersService;
-import com.training.modules.ec.utils.OrdersStatusChangeUtils;
 import com.training.modules.ec.utils.igtpush.GetTUtil;
 import com.training.modules.ec.utils.igtpush.exception.ResponseError;
 import com.training.modules.sys.utils.BugLogUtils;
@@ -122,21 +121,28 @@ public class MtmyOaNotifyController extends BaseController {
 	@RequestMapping(value = "save")
 	public String save(MtmyOaNotify mtmyOaNotify,Model model,HttpServletRequest request, RedirectAttributes redirectAttributes){
 		try {
+			mtmyOaNotify.setTitle(HtmlUtils.htmlUnescape(mtmyOaNotify.getTitle()));
 			//当推送方式为组推时
 			if(mtmyOaNotify.getPushType() == 2){
 				List<MtmyOaNotifyRecord> mtmyOaNotifyRecordList = Lists.newArrayList();
-				String phones = mtmyOaNotify.getPhones();
-				//当导入的手机号不为空时
-				if(!"".equals(phones) && phones != null){
+				String newData = mtmyOaNotify.getData().trim();
+				//当导入的数据（手机号或者用户id）不为空时
+				if(!"".equals(newData) && newData != null){
+					String data=newData.replace("，", ",").replace(" ", "").replace("\r\n","");
 					//手机号码去重
-					String[] strs = phones.split(",");
+					String[] strs = data.split(",");
 					Set<String> set = new HashSet<>();  
 			        for(int i=0;i<strs.length;i++){  
 			            set.add(strs[i]);  
 			        }  
 			        String[] arrayResult = (String[]) set.toArray(new String[set.size()]);  
 					for(int i=0;i<arrayResult.length;i++){
-						Users users = mtmyUsersService.getUserByMobile(arrayResult[i]);
+						Users users = new Users();
+						if("0".equals(mtmyOaNotify.getGroupImportType())){   //用手机号
+							users = mtmyUsersService.getUserByMobile(arrayResult[i]);
+						}else{                       //用用户id
+							users = mtmyUsersService.get(arrayResult[i]);
+						}
 						//当用户不为空时
 						if(users != null){
 							if(mtmyOaNotifyService.selectClient(users.getUserid()) > 0){
@@ -177,7 +183,8 @@ public class MtmyOaNotifyController extends BaseController {
 					return "redirect:" + adminPath + "/ec/mtmyOaNotify/list";
 				}
 			}
-			
+			//将内容转码
+			mtmyOaNotify.setContent(HtmlUtils.htmlUnescape(mtmyOaNotify.getContent()));
 			mtmyOaNotifyService.save(mtmyOaNotify);
 			addMessage(redirectAttributes, "保存/修改通知'" + mtmyOaNotify.getTitle() + "'成功");
 		} catch (Exception e) {
@@ -308,46 +315,72 @@ public class MtmyOaNotifyController extends BaseController {
 	@RequestMapping(value = "importPhonesOrders/template")
 	public void importVirtualOrdersTemplate(MtmyOaNotify mtmyOaNotify,HttpServletResponse response, HttpServletRequest request,RedirectAttributes redirectAttributes) {
 		try {
-			String filename = "phonesImport.xlsx";
-			String oldPath = request.getServletContext().getRealPath("/") + "static/Exceltemplate/" + filename;
-			logger.info("#####[组推手机号模板-old-path"+oldPath);
-			TrainRuleParam trainRuleParam  =new TrainRuleParam();
-			trainRuleParam.setParamKey("excel_path"); 
-			String path = trainRuleParamDao.findParamByKey(trainRuleParam).getParamValue() + "/static/Exceltemplate/" + filename;
-			logger.info("#####[组推手机号模板-new-path"+path);
-			File file = new File(path);
-			// 以流的形式下载文件。
-			InputStream fis = new BufferedInputStream(new FileInputStream(path));
-			byte[] buffer = new byte[fis.available()];
-			fis.read(buffer);
-			fis.close();
-			// 清空response
-			response.reset();
-			// 设置response的Header
-			response.addHeader("Content-Disposition","attachment;filename=" + java.net.URLEncoder.encode(filename, "UTF-8"));
-			response.addHeader("Content-Length", "" + file.length());
-			OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
-			response.setContentType("application/vnd.ms-excel");
-			toClient.write(buffer);
-			toClient.flush();
-			toClient.close();
-			
+			String type= request.getParameter("type");
+			if("0".equals(type) || type== "0"){  //组推批量导入手机号
+				String filename = "phonesImport.xlsx";
+				String oldPath = request.getServletContext().getRealPath("/") + "static/Exceltemplate/" + filename;
+				logger.info("#####[组推手机号模板-old-path"+oldPath);
+				TrainRuleParam trainRuleParam  =new TrainRuleParam();
+				trainRuleParam.setParamKey("excel_path"); 
+				String path = trainRuleParamDao.findParamByKey(trainRuleParam).getParamValue() + "/static/Exceltemplate/" + filename;
+				logger.info("#####[组推手机号模板-new-path"+path);
+				File file = new File(path);
+				// 以流的形式下载文件。
+				InputStream fis = new BufferedInputStream(new FileInputStream(path));
+				byte[] buffer = new byte[fis.available()];
+				fis.read(buffer);
+				fis.close();
+				// 清空response
+				response.reset();
+				// 设置response的Header
+				response.addHeader("Content-Disposition","attachment;filename=" + java.net.URLEncoder.encode(filename, "UTF-8"));
+				response.addHeader("Content-Length", "" + file.length());
+				OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
+				response.setContentType("application/vnd.ms-excel");
+				toClient.write(buffer);
+				toClient.flush();
+				toClient.close();
+			}else{                              //组推批量导入用户id
+				String filename = "userIdsImport.xlsx";
+				String oldPath = request.getServletContext().getRealPath("/") + "static/Exceltemplate/" + filename;
+				logger.info("#####[组推用户ID模板-old-path"+oldPath);
+				TrainRuleParam trainRuleParam  =new TrainRuleParam();
+				trainRuleParam.setParamKey("excel_path"); 
+				String path = trainRuleParamDao.findParamByKey(trainRuleParam).getParamValue() + "/static/Exceltemplate/" + filename;
+				logger.info("#####[组推用户ID模板-new-path"+path);
+				File file = new File(path);
+				// 以流的形式下载文件。
+				InputStream fis = new BufferedInputStream(new FileInputStream(path));
+				byte[] buffer = new byte[fis.available()];
+				fis.read(buffer);
+				fis.close();
+				// 清空response
+				response.reset();
+				// 设置response的Header
+				response.addHeader("Content-Disposition","attachment;filename=" + java.net.URLEncoder.encode(filename, "UTF-8"));
+				response.addHeader("Content-Length", "" + file.length());
+				OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
+				response.setContentType("application/vnd.ms-excel");
+				toClient.write(buffer);
+				toClient.flush();
+				toClient.close();
+			}
 		} catch (Exception e) {
-			BugLogUtils.saveBugLog(request, "导入模板下载失败", e);
-			addMessage(redirectAttributes, "导入模板下载失败！失败信息：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "组推导入模板下载失败", e);
+			addMessage(redirectAttributes, "组推导入模板下载失败！失败信息：" + e.getMessage());
 		}
 	}
 	
 	/**
-	 * 导入组推手机号
+	 * 导入组推手机号或用户ID
 	 * 
 	 * @param file
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@RequestMapping(value = "importPhones")
+	@RequestMapping(value = "importPhonesOrUserIds")
 	@ResponseBody
-	public String importPhones(HttpServletRequest request,MultipartFile file, RedirectAttributes redirectAttributes) {
+	public String importPhonesOrUserIds(HttpServletRequest request,MultipartFile file, RedirectAttributes redirectAttributes) {
 		JSONObject jsonO = new JSONObject();
 		StringBuffer str = new StringBuffer();
 		try {
@@ -358,15 +391,15 @@ public class MtmyOaNotifyController extends BaseController {
 			}else{
 				List<MtmyOaNotify> list = ei.getDataList(MtmyOaNotify.class);
 				for(MtmyOaNotify mtmyOaNotify : list){
-					str.append(mtmyOaNotify.getPhones()+",");
+					str.append(mtmyOaNotify.getData()+",");
 				}
-				jsonO.put("phones", str.toString());
+				jsonO.put("data", str.toString());
 				jsonO.put("type", "success");
 			}
 			addMessage(redirectAttributes, "成功！");
 		}catch(Exception e){
-			BugLogUtils.saveBugLog(request, "导入组推手机号出错", e);
-			logger.error("导入组推手机号出错信息：" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "导入组推手机号或用户ID出错", e);
+			logger.error("导入组推手机号或用户ID出错信息：" + e.getMessage());
 			jsonO.put("type", "error");
 		}
 		return jsonO.toString();

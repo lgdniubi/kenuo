@@ -3,6 +3,7 @@ package com.training.modules.train.entity;
 import java.util.Date;
 
 import com.training.common.persistence.DataEntity;
+import com.training.modules.sys.entity.Franchisee;
 
 /**
  * 课程
@@ -30,6 +31,10 @@ public class TrainLessons extends DataEntity<TrainLessons>{
 	
 	private int sort;				//排序
 	private int isShow;				//是否显示
+	
+	private int showType = -1;			//课程类型，0:普通课程，1：新课推荐，2：热门课程，3：推荐和热门
+	private Franchisee franchisee;	//课程所属商家
+	
 	
 	public TrainLessons(){
 		super();
@@ -188,4 +193,19 @@ public class TrainLessons extends DataEntity<TrainLessons>{
 		this.isShow = isShow;
 	}
 
+	public int getShowType() {
+		return showType;
+	}
+
+	public void setShowType(int showType) {
+		this.showType = showType;
+	}
+
+	public Franchisee getFranchisee() {
+		return franchisee;
+	}
+
+	public void setFranchisee(Franchisee franchisee) {
+		this.franchisee = franchisee;
+	}
 }

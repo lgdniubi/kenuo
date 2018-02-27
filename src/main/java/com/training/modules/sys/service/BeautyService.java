@@ -77,6 +77,18 @@ public class BeautyService extends TreeService<BeautyDao, BeautyCountData> {
 			if(commentData.getApptCount() == null){
 				commentData.setApptCount(0);
 			}
+			//个人形象评价评分(1.5到5)
+			if(commentData.getBeautyScore() == null){
+				commentData.setBeautyScore((float) 0.0);
+			}
+			//服务评价评分(1.5到5)
+			if(commentData.getServiceScore() == null){
+				commentData.setServiceScore((float) 0.0);
+			}
+			//技能手法评价评分(1.5到5)
+			if(commentData.getSkillScore() == null){
+				commentData.setSkillScore((float) 0.0);
+			}
 		}
 		// 更新评论数据
 		if(commentDataList.size() != 0){

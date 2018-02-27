@@ -22,17 +22,17 @@ public interface ArrangeDao extends CrudDao<ArrangeShop>{
 	//查询市场下所有店铺
 	public List<Office> findOffice(String officeId);
 	//查询店铺上班时间
-	public List<Integer> findArrange(@Param(value="officeId")String officeId,@Param(value="month")int month);
+	public List<Integer> findArrange(@Param(value="officeId")String officeId,@Param(value="year")int year,@Param(value="month")int month);
 	//查询店铺美容师上班详情
-	public List<ArrangeBeautician> findArrangeBeautician(@Param(value="officeId")String officeId,@Param(value="day")int day,@Param(value="month")int month);
+	public List<ArrangeBeautician> findArrangeBeautician(@Param(value="officeId")String officeId,@Param(value="day")int day,@Param(value="month")int month,@Param(value="year")int year);
 	//查询店铺设备上班详情
-	public List<ArrangeBeautician> findArrangeEquipment(@Param(value="officeId")String officeId,@Param(value="day")int day,@Param(value="month")int month);
+	public List<ArrangeBeautician> findArrangeEquipment(@Param(value="officeId")String officeId,@Param(value="day")int day,@Param(value="month")int month,@Param(value="year")int year);
 
 	
 	//查询店铺下特殊美容师
-	public List<ArrangeBeautician> findAllBeautician(@Param(value="officeId")String officeId,@Param(value="month")int month);
+	public List<ArrangeBeautician> findAllBeautician(@Param(value="officeId")String officeId,@Param(value="year")int year,@Param(value="month")int month);
 	//查询特殊美容师排班详情
-	public List<ArrangeShop> findBeautician(@Param(value="id")String id,@Param(value="month")int month);
+	public List<ArrangeShop> findBeautician(@Param(value="id")String id,@Param(value="year")int year,@Param(value="month")int month);
 	//清空特殊特殊美容师排班
 	public void delBeautician(List<ArrangeShop> list);
 	//保存特殊美容师排班
@@ -40,13 +40,13 @@ public interface ArrangeDao extends CrudDao<ArrangeShop>{
 	
 	
 	//查询店铺下普通美容师
-	public List<ArrangeBeautician> findAllOrdinary(@Param(value="officeId")String officeId,@Param(value="month")int month);
+	public List<ArrangeBeautician> findAllOrdinary(@Param(value="officeId")String officeId,@Param(value="year")int year,@Param(value="month")int month);
 	
 	
 	//查询店铺下特殊设备
-	public List<ArrangeBeautician> findAllEquipment(@Param(value="officeId")String officeId,@Param(value="month")int month);
+	public List<ArrangeBeautician> findAllEquipment(@Param(value="officeId")String officeId,@Param(value="year")int year,@Param(value="month")int month);
 	//查询特殊设备排班详情
-	public List<ArrangeEquipment> findEquipment(@Param(value="equipmentId")int equipmentId,@Param(value="month")int month);
+	public List<ArrangeEquipment> findEquipment(@Param(value="equipmentId")int equipmentId,@Param(value="year")int year,@Param(value="month")int month);
 	//清空特殊设备排班
 	public void delEquipment(List<ArrangeEquipment> list);
 	//保存特殊设备排班

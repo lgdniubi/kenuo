@@ -22,6 +22,10 @@ public class MtmyWebAd extends DataEntity<MtmyWebAd>{
 	private String redirectUrl;    //链接地址
 	private String isShow;         //是否显示(0：显示；1：不显示)
 	
+	private int sort;         //排序(数字越大越靠前)
+	private String subhead;   // 副标题
+	
+	
 	public int getMtmyWebAdId() {
 		return mtmyWebAdId;
 	}
@@ -81,6 +85,18 @@ public class MtmyWebAd extends DataEntity<MtmyWebAd>{
 	}
 	public void setIsShow(String isShow) {
 		this.isShow = isShow;
+	}
+	public int getSort() {
+		return sort;
+	}
+	public void setSort(int sort) {
+		this.sort = sort;
+	}
+	public String getSubhead() {
+		return subhead;
+	}
+	public void setSubhead(String subhead) {
+		this.subhead = subhead;
 	}
 	
 	

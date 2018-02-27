@@ -28,6 +28,7 @@
 							async: false,
 							url:"${ctx}/train/department/checkName?oldName=" + encodeURIComponent("${department.name}")+"&companyId=${department.office.id}"
 						}
+					}
 				},
 				messages: {
 					name: {remote: "部门已存在"}
@@ -45,7 +46,6 @@
 						error.insertAfter(element);
 					}
 				}
-			}
 			});
 			$("#inputForm").validate().element($("#name"));
 		})

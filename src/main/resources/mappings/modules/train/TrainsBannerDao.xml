@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.training.modules.train.dao.TrainsBannerDao">
     
-	<insert id="insert">
+	<insert id="insertBanner" parameterType="TrainsBanner" useGeneratedKeys="true" keyProperty="adId">
 		INSERT INTO train_advert(
 			ad_name,
 			ad_type,
@@ -11,7 +11,8 @@
 			remark,
 			sort,
 			del_flag,
-			create_time
+			create_time,
+			parent_ids
 		) VALUES (
 			#{adName},
 			#{adType},
@@ -20,7 +21,20 @@
 			#{remark},
 			#{sort},
 			#{DEL_FLAG_DELETE},
-			SYSDATE()
+			SYSDATE(),
+			#{parentIds}
+		)
+	</insert>
+	<!-- 插入banner商家权限 -->
+	<insert id="insertFranchiseeBanner">
+		INSERT INTO trains.train_franchisee_advert(
+			create_franise_id,
+			banner_id,
+			so_franise_id
+		) VALUES(
+			#{createFranchisee},
+			#{bannerId},
+			#{soFranchisee}
 		)
 	</insert>
 	<select id="findList" resultType="TrainsBanner">
@@ -42,9 +56,16 @@
 			c.update_by AS "dict.updateBy",
 			c.update_date AS "dict.updateDate",
 			c.remarks AS "dict.remarks",
-			c.del_flag AS "dict.delFlag"
+			c.del_flag AS "dict.delFlag",
+			f.banner_id AS "franchiseeBanner.bannerId",
+			f.create_franise_id AS "franchiseeBanner.createFranchisee",
+			f.so_franise_id AS "franchiseeBanner.soFranchisee"
 		FROM
 			train_advert a
+		LEFT JOIN
+			train_franchisee_advert f
+		ON
+			a.ad_id = f.banner_id
 		LEFT JOIN 
 			sys_dict c 
 		ON 
@@ -53,6 +74,12 @@
 			c.type = 'banner_type' 
 		AND 
 			c.del_flag = 0
+		<if test="user.loginName != 'admin'">
+			AND 
+				f.create_franise_id = #{user.company.id}
+		</if>
+		GROUP BY
+			a.ad_id
 		ORDER BY
 			sort DESC
 	</select>
@@ -76,9 +103,16 @@
 			c.update_by AS "dict.updateBy",
 			c.update_date AS "dict.updateDate",
 			c.remarks AS "dict.remarks",
-			c.del_flag AS "dict.delFlag"	
+			c.del_flag AS "dict.delFlag",
+			f.banner_id AS "franchiseeBanner.bannerId",
+			f.create_franise_id AS "franchiseeBanner.createFranchisee",
+			GROUP_CONCAT(f.so_franise_id) AS "soFranchiseeIds"
 		FROM
 			train_advert a
+		LEFT JOIN
+			train_franchisee_advert f
+		ON
+			a.ad_id = f.banner_id
 		LEFT JOIN 
 			sys_dict c 
 		ON 
@@ -99,7 +133,7 @@
 			  ad_url = #{adUrl},
 			  remark = #{remark},
 			  sort = #{sort},
-			  del_flag = 1
+			  parent_ids = #{parentIds}
 			WHERE ad_id = #{adId}
 	</update>
 	<update id="deleteBanner">
@@ -108,4 +142,8 @@
 			  del_flag = #{flag }
 			WHERE ad_id = #{adId}
 	</update>
+	<!-- 删除banner商家权限 -->
+	<delete id="delteFranchiseeBanner">
+		DELETE FROM trains.train_franchisee_advert WHERE create_franise_id = #{createFranchisee} AND banner_id = #{bannerId}
+	</delete>
 </mapper>

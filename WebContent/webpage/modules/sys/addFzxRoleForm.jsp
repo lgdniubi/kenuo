@@ -22,15 +22,6 @@
 								if (offNode != null) {
 									offTreeObj.checkNode(offNode, true, false,true);
 									var offNoChecks = offTreeObj.getCheckedNodes(false);
-									//offTreeObj.setChkDisabled(offNode, true);
-									for (var i = 0; i < offNoChecks.length; i++) {
-										offNoChecks[i].chkDisabled = true;
-										offNoChecks[i].nocheck = true;
-									}
-									var offNodeAll = offTreeObj.getNodes();
-									for (var j = 0; j < offNodeAll.length; j++) {
-										offNodeAll[j].chkDisabled = true;
-									}
 									if (offNode.pId != '0') {
 										// 展开选中的节点
 										var nodeP = offTreeObj.getNodeByParam("id",offNode.pId);

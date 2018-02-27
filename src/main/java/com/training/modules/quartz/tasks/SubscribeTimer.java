@@ -16,6 +16,7 @@ import com.training.modules.ec.service.ReservationService;
 import com.training.modules.quartz.entity.TaskLog;
 import com.training.modules.quartz.tasks.utils.CommonService;
 import com.training.modules.sys.utils.BugLogUtils;
+import com.training.modules.sys.utils.ThreadUtils;
 import com.training.modules.train.entity.Subscribe;
 import com.training.modules.train.service.EntryService;
 
@@ -64,6 +65,7 @@ public class SubscribeTimer extends CommonService{
 				//修改预约状态
 				int num = reservationService.updateapptstatus(list.get(i).getAppt_id());
 				if(num > 0){
+					ThreadUtils.saveLog(request, "预约自动完成", 2, 2, list.get(i).getAppt_id());
 					redisClientTemplate.hincrBy("BEAUTICIAN_SUBSCRIBE_NUM_KEY", list.get(i).getBeautician_id(), 1);	//美容师预约完成数量+1
 					redisClientTemplate.hincrBy("SHOP_SUBSCRIBE_NUM_KEY", list.get(i).getShop_id(), 1);				//店铺预约完成数量+1
 				}

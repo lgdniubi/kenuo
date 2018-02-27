@@ -210,5 +210,33 @@ public interface OfficeDao extends TreeDao<Office> {
 	 * @param officeLog
 	 */
 	public void saveOfficeLogDel(OfficeLog officeLog);
+	/**
+	 * 
+	 * @Title: checkOfficeCode
+	 * @Description: TODO 验证机构唯一编码
+	 * @param office
+	 * @return:
+	 * @return: Office
+	 * @throws
+	 * 2017年12月26日 兵子
+	 */
+	public Office checkOfficeCode(Office office);
+	/**
+	 * 
+	 * @Title: finAllByPId
+	 * @Description: TODO 根据id查询所有的子类
+	 * @throws
+	 * 2018年2月1日 兵子
+	 */
+	public List<Office> finAllByPId(Object obj);
+	
+	/**
+	 * 
+	 * @Title: updateFranchisee
+	 * @Description: TODO 修改机构时更新机构的商家id
+	 * @throws
+	 * 2018年2月6日 兵子
+	 */
+	public void updateFranchisee(Office off);
 
 }

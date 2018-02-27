@@ -25,7 +25,6 @@
 		a.update_by AS "updateBy.id",
 		a.update_date,
 		a.is_new AS "isNew",
-		a.is_recommend AS "isRecommend",
 		a.is_cargo AS "isCargo",
 		a.longitude,
 		a.latitude,
@@ -33,6 +32,7 @@
 		a.useable AS useable,
 		a.primary_person AS "primaryPerson.id",
 		a.deputy_person AS "deputyPerson.id",
+		a.office_code AS "officeCode",
 		p.name AS "parent.name",
 		ar.name AS "area.name",
 		ar.parent_ids AS "area.parentIds",
@@ -90,7 +90,6 @@
 			a.update_date,
 			a.del_flag,
 			a.is_new,
-			a.is_recommend AS isRecommend,
 			a.longitude AS longitude,
 			a.latitude AS latitude,
 			a.useable AS useable,
@@ -240,7 +239,6 @@
 			update_date, 
 			remarks, 
 			del_flag,
-			is_recommend,
 			longitude,
 			latitude,
 			useable,
@@ -270,7 +268,6 @@
 			#{updateDate}, 
 			#{remarks}, 
 			#{delFlag},
-			#{isRecommend},
 			#{longitude},
 			#{latitude},
 			#{useable},
@@ -318,12 +315,12 @@
 			update_date, 
 			remarks, 
 			del_flag,
-			is_recommend,
 			longitude,
 			latitude,
 			useable,
 			primary_person,
-			deputy_person
+			deputy_person,
+			office_code
 		) VALUES (
 			#{id}, 
 			#{parent.id}, 
@@ -352,12 +349,12 @@
 			#{updateDate}, 
 			#{remarks}, 
 			#{delFlag},
-			#{isRecommend},
 			#{longitude},
 			#{latitude},
 			#{useable},
 			#{primaryPerson.id},
-			#{deputyPerson.id}
+			#{deputyPerson.id},
+			#{officeCode}
 		)
 	</insert>
 	
@@ -385,12 +382,12 @@
 			update_by = #{updateBy.id}, 
 			update_date = #{updateDate}, 
 			remarks = #{remarks},
-			is_recommend = #{isRecommend},
 			longitude = #{longitude},
 			latitude = #{latitude},
 			useable=#{useable},
 			primary_person=#{primaryPerson.id},
-			deputy_person=#{deputyPerson.id}
+			deputy_person=#{deputyPerson.id},
+			office_code=#{officeCode}
 		WHERE id = #{id}
 	</update>
 	
@@ -709,9 +706,9 @@
 		SELECT COUNT(1)
 		FROM sys_user a
 		LEFT JOIN sys_office o ON o.id = a.office_id
-		WHERE o.id = #{id} OR o.parent_ids LIKE 
+		WHERE (o.id = #{id} OR o.parent_ids LIKE 
 			<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
-			<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+			<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>)
 		AND a.del_flag = 0
 	</select>
 	
@@ -788,4 +785,59 @@
 		AND o.del_flag = 0
 		AND oi.del_flag = 0
 	</select>
+	
+	<!-- 验证机构唯一编码 -->
+	<select id="checkOfficeCode" resultType="Office">
+		SELECT 
+			o.id,
+			o.parent_id AS "parent.id",
+			o.parent_ids,
+			o.franchisee_id AS 'franchisee.id',
+			o.icon_url,
+			o.name,
+			o.sort,
+			o.area_id AS "area.id",
+			o.code,
+			o.type,
+			o.grade,
+			o.address,
+			o.is_new,
+			o.office_code AS "officeCode"
+		FROM trains.sys_office o 
+		WHERE o.office_code = #{officeCode}
+	</select>
+	
+	<!-- 根据id查询所有子机构 -->
+	<select id="finAllByPId" resultType="Office">
+		SELECT 
+			o.id,
+			o.parent_id AS "parent.id",
+			o.parent_ids,
+			o.franchisee_id AS 'franchisee.id',
+			o.icon_url,
+			o.name,
+			o.sort,
+			o.area_id AS "area.id",
+			o.code,
+			o.type,
+			o.grade,
+			o.address,
+			o.is_new,
+			o.office_code AS "officeCode"
+		FROM 
+			sys_office o 
+		WHERE 
+			<if test="id != null and id != ''">
+				(o.parent_ids LIKE 
+			<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+				OR o.id = #{id})
+		</if>
+			AND o.del_flag = 0  
+			GROUP BY o.id
+	</select>
+	<!-- 更新机构时更新子机构的商家 -->
+	<update id="updateFranchisee">
+		UPDATE sys_office SET franchisee_id = #{franchisee.id} WHERE id = #{id}
+	</update>
 </mapper>

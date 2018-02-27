@@ -27,5 +27,50 @@
 		ORDER BY a.add_time desc
 
 	</select>
-
+	
+	<!-- 插入订单日志 -->
+	<insert id="saveOrdersLog">
+		INSERT INTO mtmydb.mtmy_orders_operate_log(
+			order_id,
+			title,
+			content,
+			content_record,
+			channel_flag,
+			platform_flag,
+			create_by,
+			create_office_ids,
+			create_date
+		)VALUES(
+			#{orderid},
+			#{title},
+			#{content},
+			#{contentRecord},
+			#{channelFlag},
+			#{platformFlag},
+			#{createBy.id},
+			#{createOfficeIds},
+			SYSDATE()
+		)
+	</insert>
+	
+	<!-- 根据订单id查询该订单的日志 -->
+	<select id="editLog" resultType="OrdersLog">
+		SELECT 
+			ol.id AS 'olid',
+			ol.order_id AS 'orderid',
+			ol.title,
+			ol.content,
+			ol.content_record AS 'contentRecord',
+			ol.channel_flag AS 'channelFlag',
+			ol.platform_flag AS 'platformFlag',
+			ol.create_by AS 'createBy.id',
+			ol.create_office_ids AS 'createOfficeIds',
+			ol.create_date AS 'createDate',
+			(select u.name from trains.sys_user u where u.id = ol.create_by) AS 'createBy.name'
+		FROM mtmydb.mtmy_orders_operate_log ol
+		WHERE 1=1
+		<if test="orderid != null and orderid != ''">
+			AND ol.order_id = #{orderid}
+		</if>
+	</select>
 </mapper>

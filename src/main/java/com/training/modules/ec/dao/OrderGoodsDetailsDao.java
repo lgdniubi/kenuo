@@ -6,12 +6,12 @@ import org.apache.ibatis.annotations.Param;
 
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
-import com.training.modules.ec.entity.GoodsDetailSum;
 import com.training.modules.ec.entity.OfficeAccount;
 import com.training.modules.ec.entity.OfficeAccountLog;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderGoodsDetails;
 import com.training.modules.ec.entity.Orders;
+import com.training.modules.ec.entity.ReturnedGoods;
 /**
  * 订单商品详情记录表
  * @author dalong
@@ -50,13 +50,6 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @return
 	 */
 	List<OrderGoodsDetails> getMappinfOrderView(@Param("recid")Integer recid);
-	
-	/**
-	 * 计算欠款
-	 * @param recId
-	 * @return
-	 */
-	public  GoodsDetailSum selectDetaiSum(String recId);
 	
 	/**
 	 * 处理预约金
@@ -100,7 +93,7 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @param recId
 	 * @return
 	 */
-	public int findApptStatus(int recId);
+	public int findApptStatus(String orderid);
 	
 	/**
 	 * 根据mapping_id获取其订单余款
@@ -114,14 +107,14 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @param ogd
 	 * @return
 	 */
-	OrderGoodsDetails getOrderGoodsDetailSurplusAmountByOid(OrderGoodsDetails ogd);
+	double getOrderGoodsDetailSurplusAmountByOid(OrderGoodsDetails ogd);
 	
 	/**
 	 * 查询details表中AdvanceFlag=4的最新一条记录中SurplusAmount(套卡剩余金额)
 	 * @param orderId
 	 * @return
 	 */
-	public int getSurplusAmount(String orderId);
+	public double getSurplusAmount(String orderId);
 	
 	/**
 	 * 根据订单id查询下单时候的总的app实付
@@ -129,4 +122,69 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @return
 	 */
 	public double queryAppSum(String orderId);
+
+	/**
+	 * 根据订单id获取订单余额,订单欠款和app欠款金额
+	 * @param returnedGoods
+	 * @return
+	 */
+	OrderGoodsDetails getArrearageByOrderId(ReturnedGoods returnedGoods);
+
+	/**
+	 * 查询该商品的欠款金额
+	 * @param returnedGoods
+	 * @return
+	 */
+	double getSumArrearage(ReturnedGoods returnedGoods);
+
+	/**
+	 * 查询'平预约金'记录
+	 * @param returnedGoods
+	 * @return
+	 */
+	int getCountAdvanceFlag(ReturnedGoods returnedGoods);
+
+	/**
+	 * 取消'平预约金'记录
+	 * @param returnedGoods
+	 */
+	void cancelAdvanceFlag(ReturnedGoods returnedGoods);
+
+	/**
+	 * 平预约金状态
+	 * @param returnedGoods
+	 */
+	void editAdvanceFlag(ReturnedGoods returnedGoods);
+
+	/**
+	 * 在审核时,可能修改了售后次数,需要相应的修改detail表
+	 * @param returnedGoods
+	 */
+	void updateDetailServiceTimes(ReturnedGoods returnedGoods);
+
+	/**
+	 * 删除平欠款记录
+	 * @param returnedGoods 
+	 */
+	void deleteArrearage(ReturnedGoods returnedGoods);
+	
+	/**
+	 * 是否有未处理预约金的 
+	 * @param orderId
+	 * @return
+	 */
+	public int whetherAdvanceFlag(String orderId);
+	
+	/**
+	 * 平预约金
+	 * @param orderId
+	 */
+	public void flatOutAdvance(String orderId);
+
+	/**
+	 * 查询审核需要的条件,判断有无'平欠款'记录
+	 * @param returnedGoods
+	 * @return
+	 */
+	int getCountArrearage(ReturnedGoods returnedGoods);
 }

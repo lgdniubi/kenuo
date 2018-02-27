@@ -17,7 +17,7 @@
 	<div class="wrapper wrapper-content">
 		<div class="ibox">
 	    	<div class="ibox-content">
-	    		<form id="searchForm" action="${ctx}/ec/mtmyMnappointment/findListLog" method="post" class="navbar-form navbar-left searcharea">
+	    		<form id="searchForm" action="${ctx}/ec/mtmyMnappointment/findReservationLog" method="post" class="navbar-form navbar-left searcharea">
 					<!-- 翻页隐藏文本框 -->
 					<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 					<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
@@ -25,20 +25,43 @@
 					<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 						<thead>
 							<tr>
-								 <th style="text-align: center;width:100px;" class="active">操作者</th>
-							     <th style="text-align: center;width:80px;" class="active">操作时间</th>
-							     <th style="text-align: center;" class="active">相关内容</th>
+								<th style="text-align: center;">时间</th>
+								<th style="text-align: center;">操作人</th>
+								<th style="text-align: center;">标题</th>
+								<th style="text-align: center;">操作内容</th>
+								<th style="text-align: center;">操作渠道</th>
+								<th style="text-align: center;">操作平台</th>
 							</tr>
 						</thead>
 						<tbody>
-							<c:forEach items="${page.list }" var="reservationLog">
+							<c:forEach items="${page.list}" var="reservationLog">
 								<tr>
-								  	<td align="center">${reservationLog.createBy.name }</td>
-								  	<td align="center"><fmt:formatDate value="${reservationLog.createDate }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-								  	<td>																					
-								  		店铺名:${reservationLog.officeName }|美容师:${reservationLog.userName }|服务状态:${fns:getDictLabel(reservationLog.reservationStatus, 'reservation_status', '')}<br>
-								  		备注：${reservationLog.remarks }
-								  	</td>
+									<td align="center"><fmt:formatDate value="${reservationLog.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+									<td align="center">${reservationLog.createBy.name}</td>
+									<td align="center">${reservationLog.title}</td>
+									<td align="center">${reservationLog.content}</td>
+									<td align="center">
+										<c:if test="${reservationLog.channelFlag== 'wap'}">
+											wap端
+										</c:if>
+										<c:if test="${reservationLog.channelFlag== 'ios'}">
+											苹果手机
+										</c:if>
+										<c:if test="${reservationLog.channelFlag=='android'}">
+											安卓手机
+										</c:if>
+										<c:if test="${reservationLog.channelFlag=='bm'}">
+											后台管理
+										</c:if>
+									</td>
+									<td align="center">
+										<c:if test="${reservationLog.platformFlag== 'mtmy'}">
+											每天美耶
+										</c:if>
+										<c:if test="${reservationLog.platformFlag== 'fzx'}">
+											妃子校
+										</c:if>
+									</td>
 								</tr>
 							</c:forEach>
 						</tbody>

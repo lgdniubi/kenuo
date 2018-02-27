@@ -43,8 +43,8 @@
 		a.postal_code,
 		a.is_real,
 		b.nickname as "username",
-		COUNT(c.order_id) as "goodsnum"
-
+		COUNT(c.order_id) as "goodsnum",
+		a.office_id AS "officeId"
 	</sql>
 
 	<sql id="ordersJoins">
@@ -78,22 +78,6 @@
 		GROUP BY
 		a.order_id,a.pay_id,a.pay_code,a.pay_name
 	</select>
-	
-	<select id="selectByOrderIdSum" resultType="Orders">
-		SELECT
-			a.order_id,
-			a.order_amount,
-			a.channel_flag,
-			a.flag,
-			SUM(b.total_amount) as "total_amount"
-		
-		FROM
-			mtmydb.mtmy_orders a
-		LEFT JOIN mtmydb.mtmy_order_goods_details b ON a.order_id=b.order_id
-		WHERE a.order_id=#{orderid}
-		GROUP BY a.order_id
-	</select>
-	
 	<!-- 查询用户可以开发票的订单 -->
 	<select id="selectByOrderId" resultType="Orders">
 		SELECT 
@@ -188,7 +172,9 @@
 			a.del_flag,
 			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType,
 			IFNULL(u.office_id,'') as officeId,
-			u.user_id as userid
+			u.user_id as userid,
+			a.is_pick_up as isPickUp,
+			a.pick_up_note as pickUpNote
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
@@ -251,6 +237,9 @@
 		<if test="newIsNeworder != null and newIsNeworder !=''">
 			AND a.is_neworder = #{newIsNeworder}
 		</if>
+		<if test="returnedId != null and returnedId != ''">
+			AND a.returned_id = #{returnedId}
+		</if>
 		GROUP BY a.order_id
 		<!-- <if test="orderArrearageType == 2 "> 没有欠款
 			HAVING orderarrearage > 0
@@ -295,7 +284,9 @@
 			a.del_flag,
 			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType,
 			IFNULL(u.office_id,'') as officeId,
-			u.user_id as userid
+			u.user_id as userid,
+			a.is_pick_up as isPickUp,
+			a.pick_up_note as pickUpNote
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
@@ -356,12 +347,6 @@
 			AND a.del_flag=#{userDelFlag}
 		</if>
 		GROUP BY a.order_id
-		<!-- <if test="orderArrearageType == 2 "> 没有欠款
-			HAVING orderarrearage > 0
-		</if>
-		<if test="orderArrearageType == 1 "> 有欠款
-			HAVING orderarrearage = 0
-		</if> -->
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
@@ -865,6 +850,7 @@
 		(
 			order_id,
 			parent_id,
+			returned_id,
 			user_id,
 			order_status,
 			pay_id,
@@ -889,11 +875,13 @@
 			user_note,
 			discount,
 			pay_time,
+			return_time,
 			belong_office_id,
 			create_by
 		)values(
 			#{orderid},
 			#{parentid},
+			#{returnedId},
 			#{userid},
 			#{orderstatus},
 			#{payid},
@@ -915,9 +903,10 @@
 			#{delFlag},
 			#{invoiceOvertime},
 			#{realityAddTime},
-			#{usernote},
+			#{userNote},
 			1,
 			SYSDATE(),
+			DATE_ADD(NOW(),INTERVAL #{returnDay} DAY),
 			#{belongOfficeId},
 			#{createBy.id}
 		)
@@ -982,7 +971,7 @@
 			o.shop_id as shopId,
 			(select f.name from sys_office f where f.id = o.shop_id) as shopName,
 			o.shipping_type as shippingtype,
-			o.user_note as usernote,
+			o.user_note as userNote,
 			o.is_real as isReal,
 			o.channel_flag as channelFlag,
 			o.total_amount as totalamount,
@@ -995,7 +984,16 @@
 			o.member_goods_price as membergoodsprice,
 			o.invoice_overtime as invoiceOvertime,
 			o.shipping_price as shippingprice,
-			IFNULL(u.office_id,'') AS officeId
+			o.shipping_time as shippingtime,
+			o.shipping_code as shippingcode,
+			o.shipping_name as shippingname,
+			IFNULL(u.office_id,'') AS officeId,
+			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '1') AS 'advanceFlag',
+			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '6') AS 'changeAdvanceFlag',
+			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '0' AND service_times = -1) AS 'sumAppt',
+			(SELECT COUNT(*) FROM mtmydb.mtmy_returned_goods WHERE order_id = #{orderid} AND del_flag = 0 AND return_status IN (12,13,14,15,16,22,23,24,25)) AS 'returnedFlag',
+			o.is_pick_up as isPickUp,
+			o.pick_up_note as pickUpNote
 		FROM
 			mtmydb.mtmy_orders o,
 			mtmydb.mtmy_users u
@@ -1014,7 +1012,7 @@
 			consignee = #{consignee},
 			invoice_overtime = #{invoiceOvertime},
 			shipping_type = #{shippingtype},
-			user_note = #{usernote}
+			user_note = #{userNote}
 			<if test="cancelType != null  and cancelType != ''">
 				cancel_type = #{cancelType}
 			</if>
@@ -1038,6 +1036,7 @@
 		(
 			order_id,
 			parent_id,
+			returned_id,
 			user_id,
 			order_status,
 			pay_id,
@@ -1065,11 +1064,13 @@
 			reality_add_time,
 			discount,
 			pay_time,
+			return_time,
 			belong_office_id,
 			create_by
 		)values(
 			#{orderid},
 			#{parentid},
+			#{returnedId},
 			#{userid},
 			#{orderstatus},
 			#{payid},
@@ -1092,11 +1093,12 @@
 			#{consignee},
 			#{phone},
 			#{address},
-			#{usernote},
+			#{userNote},
 			#{invoiceOvertime},
 			#{realityAddTime},
 			1,
 			SYSDATE(),
+			DATE_ADD(NOW(),INTERVAL #{returnDay} DAY),
 			#{belongOfficeId},
 			#{createBy.id}
 		)
@@ -1343,6 +1345,22 @@
 	<update id="updateOrderstatusForReal">
 		UPDATE mtmydb.mtmy_orders
 		SET order_status = '4'
+		WHERE order_id = #{orderid}
+	</update>
+	<!-- 实物订单状态'待发货'和'待收货'修改为'已完成'状态(同意售后审核) -->
+	<update id="editOrderstatusForfinish">
+		UPDATE mtmydb.mtmy_orders
+		SET order_status = '4'
+		WHERE order_id = #{orderid}
+		AND order_status IN (1,2)
+	</update>
+	
+	<!-- 是否取货 -->
+	<update id="updateIsPickUp">
+		UPDATE mtmydb.mtmy_orders
+		SET 
+			is_pick_up = '1',
+			pick_up_note = #{pickUpNote}
 		WHERE order_id = #{orderid}
 	</update>
 </mapper>

@@ -96,4 +96,11 @@ public interface MtmyWebAdDao extends CrudDao<MtmyWebAd>{
 	 */
 	public void delAllGoodsByCategoryIdForFirst(int categoryId);
 	
+	/**
+	 * 保存广告图对应商品的排序
+	 * @param adId
+	 * @param goodsId
+	 */
+	public void insertGoodsSort(@Param(value="sort")int sort,@Param("adId")int adId,@Param(value="goodsId")int goodsId);
+	
 }

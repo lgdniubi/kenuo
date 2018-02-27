@@ -63,7 +63,6 @@ public class Orders extends TreeEntity<Orders> {
 	private int actionid;				//活动id
 	private	double orderactionamount;	//活动优惠金额
 	private double discount;			//价格调整
-	private String usernote;			//用户备注
 	private String adminnote;			//管理员备注
 	private String parentid;			//父单号id
 	private String username;			//购买者姓名
@@ -206,6 +205,24 @@ public class Orders extends TreeEntity<Orders> {
 	private String belongOfficeName;         //归属机构名称
 	
 	private Date realityAddTime;             //订单的实际下单时间
+	
+	//-----------------------------强制取消需要的字段------------------------
+	private int advanceFlag;         //是否预约金,等于1说明查到advance_flag=1
+	private int sumAppt;                  //是否有预约
+	private int apptFlag;                 //预约标识（预约状态为等待服务、已完成、 已评价 、爽约，则为1，不是这几个状态的为0）
+	private int changeAdvanceFlag;        //是否平预约金，等于1说明查到advance_flag=6
+	private int returnedFlag;             //平预约金的前提下，看是否出现售后已通过（12：同意退货；13：退货中；14：退货完成；15：退款中；16：已退款；）的售后订单
+	//-------------------------------------------------------------------
+	
+	//----------------------------售后转单新字段-----------------------------
+	private List<Integer> actualSpeckeyNums;		//实际规格次数
+	private String returnedId;                      //售后订单id
+	//-------------------------------------------------------------------
+	
+	private int returnDay;                           //退货日期
+	
+	private int isPickUp;                           //是否已取货（0：否；1：是）
+	private String pickUpNote;                    //确认取货备注
 	
 	public String getSearchIsReal() {
 		return searchIsReal;
@@ -1194,14 +1211,6 @@ public class Orders extends TreeEntity<Orders> {
 		this.discount = discount;
 	}
 
-	public String getUsernote() {
-		return usernote;
-	}
-
-	public void setUsernote(String usernote) {
-		this.usernote = usernote;
-	}
-
 	public String getAdminnote() {
 		return adminnote;
 	}
@@ -1649,6 +1658,67 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setRealityAddTime(Date realityAddTime) {
 		this.realityAddTime = realityAddTime;
+	}
+	
+	public int getAdvanceFlag() {
+		return advanceFlag;
+	}
+	public void setAdvanceFlag(int advanceFlag) {
+		this.advanceFlag = advanceFlag;
+	}
+	public int getSumAppt() {
+		return sumAppt;
+	}
+	public void setSumAppt(int sumAppt) {
+		this.sumAppt = sumAppt;
+	}
+	public List<Integer> getActualSpeckeyNums() {
+		return actualSpeckeyNums;
+	}
+	public void setActualSpeckeyNums(List<Integer> actualSpeckeyNums) {
+		this.actualSpeckeyNums = actualSpeckeyNums;
+	}
+	public String getReturnedId() {
+		return returnedId;
+	}
+	public void setReturnedId(String returnedId) {
+		this.returnedId = returnedId;
+	}
+	public int getApptFlag() {
+		return apptFlag;
+	}
+	public void setApptFlag(int apptFlag) {
+		this.apptFlag = apptFlag;
+	}
+	public int getChangeAdvanceFlag() {
+		return changeAdvanceFlag;
+	}
+	public void setChangeAdvanceFlag(int changeAdvanceFlag) {
+		this.changeAdvanceFlag = changeAdvanceFlag;
+	}
+	public int getReturnedFlag() {
+		return returnedFlag;
+	}
+	public void setReturnedFlag(int returnedFlag) {
+		this.returnedFlag = returnedFlag;
+	}
+	public int getReturnDay() {
+		return returnDay;
+	}
+	public void setReturnDay(int returnDay) {
+		this.returnDay = returnDay;
+	}
+	public int getIsPickUp() {
+		return isPickUp;
+	}
+	public void setIsPickUp(int isPickUp) {
+		this.isPickUp = isPickUp;
+	}
+	public String getPickUpNote() {
+		return pickUpNote;
+	}
+	public void setPickUpNote(String pickUpNote) {
+		this.pickUpNote = pickUpNote;
 	}
 	
 }

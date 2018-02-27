@@ -8,7 +8,7 @@
 	<script type="text/javascript">
 	//将分类下商品加载到左侧的下拉框
 	function addSelectUser(){
-		if(($("#districtId").val() != null && $("#districtId").val() != "" )||($("#nickname").val() != null && $("#nickname").val() != "")||($("#mobile").val() != null && $("#mobile").val() != "")){
+		if(($("#districtId").val() != null && $("#districtId").val() != "" )||($("#nickname").val() != null && $("#nickname").val() != "")||($("#userid").val() != null && $("#userid").val() != "")||($("#mobile").val() != null && $("#mobile").val() != "")){
 			$(".loading").show();
 			$("#select1").empty();
 			var arr = new Array(); //数组定义标准形式，不要写成Array arr = new Array();
@@ -156,7 +156,9 @@
 				<div class="clearfix">
 					<form id="searchForm" action="" method="post" class="navbar-form navbar-left searcharea">
 						<input id="nickname" name="nickname" type="text"  class="form-control" placeholder="用户名">
+						<input id="userid" name="userid" type="text"  class="form-control" placeholder="用户ID">
 						<input id="mobile" name="mobile" type="text" class="form-control" placeholder="手机号码" onkeyup="this.value=this.value.replace(/\D/g,'')">
+						<p></p>
 						<span><label>选择区域:</label></span>
 						<sys:treeselect id="district" name="district" value="" labelName="areaName" labelValue="" 
 					     	title="地区" url="/sys/area/treeData" cssClass="area1 form-control required"  allowClear="true" notAllowSelectRoot="true"/>

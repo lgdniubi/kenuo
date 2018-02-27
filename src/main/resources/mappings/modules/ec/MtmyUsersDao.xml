@@ -136,7 +136,13 @@
 			'0',
 			'0',
 			0,
-			#{name},
+			(SELECT tom.nick FROM
+				(SELECT 
+					CASE WHEN nickname IS NULL THEN #{name}
+						 ELSE CONCAT(#{name},SUBSTRING(#{mobile}, 8))
+					END AS 'nick',COUNT(1)
+				FROM mtmydb.mtmy_users WHERE nickname = #{name} AND del_flag = 0) 
+			AS tom),
 			1,
 			1.00,
 			0.00,
@@ -330,6 +336,9 @@
 					or u.province = #{district }
 					)
 			</if>
+			<if test="userid != null">
+				AND u.user_id = #{userid} 
+			</if>
 			AND u.del_flag = #{DEL_FLAG_NORMAL}
 			AND u.user_id is NOT NULL
 		ORDER BY u.reg_time DESC
@@ -346,6 +355,9 @@
 				AND u.nickname LIKE 
 					<if test="dbName == 'oracle'">'%'||#{nickname}||'%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%', #{nickname}, '%')</if>
+			</if>
+			<if test="userid != null">
+				AND u.user_id = #{userid} 
 			</if>
 			<if test="mobile != null and mobile != ''">
 				AND u.mobile LIKE 

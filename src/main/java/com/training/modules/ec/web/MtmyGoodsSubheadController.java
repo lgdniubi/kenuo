@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import com.training.common.persistence.Page;
 import com.training.common.utils.ObjectUtils;
@@ -99,6 +100,8 @@ public class MtmyGoodsSubheadController extends BaseController{
 	@RequestMapping(value = "save")
 	public String save(GoodsSubhead goodsSubhead,RedirectAttributes redirectAttributes,HttpServletRequest request){
 		try{
+			goodsSubhead.setName(HtmlUtils.htmlUnescape(goodsSubhead.getName()));
+			goodsSubhead.setSubheading(HtmlUtils.htmlUnescape(goodsSubhead.getSubheading()));
 			if(goodsSubhead.getGoodsSubheadId() == 0){
 				mtmyGoodsSubheadService.insertGoodsSubhead(goodsSubhead);
 				addMessage(redirectAttributes, "添加成功！");

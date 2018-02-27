@@ -76,7 +76,7 @@
 			$("#earningsRatio").val(afterEarningsRatio);
 			
 		});
-		
+			
 </script>
 </head>
 <body>
@@ -99,6 +99,12 @@
 				<tr>
 					<td><label class="pull-right">直播主题:</label></td>
 					<td><label>${trainLiveAudit.title}</label> <%-- <form:input path="title" htmlEscape="false" maxlength="30" class="form-control"  readonly="true"/> --%>
+					</td>
+				</tr>
+				<tr>
+					<td><label class="pull-right">直播分类:</label></td>
+					<td><sys:treeselect id="category" name="category.trainLiveCategoryId" value="${trainLiveAudit.category.trainLiveCategoryId}" labelName="categorye.name" labelValue="${trainLiveAudit.category.name}" title="直播分类"
+									url="/train/category/treeData" cssClass=" form-control input-sm"/>
 					</td>
 				</tr>
 				<tr>
@@ -165,6 +171,31 @@
 							<sys:treeselect id="trainLiveAudit" name="companyIds" value="${trainLiveAudit.companyIds }" labelName="companyNames" labelValue="${trainLiveAudit.companyNames }"
 								title="公司" url="/sys/franchisee/treeData" cssClass="form-control" checked="true" extId="1"/>
 						</label>
+					</td>
+				</tr>
+				<tr id="earningsRatioShow">
+					<td><label class="pull-right">是否公开到每天美耶:</label></td>
+					<td>
+						<c:if test="${trainLiveAudit.auditStatus==4}">
+							<c:if test="${trainLiveAudit.isOpen==0}">
+								<label><input id="isOpen" name="isOpen" type="radio" value="1" class="form" disabled="disabled"/>是</label>
+								<label><input id="isOpen" name="isOpen" type="radio" value="0" checked="checked" class="form" disabled="disabled"/>否</label>
+							</c:if> 
+							<c:if test="${trainLiveAudit.isOpen==1}">
+								<label><input id="isOpen" name="isOpen" type="radio" value="1" checked="checked" class="form" disabled="disabled"/>是</label>
+								<label><input id="isOpen" name="isOpen" type="radio" value="0" class="form" disabled="disabled"/>否</label>
+							</c:if> 
+						</c:if> 
+						<c:if test="${trainLiveAudit.auditStatus!=4}">
+							<c:if test="${trainLiveAudit.isOpen==0}">
+								<label><input id="isOpen" name="isOpen" type="radio" value="1" class="form" />是</label>
+								<label><input id="isOpen" name="isOpen" type="radio" value="0" checked="checked" class="form" />否</label>
+							</c:if> 
+							<c:if test="${trainLiveAudit.isOpen==1}">
+								<label><input id="isOpen" name="isOpen" type="radio" value="1" checked="checked" class="form" />是</label>
+								<label><input id="isOpen" name="isOpen" type="radio" value="0" class="form" />否</label>
+							</c:if> 
+						</c:if> 
 					</td>
 				</tr>
 				<tr>

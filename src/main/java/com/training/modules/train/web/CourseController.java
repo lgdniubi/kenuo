@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import com.training.common.config.Global;
 import com.training.common.persistence.Page;
@@ -26,6 +27,7 @@ import com.training.common.utils.IdGen;
 import com.training.common.utils.StringUtils;
 import com.training.common.utils.excel.ExportExcel;
 import com.training.common.web.BaseController;
+import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.StatisticsCollectionExport;
@@ -86,10 +88,13 @@ public class CourseController extends BaseController{
 	@RequestMapping(value = {"listcourse", ""})
 	public String listcourse(TrainLessons trainLessons, HttpServletRequest request, HttpServletResponse response, Model model) {
 		
+		User user = UserUtils.getUser();
 		TrainCategorys trainCategorys = new TrainCategorys();
 		trainCategorys.setPriority(1);
+		model.addAttribute("trainLessons", trainLessons);
 		//添加数据权限
-//		trainCategorys = CategorysUtils.categorysFilter(trainCategorys);
+    	//trainCategorys = CategorysUtils.categorysFilter(trainCategorys);
+		
 		trainCategorys.getSqlMap().put("dsf", ScopeUtils.dataScopeFilter("t","category"));
 		
 		//查询1级分类
@@ -111,6 +116,7 @@ public class CourseController extends BaseController{
 		trainLessons.getSqlMap().put("dsf", ScopeUtils.dataScopeFilter("t",""));
 		Page<TrainLessons> page = trainLessonsService.find(new Page<TrainLessons>(request, response), trainLessons);
 		model.addAttribute("page", page);
+		model.addAttribute("user", user);
 		return "modules/train/coursechange";
 	}
 	
@@ -149,6 +155,7 @@ public class CourseController extends BaseController{
 	public String savecourse(TrainLessons trainLessons, HttpServletRequest request, HttpServletResponse response, Model model, RedirectAttributes redirectAttributes) throws IllegalStateException, IOException{
 		
 		try {
+			trainLessons.setName(HtmlUtils.htmlUnescape(trainLessons.getName()));
 			if(null == trainLessons.getLessonId() || "".equals(trainLessons.getLessonId())){
 				trainLessons.setLessonId(IdGen.uuid());
 			}
@@ -162,7 +169,7 @@ public class CourseController extends BaseController{
 			
 			trainLessonsService.save(trainLessons);
 			addMessage(redirectAttributes, "保存课程'" + trainLessons.getName() + "'成功");
-			return "redirect:" + adminPath + "/train/course/listcourse?name="+trainLessons.getName()+"&beginDate=''&endDate=''";
+			return "redirect:" + adminPath + "/train/course/listcourse?beginDate=''&endDate=''";
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "保存课程出现异常,请与管理员联系");
 			logger.error("保存课程出现异常,异常信息为："+e.getMessage());
@@ -179,9 +186,10 @@ public class CourseController extends BaseController{
 	@RequiresPermissions(value={"train:course:updatecourse"},logical=Logical.OR)
 	@RequestMapping(value = {"updatecourse", ""})
 	public String updatecourse(TrainLessons trainLessons,RedirectAttributes redirectAttributes) throws IllegalStateException, IOException{
+		trainLessons.setName(HtmlUtils.htmlUnescape(trainLessons.getName()));
 		trainLessonsService.updatecourse(trainLessons);
 		addMessage(redirectAttributes, "修改课程'" + trainLessons.getName() + "'修改成功");
-		return "redirect:" + adminPath + "/train/course/listcourse?name="+trainLessons.getName()+"&beginDate=''&endDate=''";
+		return "redirect:" + adminPath + "/train/course/listcourse?beginDate=''&endDate=''";
 	}
 	
 	/**

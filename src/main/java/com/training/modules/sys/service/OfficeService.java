@@ -148,8 +148,27 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		franchisee.setId(a);
 		office.setFranchisee(franchisee);
 		//end 
+		//更新子类的归属商家
+		if(!"".equals(office.getId())){
+			updateFranchisee(office);
+		}
 		super.save(office);
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
+	}
+	
+	// 修改机构时更新机构的商家id
+	public void updateFranchisee(Office office){
+		//  office 为新office   oldOffice  为修改前office
+		Office oldOffice = dao.get(office.getId());
+		if(!office.getParent().getId().equals(oldOffice.getParent().getId())){
+			List<Office> childList = dao.finAllByPId(office);//包含的当前父类
+			if (childList != null && childList.size() > 0) {
+				for (Office off : childList) {
+					off.setFranchisee(office.getFranchisee());
+					officeDao.updateFranchisee(off);
+				}
+			}
+		}
 	}
 	//修改机构时
 	public String updateCode(Office office){
@@ -382,6 +401,20 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Transactional(readOnly = false)
 	public void saveOfficeLogDel(OfficeLog officeLog) {
 		dao.saveOfficeLogDel(officeLog);
+	}
+
+	/**
+	 * 
+	 * @Title: checkOfficeCode
+	 * @Description: TODO 验证机构唯一编码
+	 * @param office
+	 * @return:
+	 * @return: Office
+	 * @throws
+	 * 2017年12月26日 兵子
+	 */
+	public Office checkOfficeCode(Office office) {
+		return officeDao.checkOfficeCode(office);
 	}
 
 }
