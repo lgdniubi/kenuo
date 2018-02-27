@@ -99,4 +99,12 @@ public class FranchiseeService extends TreeService<FranchiseeDao,Franchisee>{
 		}
 		return res;
 	}
+
+	/**
+	 * 修改公共商品服务标识
+	 * @param franchisee
+	 */
+	public void updatePublicServiceFlag(Franchisee franchisee) {
+		franchiseeDao.updatePublicServiceFlag(franchisee);
+	}
 }

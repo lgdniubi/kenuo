@@ -1,6 +1,7 @@
 package com.training.modules.sys.web;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -259,4 +260,27 @@ public class FranchiseeController extends BaseController{
 		return mapList;
 	}
 
+	/**
+	 * 公共商品服务标识(0: 做 1: 不做)
+	 * @param franchisee
+	 * @param redirectAttributes
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "changeType")
+	public Map<String, String> changeType(Franchisee franchisee, RedirectAttributes redirectAttributes,HttpServletRequest request){
+		Map<String, String> map = new HashMap<String, String>();
+    	try {
+    		franchiseeService.updatePublicServiceFlag(franchisee);
+			map.put("FLAG", "OK");
+			map.put("MESSAGE", "修改成功");
+		} catch (Exception e) {
+			logger.error("修改商家公共商品服务标识错误信息："+e.getMessage());
+    		BugLogUtils.saveBugLog(request, "商家公共商品服务标识修改失败", e);
+    		map.put("FLAG", "ERROR");
+    		map.put("MESSAGE", "修改失败");
+		}
+    	return map;
+	}
 }

@@ -32,4 +32,10 @@ public interface FranchiseeDao extends TreeDao<Franchisee>{
 	 * 修改数据
 	 */
 	public int update(Franchisee franchisee);
+
+	/**
+	 * 修改公共商品服务标识
+	 * @param franchisee
+	 */
+	public void updatePublicServiceFlag(Franchisee franchisee);
 }

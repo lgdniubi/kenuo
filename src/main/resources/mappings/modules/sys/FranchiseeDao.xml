@@ -25,6 +25,7 @@
 		  f.bank_beneficiary AS 'bankBeneficiary',
 		  f.bank_code AS 'bankCode',
 		  f.bank_name AS 'bankName',
+		  f.public_service_flag AS 'publicServiceFlag',
 		  f.status,
 		  f.remarks
 	</sql>
@@ -213,5 +214,10 @@
 					<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
 	</update>
-	
+	<update id="updatePublicServiceFlag">
+		UPDATE sys_franchisee SET
+			public_service_flag = #{publicServiceFlag}
+		WHERE
+			id=#{id}
+	</update>
 </mapper>
