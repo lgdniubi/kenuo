@@ -2025,7 +2025,7 @@ public class OrdersController extends BaseController {
 				}
 			}
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleAdvanceFlag(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,realAdvancePrice);
+			ordersService.handleAdvanceFlag(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,realAdvancePrice,orderGoods.getRealityAddTime());
 			date = "success";
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "处理预约金异常", e);
@@ -2987,7 +2987,7 @@ public class OrdersController extends BaseController {
 				oLog.setTotalAmount(advance);
 			}
 			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleCardAdvance(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,isReal,realAdvancePrice);
+			ordersService.handleCardAdvance(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,isReal,realAdvancePrice,orderGoods.getRealityAddTime());
 			date = "success";
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "处理卡项预约金异常", e);
@@ -3021,6 +3021,7 @@ public class OrdersController extends BaseController {
 				String officeId = "";           //组织架构ID
 				double advancePrice = 0;    //单个实物的预约金
 				int recId = 0;
+				Date realityAddTime = new Date();     //订单的实际下单时间
 				List<OrderGoods> lists = ordersService.selectOrderGoodsByOrderid(orders.getOrderid());   //卡项本身  
 				if(lists.size() > 0){
 					detailsTotalAmount = lists.get(0).getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
@@ -3028,6 +3029,7 @@ public class OrdersController extends BaseController {
 					officeId = lists.get(0).getOfficeId();           //组织架构ID
 					advancePrice = lists.get(0).getAdvancePrice();    //单个实物的预约金
 					recId = lists.get(0).getRecid();
+					realityAddTime = lists.get(0).getRealityAddTime();      //订单的实际下单时间
 				}
 				
 				if(!"bm".equals(orders.getChannelFlag())){
@@ -3068,6 +3070,7 @@ public class OrdersController extends BaseController {
 					turnOverDetails1.setUserId(orders.getUserid());
 					turnOverDetails1.setBelongOfficeId(officeId);
 					turnOverDetails1.setCreateBy(UserUtils.getUser());
+					turnOverDetails1.setSettleDate(realityAddTime);
 					turnOverDetailsService.saveTurnOverDetails(turnOverDetails1);
 					
 					//第二次，同步处理预约金的那条数据
@@ -3080,6 +3083,7 @@ public class OrdersController extends BaseController {
 					turnOverDetails2.setStatus(2);
 					turnOverDetails2.setUserId(orders.getUserid());
 					turnOverDetails2.setCreateBy(UserUtils.getUser());
+					turnOverDetails2.setSettleDate(new Date());
 					turnOverDetailsService.saveTurnOverDetails(turnOverDetails2);
 				}
 				
@@ -3482,7 +3486,6 @@ public class OrdersController extends BaseController {
 			double spareMoney = Double.valueOf(request.getParameter("spareMoney"));  //卡项余款
 			int tail = Integer.valueOf(request.getParameter("tail"));  //用来表示添加的卡项商品
 			int isNeworder = Integer.valueOf(request.getParameter("isNeworder"));  //区分新老订单
-			Date realityAddTime =  new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("realityAddTime"));  //实际下单时间
 			int goodsId = goods.getGoodsId();
 			List<Goods> goodsList = ordersService.selectCardSon(goodsId);
 			if(goodsList.size() > 0){
@@ -3495,8 +3498,7 @@ public class OrdersController extends BaseController {
 						"<td rowspan="+num+"> "+costPrice+"</td> "+
 						"<td> "+goodsList.get(0).getMarketPrice()+"<input id='orderAmounts' name='orderAmounts' type='hidden' value='"+orderAmount+"'></td> "+
 						"<td> "+goodsList.get(0).getShopPrice()+"<input id='actualPayments' name='actualPayments' type='hidden' value='"+actualPayment+"'></td> "+
-						"<td> "+goodsList.get(0).getGoodsNum()+"</td> "+
-						"<input id='realityAddTime' name='realityAddTimeList' type='hidden' value='"+realityAddTime+"'>";
+						"<td> "+goodsList.get(0).getGoodsNum()+"</td> ";
 				if(isNeworder == 0){
 					suitCardSons = suitCardSons + 
 						"<td></td> ";
@@ -3627,7 +3629,6 @@ public class OrdersController extends BaseController {
 			double debtMoney = Double.valueOf(request.getParameter("debtMoney"));  //卡项欠款
 			double spareMoney = Double.valueOf(request.getParameter("spareMoney"));  //卡项余款
 			int tail = Integer.valueOf(request.getParameter("tail"));  //用来表示添加的卡项商品
-			Date realityAddTime =  new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("realityAddTime"));  //实际下单时间
 			Integer actualSpeckeyNum = Integer.valueOf(request.getParameter("actualSpeckeyNum"));     //售后转单订单自定的实际规格次数
 			
 			int goodsId = goods.getGoodsId();
@@ -3653,7 +3654,6 @@ public class OrdersController extends BaseController {
 						"<td rowspan="+num+"> "+
 							"<a href='#' class='btn btn-danger btn-xs' onclick='delFile("+tail+","+costPrice+","+orderAmount+","+spareMoney+","+afterPayment+","+debtMoney+")'><i class='fa fa-trash'></i> 删除</a> "+
 						"</td>"+
-						"<input id='realityAddTime' name='realityAddTimeList' type='hidden' value='"+realityAddTime+"'>"+
 					"</tr>";
 				for(int i=1;i<num;i++){
 					suitCardSons = suitCardSons +

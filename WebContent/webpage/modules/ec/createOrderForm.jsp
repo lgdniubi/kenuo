@@ -25,8 +25,17 @@
 					top.layer.alert('商品信息不能为空!', {icon: 0, title:'提醒'}); 
 					return;
 				}
-				$("#inputForm").submit();
-				return true;	
+				
+				layer.confirm("目前的订单实际时间为"+$("#realityAddTime").val()+"，保存后不可修改，确定吗？", {
+					  btn: ['确认','取消'] //按钮
+					}, function(){
+						$("#inputForm").submit();
+       	       		    var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+	       	            parent.layer.close(index);
+					}, function(){
+					 
+					});  
+				
 			  }
 		  return false;
 		}
@@ -208,19 +217,19 @@
 	
 	$(document).ready(function(){
 		var realityAddTime = {
-			    elem: '#realityAddTime',
-			    format: 'YYYY-MM-DD hh:mm:ss',
-			    event: 'focus',
-			    max: laydate.now(),   //最大日期
-			    min: laydate.now(-6),
-			    istime: true,				//是否显示时间
-			    isclear: true,				//是否显示清除
-			    istoday: true,				//是否显示今天
-			    issure: true,				//是否显示确定
-			    festival: true			//是否显示节日
-			};
-		
-			laydate(realityAddTime);
+		    elem: '#realityAddTime',
+		    format: 'YYYY-MM-DD hh:mm:ss',
+		    event: 'focus',
+		    max: laydate.now(),   //最大日期
+		    min: laydate.now(-6),
+		    istime: true,				//是否显示时间
+		    isclear: true,				//是否显示清除
+		    istoday: true,				//是否显示今天
+		    issure: true,				//是否显示确定
+		    festival: true			//是否显示节日
+		};
+	
+		laydate(realityAddTime);
 		
 		$("#Ichecks").attr("disabled",true);
 		$("#Ichecks").val(0);
@@ -491,6 +500,7 @@
 				<p></p> 
 				<label><font color="red">*</font>实际下单时间：</label>
 				<input id="realityAddTime" name="realityAddTime" type="text" maxlength="30" class="laydate-icon form-control layer-date input-sm required" value="<fmt:formatDate value="${now}" pattern="yyyy-MM-dd HH:mm:ss"/>" style="width:185px;" placeholder="实际下单时间" readonly="readonly"/>
+				<span style="color:red;">订单一经保存，时间不予修改</span>
 				<p></p>
 				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 					<div class="pull-left">

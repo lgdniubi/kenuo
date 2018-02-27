@@ -431,18 +431,6 @@
 		$("#computType").val(1);//没有点击计算费用
 	}
 	
-	 $(document).ready(function(){
-		function today(){
-		    var today=new Date();
-		    var h=today.getFullYear();
-		    var m=today.getMonth()+1;
-		    var d=today.getDate();
-		    m= m<10?"0"+m:m;      
-		    d= d<10?"0"+d:d;  
-		    return h+"-"+m+"-"+d;
-		}
-		document.getElementById("realityAddTime").value = today(); 
-	 });
 </script>
 </head>
 <body>
@@ -561,12 +549,6 @@
 									<td><input id="debtMoney" name="debtMoney" maxlength="10" class="form-control required" readonly="readonly"  style="width:150px;height:30px;"/></td>
 									<td><label class="pull-right">余额：</label></td>
 									<td><input id="spareMoney" name="spareMoney" maxlength="10" class="form-control required" readonly="readonly"  style="width:150px;height:30px;"/></td>
-								</tr>
-								<tr>
-									<td><label class="pull-right"><font color="red">*</font>实际下单时间：</label></td>	
-									<td>
-										<input id="realityAddTime" name="realityAddTime" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'%y-%M-%d'})"/>
-									</td>
 								</tr>
 							</table>
 						</form:form>

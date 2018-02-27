@@ -631,6 +631,9 @@ window.onload=initStatus;
 									<form:option value="${payment.paycode}">${payment.paydesc}</form:option>
 								</c:forEach>
 							</form:select>
+							<p></p> 
+							<label class="active">实际下单时间：</label>
+							<fmt:formatDate value="${orders.realityAddTime}"  pattern="yyyy-MM-dd HH:mm:ss" />
 							<p></p>
 							<label >留言备注：</label>
 							<textarea name="userNote" rows="5" cols="60">${orders.userNote }</textarea>
