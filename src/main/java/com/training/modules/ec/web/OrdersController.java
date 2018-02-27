@@ -2306,14 +2306,7 @@ public class OrdersController extends BaseController {
 			String actualNum = request.getParameter("actualNum");  //卡项实际次数
 			double debtMoney = Double.valueOf(request.getParameter("debtMoney"));  //卡项欠款
 			double spareMoney = Double.valueOf(request.getParameter("spareMoney"));  //卡项余款
-			int isNeworderSon = Integer.valueOf(request.getParameter("isNeworderSon"));  //新老订单（0：新订单，1：老订单）
 			int tail = Integer.valueOf(request.getParameter("tail"));  //用来表示添加的卡项商品
-			Date realityAddTime;
-			if(isNeworderSon == 1){
-				realityAddTime =  new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("realityAddTime"));  //实际下单时间
-			}else{
-				realityAddTime =  new Date();  //实际下单时间
-			}
 			int goodsId = goods.getGoodsId();
 			List<Goods> goodsList = ordersService.selectCardSon(goodsId);
 			if(goodsList.size() > 0){
@@ -2336,7 +2329,6 @@ public class OrdersController extends BaseController {
 						"<td rowspan="+num+"> "+
 							"<a href='#' class='btn btn-danger btn-xs' onclick='delFile("+tail+","+costPrice+","+orderAmount+","+spareMoney+","+afterPayment+","+debtMoney+")'><i class='fa fa-trash'></i> 删除</a> "+
 						"</td>"+
-						"<input id='realityAddTime' name='realityAddTimeList' type='hidden' value='"+realityAddTime+"'>"+
 					"</tr>";
 				for(int i=1;i<num;i++){
 					suitCardSons = suitCardSons +

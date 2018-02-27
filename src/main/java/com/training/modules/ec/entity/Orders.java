@@ -205,6 +205,8 @@ public class Orders extends TreeEntity<Orders> {
 	private String belongOfficeId;           //归属机构id
 	private String belongOfficeName;         //归属机构名称
 	
+	private Date realityAddTime;             //订单的实际下单时间
+	
 	public String getSearchIsReal() {
 		return searchIsReal;
 	}
@@ -1642,4 +1644,11 @@ public class Orders extends TreeEntity<Orders> {
 	public void setBelongOfficeName(String belongOfficeName) {
 		this.belongOfficeName = belongOfficeName;
 	}
+	public Date getRealityAddTime() {
+		return realityAddTime;
+	}
+	public void setRealityAddTime(Date realityAddTime) {
+		this.realityAddTime = realityAddTime;
+	}
+	
 }

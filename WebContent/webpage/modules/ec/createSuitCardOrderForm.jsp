@@ -201,6 +201,21 @@
 	}
 	
 	$(document).ready(function(){
+		var realityAddTime = {
+		    elem: '#realityAddTime',
+		    format: 'YYYY-MM-DD hh:mm:ss',
+		    event: 'focus',
+		    max: laydate.now(),   //最大日期
+		    min: laydate.now(-6),
+		    istime: true,				//是否显示时间
+		    isclear: true,				//是否显示清除
+		    istoday: true,				//是否显示今天
+		    issure: true,				//是否显示确定
+		    festival: true			//是否显示节日
+		};
+	
+		laydate(realityAddTime);
+		
 		$("#Ichecks").attr("disabled",true);
 		$("#Ichecks").val(0);
 		$("#iType").hide();
@@ -437,6 +452,9 @@
 					<option value=1>老订单</option>
 				</select>
 				<input type="hidden" id="_isNeworder" name="isNeworder" />
+				<p></p> 
+				<label><font color="red">*</font>实际下单时间：</label>
+				<input id="realityAddTime" name="realityAddTime" type="text" maxlength="30" class="laydate-icon form-control layer-date input-sm required" value="<fmt:formatDate value="${now}" pattern="yyyy-MM-dd HH:mm:ss"/>" style="width:185px;" placeholder="实际下单时间" readonly="readonly"/>
 				<p></p>
 				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
 					<div class="pull-left">

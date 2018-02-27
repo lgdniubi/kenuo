@@ -654,7 +654,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<Double> orderAmounts = orders.getOrderAmounts();		//成交价集合
 		List<Double> actualPayments = orders.getActualPayments();	//实际付款集合
 		List<Integer> remaintimeNums = orders.getRemaintimeNums();	//虚拟订单老产品-实际次数
-		List<Date> realityAddTimeList = orders.getRealityAddTimeList();  //实际下单时间集合
 		double orderAmountSum = 0d;  //应付总额
 		double afterPaymentSum = 0d;  //实际付款总额
 		double debtMoneySum = 0d;	//总欠款
@@ -773,11 +772,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderGoods.setIsreal(1);	// 是否为虚拟 0 实物 1虚拟
 			orderGoods.setServicetimes(serviceTimes);	//预计服务次数
 			orderGoods.setServicemin(goods.getServiceMin());//服务时长
-			if(orders.getIsNeworder() == 0){
-				orderGoods.setRealityAddTime(new Date());   //实际下单时间
-			}else{
-				orderGoods.setRealityAddTime(realityAddTimeList.get(i));   //实际下单时间
-			}
+			orderGoods.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 			
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
@@ -885,6 +880,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setShippingtype(2);
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		_orders.setRealityAddTime(orders.getRealityAddTime());
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		ordersDao.saveVirtualOrder(_orders);
 		
@@ -1449,7 +1445,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderGoods.setTotalAmount(actualPayment_on);	//计算后实付款金额
 			orderGoods.setOrderBalance(orderBalance_on);	//订单余款
 			orderGoods.setOrderArrearage(orderArrearage_on);	//订单欠款
-			orderGoods.setRealityAddTime(new Date());   //实际下单时间
+			orderGoods.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 			orderGoods.setExpiringDate(goodspec.getExpiringDate());
 			orderGoods.setIsreal(0);	// 是否为虚拟 0 实物 1虚拟
 			//保存 mtmy_order_goods_mapping
@@ -1530,6 +1526,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setAddress(orders.getAddress());
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		_orders.setRealityAddTime(orders.getRealityAddTime());
 		_orders.setCreateBy(user);
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		ordersDao.saveKindOrder(_orders);
@@ -2114,7 +2111,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<Double> orderAmounts = orders.getOrderAmounts();		//成交价集合
 		List<Double> actualPayments = orders.getActualPayments();	//实际付款集合
 		List<Integer> remaintimeNums = orders.getRemaintimeNums();	//虚拟订单老产品-实际次数
-		List<Date> realityAddTimeList = orders.getRealityAddTimeList();  //实际下单时间集合
 		
 		double orderAmountSum = 0d;  //应付总额
 		double afterPaymentSum = 0d;  //实际付款总额
@@ -2225,11 +2221,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderGoods.setSingleNormPrice(_singleNormPrice);	//单次标价
 			orderGoods.setIsreal(3);	//  2套卡 3通用卡
 			orderGoods.setServicetimes(serviceTimes);	//预计服务次数
-			if(orders.getIsNeworder() == 0){
-				orderGoods.setRealityAddTime(new Date());   //实际下单时间
-			}else{
-				orderGoods.setRealityAddTime(realityAddTimeList.get(i));   //实际下单时间
-			}
+			orderGoods.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 			
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
@@ -2251,7 +2243,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setOriginalimg(goodsListSon.get(j).getOriginalImg());
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
-					orderGoodsSon.setRealityAddTime(new Date());   //实际下单时间
+					orderGoodsSon.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
 					if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 0){
 						orderGoodsSon.setGoodsnum(goodsListSon.get(j).getGoodsNum());	//购买数量
@@ -2369,6 +2361,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setShippingtype(2);
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		_orders.setRealityAddTime(orders.getRealityAddTime());
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		ordersDao.saveVirtualOrder(_orders);
 		
@@ -2537,7 +2530,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderGoods.setOrderBalance(orderBalance_on);	//订单余款
 			orderGoods.setOrderArrearage(orderArrearage_on);	//订单欠款
 			orderGoods.setExpiringDate(goodspec.getExpiringDate());
-			orderGoods.setRealityAddTime(new Date());   //实际下单时间
+			orderGoods.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 			orderGoods.setIsreal(2);	// 是否为虚拟 0 实物 1虚拟 2套卡 3通用卡
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
@@ -2560,7 +2553,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setSpeckeyname(String.valueOf(goodsListSon.get(j).getGoodsNum()));  //套卡将子项的规格放到spec_key_name
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
-					orderGoodsSon.setRealityAddTime(new Date());   //实际下单时间
+					orderGoodsSon.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
 					
 					orderGoodsSon.setIsreal(Integer.valueOf(goodsListSon.get(j).getIsReal()));	// 是否为虚拟 0 实物 1虚拟
@@ -2710,6 +2703,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setAddress(orders.getAddress());
 		_orders.setUsernote(orders.getUsernote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		_orders.setRealityAddTime(orders.getRealityAddTime());
 		_orders.setCreateBy(user);
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		ordersDao.saveVirtualOrder(_orders);
