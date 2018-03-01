@@ -3021,7 +3021,6 @@ public class OrdersController extends BaseController {
 				String officeId = "";           //组织架构ID
 				double advancePrice = 0;    //单个实物的预约金
 				int recId = 0;
-				Date realityAddTime = new Date();     //订单的实际下单时间
 				List<OrderGoods> lists = ordersService.selectOrderGoodsByOrderid(orders.getOrderid());   //卡项本身  
 				if(lists.size() > 0){
 					detailsTotalAmount = lists.get(0).getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
@@ -3029,7 +3028,6 @@ public class OrdersController extends BaseController {
 					officeId = lists.get(0).getOfficeId();           //组织架构ID
 					advancePrice = lists.get(0).getAdvancePrice();    //单个实物的预约金
 					recId = lists.get(0).getRecid();
-					realityAddTime = lists.get(0).getRealityAddTime();      //订单的实际下单时间
 				}
 				
 				if(!"bm".equals(orders.getChannelFlag())){
@@ -3070,7 +3068,7 @@ public class OrdersController extends BaseController {
 					turnOverDetails1.setUserId(orders.getUserid());
 					turnOverDetails1.setBelongOfficeId(officeId);
 					turnOverDetails1.setCreateBy(UserUtils.getUser());
-					turnOverDetails1.setSettleDate(realityAddTime);
+					turnOverDetails1.setSettleDate(new Date());
 					turnOverDetailsService.saveTurnOverDetails(turnOverDetails1);
 					
 					//第二次，同步处理预约金的那条数据

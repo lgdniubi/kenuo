@@ -1929,7 +1929,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		turnOverDetails1.setUserId(oLog.getMtmyUserId());
 		turnOverDetails1.setBelongOfficeId(officeId);
 		turnOverDetails1.setCreateBy(UserUtils.getUser());
-		turnOverDetails1.setSettleDate(realityAddTime);
+		turnOverDetails1.setSettleDate(new Date());
 		turnOverDetailsDao.saveTurnOverDetails(turnOverDetails1);
 		
 		//第二次，同步处理预约金的那条数据
@@ -3148,7 +3148,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		turnOverDetails1.setUserId(oLog.getMtmyUserId());
 		turnOverDetails1.setBelongOfficeId(officeId);
 		turnOverDetails1.setCreateBy(UserUtils.getUser());
-		turnOverDetails1.setSettleDate(realityAddTime);
+		turnOverDetails1.setSettleDate(new Date());
 		turnOverDetailsDao.saveTurnOverDetails(turnOverDetails1);
 		
 		//第二次，同步处理预约金的那条数据
