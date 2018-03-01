@@ -224,6 +224,9 @@ public class Orders extends TreeEntity<Orders> {
 	private int isPickUp;                           //是否已取货（0：否；1：是）
 	private String pickUpNote;                    //确认取货备注
 	
+	private Date actualBegTime;                   //实际下单时间的开始时间
+	private Date actualEndTime;                   //实际下单时间的结束时间
+	
 	public String getSearchIsReal() {
 		return searchIsReal;
 	}
@@ -1719,6 +1722,18 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setPickUpNote(String pickUpNote) {
 		this.pickUpNote = pickUpNote;
+	}
+	public Date getActualBegTime() {
+		return actualBegTime;
+	}
+	public void setActualBegTime(Date actualBegTime) {
+		this.actualBegTime = actualBegTime;
+	}
+	public Date getActualEndTime() {
+		return actualEndTime;
+	}
+	public void setActualEndTime(Date actualEndTime) {
+		this.actualEndTime = actualEndTime;
 	}
 	
 }
