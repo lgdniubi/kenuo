@@ -1376,4 +1376,20 @@
 			pick_up_note = #{pickUpNote}
 		WHERE order_id = #{orderid}
 	</update>
+	
+	
+	<!-- 下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用) -->
+	<insert id="insertForHonour">
+		INSERT INTO mtmydb.mtmy_data_log(
+			new_create_time,
+			old_create_time,
+			order_id,
+			create_date
+		)VALUES(
+			#{newCreateTime},
+			NOW(),
+			#{orderId},
+			NOW()
+		)
+	</insert>
 </mapper>

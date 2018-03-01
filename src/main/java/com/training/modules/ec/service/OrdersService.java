@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.training.common.persistence.Page;
 import com.training.common.service.TreeService;
 import com.training.common.utils.BeanUtil;
+import com.training.common.utils.DateUtils;
 import com.training.modules.crm.entity.CrmOrders;
 import com.training.modules.ec.dao.AcountLogDao;
 import com.training.modules.ec.dao.ActivityCouponUserDao;
@@ -56,6 +57,7 @@ import com.training.modules.ec.entity.TradingLog;
 import com.training.modules.ec.entity.TurnOverDetails;
 import com.training.modules.ec.entity.UserAccountsLog;
 import com.training.modules.ec.entity.Users;
+import com.training.modules.ec.web.MtmyMnappointmentController;
 import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.quartz.tasks.OrderTimeOut;
 import com.training.modules.quartz.utils.RedisLock;
@@ -846,6 +848,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			turnOverDetails.setCreateBy(UserUtils.getUser());
 			turnOverDetails.setSettleDate(orders.getRealityAddTime());
 			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
+			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
+			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
 		}
 		
 		/*//订单充值日志表
@@ -895,6 +900,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
 		
+		//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+		insertDataForHonour(orders.getRealityAddTime(),orderid);
+				
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
 		if(account == null){
@@ -1505,6 +1513,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			turnOverDetails.setCreateBy(UserUtils.getUser());
 			turnOverDetails.setSettleDate(orders.getRealityAddTime());
 			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
+			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
+			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
 		}
 		
 		/*//订单充值日志表
@@ -1557,6 +1568,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setReturnDay(returnDay);
 		ordersDao.saveKindOrder(_orders);
 		
+		//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+		insertDataForHonour(orders.getRealityAddTime(),orderid);
+				
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
 		/*double accountArrearage = account.getAccountArrearage()+debtMoneySum;	//账户欠款信息*/		
@@ -2346,6 +2360,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			turnOverDetails.setCreateBy(UserUtils.getUser());
 			turnOverDetails.setSettleDate(orders.getRealityAddTime());
 			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
+			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
+			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
 		}
 		
 		Payment payment = paymentDao.getByCode(orders.getPaycode());
@@ -2384,6 +2401,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
 		
+		//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+		insertDataForHonour(orders.getRealityAddTime(),orderid);
+				
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
 		if(account == null){
@@ -2696,6 +2716,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			turnOverDetails.setCreateBy(UserUtils.getUser());
 			turnOverDetails.setSettleDate(orders.getRealityAddTime());
 			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
+			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
+			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
 		}
 		
 		Payment payment = paymentDao.getByCode(orders.getPaycode());
@@ -2736,6 +2759,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		}
 		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
+		
+		//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+		insertDataForHonour(orders.getRealityAddTime(),orderid);
 		
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
@@ -3528,6 +3554,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			turnOverDetails.setCreateBy(UserUtils.getUser());
 			turnOverDetails.setSettleDate(orders.getRealityAddTime());
 			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
+			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
+			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
 		}
 		
 		/*//订单充值日志表
@@ -3578,6 +3607,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
 		
+		//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+		insertDataForHonour(orders.getRealityAddTime(),orderid);
+				
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
 		if(account == null){
@@ -3749,6 +3781,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			turnOverDetails.setCreateBy(UserUtils.getUser());
 			turnOverDetails.setSettleDate(orders.getRealityAddTime());
 			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
+			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
+			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
 		}
 		
 		/*//订单充值日志表
@@ -3802,6 +3837,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setReturnDay(returnDay);
 		ordersDao.saveKindOrder(_orders);
 		
+		//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+		insertDataForHonour(orders.getRealityAddTime(),orderid);
+				
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
 		/*double accountArrearage = account.getAccountArrearage()+debtMoneySum;	//账户欠款信息*/		
@@ -4083,6 +4121,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			turnOverDetails.setCreateBy(UserUtils.getUser());
 			turnOverDetails.setSettleDate(orders.getRealityAddTime());
 			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
+			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
+			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
 		}
 		
 		Payment payment = paymentDao.getByCode(orders.getPaycode());
@@ -4124,6 +4165,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		}
 		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
+		
+		//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+		insertDataForHonour(orders.getRealityAddTime(),orderid);
 		
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
@@ -4395,6 +4439,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			turnOverDetails.setCreateBy(UserUtils.getUser());
 			turnOverDetails.setSettleDate(orders.getRealityAddTime());
 			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
+			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
+			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
 		}
 		
 		Payment payment = paymentDao.getByCode(orders.getPaycode());
@@ -4434,6 +4481,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
 		
+		//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+		insertDataForHonour(orders.getRealityAddTime(),orderid);
+				
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
 		if(account == null){
@@ -4522,5 +4572,30 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 */
 	public void updateIsPickUp(Orders orders){
 		ordersDao.updateIsPickUp(orders);
+	}
+	
+	/**
+	 * 下单时当实际下单时间不等于当天的时候调用接口
+	 * @param realityAddTime
+	 * @param officeId
+	 */
+	public void compareRealityAddTimeAndNow(Date realityAddTime,String officeId){
+		SimpleDateFormat fmt=new SimpleDateFormat("yyyy-MM-dd");
+		String newRealityAddTime = DateUtils.formatDate(realityAddTime, "yyyy-MM-dd");
+	     if(!fmt.format(realityAddTime).toString().equals(fmt.format(new Date()).toString())){//格式化为相同格式
+	    	 MtmyMnappointmentController.adddata_log("",newRealityAddTime,officeId,"");
+	     }
+	}
+	
+	/**
+	 * 下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+	 * @param newCreateTime
+	 * @param orderId
+	 */
+	public void insertDataForHonour(Date newCreateTime,String orderId){
+		SimpleDateFormat fmt=new SimpleDateFormat("yyyy-MM-dd");
+	     if(!fmt.format(newCreateTime).toString().equals(fmt.format(new Date()).toString())){//格式化为相同格式
+	    	 ordersDao.insertForHonour(newCreateTime, orderId);
+	     }
 	}
 }
