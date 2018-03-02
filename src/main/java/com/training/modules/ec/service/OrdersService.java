@@ -851,6 +851,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
 			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
+			
+			//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+			insertDataForHonour(orders.getRealityAddTime(),orderid);
 		}
 		
 		/*//订单充值日志表
@@ -900,9 +903,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
 		
-		//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
-		insertDataForHonour(orders.getRealityAddTime(),orderid);
-				
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
 		if(account == null){
@@ -1516,6 +1516,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
 			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
+			
+			//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+			insertDataForHonour(orders.getRealityAddTime(),orderid);
 		}
 		
 		/*//订单充值日志表
@@ -1568,9 +1571,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setReturnDay(returnDay);
 		ordersDao.saveKindOrder(_orders);
 		
-		//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
-		insertDataForHonour(orders.getRealityAddTime(),orderid);
-				
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
 		/*double accountArrearage = account.getAccountArrearage()+debtMoneySum;	//账户欠款信息*/		
@@ -2363,6 +2363,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
 			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
+			
+			//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+			insertDataForHonour(orders.getRealityAddTime(),orderid);
 		}
 		
 		Payment payment = paymentDao.getByCode(orders.getPaycode());
@@ -2401,9 +2404,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
 		
-		//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
-		insertDataForHonour(orders.getRealityAddTime(),orderid);
-				
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
 		if(account == null){
@@ -2719,6 +2719,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
 			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
+			
+			//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+			insertDataForHonour(orders.getRealityAddTime(),orderid);
 		}
 		
 		Payment payment = paymentDao.getByCode(orders.getPaycode());
@@ -2759,9 +2762,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		}
 		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
-		
-		//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
-		insertDataForHonour(orders.getRealityAddTime(),orderid);
 		
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
@@ -3557,6 +3557,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
 			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
+			
+			//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+			insertDataForHonour(orders.getRealityAddTime(),orderid);
 		}
 		
 		/*//订单充值日志表
@@ -3607,9 +3610,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
 		
-		//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
-		insertDataForHonour(orders.getRealityAddTime(),orderid);
-				
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
 		if(account == null){
@@ -3784,6 +3784,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
 			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
+			
+			//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+			insertDataForHonour(orders.getRealityAddTime(),orderid);
 		}
 		
 		/*//订单充值日志表
@@ -3837,9 +3840,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setReturnDay(returnDay);
 		ordersDao.saveKindOrder(_orders);
 		
-		//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
-		insertDataForHonour(orders.getRealityAddTime(),orderid);
-				
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
 		/*double accountArrearage = account.getAccountArrearage()+debtMoneySum;	//账户欠款信息*/		
@@ -4124,6 +4124,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
 			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
+			
+			//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+			insertDataForHonour(orders.getRealityAddTime(),orderid);
 		}
 		
 		Payment payment = paymentDao.getByCode(orders.getPaycode());
@@ -4165,9 +4168,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		}
 		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
-		
-		//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
-		insertDataForHonour(orders.getRealityAddTime(),orderid);
 		
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
@@ -4442,6 +4442,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			
 			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
 			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
+			
+			//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+			insertDataForHonour(orders.getRealityAddTime(),orderid);
 		}
 		
 		Payment payment = paymentDao.getByCode(orders.getPaycode());
@@ -4481,9 +4484,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setReturnDay(returnDay);
 		ordersDao.saveVirtualOrder(_orders);
 		
-		//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
-		insertDataForHonour(orders.getRealityAddTime(),orderid);
-				
 		//根据用户id查询用户账户信息
 		Orders account = ordersDao.getAccount(_orders);
 		if(account == null){
