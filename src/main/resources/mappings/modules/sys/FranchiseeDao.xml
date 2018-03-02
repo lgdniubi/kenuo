@@ -171,7 +171,43 @@
 		    #{bankCode},
 		    #{bankName},
 		    #{status},
-		    #{createBy.name},
+		    #{createBy.id},
+		    SYSDATE(),
+		    NULL,
+		    NULL,
+		    0,
+		    #{remarks}
+		  )
+	</insert>
+	<!-- 保存 -->
+	<insert id="saveMtmyFranchisee">
+		INSERT INTO mtmydb.mtmy_franchisee (
+		  id,
+		  parent_id,
+		  parent_ids,
+		  name,
+		  type,
+		  sort,
+		  icon_url,
+		  status,
+		  create_by,
+		  create_date,
+		  update_by,
+		  update_date,
+		  del_flag,
+		  remarks
+		) 
+		VALUES
+		  (
+		    #{id}, 
+		    #{parentId}, 
+			#{parentIds},
+		    #{name},
+		    #{type},
+		    #{sort},
+		    #{iconUrl},
+		    0,
+		    #{createId},
 		    SYSDATE(),
 		    NULL,
 		    NULL,
@@ -200,7 +236,20 @@
 		  bank_beneficiary = #{bankBeneficiary},
 		  bank_code = #{bankCode},
 		  bank_name = #{bankName},
-		  update_by = #{updateBy.name},
+		  update_by = #{updateBy.id},
+		  update_date = SYSDATE(),
+		  remarks = #{remarks} 
+		WHERE id = #{id} 
+	</update>
+	<!-- 同步修改mtmydb库中mtmy_franchisee -->
+	<update id="updateMtmyFranchisee">
+		UPDATE 
+		  mtmydb.mtmy_franchisee
+		SET
+		  name = #{name},
+		  type = #{type},
+		  icon_url = #{iconUrl},
+		  update_by = #{updateId},
 		  update_date = SYSDATE(),
 		  remarks = #{remarks} 
 		WHERE id = #{id} 
@@ -213,6 +262,12 @@
 		WHERE id = #{id} OR parent_ids LIKE 
 					<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+	</update>
+	<!-- 逻辑删除  同步操作到mtmy_franchisee -->
+	<update id="deleteMtmyFranchisee">
+		UPDATE mtmydb.mtmy_franchisee SET 
+			del_flag = 1
+		WHERE id = #{id} OR parent_ids LIKE #{id}
 	</update>
 	<update id="updatePublicServiceFlag">
 		UPDATE sys_franchisee SET

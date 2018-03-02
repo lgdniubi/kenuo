@@ -5,7 +5,6 @@
 	<sql id="CommentColumns">
 		a.id,
 		a.franchisee_id AS franchiseeId,
-		a.franchisee_name AS franchiseeName,
 		a.banner_name AS bannerName,
 		a.img,
 		a.redirect_url AS redirectUrl,
@@ -17,24 +16,26 @@
 	<!-- 查询所有数据列表 -->
 	<select id="findList" resultType="mtmyFranchiseeBanner">
 		SELECT
-			<include refid="CommentColumns"/>
+			<include refid="CommentColumns"/>,
+			b.name AS franchiseeName
 		FROM
-			mtmydb.mtmy_franchisee_banner a
+			mtmydb.mtmy_franchisee_banner a LEFT JOIN mtmydb.mtmy_franchisee b ON a.franchisee_id = b.id
 		WHERE 1 = 1
 			<if test="isShow != null and isShow != '' and isShow != '-1'">
 				AND is_show = #{isShow}
 			</if>
-		AND del_flag = 0
+		AND a.del_flag = 0
 		ORDER BY
-			id DESC
+			a.id DESC
 	</select>
 	
 	<!-- 根据id查询商家主页banner图 -->
 	<select id="getMtmyFranchiseeBannerById" resultType="mtmyFranchiseeBanner">
 		SELECT
-			<include refid="CommentColumns"/>
+			<include refid="CommentColumns"/>,
+			b.name AS franchiseeName
 		FROM
-			mtmydb.mtmy_franchisee_banner a
+			mtmydb.mtmy_franchisee_banner a LEFT JOIN mtmydb.mtmy_franchisee b ON a.franchisee_id = b.id
 		WHERE 
 			a.id = #{id}
 	</select>
@@ -43,7 +44,6 @@
 	<insert id="insert" parameterType="mtmyFranchiseeBanner">
 		INSERT INTO mtmydb.mtmy_franchisee_banner(
 			franchisee_id,
-			franchisee_name,
 			banner_name,
 			img,
 			redirect_url,
@@ -56,7 +56,6 @@
 			update_date
 		) VALUES (
 			#{franchiseeId},
-			#{franchiseeName},
 			#{bannerName},
 			#{img},
 			#{redirectUrl},
@@ -75,7 +74,6 @@
 		UPDATE mtmydb.mtmy_franchisee_banner
 		SET
 			franchisee_id = #{franchiseeId},
-			franchisee_name = #{franchiseeName},
 			banner_name = #{bannerName},
 			img = #{img},
 			redirect_url = #{redirectUrl},

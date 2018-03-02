@@ -53,50 +53,6 @@
 					}
 				}
 			);
-			$("#franchiseeIdButton").click(function(){
-				// 是否限制选择，如果限制，设置为disabled
-				if ($("#franchiseeIdButton").hasClass("disabled")){
-					return true;
-				}
-				// 正常打开	
-				top.layer.open({
-				    type: 2, 
-				    area: ['300px', '420px'],
-				    title:"选择加盟商",
-				    ajaxData:{selectIds: $("#franchiseeIdId").val()},
-				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/franchisee/treeData")+"&module=&checked=&extId=&isAll=&selectIds=" ,
-				    btn: ['确定', '关闭']
-		    	       ,yes: function(index, layero){ //或者使用btn1
-								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
-								var ids = [], names = [], nodes = [];
-								if ("" == "true"){
-									nodes = tree.getCheckedNodes(true);
-								}else{
-									nodes = tree.getSelectedNodes();
-								}
-								for(var i=0; i<nodes.length; i++) {//
-									if (nodes[i].isParent){
-										//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
-										//layer.msg('有表情地提示');
-										top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
-										return false;
-									}//
-									ids.push(nodes[i].id);
-									names.push(nodes[i].name);//
-									break; // 如果为非复选框选择，则返回第一个选择  
-								}
-								$("#franchiseeIdId").val(ids.join(",").replace(/u_/ig,""));
-								$("#franchiseeIdName").val(names.join(","));
-								$("#franchiseeIdName").focus();
-								$("#franchiseeName").val($("#franchiseeIdName").val());
-								top.layer.close(index);
-						    	       },
-		    	cancel: function(index){ //或者使用btn2
-		    	           //按钮【按钮二】的回调
-		    	       }
-				}); 
-			
-			});
 		});
 		
 	</script>
@@ -110,24 +66,15 @@
 	                <div class="tab-inner">
 						<form:form id="inputForm" modelAttribute="mtmyFranchiseeBanner" action="${ctx}/ec/franchiseeBanner/save">
 							<form:hidden path="id"/>
-							<form:hidden path="franchiseeName"/>
 							<form:hidden path="isShow"/>
 							<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 								<tr>
 									<td><label class="pull-right"><font color="red">*</font>选择商家：</label></td>
-									<td style="width: 300px">
-										<div>
-											<input id="franchiseeIdId" name="franchiseeId" class="form-control required" type="hidden" value="${mtmyFranchiseeBanner.franchiseeId}" aria-required="true">
-											<div class="input-group">
-												<input id="franchiseeIdName" name="franchiseeIdName" readonly="readonly" type="text" value="${mtmyFranchiseeBanner.franchiseeName}" data-msg-required="" class="form-control required valid" style="" aria-required="true" aria-invalid="false">
-										       		 <span class="input-group-btn">
-											       		 <button type="button" id="franchiseeIdButton" class="btn   btn-primary  "><i class="fa fa-search"></i>
-											             </button> 
-										       		 </span>
-										    </div>
-											 <label id="franchiseeIdName-error" class="error" for="franchiseeIdName" style="display:none"></label>
-								     	</div>
-									</td>
+									<td style="width: 40px"><sys:treeselect id="franchiseeId" name="franchiseeId" value="${mtmyFranchiseeBanner.id}"
+												labelName="franchisee.name" labelValue="${mtmyFranchiseeBanner.franchiseeName}" 
+	 											title="加盟商" url="/sys/franchisee/treeData" 
+	 											cssClass="form-control required" allowClear="true" notAllowSelectParent="true"/>
+	 								</td>
 								</tr>
 								<tr>
 									<td><label class="pull-right"><font color="red">*</font>商家banner图名称：</label></td>

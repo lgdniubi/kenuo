@@ -198,6 +198,8 @@ public class FranchiseeController extends BaseController{
 				Franchisee fran = franchiseeService.get(franchisee);
 				//删除商家信息
 				franchiseeService.delete(franchisee);
+				//把trains库中的sys_franchisee的修改信息同步到mtmydb中mtmy_franchisee
+				franchiseeService.deleteMtmyFranchisee(franchisee.getId());
 				
 				//删除组织结构信息（office）
 				Office office = new Office();
