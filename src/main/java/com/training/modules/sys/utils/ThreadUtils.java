@@ -61,7 +61,7 @@ public class ThreadUtils {
 		private String url;
 		
 		public PostObjectThread(HttpServletRequest request, String title,int type1,Object... objects){
-			super(PostObjectThread.class.getSimpleName());
+			
 			this.request = request;
 			this.title = title;
 			this.type = type1;
@@ -91,7 +91,6 @@ public class ThreadUtils {
 		private List<Object> obj;
 		
 		public SaveLogThread(HttpServletRequest request, String title,int type1,Object... objects){
-			super(SaveLogThread.class.getSimpleName());
 			
 			this.request = request;
 			this.title = title;
