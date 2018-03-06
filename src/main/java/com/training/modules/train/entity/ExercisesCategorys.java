@@ -1,8 +1,10 @@
 package com.training.modules.train.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.google.common.collect.Lists;
 import com.training.common.persistence.DataEntity;
 
 public class ExercisesCategorys extends DataEntity<ExercisesCategorys>{
@@ -36,6 +38,8 @@ private static final long serialVersionUID = 1L;
 	private String num2;			//多选题
 	private String num3;			//判断题
 	private int newNum;				//用于将String类型的数量转换为int类型	
+	
+	private List<String> exList = Lists.newArrayList();		//排除的试题id
 	
 	public String getExerciseId() {
 		return exerciseId;
@@ -164,5 +168,11 @@ private static final long serialVersionUID = 1L;
 	}
 	public void setNewNum(int newNum) {
 		this.newNum = newNum;
+	}
+	public List<String> getExList() {
+		return exList;
+	}
+	public void setExList(List<String> exList) {
+		this.exList = exList;
 	}
 }
