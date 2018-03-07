@@ -91,5 +91,23 @@
 			SET 
 			  is_show = #{isShow}
 		WHERE id = #{id}
+		AND franchisee_id = #{franchiseeId}
 	</update>
+	
+	<!-- 将当前商家的所有banner图都不显示 -->
+	<update id="changeAll">
+		UPDATE mtmydb.mtmy_franchisee_banner
+		SET is_show = 0
+		WHERE franchisee_id = #{franchiseeId}
+	</update>
+	
+	<!-- 查询某商家的最新创建的商家主页banner图 -->
+	<select id="getMtmyFranchiseeBannerByCreateDate" resultType="mtmyFranchiseeBanner">
+		SELECT
+			<include refid="CommentColumns"/>
+		FROM mtmydb.mtmy_franchisee_banner a
+		WHERE a.franchisee_id = #{franchiseeId}
+		ORDER BY a.create_date DESC 
+		limit 1
+	</select>
 </mapper>
