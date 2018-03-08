@@ -120,4 +120,60 @@
 	<select id="findByName" resultType="TrainCategorys">
 		SELECT category_id AS categoryId FROM trains.`train_categorys` WHERE NAME = #{categoryName} AND parent_id != '0' AND STATUS =0;
 	</select>
+	<!-- 查询当前课程的试题id -->
+	<select id="findExercisesId" resultType="String">
+		SELECT 
+			e.exercise_id
+		FROM 
+			trains.train_exercises e 
+		LEFT JOIN 
+			train_exercises_lesson_mapping m 
+		ON 
+			e.exercise_id = m.exercise_id 
+		LEFT JOIN 
+			train_categorys c ON e.category_id = c.category_id
+		WHERE
+			m.status = 0
+			<if test="lessontype == 1">
+				AND m.LESSON_ID = #{lessonId}
+			</if>
+			<if test="lessontype == 2 ">
+				AND m.CATEGORY_ID = #{categoryId}
+			</if>
+	</select>
+	<!-- 分页查询所有试题（排除已有的试题） -->
+	<select id="findExerPage" resultType="ExercisesCategorys">
+		SELECT DISTINCT a.*,c.name FROM 
+			TRAIN_CATEGORYS AS c,
+			TRAIN_EXERCISES AS a
+			<!-- 数据范围过滤 -->
+			${sqlMap.dsf}
+			AND a.STATUS=0
+			AND a.category_id=c.category_id
+			<if test="name != null and name != ''">
+				AND c.name = 
+				(SELECT name FROM 
+				TRAIN_CATEGORYS 
+				WHERE category_id = #{name})
+			</if>
+			<if test="exerciseTitle != null and exerciseTitle != ''">
+				AND ( a.exercise_title LIKE 
+						<if test="dbName == 'oracle'">'%'||#{exerciseTitle}||'%'</if>
+						<if test="dbName == 'mysql'">CONCAT('%', #{exerciseTitle}, '%')</if>
+				OR a.tags LIKE 
+						<if test="dbName == 'oracle'">'%'||#{exerciseTitle}||'%'</if>
+						<if test="dbName == 'mysql'">CONCAT('%', #{exerciseTitle}, '%')</if>
+						)
+			</if>
+			<if test="exerciseType != null and exerciseType !=''">
+				AND a.exercise_type = #{exerciseType }
+			</if>
+			<if test="exList != null and exList.size() != 0">
+				AND a.exercise_id NOT IN
+				<foreach collection="exList" open="(" close=")" separator="," item="exerId">
+					 #{exerId}
+				</foreach>
+			</if>
+			ORDER BY A.CREATETIME,a.exercise_id DESC 
+	</select>
 </mapper>

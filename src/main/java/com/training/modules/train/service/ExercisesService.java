@@ -1,5 +1,8 @@
 package com.training.modules.train.service;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +21,9 @@ import com.training.modules.train.entity.TrainCategorys;
 @Service
 @Transactional(readOnly = false)
 public class ExercisesService extends CrudService<ExercisesDao,ExercisesCategorys>{
+	
+	@Autowired
+	private ExercisesDao exercisesDao;
 	/**
 	 * 查询所有试题
 	 * @param page
@@ -86,5 +92,28 @@ public class ExercisesService extends CrudService<ExercisesDao,ExercisesCategory
 	 */
 	public TrainCategorys findByName(String categoryName){
 		return dao.findByName(categoryName);
+	}
+	/**
+	 * 
+	 * @Title: findExercisesId
+	 * @Description: TODO 查询当前课程试题id
+	 * @throws
+	 * 2018年2月28日 兵子
+	 */
+	public List<String> findExercisesId(ExercisesCategorys exercisesCategorys) {
+		return exercisesDao.findExercisesId(exercisesCategorys);
+	}
+	
+	/**
+	 * 
+	 * @Title: findExerPage
+	 * @Description: TODO 分页查询试题（排除当前课程已有的试题）
+	 * @throws
+	 * 2018年2月28日 兵子
+	 */
+	public Page<ExercisesCategorys> findExerPage(Page<ExercisesCategorys> page, ExercisesCategorys exercisesCategorys) {
+		exercisesCategorys.setPage(page);
+		page.setList(exercisesDao.findExerPage(exercisesCategorys));
+		return page;
 	}
 }
