@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.training.common.persistence.Page;
 import com.training.common.service.TreeService;
 import com.training.common.utils.BeanUtil;
+import com.training.common.utils.DateUtils;
 import com.training.modules.crm.entity.CrmOrders;
 import com.training.modules.ec.dao.AcountLogDao;
 import com.training.modules.ec.dao.ActivityCouponUserDao;
@@ -56,6 +57,7 @@ import com.training.modules.ec.entity.TradingLog;
 import com.training.modules.ec.entity.TurnOverDetails;
 import com.training.modules.ec.entity.UserAccountsLog;
 import com.training.modules.ec.entity.Users;
+import com.training.modules.ec.web.MtmyMnappointmentController;
 import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.quartz.tasks.OrderTimeOut;
 import com.training.modules.quartz.utils.RedisLock;
@@ -657,7 +659,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<Double> orderAmounts = orders.getOrderAmounts();		//成交价集合
 		List<Double> actualPayments = orders.getActualPayments();	//实际付款集合
 		List<Integer> remaintimeNums = orders.getRemaintimeNums();	//虚拟订单老产品-实际次数
-		List<Date> realityAddTimeList = orders.getRealityAddTimeList();  //实际下单时间集合
 		double orderAmountSum = 0d;  //应付总额
 		double afterPaymentSum = 0d;  //实际付款总额
 		double debtMoneySum = 0d;	//总欠款
@@ -777,11 +778,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderGoods.setIsreal(1);	// 是否为虚拟 0 实物 1虚拟
 			orderGoods.setServicetimes(serviceTimes);	//预计服务次数
 			orderGoods.setServicemin(goods.getServiceMin());//服务时长
-			if(orders.getIsNeworder() == 0){
-				orderGoods.setRealityAddTime(new Date());   //实际下单时间
-			}else{
-				orderGoods.setRealityAddTime(realityAddTimeList.get(i));   //实际下单时间
-			}
+			orderGoods.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 			
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
@@ -849,7 +846,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			turnOverDetails.setUserId(mtmyUserId);
 			turnOverDetails.setBelongOfficeId(orders.getBelongOfficeId());
 			turnOverDetails.setCreateBy(UserUtils.getUser());
+			turnOverDetails.setSettleDate(orders.getRealityAddTime());
 			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
+			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
+			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
+			
+			//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+			insertDataForHonour(orders.getRealityAddTime(),orderid);
 		}
 		
 		/*//订单充值日志表
@@ -889,6 +893,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setShippingtype(2);
 		_orders.setUserNote(orders.getUserNote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		_orders.setRealityAddTime(orders.getRealityAddTime());
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		//修改退货日期
 		int returnDay = Integer.parseInt(ParametersFactory.getMtmyParamValues("returngoods_date"));
@@ -1265,6 +1270,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		turnOverDetails.setUserId(oLog.getMtmyUserId());
 		turnOverDetails.setBelongOfficeId(details.getBelongOfficeId());
 		turnOverDetails.setCreateBy(UserUtils.getUser());
+		turnOverDetails.setSettleDate(new Date());
 		turnOverDetailsDao.saveTurnOverDetails(turnOverDetails);
 		
 		//根据用户id查询用户账户信息
@@ -1466,7 +1472,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderGoods.setTotalAmount(actualPayment_on);	//计算后实付款金额
 			orderGoods.setOrderBalance(orderBalance_on);	//订单余款
 			orderGoods.setOrderArrearage(orderArrearage_on);	//订单欠款
-			orderGoods.setRealityAddTime(new Date());   //实际下单时间
+			orderGoods.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 			orderGoods.setExpiringDate(goodspec.getExpiringDate());
 			orderGoods.setIsreal(0);	// 是否为虚拟 0 实物 1虚拟
 			//保存 mtmy_order_goods_mapping
@@ -1505,7 +1511,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			turnOverDetails.setUserId(mtmyUserId);
 			turnOverDetails.setBelongOfficeId(orders.getBelongOfficeId());
 			turnOverDetails.setCreateBy(UserUtils.getUser());
+			turnOverDetails.setSettleDate(orders.getRealityAddTime());
 			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
+			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
+			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
+			
+			//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+			insertDataForHonour(orders.getRealityAddTime(),orderid);
 		}
 		
 		/*//订单充值日志表
@@ -1547,6 +1560,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setAddress(orders.getAddress());
 		_orders.setUserNote(orders.getUserNote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		_orders.setRealityAddTime(orders.getRealityAddTime());
 		_orders.setCreateBy(user);
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		//修改退货日期
@@ -1797,7 +1811,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param orderAmount应付款金额
 	 * @param ratioPrice异价后的价格
 	 */
-	public void handleAdvanceFlag(OrderRechargeLog oLog,double ratioPrice,double detailsTotalAmount,int goodsType,String officeId,double realAdvancePrice){
+	public void handleAdvanceFlag(OrderRechargeLog oLog,double ratioPrice,double detailsTotalAmount,int goodsType,String officeId,double realAdvancePrice,Date realityAddTime){
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
 		double totalAmount = oLog.getTotalAmount(); //实付款金额
@@ -1929,6 +1943,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		turnOverDetails1.setUserId(oLog.getMtmyUserId());
 		turnOverDetails1.setBelongOfficeId(officeId);
 		turnOverDetails1.setCreateBy(UserUtils.getUser());
+		turnOverDetails1.setSettleDate(new Date());
 		turnOverDetailsDao.saveTurnOverDetails(turnOverDetails1);
 		
 		//第二次，同步处理预约金的那条数据
@@ -1941,6 +1956,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		turnOverDetails2.setStatus(2);
 		turnOverDetails2.setUserId(oLog.getMtmyUserId());
 		turnOverDetails2.setCreateBy(UserUtils.getUser());
+		turnOverDetails2.setSettleDate(new Date());
 		turnOverDetailsDao.saveTurnOverDetails(turnOverDetails2);
 		
 		OrderGoodsDetails newDetails = orderGoodsDetailsDao.selectOrderBalance(oLog.getRecid());
@@ -2118,7 +2134,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<Double> orderAmounts = orders.getOrderAmounts();		//成交价集合
 		List<Double> actualPayments = orders.getActualPayments();	//实际付款集合
 		List<Integer> remaintimeNums = orders.getRemaintimeNums();	//虚拟订单老产品-实际次数
-		List<Date> realityAddTimeList = orders.getRealityAddTimeList();  //实际下单时间集合
 		
 		double orderAmountSum = 0d;  //应付总额
 		double afterPaymentSum = 0d;  //实际付款总额
@@ -2230,11 +2245,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderGoods.setSingleNormPrice(_singleNormPrice);	//单次标价
 			orderGoods.setIsreal(3);	//  2套卡 3通用卡
 			orderGoods.setServicetimes(serviceTimes);	//预计服务次数
-			if(orders.getIsNeworder() == 0){
-				orderGoods.setRealityAddTime(new Date());   //实际下单时间
-			}else{
-				orderGoods.setRealityAddTime(realityAddTimeList.get(i));   //实际下单时间
-			}
+			orderGoods.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 			
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
@@ -2256,8 +2267,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setOriginalimg(goodsListSon.get(j).getOriginalImg());
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
+					orderGoodsSon.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 					orderGoodsSon.setRatioPrice(goodsListSon.get(j).getShopPrice());    //异价后的价格
-					orderGoodsSon.setRealityAddTime(new Date());   //实际下单时间
+					orderGoodsSon.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
 					if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 0){
 						orderGoodsSon.setGoodsnum(goodsListSon.get(j).getGoodsNum());	//购买数量
@@ -2346,7 +2358,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			turnOverDetails.setUserId(mtmyUserId);
 			turnOverDetails.setBelongOfficeId(orders.getBelongOfficeId());
 			turnOverDetails.setCreateBy(UserUtils.getUser());
+			turnOverDetails.setSettleDate(orders.getRealityAddTime());
 			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
+			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
+			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
+			
+			//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+			insertDataForHonour(orders.getRealityAddTime(),orderid);
 		}
 		
 		Payment payment = paymentDao.getByCode(orders.getPaycode());
@@ -2375,6 +2394,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setShippingtype(2);
 		_orders.setUserNote(orders.getUserNote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		_orders.setRealityAddTime(orders.getRealityAddTime());
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		//修改退货日期
 		int returnDay = Integer.parseInt(ParametersFactory.getMtmyParamValues("returngoods_date"));
@@ -2550,7 +2570,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderGoods.setOrderBalance(orderBalance_on);	//订单余款
 			orderGoods.setOrderArrearage(orderArrearage_on);	//订单欠款
 			orderGoods.setExpiringDate(goodspec.getExpiringDate());
-			orderGoods.setRealityAddTime(new Date());   //实际下单时间
+			orderGoods.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 			orderGoods.setIsreal(2);	// 是否为虚拟 0 实物 1虚拟 2套卡 3通用卡
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
@@ -2573,8 +2593,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setSpeckeyname(String.valueOf(goodsListSon.get(j).getGoodsNum()));  //套卡将子项的规格放到spec_key_name
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
+					orderGoodsSon.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 					orderGoodsSon.setRatioPrice(goodsListSon.get(j).getShopPrice());     //异价价格
-					orderGoodsSon.setRealityAddTime(new Date());   //实际下单时间
+					orderGoodsSon.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
 					
 					orderGoodsSon.setIsreal(Integer.valueOf(goodsListSon.get(j).getIsReal()));	// 是否为虚拟 0 实物 1虚拟
@@ -2693,7 +2714,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			turnOverDetails.setUserId(mtmyUserId);
 			turnOverDetails.setBelongOfficeId(orders.getBelongOfficeId());
 			turnOverDetails.setCreateBy(UserUtils.getUser());
+			turnOverDetails.setSettleDate(orders.getRealityAddTime());
 			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
+			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
+			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
+			
+			//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+			insertDataForHonour(orders.getRealityAddTime(),orderid);
 		}
 		
 		Payment payment = paymentDao.getByCode(orders.getPaycode());
@@ -2724,6 +2752,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setAddress(orders.getAddress());
 		_orders.setUserNote(orders.getUserNote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		_orders.setRealityAddTime(orders.getRealityAddTime());
 		_orders.setCreateBy(user);
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		//修改退货日期
@@ -2986,6 +3015,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		turnOverDetails.setUserId(oLog.getMtmyUserId());
 		turnOverDetails.setBelongOfficeId(details.getBelongOfficeId());
 		turnOverDetails.setCreateBy(UserUtils.getUser());
+		turnOverDetails.setSettleDate(new Date());
 		turnOverDetailsDao.saveTurnOverDetails(turnOverDetails);
 		
 		//根据用户id查询用户账户信息
@@ -3023,7 +3053,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param orderAmount应付款金额
 	 * @param ratioPrice异价后的价格
 	 */
-	public void handleCardAdvance(OrderRechargeLog oLog,double ratioPrice,double detailsTotalAmount,int goodsType,String officeId,int isReal,double realAdvancePrice){
+	public void handleCardAdvance(OrderRechargeLog oLog,double ratioPrice,double detailsTotalAmount,int goodsType,String officeId,int isReal,double realAdvancePrice,Date realityAddTime){
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
 		double totalAmount = oLog.getTotalAmount(); //实付款金额
@@ -3144,6 +3174,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		turnOverDetails1.setUserId(oLog.getMtmyUserId());
 		turnOverDetails1.setBelongOfficeId(officeId);
 		turnOverDetails1.setCreateBy(UserUtils.getUser());
+		turnOverDetails1.setSettleDate(new Date());
 		turnOverDetailsDao.saveTurnOverDetails(turnOverDetails1);
 		
 		//第二次，同步处理预约金的那条数据
@@ -3156,6 +3187,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		turnOverDetails2.setStatus(2);
 		turnOverDetails2.setUserId(oLog.getMtmyUserId());
 		turnOverDetails2.setCreateBy(UserUtils.getUser());
+		turnOverDetails2.setSettleDate(new Date());
 		turnOverDetailsDao.saveTurnOverDetails(turnOverDetails2);
 		
 		OrderGoodsDetails newDetails = orderGoodsDetailsDao.selectOrderBalance(oLog.getRecid());
@@ -3356,7 +3388,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<Double> orderAmounts = orders.getOrderAmounts();		//成交价集合
 		List<Double> actualPayments = orders.getActualPayments();	//实际付款集合
 		List<Integer> actualSpeckeyNums = orders.getActualSpeckeyNums();	//售后转单的实际规格次数
-		List<Date> realityAddTimeList = orders.getRealityAddTimeList();  //实际下单时间集合
 		double orderAmountSum = 0d;  //应付总额
 		double afterPaymentSum = 0d;  //实际付款总额
 		double debtMoneySum = 0d;	//总欠款
@@ -3463,7 +3494,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderGoods.setIsreal(1);	// 是否为虚拟 0 实物 1虚拟
 			orderGoods.setServicetimes(actualSpeckeyTimes);	//预计服务次数
 			orderGoods.setServicemin(goods.getServiceMin());//服务时长
-			orderGoods.setRealityAddTime(realityAddTimeList.get(i));   //实际下单时间
+			orderGoods.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 			
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
@@ -3521,7 +3552,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			turnOverDetails.setUserId(mtmyUserId);
 			turnOverDetails.setBelongOfficeId(orders.getBelongOfficeId());
 			turnOverDetails.setCreateBy(UserUtils.getUser());
+			turnOverDetails.setSettleDate(orders.getRealityAddTime());
 			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
+			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
+			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
+			
+			//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+			insertDataForHonour(orders.getRealityAddTime(),orderid);
 		}
 		
 		/*//订单充值日志表
@@ -3562,6 +3600,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setShippingtype(2);
 		_orders.setUserNote(orders.getUserNote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		_orders.setRealityAddTime(orders.getRealityAddTime());
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		//修改退货日期
 		int returnDay = Integer.parseInt(ParametersFactory.getMtmyParamValues("returngoods_date"));
@@ -3629,7 +3668,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<Double> orderAmounts = orders.getOrderAmounts();		//成交价集合
 		List<Double> actualPayments = orders.getActualPayments();	//实际付款集合
 		List<Integer> kindgoodsnum = orders.getKindgoodsnum();		//实物商品购买数量集合
-		List<Date> realityAddTimeList = orders.getRealityAddTimeList();  //实际下单时间集合
 		double orderAmountSum = 0d;  //应付总额
 		double afterPaymentSum = 0d;  //实际付款总额
 		double debtMoneySum = 0d;	//总欠款
@@ -3704,7 +3742,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderGoods.setRealityAddTime(new Date());   //实际下单时间
 			orderGoods.setExpiringDate(goodspec.getExpiringDate());
 			orderGoods.setIsreal(0);	// 是否为虚拟 0 实物 1虚拟
-			orderGoods.setRealityAddTime(realityAddTimeList.get(i));   //实际下单时间
+			orderGoods.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
 			
@@ -3741,7 +3779,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			turnOverDetails.setUserId(mtmyUserId);
 			turnOverDetails.setBelongOfficeId(orders.getBelongOfficeId());
 			turnOverDetails.setCreateBy(UserUtils.getUser());
+			turnOverDetails.setSettleDate(orders.getRealityAddTime());
 			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
+			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
+			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
+			
+			//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+			insertDataForHonour(orders.getRealityAddTime(),orderid);
 		}
 		
 		/*//订单充值日志表
@@ -3784,6 +3829,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setAddress(orders.getAddress());
 		_orders.setUserNote(orders.getUserNote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		_orders.setRealityAddTime(orders.getRealityAddTime());
 		_orders.setCreateBy(user);
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		//修改退货日期
@@ -3854,7 +3900,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<Double> orderAmounts = orders.getOrderAmounts();		//成交价集合
 		List<Double> actualPayments = orders.getActualPayments();	//实际付款集合
 		List<Integer> remaintimeNums = orders.getRemaintimeNums();	//套卡订单老产品-实际次数
-		List<Date> realityAddTimeList = orders.getRealityAddTimeList();  //实际下单时间集合
 		
 		double orderAmountSum = 0d;  //应付总额
 		double afterPaymentSum = 0d;  //实际付款总额
@@ -3932,7 +3977,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderGoods.setOrderArrearage(orderArrearage_on);	//订单欠款
 			orderGoods.setExpiringDate(goodspec.getExpiringDate());
 			orderGoods.setIsreal(2);	// 是否为虚拟 0 实物 1虚拟 2套卡 3通用卡
-			orderGoods.setRealityAddTime(realityAddTimeList.get(i));   //实际下单时间
+			orderGoods.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
 			
@@ -3955,7 +4000,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
 					orderGoodsSon.setRatioPrice(goodsListSon.get(j).getShopPrice());     //异价价格
-					orderGoodsSon.setRealityAddTime(realityAddTimeList.get(i));   //实际下单时间
+					orderGoodsSon.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
 					
 					orderGoodsSon.setIsreal(Integer.valueOf(goodsListSon.get(j).getIsReal()));	// 是否为虚拟 0 实物 1虚拟
@@ -4074,7 +4119,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			turnOverDetails.setUserId(mtmyUserId);
 			turnOverDetails.setBelongOfficeId(orders.getBelongOfficeId());
 			turnOverDetails.setCreateBy(UserUtils.getUser());
+			turnOverDetails.setSettleDate(orders.getRealityAddTime());
 			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
+			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
+			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
+			
+			//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+			insertDataForHonour(orders.getRealityAddTime(),orderid);
 		}
 		
 		Payment payment = paymentDao.getByCode(orders.getPaycode());
@@ -4106,6 +4158,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setAddress(orders.getAddress());
 		_orders.setUserNote(orders.getUserNote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		_orders.setRealityAddTime(orders.getRealityAddTime());
 		_orders.setCreateBy(user);
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		//修改退货日期
@@ -4197,7 +4250,6 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<Double> actualPayments = orders.getActualPayments();	//实际付款集合
 		List<Integer> remaintimeNums = orders.getRemaintimeNums();	//虚拟订单老产品-实际次数
 		List<Integer> actualSpeckeyNums = orders.getActualSpeckeyNums();	//售后转单的实际规格次数
-		List<Date> realityAddTimeList = orders.getRealityAddTimeList();  //实际下单时间集合
 		
 		double orderAmountSum = 0d;  //应付总额
 		double afterPaymentSum = 0d;  //实际付款总额
@@ -4296,7 +4348,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderGoods.setSingleNormPrice(_singleNormPrice);	//单次标价
 			orderGoods.setIsreal(3);	//  2套卡 3通用卡
 			orderGoods.setServicetimes(actualSpeckeyTimes);	//预计服务次数
-			orderGoods.setRealityAddTime(realityAddTimeList.get(i));   //实际下单时间
+			orderGoods.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 			
 			//保存 mtmy_order_goods_mapping
 			orderGoodsDao.saveOrderGoods(orderGoods);
@@ -4319,7 +4371,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsSon.setMarketprice(goodsListSon.get(j).getMarketPrice());		//市场单价
 					orderGoodsSon.setGoodsprice(goodsListSon.get(j).getShopPrice());	//优惠价
 					orderGoodsSon.setRatioPrice(goodsListSon.get(j).getShopPrice());    //异价后的价格
-					orderGoodsSon.setRealityAddTime(realityAddTimeList.get(i));   //实际下单时间
+					orderGoodsSon.setRealityAddTime(orders.getRealityAddTime());   //实际下单时间
 					orderGoodsSon.setExpiringDate(goodspec.getExpiringDate());
 					if(Integer.valueOf(goodsListSon.get(j).getIsReal()) == 0){
 						orderGoodsSon.setGoodsnum(goodsListSon.get(j).getGoodsNum());	//购买数量
@@ -4385,7 +4437,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			turnOverDetails.setUserId(mtmyUserId);
 			turnOverDetails.setBelongOfficeId(orders.getBelongOfficeId());
 			turnOverDetails.setCreateBy(UserUtils.getUser());
+			turnOverDetails.setSettleDate(orders.getRealityAddTime());
 			turnOverDetailsService.saveTurnOverDetails(turnOverDetails);
+			
+			//下单时当实际下单时间不等于当天的时候调用接口,方便妃子校统计数据
+			compareRealityAddTimeAndNow(orders.getRealityAddTime(),orders.getBelongOfficeId());
+			
+			//下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+			insertDataForHonour(orders.getRealityAddTime(),orderid);
 		}
 		
 		Payment payment = paymentDao.getByCode(orders.getPaycode());
@@ -4415,6 +4474,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		_orders.setShippingtype(2);
 		_orders.setUserNote(orders.getUserNote());
 		_orders.setInvoiceOvertime(getMaxMonthDate(new Date()));
+		_orders.setRealityAddTime(orders.getRealityAddTime());
 		_orders.setBelongOfficeId(orders.getBelongOfficeId());
 		//修改退货日期
 		int returnDay = Integer.parseInt(ParametersFactory.getMtmyParamValues("returngoods_date"));
@@ -4512,5 +4572,30 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 */
 	public void updateIsPickUp(Orders orders){
 		ordersDao.updateIsPickUp(orders);
+	}
+	
+	/**
+	 * 下单时当实际下单时间不等于当天的时候调用接口
+	 * @param realityAddTime
+	 * @param officeId
+	 */
+	public void compareRealityAddTimeAndNow(Date realityAddTime,String officeId){
+		SimpleDateFormat fmt=new SimpleDateFormat("yyyy-MM-dd");
+		String newRealityAddTime = DateUtils.formatDate(realityAddTime, "yyyy-MM-dd");
+	     if(!fmt.format(realityAddTime).toString().equals(fmt.format(new Date()).toString())){//格式化为相同格式
+	    	 MtmyMnappointmentController.adddata_log("",newRealityAddTime,officeId,"");
+	     }
+	}
+	
+	/**
+	 * 下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+	 * @param newCreateTime
+	 * @param orderId
+	 */
+	public void insertDataForHonour(Date newCreateTime,String orderId){
+		SimpleDateFormat fmt=new SimpleDateFormat("yyyy-MM-dd");
+	     if(!fmt.format(newCreateTime).toString().equals(fmt.format(new Date()).toString())){//格式化为相同格式
+	    	 ordersDao.insertForHonour(newCreateTime, orderId);
+	     }
 	}
 }

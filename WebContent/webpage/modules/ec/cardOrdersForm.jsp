@@ -285,7 +285,7 @@
 						top.layer.alert('单个业务员的营业额不能小于0！', {icon: 0, title:'提醒'});
 	 	    			return;
 					}
-					if(parseFloat(pushMoneyTotal[i].value) + parseFloat(changeValue[i].value) < 0){
+					if((parseFloat(pushMoneyTotal[i].value) + parseFloat(changeValue[i].value)) < 0){
 						top.layer.alert('单个业务员的营业额不能小于其在该笔订单中的营业总额！', {icon: 0, title:'提醒'});
 	 	    			return;
 					}
@@ -296,9 +296,10 @@
 					var sum = 0;
 					var result = obj.document.getElementsByClassName(map[j]);
 					for(k=0;k<result.length;k++){
-						sum = parseFloat(sum) + parseFloat(result[k].value); 
+						sum = (parseFloat(sum)*10000 + parseFloat(result[k].value)*10000)/10000; 
 					}
-      	    		if(parseFloat(sum) - parseFloat(amount) != 0){
+					sum = sum.toFixed(2);
+					if((parseFloat(sum) - parseFloat(amount)) != 0){
       	    			top.layer.alert('每个部门的营业额之和必须等于分享营业额！', {icon: 0, title:'提醒'});
 	 	    			return;
       	    		}
@@ -630,6 +631,9 @@ window.onload=initStatus;
 									<form:option value="${payment.paycode}">${payment.paydesc}</form:option>
 								</c:forEach>
 							</form:select>
+							<p></p> 
+							<label class="active">实际下单时间：</label>
+							<fmt:formatDate value="${orders.realityAddTime}"  pattern="yyyy-MM-dd HH:mm:ss" />
 							<p></p>
 							<label >留言备注：</label>
 							<textarea name="userNote" rows="5" cols="60">${orders.userNote }</textarea>

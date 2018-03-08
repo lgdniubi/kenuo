@@ -34,7 +34,7 @@
 			#{createBy.id},
 			SYSDATE(),
 			#{createBy.id},
-			SYSDATE()
+			#{settleDate}
 		)
 	</insert>
 	

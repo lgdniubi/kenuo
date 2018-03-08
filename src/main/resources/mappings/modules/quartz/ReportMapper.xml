@@ -12,28 +12,33 @@
 	<insert id="insertTableUserAppArrearge"><!--统计会员欠款(区分商家)-->
 		INSERT INTO mtmydb.user_app_arrearage 
 		(user_id,user_name,beautician_id,beautician_name,user_office_id,user_office_name,goods_franchisee_id,total_app_arrearage,create_day)
-		SELECT 
+		SELECT
 			u.user_id,
-			u.`name`,
+			u.`name` as `name`,
 			u.beautician_id,
 			u.beautician_name,
 			u.office_id,
-			u.office_name,
-			gm.goods_franchisee_id,
-			IFNULL(SUM(de.app_arrearage),0) as app_arrearage,
-			MAX(de.create_date) as create_day
+			u.office_name, 
+			dg.goods_franchisee_id,
+			IFNULL(SUM(dg.app_arrearage),0) as app_arrearage,
+			MAX(dg.create_day)as create_day
+		FROM
+		(SELECT
+			g.goods_franchisee_id,
+			d.app_arrearage as app_arrearage,
+			d.goods_mapping_id,
+			g.user_id,
+			d.create_date as create_day
 		FROM 
-			mtmydb.mtmy_order_goods_details de
-		INNER JOIN mtmydb.mtmy_order_goods_mapping gm ON gm.rec_id = de.goods_mapping_id
-		INNER JOIN mtmydb.mtmy_users u ON u.user_id = gm.user_id
-		INNER JOIN trains.sys_office s ON s.id = u.office_id
-		WHERE 
-		gm.del_flag =0
-		AND u.del_flag =0
-		AND (u.office_id is not null OR u.office_id != '')
-		AND s.del_flag =0
-		AND gm.goods_franchisee_id = s.franchisee_id
-		GROUP BY u.user_id HAVING app_arrearage >0;
+			mtmydb.mtmy_order_goods_details d
+		INNER JOIN mtmydb.mtmy_order_goods_mapping g ON g.rec_id = d.goods_mapping_id AND g.del_flag =0
+		AND d.app_arrearage != 0
+		)dg
+		INNER JOIN (SELECT * FROM mtmydb.mtmy_users u WHERE u.del_flag = 0 and (u.office_id is not null OR u.office_id != '')) u ON u.user_id = dg.user_id
+		INNER JOIN (SELECT s.id,s.franchisee_id FROM trains.sys_office s WHERE s.del_flag = 0)s ON s.id = u.office_id 
+		WHERE
+		dg.goods_franchisee_id = s.franchisee_id
+		GROUP BY dg.user_id HAVING app_arrearage > 0
 	</insert>
 
 	<insert id="insertTableOfficeAppArrearge"><!--统计机构欠款(区分商家)-->

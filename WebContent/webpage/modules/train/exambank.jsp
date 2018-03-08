@@ -63,7 +63,7 @@
 		})
 		
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-        	var exerciseIds =  $('textarea').text();
+        	var exerciseIds =  $("#mergeExerciseId").val();
 			if(exerciseIds == ''){
 				 top.layer.alert("请选择一条数据！", {icon: 0, title:'提醒'}); 
 				 return false;
@@ -108,9 +108,12 @@
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		 				<input id="categoryId1" name="ziCategoryId" value="${ziCategoryId}" type="hidden"/>	<!--二级子类ID  -->
+		 				<input name="LessCategoryId" value="${LessCategoryId }" type="hidden">
+		 				<input name="unitTestId" value="${unitTestId}" type="hidden"/>	
 		 				<input id="lessonId" name="lessonId" value="${exercisesCategorys.lessonId}" type="hidden"/>  <!--添加课程习题 翻页是提交课程ID  -->
 						<input id="lessontype" name="lessontype" value="${exercisesCategorys.lessontype}" type="hidden"/>	<!-- 判断课程习题还是单元试题 -->
 						<input type="hidden" name="restNum" id="restNum"><!-- 重置表单  为了不影响批量添加提交课程id -->
+						<input type="hidden" name="pageExerId" id="pageExerId" value="${pageExerId }"><!-- 批量添加的试题id -->
                         <div class="form-group">
                             <label>关键字：<input id="exerciseTitle" name="exerciseTitle" type="text" value="${exerciseTitle}" class="form-control" placeholder="请输入关键字" maxlength="10"></label> 
                             <!-- 下拉框二级联动 -->
@@ -157,7 +160,9 @@
                     <tbody>
 	                    <c:forEach items="${page.list}" var="Exercises">
 	                        <tr style="text-align: center;">
-	                            <td><input type="checkbox" name="exerciseId" class="checkall" value="${Exercises.exerciseId}"></td>
+	                            <td>
+	                            	<input type="checkbox" name="exerciseId" class="checkall" value="${Exercises.exerciseId}">
+	                            </td>
 	                            <td>${Exercises.exerciseTitle}</td>
 	                            <td>
 	                            	${fns:getDictLabel(Exercises.exerciseType, 'exercise_type', '')}
@@ -185,11 +190,12 @@
     <div style="display: none">
     <!-- 点击批量添加提交对应的from -->
     <form:form class="navbar-form navbar-left searcharea"  id="inputForm" modelAttribute="exercise" action="${ctx}/train/exambank/addAllExam" method="post">
-    	<input id="ziCategoryId" name="ziCategoryId" value="${ziCategoryId}" />  
+    	<input id="unitTestId" name="unitTestId" value="${unitTestId}" />  
 		<input id="lessontype" name="lessontype" value="${exercisesCategorys.lessontype}" />	
 	    <input id="lessonId" name="lessonId" value="${exercisesCategorys.lessonId}" />
-		<input id="text" name="exerciseId1"/>
-		<textarea rows="5px" cols="200px" name="exerciseId2"></textarea>
+		<input id="text" name="exerciseId1" value="${pageExerId }"/> 	<!-- 前一页试题id -->
+		<textarea rows="5px" cols="200px" name="exerciseId2" id="exerciseId2"></textarea>   <!-- 当前页id -->
+		<textarea rows="5px" cols="200px" name="mergeExerciseId" id="mergeExerciseId"></textarea>   <!-- 全部id -->
 	</form:form>
 	</div>
 	<script type="text/javascript">
@@ -197,7 +203,6 @@
 	   //     var $load = $('#loading');
 	        // 全选
 	        $('#checkall').click(function(){
-	        	$("#addexam").attr("disabled", false); 
 		        var result=""; 
 	        	if ($(this).is(':checked')) {
 	        		$(":checkbox").prop('checked',true); 
@@ -209,20 +214,49 @@
 		        }); 
 	        	//判断全选框是否被选中  
 		        	if($("input[name='exerciseId']:checked")){
-			        	$('textarea').text(result); 
+			        	$("#exerciseId2").text(result); 
 		        	}else{
 		        		result.splice($(this),1)
 		        	}
+		        	$("#pageExerId").val($("#text").val()+$("#exerciseId2").val());
+		        	$("#mergeExerciseId").val($("#pageExerId").val());
         	});
 	      //将已选中的值放入文本框中
 			$("input[name='exerciseId']").change(function(){
-				$("#addexam").attr("disabled", false); 
 		        var result="";
 		        $("input[name='exerciseId']:checked").each(function(){
-		              	result+=$(this).val()+',';
+			              	result+=$(this).val()+',';
 		        }); 
-		        $('textarea').text(result);
+		        $("#exerciseId2").text(result);
+		        $("#pageExerId").val($("#text").val()+$("#exerciseId2").val());
+		        $("#mergeExerciseId").val($("#pageExerId").val());
+		        /* alert("当前页:"+$("#exerciseId2").val());
+		        alert("前一页:"+$("#text").val());
+		        alert("分页:"+$("#pageExerId").val());
+		        alert("总共:"+$("#mergeExerciseId").val()); */
 		    })
+		    // 多选框选中
+		  $(function(){		   
+				if ($("#text").val().length > 0) {
+					$("#mergeExerciseId").val($("#text").val()+$("#exerciseId2").val());
+			    	var cheIds = $("#mergeExerciseId").val();
+			    	var arr = new Array();
+			    	if (cheIds != '' && cheIds.length > 0) {
+						arr = cheIds.split(",");
+						for (var i = 0; i < arr.length; i++) {
+							if (arr[i] != '' && arr[i].length > 0) {
+								$("input[type=checkbox][name=exerciseId][value="+arr[i]+"]").attr("checked",'checked');
+					       	  		if( $("input[type=checkbox][name=exerciseId][value="+arr[i]+"]").is(':checked')){
+					       	  			//将当前页面复选框选中的值用空格替代 
+					       	  			cheIds=cheIds.replace($("input[type=checkbox][name=exerciseId][value="+arr[i]+"]").val(),"");  
+					       	  		}
+							}
+				       	  	$("#text").val(cheIds);
+						}			    	
+					}
+				}			  
+		    })
+		    
 	</script>
 </body>
 </html>

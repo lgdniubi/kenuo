@@ -117,7 +117,7 @@
 	    	<div class="ibox-content">
 				<div class="tab-content" id="tab-content">
 	                <div class="tab-inner">
-						<form id="inputForm" action="${ctx}/ec/goodsPriceRatio/save">
+						<form id="inputForm" action="${ctx}/ec/goodsPriceRatio/save" method="post">
 						<input id="goodsPriceRatioId" name="goodsPriceRatioId" value="${goodsPriceRatio.goodsPriceRatioId}" type="hidden">
 							<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 								<tr>
