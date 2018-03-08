@@ -24,6 +24,12 @@
 				return;
 			}
 			
+			if($("#isNeworder").val() == 0){
+				$("#realityAddTime").val($("#newOrdersRealityAddTime").val());
+			}else{
+				$("#realityAddTime").val($("#oldOrdersRealityAddTime").val());
+			}
+			
 			layer.confirm("目前的订单实际时间为"+$("#realityAddTime").val()+"，保存后不可修改，确定吗？", {
 				  btn: ['确认','取消'] //按钮
 				}, function(){
@@ -194,8 +200,8 @@
 	}
 	
 	$(document).ready(function(){
-		var realityAddTime = {
-		    elem: '#realityAddTime',
+		var newOrdersRealityAddTime = {
+		    elem: '#newOrdersRealityAddTime',
 		    format: 'YYYY-MM-DD hh:mm:ss',
 		    event: 'focus',
 		    max: laydate.now(),   //最大日期
@@ -206,8 +212,23 @@
 		    issure: true,				//是否显示确定
 		    festival: true			//是否显示节日
 		};
+		
+		var oldOrdersRealityAddTime = {
+			    elem: '#oldOrdersRealityAddTime',
+			    format: 'YYYY-MM-DD hh:mm:ss',
+			    event: 'focus',
+			    max: laydate.now(),   //最大日期
+			    istime: true,				//是否显示时间
+			    isclear: true,				//是否显示清除
+			    istoday: true,				//是否显示今天
+			    issure: true,				//是否显示确定
+			    festival: true			//是否显示节日
+			};
 	
-		laydate(realityAddTime);
+		laydate(newOrdersRealityAddTime);
+		laydate(oldOrdersRealityAddTime);
+		
+		$("#oldTime").hide();
 			
 		$("#shop").hide();
 		$("#defaultRadio").click(function(){
@@ -550,6 +571,9 @@
 	function choose(value){
 		$("#belongOfficeId").val("");
 		$("#belongOfficeName").val("");
+		
+		$("#newOrdersRealityAddTime").val("");
+		$("#oldOrdersRealityAddTime").val("");
 		if(value == 1){
 			$("#iType").hide();
 			$("#personheadContent").hide();
@@ -559,8 +583,14 @@
 			$("#Ichecks").attr("checked",false);
 			$("#Ichecks").attr("disabled",true);
 			$("#belongOffice").hide();
+			
+			$("#newTime").hide();
+			$("#oldTime").show();
 		}else{
 			$("#belongOffice").show();
+			
+			$("#newTime").show();
+			$("#oldTime").hide();
 		} 
 	}
 	
@@ -592,7 +622,13 @@
 				<input type="hidden" id="_isNeworder" name="isNeworder" />
 				<p></p> 
 				<label><font color="red">*</font>实际下单时间：</label>
-				<input id="realityAddTime" name="realityAddTime" type="text" maxlength="30" class="laydate-icon form-control layer-date input-sm required" value="<fmt:formatDate value="${now}" pattern="yyyy-MM-dd HH:mm:ss"/>" style="width:185px;" placeholder="实际下单时间" readonly="readonly"/>
+				<input id="realityAddTime" name="realityAddTime" type="hidden">
+				<span id="newTime">
+					<input id="newOrdersRealityAddTime" name="newOrdersRealityAddTime" type="text" maxlength="30" class="laydate-icon form-control layer-date input-sm required" value="<fmt:formatDate value="${now}" pattern="yyyy-MM-dd HH:mm:ss"/>" style="width:185px;" placeholder="实际下单时间" readonly="readonly"/>
+				</span>
+				<span id="oldTime">
+					<input id="oldOrdersRealityAddTime" name="oldOrdersRealityAddTime" type="text" maxlength="30" class="laydate-icon form-control layer-date input-sm required" value="<fmt:formatDate value="${now}" pattern="yyyy-MM-dd HH:mm:ss"/>" style="width:185px;" placeholder="实际下单时间" readonly="readonly"/>
+				</span>
 				<span style="color:red;">订单一经保存，时间不予修改</span>
 				<p></p>
 				<div style=" border: 1px solid #CCC;padding:10px 20px 20px 10px;">
