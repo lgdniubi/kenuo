@@ -30,7 +30,6 @@
 		r.roomId as "roomId",
 		a.earnings_ratio as "earningsRatio",
 		a.is_open as isOpen,
-		is_open_role AS isOpenRole,
 		a.is_recommend as isRecommend,
 		a.del_flag
 
@@ -107,7 +106,6 @@
 			live_remarks=#{liveRemarks},
 			earnings_ratio = #{earningsRatio},
 			is_open = #{isOpen},
-			is_open_role = #{isOpenRole},
 			audit_user=#{auditUser}
 		WHERE id=#{id}
 	</update>

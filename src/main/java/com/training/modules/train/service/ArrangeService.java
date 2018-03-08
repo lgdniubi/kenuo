@@ -26,24 +26,24 @@ public class ArrangeService extends CrudService<ArrangeDao,ArrangeShop>{
 		return dao.findOffice(officeId);
 	}
 	//查询店铺上班时间
-	public List<Integer> findArrange(String officeId,int month){
-		return dao.findArrange(officeId, month);
+	public List<Integer> findArrange(String officeId,int year,int month){
+		return dao.findArrange(officeId,year,month);
 	} 
 	//查询店铺美容师上班详情
-	public List<ArrangeBeautician> findArrangeBeautician(String officeId,int day,int month){
-		return dao.findArrangeBeautician(officeId, day, month);
+	public List<ArrangeBeautician> findArrangeBeautician(String officeId,int day,int month,int year){
+		return dao.findArrangeBeautician(officeId, day, month,year);
 	}
 	//查询店铺设备上班详情
-	public List<ArrangeBeautician> findArrangeEquipment(String officeId,int day,int month){
-		return dao.findArrangeEquipment(officeId, day, month);
+	public List<ArrangeBeautician> findArrangeEquipment(String officeId,int day,int month,int year){
+		return dao.findArrangeEquipment(officeId, day, month,year);
 	}
 	//查询店铺下的特殊美容师
-	public List<ArrangeBeautician> findAllBeautician(String officeId,int month){
-		return dao.findAllBeautician(officeId,month);
+	public List<ArrangeBeautician> findAllBeautician(String officeId,int year,int month){
+		return dao.findAllBeautician(officeId,year,month);
 	}
 	//查询特殊美容师排班详情
-	public List<ArrangeShop> findBeautician(String id,int month){
-		return dao.findBeautician(id,month);
+	public List<ArrangeShop> findBeautician(String id,int year,int month){
+		return dao.findBeautician(id,year,month);
 	}
 	//保存特殊美容师排班
 	public void saveBeautician(List<ArrangeShop> isUpdateArrange,List<ArrangeShop> list){
@@ -55,16 +55,16 @@ public class ArrangeService extends CrudService<ArrangeDao,ArrangeShop>{
 		}
 	}
 	//查询店铺下的普通美容师
-	public List<ArrangeBeautician> findAllOrdinary(String officeId,int month){
-		return dao.findAllOrdinary(officeId, month);
+	public List<ArrangeBeautician> findAllOrdinary(String officeId,int year, int month){
+		return dao.findAllOrdinary(officeId,year, month);
 	}
 	//查询店铺下的特殊设备
-	public List<ArrangeBeautician> findAllEquipment(String officeId,int month){
-		return dao.findAllEquipment(officeId,month);
+	public List<ArrangeBeautician> findAllEquipment(String officeId,int year,int month){
+		return dao.findAllEquipment(officeId,year,month);
 	}
 	//查询特殊设备排班详情
-	public List<ArrangeEquipment> findEquipment(int equipmentId,int month){
-		return dao.findEquipment(equipmentId, month);
+	public List<ArrangeEquipment> findEquipment(int equipmentId,int year,int month){
+		return dao.findEquipment(equipmentId,year, month);
 	}
 	//保存特殊设备排班
 	public void saveEquipment(List<ArrangeEquipment> isUpdateArrange,List<ArrangeEquipment> list){

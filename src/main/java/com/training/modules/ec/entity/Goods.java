@@ -114,10 +114,6 @@ public class Goods extends DataEntity<Goods> {
 	private double minRatio;           //异价比例的小值
 	private double maxRatio;           //异价比例的大值
 	
-	private int goodsIsOpen;                //是否公开
-	private String openFlag;          //是否公开的标识（商品数据树查询用的）
-	private List<String> franchiseeIdsList;   //商家id集合
-	
 	/**
 	 * get/set
 	 */
@@ -588,24 +584,6 @@ public class Goods extends DataEntity<Goods> {
 	}
 	public void setWhetherRatio(String whetherRatio) {
 		this.whetherRatio = whetherRatio;
-	}
-	public int getGoodsIsOpen() {
-		return goodsIsOpen;
-	}
-	public void setGoodsIsOpen(int goodsIsOpen) {
-		this.goodsIsOpen = goodsIsOpen;
-	}
-	public String getOpenFlag() {
-		return openFlag;
-	}
-	public void setOpenFlag(String openFlag) {
-		this.openFlag = openFlag;
-	}
-	public List<String> getFranchiseeIdsList() {
-		return franchiseeIdsList;
-	}
-	public void setFranchiseeIdsList(List<String> franchiseeIdsList) {
-		this.franchiseeIdsList = franchiseeIdsList;
 	}
 	
 }

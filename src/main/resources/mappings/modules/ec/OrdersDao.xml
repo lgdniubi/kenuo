@@ -240,6 +240,12 @@
 		<if test="returnedId != null and returnedId != ''">
 			AND a.returned_id = #{returnedId}
 		</if>
+		<if test="actualBegTime != null and actualBegTime != ''">
+			AND DATE_FORMAT(a.reality_add_time,'%Y-%m-%d') >= DATE_FORMAT(#{actualBegTime},'%Y-%m-%d')
+		</if>
+		<if test="actualEndTime !=null and actualEndTime != ''">
+			<![CDATA[AND DATE_FORMAT(a.reality_add_time,'%Y-%m-%d') <= DATE_FORMAT(#{actualEndTime},'%Y-%m-%d')]]>
+		</if>
 		GROUP BY a.order_id
 		<!-- <if test="orderArrearageType == 2 "> 没有欠款
 			HAVING orderarrearage > 0
@@ -345,6 +351,12 @@
 		</if>
 		<if test="userDelFlag !=null and userDelFlag !=''">
 			AND a.del_flag=#{userDelFlag}
+		</if>
+		<if test="actualBegTime != null and actualBegTime != ''">
+			AND DATE_FORMAT(a.reality_add_time,'%Y-%m-%d') >= DATE_FORMAT(#{actualBegTime},'%Y-%m-%d')
+		</if>
+		<if test="actualEndTime !=null and actualEndTime != ''">
+			<![CDATA[AND DATE_FORMAT(a.reality_add_time,'%Y-%m-%d') <= DATE_FORMAT(#{actualEndTime},'%Y-%m-%d')]]>
 		</if>
 		GROUP BY a.order_id
 		<choose>
@@ -871,6 +883,7 @@
 			shipping_type,
 			del_flag,
 			invoice_overtime,
+			reality_add_time,
 			user_note,
 			discount,
 			pay_time,
@@ -901,6 +914,7 @@
 			#{shippingtype},
 			#{delFlag},
 			#{invoiceOvertime},
+			#{realityAddTime},
 			#{userNote},
 			1,
 			SYSDATE(),
@@ -991,7 +1005,8 @@
 			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '0' AND service_times = -1) AS 'sumAppt',
 			(SELECT COUNT(*) FROM mtmydb.mtmy_returned_goods WHERE order_id = #{orderid} AND del_flag = 0 AND return_status IN (12,13,14,15,16,22,23,24,25)) AS 'returnedFlag',
 			o.is_pick_up as isPickUp,
-			o.pick_up_note as pickUpNote
+			o.pick_up_note as pickUpNote,
+			o.reality_add_time as realityAddTime
 		FROM
 			mtmydb.mtmy_orders o,
 			mtmydb.mtmy_users u
@@ -1059,6 +1074,7 @@
 			address,
 			user_note,
 			invoice_overtime,
+			reality_add_time,
 			discount,
 			pay_time,
 			return_time,
@@ -1092,6 +1108,7 @@
 			#{address},
 			#{userNote},
 			#{invoiceOvertime},
+			#{realityAddTime},
 			1,
 			SYSDATE(),
 			DATE_ADD(NOW(),INTERVAL #{returnDay} DAY),
@@ -1359,4 +1376,20 @@
 			pick_up_note = #{pickUpNote}
 		WHERE order_id = #{orderid}
 	</update>
+	
+	
+	<!-- 下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用) -->
+	<insert id="insertForHonour">
+		INSERT INTO mtmydb.mtmy_data_log(
+			new_create_time,
+			old_create_time,
+			order_id,
+			create_date
+		)VALUES(
+			#{newCreateTime},
+			NOW(),
+			#{orderId},
+			NOW()
+		)
+	</insert>
 </mapper>

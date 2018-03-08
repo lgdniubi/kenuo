@@ -22,8 +22,6 @@ public class Theme extends DataEntity<Theme>{
 	private int delflag;                      //删除标识（0：正常；1：删除；）
 	private String flag;                     //标识
 	
-	private String isOpen;                  //是否公开(0：公开；不公开则保存相应的商家id，以,拼接)
-	
 	public int getThemeId() {
 		return themeId;
 	}
@@ -91,11 +89,5 @@ public class Theme extends DataEntity<Theme>{
 	public void setFlag(String flag) {
 		this.flag = flag;
 	}
-	public String getIsOpen() {
-		return isOpen;
-	}
-	public void setIsOpen(String isOpen) {
-		this.isOpen = isOpen;
-	}
-
+	
 }

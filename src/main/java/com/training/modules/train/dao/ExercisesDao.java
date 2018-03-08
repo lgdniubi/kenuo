@@ -1,5 +1,7 @@
 package com.training.modules.train.dao;
 
+import java.util.List;
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.Exercises;
@@ -49,4 +51,20 @@ public interface ExercisesDao extends CrudDao<ExercisesCategorys>{
 		 * @return
 		 */
 		public TrainCategorys findByName(String categoryName);
+		/**
+		 * 
+		 * @Title: findExercisesId
+		 * @Description: TODO 查询当前课程的试题id
+		 * @throws
+		 * 2018年2月28日 兵子
+		 */
+		public List<String> findExercisesId(ExercisesCategorys exercisesCategorys);
+		/**
+		 * 
+		 * @Title: findExerPage
+		 * @Description: TODO 分页查询试题（排除当前课程已有的试题）
+		 * @throws
+		 * 2018年2月28日 兵子
+		 */
+		public List<ExercisesCategorys> findExerPage(ExercisesCategorys exercisesCategorys);
 }

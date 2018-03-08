@@ -16,7 +16,6 @@ public class AppStartPage extends DataEntity<AppStartPage>{
 	private String imgUrl;						//启动页
 	private String redirectUrl;					//链接
 	private String isOnSale;					//是否上架（0：下架；1：上架）
-	private String type;                        //位置类型（0：启动页；1：广告位）
 	
 	public int getAppStartPageId() {
 		return appStartPageId;
@@ -47,12 +46,6 @@ public class AppStartPage extends DataEntity<AppStartPage>{
 	}
 	public void setIsOnSale(String isOnSale) {
 		this.isOnSale = isOnSale;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
 	}
 	
 }

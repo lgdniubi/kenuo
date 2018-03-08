@@ -28,7 +28,7 @@
 		    type: 2, 
 		    area: ['800px', '600px'],
 		    title:"添加商品",
-		    content: "${ctx}/ec/action/addActionGoodsForm?actionId="+$("#actionId").val(),
+		    content: "${ctx}/ec/action/addActionGoodsForm?actionId="+$("#actionId").val() ,
 		    btn: ['确定', '关闭'],
 		    yes: function(index, layero){
 		    	var arr = new Array(); //数组定义标准形式，不要写成Array arr = new Array();
