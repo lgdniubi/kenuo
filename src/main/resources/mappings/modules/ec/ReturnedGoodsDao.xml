@@ -149,7 +149,7 @@
 		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
 		LEFT JOIN mtmydb.mtmy_order_goods_details f ON a.order_id=f.order_id AND a.goods_mapping_id = f.goods_mapping_id
 		WHERE 
-			a.id = #{id} AND a.del_flag = 0 
+			a.id = #{id}
 	</select>
 	<!-- 查询订单中商品已经售后成功的个数 -->
 	<select id="getReturnedGoods" resultType="int">
@@ -157,8 +157,7 @@
 			COUNT(1)
 		FROM mtmydb.mtmy_returned_goods 
 		WHERE 
-			return_status IN (12,13,14,15,16) 
-		AND del_flag = 0 
+			return_status IN (12,13,14,15,16)
 		AND order_id= #{orderId}
 		AND goods_mapping_id= #{goodsMappingId}
 	</select>
@@ -169,7 +168,6 @@
 		FROM mtmydb.mtmy_returned_goods 
 		WHERE 
 			return_status IN (11,12,13,14,15,16)
-		AND del_flag = 0 
 		AND order_id= #{orderId}
 		AND goods_mapping_id= #{goodsMappingId}
 	</select>
@@ -180,7 +178,6 @@
 		FROM mtmydb.mtmy_returned_goods 
 		WHERE 
 			return_status IN (11,12,13,14,15,16)
-		AND del_flag = 0 
 		AND order_id= #{orderId}
 		AND goods_mapping_id= #{goodsMappingId}
 		AND id != #{id}
@@ -339,7 +336,6 @@
 		WHERE 
 			a.order_id = #{orderId}
 		AND a.id = #{returnedId}
-		AND a.del_flag = 0
 	</select>
 	<!-- 查询业务员提成总额 -->
 	<select id="getOrderPushmoneyRecord" resultType="OrderPushmoneyRecord">
@@ -622,7 +618,7 @@
 		LEFT JOIN trains.sys_user g ON g.id=a.receipt_by
 		LEFT JOIN trains.sys_user h ON h.id=a.shipper_by
 		LEFT JOIN trains.sys_user j ON j.id=a.financial_by
-		${sqlMap.dsf}	and a.del_flag=0
+		${sqlMap.dsf}
 		<if test="userName != null and userName!=''">
 			AND d.nickname like
 			<if test="dbName == 'oracle'">'%'||#{userName} ||'%'</if>
@@ -681,8 +677,7 @@
 		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
 		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
 		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
-		WHERE 1=1	
-		AND a.del_flag=0 
+		WHERE 1=1
 		AND a.user_id =#{userId}
 		<if test="keyword != null and keyword!=''">
 			AND (
@@ -737,6 +732,7 @@
 			mbt.order_id = #{orderId}
 		AND 
 			mbt.returned_id = #{returnedId}
+		ORDER BY mbt.id DESC
 	</select>
 	<!-- 获取店铺营业额的操作日志 -->
 	<select id="findMtmyTurnoverDetailsList" resultType="TurnOverDetails">
@@ -941,6 +937,20 @@
 		GROUP BY
 			r.department_id
 	</select>
+	<!-- 异步获取除本次售后外,该部门剩余分享的营业额 -->
+	<select id="getDeptPushmoney" resultType="Double">
+		SELECT
+			SUM(r.push_money) AS pushMoney
+		FROM
+			mtmydb.mtmy_beautician_turnover r
+		LEFT JOIN
+			trains.train_department td ON r.department_id = td.id
+		WHERE
+			r.order_id = #{orderId}
+		AND r.del_flag = 0
+		AND r.department_id = #{departmentId}
+		AND	(r.returned_id != #{returnedId} OR r.returned_id IS NULL)
+	</select>
 	
 	<!-- 查询业务员营业额明细列表-->
 	<select id="getBeauticianTurnoverList" resultType="OrderPushmoneyRecord">
@@ -981,7 +991,6 @@
 		INSERT INTO mtmydb.mtmy_beautician_turnover (
 			order_id,
 			returned_id,
-			turnover_details_id,
 			type,
 			user_id,
 			user_office_id,
@@ -999,7 +1008,6 @@
 		)VALUES(
 			#{orderId},
 			#{returnedId},
-			#{turnOverDetailsId},
 			#{type},
 			#{pushmoneyUserId},
 			#{userOfficeId},
@@ -1057,7 +1065,6 @@
 		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
 		WHERE a.order_id = #{orderid}
 		AND a.return_status IN (11,21)
-		AND a.del_flag=0
 	</select>
 	
 	<!-- 根据退货id查询子项实物的售后数量 -->
@@ -1084,7 +1091,6 @@
 		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
 		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
 		WHERE a.order_id = #{orderId}
-		AND a.del_flag=0
 		ORDER BY a.apply_date DESC
 	</select>
 </mapper>

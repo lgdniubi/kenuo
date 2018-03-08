@@ -204,6 +204,7 @@ public class Orders extends TreeEntity<Orders> {
 	private String belongOfficeId;           //归属机构id
 	private String belongOfficeName;         //归属机构名称
 	
+	private Date realityAddTime;             //订单的实际下单时间
 	
 	//-----------------------------强制取消需要的字段------------------------
 	private int advanceFlag;         //是否预约金,等于1说明查到advance_flag=1
@@ -222,6 +223,9 @@ public class Orders extends TreeEntity<Orders> {
 	
 	private int isPickUp;                           //是否已取货（0：否；1：是）
 	private String pickUpNote;                    //确认取货备注
+	
+	private Date actualBegTime;                   //实际下单时间的开始时间
+	private Date actualEndTime;                   //实际下单时间的结束时间
 	
 	public String getSearchIsReal() {
 		return searchIsReal;
@@ -1652,6 +1656,13 @@ public class Orders extends TreeEntity<Orders> {
 	public void setBelongOfficeName(String belongOfficeName) {
 		this.belongOfficeName = belongOfficeName;
 	}
+	public Date getRealityAddTime() {
+		return realityAddTime;
+	}
+	public void setRealityAddTime(Date realityAddTime) {
+		this.realityAddTime = realityAddTime;
+	}
+	
 	public int getAdvanceFlag() {
 		return advanceFlag;
 	}
@@ -1711,6 +1722,18 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setPickUpNote(String pickUpNote) {
 		this.pickUpNote = pickUpNote;
+	}
+	public Date getActualBegTime() {
+		return actualBegTime;
+	}
+	public void setActualBegTime(Date actualBegTime) {
+		this.actualBegTime = actualBegTime;
+	}
+	public Date getActualEndTime() {
+		return actualEndTime;
+	}
+	public void setActualEndTime(Date actualEndTime) {
+		this.actualEndTime = actualEndTime;
 	}
 	
 }

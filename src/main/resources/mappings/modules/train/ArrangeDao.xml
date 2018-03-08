@@ -8,9 +8,9 @@
 	<!-- 查询店铺上班时间 -->
 	<select id="findArrange" resultType="int"><!-- union 去重 union all 不去重   -->
 		SELECT DISTINCT IF(a.time = 0,a.day*2-1,a.day*2) AS day FROM (
-			SELECT DISTINCT day,time FROM train_arrange_equipment WHERE shop_id = #{officeId} AND month = #{month}
+			SELECT DISTINCT day,time FROM train_arrange_equipment WHERE shop_id = #{officeId} AND month = #{month} AND DATE_FORMAT(appt_date,'%Y') = #{year}
 			union
-			SELECT DISTINCT day,time FROM train_arrange_shop WHERE shop_id = #{officeId} AND month = #{month} AND flag = 1) as a ORDER BY day
+			SELECT DISTINCT day,time FROM train_arrange_shop WHERE shop_id = #{officeId} AND month = #{month} AND DATE_FORMAT(appt_date,'%Y') = #{year} AND flag = 1) as a ORDER BY day
 	</select>
 	<!-- 查询店铺美容师上班详情 -->
 	<select id="findArrangeBeautician" resultType="ArrangeBeautician">
@@ -21,6 +21,7 @@
 			LEFT JOIN sys_user b ON a.beautician_id = b.id
 		WHERE
 			a.shop_id = #{officeId}
+			AND DATE_FORMAT(a.appt_date,'%Y') = #{year}
 			AND a.month = #{month}   
 			AND a.day = IF(MOD(#{day},2) = 0,floor(#{day}/2),floor((#{day}+1)/2))  
 			AND a.time = IF(MOD(#{day},2) = 0,1,0)
@@ -35,6 +36,7 @@
 		LEFT JOIN train_equipment b ON a.equipment_id = b.id
 		WHERE
 			a.shop_id = #{officeId}
+			AND DATE_FORMAT(a.appt_date,'%Y') = #{year}
 			AND a.month = #{month}
 			AND a.day = IF(MOD(#{day},2) = 0,floor(#{day}/2),floor((#{day}+1)/2))  
 			AND a.time = IF(MOD(#{day},2) = 0,1,0)
@@ -44,7 +46,7 @@
 		SELECT DISTINCT a.id AS userId,a.name,a.office_id AS userOfficeId,c.del_flag FROM sys_user a RIGHT JOIN (
 			SELECT user_id FROM train_special_beautician WHERE bazaar_id = (SELECT parent_id FROM trains.sys_office WHERE id = #{officeId}) AND del_flag = 0
 			union all
-			SELECT DISTINCT b.beautician_id AS userId FROM train_arrange_shop b WHERE b.shop_id = #{officeId} AND b.month = #{month} AND flag = 1
+			SELECT DISTINCT b.beautician_id AS userId FROM train_arrange_shop b WHERE b.shop_id = #{officeId} AND b.month = #{month} AND DATE_FORMAT(b.appt_date,'%Y') = #{year} AND flag = 1
 		) AS b ON a.id = b.user_id
 		LEFT JOIN train_special_beautician c ON b.user_id = c.user_id WHERE c.del_flag is NOT NULL ORDER BY c.del_flag
 	</select>
@@ -64,6 +66,7 @@
 		 	train_arrange_shop a
 		 WHERE 
 		 	a.beautician_id = #{id} 
+		 	AND DATE_FORMAT(a.appt_date,'%Y') = #{year}
 		 	AND a.month = #{month} 
 		 ORDER BY a.day
 	</select>
@@ -117,7 +120,7 @@
 		SELECT DISTINCT a.id AS equipmentId,a.name AS equipmentName,a.del_flag FROM train_equipment a RIGHT JOIN(
 			SELECT id AS equipment_id FROM train_equipment WHERE type = 1 AND del_flag = 0 AND bazaar_id = (SELECT parent_id FROM trains.sys_office WHERE id = #{officeId})
 			union all
-			SELECT DISTINCT b.equipment_id AS equipment_id FROM train_arrange_equipment b WHERE b.shop_id = #{officeId} AND b.month = #{month}
+			SELECT DISTINCT b.equipment_id AS equipment_id FROM train_arrange_equipment b WHERE b.shop_id = #{officeId} AND b.month = #{month} AND DATE_FORMAT(b.appt_date,'%Y') = #{year}
 		) AS b ON a.id = b.equipment_id
 	</select>
 	<!-- 查询设备排班信息 -->
@@ -132,7 +135,10 @@
 			a.shop_id AS shopId,
 			a.shop_name AS shopName
 		FROM train_arrange_equipment a
-		WHERE a.equipment_id = #{equipmentId} AND a.month = #{month}
+		WHERE 
+			a.equipment_id = #{equipmentId} 
+			AND DATE_FORMAT(a.appt_date,'%Y') = #{year}
+			AND a.month = #{month}
 	</select>
 	<!-- 删除特殊设备当前月所有排班 -->
 	<delete id="delEquipment">
@@ -188,7 +194,7 @@
 			SELECT c.user_id,(CASE WHEN d.del_flag = 0 THEN 0 ELSE 1 END) AS del_flag FROM
 				(SELECT a.id AS user_id FROM sys_user AS a RIGHT JOIN (SELECT user_id FROM trains.sys_user_role WHERE role_id = (SELECT id FROM trains.sys_role WHERE enname = 'pb' AND del_flag = 0)) ur ON a.id = ur.user_id WHERE a.office_id = #{officeId} AND a.del_flag = 0
 				union
-				SELECT DISTINCT b.beautician_id AS user_id FROM train_arrange_shop b WHERE b.shop_id = #{officeId} AND b.month = #{month}) c
+				SELECT DISTINCT b.beautician_id AS user_id FROM train_arrange_shop b WHERE b.shop_id = #{officeId} AND b.month = #{month} AND DATE_FORMAT(b.appt_date,'%Y') = #{year}) c
 				LEFT JOIN trains.train_special_beautician d ON c.user_id = d.user_id
 		) AS b ON a.id = b.user_id ORDER BY beauticianStatus DESC
 	</select>
