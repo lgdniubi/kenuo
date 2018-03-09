@@ -129,9 +129,11 @@ public class FranchiseeBannerController extends BaseController{
 		try {
 			String id = request.getParameter("ID");
 			String flag = request.getParameter("flag");
-			if(!StringUtils.isEmpty(id) && !StringUtils.isEmpty(flag)){
+			String franchiseeId = request.getParameter("franchiseeId");
+			if(!StringUtils.isEmpty(id) && !StringUtils.isEmpty(flag) && !StringUtils.isEmpty(franchiseeId)){
 				mtmyFranchiseeBanner.setId(id);
 				mtmyFranchiseeBanner.setIsShow(flag);
+				mtmyFranchiseeBanner.setFranchiseeId(Integer.valueOf(franchiseeId));
 				franchiseeBannerService.changIsShow(mtmyFranchiseeBanner);
 				map.put("STATUS", "OK");
 			}else{

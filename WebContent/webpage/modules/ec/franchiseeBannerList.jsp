@@ -33,11 +33,11 @@
 		});
 		
 		//是否显示
-		function updateType(id,flag){
+		function updateType(id,flag,franchiseeId){
 			$(".loading").show();//打开展示层
 			$.ajax({
 				type : "POST",
-				url : "${ctx}/ec/franchiseeBanner/updateType?ID="+id+"&flag="+flag,
+				url : "${ctx}/ec/franchiseeBanner/updateType?ID="+id+"&flag="+flag+"&franchiseeId="+franchiseeId,
 				dataType: 'json',
 				success: function(data) {
 					$(".loading").hide(); //关闭加载层
@@ -117,10 +117,10 @@
 							<td style="text-align: center;" class="imgUrl" ><img alt="" src="${ctxStatic}/images/lazylode.png"  data-src="${franchiseeBanner.img}" style="width: 150px;height: 100px;border:1px solid black; "></td>
 							<td style="text-align: center;" id="${franchiseeBanner.id}">
 								<c:if test="${franchiseeBanner.isShow  eq '0'}">
-									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="updateType('${franchiseeBanner.id}','1')">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="updateType('${franchiseeBanner.id}','1','${franchiseeBanner.franchiseeId}')">
 								</c:if>
 								<c:if test="${franchiseeBanner.isShow eq '1'}">
-									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="updateType('${franchiseeBanner.id}','0')">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="updateType('${franchiseeBanner.id}','0','${franchiseeBanner.franchiseeId}')">
 								</c:if>
 							</td>
 							<td style="text-align: center;">${franchiseeBanner.sort}</td>

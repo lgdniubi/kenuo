@@ -1,5 +1,6 @@
 package com.training.modules.ec.dao;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -366,4 +367,11 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @param orders
 	 */
 	public void updateIsPickUp(Orders orders);
+	
+	/**
+	 * 下单时实际下单时间不等于当前时间时，同步数据(用于荣誉机制使用)
+	 * @param newCreateTime
+	 * @param orderId
+	 */
+	public void insertForHonour(@Param(value="newCreateTime")Date newCreateTime,@Param(value="orderId")String orderId);
 }

@@ -82,10 +82,41 @@
 					    	payBeg.max = datas; //结束日选好后，重置开始日的最大日期
 					    }
 					};
+				var actualBeg = {
+					    elem: '#actualBegTime',
+					    format: 'YYYY-MM-DD',
+					    event: 'focus',
+					    max: $("#actualEndTime").val(),   //最大日期
+					    istime: false,				//是否显示时间
+					    isclear: true,				//是否显示清除
+					    istoday: true,				//是否显示今天
+					    issure: true,				//是否显示确定
+					    festival: true,				//是否显示节日
+					    choose: function(datas){
+					    	actualEnd.min = datas; 		//开始日选好后，重置结束日的最小日期
+					    	actualEnd.start = datas 		//将结束日的初始值设定为开始日
+					    }
+					};
+				var actualEnd = {
+					    elem: '#actualEndTime',
+					    format: 'YYYY-MM-DD',
+					    event: 'focus',
+					    min: $("#actualBegTime").val(),
+					    istime: false,
+					    isclear: true,
+					    istoday: true,
+					    issure: true,
+					    festival: true,
+					    choose: function(datas){
+					    	actualBeg.max = datas; //结束日选好后，重置开始日的最大日期
+					    }
+					};
 					laydate(start);
 					laydate(end);
 					laydate(payBeg);
 					laydate(payEnd);
+					laydate(actualBeg);
+					laydate(actualEnd);
 	    });
 		
 		function addVirtualOrder(){
@@ -203,6 +234,12 @@
 						一
 						<input id="payEndTime" name="payEndTime" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" 
 						value="<fmt:formatDate value="${orders.payEndTime}" pattern="yyyy-MM-dd"/>"  style="width:185px;" placeholder="结束时间" readonly="readonly"/>&nbsp;&nbsp;
+					 	<label>实际下单时间：</label>
+						<input id="actualBegTime" name="actualBegTime" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
+							value="<fmt:formatDate value="${orders.actualBegTime}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="开始时间" readonly="readonly"/>
+						一
+						<input id="actualEndTime" name="actualEndTime" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" 
+						value="<fmt:formatDate value="${orders.actualEndTime}" pattern="yyyy-MM-dd"/>"  style="width:185px;" placeholder="结束时间" readonly="readonly"/>&nbsp;&nbsp;
 					 </div>	
 				</form:form>
 					<!-- 工具栏 -->

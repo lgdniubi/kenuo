@@ -50,6 +50,13 @@ public class FranchiseeBannerService extends CrudService<FranchiseeBannerDao, Mt
 	 * @return
 	 */
 	public void changIsShow(MtmyFranchiseeBanner mtmyFranchiseeBanner) {
-		franchiseeBannerDao.changIsShow(mtmyFranchiseeBanner);
+		franchiseeBannerDao.changeAll(mtmyFranchiseeBanner.getFranchiseeId());
+		if("1".equals(mtmyFranchiseeBanner.getIsShow())){
+			franchiseeBannerDao.changIsShow(mtmyFranchiseeBanner);
+		}else{
+			mtmyFranchiseeBanner = franchiseeBannerDao.getMtmyFranchiseeBannerByCreateDate(mtmyFranchiseeBanner.getFranchiseeId());
+			mtmyFranchiseeBanner.setIsShow("1");
+			franchiseeBannerDao.changIsShow(mtmyFranchiseeBanner);
+		}
 	}
 }

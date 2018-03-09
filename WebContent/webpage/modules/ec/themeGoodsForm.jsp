@@ -124,7 +124,7 @@
 			$.ajax({
 				 type:"get",
 				 dataType:"json",
-				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&goodsName="+goodsName+"&goodsId="+newGoodsId+"&isOnSale=1&isAppshow=1&isOpen="+$("#isOpen").val(),
+				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&goodsName="+goodsName+"&goodsId="+newGoodsId+"&isOnSale=1&isAppshow=1",
 				 success:function(date){
 					var data=date;
 					if(data.length < 1){
@@ -192,7 +192,6 @@
 			</div>
 			<div class="ibox-content">
 				<div class="clearfix">
-					<input id="isOpen" name="isOpen" value="${isOpen}" type="hidden">
 					<form:form id="inputForm" modelAttribute="goods" action="${ctx}/ec/goodsSubhead/saveGoodsSubheadGoods" method="post" class="form-horizontal">
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 							<tr>

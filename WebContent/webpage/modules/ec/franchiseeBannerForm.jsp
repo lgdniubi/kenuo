@@ -69,7 +69,7 @@
 							<form:hidden path="isShow"/>
 							<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 								<tr>
-									<td><label class="pull-right"><font color="red">*</font>选择商家：</label></td>
+									<td style="width: 80px"><label class="pull-right"><font color="red">*</font>选择商家：</label></td>
 									<td style="width: 40px"><sys:treeselect id="franchiseeId" name="franchiseeId" value="${mtmyFranchiseeBanner.id}"
 												labelName="franchisee.name" labelValue="${mtmyFranchiseeBanner.franchiseeName}" 
 	 											title="加盟商" url="/sys/franchisee/treeData" 
@@ -77,7 +77,7 @@
 	 								</td>
 								</tr>
 								<tr>
-									<td><label class="pull-right"><font color="red">*</font>商家banner图名称：</label></td>
+									<td><label class="pull-right"><font color="red">*</font>名称：</label></td>
 									<td>
 										<form:input path="bannerName" class="form-control required" style="width: 300px"/>
 									</td>

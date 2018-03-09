@@ -23,21 +23,7 @@
 			   top.layer.alert('头图不可为空！', {icon: 0, title:'提醒'});
 			   return false;
 		    }
-			
-			if($('input:checked').length <= 0){
-				top.layer.alert('可见范围必选！', {icon: 0, title:'提醒'});
-				return false;
-			}else{
-				var str=document.getElementsByName("isOpenLabel");
-				var ids = "";
-				for (i=0;i<str.length;i++){
-				    if(str[i].checked == true){
-				    	ids = ids + str[i].value + ",";
-				    }
-				}
-				$("#isOpen").val(ids);
-			}
-		
+
 		    if(validateForm.form()){
 	    		loading("正在提交，请稍候...");
 				$("#inputForm").submit();
@@ -47,33 +33,7 @@
 	    }
 		$(document).ready(function(){
 			validateForm = $("#inputForm").validate();
-			
-			var isOpenIds = "${theme.isOpen}";
-			if(isOpenIds.length > 0){
-				var isOpenId = isOpenIds.split(",");
-				for(q=0;q<isOpenId.length-1;q++){
-					$("input[type=checkbox][name=isOpenLabel][value="+isOpenId[q]+"]").attr("checked",true);
-					queryIsOpen(isOpenId[q]);
-				}
-			}
-			
-			var id = "${theme.themeId}";
-			if(id > 0){
-				$("input[type=checkbox][name=isOpenLabel]").attr("disabled",true);
-			}
 		});
-		
-		function queryIsOpen(value){
-			if($('input:checked').length == 0){
-				$("input[type=checkbox][name=isOpenLabel]").attr("disabled",false);
-			}else{
-				if(value == '0'){
-					$("input[type=checkbox][name=isOpenLabel][id=notOpen]").attr("disabled",true);
-				}else{
-					$("input[type=checkbox][name=isOpenLabel][id=open]").attr("disabled",true);
-				}				
-			}
-		}
 	</script>
 </head>
 <body class="gray-bg">
@@ -123,16 +83,6 @@
 									<td><label class="pull-right"><font color="red">*</font>排序：</label></td>
 									<td>
 										<input class="form-control required" id="sort" name="sort" type="text" value="${theme.sort}" style="width: 300px"/>
-									</td>
-								</tr>
-								<tr>
-									<td width="100px"><label class="pull-right"><font color="red">*</font>可见范围：</label></td>
-									<td>
-										<input type="checkbox" id="open" name="isOpenLabel" value="0" onclick="queryIsOpen('0')">公开
-										<c:forEach items="${list}" var="franchisee">
-											<input type="checkbox" id="notOpen" name="isOpenLabel" value="${franchisee.id}" onclick="queryIsOpen('1')">${franchisee.name}
-										</c:forEach>
-										<input id="isOpen" value="${theme.isOpen}" name="isOpen" type="hidden">
 									</td>
 								</tr>
 							</table>

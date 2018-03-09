@@ -60,9 +60,7 @@
 		  sys_franchisee f 
 		
 		WHERE f.del_flag = 0 and f.parent_id !=0
-		<if test="isRealFranchisee != null and isRealFranchisee != ''">
-			AND f.is_real_franchisee = #{isRealFranchisee}
-		</if>
+		
 		ORDER BY f.code
 	</select>
 	

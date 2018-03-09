@@ -443,20 +443,6 @@
 		}
 	}
 	
-	 $(document).ready(function(){
-		if(${orders.isNeworder == 1}){
-			function today(){
-			    var today=new Date();
-			    var h=today.getFullYear();
-			    var m=today.getMonth()+1;
-			    var d=today.getDate();
-			    m= m<10?"0"+m:m;      
-			    d= d<10?"0"+d:d;  
-			    return h+"-"+m+"-"+d;
-			}
-			document.getElementById("realityAddTime").value = today(); 
-		}
-	 });
 </script>
 </head>
 <body>
@@ -573,14 +559,6 @@
 									<td><label class="pull-right">余额：</label></td>
 									<td><input id="spareMoney" name="spareMoney" maxlength="10" class="form-control required" readonly="true"  style="width:150px;height:30px;"/></td>
 								</tr>
-								<c:if test="${orders.isNeworder == 1}">
-									<tr>
-										<td><label class="pull-right"><font color="red">*</font>实际下单时间：</label></td>	
-										<td>
-											<input id="realityAddTime" name="realityAddTime" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'%y-%M-%d'})"/>
-										</td>
-									</tr>
-								</c:if>
 							</table>
 						</form:form>
 				</div>

@@ -149,7 +149,9 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		office.setFranchisee(franchisee);
 		//end 
 		//更新子类的归属商家
-		updateFranchisee(office);
+		if(!"".equals(office.getId())){
+			updateFranchisee(office);
+		}
 		super.save(office);
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 	}

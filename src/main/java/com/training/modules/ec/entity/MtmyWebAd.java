@@ -25,7 +25,6 @@ public class MtmyWebAd extends DataEntity<MtmyWebAd>{
 	private int sort;         //排序(数字越大越靠前)
 	private String subhead;   // 副标题
 	
-	private String isOpen;     //是否公开(0：公开；不公开则保存相应的商家id，以,拼接)
 	
 	public int getMtmyWebAdId() {
 		return mtmyWebAdId;
@@ -99,11 +98,7 @@ public class MtmyWebAd extends DataEntity<MtmyWebAd>{
 	public void setSubhead(String subhead) {
 		this.subhead = subhead;
 	}
-	public String getIsOpen() {
-		return isOpen;
-	}
-	public void setIsOpen(String isOpen) {
-		this.isOpen = isOpen;
-	}
+	
+	
 	
 }

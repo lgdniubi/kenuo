@@ -50,8 +50,7 @@
 		  g.service_min AS 'serviceMin',
 		  g.goods_type AS 'goodsType',
 		  g.advance_price AS 'advancePrice',
-		  g.supplier_id AS 'supplierId',
-		  g.is_open AS 'goodsIsOpen'
+		  g.supplier_id AS 'supplierId'
 	</sql>
 	
 	<sql id="goodsJoins">
@@ -77,8 +76,7 @@
 		  g.is_real AS 'isReal',
 		  g.sort,
 		  g.action_id as "actionId",
-		  b.action_name as "actionName",
-		  g.is_open as "goodsIsOpen"
+		  b.action_name as "actionName"
 		FROM
 		  mtmydb.mtmy_goods g 
 		  LEFT JOIN mtmydb.mtmy_goods_category c 
@@ -211,9 +209,6 @@
 		<if test="goodsId != 0">
 			AND g.goods_id = #{goodsId}
 		</if>
-		<if test="openFlag != null and openFlag != ''">
-			AND g.is_open = #{openFlag}
-		</if>
 	</select>
 	<!-- 根据多个分类查询上商品 -->
 	<select id="findByCateList" resultType="Goods">
@@ -232,8 +227,7 @@
 			g.goods_name AS 'goodsName',
 			g.original_img AS 'originalImg',
 			g.service_min AS 'serviceMin',
-			g.is_real AS 'isReal',
-			g.is_open AS 'goodsIsOpen'
+			g.is_real AS 'isReal'
 		FROM
 			mtmydb.mtmy_goods g
 		WHERE g.del_flag = 0  AND g.goods_id = #{goodsId}
@@ -271,8 +265,7 @@
 		  g.sales_sum AS 'salesSum',
 		  g.region_name AS 'regionName',
 		  g.region_id AS 'regionId',
-		  g.service_min AS 'serviceMin',
-		  g.is_open AS 'goodsIsOpen'
+		  g.service_min AS 'serviceMin'
 		FROM
 		  mtmydb.mtmy_goods g
 		 
@@ -326,8 +319,7 @@
 		  last_update,
 		  goods_type,
 		  advance_price,
-		  supplier_id,
-		  is_open
+		  supplier_id
 		) 
 		VALUES
 		  ( #{goodsCategoryId},
@@ -373,8 +365,7 @@
 		    SYSDATE(),
 		    #{goodsType},
 		    #{advancePrice},
-		    #{supplierId},
-		    #{goodsIsOpen}
+		    #{supplierId}
 		  )
 	</insert>
 	
@@ -423,8 +414,7 @@
 			  last_update = SYSDATE(),
 			  goods_type = #{goodsType},
 		      advance_price = #{advancePrice},
-			  supplier_id = #{supplierId},
-			  is_open = #{goodsIsOpen}
+			  supplier_id = #{supplierId}
 			WHERE del_flag = 0 AND goods_id = #{goodsId}
 	</update>
 	<update id="updateTotalstore">

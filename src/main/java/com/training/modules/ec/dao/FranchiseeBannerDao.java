@@ -25,6 +25,17 @@ public interface FranchiseeBannerDao extends CrudDao<MtmyFranchiseeBanner>{
 	 * @param mtmyFranchiseeBanner
 	 */
 	void changIsShow(MtmyFranchiseeBanner mtmyFranchiseeBanner);
-
+	
+	/**
+	 * 将当前商家的所有banner图都不显示
+	 * @param franchiseeId
+	 */
+	public void changeAll(int franchiseeId);
+	
+	/**
+	 * 查询某商家的最新创建的商家主页banner图
+	 * @param franchiseeId
+	 */
+	public MtmyFranchiseeBanner getMtmyFranchiseeBannerByCreateDate(int franchiseeId);
 	
 }
