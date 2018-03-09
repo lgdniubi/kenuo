@@ -84,6 +84,8 @@
                 			<th style="text-align: center;">ID</th>
                 			<th style="text-align: center;">明星技师组名称</th>
                 			<th style="text-align: center;">是否显示</th>
+                			<th style="text-align: center;">创建者</th>
+                			<th style="text-align: center;">创建时间</th>
                 			<th style="text-align: center;">操作</th>
                 		</tr>
                 	</thead>
@@ -100,6 +102,8 @@
 									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="updateType('${starBeauty.id}',0)">
 								</c:if>
 							</td>
+							<td style="text-align: center;">${starBeauty.createBy.name}</td>
+							<td style="text-align: center;"><fmt:formatDate value="${starBeauty.createDate}"  pattern="yyyy-MM-dd HH:mm:ss" /></td>
 							<td style="text-align: center;">
 								<shiro:hasPermission name="ec:starBeauty:view">
 									<a href="#" onclick="openDialogView('查看', '${ctx}/ec/starBeauty/form?id=${starBeauty.id}','600px', '550px')" class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i> 查看</a>

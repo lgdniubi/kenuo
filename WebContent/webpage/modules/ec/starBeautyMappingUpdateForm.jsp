@@ -30,7 +30,7 @@
 	    
 	});
 	$(function(){
-		$("#images").each(function(){
+		$(".images").each(function(){
 			var $this = $(this),
 				$src = $this.attr('data-src');  
 			$this.attr({'src':$src})
@@ -129,9 +129,6 @@
 							<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="newSearch()">
 								<i class="fa fa-search"></i> 查询
 							</button>
-							<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="newreset()">
-								<i class="fa fa-refresh"></i> 重置
-							</button>
 						</div>
 					</div>
 				</div>
@@ -149,12 +146,12 @@
 					<tbody>
 						<c:forEach items="${page.list}" var="user">
 						<tr>
-							<td><input type="radio" id="selectId" class="i-radio" value="${user.id}" onchange="selectFunction(this)"></td>
+							<td><input id="selectId" name="selectId" type="radio" value="${user.id}"  class="form required"  onchange="selectFunction(this)"/></td>
 							<td style="text-align: center;">${user.name}</td>
 							<td style="text-align: center;">${user.office.name}</td>
 							<td style="text-align: center;">${user.mobile}</td>
 							<td style="text-align: center;" class="imgUrl">
-								<img id="images" alt="" src="${ctxStatic}/images/lazylode.png"  data-src="${user.photo}" style="width: 150px;height: 100px;border:1px solid black; ">
+								<img class="images" alt="" src="${ctxStatic}/images/lazylode.png"  data-src="${user.photo}" style="width: 150px;height: 100px;border:1px solid black; ">
 							</td>
 						</tr>
 						<input type="hidden" id="${user.id}officeid" value="${user.office.id}"/>

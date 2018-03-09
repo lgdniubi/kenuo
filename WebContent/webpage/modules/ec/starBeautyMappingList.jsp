@@ -74,8 +74,16 @@
 						var sort = obj.document.getElementById("sort");
 						var remarks = obj.document.getElementById("remarks");
 				        
+						if($(starBeautyName).val()== null || $(starBeautyName).val()==""){
+							top.layer.alert('姓名不能为空!', {icon: 0, title:'提醒'}); 
+							return;
+						}
 						if($(starBeautyPhoto).val()== null || $(starBeautyPhoto).val()==""){
 							top.layer.alert('图片不能为空!', {icon: 0, title:'提醒'}); 
+							return;
+						}
+						if($(sort).val()== null || $(sort).val()==""){
+							top.layer.alert('排序不能为空!', {icon: 0, title:'提醒'}); 
 							return;
 						}
 						
@@ -139,8 +147,16 @@
 				var sort = obj.document.getElementById("sort");
 				var remarks = obj.document.getElementById("remarks");
 		        
+				if($(starBeautyName).val()== null || $(starBeautyName).val()==""){
+					top.layer.alert('姓名不能为空!', {icon: 0, title:'提醒'}); 
+					return;
+				}
 				if($(starBeautyPhoto).val()== null || $(starBeautyPhoto).val()==""){
 					top.layer.alert('图片不能为空!', {icon: 0, title:'提醒'}); 
+					return;
+				}
+				if($(sort).val()== null || $(sort).val()==""){
+					top.layer.alert('排序不能为空!', {icon: 0, title:'提醒'}); 
 					return;
 				}
 				
