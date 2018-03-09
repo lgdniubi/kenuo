@@ -80,7 +80,7 @@ public class arrangeController extends BaseController{
 					arrangeBeautician.setName(office.getName());
 					List<ArrangeShop> l = new ArrayList<ArrangeShop>();
 					//查询店铺上班时间
-					List<Integer> iList = arrangeService.findArrange(office.getId(), map.get("month"));
+					List<Integer> iList = arrangeService.findArrange(office.getId(), map.get("year"), map.get("month"));
 					//  循环当月天数
 					for (int i = 1; i <= map.get("maxDay"); i++) {
 						ArrangeShop arr = new ArrangeShop();
@@ -102,6 +102,7 @@ public class arrangeController extends BaseController{
 					lists.add(arrangeBeautician);
 				}
 				model.addAttribute("lists", lists);
+				model.addAttribute("year", map.get("year"));
 				model.addAttribute("month",map.get("month"));
 				model.addAttribute("bazaarName", arrangeShop.getSearchOfficeName());
 			}else{
@@ -124,11 +125,11 @@ public class arrangeController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "arrangeDetails")
-	public Map<String, Object> arrangeDetails(String officeId,int day,int month,HttpServletRequest request){
+	public Map<String, Object> arrangeDetails(String officeId,int day,int month,int year,HttpServletRequest request){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
-			List<ArrangeBeautician> listB = arrangeService.findArrangeBeautician(officeId, day, month);
-			List<ArrangeBeautician> listE = arrangeService.findArrangeEquipment(officeId, day, month);
+			List<ArrangeBeautician> listB = arrangeService.findArrangeBeautician(officeId, day, month,year);
+			List<ArrangeBeautician> listE = arrangeService.findArrangeEquipment(officeId, day, month,year);
 			jsonMap.put("STATUS", "OK");
 			jsonMap.put("LISTB", listB);
 			jsonMap.put("LISTE", listE);
@@ -160,9 +161,9 @@ public class arrangeController extends BaseController{
 			String str = calendar(date,officeName,"Beautician");
 			model.addAttribute("calendarStr", str);
 			List<ArrangeBeautician> lists = new ArrayList<ArrangeBeautician>();
-		    List<ArrangeBeautician> list = arrangeService.findAllBeautician(officeId,map.get("month"));
+		    List<ArrangeBeautician> list = arrangeService.findAllBeautician(officeId,map.get("year"),map.get("month"));
 		    for (ArrangeBeautician arrangeBeautician : list) {
-	    		List<ArrangeShop> l = arrangeService.findBeautician(arrangeBeautician.getUserId(),map.get("month"));
+	    		List<ArrangeShop> l = arrangeService.findBeautician(arrangeBeautician.getUserId(),map.get("year"),map.get("month"));
 	    		List<ArrangeShop> newL = new ArrayList<ArrangeShop>();
 	    		for (int i = 1; i <= map.get("maxDay"); i++) {
 	    			int y = 0;
@@ -302,9 +303,9 @@ public class arrangeController extends BaseController{
 			model.addAttribute("calendarStr", str);
 			
 			List<ArrangeBeautician> lists = new ArrayList<ArrangeBeautician>();
-		    List<ArrangeBeautician> list = arrangeService.findAllEquipment(officeId,map.get("month"));
+		    List<ArrangeBeautician> list = arrangeService.findAllEquipment(officeId,map.get("year"),map.get("month"));
 		    for (ArrangeBeautician arrangeBeautician : list) {
-		    	List<ArrangeEquipment> l = arrangeService.findEquipment(arrangeBeautician.getEquipmentId(),map.get("month"));
+		    	List<ArrangeEquipment> l = arrangeService.findEquipment(arrangeBeautician.getEquipmentId(),map.get("year"),map.get("month"));
 		    	List<ArrangeEquipment> newL = new ArrayList<ArrangeEquipment>();
 		    	for (int i = 1; i <= map.get("maxDay"); i++) {
 		    		int y = 0;
@@ -446,9 +447,9 @@ public class arrangeController extends BaseController{
 			model.addAttribute("calendarStr", str);
 			
 			List<ArrangeBeautician> lists = new ArrayList<ArrangeBeautician>();
-		    List<ArrangeBeautician> list = arrangeService.findAllOrdinary(officeId,map.get("month"));
+		    List<ArrangeBeautician> list = arrangeService.findAllOrdinary(officeId,map.get("year"),map.get("month"));
 		    for (ArrangeBeautician arrangeBeautician : list) {
-	    		List<ArrangeShop> l = arrangeService.findBeautician(arrangeBeautician.getUserId(),map.get("month"));
+	    		List<ArrangeShop> l = arrangeService.findBeautician(arrangeBeautician.getUserId(),map.get("year"),map.get("month"));
 	    		List<ArrangeShop> newL = new ArrayList<ArrangeShop>();
 	    		for (int i = 1; i <= map.get("maxDay"); i++) {
 	    			int y = 0;

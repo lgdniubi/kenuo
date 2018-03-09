@@ -160,5 +160,5 @@ public class ActionInfo extends DataEntity<ActionInfo>{
 	public void setSort(int sort) {
 		this.sort = sort;
 	}
-	
+
 }

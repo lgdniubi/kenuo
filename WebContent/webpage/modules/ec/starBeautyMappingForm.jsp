@@ -6,7 +6,7 @@
 %>
 <html>
 <head>
-	<title>启动页广告图</title>
+	<title>明星技师</title>
 	<meta name="decorator" content="default"/>
 	<link rel="stylesheet" href="${ctxStatic}/train/css/exam.css">
 	
@@ -19,10 +19,6 @@
 	<script type="text/javascript">
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-		    if($("#imgUrl").val() == null || $("#imgUrl").val() == ""){
-			   top.layer.alert('启动页广告图！', {icon: 0, title:'提醒'});
-			   return false;
-		    }
 	    	if(validateForm.form()){
 	    		loading("正在提交，请稍候...");
 				$("#inputForm").submit();
@@ -32,6 +28,8 @@
 	    };
 	    
 		$(document).ready(function() {
+			
+			
 			validateForm = $("#inputForm").validate({
 					submitHandler: function(form){
 						loading('正在提交，请稍等...');
@@ -58,39 +56,33 @@
 	    	<div class="ibox-content">
 				<div class="tab-content" id="tab-content">
 	                <div class="tab-inner">
-						<form:form id="inputForm" modelAttribute="appStartPage" action="${ctx}/ec/appStartPage/save">
-							<form:hidden path="appStartPageId"/>
-							<form:hidden path="isOnSale"/>
+						<form:form id="inputForm" modelAttribute="starBeautyMapping" action="${ctx}/ec/starBeauty/saveStarBeautyMapping">
+							<form:hidden path="mappingId"/>
+							<form:hidden path="starId"/>
+							<form:hidden path="userId"/>
+							<form:hidden path="officeIds"/>
 							<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 								<tr>
-									<td><label class="pull-right"><font color="red">*</font>启动页名称：</label></td>
-									<td>
-										<form:input path="name" class="form-control required" style="width: 300px"/>
-									</td>
-								</tr>
-								<tr>
-									<td><label class="pull-right"><font color="red">*</font>位置：</label></td>
-									<td>
-										<form:select path="type" class="form-control required">
-											<form:option value="0">启动页广告图</form:option>
-											<form:option value="1">广告位弹窗</form:option>
-										</form:select>
-									</td>
+						  			<td><label class="pull-right"><font color="red">*</font>姓名：</label></td>
+						       		<td><form:input path="starBeautyName" style="width: 300px;height:30px;" class="form-control required"/></td>
 								</tr>
 								<tr>
 									<td><label class="pull-right"><font color="red">*</font>图片：</label></td>
-									<td><label class="pull-right"><font color="red">*</font>启动页：</label></td>
 									<td>
-										<img id="img" src="${appStartPage.imgUrl }" alt="" style="width: 200px;height: 100px;"/>
-										<input class="form-control" id="imgUrl" name="imgUrl" type="hidden" value="${appStartPage.imgUrl }"/><!-- 图片隐藏文本框 -->
-										<input type="file" name="file_img_upload" id="file_img_upload">
+										<img id="img" src="${starBeautyMapping.starBeautyPhoto}" alt="" style="width: 200px;height: 100px;"/>
+										<input class="form-control" id="starBeautyPhoto" name="starBeautyPhoto" type="hidden" value="${starBeautyMapping.starBeautyPhoto}"/><!-- 图片隐藏文本框 -->
+										<input type="file" name="file_img_upload" id="file_img_upload" onclick="fileClick()">
 										<div id="file_img_queue"></div>
 									</td>
 								</tr>
 								<tr>
-									<td><label class="pull-right">链接：</label></td>
+									<td><label class="pull-right"><font color="red">*</font>排序：</label></td>
+						       		<td><form:input path="sort" style="width: 300px;height:30px;" class="form-control required"/></td>
+								</tr>
+								<tr>
+									<td><label class="pull-right">备注：</label></td>
 									<td>
-										<form:input path="redirectUrl" class="form-control" style="width: 300px"/>
+										<form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" class="form-control"/>
 									</td>
 								</tr>
 							</table>
@@ -110,7 +102,7 @@
 				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
 				'uploader' : '<%=uploadURL%>',
 				'fileObjName' : 'file_img_upload',//<input type="file"/>的name
-				'queueID' : 'file_img_queue',//与下面HTML的div.id对应,上传时的进度条
+				'queueID' : 'img',//与下面HTML的div.id对应
 				'method' : 'post',
 				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
 				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
@@ -124,7 +116,7 @@
 				'onUploadSuccess' : function(file, data, response) { 
 					var jsonData = $.parseJSON(data);//text 转 json
 					if(jsonData.result == '200'){
-						$("#imgUrl").val(jsonData.file_url);
+						$("#starBeautyPhoto").val(jsonData.file_url);
 						$("#img").attr('src',jsonData.file_url); 
 					}
 				}

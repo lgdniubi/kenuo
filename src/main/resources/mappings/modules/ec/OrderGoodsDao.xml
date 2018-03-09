@@ -376,7 +376,8 @@
 			ogm.single_reality_price AS 'singleRealityPrice',
 			ogm.advance_price AS 'advancePrice',
 			g.goods_type AS 'goodsType',
-			u.office_id AS 'officeId'
+			u.office_id AS 'officeId',
+			ogm.reality_add_time AS 'realityAddTime'
 		FROM mtmydb.mtmy_order_goods_mapping ogm
 		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id = ogm.goods_id
 		LEFT JOIN mtmydb.mtmy_users u ON u.user_id = ogm.user_id
@@ -465,7 +466,8 @@
 			ogm.single_reality_price AS 'singleRealityPrice',
 			ogm.advance_price AS 'advancePrice',
 			g.goods_type AS 'goodsType',
-			u.office_id AS 'officeId'
+			u.office_id AS 'officeId',
+			ogm.reality_add_time AS 'realityAddTime'
 		FROM mtmydb.mtmy_order_goods_mapping ogm
 		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id = ogm.goods_id
 		LEFT JOIN mtmydb.mtmy_users u ON u.user_id = ogm.user_id

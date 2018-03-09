@@ -22,8 +22,6 @@ import com.training.modules.ec.entity.Theme;
 import com.training.modules.ec.entity.ThemeMapping;
 import com.training.modules.ec.service.ThemeService;
 import com.training.modules.ec.utils.WebUtils;
-import com.training.modules.sys.entity.Franchisee;
-import com.training.modules.sys.service.FranchiseeService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
@@ -44,8 +42,6 @@ public class ThemeController extends BaseController{
 	private ThemeService themeService;
 	@Autowired
 	private ThemeDao themeDao;
-	@Autowired
-	private FranchiseeService franchiseeService;
 	
 	/**
 	 * 热门主题列表
@@ -77,14 +73,10 @@ public class ThemeController extends BaseController{
 	@RequestMapping(value="form")
 	public String form(Theme theme,HttpServletRequest request,Model model){
 		try{
-			Franchisee franchisee = new Franchisee();
-			franchisee.setIsRealFranchisee("1");
-			List<Franchisee> list = franchiseeService.findList(franchisee);
 			if(theme.getThemeId() != 0){
 				theme = themeService.getTheme(theme.getThemeId());
 			}
 			model.addAttribute("theme",theme);
-			model.addAttribute("list",list);
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "跳转编辑热门主题页面", e);
 			logger.error("跳转编辑热门主题页面出错信息：" + e.getMessage());
@@ -181,7 +173,6 @@ public class ThemeController extends BaseController{
 			Page<ThemeMapping> page = themeService.selectGoodsForTheme(new Page<ThemeMapping>(request,response),themeMapping);
 			model.addAttribute("page", page);
 			model.addAttribute("themeMapping",themeMapping);
-			model.addAttribute("isOpen", theme.getIsOpen());
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "热门主题对应的商品列表", e);
 			logger.error("热门主题对应的商品列表出错信息：" + e.getMessage());
@@ -207,7 +198,6 @@ public class ThemeController extends BaseController{
 			model.addAttribute("page", page);
 			model.addAttribute("themeMapping",themeMapping);
 			model.addAttribute("articlesIds",articlesIds);
-			model.addAttribute("isOpen", theme.getIsOpen());
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "热门主题对应的文章列表", e);
 			logger.error("热门主题对应的文章列表出错信息：" + e.getMessage());
@@ -227,7 +217,6 @@ public class ThemeController extends BaseController{
 		try{
 			List<ThemeMapping> goodsList = themeDao.selectGoodsForTheme(themeMapping);
 			model.addAttribute("goodsList",goodsList);
-			model.addAttribute("isOpen", request.getParameter("isOpen"));
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "跳转热门主题添加商品页面", e);
 			logger.error("跳转热门主题添加商品页面出错信息：" + e.getMessage());
@@ -245,7 +234,7 @@ public class ThemeController extends BaseController{
 	@RequestMapping(value="themeArticlesForm")
 	public String themeArticlesForm(ThemeMapping themeMapping,HttpServletRequest request,Model model){
 		try{
-			model.addAttribute("isOpen", request.getParameter("isOpen"));
+
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "跳转热门主题添加文章页面", e);
 			logger.error("跳转热门主题添加文章页面出错信息：" + e.getMessage());
@@ -375,29 +364,13 @@ public class ThemeController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "treeArticlesData")
-	public List<Map<String, Object>> treeArticlesData(HttpServletRequest request,String categoryId,String title,String isOpen,HttpServletResponse response) {
+	public List<Map<String, Object>> treeArticlesData(HttpServletRequest request,String categoryId,String title,HttpServletResponse response) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		try{
 			JSONObject jsonObject = new JSONObject();
-			String queryMediaArticleDetailList = ParametersFactory.getMtmyParamValues("mtmy_queryMediaArticleDetailList");	
+			String queryMediaArticleDetailList =	ParametersFactory.getMtmyParamValues("mtmy_queryMediaArticleDetailList");	
 			logger.info("##### web接口路径:"+queryMediaArticleDetailList);	
-			
-			String isPublic = "";
-			String franchiseeId = "";
-			if(!"".equals(isOpen) && isOpen != null){
-				if("0,".equals(isOpen)){                //若活动或者主题是公开的，则商品就是公开的
-					isPublic = "0";
-				}else{
-					String[] franchiseeIds = isOpen.split(",");
-					if(franchiseeIds.length == 1){      //若不是公开的且只有一个商家
-						franchiseeId = franchiseeIds[0];
-					}else if(franchiseeIds.length >= 2){  //若不是公开的且多个商家
-						isPublic = "0";
-					}
-				}
-			}
-			
-			String parpm = "{\"sourcePlatform\":\"mtmy\",\"articleCateId\":\""+categoryId+"\",\"articleTitle\":\""+title+"\",\"isPublic\":\""+isPublic+"\",\"franchiseeId\":\""+franchiseeId+"\"}";
+			String parpm = "{\"sourcePlatform\":\"mtmy\",\"articleCateId\":\""+categoryId+"\",\"articleTitle\":\""+title+"\"}";
 			String url=queryMediaArticleDetailList;
 			String result = WebUtils.postMediaObject(parpm, url);
 			jsonObject = JSONObject.fromObject(result);

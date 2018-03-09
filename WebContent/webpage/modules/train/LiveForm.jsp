@@ -20,25 +20,6 @@
 					  return;
 				  }
 			  }
-			  //公开到每天美耶,才可以选择可见范围
-			  if($('input[name=isOpen]:checked').val() == 1){
-				  //每天美耶可见范围
-				  if($('input[name=isOpenLabel]:checked').length <= 0){
-						top.layer.alert('|每天美耶可见范围|必选！', {icon: 0, title:'提醒'});
-						return false;
-				  }else{
-					  var str=document.getElementsByName("isOpenLabel");
-					  var ids = "";
-					  for (i=0;i<str.length;i++){
-					      if(str[i].checked == true){
-					    	  ids = ids + str[i].value + ",";
-					      }
-					  }
-					  $("#isOpenRole").val(ids);
-				  }
-			  }else{//非公开,需要默认可见范围的值为'0,'
-				  $("#isOpenRole").val("0,");
-			  }
 			  
 			  $("#inputForm").submit();
 			  return true;
@@ -47,27 +28,6 @@
 		  return false;
 		}
 		
-		//是否公开到每天美耶
-		function isShow(show){
-			if(show == 0){//非公开
-				$("#isOpenRoleShow").hide();
-			}else{//公开
-				$("#isOpenRoleShow").show();
-			}
-		}
-		//每天美耶可见范围
-		function queryIsOpen(value){
-			var isOpen = $('input[name=isOpen]:checked').val();
-			if($('input[name=isOpenLabel]:checked').length == 0){
-				$("input[type=checkbox][name=isOpenLabel]").attr("disabled",false);
-			}else{
-				if(value == '0'){
-					$("input[type=checkbox][name=isOpenLabel][id=notOpen]").attr("disabled",true);
-				}else{
-					$("input[type=checkbox][name=isOpenLabel][id=open]").attr("disabled",true);
-				}				
-			}
-		}
 	
 		$(document).ready(function(){
 			
@@ -115,30 +75,6 @@
 			var afterEarningsRatio = parseInt(earningsRatio);
 			$("#earningsRatio").val(afterEarningsRatio);
 			
-			var isOpen = "${trainLiveAudit.isOpen}";//是否公开到每天美耶
-			if(isOpen == 0){//非公开到每天美耶,可见范围不能选择
-				$("#isOpenRoleShow").hide();
-			}else{
-				$("#isOpenRoleShow").show();
-				//每天美耶可见范围
-				var isOpenIds = "${trainLiveAudit.isOpenRole}";
-				if(isOpenIds.length > 0){
-					var isOpenId = isOpenIds.split(",");
-					for(q=0;q<isOpenId.length-1;q++){
-						$("input[type=checkbox][name=isOpenLabel][value="+isOpenId[q]+"]").attr("checked",true);
-						queryIsOpen(isOpenId[q]);
-					}
-				}
-				
-				//修改时,可见范围不能修改
-				var auditStatus = "${trainLiveAudit.auditStatus}";
-				if(auditStatus == 2 || auditStatus == 3 || auditStatus == 4){
-					var id = "${trainLiveAudit.id}";
-					if(id > 0){
-						$("input[type=checkbox][name=isOpenLabel]").attr("disabled",true);
-					}
-				}
-			}
 		});
 			
 </script>
@@ -241,24 +177,26 @@
 					<td><label class="pull-right">是否公开到每天美耶:</label></td>
 					<td>
 						<c:if test="${trainLiveAudit.auditStatus==4}">
-							<label><input id="isOpen" name="isOpen" type="radio" value="1" ${(trainLiveAudit.isOpen==1)?'checked="checked"':''} class="form" disabled="disabled" onclick="isShow(1)"/>是</label>
-							<label><input id="isOpen" name="isOpen" type="radio" value="0" ${(trainLiveAudit.isOpen==0)?'checked="checked"':''} class="form" disabled="disabled" onclick="isShow(0)"/>否</label>
+							<c:if test="${trainLiveAudit.isOpen==0}">
+								<label><input id="isOpen" name="isOpen" type="radio" value="1" class="form" disabled="disabled"/>是</label>
+								<label><input id="isOpen" name="isOpen" type="radio" value="0" checked="checked" class="form" disabled="disabled"/>否</label>
+							</c:if> 
+							<c:if test="${trainLiveAudit.isOpen==1}">
+								<label><input id="isOpen" name="isOpen" type="radio" value="1" checked="checked" class="form" disabled="disabled"/>是</label>
+								<label><input id="isOpen" name="isOpen" type="radio" value="0" class="form" disabled="disabled"/>否</label>
+							</c:if> 
 						</c:if> 
 						<c:if test="${trainLiveAudit.auditStatus!=4}">
-							<label><input id="isOpen" name="isOpen" type="radio" value="1" ${(trainLiveAudit.isOpen==1)?'checked="checked"':''} class="form" onclick="isShow(1)"/>是</label>
-							<label><input id="isOpen" name="isOpen" type="radio" value="0" ${(trainLiveAudit.isOpen==0)?'checked="checked"':''} class="form" onclick="isShow(0)"/>否</label>
+							<c:if test="${trainLiveAudit.isOpen==0}">
+								<label><input id="isOpen" name="isOpen" type="radio" value="1" class="form" />是</label>
+								<label><input id="isOpen" name="isOpen" type="radio" value="0" checked="checked" class="form" />否</label>
+							</c:if> 
+							<c:if test="${trainLiveAudit.isOpen==1}">
+								<label><input id="isOpen" name="isOpen" type="radio" value="1" checked="checked" class="form" />是</label>
+								<label><input id="isOpen" name="isOpen" type="radio" value="0" class="form" />否</label>
+							</c:if> 
 						</c:if> 
 					</td>
-				</tr>
-				<tr>
-					<td><label class="pull-right">每天美耶可见范围:</label></td>	
-					<td id="isOpenRoleShow">
-						<label><input type="checkbox" id="open" name="isOpenLabel" value="0" onclick="queryIsOpen('0')">公开</label>
-						<c:forEach items="${list}" var="franchisee">
-							<label><input type="checkbox" id="notOpen" name="isOpenLabel" value="${franchisee.id}" onclick="queryIsOpen('1')">${franchisee.name}</label>
-						</c:forEach>
-						<input id="isOpenRole" value="${trainLiveAudit.isOpenRole}" name="isOpenRole" type="hidden">
-					</td>			
 				</tr>
 				<tr>
 					<td><label class="pull-right">是否付费:</label></td>

@@ -116,20 +116,36 @@ public class ExambankController extends BaseController{
 	 */
 	
 	@RequestMapping(value = "exambank")
-	public String exambank(String exerciseType,String ziCategoryId,ExercisesCategorys exercisesCategorys,HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String exambank(String exerciseType,String ziCategoryId,String LessCategoryId, String unitTestId,String pageExerId,ExercisesCategorys exercisesCategorys,HttpServletRequest request, HttpServletResponse response, Model model) {
 //		List<String> typeList = exercisesService.findTypeList();
 //		model.addAttribute("typeList", typeList);
 		
 		
 		model.addAttribute("exerciseType", exerciseType);
+		if (StringUtils.isNotBlank(unitTestId)) {
+			model.addAttribute("unitTestId", unitTestId);
+		}else{
+			model.addAttribute("unitTestId", exercisesCategorys.getCategoryId());
+		}
 		model.addAttribute("ziCategoryId", exercisesCategorys.getCategoryId());
 		model.addAttribute("exercisesCategorys", exercisesCategorys);
 		model.addAttribute("parentId", exercisesCategorys.getParentId());
+		model.addAttribute("pageExerId", pageExerId);
 		exercisesCategorys.getSqlMap().put("dsf", ScopeUtils.dataScopeFilter("a",""));
 		if (StringUtils.isNotBlank(ziCategoryId)) {
 			exercisesCategorys.setName(exercisesCategorys.getCategoryId());
 		}
-		Page<ExercisesCategorys> page=exercisesService.findPage(new Page<ExercisesCategorys>(request, response), exercisesCategorys);
+		if (StringUtils.isBlank(LessCategoryId)) {
+			model.addAttribute("LessCategoryId", exercisesCategorys.getCategoryId());
+		}else{
+			model.addAttribute("LessCategoryId", LessCategoryId);
+			exercisesCategorys.setCategoryId(LessCategoryId);
+		}
+		List<String> exerIdList = exercisesService.findExercisesId(exercisesCategorys);
+		if (exerIdList != null && exerIdList.size() > 0) {
+			exercisesCategorys.setExList(exerIdList);
+		}
+		Page<ExercisesCategorys> page=exercisesService.findExerPage(new Page<ExercisesCategorys>(request, response), exercisesCategorys);
 		if(exercisesCategorys.getExerciseTitle()!=null || exercisesCategorys.getExerciseTitle()!=""){
 			model.addAttribute("exerciseTitle", exercisesCategorys.getExerciseTitle());
 		}
@@ -154,68 +170,47 @@ public class ExambankController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = { "addAllExam"})
-	public String addAllExam(ExamLessionMapping examLession,HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes){
-		String idArray1[] =request.getParameter("exerciseId1").split(",");
-		String idArray2[]=request.getParameter("exerciseId2").split(",");
-		if(request.getParameter("lessontype").equals("1")){
-			examLession.setLessonId(request.getParameter("lessonId"));
-			examLession.setLessontype(request.getParameter("lessontype"));
-			examBankService.deleteAll(examLession);
-			if(request.getParameter("exerciseId2")!=""){
-				for(String id:idArray2){
-					if(id.length()!=0){ 
-						ExamLessionMapping examLessionMapping = new ExamLessionMapping();
-						examLessionMapping.setExerciseId(id);
-						examLessionMapping.setLessonId(request.getParameter("lessonId"));
-						examLessionMapping.setCategoryId("0");
-						examLessionMapping.setStatus(0);
-						examBankService.addExamLesson(examLessionMapping);	
+	public String addAllExam(ExamLessionMapping examLession,String unitTestId,HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes){
+		try {
+			String idArray2[]=request.getParameter("mergeExerciseId").split(",");
+			if(request.getParameter("lessontype").equals("1")){   //课后习题，category=0
+				examLession.setLessonId(request.getParameter("lessonId"));
+				examLession.setLessontype(request.getParameter("lessontype"));
+				//examBankService.deleteAll(examLession);		不在将原有试题删除，进行叠加
+				if(request.getParameter("mergeExerciseId")!=""){
+					for(String id:idArray2){
+						if(id.length()!=0){ 
+							ExamLessionMapping examLessionMapping = new ExamLessionMapping();
+							examLessionMapping.setExerciseId(id);
+							examLessionMapping.setLessonId(request.getParameter("lessonId"));
+							examLessionMapping.setCategoryId("0");
+							examLessionMapping.setStatus(0);
+							examBankService.addExamLesson(examLessionMapping);	
+						}
+					}
+				}
+			}else if(request.getParameter("lessontype").equals("2")){	//单元测试，lessonId=0
+				examLession.setCategoryId(unitTestId);
+				examLession.setLessontype(request.getParameter("lessontype"));
+				if(request.getParameter("mergeExerciseId")!=""){
+					for(String id:idArray2){
+						if(id.length()!=0){ 
+							ExamLessionMapping examLessionMapping = new ExamLessionMapping();
+							examLessionMapping.setExerciseId(id);
+							examLessionMapping.setLessonId("0");
+							examLessionMapping.setCategoryId(unitTestId);
+							examLessionMapping.setStatus(0);
+							examBankService.addExamLesson(examLessionMapping);	
+						}
 					}
 				}
 			}
-			if(request.getParameter("exerciseId1")!=""){
-				for(String id:idArray1){
-					if(id.length()!=0){ 
-						ExamLessionMapping examLessionMapping = new ExamLessionMapping();
-						examLessionMapping.setExerciseId(id);
-						examLessionMapping.setLessonId(request.getParameter("lessonId"));
-						examLessionMapping.setCategoryId("0");
-						examLessionMapping.setStatus(0);
-						examBankService.addExamLesson(examLessionMapping);		
-					}
-				}
-			}
-		}else if(request.getParameter("lessontype").equals("2")){
-			examLession.setCategoryId(request.getParameter("ziCategoryId"));
-			examLession.setLessontype(request.getParameter("lessontype"));
-			examBankService.deleteAll(examLession);
-			if(request.getParameter("exerciseId2")!=""){
-				for(String id:idArray2){
-					if(id.length()!=0){ 
-						ExamLessionMapping examLessionMapping = new ExamLessionMapping();
-						examLessionMapping.setExerciseId(id);
-						examLessionMapping.setLessonId("0");
-						examLessionMapping.setCategoryId(request.getParameter("ziCategoryId"));
-						examLessionMapping.setStatus(0);
-						examBankService.addExamLesson(examLessionMapping);	
-					}
-				}
-			}
-			if(request.getParameter("exerciseId1")!=""){
-				for(String id:idArray1){
-					if(id.length()!=0){ 
-						ExamLessionMapping examLessionMapping = new ExamLessionMapping();
-						examLessionMapping.setExerciseId(id);
-						examLessionMapping.setLessonId("0");
-						examLessionMapping.setCategoryId(request.getParameter("ziCategoryId"));
-						examLessionMapping.setStatus(0);
-						examBankService.addExamLesson(examLessionMapping);		
-					}
-				}
-			}
-			
+			addMessage(redirectAttributes, "批量添加试题成功");
+		} catch (Exception e) {
+			addMessage(redirectAttributes, "批量添加试题失败！");
+			logger.error("批量添加试题出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "批量添加试题错误信息", e);
 		}
-		addMessage(redirectAttributes, "批量添加试题成功");
 		return "redirect:" + adminPath + "/train/exambank/exambankFrom?lessonId="+examLession.getLessonId()+"&categoryId="+examLession.getCategoryId()+"&lessontype="+examLession.getLessontype();
 	}
 	/**

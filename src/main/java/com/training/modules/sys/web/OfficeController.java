@@ -294,13 +294,26 @@ public class OfficeController extends BaseController {
 					reservationTime(3, currentUser.getCreateBy().getId(), img, "", lifeImgUrls, office.getId(), "bm", null);
 				}
 				
-				//操作店铺保存记录日志
+				//操作店铺保存记录日志	创建店铺记录
 				OfficeLog officeLog = new OfficeLog();
 				officeLog.setOfficeId(office.getId());
 				officeLog.setType(0);
 				officeLog.setContent("添加店铺");
 				officeLog.setUpdateBy(office.getCreateBy());
 				officeService.saveOfficeLog(officeLog);
+				
+				//操作店铺保存记录日志	隐藏/开启记录
+				OfficeLog officeLog1 = new OfficeLog();
+				officeLog1.setOfficeId(office.getId());
+				officeLog1.setUpdateBy(office.getCreateBy());
+				if(office.getOfficeInfo().getStatus() == 0){
+					officeLog1.setType(2);
+					officeLog1.setContent("开启店铺");
+				}else{
+					officeLog1.setType(3);
+					officeLog1.setContent("隐藏店铺");
+				}
+				officeService.saveOfficeLog(officeLog1);
 			}
 		}else{
 			Office eqold = officeService.get(office.getId());

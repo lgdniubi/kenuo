@@ -270,4 +270,10 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 * @return
 	 */
 	public List<ReturnedGoods> queryReturnList(String orderIds);
+	/**
+	 * 异步获取除本次售后外,该部门剩余分享的营业额
+	 * @param orderPushmoneyRecord
+	 * @return
+	 */
+	public double getDeptPushmoney(OrderPushmoneyRecord orderPushmoneyRecord);
 }

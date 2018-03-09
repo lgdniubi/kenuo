@@ -604,7 +604,7 @@ public class MtmyMnappointmentController extends BaseController{
 	 * @param userId
 	 * @param officeId
 	 */
-	public void adddata_log(String oldApptDate,String newApptdate,String officeId,String userId){
+	public static void adddata_log(String oldApptDate,String newApptdate,String officeId,String userId){
 		String websaveReservation = ParametersFactory.getMtmyParamValues("adddata_log");
 		System.out.println("##### 记录预约时间变更时，调用接口  web接口路径:"+websaveReservation);
 		if(!"-1".equals(websaveReservation)){

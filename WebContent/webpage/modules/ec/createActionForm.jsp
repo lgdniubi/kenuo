@@ -67,21 +67,14 @@
 				top.layer.alert('抢购数量必须大于0!', {icon: 0, title:'提醒'}); 
 				  return;
 			}
-			
-			//可见范围取值
-			obj = document.getElementsByName("isOpen_");
-		    check_val = [];
-		    for(k in obj){
-		        if(obj[k].checked)
-		            check_val.push(obj[k].value);
-		    }
 			$("#inputForm").submit();
 			return true;
 		}
 
 		return false;
 	}
-	
+
+
 	$(document).ready(function() {
 
 			/* var start = {
@@ -187,6 +180,7 @@
 // 					elem : '#expirationDate', //目标元素。由于laydate.js封装了一个轻量级的选择器引擎，因此elem还允许你传入class、tag但必须按照这种方式 '#id .class'
 // 					event : 'focus' //响应事件。如果没有传入event，则按照默认的click
 // 				});
+
 			});
 </script>
 </head>

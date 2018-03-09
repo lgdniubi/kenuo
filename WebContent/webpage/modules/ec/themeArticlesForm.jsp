@@ -20,7 +20,7 @@
 		$.ajax({
 			 type:"get",
 			 dataType:"json",
-			 url:"${ctx}/ec/theme/treeArticlesData?categoryId="+cateid+"&title="+title+"&isOpen="+$("#isOpen").val(),
+			 url:"${ctx}/ec/theme/treeArticlesData?categoryId="+cateid+"&title="+title,
 			 success:function(date){
 				var data=date;
 				if(data.length < 1){
@@ -45,7 +45,6 @@
 		<div class="ibox">
 			<div class="ibox-content">
 				<div class="clearfix">
-					<input id="isOpen" name="isOpen" value="${isOpen}" type="hidden">
 					<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 						<tr>
 							<td>

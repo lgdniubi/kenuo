@@ -22,8 +22,6 @@ import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.entity.MtmyWebAd;
 import com.training.modules.ec.service.MtmyWebAdCategoryService;
 import com.training.modules.ec.service.MtmyWebAdService;
-import com.training.modules.sys.entity.Franchisee;
-import com.training.modules.sys.service.FranchiseeService;
 import com.training.modules.sys.utils.BugLogUtils;
 
 /**
@@ -43,9 +41,6 @@ public class MtmyWebAdController extends BaseController{
 	
 	@Autowired
 	private MtmyWebAdCategoryService mtmyWebAdCategoryService;
-	
-	@Autowired
-	private FranchiseeService franchiseeService;
 	
 	/**
 	 * 首页广告图列表
@@ -81,16 +76,12 @@ public class MtmyWebAdController extends BaseController{
 	@RequestMapping(value="form")
 	public String form(MtmyWebAd mtmyWebAd,HttpServletRequest request, HttpServletResponse response,Model model) {
 		try{
-			Franchisee franchisee = new Franchisee();
-			franchisee.setIsRealFranchisee("1");
-			List<Franchisee> list = franchiseeService.findList(franchisee);
 			if(mtmyWebAd.getMtmyWebAdId() != 0){
 				mtmyWebAd = mtmyWebAdService.getMtmyWebAd(mtmyWebAd.getMtmyWebAdId());
 			}else{
 				mtmyWebAd.setPositionType(mtmyWebAdCategoryService.getMtmyWebAdCategory(mtmyWebAd.getCategoryId()).getPositionType());
 			}
 			model.addAttribute("mtmyWebAd", mtmyWebAd);
-			model.addAttribute("list",list);
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "跳转增加首页广告图页面", e);
 			logger.error("跳转增加首页广告图页面出错信息：" + e.getMessage());
@@ -222,7 +213,6 @@ public class MtmyWebAdController extends BaseController{
 			List<Goods> goodsList = mtmyWebAdDao.findGoodsList(goods);
 			model.addAttribute("goods", goods);
 			model.addAttribute("goodsList",goodsList);
-			model.addAttribute("isOpen", request.getParameter("isOpen"));
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "跳转增加首页广告图对应的商品页面", e);
 			logger.error("跳转增加首页广告图页面对应的商品出错信息：" + e.getMessage());

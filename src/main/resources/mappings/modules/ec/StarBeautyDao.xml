@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.StarBeautyDao">
+    
+	<!-- 查询数据列表  -->
+	<select id="findList" resultType="StarBeauty">
+		SELECT
+			id,
+			name,                               
+			is_show AS isShow,
+			remarks
+		FROM
+			mtmydb.mtmy_star_beauty
+		WHERE
+			del_flag = 0
+		ORDER BY id DESC
+	</select>
+	
+	<!-- 修改明星技师全部为不展示 -->
+	<update id="cannelAllIsShow">
+		UPDATE mtmydb.mtmy_star_beauty
+		SET is_show = 0
+		WHERE
+			del_flag = 0
+	</update>
+	
+	<!-- 根据明星技师组id,修改状态 -->
+	<update id="changeIsShow">
+		UPDATE mtmydb.mtmy_star_beauty
+		SET is_show = 1
+		WHERE 
+			id = #{id}
+		AND del_flag = 0
+	</update>
+	
+	<!-- 获取最新添加的明星技师数据 -->
+	<select id="findStarBeauty" resultType="StarBeauty">
+		SELECT 
+			id,
+			name,
+			is_show AS isShow
+		FROM 
+			mtmydb.mtmy_star_beauty
+		WHERE 
+			del_flag = 0
+		ORDER BY id DESC
+		LIMIT 1
+	</select>
+	
+	<!-- 根据明星技师组id查询数据 -->
+	<select id="getStarBeautyById" resultType="StarBeauty">
+		SELECT 
+			id,
+			name,
+			is_show AS isShow,
+			remarks 
+		FROM
+			mtmydb.mtmy_star_beauty
+		WHERE
+			id = #{id}
+	</select>
+	
+    <!-- 插入数据 -->
+	<insert id="saveStarBeauty" parameterType="StarBeauty">
+		INSERT INTO mtmydb.mtmy_star_beauty(
+			name,
+			is_show,
+			remarks,
+			create_by,
+			create_date,
+			del_flag
+		) VALUES (
+			#{name},
+			0,
+			#{remarks},
+			#{createBy.id},
+			SYSDATE(),
+			0
+		)
+	</insert>
+	
+	<!--更新数据 -->
+	<update id="updateStarBeauty" parameterType="StarBeauty">
+		UPDATE mtmydb.mtmy_star_beauty
+			SET 
+			  name = #{name},     
+			  remarks = #{remarks},
+			  update_by = #{updateBy.id},
+			  update_date = SYSDATE()
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 逻辑删除 明星技师组 -->
+	<update id="delete" parameterType="StarBeauty">
+		UPDATE mtmydb.mtmy_star_beauty
+		SET del_flag = 1
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 根据明星技师组id查询明星技师内容列表  -->
+	<select id="findMappingPage" resultType="StarBeautyMapping">
+		SELECT
+			id AS mappingId,
+			star_id AS starId,
+			user_id AS userId,
+			office_ids AS officeIds,
+			name AS starBeautyName,          
+			photo AS starBeautyPhoto,
+			sort,
+			remarks
+		FROM
+			mtmydb.mtmy_star_beauty_mapping
+		WHERE
+			del_flag = 0
+		AND
+			star_id = #{starId}
+		ORDER BY sort DESC
+	</select>
+	
+	<!-- 插入数据 -->
+	<insert id="saveStarBeautyMapping" parameterType="StarBeautyMapping">
+		INSERT INTO mtmydb.mtmy_star_beauty_mapping(
+			star_id,
+			user_id,
+			office_ids,
+			name,
+			photo,
+			sort,
+			remarks,
+			create_by,
+			create_date,
+			del_flag
+		) VALUES (
+			#{starId},
+			#{userId},
+			#{officeIds},
+			#{starBeautyName},
+			#{starBeautyPhoto},
+			#{sort},
+			#{remarks},
+			#{createBy.id},
+			SYSDATE(),
+			0
+		)
+	</insert>
+	
+	<!-- 根据明星技师表id查询明星技师  -->
+	<select id="getStarBeautyMappingByMappingId" resultType="StarBeautyMapping">
+		SELECT
+			id AS mappingId,
+			star_id AS starId,
+			user_id AS userId,
+			office_ids AS officeIds,
+			name AS starBeautyName,          
+			photo AS starBeautyPhoto,
+			sort,
+			remarks
+		FROM
+			mtmydb.mtmy_star_beauty_mapping
+		WHERE
+			del_flag = 0
+		AND
+			id = #{mappingId}
+		ORDER BY sort DESC
+	</select>
+	
+	<!--修改明星技师的信息 -->
+	<update id="updateStarBeautyMapping" parameterType="StarBeautyMapping">
+		UPDATE mtmydb.mtmy_star_beauty_mapping
+			SET 
+			  star_id = #{starId},
+			  user_id = #{userId},
+			  office_ids = #{officeIds},
+			  name = #{starBeautyName},     
+			  photo = #{starBeautyPhoto},     
+			  sort = #{sort},
+			  remarks = #{remarks},
+			  update_by = #{updateBy.id},
+			  update_date = SYSDATE()
+		WHERE id = #{mappingId}
+	</update>
+	
+	<!-- 逻辑删除 明星技师 -->
+	<update id="delStarBeautyMapping" parameterType="StarBeautyMapping">
+		UPDATE mtmydb.mtmy_star_beauty_mapping
+		SET del_flag = 1
+		WHERE id = #{mappingId}
+	</update>
+</mapper>

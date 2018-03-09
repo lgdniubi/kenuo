@@ -30,7 +30,7 @@
 			if($("#month").val().length != 0 && officeId.length != 0 && day.length != 0){
 				$.ajax({
 					type : "POST",   
-					url : "${ctx}/train/arrange/arrangeDetails?officeId="+officeId+"&day="+day+"&month="+$("#month").val(),
+					url : "${ctx}/train/arrange/arrangeDetails?officeId="+officeId+"&day="+day+"&month="+$("#month").val()+"&year="+$("#year").val(),
 					dataType: 'json',
 					success: function(data) {
 						$(".loading").hide();//隐藏展示层
@@ -73,6 +73,7 @@
 				</div>
 				<div class="ibox-content" style="height:100%">
 				<input id="month" value="${month }" type="hidden">
+				<input id="year" value="${year }" type="hidden">
 				<c:if test="${empty nextMonth}">
 					<div class="searcharea clearfix">
 						<form:form id="searchForm" action="${ctx}/train/arrange/list" method="post" class="navbar-form navbar-left searcharea">
