@@ -1398,7 +1398,7 @@ public class GoodsController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "treeGoodsData")
-	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String goodsId,String isReal,String isOnSale,String isAppshow,String type,HttpServletResponse response) {
+	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String goodsId,String isReal,String isOnSale,String isAppshow,String type,String isOpen,HttpServletResponse response) {
 		// 注： type属于临时方案，目前仅用于下单时查询商品  type=1表示下单时下单需区分用户商家
 		if(type != null && !"".equals(type)){
 			String companyId = UserUtils.getUser().getCompany().getId();
@@ -1421,6 +1421,19 @@ public class GoodsController extends BaseController{
 		goods.setGoodsId(Integer.valueOf(goodsId));
 		if(actionId!=null){
 			goods.setActionId(Integer.parseInt(actionId));
+		}
+		
+		if(!"".equals(isOpen) && isOpen != null){
+			if("0,".equals(isOpen)){                //若活动或者主题是公开的，则商品就是公开的
+				goods.setOpenFlag("0");
+			}else{
+				String[] franchiseeIds = isOpen.split(",");
+				if(franchiseeIds.length == 1){      //若活动或者主题不是公开的且只有一个商家
+					goods.setFranchiseeId(franchiseeIds[0]);
+				}else if(franchiseeIds.length >= 2){  //若活动或者主题不是公开的且多个商家
+					goods.setOpenFlag("0");
+				}
+			}
 		}
 		
 		List<Goods> list = goodsService.list(goods);

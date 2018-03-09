@@ -128,7 +128,7 @@
 									<a href="${ctx}/ec/webAd/del?mtmyWebAdId=${mtmyWebAd.mtmyWebAdId}&categoryId=${mtmyWebAd.categoryId}" onclick="return confirmx('确认要删除吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="ec:webAd:addGoods">
-									<a href="#" onclick="openDialogView('增加商品', '${ctx}/ec/webAd/mtmyWebAdGoodsList?mtmyWebAdId=${mtmyWebAd.mtmyWebAdId}&positionType=${mtmyWebAd.positionType}','700px', '650px')" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> 增加商品</a>
+									<a href="#" onclick="openDialogView('增加商品', '${ctx}/ec/webAd/mtmyWebAdGoodsList?mtmyWebAdId=${mtmyWebAd.mtmyWebAdId}&positionType=${mtmyWebAd.positionType}&isOpen=${mtmyWebAd.isOpen}','700px', '650px')" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> 增加商品</a>
 								</shiro:hasPermission>
 							</td>
 						</tr>

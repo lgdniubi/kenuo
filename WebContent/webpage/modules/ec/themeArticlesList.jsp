@@ -92,14 +92,14 @@
 	});
 	}
 	
-	function addArticles(id){
+	function addArticles(id,isOpen){
 		var articlesIds = $("#articlesIds").val();
 		articlesIds = "," + articlesIds + ",";
 		top.layer.open({
 		    type: 2, 
 		    area: ['600px', '500px'],
 		    title:"添加文章",
-		    content: "${ctx}/ec/theme/themeArticlesForm?themeId="+id,
+		    content: "${ctx}/ec/theme/themeArticlesForm?themeId="+id+"&isOpen="+isOpen,
 		    btn: ['确定', '关闭'],
 		    yes: function(index, layero){
 		        var obj =  layero.find("iframe")[0].contentWindow;
@@ -165,7 +165,7 @@
 					<div class="row" style="padding-top: 10px;">
 						<div class="col-sm-12">
 							<div class="pull-left">
-									<a href="#" onclick="addArticles(${themeMapping.themeId})" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加文章</a>
+									<a href="#" onclick="addArticles(${themeMapping.themeId},'${isOpen}')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加文章</a>
 									<shiro:hasPermission name="ec:theme:deleteAllArticles">
 										<!-- 删除按钮 -->
 										<button class="btn btn-white btn-sm" onclick="deleteAll(${themeMapping.themeId})" data-toggle="tooltip" data-placement="top"><i class="fa fa-trash-o"> ${label==null?'删除':label}</i></button>
