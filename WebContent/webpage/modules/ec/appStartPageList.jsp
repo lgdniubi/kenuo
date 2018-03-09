@@ -117,13 +117,10 @@
 						<tr>
 							<td style="text-align: center;">${appStartPage.appStartPageId}</td>
 							<td style="text-align: center;">${appStartPage.name}</td>
-<<<<<<< HEAD
 							<td style="text-align: center;">
 								<c:if test="${appStartPage.type == '0'}">启动页广告图</c:if>
 								<c:if test="${appStartPage.type == '1'}">广告位弹窗</c:if>
 							</td>
-=======
->>>>>>> d5d02f1c3132127aee0999b99490035ee969a635
 							<td style="text-align: center;" class="imgUrl" ><img alt="" src="${ctxStatic}/images/lazylode.png"  data-src="${appStartPage.imgUrl}" style="width: 150px;height: 100px;border:1px solid black; "></td>
 							<td style="text-align: center;" id="${appStartPage.appStartPageId}">
 								<c:if test="${appStartPage.isOnSale  eq '0'}">
