@@ -131,9 +131,11 @@ public class AppStartPageController extends BaseController{
 		try {
 			String id = request.getParameter("ID");
 			String flag = request.getParameter("flag");
-			if(!StringUtils.isEmpty(id) && !StringUtils.isEmpty(flag)){
+			String type = request.getParameter("type");
+			if(!StringUtils.isEmpty(id) && !StringUtils.isEmpty(flag) && !StringUtils.isEmpty(type)){
 				appStartPage.setAppStartPageId(Integer.parseInt(id));
 				appStartPage.setIsOnSale(flag);
+				appStartPage.setType(type);
 				map = appStartPageService.updateType(appStartPage);
 			}else{
 				map = new HashMap<String, String>();

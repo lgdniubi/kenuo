@@ -23,7 +23,7 @@ public interface AppStartPageDao extends CrudDao<AppStartPage>{
 	/**
 	 * 修改全部为下架
 	 */
-	public void changAllIsShowByType();
+	public void changAllIsShowByType(String type);
 
 	/**
 	 * 根据ID修改是否上架

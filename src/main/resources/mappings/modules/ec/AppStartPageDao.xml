@@ -6,7 +6,8 @@
 	<select id="findList" resultType="AppStartPage">
 		SELECT
 			id AS appStartPageId,
-			name,                               
+			name,  
+			type,                             
 			img_url AS imgUrl,
 			is_on_sale AS isOnSale
 		FROM
@@ -14,6 +15,9 @@
 		WHERE 1 = 1
 			<if test="isOnSale != null and isOnSale != '' and isOnSale != '-1'">
 				AND is_on_sale = #{isOnSale}
+			</if>
+			<if test="type != null and type != ''">
+				AND type = #{type}
 			</if>
 		ORDER BY
 			id DESC
@@ -23,7 +27,8 @@
 	<select id="getAppStartPageById" resultType="AppStartPage">
 		SELECT
 			id AS appStartPageId,
-			name,                               
+			name, 
+			type,                               
 			img_url AS imgUrl,
 			is_on_sale AS isOnSale,
 			redirect_url AS redirectUrl
@@ -37,6 +42,7 @@
 	<insert id="insert" parameterType="AppStartPage">
 		INSERT INTO mtmydb.mtmy_app_start_page(
 			name,
+			type, 
 			img_url,
 			redirect_url,
 			is_on_sale,
@@ -46,6 +52,7 @@
 			update_date
 		) VALUES (
 			#{name},
+			#{type},
 			#{imgUrl},
 			#{redirectUrl},
 			#{isOnSale},
@@ -61,6 +68,7 @@
 		UPDATE mtmydb.mtmy_app_start_page
 		SET
 			name = #{name},
+			type = #{type},
 			img_url = #{imgUrl},
 			redirect_url = #{redirectUrl},
 			update_by = #{updateBy.id},
@@ -74,13 +82,14 @@
 			SET 
 			  is_on_sale = #{isOnSale}
 		WHERE id = #{appStartPageId}
+		AND type = #{type}
 	</update>
 	
 	<!-- 修改启动页广告图全部为下架 -->
 	<update id="changAllIsShowByType">
 		UPDATE mtmydb.mtmy_app_start_page
-			SET 
-			  is_on_sale = 0
+		SET is_on_sale = 0
+		WHERE type = #{type}
 			
 	</update>
 	
@@ -88,7 +97,8 @@
 	<select id="selectIdByType" resultType="AppStartPage">
 		SELECT 
 			id AS appStartPageId,
-			name,                               
+			name,  
+			type,                             
 			is_on_sale AS isOnSale
 		FROM mtmydb.mtmy_app_start_page
 		ORDER BY update_date desc LIMIT 1

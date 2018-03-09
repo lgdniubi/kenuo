@@ -63,7 +63,7 @@
 							<form:hidden path="isOnSale"/>
 							<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 								<tr>
-									<td><label class="pull-right"><font color="red">*</font>启动页名称：</label></td>
+									<td><label class="pull-right"><font color="red">*</font>名称：</label></td>
 									<td>
 										<form:input path="name" class="form-control required" style="width: 300px"/>
 									</td>
@@ -79,7 +79,6 @@
 								</tr>
 								<tr>
 									<td><label class="pull-right"><font color="red">*</font>图片：</label></td>
-									<td><label class="pull-right"><font color="red">*</font>启动页：</label></td>
 									<td>
 										<img id="img" src="${appStartPage.imgUrl }" alt="" style="width: 200px;height: 100px;"/>
 										<input class="form-control" id="imgUrl" name="imgUrl" type="hidden" value="${appStartPage.imgUrl }"/><!-- 图片隐藏文本框 -->
