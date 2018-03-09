@@ -78,8 +78,8 @@
 									<label>位置：</label>
 									<form:select path="type" cssClass="form-control">
 										<form:option value="">全部</form:option>
-										<form:option value="0">启动页</form:option>
-										<form:option value="1">广告位</form:option>
+										<form:option value="0">启动页广告图</form:option>
+										<form:option value="1">广告位弹窗</form:option>
 									</form:select>
 								</div>
 							</div>	
@@ -119,8 +119,8 @@
 							<td style="text-align: center;">${appStartPage.appStartPageId}</td>
 							<td style="text-align: center;">${appStartPage.name}</td>
 							<td style="text-align: center;">
-								<c:if test="${appStartPage.type == '0'}">启动页</c:if>
-								<c:if test="${appStartPage.type == '1'}">广告位</c:if>
+								<c:if test="${appStartPage.type == '0'}">启动页广告图</c:if>
+								<c:if test="${appStartPage.type == '1'}">广告位弹窗</c:if>
 							</td>
 							<td style="text-align: center;" class="imgUrl" ><img alt="" src="${ctxStatic}/images/lazylode.png"  data-src="${appStartPage.imgUrl}" style="width: 150px;height: 100px;border:1px solid black; "></td>
 							<td style="text-align: center;" id="${appStartPage.appStartPageId}">

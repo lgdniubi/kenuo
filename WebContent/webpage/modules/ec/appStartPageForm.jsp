@@ -72,8 +72,8 @@
 									<td><label class="pull-right"><font color="red">*</font>位置：</label></td>
 									<td>
 										<form:select path="type" class="form-control required">
-											<form:option value="0">启动页</form:option>
-											<form:option value="1">广告位</form:option>
+											<form:option value="0">启动页广告图</form:option>
+											<form:option value="1">广告位弹窗</form:option>
 										</form:select>
 									</td>
 								</tr>
