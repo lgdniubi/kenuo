@@ -110,4 +110,11 @@
 		ORDER BY a.create_date DESC 
 		limit 1
 	</select>
+	
+	<!-- 逻辑删除商家的所有banner图 -->
+	<update id="deleteByLogic">
+		UPDATE mtmydb.mtmy_franchisee_banner
+		SET del_flag = 1
+		WHERE id = #{id}
+	</update>
 </mapper>

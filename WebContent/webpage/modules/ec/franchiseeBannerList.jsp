@@ -50,6 +50,35 @@
 				}
 			}); 
 		}
+		
+		//确认是否删除
+		function  delFranchiseeBanner(id,franchiseeId,isShow){
+			if(confirm("确认要删除吗？","提示框")){
+				isDelete(id,franchiseeId,isShow);			
+			}
+		}
+		//不启用的数据可以被删除
+		function isDelete(id,franchiseeId,isShow){
+			if(isShow == 1){
+				top.layer.alert('此数据启用中,请重新选择!', {icon: 0, title:'提醒'});
+				return;
+			}
+			$(".loading").show();//打开展示层
+			$.ajax({
+				type : "POST",
+				url : "${ctx}/ec/franchiseeBanner/delete?id="+id+"&franchiseeId="+franchiseeId,
+				dataType: 'json',
+				success: function(data) {
+					$(".loading").hide(); //关闭加载层
+					var status = data.STATUS;
+					if("OK" == status){
+						window.location="${ctx}/ec/franchiseeBanner/list";
+					}else if("ERROR" == status){
+						top.layer.alert(data.MESSAGE, {icon: 0, title:'提醒'});
+					}
+				}
+			}); 
+		}
     </script>
     <title>商家主页banner图</title>
 </head>
@@ -130,6 +159,9 @@
 								</shiro:hasPermission>
 								<shiro:hasPermission name="ec:franchiseeBanner:edit">
 									<a href="#" onclick="openDialog('修改', '${ctx}/ec/franchiseeBanner/form?id=${franchiseeBanner.id}','600px', '550px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 修改</a>
+								</shiro:hasPermission>
+								<shiro:hasPermission name="ec:franchiseeBanner:del">
+									<a href="#" onclick="delFranchiseeBanner('${franchiseeBanner.id}','${franchiseeBanner.franchiseeId}',${franchiseeBanner.isShow})" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>删除</a>
 								</shiro:hasPermission>
 							</td>
 						</tr>

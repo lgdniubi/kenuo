@@ -37,5 +37,5 @@ public interface FranchiseeBannerDao extends CrudDao<MtmyFranchiseeBanner>{
 	 * @param franchiseeId
 	 */
 	public MtmyFranchiseeBanner getMtmyFranchiseeBannerByCreateDate(int franchiseeId);
-	
+
 }

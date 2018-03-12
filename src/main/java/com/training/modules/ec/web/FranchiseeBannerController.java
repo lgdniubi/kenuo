@@ -149,5 +149,30 @@ public class FranchiseeBannerController extends BaseController{
 		}
 		return map;
 	}
+	/**
+	 * 删除记录
+	 * @param mtmyFranchiseeBanner
+	 * @param redirectAttributes
+	 * @param request
+	 * @return
+	 */
+	@RequiresPermissions("ec:franchiseeBanner:del")
+	@RequestMapping(value = "delete")
+	@ResponseBody
+	public Map<String, String> delete(MtmyFranchiseeBanner mtmyFranchiseeBanner,RedirectAttributes redirectAttributes,HttpServletRequest request){
+		Map<String, String> map = new HashMap<String, String>();
+		try {
+			//删除记录
+			franchiseeBannerService.delete(mtmyFranchiseeBanner);
+			map.put("STATUS", "OK");
+		} catch (Exception e) {
+			logger.error("删除商家主页banner图错误信息："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "删除商家主页banner图失败", e);
+			map = new HashMap<String, String>();
+			map.put("STATUS", "ERROR");
+			map.put("MESSAGE", "删除失败");
+		}
+		return map;
+	}
 	
 }
