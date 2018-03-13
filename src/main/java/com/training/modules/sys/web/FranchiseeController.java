@@ -275,6 +275,7 @@ public class FranchiseeController extends BaseController{
 		Map<String, String> map = new HashMap<String, String>();
     	try {
     		franchiseeService.updatePublicServiceFlag(franchisee);
+    		franchiseeService.updateMtmyPublicServiceFlag(franchisee);//同步mtmy商家表中修改公共商品服务标识
 			map.put("FLAG", "OK");
 			map.put("MESSAGE", "修改成功");
 		} catch (Exception e) {

@@ -78,4 +78,10 @@ public interface FranchiseeDao extends TreeDao<Franchisee>{
 	 */
 	public void deleteMtmyFranchisee(@Param(value="id")String id);
 
+	/**
+	 * 同步mtmy商家表中修改公共商品服务标识
+	 * @param franchisee
+	 */
+	public void updateMtmyPublicServiceFlag(Franchisee franchisee);
+
 }
