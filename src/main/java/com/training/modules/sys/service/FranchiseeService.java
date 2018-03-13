@@ -125,4 +125,12 @@ public class FranchiseeService extends TreeService<FranchiseeDao,Franchisee>{
 	public void deleteMtmyFranchisee(String id) {
 		franchiseeDao.deleteMtmyFranchisee(id);
 	}
+
+	/**
+	 * 同步mtmy商家表中修改公共商品服务标识
+	 * @param franchisee
+	 */
+	public void updateMtmyPublicServiceFlag(Franchisee franchisee) {
+		franchiseeDao.updateMtmyPublicServiceFlag(franchisee);
+	}
 }

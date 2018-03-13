@@ -269,8 +269,16 @@
 			del_flag = 1
 		WHERE id = #{id} OR parent_ids LIKE #{id}
 	</update>
+	<!-- 修改公共商品服务标识 -->
 	<update id="updatePublicServiceFlag">
 		UPDATE sys_franchisee SET
+			public_service_flag = #{publicServiceFlag}
+		WHERE
+			id=#{id}
+	</update>
+	<!-- 同步修改公共商品服务标识 -->
+	<update id="updateMtmyPublicServiceFlag">
+		UPDATE mtmydb.mtmy_franchisee SET
 			public_service_flag = #{publicServiceFlag}
 		WHERE
 			id=#{id}
