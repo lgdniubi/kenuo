@@ -51,8 +51,8 @@ public class TrainLiveAudit extends TreeEntity<TrainLiveAudit> {
 	private String companyIds; // 数据范围按商家区分
 	private String companyNames; // 数据范围按商家区分
 	
-	private int isOpen;					//是否公开到每天美耶     2017-11-7  土豆添加
-	private int isRecommend;			//是否推荐	        2017-11-7  土豆添加
+	private String isOpen;				//是否公开到每天美耶     2017-11-7  土豆添加
+	private String isRecommend;			//是否推荐	        2017-11-7  土豆添加
 	private String isOpenRole; 			//是否公开(0,：公开；不公开则保存相应的商家id，以,拼接，用于每天美耶) 2018-2-24  土豆添加
 	
 	private TrainLiveCategory category;		//直播分类
@@ -341,22 +341,23 @@ public class TrainLiveAudit extends TreeEntity<TrainLiveAudit> {
 	public void setCompanyNames(String companyNames) {
 		this.companyNames = companyNames;
 	}
-
-	public int getIsOpen() {
+	
+	public String getIsOpen() {
 		return isOpen;
 	}
 
-	public void setIsOpen(int isOpen) {
+	public void setIsOpen(String isOpen) {
 		this.isOpen = isOpen;
 	}
 
-	public int getIsRecommend() {
+	public String getIsRecommend() {
 		return isRecommend;
 	}
 
-	public void setIsRecommend(int isRecommend) {
+	public void setIsRecommend(String isRecommend) {
 		this.isRecommend = isRecommend;
 	}
+
 	public String getIsOpenRole() {
 		return isOpenRole;
 	}

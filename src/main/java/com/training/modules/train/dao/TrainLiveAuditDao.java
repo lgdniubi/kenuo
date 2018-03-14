@@ -143,4 +143,11 @@ public interface TrainLiveAuditDao extends TreeDao<TrainLiveAudit>{
 	 * 2017年12月20日 兵子
 	 */
 	public int transferCategory(@Param(value = "auditId") String auditId, @Param(value = "categoryId") String categoryId);
+
+	/**
+	 * 直播列表修改每天美耶权限
+	 * @param trainLiveAudit
+	 */
+	public void saveFormMtmy(TrainLiveAudit trainLiveAudit);
+
 }
