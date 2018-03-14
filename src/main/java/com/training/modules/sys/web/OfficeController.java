@@ -331,7 +331,10 @@ public class OfficeController extends BaseController {
 
 				//店铺首图
 				img = office.getOfficeInfo().getImg() == null ? "" : office.getOfficeInfo().getImg();//修改后的首图信息
-				String oldImg = oldOffice.getImg() == null ? "" : oldOffice.getImg();//修改前的首图信息
+				String oldImg = "";
+				if(oldOffice != null){//判断修改前的店铺信息是否为空,防止报空指针异常
+					oldImg = oldOffice.getImg() == null ? "" : oldOffice.getImg();//修改前的首图信息
+				}
 				if(!oldImg.equals(img)){
 					reservationTime(3, currentUser.getCreateBy().getId(), img, oldOffice.getImg(), lifeImgUrls, office.getId(), "bm", null);
 				}
