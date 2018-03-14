@@ -397,7 +397,7 @@
 				         <td class="width-35"><form:input path="officeInfo.bedNum" htmlEscape="false" maxlength="5" cssClass="form-control digits required"/></td>
 						 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>是否新店：</label></td>
 						 <td id="isNew">
-						 	<c:if test="${not empty office.id }">
+						 	<c:if test="${not empty office.officeInfo.shortName}">
 				         		<c:if test="${office.isNew == 0}">
 									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('isNew','${office.id}',1)">&nbsp;&nbsp;否
 								</c:if>
@@ -405,7 +405,7 @@
 									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('isNew','${office.id}',0)">&nbsp;&nbsp;是
 								</c:if>
 				         	</c:if>
-				         	<c:if test="${empty office.id }">
+				         	<c:if test="${empty office.officeInfo.shortName}">
 				         		<select class="form-control required" id="isNew" name="isNew">
 									<option value='0'>否</option>
 								</select>
@@ -422,7 +422,7 @@
 						 </td>
 						 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺状态(是否隐藏)：</label></td>
 				         <td class="width-35" id="status">
-				         	<c:if test="${not empty office.id }">
+				         	<c:if test="${not empty office.officeInfo.shortName}">
 								<c:if test="${office.officeInfo.status == 1}">
 									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('status','${office.id}',0)">&nbsp;&nbsp;是
 								</c:if>
@@ -430,7 +430,7 @@
 									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('status','${office.id}',1)">&nbsp;&nbsp;否
 								</c:if>
 				         	</c:if>
-				         	<c:if test="${empty office.id }">
+				         	<c:if test="${empty office.officeInfo.shortName}">
 				         		<select id="officeInfo.status" name="officeInfo.status" class="form-control">
 				         			<option value="0">正常</option>
 				         			<option value="1">隐藏</option>
