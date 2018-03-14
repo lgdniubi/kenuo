@@ -107,6 +107,7 @@
 			<include refid="CommentColumns"/>
 		FROM mtmydb.mtmy_franchisee_banner a
 		WHERE a.franchisee_id = #{franchiseeId}
+		AND a.del_flag = 0
 		ORDER BY a.create_date DESC 
 		limit 1
 	</select>
