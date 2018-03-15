@@ -32,6 +32,12 @@
 	    };
 	    
 		$(document).ready(function() {
+			
+			//处于启用状态，不能修改位置类型
+			if($("#appStartPageId").val() != '' && '${appStartPage.isOnSale}' == 1){
+				$("#type").attr("disabled","disabled")
+			}
+			
 			validateForm = $("#inputForm").validate({
 					submitHandler: function(form){
 						loading('正在提交，请稍等...');
@@ -49,6 +55,7 @@
 				}
 			);
 		});
+		
 	</script>
 </head>
 <body class="gray-bg">
@@ -58,6 +65,7 @@
 	    	<div class="ibox-content">
 				<div class="tab-content" id="tab-content">
 	                <div class="tab-inner">
+	                	<span style="color:red;">若处于启用状态则不能修改位置类型</span>
 						<form:form id="inputForm" modelAttribute="appStartPage" action="${ctx}/ec/appStartPage/save">
 							<form:hidden path="appStartPageId"/>
 							<form:hidden path="isOnSale"/>
