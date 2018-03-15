@@ -412,7 +412,7 @@ public class TrainLiveAuditController extends BaseController{
 		return "modules/train/LiveIntegralsList";
 	}
 	/**
-	 * 添加直播推荐
+	 * 添加/修改 直播推荐
 	 * @param trainLiveAudit
 	 * @param request
 	 * @param response
@@ -424,13 +424,18 @@ public class TrainLiveAuditController extends BaseController{
 	@RequestMapping(value="addRecommend")
 	public String addRecommend(TrainLiveAudit trainLiveAudit, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes){
 		try {
-			trainLiveAuditService.addRecommend(trainLiveAudit);
-			addMessage(redirectAttributes, "推荐直播成功！");
+			//添加直播推荐
+			if(trainLiveAudit.getIsRecommend().equals("0")){
+				trainLiveAuditService.addRecommend(trainLiveAudit);
+			}else{//修改直播为不推荐
+				trainLiveAuditService.updateRecommend();
+			}
+			addMessage(redirectAttributes, "添加/修改 直播推荐成功！");
 			return "OK";
 		} catch (Exception e) {
-			BugLogUtils.saveBugLog(request, "推荐直播失败!", e);
+			BugLogUtils.saveBugLog(request, "添加/修改 直播推荐失败!", e);
 			logger.error("推荐直播失败错误信息:"+e.getMessage());
-			addMessage(redirectAttributes, "推荐直播失败！");
+			addMessage(redirectAttributes, "添加/修改 直播推荐失败！");
 			return "ERROR";
 		}
 	}
@@ -530,5 +535,48 @@ public class TrainLiveAuditController extends BaseController{
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
 		return "redirect:" + adminPath + "/train/live/transferForm?category.trainLiveCategoryId="+liveCategoryId;
+	}
+	
+	/**
+	 * 单独抽离出每天美耶的权限配置
+	 * @param trainLiveAudit
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/liveFormMtmy")
+	public String liveFormMtmy(TrainLiveAudit trainLiveAudit,HttpServletRequest request, Model model){
+		try{
+			//每天美耶可见商家的范围
+			Franchisee franchisee = new Franchisee();
+			franchisee.setIsRealFranchisee("1");
+			List<Franchisee> list = franchiseeService.findList(franchisee);
+			
+			trainLiveAudit = trainLiveAuditService.get(trainLiveAudit);
+			model.addAttribute("trainLiveAudit", trainLiveAudit);
+			model.addAttribute("list", list);
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "查询当前直播的数据失败", e);
+			logger.error("查询当前直播的数据报错信息：" + e.getMessage());
+		}
+		return "modules/train/liveFormMtmy";
+	}
+	
+	/**
+	 * 直播列表修改每天美耶权限
+	 * @param trainLiveAudit
+	 * @return
+	 */
+	@RequestMapping(value = "saveFormMtmy")
+	public String saveFormMtmy(TrainLiveAudit trainLiveAudit,HttpServletRequest request,RedirectAttributes redirectAttributes){
+		try{
+			trainLiveAuditService.saveFormMtmy(trainLiveAudit);
+			addMessage(redirectAttributes,"保存成功！");
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "直播列表修改每天美耶权限数据失败", e);
+			logger.error("直播列表修改每天美耶权限数据报错信息：" + e.getMessage());
+			addMessage(redirectAttributes,"保存失败！");
+		}
+		return "redirect:" + adminPath + "/train/live/list";
 	}
 }
