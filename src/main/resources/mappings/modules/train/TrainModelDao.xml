@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.TrainModelDao">
+	
+	<!-- 添加版本信息 -->
+	<insert id="insert">
+		INSERT INTO `train_model` (
+			`mod_name`,
+			`mod_type`,
+			`mod_ename`,
+			`mod_pay`,
+			`mod_fee`,
+			`mod_day`,
+			`remark`,
+			`create_by`,
+			`create_date` 
+		)
+		VALUES
+			(
+			    #{modName},
+			    #{modType},
+			    #{modEname},
+			    #{modPay},
+			    #{modFee},
+			    #{modDay},
+			    #{remark},
+			    #{createBy.id},
+			    SYSDATE()
+			    
+			); 
+	</insert>
+	
+	<select id="findUniqueByProperty" parameterType="String" resultType="TrainModel">
+		select
+			`id` AS id,
+			`mod_name` AS modName,
+			`mod_type` AS modType,
+			`mod_ename` AS modEname,
+			`mod_pay` AS modPay,
+			`mod_fee` AS modFee,
+			`mod_day` AS modDay,
+			`remark` AS remark
+		FROM
+			train_model t
+		WHERE
+			modEname = #{modEname}
+			AND del_flag = 0
+	</select>
+	<select id="findByModEname" resultType="int" parameterType="String">
+		SELECT     
+			COUNT(1)   
+		FROM     
+			train_model    
+		WHERE     
+			mod_ename = #{modEname}
+			AND del_flag = 0
+	</select>
+	
+	<!-- 查询所有“有效”的版本信息-->
+	<select id="findList" resultType="TrainModel">
+		select
+			`id` AS id,
+			`mod_name` AS modName,
+			`mod_type` AS modType,
+			`mod_ename` AS modEname,
+			`mod_pay` AS modPay,
+			`mod_fee` AS modFee,
+			`mod_day` AS modDay,
+			`remark` AS remark
+			<!-- `create_by` AS,
+			`create_date` AS,
+			`update_by` AS,
+			`update_date` AS,
+			`del_flag` AS -->
+		FROM
+		train_model t
+		WHERE 1=1
+		<if test="modEname != null and modEname != ''">
+			AND t.mod_ename LIKE
+			<if test="dbName == 'oracle'">'%'||#{modEname}||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{modEname}, '%')</if>
+		</if>
+	</select>
+	
+	<!-- 版本修改 -->
+	<update id="editTrainModel">
+		UPDATE train_model SET 
+			mod_name = #{modName},
+			mod_type = #{modType},
+			mod_ename = #{modEname},
+			remark = #{remark},
+			update_by = #{updateBy.id},
+			update_date = SYSDATE()
+			<!-- remarks = #{remarks} -->
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 获取单个版本数据 -->
+	<select id="getTrainModel" resultType="TrainModel">
+		SELECT 
+			`id` AS id,
+			`mod_name` AS modName,
+			`mod_type` AS modType,
+			`mod_ename` AS modEname,
+			`mod_pay` AS modPay,
+			`mod_fee` AS modFee,
+			`mod_day` AS modDay,
+			`remark` AS remark
+		FROM train_model  
+		WHERE 
+			del_flag = 0 
+		AND id = #{id} 
+	</select>
+	
+</mapper>
