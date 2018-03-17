@@ -163,6 +163,7 @@
 				<div class="clearfix">
 					<!-- 工具栏 -->
 					<div class="row" style="padding-top: 10px;">
+						<input id="articlesIds" name="articlesIds" type="hidden" value="${articlesIds}"/>
 						<div class="col-sm-12">
 							<div class="pull-left">
 									<a href="#" onclick="addArticles(${themeMapping.themeId},'${isOpen}')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加文章</a>
