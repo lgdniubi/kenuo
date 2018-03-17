@@ -54,10 +54,12 @@ import com.training.modules.ec.service.GoodsSpecService;
 import com.training.modules.ec.service.GoodsTypeService;
 import com.training.modules.ec.service.OrderGoodsService;
 import com.training.modules.ec.utils.GoodsUtil;
+import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.quartz.tasks.utils.RedisConfig;
 import com.training.modules.quartz.utils.RedisLock;
 import com.training.modules.sys.utils.BugLogUtils;
+import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
 
 import net.sf.json.JSONObject;
@@ -965,6 +967,17 @@ public class GoodsController extends BaseController{
 		if(null != id && !"".equals(id)){
 			goods.setGoodsId(Integer.parseInt(id));
 			goodsService.delete(goods);
+			
+			//自媒体每天美耶商品信息同步
+			JSONObject jsonObject = new JSONObject();
+			String updateMtmyGoodInfo = ParametersFactory.getMtmyParamValues("mtmy_updateMtmyGoodInfo");	
+			logger.info("##### web接口路径:"+updateMtmyGoodInfo);	         
+			String parpm = "{\"goodsId\":\""+goods.getGoodsId()+"\",\"delFlag\":\"2\"}";
+			String url=updateMtmyGoodInfo;
+			String result = WebUtils.postMediaObject(parpm, url);
+			jsonObject = JSONObject.fromObject(result);
+			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			
 			addMessage(redirectAttributes, "删除商品信息成功");
 		}else{
 			addMessage(redirectAttributes, "删除失败，必要参数为空，请与系统管理员联系");

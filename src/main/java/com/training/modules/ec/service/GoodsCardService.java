@@ -25,7 +25,9 @@ import com.training.modules.ec.entity.GoodsSpecImage;
 import com.training.modules.ec.entity.GoodsSpecPrice;
 import com.training.modules.ec.entity.GoodsStatisticsCountData;
 import com.training.modules.ec.utils.GoodsUtil;
+import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.sys.utils.ParametersFactory;
 
 import net.sf.json.JSONObject;
 
@@ -110,6 +112,15 @@ public class GoodsCardService extends CrudService<GoodsCardDao, GoodsCard> {
 		// 保存
 		goodsDao.insert(goods);
 		
+		//自媒体每天美耶商品信息同步
+		JSONObject jsonObject = new JSONObject();
+		String updateMtmyGoodInfo = ParametersFactory.getMtmyParamValues("mtmy_updateMtmyGoodInfo");	
+		logger.info("##### web接口路径:"+updateMtmyGoodInfo);	         
+		String parpm = "{\"goodsId\":\""+goods.getGoodsId()+"\",\"goodsName\":\""+goods.getGoodsName()+"\",\"marketPrice\":\""+goods.getMarketPrice()+"\",\"shopPrice\":\""+goods.getShopPrice()+"\",\"advancePrice\":\""+goods.getAdvancePrice()+"\",\"goodsRemark\":\""+goods.getGoodsRemark()+"\",\"actionType\":\""+goods.getActionType()+"\",\"isReal\":\""+goods.getIsReal()+"\",\"integral\":\""+goods.getIntegral()+"\",\"originalImg\":\""+goods.getOriginalImg()+"\",\"isOpen\":\""+goods.getGoodsIsOpen()+"\",\"franchiseeId\":\""+goods.getFranchiseeId()+"\"}";
+		String url=updateMtmyGoodInfo;
+		String result = WebUtils.postMediaObject(parpm, url);
+		jsonObject = JSONObject.fromObject(result);
+		logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
 		
 		int goodId = goods.getGoodsId();
 		if (0 == goodId) {
