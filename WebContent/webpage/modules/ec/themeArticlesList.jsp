@@ -123,11 +123,11 @@
 					success:function(data){
 						if(data=="success"){
 							top.layer.alert('保存成功!', {icon: 1, title:'提醒'});
-							window.location="${ctx}/ec/theme/themeArticlesList?themeId="+id;	
+							window.location="${ctx}/ec/theme/themeArticlesList?themeId="+id+"&isOpen="+isOpen;	
 						}
 						if(data=="error"){
 							top.layer.alert('保存失败!', {icon: 2, title:'提醒'});
-							window.location="${ctx}/ec/theme/themeArticlesList?themeId="+id;
+							window.location="${ctx}/ec/theme/themeArticlesList?themeId="+id+"&isOpen="+isOpen;
 						}
 									
 					},

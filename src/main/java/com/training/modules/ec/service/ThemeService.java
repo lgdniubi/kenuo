@@ -96,7 +96,7 @@ public class ThemeService extends CrudService<ThemeDao, Theme>{
 		JSONObject jsonObject = new JSONObject();
 		String queryMediaArticleDetailListByArticleIdList = ParametersFactory.getMtmyParamValues("mtmy_queryMediaArticleDetailListByArticleIdList");	
 		logger.info("##### web接口路径:"+queryMediaArticleDetailListByArticleIdList);	
-		String parpm = "{\"sourcePlatform\":\"mtmy\",\"articleIdList\":\""+articlesIds+"\"}";
+		String parpm = "{\"sourcePlatform\":\"mtmy\",\"articleIdList\":\""+articlesIds+"\",\"articleIdList\":\"0\"}";
 		String url=queryMediaArticleDetailListByArticleIdList;
 		String result = WebUtils.postMediaObject(parpm, url);
 		jsonObject = JSONObject.fromObject(result);
