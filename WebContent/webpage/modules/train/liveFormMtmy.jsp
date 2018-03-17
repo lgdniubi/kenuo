@@ -134,11 +134,11 @@
 				success: function(data) {
 					$(".loading").hide(); //关闭加载层
 					if(data=="OK"){
-						top.layer.alert('推荐成功!', {icon: 1, title:'提醒'});
+						top.layer.alert('操作成功!', {icon: 1, title:'提醒'});
 						window.location="${ctx}/train/live/liveFormMtmy?id="+id;
 					}
 					if(data=="ERROR"){
-						top.layer.alert('推荐失败!', {icon: 2, title:'提醒'});
+						top.layer.alert('操作失败!', {icon: 2, title:'提醒'});
 						window.location="${ctx}/train/live/liveFormMtmy?id="+id;
 					}
 				}
