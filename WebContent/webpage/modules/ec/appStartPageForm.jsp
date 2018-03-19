@@ -23,6 +23,8 @@
 			   top.layer.alert('启动页广告图！', {icon: 0, title:'提醒'});
 			   return false;
 		    }
+		
+		    $("#type").removeAttr("disabled"); 
 	    	if(validateForm.form()){
 	    		loading("正在提交，请稍候...");
 				$("#inputForm").submit();
