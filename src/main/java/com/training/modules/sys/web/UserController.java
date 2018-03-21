@@ -150,8 +150,10 @@ public class UserController extends BaseController {
 			user.setOffice(UserUtils.getUser().getOffice());
 		}*/
 		if (user.getUserinfo() == null || user.getUserinfo().getId() == null) {
-			user.setUserinfo(systemService.getUserInfoByUserId(user.getId()));		
-			user.getUserinfo().setSelfintro(HtmlUtils.htmlEscape(user.getUserinfo().getSelfintro()));
+			user.setUserinfo(systemService.getUserInfoByUserId(user.getId()));
+			if(user.getUserinfo() != null){
+				user.getUserinfo().setSelfintro(HtmlUtils.htmlEscape(user.getUserinfo().getSelfintro()));
+			}
 		}
 		if (user.getSpeciality() == null || user.getSpeciality().getId() == null) {
 			user.setSpeciality(systemService.getSpecialityByUserId(user.getId()));
