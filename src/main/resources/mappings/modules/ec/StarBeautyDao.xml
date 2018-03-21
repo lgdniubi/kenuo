@@ -8,11 +8,16 @@
 			a.id,
 			a.name,                               
 			a.is_show AS isShow,
+			a.is_open AS isOpen,
+			a.franchisee_id AS franchiseeId,
+			c.name AS franchiseeName,
+			a.sort,
 			a.remarks,
 			b.name AS "createBy.name",
 			a.create_date AS createDate
 		FROM
 			mtmydb.mtmy_star_beauty a LEFT JOIN sys_user b ON a.create_by = b.id
+			LEFT JOIN mtmydb.mtmy_franchisee c ON a.franchisee_id = c.id
 		WHERE
 			a.del_flag = 0
 		ORDER BY a.id DESC
@@ -55,6 +60,9 @@
 			id,
 			name,
 			is_show AS isShow,
+			is_open AS isOpen,
+			franchisee_id AS franchiseeId,
+			sort,
 			remarks 
 		FROM
 			mtmydb.mtmy_star_beauty
@@ -67,6 +75,9 @@
 		INSERT INTO mtmydb.mtmy_star_beauty(
 			name,
 			is_show,
+			is_open,
+			franchisee_id,
+			sort,
 			remarks,
 			create_by,
 			create_date,
@@ -74,6 +85,9 @@
 		) VALUES (
 			#{name},
 			0,
+			#{isOpen},
+			#{franchiseeId},
+			#{sort},
 			#{remarks},
 			#{createBy.id},
 			SYSDATE(),
@@ -86,6 +100,7 @@
 		UPDATE mtmydb.mtmy_star_beauty
 			SET 
 			  name = #{name},     
+			  sort = #{sort},
 			  remarks = #{remarks},
 			  update_by = #{updateBy.id},
 			  update_date = SYSDATE()

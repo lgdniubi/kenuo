@@ -53,16 +53,17 @@
 		
 		//确认是否删除
 		function  delFranchiseeBanner(id,franchiseeId,isShow){
-			if(confirm("确认要删除吗？","提示框")){
-				isDelete(id,franchiseeId,isShow);			
-			}
-		}
-		//不启用的数据可以被删除
-		function isDelete(id,franchiseeId,isShow){
 			if(isShow == 1){
 				top.layer.alert('此数据启用中,请重新选择!', {icon: 0, title:'提醒'});
 				return;
+			}else{
+				if(confirm("确认要删除吗？","提示框")){
+					isDelete(id,franchiseeId);			
+				}
 			}
+		}
+		//不启用的数据可以被删除
+		function isDelete(id,franchiseeId){
 			$(".loading").show();//打开展示层
 			$.ajax({
 				type : "POST",

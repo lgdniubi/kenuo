@@ -50,6 +50,35 @@
 			}); 
 		}
 		
+		//确认是否删除
+		function  del(id,isShow){
+			if(isShow == 1){
+				top.layer.alert('此数据启用中,请重新选择!', {icon: 0, title:'提醒'});
+				return;
+			}else{
+				if(confirm("确认要删除吗？","提示框")){
+					isDelete(id);			
+				}
+			}
+		}
+		//不启用的数据可以被删除
+		function isDelete(id){
+			$(".loading").show();//打开展示层
+			$.ajax({
+				type : "POST",
+				url : "${ctx}/ec/starBeauty/del?id="+id,
+				dataType: 'json',
+				success: function(data) {
+					$(".loading").hide(); //关闭加载层
+					var status = data.STATUS;
+					if("OK" == status){
+						window.location="${ctx}/ec/starBeauty/list";
+					}else if("ERROR" == status){
+						top.layer.alert(data.MESSAGE, {icon: 0, title:'提醒'});
+					}
+				}
+			}); 
+		}
     </script>
     <title>明星技师管理</title>
 </head>
@@ -84,6 +113,8 @@
                 			<th style="text-align: center;">ID</th>
                 			<th style="text-align: center;">明星技师组名称</th>
                 			<th style="text-align: center;">是否显示</th>
+                			<th style="text-align: center;">商家</th>
+                			<th style="text-align: center;">排序</th>
                 			<th style="text-align: center;">创建者</th>
                 			<th style="text-align: center;">创建时间</th>
                 			<th style="text-align: center;">操作</th>
@@ -102,6 +133,13 @@
 									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="updateType('${starBeauty.id}',0)">
 								</c:if>
 							</td>
+							<c:if test="${starBeauty.isOpen == 0}">
+								<td style="text-align: center;">公开</td>
+							</c:if>
+							<c:if test="${starBeauty.isOpen == 1}">
+								<td style="text-align: center;">${starBeauty.franchiseeName}</td>
+							</c:if>
+							<td style="text-align: center;">${starBeauty.sort}</td>
 							<td style="text-align: center;">${starBeauty.createBy.name}</td>
 							<td style="text-align: center;"><fmt:formatDate value="${starBeauty.createDate}"  pattern="yyyy-MM-dd HH:mm:ss" /></td>
 							<td style="text-align: center;">
@@ -112,10 +150,10 @@
 									<a href="#" onclick="openDialog('修改', '${ctx}/ec/starBeauty/form?id=${starBeauty.id}','600px', '550px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 修改</a>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="ec:starBeauty:del">
-									<a href="${ctx}/ec/starBeauty/del?id=${starBeauty.id}" onclick="return confirmx('确认要删除吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
+									<a href="#" onclick="del('${starBeauty.id}','${starBeauty.isShow}')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>删除</a>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="ec:starBeautyMapping:add">
-									<a href="#" onclick="openDialogView('添加明星技师', '${ctx}/ec/starBeauty/starBeautyMappingList?starId=${starBeauty.id}','700px', '550px')" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> 添加明星技师</a>
+									<a href="#" onclick="openDialogView('添加明星技师', '${ctx}/ec/starBeauty/starBeautyMappingList?starId=${starBeauty.id}&isShow=${starBeauty.isShow}&franchiseeId=${starBeauty.franchiseeId}','700px', '550px')" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> 添加明星技师</a>
 								</shiro:hasPermission>
 							</td>
 						</tr>

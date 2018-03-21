@@ -349,6 +349,7 @@ public interface UserDao extends CrudDao<User> {
 	/**
 	 * 明星技师使用的查询美容师方法
 	 * @param user
+	 * @param isOpen 
 	 * @return
 	 */
 	public List<User> starBeautyFindUser(User user);

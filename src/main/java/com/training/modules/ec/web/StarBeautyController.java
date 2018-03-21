@@ -1,6 +1,7 @@
 package com.training.modules.ec.web;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +20,9 @@ import com.training.common.web.BaseController;
 import com.training.modules.ec.entity.StarBeauty;
 import com.training.modules.ec.entity.StarBeautyMapping;
 import com.training.modules.ec.service.StarBeautyService;
+import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.entity.User;
+import com.training.modules.sys.service.FranchiseeService;
 import com.training.modules.sys.service.SystemService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
@@ -37,6 +40,8 @@ public class StarBeautyController extends BaseController{
 	private StarBeautyService starBeautyService;
 	@Autowired
 	private SystemService systemService;
+	@Autowired
+	private FranchiseeService franchiseeService;
 	
 	/**
 	 * 查看明星技师组列表
@@ -69,6 +74,12 @@ public class StarBeautyController extends BaseController{
 	@RequestMapping("form")
 	public String form(StarBeauty starBeauty,Model model,HttpServletRequest request){
 		try {
+			//查询商家保护功能中的所有商家
+			Franchisee franchisee = new Franchisee();
+			franchisee.setIsRealFranchisee("1");
+			List<Franchisee> list = franchiseeService.findList(franchisee);
+			model.addAttribute("list", list);
+			
 			if(StringUtils.isNotEmpty(starBeauty.getId())){
 				starBeauty = starBeautyService.getStarBeautyById(starBeauty);
 				model.addAttribute("starBeauty", starBeauty);
@@ -91,7 +102,13 @@ public class StarBeautyController extends BaseController{
 	public String save(StarBeauty starBeauty,Model model,HttpServletRequest request,RedirectAttributes redirectAttributes){
 		try {
 			User user = UserUtils.getUser();
+			int isOpen = starBeauty.getIsOpen();//商家保护是否公开
 			if(StringUtils.isEmpty(starBeauty.getId())){//添加
+				if(isOpen != 0){//如果isOpen=0,商家id为空;isOpen是商家id,修改为1,并且填写商家id
+					starBeauty.setFranchiseeId(starBeauty.getIsOpen()+"");
+					starBeauty.setIsOpen(1);
+				}
+				
 				starBeauty.setCreateBy(user);
 				starBeautyService.saveStarBeauty(starBeauty);
 				addMessage(redirectAttributes, "添加 明星技师组成功！");
@@ -114,17 +131,21 @@ public class StarBeautyController extends BaseController{
 	 * @param request
 	 * @return
 	 */
+	@ResponseBody
 	@RequestMapping("del")
-	public String del(StarBeauty starBeauty,Model model,HttpServletRequest request){
+	public Map<String, String> del(StarBeauty starBeauty,Model model,HttpServletRequest request){
+		Map<String, String> map = new HashMap<String, String>();
 		try {
-			if(StringUtils.isNotEmpty(starBeauty.getId())){
-				starBeautyService.delStarBeauty(starBeauty);
-			}
+			//删除记录
+			starBeautyService.delStarBeauty(starBeauty);
+			map.put("STATUS", "OK");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "删除明星技师组失败!", e);
 			logger.error("删除明星技师组失败：" + e.getMessage());
+			map.put("STATUS", "ERROR"); 
+			map.put("MESSAGE", "删除失败");
 		}
-		return"redirect:" + adminPath + "/ec/starBeauty/list";
+		return map;
 	}
 	
 	/**
@@ -161,7 +182,11 @@ public class StarBeautyController extends BaseController{
 	@RequestMapping(value="starBeautyMappingList")
 	public String starBeautyMappingList(StarBeautyMapping starBeautyMapping,HttpServletRequest request, HttpServletResponse response,Model model) {
 		try{
+			String isShow = request.getParameter("isShow");//是否展示
+			String franchiseeId = request.getParameter("franchiseeId");//商家保护的商家id
 			Page<StarBeautyMapping> page = starBeautyService.findMappingPage(new Page<StarBeautyMapping>(request, response), starBeautyMapping);
+			model.addAttribute("isShow", isShow);
+			model.addAttribute("franchiseeId", franchiseeId);
 			model.addAttribute("starId", starBeautyMapping.getStarId());
 			model.addAttribute("num", page.getList().size());
 			model.addAttribute("page", page);
@@ -183,7 +208,9 @@ public class StarBeautyController extends BaseController{
 	@RequestMapping("mappingform")
 	public String mappingform(StarBeautyMapping starBeautyMapping,Model model,HttpServletRequest request, HttpServletResponse response){
 		String starId = request.getParameter("starId");
+		String franchiseeId = request.getParameter("franchiseeId");//商家保护的商家id
 		try {
+			model.addAttribute("franchiseeId", franchiseeId);
 			model.addAttribute("user", new User());
 			model.addAttribute("starId", starId);
 			model.addAttribute("starBeautyMapping", starBeautyMapping);
@@ -207,6 +234,7 @@ public class StarBeautyController extends BaseController{
 		try{
 			String starId = request.getParameter("starId");
 			Page<User> page = systemService.starBeautyFindUser(new Page<User>(request, response), user);
+			model.addAttribute("franchiseeId", user.getCompany().getId());
 			model.addAttribute("starId", starId);
 			model.addAttribute("page", page);
 		}catch(Exception e){

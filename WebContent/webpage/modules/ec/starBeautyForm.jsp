@@ -35,6 +35,10 @@
 					}
 				}
 			);
+			var id = '${starBeauty.id}';
+			if(id > 0){
+				$("[name='isOpen']").attr("disabled",true);
+			}
 		});
 	</script>
 </head>
@@ -59,6 +63,21 @@
 									<td>
 										<form:input path="remarks" class="form-control" style="width: 300px"/>
 									</td>
+								</tr>
+								<tr>
+									<td><label class="pull-right"><font color="red">*</font>排序：</label></td>
+									<td>
+										<form:input path="sort" class="form-control required" style="width: 300px"/>
+									</td>
+								</tr>
+								<tr>
+									<td><label class="pull-right"><font color="red">*</font>选择商家:</label></td>	
+									<td>
+										<label><input type="radio" id="isOpen" name="isOpen" value="0" <c:if test="${starBeauty.isOpen == 0}">checked="checked"</c:if> class="form required">公开</label>
+										<c:forEach items="${list}" var="franchisee">
+											<label><input type="radio" id="isOpen" name="isOpen" <c:if test="${starBeauty.franchiseeId == franchisee.id}">checked="checked"</c:if> value="${franchisee.id}" class="form required">${franchisee.name}</label>
+										</c:forEach>
+									</td>			
 								</tr>
 							</table>
 						</form:form>

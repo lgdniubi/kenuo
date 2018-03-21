@@ -46,6 +46,28 @@
 		$("#officeName").val("");
 	}
 	
+	/* 绑定归属商家和归属机构联动 */
+	function officeButtion() {
+		var compId = $("#franchiseeId").val();
+		top.layer.open({
+		    type: 2, 
+		    area: ['300px', '420px'],
+		    title:"选择机构",
+		    content: "${ctx}/sys/office/newUserOffice?compId="+compId,
+		    btn: ['确定', '关闭'],
+    	    yes: function(index, layero){ //或者使用btn1
+						var treeId = layero.find("iframe")[0].contentWindow.document.getElementById("offtreeId").value;//h.find("iframe").contents();
+						var treeName = layero.find("iframe")[0].contentWindow.document.getElementById("offtreeName").value;
+						$("#officeId").val(treeId);
+						$("#officeName").val(treeName);
+						top.layer.close(index);
+				    	       },
+    	cancel: function(index){ //或者使用btn2
+    	           //按钮【按钮二】的回调
+    	       }
+		}); 
+	}
+	
 	//明星技师修改查询出的信息
 	function selectFunction(o){
 		
@@ -114,10 +136,19 @@
 								<span>电话：</span>
 								<form:input path="mobile" htmlEscape="false" maxlength="50" class=" form-control input-sm" style="width:200px"/> 
 								<span>归属机构：</span>
-								<sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}" title="部门"
-									url="/sys/office/treeData?type=2" cssClass=" form-control input-sm" allowClear="true"
-									notAllowSelectRoot="false" notAllowSelectParent="false" />
+								<%-- <sys:treeselect id="office" name="office.id" value="${user.office.id}" labelName="office.name" labelValue="${user.office.name}" title="部门"
+									url="/sys/office/treeData?type=2&" cssClass=" form-control input-sm" allowClear="true"
+									notAllowSelectRoot="false" notAllowSelectParent="false" /> --%>
+								<input id="officeId" name="office.id" class="form-control required" type="hidden" value="${user.office.id}"/>
+								<div class="input-group">
+									<input id="officeName" name="office.name"  type="text" value="${user.office.name}" readonly="readonly" class="form-control required"/>
+						       		 <span class="input-group-btn">
+							       		 <button type="button"  id="officeButton" class="btn  btn-primary" onclick="officeButtion()"><i class="fa fa-search"></i></button> 
+						       		 </span>
+							    </div>
+								<input id="franchiseeId" name="company.id" type="hidden" value="${franchiseeId}" /><!-- 商家保护 -->
 							</div>
+							
 						</form:form>
 					</div>
 				</div>
@@ -165,7 +196,7 @@
 				<table:page page="${page}"></table:page>
 			</div>
 			<div id="div1" style="display: none;">
-				<form action="${ctx}/ec/starBeauty/saveStarBeauty" method="post" class="form-horizontal">
+				<form method="post" class="form-horizontal">
 					<input type="hidden" id="userId" name="userId"/>
 					<input type="hidden" id="officeIds" name="officeIds"/>
 					<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
