@@ -32,11 +32,11 @@
 			
 		});
 		//是否启用
-		function updateType(id,isShow){
+		function updateType(id,isShow,isOpen,franchiseeId){
 			$(".loading").show();//打开展示层
 			$.ajax({
 				type : "POST",
-				url : "${ctx}/ec/starBeauty/updateType?id="+id+"&isShow="+isShow,
+				url : "${ctx}/ec/starBeauty/updateType?id="+id+"&isShow="+isShow+"&isOpen="+isOpen+"&franchiseeId="+franchiseeId,
 				dataType: 'json',
 				success: function(data) {
 					$(".loading").hide(); //关闭加载层
@@ -127,10 +127,10 @@
 							<td style="text-align: center;">${starBeauty.name}</td>
 							<td style="text-align: center;">
 								<c:if test="${starBeauty.isShow  == 0}">
-									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="updateType('${starBeauty.id}',1)">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="updateType('${starBeauty.id}',1,'${starBeauty.isOpen}','${starBeauty.franchiseeId}')">
 								</c:if>
 								<c:if test="${starBeauty.isShow == 1}">
-									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="updateType('${starBeauty.id}',0)">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="updateType('${starBeauty.id}',0,'${starBeauty.isOpen}','${starBeauty.franchiseeId}')">
 								</c:if>
 							</td>
 							<c:if test="${starBeauty.isOpen == 0}">

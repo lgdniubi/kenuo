@@ -102,11 +102,11 @@ public class StarBeautyController extends BaseController{
 	public String save(StarBeauty starBeauty,Model model,HttpServletRequest request,RedirectAttributes redirectAttributes){
 		try {
 			User user = UserUtils.getUser();
-			int isOpen = starBeauty.getIsOpen();//商家保护是否公开
+			String isOpen = starBeauty.getIsOpen();//商家保护是否公开
 			if(StringUtils.isEmpty(starBeauty.getId())){//添加
-				if(isOpen != 0){//如果isOpen=0,商家id为空;isOpen是商家id,修改为1,并且填写商家id
+				if(!isOpen.equals("0")){//如果isOpen=0,商家id为空;isOpen是商家id,修改为1,并且填写商家id
 					starBeauty.setFranchiseeId(starBeauty.getIsOpen()+"");
-					starBeauty.setIsOpen(1);
+					starBeauty.setIsOpen("1");
 				}
 				
 				starBeauty.setCreateBy(user);
