@@ -147,11 +147,6 @@ public class OfficeRecommendController extends BaseController{
 			if(officeRecommend.getOfficeRecommendId() != 0){
 				if(officeRecommend.getIsShow() == 1){
 					officeRecommendService.updateIsShow(officeRecommend);
-				}else if(officeRecommend.getIsShow() == 0){
-					int officeRecommendId = officeRecommendService.selectIdByCreatDate(officeRecommend);
-					officeRecommend = officeRecommendService.getOfficeRecommend(officeRecommendId);
-					officeRecommend.setIsShow(1);
-					officeRecommendService.updateIsShow(officeRecommend);
 				}
 			}
 		}catch(Exception e){
