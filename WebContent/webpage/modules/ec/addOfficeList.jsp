@@ -22,24 +22,24 @@
 		return false;
 	}
 	
-	function delOffice(officeRecommendMappingId,officeRecommendId){
+	function delOffice(officeRecommendMappingId,officeRecommendId,franchiseeId){
 		if(confirm("确认要删除吗？","提示框")){
-			newDelete(officeRecommendMappingId,officeRecommendId);			
+			newDelete(officeRecommendMappingId,officeRecommendId,franchiseeId);			
 		}
 	}
 		
-	function newDelete(officeRecommendMappingId,officeRecommendId){
+	function newDelete(officeRecommendMappingId,officeRecommendId,franchiseeId){
 		$.ajax({
 			type:"post",
 			url:"${ctx}/ec/officeRecommend/delOffice?officeRecommendMappingId="+officeRecommendMappingId,
 			success:function(date){
 				if(date=="success"){
 					top.layer.alert('删除成功!', {icon: 1, title:'提醒'});
-					window.location="${ctx}/ec/officeRecommend/addOffice?officeRecommendId="+officeRecommendId;
+					window.location="${ctx}/ec/officeRecommend/addOffice?officeRecommendId="+officeRecommendId+"&franchiseeId="+franchiseeId;
 				}
 				if(date=="error"){
 					top.layer.alert('删除失败!', {icon: 2, title:'提醒'});
-					window.location="${ctx}/ec/officeRecommend/addOffice?officeRecommendId="+officeRecommendId;
+					window.location="${ctx}/ec/officeRecommend/addOffice?officeRecommendId="+officeRecommendId+"&franchiseeId="+franchiseeId;
 				}
 							
 			},
@@ -153,7 +153,7 @@
 										<a href="#" onclick="editOffice(${page.recommendId},${page.officeRecommendMappingId},'edit','${franchiseeId}')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i>修改</a>
 									</shiro:hasPermission> 
 									<shiro:hasPermission name="ec:officeRecommend:delOffice">
-										<a href="#" onclick="delOffice(${page.officeRecommendMappingId},${page.recommendId})" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>删除</a>
+										<a href="#" onclick="delOffice(${page.officeRecommendMappingId},${page.recommendId},'${franchiseeId}')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>删除</a>
 									</shiro:hasPermission> 
 								</td>
 							</tr>
