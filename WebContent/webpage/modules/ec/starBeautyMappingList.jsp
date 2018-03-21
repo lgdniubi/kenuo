@@ -223,11 +223,9 @@
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 						<input id="categoryIds" name="categoryIds" type="hidden" value="${categoryIds}"/>
 					</form>
-					<c:if test="${isShow == 0}">
-						<shiro:hasPermission name="ec:starBeauty:add">
-							<a href="#" onclick="addStarBeautyMapping(${starId},${isShow})" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加明星技师</a>
-						</shiro:hasPermission>
-					</c:if>
+					<shiro:hasPermission name="ec:starBeauty:add">
+						<a href="#" onclick="addStarBeautyMapping(${starId},${isShow})" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加明星技师</a>
+					</shiro:hasPermission>
 				</div>
 				<p></p>
 				<input id="num" type="hidden" value="${num}"/>
@@ -239,9 +237,7 @@
 							<th style="text-align: center;">名称</th>
 							<th style="text-align: center;">图片</th>
 							<th style="text-align: center;">排序</th>
-							<c:if test="${isShow == 0}">
-								<th style="text-align: center;">操作</th>
-							</c:if>
+							<th style="text-align: center;">操作</th>
 						</tr>
 					</thead>
 					<tbody style="text-align: center;">
@@ -255,19 +251,17 @@
 									<img alt="" src="${ctxStatic}/images/lazylode.png" data-src="${page.starBeautyPhoto}" style="width: 100px;height: 80px;">
 								</td>
 								<td style="text-align: center;">${page.sort}</td>
-								<c:if test="${isShow == 0}">
-									<td style="text-align: center;">
-										<shiro:hasPermission name="ec:starBeauty:view">
-											<a href="#" onclick="openDialogView('查看', '${ctx}/ec/starBeauty/starBeautyMappingform?mappingId=${page.mappingId}','600px', '550px')" class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i> 查看</a>
-										</shiro:hasPermission>
-										<shiro:hasPermission name="ec:starBeauty:edit">
-											<a href="#" onclick="editStarBeautyMapping(${page.mappingId},${isShow},${franchiseeId})" class="btn btn-success btn-xs"><i class="fa fa-edit"></i>修改</a>
-										</shiro:hasPermission>
-										<shiro:hasPermission name="ec:starBeauty:del">
-											<a href="#" onclick="delStarBeautyMapping(${page.mappingId},${starId},${isShow},${franchiseeId})" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>删除</a>
-										</shiro:hasPermission>
-									</td>
-								</c:if>
+								<td style="text-align: center;">
+									<shiro:hasPermission name="ec:starBeauty:view">
+										<a href="#" onclick="openDialogView('查看', '${ctx}/ec/starBeauty/starBeautyMappingform?mappingId=${page.mappingId}','600px', '550px')" class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i> 查看</a>
+									</shiro:hasPermission>
+									<shiro:hasPermission name="ec:starBeauty:edit">
+										<a href="#" onclick="editStarBeautyMapping(${page.mappingId},${isShow},${franchiseeId})" class="btn btn-success btn-xs"><i class="fa fa-edit"></i>修改</a>
+									</shiro:hasPermission>
+									<shiro:hasPermission name="ec:starBeauty:del">
+										<a href="#" onclick="delStarBeautyMapping(${page.mappingId},${starId},${isShow},${franchiseeId})" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>删除</a>
+									</shiro:hasPermission>
+								</td>
 							</tr>
 						</c:forEach>
 					</tbody>

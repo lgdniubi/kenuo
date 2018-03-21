@@ -151,6 +151,7 @@ public class UserController extends BaseController {
 		}*/
 		if (user.getUserinfo() == null || user.getUserinfo().getId() == null) {
 			user.setUserinfo(systemService.getUserInfoByUserId(user.getId()));		
+			user.getUserinfo().setSelfintro(HtmlUtils.htmlEscape(user.getUserinfo().getSelfintro()));
 		}
 		if (user.getSpeciality() == null || user.getSpeciality().getId() == null) {
 			user.setSpeciality(systemService.getSpecialityByUserId(user.getId()));
@@ -168,7 +169,6 @@ public class UserController extends BaseController {
 			dict.setType("sys_user_type");
 			model.addAttribute("dict", dictService.findDict(dict));
 		}
-		user.getUserinfo().setSelfintro(HtmlUtils.htmlEscape(user.getUserinfo().getSelfintro()));
 		model.addAttribute("userLogs", userLogs);
 		model.addAttribute("user", user);
 		//默认给美容师角色
