@@ -132,14 +132,6 @@ public class OfficeRecommendService extends CrudService<OfficeRecommendDao, Offi
 	}
 	
 	/**
-	 * 查询最近创建的那个推荐组
-	 * @return
-	 */
-	public int selectIdByCreatDate(OfficeRecommend officeRecommend){
-		return officeRecommendDao.selectIdByCreatDate(officeRecommend);
-	}
-	
-	/**
 	 * 查询推荐组对应的推荐店铺id
 	 * @param recommendId
 	 * @return
