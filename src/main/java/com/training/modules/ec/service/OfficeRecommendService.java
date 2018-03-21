@@ -127,16 +127,16 @@ public class OfficeRecommendService extends CrudService<OfficeRecommendDao, Offi
 	/**
 	 * 将所有的推荐组都设置为不显示
 	 */
-	public void changeAll(){
-		officeRecommendDao.changeAll();
+	public void changeAll(OfficeRecommend officeRecommend){
+		officeRecommendDao.changeAll(officeRecommend);
 	}
 	
 	/**
 	 * 查询最近创建的那个推荐组
 	 * @return
 	 */
-	public int selectIdByCreatDate(){
-		return officeRecommendDao.selectIdByCreatDate();
+	public int selectIdByCreatDate(OfficeRecommend officeRecommend){
+		return officeRecommendDao.selectIdByCreatDate(officeRecommend);
 	}
 	
 	/**
@@ -147,4 +147,5 @@ public class OfficeRecommendService extends CrudService<OfficeRecommendDao, Offi
 	public String selectOfficeId(int recommendId){
 		return officeRecommendDao.selectOfficeId(recommendId);
 	}
+	
 }

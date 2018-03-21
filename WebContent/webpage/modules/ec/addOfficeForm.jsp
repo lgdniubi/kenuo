@@ -24,7 +24,7 @@
 			    type: 2, 
 			    area: ['300px', '420px'],
 			    title:"选择所在店铺",
-			    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/sys/office/treeData?type=2")+"&module=&checked=&extId=&isAll=" ,
+			    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/sys/office/newOfficeTreeData?compId=${franchiseeId}"),
 			    	btn: ['确定', '关闭']
 	    	       ,yes: function(index, layero){ //或者使用btn1
 	    	    	   var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
