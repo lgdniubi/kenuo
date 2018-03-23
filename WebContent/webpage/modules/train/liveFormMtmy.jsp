@@ -50,7 +50,6 @@
 				$("#isRecommendShow").hide();
 			}else{//公开
 				$("#isOpenRoleShow").show();
-				$("#isRecommendShow").show();
 			}
 		}
 		//每天美耶可见范围
@@ -107,7 +106,6 @@
 				$("#isRecommendShow").hide();
 			}else{
 				$("#isOpenRoleShow").show();
-				$("#isRecommendShow").show();
 				//每天美耶可见范围
 				var isOpenIds = "${trainLiveAudit.isOpenRole}";
 				if(isOpenIds.length > 0){
