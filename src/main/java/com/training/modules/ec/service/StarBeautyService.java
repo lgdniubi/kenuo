@@ -40,15 +40,12 @@ public class StarBeautyService extends CrudService<StarBeautyDao, StarBeauty>{
 	 */
 	public Map<String, String> updateType(StarBeauty starBeauty) {
 		Map<String, String> map = new HashMap<String, String>();
-		//必须有一个是显示的. 
 		//当传递的isShow = 1,要求启用.关闭其他,打开这个~~~~~传递isShow=0,要求关闭,关闭所有的,打开最新的
-		starBeautyDao.cannelAllIsShow();
-		if(starBeauty.getIsShow() == 1){
+		if(starBeauty.getIsShow() == 1){//×改对勾,当前商家下的全部关闭,打开选中的
+			starBeautyDao.cannelAllIsShow(starBeauty);//修改当前商家下所有店铺为关闭
 			//根据id修改状态为使用
 			starBeautyDao.changeIsShow(starBeauty);
-		}else{
-			//查询最新添加的数据,修改为显示
-			starBeauty = starBeautyDao.findStarBeauty();
+		}else{//对勾改×,直接改;
 			starBeautyDao.changeIsShow(starBeauty);
 		}
 		map.put("STATUS", "OK");

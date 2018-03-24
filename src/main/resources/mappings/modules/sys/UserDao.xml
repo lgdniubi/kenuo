@@ -325,6 +325,9 @@
 		<if test="mobile != null and mobile != ''">
 			AND a.mobile = #{mobile}
 		</if>
+		<if test="company.id != null and company.id != '' and company.id != 0">
+			AND a.company_id = #{company.id}
+		</if>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}

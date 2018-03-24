@@ -24,7 +24,7 @@
 			    type: 2, 
 			    area: ['300px', '420px'],
 			    title:"选择所在店铺",
-			    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/sys/office/treeData?type=2")+"&module=&checked=&extId=&isAll=" ,
+			    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/sys/office/newOfficeTreeData?compId=${franchiseeId}"),
 			    	btn: ['确定', '关闭']
 	    	       ,yes: function(index, layero){ //或者使用btn1
 	    	    	   var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
@@ -80,12 +80,8 @@
 							<td>
 								<label class="pull-right" >选择店铺：</label>
 							</td>
-							<%-- <td>
-								<sys:treeselect id="office" name="officeId" value="${officeRecommendMapping.officeId}" labelName="officeName" labelValue="${officeRecommendMapping.officeName}" title="店铺" url="/sys/office/treeData?type=2" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="true"/>
-							</td> --%>
-							
 							<td>
-							<input id="officeId" class=" form-control input-sm" name="officeId" value="" type="hidden">
+							<input id="officeId" class=" form-control input-sm" name="officeId" value="${officeRecommendMapping.officeId}" type="hidden">
 								<div class="input-group">
 									<input id="officeName" class=" form-control input-sm" name="officeName" readonly="readonly" value="${officeRecommendMapping.officeName}" data-msg-required="" style="" type="text">
 										<span class="input-group-btn">

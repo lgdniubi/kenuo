@@ -13,31 +13,8 @@
 		$("#searchForm").submit();
 		return false;
 	}
-	//推荐直播按钮	
-	function addRecommend(id) {
-		$(".loading").show();//打开展示层
-		$.ajax({
-			type : "POST",
-			url : "${ctx}/train/live/addRecommend?id="+id,
-			success: function(data) {
-				$(".loading").hide(); //关闭加载层
-				if(data=="OK"){
-					top.layer.alert('推荐成功!', {icon: 1, title:'提醒'});
-					window.location="${ctx}/train/live/list";
-				}
-				if(data=="ERROR"){
-					top.layer.alert('推荐失败!', {icon: 2, title:'提醒'});
-					window.location="${ctx}/train/live/list";
-				}
-			}
-		});   
-	}
-	
 </script>
 </head>
-
-
-
 
 <body class="gray-bg">
 	<div class="wrapper wrapper-content">
@@ -71,6 +48,18 @@
 								<form:option value="3">已完成</form:option>
 								<form:option value="4">正在直播</form:option>
 								<form:option value="5">异常</form:option>
+							</form:select>
+							<label>是否公开到每天美耶：</label>
+							<form:select path="isOpen" class="form-control">
+								<form:option value=" ">全部</form:option>
+								<form:option value="0">不公开</form:option>
+								<form:option value="1">公开</form:option>
+							</form:select>
+							<label>是否推荐：</label>
+							<form:select path="isRecommend" class="form-control">
+								<form:option value=" ">全部</form:option>
+								<form:option value="0">未推荐</form:option>
+								<form:option value="1">推荐</form:option>
 							</form:select>
 						</div>
 					</form:form>
@@ -176,9 +165,10 @@
 										<a href="#" onclick="openDialogView('云币贡献榜', '${ctx}/train/live/cloudContribution?auditId=${live.id}','800px','500px')"
 											 class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>云币贡献榜</a>
 									</shiro:hasPermission>
-									<c:if test="${live.isOpen==1}">
-										<a href="#" onclick="addRecommend(${live.id})" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i>推荐</a>
-									</c:if>
+									<shiro:hasPermission name="train:live:edit">
+										<a href="#" onclick="openDialog('编辑直播','${ctx}/train/live/liveFormMtmy?id=${live.id}','700px','400px')"
+											class="btn btn-success btn-xs"><i class="fa fa-edit"></i>每天美耶权限按钮</a>
+									</shiro:hasPermission>
 								</td>
 							</tr>
 						</c:forEach>

@@ -21,24 +21,29 @@
 		return false;
 	}
 	
-	function  delStarBeautyMapping(mappingId,starId){
-		if(confirm("确认要删除吗？","提示框")){
-			newDelete(mappingId,starId);			
+	function  delStarBeautyMapping(mappingId,starId,isShow,franchiseeId){
+		if(isShow == 1){
+			top.layer.alert('数据启用中,不能删除!', {icon: 0, title:'提醒'});
+			return;
+		}else{
+			if(confirm("确认要删除吗？","提示框")){
+				newDelete(mappingId,starId,isShow,franchiseeId);			
+			}
 		}
 	}
 		
-	function newDelete(mappingId,starId){
+	function newDelete(mappingId,starId,isShow,franchiseeId){
 		$.ajax({
 			type:"post",
 			url:"${ctx}/ec/starBeauty/delStarBeautyMapping?mappingId="+mappingId,
 			success:function(date){
 				if(date=="success"){
 					top.layer.alert('删除成功!', {icon: 1, title:'提醒'});
-					window.location="${ctx}/ec/starBeauty/starBeautyMappingList?starId="+starId;
+					window.location="${ctx}/ec/starBeauty/starBeautyMappingList?starId="+starId+"&isShow="+isShow+"&franchiseeId="+franchiseeId;
 				}
 				if(date=="error"){
 					top.layer.alert('删除失败!', {icon: 2, title:'提醒'});
-					window.location="${ctx}/ec/starBeauty/starBeautyMappingList?starId="+starId;
+					window.location="${ctx}/ec/starBeauty/starBeautyMappingList?starId="+starId+"&isShow="+isShow+"&franchiseeId="+franchiseeId;
 				}
 							
 			},
@@ -46,12 +51,13 @@
 						    
 			}
 						 
-	});
+		});
 	}
 	
-	function addStarBeautyMapping(starId){
+	function addStarBeautyMapping(starId,isShow){
 		var lock = true;
 		var num = $("#num").val();
+		var franchiseeId = $("#franchiseeId").val();//商家保护所选择的商家id
 		if(num == 7){//明星技师只能有7个
 			top.layer.alert('只能有7个明星技师!', {icon: 0, title:'提醒'}); 
 			return;
@@ -60,7 +66,7 @@
 			    type: 2, 
 			    area: ['900px', '550px'],
 			    title:"添加明星技师",
-			    content: "${ctx}/ec/starBeauty/mappingform?starId="+starId,
+			    content: "${ctx}/ec/starBeauty/mappingform?starId="+starId+"&franchiseeId="+franchiseeId,
 			    btn: ['确定', '关闭'],
 			    yes: function(index, layero){
 			    	if(lock){
@@ -105,11 +111,11 @@
 							success:function(date){
 								if(date=="success"){
 									top.layer.alert('保存成功!', {icon: 1, title:'提醒'});
-									window.location="${ctx}/ec/starBeauty/starBeautyMappingList?starId="+$(starId).val();
+									window.location="${ctx}/ec/starBeauty/starBeautyMappingList?starId="+$(starId).val()+"&isShow="+isShow+"&franchiseeId="+franchiseeId;
 								}
 								if(date=="error"){
 									top.layer.alert('保存失败!', {icon: 2, title:'提醒'});
-									window.location="${ctx}/ec/starBeauty/starBeautyMappingList?starId="+$(starId).val();
+									window.location="${ctx}/ec/starBeauty/starBeautyMappingList?starId="+$(starId).val()+"&isShow="+isShow+"&franchiseeId="+franchiseeId;
 									lock = true;
 								}
 											
@@ -129,7 +135,7 @@
 	}
 	
 	//修改明星技师信息
-	function editStarBeautyMapping(mappingId){
+	function editStarBeautyMapping(mappingId,isShow,franchiseeId){
 		top.layer.open({
 		    type: 2, 
 		    area: ['900px', '550px'],
@@ -177,11 +183,11 @@
 					success:function(date){
 						if(date=="success"){
 							top.layer.alert('保存成功!', {icon: 1, title:'提醒'});
-							window.location="${ctx}/ec/starBeauty/starBeautyMappingList?starId="+$(starId).val();
+							window.location="${ctx}/ec/starBeauty/starBeautyMappingList?starId="+$(starId).val()+"&isShow="+isShow+"&franchiseeId="+franchiseeId;
 						}
 						if(date=="error"){
 							top.layer.alert('保存失败!', {icon: 2, title:'提醒'});
-							window.location="${ctx}/ec/starBeauty/starBeautyMappingList?starId="+$(starId).val();
+							window.location="${ctx}/ec/starBeauty/starBeautyMappingList?starId="+$(starId).val()+"&isShow="+isShow+"&franchiseeId="+franchiseeId;
 						}
 									
 					},
@@ -218,11 +224,12 @@
 						<input id="categoryIds" name="categoryIds" type="hidden" value="${categoryIds}"/>
 					</form>
 					<shiro:hasPermission name="ec:starBeauty:add">
-						<a href="#" onclick="addStarBeautyMapping(${starId})" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加明星技师</a>
+						<a href="#" onclick="addStarBeautyMapping(${starId},${isShow})" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加明星技师</a>
 					</shiro:hasPermission>
 				</div>
 				<p></p>
 				<input id="num" type="hidden" value="${num}"/>
+				<input id="franchiseeId" type="hidden" value="${franchiseeId}"/>
 				<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 					<thead>
 						<tr>
@@ -249,10 +256,10 @@
 										<a href="#" onclick="openDialogView('查看', '${ctx}/ec/starBeauty/starBeautyMappingform?mappingId=${page.mappingId}','600px', '550px')" class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i> 查看</a>
 									</shiro:hasPermission>
 									<shiro:hasPermission name="ec:starBeauty:edit">
-										<a href="#" onclick="editStarBeautyMapping(${page.mappingId})" class="btn btn-success btn-xs"><i class="fa fa-edit"></i>修改</a>
+										<a href="#" onclick="editStarBeautyMapping(${page.mappingId},${isShow},${franchiseeId})" class="btn btn-success btn-xs"><i class="fa fa-edit"></i>修改</a>
 									</shiro:hasPermission>
 									<shiro:hasPermission name="ec:starBeauty:del">
-										<a href="#" onclick="delStarBeautyMapping(${page.mappingId},${starId})" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>删除</a>
+										<a href="#" onclick="delStarBeautyMapping(${page.mappingId},${starId},${isShow},${franchiseeId})" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>删除</a>
 									</shiro:hasPermission>
 								</td>
 							</tr>

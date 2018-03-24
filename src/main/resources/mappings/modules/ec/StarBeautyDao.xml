@@ -8,46 +8,43 @@
 			a.id,
 			a.name,                               
 			a.is_show AS isShow,
+			a.is_open AS isOpen,
+			a.franchisee_id AS franchiseeId,
+			c.name AS franchiseeName,
+			a.sort,
 			a.remarks,
 			b.name AS "createBy.name",
 			a.create_date AS createDate
 		FROM
 			mtmydb.mtmy_star_beauty a LEFT JOIN sys_user b ON a.create_by = b.id
+			LEFT JOIN mtmydb.mtmy_franchisee c ON a.franchisee_id = c.id
 		WHERE
 			a.del_flag = 0
-		ORDER BY a.id DESC
+		ORDER BY a.sort DESC
 	</select>
 	
-	<!-- 修改明星技师全部为不展示 -->
+	<!-- 修改当前商家下所有店铺为关闭 -->
 	<update id="cannelAllIsShow">
 		UPDATE mtmydb.mtmy_star_beauty
 		SET is_show = 0
 		WHERE
 			del_flag = 0
+		<if test="franchiseeId != '' and franchiseeId != null">
+			AND franchisee_id = #{franchiseeId}
+		</if>
+		<if test="isOpen != '' and isOpen != null and isOpen == 0">
+			AND is_open = 0
+		</if>
 	</update>
 	
 	<!-- 根据明星技师组id,修改状态 -->
 	<update id="changeIsShow">
 		UPDATE mtmydb.mtmy_star_beauty
-		SET is_show = 1
+		SET is_show = #{isShow}
 		WHERE 
 			id = #{id}
 		AND del_flag = 0
 	</update>
-	
-	<!-- 获取最新添加的明星技师数据 -->
-	<select id="findStarBeauty" resultType="StarBeauty">
-		SELECT 
-			id,
-			name,
-			is_show AS isShow
-		FROM 
-			mtmydb.mtmy_star_beauty
-		WHERE 
-			del_flag = 0
-		ORDER BY id DESC
-		LIMIT 1
-	</select>
 	
 	<!-- 根据明星技师组id查询数据 -->
 	<select id="getStarBeautyById" resultType="StarBeauty">
@@ -55,6 +52,9 @@
 			id,
 			name,
 			is_show AS isShow,
+			is_open AS isOpen,
+			franchisee_id AS franchiseeId,
+			sort,
 			remarks 
 		FROM
 			mtmydb.mtmy_star_beauty
@@ -67,6 +67,9 @@
 		INSERT INTO mtmydb.mtmy_star_beauty(
 			name,
 			is_show,
+			is_open,
+			franchisee_id,
+			sort,
 			remarks,
 			create_by,
 			create_date,
@@ -74,6 +77,9 @@
 		) VALUES (
 			#{name},
 			0,
+			#{isOpen},
+			#{franchiseeId},
+			#{sort},
 			#{remarks},
 			#{createBy.id},
 			SYSDATE(),
@@ -86,6 +92,7 @@
 		UPDATE mtmydb.mtmy_star_beauty
 			SET 
 			  name = #{name},     
+			  sort = #{sort},
 			  remarks = #{remarks},
 			  update_by = #{updateBy.id},
 			  update_date = SYSDATE()

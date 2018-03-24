@@ -32,7 +32,14 @@
 			
 		});
 		
-		
+		function deleteSure(officeRecommendId,isShow){
+			if(isShow == '1'){
+				top.layer.alert('数据处于显示中,无法删除！', {icon: 0, title:'提醒'});
+		    	return;
+			}
+			confirmx("确认要删除吗？", "${ctx}/ec/officeRecommend/del?officeRecommendId="+officeRecommendId)
+			
+		}
     </script>
     <title>店铺推荐管理</title>
 </head>
@@ -62,10 +69,12 @@
                 	<thead> 
                 		<tr>
                 			<th style="text-align: center;">ID</th>
+                			<th style="text-align: center;">权限范围</th>
                 			<th style="text-align: center;">推荐组名称</th>
                 			<th style="text-align: center;">头图</th>
                 			<th style="text-align: center;">创建时间</th>
                 			<th style="text-align: center;">是否显示</th>
+                			<th style="text-align: center;">排序</th>
                 			<th style="text-align: center;">操作</th>
                 		</tr>
                 	</thead>
@@ -73,6 +82,10 @@
                     	<c:forEach items="${page.list}" var="officeRecommend">
 						<tr>
 							<td style="text-align: center;">${officeRecommend.officeRecommendId}</td>
+							<td style="text-align: center;">
+								<c:if test="${officeRecommend.isOpen == '0'}">公开</c:if>
+								<c:if test="${officeRecommend.isOpen == '1'}">${officeRecommend.franchiseeName}</c:if>
+							</td>
 							<td style="text-align: center;">${officeRecommend.name}</td>
 							<td style="text-align: center;" class="imgUrl" ><img alt="" src="${ctxStatic}/images/lazylode.png"  data-src="${officeRecommend.img}" style="width: 150px;height: 100px;border:1px solid black; "></td>
 							<td style="text-align: center;">
@@ -81,17 +94,18 @@
 							<td style="text-align: center;" id="${officeRecommend.officeRecommendId}">
 								<shiro:hasPermission name="ec:officeRecommend:isShow">
 									<c:if test="${officeRecommend.isShow == '0'}">
-										<a href="${ctx}/ec/officeRecommend/updateType?officeRecommendId=${officeRecommend.officeRecommendId}&isShow=1" >
+										<a href="${ctx}/ec/officeRecommend/updateType?officeRecommendId=${officeRecommend.officeRecommendId}&isShow=1&franchiseeId=${officeRecommend.franchiseeId}&isOpen=${officeRecommend.isOpen}" >
 											<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" >
 										</a>	
 									</c:if>
 									<c:if test="${officeRecommend.isShow eq '1'}">
-										<a href="${ctx}/ec/officeRecommend/updateType?officeRecommendId=${officeRecommend.officeRecommendId}&isShow=0" >
+										<a href="${ctx}/ec/officeRecommend/updateType?officeRecommendId=${officeRecommend.officeRecommendId}&isShow=0&franchiseeId=${officeRecommend.franchiseeId}&isOpen=${officeRecommend.isOpen}" >
 											<img width="20" height="20" src="${ctxStatic}/ec/images/open.png">
 										</a>
 									</c:if>
 								</shiro:hasPermission>
 							</td>
+							<td style="text-align: center;">${officeRecommend.sort}</td>
 							<td style="text-align: center;">
 								<shiro:hasPermission name="ec:officeRecommend:view">
 									<a href="#" onclick="openDialogView('查看', '${ctx}/ec/officeRecommend/togetherForm?officeRecommendId=${officeRecommend.officeRecommendId}','600px', '550px')" class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i> 查看</a>
@@ -100,10 +114,10 @@
 									<a href="#" onclick="openDialog('修改', '${ctx}/ec/officeRecommend/form?officeRecommendId=${officeRecommend.officeRecommendId}','600px', '550px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 修改</a>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="ec:officeRecommend:del">
-									<a href="${ctx}/ec/officeRecommend/del?officeRecommendId=${officeRecommend.officeRecommendId}" onclick="return confirmx('确认要删除吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
+									<a href="#" onclick="deleteSure('${officeRecommend.officeRecommendId}','${officeRecommend.isShow}')"  class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i>删除</a>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="ec:officeRecommend:addOffice">
-									<a href="#" onclick="openDialogView('添加店铺', '${ctx}/ec/officeRecommend/addOffice?officeRecommendId=${officeRecommend.officeRecommendId}','700px', '550px')" class="btn btn-info btn-xs"><i class="fa fa-edit"></i>添加店铺</a>
+									<a href="#" onclick="openDialogView('添加店铺', '${ctx}/ec/officeRecommend/addOffice?officeRecommendId=${officeRecommend.officeRecommendId}&franchiseeId=${officeRecommend.franchiseeId}','700px', '550px')" class="btn btn-info btn-xs"><i class="fa fa-edit"></i>添加店铺</a>
 								</shiro:hasPermission>
 							</td>
 						</tr>

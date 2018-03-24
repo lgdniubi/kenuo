@@ -304,6 +304,7 @@ public class SystemService extends BaseService implements InitializingBean {
 	 * 明星技师使用的查询美容师方法(只是明星技师查询使用2018-3-8)
 	 * @param page
 	 * @param user
+	 * @param isOpen 
 	 * @return
 	 */
 	public Page<User> starBeautyFindUser(Page<User> page, User user) {
