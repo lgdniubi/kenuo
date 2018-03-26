@@ -1413,7 +1413,9 @@ public class GoodsController extends BaseController{
 	@RequestMapping(value = "treeGoodsData")
 	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String goodsId,String isReal,String isOnSale,String isAppshow,String type,String isOpen,HttpServletResponse response) {
 		// 注： type属于临时方案，目前仅用于下单时查询商品  type=1表示下单时下单需区分用户商家
+		String isBmCreate = "";
 		if(type != null && !"".equals(type)){
+			isBmCreate = "1";
 			String companyId = UserUtils.getUser().getCompany().getId();
 			if(!"1".equals(companyId)){
 				franchiseeId = companyId;
@@ -1431,6 +1433,7 @@ public class GoodsController extends BaseController{
 		goods.setIsReal(isReal);
 		goods.setIsOnSale(isOnSale);
 		goods.setIsAppshow(isAppshow);
+		goods.setIsBmCreate(isBmCreate);
 		goods.setGoodsId(Integer.valueOf(goodsId));
 		if(actionId!=null){
 			goods.setActionId(Integer.parseInt(actionId));

@@ -586,10 +586,8 @@ public class OrdersController extends BaseController {
 		try {
 
 			List<Payment> paylist = paymentService.paylist();
-			List<GoodsCategory> cateList = ordersService.cateList();
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
-			model.addAttribute("cateList", cateList);
 
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转创建虚拟订单页面", e);
@@ -1351,10 +1349,8 @@ public class OrdersController extends BaseController {
 		try {
 
 			List<Payment> paylist = paymentService.paylist();
-			List<GoodsCategory> cateList = ordersService.cateList();
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
-			model.addAttribute("cateList", cateList);
 
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转创建实物订单页面", e);
@@ -2257,10 +2253,8 @@ public class OrdersController extends BaseController {
 		try {
 
 			List<Payment> paylist = paymentService.paylist();
-			List<GoodsCategory> cateList = ordersService.cateList();
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
-			model.addAttribute("cateList", cateList);
 
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转创建套卡订单页面", e);
@@ -2400,10 +2394,8 @@ public class OrdersController extends BaseController {
 		try {
 
 			List<Payment> paylist = paymentService.paylist();
-			List<GoodsCategory> cateList = ordersService.cateList();
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
-			model.addAttribute("cateList", cateList);
 
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转创建通用卡订单页面", e);
@@ -3297,10 +3289,8 @@ public class OrdersController extends BaseController {
 		try {
 			
 			List<Payment> paylist = paymentService.paylist();
-			List<GoodsCategory> cateList = ordersService.cateList();
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
-			model.addAttribute("cateList", cateList);
 
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转售后转虚拟订单页面", e);
@@ -3364,10 +3354,8 @@ public class OrdersController extends BaseController {
 		try {
 			
 			List<Payment> paylist = paymentService.paylist();
-			List<GoodsCategory> cateList = ordersService.cateList();
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
-			model.addAttribute("cateList", cateList);
 
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转售后转实物订单页面", e);
@@ -3431,10 +3419,8 @@ public class OrdersController extends BaseController {
 		try {
 			
 			List<Payment> paylist = paymentService.paylist();
-			List<GoodsCategory> cateList = ordersService.cateList();
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
-			model.addAttribute("cateList", cateList);
 
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转售后转套卡订单页面", e);
@@ -3569,10 +3555,8 @@ public class OrdersController extends BaseController {
 		try {
 
 			List<Payment> paylist = paymentService.paylist();
-			List<GoodsCategory> cateList = ordersService.cateList();
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
-			model.addAttribute("cateList", cateList);
 
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转售后转通用卡订单页面", e);

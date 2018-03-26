@@ -38,6 +38,7 @@
 		  g.is_new AS 'isNew',
 		  g.is_hot AS 'isHot',
 		  g.is_appshow AS 'isAppshow',
+		  g.is_bm_create AS 'isBmCreate',
 		  g.attr_type AS 'attrType',
 		  g.spec_type AS 'specType',
 		  g.give_integral AS 'giveIntegral',
@@ -130,6 +131,9 @@
 					</choose>
 				</if>
 			</if>
+			<if test="isBmCreate != null and isBmCreate != '' ">
+				AND g.is_bm_create = #{isBmCreate}
+			</if>
 			AND g.del_flag = 0 
 			ORDER BY g.sort DESC 
 	</select>
@@ -181,8 +185,19 @@
 		<if test="actionId !=null and actionId !=''">
 			AND g.action_id=0
 		</if>
-		<if test="franchiseeId !=null and franchiseeId !=''">
+		<if test="(franchiseeId !=null and franchiseeId !='') and (isBmCreate == null or isBmCreate == '') ">
 			AND g.franchisee_id=#{franchiseeId}
+		</if>
+		<if test="isBmCreate != null and isBmCreate != ''">
+			<choose>
+				<when test="franchiseeId !=null and franchiseeId !=''">
+					AND (g.franchisee_id = #{franchiseeId} OR g.is_open = 0)
+					AND g.is_bm_create = #{isBmCreate}
+				</when>
+				<otherwise>
+					AND g.is_bm_create = #{isBmCreate}
+				</otherwise>
+			</choose>
 		</if>
 		<if test="goodsBrandId !=null and goodsBrandId !=''">
 			AND g.goodsbrand_id=#{goodsBrandId}
@@ -312,6 +327,7 @@
 		  is_new,
 		  is_hot,
 		  is_appshow, 
+		  is_bm_create,
 		  attr_type,
 		  spec_type,
 		  give_integral,
@@ -359,6 +375,7 @@
 		    #{isNew},
 		    #{isHot},
 		    #{isAppshow},
+		    #{isBmCreate},
 		    #{attrType},
 		    #{specType},
 		    #{giveIntegral},
@@ -411,6 +428,7 @@
 			  is_new = #{isNew},
 			  is_hot = #{isHot},
 			  is_appshow = #{isAppshow},
+			  is_bm_create = #{isBmCreate},
 			  attr_type = #{attrType},
 			  spec_type = #{specType},
 			  give_integral = #{giveIntegral},
