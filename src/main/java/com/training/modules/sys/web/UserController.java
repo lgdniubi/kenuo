@@ -62,6 +62,7 @@ import com.training.modules.sys.entity.Role;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.entity.UserDelete;
 import com.training.modules.sys.entity.UserLog;
+import com.training.modules.sys.entity.UserPuTo;
 import com.training.modules.sys.service.AreaService;
 import com.training.modules.sys.service.DictService;
 import com.training.modules.sys.service.MediaLoginAuthService;
@@ -141,6 +142,12 @@ public class UserController extends BaseController {
 	@RequiresPermissions(value = { "sys:user:view", "sys:user:add", "sys:user:edit" }, logical = Logical.OR)
 	@RequestMapping(value = "form")
 	public String form(User user, Model model) {
+		if("pt".equals(user.getType())){	//查询普通会员的信息
+//			UserPuTo userpt = new UserPuTo();
+			UserPuTo userpt = systemService.getUserPuTo(user.getId());
+			model.addAttribute("userpt", userpt);
+			return "modules/sys/userPTForm";
+		}
 		List<UserLog> userLogs = new ArrayList<UserLog>();
 		/*if (user.getCompany() == null || user.getCompany().getId() == null) {  在进入添加页面时不需要进行查询初始化，因为页面要根据商家去查询权限内的机构，所以不能将商家初始化为登云
 			user.setCompany(UserUtils.getUser().getCompany());

@@ -14,6 +14,7 @@ import com.training.modules.sys.entity.Role;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.entity.UserLog;
 import com.training.modules.sys.entity.UserOfficeCode;
+import com.training.modules.sys.entity.UserPuTo;
 import com.training.modules.sys.entity.UserVo;
 
 /**
@@ -345,4 +346,11 @@ public interface UserDao extends CrudDao<User> {
 	 * @return
 	 */
 	public List<User> querySysUser(User user);
+	
+	/**
+	 * 通过用户id查询普通会员的信息
+	 * @param id 用户user_id
+	 * @return
+	 */
+	public UserPuTo getUserPuTo(String id);
 }

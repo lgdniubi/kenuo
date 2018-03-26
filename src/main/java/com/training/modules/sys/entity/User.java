@@ -107,6 +107,11 @@ public class User extends DataEntity<User> {
 	private String positonName;        //职位
 	private String officeName;         //归属机构名
 	
+	//-----------2018-03-22增加-----------
+	private String userStatus;         //用户状态：train_model_franchisee中取，能查到且未到期-已授权，能查到且已到期-已到期，查不到-未授权
+	private String modelName;         //版本类型：从train_model_franchisee和train_model这两个表里联查，根据user_id，查出来取mod_name
+	private String type;         //用户类型：sys_user中type取 （员工：yg，普通会员：pt，手艺人用户：syr，企业员工：qy）
+	
 	public Integer getReturnId() {
 		return returnId;
 	}
@@ -642,6 +647,24 @@ public class User extends DataEntity<User> {
 	}
 	public void setDepartmentId(int departmentId) {
 		this.departmentId = departmentId;
+	}
+	public String getUserStatus() {
+		return userStatus;
+	}
+	public void setUserStatus(String userStatus) {
+		this.userStatus = userStatus;
+	}
+	public String getModelName() {
+		return modelName;
+	}
+	public void setModelName(String modelName) {
+		this.modelName = modelName;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
 	}
 	
 }

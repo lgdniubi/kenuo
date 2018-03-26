@@ -140,7 +140,9 @@
 							<th><input type="checkbox" class="i-checks"></th>
 							<th class="sort-column login_name">登录名</th>
 							<th class="sort-column name">姓名</th>
-							<th class="sort-column phone">电话</th>
+							<th class="sort-column phone">用户类型</th>
+							<th class="sort-column phone">版本类型</th>
+							<th class="sort-column phone">用户状态</th>
 							<th class="sort-column mobile">手机</th>
 							<th class="sort-column c.name">归属商家</th>
 							<th class="sort-column o.name">归属店铺</th>
@@ -154,7 +156,9 @@
 								<td><input type="checkbox" id="${user.id}" class="i-checks"></td>
 								<td><a href="#" onclick="openDialogView('查看用户', '${ctx}/sys/user/form?id=${user.id}','800px', '650px')">${user.loginName}</a></td>
 								<td>${user.name}</td>
-								<td>${user.phone}</td>
+								<td>${user.type}</td>
+								<td>${user.modelName}</td>
+								<td>${user.userStatus}</td>
 								<td>${user.mobile}</td>
 								<td>${user.company.name}</td>
 								<td>${user.office.name}</td>
@@ -175,12 +179,14 @@
 											<a href="${ctx}/sys/user/delete?id=${user.id}" onclick="return promptx('请填写删除备注信息！不可为空！','确定要删除用户吗？',this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
 										</c:if>
 									</shiro:hasPermission>
-									<shiro:hasPermission name="sys:user:auth">
-										<a href="#" onclick="openDialog('权限设置', '${ctx}/sys/user/auth?id=${user.id}','800px', '650px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a>
-									</shiro:hasPermission>
-									<shiro:hasPermission name="sys:user:auth">
-										<a href="#" onclick="openDialogView('添加角色','${ctx}/sys/user/addFzxRole?id=${user.id}','800px', '650px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>添加角色</a>
-									</shiro:hasPermission>
+									<c:if test="${user.userType eq '员工'}">
+										<shiro:hasPermission name="sys:user:auth">
+											<a href="#" onclick="openDialog('权限设置', '${ctx}/sys/user/auth?id=${user.id}','800px', '650px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a>
+										</shiro:hasPermission>
+										<shiro:hasPermission name="sys:user:auth">
+											<a href="#" onclick="openDialogView('添加角色','${ctx}/sys/user/addFzxRole?id=${user.id}','800px', '650px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>添加角色</a>
+										</shiro:hasPermission>
+									</c:if>
 								</td>
 							</tr>
 						</c:forEach>

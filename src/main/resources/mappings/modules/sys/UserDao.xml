@@ -97,6 +97,7 @@
 		a.mtmy_user_id AS mtmyUserId,
 		a.data_scope AS 'dataScope',
 		a.sex,
+		a.type,
 		a.is_recommend AS 'isRecommend',
     	c.name AS "company.name",
     	c.parent_id AS "company.parent.id",
@@ -195,12 +196,26 @@
 			a.phone,
 			a.mobile,
 			a.del_flag,
+			CASE a.type 
+			WHEN 'yg' THEN '员工'
+			WHEN 'pt' THEN '普通会员'
+			WHEN 'syr' THEN '手艺人用户'
+			WHEN 'qy' THEN '企业员工' 
+			ELSE '' END AS type, 	
+			tm.mod_name AS modelName,
+			CASE tmf.`status`
+			WHEN 0 THEN '已授权'
+			WHEN 1 THEN '已到期'
+			ELSE '未授权' END AS userStatus,
 			c. NAME AS "company.name",
 			o. NAME AS "office.name"
 		FROM
 			sys_user a
 		LEFT JOIN sys_franchisee c ON c.id = a.company_id
 		LEFT JOIN sys_office o ON o.id = a.office_id
+		LEFT JOIN train_apply tap ON tap.user_id = a.id 
+		LEFT JOIN train_model_franchisee tmf ON tmf.user_id = a.id
+		LEFT JOIN train_model tm ON tm.id = tmf.mod_id
 		<!-- 数据范围过滤 -->
 		${sqlMap.dsf}
 		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
@@ -909,5 +924,50 @@
 		<if test="id != '' and id != null">
 			AND u.id = #{id}
 		</if>
+	</select>
+	<select id="getUserPuTo" resultType="UserPuTo" >
+		SELECT
+			u.`name` AS memName,
+			u.nickname AS memNickName,
+			u.type AS memType,
+			'WEIXIN' AS weiXin,
+			'WEIBO' AS weibo,
+			'memLevel' AS memLevel,
+			'QQ' AS QQ,
+			'最近消费' AS lastFee,
+			u.mobile AS memMobile,
+			u.create_date AS regisTime,
+			l.NAME AS lesson,
+			'关注' AS attention,
+			'历史浏览' AS scan,
+			'粉丝' AS fans,
+			liv.title AS video,
+			'文章评论' AS articleComment,
+			'学分' AS score,
+			art.title AS article,
+			'问答评论' AS answers,
+			'获赞数' AS praise,
+			'收藏商品' AS goods,
+			'消费总金额' AS totalFee,
+			'昨日消费' AS yesterdayFee,
+			'最近7日消费' AS sevenFee,
+			COUNT(ord.order_id) AS totalOrderFund,
+			SUM(ord.amount) AS totalOrderNum,
+			'商品订单数量' AS goodsOrderNum,
+			'商品订单金额' AS goodsOrderFund
+		FROM
+			sys_user u
+		LEFT JOIN train_lesson_favorites lf ON lf.user_id = u.id
+		LEFT JOIN train_lessons l ON l.lesson_id = lf.lesson_id
+		LEFT JOIN train_live_audit liv ON liv.userId = u.id
+		LEFT JOIN train_articles_favorites af ON af.user_id = u.id
+		LEFT JOIN train_articles art ON art.id = af.article_id
+		LEFT JOIN train_order ord ON ord.user_id = u.id
+		WHERE u.del_flag = '0' 
+			AND u.id = #{id}
+		<!-- <if test="id != '' and id != null">
+		'223ac0e7317746fb94c6498e7e647ff1'
+		</if> -->
+		AND liv.audit_status = 3
 	</select>
 </mapper>

@@ -49,6 +49,7 @@ import com.training.modules.sys.entity.Speciality;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.entity.UserLog;
 import com.training.modules.sys.entity.UserOfficeCode;
+import com.training.modules.sys.entity.UserPuTo;
 import com.training.modules.sys.entity.UserSkill;
 import com.training.modules.sys.entity.UserSpeciality;
 import com.training.modules.sys.entity.UserVo;
@@ -1240,5 +1241,15 @@ public class SystemService extends BaseService implements InitializingBean {
 			BugLogUtils.saveBugLog(request, "记录店铺首图、美容院和美容师图片上传相关信息", e);
 			logger.error("调用接口:记录店铺首图、美容院和美容师图片上传相关信息:"+e.getMessage());
 		}
+	}
+
+	/**
+	 * 通过用户id查询普通会员的信息
+	 * @param id 用户user_id
+	 * @return
+	 */
+	public UserPuTo getUserPuTo(String id) {
+		
+		return userDao.getUserPuTo(id);
 	}
 }
