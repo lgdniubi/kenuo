@@ -81,7 +81,7 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	/**
 	 * 查询用户购买商品预约的店铺id
 	 */
-	public String selectShopId(String goodsMappingId);
+	public String selectShopId(int reservationId);
 	
 	/**
 	 * 当对登云账户进行操作时，插入log日志 

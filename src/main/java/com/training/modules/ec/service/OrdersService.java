@@ -2019,7 +2019,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		}
 		
 		//若为老商品，则对店铺有补偿
-		if(goodsType == 0){
+		/*if(goodsType == 0){
 			//若有预约金
 			if(realAdvancePrice > 0){
 				//对登云账户进行操作
@@ -2072,7 +2072,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsDetailsDao.insertOfficeAccountLog(officeAccountLog);
 				}
 			}
-		}
+		}*/
 	}
 	
 	/**
@@ -3248,7 +3248,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		}
 		
 		//若为老商品，则对店铺有补偿
-		if(goodsType == 0){
+		/*if(goodsType == 0){
 			//若预约金大于0
 			if(realAdvancePrice > 0){   
 				//对登云账户进行操作
@@ -3301,7 +3301,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					orderGoodsDetailsDao.insertOfficeAccountLog(officeAccountLog);
 				}
 			}
-		}
+		}*/
 	}
 
 	/**

@@ -103,8 +103,8 @@ public class OrderGoodsDetailsService extends TreeService<OrderGoodsDetailsDao, 
 	/**
 	 * 查询用户购买商品预约的店铺id
 	 */
-	public String selectShopId(String goodsMappingId){
-		return dao.selectShopId(goodsMappingId);
+	public String selectShopId(int reservationId){
+		return dao.selectShopId(reservationId);
 	}
 	
 	/**

@@ -1,5 +1,6 @@
 package com.training.modules.ec.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -100,4 +101,20 @@ public interface ReservationDao extends CrudDao<Reservation>{
 	 * @return
 	 */
 	public List<ReservationLog> findReservationLog(ReservationLog reservationLog);
+	
+	/**
+	 * 查询一定时间段内已完成、爽约的预约，用于给店铺分预约金和补偿金 
+	 * @param lastTime
+	 * @return
+	 */
+	public List<Reservation> queryApptOrderForAdvancePrice(@Param(value="lastTime")Date lastTime,@Param(value="startTime")Date startTime);
+	
+	/**
+	 * 查询某个订单下的预约完成与爽约的总数
+	 * @param groupId
+	 * @param goodsMappingId
+	 * @return
+	 */
+	public int queryCompleteNum(@Param(value="groupId")int groupId,@Param(value="goodsMappingId")String goodsMappingId);
+
 }

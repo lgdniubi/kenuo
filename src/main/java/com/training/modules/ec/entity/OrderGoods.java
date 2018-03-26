@@ -85,6 +85,8 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private double advancePrice;          //用于详情展示的预约金
 	private int goodsType;                 //商品区分(0: 老商品 1: 新商品)
 	private String officeId;              //组织架构ID
+	private int totalTimes;               //商品总次数
+	
 	//-------------------------------------------------------------------------
 	
 	
@@ -596,6 +598,12 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setRatio(double ratio) {
 		this.ratio = ratio;
+	}
+	public int getTotalTimes() {
+		return totalTimes;
+	}
+	public void setTotalTimes(int totalTimes) {
+		this.totalTimes = totalTimes;
 	}
 	
 }

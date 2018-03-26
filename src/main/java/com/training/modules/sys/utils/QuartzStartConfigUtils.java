@@ -63,4 +63,33 @@ public class QuartzStartConfigUtils {
 		int num = dao.addQuartzStartConfig(list);
 		return num;
 	}
+	
+	/**
+	 * 根据key获取每天美耶对应value值 
+	 * @param key
+	 * @return
+	 */
+	public static String queryMtmyValue(String key){
+		return dao.queryMtmyValue(key);
+	}
+
+	/**
+	 * 添加每天美耶定时器起始配置数据
+	 * @param map
+	 * @return
+	 */
+	public static int addMtmyQuartzStartConfig(Map<String, Object> map){
+		List<QuartzStartConfig> list = new ArrayList<QuartzStartConfig>();
+		Set<Entry<String, Object>> entrySet = map.entrySet();
+		for (Entry<String, Object> entry : entrySet) {
+			String key = entry.getKey();
+			String value = (String)entry.getValue();
+			QuartzStartConfig quartzStartConfig = new QuartzStartConfig();
+			quartzStartConfig.setKey(key);
+			quartzStartConfig.setMtmyValue(value);
+			list.add(quartzStartConfig);
+		}
+		int num = dao.addMtmyQuartzStartConfig(list);
+		return num;
+	}
 }
