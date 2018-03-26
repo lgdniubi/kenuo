@@ -85,12 +85,6 @@ public interface OfficeRecommendDao extends CrudDao<OfficeRecommend> {
 	public void changeAll(OfficeRecommend officeRecommend);
 	
 	/**
-	 * 查询最近创建的那个推荐组
-	 * @return
-	 */
-	public int selectIdByCreatDate(OfficeRecommend officeRecommend);
-	
-	/**
 	 * 查询推荐组对应的推荐店铺id
 	 * @param recommendId
 	 * @return

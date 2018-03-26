@@ -112,6 +112,8 @@
 			}
 		});
 		
+		//光标自动跳转到starBeautyName姓名部位
+		$("#starBeautyName").focus();
 	}
 </script>
 </head>

@@ -160,17 +160,6 @@
 		</if>
 	</update>
 	
-	<!-- 查询最近创建的那个推荐组 -->
-	<select id="selectIdByCreatDate" resultType="Integer">
-		SELECT id
-		FROM sys_office_recommend
-		WHERE is_open = #{isOpen}
-		<if test="franchiseeId != '' and franchiseeId != null">
-			AND franchisee_id = #{franchiseeId}
-		</if>
-		AND del_flag = 0
-		ORDER BY create_date DESC limit 1
-	</select>
 	
 	<!-- 查询推荐组对应的推荐店铺id -->
 	<select id="selectOfficeId" resultType="String">

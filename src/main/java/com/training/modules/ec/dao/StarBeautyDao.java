@@ -16,21 +16,16 @@ import com.training.modules.ec.entity.StarBeautyMapping;
 public interface StarBeautyDao extends CrudDao<StarBeauty>{
 
 	/**
-	 * 关闭所有的明星组
+	 * 修改当前商家下所有店铺为关闭
+	 * @param starBeauty 
 	 */
-	public void cannelAllIsShow();
+	public void cannelAllIsShow(StarBeauty starBeauty);
 
 	/**
 	 * 根据id修改是否显示
 	 * @param starBeauty
 	 */
 	public void changeIsShow(StarBeauty starBeauty);
-
-	/**
-	 * 获取最新添加的明星技师组数据
-	 * @return
-	 */
-	public StarBeauty findStarBeauty();
 
 	/**
 	 * 根据明星技师组id查询数据
