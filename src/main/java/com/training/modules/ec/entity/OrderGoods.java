@@ -121,6 +121,9 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	private double appTotalAmount;                 //app实付
 	
 	private double ratio;                          //异价比例
+	
+	private int completeAppt;                       //预约完成的订单标识（预约状态为已完成、已服务、爽约的）
+	
 	public int getAfterSaleNum() {
 		return afterSaleNum;
 	}
@@ -596,6 +599,12 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setRatio(double ratio) {
 		this.ratio = ratio;
+	}
+	public int getCompleteAppt() {
+		return completeAppt;
+	}
+	public void setCompleteAppt(int completeAppt) {
+		this.completeAppt = completeAppt;
 	}
 	
 }
