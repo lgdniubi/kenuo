@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.UserCheckDao">
+	
+	<select id="findUniqueByProperty" parameterType="String" resultType="UserCheck">
+		select
+			`id` AS id,
+			`mod_name` AS modName,
+			`mod_type` AS modType,
+			`mod_ename` AS modEname,
+			`mod_pay` AS modPay,
+			`mod_fee` AS modFee,
+			`mod_day` AS modDay,
+			`remark` AS remark
+		FROM
+			train_model t
+		WHERE
+			modEname = #{modEname}
+			AND del_flag = 0
+	</select>
+	<select id="findByModEname" resultType="int" parameterType="String">
+		SELECT     
+			COUNT(1)   
+		FROM     
+			train_model    
+		WHERE     
+			mod_ename = #{modEname}
+			AND del_flag = 0
+	</select>
+	
+	<!-- 查询所有“有效”的版本信息-->
+	<select id="findList" resultType="UserCheck">
+		SELECT 
+			tap.id,
+			u.`name`,
+			u.nickname,
+			u.mobile,
+			u.type,
+			tap.user_id,
+			tap.apply_type AS applyType,
+			tap.status,
+			tap.create_date AS createDate
+			from sys_user u
+			LEFT JOIN train_apply tap ON tap.user_id=u.id
+		WHERE 1=1
+		<if test="mobile != null and mobile != ''">
+			AND u.mobile LIKE
+			<if test="dbName == 'oracle'">'%'||#{mobile}||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{mobile}, '%')</if>
+		</if>
+		<if test="status ==0 ">
+			AND tap.status in (0,1)
+		</if>
+	</select>
+	
+	<!-- 保存用户审核状态 -->
+	<update id="editUserCheck">
+		UPDATE train_apply set
+		 `status`=#{status}
+		WHERE id = #{id} AND user_id=#{userid}
+	</update>
+	
+	<!-- 获取单个版本数据 -->
+	<select id="getUserCheck" resultType="UserCheck">
+		SELECT 
+			u.`name`,
+			u.nickname,
+			u.mobile,
+			u.type,
+			tap.apply_type AS applyType,
+			tap.audit_type AS auditType,
+			tap.create_date AS createDate,
+			tf.`name` AS companyName,
+			tf.short_name AS shortName,
+			tf.charter_card AS charterCard,
+			tf.address,
+			tf.legal_person AS legalPerson,
+			tf.legal_mobile AS legalMobile,
+			tf.legal_card AS legalCard,
+			tf.icardone,
+			tf.icardtwo,
+			tf.intro
+			from sys_user u
+			LEFT JOIN train_apply tap ON tap.user_id=u.id
+			LEFT JOIN train_franchisee_info tf ON tf.apply_id= tap.id
+		WHERE 
+			del_flag = 0 
+		AND tap.user_id = #{userid} and tap.id = #{id}
+	</select>
+	
+	<insert id="saveModelFranchisee" >
+		INSERT INTO `train_model_franchisee` (
+			`mod_id`,
+			`franchisee_id`,
+			`user_id`,
+			`auth_start_date`,
+			`auth_end_date`,
+			<if test="discount != null"> `discount`, </if>
+			`pay_type`,
+			`create_by`,
+			`create_date`,
+			`status`
+		)
+		VALUES
+			(
+				#{modid},
+			    1,
+			    #{userid},
+			    #{authStartDate},
+			    #{authEndDate},
+			    <if test="discount != null"> #{discount}, </if>
+			    #{paytype},
+			    #{createBy.id},
+			    SYSDATE(),
+				'0'
+			);
+				
+	</insert>
+	<insert id="saveFranchisee" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO sys_franchisee (
+			  parent_id,
+			  parent_ids,
+			  name,
+			  code,
+			  address,
+			  legal_name,
+			  mobile,
+			  create_by,
+			  create_date,
+			  icardone,
+			  icardtwo,
+			  intro
+			) 
+		VALUES
+		  (
+		    '0', 
+			'0,1',
+		    #{companyName},
+		    #{charterCard},
+		    #{address},
+		    #{legalPerson},
+		    #{mobile},
+		    #{createBy.name},
+		    SYSDATE(),
+		    icardone,
+			icardtwo,
+			intro
+		  )
+	</insert>
+	<!-- 查看手艺人权限信息根据user id -->
+	<select id="getModelFranchiseeByUserid"  parameterType="String" resultType="ModelFranchisee">
+		SELECT 
+			t.id,
+			t.franchisee_id AS franchiseeid,
+			t.mod_id AS modid,
+			t.auth_start_date AS authStartDate,
+			t.auth_end_date AS authEndDate,
+			t.discount,
+			t.create_date,
+			t.pay_type AS paytype,
+			t.user_id
+			from train_model_franchisee t
+			WHERE user_id=#{userid}
+			AND del_flag = 0
+	</select>
+	<!-- 查看手艺人权限信息根据user id -->
+	<select id="getQYModelFranchiseeByUserid"  parameterType="String" resultType="ModelFranchisee">
+		SELECT 
+			t.id,
+			t.franchisee_id AS franchiseeid,
+			t.mod_id AS modid,
+			t.auth_start_date AS authStartDate,
+			t.auth_end_date AS authEndDate,
+			t.discount,
+			t.create_date,
+			t.pay_type AS paytype,
+			t.user_id
+			from train_model_franchisee t
+			LEFT JOIN sys_user u ON u.company_id = t.franchisee_id 
+			WHERE u.id= #{userid}
+			AND t.del_flag = 0
+	</select>
+	
+	<!-- 修改权益设置信息 -->
+	<update id="editModelFranchisee">
+		UPDATE train_model_franchisee SET 
+			`mod_id` = #{modid},
+			`auth_start_date` = #{authStartDate},
+			`auth_end_date` = #{authEndDate}
+			<if test="discount != null">, `discount`= #{discount}, </if>
+		WHERE id = #{id} and user_id = #{userid}
+	</update>
+	<!-- 保存权益信息后，设置用户type -->
+	<update id="updateUserType">
+		UPDATE sys_user SET 
+			`type` = #{type}
+			<if test="franchid != null">
+			,company_id = #{franchid},
+			office_id = #{franchid} 
+			</if>
+		WHERE id = #{userid}
+	</update>
+	<select id="selectCids" parameterType="string" resultType="string">
+		select
+			uc.client_id
+		from oa_user_cid uc  
+		where uc.user_id = = #{userid} 
+	</select>
+</mapper>
