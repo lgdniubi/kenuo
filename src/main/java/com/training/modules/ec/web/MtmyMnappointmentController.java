@@ -302,6 +302,35 @@ public class MtmyMnappointmentController extends BaseController{
 		}
 		return "redirect:" + adminPath + "/ec/mtmyMnappointment/mnappointment";
 	}
+	
+	/**
+	 * 校验同一美容师同一时间段内只能有一条已完成的预约记录
+	 * @param request
+	 * @param reservation
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "verifyApptDate")
+	public Map<String, String> verifyLevel(HttpServletRequest request,Reservation reservation){
+		Map<String, String> map = new HashMap<>();
+		try {
+			int num = reservationService.verifyApptDate(reservation);
+			if(num > 0){
+				map.put("FLAG", "ERROR");
+				map.put("MESSAGE", "该时间段已被占用,请重新选择合理时间");
+			}else{
+				map.put("FLAG", "OK");
+			}
+		} catch (Exception e) {
+			logger.error("修改预约校验预约时间出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "修改预约校验预约时间错误信息", e);
+			map.put("FLAG", "ERROR");
+			map.put("MESSAGE", "校验预约完成时间出现异常,请联系管理员");
+			return map;
+		}
+		return map;
+	}
+	
 	/**
 	 * 修改预约
 	 * @param reservation

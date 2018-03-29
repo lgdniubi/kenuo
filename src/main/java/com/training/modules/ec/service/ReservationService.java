@@ -3,7 +3,6 @@ package com.training.modules.ec.service;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -171,5 +170,14 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 	 */
 	public int queryCompleteNum(int groupId,String goodsMappingId){
 		return dao.queryCompleteNum(groupId,goodsMappingId);
+	}
+	
+	/**
+	 * 校验同一美容师同一时间段内只能有一条已完成的预约记录
+	 * @param reservation
+	 * @return
+	 */
+	public int verifyApptDate(Reservation reservation){
+		return dao.verifyApptDate(reservation);
 	}
 }

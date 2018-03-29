@@ -116,5 +116,10 @@ public interface ReservationDao extends CrudDao<Reservation>{
 	 * @return
 	 */
 	public int queryCompleteNum(@Param(value="groupId")int groupId,@Param(value="goodsMappingId")String goodsMappingId);
-
+	
+	/**
+	 * 校验同一美容师同一时间段内只能有一条已完成的预约记录
+	 * @param reservation
+	 */
+	public int verifyApptDate(Reservation reservation);
 }
