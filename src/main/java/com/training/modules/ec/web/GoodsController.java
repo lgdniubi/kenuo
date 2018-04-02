@@ -971,12 +971,15 @@ public class GoodsController extends BaseController{
 			//自媒体每天美耶商品信息同步
 			JSONObject jsonObject = new JSONObject();
 			String updateMtmyGoodInfo = ParametersFactory.getMtmyParamValues("mtmy_updateMtmyGoodInfo");	
-			logger.info("##### web接口路径:"+updateMtmyGoodInfo);	         
-			String parpm = "{\"goodsId\":\""+goods.getGoodsId()+"\",\"delFlag\":\"2\"}";
-			String url=updateMtmyGoodInfo;
-			String result = WebUtils.postMediaObject(parpm, url);
-			jsonObject = JSONObject.fromObject(result);
-			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			logger.info("##### web接口路径:"+updateMtmyGoodInfo);	  
+			
+			if(!"-1".equals(updateMtmyGoodInfo)){
+				String parpm = "{\"goodsId\":\""+goods.getGoodsId()+"\",\"delFlag\":\"2\"}";
+				String url=updateMtmyGoodInfo;
+				String result = WebUtils.postMediaObject(parpm, url);
+				jsonObject = JSONObject.fromObject(result);
+				logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			}
 			
 			addMessage(redirectAttributes, "删除商品信息成功");
 		}else{

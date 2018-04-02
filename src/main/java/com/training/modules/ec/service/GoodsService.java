@@ -129,12 +129,15 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 			//自媒体每天美耶商品信息同步
 			JSONObject jsonObject = new JSONObject();
 			String updateMtmyGoodInfo = ParametersFactory.getMtmyParamValues("mtmy_updateMtmyGoodInfo");	
-			logger.info("##### web接口路径:"+updateMtmyGoodInfo);	         
-			String parpm = "{\"goodsId\":\""+goods.getGoodsId()+"\",\"goodsName\":\""+goods.getGoodsName()+"\",\"marketPrice\":\""+goods.getMarketPrice()+"\",\"shopPrice\":\""+goods.getShopPrice()+"\",\"advancePrice\":\""+goods.getAdvancePrice()+"\",\"goodsRemark\":\""+goods.getGoodsRemark()+"\",\"actionType\":\""+goods.getActionType()+"\",\"isReal\":\""+goods.getIsReal()+"\",\"integral\":\""+goods.getIntegral()+"\",\"originalImg\":\""+goods.getOriginalImg()+"\",\"isOpen\":\""+goods.getGoodsIsOpen()+"\",\"franchiseeId\":\""+goods.getFranchiseeId()+"\"}";
-			String url=updateMtmyGoodInfo;
-			String result = WebUtils.postMediaObject(parpm, url);
-			jsonObject = JSONObject.fromObject(result);
-			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			logger.info("##### web接口路径:"+updateMtmyGoodInfo);	  
+			
+			if(!"-1".equals(updateMtmyGoodInfo)){
+				String parpm = "{\"goodsId\":\""+goods.getGoodsId()+"\",\"goodsName\":\""+goods.getGoodsName()+"\",\"marketPrice\":\""+goods.getMarketPrice()+"\",\"shopPrice\":\""+goods.getShopPrice()+"\",\"advancePrice\":\""+goods.getAdvancePrice()+"\",\"goodsRemark\":\""+goods.getGoodsRemark()+"\",\"actionType\":\""+goods.getActionType()+"\",\"isReal\":\""+goods.getIsReal()+"\",\"integral\":\""+goods.getIntegral()+"\",\"originalImg\":\""+goods.getOriginalImg()+"\",\"isOpen\":\""+goods.getGoodsIsOpen()+"\",\"franchiseeId\":\""+goods.getFranchiseeId()+"\"}";
+				String url=updateMtmyGoodInfo;
+				String result = WebUtils.postMediaObject(parpm, url);
+				jsonObject = JSONObject.fromObject(result);
+				logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			}
 			
 			int goodId = goods.getGoodsId();
 			if (0 == goodId) {
@@ -406,12 +409,15 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 			//自媒体每天美耶商品信息同步
 			JSONObject jsonObject = new JSONObject();
 			String updateMtmyGoodInfo = ParametersFactory.getMtmyParamValues("mtmy_updateMtmyGoodInfo");	
-			logger.info("##### web接口路径:"+updateMtmyGoodInfo);	         
-			String parpm = "{\"goodsId\":\""+goods.getGoodsId()+"\",\"goodsName\":\""+goods.getGoodsName()+"\",\"marketPrice\":\""+goods.getMarketPrice()+"\",\"shopPrice\":\""+goods.getShopPrice()+"\",\"advancePrice\":\""+goods.getAdvancePrice()+"\",\"goodsRemark\":\""+goods.getGoodsRemark()+"\",\"actionType\":\""+goods.getActionType()+"\",\"isReal\":\""+goods.getIsReal()+"\",\"integral\":\""+goods.getIntegral()+"\",\"originalImg\":\""+goods.getOriginalImg()+"\",\"isOpen\":\""+goods.getGoodsIsOpen()+"\",\"franchiseeId\":\""+goods.getFranchiseeId()+"\"}";
-			String url=updateMtmyGoodInfo;
-			String result = WebUtils.postMediaObject(parpm, url);
-			jsonObject = JSONObject.fromObject(result);
-			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			logger.info("##### web接口路径:"+updateMtmyGoodInfo);	  
+			
+			if(!"-1".equals(updateMtmyGoodInfo)){
+				String parpm = "{\"goodsId\":\""+goods.getGoodsId()+"\",\"goodsName\":\""+goods.getGoodsName()+"\",\"marketPrice\":\""+goods.getMarketPrice()+"\",\"shopPrice\":\""+goods.getShopPrice()+"\",\"advancePrice\":\""+goods.getAdvancePrice()+"\",\"goodsRemark\":\""+goods.getGoodsRemark()+"\",\"actionType\":\""+goods.getActionType()+"\",\"isReal\":\""+goods.getIsReal()+"\",\"integral\":\""+goods.getIntegral()+"\",\"originalImg\":\""+goods.getOriginalImg()+"\",\"isOpen\":\""+goods.getGoodsIsOpen()+"\",\"franchiseeId\":\""+goods.getFranchiseeId()+"\"}";
+				String url=updateMtmyGoodInfo;
+				String result = WebUtils.postMediaObject(parpm, url);
+				jsonObject = JSONObject.fromObject(result);
+				logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			}
 			
 			// 用户商品上下架Regis缓存
 			if (goods.getIsOnSale().equals("0")) {
@@ -707,11 +713,14 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 		JSONObject jsonObject = new JSONObject();
 		String updateMtmyGoodInfo = ParametersFactory.getMtmyParamValues("mtmy_updateMtmyGoodInfo");	
 		logger.info("##### web接口路径:"+updateMtmyGoodInfo);	         
-		String parpm = "{\"goodsId\":\""+goods.getGoodsId()+"\",\"goodsName\":\""+goods.getGoodsName()+"\",\"marketPrice\":\""+goods.getMarketPrice()+"\",\"shopPrice\":\""+goods.getShopPrice()+"\",\"advancePrice\":\""+goods.getAdvancePrice()+"\",\"goodsRemark\":\""+goods.getGoodsRemark()+"\",\"actionType\":\""+goods.getActionType()+"\",\"isReal\":\""+goods.getIsReal()+"\",\"integral\":\""+goods.getIntegral()+"\",\"originalImg\":\""+goods.getOriginalImg()+"\",\"isOpen\":\""+goods.getGoodsIsOpen()+"\",\"franchiseeId\":\""+goods.getFranchiseeId()+"\"}";
-		String url=updateMtmyGoodInfo;
-		String result = WebUtils.postMediaObject(parpm, url);
-		jsonObject = JSONObject.fromObject(result);
-		logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+		
+		if(!"-1".equals(updateMtmyGoodInfo)){
+			String parpm = "{\"goodsId\":\""+goods.getGoodsId()+"\",\"goodsName\":\""+goods.getGoodsName()+"\",\"marketPrice\":\""+goods.getMarketPrice()+"\",\"shopPrice\":\""+goods.getShopPrice()+"\",\"advancePrice\":\""+goods.getAdvancePrice()+"\",\"goodsRemark\":\""+goods.getGoodsRemark()+"\",\"actionType\":\""+goods.getActionType()+"\",\"isReal\":\""+goods.getIsReal()+"\",\"integral\":\""+goods.getIntegral()+"\",\"originalImg\":\""+goods.getOriginalImg()+"\",\"isOpen\":\""+goods.getGoodsIsOpen()+"\",\"franchiseeId\":\""+goods.getFranchiseeId()+"\"}";
+			String url=updateMtmyGoodInfo;
+			String result = WebUtils.postMediaObject(parpm, url);
+			jsonObject = JSONObject.fromObject(result);
+			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+		}
 		
 		// 用户商品上下架Regis缓存
 		if (goods.getIsOnSale().equals("0")) {
