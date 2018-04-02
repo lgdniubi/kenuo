@@ -152,14 +152,24 @@ public class fzxRoleController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "checkEnname")
-	public String checkEnname(String oldEnname, String enname) {
+	public String checkEnname(String oldEnname, Integer oldModeid,Integer modeid) {
+		if("cjgly".equals(oldEnname)){
+			if (oldModeid == modeid){
+				return "true";
+			} else if (modeid != null &&  fzxRoleService.checkEnname(modeid) != 0) {
+				return "false";
+			}
+		}
+		return "true";
+	}
+	/*public String checkEnname(String oldEnname, String enname) {
 		if (enname != null && enname.equals(oldEnname)) {
 			return "true";
 		} else if (enname != null &&  fzxRoleService.checkEnname(enname) == 0) {
 			return "true";
 		}
 		return "false";
-	}
+	}*/
 	/**
 	 * 删除角色
 	 * @param model

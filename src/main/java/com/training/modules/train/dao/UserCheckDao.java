@@ -6,7 +6,9 @@ import org.apache.ibatis.annotations.Param;
 
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
+import com.training.modules.train.entity.FzxRole;
 import com.training.modules.train.entity.ModelFranchisee;
+import com.training.modules.train.entity.PcRole;
 import com.training.modules.train.entity.UserCheck;
 
 /**
@@ -57,5 +59,53 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	public ModelFranchisee getQYModelFranchiseeByUserid(String userid);
 
 	public List<String> selectCids(String userid);
+
+	/**
+	 * 从pc_role查
+	 * 根据该用户申请的商家版本id，ename=cjgly，officeid=1，franchiseeid=1查询超级管理员id
+	 * @param modelFranchisee
+	 * @return
+	 */
+	public int findByModidAndEname(ModelFranchisee modelFranchisee);
+
+	/**
+	 * 向pc_user_role中插入一条记录
+	 * @param userid
+	 * @param roleid
+	 */
+	public void insertPcUserRole(@Param("userid")String userid, @Param("roleid")int roleid);
+
+	/**
+	 * 从fzx_role查
+	 * @param modelFranchisee
+	 * @return
+	 */
+	public int findByModidAndEnameFzx(ModelFranchisee modelFranchisee);
+	//向pc_user_role中插入一条记录
+	public void insertFzxUserRole(@Param("userid")String userid, @Param("roleid")int fzx_roleid);
+
+	/**
+	 * 从pc_role中查询基础的角色
+	 * @param franchid
+	 * @return
+	 */
+	public List<PcRole> findPcRoleByModid(ModelFranchisee modelFranchisee);
+
+	/**
+	 * 创建基础角色
+	 * @param pcrole
+	 */
+	public void insertPcCommonRole(PcRole pcrole);
+
+	public List<FzxRole> findFzxRoleByModid(ModelFranchisee modelFranchisee);
+
+	public void insertFzxCommonRole(FzxRole fzxRole);
+
+	/**
+	 * 发送推送消息时，通过userid找到客户端id
+	 * @param userid
+	 * @return
+	 */
+	public String findCidByUserid(String userid);
 	
 }

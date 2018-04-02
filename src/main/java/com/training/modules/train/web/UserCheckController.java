@@ -69,7 +69,11 @@ public class UserCheckController extends BaseController{
 	public String savemodel(UserCheck userCheck, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		try {
 			userCheckService.saveModel(userCheck);//保存审核信息
-			String json = userCheckService.pushMsg(userCheck);
+			if ("1".equals(userCheck.getStatus())){
+				userCheckService.pushMsg(userCheck,"你的申请资料信息没有通过审核，请修改资料");
+			}else if ("2".equals(userCheck.getStatus())){
+				userCheckService.pushMsg(userCheck,"你的申请资料信息已通过审核，等待平台给您赋予权限");
+			}
 			addMessage(redirectAttributes, "成功");
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "保存审核信息出现异常,请与管理员联系");

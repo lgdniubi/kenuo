@@ -112,4 +112,8 @@
 		JOIN sys_user u ON u.id = ur.user_id
 		WHERE u.id = #{id} AND r.del_flag = 0
 	</select>
+	<!-- 验证英文名称是否有效 -->
+	<select id="checkEnname" resultType="int">
+		SELECT COUNT(1) FROM pc_role WHERE mode_id = #{modeid} AND del_flag = 0 AND ename = 'cjgly'
+	</select>
 </mapper>

@@ -23,18 +23,24 @@
 		}
 		$(document).ready(function(){
 			validateForm = $("#inputForm").validate({
-				/* rules: {   英文名称校验修改为下拉选，不用再进行验证,如需进行校验，将此注释打开即可
-					enname:{
+				rules: {  // 英文名称校验修改为下拉选，不用再进行验证,如需进行校验，将此注释打开即可
+					modeid:{
 						remote:{
 							type: "post",
 							async: false,
-							url: "${ctx}/train/fzxRole/checkEnname?oldEnname=" + encodeURIComponent('${fzxRole.enname}')
+							dataType: "json",           //接受数据格式  
+							url: "${ctx}/train/fzxRole/checkEnname?oldModeid=${pcRole.modeid}",
+							data: {                     //要传递的数据
+								oldEnname: function() {
+						            return $("#enname").val();
+						        }
+						    }
 						}
 					}
 				},
 				messages:{
-					enname:{remote:"英文名称已存在"}
-				}, */
+					modeid:{remote:"此版本的英文名称已存在"}
+				},
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
 					form.submit();

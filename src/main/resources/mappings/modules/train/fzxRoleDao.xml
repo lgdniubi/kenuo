@@ -30,19 +30,21 @@
 		INSERT INTO fzx_role(
 			enname, 
 			name, 
-			franchisee_id,
+			company_id,
 			office_id,
 			mod_id,
+			role_grade,
 			create_by,
 			create_date, 
 			remarks,
 			del_flag
 		) VALUES (
 			#{enname},
+			#{name},
 			#{franchiseeid},
 			#{officeid},
-			#{name},
 			#{modeid},
+			1,
 			#{createBy.id}, 
 			#{createDate}, 
 			#{remarks}, 
@@ -140,7 +142,7 @@
 	</select>
 	<!-- 验证英文名称是否有效 -->
 	<select id="checkEnname" resultType="int">
-		SELECT COUNT(1) FROM fzx_role WHERE enname = #{enname} AND del_flag = 0
+		SELECT COUNT(1) FROM fzx_role WHERE mod_id = #{modeid} AND del_flag = 0 AND enname = 'cjgly'
 	</select>
 	
 	<select id="findByRoleId" resultType="FzxRole">

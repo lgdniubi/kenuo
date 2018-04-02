@@ -33,7 +33,9 @@ import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.UserCheckDao;
+import com.training.modules.train.entity.FzxRole;
 import com.training.modules.train.entity.ModelFranchisee;
+import com.training.modules.train.entity.PcRole;
 import com.training.modules.train.entity.TrainCategorys;
 import com.training.modules.train.entity.TrainLessons;
 import com.training.modules.train.entity.UserCheck;
@@ -143,13 +145,58 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			//向商家和机构插入一条信息
 			String franchid = saveFranchiseeAndOffice(find);
 			
+			//设置该用户的超级管理员
+			setSuperAdminForUserid(modelFranchisee);
+			//设置公共的角色
+			setRoleForUser(modelFranchisee,franchid);
+			
 			modelFranchisee.setFranchiseeid(franchid);
-			userCheckDao.updateUserType("qy",modelFranchisee.getUserid(),franchid);
+			userCheckDao.updateUserType("qy",modelFranchisee.getUserid(),franchid);//更改用户表type为企业类型
 			modelFranchisee.setUserid("0");
 		}
 		
 		save(modelFranchisee);
-		//更改用户表type为企业类型
+//		int a = 1/0;
+	}
+
+	/**
+	 * 为该用户设置一些公共的角色
+	 * @param modelFranchisee
+	 * @param franchid
+	 */
+	private void setRoleForUser(ModelFranchisee modelFranchisee, String franchid) {
+		List<PcRole> pcroleList = userCheckDao.findPcRoleByModid(modelFranchisee);
+		for (PcRole pcrole : pcroleList) {
+			pcrole.setFranchiseeid(Integer.valueOf(franchid));
+			pcrole.setOfficeid(franchid);
+			pcrole.preInsert();
+			userCheckDao.insertPcCommonRole(pcrole);
+		}
+		
+		//向妃子校角色表插入数据
+		List<FzxRole> fzxRoleList = userCheckDao.findFzxRoleByModid(modelFranchisee);
+		for (FzxRole fzxRole : fzxRoleList) {
+			fzxRole.setFranchiseeid(Integer.valueOf(franchid));
+			fzxRole.setOfficeid(franchid);
+			fzxRole.preInsert();
+			userCheckDao.insertFzxCommonRole(fzxRole);
+		}
+	}
+
+	/**
+	 * 设置该用户的超级管理员
+	 * @param userid
+	 */
+	private void setSuperAdminForUserid(ModelFranchisee modelFranchisee) {
+		//从pc_role查出超级管理员角色记录插入pc_user_role
+		int pc_roleid = userCheckDao.findByModidAndEname(modelFranchisee);
+		//向pc_user_role中插入一条记录
+		userCheckDao.insertPcUserRole(modelFranchisee.getUserid(),pc_roleid);
+		//从fzx_role查出超级管理员角色记录插入fzx_user_role
+		int fzx_roleid = userCheckDao.findByModidAndEnameFzx(modelFranchisee);
+		//向pc_user_role中插入一条记录
+		userCheckDao.insertFzxUserRole(modelFranchisee.getUserid(),fzx_roleid);
+		
 	}
 
 	private String saveFranchiseeAndOffice(UserCheck find) {
@@ -204,19 +251,21 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	 * @param userCheck
 	 * @return
 	 */
-	public String pushMsg(UserCheck userCheck) {
+	public String pushMsg(UserCheck userCheck,String text) {
 		JSONArray jsonArray = new JSONArray();
-		jsonArray.add("35be8ac9632c9475ac67f9be3c340665");
+		String cid = userCheckDao.findCidByUserid(userCheck.getUserid());
+//		jsonArray.add("35be8ac9632c9475ac67f9be3c340665");
+		jsonArray.add(cid);
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("cid_list", jsonArray);
 		jsonObj.put("push_type", 1);
 		Map<String, Object> map = new HashMap<String, Object>();
 		String dateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-		map.put("content", "审核已经过了");
+		map.put("content", text);
 //		map.put("notify_id", "35be8ac9632c9475ac67f9be3c3");
 		map.put("notify_type", 2);
 		map.put("push_time", dateStr);
-		map.put("title", "企业审核");
+		map.put("title", "审核通知");
 		jsonObj.put("content", map);
 		
 		String json =  this.push(jsonObj);
@@ -239,79 +288,13 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		
 		HttpEntity<String> entity = new HttpEntity<String>(paramter,headers);
 		
-//		String push_url = ParametersFactory.getMtmyParamValues("push_url");
-		String push_url = "http://10.10.8.22:8801/appServer/pushMsg/pushGT.do";
+		String push_url = ParametersFactory.getMtmyParamValues("push_url");
+//		String push_url = "http://10.10.8.22:8801/appServer/pushMsg/pushGT.do";
 		
 		String json = restTemplate.postForObject(push_url, entity, String.class);
-		System.out.println("pushjsonStr == "+jsonObj);
-		System.out.println(json);
+//		System.out.println("pushjsonStr == "+jsonObj);
+//		System.out.println(json);
 		return json;
 	}
-	public static void main(String[] args) {
-		UserCheck userCheck = new UserCheck();
-		new UserCheckService().pushMsg(userCheck);
-//		pppssssmmm();
-	}
 	
-	private static void pppssssmmm() {
-		JSONArray jsonArray = new JSONArray();
-		jsonArray.add("35be8ac9632c9475ac67f9be3c340665");
-		JSONObject jsonObj = new JSONObject();
-		jsonObj.put("cid_list", jsonArray);
-		jsonObj.put("push_type", 1);
-		Map<String, Object> map = new HashMap<String, Object>();
-		String dateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-		map.put("content", "dalkdjadsa");
-		map.put("notify_id", "35be8ac9632c9475ac67f9be3c3");
-		map.put("notify_type", 2);
-		map.put("push_time", dateStr);
-		map.put("title", "地推透传");
-		jsonObj.put("content", map);
-		//jsonObj.put("notify_type", 2);
-		//jsonObj.put("title", "title");
-//		jsonObj.put("notify_type", 1);
-		
-		RestTemplate restTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
-		MediaType type = MediaType.parseMediaType("application/json;charset=UTF-8");
-		headers.setContentType(type);
-		headers.add("Accept", MediaType.APPLICATION_JSON.toString());
-		
-		//  用于加密
-		String sign = WebUtils.MD5("train"+StringEscapeUtils.unescapeJava(jsonObj.toString())+"train");
-		String paramter = "{'sign':'"+sign+"' , 'jsonStr':'train"+jsonObj+"'}";
-		
-		HttpEntity<String> entity = new HttpEntity<String>(paramter,headers);
-		
-		String push_url = "http://10.10.8.22:8801/appServer/pushMsg/pushGT.do";
-		
-		String json = restTemplate.postForObject(push_url, entity, String.class);
-		System.out.println("pushjsonStr == "+jsonObj);
-		System.out.println(json);
-		
-	}
-	
-	/*String start = "";
-	String end = "";
-	if(map.get("start_time") != null)
-		start = ((Timestamp) map.get("start_time")).toString();
-	if(map.get("end_time") != null)
-		end = ((Timestamp) map.get("end_time")).toString();
-	if(StringUtils.isNotBlank(start))
-		map.put("start_time", start.substring(0, start.lastIndexOf(".")));
-	if(StringUtils.isNotBlank(end))
-		map.put("end_time", end.substring(0, end.lastIndexOf(".")));
-	map.put("push_time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-	
-	String type = (String) map.get("notify_type");
-	if("4".equals(type)){
-		TrainLessons l = this.trainLessonsDao.get(((String)map.get("content")).trim());
-		
-		map.put("name", l.getName());
-		map.put("pic", l.getCoverPic());
-	}else if("5".equals(type)){
-		TrainCategorys tc = this.trainCategorysDao.get(((String)map.get("content")).trim());
-		map.put("name", tc.getName());
-		map.put("pic",tc.getCoverPic());
-	}*/
 }

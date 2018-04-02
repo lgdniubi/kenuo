@@ -111,4 +111,11 @@ public interface PcRoleDao extends CrudDao<PcRole>{
 	 * 2017年10月27日
 	 */
 	public List<PcRole> findpcRoleByUserId(User user);
+	
+	/**
+	 * 验证英文名称是否有效
+	 * @param enname
+	 * @return
+	 */
+	public int checkEnname(Integer modeid);
 }

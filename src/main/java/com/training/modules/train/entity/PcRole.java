@@ -31,6 +31,7 @@ public class PcRole extends DataEntity<PcRole> {
 	private String officeid;	//机构id
 	private int modeid;		//模板id
 	private String modName;	//机构id
+	private String remarks;	//机构id
 	
 	public User getUser() {
 		return user;
@@ -109,6 +110,12 @@ public class PcRole extends DataEntity<PcRole> {
 	}
 	public void setModName(String modName) {
 		this.modName = modName;
+	}
+	public String getRemarks() {
+		return remarks;
+	}
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 	
 }

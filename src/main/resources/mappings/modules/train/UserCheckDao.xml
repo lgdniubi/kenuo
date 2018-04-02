@@ -204,6 +204,145 @@
 		select
 			uc.client_id
 		from oa_user_cid uc  
-		where uc.user_id = = #{userid} 
+		where uc.user_id = #{userid} 
 	</select>
+	
+	<select id="findByModidAndEname" resultType="int">
+		SELECT
+			id
+		FROM
+			`pc_role`
+		WHERE
+			office_id = 1
+		AND franchisee_id = 1
+		AND mode_id = #{modid}
+		AND ename = 'cjgly';
+	</select>
+	<select id="findCidByUserid" resultType="string">
+		SELECT
+			client_id
+		FROM
+			oa_user_cid
+		WHERE
+			user_id =#{userid}
+	</select>
+	
+	<insert id="insertPcUserRole">
+		INSERT INTO `pc_user_role` (`user_id`, `pc_role_id`)
+		VALUES
+			(
+				#{userid},
+				#{roleid}
+			);
+				
+	</insert>
+	<select id="findByModidAndEnameFzx" resultType="int">
+		SELECT
+			id
+		FROM
+			`fzx_role`
+		WHERE
+			office_id = 1
+		AND company_id = 1
+		AND mod_id = #{modid}
+		AND enname = 'cjgly';
+	</select>
+	
+	<insert id="insertFzxUserRole">
+		INSERT INTO `fzx_user_role` (
+			`user_id`,
+			`fzx_role_id`
+		)
+		VALUES
+			(
+				#{userid},
+				#{roleid}
+			);
+	</insert>
+	<select id="findPcRoleByModid" resultType="PcRole">
+		SELECT
+		  `franchisee_id`,
+		  `office_id`,
+		  `mode_id`,
+		  `name`,
+		  `ename`,
+		  `remarks` 
+		FROM
+			`pc_role`
+		WHERE
+			mode_id = #{modid}
+		AND office_id = 1
+		AND franchisee_id = 1
+		AND ename != 'cjgly'
+	</select>
+	<insert id="insertPcCommonRole">
+		INSERT INTO `trains`.`pc_role` (
+			`franchisee_id`,
+			`office_id`,
+			`mode_id`,
+			`name`,
+			`ename`,
+			`create_by`,
+			`create_date`,
+			`remarks`,
+			`del_flag`
+		)
+		VALUES
+			(
+				#{franchiseeid},
+				#{officeid},
+				#{modeid},
+				#{name},
+				#{ename},
+				#{createBy.id},
+			    SYSDATE(),
+				#{remarks},
+				'0'
+			);
+				
+	</insert>
+	<select id="findFzxRoleByModid" resultType="FzxRole">
+		SELECT
+			`company_id`,
+			`office_id`,
+			`mod_id`,
+			`name`,
+			`enname`,
+			`remarks`
+		FROM
+			`fzx_role`
+		WHERE
+			mod_id = #{modid}
+		AND office_id = 1
+		AND company_id = 1
+		AND enname != 'cjgly'
+	</select>
+	<insert id="insertFzxCommonRole">
+		INSERT INTO `trains`.`fzx_role` (
+			`company_id`,
+			`office_id`,
+			`mod_id`,
+			`name`,
+			`enname`,
+			`create_by`,
+			`create_date`,
+			`remarks`,
+			`role_grade`,
+			`del_flag`
+		)
+		VALUES
+			(
+				#{franchiseeid},
+				#{officeid},
+				#{modeid},
+				#{name},
+				#{enname},
+				#{createBy.id},
+			    SYSDATE(),
+				#{remarks},
+				1,
+				'0'
+			);
+				
+	</insert>
 </mapper>

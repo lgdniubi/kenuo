@@ -108,4 +108,12 @@ public class PcRoleService extends CrudService<PcRoleDao,PcRole>{
 		return pcRoleDao.findpcRoleByUserId(user);
 	}
 
+	/**
+	 * 验证英文名称是否有效
+	 * @param enname
+	 * @return
+	 */
+	public int checkEnname(Integer modeid){
+		return dao.checkEnname(modeid);
+	}
 }

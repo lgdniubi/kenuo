@@ -167,11 +167,11 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 	}
 	/**
 	 * 验证英文名称是否有效
-	 * @param enname
+	 * @param modeid
 	 * @return
 	 */
-	public int checkEnname(String enname){
-		return dao.checkEnname(enname);
+	public int checkEnname(Integer modeid){
+		return dao.checkEnname(modeid);
 	}
 
 	/**
