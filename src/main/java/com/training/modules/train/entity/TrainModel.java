@@ -22,8 +22,10 @@ public class TrainModel extends DataEntity<TrainModel>{
 	private String modPay;		//是否收费(0:免费1:收费)
 	private double modFee;		//价格
 	private int modDay;			//天数
-	
 	private String remark;		//备注
+
+	private int menuId;		//菜单id
+	private String menuIds;	//菜单ids
 	
 	public TrainModel() {
 		super();
@@ -83,6 +85,22 @@ public class TrainModel extends DataEntity<TrainModel>{
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public int getMenuId() {
+		return menuId;
+	}
+
+	public void setMenuId(int menuId) {
+		this.menuId = menuId;
+	}
+
+	public String getMenuIds() {
+		return menuIds;
+	}
+
+	public void setMenuIds(String menuIds) {
+		this.menuIds = menuIds;
 	}
 
 	@Override

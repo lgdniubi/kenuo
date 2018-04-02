@@ -145,15 +145,15 @@ public class PCMenu extends DataEntity<PCMenu> {
 		}
 		return false;
 	}
-	@JsonIgnore
-	public boolean hasPermisson(){
-		List<PCMenu> menuList = TrainUserUtils.getMenuList();
-		for(PCMenu menu:menuList){
-			if(menu.getId().equals(this.getId()))
-				return true;
-		}
-		return false;
-	}
+//	@JsonIgnore
+//	public boolean hasPermisson(){
+//		List<PCMenu> menuList = TrainUserUtils.getMenuList();
+//		for(PCMenu menu:menuList){
+//			if(menu.getId().equals(this.getId()))
+//				return true;
+//		}
+//		return false;
+//	}
 	
 	@JsonIgnore
 	public static void sortList(List<PCMenu> list, List<PCMenu> sourcelist, String parentId, boolean cascade){

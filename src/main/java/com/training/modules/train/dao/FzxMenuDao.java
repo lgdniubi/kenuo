@@ -7,6 +7,7 @@ import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.sys.entity.User;
 import com.training.modules.train.entity.FzxMenu;
+import com.training.modules.train.entity.FzxRole;
 
 /**
  * 妃子校菜单Dao接口
@@ -90,5 +91,7 @@ public interface FzxMenuDao extends CrudDao<FzxMenu>{
 	 * 2017年10月18日
 	 */
 	public void updateMenuSort(FzxMenu fzxMenu);
+
+	public List<FzxMenu> findAllMenuByModid(FzxRole fzxRole);
 
 }

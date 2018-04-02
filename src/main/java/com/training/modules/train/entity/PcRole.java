@@ -11,19 +11,19 @@ import com.training.modules.sys.entity.User;
  * 
  * @version 2013-12-05
  */
-public class FzxRole extends DataEntity<FzxRole> {
+public class PcRole extends DataEntity<PcRole> {
 	
 	private static final long serialVersionUID = 1L;
 	private int roleId;		//主键id
 	private String name;	//名称
-	private String enname;	//英文名称
+	private String ename;	//英文名称
 	private int roleGrade;	//角色等级
 	
 	private int menuId;		//菜单id
 	private String menuIds;	//菜单ids
 	
-	private String fzxRoleIds;		//角色IDS
-	private String fzxRoleNames;	//角色名称S
+	private String pcRoleIds;		//角色IDS
+	private String pcRoleNames;	//角色名称S
 	
 	private User user;				//用户
 	
@@ -50,11 +50,11 @@ public class FzxRole extends DataEntity<FzxRole> {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getEnname() {
-		return enname;
+	public String getEname() {
+		return ename;
 	}
-	public void setEnname(String enname) {
-		this.enname = enname;
+	public void setEname(String ename) {
+		this.ename = ename;
 	}
 	public int getRoleGrade() {
 		return roleGrade;
@@ -74,17 +74,17 @@ public class FzxRole extends DataEntity<FzxRole> {
 	public void setMenuId(int menuId) {
 		this.menuId = menuId;
 	}
-	public String getFzxRoleIds() {
-		return fzxRoleIds;
+	public String getpcRoleIds() {
+		return pcRoleIds;
 	}
-	public void setFzxRoleIds(String fzxRoleIds) {
-		this.fzxRoleIds = fzxRoleIds;
+	public void setpcRoleIds(String pcRoleIds) {
+		this.pcRoleIds = pcRoleIds;
 	}
-	public String getFzxRoleNames() {
-		return fzxRoleNames;
+	public String getpcRoleNames() {
+		return pcRoleNames;
 	}
-	public void setFzxRoleNames(String fzxRoleNames) {
-		this.fzxRoleNames = fzxRoleNames;
+	public void setpcRoleNames(String pcRoleNames) {
+		this.pcRoleNames = pcRoleNames;
 	}
 	public int getFranchiseeid() {
 		return franchiseeid;

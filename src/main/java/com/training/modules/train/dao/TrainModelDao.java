@@ -8,6 +8,7 @@ import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.oa.entity.OaNotify;
 import com.training.modules.train.entity.CategoryLesson;
+import com.training.modules.train.entity.PCMenu;
 import com.training.modules.train.entity.TrainCategorys;
 import com.training.modules.train.entity.TrainModel;
 
@@ -29,14 +30,42 @@ public interface TrainModelDao extends CrudDao<TrainModel>{
 	public void editTrainModel(TrainModel trainModel);
 
 	public TrainModel getTrainModel(TrainModel trainModel);
-	
+
 	/**
-	 * 
-	 * @param 
-	 * @return
+	 * 查找该版本下的pc菜单
+	 * @param trainModel
 	 */
-//	public List<TrainCategorys> findcategoryslist(TrainCategorys trainCategorys);
-	
-	
+	public TrainModel findmodpcMenu(TrainModel trainModel);
+
+	/**
+	 * 删除以前的该版本下的pc菜单信息
+	 * @param trainModel
+	 */
+	public void deleteModpcMenu(TrainModel trainModel);
+
+	/**
+	 * 插入新的该版本下的pc菜单
+	 * @param newModel
+	 */
+	public void insertModpcMenu(TrainModel newModel);
+
+	/**
+	 * 查找该版本下的fzx菜单
+	 * @param trainModel
+	 */
+	public TrainModel findmodfzxMenu(TrainModel trainModel);
+
+	/**
+	 * 删除以前的该版本下的fzx菜单信息
+	 * @param trainModel
+	 */
+	public void deleteModfzxMenu(TrainModel trainModel);
+
+	/**
+	 * 插入新的该版本下的fzx菜单
+	 * @param newModel
+	 */
+	public void insertModfzxMenu(TrainModel newModel);
+
 	
 }

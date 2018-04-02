@@ -24,16 +24,16 @@
 		$(document).ready(function(){
 			validateForm = $("#inputForm").validate({
 				/* rules: {   英文名称校验修改为下拉选，不用再进行验证,如需进行校验，将此注释打开即可
-					enname:{
+					ename:{
 						remote:{
 							type: "post",
 							async: false,
-							url: "${ctx}/train/fzxRole/checkEnname?oldEnname=" + encodeURIComponent('${fzxRole.enname}')
+							url: "${ctx}/train/pcRole/checkEnname?oldEname=" + encodeURIComponent('${pcRole.ename}')
 						}
 					}
 				},
 				messages:{
-					enname:{remote:"英文名称已存在"}
+					ename:{remote:"英文名称已存在"}
 				}, */
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
@@ -53,7 +53,7 @@
 	</script>
 </head>
 <body>
-	<form:form id="inputForm" modelAttribute="fzxRole" action="${ctx}/train/fzxRole/save" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="pcRole" action="${ctx}/train/pcRole/save" method="post" class="form-horizontal">
 		<form:hidden path="roleId"/>
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		   <tbody>
@@ -65,11 +65,11 @@
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 英文名称:</label></td>
 		         <td  class="width-35" >
 		         	<!-- 将英文名称改为下拉选 -->
-		         	<form:select path="enname"  class="form-control">
+		         	<form:select path="ename"  class="form-control">
 						<form:options items="${fns:getDictList('fzx_role_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 					</form:select>
-		         	<%-- <form:input path="enname" htmlEscape="false" maxlength="20" class="required form-control "/>
-		         	<input type="hidden" id="oldEnname" name="oldEnname" value="${fzxRole.enname }"> --%>
+		         	<%-- <form:input path="ename" htmlEscape="false" maxlength="20" class="required form-control "/>
+		         	<input type="hidden" id="oldEname" name="oldEname" value="${pcRole.ename }"> --%>
 		         </td>
 		      </tr>
 		       <tr>

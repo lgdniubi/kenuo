@@ -49,6 +49,8 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 	public void saveFzxRole(FzxRole fzxRole){
 		if(fzxRole.getRoleId() == 0){
 			fzxRole.preInsert();
+			fzxRole.setFranchiseeid(1);	//默认商家id是平台公共的角色
+			fzxRole.setOfficeid("1");	//默认商家id是平台公共的角色
 			dao.insert(fzxRole);
 		}else{
 			fzxRole.preUpdate();

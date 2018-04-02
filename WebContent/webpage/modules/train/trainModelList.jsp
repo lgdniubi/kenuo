@@ -89,6 +89,12 @@
 										<shiro:hasPermission name="train:model:updatemodel">
 				    						<a href="#" onclick="openDialog('修改', '${ctx}/train/model/form?id=${trainModel.id}&opflag=UPDATE','430px', '480px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 					    				</shiro:hasPermission>
+										<shiro:hasPermission name="train:model:auth">
+				    						<a href="#" onclick="openDialog('pc端权限设置', '${ctx}/train/model/auth?id=${trainModel.id}&opflag=pc','430px', '600px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>pc端权限设置</a>
+					    				</shiro:hasPermission>
+										<shiro:hasPermission name="train:model:auth">
+				    						<a href="#" onclick="openDialog('fzx端权限设置', '${ctx}/train/model/auth?id=${trainModel.id}&opflag=fzx','430px', '600px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>fzx端权限设置</a>
+					    				</shiro:hasPermission>
 									</td>
 								</tr>
 							</c:forEach>

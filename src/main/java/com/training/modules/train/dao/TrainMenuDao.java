@@ -8,6 +8,7 @@ import java.util.List;
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.PCMenu;
+import com.training.modules.train.entity.PcRole;
 
 /**
  * 菜单DAO接口
@@ -26,5 +27,7 @@ public interface TrainMenuDao extends CrudDao<PCMenu> {
 	public int updateSort(PCMenu menu);
 	
 	public List<PCMenu> findByPidforChild(String id);
+
+	public List<PCMenu> findAllMenuByModid(PcRole pcRole);
 	
 }

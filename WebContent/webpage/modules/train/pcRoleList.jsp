@@ -25,18 +25,18 @@
 			
 		});
     </script>
-    <title>妃子校角色管理</title>
+    <title>PC端角色管理</title>
 </head>
 <body>
 	<div class="wrapper-content">
         <div class="ibox">
             <div class="ibox-title">
-                <h5>妃子校角色管理</h5>
+                <h5>PC端角色管理</h5>
             </div>
             <sys:message content="${message}"/>
             <div class="ibox-content">
                 <div class=" clearfix">
-                    <form:form class="navbar-form navbar-left searcharea"  id="searchForm" modelAttribute="fzxRole" action="${ctx}/train/fzxRole/list" method="post">
+                    <form:form class="navbar-form navbar-left searcharea"  id="searchForm" modelAttribute="pcRole" action="${ctx}/train/pcRole/list" method="post">
                     	<!-- 分页隐藏文本框 -->
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
@@ -49,9 +49,9 @@
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="pull-left">
-							<shiro:hasPermission name="train:fzxRole:add">
+							<shiro:hasPermission name="train:pcRole:add">
 								<!-- 增加按钮 -->
-								<table:addRow url="${ctx}/train/fzxRole/form" title="新增角色" width="800px" height="650px"></table:addRow>
+								<table:addRow url="${ctx}/train/pcRole/form" title="新增角色" width="800px" height="650px"></table:addRow>
 							</shiro:hasPermission>
 						</div>
 						<div class="pull-right">
@@ -80,24 +80,21 @@
 								<tr>
 									<td>${list.roleId }</td>
 								  	<td>${list.name }</td>
-								  	<td>${list.enname }</td>
+								  	<td>${list.ename }</td>
 								  	<td>${list.modName }</td>
 								    <td>
-							    		<shiro:hasPermission name="train:fzxRole:view">
-											<a href="#" onclick="openDialogView('查看角色', '${ctx}/train/fzxRole/form?roleId=${list.roleId}','800px', '650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>
+							    		<shiro:hasPermission name="train:pcRole:view">
+											<a href="#" onclick="openDialogView('查看角色', '${ctx}/train/pcRole/form?roleId=${list.roleId}','800px', '650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>
 										</shiro:hasPermission>
-										<shiro:hasPermission name="train:fzxRole:edit">
-					    					<a href="#" onclick="openDialog('修改角色', '${ctx}/train/fzxRole/form?roleId=${list.roleId}','800px', '650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
+										<shiro:hasPermission name="train:pcRole:edit">
+					    					<a href="#" onclick="openDialog('修改角色', '${ctx}/train/pcRole/form?roleId=${list.roleId}','800px', '650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 					    				</shiro:hasPermission>
-					    				<shiro:hasPermission name="train:fzxRole:del">
-											<a href="${ctx}/train/fzxRole/delete?roleId=${list.roleId}" onclick="return confirmx('要删除该角色吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
+					    				<shiro:hasPermission name="train:pcRole:del">
+											<a href="${ctx}/train/pcRole/delete?roleId=${list.roleId}" onclick="return confirmx('要删除该角色吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
 										</shiro:hasPermission>
-										<shiro:hasPermission name="train:fzxRole:auth"> 
-											<a href="#" onclick="openDialog('权限设置', '${ctx}/train/fzxRole/auth?roleId=${list.roleId}','350px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a> 
+										<shiro:hasPermission name="train:pcRole:auth"> 
+											<a href="#" onclick="openDialog('权限设置', '${ctx}/train/pcRole/auth?roleId=${list.roleId}','350px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a> 
 										</shiro:hasPermission>
-										<%-- <shiro:hasPermission name="sys:role:assign"> 
-											<a href="#" onclick="openDialogView('分配用户', '${ctx}/train/fzxRole/assign?fzxRole.roleId=${list.roleId}','800px', '600px')"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i> 分配用户</a>
-										</shiro:hasPermission> --%>
 								    </td>
 								</tr>
 							</c:forEach>

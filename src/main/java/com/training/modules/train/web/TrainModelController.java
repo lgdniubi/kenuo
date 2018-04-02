@@ -1,10 +1,7 @@
 package com.training.modules.train.web;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,28 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.training.common.utils.IdGen;
-import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
-import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.entity.User;
+import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
-import com.training.modules.train.entity.CategoryLesson;
-import com.training.modules.train.entity.Department;
-import com.training.modules.train.entity.TrainCategorys;
 import com.training.modules.train.entity.TrainModel;
+import com.training.modules.train.service.FzxMenuService;
 import com.training.modules.train.service.TrainModelService;
-import com.training.modules.train.utils.ScopeUtils;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JsonConfig;
-import net.sf.json.util.CycleDetectionStrategy;
 
 /**
  * 版本管理
@@ -49,6 +35,8 @@ public class TrainModelController extends BaseController{
 	
 	@Autowired
 	private TrainModelService trainModelService;
+	@Autowired
+	private FzxMenuService fzxMenuService;
 	
 	
 	/**
@@ -130,5 +118,82 @@ public class TrainModelController extends BaseController{
 		model.addAttribute("trainModel", trainModel);
 		return "modules/train/trainModelForm";
 	}
-	
+	/**
+	 * 版本设置菜单
+	 * 不同的版本具有的菜单功能是不一样的
+	 * @param trainModel
+	 * @param model
+	 * @return
+	 */
+	@RequiresPermissions(value={"train:model:auth"})
+	@RequestMapping(value={"auth"})
+	public String auth(TrainModel trainModel,Model model,String opflag,RedirectAttributes redirectAttributes,HttpServletRequest request){
+		String returnjsp = "";
+		try {
+			//pc端菜单权限设置
+			if ("pc".equals(opflag)) {
+				model.addAttribute("pcMenu",trainModelService.findAllpcMenu());
+				model.addAttribute("model",trainModelService.findmodpcMenu(trainModel));
+				returnjsp = "modules/train/pcModAuth";
+			}else if ("fzx".equals(opflag)) {	//fzx端菜单权限设置
+				model.addAttribute("fzxMenu",fzxMenuService.findAllMenu());//查询所有fzx_menu
+				model.addAttribute("model",trainModelService.findmodfzxMenu(trainModel));
+				returnjsp = "modules/train/fzxModAuth";
+			}
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "版本权限设置", e);
+			logger.error("版本权限设置错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
+			return "redirect:" + adminPath + "/train/model/findalllist";
+		}
+		return returnjsp;
+	}
+	/**
+	 * 保存PC版本菜单权限
+	 * @param model
+	 * @param trainModel
+	 * @param oldMenuIds
+	 * @param request
+	 * @param response
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = "savePCAuth")
+	public String savePCAuth(Model model,TrainModel trainModel,String oldMenuIds,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
+		try {
+			if(!oldMenuIds.equals(trainModel.getMenuIds())){
+				trainModelService.saveModpcMenu(trainModel);
+			}
+			addMessage(redirectAttributes, "保存PC版本菜单权限成功!");
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "保存PC版本菜单权限", e);
+			logger.error("保存PC版本菜单权限错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
+		}
+		return "redirect:" + adminPath + "/train/model/findalllist";
+	}
+	/**
+	 * 保存fzx版本菜单权限
+	 * @param model
+	 * @param trainModel
+	 * @param oldMenuIds
+	 * @param request
+	 * @param response
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = "savefzxAuth")
+	public String savefzxAuth(Model model,TrainModel trainModel,String oldMenuIds,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
+		try {
+			if(!oldMenuIds.equals(trainModel.getMenuIds())){
+				trainModelService.saveModfzxMenu(trainModel);
+			}
+			addMessage(redirectAttributes, "保存fzx版本菜单权限成功!");
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "保存fzx版本菜单权限", e);
+			logger.error("保存fzx版本菜单权限错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
+		}
+		return "redirect:" + adminPath + "/train/model/findalllist";
+	}
 }

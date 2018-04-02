@@ -111,5 +111,40 @@
 			del_flag = 0 
 		AND id = #{id} 
 	</select>
-	
+	<!--  查找该版本下的pc菜单 -->
+	<select id="findmodpcMenu" resultType="TrainModel">
+		SELECT a.id AS id,group_concat(b.menu_id) AS menuIds FROM train_model a LEFT JOIN train_model_pcmenu b ON a.id = b.model_id WHERE a.id = #{id}
+	</select>
+	<!-- 删除版本下所有pc菜单 -->
+	<delete id="deleteModpcMenu">
+		DELETE FROM train_model_pcmenu  WHERE model_id = #{id}
+	</delete>
+	<!-- 插入版本下所有pc菜单 -->
+	<insert id="insertModpcMenu">
+		INSERT INTO train_model_pcmenu(
+			model_id, 
+			menu_id
+		) VALUES (
+			#{id},
+			#{menuId}
+		)
+	</insert>
+	<!--  查找该版本下的fzx菜单 -->
+	<select id="findmodfzxMenu" resultType="TrainModel">
+		SELECT a.id AS id,group_concat(b.menu_id) AS menuIds FROM train_model a LEFT JOIN train_model_fzxmenu b ON a.id = b.mod_id WHERE a.id = #{id}
+	</select>
+	<!-- 删除版本下所有fzx菜单 -->
+	<delete id="deleteModfzxMenu">
+		DELETE FROM train_model_fzxmenu  WHERE mod_id = #{id}
+	</delete>
+	<!-- 插入版本下所有fzx菜单 -->
+	<insert id="insertModfzxMenu">
+		INSERT INTO train_model_fzxmenu(
+			mod_id, 
+			menu_id
+		) VALUES (
+			#{id},
+			#{menuId}
+		)
+	</insert>
 </mapper>

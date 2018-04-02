@@ -29,8 +29,10 @@ import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.FzxRoleDao;
 import com.training.modules.train.entity.FzxRole;
+import com.training.modules.train.entity.TrainModel;
 import com.training.modules.train.service.FzxMenuService;
 import com.training.modules.train.service.FzxRoleService;
+import com.training.modules.train.service.TrainModelService;
 
 
 /**
@@ -56,7 +58,8 @@ public class fzxRoleController extends BaseController{
 	private RedisClientTemplate redisClientTemplate;		//redis缓存Service
 	@Autowired
 	private UserDao UserDao;
-	
+	@Autowired
+	private TrainModelService trainModelService;
 	/**
 	 * 妃子校角色list
 	 * @param model
@@ -98,7 +101,9 @@ public class fzxRoleController extends BaseController{
 			}else{
 				fzxRole = new FzxRole();
 			}
+			List<TrainModel> modList = trainModelService.findList(new TrainModel());	//查找所有的版本类型
 			model.addAttribute("fzxRole", fzxRole);
+			model.addAttribute("modList", modList);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "查询妃子校角色详情", e);
 			logger.error("查询妃子校角色详情错误信息:"+e.getMessage());
@@ -195,7 +200,7 @@ public class fzxRoleController extends BaseController{
 	@RequestMapping(value = "auth")
 	public String auth(Model model,FzxRole fzxRole,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
-			model.addAttribute("fzxMenu", fzxMenuService.findAllMenu());
+			model.addAttribute("fzxMenu", fzxMenuService.findAllMenuByModid(fzxRole));
 			model.addAttribute("fzxRole", fzxRoleService.findRoleMenu(fzxRole));
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "妃子校角色权限设置", e);

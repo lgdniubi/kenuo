@@ -4,39 +4,45 @@
 	<!-- 角色列表 -->
 	<select id="findList" resultType="FzxRole">
 		SELECT 
-			id AS roleId,
-			name,
-			enname,
-			role_grade AS roleGrade
+			r.id AS roleId,
+			r.name,
+			r.enname,
+			r.mod_id AS modeid,
+			tm.mod_name AS modName
 		FROM 
-			fzx_role 
+			fzx_role r
+			LEFT JOIN train_model tm ON tm.id = r.mod_id
 		WHERE 
-			del_flag = 0 
+			r.del_flag = 0 
 			<if test="name != null and name != ''">
-				AND name like 
+				AND r.name like 
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
 			</if>
-			ORDER BY id DESC
+			ORDER BY r.id DESC
 	</select>
 	<!-- 角色详情 -->
 	<select id="get" resultType="FzxRole">
-		SELECT id AS roleId,name,enname,role_grade AS roleGrade,remarks FROM fzx_role WHERE id = #{roleId}
+		SELECT id AS roleId,name,enname,mod_id AS modeid,remarks FROM fzx_role WHERE id = #{roleId}
 	</select>
 	<!-- 插入角色 -->
 	<insert id="insert">
 		INSERT INTO fzx_role(
 			enname, 
 			name, 
-			role_grade,
+			franchisee_id,
+			office_id,
+			mod_id,
 			create_by,
 			create_date, 
 			remarks,
 			del_flag
 		) VALUES (
 			#{enname},
+			#{franchiseeid},
+			#{officeid},
 			#{name},
-			#{roleGrade},
+			#{modeid},
 			#{createBy.id}, 
 			#{createDate}, 
 			#{remarks}, 
@@ -48,6 +54,7 @@
 		UPDATE fzx_role SET 
 			enname = #{enname}, 
 			name = #{name}, 
+			mod_id = #{modeid},
 			role_grade = #{roleGrade}, 
 			update_by = #{updateBy.id}, 
 			update_date = #{updateDate}, 

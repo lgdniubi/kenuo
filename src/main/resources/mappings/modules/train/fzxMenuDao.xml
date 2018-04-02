@@ -88,7 +88,22 @@
 			,(SELECT COUNT(*) FROM fzx_menu AS B WHERE a.id = B.parent_id AND B.del_flag=0) AS 'num'
 		FROM fzx_menu a
 		<include refid="menuJoins"/>
-		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		WHERE
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		ORDER BY a.sort
+	</select>
+	<!-- 根据角色id查找该角色下所属版本的菜单 -->
+	<select id="findAllMenuByModid" resultMap="fzxMenuResult">
+		SELECT
+		<include refid="menuColumns"/>
+		,(SELECT COUNT(*) FROM fzx_menu AS B WHERE a.id = B.parent_id AND B.del_flag=0) AS 'num'
+		FROM fzx_menu a
+		<include refid="menuJoins"/>
+		LEFT JOIN train_model_fzxmenu tmf ON tmf.menu_id = a.id
+		LEFT JOIN fzx_role r ON r.mod_id = tmf.mod_id
+		WHERE
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		AND r.id = #{roleId}
 		ORDER BY a.sort
 	</select>
 	<!-- 菜单详情 -->

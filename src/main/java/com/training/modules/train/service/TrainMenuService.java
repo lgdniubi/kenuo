@@ -58,6 +58,7 @@ import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.train.dao.TrainMenuDao;
 import com.training.modules.train.entity.FzxRole;
 import com.training.modules.train.entity.PCMenu;
+import com.training.modules.train.entity.PcRole;
 import com.training.modules.train.utils.TrainUserUtils;
 
 import net.sf.json.JSONArray;
@@ -1240,5 +1241,10 @@ public class TrainMenuService extends BaseService implements InitializingBean {
 			BugLogUtils.saveBugLog(request, "记录店铺首图、美容院和美容师图片上传相关信息", e);
 			logger.error("调用接口:记录店铺首图、美容院和美容师图片上传相关信息:"+e.getMessage());
 		}
+	}
+
+	public List<PCMenu> findAllMenuByModid(PcRole pcRole) {
+		
+		return trainMenuDao.findAllMenuByModid(pcRole);
 	}
 }
