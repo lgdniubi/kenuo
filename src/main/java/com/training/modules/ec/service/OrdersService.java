@@ -1038,9 +1038,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 						
 						//预约状态为已完成、 已评价 、爽约
 						if(orderGoodsDetailsDao.findCompleteApptStatus(orders.getOrderid()) != 0){
-							_orderGoods.setCompleteAppt(1);
+							orderGoods.setCompleteAppt(1);
 						}else{
-							_orderGoods.setCompleteAppt(0);
+							orderGoods.setCompleteAppt(0);
 						}
 					}
 					
