@@ -114,6 +114,6 @@
 	</select>
 	<!-- 验证英文名称是否有效 -->
 	<select id="checkEnname" resultType="int">
-		SELECT COUNT(1) FROM pc_role WHERE mode_id = #{modeid} AND del_flag = 0 AND ename = 'cjgly'
+		SELECT COUNT(1) FROM pc_role WHERE mode_id = #{modeid} AND del_flag = 0 AND ename = 'sjgly'
 	</select>
 </mapper>

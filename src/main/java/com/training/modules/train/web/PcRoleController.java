@@ -250,7 +250,7 @@ public class PcRoleController extends BaseController{
 	@ResponseBody
 	@RequestMapping(value = "checkEnname")
 	public String checkEnname(String oldEnname, Integer oldModeid,Integer modeid) {
-		if("cjgly".equals(oldEnname)){
+		if("sjgly".equals(oldEnname)){
 			if (oldModeid == modeid){
 				return "true";
 			} else if (modeid != null &&  pcRoleService.checkEnname(modeid) != 0) {

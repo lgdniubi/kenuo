@@ -62,7 +62,7 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 
 	/**
 	 * 从pc_role查
-	 * 根据该用户申请的商家版本id，ename=cjgly，officeid=1，franchiseeid=1查询超级管理员id
+	 * 根据该用户申请的商家版本id，ename=sjgly，officeid=1，franchiseeid=1查询超级管理员id
 	 * @param modelFranchisee
 	 * @return
 	 */
