@@ -163,7 +163,7 @@
 								<td>${user.company.name}</td>
 								<td>${user.office.name}</td>
 								<td>
-									<c:if test="${user.delFlag == 0 }">在职</c:if> 
+									<c:if test="${user.delFlag == 0 }">在职</c:if> ${user.userType}
 									<c:if test="${user.delFlag == 1 }">已离职</c:if>
 								</td>
 								<td>
@@ -179,7 +179,7 @@
 											<a href="${ctx}/sys/user/delete?id=${user.id}" onclick="return promptx('请填写删除备注信息！不可为空！','确定要删除用户吗？',this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
 										</c:if>
 									</shiro:hasPermission>
-									<c:if test="${user.userType eq '员工'}">
+									<c:if test="${user.type eq '员工'}">
 										<shiro:hasPermission name="sys:user:auth">
 											<a href="#" onclick="openDialog('权限设置', '${ctx}/sys/user/auth?id=${user.id}','800px', '650px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a>
 										</shiro:hasPermission>
