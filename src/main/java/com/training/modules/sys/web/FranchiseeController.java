@@ -238,12 +238,9 @@ public class FranchiseeController extends BaseController{
 	@ResponseBody
 	@RequestMapping(value = "treeData")
 	public List<Map<String, Object>> treeData(@RequestParam(required=false) String extId, @RequestParam(required=false) String type,
-			@RequestParam(required=false) Long grade, @RequestParam(required=false) Boolean isAll, @RequestParam(required=false) String publicServiceFlag,@RequestParam(required=false) String isRealFranchisee,HttpServletResponse response) {
+			@RequestParam(required=false) Long grade, @RequestParam(required=false) Boolean isAll, HttpServletResponse response) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		Franchisee franchisee = new Franchisee();
-		franchisee.setPublicServiceFlag(publicServiceFlag);	// 是否可做公开项目
-		franchisee.setIsRealFranchisee(isRealFranchisee);	// 是否是真实商家
-		List<Franchisee> list = franchiseeService.findAllList(franchisee);
+		List<Franchisee> list = franchiseeService.findAllList(null);
 		for (int i=0; i<list.size(); i++){
 			Franchisee e = list.get(i);
 			//&& (type == null || (type != null && (type.equals("1") ? type.equals(e.getType()) : true)))
