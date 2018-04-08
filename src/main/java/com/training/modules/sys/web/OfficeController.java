@@ -295,25 +295,9 @@ public class OfficeController extends BaseController {
 				}
 				
 				//操作店铺保存记录日志	创建店铺记录
-				OfficeLog officeLog = new OfficeLog();
-				officeLog.setOfficeId(office.getId());
-				officeLog.setType(0);
-				officeLog.setContent("添加店铺");
-				officeLog.setUpdateBy(office.getCreateBy());
-				officeService.saveOfficeLog(officeLog);
-				
+				saveOfficeLog(office.getId(),0,"");
 				//操作店铺保存记录日志	隐藏/开启记录
-				OfficeLog officeLog1 = new OfficeLog();
-				officeLog1.setOfficeId(office.getId());
-				officeLog1.setUpdateBy(office.getCreateBy());
-				if(office.getOfficeInfo().getStatus() == 0){
-					officeLog1.setType(2);
-					officeLog1.setContent("开启店铺");
-				}else{
-					officeLog1.setType(3);
-					officeLog1.setContent("隐藏店铺");
-				}
-				officeService.saveOfficeLog(officeLog1);
+				saveOfficeLog(office.getId(),(office.getOfficeInfo().getStatus() == 0)?2:3,"");
 			}
 		}else{
 			Office eqold = officeService.get(office.getId());
@@ -321,6 +305,11 @@ public class OfficeController extends BaseController {
 			if(office.getGrade().equals("2")){
 				//修改机构
 				officeService.save(office);
+				// 机构类型变更 由店铺修改为非店铺
+				if (!eqold.getGrade().equals(office.getGrade())) {
+					saveOfficeLog(office.getId(),3,"是否是店变更开启");
+				}
+				
 			}else{
 				//查询出修改前修改前店铺首图信息
 				OfficeInfo oldOffice = officeService.findbyid(office);
@@ -328,6 +317,10 @@ public class OfficeController extends BaseController {
 				//修改实体店
 				officeService.save(office);
 				officeService.saveOfficeInfo(office);
+				// 机构类型变更 由店铺修改为非店铺
+				if (office.getOfficeInfo().getId() == null || "".equals(office.getOfficeInfo().getId())) {
+					saveOfficeLog(office.getId(),(office.getOfficeInfo().getStatus() == 0)?2:3,"是否是店变更关闭");
+				}
 
 				//店铺首图
 				img = office.getOfficeInfo().getImg() == null ? "" : office.getOfficeInfo().getImg();//修改后的首图信息
@@ -384,11 +377,9 @@ public class OfficeController extends BaseController {
 //			addMessage(redirectAttributes, "删除机构失败, 不允许删除顶级机构或编号空");
 //		}else{
 			//操作店铺保存记录日志(添加日志记录必须在删除之前,因为对应的del_flag=0,如果是删除之后,就不符合条件)
-			OfficeLog officeLog = new OfficeLog();
-			officeLog.setOfficeId(office.getId());
-			officeLog.setType(1);
-			officeLog.setContent("删除店铺");
-			officeService.saveOfficeLogDel(officeLog);
+			if("1".equals(office.getGrade())){
+				saveOfficeLog(office.getId(),1,"");
+			}
 			
 			//删除操作
 			officeService.delete(office);
@@ -560,7 +551,7 @@ public class OfficeController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "verifyName")
 	public String verifyName(Office office,String oldOfficeName){
-		if(office.getName() != null && office.getName().equals(oldOfficeName)){
+ 		if(office.getName() != null && office.getName().equals(oldOfficeName)){
 			return "true";
 		}else if(office.getName() != null && officeService.verifyOfficeNameByPid(office).size() == 0){
 			return "true";
@@ -623,6 +614,53 @@ public class OfficeController extends BaseController {
 		}
 		return "true";
 	}
+	/**
+	 * 1.深圳方面确认 对于可诺丹婷、罗蜜雅伦、慕伦格尔三个商家都是六级组织机构，并且第六级是店铺。（以下需求只针对可诺丹婷、罗蜜雅伦、慕伦格尔）
+	 * 2.现需要在创建和修改1到5级的机构时，不能编辑“是否是店”，默认不是店铺。创建和修改第6级的机构时，不能编辑“是否是店”，默认是店铺。
+	 * @param office 上级机构	
+	 * @param grade 是否为店铺
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "verifyLevel")
+	public Map<String, String> verifyLevel(HttpServletRequest request,Office office,String grade,String officeId){
+		Map<String, String> map = new HashMap<>();
+		try {
+			// 机构不可为空(空指针)&&商家为可诺丹婷、罗蜜雅伦、慕伦格尔
+			if(office != null){
+				if("1000001,1000002,1000003".indexOf(office.getFranchisee().getId()) >= 0){
+					// (上级机构等级为5&&机构类型为否店铺) || (上级机构等级小于5&&机构类型为是店铺) || (上级机构等级大于5)   
+					if((office.getLevel() == 5 && Integer.valueOf(grade) == 2) || (office.getLevel() < 5 && Integer.valueOf(grade) == 1) || office.getLevel() > 5){
+						map.put("FLAG", "ERROR");
+	    				map.put("MESSAGE", "是否为店铺选择异常");
+	    				return map;
+					}
+					
+					Office nowOffice = officeService.get(officeId);
+					if(nowOffice != null && "2".equals(grade)){
+						if (office.getLevel() != (nowOffice.getLevel()-1)) {	// 三个特殊商家必须同级移动
+							map.put("FLAG", "ERROR");
+		    				map.put("MESSAGE", "非同层级移动");
+		    				return map;
+						}
+					}
+				}
+			}else{
+				map.put("FLAG", "ERROR");
+				map.put("MESSAGE", "非同级移动");
+				return map;
+			}
+		} catch (Exception e) {
+			logger.error("上级机构或是否为店铺校验出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "上级机构或是否为店铺校验错误信息", e);
+			map.put("FLAG", "ERROR");
+			map.put("MESSAGE", "上级机构或是否为店铺选择异常");
+			return map;
+		}
+		map.put("FLAG", "OK");
+		return map;
+	}
+	
 	/**
 	 * 跳转到导入界面
 	 * @return
@@ -710,12 +748,7 @@ public class OfficeController extends BaseController {
 							officeService.saveOfficeInfo2(officeInfo);
 							
 							//操作店铺保存记录日志
-							OfficeLog officeLog = new OfficeLog();
-							officeLog.setOfficeId(office.getId());
-							officeLog.setType(0);
-							officeLog.setContent("导入店铺");
-							officeLog.setUpdateBy(office.getCreateBy());
-							officeService.saveOfficeLog(officeLog);
+							saveOfficeLog(officeInfo.getId(),0,"导入店铺");
 							
 							successNum++;
 						}else if("officeFalse".equals(str)){
@@ -958,17 +991,8 @@ public class OfficeController extends BaseController {
     					map.put("MESSAGE", "操作成功");
     				}
     				//操作店铺保存记录日志
-    				OfficeLog officeLog = new OfficeLog();
-    				officeLog.setOfficeId(id);
-    				if(isyesno.equals("0")){//开启店铺
-    					officeLog.setType(2);
-    					officeLog.setContent("开启店铺");
-    				}else if(isyesno.equals("1")){//隐藏店铺
-    					officeLog.setType(3);
-    					officeLog.setContent("隐藏店铺");
-    				}
-    				officeLog.setUpdateBy(UserUtils.getUser());
-    				officeService.saveOfficeLog(officeLog);
+    				saveOfficeLog(id,("0".equals(isyesno))?2:3,"");
+    				
     			}else{
     				map.put("MESSAGE", "修改成功");
     			}
@@ -1075,5 +1099,39 @@ public class OfficeController extends BaseController {
 		}
     	return "false";
     }
-    
+    /**
+     * 记录开闭店log
+     * @param id
+     * @param type	0:添加店铺  1:删除店铺  2:开启店铺  3:隐藏店铺
+     * @param title	日志内容(可为空)
+     */
+    public void saveOfficeLog(String id,int type,String title){
+    	//操作店铺保存记录日志
+		OfficeLog officeLog = new OfficeLog();
+		officeLog.setOfficeId(id);
+		switch (type) {
+			case 0:
+				officeLog.setType(0);
+				officeLog.setContent((title.equals(""))?"添加店铺":title);
+				break;
+			case 1:
+				officeLog.setType(1);
+				officeLog.setContent((title.equals(""))?"删除店铺":title);
+				break;
+			case 2:
+				officeLog.setType(2);
+				officeLog.setContent((title.equals(""))?"开启店铺":title);
+				break;
+			case 3:
+				officeLog.setType(3);
+				officeLog.setContent((title.equals(""))?"隐藏店铺":title);
+				break;
+			default:
+				officeLog.setType(99);
+				officeLog.setContent("错误数据:"+title);
+				break;
+		}
+		officeLog.setUpdateBy(UserUtils.getUser());
+		officeService.saveOfficeLog(officeLog);
+    }
 }

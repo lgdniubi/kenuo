@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -23,6 +24,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.training.common.persistence.Page;
 import com.training.common.utils.DateUtils;
+import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.ec.entity.Comment;
 import com.training.modules.ec.entity.OrderGoods;
@@ -33,8 +35,10 @@ import com.training.modules.ec.service.CommentService;
 import com.training.modules.ec.service.OrderGoodsService;
 import com.training.modules.ec.service.ReservationService;
 import com.training.modules.ec.utils.WebUtils;
+import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.User;
+import com.training.modules.sys.service.FranchiseeService;
 import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.service.SystemService;
 import com.training.modules.sys.utils.BugLogUtils;
@@ -63,6 +67,8 @@ public class MtmyMnappointmentController extends BaseController{
 	private SystemService systemService;
 	@Autowired
 	private CommentService commentService;
+	@Autowired
+	private FranchiseeService franchiseeService;
 	/**
 	 * 预约管理
 	 * @param model
@@ -151,10 +157,14 @@ public class MtmyMnappointmentController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "loadOffice")
-	public Map<String, Object> loadOffice(String areaId,String goodsIds,String franchiseeId,Boolean isAll,HttpServletRequest request, HttpServletResponse response){
+	public Map<String, Object> loadOffice(String areaId,String goodsIds,String franchiseeId,String isOpean,Boolean isAll,HttpServletRequest request, HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		Set<Map<String, Object>> setMain = new HashSet<Map<String, Object>>();
 		List<Office> list1= reservationService.loadOffice(goodsIds,franchiseeId,areaId);  	// 可用店铺
+		// 是否公开 0公开  1不公开
+		if(isOpean != null && !"".equals(isOpean) && "0".equals(isOpean)){
+			isAll = true;
+		}
 		List<Office> list2 = officeService.findList(isAll);		//有权限机构
 		if(list1.size() > 0 && list2.size() > 0){		// 当两个集合都存在值时  取交集 
 			Map<String, Object> setMap = new HashMap<String, Object>();
@@ -660,5 +670,56 @@ public class MtmyMnappointmentController extends BaseController{
 		model.addAttribute("page", page);
 		model.addAttribute("reservationLog", reservationLog);
 		return "modules/ec/mnappointmentLogForm";
+	}
+	/**
+	 * 临时方案 需优化
+	 * @param extId 排除的ID
+	 * @param type	类型（1：直营；2：加盟；）
+	 * @param grade 显示级别
+	 * @param response
+	 * @return
+	 */
+	@RequiresPermissions("user")
+	@ResponseBody
+	@RequestMapping(value = "treeData")
+	public List<Map<String, Object>> treeData(@RequestParam(required=false) String extId, @RequestParam(required=false) String type,@RequestParam(required=false) Long grade,@RequestParam(required=false) Boolean isAll,  
+			@RequestParam(required=false) String franchiseeId, @RequestParam(required=false) String publicServiceFlag,@RequestParam(required=false) String isRealFranchisee,HttpServletResponse response) {
+		List<Map<String, Object>> mapList = Lists.newArrayList();
+		Franchisee franchisee = new Franchisee();
+		franchisee.setPublicServiceFlag(publicServiceFlag);	// 是否可做公开项目
+		franchisee.setIsRealFranchisee(isRealFranchisee);	// 是否是真实商家
+		List<Franchisee> list = franchiseeService.findAllList(franchisee);
+		Boolean a = false;
+		for (int i=0; i<list.size(); i++){
+			Franchisee e = list.get(i);
+			if (franchiseeId.equals(e.getId())) {
+				a = true;
+			}
+			if ((StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId())))){
+				Map<String, Object> map = Maps.newHashMap();
+				map.put("id", e.getId());
+				map.put("pId", e.getParentId());
+				map.put("pIds", e.getParentIds());
+				map.put("name", e.getName());
+				if (type != null && "3".equals(type)){
+					map.put("isParent", true);
+				}
+				mapList.add(map);
+			}
+		}
+		if (!a) {
+			Franchisee franchisee2 = franchiseeService.get(franchiseeId);
+			Map<String, Object> map = Maps.newHashMap();
+			map.put("id", franchisee2.getId());
+			map.put("pId", franchisee2.getParentId());
+			map.put("pIds", franchisee2.getParentIds());
+			map.put("name", franchisee2.getName());
+			if (type != null && "3".equals(type)){
+				map.put("isParent", true);
+			}
+			mapList.add(map);
+		}
+		
+		return mapList;
 	}
 }

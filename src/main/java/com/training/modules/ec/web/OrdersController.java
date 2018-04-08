@@ -586,10 +586,8 @@ public class OrdersController extends BaseController {
 		try {
 
 			List<Payment> paylist = paymentService.paylist();
-			List<GoodsCategory> cateList = ordersService.cateList();
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
-			model.addAttribute("cateList", cateList);
 
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转创建虚拟订单页面", e);
@@ -1351,10 +1349,8 @@ public class OrdersController extends BaseController {
 		try {
 
 			List<Payment> paylist = paymentService.paylist();
-			List<GoodsCategory> cateList = ordersService.cateList();
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
-			model.addAttribute("cateList", cateList);
 
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转创建实物订单页面", e);
@@ -2257,10 +2253,8 @@ public class OrdersController extends BaseController {
 		try {
 
 			List<Payment> paylist = paymentService.paylist();
-			List<GoodsCategory> cateList = ordersService.cateList();
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
-			model.addAttribute("cateList", cateList);
 
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转创建套卡订单页面", e);
@@ -2400,10 +2394,8 @@ public class OrdersController extends BaseController {
 		try {
 
 			List<Payment> paylist = paymentService.paylist();
-			List<GoodsCategory> cateList = ordersService.cateList();
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
-			model.addAttribute("cateList", cateList);
 
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转创建通用卡订单页面", e);
@@ -2599,9 +2591,9 @@ public class OrdersController extends BaseController {
 										suitCardSons = suitCardSons + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs' ><i class='fa fa-edit'></i>充值</a>";
 									} 
 								}else if(father.getAdvanceFlag() == 1){        //是预约金   
-									if(orders.getOrderstatus() == 4 && father.getSumAppt() == 1){    //已完成且预约已完成
+									if(orders.getOrderstatus() == 4 && father.getCompleteAppt() == 1){    //已完成且预约已完成
 										suitCardSons = suitCardSons + "<a href='#' onclick='ToAdvance("+"\""+orders.getOfficeId()+"\""+","+father.getRecid()+","+father.getServicetimes()+","+father.getOrderArrearage()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
-									}else if(orders.getOrderstatus() != 4 || father.getSumAppt() == 0){   //无预约或订单未完成
+									}else if(orders.getOrderstatus() != 4 || father.getCompleteAppt() == 0){   //无预约或订单未完成
 										suitCardSons = suitCardSons + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
 									}
 									
@@ -2658,9 +2650,9 @@ public class OrdersController extends BaseController {
 										suitCardSons = suitCardSons + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs' ><i class='fa fa-edit'></i>充值</a>";
 									} 
 								}else if(father.getAdvanceFlag() == 1){        //是预约金   
-									if(orders.getOrderstatus() == 4 && father.getSumAppt() == 1){    //已完成且预约已完成
+									if(orders.getOrderstatus() == 4 && father.getCompleteAppt() == 1){    //已完成且预约已完成
 										suitCardSons = suitCardSons + "<a href='#' onclick='ToAdvance("+"\""+orders.getOfficeId()+"\""+","+father.getRecid()+","+father.getServicetimes()+","+father.getOrderArrearage()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
-									}else if(orders.getOrderstatus() != 4 || father.getSumAppt() == 0){   //无预约或订单未完成
+									}else if(orders.getOrderstatus() != 4 || father.getCompleteAppt() == 0){   //无预约或订单未完成
 										suitCardSons = suitCardSons + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
 									}
 									
@@ -3297,10 +3289,8 @@ public class OrdersController extends BaseController {
 		try {
 			
 			List<Payment> paylist = paymentService.paylist();
-			List<GoodsCategory> cateList = ordersService.cateList();
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
-			model.addAttribute("cateList", cateList);
 
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转售后转虚拟订单页面", e);
@@ -3364,10 +3354,8 @@ public class OrdersController extends BaseController {
 		try {
 			
 			List<Payment> paylist = paymentService.paylist();
-			List<GoodsCategory> cateList = ordersService.cateList();
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
-			model.addAttribute("cateList", cateList);
 
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转售后转实物订单页面", e);
@@ -3431,10 +3419,8 @@ public class OrdersController extends BaseController {
 		try {
 			
 			List<Payment> paylist = paymentService.paylist();
-			List<GoodsCategory> cateList = ordersService.cateList();
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
-			model.addAttribute("cateList", cateList);
 
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转售后转套卡订单页面", e);
@@ -3569,10 +3555,8 @@ public class OrdersController extends BaseController {
 		try {
 
 			List<Payment> paylist = paymentService.paylist();
-			List<GoodsCategory> cateList = ordersService.cateList();
 			model.addAttribute("orders", orders);
 			model.addAttribute("paylist", paylist);
-			model.addAttribute("cateList", cateList);
 
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "跳转售后转通用卡订单页面", e);

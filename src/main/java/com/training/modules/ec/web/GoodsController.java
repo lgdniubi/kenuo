@@ -971,12 +971,15 @@ public class GoodsController extends BaseController{
 			//自媒体每天美耶商品信息同步
 			JSONObject jsonObject = new JSONObject();
 			String updateMtmyGoodInfo = ParametersFactory.getMtmyParamValues("mtmy_updateMtmyGoodInfo");	
-			logger.info("##### web接口路径:"+updateMtmyGoodInfo);	         
-			String parpm = "{\"goodsId\":\""+goods.getGoodsId()+"\",\"delFlag\":\"2\"}";
-			String url=updateMtmyGoodInfo;
-			String result = WebUtils.postMediaObject(parpm, url);
-			jsonObject = JSONObject.fromObject(result);
-			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			logger.info("##### web接口路径:"+updateMtmyGoodInfo);	  
+			
+			if(!"-1".equals(updateMtmyGoodInfo)){
+				String parpm = "{\"goodsId\":\""+goods.getGoodsId()+"\",\"delFlag\":\"2\"}";
+				String url=updateMtmyGoodInfo;
+				String result = WebUtils.postMediaObject(parpm, url);
+				jsonObject = JSONObject.fromObject(result);
+				logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			}
 			
 			addMessage(redirectAttributes, "删除商品信息成功");
 		}else{
@@ -1413,7 +1416,9 @@ public class GoodsController extends BaseController{
 	@RequestMapping(value = "treeGoodsData")
 	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String goodsId,String isReal,String isOnSale,String isAppshow,String type,String isOpen,HttpServletResponse response) {
 		// 注： type属于临时方案，目前仅用于下单时查询商品  type=1表示下单时下单需区分用户商家
+		String isBmCreate = "";
 		if(type != null && !"".equals(type)){
+			isBmCreate = "1";
 			String companyId = UserUtils.getUser().getCompany().getId();
 			if(!"1".equals(companyId)){
 				franchiseeId = companyId;
@@ -1431,6 +1436,7 @@ public class GoodsController extends BaseController{
 		goods.setIsReal(isReal);
 		goods.setIsOnSale(isOnSale);
 		goods.setIsAppshow(isAppshow);
+		goods.setIsBmCreate(isBmCreate);
 		goods.setGoodsId(Integer.valueOf(goodsId));
 		if(actionId!=null){
 			goods.setActionId(Integer.parseInt(actionId));
