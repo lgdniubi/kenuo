@@ -51,6 +51,12 @@ public class FranchiseeService extends TreeService<FranchiseeDao,Franchisee>{
 	public String saveFranchisee(Franchisee franchisee,HttpServletRequest request){
 		try {
 			franchiseeDao.insertFranchisee(franchisee);
+			//把trains库中的sys_franchisee的修改信息同步到mtmydb中mtmy_franchisee
+			String parentId = franchisee.getParent().getId();
+			String createId = franchisee.getCreateBy().getId();
+			franchiseeDao.saveMtmyFranchisee(franchisee.getId(),parentId,franchisee.getParentIds(),franchisee.getName(),franchisee.getType(),franchisee.getSort(),franchisee.getIconUrl(),createId,franchisee.getRemarks());
+			
+			
 			String weburl = ParametersFactory.getMtmyParamValues("fzx_equally_franchisee");
 			logger.info("##### web接口路径:"+weburl);
 			String parpm = "{\"id\":"+Integer.valueOf(franchisee.getId())+",\"name\":\""+franchisee.getName()+"\",\"type\":\""+franchisee.getType()+"\","
@@ -76,6 +82,10 @@ public class FranchiseeService extends TreeService<FranchiseeDao,Franchisee>{
 	 */
 	public int update(Franchisee franchisee){
 		int res = franchiseeDao.update(franchisee); 
+		//把trains库中的sys_franchisee的修改信息同步到mtmydb中mtmy_franchisee
+		String updateId = franchisee.getUpdateBy().getId();
+		franchiseeDao.updateMtmyFranchisee(franchisee.getId(),franchisee.getName(),franchisee.getType(),franchisee.getIconUrl(),updateId,franchisee.getRemarks());
+		
 		if(1 == res){
 			String weburl = ParametersFactory.getMtmyParamValues("fzx_equally_franchisee");
 			logger.info("##### web接口路径:"+weburl);
@@ -98,5 +108,29 @@ public class FranchiseeService extends TreeService<FranchiseeDao,Franchisee>{
 			}
 		}
 		return res;
+	}
+
+	/**
+	 * 修改公共商品服务标识
+	 * @param franchisee
+	 */
+	public void updatePublicServiceFlag(Franchisee franchisee) {
+		franchiseeDao.updatePublicServiceFlag(franchisee);
+	}
+
+	/**
+	 * 删除  把trains库中的sys_franchisee的操作同步到mtmydb中mtmy_franchisee
+	 * @param id
+	 */
+	public void deleteMtmyFranchisee(String id) {
+		franchiseeDao.deleteMtmyFranchisee(id);
+	}
+
+	/**
+	 * 同步mtmy商家表中修改公共商品服务标识
+	 * @param franchisee
+	 */
+	public void updateMtmyPublicServiceFlag(Franchisee franchisee) {
+		franchiseeDao.updateMtmyPublicServiceFlag(franchisee);
 	}
 }

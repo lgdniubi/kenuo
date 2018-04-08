@@ -376,4 +376,20 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 	public int transferCategory(String auditId, String categoryId) {
 		return trainLiveAuditDao.transferCategory(auditId,categoryId);
 	}
+
+	/**
+	 * 直播列表修改每天美耶权限
+	 * @param trainLiveAudit
+	 */
+	public void saveFormMtmy(TrainLiveAudit trainLiveAudit) {
+		trainLiveAuditDao.saveFormMtmy(trainLiveAudit);
+	}
+
+	/**
+	 * 修改直播为不推荐
+	 * @param trainLiveAudit
+	 */
+	public void updateRecommend() {
+		trainLiveAuditDao.updateRecommend();
+	}
 }

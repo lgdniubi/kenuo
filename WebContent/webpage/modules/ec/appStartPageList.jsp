@@ -33,11 +33,11 @@
 		});
 		
 		//是否启用
-		function updateType(id,flag){
+		function updateType(id,flag,type){
 			$(".loading").show();//打开展示层
 			$.ajax({
 				type : "POST",
-				url : "${ctx}/ec/appStartPage/updateType?ID="+id+"&flag="+flag,
+				url : "${ctx}/ec/appStartPage/updateType?ID="+id+"&flag="+flag+"&type="+type,
 				dataType: 'json',
 				success: function(data) {
 					$(".loading").hide(); //关闭加载层
@@ -69,11 +69,17 @@
 								<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}" />
 								<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
 								<div class="form-group">
-									<label>是否显示：</label>
+									<label>是否启用：</label>
 									<form:select path="isOnSale" cssClass="form-control">
 										<form:option value="-1">全部</form:option>
-										<form:option value="1">显示</form:option>
+										<form:option value="1">启用</form:option>
 										<form:option value="0">隐藏</form:option>
+									</form:select>
+									<label>位置：</label>
+									<form:select path="type" cssClass="form-control">
+										<form:option value="">全部</form:option>
+										<form:option value="0">启动页广告图</form:option>
+										<form:option value="1">广告位弹窗</form:option>
 									</form:select>
 								</div>
 							</div>	
@@ -100,8 +106,9 @@
                 	<thead> 
                 		<tr>
                 			<th style="text-align: center;">ID</th>
-                			<th style="text-align: center;">启动页名称</th>
-                			<th style="text-align: center;">启动页</th>
+                			<th style="text-align: center;">名称</th>
+                			<th style="text-align: center;">位置</th>
+                			<th style="text-align: center;">图片</th>
                 			<th style="text-align: center;">是否启用</th>
                 			<th style="text-align: center;">操作</th>
                 		</tr>
@@ -111,13 +118,17 @@
 						<tr>
 							<td style="text-align: center;">${appStartPage.appStartPageId}</td>
 							<td style="text-align: center;">${appStartPage.name}</td>
+							<td style="text-align: center;">
+								<c:if test="${appStartPage.type == '0'}">启动页广告图</c:if>
+								<c:if test="${appStartPage.type == '1'}">广告位弹窗</c:if>
+							</td>
 							<td style="text-align: center;" class="imgUrl" ><img alt="" src="${ctxStatic}/images/lazylode.png"  data-src="${appStartPage.imgUrl}" style="width: 150px;height: 100px;border:1px solid black; "></td>
 							<td style="text-align: center;" id="${appStartPage.appStartPageId}">
 								<c:if test="${appStartPage.isOnSale  eq '0'}">
-									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="updateType('${appStartPage.appStartPageId}','1')">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="updateType('${appStartPage.appStartPageId}','1','${appStartPage.type}')">
 								</c:if>
 								<c:if test="${appStartPage.isOnSale eq '1'}">
-									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="updateType('${appStartPage.appStartPageId}','0')">
+									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="updateType('${appStartPage.appStartPageId}','0','${appStartPage.type}')">
 								</c:if>
 							</td>
 							<td style="text-align: center;">

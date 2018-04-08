@@ -23,7 +23,28 @@
 			   top.layer.alert('头图不可为空！', {icon: 0, title:'提醒'});
 			   return false;
 		    }
-
+			
+		    if($('input:checked').length <= 0){
+				top.layer.alert('可见范围必选！', {icon: 0, title:'提醒'});
+				return false;
+			}else{
+				var str=document.getElementsByName("isOpenLabel");
+				var id = "";
+				for (i=0;i<str.length;i++){
+				    if(str[i].checked == true){
+				    	id = id + str[i].value;
+				    }
+				}
+				if(id == '0'){
+					$("#isOpen").val(0);
+					$("#franchiseeId").val("");
+				}else{
+					$("#isOpen").val(1);
+					$("#franchiseeId").val(id);
+				}
+			}
+			
+		    $("input[type=radio][name=isOpenLabel]").removeAttr("disabled");
 		    if(validateForm.form()){
 	    		loading("正在提交，请稍候...");
 				$("#inputForm").submit();
@@ -32,6 +53,17 @@
 	    	return false;
 	    }
 		$(document).ready(function(){
+			var id = "${officeRecommend.officeRecommendId}";
+			var franchiseeId = "${officeRecommend.franchiseeId}";
+			if(id > 0){
+				$("input[type=radio][name=isOpenLabel]").attr("disabled","disabled");
+				if(franchiseeId.length > 0){
+					$("input[type=radio][name=isOpenLabel][value="+franchiseeId+"]").attr("checked",true);
+				}else{
+					$("input[type=radio][id=open][name=isOpenLabel]").attr("checked",true);
+				}
+			}
+			
 			validateForm = $("#inputForm").validate();
 		});
 	</script>
@@ -59,6 +91,23 @@
 										<input class="form-control" id="img" name="img" type="hidden" value="${officeRecommend.img }"/><!-- 图片隐藏文本框 -->
 										<input type="file" name="file_img_upload" id="file_img_upload">
 										<div id="file_img_queue"></div>
+									</td>
+								</tr>
+								<tr>
+									<td><label class="pull-right"><font color="red">*</font>排序：</label></td>
+									<td>
+										<input id="sort" name="sort" value="${officeRecommend.sort}" class="form-control required" style="width: 300px"/>
+									</td>
+								</tr>
+								<tr>
+									<td width="100px"><label class="pull-right"><font color="red">*</font>可见范围：</label></td>
+									<td>
+										<input type="radio" id="open" name="isOpenLabel" value="0">公开
+										<c:forEach items="${list}" var="franchisee">
+											<input type="radio" id="notOpen" name="isOpenLabel" value="${franchisee.id}">${franchisee.name}
+										</c:forEach>
+										<input id="isOpen" value="${officeRecommend.isOpen}" name="isOpen" type="hidden">
+										<input id="franchiseeId" value="${officeRecommend.franchiseeId}" name="franchiseeId" type="hidden">
 									</td>
 								</tr>
 							</table>

@@ -23,6 +23,8 @@
 			   top.layer.alert('启动页广告图！', {icon: 0, title:'提醒'});
 			   return false;
 		    }
+		
+		    $("#type").removeAttr("disabled"); 
 	    	if(validateForm.form()){
 	    		loading("正在提交，请稍候...");
 				$("#inputForm").submit();
@@ -32,6 +34,12 @@
 	    };
 	    
 		$(document).ready(function() {
+			
+			//处于启用状态，不能修改位置类型
+			if($("#appStartPageId").val() != '' && '${appStartPage.isOnSale}' == 1){
+				$("#type").attr("disabled","disabled")
+			}
+			
 			validateForm = $("#inputForm").validate({
 					submitHandler: function(form){
 						loading('正在提交，请稍等...');
@@ -49,6 +57,7 @@
 				}
 			);
 		});
+		
 	</script>
 </head>
 <body class="gray-bg">
@@ -58,18 +67,28 @@
 	    	<div class="ibox-content">
 				<div class="tab-content" id="tab-content">
 	                <div class="tab-inner">
+	                	<span style="color:red;">若处于启用状态则不能修改位置类型</span>
 						<form:form id="inputForm" modelAttribute="appStartPage" action="${ctx}/ec/appStartPage/save">
 							<form:hidden path="appStartPageId"/>
 							<form:hidden path="isOnSale"/>
 							<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 								<tr>
-									<td><label class="pull-right"><font color="red">*</font>启动页名称：</label></td>
+									<td><label class="pull-right"><font color="red">*</font>名称：</label></td>
 									<td>
 										<form:input path="name" class="form-control required" style="width: 300px"/>
 									</td>
 								</tr>
 								<tr>
-									<td><label class="pull-right"><font color="red">*</font>启动页：</label></td>
+									<td><label class="pull-right"><font color="red">*</font>位置：</label></td>
+									<td>
+										<form:select path="type" class="form-control required">
+											<form:option value="0">启动页广告图</form:option>
+											<form:option value="1">广告位弹窗</form:option>
+										</form:select>
+									</td>
+								</tr>
+								<tr>
+									<td><label class="pull-right"><font color="red">*</font>图片：</label></td>
 									<td>
 										<img id="img" src="${appStartPage.imgUrl }" alt="" style="width: 200px;height: 100px;"/>
 										<input class="form-control" id="imgUrl" name="imgUrl" type="hidden" value="${appStartPage.imgUrl }"/><!-- 图片隐藏文本框 -->

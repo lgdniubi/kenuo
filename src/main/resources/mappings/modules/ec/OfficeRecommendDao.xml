@@ -5,17 +5,21 @@
 	<!-- 查询推荐店铺列表 -->
 	<select id="findList" resultType="OfficeRecommend">
 		SELECT 
-			id AS 'officeRecommendId', 
-			name,
-			img,
-			is_show AS 'isShow',
-			create_by AS 'createBy.id',
-			create_date AS 'createDate',
-			update_by AS 'updateBy.id',
-			update_date AS 'updateDate'
-		FROM sys_office_recommend
-		WHERE del_flag = 0
-		ORDER BY create_date DESC
+			r.id AS 'officeRecommendId', 
+			r.name,
+			r.img,
+			r.is_show AS 'isShow',
+			r.is_open AS 'isOpen',
+			r.franchisee_id AS 'franchiseeId',
+			(select f.name from trains.sys_franchisee f where f.id = r.franchisee_id and f.del_flag = 0) AS 'franchiseeName',
+			r.sort,
+			r.create_by AS 'createBy.id',
+			r.create_date AS 'createDate',
+			r.update_by AS 'updateBy.id',
+			r.update_date AS 'updateDate'
+		FROM sys_office_recommend r
+		WHERE r.del_flag = 0
+		ORDER BY r.sort DESC
 	</select>
 	
 	<!-- 根据id获取店铺推荐组 -->
@@ -25,6 +29,9 @@
 			name,
 			img,
 			is_show AS 'isShow',
+			is_open AS 'isOpen',
+			franchisee_id AS 'franchiseeId',
+			sort,
 			create_by AS 'createBy.id',
 			create_date AS 'createDate',
 			update_by AS 'updateBy.id',
@@ -40,6 +47,9 @@
 			name,
 			img,
 			is_show,
+			is_open,
+			franchisee_id,
+			sort,
 			create_by,
 			create_date,
 			del_flag
@@ -47,6 +57,9 @@
 			#{name},
 			#{img},
 			0,
+			#{isOpen},
+			#{franchiseeId},
+			#{sort},
 			#{createBy.id},
 			SYSDATE(),
 			0
@@ -59,6 +72,9 @@
 		SET 
 			name = #{name},
 			img = #{img},
+			is_open = #{isOpen},
+			franchisee_id = #{franchiseeId},
+			sort = #{sort},
 			update_by = #{updateBy.id},
 			update_date = SYSDATE()
 		WHERE id = #{officeRecommendId}
@@ -76,6 +92,10 @@
 		UPDATE sys_office_recommend
 		SET is_show = #{isShow}
 		WHERE id = #{officeRecommendId}
+		AND is_open = #{isOpen}
+		<if test="franchiseeId != '' and franchiseeId != null">
+			AND franchisee_id = #{franchiseeId}
+		</if>
 	</update>
 	
 	<!-- 店铺推荐组对应的店铺列表 -->
@@ -134,14 +154,12 @@
 	<update id="changeAll">
 		UPDATE sys_office_recommend
 		SET is_show = 0
+		WHERE is_open = #{isOpen}
+		<if test="franchiseeId != '' and franchiseeId != null">
+			AND franchisee_id = #{franchiseeId}
+		</if>
 	</update>
 	
-	<!-- 查询最近创建的那个推荐组 -->
-	<select id="selectIdByCreatDate" resultType="Integer">
-		SELECT id
-		FROM sys_office_recommend
-		ORDER BY create_date DESC limit 1
-	</select>
 	
 	<!-- 查询推荐组对应的推荐店铺id -->
 	<select id="selectOfficeId" resultType="String">
@@ -150,5 +168,6 @@
 		LEFT JOIN sys_office o ON o.id = orm.office_id
 		WHERE orm.recommend_id = #{recommendId}
 	</select>
+	
 </mapper>
 

@@ -22,24 +22,24 @@
 		return false;
 	}
 	
-	function delOffice(officeRecommendMappingId,officeRecommendId){
+	function delOffice(officeRecommendMappingId,officeRecommendId,franchiseeId){
 		if(confirm("确认要删除吗？","提示框")){
-			newDelete(officeRecommendMappingId,officeRecommendId);			
+			newDelete(officeRecommendMappingId,officeRecommendId,franchiseeId);			
 		}
 	}
 		
-	function newDelete(officeRecommendMappingId,officeRecommendId){
+	function newDelete(officeRecommendMappingId,officeRecommendId,franchiseeId){
 		$.ajax({
 			type:"post",
 			url:"${ctx}/ec/officeRecommend/delOffice?officeRecommendMappingId="+officeRecommendMappingId,
 			success:function(date){
 				if(date=="success"){
 					top.layer.alert('删除成功!', {icon: 1, title:'提醒'});
-					window.location="${ctx}/ec/officeRecommend/addOffice?officeRecommendId="+officeRecommendId;
+					window.location="${ctx}/ec/officeRecommend/addOffice?officeRecommendId="+officeRecommendId+"&franchiseeId="+franchiseeId;
 				}
 				if(date=="error"){
 					top.layer.alert('删除失败!', {icon: 2, title:'提醒'});
-					window.location="${ctx}/ec/officeRecommend/addOffice?officeRecommendId="+officeRecommendId;
+					window.location="${ctx}/ec/officeRecommend/addOffice?officeRecommendId="+officeRecommendId+"&franchiseeId="+franchiseeId;
 				}
 							
 			},
@@ -50,13 +50,13 @@
 		});
 	}
 	
-	function editOffice(id,mappingId,flag){
+	function editOffice(id,mappingId,flag,franchiseeId){
 		var oldOfficeIds = $("#oldOfficeIds").val();
 		top.layer.open({
 		    type: 2, 
 		    area: ['500px', '300px'],
 		    title:"添加店铺",
-		    content: "${ctx}/ec/officeRecommend/addOfficeForm?officeRecommendMappingId="+mappingId,
+		    content: "${ctx}/ec/officeRecommend/addOfficeForm?officeRecommendMappingId="+mappingId+"&franchiseeId="+franchiseeId,
 		    btn: ['确定', '关闭'],
 		    yes: function(index, layero){
 		        var obj =  layero.find("iframe")[0].contentWindow;
@@ -89,11 +89,11 @@
 					success:function(data){
 						if(data=="success"){
 							top.layer.alert('保存成功!', {icon: 1, title:'提醒'});
-							window.location="${ctx}/ec/officeRecommend/addOffice?officeRecommendId="+id;	
+							window.location="${ctx}/ec/officeRecommend/addOffice?officeRecommendId="+id+"&franchiseeId="+franchiseeId;	
 						}
 						if(data=="error"){
 							top.layer.alert('保存失败!', {icon: 2, title:'提醒'});
-							window.location="${ctx}/ec/officeRecommend/addOffice?officeRecommendId="+id;
+							window.location="${ctx}/ec/officeRecommend/addOffice?officeRecommendId="+id+"&franchiseeId="+franchiseeId;
 						}
 									
 					},
@@ -127,7 +127,7 @@
 								<input id="oldOfficeIds" name="oldOfficeIds" type="hidden" value="${oldOfficeIds}"/>
 							</form>
 							<div class="pull-left">
-								<a href="#" onclick="editOffice(${officeRecommendMapping.recommendId},0,'add')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加店铺</a>
+								<a href="#" onclick="editOffice(${officeRecommendMapping.recommendId},0,'add','${franchiseeId}')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加店铺</a>
 							</div>
 						</div>
 					</div>
@@ -150,10 +150,10 @@
 								<td style="text-align: center;">${page.sort}</td>
 								<td style="text-align: center;">
 									<shiro:hasPermission name="ec:officeRecommend:editOffice">
-										<a href="#" onclick="editOffice(${page.recommendId},${page.officeRecommendMappingId},'edit')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i>修改</a>
+										<a href="#" onclick="editOffice(${page.recommendId},${page.officeRecommendMappingId},'edit','${franchiseeId}')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i>修改</a>
 									</shiro:hasPermission> 
 									<shiro:hasPermission name="ec:officeRecommend:delOffice">
-										<a href="#" onclick="delOffice(${page.officeRecommendMappingId},${page.recommendId})" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>删除</a>
+										<a href="#" onclick="delOffice(${page.officeRecommendMappingId},${page.recommendId},'${franchiseeId}')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>删除</a>
 									</shiro:hasPermission> 
 								</td>
 							</tr>

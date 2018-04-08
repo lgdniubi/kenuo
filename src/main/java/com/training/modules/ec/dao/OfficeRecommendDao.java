@@ -82,13 +82,7 @@ public interface OfficeRecommendDao extends CrudDao<OfficeRecommend> {
 	/**
 	 * 将所有的推荐组都设置为不显示
 	 */
-	public void changeAll();
-	
-	/**
-	 * 查询最近创建的那个推荐组
-	 * @return
-	 */
-	public int selectIdByCreatDate();
+	public void changeAll(OfficeRecommend officeRecommend);
 	
 	/**
 	 * 查询推荐组对应的推荐店铺id
@@ -96,4 +90,5 @@ public interface OfficeRecommendDao extends CrudDao<OfficeRecommend> {
 	 * @return
 	 */
 	public String selectOfficeId(int recommendId);
+	
 }
