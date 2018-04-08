@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -149,7 +150,10 @@ public class UserController extends BaseController {
 			user.setOffice(UserUtils.getUser().getOffice());
 		}*/
 		if (user.getUserinfo() == null || user.getUserinfo().getId() == null) {
-			user.setUserinfo(systemService.getUserInfoByUserId(user.getId()));		
+			user.setUserinfo(systemService.getUserInfoByUserId(user.getId()));
+			if(user.getUserinfo() != null){
+				user.getUserinfo().setSelfintro(HtmlUtils.htmlEscape(user.getUserinfo().getSelfintro()));
+			}
 		}
 		if (user.getSpeciality() == null || user.getSpeciality().getId() == null) {
 			user.setSpeciality(systemService.getSpecialityByUserId(user.getId()));
@@ -167,7 +171,6 @@ public class UserController extends BaseController {
 			dict.setType("sys_user_type");
 			model.addAttribute("dict", dictService.findDict(dict));
 		}
-		
 		model.addAttribute("userLogs", userLogs);
 		model.addAttribute("user", user);
 		//默认给美容师角色
@@ -261,6 +264,8 @@ public class UserController extends BaseController {
 	@RequestMapping(value = "save")
 	public String save(User user, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		try {
+			//自我评价转义
+			user.getUserinfo().setSelfintro(HtmlUtils.htmlUnescape(user.getUserinfo().getSelfintro()));
 			if(null != user.getId() && "" != user.getId()){
 				User users = userDao.get(user.getId());
 				if(null != users){

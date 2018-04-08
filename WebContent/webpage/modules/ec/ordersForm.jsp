@@ -424,6 +424,7 @@
        	     				top.layer.close(index);
        					}else{
        						top.layer.alert('添加业务员失败', {icon: 0, title:'提醒'});
+       						isDecided = false;
        					}
        				},
        				error:function(XMLHttpRequest,textStatus,errorThrown){
@@ -1057,7 +1058,7 @@ window.onload=initStatus;
 					<shiro:hasPermission name="ec:orders:edit">
 						<a href="#" onclick="openDialogView('操作日志', '${ctx}/ec/orders/orderlist?id=${orders.orderid}','900px','450px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>订单流程</a>
 					</shiro:hasPermission>
-					<shiro:hasPermission name="ec:orders:edit">
+					<shiro:hasPermission name="ec:orders:forceOrders">
 						<!-- 1.实物订单待发货或待收货；2.app虚拟订单，未处理预约金且（未预约或预约了但预约状态不为等待服务、已完成、 已评价 、爽约的预约）或平预约金但不存在售后完成的订单；3.后台虚拟订单，未预约或预约了但预约状态不为等待服务、已完成、 已评价 、爽约的预约或不存在售后完成的订单 -->
 						<c:if test="${type != 'view' }">
 							<c:choose>                                                                                                                                                                                                                                                   

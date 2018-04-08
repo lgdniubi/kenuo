@@ -25,6 +25,9 @@ public class Banner extends DataEntity<Banner>{
 	private String isShare;		//是否分享（0：分享；1：不分享）
 	private int pageType;		//跳转类型：(0：活动页；1：商品；2：专题页，3：文章)
 	
+	private String isOpen;             //是否公开（0：公开，1：不公开）
+	private String franchiseeIds;   //商家id(以,拼接)
+	
 	public int getBannerId() {
 		return bannerId;
 	}
@@ -97,4 +100,18 @@ public class Banner extends DataEntity<Banner>{
 	public void setPageType(int pageType) {
 		this.pageType = pageType;
 	}
+	
+	public String getIsOpen() {
+		return isOpen;
+	}
+	public void setIsOpen(String isOpen) {
+		this.isOpen = isOpen;
+	}
+	public String getFranchiseeIds() {
+		return franchiseeIds;
+	}
+	public void setFranchiseeIds(String franchiseeIds) {
+		this.franchiseeIds = franchiseeIds;
+	}
+	
 }

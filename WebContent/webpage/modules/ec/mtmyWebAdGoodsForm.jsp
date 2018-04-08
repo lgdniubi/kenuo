@@ -114,7 +114,7 @@
 			$.ajax({
 				 type:"get",
 				 dataType:"json",
-				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&actionType="+actionType+"&isOnSale=1"+"&isReal="+isReal,
+				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&actionType="+actionType+"&isOnSale=1"+"&isReal="+isReal+"&isOpen="+$("#isOpen").val(),
 				 success:function(date){
 					var data=date;
 					if(arr.length>0){
@@ -155,6 +155,7 @@
 				<div class="clearfix">
 					<form:form id="inputForm" modelAttribute="goods" action="${ctx}/ec/webAd/saveMtmyWebAdGoods" method="post" class="form-horizontal">
 						<input type="hidden" id="isReal" name="isReal" value="${isReal}">
+						<input type="hidden" id="isOpen" name="isOpen" value="${isOpen}">
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 							<tr>
 								<td>

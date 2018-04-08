@@ -295,6 +295,49 @@
 		</choose>
 	</select>
 	
+	<!-- 分页查询美容师信息 -->
+	<select id="starBeautyFindUser" resultType="User">
+		SELECT
+			DISTINCT
+			a.id,
+			a.name,
+			a.mobile,
+			a.photo,
+			o.id AS "office.id",
+			o.parent_ids AS "office.parentIds",	
+			o. NAME AS "office.name",
+			o.code AS a,
+			c.code AS b
+		FROM
+			sys_user a
+		RIGHT JOIN (SELECT user_id FROM trains.sys_user_role WHERE role_id = (SELECT id FROM trains.sys_role WHERE enname = 'pb' AND del_flag = 0)) ur ON a.id = ur.user_id
+		LEFT JOIN sys_franchisee c ON c.id = a.company_id
+		LEFT JOIN sys_office o ON o.id = a.office_id
+		LEFT JOIN train_user_skill us ON us.user_id = a.id
+		WHERE
+			a.del_flag = 0
+		<if test="office != null and office.id != null and office.id != ''">
+			AND (o.id = #{office.id} OR o.parent_ids LIKE CONCAT('%,', #{office.id}, ',%'))
+		</if>
+		<if test="name != null and name != ''">
+			AND a.name like CONCAT('%', #{name}, '%')
+		</if>
+		<if test="mobile != null and mobile != ''">
+			AND a.mobile = #{mobile}
+		</if>
+		<if test="company.id != null and company.id != '' and company.id != 0">
+			AND a.company_id = #{company.id}
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY  o.code,c.code, a.name
+			</otherwise>
+		</choose>
+	</select>
+	
 	<!-- 根据部门查询用户信息 -->
 	<select id="findListByOffice" resultType="User">
 		SELECT

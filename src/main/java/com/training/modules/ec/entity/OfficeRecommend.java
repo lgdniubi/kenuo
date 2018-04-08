@@ -14,6 +14,10 @@ public class OfficeRecommend extends DataEntity<OfficeRecommend>{
 	private int officeRecommendId;         //主键ID
 	private String name;                      //组名称
 	private String img;                   //头图
+	private String isOpen;                //是否公开
+	private String franchiseeId;          //商家id
+	private String franchiseeName;        //商家名称
+	private int sort;                     //排序
 	private int isShow;                   //是否显示（0：否；1：是）
 	private int delflag;                  //删除标识（0：正常；1：删除；）
 	
@@ -47,4 +51,29 @@ public class OfficeRecommend extends DataEntity<OfficeRecommend>{
 	public void setDelflag(int delflag) {
 		this.delflag = delflag;
 	}
+	public String getIsOpen() {
+		return isOpen;
+	}
+	public void setIsOpen(String isOpen) {
+		this.isOpen = isOpen;
+	}
+	public String getFranchiseeId() {
+		return franchiseeId;
+	}
+	public void setFranchiseeId(String franchiseeId) {
+		this.franchiseeId = franchiseeId;
+	}
+	public int getSort() {
+		return sort;
+	}
+	public void setSort(int sort) {
+		this.sort = sort;
+	}
+	public String getFranchiseeName() {
+		return franchiseeName;
+	}
+	public void setFranchiseeName(String franchiseeName) {
+		this.franchiseeName = franchiseeName;
+	}
+	
 }

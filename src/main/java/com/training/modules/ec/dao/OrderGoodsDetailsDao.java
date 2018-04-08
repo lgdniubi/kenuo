@@ -96,6 +96,13 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	public int findApptStatus(String orderid);
 	
 	/**
+	 * 查看预约已完成、已服务、爽约的订单 
+	 * @param recId
+	 * @return
+	 */
+	public int findCompleteApptStatus(String orderid);
+	
+	/**
 	 * 根据mapping_id获取其订单余款
 	 * @param recId
 	 * @return

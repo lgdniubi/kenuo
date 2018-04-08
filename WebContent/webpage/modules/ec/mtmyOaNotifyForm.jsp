@@ -290,8 +290,8 @@
 		        	</td>
 		       		<td colspan="3">
 		       			<select class="form-control required" id="groupImportType" name="groupImportType" style="width:200px" onchange="selectImportType(this.value)">
-		       				<option ${(mtmyOaNotify.groupImportType == 0)?'selected="selected"':''} value="0">批量导入手机号</option>
 		       				<option ${(mtmyOaNotify.groupImportType == 1)?'selected="selected"':''} value="1">批量导入用户ID</option>
+		       				<option ${(mtmyOaNotify.groupImportType == 0)?'selected="selected"':''} value="0">批量导入手机号</option>
 		       			</select>
 		       			<p></p>
 	       				<a href="#" onclick="newImport()" class="btn btn-white btn-sm"><i class="fa fa-folder-open-o"></i>导入</a><font color="red">若要手动输入，则要“,”分割开</font><br>

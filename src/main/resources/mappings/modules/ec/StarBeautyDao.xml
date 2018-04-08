@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.StarBeautyDao">
+    
+	<!-- 查询数据列表  -->
+	<select id="findList" resultType="StarBeauty">
+		SELECT
+			a.id,
+			a.name,                               
+			a.is_show AS isShow,
+			a.is_open AS isOpen,
+			a.franchisee_id AS franchiseeId,
+			c.name AS franchiseeName,
+			a.sort,
+			a.remarks,
+			b.name AS "createBy.name",
+			a.create_date AS createDate
+		FROM
+			mtmydb.mtmy_star_beauty a LEFT JOIN sys_user b ON a.create_by = b.id
+			LEFT JOIN mtmydb.mtmy_franchisee c ON a.franchisee_id = c.id
+		WHERE
+			a.del_flag = 0
+		ORDER BY a.sort DESC
+	</select>
+	
+	<!-- 修改当前商家下所有店铺为关闭 -->
+	<update id="cannelAllIsShow">
+		UPDATE mtmydb.mtmy_star_beauty
+		SET is_show = 0
+		WHERE
+			del_flag = 0
+		<if test="franchiseeId != '' and franchiseeId != null">
+			AND franchisee_id = #{franchiseeId}
+		</if>
+		<if test="isOpen != '' and isOpen != null and isOpen == 0">
+			AND is_open = 0
+		</if>
+	</update>
+	
+	<!-- 根据明星技师组id,修改状态 -->
+	<update id="changeIsShow">
+		UPDATE mtmydb.mtmy_star_beauty
+		SET is_show = #{isShow}
+		WHERE 
+			id = #{id}
+		AND del_flag = 0
+	</update>
+	
+	<!-- 根据明星技师组id查询数据 -->
+	<select id="getStarBeautyById" resultType="StarBeauty">
+		SELECT 
+			id,
+			name,
+			is_show AS isShow,
+			is_open AS isOpen,
+			franchisee_id AS franchiseeId,
+			sort,
+			remarks 
+		FROM
+			mtmydb.mtmy_star_beauty
+		WHERE
+			id = #{id}
+	</select>
+	
+    <!-- 插入数据 -->
+	<insert id="saveStarBeauty" parameterType="StarBeauty">
+		INSERT INTO mtmydb.mtmy_star_beauty(
+			name,
+			is_show,
+			is_open,
+			franchisee_id,
+			sort,
+			remarks,
+			create_by,
+			create_date,
+			del_flag
+		) VALUES (
+			#{name},
+			0,
+			#{isOpen},
+			#{franchiseeId},
+			#{sort},
+			#{remarks},
+			#{createBy.id},
+			SYSDATE(),
+			0
+		)
+	</insert>
+	
+	<!--更新数据 -->
+	<update id="updateStarBeauty" parameterType="StarBeauty">
+		UPDATE mtmydb.mtmy_star_beauty
+			SET 
+			  name = #{name},     
+			  sort = #{sort},
+			  remarks = #{remarks},
+			  update_by = #{updateBy.id},
+			  update_date = SYSDATE()
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 逻辑删除 明星技师组 -->
+	<update id="delete" parameterType="StarBeauty">
+		UPDATE mtmydb.mtmy_star_beauty
+		SET del_flag = 1
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 根据明星技师组id查询明星技师内容列表  -->
+	<select id="findMappingPage" resultType="StarBeautyMapping">
+		SELECT
+			id AS mappingId,
+			star_id AS starId,
+			user_id AS userId,
+			office_ids AS officeIds,
+			name AS starBeautyName,          
+			photo AS starBeautyPhoto,
+			sort,
+			remarks
+		FROM
+			mtmydb.mtmy_star_beauty_mapping
+		WHERE
+			del_flag = 0
+		AND
+			star_id = #{starId}
+		ORDER BY sort DESC
+	</select>
+	
+	<!-- 插入数据 -->
+	<insert id="saveStarBeautyMapping" parameterType="StarBeautyMapping">
+		INSERT INTO mtmydb.mtmy_star_beauty_mapping(
+			star_id,
+			user_id,
+			office_ids,
+			name,
+			photo,
+			sort,
+			remarks,
+			create_by,
+			create_date,
+			del_flag
+		) VALUES (
+			#{starId},
+			#{userId},
+			#{officeIds},
+			#{starBeautyName},
+			#{starBeautyPhoto},
+			#{sort},
+			#{remarks},
+			#{createBy.id},
+			SYSDATE(),
+			0
+		)
+	</insert>
+	
+	<!-- 根据明星技师表id查询明星技师  -->
+	<select id="getStarBeautyMappingByMappingId" resultType="StarBeautyMapping">
+		SELECT
+			id AS mappingId,
+			star_id AS starId,
+			user_id AS userId,
+			office_ids AS officeIds,
+			name AS starBeautyName,          
+			photo AS starBeautyPhoto,
+			sort,
+			remarks
+		FROM
+			mtmydb.mtmy_star_beauty_mapping
+		WHERE
+			del_flag = 0
+		AND
+			id = #{mappingId}
+		ORDER BY sort DESC
+	</select>
+	
+	<!--修改明星技师的信息 -->
+	<update id="updateStarBeautyMapping" parameterType="StarBeautyMapping">
+		UPDATE mtmydb.mtmy_star_beauty_mapping
+			SET 
+			  star_id = #{starId},
+			  user_id = #{userId},
+			  office_ids = #{officeIds},
+			  name = #{starBeautyName},     
+			  photo = #{starBeautyPhoto},     
+			  sort = #{sort},
+			  remarks = #{remarks},
+			  update_by = #{updateBy.id},
+			  update_date = SYSDATE()
+		WHERE id = #{mappingId}
+	</update>
+	
+	<!-- 逻辑删除 明星技师 -->
+	<update id="delStarBeautyMapping" parameterType="StarBeautyMapping">
+		UPDATE mtmydb.mtmy_star_beauty_mapping
+		SET del_flag = 1
+		WHERE id = #{mappingId}
+	</update>
+</mapper>

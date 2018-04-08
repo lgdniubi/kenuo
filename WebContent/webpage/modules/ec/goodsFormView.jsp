@@ -155,12 +155,23 @@
 										<input type="radio" id="goodsType" name="goodsType" value="0" ${(goods.goodsType == '0' || goods.goodsType == null)?'checked="checked"':''}>老商品
 									</li>
 									<li class="form-group">
-											<span class="control-label col-sm-2">是否参与城市异价：</span>
-											<select class="form-control" disabled="disabled">
-						                        <option ${(goods.isRatio == 0)?'selected="selected"':''}>否</option>
-						                        <option ${(goods.isRatio == 1)?'selected="selected"':''}>是</option>
-						                    </select>
-										</li>
+										<span class="control-label col-sm-2"><font color="red">*</font>是否公开：</span>
+										<input type="radio" id="goodsIsOpen" name="goodsIsOpen" value="0" ${(goods.goodsIsOpen == '0')?'checked="checked"':''}>是：公开
+										<input type="radio" id="goodsIsOpen" name="goodsIsOpen" value="1" ${(goods.goodsIsOpen == '1')?'checked="checked"':''}>否：非公开
+									</li>
+									<li class="form-group">
+										<span class="control-label col-sm-2"><font color="red">*</font>是否可在后台下单：</span>
+										<input type="radio" id="isBmCreate" name="isBmCreate" value="0" ${(goods.isBmCreate == '0' || goods.isBmCreate == null)?'checked="checked"':''}>否
+										<input type="radio" id="isBmCreate" name="isBmCreate" value="1" ${(goods.isBmCreate == '1')?'checked="checked"':''}>是
+										<span class="control-label cannotEdit">(用于标示后台是否可以创建订单)</span>
+									</li>
+									<li class="form-group">
+										<span class="control-label col-sm-2">是否参与城市异价：</span>
+										<select class="form-control" disabled="disabled">
+					                        <option ${(goods.isRatio == 0)?'selected="selected"':''}>否</option>
+					                        <option ${(goods.isRatio == 1)?'selected="selected"':''}>是</option>
+					                    </select>
+									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>活动类型：</span>
 										<select class="form-control" id="actionType" name="actionType">

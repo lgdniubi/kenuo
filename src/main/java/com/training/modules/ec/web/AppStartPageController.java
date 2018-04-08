@@ -100,18 +100,18 @@ public class AppStartPageController extends BaseController{
 				User user=UserUtils.getUser();
 				appStartPage.setCreateBy(user);
 				appStartPageService.save(appStartPage);
-				addMessage(redirectAttributes, "添加启动页广告图成功！");
+				addMessage(redirectAttributes, "添加成功！");
 			}else{
 				//修改
 				User user=UserUtils.getUser();
 				appStartPage.setUpdateBy(user);
 				appStartPageService.update(appStartPage);
-				addMessage(redirectAttributes, "修改启动页广告图成功！");
+				addMessage(redirectAttributes, "修改成功！");
 			}
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "保存启动页广告图失败!", e);
 			logger.error("保存启动页广告图失败：" + e.getMessage());
-			addMessage(redirectAttributes,"保存启动页广告图失败");
+			addMessage(redirectAttributes,"保存失败");
 		}
 		return "redirect:" + adminPath + "/ec/appStartPage/list";
 	}
@@ -131,9 +131,11 @@ public class AppStartPageController extends BaseController{
 		try {
 			String id = request.getParameter("ID");
 			String flag = request.getParameter("flag");
-			if(!StringUtils.isEmpty(id) && !StringUtils.isEmpty(flag)){
+			String type = request.getParameter("type");
+			if(!StringUtils.isEmpty(id) && !StringUtils.isEmpty(flag) && !StringUtils.isEmpty(type)){
 				appStartPage.setAppStartPageId(Integer.parseInt(id));
 				appStartPage.setIsOnSale(flag);
+				appStartPage.setType(type);
 				map = appStartPageService.updateType(appStartPage);
 			}else{
 				map = new HashMap<String, String>();
@@ -141,8 +143,8 @@ public class AppStartPageController extends BaseController{
 				map.put("MESSAGE", "修改失败,必要参数为空");
 			}
 		} catch (Exception e) {
-			logger.error("启动页广告图修改状态错误信息："+e.getMessage());
-			BugLogUtils.saveBugLog(request, "启动页广告图修改状态失败", e);
+			logger.error("修改状态错误信息："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "修改状态失败", e);
 			map = new HashMap<String, String>();
 			map.put("STATUS", "ERROR");
 			map.put("MESSAGE", "修改失败");

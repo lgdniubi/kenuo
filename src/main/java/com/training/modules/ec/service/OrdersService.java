@@ -1032,6 +1032,18 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 							_orderGoods.setSumAppt(0);
 						}
 					}*/
+					
+					//存在预约记录
+					if(_orderGoods.getSumAppt() > 0){
+						
+						//预约状态为已完成、 已评价 、爽约
+						if(orderGoodsDetailsDao.findCompleteApptStatus(orders.getOrderid()) != 0){
+							orderGoods.setCompleteAppt(1);
+						}else{
+							orderGoods.setCompleteAppt(0);
+						}
+					}
+					
 					orderGoods.setTotalAmount(_orderGoods.getTotalAmount());
 					orderGoods.setOrderBalance(_orderGoods.getOrderBalance());
 					orderGoods.setOrderArrearage(_orderGoods.getOrderArrearage());
