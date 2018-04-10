@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -225,5 +226,14 @@ public class MtmyUsersService extends CrudService<MtmyUsersDao,Users>{
 	 */
 	public void deleteFromSaleRelations(int userId){
 		dao.deleteFromSaleRelations(userId);
+	}
+	
+	/**
+	 * 修改是否正常数据
+	 * @param isTest
+	 * @param userId
+	 */
+	public void updateIsRealData(String isTest,String userId){
+		dao.updateIsRealData(isTest, userId);
 	}
 }

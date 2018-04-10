@@ -3,6 +3,8 @@ package com.training.modules.ec.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.MtmySaleRelieve;
@@ -195,4 +197,11 @@ public interface MtmyUsersDao extends CrudDao<Users>{
 	 * 验证手机号是否存在于每天美耶 
 	 */
 	public int checkMobile(String mobile);
+	
+	/**
+	 * 修改是否正常数据
+	 * @param isTest
+	 * @param userId
+	 */
+	public void updateIsRealData(@Param(value="isTest")String isTest,@Param(value="userId")String userId);
 }
