@@ -250,15 +250,20 @@
 				</if>
 			GROUP BY mc.user_id
 		) cuo ON cuo.user_id = mu.user_id
-		WHERE 
-			(
-				mu.nickname like
-				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
-				OR mu.mobile like
-				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
-				OR mu.name like
-				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
-			)
+		WHERE 1=1
+			<if test="level!=null and level!=''">
+				AND muyl.level =#{level}
+			</if>
+			<if test="keyword!=null and keyword!=''">
+				AND (
+					mu.nickname like
+					<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+					OR mu.mobile like
+					<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+					OR mu.name like
+					<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+				)
+			</if> 
 		GROUP BY
 			mu.user_id,
 			muyl. NAME,
