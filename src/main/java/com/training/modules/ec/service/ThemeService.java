@@ -96,22 +96,25 @@ public class ThemeService extends CrudService<ThemeDao, Theme>{
 		JSONObject jsonObject = new JSONObject();
 		String queryMediaArticleDetailListByArticleIdList = ParametersFactory.getMtmyParamValues("mtmy_queryMediaArticleDetailListByArticleIdList");	
 		logger.info("##### web接口路径:"+queryMediaArticleDetailListByArticleIdList);	
-		String parpm = "{\"sourcePlatform\":\"mtmy\",\"articleIdList\":\""+articlesIds+"\",\"franchiseeIds\":\"0\"}";
-		String url=queryMediaArticleDetailListByArticleIdList;
-		String result = WebUtils.postMediaObject(parpm, url);
-		jsonObject = JSONObject.fromObject(result);
-		logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
-		if("200".equals(jsonObject.get("code"))){
-			JSONArray jsonArray = jsonObject.getJSONArray("data");
-			List<Map> list = (List<Map>)JSONArray.toCollection(jsonArray,Map.class);
-			for(int i=0; i<list.size(); i++){
-				ThemeMapping newThemeMapping = new ThemeMapping();
-				ArticleRepository articleRepository = new ArticleRepository();
-				articleRepository.setArticleId(((Integer.parseInt(list.get(i).get("articleId").toString()))));
-				articleRepository.setTitle(String.valueOf(list.get(i).get("articleTitle")));
-				newThemeMapping.setArticleRepository(articleRepository);
-				mapList.add(newThemeMapping);
-	 		}
+		
+		if(!"-1".equals(queryMediaArticleDetailListByArticleIdList)){
+			String parpm = "{\"sourcePlatform\":\"mtmy\",\"articleIdList\":\""+articlesIds+"\",\"franchiseeIds\":\"0\"}";
+			String url=queryMediaArticleDetailListByArticleIdList;
+			String result = WebUtils.postMediaObject(parpm, url);
+			jsonObject = JSONObject.fromObject(result);
+			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			if("200".equals(jsonObject.get("code"))){
+				JSONArray jsonArray = jsonObject.getJSONArray("data");
+				List<Map> list = (List<Map>)JSONArray.toCollection(jsonArray,Map.class);
+				for(int i=0; i<list.size(); i++){
+					ThemeMapping newThemeMapping = new ThemeMapping();
+					ArticleRepository articleRepository = new ArticleRepository();
+					articleRepository.setArticleId(((Integer.parseInt(list.get(i).get("articleId").toString()))));
+					articleRepository.setTitle(String.valueOf(list.get(i).get("articleTitle")));
+					newThemeMapping.setArticleRepository(articleRepository);
+					mapList.add(newThemeMapping);
+				}
+			}
 		}
 		
 		themeMapping.setPage(page);

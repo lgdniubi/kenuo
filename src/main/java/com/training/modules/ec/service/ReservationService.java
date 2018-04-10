@@ -157,5 +157,32 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 		page.setList(dao.findReservationLog(reservationLog));
 		return page;
 	}
-
+	
+	/**
+	 * 查询一定时间段内已完成、爽约的预约，用于给店铺分预约金和补偿金 
+	 * @param lastTime
+	 * @return
+	 */
+	public List<Reservation> queryApptOrderForAdvancePrice(Date lastTime,Date startTime){
+		return dao.queryApptOrderForAdvancePrice(lastTime,startTime);
+	}
+	
+	/**
+	 * 查询某个订单下的预约完成与爽约的总数
+	 * @param groupId
+	 * @param goodsMappingId
+	 * @return
+	 */
+	public int queryCompleteNum(int groupId,String goodsMappingId){
+		return dao.queryCompleteNum(groupId,goodsMappingId);
+	}
+	
+	/**
+	 * 校验同一美容师同一时间段内只能有一条已完成的预约记录
+	 * @param reservation
+	 * @return
+	 */
+	public int verifyApptDate(Reservation reservation){
+		return dao.verifyApptDate(reservation);
+	}
 }

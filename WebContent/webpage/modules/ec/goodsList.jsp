@@ -174,7 +174,12 @@
 									<option <c:if test="${(goods.minRatio == 0.81) && (goods.maxRatio == 0.9)}">selected="selected"</c:if> value="0.81-0.9">81%-90%</option>
 									<option <c:if test="${(goods.minRatio == 0.91) && (goods.maxRatio == 1)}">selected="selected"</c:if> value="0.91-1">91%-100%</option>
 								</select>
-								&nbsp;&nbsp;
+								&nbsp;&nbsp;是否可在后台下单:
+								<select class="form-control" style="text-align: center;width: 150px;" id="isBmCreate" name="isBmCreate">
+									<option value="">全部</option>
+									<option value="0" ${(goods.isBmCreate == '0')?'selected="selected"':''}>否</option>
+									<option value="1" ${(goods.isBmCreate == '1')?'selected="selected"':''}>是</option>
+								</select>
 							</div>
 								<!-- 分页必要字段 -->
 								<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>

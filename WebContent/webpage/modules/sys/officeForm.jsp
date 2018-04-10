@@ -32,18 +32,32 @@
 		var newUploadURL = '<%=uploadURL%>';
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-		  if(validateForm.form()){
-			  var content = $(".ke-edit-iframe").contents().find(".ke-content").html();
-				if(content.indexOf("style") >=0){
-					content = content.replace("&lt;style&gt;","<style>");
-					content = content.replace("&lt;/style&gt;","</style>");
+			var verifyForm = "true";
+			$.ajax({
+				type : "POST",   
+				url : "${ctx}/sys/office/verifyLevel",
+				data: {id:$("#officeId").val(), grade:$("#grade").val(),officeId:$("#id").val()},
+				async:false,
+				success: function(data) {
+					if("ERROR" == data.FLAG){
+						verifyForm = "false";
+						top.layer.alert(data.MESSAGE, {icon: 0, title:'提醒'}); 
+					}
 				}
-				$("#details").val(content);
-				$("#tags").val($("#officeInfotagsName").val());//标签
-			  $("#inputForm").submit();
-			  return true;
-		  }
-	
+			}); 
+			if(verifyForm == "true"){
+				if(validateForm.form()){
+					var content = $(".ke-edit-iframe").contents().find(".ke-content").html();
+					if(content.indexOf("style") >=0){
+						content = content.replace("&lt;style&gt;","<style>");
+						content = content.replace("&lt;/style&gt;","</style>");
+					}
+					$("#details").val(content);
+					$("#tags").val($("#officeInfotagsName").val());//标签
+					$("#inputForm").submit();
+					return true;
+				}
+			}
 		  return false;
 		}
 		$(document).ready(function() {
@@ -62,7 +76,8 @@
 					name: {
 						remote: {
 			            	url:"${ctx}/sys/office/verifyName",
-		            		type: "get",
+		            		type: "post",
+		            		async:false,
 		                    data: {
 		                    	'id' : function(){return $("#officeId").val();},
 		                        'name': function(){return $("input[name='name']").val();},
@@ -76,6 +91,7 @@
 						remote:{
 							url:"${ctx}/sys/office/checkOfficeCode",
 							type:"post",
+							async:false,
 							data:{
 								'officeCode':function(){return $("#officeCode").val();},
 								'oldOfficeCode': function(){return $("#oldOfficeCode").val();}
@@ -95,7 +111,8 @@
 					name: {remote: "机构名称已存在"},
 					officeCode: {
 						maxlength:"机构编码不能超过20个字符",
-						remote: "机构编码已存在"}
+						remote: "机构编码已存在"
+					}
 				},
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
@@ -243,7 +260,7 @@
 				      	<tr>
 					         <td class="width-15 active"><label class="pull-right">上级机构:</label></td>
 					         <td class="width-35"><sys:treeselect id="office" name="parent.id" value="${office.parent.id}" labelName="parent.name" labelValue="${office.parent.name}"
-								title="机构" url="/sys/office/parentTreeData?isGrade=true" extId="${office.id}"  cssClass="form-control" allowClear="${office.currentUser.admin}"/></td>
+								title="机构" url="/sys/office/parentTreeData?isGrade=true" extId="${office.id}"  cssClass="form-control required" allowClear="${office.currentUser.admin}"/></td>
 					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>归属区域:</label></td>
 					         <td class="width-35">
 						        <div id="area1">
@@ -277,7 +294,7 @@
 								<span class="help-inline"><font color="red">注：更改此类时请重新选择归属区域</font></span>
 							</c:if>
 							<c:if test="${office.num != '0'}">
-								<form:hidden path="grade"/>
+								<form:hidden path="grade"/>	<!-- disabled="true" form表单提交的时候,就不会传值到后台 -->
 								<form:select path="grade" id="grade" cssClass="form-control" onchange="unfold(this.options[this.options.selectedIndex].value)" disabled="true">
 									<form:options items="${fns:getDictList('sys_office_grade')}" itemLabel="label" itemValue="value" htmlEscape="false" disabled="true"/>
 								</form:select>
@@ -309,6 +326,17 @@
 				        	<span class="help-inline">只能输入数字字母和下划线</span>
 				        </td>
 				     </tr>
+				     <shiro:hasPermission name="sys:office:isRealData">
+					     <tr>
+					     	<td class="width-15 active"><label class="pull-right">是否正常数据</label></td>
+				     		<td>
+								<form:select path="isTest" class="form-control required">
+									<form:option value="0">正常数据</form:option>
+									<form:option value="1">测试数据</form:option>
+								</form:select>
+							</td>
+					     </tr>
+				     </shiro:hasPermission>
 				     <tr id="a5">
 				         <td class="width-15 active"><label class="pull-right">主负责人:</label></td>
 				         <td class="width-35"><sys:treeselect id="primaryPerson" name="primaryPerson.id" value="${office.primaryPerson.id}" labelName="office.primaryPerson.name" labelValue="${office.primaryPerson.name}"
@@ -341,7 +369,12 @@
 				     </tr>
 			      </tbody>
 			      <tbody id="unfold">
-			      	 <tr><td colspan="4" class="active"><label class="pull-left">店铺详细信息</label></td></tr>
+					<tr>
+						<td colspan="4" class="active">
+							<label class="pull-left">店铺详细信息</label>
+							<form:hidden path="officeInfo.id"/>
+						</td>
+					</tr>
 			      	  <tr>
 				      	 <td  class="width-15 active"><label class="pull-right">店铺首图:</label></td>
 				         <td class="width-35">
@@ -397,7 +430,7 @@
 				         <td class="width-35"><form:input path="officeInfo.bedNum" htmlEscape="false" maxlength="5" cssClass="form-control digits required"/></td>
 						 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>是否新店：</label></td>
 						 <td id="isNew">
-						 	<c:if test="${not empty office.officeInfo.shortName}">
+						 	<c:if test="${not empty office.id}">
 				         		<c:if test="${office.isNew == 0}">
 									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('isNew','${office.id}',1)">&nbsp;&nbsp;否
 								</c:if>
@@ -405,7 +438,7 @@
 									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('isNew','${office.id}',0)">&nbsp;&nbsp;是
 								</c:if>
 				         	</c:if>
-				         	<c:if test="${empty office.officeInfo.shortName}">
+				         	<c:if test="${empty office.id}">
 				         		<select class="form-control required" id="isNew" name="isNew">
 									<option value='0'>否</option>
 								</select>
@@ -422,7 +455,7 @@
 						 </td>
 						 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺状态(是否隐藏)：</label></td>
 				         <td class="width-35" id="status">
-				         	<c:if test="${not empty office.officeInfo.shortName}">
+				         	<c:if test="${not empty office.officeInfo.id}">
 								<c:if test="${office.officeInfo.status == 1}">
 									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('status','${office.id}',0)">&nbsp;&nbsp;是
 								</c:if>
@@ -430,10 +463,9 @@
 									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('status','${office.id}',1)">&nbsp;&nbsp;否
 								</c:if>
 				         	</c:if>
-				         	<c:if test="${empty office.officeInfo.shortName}">
+				         	<c:if test="${empty office.officeInfo.id}">
 				         		<select id="officeInfo.status" name="officeInfo.status" class="form-control">
 				         			<option value="0">正常</option>
-				         			<option value="1">隐藏</option>
 				         		</select>
 				         	</c:if>
 				         </td>

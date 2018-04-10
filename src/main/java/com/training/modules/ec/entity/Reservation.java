@@ -45,10 +45,17 @@ public class Reservation extends DataEntity<Reservation>{
 	private String userNote;           //消费者备注
 	private Date serviceStartTime;		//实际服务开始时间（YYYY-MM-DD hh:mm）
 	private Date serviceEndTime;		//实际服务结束时间（YYYY-MM-DD hh:mm）
-	
+
 	private String franchiseeId;		//获取查询的归属商家id    2018-4-2   土豆添加    CRM中护理时间表查询数据使用
 	private String franchiseeIds;		//存储当前操作人的绑定店铺    2018-4-2   土豆添加  CRM中护理时间表查询数据使用
 	
+
+	//============用于给店铺平分预约金===========================================
+	private String detailsMappingId;		//对应的details中的goodsMappingId
+	private int groupId;                  //组id，卡项订单，一个卡项商品下有多个子项，每个子项的组id就是那个卡项的recid
+	
+	//============end用于给店铺平分预约金===========================================
+
 	public Integer getTeachersStarLevel() {
 		return teachersStarLevel;
 	}
@@ -201,6 +208,7 @@ public class Reservation extends DataEntity<Reservation>{
 	public void setServiceEndTime(Date serviceEndTime) {
 		this.serviceEndTime = serviceEndTime;
 	}
+
 	public String getFranchiseeId() {
 		return franchiseeId;
 	}
@@ -212,6 +220,18 @@ public class Reservation extends DataEntity<Reservation>{
 	}
 	public void setFranchiseeIds(String franchiseeIds) {
 		this.franchiseeIds = franchiseeIds;
+	}
+	public String getDetailsMappingId() {
+		return detailsMappingId;
+	}
+	public void setDetailsMappingId(String detailsMappingId) {
+		this.detailsMappingId = detailsMappingId;
+	}
+	public int getGroupId() {
+		return groupId;
+	}
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
 	}
 	
 }

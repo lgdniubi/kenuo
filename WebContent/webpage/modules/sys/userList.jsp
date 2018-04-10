@@ -67,7 +67,7 @@
 								<shiro:hasPermission name="sys:user:state">
 									<form:select path="parentDel" onchange="parentDelchange(this.options[this.options.selectedIndex].value)" cssClass="form-control">
 										<form:option value="0">在职</form:option>
-										<form:option value="1">已离职</form:option>
+										<form:option value="1">离职</form:option>
 									</form:select>
 								</shiro:hasPermission>
 							</div>
@@ -160,7 +160,7 @@
 								<td>${user.office.name}</td>
 								<td>
 									<c:if test="${user.delFlag == 0 }">在职</c:if> 
-									<c:if test="${user.delFlag == 1 }">已离职</c:if>
+									<c:if test="${user.delFlag == 1 }">离职</c:if>
 								</td>
 								<td>
 									<shiro:hasPermission name="sys:user:view">
@@ -172,7 +172,10 @@
 									<shiro:hasPermission name="sys:user:del">
 										<%-- <a href="${ctx}/sys/user/delete?id=${user.id}" onclick="return confirmx('确认要删除该用户吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a> --%>
 										<c:if test="${user.delFlag == 0 }">
-											<a href="${ctx}/sys/user/delete?id=${user.id}" onclick="return promptx('请填写删除备注信息！不可为空！','确定要删除用户吗？',this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
+											<a href="${ctx}/sys/user/delete?id=${user.id}" onclick="return promptx('请填写离职备注信息！不可为空！','确定要离职吗？',this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 离职</a>
+										</c:if>
+										<c:if test="${user.delFlag == 1 }">
+											<a href="${ctx}/sys/user/onJob?id=${user.id}" onclick="return confirmx('确定要恢复在职吗？',this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 在职</a>
 										</c:if>
 									</shiro:hasPermission>
 									<shiro:hasPermission name="sys:user:auth">

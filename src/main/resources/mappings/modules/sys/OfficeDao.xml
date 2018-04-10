@@ -13,6 +13,7 @@
 		a.sort,
 		a.type,
 		a.grade,
+		a.level,
 		a.address, 
 		a.zip_code, 
 		a.master, 
@@ -29,6 +30,7 @@
 		a.longitude,
 		a.latitude,
 		a.del_flag,
+		a.is_test AS 'isTest',
 		a.useable AS useable,
 		a.primary_person AS "primaryPerson.id",
 		a.deputy_person AS "deputyPerson.id",
@@ -90,6 +92,7 @@
 			a.update_date,
 			a.del_flag,
 			a.is_new,
+			a.is_test AS 'isTest',
 			a.longitude AS longitude,
 			a.latitude AS latitude,
 			a.useable AS useable,
@@ -156,6 +159,7 @@
 			a.type,
 			a.grade,
 			a.remarks,
+			a.is_test AS 'isTest',
 			ar.NAME AS 'area.name',
 			(SELECT COUNT(1) FROM sys_office AS B WHERE B.parent_id = A.id AND B.del_flag = 0) AS 'num'
 		FROM
@@ -177,6 +181,7 @@
 			a.type,
 			a.grade,
 			a.remarks,
+			a.is_test AS 'isTest',
 			ar.NAME AS 'area.name',
 			(SELECT COUNT(1) FROM sys_office AS B WHERE B.parent_id = A.id AND B.del_flag = 0) AS 'num'
 		FROM
@@ -203,6 +208,7 @@
 			a.name,
 			"直营店" AS 'typeName',
 			a.remarks,
+			a.is_test AS 'isTest',
 			ar.name AS 'area.name'
 		FROM
 			sys_office a
@@ -227,6 +233,7 @@
 			sort, 
 			type, 
 			grade, 
+			`level`,
 			address, 
 			zip_code, 
 			master, 
@@ -242,6 +249,7 @@
 			longitude,
 			latitude,
 			useable,
+			is_test,
 			primary_person,
 			deputy_person
 		) VALUES (
@@ -256,6 +264,7 @@
 			#{sort}, 
 			#{type}, 
 			#{grade}, 
+			2,
 			#{address}, 
 			#{zipCode}, 
 			#{master}, 
@@ -271,6 +280,7 @@
 			#{longitude},
 			#{latitude},
 			#{useable},
+			#{isTest},
 			#{primaryPerson.id},
 			#{deputyPerson.id}
 		)	 
@@ -303,6 +313,7 @@
 			sort, 
 			type, 
 			grade, 
+			level,
 			address, 
 			zip_code, 
 			master, 
@@ -310,6 +321,7 @@
 			fax, 
 			email, 
 			is_new, 
+			is_test,
 			create_by, 
 			create_date, 
 			update_by, 
@@ -338,6 +350,7 @@
 			#{sort}, 
 			#{type}, 
 			#{grade}, 
+			(LENGTH( #{parentIds})-LENGTH(REPLACE( #{parentIds},',',''))),
 			#{address}, 
 			#{zipCode}, 
 			#{master}, 
@@ -345,6 +358,7 @@
 			#{fax}, 
 			#{email}, 
 			#{isNew}, 
+			#{isTest},
 			#{createBy.id}, 
 			#{createDate}, 
 			#{updateBy.id}, 
@@ -375,6 +389,7 @@
 			name = #{name}, 
 			type = #{type}, 
 			grade = #{grade}, 
+			level = (LENGTH( #{parentIds})-LENGTH(REPLACE( #{parentIds},',',''))),
 			address = #{address}, 
 			zip_code = #{zipCode}, 
 			master = #{master}, 
@@ -387,6 +402,7 @@
 			longitude = #{longitude},
 			latitude = #{latitude},
 			useable=#{useable},
+			is_test = #{isTest},
 			primary_person=#{primaryPerson.id},
 			deputy_person=#{deputyPerson.id},
 			office_code=#{officeCode}
@@ -395,6 +411,7 @@
 	
 	<update id="updateParentIds">
 		UPDATE sys_office SET 
+			`level` = (LENGTH( #{parentIds})-LENGTH(REPLACE( #{parentIds},',',''))),
 			parent_id = #{parent.id}, 
 			parent_ids = #{parentIds}
 		WHERE id = #{id}
@@ -497,8 +514,10 @@
 			AND del_flag = #{DEL_FLAG_NORMAL} 
 			AND code = #{franchiseeCode}
 	</select>
+	<!-- 查询店铺详情 -->
 	<select id="findbyid" resultType="OfficeInfo">
 		SELECT
+			id,
 			short_name   AS shortName,
 			postal_code  AS postalCode,
 			contacts     AS contacts,

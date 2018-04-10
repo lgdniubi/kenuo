@@ -3,8 +3,6 @@ package com.training.modules.ec.dao;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.Effect;

@@ -81,7 +81,7 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	/**
 	 * 查询用户购买商品预约的店铺id
 	 */
-	public String selectShopId(String goodsMappingId);
+	public String selectShopId(int reservationId);
 	
 	/**
 	 * 当对登云账户进行操作时，插入log日志 
@@ -94,6 +94,13 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @return
 	 */
 	public int findApptStatus(String orderid);
+	
+	/**
+	 * 查看预约已完成、已服务、爽约的订单 
+	 * @param recId
+	 * @return
+	 */
+	public int findCompleteApptStatus(String orderid);
 	
 	/**
 	 * 根据mapping_id获取其订单余款

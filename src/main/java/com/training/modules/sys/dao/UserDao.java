@@ -353,4 +353,10 @@ public interface UserDao extends CrudDao<User> {
 	 * @return
 	 */
 	public List<User> starBeautyFindUser(User user);
+	
+	/**
+	 * 将逻辑删除的用户用户还原
+	 * @param user
+	 */
+	public void onJob(User user);
 }

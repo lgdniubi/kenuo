@@ -118,6 +118,7 @@ public class Goods extends DataEntity<Goods> {
 	private String openFlag;          //是否公开的标识（商品数据树查询用的）
 	private List<String> franchiseeIdsList;   //商家id集合
 	
+	private String isBmCreate;			// 是否后台可创建
 	/**
 	 * get/set
 	 */
@@ -606,5 +607,11 @@ public class Goods extends DataEntity<Goods> {
 	}
 	public void setFranchiseeIdsList(List<String> franchiseeIdsList) {
 		this.franchiseeIdsList = franchiseeIdsList;
+	}
+	public String getIsBmCreate() {
+		return isBmCreate;
+	}
+	public void setIsBmCreate(String isBmCreate) {
+		this.isBmCreate = isBmCreate;
 	}
 }

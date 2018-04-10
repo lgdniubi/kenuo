@@ -18,6 +18,7 @@ public class OfficeAccountLog extends DataEntity<OfficeAccountLog>{
 	private String officeFrom;      //来源机构id
 	private double amount;         //金额
 	private String channelFlag;     //渠道标识（wap：wap端；ios：苹果手机；android：安卓手机；bm：后台管理）
+	private String apptId;         //预约id
 	
 	public int getOfficeAccountLogId() {
 		return officeAccountLogId;
@@ -60,6 +61,12 @@ public class OfficeAccountLog extends DataEntity<OfficeAccountLog>{
 	}
 	public void setChannelFlag(String channelFlag) {
 		this.channelFlag = channelFlag;
+	}
+	public String getApptId() {
+		return apptId;
+	}
+	public void setApptId(String apptId) {
+		this.apptId = apptId;
 	}
 	
 	

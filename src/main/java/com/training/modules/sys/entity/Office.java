@@ -27,7 +27,8 @@ public class Office extends TreeEntity<Office> {
 //	private String name; 	// 机构名称
 //	private Integer sort;		// 排序
 	private String type; 	// 机构类型（1：公司管理部；2：区域管理部；3：市场管理部；4：店铺管理部）
-	private String grade; 	// 机构等级（1：一级；2：二级；3：三级；4：四级）
+	private String grade; 	// 是否为店铺(1:是 2：否)
+	private int level;	// 机构层级
 	private String address; // 联系地址
 	private String zipCode; // 邮政编码
 	private String master; 	// 负责人
@@ -58,6 +59,8 @@ public class Office extends TreeEntity<Office> {
 	private FzxRole fzxRole;		//妃子校角色
 	
 	private String officeCode;		//机构唯一编码（和编码不一样，是固定的）
+	
+	private int isTest;            //测试账号标识（0：正常；1：测试）
 	
 	public String getOfficeCode() {
 		return officeCode;
@@ -186,6 +189,14 @@ public class Office extends TreeEntity<Office> {
 
 	public void setGrade(String grade) {
 		this.grade = grade;
+	}
+	
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
 	}
 
 	@Length(min=0, max=255)
@@ -334,6 +345,14 @@ public class Office extends TreeEntity<Office> {
 
 	public void setIconUrl(String iconUrl) {
 		this.iconUrl = iconUrl;
+	}
+
+	public int getIsTest() {
+		return isTest;
+	}
+
+	public void setIsTest(int isTest) {
+		this.isTest = isTest;
 	}
 	
 }
