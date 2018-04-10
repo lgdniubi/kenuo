@@ -64,13 +64,4 @@ public class UserDetailService extends CrudService<UserDetailDao,UserDetail> {
 		 return page;
 	}
 	
-	/**
-	 * 绑定店铺
-	 * @param 
-	 * @return int
-	 */
-	public int updateMtmyUsers(UserDetail entity){
-		
-		 return dao.updateMtmyUsers(entity);
-	}
 }

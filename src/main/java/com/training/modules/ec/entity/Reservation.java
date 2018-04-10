@@ -46,6 +46,9 @@ public class Reservation extends DataEntity<Reservation>{
 	private Date serviceStartTime;		//实际服务开始时间（YYYY-MM-DD hh:mm）
 	private Date serviceEndTime;		//实际服务结束时间（YYYY-MM-DD hh:mm）
 	
+	private String franchiseeId;		//获取查询的归属商家id    2018-4-2   土豆添加    CRM中护理时间表查询数据使用
+	private String franchiseeIds;		//存储当前操作人的绑定店铺    2018-4-2   土豆添加  CRM中护理时间表查询数据使用
+	
 	public Integer getTeachersStarLevel() {
 		return teachersStarLevel;
 	}
@@ -197,6 +200,18 @@ public class Reservation extends DataEntity<Reservation>{
 	}
 	public void setServiceEndTime(Date serviceEndTime) {
 		this.serviceEndTime = serviceEndTime;
+	}
+	public String getFranchiseeId() {
+		return franchiseeId;
+	}
+	public void setFranchiseeId(String franchiseeId) {
+		this.franchiseeId = franchiseeId;
+	}
+	public String getFranchiseeIds() {
+		return franchiseeIds;
+	}
+	public void setFranchiseeIds(String franchiseeIds) {
+		this.franchiseeIds = franchiseeIds;
 	}
 	
 }

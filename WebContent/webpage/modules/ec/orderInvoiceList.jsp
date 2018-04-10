@@ -44,7 +44,7 @@
 								<form:select path="invoiceType"  class="form-control" style="width:185px;">
 									<form:option value="0">请选择类型</form:option>
 									<form:option value="1">个人普票</form:option>
-									<form:option value="2">公司普通</form:option>
+									<form:option value="2">公司普票</form:option>
 									<form:option value="3">公司专票</form:option>
 								</form:select>
 						</div>
@@ -98,7 +98,7 @@
 										个人普票
 									</c:if>
 									<c:if test="${Invoice.invoiceType==2}">
-										公司普通
+										公司普票
 									</c:if>
 									<c:if test="${Invoice.invoiceType==3}"> 
 										公司专票

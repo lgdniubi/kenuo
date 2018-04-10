@@ -6,6 +6,7 @@
 	<select id="get" resultType="SkinFile">
 		SELECT
 			usf.mtmy_user_id AS 'userId',
+			usf.franchisee_id AS 'franchiseeId',
 			usf.now_skin_condition AS 'nowSkinCondition',
 			usf.skin_type AS skinType,
 			usf.skin_resistibility AS skinResistibility,
@@ -20,15 +21,18 @@
 			usf.physique AS physique,
 			usf.remark AS remark
 		FROM
-		mtmydb.mtmy_user_skin_file usf
+			mtmydb.mtmy_user_skin_file usf
 		WHERE
-		usf.mtmy_user_id = #{id}
+			usf.mtmy_user_id = #{userId}
+		AND 
+			usf.franchisee_id = #{franchiseeId}
 	</select>
 	
 	<!-- 插入单挑皮肤状态的数据 --> 	
 	<insert id="insert">
 		INSERT INTO mtmydb.mtmy_user_skin_file(		
 		   mtmy_user_id,
+		   franchisee_id,
 		   now_skin_condition,
 		   skin_type,
 		   skin_resistibility,
@@ -46,6 +50,7 @@
 		   create_by
 		) VALUES (
 			#{userId}, 
+			#{franchiseeId}, 
 			#{nowSkinCondition}, 
 			#{skinType}, 
 			#{skinResistibility}, 
@@ -79,6 +84,7 @@
 		   physique=#{physique},
 		   remark=#{remark}
 		WHERE mtmy_user_id= #{userId}
+		AND franchisee_id= #{franchiseeId}
 	</update>
 				
 </mapper>

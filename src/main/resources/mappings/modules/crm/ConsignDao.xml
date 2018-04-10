@@ -19,7 +19,9 @@
 		LEFT JOIN mtmydb.mtmy_goods mg ON uc.goods_id = mg.goods_id
 		LEFT JOIN trains.sys_office so ON uc.office_id = so.id
 		WHERE
-		uc.mtmy_user_id = #{userId}
+			uc.mtmy_user_id = #{userId}
+		AND 
+			uc.franchisee_id = #{franchiseeId}
 		ORDER BY uc.create_date DESC
 	</select>
 	
@@ -42,13 +44,14 @@
 		LEFT JOIN mtmydb.mtmy_goods mg ON uc.goods_id = mg.goods_id
 		LEFT JOIN trains.sys_office so ON uc.office_id = so.id
 		WHERE
-		uc.id = #{consignId}
+			uc.id = #{consignId}
 	</select>
 
 	<!--增加用户寄存记录  -->
 	<insert id="insert">
 		INSERT INTO mtmydb.mtmy_user_consign(		
 		  	mtmy_user_id,
+		  	franchisee_id,
 			order_id,
 			goods_id,
 			goods_name,
@@ -61,6 +64,7 @@
 			office_id
 		) VALUES (
 			#{userId}, 
+			#{franchiseeId}, 
 			#{orderId}, 
 			#{goodsId}, 
 			#{goodsName},
@@ -68,7 +72,7 @@
 			#{consignNum}, 
 			#{takenNum}, 
 			#{remark}, 
-			#{createBy.name}, 
+			#{createBy.id}, 
 			SYSDATE(), 
 			#{officeId}
 		)

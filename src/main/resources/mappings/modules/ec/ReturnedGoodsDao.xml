@@ -681,14 +681,12 @@
 		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
 		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
 		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
-		WHERE 1=1
+		${sqlMap.dsf}
 		AND a.del_flag=0 
 		AND a.user_id =#{userId}
 		<if test="keyword != null and keyword!=''">
 			AND (
-			d.nickname LIKE
-			<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
-			OR d.mobile LIKE
+			a.id LIKE
 			<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
 			OR a.order_id LIKE
 			<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>

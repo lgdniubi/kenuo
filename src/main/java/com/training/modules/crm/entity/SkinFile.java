@@ -27,6 +27,8 @@ public class SkinFile extends DataEntity<SkinFile> {
 	private String physique;			//体质判断
 	private String remark;              //其他问题
 	
+	private String franchiseeId;        //所属商家id
+	
 	public String getRemark() {
 		return remark;
 	}
@@ -111,4 +113,11 @@ public class SkinFile extends DataEntity<SkinFile> {
 	public void setPhysique(String physique) {
 		this.physique = physique;
 	}
+	public String getFranchiseeId() {
+		return franchiseeId;
+	}
+	public void setFranchiseeId(String franchiseeId) {
+		this.franchiseeId = franchiseeId;
+	}
+	
 }

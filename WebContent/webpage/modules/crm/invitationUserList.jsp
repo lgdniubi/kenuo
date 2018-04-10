@@ -35,29 +35,29 @@
 						</div>
 				   <ul class="layui-tab-title">
 					<li role="presentation" class="layui-this"><a
-								href="${ctx}/crm/user/userDetail?userId=${userId}">基本资料</a></li>
+								href="${ctx}/crm/user/userDetail?userId=${userId}&franchiseeId=${franchiseeId}">基本资料</a></li>
 					<li role="presentation"><a
-								href="${ctx}/crm/physical/skin?userId=${userId}">身体状况</a></li>
+								href="${ctx}/crm/physical/skin?userId=${userId}&franchiseeId=${franchiseeId}">身体状况</a></li>
 					<li role="presentation"><a
-								href="${ctx}/crm/schedule/list?userId=${userId}">护理时间表</a></li>
+								href="${ctx}/crm/schedule/list?userId=${userId}&franchiseeId=${franchiseeId}">护理时间表</a></li>
 					<li role="presentation"><a
-								href="${ctx}/crm/orders/list?userId=${userId}">客户订单</a></li>
+								href="${ctx}/crm/orders/list?userId=${userId}&franchiseeId=${franchiseeId}">客户订单</a></li>
 					<li role="presentation"><a
-								href="${ctx}/crm/coustomerService/list?userId=${userId}">售后</a></li>
+								href="${ctx}/crm/coustomerService/list?userId=${userId}&franchiseeId=${franchiseeId}">售后</a></li>
 					<li role="presentation"><a
-								href="${ctx}/crm/consign/list?userId=${userId}">物品寄存</a></li>
+								href="${ctx}/crm/consign/list?userId=${userId}&franchiseeId=${franchiseeId}">物品寄存</a></li>
 					<li role="presentation"><a
-								href="${ctx}/crm/goodsUsage/list?userId=${userId}">产品使用记录</a></li>
+								href="${ctx}/crm/goodsUsage/list?userId=${userId}&franchiseeId=${franchiseeId}">产品使用记录</a></li>
 					<li role="presentation"><a
-								href="${ctx}/crm/coin/list?userId=${userId}">云币明细</a></li>
+								href="${ctx}/crm/coin/list?userId=${userId}&franchiseeId=${franchiseeId}">云币明细</a></li>
 					<li role="presentation"><a
-								href="${ctx}/crm/user/account?userId=${userId}">账户总览</a></li>
+								href="${ctx}/crm/user/account?userId=${userId}&franchiseeId=${franchiseeId}">账户总览</a></li>
 					<li role="presentation"><a
-								href="${ctx}/crm/invitation?userId=${userId}">邀请明细</a></li>
+								href="${ctx}/crm/invitation?userId=${userId}&franchiseeId=${franchiseeId}">邀请明细</a></li>
 					<li role="presentation"><a
-								href="${ctx}/crm/returnRecord?userId=${userId}">回访记录</a></li>
+								href="${ctx}/crm/returnRecord?userId=${userId}&franchiseeId=${franchiseeId}">回访记录</a></li>
 					<li role="presentation"><a 
-								href="${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1">投诉咨询</a></li>
+								href="${ctx}/crm/store/list?mobile=${userDetail.mobile}&userId=${userId}&franchiseeId=${franchiseeId}&stamp=1">投诉咨询</a></li>
 				  </ul>
 					</div>
 				</div>

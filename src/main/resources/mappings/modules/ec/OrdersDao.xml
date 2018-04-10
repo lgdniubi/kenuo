@@ -1241,7 +1241,7 @@
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
-		WHERE a.del_flag = 0
+		${sqlMap.dsf} AND a.del_flag = 0
 		 AND a.user_id=#{userid}
 		<if test="orderstatus!= null  and orderstatus!= ''">
 			AND a.order_status=#{orderstatus}
