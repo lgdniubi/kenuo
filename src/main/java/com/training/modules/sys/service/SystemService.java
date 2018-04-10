@@ -443,14 +443,27 @@ public class SystemService extends BaseService implements InitializingBean {
 		return str.toString();
 	}
 	/**
-	 * 保存删除日志
+	 * 保存离职日志
 	 * 
 	 * @param user
 	 */
 	@Transactional(readOnly = false)
 	public void saveUserLog2(User user) {
 		UserLog userLog = new UserLog();
-		userLog.setContent("删除备注：" + user.getDelRemarks());
+		userLog.setContent("离职备注：" + user.getDelRemarks());
+		user.setUserLog(userLog);
+		userDao.saveUserLog(user);
+	}
+	
+	/**
+	 * 由离职变为在职日志
+	 * 
+	 * @param user
+	 */
+	@Transactional(readOnly = false)
+	public void saveUserLog3(User user) {
+		UserLog userLog = new UserLog();
+		userLog.setContent("在职备注：由离职变为在职");
 		user.setUserLog(userLog);
 		userDao.saveUserLog(user);
 	}
@@ -736,7 +749,21 @@ public class SystemService extends BaseService implements InitializingBean {
 		JSONObject jsonObject = JSONObject.fromObject(result);
 		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
 	}
+	
+	/**
+	 * 将逻辑删除的用户用户还原成在职
+	 */
+	@Transactional(readOnly = false)
+	public void onJob(User user) {
+		saveUserLog3(user);
+		userDao.onJob(user);
 
+		// 清除用户缓存
+		UserUtils.clearCache(user);
+	}
+	
+	
+	
 	@Transactional(readOnly = false)
 	public int deleteUserByIdCard(String idcard) {
 		/**
