@@ -30,6 +30,7 @@
 		a.longitude,
 		a.latitude,
 		a.del_flag,
+		a.is_test AS 'isTest',
 		a.useable AS useable,
 		a.primary_person AS "primaryPerson.id",
 		a.deputy_person AS "deputyPerson.id",
@@ -91,6 +92,7 @@
 			a.update_date,
 			a.del_flag,
 			a.is_new,
+			a.is_test AS 'isTest',
 			a.longitude AS longitude,
 			a.latitude AS latitude,
 			a.useable AS useable,
@@ -157,6 +159,7 @@
 			a.type,
 			a.grade,
 			a.remarks,
+			a.is_test AS 'isTest',
 			ar.NAME AS 'area.name',
 			(SELECT COUNT(1) FROM sys_office AS B WHERE B.parent_id = A.id AND B.del_flag = 0) AS 'num'
 		FROM
@@ -178,6 +181,7 @@
 			a.type,
 			a.grade,
 			a.remarks,
+			a.is_test AS 'isTest',
 			ar.NAME AS 'area.name',
 			(SELECT COUNT(1) FROM sys_office AS B WHERE B.parent_id = A.id AND B.del_flag = 0) AS 'num'
 		FROM
@@ -204,6 +208,7 @@
 			a.name,
 			"直营店" AS 'typeName',
 			a.remarks,
+			a.is_test AS 'isTest',
 			ar.name AS 'area.name'
 		FROM
 			sys_office a
@@ -244,6 +249,7 @@
 			longitude,
 			latitude,
 			useable,
+			is_test,
 			primary_person,
 			deputy_person
 		) VALUES (
@@ -274,6 +280,7 @@
 			#{longitude},
 			#{latitude},
 			#{useable},
+			#{isTest},
 			#{primaryPerson.id},
 			#{deputyPerson.id}
 		)	 
@@ -314,6 +321,7 @@
 			fax, 
 			email, 
 			is_new, 
+			is_test,
 			create_by, 
 			create_date, 
 			update_by, 
@@ -350,6 +358,7 @@
 			#{fax}, 
 			#{email}, 
 			#{isNew}, 
+			#{isTest},
 			#{createBy.id}, 
 			#{createDate}, 
 			#{updateBy.id}, 
@@ -393,6 +402,7 @@
 			longitude = #{longitude},
 			latitude = #{latitude},
 			useable=#{useable},
+			is_test = #{isTest},
 			primary_person=#{primaryPerson.id},
 			deputy_person=#{deputyPerson.id},
 			office_code=#{officeCode}
