@@ -46,6 +46,7 @@ public class Complain extends DataEntity<Complain>{
 	private String tab;                     //标记     
 	private String tamb;      
 	
+	private String franchiseeId;      		//区分商家id
 	
 	public String getTamb() {
 		return tamb;
@@ -245,6 +246,12 @@ public class Complain extends DataEntity<Complain>{
 	}
 	public void setStamp(String stamp) {
 		this.stamp = stamp;
+	}
+	public String getFranchiseeId() {
+		return franchiseeId;
+	}
+	public void setFranchiseeId(String franchiseeId) {
+		this.franchiseeId = franchiseeId;
 	}
 	
 }

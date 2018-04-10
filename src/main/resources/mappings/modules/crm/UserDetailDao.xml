@@ -10,15 +10,9 @@
 			mmu.mobile,
 			mmu.birthday,
 			mmu.`name`,
-			mmu.level AS userLevel,
-			mmu.office_id AS officeId,
-			tso.name AS officeName,
-			mmu.beautician_id AS beautyId,
-			tsu.`name` AS beautyName
+			mmu.level AS userLevel
 		FROM
 			mtmydb.mtmy_users mmu
-		LEFT JOIN trains.sys_office tso ON mmu.office_id = tso.id
-		LEFT JOIN trains.sys_user tsu ON mmu.beautician_id = tsu.id
 		WHERE
 			user_id =#{userId}
 	</select>
@@ -26,6 +20,7 @@
 	<select id="get" resultType="UserDetail">
 		SELECT
 			mui.mtmy_user_id AS 'userId',
+			mui.franchisee_id AS 'franchiseeId',
 			mui.name AS 'name',
 			mui.mobile AS 'mobile',
 			mui.idcard AS 'idCard',
@@ -50,17 +45,27 @@
 			mui.c_intrest AS 'intrest',
 			mui.c_taboo AS 'taboo',
 			mui.c_hate AS 'hate',
-			mui.remark AS 'remark'
+			mui.remark AS 'remark',
+			mmc.beauty_id AS 'beautyId',
+			tsu.name AS 'beautyName',
+			mmc.office_id AS 'officeId',
+			tso.name AS 'officeName'
 		FROM
 			mtmydb.mtmy_user_info mui
+		LEFT JOIN mtmydb.mtmy_customer mmc ON (mui.mtmy_user_id = mmc.user_id AND mui.franchisee_id = mmc.franchisee_id)
+		LEFT JOIN trains.sys_user tsu ON mmc.beauty_id = tsu.id
+		LEFT JOIN trains.sys_office tso ON tso.id = mmc.office_id
 		WHERE
 			mui.mtmy_user_id=#{userId}
+		AND 
+			mui.franchisee_id = #{franchiseeId}
 	</select>
 
 	<!--增加用户产品使用记录 -->
 	<insert id="insert">
 		INSERT INTO mtmydb.mtmy_user_info(
 		mtmy_user_id,
+		franchisee_id,
 		name,
 		idcard,
 		lunar_birthday,
@@ -90,6 +95,7 @@
 		)
 		VALUES(
 		#{userId},
+		#{franchiseeId},
 		#{name},
 		#{idCard},
 		#{lunarBirthday},
@@ -147,6 +153,7 @@
 			c_hate= #{hate},
 			remark=#{remark}
 		WHERE mtmy_user_id = #{userId}
+		AND franchisee_id = #{franchiseeId}
 	</update>
 
 	<select id="findUserList" resultType="UserDetail">
@@ -158,24 +165,33 @@
 			mu.nickname,
 			mu.level_value AS 'levelvalue',
 			mu.reg_time regTime,
-			mua.account_arrearage accountArrearage,
 			MIN(mo.add_time) firstDate,
 			MAX(mo.add_time) lastDate,
 			muyl.`level` AS 'level',
-			tsu. NAME AS 'beautyName',
-			tso. NAME AS 'shopName'
+			cuo.franchisee_id AS 'franchiseeId',
+			cuo.franchiseeName,
+			cuo.beautyName,
+			cuo.officeName AS 'shopName'
 		FROM
 			mtmydb.mtmy_users mu
-		LEFT JOIN mtmydb.mtmy_user_accounts mua ON mu.user_id = mua.user_id
 		LEFT JOIN mtmydb.mtmy_orders mo ON mu.user_id = mo.user_id
-		LEFT JOIN mtmydb.mtmy_user_yz_level muyl ON mu.level_value <![CDATA[>=]]>muyl.min_val
-			AND mu.level_value <![CDATA[<=]]>muyl.max_val
-		LEFT JOIN trains.sys_user tsu ON mu.beautician_id = tsu.id
-		LEFT JOIN trains.sys_office tso ON mu.office_id = tso.id
+		LEFT JOIN mtmydb.mtmy_user_yz_level muyl ON mu.level_value <![CDATA[>=]]> muyl.min_val
+			AND mu.level_value <![CDATA[<=]]> muyl.max_val
+		LEFT JOIN (
+			SELECT mc.user_id, mc.franchisee_id, tsf.name AS 'franchiseeName', tsu.`name` AS 'beautyName', tso.`name` AS 'officeName'
+			FROM
+				mtmydb.mtmy_customer mc 
+			LEFT JOIN trains.sys_franchisee tsf ON mc.franchisee_id = tsf.id
+			LEFT JOIN trains.sys_user tsu ON mc.beauty_id = tsu.id
+			LEFT JOIN trains.sys_office tso ON mc.office_id = tso.id
+			WHERE 
+				mc.franchisee_id = #{franchiseeId}
+				<if test="officeId != null and officeId!='' ">
+					AND (tso.id = #{officeId} OR tso.parent_ids LIKE CONCAT('%,', #{officeId}, ',%'))
+				</if>
+			GROUP BY mc.user_id
+		) cuo ON cuo.user_id = mu.user_id
 		${sqlMap.dsf}
-		<if test="officeId != null and officeId!='' ">
-			AND (tso.id = #{officeId} OR tso.parent_ids LIKE CONCAT('%,', #{officeId}, ',%'))
-		</if>
 		<if test="level!=null and level!=''">
 			AND muyl.level =#{level}
 		</if>
@@ -186,8 +202,6 @@
 				OR mu.mobile like
 				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
 				OR mu.name like
-				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
-				OR tsu.name like
 				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
 			)
 		</if>
@@ -212,19 +226,44 @@
 			MIN(mo.add_time) firstDate,
 			MAX(mo.add_time) lastDate,
 			muyl.`level` AS 'level',
-			tsu.NAME AS 'beautyName',
-			tso.NAME AS 'shopName',
-			tso.id AS officeId,
-			tsu.id AS beautyId
+			cuo.franchisee_id AS 'franchiseeId',
+			cuo.franchiseeName,
+			cuo.beautyName,
+			cuo.officeName AS 'shopName'
 		FROM
 			mtmydb.mtmy_users mu
 		LEFT JOIN mtmydb.mtmy_user_accounts mua ON mu.user_id = mua.user_id
 		LEFT JOIN mtmydb.mtmy_orders mo ON mu.user_id = mo.user_id
 		LEFT JOIN mtmydb.mtmy_user_yz_level muyl ON mu.level_value <![CDATA[>=]]>muyl.min_val
 			AND mu.level_value <![CDATA[<=]]>muyl.max_val
-		LEFT JOIN trains.sys_user tsu ON mu.beautician_id = tsu.id
-		LEFT JOIN trains.sys_office tso ON mu.office_id = tso.id
-		WHERE mu.mobile = #{keyword}
+		LEFT JOIN (
+			SELECT mc.user_id, mc.franchisee_id, tsf.name AS 'franchiseeName', tsu.`name` AS 'beautyName', tso.`name` AS 'officeName'
+			FROM
+				mtmydb.mtmy_customer mc 
+			LEFT JOIN trains.sys_franchisee tsf ON mc.franchisee_id = tsf.id
+			LEFT JOIN trains.sys_user tsu ON mc.beauty_id = tsu.id
+			LEFT JOIN trains.sys_office tso ON mc.office_id = tso.id
+			WHERE 
+				mc.franchisee_id = #{franchiseeId}
+				<if test="officeId != null and officeId!='' ">
+					AND (tso.id = #{officeId} OR tso.parent_ids LIKE CONCAT('%,', #{officeId}, ',%'))
+				</if>
+			GROUP BY mc.user_id
+		) cuo ON cuo.user_id = mu.user_id
+		WHERE 1=1
+			<if test="level!=null and level!=''">
+				AND muyl.level =#{level}
+			</if>
+			<if test="keyword!=null and keyword!=''">
+				AND (
+					mu.nickname like
+					<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+					OR mu.mobile like
+					<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+					OR mu.name like
+					<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+				)
+			</if> 
 		GROUP BY
 			mu.user_id,
 			muyl. NAME,
@@ -232,13 +271,4 @@
 		ORDER BY
 			mu.reg_time DESC
 	</select>
-
-	<update id="updateMtmyUsers">
-		UPDATE mtmydb.mtmy_users SET
-			office_id=#{officeId},
-			office_name=(SELECT name FROM trains.sys_office WHERE id = #{officeId}),
-			beautician_id= #{beautyId},
-			beautician_name=(SELECT name FROM trains.sys_user WHERE id = #{beautyId})
-		WHERE  user_id = #{userId}	
-	</update>
 </mapper>

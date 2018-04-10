@@ -20,7 +20,9 @@ import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.crm.entity.Complain;
+import com.training.modules.crm.entity.UserDetail;
 import com.training.modules.crm.service.AdviceService;
+import com.training.modules.crm.service.UserDetailService;
 import com.training.modules.ec.entity.GoodsBrand;
 import com.training.modules.ec.service.GoodsBrandService;
 import com.training.modules.oa.entity.OaNotify;
@@ -48,6 +50,8 @@ public class AdviceController extends BaseController {
 	private OfficeService officeService;
 	@Autowired
 	private OaNotifyService oaNotifyService;
+	@Autowired
+	private UserDetailService userDetailService;
 
 	/**
 	 * @author：星星
@@ -319,7 +323,11 @@ public class AdviceController extends BaseController {
 				adviceService.saveSolve(complain);
 			}
 			addMessage(redirectAttributes, complain.getName()+"的问题保存成功！");
-			return "redirect:" + adminPath + "/crm/store/list?stamp="+complain.getStamp()+"&mobile="+complain.getMobile();
+			if(complain.getStamp().equals("1")){
+				return "redirect:" + adminPath + "/crm/store/questionCrmList?stamp="+complain.getStamp()+"&mobile="+complain.getMobile()+"&userId="+complain.getUserId()+"&franchiseeId="+complain.getFranchiseeId();
+			}else{
+				return "redirect:" + adminPath + "/crm/store/list?stamp="+complain.getStamp()+"&mobile="+complain.getMobile();
+			}
 		} else {
 			//判断有没有处理过程
 			if (complain.getHandResult() != null) {
@@ -343,11 +351,50 @@ public class AdviceController extends BaseController {
 				}
 				adviceService.saveHandle(complain);
 				addMessage(redirectAttributes, "处理过程保存成功");
-				return "redirect:" + adminPath + "/crm/store/list";
 			} else {
 				addMessage(redirectAttributes, "没有保存处理过程");
+			}
+			if(complain.getStamp().equals("1")){
+				return "redirect:" + adminPath + "/crm/store/questionCrmList?stamp="+complain.getStamp()+"&mobile="+complain.getMobile()+"&userId="+complain.getUserId()+"&franchiseeId="+complain.getFranchiseeId();
+			}else{
 				return "redirect:" + adminPath + "/crm/store/list";
 			}
 		}
 	}
+	
+	/**
+	 * @author：土豆 
+	 * @description：分页查询、条件查询  CRM中客户管理-投诉咨询 存在问题,重新写界面   区分CRM400客服部分
+	 * 2018年3月30日
+	 */
+	@RequiresPermissions("crm:store:list")
+	@RequestMapping(value = "/questionCrmList")
+	public String questionCrmList(Complain complain, HttpServletRequest request, HttpServletResponse response, Model model, RedirectAttributes redirectAttributes) {
+		if(null != complain && complain.getStamp() != null && complain.getStamp().equals("1")){
+			//通过用户di查询出用户的电话号码
+			UserDetail detail=  userDetailService.getUserNickname(complain.getUserId());
+			if(null != detail && detail.getMobile() != null){
+				complain.setMobile(detail.getMobile());
+				model.addAttribute("detail", detail);
+			}
+			
+			complain.setRedirectUserId("");
+			model.addAttribute("stamp", complain.getStamp());
+			model.addAttribute("userId", complain.getUserId());
+			model.addAttribute("franchiseeId", complain.getFranchiseeId());
+			model.addAttribute("mobile", complain.getMobile());			
+		}
+		// 查询所有投诉
+		Page<Complain> page = adviceService.findPage(new Page<Complain>(request, response), complain);
+		/**
+		 * 2018-4-10 土豆注释  	这里暂时没人使用.先注释,是有数据权限的查询.
+		 * Page<Complain> page = adviceService.newfindPage(new Page<Complain>(request, response), complain);
+		 */
+		model.addAttribute("page", page);
+		// 查询商品品牌
+		List<GoodsBrand> goodsBrandList = goodsBrandService.findAllList(new GoodsBrand());
+		model.addAttribute("goodsBrandList", goodsBrandList);
+		return "modules/crm/questionCrmList";
+	}
+	
 }

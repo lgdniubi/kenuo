@@ -62,7 +62,7 @@ public interface MtmySaleRelieveDao extends CrudDao<MtmySaleRelieve>{
 	 */
 	public List<MtmySaleRelieveLog> findUserDetails(MtmySaleRelieveLog mtmySaleRelieveLog);
 	/**
-	 * A用户收益明细
+	 * 用户收益明细
 	 * @param mtmySaleRelieveLog
 	 * @return
 	 */

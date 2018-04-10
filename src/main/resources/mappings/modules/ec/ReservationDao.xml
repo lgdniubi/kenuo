@@ -91,7 +91,7 @@
 
 	<!-- 单个用户的预约记录-->	
 	<select id="findUserPage" resultType="Reservation">
-		SELECT
+		<!-- SELECT
 			mao.id AS reservationId,
 			mao.appt_date AS apptDate,
 			mao.appt_status AS apptStatus,
@@ -108,6 +108,48 @@
 		LEFT JOIN mtmydb.mtmy_goods mg ON mao.goods_id = mg.goods_id
 		LEFT JOIN trains.sys_user_info sui ON su.id = sui.user_id
 		WHERE mao.user_id= #{userId} 
+		ORDER BY mao.create_date DESC -->
+		SELECT
+			mao.id AS reservationId,
+			mg.goods_name AS 'goods.goodsName',
+			su.`no` AS 'user.no',
+			mg.goods_sn AS 'goods.goodsSn',
+			mao.appt_date AS apptDate,
+			mao.appt_status AS apptStatus,
+			su.`name` AS 'user.name',
+			sui.teachers_star_level AS 'teachersStarLevel'
+		FROM
+			mtmydb.mtmy_appt_order mao
+		LEFT JOIN trains.sys_user su ON mao.beautician_id = su.id
+		LEFT JOIN mtmydb.mtmy_goods mg ON mao.goods_id = mg.goods_id
+		LEFT JOIN trains.sys_user_info sui ON su.id = sui.user_id
+		LEFT JOIN mtmydb.mtmy_customer mc ON mc.user_id = mao.user_id
+		LEFT JOIN trains.sys_office o1 ON o1.id = mao.office_id
+		LEFT JOIN trains.sys_office o2 ON o2.id = mao.bea_office_id
+		LEFT JOIN trains.sys_office o3 ON o3.id = mao.shop_id
+		WHERE 
+			mao.user_id= #{userId}
+		AND 
+			mc.franchisee_id = #{franchiseeId}
+		AND ((
+			locate(
+				#{franchiseeIds},
+				concat(o1.parent_ids, o1.id)
+			) > 0
+		)
+		or (
+			locate(
+				#{franchiseeIds},
+				concat(o2.parent_ids, o2.id)
+			) > 0
+		)
+		or (
+			locate(
+				#{franchiseeIds},
+				concat(o3.parent_ids, o3.id)
+			) > 0
+		))
+		GROUP BY mao.id
 		ORDER BY mao.create_date DESC
 	</select>
 	

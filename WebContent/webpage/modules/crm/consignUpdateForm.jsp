@@ -17,15 +17,15 @@
 			    }
 			}
 		 }else{ 
-			 alert("B");
+			 alert("请输入正确的数量");
 			  return false; 
 		 } 
 	}
 	//提交的时候判断错误
 	function number(){
-		var takenNum = parseInt($("#takenNum").val()); 
-		var purchaseNum = parseInt($("#purchaseNum").val()); 
-		var consignNum = parseInt($("#consignNum").val());
+		var takenNum = parseInt($("#takenNum").val());//取走数量
+		var purchaseNum = parseInt($("#purchaseNum").val());//购买数量
+		var consignNum = parseInt($("#consignNum").val());//寄存数量
 		if((takenNum > purchaseNum)|| (takenNum > consignNum)){
 			alert("输入正确取走数量");
 			return false;
@@ -65,59 +65,61 @@
 						class="form-horizontal">
 						<input type="hidden" name="consignId" value="${consign.consignId}" />
 						<input type="hidden" name="userId" value="${userId}" />
+						<input type="hidden" name="franchiseeId" value="${franchiseeId}" />
 						<table
 							class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 							<tbody>
 								<tr>
-									<td class="width-15 active"><label class="pull-right"><font
-											color="red">*</font>所属店铺:</label></td>
-									<td><sys:treeselect id="office" name="officeId"
-											value="${consign.officeId}" labelName="officeName"
-											labelValue="${consign.officeName}" title="店铺"
-											url="/sys/office/treeData?type=2" hideBtn="true"
-											cssClass="form-control input-sm" allowClear="true"
-											notAllowSelectRoot="false" notAllowSelectParent="false" /></td>
-									<td class="width-15 active"><label class="pull-right"><font
-											color="red">*</font>商品名称:</label></td>
-									<td><sys:treeselect id="goodsId" name="goodsId"
-											value="${consign.goodsId}" labelName="goodsName"
-											labelValue="${consign.goodsName}" title="商品名称"
-											url="/ec/goods/treeAllData" cssClass="form-control required"
-											allowClear="true" hideBtn="true" notAllowSelectParent="true" />
+									<td class="width-15 active">
+										<label class="pull-right"><font color="red">*</font>所属店铺:</label>
+									</td>
+									<td>
+										<sys:treeselect id="office" name="officeId" value="${consign.officeId}" labelName="officeName" labelValue="${consign.officeName}" title="店铺"
+											url="/sys/office/treeData?type=2" hideBtn="true" cssClass="form-control input-sm" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="false" />
+									</td>
+									<td class="width-15 active">
+										<label class="pull-right"><font color="red">*</font>商品名称:</label>
+									</td>
+									<td>
+										<sys:treeselect id="goodsId" name="goodsId" value="${consign.goodsId}" labelName="goodsName" labelValue="${consign.goodsName}" title="商品名称"
+											url="/ec/goods/treeAllData" cssClass="form-control required" allowClear="true" hideBtn="true" notAllowSelectParent="true" />
 									</td>
 								</tr>
 								<tr>
-									<td class="width-15 active"><label class="pull-right"><font
-											color="red">*</font>购买数量:</label></td>
-									<td class="width-20"><input name="purchaseNum"
-										id="purchaseNum" value="${consign.purchaseNum}" maxlength="50"
-										class="form-control"  readonly = "readonly"  /></td>
-									<td class="width-15 active"><label class="pull-right"><font
-											color="red">*</font>取走数量:</label></td>
-									<td class="width-20"><input name="takenNum" id="takenNum"
-										value="${consign.takenNum}" maxlength="50"
-										class="form-control required" /></td>
+									<td class="width-15 active">
+										<label class="pull-right"><font color="red">*</font>购买数量:</label>
+									</td>
+									<td class="width-20">
+										<input name="purchaseNum" id="purchaseNum" value="${consign.purchaseNum}" maxlength="50" class="form-control"  readonly = "readonly"  />
+									</td>
+									<td class="width-15 active">
+										<label class="pull-right"><font color="red">*</font>取走数量:</label>
+									</td>
+									<td class="width-20">
+										<input name="takenNum" id="takenNum" value="${consign.takenNum}" maxlength="50" class="form-control required" />
+									</td>
 								</tr>
 								<tr>
-									<td class="width-15 active"><label class="pull-right"><font
-											color="red">*</font>寄存数量:</label></td>
-									<td class="width-20"><input name="consignNum"
-										id="consignNum" value="${consign.consignNum}" maxlength="50"
-										class="form-control required"  readonly = "readonly"  /></td>
-									<td class="width-15 active"><label class="pull-right"><font
-											color="red">*</font>寄存时间:</label></td>
-									<td class="width-20" colspan="3"><input id="begtime"
-										name="createDate" type="text" maxlength="50"
-										class="laydate-icon form-control layer-date input-sm "
-										value="<fmt:formatDate value="${consign.createDate}" pattern="yyyy-MM-dd"/>"
-										style="width: 185px;" placeholder="开始时间" required="required"
-										 readonly = "readonly"  /></td>
+									<td class="width-15 active">
+										<label class="pull-right"><font color="red">*</font>寄存数量:</label>
+									</td>
+									<td class="width-20">
+										<input name="consignNum" id="consignNum" value="${consign.consignNum}" maxlength="50" class="form-control required"  readonly = "readonly"  />
+									</td>
+									<td class="width-15 active">
+										<label class="pull-right"><font color="red">*</font>寄存时间:</label>
+									</td>
+									<td class="width-20" colspan="3">
+										<input id="begtime" name="createDate" type="text" maxlength="50" class="laydate-icon form-control layer-date input-sm "
+											value="<fmt:formatDate value="${consign.createDate}" pattern="yyyy-MM-dd"/>" style="width: 185px;" placeholder="开始时间" required="required" readonly = "readonly"  />
+									</td>
 								</tr>
 								<tr>
-									<td class="width-15 active"><label class="pull-right"><font
-											color="red"></font>备注:</label></td>
-									<td class="width-20" colspan="3"><textarea id="remark"
-											name="remark" rows="10" cols="40">${consign.remark}</textarea>
+									<td class="width-15 active">
+										<label class="pull-right"><font color="red"></font>备注:</label>
+									</td>
+									<td class="width-20" colspan="3">
+										<textarea id="remark" name="remark" rows="10" cols="40">${consign.remark}</textarea>
 									</td>
 								</tr>
 							</tbody>

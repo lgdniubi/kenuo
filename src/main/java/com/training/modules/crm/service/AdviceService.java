@@ -4,10 +4,13 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.crm.dao.AdviceDao;
 import com.training.modules.crm.entity.Complain;
 import com.training.modules.sys.entity.User;
+import com.training.modules.train.utils.ScopeUtils;
 
 /**
  * @author：星星
@@ -171,6 +174,23 @@ public class AdviceService extends CrudService<AdviceDao, Complain>{
 	 */
 	public List<Complain> selectSeek(Complain complain) {
 		return dao.selectSeek(complain);
+	}
+
+	/**
+	 * 根据用户id查询投诉咨询集合,带有数据权限
+	 * @param 土豆
+	 * @param complain
+	 * @return
+	 * 2018-4-2
+	 */
+	public Page<Complain> newfindPage(Page<Complain> page, Complain complain) {
+		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
+		complain.getSqlMap().put("dsf", ScopeUtils.dataScopeFilter("q", "orderOrRet"));
+		// 设置分页参数
+		complain.setPage(page);
+		// 执行分页查询
+		page.setList(dao.newfindPage(complain));
+		return page;
 	}
 
 		

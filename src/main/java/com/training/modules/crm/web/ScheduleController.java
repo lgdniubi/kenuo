@@ -58,13 +58,16 @@ public class ScheduleController extends BaseController {
 	 * @return String 
 	 */
 	@RequestMapping(value = "list")
-	public String schedule(String userId, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String schedule(String userId, String franchiseeId, HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		if (null!=userId && userId.trim().length()>0 ) {
 			Reservation reservation = new Reservation();
 			reservation.setUserId(Integer.valueOf(userId));
+			reservation.setFranchiseeId(franchiseeId);
+			
 			Page<Reservation> page = reservationService.findUserPage(new Page<Reservation>(request, response), reservation);
 			model.addAttribute("userId", userId);
+			model.addAttribute("franchiseeId", franchiseeId);
 			model.addAttribute("page", page);
 		}
 		return "modules/crm/schedule";

@@ -1,7 +1,5 @@
 package com.training.modules.crm.web;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -52,24 +50,21 @@ public class ConsignController extends BaseController {
 	 * @return "modules/crm/consingn"
 	 */
 	@RequestMapping(value = "list")
-	public String consingn(String userId, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String consingn(String userId, String franchiseeId, HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		if ("".equals(userId) || userId == null) {
 			model.addAttribute("userId", null);
 		} else {
 			try {
-				//LogList
-				UserOperatorLog log = new UserOperatorLog();
-				log.setUserId(userId);
-				log.setOperatorType("2");
-				List<UserOperatorLog> logList = logService.findList(log);
 				//consignList
 				Consign entity = new Consign();
 				entity.setUserId(userId);
+				entity.setFranchiseeId(franchiseeId);
+				
 				Page<Consign> page = consignService.getConsignList(new Page<Consign>(request, response), entity);
 				model.addAttribute("page", page);
 				model.addAttribute("userId", userId);
-				model.addAttribute("logList", logList);
+				model.addAttribute("franchiseeId", franchiseeId);
 			} catch (Exception e) {
 				logger.debug("<<<<<<<<<<<<"+e.getMessage());
 				e.printStackTrace();
@@ -84,17 +79,19 @@ public class ConsignController extends BaseController {
 	 * @return "modules/crm/consignForm"
 	 */
 	@RequestMapping(value = { "add", })
-	public String editConsign(Consign consign, @RequestParam(value = "userId") String userId,
+	public String editConsign(Consign consign, @RequestParam(value = "userId") String userId, @RequestParam(value = "franchiseeId") String franchiseeId,
 			HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		String consignId = consign.getConsignId();
 		if (null == consignId || "".equals(consignId)) {
-			model.addAttribute("userId", userId);
 			model.addAttribute("consign", consign);
-		} else {
-			Consign entity = consignService.get(consignId);
-			model.addAttribute("consign", entity);
 			model.addAttribute("userId", userId);
+			model.addAttribute("franchiseeId", franchiseeId);
+		} else {
+			consign = consignService.get(consignId);
+			model.addAttribute("consign", consign);
+			model.addAttribute("userId", userId);
+			model.addAttribute("franchiseeId", franchiseeId);
 		}
 		return "modules/crm/consignForm";
 	}
@@ -105,17 +102,19 @@ public class ConsignController extends BaseController {
 	 * @return "modules/crm/consignForm"
 	 */
 	@RequestMapping(value = {"update" })
-	public String updateConsign(Consign consign, @RequestParam(value = "userId") String userId,
+	public String updateConsign(Consign consign, @RequestParam(value = "userId") String userId, @RequestParam(value = "franchiseeId") String franchiseeId,
 			HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		String consignId = consign.getConsignId();
 		if (null == consignId || "".equals(consignId)) {
 			model.addAttribute("userId", userId);
 			model.addAttribute("consign", consign);
+			model.addAttribute("franchiseeId", franchiseeId);
 		} else {
 			Consign entity = consignService.get(consignId);
 			model.addAttribute("consign", entity);
 			model.addAttribute("userId", userId);
+			model.addAttribute("franchiseeId", franchiseeId);
 		}
 		return "modules/crm/consignUpdateForm";
 	}
@@ -131,23 +130,25 @@ public class ConsignController extends BaseController {
 		try {
 			consignId = consign.getConsignId();
 			UserOperatorLog log = new UserOperatorLog();
-			log.setOperatorType("2");
+			log.setOperatorType("4");
 			if (null==consignId|| consignId.trim().length()<=0) {
 				consignService.save(consign);
 				//save Log
 				log.setUserId(consign.getUserId());
 				log.setContent("创建新的寄存档案");
+				log.setFranchiseeId(consign.getFranchiseeId());
 				logService.save(log);
 			}else {
 				consignService.updateSingle(consign);
 				log.setUserId(consign.getUserId());
 				log.setContent("修改寄存档案");
+				log.setFranchiseeId(consign.getFranchiseeId());
 				logService.save(log);
 			}
 			
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
 		}
-		return "redirect:" + adminPath + "/crm/consign/list?userId="+consign.getUserId();
+		return "redirect:" + adminPath + "/crm/consign/list?userId="+consign.getUserId()+"&franchiseeId="+consign.getFranchiseeId();
 	}
 }

@@ -69,13 +69,17 @@ public class PhysiclalController extends BaseController {
 	 * @description
 	 */
 	@RequestMapping(value = "skin")
-	public String getPhysiclalStatus(String userId, HttpServletRequest request, HttpServletResponse response,Model model) {
+	public String getPhysiclalStatus(String userId, String franchiseeId, HttpServletRequest request, HttpServletResponse response,Model model) {
 		try {
 			//if ("".equals(userId) || userId == null) {
 			if (null == userId || userId.trim().length() <= 0) {
 				return null;
 			} else {
-				SkinFile file = skinFileService.get(userId);
+				SkinFile file = new SkinFile();
+				file.setUserId(userId);
+				file.setFranchiseeId(franchiseeId);
+				
+				file = skinFileService.get(file);
 				// 获取所有skin条目
 				List<CrmDict> dictList = crmDictService.getSkinFile();
 				List<String> typeList = new ArrayList<>();
@@ -109,6 +113,7 @@ public class PhysiclalController extends BaseController {
 				model.addAttribute("dictList", dictList);
 				model.addAttribute("typeList", typeList);
 				model.addAttribute("userId", userId);
+				model.addAttribute("franchiseeId", franchiseeId);
 				model.addAttribute("skinFile",file );
 			}
 		} catch (Exception e) {
@@ -130,7 +135,7 @@ public class PhysiclalController extends BaseController {
 		try {
 			String userId = skinFile.getUserId();
 			if (null!=userId && userId.trim().length()>0) {
-				SkinFile file = skinFileService.get(userId);
+				SkinFile file = skinFileService.get(skinFile);
 				if (null != file) {
 					Integer result = skinFileService.update(skinFile);
 					if (result == 1) {
@@ -147,7 +152,7 @@ public class PhysiclalController extends BaseController {
 			addMessage(redirectAttributes, "保存/修改  皮肤档案'" + "'失败");
 			e.printStackTrace();
 		}
-		return "redirect:" + adminPath + "/crm/physical/skin?userId="+skinFile.getUserId();
+		return "redirect:" + adminPath + "/crm/physical/skin?userId="+skinFile.getUserId()+"&franchiseeId="+skinFile.getFranchiseeId();
 	}
 
 	/**
@@ -157,20 +162,23 @@ public class PhysiclalController extends BaseController {
 	 * @description
 	 */
 	@RequestMapping(value = "shape")
-	public String userShape(String userId, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String userShape(String userId, String franchiseeId, HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		if (null == userId ||userId.trim().length()<=0) {
 			model.addAttribute("userId", userId);
 		} else {
-			ShapeFile shapeFile;
+			ShapeFile shapeFile = new ShapeFile();
+			shapeFile.setUserId(userId);
+			shapeFile.setFranchiseeId(franchiseeId);
 			try {
-				shapeFile = shapeService.get(userId);
+				shapeFile = shapeService.get(shapeFile);
 				model.addAttribute("shapeFile", shapeFile);
 			} catch (Exception e) {
 				logger.debug(e.getMessage());
 				e.printStackTrace();
 			}
 			model.addAttribute("userId", userId);
+			model.addAttribute("franchiseeId", franchiseeId);
 		}
 		return "modules/crm/userShape";
 	}
@@ -187,7 +195,7 @@ public class PhysiclalController extends BaseController {
 		String userId = shapeFile.getUserId();
 		try {
 			if (null!=userId && userId.trim().length()>0) {
-				ShapeFile exist = shapeService.get(userId);
+				ShapeFile exist = shapeService.get(shapeFile);
 				if (null != exist) {
 					Integer result = shapeService.update(shapeFile);
 					if (result == 1) {
@@ -204,6 +212,6 @@ public class PhysiclalController extends BaseController {
 			addMessage(redirectAttributes, "保存/修改  皮肤档案'" + "'失败");
 			e.printStackTrace();
 		}
-		return "redirect:" + adminPath + "/crm/physical/shape?userId="+userId;
+		return "redirect:" + adminPath + "/crm/physical/shape?userId="+userId+"&franchiseeId="+shapeFile.getFranchiseeId();
 	}
 }

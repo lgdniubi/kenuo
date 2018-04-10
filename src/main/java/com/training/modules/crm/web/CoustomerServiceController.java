@@ -53,10 +53,11 @@ public class CoustomerServiceController extends BaseController {
 	 * @return "modules/crm/coustomerService"
 	 */
 	@RequestMapping(value = { "list", "" })
-	public String getByUser(ReturnedGoods returnedGoods, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String getByUser(ReturnedGoods returnedGoods, String franchiseeId, HttpServletRequest request, HttpServletResponse response, Model model) {
 		Page<ReturnedGoods> page = returnedGoodsService.findListByUser(new Page<ReturnedGoods>(request, response),returnedGoods);
 		model.addAttribute("page", page);
 		model.addAttribute("userId",returnedGoods.getUserId());
+		model.addAttribute("franchiseeId",franchiseeId);
 		return"modules/crm/coustomerService";
 	}
 }

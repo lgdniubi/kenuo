@@ -85,62 +85,67 @@
 				<sys:message content="${message}" />
 				<div class="clearfix">
 					<form id="inputForm" action="${ctx}/crm/goodsUsage/save" method="post" class="form-horizontal">
-						<input type="hidden" name="usageId"
-							value="${goodsUsage.usageId}" /> <input type="hidden"
-							name="userId" value="${userId}" />
+						<input type="hidden" name="usageId" value="${goodsUsage.usageId}" />
+						<input type="hidden" name="userId" value="${userId}" />
+						<input type="hidden" name="franchiseeId" value="${franchiseeId}" />
 						<table
 							class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 							<tbody>
 								<tr>
-									<td class="width-15 active"><label class="pull-right"><font
-											color="red">*</font>商品名称:</label></td>
-									<td class="width-15" colspan="3"><sys:treeselect
-											id="goodsId" name="goodsId" value="${goodsUsage.goodsId}"
-											labelName="goodsName" labelValue="${goodsUsage.goodsName}"
-											title="商品名称" url="/ec/goods/treeAllData"
-											cssClass="form-control required" allowClear="true"
-											notAllowSelectParent="true"/></td>
-									<td class="width-15 active"><label class="pull-right"><font
-											color="red">*</font>购买数量:</label></td>
-									<td class="width-15" colspan="3"><input name="usageNum" id="usageNum"
-										value="${goodsUsage.usageNum}" maxlength="50" onblur="NumberCheck(this)"
-										class="form-control required" /></td>
+									<td class="width-15 active">
+										<label class="pull-right"><font color="red">*</font>商品名称:</label>
+									</td>
+									<td class="width-15" colspan="3">
+										<sys:treeselect id="goodsId" name="goodsId" value="${goodsUsage.goodsId}" labelName="goodsName" labelValue="${goodsUsage.goodsName}"
+											title="商品名称" url="/ec/goods/treeAllData" cssClass="form-control required" allowClear="true" notAllowSelectParent="true"/>
+									</td>
+									<td class="width-15 active">
+										<label class="pull-right"><font color="red">*</font>购买数量:</label>
+									</td>
+									<td class="width-15" colspan="3">
+										<input name="usageNum" id="usageNum" value="${goodsUsage.usageNum}" maxlength="50" onblur="NumberCheck(this)" class="form-control required" />
+									</td>
 								</tr>
 								<tr>
-									<td class="width-15 active" ><label class="pull-right"><font
-											color="red">*</font>开始使用日期:</label></td>
-									<td class="width-20" colspan="3"><input id="begtime"
-										name="startDate" type="text" maxlength="50" 
-										class="laydate-icon form-control layer-date input-sm required"
-										value="<fmt:formatDate value="${goodsUsage.startDate}" pattern="yyyy-MM-dd"/>"
-										style="width: 185px;" placeholder="开始时间" /></td>
-									<td class="width-15 active" ><label class="pull-right"><font
-											color="red">*</font>结束使用日期:</label></td>
-									<td class="width-20" colspan="3"><input id="endtime"
-										name="endDate" type="text" maxlength="50" 
-										class="laydate-icon form-control layer-date input-sm required"
+									<td class="width-15 active" >
+										<label class="pull-right"><font color="red">*</font>开始使用日期:</label>
+									</td>
+									<td class="width-20" colspan="3">
+										<input id="begtime" name="startDate" type="text" maxlength="50"  class="laydate-icon form-control layer-date input-sm required"
+											value="<fmt:formatDate value="${goodsUsage.startDate}" pattern="yyyy-MM-dd"/>"
+											style="width: 185px;" placeholder="开始时间" />
+									</td>
+									<td class="width-15 active" >
+										<label class="pull-right"><font color="red">*</font>结束使用日期:</label>
+									</td>
+									<td class="width-20" colspan="3">
+										<input id="endtime" name="endDate" type="text" maxlength="50" class="laydate-icon form-control layer-date input-sm required"
 										value="<fmt:formatDate value="${goodsUsage.endDate}" pattern="yyyy-MM-dd"/>"
-										style="width: 185px;" placeholder="结束时间" /></td>
-								</tr>
-								<tr>
-									<td class="width-15 active"><label class="pull-right"><font
-											color="red"></font>使用效果:</label></td>
-									<td class="width-20" colspan="6"><textarea id="effection"
-											name="effection" rows="4" cols="60">${goodsUsage.effection}</textarea>
+										style="width: 185px;" placeholder="结束时间" />
 									</td>
 								</tr>
 								<tr>
-									<td class="width-15 active"><label class="pull-right"><font
-											color="red"></font>用户反馈:</label></td>
-									<td class="width-20" colspan="6"><textarea id="feedback"
-											name="feedback" rows="4" cols="60">${goodsUsage.feedback}</textarea>
+									<td class="width-15 active">
+										<label class="pull-right"><font color="red"></font>使用效果:</label>
+									</td>
+									<td class="width-20" colspan="6">
+										<textarea id="effection" name="effection" rows="4" cols="60">${goodsUsage.effection}</textarea>
 									</td>
 								</tr>
 								<tr>
-									<td class="width-15 active"><label class="pull-right"><font
-											color="red"></font>备注:</label></td>
-									<td class="width-20" colspan="6"><textarea id="remark"
-											name="remark" rows="4" cols="60">${goodsUsage.remark}</textarea>
+									<td class="width-15 active">
+										<label class="pull-right"><font color="red"></font>用户反馈:</label>
+									</td>
+									<td class="width-20" colspan="6">
+										<textarea id="feedback" name="feedback" rows="4" cols="60">${goodsUsage.feedback}</textarea>
+									</td>
+								</tr>
+								<tr>
+									<td class="width-15 active">
+										<label class="pull-right"><font color="red"></font>备注:</label>
+									</td>
+									<td class="width-20" colspan="6">
+										<textarea id="remark" name="remark" rows="4" cols="60">${goodsUsage.remark}</textarea>
 									</td>
 								</tr>
 							</tbody>

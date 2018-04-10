@@ -99,7 +99,7 @@ public class MtmySaleRelieveService extends CrudService<MtmySaleRelieveDao,MtmyS
 		return page;
 	}
 	/**
-	 *  A用户收益明细
+	 *  用户收益明细
 	 * @param page
 	 * @param mtmySaleRelieveLog
 	 * @return

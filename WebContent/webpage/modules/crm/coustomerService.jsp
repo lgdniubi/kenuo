@@ -91,31 +91,40 @@
 							</p>
 						</div>
 						<ul class="layui-tab-title">
-							<li role="presentation"><a
-								href="${ctx}/crm/user/userDetail?userId=${userId}">基本资料</a></li>
-							<li role="presentation"><a
-								href="${ctx}/crm/physical/skin?userId=${userId}">身体状况</a></li>
-							<li role="presentation"><a
-								href="${ctx}/crm/schedule/list?userId=${userId}">护理时间表</a></li>
-							<li role="presentation"><a
-								href="${ctx}/crm/orders/list?userId=${userId}">客户订单</a></li>
-							<li role="presentation" class="layui-this"><a
-								href="${ctx}/crm/coustomerService/list?userId=${userId}">售后</a></li>
-							<li role="presentation"><a
-								href="${ctx}/crm/consign/list?userId=${userId}">物品寄存</a></li>
-							<li role="presentation"><a
-								href="${ctx}/crm/goodsUsage/list?userId=${userId}">产品使用记录</a></li>
-							<li role="presentation"><a
-								href="${ctx}/crm/user/account?userId=${userId}">账户总览</a></li>
-							<li role="presentation"><a
-								href="${ctx}/crm/invitation/list?userId=${userId}">邀请明细</a></li>
-							<li role="presentation"><a
-								href="${ctx}/crm/returnRecord?userId=${userId}">回访记录</a></li>
 							<li role="presentation">
-							<shiro:hasPermission name="crm:store:list">	
-							<a onclick='top.openTab("${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1","会员投诉", false)'
-								>投诉咨询</a>
-							</shiro:hasPermission>
+								<a href="${ctx}/crm/user/userDetail?userId=${userId}&franchiseeId=${franchiseeId}">基本资料</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/physical/skin?userId=${userId}&franchiseeId=${franchiseeId}">身体状况</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/schedule/list?userId=${userId}&franchiseeId=${franchiseeId}">护理时间表</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/orders/list?userId=${userId}&franchiseeId=${franchiseeId}">客户订单</a>
+							</li>
+							<li role="presentation" class="layui-this">
+								<a href="${ctx}/crm/coustomerService/list?userId=${userId}&franchiseeId=${franchiseeId}">售后</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/consign/list?userId=${userId}&franchiseeId=${franchiseeId}">物品寄存</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/goodsUsage/list?userId=${userId}&franchiseeId=${franchiseeId}">产品使用记录</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/user/account?userId=${userId}&franchiseeId=${franchiseeId}">账户总览</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/invitation/list?userId=${userId}&franchiseeId=${franchiseeId}">邀请明细</a>
+							</li>
+							<%-- <li role="presentation">
+								<a href="${ctx}/crm/returnRecord?userId=${userId}&franchiseeId=${franchiseeId}">回访记录</a>
+							</li> --%>
+							<li role="presentation">
+								<shiro:hasPermission name="crm:store:list">	
+									<a href="${ctx}/crm/store/questionCrmList?mobile=${userDetail.mobile}&userId=${userId}&franchiseeId=${franchiseeId}&stamp=1">投诉咨询</a>
+								</shiro:hasPermission>
 							</li>
 						</ul>
 					</div>
@@ -124,37 +133,26 @@
 			<!-- 查询条件 -->
 			<div class="ibox-content">
 				<div class="clearfix">
-					<form:form id="searchForm" modelAttribute="returnedGoods"
-						action="${ctx}/crm/coustomerService/list" method="post" class="form-inline">
-						<input id="pageNo" name="pageNo" type="hidden"
-							value="${page.pageNo}" />
-						<input id="pageSize" name="pageSize" type="hidden"
-							value="${page.pageSize}" />
-						<input id="userId" name="userId" type="hidden"
-							value="${userDetail.userId}" />	
-						<table:sortColumn id="orderBy" name="orderBy"
-							value="${page.orderBy}" callback="sortOrRefresh();" />
+					<form:form id="searchForm" modelAttribute="returnedGoods" action="${ctx}/crm/coustomerService/list" method="post" class="form-inline">
+						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}" />
+						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
+						<input id="userId" name="userId" type="hidden" value="${userDetail.userId}" />	
+						<input id="franchiseeId" name="franchiseeId" type="hidden" value="${franchiseeId}" />
+						<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();" />
 						<!-- 支持排序 -->
 						<div class="form-group">
-							<label>创建时间：</label> <input id="begtime" name="begtime"
-								type="text" maxlength="20"
-								class="laydate-icon form-control layer-date input-sm"
-								value="<fmt:formatDate value="${returnedGoods.begtime}" pattern="yyyy-MM-dd"/>"
-								placeholder="开始时间" readonly="readonly" style="width: 185px;" />
-							— <input id="endtime" name="endtime" type="text" maxlength="20"
-								class=" laydate-icon form-control layer-date input-sm"
-								value="<fmt:formatDate value="${returnedGoods.endtime}" pattern="yyyy-MM-dd"/>"
-								placeholder="结束时间" readonly="readonly" style="width: 185px;" />
+							<label>创建时间：</label> 
+							<input id="begtime" name="begtime" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${returnedGoods.begtime}" pattern="yyyy-MM-dd"/>" placeholder="开始时间" readonly="readonly" style="width: 185px;" />
+							— 
+							<input id="endtime" name="endtime" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${returnedGoods.endtime}" pattern="yyyy-MM-dd"/>" placeholder="结束时间" readonly="readonly" style="width: 185px;" />
 							<label>入库状态：</label>
-							<form:select path="isStorage" class="form-control"
-								style="width:185px;">
+							<form:select path="isStorage" class="form-control" style="width:185px;">
 								<form:option value=" ">全部</form:option>
 								<form:option value="0">未入库</form:option>
 								<form:option value="1">已入库</form:option>
 							</form:select>
 							<label>退货状态：</label>
-							<form:select path="returnStatus" class="form-control"
-								style="width:185px;">
+							<form:select path="returnStatus" class="form-control" style="width:185px;">
 								<form:option value=" ">全部</form:option>
 								<form:option value="-10">拒绝退货</form:option>
 								<form:option value="11">申请退货</form:option>
@@ -171,8 +169,7 @@
 								<form:option value="25">换货中</form:option>
 								<form:option value="26">换货完成</form:option>
 							</form:select>
-							<form:input path="keyword" htmlEscape="false" style="width:275px" class=" form-control input-sm" 
-							placeholder="请输入订单号，用户名或者手机号"/>
+							<form:input path="keyword" htmlEscape="false" style="width:275px" class=" form-control input-sm" placeholder="请输入订单号或者退货订单号"/>
 							<p></p>
 						</div>
 					</form:form>
@@ -180,39 +177,14 @@
 					<div class="row">
 						<div class="col-sm-12">
 							<div class="pull-right">
-								<button class="btn btn-primary btn-rounded btn-outline btn-sm "
-									onclick="search()">
-									<i class="fa fa-search"></i> 查询
-								</button>
-								<button class="btn btn-primary btn-rounded btn-outline btn-sm "
-									onclick="reset()">
-									<i class="fa fa-refresh"></i> 重置
-								</button>
+								<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()"><i class="fa fa-search"></i> 查询</button>
+								<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()"><i class="fa fa-refresh"></i> 重置 </button>
 							</div>
 						</div>
 					</div>
 					<p></p>
 				</div>
-					<div>
-					<!-- 工具栏 -->
-<!-- 					<div class="row"> -->
-<!-- 						<div class="col-sm-12"> -->
-<!-- 							<div class="pull-left"> -->
-<%-- <%-- 								<shiro:hasPermission name="crm:returnedGoods:export"> --%> 
-<!-- 								导出按钮 -->
-<%-- 								<form id="exportForm" action ="${ctx}/crm/coustomerService/export" method="post"> --%>
-<%-- 								  <input type="hidden" name="userId" value="${userDetail.userId}">	 --%>
-<!-- 									<button id ="btnExport" class="btn btn-danger btn-xs">导出</button> -->
-<%-- <%-- 								</shiro:hasPermission> --%>
-<!-- 								</form> -->
-<!-- 							</div> -->
-<!-- 						</div> -->
-<!-- 					</div> -->
-<!-- 					工具栏 -->
-				</div>
-				<table id="contentTable"
-					class="table table-striped table-bordered  table-hover table-condensed  
-					dataTables-example dataTable no-footer">
+				<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed dataTables-example dataTable no-footer">
 					<thead>
 						<tr>
 							<th style="text-align: center;">退货单号</th>
@@ -233,63 +205,76 @@
 							<tr>
 								<td style="text-align: center;">${returnGoods.id}</td>
 								<td style="text-align: center;">${returnGoods.userName}</td>
-								<td style="text-align: center;"><c:if
-										test="${returnGoods.returnStatus==-10}">
+								<td style="text-align: center;">
+									<c:if test="${returnGoods.returnStatus==-10}">
 										拒绝退货
-									</c:if> <c:if test="${returnGoods.returnStatus==-20}">
+									</c:if>
+									<c:if test="${returnGoods.returnStatus==-20}">
 										拒绝换货
-									</c:if> <c:if test="${returnGoods.returnStatus==11}">
+									</c:if>
+									<c:if test="${returnGoods.returnStatus==11}">
 										申请退货
-									</c:if> <c:if test="${returnGoods.returnStatus==12}">
+									</c:if>
+									<c:if test="${returnGoods.returnStatus==12}">
 										同意退货
-									</c:if> <c:if test="${returnGoods.returnStatus==13}">
+									</c:if>
+									<c:if test="${returnGoods.returnStatus==13}">
 										退货中
-									</c:if> <c:if test="${returnGoods.returnStatus==14}">
+									</c:if>
+									<c:if test="${returnGoods.returnStatus==14}">
 										退货完成
-									</c:if> <c:if test="${returnGoods.returnStatus==15}">
+									</c:if>
+									<c:if test="${returnGoods.returnStatus==15}">
 										退款中
-									</c:if> <c:if test="${returnGoods.returnStatus==16}">
+									</c:if>
+									<c:if test="${returnGoods.returnStatus==16}">
 										已退款
-									</c:if> <c:if test="${returnGoods.returnStatus==21}">
+									</c:if>
+									<c:if test="${returnGoods.returnStatus==21}">
 										申请换货
-									</c:if> <c:if test="${returnGoods.returnStatus==22}">
+									</c:if>
+									<c:if test="${returnGoods.returnStatus==22}">
 										同意换货
-									</c:if> <c:if test="${returnGoods.returnStatus==23}">
+									</c:if>
+									<c:if test="${returnGoods.returnStatus==23}">
 										换货退货中
-									</c:if> <c:if test="${returnGoods.returnStatus==24}">
+									</c:if>
+									<c:if test="${returnGoods.returnStatus==24}">
 										换货退货完成
-									</c:if> <c:if test="${returnGoods.returnStatus==25}">
+									</c:if>
+									<c:if test="${returnGoods.returnStatus==25}">
 										换货中
-									</c:if> <c:if test="${returnGoods.returnStatus==26}">
+									</c:if>
+									<c:if test="${returnGoods.returnStatus==26}">
 										换货完成
-									</c:if></td>
-								<td style="text-align: center;">${returnGoods.orderAmount}</td>
-								<td style="text-align: center;"><c:if
-										test="${returnGoods.applyType==0}">
-										退货并退款
-									</c:if> <c:if test="${returnGoods.applyType==1}">
-										仅换货
-									</c:if></td>
-								<td style="text-align: center;"><fmt:formatDate
-										value="${returnGoods.applyDate}" pattern="yyyy-MM-dd HH:mm:ss" />
+									</c:if>
 								</td>
+								<td style="text-align: center;">${returnGoods.orderAmount}</td>
+								<td style="text-align: center;">
+									<c:if test="${returnGoods.applyType==0}">
+										退货并退款
+									</c:if>
+									<c:if test="${returnGoods.applyType==1}">
+										仅换货
+									</c:if>
+								</td>
+								<td style="text-align: center;"><fmt:formatDate value="${returnGoods.applyDate}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
 								<td style="text-align: center;">${returnGoods.returnReason}</td>
-								<td style="text-align: center;"><c:if
-										test="${returnGoods.isStorage==0}">
+								<td style="text-align: center;">
+									<c:if test="${returnGoods.isStorage==0}">
 										未入库
-									</c:if> <c:if test="${returnGoods.isStorage==1}">
+									</c:if>
+									<c:if test="${returnGoods.isStorage==1}">
 										已入库
-									</c:if></td>
+									</c:if>
+								</td>
 								<td style="text-align: center;">${returnGoods.returnAmount}</td>
 								<td style="text-align: center;">${returnGoods.remarks}</td>
 								<td style="text-align: center;">
-									<!-- 查看详情 --> <shiro:hasPermission name="ec:returned:view">
-										<a href="#"
-											onclick="openDialogView('售后详情', '${ctx}/ec/returned/returnform?id=${returnGoods.id}','850px','650px')"
-											class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>
-											查看详情</a>
-									</shiro:hasPermission> <!-- 审核 --> 
-
+									<!-- 查看详情 --> 
+									<shiro:hasPermission name="ec:returned:view">
+										<a href="#" onclick="openDialogView('售后详情', '${ctx}/ec/returned/returnform?id=${returnGoods.id}','850px','650px')" class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>查看详情</a>
+									</shiro:hasPermission> 
 								</td>
 							</tr>
 						</c:forEach>

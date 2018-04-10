@@ -49,5 +49,12 @@ public interface AdviceDao extends CrudDao<Complain>{
 
 	public List<Complain> selectSeek(Complain complain);
 
+	/**
+	 * 获取带权限的数据
+	 * @param complain
+	 * @return
+	 */
+	public List<Complain> newfindPage(Complain complain);
+
 
 }
