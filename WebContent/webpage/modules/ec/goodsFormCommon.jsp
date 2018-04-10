@@ -191,6 +191,12 @@
 										<input type="radio" id="goodsIsOpen" name="goodsIsOpen" value="1" ${(goods.goodsIsOpen == '1')?'checked="checked"':''}>否：非公开
 									</li>
 									<li class="form-group">
+										<span class="control-label col-sm-2"><font color="red">*</font>是否可在后台下单：</span>
+										<input type="radio" id="isBmCreate" name="isBmCreate" value="0" ${(goods.isBmCreate == '0' || goods.isBmCreate == null)?'checked="checked"':''}>否
+										<input type="radio" id="isBmCreate" name="isBmCreate" value="1" ${(goods.isBmCreate == '1')?'checked="checked"':''}>是
+										<span class="control-label cannotEdit">(用于标示后台是否可以创建订单)</span>
+									</li>
+									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>活动类型：</span>
 										<select class="form-control" id="actionType" name="actionType">
 					                        <option ${(goods.actionType == 0)?'selected="selected"':''} value="0">普通商品</option>

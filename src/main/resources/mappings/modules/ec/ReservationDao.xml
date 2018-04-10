@@ -357,5 +357,29 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+	<!-- 同一美容师同一时间段内只能有一条已完成的预约记录 -->
+	<select id="verifyApptDate" resultType="java.lang.Integer">
+		SELECT
+			COUNT(1)
+		FROM
+			mtmydb.mtmy_appt_order
+		WHERE
+			beautician_id = #{beauticianId}
+		AND DATE_FORMAT(appt_date,'%Y-%m-%d') = DATE_FORMAT(#{apptDate},'%Y-%m-%d')
+		AND appt_status IN (0,1,2)
+		AND 
+		(
+			(
+				DATE_FORMAT(CONCAT(appt_date,' ',appt_start_time),'%H:%i') <![CDATA[ < ]]> DATE_FORMAT(CONCAT(DATE_FORMAT(#{apptDate},'%Y-%m-%d'),' ',#{apptStartTime}),'%H:%i')
+				AND DATE_FORMAT(CONCAT(DATE_FORMAT(#{apptDate},'%Y-%m-%d'),' ',#{apptStartTime}),'%H:%i') <![CDATA[ < ]]> DATE_FORMAT(CONCAT(appt_date,' ',appt_end_time),'%H:%i')
+			) OR (
+				DATE_FORMAT(CONCAT(DATE_FORMAT(#{apptDate},'%Y-%m-%d'),' ',#{apptStartTime}),'%H:%i') <![CDATA[ <= ]]> DATE_FORMAT(CONCAT(appt_date,' ',appt_start_time),'%H:%i') 
+				AND DATE_FORMAT(CONCAT(appt_date,' ',appt_end_time),'%H:%i') <![CDATA[ <= ]]> DATE_FORMAT(CONCAT(DATE_FORMAT(#{apptDate},'%Y-%m-%d'),' ',#{apptEndTime}),'%H:%i') 
+			) OR (
+				DATE_FORMAT(CONCAT(appt_date,' ',appt_start_time),'%H:%i') <![CDATA[ < ]]> DATE_FORMAT(CONCAT(DATE_FORMAT(#{apptDate},'%Y-%m-%d'),' ',#{apptEndTime}),'%H:%i') 
+				AND DATE_FORMAT(CONCAT(DATE_FORMAT(#{apptDate},'%Y-%m-%d'),' ',#{apptEndTime}),'%H:%i') <![CDATA[ < ]]> DATE_FORMAT(CONCAT(appt_date,' ',appt_end_time),'%H:%i')
+			)
+		)
+		AND id != #{reservationId}
+	</select>
 </mapper>

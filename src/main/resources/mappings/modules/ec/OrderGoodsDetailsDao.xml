@@ -210,6 +210,14 @@
 				) AS num
 	</select>
 	
+	<!-- 查看预约已完成、已服务、爽约的订单 -->
+	<select id="findCompleteApptStatus" resultType="Integer">
+		SELECT ( CASE WHEN 
+					(SELECT COUNT(1) FROM mtmydb.mtmy_appt_order WHERE id IN (SELECT appt_id FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '0' AND service_times = -1 AND appt_status IN (1,2,4))) > 0
+					 THEN 1 ELSE 0 END
+				) AS num
+	</select>
+	
 	<!-- 根据mapping_id获取其订单余款 -->
 	<select id="selectOrderBalance" resultType="OrderGoodsDetails">
 		SELECT 

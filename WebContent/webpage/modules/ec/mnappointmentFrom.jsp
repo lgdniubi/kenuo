@@ -9,18 +9,43 @@
     <link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
     <script type="text/javascript">
     function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-    	if(validateForm.form()){
-    		if($("#apptStatus").val() == 0){
-    			top.layer.alert('预约状态不可修改为等待服务', {icon: 0, title:'提醒'});
-	    		return false;
-    		}else{
+    	var verifyForm = "true";
+
+		if($("#apptStatus").val() == 0){	// 未修改预约状态时,
+			top.layer.alert('预约状态不可修改为等待服务', {icon: 0, title:'提醒'});
+    		return false;
+		}
+		if($("#apptStatus").val() == 1){	// 当预约状态修改为已完成时需校验美容师当前时间在当前店铺是否存在预约
+			/* 日期控件做了禁选操作,由于用户可以不修改预约日期直接提交数据,在提交前需人为校验 */
+			var date = new Date().getTime() - new Date(Date.parse($("#apptDate").val())).getTime();   //时间差的毫秒数  当前时间-预约日期
+			var day=Math.floor(date/(24*3600*1000));//计算出相差天数
+	      	if(day < 0 || day > 7){
+	      		verifyForm = "false";
+	      		top.layer.alert('预约时间必须为七天内', {icon: 0, title:'提醒'});
+	      	}
+	      	if(verifyForm == "true"){
+				$.ajax({
+					type : "POST",   
+					url : "${ctx}/ec/mtmyMnappointment/verifyApptDate",
+					data: $('#inputForm').serialize(), 
+					async:false,
+					success: function(data) {
+						if("ERROR" == data.FLAG){
+							verifyForm = "false";
+							top.layer.alert(data.MESSAGE, {icon: 0, title:'提醒'}); 
+						}
+					}
+				}); 
+			}
+		}
+		if(verifyForm == "true"){
+			if(validateForm.form()){
     			loading("正在提交，请稍候...");
         		$("#inputForm").submit();
-    	    	return true; 
-    		}
-    	}
-    
-    	return false;
+    	    	return true;
+	    	}
+		}
+		return false;
     } 
    	$(document).ready(function(){
    		changeStatus($("#oldStatus").val());
@@ -89,10 +114,11 @@
 	    	<div class="ibox-content">
 				<form:form id="inputForm" modelAttribute="reservation" action="${ctx }/ec/mtmyMnappointment/updateMnappointment">
 					<input type="hidden" value="${reservation.reservationId }" id="reservationId" name="reservationId"><!-- 预约id -->
-					<input type="hidden" value="${reservation.apptStatus}" id="oldStatus" name="oldStatus">
-					<input type="hidden" value="<fmt:formatDate value="${reservation.apptDate}" pattern="yyyy-MM-dd"/>" id="oldApptDate" name="oldApptDate">
-					<input type="hidden" value="${reservation.beauticianId}" id=beauticianId name=beauticianId>
-					<input type="hidden" value="${reservation.shopId}" id="shopId" name="shopId">  
+					<input type="hidden" value="${reservation.apptStatus}" id="oldStatus" name="oldStatus"><!-- 修改前预约状态 -->
+					<input type="hidden" value="<fmt:formatDate value="${reservation.apptDate}" pattern="yyyy-MM-dd"/>" id="oldApptDate" name="oldApptDate"><!-- 修改前预约时间 -->
+					<input type="hidden" value="${reservation.beauticianId}" id=beauticianId name=beauticianId><!-- 预约美容师id -->
+					<input type="hidden" value="${reservation.shopId}" id="shopId" name="shopId"><!-- 预约店铺id -->
+					<input type="hidden" value="${reservation.userId}" id="userId" name="userId"><!-- 预约用户id -->
 					<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 						<tr>
 							<td width="100px"><label class="pull-right">店铺：</label></td>
@@ -141,7 +167,7 @@
 							<td><label class="pull-right"><font color="red">*</font>预约日期：</label></td>
 							<td>
 								<input id="apptDate" name="apptDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text"
-									value="<fmt:formatDate value="${reservation.apptDate}" pattern="yyyy-MM-dd"/>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" readonly="readonly"/>
+									value="<fmt:formatDate value="${reservation.apptDate}" pattern="yyyy-MM-dd"/>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'%y-%M-{%d-7}',maxDate:'%y-%M-%d'})" readonly="readonly"/>
 							</td>
 						</tr>
 						<tr id="isNo2">

@@ -178,7 +178,8 @@
 			s.skill_id AS skillId,
 			e.label_id AS labelId,
 			IF((DATE_FORMAT(DATE_ADD(a.reality_add_time, interval a.expiring_date MONTH),'%Y-%m-%d')) >= DATE_FORMAT(SYSDATE(),'%Y-%m-%d'),0,1) AS isExpiring,
-			g.franchisee_id AS franchiseeId
+			g.franchisee_id AS franchiseeId,
+			g.is_open AS isOpean
 		FROM 
 			mtmydb.mtmy_order_goods_mapping a
 			LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id

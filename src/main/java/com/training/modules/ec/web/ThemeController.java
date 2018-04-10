@@ -345,21 +345,24 @@ public class ThemeController extends BaseController{
 			JSONObject jsonObject = new JSONObject();
 			String mtmyMediaArticleCategoryList =	ParametersFactory.getMtmyParamValues("mtmy_queryMediaArticleCategoryList");	
 			logger.info("##### web接口路径:"+mtmyMediaArticleCategoryList);	
-			String parpm = "{\"sourcePlatform\":\"mtmy\"}";
-			String url=mtmyMediaArticleCategoryList;
-			String result = WebUtils.postMediaObject(parpm, url);
-			jsonObject = JSONObject.fromObject(result);
-			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
-			if("200".equals(jsonObject.get("code"))){
-				JSONArray jsonArray = jsonObject.getJSONArray("data");
-				List<Map> list = (List<Map>)JSONArray.toCollection(jsonArray,Map.class);
-				for(int i=0; i<list.size(); i++){
-					Map<String, Object> map = Maps.newHashMap();
-					map.put("id", list.get(i).get("articleCateId"));
-					map.put("name", list.get(i).get("articleCateName"));
-					mapList.add(map);
-		 		}
+			if(!"-1".equals(mtmyMediaArticleCategoryList)){
+				String parpm = "{\"sourcePlatform\":\"mtmy\"}";
+				String url=mtmyMediaArticleCategoryList;
+				String result = WebUtils.postMediaObject(parpm, url);
+				jsonObject = JSONObject.fromObject(result);
+				logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+				if("200".equals(jsonObject.get("code"))){
+					JSONArray jsonArray = jsonObject.getJSONArray("data");
+					List<Map> list = (List<Map>)JSONArray.toCollection(jsonArray,Map.class);
+					for(int i=0; i<list.size(); i++){
+						Map<String, Object> map = Maps.newHashMap();
+						map.put("id", list.get(i).get("articleCateId"));
+						map.put("name", list.get(i).get("articleCateName"));
+						mapList.add(map);
+					}
+				}
 			}
+			
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "调用接口:获得每天美耶文章分类", e);
 			logger.error("调用接口:获得每天美耶文章分类错误信息:"+e.getMessage());
@@ -382,35 +385,37 @@ public class ThemeController extends BaseController{
 			String queryMediaArticleDetailList = ParametersFactory.getMtmyParamValues("mtmy_queryMediaArticleDetailList");	
 			logger.info("##### web接口路径:"+queryMediaArticleDetailList);	
 			
-			String isPublic = "";
-			String franchiseeId = "";
-			if(!"".equals(isOpen) && isOpen != null){
-				if("0,".equals(isOpen)){                //若活动或者主题是公开的，则商品就是公开的
-					isPublic = "0";
-				}else{
-					String[] franchiseeIds = isOpen.split(",");
-					if(franchiseeIds.length == 1){      //若不是公开的且只有一个商家
-						franchiseeId = franchiseeIds[0];
-					}else if(franchiseeIds.length >= 2){  //若不是公开的且多个商家
+			if(!"-1".equals(queryMediaArticleDetailList)){
+				String isPublic = "";
+				String franchiseeId = "";
+				if(!"".equals(isOpen) && isOpen != null){
+					if("0,".equals(isOpen)){                //若活动或者主题是公开的，则商品就是公开的
 						isPublic = "0";
+					}else{
+						String[] franchiseeIds = isOpen.split(",");
+						if(franchiseeIds.length == 1){      //若不是公开的且只有一个商家
+							franchiseeId = franchiseeIds[0];
+						}else if(franchiseeIds.length >= 2){  //若不是公开的且多个商家
+							isPublic = "0";
+						}
 					}
 				}
-			}
-			
-			String parpm = "{\"sourcePlatform\":\"mtmy\",\"articleCateId\":\""+categoryId+"\",\"articleTitle\":\""+title+"\",\"isPublic\":\""+isPublic+"\",\"franchiseeId\":\""+franchiseeId+"\"}";
-			String url=queryMediaArticleDetailList;
-			String result = WebUtils.postMediaObject(parpm, url);
-			jsonObject = JSONObject.fromObject(result);
-			logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
-			if("200".equals(jsonObject.get("code"))){
-				JSONArray jsonArray = jsonObject.getJSONArray("data");
-				List<Map> list = (List<Map>)JSONArray.toCollection(jsonArray,Map.class);
-				for(int i=0; i<list.size(); i++){
-					Map<String, Object> map = Maps.newHashMap();
-					map.put("id", list.get(i).get("articleId"));
-					map.put("name", list.get(i).get("articleTitle"));
-					mapList.add(map);
-		 		}
+				
+				String parpm = "{\"sourcePlatform\":\"mtmy\",\"articleCateId\":\""+categoryId+"\",\"articleTitle\":\""+title+"\",\"isPublic\":\""+isPublic+"\",\"franchiseeId\":\""+franchiseeId+"\"}";
+				String url=queryMediaArticleDetailList;
+				String result = WebUtils.postMediaObject(parpm, url);
+				jsonObject = JSONObject.fromObject(result);
+				logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+				if("200".equals(jsonObject.get("code"))){
+					JSONArray jsonArray = jsonObject.getJSONArray("data");
+					List<Map> list = (List<Map>)JSONArray.toCollection(jsonArray,Map.class);
+					for(int i=0; i<list.size(); i++){
+						Map<String, Object> map = Maps.newHashMap();
+						map.put("id", list.get(i).get("articleId"));
+						map.put("name", list.get(i).get("articleTitle"));
+						mapList.add(map);
+					}
+				}
 			}
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "调用接口:获得发现的文章", e);

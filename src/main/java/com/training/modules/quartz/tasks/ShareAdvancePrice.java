@@ -23,7 +23,6 @@ import com.training.modules.quartz.entity.TaskLog;
 import com.training.modules.quartz.tasks.utils.CommonService;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.QuartzStartConfigUtils;
-import com.training.modules.sys.utils.UserUtils;
 
 /**
  * 有预约金的商品，预约完成时按次数给店铺打预约金和补偿金
