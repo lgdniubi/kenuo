@@ -38,6 +38,7 @@
 		  g.is_new AS 'isNew',
 		  g.is_hot AS 'isHot',
 		  g.is_appshow AS 'isAppshow',
+		  g.is_bm_create AS 'isBmCreate',
 		  g.attr_type AS 'attrType',
 		  g.spec_type AS 'specType',
 		  g.give_integral AS 'giveIntegral',
@@ -50,7 +51,8 @@
 		  g.service_min AS 'serviceMin',
 		  g.goods_type AS 'goodsType',
 		  g.advance_price AS 'advancePrice',
-		  g.supplier_id AS 'supplierId'
+		  g.supplier_id AS 'supplierId',
+		  g.is_open AS 'goodsIsOpen'
 	</sql>
 	
 	<sql id="goodsJoins">
@@ -76,7 +78,8 @@
 		  g.is_real AS 'isReal',
 		  g.sort,
 		  g.action_id as "actionId",
-		  b.action_name as "actionName"
+		  b.action_name as "actionName",
+		  g.is_open as "goodsIsOpen"
 		FROM
 		  mtmydb.mtmy_goods g 
 		  LEFT JOIN mtmydb.mtmy_goods_category c 
@@ -127,6 +130,9 @@
 						</otherwise>
 					</choose>
 				</if>
+			</if>
+			<if test="isBmCreate != null and isBmCreate != '' ">
+				AND g.is_bm_create = #{isBmCreate}
 			</if>
 			AND g.del_flag = 0 
 			ORDER BY g.sort DESC 
@@ -179,8 +185,19 @@
 		<if test="actionId !=null and actionId !=''">
 			AND g.action_id=0
 		</if>
-		<if test="franchiseeId !=null and franchiseeId !=''">
+		<if test="(franchiseeId !=null and franchiseeId !='') and (isBmCreate == null or isBmCreate == '') ">
 			AND g.franchisee_id=#{franchiseeId}
+		</if>
+		<if test="isBmCreate != null and isBmCreate != ''">
+			<choose>
+				<when test="franchiseeId !=null and franchiseeId !=''">
+					AND (g.franchisee_id = #{franchiseeId} OR g.is_open = 0)
+					AND g.is_bm_create = #{isBmCreate}
+				</when>
+				<otherwise>
+					AND g.is_bm_create = #{isBmCreate}
+				</otherwise>
+			</choose>
 		</if>
 		<if test="goodsBrandId !=null and goodsBrandId !=''">
 			AND g.goodsbrand_id=#{goodsBrandId}
@@ -209,6 +226,9 @@
 		<if test="goodsId != 0">
 			AND g.goods_id = #{goodsId}
 		</if>
+		<if test="openFlag != null and openFlag != ''">
+			AND g.is_open = #{openFlag}
+		</if>
 	</select>
 	<!-- 根据多个分类查询上商品 -->
 	<select id="findByCateList" resultType="Goods">
@@ -227,7 +247,8 @@
 			g.goods_name AS 'goodsName',
 			g.original_img AS 'originalImg',
 			g.service_min AS 'serviceMin',
-			g.is_real AS 'isReal'
+			g.is_real AS 'isReal',
+			g.is_open AS 'goodsIsOpen'
 		FROM
 			mtmydb.mtmy_goods g
 		WHERE g.del_flag = 0  AND g.goods_id = #{goodsId}
@@ -265,7 +286,8 @@
 		  g.sales_sum AS 'salesSum',
 		  g.region_name AS 'regionName',
 		  g.region_id AS 'regionId',
-		  g.service_min AS 'serviceMin'
+		  g.service_min AS 'serviceMin',
+		  g.is_open AS 'goodsIsOpen'
 		FROM
 		  mtmydb.mtmy_goods g
 		 
@@ -305,6 +327,7 @@
 		  is_new,
 		  is_hot,
 		  is_appshow, 
+		  is_bm_create,
 		  attr_type,
 		  spec_type,
 		  give_integral,
@@ -319,7 +342,8 @@
 		  last_update,
 		  goods_type,
 		  advance_price,
-		  supplier_id
+		  supplier_id,
+		  is_open
 		) 
 		VALUES
 		  ( #{goodsCategoryId},
@@ -351,6 +375,7 @@
 		    #{isNew},
 		    #{isHot},
 		    #{isAppshow},
+		    #{isBmCreate},
 		    #{attrType},
 		    #{specType},
 		    #{giveIntegral},
@@ -365,7 +390,8 @@
 		    SYSDATE(),
 		    #{goodsType},
 		    #{advancePrice},
-		    #{supplierId}
+		    #{supplierId},
+		    #{goodsIsOpen}
 		  )
 	</insert>
 	
@@ -402,6 +428,7 @@
 			  is_new = #{isNew},
 			  is_hot = #{isHot},
 			  is_appshow = #{isAppshow},
+			  is_bm_create = #{isBmCreate},
 			  attr_type = #{attrType},
 			  spec_type = #{specType},
 			  give_integral = #{giveIntegral},
@@ -414,7 +441,8 @@
 			  last_update = SYSDATE(),
 			  goods_type = #{goodsType},
 		      advance_price = #{advancePrice},
-			  supplier_id = #{supplierId}
+			  supplier_id = #{supplierId},
+			  is_open = #{goodsIsOpen}
 			WHERE del_flag = 0 AND goods_id = #{goodsId}
 	</update>
 	<update id="updateTotalstore">

@@ -54,10 +54,12 @@ import com.training.modules.ec.service.GoodsSpecService;
 import com.training.modules.ec.service.GoodsTypeService;
 import com.training.modules.ec.service.OrderGoodsService;
 import com.training.modules.ec.utils.GoodsUtil;
+import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.quartz.tasks.utils.RedisConfig;
 import com.training.modules.quartz.utils.RedisLock;
 import com.training.modules.sys.utils.BugLogUtils;
+import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
 
 import net.sf.json.JSONObject;
@@ -965,6 +967,20 @@ public class GoodsController extends BaseController{
 		if(null != id && !"".equals(id)){
 			goods.setGoodsId(Integer.parseInt(id));
 			goodsService.delete(goods);
+			
+			//自媒体每天美耶商品信息同步
+			JSONObject jsonObject = new JSONObject();
+			String updateMtmyGoodInfo = ParametersFactory.getMtmyParamValues("mtmy_updateMtmyGoodInfo");	
+			logger.info("##### web接口路径:"+updateMtmyGoodInfo);	  
+			
+			if(!"-1".equals(updateMtmyGoodInfo)){
+				String parpm = "{\"goodsId\":\""+goods.getGoodsId()+"\",\"delFlag\":\"2\"}";
+				String url=updateMtmyGoodInfo;
+				String result = WebUtils.postMediaObject(parpm, url);
+				jsonObject = JSONObject.fromObject(result);
+				logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+			}
+			
 			addMessage(redirectAttributes, "删除商品信息成功");
 		}else{
 			addMessage(redirectAttributes, "删除失败，必要参数为空，请与系统管理员联系");
@@ -1398,9 +1414,11 @@ public class GoodsController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "treeGoodsData")
-	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String goodsId,String isReal,String isOnSale,String isAppshow,String type,HttpServletResponse response) {
+	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String goodsId,String isReal,String isOnSale,String isAppshow,String type,String isOpen,HttpServletResponse response) {
 		// 注： type属于临时方案，目前仅用于下单时查询商品  type=1表示下单时下单需区分用户商家
+		String isBmCreate = "";
 		if(type != null && !"".equals(type)){
+			isBmCreate = "1";
 			String companyId = UserUtils.getUser().getCompany().getId();
 			if(!"1".equals(companyId)){
 				franchiseeId = companyId;
@@ -1418,9 +1436,23 @@ public class GoodsController extends BaseController{
 		goods.setIsReal(isReal);
 		goods.setIsOnSale(isOnSale);
 		goods.setIsAppshow(isAppshow);
+		goods.setIsBmCreate(isBmCreate);
 		goods.setGoodsId(Integer.valueOf(goodsId));
 		if(actionId!=null){
 			goods.setActionId(Integer.parseInt(actionId));
+		}
+		
+		if(!"".equals(isOpen) && isOpen != null){
+			if("0,".equals(isOpen)){                //若活动或者主题是公开的，则商品就是公开的
+				goods.setOpenFlag("0");
+			}else{
+				String[] franchiseeIds = isOpen.split(",");
+				if(franchiseeIds.length == 1){      //若活动或者主题不是公开的且只有一个商家
+					goods.setFranchiseeId(franchiseeIds[0]);
+				}else if(franchiseeIds.length >= 2){  //若活动或者主题不是公开的且多个商家
+					goods.setOpenFlag("0");
+				}
+			}
 		}
 		
 		List<Goods> list = goodsService.list(goods);

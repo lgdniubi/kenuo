@@ -22,6 +22,30 @@
 		  }
 		  return false;
 		}
+		//公共商品服务标识
+		function changeType(id,isyesno){
+			$(".loading").show();//打开展示层
+			$.ajax({
+				type : "POST",
+				url : "${ctx}/sys/franchisee/changeType?id="+id+"&publicServiceFlag="+isyesno,
+				dataType: 'json',
+				success: function(data) {
+					$(".loading").hide(); //关闭加载层
+					var flag = data.FLAG;
+					if("OK" == flag){
+						$("#isShow").html("");//清除DIV内容	
+						if(isyesno == '0'){
+							//当前状态为【不做】，改为做
+							$("#isShow").append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeType('"+id+"','1')\">&nbsp;&nbsp;做");
+						}else if(isyesno == '1'){
+							//当前状态为【做】，改为不做
+							$("#isShow").append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeType('"+id+"','0')\">&nbsp;&nbsp;不做");
+						}
+					}
+					top.layer.alert(data.MESSAGE, {icon: 0, title:'提醒'}); 
+				}
+			}); 
+		}
 		$(document).ready(function() {
 			//税务登记上传
 			$("#file_taxationUrl_upload").uploadify({
@@ -232,6 +256,17 @@
 				<tr>
 					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡号:</label></td>
 					<td class="width-35"><form:input path="bankCode" htmlEscape="false" maxlength="50" cssClass="form-control digits required" /></td>
+					<td class="width-15 active"><label class="pull-right">公共商品服务标识:</label></td>
+					<td class="width-35" id="isShow">
+		         		<c:if test="${franchisee.publicServiceFlag == 0}">
+							<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeType('${franchisee.id}',1)">&nbsp;&nbsp;做
+						</c:if>
+						<c:if test="${franchisee.publicServiceFlag == 1}">
+							<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeType('${franchisee.id}',0)">&nbsp;&nbsp;不做
+						</c:if>
+					</td>
+				</tr>
+				<tr>
 					<td class="width-15 active"><label class="pull-right">备注:</label></td>
 					<td class="width-35"><form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" class="form-control" /></td>
 				</tr>

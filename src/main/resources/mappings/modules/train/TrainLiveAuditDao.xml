@@ -30,6 +30,7 @@
 		r.roomId as "roomId",
 		a.earnings_ratio as "earningsRatio",
 		a.is_open as isOpen,
+		a.is_open_role AS isOpenRole,
 		a.is_recommend as isRecommend,
 		a.del_flag
 
@@ -90,6 +91,12 @@
 		<if test="position != null and position != ''">
 			AND c.label = #{position}
 		</if>
+		<if test="isOpen != null and isOpen != ''">
+			AND a.is_open = #{isOpen}
+		</if>
+		<if test="isRecommend != null and isRecommend != ''">
+			AND a.is_recommend = #{isRecommend}
+		</if>
 		<if test="sqlMap.dsf != null and sqlMap.dsf != ''">
 			AND a.company_id ${sqlMap.dsf}
 		</if>
@@ -106,6 +113,7 @@
 			live_remarks=#{liveRemarks},
 			earnings_ratio = #{earningsRatio},
 			is_open = #{isOpen},
+			is_open_role = #{isOpenRole},
 			audit_user=#{auditUser}
 		WHERE id=#{id}
 	</update>
@@ -397,5 +405,15 @@
 	<!-- 修改直播分类 -->
 	<update id="transferCategory">
 		UPDATE trains.train_live_audit SET category_id = #{categoryId} WHERE id = #{auditId}
+	</update>
+	
+	<!-- 直播列表修改每天美耶权限 -->
+	<update id="saveFormMtmy">
+		UPDATE trains.train_live_audit 
+		SET
+			is_open = #{isOpen},
+			is_open_role = #{isOpenRole},
+			is_recommend = #{isRecommend}
+		WHERE id=#{id}
 	</update>
 </mapper>

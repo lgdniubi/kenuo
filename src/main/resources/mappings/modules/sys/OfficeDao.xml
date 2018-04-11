@@ -13,6 +13,7 @@
 		a.sort,
 		a.type,
 		a.grade,
+		a.level,
 		a.address, 
 		a.zip_code, 
 		a.master, 
@@ -227,6 +228,7 @@
 			sort, 
 			type, 
 			grade, 
+			`level`,
 			address, 
 			zip_code, 
 			master, 
@@ -256,6 +258,7 @@
 			#{sort}, 
 			#{type}, 
 			#{grade}, 
+			2,
 			#{address}, 
 			#{zipCode}, 
 			#{master}, 
@@ -303,12 +306,14 @@
 			sort, 
 			type, 
 			grade, 
+			level,
 			address, 
 			zip_code, 
 			master, 
 			phone, 
 			fax, 
 			email, 
+			is_new, 
 			create_by, 
 			create_date, 
 			update_by, 
@@ -337,12 +342,14 @@
 			#{sort}, 
 			#{type}, 
 			#{grade}, 
+			(LENGTH( #{parentIds})-LENGTH(REPLACE( #{parentIds},',',''))),
 			#{address}, 
 			#{zipCode}, 
 			#{master}, 
 			#{phone}, 
 			#{fax}, 
 			#{email}, 
+			#{isNew}, 
 			#{createBy.id}, 
 			#{createDate}, 
 			#{updateBy.id}, 
@@ -373,6 +380,7 @@
 			name = #{name}, 
 			type = #{type}, 
 			grade = #{grade}, 
+			level = (LENGTH( #{parentIds})-LENGTH(REPLACE( #{parentIds},',',''))),
 			address = #{address}, 
 			zip_code = #{zipCode}, 
 			master = #{master}, 
@@ -393,6 +401,7 @@
 	
 	<update id="updateParentIds">
 		UPDATE sys_office SET 
+			`level` = (LENGTH( #{parentIds})-LENGTH(REPLACE( #{parentIds},',',''))),
 			parent_id = #{parent.id}, 
 			parent_ids = #{parentIds}
 		WHERE id = #{id}
@@ -495,8 +504,10 @@
 			AND del_flag = #{DEL_FLAG_NORMAL} 
 			AND code = #{franchiseeCode}
 	</select>
+	<!-- 查询店铺详情 -->
 	<select id="findbyid" resultType="OfficeInfo">
 		SELECT
+			id,
 			short_name   AS shortName,
 			postal_code  AS postalCode,
 			contacts     AS contacts,

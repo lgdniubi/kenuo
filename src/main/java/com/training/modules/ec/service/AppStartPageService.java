@@ -56,7 +56,7 @@ public class AppStartPageService extends CrudService<AppStartPageDao, AppStartPa
 	 */
 	public Map<String, String> updateType(AppStartPage appStartPage) {
 		Map<String, String> map = new HashMap<String, String>();
-		appStartPageDao.changAllIsShowByType();//修改全部为下架
+		appStartPageDao.changAllIsShowByType(appStartPage.getType());//修改全部为下架
 		
 		if("1".equals(appStartPage.getIsOnSale())){//当前下架,要上架
 			appStartPageDao.changIsShowByType(appStartPage);

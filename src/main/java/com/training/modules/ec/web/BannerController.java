@@ -4,6 +4,7 @@
 package com.training.modules.ec.web;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,8 @@ import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.ec.entity.Banner;
 import com.training.modules.ec.service.BannerService;
+import com.training.modules.sys.entity.Franchisee;
+import com.training.modules.sys.service.FranchiseeService;
 import com.training.modules.sys.utils.BugLogUtils;
 
 /**
@@ -35,6 +38,8 @@ public class BannerController extends BaseController {
 	
 	@Autowired
 	private BannerService bannerService;
+	@Autowired
+	private FranchiseeService franchiseeService;
 	
 	/**
 	 * 分页查询
@@ -60,10 +65,15 @@ public class BannerController extends BaseController {
 	 */
 	@RequestMapping(value = "form")
 	public String form(Banner banner,Model model){
+		Franchisee franchisee = new Franchisee();
+		franchisee.setIsRealFranchisee("1");
+		List<Franchisee> list = franchiseeService.findList(franchisee);
+		
 		if(banner.getBannerId()!=0){
 			banner = bannerService.get(banner);
-			model.addAttribute("banner", banner);
 		}
+		model.addAttribute("banner", banner);
+		model.addAttribute("list", list);
 		return "modules/ec/bannerForm";
 	}
 	

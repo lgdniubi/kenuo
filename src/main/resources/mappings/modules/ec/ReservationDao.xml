@@ -40,11 +40,12 @@
 			<if test="apptStatus != null and apptStatus != ''">
 				AND r.appt_status = #{apptStatus }
 			</if>
+			
 			<if test="beginDate != null and beginDate != ''">
-				AND r.appt_date >= #{beginDate}
+				AND DATE_FORMAT(r.appt_date,'%Y-%m-%d') >= DATE_FORMAT(#{beginDate},'%Y-%m-%d')
 			</if>
 			<if test="endDate != null and endDate != ''">
-				AND r.appt_date <![CDATA[ <= ]]> #{endDate}
+				<![CDATA[AND DATE_FORMAT(r.appt_date,'%Y-%m-%d') <= DATE_FORMAT(#{endDate},'%Y-%m-%d')]]>
 			</if>
 			<if test="keyword != null and keyword != ''">
 				AND ( r.user_name LIKE 

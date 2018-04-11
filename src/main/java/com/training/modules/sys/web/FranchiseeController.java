@@ -1,6 +1,7 @@
 package com.training.modules.sys.web;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -197,6 +198,8 @@ public class FranchiseeController extends BaseController{
 				Franchisee fran = franchiseeService.get(franchisee);
 				//删除商家信息
 				franchiseeService.delete(franchisee);
+				//把trains库中的sys_franchisee的修改信息同步到mtmydb中mtmy_franchisee
+				franchiseeService.deleteMtmyFranchisee(franchisee.getId());
 				
 				//删除组织结构信息（office）
 				Office office = new Office();
@@ -259,4 +262,28 @@ public class FranchiseeController extends BaseController{
 		return mapList;
 	}
 
+	/**
+	 * 公共商品服务标识(0: 做 1: 不做)
+	 * @param franchisee
+	 * @param redirectAttributes
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "changeType")
+	public Map<String, String> changeType(Franchisee franchisee, RedirectAttributes redirectAttributes,HttpServletRequest request){
+		Map<String, String> map = new HashMap<String, String>();
+    	try {
+    		franchiseeService.updatePublicServiceFlag(franchisee);
+    		franchiseeService.updateMtmyPublicServiceFlag(franchisee);//同步mtmy商家表中修改公共商品服务标识
+			map.put("FLAG", "OK");
+			map.put("MESSAGE", "修改成功");
+		} catch (Exception e) {
+			logger.error("修改商家公共商品服务标识错误信息："+e.getMessage());
+    		BugLogUtils.saveBugLog(request, "商家公共商品服务标识修改失败", e);
+    		map.put("FLAG", "ERROR");
+    		map.put("MESSAGE", "修改失败");
+		}
+    	return map;
+	}
 }

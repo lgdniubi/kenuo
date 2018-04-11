@@ -1,5 +1,7 @@
 package com.training.modules.ec.web;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,6 +17,8 @@ import com.training.common.web.BaseController;
 import com.training.modules.ec.entity.OfficeRecommend;
 import com.training.modules.ec.entity.OfficeRecommendMapping;
 import com.training.modules.ec.service.OfficeRecommendService;
+import com.training.modules.sys.entity.Franchisee;
+import com.training.modules.sys.service.FranchiseeService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
 
@@ -29,7 +33,9 @@ public class OfficeRecommendController extends BaseController{
 	
 	@Autowired
 	private OfficeRecommendService officeRecommendService;
-
+	@Autowired
+	private FranchiseeService franchiseeService;
+	
 	/**
 	 * 店铺推荐列表
 	 * @param officeRecommend
@@ -60,10 +66,15 @@ public class OfficeRecommendController extends BaseController{
 	@RequestMapping(value="form")
 	public String form(OfficeRecommend officeRecommend,HttpServletRequest request,Model model){
 		try{
+			Franchisee franchisee = new Franchisee();
+			franchisee.setIsRealFranchisee("1");
+			List<Franchisee> list = franchiseeService.findList(franchisee);
+			
 			if(officeRecommend.getOfficeRecommendId() != 0){
 				officeRecommend = officeRecommendService.getOfficeRecommend(officeRecommend.getOfficeRecommendId());
 				model.addAttribute("officeRecommend",officeRecommend);
 			}
+			model.addAttribute("list",list);
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "跳转编辑店铺推荐组", e);
 			logger.error("跳转编辑店铺推荐组出错信息：" + e.getMessage());
@@ -132,14 +143,9 @@ public class OfficeRecommendController extends BaseController{
 	@RequestMapping(value="updateType")
 	public String updateType(OfficeRecommend officeRecommend,HttpServletRequest request,RedirectAttributes redirectAttributes){
 		try{
-			officeRecommendService.changeAll();
+			officeRecommendService.changeAll(officeRecommend);
 			if(officeRecommend.getOfficeRecommendId() != 0){
 				if(officeRecommend.getIsShow() == 1){
-					officeRecommendService.updateIsShow(officeRecommend);
-				}else if(officeRecommend.getIsShow() == 0){
-					int officeRecommendId = officeRecommendService.selectIdByCreatDate();
-					officeRecommend = officeRecommendService.getOfficeRecommend(officeRecommendId);
-					officeRecommend.setIsShow(1);
 					officeRecommendService.updateIsShow(officeRecommend);
 				}
 			}
@@ -193,6 +199,7 @@ public class OfficeRecommendController extends BaseController{
 				model.addAttribute("page",page);
 				model.addAttribute("officeRecommendMapping",officeRecommendMapping);
 				model.addAttribute("oldOfficeIds",oldOfficeIds);
+				model.addAttribute("franchiseeId", officeRecommend.getFranchiseeId());
 			}
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "店铺推荐组对应的店铺列表", e);
@@ -215,6 +222,7 @@ public class OfficeRecommendController extends BaseController{
 				officeRecommendMapping = officeRecommendService.getOfficeRecommendMapping(officeRecommendMapping.getOfficeRecommendMappingId());
 			}
 			model.addAttribute("officeRecommendMapping",officeRecommendMapping);
+			model.addAttribute("franchiseeId", request.getParameter("franchiseeId"));
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "跳转添加店铺推荐组中的店铺页面", e);
 			logger.error("跳转添加店铺推荐组中的店铺出错信息：" + e.getMessage());

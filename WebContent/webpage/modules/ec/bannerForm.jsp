@@ -23,6 +23,27 @@
 			   top.layer.alert('banner图不可为空！', {icon: 0, title:'提醒'});
 			   return false;
 		    }
+			
+		    if($('input:checked').length <= 0){
+				top.layer.alert('可见范围必选！', {icon: 0, title:'提醒'});
+				return false;
+			}else{
+				var str=document.getElementsByName("isOpenLabel");
+				var ids = "";
+				for (i=0;i<str.length;i++){
+				    if(str[i].checked == true){
+				    	ids = ids + str[i].value + ",";
+				    }
+				}
+				if(ids == '0,'){
+					$("#isOpen").val(0);
+					$("#franchiseeIds").val("");
+				}else{
+					$("#isOpen").val(1);
+					$("#franchiseeIds").val(ids);
+				}
+			}
+		    
 	    	if(validateForm.form()){
 	    		loading("正在提交，请稍候...");
 				$("#inputForm").submit();
@@ -32,6 +53,21 @@
 	    };
 	    
 		$(document).ready(function() {
+			var id = "${banner.bannerId}";
+			var franchiseeIds = "${banner.franchiseeIds}";
+			if(id > 0){
+				if(franchiseeIds.length > 0){
+					var franchiseeId = franchiseeIds.split(",");
+					for(q=0;q<franchiseeId.length-1;q++){
+						$("input[type=checkbox][name=isOpenLabel][value="+franchiseeId[q]+"]").attr("checked",true);
+						queryIsOpen(franchiseeId[q]);
+					}
+				}else{
+					$("input[type=checkbox][id=open][name=isOpenLabel]").attr("checked",true);
+					queryIsOpen(0);
+				}
+			}
+			
 			validateForm = $("#inputForm").validate({
 					rules:{
 						titleStyle:{
@@ -54,6 +90,18 @@
 				}
 			);
 		});
+		
+		function queryIsOpen(value){
+			if($('input:checked').length == 0){
+				$("input[type=checkbox][name=isOpenLabel]").attr("disabled",false);
+			}else{
+				if(value == '0'){
+					$("input[type=checkbox][name=isOpenLabel][id=notOpen]").attr("disabled",true);
+				}else{
+					$("input[type=checkbox][name=isOpenLabel][id=open]").attr("disabled",true);
+				}				
+			}
+		}
 	</script>
 </head>
 <body class="gray-bg">
@@ -124,6 +172,17 @@
 									<td><label class="pull-right"><font color="red">*</font>排序：</label></td>
 									<td>
 										<form:input path="sort" class="form-control required" style="width: 300px"/>
+									</td>
+								</tr>
+								<tr>
+									<td width="100px"><label class="pull-right"><font color="red">*</font>可见范围：</label></td>
+									<td>
+										<input type="checkbox" id="open" name="isOpenLabel" value="0" onclick="queryIsOpen('0')">公开
+										<c:forEach items="${list}" var="franchisee">
+											<input type="checkbox" id="notOpen" name="isOpenLabel" value="${franchisee.id}" onclick="queryIsOpen('1')">${franchisee.name}
+										</c:forEach>
+										<input id="isOpen" value="${banner.isOpen}" name="isOpen" type="hidden">
+										<input id="franchiseeIds" value="${banner.franchiseeIds}" name="franchiseeIds" type="hidden">
 									</td>
 								</tr>
 								<tr>
