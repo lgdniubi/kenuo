@@ -1974,54 +1974,59 @@ public class OrdersController extends BaseController {
 		String date="";
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
-			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());    
-			double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
-			double advance = orderGoods.getAdvancePrice();                 //预约金
-			double ratioPrice = orderGoods.getRatioPrice();        //异价后的价格
-			
-			double realAdvancePrice = 0;                                //处理预约金给老商品送钱时，判断预约金的真实价格
-			
-			if(advance == 0){      //当预约金为0的时候付全款
-				realAdvancePrice = 0;
-				advance = ratioPrice;                 //预约金
-			}else{
-				realAdvancePrice = advance;
-				advance = orderGoods.getAdvancePrice();                 //预约金
-			}
-			
-			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
-			int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
-			String officeId = orderGoods.getOfficeId();           //组织架构ID
-			
-			oLog.setMtmyUserId(userid);
-			oLog.setOrderId(orderid);
-			oLog.setRecid(orderGoods.getRecid());
-			oLog.setSingleRealityPrice(orderGoods.getSingleRealityPrice());
-			oLog.setSingleNormPrice(orderGoods.getSingleNormPrice());
-			oLog.setAdvance(advance);
-			
-			if(oLog.getServicetimes() == 999){        //时限卡单独处理
-				oLog.setTotalAmount(oLog.getOrderArrearage());      //当时限卡处理预约金时，实付款金额就是待付尾款（欠款）
-				if(sum == 0){//用了账户余额
-					oLog.setAccountBalance(oLog.getOrderArrearage()); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+			OrderGoods nextOrderGoods = orderGoodsDetailsService.getOrderGoodsDetailListByMid(orderGoods.getRecid());
+			if(nextOrderGoods.getAdvanceFlag() == 1){    //说明未处理
+				orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());    
+				double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
+				double advance = orderGoods.getAdvancePrice();                 //预约金
+				double ratioPrice = orderGoods.getRatioPrice();        //异价后的价格
+				
+				double realAdvancePrice = 0;                                //处理预约金给老商品送钱时，判断预约金的真实价格
+				
+				if(advance == 0){      //当预约金为0的时候付全款
+					realAdvancePrice = 0;
+					advance = ratioPrice;                 //预约金
 				}else{
-					oLog.setAccountBalance(0);
+					realAdvancePrice = advance;
+					advance = orderGoods.getAdvancePrice();                 //预约金
 				}
-			}else{
-				//若订金小于单次价，则实付款金额就是单次价，
-				if(advance < singleRealityPrice){
-					oLog.setTotalAmount(singleRealityPrice);
+				
+				double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
+				int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
+				String officeId = orderGoods.getOfficeId();           //组织架构ID
+				
+				oLog.setMtmyUserId(userid);
+				oLog.setOrderId(orderid);
+				oLog.setRecid(orderGoods.getRecid());
+				oLog.setSingleRealityPrice(orderGoods.getSingleRealityPrice());
+				oLog.setSingleNormPrice(orderGoods.getSingleNormPrice());
+				oLog.setAdvance(advance);
+				
+				if(oLog.getServicetimes() == 999){        //时限卡单独处理
+					oLog.setTotalAmount(oLog.getOrderArrearage());      //当时限卡处理预约金时，实付款金额就是待付尾款（欠款）
 					if(sum == 0){//用了账户余额
-						oLog.setAccountBalance(Double.parseDouble(formater.format(singleRealityPrice-advance))); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+						oLog.setAccountBalance(oLog.getOrderArrearage()); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
 					}else{
 						oLog.setAccountBalance(0);
 					}
-				}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
-					oLog.setTotalAmount(advance);
+				}else{
+					//若订金小于单次价，则实付款金额就是单次价，
+					if(advance < singleRealityPrice){
+						oLog.setTotalAmount(singleRealityPrice);
+						if(sum == 0){//用了账户余额
+							oLog.setAccountBalance(Double.parseDouble(formater.format(singleRealityPrice-advance))); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+						}else{
+							oLog.setAccountBalance(0);
+						}
+					}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
+						oLog.setTotalAmount(advance);
+					}
 				}
+				
+				orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
+				ordersService.handleAdvanceFlag(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,realAdvancePrice,orderGoods.getRealityAddTime());
 			}
-			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleAdvanceFlag(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,realAdvancePrice,orderGoods.getRealityAddTime());
+			
 			date = "success";
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "处理预约金异常", e);
@@ -2931,55 +2936,61 @@ public class OrdersController extends BaseController {
 		double singleRealityPrice = 0;     //实际服务单次价
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
-			int isReal = oLog.getIsReal();
-			
-			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());   //卡项本身  
-			double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
-			int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
-			String officeId = orderGoods.getOfficeId();           //组织架构ID
-			double ratioPrice = orderGoods.getRatioPrice();        //异价后的价格
-			
-			double advance = orderGoods.getAdvancePrice();                 //预约金
-			double realAdvancePrice = 0;                                //处理预约金给老商品送钱时，判断预约金的真实价格
-			
-			if(advance == 0){      //当预约金为0的时候付全款
-				realAdvancePrice = 0;
-				advance = ratioPrice;                 //预约金
-			}else{
-				realAdvancePrice = advance;
-				advance = orderGoods.getAdvancePrice();            //预约金
-			}
-			
-			//卡项中预约是某一个子项，故处理预约金是针对子项的，但是预约金本身却是卡项本身的
-			OrderGoods orderGoodsSon = ordersService.selectCardSonReservation(orderGoods.getRecid());   //预约的子项
-			
-			if(isReal == 2){    //套卡
-				singleRealityPrice = orderGoodsSon.getSingleRealityPrice();   //子项的实际服务单次价
-			}else if(isReal == 3){  //通用卡
-				singleRealityPrice = orderGoods.getSingleRealityPrice();   //卡项本身的实际服务单次价
+			OrderGoods nextOrderGoods = orderGoodsDetailsService.getOrderGoodsDetailListByMid(orderGoods.getRecid());
+			if(nextOrderGoods.getAdvanceFlag() == 1){    //说明未处理
+				int isReal = oLog.getIsReal();
 				
-			}
-			
-			oLog.setMtmyUserId(userid);
-			oLog.setOrderId(orderid);
-			oLog.setRecid(orderGoods.getRecid());
-			oLog.setSingleRealityPrice(singleRealityPrice);
-			oLog.setAdvance(advance);
-			
-			
-			//若订金小于单次价，则实付款金额就是单次价，
-			if(advance < singleRealityPrice){
-				oLog.setTotalAmount(singleRealityPrice);
-				if(sum == 0){//用了账户余额
-					oLog.setAccountBalance(Double.parseDouble(formater.format(singleRealityPrice-advance))); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+				orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());   //卡项本身  
+				double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
+				int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
+				String officeId = orderGoods.getOfficeId();           //组织架构ID
+				double ratioPrice = orderGoods.getRatioPrice();        //异价后的价格
+				
+				double advance = orderGoods.getAdvancePrice();                 //预约金
+				double realAdvancePrice = 0;                                //处理预约金给老商品送钱时，判断预约金的真实价格
+				
+				if(advance == 0){      //当预约金为0的时候付全款
+					realAdvancePrice = 0;
+					advance = ratioPrice;                 //预约金
 				}else{
-					oLog.setAccountBalance(0);
+					realAdvancePrice = advance;
+					advance = orderGoods.getAdvancePrice();            //预约金
 				}
-			}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
-				oLog.setTotalAmount(advance);
+				
+				//卡项中预约是某一个子项，故处理预约金是针对子项的，但是预约金本身却是卡项本身的
+				OrderGoods orderGoodsSon = ordersService.selectCardSonReservation(orderGoods.getRecid());   //预约的子项
+				
+				if(isReal == 2){    //套卡
+					singleRealityPrice = orderGoodsSon.getSingleRealityPrice();   //子项的实际服务单次价
+				}else if(isReal == 3){  //通用卡
+					singleRealityPrice = orderGoods.getSingleRealityPrice();   //卡项本身的实际服务单次价
+					
+				}
+				
+				oLog.setMtmyUserId(userid);
+				oLog.setOrderId(orderid);
+				oLog.setRecid(orderGoods.getRecid());
+				oLog.setSingleRealityPrice(singleRealityPrice);
+				oLog.setAdvance(advance);
+				
+				
+				//若订金小于单次价，则实付款金额就是单次价，
+				if(advance < singleRealityPrice){
+					oLog.setTotalAmount(singleRealityPrice);
+					if(sum == 0){//用了账户余额
+						oLog.setAccountBalance(Double.parseDouble(formater.format(singleRealityPrice-advance))); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+					}else{
+						oLog.setAccountBalance(0);
+					}
+				}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
+					oLog.setTotalAmount(advance);
+				}
+				
+				
+				orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
+				ordersService.handleCardAdvance(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,isReal,realAdvancePrice,orderGoods.getRealityAddTime());
 			}
-			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleCardAdvance(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,isReal,realAdvancePrice,orderGoods.getRealityAddTime());
+			
 			date = "success";
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "处理卡项预约金异常", e);
