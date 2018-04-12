@@ -54,6 +54,7 @@ public class CoustomerServiceController extends BaseController {
 	 */
 	@RequestMapping(value = { "list", "" })
 	public String getByUser(ReturnedGoods returnedGoods, String franchiseeId, HttpServletRequest request, HttpServletResponse response, Model model) {
+		returnedGoods.setFranchiseeId(franchiseeId);
 		Page<ReturnedGoods> page = returnedGoodsService.findListByUser(new Page<ReturnedGoods>(request, response),returnedGoods);
 		model.addAttribute("page", page);
 		model.addAttribute("userId",returnedGoods.getUserId());

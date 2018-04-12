@@ -1243,6 +1243,9 @@
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
 		${sqlMap.dsf} AND a.del_flag = 0
 		 AND a.user_id=#{userid}
+		<if test="franchiseeId != null  and franchiseeId != ''">
+			AND a.office_id=#{franchiseeId}
+		</if>
 		<if test="orderstatus!= null  and orderstatus!= ''">
 			AND a.order_status=#{orderstatus}
 		</if>
