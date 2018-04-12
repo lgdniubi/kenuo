@@ -61,6 +61,8 @@ public class Users extends TreeEntity<Users> {
 	private String officeId ;		//所属门店
 	private String beautyId;	    //所属美容师
 	
+	private int isTest;           //测试账号标识（0：正常；1：测试）
+	
 	public String getOfficeId() {
 		return officeId;
 	}
@@ -325,6 +327,12 @@ public class Users extends TreeEntity<Users> {
 	public void setParent(Users parent) {
 		// TODO Auto-generated method stub
 		
+	}
+	public int getIsTest() {
+		return isTest;
+	}
+	public void setIsTest(int isTest) {
+		this.isTest = isTest;
 	}
 	
 }
