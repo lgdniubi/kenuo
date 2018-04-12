@@ -681,11 +681,17 @@
 		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
 		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
 		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
+		LEFT JOIN trains.sys_office tso ON tso.id = a.office_id
 		${sqlMap.dsf}
 		AND a.del_flag=0 
 		AND a.user_id =#{userId}
 		<if test="franchiseeId != null  and franchiseeId != ''">
-			AND a.office_id=#{franchiseeId}
+			AND (
+				locate(
+					a.office_id,
+					concat(tso.parent_ids, tso.id)
+				) > 0
+			)
 		</if>
 		<if test="keyword != null and keyword!=''">
 			AND (
