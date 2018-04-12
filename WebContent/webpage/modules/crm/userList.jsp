@@ -142,14 +142,14 @@
 										       		 </span>
 										    </div>
 										</c:if>
-										<%-- <span>选择归属机构：</span> 
+										<span>选择归属机构：</span> 
 										<input id="officeId" name="officeId" class=" form-control input-sm" type="hidden" value="${detail.officeId}"/>
 										<div class="input-group">
 											<input id="officeName" name="officeName"  type="text" value="${detail.officeName}" readonly="readonly" class=" form-control input-sm"/>
 								       		 <span class="input-group-btn">
 									       		 <button type="button"  id="officeButton" class="btn  btn-primary" onclick="officeButtion()"><i class="fa fa-search"></i></button> 
 								       		 </span>
-									    </div> --%>
+									    </div>
 									</shiro:hasPermission>	
 									<%-- <sys:treeselect id="bazaar" name="bazaarId" value="${equipment.bazaarId}" labelName="bazaarName" labelValue="${equipment.bazaarName}" title="市场" url="/sys/office/treeData?isGrade=true" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="true" notAllowSelectParent="true"/> --%>
 									<span>请选等级</span>
