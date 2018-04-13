@@ -1251,6 +1251,12 @@
 					concat(tso.parent_ids, tso.id)
 				) > 0
 			)
+			AND (
+				locate(
+					#{franchiseeId},
+					concat(tso.parent_ids, tso.id)
+				) > 0
+			)
 		</if>
 		<if test="orderstatus!= null  and orderstatus!= ''">
 			AND a.order_status=#{orderstatus}

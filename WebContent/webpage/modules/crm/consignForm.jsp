@@ -169,7 +169,7 @@
 									</td>
 									<td>
 										<sys:treeselect id="goodsId" name="goodsId" value="${consign.goodsId}" labelName="goodsName" labelValue="${consign.goodsName}"
-											title="商品名称" url="/ec/goods/treeAllData" cssClass="form-control required" allowClear="true" notAllowSelectParent="true" />
+											title="商品名称" url="/ec/goods/treeGoodsData?franchiseeId=${franchiseeId}" cssClass="form-control required" allowClear="true" notAllowSelectParent="true" />
 									</td>
 								</tr>
 								<tr>
