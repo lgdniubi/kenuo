@@ -94,6 +94,7 @@ import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.TrainRuleParam;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * 订单Controller
@@ -1185,15 +1186,38 @@ public class OrdersController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "addOrderRechargeLog")
 	public String addOrderRechargeLog(OrderRechargeLog oLog){
-		String success="";
+		JSONObject jsonO = new JSONObject();
+		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
-			ordersService.addOrderRechargeLog(oLog);
-			success = "success";
+			double accountBalance = ordersService.getAccount(oLog.getMtmyUserId());   //该用户的账户余额
+			OrderGoods orderGoods = orderGoodsDetailsService.querySomeThing(String.valueOf(oLog.getRecid())); //订单下该商品的欠款和已经充值的次数
+			
+			if(orderGoods.getOrderArrearage() > 0){  //欠款大于0
+				if(Double.parseDouble(formater.format(accountBalance - oLog.getAccountBalance())) >= 0){   //账户余额大于等于使用的账户余额  
+					
+					//充值金额+使用的账户余额+商品余额-订单欠款<=0，才能不多充值
+					if(Double.parseDouble(formater.format(oLog.getTotalAmount() + orderGoods.getOrderBalance() - orderGoods.getOrderArrearage())) <= 0){
+						ordersService.addOrderRechargeLog(oLog,orderGoods);
+						jsonO.put("type", "success");
+					}else{
+						jsonO.put("result", "tooMuchMoney");
+						jsonO.put("type", "error");
+					}
+					
+				}else{
+					jsonO.put("result", "moneyIsNotEnough");
+					jsonO.put("type", "error");
+				}
+			}else{
+				jsonO.put("result", "notHaveArrearage");
+				jsonO.put("type", "error");
+			}
+			
 		}catch(Exception e){
 			e.printStackTrace();
-			success = "error";
+			jsonO.put("type", "error");
 		}
-		return success;
+		return jsonO.toString();
 	}
 	/**
 	 * 修改订单
@@ -2841,15 +2865,38 @@ public class OrdersController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "addCardOrderRechargeLog")
 	public String addCardOrderRechargeLog(OrderRechargeLog oLog){
-		String success="";
+		JSONObject jsonO = new JSONObject();
+		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
-			ordersService.addCardOrderRechargeLog(oLog);
-			success = "success";
+			double accountBalance = ordersService.getAccount(oLog.getMtmyUserId());   //该用户的账户余额
+			OrderGoods orderGoods = orderGoodsDetailsService.querySomeThing(String.valueOf(oLog.getRecid())); //订单下该商品的欠款和已经充值的次数
+			
+			if(orderGoods.getOrderArrearage() > 0){  //欠款大于0
+				if(Double.parseDouble(formater.format(accountBalance - oLog.getAccountBalance())) >= 0){   //账户余额大于等于使用的账户余额  
+					
+					//充值金额+使用的账户余额+商品余额-订单欠款<=0，才能不多充值
+					if(Double.parseDouble(formater.format(oLog.getTotalAmount() + orderGoods.getOrderBalance() - orderGoods.getOrderArrearage())) <= 0){
+						ordersService.addCardOrderRechargeLog(oLog,orderGoods);
+						jsonO.put("type", "success");
+					}else{
+						jsonO.put("result", "tooMuchMoney");
+						jsonO.put("type", "error");
+					}
+					
+				}else{
+					jsonO.put("result", "moneyIsNotEnough");
+					jsonO.put("type", "error");
+				}
+			}else{
+				jsonO.put("result", "notHaveArrearage");
+				jsonO.put("type", "error");
+			}
+			
 		}catch(Exception e){
 			e.printStackTrace();
-			success = "error";
+			jsonO.put("type", "error");
 		}
-		return success;
+		return jsonO.toString();
 	}
 	
 	/**

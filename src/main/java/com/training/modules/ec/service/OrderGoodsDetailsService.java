@@ -165,4 +165,13 @@ public class OrderGoodsDetailsService extends TreeService<OrderGoodsDetailsDao, 
 	public void flatOutAdvance(String orderId){
 		dao.flatOutAdvance(orderId);
 	}
+	
+	/**
+	 * 查询订单下某商品的欠款以及已经充值的次数
+	 * @param recId
+	 * @return
+	 */
+	public OrderGoods querySomeThing(String recId){
+		return dao.querySomeThing(recId);
+	}
 }

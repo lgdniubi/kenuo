@@ -194,4 +194,11 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @return
 	 */
 	int getCountArrearage(ReturnedGoods returnedGoods);
+	
+	/**
+	 * 查询订单下某商品的欠款以及已经充值的次数
+	 * @param recId
+	 * @return
+	 */
+	public OrderGoods querySomeThing(String recId);
 }
