@@ -51,14 +51,14 @@
 			mmc.office_id AS 'officeId',
 			tso.name AS 'officeName'
 		FROM
-			mtmydb.mtmy_user_info mui
-		LEFT JOIN mtmydb.mtmy_customer mmc ON (mui.mtmy_user_id = mmc.user_id AND mui.franchisee_id = mmc.franchisee_id)
+			mtmydb.mtmy_customer mmc
+		LEFT JOIN mtmydb.mtmy_user_info mui ON (mmc.user_id = mui.mtmy_user_id AND mmc.franchisee_id = mui.franchisee_id)
 		LEFT JOIN trains.sys_user tsu ON mmc.beauty_id = tsu.id
 		LEFT JOIN trains.sys_office tso ON tso.id = mmc.office_id
 		WHERE
-			mui.mtmy_user_id=#{userId}
+			mmc.user_id=#{userId}
 		AND 
-			mui.franchisee_id = #{franchiseeId}
+			mmc.franchisee_id = #{franchiseeId}
 	</select>
 
 	<!--增加用户产品使用记录 -->
