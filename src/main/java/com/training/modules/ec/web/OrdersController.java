@@ -3059,128 +3059,132 @@ public class OrdersController extends BaseController {
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
 			if((!"".equals(orders.getOrderid()) && (orders.getOrderid() != null))){
+				
 				Orders oldOrders = ordersService.selectOrderById(orders.getOrderid());
-
-				ordersService.updateOrderstatusForReal(orders.getOrderid());
-
-				//调用日志的公用方法
-				ThreadUtils.saveLog(request, "确认收货", 2, 1, oldOrders,orders);
 				
-				double detailsTotalAmount = 0;       //预约金用了红包、折扣以后实际付款的钱
-				int goodsType = 0;                    //商品区分(0: 老商品 1: 新商品)
-				String officeId = "";           //组织架构ID
-				double advancePrice = 0;    //单个实物的预约金
-				int recId = 0;
-				List<OrderGoods> lists = ordersService.selectOrderGoodsByOrderid(orders.getOrderid());   //卡项本身  
-				if(lists.size() > 0){
-					detailsTotalAmount = lists.get(0).getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
-					goodsType = lists.get(0).getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
-					officeId = lists.get(0).getOfficeId();           //组织架构ID
-					advancePrice = lists.get(0).getAdvancePrice();    //单个实物的预约金
-					recId = lists.get(0).getRecid();
-				}
-				
-				if(!"bm".equals(orders.getChannelFlag())){
+				//订单状态为待收货且物流类型为到店自取，则才可以确认收货
+				if(oldOrders.getOrderstatus() == 2 && oldOrders.getShippingtype() == 1){
+					ordersService.updateOrderstatusForReal(orders.getOrderid());
 					
-					//实物带预约金，点击确认收货，按照虚拟有预约金处理的方法入库
-					orderGoodsDetailsService.updateAdvanceFlag(recId+"");
+					//调用日志的公用方法
+					ThreadUtils.saveLog(request, "确认收货", 2, 1, oldOrders,orders);
 					
-					//保存订单商品详情记录表
-					OrderGoodsDetails details = new OrderGoodsDetails();
-					details.setOrderId(orders.getOrderid());
-					details.setGoodsMappingId(recId+"");
-					details.setTotalAmount(0);	//实付款金额
-					details.setOrderBalance(0);	//订单余款
-					details.setOrderArrearage(0);	//订单欠款
-					details.setItemAmount(0);	//项目金额
-					details.setItemCapitalPool(0); //项目资金池
-					details.setServiceTimes(0);	//剩余服务次数
-					details.setAppTotalAmount(0);   //app实付金额
-					details.setAppArrearage(0);        //app欠款金额
-					details.setSurplusAmount(0);   //套卡剩余金额(套卡的才存)
-					details.setType(0);
-					details.setAdvanceFlag("2");
-					details.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
-					details.setCreateBy(UserUtils.getUser());
-					//保存订单商品详情记录
-					orderGoodsDetailsService.saveOrderGoodsDetails(details);
+					double detailsTotalAmount = 0;       //预约金用了红包、折扣以后实际付款的钱
+					int goodsType = 0;                    //商品区分(0: 老商品 1: 新商品)
+					String officeId = "";           //组织架构ID
+					double advancePrice = 0;    //单个实物的预约金
+					int recId = 0;
+					List<OrderGoods> lists = ordersService.selectOrderGoodsByOrderid(orders.getOrderid());   //卡项本身  
+					if(lists.size() > 0){
+						detailsTotalAmount = lists.get(0).getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
+						goodsType = lists.get(0).getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
+						officeId = lists.get(0).getOfficeId();           //组织架构ID
+						advancePrice = lists.get(0).getAdvancePrice();    //单个实物的预约金
+						recId = lists.get(0).getRecid();
+					}
 					
-					//同步数据到营业额明细表
-					//第一次，同步下单的那条数据
-					double appSum = orderGoodsDetailsService.queryAppSum(details.getOrderId());
-					TurnOverDetails turnOverDetails1 = new TurnOverDetails();
-					turnOverDetails1.setOrderId(details.getOrderId());
-					turnOverDetails1.setDetailsId(details.getOrderId());
-					turnOverDetails1.setType(1);
-					turnOverDetails1.setAmount(appSum);
-					turnOverDetails1.setUseBalance(0);
-					turnOverDetails1.setStatus(1);
-					turnOverDetails1.setUserId(orders.getUserid());
-					turnOverDetails1.setBelongOfficeId(officeId);
-					turnOverDetails1.setCreateBy(UserUtils.getUser());
-					turnOverDetails1.setSettleDate(new Date());
-					turnOverDetailsService.saveTurnOverDetails(turnOverDetails1);
+					if(!"bm".equals(orders.getChannelFlag())){
+						
+						//实物带预约金，点击确认收货，按照虚拟有预约金处理的方法入库
+						orderGoodsDetailsService.updateAdvanceFlag(recId+"");
+						
+						//保存订单商品详情记录表
+						OrderGoodsDetails details = new OrderGoodsDetails();
+						details.setOrderId(orders.getOrderid());
+						details.setGoodsMappingId(recId+"");
+						details.setTotalAmount(0);	//实付款金额
+						details.setOrderBalance(0);	//订单余款
+						details.setOrderArrearage(0);	//订单欠款
+						details.setItemAmount(0);	//项目金额
+						details.setItemCapitalPool(0); //项目资金池
+						details.setServiceTimes(0);	//剩余服务次数
+						details.setAppTotalAmount(0);   //app实付金额
+						details.setAppArrearage(0);        //app欠款金额
+						details.setSurplusAmount(0);   //套卡剩余金额(套卡的才存)
+						details.setType(0);
+						details.setAdvanceFlag("2");
+						details.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
+						details.setCreateBy(UserUtils.getUser());
+						//保存订单商品详情记录
+						orderGoodsDetailsService.saveOrderGoodsDetails(details);
+						
+						//同步数据到营业额明细表
+						//第一次，同步下单的那条数据
+						double appSum = orderGoodsDetailsService.queryAppSum(details.getOrderId());
+						TurnOverDetails turnOverDetails1 = new TurnOverDetails();
+						turnOverDetails1.setOrderId(details.getOrderId());
+						turnOverDetails1.setDetailsId(details.getOrderId());
+						turnOverDetails1.setType(1);
+						turnOverDetails1.setAmount(appSum);
+						turnOverDetails1.setUseBalance(0);
+						turnOverDetails1.setStatus(1);
+						turnOverDetails1.setUserId(orders.getUserid());
+						turnOverDetails1.setBelongOfficeId(officeId);
+						turnOverDetails1.setCreateBy(UserUtils.getUser());
+						turnOverDetails1.setSettleDate(new Date());
+						turnOverDetailsService.saveTurnOverDetails(turnOverDetails1);
+						
+						//第二次，同步处理预约金的那条数据
+						TurnOverDetails turnOverDetails2 = new TurnOverDetails();
+						turnOverDetails2.setOrderId(details.getOrderId());
+						turnOverDetails2.setDetailsId(details.getId());
+						turnOverDetails2.setType(2);
+						turnOverDetails2.setAmount(details.getAppTotalAmount());
+						turnOverDetails2.setUseBalance(details.getUseBalance());
+						turnOverDetails2.setStatus(2);
+						turnOverDetails2.setUserId(orders.getUserid());
+						turnOverDetails2.setCreateBy(UserUtils.getUser());
+						turnOverDetails2.setSettleDate(new Date());
+						turnOverDetailsService.saveTurnOverDetails(turnOverDetails2);
+					}
 					
-					//第二次，同步处理预约金的那条数据
-					TurnOverDetails turnOverDetails2 = new TurnOverDetails();
-					turnOverDetails2.setOrderId(details.getOrderId());
-					turnOverDetails2.setDetailsId(details.getId());
-					turnOverDetails2.setType(2);
-					turnOverDetails2.setAmount(details.getAppTotalAmount());
-					turnOverDetails2.setUseBalance(details.getUseBalance());
-					turnOverDetails2.setStatus(2);
-					turnOverDetails2.setUserId(orders.getUserid());
-					turnOverDetails2.setCreateBy(UserUtils.getUser());
-					turnOverDetails2.setSettleDate(new Date());
-					turnOverDetailsService.saveTurnOverDetails(turnOverDetails2);
-				}
-				
-				//若为老商品，则对店铺有补偿
-				if(goodsType == 0){
-					//若预约金大于0
-					if(advancePrice > 0){   
-						//对登云账户进行操作
-						if(detailsTotalAmount > 0){
-							double claimMoney = 0.0;   //补偿金  补助不超过20
-							if(detailsTotalAmount * 0.2 >= 20){
-								claimMoney = detailsTotalAmount + 20;
-							}else{
-								claimMoney = detailsTotalAmount * 1.2;
+					//若为老商品，则对店铺有补偿
+					if(goodsType == 0){
+						//若预约金大于0
+						if(advancePrice > 0){   
+							//对登云账户进行操作
+							if(detailsTotalAmount > 0){
+								double claimMoney = 0.0;   //补偿金  补助不超过20
+								if(detailsTotalAmount * 0.2 >= 20){
+									claimMoney = detailsTotalAmount + 20;
+								}else{
+									claimMoney = detailsTotalAmount * 1.2;
+								}
+								OfficeAccountLog officeAccountLog = new OfficeAccountLog();
+								User newUser = UserUtils.getUser();
+								
+								double amount = orderGoodsDetailsService.selectByOfficeId("1");   //登云美业公司账户的钱
+								double afterAmount = Double.parseDouble(formater.format(amount - claimMoney));
+								orderGoodsDetailsService.updateByOfficeId(afterAmount, "1");   //更新登云美业的登云账户金额
+								
+								//登云美业的登云账户减少钱时对日志进行操作
+								officeAccountLog.setOrderId(orders.getOrderid());
+								officeAccountLog.setOfficeId("1");
+								officeAccountLog.setType("1");
+								officeAccountLog.setOfficeFrom("1");
+								officeAccountLog.setAmount(claimMoney);
+								officeAccountLog.setCreateBy(newUser);
+								orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
+								
+								if(orderGoodsDetailsService.selectShopByOfficeId(officeId) == 0){    //若登云账户中无该店铺的账户
+									OfficeAccount officeAccount = new OfficeAccount();
+									officeAccount.setAmount(claimMoney);
+									officeAccount.setOfficeId(officeId);
+									orderGoodsDetailsService.insertByOfficeId(officeAccount);
+								}else{         
+									double shopAmount = orderGoodsDetailsService.selectByOfficeId(officeId);   //登云账户中店铺的钱
+									double afterShopAmount =  Double.parseDouble(formater.format(shopAmount + claimMoney));
+									orderGoodsDetailsService.updateByOfficeId(afterShopAmount, officeId);
+								}
+								//店铺的登云账户减少钱时对日志进行操作
+								officeAccountLog.setOrderId(orders.getOrderid());
+								officeAccountLog.setOfficeId(officeId);
+								officeAccountLog.setType("0");
+								officeAccountLog.setOfficeFrom("1");
+								officeAccountLog.setAmount(claimMoney);
+								officeAccountLog.setCreateBy(newUser);
+								orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
 							}
-							OfficeAccountLog officeAccountLog = new OfficeAccountLog();
-							User newUser = UserUtils.getUser();
-							
-							double amount = orderGoodsDetailsService.selectByOfficeId("1");   //登云美业公司账户的钱
-							double afterAmount = Double.parseDouble(formater.format(amount - claimMoney));
-							orderGoodsDetailsService.updateByOfficeId(afterAmount, "1");   //更新登云美业的登云账户金额
-							
-							//登云美业的登云账户减少钱时对日志进行操作
-							officeAccountLog.setOrderId(orders.getOrderid());
-							officeAccountLog.setOfficeId("1");
-							officeAccountLog.setType("1");
-							officeAccountLog.setOfficeFrom("1");
-							officeAccountLog.setAmount(claimMoney);
-							officeAccountLog.setCreateBy(newUser);
-							orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
-							
-							if(orderGoodsDetailsService.selectShopByOfficeId(officeId) == 0){    //若登云账户中无该店铺的账户
-								OfficeAccount officeAccount = new OfficeAccount();
-								officeAccount.setAmount(claimMoney);
-								officeAccount.setOfficeId(officeId);
-								orderGoodsDetailsService.insertByOfficeId(officeAccount);
-							}else{         
-								double shopAmount = orderGoodsDetailsService.selectByOfficeId(officeId);   //登云账户中店铺的钱
-								double afterShopAmount =  Double.parseDouble(formater.format(shopAmount + claimMoney));
-								orderGoodsDetailsService.updateByOfficeId(afterShopAmount, officeId);
-							}
-							//店铺的登云账户减少钱时对日志进行操作
-							officeAccountLog.setOrderId(orders.getOrderid());
-							officeAccountLog.setOfficeId(officeId);
-							officeAccountLog.setType("0");
-							officeAccountLog.setOfficeFrom("1");
-							officeAccountLog.setAmount(claimMoney);
-							officeAccountLog.setCreateBy(newUser);
-							orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
 						}
 					}
 				}
