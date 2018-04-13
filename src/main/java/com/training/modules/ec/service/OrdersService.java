@@ -1113,17 +1113,18 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * 新增订单充值日志记录
 	 * @param oLog
 	 */
-	public void addOrderRechargeLog(OrderRechargeLog oLog){
+	public void addOrderRechargeLog(OrderRechargeLog oLog,OrderGoods orderGoods){
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
 		double totalAmount = oLog.getTotalAmount(); //实付款金额
-		double accountBalance = oLog.getAccountBalance(); //订单余款 //账户余额
+		double accountBalance = oLog.getAccountBalance(); //使用的账户余额
 		double singleRealityPrice = oLog.getSingleRealityPrice(); //实际服务单次价
 		double singleNormPrice = oLog.getSingleNormPrice(); //单次标价
-		double orderArrearage = oLog.getOrderArrearage(); //欠款
 		int _servicetimes = oLog.getServicetimes(); //预计服务次数
 		
+		double orderArrearage = orderGoods.getOrderArrearage(); //欠款
+
 		OrderGoodsDetails newDetails = orderGoodsDetailsDao.selectOrderBalance(oLog.getRecid());
 		double sumOrderBalance = newDetails.getOrderBalance();//该订单的该商品剩余的可用余额，充值时必须用
 		double sumAppTotalAmount = newDetails.getAppTotalAmount();//该订单的已付金额
@@ -1159,7 +1160,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				appArrearage = -Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app欠款金额
 			}else if(newTotalAmount >= orderArrearage){
 				//实付款金额	>=  欠款
-				serviceTimes_in = _servicetimes-oLog.getRemaintimes();//充值次数
+				serviceTimes_in = _servicetimes-orderGoods.getPayRemaintimes();//充值次数
 				totalAmount_in = orderArrearage;//实付金额
 				
 				newSpareMoneySum = Double.parseDouble(formater.format(newTotalAmount - orderArrearage - accountBalance));//商品总余额(当实付大于欠款时，将多的存入个人账户余额中)
@@ -2844,16 +2845,17 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * 新增卡项订单充值日志记录
 	 * @param oLog
 	 */
-	public void addCardOrderRechargeLog(OrderRechargeLog oLog){
+	public void addCardOrderRechargeLog(OrderRechargeLog oLog,OrderGoods orderGoods){
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
 		double totalAmount = oLog.getTotalAmount(); //实付款金额(充值金额+使用的账户余额)
 		double accountBalance = oLog.getAccountBalance(); //使用的账户余额
 		double singleRealityPrice = oLog.getSingleRealityPrice(); //实际服务单次价
-		double orderArrearage = oLog.getOrderArrearage(); //欠款
 		int _servicetimes = oLog.getServicetimes(); //预计服务次数
 		
+		double orderArrearage = orderGoods.getOrderArrearage(); //欠款
+
 		OrderGoodsDetails newDetails = orderGoodsDetailsDao.selectOrderBalance(oLog.getRecid());
 		double sumOrderBalance = newDetails.getOrderBalance();//该订单的该商品剩余的可用余额，充值时必须用
 		double sumAppTotalAmount = newDetails.getAppTotalAmount();//该订单的已付金额
@@ -2889,7 +2891,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				appArrearage = -Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app欠款金额
 			}else if(newTotalAmount >= orderArrearage){
 				//实付款金额	>=  欠款
-				serviceTimes_in = _servicetimes-oLog.getRemaintimes();//充值次数
+				serviceTimes_in = _servicetimes-orderGoods.getRemaintimes();//充值次数
 				totalAmount_in = orderArrearage;//实付金额
 				
 				newSpareMoneySum = Double.parseDouble(formater.format(newTotalAmount - orderArrearage - accountBalance));//商品总余额(当实付大于欠款时，将多的存入个人账户余额中)

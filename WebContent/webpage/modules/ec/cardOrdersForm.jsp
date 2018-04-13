@@ -213,8 +213,27 @@
 										 },
 										url:"${ctx}/ec/orders/addCardOrderRechargeLog",
 										success:function(date){
-												top.layer.alert('保存成功!', {icon: 1, title:'提醒'});
-												window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid;
+											var newDate = eval("("+date+")");
+										 	var type = newDate.type;
+											var result = newDate.result;
+											
+											if(type =="success"){
+												top.layer.alert('充值成功!', {icon: 1, title:'提醒'});
+											}
+											if(type =="error"){
+												top.layer.alert('充值失败!', {icon: 2, title:'提醒'});
+											}
+											if(type=="error" && result == "notHaveArrearage"){
+												top.layer.alert('充值失败!该商品已无欠款', {icon: 2, title:'提醒'});
+											}
+											if(type=="error" && result == "moneyIsNotEnough"){
+												top.layer.alert('充值失败!该用户账户余额不足', {icon: 2, title:'提醒'});
+											}
+											if(type=="error" && result == "tooMuchMoney"){
+												top.layer.alert('充值失败!充值总额不能大于欠款', {icon: 2, title:'提醒'});
+											}
+											
+											window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid;
 										},
 										error:function(XMLHttpRequest,textStatus,errorThrown){}
 									});

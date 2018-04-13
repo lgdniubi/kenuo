@@ -361,4 +361,18 @@
 		WHERE order_id = #{orderId}
 		AND advance_flag = '1'
 	</update>
+	
+	<!-- 查询订单下某商品的欠款以及已经充值的次数 -->
+	<select id="querySomeThing" resultType="OrderGoods">
+		SELECT
+			SUM(ogd.order_balance) AS 'orderBalance',
+			(SELECT SUM(a.service_times) FROM mtmydb.mtmy_order_goods_details a WHERE a.goods_mapping_id = ogd.goods_mapping_id AND type = 0) AS payRemaintimes,
+			SUM(ogd.order_arrearage) as orderArrearage
+		FROM
+			mtmydb.mtmy_order_goods_details ogd
+		WHERE
+			ogd.goods_mapping_id = #{mid}
+	</select>
+	
+	
 </mapper>
