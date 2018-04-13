@@ -196,6 +196,7 @@ public class CrmOrders extends TreeEntity<CrmOrders> {
 	private int num;         //订单的发票个数
 	
 	private String newIsNeworder;   //查询所用的新老订单字段
+	private String franchiseeId;   //查询所用的新老订单字段
 	
 	public String getSearchIsReal() {
 		return searchIsReal;
@@ -1570,6 +1571,12 @@ public class CrmOrders extends TreeEntity<CrmOrders> {
 	public CrmOrders getParent() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	public String getFranchiseeId() {
+		return franchiseeId;
+	}
+	public void setFranchiseeId(String franchiseeId) {
+		this.franchiseeId = franchiseeId;
 	}
 	
 }

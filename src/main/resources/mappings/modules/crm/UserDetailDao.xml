@@ -51,14 +51,14 @@
 			mmc.office_id AS 'officeId',
 			tso.name AS 'officeName'
 		FROM
-			mtmydb.mtmy_user_info mui
-		LEFT JOIN mtmydb.mtmy_customer mmc ON (mui.mtmy_user_id = mmc.user_id AND mui.franchisee_id = mmc.franchisee_id)
+			mtmydb.mtmy_customer mmc
+		LEFT JOIN mtmydb.mtmy_user_info mui ON (mmc.user_id = mui.mtmy_user_id AND mmc.franchisee_id = mui.franchisee_id)
 		LEFT JOIN trains.sys_user tsu ON mmc.beauty_id = tsu.id
 		LEFT JOIN trains.sys_office tso ON tso.id = mmc.office_id
 		WHERE
-			mui.mtmy_user_id=#{userId}
+			mmc.user_id=#{userId}
 		AND 
-			mui.franchisee_id = #{franchiseeId}
+			mmc.franchisee_id = #{franchiseeId}
 	</select>
 
 	<!--增加用户产品使用记录 -->
@@ -158,7 +158,7 @@
 
 	<select id="findUserList" resultType="UserDetail">
 		SELECT
-			mu.user_id AS userId,
+			mc.user_id AS userId,
 			mu.`name`,
 			mu.sex,
 			mu.mobile,
@@ -168,89 +168,31 @@
 			MIN(mo.add_time) firstDate,
 			MAX(mo.add_time) lastDate,
 			muyl.`level` AS 'level',
-			cuo.franchisee_id AS 'franchiseeId',
-			cuo.franchiseeName,
-			cuo.beautyName,
-			cuo.officeName AS 'shopName'
+			mc.franchisee_id AS 'franchiseeId',
+			tsf. NAME AS 'franchiseeName',
+			tsu.`name` AS 'beautyName',
+			tso.`name` AS 'shopName'
 		FROM
-			mtmydb.mtmy_users mu
-		LEFT JOIN mtmydb.mtmy_orders mo ON mu.user_id = mo.user_id
+			mtmydb.mtmy_customer mc
+		LEFT JOIN trains.sys_franchisee tsf ON mc.franchisee_id = tsf.id
+		LEFT JOIN trains.sys_user tsu ON mc.beauty_id = tsu.id
+		LEFT JOIN trains.sys_office tso ON mc.office_id = tso.id
+		LEFT JOIN mtmydb.mtmy_users mu ON mc.user_id = mu.user_id
+		LEFT JOIN mtmydb.mtmy_orders mo ON mc.user_id = mo.user_id
 		LEFT JOIN mtmydb.mtmy_user_yz_level muyl ON mu.level_value <![CDATA[>=]]> muyl.min_val
 			AND mu.level_value <![CDATA[<=]]> muyl.max_val
-		LEFT JOIN (
-			SELECT mc.user_id, mc.franchisee_id, tsf.name AS 'franchiseeName', tsu.`name` AS 'beautyName', tso.`name` AS 'officeName'
-			FROM
-				mtmydb.mtmy_customer mc 
-			LEFT JOIN trains.sys_franchisee tsf ON mc.franchisee_id = tsf.id
-			LEFT JOIN trains.sys_user tsu ON mc.beauty_id = tsu.id
-			LEFT JOIN trains.sys_office tso ON mc.office_id = tso.id
-			WHERE 
-				mc.franchisee_id = #{franchiseeId}
-				<if test="officeId != null and officeId!='' ">
-					AND (tso.id = #{officeId} OR tso.parent_ids LIKE CONCAT('%,', #{officeId}, ',%'))
-				</if>
-			GROUP BY mc.user_id
-		) cuo ON cuo.user_id = mu.user_id
 		${sqlMap.dsf}
-		<if test="level!=null and level!=''">
-			AND muyl.level =#{level}
-		</if>
-		<if test="keyword!=null and keyword!=''">
-			AND (
-				mu.nickname like
-				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
-				OR mu.mobile like
-				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
-				OR mu.name like
-				<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
-			)
-		</if>
-		GROUP BY
-			mu.user_id,
-			muyl.NAME,
-			muyl.`level`
-		ORDER BY
-			mu.reg_time DESC
-	</select>
-
-	<select id="getUserWithoutScope" resultType="UserDetail">
-		SELECT
-			mu.user_id AS userId,
-			mu.`name`,
-			mu.sex,
-			mu.mobile,
-			mu.nickname,
-			mu.level_value AS 'levelvalue',
-			mu.reg_time regTime,
-			mua.account_arrearage accountArrearage,
-			MIN(mo.add_time) firstDate,
-			MAX(mo.add_time) lastDate,
-			muyl.`level` AS 'level',
-			cuo.franchisee_id AS 'franchiseeId',
-			cuo.franchiseeName,
-			cuo.beautyName,
-			cuo.officeName AS 'shopName'
-		FROM
-			mtmydb.mtmy_users mu
-		LEFT JOIN mtmydb.mtmy_user_accounts mua ON mu.user_id = mua.user_id
-		LEFT JOIN mtmydb.mtmy_orders mo ON mu.user_id = mo.user_id
-		LEFT JOIN mtmydb.mtmy_user_yz_level muyl ON mu.level_value <![CDATA[>=]]>muyl.min_val
-			AND mu.level_value <![CDATA[<=]]>muyl.max_val
-		LEFT JOIN (
-			SELECT mc.user_id, mc.franchisee_id, tsf.name AS 'franchiseeName', tsu.`name` AS 'beautyName', tso.`name` AS 'officeName'
-			FROM
-				mtmydb.mtmy_customer mc 
-			LEFT JOIN trains.sys_franchisee tsf ON mc.franchisee_id = tsf.id
-			LEFT JOIN trains.sys_user tsu ON mc.beauty_id = tsu.id
-			LEFT JOIN trains.sys_office tso ON mc.office_id = tso.id
-			WHERE 
-				mc.franchisee_id = #{franchiseeId}
-				<if test="officeId != null and officeId!='' ">
-					AND (tso.id = #{officeId} OR tso.parent_ids LIKE CONCAT('%,', #{officeId}, ',%'))
-				</if>
-			GROUP BY mc.user_id
-		) cuo ON cuo.user_id = mu.user_id
-		WHERE 1=1
+			<if test="franchiseeId != null and franchiseeId !='' ">
+				AND mc.franchisee_id = #{franchiseeId}
+			</if>
+			<if test="officeId != null and officeId!='' ">
+				AND (
+						locate(
+							#{officeId},
+							concat(mc.office_pids, mc.office_id)
+						) > 0
+					)
+			</if>
 			<if test="level!=null and level!=''">
 				AND muyl.level =#{level}
 			</if>
@@ -263,11 +205,65 @@
 					OR mu.name like
 					<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
 				)
-			</if> 
+			</if>
 		GROUP BY
-			mu.user_id,
-			muyl. NAME,
-			muyl.`level`
+			mc.user_id
+		ORDER BY
+			mu.reg_time DESC
+	</select>
+
+	<select id="getUserWithoutScope" resultType="UserDetail">
+		SELECT
+			mc.user_id AS userId,
+			mu.`name`,
+			mu.sex,
+			mu.mobile,
+			mu.nickname,
+			mu.level_value AS 'levelvalue',
+			mu.reg_time regTime,
+			MIN(mo.add_time) firstDate,
+			MAX(mo.add_time) lastDate,
+			muyl.`level` AS 'level',
+			mc.franchisee_id AS 'franchiseeId',
+			tsf. NAME AS 'franchiseeName',
+			tsu.`name` AS 'beautyName',
+			tso.`name` AS 'shopName'
+		FROM
+			mtmydb.mtmy_customer mc
+		LEFT JOIN trains.sys_franchisee tsf ON mc.franchisee_id = tsf.id
+		LEFT JOIN trains.sys_user tsu ON mc.beauty_id = tsu.id
+		LEFT JOIN trains.sys_office tso ON mc.office_id = tso.id
+		LEFT JOIN mtmydb.mtmy_users mu ON mc.user_id = mu.user_id
+		LEFT JOIN mtmydb.mtmy_orders mo ON mc.user_id = mo.user_id
+		LEFT JOIN mtmydb.mtmy_user_yz_level muyl ON mu.level_value <![CDATA[>=]]> muyl.min_val
+			AND mu.level_value <![CDATA[<=]]> muyl.max_val
+		WHERE 1=1
+			<if test="franchiseeId != null and franchiseeId !='' ">
+				AND mc.franchisee_id = #{franchiseeId}
+			</if>
+			<if test="officeId != null and officeId!='' ">
+				AND (
+						locate(
+							#{officeId},
+							concat(mc.office_pids, mc.office_id)
+						) > 0
+					)
+			</if>
+			<if test="level!=null and level!=''">
+				AND muyl.level =#{level}
+			</if>
+			<if test="keyword!=null and keyword!=''">
+				AND (
+					mu.nickname like
+					<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+					OR mu.mobile like
+					<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+					OR mu.name like
+					<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
+				)
+			</if>
+		GROUP BY
+			mc.user_id
 		ORDER BY
 			mu.reg_time DESC
 	</select>

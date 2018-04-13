@@ -37,7 +37,7 @@ public class UserDetailService extends CrudService<UserDetailDao,UserDetail> {
 	public Page<UserDetail> getUserList(Page<UserDetail> page,UserDetail dto){
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
 		//orders.getSqlMap().put("dsf", dataScopeFilter(orders.getCurrentUser(), "o", "a"));
-		dto.getSqlMap().put("dsf",CommonScopeUtils.dataScopeFilter("mu"));
+		dto.getSqlMap().put("dsf",CommonScopeUtils.dataScopeFilter("mc"));
 	    dto.setPage(page);
 		page.setList(dao.findUserList(dto));
 		return page;

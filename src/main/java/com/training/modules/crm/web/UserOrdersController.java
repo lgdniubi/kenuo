@@ -54,6 +54,7 @@ public class UserOrdersController extends BaseController {
 
 		if (null!=userId && userId.trim().length()>0) {
 			orders.setUserid(Integer.valueOf(userId));
+			orders.setFranchiseeId(franchiseeId);
 			Page<CrmOrders> page = ordersService.findByUser(new Page<CrmOrders>(request, response), orders);
 			model.addAttribute("page", page);
 			model.addAttribute("userId", userId);
