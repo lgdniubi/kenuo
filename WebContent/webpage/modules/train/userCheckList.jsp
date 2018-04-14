@@ -19,7 +19,7 @@
 			reset();
 		}
 		
-		//刷新
+		//刷新 
 		function refresh(){
 			window.location="${ctx}/train/userCheck/findalllist";
 		}
@@ -33,7 +33,6 @@
 		}
 		//审核按钮
 		function checkBtn(id,userid){
-			//alert("${ctx}/train/userCheck/form?id="+id+"&userid="+userid )
 			top.layer.open({
 			    type: 2, 
 			    area: ['800px', '650px'],
@@ -74,7 +73,7 @@
 							<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
 							<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();" />
 							<div class="form-group">
-								<label>关键字：<input id="name" name="mobile" maxlength="10" type="text" class="form-control" value="${userCheck.mobile}" placeholder="请输入手机号"></label> 
+								<label>关键字：<input id="name" name="mobile" maxlength="11" type="text" class="form-control" value="${userCheck.mobile}" placeholder="请输入手机号"></label> 
 							</div>
 							<shiro:hasPermission name="train:userCheck:findalllist">
 								<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
@@ -90,7 +89,7 @@
 					<div class="row">
 						<div class="col-sm-12">
 							<div class="pull-left">
-								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新"><i class="glyphicon glyphicon-repeat"></i> 刷新</button>
+								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="search()" title="刷新"><i class="glyphicon glyphicon-repeat"></i> 刷新</button>
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="wait()" title="待审核">待审核</button>
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="hasCheck()" title="已审核">已审核</button>
 							</div>
@@ -120,7 +119,7 @@
 									<td style="text-align: left;">
 									<shiro:hasPermission name="train:userCheck:update">
 										<c:if test="${userCheck.status == 2}">
-					    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.type}&opflag=setPermiss','600px', '450px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
+					    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.type}&opflag=setPermiss','650px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
 										</c:if>
 										<c:if test="${userCheck.status != 2}">
 					    						<a href="#" onclick="checkBtn(${userCheck.id},'${userCheck.userid}')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>

@@ -108,4 +108,6 @@ public interface SkillDao extends CrudDao<Skill>{
 	 * @return
 	 */
 	public int getByName(String name);
+
+	public int validDel(Skill skill);
 }

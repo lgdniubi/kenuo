@@ -382,6 +382,8 @@ public class UserController extends BaseController {
 		} else {
 			user.preUpdate();
 			systemService.deleteUser(user);
+			 //删除员工时，使app端fzx用户token失效
+			redisClientTemplate.del("UTOKEN_"+user.getId());
 			addMessage(redirectAttributes, "删除用户成功");
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";

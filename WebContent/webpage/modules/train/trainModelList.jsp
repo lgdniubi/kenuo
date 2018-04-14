@@ -95,6 +95,9 @@
 										<shiro:hasPermission name="train:model:auth">
 				    						<a href="#" onclick="openDialog('fzx端权限设置', '${ctx}/train/model/auth?id=${trainModel.id}&opflag=fzx','430px', '600px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>fzx端权限设置</a>
 					    				</shiro:hasPermission>
+										<shiro:hasPermission name="train:model:auth">
+				    						<a href="#" onclick="openDialog('media权限设置', '${ctx}/train/model/auth?id=${trainModel.id}&opflag=md','430px', '600px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>自媒体权限设置</a>
+					    				</shiro:hasPermission>
 									</td>
 								</tr>
 							</c:forEach>

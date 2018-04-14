@@ -1,15 +1,7 @@
 package com.training.modules.train.dao;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
-
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
-import com.training.modules.oa.entity.OaNotify;
-import com.training.modules.train.entity.CategoryLesson;
-import com.training.modules.train.entity.PCMenu;
-import com.training.modules.train.entity.TrainCategorys;
 import com.training.modules.train.entity.TrainModel;
 
 /**
@@ -66,6 +58,24 @@ public interface TrainModelDao extends CrudDao<TrainModel>{
 	 * @param newModel
 	 */
 	public void insertModfzxMenu(TrainModel newModel);
+
+	/**
+	 * 查找该版本下的自媒体菜单
+	 * @param trainModel
+	 */
+	public TrainModel findmodMediaMenu(TrainModel trainModel);
+
+	/**
+	 * 删除以前的该版本下的自媒体菜单信息
+	 * @param trainModel
+	 */
+	public void deleteModMediaMenu(TrainModel trainModel);
+
+	/**
+	 * 插入新的该版本下的自媒体菜单
+	 * @param newModel
+	 */
+	public void insertModMediaMenu(TrainModel newModel);
 
 	
 }

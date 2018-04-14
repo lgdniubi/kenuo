@@ -59,14 +59,14 @@
 	<!-- 查询所有“有效”的版本信息-->
 	<select id="findList" resultType="TrainModel">
 		select
-			`id` AS id,
-			`mod_name` AS modName,
-			`mod_type` AS modType,
-			`mod_ename` AS modEname,
-			`mod_pay` AS modPay,
-			`mod_fee` AS modFee,
-			`mod_day` AS modDay,
-			`remark` AS remark
+			t.`id` AS id,
+			t.`mod_name` AS modName,
+			dc.label AS modType,
+			t.`mod_ename` AS modEname,
+			t.`mod_pay` AS modPay,
+			t.`mod_fee` AS modFee,
+			t.`mod_day` AS modDay,
+			t.`remark` AS remark
 			<!-- `create_by` AS,
 			`create_date` AS,
 			`update_by` AS,
@@ -74,12 +74,15 @@
 			`del_flag` AS -->
 		FROM
 		train_model t
+		LEFT JOIN sys_dict dc ON dc.`value`= t.mod_type
 		WHERE 1=1
+		AND dc.type = 'model_type'
 		<if test="modEname != null and modEname != ''">
 			AND t.mod_ename LIKE
 			<if test="dbName == 'oracle'">'%'||#{modEname}||'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%', #{modEname}, '%')</if>
 		</if>
+		ORDER BY t.create_date DESC
 	</select>
 	
 	<!-- 版本修改 -->
@@ -141,6 +144,24 @@
 	<insert id="insertModfzxMenu">
 		INSERT INTO train_model_fzxmenu(
 			mod_id, 
+			menu_id
+		) VALUES (
+			#{id},
+			#{menuId}
+		)
+	</insert>
+	<!--  查找该版本下的自媒体菜单 -->
+	<select id="findmodMediaMenu" resultType="TrainModel">
+		SELECT a.id AS id,group_concat(b.menu_id) AS menuIds FROM train_model a LEFT JOIN train_model_mdmenu b ON a.id = b.model_id WHERE a.id = #{id}
+	</select>
+	<!-- 删除版本下所有fzx菜单 -->
+	<delete id="deleteModMediaMenu">
+		DELETE FROM train_model_mdmenu  WHERE model_id = #{id}
+	</delete>
+	<!-- 插入版本下所有fzx菜单 -->
+	<insert id="insertModMediaMenu">
+		INSERT INTO train_model_mdmenu(
+			model_id, 
 			menu_id
 		) VALUES (
 			#{id},

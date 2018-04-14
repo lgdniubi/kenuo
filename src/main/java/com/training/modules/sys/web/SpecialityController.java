@@ -105,6 +105,21 @@ public class SpecialityController extends BaseController {
 		addMessage(redirectAttributes, "删除成功");
 		return "redirect:" + adminPath + "/sys/speciality/list?repage";
 	}
+	/**
+	 * 删除数据前先判断该标签是否已经被使用 
+	 * @param speciality
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequiresPermissions("sys:speciality:del")
+	@RequestMapping(value = "validDel")
+	@ResponseBody
+	public boolean validDel(Speciality speciality, RedirectAttributes redirectAttributes) {
+		boolean flag = true;
+		flag = specialityService.validDel(speciality);
+		addMessage(redirectAttributes, "删除成功");
+		return flag;
+	}
 
 	/**
 	 * 获取机构JSON数据。

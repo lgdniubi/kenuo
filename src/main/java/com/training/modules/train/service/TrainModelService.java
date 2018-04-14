@@ -118,6 +118,29 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	        }
 		}
 	}
-	
+
+	/**
+	 * 查找该版本下的自媒体菜单
+	 * @param trainModel
+	 */
+	public TrainModel findmodMediaMenu(TrainModel trainModel) {
+		return  dao.findmodMediaMenu(trainModel);
+	}
+	/**
+	 * 保存自媒体版本菜单
+	 * @param trainModel
+	 */
+	public void saveModMediaMenu(TrainModel trainModel) {
+		TrainModel newModel = new TrainModel();
+		dao.deleteModMediaMenu(trainModel);
+		if(!trainModel.getMenuIds().isEmpty()){
+	        String[] ids = trainModel.getMenuIds().split(",");
+	        for (int i = 0; i < ids.length; i++) {
+	        	newModel.setId(trainModel.getId());
+	        	newModel.setMenuId(Integer.valueOf(ids[i]));
+	            dao.insertModMediaMenu(newModel);
+	        }
+		}
+	}
 	
 }

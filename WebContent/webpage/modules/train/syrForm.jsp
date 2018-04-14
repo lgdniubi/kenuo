@@ -115,7 +115,7 @@
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">采购折扣:</label></td>
-			         <td colspan="2"><input id="discount" class=" form-control input-sm required" name="discount" value="${modelFranchisee.discount}" aria-required="true" placeholder="请输入0-1的小数" ></td>
+			         <td colspan="2"><input id="discount" class=" form-control input-sm required" name="discount" value="${modelFranchisee.discount}" aria-required="true" placeholder="请输入0-1的2位小数" onkeyup="value=value.replace(/\.\d{2,}$/,value.substr(value.indexOf('.'),3))"></td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">授权期限:</label></td>
@@ -123,7 +123,7 @@
 							value="<fmt:formatDate value="${modelFranchisee.authStartDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="开始时间" readonly="readonly"/></td>
 			         
 			         <td ><input id="auth_end_date" name="authEndDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
-							value="<fmt:formatDate value="${modelFranchisee.authEndDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="结束时间" readonly="readonly"/></td>
+							value="<fmt:formatDate value="${modelFranchisee.authEndDate}" pattern="yyyy-MM-dd"/>" style="width:285px;" placeholder="结束时间" readonly="readonly"/></td>
 			         
 				</tr>
 			</tbody>

@@ -40,16 +40,19 @@
 			tap.apply_type AS applyType,
 			tap.status,
 			tap.create_date AS createDate
-			from sys_user u
-			LEFT JOIN train_apply tap ON tap.user_id=u.id
+			from train_apply tap
+			LEFT JOIN sys_user u ON tap.user_id=u.id
 		WHERE 1=1
 		<if test="mobile != null and mobile != ''">
-			AND u.mobile LIKE
-			<if test="dbName == 'oracle'">'%'||#{mobile}||'%'</if>
-			<if test="dbName == 'mysql'">CONCAT('%', #{mobile}, '%')</if>
+			AND u.mobile = #{mobile}
+<!-- 			<if test="dbName == 'oracle'">'%'||#{mobile}||'%'</if> 
+	<if test="dbName == 'mysql'">CONCAT('%', #{mobile}, '%')</if> -->
 		</if>
-		<if test="status ==0 ">
+		<if test="status == 0">
 			AND tap.status in (0,1)
+		</if>
+		<if test="status == 2">
+			AND tap.status = 2
 		</if>
 	</select>
 	

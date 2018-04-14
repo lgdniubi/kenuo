@@ -20,8 +20,10 @@ import com.training.common.web.BaseController;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.entity.MediaMenu;
 import com.training.modules.train.entity.TrainModel;
 import com.training.modules.train.service.FzxMenuService;
+import com.training.modules.train.service.MediaMenuService;
 import com.training.modules.train.service.TrainModelService;
 
 /**
@@ -37,6 +39,8 @@ public class TrainModelController extends BaseController{
 	private TrainModelService trainModelService;
 	@Autowired
 	private FzxMenuService fzxMenuService;
+	@Autowired
+	private MediaMenuService mediaMenuService;
 	
 	
 	/**
@@ -135,10 +139,14 @@ public class TrainModelController extends BaseController{
 				model.addAttribute("pcMenu",trainModelService.findAllpcMenu());
 				model.addAttribute("model",trainModelService.findmodpcMenu(trainModel));
 				returnjsp = "modules/train/pcModAuth";
-			}else if ("fzx".equals(opflag)) {	//fzx端菜单权限设置
+			}else if ("fzx".equals(opflag)) {	//fzx菜单权限设置
 				model.addAttribute("fzxMenu",fzxMenuService.findAllMenu());//查询所有fzx_menu
 				model.addAttribute("model",trainModelService.findmodfzxMenu(trainModel));
 				returnjsp = "modules/train/fzxModAuth";
+			}else if ("md".equals(opflag)) {	//自媒体菜单权限设置
+				model.addAttribute("mediaMenu",mediaMenuService.findAllMenu());//查询所有自媒体菜单
+				model.addAttribute("model",trainModelService.findmodMediaMenu(trainModel));
+				returnjsp = "modules/train/mediaModAuth";
 			}
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "版本权限设置", e);
@@ -192,6 +200,30 @@ public class TrainModelController extends BaseController{
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "保存fzx版本菜单权限", e);
 			logger.error("保存fzx版本菜单权限错误信息:"+e.getMessage());
+			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
+		}
+		return "redirect:" + adminPath + "/train/model/findalllist";
+	}
+	/**
+	 * 保存自媒体版本菜单权限
+	 * @param model
+	 * @param trainModel
+	 * @param oldMenuIds
+	 * @param request
+	 * @param response
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value = "saveMediaAuth")
+	public String saveMediaAuth(Model model,TrainModel trainModel,String oldMenuIds,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
+		try {
+			if(!oldMenuIds.equals(trainModel.getMenuIds())){
+				trainModelService.saveModMediaMenu(trainModel);
+			}
+			addMessage(redirectAttributes, "保存自媒体版本菜单权限成功!");
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "保存自媒体版本菜单权限", e);
+			logger.error("保存自媒体版本菜单权限错误信息:"+e.getMessage());
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
 		return "redirect:" + adminPath + "/train/model/findalllist";

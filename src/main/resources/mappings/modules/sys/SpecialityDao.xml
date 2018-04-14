@@ -105,6 +105,13 @@
 		where id=#{id}
 
 	</update>
-
+	<!-- 逻辑删除特长标签前先判断该标签是否已经被使用 -->
+	<select id="validDel" resultType="Integer">
+		SELECT
+			COUNT(1)
+		FROM
+			user_speciality
+		WHERE speciality_id = #{id}
+	</select>
 
 </mapper>

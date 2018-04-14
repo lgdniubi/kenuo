@@ -6,14 +6,16 @@
 		SELECT 
 			r.id AS roleId,
 			r.name,
-			r.enname,
+			dc.label AS enname,
 			r.mod_id AS modeid,
 			tm.mod_name AS modName
 		FROM 
 			fzx_role r
 			LEFT JOIN train_model tm ON tm.id = r.mod_id
+			LEFT JOIN sys_dict dc ON dc.`value` = r.enname
 		WHERE 
 			r.del_flag = 0 
+			AND dc.type = 'fzx_role_type'
 			<if test="name != null and name != ''">
 				AND r.name like 
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>

@@ -66,4 +66,6 @@ public interface SpecialityDao extends CrudDao<Speciality> {
 	 */
 	public int	deleteSpeciality(Speciality speciality);
 
+	public int validDel(Speciality speciality);
+
 }

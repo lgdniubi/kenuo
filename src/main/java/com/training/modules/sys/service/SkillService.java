@@ -60,9 +60,11 @@ public class SkillService extends CrudService<SkillDao, Skill>{
 		User user = UserUtils.getUser();
 		if(skill.getSkillId() != 0){
 			skill.setUpdateBy(user);
+			skill.setFranchiseeId(user.getCompany().getId());
 			skillDao.updateSkill(skill);
 		}else{
 			skill.setCreateBy(user);
+			skill.setFranchiseeId(user.getCompany().getId());
 			skillDao.insertSkill(skill);
 		}
 	}
@@ -99,5 +101,16 @@ public class SkillService extends CrudService<SkillDao, Skill>{
 	 */
 	public int getByName(String name){
 		return skillDao.getByName(name);
+	}
+
+	/**
+	 * 根据id判断可否删除
+	 * @param skill
+	 * @return
+	 * @Description:
+	 */
+	public boolean validDel(Skill skill) {
+		int count = skillDao.validDel(skill);
+		return count == 0;
 	}
 }

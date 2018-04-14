@@ -10,6 +10,7 @@ public class Skill extends DataEntity<Skill>{
     private String name;    //技能标签名字
     private String description;  //技能描述
     private String isShow;     //是否显示（0：显示，1：隐藏）
+    private String franchiseeId;     //是否显示（0：显示，1：隐藏）
     private int delflag;    //删除标识
 	public int getSkillId() {
 		return skillId;
@@ -40,6 +41,12 @@ public class Skill extends DataEntity<Skill>{
 	}
 	public void setIsShow(String isShow) {
 		this.isShow = isShow;
+	}
+	public String getFranchiseeId() {
+		return franchiseeId;
+	}
+	public void setFranchiseeId(String franchiseeId) {
+		this.franchiseeId = franchiseeId;
 	}
     
     

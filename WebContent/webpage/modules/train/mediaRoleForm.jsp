@@ -29,7 +29,7 @@
 							type: "post",
 							async: false,
 							dataType: "json",           //接受数据格式  
-							url: "${ctx}/train/pcRole/checkEnname?oldModeid=${pcRole.modeid}",
+							url: "${ctx}/train/mdrole/checkEnname?oldModeid=${mediaRole.modeid}",
 							data: {                     //要传递的数据
 								oldEnname: function() {
 						            return $("#ename").val();
@@ -60,7 +60,7 @@
 	</script>
 </head>
 <body>
-	<form:form id="inputForm" modelAttribute="pcRole" action="${ctx}/train/pcRole/save" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="mediaRole" action="${ctx}/train/mdrole/save" method="post" class="form-horizontal">
 		<form:hidden path="roleId"/>
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		   <tbody>
@@ -73,7 +73,7 @@
 		         <td  class="width-35" >
 		         	<!-- 将英文名称改为下拉选 -->
 		         	<form:select path="ename"  class="form-control">
-						<form:options items="${fns:getDictList('pc_role_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+						<form:options items="${fns:getDictList('media_role_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 					</form:select>
 		         	<%-- <form:input path="ename" htmlEscape="false" maxlength="20" class="required form-control "/>
 		         	<input type="hidden" id="oldEname" name="oldEname" value="${pcRole.ename }"> --%>

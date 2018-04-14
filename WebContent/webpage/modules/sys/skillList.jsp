@@ -50,6 +50,26 @@
 				}
 			});   
 		}
+		
+		//删除前判断此技能是否已经被引用
+		function validDel(obj,skillId){
+			var url = "${ctx}/sys/skill/validDel?skillId="+skillId;
+		 	$.post(url,function(data){
+			    if(data){
+			    	var href = "${ctx}/sys/skill/delete?skillId="+skillId;
+		 			promptx('请填写删除备注信息！不可为空！','确定要删除技能标签吗？',href);
+			    }else{
+				    top.layer.open({
+			    	 	title: '提示'
+			    		,content: '该标签已被使用不能删除',
+			    		icon: 3,
+			    		time: 2000		//2秒后自动消失
+			    	});
+			    }
+			  },
+			  "json");
+		 	return false;
+		}
 	</script>
 </head>
 <body>
@@ -132,7 +152,7 @@
 									<a href="#" onclick="openDialog('编辑技能', '${ctx}/sys/skill/form?skillId=${skill.skillId}','600px','400px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 编辑</a>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="sys:skill:del">
-									<a href="${ctx}/sys/skill/delete?skillId=${skill.skillId}" onclick="return promptx('请填写删除备注信息！不可为空！','确定要删除技能标签吗？',this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
+									<a href="javascript:validDel(this,${skill.skillId})" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
 								</shiro:hasPermission>
 							</td>
 						</tr>

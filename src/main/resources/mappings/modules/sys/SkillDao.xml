@@ -67,6 +67,7 @@
 			name,
 			description,
 			is_show,
+			franchisee_id,
 			create_by,
 			create_date,
 			update_by,
@@ -75,6 +76,7 @@
 			#{name},
 			#{description},
 			'0',
+			#{franchiseeId},
 			#{createBy.id},
 			SYSDATE(),
 			#{createBy.id},
@@ -88,6 +90,7 @@
 		SET 
 			name = #{name},
 			description = #{description},
+			franchisee_id = #{franchiseeId},
 			update_by = #{updateBy.id},
 			update_date = SYSDATE()
 		WHERE id = #{skillId}
@@ -100,6 +103,14 @@
 			remarks = #{remarks}
 		WHERE id = #{skillId}
 	</delete>
+	<!-- 逻辑删除技能标签前先判断该标签是否已经被使用 -->
+	<select id="validDel" resultType="Integer">
+		SELECT
+			COUNT(1)
+		FROM
+			train_user_skill
+		WHERE skill_id = #{skillId}
+	</select>
 	
 	<!-- 插入美容师用户技能中间表 -->
 	<insert id="insertUserSkill">
