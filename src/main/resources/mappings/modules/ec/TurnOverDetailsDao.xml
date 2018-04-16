@@ -6,6 +6,8 @@
 		INSERT INTO mtmydb.mtmy_turnover_details (
 			order_id,
 			details_id,
+			mapping_id,
+			goods_id,
 			type,
 			amount,
 			use_balance,
@@ -20,6 +22,8 @@
 		)VALUES(
 			#{orderId},
 			#{detailsId},
+			#{mappingId},
+			#{goodsId},
 			#{type},
 			#{amount},
 			#{useBalance},

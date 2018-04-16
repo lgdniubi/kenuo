@@ -377,6 +377,7 @@
 			ogm.single_reality_price AS 'singleRealityPrice',
 			ogm.advance_price AS 'advancePrice',
 			g.goods_type AS 'goodsType',
+			ogm.goods_id AS 'goodsid',
 			u.office_id AS 'officeId',
 			ogm.reality_add_time AS 'realityAddTime',
 			ogm.is_real AS 'isreal',
@@ -471,6 +472,7 @@
 			ogm.single_reality_price AS 'singleRealityPrice',
 			ogm.advance_price AS 'advancePrice',
 			g.goods_type AS 'goodsType',
+			ogm.goods_id AS 'goodsid',
 			u.office_id AS 'officeId',
 			ogm.reality_add_time AS 'realityAddTime'
 		FROM mtmydb.mtmy_order_goods_mapping ogm

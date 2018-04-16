@@ -1197,7 +1197,7 @@ public class OrdersController extends BaseController {
 					
 					//充值金额+使用的账户余额+商品余额-订单欠款<=0，才能不多充值
 					if(Double.parseDouble(formater.format(oLog.getTotalAmount() + orderGoods.getOrderBalance() - orderGoods.getOrderArrearage())) <= 0){
-						ordersService.addOrderRechargeLog(oLog,orderGoods);
+						ordersService.addOrderRechargeLog(oLog,orderGoods,orderGoods.getGoodsid());
 						jsonO.put("type", "success");
 					}else{
 						jsonO.put("result", "tooMuchMoney");
@@ -2004,6 +2004,7 @@ public class OrdersController extends BaseController {
 				double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
 				double advance = orderGoods.getAdvancePrice();                 //预约金
 				double ratioPrice = orderGoods.getRatioPrice();        //异价后的价格
+				int goodsId = orderGoods.getGoodsid();                  //商品id
 				
 				double realAdvancePrice = 0;                                //处理预约金给老商品送钱时，判断预约金的真实价格
 				
@@ -2048,7 +2049,7 @@ public class OrdersController extends BaseController {
 				}
 				
 				orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-				ordersService.handleAdvanceFlag(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,realAdvancePrice,orderGoods.getRealityAddTime());
+				ordersService.handleAdvanceFlag(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,realAdvancePrice,orderGoods.getRealityAddTime(),goodsId);
 			}
 			
 			date = "success";
@@ -2876,7 +2877,7 @@ public class OrdersController extends BaseController {
 					
 					//充值金额+使用的账户余额+商品余额-订单欠款<=0，才能不多充值
 					if(Double.parseDouble(formater.format(oLog.getTotalAmount() + orderGoods.getOrderBalance() - orderGoods.getOrderArrearage())) <= 0){
-						ordersService.addCardOrderRechargeLog(oLog,orderGoods);
+						ordersService.addCardOrderRechargeLog(oLog,orderGoods,orderGoods.getGoodsid());
 						jsonO.put("type", "success");
 					}else{
 						jsonO.put("result", "tooMuchMoney");
@@ -2992,6 +2993,7 @@ public class OrdersController extends BaseController {
 				int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
 				String officeId = orderGoods.getOfficeId();           //组织架构ID
 				double ratioPrice = orderGoods.getRatioPrice();        //异价后的价格
+				int goodsId = orderGoods.getGoodsid();                  //商品id
 				
 				double advance = orderGoods.getAdvancePrice();                 //预约金
 				double realAdvancePrice = 0;                                //处理预约金给老商品送钱时，判断预约金的真实价格
@@ -3035,7 +3037,7 @@ public class OrdersController extends BaseController {
 				
 				
 				orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-				ordersService.handleCardAdvance(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,isReal,realAdvancePrice,orderGoods.getRealityAddTime());
+				ordersService.handleCardAdvance(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,isReal,realAdvancePrice,orderGoods.getRealityAddTime(),goodsId);
 			}
 			
 			date = "success";
@@ -3073,6 +3075,7 @@ public class OrdersController extends BaseController {
 					int goodsType = 0;                    //商品区分(0: 老商品 1: 新商品)
 					double advancePrice = 0;    //单个实物的预约金
 					int recId = 0;
+					int goodsId = 0;
 					
 					String shopId = ordersService.queryReservationShopId(orders.getOrderid());          //取货的店铺
 					List<OrderGoods> lists = ordersService.selectOrderGoodsByOrderid(orders.getOrderid());   //卡项本身  
@@ -3082,6 +3085,7 @@ public class OrdersController extends BaseController {
 						goodsType = lists.get(0).getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
 						advancePrice = lists.get(0).getAdvancePrice();    //单个实物的预约金
 						recId = lists.get(0).getRecid();
+						goodsId = lists.get(0).getGoodsid();
 					}
 					
 					if(!"bm".equals(orders.getChannelFlag())){
@@ -3129,6 +3133,8 @@ public class OrdersController extends BaseController {
 						TurnOverDetails turnOverDetails2 = new TurnOverDetails();
 						turnOverDetails2.setOrderId(details.getOrderId());
 						turnOverDetails2.setDetailsId(details.getId());
+						turnOverDetails2.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
+						turnOverDetails2.setGoodsId(String.valueOf(goodsId));
 						turnOverDetails2.setType(2);
 						turnOverDetails2.setAmount(details.getAppTotalAmount());
 						turnOverDetails2.setUseBalance(details.getUseBalance());

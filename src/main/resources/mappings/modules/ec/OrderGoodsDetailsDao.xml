@@ -367,7 +367,8 @@
 		SELECT
 			SUM(ogd.order_balance) AS 'orderBalance',
 			(SELECT SUM(a.service_times) FROM mtmydb.mtmy_order_goods_details a WHERE a.goods_mapping_id = ogd.goods_mapping_id AND type = 0) AS payRemaintimes,
-			SUM(ogd.order_arrearage) as orderArrearage
+			SUM(ogd.order_arrearage) as orderArrearage,
+			(select goods_id from mtmydb.mtmy_order_goods_mapping where rec_id = ogd.goods_mapping_id) AS goodsid
 		FROM
 			mtmydb.mtmy_order_goods_details ogd
 		WHERE

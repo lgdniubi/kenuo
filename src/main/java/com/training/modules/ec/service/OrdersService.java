@@ -1122,7 +1122,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * 新增订单充值日志记录
 	 * @param oLog
 	 */
-	public void addOrderRechargeLog(OrderRechargeLog oLog,OrderGoods orderGoods){
+	public void addOrderRechargeLog(OrderRechargeLog oLog,OrderGoods orderGoods,int goodsId){
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
@@ -1285,6 +1285,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		TurnOverDetails turnOverDetails = new TurnOverDetails();
 		turnOverDetails.setOrderId(details.getOrderId());
 		turnOverDetails.setDetailsId(details.getId());
+		turnOverDetails.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
+		turnOverDetails.setGoodsId(String.valueOf(goodsId));
 		turnOverDetails.setType(2);
 		turnOverDetails.setAmount(details.getAppTotalAmount());
 		turnOverDetails.setUseBalance(details.getUseBalance());
@@ -1836,7 +1838,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param orderAmount应付款金额
 	 * @param ratioPrice异价后的价格
 	 */
-	public void handleAdvanceFlag(OrderRechargeLog oLog,double ratioPrice,double detailsTotalAmount,int goodsType,String officeId,double realAdvancePrice,Date realityAddTime){
+	public void handleAdvanceFlag(OrderRechargeLog oLog,double ratioPrice,double detailsTotalAmount,int goodsType,String officeId,double realAdvancePrice,Date realityAddTime,int goodsId){
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
 		double totalAmount = oLog.getTotalAmount(); //实付款金额
@@ -1975,6 +1977,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		TurnOverDetails turnOverDetails2 = new TurnOverDetails();
 		turnOverDetails2.setOrderId(details.getOrderId());
 		turnOverDetails2.setDetailsId(details.getId());
+		turnOverDetails2.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
+		turnOverDetails2.setGoodsId(String.valueOf(goodsId));
 		turnOverDetails2.setType(2);
 		turnOverDetails2.setAmount(details.getAppTotalAmount());
 		turnOverDetails2.setUseBalance(details.getUseBalance());
@@ -2854,7 +2858,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * 新增卡项订单充值日志记录
 	 * @param oLog
 	 */
-	public void addCardOrderRechargeLog(OrderRechargeLog oLog,OrderGoods orderGoods){
+	public void addCardOrderRechargeLog(OrderRechargeLog oLog,OrderGoods orderGoods,int goodsId){
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
@@ -3034,6 +3038,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		TurnOverDetails turnOverDetails = new TurnOverDetails();
 		turnOverDetails.setOrderId(details.getOrderId());
 		turnOverDetails.setDetailsId(details.getId());
+		turnOverDetails.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
+		turnOverDetails.setGoodsId(String.valueOf(goodsId));
 		turnOverDetails.setType(2);
 		turnOverDetails.setAmount(details.getAppTotalAmount());
 		turnOverDetails.setUseBalance(details.getUseBalance());
@@ -3079,7 +3085,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param orderAmount应付款金额
 	 * @param ratioPrice异价后的价格
 	 */
-	public void handleCardAdvance(OrderRechargeLog oLog,double ratioPrice,double detailsTotalAmount,int goodsType,String officeId,int isReal,double realAdvancePrice,Date realityAddTime){
+	public void handleCardAdvance(OrderRechargeLog oLog,double ratioPrice,double detailsTotalAmount,int goodsType,String officeId,int isReal,double realAdvancePrice,Date realityAddTime,int goodsId){
 		//获取基本值
 		User user = UserUtils.getUser(); //登陆用户
 		double totalAmount = oLog.getTotalAmount(); //实付款金额
@@ -3207,6 +3213,8 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		TurnOverDetails turnOverDetails2 = new TurnOverDetails();
 		turnOverDetails2.setOrderId(details.getOrderId());
 		turnOverDetails2.setDetailsId(details.getId());
+		turnOverDetails2.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
+		turnOverDetails2.setGoodsId(String.valueOf(goodsId));
 		turnOverDetails2.setType(2);
 		turnOverDetails2.setAmount(details.getAppTotalAmount());
 		turnOverDetails2.setUseBalance(details.getUseBalance());
