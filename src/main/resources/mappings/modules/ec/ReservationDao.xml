@@ -372,7 +372,8 @@
 			ogd1.goods_mapping_id AS 'detailsMappingId',
 			r.group_id AS 'groupId',
 			ogd1.order_id AS 'orderId',
-			r.update_date AS 'updateDate'
+			r.update_date AS 'updateDate',
+			r.update_by AS 'updateBy.id'
 		FROM mtmydb.mtmy_appt_order r
 		LEFT JOIN mtmydb.mtmy_order_goods_details ogd1 ON ogd1.appt_id = r.id 
 		LEFT JOIN mtmydb.mtmy_order_goods_details ogd2 ON ogd2.order_id = ogd1.order_id

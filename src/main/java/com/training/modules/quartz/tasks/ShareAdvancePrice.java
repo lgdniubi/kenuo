@@ -13,10 +13,12 @@ import org.springframework.stereotype.Component;
 
 import com.training.common.utils.BeanUtil;
 import com.training.modules.ec.dao.OrderGoodsDetailsDao;
+import com.training.modules.ec.dao.TurnOverDetailsDao;
 import com.training.modules.ec.entity.OfficeAccount;
 import com.training.modules.ec.entity.OfficeAccountLog;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.Reservation;
+import com.training.modules.ec.entity.TurnOverDetails;
 import com.training.modules.ec.service.OrdersService;
 import com.training.modules.ec.service.ReservationService;
 import com.training.modules.quartz.entity.TaskLog;
@@ -35,6 +37,7 @@ public class ShareAdvancePrice extends CommonService{
 	private static ReservationService reservationService;
 	private static OrdersService ordersService;
 	private static OrderGoodsDetailsDao orderGoodsDetailsDao;
+	private static TurnOverDetailsDao turnOverDetailsDao;
 	
 	private DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private Logger logger = Logger.getLogger(SubBeforeDay.class);
@@ -44,6 +47,7 @@ public class ShareAdvancePrice extends CommonService{
 		reservationService = (ReservationService) BeanUtil.getBean("reservationService");
 		ordersService = (OrdersService) BeanUtil.getBean("ordersService");
 		orderGoodsDetailsDao = (OrderGoodsDetailsDao) BeanUtil.getBean("orderGoodsDetailsDao");
+		turnOverDetailsDao = (TurnOverDetailsDao) BeanUtil.getBean("turnOverDetailsDao");
 	}
 
 	public void shareAdvancePrice(){
@@ -86,6 +90,43 @@ public class ShareAdvancePrice extends CommonService{
 					if(i == reservationList.size()-1){
 						map.put("mtmy_advance_time", sdf.format(reservationList.get(i).getUpdateDate()));
 					}
+					
+					//获取当前用户预约对应的店铺id
+					String shopId = orderGoodsDetailsDao.selectShopId(reservationList.get(i).getReservationId()); 
+					
+					//同步数据到营业额明细表
+					double appSum = orderGoodsDetailsDao.queryAppSum(reservationList.get(i).getOrderId());
+					double realTurnOverMoney = 0.0;     //每次要打给商家的营业额
+					
+					double avgTurnOverMoney = Double.parseDouble(formater.format(appSum/totalTimes));     //前(n-1)次平分的钱
+					double lastTurnOverMoney = Double.parseDouble(formater.format(appSum - avgTurnOverMoney*(totalTimes-1)));   //最后一次平分的钱 
+							
+					if((orderGoods.getIsreal() == 2) || (orderGoods.getIsreal() == 3) || (orderGoods.getIsreal() == 1 && totalTimes != 999)){
+						if(completeNum == totalTimes){   //最后一次预约完成
+							realTurnOverMoney = lastTurnOverMoney;
+						}else{    //前n-1次预约完成
+							realTurnOverMoney = avgTurnOverMoney;
+						}
+					}else if(orderGoods.getIsreal() == 1 && totalTimes == 999){   //时限卡第一次就打全部
+						if(completeNum == 1){
+							realTurnOverMoney = appSum;
+						}else{
+							continue;
+						}
+					}
+					
+					TurnOverDetails turnOverDetails1 = new TurnOverDetails();
+					turnOverDetails1.setOrderId(reservationList.get(i).getOrderId());
+					turnOverDetails1.setDetailsId(reservationList.get(i).getOrderId());
+					turnOverDetails1.setType(1);
+					turnOverDetails1.setAmount(realTurnOverMoney);
+					turnOverDetails1.setUseBalance(0);
+					turnOverDetails1.setStatus(1);
+					turnOverDetails1.setUserId(reservationList.get(i).getUserId());
+					turnOverDetails1.setBelongOfficeId(shopId);
+					turnOverDetails1.setCreateBy(reservationList.get(i).getUpdateBy());
+					turnOverDetails1.setSettleDate(new Date());
+					turnOverDetailsDao.saveTurnOverDetails(turnOverDetails1);
 					
 					//若为老商品，则对店铺有补偿
 					if(goodsType == 0){
@@ -134,9 +175,6 @@ public class ShareAdvancePrice extends CommonService{
 								officeAccountLog.setCreateBy(user);
 								officeAccountLog.setApptId(String.valueOf(reservationList.get(i).getReservationId()));
 								orderGoodsDetailsDao.insertOfficeAccountLog(officeAccountLog);
-								
-								//获取当前用户预约对应的店铺id
-								String shopId = orderGoodsDetailsDao.selectShopId(reservationList.get(i).getReservationId()); 
 								
 								//若无该店铺的账户
 								if(orderGoodsDetailsDao.selectShopByOfficeId(shopId) == 0){    

@@ -374,4 +374,11 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @param orderId
 	 */
 	public void insertForHonour(@Param(value="newCreateTime")Date newCreateTime,@Param(value="orderId")String orderId);
+	
+	/**
+	 * 查询实物发货到店的取货店铺
+	 * @param orderId
+	 * @return
+	 */
+	public String queryReservationShopId(String orderId);
 }

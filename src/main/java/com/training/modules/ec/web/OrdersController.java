@@ -3071,14 +3071,15 @@ public class OrdersController extends BaseController {
 					
 					double detailsTotalAmount = 0;       //预约金用了红包、折扣以后实际付款的钱
 					int goodsType = 0;                    //商品区分(0: 老商品 1: 新商品)
-					String officeId = "";           //组织架构ID
 					double advancePrice = 0;    //单个实物的预约金
 					int recId = 0;
+					
+					String shopId = ordersService.queryReservationShopId(orders.getOrderid());          //取货的店铺
 					List<OrderGoods> lists = ordersService.selectOrderGoodsByOrderid(orders.getOrderid());   //卡项本身  
+
 					if(lists.size() > 0){
 						detailsTotalAmount = lists.get(0).getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
 						goodsType = lists.get(0).getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
-						officeId = lists.get(0).getOfficeId();           //组织架构ID
 						advancePrice = lists.get(0).getAdvancePrice();    //单个实物的预约金
 						recId = lists.get(0).getRecid();
 					}
@@ -3119,7 +3120,7 @@ public class OrdersController extends BaseController {
 						turnOverDetails1.setUseBalance(0);
 						turnOverDetails1.setStatus(1);
 						turnOverDetails1.setUserId(orders.getUserid());
-						turnOverDetails1.setBelongOfficeId(officeId);
+						turnOverDetails1.setBelongOfficeId(shopId);
 						turnOverDetails1.setCreateBy(UserUtils.getUser());
 						turnOverDetails1.setSettleDate(new Date());
 						turnOverDetailsService.saveTurnOverDetails(turnOverDetails1);
@@ -3166,19 +3167,19 @@ public class OrdersController extends BaseController {
 								officeAccountLog.setCreateBy(newUser);
 								orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
 								
-								if(orderGoodsDetailsService.selectShopByOfficeId(officeId) == 0){    //若登云账户中无该店铺的账户
+								if(orderGoodsDetailsService.selectShopByOfficeId(shopId) == 0){    //若登云账户中无该店铺的账户
 									OfficeAccount officeAccount = new OfficeAccount();
 									officeAccount.setAmount(claimMoney);
-									officeAccount.setOfficeId(officeId);
+									officeAccount.setOfficeId(shopId);
 									orderGoodsDetailsService.insertByOfficeId(officeAccount);
 								}else{         
-									double shopAmount = orderGoodsDetailsService.selectByOfficeId(officeId);   //登云账户中店铺的钱
+									double shopAmount = orderGoodsDetailsService.selectByOfficeId(shopId);   //登云账户中店铺的钱
 									double afterShopAmount =  Double.parseDouble(formater.format(shopAmount + claimMoney));
-									orderGoodsDetailsService.updateByOfficeId(afterShopAmount, officeId);
+									orderGoodsDetailsService.updateByOfficeId(afterShopAmount, shopId);
 								}
 								//店铺的登云账户减少钱时对日志进行操作
 								officeAccountLog.setOrderId(orders.getOrderid());
-								officeAccountLog.setOfficeId(officeId);
+								officeAccountLog.setOfficeId(shopId);
 								officeAccountLog.setType("0");
 								officeAccountLog.setOfficeFrom("1");
 								officeAccountLog.setAmount(claimMoney);

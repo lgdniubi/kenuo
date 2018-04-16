@@ -1401,4 +1401,12 @@
 			NOW()
 		)
 	</insert>
+	
+	<!-- 查询实物发货到店的取货店铺 -->
+	<select id="queryReservationShopId" resultType="String">
+		SELECT o.shop_id
+		FROM mtmydb.mtmy_orders o
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping ogm ON ogm.order_id = o.order_id
+		WHERE o.order_id = #{orderid}
+	</select>
 </mapper>

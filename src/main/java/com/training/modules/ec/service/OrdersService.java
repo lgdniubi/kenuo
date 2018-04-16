@@ -641,7 +641,16 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	public List<OrderGoods> selectOrderGoodsByOrderid(String orderId){
 		return orderGoodsDao.selectOrderGoodsByOrderid(orderId);
 	}
-
+	
+	/**
+	 * 查询实物发货到店的取货店铺
+	 * @param orderId
+	 * @return
+	 */
+	public String queryReservationShopId(String orderId){
+		return ordersDao.queryReservationShopId(orderId);
+	}
+	
 	/**
 	 * 保存虚拟订单saveVirtualOrder
 	 * @param orders
@@ -1948,7 +1957,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		
 		//同步数据到营业额明细表
 		//第一次，同步下单的那条数据
-		double appSum = orderGoodsDetailsDao.queryAppSum(details.getOrderId());
+		/*double appSum = orderGoodsDetailsDao.queryAppSum(details.getOrderId());
 		TurnOverDetails turnOverDetails1 = new TurnOverDetails();
 		turnOverDetails1.setOrderId(details.getOrderId());
 		turnOverDetails1.setDetailsId(details.getOrderId());
@@ -1960,7 +1969,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		turnOverDetails1.setBelongOfficeId(officeId);
 		turnOverDetails1.setCreateBy(UserUtils.getUser());
 		turnOverDetails1.setSettleDate(new Date());
-		turnOverDetailsDao.saveTurnOverDetails(turnOverDetails1);
+		turnOverDetailsDao.saveTurnOverDetails(turnOverDetails1);*/
 		
 		//第二次，同步处理预约金的那条数据
 		TurnOverDetails turnOverDetails2 = new TurnOverDetails();
@@ -3180,7 +3189,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		
 		//同步数据到营业额明细表
 		//第一次，同步下单的那条数据
-		double appSum = orderGoodsDetailsDao.queryAppSum(details.getOrderId());
+		/*double appSum = orderGoodsDetailsDao.queryAppSum(details.getOrderId());
 		TurnOverDetails turnOverDetails1 = new TurnOverDetails();
 		turnOverDetails1.setOrderId(details.getOrderId());
 		turnOverDetails1.setDetailsId(details.getOrderId());
@@ -3192,7 +3201,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		turnOverDetails1.setBelongOfficeId(officeId);
 		turnOverDetails1.setCreateBy(UserUtils.getUser());
 		turnOverDetails1.setSettleDate(new Date());
-		turnOverDetailsDao.saveTurnOverDetails(turnOverDetails1);
+		turnOverDetailsDao.saveTurnOverDetails(turnOverDetails1);*/
 		
 		//第二次，同步处理预约金的那条数据
 		TurnOverDetails turnOverDetails2 = new TurnOverDetails();
