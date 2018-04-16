@@ -692,6 +692,12 @@
 					concat(tso.parent_ids, tso.id)
 				) > 0
 			)
+			AND (
+				locate(
+					#{franchiseeId},
+					concat(tso.parent_ids, tso.id)
+				) > 0
+			)
 		</if>
 		<if test="keyword != null and keyword!=''">
 			AND (

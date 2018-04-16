@@ -97,7 +97,7 @@
 									</td>
 									<td class="width-15" colspan="3">
 										<sys:treeselect id="goodsId" name="goodsId" value="${goodsUsage.goodsId}" labelName="goodsName" labelValue="${goodsUsage.goodsName}"
-											title="商品名称" url="/ec/goods/treeAllData" cssClass="form-control required" allowClear="true" notAllowSelectParent="true"/>
+											title="商品名称" url="/ec/goods/treeGoodsData?franchiseeId=${franchiseeId}" cssClass="form-control required" allowClear="true" notAllowSelectParent="true"/>
 									</td>
 									<td class="width-15 active">
 										<label class="pull-right"><font color="red">*</font>购买数量:</label>

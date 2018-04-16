@@ -19,8 +19,8 @@
 
 	<select id="get" resultType="UserDetail">
 		SELECT
-			mui.mtmy_user_id AS 'userId',
-			mui.franchisee_id AS 'franchiseeId',
+			mmc.user_id AS 'userId',
+			mmc.franchisee_id AS 'franchiseeId',
 			mui.name AS 'name',
 			mui.mobile AS 'mobile',
 			mui.idcard AS 'idCard',
@@ -214,7 +214,7 @@
 
 	<select id="getUserWithoutScope" resultType="UserDetail">
 		SELECT
-			mc.user_id AS userId,
+			mu.user_id AS userId,
 			mu.`name`,
 			mu.sex,
 			mu.mobile,
@@ -229,18 +229,15 @@
 			tsu.`name` AS 'beautyName',
 			tso.`name` AS 'shopName'
 		FROM
-			mtmydb.mtmy_customer mc
-		LEFT JOIN trains.sys_franchisee tsf ON mc.franchisee_id = tsf.id
-		LEFT JOIN trains.sys_user tsu ON mc.beauty_id = tsu.id
-		LEFT JOIN trains.sys_office tso ON mc.office_id = tso.id
-		LEFT JOIN mtmydb.mtmy_users mu ON mc.user_id = mu.user_id
+			mtmydb.mtmy_users mu
+		LEFT JOIN mtmydb.mtmy_customer mc ON mc.user_id = mu.user_id AND mc.franchisee_id = #{franchiseeId} 
 		LEFT JOIN mtmydb.mtmy_orders mo ON mc.user_id = mo.user_id
 		LEFT JOIN mtmydb.mtmy_user_yz_level muyl ON mu.level_value <![CDATA[>=]]> muyl.min_val
 			AND mu.level_value <![CDATA[<=]]> muyl.max_val
+		LEFT JOIN trains.sys_franchisee tsf ON mc.franchisee_id = tsf.id
+		LEFT JOIN trains.sys_user tsu ON mc.beauty_id = tsu.id
+		LEFT JOIN trains.sys_office tso ON mc.office_id = tso.id
 		WHERE 1=1
-			<if test="franchiseeId != null and franchiseeId !='' ">
-				AND mc.franchisee_id = #{franchiseeId}
-			</if>
 			<if test="officeId != null and officeId!='' ">
 				AND (
 						locate(
