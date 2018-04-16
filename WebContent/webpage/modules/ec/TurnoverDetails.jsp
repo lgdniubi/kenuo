@@ -139,6 +139,8 @@
 		     	    	
 		     	    	var orderId = obj.document.getElementById("orderId").value; //订单id
 		     	    	var detailsId = obj.document.getElementById("detailsId").value; //售后id
+		     	    	var mappingId = obj.document.getElementById("mappingId").value; //售后id
+		     	    	var goodsId = obj.document.getElementById("goodsId").value; //售后id
 		     	    	
 		     	    	//判断是否存在数据
 		     	    	if(returnAmount==''){
@@ -186,6 +188,8 @@
 		       				data:{
 		       					orderId:orderId,
 		       					detailsId:detailsId,
+		       					mappingId:mappingId,
+		       					goodsId:goodsId,
 		       					amounts:amounts
 		       				 },
 		       				url:"${ctx}/ec/returned/saveMtmyTurnoverDetails",
