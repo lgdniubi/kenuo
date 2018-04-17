@@ -1,8 +1,6 @@
 package com.training.modules.train.service;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,17 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import com.sun.org.apache.bcel.internal.generic.PUSH;
-import com.training.common.mapper.JsonMapper;
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.ec.utils.WebUtils;
-import com.training.modules.sys.dao.FranchiseeDao;
 import com.training.modules.sys.entity.Area;
-import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.User;
-import com.training.modules.sys.service.FranchiseeService;
 import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
@@ -36,8 +29,6 @@ import com.training.modules.train.dao.UserCheckDao;
 import com.training.modules.train.entity.FzxRole;
 import com.training.modules.train.entity.ModelFranchisee;
 import com.training.modules.train.entity.PcRole;
-import com.training.modules.train.entity.TrainCategorys;
-import com.training.modules.train.entity.TrainLessons;
 import com.training.modules.train.entity.UserCheck;
 
 import net.sf.json.JSONArray;
@@ -54,10 +45,6 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 
 	@Autowired
 	private UserCheckDao userCheckDao;
-	@Autowired
-	private FranchiseeDao franchiseeDao;
-	@Autowired
-	private FranchiseeService franchiseeService;
 	@Autowired
 	private OfficeService officeService;
 	

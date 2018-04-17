@@ -1,11 +1,6 @@
 package com.training.modules.train.entity;
 
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.training.common.persistence.DataEntity;
-import com.training.modules.sys.entity.Franchisee;
-import com.training.modules.sys.entity.Office;
 
 /**
  * 版本管理

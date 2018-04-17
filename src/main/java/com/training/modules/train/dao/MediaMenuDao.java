@@ -9,7 +9,6 @@ import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.MediaMenu;
 import com.training.modules.train.entity.MediaRole;
-import com.training.modules.train.entity.PcRole;
 
 /**
  * 菜单DAO接口

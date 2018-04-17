@@ -10,8 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.training.common.service.CrudService;
 import com.training.modules.train.dao.TrainMenuDao;
 import com.training.modules.train.dao.TrainModelDao;
-import com.training.modules.train.entity.FzxMenu;
-import com.training.modules.train.entity.FzxRole;
 import com.training.modules.train.entity.PCMenu;
 import com.training.modules.train.entity.TrainModel;
 

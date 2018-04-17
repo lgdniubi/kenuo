@@ -1,7 +1,6 @@
 package com.training.modules.train.web;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,12 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.common.collect.Lists;
 import com.training.common.persistence.Page;
 import com.training.common.web.BaseController;
-import com.training.modules.sys.entity.Franchisee;
-import com.training.modules.sys.entity.User;
-import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.ModelFranchisee;
 import com.training.modules.train.entity.UserCheck;
 import com.training.modules.train.service.UserCheckService;

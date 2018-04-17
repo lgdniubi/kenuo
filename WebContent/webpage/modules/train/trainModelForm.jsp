@@ -82,8 +82,7 @@
 				  </tr>
 			      <tr>
 					 <td class="width-15 active"><label class="pull-right">备注:</label></td>
-			         <td class="width-35"><form:textarea path="remark" htmlEscape="false" rows="3" maxlength="50" class="form-control "/>
-			         <span class="help-inline">0/50</span></td>
+			         <td class="width-35"><form:textarea path="remark" htmlEscape="false" rows="3" maxlength="50" class="form-control" placeholder="请输入备注（最多50个字）"/></td>
 			      </tr>
 				</tbody>
 				</table>

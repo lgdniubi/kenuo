@@ -20,7 +20,6 @@ import com.training.common.web.BaseController;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
-import com.training.modules.train.entity.MediaMenu;
 import com.training.modules.train.entity.TrainModel;
 import com.training.modules.train.service.FzxMenuService;
 import com.training.modules.train.service.MediaMenuService;

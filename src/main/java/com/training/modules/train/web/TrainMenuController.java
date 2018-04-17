@@ -3,7 +3,6 @@
  */
 package com.training.modules.train.web;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +24,6 @@ import com.google.common.collect.Maps;
 import com.training.common.config.Global;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
-import com.training.modules.sys.entity.Menu;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.TrainMenuDao;
 import com.training.modules.train.entity.PCMenu;

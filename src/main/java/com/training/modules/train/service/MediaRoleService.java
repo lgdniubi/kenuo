@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
-import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.sys.entity.User;
 import com.training.modules.train.dao.MediaRoleDao;
 import com.training.modules.train.entity.MediaRole;
@@ -23,8 +22,6 @@ import com.training.modules.train.entity.MediaRole;
 @Transactional(readOnly = false)
 public class MediaRoleService extends CrudService<MediaRoleDao,MediaRole>{
 	
-	@Autowired
-	private RedisClientTemplate redisClientTemplate; //redis缓存Service
 	@Autowired
 	private MediaRoleDao mediaRoleDao;
 	
