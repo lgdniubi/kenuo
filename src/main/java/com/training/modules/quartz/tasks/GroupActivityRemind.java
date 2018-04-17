@@ -107,9 +107,9 @@ public class GroupActivityRemind extends CommonService{
 							mapMobile.put(key, listMobile);
 						}
 					}
-					// 调用接口、短信 并修改推送信息
-					push(mapCid,mapMobile,ids);
 				}
+				// 调用接口、短信 并修改推送信息
+				push(mapCid,mapMobile,ids);
 				message = message + "推送活动id"+list.get(i).getId()+",";
 			}
 			taskLog.setJobDescription("团购项目推送：");
