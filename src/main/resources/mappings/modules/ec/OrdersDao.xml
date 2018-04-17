@@ -172,6 +172,14 @@
 			a.del_flag,
 			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType,
 			IFNULL(u.office_id,'') as officeId,
+			(SELECT COUNT(*)
+			FROM mtmydb.mtmy_customer
+			WHERE user_id = u.user_id
+			<if test="franchiseeId != '' and franchiseeId != null and franchiseeId != 1">
+				AND franchisee_id = #{franchiseeId}
+			</if>
+			AND office_id IS NOT NULL
+			AND office_id != '') AS 'bindingOfficeNum',
 			u.user_id as userid,
 			a.is_pick_up as isPickUp,
 			a.pick_up_note as pickUpNote
@@ -290,6 +298,14 @@
 			a.del_flag,
 			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType,
 			IFNULL(u.office_id,'') as officeId,
+			(SELECT COUNT(*)
+			FROM mtmydb.mtmy_customer
+			WHERE user_id = u.user_id
+			<if test="franchiseeId != '' and franchiseeId != null and franchiseeId != 1">
+				AND franchisee_id = #{franchiseeId}
+			</if>
+			AND office_id IS NOT NULL
+			AND office_id != '') AS 'bindingOfficeNum',
 			u.user_id as userid,
 			a.is_pick_up as isPickUp,
 			a.pick_up_note as pickUpNote
@@ -1000,6 +1016,14 @@
 			o.shipping_code as shippingcode,
 			o.shipping_name as shippingname,
 			IFNULL(u.office_id,'') AS officeId,
+			(SELECT COUNT(*)
+			FROM mtmydb.mtmy_customer
+			WHERE user_id = u.user_id
+			<if test="franchiseeId != '' and franchiseeId != null and franchiseeId != 1">
+				AND franchisee_id = #{franchiseeId}
+			</if>
+			AND office_id IS NOT NULL
+			AND office_id != '') AS 'bindingOfficeNum',
 			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '1') AS 'advanceFlag',
 			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '6') AS 'changeAdvanceFlag',
 			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '0' AND service_times = -1) AS 'sumAppt',

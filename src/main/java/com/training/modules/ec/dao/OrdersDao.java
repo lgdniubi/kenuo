@@ -166,7 +166,7 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @param orderid
 	 * @return
 	 */
-	public Orders selectOrderById(String orderid);
+	public Orders selectOrderById(Orders orders);
 	/**
 	 * 修改虚拟订单
 	 * @param orders

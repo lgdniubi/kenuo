@@ -514,13 +514,13 @@
 	}
 window.onload=initStatus;
 
-	function ToAdvance(officeId,recid,servicetimes,orderArrearage){
+	function ToAdvance(bindingOfficeNum,recid,servicetimes,orderArrearage){
 		var userid = $("#userid").val();
 		var orderid = $("#orderid").val();
 		var isReal = $("#isReal").val();
 		var channelFlag = $("#channelFlag").val();
 		
-		if(officeId == "" || officeId == null){
+		if(bindingOfficeNum == 0){
 			top.layer.alert('该用户未绑定店铺,请在CRM中为该用户绑定！', {icon: 0, title:'提醒'});
 	    	return;
 		}
@@ -811,7 +811,7 @@ window.onload=initStatus;
 												</c:if>
 												<c:if test="${orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag == 1}">
 													<c:if test="${orders.orderstatus == 4}">
-														<a href="#" onclick="ToAdvance('${orders.officeId}',${orderGood.recid},${orderGood.servicetimes},${orderGood.orderArrearage })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
+														<a href="#" onclick="ToAdvance('${orders.bindingOfficeNum}',${orderGood.recid},${orderGood.servicetimes},${orderGood.orderArrearage })"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>处理预约金</a>
 													</c:if>
 												</c:if>
 											</c:if>

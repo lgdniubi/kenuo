@@ -13,6 +13,10 @@ import com.training.modules.sys.entity.User;
  * @author zhangyang
  *
  */
+/**
+ * @author xiaoye
+ *
+ */
 public class Orders extends TreeEntity<Orders> {
 	
 	private static final long serialVersionUID = 1L;
@@ -226,6 +230,9 @@ public class Orders extends TreeEntity<Orders> {
 	
 	private Date actualBegTime;                   //实际下单时间的开始时间
 	private Date actualEndTime;                   //实际下单时间的结束时间
+	
+	private int bindingOfficeNum;                //用户绑定的店铺个数
+	private String franchiseeId;                   //当前登录人的商家id
 	
 	public String getSearchIsReal() {
 		return searchIsReal;
@@ -1734,6 +1741,18 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setActualEndTime(Date actualEndTime) {
 		this.actualEndTime = actualEndTime;
+	}
+	public int getBindingOfficeNum() {
+		return bindingOfficeNum;
+	}
+	public void setBindingOfficeNum(int bindingOfficeNum) {
+		this.bindingOfficeNum = bindingOfficeNum;
+	}
+	public String getFranchiseeId() {
+		return franchiseeId;
+	}
+	public void setFranchiseeId(String franchiseeId) {
+		this.franchiseeId = franchiseeId;
 	}
 	
 }
