@@ -75,6 +75,8 @@
 					<!-- 存储需要字段 -->
 					<input type="hidden" id="orderId" name="orderId" value="${turnOverDetails.orderId}"/>
 					<input type="hidden" id="detailsId" name="detailsId" value="${turnOverDetails.detailsId}"/>
+					<input type="hidden" id="mappingId" name="mappingId" value="${turnOverDetails.mappingId}"/>
+					<input type="hidden" id="goodsId" name="goodsId" value="${turnOverDetails.goodsId}"/>
 					
 					<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 						<thead>

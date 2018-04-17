@@ -130,4 +130,13 @@ public class OrderGoodsService extends TreeService<OrderGoodsDao,OrderGoods>{
 	public List<OrderGoods> findOrderDetails(String orderId){
 		return orderGoodsDao.findOrderDetails(orderId);
 	}
+
+	/**
+	 * 根据营业额中订单商品中间表ID获取到商品id  (土豆售后编辑营业额使用)
+	 * @param mappingId
+	 * @return
+	 */
+	public String getGoodsIdByRecId(int mappingId) {
+		return orderGoodsDao.getGoodsIdByRecId(mappingId);
+	}
 }

@@ -572,4 +572,14 @@
 		AND a.group_id = 0
 		GROUP BY a.rec_id
 	</select>
+	
+	<!-- 根据订单id查询所有商品订单 -->
+	<select id="getGoodsIdByRecId" resultType="String">
+		SELECT
+			m.goods_id AS goodsId
+		FROM
+			mtmydb.mtmy_order_goods_mapping m
+		WHERE
+			m.rec_id = #{mappingId}
+	</select>
 </mapper>

@@ -1146,6 +1146,8 @@ public class ReturnedGoodsService extends CrudService<ReturnedGoodsDao, Returned
 		String[] amount = amounts.split(",");
 		for (int i = 0; i < amount.length; i++) {
 			list.get(i).setDetailsId(turnOverDetails.getDetailsId());
+			list.get(i).setMappingId(turnOverDetails.getMappingId());
+			list.get(i).setGoodsId(turnOverDetails.getGoodsId());
 			list.get(i).setType(3);
 			list.get(i).setStatus(4);
 			list.get(i).setAmount(Double.parseDouble(amount[i]));

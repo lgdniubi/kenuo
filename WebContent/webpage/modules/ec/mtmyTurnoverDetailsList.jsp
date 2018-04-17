@@ -44,8 +44,6 @@
 							<th style="text-align: center;">使用账户余额</th>
 							<th style="text-align: center;">状态</th>
 							<th style="text-align: center;">消费者</th>
-							<th style="text-align: center;">消费者绑定店铺</th>
-							<th style="text-align: center;">绑定技师</th>
 							<th style="text-align: center;">创建者</th>
 							<th style="text-align: center;">创建时间</th>
 						</tr>
@@ -88,8 +86,6 @@
 									</c:if>
 								</td>
 								<td>${turnOverDetails.userName}</td>
-								<td>${turnOverDetails.officeName}</td>
-								<td>${turnOverDetails.beauticianName}</td>
 								<td>${turnOverDetails.createName}</td>
 								<td><fmt:formatDate value="${turnOverDetails.createDate }" pattern="yyyy-MM-dd HH:mm:ss" /></td>
 							</tr>
