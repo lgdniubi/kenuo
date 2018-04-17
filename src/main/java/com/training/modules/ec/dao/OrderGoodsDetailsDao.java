@@ -131,6 +131,13 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	public double queryAppSum(String orderId);
 
 	/**
+	 * 根据订单id查询app下的单时候的总的app实付
+	 * @param orderId
+	 * @return
+	 */
+	public double queryAppOrdersSum(String orderId);
+	
+	/**
 	 * 根据订单id获取订单余额,订单欠款和app欠款金额
 	 * @param returnedGoods
 	 * @return

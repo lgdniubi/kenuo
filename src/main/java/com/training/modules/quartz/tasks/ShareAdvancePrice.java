@@ -95,7 +95,7 @@ public class ShareAdvancePrice extends CommonService{
 					String shopId = orderGoodsDetailsDao.selectShopId(reservationList.get(i).getReservationId()); 
 					
 					//同步数据到营业额明细表
-					double appSum = orderGoodsDetailsDao.queryAppSum(reservationList.get(i).getOrderId());
+					double appSum = orderGoodsDetailsDao.queryAppOrdersSum(reservationList.get(i).getOrderId());
 					double realTurnOverMoney = 0.0;     //每次要打给商家的营业额
 					
 					double avgTurnOverMoney = Double.parseDouble(formater.format(appSum/totalTimes));     //前(n-1)次平分的钱

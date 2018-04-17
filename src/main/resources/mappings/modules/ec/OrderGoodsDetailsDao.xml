@@ -245,6 +245,22 @@
 		WHERE order_id = #{orderId}
 		AND advance_flag = '0'
 	</select>
+	
+	<!-- 根据订单id查询app下的单时候的总的app实付 -->
+	<select id="queryAppOrdersSum" resultType="Double">
+		SELECT
+		CASE 
+			WHEN (SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details ogd2 WHERE ogd2.advance_flag = 1 AND ogd2.order_id = #{orderId}) = 1
+			THEN (SELECT ogd3.app_total_amount FROM mtmydb.mtmy_order_goods_details ogd3 WHERE ogd3.advance_flag = 1 AND ogd3.order_id = #{orderId})
+		ELSE 
+			(SELECT SUM(ogd5.app_total_amount) 
+			FROM mtmydb.mtmy_order_goods_details ogd5
+			WHERE ogd5.advance_flag = 0 
+			AND ogd5.order_id = #{orderId}
+			<![CDATA[AND DATE_FORMAT(ogd5.create_date,'%Y-%m-%d %H:%i:%s') <= DATE_FORMAT((SELECT ogd4.create_date FROM mtmydb.mtmy_order_goods_details ogd4 WHERE ogd4.advance_flag = 2 AND ogd4.order_id = #{orderId}),'%Y-%m-%d %H:%i:%s')]]>)
+		END
+	</select>
+	
 	<!-- 根据订单id查询商品的订单余额,订单欠款和app欠款 -->
 	<select id="getArrearageByOrderId" resultType="OrderGoodsDetails">
 		SELECT
