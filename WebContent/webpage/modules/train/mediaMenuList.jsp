@@ -38,7 +38,7 @@
 								html += "<td nowrap><a href=\"#\" onclick=\"openDialogView('查看菜单', '${ctx}/train/mdmenu/form?id="+dataObj[i].id+"','800px', '620px')\">"+dataObj[i].name+"</a></td>";
 								html += "<td>"+dataObj[i].href+"</td>";
 								html +="<td style=\"text-align:center;\"><input name=\"sorts\" type=\"text\" value="+dataObj[i].sort+" class=\"form-control\" style=\"width:100px;margin:0;padding:0;text-align:center;\"></td>";
-								if(dataObj[i].isShow == 1){
+								if(dataObj[i].isShow == 0){
 									html += "<td>显示</td>";
 								}else{
 									html += "<td>隐藏</td>";
