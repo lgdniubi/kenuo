@@ -2906,7 +2906,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				appArrearage = -Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app欠款金额
 			}else if(newTotalAmount >= orderArrearage){
 				//实付款金额	>=  欠款
-				serviceTimes_in = _servicetimes-orderGoods.getRemaintimes();//充值次数
+				serviceTimes_in = _servicetimes-orderGoods.getPayRemaintimes();//充值次数
 				totalAmount_in = orderArrearage;//实付金额
 				
 				newSpareMoneySum = Double.parseDouble(formater.format(newTotalAmount - orderArrearage - accountBalance));//商品总余额(当实付大于欠款时，将多的存入个人账户余额中)
