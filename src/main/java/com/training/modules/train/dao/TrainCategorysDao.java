@@ -57,6 +57,11 @@ public interface TrainCategorysDao extends CrudDao<TrainCategorys>{
 	 * @param trainCategorys
 	 */
 	public void updateIsShow(@Param(value="ids")String[] ids,@Param(value="isShow")int isShow);
+	/**
+	 * 修改分类状态
+	 * @param trainCategorys
+	 */
+	public void updateIsOpen(@Param(value="ids")String[] ids,@Param(value="isOpen")int isOpen);
 
 	/**
 	 * 

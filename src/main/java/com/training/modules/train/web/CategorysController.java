@@ -461,4 +461,33 @@ public class CategorysController extends BaseController{
 		}
 		return jsonMap;
 	}
+	/**
+	 * 修改分类状态
+	 * @param flag
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "updateIsOpen")
+	public Map<String, String> updateIsOpen(String categoryId,String isOpen){
+		Map<String, String> jsonMap = new HashMap<String, String>();
+		try {
+			int ISOPEN = Integer.parseInt(isOpen);
+			if(!StringUtils.isEmpty(categoryId) && (ISOPEN == 0 || ISOPEN == 1)){
+				String categoryIds = categoryId;
+				String ids[] =categoryIds.split(",");
+				trainCategorysService.updateIsOpen(ids,ISOPEN);
+				jsonMap.put("STATUS", "OK");
+				jsonMap.put("ISOPEN", isOpen);
+				jsonMap.put("CATEGORYIDS", categoryIds);
+			}else{
+				jsonMap.put("STATUS", "ERROR");
+				jsonMap.put("MESSAGE", "修改失败,必要参数为空");
+			}
+		} catch (Exception e) {
+			logger.error("分类管理-修改分类状态 出现异常，异常信息为："+e.getMessage());
+			jsonMap.put("STATUS", "ERROR");
+			jsonMap.put("MESSAGE", "修改失败,出现异常");
+		}
+		return jsonMap;
+	}
 }

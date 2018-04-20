@@ -39,6 +39,11 @@ public interface TrainLessonsDao extends CrudDao<TrainLessons>{
 	 * @param trainLessons
 	 */
 	public void updateIsShow(TrainLessons trainLessons);
+	/**
+	 * 修改课程状态
+	 * @param trainLessons
+	 */
+	public void updateIsOpen(TrainLessons trainLessons);
 	
 	/**
 	 * 统计总揽

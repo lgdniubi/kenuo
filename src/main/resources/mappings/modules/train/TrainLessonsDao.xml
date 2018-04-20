@@ -18,6 +18,7 @@
 			T.CREATETIME,
 			t.sort,
 			t.is_show AS isShow,
+			t.is_open AS isOpen,
 			t.office_id AS "franchisee.id",
 			t.show_type AS 'showType'
 		FROM
@@ -111,6 +112,7 @@
 			office_id,
 			sort,
 			is_show,
+			is_open,
 			show_type
 		)
 		VALUES
@@ -129,6 +131,7 @@
 			(SELECT office_id FROM trains.train_categorys WHERE category_id = #{trainCategorys.categoryId}),
 			#{sort},
 			#{isShow},
+			#{isOpen},
 			#{showType}
 		)
 	</insert>
@@ -146,6 +149,7 @@
 		  show_type = #{showType},
 		  office_id = (SELECT office_id FROM trains.train_categorys WHERE category_id = #{categoryId}),
 		  sort = #{sort},
+		  is_open = #{isOpen},
 		  is_show = #{isShow}
 		WHERE lesson_id = #{lessonId} 
 	</update>
@@ -155,6 +159,14 @@
 		  train_lessons 
 		SET
 		  is_show = #{isShow}
+		WHERE lesson_id = #{lessonId} 
+	</update>
+	<!-- 修改课程状态 -->
+	<update id="updateIsOpen">
+		UPDATE 
+		  train_lessons 
+		SET
+		 is_open = #{isOpen}
 		WHERE lesson_id = #{lessonId} 
 	</update>
 	<!-- 课程统计总揽 -->

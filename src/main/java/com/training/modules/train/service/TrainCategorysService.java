@@ -86,6 +86,13 @@ public class TrainCategorysService extends CrudService<TrainCategorysDao,TrainCa
 	public void updateIsShow(String[] ids,int isShow){
 		dao.updateIsShow(ids,isShow);
 	}
+	/**
+	 * 修改分类状态
+	 * @param trainCategorys
+	 */
+	public void updateIsOpen(String[] ids,int isOpen){
+		dao.updateIsOpen(ids,isOpen);
+	}
 
 	/**
 	 * 

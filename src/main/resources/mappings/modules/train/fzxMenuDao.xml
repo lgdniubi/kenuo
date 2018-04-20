@@ -27,8 +27,9 @@
 		a.href,
 		a.icon,
 		a.sort,
-		a.is_show,
-		<!-- a.permission, -->
+		a.is_shops,
+		<!--a.is_show,
+		 a.permission, -->
 		a.remarks,
 		a.create_by AS "createBy.id",
 		a.create_date,
@@ -58,7 +59,7 @@
 			name,
 			enname,
 			icon,
-			is_show AS isShow,
+			<!-- is_show AS isShow, -->
 			sort 
 		FROM 
 			fzx_menu 
@@ -128,7 +129,8 @@
 			name, 
 			href,
 			icon,
-			is_show,
+			is_shops,
+			<!-- is_show, -->
 			sort, 
 			create_by,
 			create_date, 
@@ -158,7 +160,7 @@
 			name = #{name}, 
 			href = #{href}, 
 			icon = #{icon}, 
-			is_show = #{isShow}, 
+			is_shops, = #{isShow}, 
 			sort = #{sort},
 			update_by = #{updateBy.id}, 
 			update_date = #{updateDate}, 
@@ -174,7 +176,7 @@
 			name = #{name}, 
 			href = #{href}, 
 			icon = #{icon}, 
-			is_show = #{isShow}, 
+			is_shops, = #{isShow}, 
 			sort = #{sort},
 			update_by = #{updateBy.id}, 
 			update_date = #{updateDate}, 
