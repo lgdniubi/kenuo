@@ -67,7 +67,9 @@ public class UserCheckController extends BaseController{
 			if ("1".equals(userCheck.getStatus())){
 				userCheckService.pushMsg(userCheck,"你的申请资料信息没有通过审核，请修改资料");
 			}else if ("2".equals(userCheck.getStatus())){
+				//审核通过，发送消息并，更新用户type
 				userCheckService.pushMsg(userCheck,"你的申请资料信息已通过审核，等待平台给您赋予权限");
+//				userCheckService.updateTypeAndpushMsg(userCheck,"你的申请资料信息已通过审核，等待平台给您赋予权限");
 			}
 			addMessage(redirectAttributes, "成功");
 		} catch (Exception e) {

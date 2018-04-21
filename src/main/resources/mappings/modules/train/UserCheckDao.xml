@@ -54,6 +54,7 @@
 		<if test="status == 2">
 			AND tap.status = 2
 		</if>
+		ORDER BY tap.create_date DESC
 	</select>
 	
 	<!-- 保存用户审核状态 -->

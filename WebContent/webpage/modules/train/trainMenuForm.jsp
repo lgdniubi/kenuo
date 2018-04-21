@@ -18,6 +18,24 @@
 		$(document).ready(function() {
 			$("#name").focus();
 			validateForm = $("#inputForm").validate({
+				rules:{ 
+					name:{
+	                    remote:{
+							type: "post",
+							async: false,
+							dataType: "json",           //接受数据格式  
+							url: "${ctx}/train/menu/checkName?oldName=${menu.name}",
+							data: {                     //要传递的数据
+								name: function() {
+						            return $("#name").val();
+						        }
+						    }
+						}
+                    }
+	             },
+                messages:{
+					name:{remote:"菜单名称已存在"}
+				},
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
 					form.submit();

@@ -24,7 +24,8 @@
 				    elem: '#auth_start_date',
 				    format: 'YYYY-MM-DD',
 				    event: 'focus',
-				    max: $("#auth_start_date").val(),   //最大日期
+				    min: laydate.now(), //设定最小日期为当前日期  
+				    //max: $("#auth_start_date").val(),   //最大日期
 				    istime: false,				//是否显示时间
 				    isclear: true,				//是否显示清除
 				    istoday: true,				//是否显示今天
@@ -39,7 +40,8 @@
 				    elem: '#auth_end_date',
 				    format: 'YYYY-MM-DD',
 				    event: 'focus',
-				    min: $("#auth_end_date").val(),
+				    min: laydate.now(), //设定最小日期为当前日期  
+				   // min: $("#auth_end_date").val(),
 				    istime: false,
 				    isclear: true,
 				    istoday: true,
@@ -107,10 +109,10 @@
 			    	<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="4"><label class="pull-left">企业权益设置:</label></td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">企业会员类型:</label></td>
-			         <td><input id="mod_id1" class=" input-sm required" name="modid" value="5" aria-required="true" <c:if test="${empty modelFranchisee.modid|| modelFranchisee.modid == 5}">checked="checked"</c:if>  type="radio">标准版</td>
-			         <td><input id="mod_id2" class=" input-sm required" name="modid" value="6" aria-required="true" <c:if test="${modelFranchisee.modid == 6}">checked="checked"</c:if> type="radio">高级版</td>
-			         <td><input id="mod_id3" class=" input-sm required" name="modid" value="7" aria-required="true" <c:if test="${modelFranchisee.modid == 7}">checked="checked"</c:if> type="radio">旗舰版</td>
+			         <td style= "width:100px" class="active"><label class="pull-right">企业会员类型:</label></td>
+			         <td style= "width:160px"><input id="mod_id1" class=" input-sm required" name="modid" value="5" aria-required="true" <c:if test="${empty modelFranchisee.modid|| modelFranchisee.modid == 5}">checked="checked"</c:if>  type="radio">标准版</td>
+			         <td style= "width:160px"><input id="mod_id2" class=" input-sm required" name="modid" value="6" aria-required="true" <c:if test="${modelFranchisee.modid == 6}">checked="checked"</c:if> type="radio">高级版</td>
+			         <td style= "width:160px"><input id="mod_id3" class=" input-sm required" name="modid" value="7" aria-required="true" <c:if test="${modelFranchisee.modid == 7}">checked="checked"</c:if> type="radio">旗舰版</td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">采购支付方式:</label></td>
@@ -121,7 +123,7 @@
 			         <td class="active"><label class="pull-right">授权期限:</label></td>
 			         <td ><input id="auth_start_date" name="authStartDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
 							value="<fmt:formatDate value="${modelFranchisee.authStartDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="开始时间" readonly="readonly"/></td>
-			         <td>----</td>
+			         <td align="center"><label class="center">----</label></td>
 			         <td ><input id="auth_end_date" name="authEndDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
 							value="<fmt:formatDate value="${modelFranchisee.authEndDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="结束时间" readonly="readonly"/></td>
 				</tr>

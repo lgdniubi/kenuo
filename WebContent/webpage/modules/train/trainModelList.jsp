@@ -77,7 +77,7 @@
 						<tbody><%-- src="${trainModel.coverPic}" --%>
 							<c:forEach items="${list}" var="trainModel">
 								<tr id="${trainModel.id}" >
-									<td nowrap style="text-align: left;"><i class="icon-menu.icon"></i>${trainModel.id}</td>
+									<td nowrap style="text-align: center;"><i class="icon-menu.icon"></i>${trainModel.id}</td>
 									<td>${trainModel.modName}</td>
 									<td>${trainModel.modType}</td>
 									<td>${trainModel.modEname}</td>

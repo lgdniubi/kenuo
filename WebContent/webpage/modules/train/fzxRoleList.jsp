@@ -72,6 +72,7 @@
 								<th style="text-align: center;">角色名称</th>
 							    <th style="text-align: center;">英文名称</th>
 							    <th style="text-align: center;">版本名称</th>
+							    <th style="text-align: center;">备注</th>
 						    	<th style="text-align: center;">操作</th>
 							</tr>
 						</thead>
@@ -82,6 +83,7 @@
 								  	<td>${list.name }</td>
 								  	<td>${list.enname }</td>
 								  	<td>${list.modName }</td>
+								  	<td>${list.remarks }</td>
 								    <td>
 							    		<shiro:hasPermission name="train:fzxRole:view">
 											<a href="#" onclick="openDialogView('查看角色', '${ctx}/train/fzxRole/form?roleId=${list.roleId}','800px', '650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>

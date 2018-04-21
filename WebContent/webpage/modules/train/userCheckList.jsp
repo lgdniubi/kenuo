@@ -119,7 +119,7 @@
 									<td style="text-align: left;">
 									<shiro:hasPermission name="train:userCheck:update">
 										<c:if test="${userCheck.status == 2}">
-					    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.type}&opflag=setPermiss','650px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
+					    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.type}&opflag=setPermiss','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
 										</c:if>
 										<c:if test="${userCheck.status != 2}">
 					    						<a href="#" onclick="checkBtn(${userCheck.id},'${userCheck.userid}')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>

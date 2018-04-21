@@ -122,6 +122,20 @@ public class TrainMenuController extends BaseController {
 		return "redirect:" + adminPath + "/train/menu/";
 	}
 	
+	/**
+	 * 验证 菜单名称是否重复
+	 * 
+	 * @param name
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "checkName")
+	public boolean checkName(String name,String oldName) {
+		if (name.equals(oldName)) return true;
+		boolean flag =trainMenuService.checkName(name) == 0;
+		return flag;
+	}
+	
 	@RequiresPermissions("train:menu:del")
 	@RequestMapping(value = "delete")
 	public String delete(@ModelAttribute("pCMenu")PCMenu menu, RedirectAttributes redirectAttributes) {

@@ -133,7 +133,16 @@
 	</div>
 	<form id="listForm" method="post">
 		<table id="treeTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
-			<thead><tr><!-- <th><input type="checkbox" class="i-checks"></th> 批量删除 由于样式问题  取消 --><th>名称</th><th>链接</th><th style="text-align:center;">排序</th><th>可见</th><th>权限标识</th><shiro:hasPermission name="train:menu:edit"><th>操作</th></shiro:hasPermission></tr></thead>
+			<thead>
+				<tr><!-- <th><input type="checkbox" class="i-checks"></th> 批量删除 由于样式问题  取消 -->
+					<th>名称</th>
+					<th>链接</th>
+					<th style="text-align:center;">排序</th>
+					<th>可见</th>
+					<th>权限标识</th>
+					<shiro:hasPermission name="train:menu:edit"><th>操作</th></shiro:hasPermission>
+				</tr>
+			</thead>
 			<tbody>
 				<c:forEach items="${list}" var="menu">
 					<c:if test="${menu.parent.id == '1'}">

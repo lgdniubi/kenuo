@@ -5,6 +5,8 @@ package com.training.modules.train.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.PCMenu;
@@ -29,5 +31,7 @@ public interface TrainMenuDao extends CrudDao<PCMenu> {
 	public List<PCMenu> findByPidforChild(String id);
 
 	public List<PCMenu> findAllMenuByModid(PcRole pcRole);
+
+	public int checkName(@Param("name")String name);
 	
 }

@@ -29,6 +29,7 @@ public class PCMenu extends DataEntity<PCMenu> {
 	private String icon; 	// 图标
 	private Integer sort; 	// 排序
 	private String isShow; 	// 是否在菜单中显示（1：显示；0：不显示）
+	private String isShop; 	// 是否为管理端菜单（0：管理端，1：店铺端）
 	private String permission; // 权限标识
 	private Integer isPay; 	// 排序
 	
@@ -117,6 +118,14 @@ public class PCMenu extends DataEntity<PCMenu> {
 
 	public void setIsShow(String isShow) {
 		this.isShow = isShow;
+	}
+	
+	public String getIsShop() {
+		return isShop;
+	}
+
+	public void setIsShop(String isShop) {
+		this.isShop = isShop;
 	}
 
 	@Length(min=0, max=200)

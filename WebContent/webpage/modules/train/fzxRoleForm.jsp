@@ -24,23 +24,39 @@
 		$(document).ready(function(){
 			validateForm = $("#inputForm").validate({
 				rules: {  // 英文名称校验修改为下拉选，不用再进行验证,如需进行校验，将此注释打开即可
-					modeid:{
+					name: {
+						required:true,
 						remote:{
 							type: "post",
 							async: false,
 							dataType: "json",           //接受数据格式  
-							url: "${ctx}/train/fzxRole/checkEnname?oldModeid=${pcRole.modeid}",
+							url: "${ctx}/train/fzxRole/checkName",
 							data: {                     //要传递的数据
-								oldEnname: function() {
-						            return $("#enname").val();
+								oldEnname: function() { return $("#name").val(); },
+						        modeid: function() {  return $("#modeid").val(); },
+								oldModeid: function() {  return $("#oldModeid").val(); },
+						        oldName: function() {  return $("#oldName").val(); }
+						    }
+						}
+					} ,
+					enname:{
+						remote:{
+							type: "post",
+							async: false,
+							dataType: "json",           //接受数据格式  
+							url: "${ctx}/train/fzxRole/checkEnname?oldEnname=${fzxRole.enname}",
+							data: {                     //要传递的数据
+								modeid: function() {
+						            return $("#modeid").val();
 						        }
 						    }
 						}
 					}
 				},
 				messages:{
-					modeid:{remote:"此版本的英文名称已存在"}
-				},
+					name:{remote:"此版本的角色名称已存在",required:"角色名称不能为空"},
+					enname:{remote:"此版本的英文名称已存在"}
+				}, 
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
 					form.submit();
@@ -59,13 +75,15 @@
 	</script>
 </head>
 <body>
+	<input type="hidden" value="${fzxRole.modeid}" id="oldModeid"/>
+	<input type="hidden" value="${fzxRole.name}" id="oldName"/>
 	<form:form id="inputForm" modelAttribute="fzxRole" action="${ctx}/train/fzxRole/save" method="post" class="form-horizontal">
 		<form:hidden path="roleId"/>
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		   <tbody>
 		      <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 名称:</label></td>
-		         <td  class="width-35" ><form:input path="name" htmlEscape="false" maxlength="20" class="required form-control "/></td>
+		         <td  class="width-35" ><form:input path="name" htmlEscape="false" maxlength="20" class="form-control "/></td>
 		      </tr>
 		      <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 英文名称:</label></td>

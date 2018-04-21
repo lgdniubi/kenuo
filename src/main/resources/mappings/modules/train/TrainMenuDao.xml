@@ -10,6 +10,7 @@
 		<result property="icon" column="icon" />
 		<result property="sort" column="sort" />
 		<result property="isShow" column="is_show" />
+		<result property="isShop" column="is_shop" />
 		<result property="permission" column="permission" />
 		<result property="isPay" column="is_pay" />
 		<!-- 查询父模块-->  
@@ -29,6 +30,7 @@
 		a.icon,
 		a.sort,
 		a.is_show,
+		a.is_shop,
 		a.permission,
 		a.remarks,
 		a.create_by AS "createBy.id",
@@ -125,6 +127,10 @@
 		AND a.parent_id = #{id}
 		ORDER BY a.sort
 	</select>
+	<!-- 验证菜单名称是否存在 -->
+	<select id="checkName" resultType="int">
+		SELECT COUNT(1) FROM pc_menu WHERE del_flag = 0 AND name = #{name}
+	</select>
 	<insert id="insert">
 		INSERT INTO pc_menu(
 			parent_id, 
@@ -135,6 +141,7 @@
 			icon, 
 			sort, 
 			is_show, 
+			is_shop, 
 			permission, 
 			create_by, 
 			create_date, 
@@ -151,6 +158,7 @@
 			#{icon}, 
 			#{sort}, 
 			#{isShow}, 
+			#{isShop}, 
 			#{permission}, 
 			#{createBy.id}, 
 			#{createDate}, 
@@ -171,6 +179,7 @@
 			icon = #{icon}, 
 			sort = #{sort}, 
 			is_show = #{isShow}, 
+			is_shop = #{isShop}, 
 			permission = #{permission}, 
 			update_by = #{updateBy.id}, 
 			update_date = #{updateDate}, 

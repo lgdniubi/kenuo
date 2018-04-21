@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,15 +153,34 @@ public class fzxRoleController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "checkEnname")
-	public String checkEnname(String oldEnname, Integer oldModeid,Integer modeid) {
-		if("sjgly".equals(oldEnname)){
-			if (oldModeid == modeid){
-				return "true";
-			} else if (modeid != null &&  fzxRoleService.checkEnname(modeid) != 0) {
-				return "false";
+	public boolean checkEnname(String oldEnname, String enname,Integer modeid) {
+		if("sjgly".equals(enname) && modeid != null){
+			if ( StringUtils.isBlank(oldEnname)){//如果是空表示添加
+				return fzxRoleService.checkEnname(modeid) == 0;
+			} else {//如果不是空，表示修改
+				return fzxRoleService.checkEnname(modeid) <= 1;
 			}
 		}
-		return "true";
+		return true;
+	}
+	/**
+	 * 验证 名称是否有效
+	 * 
+	 * @param oldLoginName
+	 * @param loginName
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "checkName")
+	public boolean checkName(String name,String oldName, Integer oldModeid,Integer modeid) {
+		if(modeid != null && StringUtils.isNotBlank(name)){
+			if(oldName.equals(name)&& oldModeid == modeid){
+				return true;
+			}else if (fzxRoleService.checkName(modeid,name) > 0) {
+				return false;
+			}
+		}
+		return true;
 	}
 	/*public String checkEnname(String oldEnname, String enname) {
 		if (enname != null && enname.equals(oldEnname)) {

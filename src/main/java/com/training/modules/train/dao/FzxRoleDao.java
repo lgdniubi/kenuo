@@ -111,4 +111,6 @@ public interface FzxRoleDao extends CrudDao<FzxRole>{
 	 * 2017年10月27日
 	 */
 	public List<FzxRole> findFzxRoleByUserId(User user);
+
+	public int checkName(@Param("modeid")Integer modeid, @Param("name")String name);
 }

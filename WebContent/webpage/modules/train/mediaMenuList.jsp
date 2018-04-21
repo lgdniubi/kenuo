@@ -43,7 +43,7 @@
 								}else{
 									html += "<td>隐藏</td>";
 								}
-								html += "<td>"+dataObj[i].permission+"</td>";
+								/* html += "<td>"+dataObj[i].permission+"</td>"; */
 								html += "<td>";
 								//操作权限-查看
 								if($("#shiroView").val() == 1){
@@ -118,9 +118,6 @@
 			<shiro:hasPermission name="train:mdmenu:add">
 				<table:addRow url="${ctx}/train/mdmenu/form" title="菜单"></table:addRow><!-- 增加按钮 -->
 			</shiro:hasPermission>
-			<shiro:hasPermission name="train:mdmenu:edit">
-			    <table:editRow url="${ctx}/train/mdmenu/form" id="treeTable"  title="菜单"></table:editRow><!-- 编辑按钮 -->
-			</shiro:hasPermission>
 			<%-- <shiro:hasPermission name="train:menu:del">
 				<table:delRow url="${ctx}/train/menu/deleteAll" id="treeTable"></table:delRow><!-- 删除按钮 -->
 			</shiro:hasPermission> 批量删除 由于样式问题  取消 --%>
@@ -133,7 +130,15 @@
 	</div>
 	<form id="listForm" method="post">
 		<table id="treeTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
-			<thead><tr><th>名称</th><th>链接</th><th style="text-align:center;">排序</th><th>可见</th><shiro:hasPermission name="train:mdmenu:edit"><th>操作</th></shiro:hasPermission></tr></thead>
+			<thead>
+				<tr>
+					<th>名称</th>
+					<th>链接</th>
+					<th style="text-align:center;">排序</th>
+					<th>可见</th>
+					<shiro:hasPermission name="train:mdmenu:edit"><th>操作</th></shiro:hasPermission>
+				</tr>
+			</thead>
 			<tbody>
 				<c:forEach items="${list}" var="menu">
 					<c:if test="${menu.parent.id == '1'}">

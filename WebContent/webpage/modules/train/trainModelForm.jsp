@@ -71,7 +71,7 @@
 						<label class="pull-right"><font color="red">*</font>版本名称：</label>
 					</td>
 					<td class="width-35">
-					<form:input path="modName" htmlEscape="false" maxlength="50" class="form-control required"/></td>
+					<form:input path="modName" htmlEscape="false" class="form-control required"/></td>
 				  </tr>
 			      <tr>
 					<td class="width-15 active">

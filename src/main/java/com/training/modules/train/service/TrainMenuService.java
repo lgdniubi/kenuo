@@ -918,6 +918,7 @@ public class TrainMenuService extends BaseService implements InitializingBean {
 
 		// 设置新的父节点串
 		menu.setParentIds(menu.getParent().getParentIds() + menu.getParent().getId() + ",");
+		menu.setIsShop(menu.getParent().getIsShop());
 
 		// 保存或更新实体
 		if (StringUtils.isBlank(menu.getId())) {
@@ -1246,5 +1247,9 @@ public class TrainMenuService extends BaseService implements InitializingBean {
 	public List<PCMenu> findAllMenuByModid(PcRole pcRole) {
 		
 		return trainMenuDao.findAllMenuByModid(pcRole);
+	}
+
+	public int checkName(String name) {
+		return trainMenuDao.checkName(name);
 	}
 }

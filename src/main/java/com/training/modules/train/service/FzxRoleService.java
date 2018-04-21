@@ -188,4 +188,15 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 		return fzxRoleDao.findFzxRoleByUserId(user);
 	}
 
+	/**
+	 * 同版本下不能有多个相同的角色
+	 * @param modeid
+	 * @param name
+	 * @return
+	 * @Description:
+	 */
+	public int checkName(Integer modeid, String name) {
+		return dao.checkName(modeid, name);
+	}
+
 }

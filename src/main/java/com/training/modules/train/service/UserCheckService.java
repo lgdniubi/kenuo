@@ -283,5 +283,17 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 //		System.out.println(json);
 		return json;
 	}
+
+	/**
+	 * 用户通过审核后发消息，并更改用户成为认证类型。
+	 * @param userCheck
+	 * @param text
+	 * @Description:
+	 */
+	public void updateTypeAndpushMsg(UserCheck userCheck, String text) {
+		UserCheck userfind = userCheckDao.get(userCheck.getId());
+		userCheckDao.updateUserType(userfind.getAuditType(),userCheck.getUserid(),null);//更改用户表type为企业类型
+		pushMsg(userCheck, text);
+	}
 	
 }
