@@ -36,6 +36,9 @@ public class GoodsSpecPrice extends DataEntity<GoodsSpecPrice> {
 	private double cargoPrice;		//报货价格
 	private double purchasePrice;	//采购价格
 	private String suplierGoodsNo;	//供应商商品编号
+	
+	private double groupActivityPrice;// 团购价
+	private int groupActivityStoreCount;//团购库存
 	/**
 	 * get/set
 	 */
@@ -140,5 +143,21 @@ public class GoodsSpecPrice extends DataEntity<GoodsSpecPrice> {
 	public void setSuplierGoodsNo(String suplierGoodsNo) {
 		this.suplierGoodsNo = suplierGoodsNo;
 	}
-	
+	public double getGroupActivityPrice() {
+		return groupActivityPrice;
+	}
+	public void setGroupActivityPrice(double groupActivityPrice) {
+		this.groupActivityPrice = groupActivityPrice;
+	}
+	public int getGroupActivityStoreCount() {
+		RedisClientTemplate redisClientTemplate = (RedisClientTemplate) BeanUtil.getBean("redisClientTemplate");
+		String group_activity_store_count = redisClientTemplate.get(RedisConfig.GOODS_GROUPACTIVITY_SPECPRICE_PREFIX + this.getGoodsId()+"#"+this.specKey);
+		if(StringUtils.isNotBlank(group_activity_store_count)){
+			groupActivityStoreCount = Integer.parseInt(group_activity_store_count);
+		}
+		return groupActivityStoreCount;
+	}
+	public void setGroupActivityStoreCount(int groupActivityStoreCount) {
+		this.groupActivityStoreCount = groupActivityStoreCount;
+	}
 }

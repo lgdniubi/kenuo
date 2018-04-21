@@ -630,7 +630,9 @@
 		  suplier_goods_no AS 'suplierGoodsNo',
 		  service_times AS 'serviceTimes',
 		  expiring_date AS 'expiringDate',
-		  goods_weight  AS 'goodsWeight'
+		  goods_weight  AS 'goodsWeight',
+		  group_activity_price AS 'groupActivityPrice',
+		  group_activity_store_count AS 'groupActivityStoreCount'
 		FROM
 		  mtmydb.mtmy_spec_goods_price 
 		WHERE goods_id = #{goodsId} AND del_flag = 0
