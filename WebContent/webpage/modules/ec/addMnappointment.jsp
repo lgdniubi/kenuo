@@ -25,14 +25,62 @@
     } 
     $(document).ready(function() {
     	validateForm = $("#inputForm").validate();
+    	$(".franchisee").hide();
+    	
+    	
+    	$("#franchiseeIdButton").click(function(){
+    		// 是否限制选择，如果限制，设置为disabled
+    		if ($("#franchiseeIdButton").hasClass("disabled")){
+    			return true;
+    		}
+    		// 正常打开	
+    		top.layer.open({
+    		    type: 2, 
+    		    area: ['300px', '420px'],
+    		    title:"选择商家",
+    		    ajaxData:{selectIds: $("#franchiseeIdId").val()},
+    		    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/mtmyMnappointment/treeData?isRealFranchisee=1&publicServiceFlag=0&franchiseeId="+$("#franchiseeId").val())+"&module=&checked=&extId=&isAll=&selectIds=" ,
+    		    btn: ['确定', '关闭']
+        	       ,yes: function(index, layero){ //或者使用btn1
+    						var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+    						var ids = [], names = [], nodes = [];
+    						if ("" == "true"){
+    							nodes = tree.getCheckedNodes(true);
+    						}else{
+    							nodes = tree.getSelectedNodes();
+    						}
+    						for(var i=0; i<nodes.length; i++) {//
+    							if (nodes[i].isParent){
+    								//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+    								//layer.msg('有表情地提示');
+    								top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+    								return false;
+    							}//
+    							ids.push(nodes[i].id);
+    							names.push(nodes[i].name);//
+    							break; // 如果为非复选框选择，则返回第一个选择  
+    						}
+    						$("#franchiseeIdId").val(ids.join(",").replace(/u_/ig,""));
+    						$("#franchiseeIdName").val(names.join(","));
+    						$("#franchiseeIdName").focus();
+    						top.layer.close(index);
+    				    	       },
+        	cancel: function(index){ //或者使用btn2
+        	           //按钮【按钮二】的回调
+        	       }
+    		}); 
+    	
+    	});
+    	
 	}); 
     //  加载订单详情
     function findOrderGoods(){
     	if($("#oldorderid").val() != $("#orderid").val()){
     		$("#warning").hide();
     		$("#mytable").empty("");
+    		$(".franchisee").hide();
         	//清除input值
-        	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,goodsName,skillId,labelId,franchiseeId,oldorderid,groupId,isReal");
+        	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,goodsName,skillId,labelId,franchiseeId,oldorderid,groupId,isReal,franchiseeIdId,franchiseeIdName");
         	//清除下拉框的值
         	clearSelect("serve,shopId,beauticianId,date,times");
     	}
@@ -61,8 +109,9 @@
     // 选择订单下虚拟订单
     function serveChange(num){
     	$("#mytable").empty("");
+    	$(".franchisee").hide();
     	//清除input值
-    	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,goodsName,skillId,labelId,franchiseeId,groupId,isReal");
+    	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,goodsName,skillId,labelId,franchiseeId,groupId,isReal,franchiseeIdId,franchiseeIdName");
     	//清除下拉框的值
     	clearSelect("shopId,beauticianId,date,times");
     	if(serveList[num].isExpiring == 1){
@@ -93,8 +142,13 @@
 					    	$("#skillId").val(serveList[num].skillId);
 					    	$("#labelId").val(serveList[num].labelId);
 					    	$("#franchiseeId").val(serveList[num].franchiseeId);
+					    	$("#isOpean").val(serveList[num].isOpean);
 					    	$(".loading").hide();
-					    	findOffice();	// 若选中商品后则自动加载店铺
+					    	if(serveList[num].isOpean == 1){
+						    	findOffice();	// 若选中商品后则自动加载店铺
+					    	}else{
+					    		$(".franchisee").show();
+					    	}
 		    			}else{
 		    				$(".loading").hide();
 		    				top.layer.alert('1、此商品无可用次数!<br>2、此商品服务次数已用完!', {icon: 0, title:'提醒'});
@@ -119,8 +173,13 @@
 						    	$("#skillId").val(serveList[num].skillId);
 						    	$("#labelId").val(serveList[num].labelId);
 						    	$("#franchiseeId").val(serveList[num].franchiseeId);
+						    	$("#isOpean").val(serveList[num].isOpean);
 						    	$(".loading").hide();
-						    	findOffice();	// 若选中商品后则自动加载店铺
+						    	if(serveList[num].isOpean == 1){
+							    	findOffice();	// 若选中商品后则自动加载店铺
+						    	}else{
+						    		$(".franchisee").show();
+						    	}
 		    				}else{
 		    					$(".loading").hide();
 		    					top.layer.alert('1、此套卡商品可用金额不足一次服务!<br>2、此套卡商品服务次数已用完!', {icon: 0, title:'提醒'});
@@ -143,8 +202,13 @@
 					    	$("#skillId").val(serveList[num].skillId);
 					    	$("#labelId").val(serveList[num].labelId);
 					    	$("#franchiseeId").val(serveList[num].franchiseeId);
+					    	$("#isOpean").val(serveList[num].isOpean);
 					    	$(".loading").hide();
-					    	findOffice();	// 若选中商品后则自动加载店铺
+					    	if(serveList[num].isOpean == 1){
+						    	findOffice();	// 若选中商品后则自动加载店铺
+					    	}else{
+					    		$(".franchisee").show();
+					    	}
 		    			}else{
 		    				$(".loading").hide();
 		    				top.layer.alert('此套卡商品无可用次数!', {icon: 0, title:'提醒'});
@@ -168,8 +232,13 @@
 					    	$("#skillId").val(serveList[num].skillId);
 					    	$("#labelId").val(serveList[num].labelId);
 					    	$("#franchiseeId").val(serveList[num].franchiseeId);
+					    	$("#isOpean").val(serveList[num].isOpean);
 					    	$(".loading").hide();
-					    	findOffice();	// 若选中商品后则自动加载店铺
+					    	if(serveList[num].isOpean == 1){
+						    	findOffice();	// 若选中商品后则自动加载店铺
+					    	}else{
+					    		$(".franchisee").show();
+					    	}
 		    			}else{
 		    				$(".loading").hide();
 		    				top.layer.alert('1、此通用卡商品无可用次数!<br>2、此通用卡商品服务次数已用完!', {icon: 0, title:'提醒'});
@@ -187,31 +256,40 @@
     	//清除下拉框的值
     	clearSelect("shopId,beauticianId,date,times");
    		if($("#goodsId").val() != ""){
-   			$(".loading").show();
-   	       	$.ajax({
-   	       		type : 'post',
-   	       		url : '${ctx}/ec/mtmyMnappointment/loadOffice',
-   	       		data:{'areaId':$('#areaId').val(),'goodsIds':$("#goodsId").val(),'franchiseeId':$("#franchiseeId").val()},
-   	       		dateType: 'text',
-   	       		success:function(data){
-   	   				$.each(data.office,function(index,item){
-   	   					if(data.loginOfficeId == item.officeId){
-   	   						$("#shopId").append("<option value="+item.officeId+" selected=\"selected\" >"+item.officeName+"</option>");
-   	   					}else{
-	   	   					$("#shopId").append("<option value="+item.officeId+">"+item.officeName+"</option>");
-   	   					}
-   	       			}); 
-   	   				$(".loading").hide();
-   	   				if($("#shopId").val() != ""){	// 若选中店铺则自动加载美容师
-   	   					changeShop();
-   	   				}else{
-   	   					$("#shopId").focus();	// 若无选中店铺 则自动定位到 选中店铺 下拉框
-   	   				}
-   	       		}
-   	       	})
+	    	if(($("#isOpean").val() == 0 && $("#franchiseeIdId").val() != "" && $("#franchiseeIdId").val() != null) || $("#isOpean").val() == 1){	// 是否公开 0公开  1不公开
+	    		var franchiseeId = $("#franchiseeId").val();
+	    		if($("#isOpean").val() == 0){
+	    			franchiseeId = $("#franchiseeIdId").val();
+	    		}
+	   			$(".loading").show();
+	   	       	$.ajax({
+	   	       		type : 'post',
+	   	       		url : '${ctx}/ec/mtmyMnappointment/loadOffice',
+	   	       		data:{'areaId':$('#areaId').val(),'goodsIds':$("#goodsId").val(),'franchiseeId':franchiseeId,'isOpean':$("#isOpean").val()},
+	   	       		dateType: 'text',
+	   	       		success:function(data){
+	   	   				$.each(data.office,function(index,item){
+	   	   					if(data.loginOfficeId == item.officeId){
+	   	   						$("#shopId").append("<option value="+item.officeId+" selected=\"selected\" >"+item.officeName+"</option>");
+	   	   					}else{
+		   	   					$("#shopId").append("<option value="+item.officeId+">"+item.officeName+"</option>");
+	   	   					}
+	   	       			}); 
+	   	   				$(".loading").hide();
+	   	   				if($("#shopId").val() != ""){	// 若选中店铺则自动加载美容师
+	   	   					changeShop();
+	   	   				}else{
+	   	   					$("#shopId").focus();	// 若无选中店铺 则自动定位到 选中店铺 下拉框
+	   	   				}
+	   	       		}
+	   	       	})
+	   		}else{
+	   			top.layer.alert('请先选择商家', {icon: 0, title:'提醒'});
+	   		}
    		}else{
    			top.layer.alert('未选择商品,请核对信息', {icon: 0, title:'提醒'});
    		}
+    	
     }
     //加载美容师
     function changeShop(){
@@ -339,6 +417,7 @@
 					<input id="skillId" name="skillId" type="hidden"><!-- 获取美容师详情 -->
 					<input id="labelId" name="labelId" type="hidden"><!-- 获取美容师预约时间 -->
 					<input id="franchiseeId" name="franchiseeId" type="hidden"><!-- 商品的归属商家   用于加载店铺时选择同一个商家 -->
+					<input id="isOpean" name="isOpean" type="hidden"><!-- 商品是否公开 -->
 					<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 						<tr>
 							<td class="active" width="110px;"><label class="pull-right"><font color="red">*</font>订单号：</label></td>
@@ -375,10 +454,24 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="active"><label class="pull-right"><font color="red"></font>区域：</label></td>
+							<td class="active"><label class="pull-right">区域：</label></td>
 							<td>
 								<sys:treeselect id="area" name="area.id" value="" labelName="area.name" labelValue="" 
 							         title="区域" url="/sys/area/treeData" cssClass="form-control" allowClear="true" notAllowSelectParent="true"/>
+							</td>
+						</tr>
+						<tr class="franchisee">
+							<td class="active"><label class="pull-right"><font color="red">*</font>商家：</label></td>
+							<td>
+								<input id="franchiseeIdId" name="franchiseeId" class="form-control" type="hidden" value="">
+								<div class="input-group">
+									<input id="franchiseeIdName" name="franchisee.name" readonly="readonly" type="text" value="" data-msg-required="" class="form-control" style="">
+							       		 <span class="input-group-btn">
+								       		 <button type="button" id="franchiseeIdButton" class="btn   btn-primary  "><i class="fa fa-search"></i>
+								             </button> 
+							       		 </span>
+							    </div>
+								<label id="franchiseeIdName-error" class="error" for="franchiseeIdName" style="display:none"></label>
 							</td>
 						</tr>
 						<tr>

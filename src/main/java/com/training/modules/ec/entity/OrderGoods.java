@@ -124,6 +124,8 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	
 	private int completeAppt;                       //预约完成的订单标识（预约状态为已完成、已服务、爽约的）
 	
+	private int isOpean;			// 是否公开(商品是否公开)
+	
 	public int getAfterSaleNum() {
 		return afterSaleNum;
 	}
@@ -605,6 +607,12 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setCompleteAppt(int completeAppt) {
 		this.completeAppt = completeAppt;
+	}
+	public int getIsOpean() {
+		return isOpean;
+	}
+	public void setIsOpean(int isOpean) {
+		this.isOpean = isOpean;
 	}
 	
 }
