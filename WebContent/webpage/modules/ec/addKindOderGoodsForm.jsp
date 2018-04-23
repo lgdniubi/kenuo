@@ -244,63 +244,60 @@
 			if ($("#goodselectButton").hasClass("disabled")){
 				return true;
 			}
-			if((cateid == "0" || cateid == "") && (goodsName == "")){
-				top.layer.alert('请先选择一个条件!', {icon: 0, title:'提醒'});
-			}else{
-				// 正常打开	
-				top.layer.open({
-				    type: 2, 
-				    area: ['300px', '420px'],
-				    title:"商品选择",
-				    ajaxData:{selectIds: $("#goodselectId").val()},
-				    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?&isReal=0&goodsCategory="+cateid+"&goodsName="+goodsName+"&type=1")+"&module=&checked=&extId=&isAll=",
-				    btn: ['确定', '关闭']
-		    	       ,yes: function(index, layero){ //或者使用btn1
-								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
-								var ids = [], names = [], nodes = [];
-								if ("" == "true"){
-									nodes = tree.getCheckedNodes(true);
-								}else{
-									nodes = tree.getSelectedNodes();
-								}
-								for(var i=0; i<nodes.length; i++) {//
-									if (nodes[i].isParent){
-										//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
-										//layer.msg('有表情地提示');
-										top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
-										return false;
-									}//
-									ids.push(nodes[i].id);
-									names.push(nodes[i].name);//
-									break; // 如果为非复选框选择，则返回第一个选择  
-								}
-								
-								$("#goodselectId").val(ids.join(",").replace(/u_/ig,""));
-								$("#goodselectName").val(names.join(","));
-								$("#goodselectName").focus();
-								
-								
-								
-								$("#actualPayment").val("");//实付
-								$("#debtMoney").val("");//余额
-								$("#spareMoney").val("");//欠款
-								ceateid=$("#goodselectId").val();
-								if($("#isNeworderSon").val() == 0){ //新订单
-									//商品选择时去掉应付和实付 不可以编辑属性
-									$("#orderAmount").removeAttr("readonly");
-									$("#actualPayment").removeAttr("readonly");
-									$("#computType").val(1);						
-								}
-								
-								selectgood();
-								selecSpecgood();
-								top.layer.close(index);
-						    	       },
-		    	cancel: function(index){ //或者使用btn2
-		    	           //按钮【按钮二】的回调
-		    	       }
-				}); 
-			}
+			
+			// 正常打开	
+			top.layer.open({
+			    type: 2, 
+			    area: ['300px', '420px'],
+			    title:"商品选择",
+			    ajaxData:{selectIds: $("#goodselectId").val()},
+			    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?&isReal=0&goodsCategory="+cateid+"&goodsName="+goodsName+"&type=1")+"&module=&checked=&extId=&isAll=",
+			    btn: ['确定', '关闭']
+	    	       ,yes: function(index, layero){ //或者使用btn1
+							var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+							var ids = [], names = [], nodes = [];
+							if ("" == "true"){
+								nodes = tree.getCheckedNodes(true);
+							}else{
+								nodes = tree.getSelectedNodes();
+							}
+							for(var i=0; i<nodes.length; i++) {//
+								if (nodes[i].isParent){
+									//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+									//layer.msg('有表情地提示');
+									top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+									return false;
+								}//
+								ids.push(nodes[i].id);
+								names.push(nodes[i].name);//
+								break; // 如果为非复选框选择，则返回第一个选择  
+							}
+							
+							$("#goodselectId").val(ids.join(",").replace(/u_/ig,""));
+							$("#goodselectName").val(names.join(","));
+							$("#goodselectName").focus();
+							
+							
+							
+							$("#actualPayment").val("");//实付
+							$("#debtMoney").val("");//余额
+							$("#spareMoney").val("");//欠款
+							ceateid=$("#goodselectId").val();
+							if($("#isNeworderSon").val() == 0){ //新订单
+								//商品选择时去掉应付和实付 不可以编辑属性
+								$("#orderAmount").removeAttr("readonly");
+								$("#actualPayment").removeAttr("readonly");
+								$("#computType").val(1);						
+							}
+							
+							selectgood();
+							selecSpecgood();
+							top.layer.close(index);
+					    	       },
+	    	cancel: function(index){ //或者使用btn2
+	    	           //按钮【按钮二】的回调
+	    	       }
+			}); 
 		});
 
 			
