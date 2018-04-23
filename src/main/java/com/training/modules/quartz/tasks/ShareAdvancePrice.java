@@ -41,7 +41,6 @@ public class ShareAdvancePrice extends CommonService{
 	
 	private DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private Logger logger = Logger.getLogger(SubBeforeDay.class);
-	private static final String startTime = "2018-03-20 00:00:00";            //上线的时间
 	
 	static{
 		reservationService = (ReservationService) BeanUtil.getBean("reservationService");
@@ -65,7 +64,9 @@ public class ShareAdvancePrice extends CommonService{
 		taskLog.setStartDate(startDate);
 		
 		try {
+		    String startTime = QuartzStartConfigUtils.queryMtmyValue("share_advance_price_start_time"); //上线的时间
 			String time = QuartzStartConfigUtils.queryMtmyValue("mtmy_advance_time"); //上次符合条件的最后一个预约的时间
+			
 			SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
 			Date lastTime = sdf.parse(time);                                      
 			Date itemStartTime = sdf.parse(startTime);                             //项目上线的时间
