@@ -79,6 +79,9 @@
 					AND (c.img = '' OR c.img is null)
 				</if>
 			</if>
+			<if test="isReplay != null and isReplay != ''">
+				AND c.is_replay = #{isReplay}
+			</if>
 			ORDER BY c.add_time DESC
 	</select>
 	<select id="findRealByCid" parameterType="Comment" resultType="Comment">
@@ -118,6 +121,17 @@
 			comment_id = #{parentId}
 			OR parent_id = #{parentId}
 	</update>
+	
+	<!-- 将被回复的商品的评论标示为被评论 -->
+	<update id="updateGoodsIsReplay">
+		UPDATE
+			mtmydb.mtmy_comment
+		SET
+		    is_replay = 1
+		WHERE 
+			comment_id = #{parentId}
+	</update>
+	
 	<select id="findList" resultType="Comment">
 		SELECT t.*,tt.name AS 'user.name' FROM 
 			(SELECT
@@ -147,6 +161,9 @@
 						<if test="whetherImg == 1">
 							AND (b.img = '' OR b.img is null)
 						</if>
+					</if>
+					<if test="isReplay != null and isReplay != ''">
+						AND b.is_replay = #{isReplay}
 					</if>
 			) t join sys_user tt
 			on t.beautyId = tt.id
@@ -196,6 +213,17 @@
 			comm_id = #{parentId}
 			OR parent_id = #{parentId}
 	</update>
+	
+	<!-- 将被回复的美容师的评论标示为被评论 -->
+	<update id="updateBeautyIsReplay">
+		UPDATE
+			mtmydb.mtmy_beauty_comment
+		SET
+		    is_replay = 1
+		WHERE 
+			comm_id = #{parentId}
+	</update>
+	
 	<select id="exportGoodsComment" resultType="MtmyComment">
 		SELECT
 			IFNULL(c.NAME,c.nickname) AS 'name',
@@ -286,6 +314,9 @@
 					AND (a.img = '' OR a.img is null)
 				</if>
 			</if>
+			<if test="isReplay != null and isReplay != ''">
+				AND a.is_replay = #{isReplay}
+			</if>
 		GROUP BY a.id
 		ORDER BY a.create_date DESC
 	</select>
@@ -335,6 +366,16 @@
 		WHERE 
 			id = #{parentId}
 			OR parent_id = #{parentId}
+	</update>
+	
+	<!-- 将被回复的评论标示为被评论 -->
+	<update id="updateShopIsReplay">
+		UPDATE
+			mtmydb.mtmy_shop_comment
+		SET
+		    is_replay = 1
+		WHERE 
+			id = #{parentId}
 	</update>
 	
 	<!-- 查询某一预约下对美容师的评论 -->
