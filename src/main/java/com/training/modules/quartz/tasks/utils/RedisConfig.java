@@ -35,4 +35,10 @@ public class RedisConfig {
 	
 	public static final String COUNT_ARTICLE_DETAIL_NUM_KEY = "COUNT_ARTICLE_DETAIL_NUM_KEY";//记录文章详情  浏览量
 	public static final String ARTICLE_SHARE_COUNT_KEY = "ARTICLE_SHARE_COUNT_KEY";//记录文章详情分享数
+	
+	// 团购活动
+	public static final String GOODS_GROUPACTIVITY_IDS_HASH = "GOODS_GROUPACTIVITY_IDS_HASH"; //团购活动商品idhash
+	public static final String GOODS_GROUPACTIVITY_SPECPRICE_HASH = "GOODS_GROUPACTIVITY_SPECPRICE_HASH";//团购活动商品规格hash key
+	public static final String GOODS_GROUPACTIVITY_STORECOUNT_PREFIX = "GOODSSTORE_GROUPACTIVITY_"; //团购活动商品库存
+	public static final String GOODS_GROUPACTIVITY_SPECPRICE_PREFIX = "SPECPRICE_GROUPACTIVITY_";//团购活动规格库存
 }

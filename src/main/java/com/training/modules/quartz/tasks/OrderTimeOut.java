@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.training.common.utils.BeanUtil;
+import com.training.modules.ec.dao.MtmyGroupActivityDao;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.Orders;
 import com.training.modules.ec.service.OrderGoodsService;
@@ -35,12 +36,14 @@ public class OrderTimeOut extends CommonService{
 	
 	private static OrdersService ordersService;
 	private static OrderGoodsService orderGoodsService;
+	private static MtmyGroupActivityDao mtmyGroupActivityDao;
 	/*
 	private static MtmyUsersService mtmyUsersService;
 	private static MtmyRuleParamService mtmyRuleParamService;*/
 	static{
 		ordersService = (OrdersService) BeanUtil.getBean("ordersService");
 		orderGoodsService = (OrderGoodsService) BeanUtil.getBean("orderGoodsService");
+		mtmyGroupActivityDao = (MtmyGroupActivityDao) BeanUtil.getBean("mtmyGroupActivityDao");
 		/*mtmyUsersService = (MtmyUsersService) BeanUtil.getBean("mtmyUsersService");
 		mtmyRuleParamService = (MtmyRuleParamService) BeanUtil.getBean("mtmyRuleParamService");*/
 	}
@@ -208,7 +211,144 @@ public class OrderTimeOut extends CommonService{
 		logger.info("[过期抢购订单],end,过期订单设置,结束时间："+df.format(new Date()));
 	}
 	
+	/**
+	 * 团购订单自动取消任务
+	 */
+	public void groupOrderTimeOut(){
+		logger.info("[过期团购订单],start,过期订单设置,开始时间："+df.format(new Date()));
+		
+		//添加日志
+		TaskLog taskLog = new TaskLog();
+		Date startDate;	//开始时间
+		Date endDate;	//结束时间
+		long runTime;	//运行时间
+		
+		startDate = new Date();
+		taskLog.setJobName("groupOrderTimeOut");
+		taskLog.setStartDate(startDate);
+		
+		String now_order = null;//当前订单号
+		try {
+			int timeout = Integer.parseInt(ParametersFactory.getMtmyParamValues("groupOrder_timeout"));
+			
+			logger.info("[过期团购订单]，订单过期时间为："+timeout);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("minute", timeout);
+			map.put("order_type", 2);//团购订单
+			List<Orders> list = ordersService.queryNotPayOrder(map);
+			
+			logger.info("[过期团购订单]，扫面过期订单开始，订单个数："+list.size());
+			for(Orders vo : list){
+				now_order = vo.getOrderid();
+				
+				logger.info("[过期团购订单]，订单id："+vo.getOrderid());
+				Map<String, Object> m = new HashMap<String, Object>();
+				m.put("order_status", -2);
+				m.put("cancel_type", 2);
+				m.put("order_id", vo.getOrderid());
+				//将过期的订单置为已作废
+				int num = ordersService.modifyOrderStatus(m);
+				if(num > 0){	// 修改订单成功后
+					List<OrderGoods> vs = orderGoodsService.orderlist(vo.getOrderid());
+					//归还订单商品的库存
+					logger.info("[过期团购订单]，归还商品数量："+vs.size());
+					for(OrderGoods v : vs){
+						logger.info("[过期团购订单]，归还商品id："+v.getGoodsid());
+						RedisLock lo = new RedisLock(redisClientTemplate, LOCK_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey());
+						lo.lock();
+						boolean str = redisClientTemplate.exists(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey());
+						if(str){
+							redisClientTemplate.incrBy(RedisConfig.GOODS_STORECOUNT_PREFIX+v.getGoodsid(),v.getGoodsnum());
+							redisClientTemplate.incrBy(RedisConfig.GOODS_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey(),v.getGoodsnum());
+						}
+						lo.unlock();
+						
+						logger.info("归还用户限购资源,活动id："+v.getActionid()+",用户id："+v.getUserid()+",商品id："+v.getGoodsid()+",数量："+v.getGoodsnum());
+						if(v.getActiontype() ==1){ //归还用户限购资源
+							redisClientTemplate.hincrBy(RedisConfig.buying_limit_prefix+v.getActionid(), v.getUserid()+"_"+v.getGoodsid(), -v.getGoodsnum());
+						}
+					}
+				}
+			}
+			taskLog.setJobDescription("[过期团购订单]，订单过期时间为："+timeout+"   扫面过期订单开始，订单个数："+list.size());
+			taskLog.setStatus(0);//任务状态
+		} catch (Exception e) {
+			logger.error("#####【定时任务groupOrderTimeOut】过期订单,当前订单号["+now_order+"]出现异常，异常信息为："+e.getMessage());
+			taskLog.setStatus(1);
+			taskLog.setExceptionMsg(e.getMessage().substring(0, e.getMessage().length()>2500?2500:e.getMessage().length()));
+		}finally{
+			endDate = new Date();//结束时间
+			runTime = (endDate.getTime() - startDate.getTime());//运行时间
+			taskLog.setEndDate(new Date());	//结束时间
+			taskLog.setRunTime(runTime);
+			taskService.saveTaskLog(taskLog);
+		}
+		logger.info("[过期团购订单],end,过期订单设置,结束时间："+df.format(new Date()));
+	}
 	
+	/**
+	 * 团购订单库存返还
+	 */
+	public void returnGroupOrder(){
+		logger.info("[团购订单库存返还],start,团购订单库存返还,开始时间："+df.format(new Date()));
+		
+		//添加日志
+		TaskLog taskLog = new TaskLog();
+		Date startDate;	//开始时间
+		Date endDate;	//结束时间
+		long runTime;	//运行时间
+		String now_order = null;//当前订单号
+		
+		startDate = new Date();
+		taskLog.setJobName("returnGroupOrder");
+		taskLog.setStartDate(startDate);
+		
+		try {
+			// 查询取消团购订单
+			List<Orders> list = mtmyGroupActivityDao.selectCancelGroupOrder();
+			
+			logger.info("[团购订单库存返还]，订单个数："+list.size());
+			for(Orders vo : list){
+				now_order = vo.getOrderid();
+				logger.info("[团购订单库存返还]，订单id："+vo.getOrderid());
+				
+				//归还取消订单库存
+				int num = mtmyGroupActivityDao.returnGroupOrder(vo.getOrderid());
+				if(num > 0){	// 修改订单成功后
+					List<OrderGoods> vs = orderGoodsService.orderlist(vo.getOrderid());
+					//归还订单商品的库存
+					logger.info("[团购订单库存返还]，归还商品数量："+vs.size());
+					for(OrderGoods v : vs){
+						logger.info("[团购订单库存返还]，归还商品id："+v.getGoodsid());
+						
+						RedisLock redisLock = new RedisLock(redisClientTemplate, RedisConfig.GOODS_GROUPACTIVITY_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey());
+						redisLock.lock();
+						redisClientTemplate.incrBy(RedisConfig.GOODS_GROUPACTIVITY_SPECPRICE_PREFIX+v.getGoodsid()+"#"+v.getSpeckey(), v.getGoodsnum());
+						redisClientTemplate.incrBy(RedisConfig.GOODS_GROUPACTIVITY_STORECOUNT_PREFIX+v.getGoodsid(),v.getGoodsnum());
+						redisLock.unlock();
+						
+						logger.info("团购订单库存返还,归还用户限购资源,活动id："+vo.getId()+",用户id："+v.getUserid()+",商品id："+v.getGoodsid()+",数量："+v.getGoodsnum());
+						if(v.getActiontype() == 2){ //归还用户限购资源
+							redisClientTemplate.hincrBy(RedisConfig.buying_limit_prefix+vo.getId(), v.getUserid()+"_"+v.getGoodsid(), -v.getGoodsnum());
+						}
+					}
+				}
+			}
+			taskLog.setJobDescription("[团购订单库存返还]，订单个数："+list.size());
+			taskLog.setStatus(0);//任务状态
+		} catch (Exception e) {
+			logger.error("#####【定时任务groupOrderTimeOut】团购订单库存返还,当前订单号["+now_order+"]出现异常，异常信息为："+e.getMessage());
+			taskLog.setStatus(1);
+			taskLog.setExceptionMsg(e.getMessage().substring(0, e.getMessage().length()>2500?2500:e.getMessage().length()));
+		}finally{
+			endDate = new Date();//结束时间
+			runTime = (endDate.getTime() - startDate.getTime());//运行时间
+			taskLog.setEndDate(new Date());	//结束时间
+			taskLog.setRunTime(runTime);
+			taskService.saveTaskLog(taskLog);
+		}
+		logger.info("[团购订单库存返还],end,团购订单库存返还,结束时间："+df.format(new Date()));
+	}
 	
 	/**
 	 * 后台调用

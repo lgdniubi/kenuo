@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.MtmyGroupActivityDao">
+
+	<sql id="mtmyGroupActivityColunm">
+		a.activity_id AS "id",
+		a.activity_pid AS "parent.id",
+		a.activity_pids AS "parentIds",
+		a.activity_name AS "name",
+		a.activity_status AS "activityStatus",
+		a.activity_start_date AS "activityStartDate",
+		a.activity_end_date AS "activityEndDate",
+		a.activity_start_time AS "activityStartTime",
+		a.activity_end_time AS "activityEndTime",
+		a.create_time AS "createDate",
+		a.del_flag
+	</sql>
+	<!-- 通过id获取团购项目 -->
+	<select id="get" resultType="MtmyGroupActivity">
+		SELECT
+		 <include refid="mtmyGroupActivityColunm"></include>
+		FROM mtmydb.mtmy_group_activity AS a
+		WHERE a.activity_id=#{id}
+	</select>
+	<!-- 分页查询 -->
+	<select id="findList" resultType="MtmyGroupActivity">
+		SELECT
+		 <include refid="mtmyGroupActivityColunm"></include>
+		FROM mtmydb.mtmy_group_activity AS a
+		WHERE 1=1
+			<if test="activityStatus != null and activityStatus != ''">
+				AND a.activity_status = #{activityStatus}
+			</if>
+			<choose>
+				<when test="parent != null and parent.id != ''">
+					AND a.activity_pid = #{parent.id}
+				</when>
+				<otherwise>
+					AND a.activity_pid = '0'
+				</otherwise>
+			</choose>
+			<if test="activityStartDate != null and activityStartDate != ''">
+				AND DATE_FORMAT(a.activity_start_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{activityStartDate},'%Y-%m-%d')
+				AND DATE_FORMAT(a.activity_end_date,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{activityStartDate},'%Y-%m-%d')
+			</if>
+			<if test="activityStatus != null and activityStatus != ''">
+				AND a.activity_status = #{activityStatus}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.activity_name LIKE
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+			</if>
+			AND a.del_flag = 0
+		ORDER BY a.create_time DESC
+	</select>
+	<!-- 保存数据 -->
+	<insert id="insert">
+		INSERT INTO mtmydb.mtmy_group_activity (
+			activity_id,
+			activity_pid,
+			activity_pids,
+			activity_name,
+			activity_status,
+			activity_start_date,
+			activity_end_date,
+			activity_start_time,
+			activity_end_time,
+			create_time,
+			create_by,
+			del_flag
+		) VALUES (
+			#{id},
+			#{parent.id},
+			IF(#{parent.id}='0','0,',(SELECT CONCAT(a.activity_pids,a.activity_id,',') AS parentIds FROM mtmydb.mtmy_group_activity AS a WHERE a.activity_id= #{parent.id})),
+			#{name},
+			'0',
+			#{activityStartDate},
+			DATE_FORMAT(#{activityEndDate},'%Y-%m-%d 23:59:59'),
+			DATE_FORMAT(#{activityStartTime},'%H:%i:%s'),
+			DATE_FORMAT(#{activityEndTime},'%H:%i:%s'),
+			SYSDATE(),
+			#{createBy.id},
+			'0'
+		)
+	</insert>
+	<!-- 修改数据 -->
+	<update id="update">
+		UPDATE mtmydb.mtmy_group_activity
+		SET
+		 activity_name = #{name},
+		 activity_start_date = #{activityStartDate},
+		 activity_end_date = DATE_FORMAT(#{activityEndDate},'%Y-%m-%d 23:59:59'),
+		 activity_start_time = DATE_FORMAT(#{activityStartTime},'%H:%i:%s'),
+		 activity_end_time = DATE_FORMAT(#{activityEndTime},'%H:%i:%s')
+		WHERE
+			activity_id = #{id}
+	</update>
+	<!-- 逻辑删除数据 -->
+	<update id="deleteByLogic">
+		UPDATE mtmydb.mtmy_group_activity SET del_flag = 1 WHERE activity_id = #{id} OR activity_pids LIKE
+		<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
+		<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+	</update>
+	<!-- 查询活动下所有商品 -->
+	<select id="findGoodsList" resultType="MtmyGroupActivityGoods">
+		SELECT
+			a.id AS 'gId',
+			a.activity_id AS 'mtmyGroupActivity.id',
+			a.goods_id AS 'goods.goodsId',
+			b.goods_name AS 'goods.goodsName',
+			c.name AS 'goods.franchisee.name',
+			d.name AS 'goods.goodsCategory.name',
+			b.is_on_sale AS 'goods.isOnSale',
+			a.group_activity_market_price AS 'groupActivityMarketPrice'
+		FROM
+			mtmydb.mtmy_group_activity_goods AS a
+			LEFT JOIN mtmydb.mtmy_goods AS b ON a.goods_id = b.goods_id
+			LEFT JOIN trains.sys_franchisee c ON b.franchisee_id = c.id
+			LEFT JOIN mtmydb.mtmy_goods_category d ON b.category_id = d.category_id
+		WHERE
+			a.activity_id = #{mtmyGroupActivity.id}
+			<if test="goods != null and goods.goodsCategoryId != null and goods.goodsCategoryId != ''">
+				AND b.category_id = #{goods.goodsCategoryId}
+			</if>
+			<if test="goods != null and goods.franchisee != null and goods.franchisee.id != null and goods.franchisee.id != ''">
+				AND b.franchisee_id = #{goods.franchisee.id}
+			</if>
+			<if test="goods != null and goods.isOnSale != null and goods.isOnSale != '' and goods.isOnSale != '-1'">
+				AND b.is_on_sale = #{goods.isOnSale}
+			</if>
+			<if test="goodsId != null and goodsId != 0">
+				AND b.goods_id = #{goodsId}
+			</if>
+			<if test="goods != null and goods.querytext != null and goods.querytext != ''">
+				AND (	b.goods_name LIKE
+							<if test="dbName == 'oracle'">'%'||#{goods.querytext}||'%'</if>
+							<if test="dbName == 'mysql'">CONCAT('%', #{goods.querytext}, '%')</if> 
+						OR b.keywords LIKE
+							<if test="dbName == 'oracle'">'%'||#{goods.querytext}||'%'</if>
+							<if test="dbName == 'mysql'">CONCAT('%', #{goods.querytext}, '%')</if>
+					)
+			</if>
+			AND a.del_flag = 0
+	</select>
+	<!-- 获取活动下商品详情 -->
+	<select id="findGoodsForm" resultType="MtmyGroupActivityGoods">
+		SELECT
+			a.id AS 'gId',
+			a.activity_id AS 'mtmyGroupActivity.id',
+			a.goods_id AS 'goods.goodsId',
+			b.is_real AS 'goods.isReal',
+			b.goods_name AS 'goods.goodsName',
+			a.group_activity_market_price AS 'groupActivityMarketPrice',
+			a.group_activity_price AS 'groupActivityPrice',
+			a.group_activity_advance_price AS 'groupActivityAdvancePrice',
+			a.sort,
+			a.purchase_count AS 'purchaseCount',
+			a.except_date AS 'exceptDate',
+			a.range_of_application AS 'rangeOfApplication',
+			a.other_tips AS 'otherTips'
+		FROM
+			mtmydb.mtmy_group_activity_goods AS a
+			LEFT JOIN mtmydb.mtmy_goods AS b ON a.goods_id = b.goods_id
+		WHERE
+			a.id = #{gId}
+	</select>
+	<!-- 插入团购项目商品 -->
+	<insert id="insterGroupActivityGoods">
+		INSERT INTO mtmydb.mtmy_group_activity_goods (
+			activity_id,
+			goods_id,
+			purchase_count,
+			group_activity_price,
+			group_activity_advance_price,
+			group_activity_market_price,
+			sort,
+			except_date,
+			range_of_application,
+			other_tips,
+			create_time,
+			del_flag
+		) VALUES (
+			#{mtmyGroupActivity.id},
+			#{goods.goodsId},
+			#{purchaseCount},
+			#{groupActivityPrice},
+			#{groupActivityAdvancePrice},
+			#{groupActivityMarketPrice},
+			#{sort},
+			#{exceptDate},
+			#{rangeOfApplication},
+			#{otherTips},
+			SYSDATE(),
+			'0'
+		)
+	</insert>
+	<!-- 修改团购项目商品 -->
+	<update id="updateGroupActivityGoods">
+		UPDATE mtmydb.mtmy_group_activity_goods
+		SET
+		 purchase_count = #{purchaseCount},
+		 group_activity_price = #{groupActivityPrice},
+		 group_activity_advance_price = #{groupActivityAdvancePrice},
+		 group_activity_market_price = #{groupActivityMarketPrice},
+		 sort = #{sort},
+		 except_date = #{exceptDate},
+		 range_of_application = #{rangeOfApplication},
+		 other_tips = #{otherTips}
+		WHERE id = #{gId}
+	</update>
+	<!-- 修改团购项目商品的团购价格 -->
+	<update id="updateActivityGoodsSpec">
+		UPDATE mtmydb.mtmy_spec_goods_price
+		SET 
+			group_activity_price = #{groupActivityPrice}
+		WHERE
+			goods_id = #{goodsId}
+		AND spec_key = #{specKey}
+		AND del_flag = 0
+	</update>
+	<!-- 删除团购项目内的商品 -->
+	<update id="deleteActivityGoods">
+		UPDATE mtmydb.mtmy_group_activity_goods SET del_flag = '1' WHERE id = #{gId}
+	</update>
+	<!-- 删除团购项目内的商品 -->
+	<update id="deleteActivityGoodsByActivity">
+		UPDATE mtmydb.mtmy_group_activity_goods SET del_flag = '1' WHERE activity_id = #{id}
+	</update>
+	<!-- 查询5分钟内的活动 -->
+	<select id="findGroupActivity" resultType="MtmyGroupActivity">
+		SELECT
+			activity_id AS "id"
+		FROM
+			mtmydb.mtmy_group_activity 
+		WHERE 
+			activity_pid != '0' 
+			AND del_flag = 0
+			AND DATE_FORMAT(activity_start_date,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(SYSDATE(),'%Y-%m-%d')
+			AND DATE_FORMAT(SYSDATE(),'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(activity_end_date,'%Y-%m-%d')
+			AND DATE_FORMAT(DATE_ADD(activity_start_time,INTERVAL -5 MINUTE),'%H:%i:00') <![CDATA[ <= ]]> DATE_FORMAT(SYSDATE(),'%H:%i:00')
+			AND DATE_FORMAT(SYSDATE(),'%H:%i:00') <![CDATA[ <= ]]> DATE_FORMAT(activity_start_time,'%H:%i:00')
+	</select>
+	<!-- 查询提醒用户 -->
+	<select id="findGroupActivityRemind" resultType="MtmyGroupActivityRemind">
+		SELECT
+			a.id AS "rId",
+			a.user_id AS "userId",
+			a.goods_id AS "goodsId",
+			a.goods_name AS "goodsName",
+			b.mobile,
+			c.client_id AS "clientId"
+		FROM
+			mtmydb.mtmy_group_activity_remind AS a
+		 	LEFT JOIN mtmydb.mtmy_users AS b ON a.user_id = b.user_id
+			LEFT JOIN mtmydb.mtmy_oa_user_client AS c ON a.user_id = c.user_id
+		WHERE
+			a.is_remind = 0
+		AND a.activity_id = #{activityId }
+		AND DATE_FORMAT(remind_time,'%Y-%m-%d') = DATE_FORMAT(SYSDATE(),'%Y-%m-%d')
+		AND a.del_flag = 0
+	</select>
+	<!-- 修改提醒用户 -->
+	<update id="updateGroupActivityRemind" parameterType="List">
+		UPDATE mtmydb.mtmy_group_activity_remind
+		SET is_remind = 1
+		WHERE
+			id IN
+			<foreach collection="list" item="list" open="(" separator="," close=")">
+				#{list}
+			</foreach>
+	</update>
+	<!-- 查询取消团购订单 -->
+	<select id="selectCancelGroupOrder" resultType="Orders">
+		SELECT
+			a.order_id,
+			a.activity_id AS "id"
+		FROM
+			mtmydb.mtmy_group_activity_order_mapping a
+			LEFT JOIN mtmydb.mtmy_orders b ON a.order_id = b.order_id
+		WHERE
+			a.del_flag = 0 
+			AND a.is_return != 1
+			AND b.order_status = -2
+	</select>
+	<!-- 归还取消订单库存 -->
+	<update id="returnGroupOrder">
+		UPDATE mtmydb.mtmy_group_activity_order_mapping SET is_return = 1 WHERE order_id = #{orderId} AND is_return = 0
+	</update>
+</mapper>
