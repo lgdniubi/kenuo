@@ -133,6 +133,10 @@ input::-webkit-inner-spin-button{
 								nodes = tree.getSelectedNodes();
 							}
 							for (var i = 0; i < nodes.length; i++) {//
+								if (nodes[i].isParent){
+									top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+									return false;
+								}
 								ids.push(nodes[i].id);
 								names.push(nodes[i].name);//
 								break; // 如果为非复选框选择，则返回第一个选择  
