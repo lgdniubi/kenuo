@@ -23,23 +23,12 @@
 		}
 		$(document).ready(function(){
 			validateForm = $("#inputForm").validate({
-				rules: {   //英文名称校验修改为下拉选，不用再进行验证,如需进行校验，将此注释打开即可
-					modeid:{
-						remote:{
-							type: "post",
-							async: false,
-							dataType: "json",           //接受数据格式  
-							url: "${ctx}/train/pcRole/checkEnname?oldModeid=${pcRole.modeid}",
-							data: {                     //要传递的数据
-								oldEnname: function() {
-						            return $("#ename").val();
-						        }
-						    }
-						}
-					}
+				rules: {   //
+					name :{nameMethod:true},
+					ename:{enameMethod:true}
 				},
 				messages:{
-					modeid:{remote:"此版本的英文名称已存在"}
+					name :{nameMethod:"角色名称不能为空且不重复"}
 				},
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
@@ -56,7 +45,38 @@
 				}
 			});
 		});
-		
+		//自定义校验英文名称
+		jQuery.validator.addMethod("enameMethod", function(value, element) {
+            var url = "${ctx}/train/pcRole/checkEnname?oldEnname=${pcRole.ename}";
+            var enameFlag = true;
+            $.ajax({
+                type: "post",
+                url: url,
+                async : false,
+                data: {modeid:$("#modeid").val(),ename:$("#ename").val()},
+                dataType: "json",
+                success: function(data){
+                	enameFlag = data;
+                }
+            });
+            return enameFlag;
+        }, "此版本的英文名称已存在");
+		//自定义校验角色名称
+		jQuery.validator.addMethod("nameMethod", function(value, element) {
+            var url = "${ctx}/train/pcRole/checkRoleName?oldName=${pcRole.name}";
+            var nameFlag = true;
+            $.ajax({
+                type: "post",
+                url: url,
+                async : false,
+                data: {modeid:$("#modeid").val(),name:$("#name").val()},
+                dataType: "json",
+                success: function(data){
+                	nameFlag = data;
+                }
+            });
+            return nameFlag;
+        }, "此版本的角色名称已存在");
 	</script>
 </head>
 <body>

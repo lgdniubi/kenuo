@@ -24,7 +24,7 @@
 							type: "post",
 							async: false,
 							dataType: "json",           //接受数据格式  
-							url: "${ctx}/train/menu/checkName?oldName=${menu.name}",
+							url: "${ctx}/train/menu/checkName?oldName=${menu.name}&parentId=${menu.parent.id}",
 							data: {                     //要传递的数据
 								name: function() {
 						            return $("#name").val();

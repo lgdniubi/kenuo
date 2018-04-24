@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -249,7 +250,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String dateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 		map.put("content", text);
-//		map.put("notify_id", "35be8ac9632c9475ac67f9be3c3");
+		map.put("notify_id", UUID.randomUUID().toString().replace("-", ""));
 		map.put("notify_type", 2);
 		map.put("push_time", dateStr);
 		map.put("title", "审核通知");

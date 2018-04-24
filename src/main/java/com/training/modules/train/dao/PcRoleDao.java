@@ -3,6 +3,8 @@ package com.training.modules.train.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.sys.entity.User;
@@ -116,4 +118,11 @@ public interface PcRoleDao extends CrudDao<PcRole>{
 	 * @return
 	 */
 	public int checkEnname(Integer modeid);
+
+	/**
+	 * 验证 角色名称是否重复
+	 * @param name
+	 * @return
+	 */
+	public int checkRoleName(@Param("name")String name, @Param("modeid")Integer modeid);
 }

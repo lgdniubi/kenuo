@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ import com.training.modules.train.service.TrainModelService;
 
 
 /**
- * PC角色管理
+ * 自媒体角色管理
  * @author coffee
  *
  */
@@ -249,14 +250,33 @@ public class MediaRoleController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "checkEnname")
-	public String checkEnname(String oldEnname, Integer oldModeid,Integer modeid) {
-		if("sjgly".equals(oldEnname)){
-			if (oldModeid == modeid){
-				return "true";
-			} else if (modeid != null &&  mediaRoleService.checkEnname(modeid) != 0) {
-				return "false";
+	public boolean checkEnname(String oldEnname,String ename,Integer modeid) {
+		if("sjgly".equals(ename) && modeid != null){
+			if ( StringUtils.isBlank(oldEnname)){//如果是空表示添加
+				return mediaRoleService.checkEnname(modeid) == 0;
+			} else {//如果不是空，表示修改
+				return mediaRoleService.checkEnname(modeid) <= 1;
 			}
 		}
-		return "true";
+		return true;
+	}
+	
+	/**
+	 * 验证 角色名称是否重复
+	 * 
+	 * @param name
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "checkRoleName")
+	public boolean checkName(String name,String oldName,Integer modeid) {
+		if (StringUtils.isNotBlank(name)){//如果是空表示添加
+			if (StringUtils.isBlank(oldName)){//如果是空表示添加
+				return mediaRoleService.checkRoleName(name,modeid)==0;
+			}else {//如果不是空，表示修改
+				return mediaRoleService.checkRoleName(name,modeid)<=1;
+			}
+		}
+		return false;	
 	}
 }

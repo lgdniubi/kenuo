@@ -1249,7 +1249,7 @@ public class TrainMenuService extends BaseService implements InitializingBean {
 		return trainMenuDao.findAllMenuByModid(pcRole);
 	}
 
-	public int checkName(String name) {
-		return trainMenuDao.checkName(name);
+	public int checkName(String name,Integer parentId) {
+		return trainMenuDao.checkName(name,parentId);
 	}
 }

@@ -32,6 +32,6 @@ public interface TrainMenuDao extends CrudDao<PCMenu> {
 
 	public List<PCMenu> findAllMenuByModid(PcRole pcRole);
 
-	public int checkName(@Param("name")String name);
+	public int checkName(@Param("name")String name,@Param("parentId")Integer parentId);
 	
 }

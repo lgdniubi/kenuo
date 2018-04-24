@@ -21,7 +21,7 @@ public class ModelFranchisee extends DataEntity<ModelFranchisee>{
 	private Date authEndDate;		//授权结束时间
 	private String discount;		//折扣
 	private String paytype;		//支付类型（0：线上支付，1：线下支付）
-	private String remarks;		//备注
+//	private String remarks;		//备注
 	private String status;		//过期状态（0：未过期，1：已过期）
 	public ModelFranchisee() {
 		super();
@@ -76,12 +76,12 @@ public class ModelFranchisee extends DataEntity<ModelFranchisee>{
 	public void setPaytype(String paytype) {
 		this.paytype = paytype;
 	}
-	public String getRemarks() {
-		return remarks;
-	}
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
+//	public String getRemarks() {
+//		return remarks;
+//	}
+//	public void setRemarks(String remarks) {
+//		this.remarks = remarks;
+//	}
 	public String getStatus() {
 		return status;
 	}

@@ -104,6 +104,7 @@
 								<th width="230" style="text-align: center;">认证类型</th>
 								<th width="230" style="text-align: center;">申请类型</th>
 								<th width="230" style="text-align: center;">申请时间</th>
+								<th width="230" style="text-align: center;">状态</th>
 								<th width="300" style="text-align: center;">操作</th>
 							</tr>
 						</thead>
@@ -116,12 +117,17 @@
 									<td>${userCheck.type}</td>
 									<td>${userCheck.applyType}</td>
 									<td><fmt:formatDate value="${userCheck.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/> </td>
+									<td>
+										<c:if test="${userCheck.status == 0}">待审核</c:if>
+										<c:if test="${userCheck.status == 1}">未通过</c:if>
+										<c:if test="${userCheck.status == 2}">已通过</c:if>
+									</td>
 									<td style="text-align: left;">
 									<shiro:hasPermission name="train:userCheck:update">
 										<c:if test="${userCheck.status == 2}">
 					    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.type}&opflag=setPermiss','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
 										</c:if>
-										<c:if test="${userCheck.status != 2}">
+										<c:if test="${userCheck.status == 0}">
 					    						<a href="#" onclick="checkBtn(${userCheck.id},'${userCheck.userid}')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>
 										</c:if>
 						    		</shiro:hasPermission>

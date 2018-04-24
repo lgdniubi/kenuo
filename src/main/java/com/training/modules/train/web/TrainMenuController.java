@@ -130,9 +130,9 @@ public class TrainMenuController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "checkName")
-	public boolean checkName(String name,String oldName) {
+	public boolean checkName(String name,String oldName,Integer parentId) {
 		if (name.equals(oldName)) return true;
-		boolean flag =trainMenuService.checkName(name) == 0;
+		boolean flag =trainMenuService.checkName(name,parentId) == 0;
 		return flag;
 	}
 	

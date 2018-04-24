@@ -190,8 +190,9 @@
 		UPDATE train_model_franchisee SET 
 			`mod_id` = #{modid},
 			`auth_start_date` = #{authStartDate},
+			<if test="discount != null"> `discount`= #{discount}, </if>
+			<if test="paytype != null"> `pay_type`= #{paytype}, </if>
 			`auth_end_date` = #{authEndDate}
-			<if test="discount != null">, `discount`= #{discount}, </if>
 		WHERE id = #{id} and user_id = #{userid}
 	</update>
 	<!-- 保存权益信息后，设置用户type -->

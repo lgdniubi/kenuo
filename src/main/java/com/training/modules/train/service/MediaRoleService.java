@@ -113,4 +113,13 @@ public class MediaRoleService extends CrudService<MediaRoleDao,MediaRole>{
 	public int checkEnname(Integer modeid){
 		return dao.checkEnname(modeid);
 	}
+
+	/**
+	 * 验证 角色名称是否重复
+	 * @param name
+	 * @return
+	 */
+	public int checkRoleName(String name, Integer modeid) {
+		return dao.checkRoleName(name, modeid);
+	}
 }

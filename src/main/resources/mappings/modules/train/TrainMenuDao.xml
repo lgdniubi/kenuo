@@ -129,7 +129,7 @@
 	</select>
 	<!-- 验证菜单名称是否存在 -->
 	<select id="checkName" resultType="int">
-		SELECT COUNT(1) FROM pc_menu WHERE del_flag = 0 AND name = #{name}
+		SELECT COUNT(1) FROM pc_menu WHERE del_flag = 0 AND name = #{name} AND parent_id = #{parentId}
 	</select>
 	<insert id="insert">
 		INSERT INTO pc_menu(
