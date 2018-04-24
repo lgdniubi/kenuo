@@ -81,7 +81,7 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	 * @return
 	 */
 	public int findByModidAndEnameFzx(ModelFranchisee modelFranchisee);
-	//向pc_user_role中插入一条记录
+	//向fzx_user_role中插入一条记录
 	public void insertFzxUserRole(@Param("userid")String userid, @Param("roleid")int fzx_roleid);
 
 	/**
@@ -107,5 +107,13 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	 * @return
 	 */
 	public String findCidByUserid(String userid);
+
+	/**
+	 * 从fzx_role查询mod_id为syr的roleid插入fzx_user_role
+	 * 设置手艺人角色，权益设置后
+	 * @param modelFranchisee
+	 * @Description:
+	 */
+	public void insertFzxUserRoleForsyr(ModelFranchisee modelFranchisee);
 	
 }

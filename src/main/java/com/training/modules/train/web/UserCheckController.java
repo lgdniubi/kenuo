@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
 import com.training.common.web.BaseController;
+import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.train.entity.ModelFranchisee;
 import com.training.modules.train.entity.UserCheck;
 import com.training.modules.train.service.UserCheckService;
@@ -30,7 +31,8 @@ public class UserCheckController extends BaseController{
 	
 	@Autowired
 	private UserCheckService userCheckService;
-	
+	@Autowired
+	private RedisClientTemplate redisClientTemplate;		//redis缓存Service
 	
 	/**
 	 * 用户审核
@@ -89,6 +91,7 @@ public class UserCheckController extends BaseController{
 			}else if ("qy".equals(opflag)){
 				userCheckService.saveQYModelFranchisee(modelFranchisee);//保存版本分类信息
 			}
+			redisClientTemplate.del("UTOKEN_"+modelFranchisee.getUserid());
 			addMessage(redirectAttributes, "成功");
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "保存权限设置出现异常,请与管理员联系");

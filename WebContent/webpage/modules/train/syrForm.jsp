@@ -24,7 +24,8 @@
 				    elem: '#auth_start_date',
 				    format: 'YYYY-MM-DD',
 				    event: 'focus',
-				    max: $("#auth_start_date").val(),   //最大日期
+				   // max: $("#auth_start_date").val(),   //最大日期
+				    min: laydate.now(), //设定最小日期为当前日期  
 				    istime: false,				//是否显示时间
 				    isclear: true,				//是否显示清除
 				    istoday: true,				//是否显示今天
@@ -39,7 +40,7 @@
 				    elem: '#auth_end_date',
 				    format: 'YYYY-MM-DD',
 				    event: 'focus',
-				    min: $("#auth_end_date").val(),
+				    min: laydate.now(), //设定最小日期为当前日期  
 				    istime: false,
 				    isclear: true,
 				    istoday: true,

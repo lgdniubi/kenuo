@@ -99,7 +99,7 @@
 						<thead>
 							<tr>
 								<th width="120" style="text-align: center;">手机号</th>
-								<th style="text-align: center">姓名</th>
+								<th width="230" style="text-align: center">姓名</th>
 								<th width="230" style="text-align: center;">昵称</th>
 								<th width="230" style="text-align: center;">认证类型</th>
 								<th width="230" style="text-align: center;">申请类型</th>
