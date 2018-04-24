@@ -85,7 +85,7 @@ public class ShareAdvancePrice extends CommonService{
 					int totalTimes = orderGoods.getTotalTimes();                    //商品的总次数
 					
 					//该订单下预约已完成和爽约的个数
-					int completeNum = reservationService.queryCompleteNum(reservationList.get(i).getGroupId(),reservationList.get(i).getGoodsMappingId());
+					int completeNum = reservationService.queryCompleteNum(reservationList.get(i).getGroupId(),reservationList.get(i).getGoodsMappingId(),reservationList.get(i).getReservationId());
 					
 					if(i == reservationList.size()-1){
 						map.put("mtmy_advance_time", sdf.format(reservationList.get(i).getUpdateDate()));

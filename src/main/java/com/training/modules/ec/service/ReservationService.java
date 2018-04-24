@@ -173,8 +173,8 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 	 * @param goodsMappingId
 	 * @return
 	 */
-	public int queryCompleteNum(int groupId,String goodsMappingId){
-		return dao.queryCompleteNum(groupId,goodsMappingId);
+	public int queryCompleteNum(int groupId,String goodsMappingId,int apptId){
+		return dao.queryCompleteNum(groupId,goodsMappingId,apptId);
 	}
 	
 	/**
