@@ -383,22 +383,30 @@
 		<![CDATA[AND DATE_FORMAT(r.update_date,'%Y-%m-%d %H:%i:%s') <= DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s')]]>
 		AND ((ogd2.advance_flag = 2 AND DATE_FORMAT(ogd2.create_date,'%Y-%m-%d %H:%i:%s') > DATE_FORMAT(#{startTime},'%Y-%m-%d %H:%i:%s')) or (ogd2.advance_flag = 1))
 		AND o.channel_flag != 'bm'
+		ORDER BY r.update_date,r.id
 	</select>
 	
 	<!-- 查询某个订单下的预约完成与爽约的总数 -->
 	<select id="queryCompleteNum" resultType="Integer">
-		SELECT COUNT(*)
-		FROM mtmydb.mtmy_appt_order
-		WHERE (appt_status = 1 OR appt_status = 4)
-		AND del_flag = 0
-		<choose>
+		SELECT c.rowNo FROM
+		(SELECT
+			(@rowNum:=@rowNum+1) as rowNo,
+			a.id
+	     FROM
+			mtmydb.mtmy_appt_order AS a,
+			(Select (@rowNum :=0) ) b
+		 WHERE
+			(a.appt_status = 1 OR a.appt_status = 4)
+		 AND a.del_flag = 0
+		 <choose>
 			<when test="groupId == 0">
-				AND goods_mapping_id = #{goodsMappingId}
+				AND a.goods_mapping_id = #{goodsMappingId}
 			</when>
 			<otherwise>
-				AND group_id = #{groupId}
+				AND a.group_id = #{groupId}
 			</otherwise>
-		</choose>
+		 </choose>
+		ORDER BY a.update_date ASC,a.id ASC) AS c WHERE c.id = #{apptId}
 	</select>
 	<!-- 同一美容师同一时间段内只能有一条已完成的预约记录 -->
 	<select id="verifyApptDate" resultType="java.lang.Integer">

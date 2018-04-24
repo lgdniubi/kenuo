@@ -291,7 +291,8 @@ public class OrdersController extends BaseController {
 		try {
 			User user = UserUtils.getUser(); //登陆用户
 			List<Payment> paylist = paymentService.paylist();
-			orders = ordersService.selectOrderById(orders.getOrderid());
+			orders.setFranchiseeId(UserUtils.getUser().getCompany().getId());
+			orders = ordersService.selectOrderById(orders);
 			
 			//查看退货信息
 			List<ReturnedGoods> returnedList = returnedGoodsService.queryReturnList(orders.getOrderid());
@@ -437,7 +438,7 @@ public class OrdersController extends BaseController {
 	@RequestMapping(value = "UpdateShipping")
 	public String UpdateShipping(Orders orders, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		try {
-			Orders oldOrders = ordersService.selectOrderById(orders.getOrderid());
+			Orders oldOrders = ordersService.selectOrderById(orders);
 			
 			int returnDay = Integer.parseInt(ParametersFactory.getMtmyParamValues("returngoods_date"));
 			if(-1 == returnDay){
@@ -1025,8 +1026,10 @@ public class OrdersController extends BaseController {
 						}
 						
 						BeanValidators.validateWithException(validator, shipping);
-
-						Orders oldOrders = ordersService.selectOrderById(shipping.getOrderid());
+						
+						Orders queryOrders = new Orders();
+						queryOrders.setOrderid(shipping.getOrderid());
+						Orders oldOrders = ordersService.selectOrderById(queryOrders);
 						
 						Orders orders=new Orders();
 						if(shipping.getShippingtime()!=null){
@@ -1231,7 +1234,7 @@ public class OrdersController extends BaseController {
 	public String updateVirtualOrder(Orders orders, HttpServletRequest request, Model model,
 			RedirectAttributes redirectAttributes) {
 		try {
-			Orders newOrders = ordersService.selectOrderById(orders.getOrderid());
+			Orders newOrders = ordersService.selectOrderById(orders);
 			
 			orders.setInvoiceOvertime(newOrders.getInvoiceOvertime());
 			orders.setIsReal(newOrders.getIsReal());
@@ -1618,7 +1621,7 @@ public class OrdersController extends BaseController {
 	public String forcedCancel(Orders orders, HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
 		try {
 			int integral = 0;
-			Orders oldOrders = ordersService.selectOrderById(orders.getOrderid());
+			Orders oldOrders = ordersService.selectOrderById(orders);
 			
 			orders = ordersService.findselectByOrderId(orders.getOrderid());
 			boolean result = returnRepository(orders.getOrderid(),request);
@@ -2561,7 +2564,9 @@ public class OrdersController extends BaseController {
 			List<OrderGoods> resultSon = new ArrayList<OrderGoods>();              //存放每个卡项商品和它的子项
 			User user = UserUtils.getUser(); //登陆用户
 			List<Payment> paylist = paymentService.paylist();
-			orders = ordersService.selectOrderById(orders.getOrderid());
+			
+			orders.setFranchiseeId(UserUtils.getUser().getCompany().getId());
+			orders = ordersService.selectOrderById(orders);
 			
 			//查看退货信息
 			List<ReturnedGoods> returnedList = returnedGoodsService.queryReturnList(orders.getOrderid());
@@ -2622,7 +2627,7 @@ public class OrdersController extends BaseController {
 									} 
 								}else if(father.getAdvanceFlag() == 1){        //是预约金   
 									if(orders.getOrderstatus() == 4 && father.getCompleteAppt() == 1){    //已完成且预约已完成
-										suitCardSons = suitCardSons + "<a href='#' onclick='ToAdvance("+"\""+orders.getOfficeId()+"\""+","+father.getRecid()+","+father.getServicetimes()+","+father.getOrderArrearage()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
+										suitCardSons = suitCardSons + "<a href='#' onclick='ToAdvance("+"\""+orders.getBindingOfficeNum()+"\""+","+father.getRecid()+","+father.getServicetimes()+","+father.getOrderArrearage()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
 									}else if(orders.getOrderstatus() != 4 || father.getCompleteAppt() == 0){   //无预约或订单未完成
 										suitCardSons = suitCardSons + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
 									}
@@ -2681,7 +2686,7 @@ public class OrdersController extends BaseController {
 									} 
 								}else if(father.getAdvanceFlag() == 1){        //是预约金   
 									if(orders.getOrderstatus() == 4 && father.getCompleteAppt() == 1){    //已完成且预约已完成
-										suitCardSons = suitCardSons + "<a href='#' onclick='ToAdvance("+"\""+orders.getOfficeId()+"\""+","+father.getRecid()+","+father.getServicetimes()+","+father.getOrderArrearage()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
+										suitCardSons = suitCardSons + "<a href='#' onclick='ToAdvance("+"\""+orders.getBindingOfficeNum()+"\""+","+father.getRecid()+","+father.getServicetimes()+","+father.getOrderArrearage()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
 									}else if(orders.getOrderstatus() != 4 || father.getCompleteAppt() == 0){   //无预约或订单未完成
 										suitCardSons = suitCardSons + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
 									}
@@ -2790,7 +2795,7 @@ public class OrdersController extends BaseController {
 	@RequestMapping(value = "updateCardOrder")
 	public String updateCardOrder(Orders orders, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
 		try {
-			Orders newOrders = ordersService.selectOrderById(orders.getOrderid());
+			Orders newOrders = ordersService.selectOrderById(orders);
 			orders.setInvoiceOvertime(newOrders.getInvoiceOvertime());
 			orders.setIsReal(newOrders.getIsReal());
 			//判断收货地址是否修改了，若未修改则xml中不对address更新，若不修改，则将省市县详细地址存到相应的地方
@@ -3062,7 +3067,7 @@ public class OrdersController extends BaseController {
 		try{
 			if((!"".equals(orders.getOrderid()) && (orders.getOrderid() != null))){
 				
-				Orders oldOrders = ordersService.selectOrderById(orders.getOrderid());
+				Orders oldOrders = ordersService.selectOrderById(orders);
 				
 				//订单状态为待收货且物流类型为到店自取，则才可以确认收货
 				if(oldOrders.getOrderstatus() == 2 && oldOrders.getShippingtype() == 1){
@@ -3778,7 +3783,7 @@ public class OrdersController extends BaseController {
 	public String isPickUp(Orders orders,HttpServletRequest request,Model model,RedirectAttributes redirectAttributes){
 		try{
 			if((!"".equals(orders.getOrderid()) && (orders.getOrderid() != null))){
-				Orders oldOrders = ordersService.selectOrderById(orders.getOrderid());
+				Orders oldOrders = ordersService.selectOrderById(orders);
 				
 				ordersService.updateIsPickUp(orders); 
 

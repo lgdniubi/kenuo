@@ -153,6 +153,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		// 设置分页参数
 		orders.setPage(page);
 		// 执行分页查询
+		orders.setFranchiseeId(UserUtils.getUser().getCompany().getId());
 		page.setList(ordersDao.findList(orders));
 		return page;
 	}
@@ -171,6 +172,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		// 设置分页参数
 		orders.setPage(page);
 		// 执行分页查询
+		orders.setFranchiseeId(UserUtils.getUser().getCompany().getId());
 		page.setList(ordersDao.newFindList(orders));
 		return page;
 	}
@@ -1007,9 +1009,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @param orderid
 	 * @return
 	 */
-	public Orders selectOrderById(String orderid) {
+	public Orders selectOrderById(Orders queryOrders) {
 		DecimalFormat formater = new DecimalFormat("#0.##");   //四舍五入
-		Orders orders = dao.selectOrderById(orderid);
+		Orders orders = dao.selectOrderById(queryOrders);
 	
 		//存在预约记录
 		if(orders.getSumAppt() > 0){
@@ -1087,14 +1089,14 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		List<OrderPushmoneyRecord> orderPushmoneyRecords = orderPushmoneyRecordService.getOrderPushmoneyRecordByOrderId(orderid);
 		orders.setOrderPushmoneyRecords(orderPushmoneyRecords);*/
 		//查询订单日志信息
-		List<OrderRemarksLog> orderRemarks = dao.getOrderRemarksLog(orderid);
+		List<OrderRemarksLog> orderRemarks = dao.getOrderRemarksLog(queryOrders.getOrderid());
 		orders.setOrderRemarksLog(orderRemarks);
 		//查询订单发票信息
-		orders.setNum(dao.selectInvoiceRelevancyNum(orderid));
+		orders.setNum(dao.selectInvoiceRelevancyNum(queryOrders.getOrderid()));
 //		OrderInvoice orderInvoice  = dao.getOrderInvoiceRelevancy(orderid);
 //		orders.setOrderInvoice(orderInvoice);
 		//查询订单下的红包
-		List<OrderGoodsCoupon> orderGoodsCoupons = activityCouponUserDao.findlistByOrdeid(orderid);
+		List<OrderGoodsCoupon> orderGoodsCoupons = activityCouponUserDao.findlistByOrdeid(queryOrders.getOrderid());
 		orders.setOrderGoodsCoupons(orderGoodsCoupons);
 		
 		return orders;
@@ -1372,7 +1374,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		orders.setPayid(payment.getPayid());
 		orders.setPaycode(payment.getPaycode());
 		orders.setPayname(payment.getPayname());
-		Orders _orders = ordersDao.selectOrderById(orders.getOrderid());
+		Orders _orders = ordersDao.selectOrderById(orders);
 		insertLog(_orders);
 		ordersDao.updateVirtualOrder(orders);
 		insertLog(orders);
@@ -2904,7 +2906,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				appArrearage = -Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app欠款金额
 			}else if(newTotalAmount >= orderArrearage){
 				//实付款金额	>=  欠款
-				serviceTimes_in = _servicetimes-orderGoods.getRemaintimes();//充值次数
+				serviceTimes_in = _servicetimes-orderGoods.getPayRemaintimes();//充值次数
 				totalAmount_in = orderArrearage;//实付金额
 				
 				newSpareMoneySum = Double.parseDouble(formater.format(newTotalAmount - orderArrearage - accountBalance));//商品总余额(当实付大于欠款时，将多的存入个人账户余额中)
