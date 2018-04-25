@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Param;
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.sys.entity.Office;
+import com.training.modules.sys.entity.OfficeAcount;
 import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.OfficeLog;
 
@@ -238,5 +239,21 @@ public interface OfficeDao extends TreeDao<Office> {
 	 * 2018年2月6日 兵子
 	 */
 	public void updateFranchisee(Office off);
+	/**
+	 * 查询机构账户
+	 * @param officeId
+	 * @return
+	 */
+	public OfficeAcount findOfficeAcount(String officeId);
+	/**
+	 * 变更信用额度
+	 * @param OfficeAcount
+	 */
+	public void updateOfficeCreditLimit(OfficeAcount OfficeAcount);
+	/**
+	 * 创建账户
+	 * @param OfficeAcount
+	 */
+	public void saveOfficeAcount(OfficeAcount officeAcount);
 
 }
