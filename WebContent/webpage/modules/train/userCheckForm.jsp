@@ -28,7 +28,7 @@
 			    	<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="6"><label class="pull-left">申请人基本信息:</label></td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">电话:</label></td>
+			         <td width="100px" class="active"><label class="pull-right">电话:</label></td>
 			         <td>${userCheck.mobile}</td>
 			         <td class="active"><label class="pull-right">姓名:</label></td>
 			         <td>${userCheck.name}</td>
@@ -41,11 +41,18 @@
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">当前会员类型:</label></td>
-			         <td colspan="5">${userCheck.applyType}</td>
+			         <td colspan="5">
+			         	<c:if test="${userCheck.applyType eq 'pt'}">普通员工</c:if>
+						<c:if test="${userCheck.applyType eq 'syr'}">手艺人</c:if>
+						<c:if test="${userCheck.applyType eq 'qy'}">企业</c:if>
+					 </td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">申请会员类型:</label></td>
-			         <td colspan="5">${userCheck.auditType}</td>
+			         <td colspan="5">
+					 	<c:if test="${userCheck.auditType eq 'syr'}">手艺人</c:if>
+						<c:if test="${userCheck.auditType eq 'qy'}">企业</c:if>
+					 </td>
 				</tr>
 				<tr>
 			    	<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="6"><label class="pull-left">申请资料:</label></td>
@@ -70,18 +77,22 @@
 			         <td class="active" colspan="6"><label class="pull-left">法人身份证:</label></td>
 			    </tr>
 			    <tr>
-			         <td class="active" colspan="3"><img id="photosrc" src="${userCheck.icardone}" alt="images" style="width: 200px;height: 100px;"/></td>
-			         <td class="active" colspan="3"><img id="photosrc" src="${userCheck.icardtwo}" alt="images" style="width: 200px;height: 100px;"/></td>
+			         <td height="100px" colspan="3"><img id="photosrc" src="${userCheck.icardone}" alt="images" style="width: 200px;height: 100px;"/></td>
+			         <td  colspan="3"><img id="photosrc" src="${userCheck.icardtwo}" alt="images" style="width: 200px;height: 100px;"/></td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-left">身份证号:</label></td>
 			         <td colspan="5">${userCheck.legalCard}</td>
 			    </tr>
 			    <tr>
+			         <td height="100px" class="active"><label class="pull-left">营业执照:</label></td>
+			    	 <td colspan="5"><img id="photosrc" src="${userCheck.charterUrl}" alt="images" style="width: 200px;height: 100px;"/></td>
+			    </tr>
+			    <tr>
 			         <td class="active" colspan="6"><label class="pull-left">企业介绍:</label></td>
 			    </tr>
 			    <tr>  
-			         <td ></td>
+			         <td height="100px"></td>
 			         <td colspan="5">${userCheck.intro}</td>
 				</tr>
 			</tbody>

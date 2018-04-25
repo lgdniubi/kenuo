@@ -89,7 +89,7 @@ public class MediaMenuService extends BaseService implements InitializingBean {
 	public void deleteMenu(MediaMenu menu) {
 		mediaMenuDao.delete(menu);
 		// 清除用户菜单缓存
-		TrainUserUtils.removeCache(TrainUserUtils.CACHE_MENU_LIST);
+		MediaMenuUtils.removeCache(MediaMenuUtils.CACHE_MENU_LIST);
 		// // 清除权限缓存
 		// systemRealm.clearAllCachedAuthorizationInfo();
 		// 清除日志相关缓存
@@ -110,6 +110,17 @@ public class MediaMenuService extends BaseService implements InitializingBean {
 	public List<MediaMenu> findAllMenuByModid(MediaRole mediaRole) {
 		
 		return mediaMenuDao.findAllMenuByModid(mediaRole);
+	}
+
+	/**
+	 * 验证同一个父级菜单下不能有重复的名称
+	 * @param name
+	 * @param parentId
+	 * @return
+	 * @Description:
+	 */
+	public int checkName(String name,Integer parentId) {
+		return mediaMenuDao.checkName(name,parentId);
 	}
 	
 }

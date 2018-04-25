@@ -114,8 +114,15 @@
 									<td>${userCheck.mobile}</td>
 									<td>${userCheck.name}</td>
 									<td>${userCheck.nickname}</td>
-									<td>${userCheck.type}</td>
-									<td>${userCheck.applyType}</td>
+									<td>
+										<c:if test="${userCheck.auditType eq 'syr'}">手艺人</c:if>
+										<c:if test="${userCheck.auditType eq 'qy'}">企业</c:if>
+									</td>
+									<td>
+										<c:if test="${userCheck.applyType eq 'pt'}">普通员工</c:if>
+										<c:if test="${userCheck.applyType eq 'syr'}">手艺人</c:if>
+										<c:if test="${userCheck.applyType eq 'qy'}">企业</c:if>
+									</td>
 									<td><fmt:formatDate value="${userCheck.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/> </td>
 									<td>
 										<c:if test="${userCheck.status == 0}">待审核</c:if>
@@ -125,7 +132,7 @@
 									<td style="text-align: left;">
 									<shiro:hasPermission name="train:userCheck:update">
 										<c:if test="${userCheck.status == 2}">
-					    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.type}&opflag=setPermiss','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
+					    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.auditType}&opflag=setPermiss','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
 										</c:if>
 										<c:if test="${userCheck.status == 0}">
 					    						<a href="#" onclick="checkBtn(${userCheck.id},'${userCheck.userid}')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>

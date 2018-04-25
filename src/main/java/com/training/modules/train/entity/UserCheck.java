@@ -29,7 +29,14 @@ public class UserCheck extends DataEntity<UserCheck>{
 	private String legalCard;		//法人身份证号
 	private String icardone;		//身份证（正）
 	private String icardtwo;		//身份证（反）
+	private String charterUrl;		//营业执照（照片）
 	private String intro;			//企业介绍
+	
+	//----------------手艺人审核信息--train_audituser_info
+	private String speciality;			//特长
+	private String startDate;			//工作年限
+	private String income;			//月收入
+	private String city;			//工作城市
 	
 	public UserCheck() {
 		super();
@@ -147,5 +154,35 @@ public class UserCheck extends DataEntity<UserCheck>{
 	}
 	public void setIntro(String intro) {
 		this.intro = intro;
+	}
+	public String getSpeciality() {
+		return speciality;
+	}
+	public void setSpeciality(String speciality) {
+		this.speciality = speciality;
+	}
+	public String getStartDate() {
+		return startDate;
+	}
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+	public String getIncome() {
+		return income;
+	}
+	public void setIncome(String income) {
+		this.income = income;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public String getCharterUrl() {
+		return charterUrl;
+	}
+	public void setCharterUrl(String charterUrl) {
+		this.charterUrl = charterUrl;
 	}
 }

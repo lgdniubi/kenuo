@@ -5,6 +5,8 @@ package com.training.modules.train.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.MediaMenu;
@@ -29,5 +31,7 @@ public interface MediaMenuDao extends CrudDao<MediaMenu> {
 	public List<MediaMenu> findByPidforChild(String id);
 
 	public List<MediaMenu> findAllMenuByModid(MediaRole mediaRole);
+
+	public int checkName(@Param("name")String name,@Param("parentId")Integer parentId);
 	
 }

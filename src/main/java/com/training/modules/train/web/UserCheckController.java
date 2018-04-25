@@ -65,7 +65,7 @@ public class UserCheckController extends BaseController{
 	@RequestMapping(value = {"save"})
 	public String savemodel(UserCheck userCheck, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		try {
-			userCheckService.saveModel(userCheck);//保存审核信息
+			userCheckService.saveModel(userCheck);//保存审核信息保存用户审核状态
 			if ("1".equals(userCheck.getStatus())){
 				userCheckService.pushMsg(userCheck,"你的申请资料信息没有通过审核，请修改资料");
 			}else if ("2".equals(userCheck.getStatus())){
@@ -129,6 +129,10 @@ public class UserCheckController extends BaseController{
 		}
 		if (userCheck.getId() != null) {
 			userCheck =  userCheckService.getUserCheck(userCheck);
+			if("syr".equals(userCheck.getAuditType())){//如果认证类型是手艺人，跳转收益审核页面
+				model.addAttribute("userCheck", userCheck);
+				return "modules/train/syrCheckForm";
+			}
 		}
 		model.addAttribute("userCheck", userCheck);
 		return "modules/train/userCheckForm";

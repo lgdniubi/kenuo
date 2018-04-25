@@ -38,6 +38,7 @@
 			u.type,
 			tap.user_id,
 			tap.apply_type AS applyType,
+			tap.audit_type AS auditType,
 			tap.status,
 			tap.create_date AS createDate
 			from train_apply tap
@@ -67,7 +68,7 @@
 	<!-- 获取单个版本数据 -->
 	<select id="getUserCheck" resultType="UserCheck">
 		SELECT 
-			u.`name`,
+			adi.`name`,
 			u.nickname,
 			u.mobile,
 			u.type,
@@ -81,16 +82,22 @@
 			tf.legal_person AS legalPerson,
 			tf.legal_mobile AS legalMobile,
 			tf.legal_card AS legalCard,
+			(SELECT charter_url FROM sys_franchisee WHERE id = u.company_id) AS charterUrl,
 			tf.icardone,
 			tf.icardtwo,
-			tf.intro
+			tf.intro,
+			adi.city,
+			adi.income,
+			adi.speciality,
+			adi.start_date AS startDate
 			from sys_user u
 			LEFT JOIN train_apply tap ON tap.user_id=u.id
 			LEFT JOIN train_franchisee_info tf ON tf.apply_id= tap.id
+			LEFT JOIN train_audituser_info adi ON adi.apply_id = tap.id
 		WHERE 
 			del_flag = 0 
 		AND tap.user_id = #{userid} and tap.id = #{id}
-	</select>
+	</select>	
 	
 	<insert id="saveModelFranchisee" >
 		INSERT INTO `train_model_franchisee` (

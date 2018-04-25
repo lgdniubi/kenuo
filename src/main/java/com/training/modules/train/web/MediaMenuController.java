@@ -102,6 +102,19 @@ public class MediaMenuController extends BaseController {
 		return "modules/train/mediaMenuForm";
 	}
 	
+	/**
+	 * 验证 菜单名称是否重复
+	 * @param name
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "checkName")
+	public boolean checkName(String name,String oldName,Integer parentId) {
+		if (name.equals(oldName)) return true;
+		boolean flag =mediaMenuService.checkName(name,parentId) == 0;
+		return flag;
+	}
+	
 	@RequiresPermissions(value={"train:mdmenu:add","train:mdmenu:edit"},logical=Logical.OR)
 	@RequestMapping(value = "save")
 	public String save(MediaMenu menu, Model model, RedirectAttributes redirectAttributes) {
@@ -125,7 +138,6 @@ public class MediaMenuController extends BaseController {
 	@RequiresPermissions("train:mdmenu:del")
 	@RequestMapping(value = "delete")
 	public String delete(MediaMenu menu, RedirectAttributes redirectAttributes) {
-//		public String delete(@ModelAttribute("pCMenu")MediaMenu menu, RedirectAttributes redirectAttributes) {
 		if(Global.isDemoMode()){
 			addMessage(redirectAttributes, "演示模式，不允许操作！");
 			return "redirect:" + adminPath + "/train/mdmenu/";
