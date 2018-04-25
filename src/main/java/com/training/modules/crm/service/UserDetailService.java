@@ -63,5 +63,14 @@ public class UserDetailService extends CrudService<UserDetailDao,UserDetail> {
 		 page.setList(dao.getUserWithoutScope(dto));
 		 return page;
 	}
+
+	/**
+	 * 获取该用户的绑定店铺信息
+	 * @param uDetail
+	 * @return
+	 */
+	public UserDetail getOfficeByDetail(UserDetail uDetail) {
+		return dao.getOfficeByDetail(uDetail);
+	}
 	
 }

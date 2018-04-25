@@ -144,9 +144,19 @@ public class UserDetailController extends BaseController {
 				uDetail.setUserId(userId);
 				uDetail.setFranchiseeId(franchiseeId);
 				
+				//获取该用户的绑定店铺信息
+				UserDetail officeDetail = userDetailService.getOfficeByDetail(uDetail);
+				
 				// 取得用户详情
 				uDetail = userDetailService.get(uDetail);
 				if (null!=uDetail) {
+					if(null != officeDetail){//该用户的绑定店铺不存在,就不存
+						uDetail.setBeautyId(officeDetail.getBeautyId());
+						uDetail.setBeautyName(officeDetail.getBeautyName());
+						uDetail.setOfficeId(officeDetail.getOfficeId());
+						uDetail.setOfficeName(officeDetail.getOfficeName());
+					}
+					
 					uDetail.setUserId(userId);
 					// 计算年龄
 					Date birthday = uDetail.getBirthday();
@@ -207,6 +217,12 @@ public class UserDetailController extends BaseController {
 				}else{
 					//
 					UserDetail nameEntity = userDetailService.getUserNickname(userId);
+					if(null != officeDetail){//该用户的绑定店铺不存在,就不存
+						nameEntity.setBeautyId(officeDetail.getBeautyId());
+						nameEntity.setBeautyName(officeDetail.getBeautyName());
+						nameEntity.setOfficeId(officeDetail.getOfficeId());
+						nameEntity.setOfficeName(officeDetail.getOfficeName());
+					}
 					// 取得性格列表
 					CrmDict entity = new CrmDict();
 					entity.setType("character");
