@@ -45,7 +45,9 @@
 				},
 				btn2: function(index, layero){
 			    //按钮【不通过】的回调
-			    	window.location="${ctx}/train/userCheck/save?id="+id+"&userid="+userid+"&status=1";
+			    	var url = "${ctx}/train/userCheck/refuseForm?id="+id+"&userid="+userid+"&status=1";
+			    	openDialog('拒绝', url,'300px', '300px')
+			    	//window.location="${ctx}/train/userCheck/save?id="+id+"&userid="+userid+"&status=1";
 					top.layer.close(index);
 			    //return false 开启该代码可禁止点击该按钮关闭
 			  	},
@@ -101,8 +103,8 @@
 								<th width="120" style="text-align: center;">手机号</th>
 								<th width="230" style="text-align: center">姓名</th>
 								<th width="230" style="text-align: center;">昵称</th>
+								<th width="230" style="text-align: center;">会员类型</th>
 								<th width="230" style="text-align: center;">认证类型</th>
-								<th width="230" style="text-align: center;">申请类型</th>
 								<th width="230" style="text-align: center;">申请时间</th>
 								<th width="230" style="text-align: center;">状态</th>
 								<th width="300" style="text-align: center;">操作</th>
@@ -115,13 +117,13 @@
 									<td>${userCheck.name}</td>
 									<td>${userCheck.nickname}</td>
 									<td>
-										<c:if test="${userCheck.auditType eq 'syr'}">手艺人</c:if>
-										<c:if test="${userCheck.auditType eq 'qy'}">企业</c:if>
+										<c:if test="${userCheck.type eq 'pt'}">普通会员</c:if>
+										<c:if test="${userCheck.type eq 'syr'}">手艺人</c:if>
+										<c:if test="${userCheck.type eq 'qy'}">企业</c:if>
 									</td>
 									<td>
-										<c:if test="${userCheck.applyType eq 'pt'}">普通员工</c:if>
-										<c:if test="${userCheck.applyType eq 'syr'}">手艺人</c:if>
-										<c:if test="${userCheck.applyType eq 'qy'}">企业</c:if>
+										<c:if test="${userCheck.auditType eq 'syr'}">手艺人</c:if>
+										<c:if test="${userCheck.auditType eq 'qy'}">企业</c:if>
 									</td>
 									<td><fmt:formatDate value="${userCheck.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/> </td>
 									<td>

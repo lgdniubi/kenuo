@@ -52,7 +52,7 @@ public class UserCheckController extends BaseController{
 	
 	
 	/**
-	 * 用户审核
+	 * 用户审核，通过改状态发消息
 	 * @param userCheck
 	 * @param request
 	 * @param response
@@ -80,6 +80,24 @@ public class UserCheckController extends BaseController{
 		}
 		return "redirect:" + adminPath + "/train/userCheck/findalllist";
 	}
+	@RequestMapping(value = {"refuseForm"})
+	public String refuse(String id,String userid,String status, Model model) {
+		model.addAttribute("id", id);
+		model.addAttribute("userid", userid);
+		model.addAttribute("status", status);
+		return "modules/train/refuseForm";
+	}
+	
+	/**
+	 * 
+	 * @param modelFranchisee
+	 * @param opflag
+	 * @param request
+	 * @param response
+	 * @param redirectAttributes
+	 * @return
+	 * @Description:保存权限设置信息
+	 */
 	@RequiresPermissions(value={"train:userCheck:save"},logical=Logical.OR)
 	@RequestMapping(value = {"saveFranchise"})
 	public String saveFranchise(ModelFranchisee modelFranchisee,String opflag, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
@@ -87,9 +105,9 @@ public class UserCheckController extends BaseController{
 			if ("syr".equals(opflag)){
 				modelFranchisee.setFranchiseeid("0");
 				modelFranchisee.setPaytype("0");
-				userCheckService.saveModelFranchisee(modelFranchisee);//保存版本分类信息
+				userCheckService.saveModelFranchisee(modelFranchisee);//保存手艺人权益信息
 			}else if ("qy".equals(opflag)){
-				userCheckService.saveQYModelFranchisee(modelFranchisee);//保存版本分类信息
+				userCheckService.saveQYModelFranchisee(modelFranchisee);//保存企业权益信息
 			}
 			redisClientTemplate.del("UTOKEN_"+modelFranchisee.getUserid());
 			addMessage(redirectAttributes, "成功");
@@ -114,6 +132,7 @@ public class UserCheckController extends BaseController{
 			if("syr".equals(userCheck.getType())){
 				ModelFranchisee modelFranchisee = userCheckService.getModelFranchiseeByUserid(userCheck.getUserid());
 				model.addAttribute("modelFranchisee",modelFranchisee);
+				model.addAttribute("userid",userCheck.getUserid());
 				return "modules/train/syrForm";
 			}
 			if("qy".equals(userCheck.getType())){

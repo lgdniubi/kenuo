@@ -102,7 +102,7 @@
 <body>
 	<form:form id="inputForm" modelAttribute="modelFranchisee" action="${ctx}/train/userCheck/saveFranchise?opflag=syr" method="post" class="form-horizontal">
 		<sys:message content="${message}"/>
-		<input name="userid" value="${modelFranchisee.userid}" type="hidden">
+		<input name="userid" value="${userid}" type="hidden">
 		<input name="id" value="${modelFranchisee.id}" type="hidden">
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 			<tbody>

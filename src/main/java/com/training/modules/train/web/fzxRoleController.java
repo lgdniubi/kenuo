@@ -173,14 +173,14 @@ public class fzxRoleController extends BaseController{
 	@ResponseBody
 	@RequestMapping(value = "checkName")
 	public boolean checkName(String name,String oldName, Integer oldModeid,Integer modeid) {
-		if(modeid != null && StringUtils.isNotBlank(name)){
-			if(oldName.equals(name)&& oldModeid == modeid){
-				return true;
-			}else if (fzxRoleService.checkName(modeid,name) > 0) {
-				return false;
+		if (StringUtils.isNotBlank(name)){//如果不是空
+			if (StringUtils.isBlank(oldName)){//如果是空表示添加
+				return fzxRoleService.checkName(modeid,name)==0;
+			}else {//如果不是空，表示修改
+				return fzxRoleService.checkName(modeid,name) <= 1;
 			}
 		}
-		return true;
+		return false;	
 	}
 	/*public String checkEnname(String oldEnname, String enname) {
 		if (enname != null && enname.equals(oldEnname)) {
