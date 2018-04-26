@@ -88,13 +88,13 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	 * @param modelFranchisee
 	 */
 	public void saveModelFranchisee(ModelFranchisee modelFranchisee) {
-		save(modelFranchisee);
 		//更改用户表type为手艺人类型
 		if (StringUtils.isEmpty(modelFranchisee.getId())) {
+			userCheckDao.updateUserType("syr",modelFranchisee.getUserid(),null);
 			//为改手艺人设置角色，从fzx_role查询mod_id为syr的roleid插入fzx_user_role
 			setSYRroleForUser(modelFranchisee);
-			userCheckDao.updateUserType("syr",modelFranchisee.getUserid(),null);
 		}
+		save(modelFranchisee);
 	}
 
 	private void setSYRroleForUser(ModelFranchisee modelFranchisee) {

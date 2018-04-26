@@ -81,7 +81,12 @@
 			         <td class="active"><label class="pull-right">手机:</label></td>
 			         <td>${userCheck.mobile}</td>
 				</tr>
-			   
+				<c:if test="${userCheck.status == 1 || userCheck.status == 2}">
+				    <tr>
+				         <td class="active"><label class="pull-right">不通过原因:</label></td>
+				         <td>${userCheck.remarks}</td>
+					</tr>
+			    </c:if>
 			</tbody>
 		</table>  
 	</form:form> 

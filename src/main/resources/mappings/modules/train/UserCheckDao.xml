@@ -76,6 +76,8 @@
 			tap.apply_type AS applyType,
 			tap.audit_type AS auditType,
 			tap.create_date AS createDate,
+			tap.remarks,
+			tap.status,
 			tf.`name` AS companyName,
 			tf.short_name AS shortName,
 			tf.charter_card AS charterCard,

@@ -30,7 +30,7 @@
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 			<tbody>
 			    <tr>
-			        <td> <textarea name="remarks" id="label-reason" style="width:100px,height:100px" class="required" maxlength="50" placeholder="请输入拒绝理由（最多50个字）"></textarea></td>
+			        <td> <textarea name="remarks" id="label-reason" style="width:270px;height:170px" class="required" maxlength="50" placeholder="请输入拒绝理由（最多50个字）"></textarea></td>
 				</tr>
 			</tbody>
 		</table>  

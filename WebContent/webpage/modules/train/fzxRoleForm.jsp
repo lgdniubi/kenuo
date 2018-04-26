@@ -26,25 +26,14 @@
 				rules: {  // 英文名称校验修改为下拉选，不用再进行验证,如需进行校验，将此注释打开即可
 					name: {
 						required:true,
-						remote:{
-							type: "post",
-							async: false,
-							dataType: "json",           //接受数据格式  
-							url: "${ctx}/train/fzxRole/checkName",
-							data: {                     //要传递的数据
-								oldEnname: function() { return $("#name").val(); },
-						        modeid: function() {  return $("#modeid").val(); },
-								oldModeid: function() {  return $("#oldModeid").val(); },
-						        oldName: function() {  return $("#oldName").val(); }
-						    }
-						}
+						nameMethod :true
 					} ,
 					enname:{
 						enameMethod:true
 					}
 				},
 				messages:{
-					name:{remote:"此版本的角色名称已存在",required:"角色名称不能为空"}
+					name:{nameMethod:"此版本的角色名称已存在",required:"角色名称不能为空"}
 				}, 
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
@@ -63,20 +52,41 @@
 		});
 		//自定义校验英文名称
 		jQuery.validator.addMethod("enameMethod", function(value, element) {
-            var url = "${ctx}/train/fzxRole/checkEnname?oldEnname=${fzxRole.enname}";
-            var enameFlag = true;
-            $.ajax({
-                type: "post",
-                url: url,
-                async : false,
-                data: {modeid:$("#modeid").val(),enname:$("#enname").val()},
-                dataType: "json",
-                success: function(data){
-                	enameFlag = data;
-                }
-            });
-            return enameFlag;
-        }, "此版本的英文名称已存在");
+	        var url = "${ctx}/train/fzxRole/checkEnname?oldEnname=${fzxRole.enname}";
+	        var enameFlag = true;
+	        $.ajax({
+	            type: "post",
+	            url: url,
+	            async : false,
+	            data: {modeid:$("#modeid").val(),enname:$("#enname").val()},
+	            dataType: "json",
+	            success: function(data){
+	            	enameFlag = data;
+	            }
+	        });
+	        return enameFlag;
+	    }, "此版本的英文名称已存在");
+		//自定义校验英文名称
+		jQuery.validator.addMethod("nameMethod", function(value, element) {
+	        var url = "${ctx}/train/fzxRole/checkName";
+	        var nameFlag = true;
+	        $.ajax({
+	            type: "post",
+	            url: url,
+	            async : false,
+	            data: {
+	            	oldEnname: function() { return $("#name").val(); },
+			        modeid: function() {  return $("#modeid").val(); },
+					oldModeid: function() {  return $("#oldModeid").val(); },
+			        oldName: function() {  return $("#oldName").val(); }
+					},
+	            dataType: "json",
+	            success: function(data){
+	            	nameFlag = data;
+	            }
+	        });
+	        return nameFlag;
+	    }, "此版本的角色名称已存在");
 	</script>
 </head>
 <body>

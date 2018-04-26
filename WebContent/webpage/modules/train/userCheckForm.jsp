@@ -74,16 +74,16 @@
 			         <td>${userCheck.legalMobile}</td>
 				</tr>
 			    <tr>
+			         <td class="active"><label class="pull-left">身份证号:</label></td>
+			         <td colspan="5">${userCheck.legalCard}</td>
+			    </tr>
+			    <tr>
 			         <td class="active" colspan="6"><label class="pull-left">法人身份证:</label></td>
 			    </tr>
 			    <tr>
 			         <td height="100px" colspan="3"><img id="photosrc" src="${userCheck.icardone}" alt="images" style="width: 200px;height: 100px;"/></td>
 			         <td  colspan="3"><img id="photosrc" src="${userCheck.icardtwo}" alt="images" style="width: 200px;height: 100px;"/></td>
 				</tr>
-			    <tr>
-			         <td class="active"><label class="pull-left">身份证号:</label></td>
-			         <td colspan="5">${userCheck.legalCard}</td>
-			    </tr>
 			    <tr>
 			         <td height="100px" class="active"><label class="pull-left">营业执照:</label></td>
 			    	 <td colspan="5"><img id="photosrc" src="${userCheck.charterUrl}" alt="images" style="width: 200px;height: 100px;"/></td>
@@ -95,6 +95,14 @@
 			         <td height="100px"></td>
 			         <td colspan="5">${userCheck.intro}</td>
 				</tr>
+				<c:if test="${userCheck.status == 1 || userCheck.status == 2}">
+				    <tr>
+				         <td class="active" colspan="6"><label class="pull-left">不通过原因:</label></td>
+				    </tr>
+				    <tr>  
+				         <td height="100px" colspan="6">${userCheck.remarks}</td>
+					</tr>
+				</c:if>
 			</tbody>
 		</table>  
 	</form:form> 
