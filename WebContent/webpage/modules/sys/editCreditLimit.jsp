@@ -10,6 +10,11 @@
 	<script type="text/javascript">
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 			var v = $("#creditLimit").val();
+			var usedLimit = $("#usedLimit").val();
+			if(usedLimit > 0){
+				alert("请先还清信用欠款");
+				return;
+			}
 			if(!v){
 				alert("请输入数字");
 				return;
@@ -26,6 +31,7 @@
 </head>
 <body>
 	<div class="ibox-content">
+		<input type="hidden" id="usedLimit" value="${officeAcount.usedLimit}">
 		<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/updateOfficeCreditLimit" method="post" class="form-horizontal">
 			<input type="hidden" value="${officeAcount.officeId }" name="officeId">
 			<sys:message content="${message}"/>
