@@ -191,7 +191,7 @@
 			t.user_id
 			from train_model_franchisee t
 			LEFT JOIN sys_user u ON u.company_id = t.franchisee_id 
-			WHERE 	t.user_id = #{userid}
+			WHERE 	u.id = #{userid}
 			AND t.del_flag = 0
 	</select>
 	
