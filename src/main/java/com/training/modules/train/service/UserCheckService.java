@@ -141,9 +141,9 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			String franchid = saveFranchiseeAndOffice(find);
 			
 			//设置该用户的超级管理员
-			setSuperAdminForUserid(modelFranchisee);
+//			setSuperAdminForUserid(modelFranchisee);
 			//设置公共的角色
-			setRoleForUser(modelFranchisee,franchid);
+//			setRoleForUser(modelFranchisee,franchid);
 			
 			modelFranchisee.setFranchiseeid(franchid);
 			userCheckDao.updateUserType("qy",modelFranchisee.getUserid(),franchid);//更改用户表type为企业类型

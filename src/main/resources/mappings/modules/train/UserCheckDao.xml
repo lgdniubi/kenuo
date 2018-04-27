@@ -118,7 +118,7 @@
 		VALUES
 			(
 				#{modid},
-			    1,
+				#{franchiseeid},
 			    #{userid},
 			    #{authStartDate},
 			    #{authEndDate},
@@ -191,7 +191,7 @@
 			t.user_id
 			from train_model_franchisee t
 			LEFT JOIN sys_user u ON u.company_id = t.franchisee_id 
-			WHERE u.id= #{userid}
+			WHERE 	t.user_id = #{userid}
 			AND t.del_flag = 0
 	</select>
 	

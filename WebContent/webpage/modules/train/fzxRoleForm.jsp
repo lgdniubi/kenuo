@@ -75,7 +75,7 @@
 	            url: url,
 	            async : false,
 	            data: {
-	            	oldEnname: function() { return $("#name").val(); },
+	            	name: function() { return $("#name").val(); },
 			        modeid: function() {  return $("#modeid").val(); },
 					oldModeid: function() {  return $("#oldModeid").val(); },
 			        oldName: function() {  return $("#oldName").val(); }

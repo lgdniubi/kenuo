@@ -95,7 +95,7 @@
 			         <td height="100px"></td>
 			         <td colspan="5">${userCheck.intro}</td>
 				</tr>
-				<c:if test="${userCheck.status == 1 || userCheck.status == 2}">
+				<c:if test="${userCheck.status == 1}">
 				    <tr>
 				         <td class="active" colspan="6"><label class="pull-left">不通过原因:</label></td>
 				    </tr>
