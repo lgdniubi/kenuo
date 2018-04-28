@@ -89,6 +89,7 @@
 			tf.icardone,
 			tf.icardtwo,
 			tf.intro,
+			tf.district_id AS districtId,
 			adi.city,
 			adi.income,
 			adi.speciality,
@@ -102,6 +103,9 @@
 		AND tap.user_id = #{userid} and tap.id = #{id}
 	</select>	
 	
+	<select id="findMaxCode" resultType="long">
+		SELECT MAX(code) FROM sys_franchisee
+	</select>
 	<insert id="saveModelFranchisee" >
 		INSERT INTO `train_model_franchisee` (
 			`mod_id`,
@@ -135,30 +139,46 @@
 			  parent_id,
 			  parent_ids,
 			  name,
+			  sort,
 			  code,
+			  area_id,
+			  type,
 			  address,
 			  legal_name,
 			  mobile,
+			  is_real_franchisee,
+			  charter_url,
+			  charter_card,
 			  create_by,
 			  create_date,
 			  icardone,
 			  icardtwo,
+			  del_flag,
+			  remarks,
 			  intro
 			) 
 		VALUES
 		  (
-		    '0', 
-			'0,1',
+		    '1', 
+			'0,1,',
 		    #{companyName},
-		    #{charterCard},
+		    30,
+		    #{code},
+		    #{districtId},
+		    2,
 		    #{address},
 		    #{legalPerson},
 		    #{mobile},
-		    #{createBy.name},
+		    1,
+		    #{charterUrl},
+		    #{charterCard},
+		    #{createBy.id},
 		    SYSDATE(),
-		    icardone,
-			icardtwo,
-			intro
+		    #{icardone},
+			#{icardtwo},
+			0,
+			'用户审核增加',
+			#{intro}
 		  )
 	</insert>
 	<!-- 查看手艺人权限信息根据user id -->

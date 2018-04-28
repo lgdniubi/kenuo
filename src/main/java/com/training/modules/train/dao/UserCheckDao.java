@@ -115,5 +115,11 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	 * @Description:
 	 */
 	public void insertFzxUserRoleForsyr(ModelFranchisee modelFranchisee);
+
+	/**
+	 * @return
+	 * @Description:找出商家code中最大的一个
+	 */
+	public Long findMaxCode();
 	
 }

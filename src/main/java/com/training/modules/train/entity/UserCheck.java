@@ -23,7 +23,9 @@ public class UserCheck extends DataEntity<UserCheck>{
 	private String companyName;		//企业名称
 	private String shortName;		//企业简称
 	private String charterCard;		//执照编号
+	private String code;		//机构编码
 	private String address;			//详情地址
+	private String districtId;		//区id
 	private String legalPerson;		//法人
 	private String legalMobile;		//法人手机号
 	private String legalCard;		//法人身份证号
@@ -113,11 +115,23 @@ public class UserCheck extends DataEntity<UserCheck>{
 	public void setCharterCard(String charterCard) {
 		this.charterCard = charterCard;
 	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
 	public String getAddress() {
 		return address;
 	}
 	public void setAddress(String address) {
 		this.address = address;
+	}
+	public String getDistrictId() {
+		return districtId;
+	}
+	public void setDistrictId(String districtId) {
+		this.districtId = districtId;
 	}
 	public String getLegalPerson() {
 		return legalPerson;

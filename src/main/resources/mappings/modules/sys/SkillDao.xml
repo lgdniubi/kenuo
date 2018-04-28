@@ -38,6 +38,7 @@
 			<include refid="skillColunm" />
 		FROM train_skill_label sl
 		WHERE sl.del_flag = 0
+		AND sl.franchisee_id = '1'
 		<!-- 数据范围过滤 -->
 		<if test="name != '' and name != null">
 			AND sl.name like CONCAT('%', #{name}, '%')

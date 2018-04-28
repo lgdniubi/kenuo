@@ -88,6 +88,7 @@
 		${sqlMap.dsf}
 		AND a.del_flag = #{DEL_FLAG_NORMAL} 
 		AND a.status=0
+		AND a.franchisee_id = '1'
 		<!-- 数据范围过滤 -->
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">

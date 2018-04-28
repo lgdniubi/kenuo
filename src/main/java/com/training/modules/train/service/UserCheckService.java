@@ -196,6 +196,12 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 
 	private String saveFranchiseeAndOffice(UserCheck find) {
 		find.preInsert();
+		//id为null或者"" 时，则为添加下级菜单时，code自增
+		Long code = userCheckDao.findMaxCode();
+//		if(code==null){
+//			find.setCode(StringUtils.leftPad("1", 4, "0"));
+//		}
+		find.setCode(String.valueOf(code+1));
 		userCheckDao.saveFranchisee(find);
 		String id = find.getId();
 		saveOffice(id,find);
@@ -210,12 +216,11 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		Office parent = new Office();
 		parent.setId("1");
 		office.setParent(parent);
-		office.setParentIds("0,"+parent.getId()+",");
+		office.setParentIds("0,1,");
 		office.setName(find.getCompanyName());
-		office.setArea(new Area("1111"));
-//		office.setArea(franchisee.getArea());
+		office.setArea(new Area(find.getDistrictId()));
 		office.setSort(10);
-		office.setCode(find.getCharterCard());
+		office.setCode(find.getCode());
 		office.setType("1");
 		office.setGrade("2");
 		office.setUseable("1");
@@ -223,6 +228,10 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		office.setCreateDate(new Date());
 		office.setUpdateDate(new Date());
 		office.setDelFlag("0");
+		office.setRemarks("用户审核插入");
+		office.setAddress(find.getAddress());
+		office.setPhone(find.getMobile());
+		office.setMaster(find.getName());
 //		office.setIconUrl(franchisee.getIconUrl());
 		User user = UserUtils.getUser();
 		if (StringUtils.isNotBlank(user.getId())){
