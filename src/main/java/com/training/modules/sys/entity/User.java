@@ -107,6 +107,12 @@ public class User extends DataEntity<User> {
 	private String positonName;        //职位
 	private String officeName;         //归属机构名
 	
+	// 埋点必填参数
+	// 来源类型
+	private String sourceType;
+	// 来源名称
+	private String actionSource;
+	
 	public Integer getReturnId() {
 		return returnId;
 	}
@@ -643,5 +649,18 @@ public class User extends DataEntity<User> {
 	public void setDepartmentId(int departmentId) {
 		this.departmentId = departmentId;
 	}
+	public String getSourceType() {
+		return sourceType;
+	}
+	public void setSourceType(String sourceType) {
+		this.sourceType = sourceType;
+	}
+	public String getActionSource() {
+		return actionSource;
+	}
+	public void setActionSource(String actionSource) {
+		this.actionSource = actionSource;
+	}
+	
 	
 }

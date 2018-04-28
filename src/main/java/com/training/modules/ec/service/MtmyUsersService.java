@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.training.common.config.Global;
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
+import com.training.common.track.thread.TrackThread;
 import com.training.modules.ec.dao.IntegralLogDao;
 import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.dao.TradingLogDao;
@@ -38,6 +40,24 @@ public class MtmyUsersService extends CrudService<MtmyUsersDao,Users>{
 	 */
 	public void addUsers(Users users){
 		dao.insert(users);
+		
+		/*##########[神策埋点{sign_up}-Begin]##########*/
+		if(null != users.getUserid() && 0 != users.getUserid()) {
+			Map<String, Object> paramMap = new HashMap<String, Object>();
+			// 方法名称-注册
+			paramMap.put("METHOD_NAME", "sign_up");
+			// 用户ID
+			paramMap.put("DISTINCT_ID", users.getUserid());
+			// 匿名ID
+			paramMap.put("ANONYMOUS_ID", "");
+			// 来源类型
+			paramMap.put("SOURCE_TYPE", users.getSourceType());
+			// 来源类型名称
+			paramMap.put("ACTION_SOURCE", users.getActionSource());
+			// 异步线程执行方法
+			Global.newFixed.execute(new TrackThread(paramMap));
+		}
+		/*##########[神策埋点end]##########*/
 	}
 	/**
 	 * 查询所有用户

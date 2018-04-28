@@ -148,6 +148,10 @@ public class RegisterController extends BaseController {
 		TwoDimensionCode.encoderQRCode(user.getLoginName(), filePath, "png");//执行生成二维码
 		user.setQrCode(request.getContextPath()+Global.USERFILES_BASE_URL
 			+  user.getId()  + "/qrcode/"+name);
+		
+		// 添加埋点参数
+		user.setSourceType("5");
+		user.setActionSource("后台创建妃子校用户-页面注册-同步每天美耶用户");
 		// 保存用户信息
 		systemService.saveUser(user);
 		// 清除当前用户缓存
