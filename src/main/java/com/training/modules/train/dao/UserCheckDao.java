@@ -35,6 +35,11 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	 */
 	public void saveModelFranchisee(ModelFranchisee modelFranchisee);
 
+	/**
+	 * 查看手艺人权限信息根据user id
+	 * @param userid
+	 * @return
+	 */
 	public ModelFranchisee getModelFranchiseeByUserid(String userid);
 
 	/**
@@ -121,5 +126,13 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	 * @Description:找出商家code中最大的一个
 	 */
 	public Long findMaxCode();
+
+	public void deletePcUserRole(String userid);
+
+	public void deleteFzxUserRole(String userid);
+
+	public void deletePcCommonRole(String franchiseeid);
+
+	public void deleteFzxCommonRole(String franchiseeid);
 	
 }

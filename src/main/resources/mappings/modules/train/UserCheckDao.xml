@@ -394,4 +394,20 @@
 				(SELECT id FROM fzx_role WHERE mod_id = #{modid} AND del_flag =0  LIMIT 1)
 			);		
 	</insert>
+	
+	<!-- 删除该用户的超级管理员角色-->
+	<delete id="deletePcUserRole">
+		DELETE FROM pc_user_role WHERE user_id = #{userid}
+	</delete>
+	<delete id="deleteFzxUserRole">
+		DELETE FROM fzx_user_role WHERE user_id = #{userid}
+	</delete>
+	<!-- 删除该用户pc公共的角色-->
+	<delete id="deletePcCommonRole">
+		DELETE FROM pc_role WHERE franchisee_id = #{franchiseeid}
+	</delete>
+	<!-- 删除该用户fzx公共的角色-->
+	<delete id="deleteFzxCommonRole">
+		DELETE FROM fzx_role WHERE company_id = #{franchiseeid}
+	</delete>
 </mapper>

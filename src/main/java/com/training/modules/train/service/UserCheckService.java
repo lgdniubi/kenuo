@@ -93,8 +93,21 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			userCheckDao.updateUserType("syr",modelFranchisee.getUserid(),null);
 			//为改手艺人设置角色，从fzx_role查询mod_id为syr的roleid插入fzx_user_role
 			setSYRroleForUser(modelFranchisee);
+		}else{
+			//编辑的时候先删除超级管理员角色和公共的角色-----再重新设置新的版本的角色
+			ModelFranchisee franchisee = getModelFranchiseeByUserid(modelFranchisee.getUserid());
+			if(!franchisee.getModid().equals(modelFranchisee.getModid())){	//如果版本更换才重新设置
+				deleteFZXRolesForUser(modelFranchisee.getUserid());
+				//为改手艺人设置角色，从fzx_role查询mod_id为syr的roleid插入fzx_user_role
+				setSYRroleForUser(modelFranchisee);
+			}
 		}
 		save(modelFranchisee);
+	}
+
+	//手艺人权益变更的时候删除以前的角色
+	private void deleteFZXRolesForUser(String userid) {
+		userCheckDao.deleteFzxUserRole(userid);
 	}
 
 	private void setSYRroleForUser(ModelFranchisee modelFranchisee) {
@@ -148,10 +161,31 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			modelFranchisee.setFranchiseeid(franchid);
 			userCheckDao.updateUserType("qy",modelFranchisee.getUserid(),franchid);//更改用户表type为企业类型
 			modelFranchisee.setUserid("0");
+		}else{
+			//编辑的时候先删除超级管理员角色和公共的角色-----再重新设置新的版本的角色
+			ModelFranchisee franchisee = getQYModelFranchiseeByUserid(modelFranchisee.getUserid());
+			if(!franchisee.getModid().equals(modelFranchisee.getModid())){	//如果版本更换才重新设置
+				deleteAllRolesForUser(modelFranchisee.getUserid(),franchisee.getFranchiseeid());
+				//设置该用户的超级管理员
+				setSuperAdminForUserid(modelFranchisee);
+				//设置公共的角色
+				setRoleForUser(modelFranchisee,franchisee.getFranchiseeid());
+			}
 		}
 		
 		save(modelFranchisee);
 //		int a = 1/0;
+	}
+
+	/**
+	 * @param modelFranchisee
+	 * @Description: 更改权益设置，版本变更--先删除公共角色和管理员角色
+	 */
+	private void deleteAllRolesForUser(String userid,String franchiseeid) {
+		userCheckDao.deletePcUserRole(userid);
+		userCheckDao.deleteFzxUserRole(userid);
+		userCheckDao.deletePcCommonRole(franchiseeid);
+		userCheckDao.deleteFzxCommonRole(franchiseeid);
 	}
 
 	/**
