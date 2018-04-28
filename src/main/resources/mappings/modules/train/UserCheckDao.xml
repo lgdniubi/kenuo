@@ -223,7 +223,7 @@
 			<if test="discount != null"> `discount`= #{discount}, </if>
 			<if test="paytype != null"> `pay_type`= #{paytype}, </if>
 			`auth_end_date` = #{authEndDate}
-		WHERE id = #{id} and user_id = #{userid}
+		WHERE id = #{id} and franchisee_id = #{franchiseeid}
 	</update>
 	<!-- 保存权益信息后，设置用户type -->
 	<update id="updateUserType">
@@ -250,6 +250,7 @@
 		WHERE
 			office_id = 1
 		AND franchisee_id = 1
+		AND del_flag = 0
 		AND mode_id = #{modid}
 		AND ename = 'sjgly';
 	</select>
@@ -279,6 +280,7 @@
 		WHERE
 			office_id = 1
 		AND company_id = 1
+		AND del_flag = 0
 		AND mod_id = #{modid}
 		AND enname = 'sjgly';
 	</select>
