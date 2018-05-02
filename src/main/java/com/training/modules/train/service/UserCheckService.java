@@ -198,6 +198,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		for (PcRole pcrole : pcroleList) {
 			pcrole.setFranchiseeid(Integer.valueOf(franchid));
 			pcrole.setOfficeid(franchid);
+			pcrole.setModeid(Integer.valueOf(modelFranchisee.getModid()));
 			pcrole.preInsert();
 			userCheckDao.insertPcCommonRole(pcrole);
 		}
@@ -207,6 +208,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		for (FzxRole fzxRole : fzxRoleList) {
 			fzxRole.setFranchiseeid(Integer.valueOf(franchid));
 			fzxRole.setOfficeid(franchid);
+			fzxRole.setModeid(Integer.valueOf(modelFranchisee.getModid()));
 			fzxRole.preInsert();
 			userCheckDao.insertFzxCommonRole(fzxRole);
 		}
