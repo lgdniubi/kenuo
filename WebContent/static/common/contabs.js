@@ -334,6 +334,8 @@ function openTab(url,title, isNew){//isNew 为true时，打开一个新的选项
         dataIndex ,
         menuName = title,
         flag = true;
+    // 2018年5月2日13:44:21 咖啡,使用多个top.openTab打开界面时,界面跳转异常。dataIndex为undefined,可直接将URL赋值给dataIndex
+    if(dataIndex == undefined || top.$.trim(dataIndex).length == 0){dataIndex = url};
     if (dataUrl == undefined || top.$.trim(dataUrl).length == 0)return false;
 //    //设置dataIndex
 //    $(".J_menuItem").each(function (index) {
