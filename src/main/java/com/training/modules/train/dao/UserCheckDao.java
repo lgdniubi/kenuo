@@ -1,6 +1,7 @@
 package com.training.modules.train.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -87,7 +88,8 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	 */
 	public int findByModidAndEnameFzx(ModelFranchisee modelFranchisee);
 	//向fzx_user_role中插入一条记录
-	public void insertFzxUserRole(@Param("userid")String userid, @Param("roleid")int fzx_roleid);
+	public int insertFzxUserRole(Map<String, Object> map);
+	public int insertFzxUserRole(@Param("userid")String userid, @Param("roleid")int fzx_roleid);
 
 	/**
 	 * 从pc_role中查询基础的角色
@@ -134,5 +136,19 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	public void deletePcCommonRole(String franchiseeid);
 
 	public void deleteFzxCommonRole(String franchiseeid);
+	//向fzx_user_role_office插入一条数据
+	public void insertFzxUserRoleOffice(@Param("fzxUserRoleId")int fzxUserRoleId, @Param("franchid")String franchid);
+	//查询pc该角色的全部菜单，插入新的角色id
+	public List<PcRole> finAllPcMenuByRoleId(String roleid);
+	//查询fzx该角色的全部菜单，插入新的角色id
+	public List<FzxRole> finAllFzxMenuByRoleId(String roleid);
+	//删除pc公共角色id对应的menuid
+	public void deleteAllPcMenu(List<PcRole> prList);
+	//查询pc以前公共角色id
+	public List<PcRole> findAllPcCommonRoleIds(String franchiseeid);
+	//删除fzx公共角色id对应的menuid
+	public void deleteAllFzxMenu(List<FzxRole> fzxList);
+	//查询fzx以前公共角色id
+	public List<FzxRole> findAllFzxCommonRoleIds(String franchiseeid);
 	
 }

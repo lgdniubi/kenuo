@@ -197,7 +197,7 @@
 			WHERE user_id=#{userid}
 			AND del_flag = 0
 	</select>
-	<!-- 查看手艺人权限信息根据user id -->
+	<!-- 查看企业权限信息根据user id -->
 	<select id="getQYModelFranchiseeByUserid"  parameterType="String" resultType="ModelFranchisee">
 		SELECT 
 			t.id,
@@ -285,7 +285,7 @@
 		AND enname = 'sjgly';
 	</select>
 	
-	<insert id="insertFzxUserRole">
+	<insert id="insertFzxUserRole" useGeneratedKeys="true" keyProperty="fzxUserRoleId">
 		INSERT INTO `fzx_user_role` (
 			`user_id`,
 			`fzx_role_id`
@@ -296,8 +296,18 @@
 				#{roleid}
 			);
 	</insert>
+	<!-- 向fzx_user_role_office插入一条数据 -->
+	<insert id="insertFzxUserRoleOffice" useGeneratedKeys="true" keyProperty="fzxUserRoleId">
+		INSERT INTO `fzx_user_role_office` (`u_r_id`, `office_id`)
+		VALUES
+			(
+				#{fzxUserRoleId},
+				#{franchid}
+			);
+	</insert>
 	<select id="findPcRoleByModid" resultType="PcRole">
 		SELECT
+		   id,
 		  `franchisee_id`,
 		  `office_id`,
 		  `mode_id`,
@@ -312,7 +322,7 @@
 		AND franchisee_id = 1
 		AND ename != 'sjgly'
 	</select>
-	<insert id="insertPcCommonRole">
+	<insert id="insertPcCommonRole" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO `trains`.`pc_role` (
 			`franchisee_id`,
 			`office_id`,
@@ -340,6 +350,7 @@
 	</insert>
 	<select id="findFzxRoleByModid" resultType="FzxRole">
 		SELECT
+			id,
 			`company_id`,
 			`office_id`,
 			`mod_id`,
@@ -354,7 +365,7 @@
 		AND company_id = 1
 		AND enname != 'sjgly'
 	</select>
-	<insert id="insertFzxCommonRole">
+	<insert id="insertFzxCommonRole" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO `trains`.`fzx_role` (
 			`company_id`,
 			`office_id`,
@@ -382,6 +393,36 @@
 			);
 				
 	</insert>
+	<!-- 查询pc该角色的全部菜单，插入新的角色id -->
+	<select id="finAllPcMenuByRoleId" resultType="PcRole">
+		SELECT mr.menu_id,mr.role_id FROM pc_menu_role mr WHERE mr.`status` =0 AND mr.role_id = #{roleid};
+	</select>
+	<!-- 查询fzx该角色的全部菜单，插入新的角色id -->
+	<select id="finAllFzxMenuByRoleId" resultType="FzxRole">
+		SELECT mr.fzx_menu_id AS menuId,mr.fzx_role_id AS roleId FROM fzx_role_menu mr WHERE mr.`status` =0 AND mr.fzx_role_id = #{roleid};
+	</select>
+	<!-- 查询以前公共角色id -->
+	<select id="findAllPcCommonRoleIds" resultType="PcRole">
+		SELECT id AS roleId from pc_role WHERE franchisee_id = #{franchiseeid}
+	</select>
+	<!-- 删除pc公共角色id对应的menuid -->
+	<delete id="deleteAllPcMenu">
+		DELETE from pc_menu_role WHERE role_id in
+		<foreach collection="list"  index="index" item="item" open="(" separator="," close=")"  >
+       		#{item.roleId}
+        </foreach>
+	</delete>
+	<!-- 查询Fzx以前公共角色id -->
+	<select id="findAllFzxCommonRoleIds" resultType="PcRole">
+		SELECT id AS roleId from fzx_role WHERE company_id = #{franchiseeid}
+	</select>
+	<!-- 删除Fzx公共角色id对应的menuid -->
+	<delete id="deleteAllFzxMenu">
+		DELETE from fzx_role_menu WHERE fzx_role_id in
+		<foreach collection="list"  index="index" item="item" open="(" separator="," close=")"  >
+       		#{item.roleId}
+        </foreach>
+	</delete>
 	<!-- 设置手艺人角色，权益设置后 -->
 	<insert id="insertFzxUserRoleForsyr">
 		INSERT INTO `trains`.`fzx_user_role` ( 

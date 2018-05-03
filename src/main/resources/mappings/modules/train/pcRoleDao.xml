@@ -16,7 +16,7 @@
 		WHERE 
 			r.del_flag = 0 
 			AND dc.type = 'pc_role_type'
-			AND franchisee_id = 1
+			AND r.franchisee_id = 1
 			<if test="name != null and name != ''">
 				AND r.name like 
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
