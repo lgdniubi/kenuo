@@ -99,7 +99,7 @@ public class TrackConfig {
 		Map<String, Object> properties = new HashMap<String, Object>();
 		// 平台类型 (iOS/Android/H5/WAP)
 		// wap端后台埋点，因此直接写死“WAP”
-		properties.put("platformType", "WAP");
+		properties.put("platformType", "INTERFACE");
 		// 是否是登录状态
 		String distinctId = String.valueOf(paramMap.get("DISTINCT_ID")); 
 		if(null != distinctId && !"null".equals(distinctId)) {
