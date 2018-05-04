@@ -93,7 +93,7 @@ public class TrackConfig {
 	    	sa = new SensorsAnalytics(new SensorsAnalytics.DebugConsumer(SA_SERVER_URL, SA_WRITE_DATA));
 	    }else if(TrackConfig.SA_LEVEL_DATA.equals("ONLINE")) {
 	    	//生产模式
-	    	sa = new SensorsAnalytics(new SensorsAnalytics.ConcurrentLoggingConsumer("/data/shence/mtmy_logs/access.log"));
+	    	sa = new SensorsAnalytics(new SensorsAnalytics.ConcurrentLoggingConsumer("/data/shence/kenuo_logs/access.log"));
 	    }
 		
 		Map<String, Object> properties = new HashMap<String, Object>();
