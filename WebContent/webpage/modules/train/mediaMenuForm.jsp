@@ -82,7 +82,7 @@
 		      </tr>
 		      <tr>
 		         <td  class="width-15 active"><label class="pull-right">图标:</label></td>
-		         <td class="width-35" ><sys:iconselect id="icon" name="icon" value="${menu.icon}"/></td>
+		         <td class="width-35" ><input id="icon" name="icon" type="text" value="${menu.icon}" class="form-control "></td>
 		         <td  class="width-15 active"><label class="pull-right">排序:</label></td>
 		         <td  class="width-35" ><form:input path="sort" htmlEscape="false" maxlength="50" class="required digits form-control "/>
 					<span class="help-inline">排列顺序，升序。</span></td>
