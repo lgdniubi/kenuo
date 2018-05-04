@@ -356,7 +356,8 @@
 			`mod_id`,
 			`name`,
 			`enname`,
-			`remarks`
+			`remarks`,
+			is_default AS isDefault
 		FROM
 			`fzx_role`
 		WHERE
@@ -375,6 +376,7 @@
 			`create_by`,
 			`create_date`,
 			`remarks`,
+			`is_default`,
 			`role_grade`,
 			`del_flag`
 		)
@@ -388,6 +390,7 @@
 				#{createBy.id},
 			    SYSDATE(),
 				#{remarks},
+				#{isDefault},
 				1,
 				'0'
 			);

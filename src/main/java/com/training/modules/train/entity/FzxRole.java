@@ -17,6 +17,7 @@ public class FzxRole extends DataEntity<FzxRole> {
 	private int roleId;		//主键id
 	private String name;	//名称
 	private String enname;	//英文名称
+	private String enamer;	//角色英文名称
 	private int roleGrade;	//角色等级
 	
 	private int menuId;		//菜单id
@@ -31,6 +32,7 @@ public class FzxRole extends DataEntity<FzxRole> {
 	private String officeid;	//机构id
 	private int modeid;		//模板id
 	private String modName;	//机构id
+	private String isDefault;	//0:非默认，1：默认角色
 	
 	public User getUser() {
 		return user;
@@ -109,6 +111,18 @@ public class FzxRole extends DataEntity<FzxRole> {
 	}
 	public void setModName(String modName) {
 		this.modName = modName;
+	}
+	public String getEnamer() {
+		return enamer;
+	}
+	public void setEnamer(String enamer) {
+		this.enamer = enamer;
+	}
+	public String getIsDefault() {
+		return isDefault;
+	}
+	public void setIsDefault(String isDefault) {
+		this.isDefault = isDefault;
 	}
 	
 }

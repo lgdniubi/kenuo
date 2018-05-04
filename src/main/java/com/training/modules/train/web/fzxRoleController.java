@@ -452,5 +452,22 @@ public class fzxRoleController extends BaseController{
 		model.addAttribute("fzxRoleIds", fzxRoleIds);
 		return "modules/sys/addFzxRoleForm";
 	}
+	/**
+	 * @param modeid
+	 * @return
+	 * @Description:为某个版本设置默认角色
+	 */
+	@RequestMapping(value="setDefault")
+	public String setDefault(FzxRole fzxRole ,HttpServletRequest request,RedirectAttributes redirectAttributes){
+		try {
+			fzxRoleService.setDefault(fzxRole);
+			addMessage(redirectAttributes, "默认角色保存成功!");
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "默认角色保存异常", e);
+			logger.error("保存妃子校角色菜单权限错误信息:"+e);
+			addMessage(redirectAttributes, "默认角色保存异常，请与管理员联系");
+		}
+		return "redirect:" + adminPath + "/train/fzxRole/list";
+	}
 	
 }

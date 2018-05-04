@@ -113,4 +113,8 @@ public interface FzxRoleDao extends CrudDao<FzxRole>{
 	public List<FzxRole> findFzxRoleByUserId(User user);
 
 	public int checkName(@Param("modeid")Integer modeid, @Param("name")String name);
+	//设置其他默认的为非默认
+	public void setNotDefault(int modeid);
+	//根据roleid设置该角色默认
+	public void setDefault(int roleId);
 }

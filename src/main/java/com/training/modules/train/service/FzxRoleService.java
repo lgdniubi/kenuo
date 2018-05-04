@@ -199,4 +199,16 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 		return dao.checkName(modeid, name);
 	}
 
+	/**
+	 * 为某个版本设置默认角色
+	 * @param fzxRole
+	 * @Description: 根据版本id设置非默认，根据roleid设置该角色默认
+	 */
+	public void setDefault(FzxRole fzxRole) {
+		//设置其他默认的为非默认
+		dao.setNotDefault(fzxRole.getModeid());
+		//根据roleid设置该角色默认
+		dao.setDefault(fzxRole.getRoleId());
+	}
+
 }
