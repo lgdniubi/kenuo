@@ -42,7 +42,7 @@
 			    <tr>
 			         <td class="active"><label class="pull-right">当前会员类型:</label></td>
 			         <td colspan="5">
-			         	<c:if test="${userCheck.applyType eq 'pt'}">普通员工</c:if>
+			         	<c:if test="${userCheck.applyType eq 'pt'}">普通会员</c:if>
 						<c:if test="${userCheck.applyType eq 'syr'}">手艺人</c:if>
 						<c:if test="${userCheck.applyType eq 'qy'}">企业</c:if>
 					 </td>
