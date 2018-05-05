@@ -11,6 +11,7 @@ import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.PCMenu;
 import com.training.modules.train.entity.PcRole;
+import com.training.modules.train.entity.TrainModel;
 
 /**
  * 菜单DAO接口
@@ -33,5 +34,6 @@ public interface TrainMenuDao extends CrudDao<PCMenu> {
 	public List<PCMenu> findAllMenuByModid(PcRole pcRole);
 
 	public int checkName(@Param("name")String name,@Param("parentId")Integer parentId);
+	
 	
 }

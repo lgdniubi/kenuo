@@ -140,5 +140,15 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	        }
 		}
 	}
+
+	/**
+	 * 查询企业的版本--3个
+	 * @param trainModel
+	 * @return
+	 * @Description:
+	 */
+	public List<TrainModel> findQYModelList() {
+		return dao.findQYModelList();
+	}
 	
 }

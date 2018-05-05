@@ -229,6 +229,9 @@
 	<update id="updateUserType">
 		UPDATE sys_user SET 
 			`type` = #{type}
+			<if test="type == 'syr'">
+				name = (SELECT f.name  FROM train_audituser_info f LEFT JOIN train_apply a ON a.id = f.apply_id WHERE a.user_id = #{userid})
+			</if>
 			<if test="franchid != null">
 			,company_id = #{franchid},
 			office_id = #{franchid} 
@@ -427,7 +430,7 @@
         </foreach>
 	</delete>
 	<!-- 设置手艺人角色，权益设置后 -->
-	<insert id="insertFzxUserRoleForsyr">
+	<insert id="insertFzxUserRoleForsyr" useGeneratedKeys="true" keyProperty="userRoleId">
 		INSERT INTO `trains`.`fzx_user_role` ( 
 			`user_id`,
 			`fzx_role_id`
@@ -453,5 +456,13 @@
 	<!-- 删除该用户fzx公共的角色-->
 	<delete id="deleteFzxCommonRole">
 		DELETE FROM fzx_role WHERE company_id = #{franchiseeid}
+	</delete>
+	<!-- 删除该用户以前的角色机构信息fzx_user_role_office-->
+	<delete id="deleteOldFzxRoleOffice">
+		DELETE FROM fzx_user_role_office WHERE u_r_id in(SELECT fzx_role_id FROM fzx_user_role WHERE user_id = #{userid}) 
+	</delete>
+	<!-- 删除该用户以前的角色fzx_user_role-->
+	<delete id="deleteOldFzxRole">
+		DELETE FROM fzx_user_role WHERE user_id = #{userid}
 	</delete>
 </mapper>

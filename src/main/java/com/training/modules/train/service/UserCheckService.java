@@ -96,14 +96,16 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	public void saveModelFranchisee(ModelFranchisee modelFranchisee) {
 		//更改用户表type为手艺人类型
 		if (StringUtils.isEmpty(modelFranchisee.getId())) {
-			userCheckDao.updateUserType("syr",modelFranchisee.getUserid(),null);
+			deleteOldFzxRoleAndOffice(modelFranchisee.getUserid());
+			userCheckDao.updateUserType("syr",modelFranchisee.getUserid(),"999999");
 			//为改手艺人设置角色，从fzx_role查询mod_id为syr的roleid插入fzx_user_role
 			setSYRroleForUser(modelFranchisee);
 		}else{
 			//编辑的时候先删除超级管理员角色和公共的角色-----再重新设置新的版本的角色
 			ModelFranchisee franchisee = getModelFranchiseeByUserid(modelFranchisee.getUserid());
 			if(!franchisee.getModid().equals(modelFranchisee.getModid())){	//如果版本更换才重新设置
-				deleteFZXRolesForUser(modelFranchisee.getUserid());
+				deleteOldFzxRoleAndOffice(modelFranchisee.getUserid());	//不仅删除用户的fzx角色，还删除该角色对应的菜单
+//				deleteFZXRolesForUser(modelFranchisee.getUserid());
 				//为改手艺人设置角色，从fzx_role查询mod_id为syr的roleid插入fzx_user_role
 				setSYRroleForUser(modelFranchisee);
 			}
@@ -112,13 +114,16 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	}
 
 	//手艺人权益变更的时候删除以前的角色
-	private void deleteFZXRolesForUser(String userid) {
-		userCheckDao.deleteFzxUserRole(userid);
-	}
+//	private void deleteFZXRolesForUser(String userid) {
+//		userCheckDao.deleteFzxUserRole(userid);
+//	}
 
 	private void setSYRroleForUser(ModelFranchisee modelFranchisee) {
 		//从fzx_role查询mod_id为syr的roleid插入fzx_user_role
 		userCheckDao.insertFzxUserRoleForsyr(modelFranchisee);
+		int userRoleId = modelFranchisee.getUserRoleId();
+		//向fzx_user_role_office插入一条数据===999999是数据库中的虚拟的商家id
+		userCheckDao.insertFzxUserRoleOffice(userRoleId,"999999");
 	}
 
 	/**
@@ -173,7 +178,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			if(!franchisee.getModid().equals(modelFranchisee.getModid())){	//如果版本更换才重新设置
 				deleteAllRolesForUser(modelFranchisee.getUserid(),franchisee.getFranchiseeid());
 				//设置该用户的超级管理员
-//				setSuperAdminForUserid(modelFranchisee,franchisee.getFranchiseeid());
+				setSuperAdminForUserid(modelFranchisee,franchisee.getFranchiseeid());
 				//设置公共的角色
 				setRoleForUser(modelFranchisee,franchisee.getFranchiseeid());
 			}
@@ -267,6 +272,9 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		int pc_roleid = userCheckDao.findByModidAndEname(modelFranchisee);
 		//向pc_user_role中插入一条记录
 		userCheckDao.insertPcUserRole(modelFranchisee.getUserid(),pc_roleid);
+		
+		//删除该用户以前的角色fzx_user_role和角色机构信息fzx_user_role_office
+		deleteOldFzxRoleAndOffice(modelFranchisee.getUserid());
 		//从fzx_role查出超级管理员角色记录插入fzx_user_role
 		int fzx_roleid = userCheckDao.findByModidAndEnameFzx(modelFranchisee);
 		//向pc_user_role中插入一条记录
@@ -280,6 +288,16 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		//向fzx_user_role_office插入一条数据
 		userCheckDao.insertFzxUserRoleOffice(fzxUserRoleId,franchid);
 		
+	}
+
+	/**
+	 * 删除该用户以前的角色fzx_user_role和角色机构信息fzx_user_role_office
+	 * @param userid
+	 * @Description:
+	 */
+	private void deleteOldFzxRoleAndOffice(String userid) {
+		userCheckDao.deleteOldFzxRoleOffice(userid);
+		userCheckDao.deleteOldFzxRole(userid);
 	}
 
 	private String saveFranchiseeAndOffice(UserCheck find) {

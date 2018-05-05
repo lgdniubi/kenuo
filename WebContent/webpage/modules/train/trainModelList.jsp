@@ -68,7 +68,7 @@
 								<!-- <th width="40" style="text-align: center;"><input type="checkbox" class="i-checks"></th>  批量删除 由于样式问题  取消 -->
 								<th width="120" style="text-align: center;">序号</th>
 								<th style="text-align: center">版本名称</th>
-								<th width="230" style="text-align: center;">用户类型</th>
+								<th width="230" style="text-align: center;">版本类型</th>
 								<th width="230" style="text-align: center;">英文名称</th>
 								<th width="230" style="text-align: center;">备注</th>
 								<th width="300" style="text-align: center;">操作</th>
@@ -89,14 +89,12 @@
 										<shiro:hasPermission name="train:model:updatemodel">
 				    						<a href="#" onclick="openDialog('修改', '${ctx}/train/model/form?id=${trainModel.id}&opflag=UPDATE','430px', '480px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 					    				</shiro:hasPermission>
-										<shiro:hasPermission name="train:model:auth">
-				    						<a href="#" onclick="openDialog('pc端权限设置', '${ctx}/train/model/auth?id=${trainModel.id}&opflag=pc','430px', '600px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>pc端权限设置</a>
-					    				</shiro:hasPermission>
-										<shiro:hasPermission name="train:model:auth">
+										<shiro:hasPermission name="train:model:auth">	
 				    						<a href="#" onclick="openDialog('fzx端权限设置', '${ctx}/train/model/auth?id=${trainModel.id}&opflag=fzx','430px', '600px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>fzx端权限设置</a>
-					    				</shiro:hasPermission>
-										<shiro:hasPermission name="train:model:auth">
+				    						<c:if test="${trainModel.modType eq '企业'}">
+				    						<a href="#" onclick="openDialog('pc端权限设置', '${ctx}/train/model/auth?id=${trainModel.id}&opflag=pc','430px', '600px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>pc端权限设置</a>
 				    						<a href="#" onclick="openDialog('media权限设置', '${ctx}/train/model/auth?id=${trainModel.id}&opflag=md','430px', '600px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>自媒体权限设置</a>
+				    						</c:if>
 					    				</shiro:hasPermission>
 									</td>
 								</tr>

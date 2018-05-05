@@ -150,5 +150,9 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	public void deleteAllFzxMenu(List<FzxRole> fzxList);
 	//查询fzx以前公共角色id
 	public List<FzxRole> findAllFzxCommonRoleIds(String franchiseeid);
+	//删除该用户以前的角色机构信息fzx_user_role_office
+	public void deleteOldFzxRoleOffice(String userid);
+	//删除该用户以前的角色fzx_user_role
+	public void deleteOldFzxRole(String userid);
 	
 }

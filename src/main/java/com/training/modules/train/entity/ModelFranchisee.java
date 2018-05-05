@@ -16,6 +16,7 @@ public class ModelFranchisee extends DataEntity<ModelFranchisee>{
 	private String modid;		//模板id
 	private String franchiseeid;	//商家id,当商家id为0时，为手艺人
 	private String userid;		//用户id，当用户id为0时，为企业版本
+	private int userRoleId;		//插入手艺人用户角色时返回的id
 	private String applyid;		//用户申请id
 	private Date authStartDate;		//授权开始时间
 	private Date authEndDate;		//授权结束时间
@@ -76,14 +77,14 @@ public class ModelFranchisee extends DataEntity<ModelFranchisee>{
 	public void setPaytype(String paytype) {
 		this.paytype = paytype;
 	}
-//	public String getRemarks() {
-//		return remarks;
-//	}
-//	public void setRemarks(String remarks) {
-//		this.remarks = remarks;
-//	}
 	public String getStatus() {
 		return status;
+	}
+	public int getUserRoleId() {
+		return userRoleId;
+	}
+	public void setUserRoleId(int userRoleId) {
+		this.userRoleId = userRoleId;
 	}
 	public void setStatus(String status) {
 		this.status = status;

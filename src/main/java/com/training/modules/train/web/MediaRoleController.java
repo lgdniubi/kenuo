@@ -88,7 +88,7 @@ public class MediaRoleController extends BaseController{
 			}else{
 				mediaRole = new MediaRole();
 			}
-			List<TrainModel> modList = trainModelService.findList(new TrainModel());	//查找所有的版本类型
+			List<TrainModel> modList = trainModelService.findQYModelList();	//查找企业的所有的版本类型
 			model.addAttribute("mediaRole", mediaRole);
 			model.addAttribute("modList", modList);
 		} catch (Exception e) {

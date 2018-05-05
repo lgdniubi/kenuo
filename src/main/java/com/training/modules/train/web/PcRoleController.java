@@ -88,7 +88,7 @@ public class PcRoleController extends BaseController{
 			}else{
 				pcRole = new PcRole();
 			}
-			List<TrainModel> modList = trainModelService.findList(new TrainModel());	//查找所有的版本类型
+			List<TrainModel> modList = trainModelService.findQYModelList();	//查找企业的所有的版本类型
 			model.addAttribute("pcRole", pcRole);
 			model.addAttribute("modList", modList);
 		} catch (Exception e) {

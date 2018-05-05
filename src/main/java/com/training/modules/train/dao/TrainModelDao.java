@@ -1,5 +1,7 @@
 package com.training.modules.train.dao;
 
+import java.util.List;
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.TrainModel;
@@ -76,6 +78,9 @@ public interface TrainModelDao extends CrudDao<TrainModel>{
 	 * @param newModel
 	 */
 	public void insertModMediaMenu(TrainModel newModel);
+
+	// 查询企业的版本--3个
+	public List<TrainModel> findQYModelList();
 
 	
 }

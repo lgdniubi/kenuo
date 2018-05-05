@@ -142,7 +142,7 @@
 							<th class="sort-column name">姓名</th>
 							<th class="sort-column phone">用户类型</th>
 							<th class="sort-column phone">版本类型</th>
-							<th class="sort-column phone">用户状态</th>
+<!-- 							<th class="sort-column phone">用户状态</th> -->
 							<th class="sort-column mobile">手机</th>
 							<th class="sort-column c.name">归属商家</th>
 							<th class="sort-column o.name">归属店铺</th>
@@ -158,7 +158,7 @@
 								<td>${user.name}</td>
 								<td>${user.type}</td>
 								<td>${user.modelName}</td>
-								<td>${user.userStatus}</td>
+								<%-- <td>${user.userStatus}</td> --%>
 								<td>${user.mobile}</td>
 								<td>${user.company.name}</td>
 								<td>${user.office.name}</td>
