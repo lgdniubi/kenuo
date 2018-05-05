@@ -140,7 +140,7 @@
 					    						<a href="#" onclick="checkBtn(${userCheck.id},'${userCheck.userid}')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>
 										</c:if>
 										<c:if test="${userCheck.status != 0}">
-					    				<a href="#" onclick="openDialog('查看审核信息', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&opflag=view','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>查看</a>
+					    				<a href="#" onclick="openDialogView('查看审核信息', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&opflag=view','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>查看</a>
 										</c:if>
 						    		</shiro:hasPermission>
 									</td>

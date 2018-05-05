@@ -11,7 +11,6 @@ import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.PCMenu;
 import com.training.modules.train.entity.PcRole;
-import com.training.modules.train.entity.TrainModel;
 
 /**
  * 菜单DAO接口
