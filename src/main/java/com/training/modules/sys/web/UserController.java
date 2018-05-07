@@ -333,6 +333,9 @@ public class UserController extends BaseController {
 			String filePath = realPath + name; // 存放路径
 			TwoDimensionCode.encoderQRCode(user.getLoginName(), filePath, "png");// 执行生成二维码
 			user.setQrCode(request.getContextPath() + Global.USERFILES_BASE_URL + user.getId() + "/qrcode/" + name);
+			// 添加埋点参数
+			user.setSourceType("5");
+			user.setActionSource("后台创建妃子校用户-普通添加-同步每天美耶用户");
 			// 保存用户信息
 			systemService.saveUser(user);
 			UserUtils.clearCache(user);		//清除指定用户缓存
@@ -656,6 +659,9 @@ public class UserController extends BaseController {
 															Office office = systemService.getoffice(user.getCode());
 															user.setOffice(office);
 															user.setName(user.getName().replace(" ", ""));
+															// 添加埋点参数
+															user.setSourceType("5");
+															user.setActionSource("后台创建妃子校用户-Excel导入-同步每天美耶用户");
 															systemService.saveUser(user);
 															successNum++;
 			

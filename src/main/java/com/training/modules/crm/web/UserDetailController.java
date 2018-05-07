@@ -2,6 +2,7 @@ package com.training.modules.crm.web;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -21,7 +22,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.training.common.config.Global;
 import com.training.common.persistence.Page;
+import com.training.common.track.thread.TrackThread;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.crm.dao.AvaliableCouponDao;
@@ -452,6 +455,11 @@ public class UserDetailController extends BaseController {
 			addMessage(redirectAttributes, "添加用户"+users.getName()+"失败,昵称重复");
 		}else{
 			users.setPassword(SystemService.entryptPassword(users.getPassword()));
+			
+			// 添加埋点参数
+			users.setSourceType("5");
+			users.setActionSource("后台创建-CRM-添加用户");
+			
 			mtmyUsersService.addUsers(users);
 			//新增用户时插入用户账目表
 			mtmyUsersDao.insertAccounts(users);

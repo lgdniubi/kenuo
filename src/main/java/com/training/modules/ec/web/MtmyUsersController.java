@@ -216,6 +216,10 @@ public class MtmyUsersController extends BaseController{
 			addMessage(redirectAttributes, "添加用户"+users.getName()+"失败,昵称重复");
 		}else{
 			users.setPassword(SystemService.entryptPassword(users.getPassword()));
+			// 添加埋点参数
+			users.setSourceType("5");
+			users.setActionSource("后台创建-普通-添加用户");
+			
 			mtmyUsersService.addUsers(users);
 			//新增用户时插入用户账目表
 			mtmyUsersDao.insertAccounts(users);

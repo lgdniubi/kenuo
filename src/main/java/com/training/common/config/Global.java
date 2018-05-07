@@ -4,6 +4,8 @@ package com.training.common.config;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.springframework.core.io.DefaultResourceLoader;
 
@@ -15,6 +17,11 @@ import com.training.common.utils.StringUtils;
 
 public class Global {
 
+	/**
+	 * 固定大小线程池，用于执行异步任务
+	 */
+	public static final ExecutorService newFixed = Executors.newFixedThreadPool(10);
+	
 	/**
 	 * 当前对象实例2
 	 */

@@ -62,6 +62,11 @@ public class Users extends TreeEntity<Users> {
 	private String beautyId;	    //所属美容师
 	
 	private int isTest;           //测试账号标识（0：正常；1：测试）
+	// 埋点必填参数 kele 2018年4月28日10:35:22 添加
+	// 来源类型
+	private String sourceType;
+	// 来源名称
+	private String actionSource;
 	
 	public String getOfficeId() {
 		return officeId;
@@ -335,4 +340,16 @@ public class Users extends TreeEntity<Users> {
 		this.isTest = isTest;
 	}
 	
+	public String getSourceType() {
+		return sourceType;
+	}
+	public void setSourceType(String sourceType) {
+		this.sourceType = sourceType;
+	}
+	public String getActionSource() {
+		return actionSource;
+	}
+	public void setActionSource(String actionSource) {
+		this.actionSource = actionSource;
+	}
 }
