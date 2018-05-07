@@ -23,6 +23,7 @@ import com.training.common.security.Digests;
 import com.training.common.security.shiro.session.SessionDAO;
 import com.training.common.service.BaseService;
 import com.training.common.service.ServiceException;
+import com.training.common.track.utils.TrackUtils;
 import com.training.common.utils.CacheUtils;
 import com.training.common.utils.Encodes;
 import com.training.common.utils.StringUtils;
@@ -476,6 +477,11 @@ public class SystemService extends BaseService implements InitializingBean {
 			}else{
 				mtmyUsersDao.trainsInsertMtmy(user);
 				logger.info("#####[保存妃子校用户时插入每天美耶--返回每天美耶id]:"+user.getMtmyUserId());
+				
+				/*##########[神策埋点{sign_up}-Begin]##########*/
+				TrackUtils.trackSyncMtmyUser(user);
+				/*##########[神策埋点end]##########*/
+				
 				//新增用户时插入用户账目表
 				Users users = new Users();
 				users.setUserid(user.getMtmyUserId());
@@ -631,24 +637,34 @@ public class SystemService extends BaseService implements InitializingBean {
 				}else{
 					mtmyUsersDao.trainsInsertMtmy(user);
 					logger.info("#####[保存妃子校用户时插入每天美耶--返回每天美耶id]:"+user.getMtmyUserId());
+					
+					/*##########[神策埋点{sign_up}-Begin]##########*/
+					TrackUtils.trackSyncMtmyUser(user);
+					/*##########[神策埋点end]##########*/
+					
 					//新增用户时插入用户账目表
 					Users users = new Users();
 					users.setUserid(user.getMtmyUserId());
 					mtmyUsersDao.insertAccounts(users);
 					//新增用户时插入用户统计表
 					mtmyUsersDao.insterSaleStats(users);
-				};
+				}
 			}else{
 				if(mtmyUsersDao.get(u) == null){
 					mtmyUsersDao.trainsInsertMtmy(user);
 					logger.info("#####[保存妃子校用户时插入每天美耶--返回每天美耶id]:"+user.getMtmyUserId());
+					
+					/*##########[神策埋点{sign_up}-Begin]##########*/
+					TrackUtils.trackSyncMtmyUser(user);
+					/*##########[神策埋点end]##########*/
+					
 					//新增用户时插入用户账目表
 					Users users = new Users();
 					users.setUserid(user.getMtmyUserId());
 					mtmyUsersDao.insertAccounts(users);
 					//新增用户时插入用户统计表
 					mtmyUsersDao.insterSaleStats(users);
-				};
+				}
 			}
 //end     修改妃子校用户同时更新每天美耶用户结束
 			
