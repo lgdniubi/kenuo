@@ -111,6 +111,11 @@ public class User extends DataEntity<User> {
 	private String userStatus;         //用户状态：train_model_franchisee中取，能查到且未到期-已授权，能查到且已到期-已到期，查不到-未授权
 	private String modelName;         //版本类型：从train_model_franchisee和train_model这两个表里联查，根据user_id，查出来取mod_name
 	private String type;         //用户类型：sys_user中type取 （员工：yg，普通会员：pt，手艺人用户：syr，企业员工：qy）
+	// 埋点必填参数
+	// 来源类型
+	private String sourceType;
+	// 来源名称
+	private String actionSource;
 	
 	public Integer getReturnId() {
 		return returnId;
@@ -666,5 +671,16 @@ public class User extends DataEntity<User> {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
+	public String getSourceType() {
+		return sourceType;
+	}
+	public void setSourceType(String sourceType) {
+		this.sourceType = sourceType;
+	}
+	public String getActionSource() {
+		return actionSource;
+	}
+	public void setActionSource(String actionSource) {
+		this.actionSource = actionSource;
+	}
 }
