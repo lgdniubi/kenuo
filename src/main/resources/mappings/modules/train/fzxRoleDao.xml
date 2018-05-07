@@ -177,6 +177,7 @@
 			is_default = 0
 		WHERE mod_id = #{modeid}
 		AND del_flag = 0
+		AND company_id = 1
 		AND is_default = 1
 	</update>
 	<!-- 根据roleid设置该角色默认 -->
@@ -184,5 +185,6 @@
 		UPDATE fzx_role SET 
 			is_default = 1
 		WHERE id = #{roleId}
+		AND company_id = 1
 	</update>
 </mapper>

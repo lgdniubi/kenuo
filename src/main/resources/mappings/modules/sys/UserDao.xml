@@ -201,7 +201,8 @@
 			WHEN 'pt' THEN '普通会员'
 			WHEN 'syr' THEN '手艺人用户'
 			WHEN 'qy' THEN '企业员工' 
-			ELSE '' END AS type, 	
+			ELSE '' END AS type, 
+			IFNULL((SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.user_id = a.id),'无') AS modelName,	
 			<!-- tm.mod_name AS modelName,
 			CASE tmf.`status`
 			WHEN 0 THEN '已授权'
@@ -213,8 +214,8 @@
 			sys_user a
 		LEFT JOIN sys_franchisee c ON c.id = a.company_id
 		LEFT JOIN sys_office o ON o.id = a.office_id
-		LEFT JOIN train_apply tap ON tap.user_id = a.id 
-<!-- 		LEFT JOIN train_model_franchisee tmf ON tmf.user_id = a.id 
+	<!--	LEFT JOIN train_apply tap ON tap.user_id = a.id 
+ 		LEFT JOIN train_model_franchisee tmf ON tmf.user_id = a.id 
 		LEFT JOIN train_model tm ON tm.id = tmf.mod_id-->
 		<!-- 数据范围过滤 -->
 		${sqlMap.dsf}

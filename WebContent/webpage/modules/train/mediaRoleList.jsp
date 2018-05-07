@@ -72,6 +72,8 @@
 								<th style="text-align: center;">角色名称</th>
 							    <th style="text-align: center;">英文名称</th>
 							    <th style="text-align: center;">版本名称</th>
+							    <th style="text-align: center;">角色类型</th>
+							    <th style="text-align: center;">发布平台</th>
 						    	<th style="text-align: center;">操作</th>
 							</tr>
 						</thead>
@@ -82,6 +84,16 @@
 								  	<td>${list.name }</td>
 								  	<td>${list.ename }</td>
 								  	<td>${list.modName }</td>
+								  	<td>
+								  		<c:if test="${list.type eq '0'}">写手</c:if>
+								  		<c:if test="${list.type eq '1'}">管理员</c:if>
+								  	</td>
+								  	<td>
+								  		<c:forEach items="${list.publictoArr}" var="pub">
+								  		<c:if test="${pub eq 'a'}">妃子笑</c:if>
+								  		<c:if test="${pub eq 'b'}">每天美耶</c:if>
+								  		</c:forEach>
+								  	</td>
 								    <td>
 							    		<shiro:hasPermission name="train:mdrole:view">
 											<a href="#" onclick="openDialogView('查看角色', '${ctx}/train/mdrole/form?roleId=${list.roleId}','800px', '650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>

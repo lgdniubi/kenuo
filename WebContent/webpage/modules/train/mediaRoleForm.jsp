@@ -44,6 +44,7 @@
 					}
 				}
 			});
+			showOrhide();	//发布平台是否显示
 		});
 		//自定义校验英文名称
 		jQuery.validator.addMethod("enameMethod", function(value, element) {
@@ -77,6 +78,24 @@
             });
             return nameFlag;
         }, "此版本的角色名称已存在");
+		
+		//页面加载时判断角色类型是写手，还是管理员
+		function showOrhide(value){
+			var typevalue = '${mediaRole.type}';
+			if ( typevalue && typevalue == 0){
+				$("#publictoId").show();
+			}else{$("#publictoId").hide();}
+		}
+		
+		function isAdmin(value){
+			if (value == 0){
+				$("#publictoId").show();
+				$("#publictoId input").addClass("required");
+			}else {
+				$("#publictoId").hide();
+				$("#publictoId input").removeClass("required");
+			}
+		}
 	</script>
 </head>
 <body>
@@ -106,6 +125,18 @@
 						<form:options items="${modList}" itemLabel="modName" itemValue="id" htmlEscape="false"/>
 					</form:select>
 				 </td>
+		      </tr>
+		      <tr>
+		         <td  class="width-15 active"><label class="pull-right">角色类型:</label></td>
+		         <td  class="width-35" >
+		         	<form:radiobuttons path="type" items="${mediaRole.typeList}" itemLabel="label" itemValue="value" htmlEscape="false" onclick="isAdmin(this.value)" class="required i-checks "/>
+		         </td>
+		      </tr>
+		      <tr id = "publictoId">
+		         <td  class="width-15 active"><label class="pull-right">发布平台:</label></td>
+		         <td  class="width-35" >
+		         	<form:checkboxes path="publictoArr" items="${mediaRole.publictoList}" itemLabel="label" itemValue="value" htmlEscape="false" class="i-checks "/>
+		         </td>
 		      </tr>
 		      <tr>
 		         <td  class="width-15 active"><label class="pull-right">备注:</label></td>

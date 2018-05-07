@@ -6,6 +6,8 @@
 		SELECT 
 			r.id AS roleId,
 			r.name,
+			r.type,
+			r.publicto,
 			dc.label AS ename,
 			r.mod_id AS modeid,
 			tm.mod_name AS modName
@@ -25,12 +27,14 @@
 	</select>
 	<!-- 角色详情 -->
 	<select id="get" resultType="MediaRole">
-		SELECT id AS roleId,name,ename, mod_id AS modeid, remarks FROM media_manage_role WHERE id = #{roleId}
+		SELECT id AS roleId,name,ename, mod_id AS modeid, type, publicto, remarks FROM media_manage_role WHERE id = #{roleId}
 	</select>
 	<!-- 插入角色 -->
 	<insert id="insert">
 		INSERT INTO media_manage_role(
 			ename, 
+			type,
+			publicto,
 			name, 
 			franchisee_id,
 			office_id,
@@ -41,6 +45,8 @@
 			del_flag
 		) VALUES (
 			#{ename},
+			#{type},
+			#{publicto},
 			#{name},
 			#{franchiseeid},
 			#{officeid},
@@ -55,6 +61,8 @@
 	<update id="update">
 		UPDATE media_manage_role SET 
 			ename = #{ename}, 
+			type = #{type}, 
+			publicto = #{publicto}, 
 			name = #{name},
 			mod_id  = #{modeid}, 
 			update_by = #{updateBy.id}, 

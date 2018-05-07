@@ -3,7 +3,11 @@
  */
 package com.training.modules.train.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.training.common.persistence.DataEntity;
+import com.training.modules.sys.entity.Dict;
 import com.training.modules.sys.entity.User;
 
 /**
@@ -32,6 +36,11 @@ public class MediaRole extends DataEntity<MediaRole> {
 	private int modeid;		//模板id
 	private String modName;	//机构id
 	private String remarks;	//机构id
+	private String type;	//角色类型：0：写手，1：管理员
+	private List<Dict> typeList;	//角色类型集合
+	private String publicto;	//发布平台：a:妃子校，b:每天美耶，ab:每天美耶和妃子校
+	private String[] publictoArr;	//发布平台：a:妃子校，b:每天美耶，ab:每天美耶和妃子校
+	private List<Dict> publictoList;	//发布平台集合
 	
 	public User getUser() {
 		return user;
@@ -117,5 +126,60 @@ public class MediaRole extends DataEntity<MediaRole> {
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
+	public String getType() {
+//		if (type == null)type ="0";
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public List<Dict> getTypeList() {
+		typeList = new ArrayList<Dict>();
+		Dict c  = new Dict();
+		c.setLabel("写手");
+		c.setValue("0");
+		Dict c1  = new Dict();
+		c1.setLabel("管理员");
+		c1.setValue("1");
+		typeList.add(c);
+		typeList.add(c1);
+		return typeList;
+	}
+	public String getPublicto() {
+		if (publictoArr == null) return publicto;
+		StringBuilder sb = new StringBuilder();
+		for (String a : publictoArr) {
+			sb.append(a);
+			sb.append(",");
+		}
+		return sb.toString();
+	}
+	public void setPublicto(String publicto) {
+		this.publicto = publicto;
+	}
+	public String[] getPublictoArr() {
+		if(publicto!=null)return publicto.split(",");
+		return publictoArr;
+	}
+	public void setPublictoArr(String[] publictoArr) {
+		this.publictoArr = publictoArr;
+	}
+	public List<Dict> getPublictoList() {
+		publictoList = new ArrayList<Dict>();
+		Dict c  = new Dict();
+		c.setLabel("妃子校");
+		c.setValue("a");
+		Dict c1  = new Dict();
+		c1.setLabel("每天美耶");
+		c1.setValue("b");
+		Dict c2  = new Dict();
+		c2.setLabel("每天美耶和妃子校");
+		c2.setValue("ab");
+		publictoList.add(c);
+		publictoList.add(c1);
+//		publictoList.add(c2);
+		return publictoList;
+	}
+	
 	
 }

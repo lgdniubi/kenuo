@@ -44,6 +44,9 @@ public class MediaRoleService extends CrudService<MediaRoleDao,MediaRole>{
 	 * @param mediaRole
 	 */
 	public void savemediaRole(MediaRole mediaRole){
+		if("1".equals(mediaRole.getType())){	//如果是管理员，发布平台数据清空
+			mediaRole.setPublictoArr(null);
+		}
 		if(mediaRole.getRoleId() == 0){
 			mediaRole.preInsert();
 			mediaRole.setFranchiseeid(1);	//默认商家id是平台公共的角色
