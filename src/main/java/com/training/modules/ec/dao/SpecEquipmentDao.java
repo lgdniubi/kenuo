@@ -97,4 +97,6 @@ public interface SpecEquipmentDao extends CrudDao<Equipment> {
 	 * @return
 	 */
 	public List<EquipmentLogs> findEquipmentLogsList(EquipmentLogs equipmentLogs);
+	//删除与新增设备名称相同的数据
+	public void deleteSpecEquipmentByName(Equipment equipment);
 }

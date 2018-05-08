@@ -71,8 +71,10 @@ public class SpecEquipmentService extends CrudService<SpecEquipmentDao, Equipmen
 		if(equipment.getEquipmentId() != 0){
 			specEquipmentDao.updateSpecEquipment(equipment);
 		}else{
+			//删除与新增设备名称相同的数据，新增的时候设置office_id为1（平台的id）
+			specEquipmentDao.deleteSpecEquipmentByName(equipment);
 			//获取当前用户的office的id
-			equipment.setOfficeId(user.getOffice().getId());
+			equipment.setOfficeId("1");
 			equipment.setCreateBy(user);
 			specEquipmentDao.insertSpecEquipment(equipment);
 		}

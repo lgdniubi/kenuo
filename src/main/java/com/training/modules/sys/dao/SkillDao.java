@@ -110,4 +110,6 @@ public interface SkillDao extends CrudDao<Skill>{
 	public int getByName(String name);
 
 	public int validDel(Skill skill);
+	//删除与新增技能名称相同的数据
+	public void deleteSkillByName(Skill skill);
 }

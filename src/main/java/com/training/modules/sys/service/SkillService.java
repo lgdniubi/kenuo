@@ -63,8 +63,10 @@ public class SkillService extends CrudService<SkillDao, Skill>{
 			skill.setFranchiseeId(user.getCompany().getId());
 			skillDao.updateSkill(skill);
 		}else{
+			//删除与新增技能名称相同的数据，新增的时候设置office_id为1（平台的id）
+			skillDao.deleteSkillByName(skill);
 			skill.setCreateBy(user);
-			skill.setFranchiseeId(user.getCompany().getId());
+			skill.setFranchiseeId("1");
 			skillDao.insertSkill(skill);
 		}
 	}

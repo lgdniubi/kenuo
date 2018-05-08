@@ -193,8 +193,8 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	 * @Description: 更改权益设置，版本变更--先删除公共角色和管理员角色
 	 */
 	private void deleteAllRolesForUser(String userid,String franchiseeid) {
-//		userCheckDao.deletePcUserRole(userid);
-//		userCheckDao.deleteFzxUserRole(userid);
+		userCheckDao.deletePcUserRole(userid);
+		userCheckDao.deleteFzxUserRole(userid);
 		List<PcRole> prList= userCheckDao.findAllPcCommonRoleIds(franchiseeid);
 		if(prList != null && prList.size()>0){
 			userCheckDao.deleteAllPcMenu(prList);

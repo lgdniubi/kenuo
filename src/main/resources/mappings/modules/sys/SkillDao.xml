@@ -61,7 +61,10 @@
 		WHERE sl.id = #{skillId} 
 			AND sl.del_flag=0
 	</select>
-	
+	<!-- 删除与新增技能名称相同的数据 -->
+	<delete id="deleteSkillByName">
+		DELETE FROM train_skill_label WHERE id IN (SELECT tt.id FROM (SELECT t.id from train_skill_label t WHERE t.`name`= #{name}) tt);
+	</delete>
 	<!-- 新增技能标签 -->
 	<insert id="insertSkill" parameterType="Skill">
 		INSERT INTO train_skill_label(
@@ -198,5 +201,6 @@
 		FROM train_skill_label sl
 		WHERE sl.name = #{name} 
 		AND sl.del_flag =0
+		AND franchisee_id = 1
 	</select>
 </mapper>
