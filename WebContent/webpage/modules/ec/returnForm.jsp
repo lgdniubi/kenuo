@@ -37,6 +37,15 @@
 				  top.layer.alert('该商品已申请过售后!', {icon: 0, title:'提醒'});
 				  return;
 			  }
+			  //虚拟商品的退款次数校验
+			  var st=$("#returnNum").val();
+			  if(parseInt(st)<0){
+				  top.layer.alert('售后次数必须大于等于0，小于剩余次数!', {icon: 0, title:'提醒'});
+				  return;
+			  }else if(parseInt(st)>parseInt(remaintimes)){
+				  top.layer.alert('售后次数必须大于等于0，小于剩余次数!', {icon: 0, title:'提醒'});
+				  return;
+			  }
 			  
 			  //退货并退款:注意当售后数量和金额都为0,不能售后
 			  //当是退货并退款或者仅退款,退款方式需要校验
@@ -47,15 +56,6 @@
 				  $("#receiveName").val("");//清空收款人信息
 				  $("#receiveAccount").val("");//清空收款账号
 			  }else{//退货并退款      仅退款
-				  //虚拟商品的退款次数校验
-				  var st=$("#returnNum").val();
-				  if(parseInt(st)<0){
-					  top.layer.alert('售后次数必须大于等于0，小于剩余次数!', {icon: 0, title:'提醒'});
-					  return;
-				  }else if(parseInt(st)>parseInt(remaintimes)){
-					  top.layer.alert('售后次数必须大于等于0，小于剩余次数!', {icon: 0, title:'提醒'});
-					  return;
-				  }
 				  //虚拟商品的退款金额校验
 				  var ra=$("#returnAmount").val();
 				  if(parseFloat(ra)<0){
