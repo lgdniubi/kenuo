@@ -16,6 +16,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.training.common.persistence.Page;
 import com.training.common.web.BaseController;
 import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.quartz.utils.RedisLock;
+import com.training.modules.sys.dao.UserDao;
 import com.training.modules.train.entity.ModelFranchisee;
 import com.training.modules.train.entity.UserCheck;
 import com.training.modules.train.service.UserCheckService;
@@ -31,6 +33,8 @@ public class UserCheckController extends BaseController{
 	
 	@Autowired
 	private UserCheckService userCheckService;
+	@Autowired
+	private UserDao userDao;
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;		//redis缓存Service
 	
@@ -67,10 +71,11 @@ public class UserCheckController extends BaseController{
 		try {
 			userCheckService.saveModel(userCheck);//保存审核信息保存用户审核状态
 			if ("1".equals(userCheck.getStatus())){
-				userCheckService.pushMsg(userCheck,"你的申请资料信息没有通过审核，请修改资料"+userCheck.getRemarks());
+				String text = creatText(userCheck);
+				userCheckService.pushMsg(userCheck,text);
 			}else if ("2".equals(userCheck.getStatus())){
 				//审核通过，发送消息并，更新用户type
-				userCheckService.pushMsg(userCheck,"你的申请资料信息已通过审核，等待平台给您赋予权限");
+//				userCheckService.pushMsg(userCheck,"你的申请资料信息已通过审核，等待平台给您赋予权限");
 //				userCheckService.updateTypeAndpushMsg(userCheck,"你的申请资料信息已通过审核，等待平台给您赋予权限");
 			}
 			addMessage(redirectAttributes, "成功");
@@ -80,11 +85,29 @@ public class UserCheckController extends BaseController{
 		}
 		return "redirect:" + adminPath + "/train/userCheck/findalllist";
 	}
+	//创建发送拒绝审核通知消息：您申请认证手艺人用户未被通过，原因如下：====您申请认证企业用户未被通过，原因如下：
+	private String creatText(UserCheck userCheck) {
+		StringBuilder sb = new StringBuilder();
+		String str = "";
+		if ("syr".equals(userCheck.getAuditType())){
+			str = "认证手艺人";
+		}else{
+			str = "认证企业";
+		}
+		sb.append("您申请");
+		sb.append(str);
+		sb.append("用户未被通过，原因如下：");
+		sb.append(userCheck.getRemarks());
+		return sb.toString();
+	}
+
+
 	@RequestMapping(value = {"refuseForm"})
-	public String refuse(String id,String userid,String status, Model model) {
+	public String refuse(String id,String userid,String status,String auditType, Model model) {
 		model.addAttribute("id", id);
 		model.addAttribute("userid", userid);
 		model.addAttribute("status", status);
+		model.addAttribute("auditType", auditType);
 		return "modules/train/refuseForm";
 	}
 	
@@ -101,19 +124,34 @@ public class UserCheckController extends BaseController{
 	@RequiresPermissions(value={"train:userCheck:save"},logical=Logical.OR)
 	@RequestMapping(value = {"saveFranchise"})
 	public String saveFranchise(ModelFranchisee modelFranchisee,String opflag, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		UserCheck userCheck = new UserCheck();
+		userCheck.setId(modelFranchisee.getApplyid());
+		userCheck.setUserid(modelFranchisee.getUserid());
+		UserCheck find = userCheckService.getUserCheck(userCheck);
+		boolean flag = "qy".equals(userCheck.getType()) && Integer.valueOf(userCheck.getStatus())==4;
+		boolean flagsyr = "syr".equals(opflag) && "qy".equals(userCheck.getType());
+		//缓存锁
+		RedisLock redisLock = new RedisLock(redisClientTemplate, "fzx_mobile_"+userCheck.getMobile());
 		try {
-			if ("syr".equals(opflag)){
-				modelFranchisee.setFranchiseeid("0");
-				modelFranchisee.setPaytype("0");
-				userCheckService.saveModelFranchisee(modelFranchisee);//保存手艺人权益信息
-			}else if ("qy".equals(opflag)){
-				userCheckService.saveQYModelFranchisee(modelFranchisee);//保存企业权益信息
+			redisLock.lock();
+			if(flag || flagsyr){
+				addMessage(redirectAttributes, "该用户已经是企业用户，不能进行操作");
+			}else{
+				if ("syr".equals(opflag)){
+					modelFranchisee.setFranchiseeid("0");
+					modelFranchisee.setPaytype("0");
+					userCheckService.saveModelFranchisee(modelFranchisee);//保存手艺人权益信息
+				}else if ("qy".equals(opflag)){
+					userCheckService.saveQYModelFranchisee(modelFranchisee,find);//保存企业权益信息
+				}
+				redisClientTemplate.del("UTOKEN_"+modelFranchisee.getUserid());
+				addMessage(redirectAttributes, "成功");
 			}
-			redisClientTemplate.del("UTOKEN_"+modelFranchisee.getUserid());
-			addMessage(redirectAttributes, "成功");
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "保存权限设置出现异常,请与管理员联系");
 			logger.error("保存权限设置异常,异常信息为："+e.getMessage());
+		}finally {
+			redisLock.unlock();
 		}
 		return "redirect:" + adminPath + "/train/userCheck/findalllist";
 	}

@@ -27,6 +27,7 @@
 		<input name="userid" value="${userid}" type="hidden">
 		<input name="id" value="${id}" type="hidden">
 		<input name="status" value="${status}" type="hidden">
+		<input name="auditType" value="${auditType}" type="hidden">
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 			<tbody>
 			    <tr>

@@ -131,6 +131,11 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	 * @param modelFranchisee
 	 */
 	private void save(ModelFranchisee modelFranchisee) {
+		UserCheck ck = new UserCheck();
+		ck.setUserid(modelFranchisee.getUserid());
+		ck.setId(modelFranchisee.getApplyid());
+		ck.setStatus("3");//更改状态已授权
+		userCheckDao.editUserCheck(ck );
 		if (StringUtils.isEmpty(modelFranchisee.getId())) {
 			modelFranchisee.preInsert();
 			userCheckDao.saveModelFranchisee(modelFranchisee);
@@ -155,12 +160,8 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	 * @param modelFranchisee
 	 * 在授权企业的时候去把train_franchisee_info(企业审核信息)中的企业信息入库到sys_franchisee和sys_office中，然后去授权在去更改sys_user表中此用户的归属商家机构等信息
 	 */
-	public void saveQYModelFranchisee(ModelFranchisee modelFranchisee) {
+	public void saveQYModelFranchisee(ModelFranchisee modelFranchisee,UserCheck find) {
 		if (StringUtils.isEmpty(modelFranchisee.getId())) {
-			UserCheck userCheck = new UserCheck();
-			userCheck.setId(modelFranchisee.getApplyid());
-			userCheck.setUserid(modelFranchisee.getUserid());
-			UserCheck find = getUserCheck(userCheck);
 			//向商家和机构插入一条信息
 			String franchid = saveFranchiseeAndOffice(find);
 			
@@ -183,9 +184,20 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 				setRoleForUser(modelFranchisee,franchisee.getFranchiseeid());
 			}
 		}
-		
+		updateInvitationAndPush(find);	//向邀请表和推送消息表更改数据，把所有推送消息设置为未通过，邀请记录：没同意的设置为3会员拒绝，同意的设置为2商家拒绝。
 		save(modelFranchisee);
-//		int a = 1/0;
+		int a = 1/0;
+	}
+
+	/**
+	 * 向邀请表和推送消息表更改数据，把所有推送消息设置为0:不可操作，邀请记录：没同意的设置为3会员拒绝，同意的设置为2商家拒绝。
+	 * @param find
+	 * @Description:
+	 */
+	private void updateInvitationAndPush(UserCheck find) {
+		userCheckDao.updateInvitationByShop(find.getMobile());		//同意的设置为2商家拒绝。
+		userCheckDao.updateInvitationByUser(find.getMobile());		//没同意的设置为3会员拒绝
+		userCheckDao.updatePushByUser(find.getUserid());		//把所有推送消息设置为0:不可操作
 	}
 
 	/**
@@ -308,7 +320,8 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 //			find.setCode(StringUtils.leftPad("1", 4, "0"));
 //		}
 		find.setCode(String.valueOf(code+1));
-		userCheckDao.saveFranchisee(find);
+		userCheckDao.saveMtmyFranchisee(find);	//保存每天美耶的商家
+		userCheckDao.saveFranchisee(find);	//保存平台的商家
 		String id = find.getId();
 		saveOffice(id,find);
 		return id ;

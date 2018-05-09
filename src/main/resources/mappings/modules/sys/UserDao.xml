@@ -202,7 +202,8 @@
 			WHEN 'syr' THEN '手艺人用户'
 			WHEN 'qy' THEN '企业员工' 
 			ELSE '' END AS type, 
-			IFNULL((SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.user_id = a.id),'无') AS modelName,	
+			IFNULL((SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.user_id = a.id),
+			(SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.franchisee_id = a.company_id LIMIT 1)) AS modelName,	
 			<!-- tm.mod_name AS modelName,
 			CASE tmf.`status`
 			WHEN 0 THEN '已授权'

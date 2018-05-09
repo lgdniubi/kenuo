@@ -32,7 +32,7 @@
 			window.location="${ctx}/train/userCheck/findalllist?status=0";
 		}
 		//审核按钮
-		function checkBtn(id,userid){
+		function checkBtn(id,userid,type){
 			top.layer.open({
 			    type: 2, 
 			    area: ['800px', '650px'],
@@ -45,7 +45,7 @@
 				},
 				btn2: function(index, layero){
 			    //按钮【不通过】的回调
-			    	var url = "${ctx}/train/userCheck/refuseForm?id="+id+"&userid="+userid+"&status=1";
+			    	var url = "${ctx}/train/userCheck/refuseForm?id="+id+"&userid="+userid+"&status=1&auditType="+type;
 			    	openDialog('拒绝', url,'300px', '300px')
 			    	//window.location="${ctx}/train/userCheck/save?id="+id+"&userid="+userid+"&status=1";
 					top.layer.close(index);
@@ -130,6 +130,7 @@
 										<c:if test="${userCheck.status == 0}">待审核</c:if>
 										<c:if test="${userCheck.status == 1}">未通过</c:if>
 										<c:if test="${userCheck.status == 2}">已通过</c:if>
+										<c:if test="${userCheck.status == 4}">不能操作</c:if>
 									</td>
 									<td style="text-align: left;">
 									<shiro:hasPermission name="train:userCheck:update">
@@ -137,7 +138,7 @@
 					    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.auditType}&opflag=setPermiss','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
 										</c:if>
 										<c:if test="${userCheck.status == 0}">
-					    						<a href="#" onclick="checkBtn(${userCheck.id},'${userCheck.userid}')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>
+					    						<a href="#" onclick="checkBtn(${userCheck.id},'${userCheck.userid}','${userCheck.auditType}')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>
 										</c:if>
 										<c:if test="${userCheck.status != 0}">
 					    				<a href="#" onclick="openDialogView('查看审核信息', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&opflag=view','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>查看</a>

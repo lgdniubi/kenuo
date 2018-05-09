@@ -154,5 +154,13 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	public void deleteOldFzxRoleOffice(String userid);
 	//删除该用户以前的角色fzx_user_role
 	public void deleteOldFzxRole(String userid);
+	//邀请记录：同意的设置为2商家拒绝。
+	public void updateInvitationByShop(String mobile);
+	//邀请记录：没同意的设置为3会员拒绝，
+	public void updateInvitationByUser(String mobile);
+	//把所有推送消息设置为0:不可操作，
+	public void updatePushByUser(String userid);
+	//保存每天美耶的商家
+	public void saveMtmyFranchisee(UserCheck find);
 	
 }

@@ -50,10 +50,10 @@
 	<if test="dbName == 'mysql'">CONCAT('%', #{mobile}, '%')</if> -->
 		</if>
 		<if test="status == 0">
-			AND tap.status in (0,1)
+			AND tap.status = 0
 		</if>
 		<if test="status == 2">
-			AND tap.status = 2
+			AND tap.status in (1,2)
 		</if>
 		ORDER BY tap.create_date DESC
 	</select>
@@ -73,6 +73,7 @@
 			u.nickname,
 			u.mobile,
 			u.type,
+			u.id AS userid,
 			tap.apply_type AS applyType,
 			tap.audit_type AS auditType,
 			tap.create_date AS createDate,
@@ -179,6 +180,17 @@
 			0,
 			'用户审核增加',
 			#{intro}
+		  )
+	</insert>
+	<insert id="saveMtmyFranchisee" >
+		INSERT INTO `mtmydb`.`mtmy_franchisee` (
+			`parent_id`, `parent_ids`, `name`, `type`, `sort`, `is_real_franchisee`,  `public_service_flag`, 
+			`create_by`, `create_date`, `del_flag`, `remarks`
+		) 
+		VALUES
+		  (
+		    '1',  		'0,1,', 	#{companyName}, 2, 	 30, 		 1, 					 0,
+		     #{createBy.id}, SYSDATE(), 	0,		 '用户审核增加'
 		  )
 	</insert>
 	<!-- 查看手艺人权限信息根据user id -->
@@ -467,4 +479,16 @@
 	<delete id="deleteOldFzxRole">
 		DELETE FROM fzx_user_role WHERE user_id = #{userid}
 	</delete>
+	<!-- 邀请记录：同意的设置为2商家拒绝 -->
+	<update id="updateInvitationByShop">
+		UPDATE pc_user_invitation SET `status` = 2 WHERE phone = #{mobile} AND `status` = 0
+	</update>
+	<!-- 邀请记录：没同意的设置为3会员拒绝， -->
+	<update id="updateInvitationByUser">
+		UPDATE pc_user_invitation SET `status` = 3 WHERE phone = #{mobile} AND `status` = 4
+	</update>
+	<!-- 把所有推送消息设置为0:不可操作，-->
+	<update id="updatePushByUser">
+		UPDATE push_msg SET is_handle = 0 WHERE user_id = #{userid} AND notify_type = 12
+	</update>
 </mapper>
