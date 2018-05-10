@@ -5,6 +5,7 @@
 <head>
 	<title>套卡订单详情页</title>
 	<meta name="decorator" content="default"/>
+	<link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
 	<script type="text/javascript">
 		
 		var validateForm;
@@ -122,6 +123,7 @@
 			
 	    	
 		    function TopUp(recid,singleRealityPrice,singleNormPrice,orderArrearage,servicetimes,remaintimes,goodsBalance){
+		    	$(".loading").show();
 		    	var isCommitted = false;		//表单是否已经提交标识，默认为false
 		    	var orderid = $("#orderid").val();
 		    	var userid = $("#userid").val();
@@ -243,7 +245,7 @@
 						});
 				},
 				cancel: function(index){ //或者使用btn2
-					    	           //按钮【按钮二】的回调
+					$(".loading").hide(); //按钮【按钮二】的回调
 				}
 			}); 
 		}
@@ -423,8 +425,8 @@ window.onload=initStatus;
 	    	return;
 		}
 		
+		$(".loading").show();
 		var isHandled = false;		//表单是否已经提交标识，默认为false
-		
 		top.layer.open({
 		    type: 2, 
 		    area: ['600px', '450px'],
@@ -475,7 +477,7 @@ window.onload=initStatus;
 				});
 		},
 		cancel: function(index){ //或者使用btn2
-			    	           //按钮【按钮二】的回调
+			$(".loading").hide();	//按钮【按钮二】的回调
 		}
 	}); 
 	}
