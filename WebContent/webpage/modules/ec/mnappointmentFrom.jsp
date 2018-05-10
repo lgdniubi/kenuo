@@ -167,7 +167,7 @@
 							<td><label class="pull-right"><font color="red">*</font>预约日期：</label></td>
 							<td>
 								<input id="apptDate" name="apptDate" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text"
-									value="<fmt:formatDate value="${reservation.apptDate}" pattern="yyyy-MM-dd"/>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'%y-%M-{%d-7}',maxDate:'%y-%M-%d'})" readonly="readonly"/>
+									value="<fmt:formatDate value="${reservation.apptDate}" pattern="yyyy-MM-dd"/>" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'%y-%M-{%d-6}',maxDate:'%y-%M-%d'})" readonly="readonly"/>
 							</td>
 						</tr>
 						<tr id="isNo2">
