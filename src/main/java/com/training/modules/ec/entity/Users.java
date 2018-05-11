@@ -61,6 +61,7 @@ public class Users extends TreeEntity<Users> {
 	private String officeId ;		//所属门店
 	private String beautyId;	    //所属美容师
 	
+	private int isTest;           //测试账号标识（0：正常；1：测试）
 	// 埋点必填参数 kele 2018年4月28日10:35:22 添加
 	// 来源类型
 	private String sourceType;
@@ -332,6 +333,13 @@ public class Users extends TreeEntity<Users> {
 		// TODO Auto-generated method stub
 		
 	}
+	public int getIsTest() {
+		return isTest;
+	}
+	public void setIsTest(int isTest) {
+		this.isTest = isTest;
+	}
+	
 	public String getSourceType() {
 		return sourceType;
 	}

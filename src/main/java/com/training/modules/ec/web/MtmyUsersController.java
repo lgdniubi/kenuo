@@ -36,6 +36,7 @@ import com.training.modules.ec.service.OrderGoodsService;
 import com.training.modules.ec.service.OrdersService;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.SystemService;
+import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
 
 /**
@@ -465,4 +466,24 @@ public class MtmyUsersController extends BaseController{
         }
         return str;
 	}
+	
+	 /**
+     * 修改是否正常数据
+     * @param request
+     * @retur
+     */
+    @RequestMapping(value = {"updateIsRealData"})
+    public String updateIsRealData(HttpServletRequest request,RedirectAttributes redirectAttributes){
+    	try {
+    		String id = request.getParameter("ID");				// id
+    		String isyesno = request.getParameter("ISYESNO");	// 是否
+    		mtmyUsersService.updateIsRealData(isyesno, id);
+    		addMessage(redirectAttributes, "修改成功");
+		} catch (Exception e) {
+			logger.error("修改是否正常数据错误信息："+e.getMessage());
+    		BugLogUtils.saveBugLog(request, "是否正常数据修改失败", e);
+    		addMessage(redirectAttributes, "修改失败");
+		}
+    	return "redirect:" + adminPath + "/ec/mtmyuser/list";
+    }
 }

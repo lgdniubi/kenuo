@@ -19,6 +19,8 @@ public class UserOperatorLog extends DataEntity<UserOperatorLog> {
 	private String content; // 操作内容
 	private Date createTime;//创建时间
 	private String creatorName;//创建人名字
+	
+	private String franchiseeId;//商家id
 
 	public Date getCreateTime() {
 		return createTime;
@@ -84,4 +86,12 @@ public class UserOperatorLog extends DataEntity<UserOperatorLog> {
 		this.content = content;
 	}
 
+	public String getFranchiseeId() {
+		return franchiseeId;
+	}
+
+	public void setFranchiseeId(String franchiseeId) {
+		this.franchiseeId = franchiseeId;
+	}
+	
 }

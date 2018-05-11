@@ -11,6 +11,7 @@
 		u.phone,
 		u.mobile,
 		u.is_lock AS islock,
+		u.is_test AS isTest,
 		u.user_money
 	</sql>
     <!-- shiba 增加两个字段officeId 和 beautyId-->   
@@ -518,4 +519,11 @@
 			mtmydb.mtmy_users    
 		WHERE mobile = #{mobile}
 	</select>
+	
+	<!-- 修改是否正常数据 -->
+	<update id="updateIsRealData">
+		UPDATE mtmydb.mtmy_users    
+		SET is_test = #{isTest}
+		WHERE user_id = #{userId}
+	</update>
 </mapper>

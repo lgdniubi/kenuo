@@ -18,6 +18,8 @@ import com.training.modules.ec.utils.CommonScopeUtils;
 import com.training.modules.sys.dao.AreaDao;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.Office;
+import com.training.modules.sys.entity.User;
+import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.Subscribe;
 
 
@@ -62,8 +64,11 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 	 * 查看单个用户所有预约
 	 */
 	public Page<Reservation> findUserPage(Page<Reservation> page,Reservation reservation){
-		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
-		reservation.getSqlMap().put("dsf", CommonScopeUtils.newDataScopeFilter("r"));
+		//获取当前操作人的所属id
+		User user = UserUtils.getUser();
+		String franchiseeIds = user.getOffice().getParentIds()+user.getOffice().getId();
+		reservation.setFranchiseeIds(franchiseeIds);
+		
 		reservation.setPage(page);
 		page.setList(dao.findUserPage(reservation));
 		return page;
@@ -152,5 +157,32 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 		page.setList(dao.findReservationLog(reservationLog));
 		return page;
 	}
-
+	
+	/**
+	 * 查询一定时间段内已完成、爽约的预约，用于给店铺分预约金和补偿金 
+	 * @param lastTime
+	 * @return
+	 */
+	public List<Reservation> queryApptOrderForAdvancePrice(Date lastTime,Date startTime){
+		return dao.queryApptOrderForAdvancePrice(lastTime,startTime);
+	}
+	
+	/**
+	 * 查询某个订单下的预约完成与爽约的总数
+	 * @param groupId
+	 * @param goodsMappingId
+	 * @return
+	 */
+	public int queryCompleteNum(int groupId,String goodsMappingId,int apptId){
+		return dao.queryCompleteNum(groupId,goodsMappingId,apptId);
+	}
+	
+	/**
+	 * 校验同一美容师同一时间段内只能有一条已完成的预约记录
+	 * @param reservation
+	 * @return
+	 */
+	public int verifyApptDate(Reservation reservation){
+		return dao.verifyApptDate(reservation);
+	}
 }

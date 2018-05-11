@@ -262,8 +262,6 @@
 			SUM(a.amount) AS amount,
 			a.use_balance AS useBalance,
 			a.user_id AS userId,
-			a.user_office_id AS userOfficeId,
-			a.user_beautician_id AS userBeauticianId,
 			a.belong_office_id AS belongOfficeId,
 			b.name AS belongOfficeName,
 			a.belong_office_ids AS belongOfficeIds,
@@ -290,8 +288,6 @@
 			SUM(a.amount) AS amount,
 			a.use_balance AS useBalance,
 			a.user_id AS userId,
-			a.user_office_id AS userOfficeId,
-			a.user_beautician_id AS userBeauticianId,
 			a.belong_office_id AS belongOfficeId,
 			b.name AS belongOfficeName,
 			a.belong_office_ids AS belongOfficeIds,
@@ -332,6 +328,7 @@
 		SELECT
 			a.id AS detailsId,
 			a.order_id AS orderId,
+			a.goods_mapping_id AS mappingId,
 			SUM(a.return_amount) AS amount,
 			IFNULL(a.audit_date,a.apply_date) AS createDate
 		FROM
@@ -681,14 +678,27 @@
 		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
 		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
 		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
-		WHERE 1=1
+		LEFT JOIN trains.sys_office tso ON tso.id = a.office_id
+		${sqlMap.dsf}
 		AND a.del_flag=0 
 		AND a.user_id =#{userId}
+		<if test="franchiseeId != null  and franchiseeId != ''">
+			AND (
+				locate(
+					a.office_id,
+					concat(tso.parent_ids, tso.id)
+				) > 0
+			)
+			AND (
+				locate(
+					#{franchiseeId},
+					concat(tso.parent_ids, tso.id)
+				) > 0
+			)
+		</if>
 		<if test="keyword != null and keyword!=''">
 			AND (
-			d.nickname LIKE
-			<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
-			OR d.mobile LIKE
+			a.id LIKE
 			<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
 			OR a.order_id LIKE
 			<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
@@ -749,8 +759,6 @@
 			a.use_balance AS useBalance,
 			a.status,
 			a.user_id AS userId,
-			a.user_office_id AS userOfficeId,
-			a.user_beautician_id AS userBeauticianId,
 			a.belong_office_id AS belongOfficeId,
 			a.belong_office_ids AS belongOfficeIds,
 			a.create_by AS createBy,
@@ -784,13 +792,13 @@
 		INSERT INTO mtmydb.mtmy_turnover_details (
 			order_id,
 			details_id,
+			mapping_id,
+			goods_id,
 			type,
 			amount,
 			use_balance,
 			status,
 			user_id,
-			user_office_id,
-			user_beautician_id,
 			belong_office_id,
 			belong_office_ids,
 			create_by,
@@ -801,13 +809,13 @@
 		)VALUES(
 			#{orderId},
 			#{detailsId},
+			#{mappingId},
+			#{goodsId},
 			#{type},
 			#{amount},
 			#{useBalance},
 			#{status},
 			#{userId},
-			#{userOfficeId},
-			#{userBeauticianId},
 			#{belongOfficeId},
 			#{belongOfficeIds},
 			#{createBy.id},
@@ -963,10 +971,10 @@
 			r.id AS pushmoneyRecordId,
 			r.order_id AS orderId,
 			r.returned_id AS returnedId,
-			r.turnover_details_id AS turnoverDetailsId,
-			r.user_id AS pushmoneyUserId,
 			r.user_office_id as userOfficeId,
 			r.user_office_ids as userOfficeIds,
+			r.turnover_details_id AS turnoverDetailsId,
+			r.user_id AS pushmoneyUserId,
 			r.belong_office_id as belongOfficeId,
 			r.belong_office_ids as belongOfficeIds,
 			r.position_key as positionKey,

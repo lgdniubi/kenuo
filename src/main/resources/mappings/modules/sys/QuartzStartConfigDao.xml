@@ -27,4 +27,30 @@
             (null,#{qsc.key},#{qsc.value},SYSDATE())  
         </foreach> 
 	</insert>
+	
+	<!-- 根据key获取每天美耶对应value值 -->
+	<select id="queryMtmyValue" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT
+			qsc.value
+		FROM
+			mtmydb.quartz_start_config qsc
+		WHERE
+			qsc.`key`  = #{key}
+		ORDER BY id DESC
+		LIMIT 1
+	</select>
+	
+	<!-- 添加每天美耶定时器起始配置数据 -->
+	<insert id="addMtmyQuartzStartConfig" parameterType="java.util.List">
+		INSERT INTO `mtmydb`.`quartz_start_config` (
+			`id`,
+			`key`,
+			`value`,
+			`create_date`
+		)
+		VALUES
+        <foreach collection="list" item="qsc" index="index" separator=",">  
+            (null,#{qsc.key},#{qsc.mtmyValue},SYSDATE())  
+        </foreach> 
+	</insert>
 </mapper>

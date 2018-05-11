@@ -382,6 +382,25 @@ public class UserController extends BaseController {
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}
+	
+	/**
+	 * 
+	 * @param user
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequiresPermissions("sys:user:del")
+	@RequestMapping(value = "onJob")
+	public String onJob(User user, RedirectAttributes redirectAttributes) {
+		if (Global.isDemoMode()) {
+			addMessage(redirectAttributes, "演示模式，不允许操作！");
+			return "redirect:" + adminPath + "/sys/user/list?repage";
+		}
+		user.preUpdate();
+		systemService.onJob(user);
+		addMessage(redirectAttributes, "回复成在职用户成功");
+		return "redirect:" + adminPath + "/sys/user/list?repage";
+	}
 
 	/**
 	 * 批量删除用户

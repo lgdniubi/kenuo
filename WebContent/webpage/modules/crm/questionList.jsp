@@ -28,7 +28,8 @@
 						<form:form id="searchForm" action="${ctx}/crm/store/list" modelAttribute="complain" method="post" class="form-inline">
 							<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 							<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-							<input id="stamp" class="stamp" name="stamp" value="${stamp }" type="hidden">
+							<input id="stamp" class="stamp" name="stamp" value="${stamp}" type="hidden">
+							<input id="franchiseeId" name="franchiseeId" value="${franchiseeId}" type="hidden">
 							<form:hidden path="mobile" id="mobile"/>
 							<form:hidden path="member" id="member"/>
 							<div class="form-group">						
@@ -134,7 +135,7 @@
 								    <c:if test="${complain.status== '2'}">已处理</c:if>
 					            </td>								
 								<td>${complain.changeTimes}</td>
-								<td> <a href="#" onclick="openDialog('详情', '${ctx}/crm/store/detailed?id=${complain.id}&stamp=${stamp}','800px','680px')"  class="btn btn-success btn-xs" ><i class="fa fa-search-plus"></i>详情</a></td>
+								<td> <a href="#" onclick="openDialog('修改', '${ctx}/crm/store/detailed?id=${complain.id}&stamp=${stamp}','800px','680px')"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>修改</a></td>
  							   </tr>
 							</c:forEach>
 						</tbody>

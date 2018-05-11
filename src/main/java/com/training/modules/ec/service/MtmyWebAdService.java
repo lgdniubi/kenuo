@@ -1,5 +1,7 @@
 package com.training.modules.ec.service;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -84,10 +86,20 @@ public class MtmyWebAdService extends CrudService<MtmyWebAdDao,MtmyWebAd>{
 	 */
 	public void saveMtmyWebAdGoods(int adId,String goodsIds){
 		if(!"".equals(goodsIds) && goodsIds != null){
+			//根据adId获取原有数据
+			Goods goods = new Goods();
+			goods.setAdId(adId);
+			List<Goods> list = dao.findGoodsList(goods);
+			//删除原有的全部数据
 			mtmyWebAdDao.delAllGoods(adId);
+			//保存新增数据
 			String[] goodsIdArr = goodsIds.split(",");
 			for(String goodsId:goodsIdArr){
 				mtmyWebAdDao.insertGoods(adId, Integer.valueOf(goodsId));
+			}
+			//循环集合,根据adId和商品id修改sort值
+			for (Goods g : list) {
+				mtmyWebAdDao.insertGoodsSort(g.getSort(), adId, g.getGoodsId());
 			}
 		}
 	}

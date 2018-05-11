@@ -377,8 +377,13 @@
 			ogm.single_reality_price AS 'singleRealityPrice',
 			ogm.advance_price AS 'advancePrice',
 			g.goods_type AS 'goodsType',
+			ogm.goods_id AS 'goodsid',
 			u.office_id AS 'officeId',
-			ogm.reality_add_time AS 'realityAddTime'
+			ogm.reality_add_time AS 'realityAddTime',
+			ogm.is_real AS 'isreal',
+			CASE WHEN ogm.is_real = 2 THEN (select SUM(ogm2.service_times) from mtmydb.mtmy_order_goods_mapping ogm2 where ogm2.group_id = ogm.rec_id and ogm2.is_real=1)
+				 ELSE ogm.service_times 
+				 END AS 'totalTimes'
 		FROM mtmydb.mtmy_order_goods_mapping ogm
 		LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id = ogm.goods_id
 		LEFT JOIN mtmydb.mtmy_users u ON u.user_id = ogm.user_id
@@ -467,6 +472,7 @@
 			ogm.single_reality_price AS 'singleRealityPrice',
 			ogm.advance_price AS 'advancePrice',
 			g.goods_type AS 'goodsType',
+			ogm.goods_id AS 'goodsid',
 			u.office_id AS 'officeId',
 			ogm.reality_add_time AS 'realityAddTime'
 		FROM mtmydb.mtmy_order_goods_mapping ogm
@@ -565,5 +571,15 @@
 		AND a.order_id= #{orderId}
 		AND a.group_id = 0
 		GROUP BY a.rec_id
+	</select>
+	
+	<!-- 根据订单id查询所有商品订单 -->
+	<select id="getGoodsIdByRecId" resultType="String">
+		SELECT
+			m.goods_id AS goodsId
+		FROM
+			mtmydb.mtmy_order_goods_mapping m
+		WHERE
+			m.rec_id = #{mappingId}
 	</select>
 </mapper>

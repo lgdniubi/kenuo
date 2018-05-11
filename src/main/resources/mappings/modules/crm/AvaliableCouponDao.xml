@@ -29,6 +29,7 @@
 		WHERE
 			user_id = #{userId}
 		AND macu.`status` = 0 
+		AND mac.id IS NOT NULL
 		ORDER BY ma.expiration_date DESC
 	</select>
 </mapper>

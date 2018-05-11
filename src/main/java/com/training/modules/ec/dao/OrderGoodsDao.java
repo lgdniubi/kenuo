@@ -168,4 +168,11 @@ public interface OrderGoodsDao extends TreeDao<OrderGoods> {
 	 * @return
 	 */
 	public List<OrderGoods> findOrderDetails(String orderId);
+
+	/**
+	 * 根据营业额中订单商品中间表ID获取到商品id
+	 * @param mappingId
+	 * @return
+	 */
+	public String getGoodsIdByRecId(int mappingId);
 }

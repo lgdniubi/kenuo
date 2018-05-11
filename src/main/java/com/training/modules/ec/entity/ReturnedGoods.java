@@ -91,6 +91,9 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	private double costPrice;				//商品成本价
 	private double marketPrice;				//商品市场价
 		
+	private String franchiseeId;			//区分商家id(CRM中使用,土豆添加2018-4-12)
+
+	
 	public List<Integer> getRecIds() {
 		return recIds;
 	}
@@ -527,6 +530,12 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	}
 	public void setMarketPrice(double marketPrice) {
 		this.marketPrice = marketPrice;
+	}
+	public String getFranchiseeId() {
+		return franchiseeId;
+	}
+	public void setFranchiseeId(String franchiseeId) {
+		this.franchiseeId = franchiseeId;
 	}
 	
 }

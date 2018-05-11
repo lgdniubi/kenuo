@@ -49,14 +49,16 @@ public class UserOrdersController extends BaseController {
 	 * @return String 客户订单列表
 	 */
 	@RequestMapping(value = "list")
-	public String orders(String userId, CrmOrders orders, HttpServletRequest request, HttpServletResponse response,
+	public String orders(String userId, String franchiseeId, CrmOrders orders, HttpServletRequest request, HttpServletResponse response,
 			Model model) {
 
 		if (null!=userId && userId.trim().length()>0) {
 			orders.setUserid(Integer.valueOf(userId));
+			orders.setFranchiseeId(franchiseeId);
 			Page<CrmOrders> page = ordersService.findByUser(new Page<CrmOrders>(request, response), orders);
 			model.addAttribute("page", page);
 			model.addAttribute("userId", userId);
+			model.addAttribute("franchiseeId", franchiseeId);
 			model.addAttribute("orders",orders);
 		}
 		return "modules/crm/orders";
