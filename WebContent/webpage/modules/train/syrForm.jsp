@@ -97,6 +97,21 @@
 				}
 			});
 		});
+		//设置折扣，选择免费折扣只能为1，收费的时候设置成原来的
+		function setDiscount(value){
+			if(value==3){
+				$("#discount").val("1");
+				$("#discount").prop("readonly","readonly");
+			}else{
+				var oldDiscount = '${modelFranchisee.discount}';
+				if (oldDiscount){//原来的不是空
+					$("#discount").val(oldDiscount);
+				}else{
+					$("#discount").val("");
+				}
+				$("#discount").removeAttr("readonly");
+			}
+		}
 	</script>
 </head>
 <body>
@@ -111,8 +126,8 @@
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">手艺人会员类型:</label></td>
-			         <td><input id="mod_id1" class=" input-sm required" name="modid" value="4" aria-required="true" <c:if test="${modelFranchisee.modid != 3}">checked="checked"</c:if>  type="radio">收费版</td>
-			         <td><input id="mod_id2" class=" input-sm required" name="modid" value="3" aria-required="true" <c:if test="${modelFranchisee.modid == 3}">checked="checked"</c:if> type="radio">免费版</td>
+			         <td><input id="mod_id1" class=" input-sm required" name="modid" value="4" aria-required="true" <c:if test="${modelFranchisee.modid == 4}">checked="checked"</c:if>  type="radio" onclick="setDiscount(this.value)">收费版</td>
+			         <td><input id="mod_id2" class=" input-sm required" name="modid" value="3" aria-required="true" <c:if test="${modelFranchisee.modid == 3}">checked="checked"</c:if> type="radio" onclick="setDiscount(this.value)">免费版</td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">采购折扣:</label></td>
