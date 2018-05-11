@@ -174,9 +174,9 @@
 			mu.nickname,
 			mu.level_value AS 'levelvalue',
 			mu.reg_time regTime,
-			MIN(mo.add_time) firstDate,
+			<!-- MIN(mo.add_time) firstDate,
 			MAX(mo.add_time) lastDate,
-			muyl.`level` AS 'level',
+			muyl.`level` AS 'level', -->
 			mc.franchisee_id AS 'franchiseeId',
 			tsf. NAME AS 'franchiseeName',
 			tsu.`name` AS 'beautyName',
@@ -187,9 +187,9 @@
 		LEFT JOIN trains.sys_user tsu ON mc.beauty_id = tsu.id
 		LEFT JOIN trains.sys_office tso ON mc.office_id = tso.id
 		LEFT JOIN mtmydb.mtmy_users mu ON mc.user_id = mu.user_id
-		LEFT JOIN mtmydb.mtmy_orders mo ON mc.user_id = mo.user_id
+		<!-- LEFT JOIN mtmydb.mtmy_orders mo ON mc.user_id = mo.user_id
 		LEFT JOIN mtmydb.mtmy_user_yz_level muyl ON mu.level_value <![CDATA[>=]]> muyl.min_val
-			AND mu.level_value <![CDATA[<=]]> muyl.max_val
+			AND mu.level_value <![CDATA[<=]]> muyl.max_val -->
 		${sqlMap.dsf}
 			<if test="franchiseeId != null and franchiseeId !='' ">
 				AND mc.franchisee_id = #{franchiseeId}
@@ -202,9 +202,9 @@
 						) > 0
 					)
 			</if>
-			<if test="level!=null and level!=''">
+			<!-- <if test="level!=null and level!=''">
 				AND muyl.level =#{level}
-			</if>
+			</if> -->
 			<if test="keyword!=null and keyword!=''">
 				AND (
 					mu.nickname like
@@ -230,9 +230,9 @@
 			mu.nickname,
 			mu.level_value AS 'levelvalue',
 			mu.reg_time regTime,
-			MIN(mo.add_time) firstDate,
+			<!-- MIN(mo.add_time) firstDate,
 			MAX(mo.add_time) lastDate,
-			muyl.`level` AS 'level',
+			muyl.`level` AS 'level', -->
 			mc.franchisee_id AS 'franchiseeId',
 			tsf. NAME AS 'franchiseeName',
 			tsu.`name` AS 'beautyName',
@@ -240,9 +240,9 @@
 		FROM
 			mtmydb.mtmy_users mu
 		LEFT JOIN mtmydb.mtmy_customer mc ON mc.user_id = mu.user_id AND mc.franchisee_id = #{franchiseeId} 
-		LEFT JOIN mtmydb.mtmy_orders mo ON mc.user_id = mo.user_id
+		<!-- LEFT JOIN mtmydb.mtmy_orders mo ON mc.user_id = mo.user_id
 		LEFT JOIN mtmydb.mtmy_user_yz_level muyl ON mu.level_value <![CDATA[>=]]> muyl.min_val
-			AND mu.level_value <![CDATA[<=]]> muyl.max_val
+			AND mu.level_value <![CDATA[<=]]> muyl.max_val -->
 		LEFT JOIN trains.sys_franchisee tsf ON mc.franchisee_id = tsf.id
 		LEFT JOIN trains.sys_user tsu ON mc.beauty_id = tsu.id
 		LEFT JOIN trains.sys_office tso ON mc.office_id = tso.id
@@ -255,9 +255,9 @@
 						) > 0
 					)
 			</if>
-			<if test="level!=null and level!=''">
+			<!-- <if test="level!=null and level!=''">
 				AND muyl.level =#{level}
-			</if>
+			</if> -->
 			<if test="keyword!=null and keyword!=''">
 				AND (
 					mu.nickname like

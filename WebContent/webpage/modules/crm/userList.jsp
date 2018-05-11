@@ -152,7 +152,7 @@
 									    </div>
 									</shiro:hasPermission>	
 									<%-- <sys:treeselect id="bazaar" name="bazaarId" value="${equipment.bazaarId}" labelName="bazaarName" labelValue="${equipment.bazaarName}" title="市场" url="/sys/office/treeData?isGrade=true" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="true" notAllowSelectParent="true"/> --%>
-									<span>请选等级</span>
+									<%-- <span>请选等级</span>
 									<form:select path="level" name="level" id="level" value="${detail.level}" class="form-control" style="width:185px;">
 										<form:option value="">等级</form:option>
 										<form:option value="0">L0</form:option>
@@ -166,7 +166,7 @@
 										<form:option value="8">L8</form:option>
 										<form:option value="9">L9</form:option>
 										<form:option value="10">L10</form:option>
-									</form:select>
+									</form:select> --%>
 									<form:input neme="keyword" path="keyword" id="keyword" value="${detail.keyword}" htmlEscape="false" maxlength="50" class=" form-control input-sm" placeholder ="手机号码或者昵称" style="width:250px" />
 									<div class="pull-right">
 										<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="newSearch()">
@@ -199,12 +199,12 @@
 							<th style="text-align: center;">姓名</th>
 							<th style="text-align: center;">性别</th>
 							<th style="text-align: center;">手机</th>
-							<th style="text-align: center;">等级</th>
+							<!-- <th style="text-align: center;">等级</th> -->
 							<th style="text-align: center;">颜值</th>
 							<th style="text-align: center;">美容师</th>
 							<th style="text-align: center;">注册日期</th>
-							<th style="text-align: center;">首次消费</th>
-							<th style="text-align: center;">最近消费</th>
+							<!-- <th style="text-align: center;">首次消费</th>
+							<th style="text-align: center;">最近消费</th> -->
 							<th style="text-align: center;">所属店铺</th>
 							<th style="text-align: center;">操作</th>
 						</tr>
@@ -227,12 +227,12 @@
 									</c:if>
 								</td>
 								<td>${users.mobile}</td>
-								<td>${users.level}</td>
+								<%-- <td>${users.level}</td> --%>
 								<td>${users.levelvalue }</td>
 								<td>${users.beautyName }</td>
 								<td><fmt:formatDate value="${users.regTime}" pattern="yyyy-MM-dd " /></td>
-								<td><fmt:formatDate value="${users.firstDate}" pattern="yyyy-MM-dd " /></td>
-								<td><fmt:formatDate value="${users.lastDate}" pattern="yyyy-MM-dd " /></td>
+								<%-- <td><fmt:formatDate value="${users.firstDate}" pattern="yyyy-MM-dd " /></td>
+								<td><fmt:formatDate value="${users.lastDate}" pattern="yyyy-MM-dd " /></td> --%>
 								<td>${users.shopName }</td>
 								<td>
 									<button class="btn btn-info btn-xs" onclick='top.openTab("${ctx}/crm/user/userDetail?userId=${users.userId}&franchiseeId=${detail.franchiseeId}","客户详情", false)'>详情</button>
