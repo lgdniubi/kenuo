@@ -111,6 +111,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			}
 		}
 		save(modelFranchisee);
+		updateApplyStatus(modelFranchisee);
 	}
 
 	//手艺人权益变更的时候删除以前的角色
@@ -131,11 +132,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	 * @param modelFranchisee
 	 */
 	private void save(ModelFranchisee modelFranchisee) {
-		UserCheck ck = new UserCheck();
-		ck.setUserid(modelFranchisee.getUserid());
-		ck.setId(modelFranchisee.getApplyid());
-		ck.setStatus("3");//更改状态已授权
-		userCheckDao.editUserCheck(ck );
+//		updateApplyStatus(modelFranchisee);
 		if (StringUtils.isEmpty(modelFranchisee.getId())) {
 			modelFranchisee.preInsert();
 			userCheckDao.saveModelFranchisee(modelFranchisee);
@@ -143,6 +140,14 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			modelFranchisee.preUpdate();
 			userCheckDao.editModelFranchisee(modelFranchisee);
 		}
+	}
+	//更改授权状态为已授权
+	private void updateApplyStatus(ModelFranchisee modelFranchisee) {
+		UserCheck ck = new UserCheck();
+		ck.setUserid(modelFranchisee.getUserid());
+		ck.setId(modelFranchisee.getApplyid());
+		ck.setStatus("3");//更改状态已授权
+		userCheckDao.editUserCheck(ck );
 	}
 
 	/**
@@ -186,6 +191,8 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		}
 		updateInvitationAndPush(find);	//向邀请表和推送消息表更改数据，把所有推送消息设置为未通过，邀请记录：没同意的设置为3会员拒绝，同意的设置为2商家拒绝。
 		save(modelFranchisee);
+		modelFranchisee.setUserid(find.getUserid());
+		updateApplyStatus(modelFranchisee);
 //		int a = 1/0;
 	}
 

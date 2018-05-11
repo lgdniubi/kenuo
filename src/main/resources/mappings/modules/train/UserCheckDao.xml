@@ -49,7 +49,7 @@
 <!-- 			<if test="dbName == 'oracle'">'%'||#{mobile}||'%'</if> 
 	<if test="dbName == 'mysql'">CONCAT('%', #{mobile}, '%')</if> -->
 		</if>
-		<if test="status == 0">
+		<if test="status != '' and status == 0">
 			AND tap.status = 0
 		</if>
 		<if test="status == 2">

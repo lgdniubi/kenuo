@@ -170,9 +170,9 @@ public class UserCheckController extends BaseController{
 		if ("setPermiss".equals(opflag)){
 			if("syr".equals(userCheck.getType())){
 				ModelFranchisee modelFranchisee = userCheckService.getModelFranchiseeByUserid(userCheck.getUserid());
-				modelFranchisee.setApplyid(userCheck.getId());
 				model.addAttribute("modelFranchisee",modelFranchisee);
 				model.addAttribute("userid",userCheck.getUserid());
+				model.addAttribute("applyid",userCheck.getId());
 				return "modules/train/syrForm";
 			}
 			if("qy".equals(userCheck.getType())){

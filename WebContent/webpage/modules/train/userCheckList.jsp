@@ -16,6 +16,7 @@
 		//重置表单
 		function resetnew(){
 			$("#name").val("");
+			$("#status").val("");
 			reset();
 		}
 		
@@ -98,7 +99,7 @@
 					<div class="row">
 						<div class="col-sm-12">
 							<div class="pull-left">
-								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="search()" title="刷新"><i class="glyphicon glyphicon-repeat"></i> 刷新</button>
+								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新"><i class="glyphicon glyphicon-repeat"></i> 刷新</button>
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="wait()" title="待审核">待审核</button>
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="hasCheck()" title="已审核">已审核</button>
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="hasAudit()" title="已授权">已授权</button>
@@ -144,12 +145,13 @@
 									<td style="text-align: left;">
 									<shiro:hasPermission name="train:userCheck:update">
 										<c:if test="${userCheck.status == 2 || userCheck.status == 3}">
-											<c:if test="${userCheck.type eq 'qy' && userCheck.auditType eq userCheck.type}">
+						    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.auditType}&opflag=setPermiss','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
+											<%-- <c:if test="${userCheck.type eq 'qy' && userCheck.auditType eq userCheck.type}">
 						    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.auditType}&opflag=setPermiss','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
 											</c:if>
 											<c:if test="${userCheck.type eq 'pt' || userCheck.type eq 'syr'}">
 						    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.auditType}&opflag=setPermiss','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
-											</c:if>
+											</c:if> --%>
 										</c:if>
 										<c:if test="${userCheck.status == 0}">
 					    						<a href="#" onclick="checkBtn(${userCheck.id},'${userCheck.userid}','${userCheck.auditType}')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>

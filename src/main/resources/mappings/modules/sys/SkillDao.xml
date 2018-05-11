@@ -66,7 +66,7 @@
 		DELETE FROM train_skill_label WHERE id IN (SELECT tt.id FROM (SELECT t.id from train_skill_label t WHERE t.`name`= #{name}) tt);
 	</delete>
 	<!-- 新增技能标签 -->
-	<insert id="insertSkill" parameterType="Skill">
+	<insert id="insertSkill" parameterType="Skill" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO train_skill_label(
 			name,
 			description,
