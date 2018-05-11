@@ -79,7 +79,57 @@
 		    LEFT JOIN mtmydb.fcsd_question_solve s ON q.id = s.question_id
 		    LEFT JOIN trains.sys_user h ON h.id = q.create_by
 		    LEFT JOIN mtmydb.mtmy_brand v ON q.brand_type=v.band_id
-		    WHERE 1=1
+			WHERE	1=1
+	          <if test="brandType!=null and brandType!=''">
+	            and q.brand_type=#{brandType}
+	          </if>		
+	          <if test="status!=null and status!=''">
+	            and q.q_status=#{status}
+	          </if>
+	           <if test="member!=null and member!=''">
+	            and q.is_member=#{member}
+	          </if>
+	          <if test="name!=null and name!=''">
+	            AND (q.name LIKE CONCAT('%', #{name}, '%') OR q.nickname LIKE CONCAT('%', #{name}, '%'))
+	          </if>
+<!-- 	          <if test="redirectUserId!=null and redirectUserId!=''">
+	            and s.redirect_user_id=#{redirectUserId}
+	          </if> -->
+	          <if test="stamp!=null and stamp!=''"> 
+	            and s.redirect_user_id=s_user_id 
+	          </if>
+	          <if test="stamp==null or stamp==''"> 
+	            and s.redirect_user_id=#{redirectUserId}
+	          </if>
+	          <if test="mobile!=null and mobile!=''">
+	            and (q.mobile=#{mobile} or q.nickname=#{mobile})
+	          </if>
+		    ORDER BY q.id DESC
+	</select>
+	
+	<!-- 表单遍历 -->
+	<select id="newfindPage" resultType="Complain">
+			SELECT 
+			    q.id AS id,
+			    q.is_member AS member,
+			    q.q_theme AS theme,
+			    q.q_type AS questionType,
+			  	v.name AS brandType,
+			    q.nickname AS nickName,
+			    q.name AS name, 
+			   	q.create_date AS creatDate,
+			    q.record_time AS recordTime,
+			    q.q_degree AS degree,
+			    h.name AS creatBy,
+		        (SELECT u.name FROM mtmydb.fcsd_question_solve k LEFT JOIN trains.sys_user u ON u.id = k.s_user_id WHERE k.question_id = q.id ORDER BY k.create_date DESC LIMIT 1)	AS handler,
+			  	q.q_status AS status,
+		       (SELECT f.redirect_explain FROM mtmydb.fcsd_question_solve f WHERE f.question_id = q.id ORDER BY f.create_date DESC LIMIT 1)	AS changeTimes,
+		       question_source AS questionSource  
+		    FROM mtmydb.fcsd_question q
+		    LEFT JOIN mtmydb.fcsd_question_solve s ON q.id = s.question_id
+		    LEFT JOIN trains.sys_user h ON h.id = q.create_by
+		    LEFT JOIN mtmydb.mtmy_brand v ON q.brand_type=v.band_id
+		    ${sqlMap.dsf}
 	          <if test="brandType!=null and brandType!=''">
 	            and q.brand_type=#{brandType}
 	          </if>		
@@ -137,7 +187,7 @@
 	<select id="detailed" resultType="Complain">
 			SELECT
 			    a.id AS id,
-			    nickname AS nickName,
+			    b.nickname AS nickName,
 			    a.name AS name,
 			    a.mobile AS mobile,
 			    brand_type AS brandType,

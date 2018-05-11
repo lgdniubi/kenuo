@@ -899,6 +899,10 @@ public class ReturnedGoodsController extends BaseController {
 		returnedGoods.setOrderId(turnOverDetails.getOrderId());
 		returnedGoods.setReturnedId(turnOverDetails.getDetailsId());
 		turnOverDetails = returnedGoodsService.getTurnover(returnedGoods);
+		//根据营业额中订单商品中间表ID获取到商品id
+		String goodsId = ordergoodService.getGoodsIdByRecId(turnOverDetails.getMappingId());
+		turnOverDetails.setGoodsId(goodsId);
+		
 		String shopTurnover = "";//jsp界面的页面展示字符串
 		//获取店营业额明细列表(sum营业额)
 		List<TurnOverDetails> list = returnedGoodsService.getMtmyTurnoverDetailsList(turnOverDetails);

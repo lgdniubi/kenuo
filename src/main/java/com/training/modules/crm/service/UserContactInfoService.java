@@ -24,14 +24,6 @@ public class UserContactInfoService extends CrudService<UserContactInfoDao,UserC
 	private UserContactInfoDao dao;
 	
 	/**
-	 * @param userId
-	 * @return List<UserContactInfo>
-	 * @description 查询用户联系信息
-	 */
-	public UserContactInfo getUserContactInfo(String userId){
-		return dao.get(userId);
-	}
-	/**
 	 * @param UserContactInfo实体类 
 	 * @return int
 	 * @description 修改用户联系信息

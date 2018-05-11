@@ -45,11 +45,11 @@
 					success:function(date){
 						if(date=="success"){
 							top.layer.alert('删除成功!', {icon: 1, title:'提醒'});
-							window.location="${ctx}/ec/theme/themeGoodsList?themeId="+themeId;
+							window.location="${ctx}/ec/theme/themeGoodsList?themeId="+themeId+"&isOpen="+$("#isOpen").val();
 						}
 						if(date=="error"){
 							top.layer.alert('删除失败!', {icon: 2, title:'提醒'});
-							window.location="${ctx}/ec/theme/themeGoodsList?themeId="+themeId;
+							window.location="${ctx}/ec/theme/themeGoodsList?themeId="+themeId+"&isOpen="+$("#isOpen").val();
 						}
 									
 					},
@@ -77,11 +77,11 @@
 			success:function(date){
 				if(date=="success"){
 					top.layer.alert('删除成功!', {icon: 1, title:'提醒'});
-					window.location="${ctx}/ec/theme/themeGoodsList?themeId="+themeId;
+					window.location="${ctx}/ec/theme/themeGoodsList?themeId="+themeId+"&isOpen="+$("#isOpen").val();
 				}
 				if(date=="error"){
 					top.layer.alert('删除失败!', {icon: 2, title:'提醒'});
-					window.location="${ctx}/ec/theme/themeGoodsList?themeId="+themeId;
+					window.location="${ctx}/ec/theme/themeGoodsList?themeId="+themeId+"&isOpen="+$("#isOpen").val();
 				}
 							
 			},
@@ -115,11 +115,11 @@
 					success:function(data){
 						if(data=="success"){
 							top.layer.alert('保存成功!', {icon: 1, title:'提醒'});
-							window.location="${ctx}/ec/theme/themeGoodsList?themeId="+id;	
+							window.location="${ctx}/ec/theme/themeGoodsList?themeId="+id+"&isOpen="+$("#isOpen").val();	
 						}
 						if(data=="error"){
 							top.layer.alert('保存失败!', {icon: 2, title:'提醒'});
-							window.location="${ctx}/ec/theme/themeGoodsList?themeId="+id;
+							window.location="${ctx}/ec/theme/themeGoodsList?themeId="+id+"&isOpen="+$("#isOpen").val();
 						}
 									
 					},
@@ -147,7 +147,7 @@
 	});
 	
 	function newReset(){
-		window.location = "${ctx}/ec/theme/themeGoodsList?themeId="+${themeMapping.themeId};
+		window.location = "${ctx}/ec/theme/themeGoodsList?themeId="+${themeMapping.themeId}+"&isOpen="+$("#isOpen").val();
 	}
 </script>
 </head>
@@ -160,6 +160,7 @@
 						<!-- 翻页隐藏文本框 -->
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+						<input id="isOpen" name="isOpen" type="hidden" value="${isOpen}"/>
 							<table>
 								<tr>
 									<td>商品ID：</td>

@@ -60,6 +60,8 @@ public class Office extends TreeEntity<Office> {
 	
 	private String officeCode;		//机构唯一编码（和编码不一样，是固定的）
 	
+	private int isTest;            //测试账号标识（0：正常；1：测试）
+	
 	public String getOfficeCode() {
 		return officeCode;
 	}
@@ -343,6 +345,14 @@ public class Office extends TreeEntity<Office> {
 
 	public void setIconUrl(String iconUrl) {
 		this.iconUrl = iconUrl;
+	}
+
+	public int getIsTest() {
+		return isTest;
+	}
+
+	public void setIsTest(int isTest) {
+		this.isTest = isTest;
 	}
 	
 }

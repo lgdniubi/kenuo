@@ -68,35 +68,43 @@
 					<div class="nav">
 						<!-- 翻页隐藏文本框 -->
 						<div class="text-danger" style="margin:8px">
-									<p class="text-primary">
-										<span >${userDetail.nickname}</span>的客户档案--请注意保密
-									</p>
+							<p class="text-primary">
+								<span >${userDetail.nickname}</span>的客户档案--请注意保密
+							</p>
 						</div>
-					 <ul class="layui-tab-title">
-						<li role="presentation"><a
-									href="${ctx}/crm/user/userDetail?userId=${userId}">基本资料</a></li>
-						<li role="presentation"><a
-									href="${ctx}/crm/physical/skin?userId=${userId}">身体状况</a></li>
-						<li role="presentation"><a
-									href="${ctx}/crm/schedule/list?userId=${userId}">护理时间表</a></li>
-						<li role="presentation"><a
-									href="${ctx}/crm/orders/list?userId=${userId}">客户订单</a></li>
-						<li role="presentation"><a
-									href="${ctx}/crm/coustomerService/list?userId=${userId}">售后</a></li>
-						<li role="presentation"><a
-									href="${ctx}/crm/consign/list?userId=${userId}">物品寄存</a></li>
-						<li role="presentation" class="layui-this"><a
-									href="${ctx}/crm/goodsUsage/list?userId=${userId}">产品使用记录</a></li>
-						<li role="presentation"><a
-									href="${ctx}/crm/user/account?userId=${userId}">账户总览</a></li>
-						<li role="presentation"><a
-									href="${ctx}/crm/invitation/list?userId=${userId}">邀请明细</a></li>
-						<li role="presentation">
-							<shiro:hasPermission name="crm:store:list">	
-							<a onclick='top.openTab("${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1","会员投诉", false)'
-								>投诉咨询</a>
-							</shiro:hasPermission>
-						</li>
+						 <ul class="layui-tab-title">
+							<li role="presentation">
+								<a href="${ctx}/crm/user/userDetail?userId=${userId}&franchiseeId=${franchiseeId}">基本资料</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/physical/skin?userId=${userId}&franchiseeId=${franchiseeId}">身体状况</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/schedule/list?userId=${userId}&franchiseeId=${franchiseeId}">护理时间表</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/orders/list?userId=${userId}&franchiseeId=${franchiseeId}">客户订单</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/coustomerService/list?userId=${userId}&franchiseeId=${franchiseeId}">售后</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/consign/list?userId=${userId}&franchiseeId=${franchiseeId}">物品寄存</a>
+							</li>
+							<li role="presentation" class="layui-this">
+								<a href="${ctx}/crm/goodsUsage/list?userId=${userId}&franchiseeId=${franchiseeId}">产品使用记录</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/user/account?userId=${userId}&franchiseeId=${franchiseeId}">账户总览</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/invitation/list?userId=${userId}&franchiseeId=${franchiseeId}">邀请明细</a>
+							</li>
+							<li role="presentation">
+								<shiro:hasPermission name="crm:store:list">	
+									<a href="${ctx}/crm/store/questionCrmList?mobile=${userDetail.mobile}&userId=${userId}&franchiseeId=${franchiseeId}&stamp=1">投诉咨询</a>
+								</shiro:hasPermission>
+							</li>
 						</ul>
 					</div>
 				</div>
@@ -109,29 +117,26 @@
 						<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();" />
 						<!-- 支持排序 -->
 						<input id="userId" name="userId" type="hidden" value="${userDetail.userId}" />
+						<input id="franchiseeId" name="franchiseeId" type="hidden" value="${franchiseeId}" />
 					</form>	
 					
 						<div class="pull-left col-md-1">
 							<shiro:hasPermission name="crm:goodsUsage:exe">
-								<table:addRow url="${ctx}/crm/goodsUsage/add?userId=${userId}" title="用户使用记录"></table:addRow><!-- 增加按钮 -->
+								<table:addRow url="${ctx}/crm/goodsUsage/add?userId=${userId}&franchiseeId=${franchiseeId}" title="用户使用记录"></table:addRow><!-- 增加按钮 -->
 						    </shiro:hasPermission>
 						</div>
 						<div class="row">
 						     <form action="${ctx}/crm/goodsUsage/list" method="post"> 
 								<input name="userId" value="${userDetail.userId}" type="hidden"	>
-								<input id="startDate" name="startDate"
-								type="text" maxlength="20"
-								class="laydate-icon form-control layer-date input-sm"
-								value="<fmt:formatDate value="${detail.startDate}" pattern="yyyy-MM-dd"/>"
-								placeholder="开始时间" readonly="readonly" style="width: 185px;" />
-							— <input id="endDate" name="endDate" type="text" maxlength="20"
-								class=" laydate-icon form-control layer-date input-sm"
-								value="<fmt:formatDate value="${detail.endDate}" pattern="yyyy-MM-dd"/>"
-								placeholder="结束时间" readonly="readonly" style="width: 185px;" />
-								<button class="btn btn-primary btn-rounded btn-outline btn-sm "
-									type="submit">
-									<i class="fa fa-search"></i> 查询
-								</button>
+								<input id="franchiseeId" name="franchiseeId" type="hidden" value="${franchiseeId}" />
+								<input id="startDate" name="startDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
+									value="<fmt:formatDate value="${detail.startDate}" pattern="yyyy-MM-dd"/>"
+									placeholder="开始时间" readonly="readonly" style="width: 185px;" />
+								— 
+								<input id="endDate" name="endDate" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm"
+									value="<fmt:formatDate value="${detail.endDate}" pattern="yyyy-MM-dd"/>"
+									placeholder="结束时间" readonly="readonly" style="width: 185px;" />
+								<button class="btn btn-primary btn-rounded btn-outline btn-sm " type="submit"> <i class="fa fa-search"></i> 查询</button>
 							</form>	
 						</div>
 					</div>
@@ -139,7 +144,6 @@
 					class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 					<thead>
 						<tr>
-							<!-- 							 <th style="text-align: center;">编号</th> -->
 							<th style="text-align: center;">产品名称</th>
 							<th style="text-align: center;">购买数量</th>
 							<th style="text-align: center;">开始使用日期</th>
@@ -155,16 +159,14 @@
 							<tr>
 								<td>${item.goodsName}</td>
 								<td>${item.usageNum}</td>
-								<td><fmt:formatDate value="${item.startDate}"
- 										pattern="yyyy-MM-dd " /></td>
- 								<td><fmt:formatDate value="${item.endDate}"
- 										pattern="yyyy-MM-dd " /></td>
+								<td><fmt:formatDate value="${item.startDate}" pattern="yyyy-MM-dd " /></td>
+ 								<td><fmt:formatDate value="${item.endDate}" pattern="yyyy-MM-dd " /></td>
 								<td>${item.effection}</td>
 								<td>${item.feedback}</td>
 								<td>${item.remark}</td> 
 								<td>
 									<shiro:hasPermission name="crm:goodsUsage:exe">
- 									<a href="#" onclick="openDialog('修改使用记录', '${ctx}/crm/goodsUsage/update?usageId=${item.usageId}&userId=${userId}','800px', '500px')"
+ 									<a href="#" onclick="openDialog('修改使用记录', '${ctx}/crm/goodsUsage/update?usageId=${item.usageId}&userId=${userId}&franchiseeId=${franchiseeId}','800px', '500px')"
  								  		 class="btn btn-success btn-xs" ><i class="fa fa-search-plus"></i>修改</a> 
 								    </shiro:hasPermission>
 								</td> 

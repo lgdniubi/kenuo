@@ -121,7 +121,7 @@
 			<include refid="franchiseeColumns"/>
 			FROM sys_franchisee f
 			<include refid="franchiseeJoins"/>
-		WHERE f.del_flag = 0 AND f.parent_id= #{parent.id}
+		WHERE f.parent_id= #{parent.id}
 		ORDER BY f.code
 	</select>
 	

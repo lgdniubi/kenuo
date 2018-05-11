@@ -26,7 +26,7 @@ public class ShapeFile extends DataEntity<ShapeFile> {
 	private String leftThign;			    //左大腿
 	private String rightThign;				//右大腿
 
-	
+	private String franchiseeId;        //所属商家id
 	
 	public String getUserId() {
 		return userId;
@@ -109,4 +109,11 @@ public class ShapeFile extends DataEntity<ShapeFile> {
 	public void setWaist(String waist) {
 		this.waist = waist;
 	}
+	public String getFranchiseeId() {
+		return franchiseeId;
+	}
+	public void setFranchiseeId(String franchiseeId) {
+		this.franchiseeId = franchiseeId;
+	}
+	
 }

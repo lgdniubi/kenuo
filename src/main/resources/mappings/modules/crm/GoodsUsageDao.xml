@@ -20,7 +20,7 @@
 		LEFT JOIN
 			mtmydb.mtmy_goods mg ON mugu.goods_id = mg.goods_id
 		WHERE 1=1 AND mugu.mtmy_user_id =#{userId}
-		
+		AND mugu.franchisee_id =#{franchiseeId}
 		<if test="startDate != null">
 			<![CDATA[AND mugu.start_time >= #{startDate,jdbcType=DATE}]]>
 		</if>
@@ -35,6 +35,7 @@
 		SELECT
 			mugu.id AS 'usageId',
 			mugu.mtmy_user_id AS 'userId',
+			mugu.franchisee_id AS 'franchiseeId',
 			mugu.goods_id AS 'goodsId',
 			mugu.usage_num AS 'usageNum',
 			mugu.start_time AS 'startDate',
@@ -55,6 +56,7 @@
 	<insert id="insert">
 		INSERT INTO mtmydb.mtmy_user_goods_usage(
 			mtmy_user_id,
+			franchisee_id,
 			goods_id,
 			goods_name,
 			usage_num,
@@ -68,6 +70,7 @@
 			)
 		VALUES(
 			#{userId},
+			#{franchiseeId},
 			#{goodsId},
 			#{goodsName},
 			#{usageNum},
@@ -76,7 +79,7 @@
 			#{effection},
 			#{feedback},
 			#{remark},
-			#{createBy.name},
+			#{createBy.id},
 			SYSDATE()
 		)
 	</insert>

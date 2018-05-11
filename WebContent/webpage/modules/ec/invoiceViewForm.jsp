@@ -233,7 +233,7 @@
 						<label><font color="red">*</font>发票类型：</label>
 						<form:select path="invoiceType"  class="form-control" style="width:185px;" onchange="selectType(this)">
 							<form:option value="1">个人普票</form:option>
-							<form:option value="2">公司普通</form:option>
+							<form:option value="2">公司普票</form:option>
 							<form:option value="3">公司专票</form:option>
 						</form:select>
 						<p></p>

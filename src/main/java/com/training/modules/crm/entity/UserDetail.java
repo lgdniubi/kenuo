@@ -68,6 +68,9 @@ public class UserDetail extends DataEntity<UserDetail> {
   	//新添字段(对应mtmy_users中真实姓名remarkname)
   	private String remarkname;
   	
+  	private String franchiseeId;	//绑定商家id
+  	private String franchiseeName;	//绑定商家id
+  	
   	public String getNickname() {
 		return nickname;
 	}
@@ -470,5 +473,21 @@ public class UserDetail extends DataEntity<UserDetail> {
 		this.remarkname = remarkname;
 	}
 
+	public String getFranchiseeId() {
+		return franchiseeId;
+	}
+
+	public void setFranchiseeId(String franchiseeId) {
+		this.franchiseeId = franchiseeId;
+	}
+
+	public String getFranchiseeName() {
+		return franchiseeName;
+	}
+
+	public void setFranchiseeName(String franchiseeName) {
+		this.franchiseeName = franchiseeName;
+	}
+	
 }
 

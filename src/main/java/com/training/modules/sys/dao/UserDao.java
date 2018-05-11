@@ -362,4 +362,10 @@ public interface UserDao extends CrudDao<User> {
 	 */
 	public UserPuTo getUserPuTo(String id);
 	
+	/**
+	 * 将逻辑删除的用户用户还原
+	 * @param user
+	 */
+	public void onJob(User user);
+
 }

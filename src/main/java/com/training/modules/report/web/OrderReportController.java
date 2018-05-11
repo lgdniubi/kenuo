@@ -35,7 +35,7 @@ import net.sf.json.util.CycleDetectionStrategy;
  */
 
 @Controller
-@RequestMapping(value = "${adminPath}/report/order")
+@RequestMapping(value = "${adminPath}/mtmyreport/order")
 public class OrderReportController extends BaseController {
 
 	@Autowired

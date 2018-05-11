@@ -34,35 +34,43 @@
 					<div class="nav">
 						<!-- 翻页隐藏文本框 -->
 						<div class="text-danger" style="margin:8px">
-									<p class="text-primary">
-										<span >${userDetail.nickname}</span>的客户档案--请注意保密
-									</p>
+							<p class="text-primary">
+								<span >${userDetail.nickname}</span>的客户档案--请注意保密
+							</p>
 						</div>
 						<div class="layui-tab">
 							<ul class="layui-tab-title">
-								<li role="presentation"><a
-									href="${ctx}/crm/user/userDetail?userId=${userId}">基本资料</a></li>
-								<li role="presentation" class="layui-this"><a
-									href="${ctx}/crm/physical/skin?userId=${userId}">身体状况</a></li>
-								<li role="presentation"><a
-									href="${ctx}/crm/schedule/list?userId=${userId}">护理时间表</a></li>
-								<li role="presentation"><a
-									href="${ctx}/crm/orders/list?userId=${userId}">客户订单</a></li>
-								<li role="presentation"><a
-									href="${ctx}/crm/coustomerService/list?userId=${userId}">售后</a></li>
-								<li role="presentation"><a
-									href="${ctx}/crm/consign/list?userId=${userId}">物品寄存</a></li>
-								<li role="presentation"><a
-									href="${ctx}/crm/goodsUsage/list?userId=${userId}">产品使用记录</a></li>
-								<li role="presentation"><a
-									href="${ctx}/crm/user/account?userId=${userId}">账户总览</a></li>
-								<li role="presentation"><a
-									href="${ctx}/crm/invitation/list?userId=${userId}">邀请明细</a></li>
 								<li role="presentation">
-								<shiro:hasPermission name="crm:store:list">	
-								<a onclick='top.openTab("${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1","会员投诉", false)'
-										>投诉咨询</a>
-								</shiro:hasPermission>
+									<a href="${ctx}/crm/user/userDetail?userId=${userId}&franchiseeId=${franchiseeId}">基本资料</a>
+								</li>
+								<li role="presentation" class="layui-this">
+									<a href="${ctx}/crm/physical/skin?userId=${userId}&franchiseeId=${franchiseeId}">身体状况</a>
+								</li>
+								<li role="presentation">
+									<a href="${ctx}/crm/schedule/list?userId=${userId}&franchiseeId=${franchiseeId}">护理时间表</a>
+								</li>
+								<li role="presentation">
+									<a href="${ctx}/crm/orders/list?userId=${userId}&franchiseeId=${franchiseeId}">客户订单</a>
+								</li>
+								<li role="presentation">
+									<a href="${ctx}/crm/coustomerService/list?userId=${userId}&franchiseeId=${franchiseeId}">售后</a>
+								</li>
+								<li role="presentation">
+									<a href="${ctx}/crm/consign/list?userId=${userId}&franchiseeId=${franchiseeId}">物品寄存</a>
+								</li>
+								<li role="presentation">
+									<a href="${ctx}/crm/goodsUsage/list?userId=${userId}&franchiseeId=${franchiseeId}">产品使用记录</a>
+								</li>
+								<li role="presentation">
+									<a href="${ctx}/crm/user/account?userId=${userId}&franchiseeId=${franchiseeId}">账户总览</a>
+								</li>
+								<li role="presentation">
+									<a href="${ctx}/crm/invitation/list?userId=${userId}&franchiseeId=${franchiseeId}">邀请明细</a>
+								</li>
+								<li role="presentation">
+									<shiro:hasPermission name="crm:store:list">	
+										<a href="${ctx}/crm/store/questionCrmList?mobile=${userDetail.mobile}&userId=${userId}&franchiseeId=${franchiseeId}&stamp=1">投诉咨询</a>
+									</shiro:hasPermission>
 							 	</li>
 							</ul>
 						</div>
@@ -73,12 +81,14 @@
 			<div class="ibox-content">
 				<div class="ibox-title">
 					<div class="layui-tab layui-tab-brief">
-							<ul class="layui-tab-title">
-								<li role="presentation" class="layui-this"><a
-									href="${ctx}/crm/physical/skin?userId=${userId}">皮肤档案</a></li>
-								<li role="presentation" ><a
-									href="${ctx}/crm/physical/shape?userId=${userId}">形体档案</a></li>
-							</ul>
+						<ul class="layui-tab-title">
+							<li role="presentation" class="layui-this">
+								<a href="${ctx}/crm/physical/skin?userId=${userId}&franchiseeId=${franchiseeId}">皮肤档案</a>
+						 	</li>
+							<li role="presentation" >
+								<a href="${ctx}/crm/physical/shape?userId=${userId}&franchiseeId=${franchiseeId}">形体档案</a>
+							</li>
+						</ul>
 					</div>
 				</div>
 			</div>
@@ -89,6 +99,7 @@
 							<div class="row">
 								<div class="col-xs-12 col-md-8">
 									<input type="hidden" value="${userDetail.userId}" name="userId">
+									<input type="hidden" value="${franchiseeId}" name="franchiseeId">
 									<c:forEach items="${dictList}" var="row">
 										<c:if test="${row.actionType=='1'}">  
 											<div class="row" style="margin:40px">
@@ -130,16 +141,16 @@
 							</div>
 					</fieldset>
 					</form>
-						<div class="row">
-						<shiro:hasPermission name="crm:userInfo:edit">
-							 <div class="col-md-2">
-								<button style="float:right" class="btn btn-success" id="enableEdit">点此编辑</button>
-							</div>
-							<div class="col-md-2">
-								<button type="submit" class="btn btn-info" id="edit">保存</button>
-							</div>
-						</shiro:hasPermission>
+					<div class="row">
+					<shiro:hasPermission name="crm:userInfo:edit">
+						 <div class="col-md-2">
+							<button style="float:right" class="btn btn-success" id="enableEdit">点此编辑</button>
 						</div>
+						<div class="col-md-2">
+							<button type="submit" class="btn btn-info" id="edit">保存</button>
+						</div>
+					</shiro:hasPermission>
+					</div>
 				</div>
 			</div>
 		</div>

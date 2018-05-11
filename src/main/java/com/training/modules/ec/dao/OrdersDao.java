@@ -166,7 +166,7 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @param orderid
 	 * @return
 	 */
-	public Orders selectOrderById(String orderid);
+	public Orders selectOrderById(Orders orders);
 	/**
 	 * 修改虚拟订单
 	 * @param orders
@@ -374,4 +374,11 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @param orderId
 	 */
 	public void insertForHonour(@Param(value="newCreateTime")Date newCreateTime,@Param(value="orderId")String orderId);
+	
+	/**
+	 * 查询实物发货到店的取货店铺
+	 * @param orderId
+	 * @return
+	 */
+	public String queryReservationShopId(String orderId);
 }

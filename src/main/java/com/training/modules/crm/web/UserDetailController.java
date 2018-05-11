@@ -2,7 +2,6 @@ package com.training.modules.crm.web;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -22,9 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.training.common.config.Global;
 import com.training.common.persistence.Page;
-import com.training.common.track.thread.TrackThread;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.crm.dao.AvaliableCouponDao;
@@ -48,6 +45,7 @@ import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.SystemService;
 import com.training.modules.sys.utils.BugLogUtils;
+import com.training.modules.sys.utils.UserUtils;
 
 /**
  * kenuo 
@@ -93,12 +91,23 @@ public class UserDetailController extends BaseController {
 	 * @description
 	 */
 	@RequestMapping(value = "userList")
-	public String getUserList(UserDetail userDetail, HttpServletRequest request, HttpServletResponse response,
-			Model model) {
+	public String getUserList(UserDetail userDetail, HttpServletRequest request, HttpServletResponse response, Model model) {
 		try {
+			//先获取当前操作人的归属商家
+			User user = UserUtils.getUser();
+			String franchiseeId = user.getCompany().getId();
+			if(franchiseeId.equals("1") && userDetail != null && StringUtils.isEmpty(userDetail.getFranchiseeId())){
+				userDetail.setFranchiseeId("1000001");//如果是登云级,默认"可诺"
+				userDetail.setFranchiseeName("可诺丹婷");
+			}else if(!franchiseeId.equals("1") && userDetail != null && StringUtils.isEmpty(userDetail.getFranchiseeId())){
+				userDetail.setFranchiseeId(franchiseeId);//不是登云级,获取操作人的所属商家
+				userDetail.setFranchiseeName(user.getCompany().getName());
+			}
+			model.addAttribute("isfranchisee", franchiseeId);//当前操作人是登云级,展示可选择商家
+			
 			String keyword =userDetail.getKeyword();
 			//判断是否为手机号
-			if (null!=keyword && keyword.trim().length()==11 && StringUtils.isNumeric(keyword)) {
+			if (StringUtils.isNotEmpty(keyword)) {
 				//用手机号无权限过滤去查	
 				Page<UserDetail> page  = userDetailService.getUserWithoutScope(new Page<UserDetail>(request, response), userDetail);
 				//如果查到一条
@@ -126,26 +135,43 @@ public class UserDetailController extends BaseController {
 	 */
 	// @RequiresPermissions("crm:userInfo:view")
 	@RequestMapping(value = "userDetail")
-	public String getUserDetail(String userId, HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String getUserDetail(String userId,String franchiseeId, HttpServletRequest request, HttpServletResponse response, Model model) {
 		try {
 			if ( null==userId ||userId.trim().length()<=0 ) {
 				model.addAttribute("userId", userId);
 			} else {
+				UserDetail uDetail = new UserDetail();
+				uDetail.setUserId(userId);
+				uDetail.setFranchiseeId(franchiseeId);
+				
+				//获取该用户的绑定店铺信息
+				UserDetail officeDetail = userDetailService.getOfficeByDetail(uDetail);
+				
 				// 取得用户详情
-				UserDetail userDetail = userDetailService.get(userId);
-				if (null!=userDetail) {
-					userDetail.setUserId(userId);
+				uDetail = userDetailService.get(uDetail);
+				if (null!=uDetail) {
+					if(null != officeDetail){//该用户的绑定店铺不存在,就不存
+						uDetail.setBeautyId(officeDetail.getBeautyId());
+						uDetail.setBeautyName(officeDetail.getBeautyName());
+						uDetail.setOfficeId(officeDetail.getOfficeId());
+						uDetail.setOfficeName(officeDetail.getOfficeName());
+					}
+					
+					uDetail.setUserId(userId);
 					// 计算年龄
-					Date birthday = userDetail.getBirthday();
+					Date birthday = uDetail.getBirthday();
 					Integer age = BirthdayUtil.getAge(birthday);
-					userDetail.setAge(age);
-					// 取得操作日志
+					uDetail.setAge(age);
+					/*// 取得操作日志
 					UserOperatorLog log = new UserOperatorLog();
 					log.setOperatorType("1");
 					log.setUserId(userId);
-					List<UserOperatorLog> logList = logService.findList(log);
+					List<UserOperatorLog> logList = logService.findList(log);*/
 					// 取得联系信息
-					UserContactInfo contactInfo = contactInfoService.getUserContactInfo(userId);
+					UserContactInfo contactInfo = new UserContactInfo();
+					contactInfo.setUserId(userId);
+					contactInfo.setFranchiseeId(franchiseeId);
+					contactInfo = contactInfoService.get(contactInfo);
 					// 取得性格列表
 					CrmDict entity = new CrmDict();
 					entity.setType("character");
@@ -185,12 +211,18 @@ public class UserDetailController extends BaseController {
 					model.addAttribute("source", source);
 					model.addAttribute("character", character);
 					model.addAttribute("info", contactInfo);
-					model.addAttribute("logList", logList);
-					model.addAttribute("detail", userDetail);
+					model.addAttribute("detail", uDetail);
 					model.addAttribute("userId", userId);
+					model.addAttribute("franchiseeId", franchiseeId);
 				}else{
 					//
 					UserDetail nameEntity = userDetailService.getUserNickname(userId);
+					if(null != officeDetail){//该用户的绑定店铺不存在,就不存
+						nameEntity.setBeautyId(officeDetail.getBeautyId());
+						nameEntity.setBeautyName(officeDetail.getBeautyName());
+						nameEntity.setOfficeId(officeDetail.getOfficeId());
+						nameEntity.setOfficeName(officeDetail.getOfficeName());
+					}
 					// 取得性格列表
 					CrmDict entity = new CrmDict();
 					entity.setType("character");
@@ -231,6 +263,7 @@ public class UserDetailController extends BaseController {
 					model.addAttribute("detail", nameEntity);
 					model.addAttribute("character", character);
 					model.addAttribute("userId", userId);
+					model.addAttribute("franchiseeId", franchiseeId);
 				}
 			}
 		} catch (Exception e) {
@@ -249,14 +282,14 @@ public class UserDetailController extends BaseController {
 	@RequestMapping(value = "saveDetail")
 	public String saveUsetDetail(UserDetail entity,UserContactInfo info, HttpServletRequest request, HttpServletResponse response,Model model) {
 		String userId = entity.getUserId();
+		String franchiseeId = entity.getFranchiseeId();
 		if (null!=userId && userId.trim().length()>0) {
 			try {
-				UserDetail exists =  userDetailService.get(entity.getUserId());
-				UserContactInfo exists2 = contactInfoService.get(entity.getUserId());
+				UserDetail exists =  userDetailService.get(entity);
+				UserContactInfo exists2 = contactInfoService.get(info);
 				UserOperatorLog log = new UserOperatorLog();
 				if (null!=exists && null!=exists2 ) {
 					try {
-						userDetailService.updateMtmyUsers(entity);
 						if(!"".equals(entity.getOfficeId()) && entity.getOfficeId() != null){
 							customerService.saveCustomerOfficeBrauty(Integer.valueOf(entity.getUserId()),entity.getOfficeId(),entity.getBeautyId());
 						}
@@ -265,6 +298,7 @@ public class UserDetailController extends BaseController {
 						String detailChange = Comparison.compareObj(exists,entity);
 						String infoChange = Comparison.compareObj(exists2,info);
 						log.setUserId(userId);
+						log.setFranchiseeId(franchiseeId);
 						log.setOperatorType("1");
 						if ("未作修改".equals(infoChange)) {
 							log.setContent(detailChange);
@@ -281,7 +315,6 @@ public class UserDetailController extends BaseController {
 					}
 				}else if (null!=exists && null==exists2 ) {
 					try {
-						userDetailService.updateMtmyUsers(entity);
 						if(!"".equals(entity.getOfficeId()) && entity.getOfficeId() != null){
 							customerService.saveCustomerOfficeBrauty(Integer.valueOf(entity.getUserId()),entity.getOfficeId(),entity.getBeautyId());
 						}
@@ -289,6 +322,7 @@ public class UserDetailController extends BaseController {
 						userDetailService.updateSingle(entity);
 						String detailChange = Comparison.compareObj(exists,entity);
 						log.setUserId(userId);
+						log.setFranchiseeId(franchiseeId);
 						log.setOperatorType("1");
 						log.setContent("修改用户详细信息"+detailChange);
 						logService.save(log);
@@ -301,12 +335,12 @@ public class UserDetailController extends BaseController {
 					try {
 						contactInfoService.updateSingle(info);
 						userDetailService.save(entity);
-						userDetailService.updateMtmyUsers(entity);
 						if(!"".equals(entity.getOfficeId()) && entity.getOfficeId() != null){
 							customerService.saveCustomerOfficeBrauty(Integer.valueOf(entity.getUserId()),entity.getOfficeId(),entity.getBeautyId());
 						}
 						String infoChange = Comparison.compareObj(exists2,info);
 						log.setUserId(userId);
+						log.setFranchiseeId(franchiseeId);
 						log.setOperatorType("1");
 						log.setContent("创建新的用户详细记录;"+infoChange);
 						logService.save(log);
@@ -319,11 +353,11 @@ public class UserDetailController extends BaseController {
 					try {
 						contactInfoService.save(info);
 						userDetailService.save(entity);
-						userDetailService.updateMtmyUsers(entity);
 						if(!"".equals(entity.getOfficeId()) && entity.getOfficeId() != null){
 							customerService.saveCustomerOfficeBrauty(Integer.valueOf(entity.getUserId()),entity.getOfficeId(),entity.getBeautyId());
 						}
 						log.setUserId(userId);
+						log.setFranchiseeId(franchiseeId);
 						log.setOperatorType("1");
 						log.setContent("创建新的用户详细记录");
 						logService.save(log);
@@ -338,9 +372,27 @@ public class UserDetailController extends BaseController {
 				e.printStackTrace();
 			}
 		}
-		return "redirect:"+adminPath+"/crm/user/userDetail/?userId="+userId;
+		return "redirect:"+adminPath+"/crm/user/userDetail/?userId="+userId+"&franchiseeId="+franchiseeId;
 	}
-
+	
+	/**
+	 * 获取基本资料中的操作记录
+	 * @param log
+	 */
+	@RequestMapping("logDetail")
+	public String logDetail(UserOperatorLog log, HttpServletRequest request, HttpServletResponse response, Model model){
+		try {
+			// 取得操作日志
+			Page<UserOperatorLog> page = logService.findList(new Page<UserOperatorLog>(request, response), log);
+			model.addAttribute("page", page);
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+			addMessage(model, "查询出现问题或者超时");
+			e.printStackTrace();
+		}
+		return "modules/crm/logDetail";
+	}
+	
 	/**
 	 * 查找所属门店下的所有美容师
 	 * @param
@@ -423,7 +475,7 @@ public class UserDetailController extends BaseController {
 	 * @return String
 	 */
 	@RequestMapping(value = "account")
-	public String account(String userId,HttpServletRequest request, HttpServletResponse response,Model model, RedirectAttributes redirectAttributes) {
+	public String account(String userId, @RequestParam(value ="franchiseeId") String franchiseeId,HttpServletRequest request, HttpServletResponse response,Model model, RedirectAttributes redirectAttributes) {
 	
 		try {
 			UsersAccounts account = new UsersAccounts();
@@ -433,6 +485,7 @@ public class UserDetailController extends BaseController {
 			model.addAttribute("coupon",total);
 			model.addAttribute("account",entity);
 			model.addAttribute("userId",userId);
+			model.addAttribute("franchiseeId",franchiseeId);
 		} catch (NumberFormatException e) {
 			logger.debug(e.getMessage());
 			e.printStackTrace();

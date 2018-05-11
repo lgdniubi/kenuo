@@ -42,4 +42,18 @@ public interface QuartzStartConfigDao extends TreeDao<QuartzStartConfig> {
 	 * @return
 	 */
 	public int addQuartzStartConfig(List<QuartzStartConfig> list);
+	
+	/**
+	 * 根据key获取每天美耶对应value值
+	 * @param key
+	 * @return
+	 */
+	public String queryMtmyValue(String key);
+	
+	/**
+	 * 添加每天美耶定时器起始配置数据
+	 * @param list
+	 * @return
+	 */
+	public Integer addMtmyQuartzStartConfig(List<QuartzStartConfig> list);
 }

@@ -8,11 +8,6 @@
 		<link href="${ctxStatic}/layer-v2.0/layer/skin/layui.css" type="text/css" rel="stylesheet">
 	
 	<script type="text/javascript">
-// 	    function edit(){
-// 	    	$("userid").removeAttr("disabled"); 
-// 	    	$("sex").attr("disabled",false);
-// 	    	$("userid").removeAttr("disabled")
-// 	    }
 	    function save(){
 	    	$("#inputForm").submit();
 			return true;
@@ -40,35 +35,42 @@
 					<div class="nav" >
 						<!-- 翻页隐藏文本框 -->
 						<div class="text-danger" style="margin:8px">
-									<p class="text-primary">
-										<span >${userDetail.nickname}</span>的客户档案--请注意保密
-									</p>
+							<p class="text-primary">
+								<span >${userDetail.nickname}</span>的客户档案--请注意保密
+							</p>
 						</div>
 				      	 <ul class="layui-tab-title">
-				   
-							<li role="presentation"><a
-										href="${ctx}/crm/user/userDetail?userId=${userId}">基本资料</a></li>
-							<li role="presentation"><a
-										href="${ctx}/crm/physical/skin?userId=${userId}">身体状况</a></li>
-							<li role="presentation" class="layui-this"><a
-										href="${ctx}/crm/schedule/list?userId=${userId}">护理时间表</a></li>
-							<li role="presentation"><a
-										href="${ctx}/crm/orders/list?userId=${userId}">客户订单</a></li>
-							<li role="presentation"><a
-										href="${ctx}/crm/coustomerService/list?userId=${userId}">售后</a></li>
-							<li role="presentation"><a
-										href="${ctx}/crm/consign/list?userId=${userId}">物品寄存</a></li>
-							<li role="presentation"><a
-										href="${ctx}/crm/goodsUsage/list?userId=${userId}">产品使用记录</a></li>
-							<li role="presentation"><a
-										href="${ctx}/crm/user/account?userId=${userId}">账户总览</a></li>
-							<li role="presentation"><a
-										href="${ctx}/crm/invitation/list?userId=${userId}">邀请明细</a></li>
 							<li role="presentation">
-							<shiro:hasPermission name="crm:store:list">	
-							<a onclick='top.openTab("${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1","会员投诉", false)'
-										>投诉咨询</a>
-							</shiro:hasPermission>
+								<a href="${ctx}/crm/user/userDetail?userId=${userId}&franchiseeId=${franchiseeId}">基本资料</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/physical/skin?userId=${userId}&franchiseeId=${franchiseeId}">身体状况</a>
+							</li>
+							<li role="presentation" class="layui-this">
+								<a href="${ctx}/crm/schedule/list?userId=${userId}&franchiseeId=${franchiseeId}">护理时间表</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/orders/list?userId=${userId}&franchiseeId=${franchiseeId}">客户订单</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/coustomerService/list?userId=${userId}&franchiseeId=${franchiseeId}">售后</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/consign/list?userId=${userId}&franchiseeId=${franchiseeId}">物品寄存</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/goodsUsage/list?userId=${userId}&franchiseeId=${franchiseeId}">产品使用记录</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/user/account?userId=${userId}&franchiseeId=${franchiseeId}">账户总览</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/invitation/list?userId=${userId}&franchiseeId=${franchiseeId}">邀请明细</a>
+							</li>
+							<li role="presentation">
+								<shiro:hasPermission name="crm:store:list">	
+									<a href="${ctx}/crm/store/questionCrmList?mobile=${userDetail.mobile}&userId=${userId}&franchiseeId=${franchiseeId}&stamp=1">投诉咨询</a>
+								</shiro:hasPermission>
 							</li>						 
 						 </ul>
 					</div>
@@ -77,17 +79,16 @@
 			</div>
 			<sys:message content="${message}"/>
 	    	<div class="ibox-content">
-	    	<form id="searchForm" action="${ctx}/crm/schedule/list" method="post" class="form-inline">
+		    	<form id="searchForm" action="${ctx}/crm/schedule/list" method="post" class="form-inline">
 					<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}" />
 					<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
 					<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();" />
 					<!-- 支持排序 -->
 					<input id="userId" name="userId" type="hidden" value="${userDetail.userId}" />
-			</form>	
+				</form>	
 				<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 					<thead>
 						<tr>
-<!-- 							 <th style="text-align: center;">编号</th> -->
 						     <th style="text-align: center;">产品编号</th>
 						     <th style="text-align: center;">美容师编号</th>
 						     <th style="text-align: center;">产品名称</th>
@@ -117,13 +118,8 @@
 							  	<td>${item.user.name}</td>						
 							    <td>${item.teachersStarLevel}</td>	
 								<td>
-									<a href="#"
-									onclick="openDialog('用户评论', 
-									'${ctx}/crm/schedule/comment?userId=${userId}&reservationId=${item.reservationId}','800px', '500px')"
-									class="btn btn-success btn-xs"><i class="fa fa-search-plus"></i>评论</a>
-<!-- 									<a href="#" -->
-<%-- 									onclick="openDialog('美容师护理日志', '${ctx}/crm/schedual/record?beauticianId=${beauticianId}','800px', '500px')" --%>
-<!-- 									class="btn btn-success btn-xs"><i class="fa fa-search-plus"></i>日志</a> -->
+									<a href="#" onclick="openDialog('用户评论','${ctx}/crm/schedule/comment?userId=${userId}&reservationId=${item.reservationId}','800px', '500px')"
+										class="btn btn-success btn-xs"><i class="fa fa-search-plus"></i>评论</a>
 								</td>
 							</tr>
 						</c:forEach>

@@ -233,7 +233,7 @@
 		WHERE 
 			rebate_user = #{rebateUser} and receive_user = #{receiveUser} AND rebate_flag = 2	
 	</select>
-	<!-- A用户收益明细 -->
+	<!-- 用户收益明细 -->
 	<select id="findUserEarnings" resultType="MtmySaleRelieveLog">
 		SELECT rabate_date AS rabateDate,SUM(balance_amount)  AS balanceAmount,SUM(integral_amount) AS integralAmount,rebate_flag AS rebateFlag
 			FROM mtmydb.mtmy_day_account WHERE receive_user = #{receiveUser} GROUP BY receive_user,rebate_flag,rabate_date

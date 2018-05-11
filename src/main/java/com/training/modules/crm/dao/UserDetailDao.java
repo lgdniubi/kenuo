@@ -45,12 +45,12 @@ public interface UserDetailDao extends CrudDao<UserDetail>{
 	 * @return UserDetail
 	 */
 	public List<UserDetail> getUserWithoutScope(UserDetail entity);
-	
+
 	/**
-	 * 未绑定的用户绑定店铺
-	 * @param 
-	 * @return int
+	 * 获取该用户的绑定店铺信息
+	 * @param uDetail
+	 * @return
 	 */
-	public int updateMtmyUsers(UserDetail entity);
+	public UserDetail getOfficeByDetail(UserDetail uDetail);
 
 }

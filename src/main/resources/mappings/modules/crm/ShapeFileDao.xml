@@ -6,6 +6,7 @@
 	<select id="get" resultType="ShapeFile">
 		SELECT
 			usf.mtmy_user_id AS 'userId',
+			usf.franchisee_id AS 'franchiseeId',
 			usf.breast_height_standard AS 'breastHeightStandard',
 			usf.up_bust AS upperBust,
 			usf.bust AS bust,
@@ -21,13 +22,16 @@
 		FROM
 		mtmydb.mtmy_user_shape_file usf
 		WHERE
-		usf.mtmy_user_id = #{id}
+			usf.mtmy_user_id = #{userId}
+		AND 
+			usf.franchisee_id = #{franchiseeId}
 	</select>
 	
 	<!-- 插入单条形体状态的数据 --> 	
 	<insert id="insert">
 		INSERT INTO mtmydb.mtmy_user_shape_file(		
 			  mtmy_user_id ,
+			  franchisee_id ,
 			  breast_height_standard,
 			  up_bust,
 			  bust,
@@ -44,6 +48,7 @@
 			  create_date
 		) VALUES (
 			#{userId}, 
+			#{franchiseeId}, 
 			#{breastHeightStandard}, 
 			#{upperBust}, 
 			#{bust}, 
@@ -77,5 +82,6 @@
 		   left_thign=#{leftThign},
 		   right_thign=#{rightThign}
 		WHERE mtmy_user_id= #{userId}
+		AND franchisee_id = #{franchiseeId}
 	</update>
 </mapper>
