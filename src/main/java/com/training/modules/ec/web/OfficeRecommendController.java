@@ -157,6 +157,7 @@ public class OfficeRecommendController extends BaseController{
 		return "redirect:" + adminPath + "/ec/officeRecommend/list";
 	}
 	
+	
 	/**
 	 * 查看店铺推荐组以及推荐店铺
 	 * @param officeRecommend

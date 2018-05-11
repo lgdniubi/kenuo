@@ -94,6 +94,7 @@ import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.TrainRuleParam;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * 订单Controller
@@ -290,7 +291,8 @@ public class OrdersController extends BaseController {
 		try {
 			User user = UserUtils.getUser(); //登陆用户
 			List<Payment> paylist = paymentService.paylist();
-			orders = ordersService.selectOrderById(orders.getOrderid());
+			orders.setFranchiseeId(UserUtils.getUser().getCompany().getId());
+			orders = ordersService.selectOrderById(orders);
 			
 			//查看退货信息
 			List<ReturnedGoods> returnedList = returnedGoodsService.queryReturnList(orders.getOrderid());
@@ -436,7 +438,7 @@ public class OrdersController extends BaseController {
 	@RequestMapping(value = "UpdateShipping")
 	public String UpdateShipping(Orders orders, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		try {
-			Orders oldOrders = ordersService.selectOrderById(orders.getOrderid());
+			Orders oldOrders = ordersService.selectOrderById(orders);
 			
 			int returnDay = Integer.parseInt(ParametersFactory.getMtmyParamValues("returngoods_date"));
 			if(-1 == returnDay){
@@ -1024,8 +1026,10 @@ public class OrdersController extends BaseController {
 						}
 						
 						BeanValidators.validateWithException(validator, shipping);
-
-						Orders oldOrders = ordersService.selectOrderById(shipping.getOrderid());
+						
+						Orders queryOrders = new Orders();
+						queryOrders.setOrderid(shipping.getOrderid());
+						Orders oldOrders = ordersService.selectOrderById(queryOrders);
 						
 						Orders orders=new Orders();
 						if(shipping.getShippingtime()!=null){
@@ -1185,15 +1189,38 @@ public class OrdersController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "addOrderRechargeLog")
 	public String addOrderRechargeLog(OrderRechargeLog oLog){
-		String success="";
+		JSONObject jsonO = new JSONObject();
+		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
-			ordersService.addOrderRechargeLog(oLog);
-			success = "success";
+			double accountBalance = ordersService.getAccount(oLog.getMtmyUserId());   //该用户的账户余额
+			OrderGoods orderGoods = orderGoodsDetailsService.querySomeThing(String.valueOf(oLog.getRecid())); //订单下该商品的欠款和已经充值的次数
+			
+			if(orderGoods.getOrderArrearage() > 0){  //欠款大于0
+				if(Double.parseDouble(formater.format(accountBalance - oLog.getAccountBalance())) >= 0){   //账户余额大于等于使用的账户余额  
+					
+					//充值金额+使用的账户余额+商品余额-订单欠款<=0，才能不多充值
+					if(Double.parseDouble(formater.format(oLog.getTotalAmount() + orderGoods.getOrderBalance() - orderGoods.getOrderArrearage())) <= 0){
+						ordersService.addOrderRechargeLog(oLog,orderGoods,orderGoods.getGoodsid());
+						jsonO.put("type", "success");
+					}else{
+						jsonO.put("result", "tooMuchMoney");
+						jsonO.put("type", "error");
+					}
+					
+				}else{
+					jsonO.put("result", "moneyIsNotEnough");
+					jsonO.put("type", "error");
+				}
+			}else{
+				jsonO.put("result", "notHaveArrearage");
+				jsonO.put("type", "error");
+			}
+			
 		}catch(Exception e){
 			e.printStackTrace();
-			success = "error";
+			jsonO.put("type", "error");
 		}
-		return success;
+		return jsonO.toString();
 	}
 	/**
 	 * 修改订单
@@ -1207,7 +1234,7 @@ public class OrdersController extends BaseController {
 	public String updateVirtualOrder(Orders orders, HttpServletRequest request, Model model,
 			RedirectAttributes redirectAttributes) {
 		try {
-			Orders newOrders = ordersService.selectOrderById(orders.getOrderid());
+			Orders newOrders = ordersService.selectOrderById(orders);
 			
 			orders.setInvoiceOvertime(newOrders.getInvoiceOvertime());
 			orders.setIsReal(newOrders.getIsReal());
@@ -1594,7 +1621,7 @@ public class OrdersController extends BaseController {
 	public String forcedCancel(Orders orders, HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
 		try {
 			int integral = 0;
-			Orders oldOrders = ordersService.selectOrderById(orders.getOrderid());
+			Orders oldOrders = ordersService.selectOrderById(orders);
 			
 			orders = ordersService.findselectByOrderId(orders.getOrderid());
 			boolean result = returnRepository(orders.getOrderid(),request);
@@ -1974,54 +2001,60 @@ public class OrdersController extends BaseController {
 		String date="";
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
-			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());    
-			double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
-			double advance = orderGoods.getAdvancePrice();                 //预约金
-			double ratioPrice = orderGoods.getRatioPrice();        //异价后的价格
-			
-			double realAdvancePrice = 0;                                //处理预约金给老商品送钱时，判断预约金的真实价格
-			
-			if(advance == 0){      //当预约金为0的时候付全款
-				realAdvancePrice = 0;
-				advance = ratioPrice;                 //预约金
-			}else{
-				realAdvancePrice = advance;
-				advance = orderGoods.getAdvancePrice();                 //预约金
-			}
-			
-			double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
-			int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
-			String officeId = orderGoods.getOfficeId();           //组织架构ID
-			
-			oLog.setMtmyUserId(userid);
-			oLog.setOrderId(orderid);
-			oLog.setRecid(orderGoods.getRecid());
-			oLog.setSingleRealityPrice(orderGoods.getSingleRealityPrice());
-			oLog.setSingleNormPrice(orderGoods.getSingleNormPrice());
-			oLog.setAdvance(advance);
-			
-			if(oLog.getServicetimes() == 999){        //时限卡单独处理
-				oLog.setTotalAmount(oLog.getOrderArrearage());      //当时限卡处理预约金时，实付款金额就是待付尾款（欠款）
-				if(sum == 0){//用了账户余额
-					oLog.setAccountBalance(oLog.getOrderArrearage()); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+			OrderGoods nextOrderGoods = orderGoodsDetailsService.getOrderGoodsDetailListByMid(orderGoods.getRecid());
+			if(nextOrderGoods.getAdvanceFlag() == 1){    //说明未处理
+				orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());    
+				double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
+				double advance = orderGoods.getAdvancePrice();                 //预约金
+				double ratioPrice = orderGoods.getRatioPrice();        //异价后的价格
+				int goodsId = orderGoods.getGoodsid();                  //商品id
+				
+				double realAdvancePrice = 0;                                //处理预约金给老商品送钱时，判断预约金的真实价格
+				
+				if(advance == 0){      //当预约金为0的时候付全款
+					realAdvancePrice = 0;
+					advance = ratioPrice;                 //预约金
 				}else{
-					oLog.setAccountBalance(0);
+					realAdvancePrice = advance;
+					advance = orderGoods.getAdvancePrice();                 //预约金
 				}
-			}else{
-				//若订金小于单次价，则实付款金额就是单次价，
-				if(advance < singleRealityPrice){
-					oLog.setTotalAmount(singleRealityPrice);
+				
+				double singleRealityPrice = orderGoods.getSingleRealityPrice();   //服务单次价
+				int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
+				String officeId = orderGoods.getOfficeId();           //组织架构ID
+				
+				oLog.setMtmyUserId(userid);
+				oLog.setOrderId(orderid);
+				oLog.setRecid(orderGoods.getRecid());
+				oLog.setSingleRealityPrice(orderGoods.getSingleRealityPrice());
+				oLog.setSingleNormPrice(orderGoods.getSingleNormPrice());
+				oLog.setAdvance(advance);
+				
+				if(oLog.getServicetimes() == 999){        //时限卡单独处理
+					oLog.setTotalAmount(oLog.getOrderArrearage());      //当时限卡处理预约金时，实付款金额就是待付尾款（欠款）
 					if(sum == 0){//用了账户余额
-						oLog.setAccountBalance(Double.parseDouble(formater.format(singleRealityPrice-advance))); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+						oLog.setAccountBalance(oLog.getOrderArrearage()); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
 					}else{
 						oLog.setAccountBalance(0);
 					}
-				}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
-					oLog.setTotalAmount(advance);
+				}else{
+					//若订金小于单次价，则实付款金额就是单次价，
+					if(advance < singleRealityPrice){
+						oLog.setTotalAmount(singleRealityPrice);
+						if(sum == 0){//用了账户余额
+							oLog.setAccountBalance(Double.parseDouble(formater.format(singleRealityPrice-advance))); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+						}else{
+							oLog.setAccountBalance(0);
+						}
+					}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
+						oLog.setTotalAmount(advance);
+					}
 				}
+				
+				orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
+				ordersService.handleAdvanceFlag(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,realAdvancePrice,orderGoods.getRealityAddTime(),goodsId);
 			}
-			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleAdvanceFlag(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,realAdvancePrice,orderGoods.getRealityAddTime());
+			
 			date = "success";
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "处理预约金异常", e);
@@ -2531,7 +2564,9 @@ public class OrdersController extends BaseController {
 			List<OrderGoods> resultSon = new ArrayList<OrderGoods>();              //存放每个卡项商品和它的子项
 			User user = UserUtils.getUser(); //登陆用户
 			List<Payment> paylist = paymentService.paylist();
-			orders = ordersService.selectOrderById(orders.getOrderid());
+			
+			orders.setFranchiseeId(UserUtils.getUser().getCompany().getId());
+			orders = ordersService.selectOrderById(orders);
 			
 			//查看退货信息
 			List<ReturnedGoods> returnedList = returnedGoodsService.queryReturnList(orders.getOrderid());
@@ -2592,7 +2627,7 @@ public class OrdersController extends BaseController {
 									} 
 								}else if(father.getAdvanceFlag() == 1){        //是预约金   
 									if(orders.getOrderstatus() == 4 && father.getCompleteAppt() == 1){    //已完成且预约已完成
-										suitCardSons = suitCardSons + "<a href='#' onclick='ToAdvance("+"\""+orders.getOfficeId()+"\""+","+father.getRecid()+","+father.getServicetimes()+","+father.getOrderArrearage()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
+										suitCardSons = suitCardSons + "<a href='#' onclick='ToAdvance("+"\""+orders.getBindingOfficeNum()+"\""+","+father.getRecid()+","+father.getServicetimes()+","+father.getOrderArrearage()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
 									}else if(orders.getOrderstatus() != 4 || father.getCompleteAppt() == 0){   //无预约或订单未完成
 										suitCardSons = suitCardSons + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
 									}
@@ -2651,7 +2686,7 @@ public class OrdersController extends BaseController {
 									} 
 								}else if(father.getAdvanceFlag() == 1){        //是预约金   
 									if(orders.getOrderstatus() == 4 && father.getCompleteAppt() == 1){    //已完成且预约已完成
-										suitCardSons = suitCardSons + "<a href='#' onclick='ToAdvance("+"\""+orders.getOfficeId()+"\""+","+father.getRecid()+","+father.getServicetimes()+","+father.getOrderArrearage()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
+										suitCardSons = suitCardSons + "<a href='#' onclick='ToAdvance("+"\""+orders.getBindingOfficeNum()+"\""+","+father.getRecid()+","+father.getServicetimes()+","+father.getOrderArrearage()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
 									}else if(orders.getOrderstatus() != 4 || father.getCompleteAppt() == 0){   //无预约或订单未完成
 										suitCardSons = suitCardSons + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs' ><i class='fa fa-edit'></i>处理预约金</a>";
 									}
@@ -2760,7 +2795,7 @@ public class OrdersController extends BaseController {
 	@RequestMapping(value = "updateCardOrder")
 	public String updateCardOrder(Orders orders, HttpServletRequest request, Model model,RedirectAttributes redirectAttributes) {
 		try {
-			Orders newOrders = ordersService.selectOrderById(orders.getOrderid());
+			Orders newOrders = ordersService.selectOrderById(orders);
 			orders.setInvoiceOvertime(newOrders.getInvoiceOvertime());
 			orders.setIsReal(newOrders.getIsReal());
 			//判断收货地址是否修改了，若未修改则xml中不对address更新，若不修改，则将省市县详细地址存到相应的地方
@@ -2836,15 +2871,38 @@ public class OrdersController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "addCardOrderRechargeLog")
 	public String addCardOrderRechargeLog(OrderRechargeLog oLog){
-		String success="";
+		JSONObject jsonO = new JSONObject();
+		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
-			ordersService.addCardOrderRechargeLog(oLog);
-			success = "success";
+			double accountBalance = ordersService.getAccount(oLog.getMtmyUserId());   //该用户的账户余额
+			OrderGoods orderGoods = orderGoodsDetailsService.querySomeThing(String.valueOf(oLog.getRecid())); //订单下该商品的欠款和已经充值的次数
+			
+			if(orderGoods.getOrderArrearage() > 0){  //欠款大于0
+				if(Double.parseDouble(formater.format(accountBalance - oLog.getAccountBalance())) >= 0){   //账户余额大于等于使用的账户余额  
+					
+					//充值金额+使用的账户余额+商品余额-订单欠款<=0，才能不多充值
+					if(Double.parseDouble(formater.format(oLog.getTotalAmount() + orderGoods.getOrderBalance() - orderGoods.getOrderArrearage())) <= 0){
+						ordersService.addCardOrderRechargeLog(oLog,orderGoods,orderGoods.getGoodsid());
+						jsonO.put("type", "success");
+					}else{
+						jsonO.put("result", "tooMuchMoney");
+						jsonO.put("type", "error");
+					}
+					
+				}else{
+					jsonO.put("result", "moneyIsNotEnough");
+					jsonO.put("type", "error");
+				}
+			}else{
+				jsonO.put("result", "notHaveArrearage");
+				jsonO.put("type", "error");
+			}
+			
 		}catch(Exception e){
 			e.printStackTrace();
-			success = "error";
+			jsonO.put("type", "error");
 		}
-		return success;
+		return jsonO.toString();
 	}
 	
 	/**
@@ -2931,55 +2989,62 @@ public class OrdersController extends BaseController {
 		double singleRealityPrice = 0;     //实际服务单次价
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
-			int isReal = oLog.getIsReal();
-			
-			orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());   //卡项本身  
-			double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
-			int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
-			String officeId = orderGoods.getOfficeId();           //组织架构ID
-			double ratioPrice = orderGoods.getRatioPrice();        //异价后的价格
-			
-			double advance = orderGoods.getAdvancePrice();                 //预约金
-			double realAdvancePrice = 0;                                //处理预约金给老商品送钱时，判断预约金的真实价格
-			
-			if(advance == 0){      //当预约金为0的时候付全款
-				realAdvancePrice = 0;
-				advance = ratioPrice;                 //预约金
-			}else{
-				realAdvancePrice = advance;
-				advance = orderGoods.getAdvancePrice();            //预约金
-			}
-			
-			//卡项中预约是某一个子项，故处理预约金是针对子项的，但是预约金本身却是卡项本身的
-			OrderGoods orderGoodsSon = ordersService.selectCardSonReservation(orderGoods.getRecid());   //预约的子项
-			
-			if(isReal == 2){    //套卡
-				singleRealityPrice = orderGoodsSon.getSingleRealityPrice();   //子项的实际服务单次价
-			}else if(isReal == 3){  //通用卡
-				singleRealityPrice = orderGoods.getSingleRealityPrice();   //卡项本身的实际服务单次价
+			OrderGoods nextOrderGoods = orderGoodsDetailsService.getOrderGoodsDetailListByMid(orderGoods.getRecid());
+			if(nextOrderGoods.getAdvanceFlag() == 1){    //说明未处理
+				int isReal = oLog.getIsReal();
 				
-			}
-			
-			oLog.setMtmyUserId(userid);
-			oLog.setOrderId(orderid);
-			oLog.setRecid(orderGoods.getRecid());
-			oLog.setSingleRealityPrice(singleRealityPrice);
-			oLog.setAdvance(advance);
-			
-			
-			//若订金小于单次价，则实付款金额就是单次价，
-			if(advance < singleRealityPrice){
-				oLog.setTotalAmount(singleRealityPrice);
-				if(sum == 0){//用了账户余额
-					oLog.setAccountBalance(Double.parseDouble(formater.format(singleRealityPrice-advance))); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+				orderGoods = ordersService.selectOrderGoodsByRecid(orderGoods.getRecid());   //卡项本身  
+				double detailsTotalAmount = orderGoods.getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
+				int goodsType = orderGoods.getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
+				String officeId = orderGoods.getOfficeId();           //组织架构ID
+				double ratioPrice = orderGoods.getRatioPrice();        //异价后的价格
+				int goodsId = orderGoods.getGoodsid();                  //商品id
+				
+				double advance = orderGoods.getAdvancePrice();                 //预约金
+				double realAdvancePrice = 0;                                //处理预约金给老商品送钱时，判断预约金的真实价格
+				
+				if(advance == 0){      //当预约金为0的时候付全款
+					realAdvancePrice = 0;
+					advance = ratioPrice;                 //预约金
 				}else{
-					oLog.setAccountBalance(0);
+					realAdvancePrice = advance;
+					advance = orderGoods.getAdvancePrice();            //预约金
 				}
-			}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
-				oLog.setTotalAmount(advance);
+				
+				//卡项中预约是某一个子项，故处理预约金是针对子项的，但是预约金本身却是卡项本身的
+				OrderGoods orderGoodsSon = ordersService.selectCardSonReservation(orderGoods.getRecid());   //预约的子项
+				
+				if(isReal == 2){    //套卡
+					singleRealityPrice = orderGoodsSon.getSingleRealityPrice();   //子项的实际服务单次价
+				}else if(isReal == 3){  //通用卡
+					singleRealityPrice = orderGoods.getSingleRealityPrice();   //卡项本身的实际服务单次价
+					
+				}
+				
+				oLog.setMtmyUserId(userid);
+				oLog.setOrderId(orderid);
+				oLog.setRecid(orderGoods.getRecid());
+				oLog.setSingleRealityPrice(singleRealityPrice);
+				oLog.setAdvance(advance);
+				
+				
+				//若订金小于单次价，则实付款金额就是单次价，
+				if(advance < singleRealityPrice){
+					oLog.setTotalAmount(singleRealityPrice);
+					if(sum == 0){//用了账户余额
+						oLog.setAccountBalance(Double.parseDouble(formater.format(singleRealityPrice-advance))); //这里的账户余额是用了多少账户余额，不是账户里有多少余额
+					}else{
+						oLog.setAccountBalance(0);
+					}
+				}else{   //若订金大于等于单次价，则实付款金额就是订金，充值金额也是订金
+					oLog.setTotalAmount(advance);
+				}
+				
+				
+				orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
+				ordersService.handleCardAdvance(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,isReal,realAdvancePrice,orderGoods.getRealityAddTime(),goodsId);
 			}
-			orderGoodsDetailsService.updateAdvanceFlag(orderGoods.getRecid()+"");
-			ordersService.handleCardAdvance(oLog,ratioPrice,detailsTotalAmount,goodsType,officeId,isReal,realAdvancePrice,orderGoods.getRealityAddTime());
+			
 			date = "success";
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "处理卡项预约金异常", e);
@@ -3001,128 +3066,137 @@ public class OrdersController extends BaseController {
 		DecimalFormat formater = new DecimalFormat("#0.##");
 		try{
 			if((!"".equals(orders.getOrderid()) && (orders.getOrderid() != null))){
-				Orders oldOrders = ordersService.selectOrderById(orders.getOrderid());
+				
+				Orders oldOrders = ordersService.selectOrderById(orders);
+				
+				//订单状态为待收货且物流类型为到店自取，则才可以确认收货
+				if(oldOrders.getOrderstatus() == 2 && oldOrders.getShippingtype() == 1){
+					ordersService.updateOrderstatusForReal(orders.getOrderid());
+					
+					//调用日志的公用方法
+					ThreadUtils.saveLog(request, "确认收货", 2, 1, oldOrders,orders);
+					
+					double detailsTotalAmount = 0;       //预约金用了红包、折扣以后实际付款的钱
+					int goodsType = 0;                    //商品区分(0: 老商品 1: 新商品)
+					double advancePrice = 0;    //单个实物的预约金
+					int recId = 0;
+					int goodsId = 0;
+					
+					String shopId = ordersService.queryReservationShopId(orders.getOrderid());          //取货的店铺
+					List<OrderGoods> lists = ordersService.selectOrderGoodsByOrderid(orders.getOrderid());   //卡项本身  
 
-				ordersService.updateOrderstatusForReal(orders.getOrderid());
-
-				//调用日志的公用方法
-				ThreadUtils.saveLog(request, "确认收货", 2, 1, oldOrders,orders);
-				
-				double detailsTotalAmount = 0;       //预约金用了红包、折扣以后实际付款的钱
-				int goodsType = 0;                    //商品区分(0: 老商品 1: 新商品)
-				String officeId = "";           //组织架构ID
-				double advancePrice = 0;    //单个实物的预约金
-				int recId = 0;
-				List<OrderGoods> lists = ordersService.selectOrderGoodsByOrderid(orders.getOrderid());   //卡项本身  
-				if(lists.size() > 0){
-					detailsTotalAmount = lists.get(0).getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
-					goodsType = lists.get(0).getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
-					officeId = lists.get(0).getOfficeId();           //组织架构ID
-					advancePrice = lists.get(0).getAdvancePrice();    //单个实物的预约金
-					recId = lists.get(0).getRecid();
-				}
-				
-				if(!"bm".equals(orders.getChannelFlag())){
+					if(lists.size() > 0){
+						detailsTotalAmount = lists.get(0).getTotalAmount();       //预约金用了红包、折扣以后实际付款的钱
+						goodsType = lists.get(0).getGoodsType();                    //商品区分(0: 老商品 1: 新商品)
+						advancePrice = lists.get(0).getAdvancePrice();    //单个实物的预约金
+						recId = lists.get(0).getRecid();
+						goodsId = lists.get(0).getGoodsid();
+					}
 					
-					//实物带预约金，点击确认收货，按照虚拟有预约金处理的方法入库
-					orderGoodsDetailsService.updateAdvanceFlag(recId+"");
+					if(!"bm".equals(orders.getChannelFlag())){
+						
+						//实物带预约金，点击确认收货，按照虚拟有预约金处理的方法入库
+						orderGoodsDetailsService.updateAdvanceFlag(recId+"");
+						
+						//保存订单商品详情记录表
+						OrderGoodsDetails details = new OrderGoodsDetails();
+						details.setOrderId(orders.getOrderid());
+						details.setGoodsMappingId(recId+"");
+						details.setTotalAmount(0);	//实付款金额
+						details.setOrderBalance(0);	//订单余款
+						details.setOrderArrearage(0);	//订单欠款
+						details.setItemAmount(0);	//项目金额
+						details.setItemCapitalPool(0); //项目资金池
+						details.setServiceTimes(0);	//剩余服务次数
+						details.setAppTotalAmount(0);   //app实付金额
+						details.setAppArrearage(0);        //app欠款金额
+						details.setSurplusAmount(0);   //套卡剩余金额(套卡的才存)
+						details.setType(0);
+						details.setAdvanceFlag("2");
+						details.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
+						details.setCreateBy(UserUtils.getUser());
+						//保存订单商品详情记录
+						orderGoodsDetailsService.saveOrderGoodsDetails(details);
+						
+						//同步数据到营业额明细表
+						//第一次，同步下单的那条数据
+						double appSum = orderGoodsDetailsService.queryAppSum(details.getOrderId());
+						TurnOverDetails turnOverDetails1 = new TurnOverDetails();
+						turnOverDetails1.setOrderId(details.getOrderId());
+						turnOverDetails1.setDetailsId(details.getOrderId());
+						turnOverDetails1.setType(1);
+						turnOverDetails1.setAmount(appSum);
+						turnOverDetails1.setUseBalance(0);
+						turnOverDetails1.setStatus(1);
+						turnOverDetails1.setUserId(orders.getUserid());
+						turnOverDetails1.setBelongOfficeId(shopId);
+						turnOverDetails1.setCreateBy(UserUtils.getUser());
+						turnOverDetails1.setSettleDate(new Date());
+						turnOverDetailsService.saveTurnOverDetails(turnOverDetails1);
+						
+						//第二次，同步处理预约金的那条数据
+						TurnOverDetails turnOverDetails2 = new TurnOverDetails();
+						turnOverDetails2.setOrderId(details.getOrderId());
+						turnOverDetails2.setDetailsId(details.getId());
+						turnOverDetails2.setMappingId(Integer.valueOf(details.getGoodsMappingId()));
+						turnOverDetails2.setGoodsId(String.valueOf(goodsId));
+						turnOverDetails2.setType(2);
+						turnOverDetails2.setAmount(details.getAppTotalAmount());
+						turnOverDetails2.setUseBalance(details.getUseBalance());
+						turnOverDetails2.setStatus(2);
+						turnOverDetails2.setUserId(orders.getUserid());
+						turnOverDetails2.setCreateBy(UserUtils.getUser());
+						turnOverDetails2.setSettleDate(new Date());
+						turnOverDetailsService.saveTurnOverDetails(turnOverDetails2);
+					}
 					
-					//保存订单商品详情记录表
-					OrderGoodsDetails details = new OrderGoodsDetails();
-					details.setOrderId(orders.getOrderid());
-					details.setGoodsMappingId(recId+"");
-					details.setTotalAmount(0);	//实付款金额
-					details.setOrderBalance(0);	//订单余款
-					details.setOrderArrearage(0);	//订单欠款
-					details.setItemAmount(0);	//项目金额
-					details.setItemCapitalPool(0); //项目资金池
-					details.setServiceTimes(0);	//剩余服务次数
-					details.setAppTotalAmount(0);   //app实付金额
-					details.setAppArrearage(0);        //app欠款金额
-					details.setSurplusAmount(0);   //套卡剩余金额(套卡的才存)
-					details.setType(0);
-					details.setAdvanceFlag("2");
-					details.setCreateOfficeId(UserUtils.getUser().getOffice().getId());
-					details.setCreateBy(UserUtils.getUser());
-					//保存订单商品详情记录
-					orderGoodsDetailsService.saveOrderGoodsDetails(details);
-					
-					//同步数据到营业额明细表
-					//第一次，同步下单的那条数据
-					double appSum = orderGoodsDetailsService.queryAppSum(details.getOrderId());
-					TurnOverDetails turnOverDetails1 = new TurnOverDetails();
-					turnOverDetails1.setOrderId(details.getOrderId());
-					turnOverDetails1.setDetailsId(details.getOrderId());
-					turnOverDetails1.setType(1);
-					turnOverDetails1.setAmount(appSum);
-					turnOverDetails1.setUseBalance(0);
-					turnOverDetails1.setStatus(1);
-					turnOverDetails1.setUserId(orders.getUserid());
-					turnOverDetails1.setBelongOfficeId(officeId);
-					turnOverDetails1.setCreateBy(UserUtils.getUser());
-					turnOverDetails1.setSettleDate(new Date());
-					turnOverDetailsService.saveTurnOverDetails(turnOverDetails1);
-					
-					//第二次，同步处理预约金的那条数据
-					TurnOverDetails turnOverDetails2 = new TurnOverDetails();
-					turnOverDetails2.setOrderId(details.getOrderId());
-					turnOverDetails2.setDetailsId(details.getId());
-					turnOverDetails2.setType(2);
-					turnOverDetails2.setAmount(details.getAppTotalAmount());
-					turnOverDetails2.setUseBalance(details.getUseBalance());
-					turnOverDetails2.setStatus(2);
-					turnOverDetails2.setUserId(orders.getUserid());
-					turnOverDetails2.setCreateBy(UserUtils.getUser());
-					turnOverDetails2.setSettleDate(new Date());
-					turnOverDetailsService.saveTurnOverDetails(turnOverDetails2);
-				}
-				
-				//若为老商品，则对店铺有补偿
-				if(goodsType == 0){
-					//若预约金大于0
-					if(advancePrice > 0){   
-						//对登云账户进行操作
-						if(detailsTotalAmount > 0){
-							double claimMoney = 0.0;   //补偿金  补助不超过20
-							if(detailsTotalAmount * 0.2 >= 20){
-								claimMoney = detailsTotalAmount + 20;
-							}else{
-								claimMoney = detailsTotalAmount * 1.2;
+					//若为老商品，则对店铺有补偿
+					if(goodsType == 0){
+						//若预约金大于0
+						if(advancePrice > 0){   
+							//对登云账户进行操作
+							if(detailsTotalAmount > 0){
+								double claimMoney = 0.0;   //补偿金  补助不超过20
+								if(detailsTotalAmount * 0.2 >= 20){
+									claimMoney = detailsTotalAmount + 20;
+								}else{
+									claimMoney = detailsTotalAmount * 1.2;
+								}
+								OfficeAccountLog officeAccountLog = new OfficeAccountLog();
+								User newUser = UserUtils.getUser();
+								
+								double amount = orderGoodsDetailsService.selectByOfficeId("1");   //登云美业公司账户的钱
+								double afterAmount = Double.parseDouble(formater.format(amount - claimMoney));
+								orderGoodsDetailsService.updateByOfficeId(afterAmount, "1");   //更新登云美业的登云账户金额
+								
+								//登云美业的登云账户减少钱时对日志进行操作
+								officeAccountLog.setOrderId(orders.getOrderid());
+								officeAccountLog.setOfficeId("1");
+								officeAccountLog.setType("1");
+								officeAccountLog.setOfficeFrom("1");
+								officeAccountLog.setAmount(claimMoney);
+								officeAccountLog.setCreateBy(newUser);
+								orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
+								
+								if(orderGoodsDetailsService.selectShopByOfficeId(shopId) == 0){    //若登云账户中无该店铺的账户
+									OfficeAccount officeAccount = new OfficeAccount();
+									officeAccount.setAmount(claimMoney);
+									officeAccount.setOfficeId(shopId);
+									orderGoodsDetailsService.insertByOfficeId(officeAccount);
+								}else{         
+									double shopAmount = orderGoodsDetailsService.selectByOfficeId(shopId);   //登云账户中店铺的钱
+									double afterShopAmount =  Double.parseDouble(formater.format(shopAmount + claimMoney));
+									orderGoodsDetailsService.updateByOfficeId(afterShopAmount, shopId);
+								}
+								//店铺的登云账户减少钱时对日志进行操作
+								officeAccountLog.setOrderId(orders.getOrderid());
+								officeAccountLog.setOfficeId(shopId);
+								officeAccountLog.setType("0");
+								officeAccountLog.setOfficeFrom("1");
+								officeAccountLog.setAmount(claimMoney);
+								officeAccountLog.setCreateBy(newUser);
+								orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
 							}
-							OfficeAccountLog officeAccountLog = new OfficeAccountLog();
-							User newUser = UserUtils.getUser();
-							
-							double amount = orderGoodsDetailsService.selectByOfficeId("1");   //登云美业公司账户的钱
-							double afterAmount = Double.parseDouble(formater.format(amount - claimMoney));
-							orderGoodsDetailsService.updateByOfficeId(afterAmount, "1");   //更新登云美业的登云账户金额
-							
-							//登云美业的登云账户减少钱时对日志进行操作
-							officeAccountLog.setOrderId(orders.getOrderid());
-							officeAccountLog.setOfficeId("1");
-							officeAccountLog.setType("1");
-							officeAccountLog.setOfficeFrom("1");
-							officeAccountLog.setAmount(claimMoney);
-							officeAccountLog.setCreateBy(newUser);
-							orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
-							
-							if(orderGoodsDetailsService.selectShopByOfficeId(officeId) == 0){    //若登云账户中无该店铺的账户
-								OfficeAccount officeAccount = new OfficeAccount();
-								officeAccount.setAmount(claimMoney);
-								officeAccount.setOfficeId(officeId);
-								orderGoodsDetailsService.insertByOfficeId(officeAccount);
-							}else{         
-								double shopAmount = orderGoodsDetailsService.selectByOfficeId(officeId);   //登云账户中店铺的钱
-								double afterShopAmount =  Double.parseDouble(formater.format(shopAmount + claimMoney));
-								orderGoodsDetailsService.updateByOfficeId(afterShopAmount, officeId);
-							}
-							//店铺的登云账户减少钱时对日志进行操作
-							officeAccountLog.setOrderId(orders.getOrderid());
-							officeAccountLog.setOfficeId(officeId);
-							officeAccountLog.setType("0");
-							officeAccountLog.setOfficeFrom("1");
-							officeAccountLog.setAmount(claimMoney);
-							officeAccountLog.setCreateBy(newUser);
-							orderGoodsDetailsService.insertOfficeAccountLog(officeAccountLog);
 						}
 					}
 				}
@@ -3709,7 +3783,7 @@ public class OrdersController extends BaseController {
 	public String isPickUp(Orders orders,HttpServletRequest request,Model model,RedirectAttributes redirectAttributes){
 		try{
 			if((!"".equals(orders.getOrderid()) && (orders.getOrderid() != null))){
-				Orders oldOrders = ordersService.selectOrderById(orders.getOrderid());
+				Orders oldOrders = ordersService.selectOrderById(orders);
 				
 				ordersService.updateIsPickUp(orders); 
 

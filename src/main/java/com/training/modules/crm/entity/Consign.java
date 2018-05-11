@@ -26,6 +26,8 @@ public class Consign extends DataEntity<Consign> {
 	private Date createDate; //创建时间
 	private String officeName; //机构名称
 	private String officeId; //机构ID
+	
+	private String franchiseeId; //区分商家id
 		
 	public String getOfficeId() {
 		return officeId;
@@ -130,6 +132,14 @@ public class Consign extends DataEntity<Consign> {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public String getFranchiseeId() {
+		return franchiseeId;
+	}
+
+	public void setFranchiseeId(String franchiseeId) {
+		this.franchiseeId = franchiseeId;
 	}
 
 }

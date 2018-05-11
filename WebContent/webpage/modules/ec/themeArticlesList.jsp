@@ -45,11 +45,11 @@
 					success:function(date){
 						if(date=="success"){
 							top.layer.alert('删除成功!', {icon: 1, title:'提醒'});
-							window.location="${ctx}/ec/theme/themeArticlesList?themeId="+themeId;
+							window.location="${ctx}/ec/theme/themeArticlesList?themeId="+themeId+"&isOpen="+$("#isOpen").val();
 						}
 						if(date=="error"){
 							top.layer.alert('删除失败!', {icon: 2, title:'提醒'});
-							window.location="${ctx}/ec/theme/themeArticlesList?themeId="+themeId;
+							window.location="${ctx}/ec/theme/themeArticlesList?themeId="+themeId+"&isOpen="+$("#isOpen").val();
 						}
 									
 					},
@@ -77,11 +77,11 @@
 			success:function(date){
 				if(date=="success"){
 					top.layer.alert('删除成功!', {icon: 1, title:'提醒'});
-					window.location="${ctx}/ec/theme/themeArticlesList?themeId="+themeId;
+					window.location="${ctx}/ec/theme/themeArticlesList?themeId="+themeId+"&isOpen="+$("#isOpen").val();
 				}
 				if(date=="error"){
 					top.layer.alert('删除失败!', {icon: 2, title:'提醒'});
-					window.location="${ctx}/ec/theme/themeArticlesList?themeId="+themeId;
+					window.location="${ctx}/ec/theme/themeArticlesList?themeId="+themeId+"&isOpen="+$("#isOpen").val();
 				}
 							
 			},
@@ -164,6 +164,7 @@
 					<!-- 工具栏 -->
 					<div class="row" style="padding-top: 10px;">
 						<input id="articlesIds" name="articlesIds" type="hidden" value="${articlesIds}"/>
+						<input id="isOpen" name="isOpen" type="hidden" value="${isOpen}"/>
 						<div class="col-sm-12">
 							<div class="pull-left">
 									<a href="#" onclick="addArticles(${themeMapping.themeId},'${isOpen}')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加文章</a>

@@ -326,6 +326,17 @@
 				        	<span class="help-inline">只能输入数字字母和下划线</span>
 				        </td>
 				     </tr>
+				     <shiro:hasPermission name="sys:office:isRealData">
+					     <tr>
+					     	<td class="width-15 active"><label class="pull-right">是否正常数据</label></td>
+				     		<td>
+								<form:select path="isTest" class="form-control required">
+									<form:option value="0">正常数据</form:option>
+									<form:option value="1">测试数据</form:option>
+								</form:select>
+							</td>
+					     </tr>
+				     </shiro:hasPermission>
 				     <tr id="a5">
 				         <td class="width-15 active"><label class="pull-right">主负责人:</label></td>
 				         <td class="width-35"><sys:treeselect id="primaryPerson" name="primaryPerson.id" value="${office.primaryPerson.id}" labelName="office.primaryPerson.name" labelValue="${office.primaryPerson.name}"

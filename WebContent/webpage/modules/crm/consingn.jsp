@@ -36,33 +36,41 @@
 					<div class="nav">
 						<!-- 翻页隐藏文本框 -->
 						<div class="text-danger" style="margin:8px">
-									<p class="text-primary">
-										<span >${userDetail.nickname}</span>的客户档案--请注意保密
-									</p>
+							<p class="text-primary">
+								<span >${userDetail.nickname}</span>的客户档案--请注意保密
+							</p>
 						</div>
 						 <ul class="layui-tab-title">
-							<li role="presentation"><a
-										href="${ctx}/crm/user/userDetail?userId=${userId}">基本资料</a></li>
-							<li role="presentation"><a
-										href="${ctx}/crm/physical/skin?userId=${userId}">身体状况</a></li>
-							<li role="presentation"><a
-										href="${ctx}/crm/schedule/list?userId=${userId}">护理时间表</a></li>
-							<li role="presentation"><a
-										href="${ctx}/crm/orders/list?userId=${userId}">客户订单</a></li>
-							<li role="presentation"><a
-										href="${ctx}/crm/coustomerService/list?userId=${userId}">售后</a></li>
-							<li role="presentation" class="layui-this"><a
-										href="${ctx}/crm/consign/list?userId=${userId}">物品寄存</a></li>
-							<li role="presentation"><a
-										href="${ctx}/crm/goodsUsage/list?userId=${userId}">产品使用记录</a></li>
-							<li role="presentation"><a
-										href="${ctx}/crm/account?userId=${userId}">账户总览</a></li>
-							<li role="presentation"><a
-										href="${ctx}/crm/invitation?userId=${userId}">邀请明细</a></li>
+							<li role="presentation">
+								<a href="${ctx}/crm/user/userDetail?userId=${userId}&franchiseeId=${franchiseeId}">基本资料</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/physical/skin?userId=${userId}&franchiseeId=${franchiseeId}">身体状况</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/schedule/list?userId=${userId}&franchiseeId=${franchiseeId}">护理时间表</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/orders/list?userId=${userId}&franchiseeId=${franchiseeId}">客户订单</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/coustomerService/list?userId=${userId}&franchiseeId=${franchiseeId}">售后</a>
+							</li>
+							<li role="presentation" class="layui-this">
+								<a href="${ctx}/crm/consign/list?userId=${userId}&franchiseeId=${franchiseeId}">物品寄存</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/goodsUsage/list?userId=${userId}&franchiseeId=${franchiseeId}">产品使用记录</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/user/account?userId=${userId}&franchiseeId=${franchiseeId}">账户总览</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/invitation/list?userId=${userId}&franchiseeId=${franchiseeId}">邀请明细</a>
+							</li>
 							<li role="presentation">
 								<shiro:hasPermission name="crm:store:list">	
-									<a onclick='top.openTab("${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1","会员投诉", false)'
-										>投诉咨询</a>
+									<a href="${ctx}/crm/store/questionCrmList?mobile=${userDetail.mobile}&userId=${userId}&franchiseeId=${franchiseeId}&stamp=1">投诉咨询</a>
 								</shiro:hasPermission>
 							</li>
 						  </ul>
@@ -75,17 +83,17 @@
 					<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();" />
 					<!-- 支持排序 -->
 					<input id="userId" name="userId" type="hidden" value="${userDetail.userId}" />
+					<input id="franchiseeId" name="franchiseeId" type="hidden" value="${franchiseeId}" />
 			   </form>	
 				
 					<!-- 工具栏 -->
 					<div class="row">
 						<div class="col-sm-12">
 							<div class="pull-left">
-							<shiro:hasPermission name="crm:consign:exe">
-								<table:addRow url="${ctx}/crm/consign/add?userId=${userId}"
-									title="用户寄存记录"></table:addRow>
-								<!-- 增加按钮 -->
-							</shiro:hasPermission>	
+								<shiro:hasPermission name="crm:consign:exe">
+									<table:addRow url="${ctx}/crm/consign/add?userId=${userId}&franchiseeId=${franchiseeId}" title="用户寄存记录"></table:addRow>
+									<!-- 增加按钮 -->
+								</shiro:hasPermission>	
 							</div>
 						</div>
 					</div>
@@ -115,15 +123,12 @@
 								<td>${item.purchaseNum}</td>
 								<td>${item.consignNum}</td>
 								<td>${item.takenNum}</td>
-								<td><fmt:formatDate value="${item.createDate}"
-										pattern="yyyy-MM-dd " /></td>
+								<td><fmt:formatDate value="${item.createDate}" pattern="yyyy-MM-dd " /></td>
 								<td>${item.remark}</td>
 								<td>
-								<shiro:hasPermission name="crm:consign:exe">
-									<a href="#"
-									onclick="openDialog('查看寄存详情', '${ctx}/crm/consign/update?consignId=${item.consignId}&userId=${userId}','800px', '500px')"
-									class="btn btn-success btn-xs"><i class="fa fa-search-plus"></i>修改</a>
-								</shiro:hasPermission>
+									<shiro:hasPermission name="crm:consign:exe">
+										<a href="#" onclick="openDialog('查看寄存详情', '${ctx}/crm/consign/update?consignId=${item.consignId}&userId=${userId}&franchiseeId=${franchiseeId}','800px', '500px')" class="btn btn-success btn-xs"><i class="fa fa-search-plus"></i>修改</a>
+									</shiro:hasPermission>
 								</td>
 							</tr>
 						</c:forEach>
@@ -140,39 +145,14 @@
 			</div>
 		</div>
 	</div>
-	
 	<div class="wrapper wrapper-content">
 		<div class="ibox">
 			<!--用户联系信息 -->
 			<div class="ibox-content">
 				<div class="clearfix">
-					<div class="row" style="margin: 10px">
-						<div class="col-md-8">
-							<h3 style="color: blue">操作日志</h3>
-						</div>
-					</div>
-					<table class="table table-bordered table-condensed  dataTables-example dataTable no-footer">
-						<tr>
-							<th style="text-align: center;" class="col-md-1">操作日期</th>
-							<th style="text-align: center;" class="col-md-1">操作人</th>
-							<th style="text-align: center;" class="col-md-3">操作记录</th>
-						</tr>
-						<c:forEach items="${logList}" var="log">
-							<tr style="text-align: center;">
-								<td class="col-md-1">
-									<p>
-										<fmt:formatDate value="${log.createTime}" pattern="yyyy-MM-dd  HH:mm" />
-									</p>
-								</td>
-								<td class="col-md-1">
-									<p>${log.creatorName}</p>
-								</td>
-								<td class="col-md-3">
-									<p>${log.content}</p>
-								</td>
-							</tr>
-						</c:forEach>
-					</table>
+					<shiro:hasPermission name="crm:userInfo:edit">
+						<a href="#" onclick="openDialogView('操作日志', '${ctx}/crm/user/logDetail?userId=${userId}&franchiseeId=${franchiseeId}&operatorType=4','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 操作日志</a>
+					</shiro:hasPermission>
 				</div>
 			</div>
 		</div>

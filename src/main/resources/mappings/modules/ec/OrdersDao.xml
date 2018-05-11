@@ -172,6 +172,14 @@
 			a.del_flag,
 			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType,
 			IFNULL(u.office_id,'') as officeId,
+			(SELECT COUNT(*)
+			FROM mtmydb.mtmy_customer
+			WHERE user_id = u.user_id
+			<if test="franchiseeId != '' and franchiseeId != null and franchiseeId != 1">
+				AND franchisee_id = #{franchiseeId}
+			</if>
+			AND office_id IS NOT NULL
+			AND office_id != '') AS 'bindingOfficeNum',
 			u.user_id as userid,
 			a.is_pick_up as isPickUp,
 			a.pick_up_note as pickUpNote
@@ -290,6 +298,14 @@
 			a.del_flag,
 			(CASE a.order_status WHEN '-2' THEN a.cancel_type ELSE '' END) AS cancelType,
 			IFNULL(u.office_id,'') as officeId,
+			(SELECT COUNT(*)
+			FROM mtmydb.mtmy_customer
+			WHERE user_id = u.user_id
+			<if test="franchiseeId != '' and franchiseeId != null and franchiseeId != 1">
+				AND franchisee_id = #{franchiseeId}
+			</if>
+			AND office_id IS NOT NULL
+			AND office_id != '') AS 'bindingOfficeNum',
 			u.user_id as userid,
 			a.is_pick_up as isPickUp,
 			a.pick_up_note as pickUpNote
@@ -1000,6 +1016,14 @@
 			o.shipping_code as shippingcode,
 			o.shipping_name as shippingname,
 			IFNULL(u.office_id,'') AS officeId,
+			(SELECT COUNT(*)
+			FROM mtmydb.mtmy_customer
+			WHERE user_id = u.user_id
+			<if test="franchiseeId != '' and franchiseeId != null and franchiseeId != 1">
+				AND franchisee_id = #{franchiseeId}
+			</if>
+			AND office_id IS NOT NULL
+			AND office_id != '') AS 'bindingOfficeNum',
 			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '1') AS 'advanceFlag',
 			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '6') AS 'changeAdvanceFlag',
 			(SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details WHERE order_id = #{orderid} AND advance_flag = '0' AND service_times = -1) AS 'sumAppt',
@@ -1241,8 +1265,23 @@
 		FROM
 			mtmydb.mtmy_orders a
 		LEFT JOIN mtmydb.mtmy_users u ON a.user_id = u.user_id
-		WHERE a.del_flag = 0
-		 AND a.user_id=#{userid}
+		LEFT JOIN trains.sys_office tso ON tso.id = a.office_id
+		${sqlMap.dsf} AND a.del_flag = 0
+		 	AND a.user_id=#{userid}
+		<if test="franchiseeId != null  and franchiseeId != ''">
+			AND (
+				locate(
+					a.office_id,
+					concat(tso.parent_ids, tso.id)
+				) > 0
+			)
+			AND (
+				locate(
+					#{franchiseeId},
+					concat(tso.parent_ids, tso.id)
+				) > 0
+			)
+		</if>
 		<if test="orderstatus!= null  and orderstatus!= ''">
 			AND a.order_status=#{orderstatus}
 		</if>
@@ -1392,4 +1431,12 @@
 			NOW()
 		)
 	</insert>
+	
+	<!-- 查询实物发货到店的取货店铺 -->
+	<select id="queryReservationShopId" resultType="String">
+		SELECT o.shop_id
+		FROM mtmydb.mtmy_orders o
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping ogm ON ogm.order_id = o.order_id
+		WHERE o.order_id = #{orderid}
+	</select>
 </mapper>

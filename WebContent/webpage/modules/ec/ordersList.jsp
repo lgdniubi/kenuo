@@ -137,13 +137,13 @@
 			 openDialog('退货商品列表','${ctx}/ec/orders/returnGoddsList?orderid='+orderId+'&isReal='+isReal,'1000px','650px');
 		}
 		
-		function affirmReceive(channelFlag,officeId,orderid,userid){
-			if(officeId == "" || officeId == null){
+		function affirmReceive(channelFlag,bindingOfficeNum,orderid,userid){
+			if(bindingOfficeNum == 0){
 				top.layer.alert('该用户未绑定店铺,请在CRM中为该用户绑定！', {icon: 0, title:'提醒'});
 		    	return;
 			}
 			
-			confirmx("确认要收货吗？", "${ctx}/ec/orders/affirmReceive?orderid="+orderid+"&officeId="+officeId+"&userid="+userid+"&channelFlag="+channelFlag)
+			confirmx("确认要收货吗？", "${ctx}/ec/orders/affirmReceive?orderid="+orderid+"&userid="+userid+"&channelFlag="+channelFlag)
 			
 		}
 		
@@ -421,7 +421,7 @@
 								</c:if>
 								<shiro:hasPermission name="ec:orders:affirmReceive">
 									<c:if test="${orders.orderstatus == 2 && orders.shippingtype == 1}">
-										<a href="#" onclick="affirmReceive('${orders.channelFlag}','${orders.officeId}','${orders.orderid}','${orders.userid}')"  class="btn btn-danger btn-xs" ><i class="fa fa-edit"></i>确认收货</a>
+										<a href="#" onclick="affirmReceive('${orders.channelFlag}','${orders.bindingOfficeNum}','${orders.orderid}','${orders.userid}')"  class="btn btn-danger btn-xs" ><i class="fa fa-edit"></i>确认收货</a>
 									</c:if>
 									<c:if test="${orders.orderstatus != 2 || orders.shippingtype != 1}">
 										<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>确认收货</a>

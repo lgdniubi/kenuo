@@ -174,11 +174,9 @@
 	
 	<!-- 查询用户购买商品预约的店铺id -->
 	<select id="selectShopId" resultType="String">
-		SELECT ao.shop_id 
-		FROM mtmydb.mtmy_order_goods_details ogd
-		LEFT JOIN mtmydb.mtmy_appt_order ao ON ao.id = ogd.appt_id
-		WHERE ogd.goods_mapping_id = #{goodsMappingId}
-		AND ogd.service_times = -1
+		SELECT shop_id 
+		FROM mtmydb.mtmy_appt_order
+		WHERE id = #{reservationId}
 	</select>
 	
 	<!-- 当对登云账户进行操作时，插入log日志 -->
@@ -190,6 +188,7 @@
 			office_from,
 			amount,
 			channel_flag,
+			appt_id,
 			create_by,
 			create_date
 		)VALUES(
@@ -199,6 +198,7 @@
 			#{officeFrom},
 			#{amount},
 			'bm',
+			#{apptId},
 			#{createBy.id},
 			SYSDATE()
 		)
@@ -245,6 +245,22 @@
 		WHERE order_id = #{orderId}
 		AND advance_flag = '0'
 	</select>
+	
+	<!-- 根据订单id查询app下的单时候的总的app实付 -->
+	<select id="queryAppOrdersSum" resultType="Double">
+		SELECT
+		CASE 
+			WHEN (SELECT COUNT(*) FROM mtmydb.mtmy_order_goods_details ogd2 WHERE ogd2.advance_flag = 1 AND ogd2.order_id = #{orderId}) = 1
+			THEN (SELECT ogd3.app_total_amount FROM mtmydb.mtmy_order_goods_details ogd3 WHERE ogd3.advance_flag = 1 AND ogd3.order_id = #{orderId})
+		ELSE 
+			(SELECT SUM(ogd5.app_total_amount) 
+			FROM mtmydb.mtmy_order_goods_details ogd5
+			WHERE ogd5.advance_flag = 0 
+			AND ogd5.order_id = #{orderId}
+			<![CDATA[AND DATE_FORMAT(ogd5.create_date,'%Y-%m-%d %H:%i:%s') <= DATE_FORMAT((SELECT ogd4.create_date FROM mtmydb.mtmy_order_goods_details ogd4 WHERE ogd4.advance_flag = 2 AND ogd4.order_id = #{orderId}),'%Y-%m-%d %H:%i:%s')]]>)
+		END
+	</select>
+	
 	<!-- 根据订单id查询商品的订单余额,订单欠款和app欠款 -->
 	<select id="getArrearageByOrderId" resultType="OrderGoodsDetails">
 		SELECT
@@ -361,4 +377,19 @@
 		WHERE order_id = #{orderId}
 		AND advance_flag = '1'
 	</update>
+	
+	<!-- 查询订单下某商品的欠款以及已经充值的次数 -->
+	<select id="querySomeThing" resultType="OrderGoods">
+		SELECT
+			SUM(ogd.order_balance) AS 'orderBalance',
+			(SELECT SUM(a.service_times) FROM mtmydb.mtmy_order_goods_details a WHERE a.goods_mapping_id = ogd.goods_mapping_id AND type = 0) AS payRemaintimes,
+			SUM(ogd.order_arrearage) as orderArrearage,
+			(select goods_id from mtmydb.mtmy_order_goods_mapping where rec_id = ogd.goods_mapping_id) AS goodsid
+		FROM
+			mtmydb.mtmy_order_goods_details ogd
+		WHERE
+			ogd.goods_mapping_id = #{mid}
+	</select>
+	
+	
 </mapper>

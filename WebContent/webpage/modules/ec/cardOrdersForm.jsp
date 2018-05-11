@@ -5,6 +5,7 @@
 <head>
 	<title>套卡订单详情页</title>
 	<meta name="decorator" content="default"/>
+	<link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
 	<script type="text/javascript">
 		
 		var validateForm;
@@ -122,6 +123,7 @@
 			
 	    	
 		    function TopUp(recid,singleRealityPrice,singleNormPrice,orderArrearage,servicetimes,remaintimes,goodsBalance){
+		    	$(".loading").show();
 		    	var isCommitted = false;		//表单是否已经提交标识，默认为false
 		    	var orderid = $("#orderid").val();
 		    	var userid = $("#userid").val();
@@ -213,8 +215,27 @@
 										 },
 										url:"${ctx}/ec/orders/addCardOrderRechargeLog",
 										success:function(date){
-												top.layer.alert('保存成功!', {icon: 1, title:'提醒'});
-												window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid;
+											var newDate = eval("("+date+")");
+										 	var type = newDate.type;
+											var result = newDate.result;
+											
+											if(type =="success"){
+												top.layer.alert('充值成功!', {icon: 1, title:'提醒'});
+											}
+											if(type =="error"){
+												top.layer.alert('充值失败!', {icon: 2, title:'提醒'});
+											}
+											if(type=="error" && result == "notHaveArrearage"){
+												top.layer.alert('充值失败!该商品已无欠款', {icon: 2, title:'提醒'});
+											}
+											if(type=="error" && result == "moneyIsNotEnough"){
+												top.layer.alert('充值失败!该用户账户余额不足', {icon: 2, title:'提醒'});
+											}
+											if(type=="error" && result == "tooMuchMoney"){
+												top.layer.alert('充值失败!充值总额不能大于欠款', {icon: 2, title:'提醒'});
+											}
+											
+											window.location="${ctx}/ec/orders/cardOrdersForm?orderid="+orderid;
 										},
 										error:function(XMLHttpRequest,textStatus,errorThrown){}
 									});
@@ -224,7 +245,7 @@
 						});
 				},
 				cancel: function(index){ //或者使用btn2
-					    	           //按钮【按钮二】的回调
+					$(".loading").hide(); //按钮【按钮二】的回调
 				}
 			}); 
 		}
@@ -393,19 +414,19 @@
 	}
 window.onload=initStatus;
 
-	function ToAdvance(officeId,recid,servicetimes,orderArrearage){
+	function ToAdvance(bindingOfficeNum,recid,servicetimes,orderArrearage){
 		var userid = $("#userid").val();
 		var orderid = $("#orderid").val();
 		var isReal = $("#isReal").val();
 		var channelFlag = $("#channelFlag").val();
 		
-		if(officeId == "" || officeId == null){
+		if(bindingOfficeNum == 0){
 			top.layer.alert('该用户未绑定店铺,请在CRM中为该用户绑定！', {icon: 0, title:'提醒'});
 	    	return;
 		}
 		
+		$(".loading").show();
 		var isHandled = false;		//表单是否已经提交标识，默认为false
-		
 		top.layer.open({
 		    type: 2, 
 		    area: ['600px', '450px'],
@@ -456,7 +477,7 @@ window.onload=initStatus;
 				});
 		},
 		cancel: function(index){ //或者使用btn2
-			    	           //按钮【按钮二】的回调
+			$(".loading").hide();	//按钮【按钮二】的回调
 		}
 	}); 
 	}

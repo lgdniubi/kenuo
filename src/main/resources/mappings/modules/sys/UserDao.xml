@@ -547,8 +547,7 @@
 			remarks = #{remarks},
 			login_flag = #{loginFlag},
 			photo = #{photo},
-			qrcode = #{qrCode},
-			del_flag = 0
+			qrcode = #{qrCode}
 		WHERE id = #{id}
 	</update>
 	
@@ -610,6 +609,15 @@
 			update_date = #{updateDate}, 
 			del_flag = #{DEL_FLAG_DELETE},
 			del_remarks = #{delRemarks }
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 将逻辑删除的用户用户还原 -->
+	<update id="onJob">
+		UPDATE sys_user SET 
+			update_by = #{updateBy.id}, 
+			update_date = #{updateDate}, 
+			del_flag = 0
 		WHERE id = #{id}
 	</update>
 	

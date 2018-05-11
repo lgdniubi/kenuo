@@ -58,6 +58,7 @@ public class GoodsUsageController extends BaseController {
 				model.addAttribute("page", page);
 				model.addAttribute("detail",entity);
 				model.addAttribute("userId", entity.getUserId());
+				model.addAttribute("franchiseeId", entity.getFranchiseeId());
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
@@ -72,16 +73,18 @@ public class GoodsUsageController extends BaseController {
 	 * @return usageForm
 	 */
 	@RequestMapping(value = {"add"})
-	public String editGoodsUsage(GoodsUsage entity, @RequestParam(value ="userId") String userId,
+	public String editGoodsUsage(GoodsUsage entity, @RequestParam(value ="userId") String userId, @RequestParam(value ="franchiseeId") String franchiseeId,
 			HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		String usageId = entity.getUsageId();
 		if (null == usageId || usageId.trim().length()<=0) {
 			model.addAttribute("userId", userId);
+			model.addAttribute("franchiseeId", franchiseeId);
 		} else {
 			GoodsUsage result= goodsUsageService.get(usageId);
 			model.addAttribute("goodsUsage", result);
 			model.addAttribute("userId", userId);
+			model.addAttribute("franchiseeId", franchiseeId);
 		}
 		return "modules/crm/usageForm";
 	}
@@ -92,16 +95,18 @@ public class GoodsUsageController extends BaseController {
 	 * @return usageForm
 	 */
 	@RequestMapping(value = {"update"})
-	public String updateGoodsUsage(GoodsUsage entity, @RequestParam(value ="userId") String userId,
+	public String updateGoodsUsage(GoodsUsage entity, @RequestParam(value ="userId") String userId, @RequestParam(value ="franchiseeId") String franchiseeId,
 			HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		String usageId = entity.getUsageId();
 		if (null == usageId || usageId.trim().length()<=0) {
 			model.addAttribute("userId", userId);
+			model.addAttribute("franchiseeId", franchiseeId);
 		} else {
 			GoodsUsage result= goodsUsageService.get(usageId);
 			model.addAttribute("goodsUsage", result);
 			model.addAttribute("userId", userId);
+			model.addAttribute("franchiseeId", franchiseeId);
 		}
 		return "modules/crm/usageForm";
 	}
@@ -125,6 +130,6 @@ public class GoodsUsageController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "redirect:"+adminPath+"/crm/goodsUsage/list?userId="+entity.getUserId();
+		return "redirect:"+adminPath+"/crm/goodsUsage/list?userId="+entity.getUserId()+"&franchiseeId="+entity.getFranchiseeId();
 	}
 }

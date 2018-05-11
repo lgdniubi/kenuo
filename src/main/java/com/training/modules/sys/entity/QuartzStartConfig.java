@@ -32,6 +32,8 @@ public class QuartzStartConfig extends TreeEntity<QuartzStartConfig> {
 	private Date createTime;	//创建时间
 	
 	
+	private String mtmyValue;    //每天美耶的值
+	
 	public int getQid() {
 		return qid;
 	}
@@ -80,6 +82,14 @@ public class QuartzStartConfig extends TreeEntity<QuartzStartConfig> {
 	public void setParent(QuartzStartConfig parent) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public String getMtmyValue() {
+		return mtmyValue;
+	}
+
+	public void setMtmyValue(String mtmyValue) {
+		this.mtmyValue = mtmyValue;
 	}
 
 }

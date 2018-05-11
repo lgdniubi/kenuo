@@ -43,36 +43,44 @@
 				<div class="clearfix">
 					<div class="nav" >
 						<div class="text-danger" style="margin:8px">
-									<p class="text-primary">
-										<span >${userDetail.nickname}</span>的客户档案--请注意保密
-									</p>
+							<p class="text-primary">
+								<span >${userDetail.nickname}</span>的客户档案--请注意保密
+							</p>
 						</div>	
-				       <ul class="layui-tab-title">
-					<li role="presentation"><a
-								href="${ctx}/crm/user/userDetail?userId=${userId}">基本资料</a></li>
-					<li role="presentation"><a
-								href="${ctx}/crm/physical/skin?userId=${userId}">身体状况</a></li>
-					<li role="presentation"><a
-								href="${ctx}/crm/schedule/list?userId=${userId}">护理时间表</a></li>
-					<li role="presentation"><a
-								href="${ctx}/crm/orders/list?userId=${userId}">客户订单</a></li>
-					<li role="presentation"><a
-								href="${ctx}/crm/coustomerService/list?userId=${userId}">售后</a></li>
-					<li role="presentation"><a
-								href="${ctx}/crm/consign/list?userId=${userId}">物品寄存</a></li>
-					<li role="presentation"><a
-								href="${ctx}/crm/goodsUsage/list?userId=${userId}">产品使用记录</a></li>
-					<li role="presentation" class="layui-this"><a
-								href="${ctx}/crm/user/account?userId=${userId}">账户总览</a></li>
-					<li role="presentation"><a
-								href="${ctx}/crm/invitation/list?userId=${userId}">邀请明细</a></li>
-					<li role="presentation">
-							<shiro:hasPermission name="crm:store:list">	
-								<a onclick='top.openTab("${ctx}/crm/store/list?mobile=${userDetail.mobile}&stamp=1","会员投诉", false)'
-									>投诉咨询</a>
-							</shiro:hasPermission>
-					</li>
-				  </ul>
+				        <ul class="layui-tab-title">
+							<li role="presentation">
+								<a href="${ctx}/crm/user/userDetail?userId=${userId}&franchiseeId=${franchiseeId}">基本资料</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/physical/skin?userId=${userId}&franchiseeId=${franchiseeId}}">身体状况</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/schedule/list?userId=${userId}&franchiseeId=${franchiseeId}">护理时间表</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/orders/list?userId=${userId}&franchiseeId=${franchiseeId}">客户订单</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/coustomerService/list?userId=${userId}&franchiseeId=${franchiseeId}">售后</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/consign/list?userId=${userId}&franchiseeId=${franchiseeId}">物品寄存</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/goodsUsage/list?userId=${userId}&franchiseeId=${franchiseeId}">产品使用记录</a>
+							</li>
+							<li role="presentation" class="layui-this">
+								<a href="${ctx}/crm/user/account?userId=${userId}&franchiseeId=${franchiseeId}">账户总览</a>
+							</li>
+							<li role="presentation">
+								<a href="${ctx}/crm/invitation/list?userId=${userId}&franchiseeId=${franchiseeId}">邀请明细</a>
+							</li>
+							<li role="presentation">
+								<shiro:hasPermission name="crm:store:list">	
+									<a href="${ctx}/crm/store/questionCrmList?mobile=${userDetail.mobile}&userId=${userId}&franchiseeId=${franchiseeId}&stamp=1">投诉咨询</a>
+								</shiro:hasPermission>
+							</li>
+					  	</ul>
 					</div>
 					<!-- 工具栏 -->
 				</div>
@@ -80,8 +88,7 @@
 			<sys:message content="${message}"/>
 			<!-- 查询条件 -->
 	    	<div class="ibox-content">
-	    	
-			<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
+				<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 					<thead>
 						<tr>
 						     <th style="text-align: center;">消费</th>

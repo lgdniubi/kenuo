@@ -13,6 +13,7 @@ public class UserContactInfo extends DataEntity<UserContactInfo>{
 		private static final long serialVersionUID = 1L;
 
 		private String userId;
+		private String franchiseeId;
 		private String qq;
 		private String wechat;
 		private String email;
@@ -71,4 +72,11 @@ public class UserContactInfo extends DataEntity<UserContactInfo>{
 		public void setCompanyName(String companyName) {
 			this.companyName = companyName;
 		}
+		public String getFranchiseeId() {
+			return franchiseeId;
+		}
+		public void setFranchiseeId(String franchiseeId) {
+			this.franchiseeId = franchiseeId;
+		}
+		
 }

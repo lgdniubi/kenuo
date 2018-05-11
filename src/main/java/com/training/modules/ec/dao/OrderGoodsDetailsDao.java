@@ -81,7 +81,7 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	/**
 	 * 查询用户购买商品预约的店铺id
 	 */
-	public String selectShopId(String goodsMappingId);
+	public String selectShopId(int reservationId);
 	
 	/**
 	 * 当对登云账户进行操作时，插入log日志 
@@ -130,6 +130,13 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 */
 	public double queryAppSum(String orderId);
 
+	/**
+	 * 根据订单id查询app下的单时候的总的app实付
+	 * @param orderId
+	 * @return
+	 */
+	public double queryAppOrdersSum(String orderId);
+	
 	/**
 	 * 根据订单id获取订单余额,订单欠款和app欠款金额
 	 * @param returnedGoods
@@ -194,4 +201,11 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @return
 	 */
 	int getCountArrearage(ReturnedGoods returnedGoods);
+	
+	/**
+	 * 查询订单下某商品的欠款以及已经充值的次数
+	 * @param recId
+	 * @return
+	 */
+	public OrderGoods querySomeThing(String recId);
 }

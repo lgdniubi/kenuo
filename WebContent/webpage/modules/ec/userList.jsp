@@ -159,6 +159,7 @@
 	    	$("#userid").val(num);
 	    	$('#resetpsd').modal('show');
 	    }
+	    
 	</script>
 	<style type="text/css">
 		.modal-content{
@@ -239,6 +240,9 @@
 						     <th style="text-align: center;">注册时间</th>
 						     <th style="text-align: center;">最近登陆时间</th>
 						     <th style="text-align: center;">地区</th>
+						     <shiro:hasPermission name="ec:mtmyuser:isRealData">
+						     	<th style="text-align: center;">是否正常数据</th>
+						     </shiro:hasPermission>
 						     <th style="text-align: center;">操作</th>
 						</tr>
 					</thead>
@@ -275,6 +279,20 @@
 							  	<td><fmt:formatDate value="${users.regtime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 							  	<td><fmt:formatDate value="${users.lastlogin }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 							  	<td>${users.province }${users.city }${users.district }</td>
+							  	<shiro:hasPermission name="ec:mtmyuser:isRealData">
+								  	<td>
+									  	<c:if test="${users.isTest == 1}">
+											<a href="${ctx}/ec/mtmyuser/updateIsRealData?ID=${users.userid}&ISYESNO=0" >
+												<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" >
+											</a>
+										</c:if>
+										<c:if test="${users.isTest == 0}">
+											<a href="${ctx}/ec/mtmyuser/updateIsRealData?ID=${users.userid}&ISYESNO=1" >
+												<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" >
+											</a>
+										</c:if>
+								  	</td>
+							  	</shiro:hasPermission>
 							    <td>
 							    	<!--  
 							     	<a href="#" onclick='top.openTab("${ctx}/ec/mtmyuser/userarchives","健康档案", false)' class="btn btn-primary" >健康档案</a>

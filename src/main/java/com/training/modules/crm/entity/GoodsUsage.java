@@ -24,6 +24,8 @@ public class GoodsUsage extends DataEntity<GoodsUsage> {
 	private String effection; // 效果
 	private String feedback; // 反馈
 	private String remark; // 备注
+	
+	private String franchiseeId; //区分商家id
 
 	public String getUsageId() {
 		return usageId;
@@ -112,4 +114,13 @@ public class GoodsUsage extends DataEntity<GoodsUsage> {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
+
+	public String getFranchiseeId() {
+		return franchiseeId;
+	}
+
+	public void setFranchiseeId(String franchiseeId) {
+		this.franchiseeId = franchiseeId;
+	}
+	
 }

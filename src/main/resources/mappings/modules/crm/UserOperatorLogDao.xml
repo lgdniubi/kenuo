@@ -12,6 +12,9 @@
 		FROM
 			mtmydb.mtmy_user_operate_log muo
 	    WHERE muo.mtmy_user_id =#{userId}
+	    <if test="franchiseeId!=null and franchiseeId!=''">
+		    AND muo.franchisee_id = #{franchiseeId}
+		</if>
 	    <if test="operatorType!=null and operatorType!=''">
 			AND muo.operator_type=#{operatorType}
 		</if>
@@ -22,12 +25,14 @@
 	<insert id="insert">
 		INSERT INTO mtmydb.mtmy_user_operate_log(		
 		   mtmy_user_id,
+		   franchisee_id,
 		   operator_type,
 		   content,
 		   create_date,
 		   create_by
 		) VALUES (
 			#{userId}, 
+			#{franchiseeId}, 
 			#{operatorType}, 
 			#{content}, 
 			SYSDATE(),

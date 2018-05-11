@@ -6,23 +6,29 @@
 		
 		SELECT
 			id,
-			mtmy_user_id,
+			mtmy_user_id AS 'userId',
+			franchisee_id AS 'franchiseeId',
 			qq,
 			wechat,
 			email,
-			company_name as companyName,
+			company_name AS 'companyName',
 			area_id,
 			address,
 			create_by,
 			create_date
 		FROM
-			mtmydb.mtmy_user_contact_info where mtmy_user_id=#{userId}
+			mtmydb.mtmy_user_contact_info 
+		WHERE 
+			mtmy_user_id=#{userId}
+		AND 
+			franchisee_id = #{franchiseeId}
 	</select>
 	
 	<!--增加用户产品使用记录 -->
 	<insert id="insert">
 		INSERT INTO mtmydb.mtmy_user_contact_info(
 			mtmy_user_id,
+			franchisee_id,
 			qq,
 			wechat,
 			email,
@@ -33,6 +39,7 @@
 			)
 		VALUES(
 			#{userId},
+			#{franchiseeId},
 			#{qq},
 			#{wechat},
 			#{email},
@@ -52,5 +59,6 @@
 			company_name=#{companyName},
 			address=#{address}
 		WHERE mtmy_user_id = #{userId}
+		AND franchisee_id = #{franchiseeId}
 	</update>
 </mapper>

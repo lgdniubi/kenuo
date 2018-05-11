@@ -44,6 +44,8 @@ public class TurnOverDetails extends DataEntity<TurnOverDetails> {
 	private String beauticianName;		//绑定技师
 	private String createName;			//操作人
 	
+	private String goodsId;            //商品id
+	
 	public int getTurnOverDetailsId() {
 		return turnOverDetailsId;
 	}
@@ -192,4 +194,11 @@ public class TurnOverDetails extends DataEntity<TurnOverDetails> {
 	public void setCreateName(String createName) {
 		this.createName = createName;
 	}
+	public String getGoodsId() {
+		return goodsId;
+	}
+	public void setGoodsId(String goodsId) {
+		this.goodsId = goodsId;
+	}
+	
 }

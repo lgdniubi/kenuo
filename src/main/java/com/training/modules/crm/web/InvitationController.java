@@ -65,7 +65,7 @@ public class InvitationController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = {"list"})
-	public String chooseForm(String userId, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes){
+	public String chooseForm(String userId, String franchiseeId, HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes){
 		try {
 			Users users= mtmyUsersService.get(userId);
 			String layer = users.getLayer();
@@ -90,6 +90,7 @@ public class InvitationController extends BaseController {
 					model.addAttribute("page", page);
 					//传回UserId
 					model.addAttribute("userId",userId);
+					model.addAttribute("franchiseeId",franchiseeId);
 				} catch (Exception e) {
 					logger.error("#####[分销-查询A级用户详情-出现异常：]"+e.getMessage());
 					BugLogUtils.saveBugLog(request, "分销-查询A级用户详情", e);
@@ -110,6 +111,7 @@ public class InvitationController extends BaseController {
 					model.addAttribute("page", page);
 					//传回UserId
 					model.addAttribute("userId",userId);
+					model.addAttribute("franchiseeId",franchiseeId);
 				} catch (Exception e) {
 					logger.error("#####[分销-查询B用户详情-出现异常：]"+e.getMessage());
 					BugLogUtils.saveBugLog(request, "分销-查询B级的用户详情", e);
@@ -129,6 +131,7 @@ public class InvitationController extends BaseController {
 					model.addAttribute("page", page);
 					//传回UserId
 					model.addAttribute("userId",userId);
+					model.addAttribute("franchiseeId",franchiseeId);
 				} catch (Exception e) {
 					logger.error("#####[分销-查询C级用户详情-出现异常：]"+e.getMessage());
 					BugLogUtils.saveBugLog(request, "分销-查询C级用户详情", e);
@@ -142,6 +145,7 @@ public class InvitationController extends BaseController {
 					model.addAttribute("mtmySaleRelieve", newMtmySaleRelieve);
 					//传回UserId
 					model.addAttribute("userId",userId);
+					model.addAttribute("franchiseeId",franchiseeId);
 				} catch (Exception e) {
 					logger.error("#####[分销-查询D级用户详情-出现异常：]"+e.getMessage());
 					BugLogUtils.saveBugLog(request, "分销-查询D级用户详情", e);
@@ -150,6 +154,7 @@ public class InvitationController extends BaseController {
 				return "modules/crm/mtmySaleUserDFrom";
 			}
 			model.addAttribute("userId",userId);
+			model.addAttribute("franchiseeId",franchiseeId);
 			return "modules/crm/mtmyUserZFrom";
 		} catch (Exception e) {
 			logger.error("#####[跳转到对应的用户邀请详情-出现异常：]"+e.getMessage());
