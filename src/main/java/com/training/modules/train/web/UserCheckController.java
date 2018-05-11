@@ -34,8 +34,6 @@ public class UserCheckController extends BaseController{
 	@Autowired
 	private UserCheckService userCheckService;
 	@Autowired
-	private UserDao userDao;
-	@Autowired
 	private RedisClientTemplate redisClientTemplate;		//redis缓存Service
 	
 	/**
@@ -129,7 +127,7 @@ public class UserCheckController extends BaseController{
 		userCheck.setUserid(modelFranchisee.getUserid());
 		UserCheck find = userCheckService.getUserCheck(userCheck);
 		boolean flag = "qy".equals(userCheck.getType()) && Integer.valueOf(userCheck.getStatus())==4;
-		boolean flagsyr = "syr".equals(opflag) && "qy".equals(userCheck.getType());
+		boolean flagsyr = "syr".equals(opflag) && "qy".equals(find.getType());
 		//缓存锁
 		RedisLock redisLock = new RedisLock(redisClientTemplate, "fzx_mobile_"+userCheck.getMobile());
 		try {
@@ -171,6 +169,7 @@ public class UserCheckController extends BaseController{
 		if ("setPermiss".equals(opflag)){
 			if("syr".equals(userCheck.getType())){
 				ModelFranchisee modelFranchisee = userCheckService.getModelFranchiseeByUserid(userCheck.getUserid());
+				modelFranchisee.setApplyid(userCheck.getId());
 				model.addAttribute("modelFranchisee",modelFranchisee);
 				model.addAttribute("userid",userCheck.getUserid());
 				return "modules/train/syrForm";

@@ -101,7 +101,8 @@
 			LEFT JOIN train_audituser_info adi ON adi.apply_id = tap.id
 		WHERE 
 			del_flag = 0 
-		AND tap.user_id = #{userid} and tap.id = #{id}
+		AND tap.user_id = #{userid} 
+		<if test="id != null"> and tap.id = #{id} </if>
 	</select>	
 	
 	<select id="findMaxCode" resultType="long">

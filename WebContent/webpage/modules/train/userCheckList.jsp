@@ -117,9 +117,9 @@
 									<td>${userCheck.name}</td>
 									<td>${userCheck.nickname}</td>
 									<td>
-										<c:if test="${userCheck.type eq 'pt'}">普通会员</c:if>
-										<c:if test="${userCheck.type eq 'syr'}">手艺人</c:if>
-										<c:if test="${userCheck.type eq 'qy'}">企业</c:if>
+										<c:if test="${userCheck.applyType eq 'pt'}">普通会员</c:if>
+										<c:if test="${userCheck.applyType eq 'syr'}">手艺人</c:if>
+										<c:if test="${userCheck.applyType eq 'qy'}">企业</c:if>
 									</td>
 									<td>
 										<c:if test="${userCheck.auditType eq 'syr'}">手艺人</c:if>
@@ -130,12 +130,18 @@
 										<c:if test="${userCheck.status == 0}">待审核</c:if>
 										<c:if test="${userCheck.status == 1}">未通过</c:if>
 										<c:if test="${userCheck.status == 2}">已通过</c:if>
+										<c:if test="${userCheck.status == 3}">已授权</c:if>
 										<c:if test="${userCheck.status == 4}">不能操作</c:if>
 									</td>
 									<td style="text-align: left;">
 									<shiro:hasPermission name="train:userCheck:update">
-										<c:if test="${userCheck.status == 2}">
-					    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.auditType}&opflag=setPermiss','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
+										<c:if test="${userCheck.status == 2 || userCheck.status == 3}">
+											<c:if test="${userCheck.type eq 'qy' && userCheck.auditType eq userCheck.type}">
+						    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.auditType}&opflag=setPermiss','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
+											</c:if>
+											<c:if test="${userCheck.type eq 'pt' || userCheck.type eq 'syr'}">
+						    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.auditType}&opflag=setPermiss','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
+											</c:if>
 										</c:if>
 										<c:if test="${userCheck.status == 0}">
 					    						<a href="#" onclick="checkBtn(${userCheck.id},'${userCheck.userid}','${userCheck.auditType}')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>

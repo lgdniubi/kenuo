@@ -119,6 +119,7 @@
 		<sys:message content="${message}"/>
 		<input name="userid" value="${userid}" type="hidden">
 		<input name="id" value="${modelFranchisee.id}" type="hidden">
+		<input name="applyid" value="${modelFranchisee.applyid}" type="hidden">
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 			<tbody>
 			    <tr>
