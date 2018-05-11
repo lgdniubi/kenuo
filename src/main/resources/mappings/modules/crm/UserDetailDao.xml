@@ -217,8 +217,8 @@
 			</if>
 		GROUP BY
 			mc.user_id
-		ORDER BY
-			mu.reg_time DESC
+		<!-- ORDER BY
+			mu.reg_time DESC -->
 	</select>
 
 	<select id="getUserWithoutScope" resultType="UserDetail">
@@ -270,7 +270,7 @@
 			</if>
 		GROUP BY
 			mc.user_id
-		ORDER BY
-			mu.reg_time DESC
+		<!-- ORDER BY
+			mu.reg_time DESC -->
 	</select>
 </mapper>

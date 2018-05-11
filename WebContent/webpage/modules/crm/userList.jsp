@@ -200,7 +200,7 @@
 							<th style="text-align: center;">性别</th>
 							<th style="text-align: center;">手机</th>
 							<!-- <th style="text-align: center;">等级</th> -->
-							<th style="text-align: center;">颜值</th>
+							<!-- <th style="text-align: center;">颜值</th> -->
 							<th style="text-align: center;">美容师</th>
 							<th style="text-align: center;">注册日期</th>
 							<!-- <th style="text-align: center;">首次消费</th>
@@ -228,7 +228,7 @@
 								</td>
 								<td>${users.mobile}</td>
 								<%-- <td>${users.level}</td> --%>
-								<td>${users.levelvalue }</td>
+								<%-- <td>${users.levelvalue }</td> --%>
 								<td>${users.beautyName }</td>
 								<td><fmt:formatDate value="${users.regTime}" pattern="yyyy-MM-dd " /></td>
 								<%-- <td><fmt:formatDate value="${users.firstDate}" pattern="yyyy-MM-dd " /></td>
