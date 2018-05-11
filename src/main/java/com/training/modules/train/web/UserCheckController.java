@@ -49,6 +49,7 @@ public class UserCheckController extends BaseController{
 	public String findalllist(UserCheck userCheck,HttpServletRequest request, HttpServletResponse response, Model model){
 		Page<UserCheck> page = userCheckService.findList(new Page<UserCheck>(request, response), userCheck);
 		model.addAttribute("page", page);
+		model.addAttribute("status", userCheck.getStatus());
 		return "modules/train/userCheckList";
 	}
 	

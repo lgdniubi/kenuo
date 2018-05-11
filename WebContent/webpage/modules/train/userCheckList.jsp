@@ -25,11 +25,18 @@
 		}
 		//已审核
 		function hasCheck(){
+			$("#status").val("2")
 			window.location="${ctx}/train/userCheck/findalllist?status=2";
 		}
 		//待审核
 		function wait(){
+			$("#status").val("0")
 			window.location="${ctx}/train/userCheck/findalllist?status=0";
+		}
+		//已授权
+		function hasAudit(){
+			$("#status").val("3")
+			window.location="${ctx}/train/userCheck/findalllist?status=3";
 		}
 		//审核按钮
 		function checkBtn(id,userid,type){
@@ -73,7 +80,7 @@
 						<form:form id="searchForm" action="${ctx}/train/userCheck/findalllist" method="post" class="navbar-form navbar-left searcharea">
 							<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}" />
 							<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
-							<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();" />
+							<input id="status" name="status" type="hidden" value="${status}" />
 							<div class="form-group">
 								<label>关键字：<input id="name" name="mobile" maxlength="11" type="text" class="form-control" value="${userCheck.mobile}" placeholder="请输入手机号"></label> 
 							</div>
@@ -94,6 +101,7 @@
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="search()" title="刷新"><i class="glyphicon glyphicon-repeat"></i> 刷新</button>
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="wait()" title="待审核">待审核</button>
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="hasCheck()" title="已审核">已审核</button>
+								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="hasAudit()" title="已授权">已授权</button>
 							</div>
 						</div>
 					</div>

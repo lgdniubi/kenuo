@@ -55,6 +55,9 @@
 		<if test="status == 2">
 			AND tap.status in (1,2)
 		</if>
+		<if test="status == 3">
+			AND tap.status = 3
+		</if>
 		ORDER BY tap.create_date DESC
 	</select>
 	
