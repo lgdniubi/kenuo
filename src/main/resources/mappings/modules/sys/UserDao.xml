@@ -196,30 +196,16 @@
 			a.phone,
 			a.mobile,
 			a.del_flag,
-			CASE a.type 
-			WHEN 'yg' THEN '员工'
-			WHEN 'pt' THEN '普通会员'
-			WHEN 'syr' THEN '手艺人用户'
-			WHEN 'qy' THEN '企业员工' 
-			ELSE '' END AS type, 
-			IFNULL((SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.user_id = a.id),
-			(SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.franchisee_id = a.company_id LIMIT 1)) AS modelName,	
-			<!-- tm.mod_name AS modelName,
-			CASE tmf.`status`
-			WHEN 0 THEN '已授权'
-			WHEN 1 THEN '已到期'
-			ELSE '未授权' END AS userStatus, -->
+			'员工'  AS type, 
 			c. NAME AS "company.name",
 			o. NAME AS "office.name"
 		FROM
 			sys_user a
 		LEFT JOIN sys_franchisee c ON c.id = a.company_id
 		LEFT JOIN sys_office o ON o.id = a.office_id
-	<!--	LEFT JOIN train_apply tap ON tap.user_id = a.id 
- 		LEFT JOIN train_model_franchisee tmf ON tmf.user_id = a.id 
-		LEFT JOIN train_model tm ON tm.id = tmf.mod_id-->
 		<!-- 数据范围过滤 -->
 		${sqlMap.dsf}
+		AND a.type = 'yg'
 		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
 		<if test="!currentUser.admin">
 			AND a.id != '1'
@@ -239,6 +225,61 @@
 		</if>
 		<if test="name != null and name != ''">
 			AND a.name like CONCAT('%', #{name}, '%')
+		</if>
+		<if test="mobile != null and mobile != ''">
+			AND a.mobile = #{mobile}
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY  o.code,c.code, a.name
+			</otherwise>
+		</choose>
+	</select>
+	<!-- 分页查询非员工类型用户信息 -->
+	<select id="findSpecialUserList" resultType="User">
+		SELECT
+			a.id,
+			a.login_name,
+			a. NAME,
+			a. nickname as loginName,
+			a.phone,
+			a.mobile,
+			a.del_flag,
+			CASE a.type 
+			WHEN 'yg' THEN '员工'
+			WHEN 'pt' THEN '普通会员'
+			WHEN 'syr' THEN '手艺人用户'
+			WHEN 'qy' THEN '企业员工' 
+			ELSE '' END AS type, 
+			CASE a.type
+			WHEN 'syr' THEN (SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.user_id = a.id)
+			WHEN 'qy' THEN (SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.franchisee_id = a.company_id LIMIT 1) 
+			ELSE '' END  AS modelName,
+<!-- 			IFNULL((SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.user_id = a.id), -->
+<!-- 			(SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.franchisee_id = a.company_id LIMIT 1)) AS modelName,	 -->
+			<!-- tm.mod_name AS modelName,
+			CASE tmf.`status`
+			WHEN 0 THEN '已授权'
+			WHEN 1 THEN '已到期'
+			ELSE '未授权' END AS userStatus, -->
+			c. NAME AS "company.name",
+			o. NAME AS "office.name"
+		FROM
+			sys_user a
+		LEFT JOIN sys_franchisee c ON c.id = a.company_id
+		LEFT JOIN sys_office o ON o.id = a.office_id
+	<!--	LEFT JOIN train_apply tap ON tap.user_id = a.id 
+ 		LEFT JOIN train_model_franchisee tmf ON tmf.user_id = a.id 
+		LEFT JOIN train_model tm ON tm.id = tmf.mod_id-->
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		AND a.type != 'yg'
+		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
+		<if test="!currentUser.admin">
+			AND a.id != '1'
 		</if>
 		<if test="mobile != null and mobile != ''">
 			AND a.mobile = #{mobile}
@@ -610,6 +651,19 @@
 			del_flag = #{DEL_FLAG_DELETE},
 			del_remarks = #{delRemarks }
 		WHERE id = #{id}
+	</update>
+	<!-- 冻结解冻pt/syr用户 -->
+	<update id="updateUserDel">
+		UPDATE sys_user SET 
+			update_by = #{updateBy.id}, 
+			update_date = #{updateDate}, 
+			del_flag = #{delFlag},
+			del_remarks = #{delRemarks }
+		WHERE id = #{id}
+	</update>
+	<!-- 冻结解冻企业用户 -->
+	<update id="modelFranchisee">
+		UPDATE train_model_franchisee SET del_flag = #{delFlag} WHERE franchisee_id = #{company.id}
 	</update>
 	
 	<!-- 将逻辑删除的用户用户还原 -->

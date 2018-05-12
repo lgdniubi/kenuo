@@ -367,5 +367,15 @@ public interface UserDao extends CrudDao<User> {
 	 * @param user
 	 */
 	public void onJob(User user);
+	/**
+	 * 查找非员工类型的用户   type!= yg
+	 * @param user
+	 * @return
+	 */
+	public List<User> findSpecialUserList(User user);
+	//冻结解冻企业用户
+	public void modelFranchisee(User user);
+	//冻结解冻pt、syr用户
+	public void updateUserDel(User user);
 
 }

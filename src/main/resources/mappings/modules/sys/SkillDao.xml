@@ -61,6 +61,15 @@
 		WHERE sl.id = #{skillId} 
 			AND sl.del_flag=0
 	</select>
+	<!-- 从train_user_skill表中找出用户正在使用的相同名称的商家技能id-->
+	<select id="selectSkillIdByName" resultType="UserSkill">
+		SELECT
+			id, user_id, skill_id
+		FROM
+			train_user_skill
+		WHERE
+			skill_id IN ( SELECT t.id FROM train_skill_label t WHERE t.`name` = #{name})
+	</select>
 	<!-- 删除与新增技能名称相同的数据 -->
 	<delete id="deleteSkillByName">
 		DELETE FROM train_skill_label WHERE id IN (SELECT tt.id FROM (SELECT t.id from train_skill_label t WHERE t.`name`= #{name}) tt);
@@ -88,6 +97,14 @@
 		)
 	</insert>
 	
+	<!-- 批量更新用户是技能id为新插入的平台id -->
+	<update id="updateUserSkill" parameterType="java.util.List">
+		UPDATE train_user_skill
+		SET skill_id = #{insertId} WHERE id IN
+		 <foreach collection="usList" index="index" item="item" separator="," open="(" close=")">
+	        #{item.id}
+	    </foreach>
+	</update>
 	<!-- 编辑技能标签 -->
 	<update id="updateSkill" parameterType="Skill">
 		UPDATE train_skill_label

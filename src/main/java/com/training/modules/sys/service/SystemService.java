@@ -280,6 +280,20 @@ public class SystemService extends BaseService implements InitializingBean {
 		page.setList(userDao.findList(user));
 		return page;
 	}
+	/**
+	 * 查找非员工类型的用户   type!= yg
+	 * @param page
+	 * @param user
+	 * @return
+	 */
+	public Page<User> findSpecialUser(Page<User> page, User user) {
+		user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(),"o"));
+		// 设置分页参数
+		user.setPage(page);
+		// 执行分页查询
+		page.setList(userDao.findSpecialUserList(user));
+		return page;
+	}
 	
 	/**
 	 * 分页查询美容师的信息
@@ -1308,5 +1322,40 @@ public class SystemService extends BaseService implements InitializingBean {
 	public UserPuTo getUserPuTo(String id) {
 		
 		return userDao.getUserPuTo(id);
+	}
+
+	/**
+	 * 冻结解冻企业用户
+	 * @param user
+	 * @param opflag
+	 */
+	@Transactional(readOnly = false)
+	public void updateModelFranchisee(User user, Integer opflag) {
+		user.preUpdate();
+		if (opflag==1){	//解冻
+			user.setDelFlag("0");
+			userDao.modelFranchisee(user);
+		}else if (opflag==2){	//冻结
+			user.setDelFlag("1");
+			userDao.modelFranchisee(user);
+		}
+	}
+	/**
+	 * 冻结解冻pt、syr用户
+	 * @param user
+	 * @param opflag
+	 */
+	@Transactional(readOnly = false)
+	public void updateUserDel(User user, Integer opflag) {
+		user.preUpdate();
+		if (opflag==1){	//解冻
+			user.setDelRemarks("解冻用户");
+			user.setDelFlag("0");
+			userDao.updateUserDel(user);
+		}else if (opflag==2){	//冻结
+			user.setDelRemarks("冻结用户");
+			user.setDelFlag("1");
+			userDao.updateUserDel(user);
+		}
 	}
 }
