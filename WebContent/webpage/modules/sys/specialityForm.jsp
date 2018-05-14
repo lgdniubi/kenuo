@@ -25,29 +25,32 @@
 	$(document).ready(
 			function() {
 				$("#name").focus();
-				validateForm = $("#inputForm")
-						.validate(
-								{
-
-									submitHandler : function(form) {
-										//alert("提交")
-										loading('正在提交，请稍等...');
-										form.submit();
-									},
-									errorContainer : "#messageBox",
-									errorPlacement : function(error, element) {
-										$("#messageBox").text("输入有误，请先更正。");
-										if (element.is(":checkbox")
-												|| element.is(":radio")
-												|| element.parent().is(
-														".input-append")) {
-											error.appendTo(element.parent()
-													.parent());
-										} else {
-											error.insertAfter(element);
-										}
-									}
-								});
+				validateForm = $("#inputForm").validate({
+					rules:{
+						name:{remote:"${ctx}/sys/speciality/checkName?oldName=" + encodeURIComponent('${speciality.name}')}
+						},
+					messages:{
+						name:{remote:"名称已存在"}
+					},
+					submitHandler : function(form) {
+						//alert("提交")
+						loading('正在提交，请稍等...');
+						form.submit();
+					},
+					errorContainer : "#messageBox",
+					errorPlacement : function(error, element) {
+						$("#messageBox").text("输入有误，请先更正。");
+						if (element.is(":checkbox")
+								|| element.is(":radio")
+								|| element.parent().is(
+										".input-append")) {
+							error.appendTo(element.parent()
+									.parent());
+						} else {
+							error.insertAfter(element);
+						}
+					}
+				});
 
 				//在ready函数中预先调用一次远程校验函数，是一个无奈的回避案。(刘高峰）
 				//否则打开修改对话框，不做任何更改直接submit,这时再触发远程校验，耗时较长，

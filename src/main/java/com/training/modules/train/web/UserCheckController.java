@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
@@ -196,5 +197,17 @@ public class UserCheckController extends BaseController{
 		model.addAttribute("userCheck", userCheck);
 		return "modules/train/userCheckForm";
 	}
-	
+	/**
+	 * 判断是否可以进行权限设置
+	 * 如果该用户同意其他商家邀请，就不能操作。
+	 * @param userid
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value={"isPermiss"})
+	public boolean isPermiss(String userid){
+		int count = userCheckService.isPermiss(userid);
+		if (count == 0) return true;
+		return false;
+	}
 }

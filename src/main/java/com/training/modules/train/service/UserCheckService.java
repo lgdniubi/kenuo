@@ -438,4 +438,13 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		userCheckDao.updateUserType(userfind.getAuditType(),userCheck.getUserid(),null);//更改用户表type为企业类型
 		pushMsg(userCheck, text);
 	}
+
+	/**
+	 * 如果该用户同意其他商家邀请，就不能操作。
+	 * @param userid
+	 * @return
+	 */
+	public int isPermiss(String userid) {
+		return userCheckDao.isPermiss(userid);
+	}
 }
