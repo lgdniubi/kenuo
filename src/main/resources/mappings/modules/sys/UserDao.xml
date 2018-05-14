@@ -257,7 +257,7 @@
 			CASE a.type
 			WHEN 'syr' THEN (SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.user_id = a.id)
 			WHEN 'qy' THEN (SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.franchisee_id = a.company_id LIMIT 1) 
-			ELSE '' END  AS modelName,
+			ELSE '普通会员' END  AS modelName,
 <!-- 			IFNULL((SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.user_id = a.id), -->
 <!-- 			(SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.franchisee_id = a.company_id LIMIT 1)) AS modelName,	 -->
 			<!-- tm.mod_name AS modelName,
