@@ -61,7 +61,7 @@ public class SkillService extends CrudService<SkillDao, Skill>{
 		User user = UserUtils.getUser();
 		if(skill.getSkillId() != 0){
 			skill.setUpdateBy(user);
-//			skill.setFranchiseeId(user.getCompany().getId());
+			skill.setFranchiseeId(user.getCompany().getId());
 			skillDao.updateSkill(skill);
 		}else{
 			//从train_user_skill表中找出用户正在使用的相同名称的商家技能id
