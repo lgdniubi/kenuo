@@ -267,8 +267,7 @@
 		FROM
 			`pc_role`
 		WHERE
-			office_id = 1
-		AND franchisee_id = 1
+		franchisee_id = 1
 		AND del_flag = 0
 		AND mode_id = #{modid}
 		AND ename = 'sjgly';
@@ -328,7 +327,6 @@
 		SELECT
 		   id,
 		  `franchisee_id`,
-		  `office_id`,
 		  `mode_id`,
 		  `name`,
 		  `ename`,
@@ -338,32 +336,33 @@
 		WHERE
 			mode_id = #{modid}
 		AND del_flag =0
-		AND office_id = 1
 		AND franchisee_id = 1
 		AND ename != 'sjgly'
 	</select>
 	<insert id="insertPcCommonRole" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO `trains`.`pc_role` (
 			`franchisee_id`,
-			`office_id`,
+			`grade`,
 			`mode_id`,
 			`name`,
 			`ename`,
 			`create_by`,
 			`create_date`,
 			`remarks`,
+			role_range,
 			`del_flag`
 		)
 		VALUES
 			(
 				#{franchiseeid},
-				#{officeid},
+				100,
 				#{modeid},
 				#{name},
 				#{ename},
 				#{createBy.id},
 			    SYSDATE(),
 				#{remarks},
+				'0',
 				'0'
 			);
 				
@@ -495,4 +494,15 @@
 	<update id="updatePushByUser">
 		UPDATE push_msg SET is_handle = 0 WHERE user_id = #{userid} AND notify_type = 12
 	</update>
+	<select id="isPermiss" resultType="int">
+		SELECT
+			COUNT(1)
+		FROM
+			pc_user_invitation p
+		LEFT JOIN sys_user u ON u.mobile = p.phone
+		WHERE
+			u.id = #{userid}
+		AND u.del_flag = 0
+		AND p.`status` = 0
+	</select>
 </mapper>

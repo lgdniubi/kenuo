@@ -115,4 +115,12 @@
 		WHERE speciality_id = #{id}
 	</select>
 
+	<!-- 验证特长标签名称 -->
+	<select id="getByName" resultType="int">
+		SELECT COUNT(*)
+		FROM speciality s
+		WHERE s.name = #{name} 
+		AND s.del_flag =0
+		AND s.franchisee_id = 1
+	</select>
 </mapper>

@@ -65,15 +65,15 @@ public class SkillService extends CrudService<SkillDao, Skill>{
 			skillDao.updateSkill(skill);
 		}else{
 			//从train_user_skill表中找出用户正在使用的相同名称的商家技能id
-			List<UserSkill> usList = skillDao.selectSkillIdByName(skill);
+//			List<UserSkill> usList = skillDao.selectSkillIdByName(skill);
 			//删除与新增技能名称相同的数据，新增的时候设置office_id为1（平台的id）
-			skillDao.deleteSkillByName(skill);
+//			skillDao.deleteSkillByName(skill);
 			skill.setCreateBy(user);
 			skill.setFranchiseeId("1");
 			skillDao.insertSkill(skill);
-			String insertId = skill.getId();
+//			String insertId = skill.getId();
 			//更新找出来的用户技能id为平台新增的id
-			skillDao.updateUserSkill(usList,insertId);
+//			skillDao.updateUserSkill(usList,insertId);
 		}
 	}
 	

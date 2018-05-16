@@ -162,5 +162,7 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	public void updatePushByUser(String userid);
 	//保存每天美耶的商家
 	public void saveMtmyFranchisee(UserCheck find);
+	//如果该用户同意其他商家邀请，就不能操作
+	public int isPermiss(String userid);
 	
 }

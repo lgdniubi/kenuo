@@ -73,11 +73,12 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 	 */
 	public void saveRoleMenu(FzxRole fzxRole){
 		FzxRole newFzxRole = new FzxRole();
+		int roleId = fzxRole.getRoleId();
 		dao.deleteRoleMenu(fzxRole);
 		if(!fzxRole.getMenuIds().isEmpty()){
 	        String[] ids = fzxRole.getMenuIds().split(",");
 	        for (int i = 0; i < ids.length; i++) {
-	            newFzxRole.setRoleId(fzxRole.getRoleId());
+	            newFzxRole.setRoleId(roleId);
 	            newFzxRole.setMenuId(Integer.valueOf(ids[i]));
 	            dao.insertRoleMenu(newFzxRole);
 	        }
@@ -209,6 +210,15 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 		dao.setNotDefault(fzxRole.getModeid());
 		//根据roleid设置该角色默认
 		dao.setDefault(fzxRole.getRoleId());
+	}
+
+	/**
+	 * 根据版本id和ename=sjgly查找超级管理员角色
+	 * @param modid
+	 * @return
+	 */
+	public FzxRole getFzxRoleByModAndEname(String modid) {
+		return dao.getFzxRoleByModAndEname(modid);
 	}
 
 }

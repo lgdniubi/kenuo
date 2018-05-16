@@ -23,6 +23,7 @@ import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.sys.entity.Speciality;
 import com.training.modules.sys.service.SpecialityService;
+import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
 
 /**
@@ -149,5 +150,29 @@ public class SpecialityController extends BaseController {
 			}
 		}
 		return mapList;
+	}
+	
+	/**
+	 * 验证特长标签名称是否存在
+	 * 
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "checkName")
+	public String checkName(String oldName, String name,HttpServletRequest request) {
+		String type = "";
+		try{
+			if (name != null && name.equals(oldName)) {
+				type = "true";
+			} else if (name != null && specialityService.getByName(name) <= 0) {
+				type = "true";
+			}else{
+				type = "false";
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "验证特长标签名称是否存在错误", e);
+			logger.error("验证特长能标签名称是否存在出错信息：" + e.getMessage());
+		}
+		return type;
 	}
 }

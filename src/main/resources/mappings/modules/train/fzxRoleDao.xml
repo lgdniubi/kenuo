@@ -31,8 +31,12 @@
 	<select id="get" resultType="FzxRole">
 		SELECT id AS roleId,name,enname,mod_id AS modeid,remarks FROM fzx_role WHERE id = #{roleId}
 	</select>
+	<!-- 根据版本id和ename=sjgly查找超级管理员角色 -->
+	<select id="getFzxRoleByModAndEname" resultType="FzxRole">
+		SELECT id AS roleId,name,enname, mod_id AS modeid, remarks FROM fzx_role  WHERE mod_id= #{modid} AND enname = 'sjgly' AND del_flag = 0 AND company_id =1
+	</select>
 	<!-- 插入角色 -->
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="roleId">
 		INSERT INTO fzx_role(
 			enname, 
 			name, 

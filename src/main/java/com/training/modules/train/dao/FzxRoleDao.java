@@ -117,4 +117,6 @@ public interface FzxRoleDao extends CrudDao<FzxRole>{
 	public void setNotDefault(int modeid);
 	//根据roleid设置该角色默认
 	public void setDefault(int roleId);
+	//根据版本id和ename=sjgly查找超级管理员角色
+	public FzxRole getFzxRoleByModAndEname(String modid);
 }

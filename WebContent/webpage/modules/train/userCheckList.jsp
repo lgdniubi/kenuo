@@ -65,6 +65,23 @@
 			});
 		}
 		
+		function isPermiss(id,userid,auditType){
+			$.ajax({
+	             type: "GET",
+	             url: "${ctx}/train/userCheck/isPermiss",
+	             data: {userid:userid,id:id},
+	             dataType: "json",
+	             success: function(data){
+	            	 if(data){
+	         			var urlPermiss = "${ctx}/train/userCheck/form?id="+id+"&userid="+userid+"&type="+auditType+"&opflag=setPermiss";
+	         			openDialog('权限设置', urlPermiss,'800px', '550px')
+	            	 } else{
+	            		 layer.msg('此认证信息不能授权'); 
+	            	 }       
+	        	 }
+			});
+			/*  */
+		}
 		
 	</script>
 </head>
@@ -145,7 +162,7 @@
 									<td style="text-align: left;">
 									<shiro:hasPermission name="train:userCheck:update">
 										<c:if test="${userCheck.status == 2 || userCheck.status == 3}">
-						    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.auditType}&opflag=setPermiss','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
+						    						<a href="#" onclick="isPermiss('${userCheck.id}','${userCheck.userid }','${userCheck.auditType}')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
 											<%-- <c:if test="${userCheck.type eq 'qy' && userCheck.auditType eq userCheck.type}">
 						    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.auditType}&opflag=setPermiss','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
 											</c:if>

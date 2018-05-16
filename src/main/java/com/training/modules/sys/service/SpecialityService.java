@@ -84,6 +84,15 @@ public class SpecialityService extends CrudService<SpecialityDao, Speciality>{
 		int count = scialityDao.validDel(speciality);
 		return count == 0;
 	}
+
+	/**
+	 * 验证特长标签名称
+	 * @param name
+	 * @return
+	 */
+	public int getByName(String name){
+		return scialityDao.getByName(name);
+	}
 	
 	
 
