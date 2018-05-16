@@ -73,11 +73,12 @@ public class MediaRoleService extends CrudService<MediaRoleDao,MediaRole>{
 	 */
 	public void saveRoleMenu(MediaRole mediaRole){
 		MediaRole newmediaRole = new MediaRole();
+		int roleId = mediaRole.getRoleId();
 		dao.deleteRoleMenu(mediaRole);
 		if(!mediaRole.getMenuIds().isEmpty()){
 	        String[] ids = mediaRole.getMenuIds().split(",");
 	        for (int i = 0; i < ids.length; i++) {
-	            newmediaRole.setRoleId(mediaRole.getRoleId());
+	            newmediaRole.setRoleId(roleId);
 	            newmediaRole.setMenuId(Integer.valueOf(ids[i]));
 	            dao.insertRoleMenu(newmediaRole);
 	        }
@@ -124,5 +125,14 @@ public class MediaRoleService extends CrudService<MediaRoleDao,MediaRole>{
 	 */
 	public int checkRoleName(String name, Integer modeid) {
 		return dao.checkRoleName(name, modeid);
+	}
+
+	/**
+	 * 根据版本id和ename=sjgly查找超级管理员角色
+	 * @param modid
+	 * @return
+	 */
+	public MediaRole getMediaRoleByModAndEname(String modid) {
+		return dao.getMediaRoleByModAndEname(modid);
 	}
 }

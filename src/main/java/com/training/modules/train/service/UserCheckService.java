@@ -186,7 +186,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 				//设置该用户的超级管理员
 				setSuperAdminForUserid(modelFranchisee,franchisee.getFranchiseeid());
 				//设置公共的角色
-				setRoleForUser(modelFranchisee,franchisee.getFranchiseeid());
+//				setRoleForUser(modelFranchisee,franchisee.getFranchiseeid());
 			}
 		}
 		updateInvitationAndPush(find);	//向邀请表和推送消息表更改数据，把所有推送消息设置为未通过，邀请记录：没同意的设置为3会员拒绝，同意的设置为2商家拒绝。
@@ -214,17 +214,16 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	private void deleteAllRolesForUser(String userid,String franchiseeid) {
 		userCheckDao.deletePcUserRole(userid);
 		userCheckDao.deleteFzxUserRole(userid);
-		List<PcRole> prList= userCheckDao.findAllPcCommonRoleIds(franchiseeid);
-		if(prList != null && prList.size()>0){
-			userCheckDao.deleteAllPcMenu(prList);
-		}
-		userCheckDao.deletePcCommonRole(franchiseeid);
-		List<FzxRole> fzxList= userCheckDao.findAllFzxCommonRoleIds(franchiseeid);
-		if(fzxList != null && fzxList.size()>0){
-			userCheckDao.deleteAllFzxMenu(fzxList);
-		}
-		userCheckDao.deleteFzxCommonRole(franchiseeid);
-//		userCheckDao.deleteFzxUserRoleOffice(franchiseeid);
+//		List<PcRole> prList= userCheckDao.findAllPcCommonRoleIds(franchiseeid);
+//		if(prList != null && prList.size()>0){
+//			userCheckDao.deleteAllPcMenu(prList);
+//		}
+//		userCheckDao.deletePcCommonRole(franchiseeid);
+//		List<FzxRole> fzxList= userCheckDao.findAllFzxCommonRoleIds(franchiseeid);
+//		if(fzxList != null && fzxList.size()>0){
+//			userCheckDao.deleteAllFzxMenu(fzxList);
+//		}
+//		userCheckDao.deleteFzxCommonRole(franchiseeid);
 	}
 
 	/**

@@ -28,8 +28,12 @@
 	<select id="get" resultType="PcRole">
 		SELECT id AS roleId,name,ename, mode_id AS modeid, remarks FROM pc_role WHERE id = #{roleId}
 	</select>
+	<!-- 根据版本id和ename=sjgly查找超级管理员角色 -->
+	<select id="getPcRoleByModAndEname" resultType="PcRole">
+		SELECT id AS roleId,name,ename, mode_id AS modeid, remarks FROM pc_role WHERE mode_id= #{id} AND ename = 'sjgly' AND del_flag = 0 AND franchisee_id =1
+	</select>
 	<!-- 插入角色 -->
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="roleId">
 		INSERT INTO pc_role(
 			ename, 
 			name, 

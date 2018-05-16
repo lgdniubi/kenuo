@@ -10,7 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.training.common.service.CrudService;
 import com.training.modules.train.dao.TrainMenuDao;
 import com.training.modules.train.dao.TrainModelDao;
+import com.training.modules.train.entity.FzxRole;
+import com.training.modules.train.entity.MediaRole;
 import com.training.modules.train.entity.PCMenu;
+import com.training.modules.train.entity.PcRole;
 import com.training.modules.train.entity.TrainModel;
 
 /**
@@ -26,7 +29,12 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	private TrainModelDao trainModelDao;
 	@Autowired
 	private TrainMenuDao trainMenuDao;
-	
+	@Autowired
+	private PcRoleService pcRoleService;
+	@Autowired
+	private FzxRoleService fzxRoleService;
+	@Autowired
+	private MediaRoleService mediaRoleService;
 	/**
 	 * 根据版本英文名称查询是否存在
 	 * @param modEname
@@ -88,8 +96,26 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	        	newModel.setMenuId(Integer.valueOf(ids[i]));
 	            dao.insertModpcMenu(newModel);
 	        }
+	        //插入pc_role超级管理员角色，并赋予该角色菜单
+	        insertPCRoleAndMenu(trainModel);
 		}
 		
+	}
+	//插入pc_role超级管理员角色，并赋予该角色菜单
+	private void insertPCRoleAndMenu(TrainModel trainModel) {
+		//根据版本id和ename=sjgly查找超级管理员角色
+		String id = trainModel.getId();
+		PcRole pcRole = pcRoleService.getPcRoleByModAndEname(id);
+		if(pcRole == null){
+			pcRole = new PcRole();
+			pcRole.setName("超级管理员");
+			pcRole.setEname("sjgly");
+			pcRole.setModeid(Integer.valueOf(id));
+			pcRole.setRemarks("版本设置权限创建的超级管理员");;
+			pcRoleService.savepcRole(pcRole);
+		}
+		pcRole.setMenuIds(trainModel.getMenuIds());
+		pcRoleService.saveRoleMenu(pcRole);
 	}
 
 	/**
@@ -114,7 +140,25 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	        	newModel.setMenuId(Integer.valueOf(ids[i]));
 	            dao.insertModfzxMenu(newModel);
 	        }
+	        //插入fzx_role超级管理员角色，并赋予该角色菜单
+	        insertFzxRoleAndMenu(trainModel);
 		}
+	}
+	//插入fzx_role超级管理员角色，并赋予该角色菜单
+	private void insertFzxRoleAndMenu(TrainModel trainModel) {
+		//根据版本id和ename=sjgly查找超级管理员角色
+		String modid = trainModel.getId();
+		FzxRole fzxRole = fzxRoleService.getFzxRoleByModAndEname(modid);
+		if(fzxRole == null){
+			fzxRole = new FzxRole();
+			fzxRole.setName("超级管理员");
+			fzxRole.setEnname("sjgly");
+			fzxRole.setModeid(Integer.valueOf(modid));
+			fzxRole.setRemarks("版本设置权限创建的超级管理员");;
+			fzxRoleService.saveFzxRole(fzxRole);
+		}
+		fzxRole.setMenuIds(trainModel.getMenuIds());
+		fzxRoleService.saveRoleMenu(fzxRole);
 	}
 
 	/**
@@ -138,7 +182,25 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	        	newModel.setMenuId(Integer.valueOf(ids[i]));
 	            dao.insertModMediaMenu(newModel);
 	        }
+	        //插入meida_role超级管理员角色，并赋予该角色菜单
+	        insertMeidaRoleAndMenu(trainModel);
 		}
+	}
+	//插入meida_role超级管理员角色，并赋予该角色菜单
+	private void insertMeidaRoleAndMenu(TrainModel trainModel) {
+		//根据版本id和ename=sjgly查找超级管理员角色
+		String modid = trainModel.getId();
+		MediaRole meidaRole = mediaRoleService.getMediaRoleByModAndEname(modid);
+		if(meidaRole == null){
+			meidaRole = new MediaRole();
+			meidaRole.setName("超级管理员");
+			meidaRole.setEname("sjgly");
+			meidaRole.setModeid(Integer.valueOf(modid));
+			meidaRole.setRemarks("版本设置权限创建的超级管理员");;
+			mediaRoleService.savemediaRole(meidaRole);
+		}
+		meidaRole.setMenuIds(trainModel.getMenuIds());
+		mediaRoleService.saveRoleMenu(meidaRole);
 	}
 
 	/**

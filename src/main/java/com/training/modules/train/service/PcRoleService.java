@@ -70,11 +70,12 @@ public class PcRoleService extends CrudService<PcRoleDao,PcRole>{
 	 */
 	public void saveRoleMenu(PcRole pcRole){
 		PcRole newpcRole = new PcRole();
+		int roleId = pcRole.getRoleId();
 		dao.deleteRoleMenu(pcRole);
 		if(!pcRole.getMenuIds().isEmpty()){
 	        String[] ids = pcRole.getMenuIds().split(",");
 	        for (int i = 0; i < ids.length; i++) {
-	            newpcRole.setRoleId(pcRole.getRoleId());
+	            newpcRole.setRoleId(roleId);
 	            newpcRole.setMenuId(Integer.valueOf(ids[i]));
 	            dao.insertRoleMenu(newpcRole);
 	        }
@@ -121,5 +122,14 @@ public class PcRoleService extends CrudService<PcRoleDao,PcRole>{
 	 */
 	public int checkRoleName(String name, Integer modeid) {
 		return dao.checkRoleName(name, modeid);
+	}
+
+	/**
+	 * 根据版本id和ename=sjgly查找超级管理员角色
+	 * @param id
+	 * @return
+	 */
+	public PcRole getPcRoleByModAndEname(String id) {
+		return dao.getPcRoleByModAndEname(id);
 	}
 }
