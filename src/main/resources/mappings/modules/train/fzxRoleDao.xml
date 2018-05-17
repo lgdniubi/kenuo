@@ -6,7 +6,7 @@
 		SELECT 
 			r.id AS roleId,
 			r.name,
-			dc.label AS enname,
+			r.enname,
 			r.enname AS enamer,
 			r.mod_id AS modeid,
 			r.remarks,
@@ -15,10 +15,8 @@
 		FROM 
 			fzx_role r
 			LEFT JOIN train_model tm ON tm.id = r.mod_id
-			LEFT JOIN sys_dict dc ON dc.`value` = r.enname
 		WHERE 
 			r.del_flag = 0 
-			AND dc.type = 'fzx_role_type'
 			AND company_id = 1
 			<if test="name != null and name != ''">
 				AND r.name like 
