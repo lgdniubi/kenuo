@@ -47,7 +47,6 @@ public class PcRoleService extends CrudService<PcRoleDao,PcRole>{
 		if(pcRole.getRoleId() == 0){
 			pcRole.preInsert();
 			pcRole.setFranchiseeid(1);	//默认商家id是平台公共的角色
-			pcRole.setOfficeid("1");	//默认商家id是平台公共的角色
 			dao.insert(pcRole);
 		}else{
 			pcRole.preUpdate();

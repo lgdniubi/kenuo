@@ -88,12 +88,14 @@
 							    		<shiro:hasPermission name="train:fzxRole:view">
 											<a href="#" onclick="openDialogView('查看角色', '${ctx}/train/fzxRole/form?roleId=${list.roleId}','800px', '650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>
 										</shiro:hasPermission>
+										<c:if test="${list.isDefault eq '0' && list.enamer ne 'sjgly'}">
 										<shiro:hasPermission name="train:fzxRole:edit">
 					    					<a href="#" onclick="openDialog('修改角色', '${ctx}/train/fzxRole/form?roleId=${list.roleId}','800px', '650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 					    				</shiro:hasPermission>
 					    				<shiro:hasPermission name="train:fzxRole:del">
 											<a href="${ctx}/train/fzxRole/delete?roleId=${list.roleId}" onclick="return confirmx('要删除该角色吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
 										</shiro:hasPermission>
+										</c:if>
 										<shiro:hasPermission name="train:fzxRole:auth"> 
 											<a href="#" onclick="openDialog('权限设置', '${ctx}/train/fzxRole/auth?roleId=${list.roleId}','350px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a> 
 											<c:if test="${list.isDefault eq '0' && list.enamer != 'sjgly'}">

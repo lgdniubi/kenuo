@@ -236,7 +236,6 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		for (PcRole pcrole : pcroleList) {
 			String roleid = pcrole.getId();
 			pcrole.setFranchiseeid(Integer.valueOf(franchid));
-			pcrole.setOfficeid(franchid);
 			pcrole.setModeid(Integer.valueOf(modelFranchisee.getModid()));
 			pcrole.preInsert();
 			userCheckDao.insertPcCommonRole(pcrole);

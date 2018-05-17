@@ -110,6 +110,8 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 			pcRole = new PcRole();
 			pcRole.setName("超级管理员");
 			pcRole.setEname("sjgly");
+			pcRole.setGrade("100");
+			pcRole.setRoleRange("0");
 			pcRole.setModeid(Integer.valueOf(id));
 			pcRole.setRemarks("版本设置权限创建的超级管理员");;
 			pcRoleService.savepcRole(pcRole);
