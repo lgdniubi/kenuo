@@ -30,6 +30,7 @@ import com.training.modules.train.dao.FzxRoleDao;
 import com.training.modules.train.dao.PcRoleDao;
 import com.training.modules.train.dao.UserCheckDao;
 import com.training.modules.train.entity.FzxRole;
+import com.training.modules.train.entity.MediaRole;
 import com.training.modules.train.entity.ModelFranchisee;
 import com.training.modules.train.entity.PcRole;
 import com.training.modules.train.entity.UserCheck;
@@ -54,6 +55,8 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	private PcRoleDao pcRoleDao;
 	@Autowired
 	private FzxRoleDao fzxRoleDao;
+	@Autowired
+	private MediaRoleService mediaRoleService;
 	
 	/**
 	 * 保存用户审核的结果
@@ -214,6 +217,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	private void deleteAllRolesForUser(String userid,String franchiseeid) {
 		userCheckDao.deletePcUserRole(userid);
 		userCheckDao.deleteFzxUserRole(userid);
+		mediaRoleService.deleteUserRole(userid);
 //		List<PcRole> prList= userCheckDao.findAllPcCommonRoleIds(franchiseeid);
 //		if(prList != null && prList.size()>0){
 //			userCheckDao.deleteAllPcMenu(prList);
@@ -304,6 +308,10 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		
 		//向fzx_user_role_office插入一条数据
 		userCheckDao.insertFzxUserRoleOffice(fzxUserRoleId,franchid);
+		
+		//赋予认证这个人自媒体超级管理员角色---先根据版本查出超管，再插入
+		MediaRole mediaRole = mediaRoleService.getMediaRoleByModAndEname(modelFranchisee.getModid());
+		mediaRoleService.insertUserRole(modelFranchisee.getUserid(),mediaRole.getRoleId());
 		
 	}
 

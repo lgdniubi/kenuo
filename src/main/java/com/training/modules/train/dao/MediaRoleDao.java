@@ -54,7 +54,7 @@ public interface MediaRoleDao extends CrudDao<MediaRole>{
 	 * 保存用户角色 
 	 * @param MediaRole
 	 */
-	public void insertUserRole(MediaRole MediaRole);
+//	public void insertUserRole(MediaRole MediaRole);
 	
 	/**
 	 * 删除角色时 关联删除角色用户表
@@ -127,4 +127,6 @@ public interface MediaRoleDao extends CrudDao<MediaRole>{
 	public int checkRoleName(@Param("name")String name, @Param("modeid")Integer modeid);
 	//根据版本id和ename=sjgly查找超级管理员角色
 	public MediaRole getMediaRoleByModAndEname(String modid);
+
+	public void insertUserRole(@Param(value="userid")String userid, @Param(value="roleId")int roleId);
 }

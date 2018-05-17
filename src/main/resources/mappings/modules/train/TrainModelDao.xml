@@ -73,6 +73,9 @@
 		WHERE 1=1
 		AND t.del_flag = 0
 		AND dc.type = 'model_type'
+		<if test="modType != null and modType != ''">
+			AND t.mod_type = #{modType}
+		</if>
 		<if test="modEname != null and modEname != ''">
 			AND t.mod_ename LIKE
 			<if test="dbName == 'oracle'">'%'||#{modEname}||'%'</if>

@@ -156,7 +156,7 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 			fzxRole.setName("超级管理员");
 			fzxRole.setEnname("sjgly");
 			fzxRole.setModeid(Integer.valueOf(modid));
-			fzxRole.setRemarks("版本设置权限创建的超级管理员");;
+			fzxRole.setRemarks("版本设置权限创建的超级管理员");
 			fzxRoleService.saveFzxRole(fzxRole);
 		}
 		fzxRole.setMenuIds(trainModel.getMenuIds());
@@ -196,9 +196,10 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 		if(meidaRole == null){
 			meidaRole = new MediaRole();
 			meidaRole.setName("超级管理员");
-			meidaRole.setEname("sjgly");
 			meidaRole.setModeid(Integer.valueOf(modid));
 			meidaRole.setRemarks("版本设置权限创建的超级管理员");;
+			meidaRole.setType("1");
+//			meidaRole.setPublicto("ab");
 			mediaRoleService.savemediaRole(meidaRole);
 		}
 		meidaRole.setMenuIds(trainModel.getMenuIds());
