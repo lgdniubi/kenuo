@@ -8,6 +8,7 @@
 	<script type="text/javascript">
 		//编辑业务员营业额
 		function editOrderPushmoneyRecord(orderId,detailsId){
+			$(".loading").show();
 			var lock = true;
 			top.layer.open({
 	 			type: 2, 
@@ -95,6 +96,8 @@
 		  				    totalAdd = 0;
 		  				  	surplusMoney = 0;
 		  			    }
+		  			    
+		  			    top.layer.close(index);
 	     	    		lock = false;//上锁
 		   	    		$.ajax({
 		       				type:"post",
@@ -107,9 +110,8 @@
 		       				success:function(date){
 		       					if(date == 'success'){
 		       						$(obj).parent().parent().remove();
-		       						top.layer.alert('修改业务员成功', {icon: 0, title:'提醒'});
+		       						top.layer.alert('修改业务员成功', {icon: 1, title:'提醒'});
 		       						window.location="${ctx}/ec/returned/getTurnoverByOrderId?returnedId="+returnedId+"&orderId="+orderId;
-		       	     				top.layer.close(index);
 		       					}else{
 				     	    		lock = true;//添加失败,还可以让修改. 解锁
 		       						top.layer.alert('修改业务员失败', {icon: 0, title:'提醒'});
@@ -120,11 +122,15 @@
 		       				}
 		       			});
 	     	    	}
-	 			}
+	 			},
+				cancel: function(index){ //或者使用btn2
+					$(".loading").hide();//按钮【按钮二】的回调
+				}
 	 		}); 
 		}
 		//编辑店铺营业额
 		function editMtmyTurnoverDetails(orderId,detailsId){
+			$(".loading").show();
 			var lockTurnover = true;
 			top.layer.open({
 	 			type: 2, 
@@ -182,6 +188,8 @@
 	  					    top.layer.alert('店铺的营业额之和必须等于售后金额！', {icon: 0, title:'提醒'});
 	  					    return;
 	  				    }
+	  				    
+	  				    top.layer.close(index);
 	  				    lockTurnover = false;//上锁,防止重复提交
 		   	    		$.ajax({
 		       				type:"post",
@@ -198,7 +206,6 @@
 		       						$(obj).parent().parent().remove();
 		       						top.layer.alert('修改店铺营业额成功', {icon: 0, title:'提醒'});
 		       						window.location="${ctx}/ec/returned/getTurnoverByOrderId?returnedId="+detailsId+"&orderId="+orderId;
-		       	     				top.layer.close(index);
 		       					}else{
 		       						lockTurnover = true;//添加失败,还可以让修改. 解锁
 		       						top.layer.alert('修改店铺营业额失败', {icon: 0, title:'提醒'});
@@ -209,7 +216,10 @@
 		       				}
 		       			});
 	     	    	}
-	     	    }
+	     	    },
+				cancel: function(index){ //或者使用btn2
+					$(".loading").hide();//按钮【按钮二】的回调
+				}
 	 		}); 
 		}
 </script>
@@ -255,5 +265,6 @@
 			</div>
 		</div>
 	</div>
+	<div class="loading" id="loading"></div>
 </body>
 </html>
