@@ -38,7 +38,7 @@ public interface RefundOrderMapper {
 	* @date 2018年5月14日  
 	* @version 3.0.0  
 	*/  
-	int addrefundOrder(List<ArrearageOfficeList> subList);
+	int addrefundOrder(@Param("subList") List<ArrearageOfficeList> subList);
 
 	/**  
 	* <p>Title: </p>  

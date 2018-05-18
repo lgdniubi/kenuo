@@ -2,14 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.training.modules.train.dao.RefundOrderMapper">
 
-	<select id="queryarrearageoffice" parameterType="java.lang.String" resultType="com.training.modules.train.entity.ArrearageOfficeList">
+	<resultMap type="com.training.modules.train.entity.ArrearageOfficeList" id="ArrearageOfficeList">
+		<result column="office_id" property="office_id"/>
+		<result column="used_limit" property="used_limit"/>
+	</resultMap>
+
+	<select id="queryarrearageoffice" parameterType="java.lang.String" resultMap="ArrearageOfficeList">
 		SELECT 
 			s.office_id,
-			SUM(use_limit) AS used_limit
+			SUM(os.used_limit) AS used_limit
 		FROM trains.sys_office_account s
 		LEFT JOIN trains.sys_office_statement os ON s.office_id = os.office_id
+		LEFT JOIN trains.train_refund_order ro ON ro.arrearage_office = s.office_id AND  DATE_FORMAT(ro.add_time,'%Y-%m') = #{format}
 		WHERE DATE_FORMAT(os.create_date,'%Y-%m') = #{format}
-		GROUP BY s.office_id HAVING used_limit > 0
+		GROUP BY s.office_id HAVING used_limit > 0 AND COUNT(ro.order_id) = 0
 	</select>
 
 	<insert id="addrefundOrder" parameterType="java.util.List">
