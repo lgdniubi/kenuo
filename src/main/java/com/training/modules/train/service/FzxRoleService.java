@@ -50,7 +50,6 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 		if(fzxRole.getRoleId() == 0){
 			fzxRole.preInsert();
 			fzxRole.setFranchiseeid(1);	//默认商家id是平台公共的角色
-			fzxRole.setOfficeid("1");	//默认商家id是平台公共的角色
 			dao.insert(fzxRole);
 		}else{
 			fzxRole.preUpdate();
@@ -215,10 +214,11 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 	/**
 	 * 根据版本id和ename=sjgly查找超级管理员角色
 	 * @param modid
+	 * @param modType 
 	 * @return
 	 */
-	public FzxRole getFzxRoleByModAndEname(String modid) {
-		return dao.getFzxRoleByModAndEname(modid);
+	public FzxRole getFzxRoleByModAndEname(String modid, String modType) {
+		return dao.getFzxRoleByModAndEname(modid,modType);
 	}
 
 }

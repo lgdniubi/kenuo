@@ -48,12 +48,12 @@
                 <!-- 工具栏 -->
 				<div class="row">
 					<div class="col-sm-12">
-						<div class="pull-left">
+						<!--<div class="pull-left">
 							<shiro:hasPermission name="train:mdrole:add">
-								<!-- 增加按钮 -->
+								 增加按钮 
 								<table:addRow url="${ctx}/train/mdrole/form" title="新增角色" width="800px" height="650px"></table:addRow>
 							</shiro:hasPermission>
-						</div>
+						</div>-->
 						<div class="pull-right">
 							<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()">
 								<i class="fa fa-search"></i> 查询
@@ -70,7 +70,6 @@
 							<tr>
 								<th style="text-align: center;">ID</th>
 								<th style="text-align: center;">角色名称</th>
-							    <th style="text-align: center;">英文名称</th>
 							    <th style="text-align: center;">版本名称</th>
 							    <th style="text-align: center;">角色类型</th>
 							    <th style="text-align: center;">发布平台</th>
@@ -82,7 +81,6 @@
 								<tr>
 									<td>${list.roleId }</td>
 								  	<td>${list.name }</td>
-								  	<td>${list.ename }</td>
 								  	<td>${list.modName }</td>
 								  	<td>
 								  		<c:if test="${list.type eq '0'}">写手</c:if>
@@ -98,7 +96,7 @@
 							    		<shiro:hasPermission name="train:mdrole:view">
 											<a href="#" onclick="openDialogView('查看角色', '${ctx}/train/mdrole/form?roleId=${list.roleId}','800px', '650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>
 										</shiro:hasPermission>
-										<shiro:hasPermission name="train:mdrole:edit">
+									<!--	<shiro:hasPermission name="train:mdrole:edit">
 					    					<a href="#" onclick="openDialog('修改角色', '${ctx}/train/mdrole/form?roleId=${list.roleId}','800px', '650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 					    				</shiro:hasPermission>
 					    				<shiro:hasPermission name="train:mdrole:del">
@@ -106,7 +104,7 @@
 										</shiro:hasPermission>
 										<shiro:hasPermission name="train:mdrole:auth"> 
 											<a href="#" onclick="openDialog('权限设置', '${ctx}/train/mdrole/auth?roleId=${list.roleId}','350px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a> 
-										</shiro:hasPermission>
+										</shiro:hasPermission> -->
 								    </td>
 								</tr>
 							</c:forEach>

@@ -454,7 +454,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			newDict.setValue(user.getUserType());
 			newDict.setType("sys_user_type");
 			Dict newD = dictDao.findDict(newDict);
-			str.append("职位:修改前("+oldD.getLabel()+"),修改后("+newD.getLabel()+")--");
+			str.append("职位:修改前(ss),修改后("+newD.getLabel()+")--");
 		}
 		return str.toString();
 	}

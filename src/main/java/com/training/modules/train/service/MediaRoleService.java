@@ -50,7 +50,6 @@ public class MediaRoleService extends CrudService<MediaRoleDao,MediaRole>{
 		if(mediaRole.getRoleId() == 0){
 			mediaRole.preInsert();
 			mediaRole.setFranchiseeid(1);	//默认商家id是平台公共的角色
-			mediaRole.setOfficeid("1");	//默认商家id是平台公共的角色
 			dao.insert(mediaRole);
 		}else{
 			mediaRole.preUpdate();
@@ -134,5 +133,13 @@ public class MediaRoleService extends CrudService<MediaRoleDao,MediaRole>{
 	 */
 	public MediaRole getMediaRoleByModAndEname(String modid) {
 		return dao.getMediaRoleByModAndEname(modid);
+	}
+
+	public void insertUserRole(String userid, int roleId) {
+		dao.insertUserRole(userid,roleId);
+	}
+
+	public void deleteUserRole(String userid) {
+		dao.deleteUserRole(userid);
 	}
 }

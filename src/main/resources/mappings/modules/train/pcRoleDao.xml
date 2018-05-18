@@ -7,6 +7,7 @@
 			r.id AS roleId,
 			r.name,
 			dc.label AS ename,
+			dc.value AS enameLable,
 			r.mode_id AS modeid,
 			tm.mod_name AS modName
 		FROM 
@@ -26,7 +27,7 @@
 	</select>
 	<!-- 角色详情 -->
 	<select id="get" resultType="PcRole">
-		SELECT id AS roleId,name,ename, mode_id AS modeid, remarks FROM pc_role WHERE id = #{roleId}
+		SELECT id AS roleId,name,ename,grade, mode_id AS modeid, remarks,role_range FROM pc_role WHERE id = #{roleId}
 	</select>
 	<!-- 根据版本id和ename=sjgly查找超级管理员角色 -->
 	<select id="getPcRoleByModAndEname" resultType="PcRole">
@@ -38,21 +39,23 @@
 			ename, 
 			name, 
 			franchisee_id,
-			office_id,
+			grade,
 			mode_id,
 			create_by,
 			create_date, 
 			remarks,
+			role_range,
 			del_flag
 		) VALUES (
 			#{ename},
 			#{name},
 			#{franchiseeid},
-			#{officeid},
+			#{grade},
 			#{modeid}, 
 			#{createBy.id}, 
 			#{createDate}, 
 			#{remarks}, 
+			#{roleRange}, 
 			#{delFlag}
 		)
 	</insert>
@@ -61,10 +64,12 @@
 		UPDATE pc_role SET 
 			ename = #{ename}, 
 			name = #{name},
+			grade  = #{grade}, 
 			mode_id  = #{modeid}, 
 			update_by = #{updateBy.id}, 
 			update_date = #{updateDate}, 
 			remarks = #{remarks},
+			role_range = #{roleRange},
 			del_flag = 0
 		WHERE id = #{roleId}
 	</update>

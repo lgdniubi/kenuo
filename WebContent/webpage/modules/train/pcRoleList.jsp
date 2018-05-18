@@ -86,12 +86,14 @@
 							    		<shiro:hasPermission name="train:pcRole:view">
 											<a href="#" onclick="openDialogView('查看角色', '${ctx}/train/pcRole/form?roleId=${list.roleId}','800px', '650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>
 										</shiro:hasPermission>
+										<c:if test="${list.enameLable ne 'sjgly'}">
 										<shiro:hasPermission name="train:pcRole:edit">
 					    					<a href="#" onclick="openDialog('修改角色', '${ctx}/train/pcRole/form?roleId=${list.roleId}','800px', '650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 					    				</shiro:hasPermission>
 					    				<shiro:hasPermission name="train:pcRole:del">
 											<a href="${ctx}/train/pcRole/delete?roleId=${list.roleId}" onclick="return confirmx('要删除该角色吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
 										</shiro:hasPermission>
+										</c:if>
 										<shiro:hasPermission name="train:pcRole:auth"> 
 											<a href="#" onclick="openDialog('权限设置', '${ctx}/train/pcRole/auth?roleId=${list.roleId}','350px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a> 
 										</shiro:hasPermission>

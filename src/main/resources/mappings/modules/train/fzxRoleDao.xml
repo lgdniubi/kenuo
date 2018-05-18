@@ -6,7 +6,7 @@
 		SELECT 
 			r.id AS roleId,
 			r.name,
-			dc.label AS enname,
+			r.enname,
 			r.enname AS enamer,
 			r.mod_id AS modeid,
 			r.remarks,
@@ -15,10 +15,8 @@
 		FROM 
 			fzx_role r
 			LEFT JOIN train_model tm ON tm.id = r.mod_id
-			LEFT JOIN sys_dict dc ON dc.`value` = r.enname
 		WHERE 
 			r.del_flag = 0 
-			AND dc.type = 'fzx_role_type'
 			AND company_id = 1
 			<if test="name != null and name != ''">
 				AND r.name like 
@@ -33,7 +31,7 @@
 	</select>
 	<!-- 根据版本id和ename=sjgly查找超级管理员角色 -->
 	<select id="getFzxRoleByModAndEname" resultType="FzxRole">
-		SELECT id AS roleId,name,enname, mod_id AS modeid, remarks FROM fzx_role  WHERE mod_id= #{modid} AND enname = 'sjgly' AND del_flag = 0 AND company_id =1
+		SELECT id AS roleId,name,enname, mod_id AS modeid, remarks FROM fzx_role  WHERE mod_id= #{modid} AND enname = #{modType} AND del_flag = 0 AND company_id =1
 	</select>
 	<!-- 插入角色 -->
 	<insert id="insert" useGeneratedKeys="true" keyProperty="roleId">
@@ -41,7 +39,6 @@
 			enname, 
 			name, 
 			company_id,
-			office_id,
 			mod_id,
 			role_grade,
 			create_by,
@@ -52,9 +49,8 @@
 			#{enname},
 			#{name},
 			#{franchiseeid},
-			#{officeid},
 			#{modeid},
-			1,
+			100,
 			#{createBy.id}, 
 			#{createDate}, 
 			#{remarks}, 
