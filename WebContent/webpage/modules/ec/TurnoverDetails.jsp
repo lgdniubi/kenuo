@@ -111,11 +111,11 @@
 		       					if(date == 'success'){
 		       						$(obj).parent().parent().remove();
 		       						top.layer.alert('修改业务员成功', {icon: 1, title:'提醒'});
-		       						window.location="${ctx}/ec/returned/getTurnoverByOrderId?returnedId="+returnedId+"&orderId="+orderId;
 		       					}else{
 				     	    		lock = true;//添加失败,还可以让修改. 解锁
 		       						top.layer.alert('修改业务员失败', {icon: 0, title:'提醒'});
 		       					}
+	       						window.location="${ctx}/ec/returned/getTurnoverByOrderId?returnedId="+returnedId+"&orderId="+orderId;
 		       				},
 		       				error:function(XMLHttpRequest,textStatus,errorThrown){
 		       					
@@ -205,11 +205,11 @@
 		       					if(date == 'success'){
 		       						$(obj).parent().parent().remove();
 		       						top.layer.alert('修改店铺营业额成功', {icon: 0, title:'提醒'});
-		       						window.location="${ctx}/ec/returned/getTurnoverByOrderId?returnedId="+detailsId+"&orderId="+orderId;
 		       					}else{
 		       						lockTurnover = true;//添加失败,还可以让修改. 解锁
 		       						top.layer.alert('修改店铺营业额失败', {icon: 0, title:'提醒'});
 		       					}
+	       						window.location="${ctx}/ec/returned/getTurnoverByOrderId?returnedId="+detailsId+"&orderId="+orderId;
 		       				},
 		       				error:function(XMLHttpRequest,textStatus,errorThrown){
 		       					
