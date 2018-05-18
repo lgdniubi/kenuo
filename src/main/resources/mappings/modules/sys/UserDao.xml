@@ -197,7 +197,7 @@
 			a.phone,
 			a.mobile,
 			a.del_flag,
-			'员工'  AS type, 
+			a.type,
 			c. NAME AS "company.name",
 			o. NAME AS "office.name"
 		FROM
@@ -251,10 +251,8 @@
 			a.del_flag,
 			a.create_date AS createDate,
 			CASE a.type 
-			WHEN 'yg' THEN '员工'
 			WHEN 'pt' THEN '普通会员'
 			WHEN 'syr' THEN '手艺人用户'
-			WHEN 'qy' THEN '企业员工' 
 			ELSE '' END AS type, 
 			CASE a.type
 			WHEN 'syr' THEN (SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.user_id = a.id)

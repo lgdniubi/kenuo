@@ -50,7 +50,7 @@
 			#{name},
 			#{franchiseeid},
 			#{modeid},
-			100,
+			#{roleGrade},
 			#{createBy.id}, 
 			#{createDate}, 
 			#{remarks}, 

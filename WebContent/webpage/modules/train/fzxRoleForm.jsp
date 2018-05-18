@@ -29,11 +29,23 @@
 						nameMethod :true
 					} ,
 					enname:{
-						enameMethod:true
+						enameMethod:true,
+					},
+					roleGrade:{
+						number:true,
+						digits:true,
+						min:1,
+						max:99
 					}
 				},
 				messages:{
-					name:{nameMethod:"此版本的角色名称已存在",required:"角色名称不能为空"}
+					name:{nameMethod:"此版本的角色名称已存在",required:"角色名称不能为空"},
+					roleGrade:{
+						number:"输入合法的整数",
+						digits:"输入正整数",
+						min:"最小为1",
+						max:"最大为99"
+					}
 				}, 
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
@@ -117,6 +129,12 @@
 		         	<form:select path="modeid"  class="form-control">
 						<form:options items="${modList}" itemLabel="modName" itemValue="id" htmlEscape="false"/>
 					</form:select>
+				 </td>
+		      </tr>
+		       <tr>
+		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 角色等级:</label></td>
+		         <td  class="width-35" >
+		         	<form:input path="roleGrade" htmlEscape="false" maxlength="2" class="required form-control" placeholder="请输入1-99的整数"/>
 				 </td>
 		      </tr>
 		      <tr>

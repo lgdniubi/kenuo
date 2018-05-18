@@ -103,7 +103,7 @@ public class fzxRoleController extends BaseController{
 				fzxRole = new FzxRole();
 			}
 			TrainModel trainModel = new TrainModel();
-			trainModel.setModType("qy");
+			trainModel.setModType("'qy','dy'");
 			List<TrainModel> modList = trainModelService.findList(trainModel);	//查找所有的版本类型
 			model.addAttribute("fzxRole", fzxRole);
 			model.addAttribute("modList", modList);
