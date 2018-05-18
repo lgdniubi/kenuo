@@ -36,7 +36,7 @@
 					<h5>版本管理</h5>
 				</div>
 				<div class="ibox-content">
-					<div class="searcharea clearfix">
+					<%-- <div class="searcharea clearfix">
 						<form:form id="searchForm" action="${ctx}/train/model/findalllist" method="post" class="navbar-form navbar-left searcharea">
 							<div class="form-group">
 								<label>关键字：<input id="name" name="modEname" maxlength="10" type="text" class="form-control" value="${trainModel.modEname}" placeholder="请输入版本英文名称"></label> 
@@ -50,9 +50,9 @@
 								</button>
 							</shiro:hasPermission>
 						</form:form>
-					</div>
+					</div> --%>
 					<!-- 工具栏 -->
-					<div class="row">
+					<%-- <div class="row">
 						<div class="col-sm-12">
 							<div class="pull-left">
 								<shiro:hasPermission name="train:model:addmodel">
@@ -61,7 +61,7 @@
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新"><i class="glyphicon glyphicon-repeat"></i> 刷新</button>
 							</div>
 						</div>
-					</div>
+					</div> --%>
 					<table id="treeTable" class="table table-striped table-bordered table-hover table-condensed dataTables-example dataTable">
 						<thead>
 							<tr>
@@ -79,19 +79,21 @@
 								<tr id="${trainModel.id}" >
 									<td nowrap style="text-align: center;"><i class="icon-menu.icon"></i>${trainModel.id}</td>
 									<td>${trainModel.modName}</td>
-									<td>${trainModel.modType}</td>
+									<td>
+										<c:if test="${trainModel.modType eq 'pt'}">普通会员</c:if>
+										<c:if test="${trainModel.modType eq 'syr'}">手艺人</c:if>
+										<c:if test="${trainModel.modType eq 'qy'}">企业</c:if>
+										<c:if test="${trainModel.modType eq 'dy'}">登云</c:if>
+									</td>
 									<td>${trainModel.modEname}</td>
 									<td>${trainModel.remark}</td>
 									<td style="text-align: left;">
 										<shiro:hasPermission name="train:model:view">
 											<a href="#" onclick="openDialogView('查看', '${ctx}/train/model/form?id=${trainModel.id}&opflag=VIEW','430px', '480px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>
 										</shiro:hasPermission>
-										<shiro:hasPermission name="train:model:updatemodel">
-				    						<a href="#" onclick="openDialog('修改', '${ctx}/train/model/form?id=${trainModel.id}&opflag=UPDATE','430px', '480px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
-					    				</shiro:hasPermission>
 										<shiro:hasPermission name="train:model:auth">	
 				    						<a href="#" onclick="openDialog('fzx端权限设置', '${ctx}/train/model/auth?id=${trainModel.id}&opflag=fzx','430px', '600px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>fzx端权限设置</a>
-				    						<c:if test="${trainModel.modType eq '企业'}">
+				    						<c:if test="${trainModel.modType eq 'qy'}">
 				    						<a href="#" onclick="openDialog('pc端权限设置', '${ctx}/train/model/auth?id=${trainModel.id}&opflag=pc','430px', '600px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>pc端权限设置</a>
 				    						<a href="#" onclick="openDialog('media权限设置', '${ctx}/train/model/auth?id=${trainModel.id}&opflag=md','430px', '600px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>自媒体权限设置</a>
 				    						</c:if>

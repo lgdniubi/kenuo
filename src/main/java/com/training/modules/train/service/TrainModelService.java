@@ -150,17 +150,43 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	private void insertFzxRoleAndMenu(TrainModel trainModel) {
 		//根据版本id和ename=sjgly查找超级管理员角色
 		String modid = trainModel.getId();
-		FzxRole fzxRole = fzxRoleService.getFzxRoleByModAndEname(modid);
-		if(fzxRole == null){
-			fzxRole = new FzxRole();
-			fzxRole.setName("超级管理员");
-			fzxRole.setEnname("sjgly");
-			fzxRole.setModeid(Integer.valueOf(modid));
-			fzxRole.setRemarks("版本设置权限创建的超级管理员");
-			fzxRoleService.saveFzxRole(fzxRole);
+		Integer intModId = Integer.valueOf(modid);
+		TrainModel model = dao.getTrainModel(trainModel);
+		FzxRole fzxRole = null;
+		if("syrmf".equals(model.getModEname())){
+			fzxRole = fzxRoleService.getFzxRoleByModAndEname(modid,"syrmf");
+			creatRole("手艺人免费管理员","syrmf",intModId,"版本设置权限创建手艺人免费",fzxRole);
+		}else if ("syrsf".equals(model.getModEname())){
+			fzxRole = fzxRoleService.getFzxRoleByModAndEname(modid,"syrsf");
+			creatRole("手艺人收费管理员","syrsf",intModId,"版本设置权限创建手艺人收费",fzxRole);
+		}else if ("dy".equals(model.getModEname())){
+			fzxRole = fzxRoleService.getFzxRoleByModAndEname(modid,"dy");
+			creatRole("登云管理员","dy",intModId,"版本设置权限创建登云",fzxRole);
+		}else if ("pthy".equals(model.getModEname())){
+			fzxRole = fzxRoleService.getFzxRoleByModAndEname(modid,"pthy");
+			creatRole("普通会员管理员","pthy",intModId,"版本设置权限创建普通会员",fzxRole);
+		}else{
+			fzxRole = fzxRoleService.getFzxRoleByModAndEname(modid,"sjgly");
+			creatRole("超级管理员","sjgly",intModId,"版本设置权限创建超级",fzxRole);
 		}
 		fzxRole.setMenuIds(trainModel.getMenuIds());
 		fzxRoleService.saveRoleMenu(fzxRole);
+	}
+/*.
+ * ("ptyh".equals(model.getModEname())){
+			fzxRole = fzxRoleService.getFzxRoleByModAndEname(modid,"ptyh");
+			creatRole("普通用户管理员","ptyh",intModId,"版本设置权限创建普通用户",fzxRole);
+		}else
+ * */
+	private void creatRole(String name, String enname, Integer intModId, String remarks, FzxRole fzxRole) {
+		if(fzxRole == null){
+			fzxRole = new FzxRole();
+			fzxRole.setName(name);
+			fzxRole.setEnname(enname);
+			fzxRole.setModeid(intModId);
+			fzxRole.setRemarks(remarks);
+			fzxRoleService.saveFzxRole(fzxRole);
+		}
 	}
 
 	/**

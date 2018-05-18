@@ -214,10 +214,11 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 	/**
 	 * 根据版本id和ename=sjgly查找超级管理员角色
 	 * @param modid
+	 * @param modType 
 	 * @return
 	 */
-	public FzxRole getFzxRoleByModAndEname(String modid) {
-		return dao.getFzxRoleByModAndEname(modid);
+	public FzxRole getFzxRoleByModAndEname(String modid, String modType) {
+		return dao.getFzxRoleByModAndEname(modid,modType);
 	}
 
 }

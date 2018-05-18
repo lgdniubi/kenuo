@@ -82,6 +82,7 @@
 							<th class="sort-column name">昵称</th>
 							<th class="sort-column phone">用户类型</th>
 							<th class="sort-column phone">版本类型</th>
+							<th class="sort-column phone">注册时间</th>
 <!-- 							<th class="sort-column phone">用户状态</th> -->
 							<th>操作</th>
 						</tr>
@@ -94,6 +95,7 @@
 								<td>${user.loginName}</td>
 								<td>${user.type}</td>
 								<td>${user.modelName}</td>
+								<td><fmt:formatDate value="${user.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								<%-- <td>${user.userStatus}</td> --%>
 								<td>
 									<shiro:hasPermission name="sys:user:auth">
