@@ -1353,7 +1353,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			user.setDelFlag("0");
 			userDao.updateUserDel(user);
 		}else if (opflag==2){	//冻结
-			user.setDelRemarks("冻结用户");
+//			user.setDelRemarks("冻结用户");
 			user.setDelFlag("1");
 			userDao.updateUserDel(user);
 		}

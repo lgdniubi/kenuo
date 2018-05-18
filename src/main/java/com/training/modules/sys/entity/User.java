@@ -36,6 +36,7 @@ public class User extends DataEntity<User> {
 	private Office office;	// 归属机构
 	private String code;	//店铺编码
 	private String loginName;// 登录名
+	private String nickname;// 昵称
 	private String password;// 密码
 	private String no;		// 工号
 	private String idCard;	//身份证号码
@@ -682,5 +683,11 @@ public class User extends DataEntity<User> {
 	}
 	public void setActionSource(String actionSource) {
 		this.actionSource = actionSource;
+	}
+	public String getNickname() {
+		return nickname;
+	}
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 }

@@ -71,6 +71,7 @@
     	a.office_id AS "office.id",
     	c.code as "code",
     	a.login_name,
+    	a.nickname,
     	a.password,
     	a.no,
     	a.idcard,
@@ -205,7 +206,7 @@
 		LEFT JOIN sys_office o ON o.id = a.office_id
 		<!-- 数据范围过滤 -->
 		${sqlMap.dsf}
-		AND a.type = 'yg'
+		AND a.type in ('yg','qy')
 		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
 		<if test="!currentUser.admin">
 			AND a.id != '1'
@@ -243,8 +244,8 @@
 		SELECT
 			a.id,
 			a.login_name,
-			a. NAME,
-			a. nickname as loginName,
+			a.NAME,
+			a.nickname,
 			a.phone,
 			a.mobile,
 			a.del_flag,
@@ -277,7 +278,7 @@
 		LEFT JOIN train_model tm ON tm.id = tmf.mod_id-->
 		<!-- 数据范围过滤 -->
 		${sqlMap.dsf}
-		AND a.type != 'yg'
+		AND a.type in ('pt','syr')
 		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
 		<if test="!currentUser.admin">
 			AND a.id != '1'
