@@ -329,6 +329,7 @@
 		  `mode_id`,
 		  `name`,
 		  `ename`,
+		  `grade`,
 		  `remarks` 
 		FROM
 			`pc_role`
@@ -354,7 +355,7 @@
 		VALUES
 			(
 				#{franchiseeid},
-				100,
+				#{grade},
 				#{modeid},
 				#{name},
 				#{ename},
@@ -407,7 +408,7 @@
 			    SYSDATE(),
 				#{remarks},
 				#{isDefault},
-				100,
+				#{roleGrade},
 				'0'
 			);
 				
