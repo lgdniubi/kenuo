@@ -509,7 +509,7 @@
 		UPDATE pc_role SET mode_id = #{modid} WHERE franchisee_id = #{franchiseeid}
 	</update>
 	<!-- 更改fzxrole，该商家的角色版本 -->
-	<update id="updatePcRoleModelId">
+	<update id="updateFzxRoleModelId">
 		UPDATE fzx_role SET mod_id = #{modid} WHERE company_id = #{franchiseeid}
 	</update>
 	
