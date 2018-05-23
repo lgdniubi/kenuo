@@ -924,12 +924,17 @@
 		SELECT
 			r.order_id AS orderId,
 			r.user_id AS pushmoneyUserId,
-			SUM(r.push_money) AS pushMoney
+			IFNULL(a.pushMoney,0) AS pushMoney
 		FROM
 			mtmydb.mtmy_beautician_turnover r
+		LEFT JOIN (
+			SELECT SUM(mbr.push_money) AS pushMoney,user_id
+			FROM mtmydb.mtmy_beautician_turnover mbr 
+			WHERE mbr.returned_id = #{detailsId}
+			AND mbr.del_flag = 0 
+			GROUP BY mbr.department_id,mbr.user_id) a ON a.user_id = r.user_id 
 		WHERE
 			r.order_id = #{orderId}
-		AND r.returned_id = #{detailsId}
 		AND r.del_flag = 0
 		GROUP BY
 			r.department_id,r.user_id
