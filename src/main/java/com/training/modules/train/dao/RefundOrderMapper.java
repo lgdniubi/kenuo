@@ -28,8 +28,9 @@ public interface RefundOrderMapper {
 	* @date 2018年5月14日  
 	* @version 3.0.0  
 	 * @param format 
+	 * @param formats 
 	*/  
-	List<ArrearageOfficeList> queryarrearageoffice(@Param("format") String format);
+	List<ArrearageOfficeList> queryarrearageoffice(@Param("format") String format,@Param("formats") String formats);
 
 	/**  
 	* <p>Title: </p>  

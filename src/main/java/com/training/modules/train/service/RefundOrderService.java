@@ -33,9 +33,10 @@ public class RefundOrderService {
 	* @date 2018年5月14日  
 	* @version 3.0.0  
 	 * @param format 
+	 * @param formats 
 	*/  
-	public List<ArrearageOfficeList> queryarrearageoffice(String format) {
-		return refundOrderMapper.queryarrearageoffice(format);
+	public List<ArrearageOfficeList> queryarrearageoffice(String format, String formats) {
+		return refundOrderMapper.queryarrearageoffice(format,formats);
 	}
 
 	/**  
