@@ -164,5 +164,9 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	public void saveMtmyFranchisee(UserCheck find);
 	//如果该用户同意其他商家邀请，就不能操作
 	public int isPermiss(String userid);
+	//更改pcrole，该商家的角色版本
+	public void updatePcRoleModelId(@Param("franchiseeid")String franchiseeid, @Param("modid")String modid);
+	//更改fzxrole，该商家的角色版本
+	public void updateFzxRoleModelId(@Param("franchiseeid")String franchiseeid, @Param("modid")String modid);
 	
 }

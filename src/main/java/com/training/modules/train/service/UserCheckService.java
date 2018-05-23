@@ -190,6 +190,8 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 				setSuperAdminForUserid(modelFranchisee,franchisee.getFranchiseeid());
 				//设置公共的角色
 //				setRoleForUser(modelFranchisee,franchisee.getFranchiseeid());
+				//变更改商家角色版本id
+				updateAllRoleModelId(franchisee.getFranchiseeid(),modelFranchisee.getModid());
 			}
 		}
 		updateInvitationAndPush(find);	//向邀请表和推送消息表更改数据，把所有推送消息设置为未通过，邀请记录：没同意的设置为3会员拒绝，同意的设置为2商家拒绝。
@@ -197,6 +199,14 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		modelFranchisee.setUserid(find.getUserid());
 		updateApplyStatus(modelFranchisee);
 //		int a = 1/0;
+	}
+
+	//版本升级的时候变更改商家角色版本id
+	private void updateAllRoleModelId(String franchiseeid, String modid) {
+		//更改pcrole，该商家的角色版本
+		userCheckDao.updatePcRoleModelId(franchiseeid, modid);
+		//更改fzxrole，该商家的角色版本
+		userCheckDao.updateFzxRoleModelId(franchiseeid, modid);
 	}
 
 	/**

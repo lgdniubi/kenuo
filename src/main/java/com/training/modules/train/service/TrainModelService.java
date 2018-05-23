@@ -150,27 +150,18 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	private void insertFzxRoleAndMenu(TrainModel trainModel) {
 		//根据版本id和ename=sjgly查找超级管理员角色
 		String modid = trainModel.getId();
-		Integer intModId = Integer.valueOf(modid);
 		TrainModel model = dao.getTrainModel(trainModel);
-		FzxRole fzxRole = null;
 		if("syrmf".equals(model.getModEname())){
-			fzxRole = fzxRoleService.getFzxRoleByModAndEname(modid,"syrmf");
-			creatRole("手艺人免费管理员","syrmf",intModId,"版本设置权限创建手艺人免费",fzxRole);
+			creatRole("手艺人免费管理员","syrmf",modid,"版本设置权限创建手艺人免费" ,trainModel.getMenuIds());
 		}else if ("syrsf".equals(model.getModEname())){
-			fzxRole = fzxRoleService.getFzxRoleByModAndEname(modid,"syrsf");
-			creatRole("手艺人收费管理员","syrsf",intModId,"版本设置权限创建手艺人收费",fzxRole);
+			creatRole("手艺人收费管理员","syrsf",modid,"版本设置权限创建手艺人收费",trainModel.getMenuIds());
 		}else if ("dy".equals(model.getModEname())){
-			fzxRole = fzxRoleService.getFzxRoleByModAndEname(modid,"dy");
-			creatRole("登云管理员","dy",intModId,"版本设置权限创建登云",fzxRole);
+			 creatRole("登云管理员","dy",modid,"版本设置权限创建登云",trainModel.getMenuIds());
 		}else if ("pthy".equals(model.getModEname())){
-			fzxRole = fzxRoleService.getFzxRoleByModAndEname(modid,"pthy");
-			creatRole("普通会员管理员","pthy",intModId,"版本设置权限创建普通会员",fzxRole);
+			creatRole("普通会员管理员","pthy",modid,"版本设置权限创建普通会员",trainModel.getMenuIds());
 		}else{
-			fzxRole = fzxRoleService.getFzxRoleByModAndEname(modid,"sjgly");
-			creatRole("超级管理员","sjgly",intModId,"版本设置权限创建超级",fzxRole);
+			creatRole("超级管理员","sjgly",modid,"版本设置权限创建超级",trainModel.getMenuIds());
 		}
-		fzxRole.setMenuIds(trainModel.getMenuIds());
-		fzxRoleService.saveRoleMenu(fzxRole);
 	}
 /*.
  * ("ptyh".equals(model.getModEname())){
@@ -178,15 +169,21 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 			creatRole("普通用户管理员","ptyh",intModId,"版本设置权限创建普通用户",fzxRole);
 		}else
  * */
-	private void creatRole(String name, String enname, Integer intModId, String remarks, FzxRole fzxRole) {
+	private FzxRole creatRole(String name, String enname, String modid, String remarks,String menuIds) {
+		Integer intModId = Integer.valueOf(modid);
+		FzxRole fzxRole = fzxRoleService.getFzxRoleByModAndEname(modid,enname);
 		if(fzxRole == null){
 			fzxRole = new FzxRole();
 			fzxRole.setName(name);
 			fzxRole.setEnname(enname);
 			fzxRole.setModeid(intModId);
 			fzxRole.setRemarks(remarks);
+			fzxRole.setRoleGrade(100);
 			fzxRoleService.saveFzxRole(fzxRole);
 		}
+		fzxRole.setMenuIds(menuIds);
+		fzxRoleService.saveRoleMenu(fzxRole);
+		return fzxRole;
 	}
 
 	/**

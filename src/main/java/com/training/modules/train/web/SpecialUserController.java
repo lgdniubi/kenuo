@@ -19,9 +19,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
+import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.SystemService;
 import com.training.modules.sys.utils.BugLogUtils;
+import com.training.modules.train.utils.SendNotifyUtils;
 
 /**
  * 用户管理：pt,syr,qy
@@ -34,6 +36,8 @@ public class SpecialUserController extends BaseController {
 
 	@Autowired
 	private SystemService systemService;
+	@Autowired
+	private RedisClientTemplate redisClientTemplate;		//redis缓存Service
 	
 	
 	@ModelAttribute
@@ -74,6 +78,8 @@ public class SpecialUserController extends BaseController {
 		String newPassword = user.getNewPassword();
 		try {
 			systemService.updatePasswordById(user.getId(), user.getLoginName(), newPassword);
+			SendNotifyUtils.sendSMS(user.getMobile(), user.getNickname(), newPassword);
+			redisClientTemplate.del("UTOKEN_"+user.getId());
 			addMessage(redirectAttributes, "修改密码'" + newPassword + "'成功");
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "修改密码失败！");
@@ -92,18 +98,33 @@ public class SpecialUserController extends BaseController {
 	@RequestMapping(value = "freeze")
 	public String freeze(User user,Integer opflag, RedirectAttributes redirectAttributes) {
 		try {
-			String type = user.getType();
+			/*String type = user.getType();
 			if ("qy".equals(type)){
 				systemService.updateModelFranchisee(user,opflag);
 			}else{
-				systemService.updateUserDel(user,opflag);
-			}
+			}*/
+			
+			systemService.updateUserDel(user,opflag);
 			addMessage(redirectAttributes, "成功");
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "失败！");
 			logger.error("保存/修改 出现异常，异常信息为："+e.getMessage());
 		}
 		return "redirect:" + adminPath + "/train/specialUser/list?repage";
+	}
+	
+	/**
+	 *冻结原因 
+	 * @param id
+	 * @param opflag
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "freezeReason")
+	public String freezeReason(String id,String opflag, Model model) {
+		model.addAttribute("id", id);
+		model.addAttribute("opflag", opflag);
+		return "modules/train/freezeReason";
 	}
 	
 	

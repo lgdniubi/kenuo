@@ -19,10 +19,6 @@
 		});
 		return false;
 	}
-	//给父页面传值
-	function parentDelchange() {
-		parent.$('#parentDel').val($('#parentDel').val());
-	}
 	
 	/* 添加权限 */
 	function addFzxRole(title,url) {
@@ -92,7 +88,7 @@
 							<tr>
 								<td>${user.mobile}</td>
 								<td>${user.name}</td>
-								<td>${user.loginName}</td>
+								<td>${user.nickname}</td>
 								<td>${user.type}</td>
 								<td>${user.modelName}</td>
 								<td><fmt:formatDate value="${user.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
@@ -100,8 +96,12 @@
 								<td>
 									<shiro:hasPermission name="sys:user:auth">
 										<a href="#" onclick="openDialog('重置密码', '${ctx}/train/specialUser/resetPassword?id=${user.id}','400px', '300px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>重置密码</a>
-										<a href="${ctx}/train/specialUser/freeze?id=${user.id}&opflag=1" class="btn btn-success btn-xs" ><i class="fa fa-search-plus"></i>解冻</a>
-										<a href="${ctx}/train/specialUser/freeze?id=${user.id}&opflag=2" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i>冻结</a>
+										<c:if test="${user.delFlag == 1}">
+										<a href="${ctx}/train/specialUser/freeze?id=${user.id}&opflag=1"  class="btn btn-success btn-xs" ><i class="fa fa-search-plus"></i>解冻</a>
+										</c:if>
+										<c:if test="${user.delFlag == 0}">
+										<a href="#" onclick="openDialog('冻结', '${ctx}/train/specialUser/freezeReason?id=${user.id}&opflag=2','300px', '300px')" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i>冻结</a>
+										</c:if>
 									</shiro:hasPermission>
 								</td>
 							</tr>

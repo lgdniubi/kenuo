@@ -82,6 +82,8 @@
 		LEFT JOIN pc_role r ON r.mode_id = tmp.model_id
 		WHERE a.del_flag = 0
 		AND r.id = #{roleId}
+		<if test="roleRange != null and roleRange != '' and roleRange == 1">AND a.is_shop = 0 </if>
+		<if test="roleRange != null and roleRange != '' and roleRange == 2">AND a.is_shop = 1 </if>
 		ORDER BY a.sort
 	</select>
 	

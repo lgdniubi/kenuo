@@ -95,7 +95,7 @@
 										</shiro:hasPermission>
 										</c:if>
 										<shiro:hasPermission name="train:pcRole:auth"> 
-											<a href="#" onclick="openDialog('权限设置', '${ctx}/train/pcRole/auth?roleId=${list.roleId}','350px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a> 
+											<a href="#" onclick="openDialog('权限设置', '${ctx}/train/pcRole/auth?roleId=${list.roleId}&roleRange=${list.roleRange}','350px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a> 
 										</shiro:hasPermission>
 								    </td>
 								</tr>
