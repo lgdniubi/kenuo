@@ -14,7 +14,7 @@
 		FROM trains.sys_office_account s
 		LEFT JOIN trains.sys_office_statement os ON s.office_id = os.office_id
 		LEFT JOIN trains.train_refund_order ro ON ro.arrearage_office = s.office_id AND  DATE_FORMAT(ro.add_time,'%Y-%m') = #{format}
-		WHERE DATE_FORMAT(os.create_date,'%Y-%m') = #{format}
+		WHERE DATE_FORMAT(os.create_date,'%Y-%m') = #{formats}
 		GROUP BY s.office_id HAVING used_limit > 0 AND COUNT(ro.order_id) = 0
 	</select>
 
@@ -32,7 +32,7 @@
 		<foreach collection="subList" item="item" separator="," >  
 	        (
 			#{item.order_id},
-			1,
+			'1',
 			${item.used_limit},
 			#{item.office_id},
 			NOW(),

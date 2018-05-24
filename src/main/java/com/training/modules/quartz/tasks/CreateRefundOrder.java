@@ -64,12 +64,13 @@ public class CreateRefundOrder extends CommonService{
 		taskLog.setStartDate(startDate);
 		
 		try{
+			SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM");
 			 Calendar calendar = Calendar.getInstance();//日历对象  
 		     calendar.setTime(new Date());//设置当前日期  
+		     String format = sim.format(calendar.getTime());//输出上个月的日期  
 		     calendar.add(Calendar.MONTH, -1);//月份减一  
-		     String format = new SimpleDateFormat("yyyy-MM").format(calendar.getTime());//输出上个月的日期  
-			
-		List<ArrearageOfficeList> arrearageOfficeList = refundOrderService.queryarrearageoffice(format);
+		     String formats = sim.format(calendar.getTime());//输出上个月的日期  
+		List<ArrearageOfficeList> arrearageOfficeList = refundOrderService.queryarrearageoffice(format,formats);
 		int count = arrearageOfficeList.size() / 100;
 		if((arrearageOfficeList.size() % 100) > 0)count ++;
 		//List<ArrearageOfficeList> list = new ArrayList<ArrearageOfficeList>();
