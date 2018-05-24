@@ -21,7 +21,10 @@
 		  }
 		  return false;
 		}
+		var htmlvalue;
 		$(document).ready(function(){
+			//当改变版本的时候获取英文名称的页面代码
+			htmlvalue = $("#enname").html();
 			validateForm = $("#inputForm").validate({
 				rules: {  // 英文名称校验修改为下拉选，不用再进行验证,如需进行校验，将此注释打开即可
 					name: {
@@ -99,6 +102,16 @@
 	        });
 	        return nameFlag;
 	    }, "此版本的角色名称已存在");
+		
+		//当版本是登云的时候增加商家管理员选项，其他的时候还原
+		function addEname(obj){
+			var modid = $(obj).val();
+			if(modid == 8){
+				$("#enname").append("<option value='sjgly'>商家管理员</option>")
+			}else{
+				$("#enname").html(htmlvalue);
+			}
+		}
 	</script>
 </head>
 <body>
@@ -113,6 +126,14 @@
 		         <td  class="width-35" ><form:input path="name" htmlEscape="false" maxlength="20" class="form-control "/></td>
 		      </tr>
 		      <tr>
+		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 版本类型:</label></td>
+		         <td  class="width-35" >
+		         	<form:select path="modeid" onchange="addEname(this)" class="form-control">
+						<form:options items="${modList}" itemLabel="modName" itemValue="id" htmlEscape="false"/>
+					</form:select>
+				 </td>
+		      </tr>
+		      <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 英文名称:</label></td>
 		         <td  class="width-35" >
 		         	<!-- 将英文名称改为下拉选 -->
@@ -122,14 +143,6 @@
 		         	<%-- <form:input path="enname" htmlEscape="false" maxlength="20" class="required form-control "/>
 		         	<input type="hidden" id="oldEnname" name="oldEnname" value="${fzxRole.enname }"> --%>
 		         </td>
-		      </tr>
-		       <tr>
-		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 版本类型:</label></td>
-		         <td  class="width-35" >
-		         	<form:select path="modeid"  class="form-control">
-						<form:options items="${modList}" itemLabel="modName" itemValue="id" htmlEscape="false"/>
-					</form:select>
-				 </td>
 		      </tr>
 		       <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 角色等级:</label></td>

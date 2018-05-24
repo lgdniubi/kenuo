@@ -88,7 +88,7 @@
 							    		<shiro:hasPermission name="train:fzxRole:view">
 											<a href="#" onclick="openDialogView('查看角色', '${ctx}/train/fzxRole/form?roleId=${list.roleId}','800px', '650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 查看</a>
 										</shiro:hasPermission>
-										<c:if test="${list.isDefault eq '0' && list.enamer ne 'sjgly'}">
+										<c:if test="${list.isDefault eq '0' && list.enamer ne 'sjgly' || list.modeid==8 && list.enamer ne 'dy'}">
 										<shiro:hasPermission name="train:fzxRole:edit">
 					    					<a href="#" onclick="openDialog('修改角色', '${ctx}/train/fzxRole/form?roleId=${list.roleId}','800px', '650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 					    				</shiro:hasPermission>
@@ -102,9 +102,6 @@
 												<a href="${ctx}/train/fzxRole/setDefault?roleId=${list.roleId}&modeid=${list.modeid}"  class="btn btn-danger btn-xs" >默认</a>
 											</c:if>
 										</shiro:hasPermission>
-										<%-- <shiro:hasPermission name="sys:role:assign"> 
-											<a href="#" onclick="openDialogView('分配用户', '${ctx}/train/fzxRole/assign?fzxRole.roleId=${list.roleId}','800px', '600px')"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i> 分配用户</a>
-										</shiro:hasPermission> --%>
 								    </td>
 								</tr>
 							</c:forEach>

@@ -168,5 +168,7 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	public void updatePcRoleModelId(@Param("franchiseeid")String franchiseeid, @Param("modid")String modid);
 	//更改fzxrole，该商家的角色版本
 	public void updateFzxRoleModelId(@Param("franchiseeid")String franchiseeid, @Param("modid")String modid);
+	//更改media_manage_role，该商家的角色版本
+	public void updateMediaRoleModelId(@Param("franchiseeid")String franchiseeid, @Param("modid")String modid);
 	
 }

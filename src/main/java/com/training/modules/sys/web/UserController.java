@@ -143,12 +143,12 @@ public class UserController extends BaseController {
 	@RequiresPermissions(value = { "sys:user:view", "sys:user:add", "sys:user:edit" }, logical = Logical.OR)
 	@RequestMapping(value = "form")
 	public String form(User user, Model model) {
-		if("pt".equals(user.getType())){	//查询普通会员的信息
+		/*if("pt".equals(user.getType())){	//查询普通会员的信息
 //			UserPuTo userpt = new UserPuTo();
 			UserPuTo userpt = systemService.getUserPuTo(user.getId());
 			model.addAttribute("userpt", userpt);
 			return "modules/sys/userPTForm";
-		}
+		}*/
 		List<UserLog> userLogs = new ArrayList<UserLog>();
 		/*if (user.getCompany() == null || user.getCompany().getId() == null) {  在进入添加页面时不需要进行查询初始化，因为页面要根据商家去查询权限内的机构，所以不能将商家初始化为登云
 			user.setCompany(UserUtils.getUser().getCompany());
@@ -272,7 +272,7 @@ public class UserController extends BaseController {
 	public String save(User user, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		try {
 			//自我评价转义
-			user.getUserinfo().setSelfintro(HtmlUtils.htmlUnescape(user.getUserinfo().getSelfintro()));
+//			user.getUserinfo().setSelfintro(HtmlUtils.htmlUnescape(user.getUserinfo().getSelfintro()));
 			if(null != user.getId() && "" != user.getId()){
 				User users = userDao.get(user.getId());
 				if(null != users){

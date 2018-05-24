@@ -81,22 +81,19 @@
 		ORDER BY t.create_date 
 	</select>
 	<!--  查询企业的版本==3个-->
-	<select id="findQYModelList" resultType="TrainModel">
+	<select id="findDYModelList" resultType="TrainModel">
 		select
 			t.`id` AS id,
-			t.`mod_name` AS modName,
-			dc.label AS modType,
+			t.`mod_name` AS modName, 
 			t.`mod_ename` AS modEname,
 			t.`mod_pay` AS modPay,
 			t.`mod_fee` AS modFee,
 			t.`mod_day` AS modDay,
 			t.`remark` AS remark
 		FROM
-		train_model t
-		LEFT JOIN sys_dict dc ON dc.`value`= t.mod_type
-		WHERE 1=1
-		AND dc.type = 'model_type'
-		AND t.mod_type = 'qy'
+		train_model t 
+		WHERE 1=1 
+		AND t.mod_type = #{modType}
 		AND t.del_flag = 0
 		ORDER BY t.create_date DESC
 	</select>

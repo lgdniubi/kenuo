@@ -79,8 +79,7 @@ public interface TrainModelDao extends CrudDao<TrainModel>{
 	 */
 	public void insertModMediaMenu(TrainModel newModel);
 
-	// 查询企业的版本--3个
-	public List<TrainModel> findQYModelList();
+	// 查询登云的版本--3个
+	public List<TrainModel> findDYModelList(String modType);
 
-	
 }

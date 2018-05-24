@@ -107,17 +107,6 @@
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 名称:</label></td>
 		         <td  class="width-35" ><form:input path="name" htmlEscape="false" maxlength="20" class="required form-control "/></td>
 		      </tr>
-		      <tr>
-		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 英文名称:</label></td>
-		         <td  class="width-35" >
-		         	<!-- 将英文名称改为下拉选 -->
-		         	<form:select path="ename"  class="form-control">
-						<form:options items="${fns:getDictList('media_role_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-					</form:select>
-		         	<%-- <form:input path="ename" htmlEscape="false" maxlength="20" class="required form-control "/>
-		         	<input type="hidden" id="oldEname" name="oldEname" value="${pcRole.ename }"> --%>
-		         </td>
-		      </tr>
 		       <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 版本类型:</label></td>
 		         <td  class="width-35" >

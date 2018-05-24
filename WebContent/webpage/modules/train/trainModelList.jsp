@@ -97,6 +97,9 @@
 				    						<a href="#" onclick="openDialog('pc端权限设置', '${ctx}/train/model/auth?id=${trainModel.id}&opflag=pc','430px', '600px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>pc端权限设置</a>
 				    						<a href="#" onclick="openDialog('media权限设置', '${ctx}/train/model/auth?id=${trainModel.id}&opflag=md','430px', '600px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>自媒体权限设置</a>
 				    						</c:if>
+				    						<c:if test="${trainModel.modType eq 'dy'}">
+				    						<a href="#" onclick="openDialog('media权限设置', '${ctx}/train/model/auth?id=${trainModel.id}&opflag=md','430px', '600px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>自媒体权限设置</a>
+				    						</c:if>
 					    				</shiro:hasPermission>
 									</td>
 								</tr>
