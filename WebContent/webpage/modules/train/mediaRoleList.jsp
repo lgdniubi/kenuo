@@ -85,6 +85,7 @@
 								  	<td>
 								  		<c:if test="${list.type eq '0'}">写手</c:if>
 								  		<c:if test="${list.type eq '1'}">管理员</c:if>
+								  		<c:if test="${list.type eq '2'}">超级管理员</c:if>
 								  	</td>
 								  	<td>
 								  		<c:forEach items="${list.publictoArr}" var="pub">

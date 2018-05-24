@@ -14,7 +14,7 @@
 			media_manage_role r
 			LEFT JOIN train_model tm ON tm.id = r.mod_id
 		WHERE 
-			r.del_flag = 0 
+			r.del_flag = 0 AND r.franchisee_id=1 
 			<if test="name != null and name != ''">
 				AND r.name like 
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
