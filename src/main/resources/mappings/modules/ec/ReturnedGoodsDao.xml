@@ -557,23 +557,23 @@
 			a.id,
 			a.order_id,
 			a.goods_mapping_id,
-			b.goods_id,
-			b.goods_name as "goodsName",
-			b.goods_num as "goodsNum",
-			b.spec_key,
-			b.spec_key_name as "specName",
-			b.cost_price,
-			b.market_price,
-			b.goods_price as "goodsPrice",
+			mogm.goods_id,
+			mogm.goods_name as "goodsName",
+			mogm.goods_num as "goodsNum",
+			mogm.spec_key,
+			mogm.spec_key_name as "specName",
+			mogm.cost_price,
+			mogm.market_price,
+			mogm.goods_price as "goodsPrice",
 			a.total_amount,
-			b.order_amount as "orderAmount",
-			b.order_balance,
-			b.order_arrearage,
-			b.service_times as "serviceTimes",
+			mogm.order_amount as "orderAmount",
+			mogm.order_balance,
+			mogm.order_arrearage,
+			mogm.service_times as "serviceTimes",
 			a.user_id,
 			d.nickname as "userName",
 			d.mobile,
-			b.is_real,
+			mogm.is_real,
 			a.problem_desc as "problemDesc",
 			a.refusal_cause as "refusalCause",
 			IFNULL(f.name,a.audit_by) AS "audit_by",
@@ -611,7 +611,7 @@
 			a.receive_account,
 			a.return_type
 		FROM mtmydb.mtmy_returned_goods a 
-		LEFT JOIN mtmydb.mtmy_order_goods_mapping b ON a.goods_mapping_id=b.rec_id
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping mogm ON a.goods_mapping_id=mogm.rec_id
 		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
 		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
 		LEFT JOIN mtmydb.mtmy_pd_warehouse e ON e.id=a.warehouse_id
