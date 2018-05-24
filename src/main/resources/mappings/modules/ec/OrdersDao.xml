@@ -1228,7 +1228,7 @@
 		WHERE
 			order_status IN (1,2)
 			AND shipping_type != 2
-			AND date_add(shipping_time,INTERVAL #{completedDate} DAY) <![CDATA[ < ]]> NOW() 
+			AND date_add(shipping_received_date,INTERVAL #{completedDate} DAY) <![CDATA[ < ]]> NOW() 
 	</update>
 
 	<update id="updateOrderStatut">
@@ -1438,4 +1438,27 @@
 		FROM mtmydb.mtmy_orders 
 		WHERE order_id = #{orderid}
 	</select>
+	
+	<!-- 查询未完成的 存在物流的订单 且不存在收货时间  用于记录收货日期(用户签收时间) -->
+	<select id="queryCourierOrder" resultType="Orders">
+		SELECT 
+			order_id AS 'orderid',
+			shipping_code AS 'shippingcode'
+		FROM 
+			mtmydb.mtmy_orders 
+		WHERE 
+			shipping_type != 2 
+			AND order_status IN (1,2) 
+			AND shipping_code IS NOT NULL 
+			AND shipping_code != ''
+			AND shipping_received_date IS NULL
+	</select>
+	<!-- 记录用户签收时间 -->
+	<update id="updateCourierOrder">
+		UPDATE mtmydb.mtmy_orders
+		SET 
+			shipping_received_date = #{shippingReceivedDate }
+		WHERE order_id = #{orderid}
+		AND shipping_received_date IS NULL
+	</update>
 </mapper>
