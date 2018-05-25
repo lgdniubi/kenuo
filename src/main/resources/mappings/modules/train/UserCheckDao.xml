@@ -512,5 +512,9 @@
 	<update id="updateFzxRoleModelId">
 		UPDATE fzx_role SET mod_id = #{modid} WHERE company_id = #{franchiseeid}
 	</update>
+	<!-- 更改media_manage_role，该商家的角色版本 -->
+	<update id="updateMediaRoleModelId">
+		UPDATE media_manage_role SET mod_id = #{modid} WHERE franchisee_id = #{franchiseeid}
+	</update>
 	
 </mapper>

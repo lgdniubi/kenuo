@@ -17,21 +17,6 @@
 	<script type="text/javascript">
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-			var teachersName = $(".teachersName").val().length;
-			var teachersComment = $(".teachersComment").val().length;
-			var val="${user.roleNames}";
-			if(val.indexOf("排班")>=0 || $("#id").val() == null || $("#id").val() == ""){
-				if((teachersName != 0) && (teachersComment == '' || teachersComment == null || teachersComment == undefined || teachersComment == 0)){
-					 top.layer.alert("培训师评价不能为空!", {icon: 0, title:'提醒'}); 
-					 return false;
-				 }
-				  
-				 if((teachersName == '' || teachersName == null || teachersName == undefined || teachersName == 0) && (teachersComment != 0)){
-					 top.layer.alert("培训师姓名不能为空!", {icon: 0, title:'提醒'}); 
-					 return false;
-				 }
-			}
-			
 			if(validateForm.form()){
         	  loading('正在提交，请稍等...');
 		      $("#inputForm").submit();
@@ -482,34 +467,12 @@
 					</div>
 					<div id="file_user_queue"></div>
 				</td>
-		         <td class="active"><label class="pull-right"><font color="red">*</font>归属商家:</label></td>
-		         <td class="width-35">
-					<input id="companyId" name="company.id" class="form-control required" type="hidden" value="${user.company.id}"/>
-					<div class="input-group">
-						<input id="companyName" name="company.name"  type="text" value="${user.company.name}" readonly="readonly" class="form-control required"/>
-			       		 <span class="input-group-btn">
-				       		 <button type="button"  id="companyButton" class="btn  btn-primary" onclick="companyButtion()"><i class="fa fa-search"></i></button> 
-			       		 </span>
-			    	</div>
-				</td>
-		      </tr>
-		      
-		      <tr>
-		         <td class="active"><label class="pull-right"><font color="red">*</font>归属机构:</label></td> <!-- url="/sys/office/treeData?type=2" -->
-		         <td>
-					<input id="officeId" name="office.id" class="form-control required" type="hidden" value="${user.office.id}"/>
-					<div class="input-group">
-						<input id="officeName" name="office.name"  type="text" value="${user.office.name}" readonly="readonly" class="form-control required"/>
-			       		 <span class="input-group-btn">
-				       		 <button type="button"  id="officeButton" class="btn  btn-primary" onclick="officeButtion()"><i class="fa fa-search"></i></button> 
-			       		 </span>
-				    </div>
-					
-					</td>
-		         <td class="active"><label class="pull-right"><font color="red">*</font>工号:</label></td>
+				 <td class="active"><label class="pull-right"><font color="red">*</font>工号:</label></td>
 		         <td><input id="oldNO" name="oldNO" type="hidden" value="${user.no}">
 		            <form:input path="no" htmlEscape="false" maxlength="50" class="form-control required"/></td>
 		      </tr>
+		      
+		     <%-- 2018-05-24修改删除归属商家，删除归属机构，删除完善信息 --%>
 		      
 		      <tr>
 		         <td class="active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
@@ -547,13 +510,6 @@
 			         <form:input path="mobile" htmlEscape="false" maxlength="11" class="form-control required"/>
 			         <input type="hidden" id="star"> 
 		         </td>
-		         <td class="active"><label class="pull-right">是否允许登录:</label></td>
-		         <td><form:select path="loginFlag"  class="form-control">
-					<form:options items="${fns:getDictList('yes_no')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-				</form:select></td>
-		      </tr>
-		      
-		      <tr>
 		         <td class="active"><label class="pull-right"><font color="red">*</font>职位:</label></td>
 		         <td>
 					<input id="userTypeId" class="form-control required" type="hidden" value="${dict.value }" name="userType" aria-required="true">
@@ -568,18 +524,8 @@
 					<label id="userTypeName-error" class="error" style="display:none" for="userTypeName"></label>
 					
 				 </td>
-				 <!-- 原数据权限  2016.11.9  咖啡修改 -->
-		         <%-- <td class="active"><label class="pull-right"><font color="red">*</font>用户角色:</label></td>
-		         <td>
-		         	<form:checkboxes path="roleIdList" items="${allRoles}" itemLabel="name" itemValue="id" htmlEscape="false" cssClass="i-checks required"/>
-		         	<label id="roleIdList-error" class="error" for="roleIdList"></label>
-		         </td> --%>
-		         <td class="active"><label class="pull-right"><font color="red"></font>用户角色:</label></td>
-		         <td>
-		         	<c:if test="${empty user.id}">默认为美容师，排班<input id="roleIdList" name="roleIdList" value="${role.id }" type="hidden"></c:if>
-		         	${user.roleNames}
-		         </td>
 		      </tr>
+		      
 		      <tr>
 		         <td class="active"><label class="pull-right"><font color="red">*</font>性别:</label></td>
 		         <td>
@@ -610,133 +556,6 @@
 		  </tbody>
 		  </table>   
 		  
-		  <table class="table table-bordered  table-condensed dataTables-example dataTable no-footer"  id="hideen" style="display:none;">  
-		   <tbody>
-		      <tr>
-		  		<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="4"><label>完善用户信息</label></td>
-		  		
-		  	</tr>
-		  	<tr>
-		  	 <%-- <td class="width-15 active"><label class="pull-right">性别:</label></td>
- 		  	 <td class="width-35">
-				<form:select path="userinfo.sex"  class="form-control">
-					<form:option value="1">男</form:option>
-		  			<form:option value="2" selected="selected">女</form:option>
-				</form:select>
-			</td> --%>
-			<td class="width-15 active"><label class="pull-right">美容师星级:</label></td>
-			 <td class="width-35"><form:select path="userinfo.teachersStarLevel" class="form-control">
-				<form:options items="${fns:getDictList('teachers_star_level')}" itemLabel="label" itemValue="value" htmlEscape="false" cssClass="form-control"/>
-				</form:select>
-				<span class="help-inline">提示：星级是美容师综合素质的展示</span>
-			</td>
-			 <td class="width-15 active"><label class="pull-right">生日:</label></td>
-			 <td class="width-35">
-			 <input id="userinfo.birthday" name="userinfo.birthday" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
-				value="<fmt:formatDate value="${user.userinfo.birthday}" pattern="yyyy-MM-dd"/>"/>
-			</td>
-		  	</tr>
-		  	<tr>
-		  		<td class="width-15 active"><label class="pull-right">籍贯:</label></td>
-		  		<td class="width-35"><sys:treeselect id="nativearea" name="userinfo.areaP.id" value="${user.userinfo.areaP.id}" labelName="userinfo.areaP.name" labelValue="${user.userinfo.areaP.name}"
- 					title="区域" url="/sys/area/treeData"  cssClass="form-control"  allowClear="true"  notAllowSelectParent="true"/>
-				</td>
-		  		<td class="width-15 active"><label class="pull-right">工作地点:</label></td>
-		  		<td class="width-35"><sys:treeselect id="workarea" name="userinfo.areaC.id" value="${user.userinfo.areaC.id}" labelName="userinfo.areaC.name" labelValue="${user.userinfo.areaC.name}"
-							title="区域" url="/sys/area/treeData" cssClass="form-control" allowClear="true" notAllowSelectParent="true"/></td> 
-		  	</tr>
-		  	<tr>
-		  		<td class="width-15 active"><label class="pull-right">职位:</label></td>
-		  		<td class="width-35"><form:input path="userinfo.position" class="form-control" type="text"/></td>
-		  		<td class="width-15 active"><label class="pull-right">美容师等级:</label></td>
-				 <td class="width-35"><form:select path="userinfo.userlevel" class="form-control">
-					<form:options items="${fns:getDictList('user_level')}" itemLabel="label" itemValue="value" htmlEscape="false" cssClass="form-control"/>
-					</form:select>
-				</td>
-		  	</tr>
-		  	<tr>
-		  		<td class="width-15 active"><label class="pull-right">从业年限:</label></td>
-		  		<td class="width-35">
-		  			<input id="userinfo.workYear" name="userinfo.workYear" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${user.userinfo.workYear}" pattern="yyyy-MM-dd"/>"/>
-		  		</td>
-		 		<td class="width-15 active"><label class="pull-right">是否推荐：</label></td>
-		    	<td class="width-35" id="ISRECOMMEND">
-	         		<c:if test="${user.isRecommend == 0}">
-						<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('ISRECOMMEND','${user.id}',1)">&nbsp;&nbsp;
-					</c:if>
-					<c:if test="${user.isRecommend == 1}">
-						<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('ISRECOMMEND','${user.id}',0)">&nbsp;&nbsp;
-					</c:if>
-				 </td>
-		  	</tr>
-		  	<tr >
-		  		<td class="width-15 active"><label class="pull-right" >特长:</label></td>
-		  		<td colspan="4" width="200px"><sys:treeselect id="speciality" name="speciality.id" value="${user.speciality.id}" labelName="speciality.name" labelValue="${user.speciality.name}"
-								title="特长" url="/sys/speciality/treeData" cssClass="form-control" notAllowSelectParent="true" checked="true"/></td>
-			</tr>
-			<tr>
-		  		<td class="width-15 active"><label class="pull-right">技能标签:</label></td>
-		  		<td colspan="4" width="200px"><sys:treeselect id="skill" name="skill.id" value="${user.skill.id}" labelName="skill.name" labelValue="${user.skill.name}" title="技能标签" url="/sys/skill/treeData" cssClass="form-control" notAllowSelectParent="true" checked="true"/></td>
-		  	</tr>
-		  	<tr>
-		  		<td class="width-15 active"><label class="pull-right">生活照:</label></td>
-		  		<td colspan="3" >
-		  			<c:if test="${user.userinfo.infocontlist.size()==0 || user.userinfo.infocontlist==null}">
-		  				<div style="padding-left:5px">
-		  				<img id="livesrc1" src="" alt="images" style="width:200px;height: 100px;"/>
-		  				<form:input type="hidden" path="userinfocontent.url" class="photo1" name="photo1" value=""/>
-							<div class="upload">
-								<input type="file" name="file_live_upload1" id="file_live_upload1">
-							</div>
-							<div id="file_user_queue1"></div>
-						</div>
-						<div style="padding-left:5px">
-		  				<img id="livesrc2" src="" alt="images" style="width: 200px;height: 100px;"/>
-		  				<form:input type="hidden" path="userinfocontent.url" class="photo2"  name="photo2" value=""/>
-							<div class="upload">
-								<input type="file" name="file_live_upload2" id="file_live_upload2">
-							</div>
-							<div id="file_user_queue3"></div>
-		  				</div>
-		  				<div style="padding-left:5px">
-		  				<img id="livesrc3" src="" alt="images" style="width: 200px;height: 100px;"/>
-		  				<form:input type="hidden" path="userinfocontent.url"  class="photo3"  name="photo3" value=""/>
-							<div class="upload">
-								<input type="file" name="file_live_upload3" id="file_live_upload3">
-							</div>
-							<div id="file_user_queue3"></div>
-						</div>
-					</c:if>
-					<c:forEach items="${user.userinfo.infocontlist}" var="list" varStatus="status">
-						<div style="padding-left:5px">
-		  				<img id="livesrc${status.index+1}" src="${list.url}" alt="images" style="width:200px;height:100px;"/>
-		  				<form:input type="hidden" path="userinfocontent.url" class="photo${status.index+1}" name="photo${status.index+1}" value="${list.url}"/>
-							<div class="upload">
-								<input type="file" name="file_live_upload${status.index+1}" id="file_live_upload${status.index+1}">
-							</div>
-						</div>
-					
-					</c:forEach>
-				</td>
-		  	</tr>
-		  	<tr>
-		  		<td class="width-15 active"><label class="pull-right">服务宣言:</label></td>
-				<td class="width-35" colspan="3"><form:textarea path="userinfo.serviceManifesto" htmlEscape="false" rows="3" cols="30" style="width: 100%" readonly="true" class="form-control"/></td>
-		  	</tr>
-		  	<tr>
-		  		<td class="width-15 active"><label class="pull-right">自我评价:</label></td>
-		  		<td colspan="3"><form:textarea path="userinfo.selfintro" htmlEscape="false" rows="10" cols="60" maxlength="500"/></td>
-		  	</tr>
-		  	<tr>
-		  		<td class="width-15 active"><label class="pull-right">培训师姓名:</label></td>
-		  		<td class="width-35" colspan="3"><form:input path="userinfo.teachersName" class="form-control teachersName" type="text" style="width: 50%" maxlength="4"/></td>
-		  	</tr>
-		  	<tr>
-		  		<td class="width-15 active"><label class="pull-right">培训师评价:</label></td>
-		  		<td colspan="3"><form:textarea path="userinfo.teachersComment" htmlEscape="false" rows="10" cols="60" class="teachersComment"/></td>
-		  	</tr>
-		 </tbody>
-		 </table> 
 		 <c:if test="${not empty user.id && !empty userLogs}">    
 			<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 				<thead>

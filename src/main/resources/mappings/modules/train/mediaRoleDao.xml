@@ -14,7 +14,7 @@
 			media_manage_role r
 			LEFT JOIN train_model tm ON tm.id = r.mod_id
 		WHERE 
-			r.del_flag = 0 
+			r.del_flag = 0 AND r.franchisee_id=1 
 			<if test="name != null and name != ''">
 				AND r.name like 
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
@@ -28,7 +28,7 @@
 	</select>
 	<!-- 根据版本id和ename=sjgly查找超级管理员角色 -->
 	<select id="getMediaRoleByModAndEname" resultType="MediaRole">
-		SELECT id AS roleId,name, mod_id AS modeid, remarks FROM media_manage_role  WHERE mod_id= #{modid}  AND del_flag = 0 AND franchisee_id =1
+		SELECT id AS roleId,name, mod_id AS modeid, remarks FROM media_manage_role  WHERE mod_id= #{modid}  AND del_flag = 0 AND franchisee_id =1 AND type = 2
 	</select>
 	<!-- 插入角色 -->
 	<insert id="insert" useGeneratedKeys="true" keyProperty="roleId">

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.service.CrudService;
+import com.training.modules.sys.dao.UserDao;
+import com.training.modules.sys.entity.User;
 import com.training.modules.train.dao.TrainMenuDao;
 import com.training.modules.train.dao.TrainModelDao;
 import com.training.modules.train.entity.FzxRole;
@@ -35,6 +37,8 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	private FzxRoleService fzxRoleService;
 	@Autowired
 	private MediaRoleService mediaRoleService;
+	@Autowired
+	private UserDao userDao;
 	/**
 	 * 根据版本英文名称查询是否存在
 	 * @param modEname
@@ -209,6 +213,7 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	        }
 	        //插入meida_role超级管理员角色，并赋予该角色菜单
 	        insertMeidaRoleAndMenu(trainModel);
+	        
 		}
 	}
 	//插入meida_role超级管理员角色，并赋予该角色菜单
@@ -221,22 +226,38 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 			meidaRole.setName("超级管理员");
 			meidaRole.setModeid(Integer.valueOf(modid));
 			meidaRole.setRemarks("版本设置权限创建的超级管理员");;
-			meidaRole.setType("1");
+			meidaRole.setType("2");
 //			meidaRole.setPublicto("ab");
 			mediaRoleService.savemediaRole(meidaRole);
+			//将版本是登云的超管角色赋予平台admin
+			setSuperMedia(meidaRole);
 		}
 		meidaRole.setMenuIds(trainModel.getMenuIds());
 		mediaRoleService.saveRoleMenu(meidaRole);
 	}
+	/**
+	 * 将版本是登云的超管角色赋予平台admin
+	 * @param meidaRole
+	 */
+	private void setSuperMedia(MediaRole meidaRole) {
+		User user = new User();
+		user.setLoginName("admin");
+		User loginName = userDao.getByLoginName(user);
+		mediaRoleService.insertUserRole(loginName.getId(), meidaRole.getRoleId());
+	}
 
 	/**
-	 * 查询企业的版本--3个
+	 * 查询登云的版本--1个
 	 * @param trainModel
 	 * @return
 	 * @Description:
 	 */
-	public List<TrainModel> findQYModelList() {
-		return dao.findQYModelList();
+	public List<TrainModel> findDYModelList() {
+		return dao.findDYModelList("dy");
+	}
+
+	public List<TrainModel> findModelListByType() {
+		return dao.findDYModelList("qy");
 	}
 	
 }

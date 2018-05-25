@@ -93,10 +93,10 @@
 					    				<shiro:hasPermission name="train:pcRole:del">
 											<a href="${ctx}/train/pcRole/delete?roleId=${list.roleId}" onclick="return confirmx('要删除该角色吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
 										</shiro:hasPermission>
-										</c:if>
 										<shiro:hasPermission name="train:pcRole:auth"> 
 											<a href="#" onclick="openDialog('权限设置', '${ctx}/train/pcRole/auth?roleId=${list.roleId}&roleRange=${list.roleRange}','350px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a> 
 										</shiro:hasPermission>
+										</c:if>
 								    </td>
 								</tr>
 							</c:forEach>

@@ -207,6 +207,8 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		userCheckDao.updatePcRoleModelId(franchiseeid, modid);
 		//更改fzxrole，该商家的角色版本
 		userCheckDao.updateFzxRoleModelId(franchiseeid, modid);
+		//更改media_manage_role，该商家的角色版本
+		userCheckDao.updateMediaRoleModelId(franchiseeid, modid);
 	}
 
 	/**
