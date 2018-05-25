@@ -57,12 +57,12 @@ public class Authentication extends CommonService{
 			List<AuthenticationBean> list = authenticationService.querypastdueauthentication();
 			for(AuthenticationBean s : list){
 				//将认证授权状态改成已过期
-				authenticationService.updateauthenticationstatus(s.getId());
-				if(s.getFranchisee_id() > 0){
+				int count = authenticationService.updateauthenticationstatus(s.getId());
+				if(s.getFranchisee_id() > 0 && count > 0){
 					//将合同状态改成已失效
-					authenticationService.updateprotocolstatus(s.getFranchisee_id());
+						authenticationService.updateprotocolstatus(s.getFranchisee_id());
 					//修改pc菜单改为禁用
-					authenticationService.updatepcmenustatus(s.getFranchisee_id());
+						authenticationService.updatepcmenustatus(s.getFranchisee_id());
 				}
 			}
 		
