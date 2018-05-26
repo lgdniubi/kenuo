@@ -197,6 +197,7 @@
 			a.phone,
 			a.mobile,
 			a.del_flag,
+			a.create_date AS createDate,
 			a.type,
 			c. NAME AS "company.name",
 			o. NAME AS "office.name"
@@ -235,7 +236,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY  o.code,c.code, a.name
+				ORDER BY a.create_date desc, o.code,c.code, a.name
 			</otherwise>
 		</choose>
 	</select>
@@ -289,7 +290,7 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY  o.code,c.code, a.name
+				ORDER BY a.create_date desc, o.code,c.code, a.name
 			</otherwise>
 		</choose>
 	</select>

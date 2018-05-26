@@ -143,7 +143,8 @@
 							<th class="sort-column mobile">手机</th>
 							<th class="sort-column c.name">归属商家</th>
 							<th class="sort-column o.name">归属店铺</th>
-							<th>用户状态</th>
+							<th class="sort-column o.name">用户状态</th>
+							<th class="sort-column o.name">时间</th>
 							<th>操作</th>
 						</tr>
 					</thead>
@@ -160,6 +161,7 @@
 									<c:if test="${user.delFlag == 0 }">在职</c:if> ${user.userType}
 									<c:if test="${user.delFlag == 1 }">已离职</c:if>
 								</td>
+								<td><fmt:formatDate value="${user.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								<td>
 									<shiro:hasPermission name="sys:user:view">
 										<a href="#" onclick="openDialogView('查看用户', '${ctx}/sys/user/form?id=${user.id}','800px', '650px')" class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i> 查看</a>
