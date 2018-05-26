@@ -23,6 +23,7 @@ import com.training.common.utils.Collections3;
 import com.training.common.utils.excel.annotation.ExcelField;
 import com.training.modules.train.entity.FzxRole;
 //import com.training.common.utils.excel.fieldtype.RoleListType;
+import com.training.modules.train.entity.MediaRole;
 
 /**
  * 用户Entity
@@ -66,8 +67,10 @@ public class User extends DataEntity<User> {
 	private Date oldLoginDate;	// 上次登陆日期
 	
 	private Role role;	// 根据角色查询用户条件
+	private MediaRole mediaRole;	// 自媒体角色
 	
 	private List<Role> roleList = Lists.newArrayList(); // 拥有角色列表
+	private List<MediaRole> mdRoleList = Lists.newArrayList(); // 拥有角色列表
 	
 	private Userinfo userinfo;		//美容师信息完善
 	private Userinfocontent userinfocontent;	//美容师图片路径
@@ -444,7 +447,13 @@ public class User extends DataEntity<User> {
 	public void setRoleList(List<Role> roleList) {
 		this.roleList = roleList;
 	}
-
+	
+	public List<MediaRole> getMdRoleList() {
+		return mdRoleList;
+	}
+	public void setMdRoleList(List<MediaRole> mdRoleList) {
+		this.mdRoleList = mdRoleList;
+	}
 	@JsonIgnore
 	public List<String> getRoleIdList() {
 		List<String> roleIdList = Lists.newArrayList();
@@ -463,6 +472,24 @@ public class User extends DataEntity<User> {
 		}
 	}
 	
+	@JsonIgnore
+	public List<String> getMediaRoleIdList() {
+		List<String> roleIdList = Lists.newArrayList();
+		for (MediaRole role : mdRoleList) {
+			roleIdList.add(role.getId());
+		}
+		return roleIdList;
+	}
+	
+	public void setMediaRoleIdList(List<Integer> roleIdList) {
+		mdRoleList = Lists.newArrayList();
+		for (int roleId : roleIdList) {
+			MediaRole role = new MediaRole();
+			role.setRoleId(roleId);
+			mdRoleList.add(role);
+		}
+	}
+	
 	/**
 	 * 用户拥有的角色名称id, 多个角色名称用','分隔.
 	 * @return
@@ -470,12 +497,25 @@ public class User extends DataEntity<User> {
 	public String getRoleIds() {
 		return Collections3.extractToString(roleList, "id", ",");
 	}
+	/**
+	 * 用户拥有的自媒体角色名称id, 多个角色名称用','分隔.
+	 * @return
+	 */
+	public String getMediaRoleIds() {
+		return Collections3.extractToString(mdRoleList, "roleId", ",");
+	}
 	
 	/**
 	 * 用户拥有的角色名称字符串, 多个角色名称用','分隔.
 	 */
 	public String getRoleNames() {
 		return Collections3.extractToString(roleList, "name", ",");
+	}
+	/**
+	 * 用户拥有的自媒体角色名称字符串, 多个角色名称用','分隔.
+	 */
+	public String getMediaRoleNames() {
+		return Collections3.extractToString(mdRoleList, "name", ",");
 	}
 	
 	public boolean isAdmin(){
@@ -689,5 +729,11 @@ public class User extends DataEntity<User> {
 	}
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
+	}
+	public MediaRole getMediaRole() {
+		return mediaRole;
+	}
+	public void setMediaRole(MediaRole mediaRole) {
+		this.mediaRole = mediaRole;
 	}
 }

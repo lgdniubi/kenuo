@@ -524,6 +524,7 @@
 			photo, 
 			qrcode,
 			del_flag,
+			type,
 			mtmy_user_id
 		) VALUES (
 			#{id}, 
@@ -550,6 +551,7 @@
 			#{photo}, 
 			#{qrCode},
 			#{delFlag},
+			#{type},
 			#{mtmyUserId}
 		)
 	</insert>

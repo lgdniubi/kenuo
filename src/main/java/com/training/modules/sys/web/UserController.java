@@ -39,10 +39,8 @@ import com.training.common.beanvalidator.BeanValidators;
 import com.training.common.config.Global;
 import com.training.common.json.AjaxJson;
 import com.training.common.persistence.Page;
-import com.training.common.service.ServiceException;
 import com.training.common.utils.DateUtils;
 import com.training.common.utils.FileUtils;
-import com.training.common.utils.IdGen;
 import com.training.common.utils.StringUtils;
 import com.training.common.utils.excel.ExportExcel;
 import com.training.common.utils.excel.ImportExcel;
@@ -63,7 +61,6 @@ import com.training.modules.sys.entity.Role;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.entity.UserDelete;
 import com.training.modules.sys.entity.UserLog;
-import com.training.modules.sys.entity.UserPuTo;
 import com.training.modules.sys.service.AreaService;
 import com.training.modules.sys.service.DictService;
 import com.training.modules.sys.service.MediaLoginAuthService;
@@ -75,8 +72,10 @@ import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.tools.utils.TwoDimensionCode;
 import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.FzxRole;
+import com.training.modules.train.entity.MediaRole;
 import com.training.modules.train.entity.TrainRuleParam;
 import com.training.modules.train.service.FzxRoleService;
+import com.training.modules.train.service.MediaRoleService;
 
 import net.sf.json.JSONObject;
 
@@ -113,6 +112,8 @@ public class UserController extends BaseController {
 	private SpecBeauticianDao specBeauticianDao;	//特殊美容师
 	@Autowired
 	private FzxRoleService fzxRoleService;
+	@Autowired
+	private MediaRoleService mediaRoleService;
 	@Autowired
 	private MediaLoginAuthService mediaLoginAuthService;
 	
@@ -273,7 +274,7 @@ public class UserController extends BaseController {
 		try {
 			//自我评价转义
 //			user.getUserinfo().setSelfintro(HtmlUtils.htmlUnescape(user.getUserinfo().getSelfintro()));
-			if(null != user.getId() && "" != user.getId()){
+			/*if(null != user.getId() && "" != user.getId()){
 				User users = userDao.get(user.getId());
 				if(null != users){
 					if("2".equals(users.getUserType())){
@@ -286,7 +287,7 @@ public class UserController extends BaseController {
 						}
 					}
 				}
-			}
+			}*/
 			//新增用户时  验证其用户是否存在于每天美耶中
 //			if(user.getId().length() <= 0){
 //				if(mtmyUsersDao.findByMobile(user) != null){
@@ -297,12 +298,16 @@ public class UserController extends BaseController {
 //			}
 			// 修正引用赋值问题，不知道为何，Company和Office引用的一个实例地址，修改了一个，另外一个跟着修改。
 			Office company = new Office();
-			company.setId(request.getParameter("company.id"));
-			company.setName(request.getParameter("company.name"));
+			company.setId("1");
+			company.setName("登云平台商家");
+//			company.setId(request.getParameter("company.id"));
+//			company.setName(request.getParameter("company.name"));
 			user.setCompany(company);
 			Office office = new Office();
-			office.setId(request.getParameter("office.id"));
-			office.setName(request.getParameter("office.name"));
+			office.setId("1");
+			office.setName("登云平台机构");
+//			office.setId(request.getParameter("office.id"));
+//			office.setName(request.getParameter("office.name"));
 			user.setOffice(office);
 			
 			/*更新用户时，需要更新用户的TOKEN，用户妃子校*/
@@ -472,6 +477,9 @@ public class UserController extends BaseController {
 		Map<String, Object> map = userDao.findFranchiseeAuth(user);	// 查询用户商家权限
 		user.setCompanyIds((String)map.get("companyIds"));
 		user.setCompanyNames((String)map.get("companyNames"));
+		
+		List<MediaRole> mdroleList = mediaRoleService.findmediaRoleByUserId(user);
+		user.setMdRoleList(mdroleList);
 		model.addAttribute("isSpecBeautician", systemService.selectSpecBeautician(user.getId()));	
 		model.addAttribute("user", user);
 		model.addAttribute("officeList", officeService.findAll());
@@ -491,69 +499,20 @@ public class UserController extends BaseController {
 	public String saveAuth(User user,String oldFzxRoleIds,String fzxRoleIds,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,Model model){
 		try {
 			
-			fzxRoleService.updateUserRole(user.getId(),oldFzxRoleIds,fzxRoleIds);
-			// 角色数据有效性验证，过滤不在授权内的角色
-			List<Role> roleList = Lists.newArrayList();
-			List<String> roleIdList = user.getRoleIdList();
-			for (Role r : systemService.findAllRole()) {
-				if (roleIdList.contains(r.getId())) {
-					roleList.add(r);
-				}
-			}
-			user.setRoleList(roleList);
-			
-			// 更新用户与角色关联
-			userDao.deleteUserRole(user);
-			// 更新用户与数据权限关联
-			userDao.deleteUserOffice(user);
-			if (user.getRoleList() != null && user.getRoleList().size() > 0) {
-				userDao.insertUserRole(user);
-			} else {
-				throw new ServiceException(user.getLoginName() + "没有设置角色！");
-			}
-			
-			if(1 == user.getDataScope()){
-				user.preUpdate();
-				userDao.UpdateDataScope(user);
-				addMessage(redirectAttributes, "保存用户数据权限成功");
-			}else if(2 == user.getDataScope()){
-				user.preUpdate();
-				userDao.UpdateDataScope(user);
-				userDao.insertDataScope(user);
-				addMessage(redirectAttributes, "保存用户数据权限成功");
-			}else{
-				addMessage(redirectAttributes, "保存出现异常，请与管理员联系");
-			}
-			if("1".equals(request.getParameter("isUpdateRole"))){	// 清除用户缓存 用户TOKEN失效
-				redisClientTemplate.del("UTOKEN_"+user.getId());
-			}
-			if("1".equals(request.getParameter("isPB"))){
-				userDao.UpdateUserStatus(user.getId());
-				
-				//若用户原来无排班，然后给予排班角色，则查询有没有美容师信息，若无，则插入
-				if(userDao.selectIsExist(user.getId()) == 0){
-					userDao.insertUserInfo(IdGen.uuid(),user.getId());
-				}
-			}
-			userDao.deleteFranchiseeAuth(user);
-			if(null != user.getCompanyIds() || !"".equals(user.getCompanyIds())){
-				String idArray[] =user.getCompanyIds().split(",");
-				for(String id : idArray){
-					userDao.insertFranchiseeAuth(user.getId(),id);
-				}
-			}
+			systemService.saveAuth(user, oldFzxRoleIds, fzxRoleIds, request);
 			//更新用户的自媒体权限
-			user.getMediaLoginAuth().setUserId(user.getId());
+			/*user.getMediaLoginAuth().setUserId(user.getId());
 			//当自媒体权限:否
 			if(user.getMediaLoginAuth().getIsLogin().equals("0")){
 				user.getMediaLoginAuth().setUserType("");
 				user.getMediaLoginAuth().setPlatform("");
 				user.getMediaLoginAuth().setUserTag("");
 			}
-			mediaLoginAuthService.saveMediaLoginAuth(user.getMediaLoginAuth());
+			mediaLoginAuthService.saveMediaLoginAuth(user.getMediaLoginAuth());*/
 			
 			// 清除用户缓存
 			UserUtils.clearCache(user);
+			addMessage(redirectAttributes, "保存用户数据权限成功");
 		} catch (Exception e) {
 			logger.error("#####[保存用户数据权限-出现异常：]"+e.getMessage());
 			BugLogUtils.saveBugLog(request, "保存用户数据权限", e);
@@ -561,6 +520,7 @@ public class UserController extends BaseController {
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}
+
 	/**
 	 * 导出用户数据
 	 * 
