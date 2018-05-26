@@ -22,7 +22,7 @@
 		m.`name`,
 		m.content,
 		m.`status`,
-		m.type,
+		m.type_id as type,
 		m.create_date,
 		m.create_user as 'createBy.name'
 	</sql>
@@ -36,7 +36,7 @@
 	
 	<!-- 根据类型查找模板列表 -->
 	<select id="findModelList" resultType="ProtocolModel">
-		SELECT <include refid="menuColumns"/> FROM `supply_protocol_model` m WHERE m.type = #{type} AND del_flag = 0;
+		SELECT <include refid="menuColumns"/> FROM `supply_protocol_model` m WHERE m.type_id = #{type} AND del_flag = 0;
 	</select>
 	
 	<!-- 保存协议内容  -->

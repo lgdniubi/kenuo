@@ -41,7 +41,7 @@
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 						<div class="form-group">
-							<form:input path="name" htmlEscape="false" placeholder="搜索角色名称" class=" form-control input-sm" />
+							角色名称：<form:input path="name" htmlEscape="false" placeholder="搜索角色名称" class=" form-control input-sm" />
 						</div>
                     </form:form>
                 </div>

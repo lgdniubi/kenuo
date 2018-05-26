@@ -183,7 +183,7 @@
 											<a href="#" onclick="openDialog('权限设置', '${ctx}/sys/user/auth?id=${user.id}','800px', '650px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a>
 										</shiro:hasPermission>
 										<shiro:hasPermission name="sys:user:auth">
-											<a href="#" onclick="openDialogView('添加角色','${ctx}/sys/user/addFzxRole?id=${user.id}','800px', '650px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>添加角色</a>
+											<a href="#" onclick="openDialogView('添加妃子校角色','${ctx}/sys/user/addFzxRole?id=${user.id}','800px', '650px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>添加妃子校角色</a>
 										</shiro:hasPermission>
 									</c:if>
 								</td>
