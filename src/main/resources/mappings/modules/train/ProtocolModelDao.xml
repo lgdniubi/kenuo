@@ -46,7 +46,7 @@
 			`name`,
 			`content`,
 			`status`,
-			`type`,
+			`type_id`,
 			`create_date`,
 			`create_by`,
 			`create_user`,
@@ -65,10 +65,23 @@
 				0
 			);
 	</insert>
-	<!-- 更新单个协议内容状态 -->
+	<!-- 更新supply_protocol_shop协议状态状态 -->
+	<update id="updateProtocolShopById">
+		UPDATE supply_protocol_shop SET 
+			`status` = #{status}
+		WHERE protocol_id = #{id} 
+	</update>
+	<!-- 更新单个协议状态状态 -->
 	<update id="updateStatusById">
 		UPDATE supply_protocol_model SET 
 			`status` = #{status}
+		WHERE id = #{id} 
+	</update>
+	<!-- 更新单个协议内容状态 -->
+	<update id="updateModelById">
+		UPDATE supply_protocol_model SET 
+			`name` = #{name},
+			`content` = #{content}
 		WHERE id = #{id} 
 	</update>
 	<!-- 跟新协议类型状态 -->

@@ -223,7 +223,7 @@
 		         <td class="width-15 active" style="vertical-align: top;"><label class="pull-right">自媒体权限:</label></td>
 		         <td class="width-35">
 		         <sys:treeselect id="mdrole" name="mediaRoleIdList" value="${user.mediaRoleIds}" labelName="mediaRole.name" labelValue="${user.mediaRoleNames}" title="自媒体角色"
-						url="/train/mdrole/treeData?modeid=8" cssClass=" form-control input-sm required" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="false" checked="true"/>
+						url="/train/mdrole/treeData?modeid=8" cssClass=" form-control input-sm required" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="false"/>
 		         	<%-- <c:if test="${not empty user.mediaLoginAuth.isLogin}">
 				        <c:if test="${user.mediaLoginAuth.isLogin==1}">
 							<label><input id="isLogin" name="mediaLoginAuth.isLogin" type="radio" value="1" class="form" onclick="updateIsLogin(1)" <c:if test="${user.mediaLoginAuth.isLogin==1}">checked="checked"</c:if>/>是</label>

@@ -41,13 +41,39 @@ public class ProtocolModelService extends CrudService<ProtocolModelDao,ProtocolM
 	 * @param protocolModel
 	 */
 	public void saveProtocolModel(ProtocolModel protocolModel) {
-		protocolModel.preInsert();
-		if(protocolModel.getAssign()){	//是否重新签订--重新就更新原来的状态为变更
-			protocolModel.setStatus("3");
-			protocolModelDao.updateStatusById(protocolModel);
+		if(protocolModel.getIsNewRecord()){
+			protocolModel.preInsert();
+			protocolModel.setStatus("1");
+			dao.insert(protocolModel);
+			//新增协议的同事修改供应链那边签约状态为变更状态。
+			
+		}else{
+			ProtocolModel findModel = protocolModelDao.findModel(protocolModel);
+			boolean flag = isChanged(findModel,protocolModel);
+			if(!flag){//如果内容或标题改变
+				findModel.preInsert();
+				findModel.setStatus("2");
+				dao.insert(findModel);//把原来的内容复制一份
+				protocolModelDao.updateModelById(protocolModel);//把原来更新了
+				if(protocolModel.getAssign()){	//是否重新签订--重新就更新原来的状态为变更
+					//更改店铺-协议表该协议id的状态为变更
+					protocolModel.setStatus("2");//店铺协议状态为变更
+					protocolModelDao.updateProtocolShopById(protocolModel);//把原来更新了
+					//更改签约状态变更
+					
+				}
+			}
 		}
-		protocolModel.setStatus("1");
-		dao.insert(protocolModel);
+	}
+
+	/**
+	 * 判断协议内容是否改变
+	 * @param findModel
+	 * @param protocolModel
+	 * @return
+	 */
+	private boolean isChanged(ProtocolModel findModel, ProtocolModel protocolModel) {
+		return findModel.getName().equals(protocolModel.getName()) && findModel.getContent().equals(protocolModel.getContent());
 	}
 
 
