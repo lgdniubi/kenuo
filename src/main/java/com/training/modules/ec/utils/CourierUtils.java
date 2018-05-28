@@ -46,7 +46,7 @@ public class CourierUtils {
 		String C=md5.toMd5(B);
 		sign=C;
 		String qString="sign="+sign+"&app_key="+app_key+"&format="+format+"&method="+method+"&timestamp="+timestamp+"&user_id="+user_id+"&v="+v+"&param="+param;
-		System.out.println(qString);
+//		System.out.println(qString);
 		 try {
 			// qString=URLEncoder.encode(qString,"utf-8");
 			 String getURL = FIND_COUR; //+"?"+ URLEncoder.encode(qString,"utf-8"); // qString;

@@ -84,6 +84,7 @@ public class MtmyCommentController extends BaseController{
 		commentService.insterRealComment(comment);
 		//修改单个用户所涉及的商品评论
 		commentService.updateRealComment(comment);
+		commentService.updateGoodsIsReplay(comment);
 		addMessage(redirectAttributes, "回复用户评论成功");
 		return "redirect:" + adminPath + "/ec/mtmycomment/realComment";
 	}
@@ -135,6 +136,7 @@ public class MtmyCommentController extends BaseController{
 		commentService.insterbeautyComment(comment);
 		//修改单个用户所涉及的商品评论
 		commentService.updateBeautyComment(comment);
+		commentService.updateBeautyIsReplay(comment);
 		addMessage(redirectAttributes, "回复用户评论成功");
 		return "redirect:" + adminPath + "/ec/mtmycomment/beautyComment";
 	}
@@ -208,6 +210,7 @@ public class MtmyCommentController extends BaseController{
 		commentService.insterShopComment(comment);
 		//修改单个用户所涉及的商品评论
 		commentService.updateShopComment(comment);
+		commentService.updateShopIsReplay(comment);
 		addMessage(redirectAttributes, "回复用户评论成功");
 		return "redirect:" + adminPath + "/ec/mtmycomment/realComment";
 	}
