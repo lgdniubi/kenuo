@@ -1363,6 +1363,7 @@ public class SystemService extends BaseService implements InitializingBean {
 //			user.setDelRemarks("冻结用户");
 			user.setDelFlag("1");
 			userDao.updateUserDel(user);
+			redisClientTemplate.del("UTOKEN_"+user.getId());
 		}
 	}
 
