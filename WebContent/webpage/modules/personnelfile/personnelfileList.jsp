@@ -98,8 +98,8 @@
 								<td><input type="checkbox" id="${personnelfile.id}" class="i-checks"></td>
 								<td>${personnelfile.sName}</td>
 								<td>
-									<c:if test="${personnelfile.sex == 0 }">男</c:if> 
-									<c:if test="${personnelfile.sex == 1 }">女</c:if> 
+									<c:if test="${personnelfile.sex == 1 }">男</c:if> 
+									<c:if test="${personnelfile.sex == 2 }">女</c:if> 
 								</td>
 								<td>
 									<c:forEach items="${personnelfile.rolelist}" var="role">

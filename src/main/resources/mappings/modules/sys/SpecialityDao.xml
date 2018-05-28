@@ -88,6 +88,7 @@
 		${sqlMap.dsf}
 		AND a.del_flag = #{DEL_FLAG_NORMAL} 
 		AND a.status=0
+		AND a.franchisee_id = '1'
 		<!-- 数据范围过滤 -->
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -105,6 +106,21 @@
 		where id=#{id}
 
 	</update>
+	<!-- 逻辑删除特长标签前先判断该标签是否已经被使用 -->
+	<select id="validDel" resultType="Integer">
+		SELECT
+			COUNT(1)
+		FROM
+			user_speciality
+		WHERE speciality_id = #{id}
+	</select>
 
-
+	<!-- 验证特长标签名称 -->
+	<select id="getByName" resultType="int">
+		SELECT COUNT(*)
+		FROM speciality s
+		WHERE s.name = #{name} 
+		AND s.del_flag =0
+		AND s.franchisee_id = 1
+	</select>
 </mapper>

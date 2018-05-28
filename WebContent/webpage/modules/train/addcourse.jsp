@@ -374,6 +374,13 @@
 									</select>
 								</div>
 								<div class="input-item">
+									<span><font color="red">*</font>是否公开：</span> 
+									<select name="isOpen" id="isOpen" class="form-control required">
+										<option  value="0">公开</option>
+										<option selected value="1">不公开</option>
+									</select>
+								</div>
+								<div class="input-item">
 									<span><font color="red">*</font>课程类型：</span> 
 									<select id="lessontype" name="lessontype" class="form-control input-item-bootm">
 										<option value="1">线上课程</option>

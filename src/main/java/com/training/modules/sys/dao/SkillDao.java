@@ -2,6 +2,8 @@ package com.training.modules.sys.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.GoodsSkill;
@@ -108,4 +110,12 @@ public interface SkillDao extends CrudDao<Skill>{
 	 * @return
 	 */
 	public int getByName(String name);
+
+	public int validDel(Skill skill);
+	//删除与新增技能名称相同的数据
+	public void deleteSkillByName(Skill skill);
+
+	public List<UserSkill> selectSkillIdByName(Skill skill);
+	//批量更新用户是技能id为新插入的平台id
+	public void updateUserSkill(@Param("usList")List<UserSkill> usList, @Param("insertId")String insertId);
 }

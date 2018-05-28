@@ -72,6 +72,13 @@ public class TrainLessonsService extends CrudService<TrainLessonsDao,TrainLesson
 	public void updateIsShow(TrainLessons trainLessons){
 		dao.updateIsShow(trainLessons);
 	}
+	/**
+	 * 修改课程状态
+	 * @param trainLessons
+	 */
+	public void updateIsOpen(TrainLessons trainLessons){
+		dao.updateIsOpen(trainLessons);
+	}
 	
 	/**
 	 * 统计总揽

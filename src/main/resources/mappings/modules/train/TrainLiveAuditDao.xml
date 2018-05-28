@@ -6,7 +6,7 @@
 		a.userId,
 		b.`name` as "userName",
 		b.user_type,
-		c.label as "remarks",
+		(SELECT c.label FROM trains.sys_dict c WHERE c.`value` = b.user_type AND c.type = 'sys_user_type') AS "remarks",
 		a.title,
 		a.name,
 		a.desc,
@@ -30,6 +30,7 @@
 		r.roomId as "roomId",
 		a.earnings_ratio as "earningsRatio",
 		a.is_open as isOpen,
+		a.is_show as isShow,
 		a.is_open_role AS isOpenRole,
 		a.is_recommend as isRecommend,
 		a.del_flag
@@ -65,10 +66,9 @@
 		<include refid="sqlColumns" />
 		FROM trains.train_live_audit a 
 		LEFT JOIN trains.sys_user b ON a.userId=b.id
-		LEFT JOIN trains.sys_dict c ON c.`value`=b.user_type
 		LEFT JOIN trains.train_live_room r ON r.userId=a.userId
 		LEFT JOIN trains.sys_office o ON o.id = b.office_id
-		WHERE a.del_flag=0 AND c.type='sys_user_type'
+		WHERE a.del_flag=0 
 		<if test="userName!=null and userName!=''">
 			AND b.name like
 			<if test="dbName == 'oracle'">'%'||#{userName}||'%'</if>
@@ -113,6 +113,7 @@
 			live_remarks=#{liveRemarks},
 			earnings_ratio = #{earningsRatio},
 			is_open = #{isOpen},
+			is_show = #{isShow},
 			is_open_role = #{isOpenRole},
 			audit_user=#{auditUser}
 		WHERE id=#{id}

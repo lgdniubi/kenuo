@@ -17,6 +17,7 @@ import com.training.common.utils.StringUtils;
 import com.training.modules.sys.dao.OfficeDao;
 import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.entity.Office;
+import com.training.modules.sys.entity.OfficeAcount;
 import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.entity.OfficeLog;
@@ -417,4 +418,29 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		return officeDao.checkOfficeCode(office);
 	}
 
+	/**
+	 * 查询机构账户
+	 * @param officeId
+	 * @return
+	 */
+	public OfficeAcount findOfficeAcount(String officeId){
+		return this.officeDao.findOfficeAcount(officeId);
+	}
+	/**
+	 * 变更信用额度
+	 * @param OfficeAcount
+	 */
+	@Transactional(readOnly = false)
+	public void updateOfficeCreditLimit(OfficeAcount OfficeAcount){
+		this.officeDao.updateOfficeCreditLimit(OfficeAcount);
+	}
+	
+	/**
+	 * 创建账户
+	 * @param OfficeAcount
+	 */
+	@Transactional(readOnly = false)
+	public void saveOfficeAcount(OfficeAcount officeAcount){
+		this.officeDao.saveOfficeAcount(officeAcount);
+	}
 }

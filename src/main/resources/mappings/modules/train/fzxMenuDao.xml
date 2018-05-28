@@ -27,8 +27,9 @@
 		a.href,
 		a.icon,
 		a.sort,
-		a.is_show,
-		<!-- a.permission, -->
+		a.is_shops,
+		<!--a.is_show,
+		 a.permission, -->
 		a.remarks,
 		a.create_by AS "createBy.id",
 		a.create_date,
@@ -58,7 +59,7 @@
 			name,
 			enname,
 			icon,
-			is_show AS isShow,
+			<!-- is_show AS isShow, -->
 			sort 
 		FROM 
 			fzx_menu 
@@ -88,7 +89,22 @@
 			,(SELECT COUNT(*) FROM fzx_menu AS B WHERE a.id = B.parent_id AND B.del_flag=0) AS 'num'
 		FROM fzx_menu a
 		<include refid="menuJoins"/>
-		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		WHERE
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		ORDER BY a.sort
+	</select>
+	<!-- 根据角色id查找该角色下所属版本的菜单 -->
+	<select id="findAllMenuByModid" resultMap="fzxMenuResult">
+		SELECT
+		<include refid="menuColumns"/>
+		,(SELECT COUNT(*) FROM fzx_menu AS B WHERE a.id = B.parent_id AND B.del_flag=0) AS 'num'
+		FROM fzx_menu a
+		<include refid="menuJoins"/>
+		LEFT JOIN train_model_fzxmenu tmf ON tmf.menu_id = a.id
+		LEFT JOIN fzx_role r ON r.mod_id = tmf.mod_id
+		WHERE
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		AND r.id = #{roleId}
 		ORDER BY a.sort
 	</select>
 	<!-- 菜单详情 -->
@@ -113,7 +129,8 @@
 			name, 
 			href,
 			icon,
-			is_show,
+			is_shops,
+			<!-- is_show, -->
 			sort, 
 			create_by,
 			create_date, 
@@ -143,7 +160,7 @@
 			name = #{name}, 
 			href = #{href}, 
 			icon = #{icon}, 
-			is_show = #{isShow}, 
+			is_shops, = #{isShow}, 
 			sort = #{sort},
 			update_by = #{updateBy.id}, 
 			update_date = #{updateDate}, 
@@ -159,7 +176,7 @@
 			name = #{name}, 
 			href = #{href}, 
 			icon = #{icon}, 
-			is_show = #{isShow}, 
+			is_shops, = #{isShow}, 
 			sort = #{sort},
 			update_by = #{updateBy.id}, 
 			update_date = #{updateDate}, 

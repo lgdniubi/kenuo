@@ -4,30 +4,45 @@
 	<!-- 角色列表 -->
 	<select id="findList" resultType="FzxRole">
 		SELECT 
-			id AS roleId,
-			name,
-			enname,
-			role_grade AS roleGrade
+			r.id AS roleId,
+			r.name,
+			r.enname,
+			r.enname AS enamer,
+			r.mod_id AS modeid,
+			r.remarks,
+			r.is_default AS isDefault,
+			tm.mod_name AS modName
 		FROM 
-			fzx_role 
+			fzx_role r
+			LEFT JOIN train_model tm ON tm.id = r.mod_id
 		WHERE 
-			del_flag = 0 
+			r.del_flag = 0 
+			AND company_id = 1
+			<if test="modeid != null and modeid != ''">
+				AND mod_id = #{modeid}
+			</if>
 			<if test="name != null and name != ''">
-				AND name like 
+				AND r.name like 
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
 			</if>
-			ORDER BY id DESC
+			ORDER BY r.id DESC
 	</select>
 	<!-- 角色详情 -->
 	<select id="get" resultType="FzxRole">
-		SELECT id AS roleId,name,enname,role_grade AS roleGrade,remarks FROM fzx_role WHERE id = #{roleId}
+		SELECT id AS roleId,name,enname,mod_id AS modeid,remarks FROM fzx_role WHERE id = #{roleId}
+	</select>
+	<!-- 根据版本id和ename=sjgly查找超级管理员角色 -->
+	<select id="getFzxRoleByModAndEname" resultType="FzxRole">
+		SELECT id AS roleId,name,enname, mod_id AS modeid, remarks FROM fzx_role  WHERE mod_id= #{modid} AND enname = #{modType} AND del_flag = 0 AND company_id =1
 	</select>
 	<!-- 插入角色 -->
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="roleId">
 		INSERT INTO fzx_role(
 			enname, 
 			name, 
+			company_id,
+			mod_id,
 			role_grade,
 			create_by,
 			create_date, 
@@ -36,6 +51,8 @@
 		) VALUES (
 			#{enname},
 			#{name},
+			#{franchiseeid},
+			#{modeid},
 			#{roleGrade},
 			#{createBy.id}, 
 			#{createDate}, 
@@ -48,6 +65,7 @@
 		UPDATE fzx_role SET 
 			enname = #{enname}, 
 			name = #{name}, 
+			mod_id = #{modeid},
 			role_grade = #{roleGrade}, 
 			update_by = #{updateBy.id}, 
 			update_date = #{updateDate}, 
@@ -133,7 +151,11 @@
 	</select>
 	<!-- 验证英文名称是否有效 -->
 	<select id="checkEnname" resultType="int">
-		SELECT COUNT(1) FROM fzx_role WHERE enname = #{enname} AND del_flag = 0
+		SELECT COUNT(1) FROM fzx_role WHERE mod_id = #{modeid} AND del_flag = 0 AND enname = 'sjgly'
+	</select>
+	<!-- 验证同版本下不能有多个相同的角色 -->
+	<select id="checkName" resultType="int">
+		SELECT COUNT(1) FROM fzx_role WHERE mod_id = #{modeid} AND del_flag = 0 AND name = #{name} AND company_id= 1
 	</select>
 	
 	<select id="findByRoleId" resultType="FzxRole">
@@ -152,4 +174,20 @@
 		JOIN sys_user u ON u.id = ur.user_id
 		WHERE u.id = #{id} AND r.del_flag = 0
 	</select>
+	<!-- 设置其他默认的为非默认 -->
+	<update id="setNotDefault">
+		UPDATE fzx_role SET 
+			is_default = 0
+		WHERE mod_id = #{modeid}
+		AND del_flag = 0
+		AND company_id = 1
+		AND is_default = 1
+	</update>
+	<!-- 根据roleid设置该角色默认 -->
+	<update id="setDefault">
+		UPDATE fzx_role SET 
+			is_default = 1
+		WHERE id = #{roleId}
+		AND company_id = 1
+	</update>
 </mapper>

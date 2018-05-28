@@ -9,6 +9,25 @@
 		function refresh(){
 			window.location="${ctx}/sys/speciality/list";
 		}
+		//删除前判断此特长是否已经被引用
+		function validDel(obj,specialityId){
+			var url = "${ctx}/sys/speciality/validDel?id="+specialityId;
+		 	$.post(url,function(data){
+			    if(data){
+			    	var href = "${ctx}/sys/speciality/delete?id="+specialityId;
+			    	confirmx('确认要删除特长吗？', href)
+			    }else{
+				    top.layer.open({
+			    	 	title: '提示'
+			    		,content: '该标签已被使用不能删除',
+			    		icon: 3,
+			    		time: 2000		//2秒后自动消失
+			    	});
+			    }
+			  },
+			  "json");
+		 	return false;
+		}
 	</script>
 </head>
 <body>
@@ -66,7 +85,7 @@
 									<a href="#" onclick="openDialog('修改用户', '${ctx}/sys/speciality/form?id=${speciality.id}','800px','200px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="sys:speciality:del">
-									<a href="${ctx}/sys/speciality/delete?id=${speciality.id}" onclick="return confirmx('确认要删除特长吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
+									<a href="javascript:validDel(this,'${speciality.id}')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a>
 								</shiro:hasPermission>
 							</td>
 						</tr>

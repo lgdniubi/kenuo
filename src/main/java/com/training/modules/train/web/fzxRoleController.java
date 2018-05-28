@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,10 @@ import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.FzxRoleDao;
 import com.training.modules.train.entity.FzxRole;
+import com.training.modules.train.entity.TrainModel;
 import com.training.modules.train.service.FzxMenuService;
 import com.training.modules.train.service.FzxRoleService;
+import com.training.modules.train.service.TrainModelService;
 
 
 /**
@@ -56,7 +59,8 @@ public class fzxRoleController extends BaseController{
 	private RedisClientTemplate redisClientTemplate;		//redis缓存Service
 	@Autowired
 	private UserDao UserDao;
-	
+	@Autowired
+	private TrainModelService trainModelService;
 	/**
 	 * 妃子校角色list
 	 * @param model
@@ -98,7 +102,11 @@ public class fzxRoleController extends BaseController{
 			}else{
 				fzxRole = new FzxRole();
 			}
+			TrainModel trainModel = new TrainModel();
+			trainModel.setModType("'qy','dy'");
+			List<TrainModel> modList = trainModelService.findList(trainModel);	//查找所有的版本类型
 			model.addAttribute("fzxRole", fzxRole);
+			model.addAttribute("modList", modList);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "查询妃子校角色详情", e);
 			logger.error("查询妃子校角色详情错误信息:"+e.getMessage());
@@ -147,14 +155,43 @@ public class fzxRoleController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "checkEnname")
-	public String checkEnname(String oldEnname, String enname) {
+	public boolean checkEnname(String oldEnname, String enname,Integer modeid) {
+		if("sjgly".equals(enname) && modeid != null){
+			if ( StringUtils.isBlank(oldEnname)){//如果是空表示添加
+				return fzxRoleService.checkEnname(modeid) == 0;
+			} else {//如果不是空，表示修改
+				return fzxRoleService.checkEnname(modeid) <= 1;
+			}
+		}
+		return true;
+	}
+	/**
+	 * 验证 名称是否有效
+	 * 
+	 * @param oldLoginName
+	 * @param loginName
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "checkName")
+	public boolean checkName(String name,String oldName, Integer oldModeid,Integer modeid) {
+		if (StringUtils.isNotBlank(name)){//如果不是空
+			if (StringUtils.isBlank(oldName)){//如果是空表示添加
+				return fzxRoleService.checkName(modeid,name)==0;
+			}else {//如果不是空，表示修改
+				return fzxRoleService.checkName(modeid,name) <= 1;
+			}
+		}
+		return false;	
+	}
+	/*public String checkEnname(String oldEnname, String enname) {
 		if (enname != null && enname.equals(oldEnname)) {
 			return "true";
 		} else if (enname != null &&  fzxRoleService.checkEnname(enname) == 0) {
 			return "true";
 		}
 		return "false";
-	}
+	}*/
 	/**
 	 * 删除角色
 	 * @param model
@@ -195,7 +232,7 @@ public class fzxRoleController extends BaseController{
 	@RequestMapping(value = "auth")
 	public String auth(Model model,FzxRole fzxRole,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
-			model.addAttribute("fzxMenu", fzxMenuService.findAllMenu());
+			model.addAttribute("fzxMenu", fzxMenuService.findAllMenuByModid(fzxRole));
 			model.addAttribute("fzxRole", fzxRoleService.findRoleMenu(fzxRole));
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "妃子校角色权限设置", e);
@@ -232,9 +269,13 @@ public class fzxRoleController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "newTreeData")
-	public List<Map<String, Object>> newTreeData(HttpServletResponse response,String fzxRoleIds) {
+	public List<Map<String, Object>> newTreeData(HttpServletResponse response,String fzxRoleIds ,Integer modeid) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		List<FzxRole> list = fzxRoleDao.findList(null);
+		FzxRole fzxRole = new FzxRole();
+		if (modeid != null){
+			fzxRole.setModeid(modeid);
+		}
+		List<FzxRole> list = fzxRoleDao.findList(fzxRole);
 		for (int i = 0; i < list.size(); i++) {
 			Map<String, Object> map = Maps.newHashMap();
 			FzxRole e = list.get(i);
@@ -416,6 +457,23 @@ public class fzxRoleController extends BaseController{
 		model.addAttribute("userId", userId);
 		model.addAttribute("fzxRoleIds", fzxRoleIds);
 		return "modules/sys/addFzxRoleForm";
+	}
+	/**
+	 * @param modeid
+	 * @return
+	 * @Description:为某个版本设置默认角色
+	 */
+	@RequestMapping(value="setDefault")
+	public String setDefault(FzxRole fzxRole ,HttpServletRequest request,RedirectAttributes redirectAttributes){
+		try {
+			fzxRoleService.setDefault(fzxRole);
+			addMessage(redirectAttributes, "默认角色保存成功!");
+		} catch (Exception e) {
+			BugLogUtils.saveBugLog(request, "默认角色保存异常", e);
+			logger.error("保存妃子校角色菜单权限错误信息:"+e);
+			addMessage(redirectAttributes, "默认角色保存异常，请与管理员联系");
+		}
+		return "redirect:" + adminPath + "/train/fzxRole/list";
 	}
 	
 }

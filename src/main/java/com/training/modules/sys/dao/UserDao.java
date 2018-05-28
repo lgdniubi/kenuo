@@ -14,6 +14,7 @@ import com.training.modules.sys.entity.Role;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.entity.UserLog;
 import com.training.modules.sys.entity.UserOfficeCode;
+import com.training.modules.sys.entity.UserPuTo;
 import com.training.modules.sys.entity.UserVo;
 
 /**
@@ -355,8 +356,26 @@ public interface UserDao extends CrudDao<User> {
 	public List<User> starBeautyFindUser(User user);
 	
 	/**
+	 * 通过用户id查询普通会员的信息
+	 * @param id 用户user_id
+	 * @return
+	 */
+	public UserPuTo getUserPuTo(String id);
+	
+	/**
 	 * 将逻辑删除的用户用户还原
 	 * @param user
 	 */
 	public void onJob(User user);
+	/**
+	 * 查找非员工类型的用户   type!= yg
+	 * @param user
+	 * @return
+	 */
+	public List<User> findSpecialUserList(User user);
+	//冻结解冻企业用户
+	public void modelFranchisee(User user);
+	//冻结解冻pt、syr用户
+	public void updateUserDel(User user);
+
 }

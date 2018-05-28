@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.UserCheckDao">
+	
+	<select id="findUniqueByProperty" parameterType="String" resultType="UserCheck">
+		select
+			`id` AS id,
+			`mod_name` AS modName,
+			`mod_type` AS modType,
+			`mod_ename` AS modEname,
+			`mod_pay` AS modPay,
+			`mod_fee` AS modFee,
+			`mod_day` AS modDay,
+			`remark` AS remark
+		FROM
+			train_model t
+		WHERE
+			modEname = #{modEname}
+			AND del_flag = 0
+	</select>
+	<select id="findByModEname" resultType="int" parameterType="String">
+		SELECT     
+			COUNT(1)   
+		FROM     
+			train_model    
+		WHERE     
+			mod_ename = #{modEname}
+			AND del_flag = 0
+	</select>
+	
+	<!-- 查询所有“有效”的版本信息-->
+	<select id="findList" resultType="UserCheck">
+		SELECT 
+			tap.id,
+			u.`name`,
+			u.nickname,
+			u.mobile,
+			u.type,
+			tap.user_id,
+			tap.apply_type AS applyType,
+			tap.audit_type AS auditType,
+			tap.status,
+			tap.create_date AS createDate
+			from train_apply tap
+			LEFT JOIN sys_user u ON tap.user_id=u.id
+		WHERE 1=1
+		<if test="mobile != null and mobile != ''">
+			AND u.mobile = #{mobile}
+<!-- 			<if test="dbName == 'oracle'">'%'||#{mobile}||'%'</if> 
+	<if test="dbName == 'mysql'">CONCAT('%', #{mobile}, '%')</if> -->
+		</if>
+		<if test="status != '' and status == 0">
+			AND tap.status = 0
+		</if>
+		<if test="status == 2">
+			AND tap.status in (1,2)
+		</if>
+		<if test="status == 3">
+			AND tap.status = 3
+		</if>
+		ORDER BY tap.create_date DESC
+	</select>
+	
+	<!-- 保存用户审核状态 -->
+	<update id="editUserCheck">
+		UPDATE train_apply set
+		 `status`=#{status}
+		 <if test="remarks != null">, remarks = #{remarks}</if>
+		WHERE id = #{id} AND user_id=#{userid}
+	</update>
+	
+	<!-- 获取单个版本数据 -->
+	<select id="getUserCheck" resultType="UserCheck">
+		SELECT 
+			adi.`name`,
+			u.nickname,
+			u.mobile,
+			u.type,
+			u.id AS userid,
+			tap.apply_type AS applyType,
+			tap.audit_type AS auditType,
+			tap.create_date AS createDate,
+			tap.remarks,
+			tap.status,
+			tf.`name` AS companyName,
+			tf.short_name AS shortName,
+			tf.charter_card AS charterCard,
+			tf.address,
+			tf.legal_person AS legalPerson,
+			tf.legal_mobile AS legalMobile,
+			tf.legal_card AS legalCard,
+			tf.charter_img AS charterUrl,
+			tf.icardone,
+			tf.icardtwo,
+			tf.intro,
+			tf.district_id AS districtId,
+			adi.city,
+			adi.income,
+			adi.speciality,
+			adi.start_date AS startDate
+			from sys_user u
+			LEFT JOIN train_apply tap ON tap.user_id=u.id
+			LEFT JOIN train_franchisee_info tf ON tf.apply_id= tap.id
+			LEFT JOIN train_audituser_info adi ON adi.apply_id = tap.id
+		WHERE 
+			del_flag = 0 
+		AND tap.user_id = #{userid} 
+		<if test="id != null"> and tap.id = #{id} </if>
+	</select>	
+	
+	<select id="findMaxCode" resultType="long">
+		SELECT MAX(code) FROM sys_franchisee
+	</select>
+	<insert id="saveModelFranchisee" >
+		INSERT INTO `train_model_franchisee` (
+			`mod_id`,
+			`franchisee_id`,
+			`user_id`,
+			`auth_start_date`,
+			`auth_end_date`,
+			<if test="discount != null"> `discount`, </if>
+			`pay_type`,
+			`create_by`,
+			`create_date`,
+			`status`
+		)
+		VALUES
+			(
+				#{modid},
+				#{franchiseeid},
+			    #{userid},
+			    #{authStartDate},
+			    #{authEndDate},
+			    <if test="discount != null"> #{discount}, </if>
+			    #{paytype},
+			    #{createBy.id},
+			    SYSDATE(),
+				'0'
+			);
+				
+	</insert>
+	<insert id="saveFranchisee" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO sys_franchisee (
+			  parent_id,
+			  parent_ids,
+			  name,
+			  sort,
+			  code,
+			  area_id,
+			  type,
+			  address,
+			  legal_name,
+			  mobile,
+			  is_real_franchisee,
+			  charter_url,
+			  charter_card,
+			  create_by,
+			  create_date,
+			  icardone,
+			  icardtwo,
+			  del_flag,
+			  remarks,
+			  intro
+			) 
+		VALUES
+		  (
+		    '1', 
+			'0,1,',
+		    #{companyName},
+		    30,
+		    #{code},
+		    #{districtId},
+		    2,
+		    #{address},
+		    #{legalPerson},
+		    #{mobile},
+		    1,
+		    #{charterUrl},
+		    #{charterCard},
+		    #{createBy.id},
+		    SYSDATE(),
+		    #{icardone},
+			#{icardtwo},
+			0,
+			'用户审核增加',
+			#{intro}
+		  )
+	</insert>
+	<insert id="saveMtmyFranchisee" >
+		INSERT INTO `mtmydb`.`mtmy_franchisee` (
+			`parent_id`, `parent_ids`, `name`, `type`, `sort`, `is_real_franchisee`,  `public_service_flag`, 
+			`create_by`, `create_date`, `del_flag`, `remarks`
+		) 
+		VALUES
+		  (
+		    '1',  		'0,1,', 	#{companyName}, 2, 	 30, 		 1, 					 0,
+		     #{createBy.id}, SYSDATE(), 	0,		 '用户审核增加'
+		  )
+	</insert>
+	<!-- 查看手艺人权限信息根据user id -->
+	<select id="getModelFranchiseeByUserid"  parameterType="String" resultType="ModelFranchisee">
+		SELECT 
+			t.id,
+			t.franchisee_id AS franchiseeid,
+			t.mod_id AS modid,
+			t.auth_start_date AS authStartDate,
+			t.auth_end_date AS authEndDate,
+			t.discount,
+			t.create_date,
+			t.pay_type AS paytype,
+			t.user_id
+			from train_model_franchisee t
+			WHERE user_id=#{userid}
+			AND del_flag = 0
+	</select>
+	<!-- 查看企业权限信息根据user id -->
+	<select id="getQYModelFranchiseeByUserid"  parameterType="String" resultType="ModelFranchisee">
+		SELECT 
+			t.id,
+			t.franchisee_id AS franchiseeid,
+			t.mod_id AS modid,
+			t.auth_start_date AS authStartDate,
+			t.auth_end_date AS authEndDate,
+			t.discount,
+			t.create_date,
+			t.pay_type AS paytype,
+			t.user_id
+			from train_model_franchisee t
+			LEFT JOIN sys_user u ON u.company_id = t.franchisee_id 
+			WHERE 	u.id = #{userid}
+			AND t.del_flag = 0
+	</select>
+	
+	<!-- 修改权益设置信息 -->
+	<update id="editModelFranchisee">
+		UPDATE train_model_franchisee SET 
+			`mod_id` = #{modid},
+			`auth_start_date` = #{authStartDate},
+			<if test="discount != null"> `discount`= #{discount}, </if>
+			<if test="paytype != null"> `pay_type`= #{paytype}, </if>
+			`auth_end_date` = #{authEndDate}
+		WHERE id = #{id} and franchisee_id = #{franchiseeid}
+	</update>
+	<!-- 保存权益信息后，设置用户type -->
+	<update id="updateUserType">
+		UPDATE sys_user SET 
+			`type` = #{type}
+			<if test="type == 'syr'">
+				,name = (SELECT f.name  FROM train_audituser_info f LEFT JOIN train_apply a ON a.id = f.apply_id WHERE a.user_id = #{userid})
+			</if>
+			<if test="franchid != null">
+			,company_id = #{franchid},
+			office_id = #{franchid} 
+			</if>
+		WHERE id = #{userid}
+	</update>
+	<select id="selectCids" parameterType="string" resultType="string">
+		select
+			uc.client_id
+		from oa_user_cid uc  
+		where uc.user_id = #{userid} 
+	</select>
+	
+	<select id="findByModidAndEname" resultType="int">
+		SELECT
+			id
+		FROM
+			`pc_role`
+		WHERE
+		franchisee_id = 1
+		AND del_flag = 0
+		AND mode_id = #{modid}
+		AND ename = 'sjgly';
+	</select>
+	<select id="findCidByUserid" resultType="string">
+		SELECT
+			client_id
+		FROM
+			oa_user_cid
+		WHERE
+			user_id =#{userid}
+	</select>
+	
+	<insert id="insertPcUserRole">
+		INSERT INTO `pc_user_role` (`user_id`, `pc_role_id`)
+		VALUES
+			(
+				#{userid},
+				#{roleid}
+			);
+				
+	</insert>
+	<select id="findByModidAndEnameFzx" resultType="int">
+		SELECT
+			id
+		FROM
+			`fzx_role`
+		WHERE
+		company_id = 1
+		AND del_flag = 0
+		AND mod_id = #{modid}
+		AND enname = 'sjgly';
+	</select>
+	
+	<insert id="insertFzxUserRole" useGeneratedKeys="true" keyProperty="fzxUserRoleId">
+		INSERT INTO `fzx_user_role` (
+			`user_id`,
+			`fzx_role_id`
+		)
+		VALUES
+			(
+				#{userid},
+				#{roleid}
+			);
+	</insert>
+	<!-- 向fzx_user_role_office插入一条数据 -->
+	<insert id="insertFzxUserRoleOffice" useGeneratedKeys="true" keyProperty="fzxUserRoleId">
+		INSERT INTO `fzx_user_role_office` (`u_r_id`, `office_id`)
+		VALUES
+			(
+				#{fzxUserRoleId},
+				#{franchid}
+			);
+	</insert>
+	<select id="findPcRoleByModid" resultType="PcRole">
+		SELECT
+		   id,
+		  `franchisee_id`,
+		  `mode_id`,
+		  `name`,
+		  `ename`,
+		  `grade`,
+		   role_range AS roleRange,
+		  `remarks` 
+		FROM
+			`pc_role`
+		WHERE
+			mode_id = #{modid}
+		AND del_flag =0
+		AND franchisee_id = 1
+		AND ename != 'sjgly'
+	</select>
+	<insert id="insertPcCommonRole" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO `trains`.`pc_role` (
+			`franchisee_id`,
+			`grade`,
+			`mode_id`,
+			`name`,
+			`ename`,
+			`create_by`,
+			`create_date`,
+			`remarks`,
+			role_range,
+			`del_flag`
+		)
+		VALUES
+			(
+				#{franchiseeid},
+				#{grade},
+				#{modeid},
+				#{name},
+				#{ename},
+				#{createBy.id},
+			    SYSDATE(),
+				#{remarks},
+				#{roleRange,},
+				'0'
+			);
+				
+	</insert>
+	<select id="findFzxRoleByModid" resultType="FzxRole">
+		SELECT
+			id,
+			`company_id`,
+			`role_grade`,
+			`mod_id`,
+			`name`,
+			`enname`,
+			`remarks`,
+			is_default AS isDefault
+		FROM
+			`fzx_role`
+		WHERE
+			mod_id = #{modid}
+		AND del_flag =0
+		AND company_id = 1
+		AND enname != 'sjgly'
+	</select>
+	<insert id="insertFzxCommonRole" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO `trains`.`fzx_role` (
+			`company_id`,
+			`mod_id`,
+			`name`,
+			`enname`,
+			`create_by`,
+			`create_date`,
+			`remarks`,
+			`is_default`,
+			`role_grade`,
+			`del_flag`
+		)
+		VALUES
+			(
+				#{franchiseeid},
+				#{modeid},
+				#{name},
+				#{enname},
+				#{createBy.id},
+			    SYSDATE(),
+				#{remarks},
+				#{isDefault},
+				#{roleGrade},
+				'0'
+			);
+				
+	</insert>
+	<!-- 查询pc该角色的全部菜单，插入新的角色id -->
+	<select id="finAllPcMenuByRoleId" resultType="PcRole">
+		SELECT mr.menu_id,mr.role_id FROM pc_menu_role mr WHERE mr.`status` =0 AND mr.role_id = #{roleid};
+	</select>
+	<!-- 查询fzx该角色的全部菜单，插入新的角色id -->
+	<select id="finAllFzxMenuByRoleId" resultType="FzxRole">
+		SELECT mr.fzx_menu_id AS menuId,mr.fzx_role_id AS roleId FROM fzx_role_menu mr WHERE mr.`status` =0 AND mr.fzx_role_id = #{roleid};
+	</select>
+	<!-- 查询以前公共角色id -->
+	<select id="findAllPcCommonRoleIds" resultType="PcRole">
+		SELECT id AS roleId from pc_role WHERE franchisee_id = #{franchiseeid}
+	</select>
+	<!-- 删除pc公共角色id对应的menuid -->
+	<delete id="deleteAllPcMenu">
+		DELETE from pc_menu_role WHERE role_id in
+		<foreach collection="list"  index="index" item="item" open="(" separator="," close=")"  >
+       		#{item.roleId}
+        </foreach>
+	</delete>
+	<!-- 查询Fzx以前公共角色id -->
+	<select id="findAllFzxCommonRoleIds" resultType="PcRole">
+		SELECT id AS roleId from fzx_role WHERE company_id = #{franchiseeid}
+	</select>
+	<!-- 删除Fzx公共角色id对应的menuid -->
+	<delete id="deleteAllFzxMenu">
+		DELETE from fzx_role_menu WHERE fzx_role_id in
+		<foreach collection="list"  index="index" item="item" open="(" separator="," close=")"  >
+       		#{item.roleId}
+        </foreach>
+	</delete>
+	<!-- 设置手艺人角色，权益设置后 -->
+	<insert id="insertFzxUserRoleForsyr" useGeneratedKeys="true" keyProperty="userRoleId">
+		INSERT INTO `trains`.`fzx_user_role` ( 
+			`user_id`,
+			`fzx_role_id`
+		)
+		VALUES
+			( 
+				#{userid},
+				(SELECT id FROM fzx_role WHERE mod_id = #{modid} AND del_flag =0  LIMIT 1)
+			);		
+	</insert>
+	
+	<!-- 删除该用户的超级管理员角色-->
+	<delete id="deletePcUserRole">
+		DELETE FROM pc_user_role WHERE user_id = #{userid}
+	</delete>
+	<delete id="deleteFzxUserRole">
+		DELETE FROM fzx_user_role WHERE user_id = #{userid}
+	</delete>
+	<!-- 删除该用户pc公共的角色-->
+	<delete id="deletePcCommonRole">
+		DELETE FROM pc_role WHERE franchisee_id = #{franchiseeid}
+	</delete>
+	<!-- 删除该用户fzx公共的角色-->
+	<delete id="deleteFzxCommonRole">
+		DELETE FROM fzx_role WHERE company_id = #{franchiseeid}
+	</delete>
+	<!-- 删除该用户以前的角色机构信息fzx_user_role_office-->
+	<delete id="deleteOldFzxRoleOffice">
+		DELETE FROM fzx_user_role_office WHERE u_r_id in(SELECT fzx_role_id FROM fzx_user_role WHERE user_id = #{userid}) 
+	</delete>
+	<!-- 删除该用户以前的角色fzx_user_role-->
+	<delete id="deleteOldFzxRole">
+		DELETE FROM fzx_user_role WHERE user_id = #{userid}
+	</delete>
+	<!-- 邀请记录：同意的设置为2商家拒绝 -->
+	<update id="updateInvitationByShop">
+		UPDATE pc_user_invitation SET `status` = 2 WHERE phone = #{mobile} AND `status` = 0
+	</update>
+	<!-- 邀请记录：没同意的设置为3会员拒绝， -->
+	<update id="updateInvitationByUser">
+		UPDATE pc_user_invitation SET `status` = 3 WHERE phone = #{mobile} AND `status` = 4
+	</update>
+	<!-- 把所有推送消息设置为0:不可操作，-->
+	<update id="updatePushByUser">
+		UPDATE push_msg SET is_handle = 0 WHERE user_id = #{userid} AND notify_type = 12
+	</update>
+	<select id="isPermiss" resultType="int">
+		SELECT
+			COUNT(1)
+		FROM
+			pc_user_invitation p
+		LEFT JOIN sys_user u ON u.mobile = p.phone
+		WHERE
+			u.id = #{userid}
+		AND u.del_flag = 0
+		AND p.`status` = 0
+	</select>
+	
+	<!-- 更改pcrole，该商家的角色版本 -->
+	<update id="updatePcRoleModelId">
+		UPDATE pc_role SET mode_id = #{modid} WHERE franchisee_id = #{franchiseeid}
+	</update>
+	<!-- 更改fzxrole，该商家的角色版本 -->
+	<update id="updateFzxRoleModelId">
+		UPDATE fzx_role SET mod_id = #{modid} WHERE company_id = #{franchiseeid}
+	</update>
+	<!-- 更改media_manage_role，该商家的角色版本 -->
+	<update id="updateMediaRoleModelId">
+		UPDATE media_manage_role SET mod_id = #{modid} WHERE franchisee_id = #{franchiseeid}
+	</update>
+	
+</mapper>

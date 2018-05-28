@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.PcRoleDao">
+	<!-- 角色列表 -->
+	<select id="findList" resultType="PcRole">
+		SELECT 
+			r.id AS roleId,
+			r.name,
+			r.role_range,
+			dc.label AS ename,
+			dc.value AS enameLable,
+			r.mode_id AS modeid,
+			tm.mod_name AS modName
+		FROM 
+			pc_role r
+			LEFT JOIN train_model tm ON tm.id = r.mode_id
+			LEFT JOIN sys_dict dc ON dc.`value` = r.ename
+		WHERE 
+			r.del_flag = 0 
+			AND dc.type = 'pc_role_type'
+			AND r.franchisee_id = 1
+			<if test="name != null and name != ''">
+				AND r.name like 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+			</if>
+			ORDER BY r.id DESC
+	</select>
+	<!-- 角色详情 -->
+	<select id="get" resultType="PcRole">
+		SELECT id AS roleId,name,ename,grade, mode_id AS modeid, remarks,role_range FROM pc_role WHERE id = #{roleId}
+	</select>
+	<!-- 根据版本id和ename=sjgly查找超级管理员角色 -->
+	<select id="getPcRoleByModAndEname" resultType="PcRole">
+		SELECT id AS roleId,name,ename, mode_id AS modeid, remarks FROM pc_role WHERE mode_id= #{id} AND ename = 'sjgly' AND del_flag = 0 AND franchisee_id =1
+	</select>
+	<!-- 插入角色 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="roleId">
+		INSERT INTO pc_role(
+			ename, 
+			name, 
+			franchisee_id,
+			grade,
+			mode_id,
+			create_by,
+			create_date, 
+			remarks,
+			role_range,
+			del_flag
+		) VALUES (
+			#{ename},
+			#{name},
+			#{franchiseeid},
+			#{grade},
+			#{modeid}, 
+			#{createBy.id}, 
+			#{createDate}, 
+			#{remarks}, 
+			#{roleRange}, 
+			#{delFlag}
+		)
+	</insert>
+	<!-- 修改角色 -->
+	<update id="update">
+		UPDATE pc_role SET 
+			ename = #{ename}, 
+			name = #{name},
+			grade  = #{grade}, 
+			mode_id  = #{modeid}, 
+			update_by = #{updateBy.id}, 
+			update_date = #{updateDate}, 
+			remarks = #{remarks},
+			role_range = #{roleRange},
+			del_flag = 0
+		WHERE id = #{roleId}
+	</update>
+	<!-- 逻辑删除角色 -->
+	<update id="deleteByLogic">
+		UPDATE pc_role SET del_flag = 1 WHERE id = #{roleId}
+	</update>
+	<!--  查询角色下所有菜单 -->
+	<select id="findRoleMenu" resultType="PcRole">
+		SELECT a.id AS roleId,group_concat(b.menu_id) AS menuIds FROM pc_role a LEFT JOIN pc_menu_role b ON a.id = b.role_id WHERE a.id = #{roleId}
+	</select>
+	<!-- 删除角色下所有菜单 -->
+	<delete id="deleteRoleMenu">
+		DELETE FROM pc_menu_role WHERE role_id = #{roleId}
+	</delete>
+	<insert id="insertRoleMenu">
+		INSERT INTO pc_menu_role(
+			role_id, 
+			menu_id
+		) VALUES (
+			#{roleId},
+			#{menuId}
+		)
+	</insert>
+	<!-- 删除用户所有角色 -->
+	<delete id="deleteUserRole">
+		DELETE FROM pc_user_role WHERE user_id = #{id}
+	</delete>
+	<!-- 保存用户角色 -->
+	<insert id="insertUserRole">
+		INSERT INTO pc_user_role(
+			user_id, 
+			pc_role_id
+		) VALUES (
+			#{id},
+			#{roleId}
+		)
+	</insert>
+	<!-- 删除角色时 关联删除角色用户表 -->
+	<delete id="deleteUserRoleForRoleId">
+		DELETE FROM pc_user_role WHERE pc_role_id = #{roleId}
+	</delete>
+	
+	<!-- 根据用户查询当前用户拥有的所有角色 -->
+	<select id="findPcRoleByUserId" resultType="PcRole">
+		SELECT  
+		r.id AS roleId,
+		r.name,
+		r.ename,
+		r.remarks
+		FROM pc_role r LEFT JOIN pc_user_role ur ON r.id = ur.pc_role_id
+		JOIN sys_user u ON u.id = ur.user_id
+		WHERE u.id = #{id} AND r.del_flag = 0
+	</select>
+	<!-- 验证英文名称是否有效 -->
+	<select id="checkEnname" resultType="int">
+		SELECT COUNT(1) FROM pc_role WHERE mode_id = #{modeid} AND del_flag = 0 AND ename = 'sjgly'
+	</select>
+	<!-- 验证 角色名称是否重复 -->
+	<select id="checkRoleName" resultType="int">
+		SELECT COUNT(1) FROM pc_role WHERE mode_id = #{modeid} AND del_flag = 0 AND name = #{name} AND franchisee_id = 1
+	</select>
+</mapper>

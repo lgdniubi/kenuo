@@ -46,6 +46,7 @@ import com.training.modules.ec.dao.ReservationDao;
 import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.Office;
+import com.training.modules.sys.entity.OfficeAcount;
 import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.OfficeLog;
 import com.training.modules.sys.entity.User;
@@ -1133,5 +1134,48 @@ public class OfficeController extends BaseController {
 		}
 		officeLog.setUpdateBy(UserUtils.getUser());
 		officeService.saveOfficeLog(officeLog);
+    }
+    /**
+     * 去信用额度编辑页面
+     * @return
+     */
+    @RequiresPermissions("sys:office:editCredit")
+    @RequestMapping("toEditCredit")
+    public String toEditCredit(String office_id,Model model,RedirectAttributes redirectAttributes,HttpServletRequest request){
+    	
+    	try {
+			OfficeAcount officeAcount = this.officeService.findOfficeAcount(office_id);
+			if(officeAcount == null){
+				officeAcount = new OfficeAcount();
+				officeAcount.setOfficeId(office_id);
+				this.officeService.saveOfficeAcount(officeAcount);
+			}
+			model.addAttribute("officeAcount", officeAcount);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+    	return "modules/sys/editCreditLimit";
+    }
+    /**
+     * 编辑信用额度
+     * @param officeAcount
+     * @param redirectAttributes
+     * @param request
+     * @return
+     */
+    @RequestMapping("updateOfficeCreditLimit")
+    public String updateOfficeCreditLimit(OfficeAcount officeAcount,RedirectAttributes redirectAttributes,HttpServletRequest request){
+    	
+    	try {
+			this.officeService.updateOfficeCreditLimit(officeAcount);
+			addMessage(redirectAttributes, "变更信用额度成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			BugLogUtils.saveBugLog(request, "变更信用额度", e);
+			addMessage(redirectAttributes, "变更信用额度失败");
+		}
+    	
+    	return "redirect:" + adminPath + "/sys/office/list"; 
     }
 }

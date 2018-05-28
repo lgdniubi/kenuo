@@ -11,6 +11,7 @@ import com.training.common.service.CrudService;
 import com.training.modules.sys.dao.SkillDao;
 import com.training.modules.sys.entity.Skill;
 import com.training.modules.sys.entity.User;
+import com.training.modules.sys.entity.UserSkill;
 import com.training.modules.sys.utils.UserUtils;
 
 /**
@@ -60,10 +61,19 @@ public class SkillService extends CrudService<SkillDao, Skill>{
 		User user = UserUtils.getUser();
 		if(skill.getSkillId() != 0){
 			skill.setUpdateBy(user);
+			skill.setFranchiseeId(user.getCompany().getId());
 			skillDao.updateSkill(skill);
 		}else{
+			//从train_user_skill表中找出用户正在使用的相同名称的商家技能id
+//			List<UserSkill> usList = skillDao.selectSkillIdByName(skill);
+			//删除与新增技能名称相同的数据，新增的时候设置office_id为1（平台的id）
+//			skillDao.deleteSkillByName(skill);
 			skill.setCreateBy(user);
+			skill.setFranchiseeId("1");
 			skillDao.insertSkill(skill);
+//			String insertId = skill.getId();
+			//更新找出来的用户技能id为平台新增的id
+//			skillDao.updateUserSkill(usList,insertId);
 		}
 	}
 	
@@ -99,5 +109,16 @@ public class SkillService extends CrudService<SkillDao, Skill>{
 	 */
 	public int getByName(String name){
 		return skillDao.getByName(name);
+	}
+
+	/**
+	 * 根据id判断可否删除
+	 * @param skill
+	 * @return
+	 * @Description:
+	 */
+	public boolean validDel(Skill skill) {
+		int count = skillDao.validDel(skill);
+		return count == 0;
 	}
 }

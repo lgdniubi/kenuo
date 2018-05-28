@@ -103,6 +103,9 @@
 	<shiro:hasPermission name="ec:specEquipment:shopComEquipmentList">
 		<input type="hidden" id="specEquipment" value="1">
 	</shiro:hasPermission>
+	<shiro:hasPermission name="sys:office:editCredit">
+		<input type="hidden" id="editCredit" value="1">
+	</shiro:hasPermission>
 	<script type="text/javascript">
 		var lastValue = "";
 		var tree, setting = {data:{simpleData:{enable:true,idKey:"id",pIdKey:"pId",rootPId:'0'}},
@@ -225,12 +228,15 @@
 		function addDiyDom(treeId, treeNode) {
 			var aObj = $("#" + treeNode.tId + "_a");
 			var editStr = "<span class='brn-group'>"+treeNode.code+"　　";
+			if($('#editCredit').val() == 1)
+			editStr = editStr + "<a href = \"#\" onclick=\"openDialog('配置信用额度','${ctx}/sys/office/toEditCredit?office_id="+treeNode.id+"','500px','450px')\" class=\"btn btn-success btn-xs\"><i class=\"fa fa-edit\"></i>配置信用额度</a>";
 			if(treeNode.id != 1 && treeNode.grade != 1){
 				if($("#shiroAdd").val() == 1){
 					editStr = editStr + "<a href=\"#\" onclick=\"openDialog('添加下级机构', '${ctx}/sys/office/form?parent.id="+treeNode.id+"','800px', '620px')\" class=\"btn  btn-primary btn-xs\"><i class=\"fa fa-plus\"></i> 添加下级机构</a>";
 				}
 			}
 			if(treeNode.id.length > 7){
+				
 				//查看权限
 				if($("#shiroView").val() == 1){
 					editStr = editStr + "<a href=\"#\" onclick=\"openDialogView('查看机构', '${ctx}/sys/office/form?id="+treeNode.id+"&&num="+treeNode.num+"','800px', '620px')\" class=\"btn btn-info btn-xs\"><i class=\"fa fa-search-plus\"></i> 查看</a>";
@@ -250,6 +256,8 @@
 					editStr = editStr + "<a href=\"#\" onclick='top.openTab(\"${ctx }/train/arrange/ArrangeOrdinary?officeId="+treeNode.id+"&officeName="+treeNode.name+"\",\"店铺美容师排班\", false)' class=\"btn btn-success btn-xs\" >美容师排班</a>";
 				}
 			}
+			
+			
 			editStr+='</span>';
 			aObj.append(editStr);
 		};

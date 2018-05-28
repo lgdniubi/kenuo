@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.MediaMenuDao">
+	
+     <resultMap id="menuResult" type="MediaMenu">
+		<id property="id" column="id" />
+		<result property="parentIds" column="parentIds" />
+		<result property="name" column="name" />
+		<result property="href" column="href" />
+		<result property="icon" column="icon" />
+		<result property="sort" column="sort" />
+		<result property="isShow" column="is_show" />
+		<result property="isPay" column="is_pay" />
+		<!-- 查询父模块-->  
+        <association property="parent" column="parent_id" select="getParent" />   
+          
+        <!-- 查询子模块 -->  
+        <collection property="children" column="id" select="getChildren" />  
+	</resultMap>
+    
+	<sql id="menuColumns">
+		a.id,
+		a.parent_id AS "parent.id",
+		a.parent_ids,
+		a.name,
+		a.href,
+		a.is_pay,
+		a.icon,
+		a.sort,
+		a.is_show,
+		a.remarks,
+		a.create_by AS "createBy.id",
+		a.create_date,
+		a.update_by AS "updateBy.id",
+		a.update_date,
+		a.del_flag,
+		p.name AS "parent.name"
+	</sql>
+	
+	<sql id="menuJoins">
+		LEFT JOIN media_manage_menu p ON p.id = a.parent_id
+    </sql>
+	
+	<select id="get"  resultMap="menuResult">
+		SELECT
+			<include refid="menuColumns"/>
+		FROM media_manage_menu a
+		<include refid="menuJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	<select id="findUniqueByProperty"  resultMap="menuResult" statementType="STATEMENT">
+		select * from media_manage_menu where ${propertyName} = ${value}
+	</select>
+	
+	<select id="getChildren" parameterType="String" resultMap="menuResult">  
+        select * from media_manage_menu where parent_id = #{id} ORDER BY sort 
+    </select>  
+    <select id="getParent" parameterType="String" resultMap="menuResult">  
+        select * from media_manage_menu where id = #{id}  
+    </select>  
+	<select id="findAllList" resultMap="menuResult">
+		SELECT
+			<include refid="menuColumns"/>
+			,(SELECT COUNT(*) FROM media_manage_menu AS B WHERE a.id = B.parent_id AND B.del_flag=0) AS 'num'
+		FROM media_manage_menu a
+		<include refid="menuJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		ORDER BY a.sort,create_date desc
+	</select>
+	<!-- 查询该角色下所属版本的菜单列表 -->
+	<select id="findAllMenuByModid" resultMap="menuResult">
+		SELECT
+			<include refid="menuColumns"/>
+			,(SELECT COUNT(*) FROM media_manage_menu AS B WHERE a.id = B.parent_id AND B.del_flag=0) AS 'num'
+		FROM media_manage_menu a
+		<include refid="menuJoins"/>
+		LEFT JOIN train_model_mdmenu tmp ON tmp.menu_id = a.id
+		LEFT JOIN media_manage_role r ON r.mod_id = tmp.model_id
+		WHERE a.del_flag = 0
+		AND r.id = #{roleId}
+		ORDER BY a.sort
+	</select>
+	<!-- 验证同一个父级菜单下不能有重复的名称 -->
+	<select id="checkName" resultType="int">
+		SELECT COUNT(1) FROM media_manage_menu WHERE del_flag = 0 AND name = #{name} AND parent_id = #{parentId}
+	</select>
+	<select id="findByParentIdsLike"  resultMap="menuResult">
+		SELECT
+			a.id,
+			a.parent_id AS "parent.id",
+			a.parent_ids
+		FROM media_manage_menu a
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL} AND a.parent_ids LIKE #{parentIds}
+		ORDER BY a.sort
+	</select>
+	
+	<select id="findByUserId"  resultMap="menuResult">
+		SELECT DISTINCT
+			<include refid="menuColumns"/>
+			,(SELECT COUNT(*) FROM media_manage_menu AS B WHERE a.id = B.parent_id AND B.del_flag=0) AS 'num'
+		<!-- FROM media_manage_menu a
+		LEFT JOIN media_manage_menu p ON p.id = a.parent_id
+		JOIN pc_role_menu rm ON rm.menu_id = a.id
+		JOIN pc_role r ON r.id = rm.role_id AND r.useable='1'
+		JOIN pc_user_role ur ON ur.role_id = r.id
+		JOIN pc_user u ON u.id = ur.user_id AND u.id = #{userId}
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL} AND r.del_flag = #{DEL_FLAG_NORMAL} AND u.del_flag = #{DEL_FLAG_NORMAL} 
+		ORDER BY a.sort -->
+		
+		FROM media_manage_menu a
+		LEFT JOIN media_manage_menu p ON p.id = a.parent_id
+		JOIN pc_menu_role rm ON rm.menu_id = a.id
+		JOIN pc_role r ON r.id = rm.role_id 
+		JOIN pc_user_role ur ON ur.pc_role_id = r.id
+		JOIN sys_user u ON u.id = ur.user_id AND u.id = #{userId}
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL} AND r.del_flag = #{DEL_FLAG_NORMAL} AND u.del_flag = #{DEL_FLAG_NORMAL} 
+		ORDER BY a.sort
+	</select>
+	<select id="findByPidforChild" resultType="MediaMenu">
+		SELECT
+			<include refid="menuColumns"/>
+			,(SELECT COUNT(*) FROM media_manage_menu AS B WHERE a.id = B.parent_id AND B.del_flag=0) AS 'num'
+		FROM media_manage_menu a
+		<include refid="menuJoins"/>
+		WHERE a.del_flag = 0
+		AND a.parent_id = #{id}
+		ORDER BY a.sort
+	</select>
+	<insert id="insert">
+		INSERT INTO media_manage_menu(
+			parent_id, 
+			parent_ids, 
+			name, 
+			href, 
+			is_pay, 
+			icon, 
+			sort, 
+			is_show, 
+			create_by, 
+			create_date, 
+			update_by, 
+			update_date, 
+			remarks, 
+			del_flag
+		) VALUES (
+			#{parent.id}, 
+			#{parentIds}, 
+			#{name}, 
+			#{href}, 
+			#{isPay}, 
+			#{icon}, 
+			#{sort}, 
+			#{isShow}, 
+			#{createBy.id}, 
+			#{createDate}, 
+			#{updateBy.id}, 
+			#{updateDate}, 
+			#{remarks}, 
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE media_manage_menu SET 
+			parent_id = #{parent.id}, 
+			parent_ids = #{parentIds}, 
+			name = #{name}, 
+			href = #{href}, 
+			is_pay = #{isPay}, 
+			icon = #{icon}, 
+			sort = #{sort}, 
+			is_show = #{isShow}, 
+			update_by = #{updateBy.id}, 
+			update_date = #{updateDate}, 
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateParentIds">
+		UPDATE media_manage_menu SET 
+			parent_id = #{parent.id}, 
+			parent_ids = #{parentIds}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateSort">
+		UPDATE media_manage_menu SET 
+			sort = #{sort}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM media_manage_menu 
+		WHERE id = #{id} OR parent_ids LIKE 
+					<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+	</update>
+	
+	<update id="deleteByLogic">
+		UPDATE media_manage_menu SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id} OR parent_ids LIKE 
+					<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+	</update>
+	
+</mapper>

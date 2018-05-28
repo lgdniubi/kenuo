@@ -66,4 +66,13 @@ public interface SpecialityDao extends CrudDao<Speciality> {
 	 */
 	public int	deleteSpeciality(Speciality speciality);
 
+	public int validDel(Speciality speciality);
+
+	/**
+	 * 验证特长标签名称
+	 * @param name
+	 * @return
+	 */
+	public int getByName(String name);
+
 }

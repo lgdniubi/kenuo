@@ -100,6 +100,7 @@
 		  updatetime,
 		  office_id,
 		  sort,
+		  is_open,
 		  is_show
 		) 
 		VALUES
@@ -123,6 +124,7 @@
 		    	#{office.id}
 		    </if>,
 		    #{sort},
+		    #{isOpen},
 		    #{isShow}
 		  )
 	</insert>
@@ -167,6 +169,7 @@
 			T.CREATETIME,
 			t.sort,
 			t.is_show AS isShow,
+			t.is_open AS isOpen,
 			so.name AS "office.name"
 		FROM
 			train_categorys t
@@ -205,6 +208,7 @@
 		    	office_id = #{office.id}
 		    </if>,
 		    sort = #{sort},
+		    is_open = #{isOpen},
 		    is_show = #{isShow}
 		WHERE category_id = '${categoryId}'
 	</update>
@@ -275,6 +279,16 @@
 			train_categorys 
 		SET 
 			is_show = #{isShow}
+		WHERE category_id  IN 
+			<foreach collection="ids" item="id" open="(" separator="," close=")">
+	            #{id}
+	        </foreach>
+	</update>
+	<update id="updateIsOpen">
+		UPDATE 
+			train_categorys 
+		SET 
+			is_open = #{isOpen}
 		WHERE category_id  IN 
 			<foreach collection="ids" item="id" open="(" separator="," close=")">
 	            #{id}

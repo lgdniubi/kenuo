@@ -38,6 +38,7 @@
 			<include refid="skillColunm" />
 		FROM train_skill_label sl
 		WHERE sl.del_flag = 0
+		AND sl.franchisee_id = '1'
 		<!-- 数据范围过滤 -->
 		<if test="name != '' and name != null">
 			AND sl.name like CONCAT('%', #{name}, '%')
@@ -60,13 +61,26 @@
 		WHERE sl.id = #{skillId} 
 			AND sl.del_flag=0
 	</select>
-	
+	<!-- 从train_user_skill表中找出用户正在使用的相同名称的商家技能id-->
+	<select id="selectSkillIdByName" resultType="UserSkill">
+		SELECT
+			id, user_id, skill_id
+		FROM
+			train_user_skill
+		WHERE
+			skill_id IN ( SELECT t.id FROM train_skill_label t WHERE t.`name` = #{name})
+	</select>
+	<!-- 删除与新增技能名称相同的数据 -->
+	<delete id="deleteSkillByName">
+		DELETE FROM train_skill_label WHERE id IN (SELECT tt.id FROM (SELECT t.id from train_skill_label t WHERE t.`name`= #{name}) tt);
+	</delete>
 	<!-- 新增技能标签 -->
-	<insert id="insertSkill" parameterType="Skill">
+	<insert id="insertSkill" parameterType="Skill" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO train_skill_label(
 			name,
 			description,
 			is_show,
+			franchisee_id,
 			create_by,
 			create_date,
 			update_by,
@@ -75,6 +89,7 @@
 			#{name},
 			#{description},
 			'0',
+			#{franchiseeId},
 			#{createBy.id},
 			SYSDATE(),
 			#{createBy.id},
@@ -82,12 +97,21 @@
 		)
 	</insert>
 	
+	<!-- 批量更新用户是技能id为新插入的平台id -->
+	<update id="updateUserSkill" parameterType="java.util.List">
+		UPDATE train_user_skill
+		SET skill_id = #{insertId} WHERE id IN
+		 <foreach collection="usList" index="index" item="item" separator="," open="(" close=")">
+	        #{item.id}
+	    </foreach>
+	</update>
 	<!-- 编辑技能标签 -->
 	<update id="updateSkill" parameterType="Skill">
 		UPDATE train_skill_label
 		SET 
 			name = #{name},
 			description = #{description},
+			franchisee_id = #{franchiseeId},
 			update_by = #{updateBy.id},
 			update_date = SYSDATE()
 		WHERE id = #{skillId}
@@ -100,6 +124,14 @@
 			remarks = #{remarks}
 		WHERE id = #{skillId}
 	</delete>
+	<!-- 逻辑删除技能标签前先判断该标签是否已经被使用 -->
+	<select id="validDel" resultType="Integer">
+		SELECT
+			COUNT(1)
+		FROM
+			train_user_skill
+		WHERE skill_id = #{skillId}
+	</select>
 	
 	<!-- 插入美容师用户技能中间表 -->
 	<insert id="insertUserSkill">
@@ -186,5 +218,6 @@
 		FROM train_skill_label sl
 		WHERE sl.name = #{name} 
 		AND sl.del_flag =0
+		AND franchisee_id = 1
 	</select>
 </mapper>

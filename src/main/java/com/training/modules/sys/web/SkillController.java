@@ -118,6 +118,26 @@ public class SkillController extends BaseController{
 		}
 		return "redirect:" + adminPath + "/sys/skill/list";
 	}
+	/**
+	 * 校验是否可以删除，如果技能被引用不能删除
+	 * @param skill
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequiresPermissions("sys:skill:del")
+	@RequestMapping(value = "validDel")
+	@ResponseBody
+	public boolean validDel(Skill skill, RedirectAttributes redirectAttributes,HttpServletRequest request) {
+		boolean flag = true;
+		try{
+			flag = skillService.validDel(skill);
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "删除技能标签", e);
+			logger.error("方法：delete，删除技能标签出错信息：" + e.getMessage());
+			addMessage(redirectAttributes, "删除技能标签失败");
+		}
+		return flag;
+	}
 
 	/**
 	 * 获取机构JSON数据。(只查找显示的)

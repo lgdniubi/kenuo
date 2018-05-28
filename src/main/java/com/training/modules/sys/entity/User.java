@@ -23,6 +23,7 @@ import com.training.common.utils.Collections3;
 import com.training.common.utils.excel.annotation.ExcelField;
 import com.training.modules.train.entity.FzxRole;
 //import com.training.common.utils.excel.fieldtype.RoleListType;
+import com.training.modules.train.entity.MediaRole;
 
 /**
  * 用户Entity
@@ -36,6 +37,7 @@ public class User extends DataEntity<User> {
 	private Office office;	// 归属机构
 	private String code;	//店铺编码
 	private String loginName;// 登录名
+	private String nickname;// 昵称
 	private String password;// 密码
 	private String no;		// 工号
 	private String idCard;	//身份证号码
@@ -65,8 +67,10 @@ public class User extends DataEntity<User> {
 	private Date oldLoginDate;	// 上次登陆日期
 	
 	private Role role;	// 根据角色查询用户条件
+	private MediaRole mediaRole;	// 自媒体角色
 	
 	private List<Role> roleList = Lists.newArrayList(); // 拥有角色列表
+	private List<MediaRole> mdRoleList = Lists.newArrayList(); // 拥有角色列表
 	
 	private Userinfo userinfo;		//美容师信息完善
 	private Userinfocontent userinfocontent;	//美容师图片路径
@@ -107,6 +111,10 @@ public class User extends DataEntity<User> {
 	private String positonName;        //职位
 	private String officeName;         //归属机构名
 	
+	//-----------2018-03-22增加-----------
+	private String userStatus;         //用户状态：train_model_franchisee中取，能查到且未到期-已授权，能查到且已到期-已到期，查不到-未授权
+	private String modelName;         //版本类型：从train_model_franchisee和train_model这两个表里联查，根据user_id，查出来取mod_name
+	private String type;         //用户类型：sys_user中type取 （员工：yg，普通会员：pt，手艺人用户：syr，企业员工：qy）
 	// 埋点必填参数
 	// 来源类型
 	private String sourceType;
@@ -439,7 +447,13 @@ public class User extends DataEntity<User> {
 	public void setRoleList(List<Role> roleList) {
 		this.roleList = roleList;
 	}
-
+	
+	public List<MediaRole> getMdRoleList() {
+		return mdRoleList;
+	}
+	public void setMdRoleList(List<MediaRole> mdRoleList) {
+		this.mdRoleList = mdRoleList;
+	}
 	@JsonIgnore
 	public List<String> getRoleIdList() {
 		List<String> roleIdList = Lists.newArrayList();
@@ -458,6 +472,24 @@ public class User extends DataEntity<User> {
 		}
 	}
 	
+	@JsonIgnore
+	public List<String> getMediaRoleIdList() {
+		List<String> roleIdList = Lists.newArrayList();
+		for (MediaRole role : mdRoleList) {
+			roleIdList.add(role.getId());
+		}
+		return roleIdList;
+	}
+	
+	public void setMediaRoleIdList(List<Integer> roleIdList) {
+		mdRoleList = Lists.newArrayList();
+		for (int roleId : roleIdList) {
+			MediaRole role = new MediaRole();
+			role.setRoleId(roleId);
+			mdRoleList.add(role);
+		}
+	}
+	
 	/**
 	 * 用户拥有的角色名称id, 多个角色名称用','分隔.
 	 * @return
@@ -465,12 +497,25 @@ public class User extends DataEntity<User> {
 	public String getRoleIds() {
 		return Collections3.extractToString(roleList, "id", ",");
 	}
+	/**
+	 * 用户拥有的自媒体角色名称id, 多个角色名称用','分隔.
+	 * @return
+	 */
+	public String getMediaRoleIds() {
+		return Collections3.extractToString(mdRoleList, "roleId", ",");
+	}
 	
 	/**
 	 * 用户拥有的角色名称字符串, 多个角色名称用','分隔.
 	 */
 	public String getRoleNames() {
 		return Collections3.extractToString(roleList, "name", ",");
+	}
+	/**
+	 * 用户拥有的自媒体角色名称字符串, 多个角色名称用','分隔.
+	 */
+	public String getMediaRoleNames() {
+		return Collections3.extractToString(mdRoleList, "name", ",");
 	}
 	
 	public boolean isAdmin(){
@@ -649,6 +694,24 @@ public class User extends DataEntity<User> {
 	public void setDepartmentId(int departmentId) {
 		this.departmentId = departmentId;
 	}
+	public String getUserStatus() {
+		return userStatus;
+	}
+	public void setUserStatus(String userStatus) {
+		this.userStatus = userStatus;
+	}
+	public String getModelName() {
+		return modelName;
+	}
+	public void setModelName(String modelName) {
+		this.modelName = modelName;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
 	public String getSourceType() {
 		return sourceType;
 	}
@@ -661,6 +724,16 @@ public class User extends DataEntity<User> {
 	public void setActionSource(String actionSource) {
 		this.actionSource = actionSource;
 	}
-	
-	
+	public String getNickname() {
+		return nickname;
+	}
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+	public MediaRole getMediaRole() {
+		return mediaRole;
+	}
+	public void setMediaRole(MediaRole mediaRole) {
+		this.mediaRole = mediaRole;
+	}
 }

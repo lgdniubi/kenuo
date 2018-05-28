@@ -49,6 +49,7 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 	public void saveFzxRole(FzxRole fzxRole){
 		if(fzxRole.getRoleId() == 0){
 			fzxRole.preInsert();
+			fzxRole.setFranchiseeid(1);	//默认商家id是平台公共的角色
 			dao.insert(fzxRole);
 		}else{
 			fzxRole.preUpdate();
@@ -71,11 +72,12 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 	 */
 	public void saveRoleMenu(FzxRole fzxRole){
 		FzxRole newFzxRole = new FzxRole();
+		int roleId = fzxRole.getRoleId();
 		dao.deleteRoleMenu(fzxRole);
 		if(!fzxRole.getMenuIds().isEmpty()){
 	        String[] ids = fzxRole.getMenuIds().split(",");
 	        for (int i = 0; i < ids.length; i++) {
-	            newFzxRole.setRoleId(fzxRole.getRoleId());
+	            newFzxRole.setRoleId(roleId);
 	            newFzxRole.setMenuId(Integer.valueOf(ids[i]));
 	            dao.insertRoleMenu(newFzxRole);
 	        }
@@ -165,11 +167,11 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 	}
 	/**
 	 * 验证英文名称是否有效
-	 * @param enname
+	 * @param modeid
 	 * @return
 	 */
-	public int checkEnname(String enname){
-		return dao.checkEnname(enname);
+	public int checkEnname(Integer modeid){
+		return dao.checkEnname(modeid);
 	}
 
 	/**
@@ -184,6 +186,39 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 	 */
 	public List<FzxRole> findFzxRoleByUserId(User user) {
 		return fzxRoleDao.findFzxRoleByUserId(user);
+	}
+
+	/**
+	 * 同版本下不能有多个相同的角色
+	 * @param modeid
+	 * @param name
+	 * @return
+	 * @Description:
+	 */
+	public int checkName(Integer modeid, String name) {
+		return dao.checkName(modeid, name);
+	}
+
+	/**
+	 * 为某个版本设置默认角色
+	 * @param fzxRole
+	 * @Description: 根据版本id设置非默认，根据roleid设置该角色默认
+	 */
+	public void setDefault(FzxRole fzxRole) {
+		//设置其他默认的为非默认
+		dao.setNotDefault(fzxRole.getModeid());
+		//根据roleid设置该角色默认
+		dao.setDefault(fzxRole.getRoleId());
+	}
+
+	/**
+	 * 根据版本id和ename=sjgly查找超级管理员角色
+	 * @param modid
+	 * @param modType 
+	 * @return
+	 */
+	public FzxRole getFzxRoleByModAndEname(String modid, String modType) {
+		return dao.getFzxRoleByModAndEname(modid,modType);
 	}
 
 }

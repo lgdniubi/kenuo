@@ -275,7 +275,7 @@
 				       </tr>
 				       <tr>
 				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>机构名称:</label></td>
-				         <td class="width-35"><input id="oldOfficeName" value="${office.name }" type="hidden"><input id="name" name="name" value="${office.name }" class="form-control required"></td>
+				         <td class="width-35"><input id="oldOfficeName" value="${office.name }" type="hidden"><input id="name" name="name" value="${office.name }" maxlength="8" class="form-control required"></td>
 				         <td  class="width-15 active"><label class="pull-right">机构编码:</label></td>
 				         <td class="width-35"><form:input path="code" htmlEscape="false" maxlength="50" class="form-control" readonly="true"/></td>
 				      </tr>

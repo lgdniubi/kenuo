@@ -470,6 +470,34 @@ public class CourseController extends BaseController{
 		}
 		return jsonMap;
 	}
+	/**
+	 * 修改课程状态
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "updateIsOpen")
+	public Map<String, String> updateIsOpen(String lessonId,String isOpen){
+		Map<String, String> jsonMap = new HashMap<String, String>();
+		try {
+			int ISOPEN = Integer.parseInt(isOpen);
+			if(!StringUtils.isEmpty(lessonId) && (ISOPEN == 0 || ISOPEN == 1)){
+				TrainLessons trainLessons = new TrainLessons();
+				trainLessons.setLessonId(lessonId);
+				trainLessons.setIsOpen(ISOPEN);
+				trainLessonsService.updateIsOpen(trainLessons);
+				jsonMap.put("STATUS", "OK");
+				jsonMap.put("ISOPEN", isOpen);
+			}else{
+				jsonMap.put("STATUS", "ERROR");
+				jsonMap.put("MESSAGE", "修改失败,必要参数为空");
+			}
+		} catch (Exception e) {
+			logger.error("课程管理-修改课程状态 出现异常，异常信息为："+e.getMessage());
+			jsonMap.put("STATUS", "ERROR");
+			jsonMap.put("MESSAGE", "修改失败,出现异常");
+		}
+		return jsonMap;
+	}
 	
 	/**
 	 * 导出课程统计总览

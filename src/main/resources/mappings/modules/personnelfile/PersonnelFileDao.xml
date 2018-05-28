@@ -37,7 +37,7 @@
 		SELECT
 			s.id as id,
 			s.`name` as sName,
-			ubi.sex as sex,
+			s.sex as sex,
 			sr.`name` as srName,
 			ubi.birthday as birthday,
 			ubi.nation as nation,

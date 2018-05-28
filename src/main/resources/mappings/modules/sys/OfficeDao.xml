@@ -862,4 +862,30 @@
 	<update id="updateFranchisee">
 		UPDATE sys_office SET franchisee_id = #{franchisee.id} WHERE id = #{id}
 	</update>
+	
+	
+	<select id="findOfficeAcount" parameterType="String" resultType="com.training.modules.sys.entity.OfficeAcount">
+		select
+			office_id as officeId,
+			amount as amount,
+			integral_earnings as integralEarnings,
+			credit_limit as creditLimit,
+			used_limit as usedLimit,
+			pay_pwd as payPwd
+		from sys_office_account where office_id = #{value}
+	</select>
+	
+	<update id="updateOfficeCreditLimit" parameterType="com.training.modules.sys.entity.OfficeAcount">
+		update 
+			sys_office_account
+		set
+			credit_limit = #{creditLimit}
+		where office_id = #{officeId}
+	</update>
+	
+	<insert id="saveOfficeAcount" parameterType="com.training.modules.sys.entity.OfficeAcount">
+		insert into
+			sys_office_account(office_id)
+		values(#{officeId})
+	</insert>
 </mapper>
