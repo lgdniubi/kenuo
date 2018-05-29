@@ -269,9 +269,13 @@ public class fzxRoleController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "newTreeData")
-	public List<Map<String, Object>> newTreeData(HttpServletResponse response,String fzxRoleIds) {
+	public List<Map<String, Object>> newTreeData(HttpServletResponse response,String fzxRoleIds ,Integer modeid) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		List<FzxRole> list = fzxRoleDao.findList(null);
+		FzxRole fzxRole = new FzxRole();
+		if (modeid != null){
+			fzxRole.setModeid(modeid);
+		}
+		List<FzxRole> list = fzxRoleDao.findList(fzxRole);
 		for (int i = 0; i < list.size(); i++) {
 			Map<String, Object> map = Maps.newHashMap();
 			FzxRole e = list.get(i);

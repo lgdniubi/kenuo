@@ -174,9 +174,13 @@ public class MediaRoleController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "treeData")
-	public List<Map<String, Object>> treeData(HttpServletResponse response) {
+	public List<Map<String, Object>> treeData(HttpServletResponse response,Integer modeid) {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		List<MediaRole> list = mediaRoleDao.findList(null);
+		MediaRole mdrole = new MediaRole();
+		if (modeid != null){
+			mdrole.setModeid(modeid);
+		}
+		List<MediaRole> list = mediaRoleDao.findList(mdrole);
 		for (int i = 0; i < list.size(); i++) {
 			MediaRole e = list.get(i);
 			Map<String, Object> map = Maps.newHashMap();

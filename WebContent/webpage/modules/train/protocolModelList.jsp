@@ -47,13 +47,9 @@
 								  	<td><fmt:formatDate value="${model.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								  	<td>${model.createBy.name}</td>
 								    <td>
-								    	<c:if test="${model.status ==2}">
-				    					<a href="${ctx}/train/protocolModel/status?status=1&id=${model.id}&type=${model.type}" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>启用</a>
-				    					</c:if>
-										<c:if test="${model.status ==1}">
-										<a href="${ctx}/train/protocolModel/status?status=2&id=${model.id}&type=${model.type}" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i>停用</a>
-										</c:if>
+								    	<c:if test="${model.status !=3}">
 										<a href="#" onclick="openDialog('修改', '${ctx}/train/protocolModel/modelForm?id=${model.id}','850px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>修改</a> 
+										</c:if>
 								    </td>
 								</tr>
 							</c:forEach>

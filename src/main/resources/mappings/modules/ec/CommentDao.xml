@@ -35,7 +35,7 @@
 		a.shop_id AS shopId,
 		a.appt_order_id AS apptOrderId,
 		a.user_id AS userId,
-		ROUND((SUM(IFNULL(a.serve_rank,0)+IFNULL(a.entertain_rank,0)+IFNULL(a.environment_rank,0))/3),1) AS shopRank ,
+		ROUND(((IFNULL(a.serve_rank,0)+IFNULL(a.entertain_rank,0)+IFNULL(a.environment_rank,0))/3),1) AS shopRank,
 		contents,
 		img,
 		is_show AS isShow,
@@ -79,6 +79,9 @@
 					AND (c.img = '' OR c.img is null)
 				</if>
 			</if>
+			<if test="isReplay != null and isReplay != ''">
+				AND c.is_replay = #{isReplay}
+			</if>
 			ORDER BY c.add_time DESC
 	</select>
 	<select id="findRealByCid" parameterType="Comment" resultType="Comment">
@@ -118,45 +121,57 @@
 			comment_id = #{parentId}
 			OR parent_id = #{parentId}
 	</update>
+	
+	<!-- 将被回复的商品的评论标示为被评论 -->
+	<update id="updateGoodsIsReplay">
+		UPDATE
+			mtmydb.mtmy_comment
+		SET
+		    is_replay = 1
+		WHERE 
+			comment_id = #{parentId}
+	</update>
+	
 	<select id="findList" resultType="Comment">
-		SELECT t.*,tt.name AS 'user.name' FROM 
-			(SELECT
-				<include refid="BeautyCommentColumns"/>,
-				u.nickname AS 'users.name'
-				FROM
-					mtmydb.mtmy_beauty_comment AS b
-					LEFT JOIN mtmydb.mtmy_users AS u ON b.user_id = u.user_id
-				WHERE	1=1
-					AND b.parent_id = '0'
-					<if test="beginDate != null and beginDate != ''">
-						AND b.add_time >= #{beginDate}
-					</if>
-					<if test="endDate != null and endDate != ''">
-						AND b.add_time <![CDATA[ <= ]]> #{endDate}
-					</if>
-					<if test="usersName != null and usersName != ''">
-						AND u.nickname LIKE
-							<if test="dbName == 'oracle'">'%'||#{usersName}||'%'</if>
-							<if test="dbName == 'mysql'">CONCAT('%', #{usersName}, '%')</if>
-					</if>
-					<if test="whetherImg != null and whetherImg != ''">
-						<if test="whetherImg == 0">
-							AND b.img != ''
-							AND b.img is not null
-						</if>
-						<if test="whetherImg == 1">
-							AND (b.img = '' OR b.img is null)
-						</if>
-					</if>
-			) t join sys_user tt
-			on t.beautyId = tt.id
-			WHERE 1 = 1
+		SELECT
+			<include refid="BeautyCommentColumns"/>,
+			u.nickname AS 'users.name',
+			c.name AS 'user.name'
+		FROM
+			mtmydb.mtmy_beauty_comment AS b
+			LEFT JOIN mtmydb.mtmy_users AS u ON b.user_id = u.user_id
+			LEFT JOIN sys_user AS c ON b.beauty_id = c.id
+		WHERE	1=1
+			AND b.parent_id = '0'
+			<if test="beginDate != null and beginDate != ''">
+				AND b.add_time >= #{beginDate}
+			</if>
+			<if test="endDate != null and endDate != ''">
+				AND b.add_time <![CDATA[ <= ]]> #{endDate}
+			</if>
+			<if test="usersName != null and usersName != ''">
+				AND u.nickname LIKE
+					<if test="dbName == 'oracle'">'%'||#{usersName}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{usersName}, '%')</if>
+			</if>
 			<if test="userName != null and userName != ''">
-				AND tt.name LIKE 
+				AND c.name LIKE 
 					<if test="dbName == 'oracle'">'%'||#{userName}||'%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%', #{userName}, '%')</if>
 			</if>
-			ORDER BY t.addTime DESC
+			<if test="whetherImg != null and whetherImg != ''">
+				<if test="whetherImg == 0">
+					AND b.img != ''
+					AND b.img is not null
+				</if>
+				<if test="whetherImg == 1">
+					AND (b.img = '' OR b.img is null)
+				</if>
+			</if>
+			<if test="isReplay != null and isReplay != ''">
+				AND b.is_replay = #{isReplay}
+			</if>
+		ORDER BY b.add_time DESC
 	</select>
 	<select id="findBeautyByCid" resultType="Comment">
 		SELECT
@@ -196,6 +211,17 @@
 			comm_id = #{parentId}
 			OR parent_id = #{parentId}
 	</update>
+	
+	<!-- 将被回复的美容师的评论标示为被评论 -->
+	<update id="updateBeautyIsReplay">
+		UPDATE
+			mtmydb.mtmy_beauty_comment
+		SET
+		    is_replay = 1
+		WHERE 
+			comm_id = #{parentId}
+	</update>
+	
 	<select id="exportGoodsComment" resultType="MtmyComment">
 		SELECT
 			IFNULL(c.NAME,c.nickname) AS 'name',
@@ -258,7 +284,6 @@
 		FROM  
 			mtmydb.mtmy_shop_comment AS a
 		LEFT JOIN trains.sys_office AS b ON b.id = a.shop_id
-		LEFT JOIN mtmydb.mtmy_appt_order AS c ON a.appt_order_id = c.id
 		LEFT JOIN mtmydb.mtmy_users AS d ON a.user_id = d.user_id
 		WHERE 
 			1=1
@@ -286,7 +311,9 @@
 					AND (a.img = '' OR a.img is null)
 				</if>
 			</if>
-		GROUP BY a.id
+			<if test="isReplay != null and isReplay != ''">
+				AND a.is_replay = #{isReplay}
+			</if>
 		ORDER BY a.create_date DESC
 	</select>
 	
@@ -301,13 +328,11 @@
 			FROM
 				mtmydb.mtmy_shop_comment AS a
 			LEFT JOIN trains.sys_office AS b ON b.id = a.shop_id
-			LEFT JOIN mtmydb.mtmy_appt_order AS c ON a.appt_order_id = c.id
 			LEFT JOIN mtmydb.mtmy_users AS d ON a.user_id = d.user_id
 			LEFT JOIN trains.sys_user AS e ON e.id = a.reply_id
 			WHERE
 				1=1
 				AND ( a.id = #{commentId} OR a.parent_id = #{commentId} )
-			GROUP BY a.id
 			ORDER BY a.create_date ASC
 	</select>
 	<insert id="insterShopComment">
@@ -335,6 +360,16 @@
 		WHERE 
 			id = #{parentId}
 			OR parent_id = #{parentId}
+	</update>
+	
+	<!-- 将被回复的评论标示为被评论 -->
+	<update id="updateShopIsReplay">
+		UPDATE
+			mtmydb.mtmy_shop_comment
+		SET
+		    is_replay = 1
+		WHERE 
+			id = #{parentId}
 	</update>
 	
 	<!-- 查询某一预约下对美容师的评论 -->

@@ -140,6 +140,9 @@
 			 $("#beginDate").val(""); //清空
 			 $("#endDate").val(""); //清空
 			 $("#whetherImg").val(""); //清空
+			 $("#isReplay").val(""); //清空
+			 $("#pageNo").val("");
+			 $("#pageSize").val("");
 		}
 	</script>
 </head>
@@ -171,6 +174,12 @@
 								<option value="0" <c:if test="${comment.whetherImg == '0'}">selected</c:if>>有图</option>
 								<option value="1" <c:if test="${comment.whetherImg == '1'}">selected</c:if>>无图</option>
 							</select>	
+							<label>是否回复：</label>
+							<select id ="isReplay" name="isReplay" class="form-control" style="width:185px;">
+								<option value="" <c:if test="${comment.isReplay == ''}">selected</c:if>>全部</option>
+								<option value="0" <c:if test="${comment.isReplay == '0'}">selected</c:if>>未回复</option>
+								<option value="1" <c:if test="${comment.isReplay == '1'}">selected</c:if>>已回复</option>
+							</select>
 						</div>
 						<div class="pull-right">
 							<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>

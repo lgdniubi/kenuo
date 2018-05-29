@@ -53,6 +53,8 @@ public class Comment extends DataEntity<Comment>{
 	
 	private String whetherImg;   //是否有图
 	
+	private String isReplay;   //是否回复（0：未回复，1已回复）
+	
 	/**
 	 * sharp 所加，用于查询每个预约下的评论 
 	 */
@@ -243,6 +245,12 @@ public class Comment extends DataEntity<Comment>{
 	}
 	public void setWhetherImg(String whetherImg) {
 		this.whetherImg = whetherImg;
+	}
+	public String getIsReplay() {
+		return isReplay;
+	}
+	public void setIsReplay(String isReplay) {
+		this.isReplay = isReplay;
 	}
 	
 	

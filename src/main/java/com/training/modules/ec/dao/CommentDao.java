@@ -101,4 +101,24 @@ public interface CommentDao extends CrudDao<Comment>{
 	 */
 	public List<Comment> queryShopForReservation(int reservationId);
 	
+	/**
+	 * 将被回复的商品的评论标示为被评论
+	 * @param comment
+	 */
+	public void updateGoodsIsReplay(Comment comment);
+	
+	/**
+	 * 将被回复的美容师的评论标示为被评论
+	 * @param comment
+	 */
+	public void updateBeautyIsReplay(Comment comment);
+	
+	/**
+	 * 将被回复的店铺的评论标示为被评论
+	 * @param comment
+	 */
+	public void updateShopIsReplay(Comment comment);
+	
+	
+	
 }

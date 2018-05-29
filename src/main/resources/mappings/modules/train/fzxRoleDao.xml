@@ -18,6 +18,9 @@
 		WHERE 
 			r.del_flag = 0 
 			AND company_id = 1
+			<if test="modeid != null and modeid != ''">
+				AND mod_id = #{modeid}
+			</if>
 			<if test="name != null and name != ''">
 				AND r.name like 
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>

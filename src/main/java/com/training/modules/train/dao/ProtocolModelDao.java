@@ -39,6 +39,13 @@ public interface ProtocolModelDao extends CrudDao<ProtocolModel> {
 	 */
 	public List<ProtocolUser> findProtocolList();
 
+	public void updateModelById(ProtocolModel protocolModel);
+	/**
+	 * 更改supply_protocol_shop表所有签过该协议的状态为变更
+	 * @param protocolModel
+	 */
+	public void updateProtocolShopById(ProtocolModel protocolModel);
+
 	/*public List<MediaMenu> findByParentIdsLike(MediaMenu menu);
 
 	public List<MediaMenu> findByUserId(MediaMenu menu);

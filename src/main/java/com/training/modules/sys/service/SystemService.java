@@ -17,15 +17,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.training.common.config.Global;
 import com.training.common.persistence.Page;
 import com.training.common.security.Digests;
 import com.training.common.security.shiro.session.SessionDAO;
 import com.training.common.service.BaseService;
-import com.training.common.service.ServiceException;
 import com.training.common.track.utils.TrackUtils;
 import com.training.common.utils.CacheUtils;
 import com.training.common.utils.Encodes;
+import com.training.common.utils.IdGen;
 import com.training.common.utils.StringUtils;
 import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.entity.Users;
@@ -61,6 +62,9 @@ import com.training.modules.sys.utils.LogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.FzxRole;
+import com.training.modules.train.entity.MediaRole;
+import com.training.modules.train.service.FzxRoleService;
+import com.training.modules.train.service.MediaRoleService;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -104,6 +108,10 @@ public class SystemService extends BaseService implements InitializingBean {
 	private SkillDao skillDao;
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
+	@Autowired
+	private FzxRoleService fzxRoleService;
+	@Autowired
+	private MediaRoleService mediaRoleService;
 	
 	public SessionDAO getSessionDao() {
 		return sessionDao;
@@ -449,7 +457,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			Dict oldDict = new Dict();
 			oldDict.setValue(oldUser.getUserType());
 			oldDict.setType("sys_user_type");
-			Dict oldD = dictDao.findDict(oldDict);
+//			Dict oldD = dictDao.findDict(oldDict);
 			Dict newDict = new Dict();
 			newDict.setValue(user.getUserType());
 			newDict.setType("sys_user_type");
@@ -491,7 +499,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		User currentUser = UserUtils.getUser();//记录图片上传时,获取当前登录用户的信息
 		String lifeImgUrls = "";//记录图片上传时,图片格式为string类型(格式必须如此)
 		List<String> oldLifeImgUrls = new ArrayList<String>();//生活照调用接口(必传数据,修改之前的照片信息,格式必须如此)
-
+		user.setType("yg");
 		if (StringUtils.isBlank(user.getId())) {
 			user.preInsert();
 			if("2".equals(user.getResult())){
@@ -525,7 +533,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			}
 			
 			// userinfo.preInsert();
-			if (user.getUserinfo() != null) {
+			/*if (user.getUserinfo() != null) {
 				user.getUserinfo().preInsert();
 				user.getUserinfo().setUserid(user.getId());
 				user.getUserinfo().setNativearea(user.getUserinfo().getAreaP().getId());
@@ -538,9 +546,9 @@ public class SystemService extends BaseService implements InitializingBean {
 					specialityDao.insertSpecialityorm(list); // 插入特长表
 				}
 
-			}
+			}*/
 
-			if (user.getUserinfocontent() != null) {
+			/*if (user.getUserinfocontent() != null) {
 				List<Userinfocontent> contlist = livePicTolist(user); // 获取图片信息list
 				if (contlist.size() > 0) {
 					userinfocontentDao.insertPiclive(contlist);
@@ -553,24 +561,24 @@ public class SystemService extends BaseService implements InitializingBean {
 					reservationTime(2, currentUser.getCreateBy().getId(), null, null, lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
 				}
 				
-			}
+			}*/
 			
-			if(user.getSkill() != null){
+			/*if(user.getSkill() != null){
 				List<UserSkill> list = SpeArrSkillList(user); // 获取拼接的技能标签list
 				if (list.size() > 0) {
 					skillDao.insertUserSkill(list);     // 插入技能标签表
 				}
-			}
+			}*/
 			// 2017年9月1日 新用户默认商家权限为当前商家
 			userDao.insertFranchiseeAuth(user.getId(), user.getCompany().getId());
 			//saveFzxRoleOfficeById("4",user.getOffice().getId(),user.getId());
 			//给用户设置默认的妃子校角色和权限
-			FzxRole fzxRole  = new FzxRole();
+			/*FzxRole fzxRole  = new FzxRole();
 			fzxRole.setRoleId(4);
 			//user.setId(user.getId());
 			user.setFzxRole(fzxRole);
-			userDao.saveFzxRoleByUser(user);
-			userDao.saveOfficeById(user.getReturnId(),user.getOffice().getId());
+			userDao.saveFzxRoleByUser(user);*/
+//			userDao.saveOfficeById(user.getReturnId(),user.getOffice().getId());
 		} else {
 //			saveUserLog1(user);
 			// 清除原用户机构用户缓存
@@ -728,7 +736,7 @@ public class SystemService extends BaseService implements InitializingBean {
     			}
 			}
 		}
-		if (StringUtils.isNotBlank(user.getId())) {
+		/*if (StringUtils.isNotBlank(user.getId())) {
 			// 更新用户与角色关联
 			userDao.deleteUserRole(user);
 			if (user.getRoleList() != null && user.getRoleList().size() > 0) {
@@ -740,7 +748,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			UserUtils.clearCache(user);
 			// // 清除权限缓存
 			// systemRealm.clearAllCachedAuthorizationInfo();
-		}
+		}*/
 	}
 
 	@Transactional(readOnly = false)
@@ -1051,7 +1059,6 @@ public class SystemService extends BaseService implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -1215,7 +1222,7 @@ public class SystemService extends BaseService implements InitializingBean {
 	/**
 	 * 
 	 * @Title: saveUserAndFzxRole
-	 * @Description: TODO 保存用户权限
+	 * @Description: 保存用户权限
 	 * @param user
 	 * @return:
 	 * @return: Integer
@@ -1356,6 +1363,74 @@ public class SystemService extends BaseService implements InitializingBean {
 //			user.setDelRemarks("冻结用户");
 			user.setDelFlag("1");
 			userDao.updateUserDel(user);
+			redisClientTemplate.del("UTOKEN_"+user.getId());
 		}
+	}
+
+	/**
+	 * 保存用户权限设置
+	 * @param user
+	 * @param oldFzxRoleIds
+	 * @param fzxRoleIds
+	 * @param request
+	 */
+	@Transactional(readOnly = false)
+	public void saveAuth(User user, String oldFzxRoleIds, String fzxRoleIds, HttpServletRequest request) {
+		fzxRoleService.updateUserRole(user.getId(),oldFzxRoleIds,fzxRoleIds);
+		// 角色数据有效性验证，过滤不在授权内的角色
+		List<Role> roleList = Lists.newArrayList();
+		List<String> roleIdList = user.getRoleIdList();
+		for (Role r : this.findAllRole()) {
+			if (roleIdList.contains(r.getId())) {
+				roleList.add(r);
+			}
+		}
+		user.setRoleList(roleList);
+		
+		// 更新用户与角色关联
+		userDao.deleteUserRole(user);
+		// 更新用户与数据权限关联
+		userDao.deleteUserOffice(user);
+		if (user.getRoleList() != null && user.getRoleList().size() > 0) {
+			userDao.insertUserRole(user);
+		} else {
+			throw new RuntimeException(user.getLoginName() + "没有设置角色！");
+		}
+		
+		if(1 == user.getDataScope()){
+			user.preUpdate();
+			userDao.UpdateDataScope(user);
+		}else if(2 == user.getDataScope()){
+			user.preUpdate();
+			userDao.UpdateDataScope(user);
+			userDao.insertDataScope(user);
+		}else{
+			throw new RuntimeException(user.getLoginName() + "没有设置数据范围");
+		}
+		if("1".equals(request.getParameter("isUpdateRole"))){	// 清除用户缓存 用户TOKEN失效
+			redisClientTemplate.del("UTOKEN_"+user.getId());
+		}
+		if("1".equals(request.getParameter("isPB"))){
+			userDao.UpdateUserStatus(user.getId());
+			
+			//若用户原来无排班，然后给予排班角色，则查询有没有美容师信息，若无，则插入
+			if(userDao.selectIsExist(user.getId()) == 0){
+				userDao.insertUserInfo(IdGen.uuid(),user.getId());
+			}
+		}
+		userDao.deleteFranchiseeAuth(user);
+		if(null != user.getCompanyIds() || !"".equals(user.getCompanyIds())){
+			String idArray[] =user.getCompanyIds().split(",");
+			for(String id : idArray){
+				userDao.insertFranchiseeAuth(user.getId(),id);
+			}
+		}
+		if (user.getMdRoleList() != null && user.getMdRoleList().size() > 0) {
+			String userid = user.getId();
+			mediaRoleService.deleteUserRole(userid);
+			for (MediaRole mdRole : user.getMdRoleList()) {
+				mediaRoleService.insertUserRole(userid,mdRole.getRoleId());
+			}
+		} 
 	}
 }

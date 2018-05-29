@@ -119,6 +119,8 @@
 		         <td  class="width-15 active"><label class="pull-right">角色类型:</label></td>
 		         <td  class="width-35" >
 		         	<form:radiobuttons path="type" items="${mediaRole.typeList}" itemLabel="label" itemValue="value" htmlEscape="false" onclick="isAdmin(this.value)" class="required i-checks "/>
+		         	<c:if test="${mediaRole.type ==2}"><input type="radio" checked="checked" value=""/>超级管理员
+		         	</c:if>
 		         </td>
 		      </tr>
 		      <tr id = "publictoId">

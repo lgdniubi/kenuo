@@ -69,7 +69,7 @@
 			AND a.status=#{status}
 		</if> -->
 		<if test="orderId != null and orderId != ''">
-			AND a.id = (SELECT invoice_id FROM mtmydb.mtmy_order_invoice_relevancy WHERE order_id = #{orderId})
+			AND a.id = (SELECT DISTINCT invoice_id FROM mtmydb.mtmy_order_invoice_relevancy WHERE order_id = #{orderId})
 		</if>
 		ORDER BY a.create_date DESC
 	</select>
