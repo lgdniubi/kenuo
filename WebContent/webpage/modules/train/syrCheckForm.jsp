@@ -62,29 +62,90 @@
 			    	<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="6"><label class="pull-left">申请资料:</label></td>
 				</tr>
 			    <tr>
+			         <td class=""><label class="pull-right">所在地区:</label></td>
+			         <td>${userCheck.addr.provinceName}${userCheck.addr.cityName}${userCheck.addr.districtName}</td>
+			         <td class=""><label class="pull-right">身份证:</label></td>
+			         <td>${userCheck.addr.idcard}</td>
+				</tr>
+			    <tr>
+			         <td class=""><label class="pull-right">详细地址:</label></td>
+			         <td>${userCheck.addr.syrAddress}</td>
+			         <td class=""><label class="pull-right">手机:</label></td>
+			         <td>${userCheck.addr.syrMobile}</td>
+				</tr>
+			    <tr>
+			         <td class=""><label class="pull-right">E-mail:</label></td>
+			         <td  colspan="3"> ${userCheck.addr.email}</td>
+				</tr>
+				<c:forEach var="bank" items="${userCheck.bankAccount}">
+				    <tr>
+				         <td class=""><label class="pull-right">账户名称:</label></td>
+				         <td colspan="3">${bank.accountname}</td>
+					</tr>
+				    <tr>
+				         <td class=""><label class="pull-right">开户银行:</label></td>
+				         <td>${bank.openbank}</td>
+				         <td class=""><label class="pull-right">银行账户:</label></td>
+				         <td>${bank.bankaccount}</td>
+					</tr>
+				    <tr>
+				         <td class="active" colspan="4"><label class="pull-left">银行卡:</label></td>
+					</tr>
+				    <tr>
+				         <td class=""><label class="pull-right">正面:</label></td>
+				         <td ><img id="photosrc" src="${bank.cardup}" alt="images" style="width: 200px;height: 100px;"/></td>
+				         <td class=""><label class="pull-right">反面:</label></td>
+				         <td><img id="photosrc" src="${bank.carddown}" alt="images" style="width: 200px;height: 100px;"/></td>
+					</tr>
+				</c:forEach>
+				<c:forEach var="pay" items="${userCheck.payAccount}">
+				<c:if test="${pay.payType ==1 }">
+				    <tr>
+				         <td class="active" colspan="6"><label class="pull-left">支付宝:</label></td>
+					</tr>
+				    <tr>
+				         <td class=""><label class="pull-right">支付宝:</label></td>
+				         <td>${pay.no}</td>
+				         <td class=""><label class="pull-right">姓名:</label></td>
+				         <td>${pay.name}</td>
+				         <td class=""><label class="pull-right">电话:</label></td>
+				         <td>${pay.mobile}</td>
+					</tr>
+				</c:if>
+				<c:if test="${pay.payType ==2}">
+				    <tr>
+				         <td class="active" colspan="6"><label class="pull-left">微信:</label></td>
+					</tr>
+				    <tr>
+				         <td class=""><label class="pull-right">微信:</label></td>
+				         <td>${pay.no}</td>
+				         <td class=""><label class="pull-right">姓名:</label></td>
+				         <td>${pay.name}</td>
+				         <td class=""><label class="pull-right">电话:</label></td>
+				         <td>${pay.mobile}</td>
+					</tr>
+				</c:if>
+				</c:forEach>
+			    <tr>
 			         <td class="active"><label class="pull-right">专长:</label></td>
-			         <td>${userCheck.speciality}</td>
+			         <td colspan="3">${userCheck.speciality}</td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">工作经验:</label></td>
-			         <td>${userCheck.startDate}</td>
+			         <td colspan="3">${userCheck.startDate}</td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">目前收入:</label></td>
-			         <td>${userCheck.income}</td>
-				</tr>
-			    <tr>
-			         <td class="active"><label class="pull-right">期望工作城市:</label></td>
-			         <td>${userCheck.city}</td>
+			         <td colspan="3">${userCheck.income}</td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">手机:</label></td>
-			         <td>${userCheck.mobile}</td>
+			         <td colspan="3">${userCheck.mobile}</td>
 				</tr>
 				<c:if test="${userCheck.status == 1}">
 				    <tr>
 				         <td class="active"><label class="pull-right">不通过原因:</label></td>
-				         <td>${userCheck.remarks}</td>
+				         <td >${userCheck.remarks}</td>
 					</tr>
 			    </c:if>
 			</tbody>
