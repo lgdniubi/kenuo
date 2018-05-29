@@ -7,8 +7,11 @@ import org.apache.ibatis.annotations.Param;
 
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
+import com.training.modules.train.entity.BankAccount;
+import com.training.modules.train.entity.CheckAddr;
 import com.training.modules.train.entity.FzxRole;
 import com.training.modules.train.entity.ModelFranchisee;
+import com.training.modules.train.entity.PayAccount;
 import com.training.modules.train.entity.PcRole;
 import com.training.modules.train.entity.UserCheck;
 
@@ -170,5 +173,11 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	public void updateFzxRoleModelId(@Param("franchiseeid")String franchiseeid, @Param("modid")String modid);
 	//更改media_manage_role，该商家的角色版本
 	public void updateMediaRoleModelId(@Param("franchiseeid")String franchiseeid, @Param("modid")String modid);
+	//查找银行卡信息
+	public List<BankAccount> findBankAccountInfo(UserCheck userCheck);
+	//查找支付宝微信信息
+	public List<PayAccount> findPayAccountInfo(UserCheck userCheck);
+
+	public CheckAddr findCheckAddr(UserCheck userCheck);
 	
 }

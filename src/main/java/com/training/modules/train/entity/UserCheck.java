@@ -1,5 +1,7 @@
 package com.training.modules.train.entity;
 
+import java.util.List;
+
 import com.training.common.persistence.DataEntity;
 
 /**
@@ -39,6 +41,10 @@ public class UserCheck extends DataEntity<UserCheck>{
 	private String startDate;			//工作年限
 	private String income;			//月收入
 	private String city;			//工作城市
+	private List<PayAccount> payAccount;			//银行账户
+	private List<BankAccount> bankAccount;			//支付宝微信账户
+	private CheckAddr addr;				//地址详细
+	
 	
 	public UserCheck() {
 		super();
@@ -198,5 +204,23 @@ public class UserCheck extends DataEntity<UserCheck>{
 	}
 	public void setCharterUrl(String charterUrl) {
 		this.charterUrl = charterUrl;
+	}
+	public List<PayAccount> getPayAccount() {
+		return payAccount;
+	}
+	public void setPayAccount(List<PayAccount> payAccount) {
+		this.payAccount = payAccount;
+	}
+	public List<BankAccount> getBankAccount() {
+		return bankAccount;
+	}
+	public void setBankAccount(List<BankAccount> bankAccount) {
+		this.bankAccount = bankAccount;
+	}
+	public CheckAddr getAddr() {
+		return addr;
+	}
+	public void setAddr(CheckAddr addr) {
+		this.addr = addr;
 	}
 }

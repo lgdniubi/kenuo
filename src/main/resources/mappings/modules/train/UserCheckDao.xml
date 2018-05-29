@@ -107,7 +107,52 @@
 		AND tap.user_id = #{userid} 
 		<if test="id != null"> and tap.id = #{id} </if>
 	</select>	
-	
+	<!-- 查找银行卡信息 -->
+	<select id="findBankAccountInfo" resultType="BankAccount">
+		SELECT
+			`id`,
+			`apply_id`,
+			`accountname`,
+			`openbank`,
+			`bankaccount`,
+			`openaddress`,
+			`detailedaddress`,
+			`cardup`,
+			`carddown`,
+			`bank_type`
+		FROM
+			`sys_bank_account`
+		WHERE apply_id = #{id}
+	</select>
+	<!-- 查找支付宝微信信息 -->
+	<select id="findPayAccountInfo" resultType="PayAccount">
+		SELECT
+			`id`,
+			`apply_id`,
+			`pay_type`,
+			`no`,
+			`name`,
+			`mobile`
+		FROM
+			`sys_pay_account`
+		WHERE apply_id = #{id}
+	</select>
+	<!-- 查找支付宝微信信息 -->
+	<select id="findCheckAddr" resultType="CheckAddr">
+		SELECT
+			au.`mobile` AS syrMobile,
+			au.`idcard`,
+			au.`email`,
+			au.`address` AS syrAddress,
+			ap.`name` AS provinceName,
+			ac.`name` AS cityName,
+			ad.`name` AS districtName
+		FROM train_audituser_info au
+		LEFT JOIN sys_area ap ON ap.id = au.province_id
+		LEFT JOIN sys_area ac ON ac.id = au.city_id
+		LEFT JOIN sys_area ad ON ad.id = au.district_id
+		WHERE apply_id = #{id}
+	</select>
 	<select id="findMaxCode" resultType="long">
 		SELECT MAX(code) FROM sys_franchisee
 	</select>
