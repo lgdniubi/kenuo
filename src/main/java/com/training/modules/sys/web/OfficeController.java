@@ -1170,7 +1170,11 @@ public class OfficeController extends BaseController {
     	try {
 			this.officeService.updateOfficeCreditLimit(officeAcount);
 			addMessage(redirectAttributes, "变更信用额度成功");
-		} catch (Exception e) {
+		}catch (RuntimeException e) {
+ 			e.printStackTrace();
+ 			BugLogUtils.saveBugLog(request, "变更信用额度", e);
+ 			addMessage(redirectAttributes, e.getMessage());
+ 		}catch (Exception e) {
 			e.printStackTrace();
 			BugLogUtils.saveBugLog(request, "变更信用额度", e);
 			addMessage(redirectAttributes, "变更信用额度失败");

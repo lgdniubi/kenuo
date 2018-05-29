@@ -440,6 +440,9 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		//缓存锁
 		RedisLock redisLock = new RedisLock(redisClientTemplate, "account_lock_office_id"+OfficeAcount.getOfficeId());
 		redisLock.lock();
+		double usedLimit = this.officeDao.queryusedLimit(OfficeAcount);
+		if(OfficeAcount.getUseLimit() > usedLimit)
+			throw new RuntimeException("可用额度发生改变，暂不可修改");
 		this.officeDao.updateOfficeCreditLimit(OfficeAcount);
 		redisLock.unlock();
 	}
