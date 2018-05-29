@@ -14,6 +14,8 @@ import com.google.common.collect.Lists;
 import com.training.common.service.BaseService;
 import com.training.common.service.TreeService;
 import com.training.common.utils.StringUtils;
+import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.quartz.utils.RedisLock;
 import com.training.modules.sys.dao.OfficeDao;
 import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.entity.Office;
@@ -34,6 +36,9 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	
 	@Autowired
 	private OfficeDao officeDao;
+	
+	@Autowired
+	private RedisClientTemplate redisClientTemplate;
 
 	public List<Office> findAll(){
 		return UserUtils.getOfficeList();
@@ -432,7 +437,11 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	 */
 	@Transactional(readOnly = false)
 	public void updateOfficeCreditLimit(OfficeAcount OfficeAcount){
+		//缓存锁
+		RedisLock redisLock = new RedisLock(redisClientTemplate, "account_lock_office_id"+OfficeAcount.getOfficeId());
+		redisLock.lock();
 		this.officeDao.updateOfficeCreditLimit(OfficeAcount);
+		redisLock.unlock();
 	}
 	
 	/**

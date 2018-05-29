@@ -10,7 +10,7 @@ public class OfficeAcount {
 	private double amount = 0;	//金额
 	private int integralEarnings = 0; //贡献登云平台总云币
 	private double creditLimit = 0;	//信用额度
-	private double usedLimit = 0;	//已用额度
+	private double usedLimit = 0;	//可使用额度
 	private double payPwd;	//支付密码
 	
 	

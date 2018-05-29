@@ -9,10 +9,12 @@
 	<%-- <link rel="stylesheet" href="${ctxStatic}/train/css/exam.css"> --%>
 	<script type="text/javascript">
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
+			var creditLimit = $("#credit").val();
 			var v = $("#creditLimit").val();
 			var usedLimit = $("#usedLimit").val();
-			if(usedLimit > 0){
-				alert("请先还清信用欠款");
+			var useLimit = creditLimit - usedLimit;
+			if(v < useLimit ){
+				alert("信用额度不能小于已用额度");
 				return;
 			}
 			if(!v){
@@ -23,6 +25,7 @@
 				alert("请输入数字");
 				return;
 			}
+			$("#usedLimit").val(v - useLimit);
 			$("#inputForm").submit();
 			return true;
 		}
@@ -31,9 +34,10 @@
 </head>
 <body>
 	<div class="ibox-content">
-		<input type="hidden" id="usedLimit" value="${officeAcount.usedLimit}">
 		<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/updateOfficeCreditLimit" method="post" class="form-horizontal">
 			<input type="hidden" value="${officeAcount.officeId }" name="officeId">
+			<input type="hidden" name="usedLimit" id="usedLimit" value="${officeAcount.usedLimit}">
+			<input type="hidden" id="credit" value="${officeAcount.creditLimit}">
 			<sys:message content="${message}"/>
 			<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		   <tbody>

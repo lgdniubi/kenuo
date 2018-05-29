@@ -879,7 +879,8 @@
 		update 
 			sys_office_account
 		set
-			credit_limit = #{creditLimit}
+			credit_limit = #{creditLimit},
+			used_limit = #{usedLimit}
 		where office_id = #{officeId}
 	</update>
 	
