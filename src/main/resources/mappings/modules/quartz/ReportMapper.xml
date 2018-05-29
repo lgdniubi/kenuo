@@ -84,9 +84,8 @@
 		INNER JOIN trains.sys_office o ON dgs.office_id = o.id
 		INNER JOIN trains.sys_user su ON dgs.beauty_id =  su.id 
 		WHERE 
-				mu.del_flag = 0
+			mu.del_flag = 0
 		AND o.del_flag = 0
-		AND dgs.app_arrearage > 0
 		GROUP BY dgs.user_id,dgs.franchisee_id
 	</insert>
 
