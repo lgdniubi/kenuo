@@ -53,6 +53,7 @@ public class ProtocolModelService extends CrudService<ProtocolModelDao,ProtocolM
 			if(!flag){//如果内容或标题改变
 				findModel.preInsert();
 				findModel.setStatus("2");
+				findModel.setPid(findModel.getId());
 				dao.insert(findModel);//把原来的内容复制一份
 				protocolModelDao.updateModelById(protocolModel);//把原来更新了
 				if(protocolModel.getAssign()){	//是否重新签订--重新就更新原来的状态为变更
@@ -117,10 +118,11 @@ public class ProtocolModelService extends CrudService<ProtocolModelDao,ProtocolM
 	
 	/**
 	 * 用户--协议表
+	 * @param protocolUser 
 	 * @return
 	 */
-	public List<ProtocolUser> findProtocolList() {
-		return protocolModelDao.findProtocolList();
+	public List<ProtocolUser> findProtocolList(ProtocolUser protocolUser) {
+		return protocolModelDao.findProtocolList(protocolUser);
 	}
 
 

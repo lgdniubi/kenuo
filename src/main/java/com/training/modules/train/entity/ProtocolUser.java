@@ -22,9 +22,9 @@ public class ProtocolUser extends DataEntity<ProtocolUser>{
 	private String status;			//协议状态：1履约中,2审核中,3审核未通过,4已作废,5已失效
 	private String type;			//协议类型：1妃子校注册,2用户认证手艺人,3用户认证企业,4用户登录商家PC
 	private Integer franchiseeId;			//商家id
-	private String companyName;			//机构id
+	private String companyName;			//商家名称
 	private String officeId;			//机构id
-	private String officeName;			//机构id
+	private String officeName;			//机构名称
 	private Date authStartDate;			//有效期---授权开始时间
 	private Date authEndDate;			//有效期---授权结束时间
 	private String authBy;			//审核人

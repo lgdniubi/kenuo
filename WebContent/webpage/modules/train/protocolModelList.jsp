@@ -23,6 +23,7 @@
 							<tr>
 								<th style="text-align: center;">ID</th>
 								<th style="text-align: center;">协议名称</th>
+								<th style="text-align: center;">父级id</th>
 							    <th style="text-align: center;">状态</th>
 							    <th style="text-align: center;">是否重新签订</th>
 							    <th style="text-align: center;">创建时间</th>
@@ -35,6 +36,7 @@
 								<tr>
 									<td>${model.id }</td>
 								  	<td>${model.name }</td>
+								  	<td><c:if test="${model.pid != 0}">${model.pid }</c:if></td>
 								  	<td>
 									  	<c:if test="${model.status ==1}">启用</c:if>
 									  	<c:if test="${model.status ==2}">停用</c:if>
@@ -47,7 +49,7 @@
 								  	<td><fmt:formatDate value="${model.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								  	<td>${model.createBy.name}</td>
 								    <td>
-								    	<c:if test="${model.status !=3}">
+								    	<c:if test="${model.status ==1}">
 										<a href="#" onclick="openDialog('修改', '${ctx}/train/protocolModel/modelForm?id=${model.id}','850px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>修改</a> 
 										</c:if>
 								    </td>
@@ -55,6 +57,8 @@
 							</c:forEach>
 						</tbody>
 					</table>
+					<!-- 分页table -->
+					<table:page page="${page}"></table:page>
 				</div>
 	        </div>
 	    </div>

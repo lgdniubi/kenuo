@@ -43,10 +43,10 @@ public class ProtocolUserController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "list")
-	public String modelList( Model model) {
-		List<ProtocolUser> protocolList = protocolModelService.findProtocolList();
+	public String modelList( Model model,ProtocolUser protocolUser) {
+		List<ProtocolUser> protocolList = protocolModelService.findProtocolList(protocolUser);
 		model.addAttribute("protocolList", protocolList);
-		model.addAttribute("protocol", new ProtocolUser());
+		model.addAttribute("protocol", protocolUser);
 		return "modules/train/protocolUserList";
 	}
 	
