@@ -599,11 +599,11 @@
 						<tr>
 							<td><label class="pull-right">工作单位：</label></td>
 							<td>
-								<input class="form-control  max-width-600" name="userFamilymembers[0].works" type="text" maxlength="20" value="${personnelFile.oneUser.works}" />
+								<input class="form-control  max-width-600" name="userFamilymembers[0].works" type="text" maxlength="11" value="${personnelFile.oneUser.works}" />
 							</td>
 							<td><label class="pull-right">联系电话：</label></td>
 							<td>
-								<input class="form-control  max-width-600" name="userFamilymembers[0].phone" type="text" maxlength="20" value="${personnelFile.oneUser.phone}" />
+								<input class="form-control  max-width-600" name="userFamilymembers[0].phone" type="text" maxlength="11" value="${personnelFile.oneUser.phone}" />
 							</td>
 							<td><label class="pull-right">是否有小孩：</label></td>
 							<td>
@@ -623,9 +623,9 @@
 							<td>
 								<input class="form-control  max-width-600 required" name="userFamilymembers[1].relation" type="text" maxlength="20" value="${personnelFile.twoUser.relation}" />
 							</td>
-							<td><label class="pull-right"><font color="red">*</font>联系电话：</label></td>
+							<td><label class="pull-right"><font color="red">*</font>联系电话22：</label></td>
 							<td>
-								<input class="form-control  max-width-600 required" name="userFamilymembers[1].phone" type="text" maxlength="20" value="${personnelFile.twoUser.phone}" />
+								<input class="form-control  max-width-600 required" name="userFamilymembers[1].phone" type="text" maxlength="11" value="${personnelFile.twoUser.phone}" />
 							</td>
 						</tr>
 						<tr>
@@ -638,9 +638,9 @@
 							<td>
 								<input class="form-control  max-width-600 required" name="userFamilymembers[2].relation" type="text" maxlength="20" value="${personnelFile.threeUser.relation}" />
 							</td>
-							<td><label class="pull-right"><font color="red">*</font>联系电话：</label></td>
+							<td><label class="pull-right"><font color="red">*</font>联系电话22：</label></td>
 							<td>
-								<input class="form-control  max-width-600 required" name="userFamilymembers[2].phone" type="text" maxlength="20" value="${personnelFile.threeUser.phone}" />
+								<input class="form-control  max-width-600 required" name="userFamilymembers[2].phone" type="text" maxlength="11" value="${personnelFile.threeUser.phone}" />
 							</td>
 						</tr>
 						<tr>

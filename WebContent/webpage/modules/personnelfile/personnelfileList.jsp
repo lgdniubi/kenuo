@@ -19,6 +19,12 @@
 		});
 		return false;
 	}
+	//重置表单
+	function resetnew(){
+		$("#officeIdId").val("");
+		$("#officeIdName").val("");
+		reset();
+	}
 </script>
 </head>
 <body>
@@ -70,7 +76,7 @@
 							<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()">
 								<i class="fa fa-search"></i> 查询
 							</button>
-							<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()">
+							<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="resetnew()">
 								<i class="fa fa-refresh"></i> 重置
 							</button>
 						</div>
@@ -131,11 +137,11 @@
 										</shiro:hasPermission>
 									</c:if>
 									<c:if test="${not empty personnelfile.probationStartDate}">
-										<shiro:hasPermission name="sys:personnelfile:edit">
+										<%-- <shiro:hasPermission name="sys:personnelfile:edit">
 											<a href="${ctx}/personnelfile/user/getPersonnelFileBefor?id=${personnelfile.id}&&type=1" class="btn btn-success btn-xs">
 												<i class="fa fa-edit"></i> 修改
 											</a>
-										</shiro:hasPermission>
+										</shiro:hasPermission> --%>
 										<shiro:hasPermission name="sys:personnelfile:view">
 											<a href="${ctx}/personnelfile/user/getPersonnelFileBefor?id=${personnelfile.id}&&type=2" class="btn btn-info btn-xs">
 												<i class="fa fa-search-plus"></i> 查看

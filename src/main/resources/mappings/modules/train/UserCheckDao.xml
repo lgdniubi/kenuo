@@ -245,9 +245,9 @@
 	<update id="updateUserType">
 		UPDATE sys_user SET 
 			`type` = #{type}
-			<if test="type == 'syr'">
+			<!-- <if test="type == 'syr'">
 				,name = (SELECT f.name  FROM train_audituser_info f LEFT JOIN train_apply a ON a.id = f.apply_id WHERE a.user_id = #{userid})
-			</if>
+			</if> -->
 			<if test="franchid != null">
 			,company_id = #{franchid},
 			office_id = #{franchid} 
