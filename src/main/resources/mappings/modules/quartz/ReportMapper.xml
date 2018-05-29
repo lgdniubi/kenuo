@@ -8,8 +8,9 @@
 	<select id="dropTableOfficeAppArrearge"><!--清空机构欠款统计表-->
 		TRUNCATE TABLE mtmydb.office_app_arrearage;
 	</select>
-
-	<insert id="insertTableUserAppArrearge"><!--统计会员欠款(区分商家)-->
+	
+<!--统计会员欠款(区分商家)-->
+<!-- <insert id="insertTableUserAppArrearge">
 		INSERT INTO mtmydb.user_app_arrearage 
 		(user_id,user_name,beautician_id,beautician_name,user_office_id,user_office_name,goods_franchisee_id,total_app_arrearage,create_day)
 		SELECT
@@ -39,9 +40,58 @@
 		WHERE
 		dg.goods_franchisee_id = s.franchisee_id
 		GROUP BY dg.user_id HAVING app_arrearage > 0
+	</insert> -->
+	
+	<!--统计会员欠款(区分商家)-->
+	<insert id="insertTableUserAppArrearge">
+		INSERT INTO mtmydb.user_app_arrearage 
+		(user_id,user_name,beautician_id,beautician_name,user_office_id,user_office_name,goods_franchisee_id,total_app_arrearage,create_day)
+		SELECT
+			dgs.user_id,
+			mu.`name` as `name`,
+			dgs.beauty_id AS beautician_id,
+			su.name AS beautician_name,
+			dgs.office_id,
+			o.name AS office_name, 
+			dgs.goods_franchisee_id,
+			IFNULL(SUM(dgs.app_arrearage),0) as app_arrearage,
+			MAX(dgs.create_day)as create_day
+		FROM
+		(
+			SELECT 
+				dg.*, 
+				c.beauty_id,
+				c.franchisee_id,
+				c.office_id
+			FROM
+			(SELECT
+				g.goods_franchisee_id,
+				d.app_arrearage as app_arrearage,
+				d.goods_mapping_id,
+				g.user_id,
+				d.create_date as create_day
+			FROM 
+				mtmydb.mtmy_order_goods_details d
+			INNER JOIN mtmydb.mtmy_order_goods_mapping g ON g.rec_id = d.goods_mapping_id AND g.del_flag =0
+			AND d.app_arrearage != 0
+			)dg
+			INNER JOIN  mtmydb.mtmy_customer c ON c.user_id = dg.user_id
+			<!-- INNER JOIN (SELECT s.id,s.franchisee_id FROM trains.sys_office s WHERE s.del_flag = 0)s ON s.id = c.office_id --> 
+			WHERE
+			dg.goods_franchisee_id = c.franchisee_id
+		) dgs
+		INNER JOIN mtmydb.mtmy_users  mu ON dgs.user_id = mu.user_id
+		INNER JOIN trains.sys_office o ON dgs.office_id = o.id
+		INNER JOIN trains.sys_user su ON dgs.beauty_id =  su.id 
+		WHERE 
+				mu.del_flag = 0
+		AND o.del_flag = 0
+		AND dgs.app_arrearage > 0
+		GROUP BY dgs.user_id,dgs.franchisee_id
 	</insert>
 
-	<insert id="insertTableOfficeAppArrearge"><!--统计机构欠款(区分商家)-->
+	<!--统计机构欠款(区分商家)-->
+	<!-- <insert id="insertTableOfficeAppArrearge">
 		INSERT INTO mtmydb.office_app_arrearage 
 		(office_id,office_parent_id,office_name,total_app_arrearage,create_day)
 		SELECT 
@@ -72,7 +122,40 @@
 		GROUP BY u.user_id HAVING app_arrearage >0) as t
 		RIGHT JOIN (SELECT id,parent_id,`name`,franchisee_id from trains.sys_office WHERE del_flag = 0)o ON (t.parent_ids LIKE CONCAT('%',o.id,'%') or t.office_id = o.id)
 		GROUP BY o.id
-		ORDER BY o.id;
+		ORDER BY o.id
+	</insert> -->
+	
+	<!--统计机构欠款(区分商家)-->
+	<insert id="insertTableOfficeAppArrearge">
+		INSERT INTO mtmydb.office_app_arrearage 
+		(office_id,office_parent_id,office_name,total_app_arrearage,create_day)
+		SELECT 
+			o.id as office_id,
+			o.parent_id as office_parent_id,
+			o.name as office_name,
+			IFNULL(SUM(t.app_arrearage),0),
+			t.create_day
+		FROM
+		(SELECT 
+			c.user_id,
+			c.office_id,
+			gm.goods_franchisee_id,
+			c.office_pids AS parent_ids,
+			IFNULL(SUM(de.app_arrearage),0) as app_arrearage,
+			MAX(de.create_date) as create_day
+		FROM 
+			mtmydb.mtmy_order_goods_details de
+		INNER JOIN mtmydb.mtmy_order_goods_mapping gm ON gm.rec_id = de.goods_mapping_id
+		INNER JOIN mtmydb.mtmy_customer c ON c.user_id = gm.user_id
+		<!-- INNER JOIN trains.sys_office s ON s.id = c.office_id -->
+		WHERE  
+		gm.del_flag = 0
+		<!-- AND s.del_flag = 0 -->
+		AND gm.goods_franchisee_id = c.franchisee_id
+		GROUP BY c.user_id,c.franchisee_id HAVING app_arrearage >0) as t
+		RIGHT JOIN (SELECT id,parent_id,`name`,franchisee_id from trains.sys_office WHERE del_flag = 0)o ON (t.parent_ids LIKE CONCAT('%',o.id,'%') or t.office_id = o.id)
+		GROUP BY o.id
+		<!-- ORDER BY o.id -->
 	</insert>
 
 </mapper>
