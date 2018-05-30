@@ -5,10 +5,11 @@
 	<resultMap id="AuthenticationBean" type="com.training.modules.train.entity.AuthenticationBean">
 		<result property="id" column="id" />
 		<result property="franchisee_id" column="franchisee_id" />
+		<result property="user_id" column="user_id" />
 	</resultMap>
 	
 	<select id="querypastdueauthentication" resultMap="AuthenticationBean">
-		SELECT id,franchisee_id FROM trains.train_model_franchisee WHERE auth_end_date <![CDATA[<]]> NOW() AND `status` = 0
+		SELECT id,franchisee_id,user_id FROM trains.train_model_franchisee WHERE auth_end_date <![CDATA[<]]> NOW() AND `status` = 0
 	</select>
 	
 	<update id="updateauthenticationstatus" parameterType="java.lang.Integer">
@@ -21,8 +22,12 @@
 	
 	<update id="updatepcmenustatus" parameterType="java.lang.Integer">
 		UPDATE (SELECT * FROM trains.pc_role WHERE franchisee_id = ${franchisee_id}) r
-		INNER JOIN trains. pc_menu_role mr ON r.id = mr.role_id
+		INNER JOIN trains.pc_menu_role mr ON r.id = mr.role_id
 		SET mr.`status` = 1
 	</update>
+	
+	<select id="queryuserlist" parameterType="java.lang.Integer" resultType="java.lang.String">
+		SELECT id FROM trains.sys_user WHERE company_id = ${franchisee_id}
+	</select>
 	
 </mapper>

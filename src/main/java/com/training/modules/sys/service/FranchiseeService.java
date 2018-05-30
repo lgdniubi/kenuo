@@ -62,7 +62,7 @@ public class FranchiseeService extends TreeService<FranchiseeDao,Franchisee>{
 			String parpm = "{\"id\":"+Integer.valueOf(franchisee.getId())+",\"name\":\""+franchisee.getName()+"\",\"type\":\""+franchisee.getType()+"\","
 					+ "\"address\":\""+franchisee.getAddress()+"\",\"legal_name\":\""+franchisee.getLegalName()+"\",\"contacts\":\""+franchisee.getContacts()+"\",\"mobile\":\""+franchisee.getMobile()+"\","
 							+ "\"tel\":\""+franchisee.getTel()+"\",\"charter_url\":\""+franchisee.getCharterUrl()+"\",\"taxation_url\":\""+franchisee.getTaxationUrl()+"\","
-									+ "\"bank_beneficiary\":\""+franchisee.getBankBeneficiary()+"\",\"bank_code\":\""+franchisee.getBankCode()+"\",\"bank_owner\":\""+franchisee.getBankName()+"\",\"function\":\""+0+"\"}";
+									+ "\"bank_beneficiary\":\""+franchisee.getBankBeneficiary()+"\",\"bank_code\":\""+franchisee.getBankCode()+"\",\"bank_owner\":\""+franchisee.getBankName()+"\"}";
 			String url=weburl;
 			String result = WebUtils.postCSObject(parpm, url);
 			JSONObject jsonObject = JSONObject.fromObject(result);
@@ -92,7 +92,7 @@ public class FranchiseeService extends TreeService<FranchiseeDao,Franchisee>{
 			String parpm = "{\"id\":"+Integer.valueOf(franchisee.getId())+",\"name\":\""+franchisee.getName()+"\",\"type\":\""+franchisee.getType()+"\","
 					+ "\"address\":\""+franchisee.getAddress()+"\",\"legal_name\":\""+franchisee.getLegalName()+"\",\"contacts\":\""+franchisee.getContacts()+"\",\"mobile\":\""+franchisee.getMobile()+"\","
 							+ "\"tel\":\""+franchisee.getTel()+"\",\"charter_url\":\""+franchisee.getCharterUrl()+"\",\"taxation_url\":\""+franchisee.getTaxationUrl()+"\","
-									+ "\"bank_beneficiary\":\""+franchisee.getBankBeneficiary()+"\",\"bank_code\":\""+franchisee.getBankCode()+"\",\"bank_owner\":\""+franchisee.getBankName()+"\",\"function\":\""+1+"\"}";
+									+ "\"bank_beneficiary\":\""+franchisee.getBankBeneficiary()+"\",\"bank_code\":\""+franchisee.getBankCode()+"\",\"bank_owner\":\""+franchisee.getBankName()+"\"}";
 			String url=weburl;
 			String result = WebUtils.postCSObject(parpm, url);
 			JSONObject jsonObject = JSONObject.fromObject(result);

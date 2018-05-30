@@ -69,6 +69,17 @@ public class AuthenticationService {
 		return authenticationMapper.updatepcmenustatus(franchisee_id);
 		
 	}
+
+	/**  
+	* <p>Title: 获取该商家下的用户</p>  
+	* <p>Copyright（C）2018 by FengFeng</p>   
+	* @author fengfeng  
+	* @date 2018年5月30日  
+	* @version 3.0.0  
+	*/  
+	public List<String> queryuserlist(int franchisee_id) {
+		return authenticationMapper.queryuserlist(franchisee_id);
+	}
 	
 	
 }

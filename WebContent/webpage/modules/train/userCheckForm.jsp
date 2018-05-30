@@ -66,6 +66,19 @@
 			         <td>${userCheck.charterCard}</td>
 				</tr>
 			    <tr>
+			         <td class="active"><label class="pull-right">企业类型:</label></td>
+			         <td>
+			         	<c:if test="${userCheck.addr.type == 1}">个体户</c:if>
+			         	<c:if test="${userCheck.addr.type == 2}">合伙企业</c:if>
+			         	<c:if test="${userCheck.addr.type == 3}">个人独资企业</c:if>
+			         	<c:if test="${userCheck.addr.type == 4}">公司</c:if>
+			         </td>
+			         <td class="active"><label class="pull-right">成立日期:</label></td>
+			         <td><fmt:formatDate value="${userCheck.addr.setDate}" pattern="yyyy/MM/dd  HH:mm:ss" /></td>
+			         <td class="active"><label class="pull-right">所在地区:</label></td>
+			         <td>${userCheck.addr.provinceName}${userCheck.addr.cityName}${userCheck.addr.districtName}</td>
+				</tr>
+			    <tr>
 			         <td class="active"><label class="pull-right">详细地址:</label></td>
 			         <td>${userCheck.address}</td>
 			         <td class="active"><label class="pull-right">企业法人:</label></td>
@@ -85,6 +98,31 @@
 			         <td  colspan="3"><img id="photosrc" src="${userCheck.icardtwo}" alt="images" style="width: 200px;height: 100px;"/></td>
 				</tr>
 			    <tr>
+			    	  <td class="active" colspan="6"><label class="pull-left">账户信息</label></td>
+				</tr>
+				<c:forEach var="bank" items="${userCheck.bankAccount}">
+					<tr>
+				         <td class="active"><label class="pull-left">账户名称:</label></td>
+				         <td >${bank.accountname}</td>
+				         <td class="active"><label class="pull-left">开户银行:</label></td>
+				         <td >${bank.openbank}</td>
+				         <td class="active"><label class="pull-left">银行账户:</label></td>
+				         <td >${bank.bankaccount}</td>
+				    </tr>
+				    <tr>
+				         <td class="active"><label class="pull-left">开户地址:</label></td>
+				         <td >${bank.openaddress}</td>
+				         <td class="active"><label class="pull-left">详细地址:</label></td>
+				         <td >${bank.detailedaddress}</td>
+				    </tr>
+				    <tr>
+					         <td class=""><label class="pull-right">正面:</label></td>
+					         <td ><img id="photosrc" src="${bank.cardup}" alt="images" style="width: 200px;height: 100px;"/></td>
+					         <td class=""><label class="pull-right">反面:</label></td>
+					         <td><img id="photosrc" src="${bank.carddown}" alt="images" style="width: 200px;height: 100px;"/></td>
+						</tr>
+				    <tr>
+			    </c:forEach>
 			         <td height="100px" class="active"><label class="pull-left">营业执照:</label></td>
 			    	 <td colspan="5"><img id="photosrc" src="${userCheck.charterUrl}" alt="images" style="width: 200px;height: 100px;"/></td>
 			    </tr>

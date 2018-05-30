@@ -11,10 +11,17 @@ public class OfficeAcount {
 	private int integralEarnings = 0; //贡献登云平台总云币
 	private double creditLimit = 0;	//信用额度
 	private double usedLimit = 0;	//可使用额度
+	private double useLimit = 0;	//
 	private double payPwd;	//支付密码
 	
 	
 	
+	public double getUseLimit() {
+		return useLimit;
+	}
+	public void setUseLimit(double useLimit) {
+		this.useLimit = useLimit;
+	}
 	public String getOfficeId() {
 		return officeId;
 	}

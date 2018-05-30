@@ -13,9 +13,16 @@ package com.training.modules.train.entity;
 
 public class AuthenticationBean {
 
-	private int id;
-	private int franchisee_id;
+	private int id;				//授权id
+	private int franchisee_id;		//商家id
+	private String user_id;			//用户id
 	
+	public String getUser_id() {
+		return user_id;
+	}
+	public void setUser_id(String user_id) {
+		this.user_id = user_id;
+	}
 	public int getId() {
 		return id;
 	}

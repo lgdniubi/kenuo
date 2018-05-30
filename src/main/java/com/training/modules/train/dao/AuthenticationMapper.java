@@ -57,5 +57,14 @@ public interface AuthenticationMapper {
 	*/  
 	int updatepcmenustatus(@Param("franchisee_id") int franchisee_id);
 
+	/**  
+	* <p>Title: 获取该商家下的用户</p>  
+	* <p>Copyright（C）2018 by FengFeng</p>   
+	* @author fengfeng  
+	* @date 2018年5月30日  
+	* @version 3.0.0  
+	*/  
+	List<String> queryuserlist(@Param("franchisee_id") int franchisee_id);
+
 	
 }

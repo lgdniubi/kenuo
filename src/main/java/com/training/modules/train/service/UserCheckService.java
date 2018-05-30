@@ -29,9 +29,12 @@ import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.FzxRoleDao;
 import com.training.modules.train.dao.PcRoleDao;
 import com.training.modules.train.dao.UserCheckDao;
+import com.training.modules.train.entity.BankAccount;
+import com.training.modules.train.entity.CheckAddr;
 import com.training.modules.train.entity.FzxRole;
 import com.training.modules.train.entity.MediaRole;
 import com.training.modules.train.entity.ModelFranchisee;
+import com.training.modules.train.entity.PayAccount;
 import com.training.modules.train.entity.PcRole;
 import com.training.modules.train.entity.UserCheck;
 
@@ -74,7 +77,19 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	 * @return
 	 */
 	public UserCheck getUserCheck(UserCheck userCheck) {
-		return userCheckDao.getUserCheck(userCheck);
+		UserCheck findCheck = userCheckDao.getUserCheck(userCheck);
+		//查找银行卡信息
+		List<BankAccount> accounts= userCheckDao.findBankAccountInfo(userCheck);
+		//查找支付宝微信信息
+		if("syr".equals(userCheck.getAuditType())){//如果认证类型是手艺人，
+			List<PayAccount> payAccounts= userCheckDao.findPayAccountInfo(userCheck);
+			findCheck.setPayAccount(payAccounts);
+		}
+		findCheck.setBankAccount(accounts);
+		userCheck.setAuditType(findCheck.getAuditType());
+		CheckAddr checkAddr= userCheckDao.findCheckAddr(userCheck);
+		findCheck.setAddr(checkAddr);
+		return findCheck;
 	}
 
 	/**

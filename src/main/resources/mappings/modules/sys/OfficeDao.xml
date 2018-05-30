@@ -889,4 +889,8 @@
 			sys_office_account(office_id)
 		values(#{officeId})
 	</insert>
+	
+	<select id="queryusedLimit" parameterType="com.training.modules.sys.entity.OfficeAcount" resultType="java.lang.Double">
+		SELECT used_limit FROM trains.sys_office_account WHERE office_id = #{officeId}
+	</select>
 </mapper>

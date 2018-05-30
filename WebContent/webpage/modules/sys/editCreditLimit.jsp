@@ -26,6 +26,7 @@
 				return;
 			}
 			$("#usedLimit").val(v - useLimit);
+			$("#useLimit").val(usedLimit);
 			$("#inputForm").submit();
 			return true;
 		}
@@ -37,6 +38,7 @@
 		<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/updateOfficeCreditLimit" method="post" class="form-horizontal">
 			<input type="hidden" value="${officeAcount.officeId }" name="officeId">
 			<input type="hidden" name="usedLimit" id="usedLimit" value="${officeAcount.usedLimit}">
+			<input type="hidden" name="useLimit" id="useLimit">
 			<input type="hidden" id="credit" value="${officeAcount.creditLimit}">
 			<sys:message content="${message}"/>
 			<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">

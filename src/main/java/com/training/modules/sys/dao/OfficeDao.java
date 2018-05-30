@@ -255,5 +255,13 @@ public interface OfficeDao extends TreeDao<Office> {
 	 * @param OfficeAcount
 	 */
 	public void saveOfficeAcount(OfficeAcount officeAcount);
+	/**  
+	* <p>Title: 获取结构可用额度</p>  
+	* <p>Copyright（C）2018 by FengFeng</p>   
+	* @author fengfeng  
+	* @date 2018年5月29日  
+	* @version 3.0.0  
+	*/  
+	public double queryusedLimit(OfficeAcount officeAcount);
 
 }
