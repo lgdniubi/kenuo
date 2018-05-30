@@ -14,6 +14,7 @@ import com.training.modules.sys.dao.FranchiseeDao;
 import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
+import com.training.modules.train.entity.BankAccount;
 
 import net.sf.json.JSONObject;
 
@@ -132,5 +133,14 @@ public class FranchiseeService extends TreeService<FranchiseeDao,Franchisee>{
 	 */
 	public void updateMtmyPublicServiceFlag(Franchisee franchisee) {
 		franchiseeDao.updateMtmyPublicServiceFlag(franchisee);
+	}
+
+	/**
+	 * 查询商家认证时提交的银行信息
+	 * @param franchisee
+	 * @return
+	 */
+	public List<BankAccount> findBankAccountList(Franchisee franchisee) {
+		return franchiseeDao.findBankAccountList(franchisee);
 	}
 }

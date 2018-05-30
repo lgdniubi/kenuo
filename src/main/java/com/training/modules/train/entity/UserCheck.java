@@ -41,8 +41,8 @@ public class UserCheck extends DataEntity<UserCheck>{
 	private String startDate;			//工作年限
 	private String income;			//月收入
 	private String city;			//工作城市
-	private List<PayAccount> payAccount;			//银行账户
-	private List<BankAccount> bankAccount;			//支付宝微信账户
+	private List<PayAccount> payAccount;			//支付宝微信账户
+	private List<BankAccount> bankAccount;			//银行账户
 	private CheckAddr addr;				//地址详细
 	
 	

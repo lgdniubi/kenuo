@@ -183,6 +183,16 @@
 				</tr>
 				<tr>
 					<td class="width-15 active">
+						<label class="pull-right"><font color="red">*</font>供应商简称:</label>
+					</td>
+					<td class="width-35"><form:input path="shortName" htmlEscape="false" maxlength="8" class="form-control required" />
+					<td class="width-15 active">
+						<label class="pull-right"><font color="red">*</font>成立日期:</label>
+					</td>
+					<td class="width-35"><form:input path="setDate" htmlEscape="false" maxlength="8" class="form-control required" />
+				</tr>
+				<tr>
+					<td class="width-15 active">
 						<label class="pull-right"><font color="red">*</font>归属区域:</label>
 					</td>
 					<td class="width-35">
@@ -218,6 +228,10 @@
 					<td class="width-35"><form:input path="contacts" htmlEscape="false" maxlength="50" cssClass="form-control required" /></td>
 				</tr>
 				<tr>
+					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>法人身份证号:</label></td>
+					<td class="width-35"><form:input path="legalCard" htmlEscape="false" maxlength="50" cssClass="form-control required digits" /></td>
+				</tr>
+				<tr>
 					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>手机号码:</label></td>
 					<td class="width-35"><form:input path="mobile" htmlEscape="false" maxlength="50" cssClass="form-control required digits" /></td>
 					<td class="width-15 active"><label class="pull-right">固定电话:</label></td>
@@ -247,6 +261,31 @@
 						</c:if>
 					</td>
 				</tr>
+				<c:forEach var="bank" items="${franchisee.bankAccount}">
+					<tr>
+				         <td class="active"><label class="pull-left">账户名称:</label></td>
+				         <td >${bank.accountname}</td>
+				         <td class="active"><label class="pull-left">开户银行:</label></td>
+				         <td >${bank.openbank}</td>
+				    </tr>
+				         <td class="active"><label class="pull-left">银行账户:</label></td>
+				         <td >${bank.bankaccount}</td>
+				    <tr>
+				    </tr>
+				    <tr>
+				         <td class="active"><label class="pull-left">开户地址:</label></td>
+				         <td >${bank.openaddress}</td>
+				         <td class="active"><label class="pull-left">详细地址:</label></td>
+				         <td >${bank.detailedaddress}</td>
+				    </tr>
+				    <tr>
+					         <td class=""><label class="pull-right">正面:</label></td>
+					         <td ><img id="photosrc" src="${bank.cardup}" alt="images" style="width: 200px;height: 100px;"/></td>
+					         <td class=""><label class="pull-right">反面:</label></td>
+					         <td><img id="photosrc" src="${bank.carddown}" alt="images" style="width: 200px;height: 100px;"/></td>
+						</tr>
+				    <tr>
+			    </c:forEach>
 				<tr>
 					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>开户行:</label></td>
 					<td class="width-35"><form:input path="bankBeneficiary" htmlEscape="false" maxlength="50" cssClass="form-control required" /></td>
