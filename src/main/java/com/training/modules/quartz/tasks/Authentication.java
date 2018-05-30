@@ -63,7 +63,15 @@ public class Authentication extends CommonService{
 						authenticationService.updateprotocolstatus(s.getFranchisee_id());
 					//修改pc菜单改为禁用
 						authenticationService.updatepcmenustatus(s.getFranchisee_id());
+					//获取该商家下的用户
+						List<String> user = authenticationService.queryuserlist(s.getFranchisee_id());
+						for(String user_id : user){
+							redisClientTemplate.del("UTOKEN_"+user_id);
+						}
+				}else if(s.getFranchisee_id() == 0 && count > 0){
+					redisClientTemplate.del("UTOKEN_"+s.getUser_id());
 				}
+				
 			}
 		
 		
