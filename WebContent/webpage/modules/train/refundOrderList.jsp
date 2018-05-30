@@ -27,6 +27,9 @@
 			$("#pageSize").val(s);
 			$("#searchForm").submit();
 		}
+		function makesure(){
+			
+		}
     </script>
     <title>文章管理</title>
 </head>
@@ -82,7 +85,8 @@
                                		${refund.tempOrderId}
                                	</td>
                                	<td style="text-align: center;">
-                               		${refund.orderType}
+                               		<c:if test="${refund.orderType eq '1'}">线上</c:if>
+                               		<c:if test="${refund.orderType eq '2'}">线下</c:if>
                                	</td>
                                 <td style="text-align: center;">
                                		${refund.arrearagePrice}
@@ -94,7 +98,9 @@
                                		${refund.amount}
                                	</td>
                                	<td style="text-align: center;">
-                               		${refund.orderStatus}
+                               		<c:if test="${refund.orderStatus eq '1'}">待支付</c:if>
+                               		<c:if test="${refund.orderStatus eq '2'}">已支付</c:if>
+                               		<c:if test="${refund.orderStatus eq '3'}">已入账</c:if>
                                	</td>
                                	<td style="text-align: center;">
                                		${refund.payCode}
@@ -112,13 +118,18 @@
                                		${refund.payTime}
                                	</td>
 								<td style="text-align: center;">
-									<a class="btn btn-info btn-xs" onclick="top.openTab('${ctx}/train/articlelist/lookdetail?articleId=${refund.orderId}','查看文章', false)"><i class="fa fa-search-plus"></i>查看</a>
-									<shiro:hasPermission name="train:articlelist:updatedetail">
-										<a class="btn btn-success btn-xs"  onclick="top.openTab('${ctx}/train/articlelist/updatedetail?articleId=${refund.orderId}','修改文章', false)"><i class="fa fa-edit"></i>修改</a> 
+									<shiro:hasPermission name="train:refundOrder:makeSureInAccount">
+									<c:if test="${refund.orderStatus eq '2'}">
+										<a href="${ctx}/train/refundOrder/makeSureInAccount?order_id=${refund.orderId}"  onclick="return confirmx('要删除该分类及所有子分类吗？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>确认入账</a>
+									</c:if>
 									</shiro:hasPermission>
 									<shiro:hasPermission name="train:articlelist:deleteOne">
-										<a href="${ctx}/train/articlelist/deleteOne?articleId=${refund.orderId}" onclick="return confirmx('确认要删除此文章吗？', this.href)"   class="btn btn-info btn-xs btn-danger"><i class="fa fa-trash"></i> 删除</a>
+										<a class="btn btn-success btn-xs"  onclick="openDialogView('对账单','${ctx}/train/refundOrder/queryStatementOfRefund?order_id=${refund.orderId}', '800px', '500px')"><i class="fa fa-edit"></i>对账单详情</a>
 									</shiro:hasPermission>
+									<c:if test="${refund.orderType eq '2'}">
+										<a class="btn btn-success btn-xs"  onclick="openDialogView('支付信息','${ctx}/train/refundOrder/queryTransferpay?order_id=${refund.orderId}', '800px', '500px')"><i class="fa fa-edit"></i>支付信息</a>
+									</c:if>
+									
 								</td>
 							</tr>
 						</c:forEach>

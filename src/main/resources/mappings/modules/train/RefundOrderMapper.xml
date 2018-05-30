@@ -81,4 +81,43 @@
 	</select>
 	
 	
+	<select id="queryStatementOfRefund" resultType="Statement">
+		select 
+			id as stateId,
+			order_id,
+			office_id,
+			used_limit,
+			`from` as `from`,
+			type,
+			DATE_FORMAT(create_date,'%Y-%m-%d %H:%i') as create_date
+		from sys_office_statement where order_id = #{order_id}
+		
+	</select>
+	
+	<select id="queryTransferpay" resultType="Transferpay">
+		select
+			t.id as payId,
+			t.serialnumber,
+			t.bankaccount,
+			t.openbank,
+			t.office_id,
+			t.order_id,
+			t.repaymonth,
+			t.user_id,
+			t.proof,
+			t.`status` as `status`,
+			t.`explain` as `explain`,
+			t.openname,
+			DATE_FORMAT(t.create_time,'%Y-%m-%d %H:%i') as create_time,
+			u.name as user_name
+		from sys_office_transferpay t
+		left join sys_user u on u.id = t.user_id
+		where t.order_id = #{order_id}
+	</select>
+	
+	<update id="makeSureInAccount">
+		update train_refund_order
+		set order_status = '3'
+		where order_id = #{order_id}
+	</update>
 </mapper>

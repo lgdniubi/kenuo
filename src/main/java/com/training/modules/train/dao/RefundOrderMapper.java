@@ -12,6 +12,8 @@ import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.ArrearageOfficeList;
 import com.training.modules.train.entity.RefundOrder;
+import com.training.modules.train.entity.Statement;
+import com.training.modules.train.entity.Transferpay;
 
 /**  
 * <p>Title: RefundOrderMapper.java</p>  
@@ -51,6 +53,21 @@ public interface RefundOrderMapper extends CrudDao<RefundOrder> {
 	* @version 3.0.0  
 	*/  
 	void updateOfficeAccount();
-
-	
+	/**
+	 * 查询对账单
+	 * @param order_id
+	 * @return
+	 */
+	List<Statement> queryStatementOfRefund(@Param("order_id")String order_id);
+	/**
+	 * 查询支付信息
+	 * @param order_id
+	 * @return
+	 */
+	public Transferpay queryTransferpay(@Param("order_id")String order_id);
+	/**
+	 * 确认入账
+	 * @param order_id
+	 */
+	public void makeSureInAccount(@Param("order_id")String order_id);
 }
