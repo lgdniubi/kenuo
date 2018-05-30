@@ -131,10 +131,10 @@ public class Runnable implements java.lang.Runnable {
 			log.debug("refresh files:" + refreshs.size());
 		}
 		for (int i = 0; i < refreshs.size(); i++) {
-			System.out.println("Refresh file: "
-					+ mappingPath
-					+ StringUtils.substringAfterLast(refreshs.get(i)
-							.getAbsolutePath(), mappingPath));
+//			System.out.println("Refresh file: "
+//					+ mappingPath
+//					+ StringUtils.substringAfterLast(refreshs.get(i)
+//							.getAbsolutePath(), mappingPath));
 			log.debug("refresh file:" + refreshs.get(i).getAbsolutePath());
 			log.debug("refresh filename:" + refreshs.get(i).getName());
 			SqlSessionFactoryBean.refresh(new FileInputStream(refreshs.get(i)),
