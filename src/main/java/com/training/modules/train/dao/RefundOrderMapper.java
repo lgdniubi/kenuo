@@ -8,8 +8,10 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.ArrearageOfficeList;
+import com.training.modules.train.entity.RefundOrder;
 
 /**  
 * <p>Title: RefundOrderMapper.java</p>  
@@ -19,7 +21,7 @@ import com.training.modules.train.entity.ArrearageOfficeList;
 * @version 3.0.0 
 */
 @MyBatisDao
-public interface RefundOrderMapper {
+public interface RefundOrderMapper extends CrudDao<RefundOrder> {
 
 	/**  
 	* <p>Title: </p>  

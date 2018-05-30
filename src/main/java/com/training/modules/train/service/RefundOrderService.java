@@ -4,13 +4,13 @@
 package com.training.modules.train.service;
 
 import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.training.common.service.CrudService;
 import com.training.modules.train.dao.RefundOrderMapper;
 import com.training.modules.train.entity.ArrearageOfficeList;
+import com.training.modules.train.entity.RefundOrder;
 
 /**  
 * <p>Title: RefundOrderService.java</p>  
@@ -21,7 +21,7 @@ import com.training.modules.train.entity.ArrearageOfficeList;
 */
 
 @Service
-public class RefundOrderService {
+public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrder> {
 
 	@Autowired
 	private RefundOrderMapper refundOrderMapper;
