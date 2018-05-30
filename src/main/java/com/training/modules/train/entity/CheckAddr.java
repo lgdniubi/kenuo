@@ -1,5 +1,7 @@
 package com.training.modules.train.entity;
 
+import java.util.Date;
+
 import com.training.common.persistence.DataEntity;
 
 /**
@@ -17,6 +19,10 @@ public class CheckAddr extends DataEntity<CheckAddr>{
 	private String cityName;			//城市
 	private String districtName;			//区
 	private String idcard;			//身份证
+	
+	//----------企业的信息-----------------
+	private String type;			//企业类型【1.个体户、2.合伙企业、3.个人独资企业、4.公司】
+	private Date setDate;			//成立日期
 	public String getSyrMobile() {
 		return syrMobile;
 	}
@@ -58,6 +64,18 @@ public class CheckAddr extends DataEntity<CheckAddr>{
 	}
 	public void setIdcard(String idcard) {
 		this.idcard = idcard;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public Date getSetDate() {
+		return setDate;
+	}
+	public void setSetDate(Date setDate) {
+		this.setDate = setDate;
 	}
 	
 }
