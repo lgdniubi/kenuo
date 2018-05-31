@@ -677,6 +677,19 @@
 			del_flag = 0
 		WHERE id = #{id}
 	</update>
+	<!-- 离职后变为普通商家和普通机构-->
+	<update id="updateCompanyAndOfficeId">
+		UPDATE sys_user SET 
+			company_id = '1000000', 
+			office_id = '1000000'
+		WHERE id = #{id}
+	</update>
+	<!-- 离职后变为普通角色 -->
+	<update id="updateUserRole">
+		UPDATE sys_user_role SET 
+			role_id = (SELECT id FROM fzx_role WHERE enname = 'pthy')
+		WHERE user_id = #{id}
+	</update>
 	
 	<!-- 根据实体名称和字段名称和字段值获取唯一记录 -->
 	<select id="findUniqueByProperty"  resultType="User" statementType="STATEMENT">

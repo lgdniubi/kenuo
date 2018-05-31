@@ -92,6 +92,12 @@
 				         <td>${bank.bankaccount}</td>
 					</tr>
 				    <tr>
+				         <td class=""><label class="pull-right">开户地址:</label></td>
+				         <td>${bank.openaddress}</td>
+				         <td class=""><label class="pull-right">详细地址:</label></td>
+				         <td>${bank.detailedaddress}</td>
+					</tr>
+				    <tr>
 				         <td class=""><label class="pull-right">正面:</label></td>
 				         <td ><img id="photosrc" src="${bank.cardup}" alt="images" style="width: 200px;height: 100px;"/></td>
 				         <td class=""><label class="pull-right">反面:</label></td>

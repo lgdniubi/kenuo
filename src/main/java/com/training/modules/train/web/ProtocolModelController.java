@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import com.training.common.web.BaseController;
 import com.training.modules.ec.entity.ArticleRepository;
@@ -82,7 +83,9 @@ public class ProtocolModelController extends BaseController {
 	@RequestMapping(value = "save")
 	public String save(ProtocolModel protocolModel,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
 		try {
-			//
+			//保存数据的时候需要转码
+			String htmlEscape = HtmlUtils.htmlEscape(protocolModel.getContent());
+			protocolModel.setContent(htmlEscape);
 			protocolModelService.saveProtocolModel(protocolModel);
 			addMessage(redirectAttributes, "保存协议内容成功!");
 		} catch (Exception e) {

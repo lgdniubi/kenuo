@@ -370,7 +370,7 @@ public class UserController extends BaseController {
 	 */
 	@RequiresPermissions("sys:user:del")
 	@RequestMapping(value = "delete")
-	public String delete(User user, RedirectAttributes redirectAttributes) {
+	public String delete(User user,RedirectAttributes redirectAttributes) {
 		if (Global.isDemoMode()) {
 			addMessage(redirectAttributes, "演示模式，不允许操作！");
 			return "redirect:" + adminPath + "/sys/user/list?repage";
@@ -392,7 +392,7 @@ public class UserController extends BaseController {
 			systemService.deleteUser(user);
 			 //删除员工时，使app端fzx用户token失效
 			redisClientTemplate.del("UTOKEN_"+user.getId());
-			addMessage(redirectAttributes, "删除用户成功");
+			addMessage(redirectAttributes, "操作成功");
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}

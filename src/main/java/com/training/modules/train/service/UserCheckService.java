@@ -364,9 +364,8 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 //			find.setCode(StringUtils.leftPad("1", 4, "0"));
 //		}
 		find.setCode(String.valueOf(code+1));
+//		int a = 1/0;
 		userCheckDao.saveMtmyFranchisee(find);	//保存每天美耶的商家
-		CheckAddr checkAddr= userCheckDao.findCheckAddr(find);
-		find.setAddr(checkAddr);
 		userCheckDao.saveFranchisee(find);	//保存平台的商家
 		saveSupplyFranchisee(find);	//同步给供应链商家
 		String id = find.getId();
@@ -382,8 +381,8 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			String weburl = ParametersFactory.getMtmyParamValues("fzx_equally_franchisee");
 			logger.info("##### web接口路径:"+weburl);
 			String parpm = "{\"id\":"+Integer.valueOf(find.getId())+",\"name\":\""+find.getCompanyName()+"\",\"type\":\""+find.getAddr().getType()+"\","
-					+ "\"address\":\""+find.getAddress()+"\",\"legal_name\":\""+find.getName()+"\",\"mobile\":\""+find.getMobile()+"\","
-							+"\",\"charter_url\":\""+find.getCharterUrl();
+					+ "\"address\":\""+find.getAddress()+"\",\"legal_name\":\""+find.getLegalPerson()+"\",\"mobile\":\""+find.getMobile()
+							+"\",\"charter_url\":\""+find.getCharterUrl()+"\"}";
 			String url=weburl;
 			String result = WebUtils.postCSObject(parpm, url);
 			JSONObject jsonObject = JSONObject.fromObject(result);
