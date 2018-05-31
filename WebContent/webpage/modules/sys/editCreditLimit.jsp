@@ -35,12 +35,13 @@
 			return true;
 		};
 
-		function checkNum (val) {
+		function checkNum (vall) {
 			var va = $("#vals").val();
 			//var b = val >= 0 ? val : "";
-			if(val >= 0){
-		   		document.getElementById('creditLimit').value = val;
-		   		document.getElementById('vals').value = val;
+			var re = /^([+-]?)\d*\.?\d{0,4}$/;
+			if(vall >= 0 && re.test(vall)){
+		   		document.getElementById('creditLimit').value = vall;
+		   		document.getElementById('vals').value = vall;
 			}else{
 				document.getElementById('creditLimit').value = va;
 			}
