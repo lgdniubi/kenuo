@@ -105,7 +105,7 @@
 		   <tbody>
 		      <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 名称:</label></td>
-		         <td  class="width-35" ><form:input path="name" htmlEscape="false" maxlength="20" class="required form-control "/></td>
+		         <td  class="width-35" ><form:input path="name" htmlEscape="false" maxlength="10" class="required form-control "/></td>
 		      </tr>
 		       <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 版本类型:</label></td>

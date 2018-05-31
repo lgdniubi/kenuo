@@ -13,6 +13,7 @@ public class UserCheck extends DataEntity<UserCheck>{
 
 	private static final long serialVersionUID = 1L;
 	private String userid;		//用户id
+	private Integer applyId;		//用户id
 	private String applyType;		//申请类型
 	private String auditType;	//认证类型
 	private String status;		//审核状态（0：待审核，1：未通过，2：已通过）
@@ -57,6 +58,12 @@ public class UserCheck extends DataEntity<UserCheck>{
 		this.userid = userid;
 	}
 
+	public Integer getApplyId() {
+		return applyId;
+	}
+	public void setApplyId(Integer applyId) {
+		this.applyId = applyId;
+	}
 	public String getApplyType() {
 		return applyType;
 	}

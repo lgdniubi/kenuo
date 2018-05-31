@@ -79,6 +79,9 @@
 				</tr>
 				<c:forEach var="bank" items="${userCheck.bankAccount}">
 				    <tr>
+				         <td class="active" colspan="4"><label class="pull-left">银行卡:</label></td>
+					</tr>
+				    <tr>
 				         <td class=""><label class="pull-right">账户名称:</label></td>
 				         <td colspan="3">${bank.accountname}</td>
 					</tr>
@@ -87,9 +90,6 @@
 				         <td>${bank.openbank}</td>
 				         <td class=""><label class="pull-right">银行账户:</label></td>
 				         <td>${bank.bankaccount}</td>
-					</tr>
-				    <tr>
-				         <td class="active" colspan="4"><label class="pull-left">银行卡:</label></td>
 					</tr>
 				    <tr>
 				         <td class=""><label class="pull-right">正面:</label></td>

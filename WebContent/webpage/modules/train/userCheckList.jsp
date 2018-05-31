@@ -174,7 +174,7 @@
 					    						<a href="#" onclick="checkBtn(${userCheck.id},'${userCheck.userid}','${userCheck.auditType}')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>
 										</c:if>
 										<c:if test="${userCheck.status != 0}">
-					    				<a href="#" onclick="openDialogView('查看审核信息', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&opflag=view','1200px', '800px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>查看</a>
+					    				<a href="#" onclick="openDialogView('查看审核信息', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&opflag=view','800px', '700px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>查看</a>
 										</c:if>
 						    		</shiro:hasPermission>
 									</td>

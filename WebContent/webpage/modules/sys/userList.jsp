@@ -173,7 +173,8 @@
 									<shiro:hasPermission name="sys:user:del">
 										<%-- <a href="${ctx}/sys/user/delete?id=${user.id}" onclick="return confirmx('确认要删除该用户吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 删除</a> --%>
 										<c:if test="${user.delFlag == 0 }">
-											<a href="${ctx}/sys/user/delete?id=${user.id}" onclick="return promptx('请填写离职备注信息！不可为空！','确定要离职吗？',this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 离职</a>
+											<a href="${ctx}/sys/user/offJob?id=${user.id}" onclick="return promptx('请填写离职备注信息！不可为空！','确定要离职吗？',this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 离职</a>
+											<a href="${ctx}/sys/user/delete?id=${user.id}" onclick="return promptx('请填写离职备注信息！不可为空！','确定要冻结该用户吗？',this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 冻结</a>
 										</c:if>
 										<c:if test="${user.delFlag == 1 }">
 											<a href="${ctx}/sys/user/onJob?id=${user.id}" onclick="return confirmx('确定要恢复在职吗？',this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> 在职</a>

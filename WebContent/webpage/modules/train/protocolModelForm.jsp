@@ -49,7 +49,7 @@
                        <div class="form-group">
                             <label class="col-sm-2 control-label"><font color="red">*</font>标题： </label>
                             <div class="col-sm-8">
-                               <form:input path="name" cssClass="form-control required" maxlength="26" placeholder="请输入标题"/>
+                               <form:input path="name" cssClass="form-control required" maxlength="10" placeholder="请输入标题"/>
 						    </div>
 						    <c:if test="${not empty protocolModel.id}">
                              <input type="checkbox"  name="pids" value="0" id="isPidId"  />是否重新签订

@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
+import com.training.common.utils.DateUtils;
 import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.Office;
@@ -79,9 +80,9 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	public UserCheck getUserCheck(UserCheck userCheck) {
 		UserCheck findCheck = userCheckDao.getUserCheck(userCheck);
 		//查找银行卡信息
-		List<BankAccount> accounts= userCheckDao.findBankAccountInfo(userCheck);
+		List<BankAccount> accounts= userCheckDao.findBankAccountInfo(userCheck.getId());
 		//查找支付宝微信信息
-		if("syr".equals(userCheck.getAuditType())){//如果认证类型是手艺人，
+		if("syr".equals(findCheck.getAuditType())){//如果认证类型是手艺人，
 			List<PayAccount> payAccounts= userCheckDao.findPayAccountInfo(userCheck);
 			findCheck.setPayAccount(payAccounts);
 		}
@@ -156,6 +157,9 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			userCheckDao.saveModelFranchisee(modelFranchisee);
 		}else{
 			modelFranchisee.preUpdate();
+			if((DateUtils.formatDate(modelFranchisee.getAuthEndDate(), "yyyy-MM-dd").compareTo(DateUtils.getDate()))!=-1){
+				modelFranchisee.setStatus("0");
+			}
 			userCheckDao.editModelFranchisee(modelFranchisee);
 		}
 	}
@@ -361,13 +365,36 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 //		}
 		find.setCode(String.valueOf(code+1));
 		userCheckDao.saveMtmyFranchisee(find);	//保存每天美耶的商家
+		CheckAddr checkAddr= userCheckDao.findCheckAddr(find);
+		find.setAddr(checkAddr);
 		userCheckDao.saveFranchisee(find);	//保存平台的商家
+		saveSupplyFranchisee(find);	//同步给供应链商家
 		String id = find.getId();
 		saveOffice(id,find);
+		//更新认知支付银行账户表sys_bank_account 商家id
+		userCheckDao.updateBankAccountFranchiseeId(id,find.getApplyId());
 		return id ;
 	}
 
-	
+	//同步给供应链商家
+	private void saveSupplyFranchisee(UserCheck find) {
+		try {
+			String weburl = ParametersFactory.getMtmyParamValues("fzx_equally_franchisee");
+			logger.info("##### web接口路径:"+weburl);
+			String parpm = "{\"id\":"+Integer.valueOf(find.getId())+",\"name\":\""+find.getCompanyName()+"\",\"type\":\""+find.getAddr().getType()+"\","
+					+ "\"address\":\""+find.getAddress()+"\",\"legal_name\":\""+find.getName()+"\",\"mobile\":\""+find.getMobile()+"\","
+							+"\",\"charter_url\":\""+find.getCharterUrl();
+			String url=weburl;
+			String result = WebUtils.postCSObject(parpm, url);
+			JSONObject jsonObject = JSONObject.fromObject(result);
+			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+			/*if("200".equals(jsonObject.get("result"))){
+			}*/
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void saveOffice(String id,UserCheck find) {
 		//保存组织机构信息，给组织机构添加一条父类数据
 		Office office = new Office();
