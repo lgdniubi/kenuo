@@ -61,7 +61,7 @@
 	                   	 <tr>
                    			<!-- <th style="text-align: center;"><label for="i-checks"><input type="checkbox" name="" id="i-checks" class="i-checks"></label></th> -->
                    			<th style="text-align: center;">订单号</th>
-                   			<th style="text-align: center;">临时订单号</th>
+                   			<!-- <th style="text-align: center;">临时订单号</th> -->
                    			<th style="text-align: center;">订单类型</th>
                    			<th style="text-align: center;">欠款金额</th>
                    			<th style="text-align: center;">欠款机构</th>
@@ -81,9 +81,9 @@
                                 <td style="text-align: center;">
                                		${refund.orderId}
                                	</td>
-                               	<td style="text-align: center;">
+                               	<%-- <td style="text-align: center;">
                                		${refund.tempOrderId}
-                               	</td>
+                               	</td> --%>
                                	<td style="text-align: center;">
                                		<c:if test="${refund.orderType eq '1'}">线上</c:if>
                                		<c:if test="${refund.orderType eq '2'}">线下</c:if>

@@ -34,7 +34,7 @@
                                		${state.orderId}
                                	</td>
                                	<td style="text-align: center;">
-                               		${state.used_limit}
+                               		${state.usedLimit}
                                	</td>
                                	<td style="text-align: center;">
                                		<c:if test="${state.from eq '0'}">订单</c:if>
@@ -46,7 +46,7 @@
                                		<c:if test="${state.type eq '1'}">支出</c:if>
                                	</td>
                                	<td style="text-align: center;">
-                               		${state.create_date}
+                               		${state.createTime}
                                	</td>
 							</tr>
 						</c:forEach>

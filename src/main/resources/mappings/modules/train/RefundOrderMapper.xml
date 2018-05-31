@@ -60,10 +60,10 @@
 			arrearage_price as arrearagePrice,
 			arrearage_office as arrearageOffice,
 			amount as amount,
-			DATE_FORMAT(add_time,'%Y-%m-%d %H:%i') as addTime,
+			DATE_FORMAT(add_time,'%Y-%m-%d %H:%i:%s') as addTime,
 			order_status as orderStatus,
 			pay_code as payCode,
-			DATE_FORMAT(pay_time,'%Y-%m-%d %H:%i') as payTime,
+			DATE_FORMAT(pay_time,'%Y-%m-%d %H:%i:%s') as payTime,
 			charge_id as chargeId,
 			user_id as userId,
 			user_mobile as userMobile,
@@ -84,12 +84,12 @@
 	<select id="queryStatementOfRefund" resultType="Statement">
 		select 
 			id as stateId,
-			order_id,
-			office_id,
-			used_limit,
+			order_id as orderId,
+			office_id as officeId,
+			used_limit as usedLimit,
 			`from` as `from`,
-			type,
-			DATE_FORMAT(create_date,'%Y-%m-%d %H:%i') as create_date
+			type as type,
+			DATE_FORMAT(create_date,'%Y-%m-%d %H:%i:%s') as createTime
 		from sys_office_statement where order_id = #{order_id}
 		
 	</select>
@@ -108,7 +108,7 @@
 			t.`status` as `status`,
 			t.`explain` as `explain`,
 			t.openname,
-			DATE_FORMAT(t.create_time,'%Y-%m-%d %H:%i') as create_time,
+			DATE_FORMAT(t.create_time,'%Y-%m-%d %H:%i:%s') as create_time,
 			u.name as user_name
 		from sys_office_transferpay t
 		left join sys_user u on u.id = t.user_id
