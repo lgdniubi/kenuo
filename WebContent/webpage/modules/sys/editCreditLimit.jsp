@@ -36,7 +36,7 @@
 			//只能输入数字与点
 			//只能输入一个点
 			//小数点后4位
-			document.getElementById('creditLimit').value = vall.replace(/^\./g,"").replace(/[^\d.]/g,"").replace(/\.{2,}/g,".").replace(/^(\-)*(\d+)\.(\d\d\d\d).*$/,'$1$2.$3');
+			document.getElementById('creditLimit').value = vall.replace(/^\./g,"").replace(/[^\d.]/g,"").replace(".","$#$").replace(/\./g,"").replace("$#$",".").replace(/^(\-)*(\d+)\.(\d\d\d\d).*$/,'$1$2.$3');
 		}; 
 
 	</script>
