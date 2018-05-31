@@ -36,16 +36,11 @@
 		};
 
 		function checkNum (vall) {
-			var va = $("#vals").val();
-			//var b = val >= 0 ? val : "";
-			var re = /^([+-]?)\d*\.?\d{0,4}$/;
-			if(vall >= 0 && re.test(vall)){
-		   		document.getElementById('creditLimit').value = vall;
-		   		document.getElementById('vals').value = vall;
-			}else{
-				document.getElementById('creditLimit').value = va;
-			}
-		    
+			//数字开头
+			//只能输入数字与点
+			//只能输入一个点
+			//小数点后4位
+			document.getElementById('creditLimit').value = vall.replace(/^\./g,"").replace(/[^\d.]/g,"").replace(/\.{2,}/g,".").replace(/^(\-)*(\d+)\.(\d\d\d\d).*$/,'$1$2.$3');
 		}; 
 
 	</script>
@@ -57,7 +52,6 @@
 			<%-- <input type="hidden" name="usedLimit" id="usedLimit" value="${officeAcount.usedLimit}"> --%>
 			<input type="hidden" name="useLimit" id="useLimit">
 			<input type="hidden" id="credit" value="${officeAcount.creditLimit}">
-			<input type="hidden" id="vals" name="vals">
 			<sys:message content="${message}"/>
 			<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		   <tbody>
