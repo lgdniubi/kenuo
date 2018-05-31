@@ -174,10 +174,13 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	//更改media_manage_role，该商家的角色版本
 	public void updateMediaRoleModelId(@Param("franchiseeid")String franchiseeid, @Param("modid")String modid);
 	//查找银行卡信息
-	public List<BankAccount> findBankAccountInfo(UserCheck userCheck);
+	public List<BankAccount> findBankAccountInfo(String id);
 	//查找支付宝微信信息
 	public List<PayAccount> findPayAccountInfo(UserCheck userCheck);
 
 	public CheckAddr findCheckAddr(UserCheck userCheck);
+	//更新认知支付银行账户表sys_bank_account 商家id
+	public void updateBankAccountFranchiseeId(@Param("franchiseeid")String id, @Param("applyId")Integer applyId);
+
 	
 }

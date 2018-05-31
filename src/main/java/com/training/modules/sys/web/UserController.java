@@ -398,6 +398,41 @@ public class UserController extends BaseController {
 	}
 	
 	/**
+	 * 离职操作
+	 * @param user
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequiresPermissions("sys:user:del")
+	@RequestMapping(value = "offJob")
+	public String offJob(User user, RedirectAttributes redirectAttributes) {
+		if (Global.isDemoMode()) {
+			addMessage(redirectAttributes, "演示模式，不允许操作！");
+			return "redirect:" + adminPath + "/sys/user/list?repage";
+		}
+		if(reservationDao.findCountById(user.getId()) != 0){
+			addMessage(redirectAttributes, "删除用户失败, 当前用户存在未完成的预约");
+			return "redirect:" + adminPath + "/sys/user/list?repage";
+		}
+		if(specBeauticianDao.findSpecBeautician(user.getId()) != 0){
+			addMessage(redirectAttributes, "删除用户失败,当前用户属于特殊美容师,请先从特殊美容师列表删除");
+			return "redirect:" + adminPath + "/sys/user/list?repage";
+		}
+		if (UserUtils.getUser().getId().equals(user.getId())) {
+			addMessage(redirectAttributes, "删除用户失败, 不允许删除当前用户");
+		} else if (User.isAdmin(user.getId())) {
+			addMessage(redirectAttributes, "删除用户失败, 不允许删除超级管理员用户");
+		} else {
+			user.preUpdate();
+			systemService.offJob(user);
+			//删除员工时，使app端fzx用户token失效
+			redisClientTemplate.del("UTOKEN_"+user.getId());
+			addMessage(redirectAttributes, "用户离职成功");
+		}
+		return "redirect:" + adminPath + "/sys/user/list?repage";
+	}
+	
+	/**
 	 * 
 	 * @param user
 	 * @param redirectAttributes

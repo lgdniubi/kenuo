@@ -77,6 +77,7 @@
 			u.mobile,
 			u.type,
 			u.id AS userid,
+			tap.id AS applyId,
 			tap.apply_type AS applyType,
 			tap.audit_type AS auditType,
 			tap.create_date AS createDate,
@@ -157,6 +158,8 @@
 		<if test="auditType !=null and auditType == 'qy'">
 			SELECT
 				au.type,
+				au.legal_card AS idcard,
+				au.set_date,
 				au.set_date,
 				ap.`name` AS provinceName,
 				ac.`name` AS cityName,
@@ -204,10 +207,12 @@
 			  parent_id,
 			  parent_ids,
 			  name,
+			  `short_name`,
 			  sort,
 			  code,
 			  area_id,
 			  type,
+			  type2,
 			  address,
 			  legal_name,
 			  mobile,
@@ -220,17 +225,24 @@
 			  icardtwo,
 			  del_flag,
 			  remarks,
-			  intro
+			  intro,
+			  province_id`,
+			 `city_id`,
+			 `district_id`,
+			 `legal_card`,
+			 `set_date`
 			) 
 		VALUES
 		  (
 		    '1', 
 			'0,1,',
 		    #{companyName},
+		    #{shortName},
 		    30,
 		    #{code},
 		    #{districtId},
 		    2,
+		    #{addr.type},
 		    #{address},
 		    #{legalPerson},
 		    #{mobile},
@@ -243,7 +255,12 @@
 			#{icardtwo},
 			0,
 			'用户审核增加',
-			#{intro}
+			#{intro},
+			null,
+			null,
+			#{districtId},
+			#{addr.idcard},
+			#{addr.setDate}
 		  )
 	</insert>
 	<insert id="saveMtmyFranchisee" >
@@ -297,6 +314,7 @@
 			`mod_id` = #{modid},
 			`auth_start_date` = #{authStartDate},
 			<if test="discount != null"> `discount`= #{discount}, </if>
+			<if test="status != null"> `status`= #{status}, </if>
 			<if test="paytype != null"> `pay_type`= #{paytype}, </if>
 			`auth_end_date` = #{authEndDate}
 		WHERE id = #{id} and franchisee_id = #{franchiseeid}
@@ -576,5 +594,10 @@
 	<update id="updateMediaRoleModelId">
 		UPDATE media_manage_role SET mod_id = #{modid} WHERE franchisee_id = #{franchiseeid}
 	</update>
-	
+	<!-- 更新认知支付银行账户表sys_bank_account 商家id -->
+	<update id="updateBankAccountFranchiseeId">
+		UPDATE sys_bank_account set
+		 `franchisee_id`=#{franchiseeid}
+		WHERE apply_id = #{applyId}
+	</update>
 </mapper>
