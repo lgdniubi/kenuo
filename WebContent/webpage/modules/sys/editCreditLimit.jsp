@@ -13,10 +13,6 @@
 			var v = $("#creditLimit").val();
 			var usedLimit = $("#usedLimit").val();
 			var useLimit = creditLimit - usedLimit;
-			if(v < 0){
-				alert("信用额度不能设置为负数");
-				return;
-			}
 			if(v < useLimit ){
 				alert("信用额度不能小于已用额度");
 				return;
