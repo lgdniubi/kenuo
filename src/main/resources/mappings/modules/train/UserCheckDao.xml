@@ -137,21 +137,36 @@
 			`sys_pay_account`
 		WHERE apply_id = #{id}
 	</select>
-	<!-- 查找支付宝微信信息 -->
+	<!-- 查找 -->
 	<select id="findCheckAddr" resultType="CheckAddr">
-		SELECT
-			au.`mobile` AS syrMobile,
-			au.`idcard`,
-			au.`email`,
-			au.`address` AS syrAddress,
-			ap.`name` AS provinceName,
-			ac.`name` AS cityName,
-			ad.`name` AS districtName
-		FROM train_audituser_info au
-		LEFT JOIN sys_area ap ON ap.id = au.province_id
-		LEFT JOIN sys_area ac ON ac.id = au.city_id
-		LEFT JOIN sys_area ad ON ad.id = au.district_id
-		WHERE apply_id = #{id}
+		<if test="auditType !=null and auditType == 'syr'">
+			SELECT
+				au.`mobile` AS syrMobile,
+				au.`idcard`,
+				au.`email`,
+				au.`address` AS syrAddress,
+				ap.`name` AS provinceName,
+				ac.`name` AS cityName,
+				ad.`name` AS districtName
+			FROM train_audituser_info au
+			LEFT JOIN sys_area ap ON ap.id = au.province_id
+			LEFT JOIN sys_area ac ON ac.id = au.city_id
+			LEFT JOIN sys_area ad ON ad.id = au.district_id
+			WHERE apply_id = #{id}
+		</if>
+		<if test="auditType !=null and auditType == 'qy'">
+			SELECT
+				au.type,
+				au.set_date,
+				ap.`name` AS provinceName,
+				ac.`name` AS cityName,
+				ad.`name` AS districtName
+			FROM train_franchisee_info au
+			LEFT JOIN sys_area ap ON ap.id = au.province_id
+			LEFT JOIN sys_area ac ON ac.id = au.city_id
+			LEFT JOIN sys_area ad ON ad.id = au.district_id
+			WHERE apply_id = #{id}
+		</if>
 	</select>
 	<select id="findMaxCode" resultType="long">
 		SELECT MAX(code) FROM sys_franchisee

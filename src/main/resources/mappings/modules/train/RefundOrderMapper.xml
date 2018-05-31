@@ -50,4 +50,74 @@
 		WHERE oa.freeze = 0
 	</update>
 	
+	
+	
+	<select id="findList" resultType="RefundOrder">
+		SELECT 
+			order_id as orderId,
+			temp_order_id as tempOrderId,
+			order_type as orderType,
+			arrearage_price as arrearagePrice,
+			arrearage_office as arrearageOffice,
+			amount as amount,
+			DATE_FORMAT(add_time,'%Y-%m-%d %H:%i:%s') as addTime,
+			order_status as orderStatus,
+			pay_code as payCode,
+			DATE_FORMAT(pay_time,'%Y-%m-%d %H:%i:%s') as payTime,
+			charge_id as chargeId,
+			user_id as userId,
+			user_mobile as userMobile,
+			user_office_id as userOfficeId,
+			channel_flag as channelFlag,
+			o.name as arrearageOfficeName,
+			u.name as userName
+		FROM train_refund_order ro
+		left join sys_user u on u.id = ro.user_id
+		left join sys_office o on o.id = arrearage_office
+		where ro.del_flag = '0'
+		<if test="orderId != null and orderId !=''">
+			and order_id = #{orderId}
+		</if>
+	</select>
+	
+	
+	<select id="queryStatementOfRefund" resultType="Statement">
+		select 
+			id as stateId,
+			order_id as orderId,
+			office_id as officeId,
+			used_limit as usedLimit,
+			`from` as `from`,
+			type as type,
+			DATE_FORMAT(create_date,'%Y-%m-%d %H:%i:%s') as createTime
+		from sys_office_statement where order_id = #{order_id}
+		
+	</select>
+	
+	<select id="queryTransferpay" resultType="Transferpay">
+		select
+			t.id as payId,
+			t.serialnumber,
+			t.bankaccount,
+			t.openbank,
+			t.office_id,
+			t.order_id,
+			t.repaymonth,
+			t.user_id,
+			t.proof,
+			t.`status` as `status`,
+			t.`explain` as `explain`,
+			t.openname,
+			DATE_FORMAT(t.create_time,'%Y-%m-%d %H:%i:%s') as create_time,
+			u.name as user_name
+		from sys_office_transferpay t
+		left join sys_user u on u.id = t.user_id
+		where t.order_id = #{order_id}
+	</select>
+	
+	<update id="makeSureInAccount">
+		update train_refund_order
+		set order_status = '3'
+		where order_id = #{order_id}
+	</update>
 </mapper>

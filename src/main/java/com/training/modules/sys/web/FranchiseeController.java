@@ -31,6 +31,7 @@ import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.entity.BankAccount;
 
 import net.sf.json.JSONObject;
 
@@ -79,6 +80,8 @@ public class FranchiseeController extends BaseController{
 		//当时id不为空与不为""时,查看
 		if(!StringUtils.isEmpty(franchisee.getId())){
 			franchisee = franchiseeService.get(franchisee);
+			List<BankAccount> bankAccount = franchiseeService.findBankAccountList(franchisee);
+			franchisee.setBankAccount(bankAccount);
 		}else{
 			//添加或者修改
 			franchisee.setParent(franchiseeService.get(franchisee.getParent().getId()));

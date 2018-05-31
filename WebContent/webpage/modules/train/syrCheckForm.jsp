@@ -106,10 +106,8 @@
 				    <tr>
 				         <td class=""><label class="pull-right">支付宝:</label></td>
 				         <td>${pay.no}</td>
-				         <td class=""><label class="pull-right">姓名:</label></td>
-				         <td>${pay.name}</td>
-				         <td class=""><label class="pull-right">电话:</label></td>
-				         <td>${pay.mobile}</td>
+				         <td class=""><label class="pull-right">姓名:${pay.name}</label></td>
+				         <td class=""><label class="pull-right">电话:${pay.mobile}</label></td>
 					</tr>
 				</c:if>
 				<c:if test="${pay.payType ==2}">
@@ -119,10 +117,8 @@
 				    <tr>
 				         <td class=""><label class="pull-right">微信:</label></td>
 				         <td>${pay.no}</td>
-				         <td class=""><label class="pull-right">姓名:</label></td>
-				         <td>${pay.name}</td>
-				         <td class=""><label class="pull-right">电话:</label></td>
-				         <td>${pay.mobile}</td>
+				         <td class=""><label class="pull-right">姓名:${pay.name}</label></td>
+				         <td class=""><label class="pull-right">电话:${pay.mobile}</label></td>
 					</tr>
 				</c:if>
 				</c:forEach>

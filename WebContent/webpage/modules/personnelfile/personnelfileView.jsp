@@ -24,12 +24,13 @@
 <script type="text/javascript">
 		var validateForm;
 		function valiForm(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-		  if(validateForm.form()){
+		  location.href="javascript:history.go(-1);";
+		  /* if(validateForm.form()){
 			 $("#inputForm").submit();
 			 return true;  
 
-		  }
-		  return false;
+		  } */
+		  //return true;
 		}
 		$(document).ready(function(){
 			//用户头像上传
@@ -433,15 +434,21 @@
 							<td><label class="pull-right">学历：</label></td>
 							<td>
 								<select class="form-control max-width-150" name="userEducation.education">
-									<option value="1" selected="<c:if test="${personnelFile.userEducation.education == 0}">selected</c:if>">小学</option>
-									<option value="2" selected="<c:if test="${personnelFile.userEducation.education == 2}">selected</c:if>">初中</option>
+									<option value="1" <c:if test="${personnelFile.userEducation.education == '1'}">selected="selected"</c:if> >小学</option>
+									<option value="2" <c:if test="${personnelFile.userEducation.education == '2'}">selected="selected"</c:if> >初中</option>
+									<option value="3" <c:if test="${personnelFile.userEducation.education == '3'}">selected="selected"</c:if> >高中</option>
+									<option value="4" <c:if test="${personnelFile.userEducation.education == '4'}">selected="selected"</c:if> >大专</option>
+									<option value="5" <c:if test="${personnelFile.userEducation.education == '5'}">selected="selected"</c:if> >本科</option>
+									<option value="6" <c:if test="${personnelFile.userEducation.education == '6'}">selected="selected"</c:if> >硕士</option>
+									<option value="7" <c:if test="${personnelFile.userEducation.education == '7'}">selected="selected"</c:if> >博士</option>
 								</select>
 							</td>
 							<td><label class="pull-right">学位：</label></td>
 							<td>
 								<select class="form-control max-width-150" name="userEducation.degree">
-									<option value="1">博士</option>
-									<option value="2">博士后</option>
+									<option value="1" <c:if test="${personnelFile.userEducation.degree == '1'}">selected="selected"</c:if> >学士</option>
+									<option value="2" <c:if test="${personnelFile.userEducation.degree == '2'}">selected="selected"</c:if> >硕士</option>
+									<option value="3" <c:if test="${personnelFile.userEducation.degree == '3'}">selected="selected"</c:if> >博士</option>
 								</select>
 							</td>
 							<td><label class="pull-right">毕业时间：</label></td>

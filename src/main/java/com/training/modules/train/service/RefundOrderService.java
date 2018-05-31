@@ -4,13 +4,18 @@
 package com.training.modules.train.service;
 
 import java.util.List;
-import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.training.common.service.CrudService;
 import com.training.modules.train.dao.RefundOrderMapper;
 import com.training.modules.train.entity.ArrearageOfficeList;
+import com.training.modules.train.entity.RefundOrder;
+import com.training.modules.train.entity.Statement;
+import com.training.modules.train.entity.Transferpay;
 
 /**  
 * <p>Title: RefundOrderService.java</p>  
@@ -21,7 +26,8 @@ import com.training.modules.train.entity.ArrearageOfficeList;
 */
 
 @Service
-public class RefundOrderService {
+@Transactional(readOnly = false)
+public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrder> {
 
 	@Autowired
 	private RefundOrderMapper refundOrderMapper;
@@ -61,4 +67,27 @@ public class RefundOrderService {
 		refundOrderMapper.updateOfficeAccount();
 	}
 	
+	/**
+	 * 查询对账单
+	 * @param order_id
+	 * @return
+	 */
+	public List<Statement> queryStatementOfRefund(String order_id){
+		return this.refundOrderMapper.queryStatementOfRefund(order_id);
+	}
+	/**
+	 * 查询支付信息
+	 * @param order_id
+	 * @return
+	 */
+	public Transferpay queryTransferpay(String order_id){
+		return this.refundOrderMapper.queryTransferpay(order_id);
+	}
+	/**
+	 * 确认入账
+	 * @param order_id
+	 */
+	public void makeSureInAccount(String order_id){
+		this.refundOrderMapper.makeSureInAccount(order_id);
+	}
 }

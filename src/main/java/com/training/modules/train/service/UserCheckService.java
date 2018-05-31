@@ -81,9 +81,12 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		//查找银行卡信息
 		List<BankAccount> accounts= userCheckDao.findBankAccountInfo(userCheck);
 		//查找支付宝微信信息
-		List<PayAccount> payAccounts= userCheckDao.findPayAccountInfo(userCheck);
-		findCheck.setPayAccount(payAccounts);
+		if("syr".equals(userCheck.getAuditType())){//如果认证类型是手艺人，
+			List<PayAccount> payAccounts= userCheckDao.findPayAccountInfo(userCheck);
+			findCheck.setPayAccount(payAccounts);
+		}
 		findCheck.setBankAccount(accounts);
+		userCheck.setAuditType(findCheck.getAuditType());
 		CheckAddr checkAddr= userCheckDao.findCheckAddr(userCheck);
 		findCheck.setAddr(checkAddr);
 		return findCheck;
