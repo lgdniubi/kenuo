@@ -6,7 +6,9 @@ package com.training.modules.sys.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -61,10 +63,12 @@ import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.LogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.dao.UserCheckDao;
 import com.training.modules.train.entity.FzxRole;
 import com.training.modules.train.entity.MediaRole;
 import com.training.modules.train.service.FzxRoleService;
 import com.training.modules.train.service.MediaRoleService;
+import com.training.modules.train.service.PcRoleService;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -84,6 +88,8 @@ public class SystemService extends BaseService implements InitializingBean {
 
 	@Autowired
 	private UserDao userDao;
+	@Autowired
+	private UserCheckDao userCheckDao;
 	@Autowired
 	private RoleDao roleDao;
 	@Autowired
@@ -112,6 +118,8 @@ public class SystemService extends BaseService implements InitializingBean {
 	private FzxRoleService fzxRoleService;
 	@Autowired
 	private MediaRoleService mediaRoleService;
+	@Autowired
+	private PcRoleService pcRoleService;
 	
 	public SessionDAO getSessionDao() {
 		return sessionDao;
@@ -805,7 +813,7 @@ public class SystemService extends BaseService implements InitializingBean {
 //		saveUserLog2(user);
 		//离职后变为普通商家和普通机构
 		userDao.updateCompanyAndOfficeId(user);
-		userDao.updateUserRole(user);	//离职后变为普通角色
+		updateUserRole(user);
 		
 		// 清除用户缓存
 		UserUtils.clearCache(user);
@@ -825,6 +833,24 @@ public class SystemService extends BaseService implements InitializingBean {
 		String result = WebUtils.postCSObject(parpm, url);
 		JSONObject jsonObject = JSONObject.fromObject(result);
 		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+	}
+
+	private void updateUserRole(User user) {
+		String userid = user.getId();
+		//离职后变为普通角色
+		userCheckDao.deleteOldFzxRoleOffice(userid);
+		userCheckDao.deleteOldFzxRole(userid);
+		FzxRole role = fzxRoleService.getFzxRoleByModAndEname("1", "pthy");
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("fzxUserRoleId", 0);
+		map.put("userid", user.getId());
+		map.put("roleid", role.getRoleId());
+		userCheckDao.insertFzxUserRole(map);
+		int fzxUserRoleId = (int) map.get("fzxUserRoleId");
+		//向fzx_user_role_office插入一条数据  普通商家id=1000000
+		userCheckDao.insertFzxUserRoleOffice(fzxUserRoleId,"1000000");
+		mediaRoleService.deleteUserRole(userid);
+		pcRoleService.deleteUserRole(userid);
 	}
 	
 	/**
