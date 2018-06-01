@@ -7,7 +7,6 @@ import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.crm.dao.UserDetailDao;
 import com.training.modules.crm.entity.UserDetail;
-import com.training.modules.ec.utils.CommonScopeUtils;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.UserUtils;
 
@@ -61,7 +60,6 @@ public class UserDetailService extends CrudService<UserDetailDao,UserDetail> {
 			sqlString.append(" WHERE 1 = 1 ");
 		}
 		dto.getSqlMap().put("dsf",sqlString.toString());
-		System.out.println(sqlString.toString());
 //		dto.getSqlMap().put("dsf",CommonScopeUtils.dataScopeFilter("mc"));
 	    dto.setPage(page);
 		page.setList(dao.findUserList(dto));
