@@ -305,7 +305,10 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		MediaRole mediaRole = mediaRoleService.getMediaRoleByModAndEname(modelFranchisee.getModid());
 		MediaRole findRoleMenu = mediaRoleService.findRoleMenu(mediaRole);
 		mediaRole.setRoleId(0);
-		mediaRoleService.savemediaRole(mediaRole);
+		mediaRole.setFranchiseeid(Integer.valueOf(franchid));
+		mediaRole.preInsert();
+		mediaRoleDao.insert(mediaRole);
+//		mediaRoleService.savemediaRole(mediaRole);
 		findRoleMenu.setRoleId(mediaRole.getRoleId());
 		mediaRoleService.saveRoleMenu(findRoleMenu);
 		mediaRoleService.insertUserRole(modelFranchisee.getUserid(),mediaRole.getRoleId());
