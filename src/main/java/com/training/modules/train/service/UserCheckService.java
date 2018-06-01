@@ -345,6 +345,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			userCheckDao.insertPcUserRole(modelFranchisee.getUserid(),Integer.valueOf(roleid));
 		    break;
 		case 2://向pc_user_role中插入一条记录
+			deleteOldFzxRoleAndOffice(modelFranchisee.getUserid());
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("fzxUserRoleId", 0);
 			map.put("userid", modelFranchisee.getUserid());
