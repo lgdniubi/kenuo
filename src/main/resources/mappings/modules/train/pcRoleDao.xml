@@ -86,10 +86,6 @@
 	<delete id="deleteRoleMenu">
 		DELETE FROM pc_menu_role WHERE role_id = #{roleId}
 	</delete>
-	<!-- 删除用户所有角色 -->
-	<delete id="deleteUserRole">
-		DELETE FROM pc_user_role WHERE user_id = #{id}
-	</delete>
 	<insert id="insertRoleMenu">
 		INSERT INTO pc_menu_role(
 			role_id, 
