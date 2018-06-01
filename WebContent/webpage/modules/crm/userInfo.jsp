@@ -26,9 +26,11 @@ input::-webkit-inner-spin-button{
 	$(document).ready(function() {
 		var officeId = $("#officeId").val(); 
 		var beautyId =$("#beautyId").val();
-		if(officeId !=''){
+		if(beautyId !=''){
 		    $("#officeButton").attr("disabled","disabled");//添加disabled属性
 		    $("#beautyButton").attr("disabled","disabled");         
+		}else if(beautyId == '' && officeId != ''){
+			$("#officeButton").attr("disabled","disabled");//添加disabled属性
 		}
 	})
 	function save() {

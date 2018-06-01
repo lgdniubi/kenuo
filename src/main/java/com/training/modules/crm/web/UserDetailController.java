@@ -110,11 +110,8 @@ public class UserDetailController extends BaseController {
 			if (StringUtils.isNotEmpty(keyword)) {
 				//用手机号无权限过滤去查	
 				Page<UserDetail> page  = userDetailService.getUserWithoutScope(new Page<UserDetail>(request, response), userDetail);
-				//如果查到一条
-				if (page.getList().size()>0) {
-					model.addAttribute("detail", userDetail);
-					model.addAttribute("page", page);
-				}
+				model.addAttribute("detail", userDetail);
+				model.addAttribute("page", page);
 			}else{
 				Page<UserDetail> page = userDetailService.getUserList(new Page<UserDetail>(request, response), userDetail);
 				model.addAttribute("detail", userDetail);

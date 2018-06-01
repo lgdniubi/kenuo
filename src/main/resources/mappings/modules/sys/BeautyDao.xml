@@ -53,6 +53,7 @@
 			mtmydb.mtmy_beauty_comment mbc
 		WHERE
 			comm_id > #{commId}
+			AND parent_id = '0'
 		GROUP BY
 			beauty_id
 	</select>

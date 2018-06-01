@@ -38,6 +38,7 @@
 			mtmydb.mtmy_shop_comment msc
 		WHERE
 			id > #{commentId}
+			AND	parent_id = '0'
 		GROUP BY
 			shop_id
 	</select>
