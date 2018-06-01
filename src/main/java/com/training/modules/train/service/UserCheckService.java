@@ -28,6 +28,7 @@ import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.FzxRoleDao;
+import com.training.modules.train.dao.MediaRoleDao;
 import com.training.modules.train.dao.PcRoleDao;
 import com.training.modules.train.dao.UserCheckDao;
 import com.training.modules.train.entity.BankAccount;
@@ -61,6 +62,8 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	private FzxRoleDao fzxRoleDao;
 	@Autowired
 	private MediaRoleService mediaRoleService;
+	@Autowired
+	private MediaRoleDao mediaRoleDao;
 	
 	/**
 	 * 保存用户审核的结果
@@ -192,8 +195,8 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			//向商家和机构插入一条信息
 			String franchid = saveFranchiseeAndOffice(find);
 			
-			//设置该用户的超级管理员
-			setSuperAdminForUserid(modelFranchisee,franchid);
+			//设置该用户的超级管理员	2018-06-01改为复制所有角色为该用户创建复制后 的sjgly角色
+//			setSuperAdminForUserid(modelFranchisee,franchid);
 			//设置公共的角色
 			setRoleForUser(modelFranchisee,franchid);
 			
@@ -206,7 +209,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			if(!franchisee.getModid().equals(modelFranchisee.getModid())){	//如果版本更换才重新设置
 				deleteAllRolesForUser(modelFranchisee.getUserid(),franchisee.getFranchiseeid());
 				//设置该用户的超级管理员
-				setSuperAdminForUserid(modelFranchisee,franchisee.getFranchiseeid());
+//				setSuperAdminForUserid(modelFranchisee,franchisee.getFranchiseeid());
 				//设置公共的角色
 //				setRoleForUser(modelFranchisee,franchisee.getFranchiseeid());
 				//变更改商家角色版本id
@@ -276,6 +279,10 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			userCheckDao.insertPcCommonRole(pcrole);
 			//插入公共角色后创建公共权限
 			setPcCommonMenuByRoleId(roleid,pcrole.getId());
+			if ("sjgly".equals(pcrole.getEname())){
+				//设置该用户的超级管理员
+				setSuperAdminForUserid(modelFranchisee,franchid,pcrole.getId(),1);
+			}
 		}
 		
 		//向妃子校角色表插入数据
@@ -289,7 +296,19 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			userCheckDao.insertFzxCommonRole(fzxRole);
 			//插入公共角色后创建公共权限
 			setFzxCommonMenuByRoleId(roleid,fzxRole.getId());
+			if ("sjgly".equals(fzxRole.getEnname())){
+				//设置该用户的超级管理员
+				setSuperAdminForUserid(modelFranchisee,franchid,fzxRole.getId(),2);
+			}
 		}
+		//赋予认证这个人自媒体超级管理员角色---先根据版本查出超管，再插入
+		MediaRole mediaRole = mediaRoleService.getMediaRoleByModAndEname(modelFranchisee.getModid());
+		MediaRole findRoleMenu = mediaRoleService.findRoleMenu(mediaRole);
+		mediaRole.setRoleId(0);
+		mediaRoleService.savemediaRole(mediaRole);
+		findRoleMenu.setRoleId(mediaRole.getRoleId());
+		mediaRoleService.saveRoleMenu(findRoleMenu);
+		mediaRoleService.insertUserRole(modelFranchisee.getUserid(),mediaRole.getRoleId());
 	}
 
 	/**
@@ -317,9 +336,29 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 
 	/**
 	 * 设置该用户的超级管理员
+	 * @param roleid 
 	 * @param userid
 	 */
-	private void setSuperAdminForUserid(ModelFranchisee modelFranchisee,String franchid) {
+	private void setSuperAdminForUserid(ModelFranchisee modelFranchisee,String franchid,String roleid, Integer sw) {
+		switch(sw){
+		case 1:	//向pc_user_role中插入一条记录
+			userCheckDao.insertPcUserRole(modelFranchisee.getUserid(),Integer.valueOf(roleid));
+		    break;
+		case 2://向pc_user_role中插入一条记录
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("fzxUserRoleId", 0);
+			map.put("userid", modelFranchisee.getUserid());
+			map.put("roleid", roleid);
+			userCheckDao.insertFzxUserRole(map);
+			int fzxUserRoleId = (int) map.get("fzxUserRoleId");
+			//向fzx_user_role_office插入一条数据
+			userCheckDao.insertFzxUserRoleOffice(fzxUserRoleId,franchid);
+		    break;
+		default:
+		    break;
+		}
+	}
+/*	private void setSuperAdminForUserid(ModelFranchisee modelFranchisee,String franchid) {
 		//从pc_role查出超级管理员角色记录插入pc_user_role
 		int pc_roleid = userCheckDao.findByModidAndEname(modelFranchisee);
 		//向pc_user_role中插入一条记录
@@ -345,7 +384,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		mediaRoleService.insertUserRole(modelFranchisee.getUserid(),mediaRole.getRoleId());
 		
 	}
-
+*/
 	/**
 	 * 删除该用户以前的角色fzx_user_role和角色机构信息fzx_user_role_office
 	 * @param userid
