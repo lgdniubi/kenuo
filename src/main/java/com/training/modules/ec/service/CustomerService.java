@@ -68,7 +68,7 @@ public class CustomerService extends CrudService<CustomerDao, Customer>{
 		int result = customerDao.selectFranchisee(userId,franchiseeId);
 		if(result == 1){       //当该店铺的归属商家在新店表中有记录时
 			Customer oldCustomer = customerDao.selectFranchiseeOffice(userId, franchiseeId);
-			if(oldCustomer.getOfficeId() == null){  //当该用户即将绑定的店铺对应的归属商家未绑定相关店铺时
+			if(oldCustomer.getBeautyId() == null){  //当该用户即将绑定的店铺对应的归属商家未绑定相关店铺时
 				Customer customer = new Customer();
 				customer.setUserId(userId);
 				customer.setOfficeId(officeId);

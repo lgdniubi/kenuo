@@ -226,7 +226,7 @@ public class Comparison {
 								if (afterValue.equals(beforeValue)) {
 
 								} else {
-									System.out.println("数据类型为：String" + typeName + afterValue + "null" + beforeValue);
+//									System.out.println("数据类型为：String" + typeName + afterValue + "null" + beforeValue);
 
 									if (null == beforeValue || beforeValue.trim().length() <= 0) {
 										if (selectCols.containsKey(typeName)) {
@@ -257,7 +257,7 @@ public class Comparison {
 						Double beforeValue = (Double) m.invoke(beforeObj);
 
 						if (null != afterValue) {
-							System.out.println("数据类型为：double" + typeName + afterValue + "null" + beforeValue);
+//							System.out.println("数据类型为：double" + typeName + afterValue + "null" + beforeValue);
 							if (null == beforeValue) {
 								sBuilder.append(cols.get(typeName) + ":新增--" + afterValue + "; ");
 							} else if (afterValue.doubleValue() != beforeValue.doubleValue()
@@ -271,11 +271,11 @@ public class Comparison {
 					if (type.equals("class java.util.Date")) {
 						Method m = afterObj.getClass().getMethod("get" + nameUpperCase);
 						Date afterValue = (Date) m.invoke(afterObj);
-						System.out.println("数据类型为：Date");
+//						System.out.println("数据类型为：Date");
 						java.util.Date beforeValue = (java.util.Date) m.invoke(beforeObj);
 						if (afterValue != null) {
 							if (afterValue.equals(beforeValue)) {
-								System.out.println(sBuilder);
+//								System.out.println(sBuilder);
 							} else {
 								if (null == beforeValue) {
 									sBuilder.append(cols.get(typeName) + "：新增--" + format.format(afterValue) + ";");

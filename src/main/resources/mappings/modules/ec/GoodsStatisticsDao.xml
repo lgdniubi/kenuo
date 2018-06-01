@@ -47,6 +47,7 @@
 			mtmydb.mtmy_comment b
 		WHERE
 			comment_id > ${commentId}
+			AND	parent_id = '0'
 		GROUP BY
 			goods_id
 	</select>

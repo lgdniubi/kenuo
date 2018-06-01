@@ -7,7 +7,8 @@ import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.crm.dao.UserDetailDao;
 import com.training.modules.crm.entity.UserDetail;
-import com.training.modules.ec.utils.CommonScopeUtils;
+import com.training.modules.sys.entity.User;
+import com.training.modules.sys.utils.UserUtils;
 
 /**   		  
 * kenuo      
@@ -36,8 +37,30 @@ public class UserDetailService extends CrudService<UserDetailDao,UserDetail> {
 	 */
 	public Page<UserDetail> getUserList(Page<UserDetail> page,UserDetail dto){
 		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
-		//orders.getSqlMap().put("dsf", dataScopeFilter(orders.getCurrentUser(), "o", "a"));
-		dto.getSqlMap().put("dsf",CommonScopeUtils.dataScopeFilter("mc"));
+		User user = UserUtils.getUser();
+		String a = user.getOffice().getParentIds()+user.getOffice().getId();
+		StringBuilder sqlString = new StringBuilder();
+		
+		// 超级管理员，跳过权限过滤
+		if(!user.isAdmin()){
+			//当用户非“管理员”用户时，根据数据权限判断
+			if(User.DATA_SCOPE_OFFICE_AND_CHILD.equals(String.valueOf(user.getDataScope()))){
+				//数据范围(1:所在部门及以下数据)
+				sqlString.append(" WHERE 1 = 1 ");
+				sqlString.append(" AND mc.office_id IN (SELECT id FROM sys_office o ");
+				sqlString.append(" WHERE locate( '" + a +"',concat(o.parent_ids, o.id))>0)");
+			}else if(User.DATA_SCOPE_CUSTOM.equals(String.valueOf(user.getDataScope()))){
+				//数据范围(2:按明细设置)
+				sqlString.append(" WHERE 1 = 1 ");
+				sqlString.append(" AND mc.office_id IN (SELECT b.office_id FROM sys_user_office b ");
+				sqlString.append(" WHERE b.user_id = '"+user.getId()+"')");
+			}
+		}else{
+			//当用户为“管理员”,查询所有数据
+			sqlString.append(" WHERE 1 = 1 ");
+		}
+		dto.getSqlMap().put("dsf",sqlString.toString());
+//		dto.getSqlMap().put("dsf",CommonScopeUtils.dataScopeFilter("mc"));
 	    dto.setPage(page);
 		page.setList(dao.findUserList(dto));
 		return page;

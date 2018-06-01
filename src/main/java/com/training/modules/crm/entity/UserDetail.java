@@ -71,6 +71,8 @@ public class UserDetail extends DataEntity<UserDetail> {
   	private String franchiseeId;	//绑定商家id
   	private String franchiseeName;	//绑定商家id
   	
+  	private String isBindingBeauty;		//是否绑定技师
+  	
   	public String getNickname() {
 		return nickname;
 	}
@@ -487,6 +489,14 @@ public class UserDetail extends DataEntity<UserDetail> {
 
 	public void setFranchiseeName(String franchiseeName) {
 		this.franchiseeName = franchiseeName;
+	}
+
+	public String getIsBindingBeauty() {
+		return isBindingBeauty;
+	}
+
+	public void setIsBindingBeauty(String isBindingBeauty) {
+		this.isBindingBeauty = isBindingBeauty;
 	}
 	
 }

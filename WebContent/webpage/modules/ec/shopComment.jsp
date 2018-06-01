@@ -55,6 +55,7 @@
 		function look(num,id){
 			 loading("正在查询，请稍后 . . .");
 			 $("#newComment").empty();
+			 $("#contents").val('');
 			 $("#photo").empty();
 			 $("#parentId").val(num); 
 			 $("#shopId").val(id); 
@@ -131,7 +132,11 @@
 						setTimeout(function(){
 							sortOrRefresh()
 							}, 1000);
-					 }
+					 },
+					 error: function(XMLHttpRequest, textStatus, errorThrown) {
+						 closeTip();
+						 showTip('回复评论失败','error');
+					}
 				 })
 			}else{
 				$("#bt").show();
@@ -262,7 +267,7 @@
 			      	<!-- 回复评论 隐藏评论ID -->
 					<input type="hidden" id="parentId" name="parentId">
 					<input type="hidden" id="shopId" name="shopId">
-		      		<h5>权限设置；<input type="radio" id="isShow" name="isShow" checked="checked" value="0"> 所有人可见　<input type="radio" id="isShow" name="isShow" value="1"> 用户本人可见</h5>
+		      		<h5>权限设置:<input type="radio" id="isShow" name="isShow" checked="checked" value="0"> 所有人可见　<input type="radio" id="isShow" name="isShow" value="1"> 用户本人可见</h5>
 		      	</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-success" onclick="tijiao()">发表回复</button>
