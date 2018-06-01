@@ -138,7 +138,7 @@
 		}
 		//同意时,显示地址,隐藏原因
 		function seletAddreess(){
-			applyType="${returnedGoods.applyType}";
+			applyType=$("#applyType").val();
 			if(applyType == 2){//仅退款
 				$("#refusal").hide();//拒绝原因
 				$("#addreess").hide();//仓库地址
