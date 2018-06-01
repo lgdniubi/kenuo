@@ -819,7 +819,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
 		logger.info("##### web接口路径:"+weburl);
 		String parpm = "{\"user_id\":\""+user.getId()+"\",\"user_name\":\""+user.getName()+"\",\"franchisee_id\":"+user.getCompany().getId()+","
-				+ "\"user_mobile\":\""+user.getMobile()+"\",\"login_name\":\""+user.getLoginName()+"\",\"is_delete\":"+1+","
+				+ "\"user_mobile\":\""+user.getMobile()+"\",\"login_name\":\""+user.getLoginName()+"\",\"user_status\":"+1+","
 				+ "\"office_id\":\""+user.getOffice().getId()+"\",\"office_name\":\""+user.getOffice().getName()+"\"}";
 		String url=weburl;
 		String result = WebUtils.postCSObject(parpm, url);
