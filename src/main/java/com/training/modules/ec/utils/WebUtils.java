@@ -170,8 +170,6 @@ public class WebUtils {
 			//jsonObj.put("client_side", "wap");
 			String json=jsonObj.toString();
 			String sign = MD5("cs"+json+"cs");
-			System.err.println(sign);
-			System.err.println("cs"+json+"cs");
 
 			String paramter = "{'sign':'"+sign+"' , 'jsonStr':'cs"+json+"'}";
 			HttpEntity<String> entity = new HttpEntity<String>(paramter, headers);

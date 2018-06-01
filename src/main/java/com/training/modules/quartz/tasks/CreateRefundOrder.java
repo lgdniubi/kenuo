@@ -15,16 +15,22 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ObjectUtils.Null;
 import org.apache.log4j.Logger;
+import org.springframework.http.StreamingHttpOutputMessage;
 import org.springframework.stereotype.Component;
 
 import com.training.common.utils.BeanUtil;
+import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.quartz.entity.TaskLog;
 import com.training.modules.quartz.tasks.utils.CommonService;
+import com.training.modules.quartz.utils.PushUtils;
 import com.training.modules.sys.utils.BugLogUtils;
+import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.train.entity.ArrearageOfficeList;
 import com.training.modules.train.service.EntryService;
 import com.training.modules.train.service.RefundOrderService;
 import com.training.modules.train.service.TrainLiveAuditService;
+
+import net.sf.json.JSONObject;
 
 /**  
 * <p>Title: CreateRefundOrder.java</p>  
@@ -63,11 +69,13 @@ public class CreateRefundOrder extends CommonService{
 		taskLog.setJobName("createRefundOrder");
 		taskLog.setStartDate(startDate);
 		
+		String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
+		
 		try{
 			SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM");
 			 Calendar calendar = Calendar.getInstance();//日历对象  
 		     calendar.setTime(new Date());//设置当前日期  
-		     String format = sim.format(calendar.getTime());//输出上个月的日期  
+		     String format = sim.format(calendar.getTime());//输出本月的日期  
 		     calendar.add(Calendar.MONTH, -1);//月份减一  
 		     String formats = sim.format(calendar.getTime());//输出上个月的日期  
 		List<ArrearageOfficeList> arrearageOfficeList = refundOrderService.queryarrearageoffice(format,formats);
@@ -83,14 +91,27 @@ public class CreateRefundOrder extends CommonService{
 			refundOrderService.addrefundOrder(subList);
 		}
 		
-		/*Map<String,Object> map = new HashMap<String,Object>();
-		for(ArrearageOfficeList aol : arrearageOfficeList){
-			map.put("order_id",createRefundOrderid());
-			map.put("arrearage_price",aol.getUsed_limit());
-			map.put("arrearage_office",aol.getOffice_id());
-			
-			refundOrderService.addrefundOrder(map);
-		}*/
+		PushUtils pushUtils = new PushUtils();
+		//Map<String,Object> map = new HashMap<String,Object>();
+		//map.put("ver_num", "1.0.0");
+		for (int i = 0; i < arrearageOfficeList.size(); i++) {
+			try{
+				//map.put("office_id", arrearageOfficeList.get(i).getOffice_id());
+				String param = "{'ver_num':'1.0.0','office_id':'"+arrearageOfficeList.get(i).getOffice_id()+"'}";
+				Map<String,Object> m = null;
+				String user_id = null;
+				Object object = JSONObject.fromObject(WebUtils.postCSObject(param, "http://10.10.8.22:9208/cs_service/pub/queryContractInfo.htm")).get("data");
+				if(!"null".equals(String.valueOf(object))){
+					m = (Map<String, Object>) object;
+					user_id = String.valueOf(m.get("sign_userid"));
+				}
+				if(user_id != null && user_id != "")
+					pushUtils.pushMsg(user_id, formats+"月账单已出，共计消费"+arrearageOfficeList.get(i).getUsed_limit()+"元", 15, "本月账单");
+			}catch(Exception e){
+				logger.error("#####【定时任务createRefundOrder】创建信用额度还款订单推送通知出现异常，异常信息为："+e.getMessage());
+				e.printStackTrace();
+			}
+		}
 		
 		
 		}catch (Exception e) {
