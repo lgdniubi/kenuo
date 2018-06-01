@@ -377,5 +377,9 @@ public interface UserDao extends CrudDao<User> {
 	public void modelFranchisee(User user);
 	//冻结解冻pt、syr用户
 	public void updateUserDel(User user);
+	//离职后变为普通商家和普通机构
+	public void updateCompanyAndOfficeId(User user);
+	//离职后变为普通角色
+	public void updateUserRole(User user);
 
 }

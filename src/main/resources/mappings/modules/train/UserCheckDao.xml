@@ -226,8 +226,6 @@
 			  del_flag,
 			  remarks,
 			  intro,
-			  province_id`,
-			 `city_id`,
 			 `district_id`,
 			 `legal_card`,
 			 `set_date`
@@ -256,8 +254,6 @@
 			0,
 			'用户审核增加',
 			#{intro},
-			null,
-			null,
 			#{districtId},
 			#{addr.idcard},
 			#{addr.setDate}

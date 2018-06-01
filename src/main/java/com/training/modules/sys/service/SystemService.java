@@ -768,7 +768,13 @@ public class SystemService extends BaseService implements InitializingBean {
 		 */
 		relieveUser(user);
 		saveUserLog2(user);
-		userDao.deleteByLogic(user);
+		if("1".equals(user.getDelFlag())){
+			userDao.deleteByLogic(user);
+		}else{
+			user.setDelRemarks("解冻用户");
+			userDao.updateUserDel(user);
+		}
+			
 
 		// 清除用户缓存
 		UserUtils.clearCache(user);
@@ -777,11 +783,12 @@ public class SystemService extends BaseService implements InitializingBean {
 		
 		/**
 		 * 删除用户时将用户数据t同步到供应链
+		 * user_status解冻0，新增冻结状态1
 		 */
 		String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
 		logger.info("##### web接口路径:"+weburl);
 		String parpm = "{\"user_id\":\""+user.getId()+"\",\"user_name\":\""+user.getName()+"\",\"franchisee_id\":"+user.getCompany().getId()+","
-				+ "\"user_mobile\":\""+user.getMobile()+"\",\"login_name\":\""+user.getLoginName()+"\",\"user_status\":"+1+","
+				+ "\"user_mobile\":\""+user.getMobile()+"\",\"login_name\":\""+user.getLoginName()+"\",\"user_status\":"+user.getDelFlag()+","
 						+ "\"office_id\":\""+user.getOffice().getId()+"\",\"office_name\":\""+user.getOffice().getName()+"\"}";
 		String url=weburl;
 		String result = WebUtils.postCSObject(parpm, url);
@@ -794,9 +801,11 @@ public class SystemService extends BaseService implements InitializingBean {
 		/**
 		 * 用户物理删除修改为逻辑删除，修改时间为：2016-4-13 userDao.delete(user);
 		 */
-		relieveUser(user);
-		saveUserLog2(user);
-		userDao.deleteByLogic(user);
+//		relieveUser(user);
+//		saveUserLog2(user);
+		//离职后变为普通商家和普通机构
+		userDao.updateCompanyAndOfficeId(user);
+		userDao.updateUserRole(user);	//离职后变为普通角色
 		
 		// 清除用户缓存
 		UserUtils.clearCache(user);
@@ -805,11 +814,12 @@ public class SystemService extends BaseService implements InitializingBean {
 		
 		/**
 		 * 删除用户时将用户数据t同步到供应链
+		 * is_delete离职状态1
 		 */
 		String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
 		logger.info("##### web接口路径:"+weburl);
 		String parpm = "{\"user_id\":\""+user.getId()+"\",\"user_name\":\""+user.getName()+"\",\"franchisee_id\":"+user.getCompany().getId()+","
-				+ "\"user_mobile\":\""+user.getMobile()+"\",\"login_name\":\""+user.getLoginName()+"\",\"user_status\":"+1+","
+				+ "\"user_mobile\":\""+user.getMobile()+"\",\"login_name\":\""+user.getLoginName()+"\",\"is_delete\":"+1+","
 				+ "\"office_id\":\""+user.getOffice().getId()+"\",\"office_name\":\""+user.getOffice().getName()+"\"}";
 		String url=weburl;
 		String result = WebUtils.postCSObject(parpm, url);
