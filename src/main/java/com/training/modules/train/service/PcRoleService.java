@@ -131,4 +131,8 @@ public class PcRoleService extends CrudService<PcRoleDao,PcRole>{
 	public PcRole getPcRoleByModAndEname(String id) {
 		return dao.getPcRoleByModAndEname(id);
 	}
+
+	public void deleteUserRole(String userid) {
+		dao.deleteUserRole(userid);
+	}
 }

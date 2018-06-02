@@ -128,14 +128,14 @@
 									</c:if>
 								</td>
 								<td>
-									<!-- 增加按钮 -->
+									<!-- 增加按钮 
 									<c:if test="${empty personnelfile.probationStartDate}">
 										<shiro:hasPermission name="sys:personnelfile:add">
 											<a href="${ctx}/personnelfile/user/form?id=${personnelfile.id}" class="btn btn-danger btn-xs">
 												<i class="fa fa-plus"></i> 建档
 											</a>
 										</shiro:hasPermission>
-									</c:if>
+									</c:if>-->
 									<c:if test="${not empty personnelfile.probationStartDate}">
 										<%-- <shiro:hasPermission name="sys:personnelfile:edit">
 											<a href="${ctx}/personnelfile/user/getPersonnelFileBefor?id=${personnelfile.id}&&type=1" class="btn btn-success btn-xs">

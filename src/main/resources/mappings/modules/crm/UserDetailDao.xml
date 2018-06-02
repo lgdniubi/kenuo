@@ -215,6 +215,10 @@
 					<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
 				)
 			</if>
+			<if test="isBindingBeauty != null and isBindingBeauty != ''">
+				<if test="isBindingBeauty == 0">AND (mc.beauty_id IS NOT NULL AND mc.beauty_id != '')</if>
+				<if test="isBindingBeauty == 1">AND (mc.beauty_id IS NULL OR mc.beauty_id = '')</if>
+			</if>
 		GROUP BY
 			mc.user_id
 		<!-- ORDER BY
@@ -267,6 +271,10 @@
 					OR mu.name like
 					<if test="dbName == 'mysql'">CONCAT('%', #{keyword} , '%')</if>
 				)
+			</if>
+			<if test="isBindingBeauty != null and isBindingBeauty != ''">
+				<if test="isBindingBeauty == 0">AND (mc.beauty_id IS NOT NULL AND mc.beauty_id != '')</if>
+				<if test="isBindingBeauty == 1">AND (mc.beauty_id IS NULL OR mc.beauty_id = '')</if>
 			</if>
 		GROUP BY
 			mc.user_id
