@@ -4,6 +4,7 @@
 package com.training.modules.train.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -46,7 +47,7 @@ public interface AuthenticationMapper {
 	* @date 2018年5月25日  
 	* @version 3.0.0  
 	*/  
-	int updateprotocolstatus(@Param("franchisee_id") int franchisee_id);
+	int updateprotocolstatus(Map<String, Object> map);
 
 	/**  
 	* <p>Title: 修改pc菜单改为禁用</p>  
@@ -55,7 +56,7 @@ public interface AuthenticationMapper {
 	* @date 2018年5月25日  
 	* @version 3.0.0  
 	*/  
-	int updatepcmenustatus(@Param("franchisee_id") int franchisee_id);
+	int updatepcmenustatus(Map<String, Object> map);
 
 	/**  
 	* <p>Title: 获取该商家下的用户</p>  

@@ -16,14 +16,16 @@
 		UPDATE trains.train_model_franchisee SET status = 1 WHERE id = ${id} AND auth_end_date <![CDATA[<]]> NOW() AND `status` = 0
 	</update>
 	
-	<update id="updateprotocolstatus" parameterType="java.lang.Integer">
-		UPDATE trains.supply_protocol_shop SET status = 5 WHERE franchisee_id = ${franchisee_id}
+	<update id="updateprotocolstatus" parameterType="java.util.Map">
+		UPDATE trains.supply_protocol_shop SET status = ${status} WHERE franchisee_id = ${franchisee_id}
 	</update>
 	
-	<update id="updatepcmenustatus" parameterType="java.lang.Integer">
+	<update id="updatepcmenustatus" parameterType="java.util.Map">
 		UPDATE (SELECT * FROM trains.pc_role WHERE franchisee_id = ${franchisee_id}) r
 		INNER JOIN trains.pc_menu_role mr ON r.id = mr.role_id
-		SET mr.`status` = 1
+		INNER JOIN trains.pc_menu m ON mr.menu_id = m.id
+		SET mr.`status` = ${status}
+		WHERE m.is_pay = 1
 	</update>
 	
 	<select id="queryuserlist" parameterType="java.lang.Integer" resultType="java.lang.String">

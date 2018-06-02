@@ -3,7 +3,9 @@ package com.training.modules.quartz.tasks;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -55,14 +57,18 @@ public class Authentication extends CommonService{
 			
 			//查询企业认证过期授权
 			List<AuthenticationBean> list = authenticationService.querypastdueauthentication();
+			Map<String, Object> map = new HashMap<String,Object>();
 			for(AuthenticationBean s : list){
 				//将认证授权状态改成已过期
 				int count = authenticationService.updateauthenticationstatus(s.getId());
 				if(s.getFranchisee_id() > 0 && count > 0){
+					map.put("franchisee_id", s.getFranchisee_id());
 					//将合同状态改成已失效
-						authenticationService.updateprotocolstatus(s.getFranchisee_id());
+						map.put("status", 5);
+						authenticationService.updateprotocolstatus(map);
 					//修改pc菜单改为禁用
-						authenticationService.updatepcmenustatus(s.getFranchisee_id());
+						map.put("status", 1);
+						authenticationService.updatepcmenustatus(map);
 					//获取该商家下的用户
 						List<String> user = authenticationService.queryuserlist(s.getFranchisee_id());
 						for(String user_id : user){

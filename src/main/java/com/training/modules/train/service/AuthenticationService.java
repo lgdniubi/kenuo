@@ -4,6 +4,7 @@
 package com.training.modules.train.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,8 +55,8 @@ public class AuthenticationService {
 	* @date 2018年5月25日  
 	* @version 3.0.0  
 	*/  
-	public int updateprotocolstatus(int franchisee_id) {
-		return authenticationMapper.updateprotocolstatus(franchisee_id);
+	public int updateprotocolstatus(Map<String, Object> map) {
+		return authenticationMapper.updateprotocolstatus(map);
 	}
 
 	/**  
@@ -65,8 +66,8 @@ public class AuthenticationService {
 	* @date 2018年5月25日  
 	* @version 3.0.0  
 	*/  
-	public int updatepcmenustatus(int franchisee_id) {
-		return authenticationMapper.updatepcmenustatus(franchisee_id);
+	public int updatepcmenustatus(Map<String, Object> map) {
+		return authenticationMapper.updatepcmenustatus(map);
 		
 	}
 

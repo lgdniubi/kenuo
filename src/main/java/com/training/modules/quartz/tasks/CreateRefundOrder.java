@@ -106,7 +106,7 @@ public class CreateRefundOrder extends CommonService{
 					user_id = String.valueOf(m.get("sign_userid"));
 				}
 				if(user_id != null && user_id != "")
-					pushUtils.pushMsg(user_id, formats+"月账单已出，共计消费"+arrearageOfficeList.get(i).getUsed_limit()+"元", 15, "本月账单");
+					pushUtils.pushMsg(user_id, formats+"月账单已出，共计消费"+arrearageOfficeList.get(i).getUsed_limit()+"元", 15, "信用额度账单");
 			}catch(Exception e){
 				logger.error("#####【定时任务createRefundOrder】创建信用额度还款订单推送通知出现异常，异常信息为："+e.getMessage());
 				e.printStackTrace();
