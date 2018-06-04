@@ -47,7 +47,7 @@
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
                         <div class="form-group">
-                            <label>订单号：<input id="orderId" name="orderId" type="text" value="${refundOrder.orderId}" class="form-control" placeholder="搜索订单号"></label> 
+                            <label>账单编号：<input id="orderId" name="orderId" type="text" value="${refundOrder.orderId}" class="form-control" placeholder="搜索账单编号"></label> 
                            
                         </div>
                         <div class="pull-right">
@@ -60,13 +60,14 @@
 	                 <thead> 
 	                   	 <tr>
                    			<!-- <th style="text-align: center;"><label for="i-checks"><input type="checkbox" name="" id="i-checks" class="i-checks"></label></th> -->
-                   			<th style="text-align: center;">订单号</th>
+                   			<th style="text-align: center;">账单编号</th>
                    			<!-- <th style="text-align: center;">临时订单号</th> -->
-                   			<th style="text-align: center;">订单类型</th>
+                   			<th style="text-align: center;">账单类型</th>
                    			<th style="text-align: center;">欠款金额</th>
+                   			<th style="text-align: center;">欠款商家</th>
                    			<th style="text-align: center;">欠款机构</th>
                    			<th style="text-align: center;">实付金额</th>
-                   			<th style="text-align: center;">订单状态</th>
+                   			<th style="text-align: center;">账单状态</th>
                    			<th style="text-align: center;">支付类型</th>
                    			<th style="text-align: center;">支付用户</th>
                    			<th style="text-align: center;">渠道</th>
@@ -90,6 +91,9 @@
                                	</td>
                                 <td style="text-align: center;">
                                		${refund.arrearagePrice}
+                               	</td>
+                               	<td style="text-align: center;">
+                               		${refund.franchiseeName}
                                	</td>
                                	<td style="text-align: center;">
                                		${refund.arrearageOfficeName}
