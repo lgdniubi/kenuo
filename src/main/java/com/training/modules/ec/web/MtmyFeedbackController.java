@@ -67,14 +67,6 @@ public class MtmyFeedbackController extends BaseController{
 	@RequestMapping(value ="feedbackForm")
 	public String feedbackForm(MtmyFeedback feedback,HttpServletRequest request, HttpServletResponse response, Model model){
 		MtmyFeedback f=feedbackService.get(feedback);
-		List<String> img = new ArrayList<String>();
-		if(f.getMessageImg() != null){
-			String[] strs=f.getMessageImg().split(","); 
-			for (String str : strs) {
-				img.add(str);
-			}
-			model.addAttribute("photo",img);
-		}
 		model.addAttribute("feedback",f);
 		return "modules/ec/mtmyFeedbackForm";
 	}

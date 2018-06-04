@@ -169,7 +169,6 @@ public class OrdersController extends BaseController {
 	 * @param model
 	 * @return
 	 */
-	@RequiresPermissions("ec:orders:view")
 	@RequestMapping(value = { "list", "" })
 	public String list(Orders orders, HttpServletRequest request, HttpServletResponse response, Model model) {
 		try {
