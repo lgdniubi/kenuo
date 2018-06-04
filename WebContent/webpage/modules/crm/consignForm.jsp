@@ -9,6 +9,11 @@
 	var msg = "您真的确定要提交吗？\n\n请确认！"; 
 	function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		if(validateForm.form()){
+			//先计算数量才能提交
+			if($("#computType").val() == 1){
+				top.layer.alert('请先计算数量!', {icon: 0, title:'提醒'});
+				return false;
+			}
 			var result = number();
 			if(result==true){
 		 		if (confirm(msg)==true){ 
@@ -74,7 +79,6 @@
 			      },
 			      consignNum:{
 			    	   isNumber:true,  
-			    	    required:true,
 			    	    number:true,
 			    	    min:0
 			      },
@@ -104,7 +108,6 @@
 			       },
 			       consignNum:{
 			    	   isNumber:"非负整数",
-			    	  required : "这是必填字段",
 			    	    number:"请输入数字",
 			    	    min:"不能为负数"
 			      },
@@ -135,6 +138,27 @@
             isNaN(parseInt(num))?t.value=0:t.value=parseInt(num);
         }
     }
+	
+	//计算数量
+	function compute(){
+		var purchaseNum = $("#purchaseNum").val();//购买数量
+		var takenNum = $("#takenNum").val();//取走数量
+		if(takenNum == 0){
+			top.layer.alert('请正确填写取走数量', {icon: 0, title:'提醒'});
+		}else{
+			$("#purchaseNum").attr("readonly",true);
+			$("#takenNum").attr("readonly",true);
+			$("#consignNum").val(parseInt(purchaseNum)-parseInt(takenNum));//寄存数量
+			$("#computType").val(0);
+		}
+	}
+	//修改数量
+	function updateCompute(){
+		$("#purchaseNum").attr("readonly",false);
+		$("#takenNum").attr("readonly",false);
+		$("#consignNum").val(0);
+		$("#computType").val(1);
+	}
 </script>
 </head>
 <body>
@@ -183,7 +207,12 @@
 								    	<label class="pull-right"><font color="red">*</font>取走数量:</label>
 								    </td>
 									<td class="width-20">
-										<input name="takenNum" id="takenNum" value="${consign.takenNum}" maxlength="50" onblur="NumberCheck(this)" class="form-control required" />
+										<input name="takenNum" id="takenNum" value="0" maxlength="50" class="form-control required" onblur="NumberCheck(this)" style="width: 150px" />
+										<a href="#" id="compute" onclick="compute()">计算数量</a>
+										<input type="hidden" id="computType" name="computType" value="1"/>
+										<div id="updateCompute">
+											<a href="#" id="compute" onclick="updateCompute()">修改数量</a>
+										</div>
 									</td>
 								</tr>
 								<tr>
@@ -191,7 +220,7 @@
 										<label class="pull-right"><font color="red">*</font>寄存数量:</label>
 									</td>
 									<td class="width-20">
-										<input name="consignNum" id="consignNum" value="${consign.consignNum}" maxlength="50" onblur="NumberCheck(this)" class="form-control required" />
+										<input name="consignNum" id="consignNum" value="${consign.consignNum}" maxlength="50" readonly = "readonly" onblur="NumberCheck(this)" class="form-control" />
 									</td>
 								    <td class="width-15 active" >
 								    	<label class="pull-right"><font color="red">*</font>寄存时间:</label>
