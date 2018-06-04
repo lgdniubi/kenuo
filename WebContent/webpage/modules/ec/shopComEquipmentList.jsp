@@ -77,9 +77,16 @@
 					<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
 					<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();" /><!-- 支持排序 -->
 					<input name="shopId" value="${shopComEquipment.shopId}" type="hidden">
+					<div class="form-group">
+						<input id="name" name="name" value="${shopComEquipment.name}" class=" form-control input-sm" style="width:200px;" placeholder="设备名称">
+					</div>
 				</form>
 				<div>
 					<a href="#" onclick="addComEquipment('${shopComEquipment.shopId}')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加设备</a>
+					<div class="pull-right">
+						<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
+						<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()" ><i class="fa fa-refresh"></i> 重置</button>
+					</div>
 				</div>
 				<p></p>
 				<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
@@ -88,6 +95,9 @@
 							<th style="text-align: center;">ID</th>
 							<th style="text-align: center;">设备名称</th>
 							<th style="text-align: center;">状态</th>
+							<shiro:hasPermission name="ec:specEquipment:editLog">
+							</shiro:hasPermission>
+							<th style="text-align: center;">日志</th>
 						</tr>
 					</thead>
 					<tbody style="text-align: center;">
@@ -96,17 +106,22 @@
 								<td style="text-align: center;">${page.shopComEquipmentId}</td>
 								<td style="text-align: center;">${page.name}</td>
 								<td style="text-align: center;" id="${page.shopComEquipmentId}">
-								<c:if test="${page.isEnabled == '1'}">
-									<a href="${ctx}/ec/specEquipment/updateType?shopComEquipmentId=${page.shopComEquipmentId}&flag=0&shopId=${page.shopId}" >
-										<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" >
-									</a>	
-								</c:if>
-								<c:if test="${page.isEnabled eq '0'}">
-									<a href="${ctx}/ec/specEquipment/updateType?shopComEquipmentId=${page.shopComEquipmentId}&flag=1&shopId=${page.shopId}" >
-										<img width="20" height="20" src="${ctxStatic}/ec/images/open.png">
-									</a>
-								</c:if>
+									<c:if test="${page.isEnabled == '1'}">
+										<a href="${ctx}/ec/specEquipment/updateType?shopComEquipmentId=${page.shopComEquipmentId}&flag=0&shopId=${page.shopId}&name=${page.name}" >
+											<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" >
+										</a>	
+									</c:if>
+									<c:if test="${page.isEnabled eq '0'}">
+										<a href="${ctx}/ec/specEquipment/updateType?shopComEquipmentId=${page.shopComEquipmentId}&flag=1&shopId=${page.shopId}&name=${page.name}" >
+											<img width="20" height="20" src="${ctxStatic}/ec/images/open.png">
+										</a>
+									</c:if>
 								</td>
+								<shiro:hasPermission name="ec:specEquipment:editLog">
+									<td style="text-align: center;">
+										<a href="#" onclick="openDialogView('设备操作日志', '${ctx}/ec/specEquipment/editLog?comEquipmentId=${page.shopComEquipmentId}','600px','550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>操作日志</a>
+									</td>
+								</shiro:hasPermission>
 							</tr>
 						</c:forEach>
 					</tbody>

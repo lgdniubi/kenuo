@@ -97,4 +97,17 @@ public interface SpecEquipmentDao extends CrudDao<Equipment> {
 	 * @return
 	 */
 	public List<EquipmentLogs> findEquipmentLogsList(EquipmentLogs equipmentLogs);
+	
+	/**
+	 * 新增店铺通用设备操作日志
+	 * @param equipmentLogs
+	 */
+	public void insertComEquipmentLog(EquipmentLogs equipmentLogs);
+	
+	/**
+	 * 查看店铺通用设备操作日志
+	 * @param officeId
+	 * @return
+	 */
+	public List<EquipmentLogs> findAllLogs(String comEquipmentId);
 }

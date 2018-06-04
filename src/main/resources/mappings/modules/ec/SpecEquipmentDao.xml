@@ -128,15 +128,10 @@
 		FROM train_shop_equipment 
 		WHERE shop_id = #{shopId}
 		AND del_flag = 0
-		<!-- 数据范围过滤 -->
-		<choose>
-			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
-				ORDER BY ${page.orderBy}
-			</when>
-			<otherwise>
-				ORDER BY create_date DESC
-			</otherwise>
-		</choose>
+		<if test="name != null and name != ''">
+			AND name like CONCAT("%",#{name},"%") 
+		</if>
+		ORDER BY create_date DESC
 	</select>
 	
 	<!-- 保存店铺添加的通用设备 -->
@@ -215,5 +210,31 @@
 				ORDER BY ar.appt_date DESC
 			</otherwise>
 		</choose>
+	</select>
+	
+	<!-- 新增店铺通用设备操作日志 -->
+	<insert id="insertComEquipmentLog">
+		INSERT INTO shop_common_equipment_log(
+			comEquipment_id,
+			content,
+			create_date,
+			create_by
+		)VALUES(
+			#{comEquipmentId},
+			#{content},
+			SYSDATE(),
+			#{createBy.id}
+		)
+	</insert>
+	
+	<!-- 查看店铺通用设备操作日志 -->
+	<select id="findAllLogs" resultType="EquipmentLogs">
+		SELECT
+			cel.content,
+			cel.create_date AS 'createDate',
+			(select name from sys_user where id = cel.create_by) AS 'createBy.name'
+		FROM shop_common_equipment_log cel
+		WHERE cel.comEquipment_id = #{comEquipmentId}
+		ORDER BY cel.create_date DESC
 	</select>
 </mapper>
