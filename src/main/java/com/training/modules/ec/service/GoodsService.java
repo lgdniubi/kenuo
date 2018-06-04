@@ -803,7 +803,11 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 		List<GoodsSpecImage> goodsSpecImagesList = findspecimgbyid(goods);
 		// 根据商品ID，查询所有属性值内容
 		List<GoodsAttributeMappings> gamList = findGoodsAttributeMappings(goods);
-
+		//查看商品的技能标签
+		goods.setSkill(getSkillByGoodsId(goods.getGoodsId()));
+		//查看商品的特殊设备
+		goods.setEquipmentLabel(getEquipmentLabelByGoodsId(goods.getGoodsId()));
+		
 		if (goods != null) {
 			int num = dao.selectByMaxSort();
 			goods.setGoodsId(0);
@@ -811,6 +815,9 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 			goods.setActionId(0);
 			goods.setSort(num + 1);
 			goods.setStoreCount(0);
+			//复制商品默认不上架，不app显示
+			goods.setIsOnSale("0");
+			goods.setIsAppshow("0");
 			// 保存
 			dao.insert(goods);
 			int goodId = goods.getGoodsId();
@@ -877,6 +884,21 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 			goods.setGoodsAttributeMappingsList(goodsAttributeList);
 			saveattribute(goods);
 		}
+		//复制商品-->复制其技能和标签
+		//更新商品技能标签
+		List<GoodsSkill> skillList = SpeArrSkillList(goods); // 获得技能标签list
+		skillDao.deleteGoodsSkill(goods.getGoodsId());
+		if (skillList.size() > 0) {
+			skillDao.insertGoodsSkill(skillList);
+		}
+
+		// 更新商品设备标签
+		List<GoodsEquipmentLabel> goodsEquipmentLabelList = SpeArrGoodsEquipmentLabelList(goods); // 获得设备标签list
+		equipmentLabelDao.deleteGoodsEquipmentLabel(goods.getGoodsId());
+		if (goodsEquipmentLabelList.size() > 0) {
+			equipmentLabelDao.insertGoodsEquipmentLabel(goodsEquipmentLabelList);
+		}
+		
 	}
 
 	/**
