@@ -13,8 +13,8 @@
 			SUM(os.used_limit) AS used_limit
 		FROM trains.sys_office_account s
 		LEFT JOIN trains.sys_office_statement os ON s.office_id = os.office_id
-		LEFT JOIN trains.train_refund_order ro ON ro.arrearage_office = s.office_id AND  DATE_FORMAT(ro.add_time,'%Y-%m') = #{format}
-		WHERE DATE_FORMAT(os.create_date,'%Y-%m') = #{formats}
+		LEFT JOIN trains.train_refund_order ro ON ro.arrearage_office = s.office_id AND  DATE_FORMAT(ro.add_time,'%Y-%m-%d') = #{format}
+		WHERE DATE_FORMAT(os.create_date,'%Y-%m-%d') = #{formats}
 		GROUP BY s.office_id HAVING used_limit > 0 AND COUNT(ro.order_id) = 0
 	</select>
 

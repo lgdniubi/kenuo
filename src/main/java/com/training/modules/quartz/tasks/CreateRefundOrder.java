@@ -72,11 +72,15 @@ public class CreateRefundOrder extends CommonService{
 		String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
 		
 		try{
-			SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM");
+			SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
 			 Calendar calendar = Calendar.getInstance();//日历对象  
+//		     calendar.setTime(new Date());//设置当前日期  
+//		     String format = sim.format(calendar.getTime());//输出本月的日期  
+//		     calendar.add(Calendar.MONTH, -1);//月份减一  
+//		     String formats = sim.format(calendar.getTime());//输出上个月的日期  
 		     calendar.setTime(new Date());//设置当前日期  
 		     String format = sim.format(calendar.getTime());//输出本月的日期  
-		     calendar.add(Calendar.MONTH, -1);//月份减一  
+		     calendar.add(Calendar.DAY_OF_YEAR, -1);//月份减一  
 		     String formats = sim.format(calendar.getTime());//输出上个月的日期  
 		List<ArrearageOfficeList> arrearageOfficeList = refundOrderService.queryarrearageoffice(format,formats);
 		int count = arrearageOfficeList.size() / 100;

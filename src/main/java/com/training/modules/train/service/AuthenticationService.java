@@ -9,6 +9,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.training.modules.ec.utils.WebUtils;
+import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.train.dao.AuthenticationMapper;
 import com.training.modules.train.entity.AuthenticationBean;
 
@@ -25,6 +28,8 @@ public class AuthenticationService {
 
 	@Autowired
 	private AuthenticationMapper authenticationMapper;
+	@Autowired
+	private RedisClientTemplate redisClientTemplate;
 
 	/**  
 	* <p>Title:查询企业认证过期授权 </p>  
@@ -82,5 +87,31 @@ public class AuthenticationService {
 		return authenticationMapper.queryuserlist(franchisee_id);
 	}
 	
-	
+	/**
+	* <p>Title: </p>  
+	* <p>Copyright（C）2018 by FengFeng</p>   
+	* @author fengfeng  
+	* @date 2018年6月4日  
+	* @version 3.0.0
+	 */
+	public void updatestatus(Map<String,Object> map){
+		if((int)map.get("franchisee_id") > 0){
+			String weburl = ParametersFactory.getMtmyParamValues("updateContractInfoStatus");
+			//将合同状态改成已失效
+				map.put("status", (int)map.get("status1"));
+				//authenticationMapper.updateprotocolstatus(map);
+				String param = "{'ver_num':'1.0.0','office_id':'"+map.get("franchisee_id")+"','status':'"+map.get("status")+"','update_user':'"+map.get("update_user")+"'}";
+				WebUtils.postCSObject(param, "http://10.10.8.22:9208/cs_service/pub/updateContractInfoStatus.htm");
+			//修改pc菜单改为禁用
+				map.put("status", (int)map.get("status2"));
+				authenticationMapper.updatepcmenustatus(map);
+			//获取该商家下的用户
+				List<String> user = authenticationMapper.queryuserlist((int)map.get("franchisee_id"));
+				for(String user_id : user){
+					redisClientTemplate.del("UTOKEN_"+user_id);
+				}
+		}else if((int)map.get("franchisee_id") == 0){
+			redisClientTemplate.del("UTOKEN_"+(String)map.get("user_id"));
+		}
+	}
 }

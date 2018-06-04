@@ -61,21 +61,14 @@ public class Authentication extends CommonService{
 			for(AuthenticationBean s : list){
 				//将认证授权状态改成已过期
 				int count = authenticationService.updateauthenticationstatus(s.getId());
-				if(s.getFranchisee_id() > 0 && count > 0){
+				
+				if(count > 0){
 					map.put("franchisee_id", s.getFranchisee_id());
-					//将合同状态改成已失效
-						map.put("status", 5);
-						authenticationService.updateprotocolstatus(map);
-					//修改pc菜单改为禁用
-						map.put("status", 1);
-						authenticationService.updatepcmenustatus(map);
-					//获取该商家下的用户
-						List<String> user = authenticationService.queryuserlist(s.getFranchisee_id());
-						for(String user_id : user){
-							redisClientTemplate.del("UTOKEN_"+user_id);
-						}
-				}else if(s.getFranchisee_id() == 0 && count > 0){
-					redisClientTemplate.del("UTOKEN_"+s.getUser_id());
+					map.put("user_id", s.getUser_id());
+					map.put("status1", 0);
+					map.put("status2", 1);
+					map.put("update_user", 1);
+					authenticationService.updatestatus(map);
 				}
 				
 			}
