@@ -45,4 +45,13 @@ public class ContractInfoService {
 		contractInfo.setPage(page);
 		return page;
 	}
+	
+	public JSONObject queryContractInfoDetail(String office_id){
+		JSONObject jsonO = new JSONObject();
+		jsonO.put("office_id", office_id);
+		
+		JSONObject json = WebUtils.postCS(jsonO, ParametersFactory.getTrainsParamValues("queryContractInfoAudit"));
+		
+		return json.getJSONObject("data");
+	}
 }

@@ -101,7 +101,7 @@
 									<shiro:hasPermission name="train:articlelist:deleteOne">
 										<a class="btn btn-success btn-xs"  onclick="openDialogView('审核','${ctx}/train/contractInfo/toAuditContractInfo?office_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>审核</a>
 									</shiro:hasPermission>
-									<a class="btn btn-success btn-xs"  onclick="openDialogView('详情','${ctx}/train/contractInfo/toAuditContractInfo?office_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>详情</a>
+									<a class="btn btn-success btn-xs"  onclick="openDialogView('详情','${ctx}/train/contractInfo/queryContractInfoDetail?office_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>详情</a>
 								</td>
 							</tr>
 						</c:forEach>

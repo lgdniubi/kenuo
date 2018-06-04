@@ -8,7 +8,7 @@
 	<meta name="decorator" content="default"/>
 
 	<script type="text/javascript">
-		var validateForm;
+		/* var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 			if(validateForm.form()){
         	  loading('正在提交，请稍等...');
@@ -16,7 +16,7 @@
 	     	  return true;
 		  	}
 		  return false;
-		}
+		} */
 	</script>
 </head>
 <body>
@@ -46,7 +46,11 @@
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">营业执照:</label></td>
-			         <td colspan="5">${contractInfo.office_license }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.office_license  eq null}">
+			         <img id="photosrc" src="${contractInfo.office_license }" alt="images" style="width: 200px;height: 100px;"/>
+			         </c:if>
+			         </td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">营业地址:</label></td>
@@ -58,11 +62,19 @@
 				</tr>
 				<tr>
 			         <td class="active"><label class="pull-right">法人证件前照:</label></td>
-			         <td colspan="5">${contractInfo.office_fonturl }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.office_fonturl eq null}">
+			         <img id="photosrc" src="${contractInfo.office_fonturl }" alt="images" style="width: 200px;height: 100px;"/>
+			         </c:if>
+			         </td>
 				</tr>
 				<tr>
 			         <td class="active"><label class="pull-right">法人证件反照:</label></td>
-			         <td colspan="5">${contractInfo.office_backurl }</td>
+			         <td colspan="5">、
+			         <c:if test="${contractInfo.office_backurl eq null}">
+			         <img id="photosrc" src="${contractInfo.office_backurl }" alt="images" style="width: 200px;height: 100px;"/>
+			         </c:if>
+			         </td>
 				</tr>
 				<tr>
 			         <td class="active"><label class="pull-right">绑定银行:</label></td>
@@ -78,11 +90,19 @@
 				</tr>
 				<tr>
 			         <td class="active"><label class="pull-right">银行卡前照:</label></td>
-			         <td colspan="5">${contractInfo.office_fontbank }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.office_fontbank eq null}">
+			         <img id="photosrc" src="${contractInfo.office_fontbank }" alt="images" style="width: 200px;height: 100px;"/>
+			         </c:if>
+			         </td>
 				</tr>
 				<tr>
 			         <td class="active"><label class="pull-right">银行卡反照:</label></td>
-			         <td colspan="5">${contractInfo.office_backbank }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.office_backbank eq null}">
+			         <img id="photosrc" src="${contractInfo.office_backbank }" alt="images" style="width: 200px;height: 100px;"/>
+			         </c:if>
+			         </td>
 				</tr>
 				<tr>
 			         <td class="active"><label class="pull-right">成立日期:</label></td>
@@ -109,11 +129,19 @@
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">证件前照:</label></td>
-			         <td colspan="5">${contractInfo.sign_fonturl }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.sign_fonturl eq null}">
+			         <img id="photosrc" src="${contractInfo.sign_fonturl }" alt="images" style="width: 200px;height: 100px;"/>
+			         </c:if>
+			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-left">证件反照:</label></td>
-			         <td colspan="5">${contractInfo.sign_backurl }</td>
+			         <td class="active"><label class="pull-right">证件反照:</label></td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.sign_backurl eq null}">
+			         <img id="photosrc" src="${contractInfo.sign_backurl }" alt="images" style="width: 200px;height: 100px;"/>
+			         </c:if>
+			         </td>
 			    </tr>
 			    <tr>
 			    	<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="6"><label class="pull-left">报货人信息:</label></td>
@@ -136,11 +164,19 @@
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">证件前照:</label></td>
-			         <td colspan="5">${contractInfo.cargo_fonturl }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.cargo_fonturl eq null}">
+			         <img id="photosrc" src="${contractInfo.cargo_fonturl }" alt="images" style="width: 200px;height: 100px;"/>
+			         </c:if>
+			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-left">证件反照:</label></td>
-			         <td colspan="5">${contractInfo.cargo_backurl }</td>
+			         <td class="active"><label class="pull-right">证件反照:</label></td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.cargo_backurl eq null}">
+			         <img id="photosrc" src="${contractInfo.cargo_backurl }" alt="images" style="width: 200px;height: 100px;"/>
+			         </c:if>
+			         </td>
 			    </tr>
 			    <tr>
 			    	<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="6"><label class="pull-left">审核人信息:</label></td>
@@ -163,11 +199,19 @@
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">证件前照:</label></td>
-			         <td colspan="5">${contractInfo.audit_fonturl }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.audit_fonturl eq null}">
+			         <img id="photosrc" src="${contractInfo.audit_fonturl }" alt="images" style="width: 200px;height: 100px;"/>
+			         </c:if>
+			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-left">证件反照:</label></td>
-			         <td colspan="5">${contractInfo.audit_backurl }</td>
+			         <td class="active"><label class="pull-right">证件反照:</label></td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.audit_backurl eq null}">
+			         <img id="photosrc" src="${contractInfo.audit_backurl }" alt="images" style="width: 200px;height: 100px;"/>
+			         </c:if>
+			         </td>
 			    </tr>
 			    <tr>
 			    	<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="6"><label class="pull-left">代付人信息:</label></td>
@@ -190,55 +234,63 @@
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">证件前照:</label></td>
-			         <td colspan="5">${contractInfo.proxy_fonturl }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.proxy_fonturl eq null}">
+			         <img id="photosrc" src="${contractInfo.proxy_fonturl }" alt="images" style="width: 200px;height: 100px;"/>
+			         </c:if>
+			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-left">证件反照:</label></td>
-			         <td colspan="5">${contractInfo.proxy_backurl }</td>
+			         <td class="active"><label class="pull-right">证件反照:</label></td>
+			         <td colspan="5">
+			         	<c:if test="${contractInfo.proxy_backurl eq null}">
+			        	 <img id="photosrc" src="${contractInfo.proxy_backurl }" alt="images" style="width: 200px;height: 100px;"/>
+			        	 </c:if>
+			         </td>
 			    </tr>
+			    <c:if test="${!empty payInfos}">
 			    <tr>
 			    	  <td class="active" colspan="6"><label class="pull-left">账户信息</label></td>
 				</tr>
 				<c:forEach var="bank" items="payInfos">
 					<tr>
 				         <td class="active"><label class="pull-left">账户名称:</label></td>
-				         <td ></td>
+				         <td >${bank.pay_username }</td>
 				         <td class="active"><label class="pull-left">开户银行:</label></td>
-				         <td ></td>
-				         <td class="active"><label class="pull-left">银行账户:</label></td>
-				         <td ></td>
+				         <td >${bank.pay_name }</td>
 				    </tr>
 				    <tr>
+				    	<td class="active"><label class="pull-left">银行账户:</label></td>
+				         <td >${bank.pay_account}</td>
 				         <td class="active"><label class="pull-left">开户地址:</label></td>
-				         <td ></td>
-				         <td class="active"><label class="pull-left">详细地址:</label></td>
-				         <td ></td>
+				         <td >${bank.pay_mobile }</td>
 				    </tr>
 				    <tr>
 					         <td class=""><label class="pull-right">正面:</label></td>
-					         <td ><img id="photosrc" src="" alt="images" style="width: 200px;height: 100px;"/></td>
+					         <td >
+					         <c:if test="${bank.pay_fonturl eq null}">
+					         <img id="photosrc" src="${bank.pay_fonturl }" alt="images" style="width: 200px;height: 100px;"/>
+					         </c:if>
+					         </td>
 					         <td class=""><label class="pull-right">反面:</label></td>
-					         <td><img id="photosrc" src="" alt="images" style="width: 200px;height: 100px;"/></td>
+					         <td>
+					          <c:if test="${bank.pay_backurl eq null}">
+					         <img id="photosrc" src="${bank.pay_backurl }" alt="images" style="width: 200px;height: 100px;"/>
+					          </c:if>
+					         </td>
 						</tr>
 				    <tr>
 			    </c:forEach>
-			         <td height="100px" class="active"><label class="pull-left">营业执照:</label></td>
-			    	 <td colspan="5"><img id="photosrc" src="" alt="images" style="width: 200px;height: 100px;"/></td>
-			    </tr>
+			    </c:if>
+			    <c:if test="${contractInfo.remarks eq null}">
 			    <tr>
-			         <td class="active" colspan="6"><label class="pull-left">企业介绍:</label></td>
+			         <td class="active" colspan="6"><label class="pull-left">不通过原因:</label></td>
 			    </tr>
 			    <tr>  
-			         <td height="100px"></td>
-			         <td colspan="5"></td>
+			         <td height="100px" colspan="6">
+			         ${contractInfo.remarks }
+			         </td>
 				</tr>
-				<c:if test="">
-				    <tr>
-				         <td class="active" colspan="6"><label class="pull-left">不通过原因:</label></td>
-				    </tr>
-				    <tr>  
-				         <td height="100px" colspan="6"></td>
-					</tr>
 				</c:if>
 			</tbody>
 		</table>  
