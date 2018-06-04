@@ -178,6 +178,20 @@
 					}
 				}
 			});
+			
+			var start = {
+				    elem: '#dd',
+				    format: 'YYYY-MM-DD',
+				    event: 'focus',
+				    min: laydate.now(), //设定最小日期为当前日期  
+				    //max: $("#auth_start_date").val(),   //最大日期
+				    istime: false,				//是否显示时间
+				    isclear: true,				//是否显示清除
+				    istoday: true,				//是否显示今天
+				    issure: true,				//是否显示确定
+				    festival: true				//是否显示节日
+				};
+			laydate(start);
 		});
 		function unfold(num){
 			//num = 1 不是店铺  num = 2 为店铺
@@ -389,6 +403,32 @@
 				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺短名称：</label></td>
 				         <td class="width-35"><form:input path="officeInfo.shortName" htmlEscape="false" maxlength="50" cssClass="form-control required" /></td>
 				      </tr>
+				      <tr>
+					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>营业执照图片:</label></td>
+					         <td class="width-35">
+					         	<img id="officettimgsrc" src="${office.officeInfo.img}" alt="" style="width: 200px;height: 100px;"/>
+								<input type="hidden" id="tt" name="officeInfo.img" value="${office.officeInfo.img}"><!-- 图片隐藏文本框 -->
+								<p>&nbsp;</p>
+			                   	<div class="upload">
+									<input type="file" name="file_photo_upload" id="file_tt_upload">
+								</div>
+								<div id="file_photo_queue"></div>
+					         </td>
+					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>成立日期:</label></td>
+					         <td class="width-35"><form:input path="officeInfo.setDate" htmlEscape="false" maxlength="50" cssClass="layer-date form-control input-sm required" readonly="readonly" placeholder="成立日期"/></td>
+				       </tr>
+				      	<tr>
+					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>法定代表人:</label></td>
+					         <td class="width-35"><form:input path="officeInfo.legalPerson" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
+					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>报货折扣:</label></td>
+					         <td class="width-35"><form:input path="officeInfo.discount" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
+				       </tr>
+				      	<tr>
+					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>证件照正面:</label></td>
+					         <td class="width-35"></td>
+					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>反面:</label></td>
+					         <td class="width-35"> </td>
+				       </tr>
 				     <tr>
 				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>邮政编码:</label></td>
 				         <td class="width-35"><form:input path="officeInfo.postalCode" htmlEscape="false" maxlength="50" cssClass="form-control required" onkeyup="this.value=this.value.replace(/\D/g,'')"/></td>
@@ -485,6 +525,35 @@
 							<textarea id="details" name="officeInfo.details" style="display:none;">${office.officeInfo.details}</textarea>
 						</td>
 				      </tr>
+			      </tbody>
+			      <tbody id="unfold">
+				      <tr>
+						  <td colspan="4" class="active">
+								<label class="pull-left">账户信息</label>
+						  </td>
+					  </tr>
+				      <tr>
+					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>账户名称:</label></td>
+					      <td class="width-35"><form:input path="officeInfo.accountname" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
+					      <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户银行:</label></td>
+					      <td class="width-35"><form:input path="officeInfo.openbank" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
+					  </tr>
+				      <tr>
+					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡号:</label></td>
+					      <td class="width-35"><form:input path="officeInfo.bankaccount" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
+					      <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户地址:</label></td>
+					      <td class="width-35"><form:input path="officeInfo.bankaddress" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
+					  </tr>
+				      <tr>
+					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡正面:</label></td>
+					      <td class="width-35">
+					      
+					      </td>
+					      <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡反面:</label></td>
+					      <td class="width-35">
+					      
+					      </td>
+					  </tr>
 			      </tbody>
 		      </table>
 		</form:form>

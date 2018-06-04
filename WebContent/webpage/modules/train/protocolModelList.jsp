@@ -52,6 +52,8 @@
 								    	<c:if test="${model.status ==1}">
 										<a href="#" onclick="openDialog('修改', '${ctx}/train/protocolModel/modelForm?id=${model.id}','850px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>修改</a> 
 										</c:if>
+										<a href="#" onclick="openDialogView('查看', '${ctx}/train/protocolModel/modelForm?id=${model.id}','850px', '800px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>查看</a> 
+										<a href="#" onclick="openDialogView('历史版本', '${ctx}/train/protocolModel/modelForm?id=${model.id}','850px', '800px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>历史版本</a> 
 								    </td>
 								</tr>
 							</c:forEach>

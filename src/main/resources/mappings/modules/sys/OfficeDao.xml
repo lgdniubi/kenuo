@@ -450,7 +450,19 @@
 				bed_num,
 				status,
 				details,
-				del_flag
+				del_flag,
+				set_date,
+				charter_img,
+				legal_person,
+				icardone,
+				icardtwo,
+				discount,
+				accountname,
+				openbank,
+				bankaccount,
+				detailedaddress,
+				cardup,
+				carddown
 			) values (
 				#{id},
 				#{officeInfo.shortName},
@@ -467,7 +479,19 @@
 				#{officeInfo.bedNum},
 				#{officeInfo.status},
 				#{officeInfo.details},
-				#{DEL_FLAG_NORMAL}
+				#{DEL_FLAG_NORMAL},
+				#{officeInfo.setDate},
+				#{officeInfo.charterImg},
+				#{officeInfo.legalPerson},
+				#{officeInfo.icardone},
+				#{officeInfo.icardtwo},
+				#{officeInfo.discount},
+				#{officeInfo.accountname},
+				#{officeInfo.openbank},
+				#{officeInfo.bankaccount},
+				#{officeInfo.bankaddress},
+				#{officeInfo.cardup},
+				#{officeInfo.carddown}
 			)ON DUPLICATE KEY 
 				UPDATE 
 				short_name		 = #{officeInfo.shortName},
@@ -483,6 +507,18 @@
 				intro			 = #{officeInfo.intro},
 				details			 = #{officeInfo.details},
 				bed_num			 = #{officeInfo.bedNum},
+				set_date		 =	  #{officeInfo.setDate},				
+				charter_img      =	  #{officeInfo.charterImg},          
+				legal_person     =	  #{officeInfo.legalPerson},        
+				icardone         =	  #{officeInfo.icardone},              
+				icardtwo         =	  #{officeInfo.icardtwo},              
+				discount         =	  #{officeInfo.discount},              
+				accountname      =	  #{officeInfo.accountname},       
+				openbank         =	  #{officeInfo.openbank},            
+				bankaccount      =	  #{officeInfo.bankaccount},        
+				detailedaddress  =	  #{officeInfo.bankaddress},     
+				cardup           =	  #{officeInfo.cardup},                
+				carddown         =	  #{officeInfo.carddown} ,
 				<if test="grade == 1">
 					del_flag         = #{DEL_FLAG_NORMAL}
 				</if>

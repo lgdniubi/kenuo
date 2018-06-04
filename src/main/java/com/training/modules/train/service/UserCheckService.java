@@ -39,6 +39,7 @@ import com.training.modules.train.entity.MediaRole;
 import com.training.modules.train.entity.ModelFranchisee;
 import com.training.modules.train.entity.PayAccount;
 import com.training.modules.train.entity.PcRole;
+import com.training.modules.train.entity.TrainModel;
 import com.training.modules.train.entity.UserCheck;
 
 import net.sf.json.JSONArray;
@@ -62,6 +63,10 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	@Autowired
 	private FzxRoleDao fzxRoleDao;
 	@Autowired
+	private PcRoleService pcRoleService;
+	@Autowired
+	private FzxRoleService fzxRoleService;
+	@Autowired
 	private MediaRoleService mediaRoleService;
 	@Autowired
 	private MediaRoleDao mediaRoleDao;
@@ -69,6 +74,8 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	private AuthenticationService authenticationService;
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
+	@Autowired
+	private TrainModelService trainModelService;
 	
 	/**
 	 * 保存用户审核的结果
@@ -225,9 +232,11 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			//编辑的时候先删除超级管理员角色和公共的角色-----再重新设置新的版本的角色
 			ModelFranchisee franchisee = getQYModelFranchiseeByUserid(modelFranchisee.getUserid());
 			if(!franchisee.getModid().equals(modelFranchisee.getModid())){	//如果版本更换才重新设置
-				deleteAllRolesForUser(modelFranchisee.getUserid(),franchisee.getFranchiseeid());
+//				deleteAllRolesForUser(modelFranchisee.getUserid(),franchisee.getFranchiseeid());
 				//设置该用户的超级管理员
 //				setSuperAdminForUserid(modelFranchisee,franchisee.getFranchiseeid());
+				//更改超级管理员版本菜单
+				updateSuperAdminMenu(modelFranchisee);
 				//设置公共的角色
 //				setRoleForUser(modelFranchisee,franchisee.getFranchiseeid());
 				//变更改商家角色版本id
@@ -244,6 +253,24 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		modelFranchisee.setUserid(find.getUserid());
 		updateApplyStatus(modelFranchisee);
 //		int a = 1/0;
+	}
+
+	//更改超级管理员版本菜单
+	private void updateSuperAdminMenu(ModelFranchisee modelFranchisee) {
+		FzxRole fzxrole = userCheckDao.findFzxRoleByUserId(modelFranchisee.getUserid());
+		PcRole pcrole = userCheckDao.findPcRoleByUserId(modelFranchisee.getUserid());
+		MediaRole mdrole = userCheckDao.findMdRoleByUserId(modelFranchisee.getUserid());
+		TrainModel trainModel = new TrainModel();
+		trainModel.setId(modelFranchisee.getModid());
+		TrainModel pcMenu = trainModelService.findmodpcMenu(trainModel );
+		TrainModel mediaMenu = trainModelService.findmodMediaMenu(trainModel);
+		TrainModel fzxMenu = trainModelService.findmodfzxMenu(trainModel);
+		pcrole.setMenuIds(pcMenu.getMenuIds());
+		fzxrole.setMenuIds(fzxMenu.getMenuIds());
+		mdrole.setMenuIds(mediaMenu.getMenuIds());
+		pcRoleService.saveRoleMenu(pcrole);
+		fzxRoleService.saveRoleMenu(fzxrole);
+		mediaRoleService.saveRoleMenu(mdrole);
 	}
 
 	//版本升级的时候变更改商家角色版本id

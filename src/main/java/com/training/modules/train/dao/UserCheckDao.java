@@ -10,6 +10,7 @@ import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.BankAccount;
 import com.training.modules.train.entity.CheckAddr;
 import com.training.modules.train.entity.FzxRole;
+import com.training.modules.train.entity.MediaRole;
 import com.training.modules.train.entity.ModelFranchisee;
 import com.training.modules.train.entity.PayAccount;
 import com.training.modules.train.entity.PcRole;
@@ -181,6 +182,11 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	public CheckAddr findCheckAddr(UserCheck userCheck);
 	//更新认知支付银行账户表sys_bank_account 商家id
 	public void updateBankAccountFranchiseeId(@Param("franchiseeid")String id, @Param("applyId")Integer applyId);
+	//通过用户id找到角色id
+	public FzxRole findFzxRoleByUserId(String userid);
 
+	public PcRole findPcRoleByUserId(String userid);
+
+	public MediaRole findMdRoleByUserId(String userid);
 	
 }
