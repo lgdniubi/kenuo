@@ -151,7 +151,7 @@
 			<div class="ibox-content">
 				<div class="clearfix">
 					<shiro:hasPermission name="crm:userInfo:edit">
-						<a href="#" onclick="openDialogView('操作日志', '${ctx}/crm/user/logDetail?userId=${userId}&franchiseeId=${franchiseeId}&operatorType=4','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 操作日志</a>
+						<a href="#" onclick="openDialogView('操作日志', '${ctx}/crm/consign/logDetail','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 操作日志</a>
 					</shiro:hasPermission>
 				</div>
 			</div>

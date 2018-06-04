@@ -7,8 +7,16 @@
 <script type="text/javascript">
 	var validateForm;
 	var msg = "您真的确定要提交吗？\n\n请确认！"; 
+	var newconsignNum;//新的寄存数量
+	var consignNum;//寄存数量
+	var takenNum;//取走数量
 	function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		if(validateForm.form()){
+			//先计算数量才能提交
+			if($("#computType").val() == 1){
+				top.layer.alert('请先计算数量!', {icon: 0, title:'提醒'});
+				return false;
+			}
 			var result = number();
 			if(result==true){
 		 		if (confirm(msg)==true){ 
@@ -17,7 +25,7 @@
 			    }
 			}
 		 }else{ 
-			 alert("请输入正确的数量");
+			 top.layer.alert('请输入正确取走数量', {icon: 0, title:'提醒'});
 			  return false; 
 		 } 
 	}
@@ -27,7 +35,7 @@
 		var purchaseNum = parseInt($("#purchaseNum").val());//购买数量
 		var consignNum = parseInt($("#consignNum").val());//寄存数量
 		if((takenNum > purchaseNum)|| (takenNum > consignNum)){
-			alert("输入正确取走数量");
+			top.layer.alert('请输入正确取走数量', {icon: 0, title:'提醒'});
 			return false;
 		}
 		return true;
@@ -50,6 +58,26 @@
 			  }
 		 });
 	});
+	//计算数量
+	function compute(){
+		consignNum = "${consign.consignNum}";//寄存数量
+		takenNum = $("#takenNum").val();//取走数量
+		newconsignNum = parseInt(consignNum)-parseInt(takenNum);//新的寄存数量
+		
+		if(takenNum == 0 || newconsignNum < 0){
+			top.layer.alert('请正确填写取走数量', {icon: 0, title:'提醒'});
+		}else{
+			$("#takenNum").attr("readonly",true);
+			$("#consignNum").val(newconsignNum);
+			$("#computType").val(0);
+		}
+	}
+	//修改数量
+	function updateCompute(){
+		$("#takenNum").attr("readonly",false);
+		$("#consignNum").val(consignNum);
+		$("#computType").val(1);
+	}
 </script>
 </head>
 <body>
@@ -96,7 +124,12 @@
 										<label class="pull-right"><font color="red">*</font>取走数量:</label>
 									</td>
 									<td class="width-20">
-										<input name="takenNum" id="takenNum" value="${consign.takenNum}" maxlength="50" class="form-control required" />
+										<input name="takenNum" id="takenNum" value="0" maxlength="50" class="form-control" style="width: 150px" />
+										<a href="#" id="compute" onclick="compute()">计算数量</a>
+										<input type="hidden" id="computType" name="computType" value="1"/>
+										<div id="updateCompute">
+											<a href="#" id="compute" onclick="updateCompute()">修改数量</a>
+										</div>
 									</td>
 								</tr>
 								<tr>

@@ -14,11 +14,12 @@ import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.crm.entity.Consign;
+import com.training.modules.crm.entity.CrmDepositLog;
 import com.training.modules.crm.entity.UserDetail;
-import com.training.modules.crm.entity.UserOperatorLog;
 import com.training.modules.crm.service.ConsignService;
 import com.training.modules.crm.service.UserDetailService;
-import com.training.modules.crm.service.UserOperatorLogService;
+import com.training.modules.sys.entity.User;
+import com.training.modules.sys.utils.UserUtils;
 
 /**
  * kenuo 用户寄存相关controller
@@ -29,8 +30,6 @@ import com.training.modules.crm.service.UserOperatorLogService;
 @RequestMapping(value = "${adminPath}/crm/consign")
 public class ConsignController extends BaseController {
 
-	@Autowired
-	private UserOperatorLogService logService;
 	@Autowired
 	private ConsignService consignService;
 	@Autowired
@@ -128,27 +127,52 @@ public class ConsignController extends BaseController {
 		
 		String consignId ;
 		try {
+			User user = UserUtils.getUser();
 			consignId = consign.getConsignId();
-			UserOperatorLog log = new UserOperatorLog();
-			log.setOperatorType("4");
+			CrmDepositLog log = new CrmDepositLog();
 			if (null==consignId|| consignId.trim().length()<=0) {
 				consignService.save(consign);
 				//save Log
-				log.setUserId(consign.getUserId());
-				log.setContent("创建新的寄存档案");
-				log.setFranchiseeId(consign.getFranchiseeId());
-				logService.save(log);
+				log.setProductName(consign.getGoodsName());
+				log.setBuyNum(consign.getPurchaseNum());
+				log.setTakeNum(consign.getTakenNum());
+				log.setSurplusNum(consign.getConsignNum());
+				log.setCreateBy(user);
+				log.setRemarks("新增寄存档案:"+consign.getGoodsName()+"取走数量:"+consign.getTakenNum());
+				consignService.saveCrmDepositLog(log);
 			}else {
 				consignService.updateSingle(consign);
-				log.setUserId(consign.getUserId());
-				log.setContent("修改寄存档案");
-				log.setFranchiseeId(consign.getFranchiseeId());
-				logService.save(log);
+				//save Log
+				log.setProductName(consign.getGoodsName());
+				log.setBuyNum(consign.getPurchaseNum());
+				log.setTakeNum(consign.getTakenNum());
+				log.setSurplusNum(consign.getConsignNum());
+				log.setCreateBy(user);
+				log.setRemarks("修改寄存档案:"+consign.getGoodsName()+"取走数量:"+consign.getTakenNum());
+				consignService.saveCrmDepositLog(log);
 			}
 			
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
 		}
 		return "redirect:" + adminPath + "/crm/consign/list?userId="+consign.getUserId()+"&franchiseeId="+consign.getFranchiseeId();
+	}
+	
+	/**
+	 * 获取资料中的操作日志记录
+	 * @param log
+	 */
+	@RequestMapping("logDetail")
+	public String logDetail(CrmDepositLog log, HttpServletRequest request, HttpServletResponse response, Model model){
+		try {
+			// 取得操作日志
+			Page<CrmDepositLog> page = consignService.findDepositList(new Page<CrmDepositLog>(request, response), log);
+			model.addAttribute("page", page);
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+			addMessage(model, "查询出现问题或者超时");
+			e.printStackTrace();
+		}
+		return "modules/crm/depositLog";
 	}
 }

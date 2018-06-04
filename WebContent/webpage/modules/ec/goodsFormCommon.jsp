@@ -224,8 +224,8 @@
 										<span class="control-label cannotEdit">(多条描述以逗号分开)</span>
 									</li>
 									<li class="form-group">
-										<span class="control-label col-sm-2"><font color="red">*</font>商品简单描述：</span>
-										<form:input path="goodsRemark" htmlEscape="false" maxlength="150" class="form-control required"/>
+										<span class="control-label col-sm-2">商品简单描述：</span>
+										<form:input path="goodsRemark" htmlEscape="false" maxlength="150" class="form-control"/>
 										<span class="control-label cannotEdit">(多条描述以逗号分开)</span>
 									</li>
 									<li class="form-group">
@@ -843,10 +843,6 @@
 					}
 					if(goodsShortName==""){
 						top.layer.alert('短名称不能为空!', {icon: 0, title:'提醒'});
-						return;
-					}
-					if(goodsRemark==""){
-						top.layer.alert('商品描述不能为空!', {icon: 0, title:'提醒'});
 						return;
 					}
 					if(goodsSn==""){
