@@ -54,21 +54,21 @@
 	
 	<select id="findList" resultType="RefundOrder">
 		SELECT 
-			order_id as orderId,
-			temp_order_id as tempOrderId,
-			order_type as orderType,
-			arrearage_price as arrearagePrice,
-			arrearage_office as arrearageOffice,
-			amount as amount,
-			DATE_FORMAT(add_time,'%Y-%m-%d %H:%i:%s') as addTime,
-			order_status as orderStatus,
-			pay_code as payCode,
-			DATE_FORMAT(pay_time,'%Y-%m-%d %H:%i:%s') as payTime,
-			charge_id as chargeId,
-			user_id as userId,
-			user_mobile as userMobile,
-			user_office_id as userOfficeId,
-			channel_flag as channelFlag,
+			ro.order_id as orderId,
+			ro.temp_order_id as tempOrderId,
+			ro.order_type as orderType,
+			ro.arrearage_price as arrearagePrice,
+			ro.arrearage_office as arrearageOffice,
+			ro.amount as amount,
+			DATE_FORMAT(ro.add_time,'%Y-%m-%d %H:%i:%s') as addTime,
+			ro.order_status as orderStatus,
+			ro.pay_code as payCode,
+			DATE_FORMAT(ro.pay_time,'%Y-%m-%d %H:%i:%s') as payTime,
+			ro.charge_id as chargeId,
+			ro.user_id as userId,
+			ro.user_mobile as userMobile,
+			ro.user_office_id as userOfficeId,
+			ro.channel_flag as channelFlag,
 			o.name as arrearageOfficeName,
 			u.name as userName
 		FROM train_refund_order ro
@@ -78,6 +78,7 @@
 		<if test="orderId != null and orderId !=''">
 			and order_id = #{orderId}
 		</if>
+		order by ro.add_time desc
 	</select>
 	
 	

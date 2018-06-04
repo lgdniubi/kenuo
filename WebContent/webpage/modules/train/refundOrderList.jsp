@@ -47,7 +47,7 @@
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
                         <div class="form-group">
-                            <label>订单号：<input id="orderId" name="orderId" type="text" value="${refundOrder.orderId}" class="form-control" placeholder="搜索文章标题"></label> 
+                            <label>订单号：<input id="orderId" name="orderId" type="text" value="${refundOrder.orderId}" class="form-control" placeholder="搜索订单号"></label> 
                            
                         </div>
                         <div class="pull-right">
@@ -120,7 +120,7 @@
 								<td style="text-align: center;">
 									<shiro:hasPermission name="train:refundOrder:makeSureInAccount">
 									<c:if test="${refund.orderStatus eq '2'}">
-										<a href="${ctx}/train/refundOrder/makeSureInAccount?order_id=${refund.orderId}"  onclick="return confirmx('要删除该分类及所有子分类吗？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>确认入账</a>
+										<a href="${ctx}/train/refundOrder/makeSureInAccount?order_id=${refund.orderId}"  onclick="return confirmx('确定已入账？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>确认入账</a>
 									</c:if>
 									</shiro:hasPermission>
 									<shiro:hasPermission name="train:articlelist:deleteOne">
