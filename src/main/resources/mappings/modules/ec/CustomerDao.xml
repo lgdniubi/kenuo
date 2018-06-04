@@ -60,7 +60,8 @@
 	<select id="selectFranchiseeOffice" resultType="Customer">
 		SELECT 
 			cus_id as 'cusId',
-			office_id as 'officeId'
+			office_id as 'officeId',
+			beauty_id as 'beautyId'
 		FROM mtmydb.mtmy_customer
 		WHERE user_id = #{userId}
 		AND franchisee_id = #{franchiseeId}

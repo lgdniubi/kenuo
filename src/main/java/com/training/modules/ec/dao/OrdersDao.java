@@ -381,4 +381,17 @@ public interface OrdersDao extends TreeDao<Orders>{
 	 * @return
 	 */
 	public String queryReservationShopId(String orderId);
+	
+	/**
+	 * 查询未完成的 存在物流的订单 且不存在收货时间  用于记录收货日期(用户签收时间)
+	 * @return
+	 */
+	public List<Orders> queryCourierOrder();
+
+	/**
+	 * 记录用户签收时间 
+	 * @param orders
+	 * @return
+	 */
+	public int updateCourierOrder(Orders orders);
 }

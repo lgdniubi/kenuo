@@ -17,9 +17,11 @@
 		openDialog("新增实物订单添加",url,"900px", "650px");
 	}
 	function newSearch() {
+		overShade();
 		$("#searchForm").submit();
 	}
 	function reset() {//重置，页码清零
+		overShade();
 		$("[name='franchiseeId']").val("");//绑定商家清楚
 		$("[name='franchiseeName']").val("");//绑定商家清楚
 	
@@ -27,6 +29,7 @@
 		$("#officeId").val("");
 		$("#officeName").val("");
 		$("#level").val("");
+		$("#isBindingBeauty").val("");
 		$("#keyword").val("");
 		$("#searchForm div.form-control select").val("");
 		$("#searchForm").submit();
@@ -168,6 +171,12 @@
 										<form:option value="10">L10</form:option>
 									</form:select> --%>
 									<form:input neme="keyword" path="keyword" id="keyword" value="${detail.keyword}" htmlEscape="false" maxlength="50" class=" form-control input-sm" placeholder ="手机号码或者昵称" style="width:250px" />
+									<span>是否绑定技师:</span>
+									<form:select path="isBindingBeauty" name="isBindingBeauty" id="isBindingBeauty" class="form-control" style="width:185px;">
+										<form:option value="">全部</form:option>
+										<form:option value="0">已绑定</form:option>
+										<form:option value="1">未绑定</form:option>
+									</form:select>
 									<div class="pull-right">
 										<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="newSearch()">
 											<i class="fa fa-search"></i>查询

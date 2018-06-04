@@ -43,6 +43,7 @@ public class Orders extends TreeEntity<Orders> {
 	private String shippingcode;		//物流code
 	private Date shippingtime;			//发货时间
 	private String shippingname;		//物流名称
+	private Date shippingReceivedDate;	//收货时间（用户签收订单时间）
 	private Date returnTime;			//退货期时间
 	private int payid;					//支付方式id
 	private String paycode;				//支付code
@@ -1753,6 +1754,12 @@ public class Orders extends TreeEntity<Orders> {
 	}
 	public void setFranchiseeId(String franchiseeId) {
 		this.franchiseeId = franchiseeId;
+	}
+	public Date getShippingReceivedDate() {
+		return shippingReceivedDate;
+	}
+	public void setShippingReceivedDate(Date shippingReceivedDate) {
+		this.shippingReceivedDate = shippingReceivedDate;
 	}
 	
 }
