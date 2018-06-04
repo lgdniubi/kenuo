@@ -19,8 +19,9 @@
 	   }
 		function resetnew(){//重置，页码清零
 			$("#pageNo").val(0);
-			$("#office_id").val("");
+			$("#officeId").val("");
 			$("#status").val("");
+			$("#officeName").val("");
 			$("#searchForm").submit();
 	 	 }
 		function page(n,s){//翻页
@@ -47,7 +48,11 @@
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
                         <div class="form-group">
-                            <label>所属机构：<input id="office_id" name="office_id" type="text" value="${contractInfo.office_id}" class="form-control"></label> 
+                        	<span>归属机构：</span>
+							<sys:treeselect id="office" name="office_id" value="${contractInfo.office_id}" labelName="office_name" labelValue="${contractInfo.office_name}" title="部门"
+								url="/sys/office/treeData?type=2" cssClass=" form-control input-sm" allowClear="true"
+								notAllowSelectRoot="false" notAllowSelectParent="false" />
+                            <%-- <label>所属机构：<input id="office_id" name="office_id" type="text" value="${contractInfo.office_id}" class="form-control"></label> --%> 
                             <label>状态：
                             	<select name="status" id="status">
                             		<option value="" >-- 请选择 --</option>
@@ -98,9 +103,9 @@
                                		${info.create_time}
                                	</td>
 								<td style="text-align: center;">
-									<shiro:hasPermission name="train:articlelist:deleteOne">
-										<a class="btn btn-success btn-xs"  onclick="openDialogView('审核','${ctx}/train/contractInfo/toAuditContractInfo?office_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>审核</a>
-									</shiro:hasPermission>
+									<c:if test="${info.status eq '1'}">
+								    	<a class="btn btn-success btn-xs"  onclick="openDialog('审核','${ctx}/train/contractInfo/toAuditContractInfo?office_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>审核</a>
+								    </c:if>
 									<a class="btn btn-success btn-xs"  onclick="openDialogView('详情','${ctx}/train/contractInfo/queryContractInfoDetail?office_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>详情</a>
 								</td>
 							</tr>

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
 import com.training.common.web.BaseController;
@@ -66,5 +67,23 @@ public class ContractInfoController extends BaseController {
 	public String toAuditContractInfo(Model model,String office_id){
 		model.addAttribute("office_id", office_id);
 		return "modules/train/auditContractInfo";
+	}
+	/**
+	 * 审核签约
+	 * @return
+	 */
+	@RequiresPermissions(value="train:contractInfo:audit")
+	@RequestMapping(value="auditContractInfo")
+	public String auditContractInfo(ContractInfo contractInfo,RedirectAttributes redirectAttributes){
+		try {
+			this.contractInfoService.auditContractInfo(contractInfo);
+			addMessage(redirectAttributes, "保存成功");
+		} catch (Exception e) {
+			addMessage(redirectAttributes, "保存出现异常,请与管理员联系");
+			logger.error("保存出现异常,异常信息为："+e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return "redirect:" + adminPath + "/train/contractInfo/list";
 	}
 }

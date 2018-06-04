@@ -248,21 +248,21 @@
 			        	 </c:if>
 			         </td>
 			    </tr>
-			    <c:if test="${!empty payInfos}">
+			    <c:if test="${!empty contractInfo.payInfos}">
 			    <tr>
-			    	  <td class="active" colspan="6"><label class="pull-left">账户信息</label></td>
+			    	  <td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="6"><label class="pull-left">账户信息:</label></td>
 				</tr>
-				<c:forEach var="bank" items="payInfos">
+				<c:forEach var="bank" items="${ contractInfo.payInfos}">
 					<tr>
-				         <td class="active"><label class="pull-left">账户名称:</label></td>
+				         <td class="active"><label class="pull-right">账户名称:</label></td>
 				         <td >${bank.pay_username }</td>
-				         <td class="active"><label class="pull-left">开户银行:</label></td>
+				         <td class="active"><label class="pull-right">开户银行:</label></td>
 				         <td >${bank.pay_name }</td>
 				    </tr>
 				    <tr>
-				    	<td class="active"><label class="pull-left">银行账户:</label></td>
+				    	<td class="active"><label class="pull-right">银行账户:</label></td>
 				         <td >${bank.pay_account}</td>
-				         <td class="active"><label class="pull-left">开户地址:</label></td>
+				         <td class="active"><label class="pull-right">开户地址:</label></td>
 				         <td >${bank.pay_mobile }</td>
 				    </tr>
 				    <tr>
@@ -282,9 +282,9 @@
 				    <tr>
 			    </c:forEach>
 			    </c:if>
-			    <c:if test="${contractInfo.remarks eq null}">
+			    <c:if test="${!(contractInfo.remarks eq null)}">
 			    <tr>
-			         <td class="active" colspan="6"><label class="pull-left">不通过原因:</label></td>
+			         <td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="6"><label class="pull-left">驳回原因:</label></td>
 			    </tr>
 			    <tr>  
 			         <td height="100px" colspan="6">

@@ -10,21 +10,22 @@
 	<script type="text/javascript">
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-			if(validateForm.form()){
         	  loading('正在提交，请稍等...');
 		      $("#inputForm").submit();
 	     	  return true;
-		  	}
-		  return false;
 		}
 		
-		function setDiscount(value){
-
+		function checkValue(value){
+			if(value == 2){
+				$("#remarks").hide();
+			}else if(value == 3){
+				$("#remarks").show();
+			}
 		}
 	</script>
 </head>
 <body>
-	<form:form id="inputForm" modelAttribute="modelFranchisee" action="${ctx}/train/userCheck/saveFranchise?opflag=syr" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="modelFranchisee" action="${ctx}/train/contractInfo/auditContractInfo" method="post" class="form-horizontal">
 		<sys:message content="${message}"/>
 		<input name="office_id" value="${office_id}" type="hidden">
 		
@@ -41,7 +42,7 @@
 			    <tr id="remarks">
 			         <td class="active"><label class="pull-right">驳回原因:</label></td>
 			         <td colspan="2">
-			         	<textarea rows="4" cols="" name="remarks"></textarea>
+			         	<textarea rows="4" cols="80" name="remarks"></textarea>
 			         </td>
 				</tr>
 			</tbody>

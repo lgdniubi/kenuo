@@ -54,4 +54,12 @@ public class ContractInfoService {
 		
 		return json.getJSONObject("data");
 	}
+	
+	public void auditContractInfo(ContractInfo info){
+		JSONObject jsonO = new JSONObject();
+		jsonO.put("office_id", info.getOffice_id());
+		jsonO.put("status", info.getStatus());
+		jsonO.put("remarks", info.getRemarks());
+		WebUtils.postCS(jsonO, ParametersFactory.getTrainsParamValues("updateContractInfoAuditStatus"));
+	}
 }
