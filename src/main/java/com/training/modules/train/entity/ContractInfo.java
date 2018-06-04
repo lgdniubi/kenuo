@@ -20,7 +20,7 @@ public class ContractInfo extends DataEntity<ContractInfo> {
 	private String office_pids; //机构父IDS
 	private String office_license; //营业执照
 	private String office_no;	//注册号
-	private String office_type;	//类型
+	private String office_type;	//类型 0个体户、1合伙企业、2个人独资企业、3公司
 	private String office_address;	//营业地址
 	private String office_legalman;	//法人
 	private String office_fonturl;	//证件前照

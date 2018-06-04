@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.training.common.persistence.Page;
 import com.training.modules.ec.utils.WebUtils;
@@ -24,6 +25,10 @@ public class ContractInfoService {
 		JSONObject jsonO = new JSONObject();
 		jsonO.put("page", page.getPageNo());
 		jsonO.put("size", page.getPageSize());
+		if(StringUtils.isNotBlank(contractInfo.getOffice_id()))
+			jsonO.put("office_id", contractInfo.getOffice_id());
+		if(StringUtils.isNotBlank(contractInfo.getStatus()))
+			jsonO.put("status", contractInfo.getStatus());
 		JSONObject json = WebUtils.postCS(jsonO, ParametersFactory.getTrainsParamValues("queryContractInfoAuditList"));
 		
 		List<ContractInfo> list = JSONArray.toList(json.getJSONObject("data").getJSONArray("list"), new ContractInfo(),new JsonConfig());

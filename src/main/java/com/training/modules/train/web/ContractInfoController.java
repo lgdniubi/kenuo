@@ -46,5 +46,14 @@ public class ContractInfoController extends BaseController {
 		
 		return "modules/train/contractInfoList";
 	}
+	/**
+	 * 跳转审核页面
+	 * @return
+	 */
+	@RequestMapping(value="toAuditContractInfo")
+	public String toAuditContractInfo(Model model,String office_id){
+		model.addAttribute("office_id", office_id);
+		return "modules/train/contractInfoDetail";
+	}
 	
 }

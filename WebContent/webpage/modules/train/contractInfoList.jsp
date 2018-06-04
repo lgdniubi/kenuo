@@ -19,7 +19,8 @@
 	   }
 		function resetnew(){//重置，页码清零
 			$("#pageNo").val(0);
-			$("#orderId").val("");
+			$("#office_id").val("");
+			$("#status").val("");
 			$("#searchForm").submit();
 	 	 }
 		function page(n,s){//翻页
@@ -48,9 +49,12 @@
                         <div class="form-group">
                             <label>所属机构：<input id="office_id" name="office_id" type="text" value="${contractInfo.office_id}" class="form-control"></label> 
                             <label>状态：
-                            	<select name="status">
-                            		<option value="0" <c:if test="${contractInfo.status eq '0'}">selected="selected"</c:if> >未签约</option>
-                            		<option value="1" <c:if test="${contractInfo.status eq '1'}">selected="selected"</c:if> >已签约</option>
+                            	<select name="status" id="status">
+                            		<option value="" >-- 请选择 --</option>
+                            		<option value="0" <c:if test="${contractInfo.status eq '0'}">selected="selected"</c:if> >创建</option>
+                            		<option value="1" <c:if test="${contractInfo.status eq '1'}">selected="selected"</c:if> >待审核</option>
+                            		<option value="2" <c:if test="${contractInfo.status eq '2'}">selected="selected"</c:if> >审核通过</option>
+                            		<option value="3" <c:if test="${contractInfo.status eq '3'}">selected="selected"</c:if> >审核驳回</option>
                             	</select>
                             </label>
                         </div>
@@ -83,7 +87,9 @@
                                	</td>
                                	<td style="text-align: center;">
                                		<c:if test="${info.status eq '0'}">未签约</c:if>
-                               		<c:if test="${info.status eq '1'}">已签约</c:if>
+                               		<c:if test="${info.status eq '1'}">待审核</c:if>
+                               		<c:if test="${info.status eq '2'}">审核通过</c:if>
+                               		<c:if test="${info.status eq '3'}">审核驳回</c:if>
                                	</td>
                                 <td style="text-align: center;">
                                		${info.sign_username}
@@ -92,17 +98,10 @@
                                		${info.create_time}
                                	</td>
 								<td style="text-align: center;">
-									<shiro:hasPermission name="train:refundOrder:makeSureInAccount">
-									<c:if test="${info.status eq '2'}">
-										<a href="${ctx}/train/refundOrder/makeSureInAccount?order_id=${info.office_id}"  onclick="return confirmx('确定已入账？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>确认入账</a>
-									</c:if>
-									</shiro:hasPermission>
 									<shiro:hasPermission name="train:articlelist:deleteOne">
-										<a class="btn btn-success btn-xs"  onclick="openDialogView('对账单','${ctx}/train/refundOrder/queryStatementOfRefund?order_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>对账单详情</a>
+										<a class="btn btn-success btn-xs"  onclick="openDialogView('审核','${ctx}/train/contractInfo/toAuditContractInfo?office_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>审核</a>
 									</shiro:hasPermission>
-									<c:if test="${info.status eq '2'}">
-										<a class="btn btn-success btn-xs"  onclick="openDialogView('支付信息','${ctx}/train/refundOrder/queryTransferpay?order_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>支付信息</a>
-									</c:if>
+									<a class="btn btn-success btn-xs"  onclick="openDialogView('详情','${ctx}/train/contractInfo/toAuditContractInfo?office_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>详情</a>
 								</td>
 							</tr>
 						</c:forEach>
