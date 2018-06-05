@@ -13,7 +13,7 @@
 	    	<div class="ibox-content">
 				<div class="tab-content" id="tab-content">
 	                <div class="tab-inner">
-		                <form:form id="searchForm" action="${ctx}/specEquipment/editLog" style="width: 100%;" modelAttribute="goods" method="post" class="navbar-form navbar-left searcharea">
+		                <form:form id="searchForm" action="${ctx}/ec/specEquipment/editLog" style="width: 100%;" method="post" class="navbar-form navbar-left searcharea">
 							<input id="comEquipmentId" name="comEquipmentId" value="${comEquipmentId}" type="hidden">
 		               		<!-- 分页必要字段 -->
 							<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>

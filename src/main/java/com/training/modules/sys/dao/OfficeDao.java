@@ -238,5 +238,12 @@ public interface OfficeDao extends TreeDao<Office> {
 	 * 2018年2月6日 兵子
 	 */
 	public void updateFranchisee(Office off);
+	
+	/**
+	 * 查询店铺关闭店日志
+	 * @param officeId
+	 * @return
+	 */
+	public List<OfficeLog> queryOfficeLog(OfficeLog officeLog);
 
 }

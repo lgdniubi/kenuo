@@ -488,6 +488,9 @@
 			      </tbody>
 		      </table>
 		</form:form>
+		<shiro:hasPermission name="sys:office:shopLogs">
+			<a href="#" onclick="openDialogView('操作日志', '${ctx}/sys/office/shopLogs?officeId=${office.id}','900px','450px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>操作日志</a>
+		</shiro:hasPermission>
 		<div class="loading"></div>
 	</div>
 	<!-- 富文本框上传图片弹出框 -->

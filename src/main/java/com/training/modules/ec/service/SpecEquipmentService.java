@@ -180,7 +180,7 @@ public class SpecEquipmentService extends CrudService<SpecEquipmentDao, Equipmen
 		// 设置分页参数
 		equipmentLogs.setPage(page);
 		// 执行分页查询
-		page.setList(specEquipmentDao.findAllLogs(equipmentLogs.getComEquipmentId()));
+		page.setList(specEquipmentDao.findAllLogs(equipmentLogs));
 		return page;
 	}
 }

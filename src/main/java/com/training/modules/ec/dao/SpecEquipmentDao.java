@@ -109,5 +109,5 @@ public interface SpecEquipmentDao extends CrudDao<Equipment> {
 	 * @param officeId
 	 * @return
 	 */
-	public List<EquipmentLogs> findAllLogs(String comEquipmentId);
+	public List<EquipmentLogs> findAllLogs(EquipmentLogs equipmentLogs);
 }

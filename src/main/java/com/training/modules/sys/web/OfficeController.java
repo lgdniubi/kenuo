@@ -36,6 +36,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.training.common.beanvalidator.BeanValidators;
 import com.training.common.config.Global;
+import com.training.common.persistence.Page;
 import com.training.common.service.BaseService;
 import com.training.common.utils.DateUtils;
 import com.training.common.utils.StringUtils;
@@ -1133,5 +1134,26 @@ public class OfficeController extends BaseController {
 		}
 		officeLog.setUpdateBy(UserUtils.getUser());
 		officeService.saveOfficeLog(officeLog);
+    }
+    
+    /**
+     * 查看店铺开闭店日志
+     * @param officeLog
+     * @param request
+     * @param response
+     * @param model
+     * @return
+     */
+    @RequestMapping(value="shopLogs")
+    public String shopLogs(OfficeLog officeLog,HttpServletRequest request,HttpServletResponse response,Model model){
+    	try{
+    		Page<OfficeLog> page = officeService.queryOfficeLog(new Page<OfficeLog>(request,response),officeLog);
+    		model.addAttribute("page",page);
+    		model.addAttribute("officeId",officeLog.getOfficeId());
+    	}catch (Exception e) {
+    		BugLogUtils.saveBugLog(request, "查看店铺开闭店日志", e);
+			logger.error("查看店铺开闭店日志出错信息:"+e.getMessage());
+		}
+    	return "modules/sys/shopLogs";
     }
 }
