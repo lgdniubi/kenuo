@@ -16,7 +16,14 @@ public class ArrearageOfficeList {
 	private String order_id;			//订单id
 	private String office_id;			//机构id
 	private double used_limit;			//已使用额度
+	private String billmonth;			//账单月份
 	
+	public String getBillmonth() {
+		return billmonth;
+	}
+	public void setBillmonth(String billmonth) {
+		this.billmonth = billmonth;
+	}
 	public String getOrder_id() {
 		return order_id;
 	}
