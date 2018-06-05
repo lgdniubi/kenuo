@@ -596,4 +596,14 @@
 		 `franchisee_id`=#{franchiseeid}
 		WHERE apply_id = #{applyId}
 	</update>
+	<!-- 通过用户id找到角色id -->
+	<select id="findFzxRoleByUserId" resultType="FzxRole">
+		SELECT fzx_role_id AS roleId FROM fzx_user_role WHERE user_id = #{userid}
+	</select>
+	<select id="findPcRoleByUserId" resultType="PcRole">
+		SELECT pc_role_id AS roleId FROM pc_user_role WHERE user_id = #{userid}
+	</select>
+	<select id="findMdRoleByUserId" resultType="MediaRole">
+		SELECT role_id AS roleId FROM media_manage_user_role WHERE user_id = #{userid}
+	</select>
 </mapper>

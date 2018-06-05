@@ -126,4 +126,24 @@
 			AND fr.id = #{franchiseeId}
 		</if>
 	</select>
+	
+	<select id="findProtocolListOfOffice" resultType="ProtocolUser">
+		SELECT 
+			pu.id,
+			fr.`name` AS companyName,
+			office.`name` AS officeName,
+			pm.`name` AS protocolName,
+			pu.`status`,
+			pu.type,
+			u.`name` AS 'createBy.name',
+			pu.auth_start_date,
+			pu.auth_end_date AS authEndDate,
+			pu.create_date
+		FROM supply_protocol_shop pu 
+		LEFT JOIN sys_franchisee fr ON fr.id= pu.franchisee_id
+		LEFT JOIN sys_office office ON office.id= pu.office_id
+		LEFT JOIN sys_user u ON  u.id =pu.user_id
+		LEFT JOIN supply_protocol_model pm ON pm.id= pu.protocol_id
+		WHERE pu.del_flag = 0 AND pu.type_id = 4 and pu.status = '1' and pu.office_id =#{office_id}
+	</select>
 </mapper>

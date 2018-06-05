@@ -5,6 +5,7 @@ package com.training.modules.train.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -125,6 +126,13 @@ public class ProtocolModelService extends CrudService<ProtocolModelDao,ProtocolM
 		return protocolModelDao.findProtocolList(protocolUser);
 	}
 
-
+	/**
+	 * 查询机构已签协议
+	 * @param office_id
+	 * @return
+	 */
+	public List<ProtocolUser> findProtocolListOfOffice(String office_id){
+		return this.protocolModelDao.findProtocolListOfOffice(office_id);
+	}
 	
 }

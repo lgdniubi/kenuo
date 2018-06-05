@@ -7,46 +7,47 @@
     <meta name="decorator" content="default"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no">
      <link rel="stylesheet" href="${ctxStatic}/train/css/exam.css">
-    <title>对账单列表</title>
+    <title>协议列表</title>
 </head>
 <body>
 	<div class="wrapper-content">
         <div class="ibox">
             <div class="ibox-title">
-                <h5>对账单</h5>
+                <h5>协议列表</h5>
             </div>
             <sys:message content="${message}"/>
             <div class="ibox-content">
                 <table id="treeTable" class="table table-bordered table-hover table-striped">
 	                 <thead> 
 	                   	 <tr>
-                   			<th style="text-align: center;">账单编号</th>
-                   			<th style="text-align: center;">额度</th>
-                   			<th style="text-align: center;">来源</th>
+                   			<th style="text-align: center;">协议名称</th>
                    			<th style="text-align: center;">类型</th>
-                   			<th style="text-align: center;">创建时间</th>
+                   			<th style="text-align: center;">签约机构</th>
+                   			<th style="text-align: center;">签约人</th>
+                   			<th style="text-align: center;">状态</th>
+                   			
                    		</tr>
 	                 </thead>
                      <tbody>
-                       	<c:forEach items="${statements}" var="state">
+                       	<c:forEach items="${protocalUser}" var="state">
 							<tr style="text-align: center;">
                                 <td style="text-align: center;">
-                               		${state.orderId}
+                               		${state.protocolName}
                                	</td>
                                	<td style="text-align: center;">
-                               		${state.usedLimit}
+                               		<c:if test="${state.type eq '1'}">APP注册</c:if>
+                               		<c:if test="${state.type eq '2'}">手艺人认证</c:if>
+                               		<c:if test="${state.type eq '3'}">企业认证</c:if>
+                               		<c:if test="${state.type eq '4'}">报货</c:if>
                                	</td>
                                	<td style="text-align: center;">
-                               		<c:if test="${state.from eq '0'}">订单</c:if>
-                               		<c:if test="${state.from eq '1'}">取消订单</c:if>
-                               		<c:if test="${state.from eq '2'}">售后</c:if>
+                               		${state.officeName }
                                	</td>
                                	<td style="text-align: center;">
-                               		<c:if test="${state.type eq '0'}">收入</c:if>
-                               		<c:if test="${state.type eq '1'}">支出</c:if>
+                               		${state.createBy.name}
                                	</td>
                                	<td style="text-align: center;">
-                               		${state.createTime}
+                               		<c:if test="${state.status eq '1' }">履约中</c:if>
                                	</td>
 							</tr>
 						</c:forEach>

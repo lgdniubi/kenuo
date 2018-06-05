@@ -22,7 +22,7 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	private String channelFlag; //渠道标识（wap：wap端；ios：苹果手机；android：安卓手机；bm：后台管理）
 	private String arrearageOfficeName; //欠款机构名
 	private String userName; //用户名
-	
+	private String franchiseeName; //商家
 	public String getOrderId() {
 		return orderId;
 	}
@@ -124,6 +124,12 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	}
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+	public String getFranchiseeName() {
+		return franchiseeName;
+	}
+	public void setFranchiseeName(String franchiseeName) {
+		this.franchiseeName = franchiseeName;
 	}
 	
 }

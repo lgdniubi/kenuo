@@ -21,6 +21,7 @@ import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.common.utils.DateUtils;
 import com.training.modules.ec.utils.WebUtils;
+import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.User;
@@ -38,6 +39,7 @@ import com.training.modules.train.entity.MediaRole;
 import com.training.modules.train.entity.ModelFranchisee;
 import com.training.modules.train.entity.PayAccount;
 import com.training.modules.train.entity.PcRole;
+import com.training.modules.train.entity.TrainModel;
 import com.training.modules.train.entity.UserCheck;
 
 import net.sf.json.JSONArray;
@@ -61,9 +63,19 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	@Autowired
 	private FzxRoleDao fzxRoleDao;
 	@Autowired
+	private PcRoleService pcRoleService;
+	@Autowired
+	private FzxRoleService fzxRoleService;
+	@Autowired
 	private MediaRoleService mediaRoleService;
 	@Autowired
 	private MediaRoleDao mediaRoleDao;
+	@Autowired
+	private AuthenticationService authenticationService;
+	@Autowired
+	private RedisClientTemplate redisClientTemplate;
+	@Autowired
+	private TrainModelService trainModelService;
 	
 	/**
 	 * 保存用户审核的结果
@@ -131,6 +143,11 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 				//为改手艺人设置角色，从fzx_role查询mod_id为syr的roleid插入fzx_user_role
 				setSYRroleForUser(modelFranchisee);
 			}
+			//权益期限修改更改用户菜单状态
+			if((DateUtils.formatDate(modelFranchisee.getAuthEndDate(), "yyyy-MM-dd").compareTo(DateUtils.getDate()))>=0){
+				modelFranchisee.setStatus("0");
+				updateUserMenu("0",modelFranchisee.getUserid());
+			}
 		}
 		save(modelFranchisee);
 		updateApplyStatus(modelFranchisee);
@@ -160,12 +177,20 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			userCheckDao.saveModelFranchisee(modelFranchisee);
 		}else{
 			modelFranchisee.preUpdate();
-			if((DateUtils.formatDate(modelFranchisee.getAuthEndDate(), "yyyy-MM-dd").compareTo(DateUtils.getDate()))!=-1){
-				modelFranchisee.setStatus("0");
-			}
 			userCheckDao.editModelFranchisee(modelFranchisee);
 		}
 	}
+	//权益期限修改更改用户菜单状态
+	private void updateUserMenu(String franchiseeid,String userid) {
+		Map<String, Object> map = new HashMap<String,Object>();
+		map.put("franchisee_id", Integer.valueOf(franchiseeid));
+		map.put("user_id", userid);
+		map.put("status1", 1);
+		map.put("status2", 0);
+		map.put("update_user", UserUtils.getUser().getId());
+		authenticationService.updatestatus(map);
+	}
+
 	//更改授权状态为已授权
 	private void updateApplyStatus(ModelFranchisee modelFranchisee) {
 		UserCheck ck = new UserCheck();
@@ -207,13 +232,20 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			//编辑的时候先删除超级管理员角色和公共的角色-----再重新设置新的版本的角色
 			ModelFranchisee franchisee = getQYModelFranchiseeByUserid(modelFranchisee.getUserid());
 			if(!franchisee.getModid().equals(modelFranchisee.getModid())){	//如果版本更换才重新设置
-				deleteAllRolesForUser(modelFranchisee.getUserid(),franchisee.getFranchiseeid());
+//				deleteAllRolesForUser(modelFranchisee.getUserid(),franchisee.getFranchiseeid());
 				//设置该用户的超级管理员
 //				setSuperAdminForUserid(modelFranchisee,franchisee.getFranchiseeid());
+				//更改超级管理员版本菜单
+				updateSuperAdminMenu(modelFranchisee);
 				//设置公共的角色
 //				setRoleForUser(modelFranchisee,franchisee.getFranchiseeid());
 				//变更改商家角色版本id
 				updateAllRoleModelId(franchisee.getFranchiseeid(),modelFranchisee.getModid());
+			}
+			//权益期限修改更改用户菜单状态
+			if((DateUtils.formatDate(modelFranchisee.getAuthEndDate(), "yyyy-MM-dd").compareTo(DateUtils.getDate()))>=0){
+				modelFranchisee.setStatus("0");
+				updateUserMenu(modelFranchisee.getFranchiseeid(),"0");
 			}
 		}
 		updateInvitationAndPush(find);	//向邀请表和推送消息表更改数据，把所有推送消息设置为未通过，邀请记录：没同意的设置为3会员拒绝，同意的设置为2商家拒绝。
@@ -221,6 +253,24 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		modelFranchisee.setUserid(find.getUserid());
 		updateApplyStatus(modelFranchisee);
 //		int a = 1/0;
+	}
+
+	//更改超级管理员版本菜单
+	private void updateSuperAdminMenu(ModelFranchisee modelFranchisee) {
+		FzxRole fzxrole = userCheckDao.findFzxRoleByUserId(modelFranchisee.getUserid());
+		PcRole pcrole = userCheckDao.findPcRoleByUserId(modelFranchisee.getUserid());
+		MediaRole mdrole = userCheckDao.findMdRoleByUserId(modelFranchisee.getUserid());
+		TrainModel trainModel = new TrainModel();
+		trainModel.setId(modelFranchisee.getModid());
+		TrainModel pcMenu = trainModelService.findmodpcMenu(trainModel );
+		TrainModel mediaMenu = trainModelService.findmodMediaMenu(trainModel);
+		TrainModel fzxMenu = trainModelService.findmodfzxMenu(trainModel);
+		pcrole.setMenuIds(pcMenu.getMenuIds());
+		fzxrole.setMenuIds(fzxMenu.getMenuIds());
+		mdrole.setMenuIds(mediaMenu.getMenuIds());
+		pcRoleService.saveRoleMenu(pcrole);
+		fzxRoleService.saveRoleMenu(fzxrole);
+		mediaRoleService.saveRoleMenu(mdrole);
 	}
 
 	//版本升级的时候变更改商家角色版本id

@@ -11,9 +11,10 @@
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 			if(validateForm.form()){
-        	  loading('正在提交，请稍等...');
-		      $("#inputForm").submit();
-	     	  return true;
+			  //if(confirms('点击确定相当于授权，不想授权请点击取消')){
+	        	  loading('正在提交，请稍等...');
+			      $("#inputForm").submit();
+		     	  return true;
 		  	}
 		  return false;
 		}
@@ -126,6 +127,11 @@
 			         <td align="center"><label class="center">----</label></td>
 			         <td ><input id="auth_end_date" name="authEndDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
 							value="<fmt:formatDate value="${modelFranchisee.authEndDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="结束时间" readonly="readonly"/></td>
+				</tr>
+			    <tr>
+			    	<td align="center" colspan="4">
+			    	<font color="red">点击确定相当于授权，不想授权请点击取消</font>
+			    	</td>
 				</tr>
 			</tbody>
 		</table>  
