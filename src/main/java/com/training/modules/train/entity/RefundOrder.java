@@ -23,6 +23,7 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	private String arrearageOfficeName; //欠款机构名
 	private String userName; //用户名
 	private String franchiseeName; //商家
+	private String billmonth; //账单月份
 	public String getOrderId() {
 		return orderId;
 	}
@@ -130,6 +131,12 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	}
 	public void setFranchiseeName(String franchiseeName) {
 		this.franchiseeName = franchiseeName;
+	}
+	public String getBillmonth() {
+		return billmonth;
+	}
+	public void setBillmonth(String billmonth) {
+		this.billmonth = billmonth;
 	}
 	
 }

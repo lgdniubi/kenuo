@@ -72,8 +72,8 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 	 * @param order_id
 	 * @return
 	 */
-	public List<Statement> queryStatementOfRefund(String order_id){
-		return this.refundOrderMapper.queryStatementOfRefund(order_id);
+	public List<Statement> queryStatementOfRefund(String office_id,String billmonth){
+		return this.refundOrderMapper.queryStatementOfRefund(office_id,billmonth);
 	}
 	/**
 	 * 查询支付信息

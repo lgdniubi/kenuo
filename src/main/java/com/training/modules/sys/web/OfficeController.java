@@ -330,7 +330,7 @@ public class OfficeController extends BaseController {
 					oldImg = oldOffice.getImg() == null ? "" : oldOffice.getImg();//修改前的首图信息
 				}
 				if(!oldImg.equals(img)){
-					reservationTime(3, currentUser.getCreateBy().getId(), img, oldOffice.getImg(), lifeImgUrls, office.getId(), "bm", null);
+//					reservationTime(3, currentUser.getCreateBy().getId(), img, oldOffice.getImg(), lifeImgUrls, office.getId(), "bm", null);
 				}
 			}
 			
@@ -357,7 +357,7 @@ public class OfficeController extends BaseController {
 		}
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
 		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
-		return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
+		return "redirect:" + adminPath + "/sys/office/list?id="+1+"&parentIds="+office.getParentIds();
 	}
 	
 	

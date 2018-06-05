@@ -73,7 +73,8 @@
 			ro.channel_flag as channelFlag,
 			o.name as arrearageOfficeName,
 			u.name as userName,
-			f.name as franchiseeName
+			f.name as franchiseeName,
+			ro.billmonth
 		FROM train_refund_order ro
 		left join sys_user u on u.id = ro.user_id
 		left join sys_office o on o.id = arrearage_office
@@ -95,7 +96,8 @@
 			`from` as `from`,
 			type as type,
 			DATE_FORMAT(create_date,'%Y-%m-%d %H:%i:%s') as createTime
-		from sys_office_statement where order_id = #{order_id}
+		from sys_office_statement 
+		where DATE_FORMAT(create_date,'%Y-%m') = #{billmonth} and office_id = #{office_id}
 		
 	</select>
 	
