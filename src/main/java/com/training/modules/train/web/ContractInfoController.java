@@ -15,6 +15,7 @@ import com.training.common.web.BaseController;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.train.entity.ContractInfo;
 import com.training.modules.train.service.ContractInfoService;
+import com.training.modules.train.service.ProtocolModelService;
 /**
  * 查询
  * @author QJL
@@ -27,6 +28,8 @@ public class ContractInfoController extends BaseController {
 	
 	@Autowired
 	private ContractInfoService contractInfoService;
+	@Autowired
+	private ProtocolModelService protocolModelService;
 	/**
 	 * 查询签约列表
 	 * @param request
@@ -85,5 +88,16 @@ public class ContractInfoController extends BaseController {
 		}
 		
 		return "redirect:" + adminPath + "/train/contractInfo/list";
+	}
+	/**
+	 * 查询机构签订协议
+	 * @param office_id
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="findProtocolListOfOffice")
+	public String findProtocolListOfOffice(String office_id,Model model){
+		model.addAttribute("protocalUser", this.protocolModelService.findProtocolListOfOffice(office_id));
+		return "modules/train/protocolListOfOffice";
 	}
 }

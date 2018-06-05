@@ -107,6 +107,7 @@
 								    	<a class="btn btn-success btn-xs"  onclick="openDialog('审核','${ctx}/train/contractInfo/toAuditContractInfo?office_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>审核</a>
 								    </c:if>
 									<a class="btn btn-success btn-xs"  onclick="openDialogView('详情','${ctx}/train/contractInfo/queryContractInfoDetail?office_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>详情</a>
+									<a class="btn btn-success btn-xs"  onclick="openDialogView('已签协议','${ctx}/train/contractInfo/findProtocolListOfOffice?office_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>已签协议</a>
 								</td>
 							</tr>
 						</c:forEach>

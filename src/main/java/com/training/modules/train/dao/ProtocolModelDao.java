@@ -5,6 +5,8 @@ package com.training.modules.train.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.ProtocolModel;
@@ -60,5 +62,11 @@ public interface ProtocolModelDao extends CrudDao<ProtocolModel> {
 	public List<MediaMenu> findAllMenuByModid(MediaRole mediaRole);
 
 	public int checkName(@Param("name")String name,@Param("parentId")Integer parentId);*/
+	/**
+	 * 查询机构已签协议
+	 * @param office_id
+	 * @return
+	 */
+	public List<ProtocolUser> findProtocolListOfOffice(@Param("office_id")String office_id);
 	
 }
