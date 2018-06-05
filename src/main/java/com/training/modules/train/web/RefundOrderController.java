@@ -53,8 +53,8 @@ public class RefundOrderController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value="queryStatementOfRefund")
-	public String queryStatementOfRefund(Model model,String order_id){
-		model.addAttribute("statements", this.refundOrderService.queryStatementOfRefund(order_id));
+	public String queryStatementOfRefund(Model model,String office_id,String billmonth){
+		model.addAttribute("statements", this.refundOrderService.queryStatementOfRefund(office_id,billmonth));
 		return "modules/train/statementList";
 	}
 	/**
