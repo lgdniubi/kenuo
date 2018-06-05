@@ -69,8 +69,6 @@ public class CreateRefundOrder extends CommonService{
 		taskLog.setJobName("createRefundOrder");
 		taskLog.setStartDate(startDate);
 		
-		String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
-		
 		try{
 			SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
 			 Calendar calendar = Calendar.getInstance();//日历对象  
@@ -78,10 +76,12 @@ public class CreateRefundOrder extends CommonService{
 //		     String format = sim.format(calendar.getTime());//输出本月的日期  
 //		     calendar.add(Calendar.MONTH, -1);//月份减一  
 //		     String formats = sim.format(calendar.getTime());//输出上个月的日期  
+			 
 		     calendar.setTime(new Date());//设置当前日期  
 		     String format = sim.format(calendar.getTime());//输出本月的日期  
 		     calendar.add(Calendar.DAY_OF_YEAR, -1);//月份减一  
 		     String formats = sim.format(calendar.getTime());//输出上个月的日期  
+		     
 		List<ArrearageOfficeList> arrearageOfficeList = refundOrderService.queryarrearageoffice(format,formats);
 		int count = arrearageOfficeList.size() / 100;
 		if((arrearageOfficeList.size() % 100) > 0)count ++;
@@ -98,6 +98,7 @@ public class CreateRefundOrder extends CommonService{
 		PushUtils pushUtils = new PushUtils();
 		//Map<String,Object> map = new HashMap<String,Object>();
 		//map.put("ver_num", "1.0.0");
+		String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
 		for (int i = 0; i < arrearageOfficeList.size(); i++) {
 			try{
 				//map.put("office_id", arrearageOfficeList.get(i).getOffice_id());
@@ -107,7 +108,7 @@ public class CreateRefundOrder extends CommonService{
 				Object object = JSONObject.fromObject(WebUtils.postCSObject(param, "http://10.10.8.22:9208/cs_service/pub/queryContractInfo.htm")).get("data");
 				if(!"null".equals(String.valueOf(object))){
 					m = (Map<String, Object>) object;
-					user_id = String.valueOf(m.get("sign_userid"));
+					user_id = String.valueOf(m.get("proxy_userid"));
 				}
 				if(user_id != null && user_id != "")
 					pushUtils.pushMsg(user_id, formats+"月账单已出，共计消费"+arrearageOfficeList.get(i).getUsed_limit()+"元", 15, "信用额度账单");

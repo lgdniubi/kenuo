@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.eclipse.jdt.internal.compiler.ast.ThisReference;
 import org.springframework.stereotype.Component;
 
 import com.training.common.utils.BeanUtil;
@@ -69,6 +70,19 @@ public class Authentication extends CommonService{
 					map.put("status2", 1);
 					map.put("update_user", 1);
 					authenticationService.updatestatus(map);
+					
+					if(s.getFranchisee_id() > 0){
+						Map<String, Object> m = new HashMap<String,Object>();
+						m.put("franchisee_id", s.getFranchisee_id());
+						//删除商家协议
+						authenticationService.delsupplyprotocol(m);
+					}else if(s.getFranchisee_id() == 0){
+						Map<String, Object> m = new HashMap<String,Object>();
+						m.put("user_id", s.getUser_id());
+						//删除用户协议
+						authenticationService.delsupplyprotocol(m);
+					}
+					
 				}
 				
 			}

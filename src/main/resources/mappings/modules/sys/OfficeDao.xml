@@ -460,7 +460,7 @@
 				accountname,
 				openbank,
 				bankaccount,
-				detailedaddress,
+				bankaddress,
 				cardup,
 				carddown
 			) values (
@@ -516,7 +516,7 @@
 				accountname      =	  #{officeInfo.accountname},       
 				openbank         =	  #{officeInfo.openbank},            
 				bankaccount      =	  #{officeInfo.bankaccount},        
-				detailedaddress  =	  #{officeInfo.bankaddress},     
+				bankaddress  =	  #{officeInfo.bankaddress},     
 				cardup           =	  #{officeInfo.cardup},                
 				carddown         =	  #{officeInfo.carddown} ,
 				<if test="grade == 1">
@@ -568,7 +568,19 @@
 			intro,
 			details,
 			bed_num 	AS bedNum,
-			status
+			status,
+			set_date,
+			charter_img,
+			legal_person,
+			icardone,
+			icardtwo,
+			discount,
+			accountname,
+			openbank,
+			bankaccount,
+			bankaddress,
+			cardup,
+			carddown
 		FROM sys_office_info
 		WHERE 
 			1=1

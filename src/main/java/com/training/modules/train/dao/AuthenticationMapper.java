@@ -67,5 +67,14 @@ public interface AuthenticationMapper {
 	*/  
 	List<String> queryuserlist(@Param("franchisee_id") int franchisee_id);
 
+	/**  
+	* <p>Title: 删除签署协议</p>  
+	* <p>Copyright（C）2018 by FengFeng</p>   
+	* @author fengfeng  
+	* @date 2018年6月5日  
+	* @version 3.0.0  
+	*/  
+	int delsupplyprotocol(Map<String, Object> m);
+
 	
 }

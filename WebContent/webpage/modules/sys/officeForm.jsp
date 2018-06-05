@@ -178,9 +178,135 @@
 					}
 				}
 			});
+			$("#file_char_upload").uploadify({
+				'buttonText' : ' 请选择图片',
+				'method' : 'post',
+				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
+				'uploader' : '<%=uploadURL%>',
+				'fileObjName' : 'file_char_upload',//<input type="file"/>的name
+				'queueID' : 'file_char_queue',//与下面HTML的div.id对应
+				'method' : 'post',
+				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
+				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
+				'fileSizeLimit' : '10MB',//上传文件的大小限制
+				'multi' : false,//设置为true时可以上传多个文件
+				'auto' : true,//点击上传按钮才上传(false)
+				'onFallback' : function(){
+					//没有兼容的FLASH时触发
+					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
+				},
+				'onUploadSuccess' : function(file, data, response) { 
+					var jsonData = $.parseJSON(data);//text 转 json
+					if(jsonData.result == '200'){
+						$("#char").val(jsonData.file_url);
+						$("#officeCharImgsrc").attr('src',jsonData.file_url); 
+					}
+				}
+			});
+			
+			$("#file_icardone_upload").uploadify({
+				'buttonText' : ' 请选择图片',
+				'method' : 'post',
+				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
+				'uploader' : '<%=uploadURL%>',
+				'fileObjName' : 'file_icardone_upload',//<input type="file"/>的name
+				'queueID' : 'file_icardone_queue',//与下面HTML的div.id对应
+				'method' : 'post',
+				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
+				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
+				'fileSizeLimit' : '10MB',//上传文件的大小限制
+				'multi' : false,//设置为true时可以上传多个文件
+				'auto' : true,//点击上传按钮才上传(false)
+				'onFallback' : function(){
+					//没有兼容的FLASH时触发
+					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
+				},
+				'onUploadSuccess' : function(file, data, response) { 
+					var jsonData = $.parseJSON(data);//text 转 json
+					if(jsonData.result == '200'){
+						$("#icardone").val(jsonData.file_url);
+						$("#officeIcardoneImgsrc").attr('src',jsonData.file_url); 
+					}
+				}
+			});
+			$("#file_icardtwo_upload").uploadify({
+				'buttonText' : ' 请选择图片',
+				'method' : 'post',
+				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
+				'uploader' : '<%=uploadURL%>',
+				'fileObjName' : 'file_icardtwo_upload',//<input type="file"/>的name
+				'queueID' : 'file_icardtwo_queue',//与下面HTML的div.id对应
+				'method' : 'post',
+				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
+				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
+				'fileSizeLimit' : '10MB',//上传文件的大小限制
+				'multi' : false,//设置为true时可以上传多个文件
+				'auto' : true,//点击上传按钮才上传(false)
+				'onFallback' : function(){
+					//没有兼容的FLASH时触发
+					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
+				},
+				'onUploadSuccess' : function(file, data, response) { 
+					var jsonData = $.parseJSON(data);//text 转 json
+					if(jsonData.result == '200'){
+						$("#icardtwo").val(jsonData.file_url);
+						$("#officeIcardtwoImgsrc").attr('src',jsonData.file_url); 
+					}
+				}
+			});
+			$("#file_cardup_upload").uploadify({
+				'buttonText' : ' 请选择图片',
+				'method' : 'post',
+				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
+				'uploader' : '<%=uploadURL%>',
+				'fileObjName' : 'file_cardup_upload',//<input type="file"/>的name
+				'queueID' : 'file_cardup_queue',//与下面HTML的div.id对应
+				'method' : 'post',
+				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
+				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
+				'fileSizeLimit' : '10MB',//上传文件的大小限制
+				'multi' : false,//设置为true时可以上传多个文件
+				'auto' : true,//点击上传按钮才上传(false)
+				'onFallback' : function(){
+					//没有兼容的FLASH时触发
+					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
+				},
+				'onUploadSuccess' : function(file, data, response) { 
+					var jsonData = $.parseJSON(data);//text 转 json
+					if(jsonData.result == '200'){
+						$("#cardup").val(jsonData.file_url);
+						$("#officeCardupImgsrc").attr('src',jsonData.file_url); 
+					}
+				}
+			});
+			$("#file_carddown_upload").uploadify({
+				'buttonText' : ' 请选择图片',
+				'method' : 'post',
+				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
+				'uploader' : '<%=uploadURL%>',
+				'fileObjName' : 'file_carddown_upload',//<input type="file"/>的name
+				'queueID' : 'file_carddown_queue',//与下面HTML的div.id对应
+				'method' : 'post',
+				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
+				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
+				'fileSizeLimit' : '10MB',//上传文件的大小限制
+				'multi' : false,//设置为true时可以上传多个文件
+				'auto' : true,//点击上传按钮才上传(false)
+				'onFallback' : function(){
+					//没有兼容的FLASH时触发
+					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
+				},
+				'onUploadSuccess' : function(file, data, response) { 
+					var jsonData = $.parseJSON(data);//text 转 json
+					if(jsonData.result == '200'){
+						$("#carddown").val(jsonData.file_url);
+						$("#officeCarddownImgsrc").attr('src',jsonData.file_url); 
+					}
+				}
+			});
 			
 			var start = {
-				    elem: '#dd',
+				    elem: '#start_date',
 				    format: 'YYYY-MM-DD',
 				    event: 'focus',
 				    min: laydate.now(), //设定最小日期为当前日期  
@@ -403,19 +529,22 @@
 				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺短名称：</label></td>
 				         <td class="width-35"><form:input path="officeInfo.shortName" htmlEscape="false" maxlength="50" cssClass="form-control required" /></td>
 				      </tr>
-				      <tr>
+				      <tr><!-- http://10.10.8.22:9377/resource/images/2018/06/9877ed09-5bec-498a-b85f-f9630aa04779.jpg -->
 					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>营业执照图片:</label></td>
 					         <td class="width-35">
-					         	<img id="officettimgsrc" src="${office.officeInfo.img}" alt="" style="width: 200px;height: 100px;"/>
-								<input type="hidden" id="tt" name="officeInfo.img" value="${office.officeInfo.img}"><!-- 图片隐藏文本框 -->
+					         	<img id="officeCharImgsrc" src="${office.officeInfo.charterImg}" alt="" style="width: 200px;height: 100px;"/>
+								<input type="hidden" id="char" name="officeInfo.charterImg" value="${office.officeInfo.charterImg}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_photo_upload" id="file_tt_upload">
+									<input type="file" name="file_upload" id="file_char_upload">
 								</div>
-								<div id="file_photo_queue"></div>
+								<div id="file_char_queue"></div>
 					         </td>
 					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>成立日期:</label></td>
-					         <td class="width-35"><form:input path="officeInfo.setDate" htmlEscape="false" maxlength="50" cssClass="layer-date form-control input-sm required" readonly="readonly" placeholder="成立日期"/></td>
+					         <td class="width-35">
+					         <%-- <input id="auth_start_date" name="authStartDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
+							value="<fmt:formatDate value="${modelFranchisee.authStartDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="开始时间" readonly="readonly"/> --%>
+					         <input name="officeInfo.setDate" id="start_date" value="<fmt:formatDate value="${office.officeInfo.setDate}" pattern="yyyy-MM-dd"/>" htmlEscape="false" maxlength="50" class="layer-date form-control required" readonly="readonly" placeholder="成立日期"/></td>
 				       </tr>
 				      	<tr>
 					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>法定代表人:</label></td>
@@ -425,9 +554,25 @@
 				       </tr>
 				      	<tr>
 					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>证件照正面:</label></td>
-					         <td class="width-35"></td>
+					         <td class="width-35">
+					         	<img id="officeIcardoneImgsrc" src="${office.officeInfo.icardone}" alt="" style="width: 200px;height: 100px;"/>
+								<input type="hidden" id="icardone" name="officeInfo.icardone" value="${office.officeInfo.icardone}"><!-- 图片隐藏文本框 -->
+								<p>&nbsp;</p>
+			                   	<div class="upload">
+									<input type="file" name="file_icardone_upload" id="file_icardone_upload">
+								</div>
+								<div id="file_icardone_queue"></div>
+					         </td>
 					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>反面:</label></td>
-					         <td class="width-35"> </td>
+					         <td class="width-35">
+					         	<img id="officeIcardtwoImgsrc" src="${office.officeInfo.icardtwo}" alt="" style="width: 200px;height: 100px;"/>
+								<input type="hidden" id="icardtwo" name="officeInfo.icardtwo" value="${office.officeInfo.icardtwo}"><!-- 图片隐藏文本框 -->
+								<p>&nbsp;</p>
+			                   	<div class="upload">
+									<input type="file" name="file_icardtwo_upload" id="file_icardtwo_upload">
+								</div>
+								<div id="file_icardtwo_queue"></div>
+					         </td>
 				       </tr>
 				     <tr>
 				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>邮政编码:</label></td>
@@ -547,11 +692,23 @@
 				      <tr>
 					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡正面:</label></td>
 					      <td class="width-35">
-					      
+					      	<img id="officeCardupImgsrc" src="${office.officeInfo.cardup}" alt="" style="width: 200px;height: 100px;"/>
+								<input type="hidden" id="cardup" name="officeInfo.cardup" value="${office.officeInfo.cardup}"><!-- 图片隐藏文本框 -->
+								<p>&nbsp;</p>
+			                   	<div class="upload">
+									<input type="file" name="file_cardup_upload" id="file_cardup_upload">
+								</div>
+								<div id="file_cardup_queue"></div>
 					      </td>
 					      <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡反面:</label></td>
 					      <td class="width-35">
-					      
+					      	<img id="officeCarddownImgsrc" src="${office.officeInfo.carddown}" alt="" style="width: 200px;height: 100px;"/>
+								<input type="hidden" id="carddown" name="officeInfo.carddown" value="${office.officeInfo.carddown}"><!-- 图片隐藏文本框 -->
+								<p>&nbsp;</p>
+			                   	<div class="upload">
+									<input type="file" name="file_carddown_upload" id="file_carddown_upload">
+								</div>
+								<div id="file_carddown_queue"></div>
 					      </td>
 					  </tr>
 			      </tbody>

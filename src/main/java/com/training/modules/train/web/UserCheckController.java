@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
+import com.training.common.utils.DateUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.quartz.utils.RedisLock;
@@ -124,6 +125,10 @@ public class UserCheckController extends BaseController{
 	@RequiresPermissions(value={"train:userCheck:save"},logical=Logical.OR)
 	@RequestMapping(value = {"saveFranchise"})
 	public String saveFranchise(ModelFranchisee modelFranchisee,String opflag, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		if((DateUtils.formatDate(modelFranchisee.getAuthEndDate(), "yyyy-MM-dd").compareTo(DateUtils.getDate()))<0){
+			addMessage(redirectAttributes, "授权时间无效，请重新选择授权时间");
+			return "redirect:" + adminPath + "/train/userCheck/findalllist";
+		}
 		UserCheck userCheck = new UserCheck();
 		userCheck.setId(modelFranchisee.getApplyid());
 		userCheck.setUserid(modelFranchisee.getUserid());
