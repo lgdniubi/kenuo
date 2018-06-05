@@ -9,11 +9,11 @@
 	</resultMap>
 	
 	<select id="querypastdueauthentication" resultMap="AuthenticationBean">
-		SELECT id,franchisee_id,user_id FROM trains.train_model_franchisee WHERE auth_end_date <![CDATA[<]]> NOW() AND `status` = 0
+		SELECT id,franchisee_id,user_id FROM trains.train_model_franchisee WHERE DATE_ADD(auth_end_date, interval 1 DAY) <![CDATA[<]]> NOW() AND `status` = 0
 	</select>
 	
 	<update id="updateauthenticationstatus" parameterType="java.lang.Integer">
-		UPDATE trains.train_model_franchisee SET status = 1 WHERE id = ${id} AND auth_end_date <![CDATA[<]]> NOW() AND `status` = 0
+		UPDATE trains.train_model_franchisee SET status = 1 WHERE id = ${id} AND DATE_ADD(auth_end_date, interval 1 DAY) <![CDATA[<]]> NOW() AND `status` = 0
 	</update>
 	
 	<update id="updateprotocolstatus" parameterType="java.util.Map">
@@ -31,5 +31,9 @@
 	<select id="queryuserlist" parameterType="java.lang.Integer" resultType="java.lang.String">
 		SELECT id FROM trains.sys_user WHERE company_id = ${franchisee_id}
 	</select>
+	
+	<delete id="delsupplyprotocol" parameterType="java.util.Map">
+		DELETE FROM trains.supply_protocol_shop WHERE <if test="franchisee_id != null">franchisee_id = #{franchisee_id}</if><if test="user_id != null">user_id = #{user_id}</if>
+	</delete>
 	
 </mapper>

@@ -111,7 +111,19 @@ public class AuthenticationService {
 					redisClientTemplate.del("UTOKEN_"+user_id);
 				}
 		}else if((int)map.get("franchisee_id") == 0){
+				
 			redisClientTemplate.del("UTOKEN_"+(String)map.get("user_id"));
 		}
+	}
+
+	/**  
+	* <p>Title:删除签署协议 </p>  
+	* <p>Copyright（C）2018 by FengFeng</p>   
+	* @author fengfeng  
+	* @date 2018年6月5日  
+	* @version 3.0.0  
+	*/  
+	public int delsupplyprotocol(Map<String, Object> m) {
+		return authenticationMapper.delsupplyprotocol(m);
 	}
 }
