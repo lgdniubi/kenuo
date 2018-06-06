@@ -143,14 +143,10 @@
 	function compute(){
 		var purchaseNum = $("#purchaseNum").val();//购买数量
 		var takenNum = $("#takenNum").val();//取走数量
-		if(takenNum == 0){
-			top.layer.alert('请正确填写取走数量', {icon: 0, title:'提醒'});
-		}else{
-			$("#purchaseNum").attr("readonly",true);
-			$("#takenNum").attr("readonly",true);
-			$("#consignNum").val(parseInt(purchaseNum)-parseInt(takenNum));//寄存数量
-			$("#computType").val(0);
-		}
+		$("#purchaseNum").attr("readonly",true);
+		$("#takenNum").attr("readonly",true);
+		$("#consignNum").val(parseInt(purchaseNum)-parseInt(takenNum));//寄存数量
+		$("#computType").val(0);
 	}
 	//修改数量
 	function updateCompute(){

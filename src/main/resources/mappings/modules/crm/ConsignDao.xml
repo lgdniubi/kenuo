@@ -6,6 +6,8 @@
 	<select id="findConsignList" resultType="Consign">
 		SELECT
 		   uc.id AS consignId,
+		   uc.goods_id,
+		   uc.office_id,
 		   uc.consign_num AS consignNum,
 		   uc.purchase_num AS purchaseNum,
 		   uc.taken_num AS takenNum ,
@@ -48,7 +50,7 @@
 	</select>
 
 	<!--增加用户寄存记录  -->
-	<insert id="insert">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="consignId">
 		INSERT INTO mtmydb.mtmy_user_consign(		
 		  	mtmy_user_id,
 		  	franchisee_id,
@@ -100,7 +102,8 @@
 	
 	<!-- 物品寄存档案日志记录 -->
 	<insert id="saveCrmDepositLog">
-		INSERT INTO mtmydb.mtmy_crm_deposit_log(		
+		INSERT INTO mtmydb.mtmy_crm_deposit_log(
+			consign_id,
 		  	product_name,
 			buy_num,
 			take_num,
@@ -109,6 +112,7 @@
 			create_date,
 			cretae_by
 		) VALUES (
+			#{consignId}, 
 			#{productName}, 
 			#{buyNum}, 
 			#{takeNum}, 
@@ -130,11 +134,13 @@
 			cdl.remarks,
 			cdl.create_date AS createDate,
 			cdl.cretae_by AS 'createBy.id',
-			su.name AS 'createBy.name'
+			su. NAME AS 'createBy.name'
 		FROM
 			mtmydb.mtmy_crm_deposit_log cdl
-		LEFT JOIN
-			trains.sys_user su ON cdl.cretae_by = su.id
-		ORDER BY cdl.id DESC
+		LEFT JOIN trains.sys_user su ON cdl.cretae_by = su.id
+		WHERE
+			cdl.consign_id = #{consignId}
+		ORDER BY
+			cdl.id DESC
 	</select>
 </mapper>
