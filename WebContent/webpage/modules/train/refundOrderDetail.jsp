@@ -122,7 +122,7 @@
 				    <tr>
 				         <td class="active"><label class="pull-right">凭证:</label></td>
 				         <td colspan="5">
-				         <c:if test="${refundOrder.proof}">
+				         <c:if test="${!empty refundOrder.proof}">
 				         <img id="photosrc" src="${refundOrder.proof }" alt="images" style="width: 200px;height: 100px;"/>
 				         </c:if>
 				         </td>
