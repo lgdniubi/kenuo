@@ -63,10 +63,10 @@ public class RefundOrderController extends BaseController {
 	 * @param order_id
 	 * @return
 	 */
-	@RequestMapping(value="queryTransferpay")
-	public String queryTransferpay(Model model,String order_id){
-		model.addAttribute("transferpay", this.refundOrderService.queryTransferpay(order_id));
-		return "modules/train/transferpayDetail";
+	@RequestMapping(value="queryRefundOrderDetail")
+	public String queryRefundOrderDetail(Model model,String order_id){
+		model.addAttribute("refundOrder", this.refundOrderService.queryRefundOrderDetail(order_id));
+		return "modules/train/refundOrderDetail";
 	}
 	/**
 	 * 确认入账

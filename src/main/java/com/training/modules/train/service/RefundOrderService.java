@@ -5,7 +5,6 @@ package com.training.modules.train.service;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +14,6 @@ import com.training.modules.train.dao.RefundOrderMapper;
 import com.training.modules.train.entity.ArrearageOfficeList;
 import com.training.modules.train.entity.RefundOrder;
 import com.training.modules.train.entity.Statement;
-import com.training.modules.train.entity.Transferpay;
 
 /**  
 * <p>Title: RefundOrderService.java</p>  
@@ -80,8 +78,8 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 	 * @param order_id
 	 * @return
 	 */
-	public Transferpay queryTransferpay(String order_id){
-		return this.refundOrderMapper.queryTransferpay(order_id);
+	public RefundOrder queryRefundOrderDetail(String order_id){
+		return this.refundOrderMapper.queryRefundOrderDetail(order_id);
 	}
 	/**
 	 * 确认入账

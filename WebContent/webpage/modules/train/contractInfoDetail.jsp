@@ -70,7 +70,7 @@
 				</tr>
 				<tr>
 			         <td class="active"><label class="pull-right">法人证件反照:</label></td>
-			         <td colspan="5">、
+			         <td colspan="5">
 			         <c:if test="${contractInfo.office_backurl eq null}">
 			         <img id="photosrc" src="${contractInfo.office_backurl }" alt="images" style="width: 200px;height: 100px;"/>
 			         </c:if>

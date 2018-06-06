@@ -18,19 +18,6 @@ public class ContractInfo extends DataEntity<ContractInfo> {
 	private String office_name;	//机构名称
 	private String office_pid; //机构父ID
 	private String office_pids; //机构父IDS
-	private String office_license; //营业执照
-	private String office_no;	//注册号
-	private String office_type;	//类型 0个体户、1合伙企业、2个人独资企业、3公司
-	private String office_address;	//营业地址
-	private String office_legalman;	//法人
-	private String office_fonturl;	//证件前照
-	private String office_backurl;	//证件反照
-	private String office_bank;	//银行名称
-	private String office_accountname;	//账户名称
-	private String office_account;	//账户
-	private String office_fontbank;	//银行卡前照
-	private String office_backbank;	//银行卡反照
-	private String office_date;	//成立日期
 	private String sign_userid;	//签约人ID
 	private String sign_username;	//签约人姓名
 	private String sign_idcard;	//签约人证件
@@ -78,78 +65,6 @@ public class ContractInfo extends DataEntity<ContractInfo> {
 	}
 	public void setOffice_name(String office_name) {
 		this.office_name = office_name;
-	}
-	public String getOffice_no() {
-		return office_no;
-	}
-	public void setOffice_no(String office_no) {
-		this.office_no = office_no;
-	}
-	public String getOffice_type() {
-		return office_type;
-	}
-	public void setOffice_type(String office_type) {
-		this.office_type = office_type;
-	}
-	public String getOffice_address() {
-		return office_address;
-	}
-	public void setOffice_address(String office_address) {
-		this.office_address = office_address;
-	}
-	public String getOffice_legalman() {
-		return office_legalman;
-	}
-	public void setOffice_legalman(String office_legalman) {
-		this.office_legalman = office_legalman;
-	}
-	public String getOffice_fonturl() {
-		return office_fonturl;
-	}
-	public void setOffice_fonturl(String office_fonturl) {
-		this.office_fonturl = office_fonturl;
-	}
-	public String getOffice_backurl() {
-		return office_backurl;
-	}
-	public void setOffice_backurl(String office_backurl) {
-		this.office_backurl = office_backurl;
-	}
-	public String getOffice_bank() {
-		return office_bank;
-	}
-	public void setOffice_bank(String office_bank) {
-		this.office_bank = office_bank;
-	}
-	public String getOffice_accountname() {
-		return office_accountname;
-	}
-	public void setOffice_accountname(String office_accountname) {
-		this.office_accountname = office_accountname;
-	}
-	public String getOffice_account() {
-		return office_account;
-	}
-	public void setOffice_account(String office_account) {
-		this.office_account = office_account;
-	}
-	public String getOffice_fontbank() {
-		return office_fontbank;
-	}
-	public void setOffice_fontbank(String office_fontbank) {
-		this.office_fontbank = office_fontbank;
-	}
-	public String getOffice_backbank() {
-		return office_backbank;
-	}
-	public void setOffice_backbank(String office_backbank) {
-		this.office_backbank = office_backbank;
-	}
-	public String getOffice_date() {
-		return office_date;
-	}
-	public void setOffice_date(String office_date) {
-		this.office_date = office_date;
 	}
 	public String getSign_userid() {
 		return sign_userid;
@@ -366,12 +281,6 @@ public class ContractInfo extends DataEntity<ContractInfo> {
 	}
 	public void setPayInfos(List<PayInfo> payInfos) {
 		this.payInfos = payInfos;
-	}
-	public String getOffice_license() {
-		return office_license;
-	}
-	public void setOffice_license(String office_license) {
-		this.office_license = office_license;
 	}
 	public String getStatus() {
 		return status;

@@ -4,7 +4,6 @@
 package com.training.modules.train.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -13,7 +12,6 @@ import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.ArrearageOfficeList;
 import com.training.modules.train.entity.RefundOrder;
 import com.training.modules.train.entity.Statement;
-import com.training.modules.train.entity.Transferpay;
 
 /**  
 * <p>Title: RefundOrderMapper.java</p>  
@@ -64,7 +62,7 @@ public interface RefundOrderMapper extends CrudDao<RefundOrder> {
 	 * @param order_id
 	 * @return
 	 */
-	public Transferpay queryTransferpay(@Param("order_id")String order_id);
+	public RefundOrder queryRefundOrderDetail(@Param("order_id")String order_id);
 	/**
 	 * 确认入账
 	 * @param order_id

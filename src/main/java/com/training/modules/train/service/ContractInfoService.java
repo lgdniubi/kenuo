@@ -60,6 +60,6 @@ public class ContractInfoService {
 		jsonO.put("office_id", info.getOffice_id());
 		jsonO.put("status", info.getStatus());
 		jsonO.put("remarks", info.getRemarks());
-		WebUtils.postCS(jsonO, ParametersFactory.getTrainsParamValues("updateContractInfoAuditStatus"));
+		WebUtils.postCS(jsonO, ParametersFactory.getTrainsParamValues("contract_status_path"));
 	}
 }
