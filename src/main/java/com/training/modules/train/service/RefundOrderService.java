@@ -90,4 +90,15 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 	public void makeSureInAccount(String order_id){
 		this.refundOrderMapper.makeSureInAccount(order_id);
 	}
+
+	/**  
+	* <p>Title: 将订单改为逾期状态</p>  
+	* <p>Copyright（C）2018 by FengFeng</p>   
+	* @author fengfeng  
+	* @date 2018年6月6日  
+	* @version 3.0.0  
+	*/  
+	public void updateOrderOverdueStatus() {
+		this.refundOrderMapper.updateOrderOverdueStatus();
+	}
 }

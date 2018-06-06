@@ -22,23 +22,23 @@
 		INSERT INTO trains.train_refund_order
 		(
 			order_id,
-			order_type,
 			arrearage_price,
 			arrearage_office,
 			add_time,
 			order_status,
-			billmonth
+			billmonth,
+			closingdate
 		)
 		VALUES
 		<foreach collection="subList" item="item" separator="," >  
 	        (
 			#{item.order_id},
-			'1',
 			${item.used_limit},
 			#{item.office_id},
 			NOW(),
 			1,
-			#{billmonth}
+			#{billmonth},
+			DATE_ADD(NOW(), interval 14 DAY)
 		)
 	    </foreach>
 		
@@ -50,6 +50,13 @@
 		INNER JOIN (SELECT arrearage_office FROM trains.train_refund_order WHERE order_status = 1 GROUP BY arrearage_office) s ON s.arrearage_office = oa.office_id
 		SET oa.freeze = 1
 		WHERE oa.freeze = 0
+	</update>
+	
+	<update id="updateOrderOverdueStatus">
+		UPDATE 
+			trains.train_refund_order
+		SET is_overdue = '1'
+		WHERE closingdate <![CDATA[<]]> NOW()
 	</update>
 	
 	

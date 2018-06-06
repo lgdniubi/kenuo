@@ -45,7 +45,7 @@ public class UpdateOfficeAccount extends CommonService{
 	}
 	
 	/**
-	 * 创建信用额度还款订单
+	 * 冻结信用额度
 	 * @author yangyang 
 	 */
 	public void updateOfficeAccount(){
@@ -62,8 +62,10 @@ public class UpdateOfficeAccount extends CommonService{
 		taskLog.setStartDate(startDate);
 		
 		try{
-	
+			//冻结额度账户
 			refundOrderService.updateOfficeAccount();
+			//将订单改为逾期状态
+			refundOrderService.updateOrderOverdueStatus();
 		
 		}catch (Exception e) {
 			logger.error("#####【定时任务updateOfficeAccount】冻结信用额度,出现异常，异常信息为："+e.getMessage());
