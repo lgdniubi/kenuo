@@ -19,7 +19,9 @@ public class EquipmentLogs extends DataEntity<EquipmentLogs>{
 	private int time;              //0: 上午 1: 下午
 	private String bazaarName;     //市场名称
 	
-
+	private String content;        //操作内容（店铺通用设备操作日志用）
+	private String comEquipmentId;  //通用设备id
+	
 	public String getLocalBazaarId() {
 		return localBazaarId;
 	}
@@ -56,6 +58,17 @@ public class EquipmentLogs extends DataEntity<EquipmentLogs>{
 	public void setTime(int time) {
 		this.time = time;
 	}
-	
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
+	}
+	public String getComEquipmentId() {
+		return comEquipmentId;
+	}
+	public void setComEquipmentId(String comEquipmentId) {
+		this.comEquipmentId = comEquipmentId;
+	}
 	
 }

@@ -862,4 +862,20 @@
 	<update id="updateFranchisee">
 		UPDATE sys_office SET franchisee_id = #{franchisee.id} WHERE id = #{id}
 	</update>
+	
+	<!-- 查询店铺关闭店日志 -->
+	<select id="queryOfficeLog" resultType="OfficeLog">
+		SELECT
+			office_id AS 'officeId',
+			type,
+			content,
+			(select name from sys_user u where u.id = update_bybm) AS 'updateBy.name',
+			update_date AS 'updateDate',
+			realtime,
+			IFNULL(realtime,update_date) AS 'finalTime'
+		FROM sys_office_log
+		WHERE office_id = #{officeId}
+		AND del_flag = 0
+		ORDER BY update_date DESC
+	</select>
 </mapper>
