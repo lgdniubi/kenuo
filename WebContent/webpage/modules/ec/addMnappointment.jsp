@@ -23,6 +23,115 @@
     	}
     	return false;
     } 
+    
+    //根据输入的手机号查询用户
+    function searchUser(){
+		if($("#searchMobile").val() == ""){
+			top.layer.alert('请先输入手机号！', {icon: 0, title:'提醒'});
+			return;
+		}else{
+			if($("#searchMobile").val() == $("#oldMobile").val()){
+				return;
+			}else{
+				$("#name").val("");
+				$("#mobile").val("");
+				$("#userid").val("");
+				
+				$("#mytable").empty("");
+	        	//清除input值
+	        	clearInput("areaId,areaName,recid,servicemin,goodsId,goodsName,skillId,labelId,franchiseeId,groupId,isReal,franchiseeIdId,franchiseeIdName");
+	        	//清除下拉框的值
+	        	clearSelect("shopId,beauticianId,date,times");
+	        	
+				var mask = layer.load(0, {shade: false}); //0代表加载的风格，支持0-2
+				$.ajax({
+					type:"get",
+					dataType:"json",
+					data:{
+						mobile:$("#searchMobile").val()
+					},
+					url:"${ctx}/ec/orders/getUser",
+					success:function(date){
+						layer.close(mask);
+						var user = date.users;
+						if(user){
+							top.layer.alert('查询用户信息成功!', {icon: 0, title:'提醒'}); 
+							$("#name").val(date.users.nickname);
+							$("#userid").val(date.users.userid);
+							$("#mobile").val(date.users.mobile);
+							$("#oldMobile").val(date.users.mobile);
+						}else{
+							top.layer.alert('查询用户信息失败!', {icon: 0, title:'提醒'}); 
+						}
+					},
+					error:function(XMLHttpRequest,textStatus,errorThrown){
+						layer.close(mask);
+						top.layer.alert('查询用户信息失败!', {icon: 0, title:'提醒'}); 
+					}
+				});
+			}
+		}
+    }
+    
+  //查询该用户已购买的服务
+    function chooseOneAlreadyBuyProject(){               
+
+	  	var userid = $("#userid").val();
+    	if(userid == ""){
+    		top.layer.alert('请先通过手机号查询用户信息!', {icon: 0, title:'提醒'}); 
+    		return;
+    	}
+    	
+    	top.layer.open({
+		    type: 2, 
+		    area: ['650px', '500px'],
+		    title:"选择项目",
+		    content: "${ctx}/ec/mtmyMnappointment/oneAlreadyBuyProject?userid="+userid+"&chooseRecId="+$("#recid").val(),
+		    btn: ['确定', '关闭'],
+		    yes: function(index, layero){
+		    	$(".loading").show();
+		        var obj =  layero.find("iframe")[0].contentWindow;
+		        var str = obj.document.getElementsByName("box");
+		        var recIdsAndSkillId = "";
+		        var sum = 0;
+		        for (i=0;i<str.length;i++){
+		       		if(str[i].checked == true){
+		       			sum = sum + 1;	 
+		        	}
+		        }
+		        if(sum == 0){
+		        	top.layer.alert('请选择一个商品!', {icon: 0, title:'提醒'}); 
+		        	return;
+		        }else{
+		        	$("#mytable").empty("");
+		        	$(".franchisee").hide();
+		        	//清除input值
+		        	clearInput("areaId,areaName,recid,servicemin,goodsId,goodsName,skillId,labelId,franchiseeId,groupId,isReal,franchiseeIdId,franchiseeIdName");
+		        	//清除下拉框的值
+		        	clearSelect("shopId,beauticianId,date,times");
+		        	
+			        for (i=0;i<str.length;i++){
+					    if(str[i].checked == true){
+					    	var chooseId = str[i].id;
+							
+					    	//加载相关数据
+					    	findOrderGoods(chooseId);
+							
+					    	serveChange("0");
+						}
+		        	}
+		        }
+		        top.layer.close(index);
+		        $(".loading").hide();
+		},
+		cancel: function(index){ //或者使用btn2
+			    	           //按钮【按钮二】的回调
+			$(".loading").hide();
+		}
+	}); 
+    	
+    }
+  
     $(document).ready(function() {
     	validateForm = $("#inputForm").validate();
     	$(".franchisee").hide();
@@ -74,181 +183,141 @@
     	
 	}); 
     //  加载订单详情
-    function findOrderGoods(){
-    	if($("#oldorderid").val() != $("#orderid").val()){
-    		$("#warning").hide();
-    		$("#mytable").empty("");
-    		$(".franchisee").hide();
-        	//清除input值
-        	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,goodsName,skillId,labelId,franchiseeId,oldorderid,groupId,isReal,franchiseeIdId,franchiseeIdName");
-        	//清除下拉框的值
-        	clearSelect("serve,shopId,beauticianId,date,times");
-    	}
-    	if($("#orderid").val() != "" && $("#oldorderid").val() != $("#orderid").val()){
-    		$(".loading").show();
-    		$("#oldorderid").val($("#orderid").val());
-	    	$.ajax({
-	    		type : 'post',
-	    		url : '${ctx}/ec/mtmyMnappointment/findOrderGoods',
-	    		data:{'orderid':$("#orderid").val()},
-	    		success:function(data){
-	    			if(data.orderGoods.length > 0){
-	    				serveList = data.orderGoods;
-	    				$.each(data.orderGoods,function(index,item){
-	    					$("#serve").append("<option value="+index+">"+item.goodsname+"</option>");
-	           			});
-	    				$(".loading").hide();
-	    			}else{
-	    				$(".loading").hide();
-	    				top.layer.alert('1、此订单号输入有误;<br>2、请确认此订单已支付;<br>3、请确认此订单下是否有虚拟服务;<br>4、请确认此订单号下是否有未完成的服务！', {icon: 0, title:'提醒'});
-	    			}
-	       		}
-	    	})
-    	}
+    function findOrderGoods(recid){
+    	$.ajax({
+    		type : 'post',
+    		url : '${ctx}/ec/mtmyMnappointment/findOrderGoods',
+    		async:false,
+    		data:{'recid':recid},
+    		success:function(data){
+   				serveList = data.orderGoods;
+       		}
+    	})
     }
+    
     // 选择订单下虚拟订单
     function serveChange(num){
     	$("#mytable").empty("");
     	$(".franchisee").hide();
     	//清除input值
-    	clearInput("areaId,areaName,userid,name,mobile,recid,servicemin,goodsId,goodsName,skillId,labelId,franchiseeId,groupId,isReal,franchiseeIdId,franchiseeIdName");
+    	clearInput("areaId,areaName,recid,servicemin,goodsId,goodsName,skillId,labelId,franchiseeId,groupId,isReal,franchiseeIdId,franchiseeIdName");
     	//清除下拉框的值
     	clearSelect("shopId,beauticianId,date,times");
-    	if(serveList[num].isExpiring == 1){
-    		top.layer.alert('此订单已过期,请仔细核对订单', {icon: 0, title:'提醒'});
-    	}else{
-	    	if(num != ""){
-		    	$(".loading").show();
-		    	if(serveList[num].users == null){
-		    		$(".loading").hide(); 
-		    		top.layer.alert('此订单不存在用户,请仔细核对订单', {icon: 0, title:'提醒'});
-		    	}else{
-		    		if(serveList[num].isreal == 1){ //虚拟商品
-		    			if(serveList[num].remaintimes > 0){ // 有剩余次数
-			    			$("#mytable").append("<tr><td class='active'><font color='red'>*</font>订单号</td><td colspan='4'>"+serveList[num].orderid+"</td></tr>"
-					    			+ "<tr><td class='active'><font color='red'>*</font>商品名称</td><td>"+serveList[num].goodsname+"</td><td class='active'><font color='red'>*</font>服务时长</td><td>"+serveList[num].servicemin+"分钟</td></tr>"
-					    			+ "<tr><td class='active'><font color='red'>*</font>总服务次数</td><td>"+serveList[num].servicetimes+"次</td><td class='active'><font color='red'>*</font>剩余次数</td><td>"+serveList[num].remaintimes+"次</td></tr>"
-					    			+ "<tr><td class='active'><font color='red'></font>真实姓名</td><td>"+serveList[num].users.name+"</td><td class='active'><font color='red'></font>手机号</td><td>"+serveList[num].users.mobile+"</td></tr>"
-			    				);
-					    	$("#userid").val(serveList[num].users.userid);
-					    	$("#name").val(serveList[num].users.name);
-					    	$("#mobile").val(serveList[num].users.mobile);
-					    	$("#recid").val(serveList[num].recid);
-					    	$("#groupId").val(serveList[num].groupId);
-					    	$("#isReal").val(serveList[num].isreal);
-					    	$("#servicemin").val(serveList[num].servicemin);
-					    	$("#goodsId").val(serveList[num].goodsid);
-					    	$("#goodsName").val(serveList[num].goodsname);
-					    	$("#skillId").val(serveList[num].skillId);
-					    	$("#labelId").val(serveList[num].labelId);
-					    	$("#franchiseeId").val(serveList[num].franchiseeId);
-					    	$("#isOpean").val(serveList[num].isOpean);
-					    	$(".loading").hide();
-					    	if(serveList[num].isOpean == 1){
-						    	findOffice();	// 若选中商品后则自动加载店铺
-					    	}else{
-					    		$(".franchisee").show();
-					    	}
-		    			}else{
-		    				$(".loading").hide();
-		    				top.layer.alert('1、此商品无可用次数!<br>2、此商品服务次数已用完!', {icon: 0, title:'提醒'});
-		    			}
-		    		}else if(serveList[num].isreal == 2){ //套卡
-		    			if(serveList[num].advanceFlag != 1){ // 无预约金状态
-		    				if(parseFloat(serveList[num].surplusAmount) >=  parseFloat(serveList[num].singleRealityPrice) && parseInt(serveList[num].servicetimes) > parseInt(serveList[num].useServiceTimes)){	// 套卡内剩余金额大于服务单次价  同时总服务次数大于已使用次数
-		    					$("#mytable").append("<tr><td class='active'><font color='red'>*</font>订单号</td><td colspan='4'>"+serveList[num].orderid+"</td></tr>"
-						    			+ "<tr><td class='active'><font color='red'>*</font>商品名称</td><td>"+serveList[num].goodsname+"</td><td class='active'><font color='red'>*</font>服务时长</td><td>"+serveList[num].servicemin+"分钟</td></tr>"
-						    			+ "<tr><td class='active'><font color='red'>*</font>总服务次数</td><td>"+serveList[num].servicetimes+"次</td><td class='active'><font color='red'>*</font>已服务次数</td><td>"+serveList[num].useServiceTimes+"次</td></tr>"
-						    			+ "<tr><td class='active'><font color='red'></font>真实姓名</td><td>"+serveList[num].users.name+"</td><td class='active'><font color='red'></font>手机号</td><td>"+serveList[num].users.mobile+"</td></tr>"
-				    				);
-						    	$("#userid").val(serveList[num].users.userid);
-						    	$("#name").val(serveList[num].users.name);
-						    	$("#mobile").val(serveList[num].users.mobile);
-						    	$("#recid").val(serveList[num].recid);
-						    	$("#groupId").val(serveList[num].groupId);
-						    	$("#isReal").val(serveList[num].isreal);
-						    	$("#servicemin").val(serveList[num].servicemin);
-						    	$("#goodsId").val(serveList[num].goodsid);
-						    	$("#goodsName").val(serveList[num].goodsname);
-						    	$("#skillId").val(serveList[num].skillId);
-						    	$("#labelId").val(serveList[num].labelId);
-						    	$("#franchiseeId").val(serveList[num].franchiseeId);
-						    	$("#isOpean").val(serveList[num].isOpean);
-						    	$(".loading").hide();
-						    	if(serveList[num].isOpean == 1){
-							    	findOffice();	// 若选中商品后则自动加载店铺
-						    	}else{
-						    		$(".franchisee").show();
-						    	}
-		    				}else{
-		    					$(".loading").hide();
-		    					top.layer.alert('1、此套卡商品可用金额不足一次服务!<br>2、此套卡商品服务次数已用完!', {icon: 0, title:'提醒'});
-		    				}
-		    			}else if(serveList[num].advanceFlag == 1 && serveList[num].cardUseServiceTimes == 0){
-		    				$("#mytable").append("<tr><td class='active'><font color='red'>*</font>订单号</td><td colspan='4'>"+serveList[num].orderid+"</td></tr>"
-					    			+ "<tr><td class='active'><font color='red'>*</font>商品名称</td><td>"+serveList[num].goodsname+"</td><td class='active'><font color='red'>*</font>服务时长</td><td>"+serveList[num].servicemin+"分钟</td></tr>"
-					    			+ "<tr><td class='active'><font color='red'>*</font>总服务次数</td><td>"+serveList[num].servicetimes+"次</td><td class='active'><font color='red'>*</font>已服务次数</td><td>"+serveList[num].useServiceTimes+"次</td></tr>"
-					    			+ "<tr><td class='active'><font color='red'></font>真实姓名</td><td>"+serveList[num].users.name+"</td><td class='active'><font color='red'></font>手机号</td><td>"+serveList[num].users.mobile+"</td></tr>"
-			    				);
-					    	$("#userid").val(serveList[num].users.userid);
-					    	$("#name").val(serveList[num].users.name);
-					    	$("#mobile").val(serveList[num].users.mobile);
-					    	$("#recid").val(serveList[num].recid);
-					    	$("#groupId").val(serveList[num].groupId);
-					    	$("#isReal").val(serveList[num].isreal);
-					    	$("#servicemin").val(serveList[num].servicemin);
-					    	$("#goodsId").val(serveList[num].goodsid);
-					    	$("#goodsName").val(serveList[num].goodsname);
-					    	$("#skillId").val(serveList[num].skillId);
-					    	$("#labelId").val(serveList[num].labelId);
-					    	$("#franchiseeId").val(serveList[num].franchiseeId);
-					    	$("#isOpean").val(serveList[num].isOpean);
-					    	$(".loading").hide();
-					    	if(serveList[num].isOpean == 1){
-						    	findOffice();	// 若选中商品后则自动加载店铺
-					    	}else{
-					    		$(".franchisee").show();
-					    	}
-		    			}else{
-		    				$(".loading").hide();
-		    				top.layer.alert('此套卡商品无可用次数!', {icon: 0, title:'提醒'});
-		    			}
-		    		}else if(serveList[num].isreal == 3){ //通用卡
-		    			if(serveList[num].remaintimes > 0){ // 有剩余次数
-			    			$("#mytable").append("<tr><td class='active'><font color='red'>*</font>订单号</td><td colspan='4'>"+serveList[num].orderid+"</td></tr>"
-					    			+ "<tr><td class='active'><font color='red'>*</font>商品名称</td><td>"+serveList[num].goodsname+"</td><td class='active'><font color='red'>*</font>服务时长</td><td>"+serveList[num].servicemin+"分钟</td></tr>"
-					    			+ "<tr><td class='active'><font color='red'>*</font>总服务次数</td><td>"+serveList[num].servicetimes+"次</td><td class='active'><font color='red'>*</font>剩余次数</td><td>"+serveList[num].remaintimes+"次</td></tr>"
-					    			+ "<tr><td class='active'><font color='red'></font>真实姓名</td><td>"+serveList[num].users.name+"</td><td class='active'><font color='red'></font>手机号</td><td>"+serveList[num].users.mobile+"</td></tr>"
-			    				);
-					    	$("#userid").val(serveList[num].users.userid);
-					    	$("#name").val(serveList[num].users.name);
-					    	$("#mobile").val(serveList[num].users.mobile);
-					    	$("#recid").val(serveList[num].recid);
-					    	$("#groupId").val(serveList[num].groupId);
-					    	$("#isReal").val(serveList[num].isreal);
-					    	$("#servicemin").val(serveList[num].servicemin);
-					    	$("#goodsId").val(serveList[num].goodsid);
-					    	$("#goodsName").val(serveList[num].goodsname);
-					    	$("#skillId").val(serveList[num].skillId);
-					    	$("#labelId").val(serveList[num].labelId);
-					    	$("#franchiseeId").val(serveList[num].franchiseeId);
-					    	$("#isOpean").val(serveList[num].isOpean);
-					    	$(".loading").hide();
-					    	if(serveList[num].isOpean == 1){
-						    	findOffice();	// 若选中商品后则自动加载店铺
-					    	}else{
-					    		$(".franchisee").show();
-					    	}
-		    			}else{
-		    				$(".loading").hide();
-		    				top.layer.alert('1、此通用卡商品无可用次数!<br>2、此通用卡商品服务次数已用完!', {icon: 0, title:'提醒'});
-		    			}
-		    		}else{
-		    			$(".loading").hide(); 
-		        		top.layer.alert('此订单类型有误,请仔细核对订单', {icon: 0, title:'提醒'});
-		    		}
-		    	}
-	    	}
+    
+    	if(num != ""){
+	    	$(".loading").show();
+	    	if(serveList[num].isreal == 1){ //虚拟商品
+    			if(serveList[num].remaintimes > 0){ // 有剩余次数
+	    			$("#mytable").append("<tr><td class='active'><font color='red'>*</font>订单号</td><td colspan='4'>"+serveList[num].orderid+"</td></tr>"
+			    			+ "<tr><td class='active'><font color='red'>*</font>商品名称</td><td>"+serveList[num].goodsname+"</td><td class='active'><font color='red'>*</font>服务时长</td><td>"+serveList[num].servicemin+"分钟</td></tr>"
+			    			+ "<tr><td class='active'><font color='red'>*</font>总服务次数</td><td>"+serveList[num].servicetimes+"次</td><td class='active'><font color='red'>*</font>剩余次数</td><td>"+serveList[num].remaintimes+"次</td></tr>"
+			    			+ "<tr><td class='active'><font color='red'></font>真实姓名</td><td>"+serveList[num].users.name+"</td><td class='active'><font color='red'></font>手机号</td><td>"+serveList[num].users.mobile+"</td></tr>"
+	    				);
+			    	$("#recid").val(serveList[num].recid);
+			    	$("#groupId").val(serveList[num].groupId);
+			    	$("#isReal").val(serveList[num].isreal);
+			    	$("#servicemin").val(serveList[num].servicemin);
+			    	$("#goodsId").val(serveList[num].goodsid);
+			    	$("#goodsName").val(serveList[num].goodsname);
+			    	$("#skillId").val(serveList[num].skillId);
+			    	$("#labelId").val(serveList[num].labelId);
+			    	$("#franchiseeId").val(serveList[num].franchiseeId);
+			    	$("#isOpean").val(serveList[num].isOpean);
+			    	$(".loading").hide();
+			    	if(serveList[num].isOpean == 1){
+				    	findOffice();	// 若选中商品后则自动加载店铺
+			    	}else{
+			    		$(".franchisee").show();
+			    	}
+    			}else{
+    				$(".loading").hide();
+    				top.layer.alert('1、此商品无可用次数!<br>2、此商品服务次数已用完!', {icon: 0, title:'提醒'});
+    			}
+    		}else if(serveList[num].isreal == 2){ //套卡
+    			if(serveList[num].advanceFlag != 1){ // 无预约金状态
+    				if(parseFloat(serveList[num].surplusAmount) >=  parseFloat(serveList[num].singleRealityPrice) && parseInt(serveList[num].servicetimes) > parseInt(serveList[num].useServiceTimes)){	// 套卡内剩余金额大于服务单次价  同时总服务次数大于已使用次数
+    					$("#mytable").append("<tr><td class='active'><font color='red'>*</font>订单号</td><td colspan='4'>"+serveList[num].orderid+"</td></tr>"
+				    			+ "<tr><td class='active'><font color='red'>*</font>商品名称</td><td>"+serveList[num].goodsname+"</td><td class='active'><font color='red'>*</font>服务时长</td><td>"+serveList[num].servicemin+"分钟</td></tr>"
+				    			+ "<tr><td class='active'><font color='red'>*</font>总服务次数</td><td>"+serveList[num].servicetimes+"次</td><td class='active'><font color='red'>*</font>已服务次数</td><td>"+serveList[num].useServiceTimes+"次</td></tr>"
+				    			+ "<tr><td class='active'><font color='red'></font>真实姓名</td><td>"+serveList[num].users.name+"</td><td class='active'><font color='red'></font>手机号</td><td>"+serveList[num].users.mobile+"</td></tr>"
+		    				);
+				    	$("#recid").val(serveList[num].recid);
+				    	$("#groupId").val(serveList[num].groupId);
+				    	$("#isReal").val(serveList[num].isreal);
+				    	$("#servicemin").val(serveList[num].servicemin);
+				    	$("#goodsId").val(serveList[num].goodsid);
+				    	$("#goodsName").val(serveList[num].goodsname);
+				    	$("#skillId").val(serveList[num].skillId);
+				    	$("#labelId").val(serveList[num].labelId);
+				    	$("#franchiseeId").val(serveList[num].franchiseeId);
+				    	$("#isOpean").val(serveList[num].isOpean);
+				    	$(".loading").hide();
+				    	if(serveList[num].isOpean == 1){
+					    	findOffice();	// 若选中商品后则自动加载店铺
+				    	}else{
+				    		$(".franchisee").show();
+				    	}
+    				}else{
+    					$(".loading").hide();
+    					top.layer.alert('1、此套卡商品可用金额不足一次服务!<br>2、此套卡商品服务次数已用完!', {icon: 0, title:'提醒'});
+    				}
+    			}else if(serveList[num].advanceFlag == 1 && serveList[num].cardUseServiceTimes == 0){
+    				$("#mytable").append("<tr><td class='active'><font color='red'>*</font>订单号</td><td colspan='4'>"+serveList[num].orderid+"</td></tr>"
+			    			+ "<tr><td class='active'><font color='red'>*</font>商品名称</td><td>"+serveList[num].goodsname+"</td><td class='active'><font color='red'>*</font>服务时长</td><td>"+serveList[num].servicemin+"分钟</td></tr>"
+			    			+ "<tr><td class='active'><font color='red'>*</font>总服务次数</td><td>"+serveList[num].servicetimes+"次</td><td class='active'><font color='red'>*</font>已服务次数</td><td>"+serveList[num].useServiceTimes+"次</td></tr>"
+			    			+ "<tr><td class='active'><font color='red'></font>真实姓名</td><td>"+serveList[num].users.name+"</td><td class='active'><font color='red'></font>手机号</td><td>"+serveList[num].users.mobile+"</td></tr>"
+	    				);
+			    	$("#recid").val(serveList[num].recid);
+			    	$("#groupId").val(serveList[num].groupId);
+			    	$("#isReal").val(serveList[num].isreal);
+			    	$("#servicemin").val(serveList[num].servicemin);
+			    	$("#goodsId").val(serveList[num].goodsid);
+			    	$("#goodsName").val(serveList[num].goodsname);
+			    	$("#skillId").val(serveList[num].skillId);
+			    	$("#labelId").val(serveList[num].labelId);
+			    	$("#franchiseeId").val(serveList[num].franchiseeId);
+			    	$("#isOpean").val(serveList[num].isOpean);
+			    	$(".loading").hide();
+			    	if(serveList[num].isOpean == 1){
+				    	findOffice();	// 若选中商品后则自动加载店铺
+			    	}else{
+			    		$(".franchisee").show();
+			    	}
+    			}else{
+    				$(".loading").hide();
+    				top.layer.alert('此套卡商品无可用次数!', {icon: 0, title:'提醒'});
+    			}
+    		}else if(serveList[num].isreal == 3){ //通用卡
+    			if(serveList[num].remaintimes > 0){ // 有剩余次数
+	    			$("#mytable").append("<tr><td class='active'><font color='red'>*</font>订单号</td><td colspan='4'>"+serveList[num].orderid+"</td></tr>"
+			    			+ "<tr><td class='active'><font color='red'>*</font>商品名称</td><td>"+serveList[num].goodsname+"</td><td class='active'><font color='red'>*</font>服务时长</td><td>"+serveList[num].servicemin+"分钟</td></tr>"
+			    			+ "<tr><td class='active'><font color='red'>*</font>总服务次数</td><td>"+serveList[num].servicetimes+"次</td><td class='active'><font color='red'>*</font>剩余次数</td><td>"+serveList[num].remaintimes+"次</td></tr>"
+			    			+ "<tr><td class='active'><font color='red'></font>真实姓名</td><td>"+serveList[num].users.name+"</td><td class='active'><font color='red'></font>手机号</td><td>"+serveList[num].users.mobile+"</td></tr>"
+	    				);
+			    	$("#recid").val(serveList[num].recid);
+			    	$("#groupId").val(serveList[num].groupId);
+			    	$("#isReal").val(serveList[num].isreal);
+			    	$("#servicemin").val(serveList[num].servicemin);
+			    	$("#goodsId").val(serveList[num].goodsid);
+			    	$("#goodsName").val(serveList[num].goodsname);
+			    	$("#skillId").val(serveList[num].skillId);
+			    	$("#labelId").val(serveList[num].labelId);
+			    	$("#franchiseeId").val(serveList[num].franchiseeId);
+			    	$("#isOpean").val(serveList[num].isOpean);
+			    	$(".loading").hide();
+			    	if(serveList[num].isOpean == 1){
+				    	findOffice();	// 若选中商品后则自动加载店铺
+			    	}else{
+			    		$(".franchisee").show();
+			    	}
+    			}else{
+    				$(".loading").hide();
+    				top.layer.alert('1、此通用卡商品无可用次数!<br>2、此通用卡商品服务次数已用完!', {icon: 0, title:'提醒'});
+    			}
+    		}else{
+    			$(".loading").hide(); 
+        		top.layer.alert('此订单类型有误,请仔细核对订单', {icon: 0, title:'提醒'});
+    		}
     	}
     }
     //异步加载店铺
@@ -407,7 +476,6 @@
 	    	<div class="ibox-content">
 				<form:form id="inputForm" modelAttribute="reservation" action="${ctx }/ec/mtmyMnappointment/saveReservation">
 					<!-- 用于提交时 验证数据是否有误 -->  
-					<input id="userid" name="userid" type="hidden"> 
 					<input id="recid" name="recid" type="hidden"><!-- 用于添加预约 -->
 					<input id="groupId" name="groupId" value=0 type="hidden"><!--组ID 用于添加预约 -->
 					<input id="isReal" name="isReal" value=1 type="hidden"><!--组ID 用于添加预约 -->
@@ -418,54 +486,58 @@
 					<input id="labelId" name="labelId" type="hidden"><!-- 获取美容师预约时间 -->
 					<input id="franchiseeId" name="franchiseeId" type="hidden"><!-- 商品的归属商家   用于加载店铺时选择同一个商家 -->
 					<input id="isOpean" name="isOpean" type="hidden"><!-- 商品是否公开 -->
+					
+					<!-- 用于提交时 验证数据是否有误 -->  
+					<input id="oldMobile" name="oldMobile" value="" type="hidden">
+					
 					<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 						<tr>
-							<td class="active" width="110px;"><label class="pull-right"><font color="red">*</font>订单号：</label></td>
+							<td class="active" width="110px;"><label class="pull-right"><font color="red">*</font>手机号：</label></td>
 							<td>
-								<input class="form-control required" id="orderid" onblur="findOrderGoods()">
-								<input type="hidden" id="oldorderid">
-								<br><span class="help-inline">注：订单号请在订单列表中查询</span>
+								<input class="form-control required" id="searchMobile" name="searchMobile" width="100px">
 							</td>
-						</tr>
-						<tr>
-							<td class="active"><label class="pull-right"><font color="red">*</font>已购买服务：</label></td>
-							<td>
-								<select id="serve" name="serve" class="form-control required" onchange="serveChange(this.options[this.options.selectedIndex].value)">
-									<option value="">请选择已购买服务</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td class="active"><label class="pull-right"><font color="red">*</font>服务详情：</label></td>
-							<td>
-								<table id="mytable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer"></table>
+							<td colspan="2">
+								<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="searchUser()" type="button"><i class="fa fa-search"></i> 查询</button>
 							</td>
 						</tr>
 						<tr>
 							<td class="active"><label class="pull-right"><font color="red">*</font>用户姓名：</label></td>
 							<td>
 								<input id="name" name="name" type="text" class="form-control required">
+								<input id="userid" name="userid" type="hidden">
 							</td>
-						</tr>
-						<tr>
 							<td class="active"><label class="pull-right"><font color="red">*</font>用户手机号：</label></td>
 							<td>
 								<input id="mobile" name="mobile" type="text" class="form-control required">
 							</td>
 						</tr>
 						<tr>
+							<td class="active"><label class="pull-right"><font color="red">*</font>已购买服务：</label></td>
+							<td colspan="3">
+								<button class="btn btn-white btn-sm" title="选择项目" onclick="chooseOneAlreadyBuyProject()" type="button">
+									<i class="fa fa-plus"></i>选择项目
+								</button>
+							</td>
+						</tr>
+						<tr>
+							<td class="active"><label class="pull-right"><font color="red">*</font>服务详情：</label></td>
+							<td colspan="3">
+								<table id="mytable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer"></table>
+							</td>
+						</tr>
+						<tr>
 							<td class="active"><label class="pull-right">区域：</label></td>
-							<td>
+							<td colspan="3" style="width:200px;">
 								<sys:treeselect id="area" name="area.id" value="" labelName="area.name" labelValue="" 
 							         title="区域" url="/sys/area/treeData" cssClass="form-control" allowClear="true" notAllowSelectParent="true"/>
 							</td>
 						</tr>
 						<tr class="franchisee">
 							<td class="active"><label class="pull-right"><font color="red">*</font>商家：</label></td>
-							<td>
+							<td colspan="3" style="width:200px;">
 								<input id="franchiseeIdId" name="franchiseeId" class="form-control" type="hidden" value="">
 								<div class="input-group">
-									<input id="franchiseeIdName" name="franchisee.name" readonly="readonly" type="text" value="" data-msg-required="" class="form-control" style="">
+									<input id="franchiseeIdName" name="franchisee.name" readonly="readonly" type="text" value="" data-msg-required="" class="form-control" >
 							       		 <span class="input-group-btn">
 								       		 <button type="button" id="franchiseeIdButton" class="btn   btn-primary  "><i class="fa fa-search"></i>
 								             </button> 
@@ -476,7 +548,7 @@
 						</tr>
 						<tr>
 							<td class="active"><label class="pull-right"><font color="red">*</font>店铺：</label></td>
-							<td>
+							<td colspan="3">
 								<a href="#" onclick="findOffice()" class="btn btn-primary btn-xs">获取店铺信息</a><p></p>
 								<select id="shopId" name="shopId" class="form-control required" onchange="changeShop()">
 									<option value="">请选择店铺</option>
@@ -485,7 +557,7 @@
 						</tr>
 						<tr>
 							<td class="active"><label class="pull-right"><font color="red">*</font>美容师：</label></td>
-							<td>
+							<td colspan="3">
 								<select id="beauticianId" name="beauticianId" class="form-control required" onchange="ReservationTime()">
 									<option value="">请选择美容师</option>
 								</select>
@@ -493,7 +565,7 @@
 						</tr>
 						<tr>
 							<td class="active"><label class="pull-right"><font color="red">*</font>预约日期：</label></td>
-							<td>
+							<td colspan="3">
 								<select id="date" onchange="ReservationDate()" class="form-control required">
 									<option value="">请选择预约日期</option>
 								</select>
@@ -501,7 +573,7 @@
 						</tr>
 						<tr>
 							<td class="active"><label class="pull-right"><font color="red">*</font>预约时间：</label></td>
-							<td>
+							<td colspan="3">
 								<select id="times" name="times" class="form-control required">
 									<option value="">请选择预约时间</option>
 								</select>
@@ -509,7 +581,7 @@
 						</tr>
 						<tr>
 							<td class="active"><label class="pull-right"><font color="red">*</font>预约短信：</label></td>
-							<td> 
+							<td colspan="3"> 
 								<label class="checked"><input type="radio" id="sendToUserFlag" name="sendToUserFlag" value=0 class="required">否</label>
                                 <label class="checked"><input type="radio" id="sendToUserFlag" name="sendToUserFlag" value=1 class="required">是</label>
 								<br>
@@ -518,7 +590,7 @@
 						</tr>
 						<tr>
 							<td class="active"><label class="pull-right">消费者备注：</label></td>
-							<td>
+							<td colspan="3">
 								<textarea rows="7" cols="30" id="userNote" name="userNote" onkeydown="checkEnter(event)" class="form-control"></textarea>
 							</td>
 						</tr>
