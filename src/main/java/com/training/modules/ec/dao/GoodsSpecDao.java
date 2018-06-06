@@ -30,4 +30,11 @@ public interface GoodsSpecDao extends CrudDao<GoodsSpec>{
 	 * @return
 	 */
 	public int deleteSpecItems(GoodsSpec goodsSpec);
+
+	/**
+	 * 查看规格是否有商品使用
+	 * @param itemId
+	 * @return
+	 */
+	public int findUseSpecById(Integer specItemId);
 }
