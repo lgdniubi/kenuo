@@ -26,6 +26,51 @@
 	    	return false;
 	    }
 		
+		//删除规格项前,先判断是否有商品正在使用
+		function deleteGoodsSpec(specId){
+			$.ajax({
+				type:"post",
+				async:false,
+				data:{
+					specId:specId
+				 },
+				url:"${ctx}/ec/goodsspec/getIsGoodsUseSpec",
+				success:function(obj){
+					if(obj){
+						top.layer.alert('商品正在使用此规格,无法删除.', {icon: 0, title:'提醒'});
+					}else{
+						if(confirm("要删除该商品规格吗？")){
+							deleteSpec(specId);
+						}
+					}
+				},
+				error:function(XMLHttpRequest,textStatus,errorThrown){
+							    
+				}
+			});
+		}
+		//删除操作
+		function deleteSpec(specId){
+			$.ajax({
+				type:"post",
+				async:false,
+				data:{
+					id:specId
+				 },
+				url:"${ctx}/ec/goodsspec/delete",
+				success:function(obj){
+					if(obj == "success"){
+						top.layer.alert('删除成功!', {icon: 0, title:'提醒'});
+					}else{
+						top.layer.alert('删除失败!', {icon: 0, title:'提醒'});
+					}					
+					window.location = "${ctx}/ec/goodsspec/list"
+				},
+				error:function(XMLHttpRequest,textStatus,errorThrown){
+							    
+				}
+			});
+		}
 	</script>
 </head>
 <body>
@@ -99,7 +144,8 @@
 				    						<a href="#" onclick="openDialog('修改商品规格项', '${ctx}/ec/goodsspec/form?id=${goodsSpec.id}&opflag=UPDATE','800px', '500px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 					    				</shiro:hasPermission>
 					    				<shiro:hasPermission name="ec:goodsspec:del">
-											<a href="${ctx}/ec/goodsspec/delete?id=${goodsSpec.id}" onclick="return confirmx('要删除该商品规格吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
+											<a href="#" onclick="deleteGoodsSpec(${goodsSpec.id})" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
+											<%-- <a href="${ctx}/ec/goodsspec/delete?id=${goodsSpec.id}" onclick="return confirmx('要删除该商品规格吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a> --%>
 										</shiro:hasPermission>
 									</td>
 								</tr>

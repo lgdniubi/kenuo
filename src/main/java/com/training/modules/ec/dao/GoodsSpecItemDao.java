@@ -41,5 +41,12 @@ public interface GoodsSpecItemDao extends CrudDao<GoodsSpecItem>{
 	 * @return
 	 */
 	public int delteteItems(GoodsSpecItem goodsSpecItem);
+
+	/**
+	 * 根据规格id获取到规格子项id集合
+	 * @param specItemId
+	 * @return
+	 */
+	public List<Integer> getListBySpecId(int specId);
 	
 }
