@@ -81,7 +81,7 @@
 	
 	function dellActionGoods(id){
 		var actionId=$("#actionId").val();
-		var num=0;
+		/* var num=0;
 		$.ajax({
 			type:"post",
 			async:false,
@@ -97,12 +97,12 @@
 			error:function(XMLHttpRequest,textStatus,errorThrown){
 						    
 			}
-		});
+		}); */
 		
-		if(num>0){
+		/* if(num>0){
 			top.layer.alert('该商品已经购买不可移除!', {icon: 0, title:'提醒'});
 			return;
-		}else{
+		}else{ */
 
 			$.ajax({
 				type:"post",
@@ -123,7 +123,7 @@
 							    
 				}
 			});
-		}
+		/* } */
 		
 	}
 	
