@@ -26,7 +26,8 @@
 			arrearage_price,
 			arrearage_office,
 			add_time,
-			order_status
+			order_status,
+			billmonth
 		)
 		VALUES
 		<foreach collection="subList" item="item" separator="," >  
@@ -36,7 +37,8 @@
 			${item.used_limit},
 			#{item.office_id},
 			NOW(),
-			1
+			1,
+			#{billmonth}
 		)
 	    </foreach>
 		
