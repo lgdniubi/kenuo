@@ -12,7 +12,7 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	private String arrearageOffice;//欠款机构
 	private double amount;//实付金额
 	private String addTime;//创建时间
-	private String orderStatus;//订单状态（1：待支付；2：已付款；）
+	private String orderStatus;//订单状态（1：待支付；2：待审核；3：已入账）
 	private String payCode;//支付类型(wx:微信，alipay:支付宝,zz:转账)
 	private String payTime; //支付时间
 	private String chargeId;//第三方订单号
@@ -24,6 +24,13 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	private String userName; //用户名
 	private String franchiseeName; //商家
 	private String billmonth; //账单月份
+	private String serialnumber;//流水号
+	private String bankaccount; //银行账号
+	private String openbank; //开户行
+	private String proof; //凭证
+	private String explains;//说明
+	private String openname;//开户姓名
+	
 	public String getOrderId() {
 		return orderId;
 	}
@@ -138,5 +145,40 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	public void setBillmonth(String billmonth) {
 		this.billmonth = billmonth;
 	}
-	
+	public String getSerialnumber() {
+		return serialnumber;
+	}
+	public void setSerialnumber(String serialnumber) {
+		this.serialnumber = serialnumber;
+	}
+	public String getBankaccount() {
+		return bankaccount;
+	}
+	public void setBankaccount(String bankaccount) {
+		this.bankaccount = bankaccount;
+	}
+	public String getOpenbank() {
+		return openbank;
+	}
+	public void setOpenbank(String openbank) {
+		this.openbank = openbank;
+	}
+	public String getProof() {
+		return proof;
+	}
+	public void setProof(String proof) {
+		this.proof = proof;
+	}
+	public String getExplains() {
+		return explains;
+	}
+	public void setExplains(String explains) {
+		this.explains = explains;
+	}
+	public String getOpenname() {
+		return openname;
+	}
+	public void setOpenname(String openname) {
+		this.openname = openname;
+	}
 }

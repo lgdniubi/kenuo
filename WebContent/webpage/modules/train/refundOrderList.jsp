@@ -107,7 +107,7 @@
                                	</td>
                                	<td style="text-align: center;">
                                		<c:if test="${refund.orderStatus eq '1'}">待支付</c:if>
-                               		<c:if test="${refund.orderStatus eq '2'}">已支付</c:if>
+                               		<c:if test="${refund.orderStatus eq '2'}">待审核</c:if>
                                		<c:if test="${refund.orderStatus eq '3'}">已入账</c:if>
                                	</td>
                                	<td style="text-align: center;">
@@ -117,7 +117,9 @@
                                		${refund.userName}
                                	</td>
                                	<td style="text-align: center;">
-                               		${refund.channelFlag}
+                               		<c:if test="${refund.channelFlag eq 'wx'}">微信</c:if>
+                               		<c:if test="${refund.channelFlag eq 'alipay'}">支付宝</c:if>
+                               		<c:if test="${refund.channelFlag eq 'zz'}">转账</c:if>
                                	</td>
                                	<td style="text-align: center;">
                                		${refund.addTime}
@@ -127,16 +129,16 @@
                                	</td>
 								<td style="text-align: center;">
 									<shiro:hasPermission name="train:refundOrder:makeSureInAccount">
-									<c:if test="${refund.orderStatus eq '2'}">
-										<a href="${ctx}/train/refundOrder/makeSureInAccount?order_id=${refund.orderId}"  onclick="return confirmx('确定已入账？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>确认入账</a>
+									<c:if test="${refund.orderType eq '2'}">
+										<c:if test="${refund.orderStatus eq '2'}">
+											<a href="${ctx}/train/refundOrder/makeSureInAccount?order_id=${refund.orderId}"  onclick="return confirmx('确定已入账？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>确认入账</a>
+										</c:if>
 									</c:if>
 									</shiro:hasPermission>
 									<shiro:hasPermission name="train:articlelist:deleteOne">
 										<a class="btn btn-success btn-xs"  onclick="openDialogView('对账单','${ctx}/train/refundOrder/queryStatementOfRefund?office_id=${refund.arrearageOffice}&billmonth=${refund.billmonth }', '800px', '500px')"><i class="fa fa-edit"></i>对账单详情</a>
 									</shiro:hasPermission>
-									<c:if test="${refund.orderType eq '2'}">
-										<a class="btn btn-success btn-xs"  onclick="openDialogView('支付信息','${ctx}/train/refundOrder/queryTransferpay?order_id=${refund.orderId}', '800px', '500px')"><i class="fa fa-edit"></i>支付信息</a>
-									</c:if>
+									<a class="btn btn-success btn-xs"  onclick="openDialogView('详细信息','${ctx}/train/refundOrder/queryRefundOrderDetail?order_id=${refund.orderId}', '800px', '500px')"><i class="fa fa-edit"></i>详细信息</a>
 									
 								</td>
 							</tr>
