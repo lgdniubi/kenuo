@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
-import com.training.modules.ec.entity.MtmyOaNotify;
 import com.training.modules.ec.entity.MtmyOaNotifyRecord;
 
 /**
