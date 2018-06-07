@@ -3,7 +3,6 @@ package com.training.modules.train.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,7 +13,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.training.common.persistence.Page;
 import com.training.common.web.BaseController;
 import com.training.modules.sys.utils.BugLogUtils;
-import com.training.modules.train.entity.FzxRole;
 import com.training.modules.train.entity.RefundOrder;
 import com.training.modules.train.service.RefundOrderService;
 
@@ -75,9 +73,9 @@ public class RefundOrderController extends BaseController {
 	 */
 	@RequiresPermissions(value="train:refundOrder:makeSureInAccount")
 	@RequestMapping(value="makeSureInAccount")
-	public String makesure(Model model,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,String order_id,String office_id){
+	public String makesure(Model model,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,String order_id,String office_id,double amount,String user_id){
 		try {
-			this.refundOrderService.makeSureInAccount(order_id,office_id);
+			this.refundOrderService.makeSureInAccount(order_id,office_id,amount,user_id);
 			addMessage(redirectAttributes, "已入账!");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "确认入账", e);
