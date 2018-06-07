@@ -26,6 +26,7 @@
 		a.CONTENT_ID AS "contentId",
 		a.PUSH_NUM AS "pushNum",
 	    b.read_num,
+	    a.auto_push_time AS 'autoPushTime',
 	    b.un_read_num
 	</sql>
 	
@@ -84,6 +85,7 @@
 			PUSH_TYPE,
 			group_import_type,
 			START_TIME,
+			auto_push_time,
 			END_TIME
 			
 		) VALUES (
@@ -102,6 +104,7 @@
 			#{pushType},
 			#{groupImportType},
 			#{startTime},
+			#{autoPushTime},
 			#{endTime}
 		)
 	</insert>
@@ -119,6 +122,7 @@
 			PUSH_TYPE = #{pushType},
 			group_import_type = #{groupImportType},
 			START_TIME = #{startTime},
+			auto_push_time = #{autoPushTime},
 			END_TIME = #{endTime}
 		WHERE id = #{id}
 	</update>
