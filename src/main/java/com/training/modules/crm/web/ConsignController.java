@@ -133,22 +133,24 @@ public class ConsignController extends BaseController {
 			if (null==consignId|| consignId.trim().length()<=0) {
 				consignService.save(consign);
 				//save Log
+				log.setConsignId(consign.getConsignId());
 				log.setProductName(consign.getGoodsName());
 				log.setBuyNum(consign.getPurchaseNum());
 				log.setTakeNum(consign.getTakenNum());
 				log.setSurplusNum(consign.getConsignNum());
 				log.setCreateBy(user);
-				log.setRemarks("新增寄存档案:"+consign.getGoodsName()+"取走数量:"+consign.getTakenNum());
+				log.setRemarks("新增寄存档案:"+consign.getGoodsName()+",取走数量:"+consign.getTakenNum());
 				consignService.saveCrmDepositLog(log);
 			}else {
 				consignService.updateSingle(consign);
 				//save Log
+				log.setConsignId(consign.getConsignId());
 				log.setProductName(consign.getGoodsName());
 				log.setBuyNum(consign.getPurchaseNum());
 				log.setTakeNum(consign.getTakenNum());
 				log.setSurplusNum(consign.getConsignNum());
 				log.setCreateBy(user);
-				log.setRemarks("修改寄存档案:"+consign.getGoodsName()+"取走数量:"+consign.getTakenNum());
+				log.setRemarks("修改寄存档案:"+consign.getGoodsName()+",取走数量:"+consign.getTakenNum());
 				consignService.saveCrmDepositLog(log);
 			}
 			
