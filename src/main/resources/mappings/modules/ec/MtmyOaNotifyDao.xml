@@ -159,4 +159,15 @@
 		set status = #{status}
 		where id = #{notify_id}
 	</update>
+	
+	<!-- 查询一定时间内未推送的需要定时推送的消息 -->
+	<select id="queryAutoPushMessage" resultType="MtmyOaNotify">
+		SELECT 
+			id,
+			push_type AS "pushType"
+		FROM mtmydb.mtmy_oa_notify
+		WHERE del_flag = 0
+		AND status = 0
+		<![CDATA[AND DATE_FORMAT(auto_push_time,'%Y-%m-%d %H:%i:%S"') <= DATE_FORMAT(SYSDATE(),'%Y-%m-%d %H:%i:%S"')]]>
+	</select>
 </mapper>
