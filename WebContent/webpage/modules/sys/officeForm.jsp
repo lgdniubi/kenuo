@@ -97,6 +97,19 @@
 								'oldOfficeCode': function(){return $("#oldOfficeCode").val();}
 							}
 						}
+					},
+					'officeInfo.legalPerson':{
+						legalPersonMethod:true						
+					},
+					'officeInfo.accountname':{
+						accountnameMethod:true						
+					},
+					'officeInfo.openbank':{
+						openbankMethod:true						
+					},
+					'officeInfo.bankaccount':{
+						rangelength:[13,19]	,
+						number:true
 					}
 				},
 				messages:{
@@ -112,6 +125,10 @@
 					officeCode: {
 						maxlength:"机构编码不能超过20个字符",
 						remote: "机构编码已存在"
+					},
+					'officeInfo.bankaccount':{
+						rangelength:"请输入13-19位数字",
+						number:"请输入13-19位数字"
 					}
 				},
 				submitHandler: function(form){
@@ -146,6 +163,16 @@
 	            }
 	            return returnVal;
 			}, "小数点前不能超过三位，小数点后不能超过六位");//验证错误信息
+			//判断经纬度最多6位小数
+			jQuery.validator.addMethod("legalPersonMethod", function(value, element) {     
+				 return this.optional(element) || /^[\u0391-\uFFE5]+$/.test(value) || /^\d+$/.test(value);
+			}, "请输入汉字或字母，最多8个字");//验证错误信息
+			jQuery.validator.addMethod("accountnameMethod", function(value, element) {   
+				 return this.optional(element) || /^[\u0391-\uFFE5]+$/.test(value) ||  /^[A-Za-z]+$/.test(value);
+			}, "仅支持中文或英文、最多20个字");//验证错误信息
+			jQuery.validator.addMethod("openbankMethod", function(value, element) {   
+				 return this.optional(element) || /^[\u0391-\uFFE5]+$/.test(value);
+			}, "仅支持中文、最多20个字");//验证错误信息
 
 			//在ready函数中预先调用一次远程校验函数，是一个无奈的回避案。(刘高峰）
 			//否则打开修改对话框，不做任何更改直接submit,这时再触发远程校验，耗时较长，
@@ -309,8 +336,8 @@
 				    elem: '#start_date',
 				    format: 'YYYY-MM-DD',
 				    event: 'focus',
-				    min: laydate.now(), //设定最小日期为当前日期  
-				    //max: $("#auth_start_date").val(),   //最大日期
+				    //min: laydate.now(), //设定最小日期为当前日期  
+				    max: laydate.now(),   //最大日期
 				    istime: false,				//是否显示时间
 				    isclear: true,				//是否显示清除
 				    istoday: true,				//是否显示今天
@@ -370,6 +397,10 @@
 </head>
 <body>
 	<div class="ibox-content">
+	<div>
+	<label class="pull-left"><a href="#">基础信息</a>-----</label>
+	<label class="pull-left"><a href="${ctx}/sys/office/signInfo?id=${office.id}">签约信息</a></label>
+	</div>
 		<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/save" method="post" class="form-horizontal">
 			<!-- 操作隐藏店铺按钮权限 -->
 			<shiro:hasPermission name="sys:office:updateOfficeStatus"><input type="hidden" id="officestatus" value="1"></shiro:hasPermission>
@@ -533,7 +564,7 @@
 					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>营业执照图片:</label></td>
 					         <td class="width-35">
 					         	<img id="officeCharImgsrc" src="${office.officeInfo.charterImg}" alt="" style="width: 200px;height: 100px;"/>
-								<input type="hidden" id="char" name="officeInfo.charterImg" value="${office.officeInfo.charterImg}"><!-- 图片隐藏文本框 -->
+								<input type="hidden" id="char" name="officeInfo.charterImg" class="required" value="${office.officeInfo.charterImg}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
 									<input type="file" name="file_upload" id="file_char_upload">
@@ -548,9 +579,9 @@
 				       </tr>
 				      	<tr>
 					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>法定代表人:</label></td>
-					         <td class="width-35"><form:input path="officeInfo.legalPerson" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
-					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>报货折扣:</label></td>
-					         <td class="width-35"><form:input path="officeInfo.discount" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
+					         <td class="width-35"><form:input path="officeInfo.legalPerson" htmlEscape="false" maxlength="8" cssClass="form-control required" /></td>
+					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font></label></td>
+					         <td class="width-35"><%-- <form:input path="officeInfo.discount" htmlEscape="false" maxlength="50" cssClass="form-control" /> --%></td>
 				       </tr>
 				      	<tr>
 					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>证件照正面:</label></td>
@@ -679,9 +710,9 @@
 					  </tr>
 				      <tr>
 					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>账户名称:</label></td>
-					      <td class="width-35"><form:input path="officeInfo.accountname" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
+					      <td class="width-35"><form:input path="officeInfo.accountname" htmlEscape="false" maxlength="20" cssClass="form-control" /></td>
 					      <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户银行:</label></td>
-					      <td class="width-35"><form:input path="officeInfo.openbank" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
+					      <td class="width-35"><form:input path="officeInfo.openbank" htmlEscape="false" maxlength="20" cssClass="form-control" /></td>
 					  </tr>
 				      <tr>
 					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡号:</label></td>
