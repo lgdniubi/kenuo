@@ -131,7 +131,7 @@
 									<shiro:hasPermission name="train:refundOrder:makeSureInAccount">
 									<c:if test="${refund.orderType eq '2'}">
 										<c:if test="${refund.orderStatus eq '2'}">
-											<a href="${ctx}/train/refundOrder/makeSureInAccount?office_id=${refund.arrearageOffice}&order_id=${refund.orderId}&amount=${refund.amount}&user_id=${refund.user_id}"  onclick="return confirmx('确定已入账？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>确认入账</a>
+											<a href="${ctx}/train/refundOrder/makeSureInAccount?office_id=${refund.arrearageOffice}&order_id=${refund.orderId}&amount=${refund.amount}"  onclick="return confirmx('确定已入账？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>确认入账</a>
 										</c:if>
 									</c:if>
 									</shiro:hasPermission>
