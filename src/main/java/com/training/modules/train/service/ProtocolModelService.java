@@ -59,8 +59,9 @@ public class ProtocolModelService extends CrudService<ProtocolModelDao,ProtocolM
 				protocolModelDao.updateModelById(protocolModel);//把原来更新了
 				if(protocolModel.getAssign()){	//是否重新签订--重新就更新原来的状态为变更
 					//更改店铺-协议表该协议id的状态为变更
-					protocolModel.setStatus("2");//店铺协议状态为变更
-					protocolModelDao.updateProtocolShopById(protocolModel);//把原来更新了
+//					protocolModel.setStatus("2");//店铺协议状态为变更
+//					protocolModelDao.updateProtocolShopById(protocolModel);//把原来更新了
+					protocolModelDao.deleteProtocolShopById(protocolModel);//把所有店铺签过的此协议删除
 					//更改签约状态变更
 					
 				}
@@ -133,6 +134,15 @@ public class ProtocolModelService extends CrudService<ProtocolModelDao,ProtocolM
 	 */
 	public List<ProtocolUser> findProtocolListOfOffice(String office_id){
 		return this.protocolModelDao.findProtocolListOfOffice(office_id);
+	}
+
+	/**
+	 * 查询旧版本集合
+	 * @param id
+	 * @return
+	 */
+	public List<ProtocolModel> findOldModelList(String id) {
+		return protocolModelDao.findOldModelList(id);
 	}
 	
 }

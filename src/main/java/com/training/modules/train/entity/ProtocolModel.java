@@ -38,7 +38,7 @@ public class ProtocolModel extends DataEntity<ProtocolModel>{
 		this.content = content;
 	}
 	public String getPid() {
-		if(getAssign())this.pid = id;
+		if(getAssign()&&!getIsNewRecord())this.pid = id;
 		return pid;
 	}
 	public void setPid(String pid) {

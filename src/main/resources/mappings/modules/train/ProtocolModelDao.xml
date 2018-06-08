@@ -38,6 +38,10 @@
 	<select id="findModelList" resultType="ProtocolModel">
 		SELECT <include refid="menuColumns"/> FROM `supply_protocol_model` m WHERE m.type_id = #{type} AND del_flag = 0;
 	</select>
+	<!-- 根据类型查找模板列表 -->
+	<select id="findOldModelList" resultType="ProtocolModel">
+		SELECT <include refid="menuColumns"/> FROM `supply_protocol_model` m WHERE m.pid = #{id} AND del_flag = 0;
+	</select>
 	
 	<!-- 保存协议内容  -->
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
@@ -71,6 +75,9 @@
 			`status` = #{status}
 		WHERE protocol_id = #{id} 
 	</update>
+	<delete id="deleteProtocolShopById">
+		DELETE FROM supply_protocol_shop WHERE protocol_id = #{id}  
+	</delete>
 	<!-- 更新单个协议状态状态 -->
 	<update id="updateStatusById">
 		UPDATE supply_protocol_model SET 
