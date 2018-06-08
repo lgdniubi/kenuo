@@ -61,12 +61,12 @@
 							$("#mobile").val(date.users.mobile);
 							$("#oldMobile").val(date.users.mobile);
 						}else{
-							top.layer.alert('查询用户信息失败!', {icon: 0, title:'提醒'}); 
+							top.layer.alert('用户不存在,请查看手机号是否正确!', {icon: 0, title:'提醒'}); 
 						}
 					},
 					error:function(XMLHttpRequest,textStatus,errorThrown){
 						layer.close(mask);
-						top.layer.alert('查询用户信息失败!', {icon: 0, title:'提醒'}); 
+						top.layer.alert('用户不存在,请查看手机号是否正确!', {icon: 0, title:'提醒'}); 
 					}
 				});
 			}

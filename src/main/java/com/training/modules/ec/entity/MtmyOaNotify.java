@@ -57,6 +57,8 @@ public class MtmyOaNotify extends DataEntity<MtmyOaNotify> {
 	private String data;           //组推的时候接受的数据（手机号或用户id）
 	private String groupImportType;     //组推时导入类型（0：手机号，1：用户id）
 	
+	private Date autoPushTime;         //自动推送时间
+	
 	public MtmyOaNotify() {
 		super();
 	}
@@ -331,6 +333,14 @@ public class MtmyOaNotify extends DataEntity<MtmyOaNotify> {
 
 	public void setGroupImportType(String groupImportType) {
 		this.groupImportType = groupImportType;
+	}
+
+	public Date getAutoPushTime() {
+		return autoPushTime;
+	}
+
+	public void setAutoPushTime(Date autoPushTime) {
+		this.autoPushTime = autoPushTime;
 	}
 	
 	
