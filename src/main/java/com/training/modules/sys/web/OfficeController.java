@@ -1028,7 +1028,7 @@ public class OfficeController extends BaseController {
 				String url=webReservationTime;
 				String result = WebUtils.postTrainObject(parpm, url);
 				jsonObject = JSONObject.fromObject(result);
-				logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+				logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",message:"+jsonObject.get("message")+",data:"+jsonObject.get("data"));
 			}
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "记录店铺首图、美容院和美容师图片上传相关信息", e);
