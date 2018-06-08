@@ -68,5 +68,9 @@ public interface ProtocolModelDao extends CrudDao<ProtocolModel> {
 	 * @return
 	 */
 	public List<ProtocolUser> findProtocolListOfOffice(@Param("office_id")String office_id);
+
+	public void deleteProtocolShopById(ProtocolModel protocolModel);
+	//查询旧版本集合
+	public List<ProtocolModel> findOldModelList(String id);
 	
 }

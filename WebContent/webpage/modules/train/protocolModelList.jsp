@@ -23,9 +23,7 @@
 							<tr>
 								<th style="text-align: center;">ID</th>
 								<th style="text-align: center;">协议名称</th>
-								<th style="text-align: center;">父级id</th>
 							    <th style="text-align: center;">状态</th>
-							    <th style="text-align: center;">是否重新签订</th>
 							    <th style="text-align: center;">创建时间</th>
 							    <th style="text-align: center;">操作人</th>
 						    	<th style="text-align: center;">操作</th>
@@ -36,24 +34,21 @@
 								<tr>
 									<td>${model.id }</td>
 								  	<td>${model.name }</td>
-								  	<td><c:if test="${model.pid != 0}">${model.pid }</c:if></td>
 								  	<td>
 									  	<c:if test="${model.status ==1}">启用</c:if>
 									  	<c:if test="${model.status ==2}">停用</c:if>
 									  	<c:if test="${model.status ==3}">变更</c:if>
 								  	</td>
-								  	<td>
-								  	<c:if test="${model.pid eq '0'}">否</c:if>
-								  	<c:if test="${model.pid ne '0'}">是</c:if>
-								  	</td>
 								  	<td><fmt:formatDate value="${model.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								  	<td>${model.createBy.name}</td>
 								    <td>
 								    	<c:if test="${model.status ==1}">
-										<a href="#" onclick="openDialog('修改', '${ctx}/train/protocolModel/modelForm?id=${model.id}','850px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>修改</a> 
+										<a href="#" onclick="openDialog('修改', '${ctx}/train/protocolModel/modelForm?id=${model.id}','850px', '550px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>修改</a> 
 										</c:if>
-										<a href="#" onclick="openDialogView('查看', '${ctx}/train/protocolModel/modelForm?id=${model.id}','850px', '800px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>查看</a> 
-										<a href="#" onclick="openDialogView('历史版本', '${ctx}/train/protocolModel/modelForm?id=${model.id}','850px', '800px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>历史版本</a> 
+										<a href="#" onclick="openDialogView('查看', '${ctx}/train/protocolModel/modelForm?id=${model.id}','850px', '550px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>查看</a> 
+								    	<c:if test="${empty isShow || isShow !=1}">
+										<a href="#" onclick="openDialogView('历史版本', '${ctx}/train/protocolModel/oldModelList?id=${model.id}','850px', '550px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>历史版本</a> 
+										</c:if>
 								    </td>
 								</tr>
 							</c:forEach>
