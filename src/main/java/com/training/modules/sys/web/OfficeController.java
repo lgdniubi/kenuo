@@ -63,6 +63,7 @@ import com.training.modules.train.entity.PayInfo;
 import com.training.modules.train.entity.TrainRuleParam;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONNull;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import net.sf.json.util.CycleDetectionStrategy;
@@ -262,7 +263,7 @@ public class OfficeController extends BaseController {
 	@RequestMapping(value = "save")
 	public String save(Office office,OfficeInfo officeInfo, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		//officeInfo中店铺标签 (多个标签用"#"分开)
-	/*	if(office.getOfficeInfo() != null && office.getOfficeInfo().getTags() !=null){
+		if(office.getOfficeInfo() != null && office.getOfficeInfo().getTags() !=null){
 			office.getOfficeInfo().setTags(office.getOfficeInfo().getTags().replaceAll(",", "#"));
 		}
 		if(Global.isDemoMode()){
@@ -337,9 +338,9 @@ public class OfficeController extends BaseController {
 				}
 			}
 			
-			*//**
+			/**
 			 * 此处调用报货接口，在修改机构项时将修改的机构数据循环同步到报货
-			 *//*
+			 */
 			//String weburl = ParametersFactory.getMtmyParamValues("modifyToOffice");
 			OfficeLog officeLog = new OfficeLog();
 			OfficeThreadUtils.equalBH(office,eqold,officeLog);
@@ -359,10 +360,10 @@ public class OfficeController extends BaseController {
 			}
 		}
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
-		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();*/
+		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
-		return "redirect:" + adminPath + "/sys/office/form?officeid="+"7b320d5cab72446ca8550ac8e0d3aaad"+"&parentIds="+office.getParentIds();
-//		return "redirect:" + adminPath + "/sys/office/list?id="+1+"&parentIds="+office.getParentIds();
+//		return "redirect:" + adminPath + "/sys/office/form?id="+"7b320d5cab72446ca8550ac8e0d3aaad"+"&parentIds="+office.getParentIds();
+		return "redirect:" + adminPath + "/sys/office/list?id="+1+"&parentIds="+office.getParentIds();
 	}
 	
 	@RequiresPermissions(value={"sys:office:add","sys:office:edit"},logical=Logical.OR)
@@ -378,11 +379,16 @@ public class OfficeController extends BaseController {
 		String result = WebUtils.postCSObject(parpm, url);
 		JSONObject jsonObject = JSONObject.fromObject(result);
 		ContractInfoVo infoVo = (ContractInfoVo) JSONObject.toBean(jsonObject.getJSONObject("data"), ContractInfoVo.class);
-		List<PayInfo> payInfos = JSONArray.toList(jsonObject.getJSONObject("data").getJSONArray("payInfos"), new PayInfo(),new JsonConfig());
+		String str = jsonObject.getString("data");
+		System.out.println(str);
+		System.out.println(StringUtils.isBlank(jsonObject.getString("data")));
+		if(!(jsonObject.get("data") instanceof JSONNull)){
+			List<PayInfo> payInfos = JSONArray.toList(jsonObject.getJSONObject("data").getJSONArray("payInfos"), new PayInfo(),new JsonConfig());
+			model.addAttribute("payInfos", payInfos);
+		}
 		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
 		/*if("200".equals(jsonObject.get("result"))){
 		}*/
-		model.addAttribute("payInfos", payInfos);
 		model.addAttribute("infoVo", infoVo);
 		model.addAttribute("office", office);
 		model.addAttribute("user", user);
