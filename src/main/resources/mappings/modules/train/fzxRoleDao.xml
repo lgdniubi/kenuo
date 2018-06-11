@@ -190,4 +190,17 @@
 		WHERE id = #{roleId}
 		AND company_id = 1
 	</update>
+	
+	<delete id="deleteRoleMenuForRoleId">
+		DELETE FROM fzx_role_menu WHERE fzx_menu_id = #{oldMenuid}
+	</delete>	
+	<select id="findFzxRoleByModId" resultType="int">
+		SELECT r.id AS roleId FROM fzx_role r WHERE mod_id = #{modeid} AND del_flag = 0 AND r.enname = 'sjgly' AND company_id != 1
+	</select>
+	<insert id="insertUserRoleForRoleId">
+		INSERT INTO fzx_role_menu (fzx_role_id, fzx_menu_id) VALUES
+	    <foreach collection ="roleids" item="r" separator =",">
+	         (#{r}, #{menuid})
+	    </foreach >
+	</insert>
 </mapper>

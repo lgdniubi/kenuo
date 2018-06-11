@@ -221,4 +221,21 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 		return dao.getFzxRoleByModAndEname(modid,modType);
 	}
 
+	public void insertUserRoleForRoleId(Integer menuid, List<Integer> fzxRoleids) {
+		dao.insertUserRoleForRoleId(menuid,fzxRoleids);
+	}
+
+	/**
+	 * 找出改版本的超管角色id
+	 * @param modId
+	 * @return
+	 */
+	public List<Integer> findFzxRoleByModId(String modId) {
+		return dao.findFzxRoleByModId(modId);
+	}
+
+	public void deleteRoleMenuForRoleId(Integer oldMenuid) {
+		dao.deleteRoleMenuForRoleId(oldMenuid);
+	}
+
 }

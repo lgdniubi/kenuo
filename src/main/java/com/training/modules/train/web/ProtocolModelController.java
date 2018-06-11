@@ -74,7 +74,7 @@ public class ProtocolModelController extends BaseController {
 		}
 		model.addAttribute("protocolModel", protocolModel);
 //		model.addAttribute("type", protocolModel.getType());
-		return "modules/train/protocolModelList";
+		return "modules/train/protocolModelForm";
 	}
 	
 	/**
