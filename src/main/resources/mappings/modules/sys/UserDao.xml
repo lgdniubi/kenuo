@@ -444,6 +444,15 @@
 			AND a.office_id = #{office.id}
 		ORDER BY a.name
 	</select>
+	<!-- 根据OfficeId获取用户（树查询用户时用） -->
+	<select id="findUserByFranchiseeId" resultType="User" useCache="true">
+		SELECT
+			a.id, a.name, a.login_name
+		FROM sys_user a
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+			AND a.company_id = #{company.id}
+		ORDER BY a.name
+	</select>
 	<!-- 手机号验证 -->
 	<select id="getUserByPhone" resultType="User">
 		SELECT 
@@ -686,7 +695,7 @@
 		WHERE id = #{id}
 	</update>
 	<!-- 离职后变为普通商家和普通机构-->
-	<update id="updateUserInfo">
+	<update id="updateUserInfoByUserid">
 		UPDATE sys_user_info SET 
 			franchisee_id = #{franchiseeid}, 
 			office_id = #{officeid}

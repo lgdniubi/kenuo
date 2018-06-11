@@ -362,8 +362,8 @@ public class OfficeController extends BaseController {
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
 		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
-//		return "redirect:" + adminPath + "/sys/office/form?id="+"7b320d5cab72446ca8550ac8e0d3aaad"+"&parentIds="+office.getParentIds();
-		return "redirect:" + adminPath + "/sys/office/list?id="+1+"&parentIds="+office.getParentIds();
+		return "redirect:" + adminPath + "/sys/office/form?id="+office.getId()+"&parentIds="+office.getParentIds();
+//		return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
 	}
 	
 	@RequiresPermissions(value={"sys:office:add","sys:office:edit"},logical=Logical.OR)

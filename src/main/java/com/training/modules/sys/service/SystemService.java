@@ -863,7 +863,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			specBeauticianDao.deleteArrangeShop(specBeautician);//删除他以后的排班记录
 		}
 		//更新美容师详情表sys_user_info 普通商家id=1000000
-		userDao.updateUserInfo(userid ,"1000000","1000000");
+		userDao.updateUserInfoByUserid(userid ,"1000000","1000000");
 	}
 	
 	/**
@@ -1509,6 +1509,21 @@ public class SystemService extends BaseService implements InitializingBean {
 				mediaRoleService.insertUserRole(userid,mdRole.getRoleId());
 			}
 		} 
+	}
+
+	/**
+	 * 根据商家id找用户
+	 * @param officeId
+	 * @return
+	 */
+	public List<User> findUserByFranchiseeId(String officeId) {
+		User user = new User();
+		user.setCompany(new Office(officeId));
+		List<User> list = userDao.findUserByFranchiseeId(user);
+		if(list == null ){
+			list = new ArrayList<>();
+		}
+		return list;
 	}
 
 }

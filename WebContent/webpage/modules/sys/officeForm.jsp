@@ -349,10 +349,10 @@
 		function unfold(num){
 			//num = 1 不是店铺  num = 2 为店铺
 			if(num == 1){
-				$("#unfold,#area1").show();
+				$("#unfold,#area1,#signtab,#signNext").show();
 				$("#a1,#a2,#a3,#a4,#a5,#area2").hide();
 			}else{
-				$("#unfold,#area1").hide();
+				$("#unfold,#area1,#signtab,#signNext").hide();
 				$("#a1,#a2,#a3,#a4,#a5,#area2").show();
 			}
 		}
@@ -398,8 +398,8 @@
 <body>
 	<div class="ibox-content">
 	<div>
-	<label class="pull-left"><a href="#">基础信息</a>-----</label>
-	<label class="pull-left"><a href="${ctx}/sys/office/signInfo?id=${office.id}">签约信息</a></label>
+	<label class="pull-left"><a href="#">基础信息</a></label>
+	<label class="pull-left" id="signtab" ><a href="${ctx}/sys/office/signInfo?id=${office.id}">-----签约信息</a></label>
 	</div>
 		<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/save" method="post" class="form-horizontal">
 			<!-- 操作隐藏店铺按钮权限 -->
@@ -580,8 +580,8 @@
 				      	<tr>
 					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>法定代表人:</label></td>
 					         <td class="width-35"><form:input path="officeInfo.legalPerson" htmlEscape="false" maxlength="8" cssClass="form-control required" /></td>
-					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font></label></td>
-					         <td class="width-35"><%-- <form:input path="officeInfo.discount" htmlEscape="false" maxlength="50" cssClass="form-control" /> --%></td>
+					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>统一社会信用代码</label></td>
+					         <td class="width-35"><form:input path="officeInfo.creditCode" htmlEscape="false" maxlength="15" cssClass="form-control" /></td>
 				       </tr>
 				      	<tr>
 					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>证件照正面:</label></td>
@@ -744,6 +744,8 @@
 					  </tr>
 			      </tbody>
 		      </table>
+		      <input type="button" value="保存基础信息" onclick="doSubmit()"/>
+		      <label class="pull-left" id="signNext" ><a href="${ctx}/sys/office/signInfo?id=${office.id}">下一步</a></label>
 		</form:form>
 		<div class="loading"></div>
 	</div>

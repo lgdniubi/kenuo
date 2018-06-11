@@ -382,6 +382,12 @@ public interface UserDao extends CrudDao<User> {
 	//离职后变为普通角色
 	public void updateUserRole(User user);
 	//更新美容师详情表sys_user_info 普通商家id=1000000
-	public void updateUserInfo(@Param(value="userid")String userid, @Param(value="franchiseeid")String franchiseeid, @Param(value="officeid")String officeid);
+	public void updateUserInfoByUserid(@Param(value="userid")String userid, @Param(value="franchiseeid")String franchiseeid, @Param(value="officeid")String officeid);
+	/**
+	 * 根据商家id找用户
+	 * @param user
+	 * @return
+	 */
+	public List<User> findUserByFranchiseeId(User user);
 
 }

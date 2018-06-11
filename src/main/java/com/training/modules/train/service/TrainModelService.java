@@ -297,20 +297,26 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 		switch (sc) {
 		case 1://PC端菜单增加
 			List<Integer> roleids = pcRoleService.findpcRoleByModId(modId);
-			for (String oldid : ls1) {
-				pcRoleService.insertUserRoleForRoleId(Integer.valueOf(oldid),roleids);
+			if(roleids !=null && roleids.size()>0){
+				for (String oldid : ls1) {
+					pcRoleService.insertUserRoleForRoleId(Integer.valueOf(oldid),roleids);
+				}
 			}
 			break;
 		case 2://fzx端菜单增加
 			List<Integer> fzxRoleids = fzxRoleService.findFzxRoleByModId(modId);
-			for (String oldid : ls1) {
-				fzxRoleService.insertUserRoleForRoleId(Integer.valueOf(oldid),fzxRoleids);
+			if(fzxRoleids !=null && fzxRoleids.size()>0){
+				for (String oldid : ls1) {
+					fzxRoleService.insertUserRoleForRoleId(Integer.valueOf(oldid),fzxRoleids);
+				}
 			}
 			break;
 		case 3://自媒体PC端菜单增加
 			List<Integer> mdRoleids = mediaRoleService.findMediaRoleByModId(modId);
-			for (String oldid : ls1) {
-				mediaRoleService.insertUserRoleForRoleId(Integer.valueOf(oldid),mdRoleids);
+			if(mdRoleids !=null && mdRoleids.size()>0){
+				for (String oldid : ls1) {
+					mediaRoleService.insertUserRoleForRoleId(Integer.valueOf(oldid),mdRoleids);
+				}
 			}
 			break;
 		default:

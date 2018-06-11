@@ -322,11 +322,10 @@
 <body>
 	<div class="ibox-content">
 	<div>
-	<label class="pull-left"><a href="${ctx}/sys/office/form?id=7b320d5cab72446ca8550ac8e0d3aaad">基础信息</a>-----</label>
+	<label class="pull-left"><a href="${ctx}/sys/office/form?id=${office.id}">基础信息</a>-----</label>
 	<label class="pull-left"><a href="#">签约信息</a></label>
 	</div>
 		<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/saveSignInfo" method="post" class="form-horizontal">
-			<input type="button" value="保存签约信息" onclick="saveSign()"/>
 			<form:hidden path="id"/>
 			<input type="hidden" name="create_user" value="${user.id}"/>
 			<input type="hidden" name="payInfos[0].create_user" value="${user.id}"/>
@@ -345,7 +344,7 @@
 						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
 				         	<td class="width-35"><sys:treeselect id="sign_username" name="sign_userid" value="${infoVo.sign_userid}" labelName="sign_username" labelValue="${infoVo.sign_username}"
-								title="姓名" url="/sys/user/treeData?officeId=1000001"  cssClass="form-control required"/></td>
+								title="姓名" url="/sys/user/treeData?officeId=${office.franchisee.id}"  cssClass="form-control required"/></td>
 				         	<td class="width-35" rowspan="4">
 				         		<img id="officesign_fonturlImgsrc" src="${infoVo.sign_fonturl}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="sign_fonturl" name="sign_fonturl" value="${infoVo.sign_fonturl}"><!-- 图片隐藏文本框 -->
@@ -383,7 +382,7 @@
 						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
 				         	<td class="width-35"><sys:treeselect id="cargo" name="cargo_userid" value="${infoVo.cargo_userid}" labelName="cargo_username" labelValue="${infoVo.cargo_username}"
-								title="姓名" url="/sys/user/treeData?officeId=1000001"  cssClass="form-control required required"/></td>
+								title="姓名" url="/sys/user/treeDataCompany?officeId=${office.franchisee.id}"  cssClass="form-control required required"/></td>
 				         	<td class="width-35" rowspan="4">
 				         		<img id="officecargo_fonturlImgsrc" src="${infoVo.cargo_fonturl}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="cargo_fonturl" name="cargo_fonturl" value="${infoVo.cargo_fonturl}"><!-- 图片隐藏文本框 -->
@@ -421,7 +420,7 @@
 						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
 				         	<td class="width-35"><sys:treeselect id="audit" name="audit_userid" value="${infoVo.audit_userid}" labelName="audit_username" labelValue="${infoVo.audit_username}"
-								title="姓名" url="/sys/user/treeData?officeId=1000001"  cssClass="form-control required required"/></td>
+								title="姓名" url="/sys/user/treeDataCompany?officeId=${office.franchisee.id}"  cssClass="form-control required required"/></td>
 				         	<td class="width-35" rowspan="4">
 				         		<img id="officeaudit_fonturlImgsrc" src="${infoVo.audit_fonturl}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="audit_fonturl" name="audit_fonturl" value="${infoVo.audit_fonturl}"><!-- 图片隐藏文本框 -->
@@ -459,7 +458,7 @@
 						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
 				         	<td class="width-35"><sys:treeselect id="proxy" name="proxy_userid" value="${infoVo.proxy_userid}" labelName="proxy_username" labelValue="${infoVo.proxy_username}"
-								title="姓名" url="/sys/user/treeData?officeId=1000001"  cssClass="form-control required required"/></td>
+								title="姓名" url="/sys/user/treeDataCompany?officeId=${office.franchisee.id}"  cssClass="form-control required required"/></td>
 				         	<td class="width-35" rowspan="4">
 				         		<img id="officeproxy_fonturlImgsrc" src="${infoVo.proxy_fonturl}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="proxy_fonturl" name="proxy_fonturl" value="${infoVo.proxy_fonturl}"><!-- 图片隐藏文本框 -->
@@ -553,6 +552,8 @@
 			      </tbody>
 			     
 		      </table>
+		      <input type="button" value="保存签约信息" onclick="saveSign()"/>
+			  <a href="${ctx}/sys/office/form?id=${office.id}">上一步</a>
 		</form:form>
 		<div class="loading"></div>
 	</div>

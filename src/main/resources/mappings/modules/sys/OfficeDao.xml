@@ -460,6 +460,7 @@
 				openbank,
 				bankaccount,
 				bankaddress,
+				credit_code,
 				cardup,
 				carddown
 			) values (
@@ -488,6 +489,7 @@
 				#{officeInfo.openbank},
 				#{officeInfo.bankaccount},
 				#{officeInfo.bankaddress},
+				#{officeInfo.creditCode},
 				#{officeInfo.cardup},
 				#{officeInfo.carddown}
 			)ON DUPLICATE KEY 
@@ -514,6 +516,7 @@
 				openbank         =	  #{officeInfo.openbank},            
 				bankaccount      =	  #{officeInfo.bankaccount},        
 				bankaddress  =	  #{officeInfo.bankaddress},     
+				credit_code  =	  #{officeInfo.creditCode},     
 				cardup           =	  #{officeInfo.cardup},                
 				carddown         =	  #{officeInfo.carddown} ,
 				<if test="grade == 1">
@@ -576,6 +579,7 @@
 			bankaccount,
 			bankaddress,
 			cardup,
+			credit_code,
 			carddown
 		FROM sys_office_info
 		WHERE 
