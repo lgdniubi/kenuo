@@ -39,7 +39,7 @@
 	<div class="wrapper-content">
         <div class="ibox">
             <div class="ibox-title">
-                <h5>信用账单管理</h5>
+                <h5>签约审核</h5>
             </div>
             <sys:message content="${message}"/>
             <div class="ibox-content">
