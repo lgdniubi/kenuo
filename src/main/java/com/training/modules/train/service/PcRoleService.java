@@ -135,4 +135,20 @@ public class PcRoleService extends CrudService<PcRoleDao,PcRole>{
 	public void deleteUserRole(String userid) {
 		dao.deleteUserRole(userid);
 	}
+	/**
+	 * 找出改版本的超管角色id
+	 * @param modId
+	 * @return
+	 */
+	public List<Integer> findpcRoleByModId(String modId) {
+		return dao.findpcRoleByModId(modId);
+	}
+
+	public void insertUserRoleForRoleId(Integer menuid, List<Integer> roleids) {
+		dao.insertUserRoleForRoleId(menuid,roleids);
+	}
+
+	public void deleteRoleMenuForRoleId(Integer oldMenuid) {
+		dao.deleteRoleMenuForRoleId(oldMenuid);
+	}
 }

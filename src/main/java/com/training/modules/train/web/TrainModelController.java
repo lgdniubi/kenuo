@@ -169,7 +169,7 @@ public class TrainModelController extends BaseController{
 	public String savePCAuth(Model model,TrainModel trainModel,String oldMenuIds,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
 			if(!oldMenuIds.equals(trainModel.getMenuIds())){
-				trainModelService.saveModpcMenu(trainModel);
+				trainModelService.saveModpcMenu(trainModel,oldMenuIds);
 			}
 			addMessage(redirectAttributes, "保存PC版本菜单权限成功!");
 		} catch (Exception e) {
@@ -193,7 +193,7 @@ public class TrainModelController extends BaseController{
 	public String savefzxAuth(Model model,TrainModel trainModel,String oldMenuIds,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
 			if(!oldMenuIds.equals(trainModel.getMenuIds())){
-				trainModelService.saveModfzxMenu(trainModel);
+				trainModelService.saveModfzxMenu(trainModel,oldMenuIds);
 			}
 			addMessage(redirectAttributes, "保存fzx版本菜单权限成功!");
 		} catch (Exception e) {
@@ -217,7 +217,7 @@ public class TrainModelController extends BaseController{
 	public String saveMediaAuth(Model model,TrainModel trainModel,String oldMenuIds,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
 			if(!oldMenuIds.equals(trainModel.getMenuIds())){
-				trainModelService.saveModMediaMenu(trainModel);
+				trainModelService.saveModMediaMenu(trainModel,oldMenuIds);
 			}
 			addMessage(redirectAttributes, "保存自媒体版本菜单权限成功!");
 		} catch (Exception e) {

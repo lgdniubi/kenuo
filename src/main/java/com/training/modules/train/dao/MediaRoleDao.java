@@ -129,4 +129,10 @@ public interface MediaRoleDao extends CrudDao<MediaRole>{
 	public MediaRole getMediaRoleByModAndEname(String modid);
 
 	public void insertUserRole(@Param(value="userid")String userid, @Param(value="roleId")int roleId);
+
+	public void insertUserRoleForRoleId(@Param("menuid")Integer menuid, @Param("roleids")List<Integer> roleids);
+
+	public List<Integer> findMediaRoleByModId(String modId);
+
+	public void deleteRoleMenuForRoleId(Integer oldMenuid);
 }
