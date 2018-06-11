@@ -5,6 +5,7 @@
 <head>
 <title>活动列表</title>
 <meta name="decorator" content="default" />
+<link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
 <script type="text/javascript">
 	function page(n,s) {
 		$("#pageNo").val(n);
@@ -241,5 +242,6 @@
 			</div>
 		</div>
 	</div>
+	<div class="loading"></div>
 </body>
 </html>

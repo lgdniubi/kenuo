@@ -13,6 +13,8 @@
 		a.start_time,
 		a.end_time,
 		a.expiration_date,
+		expiration_type AS 'expirationType',
+		expiration_day AS 'expirationDay',
 		a.`status`,
 		a.create_by AS "createBy.name",
 		a.create_date
@@ -76,6 +78,8 @@
 		end_time,
 		expiration_date,
 		status,
+		expiration_type,
+		expiration_day,
 		create_date,
 		create_by
 		)VALUES
@@ -87,6 +91,8 @@
 		#{endTime},
 		#{expirationDate},
 		#{status},
+		#{expirationType},
+		#{expirationDay},
 		SYSDATE(),
 		#{createBy.name}
 		
@@ -101,7 +107,9 @@
 		action_type=#{actionType},
 		start_time=#{startTime},
 		end_time=#{endTime},
-		expiration_date=#{expirationDate}
+		expiration_date=#{expirationDate},
+		expiration_type = #{expirationType},
+		expiration_day = #{expirationDay}
 		WHERE id=#{id}
 	
 	</update>

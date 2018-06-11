@@ -38,6 +38,9 @@ public class Activity extends TreeEntity<Activity> {
 	
 	private String moreType;                    //多用户推送方式（0：手机号；1：用户ID）
 	
+	private String expirationType;            //红包过期时间类型（0：按照具体时间；1：按照天数）
+	private String expirationDay;             //红包过期天数
+	
 	public int getSendType() {
 		return sendType;
 	}
@@ -216,6 +219,22 @@ public class Activity extends TreeEntity<Activity> {
 
 	public void setMoreType(String moreType) {
 		this.moreType = moreType;
+	}
+
+	public String getExpirationType() {
+		return expirationType;
+	}
+
+	public void setExpirationType(String expirationType) {
+		this.expirationType = expirationType;
+	}
+
+	public String getExpirationDay() {
+		return expirationDay;
+	}
+
+	public void setExpirationDay(String expirationDay) {
+		this.expirationDay = expirationDay;
 	}
 	
 
