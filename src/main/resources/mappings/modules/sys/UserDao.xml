@@ -685,6 +685,13 @@
 			type ='pt'
 		WHERE id = #{id}
 	</update>
+	<!-- 离职后变为普通商家和普通机构-->
+	<update id="updateUserInfo">
+		UPDATE sys_user_info SET 
+			franchisee_id = #{franchiseeid}, 
+			office_id = #{officeid}
+		WHERE user_id = #{userid}
+	</update>
 	<!-- 离职后变为普通角色 -->
 	<update id="updateUserRole">
 		UPDATE fzx_user_role SET 
