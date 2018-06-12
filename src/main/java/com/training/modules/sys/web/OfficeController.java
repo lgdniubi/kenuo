@@ -379,9 +379,6 @@ public class OfficeController extends BaseController {
 		String result = WebUtils.postCSObject(parpm, url);
 		JSONObject jsonObject = JSONObject.fromObject(result);
 		ContractInfoVo infoVo = (ContractInfoVo) JSONObject.toBean(jsonObject.getJSONObject("data"), ContractInfoVo.class);
-		String str = jsonObject.getString("data");
-		System.out.println(str);
-		System.out.println(StringUtils.isBlank(jsonObject.getString("data")));
 		if(!(jsonObject.get("data") instanceof JSONNull)){
 			List<PayInfo> payInfos = JSONArray.toList(jsonObject.getJSONObject("data").getJSONArray("payInfos"), new PayInfo(),new JsonConfig());
 			model.addAttribute("payInfos", payInfos);

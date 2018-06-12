@@ -606,4 +606,12 @@
 	<select id="findMdRoleByUserId" resultType="MediaRole">
 		SELECT role_id AS roleId FROM media_manage_user_role WHERE user_id = #{userid}
 	</select>
+	<insert id="insertUserCompany">
+		INSERT INTO `trains`.`sys_user_company` (`user_id`, `company_id`)
+		VALUES
+			(
+				#{userid},
+				#{franchiseeid}
+			);
+	</insert>
 </mapper>

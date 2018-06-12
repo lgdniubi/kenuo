@@ -131,6 +131,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		//更改用户表type为手艺人类型
 		if (StringUtils.isEmpty(modelFranchisee.getId())) {
 			deleteOldFzxRoleAndOffice(modelFranchisee.getUserid());
+			insertUserCompany(modelFranchisee.getUserid(),"999999");
 			userCheckDao.updateUserType("syr",modelFranchisee.getUserid(),"999999");
 			//为改手艺人设置角色，从fzx_role查询mod_id为syr的roleid插入fzx_user_role
 			setSYRroleForUser(modelFranchisee);
@@ -225,6 +226,9 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			//设置公共的角色
 			setRoleForUser(modelFranchisee,franchid);
 			
+			//向sys_user_company插入一条数据--问答
+			insertUserCompany(modelFranchisee.getUserid(),franchid);
+			
 			modelFranchisee.setFranchiseeid(franchid);
 			userCheckDao.updateUserType("qy",modelFranchisee.getUserid(),franchid);//更改用户表type为企业类型
 			modelFranchisee.setUserid("0");
@@ -253,6 +257,11 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		modelFranchisee.setUserid(find.getUserid());
 		updateApplyStatus(modelFranchisee);
 //		int a = 1/0;
+	}
+	
+	///向sys_user_company插入一条数据--问答
+	private void insertUserCompany(String userid, String franchseeid) {
+		userCheckDao.insertUserCompany(userid, franchseeid);
 	}
 
 	//更改超级管理员版本菜单

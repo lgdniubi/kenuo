@@ -188,5 +188,7 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	public PcRole findPcRoleByUserId(String userid);
 
 	public MediaRole findMdRoleByUserId(String userid);
+	//向sys_user_company插入一条数据--问答
+	public void insertUserCompany(@Param("userid")String userid, @Param("franchiseeid")String franchiseeid);
 	
 }

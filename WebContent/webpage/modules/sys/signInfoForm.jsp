@@ -350,7 +350,7 @@
 								<input type="hidden" id="sign_fonturl" name="sign_fonturl" value="${infoVo.sign_fonturl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_sign_fonturl_upload" id="file_sign_fonturl_upload">
+									<input type="file" name="file_sign_fonturl_upload" class="required" id="file_sign_fonturl_upload">
 								</div>
 								<div id="file_sign_fonturl_queue"></div>
 				         	</td>
@@ -359,7 +359,7 @@
 								<input type="hidden" id="sign_backurl" name="sign_backurl" value="${infoVo.sign_backurl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_sign_backurl_upload" id="file_sign_backurl_upload">
+									<input type="file" name="file_sign_backurl_upload" class="required" id="file_sign_backurl_upload">
 								</div>
 								<div id="file_sign_backurl_queue"></div>
 				         	</td>
@@ -388,7 +388,7 @@
 								<input type="hidden" id="cargo_fonturl" name="cargo_fonturl" value="${infoVo.cargo_fonturl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_cargo_fonturl_upload" id="file_cargo_fonturl_upload">
+									<input type="file" name="file_cargo_fonturl_upload" class="required" id="file_cargo_fonturl_upload">
 								</div>
 								<div id="file_cargo_fonturl_queue"></div>
 				         	</td>
@@ -397,7 +397,7 @@
 								<input type="hidden" id="cargo_backurl" name="cargo_backurl" value="${infoVo.cargo_backurl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_cargo_backurl_upload" id="file_cargo_backurl_upload">
+									<input type="file" name="file_cargo_backurl_upload" class="required" id="file_cargo_backurl_upload">
 								</div>
 								<div id="file_cargo_backurl_queue"></div>
 				         	</td>
@@ -426,7 +426,7 @@
 								<input type="hidden" id="audit_fonturl" name="audit_fonturl" value="${infoVo.audit_fonturl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_audit_fonturl_upload" id="file_audit_fonturl_upload">
+									<input type="file" name="file_audit_fonturl_upload" class="required" id="file_audit_fonturl_upload">
 								</div>
 								<div id="file_audit_fonturl_queue"></div>
 				         	</td>
@@ -435,7 +435,7 @@
 								<input type="hidden" id="audit_backurl" name="audit_backurl" value="${infoVo.audit_backurl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_audit_backurl_upload" id="file_audit_backurl_upload">
+									<input type="file" name="file_audit_backurl_upload" class="required" id="file_audit_backurl_upload">
 								</div>
 								<div id="file_audit_backurl_queue"></div>
 				         	</td>
@@ -464,7 +464,7 @@
 								<input type="hidden" id="proxy_fonturl" name="proxy_fonturl" value="${infoVo.proxy_fonturl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_proxy_fonturl_upload" id="file_proxy_fonturl_upload">
+									<input type="file" name="file_proxy_fonturl_upload" class="required" id="file_proxy_fonturl_upload">
 								</div>
 								<div id="file_proxy_fonturl_queue"></div>
 				         	</td>
@@ -473,7 +473,7 @@
 								<input type="hidden" id="proxy_backurl" name="proxy_backurl" value="${infoVo.proxy_backurl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_proxy_backurl_upload" id="file_proxy_backurl_upload">
+									<input type="file" name="file_proxy_backurl_upload" class="required" id="file_proxy_backurl_upload">
 								</div>
 								<div id="file_proxy_backurl_queue"></div>
 				         	</td>
@@ -501,7 +501,7 @@
 								<input type="hidden" id="pay_fonturl" name="payInfos[0].pay_fonturl" value="${payInfos[0].pay_fonturl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_pay_fonturl_upload" id="file_pay_fonturl_upload">
+									<input type="file" name="file_pay_fonturl_upload" class="required" id="file_pay_fonturl_upload">
 								</div>
 								<div id="file_pay_fonturl_queue"></div>
 				         	</td>
@@ -510,7 +510,7 @@
 								<input type="hidden" id="pay_backurl" name="payInfos[0].pay_backurl" value="${payInfos[0].pay_backurl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_pay_backurl_upload" id="file_pay_backurl_upload">
+									<input type="file" name="file_pay_backurl_upload" class="required" id="file_pay_backurl_upload">
 								</div>
 								<div id="file_pay_backurl_queue"></div>
 				         	</td>

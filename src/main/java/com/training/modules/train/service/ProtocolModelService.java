@@ -11,10 +11,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.service.CrudService;
+import com.training.modules.ec.utils.WebUtils;
+import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.train.dao.ProtocolModelDao;
+import com.training.modules.train.entity.ContractInfoVo;
+import com.training.modules.train.entity.PayInfo;
 import com.training.modules.train.entity.ProtocolModel;
 import com.training.modules.train.entity.ProtocolType;
 import com.training.modules.train.entity.ProtocolUser;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONNull;
+import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 
 /**
  * 系统管理，安全相关实体的管理类,包括用户、角色、菜单.
@@ -61,13 +70,31 @@ public class ProtocolModelService extends CrudService<ProtocolModelDao,ProtocolM
 					//更改店铺-协议表该协议id的状态为变更
 //					protocolModel.setStatus("2");//店铺协议状态为变更
 //					protocolModelDao.updateProtocolShopById(protocolModel);//把原来更新了
-					protocolModelDao.deleteProtocolShopById(protocolModel);//把所有店铺签过的此协议删除
+					if(!"1".equals(protocolModel.getType())){		//1是注册协议，2、3是认证协议
+						protocolModelDao.deleteProtocolShopById(protocolModel);//把所有店铺签过的此协议删除
+					}
 					//更改签约状态变更
-					
+					if("4".equals(protocolModel.getType())){		//4是店铺签约
+						changeStatusForSupply();//重新签订，需要更改签约状态
+					}
 				}
 			}
 		}
 	}
+
+	private void changeStatusForSupply() {
+		String weburl = ParametersFactory.getTrainsParamValues("resign");
+		logger.info("##### 重新签协议重新签约web接口路径:"+weburl);
+		String url=weburl;
+		String parpm = "{}";
+		String result = WebUtils.postCSObject(parpm, url);
+		JSONObject jsonObject = JSONObject.fromObject(result);
+		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+		if(!"200".equals(jsonObject.get("result"))){
+			throw new RuntimeException("重新签协议重新签约调用接口失败");
+		}
+	}
+
 
 	/**
 	 * 判断协议内容是否改变
