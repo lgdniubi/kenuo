@@ -416,9 +416,11 @@ public class OfficeController extends BaseController {
 		String result = WebUtils.postCSObject(parpm, url);
 		JSONObject jsonObject = JSONObject.fromObject(result);
 		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
-		if("200".equals(jsonObject.get("result"))){
+		if(!"200".equals(jsonObject.get("result"))){
+			addMessage(redirectAttributes, "保存机构失败");
+		}else{
+			addMessage(redirectAttributes, "保存机构成功");
 		}
-		addMessage(redirectAttributes, "保存机构成功");
 		return "redirect:" + adminPath + "/sys/office/signInfo?officeid="+officeid;
 	}
 	

@@ -515,12 +515,14 @@
 								<div id="file_pay_backurl_queue"></div>
 				         	</td>
 						</tr>
-						<tr>
 							<input value="0" name="payInfos[0].pay_type" type="hidden">
 							<input value="1" name="payInfos[1].pay_type" type="hidden">
 							<input value="2" name="payInfos[2].pay_type" type="hidden">
+							<input value="支付宝" name="payInfos[1].pay_name" type="hidden">
+							<input value="微信" name="payInfos[2].pay_name" type="hidden">
+						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>账户名称:</label></td>
-				         	<td class="width-35"><input value="${payInfos[0].pay_name}" name="payInfos[0].pay_name" class="form-control required"></td>
+				         	<td class="width-35"><input value="${payInfos[0].pay_username}" name="payInfos[0].pay_username" class="form-control required"></td>
 						</tr>
 						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>银行账号:</label></td>
