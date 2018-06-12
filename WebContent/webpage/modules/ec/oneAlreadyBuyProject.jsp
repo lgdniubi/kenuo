@@ -43,14 +43,14 @@
 											<tr>
 												<c:choose>
 													<c:when test="${orderGoods.advanceFlag == 1}">
-														<td style="text-align: center;" width="10px"><input type="radio" name="box" id="${goodsCard.recId}" value="${orderGoods.recid}" onchange="change(${goodsCard.recId},${orderGoods.recid})" ></td>
+														<td style="text-align: center;" width="10px"><input type="radio" name="box" id="${goodsCard.recId}" value="${orderGoods.recid}"></td>
 													</c:when> 
 													<c:otherwise>
 														<c:if test="${(goodsCard.serviceTimes - goodsCard.usedNum <= 0) || (orderGoods.surplusAmount - goodsCard.price < 0)}">
-															<td style="text-align: center;" width="10px"><input type="radio" name="box1" id="${goodsCard.recId}" value="${orderGoods.recid}" disabled="disabled" onchange="change(${goodsCard.recId},${orderGoods.recid})"></td>
+															<td style="text-align: center;" width="10px"><input type="radio" name="box1" id="${goodsCard.recId}" value="${orderGoods.recid}" disabled="disabled"></td>
 														</c:if>
 														<c:if test="${(goodsCard.serviceTimes - goodsCard.usedNum > 0) && (orderGoods.surplusAmount - goodsCard.price >= 0)}">
-															<td style="text-align: center;" width="10px"><input type="radio" name="box" id="${goodsCard.recId}" value="${orderGoods.recid}" onchange="change(${goodsCard.recId},${orderGoods.recid})" ></td>
+															<td style="text-align: center;" width="10px"><input type="radio" name="box" id="${goodsCard.recId}" value="${orderGoods.recid}" ></td>
 														</c:if>
 													</c:otherwise>
 												</c:choose>
@@ -86,7 +86,7 @@
 										</tr>
 										<c:forEach items="${orderGoods.goodsCards}" var="goodsCard">
 											<tr>
-												<td style="text-align: center;" width="10px"><input type="radio" name="box" id="${goodsCard.recId}" value="${orderGoods.recid}" onchange="change(${goodsCard.recId},${orderGoods.recid})"></td>
+												<td style="text-align: center;" width="10px"><input type="radio" name="box" id="${goodsCard.recId}" value="${orderGoods.recid}"></td>
 												<td>
 													${goodsCard.goodsName}
 													<input id="franchiseeId_${goodsCard.recId}" name="franchiseeId" value="${goodsCard.franchiseeId}" type="hidden"/>
@@ -108,7 +108,7 @@
 									</td>
 									</c:when>
 									<c:otherwise>
-										<td style="text-align: center;" width="10px"><input type="radio" name="box" id="${orderGoods.recid}" value="${orderGoods.recid}" onchange="change(${orderGoods.recid},${orderGoods.recid})"></td>
+										<td style="text-align: center;" width="10px"><input type="radio" name="box" id="${orderGoods.recid}" value="${orderGoods.recid}"></td>
 										<td>
 											${orderGoods.goodsname}
 											<input id="franchiseeId_${orderGoods.recid}" name="franchiseeId" value="${orderGoods.franchiseeId}" type="hidden"/>
