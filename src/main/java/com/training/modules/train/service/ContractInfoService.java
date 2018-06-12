@@ -1,9 +1,7 @@
 package com.training.modules.train.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -29,17 +27,9 @@ public class ContractInfoService {
 			jsonO.put("office_id", contractInfo.getOffice_id());
 		if(StringUtils.isNotBlank(contractInfo.getStatus()))
 			jsonO.put("status", contractInfo.getStatus());
-		JSONObject json = WebUtils.postCS(jsonO, ParametersFactory.getTrainsParamValues("queryContractInfoAuditList"));
+		JSONObject json = WebUtils.postCS(jsonO, ParametersFactory.getTrainsParamValues("contract_list_path"));
 		
 		List<ContractInfo> list = JSONArray.toList(json.getJSONObject("data").getJSONArray("list"), new ContractInfo(),new JsonConfig());
-		/*List<ContractInfo> list = new ArrayList<>();
-		JSONArray arr = json.getJSONObject("data").getJSONArray("list");
-		for(Object o : arr){
-			JSONObject info = (JSONObject) o;
-			ContractInfo inf = (ContractInfo) JSONObject.toBean(info, new ContractInfo(), new JsonConfig());
-			list.add(inf);
-		}*/
-		
 		page.setCount(json.getJSONObject("data").getLong("count"));
 		page.setList(list);
 		contractInfo.setPage(page);

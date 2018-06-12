@@ -40,6 +40,7 @@ import com.training.modules.sys.dao.MenuDao;
 import com.training.modules.sys.dao.OfficeDao;
 import com.training.modules.sys.dao.RoleDao;
 import com.training.modules.sys.dao.SkillDao;
+import com.training.modules.sys.dao.SpecBeauticianDao;
 import com.training.modules.sys.dao.SpecialityDao;
 import com.training.modules.sys.dao.UserDao;
 import com.training.modules.sys.dao.UserinfoDao;
@@ -49,6 +50,7 @@ import com.training.modules.sys.entity.Menu;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.Role;
 import com.training.modules.sys.entity.Skill;
+import com.training.modules.sys.entity.SpecBeautician;
 import com.training.modules.sys.entity.Speciality;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.entity.UserLog;
@@ -120,6 +122,8 @@ public class SystemService extends BaseService implements InitializingBean {
 	private MediaRoleService mediaRoleService;
 	@Autowired
 	private PcRoleService pcRoleService;
+	@Autowired
+	private SpecBeauticianDao specBeauticianDao;	//特殊美容师
 	
 	public SessionDAO getSessionDao() {
 		return sessionDao;
@@ -813,7 +817,8 @@ public class SystemService extends BaseService implements InitializingBean {
 //		saveUserLog2(user);
 		//离职后变为普通商家和普通机构
 		userDao.updateCompanyAndOfficeId(user);
-		updateUserRole(user);
+		//用户离职进行的操作,1删除用户所有角色，重新赋予他普通会员的角色，2插入妃子校角色商家一条数据。3删除pc和media的角色
+		updateUserRole(user);	
 		
 		// 清除用户缓存
 		UserUtils.clearCache(user);
@@ -851,6 +856,14 @@ public class SystemService extends BaseService implements InitializingBean {
 		userCheckDao.insertFzxUserRoleOffice(fzxUserRoleId,"1000000");
 		mediaRoleService.deleteUserRole(userid);
 		pcRoleService.deleteUserRole(userid);
+		
+		//如果是美容师,删除以后的排版记录，更新sys_user_info的商家和机构id
+		SpecBeautician specBeautician = specBeauticianDao.getSpecBeautician(user.getId());	//根据userid查询特殊美容师表，判断此用户是否是特殊美容师
+		if(specBeautician!=null){
+			specBeauticianDao.deleteArrangeShop(specBeautician);//删除他以后的排班记录
+		}
+		//更新美容师详情表sys_user_info 普通商家id=1000000
+		userDao.updateUserInfoByUserid(userid ,"1000000","1000000");
 	}
 	
 	/**
@@ -1496,6 +1509,21 @@ public class SystemService extends BaseService implements InitializingBean {
 				mediaRoleService.insertUserRole(userid,mdRole.getRoleId());
 			}
 		} 
+	}
+
+	/**
+	 * 根据商家id找用户
+	 * @param officeId
+	 * @return
+	 */
+	public List<User> findUserByFranchiseeId(String officeId) {
+		User user = new User();
+		user.setCompany(new Office(officeId));
+		List<User> list = userDao.findUserByFranchiseeId(user);
+		if(list == null ){
+			list = new ArrayList<>();
+		}
+		return list;
 	}
 
 }

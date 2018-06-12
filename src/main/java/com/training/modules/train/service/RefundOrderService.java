@@ -9,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.training.common.Thread.RefundThread;
 import com.training.common.service.CrudService;
 import com.training.modules.train.dao.RefundOrderMapper;
 import com.training.modules.train.entity.ArrearageOfficeList;
 import com.training.modules.train.entity.RefundOrder;
 import com.training.modules.train.entity.Statement;
+
 
 /**  
 * <p>Title: RefundOrderService.java</p>  
@@ -85,8 +87,10 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 	 * 确认入账
 	 * @param order_id
 	 */
-	public void makeSureInAccount(String order_id){
+	public void makeSureInAccount(String order_id,String office_id,double amount){
+		//修改订单状态为已入账
 		this.refundOrderMapper.makeSureInAccount(order_id);
+		new Thread(new RefundThread(office_id, order_id, amount)).start();
 	}
 
 	/**  

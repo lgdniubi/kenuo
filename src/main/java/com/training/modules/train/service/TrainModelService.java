@@ -1,5 +1,6 @@
 package com.training.modules.train.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -90,7 +91,7 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	 * 保存pc版本菜单
 	 * @param trainModel
 	 */
-	public void saveModpcMenu(TrainModel trainModel) {
+	public void saveModpcMenu(TrainModel trainModel,String oldMenuIds) {
 		TrainModel newModel = new TrainModel();
 		dao.deleteModpcMenu(trainModel);
 		if(!trainModel.getMenuIds().isEmpty()){
@@ -103,8 +104,10 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	        //插入pc_role超级管理员角色，并赋予该角色菜单
 	        insertPCRoleAndMenu(trainModel);
 		}
-		
+		//把新增加的菜单给各个超管
+		changeSuperMenu(trainModel.getId(),oldMenuIds,trainModel.getMenuIds(),1);
 	}
+
 	//插入pc_role超级管理员角色，并赋予该角色菜单
 	private void insertPCRoleAndMenu(TrainModel trainModel) {
 		//根据版本id和ename=sjgly查找超级管理员角色
@@ -136,7 +139,7 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	 * 保存fzx版本菜单
 	 * @param trainModel
 	 */
-	public void saveModfzxMenu(TrainModel trainModel) {
+	public void saveModfzxMenu(TrainModel trainModel,String oldMenuIds) {
 		TrainModel newModel = new TrainModel();
 		dao.deleteModfzxMenu(trainModel);
 		if(!trainModel.getMenuIds().isEmpty()){
@@ -149,6 +152,8 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	        //插入fzx_role超级管理员角色，并赋予该角色菜单
 	        insertFzxRoleAndMenu(trainModel);
 		}
+		//把新增加的菜单给各个超管
+		changeSuperMenu(trainModel.getId(),oldMenuIds,trainModel.getMenuIds(),2);
 	}
 	//插入fzx_role超级管理员角色，并赋予该角色菜单
 	private void insertFzxRoleAndMenu(TrainModel trainModel) {
@@ -201,7 +206,7 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	 * 保存自媒体版本菜单
 	 * @param trainModel
 	 */
-	public void saveModMediaMenu(TrainModel trainModel) {
+	public void saveModMediaMenu(TrainModel trainModel,String oldMenuIds) {
 		TrainModel newModel = new TrainModel();
 		dao.deleteModMediaMenu(trainModel);
 		if(!trainModel.getMenuIds().isEmpty()){
@@ -215,6 +220,8 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	        insertMeidaRoleAndMenu(trainModel);
 	        
 		}
+		//把新增加的菜单给各个超管
+		changeSuperMenu(trainModel.getId(),oldMenuIds,trainModel.getMenuIds(),3);
 	}
 	//插入meida_role超级管理员角色，并赋予该角色菜单
 	private void insertMeidaRoleAndMenu(TrainModel trainModel) {
@@ -259,5 +266,105 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	public List<TrainModel> findModelListByType() {
 		return dao.findDYModelList("qy");
 	}
-	
+	/**
+	 * 当版本菜单变化的时候同步给各个超管菜单
+	 * @param oldMenuIds
+	 * @param newMenuIds
+	 * @param string 
+	 */
+	private void changeSuperMenu(String modId,String oldMenuIds, String newMenuIds, int sc) {
+		String[] omenuid = oldMenuIds.split(",");
+		//找出旧的有新的没有的菜单id，需要删除
+		List<String> ls1 = findDifMenuId(newMenuIds, omenuid);
+		if(ls1.size()>0){
+			deleteOldMenuId(ls1,sc);
+		}
+		String[] nmenuid = newMenuIds.split(",");
+		//找出旧的没有新的有的菜单id，需要增加
+		List<String> ls2 = findDifMenuId(oldMenuIds, nmenuid);
+		if(ls2.size()>0){
+			addNewMenuIdForSuper(modId,ls2,sc);
+		}
+		
+	}
+	/**
+	 * 给此版本的所有超管新增菜单
+	 * @param modId
+	 * @param ls1
+	 * @param sc
+	 */
+	private void addNewMenuIdForSuper(String modId, List<String> ls1, int sc) {
+		switch (sc) {
+		case 1://PC端菜单增加
+			List<Integer> roleids = pcRoleService.findpcRoleByModId(modId);
+			if(roleids !=null && roleids.size()>0){
+				for (String oldid : ls1) {
+					pcRoleService.insertUserRoleForRoleId(Integer.valueOf(oldid),roleids);
+				}
+			}
+			break;
+		case 2://fzx端菜单增加
+			List<Integer> fzxRoleids = fzxRoleService.findFzxRoleByModId(modId);
+			if(fzxRoleids !=null && fzxRoleids.size()>0){
+				for (String oldid : ls1) {
+					fzxRoleService.insertUserRoleForRoleId(Integer.valueOf(oldid),fzxRoleids);
+				}
+			}
+			break;
+		case 3://自媒体PC端菜单增加
+			List<Integer> mdRoleids = mediaRoleService.findMediaRoleByModId(modId);
+			if(mdRoleids !=null && mdRoleids.size()>0){
+				for (String oldid : ls1) {
+					mediaRoleService.insertUserRoleForRoleId(Integer.valueOf(oldid),mdRoleids);
+				}
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	/**
+	 * 删除旧的菜单，不勾选的菜单
+	 * @param ls1
+	 * @param sc
+	 */
+	private void deleteOldMenuId(List<String> ls1, int sc) {
+		switch (sc) {
+		case 1://PC端删除
+			for (String oldid : ls1) {
+				pcRoleService.deleteRoleMenuForRoleId(Integer.valueOf(oldid));
+			}
+			break;
+		case 2://fzx端删除
+			for (String oldid : ls1) {
+				fzxRoleService.deleteRoleMenuForRoleId(Integer.valueOf(oldid));
+			}
+			break;
+		case 3://自媒体PC端删除
+			for (String oldid : ls1) {
+				mediaRoleService.deleteRoleMenuForRoleId(Integer.valueOf(oldid));
+			}
+			break;
+		default:
+			break;
+		}
+		
+	}
+
+	/**
+	 * 查找出不同的菜单
+	 * @param newMenuIds
+	 * @param omenuid
+	 * @return
+	 */
+	private List<String> findDifMenuId(String newMenuIds, String[] omenuid) {
+		List<String> ls = new ArrayList<>();
+		for (int i = 0; i < omenuid.length; i++) {
+			if(!newMenuIds.contains(omenuid[i])){
+				ls.add(omenuid[i]);
+			}
+		}
+		return ls;
+	}
 }

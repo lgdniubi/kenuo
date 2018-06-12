@@ -48,7 +48,7 @@ public class UserDetailService extends CrudService<UserDetailDao,UserDetail> {
 				//数据范围(1:所在部门及以下数据)
 				sqlString.append(" WHERE 1 = 1 ");
 				sqlString.append(" AND mc.office_id IN (SELECT id FROM sys_office o ");
-				sqlString.append(" WHERE locate( '" + a +"',concat(o.parent_ids, o.id))>0)");
+				sqlString.append(" WHERE o.franchisee_id = '"+dto.getFranchiseeId()+"' AND locate( '" + a +"',concat(o.parent_ids, o.id))>0)");
 			}else if(User.DATA_SCOPE_CUSTOM.equals(String.valueOf(user.getDataScope()))){
 				//数据范围(2:按明细设置)
 				sqlString.append(" WHERE 1 = 1 ");

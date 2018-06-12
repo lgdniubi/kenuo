@@ -68,6 +68,7 @@ public class OfficeInfo extends DataEntity<OfficeInfo>{
 	private String bankaddress;			//开户行详细地址
 	private String cardup;					//银行卡正面照片	
 	private String carddown;				//银行卡反面照片
+	private String creditCode;				//统一社会信用代码
 	
 	@JsonIgnore
 	@NotNull(message="上级机构编码不能为空")
@@ -376,6 +377,12 @@ public class OfficeInfo extends DataEntity<OfficeInfo>{
 	}
 	public void setCarddown(String carddown) {
 		this.carddown = carddown;
+	}
+	public String getCreditCode() {
+		return creditCode;
+	}
+	public void setCreditCode(String creditCode) {
+		this.creditCode = creditCode;
 	}
 	
 }

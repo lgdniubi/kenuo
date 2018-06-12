@@ -133,4 +133,17 @@
 	<select id="checkRoleName" resultType="int">
 		SELECT COUNT(1) FROM pc_role WHERE mode_id = #{modeid} AND del_flag = 0 AND name = #{name} AND franchisee_id = 1
 	</select>
+
+	<delete id="deleteRoleMenuForRoleId">
+		DELETE FROM pc_menu_role WHERE menu_id = #{oldMenuid}
+	</delete>	
+	<select id="findpcRoleByModId" resultType="int">
+		SELECT r.id AS roleId FROM pc_role r WHERE mode_id = #{modeid} AND del_flag = 0 AND r.ename = 'sjgly' AND franchisee_id != 1
+	</select>
+	<insert id="insertUserRoleForRoleId">
+		INSERT INTO pc_menu_role (role_id, menu_id) VALUES
+	    <foreach collection ="roleids" item="r" separator =",">
+	         (#{r}, #{menuid})
+	    </foreach >
+	</insert>
 </mapper>

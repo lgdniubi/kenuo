@@ -57,9 +57,13 @@ import com.training.modules.sys.utils.OfficeThreadUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.TrainRuleParamDao;
+import com.training.modules.train.entity.ContractInfo;
+import com.training.modules.train.entity.ContractInfoVo;
+import com.training.modules.train.entity.PayInfo;
 import com.training.modules.train.entity.TrainRuleParam;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONNull;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import net.sf.json.util.CycleDetectionStrategy;
@@ -357,9 +361,66 @@ public class OfficeController extends BaseController {
 		}
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
 		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
-		return "redirect:" + adminPath + "/sys/office/list?id="+1+"&parentIds="+office.getParentIds();
+		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
+		return "redirect:" + adminPath + "/sys/office/form?id="+office.getId()+"&parentIds="+office.getParentIds();
+//		return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
 	}
 	
+	@RequiresPermissions(value={"sys:office:add","sys:office:edit"},logical=Logical.OR)
+	@RequestMapping(value = "signInfo")
+	@SuppressWarnings("unchecked")
+	public String signInfo(String officeid,Office office, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		User user = UserUtils.getUser();
+		String weburl = ParametersFactory.getTrainsParamValues("contract_data_path");
+		logger.info("##### web接口路径:"+weburl);
+		String parpm = "{\"office_id\":\""+office.getId()+"\"}";
+//		String url="http://172.50.3.16:8081/cs_service/pub/queryContractInfoAudit.htm";
+		String url=weburl;
+		String result = WebUtils.postCSObject(parpm, url);
+		JSONObject jsonObject = JSONObject.fromObject(result);
+		ContractInfoVo infoVo = (ContractInfoVo) JSONObject.toBean(jsonObject.getJSONObject("data"), ContractInfoVo.class);
+		String str = jsonObject.getString("data");
+		System.out.println(str);
+		System.out.println(StringUtils.isBlank(jsonObject.getString("data")));
+		if(!(jsonObject.get("data") instanceof JSONNull)){
+			List<PayInfo> payInfos = JSONArray.toList(jsonObject.getJSONObject("data").getJSONArray("payInfos"), new PayInfo(),new JsonConfig());
+			model.addAttribute("payInfos", payInfos);
+		}
+		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+		/*if("200".equals(jsonObject.get("result"))){
+		}*/
+		model.addAttribute("infoVo", infoVo);
+		model.addAttribute("office", office);
+		model.addAttribute("user", user);
+		return "modules/sys/signInfoForm";
+	}
+	@RequiresPermissions(value={"sys:office:add","sys:office:edit"},logical=Logical.OR)
+	@RequestMapping(value = "saveSignInfo")
+	public String saveSignInfo(String officeid,ContractInfoVo contractInfo, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		 JsonConfig config = new JsonConfig();
+		 /*contractInfo.getPayInfos().get(0).setPay_username("2222222");
+		 contractInfo.getPayInfos().get(0).setCreate_user("125");
+		 contractInfo.getPayInfos().get(1).setCreate_user("222");
+		 contractInfo.getPayInfos().get(1).setPay_mobile("125555555");
+		 contractInfo.getPayInfos().get(2).setPay_mobile("125555555");
+		 contractInfo.getPayInfos().get(2).setCreate_user("3335");
+		 contractInfo.getPayInfos().get(0).setPay_backurl("http://back");
+		 contractInfo.getPayInfos().get(0).setPay_fonturl("http://front");*/
+		JSONObject j = JSONObject.fromObject(contractInfo,config);
+		System.out.println(j.toString());
+		String weburl = ParametersFactory.getTrainsParamValues("contract_save_path");
+		logger.info("##### web接口路径:"+weburl);
+		String parpm = j.toString();
+//		String url="http://172.50.3.16:8081/cs_service/pub/saveContractInfoAudit.htm";
+		String url=weburl;
+		String result = WebUtils.postCSObject(parpm, url);
+		JSONObject jsonObject = JSONObject.fromObject(result);
+		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+		if("200".equals(jsonObject.get("result"))){
+		}
+		addMessage(redirectAttributes, "保存机构成功");
+		return "redirect:" + adminPath + "/sys/office/signInfo?officeid="+officeid;
+	}
 	
 	/**
 	 * 机构管理-删除

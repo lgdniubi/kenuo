@@ -32,8 +32,8 @@
 									<td>${type.id }</td>
 								  	<td>${type.name }</td>
 								    <td>
-				    					<a href="#" onclick="openDialogView('协议列表', '${ctx}/train/protocolModel/list?type=${type.id}','800px', '650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>查看列表</a>
-				    					<a href="#" onclick="openDialog('添加', '${ctx}/train/protocolModel/modelForm?type=${type.id}','850px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>添加</a>
+				    					<a href="#" onclick="openDialogView('协议列表', '${ctx}/train/protocolModel/list?type=${type.id}','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>查看列表</a>
+				    					<a href="#" onclick="openDialog('添加', '${ctx}/train/protocolModel/modelForm?type=${type.id}','850px', '550px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>添加</a>
 								    </td>
 								</tr>
 							</c:forEach>

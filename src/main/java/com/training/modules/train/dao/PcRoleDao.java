@@ -127,4 +127,10 @@ public interface PcRoleDao extends CrudDao<PcRole>{
 	public int checkRoleName(@Param("name")String name, @Param("modeid")Integer modeid);
 	//根据版本id和ename=sjgly查找超级管理员角色
 	public PcRole getPcRoleByModAndEname(String id);
+	//找出改版本的超管角色id
+	public List<Integer> findpcRoleByModId(String modeid);
+	
+	public void insertUserRoleForRoleId(@Param("menuid")Integer menuid, @Param("roleids")List<Integer> roleids);
+
+	public void deleteRoleMenuForRoleId(Integer oldMenuid);
 }

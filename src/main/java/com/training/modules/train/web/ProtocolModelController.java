@@ -69,10 +69,26 @@ public class ProtocolModelController extends BaseController {
 	public String modelForm( ProtocolModel protocolModel,Model model) {
 		if(protocolModel.getId() != null){
 			protocolModel = protocolModelService.findModel(protocolModel);
+			String htmlEscape = HtmlUtils.htmlUnescape(protocolModel.getContent());
+			protocolModel.setContent(htmlEscape);
 		}
 		model.addAttribute("protocolModel", protocolModel);
 //		model.addAttribute("type", protocolModel.getType());
 		return "modules/train/protocolModelForm";
+	}
+	
+	/**
+	 * 查询旧版本集合
+	 * @param protocolModel
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "oldModelList")
+	public String oldModelList( ProtocolModel protocolModel,Model model) {
+		List<ProtocolModel> modelList = protocolModelService.findOldModelList(protocolModel.getId());
+		model.addAttribute("modelList", modelList);
+		model.addAttribute("isShow", 1);
+		return "modules/train/protocolModelList";
 	}
 	
 	/**
