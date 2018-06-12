@@ -15,7 +15,7 @@ public class Activity extends TreeEntity<Activity> {
 	private static final long serialVersionUID = 1L;
 	private String name;						//活动名称
 	private int franchiseeId;					//所属机构
-	private int actionType;					//活动类型：1 红包活动 2 抢购活动 9 投票
+	private int actionType;					//活动类型：1.营销红包；2.生日红包；3.内部红包；4.团购红包；5.其它
 	private Date showTime;						//抢购活动展示的时间
 	private Date closeTime;						//抢购活动关闭时间
 	private Date startTime;						//红包领取时间

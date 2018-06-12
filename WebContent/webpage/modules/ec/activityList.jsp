@@ -148,15 +148,25 @@
 								<td>${action.id}</td>
 								<td>${action.name}</td>
 								<td>${action.franchiseeName}</td>
-								<c:if test="${action.actionType==1}">
-									<td>红包活动</td>
-								</c:if>
+								<td>
+									<c:if test="${action.actionType==1}">营销红包</c:if>
+									<c:if test="${action.actionType==2}">生日红包</c:if>
+									<c:if test="${action.actionType==3}">内部红包</c:if>
+									<c:if test="${action.actionType==4}">团购活动</c:if>
+									<c:if test="${action.actionType==5}">其它</c:if>
+								</td>
 								<td><fmt:formatDate value="${action.startTime}"
 										pattern="yyyy-MM-dd HH:mm:ss" /> — <fmt:formatDate
 										value="${action.endTime}" pattern="yyyy-MM-dd HH:mm:ss" />
 								</td>
-								<td><fmt:formatDate value="${action.expirationDate}"
-										pattern="yyyy-MM-dd HH:mm:ss" /></td>
+								<td>
+									<c:if test="${action.expirationType == 0}">
+										<fmt:formatDate value="${action.expirationDate}" pattern="yyyy-MM-dd HH:mm:ss" />
+									</c:if>
+									<c:if test="${action.expirationType == 1}">
+										${action.expirationDay}天									
+									</c:if>
+								</td>
 								<td>${action.createBy.name}</td>
 								<td><fmt:formatDate value="${action.createDate}"
 										pattern="yyyy-MM-dd HH:mm:ss" /></td>	

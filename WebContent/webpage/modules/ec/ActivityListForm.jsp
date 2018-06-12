@@ -61,7 +61,11 @@
 							<tr>
 								<td><label class="pull-right"><font color="red">*</font>活动类型：</label></td>
 								<td><form:select path="actionType"  class="form-control" style="width:200px;" >
-										<form:option value="1">红包活动</form:option>
+										<form:option value="1">营销红包</form:option>
+										<form:option value="2">生日红包</form:option>
+										<form:option value="3">内部红包</form:option>
+										<form:option value="4">团购红包</form:option>
+										<form:option value="5">其它</form:option>
 									</form:select></td>
 							</tr>
 							<tr>
