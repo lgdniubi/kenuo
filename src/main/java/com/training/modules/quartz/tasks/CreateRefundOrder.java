@@ -22,6 +22,7 @@ import com.training.common.utils.BeanUtil;
 import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.quartz.entity.TaskLog;
 import com.training.modules.quartz.tasks.utils.CommonService;
+import com.training.modules.quartz.utils.CreateOrderPush;
 import com.training.modules.quartz.utils.PushUtils;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
@@ -90,39 +91,31 @@ public class CreateRefundOrder extends CommonService{
 		int count = arrearageOfficeList.size() / 100;
 		if((arrearageOfficeList.size() % 100) > 0)count ++;
 		//List<ArrearageOfficeList> list = new ArrayList<ArrearageOfficeList>();
+		String weburl = ParametersFactory.getTrainsParamValues("queryContractInfo");
 		for(int i = 0; i < count ; i++){
 			List<ArrearageOfficeList> subList = arrearageOfficeList.subList(i * 100, i == count -1 ? arrearageOfficeList.size() : (i+1) * 100);
-			
+			List<ArrearageOfficeList> list = new ArrayList<ArrearageOfficeList>(subList);
+			int f = 0;
 			for(int j = 0 ; j < subList.size() ; j++){
-				subList.get(j).setOrder_id(createRefundOrderid(j+""));
-				subList.get(j).setBillmonth(times);
-			}
-			refundOrderService.addrefundOrder(subList);
-		}
-		
-		PushUtils pushUtils = new PushUtils();
-		//Map<String,Object> map = new HashMap<String,Object>();
-		//map.put("ver_num", "1.0.0");
-		String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
-		for (int i = 0; i < arrearageOfficeList.size(); i++) {
-			try{
-				//map.put("office_id", arrearageOfficeList.get(i).getOffice_id());
-				String param = "{'ver_num':'1.0.0','office_id':'"+arrearageOfficeList.get(i).getOffice_id()+"'}";
-				Map<String,Object> m = null;
-				String user_id = null;
-				Object object = JSONObject.fromObject(WebUtils.postCSObject(param, "http://10.10.8.22:9208/cs_service/pub/queryContractInfo.htm")).get("data");
-				if(!"null".equals(String.valueOf(object))){
-					m = (Map<String, Object>) object;
-					user_id = String.valueOf(m.get("proxy_userid"));
+				list.get(j-f).setOrder_id(createRefundOrderid(j+""));
+				list.get(j-f).setBillmonth(times);
+				double used_limit = subList.get(j).getUsed_limit();
+				if(used_limit < 0 || used_limit == 0){
+					list.remove(j);
+					f++;
 				}
-				if(user_id != null && user_id != "")
-					pushUtils.pushMsg(user_id, formats+"月账单已出，共计消费"+arrearageOfficeList.get(i).getUsed_limit()+"元", 15, "信用额度账单");
+			} 
+			refundOrderService.addrefundOrder(list);
+			
+			try{
+				CreateOrderPush createorderpush = new CreateOrderPush(list, weburl, formats);
+				new Thread(createorderpush).start();
 			}catch(Exception e){
-				logger.error("#####【定时任务createRefundOrder】创建信用额度还款订单推送通知出现异常，异常信息为："+e.getMessage());
+				int k = 0;
+				logger.info("#####【定时任务createRefundOrder】创建订单还款通知线程["+(k++)+"],出现异常，异常信息为："+e.getMessage());
 				e.printStackTrace();
 			}
 		}
-		
 		
 		}catch (Exception e) {
 			logger.error("#####【定时任务createRefundOrder】创建信用额度还款订单,出现异常，异常信息为："+e.getMessage());
@@ -162,5 +155,6 @@ public class CreateRefundOrder extends CommonService{
 		sb.append(code);
 		return sb.toString();
 	}
+	
 	
 }

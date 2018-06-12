@@ -71,17 +71,15 @@ public class Authentication extends CommonService{
 					map.put("update_user", 1);
 					authenticationService.updatestatus(map);
 					
+					Map<String, Object> m = new HashMap<String,Object>();
 					if(s.getFranchisee_id() > 0){
-						Map<String, Object> m = new HashMap<String,Object>();
-						m.put("franchisee_id", s.getFranchisee_id());
 						//删除商家协议
-						authenticationService.delsupplyprotocol(m);
+						m.put("franchisee_id", s.getFranchisee_id());
 					}else if(s.getFranchisee_id() == 0){
-						Map<String, Object> m = new HashMap<String,Object>();
-						m.put("user_id", s.getUser_id());
 						//删除用户协议
-						authenticationService.delsupplyprotocol(m);
+						m.put("user_id", s.getUser_id());
 					}
+					authenticationService.delsupplyprotocol(m);
 					
 				}
 				

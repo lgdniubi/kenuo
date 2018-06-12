@@ -3,6 +3,10 @@
  */
 package com.training.modules.train.entity;
 
+import java.math.BigDecimal;
+
+import com.sun.org.apache.bcel.internal.generic.RETURN;
+
 /**  
 * <p>Title: ArrearageOfficeList.java</p>  
 * <p>Copyright（C）2018 by FengFeng</p>  
@@ -16,8 +20,16 @@ public class ArrearageOfficeList {
 	private String order_id;			//订单id
 	private String office_id;			//机构id
 	private double used_limit;			//已使用额度
+	private double expense;			//花销
+	private double income;				//收入
 	private String billmonth;			//账单月份
 	
+	public void setExpense(double expense) {
+		this.expense = expense;
+	}
+	public void setIncome(double income) {
+		this.income = income;
+	}
 	public String getBillmonth() {
 		return billmonth;
 	}
@@ -43,6 +55,10 @@ public class ArrearageOfficeList {
 		this.used_limit = used_limit;
 	}
 	
-	
+	public void setAdds(int adds) {
+		BigDecimal b1 = new BigDecimal(this.expense);
+        BigDecimal b2 = new BigDecimal((this.income * -1));
+        this.used_limit = b1.add(b2).doubleValue();
+	}
 	
 }
