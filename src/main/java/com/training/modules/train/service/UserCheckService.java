@@ -85,6 +85,12 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		if (StringUtils.isNotEmpty(userCheck.getId())) {
 			userCheckDao.editUserCheck(userCheck);
 		}
+		if ("1".equals(userCheck.getStatus())){
+			//审核通过不操作签过的协议，不通过根据userid和typeid删除协议
+			String typeId = "syr".equals(userCheck.getAuditType())? "2":"3";
+			userCheckDao.deleteProtocolShop(userCheck.getUserid(),typeId);
+			
+		}
 	}
 
 	/**
@@ -131,6 +137,9 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		//更改用户表type为手艺人类型
 		if (StringUtils.isEmpty(modelFranchisee.getId())) {
 			deleteOldFzxRoleAndOffice(modelFranchisee.getUserid());
+			insertUserCompany(modelFranchisee.getUserid(),"999999");
+			//授权通过后，改变认证时签的协议的状态为1履约中
+			updateProtocolShopStatus(modelFranchisee.getUserid(),2);//2是手艺人认证
 			userCheckDao.updateUserType("syr",modelFranchisee.getUserid(),"999999");
 			//为改手艺人设置角色，从fzx_role查询mod_id为syr的roleid插入fzx_user_role
 			setSYRroleForUser(modelFranchisee);
@@ -157,6 +166,10 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 //	private void deleteFZXRolesForUser(String userid) {
 //		userCheckDao.deleteFzxUserRole(userid);
 //	}
+	//授权通过后，改变认证时签的协议的状态为1履约中
+	private void updateProtocolShopStatus(String userid, int typeId) {
+		userCheckDao.updateProtocolShopStatus(userid, typeId);
+	}
 
 	private void setSYRroleForUser(ModelFranchisee modelFranchisee) {
 		//从fzx_role查询mod_id为syr的roleid插入fzx_user_role
@@ -225,6 +238,10 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			//设置公共的角色
 			setRoleForUser(modelFranchisee,franchid);
 			
+			//向sys_user_company插入一条数据--问答
+			insertUserCompany(modelFranchisee.getUserid(),franchid);
+			//授权通过后，改变认证时签的协议的状态为1履约中
+			updateProtocolShopStatus(modelFranchisee.getUserid(),3);//3是企业认证
 			modelFranchisee.setFranchiseeid(franchid);
 			userCheckDao.updateUserType("qy",modelFranchisee.getUserid(),franchid);//更改用户表type为企业类型
 			modelFranchisee.setUserid("0");
@@ -253,6 +270,11 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		modelFranchisee.setUserid(find.getUserid());
 		updateApplyStatus(modelFranchisee);
 //		int a = 1/0;
+	}
+	
+	///向sys_user_company插入一条数据--问答
+	private void insertUserCompany(String userid, String franchseeid) {
+		userCheckDao.updateUserCompany(userid, franchseeid);
 	}
 
 	//更改超级管理员版本菜单

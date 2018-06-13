@@ -1516,9 +1516,12 @@ public class SystemService extends BaseService implements InitializingBean {
 	 * @param officeId
 	 * @return
 	 */
-	public List<User> findUserByFranchiseeId(String officeId) {
+	public List<User> findUserByFranchiseeId(String officeId,String labelValue) {
 		User user = new User();
 		user.setCompany(new Office(officeId));
+		if(StringUtils.isNotBlank(labelValue)){
+			user.setMobile(labelValue);
+		}
 		List<User> list = userDao.findUserByFranchiseeId(user);
 		if(list == null ){
 			list = new ArrayList<>();

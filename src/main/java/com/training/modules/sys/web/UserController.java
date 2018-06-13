@@ -1239,10 +1239,11 @@ public class UserController extends BaseController {
 	@RequiresPermissions("user")
 	@ResponseBody
 	@RequestMapping(value = "treeDataCompany")
-	public List<Map<String, Object>> treeDataCompany(@RequestParam(required = false) String officeId,
-			HttpServletResponse response) {
+	public List<Map<String, Object>> treeDataCompany(@RequestParam(required = false) String officeId,String labelValue,
+			HttpServletResponse response,HttpServletRequest request) {
+		String labelValue2 = request.getParameter("labelValue");
 		List<Map<String, Object>> mapList = Lists.newArrayList();
-		List<User> list = systemService.findUserByFranchiseeId(officeId);
+		List<User> list = systemService.findUserByFranchiseeId(officeId,labelValue);
 		for (int i = 0; i < list.size(); i++) {
 			User e = list.get(i);
 			Map<String, Object> map = Maps.newHashMap();

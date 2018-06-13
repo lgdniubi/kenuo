@@ -110,6 +110,9 @@
 					'officeInfo.bankaccount':{
 						rangelength:[13,19]	,
 						number:true
+					},
+					"officeInfo.creditCode":{
+						number:true
 					}
 				},
 				messages:{
@@ -129,6 +132,9 @@
 					'officeInfo.bankaccount':{
 						rangelength:"请输入13-19位数字",
 						number:"请输入13-19位数字"
+					},
+					"officeInfo.creditCode":{
+						number:"请输入15位数字"
 					}
 				},
 				submitHandler: function(form){
@@ -581,7 +587,7 @@
 					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>法定代表人:</label></td>
 					         <td class="width-35"><form:input path="officeInfo.legalPerson" htmlEscape="false" maxlength="8" cssClass="form-control required" /></td>
 					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>统一社会信用代码</label></td>
-					         <td class="width-35"><form:input path="officeInfo.creditCode" htmlEscape="false" maxlength="15" cssClass="form-control" /></td>
+					         <td class="width-35"><form:input path="officeInfo.creditCode" htmlEscape="false" maxlength="15" cssClass="form-control required" /></td>
 				       </tr>
 				      	<tr>
 					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>证件照正面:</label></td>
@@ -709,19 +715,19 @@
 						  </td>
 					  </tr>
 				      <tr>
-					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>账户名称:</label></td>
+					      <td class="width-15 active"><label class="pull-right">账户名称:</label></td>
 					      <td class="width-35"><form:input path="officeInfo.accountname" htmlEscape="false" maxlength="20" cssClass="form-control" /></td>
-					      <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户银行:</label></td>
+					      <td  class="width-15 active"><label class="pull-right">开户银行:</label></td>
 					      <td class="width-35"><form:input path="officeInfo.openbank" htmlEscape="false" maxlength="20" cssClass="form-control" /></td>
 					  </tr>
 				      <tr>
-					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡号:</label></td>
+					      <td class="width-15 active"><label class="pull-right">银行卡号:</label></td>
 					      <td class="width-35"><form:input path="officeInfo.bankaccount" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
-					      <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户地址:</label></td>
+					      <td  class="width-15 active"><label class="pull-right">开户地址:</label></td>
 					      <td class="width-35"><form:input path="officeInfo.bankaddress" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
 					  </tr>
 				      <tr>
-					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡正面:</label></td>
+					      <td class="width-15 active"><label class="pull-right">银行卡正面:</label></td>
 					      <td class="width-35">
 					      	<img id="officeCardupImgsrc" src="${office.officeInfo.cardup}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="cardup" name="officeInfo.cardup" value="${office.officeInfo.cardup}"><!-- 图片隐藏文本框 -->
@@ -731,7 +737,7 @@
 								</div>
 								<div id="file_cardup_queue"></div>
 					      </td>
-					      <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡反面:</label></td>
+					      <td  class="width-15 active"><label class="pull-right">银行卡反面:</label></td>
 					      <td class="width-35">
 					      	<img id="officeCarddownImgsrc" src="${office.officeInfo.carddown}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="carddown" name="officeInfo.carddown" value="${office.officeInfo.carddown}"><!-- 图片隐藏文本框 -->

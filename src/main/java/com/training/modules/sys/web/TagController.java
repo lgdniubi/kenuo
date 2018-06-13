@@ -32,6 +32,7 @@ public class TagController extends BaseController {
 		model.addAttribute("checked", request.getParameter("checked")); // 是否可复选
 		model.addAttribute("selectIds", request.getParameter("selectIds")); // 指定默认选中的ID
 		model.addAttribute("isAll", request.getParameter("isAll")); 	// 是否读取全部数据，不进行权限过滤
+		model.addAttribute("labelValue", request.getParameter("labelValue")); 	// 是否读取全部数据，不进行权限过滤
 		model.addAttribute("module", request.getParameter("module"));	// 过滤栏目模型（仅针对CMS的Category树）
 		return "modules/sys/tagTreeselect";
 	}

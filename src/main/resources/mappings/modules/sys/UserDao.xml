@@ -451,6 +451,7 @@
 		FROM sys_user a
 		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
 			AND a.company_id = #{company.id}
+			<if test="mobile != null "> AND a.mobile = #{mobile}</if>
 		ORDER BY a.name
 	</select>
 	<!-- 手机号验证 -->
