@@ -36,11 +36,11 @@
 	
 	<!-- 根据类型查找模板列表 -->
 	<select id="findModelList" resultType="ProtocolModel">
-		SELECT <include refid="menuColumns"/> FROM `supply_protocol_model` m WHERE m.type_id = #{type} AND del_flag = 0;
+		SELECT <include refid="menuColumns"/> FROM `supply_protocol_model` m WHERE m.type_id = #{type} AND status = 1 AND del_flag = 0;
 	</select>
 	<!-- 根据类型查找模板列表 -->
 	<select id="findOldModelList" resultType="ProtocolModel">
-		SELECT <include refid="menuColumns"/> FROM `supply_protocol_model` m WHERE m.pid = #{id} AND del_flag = 0;
+		SELECT <include refid="menuColumns"/> FROM `supply_protocol_model` m WHERE m.pid = #{id} AND del_flag = 0 ORDER BY create_date DESC;
 	</select>
 	
 	<!-- 保存协议内容  -->

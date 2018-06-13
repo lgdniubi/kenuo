@@ -606,12 +606,13 @@
 	<select id="findMdRoleByUserId" resultType="MediaRole">
 		SELECT role_id AS roleId FROM media_manage_user_role WHERE user_id = #{userid}
 	</select>
-	<insert id="insertUserCompany">
-		INSERT INTO `trains`.`sys_user_company` (`user_id`, `company_id`)
-		VALUES
-			(
-				#{userid},
-				#{franchiseeid}
-			);
-	</insert>
+	<update id="updateUserCompany">
+		UPDATE sys_user_company SET company_id = #{franchiseeid} WHERE user_id = #{userid}
+	</update>
+	<update id="updateProtocolShopStatus">
+		UPDATE supply_protocol_shop SET `status` =1 WHERE user_id = #{userid} AND type_id = #{typeId}
+	</update>
+	<delete id="deleteProtocolShop">
+		DELETE FROM supply_protocol_shop WHERE user_id = #{userid} AND type_id = #{typeId}
+	</delete>
 </mapper>

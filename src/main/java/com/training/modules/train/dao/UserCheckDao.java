@@ -189,6 +189,10 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 
 	public MediaRole findMdRoleByUserId(String userid);
 	//向sys_user_company插入一条数据--问答
-	public void insertUserCompany(@Param("userid")String userid, @Param("franchiseeid")String franchiseeid);
+	public void updateUserCompany(@Param("userid")String userid, @Param("franchiseeid")String franchiseeid);
+	//授权通过后，改变认证时签的协议的状态为1履约中
+	public void updateProtocolShopStatus(@Param("userid")String userid, @Param("typeId")int typeId);
+
+	public void deleteProtocolShop(@Param("userid")String userid, @Param("typeId")String typeId);
 	
 }
