@@ -94,10 +94,10 @@
 							<label >反馈类型：</label>
 							<select id="msgType" name="msgType" class="form-control">
 								<option value="">全部</option>
-								<option <c:if test="${feedback.msgType == '0'}">selected</c:if> value="0">购物商品</option>
-								<option <c:if test="${feedback.msgType == '1'}">selected</c:if> value="1">功能异常</option>
-								<option <c:if test="${feedback.msgType == '2'}">selected</c:if> value="2">新功能建议</option>
-								<option <c:if test="${feedback.msgType == '3'}">selected</c:if> value="3">门店体验</option>
+								<option <c:if test="${feedback.msgType == '0'}">selected</c:if> value="0">功能异常</option>
+								<option <c:if test="${feedback.msgType == '1'}">selected</c:if> value="1">使用建议</option>
+								<option <c:if test="${feedback.msgType == '2'}">selected</c:if> value="2">功能需求</option>
+								<option <c:if test="${feedback.msgType == '3'}">selected</c:if> value="3">系统优化</option>
 								<option <c:if test="${feedback.msgType == '4'}">selected</c:if> value="4">其他</option>
 							</select>
 							
@@ -127,10 +127,10 @@
 	                    		<td>${mtmyFeedback.users.name}</td>
 	                    		<td>${mtmyFeedback.mobile}</td>
 	                    		<td>
-	                    			<c:if test="${mtmyFeedback.msgType == 0}">购物商品</c:if>
-	                    			<c:if test="${mtmyFeedback.msgType == 1}">功能异常</c:if>
-	                    			<c:if test="${mtmyFeedback.msgType == 2}">新功能建议</c:if>
-	                    			<c:if test="${mtmyFeedback.msgType == 3}">门店体验</c:if>
+	                    			<c:if test="${mtmyFeedback.msgType == 0}">功能异常</c:if>
+	                    			<c:if test="${mtmyFeedback.msgType == 1}">使用建议</c:if>
+	                    			<c:if test="${mtmyFeedback.msgType == 2}">功能需求</c:if>
+	                    			<c:if test="${mtmyFeedback.msgType == 3}">系统优化</c:if>
 	                    			<c:if test="${mtmyFeedback.msgType == 4}">其他</c:if>
 	                    		</td>
 	                            <td>

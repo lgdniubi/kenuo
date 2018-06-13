@@ -52,10 +52,10 @@
 							<tr style="text-align: center;">
 								<td><label>反馈类型</label></td>
 								<td>
-									<c:if test="${feedback.msgType == 0}">购物商品</c:if>
-			               			<c:if test="${feedback.msgType == 1}">功能异常</c:if>
-			               			<c:if test="${feedback.msgType == 2}">新功能建议</c:if>
-			               			<c:if test="${feedback.msgType == 3}">门店体验</c:if>
+									<c:if test="${feedback.msgType == 0}">功能异常</c:if>
+			               			<c:if test="${feedback.msgType == 1}">使用建议</c:if>
+			               			<c:if test="${feedback.msgType == 2}">功能需求</c:if>
+			               			<c:if test="${feedback.msgType == 3}">系统优化</c:if>
 			               			<c:if test="${feedback.msgType == 4}">其他</c:if>
 								</td>
 							</tr>
