@@ -91,7 +91,7 @@
                                		${info.office_name}
                                	</td>
                                	<td style="text-align: center;">
-                               		<c:if test="${info.status eq '0'}">未签约</c:if>
+                               		<c:if test="${info.status eq '0'}">创建</c:if>
                                		<c:if test="${info.status eq '1'}">待审核</c:if>
                                		<c:if test="${info.status eq '2'}">审核通过</c:if>
                                		<c:if test="${info.status eq '3'}">审核驳回</c:if>

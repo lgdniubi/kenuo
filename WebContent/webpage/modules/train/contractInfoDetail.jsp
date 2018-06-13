@@ -29,39 +29,58 @@
 				</tr>
 			    <tr>
 			         <td width="100px" class="active"><label class="pull-right">机构名称:</label></td>
-			         <td colspan="5">${contractInfo.office_name }</td>
+			         <td colspan="5">
+			         ${contractInfo.office_name }
+			         </td>
 		         </tr>
 				<tr>
 			    	<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="6"><label class="pull-left">管理员信息:</label></td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">管理员名称:</label></td>
-			         <td colspan="5">${contractInfo.sign_username }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.sign_username != 'null'}">
+			         	${contractInfo.sign_username }
+			         </c:if>
+			         
+			         </td>
 		         </tr>
 		         <tr>
 			         <td class="active"><label class="pull-right">管理员证件:</label></td>
-			         <td colspan="5">${contractInfo.sign_idcard }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.sign_idcard != 'null'}">
+			         	${contractInfo.sign_idcard }
+			         </c:if>
+			         </td>
 		         </tr>
 		         <tr>
 			         <td class="active"><label class="pull-right">管理员邮箱:</label></td>
-			         <td colspan="5">${contractInfo.sign_email }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.sign_email != 'null'}">
+			         	${contractInfo.sign_email }
+			         </c:if>
+			         </td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">管理员手机号:</label></td>
-			         <td colspan="5">${contractInfo.sign_mobile }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.sign_mobile != 'null' }">
+			         	${contractInfo.sign_mobile }
+			         </c:if>
+			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">证件前照:</label></td>
+			         <td class="active"><label class="pull-right">身份证正照:</label></td>
 			         <td colspan="5">
-			         <c:if test="${!(contractInfo.sign_fonturl eq null || contractInfo.sign_fonturl eq '')}">
+			         <c:if test="${contractInfo.sign_fonturl != 'null'}">
 			         <img id="photosrc" src="${contractInfo.sign_fonturl }" alt="images" style="width: 200px;height: 100px;"/>
 			         </c:if>
 			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">证件反照:</label></td>
+			         <td class="active"><label class="pull-right">身份证反照:</label></td>
 			         <td colspan="5">
-			         <c:if test="${!(contractInfo.sign_backurl eq null || contractInfo.sign_backurl eq '')}">
+			         <c:if test="${contractInfo.sign_backurl != 'null'}">
 			         <img id="photosrc" src="${contractInfo.sign_backurl }" alt="images" style="width: 200px;height: 100px;"/>
 			         </c:if>
 			         </td>
@@ -71,32 +90,48 @@
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">报货人名称:</label></td>
-			         <td colspan="5">${contractInfo.cargo_username }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.cargo_username != 'null'}">
+			         	${contractInfo.cargo_username }
+			         </c:if>
+			         </td>
 		         </tr>
 		         <tr>
 			         <td class="active"><label class="pull-right">报货人证件:</label></td>
-			         <td colspan="5">${contractInfo.cargo_idcard }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.cargo_idcard != 'null' }">
+			         	${contractInfo.cargo_idcard }
+			         </c:if>
+			         </td>
 		         </tr>
 		         <tr>
 			         <td class="active"><label class="pull-right">报货人邮箱:</label></td>
-			         <td colspan="5">${contractInfo.cargo_email }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.cargo_email != 'null'}">
+						${contractInfo.cargo_email }			
+					</c:if>         
+			         </td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">报货人手机号:</label></td>
-			         <td colspan="5">${contractInfo.cargo_mobile }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.cargo_mobile != 'null' }">
+			         	${contractInfo.cargo_mobile }
+			         </c:if>
+			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">证件前照:</label></td>
+			         <td class="active"><label class="pull-right">身份证正照:</label></td>
 			         <td colspan="5">
-			         <c:if test="${!(contractInfo.cargo_fonturl eq null || contractInfo.cargo_fonturl eq '')}">
+			         <c:if test="${contractInfo.cargo_fonturl != 'null'}">
 			         <img id="photosrc" src="${contractInfo.cargo_fonturl }" alt="images" style="width: 200px;height: 100px;"/>
 			         </c:if>
 			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">证件反照:</label></td>
+			         <td class="active"><label class="pull-right">身份证反照:</label></td>
 			         <td colspan="5">
-			         <c:if test="${!(contractInfo.cargo_backurl eq null || contractInfo.cargo_backurl eq '')}">
+			         <c:if test="${contractInfo.cargo_backurl != 'null'}">
 			         <img id="photosrc" src="${contractInfo.cargo_backurl }" alt="images" style="width: 200px;height: 100px;"/>
 			         </c:if>
 			         </td>
@@ -106,32 +141,48 @@
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">审核人名称:</label></td>
-			         <td colspan="5">${contractInfo.audit_username }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.audit_username != 'null' }">
+			         	${contractInfo.audit_username }
+			         </c:if>
+			         </td>
 		         </tr>
 		         <tr>
 			         <td class="active"><label class="pull-right">审核人证件:</label></td>
-			         <td colspan="5">${contractInfo.audit_idcard }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.audit_idcard != 'null' }">
+			         	${contractInfo.audit_idcard }
+			         </c:if>
+			         </td>
 		         </tr>
 		         <tr>
 			         <td class="active"><label class="pull-right">审核人邮箱:</label></td>
-			         <td colspan="5">${contractInfo.audit_email }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.audit_email != 'null'}">
+			         	${contractInfo.audit_email }
+			         </c:if>
+			         </td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">审核人手机号:</label></td>
-			         <td colspan="5">${contractInfo.audit_mobile }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.audit_mobile != 'null'}">
+			         	${contractInfo.audit_mobile }
+			         </c:if>
+			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">证件前照:</label></td>
+			         <td class="active"><label class="pull-right">身份证正照:</label></td>
 			         <td colspan="5">
-			         <c:if test="${!(contractInfo.audit_fonturl eq null || contractInfo.audit_fonturl eq '')}">
+			         <c:if test="${contractInfo.audit_fonturl != 'null'}">
 			         <img id="photosrc" src="${contractInfo.audit_fonturl }" alt="images" style="width: 200px;height: 100px;"/>
 			         </c:if>
 			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">证件反照:</label></td>
+			         <td class="active"><label class="pull-right">身份证正反照:</label></td>
 			         <td colspan="5">
-			         <c:if test="${!(contractInfo.audit_backurl eq null || contractInfo.audit_backurl eq '')}">
+			         <c:if test="${contractInfo.audit_backurl != 'null'}">
 			         <img id="photosrc" src="${contractInfo.audit_backurl }" alt="images" style="width: 200px;height: 100px;"/>
 			         </c:if>
 			         </td>
@@ -141,32 +192,48 @@
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">代付人名称:</label></td>
-			         <td colspan="5">${contractInfo.proxy_username }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.proxy_username != 'null' }">
+			         	${contractInfo.proxy_username }
+			         </c:if>
+			         </td>
 		         </tr>
 		         <tr>
 			         <td class="active"><label class="pull-right">代付人证件:</label></td>
-			         <td colspan="5">${contractInfo.proxy_idcard }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.proxy_idcard != 'null'}">
+			         	${contractInfo.proxy_idcard }
+			         </c:if>
+			         </td>
 		         </tr>
 		         <tr>
 			         <td class="active"><label class="pull-right">代付人邮箱:</label></td>
-			         <td colspan="5">${contractInfo.proxy_email }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.proxy_email != 'null'}">
+			         	${contractInfo.proxy_email}
+			         </c:if>
+			         </td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">代付人手机号:</label></td>
-			         <td colspan="5">${contractInfo.proxy_mobile }</td>
+			         <td colspan="5">
+			         <c:if test="${contractInfo.proxy_mobile != 'null'}">
+			         	${contractInfo.proxy_mobile }
+			         </c:if>
+			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">证件前照:</label></td>
+			         <td class="active"><label class="pull-right">身份证正照:</label></td>
 			         <td colspan="5">
-			         <c:if test="${!(contractInfo.proxy_fonturl eq null || contractInfo.proxy_fonturl eq '')}">
+			         <c:if test="${contractInfo.proxy_fonturl != 'null'}">
 			         <img id="photosrc" src="${contractInfo.proxy_fonturl }" alt="images" style="width: 200px;height: 100px;"/>
 			         </c:if>
 			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">证件反照:</label></td>
+			         <td class="active"><label class="pull-right">身份证反照:</label></td>
 			         <td colspan="5">
-			         	<c:if test="${!(contractInfo.proxy_backurl eq null || contractInfo.proxy_backurl eq '')}">
+			         	<c:if test="${contractInfo.proxy_backurl != 'null'}">
 			        	 <img id="photosrc" src="${contractInfo.proxy_backurl }" alt="images" style="width: 200px;height: 100px;"/>
 			        	 </c:if>
 			         </td>
