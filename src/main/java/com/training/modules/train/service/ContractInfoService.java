@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.training.common.persistence.Page;
 import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.sys.utils.ParametersFactory;
+import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.ContractInfo;
 
 import net.sf.json.JSONArray;
@@ -50,6 +51,7 @@ public class ContractInfoService {
 		jsonO.put("office_id", info.getOffice_id());
 		jsonO.put("status", info.getStatus());
 		jsonO.put("remarks", info.getRemarks());
+		jsonO.put("update_user", UserUtils.getUser().getId());
 		WebUtils.postCS(jsonO, ParametersFactory.getTrainsParamValues("contract_status_path"));
 	}
 }
