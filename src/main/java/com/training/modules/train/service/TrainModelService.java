@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.service.CrudService;
+import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.sys.dao.UserDao;
 import com.training.modules.sys.entity.User;
 import com.training.modules.train.dao.TrainMenuDao;
@@ -40,6 +41,10 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	private MediaRoleService mediaRoleService;
 	@Autowired
 	private UserDao userDao;
+	@Autowired
+	private RedisClientTemplate redisClientTemplate;
+	
+	public static final String PC_FZX_CACHE = "pc_fzx_cache_";
 	/**
 	 * 根据版本英文名称查询是否存在
 	 * @param modEname
@@ -300,6 +305,10 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 			if(roleids !=null && roleids.size()>0){
 				for (String oldid : ls1) {
 					pcRoleService.insertUserRoleForRoleId(Integer.valueOf(oldid),roleids);
+				}
+				List<String> list = userDao.findupdateUser(roleids);
+				for (String userId : list) {
+					redisClientTemplate.set(PC_FZX_CACHE + userId, userId);
 				}
 			}
 			break;

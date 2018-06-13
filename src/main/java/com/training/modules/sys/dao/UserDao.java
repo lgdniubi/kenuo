@@ -389,5 +389,15 @@ public interface UserDao extends CrudDao<User> {
 	 * @return
 	 */
 	public List<User> findUserByFranchiseeId(User user);
+	
+	/**
+	 * 
+	 * @Title: findupdateUser
+	 * @Description: TODO 查询出所有更改角色的用户id
+	 * @throws
+	 * 2018年6月13日 兵子
+	 */
+	public List<String> findupdateUser(List<Integer> roleids);
+	
 
 }

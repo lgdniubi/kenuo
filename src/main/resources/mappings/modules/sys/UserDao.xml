@@ -1113,4 +1113,12 @@
 		</if> -->
 		AND liv.audit_status = 3
 	</select>
+	
+	<!-- 查询改过角色的用户 -->
+	<select id="findupdateUser" resultType="String">
+		SELECT user_id FROM pc_user_role WHERE pc_role_id IN
+		<foreach collection="list" item="value" separator="," open="(" close=")">
+			#{value}
+		</foreach>
+	</select>
 </mapper>
