@@ -191,7 +191,7 @@
 						<div class="row" style="padding-top: 10px;">
 							<div class="col-sm-12">
 								<div class="pull-left">
-								<shiro:hasPermission name="crm:userSecret:view">
+								<shiro:hasPermission name="crm:userSecret:adduserindex">
 									<button class="btn btn-primary btn-rounded btn-outline" onclick="openDialog('添加会员', '${ctx}/crm/user/adduserindex','650px', '500px')">新建用户</button>
 								</shiro:hasPermission>	
 									<p></p>

@@ -242,7 +242,7 @@
 			mtmydb.mtmy_users    
 		WHERE     
 			1=1    
-			AND nickname  COLLATE utf8_bin= #{nickname}
+			AND nickname = #{nickname}
 	</select>
 	<select id="getUserByPhone" resultType="Users">
 		SELECT 
