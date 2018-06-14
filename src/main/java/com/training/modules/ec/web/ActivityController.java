@@ -435,80 +435,82 @@ public class ActivityController extends BaseController {
 	public String saveSendCoupon(Activity activity, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 	
 		try {
-			StringBuilder failureMsg = new StringBuilder();
+			StringBuilder msg = new StringBuilder();
 			int sueess=0;
 			int fail=0;
-				if(activity.getSendType()==1){
-					if(activity.getCouponId().length()>0){
-						int num=activityService.findByCouponNum(activity.getCouponId());
-						if(num>0){
-							failureMsg.insert(0, "已经有人拥有红包，不能发送！");
-							addMessage(redirectAttributes,"失败："+failureMsg);
-						}else{
-							String idarry[]=activity.getCouponId().split(",");
-							for (int i = 0; i < idarry.length; i++) {
-								ActivityCouponUser activityCouponUser=new ActivityCouponUser();
-								activityCouponUser.setCouponId(idarry[i].toString());
-								sueess=activityService.insertSend(activityCouponUser);
-							}
-							addMessage(redirectAttributes, "发送红包成功");
-						}
-						
-					}
-				}
-				if(activity.getSendType()==2){
+			
+			if(activity.getSendType()==1){
+				if(activity.getCouponId().length()>0){
+					String idarry[]=activity.getCouponId().split(",");
+					String[] couponName = activity.getCouponName().split(",");
+					int innerNum = activityService.queryInnerUserNum();
 					
-					if(activity.getUserId().length()>0 && activity.getCouponId().length()>0){
-						String[] idarry = activity.getUserId().split(",");
-						String[] idAmount=activity.getCouponId().split(",");
+					for (int i = 0; i < idarry.length; i++) {
+						ActivityCouponUser activityCouponUser=new ActivityCouponUser();
+						activityCouponUser.setCouponId(idarry[i].toString());
+						sueess=activityService.insertSend(activityCouponUser);
+						msg.append("红包："+ couponName[i] + ",已成功发送到："+sueess+"个用户账户,另有"+ (innerNum-sueess) +"个用户账户领取数量已达到上限<br>");
+					}
+					addMessage(redirectAttributes,msg.toString());
+				}
+			}
+			if(activity.getSendType()==2){
+				
+				if(activity.getUserId().length()>0 && activity.getCouponId().length()>0){
+					String[] idarry = activity.getUserId().split(",");
+					String[] idAmount=activity.getCouponId().split(",");
+					String[] couponName = activity.getCouponName().split(",");
+					
+					for (int j = 0; j < idAmount.length; j++) {
 						for (int i = 0; i < idarry.length; i++) {
-							for (int j = 0; j < idAmount.length; j++) {
-								ActivityCouponUser select=new ActivityCouponUser();
-								select.setCouponId(idAmount[j].toString());
-								select.setUserId(idarry[i]);
-								int num=activityService.findByAIdandUserId(select);
-								if(num>0){
-									fail++;
-								}else{
-									ActivityCouponUser couponUser=new ActivityCouponUser();
-									couponUser.setUserId(idarry[i].toString());
-									couponUser.setCouponId(idAmount[j].toString());
-									couponUser.setStatus("0");
-									activityService.insertUserCoupon(couponUser);
-									sueess++;
-								}
-								
-							}
-							
-						}
-						
-						
-					}
-					addMessage(redirectAttributes, "已成功发送："+sueess+"个红包，已经有用户拥有："+fail+"个红包");
-				}
-				if (activity.getSendType()==3) {
-					if(activity.getCouponId().length()>0){
-						int num=activityService.findFeiByCouponNum(activity.getCouponId());
-						if(num>0){
-							failureMsg.insert(0, "已经有人拥有红包，不能发送！");
-							addMessage(redirectAttributes, "失败："+failureMsg);
-						}else{
-							String idarry[]=activity.getCouponId().split(",");
-							for (int i = 0; i < idarry.length; i++) {
+							ActivityCouponUser select=new ActivityCouponUser();
+							select.setCouponId(idAmount[j].toString());
+							select.setUserId(idarry[i]);
+							int num=activityService.findByAIdandUserId(select);
+							int celing = activityService.findByCouponId(idAmount[j].toString()).getCeiling();
+							if(num >= celing){
+								fail++;
+							}else{
 								ActivityCouponUser couponUser=new ActivityCouponUser();
-								couponUser.setCouponId(idarry[i].toString());
-								sueess=activityService.insertFeiSend(couponUser);
+								couponUser.setUserId(idarry[i].toString());
+								couponUser.setCouponId(idAmount[j].toString());
+								couponUser.setStatus("0");
+								activityService.insertUserCoupon(couponUser);
+								sueess++;
 							}
-							addMessage(redirectAttributes, "发送红包成功");
 						}
-						
+						msg.append("红包："+ couponName[j] + ",已成功发送到："+sueess+"个用户账户,另有"+ fail +"个用户账户领取数量已达到上限<br>");
+						fail = 0;
+						sueess = 0;
 					}
+					addMessage(redirectAttributes, msg.toString());
 				}
-				if(activity.getSendType()==4){
-					if(activity.getMobileNum().length()>0 && activity.getCouponId().length()>0){
-						String data=activity.getMobileNum().trim().replace(" ", ",").replace("，", ",").replace("\r\n","");
-						String[] newData = data.split(",");
-						String[] couponId=activity.getCouponId().split(",");
+			}
+			if (activity.getSendType()==3) {
+				if(activity.getCouponId().length()>0){
+					String idarry[]=activity.getCouponId().split(",");
+					String[] couponName = activity.getCouponName().split(",");
+					int notInnerNum = activityService.queryNotInnerUserNum();
+					
+					for (int i = 0; i < idarry.length; i++) {
+						ActivityCouponUser couponUser=new ActivityCouponUser();
+						couponUser.setCouponId(idarry[i].toString());
+						sueess=activityService.insertFeiSend(couponUser);
+						msg.append("红包："+ couponName[i] + ",已成功发送到："+sueess+"个用户账户,另有"+ (notInnerNum-sueess) +"个用户账户领取数量已达到上限<br>");
+					}
+					addMessage(redirectAttributes, msg.toString());
+				}
+			}
+			if(activity.getSendType()==4){
+				if(activity.getMobileNum().length()>0 && activity.getCouponId().length()>0){
+					String data=activity.getMobileNum().trim().replace(" ", ",").replace("，", ",").replace("\r\n","");
+					String[] newData = data.split(",");
+					String[] couponId=activity.getCouponId().split(",");
+					String[] couponName = activity.getCouponName().split(",");
+					
+					for (int j = 0; j < couponId.length; j++) {
+						StringBuilder notExist = new StringBuilder();
+						
 						for (int i = 0; i < newData.length; i++) {
 							Users users= new Users();
 							if("0".equals(activity.getMoreType())){   //通过手机号
@@ -516,40 +518,40 @@ public class ActivityController extends BaseController {
 							}else if("1".equals(activity.getMoreType())){    //通过用户id
 								users = activityService.findByUserId(newData[i]);
 							}
+							
 							if(users!=null){
-								for (int j = 0; j < couponId.length; j++) {
-									ActivityCouponUser select=new ActivityCouponUser();
-									select.setCouponId(couponId[j].toString());
-									select.setUserId(users.getUserid()+"");
-									int num=activityService.findByAIdandUserId(select);
-									if(num>0){
-										failureMsg.append("<br/>手机号或用户ID："+newData[i]+"的用户已发放。");
-										fail++;
-									}else{
-										ActivityCouponUser couponUser=new ActivityCouponUser();
-										couponUser.setUserId(users.getUserid()+"");
-										couponUser.setCouponId(couponId[j].toString());
-										couponUser.setStatus("0");
-										activityService.insertUserCoupon(couponUser);
-										sueess++;
-										
-									}
+								ActivityCouponUser select=new ActivityCouponUser();
+								select.setCouponId(couponId[j].toString());
+								select.setUserId(users.getUserid()+"");
+								int num=activityService.findByAIdandUserId(select);
+								int celing = activityService.findByCouponId(couponId[j].toString()).getCeiling();
+								if(num >= celing){
+									fail++;
+								}else{
+									ActivityCouponUser couponUser=new ActivityCouponUser();
+									couponUser.setUserId(users.getUserid()+"");
+									couponUser.setCouponId(couponId[j].toString());
+									couponUser.setStatus("0");
+									activityService.insertUserCoupon(couponUser);
+									sueess++;
+								}
+							}else{
+								if("0".equals(activity.getMoreType())){   //通过手机号
+									notExist.append("手机号码："+newData[i]+" 不存在;");
+								}else if("1".equals(activity.getMoreType())){    //通过用户id
+									notExist.append("用户ID："+newData[i]+" 不存在;");
 								}
 								
-								
-							}else{
-								failureMsg.append("<br/>手机号码或用户ID："+newData[i]+" 不存在");
-								fail++;
 							}
 						}
+						
+						msg.append("红包："+ couponName[j] + ",已成功发送到："+sueess+"个用户账户,另有"+ fail +"个用户账户领取数量已达到上限," + notExist+"<br>");
+						fail = 0;
+						sueess = 0;
 					}
-
-					if (fail > 0) {
-						failureMsg.insert(0, "，失败 " + fail + "个，如下信息：");
-					}
-					addMessage(redirectAttributes, "成功发放红包："+sueess+"个， "+failureMsg);
+					addMessage(redirectAttributes, msg.toString());
 				}
-				
+			}
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "发送红包", e);
 			logger.error("方法：save，发送红包：" + e.getMessage());
