@@ -80,6 +80,11 @@ public class ProtocolModelService extends CrudService<ProtocolModelDao,ProtocolM
 				}
 			}
 		}
+		if(protocolModel.getAssign()){
+			if("2".equals(protocolModel.getType()) || "3".equals(protocolModel.getType())){		//4是店铺签约
+				protocolModelDao.deleteProtocolShop(protocolModel.getType());
+			}
+		}
 	}
 
 	private void changeStatusForSupply() {

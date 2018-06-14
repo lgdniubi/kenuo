@@ -393,7 +393,7 @@ public class OfficeController extends BaseController {
 	}
 	@RequiresPermissions(value={"sys:office:add","sys:office:edit"},logical=Logical.OR)
 	@RequestMapping(value = "saveSignInfo")
-	public String saveSignInfo(String officeid,ContractInfoVo contractInfo, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+	public String saveSignInfo(ContractInfoVo contractInfo, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		 JsonConfig config = new JsonConfig();
 		 /*contractInfo.getPayInfos().get(0).setPay_username("2222222");
 		 contractInfo.getPayInfos().get(0).setCreate_user("125");
@@ -418,7 +418,7 @@ public class OfficeController extends BaseController {
 		}else{
 			addMessage(redirectAttributes, "保存机构成功");
 		}
-		return "redirect:" + adminPath + "/sys/office/signInfo?officeid="+officeid;
+		return "redirect:" + adminPath + "/sys/office/signInfo?id="+contractInfo.getOffice_id();
 	}
 	
 	/**

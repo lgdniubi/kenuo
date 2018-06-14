@@ -586,6 +586,18 @@
 				      	<tr>
 					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>法定代表人:</label></td>
 					         <td class="width-35"><form:input path="officeInfo.legalPerson" htmlEscape="false" maxlength="8" cssClass="form-control required" /></td>
+					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>企业类型</label></td>
+					         <td class="width-35">
+					         	<select class="form-control required" id="companyType" name="officeInfo.companyType">
+									<option value=''>请选择</option>
+									<option value='1' <c:if test="${office.officeInfo.companyType== '1' }">selected="selected"</c:if> >个体户</option>
+									<option value='2' <c:if test="${office.officeInfo.companyType== '2' }">selected="selected"</c:if> >合伙企业</option>
+									<option value='3' <c:if test="${office.officeInfo.companyType== '3' }">selected="selected"</c:if> >个人独资企业</option>
+									<option value='4' <c:if test="${office.officeInfo.companyType== '4' }">selected="selected"</c:if> >公司</option>
+								</select>
+							 </td>
+				       </tr>
+				      	<tr>
 					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>统一社会信用代码</label></td>
 					         <td class="width-35"><form:input path="officeInfo.creditCode" htmlEscape="false" maxlength="15" cssClass="form-control required" /></td>
 				       </tr>

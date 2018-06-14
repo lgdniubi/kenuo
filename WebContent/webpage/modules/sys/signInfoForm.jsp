@@ -33,15 +33,28 @@
 		var validateForm;
 		function saveSign(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 			//if(validateForm.form()){
+			if(validateImgUrl()){
 				$("#inputForm").submit();
 				//return true;
-			//}
+			}
 		  return false;
+		}
+		function validateImgUrl(){
+			var flag = validOneImg('sign_fonturl')&&validOneImg('sign_backurl')&&validOneImg('cargo_fonturl')&&validOneImg('cargo_backurl')&&validOneImg('audit_fonturl')&&
+			validOneImg('audit_backurl')&&validOneImg('proxy_fonturl')&&validOneImg('proxy_backurl')&&validOneImg('pay_fonturl')&&validOneImg('pay_backurl');
+			return flag;
+		}
+		function validOneImg(id){
+			if($("#"+id).val() == null || $("#"+id).val() == ""){
+				   top.layer.alert('图片不可为空！', {icon: 0, title:'提醒'});
+				   return false;
+			}else{
+				return true;
+			}
 		}
 		$(document).ready(function() {
 			$("#sign_username").focus();
 			validateForm = $("#inputForm").validate({
-				
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
 					form.submit();
@@ -498,7 +511,7 @@
 				         	<td class="width-35"><input value="${payInfos[0].pay_name}" name="payInfos[0].pay_name" class="form-control required"></td>
 				         	<td class="width-35" rowspan="3">
 				         		<img id="officepay_fonturlImgsrc" src="${payInfos[0].pay_fonturl}" alt="" style="width: 200px;height: 100px;"/>
-								<input type="hidden" id="pay_fonturl" name="payInfos[0].pay_fonturl" value="${payInfos[0].pay_fonturl}"><!-- 图片隐藏文本框 -->
+								<input type="hidden" id="pay_fonturl" name="payInfos[0].pay_fonturl" class="required" value="${payInfos[0].pay_fonturl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
 									<input type="file" name="file_pay_fonturl_upload" class="required" id="file_pay_fonturl_upload">

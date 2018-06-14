@@ -156,6 +156,7 @@
 		  update_by,
 		  update_date,
 		  del_flag,
+		  legal_card,
 		  remarks
 		) 
 		VALUES
@@ -185,6 +186,7 @@
 		    NULL,
 		    NULL,
 		    0,
+		    #{legalCard},
 		    #{remarks}
 		  )
 	</insert>

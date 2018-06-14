@@ -1241,7 +1241,6 @@ public class UserController extends BaseController {
 	@RequestMapping(value = "treeDataCompany")
 	public List<Map<String, Object>> treeDataCompany(@RequestParam(required = false) String officeId,String labelValue,
 			HttpServletResponse response,HttpServletRequest request) {
-		String labelValue2 = request.getParameter("labelValue");
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		List<User> list = systemService.findUserByFranchiseeId(officeId,labelValue);
 		for (int i = 0; i < list.size(); i++) {

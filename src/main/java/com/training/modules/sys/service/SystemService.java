@@ -1521,6 +1521,8 @@ public class SystemService extends BaseService implements InitializingBean {
 		user.setCompany(new Office(officeId));
 		if(StringUtils.isNotBlank(labelValue)){
 			user.setMobile(labelValue);
+		}else{
+			user.setMobile("0");
 		}
 		List<User> list = userDao.findUserByFranchiseeId(user);
 		if(list == null ){

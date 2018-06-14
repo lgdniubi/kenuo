@@ -462,7 +462,8 @@
 				bankaddress,
 				credit_code,
 				cardup,
-				carddown
+				carddown,
+				companyType
 			) values (
 				#{id},
 				#{officeInfo.shortName},
@@ -491,7 +492,8 @@
 				#{officeInfo.bankaddress},
 				#{officeInfo.creditCode},
 				#{officeInfo.cardup},
-				#{officeInfo.carddown}
+				#{officeInfo.carddown},
+				#{officeInfo.companyType}
 			)ON DUPLICATE KEY 
 				UPDATE 
 				short_name		 = #{officeInfo.shortName},
@@ -519,6 +521,7 @@
 				credit_code  =	  #{officeInfo.creditCode},     
 				cardup           =	  #{officeInfo.cardup},                
 				carddown         =	  #{officeInfo.carddown} ,
+				companyType         =	  #{officeInfo.companyType} ,
 				<if test="grade == 1">
 					del_flag         = #{DEL_FLAG_NORMAL}
 				</if>
@@ -580,7 +583,8 @@
 			bankaddress,
 			cardup,
 			credit_code,
-			carddown
+			carddown,
+			companyType
 		FROM sys_office_info
 		WHERE 
 			1=1

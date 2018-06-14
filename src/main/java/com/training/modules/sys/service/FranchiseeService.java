@@ -57,7 +57,6 @@ public class FranchiseeService extends TreeService<FranchiseeDao,Franchisee>{
 			String createId = franchisee.getCreateBy().getId();
 			franchiseeDao.saveMtmyFranchisee(franchisee.getId(),parentId,franchisee.getParentIds(),franchisee.getName(),franchisee.getType(),franchisee.getSort(),franchisee.getIconUrl(),createId,franchisee.getRemarks());
 			
-			
 			String weburl = ParametersFactory.getMtmyParamValues("fzx_equally_franchisee");
 			logger.info("##### web接口路径:"+weburl);
 			String parpm = "{\"id\":"+Integer.valueOf(franchisee.getId())+",\"name\":\""+franchisee.getName()+"\",\"type\":\""+franchisee.getType()+"\","

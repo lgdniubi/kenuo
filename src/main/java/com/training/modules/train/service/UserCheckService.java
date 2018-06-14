@@ -264,6 +264,8 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 				modelFranchisee.setStatus("0");
 				updateUserMenu(modelFranchisee.getFranchiseeid(),"0");
 			}
+			//权益修改后如果支付方式改变就清除支付方式，重新签约--改变签约状态
+			clearPayInfoAndChangeStatus(franchisee,modelFranchisee);
 		}
 		updateInvitationAndPush(find);	//向邀请表和推送消息表更改数据，把所有推送消息设置为未通过，邀请记录：没同意的设置为3会员拒绝，同意的设置为2商家拒绝。
 		save(modelFranchisee);
@@ -272,6 +274,28 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 //		int a = 1/0;
 	}
 	
+	//权益修改后如果支付方式改变就清除支付方式，重新签约--改变签约状态
+	private void clearPayInfoAndChangeStatus(ModelFranchisee findFranchisee, ModelFranchisee modelFranchisee) {
+		String parpm1 = "{\"office_id\":"+findFranchisee.getFranchiseeid()+"}";
+		if(!findFranchisee.getPaytype().equals(modelFranchisee.getPaytype())){
+			postCSData(parpm1, "clearPayInfoOfFranchisee");
+		}
+		postCSData(parpm1, "resign");
+	}
+	private void postCSData(String parpm, String key) {
+		String url = ParametersFactory.getMtmyParamValues(key);
+		logger.info("##### web接口路径:"+url);
+//		String parpm = "{\"id\":"+Integer.valueOf(find.getId())+",\"name\":\""+find.getCompanyName()+"\",\"type\":\""+find.getAddr().getType()+"\","
+//				+ "\"address\":\""+find.getAddress()+"\",\"legal_name\":\""+find.getLegalPerson()+"\",\"mobile\":\""+find.getMobile()
+//						+"\",\"charter_url\":\""+find.getCharterUrl()+"\"}";
+		String result = WebUtils.postCSObject(parpm, url);
+		JSONObject jsonObject = JSONObject.fromObject(result);
+		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+		if(!"200".equals(jsonObject.get("result"))){
+			throw new RuntimeException("用户认证--授权同步供应链数据出错");
+		}
+	}
+
 	///向sys_user_company插入一条数据--问答
 	private void insertUserCompany(String userid, String franchseeid) {
 		userCheckDao.updateUserCompany(userid, franchseeid);
