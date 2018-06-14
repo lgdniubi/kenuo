@@ -66,7 +66,7 @@ public class ProtocolModelService extends CrudService<ProtocolModelDao,ProtocolM
 				findModel.setPid(findModel.getId());
 				dao.insert(findModel);//把原来的内容复制一份
 				protocolModelDao.updateModelById(protocolModel);//把原来更新了
-				if(protocolModel.getAssign()){	//是否重新签订--重新就更新原来的状态为变更
+				/*if(protocolModel.getAssign()){	//是否重新签订--重新就更新原来的状态为变更
 					//更改店铺-协议表该协议id的状态为变更
 //					protocolModel.setStatus("2");//店铺协议状态为变更
 //					protocolModelDao.updateProtocolShopById(protocolModel);//把原来更新了
@@ -74,15 +74,15 @@ public class ProtocolModelService extends CrudService<ProtocolModelDao,ProtocolM
 						protocolModelDao.deleteProtocolShopById(protocolModel);//把所有店铺签过的此协议删除
 					}
 					//更改签约状态变更
-					if("4".equals(protocolModel.getType())){		//4是店铺签约
-						changeStatusForSupply();//重新签订，需要更改签约状态
-					}
-				}
+				}*/
 			}
 		}
 		if(protocolModel.getAssign()){
-			if("2".equals(protocolModel.getType()) || "3".equals(protocolModel.getType())){		//4是店铺签约
+			if(!"1".equals(protocolModel.getType())){		//4是店铺签约
 				protocolModelDao.deleteProtocolShop(protocolModel.getType());
+			}
+			if("4".equals(protocolModel.getType())){		//4是店铺签约
+				changeStatusForSupply();//重新签订，需要更改签约状态
 			}
 		}
 	}
