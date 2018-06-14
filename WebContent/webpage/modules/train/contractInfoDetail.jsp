@@ -243,33 +243,56 @@
 			    	  <td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="6"><label class="pull-left">账户信息:</label></td>
 				</tr>
 				<c:forEach var="bank" items="${ contractInfo.payInfos}">
-					<tr>
-				         <td class="active"><label class="pull-right">账户名称:</label></td>
-				         <td >${bank.pay_username }</td>
-				         <td class="active"><label class="pull-right">开户银行:</label></td>
-				         <td >${bank.pay_name }</td>
-				    </tr>
-				    <tr>
-				    	<td class="active"><label class="pull-right">银行账户:</label></td>
-				         <td >${bank.pay_account}</td>
-				         <td class="active"><label class="pull-right">开户地址:</label></td>
-				         <td >${bank.pay_mobile }</td>
-				    </tr>
-				    <tr>
-					         <td class=""><label class="pull-right">正面:</label></td>
+					<c:if test="${bank.pay_type eq '0' }">
+						<tr>
+					         <td class="active"><label class="pull-right">账户名称:</label></td>
+					         <td >${bank.pay_username }</td>
+					         <td class="active"><label class="pull-right">开户银行:</label></td>
+					         <td>${bank.pay_name }</td>
+					    </tr>
+					    <tr>
+					    	 <td class="active"><label class="pull-right">银行账号:</label></td>
+					         <td colspan="5">${bank.pay_account}</td>
+					    </tr>
+					    <tr>
+					         <td class="active"><label class="pull-right">银行卡正面:</label></td>
 					         <td >
 					         <c:if test="${!(bank.pay_fonturl eq null || bank.pay_fonturl eq '')}">
 					         <img id="photosrc" src="${bank.pay_fonturl }" alt="images" style="width: 200px;height: 100px;"/>
 					         </c:if>
 					         </td>
-					         <td class=""><label class="pull-right">反面:</label></td>
+					         <td class="active"><label class="pull-right">银行卡反面:</label></td>
 					         <td>
 					          <c:if test="${!(bank.pay_backurl eq null || bank.pay_backurl eq '')}">
 					         <img id="photosrc" src="${bank.pay_backurl }" alt="images" style="width: 200px;height: 100px;"/>
 					          </c:if>
 					         </td>
 						</tr>
-				    <tr>
+				    </c:if>
+				    <c:if test="${bank.pay_type eq '1' }">
+						<tr>
+							 <td class="active"><label class="pull-right">微信账号:</label></td>
+					         <td >${bank.pay_account}</td>
+					         <td class="active"><label class="pull-right">账户名称:</label></td>
+					         <td >${bank.pay_username }</td>
+					    </tr>
+					    <tr>
+					         <td class="active"><label class="pull-right">手机号:</label></td>
+					         <td colspan="5">${bank.pay_mobile }</td>
+					    </tr>
+				    </c:if>
+				    <c:if test="${bank.pay_type eq '2' }">
+						<tr>
+							 <td class="active"><label class="pull-right">支付宝账号:</label></td>
+					         <td >${bank.pay_account}</td>
+					         <td class="active"><label class="pull-right">账户名称:</label></td>
+					         <td >${bank.pay_username }</td>
+					    </tr>
+					    <tr>
+					         <td class="active"><label class="pull-right">手机号:</label></td>
+					         <td colspan="5">${bank.pay_mobile }</td>
+					    </tr>
+				    </c:if>
 			    </c:forEach>
 			    </c:if>
 			    <c:if test="${!(contractInfo.remarks eq null)}">
