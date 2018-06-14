@@ -20,7 +20,7 @@ public class ProtocolUser extends DataEntity<ProtocolUser>{
 	private Integer protocolId;				//协议模板id
 	private String protocolName;			//协议状态：1履约中,2审核中,3审核未通过,4已作废,5已失效
 	private String status;			//协议状态：1履约中,2审核中,3审核未通过,4已作废,5已失效
-	private String type;			//协议类型：1妃子校注册,2用户认证手艺人,3用户认证企业,4用户登录商家PC
+	private int typeId;			//协议类型：1妃子校注册,2用户认证手艺人,3用户认证企业,4用户登录商家PC
 	private Integer franchiseeId;			//商家id
 	private String companyName;			//商家名称
 	private String officeId;			//机构id
@@ -56,11 +56,11 @@ public class ProtocolUser extends DataEntity<ProtocolUser>{
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public String getType() {
-		return type;
+	public int getTypeId() {
+		return typeId;
 	}
-	public void setType(String type) {
-		this.type = type;
+	public void setTypeId(int typeId) {
+		this.typeId = typeId;
 	}
 	public Integer getFranchiseeId() {
 		return franchiseeId;

@@ -70,7 +70,7 @@
 			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">身份证正照:</label></td>
+			         <td class="active"><label class="pull-right">身份证正面:</label></td>
 			         <td colspan="5">
 			         <c:if test="${contractInfo.sign_fonturl != 'null'}">
 			         <img id="photosrc" src="${contractInfo.sign_fonturl }" alt="images" style="width: 200px;height: 100px;"/>
@@ -78,7 +78,7 @@
 			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">身份证反照:</label></td>
+			         <td class="active"><label class="pull-right">身份证反面:</label></td>
 			         <td colspan="5">
 			         <c:if test="${contractInfo.sign_backurl != 'null'}">
 			         <img id="photosrc" src="${contractInfo.sign_backurl }" alt="images" style="width: 200px;height: 100px;"/>
@@ -121,7 +121,7 @@
 			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">身份证正照:</label></td>
+			         <td class="active"><label class="pull-right">身份证正面:</label></td>
 			         <td colspan="5">
 			         <c:if test="${contractInfo.cargo_fonturl != 'null'}">
 			         <img id="photosrc" src="${contractInfo.cargo_fonturl }" alt="images" style="width: 200px;height: 100px;"/>
@@ -129,7 +129,7 @@
 			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">身份证反照:</label></td>
+			         <td class="active"><label class="pull-right">身份证反面:</label></td>
 			         <td colspan="5">
 			         <c:if test="${contractInfo.cargo_backurl != 'null'}">
 			         <img id="photosrc" src="${contractInfo.cargo_backurl }" alt="images" style="width: 200px;height: 100px;"/>
@@ -172,7 +172,7 @@
 			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">身份证正照:</label></td>
+			         <td class="active"><label class="pull-right">身份证正面:</label></td>
 			         <td colspan="5">
 			         <c:if test="${contractInfo.audit_fonturl != 'null'}">
 			         <img id="photosrc" src="${contractInfo.audit_fonturl }" alt="images" style="width: 200px;height: 100px;"/>
@@ -180,7 +180,7 @@
 			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">身份证正反照:</label></td>
+			         <td class="active"><label class="pull-right">身份证反面:</label></td>
 			         <td colspan="5">
 			         <c:if test="${contractInfo.audit_backurl != 'null'}">
 			         <img id="photosrc" src="${contractInfo.audit_backurl }" alt="images" style="width: 200px;height: 100px;"/>
@@ -223,7 +223,7 @@
 			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">身份证正照:</label></td>
+			         <td class="active"><label class="pull-right">身份证正面:</label></td>
 			         <td colspan="5">
 			         <c:if test="${contractInfo.proxy_fonturl != 'null'}">
 			         <img id="photosrc" src="${contractInfo.proxy_fonturl }" alt="images" style="width: 200px;height: 100px;"/>
@@ -231,7 +231,7 @@
 			         </td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">身份证反照:</label></td>
+			         <td class="active"><label class="pull-right">身份证反面:</label></td>
 			         <td colspan="5">
 			         	<c:if test="${contractInfo.proxy_backurl != 'null'}">
 			        	 <img id="photosrc" src="${contractInfo.proxy_backurl }" alt="images" style="width: 200px;height: 100px;"/>
