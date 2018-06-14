@@ -205,8 +205,9 @@
 					AND DATE_FORMAT(b.pay_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(date_sub(SYSDATE(),interval 1 day),'%Y-%m-%d')
 				</if>
 				AND b.user_id IN (
-					SELECT user_id FROM mtmydb.mtmy_users WHERE office_id = #{list.shopId}
+					SELECT user_id FROM mtmydb.mtmy_customer WHERE office_id = #{list.shopId}
 				)
+				AND a.goods_franchisee_id = (SELECT franchisee_id FROM trains.sys_office WHERE id = #{list.shopId})
 				AND a.is_real != 0
 			GROUP BY goodsId,goodsName,originalImg,year,quarter,month,week,day,b.channel_flag
 		</foreach>
