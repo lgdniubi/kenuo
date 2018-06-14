@@ -265,7 +265,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 				updateUserMenu(modelFranchisee.getFranchiseeid(),"0");
 			}
 			//权益修改后如果支付方式改变就清除支付方式，重新签约--改变签约状态
-			clearPayInfoAndChangeStatus(franchisee,modelFranchisee);
+//			clearPayInfoAndChangeStatus(franchisee,modelFranchisee);
 		}
 		updateInvitationAndPush(find);	//向邀请表和推送消息表更改数据，把所有推送消息设置为未通过，邀请记录：没同意的设置为3会员拒绝，同意的设置为2商家拒绝。
 		save(modelFranchisee);
