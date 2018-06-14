@@ -28,6 +28,8 @@ public class ProtocolUser extends DataEntity<ProtocolUser>{
 	private Date authStartDate;			//有效期---授权开始时间
 	private Date authEndDate;			//有效期---授权结束时间
 	private String authBy;			//审核人
+	
+	private String typeName;
 	@Override
 	public void preInsert(){
 		User user = UserUtils.getUser();
@@ -109,5 +111,11 @@ public class ProtocolUser extends DataEntity<ProtocolUser>{
 	}
 	public void setOfficeName(String officeName) {
 		this.officeName = officeName;
+	}
+	public String getTypeName() {
+		return typeName;
+	}
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
 	}
 }

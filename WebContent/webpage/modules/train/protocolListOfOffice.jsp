@@ -35,10 +35,11 @@
                                		${state.protocolName}
                                	</td>
                                	<td style="text-align: center;">
-                               		<c:if test="${state.typeId eq 1}">APP注册</c:if>
+                               		<%-- <c:if test="${state.typeId eq 1}">APP注册</c:if>
                                		<c:if test="${state.typeId eq 2}">手艺人认证</c:if>
                                		<c:if test="${state.typeId eq 3}">企业认证</c:if>
-                               		<c:if test="${state.typeId eq 4}">报货</c:if>
+                               		<c:if test="${state.typeId eq 4}">报货</c:if> --%>
+                               		${state.typeName }
                                	</td>
                                	<td style="text-align: center;">
                                		${state.officeName }
