@@ -160,4 +160,8 @@
 	<delete id="deleteProtocolShop">
 		DELETE FROM supply_protocol_shop WHERE type_id = #{typeId}
 	</delete>
+	
+	<delete id="deleteProtocolShopOfOffice">
+		DELETE FROM supply_protocol_shop WHERE office_id = #{office_id}
+	</delete>
 </mapper>
