@@ -197,7 +197,7 @@
 			(CASE 
 				WHEN (SELECT a.expiration_type FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) = 0
 				THEN (SELECT a.expiration_date FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) 
-				ELSE (DATE_FORMAT(date_add(SYSDATE(),INTERVAL (SELECT a.expiration_day FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) DAY),'%Y-%m-%d %H:%i:%s'))
+				ELSE (DATE_FORMAT(date_add(SYSDATE(),INTERVAL (SELECT a.expiration_day FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) DAY),'%Y-%m-%d 23:59:59'))
 				END
 			),
 			NULL,
@@ -234,7 +234,7 @@
 			(CASE 
 				WHEN (SELECT a.expiration_type FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) = 0
 				THEN (SELECT a.expiration_date FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) 
-				ELSE (DATE_FORMAT(date_add(SYSDATE(),INTERVAL (SELECT a.expiration_day FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) DAY),'%Y-%m-%d %H:%i:%s'))
+				ELSE (DATE_FORMAT(date_add(SYSDATE(),INTERVAL (SELECT a.expiration_day FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) DAY),'%Y-%m-%d 23:59:59'))
 				END
 			),
 			NULL,
@@ -296,7 +296,7 @@
 			(CASE 
 				WHEN (SELECT a.expiration_type FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) = 0
 				THEN (SELECT a.expiration_date FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) 
-				ELSE (DATE_FORMAT(date_add(SYSDATE(),INTERVAL (SELECT a.expiration_day FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) DAY),'%Y-%m-%d %H:%i:%s'))
+				ELSE (DATE_FORMAT(date_add(SYSDATE(),INTERVAL (SELECT a.expiration_day FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) DAY),'%Y-%m-%d 23:59:59'))
 				END
 			),
 			null,
