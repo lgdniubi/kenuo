@@ -295,7 +295,7 @@
 				    </c:if>
 			    </c:forEach>
 			    </c:if>
-			    <c:if test="${!(contractInfo.remarks eq null)}">
+			    <c:if test="${contractInfo.remarks != 'null'}">
 			    <tr>
 			         <td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="6"><label class="pull-left">驳回原因:</label></td>
 			    </tr>
