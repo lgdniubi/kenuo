@@ -55,9 +55,10 @@ public class ContractInfoService {
 		jsonO.put("remarks", info.getRemarks());
 		jsonO.put("update_user", UserUtils.getUser().getId());
 		JSONObject json = WebUtils.postCS(jsonO, ParametersFactory.getTrainsParamValues("contract_status_path"));
+		/*
 		if("200".equals(json.getString("result")) && "3".equals(jsonO.get("status"))){
 			//审核驳回清空已签协议
 			this.protocolModelService.deleteProtocolShopOfOffice(info.getOffice_id());
-		}
+		}*/
 	}
 }
