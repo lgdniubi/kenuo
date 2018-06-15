@@ -43,6 +43,10 @@
 			var flag = validOneImg('sign_fonturl')&&validOneImg('sign_backurl')&&validOneImg('cargo_fonturl')&&validOneImg('cargo_backurl')&&validOneImg('audit_fonturl')&&
 			validOneImg('audit_backurl')&&validOneImg('proxy_fonturl')&&validOneImg('proxy_backurl');
 			var backFlag = validBackImg();
+			if(a==0){
+				 top.layer.alert('支付信息不可为空！', {icon: 0, title:'提醒'});
+				 return false;
+			}
 			return flag && backFlag;
 		}
 		//校验银行卡图片
@@ -353,7 +357,7 @@
 						
 			      </tbody>
 		      </table>
-		      <c:if test="${payWay == 1}"><!-- 0是线下支付 -->
+		      <c:if test="${payWay == 0}"><!-- 0是线下支付 -->
 		      <div id="add-pattern" onclick="addPayData(0,this)"><i class="icon-add-pattern"></i>添加账户</div>
 		      </c:if>
 		      <c:if test="${payWay == 1}"><!-- 1是线上支付 -->
@@ -429,7 +433,7 @@
 							</tbody>
 				      	</c:if>
 				      	<c:if test="${pay.pay_type == 2}">
-				      		<tbody class='wechat'>${i.index }
+				      		<tbody class='wechat'>
 								<tr>
 									<input value="2" name="payInfos[2].pay_type" type="hidden">
 									<td colspan="6" class="active"><label class="pull-left">微信</label></td>

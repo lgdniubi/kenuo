@@ -192,7 +192,7 @@
 		         <td class="width-15 active"><label class="pull-right">用户后台角色</label></td>
 		         <td class="width-35">
 		         	<sys:treeselect id="role" name="roleIdList" value="${user.roleIds }" labelName="role.name" labelValue="${user.roleNames}" title="后台角色"
-						url="/sys/role/treeData" cssClass=" form-control input-sm required" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="false" checked="true"/>
+						url="/sys/role/treeData" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="false" checked="true"/>
 				 </td>
 		      </tr>
 		      <!-- 用户后台数据范围 -->
