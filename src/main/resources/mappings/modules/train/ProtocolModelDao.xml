@@ -76,7 +76,7 @@
 		WHERE protocol_id = #{id} 
 	</update>
 	<delete id="deleteProtocolShopById">
-		DELETE FROM supply_protocol_shop WHERE protocol_id = #{id}  
+		DELETE FROM supply_protocol_shop WHERE franchisee_id = #{id}  
 	</delete>
 	<!-- 更新单个协议状态状态 -->
 	<update id="updateStatusById">

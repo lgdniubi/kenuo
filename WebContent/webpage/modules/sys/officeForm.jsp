@@ -46,7 +46,7 @@
 				}
 			}); 
 			if(verifyForm == "true"){
-				if(validateForm.form()){
+				if(validateForm.form()&&validateImgUrl()){
 					var content = $(".ke-edit-iframe").contents().find(".ke-content").html();
 					if(content.indexOf("style") >=0){
 						content = content.replace("&lt;style&gt;","<style>");
@@ -59,6 +59,19 @@
 				}
 			}
 		  return false;
+		}
+		//校验图片不能为空
+		function validateImgUrl(){
+			var flag = validOneImg('char');
+			return flag;
+		}
+		function validOneImg(id){
+			if($("#"+id).val() == null || $("#"+id).val() == ""){
+				   top.layer.alert('图片不可为空！', {icon: 0, title:'提醒'});
+				   return false;
+			}else{
+				return true;
+			}
 		}
 		$(document).ready(function() {
 			unfold($("#grade").val());

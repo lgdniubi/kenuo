@@ -279,7 +279,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	
 	//权益修改后如果支付方式改变就清除支付方式，重新签约--改变签约状态
 	private void clearPayInfoAndChangeStatus(ModelFranchisee findFranchisee, ModelFranchisee modelFranchisee) {
-		String parpm1 = "{\"office_id\":"+findFranchisee.getFranchiseeid()+"}";
+		String parpm1 = "{\"franchisee_id\":"+Integer.valueOf(findFranchisee.getFranchiseeid())+"}";
 		if(!findFranchisee.getPaytype().equals(modelFranchisee.getPaytype())){
 			postCSData(parpm1, "clearPayInfoOfFranchisee");
 		}
@@ -287,7 +287,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		protocolModelDao.deleteProtocolShopById(findFranchisee.getFranchiseeid());
 	}
 	private void postCSData(String parpm, String key) {
-		String url = ParametersFactory.getMtmyParamValues(key);
+		String url = ParametersFactory.getTrainsParamValues(key);
 		logger.info("##### web接口路径:"+url);
 //		String parpm = "{\"id\":"+Integer.valueOf(find.getId())+",\"name\":\""+find.getCompanyName()+"\",\"type\":\""+find.getAddr().getType()+"\","
 //				+ "\"address\":\""+find.getAddress()+"\",\"legal_name\":\""+find.getLegalPerson()+"\",\"mobile\":\""+find.getMobile()
