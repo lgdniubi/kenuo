@@ -263,7 +263,8 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 				updateAllRoleModelId(franchisee.getFranchiseeid(),modelFranchisee.getModid());
 			}
 			//权益期限修改更改用户菜单状态
-			if((DateUtils.formatDate(modelFranchisee.getAuthEndDate(), "yyyy-MM-dd").compareTo(DateUtils.getDate()))>=0){
+			if((DateUtils.formatDate(modelFranchisee.getAuthEndDate(), "yyyy-MM-dd").compareTo(DateUtils.getDate()))>=0
+					&& DateUtils.formatDate(modelFranchisee.getAuthEndDate(), "yyyy-MM-dd").compareTo(DateUtils.formatDate(franchisee.getAuthEndDate(), "yyyy-MM-dd"))>=0){
 				modelFranchisee.setStatus("0");
 				updateUserMenu(modelFranchisee.getFranchiseeid(),"0");
 			}
@@ -283,7 +284,8 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		if(!findFranchisee.getPaytype().equals(modelFranchisee.getPaytype())){
 			postCSData(parpm1, "clearPayInfoOfFranchisee");
 		}
-		postCSData(parpm1, "resign");
+		String parpm2 = "{\"franchisee_id\":"+Integer.valueOf(findFranchisee.getFranchiseeid())+"\"update_user\":"+UserUtils.getUser().getId()+"}";
+		postCSData(parpm2, "resign");
 		protocolModelDao.deleteProtocolShopById(findFranchisee.getFranchiseeid());
 	}
 	private void postCSData(String parpm, String key) {

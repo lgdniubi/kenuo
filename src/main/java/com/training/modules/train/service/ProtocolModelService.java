@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.training.common.service.CrudService;
 import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.sys.utils.ParametersFactory;
+import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.ProtocolModelDao;
 import com.training.modules.train.entity.ContractInfoVo;
 import com.training.modules.train.entity.PayInfo;
@@ -91,7 +92,7 @@ public class ProtocolModelService extends CrudService<ProtocolModelDao,ProtocolM
 		String weburl = ParametersFactory.getTrainsParamValues("resign");
 		logger.info("##### 重新签协议重新签约web接口路径:"+weburl);
 		String url=weburl;
-		String parpm = "{}";
+		String parpm = "{\"update_user\":"+UserUtils.getUser().getId()+"}";
 		String result = WebUtils.postCSObject(parpm, url);
 		JSONObject jsonObject = JSONObject.fromObject(result);
 		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
