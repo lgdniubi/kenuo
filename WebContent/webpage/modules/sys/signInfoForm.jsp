@@ -80,6 +80,7 @@
 			}
 		}
 		function delPayData(value,obj){
+			a--;
 			if (value == 0){
 				$(obj).parents('.bank').remove();
 			}else if(value == 1) {
