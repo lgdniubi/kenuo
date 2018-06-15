@@ -24,6 +24,7 @@ import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.entity.OfficeLog;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.entity.ModelFranchisee;
 
 /**
  * 机构Service
@@ -454,5 +455,13 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Transactional(readOnly = false)
 	public void saveOfficeAcount(OfficeAcount officeAcount){
 		this.officeDao.saveOfficeAcount(officeAcount);
+	}
+	/**
+	 * 查找支付方式，
+	 * @param id
+	 * @return
+	 */
+	public ModelFranchisee findPayType(String id) {
+		return officeDao.findPayType(id);
 	}
 }

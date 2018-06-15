@@ -31,6 +31,7 @@ import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.FzxRoleDao;
 import com.training.modules.train.dao.MediaRoleDao;
 import com.training.modules.train.dao.PcRoleDao;
+import com.training.modules.train.dao.ProtocolModelDao;
 import com.training.modules.train.dao.UserCheckDao;
 import com.training.modules.train.entity.BankAccount;
 import com.training.modules.train.entity.CheckAddr;
@@ -76,6 +77,8 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	private RedisClientTemplate redisClientTemplate;
 	@Autowired
 	private TrainModelService trainModelService;
+	@Autowired
+	private ProtocolModelDao protocolModelDao;
 	
 	/**
 	 * 保存用户审核的结果
@@ -265,7 +268,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 				updateUserMenu(modelFranchisee.getFranchiseeid(),"0");
 			}
 			//权益修改后如果支付方式改变就清除支付方式，重新签约--改变签约状态
-//			clearPayInfoAndChangeStatus(franchisee,modelFranchisee);
+			clearPayInfoAndChangeStatus(franchisee,modelFranchisee);
 		}
 		updateInvitationAndPush(find);	//向邀请表和推送消息表更改数据，把所有推送消息设置为未通过，邀请记录：没同意的设置为3会员拒绝，同意的设置为2商家拒绝。
 		save(modelFranchisee);
@@ -281,6 +284,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			postCSData(parpm1, "clearPayInfoOfFranchisee");
 		}
 		postCSData(parpm1, "resign");
+		protocolModelDao.deleteProtocolShopById(findFranchisee.getFranchiseeid());
 	}
 	private void postCSData(String parpm, String key) {
 		String url = ParametersFactory.getMtmyParamValues(key);

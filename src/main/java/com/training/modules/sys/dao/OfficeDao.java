@@ -13,6 +13,7 @@ import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeAcount;
 import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.OfficeLog;
+import com.training.modules.train.entity.ModelFranchisee;
 
 /**
  * 机构DAO接口
@@ -263,5 +264,11 @@ public interface OfficeDao extends TreeDao<Office> {
 	* @version 3.0.0  
 	*/  
 	public double queryusedLimit(OfficeAcount officeAcount);
+	/**
+	 * 查找该机构所属商家的支付方式
+	 * @param id
+	 * @return
+	 */
+	public ModelFranchisee findPayType(String id);
 
 }

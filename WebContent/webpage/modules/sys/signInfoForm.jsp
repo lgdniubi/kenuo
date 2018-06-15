@@ -41,9 +41,31 @@
 		}
 		function validateImgUrl(){
 			var flag = validOneImg('sign_fonturl')&&validOneImg('sign_backurl')&&validOneImg('cargo_fonturl')&&validOneImg('cargo_backurl')&&validOneImg('audit_fonturl')&&
-			validOneImg('audit_backurl')&&validOneImg('proxy_fonturl')&&validOneImg('proxy_backurl')&&validOneImg('pay_fonturl')&&validOneImg('pay_backurl');
-			return flag;
+			validOneImg('audit_backurl')&&validOneImg('proxy_fonturl')&&validOneImg('proxy_backurl');
+			var backFlag = validBackImg();
+			return flag && backFlag;
 		}
+		//校验银行卡图片
+		function validBackImg(id){
+			var payWay = '${payWay}';
+			if(payWay=='0'){
+				$("#pay-info input[name='payInfos[0].pay_fonturl']").each(function(k,y){
+					var vl = $(this).val();
+					if(vl == null || vl == ""){
+					   top.layer.alert('银行卡正面图片不可为空！', {icon: 0, title:'提醒'});
+					   return false;
+					}
+				})				
+				$("#pay-info input[name='payInfos[0].pay_backurl']").each(function(k,y){
+					var vl = $(this).val();
+					if(vl == null || vl == ""){
+					   top.layer.alert('银行卡图片反面不可为空！', {icon: 0, title:'提醒'});
+					   return false;
+					}
+				})	
+			}
+		}
+		
 		function validOneImg(id){
 			if($("#"+id).val() == null || $("#"+id).val() == ""){
 				   top.layer.alert('图片不可为空！', {icon: 0, title:'提醒'});
@@ -52,6 +74,27 @@
 				return true;
 			}
 		}
+		//添加付款方式
+		var a = 0;
+		function addPayData(value,obj){
+			if (value == 0) {//#pay-info
+				var s= "payfonturl";
+				var s2= "paybackurl";
+				a++;
+				var Htmlvalue = $("#pay-none #bank-pay").html();
+				Htmlvalue = Htmlvalue.replace(/payfonturl/g,s+a);
+				Htmlvalue = Htmlvalue.replace(/paybackurl/g,s2+a);
+				$("#pay-info").append(Htmlvalue);
+				uploadFile(s+a);
+				uploadFile(s2+a);
+			}else if(value == 1) {//#pay-info
+				//alert($("#ali-pay").html())
+				$("#pay-info").append($("#pay-none #ali-pay").html());
+			}else if(value == 2) {//#pay-info
+				//alert($("#bank-pay").html())
+				$("#pay-info").append($("#pay-none #wechat-pay").html());
+			}
+		} 
 		$(document).ready(function() {
 			$("#sign_username").focus();
 			validateForm = $("#inputForm").validate({
@@ -70,259 +113,47 @@
 				}
 			});
 		
-			$("#file_sign_fonturl_upload").uploadify({
-				'buttonText' : ' 请选择图片',
-				'method' : 'post',
-				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
-				'uploader' : '<%=uploadURL%>',
-				'fileObjName' : 'file_sign_fonturl_upload',//<input type="file"/>的name
-				'queueID' : 'file_sign_fonturl_queue',//与下面HTML的div.id对应
-				'method' : 'post',
-				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
-				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
-				'fileSizeLimit' : '10MB',//上传文件的大小限制
-				'multi' : false,//设置为true时可以上传多个文件
-				'auto' : true,//点击上传按钮才上传(false)
-				'onFallback' : function(){
-					//没有兼容的FLASH时触发
-					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
-				},
-				'onUploadSuccess' : function(file, data, response) { 
-					var jsonData = $.parseJSON(data);//text 转 json
-					if(jsonData.result == '200'){
-						$("#sign_fonturl").val(jsonData.file_url);
-						$("#officesign_fonturlImgsrc").attr('src',jsonData.file_url); 
-					}
-				}
-			});	
-			$("#file_sign_backurl_upload").uploadify({
-				'buttonText' : ' 请选择图片',
-				'method' : 'post',
-				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
-				'uploader' : '<%=uploadURL%>',
-				'fileObjName' : 'file_sign_backurl_upload',//<input type="file"/>的name
-				'queueID' : 'file_sign_backurl_queue',//与下面HTML的div.id对应
-				'method' : 'post',
-				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
-				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
-				'fileSizeLimit' : '10MB',//上传文件的大小限制
-				'multi' : false,//设置为true时可以上传多个文件
-				'auto' : true,//点击上传按钮才上传(false)
-				'onFallback' : function(){
-					//没有兼容的FLASH时触发
-					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
-				},
-				'onUploadSuccess' : function(file, data, response) { 
-					var jsonData = $.parseJSON(data);//text 转 json
-					if(jsonData.result == '200'){
-						$("#sign_backurl").val(jsonData.file_url);
-						$("#officesign_backurlImgsrc").attr('src',jsonData.file_url); 
-					}
-				}
-			});	
-			$("#file_cargo_backurl_upload").uploadify({
-				'buttonText' : ' 请选择图片',
-				'method' : 'post',
-				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
-				'uploader' : '<%=uploadURL%>',
-				'fileObjName' : 'file_cargo_backurl_upload',//<input type="file"/>的name
-				'queueID' : 'file_cargo_backurl_queue',//与下面HTML的div.id对应
-				'method' : 'post',
-				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
-				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
-				'fileSizeLimit' : '10MB',//上传文件的大小限制
-				'multi' : false,//设置为true时可以上传多个文件
-				'auto' : true,//点击上传按钮才上传(false)
-				'onFallback' : function(){
-					//没有兼容的FLASH时触发
-					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
-				},
-				'onUploadSuccess' : function(file, data, response) { 
-					var jsonData = $.parseJSON(data);//text 转 json
-					if(jsonData.result == '200'){
-						$("#cargo_backurl").val(jsonData.file_url);
-						$("#officecargo_backurlImgsrc").attr('src',jsonData.file_url); 
-					}
-				}
-			});	
-			$("#file_cargo_fonturl_upload").uploadify({
-				'buttonText' : ' 请选择图片',
-				'method' : 'post',
-				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
-				'uploader' : '<%=uploadURL%>',
-				'fileObjName' : 'file_cargo_fonturl_upload',//<input type="file"/>的name
-				'queueID' : 'file_cargo_fonturl_queue',//与下面HTML的div.id对应
-				'method' : 'post',
-				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
-				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
-				'fileSizeLimit' : '10MB',//上传文件的大小限制
-				'multi' : false,//设置为true时可以上传多个文件
-				'auto' : true,//点击上传按钮才上传(false)
-				'onFallback' : function(){
-					//没有兼容的FLASH时触发
-					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
-				},
-				'onUploadSuccess' : function(file, data, response) { 
-					var jsonData = $.parseJSON(data);//text 转 json
-					if(jsonData.result == '200'){
-						$("#cargo_fonturl").val(jsonData.file_url);
-						$("#officecargo_fonturlImgsrc").attr('src',jsonData.file_url); 
-					}
-				}
-			});	
-			
-			$("#file_audit_fonturl_upload").uploadify({
-				'buttonText' : ' 请选择图片',
-				'method' : 'post',
-				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
-				'uploader' : '<%=uploadURL%>',
-				'fileObjName' : 'file_audit_fonturl_upload',//<input type="file"/>的name
-				'queueID' : 'file_audit_fonturl_queue',//与下面HTML的div.id对应
-				'method' : 'post',
-				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
-				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
-				'fileSizeLimit' : '10MB',//上传文件的大小限制
-				'multi' : false,//设置为true时可以上传多个文件
-				'auto' : true,//点击上传按钮才上传(false)
-				'onFallback' : function(){
-					//没有兼容的FLASH时触发
-					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
-				},
-				'onUploadSuccess' : function(file, data, response) { 
-					var jsonData = $.parseJSON(data);//text 转 json
-					if(jsonData.result == '200'){
-						$("#audit_fonturl").val(jsonData.file_url);
-						$("#officeaudit_fonturlImgsrc").attr('src',jsonData.file_url); 
-					}
-				}
-			});	
-			$("#file_audit_backurl_upload").uploadify({
-				'buttonText' : ' 请选择图片',
-				'method' : 'post',
-				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
-				'uploader' : '<%=uploadURL%>',
-				'fileObjName' : 'file_audit_backurl_upload',//<input type="file"/>的name
-				'queueID' : 'file_audit_backurl_queue',//与下面HTML的div.id对应
-				'method' : 'post',
-				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
-				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
-				'fileSizeLimit' : '10MB',//上传文件的大小限制
-				'multi' : false,//设置为true时可以上传多个文件
-				'auto' : true,//点击上传按钮才上传(false)
-				'onFallback' : function(){
-					//没有兼容的FLASH时触发
-					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
-				},
-				'onUploadSuccess' : function(file, data, response) { 
-					var jsonData = $.parseJSON(data);//text 转 json
-					if(jsonData.result == '200'){
-						$("#audit_backurl").val(jsonData.file_url);
-						$("#officeaudit_backurlImgsrc").attr('src',jsonData.file_url); 
-					}
-				}
-			});	
-			$("#file_proxy_fonturl_upload").uploadify({
-				'buttonText' : ' 请选择图片',
-				'method' : 'post',
-				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
-				'uploader' : '<%=uploadURL%>',
-				'fileObjName' : 'file_proxy_fonturl_upload',//<input type="file"/>的name
-				'queueID' : 'file_proxy_fonturl_queue',//与下面HTML的div.id对应
-				'method' : 'post',
-				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
-				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
-				'fileSizeLimit' : '10MB',//上传文件的大小限制
-				'multi' : false,//设置为true时可以上传多个文件
-				'auto' : true,//点击上传按钮才上传(false)
-				'onFallback' : function(){
-					//没有兼容的FLASH时触发
-					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
-				},
-				'onUploadSuccess' : function(file, data, response) { 
-					var jsonData = $.parseJSON(data);//text 转 json
-					if(jsonData.result == '200'){
-						$("#proxy_fonturl").val(jsonData.file_url);
-						$("#officeproxy_fonturlImgsrc").attr('src',jsonData.file_url); 
-					}
-				}
-			});	
-			$("#file_proxy_backurl_upload").uploadify({
-				'buttonText' : ' 请选择图片',
-				'method' : 'post',
-				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
-				'uploader' : '<%=uploadURL%>',
-				'fileObjName' : 'file_proxy_backurl_upload',//<input type="file"/>的name
-				'queueID' : 'file_proxy_backurl_queue',//与下面HTML的div.id对应
-				'method' : 'post',
-				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
-				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
-				'fileSizeLimit' : '10MB',//上传文件的大小限制
-				'multi' : false,//设置为true时可以上传多个文件
-				'auto' : true,//点击上传按钮才上传(false)
-				'onFallback' : function(){
-					//没有兼容的FLASH时触发
-					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
-				},
-				'onUploadSuccess' : function(file, data, response) { 
-					var jsonData = $.parseJSON(data);//text 转 json
-					if(jsonData.result == '200'){
-						$("#proxy_backurl").val(jsonData.file_url);
-						$("#officeproxy_backurlImgsrc").attr('src',jsonData.file_url); 
-					}
-				}
-			});	
-			$("#file_pay_fonturl_upload").uploadify({
-				'buttonText' : ' 请选择图片',
-				'method' : 'post',
-				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
-				'uploader' : '<%=uploadURL%>',
-				'fileObjName' : 'file_pay_fonturl_upload',//<input type="file"/>的name
-				'queueID' : 'file_pay_fonturl_queue',//与下面HTML的div.id对应
-				'method' : 'post',
-				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
-				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
-				'fileSizeLimit' : '10MB',//上传文件的大小限制
-				'multi' : false,//设置为true时可以上传多个文件
-				'auto' : true,//点击上传按钮才上传(false)
-				'onFallback' : function(){
-					//没有兼容的FLASH时触发
-					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
-				},
-				'onUploadSuccess' : function(file, data, response) { 
-					var jsonData = $.parseJSON(data);//text 转 json
-					if(jsonData.result == '200'){
-						$("#pay_fonturl").val(jsonData.file_url);
-						$("#officepay_fonturlImgsrc").attr('src',jsonData.file_url); 
-					}
-				}
-			});	
-			$("#file_pay_backurl_upload").uploadify({
-				'buttonText' : ' 请选择图片',
-				'method' : 'post',
-				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
-				'uploader' : '<%=uploadURL%>',
-				'fileObjName' : 'file_pay_backurl_upload',//<input type="file"/>的name
-				'queueID' : 'file_pay_backurl_queue',//与下面HTML的div.id对应
-				'method' : 'post',
-				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
-				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
-				'fileSizeLimit' : '10MB',//上传文件的大小限制
-				'multi' : false,//设置为true时可以上传多个文件
-				'auto' : true,//点击上传按钮才上传(false)
-				'onFallback' : function(){
-					//没有兼容的FLASH时触发
-					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
-				},
-				'onUploadSuccess' : function(file, data, response) { 
-					var jsonData = $.parseJSON(data);//text 转 json
-					if(jsonData.result == '200'){
-						$("#pay_backurl").val(jsonData.file_url);
-						$("#officepay_backurlImgsrc").attr('src',jsonData.file_url); 
-					}
-				}
-			});	
+			uploadFile('sign_fonturl')
+			uploadFile('sign_backurl')
+			uploadFile('cargo_fonturl')
+			uploadFile('cargo_backurl')
+			uploadFile('audit_fonturl')
+			uploadFile('audit_backurl')
+			uploadFile('proxy_fonturl')
+			uploadFile('proxy_backurl')
+			/* uploadFile('pay_fonturl')
+			uploadFile('pay_backurl') */
 		});
 	
+		function uploadFile(str){
+			//pay_backurl	
+		
+			$("#file_"+str+"_upload").uploadify({
+				'buttonText' : ' 请选择图片',
+				'method' : 'post',
+				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
+				'uploader' : '<%=uploadURL%>',
+				'fileObjName' : 'file_'+str+'_upload',//<input type="file"/>的name
+				'queueID' : 'file_'+str+'_queue',//与下面HTML的div.id对应
+				'method' : 'post',
+				'fileTypeDesc': '支持的格式：*.BMP;*.JPG;*.PNG;*.GIF;',
+				'fileTypeExts' : '*.BMP;*.JPG;*.PNG;*.GIF;', //控制可上传文件的扩展名，启用本项时需同时声明fileDesc 
+				'fileSizeLimit' : '10MB',//上传文件的大小限制
+				'multi' : false,//设置为true时可以上传多个文件
+				'auto' : true,//点击上传按钮才上传(false)
+				'onFallback' : function(){
+					//没有兼容的FLASH时触发
+					alert("您未安装FLASH控件，无法上传图片！请安装FLASH控件后再试。");
+				},
+				'onUploadSuccess' : function(file, data, response) { 
+					var jsonData = $.parseJSON(data);//text 转 json
+					if(jsonData.result == '200'){
+						$("#"+str).val(jsonData.file_url);
+						$("#office"+str+"Imgsrc").attr('src',jsonData.file_url); 
+					}
+				}
+			});	
+		}
 		
 			
 			
@@ -341,9 +172,7 @@
 		<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/saveSignInfo" method="post" class="form-horizontal">
 			<form:hidden path="id"/>
 			<input type="hidden" name="create_user" value="${user.id}"/>
-			<input type="hidden" name="payInfos[0].create_user" value="${user.id}"/>
-			<input type="hidden" name="payInfos[1].create_user" value="${user.id}"/>
-			<input type="hidden" name="payInfos[2].create_user" value="${user.id}"/>
+			<input type="hidden" name="payWay" value="${payWay}"/>
 			<input type="hidden" name="office_id" value="${office.id}"/>
 			<input type="hidden" name="franchisee_id" value="${office.franchisee.id}"/>
 			<input type="hidden" name="office_pid" value="${office.parent.id}"/>
@@ -504,73 +333,105 @@
 				         	<td class="width-35"><input value="${infoVo.proxy_email}" name="proxy_email" class="form-control required"></td>
 						</tr>
 						
-						
-						<tr><td colspan="4" class=""><label class="pull-left">付款账户</label></td></tr>
-						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>开户银行</label></td>
-				         	<td class="width-35"><input value="${payInfos[0].pay_name}" name="payInfos[0].pay_name" class="form-control required"></td>
-				         	<td class="width-35" rowspan="3">
-				         		<img id="officepay_fonturlImgsrc" src="${payInfos[0].pay_fonturl}" alt="" style="width: 200px;height: 100px;"/>
-								<input type="hidden" id="pay_fonturl" name="payInfos[0].pay_fonturl" class="required" value="${payInfos[0].pay_fonturl}"><!-- 图片隐藏文本框 -->
-								<p>&nbsp;</p>
-			                   	<div class="upload">
-									<input type="file" name="file_pay_fonturl_upload" class="required" id="file_pay_fonturl_upload">
-								</div>
-								<div id="file_pay_fonturl_queue"></div>
-				         	</td>
-				         	<td class="width-35" rowspan="3">
-				         		<img id="officepay_backurlImgsrc" src="${payInfos[0].pay_backurl}" alt="" style="width: 200px;height: 100px;"/>
-								<input type="hidden" id="pay_backurl" name="payInfos[0].pay_backurl" value="${payInfos[0].pay_backurl}"><!-- 图片隐藏文本框 -->
-								<p>&nbsp;</p>
-			                   	<div class="upload">
-									<input type="file" name="file_pay_backurl_upload" class="required" id="file_pay_backurl_upload">
-								</div>
-								<div id="file_pay_backurl_queue"></div>
-				         	</td>
-						</tr>
-							<input value="0" name="payInfos[0].pay_type" type="hidden">
-							<input value="1" name="payInfos[1].pay_type" type="hidden">
-							<input value="2" name="payInfos[2].pay_type" type="hidden">
-							<input value="支付宝" name="payInfos[1].pay_name" type="hidden">
-							<input value="微信" name="payInfos[2].pay_name" type="hidden">
-						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>账户名称:</label></td>
-				         	<td class="width-35"><input value="${payInfos[0].pay_username}" name="payInfos[0].pay_username" class="form-control required"></td>
-						</tr>
-						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>银行账号:</label></td>
-				         	<td class="width-35"><input value="${payInfos[0].pay_account}" name="payInfos[0].pay_account" class="form-control required"></td>
-						</tr>
-						<tr>
-						<td colspan="2" class=""><label class="pull-left">支付宝</label></td>
-						<td colspan="2" class=""><label class="pull-left">微信</label></td>
-						</tr>
-						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>账号</label></td>
-				         	<td class="width-35"><input value="${payInfos[2].pay_account}" name="payInfos[2].pay_account" class="form-control required"></td>
-				         	<td class="width-35">账号</td>
-				         	<td class="width-35"><input value="${payInfos[1].pay_account}" name="payInfos[1].pay_account" class="form-control required"></td>
-						</tr>
-						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
-				         	<td class="width-35"><input value="${payInfos[2].pay_username}" name="payInfos[2].pay_username" class="form-control required"></td>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
-				         	<td class="width-35"><input value="${payInfos[1].pay_username}" name="payInfos[1].pay_username" class="form-control required"></td>
-						</tr>
-						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>电话:</label></td>
-				         	<td class="width-35"><input value="${payInfos[2].pay_mobile}" name="payInfos[2].pay_mobile" class="form-control required"></td>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>电话:</label></td>
-				         	<td class="width-35"><input value="${payInfos[1].pay_mobile}" name="payInfos[1].pay_mobile" class="form-control required"></td>
-						</tr>
-						
 			      </tbody>
-			     
 		      </table>
+		      <c:if test="${payWay == 0}"><!-- 0是线下支付 -->
+		      <div id="add-pattern" onclick="addPayData(0,this)"><i class="icon-add-pattern"></i>添加账户</div>
+		      </c:if>
+		      <c:if test="${payWay == 1}"><!-- 1是线上支付 -->
+		      <div id="add-pattern" onclick="addPayData(1,this)"><i class="icon-add-pattern"></i>添加支付宝</div>
+		      <div id="add-pattern" onclick="addPayData(2,this)"><i class="icon-add-pattern"></i>添加微信</div>
+		      </c:if>
+		      <table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+		      	<tbody id="pay-info">
+		      	<tr><td colspan="6" class=""><label class="pull-left">付款账户</label></td></tr>
+		      	<!-- <tr><td colspan="6" class=""></td><input type="button" onclick="addPayData(0)" id="bank-card" value="添加银行卡"/></tr>
+		      	<tr><td colspan="3" class=""></td><input type="button" onclick="addPayData(1)" id="ali" value="添加支付宝"/></tr>
+		      	<tr><td colspan="3" class=""></td><input type="button"  onclick="addPayData(2)"id="wechat" value="添加微信"/></tr> -->
+		      	</tbody>
+		      	
+		      </table>
+			     
 		      <input type="button" value="保存签约信息" onclick="saveSign()"/>
 			  <a href="${ctx}/sys/office/form?id=${office.id}">上一步</a>
 		</form:form>
 		<div class="loading"></div>
+	</div>
+	<div style="display: none;" id="pay-none">
+		<!-- 银行卡 -->
+		<div class="payment-item" >
+			<table >
+				<tbody id="bank-pay">
+					<tr>
+						<td  class="width-15 active"><label class="pull-right"><font color="red"></font>开户银行</label></td>
+				        	<td class="width-35"><input value="" name="payInfos[0].pay_name" class="form-control required"></td>
+				        	<td class="width-35" rowspan="3">
+				        		<img id="officepayfonturlImgsrc" src="" alt="" style="width: 200px;height: 100px;"/>
+							<input type="hidden" id="payfonturl" name="payInfos[0].pay_fonturl" class="required" value=""><!-- 图片隐藏文本框 -->
+							<p>&nbsp;</p>
+				                 	<div class="upload">
+								<input type="file" name="file_payfonturl_upload" class="required" id="file_payfonturl_upload">
+							</div>
+							<div id="file_payfonturl_queue"></div>
+				        	</td>
+				        	<td class="width-35" rowspan="3">
+				        		<img id="officepaybackurlImgsrc" src="" alt="" style="width: 200px;height: 100px;"/>
+							<input type="hidden" id="paybackurl" name="payInfos[0].pay_backurl" value=""><!-- 图片隐藏文本框 -->
+							<p>&nbsp;</p>
+				                 	<div class="upload">
+								<input type="file" name="file_paybackurl_upload" class="required" id="file_paybackurl_upload">
+							</div>
+							<div id="file_paybackurl_queue"></div>
+				        	</td>
+					</tr>
+					<input value="0" name="payInfos[0].pay_type" type="hidden">
+					<tr>
+						<td  class="width-15 active"><label class="pull-right"><font color="red"></font>账户名称:</label></td>
+				        <td class="width-35"><input value="" name="payInfos[0].pay_username" class="form-control required"></td>
+					</tr>
+					<tr>
+						<td  class="width-15 active"><label class="pull-right"><font color="red"></font>银行账号:</label></td>
+				        <td class="width-35"><input value="" name="payInfos[0].pay_account" class="form-control required"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<!-- 支付宝 -->
+		<div class="payment-item" >
+			<table >
+				<tbody id="ali-pay">
+					<tr>
+						<td colspan="6" class="active"><label class="pull-left">支付宝</label></td>
+					</tr>
+					<tr>
+						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
+			        	<td class="width-35"><input value="" name="payInfos[1].pay_account" class="form-control required"></td>
+						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
+				        <td class="width-35"><input value="" name="payInfos[1].pay_username" class="form-control required"></td>
+						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
+				        <td class="width-35"><input value="" name="payInfos[1].pay_mobile" class="form-control required"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<!-- 微信 -->
+		<div class="payment-item" >
+			<table >
+				<tbody id="wechat-pay">
+					<tr>
+					<td colspan="6" class="active"><label class="pull-left">微信</label></td>
+					</tr>
+					<tr>
+						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
+				        <td class="width-35"><input value="" name="payInfos[2].pay_account" class="form-control required"></td>
+						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
+				        <td class="width-35"><input value="" name="payInfos[2].pay_username" class="form-control required"></td>
+						<td class="width-15 active"><label class="pull-right"><font color="red"></font>电话:</label></td>
+				        <td class="width-35"><input value="" name="payInfos[2].pay_mobile" class="form-control required"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
 </body>
 </html>

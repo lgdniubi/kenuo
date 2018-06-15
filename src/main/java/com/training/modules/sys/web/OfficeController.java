@@ -59,6 +59,7 @@ import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.ContractInfo;
 import com.training.modules.train.entity.ContractInfoVo;
+import com.training.modules.train.entity.ModelFranchisee;
 import com.training.modules.train.entity.PayInfo;
 import com.training.modules.train.entity.TrainRuleParam;
 
@@ -360,7 +361,7 @@ public class OfficeController extends BaseController {
 			}
 		}
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
-		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
+//		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
 		return "redirect:" + adminPath + "/sys/office/form?id="+office.getId()+"&parentIds="+office.getParentIds();
 //		return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
@@ -369,56 +370,124 @@ public class OfficeController extends BaseController {
 	@RequiresPermissions(value={"sys:office:add","sys:office:edit"},logical=Logical.OR)
 	@RequestMapping(value = "signInfo")
 	@SuppressWarnings("unchecked")
-	public String signInfo(String officeid,Office office, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
-		User user = UserUtils.getUser();
-		String weburl = ParametersFactory.getTrainsParamValues("contract_data_path");
-		logger.info("##### web接口路径:"+weburl);
-		String parpm = "{\"office_id\":\""+office.getId()+"\"}";
+	public String signInfo(Office office, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		try {
+			User user = UserUtils.getUser();
+			String weburl = ParametersFactory.getTrainsParamValues("contract_data_path");
+			logger.info("##### web接口路径:"+weburl);
+			String parpm = "{\"office_id\":\""+office.getId()+"\"}";
 //		String url="http://172.50.3.16:8081/cs_service/pub/queryContractInfoAudit.htm";
-		String url=weburl;
-		String result = WebUtils.postCSObject(parpm, url);
-		JSONObject jsonObject = JSONObject.fromObject(result);
-		ContractInfoVo infoVo = (ContractInfoVo) JSONObject.toBean(jsonObject.getJSONObject("data"), ContractInfoVo.class);
-		if(!(jsonObject.get("data") instanceof JSONNull)){
-			List<PayInfo> payInfos = JSONArray.toList(jsonObject.getJSONObject("data").getJSONArray("payInfos"), new PayInfo(),new JsonConfig());
-			model.addAttribute("payInfos", payInfos);
+			String url=weburl;
+			String result = WebUtils.postCSObject(parpm, url);
+			JSONObject jsonObject = JSONObject.fromObject(result);
+			ContractInfoVo infoVo = (ContractInfoVo) JSONObject.toBean(jsonObject.getJSONObject("data"), ContractInfoVo.class);
+			if(!(jsonObject.get("data") instanceof JSONNull)){
+				List<PayInfo> payInfos = JSONArray.toList(jsonObject.getJSONObject("data").getJSONArray("payInfos"), new PayInfo(),new JsonConfig());
+				model.addAttribute("payInfos", payInfos);
+			}
+			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+			if(!"200".equals(jsonObject.get("result"))){
+				throw new RuntimeException("获取签约信息失败");
+			}
+			ModelFranchisee mod = officeService.findPayType(office.getId());
+			model.addAttribute("infoVo", infoVo);
+			model.addAttribute("office", office);
+			model.addAttribute("payWay", mod.getPaytype());
+			model.addAttribute("user", user);
+		} catch (Exception e) {
+			e.printStackTrace();
+			addMessage(redirectAttributes, "获取签约信息失败");
 		}
-		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
-		/*if("200".equals(jsonObject.get("result"))){
-		}*/
-		model.addAttribute("infoVo", infoVo);
-		model.addAttribute("office", office);
-		model.addAttribute("user", user);
 		return "modules/sys/signInfoForm";
 	}
 	@RequiresPermissions(value={"sys:office:add","sys:office:edit"},logical=Logical.OR)
 	@RequestMapping(value = "saveSignInfo")
-	public String saveSignInfo(ContractInfoVo contractInfo, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
-		 JsonConfig config = new JsonConfig();
-		 /*contractInfo.getPayInfos().get(0).setPay_username("2222222");
-		 contractInfo.getPayInfos().get(0).setCreate_user("125");
-		 contractInfo.getPayInfos().get(1).setCreate_user("222");
-		 contractInfo.getPayInfos().get(1).setPay_mobile("125555555");
-		 contractInfo.getPayInfos().get(2).setPay_mobile("125555555");
-		 contractInfo.getPayInfos().get(2).setCreate_user("3335");
-		 contractInfo.getPayInfos().get(0).setPay_backurl("http://back");
-		 contractInfo.getPayInfos().get(0).setPay_fonturl("http://front");*/
-		JSONObject j = JSONObject.fromObject(contractInfo,config);
-		System.out.println(j.toString());
-		String weburl = ParametersFactory.getTrainsParamValues("contract_save_path");
-		logger.info("##### web接口路径:"+weburl);
-		String parpm = j.toString();
+	public String saveSignInfo(ContractInfoVo contractInfo,Integer payWay, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		try {
+			List<PayInfo> payInfos = contractInfo.getPayInfos();
+			List<PayInfo> list = creatPayInfoList(payWay, payInfos,contractInfo.getCreate_user());
+			contractInfo.setPayInfos(list);
+			JsonConfig config = new JsonConfig();
+			JSONObject j = JSONObject.fromObject(contractInfo,config);
+			System.out.println(j.toString());
+			String weburl = ParametersFactory.getTrainsParamValues("contract_save_path");
+			logger.info("##### web接口路径:"+weburl);
+			String parpm = j.toString();
 //		String url="http://172.50.3.16:8081/cs_service/pub/saveContractInfoAudit.htm";
-		String url=weburl;
-		String result = WebUtils.postCSObject(parpm, url);
-		JSONObject jsonObject = JSONObject.fromObject(result);
-		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
-		if(!"200".equals(jsonObject.get("result"))){
-			addMessage(redirectAttributes, "保存机构失败");
-		}else{
-			addMessage(redirectAttributes, "保存机构成功");
+			String url=weburl;
+			String result = WebUtils.postCSObject(parpm, url);
+			JSONObject jsonObject = JSONObject.fromObject(result);
+			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+			if(!"200".equals(jsonObject.get("result"))){
+				throw new RuntimeException("保存签约信息失败");
+			}
+			addMessage(redirectAttributes, "保存签约信息成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			addMessage(redirectAttributes, "保存签约信息失败");
 		}
 		return "redirect:" + adminPath + "/sys/office/signInfo?id="+contractInfo.getOffice_id();
+	}
+
+	private List<PayInfo> creatPayInfoList(Integer payWay, List<PayInfo> payInfos, String userid) {
+		List<PayInfo> ns = new ArrayList<>();
+		if(payWay == 0){ //线下支付
+			PayInfo payInfo = payInfos.get(0);
+			String[] username = payInfo.getPay_username().split(",");
+			String[] account = payInfo.getPay_account().split(",");
+			String[] name = payInfo.getPay_name().split(",");
+			String[] font = payInfo.getPay_fonturl().split(",");
+			String[] back = payInfo.getPay_backurl().split(",");
+//			int a = back.length;
+			PayInfo np ;
+			for (int i = 0; i < back.length; i++) {
+				np = new PayInfo();
+				np.setCreate_user(userid);
+				np.setPay_username(username[i]);
+				np.setPay_account(account[i]);
+				np.setPay_name(name[i]);
+				np.setPay_fonturl(font[i]);
+				np.setPay_backurl(back[i]);
+				ns.add(np);
+			}
+		}else if(payWay == 1){ //支付宝支付
+			PayInfo payInfo = payInfos.get(1);
+			if(payInfo!=null){
+				String[] username = payInfo.getPay_username().split(",");
+				String[] account = payInfo.getPay_account().split(",");
+				String[] mobile = payInfo.getPay_mobile().split(",");
+				PayInfo np ;
+				for (int i = 0; i < account.length; i++) {
+					np = new PayInfo();
+					np.setCreate_user(userid);
+					np.setPay_username(username[i]);
+					np.setPay_account(account[i]);
+					np.setPay_mobile(mobile[i]);
+					np.setPay_name("支付宝");
+					np.setPay_type("1");
+					ns.add(np);
+				}
+			}
+		 //微信支付
+			PayInfo payInfo2 = payInfos.get(2);
+			if(payInfo2!=null){
+				String[] username2 = payInfo2.getPay_username().split(",");
+				String[] account2 = payInfo2.getPay_account().split(",");
+				String[] mobile2 = payInfo2.getPay_mobile().split(",");
+				PayInfo np2 ;
+				for (int i = 0; i < account2.length; i++) {
+					np2 = new PayInfo();
+					np2.setCreate_user(userid);
+					np2.setPay_username(username2[i]);
+					np2.setPay_account(account2[i]);
+					np2.setPay_mobile(mobile2[i]);
+					np2.setPay_name("微信");
+					np2.setPay_type("2");
+					ns.add(np2);
+				}
+			}
+		}
+		return ns;
 	}
 	
 	/**
