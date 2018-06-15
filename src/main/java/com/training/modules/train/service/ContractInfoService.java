@@ -4,6 +4,7 @@ package com.training.modules.train.service;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.training.common.persistence.Page;
 import com.training.modules.ec.utils.WebUtils;
@@ -18,7 +19,8 @@ import net.sf.json.JsonConfig;
 @Service
 public class ContractInfoService {
 
-	
+		@Autowired
+		private ProtocolModelService protocolModelService;
 	
 	public Page<ContractInfo> findPage(Page<ContractInfo> page, ContractInfo contractInfo){
 		JSONObject jsonO = new JSONObject();
@@ -52,6 +54,10 @@ public class ContractInfoService {
 		jsonO.put("status", info.getStatus());
 		jsonO.put("remarks", info.getRemarks());
 		jsonO.put("update_user", UserUtils.getUser().getId());
-		WebUtils.postCS(jsonO, ParametersFactory.getTrainsParamValues("contract_status_path"));
+		JSONObject json = WebUtils.postCS(jsonO, ParametersFactory.getTrainsParamValues("contract_status_path"));
+		if("200".equals(json.getString("result")) && "3".equals(jsonO.get("status"))){
+			//审核驳回清空已签协议
+			this.protocolModelService.deleteProtocolShopOfOffice(info.getOffice_id());
+		}
 	}
 }

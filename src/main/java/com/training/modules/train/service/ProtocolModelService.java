@@ -176,5 +176,12 @@ public class ProtocolModelService extends CrudService<ProtocolModelDao,ProtocolM
 	public List<ProtocolModel> findOldModelList(String id) {
 		return protocolModelDao.findOldModelList(id);
 	}
+	/**
+	 * 删除机构签过的协议
+	 * @param office_id
+	 */
+	public void deleteProtocolShopOfOffice(String office_id){
+		this.protocolModelDao.deleteProtocolShopOfOffice(office_id);
+	}
 	
 }
