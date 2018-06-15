@@ -76,7 +76,7 @@ public class Authentication extends CommonService{
 						String weburl = ParametersFactory.getTrainsParamValues("resign");
 						//将合同状态改成已失效
 							//authenticationMapper.updateprotocolstatus(map);
-							String param = "{'franchisee_id':"+s.getFranchisee_id()+",'update_user':1}";
+							String param = "{'franchisee_id':"+s.getFranchisee_id()+",'update_user':'1'}";
 							WebUtils.postCSObject(param, weburl);
 							
 						//删除商家协议
