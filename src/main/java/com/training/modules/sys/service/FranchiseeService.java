@@ -133,4 +133,22 @@ public class FranchiseeService extends TreeService<FranchiseeDao,Franchisee>{
 	public void updateMtmyPublicServiceFlag(Franchisee franchisee) {
 		franchiseeDao.updateMtmyPublicServiceFlag(franchisee);
 	}
+	
+	/**
+	 * 保存商品详情
+	 * @param description
+	 * @param id
+	 */
+	public void saveFranchiseeDescription(String description,String id){
+		franchiseeDao.saveFranchiseeDescription(description, id);
+	}
+	
+	/**
+	 * 同步每天美耶保存商品详情
+	 * @param description
+	 * @param id
+	 */
+	public void saveMtmyFranchiseeDescription(String description,String id){
+		franchiseeDao.saveMtmyFranchiseeDescription(description, id);
+	}
 }

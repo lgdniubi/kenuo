@@ -27,6 +27,7 @@
 		  f.bank_name AS 'bankName',
 		  f.public_service_flag AS 'publicServiceFlag',
 		  f.status,
+		  f.description,
 		  f.remarks
 	</sql>
 	
@@ -288,5 +289,19 @@
 			public_service_flag = #{publicServiceFlag}
 		WHERE
 			id=#{id}
+	</update>
+	
+	<!-- 保存商品详情 -->
+	<update id="saveFranchiseeDescription">
+		UPDATE sys_franchisee 
+		SET description = #{description}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 同步每天美耶保存商品详情 -->
+	<update id="saveMtmyFranchiseeDescription">
+		UPDATE mtmydb.mtmy_franchisee
+		SET description = #{description}
+		WHERE id = #{id}
 	</update>
 </mapper>

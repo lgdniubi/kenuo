@@ -72,6 +72,9 @@
 					    				<shiro:hasPermission name="sys:franchisee:del">
 											<a href="${ctx}/sys/franchisee/delete?id=${franchisee.id}" onclick="return confirmx('确定要删除该商家吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
 										</shiro:hasPermission>
+										<shiro:hasPermission name="sys:franchisee:description">
+											<a onclick="openDialog('商家详情', '${ctx}/sys/franchisee/franchiseeDsecriptionForm?id=${franchisee.id}','800px','620px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i>商家详情</a>
+										</shiro:hasPermission>
 										<c:if test="${franchisee.code == '1'}">
 											<shiro:hasPermission name="sys:franchisee:add">
 												<a href="#" onclick="openDialog('添加下级商家', '${ctx}/sys/franchisee/form?parent.id=${franchisee.id}&opflag=ADD','800px', '620px')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i> 添加下级商家</a>

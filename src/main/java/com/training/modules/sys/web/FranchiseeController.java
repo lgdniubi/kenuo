@@ -286,4 +286,44 @@ public class FranchiseeController extends BaseController{
 		}
     	return map;
 	}
+	
+	/**
+	 * 跳转商家详情页
+	 * @param franchisee
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="franchiseeDsecriptionForm")
+	public String franchiseeDsecriptionForm(Franchisee franchisee,HttpServletRequest request,Model model){
+		try{
+			franchisee = franchiseeService.get(franchisee.getId());
+			model.addAttribute("franchisee", franchisee);
+		}catch(Exception e){
+			logger.error("跳转商家详情页出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "跳转商家详情页出现异常", e);
+		}
+		return "modules/sys/franchiseeDsecriptionForm";
+	}
+	
+	/**
+	 * 保存商家详情
+	 * @param franchisee
+	 * @param request
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value="saveFranchiseeDsecription")
+	public String saveFranchiseeDsecription(Franchisee franchisee,HttpServletRequest request,RedirectAttributes redirectAttributes){
+		try{
+			franchiseeService.saveFranchiseeDescription(franchisee.getDescription(),franchisee.getId());
+			franchiseeService.saveMtmyFranchiseeDescription(franchisee.getDescription(),franchisee.getId());
+			addMessage(redirectAttributes, "保存成功");
+		}catch(Exception e){
+			logger.error("保存商家详情出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "保存商家详情出现异常", e);
+			addMessage(redirectAttributes, "保存失败");
+		}
+		return "redirect:" + adminPath + "/sys/franchisee/list";
+	}
 }
