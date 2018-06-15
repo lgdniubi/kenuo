@@ -176,7 +176,7 @@
 			name = #{name}, 
 			href = #{href}, 
 			icon = #{icon}, 
-			is_shops, = #{isShow}, 
+			is_shops = #{isShow}, 
 			sort = #{sort},
 			update_by = #{updateBy.id}, 
 			update_date = #{updateDate}, 
