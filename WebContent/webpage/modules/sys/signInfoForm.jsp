@@ -46,8 +46,8 @@
 			return flag && backFlag;
 		}
 		//校验银行卡图片
+		var payWay = '${payWay}';
 		function validBackImg(id){
-			var payWay = '${payWay}';
 			if(payWay=='0'){
 				$("#pay-info input[name='payInfos[0].pay_fonturl']").each(function(k,y){
 					var vl = $(this).val();
@@ -64,6 +64,7 @@
 					}
 				})	
 			}
+			return true;
 		}
 		
 		function validOneImg(id){
@@ -72,6 +73,15 @@
 				   return false;
 			}else{
 				return true;
+			}
+		}
+		function delPayData(value,obj){
+			if (value == 0){
+				$(obj).parents('.bank').remove();
+			}else if(value == 1) {
+				$(obj).parents('.ali').remove();
+			}else if(value == 2) {
+				$(obj).parents('.wechat').remove();
 			}
 		}
 		//添加付款方式
@@ -123,6 +133,14 @@
 			uploadFile('proxy_backurl')
 			/* uploadFile('pay_fonturl')
 			uploadFile('pay_backurl') */
+			if(payWay=='0'){
+				var paylen = '${paylen}'
+				a= parseInt(paylen);
+				for (var len = 0; len < a; len++) {
+					uploadFile('payfonturl'+len)
+					uploadFile('paybackurl'+len)
+				}
+			}
 		});
 	
 		function uploadFile(str){
@@ -335,20 +353,103 @@
 						
 			      </tbody>
 		      </table>
-		      <c:if test="${payWay == 0}"><!-- 0是线下支付 -->
+		      <c:if test="${payWay == 1}"><!-- 0是线下支付 -->
 		      <div id="add-pattern" onclick="addPayData(0,this)"><i class="icon-add-pattern"></i>添加账户</div>
 		      </c:if>
 		      <c:if test="${payWay == 1}"><!-- 1是线上支付 -->
 		      <div id="add-pattern" onclick="addPayData(1,this)"><i class="icon-add-pattern"></i>添加支付宝</div>
 		      <div id="add-pattern" onclick="addPayData(2,this)"><i class="icon-add-pattern"></i>添加微信</div>
 		      </c:if>
-		      <table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
-		      	<tbody id="pay-info">
+		      <table id="pay-info" class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+		      	<tbody >
 		      	<tr><td colspan="6" class=""><label class="pull-left">付款账户</label></td></tr>
 		      	<!-- <tr><td colspan="6" class=""></td><input type="button" onclick="addPayData(0)" id="bank-card" value="添加银行卡"/></tr>
 		      	<tr><td colspan="3" class=""></td><input type="button" onclick="addPayData(1)" id="ali" value="添加支付宝"/></tr>
 		      	<tr><td colspan="3" class=""></td><input type="button"  onclick="addPayData(2)"id="wechat" value="添加微信"/></tr> -->
 		      	</tbody>
+		      	<c:if test="${payWay == 0}">
+		      		<c:forEach items="${payInfos}" var="pay" varStatus="i">
+			      		<tbody class='bank'>
+							<tr>
+								<td  class="width-15 active"><label class="pull-right"><font color="red"></font>开户银行</label></td>
+						        	<td class="width-35"><input value="${pay.pay_name}" name="payInfos[0].pay_name" class="form-control required"></td>
+						        	<td class="width-35" rowspan="3">
+						        		<img id="officepayfonturl${i.index}Imgsrc" src="${pay.pay_fonturl}" alt="" style="width: 200px;height: 100px;"/>
+									<input type="hidden" id="payfonturl${i.index}" name="payInfos[0].pay_fonturl" class="required" value=""><!-- 图片隐藏文本框 -->
+									<p>&nbsp;</p>
+						                 	<div class="upload">
+										<input type="file" name="file_payfonturl${i.index}_upload" class="required" id="file_payfonturl${i.index}_upload">
+									</div>
+									<div id="file_payfonturl${i.index}_queue"></div>
+						        	</td>
+						        	<td class="width-35" rowspan="3">
+						        		<img id="officepaybackurl${i.index}Imgsrc" src="${pay.pay_backurl}" alt="" style="width: 200px;height: 100px;"/>
+									<input type="hidden" id="paybackurl${i.index}" name="payInfos[0].pay_backurl" value=""><!-- 图片隐藏文本框 -->
+									<p>&nbsp;</p>
+						                 	<div class="upload">
+										<input type="file" name="file_paybackurl${i.index}_upload" class="required" id="file_paybackurl${i.index}_upload">
+									</div>
+									<div id="file_paybackurl${i.index}_queue"></div>
+						        	</td>
+							</tr>
+							<input value="0" name="payInfos[0].pay_type" type="hidden">
+							<tr>
+								<td  class="width-15 active"><label class="pull-right"><font color="red"></font>账户名称:</label></td>
+						        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[0].pay_username" class="form-control required"></td>
+							</tr>
+							<tr>
+								<td  class="width-15 active"><label class="pull-right"><font color="red"></font>银行账号:</label></td>
+						        <td class="width-35"><input value="${pay.pay_account}" name="payInfos[0].pay_account" class="form-control required"></td>
+							</tr>
+							<tr>
+								<td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(0,this)"><i class="icon-add-pattern"></i>删除</div></td>
+							</tr>
+						</tbody>
+		      		</c:forEach>
+		      	</c:if>
+		      	<c:if test="${payWay == 1}">
+		      		<c:forEach items="${payInfos}" var="pay" varStatus="i">
+				      	<c:if test="${pay.pay_type == 1}">
+				      		<tbody class='ali'>
+								<tr>
+								<input value="1" name="payInfos[1].pay_type" type="hidden">
+									<td colspan="6" class="active"><label class="pull-left">支付宝</label></td>
+								</tr>
+								<tr>
+									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
+						        	<td class="width-35"><input value="${pay.pay_account}" name="payInfos[1].pay_account" class="form-control required"></td>
+									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
+							        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[1].pay_username" class="form-control required"></td>
+									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
+							        <td class="width-35"><input value="${pay.pay_mobile}" name="payInfos[1].pay_mobile" class="form-control required"></td>
+								</tr>
+								<tr>
+									<td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(1,this)"><i class="icon-add-pattern"></i>删除</div></td>
+								</tr>
+							</tbody>
+				      	</c:if>
+				      	<c:if test="${pay.pay_type == 2}">
+				      		<tbody class='wechat'>${i.index }
+								<tr>
+									<input value="2" name="payInfos[2].pay_type" type="hidden">
+									<td colspan="6" class="active"><label class="pull-left">微信</label></td>
+								</tr>
+								<tr>
+									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
+							        <td class="width-35"><input value="${pay.pay_account}" name="payInfos[2].pay_account" class="form-control required"></td>
+									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
+							        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[2].pay_username" class="form-control required"></td>
+									<td class="width-15 active"><label class="pull-right"><font color="red"></font>电话:</label></td>
+							        <td class="width-35"><input value="${pay.pay_mobile}" name="payInfos[2].pay_mobile" class="form-control required"></td>
+								</tr>
+								<tr>
+									<td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(2,this)"><i class="icon-add-pattern"></i>删除</div></td>
+								</tr>
+							</tbody>
+				      	</c:if>
+		      			
+		      		</c:forEach>
+		      	</c:if>
 		      	
 		      </table>
 			     
@@ -360,8 +461,8 @@
 	<div style="display: none;" id="pay-none">
 		<!-- 银行卡 -->
 		<div class="payment-item" >
-			<table >
-				<tbody id="bank-pay">
+			<table id="bank-pay">
+				<tbody class='bank'>
 					<tr>
 						<td  class="width-15 active"><label class="pull-right"><font color="red"></font>开户银行</label></td>
 				        	<td class="width-35"><input value="" name="payInfos[0].pay_name" class="form-control required"></td>
@@ -393,14 +494,18 @@
 						<td  class="width-15 active"><label class="pull-right"><font color="red"></font>银行账号:</label></td>
 				        <td class="width-35"><input value="" name="payInfos[0].pay_account" class="form-control required"></td>
 					</tr>
+					<tr>
+						<td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(0,this)"><i class="icon-add-pattern"></i>删除</div></td>
+					</tr>
 				</tbody>
 			</table>
 		</div>
 		<!-- 支付宝 -->
 		<div class="payment-item" >
-			<table >
-				<tbody id="ali-pay">
+			<table id="ali-pay">
+				<tbody class='ali'>
 					<tr>
+					<input value="1" name="payInfos[1].pay_type" type="hidden">
 						<td colspan="6" class="active"><label class="pull-left">支付宝</label></td>
 					</tr>
 					<tr>
@@ -411,15 +516,19 @@
 						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
 				        <td class="width-35"><input value="" name="payInfos[1].pay_mobile" class="form-control required"></td>
 					</tr>
+					<tr>
+						<td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(1,this)"><i class="icon-add-pattern"></i>删除</div></td>
+					</tr>
 				</tbody>
 			</table>
 		</div>
 		<!-- 微信 -->
 		<div class="payment-item" >
-			<table >
-				<tbody id="wechat-pay">
+			<table id="wechat-pay">
+				<tbody class='wechat'>
 					<tr>
-					<td colspan="6" class="active"><label class="pull-left">微信</label></td>
+						<input value="2" name="payInfos[2].pay_type" type="hidden">
+						<td colspan="6" class="active"><label class="pull-left">微信</label></td>
 					</tr>
 					<tr>
 						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
@@ -428,6 +537,9 @@
 				        <td class="width-35"><input value="" name="payInfos[2].pay_username" class="form-control required"></td>
 						<td class="width-15 active"><label class="pull-right"><font color="red"></font>电话:</label></td>
 				        <td class="width-35"><input value="" name="payInfos[2].pay_mobile" class="form-control required"></td>
+					</tr>
+					<tr>
+						<td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(2,this)"><i class="icon-add-pattern"></i>删除</div></td>
 					</tr>
 				</tbody>
 			</table>

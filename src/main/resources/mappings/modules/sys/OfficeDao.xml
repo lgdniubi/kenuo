@@ -946,7 +946,7 @@
 		SELECT used_limit FROM trains.sys_office_account WHERE office_id = #{officeId}
 	</select>
 	<select id="findPayType" resultType="ModelFranchisee">
-		SELECT fr.pay_type AS payType FROM train_model_franchisee fr
+		SELECT fr.pay_type AS paytype FROM train_model_franchisee fr
 		LEFT JOIN sys_office off ON off.franchisee_id = fr.franchisee_id
 		WHERE off.id = #{id}
 	</select>

@@ -384,6 +384,7 @@ public class OfficeController extends BaseController {
 			if(!(jsonObject.get("data") instanceof JSONNull)){
 				List<PayInfo> payInfos = JSONArray.toList(jsonObject.getJSONObject("data").getJSONArray("payInfos"), new PayInfo(),new JsonConfig());
 				model.addAttribute("payInfos", payInfos);
+				model.addAttribute("paylen", payInfos.size());
 			}
 			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
 			if(!"200".equals(jsonObject.get("result"))){
@@ -452,39 +453,45 @@ public class OfficeController extends BaseController {
 			}
 		}else if(payWay == 1){ //支付宝支付
 			PayInfo payInfo = payInfos.get(1);
-			if(payInfo!=null){
-				String[] username = payInfo.getPay_username().split(",");
-				String[] account = payInfo.getPay_account().split(",");
-				String[] mobile = payInfo.getPay_mobile().split(",");
-				PayInfo np ;
-				for (int i = 0; i < account.length; i++) {
-					np = new PayInfo();
-					np.setCreate_user(userid);
-					np.setPay_username(username[i]);
-					np.setPay_account(account[i]);
-					np.setPay_mobile(mobile[i]);
-					np.setPay_name("支付宝");
-					np.setPay_type("1");
-					ns.add(np);
-				}
+			if(payInfo!=null && payInfo.getPay_type() !=null){
+				String[] type = payInfo.getPay_type().split(",");
+				if("1".equals(type[0])){
+					String[] username = payInfo.getPay_username().split(",");
+					String[] account = payInfo.getPay_account().split(",");
+					String[] mobile = payInfo.getPay_mobile().split(",");
+					PayInfo np ;
+					for (int i = 0; i < account.length; i++) {
+						np = new PayInfo();
+						np.setCreate_user(userid);
+						np.setPay_username(username[i]);
+						np.setPay_account(account[i]);
+						np.setPay_mobile(mobile[i]);
+						np.setPay_name("支付宝");
+						np.setPay_type("1");
+						ns.add(np);
+					}
+				}	
 			}
 		 //微信支付
 			PayInfo payInfo2 = payInfos.get(2);
-			if(payInfo2!=null){
-				String[] username2 = payInfo2.getPay_username().split(",");
-				String[] account2 = payInfo2.getPay_account().split(",");
-				String[] mobile2 = payInfo2.getPay_mobile().split(",");
-				PayInfo np2 ;
-				for (int i = 0; i < account2.length; i++) {
-					np2 = new PayInfo();
-					np2.setCreate_user(userid);
-					np2.setPay_username(username2[i]);
-					np2.setPay_account(account2[i]);
-					np2.setPay_mobile(mobile2[i]);
-					np2.setPay_name("微信");
-					np2.setPay_type("2");
-					ns.add(np2);
-				}
+			if(payInfo2!=null && payInfo2.getPay_type() !=null){
+				String[] type = payInfo2.getPay_type().split(",");
+				if("2".equals(type[0])){
+					String[] username2 = payInfo2.getPay_username().split(",");
+					String[] account2 = payInfo2.getPay_account().split(",");
+					String[] mobile2 = payInfo2.getPay_mobile().split(",");
+					PayInfo np2 ;
+					for (int i = 0; i < account2.length; i++) {
+						np2 = new PayInfo();
+						np2.setCreate_user(userid);
+						np2.setPay_username(username2[i]);
+						np2.setPay_account(account2[i]);
+						np2.setPay_mobile(mobile2[i]);
+						np2.setPay_name("微信");
+						np2.setPay_type("2");
+						ns.add(np2);
+					}
+				}	
 			}
 		}
 		return ns;
