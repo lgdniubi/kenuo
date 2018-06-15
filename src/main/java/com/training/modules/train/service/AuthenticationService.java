@@ -96,12 +96,6 @@ public class AuthenticationService {
 	 */
 	public void updatestatus(Map<String,Object> map){
 		if((int)map.get("franchisee_id") > 0){
-			String weburl = ParametersFactory.getTrainsParamValues("updateContractInfoStatus");
-			//将合同状态改成已失效
-				map.put("status", (int)map.get("status1"));
-				//authenticationMapper.updateprotocolstatus(map);
-				String param = "{'ver_num':'1.0.0','office_id':'"+map.get("franchisee_id")+"','status':'"+map.get("status")+"','update_user':'"+map.get("update_user")+"'}";
-				WebUtils.postCSObject(param, weburl);
 			//修改pc菜单改为禁用
 				map.put("status", (int)map.get("status2"));
 				authenticationMapper.updatepcmenustatus(map);
@@ -111,7 +105,6 @@ public class AuthenticationService {
 					redisClientTemplate.del("UTOKEN_"+user_id);
 				}
 		}else if((int)map.get("franchisee_id") == 0){
-				
 			redisClientTemplate.del("UTOKEN_"+(String)map.get("user_id"));
 		}
 	}

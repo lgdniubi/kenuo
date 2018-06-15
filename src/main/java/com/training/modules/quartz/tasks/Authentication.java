@@ -12,8 +12,10 @@ import org.eclipse.jdt.internal.compiler.ast.ThisReference;
 import org.springframework.stereotype.Component;
 
 import com.training.common.utils.BeanUtil;
+import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.quartz.entity.TaskLog;
 import com.training.modules.quartz.tasks.utils.CommonService;
+import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.train.entity.AuthenticationBean;
 import com.training.modules.train.service.AuthenticationService;
 
@@ -66,13 +68,17 @@ public class Authentication extends CommonService{
 				if(count > 0){
 					map.put("franchisee_id", s.getFranchisee_id());
 					map.put("user_id", s.getUser_id());
-					map.put("status1", 0);
 					map.put("status2", 1);
-					map.put("update_user", 1);
 					authenticationService.updatestatus(map);
 					
 					Map<String, Object> m = new HashMap<String,Object>();
 					if(s.getFranchisee_id() > 0){
+						String weburl = ParametersFactory.getTrainsParamValues("resign");
+						//将合同状态改成已失效
+							//authenticationMapper.updateprotocolstatus(map);
+							String param = "{'franchisee_id':"+s.getFranchisee_id()+",'update_user':1}";
+							WebUtils.postCSObject(param, weburl);
+							
 						//删除商家协议
 						m.put("franchisee_id", s.getFranchisee_id());
 					}else if(s.getFranchisee_id() == 0){
