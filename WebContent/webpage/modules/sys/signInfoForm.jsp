@@ -91,10 +91,10 @@
 		//添加付款方式
 		var a = 0;
 		function addPayData(value,obj){
+			a++;
 			if (value == 0) {//#pay-info
 				var s= "payfonturl";
 				var s2= "paybackurl";
-				a++;
 				var Htmlvalue = $("#pay-none #bank-pay").html();
 				Htmlvalue = Htmlvalue.replace(/payfonturl/g,s+a);
 				Htmlvalue = Htmlvalue.replace(/paybackurl/g,s2+a);
@@ -137,9 +137,9 @@
 			uploadFile('proxy_backurl')
 			/* uploadFile('pay_fonturl')
 			uploadFile('pay_backurl') */
+			var paylen = '${paylen}'
+			a= parseInt(paylen);
 			if(payWay=='0'){
-				var paylen = '${paylen}'
-				a= parseInt(paylen);
 				for (var len = 0; len < a; len++) {
 					uploadFile('payfonturl'+len)
 					uploadFile('paybackurl'+len)
