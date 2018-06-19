@@ -418,7 +418,7 @@
 	<div class="ibox-content">
 	<div>
 	<label class="pull-left"><a href="#">基础信息</a></label>
-	<label class="pull-left" id="signtab" ><a href="${ctx}/sys/office/signInfo?id=${office.id}">-----签约信息</a></label>
+	<label class="pull-left" id="signtab" ><a href="${ctx}/sys/office/signInfo?id=${office.id}&opflag=${opflag}">-----签约信息</a></label>
 	</div>
 		<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/save" method="post" class="form-horizontal">
 			<!-- 操作隐藏店铺按钮权限 -->
@@ -775,8 +775,10 @@
 					  </tr>
 			      </tbody>
 		      </table>
+		      <c:if test="${opflag == 1}">
 		      <input type="button" value="保存基础信息" onclick="doSubmit()"/>
-		      <label class="pull-left" id="signNext" ><a href="${ctx}/sys/office/signInfo?id=${office.id}">下一步</a></label>
+		      <label class="pull-left" id="signNext" ><a href="${ctx}/sys/office/signInfo?id=${office.id}&opflag=${opflag}">下一步</a></label>
+		      </c:if>
 		</form:form>
 		<div class="loading"></div>
 	</div>

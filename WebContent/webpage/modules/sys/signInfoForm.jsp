@@ -189,7 +189,7 @@
 <body>
 	<div class="ibox-content">
 	<div>
-	<label class="pull-left"><a href="${ctx}/sys/office/form?id=${office.id}">基础信息</a>-----</label>
+	<label class="pull-left"><a href="${ctx}/sys/office/form?id=${office.id}&opflag=${opflag}">基础信息</a>-----</label>
 	<label class="pull-left"><a href="#">签约信息</a></label>
 	</div>
 		<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/saveSignInfo" method="post" class="form-horizontal">
@@ -457,9 +457,10 @@
 		      	</c:if>
 		      	
 		      </table>
-			     
+			   <c:if test="${opflag == 1}">
 		      <input type="button" value="保存签约信息" onclick="saveSign()"/>
-			  <a href="${ctx}/sys/office/form?id=${office.id}">上一步</a>
+			  <a href="${ctx}/sys/office/form?id=${office.id}&opflag=${opflag}">上一步</a>
+			  </c:if>
 		</form:form>
 		<div class="loading"></div>
 	</div>

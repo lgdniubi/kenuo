@@ -169,7 +169,7 @@ public class OfficeController extends BaseController {
 	 */
 	@RequiresPermissions(value={"sys:office:view","sys:office:add","sys:office:edit"},logical=Logical.OR)
 	@RequestMapping(value = "form")
-	public String form(Office office, Model model) {
+	public String form(Office office, Model model,String opflag) {
 		User user = UserUtils.getUser();
 		if (office.getParent()==null || office.getParent().getId()==null){
 			office.setParent(user.getOffice());
@@ -247,6 +247,7 @@ public class OfficeController extends BaseController {
 			office.setType("2");
 		}
 		model.addAttribute("office", office);
+		model.addAttribute("opflag", opflag);
 		return "modules/sys/officeForm";
 	}
 	
@@ -272,7 +273,7 @@ public class OfficeController extends BaseController {
 			return "redirect:" + adminPath + "/sys/office/";
 		}
 		if (!beanValidator(model, office)){
-			return form(office, model);
+			return form(office, model,"0");
 		}
 		
 		if(office.getGrade().equals("2")){
@@ -370,7 +371,7 @@ public class OfficeController extends BaseController {
 	@RequiresPermissions(value={"sys:office:add","sys:office:edit"},logical=Logical.OR)
 	@RequestMapping(value = "signInfo")
 	@SuppressWarnings("unchecked")
-	public String signInfo(Office office, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+	public String signInfo(Office office,String opflag, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		try {
 			User user = UserUtils.getUser();
 			String weburl = ParametersFactory.getTrainsParamValues("contract_data_path");
@@ -395,6 +396,7 @@ public class OfficeController extends BaseController {
 			model.addAttribute("office", office);
 			model.addAttribute("payWay", mod.getPaytype());
 			model.addAttribute("user", user);
+			model.addAttribute("opflag", opflag);
 		} catch (Exception e) {
 			e.printStackTrace();
 			addMessage(redirectAttributes, "获取签约信息失败");
@@ -447,6 +449,7 @@ public class OfficeController extends BaseController {
 				np.setPay_username(username[i]);
 				np.setPay_account(account[i]);
 				np.setPay_name(name[i]);
+				np.setPay_type("0");
 				np.setPay_fonturl(font[i]);
 				np.setPay_backurl(back[i]);
 				ns.add(np);
