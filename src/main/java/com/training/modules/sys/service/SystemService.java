@@ -1470,9 +1470,9 @@ public class SystemService extends BaseService implements InitializingBean {
 		userDao.deleteUserOffice(user);
 		if (user.getRoleList() != null && user.getRoleList().size() > 0) {
 			userDao.insertUserRole(user);
-		} else {
+		} /*else {
 			throw new RuntimeException(user.getLoginName() + "没有设置角色！");
-		}
+		}*/
 		
 		if(1 == user.getDataScope()){
 			user.preUpdate();

@@ -88,7 +88,8 @@ public class OfficeController extends BaseController {
 	@ModelAttribute("office")
 	public Office get(@RequestParam(required=false) String id) {
 		if (StringUtils.isNotBlank(id)){
-			return officeService.get(id);
+			Office office = officeService.get(id);
+			return office;
 		}else{
 			return new Office();
 		}
@@ -364,7 +365,8 @@ public class OfficeController extends BaseController {
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
 //		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
-		return "redirect:" + adminPath + "/sys/office/form?id="+office.getId()+"&parentIds="+office.getParentIds();
+		return "redirect:" + adminPath + "/sys/office/signInfo?id="+office.getId()+"&opflag=1&parentIds="+office.getParentIds();
+//		return "redirect:" + adminPath + "/sys/office/form?id="+office.getId()+"&parentIds="+office.getParentIds();
 //		return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
 	}
 	
@@ -429,7 +431,7 @@ public class OfficeController extends BaseController {
 			e.printStackTrace();
 			addMessage(redirectAttributes, "保存签约信息失败");
 		}
-		return "redirect:" + adminPath + "/sys/office/signInfo?id="+contractInfo.getOffice_id();
+		return "redirect:" + adminPath + "/sys/office/signInfo?id="+contractInfo.getOffice_id()+"&opflag=1";
 	}
 
 	private List<PayInfo> creatPayInfoList(Integer payWay, List<PayInfo> payInfos, String userid) {
@@ -476,25 +478,27 @@ public class OfficeController extends BaseController {
 				}	
 			}
 		 //微信支付
-			PayInfo payInfo2 = payInfos.get(2);
-			if(payInfo2!=null && payInfo2.getPay_type() !=null){
-				String[] type = payInfo2.getPay_type().split(",");
-				if("2".equals(type[0])){
-					String[] username2 = payInfo2.getPay_username().split(",");
-					String[] account2 = payInfo2.getPay_account().split(",");
-					String[] mobile2 = payInfo2.getPay_mobile().split(",");
-					PayInfo np2 ;
-					for (int i = 0; i < account2.length; i++) {
-						np2 = new PayInfo();
-						np2.setCreate_user(userid);
-						np2.setPay_username(username2[i]);
-						np2.setPay_account(account2[i]);
-						np2.setPay_mobile(mobile2[i]);
-						np2.setPay_name("微信");
-						np2.setPay_type("2");
-						ns.add(np2);
-					}
-				}	
+			if(payInfos.size()>2){
+				PayInfo payInfo2 = payInfos.get(2);
+				if(payInfo2!=null && payInfo2.getPay_type() !=null){
+					String[] type = payInfo2.getPay_type().split(",");
+					if("2".equals(type[0])){
+						String[] username2 = payInfo2.getPay_username().split(",");
+						String[] account2 = payInfo2.getPay_account().split(",");
+						String[] mobile2 = payInfo2.getPay_mobile().split(",");
+						PayInfo np2 ;
+						for (int i = 0; i < account2.length; i++) {
+							np2 = new PayInfo();
+							np2.setCreate_user(userid);
+							np2.setPay_username(username2[i]);
+							np2.setPay_account(account2[i]);
+							np2.setPay_mobile(mobile2[i]);
+							np2.setPay_name("微信");
+							np2.setPay_type("2");
+							ns.add(np2);
+						}
+					}	
+				}
 			}
 		}
 		return ns;

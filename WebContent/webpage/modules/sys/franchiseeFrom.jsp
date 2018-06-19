@@ -189,7 +189,9 @@
 					<td class="width-15 active">
 						<label class="pull-right"><font color="red">*</font>成立日期:</label>
 					</td>
-					<td class="width-35"><form:input path="setDate" htmlEscape="false" maxlength="8" class="form-control" />
+					<td class="width-35">
+					<input name="${franchisee.setDate}" value="<fmt:formatDate value="${franchisee.setDate}" pattern="yyyy-MM-dd"/>" class="form-control calendars" readonly="readonly">
+					</td>
 				</tr>
 				<tr>
 					<td class="width-15 active">
