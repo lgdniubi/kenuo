@@ -232,7 +232,7 @@
 			editStr = editStr + "<a href = \"#\" onclick=\"openDialog('配置信用额度','${ctx}/sys/office/toEditCredit?office_id="+treeNode.id+"','500px','450px')\" class=\"btn btn-success btn-xs\"><i class=\"fa fa-edit\"></i>配置信用额度</a>";
 			if(treeNode.id != 1 && treeNode.grade != 1){
 				if($("#shiroAdd").val() == 1){
-					editStr = editStr + "<a href=\"#\" onclick=\"openDialogView('添加下级机构', '${ctx}/sys/office/form?parent.id="+treeNode.id+"&opflag=1','800px', '620px')\" class=\"btn  btn-primary btn-xs\"><i class=\"fa fa-plus\"></i> 添加下级机构</a>";
+					editStr = editStr + "<a href=\"#\" onclick=\"openDialogView('添加下级机构', '${ctx}/sys/office/form?parent.id="+treeNode.id+"&opflag=2','800px', '620px')\" class=\"btn  btn-primary btn-xs\"><i class=\"fa fa-plus\"></i> 添加下级机构</a>";
 				}
 			}
 			if(treeNode.id.length > 7){

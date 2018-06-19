@@ -56,6 +56,7 @@ import com.training.modules.sys.utils.DictUtils;
 import com.training.modules.sys.utils.OfficeThreadUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.dao.ProtocolModelDao;
 import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.ContractInfo;
 import com.training.modules.train.entity.ContractInfoVo;
@@ -84,6 +85,8 @@ public class OfficeController extends BaseController {
 	private TrainRuleParamDao trainRuleParamDao;
 	@Autowired
 	private ReservationDao reservationDao;
+	@Autowired
+	private ProtocolModelDao protocolModelDao;
 	
 	@ModelAttribute("office")
 	public Office get(@RequestParam(required=false) String id) {
@@ -363,9 +366,13 @@ public class OfficeController extends BaseController {
 			}
 		}
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
-//		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
+		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
-		return "redirect:" + adminPath + "/sys/office/signInfo?id="+office.getId()+"&opflag=1&parentIds="+office.getParentIds();
+		if(office.getGrade().equals("2")){
+			return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
+		}else{
+			return "redirect:" + adminPath + "/sys/office/signInfo?id="+office.getId()+"&opflag=1&parentIds="+office.getParentIds();
+		}
 //		return "redirect:" + adminPath + "/sys/office/form?id="+office.getId()+"&parentIds="+office.getParentIds();
 //		return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
 	}
@@ -426,6 +433,7 @@ public class OfficeController extends BaseController {
 			if(!"200".equals(jsonObject.get("result"))){
 				throw new RuntimeException("保存签约信息失败");
 			}
+			protocolModelDao.deleteProtocolShopById(String.valueOf(contractInfo.getFranchisee_id()));
 			addMessage(redirectAttributes, "保存签约信息成功");
 		} catch (Exception e) {
 			e.printStackTrace();

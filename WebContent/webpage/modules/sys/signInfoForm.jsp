@@ -43,16 +43,17 @@
 			var flag = validOneImg('sign_fonturl')&&validOneImg('sign_backurl')&&validOneImg('cargo_fonturl')&&validOneImg('cargo_backurl')&&validOneImg('audit_fonturl')&&
 			validOneImg('audit_backurl')&&validOneImg('proxy_fonturl')&&validOneImg('proxy_backurl');
 			var backFlag = validBackImg();
-			if(a==0){
+			/* if(a==0){
 				 top.layer.alert('支付信息不可为空！', {icon: 0, title:'提醒'});
 				 return false;
-			}
+			} */
 			return flag && backFlag;
 		}
 		//校验银行卡图片
 		var payWay = '${payWay}';
+		var isHasBack = 0;
 		function validBackImg(id){
-			if(payWay=='0'){
+			if(payWay=='0' && isHasBack==1){
 				$("#pay-info input[name='payInfos[0].pay_fonturl']").each(function(k,y){
 					var vl = $(this).val();
 					if(vl == null || vl == ""){
@@ -82,6 +83,7 @@
 		function delPayData(value,obj){
 			a--;
 			if (value == 0){
+				isHasBack = 0;
 				$(obj).parents('.bank').remove();
 			}else if(value == 1) {
 				$(obj).parents('.ali').remove();
@@ -94,6 +96,7 @@
 		function addPayData(value,obj){
 			a++;
 			if (value == 0) {//#pay-info
+				isHasBack=1;
 				var s= "payfonturl";
 				var s2= "paybackurl";
 				var Htmlvalue = $("#pay-none #bank-pay").html();

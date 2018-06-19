@@ -61,9 +61,14 @@
 		  return false;
 		}
 		//校验图片不能为空
+		var isShop;
 		function validateImgUrl(){
-			var flag = validOneImg('char');
-			return flag;
+			if(isShop == 1){ //是店铺
+				var flag = validOneImg('char');
+				return flag;
+			}else{
+				return true
+			}
 		}
 		function validOneImg(id){
 			if($("#"+id).val() == null || $("#"+id).val() == ""){
@@ -368,11 +373,13 @@
 		function unfold(num){
 			//num = 1 不是店铺  num = 2 为店铺
 			if(num == 1){
-				$("#unfold,#area1,#signtab,#signNext").show();
-				$("#a1,#a2,#a3,#a4,#a5,#area2").hide();
+				isShop= 1;
+				$("#unfold,#area1,#signtab,#next,#signNext").show();
+				$("#a1,#a2,#a3,#a4,#a5,#sbutton,#area2").hide();
 			}else{
-				$("#unfold,#area1,#signtab,#signNext").hide();
-				$("#a1,#a2,#a3,#a4,#a5,#area2").show();
+				isShop= 0;
+				$("#unfold,#area1,#signtab,#next,#signNext").hide();
+				$("#a1,#a2,#a3,#a4,#a5,#sbutton,#area2").show();
 			}
 		}
 		function changeTableVal(type,id,isyesno){
@@ -780,6 +787,10 @@
 		      <c:if test="${opflag == 1}">
 		      <input type="button" value="下一步" onclick="doSubmit()"/>
 <%-- 		      <label class="pull-left" id="signNext" ><a href="${ctx}/sys/office/signInfo?id=${office.id}&opflag=${opflag}">下一步</a></label> --%>
+		      </c:if>
+		      <c:if test="${opflag == 2}">
+		      <label class="pull-left" id="next" ><input type="button" value="下一步" onclick="doSubmit()"/></label>
+		      <label class="pull-left" id="sbutton" ><input type="button" value="保存基础信息" onclick="doSubmit()"/></label>
 		      </c:if>
 		</form:form>
 		<div class="loading"></div>

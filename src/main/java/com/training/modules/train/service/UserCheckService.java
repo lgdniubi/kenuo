@@ -275,6 +275,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		save(modelFranchisee);
 		modelFranchisee.setUserid(find.getUserid());
 		updateApplyStatus(modelFranchisee);
+		UserUtils.removeCache("CACHE_OFFICE_ALL_LIST");//清除用户机构缓存，认证通过之后能在机构管理看见
 //		int a = 1/0;
 	}
 	
