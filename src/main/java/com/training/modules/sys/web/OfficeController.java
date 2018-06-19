@@ -417,8 +417,10 @@ public class OfficeController extends BaseController {
 	public String saveSignInfo(ContractInfoVo contractInfo,Integer payWay, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		try {
 			List<PayInfo> payInfos = contractInfo.getPayInfos();
-			List<PayInfo> list = creatPayInfoList(payWay, payInfos,contractInfo.getCreate_user());
-			contractInfo.setPayInfos(list);
+			if(payInfos != null){		//判断是否有支付信息
+				List<PayInfo> list = creatPayInfoList(payWay, payInfos,contractInfo.getCreate_user());
+				contractInfo.setPayInfos(list);
+			}
 			JsonConfig config = new JsonConfig();
 			JSONObject j = JSONObject.fromObject(contractInfo,config);
 			System.out.println(j.toString());
