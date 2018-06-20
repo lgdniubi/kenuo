@@ -281,9 +281,9 @@
 				         <td >${bank.detailedaddress}</td>
 				    </tr>
 				    <tr>
-					         <td class=""><label class="pull-right">正面:</label></td>
+					         <td class=""><label class="pull-right">身份证正面:</label></td>
 					         <td ><img id="photosrc" src="${bank.cardup}" alt="images" style="width: 200px;height: 100px;"/></td>
-					         <td class=""><label class="pull-right">反面:</label></td>
+					         <td class=""><label class="pull-right">身份证反面:</label></td>
 					         <td><img id="photosrc" src="${bank.carddown}" alt="images" style="width: 200px;height: 100px;"/></td>
 						</tr>
 				    <tr>

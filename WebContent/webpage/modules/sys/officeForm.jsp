@@ -624,7 +624,7 @@
 					         <td class="width-35"><form:input path="officeInfo.creditCode" htmlEscape="false" maxlength="15" cssClass="form-control required" /></td>
 				       </tr>
 				      	<tr>
-					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>证件照正面:</label></td>
+					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证正面:</label></td>
 					         <td class="width-35">
 					         	<img id="officeIcardoneImgsrc" src="${office.officeInfo.icardone}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="icardone" name="officeInfo.icardone" value="${office.officeInfo.icardone}"><!-- 图片隐藏文本框 -->
@@ -634,7 +634,7 @@
 								</div>
 								<div id="file_icardone_queue"></div>
 					         </td>
-					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>反面:</label></td>
+					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证反面:</label></td>
 					         <td class="width-35">
 					         	<img id="officeIcardtwoImgsrc" src="${office.officeInfo.icardtwo}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="icardtwo" name="officeInfo.icardtwo" value="${office.officeInfo.icardtwo}"><!-- 图片隐藏文本框 -->
