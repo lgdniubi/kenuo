@@ -271,7 +271,7 @@
 			       		<form:select path="pushType" class="form-control required" id="pushType" onchange="selectType(this.value)">
 							<%-- <form:option value="" label=""/>
 							<form:options items="${fns:getDictList('oa_push_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/> --%>
-							<form:option value="-1" >请选择类型</form:option>
+							<form:option value="" >请选择类型</form:option>
 							<form:options items="${fns:getDictList('mtmy_oa_push_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 						</form:select>
 					</td>
