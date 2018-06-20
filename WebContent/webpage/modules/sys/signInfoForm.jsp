@@ -383,7 +383,7 @@
 						        	<td class="width-35"><input value="${pay.pay_name}" name="payInfos[0].pay_name" class="form-control required"></td>
 						        	<td class="width-35" rowspan="3">
 						        		<img id="officepayfonturl${i.index}Imgsrc" src="${pay.pay_fonturl}" alt="" style="width: 200px;height: 100px;"/>
-									<input type="hidden" id="payfonturl${i.index}" name="payInfos[0].pay_fonturl" class="required" value=""><!-- 图片隐藏文本框 -->
+									<input type="hidden" id="payfonturl${i.index}" name="payInfos[0].pay_fonturl" class="required" value="${pay.pay_fonturl}"><!-- 图片隐藏文本框 -->
 									<p>&nbsp;</p>
 						                 	<div class="upload">
 										<input type="file" name="file_payfonturl${i.index}_upload" class="required" id="file_payfonturl${i.index}_upload">
@@ -392,7 +392,7 @@
 						        	</td>
 						        	<td class="width-35" rowspan="3">
 						        		<img id="officepaybackurl${i.index}Imgsrc" src="${pay.pay_backurl}" alt="" style="width: 200px;height: 100px;"/>
-									<input type="hidden" id="paybackurl${i.index}" name="payInfos[0].pay_backurl" value=""><!-- 图片隐藏文本框 -->
+									<input type="hidden" id="paybackurl${i.index}" name="payInfos[0].pay_backurl" value="${pay.pay_backurl}"><!-- 图片隐藏文本框 -->
 									<p>&nbsp;</p>
 						                 	<div class="upload">
 										<input type="file" name="file_paybackurl${i.index}_upload" class="required" id="file_paybackurl${i.index}_upload">
