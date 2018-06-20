@@ -40,6 +40,10 @@
 	function doSubmit() {//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		if (validateForm.form()) {
 			
+			if($("#franchiseeId").val() == '0' || $("#franchiseeId").val() == '' || $("#franchiseeId").val() == null){
+				top.layer.alert('归属商家必选！', {icon: 0, title:'提醒'}); 
+				return;
+			}
 			loading("正在提交，请稍候...");
 			$("#inputForm").submit();
 			
@@ -180,7 +184,7 @@
 								<td><label class="pull-right" ><font color="red">*</font>所属商家：</label></td>
 								<td>
 									<form:select path="franchiseeId" class="form-control" style="width:200px;">
-										<form:option value="0">所属商家</form:option>
+										<form:option value="0">请选择商家</form:option>
 										<c:forEach items="${franList}" var="list" varStatus="status">
 												<form:option value="${list.id}">${list.name}</form:option>
 										</c:forEach>
