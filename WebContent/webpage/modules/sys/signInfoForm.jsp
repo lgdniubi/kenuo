@@ -33,7 +33,7 @@
 		var validateForm;
 		function saveSign(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 			//if(validateForm.form()){
-			if( validUserId()){
+			if(validateImgUrl() && validUserId()){
 				$("#inputForm").submit();
 				//return true;
 			}

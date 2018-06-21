@@ -28,17 +28,25 @@
 	</select>
 	<insert id="addcomment">
 		INSERT INTO TRAIN_LESSON_ASK_COMMENTS(
-			COMMENT_ID,
 			CONTENT,
 			USER_ID,
 			CREATETIME,
+			like_num,
+			u_id,
+			is_son,
+			parent_uids,
+			create_by,
 			STATUS,
 			ASK_ID
 		) VALUES (
-			#{commentId},
 			#{content},
 			#{userId},
 			SYSDATE(),
+			0,
+			'0',
+			0,
+			0,
+			#{userId},
 			#{status},
 			#{askId}
 		)
