@@ -141,6 +141,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 				office.setCode(falg);
 			}
 		}else{
+			redisClientTemplate.set("pc_fzx_cache_" + office.getId(), office.getId());
 			String code = insterCode(office);
 			office.setCode(code);
 		}

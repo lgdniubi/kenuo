@@ -33,11 +33,23 @@
 		var validateForm;
 		function saveSign(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 			//if(validateForm.form()){
-			if(validateImgUrl()){
+			if( validUserId()){
 				$("#inputForm").submit();
 				//return true;
 			}
 		  return false;
+		}
+		function validUserId(){
+			return isNullUserId('sign_usernameId') &&isNullUserId('cargo') &&isNullUserId('auditId')&&isNullUserId('proxyId');
+		}
+		//判断报货人那些userID是不是空
+		function isNullUserId(uid){
+			var userid = $("#"+uid).val();
+			if(userid == ''){
+				 top.layer.alert('姓名无效，请按手机号搜索', {icon: 0, title:'提醒'});
+				 return false;
+			}
+			 return true;
 		}
 		function validateImgUrl(){
 			var flag = validOneImg('sign_fonturl')&&validOneImg('sign_backurl')&&validOneImg('cargo_fonturl')&&validOneImg('cargo_backurl')&&validOneImg('audit_fonturl')&&
