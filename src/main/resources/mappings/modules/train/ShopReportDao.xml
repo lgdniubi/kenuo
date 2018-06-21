@@ -155,7 +155,7 @@
 			b.parent_ids AS parentIds,
 			IF((SELECT id FROM trains.report_shop_goods WHERE shop_id = a.office_id LIMIT 1),1,0) AS isExist
 		FROM
-			mtmydb.mtmy_users a
+			mtmydb.mtmy_customer a
 		LEFT JOIN trains.sys_office b ON a.office_id = b.id
 		WHERE
 			a.office_id IS NOT NULL
