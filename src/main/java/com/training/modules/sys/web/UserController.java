@@ -1239,19 +1239,25 @@ public class UserController extends BaseController {
 	@RequiresPermissions("user")
 	@ResponseBody
 	@RequestMapping(value = "treeDataCompany")
-	public List<Map<String, Object>> treeDataCompany(@RequestParam(required = false) String officeId,String labelValue,
+	public Map<String, Object> treeDataCompany(@RequestParam(required = false) String officeId,String mobile,
 			HttpServletResponse response,HttpServletRequest request) {
-		List<Map<String, Object>> mapList = Lists.newArrayList();
-		List<User> list = systemService.findUserByFranchiseeId(officeId,labelValue);
+//		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<User> list = systemService.findUserByFranchiseeId(officeId,mobile);
+		Map<String, Object> map = Maps.newHashMap();
 		for (int i = 0; i < list.size(); i++) {
 			User e = list.get(i);
-			Map<String, Object> map = Maps.newHashMap();
 			map.put("id", "u_" + e.getId());
 			map.put("pId", officeId);
 			map.put("name", StringUtils.replace(e.getName(), " ", ""));
-			mapList.add(map);
+//			mapList.add(map);
 		}
-		return mapList;
+		map.put("code", list.size());	//
+		return map;
+	}
+	@RequestMapping(value = "finduser")
+	public String finduser(HttpServletResponse response,HttpServletRequest request, Model model,String officeId) {
+		model.addAttribute("officeId", officeId);
+		return "modules/sys/userfind";
 	}
 	/**
 	 * 通知--》查询用户信息

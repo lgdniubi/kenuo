@@ -33,13 +33,13 @@
 		var validateForm;
 		function saveSign(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 			//if(validateForm.form()){
-			if(validateImgUrl() && validUserId()){
+			if(validateImgUrl()){
 				$("#inputForm").submit();
 				//return true;
 			}
 		  return false;
 		}
-		function validUserId(){
+		/* function validUserId(){
 			return isNullUserId('sign_usernameId') &&isNullUserId('cargo') &&isNullUserId('auditId')&&isNullUserId('proxyId');
 		}
 		//判断报货人那些userID是不是空
@@ -50,7 +50,7 @@
 				 return false;
 			}
 			 return true;
-		}
+		} */
 		function validateImgUrl(){
 			var flag = validOneImg('sign_fonturl')&&validOneImg('sign_backurl')&&validOneImg('cargo_fonturl')&&validOneImg('cargo_backurl')&&validOneImg('audit_fonturl')&&
 			validOneImg('audit_backurl')&&validOneImg('proxy_fonturl')&&validOneImg('proxy_backurl');
@@ -161,7 +161,31 @@
 					uploadFile('paybackurl'+len)
 				}
 			}
+			
 		});
+		
+		function findUser(id){
+			top.layer.open({
+			    type: 2, 
+			    area: ['300px', '420px'],
+			    title:"查找用户",
+			    content: "${ctx}/sys/user/finduser?officeId=${office.franchisee.id}",
+			    btn: ['确定', '关闭']
+    	    ,yes: function(index, layero){ //或者使用btn1
+    	    	var tree = layero.find("iframe")[0].contentWindow.tree;
+    	    	var search_name = $(tree).find('#search_name').val();
+    	    	var search_userid = $(tree).find('#search_userid').val();
+				//top.layer.msg("不能选择当前栏目以外的栏目模型，请重新选择。", {icon: 0});
+				 $("#"+id+"Id").val(search_userid);
+				//$("#signName").val(search_name);
+				$("#"+id+"Name").val(search_name); 
+				top.layer.close(index);
+		    },
+	    	cancel: function(index){ //或者使用btn2
+	    	           //按钮【按钮二】的回调
+	    	       }
+			}); 
+		}
 	
 		function uploadFile(str){
 			//pay_backurl	
@@ -193,7 +217,7 @@
 			});	
 		}
 		
-			
+		
 			
 			
 	
@@ -223,8 +247,16 @@
 						<tr><td colspan="4" class=""><label class="pull-left">管理员</label></td></tr>
 						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
-				         	<td class="width-35"><sys:treeselect id="sign_username" name="sign_userid" value="${infoVo.sign_userid}" labelName="sign_username" labelValue="${infoVo.sign_username}"
-								title="姓名" url="/sys/user/treeDataCompany?officeId=${office.franchisee.id}" cssClass="form-control required" placeholder="请输入手机号搜索" allowInput="true"/></td>
+				         	<td class="width-35">
+					         	<input id="signId" name="sign_userid" class="form-control required" type="hidden" value="${infoVo.sign_userid}"/>
+								<div class="input-group">
+									<input id="signName" name="sign_username" type="text" readonly="readonly" value="${infoVo.sign_username}" class="form-control required" />
+							       		 <span class="input-group-btn">
+								       		 <button type="button"  onclick="findUser('sign')" class="btn btn-primary"><i class="fa fa-search"></i></button> 
+							       		 </span>
+							    </div>
+<%-- 				         	<sys:treeselect id="sign_username" name="sign_userid" value="${infoVo.sign_userid}" labelName="sign_username" labelValue="${infoVo.sign_username}" --%>
+<%-- 								title="姓名" url="/sys/user/treeDataCompany?officeId=${office.franchisee.id}" cssClass="form-control required" placeholder="请输入手机号搜索" allowInput="true"/></td> --%>
 				         	<td class="width-35" rowspan="4">
 				         		<img id="officesign_fonturlImgsrc" src="${infoVo.sign_fonturl}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="sign_fonturl" name="sign_fonturl" value="${infoVo.sign_fonturl}"><!-- 图片隐藏文本框 -->
@@ -261,8 +293,17 @@
 						<tr><td colspan="4" class=""><label class="pull-left">报货人</label></td></tr>
 						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
-				         	<td class="width-35"><sys:treeselect id="cargo" name="cargo_userid" value="${infoVo.cargo_userid}" labelName="cargo_username" labelValue="${infoVo.cargo_username}"
-								title="姓名" url="/sys/user/treeDataCompany?officeId=${office.franchisee.id}"  cssClass="form-control required" placeholder="请输入手机号搜索" allowInput="true"/></td>
+				         	<td class="width-35">
+				         		<input id="cargoId" name="cargo_userid" class="form-control required" type="hidden" value="${infoVo.cargo_userid}"/>
+								<div class="input-group">
+									<input id="cargoName" name="cargo_username" type="text" readonly="readonly" value="${infoVo.cargo_username}" class="form-control required" />
+							       		 <span class="input-group-btn">
+								       		 <button type="button"  onclick="findUser('cargo')" class="btn btn-primary"><i class="fa fa-search"></i></button> 
+							       		 </span>
+							    </div>
+				         	
+<%-- 				         	<sys:treeselect id="cargo" name="cargo_userid" value="${infoVo.cargo_userid}" labelName="cargo_username" labelValue="${infoVo.cargo_username}" --%>
+<%-- 								title="姓名" url="/sys/user/treeDataCompany?officeId=${office.franchisee.id}"  cssClass="form-control required" placeholder="请输入手机号搜索" allowInput="true"/></td> --%>
 				         	<td class="width-35" rowspan="4">
 				         		<img id="officecargo_fonturlImgsrc" src="${infoVo.cargo_fonturl}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="cargo_fonturl" name="cargo_fonturl" value="${infoVo.cargo_fonturl}"><!-- 图片隐藏文本框 -->
@@ -299,8 +340,16 @@
 						<tr><td colspan="4" class=""><label class="pull-left">审核人</label></td></tr>
 						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
-				         	<td class="width-35"><sys:treeselect id="audit" name="audit_userid" value="${infoVo.audit_userid}" labelName="audit_username" labelValue="${infoVo.audit_username}"
-								title="姓名" url="/sys/user/treeDataCompany?officeId=${office.franchisee.id}"  cssClass="form-control required" placeholder="请输入手机号搜索" allowInput="true"/></td>
+				         	<td class="width-35">
+				         		<input id="auditId" name="audit_userid" class="form-control required" type="hidden" value="${infoVo.audit_userid}"/>
+								<div class="input-group">
+									<input id="auditName" name="audit_username" type="text" readonly="readonly" value="${infoVo.audit_username}" class="form-control required" />
+							       		 <span class="input-group-btn">
+								       		 <button type="button"  onclick="findUser('audit')" class="btn btn-primary"><i class="fa fa-search"></i></button> 
+							       		 </span>
+							    </div>
+<%-- 				         	<sys:treeselect id="audit" name="audit_userid" value="${infoVo.audit_userid}" labelName="audit_username" labelValue="${infoVo.audit_username}" --%>
+<%-- 								title="姓名" url="/sys/user/treeDataCompany?officeId=${office.franchisee.id}"  cssClass="form-control required" placeholder="请输入手机号搜索" allowInput="true"/></td> --%>
 				         	<td class="width-35" rowspan="4">
 				         		<img id="officeaudit_fonturlImgsrc" src="${infoVo.audit_fonturl}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="audit_fonturl" name="audit_fonturl" value="${infoVo.audit_fonturl}"><!-- 图片隐藏文本框 -->
@@ -337,8 +386,16 @@
 						<tr><td colspan="4" class=""><label class="pull-left">付款人</label></td></tr>
 						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
-				         	<td class="width-35"><sys:treeselect id="proxy" name="proxy_userid" value="${infoVo.proxy_userid}" labelName="proxy_username" labelValue="${infoVo.proxy_username}"
-								title="姓名" url="/sys/user/treeDataCompany?officeId=${office.franchisee.id}"  cssClass="form-control required" placeholder="请输入手机号搜索" allowInput="true"/></td>
+				         	<td class="width-35">
+					         	<input id="proxyId" name="proxy_userid" class="form-control required" type="hidden" value="${infoVo.proxy_userid}"/>
+									<div class="input-group">
+										<input id="proxyName" name="proxy_username" type="text" readonly="readonly" value="${infoVo.proxy_username}" class="form-control required" />
+								       		 <span class="input-group-btn">
+									       		 <button type="button"  onclick="findUser('proxy')" class="btn btn-primary"><i class="fa fa-search"></i></button> 
+								       		 </span>
+								    </div>
+<%-- 				         	<sys:treeselect id="proxy" name="proxy_userid" value="${infoVo.proxy_userid}" labelName="proxy_username" labelValue="${infoVo.proxy_username}" --%>
+<%-- 								title="姓名" url="/sys/user/treeDataCompany?officeId=${office.franchisee.id}"  cssClass="form-control required" placeholder="请输入手机号搜索" allowInput="true"/></td> --%>
 				         	<td class="width-35" rowspan="4">
 				         		<img id="officeproxy_fonturlImgsrc" src="${infoVo.proxy_fonturl}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="proxy_fonturl" name="proxy_fonturl" value="${infoVo.proxy_fonturl}"><!-- 图片隐藏文本框 -->
