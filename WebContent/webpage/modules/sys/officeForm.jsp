@@ -784,11 +784,11 @@
 					  </tr>
 			      </tbody>
 		      </table>
-		      <c:if test="${opflag == 1 && office.num == '0'}">	<!-- 点击修改opflag=1，根据机构数量判断是否是店铺 -->
+		      <c:if test="${opflag == 1 && office.grade == '1'}">	<!-- 点击修改opflag=1，根据机构数量判断是否是店铺 -->
 		      	<input type="button" value="下一步" onclick="doSubmit()"/>
 <%-- 		      <label class="pull-left" id="signNext" ><a href="${ctx}/sys/office/signInfo?id=${office.id}&opflag=${opflag}">下一步</a></label> --%>
 		      </c:if>
-		      <c:if test="${opflag == 1 && office.num != '0'}">
+		      <c:if test="${opflag == 1 && office.grade == '2'}">
 		      	<input type="button" value="保存基础信息" onclick="doSubmit()"/>
 		      </c:if>
 		      <c:if test="${opflag == 2}"><!-- 点击添加下级机构 -->
