@@ -13,12 +13,12 @@
 		SELECT 
 			s.office_id,
 			<!-- SUM(os.used_limit) AS used_limit -->
-			(SELECT IFNULL(SUM(used_limit),0.00) FROM trains.sys_office_statement WHERE office_id = s.office_id AND DATE_FORMAT(create_date,'%Y-%m-%d') = #{formats} AND type = 1) AS expense,
-			(SELECT IFNULL(SUM(used_limit),0.00) FROM trains.sys_office_statement WHERE office_id = s.office_id AND DATE_FORMAT(create_date,'%Y-%m-%d') = #{formats} AND type = 0) AS income,
+			(SELECT IFNULL(SUM(used_limit),0.00) FROM trains.sys_office_statement WHERE office_id = s.office_id AND DATE_FORMAT(create_date,'%Y-%m') = #{formats} AND type = 1) AS expense,
+			(SELECT IFNULL(SUM(used_limit),0.00) FROM trains.sys_office_statement WHERE office_id = s.office_id AND DATE_FORMAT(create_date,'%Y-%m') = #{formats} AND type = 0) AS income,
 			1 AS adds
 		FROM trains.sys_office_account s
 		<!-- LEFT JOIN trains.sys_office_statement os ON s.office_id = os.office_id -->
-		LEFT JOIN trains.train_refund_order ro ON ro.arrearage_office = s.office_id AND  DATE_FORMAT(ro.add_time,'%Y-%m-%d') = #{format}
+		LEFT JOIN trains.train_refund_order ro ON ro.arrearage_office = s.office_id AND  DATE_FORMAT(ro.add_time,'%Y-%m') = #{format}
 		GROUP BY s.office_id HAVING COUNT(ro.order_id) = 0 AND (expense > 0 || income > 0)
 	</select>
 

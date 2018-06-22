@@ -71,7 +71,7 @@ public class CreateRefundOrder extends CommonService{
 		taskLog.setStartDate(startDate);
 		
 		try{
-			SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM");
 			 Calendar calendar = Calendar.getInstance();//日历对象  
 //		     calendar.setTime(new Date());//设置当前日期  
 //		     String time = sim.format(calendar.getTime());//输出本月的日期  
@@ -80,7 +80,7 @@ public class CreateRefundOrder extends CommonService{
 			 
 		     calendar.setTime(new Date());//设置当前日期  
 		     String format = sim.format(calendar.getTime());//输出本月的日期  
-		     calendar.add(Calendar.DAY_OF_YEAR, -1);//月份减一  
+		     calendar.add(Calendar.MONTH, -1);//月份减一  
 		     String formats = sim.format(calendar.getTime());//输出上个月的日期  
 		     
 		     SimpleDateFormat sims = new SimpleDateFormat("yyyy-MM");
