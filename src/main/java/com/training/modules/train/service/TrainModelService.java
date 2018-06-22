@@ -1,6 +1,7 @@
 package com.training.modules.train.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -369,8 +370,9 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	 */
 	private List<String> findDifMenuId(String newMenuIds, String[] omenuid) {
 		List<String> ls = new ArrayList<>();
+		List<String> list = Arrays.asList(newMenuIds.split(","));
 		for (int i = 0; i < omenuid.length; i++) {
-			if(!newMenuIds.contains(omenuid[i])){
+			if(!list.contains(omenuid[i])){
 				ls.add(omenuid[i]);
 			}
 		}

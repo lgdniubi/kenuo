@@ -13,10 +13,12 @@ public class RefundThread implements Runnable {
 	private String office_id;
 	private String order_id;
 	private double amount;
-	public RefundThread(String office_id,String order_id,double amount) {
+	private String billmonth;
+	public RefundThread(String office_id,String order_id,double amount,String billmonth) {
 		this.office_id = office_id;
 		this.order_id = order_id;
 		this.amount = amount;
+		this.billmonth = billmonth;
 	}
 	@Override
 	public void run() {
@@ -30,6 +32,7 @@ public class RefundThread implements Runnable {
 			jsonO.put("order_id", order_id);
 			jsonO.put("client", "bm");
 			jsonO.put("action_type", 2);
+			jsonO.put("billmonth", billmonth);
 			JSONObject json = WebUtils.postfzx(jsonO, ParametersFactory.getTrainsParamValues("refund"));
 			logger.info("确认入账还款返回结果："+json);
 			

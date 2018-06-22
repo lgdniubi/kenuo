@@ -73,9 +73,9 @@ public class RefundOrderController extends BaseController {
 	 */
 	@RequiresPermissions(value="train:refundOrder:makeSureInAccount")
 	@RequestMapping(value="makeSureInAccount")
-	public String makesure(Model model,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,String order_id,String office_id,double amount){
+	public String makesure(Model model,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,String order_id,String office_id,double amount,String billmonth){
 		try {
-			this.refundOrderService.makeSureInAccount(order_id,office_id,amount);
+			this.refundOrderService.makeSureInAccount(order_id,office_id,amount,billmonth);
 			addMessage(redirectAttributes, "已入账!");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "确认入账", e);
