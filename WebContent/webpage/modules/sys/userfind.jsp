@@ -69,9 +69,9 @@
 	<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="searchUser()"> <i class="fa fa-search"></i> 查询
 	</button>
 	<div id="tree" style="padding:15px 20px;">
-		姓名：<input type="text" name="" id="search_name" value="" class="form-control required"/>
-		手机号<input type="text" name="" id="search_mobile" value="" class="form-control required" />
-		<input type="hidden" name="" id="search_userid" value="" class="form-control required" />
+		姓名：<input type="text" name="" id="search_name" value="" readonly="readonly" class="form-control required"/>
+		手机号<input type="text" name="" id="search_mobile" value="" readonly="readonly" class="form-control required" />
+		<input type="hidden" name="" id="search_userid" value="" readonly="readonly" class="form-control required" />
 	</div>
 	<div class="loading"></div>
 </body>
