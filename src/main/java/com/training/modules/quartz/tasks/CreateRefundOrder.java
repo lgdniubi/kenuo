@@ -83,9 +83,9 @@ public class CreateRefundOrder extends CommonService{
 		     calendar.add(Calendar.MONTH, -1);//月份减一  
 		     String formats = sim.format(calendar.getTime());//输出上个月的日期  
 		     
-		     SimpleDateFormat sims = new SimpleDateFormat("yyyy-MM");
-		     calendar.add(Calendar.MONTH, -1);//月份减一  
-		     String times = sims.format(calendar.getTime());//输出上个月的日期  
+//		     SimpleDateFormat sims = new SimpleDateFormat("yyyy-MM");
+//		     calendar.add(Calendar.MONTH, -1);//月份减一  
+//		     String times = sims.format(calendar.getTime());//输出上个月的日期  
 		     
 		List<ArrearageOfficeList> arrearageOfficeList = refundOrderService.queryarrearageoffice(format,formats);
 		int count = arrearageOfficeList.size() / 100;
@@ -98,7 +98,7 @@ public class CreateRefundOrder extends CommonService{
 			int f = 0;
 			for(int j = 0 ; j < subList.size() ; j++){
 				list.get(j-f).setOrder_id(createRefundOrderid(j+""));
-				list.get(j-f).setBillmonth(times);
+				list.get(j-f).setBillmonth(formats);
 				double used_limit = subList.get(j).getUsed_limit();
 				if(used_limit < 0 || used_limit == 0){
 					list.remove(j);
