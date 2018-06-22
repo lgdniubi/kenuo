@@ -6,8 +6,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.ibatis.thread.PropertiesUtil;
-
 import com.sensorsdata.analytics.javasdk.SensorsAnalytics;
 import com.training.common.config.Global;
 
@@ -20,7 +18,9 @@ import com.training.common.config.Global;
 public class TrackConfig {
 
 	// 从 Sensors Analytics 获取的数据接收的 URL
-	public static final String SA_SERVER_URL = Global.getConfig("SA_SERVER_URL");
+	public static final String SA_SERVER_MTMY_URL = Global.getConfig("SA_SERVER_MTMY_URL");
+	// 从 Sensors Analytics 获取的数据接收的 URL
+	public static final String SA_SERVER_FZX_URL = Global.getConfig("SA_SERVER_FZX_URL");
 	// 使用 Debug 模式，并且导入 Debug 模式下所发送的数据
 	public static final boolean SA_WRITE_DATA = true;
 	// 模式 DEBUG ONLINE
@@ -31,6 +31,10 @@ public class TrackConfig {
 	static {
 		// 注册
 		trackConfigList.put("sign_up", "com.training.common.track.modules.TrackLoginPub");
+		// 用户审核 -通过
+		trackConfigList.put("user_authent_win", "com.training.common.track.modules.TrackUserAuditPub");
+		// 用户审核-失败
+		trackConfigList.put("user_authent_Loser", "com.training.common.track.modules.TrackUserAuditPub");
 	}
 
 	/**
@@ -45,7 +49,8 @@ public class TrackConfig {
 	public static void execute(String methodName, Map<String, Object> paramMap) {
 		
 		//重要参数
-		paramMap.put("SA_SERVER_URL", SA_SERVER_URL);
+		paramMap.put("SA_SERVER_MTMY_URL", SA_SERVER_MTMY_URL);
+		paramMap.put("SA_SERVER_FZX_URL", SA_SERVER_FZX_URL);
 		paramMap.put("SA_WRITE_DATA", SA_WRITE_DATA);
 		
 		try {
@@ -79,18 +84,18 @@ public class TrackConfig {
 	}
 	
 	/**
-	 * 方法说明：	埋点-模式切换
+	 * 方法说明：	埋点-MTMY-模式切换
 	 * 创建时间：	2018年4月25日16:53:13
 	 * 创建人：	kele
 	 * 修改记录：	修改人	修改记录	2018年4月25日16:53:13
 	 * @return
 	 * @throws IOException 
 	 */
-	public static SensorsAnalytics getSensorsAnalytics(Map<String, Object> paramMap) throws IOException {
+	public static SensorsAnalytics getMtmySensorsAnalytics(Map<String, Object> paramMap) throws IOException {
 		SensorsAnalytics sa = null ;
 		if(TrackConfig.SA_LEVEL_DATA.equals("DEBUG")) {
 			//debug模式
-	    	sa = new SensorsAnalytics(new SensorsAnalytics.DebugConsumer(SA_SERVER_URL, SA_WRITE_DATA));
+	    	sa = new SensorsAnalytics(new SensorsAnalytics.DebugConsumer(SA_SERVER_MTMY_URL, SA_WRITE_DATA));
 	    }else if(TrackConfig.SA_LEVEL_DATA.equals("ONLINE")) {
 	    	//生产模式
 	    	sa = new SensorsAnalytics(new SensorsAnalytics.ConcurrentLoggingConsumer("/data/shence/kenuo_logs/access.log"));
@@ -101,12 +106,41 @@ public class TrackConfig {
 		// wap端后台埋点，因此直接写死“WAP”
 		properties.put("platformType", "INTERFACE");
 		// 是否是登录状态
+		String distinctId = String.valueOf(paramMap.get("DISTINCT_ID"));
+		properties.put("is_login", true);
+		properties.put("com_mtmy_user_id", distinctId);
+		// 设置公共属性
+		sa.registerSuperProperties(properties);
+		
+		return sa;
+	}
+	
+	/**
+	 * 方法说明：	埋点-MTMY-模式切换
+	 * 创建时间：	2018年4月25日16:53:13
+	 * 创建人：	kele
+	 * 修改记录：	修改人	修改记录	2018年4月25日16:53:13
+	 * @return
+	 * @throws IOException 
+	 */
+	public static SensorsAnalytics getFzxSensorsAnalytics(Map<String, Object> paramMap) throws IOException {
+		SensorsAnalytics sa = null ;
+		if(TrackConfig.SA_LEVEL_DATA.equals("DEBUG")) {
+			//debug模式
+	    	sa = new SensorsAnalytics(new SensorsAnalytics.DebugConsumer(SA_SERVER_FZX_URL, SA_WRITE_DATA));
+	    }else if(TrackConfig.SA_LEVEL_DATA.equals("ONLINE")) {
+	    	//生产模式
+	    	sa = new SensorsAnalytics(new SensorsAnalytics.ConcurrentLoggingConsumer("/data/shence/kenuo_fzx_logs/access.log"));
+	    }
+		
+		Map<String, Object> properties = new HashMap<String, Object>();
+		// 平台类型 (iOS/Android/H5/WAP)
+		// wap端后台埋点，因此直接写死“WAP”
+		properties.put("platformType", "INTERFACE");
+		// 是否是登录状态
 		String distinctId = String.valueOf(paramMap.get("DISTINCT_ID")); 
-		if(null != distinctId && !"null".equals(distinctId)) {
-			properties.put("is_login", true);
-		}else {
-			properties.put("is_login", false);
-		}
+		properties.put("is_login", true);
+		properties.put("com_fzx_user_id", distinctId);
 		// 设置公共属性
 		sa.registerSuperProperties(properties);
 		

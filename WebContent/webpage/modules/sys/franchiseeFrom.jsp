@@ -189,7 +189,9 @@
 					<td class="width-15 active">
 						<label class="pull-right"><font color="red">*</font>成立日期:</label>
 					</td>
-					<td class="width-35"><form:input path="setDate" htmlEscape="false" maxlength="8" class="form-control" />
+					<td class="width-35">
+					<input name="${franchisee.setDate}" value="<fmt:formatDate value="${franchisee.setDate}" pattern="yyyy-MM-dd"/>" class="form-control calendars" readonly="readonly">
+					</td>
 				</tr>
 				<tr>
 					<td class="width-15 active">
@@ -279,9 +281,9 @@
 				         <td >${bank.detailedaddress}</td>
 				    </tr>
 				    <tr>
-					         <td class=""><label class="pull-right">正面:</label></td>
+					         <td class=""><label class="pull-right">身份证正面:</label></td>
 					         <td ><img id="photosrc" src="${bank.cardup}" alt="images" style="width: 200px;height: 100px;"/></td>
-					         <td class=""><label class="pull-right">反面:</label></td>
+					         <td class=""><label class="pull-right">身份证反面:</label></td>
 					         <td><img id="photosrc" src="${bank.carddown}" alt="images" style="width: 200px;height: 100px;"/></td>
 						</tr>
 				    <tr>

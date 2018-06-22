@@ -264,7 +264,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			}
 			//权益期限修改更改用户菜单状态
 			if((DateUtils.formatDate(modelFranchisee.getAuthEndDate(), "yyyy-MM-dd").compareTo(DateUtils.getDate()))>=0
-					&& DateUtils.formatDate(modelFranchisee.getAuthEndDate(), "yyyy-MM-dd").compareTo(DateUtils.formatDate(franchisee.getAuthEndDate(), "yyyy-MM-dd"))>=0){
+					&& DateUtils.formatDate(modelFranchisee.getAuthEndDate(), "yyyy-MM-dd").compareTo(DateUtils.formatDate(franchisee.getAuthEndDate(), "yyyy-MM-dd"))>0){
 				modelFranchisee.setStatus("0");
 				updateUserMenu(modelFranchisee.getFranchiseeid(),"0");
 			}
@@ -275,6 +275,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		save(modelFranchisee);
 		modelFranchisee.setUserid(find.getUserid());
 		updateApplyStatus(modelFranchisee);
+		UserUtils.removeCache("CACHE_OFFICE_ALL_LIST");//清除用户机构缓存，认证通过之后能在机构管理看见
 //		int a = 1/0;
 	}
 	
@@ -284,7 +285,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		if(!findFranchisee.getPaytype().equals(modelFranchisee.getPaytype())){
 			postCSData(parpm1, "clearPayInfoOfFranchisee");
 		}
-		String parpm2 = "{\"franchisee_id\":"+Integer.valueOf(findFranchisee.getFranchiseeid())+"\"update_user\":"+UserUtils.getUser().getId()+"}";
+		String parpm2 = "{\"franchisee_id\":"+Integer.valueOf(findFranchisee.getFranchiseeid())+",\"update_user\":\""+String.valueOf(UserUtils.getUser().getId())+"\"}";
 		postCSData(parpm2, "resign");
 		protocolModelDao.deleteProtocolShopById(findFranchisee.getFranchiseeid());
 	}

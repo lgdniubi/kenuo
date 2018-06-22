@@ -392,4 +392,12 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 	public void updateRecommend() {
 		trainLiveAuditDao.updateRecommend();
 	}
+	/**
+	 * 获取权限id列表
+	 * @param id
+	 * @return
+	 */
+	public TrainLiveAudit getCompanyIds(String id) {
+		return trainLiveAuditDao.getCompanyIds(id);
+	}
 }

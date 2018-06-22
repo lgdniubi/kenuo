@@ -56,6 +56,7 @@ import com.training.modules.sys.utils.DictUtils;
 import com.training.modules.sys.utils.OfficeThreadUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.dao.ProtocolModelDao;
 import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.ContractInfo;
 import com.training.modules.train.entity.ContractInfoVo;
@@ -84,11 +85,14 @@ public class OfficeController extends BaseController {
 	private TrainRuleParamDao trainRuleParamDao;
 	@Autowired
 	private ReservationDao reservationDao;
+	@Autowired
+	private ProtocolModelDao protocolModelDao;
 	
 	@ModelAttribute("office")
 	public Office get(@RequestParam(required=false) String id) {
 		if (StringUtils.isNotBlank(id)){
-			return officeService.get(id);
+			Office office = officeService.get(id);
+			return office;
 		}else{
 			return new Office();
 		}
@@ -169,7 +173,7 @@ public class OfficeController extends BaseController {
 	 */
 	@RequiresPermissions(value={"sys:office:view","sys:office:add","sys:office:edit"},logical=Logical.OR)
 	@RequestMapping(value = "form")
-	public String form(Office office, Model model) {
+	public String form(Office office, Model model,String opflag) {
 		User user = UserUtils.getUser();
 		if (office.getParent()==null || office.getParent().getId()==null){
 			office.setParent(user.getOffice());
@@ -247,6 +251,7 @@ public class OfficeController extends BaseController {
 			office.setType("2");
 		}
 		model.addAttribute("office", office);
+		model.addAttribute("opflag", opflag);
 		return "modules/sys/officeForm";
 	}
 	
@@ -272,7 +277,7 @@ public class OfficeController extends BaseController {
 			return "redirect:" + adminPath + "/sys/office/";
 		}
 		if (!beanValidator(model, office)){
-			return form(office, model);
+			return form(office, model,"0");
 		}
 		
 		if(office.getGrade().equals("2")){
@@ -361,16 +366,21 @@ public class OfficeController extends BaseController {
 			}
 		}
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
-//		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
+		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
-		return "redirect:" + adminPath + "/sys/office/form?id="+office.getId()+"&parentIds="+office.getParentIds();
+		if(office.getGrade().equals("2")){
+			return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
+		}else{
+			return "redirect:" + adminPath + "/sys/office/signInfo?id="+office.getId()+"&opflag=1&parentIds="+office.getParentIds();
+		}
+//		return "redirect:" + adminPath + "/sys/office/form?id="+office.getId()+"&parentIds="+office.getParentIds();
 //		return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
 	}
 	
 	@RequiresPermissions(value={"sys:office:add","sys:office:edit"},logical=Logical.OR)
 	@RequestMapping(value = "signInfo")
 	@SuppressWarnings("unchecked")
-	public String signInfo(Office office, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+	public String signInfo(Office office,String opflag, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		try {
 			User user = UserUtils.getUser();
 			String weburl = ParametersFactory.getTrainsParamValues("contract_data_path");
@@ -395,6 +405,7 @@ public class OfficeController extends BaseController {
 			model.addAttribute("office", office);
 			model.addAttribute("payWay", mod.getPaytype());
 			model.addAttribute("user", user);
+			model.addAttribute("opflag", opflag);
 		} catch (Exception e) {
 			e.printStackTrace();
 			addMessage(redirectAttributes, "获取签约信息失败");
@@ -406,8 +417,10 @@ public class OfficeController extends BaseController {
 	public String saveSignInfo(ContractInfoVo contractInfo,Integer payWay, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		try {
 			List<PayInfo> payInfos = contractInfo.getPayInfos();
-			List<PayInfo> list = creatPayInfoList(payWay, payInfos,contractInfo.getCreate_user());
-			contractInfo.setPayInfos(list);
+			if(payInfos != null){		//判断是否有支付信息
+				List<PayInfo> list = creatPayInfoList(payWay, payInfos,contractInfo.getCreate_user());
+				contractInfo.setPayInfos(list);
+			}
 			JsonConfig config = new JsonConfig();
 			JSONObject j = JSONObject.fromObject(contractInfo,config);
 			System.out.println(j.toString());
@@ -422,12 +435,13 @@ public class OfficeController extends BaseController {
 			if(!"200".equals(jsonObject.get("result"))){
 				throw new RuntimeException("保存签约信息失败");
 			}
+			protocolModelDao.deleteProtocolShopById(String.valueOf(contractInfo.getFranchisee_id()));
 			addMessage(redirectAttributes, "保存签约信息成功");
 		} catch (Exception e) {
 			e.printStackTrace();
 			addMessage(redirectAttributes, "保存签约信息失败");
 		}
-		return "redirect:" + adminPath + "/sys/office/signInfo?id="+contractInfo.getOffice_id();
+		return "redirect:" + adminPath + "/sys/office/signInfo?id="+contractInfo.getOffice_id()+"&opflag=1";
 	}
 
 	private List<PayInfo> creatPayInfoList(Integer payWay, List<PayInfo> payInfos, String userid) {
@@ -447,6 +461,7 @@ public class OfficeController extends BaseController {
 				np.setPay_username(username[i]);
 				np.setPay_account(account[i]);
 				np.setPay_name(name[i]);
+				np.setPay_type("0");
 				np.setPay_fonturl(font[i]);
 				np.setPay_backurl(back[i]);
 				ns.add(np);
@@ -473,25 +488,27 @@ public class OfficeController extends BaseController {
 				}	
 			}
 		 //微信支付
-			PayInfo payInfo2 = payInfos.get(2);
-			if(payInfo2!=null && payInfo2.getPay_type() !=null){
-				String[] type = payInfo2.getPay_type().split(",");
-				if("2".equals(type[0])){
-					String[] username2 = payInfo2.getPay_username().split(",");
-					String[] account2 = payInfo2.getPay_account().split(",");
-					String[] mobile2 = payInfo2.getPay_mobile().split(",");
-					PayInfo np2 ;
-					for (int i = 0; i < account2.length; i++) {
-						np2 = new PayInfo();
-						np2.setCreate_user(userid);
-						np2.setPay_username(username2[i]);
-						np2.setPay_account(account2[i]);
-						np2.setPay_mobile(mobile2[i]);
-						np2.setPay_name("微信");
-						np2.setPay_type("2");
-						ns.add(np2);
-					}
-				}	
+			if(payInfos.size()>2){
+				PayInfo payInfo2 = payInfos.get(2);
+				if(payInfo2!=null && payInfo2.getPay_type() !=null){
+					String[] type = payInfo2.getPay_type().split(",");
+					if("2".equals(type[0])){
+						String[] username2 = payInfo2.getPay_username().split(",");
+						String[] account2 = payInfo2.getPay_account().split(",");
+						String[] mobile2 = payInfo2.getPay_mobile().split(",");
+						PayInfo np2 ;
+						for (int i = 0; i < account2.length; i++) {
+							np2 = new PayInfo();
+							np2.setCreate_user(userid);
+							np2.setPay_username(username2[i]);
+							np2.setPay_account(account2[i]);
+							np2.setPay_mobile(mobile2[i]);
+							np2.setPay_name("微信");
+							np2.setPay_type("2");
+							ns.add(np2);
+						}
+					}	
+				}
 			}
 		}
 		return ns;

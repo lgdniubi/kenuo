@@ -34,7 +34,7 @@ public class TrackLoginPub {
 	public void sign_up() {
 	    try {
 	    	// 使用 DebugConsumer 初始化 SensorsAnalytics
-		    final SensorsAnalytics sa = TrackConfig.getSensorsAnalytics(this.paramMap);
+		    final SensorsAnalytics sa = TrackConfig.getMtmySensorsAnalytics(this.paramMap);
 		    
 		    // 用户的 Distinct Id	(登录用用户ID，非登录用户用设备ID)
 		    String distinctId = String.valueOf(this.paramMap.get("DISTINCT_ID"));

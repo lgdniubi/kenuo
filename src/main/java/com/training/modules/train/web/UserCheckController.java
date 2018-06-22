@@ -1,6 +1,8 @@
 package com.training.modules.train.web;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,12 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.training.common.config.Global;
 import com.training.common.persistence.Page;
+import com.training.common.track.thread.TrackThread;
 import com.training.common.utils.DateUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.quartz.utils.RedisLock;
-import com.training.modules.sys.dao.UserDao;
 import com.training.modules.train.entity.ModelFranchisee;
 import com.training.modules.train.entity.UserCheck;
 import com.training.modules.train.service.UserCheckService;
@@ -80,6 +83,24 @@ public class UserCheckController extends BaseController{
 //				userCheckService.updateTypeAndpushMsg(userCheck,"你的申请资料信息已通过审核，等待平台给您赋予权限");
 			}
 			addMessage(redirectAttributes, "成功");
+			
+			/*##########[神策埋点{user_authent_win|user_authent_Loser}-Begin]##########*/
+			Map<String, Object> inParamMap = new HashMap<String, Object>();
+			if ("1".equals(userCheck.getStatus())){
+				// 1：审核不通过
+				inParamMap.put("METHOD_NAME", "user_authent_Loser");
+			}else if("2".equals(userCheck.getStatus())) {
+				// 2:审核通过
+				inParamMap.put("METHOD_NAME", "user_authent_win");
+			}
+			// 用户ID
+			inParamMap.put("DISTINCT_ID", userCheck.getUserid());
+			// 订单ID
+			inParamMap.put("APPLY_ID", userCheck.getId());
+			// 异步线程执行方法
+			Global.newFixed.execute(new TrackThread(inParamMap));
+			/*##########[神策埋点end]##########*/
+			
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "保存审核信息出现异常,请与管理员联系");
 			logger.error("保存审核信息异常,异常信息为："+e.getMessage());
@@ -154,6 +175,7 @@ public class UserCheckController extends BaseController{
 				redisClientTemplate.del("UTOKEN_"+modelFranchisee.getUserid());
 				addMessage(redirectAttributes, "成功");
 			}
+			
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "保存权限设置出现异常,请与管理员联系");
 			logger.error("保存权限设置异常,异常信息为："+e.getMessage());

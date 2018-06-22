@@ -61,9 +61,14 @@
 		  return false;
 		}
 		//校验图片不能为空
+		var isShop;
 		function validateImgUrl(){
-			var flag = validOneImg('char');
-			return flag;
+			if(isShop == 1){ //是店铺
+				var flag = validOneImg('char');
+				return flag;
+			}else{
+				return true
+			}
 		}
 		function validOneImg(id){
 			if($("#"+id).val() == null || $("#"+id).val() == ""){
@@ -368,11 +373,13 @@
 		function unfold(num){
 			//num = 1 不是店铺  num = 2 为店铺
 			if(num == 1){
-				$("#unfold,#area1,#signtab,#signNext").show();
-				$("#a1,#a2,#a3,#a4,#a5,#area2").hide();
+				isShop= 1;
+				$("#unfold,#area1,#signtab,#next,#signNext").show();
+				$("#a1,#a2,#a3,#a4,#a5,#sbutton,#area2").hide();
 			}else{
-				$("#unfold,#area1,#signtab,#signNext").hide();
-				$("#a1,#a2,#a3,#a4,#a5,#area2").show();
+				isShop= 0;
+				$("#unfold,#area1,#signtab,#next,#signNext").hide();
+				$("#a1,#a2,#a3,#a4,#a5,#sbutton,#area2").show();
 			}
 		}
 		function changeTableVal(type,id,isyesno){
@@ -418,7 +425,9 @@
 	<div class="ibox-content">
 	<div>
 	<label class="pull-left"><a href="#">基础信息</a></label>
-	<label class="pull-left" id="signtab" ><a href="${ctx}/sys/office/signInfo?id=${office.id}">-----签约信息</a></label>
+	<c:if test="${not empty office && not empty office.id}">
+	<label class="pull-left" id="signtab" ><a href="${ctx}/sys/office/signInfo?id=${office.id}&opflag=${opflag}">-----签约信息</a></label>
+	</c:if>
 	</div>
 		<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/save" method="post" class="form-horizontal">
 			<!-- 操作隐藏店铺按钮权限 -->
@@ -615,7 +624,7 @@
 					         <td class="width-35"><form:input path="officeInfo.creditCode" htmlEscape="false" maxlength="15" cssClass="form-control required" /></td>
 				       </tr>
 				      	<tr>
-					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>证件照正面:</label></td>
+					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证正面:</label></td>
 					         <td class="width-35">
 					         	<img id="officeIcardoneImgsrc" src="${office.officeInfo.icardone}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="icardone" name="officeInfo.icardone" value="${office.officeInfo.icardone}"><!-- 图片隐藏文本框 -->
@@ -625,7 +634,7 @@
 								</div>
 								<div id="file_icardone_queue"></div>
 					         </td>
-					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>反面:</label></td>
+					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证反面:</label></td>
 					         <td class="width-35">
 					         	<img id="officeIcardtwoImgsrc" src="${office.officeInfo.icardtwo}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="icardtwo" name="officeInfo.icardtwo" value="${office.officeInfo.icardtwo}"><!-- 图片隐藏文本框 -->
@@ -775,8 +784,14 @@
 					  </tr>
 			      </tbody>
 		      </table>
-		      <input type="button" value="保存基础信息" onclick="doSubmit()"/>
-		      <label class="pull-left" id="signNext" ><a href="${ctx}/sys/office/signInfo?id=${office.id}">下一步</a></label>
+		      <c:if test="${opflag == 1}">
+		      <input type="button" value="下一步" onclick="doSubmit()"/>
+<%-- 		      <label class="pull-left" id="signNext" ><a href="${ctx}/sys/office/signInfo?id=${office.id}&opflag=${opflag}">下一步</a></label> --%>
+		      </c:if>
+		      <c:if test="${opflag == 2}">
+		      <label class="pull-left" id="next" ><input type="button" value="下一步" onclick="doSubmit()"/></label>
+		      <label class="pull-left" id="sbutton" ><input type="button" value="保存基础信息" onclick="doSubmit()"/></label>
+		      </c:if>
 		</form:form>
 		<div class="loading"></div>
 	</div>

@@ -92,7 +92,7 @@ public class ProtocolModelService extends CrudService<ProtocolModelDao,ProtocolM
 		String weburl = ParametersFactory.getTrainsParamValues("resign");
 		logger.info("##### 重新签协议重新签约web接口路径:"+weburl);
 		String url=weburl;
-		String parpm = "{\"update_user\":"+UserUtils.getUser().getId()+"}";
+		String parpm = "{\"update_user\":\""+UserUtils.getUser().getId()+"\"}";
 		String result = WebUtils.postCSObject(parpm, url);
 		JSONObject jsonObject = JSONObject.fromObject(result);
 		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));

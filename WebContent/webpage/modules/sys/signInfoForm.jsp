@@ -33,26 +33,39 @@
 		var validateForm;
 		function saveSign(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 			//if(validateForm.form()){
-			if(validateImgUrl()){
+			if(validateImgUrl() && validUserId()){
 				$("#inputForm").submit();
 				//return true;
 			}
 		  return false;
 		}
+		function validUserId(){
+			return isNullUserId('sign_usernameId') &&isNullUserId('cargo') &&isNullUserId('auditId')&&isNullUserId('proxyId');
+		}
+		//判断报货人那些userID是不是空
+		function isNullUserId(uid){
+			var userid = $("#"+uid).val();
+			if(userid == ''){
+				 top.layer.alert('姓名无效，请按手机号搜索', {icon: 0, title:'提醒'});
+				 return false;
+			}
+			 return true;
+		}
 		function validateImgUrl(){
 			var flag = validOneImg('sign_fonturl')&&validOneImg('sign_backurl')&&validOneImg('cargo_fonturl')&&validOneImg('cargo_backurl')&&validOneImg('audit_fonturl')&&
 			validOneImg('audit_backurl')&&validOneImg('proxy_fonturl')&&validOneImg('proxy_backurl');
 			var backFlag = validBackImg();
-			if(a==0){
+			/* if(a==0){
 				 top.layer.alert('支付信息不可为空！', {icon: 0, title:'提醒'});
 				 return false;
-			}
+			} */
 			return flag && backFlag;
 		}
 		//校验银行卡图片
 		var payWay = '${payWay}';
+		var isHasBack = 0;
 		function validBackImg(id){
-			if(payWay=='0'){
+			if(payWay=='0' && isHasBack==1){
 				$("#pay-info input[name='payInfos[0].pay_fonturl']").each(function(k,y){
 					var vl = $(this).val();
 					if(vl == null || vl == ""){
@@ -80,7 +93,9 @@
 			}
 		}
 		function delPayData(value,obj){
+			a--;
 			if (value == 0){
+				isHasBack = 0;
 				$(obj).parents('.bank').remove();
 			}else if(value == 1) {
 				$(obj).parents('.ali').remove();
@@ -91,10 +106,11 @@
 		//添加付款方式
 		var a = 0;
 		function addPayData(value,obj){
+			a++;
 			if (value == 0) {//#pay-info
+				isHasBack=1;
 				var s= "payfonturl";
 				var s2= "paybackurl";
-				a++;
 				var Htmlvalue = $("#pay-none #bank-pay").html();
 				Htmlvalue = Htmlvalue.replace(/payfonturl/g,s+a);
 				Htmlvalue = Htmlvalue.replace(/paybackurl/g,s2+a);
@@ -137,9 +153,9 @@
 			uploadFile('proxy_backurl')
 			/* uploadFile('pay_fonturl')
 			uploadFile('pay_backurl') */
+			var paylen = '${paylen}'
+			a= parseInt(paylen);
 			if(payWay=='0'){
-				var paylen = '${paylen}'
-				a= parseInt(paylen);
 				for (var len = 0; len < a; len++) {
 					uploadFile('payfonturl'+len)
 					uploadFile('paybackurl'+len)
@@ -188,7 +204,7 @@
 <body>
 	<div class="ibox-content">
 	<div>
-	<label class="pull-left"><a href="${ctx}/sys/office/form?id=${office.id}">基础信息</a>-----</label>
+	<label class="pull-left"><a href="${ctx}/sys/office/form?id=${office.id}&opflag=${opflag}">基础信息</a>-----</label>
 	<label class="pull-left"><a href="#">签约信息</a></label>
 	</div>
 		<form:form id="inputForm" modelAttribute="office" action="${ctx}/sys/office/saveSignInfo" method="post" class="form-horizontal">
@@ -379,7 +395,7 @@
 						        	<td class="width-35"><input value="${pay.pay_name}" name="payInfos[0].pay_name" class="form-control required"></td>
 						        	<td class="width-35" rowspan="3">
 						        		<img id="officepayfonturl${i.index}Imgsrc" src="${pay.pay_fonturl}" alt="" style="width: 200px;height: 100px;"/>
-									<input type="hidden" id="payfonturl${i.index}" name="payInfos[0].pay_fonturl" class="required" value=""><!-- 图片隐藏文本框 -->
+									<input type="hidden" id="payfonturl${i.index}" name="payInfos[0].pay_fonturl" class="required" value="${pay.pay_fonturl}"><!-- 图片隐藏文本框 -->
 									<p>&nbsp;</p>
 						                 	<div class="upload">
 										<input type="file" name="file_payfonturl${i.index}_upload" class="required" id="file_payfonturl${i.index}_upload">
@@ -388,7 +404,7 @@
 						        	</td>
 						        	<td class="width-35" rowspan="3">
 						        		<img id="officepaybackurl${i.index}Imgsrc" src="${pay.pay_backurl}" alt="" style="width: 200px;height: 100px;"/>
-									<input type="hidden" id="paybackurl${i.index}" name="payInfos[0].pay_backurl" value=""><!-- 图片隐藏文本框 -->
+									<input type="hidden" id="paybackurl${i.index}" name="payInfos[0].pay_backurl" value="${pay.pay_backurl}"><!-- 图片隐藏文本框 -->
 									<p>&nbsp;</p>
 						                 	<div class="upload">
 										<input type="file" name="file_paybackurl${i.index}_upload" class="required" id="file_paybackurl${i.index}_upload">
@@ -456,9 +472,10 @@
 		      	</c:if>
 		      	
 		      </table>
-			     
+			   <c:if test="${opflag == 1}">
 		      <input type="button" value="保存签约信息" onclick="saveSign()"/>
-			  <a href="${ctx}/sys/office/form?id=${office.id}">上一步</a>
+			  <a href="${ctx}/sys/office/form?id=${office.id}&opflag=${opflag}">上一步</a>
+			  </c:if>
 		</form:form>
 		<div class="loading"></div>
 	</div>
