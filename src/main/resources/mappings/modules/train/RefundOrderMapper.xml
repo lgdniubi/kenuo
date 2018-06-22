@@ -51,7 +51,7 @@
 	<update id="updateOfficeAccount">
 		UPDATE 
 			trains.sys_office_account oa
-		INNER JOIN (SELECT arrearage_office FROM trains.train_refund_order WHERE order_status = 1 GROUP BY arrearage_office) s ON s.arrearage_office = oa.office_id
+		INNER JOIN (SELECT arrearage_office FROM trains.train_refund_order WHERE order_status = 1 AND closingdate <![CDATA[<]]> NOW() GROUP BY arrearage_office) s ON s.arrearage_office = oa.office_id
 		SET oa.freeze = 1
 		WHERE oa.freeze = 0
 	</update>
