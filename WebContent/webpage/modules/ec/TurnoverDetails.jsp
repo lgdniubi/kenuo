@@ -145,8 +145,9 @@
 		     	    	
 		     	    	var orderId = obj.document.getElementById("orderId").value; //订单id
 		     	    	var detailsId = obj.document.getElementById("detailsId").value; //售后id
-		     	    	var mappingId = obj.document.getElementById("mappingId").value; //售后id
-		     	    	var goodsId = obj.document.getElementById("goodsId").value; //售后id
+		     	    	var mappingId = obj.document.getElementById("mappingId").value; //mapping表的rec_id
+		     	    	var goodsId = obj.document.getElementById("goodsId").value; //商品id
+		     	    	var surplusTurnOver = obj.document.getElementById("surplusTurnOver").value; //除本次售后外,各门店剩余分享营业额之和
 		     	    	
 		     	    	//判断是否存在数据
 		     	    	if(returnAmount==''){
@@ -184,9 +185,26 @@
 	  				    }
   				    	totalAdd = (amount + added)/10000;
 	     	    		totalAdd = totalAdd.toFixed(2);
-	  				    if((parseFloat(totalAdd) + parseFloat(returnAmount))!=0){
-	  					    top.layer.alert('店铺的营业额之和必须等于售后金额！', {icon: 0, title:'提醒'});
-	  					    return;
+	     	    		
+	  				    //退款金额>除本次售后外门店剩余分享营业额之和-->0<=门店扣减的营业额之和<=门店剩余分享营业额之和
+	     	    		if(parseFloat(returnAmount) > parseFloat(surplusTurnOver)){
+	  				    	if(parseFloat(totalAdd) > 0){
+		  				        top.layer.alert('店铺的营业额之和大于等于0,小于等于店铺剩余的分享营业额！', {icon: 0, title:'提醒'});
+		  					    return;
+		  				    }else if(parseFloat(surplusTurnOver) + parseFloat(totalAdd) < 0){
+		  				    	top.layer.alert('店铺的营业额之和大于等于0,小于等于店铺剩余的分享营业额！', {icon: 0, title:'提醒'});
+		  					    return;
+		  				    }
+	  				    }
+	  				    //退款金额<=除本次售后外门店剩余分享营业额之和-->0<=门店扣减营业额之和<=退款金额
+	     	    		if(parseFloat(returnAmount) <= parseFloat(surplusTurnOver)){
+		  				    if(parseFloat(totalAdd) > 0){
+		  				        top.layer.alert('店铺的营业额之和大于等于0,小于等于售后金额！', {icon: 0, title:'提醒'});
+		  					    return;
+		  				    }else if(parseFloat(returnAmount) + parseFloat(totalAdd) < 0){
+		  				    	top.layer.alert('店铺的营业额之和大于等于0,小于等于售后金额！', {icon: 0, title:'提醒'});
+		  					    return;
+		  				    }
 	  				    }
 	  				    
 	  				    top.layer.close(index);
