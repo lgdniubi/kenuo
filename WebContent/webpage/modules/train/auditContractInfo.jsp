@@ -56,9 +56,9 @@
 		
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 			<tbody>
-			    <tr>
+			    <!-- <tr>
 			    	<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="3"><label class="pull-left">手艺人权益设置:</label></td>
-				</tr>
+				</tr> -->
 			    <tr>
 			         <td class="active"><label class="pull-right">操作类型:</label></td>
 			         <td><input id="mod_id1" class=" input-sm required" name="status" value="2" aria-required="true" type="radio" onclick="checkValue(this.value)">审核通过</td>
@@ -67,7 +67,7 @@
 			    <tr id="remarks">
 			         <td class="active"><label class="pull-right">驳回原因:</label></td>
 			         <td colspan="2">
-			         	<textarea rows="4" cols="80" name="remarks" class="input-medium form-control required"></textarea>
+			         	<textarea rows="5" name="remarks" class="input-medium form-control required"></textarea>
 			         </td>
 				</tr>
 			</tbody>

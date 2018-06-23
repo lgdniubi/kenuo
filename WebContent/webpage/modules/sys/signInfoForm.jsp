@@ -431,18 +431,18 @@
 			      </tbody>
 		      </table>
 		      <c:if test="${payWay == 0}"><!-- 0是线下支付 -->
-		      <div id="add-pattern" onclick="addPayData(0,this)"><i class="icon-add-pattern"></i>添加账户</div>
+		      	  <a href="#" onclick="addPayData(0,this)"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加账户</a>
+		      	  <!-- <div id="add-pattern" onclick="addPayData(0,this)"><i class="icon-add-pattern"></i>添加账户</div> -->
 		      </c:if>
 		      <c:if test="${payWay == 1}"><!-- 1是线上支付 -->
-		      <div id="add-pattern" onclick="addPayData(1,this)"><i class="icon-add-pattern"></i>添加支付宝</div>
-		      <div id="add-pattern" onclick="addPayData(2,this)"><i class="icon-add-pattern"></i>添加微信</div>
+		      	  <a href="#" onclick="addPayData(1,this)"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加支付宝</a>
+		      	  <a href="#" onclick="addPayData(2,this)"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加微信</a>
+			      <!-- <div id="add-pattern" onclick="addPayData(1,this)"><i class="icon-add-pattern"></i>添加支付宝</div>
+			      <div id="add-pattern" onclick="addPayData(2,this)"><i class="icon-add-pattern"></i>添加微信</div> -->
 		      </c:if>
 		      <table id="pay-info" class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		      	<tbody >
 		      	<tr><td colspan="6" class=""><label class="pull-left">付款账户</label></td></tr>
-		      	<!-- <tr><td colspan="6" class=""></td><input type="button" onclick="addPayData(0)" id="bank-card" value="添加银行卡"/></tr>
-		      	<tr><td colspan="3" class=""></td><input type="button" onclick="addPayData(1)" id="ali" value="添加支付宝"/></tr>
-		      	<tr><td colspan="3" class=""></td><input type="button"  onclick="addPayData(2)"id="wechat" value="添加微信"/></tr> -->
 		      	</tbody>
 		      	<c:if test="${payWay == 0}">
 		      		<c:forEach items="${payInfos}" var="pay" varStatus="i">
@@ -479,7 +479,8 @@
 						        <td class="width-35"><input value="${pay.pay_account}" name="payInfos[0].pay_account" class="form-control required"></td>
 							</tr>
 							<tr>
-								<td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(0,this)"><i class="icon-add-pattern"></i>删除</div></td>
+								<td colspan="6" class="active"><a href="#" onclick="delPayData(0,this)" class="btn btn-danger btn-xs"><i class="fa fa-trash">删除</i></a></td>
+								<!-- <td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(0,this)"><i class="icon-add-pattern"></i>删除</div></td> -->
 							</tr>
 						</tbody>
 		      		</c:forEach>
@@ -497,11 +498,14 @@
 						        	<td class="width-35"><input value="${pay.pay_account}" name="payInfos[1].pay_account" class="form-control required"></td>
 									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
 							        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[1].pay_username" class="form-control required"></td>
-									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
-							        <td class="width-35"><input value="${pay.pay_mobile}" name="payInfos[1].pay_mobile" class="form-control required"></td>
 								</tr>
 								<tr>
-									<td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(1,this)"><i class="icon-add-pattern"></i>删除</div></td>
+									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
+							        <td colspan="5" class="width-35"><input value="${pay.pay_mobile}" name="payInfos[1].pay_mobile" class="form-control required"></td>
+								</tr>
+								<tr>
+									<td colspan="6" class="active"><a href="#" onclick="delPayData(1,this)" class="btn btn-danger btn-xs"><i class="fa fa-trash">删除</i></a></td>
+									<!-- <td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(1,this)"><i class="icon-add-pattern"></i>删除</div></td> -->
 								</tr>
 							</tbody>
 				      	</c:if>
@@ -516,11 +520,15 @@
 							        <td class="width-35"><input value="${pay.pay_account}" name="payInfos[2].pay_account" class="form-control required"></td>
 									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
 							        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[2].pay_username" class="form-control required"></td>
-									<td class="width-15 active"><label class="pull-right"><font color="red"></font>电话:</label></td>
-							        <td class="width-35"><input value="${pay.pay_mobile}" name="payInfos[2].pay_mobile" class="form-control required"></td>
+									
 								</tr>
 								<tr>
-									<td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(2,this)"><i class="icon-add-pattern"></i>删除</div></td>
+									<td class="width-15 active"><label class="pull-right"><font color="red"></font>电话:</label></td>
+							        <td  colspan="5" class="width-35"><input value="${pay.pay_mobile}" name="payInfos[2].pay_mobile" class="form-control required"></td>
+								</tr>
+								<tr>
+									<td colspan="6" class="active"><a href="#" onclick="delPayData(2,this)" class="btn btn-danger btn-xs"><i class="fa fa-trash">删除</i></a></td>
+									<!-- <td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(2,this)"><i class="icon-add-pattern"></i>删除</div></td> -->
 								</tr>
 							</tbody>
 				      	</c:if>
@@ -573,7 +581,8 @@
 				        <td class="width-35"><input value="" name="payInfos[0].pay_account" class="form-control required"></td>
 					</tr>
 					<tr>
-						<td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(0,this)"><i class="icon-add-pattern"></i>删除</div></td>
+						<td colspan="6" class="active"><a href="#" onclick="delPayData(0,this)" class="btn btn-danger btn-xs"><i class="fa fa-trash">删除</i></a></td>
+						<!-- <td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(0,this)"><i class="icon-add-pattern"></i>删除</div></td> -->
 					</tr>
 				</tbody>
 			</table>
@@ -591,11 +600,14 @@
 			        	<td class="width-35"><input value="" name="payInfos[1].pay_account" class="form-control required"></td>
 						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
 				        <td class="width-35"><input value="" name="payInfos[1].pay_username" class="form-control required"></td>
-						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
-				        <td class="width-35"><input value="" name="payInfos[1].pay_mobile" class="form-control required"></td>
 					</tr>
 					<tr>
-						<td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(1,this)"><i class="icon-add-pattern"></i>删除</div></td>
+						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
+				        <td colspan="5" class="width-35"><input value="" name="payInfos[1].pay_mobile" class="form-control required"></td>
+					</tr>
+					<tr>
+						<td colspan="6" class="active"><a href="#" onclick="delPayData(1,this)" class="btn btn-danger btn-xs"><i class="fa fa-trash">删除</i></a></td>
+						<!-- <td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(1,this)"><i class="icon-add-pattern"></i>删除</div></td> -->
 					</tr>
 				</tbody>
 			</table>
@@ -613,11 +625,14 @@
 				        <td class="width-35"><input value="" name="payInfos[2].pay_account" class="form-control required"></td>
 						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
 				        <td class="width-35"><input value="" name="payInfos[2].pay_username" class="form-control required"></td>
-						<td class="width-15 active"><label class="pull-right"><font color="red"></font>电话:</label></td>
-				        <td class="width-35"><input value="" name="payInfos[2].pay_mobile" class="form-control required"></td>
 					</tr>
 					<tr>
-						<td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(2,this)"><i class="icon-add-pattern"></i>删除</div></td>
+						<td class="width-15 active"><label class="pull-right"><font color="red"></font>电话:</label></td>
+				        <td colspan="5" class="width-35"><input value="" name="payInfos[2].pay_mobile" class="form-control required"></td>
+					</tr>
+					<tr>
+						<td colspan="6" class="active"><a href="#" onclick="delPayData(2,this)" class="btn btn-danger btn-xs"><i class="fa fa-trash">删除</i></a></td>
+						<!-- <td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(2,this)"><i class="icon-add-pattern"></i>删除</div></td> -->
 					</tr>
 				</tbody>
 			</table>
