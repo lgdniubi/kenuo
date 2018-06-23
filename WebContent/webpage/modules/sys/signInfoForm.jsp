@@ -153,8 +153,12 @@
 			uploadFile('proxy_backurl')
 			/* uploadFile('pay_fonturl')
 			uploadFile('pay_backurl') */
-			var paylen = '${paylen}'
-			a= parseInt(paylen);
+			var paylen = '${paylen}';
+			if(!a)
+				a=0;
+			else
+				a= parseInt(paylen);
+			
 			if(payWay=='0'){
 				for (var len = 0; len < a; len++) {
 					uploadFile('payfonturl'+len)
@@ -551,25 +555,25 @@
 				<tbody class='bank'>
 					<tr>
 						<td  class="width-15 active"><label class="pull-right"><font color="red"></font>开户银行</label></td>
-				        	<td class="width-35"><input value="" name="payInfos[0].pay_name" class="form-control required"></td>
-				        	<td class="width-35" rowspan="3">
-				        		<img id="officepayfonturlImgsrc" src="" alt="" style="width: 200px;height: 100px;"/>
+			        	<td class="width-35"><input value="" name="payInfos[0].pay_name" class="form-control required"></td>
+			        	<td class="width-35" rowspan="3">
+				        	<img id="officepayfonturlImgsrc" src="" alt="" style="width: 200px;height: 100px;"/>
 							<input type="hidden" id="payfonturl" name="payInfos[0].pay_fonturl" class="required" value=""><!-- 图片隐藏文本框 -->
 							<p>&nbsp;</p>
-				                 	<div class="upload">
+				            <div class="upload">
 								<input type="file" name="file_payfonturl_upload" class="required" id="file_payfonturl_upload">
 							</div>
 							<div id="file_payfonturl_queue"></div>
-				        	</td>
-				        	<td class="width-35" rowspan="3">
-				        		<img id="officepaybackurlImgsrc" src="" alt="" style="width: 200px;height: 100px;"/>
+			        	</td>
+			        	<td class="width-35" rowspan="3">
+				        	<img id="officepaybackurlImgsrc" src="" alt="" style="width: 200px;height: 100px;"/>
 							<input type="hidden" id="paybackurl" name="payInfos[0].pay_backurl" value=""><!-- 图片隐藏文本框 -->
 							<p>&nbsp;</p>
-				                 	<div class="upload">
+				            <div class="upload">
 								<input type="file" name="file_paybackurl_upload" class="required" id="file_paybackurl_upload">
 							</div>
 							<div id="file_paybackurl_queue"></div>
-				        	</td>
+			        	</td>
 					</tr>
 					<input value="0" name="payInfos[0].pay_type" type="hidden">
 					<tr>

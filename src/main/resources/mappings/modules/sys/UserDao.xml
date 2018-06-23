@@ -1122,7 +1122,7 @@
 		</foreach>
 	</select>
 	
-	<select id="fzx_user_role" resultType="String">
+	<select id="findSuperManageUid" resultType="String">
 	select ur.user_id from fzx_role r
 	left join fzx_user_role ur on ur.fzx_role_id = r.id
 	where r.enname = 'sjgly' and ur.user_id is not null and r.mod_id = #{mode_id} 
