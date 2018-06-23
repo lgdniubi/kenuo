@@ -12,6 +12,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.session.Session;
 import org.restlet.engine.util.DateUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -1530,5 +1531,5 @@ public class SystemService extends BaseService implements InitializingBean {
 		}
 		return list;
 	}
-
+	
 }

@@ -399,5 +399,7 @@ public interface UserDao extends CrudDao<User> {
 	 */
 	public List<String> findupdateUser(List<Integer> roleids);
 	
+	
+	public List<String> findSuperManageUid(@Param(value="mode_id")int mode_id);
 
 }

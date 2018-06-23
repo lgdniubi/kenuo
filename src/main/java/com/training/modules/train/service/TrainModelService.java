@@ -42,6 +42,7 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	private MediaRoleService mediaRoleService;
 	@Autowired
 	private UserDao userDao;
+
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
 	
@@ -160,6 +161,17 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 		}
 		//把新增加的菜单给各个超管
 		changeSuperMenu(trainModel.getId(),oldMenuIds,trainModel.getMenuIds(),2);
+		//清除使用该版本商家超管token
+		clearToken(Integer.parseInt(trainModel.getId()));
+	}
+	//清除使用该版本商家超管token
+	private void clearToken(int mode_id){
+		List<String> uids = this.userDao.findSuperManageUid(mode_id);
+		if(uids != null && uids.size() > 0){
+			for(String uid : uids){
+				this.redisClientTemplate.del("UTOKEN_"+uid);
+			}
+		}
 	}
 	//插入fzx_role超级管理员角色，并赋予该角色菜单
 	private void insertFzxRoleAndMenu(TrainModel trainModel) {
