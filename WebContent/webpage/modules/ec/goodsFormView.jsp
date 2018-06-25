@@ -164,6 +164,12 @@
 										<input type="radio" id="isSelfSupport" name="isSelfSupport" value="0" ${(goods.isSelfSupport == '0' || goods.isSelfSupport == null)?'checked="checked"':''}>否
 										<input type="radio" id="isSelfSupport" name="isSelfSupport" value="1" ${(goods.isSelfSupport == '1')?'checked="checked"':''}>是
 									</li>
+									<li>
+										<li class="form-group">
+										<span class="control-label col-sm-2"><font color="red">*</font>是否发货：</span>
+										<input type="radio" id="isDelivery" name="isDelivery" value="0" ${(goods.isDelivery == '0' || goods.isDelivery == null)?'checked="checked"':''}>否
+										<input type="radio" id="isDelivery" name="isDelivery" value="1" ${(goods.isDelivery == '1')?'checked="checked"':''}>是
+									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>是否可在后台下单：</span>
 										<input type="radio" id="isBmCreate" name="isBmCreate" value="0" ${(goods.isBmCreate == '0' || goods.isBmCreate == null)?'checked="checked"':''}>否

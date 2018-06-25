@@ -428,6 +428,7 @@ public class GoodsController extends BaseController{
 		
 
 		model.addAttribute("goods", goods);
+		model.addAttribute("goodsCookie", CookieUtils.getCookie(request, "goodsCookie"));
 		return "modules/ec/goodsForm";
 	}
 	/**

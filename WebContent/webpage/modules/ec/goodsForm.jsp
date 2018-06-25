@@ -122,7 +122,7 @@
 					<h5>添加商品</h5>
 				</c:if>
 				<h5 style="padding-left: 92%;margin-top: -10px;">
-	           		<a href="${ctx}/ec/goods/list?actionId=${goods.actionId}">
+	           		<a href="${ctx}/ec/goods/list?actionId=${goods.actionId}&removeCookie=1&${goodsCookie}">
 	            		<button type="button" class="btn btn-info">返回</button>
 	            	</a>
 	            </h5> 
@@ -166,6 +166,11 @@
 										<span class="control-label col-sm-2"><font color="red">*</font>是否自营：</span>
 										<input type="radio" id="isSelfSupport" name="isSelfSupport" value="0" ${(goods.isSelfSupport == '0' || goods.isSelfSupport == null)?'checked="checked"':''}>否
 										<input type="radio" id="isSelfSupport" name="isSelfSupport" value="1" ${(goods.isSelfSupport == '1')?'checked="checked"':''}>是
+									</li>
+									<li class="form-group required">
+										<span class="control-label col-sm-2"><font color="red">*</font>是否发货：</span>
+										<input type="radio" id="isDelivery" name="isDelivery" value="0" ${(goods.isDelivery == '0' || goods.isDelivery == null)?'checked="checked"':''}>否
+										<input type="radio" id="isDelivery" name="isDelivery" value="1" ${(goods.isDelivery == '1')?'checked="checked"':''}>是
 									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>是否可在后台下单：</span>
