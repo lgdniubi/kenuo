@@ -609,8 +609,10 @@
 			a.channel_flag AS 'channelFlag',
 			a.receive_name,
 			a.receive_account,
-			a.return_type
+			a.return_type,
+			mo.is_neworder AS 'isNeworder'
 		FROM mtmydb.mtmy_returned_goods a 
+		LEFT JOIN mtmydb.mtmy_orders mo ON a.order_id=mo.order_id
 		LEFT JOIN mtmydb.mtmy_order_goods_mapping mogm ON a.goods_mapping_id=mogm.rec_id
 		LEFT JOIN trains.sys_franchisee c ON a.office_id=c.id
 		LEFT JOIN mtmydb.mtmy_users d ON a.user_id=d.user_id
