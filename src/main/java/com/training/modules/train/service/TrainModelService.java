@@ -317,7 +317,7 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 			List<Integer> roleids = pcRoleService.findpcRoleByModId(modId);
 			if(roleids !=null && roleids.size()>0){
 				for (Integer oldid : ls1) {
-					pcRoleService.insertUserRoleForRoleId(Integer.valueOf(oldid),roleids);
+					pcRoleService.insertUserRoleForRoleId(oldid,roleids);
 				}
 				List<String> list = userDao.findupdateUser(roleids);
 				for (String userId : list) {
@@ -329,7 +329,7 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 			List<Integer> fzxRoleids = fzxRoleService.findFzxRoleByModId(modId);
 			if(fzxRoleids !=null && fzxRoleids.size()>0){
 				for (Integer oldid : ls1) {
-					fzxRoleService.insertUserRoleForRoleId(Integer.valueOf(oldid),fzxRoleids);
+					fzxRoleService.insertUserRoleForRoleId(oldid,fzxRoleids);
 				}
 			}
 			//清除使用该版本商家超管token
@@ -339,7 +339,7 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 			List<Integer> mdRoleids = mediaRoleService.findMediaRoleByModId(modId);
 			if(mdRoleids !=null && mdRoleids.size()>0){
 				for (Integer oldid : ls1) {
-					mediaRoleService.insertUserRoleForRoleId(Integer.valueOf(oldid),mdRoleids);
+					mediaRoleService.insertUserRoleForRoleId(oldid,mdRoleids);
 				}
 			}
 			break;
@@ -358,7 +358,7 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 		switch (sc) {
 		case 1://PC端删除
 			for (Integer oldid : ls1) {
-				pcRoleService.deleteRoleMenuForRoleId(Integer.valueOf(oldid));
+				pcRoleService.deleteRoleMenuForRoleId(oldid);
 			}
 			break;
 		case 2://fzx端删除
@@ -369,12 +369,12 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 				new Thread(thread).start();
 			}
 			for (Integer oldid : ls1) {
-				fzxRoleService.deleteRoleMenuForRoleId(Integer.valueOf(oldid));
+				fzxRoleService.deleteRoleMenuForRoleId(oldid);
 			}
 			break;
 		case 3://自媒体PC端删除
 			for (Integer oldid : ls1) {
-				mediaRoleService.deleteRoleMenuForRoleId(Integer.valueOf(oldid));
+				mediaRoleService.deleteRoleMenuForRoleId(oldid);
 			}
 			break;
 		default:
