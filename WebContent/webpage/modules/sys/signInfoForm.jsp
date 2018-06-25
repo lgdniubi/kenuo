@@ -154,11 +154,7 @@
 			/* uploadFile('pay_fonturl')
 			uploadFile('pay_backurl') */
 			var paylen = '${paylen}';
-			if(!a)
-				a=0;
-			else
-				a= parseInt(paylen);
-			
+			a= parseInt(paylen);
 			if(payWay=='0'){
 				for (var len = 0; len < a; len++) {
 					uploadFile('payfonturl'+len)

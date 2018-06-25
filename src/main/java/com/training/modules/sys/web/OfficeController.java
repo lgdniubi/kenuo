@@ -395,6 +395,8 @@ public class OfficeController extends BaseController {
 				List<PayInfo> payInfos = JSONArray.toList(jsonObject.getJSONObject("data").getJSONArray("payInfos"), new PayInfo(),new JsonConfig());
 				model.addAttribute("payInfos", payInfos);
 				model.addAttribute("paylen", payInfos.size());
+			}else{
+				model.addAttribute("paylen", 0);
 			}
 			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
 			if(!"200".equals(jsonObject.get("result"))){

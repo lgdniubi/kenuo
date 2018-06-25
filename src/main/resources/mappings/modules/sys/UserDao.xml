@@ -1127,4 +1127,19 @@
 	left join fzx_user_role ur on ur.fzx_role_id = r.id
 	where r.enname = 'sjgly' and ur.user_id is not null and r.mod_id = #{mode_id} 
 	</select>
+	<!-- 版本删除菜单的时候清除token -->
+	<select id="findUidByMenu" resultType="String">
+		SELECT DISTINCT
+			ur.user_id
+		FROM
+			fzx_role_menu rm
+		INNER JOIN fzx_user_role ur ON ur.fzx_role_id = rm.fzx_role_id
+		LEFT JOIN fzx_role r ON r.id = rm.fzx_role_id
+		WHERE
+			rm.fzx_menu_id IN 
+		<foreach collection="list" item="value" separator="," open="(" close=")">
+			#{value}
+		</foreach>
+		AND r.mod_id = #{modId}
+	</select>
 </mapper>
