@@ -265,10 +265,10 @@
 									</c:if>
 									<shiro:hasPermission name="ec:returned:turnover">
 										<!-- 编辑营业额 -->
-										<c:if test="${returnGoods.returnStatus >= 12 && returnGoods.returnStatus <= 16}">
+										<c:if test="${returnGoods.returnStatus >= 12 && returnGoods.returnStatus <= 16 && returnGoods.isNeworder == 0}">
 											<a href="#" onclick="openDialogView('营业额明细表', '${ctx}/ec/returned/getTurnoverByOrderId?returnedId=${returnGoods.id}&orderId=${returnGoods.orderId}','850px','650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 编辑营业额</a>
 										</c:if>
-										<c:if test="${returnGoods.returnStatus<12 || returnGoods.returnStatus > 16}">
+										<c:if test="${returnGoods.returnStatus<12 || returnGoods.returnStatus > 16 || returnGoods.isNeworder == 1}">
 											<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>编辑营业额</a>
 										</c:if>
 									</shiro:hasPermission>
