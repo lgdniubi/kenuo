@@ -25,6 +25,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.training.common.persistence.Page;
+import com.training.common.utils.CookieUtils;
 import com.training.common.utils.ObjectUtils;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
@@ -114,6 +115,15 @@ public class GoodsController extends BaseController{
 	@RequiresPermissions(value={"ec:goods:list"},logical=Logical.OR)
 	@RequestMapping(value = {"list"})
 	public String list(Goods goods,Model model, HttpServletRequest request, HttpServletResponse response){
+		//若不是从重定向进来的，则清除cookie中的数据
+		if(!"1".equals(request.getParameter("removeCookie")) && request.getParameter("removeCookie") != "1"){
+			CookieUtils.getCookie(request, response, "goodsCookie","/", true);
+		}
+		//若是从查询列表页进来的，则将查询条件保存到cookie
+		if(!"".equals(request.getParameter("cookieData")) && request.getParameter("cookieData") != null){
+			CookieUtils.setCookie(response, "goodsCookie",request.getParameter("cookieData"),60*30);
+		}
+		
 		if(!"".equals(goods.getNewRatio()) && goods.getNewRatio() != null){
 			String[] result = goods.getNewRatio().split("-");
 			goods.setMinRatio(Double.valueOf(result[0]));
@@ -611,7 +621,7 @@ public class GoodsController extends BaseController{
 			BugLogUtils.saveBugLog(request, "保存/修改 商品通用信息 出现异常", e);
 			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/ec/goods/list?actionId="+goods.getActionId();
+		return "redirect:" + adminPath + "/ec/goods/list?actionId="+goods.getActionId()+"&removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie");
 	}
 	/**
 	 * 保存/修改 - 商品通用信息
@@ -630,7 +640,7 @@ public class GoodsController extends BaseController{
 			BugLogUtils.saveBugLog(request, "保存/修改 商品通用信息 出现异常", e);
 			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/ec/goods/list?actionId="+goods.getActionId();
+		return "redirect:" + adminPath + "/ec/goods/list?actionId="+goods.getActionId()+"&removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie");
 	}
 	
 	
@@ -662,7 +672,7 @@ public class GoodsController extends BaseController{
 		}else{
 			addMessage(redirectAttributes, "商品补仓:保存/修改失败,必要参数为空，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/ec/goods/list";
+		return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie");
 	}
 	/**
 	 * 补仓-保存规格库存
@@ -741,7 +751,7 @@ public class GoodsController extends BaseController{
 				} catch (Exception e) {
 					logger.info("#####补仓调用接口出现异常，异常信息为："+e.getMessage());
 					addMessage(redirectAttributes, "商品补仓:保存/修改-调用接口失败,请与管理员联系");
-					return "redirect:" + adminPath + "/ec/goods/list";
+					return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie");
 				}
 				
 				goods.setGoodsSpecPricesList(goodsSpecPricesList);//保存到商品实体bean-商品规格价格list
@@ -762,7 +772,7 @@ public class GoodsController extends BaseController{
 		}else{
 			addMessage(redirectAttributes, "商品补仓:保存/修改失败,必要参数为空，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/ec/goods/list?actionId="+actionId;
+		return "redirect:" + adminPath + "/ec/goods/list?actionId="+actionId+"&removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie");
 	}
 	
 	
@@ -985,7 +995,7 @@ public class GoodsController extends BaseController{
 		}else{
 			addMessage(redirectAttributes, "删除失败，必要参数为空，请与系统管理员联系");
 		}
-		return "redirect:" + adminPath + "/ec/goods/list";
+		return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie");
 	}
 	
 	/**
@@ -1505,7 +1515,7 @@ public class GoodsController extends BaseController{
 			logger.error("商品复制 出现异常，异常信息为："+e.getMessage());
 			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/ec/goods/list";
+		return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie");
 	
 			
 	}
@@ -1663,7 +1673,7 @@ public class GoodsController extends BaseController{
 			BugLogUtils.saveBugLog(request, "刷新商品详情缓存", e);
 			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/ec/goods/list";
+		return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie");
 	};
 	/**
 	 * 添加 修改 套卡子项对应的商品

@@ -331,6 +331,11 @@ function openDialogView(title,url,width,height){
 function search(){//查询，页码清零
 	overShade();
 	$("#pageNo").val(0);
+	
+	//保留查询条件
+	$("<input id='cookieData' name='cookieData' type='hidden'>").appendTo($("#searchForm"));
+	$("#cookieData").val($(document.getElementById("searchForm")).serialize());
+	
 	$("#searchForm").submit();
 		return false;
 }
@@ -345,6 +350,11 @@ function reset(){//重置，页码清零
 	 }
 function sortOrRefresh(){//刷新或者排序，页码不清零
 	overShade();
+	
+	//保留查询条件
+	$("<input id='cookieData' name='cookieData' type='hidden'>").appendTo($("#searchForm"));
+	$("#cookieData").val($(document.getElementById("searchForm")).serialize());
+	
 	$("#searchForm").submit();
 		return false;
 }
@@ -352,6 +362,11 @@ function page(n,s){//翻页
 	overShade();
 	$("#pageNo").val(n);
 	$("#pageSize").val(s);
+	
+	//保留查询条件
+	$("<input id='cookieData' name='cookieData' type='hidden'>").appendTo($("#searchForm"));
+	$("#cookieData").val($(document.getElementById("searchForm")).serialize());
+	
 	$("#searchForm").submit();
 	$("span.page-size").text(s);
 	return false;
@@ -364,4 +379,3 @@ function overShade(){
 		{shade: [0.1,'#fff'] //0.1透明度的白色背景
 	});
 }
-

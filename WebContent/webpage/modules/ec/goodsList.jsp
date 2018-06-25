@@ -17,14 +17,6 @@
 			reset();
 		}
 		
-		//分页按钮
-		function page(n,s){
-			$("#pageNo").val(n);
-			$("#pageSize").val(s);
-			$("#searchForm").submit();
-	    	return false;
-	    }
-		
 		//是否推荐/是否显示 改变事件
 		function changeTableVal(fromid,id,isyesno){
 			$(".loading").show();//打开展示层
