@@ -130,7 +130,7 @@
 	</select>
 	
 	<delete id="deleteRoleMenuForRoleId">
-		DELETE FROM media_manage_role_menu WHERE menu_id = #{oldMenuid}
+		DELETE FROM media_manage_role_menu WHERE menu_id = #{oldMenuid} AND role_id in (SELECT r.id FROM media_manage_role r WHERE r.mod_id = #{modId});
 	</delete>	
 	<select id="findMediaRoleByModId" resultType="int">
 		SELECT r.id AS roleId FROM media_manage_role r WHERE mod_id = #{modeid} AND del_flag = 0 AND r.type = 2 AND franchisee_id != 1

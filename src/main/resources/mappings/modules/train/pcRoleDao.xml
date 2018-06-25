@@ -135,7 +135,7 @@
 	</select>
 
 	<delete id="deleteRoleMenuForRoleId">
-		DELETE FROM pc_menu_role WHERE menu_id = #{oldMenuid}
+		DELETE FROM pc_menu_role WHERE menu_id = #{oldMenuid} AND role_id IN (SELECT r.id FROM pc_role r WHERE r.mode_id = #{modId});
 	</delete>	
 	<select id="findpcRoleByModId" resultType="int">
 		SELECT r.id AS roleId FROM pc_role r WHERE mode_id = #{modeid} AND del_flag = 0 AND r.ename = 'sjgly' AND franchisee_id != 1

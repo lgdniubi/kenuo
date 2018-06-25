@@ -358,7 +358,7 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 		switch (sc) {
 		case 1://PC端删除
 			for (Integer oldid : ls1) {
-				pcRoleService.deleteRoleMenuForRoleId(oldid);
+				pcRoleService.deleteRoleMenuForRoleId(oldid,Integer.valueOf(modId));
 			}
 			break;
 		case 2://fzx端删除
@@ -369,12 +369,12 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 				new Thread(thread).start();
 			}
 			for (Integer oldid : ls1) {
-				fzxRoleService.deleteRoleMenuForRoleId(oldid);
+				fzxRoleService.deleteRoleMenuForRoleId(oldid,Integer.valueOf(modId));
 			}
 			break;
 		case 3://自媒体PC端删除
 			for (Integer oldid : ls1) {
-				mediaRoleService.deleteRoleMenuForRoleId(oldid);
+				mediaRoleService.deleteRoleMenuForRoleId(oldid,Integer.valueOf(modId));
 			}
 			break;
 		default:
