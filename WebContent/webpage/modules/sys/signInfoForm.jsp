@@ -117,10 +117,10 @@
 				$("#pay-info").append(Htmlvalue);
 				uploadFile(s+a);
 				uploadFile(s2+a);
-			}else if(value == 1) {//#pay-info
+			}else if(value == 2) {//#pay-info
 				//alert($("#ali-pay").html())
 				$("#pay-info").append($("#pay-none #ali-pay").html());
-			}else if(value == 2) {//#pay-info
+			}else if(value == 1) {//#pay-info
 				//alert($("#bank-pay").html())
 				$("#pay-info").append($("#pay-none #wechat-pay").html());
 			}
@@ -435,8 +435,8 @@
 		      	  <!-- <div id="add-pattern" onclick="addPayData(0,this)"><i class="icon-add-pattern"></i>添加账户</div> -->
 		      </c:if>
 		      <c:if test="${payWay == 1}"><!-- 1是线上支付 -->
-		      	  <a href="#" onclick="addPayData(1,this)"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加支付宝</a>
-		      	  <a href="#" onclick="addPayData(2,this)"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加微信</a>
+		      	  <a href="#" onclick="addPayData(2,this)"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加支付宝</a>
+		      	  <a href="#" onclick="addPayData(1,this)"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加微信</a>
 			      <!-- <div id="add-pattern" onclick="addPayData(1,this)"><i class="icon-add-pattern"></i>添加支付宝</div>
 			      <div id="add-pattern" onclick="addPayData(2,this)"><i class="icon-add-pattern"></i>添加微信</div> -->
 		      </c:if>
@@ -487,21 +487,21 @@
 		      	</c:if>
 		      	<c:if test="${payWay == 1}">
 		      		<c:forEach items="${payInfos}" var="pay" varStatus="i">
-				      	<c:if test="${pay.pay_type == 1}">
+				      	<c:if test="${pay.pay_type == 2}">
 				      		<tbody class='ali'>
 								<tr>
-								<input value="1" name="payInfos[1].pay_type" type="hidden">
+								<input value="2" name="payInfos[2].pay_type" type="hidden">
 									<td colspan="6" class="active"><label class="pull-left">支付宝</label></td>
 								</tr>
 								<tr>
 									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
-						        	<td class="width-35"><input value="${pay.pay_account}" name="payInfos[1].pay_account" class="form-control required"></td>
+						        	<td class="width-35"><input value="${pay.pay_account}" name="payInfos[2].pay_account" class="form-control required"></td>
 									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
-							        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[1].pay_username" class="form-control required"></td>
+							        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[2].pay_username" class="form-control required"></td>
 								</tr>
 								<tr>
 									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
-							        <td colspan="5" class="width-35"><input value="${pay.pay_mobile}" name="payInfos[1].pay_mobile" class="form-control required"></td>
+							        <td colspan="5" class="width-35"><input value="${pay.pay_mobile}" name="payInfos[2].pay_mobile" class="form-control required"></td>
 								</tr>
 								<tr>
 									<td colspan="6" class="active"><a href="#" onclick="delPayData(1,this)" class="btn btn-danger btn-xs"><i class="fa fa-trash">删除</i></a></td>
@@ -509,22 +509,22 @@
 								</tr>
 							</tbody>
 				      	</c:if>
-				      	<c:if test="${pay.pay_type == 2}">
+				      	<c:if test="${pay.pay_type == 1}">
 				      		<tbody class='wechat'>
 								<tr>
-									<input value="2" name="payInfos[2].pay_type" type="hidden">
+									<input value="1" name="payInfos[1].pay_type" type="hidden">
 									<td colspan="6" class="active"><label class="pull-left">微信</label></td>
 								</tr>
 								<tr>
 									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
-							        <td class="width-35"><input value="${pay.pay_account}" name="payInfos[2].pay_account" class="form-control required"></td>
+							        <td class="width-35"><input value="${pay.pay_account}" name="payInfos[1].pay_account" class="form-control required"></td>
 									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
-							        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[2].pay_username" class="form-control required"></td>
+							        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[1].pay_username" class="form-control required"></td>
 									
 								</tr>
 								<tr>
 									<td class="width-15 active"><label class="pull-right"><font color="red"></font>电话:</label></td>
-							        <td  colspan="5" class="width-35"><input value="${pay.pay_mobile}" name="payInfos[2].pay_mobile" class="form-control required"></td>
+							        <td  colspan="5" class="width-35"><input value="${pay.pay_mobile}" name="payInfos[1].pay_mobile" class="form-control required"></td>
 								</tr>
 								<tr>
 									<td colspan="6" class="active"><a href="#" onclick="delPayData(2,this)" class="btn btn-danger btn-xs"><i class="fa fa-trash">删除</i></a></td>
@@ -592,18 +592,18 @@
 			<table id="ali-pay">
 				<tbody class='ali'>
 					<tr>
-					<input value="1" name="payInfos[1].pay_type" type="hidden">
+					<input value="2" name="payInfos[2].pay_type" type="hidden">
 						<td colspan="6" class="active"><label class="pull-left">支付宝</label></td>
 					</tr>
 					<tr>
 						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
-			        	<td class="width-35"><input value="" name="payInfos[1].pay_account" class="form-control required"></td>
+			        	<td class="width-35"><input value="" name="payInfos[2].pay_account" class="form-control required"></td>
 						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
-				        <td class="width-35"><input value="" name="payInfos[1].pay_username" class="form-control required"></td>
+				        <td class="width-35"><input value="" name="payInfos[2].pay_username" class="form-control required"></td>
 					</tr>
 					<tr>
 						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
-				        <td colspan="5" class="width-35"><input value="" name="payInfos[1].pay_mobile" class="form-control required"></td>
+				        <td colspan="5" class="width-35"><input value="" name="payInfos[2].pay_mobile" class="form-control required"></td>
 					</tr>
 					<tr>
 						<td colspan="6" class="active"><a href="#" onclick="delPayData(1,this)" class="btn btn-danger btn-xs"><i class="fa fa-trash">删除</i></a></td>
@@ -617,18 +617,18 @@
 			<table id="wechat-pay">
 				<tbody class='wechat'>
 					<tr>
-						<input value="2" name="payInfos[2].pay_type" type="hidden">
+						<input value="1" name="payInfos[1].pay_type" type="hidden">
 						<td colspan="6" class="active"><label class="pull-left">微信</label></td>
 					</tr>
 					<tr>
 						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
-				        <td class="width-35"><input value="" name="payInfos[2].pay_account" class="form-control required"></td>
+				        <td class="width-35"><input value="" name="payInfos[1].pay_account" class="form-control required"></td>
 						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
-				        <td class="width-35"><input value="" name="payInfos[2].pay_username" class="form-control required"></td>
+				        <td class="width-35"><input value="" name="payInfos[1].pay_username" class="form-control required"></td>
 					</tr>
 					<tr>
 						<td class="width-15 active"><label class="pull-right"><font color="red"></font>电话:</label></td>
-				        <td colspan="5" class="width-35"><input value="" name="payInfos[2].pay_mobile" class="form-control required"></td>
+				        <td colspan="5" class="width-35"><input value="" name="payInfos[1].pay_mobile" class="form-control required"></td>
 					</tr>
 					<tr>
 						<td colspan="6" class="active"><a href="#" onclick="delPayData(2,this)" class="btn btn-danger btn-xs"><i class="fa fa-trash">删除</i></a></td>

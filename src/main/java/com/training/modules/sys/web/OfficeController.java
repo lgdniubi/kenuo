@@ -483,7 +483,7 @@ public class OfficeController extends BaseController {
 						np.setPay_username(username[i]);
 						np.setPay_account(account[i]);
 						np.setPay_mobile(mobile[i]);
-						np.setPay_name("支付宝");
+						np.setPay_name("微信");
 						np.setPay_type("1");
 						ns.add(np);
 					}
@@ -505,7 +505,7 @@ public class OfficeController extends BaseController {
 							np2.setPay_username(username2[i]);
 							np2.setPay_account(account2[i]);
 							np2.setPay_mobile(mobile2[i]);
-							np2.setPay_name("微信");
+							np2.setPay_name("支付宝");
 							np2.setPay_type("2");
 							ns.add(np2);
 						}
