@@ -391,10 +391,16 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	 */
 	private List<Integer> findDifMenuId(String newMenuIds, String[] omenuid) {
 		List<Integer> ls = new ArrayList<>();
-		List<String> list = Arrays.asList(newMenuIds.split(","));
-		for (int i = 0; i < omenuid.length; i++) {
-			if(!list.contains(omenuid[i])){
+		if(StringUtils.isBlank(newMenuIds)){
+			for (int i = 0; i < omenuid.length; i++) {
 				ls.add(Integer.valueOf(omenuid[i]));
+			}
+		}else{
+			List<String> list = Arrays.asList(newMenuIds.split(","));
+			for (int i = 0; i < omenuid.length; i++) {
+				if(!list.contains(omenuid[i])){
+					ls.add(Integer.valueOf(omenuid[i]));
+				}
 			}
 		}
 		return ls;

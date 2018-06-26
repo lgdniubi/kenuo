@@ -408,5 +408,11 @@ public interface UserDao extends CrudDao<User> {
 	 * @return
 	 */
 	public List<String> findUidByMenu(@Param(value="modId")Integer modId, @Param(value="list")List<Integer> list);
+	/**
+	 * 根据商家id查出所有用户id
+	 * @param id
+	 * @return
+	 */
+	public List<String> findUidByCompanyId(String companyId);
 
 }

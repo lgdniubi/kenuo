@@ -24,6 +24,7 @@ public class UserCheck extends DataEntity<UserCheck>{
 	
 	//---------------企业审核信息-------------
 	private String companyName;		//企业名称
+	private String companyId;		//企业名称
 	private String shortName;		//企业简称
 	private String charterCard;		//执照编号
 	private String code;		//机构编码
@@ -229,5 +230,11 @@ public class UserCheck extends DataEntity<UserCheck>{
 	}
 	public void setAddr(CheckAddr addr) {
 		this.addr = addr;
+	}
+	public String getCompanyId() {
+		return companyId;
+	}
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
 	}
 }

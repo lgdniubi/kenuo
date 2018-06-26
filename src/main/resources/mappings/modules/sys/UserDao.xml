@@ -1142,4 +1142,12 @@
 		</foreach>
 		AND r.mod_id = #{modId}
 	</select>
+	<!-- 根据商家id找出所有用户id -->
+	<select id="findUidByCompanyId" resultType="String">
+		SELECT
+			a.id
+		FROM sys_user a
+		WHERE a.del_flag = '0'
+		AND a.company_id = #{companyId}
+	</select>
 </mapper>

@@ -75,6 +75,7 @@
 			adi.`name`,
 			u.nickname,
 			u.mobile,
+			u.company_id,
 			u.type,
 			u.id AS userid,
 			tap.id AS applyId,
