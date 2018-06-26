@@ -143,7 +143,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @return
 	 */
 	public Page<Orders> findOrders(Page<Orders> page, Orders orders) {
-		if(orders.getBegtime() == null && orders.getEndtime() == null){
+		if(orders.getBegtime() == null && orders.getEndtime() == null && (orders.getOrderid() == null || "".equals(orders.getOrderid()))){
 			orders.setBegtime(new Date());
 			orders.setEndtime(new Date());
 		}
@@ -165,7 +165,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 	 * @return
 	 */
 	public Page<Orders> newFindOrders(Page<Orders> page, Orders orders) {
-		if(orders.getBegtime() == null && orders.getEndtime() == null){
+		if(orders.getBegtime() == null && orders.getEndtime() == null && (orders.getOrderid() == null || "".equals(orders.getOrderid()))){
 			orders.setBegtime(new Date());
 			orders.setEndtime(new Date());
 		}
