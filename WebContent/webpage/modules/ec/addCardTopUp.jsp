@@ -73,6 +73,12 @@
 			if(!checknum($("#rechargeAmount").val(),$("#accountBalance").val())){
 				return;
 			}
+			
+			if(newTopUpTotalAmount <= 0){
+				top.layer.alert('充值总金额不可小于等于0!', {icon: 0, title:'提醒'});
+				return;
+			}
+			
 			// 不可多充值
 			if(newTopUpTotalAmount > parseFloat($("#orderArrearage").val())){
 				top.layer.alert('充值总金额不可大于欠款!', {icon: 0, title:'提醒'});
