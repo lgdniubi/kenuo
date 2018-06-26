@@ -17,6 +17,7 @@ import com.training.common.service.CrudService;
 import com.training.common.utils.StringUtils;
 import com.training.modules.ec.dao.EquipmentLabelDao;
 import com.training.modules.ec.dao.GoodsAttributeDao;
+import com.training.modules.ec.dao.GoodsCardDao;
 import com.training.modules.ec.dao.GoodsDao;
 import com.training.modules.ec.dao.GoodsSpecPriceDao;
 import com.training.modules.ec.dao.GoodsStatisticsDao;
@@ -25,6 +26,7 @@ import com.training.modules.ec.entity.EquipmentLabel;
 import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.entity.GoodsAttribute;
 import com.training.modules.ec.entity.GoodsAttributeMappings;
+import com.training.modules.ec.entity.GoodsCard;
 import com.training.modules.ec.entity.GoodsEquipmentLabel;
 import com.training.modules.ec.entity.GoodsImages;
 import com.training.modules.ec.entity.GoodsPosition;
@@ -76,7 +78,9 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 	private GoodsStatisticsDao goodsStatisticsDao;
 	@Autowired
 	private GoodsPositionService goodsPositionService;
-
+	@Autowired
+	private GoodsCardDao goodsCardDao;
+	
 	/**
 	 * 分页展示所有信息
 	 * 
@@ -782,6 +786,74 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 				}
 				
 			}
+		}
+		
+		//卡项子项信息修改,先删除原先的卡项子项
+		goodsCardDao.deleteByCardId(goods.getGoodsId());
+		//判断是套卡还是通用卡,进行修改.
+		if(goods.getIsReal().equals("2")){
+			//保存卡项子项表 begin
+			GoodsCard goodsCard = new GoodsCard();
+			
+			goodsCard.setCardId(goods.getGoodsId());						//卡项ID
+			
+			List<Integer> goodsIds = goods.getGoodsIds();					//商品ID 集合
+			List<Integer> goodsNums = goods.getGoodsNums();					//次（个）数集合
+			List<Double> marketPrices = goods.getMarketPrices();			//市场单价集合
+			List<Double> prices = goods.getPrices();						//优惠价集合
+			List<Double> totalMarketPrices = goods.getTotalMarketPrices();	//市场价合计集合
+			List<Double> totalPrices = goods.getTotalPrices();				//优惠价合计集合
+			for (Integer i = 0; i < goodsIds.size(); i++) {
+				Integer goodsId = goodsIds.get(i);					//商品id
+				Integer goodsNum = goodsNums.get(i);				//次（个）数
+				Double marketPrice = marketPrices.get(i);			//市场价
+				Double price = prices.get(i);						//优惠价
+				Double totalMarketPrice = totalMarketPrices.get(i); //市场价合计
+				Double totalPrice = totalPrices.get(i);				//优惠价合计
+				//通过商品id查询商品的商品名称,商品原始图,服务时长（虚拟商品）,是否为实物（0：实物；1：虚拟；）,
+				Goods newgoods = goodsDao.findGoodsBygoodsId(goodsId);
+				
+				goodsCard.setGoodsId(newgoods.getGoodsId());
+				goodsCard.setGoodsName(newgoods.getGoodsName());
+				goodsCard.setOriginalImg(newgoods.getOriginalImg());
+				goodsCard.setGoodsNum(goodsNum);
+				goodsCard.setServiceMin(newgoods.getServiceMin());
+				goodsCard.setIsReal(newgoods.getIsReal());
+				goodsCard.setMarketPrice(marketPrice);
+				goodsCard.setPrice(price);
+				goodsCard.setTotalMarketPrice(totalMarketPrice);
+				goodsCard.setTotalPrice(totalPrice);
+				
+				goodsCardDao.insert(goodsCard);//保存卡项
+			}
+		}else if(goods.getIsReal().equals("3")){
+			//保存卡项子项表 begin
+			GoodsCard goodsCard = new GoodsCard();
+			
+			goodsCard.setCardId(goods.getGoodsId());				//卡项ID
+			
+			List<Integer> goodsIds = goods.getGoodsIds();			//商品ID 集合
+			List<Integer> goodsNums = goods.getGoodsNums();			//数量
+			for (Integer i = 0; i < goodsIds.size(); i++) {
+				Integer goodsId = goodsIds.get(i);					//商品id
+				Integer goodsNum = goodsNums.get(i);				//数量
+				//通过商品id查询商品的商品名称,商品原始图,服务时长（虚拟商品）,是否为实物（0：实物；1：虚拟；）,
+				Goods newgoods = goodsDao.findGoodsBygoodsId(goodsId);
+				
+				goodsCard.setGoodsId(newgoods.getGoodsId());
+				goodsCard.setGoodsName(newgoods.getGoodsName());
+				goodsCard.setOriginalImg(newgoods.getOriginalImg());
+				goodsCard.setGoodsNum(goodsNum);
+				goodsCard.setServiceMin(newgoods.getServiceMin());
+				goodsCard.setIsReal(newgoods.getIsReal());
+				goodsCard.setMarketPrice(0);
+				goodsCard.setPrice(0);
+				goodsCard.setTotalMarketPrice(0);
+				goodsCard.setTotalPrice(0);
+				
+				goodsCardDao.insert(goodsCard);//保存卡项
+			}
+			//保存卡项子项表 end 
 		}
 	}
 
