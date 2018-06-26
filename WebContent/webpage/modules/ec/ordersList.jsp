@@ -147,6 +147,15 @@
 			
 		}
 		
+		function newSearch(){
+			
+			if($("#orderid").val() != ""){
+				$("#begtime").val("");	
+				$("#endtime").val("");	
+			}
+			search();
+		}
+		
 </script>
 </head>
 <body class="gray-bg">
@@ -177,12 +186,6 @@
 								<form:option value="3">已退款</form:option>
 								<form:option value="4">已完成</form:option>
 							</form:select>
-						<%-- <label>是否有欠费：</label>
-						<form:select path="orderArrearageType"  class="form-control" style="width:185px;">
-								<form:option value="0">全部</form:option>
-								<form:option value="1">无欠款</form:option>
-								<form:option value="2">有欠款</form:option>
-							</form:select> --%>
 						<label>订单区分：</label>	
 						<form:select path="searchIsReal"  class="form-control" style="width:185px;">
 								<form:option value="">全部</form:option>
@@ -274,7 +277,7 @@
 							</shiro:hasPermission> 
 						</div>
 						<div class="pull-right">
-							<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
+							<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="newSearch()" ><i class="fa fa-search"></i> 查询</button>
 							<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()" ><i class="fa fa-refresh"></i> 重置</button>
 						</div>
 					</div>

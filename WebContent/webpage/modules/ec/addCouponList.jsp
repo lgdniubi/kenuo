@@ -274,11 +274,39 @@
 // 				});
 
 			});
+				
+		function delActivityAcoupon(id,activityId){
+			var num=0;
+			$.ajax({
+				type:"post",
+				async:false,
+				data:{
+					id:id
+					
+				 },
+				url:"${ctx}/ec/activity/numByCouponId",
+				success:function(date){
+					num=date;
+					
+				},
+				error:function(XMLHttpRequest,textStatus,errorThrown){
+							    
+				}
+			});
+			
+			if(num>0){
+				top.layer.alert('该红包已有人领取不可删除!', {icon: 0, title:'提醒'});
+				return;
+			}
+			
+			confirmx("确认要删除吗？", "${ctx}/ec/activity/delCoupon?id="+id+"&activityId="+activityId)
+		}
 </script>
 </head>
 <body>
 	<div class="wrapper wrapper-content">
 		<div class="ibox">
+		<sys:message content="${message}" />
 			<div class="ibox-content">
 				<div class="clearfix">
 					<form:form id="inputForm" modelAttribute="activity" action="${ctx}/ec/coupon/saveGoods" method="post" class="form-horizontal">
@@ -376,7 +404,9 @@
 	                             </c:if>   
 								<a href="#" onclick="openDialogView('信息列表', '${ctx}/ec/activity/CateGoodsList?id=${list.id}&usedType=${list.usedType}','300px','400px')"
 												class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i>查看</a>
-								
+								<shiro:hasPermission name="ec:activity:delCoupon">
+									<a onclick="delActivityAcoupon(${list.id},${activity.id})" class="btn btn-danger btn-xs"><i class="fa fa-close"></i>删除</a>								
+								</shiro:hasPermission>
 								</td>
 							</tr>
 						</c:forEach>

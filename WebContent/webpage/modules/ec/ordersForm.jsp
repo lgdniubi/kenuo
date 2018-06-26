@@ -42,6 +42,10 @@
 		}, "小数位不能超过三位"); 
 		
 		$(document).ready(function() {
+			if($("#channelFlag").val() != "bm"){
+				$("#paycode").attr("disabled",true);
+			}
+			
 			if($("#isNeworder").val() == 0){
 				$("#beauticianMoney").show();
 				$("#shopMoney").show();

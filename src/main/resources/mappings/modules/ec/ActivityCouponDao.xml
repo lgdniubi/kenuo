@@ -43,6 +43,7 @@
 		FROM mtmydb.mtmy_activity_coupon a
 		WHERE
 		a.action_id = #{actionId}
+		AND a.del_flag = 0
 		ORDER BY a.create_date DESC
 	</select>
 	
@@ -161,4 +162,10 @@
 		SET coupon_number = #{count} WHERE id=#{id}
 	</update>
 	
+	<!-- 删除活动对应的红包 -->
+	<update id="delCoupon">
+		UPDATE mtmydb.mtmy_activity_coupon
+		SET del_flag = 1
+		WHERE id = #{id}
+	</update>
 </mapper>
