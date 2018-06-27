@@ -1425,7 +1425,7 @@ public class GoodsController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "treeGoodsData")
-	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String goodsId,String isReal,String isOnSale,String isAppshow,String type,String isOpen,HttpServletResponse response) {
+	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String goodsId,String isReal,String isOnSale,String isAppshow,String type,String isOpen,String id,HttpServletResponse response) {
 		// 注： type属于临时方案，目前仅用于下单时查询商品  type=1表示下单时下单需区分用户商家
 		String isBmCreate = "";
 		if(type != null && !"".equals(type)){
@@ -1451,6 +1451,16 @@ public class GoodsController extends BaseController{
 		goods.setGoodsId(Integer.valueOf(goodsId));
 		if(actionId!=null){
 			goods.setActionId(Integer.parseInt(actionId));
+		}
+		
+		//若穿过来的商品ids不为空，本来准备用goodsids的，但是是集合，没法用，就用id代替了
+		List<Integer> goodsIdsList = new ArrayList<Integer>();
+		if(!"".equals(id) && id != null){
+			String[] newGoodsIds = id.split(",");
+			for(String newGoodsId:newGoodsIds){
+				goodsIdsList.add(Integer.valueOf(newGoodsId));
+			}
+			goods.setGoodsIds(goodsIdsList);
 		}
 		
 		if(!"".equals(isOpen) && isOpen != null){
