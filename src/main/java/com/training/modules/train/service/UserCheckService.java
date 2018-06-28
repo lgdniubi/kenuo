@@ -304,10 +304,11 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	}
 	private void postCSData(String parpm, String key) {
 		String url = ParametersFactory.getTrainsParamValues(key);
-		logger.info("##### web接口路径:"+url);
+		logger.info("##### web接口路径trains:"+url);
 //		String parpm = "{\"id\":"+Integer.valueOf(find.getId())+",\"name\":\""+find.getCompanyName()+"\",\"type\":\""+find.getAddr().getType()+"\","
 //				+ "\"address\":\""+find.getAddress()+"\",\"legal_name\":\""+find.getLegalPerson()+"\",\"mobile\":\""+find.getMobile()
 //						+"\",\"charter_url\":\""+find.getCharterUrl()+"\"}";
+		logger.info("##### 打印参数param:"+parpm);
 		String result = WebUtils.postCSObject(parpm, url);
 		JSONObject jsonObject = JSONObject.fromObject(result);
 		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
@@ -538,17 +539,18 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	private void saveSupplyFranchisee(UserCheck find) {
 		try {
 			String weburl = ParametersFactory.getMtmyParamValues("fzx_equally_franchisee");
-			logger.info("##### web接口路径:"+weburl);
+			logger.info("##### web接口路径同步供应链:"+weburl);
 			String parpm = "{\"id\":"+Integer.valueOf(find.getId())+",\"name\":\""+find.getCompanyName()+"\",\"type\":\""+find.getAddr().getType()+"\","
 					+ "\"address\":\""+find.getAddress()+"\",\"legal_name\":\""+find.getLegalPerson()+"\",\"mobile\":\""+find.getMobile()
 							+"\",\"charter_url\":\""+find.getCharterUrl()+"\"}";
 			String url=weburl;
+			logger.info("##### 打印参数param:"+parpm);
 			String result = WebUtils.postCSObject(parpm, url);
 			JSONObject jsonObject = JSONObject.fromObject(result);
 			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
 			/*if("200".equals(jsonObject.get("result"))){
 			}*/
-		} catch (NumberFormatException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
