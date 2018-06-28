@@ -34,10 +34,8 @@ public class GoodsBeauticianFee extends TreeEntity<GoodsBeauticianFee> {
 	private double store;						//储备业绩
 	private double prther;						//项目老师
 	
-	
-	
-	
-	
+	private String firstParentName;            //一级分类名称
+	private String secondParentName;          //二级分类名称
 	
 	public double getPrimary() {
 		return primary;
@@ -150,7 +148,17 @@ public class GoodsBeauticianFee extends TreeEntity<GoodsBeauticianFee> {
 		// TODO Auto-generated method stub
 		
 	}
-	
-	
+	public String getFirstParentName() {
+		return firstParentName;
+	}
+	public void setFirstParentName(String firstParentName) {
+		this.firstParentName = firstParentName;
+	}
+	public String getSecondParentName() {
+		return secondParentName;
+	}
+	public void setSecondParentName(String secondParentName) {
+		this.secondParentName = secondParentName;
+	}
 	
 }
