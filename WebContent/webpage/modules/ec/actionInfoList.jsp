@@ -235,10 +235,10 @@
 									</shiro:hasPermission> 
 									<shiro:hasPermission name="ec:action:edit">
 									<c:if test="${action.status==1}">
-										<a href=""  onclick='top.openTab("${ctx}/ec/goods/list?actionId=${action.actionId}","${action.actionName}列表", false)'  class="btn btn-primary btn-xs"><i class="fa fa-file"></i>修改商品</a>
+										<a href=""  onclick='top.openTab("${ctx}/ec/goods/list?actionId=${action.actionId}&cookieData=actionId=${action.actionId}&actionFlag=1","${action.actionName}列表", false)'  class="btn btn-primary btn-xs"><i class="fa fa-file"></i>修改商品</a>
 									</c:if>
 									<c:if test="${action.status==2}">
-										<a href=""  onclick='top.openTab("${ctx}/ec/goods/list?actionId=${action.actionId}","${action.actionName}列表", false)'  class="btn btn-primary btn-xs"><i class="fa fa-file"></i>修改商品</a>
+										<a href=""  onclick='top.openTab("${ctx}/ec/goods/list?actionId=${action.actionId}&cookieData=actionId=${action.actionId}&actionFlag=1","${action.actionName}列表", false)'  class="btn btn-primary btn-xs"><i class="fa fa-file"></i>修改商品</a>
 									</c:if>
 									<c:if test="${action.status==3}">
 										<a href="#" style="background: #C0C0C0; color: #FFF"

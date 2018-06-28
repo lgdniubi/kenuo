@@ -89,4 +89,11 @@
 		FROM mtmydb.mtmy_goods_card a
 		WHERE a.card_id=#{cardId}
 	</select>
+	
+	<!-- 根据卡项id删除子项商品 -->
+	<delete id="deleteByCardId">
+		DELETE FROM
+			mtmydb.mtmy_goods_card 
+		WHERE card_id = #{cardId}
+	</delete>
 </mapper>

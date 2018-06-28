@@ -136,6 +136,9 @@
 				<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 					<thead>
 						<tr>
+							<th style="text-align: center;">商品ID</th>
+							<th style="text-align: center;">一级分类</th>
+							<th style="text-align: center;">二级分类</th>
 							<th style="text-align: center;">商品名称</th>
 							<th style="text-align: center;">商品编号</th>
 							<th style="text-align: center;">商品类型</th>
@@ -147,6 +150,9 @@
 					<tbody style="text-align: center;">
 						<c:forEach items="${page.list}" var="beaut">
 							<tr>
+								<td>${beaut.goodsId}</td>
+								<td>${beaut.firstParentName}</td>
+								<td>${beaut.secondParentName}</td>
 								<td>${beaut.goodsName}</td>
 								<td>${beaut.goodsNo}</td>
 								<td>

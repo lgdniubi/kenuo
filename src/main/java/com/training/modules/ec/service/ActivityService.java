@@ -436,4 +436,12 @@ public class ActivityService extends TreeService<ActivityDao,Activity> {
 	public int queryNotInnerUserNum(){
 		return activityCouponUserDao.queryNotInnerUserNum();
 	}
+	
+	/**
+	 * 删除活动对应的红包
+	 * @param id
+	 */
+	public void delCoupon(String id){
+		activityCouponDao.delCoupon(id);
+	}
 }

@@ -101,6 +101,7 @@
 	function findGood(){
 		var cateid=$("#goodsCategoryId").val();
 		var actionType=$("#actionType").val();
+		var goodsIds = $("#goodsIds").val();
 		var isReal = $("#isReal").val();
 		var arr = new Array(); //数组定义标准形式，不要写成Array arr = new Array();
 	    var all = new Array(); //定义变量全部保存
@@ -114,7 +115,7 @@
 			$.ajax({
 				 type:"get",
 				 dataType:"json",
-				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&actionType="+actionType+"&isOnSale=1"+"&isReal="+isReal+"&isOpen="+$("#isOpen").val(),
+				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&actionType="+actionType+"&isOnSale=1"+"&isReal="+isReal+"&isOpen="+$("#isOpen").val()+"&id="+goodsIds,
 				 success:function(date){
 					var data=date;
 					if(arr.length>0){
@@ -157,11 +158,11 @@
 						<input type="hidden" id="isReal" name="isReal" value="${isReal}">
 						<input type="hidden" id="isOpen" name="isOpen" value="${isOpen}">
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
-							<tr>
+							<tr width="20px">
 								<td>
 									<label class="pull-right" >选择分类：</label>
 								</td>
-								<td>
+								<td width="20px">
 									<sys:treeselect id="goodsCategory" name="goodsCategoryId" value="${goods.goodsCategoryId }" labelName="goodsCategory.name" labelValue="${goodsCategory.name }" title="商品分类" url="/ec/goodscategory/treeData?positionType=${isReal}" cssClass="form-control required" allowClear="true" notAllowSelectParent="true"/>
 							</tr>
 							<tr>
@@ -174,6 +175,12 @@
 										<form:option value="2">团购</form:option>
 										<form:option value="3">促销优惠</form:option>
 									</form:select>
+								</td>
+							</tr>
+							<tr>
+								<td style="width:100px"><label class="pull-right">商品ids：</label></td>
+								<td>
+									<textarea id="goodsIds" name="goodsIds" rows="5" cols="50"></textarea>
 									
 									<a href="#"  class="btn btn-primary btn-rounded btn-outline btn-sm pull-right" onclick="findGood()" ><i class="fa fa-search"></i> 查询</a>
 								</td>

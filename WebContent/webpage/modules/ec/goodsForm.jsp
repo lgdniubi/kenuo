@@ -122,9 +122,18 @@
 					<h5>添加商品</h5>
 				</c:if>
 				<h5 style="padding-left: 92%;margin-top: -10px;">
-	           		<a href="${ctx}/ec/goods/list?actionId=${goods.actionId}">
-	            		<button type="button" class="btn btn-info">返回</button>
-	            	</a>
+					<c:choose>
+						<c:when test="${actionFlag == '1'}">
+							<a href="${ctx}/ec/goods/list?actionId=${goods.actionId}&removeCookie=1&${actionGoodsCookie}&actionFlag=${actionFlag}">
+		            			<button type="button" class="btn btn-info">返回</button>
+		            		</a>
+						</c:when>
+						<c:otherwise>
+							<a href="${ctx}/ec/goods/list?removeCookie=1&${goodsCookie}">
+		            			<button type="button" class="btn btn-info">返回</button>
+		            		</a>
+						</c:otherwise>
+					</c:choose>
 	            </h5> 
 			</div>
 			<div class="ibox-content">
@@ -135,7 +144,7 @@
 		                <li><a href="#tab_goods_spec" data-toggle="tab">商品规格</a></li>                        
 		                <li><a href="#tab_goods_attr" data-toggle="tab">商品属性</a></li>                        
 		            </ul>
-		          <form:form id="goodsForm" modelAttribute="goods" action="${ctx}/ec/goods/save" method="post">
+		          <form:form id="goodsForm" modelAttribute="goods" action="${ctx}/ec/goods/save?actionFlag=${actionFlag}" method="post">
 		            <div class="tab-content" id="myTabContent">
 		            	<!-- 通用信息 Begin -->
 						<div class="tab-pane fade in active" id="tab_tongyong">
@@ -166,6 +175,11 @@
 										<span class="control-label col-sm-2"><font color="red">*</font>是否自营：</span>
 										<input type="radio" id="isSelfSupport" name="isSelfSupport" value="0" ${(goods.isSelfSupport == '0' || goods.isSelfSupport == null)?'checked="checked"':''}>否
 										<input type="radio" id="isSelfSupport" name="isSelfSupport" value="1" ${(goods.isSelfSupport == '1')?'checked="checked"':''}>是
+									</li>
+									<li class="form-group required">
+										<span class="control-label col-sm-2"><font color="red">*</font>是否发货：</span>
+										<input type="radio" id="isDelivery" name="isDelivery" value="0" ${(goods.isDelivery == '0' || goods.isDelivery == null)?'checked="checked"':''}>否
+										<input type="radio" id="isDelivery" name="isDelivery" value="1" ${(goods.isDelivery == '1')?'checked="checked"':''}>是
 									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>是否可在后台下单：</span>

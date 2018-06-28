@@ -605,5 +605,26 @@ public class ActivityController extends BaseController {
 		return "redirect:" + adminPath + "/ec/activity/couponUserlist";
 	}
 	
+	/**
+	 * 删除红包
+	 * @param id
+	 * @param request
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value="delCoupon")
+	public String delCoupon(String id,HttpServletRequest request,RedirectAttributes redirectAttributes){
+		try{
+			if(!"".equals(id) && id != null){
+				activityService.delCoupon(id);
+				addMessage(redirectAttributes, "删除红包成功");
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "删除红包", e);
+			logger.error("方法：delCoupon，删除红包：" + e.getMessage());
+			addMessage(redirectAttributes, "删除红包失败");
+		}
+		return "redirect:" + adminPath + "/ec/activity/Couponlist?id="+request.getParameter("activityId");
+	}
 
 }

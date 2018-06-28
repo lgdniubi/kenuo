@@ -40,6 +40,7 @@
 		  g.is_appshow AS 'isAppshow',
 		  g.is_self_support AS 'isSelfSupport',
 		  g.is_bm_create AS 'isBmCreate',
+		  g.is_delivery AS 'isDelivery', 
 		  g.attr_type AS 'attrType',
 		  g.spec_type AS 'specType',
 		  g.give_integral AS 'giveIntegral',
@@ -233,6 +234,12 @@
 		<if test="openFlag != null and openFlag != ''">
 			AND g.is_open = #{openFlag}
 		</if>
+		<if test="goodsIds != null and goodsIds != '' and goodsIds.size() > 0">
+			AND g.goods_id IN  
+       		<foreach collection="goodsIds" item="item" index="index" open="(" separator="," close=")">  
+            	#{item}  
+        	</foreach> 
+		</if>
 	</select>
 	<!-- 根据多个分类查询上商品 -->
 	<select id="findByCateList" resultType="Goods">
@@ -278,6 +285,7 @@
 		  g.is_real AS 'isReal',
 		  g.is_on_sale AS 'isOnSale',
 		  g.is_free_shipping AS 'isFreeShipping',
+		  g.is_delivery AS 'isDelivery', 
 		  g.sort,
 		  g.is_recommend AS 'isRecommend',
 		  g.is_new AS 'isNew',
@@ -332,6 +340,7 @@
 		  is_hot,
 		  is_appshow, 
 		  is_self_support,
+		  is_delivery, 
 		  is_bm_create,
 		  attr_type,
 		  spec_type,
@@ -381,6 +390,7 @@
 		    #{isHot},
 		    #{isAppshow},
 		    #{isSelfSupport},
+		    #{isDelivery},
 		    #{isBmCreate},
 		    #{attrType},
 		    #{specType},
@@ -435,6 +445,7 @@
 			  is_hot = #{isHot},
 			  is_appshow = #{isAppshow},
 			  is_self_support = #{isSelfSupport},
+			  is_delivery = #{isDelivery},
 			  is_bm_create = #{isBmCreate},
 			  attr_type = #{attrType},
 			  spec_type = #{specType},

@@ -41,6 +41,9 @@ public class Activity extends TreeEntity<Activity> {
 	private String expirationType;            //红包过期时间类型（0：按照具体时间；1：按照天数）
 	private String expirationDay;             //红包过期天数
 	
+	private Date beginCreateTime;            //开始的创建时间
+	private Date endCreateTime;              //结束的创建时间
+	
 	public int getSendType() {
 		return sendType;
 	}
@@ -236,6 +239,21 @@ public class Activity extends TreeEntity<Activity> {
 	public void setExpirationDay(String expirationDay) {
 		this.expirationDay = expirationDay;
 	}
-	
+
+	public Date getBeginCreateTime() {
+		return beginCreateTime;
+	}
+
+	public void setBeginCreateTime(Date beginCreateTime) {
+		this.beginCreateTime = beginCreateTime;
+	}
+
+	public Date getEndCreateTime() {
+		return endCreateTime;
+	}
+
+	public void setEndCreateTime(Date endCreateTime) {
+		this.endCreateTime = endCreateTime;
+	}
 
 }

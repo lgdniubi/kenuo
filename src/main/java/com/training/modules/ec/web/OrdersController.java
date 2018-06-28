@@ -34,6 +34,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.training.common.beanvalidator.BeanValidators;
 import com.training.common.persistence.Page;
+import com.training.common.utils.CookieUtils;
 import com.training.common.utils.DateUtils;
 import com.training.common.utils.StringUtils;
 import com.training.common.utils.excel.ExportExcel;
@@ -172,6 +173,15 @@ public class OrdersController extends BaseController {
 	@RequestMapping(value = { "list", "" })
 	public String list(Orders orders, HttpServletRequest request, HttpServletResponse response, Model model) {
 		try {
+			
+			//若不是从重定向进来的，则清除cookie中的数据
+			if(!"1".equals(request.getParameter("removeCookie")) && request.getParameter("removeCookie") != "1"){
+				CookieUtils.getCookie(request, response, "ordersCookie", "/", true);
+			}
+			//若是从查询列表页进来的，则将查询条件保存到cookie
+			if(!"".equals(request.getParameter("cookieData")) && request.getParameter("cookieData") != null){
+				CookieUtils.setCookie(response, "ordersCookie",request.getParameter("cookieData"),60*30);
+			}
 			Page<Orders> page = new Page<Orders>();
 			if(StringUtils.isNotBlank(orders.getUsername()) || StringUtils.isNotBlank(orders.getMobile()) || StringUtils.isNotBlank(orders.getOrderid())){
 				page = ordersService.newFindOrders(new Page<Orders>(request, response), orders);
@@ -467,7 +477,7 @@ public class OrdersController extends BaseController {
 			addMessage(redirectAttributes, "物流信息保存");
 		}
 
-		return "redirect:" + adminPath + "/ec/orders/list";
+		return "redirect:" + adminPath + "/ec/orders/list?removeCookie=1&"+CookieUtils.getCookie(request, "ordersCookie");
 
 	}
 
@@ -516,7 +526,7 @@ public class OrdersController extends BaseController {
 			logger.error("方法：saveReturnKind,保存实物商品退货订单出错：" + e.getMessage());
 			addMessage(redirectAttributes, "保存实物商品退货订单失败！");
 		}
-		return "redirect:" + adminPath + "/ec/orders/list";
+		return "redirect:" + adminPath + "/ec/orders/list?removeCookie=1&"+CookieUtils.getCookie(request, "ordersCookie");
 	}
 	/**
 	 * 保存退货订单数据(虚拟商品)
@@ -534,7 +544,7 @@ public class OrdersController extends BaseController {
 			logger.error("方法：saveReturn,保存虚拟商品退货订单出错：" + e.getMessage());
 			addMessage(redirectAttributes, "保存虚拟商品退货订单失败！");
 		}
-		return "redirect:" + adminPath + "/ec/orders/list";
+		return "redirect:" + adminPath + "/ec/orders/list?removeCookie=1&"+CookieUtils.getCookie(request, "ordersCookie");
 	}
 	/**
 	 * 保存退货订单数据(套卡商品)
@@ -552,7 +562,7 @@ public class OrdersController extends BaseController {
 			logger.error("方法：saveReturnSuit,保存套卡商品退货订单出错：" + e.getMessage());
 			addMessage(redirectAttributes, "保存套卡商品退货订单失败！");
 		}
-		return "redirect:" + adminPath + "/ec/orders/list";
+		return "redirect:" + adminPath + "/ec/orders/list?removeCookie=1&"+CookieUtils.getCookie(request, "ordersCookie");
 	}
 	/**
 	 * 保存退货订单数据(通用卡商品)
@@ -570,7 +580,7 @@ public class OrdersController extends BaseController {
 			logger.error("方法：saveReturnCommon,保存通用卡商品退货订单出错：" + e.getMessage());
 			addMessage(redirectAttributes, "保存通用卡商品退货订单失败！");
 		}
-		return "redirect:" + adminPath + "/ec/orders/list";
+		return "redirect:" + adminPath + "/ec/orders/list?removeCookie=1&"+CookieUtils.getCookie(request, "ordersCookie");
 	}
 
 	/**
@@ -1276,7 +1286,7 @@ public class OrdersController extends BaseController {
 			addMessage(redirectAttributes, "修改订单失败！");
 		}
 		
-		return "redirect:" + adminPath + "/ec/orders/list";
+		return "redirect:" + adminPath + "/ec/orders/list?removeCookie=1&"+CookieUtils.getCookie(request, "ordersCookie");
 	}
 	
 	/**
@@ -1606,7 +1616,7 @@ public class OrdersController extends BaseController {
 			logger.error("取消订单失败：" + e.getMessage());
 		}
 
-		return "redirect:" + adminPath + "/ec/orders/list";
+		return "redirect:" + adminPath + "/ec/orders/list?removeCookie=1&"+CookieUtils.getCookie(request, "ordersCookie");
 	}
 	/**
 	 * 强制取消
@@ -2835,7 +2845,7 @@ public class OrdersController extends BaseController {
 			addMessage(redirectAttributes, "修改卡项订单失败！");
 		}
 		
-		return "redirect:" + adminPath + "/ec/orders/list";
+		return "redirect:" + adminPath + "/ec/orders/list?removeCookie=1&"+CookieUtils.getCookie(request, "ordersCookie");
 	}
 	
 	/**
@@ -3206,7 +3216,7 @@ public class OrdersController extends BaseController {
 			logger.error("方法：affirmReceive，实物有预约金确认收货出现错误：" + e.getMessage());
 			addMessage(redirectAttributes, "确认收货失败！");
 		}
-		return "redirect:" + adminPath + "/ec/orders/list";
+		return "redirect:" + adminPath + "/ec/orders/list?removeCookie=1&"+CookieUtils.getCookie(request, "ordersCookie");
 	}
 	
 	/**
@@ -3796,7 +3806,7 @@ public class OrdersController extends BaseController {
 			logger.error("方法：isPickUp,实物发货到店确认收货以后确认取货出现错误：" + e.getMessage());
 			addMessage(redirectAttributes, "取货失败！");
 		}
-		return "redirect:" + adminPath + "/ec/orders/list";
+		return "redirect:" + adminPath + "/ec/orders/list?removeCookie=1&"+CookieUtils.getCookie(request, "ordersCookie");
 	}
 	
 	/**
