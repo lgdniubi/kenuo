@@ -25,8 +25,8 @@
     </script>
 </head>
 <body>
+	<sys:message content="${message}"/>
 	<div class="ibox-content" style="height: 100%;">
-		<sys:message content="${message}"/>
 		<div class="warpper-content" style="height: 100%;">
 			<div class="ibox" style="height: 100%;">
 				<div class="ibox-title">
@@ -269,7 +269,6 @@
 				var $this = $(this);
 		        $this.addClass('active').siblings().removeClass('active');
 			});
-			
 			$('#treeTable .isYes').click(function(){
 				var $this = $(this);
 				if($state == 'goWork'){
@@ -319,6 +318,10 @@
 					$this.find('input[class="isUpdate"]').val('1');
 				} 
 			});
+			//自动清除提示
+            setTimeout(() => {
+                    $('#messageBox').remove();
+            }, 2000);
 		});
 	</script>
 </body>
