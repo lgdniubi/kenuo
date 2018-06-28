@@ -950,4 +950,34 @@
 		LEFT JOIN sys_office off ON off.franchisee_id = fr.franchisee_id
 		WHERE off.id = #{id}
 	</select>
+	<!-- 删除机构删除数据 -->
+	<delete id="deleteUserOfficeById">
+		DELETE FROM sys_user_office WHERE office_id = #{officeId}
+	</delete>
+	<select id="findUserRoleOffice" resultType="UserRoleOffice">
+		SELECT
+			(SELECT COUNT(1) FROM fzx_user_role_office WHERE u_r_id = uro.u_r_id) AS count,
+			uro.u_r_id AS userRoleId,
+			uro.office_id AS officeId
+		FROM
+			fzx_user_role_office uro
+		WHERE
+			office_id = #{officeId}
+		<if test="flag == 1">
+			AND (SELECT COUNT(1) FROM fzx_user_role_office WHERE u_r_id = uro.u_r_id) =1
+		</if>
+		<if test="flag == 2">
+			AND (SELECT COUNT(1) FROM fzx_user_role_office WHERE u_r_id = uro.u_r_id) >1
+		</if>
+	</select>
+	
+	<delete id="deleteUserRoleOfficeById">
+		DELETE FROM fzx_user_role_office WHERE office_id = #{officeId}
+	</delete>
+	<delete id="deleteUserRole">
+		DELETE FROM fzx_user_role WHERE id IN
+		<foreach collection ="list" item="o"  open="(" separator="," close=")">
+	         #{o.userRoleId}
+	    </foreach >
+	</delete>
 </mapper>

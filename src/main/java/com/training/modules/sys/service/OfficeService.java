@@ -22,6 +22,7 @@ import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeAcount;
 import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.User;
+import com.training.modules.sys.entity.UserRoleOffice;
 import com.training.modules.sys.entity.OfficeLog;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.ModelFranchisee;
@@ -253,7 +254,25 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public void delete(Office office) {
 		super.delete(office);
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
+		//删除店铺需要删除数据权限
+		deleteUserOffice(office.getId());
 	}
+	
+	private void deleteUserOffice(String officeId) {
+		//删除sys_user_Office
+		dao.deleteUserOfficeById(officeId);
+		//删除fzx_user_role_office
+		List<UserRoleOffice> officeOne = dao.findUserRoleOffice(officeId,1);//查询数量等于1的
+		if(officeOne != null && officeOne.size()>0){
+			dao.deleteUserRoleOfficeById(officeId);
+			dao.deleteUserRole(officeOne);
+		}
+		List<UserRoleOffice> officeMore = dao.findUserRoleOffice(officeId,2);//查询数量大于1的
+		if(officeMore != null && officeMore.size()>0){
+			dao.deleteUserRoleOfficeById(officeId);
+		}
+	}
+
 	/**
 	 * 导出店铺数据
 	 * @param office
