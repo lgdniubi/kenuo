@@ -105,9 +105,11 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 		if(!trainModel.getMenuIds().isEmpty()){
 	        String[] ids = trainModel.getMenuIds().split(",");
 	        for (int i = 0; i < ids.length; i++) {
-	        	newModel.setId(trainModel.getId());
-	        	newModel.setMenuId(Integer.valueOf(ids[i]));
-	            dao.insertModpcMenu(newModel);
+	        	if(StringUtils.isNotBlank(ids[i])){
+	        		newModel.setId(trainModel.getId());
+	        		newModel.setMenuId(Integer.valueOf(ids[i]));
+	        		dao.insertModpcMenu(newModel);
+	        	}
 	        }
 	        //插入pc_role超级管理员角色，并赋予该角色菜单
 	        insertPCRoleAndMenu(trainModel);
@@ -155,9 +157,11 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 		if(!trainModel.getMenuIds().isEmpty()){
 	        String[] ids = trainModel.getMenuIds().split(",");
 	        for (int i = 0; i < ids.length; i++) {
-	        	newModel.setId(trainModel.getId());
-	        	newModel.setMenuId(Integer.valueOf(ids[i]));
-	            dao.insertModfzxMenu(newModel);
+	        	if(StringUtils.isNotBlank(ids[i])){
+		        	newModel.setId(trainModel.getId());
+		        	newModel.setMenuId(Integer.valueOf(ids[i]));
+		            dao.insertModfzxMenu(newModel);
+	        	}
 	        }
 	        //插入fzx_role超级管理员角色，并赋予该角色菜单
 	        insertFzxRoleAndMenu(trainModel);
@@ -230,9 +234,11 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 		if(!trainModel.getMenuIds().isEmpty()){
 	        String[] ids = trainModel.getMenuIds().split(",");
 	        for (int i = 0; i < ids.length; i++) {
-	        	newModel.setId(trainModel.getId());
-	        	newModel.setMenuId(Integer.valueOf(ids[i]));
-	            dao.insertModMediaMenu(newModel);
+	        	if(StringUtils.isNotBlank(ids[i])){
+		        	newModel.setId(trainModel.getId());
+		        	newModel.setMenuId(Integer.valueOf(ids[i]));
+		            dao.insertModMediaMenu(newModel);
+	        	}
 	        }
 	        //插入meida_role超级管理员角色，并赋予该角色菜单
 	        insertMeidaRoleAndMenu(trainModel);
@@ -393,12 +399,14 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 		List<Integer> ls = new ArrayList<>();
 		if(StringUtils.isBlank(newMenuIds)){
 			for (int i = 0; i < omenuid.length; i++) {
-				ls.add(Integer.valueOf(omenuid[i]));
+				if(StringUtils.isNotBlank(omenuid[i])){
+					ls.add(Integer.valueOf(omenuid[i]));
+				}
 			}
 		}else{
 			List<String> list = Arrays.asList(newMenuIds.split(","));
 			for (int i = 0; i < omenuid.length; i++) {
-				if(!list.contains(omenuid[i])){
+				if(!list.contains(omenuid[i]) && StringUtils.isNotBlank(omenuid[i])){
 					ls.add(Integer.valueOf(omenuid[i]));
 				}
 			}
