@@ -228,7 +228,7 @@
 		function addDiyDom(treeId, treeNode) {
 			var aObj = $("#" + treeNode.tId + "_a");
 			var editStr = "<span class='brn-group'>"+treeNode.code+"　　";
-			if(treeNode.grade == 1)
+			if(treeNode.grade == 1 && $("#editCredit").val() == 1)
 			editStr = editStr + "<a href = \"#\" onclick=\"openDialog('配置信用额度','${ctx}/sys/office/toEditCredit?office_id="+treeNode.id+"','500px','450px')\" class=\"btn btn-success btn-xs\"><i class=\"fa fa-edit\"></i>配置信用额度</a>";
 			if(treeNode.id != 1 && treeNode.grade != 1){
 				if($("#shiroAdd").val() == 1){
