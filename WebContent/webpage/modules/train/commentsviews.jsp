@@ -43,7 +43,7 @@
 						<div class="col-sm-12">
 							<div class="pull-left">
 								<shiro:hasPermission name="train:comments:batchdeletecomments">
-									<table:delRow url="${ctx}/train/comments/batchdeletecomments" id="treeTable"></table:delRow><!-- 删除按钮 -->
+									<table:delRow url="${ctx}/train/comments/batchdeletecomments" id="treeTable" parameterStr="&lessonId=${trainLessonComments.trainLessons.lessonId}"></table:delRow><!-- 删除按钮 -->
 								</shiro:hasPermission>
 							</div>
 							<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新"><i class="glyphicon glyphicon-repeat"></i> 刷新</button>
@@ -62,17 +62,17 @@
 							</tr>
 						</thead>
 						<tbody>
-							<c:forEach items="${page.list}" var="trainLessonComments">
+							<c:forEach items="${page.list}" var="trainLessonComment">
 								<tr>
-									<td><input type="checkbox" class="i-checks" id="${trainLessonComments.commentId }" name="ids"></td>
-									<td>${trainLessonComments.trainLessons.name }</td>
-									<td>${trainLessonComments.user.name }</td>
-									<td>${trainLessonComments.content }</td>
-									<td><fmt:formatNumber value="${trainLessonComments.star }"/></td>
-									<td><fmt:formatDate value="${trainLessonComments.createtime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+									<td><input type="checkbox" class="i-checks" id="${trainLessonComment.commentId }" name="ids"></td>
+									<td>${trainLessonComment.trainLessons.name }</td>
+									<td>${trainLessonComment.user.name }</td>
+									<td>${trainLessonComment.content }</td>
+									<td><fmt:formatNumber value="${trainLessonComment.star }"/></td>
+									<td><fmt:formatDate value="${trainLessonComment.createtime }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 									<td>
 										<shiro:hasPermission name="train:comments:deletecomments">
-											<a href="${ctx}/train/comments/deletecomments?commentId=${trainLessonComments.commentId }" class="btn btn-danger btn-circle" 
+											<a href="${ctx}/train/comments/deletecomments?commentId=${trainLessonComment.commentId }&lessonId=${trainLessonComments.trainLessons.lessonId}" class="btn btn-danger btn-circle" 
 												onclick="return confirmx('要删除该课程评论吗？', this.href)">
 												<i class=" glyphicon glyphicon-trash"></i>
 											</a>
