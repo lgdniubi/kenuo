@@ -117,9 +117,18 @@
 			<div class="ibox-title">
 				<h5>查看商品</h5>
 				<h5 style="padding-left: 92%;margin-top: -10px;">
-	           		<a href="${ctx}/ec/goods/list?actionId=${goods.actionId}">
-	            		<button type="button" class="btn btn-info">返回</button>
-	            	</a>
+	            	<c:choose>
+						<c:when test="${actionFlag == '1'}">
+							<a href="${ctx}/ec/goods/list?actionId=${goods.actionId}&removeCookie=1&${actionGoodsCookie}&actionFlag=${actionFlag}">
+		            			<button type="button" class="btn btn-info">返回</button>
+		            		</a>
+						</c:when>
+						<c:otherwise>
+							<a href="${ctx}/ec/goods/list?removeCookie=1&${goodsCookie}">
+		            			<button type="button" class="btn btn-info">返回</button>
+		            		</a>
+						</c:otherwise>
+					</c:choose>
 	            </h5> 
 			</div>
 			<div class="ibox-content">
@@ -137,7 +146,7 @@
 		                	<li><a href="#tab_goods_spec" data-toggle="tab">商品规格</a></li> 
 		                </c:if>                       
 		            </ul>
-		          <form:form id="goodsForm" modelAttribute="goods" action="${ctx}/ec/goods/saveCard" method="post">
+		          <form:form id="goodsForm" modelAttribute="goods" action="${ctx}/ec/goods/saveCard?actionFlag=${actionFlag}" method="post">
 		            <div class="tab-content" id="myTabContent">
 		            	<!-- 通用信息 Begin -->
 						<div class="tab-pane fade in active" id="tab_tongyong">

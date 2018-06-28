@@ -104,7 +104,7 @@
 	function findGood(){
 		var cateid=$("#goodsCategoryId").val();
 		var goodsName = $("#goodsName").val();
-		var newGoodsId = $("#newGoodsId").val();
+		var goodsIds = $("#goodsIds").val();
 		var arr = new Array(); //数组定义标准形式，不要写成Array arr = new Array();
 	    var all = new Array(); //定义变量全部保存
 		$("#select1").empty();	
@@ -124,7 +124,7 @@
 			$.ajax({
 				 type:"get",
 				 dataType:"json",
-				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&goodsName="+goodsName+"&goodsId="+newGoodsId+"&isOnSale=1&isAppshow=1&isOpen="+$("#isOpen").val(),
+				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&goodsName="+goodsName+"&id="+goodsIds+"&isOnSale=1&isAppshow=1&isOpen="+$("#isOpen").val(),
 				 success:function(date){
 					var data=date;
 					if(data.length < 1){
@@ -162,16 +162,6 @@
 
 	$(document).ready(function(){
 			newValidateForm = $("#inputForm").validate({
-			rules: {
-				newGoodsId:{
-					max:2147483647
-				} 
-			},
-			messages: {
-				newGoodsId:{
-					max: "请输入小于2147483647的数"
-				}
-			},
 			submitHandler: function(form){
 				form.submit();
 			},
@@ -216,7 +206,7 @@
 									<label class="pull-right" >商品ID：</label>
 								</td>
 								<td>
-									<input id="newGoodsId" name="newGoodsId" type="text" value="" class="input-sm" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" />
+									<textarea id="goodsIds" name="goodsIds" rows="5" cols="50"></textarea>
 									<a href="#"  class="btn btn-primary btn-rounded btn-outline btn-sm pull-right" onclick="findGood()" ><i class="fa fa-search"></i> 查询</a>
 								</td>
 							</tr>

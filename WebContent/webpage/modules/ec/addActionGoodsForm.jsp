@@ -92,6 +92,7 @@
 		var goodsName=jQuery("#goodsName").val();
 		var cateid=$("#categoryId").val();
 		var name=$("#categoryName").val();
+		var goodsIds = $("#goodsIds").val();
 		$("#select1").empty();
 		var arr = new Array(); //数组定义标准形式，不要写成Array arr = new Array();
 	    var all = new Array(); //定义变量全部保存
@@ -108,6 +109,7 @@
 				  data:{
 					  goodsCategory:cateid,
 					  goodsName:goodsName,
+					  id:goodsIds,
 					  actionId:5
 					  },
 				  url:"${ctx}/ec/goods/treeGoodsData",
@@ -293,11 +295,19 @@
 							&nbsp;<label>商品关键字：</label>
 							<form:input path="goodsName" htmlEscape="false" maxlength="50" style="width:200px;" class="form-control" />
 						</div>
-						<div class="pull-right">
-								<a href="#"  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="addselectgoods()" ><i class="fa fa-search"></i> 查询</a>
+						<div  style="float:left;">
+							<p></p>
+							<label>商品ids：&nbsp;&nbsp;</label>
+							<textarea id="goodsIds" name="goodsIds" rows="5" cols="71"></textarea>
+							<p></p>
 						</div>
-						<div id="good" style="padding-top:50px">
-						<div style="float:left"><label>指定商品：&nbsp;</label></div>
+						<div class="pull-right">
+							<a href="#"  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="addselectgoods()" ><i class="fa fa-search"></i> 查询</a>
+						</div>
+						<div id="good" style="padding-top:150px">
+							<div style="float:left">
+								<label>指定商品：&nbsp;</label>
+							</div>
 							<div style="float:left">
 								<select multiple="multiple" id="select1" style="width:250px;height:300px; float: left;  padding: 4px;">
 									

@@ -231,6 +231,12 @@
 		<if test="openFlag != null and openFlag != ''">
 			AND g.is_open = #{openFlag}
 		</if>
+		<if test="goodsIds != null and goodsIds != '' and goodsIds.size() > 0">
+			AND g.goods_id IN  
+       		<foreach collection="goodsIds" item="item" index="index" open="(" separator="," close=")">  
+            	#{item}  
+        	</foreach> 
+		</if>
 	</select>
 	<!-- 根据多个分类查询上商品 -->
 	<select id="findByCateList" resultType="Goods">

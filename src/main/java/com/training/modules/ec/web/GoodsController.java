@@ -117,11 +117,19 @@ public class GoodsController extends BaseController{
 	public String list(Goods goods,Model model, HttpServletRequest request, HttpServletResponse response){
 		//若不是从重定向进来的，则清除cookie中的数据
 		if(!"1".equals(request.getParameter("removeCookie")) && request.getParameter("removeCookie") != "1"){
-			CookieUtils.getCookie(request, response, "goodsCookie","/", true);
+			if("1".equals(request.getParameter("actionFlag")) || request.getParameter("actionFlag") == "1"){  //若是从抢购活动进来的
+				CookieUtils.getCookie(request, response, "actionGoodsCookie","/", true);
+			}else{
+				CookieUtils.getCookie(request, response, "goodsCookie","/", true);
+			}
 		}
 		//若是从查询列表页进来的，则将查询条件保存到cookie
 		if(!"".equals(request.getParameter("cookieData")) && request.getParameter("cookieData") != null){
-			CookieUtils.setCookie(response, "goodsCookie",request.getParameter("cookieData"),60*30);
+			if("1".equals(request.getParameter("actionFlag")) || request.getParameter("actionFlag") == "1"){  //若是从抢购活动进来的
+				CookieUtils.setCookie(response, "actionGoodsCookie",request.getParameter("cookieData"),60*30);
+			}else{
+				CookieUtils.setCookie(response, "goodsCookie",request.getParameter("cookieData"),60*30);
+			}
 		}
 		
 		if(!"".equals(goods.getNewRatio()) && goods.getNewRatio() != null){
@@ -147,7 +155,7 @@ public class GoodsController extends BaseController{
 		goodsCategory.setId(goods.getGoodsCategoryId());
 		goodsCategory = goodsCategoryService.get(goodsCategory);
 		model.addAttribute("goodsCategory", goodsCategory);
-		
+		model.addAttribute("actionFlag", request.getParameter("actionFlag"));
 		return "modules/ec/goodsList";
 	}
 	
@@ -429,6 +437,8 @@ public class GoodsController extends BaseController{
 
 		model.addAttribute("goods", goods);
 		model.addAttribute("goodsCookie", CookieUtils.getCookie(request, "goodsCookie"));
+		model.addAttribute("actionGoodsCookie", CookieUtils.getCookie(request, "actionGoodsCookie"));
+		model.addAttribute("actionFlag", request.getParameter("actionFlag"));
 		return "modules/ec/goodsForm";
 	}
 	/**
@@ -602,6 +612,9 @@ public class GoodsController extends BaseController{
 			logger.error("查看套卡和通用卡   页面出现异常，异常信息为："+e.getMessage());
 		}
 		model.addAttribute("goods", goods);
+		model.addAttribute("goodsCookie", CookieUtils.getCookie(request, "goodsCookie"));
+		model.addAttribute("actionGoodsCookie", CookieUtils.getCookie(request, "actionGoodsCookie"));
+		model.addAttribute("actionFlag", request.getParameter("actionFlag"));
 		return "modules/ec/goodsFormView";
 	}
 	
@@ -622,7 +635,11 @@ public class GoodsController extends BaseController{
 			BugLogUtils.saveBugLog(request, "保存/修改 商品通用信息 出现异常", e);
 			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/ec/goods/list?actionId="+goods.getActionId()+"&removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie");
+		if("1".equals(request.getParameter("actionFlag")) || request.getParameter("actionFlag") == "1"){
+			return "redirect:" + adminPath + "/ec/goods/list?actionId="+goods.getActionId()+"&removeCookie=1&"+CookieUtils.getCookie(request, "actionGoodsCookie")+"&actionFlag="+request.getParameter("actionFlag");
+		}else{
+			return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie")+"&actionFlag="+request.getParameter("actionFlag");
+		}
 	}
 	/**
 	 * 保存/修改 - 商品通用信息
@@ -641,7 +658,11 @@ public class GoodsController extends BaseController{
 			BugLogUtils.saveBugLog(request, "保存/修改 商品通用信息 出现异常", e);
 			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/ec/goods/list?actionId="+goods.getActionId()+"&removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie");
+		if("1".equals(request.getParameter("actionFlag")) || request.getParameter("actionFlag") == "1"){
+			return "redirect:" + adminPath + "/ec/goods/list?actionId="+goods.getActionId()+"&removeCookie=1&"+CookieUtils.getCookie(request, "actionGoodsCookie")+"&actionFlag="+request.getParameter("actionFlag");
+		}else{
+			return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie")+"&actionFlag="+request.getParameter("actionFlag");
+		}
 	}
 	
 	
@@ -665,7 +686,7 @@ public class GoodsController extends BaseController{
 				List<GoodsSpecPrice> gspList = goodsService.findGoodsSpecPrice(goods);
 				model.addAttribute("gspList", gspList);
 				model.addAttribute("goods", goods);
-				
+				model.addAttribute("actionFlag", request.getParameter("actionFlag"));
 				return "modules/ec/goodsSpecStocks";
 			}else{
 				addMessage(redirectAttributes, "商品规格:保存/修改失败,未查询到商品信息");
@@ -673,7 +694,11 @@ public class GoodsController extends BaseController{
 		}else{
 			addMessage(redirectAttributes, "商品补仓:保存/修改失败,必要参数为空，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie");
+		if("1".equals(request.getParameter("actionFlag")) || request.getParameter("actionFlag") == "1"){
+			return "redirect:" + adminPath + "/ec/goods/list?actionId="+actionId+"&removeCookie=1&"+CookieUtils.getCookie(request, "actionGoodsCookie")+"&actionFlag="+request.getParameter("actionFlag");
+		}else{
+			return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie")+"&actionFlag="+request.getParameter("actionFlag");
+		}
 	}
 	/**
 	 * 补仓-保存规格库存
@@ -752,7 +777,11 @@ public class GoodsController extends BaseController{
 				} catch (Exception e) {
 					logger.info("#####补仓调用接口出现异常，异常信息为："+e.getMessage());
 					addMessage(redirectAttributes, "商品补仓:保存/修改-调用接口失败,请与管理员联系");
-					return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie");
+					if("1".equals(request.getParameter("actionFlag")) || request.getParameter("actionFlag") == "1"){
+						return "redirect:" + adminPath + "/ec/goods/list?actionId="+actionId+"&removeCookie=1&"+CookieUtils.getCookie(request, "actionGoodsCookie")+"&actionFlag="+request.getParameter("actionFlag");
+					}else{
+						return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie")+"&actionFlag="+request.getParameter("actionFlag");
+					}
 				}
 				
 				goods.setGoodsSpecPricesList(goodsSpecPricesList);//保存到商品实体bean-商品规格价格list
@@ -773,7 +802,11 @@ public class GoodsController extends BaseController{
 		}else{
 			addMessage(redirectAttributes, "商品补仓:保存/修改失败,必要参数为空，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/ec/goods/list?actionId="+actionId+"&removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie");
+		if("1".equals(request.getParameter("actionFlag")) || request.getParameter("actionFlag") == "1"){
+			return "redirect:" + adminPath + "/ec/goods/list?actionId="+actionId+"&removeCookie=1&"+CookieUtils.getCookie(request, "actionGoodsCookie")+"&actionFlag="+request.getParameter("actionFlag");
+		}else{
+			return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie")+"&actionFlag="+request.getParameter("actionFlag");
+		}
 	}
 	
 	
@@ -996,7 +1029,13 @@ public class GoodsController extends BaseController{
 		}else{
 			addMessage(redirectAttributes, "删除失败，必要参数为空，请与系统管理员联系");
 		}
-		return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie");
+	
+		if("1".equals(request.getParameter("actionFlag")) || request.getParameter("actionFlag") == "1"){
+			return "redirect:" + adminPath + "/ec/goods/list?actionId="+goods.getActionId()+"&removeCookie=1&"+CookieUtils.getCookie(request, "actionGoodsCookie")+"&actionFlag="+request.getParameter("actionFlag");
+		}else{
+			return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie")+"&actionFlag="+request.getParameter("actionFlag");
+		}
+	
 	}
 	
 	/**
@@ -1425,7 +1464,7 @@ public class GoodsController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "treeGoodsData")
-	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String goodsId,String isReal,String isOnSale,String isAppshow,String type,String isOpen,HttpServletResponse response) {
+	public List<Map<String, Object>> treeGoodsData(@RequestParam(required=false) String extId,String franchiseeId,String goodsCategory,String actionType,String goodsName,String actionId,String goodsId,String isReal,String isOnSale,String isAppshow,String type,String isOpen,String id,HttpServletResponse response) {
 		// 注： type属于临时方案，目前仅用于下单时查询商品  type=1表示下单时下单需区分用户商家
 		String isBmCreate = "";
 		if(type != null && !"".equals(type)){
@@ -1451,6 +1490,16 @@ public class GoodsController extends BaseController{
 		goods.setGoodsId(Integer.valueOf(goodsId));
 		if(actionId!=null){
 			goods.setActionId(Integer.parseInt(actionId));
+		}
+		
+		//若穿过来的商品ids不为空，本来准备用goodsids的，但是是集合，没法用，就用id代替了
+		List<Integer> goodsIdsList = new ArrayList<Integer>();
+		if(!"".equals(id) && id != null){
+			String[] newGoodsIds = id.split(",");
+			for(String newGoodsId:newGoodsIds){
+				goodsIdsList.add(Integer.valueOf(newGoodsId));
+			}
+			goods.setGoodsIds(goodsIdsList);
 		}
 		
 		if(!"".equals(isOpen) && isOpen != null){
@@ -1516,7 +1565,12 @@ public class GoodsController extends BaseController{
 			logger.error("商品复制 出现异常，异常信息为："+e.getMessage());
 			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie");
+		
+		if("1".equals(request.getParameter("actionFlag")) || request.getParameter("actionFlag") == "1"){
+			return "redirect:" + adminPath + "/ec/goods/list?actionId="+goods.getActionId()+"&removeCookie=1&"+CookieUtils.getCookie(request, "actionGoodsCookie")+"&actionFlag="+request.getParameter("actionFlag");
+		}else{
+			return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie")+"&actionFlag="+request.getParameter("actionFlag");
+		}
 	
 			
 	}
@@ -1674,7 +1728,12 @@ public class GoodsController extends BaseController{
 			BugLogUtils.saveBugLog(request, "刷新商品详情缓存", e);
 			addMessage(redirectAttributes, "程序出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie");
+		
+		if("1".equals(request.getParameter("actionFlag")) || request.getParameter("actionFlag") == "1"){
+			return "redirect:" + adminPath + "/ec/goods/list?actionId="+goods.getActionId()+"&removeCookie=1&"+CookieUtils.getCookie(request, "actionGoodsCookie")+"&actionFlag="+request.getParameter("actionFlag");
+		}else{
+			return "redirect:" + adminPath + "/ec/goods/list?removeCookie=1&"+CookieUtils.getCookie(request, "goodsCookie")+"&actionFlag="+request.getParameter("actionFlag");
+		}
 	};
 	/**
 	 * 添加 修改 套卡子项对应的商品
