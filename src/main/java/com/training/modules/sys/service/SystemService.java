@@ -625,7 +625,7 @@ public class SystemService extends BaseService implements InitializingBean {
 						UserUtils.USER_CACHE_LIST_BY_OFFICE_ID_ + oldUser.getOffice().getId());
 			}
 
-			if (user.getUserinfo() != null) {
+			/*if (user.getUserinfo() != null) {
 				// 更新用户数据
 				Userinfo uinfo = userinfoDao.findByuserId(user.getId()); // 查询数据库里面的用户是否存在
 
@@ -669,7 +669,7 @@ public class SystemService extends BaseService implements InitializingBean {
 					lifeImgUrls = user.getUserinfocontent().getUrl();//必须是String类型的数据
 					reservationTime(2, currentUser.getCreateBy().getId(), null, null, lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
 				}
-			}
+			}*/
 			
 //begin     修改妃子校用户同时更新每天美耶用户开始   修改时间2017年1月23日
 			//用于验证每天美耶用户   
