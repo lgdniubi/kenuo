@@ -184,7 +184,7 @@
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 						<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();"/><!-- 支持排序 -->
 						<div class="form-group">
-							<input id="userid" name="userid" type="text" value="${users.userid }" class="form-control" placeholder="用户ID"> 
+							<input id="userid" name="userid" type="text" value="${users.userid }" class="form-control" placeholder="用户ID" onkeyup="this.value=this.value.replace(/\D/g,'')"> 
 							<input id="name" name="nickname" type="text" value="${users.nickname }" class="form-control" placeholder="用户名"> 
 							<input id="mobile" name="mobile" type="text" value="${users.mobile }" class="form-control" placeholder="手机号码" onkeyup="this.value=this.value.replace(/\D/g,'')"> 
 							<input id="realName" name="name" type="text" value="${users.name }" class="form-control" placeholder="真实姓名"> 
