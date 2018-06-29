@@ -79,7 +79,7 @@ public class TaskService {
 			logger.info("#####[开启-定时任务数量：]"+jobList.size());
 			if(jobList.size() > 0){
 				for (Task task : jobList) {
-					//addJob(task);
+					addJob(task);
 				}
 			}
 			
