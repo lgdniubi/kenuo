@@ -19,6 +19,7 @@
 				  return;
 			}
 			
+			$("#paycode").removeAttr("disabled"); 
 			 $("#inputForm").submit();
 			 return true;
 				 
