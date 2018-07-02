@@ -54,6 +54,7 @@
 		  g.goods_type AS 'goodsType',
 		  g.advance_price AS 'advancePrice',
 		  g.supplier_id AS 'supplierId',
+		  g.limit_num AS 'limitNum',
 		  g.is_open AS 'goodsIsOpen'
 	</sql>
 	
@@ -357,6 +358,7 @@
 		  goods_type,
 		  advance_price,
 		  supplier_id,
+		  limit_num,
 		  is_open
 		) 
 		VALUES
@@ -407,6 +409,7 @@
 		    #{goodsType},
 		    #{advancePrice},
 		    #{supplierId},
+		    #{limitNum},
 		    #{goodsIsOpen}
 		  )
 	</insert>
@@ -460,6 +463,7 @@
 			  goods_type = #{goodsType},
 		      advance_price = #{advancePrice},
 			  supplier_id = #{supplierId},
+			  limit_num = #{limitNum},
 			  is_open = #{goodsIsOpen}
 			WHERE del_flag = 0 AND goods_id = #{goodsId}
 	</update>

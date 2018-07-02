@@ -46,6 +46,7 @@ public class GoodsCardService extends CrudService<GoodsCardDao, GoodsCard> {
 	public static final String GOODSSTORE = "GOODSSTORE_";	// 商品总库存
 	public static final String SPECPRICE = "SPECPRICE_";	// 商品对应的规格
 	public static final String GOODS_SPECPRICE_HASH = "GOODS_SPECPRICE_HASH";	//所有商品id集合
+	public static final String buying_limit = "buying_limit_0_0"; //商品限购
 	
 	@Autowired
 	private GoodsCardDao goodsCardDao;
@@ -111,6 +112,11 @@ public class GoodsCardService extends CrudService<GoodsCardDao, GoodsCard> {
 		
 		// 保存
 		goodsDao.insert(goods);
+		
+		//同步商品限购数量到redis数据库
+		if(goods.getLimitNum() > 0){
+			redisClientTemplate.hset(buying_limit, goods.getGoodsId()+"", goods.getLimitNum()+"");
+		}
 		
 		//自媒体每天美耶商品信息同步
 		JSONObject jsonObject = new JSONObject();

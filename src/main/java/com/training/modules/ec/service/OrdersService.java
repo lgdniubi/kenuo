@@ -41,8 +41,6 @@ import com.training.modules.ec.entity.GoodsSpecPrice;
 import com.training.modules.ec.entity.IntegralLog;
 import com.training.modules.ec.entity.IntegralsLog;
 import com.training.modules.ec.entity.MtmyRuleParam;
-import com.training.modules.ec.entity.OfficeAccount;
-import com.training.modules.ec.entity.OfficeAccountLog;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderGoodsCoupon;
 import com.training.modules.ec.entity.OrderGoodsDetails;

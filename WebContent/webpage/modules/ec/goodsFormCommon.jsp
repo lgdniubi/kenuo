@@ -343,6 +343,14 @@
 										<span class="control-label cannotEdit">(以克为单位)</span>
 									</li>					
 									<li class="form-group">
+										<span class="control-label col-sm-2"><font color="red">*</font>限购数量：</span>
+										<form:input path="limitNum"  maxlength="50" class="form-control digits required" 
+											onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
+											onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+											onfocus="if(value == '0'){value=''}"
+											onblur="if(value == ''){value='0'}"/>
+									</li>	
+									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>赠送消费积分：</span>
 										<form:input path="giveIntegral"  maxlength="50" class="form-control digits required" 
 											onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
