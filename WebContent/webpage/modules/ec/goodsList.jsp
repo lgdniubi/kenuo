@@ -88,7 +88,10 @@
 					<div class="searcharea clearfix">
 						<form:form id="searchForm" action="${ctx}/ec/goods/list" style="width: 100%;" modelAttribute="goods" method="post" class="navbar-form navbar-left searcharea">
 							<div class="form-group" style="width: 100%;margin-top: 5px;">
-								商品分类：
+								所属商家:<sys:treeselect id="franchisee" name="franchisee.id" value="${goods.franchisee.id}" labelName="franchisee.name" 
+									labelValue="${goods.franchisee.name}" title="所属商家" 
+									url="/sys/franchisee/treeData" cssClass=" form-control input-sm" allowClear="true" />
+								&nbsp;&nbsp;商品分类：
 								<sys:treeselect id="goodsCategoryId" name="goodsCategoryId" value="${goods.goodsCategoryId }" 
 									labelName="goodsCategory.name" labelValue="${goodsCategory.name }" 
 						     		title="商品分类" url="/ec/goodscategory/treeData" cssClass="form-control required" allowClear="true" notAllowSelectParent="true"/>

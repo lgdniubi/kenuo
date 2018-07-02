@@ -175,6 +175,9 @@
 		  mtmydb.mtmy_users AS u
 		WHERE 
 			1=1
+			<if test="userid != 0 and userid != null and userid != ''">
+				AND u.user_id = #{userid}
+			</if>
 			<if test="mobile != null and mobile != ''">
 				AND u.mobile LIKE 
 					<if test="dbName == 'oracle'">'%'||#{mobile }||'%'</if>

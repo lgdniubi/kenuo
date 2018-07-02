@@ -88,6 +88,9 @@
 		    ON c.category_id = g.category_id 
 		  LEFT JOIN mtmydb.mtmy_action_info b ON b.action_id=g.action_id
 		WHERE 1 = 1
+			<if test="franchisee != null and franchisee.id !=null and franchisee.name !=''">
+				AND g.franchisee_id = #{franchisee.id}
+			</if>
 			<if test="actionId !=null and actionId !=''">
 				AND g.action_id=#{actionId}
 			</if>
