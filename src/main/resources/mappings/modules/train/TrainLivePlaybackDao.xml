@@ -33,7 +33,8 @@
 		LEFT JOIN trains.train_live_audit d ON a.auditId=d.id
 		LEFT JOIN trains.sys_user b ON a.userId=b.id
 		LEFT JOIN trains.sys_dict c ON c.`value`=b.user_type
-		WHERE c.type='sys_user_type' and a.id=#{id}
+		and c.type='sys_user_type' 
+		WHERE  a.id=#{id}
 
 	</select>
 	<!-- 查询所有用户下的数据 -->
