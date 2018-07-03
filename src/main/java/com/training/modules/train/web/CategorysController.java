@@ -157,6 +157,26 @@ public class CategorysController extends BaseController{
 	}
 	
 	/**
+	 * 异步查询“一级”课程分类
+	 * @param trainCategorys
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = {"ajaxlistone", ""})
+	public @ResponseBody Map<String, List<TrainCategorys>> ajaxlistone(TrainCategorys trainCategorys, HttpServletRequest request, HttpServletResponse response, Model model){
+		Map<String, List<TrainCategorys>> jsonMap = new HashMap<String, List<TrainCategorys>>();
+		trainCategorys.setPriority(1);//一级分类
+		//添加数据权限
+//		trainCategorys = CategorysUtils.categorysFilter(trainCategorys);
+		trainCategorys.getSqlMap().put("dsf", ScopeUtils.dataScopeFilter("t","category"));
+				
+		List<TrainCategorys> listone = trainCategorysService.findcategoryslist(trainCategorys);
+		jsonMap.put("listone",listone);
+		return jsonMap;
+	}
+	/**
 	 * 查询“二级”课程分类
 	 * @param trainCategorys
 	 * @param request
