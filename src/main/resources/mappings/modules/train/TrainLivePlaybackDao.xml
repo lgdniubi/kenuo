@@ -56,7 +56,8 @@
 		LEFT JOIN trains.train_live_audit d ON a.auditId=d.id
 		LEFT JOIN trains.sys_user b ON a.userId=b.id
 		LEFT JOIN trains.sys_dict c ON c.`value`=b.user_type
-		WHERE c.type='sys_user_type'
+		AND c.type = 'sys_user_type'
+		WHERE 1=1
 		<if test="userName != null and userName != ''">
 			AND b.name like
 			<if test="dbName == 'oracle'">'%'||#{userName}||'%'</if>
