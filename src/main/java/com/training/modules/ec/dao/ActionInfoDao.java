@@ -53,5 +53,10 @@ public interface ActionInfoDao extends CrudDao<ActionInfo>{
 	 */
 	public int updateExecuteStatus(ActionInfo actionInfo);
 	
+	/**
+	 * 插入抢购活动商品日志
+	 * @param actionInfo
+	 */
+	public void insertActionGoodsLog(ActionInfo actionInfo);
 
 }

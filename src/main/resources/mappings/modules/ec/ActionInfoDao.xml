@@ -146,4 +146,28 @@
 	
 	</update>
 
+	<!-- 插入抢购活动商品日志 -->
+	<insert id="insertActionGoodsLog">
+		INSERT INTO mtmydb.mtmy_action_goods_log(
+			action_id,
+			goods_id,
+			limit_num,
+			start_time,
+			end_time,
+			show_time,
+			close_time,
+			create_date,
+			del_flag
+		)VALUES(
+			#{actionId},
+			#{goodsId},
+			#{ceiling},
+			#{startTime},
+			#{endTime},
+			#{showTime},
+			#{closeTime},
+			SYSDATE(),
+			#{delFlag}
+		)
+	</insert>
 </mapper>

@@ -131,4 +131,11 @@ public class ActionInfoService extends CrudService<ActionInfoDao,ActionInfo> {
 		return actionInfoDao.updateExecuteStatus(actionInfo);
 	}
 	
+	/**
+	 * 插入抢购活动商品日志
+	 * @param actionInfo
+	 */
+	public void insertActionGoodsLog(ActionInfo actionInfo){
+		actionInfoDao.insertActionGoodsLog(actionInfo);
+	}
 }
