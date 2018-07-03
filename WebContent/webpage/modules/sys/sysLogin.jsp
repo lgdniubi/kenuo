@@ -312,12 +312,12 @@
 												</a>
 											</div>
 
-											<div>
+											<!-- <div>
 												<a href="#" data-target="#signup-box" class="user-signup-link">
 													没有账号？注册
 													<i class="ace-icon fa fa-arrow-right"></i>
 												</a>
-											</div>
+											</div> -->
 										</div>
 									</div><!-- /.widget-body -->
 								</div><!-- /.login-box -->
