@@ -22,30 +22,9 @@
 		<script type="text/javascript">
 			var flag = 1;		//上传进度条
 			
-			//一级分类改变事件，联动二级分类
-			function categorychange(v){
-				if(flag == 0){
-					$(".loading").show();//打开展示层
-				}
-				$.ajax({
-					type : "POST",   
-					url : "${ctx}/train/categorys/listtow?categoryId="+v,
-					dataType: 'json',
-					success: function(data) {
-						flag = 0;
-						$(".loading").hide(); //关闭加载层
-						$("#categoryId").empty();
-						$.each(data.listtow, function(index,item){
-							$("#categoryId").prepend("<option value='"+item.categoryId+"'>"+item.name+"</option>");
-						});
-					}
-				});   
-			}
 			//页面加载事件
 			$(document).ready(function() {
-				//默认加载第一个分类
-				categorychange($("#s1").val());
-				
+				categorychange(2);
 				//过滤一道加载课程ID
 				var lessonId = $("#lessonId").val();
 				if(null == lessonId || '' == lessonId || 'undefined' == lessonId){
@@ -189,6 +168,58 @@
 						}
 					}
 				});
+				// 加载商家
+//				$("#companyButton, #companyName").click(function(){	    增加  , #companyName  文本框有点击事件
+				$("#companyButton").click(function(){
+					// 是否限制选择，如果限制，设置为disabled
+					if ($("#companyButton").hasClass("disabled")){
+						return true;
+					}
+					var labelValue = $("#companyName").val();
+					// 正常打开	
+					top.layer.open({
+					    type: 2, 
+					    area: ['300px', '420px'],
+					    title:"选择公司",
+					    ajaxData:{selectIds: $("#companyId").val()},
+					    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/franchisee/treeData")+"&module=&checked=&extId=&isAll=&selectIds=&labelValue="+labelValue ,
+					    btn: ['确定', '关闭']
+			    	       ,yes: function(index, layero){ //或者使用btn1
+									var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+									var ids = [], names = [], nodes = [];
+									if ("" == "true"){
+										nodes = tree.getCheckedNodes(true);
+									}else{
+										nodes = tree.getSelectedNodes();
+									}
+									for(var i=0; i<nodes.length; i++) {//
+										if (nodes[i].level == 0){
+											//top.$.jBox.tip("不能选择根节点（"+nodes[i].name+"）请重新选择。");
+											top.layer.msg("不能选择根节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+											return false;
+										}//
+										if (nodes[i].isParent){
+											//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+											//layer.msg('有表情地提示');
+											top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+											return false;
+										}//
+										ids.push(nodes[i].id);
+										names.push(nodes[i].name);//
+										break; // 如果为非复选框选择，则返回第一个选择  
+									}
+									$("#companyId").val(ids.join(",").replace(/u_/ig,""));
+									$("#companyName").val(names.join(","));
+									$("#companyName").focus();
+									top.layer.close(index);
+									categorychange(1);
+							    	       },
+			    	cancel: function(index){ //或者使用btn2
+			    	           //按钮【按钮二】的回调
+			    	       }
+					}); 
+				
+				});
 				
 			});
 			
@@ -312,6 +343,41 @@
 				
 			}
 			
+			// 新选择分类
+			function categorychange(level){
+				$(".loading").show(); //关闭加载层
+				var ajaxUrl;
+				var ajaxChengeId;
+				if(level == 1){
+					ajaxUrl = "${ctx}/train/categorys/ajaxlistone?franchisee.id="+$('#companyId').val();
+					ajaxChengeId = "s1";
+				}else{
+					ajaxUrl = "${ctx}/train/categorys/listtow?categoryId="+ $('#s1').val() +"&franchisee.id="+$('#companyId').val();
+					ajaxChengeId = "categoryId";
+				}
+				$("#"+ajaxChengeId).empty();
+				$.ajax({
+					type : "POST",   
+					url : ajaxUrl,
+					dataType: 'json',
+					success: function(data) {
+						$(".loading").hide(); //关闭加载层
+						if(level == 1){
+							$.each(data.listone, function(index,item){
+								$("#"+ajaxChengeId).prepend("<option value='"+item.categoryId+"'>"+item.name+"</option>");
+							});
+							categorychange(2);
+						}else{
+							$.each(data.listtow, function(index,item){
+								$("#"+ajaxChengeId).prepend("<option value='"+item.categoryId+"'>"+item.name+"</option>");
+							});
+						}
+					},
+					error: function(XMLHttpRequest, textStatus, errorThrown) {
+						$(".loading").hide(); //关闭加载层
+					}
+				});   
+			}
 		</script>
 	</head>
 	<body>
@@ -339,8 +405,16 @@
 								<!-- 前期：页面加载事件中得到课程ID。后期进行修改。需注意 -->
 								<input type="hidden" id="lessonId" name="lessonId" value="${trainLessons.lessonId }"/>
 								<div class="input-item">
+									<span>选择商家：</span> 
+									<input id="companyId" name="company.id" class=" form-control input-sm" type="hidden" value="">
+									<input id="companyName" name="company.name" readonly="readonly" placeholder="" type="text" value="" data-msg-required="" class=" form-control input-sm" style="">
+						       		 <button type="button" id="companyButton" class="btn  btn-sm   btn-primary  "><i class="fa fa-search"></i>
+						             </button> 
+									 <label id="companyName-error" class="error" for="companyName" style="display:none"></label>
+								</div>
+								<div class="input-item">
 									<span><font color="red">*</font>课程分类：</span> 
-									<select class="form-control required" id="s1" name="s1" onchange="categorychange(this.options[this.options.selectedIndex].value)">
+									<select class="form-control required" id="s1" name="s1" onchange="categorychange(2)">
 										<c:forEach items="${listone}" var="trainCategorys">
 											<option value="${trainCategorys.categoryId}">${trainCategorys.name}</option>
 										</c:forEach>

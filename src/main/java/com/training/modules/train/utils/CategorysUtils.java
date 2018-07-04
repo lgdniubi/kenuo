@@ -61,10 +61,10 @@ public class CategorysUtils {
 				//查询所有数据
 			}else if("2".equals(sysRoleType)){
 				//普通管理员
-				sqlString.append("AND (office_code LIKE '"+user.getOffice().getCode()+"%' OR cate_type = '1')");
+				sqlString.append("AND (t.office_code LIKE '"+user.getOffice().getCode()+"%' OR t.cate_type = '1')");
 			}else if("3".equals(sysRoleType)){
 				//培训师
-				sqlString.append("AND (createuser = '"+user.getId()+"' OR cate_type = '1')");
+				sqlString.append("AND (t.createuser = '"+user.getId()+"' OR t.cate_type = '1')");
 			}
 		}
 		return sqlString.toString();

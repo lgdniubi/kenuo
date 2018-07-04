@@ -540,7 +540,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		try {
 			String weburl = ParametersFactory.getMtmyParamValues("fzx_equally_franchisee");
 			logger.info("##### web接口路径同步供应链:"+weburl);
-			String parpm = "{\"id\":"+Integer.valueOf(find.getId())+",\"name\":\""+find.getCompanyName()+"\",\"type\":\""+find.getAddr().getType()+"\","
+			String parpm = "{\"id\":"+Integer.valueOf(find.getId())+",\"name\":\""+find.getCompanyName()+"\",\"type\":\"2\","
 					+ "\"address\":\""+find.getAddress()+"\",\"legal_name\":\""+find.getLegalPerson()+"\",\"mobile\":\""+find.getMobile()
 							+"\",\"charter_url\":\""+find.getCharterUrl()+"\"}";
 			String url=weburl;
