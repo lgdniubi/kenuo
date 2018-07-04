@@ -18,6 +18,23 @@ public class ContractInfo extends DataEntity<ContractInfo> {
 	private String office_name;	//机构名称
 	private String office_pid; //机构父ID
 	private String office_pids; //机构父IDS
+	
+
+	private String office_license; //营业执照
+	private String office_creditcode;	//统一社会信用代码/注册号
+	private String office_type; //企业类型【1.个体户、2.合伙企业、3.个人独资企业、4.公司】
+	private String office_setdate; //成立日期
+	private String office_legal;	//法人
+	private String office_legalcardone;	//身份证（正）
+	private String office_legalcardtwo;//身份证（反）
+	private String office_address;	//详细地址
+	private String office_accountname;	//账户名称
+	private String office_openbank;	//开户银行
+	private String office_bankaccount; //银行账号
+	private String office_bankcardup; //银行卡正面照片
+	private String office_bankcarddown; //银行卡反面照片
+	
+	
 	private String sign_userid;	//签约人ID
 	private String sign_username;	//签约人姓名
 	private String sign_idcard;	//签约人证件
@@ -299,5 +316,83 @@ public class ContractInfo extends DataEntity<ContractInfo> {
 	}
 	public void setFranchiseeName(String franchiseeName) {
 		this.franchiseeName = franchiseeName;
+	}
+	public String getOffice_license() {
+		return office_license;
+	}
+	public void setOffice_license(String office_license) {
+		this.office_license = office_license;
+	}
+	public String getOffice_creditcode() {
+		return office_creditcode;
+	}
+	public void setOffice_creditcode(String office_creditcode) {
+		this.office_creditcode = office_creditcode;
+	}
+	public String getOffice_type() {
+		return office_type;
+	}
+	public void setOffice_type(String office_type) {
+		this.office_type = office_type;
+	}
+	public String getOffice_setdate() {
+		return office_setdate;
+	}
+	public void setOffice_setdate(String office_setdate) {
+		this.office_setdate = office_setdate;
+	}
+	public String getOffice_legal() {
+		return office_legal;
+	}
+	public void setOffice_legal(String office_legal) {
+		this.office_legal = office_legal;
+	}
+	public String getOffice_legalcardone() {
+		return office_legalcardone;
+	}
+	public void setOffice_legalcardone(String office_legalcardone) {
+		this.office_legalcardone = office_legalcardone;
+	}
+	public String getOffice_legalcardtwo() {
+		return office_legalcardtwo;
+	}
+	public void setOffice_legalcardtwo(String office_legalcardtwo) {
+		this.office_legalcardtwo = office_legalcardtwo;
+	}
+	public String getOffice_address() {
+		return office_address;
+	}
+	public void setOffice_address(String office_address) {
+		this.office_address = office_address;
+	}
+	public String getOffice_accountname() {
+		return office_accountname;
+	}
+	public void setOffice_accountname(String office_accountname) {
+		this.office_accountname = office_accountname;
+	}
+	public String getOffice_openbank() {
+		return office_openbank;
+	}
+	public void setOffice_openbank(String office_openbank) {
+		this.office_openbank = office_openbank;
+	}
+	public String getOffice_bankaccount() {
+		return office_bankaccount;
+	}
+	public void setOffice_bankaccount(String office_bankaccount) {
+		this.office_bankaccount = office_bankaccount;
+	}
+	public String getOffice_bankcardup() {
+		return office_bankcardup;
+	}
+	public void setOffice_bankcardup(String office_bankcardup) {
+		this.office_bankcardup = office_bankcardup;
+	}
+	public String getOffice_bankcarddown() {
+		return office_bankcarddown;
+	}
+	public void setOffice_bankcarddown(String office_bankcarddown) {
+		this.office_bankcarddown = office_bankcarddown;
 	}
 }
