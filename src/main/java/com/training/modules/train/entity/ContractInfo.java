@@ -61,6 +61,7 @@ public class ContractInfo extends DataEntity<ContractInfo> {
 	private String proxy_idcard;	//代付人身份证
 	private String proxy_email;	//代付人邮箱
 	private String proxy_mobile;	//代付人手机号
+	private String proxy_address; //通讯地址
 	private String proxy_fonturl;	//代付人身份证前图片
 	private String proxy_backurl;	//代付人身份证后图片
 	private String create_user;	//创建人
@@ -394,5 +395,11 @@ public class ContractInfo extends DataEntity<ContractInfo> {
 	}
 	public void setOffice_bankcarddown(String office_bankcarddown) {
 		this.office_bankcarddown = office_bankcarddown;
+	}
+	public String getProxy_address() {
+		return proxy_address;
+	}
+	public void setProxy_address(String proxy_address) {
+		this.proxy_address = proxy_address;
 	}
 }
