@@ -322,7 +322,7 @@
 					      </tr>
 						<tr>
 					      	<td class="width-15 active"><label class="pull-right"><font color="red">*</font>详细地址:</label></td>
-					        <td class="width-35" colspan="3"><textarea name="office_address" <%-- value="${infoVo.office_address}" --%> htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required">${infoVo.office_address}</textarea></td>
+					        <td class="width-35" colspan="3"><textarea name="office_address" htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required">${infoVo.office_address}</textarea></td>
 				        </tr>
 						<tr>
 					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证正面:</label></td>
@@ -366,7 +366,7 @@
 					      <td class="width-35"><input name="officeInfo.bankaddress" value="${infoVo.officeInfo.bankaddress}" htmlEscape="false" maxlength="50" class="form-control" /></td>
  --%>					  </tr>
 				      <tr>
-					      <td class="width-15 active"><label class="pull-right">银行卡正面:</label></td>
+					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡正面:</label></td>
 					      <td class="width-35">
 					      	<img id="officecardupImgsrc" src="${infoVo.office_bankcardup}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="cardup" name="office_bankcardup" value="${infoVo.office_bankcardup}"><!-- 图片隐藏文本框 -->
@@ -376,7 +376,7 @@
 								</div>
 								<div id="file_cardup_queue"></div>
 					      </td>
-					      <td  class="width-15 active"><label class="pull-right">银行卡反面:</label></td>
+					      <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡反面:</label></td>
 					      <td class="width-35">
 					      	<img id="officecarddownImgsrc" src="${infoVo.office_bankcarddown}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="carddown" name="office_bankcarddown" value="${infoVo.office_bankcarddown}"><!-- 图片隐藏文本框 -->
@@ -393,7 +393,7 @@
 				   <tbody>
 						<tr><td colspan="4" class=""><label class="pull-left">管理员</label></td></tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>联系电话:</label></td>
+							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>联系电话:</label></td>
 				         	<td class="width-35">
 				         		<div class="input-group">
 				         			<input value="${infoVo.sign_mobile}" id="signMobile" name="sign_mobile" class="form-control required" placeholder="请输入手机号">
@@ -404,7 +404,7 @@
 				         	</td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
+							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
 				         	<td class="width-35">
 					         	<input id="signId" name="sign_userid" class="form-control required" type="hidden" value="${infoVo.sign_userid}"/>
 								<input id="signName" name="sign_username" type="text" readonly="readonly" value="${infoVo.sign_username}" class="form-control required" />
@@ -428,18 +428,18 @@
 				         	</td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>身份证:</label></td>
+							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证:</label></td>
 				         	<td class="width-35"><input value="${infoVo.sign_idcard}" name="sign_idcard" class="form-control required"></td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>e-mail:</label></td>
+							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>e-mail:</label></td>
 				         	<td class="width-35"><input value="${infoVo.sign_email}" name="sign_email" class="form-control required"></td>
 						</tr>
 						
 						
 						<tr><td colspan="4" class=""><label class="pull-left">报货人</label></td></tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>联系电话:</label></td>
+							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>联系电话:</label></td>
 					        <td class="width-35">
 								<div class="input-group">
 						         	<input value="${infoVo.cargo_mobile}" id="cargoMobile" name="cargo_mobile" class="form-control required" placeholder="请输入手机号">
@@ -450,7 +450,7 @@
 					        </td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
+							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
 				         	<td class="width-35">
 				         		<input id="cargoId" name="cargo_userid" class="form-control required" type="hidden" value="${infoVo.cargo_userid}"/>
 								<input id="cargoName" name="cargo_username" type="text" readonly="readonly" value="${infoVo.cargo_username}" class="form-control required" />
@@ -474,18 +474,18 @@
 				         	</td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>身份证:</label></td>
+							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证:</label></td>
 				         	<td class="width-35"><input value="${infoVo.cargo_idcard}" name="cargo_idcard" class="form-control required"></td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>e-mail:</label></td>
+							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>e-mail:</label></td>
 				         	<td class="width-35"><input value="${infoVo.cargo_email}" name="cargo_email" class="form-control required"></td>
 						</tr>
 						
 						
 						<tr><td colspan="4" class=""><label class="pull-left">审核人</label></td></tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>联系电话:</label></td>
+							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>联系电话:</label></td>
 				         	<td class="width-35">
 								<div class="input-group">
 						         	<input value="${infoVo.audit_mobile}" id="auditMobile" name="audit_mobile" class="form-control required" placeholder="请输入手机号">
@@ -496,7 +496,7 @@
 				         	</td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
+							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
 				         	<td class="width-35">
 				         		<input id="auditId" name="audit_userid" class="form-control required" type="hidden" value="${infoVo.audit_userid}"/>
 								<input id="auditName" name="audit_username" type="text" readonly="readonly" value="${infoVo.audit_username}" class="form-control required" />
@@ -520,18 +520,18 @@
 				         	</td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>身份证:</label></td>
+							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证:</label></td>
 				         	<td class="width-35"><input value="${infoVo.audit_idcard}" name="audit_idcard" class="form-control required"></td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>e-mail:</label></td>
+							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>e-mail:</label></td>
 				         	<td class="width-35"><input value="${infoVo.audit_email}" name="audit_email" class="form-control required"></td>
 						</tr>
 						
 						
 						<tr><td colspan="4" class=""><label class="pull-left">付款人</label></td></tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>联系电话:</label></td>
+							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>联系电话:</label></td>
 			         		<td class="width-35">
 								<div class="input-group">
 					         		<input value="${infoVo.proxy_mobile}" id="proxyMobile" name="proxy_mobile" class="form-control required" placeholder="请输入手机号">
@@ -542,7 +542,7 @@
 			         		</td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
+							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
 				         	<td class="width-35">
 					         	<input id="proxyId" name="proxy_userid" class="form-control required" type="hidden" value="${infoVo.proxy_userid}"/>
 								<input id="proxyName" name="proxy_username" type="text" readonly="readonly" value="${infoVo.proxy_username}" class="form-control required" />
@@ -566,15 +566,15 @@
 				         	</td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>身份证:</label></td>
+							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证:</label></td>
 				         	<td class="width-35"><input value="${infoVo.proxy_idcard}" name="proxy_idcard" class="form-control required"></td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>e-mail:</label></td>
+							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>e-mail:</label></td>
 				         	<td class="width-35"><input value="${infoVo.proxy_email}" name="proxy_email" class="form-control required"></td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>通讯地址:</label></td>
+							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>通讯地址:</label></td>
 				         	<td class="width-35"><input value="${infoVo.proxy_address}" name="proxy_address" class="form-control required"></td>
 						</tr>
 						
@@ -598,7 +598,7 @@
 		      		<c:forEach items="${payInfos}" var="pay" varStatus="i">
 			      		<tbody class='bank'>
 							<tr>
-								<td  class="width-15 active"><label class="pull-right"><font color="red"></font>开户银行</label></td>
+								<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户银行</label></td>
 						        	<td class="width-35"><input value="${pay.pay_name}" name="payInfos[0].pay_name" class="form-control required"></td>
 						        	<td class="width-35" rowspan="3">
 						        		<img id="officepayfonturl${i.index}Imgsrc" src="${pay.pay_fonturl}" alt="" style="width: 200px;height: 100px;"/>
@@ -621,11 +621,11 @@
 							</tr>
 							<input value="0" name="payInfos[0].pay_type" type="hidden">
 							<tr>
-								<td  class="width-15 active"><label class="pull-right"><font color="red"></font>账户名称:</label></td>
+								<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>账户名称:</label></td>
 						        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[0].pay_username" class="form-control required"></td>
 							</tr>
 							<tr>
-								<td  class="width-15 active"><label class="pull-right"><font color="red"></font>银行账号:</label></td>
+								<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行账号:</label></td>
 						        <td class="width-35"><input value="${pay.pay_account}" name="payInfos[0].pay_account" class="form-control required"></td>
 							</tr>
 							<tr>
@@ -673,7 +673,7 @@
 									
 								</tr>
 								<tr>
-									<td class="width-15 active"><label class="pull-right"><font color="red"></font>电话:</label></td>
+									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
 							        <td  colspan="5" class="width-35"><input value="${pay.pay_mobile}" name="payInfos[1].pay_mobile" class="form-control required"></td>
 								</tr>
 								<tr>
@@ -700,7 +700,7 @@
 			<table id="bank-pay">
 				<tbody class='bank'>
 					<tr>
-						<td  class="width-15 active"><label class="pull-right"><font color="red"></font>开户银行</label></td>
+						<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户银行</label></td>
 			        	<td class="width-35"><input value="" name="payInfos[0].pay_name" class="form-control required"></td>
 			        	<td class="width-35" rowspan="3">
 				        	<img id="officepayfonturlImgsrc" src="" alt="" style="width: 200px;height: 100px;"/>
@@ -723,11 +723,11 @@
 					</tr>
 					<input value="0" name="payInfos[0].pay_type" type="hidden">
 					<tr>
-						<td  class="width-15 active"><label class="pull-right"><font color="red"></font>账户名称:</label></td>
+						<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>账户名称:</label></td>
 				        <td class="width-35"><input value="" name="payInfos[0].pay_username" class="form-control required"></td>
 					</tr>
 					<tr>
-						<td  class="width-15 active"><label class="pull-right"><font color="red"></font>银行账号:</label></td>
+						<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行账号:</label></td>
 				        <td class="width-35"><input value="" name="payInfos[0].pay_account" class="form-control required"></td>
 					</tr>
 					<tr>
@@ -777,7 +777,7 @@
 				        <td class="width-35"><input value="" name="payInfos[1].pay_username" class="form-control required"></td>
 					</tr>
 					<tr>
-						<td class="width-15 active"><label class="pull-right"><font color="red"></font>电话:</label></td>
+						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
 				        <td colspan="5" class="width-35"><input value="" name="payInfos[1].pay_mobile" class="form-control required"></td>
 					</tr>
 					<tr>
