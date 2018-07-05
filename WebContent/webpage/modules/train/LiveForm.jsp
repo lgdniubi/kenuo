@@ -134,6 +134,11 @@
 					<td><label><fmt:formatDate value="${trainLiveAudit.bengTime}" pattern="yyyy-MM-dd HH:mm:ss" /></label></td>
 				</tr>
 				<tr>
+					<td><label class="pull-right">是否公开:</label></td>
+					<td><label><input id="auditStatus" name="isShow" type="radio" <c:if test="${trainLiveAudit.isShow==0}">checked="checked"</c:if>  value="0" class="form"/>公开</label>
+					<label><input id="auditStatus" name="isShow" type="radio" <c:if test="${trainLiveAudit.isShow==1}">checked="checked"</c:if> value="1" class="form"/>不公开</label></td>
+				</tr>
+				<tr>
 					<td><label class="pull-right">审核状态:</label></td>
 					<td><input id="oldStatus" name="oldStatus" type="hidden" value="${trainLiveAudit.auditStatus}" /> 
 						<c:if test="${trainLiveAudit.auditStatus==0}">
@@ -168,7 +173,7 @@
 					<td> 
 						<label>
 							<sys:treeselect id="trainLiveAudit" name="companyIds" value="${trainLiveAudit.companyIds }" labelName="companyNames" labelValue="${trainLiveAudit.companyNames }"
-								title="公司" url="/sys/franchisee/treeData" cssClass="form-control" checked="true" extId="1"/>
+								title="公司" url="/sys/franchisee/treeData" cssClass="form-control required" checked="true" extId="1"/>
 						</label>
 					</td>
 				</tr>

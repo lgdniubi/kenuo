@@ -39,10 +39,8 @@ import com.training.common.beanvalidator.BeanValidators;
 import com.training.common.config.Global;
 import com.training.common.json.AjaxJson;
 import com.training.common.persistence.Page;
-import com.training.common.service.ServiceException;
 import com.training.common.utils.DateUtils;
 import com.training.common.utils.FileUtils;
-import com.training.common.utils.IdGen;
 import com.training.common.utils.StringUtils;
 import com.training.common.utils.excel.ExportExcel;
 import com.training.common.utils.excel.ImportExcel;
@@ -74,8 +72,10 @@ import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.tools.utils.TwoDimensionCode;
 import com.training.modules.train.dao.TrainRuleParamDao;
 import com.training.modules.train.entity.FzxRole;
+import com.training.modules.train.entity.MediaRole;
 import com.training.modules.train.entity.TrainRuleParam;
 import com.training.modules.train.service.FzxRoleService;
+import com.training.modules.train.service.MediaRoleService;
 
 import net.sf.json.JSONObject;
 
@@ -113,6 +113,8 @@ public class UserController extends BaseController {
 	@Autowired
 	private FzxRoleService fzxRoleService;
 	@Autowired
+	private MediaRoleService mediaRoleService;
+	@Autowired
 	private MediaLoginAuthService mediaLoginAuthService;
 	
 	@ModelAttribute
@@ -142,6 +144,12 @@ public class UserController extends BaseController {
 	@RequiresPermissions(value = { "sys:user:view", "sys:user:add", "sys:user:edit" }, logical = Logical.OR)
 	@RequestMapping(value = "form")
 	public String form(User user, Model model) {
+		/*if("pt".equals(user.getType())){	//查询普通会员的信息
+//			UserPuTo userpt = new UserPuTo();
+			UserPuTo userpt = systemService.getUserPuTo(user.getId());
+			model.addAttribute("userpt", userpt);
+			return "modules/sys/userPTForm";
+		}*/
 		List<UserLog> userLogs = new ArrayList<UserLog>();
 		/*if (user.getCompany() == null || user.getCompany().getId() == null) {  在进入添加页面时不需要进行查询初始化，因为页面要根据商家去查询权限内的机构，所以不能将商家初始化为登云
 			user.setCompany(UserUtils.getUser().getCompany());
@@ -265,8 +273,8 @@ public class UserController extends BaseController {
 	public String save(User user, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		try {
 			//自我评价转义
-			user.getUserinfo().setSelfintro(HtmlUtils.htmlUnescape(user.getUserinfo().getSelfintro()));
-			if(null != user.getId() && "" != user.getId()){
+//			user.getUserinfo().setSelfintro(HtmlUtils.htmlUnescape(user.getUserinfo().getSelfintro()));
+			/*if(null != user.getId() && "" != user.getId()){
 				User users = userDao.get(user.getId());
 				if(null != users){
 					if("2".equals(users.getUserType())){
@@ -279,7 +287,7 @@ public class UserController extends BaseController {
 						}
 					}
 				}
-			}
+			}*/
 			//新增用户时  验证其用户是否存在于每天美耶中
 //			if(user.getId().length() <= 0){
 //				if(mtmyUsersDao.findByMobile(user) != null){
@@ -290,12 +298,16 @@ public class UserController extends BaseController {
 //			}
 			// 修正引用赋值问题，不知道为何，Company和Office引用的一个实例地址，修改了一个，另外一个跟着修改。
 			Office company = new Office();
-			company.setId(request.getParameter("company.id"));
-			company.setName(request.getParameter("company.name"));
+			company.setId("1");
+			company.setName("登云平台商家");
+//			company.setId(request.getParameter("company.id"));
+//			company.setName(request.getParameter("company.name"));
 			user.setCompany(company);
 			Office office = new Office();
-			office.setId(request.getParameter("office.id"));
-			office.setName(request.getParameter("office.name"));
+			office.setId("1");
+			office.setName("登云平台机构");
+//			office.setId(request.getParameter("office.id"));
+//			office.setName(request.getParameter("office.name"));
 			user.setOffice(office);
 			
 			/*更新用户时，需要更新用户的TOKEN，用户妃子校*/
@@ -358,7 +370,7 @@ public class UserController extends BaseController {
 	 */
 	@RequiresPermissions("sys:user:del")
 	@RequestMapping(value = "delete")
-	public String delete(User user, RedirectAttributes redirectAttributes) {
+	public String delete(User user,RedirectAttributes redirectAttributes) {
 		if (Global.isDemoMode()) {
 			addMessage(redirectAttributes, "演示模式，不允许操作！");
 			return "redirect:" + adminPath + "/sys/user/list?repage";
@@ -378,7 +390,44 @@ public class UserController extends BaseController {
 		} else {
 			user.preUpdate();
 			systemService.deleteUser(user);
-			addMessage(redirectAttributes, "删除用户成功");
+			 //删除员工时，使app端fzx用户token失效
+			redisClientTemplate.del("UTOKEN_"+user.getId());
+			addMessage(redirectAttributes, "操作成功");
+		}
+		return "redirect:" + adminPath + "/sys/user/list?repage";
+	}
+	
+	/**
+	 * 离职操作
+	 * @param user
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequiresPermissions("sys:user:del")
+	@RequestMapping(value = "offJob")
+	public String offJob(User user, RedirectAttributes redirectAttributes) {
+		if (Global.isDemoMode()) {
+			addMessage(redirectAttributes, "演示模式，不允许操作！");
+			return "redirect:" + adminPath + "/sys/user/list?repage";
+		}
+		if(reservationDao.findCountById(user.getId()) != 0){
+			addMessage(redirectAttributes, "删除用户失败, 当前用户存在未完成的预约");
+			return "redirect:" + adminPath + "/sys/user/list?repage";
+		}
+		if(specBeauticianDao.findSpecBeautician(user.getId()) != 0){
+			addMessage(redirectAttributes, "删除用户失败,当前用户属于特殊美容师,请先从特殊美容师列表删除");
+			return "redirect:" + adminPath + "/sys/user/list?repage";
+		}
+		if (UserUtils.getUser().getId().equals(user.getId())) {
+			addMessage(redirectAttributes, "删除用户失败, 不允许删除当前用户");
+		} else if (User.isAdmin(user.getId())) {
+			addMessage(redirectAttributes, "删除用户失败, 不允许删除超级管理员用户");
+		} else {
+			user.preUpdate();
+			systemService.offJob(user);
+			//删除员工时，使app端fzx用户token失效
+			redisClientTemplate.del("UTOKEN_"+user.getId());
+			addMessage(redirectAttributes, "用户离职成功");
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}
@@ -463,6 +512,9 @@ public class UserController extends BaseController {
 		Map<String, Object> map = userDao.findFranchiseeAuth(user);	// 查询用户商家权限
 		user.setCompanyIds((String)map.get("companyIds"));
 		user.setCompanyNames((String)map.get("companyNames"));
+		
+		List<MediaRole> mdroleList = mediaRoleService.findmediaRoleByUserId(user);
+		user.setMdRoleList(mdroleList);
 		model.addAttribute("isSpecBeautician", systemService.selectSpecBeautician(user.getId()));	
 		model.addAttribute("user", user);
 		model.addAttribute("officeList", officeService.findAll());
@@ -482,69 +534,20 @@ public class UserController extends BaseController {
 	public String saveAuth(User user,String oldFzxRoleIds,String fzxRoleIds,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,Model model){
 		try {
 			
-			fzxRoleService.updateUserRole(user.getId(),oldFzxRoleIds,fzxRoleIds);
-			// 角色数据有效性验证，过滤不在授权内的角色
-			List<Role> roleList = Lists.newArrayList();
-			List<String> roleIdList = user.getRoleIdList();
-			for (Role r : systemService.findAllRole()) {
-				if (roleIdList.contains(r.getId())) {
-					roleList.add(r);
-				}
-			}
-			user.setRoleList(roleList);
-			
-			// 更新用户与角色关联
-			userDao.deleteUserRole(user);
-			// 更新用户与数据权限关联
-			userDao.deleteUserOffice(user);
-			if (user.getRoleList() != null && user.getRoleList().size() > 0) {
-				userDao.insertUserRole(user);
-			} else {
-				throw new ServiceException(user.getLoginName() + "没有设置角色！");
-			}
-			
-			if(1 == user.getDataScope()){
-				user.preUpdate();
-				userDao.UpdateDataScope(user);
-				addMessage(redirectAttributes, "保存用户数据权限成功");
-			}else if(2 == user.getDataScope()){
-				user.preUpdate();
-				userDao.UpdateDataScope(user);
-				userDao.insertDataScope(user);
-				addMessage(redirectAttributes, "保存用户数据权限成功");
-			}else{
-				addMessage(redirectAttributes, "保存出现异常，请与管理员联系");
-			}
-			if("1".equals(request.getParameter("isUpdateRole"))){	// 清除用户缓存 用户TOKEN失效
-				redisClientTemplate.del("UTOKEN_"+user.getId());
-			}
-			if("1".equals(request.getParameter("isPB"))){
-				userDao.UpdateUserStatus(user.getId());
-				
-				//若用户原来无排班，然后给予排班角色，则查询有没有美容师信息，若无，则插入
-				if(userDao.selectIsExist(user.getId()) == 0){
-					userDao.insertUserInfo(IdGen.uuid(),user.getId());
-				}
-			}
-			userDao.deleteFranchiseeAuth(user);
-			if(null != user.getCompanyIds() || !"".equals(user.getCompanyIds())){
-				String idArray[] =user.getCompanyIds().split(",");
-				for(String id : idArray){
-					userDao.insertFranchiseeAuth(user.getId(),id);
-				}
-			}
+			systemService.saveAuth(user, oldFzxRoleIds, fzxRoleIds, request);
 			//更新用户的自媒体权限
-			user.getMediaLoginAuth().setUserId(user.getId());
+			/*user.getMediaLoginAuth().setUserId(user.getId());
 			//当自媒体权限:否
 			if(user.getMediaLoginAuth().getIsLogin().equals("0")){
 				user.getMediaLoginAuth().setUserType("");
 				user.getMediaLoginAuth().setPlatform("");
 				user.getMediaLoginAuth().setUserTag("");
 			}
-			mediaLoginAuthService.saveMediaLoginAuth(user.getMediaLoginAuth());
+			mediaLoginAuthService.saveMediaLoginAuth(user.getMediaLoginAuth());*/
 			
 			// 清除用户缓存
 			UserUtils.clearCache(user);
+			addMessage(redirectAttributes, "保存用户数据权限成功");
 		} catch (Exception e) {
 			logger.error("#####[保存用户数据权限-出现异常：]"+e.getMessage());
 			BugLogUtils.saveBugLog(request, "保存用户数据权限", e);
@@ -552,6 +555,7 @@ public class UserController extends BaseController {
 		}
 		return "redirect:" + adminPath + "/sys/user/list?repage";
 	}
+
 	/**
 	 * 导出用户数据
 	 * 
@@ -1225,6 +1229,35 @@ public class UserController extends BaseController {
 			mapList.add(map);
 		}
 		return mapList;
+	}
+	/**
+	 * 查询当前商家下的所有用户
+	 * @param officeId	商家id
+	 * @param response
+	 * @return
+	 */
+	@RequiresPermissions("user")
+	@ResponseBody
+	@RequestMapping(value = "treeDataCompany")
+	public Map<String, Object> treeDataCompany(@RequestParam(required = false) String officeId,String mobile,
+			HttpServletResponse response,HttpServletRequest request) {
+//		List<Map<String, Object>> mapList = Lists.newArrayList();
+		List<User> list = systemService.findUserByFranchiseeId(officeId,mobile);
+		Map<String, Object> map = Maps.newHashMap();
+		for (int i = 0; i < list.size(); i++) {
+			User e = list.get(i);
+			map.put("id",  e.getId());
+			map.put("pId", officeId);
+			map.put("name", StringUtils.replace(e.getName(), " ", ""));
+//			mapList.add(map);
+		}
+		map.put("code", list.size());	//
+		return map;
+	}
+	@RequestMapping(value = "finduser")
+	public String finduser(HttpServletResponse response,HttpServletRequest request, Model model,String officeId) {
+		model.addAttribute("officeId", officeId);
+		return "modules/sys/userfind";
 	}
 	/**
 	 * 通知--》查询用户信息

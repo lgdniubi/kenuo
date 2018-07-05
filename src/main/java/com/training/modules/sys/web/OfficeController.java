@@ -46,6 +46,7 @@ import com.training.modules.ec.dao.ReservationDao;
 import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.Office;
+import com.training.modules.sys.entity.OfficeAcount;
 import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.OfficeLog;
 import com.training.modules.sys.entity.User;
@@ -55,10 +56,16 @@ import com.training.modules.sys.utils.DictUtils;
 import com.training.modules.sys.utils.OfficeThreadUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.dao.ProtocolModelDao;
 import com.training.modules.train.dao.TrainRuleParamDao;
+import com.training.modules.train.entity.ContractInfo;
+import com.training.modules.train.entity.ContractInfoVo;
+import com.training.modules.train.entity.ModelFranchisee;
+import com.training.modules.train.entity.PayInfo;
 import com.training.modules.train.entity.TrainRuleParam;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONNull;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import net.sf.json.util.CycleDetectionStrategy;
@@ -78,11 +85,14 @@ public class OfficeController extends BaseController {
 	private TrainRuleParamDao trainRuleParamDao;
 	@Autowired
 	private ReservationDao reservationDao;
+	@Autowired
+	private ProtocolModelDao protocolModelDao;
 	
 	@ModelAttribute("office")
 	public Office get(@RequestParam(required=false) String id) {
 		if (StringUtils.isNotBlank(id)){
-			return officeService.get(id);
+			Office office = officeService.get(id);
+			return office;
 		}else{
 			return new Office();
 		}
@@ -163,7 +173,7 @@ public class OfficeController extends BaseController {
 	 */
 	@RequiresPermissions(value={"sys:office:view","sys:office:add","sys:office:edit"},logical=Logical.OR)
 	@RequestMapping(value = "form")
-	public String form(Office office, Model model) {
+	public String form(Office office, Model model,String opflag) {
 		User user = UserUtils.getUser();
 		if (office.getParent()==null || office.getParent().getId()==null){
 			office.setParent(user.getOffice());
@@ -241,6 +251,7 @@ public class OfficeController extends BaseController {
 			office.setType("2");
 		}
 		model.addAttribute("office", office);
+		model.addAttribute("opflag", opflag);
 		return "modules/sys/officeForm";
 	}
 	
@@ -266,7 +277,7 @@ public class OfficeController extends BaseController {
 			return "redirect:" + adminPath + "/sys/office/";
 		}
 		if (!beanValidator(model, office)){
-			return form(office, model);
+			return form(office, model,"0");
 		}
 		
 		if(office.getGrade().equals("2")){
@@ -329,7 +340,7 @@ public class OfficeController extends BaseController {
 					oldImg = oldOffice.getImg() == null ? "" : oldOffice.getImg();//修改前的首图信息
 				}
 				if(!oldImg.equals(img)){
-					reservationTime(3, currentUser.getCreateBy().getId(), img, oldOffice.getImg(), lifeImgUrls, office.getId(), "bm", null);
+//					reservationTime(3, currentUser.getCreateBy().getId(), img, oldOffice.getImg(), lifeImgUrls, office.getId(), "bm", null);
 				}
 			}
 			
@@ -356,9 +367,154 @@ public class OfficeController extends BaseController {
 		}
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
 		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
-		return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
+		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
+		if(office.getGrade().equals("2")){
+			return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
+		}else{
+			return "redirect:" + adminPath + "/sys/office/signInfo?id="+office.getId()+"&opflag=1&parentIds="+office.getParentIds();
+		}
+//		return "redirect:" + adminPath + "/sys/office/form?id="+office.getId()+"&parentIds="+office.getParentIds();
+//		return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
 	}
 	
+	@RequiresPermissions(value={"sys:office:add","sys:office:edit"},logical=Logical.OR)
+	@RequestMapping(value = "signInfo")
+	@SuppressWarnings("unchecked")
+	public String signInfo(Office office,String opflag, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		try {
+			User user = UserUtils.getUser();
+			String weburl = ParametersFactory.getTrainsParamValues("contract_data_path");
+			logger.info("##### web接口路径:"+weburl);
+			String parpm = "{\"office_id\":\""+office.getId()+"\"}";
+//		String url="http://172.50.3.16:8081/cs_service/pub/queryContractInfoAudit.htm";
+			String url=weburl;
+			String result = WebUtils.postCSObject(parpm, url);
+			JSONObject jsonObject = JSONObject.fromObject(result);
+			ContractInfoVo infoVo = (ContractInfoVo) JSONObject.toBean(jsonObject.getJSONObject("data"), ContractInfoVo.class);
+			if(!(jsonObject.get("data") instanceof JSONNull)){
+				List<PayInfo> payInfos = JSONArray.toList(jsonObject.getJSONObject("data").getJSONArray("payInfos"), new PayInfo(),new JsonConfig());
+				model.addAttribute("payInfos", payInfos);
+				model.addAttribute("paylen", payInfos.size());
+			}else{
+				model.addAttribute("paylen", 0);
+			}
+			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+			if(!"200".equals(jsonObject.get("result"))){
+				throw new RuntimeException("获取签约信息失败");
+			}
+			ModelFranchisee mod = officeService.findPayType(office.getId());
+			model.addAttribute("infoVo", infoVo);
+			model.addAttribute("office", office);
+			model.addAttribute("payWay", mod.getPaytype());
+			model.addAttribute("user", user);
+			model.addAttribute("opflag", opflag);
+		} catch (Exception e) {
+			e.printStackTrace();
+			addMessage(redirectAttributes, "获取签约信息失败");
+		}
+		return "modules/sys/signInfoForm";
+	}
+	@RequiresPermissions(value={"sys:office:add","sys:office:edit"},logical=Logical.OR)
+	@RequestMapping(value = "saveSignInfo")
+	public String saveSignInfo(ContractInfoVo contractInfo,Integer payWay, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		try {
+			List<PayInfo> payInfos = contractInfo.getPayInfos();
+			if(payInfos != null){		//判断是否有支付信息
+				List<PayInfo> list = creatPayInfoList(payWay, payInfos,contractInfo.getCreate_user());
+				contractInfo.setPayInfos(list);
+			}
+			JsonConfig config = new JsonConfig();
+			JSONObject j = JSONObject.fromObject(contractInfo,config);
+			System.out.println(j.toString());
+			String weburl = ParametersFactory.getTrainsParamValues("contract_save_path");
+			logger.info("##### web接口路径:"+weburl);
+			String parpm = j.toString();
+//		String url="http://172.50.3.16:8081/cs_service/pub/saveContractInfoAudit.htm";
+			String url=weburl;
+			String result = WebUtils.postCSObject(parpm, url);
+			JSONObject jsonObject = JSONObject.fromObject(result);
+			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+			if(!"200".equals(jsonObject.get("result"))){
+				throw new RuntimeException("保存签约信息失败");
+			}
+			protocolModelDao.deleteProtocolShopById(String.valueOf(contractInfo.getFranchisee_id()));
+			addMessage(redirectAttributes, "保存签约信息成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			addMessage(redirectAttributes, "保存签约信息失败");
+		}
+		return "redirect:" + adminPath + "/sys/office/signInfo?id="+contractInfo.getOffice_id()+"&opflag=1";
+	}
+
+	private List<PayInfo> creatPayInfoList(Integer payWay, List<PayInfo> payInfos, String userid) {
+		List<PayInfo> ns = new ArrayList<>();
+		if(payWay == 0){ //线下支付
+			PayInfo payInfo = payInfos.get(0);
+			String[] username = payInfo.getPay_username().split(",");
+			String[] account = payInfo.getPay_account().split(",");
+			String[] name = payInfo.getPay_name().split(",");
+			String[] font = payInfo.getPay_fonturl().split(",");
+			String[] back = payInfo.getPay_backurl().split(",");
+//			int a = back.length;
+			PayInfo np ;
+			for (int i = 0; i < back.length; i++) {
+				np = new PayInfo();
+				np.setCreate_user(userid);
+				np.setPay_username(username[i]);
+				np.setPay_account(account[i]);
+				np.setPay_name(name[i]);
+				np.setPay_type("0");
+				np.setPay_fonturl(font[i]);
+				np.setPay_backurl(back[i]);
+				ns.add(np);
+			}
+		}else if(payWay == 1){ //支付宝支付
+			PayInfo payInfo = payInfos.get(1);
+			if(payInfo!=null && payInfo.getPay_type() !=null){
+				String[] type = payInfo.getPay_type().split(",");
+				if("1".equals(type[0])){
+					String[] username = payInfo.getPay_username().split(",");
+					String[] account = payInfo.getPay_account().split(",");
+					String[] mobile = payInfo.getPay_mobile().split(",");
+					PayInfo np ;
+					for (int i = 0; i < account.length; i++) {
+						np = new PayInfo();
+						np.setCreate_user(userid);
+						np.setPay_username(username[i]);
+						np.setPay_account(account[i]);
+						np.setPay_mobile(mobile[i]);
+						np.setPay_name("微信");
+						np.setPay_type("1");
+						ns.add(np);
+					}
+				}	
+			}
+		 //微信支付
+			if(payInfos.size()>2){
+				PayInfo payInfo2 = payInfos.get(2);
+				if(payInfo2!=null && payInfo2.getPay_type() !=null){
+					String[] type = payInfo2.getPay_type().split(",");
+					if("2".equals(type[0])){
+						String[] username2 = payInfo2.getPay_username().split(",");
+						String[] account2 = payInfo2.getPay_account().split(",");
+						String[] mobile2 = payInfo2.getPay_mobile().split(",");
+						PayInfo np2 ;
+						for (int i = 0; i < account2.length; i++) {
+							np2 = new PayInfo();
+							np2.setCreate_user(userid);
+							np2.setPay_username(username2[i]);
+							np2.setPay_account(account2[i]);
+							np2.setPay_mobile(mobile2[i]);
+							np2.setPay_name("支付宝");
+							np2.setPay_type("2");
+							ns.add(np2);
+						}
+					}	
+				}
+			}
+		}
+		return ns;
+	}
 	
 	/**
 	 * 机构管理-删除
@@ -1133,5 +1289,52 @@ public class OfficeController extends BaseController {
 		}
 		officeLog.setUpdateBy(UserUtils.getUser());
 		officeService.saveOfficeLog(officeLog);
+    }
+    /**
+     * 去信用额度编辑页面
+     * @return
+     */
+    @RequiresPermissions("sys:office:editCredit")
+    @RequestMapping("toEditCredit")
+    public String toEditCredit(String office_id,Model model,RedirectAttributes redirectAttributes,HttpServletRequest request){
+    	
+    	try {
+			OfficeAcount officeAcount = this.officeService.findOfficeAcount(office_id);
+			if(officeAcount == null){
+				officeAcount = new OfficeAcount();
+				officeAcount.setOfficeId(office_id);
+				this.officeService.saveOfficeAcount(officeAcount);
+			}
+			model.addAttribute("officeAcount", officeAcount);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+    	return "modules/sys/editCreditLimit";
+    }
+    /**
+     * 编辑信用额度
+     * @param officeAcount
+     * @param redirectAttributes
+     * @param request
+     * @return
+     */
+    @RequestMapping("updateOfficeCreditLimit")
+    public String updateOfficeCreditLimit(OfficeAcount officeAcount,RedirectAttributes redirectAttributes,HttpServletRequest request){
+    	
+    	try {
+			this.officeService.updateOfficeCreditLimit(officeAcount);
+			addMessage(redirectAttributes, "变更信用额度成功");
+		}catch (RuntimeException e) {
+ 			e.printStackTrace();
+ 			BugLogUtils.saveBugLog(request, "变更信用额度", e);
+ 			addMessage(redirectAttributes, e.getMessage());
+ 		}catch (Exception e) {
+			e.printStackTrace();
+			BugLogUtils.saveBugLog(request, "变更信用额度", e);
+			addMessage(redirectAttributes, "变更信用额度失败");
+		}
+    	
+    	return "redirect:" + adminPath + "/sys/office/list"; 
     }
 }

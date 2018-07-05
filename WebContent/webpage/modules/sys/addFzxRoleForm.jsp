@@ -43,7 +43,7 @@
 			/* 加载妃子校角色 */
 			var fzxRoleIds = "${fzxRoleIds}";
 			//alert(fzxRoleIds);
-			$.post("${ctx}/train/fzxRole/newTreeData",{fzxRoleIds:fzxRoleIds},function(data){
+			$.post("${ctx}/train/fzxRole/newTreeData?modeid=8",{fzxRoleIds:fzxRoleIds},function(data){
 				var tree1 = $.fn.zTree.init($("#fzxRoleTree"), setting, data);
 				// 不选择父节点
 				tree1.setting.check.chkboxType = { "Y" : "", "N" : "" };

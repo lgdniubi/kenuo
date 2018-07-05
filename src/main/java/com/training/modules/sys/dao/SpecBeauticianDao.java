@@ -46,4 +46,15 @@ public interface SpecBeauticianDao extends CrudDao<SpecBeautician>{
 	 * @return
 	 */
 	public int findSpecBeautician(String userId);
+	/**
+	 * 查询用户是否是特殊美容师
+	 * @param id
+	 * @return
+	 */
+	public SpecBeautician getSpecBeautician(String id);
+	/**
+	 * 从特殊美容师表删除后，删除他的排班记录
+	 * @param specBeautician
+	 */
+	public void deleteArrangeShop(SpecBeautician specBeautician);
 }

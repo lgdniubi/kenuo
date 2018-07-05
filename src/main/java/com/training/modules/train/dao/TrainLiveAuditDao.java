@@ -150,4 +150,11 @@ public interface TrainLiveAuditDao extends TreeDao<TrainLiveAudit>{
 	 */
 	public void saveFormMtmy(TrainLiveAudit trainLiveAudit);
 
+	/**
+	 * 获取权限商家ids
+	 * @param id
+	 * @return
+	 */
+	public TrainLiveAudit getCompanyIds(String id);
+
 }

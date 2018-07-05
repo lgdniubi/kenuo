@@ -27,6 +27,9 @@
 		  f.bank_name AS 'bankName',
 		  f.public_service_flag AS 'publicServiceFlag',
 		  f.status,
+		  f.legal_card,
+		  f.short_name,
+		  f.set_date,
 		  f.remarks
 	</sql>
 	
@@ -153,6 +156,7 @@
 		  update_by,
 		  update_date,
 		  del_flag,
+		  legal_card,
 		  remarks
 		) 
 		VALUES
@@ -182,6 +186,7 @@
 		    NULL,
 		    NULL,
 		    0,
+		    #{legalCard},
 		    #{remarks}
 		  )
 	</insert>
@@ -289,4 +294,22 @@
 		WHERE
 			id=#{id}
 	</update>
+	
+	<!-- 查找银行卡信息 -->
+	<select id="findBankAccountList" resultType="BankAccount">
+		SELECT
+			`id`,
+			`apply_id`,
+			`accountname`,
+			`openbank`,
+			`bankaccount`,
+			`openaddress`,
+			`detailedaddress`,
+			`cardup`,
+			`carddown`,
+			`bank_type`
+		FROM
+			`sys_bank_account`
+		WHERE franchisee_id = #{id}
+	</select>
 </mapper>

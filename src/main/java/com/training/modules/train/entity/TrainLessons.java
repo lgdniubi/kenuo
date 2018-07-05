@@ -31,6 +31,7 @@ public class TrainLessons extends DataEntity<TrainLessons>{
 	
 	private int sort;				//排序
 	private int isShow;				//是否显示
+	private int isOpen;				//'是否公开：0、公开；1、不公开'
 	
 	private int showType = -1;			//课程类型，0:普通课程，1：新课推荐，2：热门课程，3：推荐和热门
 	private Franchisee franchisee;	//课程所属商家
@@ -191,6 +192,14 @@ public class TrainLessons extends DataEntity<TrainLessons>{
 
 	public void setIsShow(int isShow) {
 		this.isShow = isShow;
+	}
+
+	public int getIsOpen() {
+		return isOpen;
+	}
+
+	public void setIsOpen(int isOpen) {
+		this.isOpen = isOpen;
 	}
 
 	public int getShowType() {

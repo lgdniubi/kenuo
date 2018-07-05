@@ -6,10 +6,13 @@ package com.training.modules.sys.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.session.Session;
 import org.restlet.engine.util.DateUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -17,15 +20,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.training.common.config.Global;
 import com.training.common.persistence.Page;
 import com.training.common.security.Digests;
 import com.training.common.security.shiro.session.SessionDAO;
 import com.training.common.service.BaseService;
-import com.training.common.service.ServiceException;
 import com.training.common.track.utils.TrackUtils;
 import com.training.common.utils.CacheUtils;
 import com.training.common.utils.Encodes;
+import com.training.common.utils.IdGen;
 import com.training.common.utils.StringUtils;
 import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.entity.Users;
@@ -37,6 +41,7 @@ import com.training.modules.sys.dao.MenuDao;
 import com.training.modules.sys.dao.OfficeDao;
 import com.training.modules.sys.dao.RoleDao;
 import com.training.modules.sys.dao.SkillDao;
+import com.training.modules.sys.dao.SpecBeauticianDao;
 import com.training.modules.sys.dao.SpecialityDao;
 import com.training.modules.sys.dao.UserDao;
 import com.training.modules.sys.dao.UserinfoDao;
@@ -46,10 +51,12 @@ import com.training.modules.sys.entity.Menu;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.Role;
 import com.training.modules.sys.entity.Skill;
+import com.training.modules.sys.entity.SpecBeautician;
 import com.training.modules.sys.entity.Speciality;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.entity.UserLog;
 import com.training.modules.sys.entity.UserOfficeCode;
+import com.training.modules.sys.entity.UserPuTo;
 import com.training.modules.sys.entity.UserSkill;
 import com.training.modules.sys.entity.UserSpeciality;
 import com.training.modules.sys.entity.UserVo;
@@ -59,7 +66,12 @@ import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.LogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.dao.UserCheckDao;
 import com.training.modules.train.entity.FzxRole;
+import com.training.modules.train.entity.MediaRole;
+import com.training.modules.train.service.FzxRoleService;
+import com.training.modules.train.service.MediaRoleService;
+import com.training.modules.train.service.PcRoleService;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -79,6 +91,8 @@ public class SystemService extends BaseService implements InitializingBean {
 
 	@Autowired
 	private UserDao userDao;
+	@Autowired
+	private UserCheckDao userCheckDao;
 	@Autowired
 	private RoleDao roleDao;
 	@Autowired
@@ -103,6 +117,14 @@ public class SystemService extends BaseService implements InitializingBean {
 	private SkillDao skillDao;
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
+	@Autowired
+	private FzxRoleService fzxRoleService;
+	@Autowired
+	private MediaRoleService mediaRoleService;
+	@Autowired
+	private PcRoleService pcRoleService;
+	@Autowired
+	private SpecBeauticianDao specBeauticianDao;	//特殊美容师
 	
 	public SessionDAO getSessionDao() {
 		return sessionDao;
@@ -279,6 +301,20 @@ public class SystemService extends BaseService implements InitializingBean {
 		page.setList(userDao.findList(user));
 		return page;
 	}
+	/**
+	 * 查找非员工类型的用户   type!= yg
+	 * @param page
+	 * @param user
+	 * @return
+	 */
+	public Page<User> findSpecialUser(Page<User> page, User user) {
+		user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(),"o"));
+		// 设置分页参数
+		user.setPage(page);
+		// 执行分页查询
+		page.setList(userDao.findSpecialUserList(user));
+		return page;
+	}
 	
 	/**
 	 * 分页查询美容师的信息
@@ -434,12 +470,12 @@ public class SystemService extends BaseService implements InitializingBean {
 			Dict oldDict = new Dict();
 			oldDict.setValue(oldUser.getUserType());
 			oldDict.setType("sys_user_type");
-			Dict oldD = dictDao.findDict(oldDict);
+//			Dict oldD = dictDao.findDict(oldDict);
 			Dict newDict = new Dict();
 			newDict.setValue(user.getUserType());
 			newDict.setType("sys_user_type");
 			Dict newD = dictDao.findDict(newDict);
-			str.append("职位:修改前("+oldD.getLabel()+"),修改后("+newD.getLabel()+")--");
+			str.append("职位:修改前(ss),修改后("+newD.getLabel()+")--");
 		}
 		return str.toString();
 	}
@@ -476,7 +512,7 @@ public class SystemService extends BaseService implements InitializingBean {
 		User currentUser = UserUtils.getUser();//记录图片上传时,获取当前登录用户的信息
 		String lifeImgUrls = "";//记录图片上传时,图片格式为string类型(格式必须如此)
 		List<String> oldLifeImgUrls = new ArrayList<String>();//生活照调用接口(必传数据,修改之前的照片信息,格式必须如此)
-
+		user.setType("yg");
 		if (StringUtils.isBlank(user.getId())) {
 			user.preInsert();
 			if("2".equals(user.getResult())){
@@ -510,7 +546,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			}
 			
 			// userinfo.preInsert();
-			if (user.getUserinfo() != null) {
+			/*if (user.getUserinfo() != null) {
 				user.getUserinfo().preInsert();
 				user.getUserinfo().setUserid(user.getId());
 				user.getUserinfo().setNativearea(user.getUserinfo().getAreaP().getId());
@@ -523,9 +559,9 @@ public class SystemService extends BaseService implements InitializingBean {
 					specialityDao.insertSpecialityorm(list); // 插入特长表
 				}
 
-			}
+			}*/
 
-			if (user.getUserinfocontent() != null) {
+			/*if (user.getUserinfocontent() != null) {
 				List<Userinfocontent> contlist = livePicTolist(user); // 获取图片信息list
 				if (contlist.size() > 0) {
 					userinfocontentDao.insertPiclive(contlist);
@@ -538,24 +574,24 @@ public class SystemService extends BaseService implements InitializingBean {
 					reservationTime(2, currentUser.getCreateBy().getId(), null, null, lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
 				}
 				
-			}
+			}*/
 			
-			if(user.getSkill() != null){
+			/*if(user.getSkill() != null){
 				List<UserSkill> list = SpeArrSkillList(user); // 获取拼接的技能标签list
 				if (list.size() > 0) {
 					skillDao.insertUserSkill(list);     // 插入技能标签表
 				}
-			}
+			}*/
 			// 2017年9月1日 新用户默认商家权限为当前商家
 			userDao.insertFranchiseeAuth(user.getId(), user.getCompany().getId());
 			//saveFzxRoleOfficeById("4",user.getOffice().getId(),user.getId());
 			//给用户设置默认的妃子校角色和权限
-			FzxRole fzxRole  = new FzxRole();
+			/*FzxRole fzxRole  = new FzxRole();
 			fzxRole.setRoleId(4);
 			//user.setId(user.getId());
 			user.setFzxRole(fzxRole);
-			userDao.saveFzxRoleByUser(user);
-			userDao.saveOfficeById(user.getReturnId(),user.getOffice().getId());
+			userDao.saveFzxRoleByUser(user);*/
+//			userDao.saveOfficeById(user.getReturnId(),user.getOffice().getId());
 		} else {
 //			saveUserLog1(user);
 			// 清除原用户机构用户缓存
@@ -589,7 +625,7 @@ public class SystemService extends BaseService implements InitializingBean {
 						UserUtils.USER_CACHE_LIST_BY_OFFICE_ID_ + oldUser.getOffice().getId());
 			}
 
-			if (user.getUserinfo() != null) {
+			/*if (user.getUserinfo() != null) {
 				// 更新用户数据
 				Userinfo uinfo = userinfoDao.findByuserId(user.getId()); // 查询数据库里面的用户是否存在
 
@@ -633,7 +669,7 @@ public class SystemService extends BaseService implements InitializingBean {
 					lifeImgUrls = user.getUserinfocontent().getUrl();//必须是String类型的数据
 					reservationTime(2, currentUser.getCreateBy().getId(), null, null, lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
 				}
-			}
+			}*/
 			
 //begin     修改妃子校用户同时更新每天美耶用户开始   修改时间2017年1月23日
 			//用于验证每天美耶用户   
@@ -713,7 +749,7 @@ public class SystemService extends BaseService implements InitializingBean {
     			}
 			}
 		}
-		if (StringUtils.isNotBlank(user.getId())) {
+		/*if (StringUtils.isNotBlank(user.getId())) {
 			// 更新用户与角色关联
 			userDao.deleteUserRole(user);
 			if (user.getRoleList() != null && user.getRoleList().size() > 0) {
@@ -725,7 +761,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			UserUtils.clearCache(user);
 			// // 清除权限缓存
 			// systemRealm.clearAllCachedAuthorizationInfo();
-		}
+		}*/
 	}
 
 	@Transactional(readOnly = false)
@@ -745,7 +781,13 @@ public class SystemService extends BaseService implements InitializingBean {
 		 */
 		relieveUser(user);
 		saveUserLog2(user);
-		userDao.deleteByLogic(user);
+		if("1".equals(user.getDelFlag())){
+			userDao.deleteByLogic(user);
+		}else{
+			user.setDelRemarks("解冻用户");
+			userDao.updateUserDel(user);
+		}
+			
 
 		// 清除用户缓存
 		UserUtils.clearCache(user);
@@ -754,16 +796,75 @@ public class SystemService extends BaseService implements InitializingBean {
 		
 		/**
 		 * 删除用户时将用户数据t同步到供应链
+		 * user_status解冻0，新增冻结状态1
 		 */
 		String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
 		logger.info("##### web接口路径:"+weburl);
 		String parpm = "{\"user_id\":\""+user.getId()+"\",\"user_name\":\""+user.getName()+"\",\"franchisee_id\":"+user.getCompany().getId()+","
-				+ "\"user_mobile\":\""+user.getMobile()+"\",\"login_name\":\""+user.getLoginName()+"\",\"user_status\":"+1+","
+				+ "\"user_mobile\":\""+user.getMobile()+"\",\"login_name\":\""+user.getLoginName()+"\",\"user_status\":"+user.getDelFlag()+","
 						+ "\"office_id\":\""+user.getOffice().getId()+"\",\"office_name\":\""+user.getOffice().getName()+"\"}";
 		String url=weburl;
 		String result = WebUtils.postCSObject(parpm, url);
 		JSONObject jsonObject = JSONObject.fromObject(result);
 		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+	}
+	
+	@Transactional(readOnly = false)
+	public void offJob(User user) {
+		/**
+		 * 用户物理删除修改为逻辑删除，修改时间为：2016-4-13 userDao.delete(user);
+		 */
+//		relieveUser(user);
+//		saveUserLog2(user);
+		//离职后变为普通商家和普通机构
+		userDao.updateCompanyAndOfficeId(user);
+		//用户离职进行的操作,1删除用户所有角色，重新赋予他普通会员的角色，2插入妃子校角色商家一条数据。3删除pc和media的角色
+		updateUserRole(user);	
+		
+		// 清除用户缓存
+		UserUtils.clearCache(user);
+		// // 清除权限缓存
+		// systemRealm.clearAllCachedAuthorizationInfo();
+		
+		/**
+		 * 删除用户时将用户数据t同步到供应链
+		 * is_delete离职状态1
+		 */
+		String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
+		logger.info("##### web接口路径:"+weburl);
+		String parpm = "{\"user_id\":\""+user.getId()+"\",\"user_name\":\""+user.getName()+"\",\"franchisee_id\":"+user.getCompany().getId()+","
+				+ "\"user_mobile\":\""+user.getMobile()+"\",\"login_name\":\""+user.getLoginName()+"\",\"user_status\":"+1+","
+				+ "\"office_id\":\""+user.getOffice().getId()+"\",\"office_name\":\""+user.getOffice().getName()+"\"}";
+		String url=weburl;
+		String result = WebUtils.postCSObject(parpm, url);
+		JSONObject jsonObject = JSONObject.fromObject(result);
+		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+	}
+
+	private void updateUserRole(User user) {
+		String userid = user.getId();
+		//离职后变为普通角色
+		userCheckDao.deleteOldFzxRoleOffice(userid);
+		userCheckDao.deleteOldFzxRole(userid);
+		FzxRole role = fzxRoleService.getFzxRoleByModAndEname("1", "pthy");
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("fzxUserRoleId", 0);
+		map.put("userid", user.getId());
+		map.put("roleid", role.getRoleId());
+		userCheckDao.insertFzxUserRole(map);
+		int fzxUserRoleId = (int) map.get("fzxUserRoleId");
+		//向fzx_user_role_office插入一条数据  普通商家id=1000000
+		userCheckDao.insertFzxUserRoleOffice(fzxUserRoleId,"1000000");
+		mediaRoleService.deleteUserRole(userid);
+		pcRoleService.deleteUserRole(userid);
+		
+		//如果是美容师,删除以后的排版记录，更新sys_user_info的商家和机构id
+		SpecBeautician specBeautician = specBeauticianDao.getSpecBeautician(user.getId());	//根据userid查询特殊美容师表，判断此用户是否是特殊美容师
+		if(specBeautician!=null){
+			specBeauticianDao.deleteArrangeShop(specBeautician);//删除他以后的排班记录
+		}
+		//更新美容师详情表sys_user_info 普通商家id=1000000
+		userDao.updateUserInfoByUserid(userid ,"1000000","1000000");
 	}
 	
 	/**
@@ -1036,7 +1137,6 @@ public class SystemService extends BaseService implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -1200,7 +1300,7 @@ public class SystemService extends BaseService implements InitializingBean {
 	/**
 	 * 
 	 * @Title: saveUserAndFzxRole
-	 * @Description: TODO 保存用户权限
+	 * @Description: 保存用户权限
 	 * @param user
 	 * @return:
 	 * @return: Integer
@@ -1298,4 +1398,138 @@ public class SystemService extends BaseService implements InitializingBean {
 			logger.error("调用接口:记录店铺首图、美容院和美容师图片上传相关信息:"+e.getMessage());
 		}
 	}
+
+	/**
+	 * 通过用户id查询普通会员的信息
+	 * @param id 用户user_id
+	 * @return
+	 */
+	public UserPuTo getUserPuTo(String id) {
+		
+		return userDao.getUserPuTo(id);
+	}
+
+	/**
+	 * 冻结解冻企业用户
+	 * @param user
+	 * @param opflag
+	 */
+	@Transactional(readOnly = false)
+	public void updateModelFranchisee(User user, Integer opflag) {
+		user.preUpdate();
+		if (opflag==1){	//解冻
+			user.setDelFlag("0");
+			userDao.modelFranchisee(user);
+		}else if (opflag==2){	//冻结
+			user.setDelFlag("1");
+			userDao.modelFranchisee(user);
+		}
+	}
+	/**
+	 * 冻结解冻pt、syr用户
+	 * @param user
+	 * @param opflag
+	 */
+	@Transactional(readOnly = false)
+	public void updateUserDel(User user, Integer opflag) {
+		user.preUpdate();
+		if (opflag==1){	//解冻
+			user.setDelRemarks("解冻用户");
+			user.setDelFlag("0");
+			userDao.updateUserDel(user);
+		}else if (opflag==2){	//冻结
+//			user.setDelRemarks("冻结用户");
+			user.setDelFlag("1");
+			userDao.updateUserDel(user);
+			redisClientTemplate.del("UTOKEN_"+user.getId());
+		}
+	}
+
+	/**
+	 * 保存用户权限设置
+	 * @param user
+	 * @param oldFzxRoleIds
+	 * @param fzxRoleIds
+	 * @param request
+	 */
+	@Transactional(readOnly = false)
+	public void saveAuth(User user, String oldFzxRoleIds, String fzxRoleIds, HttpServletRequest request) {
+		fzxRoleService.updateUserRole(user.getId(),oldFzxRoleIds,fzxRoleIds);
+		// 角色数据有效性验证，过滤不在授权内的角色
+		List<Role> roleList = Lists.newArrayList();
+		List<String> roleIdList = user.getRoleIdList();
+		for (Role r : this.findAllRole()) {
+			if (roleIdList.contains(r.getId())) {
+				roleList.add(r);
+			}
+		}
+		user.setRoleList(roleList);
+		
+		// 更新用户与角色关联
+		userDao.deleteUserRole(user);
+		// 更新用户与数据权限关联
+		userDao.deleteUserOffice(user);
+		if (user.getRoleList() != null && user.getRoleList().size() > 0) {
+			userDao.insertUserRole(user);
+		} /*else {
+			throw new RuntimeException(user.getLoginName() + "没有设置角色！");
+		}*/
+		
+		if(1 == user.getDataScope()){
+			user.preUpdate();
+			userDao.UpdateDataScope(user);
+		}else if(2 == user.getDataScope()){
+			user.preUpdate();
+			userDao.UpdateDataScope(user);
+			userDao.insertDataScope(user);
+		}else{
+			throw new RuntimeException(user.getLoginName() + "没有设置数据范围");
+		}
+		if("1".equals(request.getParameter("isUpdateRole"))){	// 清除用户缓存 用户TOKEN失效
+			redisClientTemplate.del("UTOKEN_"+user.getId());
+		}
+		if("1".equals(request.getParameter("isPB"))){
+			userDao.UpdateUserStatus(user.getId());
+			
+			//若用户原来无排班，然后给予排班角色，则查询有没有美容师信息，若无，则插入
+			if(userDao.selectIsExist(user.getId()) == 0){
+				userDao.insertUserInfo(IdGen.uuid(),user.getId());
+			}
+		}
+		userDao.deleteFranchiseeAuth(user);
+		if(null != user.getCompanyIds() || !"".equals(user.getCompanyIds())){
+			String idArray[] =user.getCompanyIds().split(",");
+			for(String id : idArray){
+				userDao.insertFranchiseeAuth(user.getId(),id);
+			}
+		}
+		if (user.getMdRoleList() != null && user.getMdRoleList().size() > 0) {
+			String userid = user.getId();
+			mediaRoleService.deleteUserRole(userid);
+			for (MediaRole mdRole : user.getMdRoleList()) {
+				mediaRoleService.insertUserRole(userid,mdRole.getRoleId());
+			}
+		} 
+	}
+
+	/**
+	 * 根据商家id找用户
+	 * @param officeId
+	 * @return
+	 */
+	public List<User> findUserByFranchiseeId(String officeId,String labelValue) {
+		User user = new User();
+		user.setCompany(new Office(officeId));
+		if(StringUtils.isNotBlank(labelValue)){
+			user.setMobile(labelValue);
+		}else{
+			user.setMobile("0");
+		}
+		List<User> list = userDao.findUserByFranchiseeId(user);
+		if(list == null ){
+			list = new ArrayList<>();
+		}
+		return list;
+	}
+	
 }

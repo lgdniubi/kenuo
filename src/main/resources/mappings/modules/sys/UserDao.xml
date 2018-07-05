@@ -71,6 +71,7 @@
     	a.office_id AS "office.id",
     	c.code as "code",
     	a.login_name,
+    	a.nickname,
     	a.password,
     	a.no,
     	a.idcard,
@@ -97,6 +98,7 @@
 		a.mtmy_user_id AS mtmyUserId,
 		a.data_scope AS 'dataScope',
 		a.sex,
+		a.type,
 		a.is_recommend AS 'isRecommend',
     	c.name AS "company.name",
     	c.parent_id AS "company.parent.id",
@@ -195,6 +197,8 @@
 			a.phone,
 			a.mobile,
 			a.del_flag,
+			a.create_date AS createDate,
+			a.type,
 			c. NAME AS "company.name",
 			o. NAME AS "office.name"
 		FROM
@@ -203,6 +207,7 @@
 		LEFT JOIN sys_office o ON o.id = a.office_id
 		<!-- 数据范围过滤 -->
 		${sqlMap.dsf}
+		AND a.type in ('yg','qy')
 		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
 		<if test="!currentUser.admin">
 			AND a.id != '1'
@@ -231,7 +236,61 @@
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
-				ORDER BY  o.code,c.code, a.name
+				ORDER BY a.create_date desc, o.code,c.code, a.name
+			</otherwise>
+		</choose>
+	</select>
+	<!-- 分页查询非员工类型用户信息 -->
+	<select id="findSpecialUserList" resultType="User">
+		SELECT
+			a.id,
+			a.login_name,
+			a.NAME,
+			a.nickname,
+			a.phone,
+			a.mobile,
+			a.del_flag,
+			a.create_date AS createDate,
+			CASE a.type 
+			WHEN 'pt' THEN '普通会员'
+			WHEN 'syr' THEN '手艺人用户'
+			ELSE '' END AS type, 
+			CASE a.type
+			WHEN 'syr' THEN (SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.user_id = a.id)
+			WHEN 'qy' THEN (SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.franchisee_id = a.company_id LIMIT 1) 
+			ELSE '普通会员' END  AS modelName,
+<!-- 			IFNULL((SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.user_id = a.id), -->
+<!-- 			(SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.franchisee_id = a.company_id LIMIT 1)) AS modelName,	 -->
+			<!-- tm.mod_name AS modelName,
+			CASE tmf.`status`
+			WHEN 0 THEN '已授权'
+			WHEN 1 THEN '已到期'
+			ELSE '未授权' END AS userStatus, -->
+			c. NAME AS "company.name",
+			o. NAME AS "office.name"
+		FROM
+			sys_user a
+		LEFT JOIN sys_franchisee c ON c.id = a.company_id
+		LEFT JOIN sys_office o ON o.id = a.office_id
+	<!--	LEFT JOIN train_apply tap ON tap.user_id = a.id 
+ 		LEFT JOIN train_model_franchisee tmf ON tmf.user_id = a.id 
+		LEFT JOIN train_model tm ON tm.id = tmf.mod_id-->
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		AND a.type in ('pt','syr')
+		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
+		<if test="!currentUser.admin">
+			AND a.id != '1'
+		</if>
+		<if test="mobile != null and mobile != ''">
+			AND a.mobile = #{mobile}
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date desc, o.code,c.code, a.name
 			</otherwise>
 		</choose>
 	</select>
@@ -385,6 +444,16 @@
 			AND a.office_id = #{office.id}
 		ORDER BY a.name
 	</select>
+	<!-- 根据OfficeId获取用户（树查询用户时用） -->
+	<select id="findUserByFranchiseeId" resultType="User" useCache="true">
+		SELECT
+			a.id, a.name, a.login_name
+		FROM sys_user a
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+			AND a.company_id = #{company.id}
+			<if test="mobile != null "> AND a.mobile = #{mobile}</if>
+		ORDER BY a.name
+	</select>
 	<!-- 手机号验证 -->
 	<select id="getUserByPhone" resultType="User">
 		SELECT 
@@ -450,6 +519,7 @@
 			no,
 			idcard,
 			name,
+			nickname,
 			sex, 
 			induction_time,
 			email, 
@@ -465,6 +535,7 @@
 			photo, 
 			qrcode,
 			del_flag,
+			type,
 			mtmy_user_id
 		) VALUES (
 			#{id}, 
@@ -474,6 +545,7 @@
 			#{password}, 
 			#{no},
 			#{idCard},
+			#{name},
 			#{name},
 			#{sex}, 
 			#{inductionTime},
@@ -490,6 +562,7 @@
 			#{photo}, 
 			#{qrCode},
 			#{delFlag},
+			#{type},
 			#{mtmyUserId}
 		)
 	</insert>
@@ -592,6 +665,19 @@
 			del_remarks = #{delRemarks }
 		WHERE id = #{id}
 	</update>
+	<!-- 冻结解冻pt/syr用户 -->
+	<update id="updateUserDel">
+		UPDATE sys_user SET 
+			update_by = #{updateBy.id}, 
+			update_date = #{updateDate}, 
+			del_flag = #{delFlag},
+			del_remarks = #{delRemarks }
+		WHERE id = #{id}
+	</update>
+	<!-- 冻结解冻企业用户 -->
+	<update id="modelFranchisee">
+		UPDATE train_model_franchisee SET del_flag = #{delFlag} WHERE franchisee_id = #{company.id}
+	</update>
 	
 	<!-- 将逻辑删除的用户用户还原 -->
 	<update id="onJob">
@@ -600,6 +686,27 @@
 			update_date = #{updateDate}, 
 			del_flag = 0
 		WHERE id = #{id}
+	</update>
+	<!-- 离职后变为普通商家和普通机构-->
+	<update id="updateCompanyAndOfficeId">
+		UPDATE sys_user SET 
+			company_id = '1000000', 
+			office_id = '1000000',
+			type ='pt'
+		WHERE id = #{id}
+	</update>
+	<!-- 离职后变为普通商家和普通机构-->
+	<update id="updateUserInfoByUserid">
+		UPDATE sys_user_info SET 
+			franchisee_id = #{franchiseeid}, 
+			office_id = #{officeid}
+		WHERE user_id = #{userid}
+	</update>
+	<!-- 离职后变为普通角色 -->
+	<update id="updateUserRole">
+		UPDATE fzx_user_role SET 
+			fzx_role_id = (SELECT id FROM fzx_role WHERE enname = 'pthy')
+		WHERE user_id = #{id}
 	</update>
 	
 	<!-- 根据实体名称和字段名称和字段值获取唯一记录 -->
@@ -960,5 +1067,87 @@
 		<if test="id != '' and id != null">
 			AND u.id = #{id}
 		</if>
+	</select>
+	<select id="getUserPuTo" resultType="UserPuTo" >
+		SELECT
+			u.`name` AS memName,
+			u.nickname AS memNickName,
+			u.type AS memType,
+			'' AS weiXin,
+			'' AS weibo,
+			'' AS memLevel,
+			'' AS QQ,
+			'' AS lastFee,
+			u.mobile AS memMobile,
+			u.create_date AS regisTime,
+			l.NAME AS lesson,
+			'' AS attention,
+			'' AS scan,
+			'' AS fans,
+			liv.title AS video,
+			'' AS articleComment,
+			'' AS score,
+			art.title AS article,
+			'' AS answers,
+			'' AS praise,
+			'' AS goods,
+			'' AS totalFee,
+			'' AS yesterdayFee,
+			'' AS sevenFee,
+			COUNT(ord.order_id) AS totalOrderFund,
+			SUM(ord.amount) AS totalOrderNum,
+			'' AS goodsOrderNum,
+			'' AS goodsOrderFund
+		FROM
+			sys_user u
+		LEFT JOIN train_lesson_favorites lf ON lf.user_id = u.id
+		LEFT JOIN train_lessons l ON l.lesson_id = lf.lesson_id
+		LEFT JOIN train_live_audit liv ON liv.userId = u.id
+		LEFT JOIN train_articles_favorites af ON af.user_id = u.id
+		LEFT JOIN train_articles art ON art.id = af.article_id
+		LEFT JOIN train_order ord ON ord.user_id = u.id
+		WHERE u.del_flag = '0' 
+			AND u.id = #{id}
+		<!-- <if test="id != '' and id != null">
+		'223ac0e7317746fb94c6498e7e647ff1'
+		</if> -->
+		AND liv.audit_status = 3
+	</select>
+	
+	<!-- 查询改过角色的用户 -->
+	<select id="findupdateUser" resultType="String">
+		SELECT user_id FROM pc_user_role WHERE pc_role_id IN
+		<foreach collection="list" item="value" separator="," open="(" close=")">
+			#{value}
+		</foreach>
+	</select>
+	
+	<select id="findSuperManageUid" resultType="String">
+	select ur.user_id from fzx_role r
+	left join fzx_user_role ur on ur.fzx_role_id = r.id
+	where r.enname = 'sjgly' and ur.user_id is not null and r.mod_id = #{mode_id} 
+	</select>
+	<!-- 版本删除菜单的时候清除token -->
+	<select id="findUidByMenu" resultType="String">
+		SELECT DISTINCT
+			ur.user_id
+		FROM
+			fzx_role_menu rm
+		INNER JOIN fzx_user_role ur ON ur.fzx_role_id = rm.fzx_role_id
+		LEFT JOIN fzx_role r ON r.id = rm.fzx_role_id
+		WHERE
+			rm.fzx_menu_id IN 
+		<foreach collection="list" item="value" separator="," open="(" close=")">
+			#{value}
+		</foreach>
+		AND r.mod_id = #{modId}
+	</select>
+	<!-- 根据商家id找出所有用户id -->
+	<select id="findUidByCompanyId" resultType="String">
+		SELECT
+			a.id
+		FROM sys_user a
+		WHERE a.del_flag = '0'
+		AND a.company_id = #{companyId}
 	</select>
 </mapper>

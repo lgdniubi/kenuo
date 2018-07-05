@@ -14,13 +14,18 @@ import com.google.common.collect.Lists;
 import com.training.common.service.BaseService;
 import com.training.common.service.TreeService;
 import com.training.common.utils.StringUtils;
+import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.quartz.utils.RedisLock;
 import com.training.modules.sys.dao.OfficeDao;
 import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.entity.Office;
+import com.training.modules.sys.entity.OfficeAcount;
 import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.User;
+import com.training.modules.sys.entity.UserRoleOffice;
 import com.training.modules.sys.entity.OfficeLog;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.entity.ModelFranchisee;
 
 /**
  * 机构Service
@@ -33,6 +38,9 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	
 	@Autowired
 	private OfficeDao officeDao;
+	
+	@Autowired
+	private RedisClientTemplate redisClientTemplate;
 
 	public List<Office> findAll(){
 		return UserUtils.getOfficeList();
@@ -134,6 +142,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 				office.setCode(falg);
 			}
 		}else{
+			redisClientTemplate.set("pc_fzx_cache_" + office.getId(), office.getId());
 			String code = insterCode(office);
 			office.setCode(code);
 		}
@@ -245,7 +254,25 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public void delete(Office office) {
 		super.delete(office);
 		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
+		//删除店铺需要删除数据权限
+		deleteUserOffice(office.getId());
 	}
+	
+	private void deleteUserOffice(String officeId) {
+		//删除sys_user_Office
+		dao.deleteUserOfficeById(officeId);
+		//删除fzx_user_role_office
+		List<UserRoleOffice> officeOne = dao.findUserRoleOffice(officeId,1);//查询数量等于1的
+		if(officeOne != null && officeOne.size()>0){
+			dao.deleteUserRoleOfficeById(officeId);
+			dao.deleteUserRole(officeOne);
+		}
+		List<UserRoleOffice> officeMore = dao.findUserRoleOffice(officeId,2);//查询数量大于1的
+		if(officeMore != null && officeMore.size()>0){
+			dao.deleteUserRoleOfficeById(officeId);
+		}
+	}
+
 	/**
 	 * 导出店铺数据
 	 * @param office
@@ -417,4 +444,44 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		return officeDao.checkOfficeCode(office);
 	}
 
+	/**
+	 * 查询机构账户
+	 * @param officeId
+	 * @return
+	 */
+	public OfficeAcount findOfficeAcount(String officeId){
+		return this.officeDao.findOfficeAcount(officeId);
+	}
+	/**
+	 * 变更信用额度
+	 * @param OfficeAcount
+	 */
+	@Transactional(readOnly = false)
+	public void updateOfficeCreditLimit(OfficeAcount OfficeAcount){
+		//缓存锁
+		RedisLock redisLock = new RedisLock(redisClientTemplate, "account_lock_office_id"+OfficeAcount.getOfficeId());
+		redisLock.lock();
+		double usedLimit = this.officeDao.queryusedLimit(OfficeAcount);
+		if(OfficeAcount.getUseLimit() > usedLimit)
+			throw new RuntimeException("可用额度发生改变，暂不可修改");
+		this.officeDao.updateOfficeCreditLimit(OfficeAcount);
+		redisLock.unlock();
+	}
+	
+	/**
+	 * 创建账户
+	 * @param OfficeAcount
+	 */
+	@Transactional(readOnly = false)
+	public void saveOfficeAcount(OfficeAcount officeAcount){
+		this.officeDao.saveOfficeAcount(officeAcount);
+	}
+	/**
+	 * 查找支付方式，
+	 * @param id
+	 * @return
+	 */
+	public ModelFranchisee findPayType(String id) {
+		return officeDao.findPayType(id);
+	}
 }

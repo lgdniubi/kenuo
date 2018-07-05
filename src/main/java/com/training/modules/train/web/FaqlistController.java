@@ -62,14 +62,19 @@ public class FaqlistController extends BaseController{
 	@RequestMapping(value = { "comment", "" })
 	public String comment(LessonAskComments lessonAskComments,HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes){
 		//获取当前登录用户
-		String id=IdGen.uuid();
-		User currentUser = UserUtils.getUser();
-		lessonAskComments.setCommentId(id);
-		lessonAskComments.setStatus(0);
-		lessonAskComments.setUserId(currentUser.getId());
+		try {
+//			String id=IdGen.uuid();
+			User currentUser = UserUtils.getUser();
+//			lessonAskComments.setCommentId(id);
+			lessonAskComments.setStatus(0);
+			lessonAskComments.setUserId(currentUser.getId());
 //		System.out.println(lessonAskComments.getAskId()+"   "+lessonAskComments.getUserId()+"    "+lessonAskComments.getContent()+"   "+lessonAskComments.getStatus());
-		faqlistService.addcomment(lessonAskComments);
-		addMessage(redirectAttributes, "快速回复成功");
+			faqlistService.addcomment(lessonAskComments);
+			addMessage(redirectAttributes, "快速回复成功");
+		} catch (Exception e) {
+			addMessage(redirectAttributes, "回复出错");
+			e.printStackTrace();
+		}
 		return "redirect:" + adminPath + "/train/faqlist/faqlist";
 	}
 	/**

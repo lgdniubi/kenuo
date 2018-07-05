@@ -128,7 +128,7 @@
 				$("#platform").hide();
 			}
 			
-			var checkeds = $("#_platform").val();
+			/* var checkeds = $("#_platform").val();
 			//自媒体权限    是(为了回显)
 			var checkArray  = checkeds.split(",");
 			var checkBoxAll = $("input[name='mediaLoginAuth.platform']");
@@ -143,7 +143,7 @@
 				        }
 				    })
 				}
-			}
+			} */
 		});
 		function refreshOfficeTree(){
 			if($("#dataScope").val()==2){
@@ -192,7 +192,7 @@
 		         <td class="width-15 active"><label class="pull-right">用户后台角色</label></td>
 		         <td class="width-35">
 		         	<sys:treeselect id="role" name="roleIdList" value="${user.roleIds }" labelName="role.name" labelValue="${user.roleNames}" title="后台角色"
-						url="/sys/role/treeData" cssClass=" form-control input-sm required" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="false" checked="true"/>
+						url="/sys/role/treeData" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="false" checked="true"/>
 				 </td>
 		      </tr>
 		      <!-- 用户后台数据范围 -->
@@ -222,7 +222,9 @@
 		      <tr>
 		         <td class="width-15 active" style="vertical-align: top;"><label class="pull-right">自媒体权限:</label></td>
 		         <td class="width-35">
-		         	<c:if test="${not empty user.mediaLoginAuth.isLogin}">
+		         <sys:treeselect id="mdrole" name="mediaRoleIdList" value="${user.mediaRoleIds}" labelName="mediaRole.name" labelValue="${user.mediaRoleNames}" title="自媒体角色"
+						url="/train/mdrole/treeData?modeid=8" cssClass=" form-control input-sm" allowClear="true" notAllowSelectRoot="false" notAllowSelectParent="false"/>
+		         	<%-- <c:if test="${not empty user.mediaLoginAuth.isLogin}">
 				        <c:if test="${user.mediaLoginAuth.isLogin==1}">
 							<label><input id="isLogin" name="mediaLoginAuth.isLogin" type="radio" value="1" class="form" onclick="updateIsLogin(1)" <c:if test="${user.mediaLoginAuth.isLogin==1}">checked="checked"</c:if>/>是</label>
 							<label><input id="isLogin" name="mediaLoginAuth.isLogin" type="radio" value="0" class="form" onclick="updateIsLogin(0)" <c:if test="${user.mediaLoginAuth.isLogin==0}">checked="checked"</c:if>/>否</label>
@@ -235,10 +237,10 @@
 					<c:if test="${empty user.mediaLoginAuth.isLogin}">
 						<label><input id="isLogin" name="mediaLoginAuth.isLogin" type="radio" value="1" class="form" onclick="updateIsLogin(1)"/>是</label>
 						<label><input id="isLogin" name="mediaLoginAuth.isLogin" type="radio" value="0" class="form" onclick="updateIsLogin(0)" checked="checked"/>否</label>
-					</c:if>
+					</c:if> --%>
 				</td>
 		      </tr>
-		      <tr id="user_type">
+		      <%-- <tr id="user_type">
 		         <td class="width-15 active" style="vertical-align: top;"><label class="pull-right"><font color="red">*</font>用户类型:</label></td>
 		         <td class="width-35">
 		         	<form:select path="mediaLoginAuth.userType" class="form-control" onchange="updateUserType(this)">
@@ -260,7 +262,7 @@
 		         	<form:input path="mediaLoginAuth.userTag" htmlEscape="false" maxlength="6" class="form-control"/>
 		         	<span class="help-inline">每人一个标签,最多6个字</span>
 		         </td>
-		      </tr>
+		      </tr> --%>
 			</tbody>
 		</table>
 	</form:form>

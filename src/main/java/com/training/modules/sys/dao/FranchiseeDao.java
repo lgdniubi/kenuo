@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.sys.entity.Franchisee;
+import com.training.modules.train.entity.BankAccount;
 
 /**
  * 加盟商管理DAO接口
@@ -83,5 +84,12 @@ public interface FranchiseeDao extends TreeDao<Franchisee>{
 	 * @param franchisee
 	 */
 	public void updateMtmyPublicServiceFlag(Franchisee franchisee);
+
+	/**
+	 *  查询商家认证时提交的银行信息
+	 * @param franchisee
+	 * @return
+	 */
+	public List<BankAccount> findBankAccountList(Franchisee franchisee);
 
 }

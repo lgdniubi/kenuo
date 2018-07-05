@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.AuthenticationMapper">
+	
+	<resultMap id="AuthenticationBean" type="com.training.modules.train.entity.AuthenticationBean">
+		<result property="id" column="id" />
+		<result property="franchisee_id" column="franchisee_id" />
+		<result property="user_id" column="user_id" />
+	</resultMap>
+	
+	<select id="querypastdueauthentication" resultMap="AuthenticationBean">
+		SELECT id,franchisee_id,user_id FROM trains.train_model_franchisee WHERE DATE_ADD(auth_end_date, interval 1 DAY) <![CDATA[<]]> NOW() AND `status` = 0
+	</select>
+	
+	<update id="updateauthenticationstatus" parameterType="java.lang.Integer">
+		UPDATE trains.train_model_franchisee SET status = 1 WHERE id = ${id} AND DATE_ADD(auth_end_date, interval 1 DAY) <![CDATA[<]]> NOW() AND `status` = 0
+	</update>
+	
+	<update id="updateprotocolstatus" parameterType="java.util.Map">
+		UPDATE trains.supply_protocol_shop SET status = ${status} WHERE franchisee_id = ${franchisee_id}
+	</update>
+	
+	<update id="updatepcmenustatus" parameterType="java.util.Map">
+		UPDATE (SELECT * FROM trains.pc_role WHERE franchisee_id = ${franchisee_id}) r
+		INNER JOIN trains.pc_menu_role mr ON r.id = mr.role_id
+		INNER JOIN trains.pc_menu m ON mr.menu_id = m.id
+		SET mr.`status` = ${status}
+		WHERE m.is_pay = 1
+	</update>
+	
+	<select id="queryuserlist" parameterType="java.lang.Integer" resultType="java.lang.String">
+		SELECT id FROM trains.sys_user WHERE company_id = ${franchisee_id}
+	</select>
+	
+	<delete id="delsupplyprotocol" parameterType="java.util.Map">
+		DELETE FROM trains.supply_protocol_shop WHERE <if test="franchisee_id != null">franchisee_id = #{franchisee_id}</if><if test="user_id != null">user_id = #{user_id}</if>
+	</delete>
+	
+</mapper>

@@ -145,7 +145,9 @@ public class TrainLiveAuditController extends BaseController{
 			Franchisee franchisee = new Franchisee();
 			franchisee.setIsRealFranchisee("1");
 			List<Franchisee> list = franchiseeService.findList(franchisee);
-			
+			TrainLiveAudit selectLiveAudit = trainLiveAuditService.getCompanyIds(trainLiveAudit.getId());
+			trainLiveAudit.setCompanyIds(selectLiveAudit.getCompanyIds());
+			trainLiveAudit.setCompanyNames(selectLiveAudit.getCompanyNames());;
 			model.addAttribute("trainLiveAudit", trainLiveAudit);
 			model.addAttribute("list",list);
 		} catch (Exception e) {

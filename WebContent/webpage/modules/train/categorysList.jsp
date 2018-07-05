@@ -131,6 +131,34 @@
 				}
 			});   
 		}
+		//是否推荐/是否显示 改变事件
+		function changeOpenVal(flag,id,isOpen){
+			$(".loading").show();//打开展示层
+			$.ajax({
+				type : "POST",
+				url : "${ctx}/train/categorys/updateIsOpen?categoryId="+id+"&isOpen="+isOpen,
+				dataType: 'json',
+				success: function(data) {
+					$(".loading").hide(); //关闭加载层
+					var STATUS = data.STATUS;
+					var ISOPEN = data.ISOPEN;
+					var CATEGORYIDS = data.CATEGORYIDS;
+					if("OK" == STATUS){
+						arr=CATEGORYIDS.split(',');//注split可以用字符或字符串分割
+			            for(var i=0;i<arr.length;i++){
+			            	$("#"+flag+arr[i]).html("");//清除DIV内容	
+							if(ISOPEN == '1'){
+								$("#"+flag+arr[i]).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeOpenVal('"+flag+"','"+arr[i]+"','0')\">");
+							}else if(ISOPEN == '0'){
+								$("#"+flag+arr[i]).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeOpenVal('"+flag+"','"+arr[i]+"','1')\">");
+							} 
+			            } 
+					}else if("ERROR" == STATUS){
+						alert(data.MESSAGE);
+					}
+				}
+			});   
+		}
 	</script>
 </head>
 <body>
@@ -179,6 +207,7 @@
 								<th style="text-align: center">分类介绍</th>
 								<th width="230" style="text-align: center;">图片</th>
 								<th width="230" style="text-align: center;">是否显示</th>
+								<th width="230" style="text-align: center;">是否公开</th>
 								<th width="230" style="text-align: center;">权限范围</th>
 								<th width="230" style="text-align: center;">排序</th>
 								<th width="300" style="text-align: center;">课程操作</th>
@@ -199,6 +228,14 @@
 										</c:if>
 										<c:if test="${trainCategory.isShow == 0}">
 											<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeVal('isShow','${trainCategory.categoryId}','1')">
+										</c:if>
+									</td>
+									<td style="text-align: center;" id="isOpen${trainCategory.categoryId}">
+										<c:if test="${trainCategory.isOpen == 1}">
+											<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeOpenVal('isOpen','${trainCategory.categoryId}','0')">
+										</c:if>
+										<c:if test="${trainCategory.isOpen == 0}">
+											<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeOpenVal('isOpen','${trainCategory.categoryId}','1')">
 										</c:if>
 									</td>
 									<td>${trainCategory.office.name}</td>

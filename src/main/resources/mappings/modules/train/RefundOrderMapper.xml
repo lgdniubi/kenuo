@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.RefundOrderMapper">
+
+	<resultMap type="com.training.modules.train.entity.ArrearageOfficeList" id="ArrearageOfficeList">
+		<result column="office_id" property="office_id"/>
+		<result column="expense" property="expense"/>
+		<result column="income" property="income"/>
+		<result column="adds" property="adds"/>
+	</resultMap>
+
+	<select id="queryarrearageoffice" parameterType="java.lang.String" resultMap="ArrearageOfficeList">
+		SELECT 
+			s.office_id,
+			<!-- SUM(os.used_limit) AS used_limit -->
+			(SELECT IFNULL(SUM(used_limit),0.00) FROM trains.sys_office_statement WHERE office_id = s.office_id AND DATE_FORMAT(create_date,'%Y-%m') = #{formats} AND type = 1) AS expense,
+			(SELECT IFNULL(SUM(used_limit),0.00) FROM trains.sys_office_statement WHERE office_id = s.office_id AND DATE_FORMAT(create_date,'%Y-%m') = #{formats} AND type = 0) AS income,
+			1 AS adds
+		FROM trains.sys_office_account s
+		<!-- LEFT JOIN trains.sys_office_statement os ON s.office_id = os.office_id -->
+		LEFT JOIN trains.train_refund_order ro ON ro.arrearage_office = s.office_id AND  DATE_FORMAT(ro.add_time,'%Y-%m') = #{format}
+		GROUP BY s.office_id HAVING COUNT(ro.order_id) = 0 AND (expense > 0 || income > 0)
+	</select>
+
+	<insert id="addrefundOrder" parameterType="java.util.List">
+		INSERT INTO trains.train_refund_order
+		(
+			order_id,
+			arrearage_price,
+			arrearage_office,
+			add_time,
+			order_status,
+			billmonth,
+			closingdate
+		)
+		VALUES
+		<foreach collection="subList" item="item" separator="," >  
+	        (
+			#{item.order_id},
+			${item.used_limit},
+			#{item.office_id},
+			NOW(),
+			1,
+			#{item.billmonth},
+			DATE_ADD(NOW(), interval 14 DAY)
+		)
+	    </foreach>
+		
+	</insert>
+	
+	<update id="updateOfficeAccount">
+		UPDATE 
+			trains.sys_office_account oa
+		INNER JOIN (SELECT arrearage_office FROM trains.train_refund_order WHERE order_status = 1 AND closingdate <![CDATA[<]]> NOW() GROUP BY arrearage_office) s ON s.arrearage_office = oa.office_id
+		SET oa.freeze = 1
+		WHERE oa.freeze = 0
+	</update>
+	
+	<update id="updateOrderOverdueStatus">
+		UPDATE 
+			trains.train_refund_order
+		SET is_overdue = '1'
+		WHERE closingdate <![CDATA[<]]> NOW()
+	</update>
+	
+	
+	<select id="findList" resultType="RefundOrder">
+		SELECT 
+			ro.order_id as orderId,
+			ro.temp_order_id as tempOrderId,
+			ro.order_type as orderType,
+			ro.arrearage_price as arrearagePrice,
+			ro.arrearage_office as arrearageOffice,
+			ro.amount as amount,
+			DATE_FORMAT(ro.add_time,'%Y-%m-%d %H:%i:%s') as addTime,
+			ro.order_status as orderStatus,
+			ro.pay_code as payCode,
+			DATE_FORMAT(ro.pay_time,'%Y-%m-%d %H:%i:%s') as payTime,
+			ro.charge_id as chargeId,
+			ro.user_id as userId,
+			ro.user_mobile as userMobile,
+			ro.user_office_id as userOfficeId,
+			ro.channel_flag as channelFlag,
+			o.name as arrearageOfficeName,
+			u.name as userName,
+			f.name as franchiseeName,
+			ro.billmonth,
+			ro.serialnumber,
+			ro.bankaccount,
+			ro.openbank,
+			ro.openname,
+			ro.proof,
+			ro.explains
+		FROM train_refund_order ro
+		left join sys_user u on u.id = ro.user_id
+		left join sys_office o on o.id = arrearage_office
+		left join sys_franchisee f on f.id = o.franchisee_id
+		where 1=1
+		<if test="orderId != null and orderId !=''">
+			and order_id = #{orderId}
+		</if>
+		order by ro.add_time desc
+	</select>
+	
+	
+	<select id="queryStatementOfRefund" resultType="Statement">
+		select 
+			id as stateId,
+			order_id as orderId,
+			office_id as officeId,
+			used_limit as usedLimit,
+			`from` as `from`,
+			type as type,
+			DATE_FORMAT(create_date,'%Y-%m-%d %H:%i:%s') as createTime
+		from sys_office_statement 
+		where DATE_FORMAT(create_date,'%Y-%m') = #{billmonth} and office_id = #{office_id}
+		
+	</select>
+	
+	<!-- <select id="queryTransferpay" resultType="Transferpay">
+		select
+			t.id as payId,
+			t.serialnumber,
+			t.bankaccount,
+			t.openbank,
+			t.office_id,
+			t.order_id,
+			t.repaymonth,
+			t.user_id,
+			t.proof,
+			t.`status` as `status`,
+			t.`explain` as `explain`,
+			t.openname,
+			DATE_FORMAT(t.create_time,'%Y-%m-%d %H:%i:%s') as create_time,
+			u.name as user_name
+		from sys_office_transferpay t
+		left join sys_user u on u.id = t.user_id
+		where t.order_id = #{order_id}
+	</select> -->
+	
+	<select id="queryRefundOrderDetail" resultType="RefundOrder">
+		select 
+			ro.order_id as orderId,
+			ro.temp_order_id as tempOrderId,
+			ro.order_type as orderType,
+			ro.arrearage_price as arrearagePrice,
+			ro.arrearage_office as arrearageOffice,
+			ro.amount as amount,
+			DATE_FORMAT(add_time,'%Y-%m-%d %H:%i:%s') as addTime,
+			ro.order_status as orderStatus,
+			ro.pay_code as payCode,
+			DATE_FORMAT(pay_time,'%Y-%m-%d %H:%i:%s') as payTime,
+			ro.charge_id as chargeId,
+			ro.user_id as userId,
+			ro.user_mobile as userMobile,
+			ro.user_office_id as userOfficeId,
+			ro.channel_flag as channelFlag,
+			ro.billmonth as billmonth,
+			ro.serialnumber as serialnumber,
+			ro.bankaccount as bankaccount,
+			ro.openbank as openbank,
+			ro.proof as proof,
+			ro.explains as explains,
+			ro.openname as openname,
+			o.name as arrearageOfficeName,
+			u.name as userName,
+			f.name as franchiseeName
+		from train_refund_order ro
+		left join sys_user u on u.id = ro.user_id
+		left join sys_office o on o.id = arrearage_office
+		left join sys_franchisee f on f.id = o.franchisee_id
+		where order_id = #{order_id}
+	</select>
+	
+	<update id="makeSureInAccount">
+		update train_refund_order
+		set order_status = '3'
+		where order_id = #{order_id}
+	</update>
+</mapper>

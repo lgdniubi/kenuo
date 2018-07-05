@@ -200,6 +200,30 @@
 				}
 			});   
 		}
+		//是否推荐/是否显示 改变事件
+		function changeOpenVal(flag,id,isOpen){
+			$(".loading").show();//打开展示层
+			$.ajax({
+				type : "POST",
+				url : "${ctx}/train/course/updateIsOpen?lessonId="+id+"&isOpen="+isOpen,
+				dataType: 'json',
+				success: function(data) {
+					$(".loading").hide(); //关闭加载层
+					var STATUS = data.STATUS;
+					var ISOPEN = data.ISOPEN;
+					if("OK" == STATUS){
+		            	$("#"+flag+id).html("");//清除DIV内容	
+						if(ISOPEN == '1'){
+							$("#"+flag+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeOpenVal('"+flag+"','"+id+"','0')\">");
+						}else if(ISOPEN == '0'){
+							$("#"+flag+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeOpenVal('"+flag+"','"+id+"','1')\">");
+						} 
+					}else if("ERROR" == STATUS){
+						alert(data.MESSAGE);
+					}
+				}
+			});   
+		}
 		
 		//选择归属商家
 		function companyButtion(){
@@ -348,11 +372,13 @@
 						<thead>
 							<tr>
 								<th width="120" style="text-align: center;"><input type="checkbox" name="" id="i-checks" class="i-checks"></th>
+								<th style="text-align: center;">归属商家</th>
 								<th style="text-align: center;">名称</th>
 								<th width="120" style="text-align: center;">课程类型</th>
 								<th width="120" style="text-align: center;">分类</th>
 								<th width="200" style="text-align: center;">图片</th>
 								<th style="text-align: center;">是否显示</th>
+								<th style="text-align: center;">是否公开</th>
 								<th style="text-align: center;">排序</th>
 								<th width="200" style="text-align: center">课程内容</th>
 								<th width="120" style="text-align: center;">课程操作</th>
@@ -362,6 +388,7 @@
 							<c:forEach items="${page.list}" var="trainLessons">
 								<tr>
 									<td><input class="i-checks" type="checkbox" id="${trainLessons.lessonId}" name="ids"></td>
+									<td>${trainLessons.franchisee.name}</td>
 									<td><c:out value="${trainLessons.name}"></c:out></td>
 									<td>
 										<c:if test="${trainLessons.lessontype == 1}">
@@ -382,6 +409,14 @@
 										</c:if>
 										<c:if test="${trainLessons.isShow == 0}">
 											<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeVal('isShow','${trainLessons.lessonId}','1')">
+										</c:if>
+									</td>
+									<td style="text-align: center;" id="isOpen${trainLessons.lessonId}">
+										<c:if test="${trainLessons.isOpen == 1}">
+											<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeOpenVal('isOpen','${trainLessons.lessonId}','0')">
+										</c:if>
+										<c:if test="${trainLessons.isOpen == 0}">
+											<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeOpenVal('isOpen','${trainLessons.lessonId}','1')">
 										</c:if>
 									</td>
 									<td>${trainLessons.sort}</td>

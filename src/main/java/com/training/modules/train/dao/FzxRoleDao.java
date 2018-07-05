@@ -84,10 +84,10 @@ public interface FzxRoleDao extends CrudDao<FzxRole>{
 	
 	/**
 	 * 验证英文名称是否有效
-	 * @param enname
+	 * @param modeid
 	 * @return
 	 */
-	public int checkEnname(String enname);
+	public int checkEnname(Integer modeid);
 
 	/**
 	 * 
@@ -111,4 +111,18 @@ public interface FzxRoleDao extends CrudDao<FzxRole>{
 	 * 2017年10月27日
 	 */
 	public List<FzxRole> findFzxRoleByUserId(User user);
+
+	public int checkName(@Param("modeid")Integer modeid, @Param("name")String name);
+	//设置其他默认的为非默认
+	public void setNotDefault(int modeid);
+	//根据roleid设置该角色默认
+	public void setDefault(int roleId);
+	//根据版本id和ename=sjgly查找超级管理员角色
+	public FzxRole getFzxRoleByModAndEname(@Param("modid")String modid,@Param("modType")String modType);
+
+	public void insertUserRoleForRoleId(@Param("menuid")Integer menuid, @Param("roleids")List<Integer> roleids);
+	//找出改版本的超管角色id
+	public List<Integer> findFzxRoleByModId(String modId);
+
+	public void deleteRoleMenuForRoleId(@Param("oldMenuid")Integer oldMenuid, @Param("modId")Integer modId);
 }

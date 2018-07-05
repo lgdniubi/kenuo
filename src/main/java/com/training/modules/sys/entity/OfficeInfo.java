@@ -1,5 +1,7 @@
 package com.training.modules.sys.entity;
 
+import java.util.Date;
+
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -53,6 +55,21 @@ public class OfficeInfo extends DataEntity<OfficeInfo>{
 	private String shopPhone;
 	
 	//------------------------------------------------------------
+	//----------------------2018-06-04-------------
+	private Date setDate;			//成立日期
+	private String charterImg;				//营业执照
+	private String legalPerson;				//法人
+	private String icardone;				//身份证（正）
+	private String icardtwo;				//身份证（反）
+	private String discount;				//折扣
+	private String accountname;				//账户名称
+	private String openbank;					//开户银行
+	private String bankaccount;				//银行账号
+	private String bankaddress;			//开户行详细地址
+	private String cardup;					//银行卡正面照片	
+	private String carddown;				//银行卡反面照片
+	private String creditCode;				//统一社会信用代码
+	private String companyType;				//统一社会信用代码
 	
 	@JsonIgnore
 	@NotNull(message="上级机构编码不能为空")
@@ -287,6 +304,92 @@ public class OfficeInfo extends DataEntity<OfficeInfo>{
 	}
 	public void setShopPhone(String shopPhone) {
 		this.shopPhone = shopPhone;
+	}
+	public Date getSetDate() {
+		return setDate;
+	}
+	public void setSetDate(Date setDate) {
+		this.setDate = setDate;
+	}
+	public String getCharterImg() {
+		return charterImg;
+	}
+	public void setCharterImg(String charterImg) {
+		this.charterImg = charterImg;
+	}
+	public String getLegalPerson() {
+		return legalPerson;
+	}
+	public void setLegalPerson(String legalPerson) {
+		this.legalPerson = legalPerson;
+	}
+	public String getIcardone() {
+		return icardone;
+	}
+	public void setIcardone(String icardone) {
+		this.icardone = icardone;
+	}
+	public String getIcardtwo() {
+		return icardtwo;
+	}
+	public void setIcardtwo(String icardtwo) {
+		this.icardtwo = icardtwo;
+	}
+	public String getDiscount() {
+		return discount;
+	}
+	public void setDiscount(String discount) {
+		this.discount = discount;
+	}
+	public String getAccountname() {
+		return accountname;
+	}
+	public void setAccountname(String accountname) {
+		this.accountname = accountname;
+	}
+	
+	public String getOpenbank() {
+		return openbank;
+	}
+	public void setOpenbank(String openbank) {
+		this.openbank = openbank;
+	}
+	public String getBankaccount() {
+		return bankaccount;
+	}
+	public void setBankaccount(String bankaccount) {
+		this.bankaccount = bankaccount;
+	}
+	
+	public String getBankaddress() {
+		return bankaddress;
+	}
+	public void setBankaddress(String bankaddress) {
+		this.bankaddress = bankaddress;
+	}
+	public String getCardup() {
+		return cardup;
+	}
+	public void setCardup(String cardup) {
+		this.cardup = cardup;
+	}
+	public String getCarddown() {
+		return carddown;
+	}
+	public void setCarddown(String carddown) {
+		this.carddown = carddown;
+	}
+	public String getCreditCode() {
+		return creditCode;
+	}
+	public void setCreditCode(String creditCode) {
+		this.creditCode = creditCode;
+	}
+	public String getCompanyType() {
+		return companyType;
+	}
+	public void setCompanyType(String companyType) {
+		this.companyType = companyType;
 	}
 	
 }

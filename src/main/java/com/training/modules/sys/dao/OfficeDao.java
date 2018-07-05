@@ -10,8 +10,11 @@ import org.apache.ibatis.annotations.Param;
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.sys.entity.Office;
+import com.training.modules.sys.entity.OfficeAcount;
 import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.OfficeLog;
+import com.training.modules.sys.entity.UserRoleOffice;
+import com.training.modules.train.entity.ModelFranchisee;
 
 /**
  * 机构DAO接口
@@ -238,5 +241,50 @@ public interface OfficeDao extends TreeDao<Office> {
 	 * 2018年2月6日 兵子
 	 */
 	public void updateFranchisee(Office off);
+	/**
+	 * 查询机构账户
+	 * @param officeId
+	 * @return
+	 */
+	public OfficeAcount findOfficeAcount(String officeId);
+	/**
+	 * 变更信用额度
+	 * @param OfficeAcount
+	 */
+	public void updateOfficeCreditLimit(OfficeAcount OfficeAcount);
+	/**
+	 * 创建账户
+	 * @param OfficeAcount
+	 */
+	public void saveOfficeAcount(OfficeAcount officeAcount);
+	/**  
+	* <p>Title: 获取结构可用额度</p>  
+	* <p>Copyright（C）2018 by FengFeng</p>   
+	* @author fengfeng  
+	* @date 2018年5月29日  
+	* @version 3.0.0  
+	*/  
+	public double queryusedLimit(OfficeAcount officeAcount);
+	/**
+	 * 查找该机构所属商家的支付方式
+	 * @param id
+	 * @return
+	 */
+	public ModelFranchisee findPayType(String id);
+	/**
+	 * 删除机构时删除数据
+	 * @param officeId
+	 */
+	public void deleteUserOfficeById(String officeId);
+	
+	public List<UserRoleOffice> findUserRoleOffice(@Param("officeId")String officeId, @Param("flag")Integer flag);
+	/**
+	 * 删除一条数据权限
+	 * @param officeId
+	 */
+	public void deleteUserRoleOfficeById(String officeId);
+	
+	public void deleteUserRole(List<UserRoleOffice> list);
+	
 
 }
