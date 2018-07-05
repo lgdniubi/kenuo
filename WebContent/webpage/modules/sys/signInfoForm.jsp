@@ -290,7 +290,7 @@
 							<td class="width-15 active"><label class="pull-right">店铺名称：</label></td>
 							<td class="width-35"><input value="${office.name}" htmlEscape="false" maxlength="50" readonly="readonly" class="form-control required" /></td>
 							<td class="width-15 active"><label class="pull-right"><font color="red">*</font>成立日期:</label></td>
-							<td class="width-35"> <input name="office_setdate" id="start_date" value="<fmt:formatDate value="${infoVo.office_setdate}" pattern="yyyy-MM-dd"/>" htmlEscape="false" maxlength="50" class="layer-date form-control required" readonly="readonly" placeholder="成立日期"/></td>
+							<td class="width-35"> <input name="office_setdate" id="start_date" value="${infoVo.office_setdate}" htmlEscape="false" maxlength="50" class="layer-date form-control required" readonly="readonly" placeholder="成立日期"/></td>
 						</tr>
 						<tr>
 						     <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>统一社会信用代码</label></td>
@@ -322,7 +322,7 @@
 					      </tr>
 						<tr>
 					      	<td class="width-15 active"><label class="pull-right"><font color="red">*</font>详细地址:</label></td>
-					        <td class="width-35" colspan="3"><textarea name="office_address" value="${infoVo.office_address}" htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required"></textarea></td>
+					        <td class="width-35" colspan="3"><textarea name="office_address" <%-- value="${infoVo.office_address}" --%> htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required">${infoVo.office_address}</textarea></td>
 				        </tr>
 						<tr>
 					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证正面:</label></td>
