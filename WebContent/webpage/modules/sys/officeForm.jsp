@@ -46,7 +46,7 @@
 				}
 			}); 
 			if(verifyForm == "true"){
-				if(validateForm.form()&&validateImgUrl()){
+				if(validateForm.form()){
 					var content = $(".ke-edit-iframe").contents().find(".ke-content").html();
 					if(content.indexOf("style") >=0){
 						content = content.replace("&lt;style&gt;","<style>");
@@ -130,7 +130,7 @@
 						number:true
 					},
 					"officeInfo.creditCode":{
-						number:true
+						creditCodeMethod:true
 					}
 				},
 				messages:{
@@ -150,9 +150,6 @@
 					'officeInfo.bankaccount':{
 						rangelength:"请输入13-19位数字",
 						number:"请输入13-19位数字"
-					},
-					"officeInfo.creditCode":{
-						number:"请输入15位数字"
 					}
 				},
 				submitHandler: function(form){
@@ -197,6 +194,9 @@
 			jQuery.validator.addMethod("openbankMethod", function(value, element) {   
 				 return this.optional(element) || /^[\u0391-\uFFE5]+$/.test(value);
 			}, "仅支持中文、最多20个字");//验证错误信息
+			jQuery.validator.addMethod("creditCodeMethod", function(value, element) {   
+				 return this.optional(element) || /^[0-9A-Z]+$/.test(value);
+			}, "请输入18位数字或大写字母");//验证社会信用代码
 
 			//在ready函数中预先调用一次远程校验函数，是一个无奈的回避案。(刘高峰）
 			//否则打开修改对话框，不做任何更改直接submit,这时再触发远程校验，耗时较长，
@@ -356,19 +356,6 @@
 				}
 			});
 			
-			var start = {
-				    elem: '#start_date',
-				    format: 'YYYY-MM-DD',
-				    event: 'focus',
-				    //min: laydate.now(), //设定最小日期为当前日期  
-				    max: laydate.now(),   //最大日期
-				    istime: false,				//是否显示时间
-				    isclear: true,				//是否显示清除
-				    istoday: true,				//是否显示今天
-				    issure: true,				//是否显示确定
-				    festival: true				//是否显示节日
-				};
-			laydate(start);
 		});
 		function unfold(num){
 			//num = 1 不是店铺  num = 2 为店铺
@@ -585,66 +572,7 @@
 							</div>
 							<div id="file_photo_queue"></div>
 				         </td>
-				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺短名称：</label></td>
-				         <td class="width-35"><form:input path="officeInfo.shortName" htmlEscape="false" maxlength="50" cssClass="form-control required" /></td>
 				      </tr>
-				      <tr><!-- http://10.10.8.22:9377/resource/images/2018/06/9877ed09-5bec-498a-b85f-f9630aa04779.jpg -->
-					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>营业执照图片:</label></td>
-					         <td class="width-35">
-					         	<img id="officeCharImgsrc" src="${office.officeInfo.charterImg}" alt="" style="width: 200px;height: 100px;"/>
-								<input type="hidden" id="char" name="officeInfo.charterImg" class="required" value="${office.officeInfo.charterImg}"><!-- 图片隐藏文本框 -->
-								<p>&nbsp;</p>
-			                   	<div class="upload">
-									<input type="file" name="file_upload" id="file_char_upload">
-								</div>
-								<div id="file_char_queue"></div>
-					         </td>
-					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>成立日期:</label></td>
-					         <td class="width-35">
-					         <%-- <input id="auth_start_date" name="authStartDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
-							value="<fmt:formatDate value="${modelFranchisee.authStartDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="开始时间" readonly="readonly"/> --%>
-					         <input name="officeInfo.setDate" id="start_date" value="<fmt:formatDate value="${office.officeInfo.setDate}" pattern="yyyy-MM-dd"/>" htmlEscape="false" maxlength="50" class="layer-date form-control required" readonly="readonly" placeholder="成立日期"/></td>
-				       </tr>
-				      	<tr>
-					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>法定代表人:</label></td>
-					         <td class="width-35"><form:input path="officeInfo.legalPerson" htmlEscape="false" maxlength="8" cssClass="form-control required" /></td>
-					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>企业类型</label></td>
-					         <td class="width-35">
-					         	<select class="form-control required" id="companyType" name="officeInfo.companyType">
-									<option value=''>请选择</option>
-									<option value='1' <c:if test="${office.officeInfo.companyType== '1' }">selected="selected"</c:if> >个体户</option>
-									<option value='2' <c:if test="${office.officeInfo.companyType== '2' }">selected="selected"</c:if> >合伙企业</option>
-									<option value='3' <c:if test="${office.officeInfo.companyType== '3' }">selected="selected"</c:if> >个人独资企业</option>
-									<option value='4' <c:if test="${office.officeInfo.companyType== '4' }">selected="selected"</c:if> >公司</option>
-								</select>
-							 </td>
-				       </tr>
-				      	<tr>
-					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>统一社会信用代码</label></td>
-					         <td class="width-35"><form:input path="officeInfo.creditCode" htmlEscape="false" maxlength="15" cssClass="form-control required" /></td>
-				       </tr>
-				      	<tr>
-					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证正面:</label></td>
-					         <td class="width-35">
-					         	<img id="officeIcardoneImgsrc" src="${office.officeInfo.icardone}" alt="" style="width: 200px;height: 100px;"/>
-								<input type="hidden" id="icardone" name="officeInfo.icardone" value="${office.officeInfo.icardone}"><!-- 图片隐藏文本框 -->
-								<p>&nbsp;</p>
-			                   	<div class="upload">
-									<input type="file" name="file_icardone_upload" id="file_icardone_upload">
-								</div>
-								<div id="file_icardone_queue"></div>
-					         </td>
-					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证反面:</label></td>
-					         <td class="width-35">
-					         	<img id="officeIcardtwoImgsrc" src="${office.officeInfo.icardtwo}" alt="" style="width: 200px;height: 100px;"/>
-								<input type="hidden" id="icardtwo" name="officeInfo.icardtwo" value="${office.officeInfo.icardtwo}"><!-- 图片隐藏文本框 -->
-								<p>&nbsp;</p>
-			                   	<div class="upload">
-									<input type="file" name="file_icardtwo_upload" id="file_icardtwo_upload">
-								</div>
-								<div id="file_icardtwo_queue"></div>
-					         </td>
-				       </tr>
 				     <tr>
 				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>邮政编码:</label></td>
 				         <td class="width-35"><form:input path="officeInfo.postalCode" htmlEscape="false" maxlength="50" cssClass="form-control required" onkeyup="this.value=this.value.replace(/\D/g,'')"/></td>
@@ -741,47 +669,6 @@
 							<textarea id="details" name="officeInfo.details" style="display:none;">${office.officeInfo.details}</textarea>
 						</td>
 				      </tr>
-			      </tbody>
-			      <tbody id="unfold">
-				      <tr>
-						  <td colspan="4" class="active">
-								<label class="pull-left">账户信息</label>
-						  </td>
-					  </tr>
-				      <tr>
-					      <td class="width-15 active"><label class="pull-right">账户名称:</label></td>
-					      <td class="width-35"><form:input path="officeInfo.accountname" htmlEscape="false" maxlength="20" cssClass="form-control" /></td>
-					      <td  class="width-15 active"><label class="pull-right">开户银行:</label></td>
-					      <td class="width-35"><form:input path="officeInfo.openbank" htmlEscape="false" maxlength="20" cssClass="form-control" /></td>
-					  </tr>
-				      <tr>
-					      <td class="width-15 active"><label class="pull-right">银行卡号:</label></td>
-					      <td class="width-35"><form:input path="officeInfo.bankaccount" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
-					      <td  class="width-15 active"><label class="pull-right">开户地址:</label></td>
-					      <td class="width-35"><form:input path="officeInfo.bankaddress" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
-					  </tr>
-				      <tr>
-					      <td class="width-15 active"><label class="pull-right">银行卡正面:</label></td>
-					      <td class="width-35">
-					      	<img id="officeCardupImgsrc" src="${office.officeInfo.cardup}" alt="" style="width: 200px;height: 100px;"/>
-								<input type="hidden" id="cardup" name="officeInfo.cardup" value="${office.officeInfo.cardup}"><!-- 图片隐藏文本框 -->
-								<p>&nbsp;</p>
-			                   	<div class="upload">
-									<input type="file" name="file_cardup_upload" id="file_cardup_upload">
-								</div>
-								<div id="file_cardup_queue"></div>
-					      </td>
-					      <td  class="width-15 active"><label class="pull-right">银行卡反面:</label></td>
-					      <td class="width-35">
-					      	<img id="officeCarddownImgsrc" src="${office.officeInfo.carddown}" alt="" style="width: 200px;height: 100px;"/>
-								<input type="hidden" id="carddown" name="officeInfo.carddown" value="${office.officeInfo.carddown}"><!-- 图片隐藏文本框 -->
-								<p>&nbsp;</p>
-			                   	<div class="upload">
-									<input type="file" name="file_carddown_upload" id="file_carddown_upload">
-								</div>
-								<div id="file_carddown_queue"></div>
-					      </td>
-					  </tr>
 			      </tbody>
 		      </table>
 		      <c:if test="${opflag == 1 && office.grade == '1'}">	<!-- 点击修改opflag=1，根据机构数量判断是否是店铺 -->

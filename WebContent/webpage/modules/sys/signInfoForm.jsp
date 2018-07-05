@@ -52,7 +52,7 @@
 			 return true;
 		} */
 		function validateImgUrl(){
-			var flag = validOneImg('sign_fonturl')&&validOneImg('sign_backurl')&&validOneImg('cargo_fonturl')&&validOneImg('cargo_backurl')&&validOneImg('audit_fonturl')&&
+			var flag = validOneImg('char')&&validOneImg('icardone')&&validOneImg('icardtwo')&&validOneImg('cardup')&&validOneImg('carddown')&&validOneImg('sign_fonturl')&&validOneImg('sign_backurl')&&validOneImg('cargo_fonturl')&&validOneImg('cargo_backurl')&&validOneImg('audit_fonturl')&&
 			validOneImg('audit_backurl')&&validOneImg('proxy_fonturl')&&validOneImg('proxy_backurl');
 			var backFlag = validBackImg();
 			/* if(a==0){
@@ -128,6 +128,11 @@
 		$(document).ready(function() {
 			$("#sign_username").focus();
 			validateForm = $("#inputForm").validate({
+				rules: {
+					"office_creditcode":{
+						creditCodeMethod:true
+					}
+				},
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
 					form.submit();
@@ -142,7 +147,25 @@
 					}
 				}
 			});
-		
+			
+			jQuery.validator.addMethod("creditCodeMethod", function(value, element) {   
+				 return this.optional(element) || /^[0-9A-Z]+$/.test(value);
+			}, "请输入18位数字或大写字母");//验证社会信用代码
+			
+			var start = {
+				    elem: '#start_date',
+				    format: 'YYYY-MM-DD',
+				    event: 'focus',
+				    //min: laydate.now(), //设定最小日期为当前日期  
+				    max: laydate.now(),   //最大日期
+				    istime: false,				//是否显示时间
+				    isclear: true,				//是否显示清除
+				    istoday: true,				//是否显示今天
+				    issure: true,				//是否显示确定
+				    festival: true				//是否显示节日
+				};
+			laydate(start);
+			
 			uploadFile('sign_fonturl')
 			uploadFile('sign_backurl')
 			uploadFile('cargo_fonturl')
@@ -151,6 +174,11 @@
 			uploadFile('audit_backurl')
 			uploadFile('proxy_fonturl')
 			uploadFile('proxy_backurl')
+			uploadFile('icardone')
+			uploadFile('icardtwo')
+			uploadFile('cardup')
+			uploadFile('carddown')
+			uploadFile('char')
 			/* uploadFile('pay_fonturl')
 			uploadFile('pay_backurl') */
 			var paylen = '${paylen}';
@@ -163,28 +191,42 @@
 			}
 			
 		});
-		
+		var lastValue = "";
+		var lastId = "";
 		function findUser(id){
-			top.layer.open({
-			    type: 2, 
-			    area: ['300px', '420px'],
-			    title:"查找用户",
-			    content: "${ctx}/sys/user/finduser?officeId=${office.franchisee.id}",
-			    btn: ['确定', '关闭']
-    	    ,yes: function(index, layero){ //或者使用btn1
-    	    	var tree = layero.find("iframe")[0].contentWindow.tree;
-    	    	var search_name = $(tree).find('#search_name').val();
-    	    	var search_userid = $(tree).find('#search_userid').val();
-				//top.layer.msg("不能选择当前栏目以外的栏目模型，请重新选择。", {icon: 0});
-				 $("#"+id+"Id").val(search_userid);
-				//$("#signName").val(search_name);
-				$("#"+id+"Name").val(search_name); 
-				top.layer.close(index);
-		    },
-	    	cancel: function(index){ //或者使用btn2
-	    	           //按钮【按钮二】的回调
-	    	       }
-			}); 
+			$(".loading").show();
+			var value = $("#"+id+"Mobile").val()
+			// 如果和上次一次，就退出不查了。
+			if (lastValue === value && lastId == id) {
+				//等待样式隐藏
+				$(".loading").hide();
+				return;
+			}
+			if (value == "") {
+				//等待样式隐藏
+				$(".loading").hide();
+				return;
+			} 
+			// 保存最后一次
+			lastValue = value;
+			lastId = id;
+			$.ajax({
+				url:'${ctx}/sys/user/treeDataCompany?officeId=${office.franchisee.id}',
+				type:'post',
+				data:{mobile:value},
+			 	dataType:'json',
+			 	success:function(data){
+			 		if(data.code==0){
+			 			top.layer.msg("没有找到用户", {icon: 0});
+						$("#"+id+"Id").val('');
+				 		$("#"+id+"Name").val('');
+			 		}else{
+			 			$("#"+id+"Id").val(data.id);
+						$("#"+id+"Name").val(data.name); 
+			 		}
+			 		$(".loading").hide();
+			 	}
+			});
 		}
 	
 		function uploadFile(str){
@@ -244,19 +286,128 @@
 				<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 				   <tbody>
 						<tr><td colspan="4" class="active"><label class="pull-left">签约信息</label></td></tr>
+						<tr>
+							<td class="width-15 active"><label class="pull-right">店铺名称：</label></td>
+							<td class="width-35"><input value="${office.name}" htmlEscape="false" maxlength="50" readonly="readonly" class="form-control required" /></td>
+							<td class="width-15 active"><label class="pull-right"><font color="red">*</font>成立日期:</label></td>
+							<td class="width-35"> <input name="office_setdate" id="start_date" value="<fmt:formatDate value="${infoVo.office_setdate}" pattern="yyyy-MM-dd"/>" htmlEscape="false" maxlength="50" class="layer-date form-control required" readonly="readonly" placeholder="成立日期"/></td>
+						</tr>
+						<tr>
+						     <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>统一社会信用代码</label></td>
+						     <td class="width-35"><input name="office_creditcode" value="${infoVo.office_creditcode}" htmlEscape="false" maxlength="18" class="form-control required" /></td>
+					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>法定代表人:</label></td>
+					         <td class="width-35"><input name="office_legal" value="${infoVo.office_legal}" htmlEscape="false" maxlength="8" class="form-control required" /></td>
+					     </tr>
+					     <tr>
+					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>企业类型</label></td>
+					         <td class="width-35">
+					         	<select class="form-control required" id="office_type" name="office_type">
+									<option value=''>请选择</option>
+									<option value='1' <c:if test="${infoVo.office_type== '1' }">selected="selected"</c:if> >个体户</option>
+									<option value='2' <c:if test="${infoVo.office_type== '2' }">selected="selected"</c:if> >合伙企业</option>
+									<option value='3' <c:if test="${infoVo.office_type== '3' }">selected="selected"</c:if> >个人独资企业</option>
+									<option value='4' <c:if test="${infoVo.office_type== '4' }">selected="selected"</c:if> >公司</option>
+								</select>
+							 </td>
+							 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>营业执照图片:</label></td>
+					         <td class="width-35">
+					         	<img id="officecharImgsrc" src="${infoVo.office_license}" alt="" style="width: 200px;height: 100px;"/>
+								<input type="hidden" id="char" name="office_license" class="required" value="${infoVo.office_license}"><!-- 图片隐藏文本框 -->
+								<p>&nbsp;</p>
+			                   	<div class="upload">
+									<input type="file" name="file_upload" id="file_char_upload">
+								</div>
+								<div id="file_char_queue"></div>
+					         </td>
+					      </tr>
+						<tr>
+					      	<td class="width-15 active"><label class="pull-right"><font color="red">*</font>详细地址:</label></td>
+					        <td class="width-35" colspan="3"><textarea name="office_address" value="${infoVo.office_address}" htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required"></textarea></td>
+				        </tr>
+						<tr>
+					         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证正面:</label></td>
+					         <td class="width-35">
+					         	<img id="officeicardoneImgsrc" src="${infoVo.office_legalcardone}" alt="" style="width: 200px;height: 100px;"/>
+								<input type="hidden" id="icardone" name="office_legalcardone" value="${infoVo.office_legalcardone}"><!-- 图片隐藏文本框 -->
+								<p>&nbsp;</p>
+			                   	<div class="upload">
+									<input type="file" name="file_icardone_upload" id="file_icardone_upload">
+								</div>
+								<div id="file_icardone_queue"></div>
+					         </td>
+					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证反面:</label></td>
+					         <td class="width-35">
+					         	<img id="officeicardtwoImgsrc" src="${infoVo.office_legalcardtwo}" alt="" style="width: 200px;height: 100px;"/>
+								<input type="hidden" id="icardtwo" name="office_legalcardtwo" value="${infoVo.office_legalcardtwo}"><!-- 图片隐藏文本框 -->
+								<p>&nbsp;</p>
+			                   	<div class="upload">
+									<input type="file" name="file_icardtwo_upload" id="file_icardtwo_upload">
+								</div>
+								<div id="file_icardtwo_queue"></div>
+					         </td>
+				       </tr>
+				   </tbody>
+				   <tbody id="unfold">
+				      <tr>
+						  <td colspan="4" class="active">
+								<label class="pull-left">账户信息</label>
+						  </td>
+					  </tr>
+				      <tr>
+					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>账户名称:</label></td>
+					      <td class="width-35"><input name="office_accountname" value="${infoVo.office_accountname}" htmlEscape="false" maxlength="20" class="form-control required" /></td>
+					      <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户银行:</label></td>
+					      <td class="width-35"><input name="office_openbank" value="${infoVo.office_openbank}" htmlEscape="false" maxlength="20" class="form-control required" /></td>
+					  </tr>
+				      <tr>
+					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡号:</label></td>
+					      <td class="width-35"><input name="office_bankaccount" value="${infoVo.office_bankaccount}" htmlEscape="false" maxlength="50" class="form-control required" /></td>
+<%-- 					      <td  class="width-15 active"><label class="pull-right">开户地址:</label></td>
+					      <td class="width-35"><input name="officeInfo.bankaddress" value="${infoVo.officeInfo.bankaddress}" htmlEscape="false" maxlength="50" class="form-control" /></td>
+ --%>					  </tr>
+				      <tr>
+					      <td class="width-15 active"><label class="pull-right">银行卡正面:</label></td>
+					      <td class="width-35">
+					      	<img id="officecardupImgsrc" src="${infoVo.office_bankcardup}" alt="" style="width: 200px;height: 100px;"/>
+								<input type="hidden" id="cardup" name="office_bankcardup" value="${infoVo.office_bankcardup}"><!-- 图片隐藏文本框 -->
+								<p>&nbsp;</p>
+			                   	<div class="upload">
+									<input type="file" name="file_cardup_upload" id="file_cardup_upload">
+								</div>
+								<div id="file_cardup_queue"></div>
+					      </td>
+					      <td  class="width-15 active"><label class="pull-right">银行卡反面:</label></td>
+					      <td class="width-35">
+					      	<img id="officecarddownImgsrc" src="${infoVo.office_bankcarddown}" alt="" style="width: 200px;height: 100px;"/>
+								<input type="hidden" id="carddown" name="office_bankcarddown" value="${infoVo.office_bankcarddown}"><!-- 图片隐藏文本框 -->
+								<p>&nbsp;</p>
+			                   	<div class="upload">
+									<input type="file" name="file_carddown_upload" id="file_carddown_upload">
+								</div>
+								<div id="file_carddown_queue"></div>
+					      </td>
+					  </tr>
+			      </tbody>
+			    </table>
+				<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+				   <tbody>
 						<tr><td colspan="4" class=""><label class="pull-left">管理员</label></td></tr>
+						<tr>
+							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>联系电话:</label></td>
+				         	<td class="width-35">
+				         		<div class="input-group">
+				         			<input value="${infoVo.sign_mobile}" id="signMobile" name="sign_mobile" class="form-control required" placeholder="请输入手机号">
+					         		 <span class="input-group-btn">
+							       		 <button type="button"  onclick="findUser('sign')" class="btn btn-primary"><i class="fa fa-search">查询</i></button> 
+						       		 </span>
+				         		</div>
+				         	</td>
+						</tr>
 						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
 				         	<td class="width-35">
 					         	<input id="signId" name="sign_userid" class="form-control required" type="hidden" value="${infoVo.sign_userid}"/>
-								<div class="input-group">
-									<input id="signName" name="sign_username" type="text" readonly="readonly" value="${infoVo.sign_username}" class="form-control required" />
-							       		 <span class="input-group-btn">
-								       		 <button type="button"  onclick="findUser('sign')" class="btn btn-primary"><i class="fa fa-search"></i></button> 
-							       		 </span>
-							    </div>
-<%-- 				         	<sys:treeselect id="sign_username" name="sign_userid" value="${infoVo.sign_userid}" labelName="sign_username" labelValue="${infoVo.sign_username}" --%>
-<%-- 								title="姓名" url="/sys/user/treeDataCompany?officeId=${office.franchisee.id}" cssClass="form-control required" placeholder="请输入手机号搜索" allowInput="true"/></td> --%>
+								<input id="signName" name="sign_username" type="text" readonly="readonly" value="${infoVo.sign_username}" class="form-control required" />
 				         	<td class="width-35" rowspan="4">
 				         		<img id="officesign_fonturlImgsrc" src="${infoVo.sign_fonturl}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="sign_fonturl" name="sign_fonturl" value="${infoVo.sign_fonturl}"><!-- 图片隐藏文本框 -->
@@ -281,10 +432,6 @@
 				         	<td class="width-35"><input value="${infoVo.sign_idcard}" name="sign_idcard" class="form-control required"></td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>联系电话:</label></td>
-				         	<td class="width-35"><input value="${infoVo.sign_mobile}" name="sign_mobile" class="form-control required"></td>
-						</tr>
-						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>e-mail:</label></td>
 				         	<td class="width-35"><input value="${infoVo.sign_email}" name="sign_email" class="form-control required"></td>
 						</tr>
@@ -292,18 +439,21 @@
 						
 						<tr><td colspan="4" class=""><label class="pull-left">报货人</label></td></tr>
 						<tr>
+							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>联系电话:</label></td>
+					        <td class="width-35">
+								<div class="input-group">
+						         	<input value="${infoVo.cargo_mobile}" id="cargoMobile" name="cargo_mobile" class="form-control required" placeholder="请输入手机号">
+						       		 <span class="input-group-btn">
+							       		 <button type="button"  onclick="findUser('cargo')" class="btn btn-primary"><i class="fa fa-search">查询</i></button> 
+						       		 </span>
+							    </div>
+					        </td>
+						</tr>
+						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
 				         	<td class="width-35">
 				         		<input id="cargoId" name="cargo_userid" class="form-control required" type="hidden" value="${infoVo.cargo_userid}"/>
-								<div class="input-group">
-									<input id="cargoName" name="cargo_username" type="text" readonly="readonly" value="${infoVo.cargo_username}" class="form-control required" />
-							       		 <span class="input-group-btn">
-								       		 <button type="button"  onclick="findUser('cargo')" class="btn btn-primary"><i class="fa fa-search"></i></button> 
-							       		 </span>
-							    </div>
-				         	
-<%-- 				         	<sys:treeselect id="cargo" name="cargo_userid" value="${infoVo.cargo_userid}" labelName="cargo_username" labelValue="${infoVo.cargo_username}" --%>
-<%-- 								title="姓名" url="/sys/user/treeDataCompany?officeId=${office.franchisee.id}"  cssClass="form-control required" placeholder="请输入手机号搜索" allowInput="true"/></td> --%>
+								<input id="cargoName" name="cargo_username" type="text" readonly="readonly" value="${infoVo.cargo_username}" class="form-control required" />
 				         	<td class="width-35" rowspan="4">
 				         		<img id="officecargo_fonturlImgsrc" src="${infoVo.cargo_fonturl}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="cargo_fonturl" name="cargo_fonturl" value="${infoVo.cargo_fonturl}"><!-- 图片隐藏文本框 -->
@@ -328,10 +478,6 @@
 				         	<td class="width-35"><input value="${infoVo.cargo_idcard}" name="cargo_idcard" class="form-control required"></td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>联系电话:</label></td>
-				         	<td class="width-35"><input value="${infoVo.cargo_mobile}" name="cargo_mobile" class="form-control required"></td>
-						</tr>
-						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>e-mail:</label></td>
 				         	<td class="width-35"><input value="${infoVo.cargo_email}" name="cargo_email" class="form-control required"></td>
 						</tr>
@@ -339,17 +485,21 @@
 						
 						<tr><td colspan="4" class=""><label class="pull-left">审核人</label></td></tr>
 						<tr>
+							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>联系电话:</label></td>
+				         	<td class="width-35">
+								<div class="input-group">
+						         	<input value="${infoVo.audit_mobile}" id="auditMobile" name="audit_mobile" class="form-control required" placeholder="请输入手机号">
+						       		 <span class="input-group-btn">
+							       		 <button type="button"  onclick="findUser('audit')" class="btn btn-primary"><i class="fa fa-search">查询</i></button> 
+						       		 </span>
+							    </div>
+				         	</td>
+						</tr>
+						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
 				         	<td class="width-35">
 				         		<input id="auditId" name="audit_userid" class="form-control required" type="hidden" value="${infoVo.audit_userid}"/>
-								<div class="input-group">
-									<input id="auditName" name="audit_username" type="text" readonly="readonly" value="${infoVo.audit_username}" class="form-control required" />
-							       		 <span class="input-group-btn">
-								       		 <button type="button"  onclick="findUser('audit')" class="btn btn-primary"><i class="fa fa-search"></i></button> 
-							       		 </span>
-							    </div>
-<%-- 				         	<sys:treeselect id="audit" name="audit_userid" value="${infoVo.audit_userid}" labelName="audit_username" labelValue="${infoVo.audit_username}" --%>
-<%-- 								title="姓名" url="/sys/user/treeDataCompany?officeId=${office.franchisee.id}"  cssClass="form-control required" placeholder="请输入手机号搜索" allowInput="true"/></td> --%>
+								<input id="auditName" name="audit_username" type="text" readonly="readonly" value="${infoVo.audit_username}" class="form-control required" />
 				         	<td class="width-35" rowspan="4">
 				         		<img id="officeaudit_fonturlImgsrc" src="${infoVo.audit_fonturl}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="audit_fonturl" name="audit_fonturl" value="${infoVo.audit_fonturl}"><!-- 图片隐藏文本框 -->
@@ -374,10 +524,6 @@
 				         	<td class="width-35"><input value="${infoVo.audit_idcard}" name="audit_idcard" class="form-control required"></td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>联系电话:</label></td>
-				         	<td class="width-35"><input value="${infoVo.audit_mobile}" name="audit_mobile" class="form-control required"></td>
-						</tr>
-						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>e-mail:</label></td>
 				         	<td class="width-35"><input value="${infoVo.audit_email}" name="audit_email" class="form-control required"></td>
 						</tr>
@@ -385,18 +531,22 @@
 						
 						<tr><td colspan="4" class=""><label class="pull-left">付款人</label></td></tr>
 						<tr>
+							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>联系电话:</label></td>
+			         		<td class="width-35">
+								<div class="input-group">
+					         		<input value="${infoVo.proxy_mobile}" id="proxyMobile" name="proxy_mobile" class="form-control required" placeholder="请输入手机号">
+						       		 <span class="input-group-btn">
+							       		 <button type="button"  onclick="findUser('proxy')" class="btn btn-primary"><i class="fa fa-search">查询</i></button> 
+						       		 </span>
+							    </div>
+			         		</td>
+						</tr>
+						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>姓名:</label></td>
 				         	<td class="width-35">
 					         	<input id="proxyId" name="proxy_userid" class="form-control required" type="hidden" value="${infoVo.proxy_userid}"/>
-									<div class="input-group">
-										<input id="proxyName" name="proxy_username" type="text" readonly="readonly" value="${infoVo.proxy_username}" class="form-control required" />
-								       		 <span class="input-group-btn">
-									       		 <button type="button"  onclick="findUser('proxy')" class="btn btn-primary"><i class="fa fa-search"></i></button> 
-								       		 </span>
-								    </div>
-<%-- 				         	<sys:treeselect id="proxy" name="proxy_userid" value="${infoVo.proxy_userid}" labelName="proxy_username" labelValue="${infoVo.proxy_username}" --%>
-<%-- 								title="姓名" url="/sys/user/treeDataCompany?officeId=${office.franchisee.id}"  cssClass="form-control required" placeholder="请输入手机号搜索" allowInput="true"/></td> --%>
-				         	<td class="width-35" rowspan="4">
+								<input id="proxyName" name="proxy_username" type="text" readonly="readonly" value="${infoVo.proxy_username}" class="form-control required" />
+				         	<td class="width-35" rowspan="5">
 				         		<img id="officeproxy_fonturlImgsrc" src="${infoVo.proxy_fonturl}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="proxy_fonturl" name="proxy_fonturl" value="${infoVo.proxy_fonturl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
@@ -405,7 +555,7 @@
 								</div>
 								<div id="file_proxy_fonturl_queue"></div>
 				         	</td>
-				         	<td class="width-35" rowspan="4">
+				         	<td class="width-35" rowspan="5">
 				         		<img id="officeproxy_backurlImgsrc" src="${infoVo.proxy_backurl}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="proxy_backurl" name="proxy_backurl" value="${infoVo.proxy_backurl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
@@ -420,12 +570,12 @@
 				         	<td class="width-35"><input value="${infoVo.proxy_idcard}" name="proxy_idcard" class="form-control required"></td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>联系电话:</label></td>
-				         	<td class="width-35"><input value="${infoVo.proxy_mobile}" name="proxy_mobile" class="form-control required"></td>
-						</tr>
-						<tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>e-mail:</label></td>
 				         	<td class="width-35"><input value="${infoVo.proxy_email}" name="proxy_email" class="form-control required"></td>
+						</tr>
+						<tr>
+							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>通讯地址:</label></td>
+				         	<td class="width-35"><input value="${infoVo.proxy_address}" name="proxy_address" class="form-control required"></td>
 						</tr>
 						
 			      </tbody>
