@@ -1,5 +1,8 @@
 package com.training.common.track.utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,5 +44,38 @@ public class TrackUtils {
 			Global.newFixed.execute(new TrackThread(paramMap));
 		}
 		/*##########[神策埋点end]##########*/
+	}
+	
+	/**
+	 * 方法说明：	时间处理（秒）
+	 * 创建时间：	2018年6月14日 下午4:24:13
+	 * 创建人：	kele
+	 * 修改记录：	修改人	修改记录	2018年6月14日 下午4:24:13
+	 * @param disposeDate
+	 */
+	public static String getTimeDispose(Date disposeDate) {
+		long time1 = new Date().getTime();
+		long time2 = disposeDate.getTime();
+		// 秒级别  
+	    long days = (time1 - time2) / (1000);
+	    return String.valueOf(days);
+	}
+	
+	/**
+	 * 方法说明：	时间转换方法（str 转 date）
+	 * 创建时间：	2018年6月19日 下午2:40:55
+	 * 创建人：	kele
+	 * 修改记录：	修改人	修改记录	2018年6月19日 下午2:40:55
+	 * @param dateStr
+	 * @return
+	 */
+	public static Date getStrConvertDate(String dateStr) {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try {
+			return format.parse(dateStr);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return new Date();
 	}
 }

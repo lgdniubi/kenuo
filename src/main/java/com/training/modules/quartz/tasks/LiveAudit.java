@@ -232,11 +232,15 @@ public class LiveAudit extends CommonService{
 							//获取直播浏览人数
 							Long scard = redisClientTemplate.scard("browsenum_"+noticelives.get(h).getAuditid());
 							maps.put("browsenum", scard == null ? 0 : scard);
+							//获取直播点赞次数
+							String livelike = redisClientTemplate.get("livelike_"+noticelives.get(h).getAuditid());
+							maps.put("livelike", livelike == null ? 0 : Integer.parseInt(livelike));
 							//将数据保存在对应的直播信息表中
 							entryService.updatebrowsenumber(maps);
 							//清除暂存数据
 							redisClientTemplate.del("browsetime_"+noticelives.get(h).getAuditid());
 							redisClientTemplate.del("browsenum_"+noticelives.get(h).getAuditid());
+							redisClientTemplate.del("livelike_"+noticelives.get(h).getAuditid());
 							
 							RedisLock redisLock = new RedisLock(redisClientTemplate,"mtmy_id_"+noticelives.get(h).getMtmyUserId());
 							redisLock.lock();

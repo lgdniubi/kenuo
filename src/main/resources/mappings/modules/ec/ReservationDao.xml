@@ -416,7 +416,7 @@
 			mtmydb.mtmy_appt_order
 		WHERE
 			beautician_id = #{beauticianId}
-		AND DATE_FORMAT(appt_date,'%Y-%m-%d') = DATE_FORMAT(#{apptDate},'%Y-%m-%d')
+		AND appt_date = DATE_FORMAT(#{apptDate},'%Y-%m-%d')
 		AND appt_status IN (0,1,2)
 		AND 
 		(

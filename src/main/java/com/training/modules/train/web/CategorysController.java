@@ -157,6 +157,26 @@ public class CategorysController extends BaseController{
 	}
 	
 	/**
+	 * 异步查询“一级”课程分类
+	 * @param trainCategorys
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = {"ajaxlistone", ""})
+	public @ResponseBody Map<String, List<TrainCategorys>> ajaxlistone(TrainCategorys trainCategorys, HttpServletRequest request, HttpServletResponse response, Model model){
+		Map<String, List<TrainCategorys>> jsonMap = new HashMap<String, List<TrainCategorys>>();
+		trainCategorys.setPriority(1);//一级分类
+		//添加数据权限
+//		trainCategorys = CategorysUtils.categorysFilter(trainCategorys);
+		trainCategorys.getSqlMap().put("dsf", ScopeUtils.dataScopeFilter("t","category"));
+				
+		List<TrainCategorys> listone = trainCategorysService.findcategoryslist(trainCategorys);
+		jsonMap.put("listone",listone);
+		return jsonMap;
+	}
+	/**
 	 * 查询“二级”课程分类
 	 * @param trainCategorys
 	 * @param request
@@ -449,6 +469,35 @@ public class CategorysController extends BaseController{
 				trainCategorysService.updateIsShow(ids,ISSHOW);
 				jsonMap.put("STATUS", "OK");
 				jsonMap.put("ISSHOW", isShow);
+				jsonMap.put("CATEGORYIDS", categoryIds);
+			}else{
+				jsonMap.put("STATUS", "ERROR");
+				jsonMap.put("MESSAGE", "修改失败,必要参数为空");
+			}
+		} catch (Exception e) {
+			logger.error("分类管理-修改分类状态 出现异常，异常信息为："+e.getMessage());
+			jsonMap.put("STATUS", "ERROR");
+			jsonMap.put("MESSAGE", "修改失败,出现异常");
+		}
+		return jsonMap;
+	}
+	/**
+	 * 修改分类状态
+	 * @param flag
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "updateIsOpen")
+	public Map<String, String> updateIsOpen(String categoryId,String isOpen){
+		Map<String, String> jsonMap = new HashMap<String, String>();
+		try {
+			int ISOPEN = Integer.parseInt(isOpen);
+			if(!StringUtils.isEmpty(categoryId) && (ISOPEN == 0 || ISOPEN == 1)){
+				String categoryIds = categoryId;
+				String ids[] =categoryIds.split(",");
+				trainCategorysService.updateIsOpen(ids,ISOPEN);
+				jsonMap.put("STATUS", "OK");
+				jsonMap.put("ISOPEN", isOpen);
 				jsonMap.put("CATEGORYIDS", categoryIds);
 			}else{
 				jsonMap.put("STATUS", "ERROR");

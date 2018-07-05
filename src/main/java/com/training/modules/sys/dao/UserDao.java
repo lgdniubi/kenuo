@@ -14,6 +14,7 @@ import com.training.modules.sys.entity.Role;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.entity.UserLog;
 import com.training.modules.sys.entity.UserOfficeCode;
+import com.training.modules.sys.entity.UserPuTo;
 import com.training.modules.sys.entity.UserVo;
 
 /**
@@ -355,8 +356,63 @@ public interface UserDao extends CrudDao<User> {
 	public List<User> starBeautyFindUser(User user);
 	
 	/**
+	 * 通过用户id查询普通会员的信息
+	 * @param id 用户user_id
+	 * @return
+	 */
+	public UserPuTo getUserPuTo(String id);
+	
+	/**
 	 * 将逻辑删除的用户用户还原
 	 * @param user
 	 */
 	public void onJob(User user);
+	/**
+	 * 查找非员工类型的用户   type!= yg
+	 * @param user
+	 * @return
+	 */
+	public List<User> findSpecialUserList(User user);
+	//冻结解冻企业用户
+	public void modelFranchisee(User user);
+	//冻结解冻pt、syr用户
+	public void updateUserDel(User user);
+	//离职后变为普通商家和普通机构
+	public void updateCompanyAndOfficeId(User user);
+	//离职后变为普通角色
+	public void updateUserRole(User user);
+	//更新美容师详情表sys_user_info 普通商家id=1000000
+	public void updateUserInfoByUserid(@Param(value="userid")String userid, @Param(value="franchiseeid")String franchiseeid, @Param(value="officeid")String officeid);
+	/**
+	 * 根据商家id找用户
+	 * @param user
+	 * @return
+	 */
+	public List<User> findUserByFranchiseeId(User user);
+	
+	/**
+	 * 
+	 * @Title: findupdateUser
+	 * @Description: TODO 查询出所有更改角色的用户id
+	 * @throws
+	 * 2018年6月13日 兵子
+	 */
+	public List<String> findupdateUser(List<Integer> roleids);
+	
+	
+	public List<String> findSuperManageUid(@Param(value="mode_id")int mode_id);
+	/**
+	 * 根据版本id和菜单id找用户id
+	 * @param modId
+	 * @param ls1
+	 * @return
+	 */
+	public List<String> findUidByMenu(@Param(value="modId")Integer modId, @Param(value="list")List<Integer> list);
+	/**
+	 * 根据商家id查出所有用户id
+	 * @param id
+	 * @return
+	 */
+	public List<String> findUidByCompanyId(String companyId);
+
 }

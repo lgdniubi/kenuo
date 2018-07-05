@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.TrainModelDao">
+	
+	<!-- 添加版本信息 -->
+	<insert id="insert">
+		INSERT INTO `train_model` (
+			`mod_name`,
+			`mod_type`,
+			`mod_ename`,
+			`mod_pay`,
+			`mod_fee`,
+			`mod_day`,
+			`remark`,
+			`create_by`,
+			`create_date` 
+		)
+		VALUES
+			(
+			    #{modName},
+			    #{modType},
+			    #{modEname},
+			    #{modPay},
+			    #{modFee},
+			    #{modDay},
+			    #{remark},
+			    #{createBy.id},
+			    SYSDATE()
+			    
+			); 
+	</insert>
+	
+	<select id="findUniqueByProperty" parameterType="String" resultType="TrainModel">
+		select
+			`id` AS id,
+			`mod_name` AS modName,
+			`mod_type` AS modType,
+			`mod_ename` AS modEname,
+			`mod_pay` AS modPay,
+			`mod_fee` AS modFee,
+			`mod_day` AS modDay,
+			`remark` AS remark
+		FROM
+			train_model t
+		WHERE
+			modEname = #{modEname}
+			AND del_flag = 0
+	</select>
+	<select id="findByModEname" resultType="int" parameterType="String">
+		SELECT     
+			COUNT(1)   
+		FROM     
+			train_model    
+		WHERE     
+			mod_ename = #{modEname}
+			AND del_flag = 0
+	</select>
+	
+	<!-- 查询所有“有效”的版本信息-->
+	<select id="findList" resultType="TrainModel">
+		select
+			t.`id` AS id,
+			t.`mod_name` AS modName,
+			t.mod_type AS modType,
+			t.`mod_ename` AS modEname,
+			t.`mod_pay` AS modPay,
+			t.`mod_fee` AS modFee,
+			t.`mod_day` AS modDay,
+			t.`remark` AS remark
+		FROM
+		train_model t
+		WHERE  t.del_flag = 0
+		<if test="modType != null and modType != ''">
+			AND t.mod_type in ('qy','dy')
+		</if>
+		<if test="modEname != null and modEname != ''">
+			AND t.mod_ename LIKE
+			<if test="dbName == 'oracle'">'%'||#{modEname}||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{modEname}, '%')</if>
+		</if>
+		ORDER BY t.create_date 
+	</select>
+	<!--  查询企业的版本==3个-->
+	<select id="findDYModelList" resultType="TrainModel">
+		select
+			t.`id` AS id,
+			t.`mod_name` AS modName, 
+			t.`mod_ename` AS modEname,
+			t.`mod_pay` AS modPay,
+			t.`mod_fee` AS modFee,
+			t.`mod_day` AS modDay,
+			t.`remark` AS remark
+		FROM
+		train_model t 
+		WHERE 1=1 
+		AND t.mod_type = #{modType}
+		AND t.del_flag = 0
+		ORDER BY t.create_date DESC
+	</select>
+	
+	<!-- 版本修改 -->
+	<update id="editTrainModel">
+		UPDATE train_model SET 
+			mod_name = #{modName},
+			mod_type = #{modType},
+			mod_ename = #{modEname},
+			remark = #{remark},
+			update_by = #{updateBy.id},
+			update_date = SYSDATE()
+			<!-- remarks = #{remarks} -->
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 获取单个版本数据 -->
+	<select id="getTrainModel" resultType="TrainModel">
+		SELECT 
+			`id` AS id,
+			`mod_name` AS modName,
+			`mod_type` AS modType,
+			`mod_ename` AS modEname,
+			`mod_pay` AS modPay,
+			`mod_fee` AS modFee,
+			`mod_day` AS modDay,
+			`remark` AS remark
+		FROM train_model  
+		WHERE 
+			del_flag = 0 
+		AND id = #{id} 
+	</select>
+	<!--  查找该版本下的pc菜单 -->
+	<select id="findmodpcMenu" resultType="TrainModel">
+		SELECT a.id AS id,group_concat(b.menu_id) AS menuIds FROM train_model a LEFT JOIN train_model_pcmenu b ON a.id = b.model_id WHERE a.id = #{id}
+	</select>
+	<!-- 删除版本下所有pc菜单 -->
+	<delete id="deleteModpcMenu">
+		DELETE FROM train_model_pcmenu  WHERE model_id = #{id}
+	</delete>
+	<!-- 插入版本下所有pc菜单 -->
+	<insert id="insertModpcMenu">
+		INSERT INTO train_model_pcmenu(
+			model_id, 
+			menu_id
+		) VALUES (
+			#{id},
+			#{menuId}
+		)
+	</insert>
+	<!--  查找该版本下的fzx菜单 -->
+	<select id="findmodfzxMenu" resultType="TrainModel">
+		SELECT a.id AS id,group_concat(b.menu_id) AS menuIds FROM train_model a LEFT JOIN train_model_fzxmenu b ON a.id = b.mod_id WHERE a.id = #{id}
+	</select>
+	<!-- 删除版本下所有fzx菜单 -->
+	<delete id="deleteModfzxMenu">
+		DELETE FROM train_model_fzxmenu  WHERE mod_id = #{id}
+	</delete>
+	<!-- 插入版本下所有fzx菜单 -->
+	<insert id="insertModfzxMenu">
+		INSERT INTO train_model_fzxmenu(
+			mod_id, 
+			menu_id
+		) VALUES (
+			#{id},
+			#{menuId}
+		)
+	</insert>
+	<!--  查找该版本下的自媒体菜单 -->
+	<select id="findmodMediaMenu" resultType="TrainModel">
+		SELECT a.id AS id,group_concat(b.menu_id) AS menuIds FROM train_model a LEFT JOIN train_model_mdmenu b ON a.id = b.model_id WHERE a.id = #{id}
+	</select>
+	<!-- 删除版本下所有fzx菜单 -->
+	<delete id="deleteModMediaMenu">
+		DELETE FROM train_model_mdmenu  WHERE model_id = #{id}
+	</delete>
+	<!-- 插入版本下所有fzx菜单 -->
+	<insert id="insertModMediaMenu">
+		INSERT INTO train_model_mdmenu(
+			model_id, 
+			menu_id
+		) VALUES (
+			#{id},
+			#{menuId}
+		)
+	</insert>
+</mapper>

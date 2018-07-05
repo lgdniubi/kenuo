@@ -12,8 +12,6 @@ import org.hibernate.validator.constraints.Length;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.training.common.persistence.DataEntity;
-import com.training.modules.sys.entity.Menu;
-import com.training.modules.sys.utils.UserUtils;
 
 /**
  * 菜单Entity

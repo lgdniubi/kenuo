@@ -35,6 +35,7 @@ public class TrainCategorys extends DataEntity<TrainCategorys>{
 	
 	private int sort;				//排序
 	private int isShow;				//是否显示
+	private int isOpen;				//'是否公开：0、公开；1、不公开'
 	
 	public TrainCategorys() {
 		super();
@@ -227,6 +228,14 @@ public class TrainCategorys extends DataEntity<TrainCategorys>{
 
 	public void setIsShow(int isShow) {
 		this.isShow = isShow;
+	}
+
+	public int getIsOpen() {
+		return isOpen;
+	}
+
+	public void setIsOpen(int isOpen) {
+		this.isOpen = isOpen;
 	}
 	
 }

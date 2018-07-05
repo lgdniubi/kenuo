@@ -72,7 +72,9 @@
 		WHERE e.id = #{equipmentId} 
 		AND e.del_flag=0
 	</select>
-	
+	<delete id="deleteSpecEquipmentByName">
+		DELETE FROM train_equipment WHERE id IN (SELECT tt.id FROM (SELECT t.id from train_equipment t WHERE t.`name`= #{name}) tt);
+	</delete>
 	<!-- 新增设备 -->
 	<insert id="insertSpecEquipment" parameterType="Equipment">
 		INSERT INTO train_equipment(

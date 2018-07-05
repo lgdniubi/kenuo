@@ -1,6 +1,10 @@
 package com.training.modules.sys.entity;
 
+import java.util.Date;
+import java.util.List;
+
 import com.training.common.persistence.TreeEntity;
+import com.training.modules.train.entity.BankAccount;
 
 /**
  * 加盟商管理Entity
@@ -24,6 +28,9 @@ public class Franchisee extends TreeEntity<Franchisee>{
 	private String 	address;		//地址
 	private String 	zipcode;		//邮政编码
 	private String 	legalName;		//加盟法人
+	private String 	legalCard;		//加盟法人身份证号码
+	private Date 	setDate;		//加盟法人成立日期
+	private String 	shortName;		//加盟法人成立日期
 	private String 	contacts;		//加盟商联系人
 	private String 	mobile;			//联系电话
 	private String 	tel;			//联系固话
@@ -34,6 +41,7 @@ public class Franchisee extends TreeEntity<Franchisee>{
 	private String 	bankCode;		//银行卡号
 	private String 	bankName;		//持卡人姓名
 	private String 	status = "0";	//状态(未用)
+	private List<BankAccount> bankAccount;			//银行账户
 	
 	private String isRealFranchisee;  //是否真实的商家（0：否；1：是）
 	private String publicServiceFlag; //公共商品服务标识(0: 做 1: 不做)  土豆添加   2018-2-27
@@ -169,6 +177,12 @@ public class Franchisee extends TreeEntity<Franchisee>{
 	public void setStatus(String status) {
 		this.status = status;
 	}
+	public List<BankAccount> getBankAccount() {
+		return bankAccount;
+	}
+	public void setBankAccount(List<BankAccount> bankAccount) {
+		this.bankAccount = bankAccount;
+	}
 	public String getIsRealFranchisee() {
 		return isRealFranchisee;
 	}
@@ -186,6 +200,24 @@ public class Franchisee extends TreeEntity<Franchisee>{
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	public String getLegalCard() {
+		return legalCard;
+	}
+	public void setLegalCard(String legalCard) {
+		this.legalCard = legalCard;
+	}
+	public Date getSetDate() {
+		return setDate;
+	}
+	public void setSetDate(Date setDate) {
+		this.setDate = setDate;
+	}
+	public String getShortName() {
+		return shortName;
+	}
+	public void setShortName(String shortName) {
+		this.shortName = shortName;
 	}
 	
 }

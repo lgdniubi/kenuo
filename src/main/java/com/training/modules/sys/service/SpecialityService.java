@@ -75,6 +75,24 @@ public class SpecialityService extends CrudService<SpecialityDao, Speciality>{
 		
 		scialityDao.deleteSpeciality(speciality);
 	}
+
+	/**
+	 * 删除数据前先判断该标签是否已经被使用 
+	 * @param speciality
+	 */
+	public boolean validDel(Speciality speciality) {
+		int count = scialityDao.validDel(speciality);
+		return count == 0;
+	}
+
+	/**
+	 * 验证特长标签名称
+	 * @param name
+	 * @return
+	 */
+	public int getByName(String name){
+		return scialityDao.getByName(name);
+	}
 	
 	
 

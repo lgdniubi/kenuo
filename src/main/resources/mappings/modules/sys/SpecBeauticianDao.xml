@@ -34,6 +34,14 @@
 		WHERE sb.user_id = #{id}
 		AND sb.del_flag=0
 	</select>
+	<!-- 根据id查找特殊美容师 -->
+	<select id="getSpecBeautician" resultType="SpecBeautician">
+		SELECT
+			sb.id,
+			sb.user_id
+		FROM train_special_beautician sb
+		WHERE sb.user_id = #{id}
+	</select>
 	
 	<!-- 分页查询特殊美容师 -->
 	<select id="findList" resultType="SpecBeautician">
@@ -102,6 +110,10 @@
 		UPDATE train_special_beautician
 		SET del_flag = 1
 		WHERE user_id = #{userId}
+	</delete>
+	<!-- 从特殊美容师表删除后，删除他的排班记录-->
+	<delete id="deleteArrangeShop" parameterType="SpecBeautician">
+		DELETE FROM train_arrange_shop WHERE beautician_id = #{id} AND appt_date > NOW();
 	</delete>
 	
 	<!-- 物理删除特殊美容师 -->

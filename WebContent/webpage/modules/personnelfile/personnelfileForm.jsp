@@ -335,7 +335,7 @@
 							</td>
 							<td><label class="pull-right">介绍人电话：</label></td>
 							<td><form:input path="userEmployed.introducerTel" htmlEscape="false"
-									maxlength="10" class="form-control  max-width-600" />
+									maxlength="11" class="form-control  max-width-600" />
 							</td>
 						</tr>
 						<tr>
@@ -553,7 +553,7 @@
 							</td>
 							<td><label class="pull-right">联系电话：</label></td>
 							<td><form:input path="userFamilymembers[0].phone" htmlEscape="false"
-									maxlength="10" class="form-control  max-width-600" />
+									maxlength="11" class="form-control  max-width-600" />
 							</td>
 							<td><label class="pull-right">是否有小孩：</label></td>
 							<td>
@@ -575,7 +575,7 @@
 							</td>
 							<td><label class="pull-right"><font color="red">*</font>联系电话：</label></td>
 							<td><form:input path="userFamilymembers[1].phone" htmlEscape="false"
-									maxlength="10" class="form-control  max-width-600 required required digits" />
+									maxlength="11" class="form-control  max-width-600 required required digits" />
 							</td>
 						</tr>
 						<tr>
@@ -590,7 +590,7 @@
 							</td>
 							<td><label class="pull-right"><font color="red">*</font>联系电话：</label></td>
 							<td><form:input path="userFamilymembers[2].phone" htmlEscape="false"
-									maxlength="10" class="form-control  max-width-600 required required digits" />
+									maxlength="11" class="form-control  max-width-600 required required digits" />
 							</td>
 						</tr>
 						<tr>

@@ -618,8 +618,10 @@
 		            	<!-- 商品属性 End -->
 		            </div>
 		            <!-- 提交按钮 -->
-						<div class="box-footer">   
-						    <input type="submit" class="btn btn-primary" value="提 交">
+						<div class="box-footer">
+							<shiro:hasPermission name="ec:goods:editSubmit">
+						    	<input type="submit" class="btn btn-primary" value="提 交">
+						    </shiro:hasPermission>
 						</div>
 					</form:form>
 				</div>

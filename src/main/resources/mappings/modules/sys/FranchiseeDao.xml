@@ -28,6 +28,9 @@
 		  f.public_service_flag AS 'publicServiceFlag',
 		  f.status,
 		  f.description,
+		  f.legal_card,
+		  f.short_name,
+		  f.set_date,
 		  f.remarks
 	</sql>
 	
@@ -56,10 +59,8 @@
 		  f.zipcode,
 		  f.contacts,
 		  f.mobile
-		 
 		FROM
 		  sys_franchisee f 
-		
 		WHERE f.del_flag = 0 and f.parent_id !=0
 		<if test="isRealFranchisee != null and isRealFranchisee != ''">
 			AND f.is_real_franchisee = #{isRealFranchisee}
@@ -154,6 +155,7 @@
 		  update_by,
 		  update_date,
 		  del_flag,
+		  legal_card,
 		  remarks
 		) 
 		VALUES
@@ -183,6 +185,7 @@
 		    NULL,
 		    NULL,
 		    0,
+		    #{legalCard},
 		    #{remarks}
 		  )
 	</insert>
@@ -304,4 +307,22 @@
 		SET description = #{description}
 		WHERE id = #{id}
 	</update>
+	
+	<!-- 查找银行卡信息 -->
+	<select id="findBankAccountList" resultType="BankAccount">
+		SELECT
+			`id`,
+			`apply_id`,
+			`accountname`,
+			`openbank`,
+			`bankaccount`,
+			`openaddress`,
+			`detailedaddress`,
+			`cardup`,
+			`carddown`,
+			`bank_type`
+		FROM
+			`sys_bank_account`
+		WHERE franchisee_id = #{id}
+	</select>
 </mapper>

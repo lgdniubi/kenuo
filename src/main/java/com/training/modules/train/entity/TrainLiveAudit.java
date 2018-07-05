@@ -30,6 +30,7 @@ public class TrainLiveAudit extends TreeEntity<TrainLiveAudit> {
 	private int openlowdelaymode;		//开启直播低延时模式。0为关闭；1为开启  可选，默认为关闭，若对直播实时性要求不高可以关闭该模式。注意：直播间模板4、5不可以关闭该模式
 	private int showusercount;			//在页面显示当前在线人数。0表示不显示；1表示显示
 	private String auditStatus;			//审核状态 0 审核失败 1 请求审核 2 适合通过  3 已完成
+	private int isShow;			//审核状态 0 审核失败 1 请求审核 2 适合通过  3 已完成
 	private Date createDate;			//申请时间
 	private String auditUser;			//审核人
 	private String userName;			//申请人姓名
@@ -199,6 +200,14 @@ public class TrainLiveAudit extends TreeEntity<TrainLiveAudit> {
 
 	public void setAuditStatus(String auditStatus) {
 		this.auditStatus = auditStatus;
+	}
+
+	public int getIsShow() {
+		return isShow;
+	}
+
+	public void setIsShow(int isShow) {
+		this.isShow = isShow;
 	}
 
 	public Date getCreateDate() {

@@ -450,7 +450,20 @@
 				bed_num,
 				status,
 				details,
-				del_flag
+				del_flag,
+				set_date,
+				business_license,
+				legal_person,
+				icardone,
+				icardtwo,
+				accountname,
+				openbank,
+				bankaccount,
+				bankaddress,
+				credit_code,
+				cardup,
+				carddown,
+				companyType
 			) values (
 				#{id},
 				#{officeInfo.shortName},
@@ -467,7 +480,20 @@
 				#{officeInfo.bedNum},
 				#{officeInfo.status},
 				#{officeInfo.details},
-				#{DEL_FLAG_NORMAL}
+				#{DEL_FLAG_NORMAL},
+				#{officeInfo.setDate},
+				#{officeInfo.charterImg},
+				#{officeInfo.legalPerson},
+				#{officeInfo.icardone},
+				#{officeInfo.icardtwo},
+				#{officeInfo.accountname},
+				#{officeInfo.openbank},
+				#{officeInfo.bankaccount},
+				#{officeInfo.bankaddress},
+				#{officeInfo.creditCode},
+				#{officeInfo.cardup},
+				#{officeInfo.carddown},
+				#{officeInfo.companyType}
 			)ON DUPLICATE KEY 
 				UPDATE 
 				short_name		 = #{officeInfo.shortName},
@@ -483,6 +509,19 @@
 				intro			 = #{officeInfo.intro},
 				details			 = #{officeInfo.details},
 				bed_num			 = #{officeInfo.bedNum},
+				set_date		 =	  #{officeInfo.setDate},				
+				business_license      =	  #{officeInfo.charterImg},          
+				legal_person     =	  #{officeInfo.legalPerson},        
+				icardone         =	  #{officeInfo.icardone},              
+				icardtwo         =	  #{officeInfo.icardtwo},              
+				accountname      =	  #{officeInfo.accountname},       
+				openbank         =	  #{officeInfo.openbank},            
+				bankaccount      =	  #{officeInfo.bankaccount},        
+				bankaddress  =	  #{officeInfo.bankaddress},     
+				credit_code  =	  #{officeInfo.creditCode},     
+				cardup           =	  #{officeInfo.cardup},                
+				carddown         =	  #{officeInfo.carddown} ,
+				companyType         =	  #{officeInfo.companyType} ,
 				<if test="grade == 1">
 					del_flag         = #{DEL_FLAG_NORMAL}
 				</if>
@@ -532,7 +571,20 @@
 			intro,
 			details,
 			bed_num 	AS bedNum,
-			status
+			status,
+			set_date,
+			business_license AS charterImg,
+			legal_person,
+			icardone,
+			icardtwo,
+			accountname,
+			openbank,
+			bankaccount,
+			bankaddress,
+			cardup,
+			credit_code,
+			carddown,
+			companyType
 		FROM sys_office_info
 		WHERE 
 			1=1
@@ -878,4 +930,69 @@
 		AND del_flag = 0
 		ORDER BY update_date DESC
 	</select>
+	
+	<select id="findOfficeAcount" parameterType="String" resultType="com.training.modules.sys.entity.OfficeAcount">
+		select
+			office_id as officeId,
+			amount as amount,
+			integral_earnings as integralEarnings,
+			credit_limit as creditLimit,
+			used_limit as usedLimit,
+			pay_pwd as payPwd
+		from sys_office_account where office_id = #{value}
+	</select>
+	
+	<update id="updateOfficeCreditLimit" parameterType="com.training.modules.sys.entity.OfficeAcount">
+		update 
+			sys_office_account
+		set
+			credit_limit = #{creditLimit},
+			used_limit = #{usedLimit}
+		where office_id = #{officeId}
+	</update>
+	
+	<insert id="saveOfficeAcount" parameterType="com.training.modules.sys.entity.OfficeAcount">
+		insert into
+			sys_office_account(office_id)
+		values(#{officeId})
+	</insert>
+	
+	<select id="queryusedLimit" parameterType="com.training.modules.sys.entity.OfficeAcount" resultType="java.lang.Double">
+		SELECT used_limit FROM trains.sys_office_account WHERE office_id = #{officeId}
+	</select>
+	<select id="findPayType" resultType="ModelFranchisee">
+		SELECT fr.pay_type AS paytype FROM train_model_franchisee fr
+		LEFT JOIN sys_office off ON off.franchisee_id = fr.franchisee_id
+		WHERE off.id = #{id}
+	</select>
+	<!-- 删除机构删除数据 -->
+	<delete id="deleteUserOfficeById">
+		DELETE FROM sys_user_office WHERE office_id = #{officeId}
+	</delete>
+	<select id="findUserRoleOffice" resultType="UserRoleOffice">
+		SELECT
+			(SELECT COUNT(1) FROM fzx_user_role_office WHERE u_r_id = uro.u_r_id) AS count,
+			uro.u_r_id AS userRoleId,
+			uro.office_id AS officeId
+		FROM
+			fzx_user_role_office uro
+		WHERE
+			office_id = #{officeId}
+		<if test="flag == 1">
+			AND (SELECT COUNT(1) FROM fzx_user_role_office WHERE u_r_id = uro.u_r_id) =1
+		</if>
+		<if test="flag == 2">
+			AND (SELECT COUNT(1) FROM fzx_user_role_office WHERE u_r_id = uro.u_r_id) >1
+		</if>
+	</select>
+	
+	<delete id="deleteUserRoleOfficeById">
+		DELETE FROM fzx_user_role_office WHERE office_id = #{officeId}
+	</delete>
+	<delete id="deleteUserRole">
+		DELETE FROM fzx_user_role WHERE id IN
+		<foreach collection ="list" item="o"  open="(" separator="," close=")">
+	         #{o.userRoleId}
+	    </foreach >
+	</delete>
 </mapper>

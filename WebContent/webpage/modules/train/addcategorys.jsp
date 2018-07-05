@@ -200,6 +200,18 @@
 			<div class="form-inline">
 				<div class="form-group input-item" style="line-height:34px;">
 					<span style="color: red;">*</span>
+					<span>是否公开：</span> 
+					<div style="width: 70%;float: right;margin-right:33px;">
+						<select name="isOpen" id="isOpen" class="form-control required">
+							<option  value="0">公开</option>
+							<option selected value="1">不公开</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="form-inline">
+				<div class="form-group input-item" style="line-height:34px;">
+					<span style="color: red;">*</span>
 					<span>排序：</span> 
 					<div style="width: 70%;float: right;margin-right:33px;">
 						<input id="sort" name="sort" class="form-control required" onkeyup="this.value=this.value.replace(/\D/g,'')" maxlength="3">

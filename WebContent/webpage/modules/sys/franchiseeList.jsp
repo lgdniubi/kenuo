@@ -75,11 +75,12 @@
 										<shiro:hasPermission name="sys:franchisee:description">
 											<a onclick="openDialog('商家详情', '${ctx}/sys/franchisee/franchiseeDsecriptionForm?id=${franchisee.id}','800px','620px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i>商家详情</a>
 										</shiro:hasPermission>
+										<%-- 
 										<c:if test="${franchisee.code == '1'}">
 											<shiro:hasPermission name="sys:franchisee:add">
 												<a href="#" onclick="openDialog('添加下级商家', '${ctx}/sys/franchisee/form?parent.id=${franchisee.id}&opflag=ADD','800px', '620px')" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i> 添加下级商家</a>
 											</shiro:hasPermission>
-										</c:if>
+										</c:if> --%>
 									</td>
 								</tr>
 							</c:forEach>
