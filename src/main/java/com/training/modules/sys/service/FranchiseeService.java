@@ -160,4 +160,20 @@ public class FranchiseeService extends TreeService<FranchiseeDao,Franchisee>{
 	public void saveMtmyFranchiseeDescription(String description,String id){
 		franchiseeDao.saveMtmyFranchiseeDescription(description, id);
 	}
+
+	/**
+	 * 修改sys里面的"是否真实的商家"
+	 * @param franchisee
+	 */
+	public void updateIsRealFranchisee(Franchisee franchisee) {
+		franchiseeDao.updateIsRealFranchisee(franchisee);
+	}
+
+	/**
+	 * 同步mtmy里面的"是否真实的商家"
+	 * @param franchisee
+	 */
+	public void updateMtmyIsRealFranchisee(Franchisee franchisee) {
+		franchiseeDao.updateMtmyIsRealFranchisee(franchisee);
+	}
 }

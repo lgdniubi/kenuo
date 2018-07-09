@@ -291,6 +291,31 @@ public class FranchiseeController extends BaseController{
 	}
 	
 	/**
+	 * 是否真实的商家（0：否；1：是）
+	 * @param franchisee
+	 * @param redirectAttributes
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "changeIsRealFranchisee")
+	public Map<String, String> changeIsRealFranchisee(Franchisee franchisee, RedirectAttributes redirectAttributes,HttpServletRequest request){
+		Map<String, String> map = new HashMap<String, String>();
+		try {
+			franchiseeService.updateIsRealFranchisee(franchisee);//修改sys里面的"是否真实的商家"
+			franchiseeService.updateMtmyIsRealFranchisee(franchisee);//同步mtmy里面的"是否真实的商家"
+			map.put("FLAG", "OK");
+			map.put("MESSAGE", "修改成功");
+		} catch (Exception e) {
+			logger.error("修改是否真实的商家错误信息："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "是否真实的商家修改失败", e);
+			map.put("FLAG", "ERROR");
+			map.put("MESSAGE", "修改失败");
+		}
+		return map;
+	}
+	
+	/**
 	 * 跳转商家详情页
 	 * @param franchisee
 	 * @param request

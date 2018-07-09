@@ -46,6 +46,35 @@
 				}
 			}); 
 		}
+		//是否真实的商家
+		function changeIsRealFranchisee(id,isyesno){
+			if($("#franchiseeIsRealFranchisee").val() == 1){
+				$(".loading").show();//打开展示层
+				$.ajax({
+					type : "POST",
+					url : "${ctx}/sys/franchisee/changeIsRealFranchisee?id="+id+"&isRealFranchisee="+isyesno,
+					dataType: 'json',
+					success: function(data) {
+						$(".loading").hide(); //关闭加载层
+						var flag = data.FLAG;
+						if("OK" == flag){
+							$("#isRealFranchisee").html("");//清除DIV内容	
+							if(isyesno == '0'){
+								//当前状态为【否】，改为做是
+								$("#isRealFranchisee").append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeIsRealFranchisee('"+id+"','1')\">&nbsp;&nbsp;否");
+							}else if(isyesno == '1'){
+								//当前状态为【是】，改为否
+								$("#isRealFranchisee").append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeIsRealFranchisee('"+id+"','0')\">&nbsp;&nbsp;是");
+							}
+						}
+						top.layer.alert(data.MESSAGE, {icon: 0, title:'提醒'}); 
+					}
+				});
+			}else{
+				top.layer.alert("无此操作权限!", {icon: 0, title:'提醒'}); 
+			}
+		}
+		
 		$(document).ready(function() {
 			//税务登记上传
 			$("#file_taxationUrl_upload").uploadify({
@@ -151,6 +180,8 @@
 </head>
 <body>
 	<form:form id="inputForm" modelAttribute="franchisee" action="${ctx}/sys/franchisee/save" method="post" class="form-horizontal">
+		<!-- 操作是否真实的商家按钮权限 -->
+		<shiro:hasPermission name="sys:franchisee:updateIsRealFranchisee"><input type="hidden" id="franchiseeIsRealFranchisee" value="1"></shiro:hasPermission>
 		<form:hidden path="id" />
 		<sys:message content="${message}" />
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
@@ -308,6 +339,15 @@
 					</td>
 				</tr>
 				<tr>
+					<td class="width-15 active"><label class="pull-right">是否真实的商家:</label></td>
+					<td class="width-35" id="isRealFranchisee">
+		         		<c:if test="${franchisee.isRealFranchisee == 0}">
+							<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeIsRealFranchisee('${franchisee.id}',1)">&nbsp;&nbsp;否
+						</c:if>
+						<c:if test="${franchisee.isRealFranchisee == 1}">
+							<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeIsRealFranchisee('${franchisee.id}',0)">&nbsp;&nbsp;是
+						</c:if>
+					</td>
 					<td class="width-15 active"><label class="pull-right">备注:</label></td>
 					<td class="width-35"><form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" class="form-control" /></td>
 				</tr>
