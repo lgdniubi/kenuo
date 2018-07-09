@@ -149,7 +149,7 @@ public class UserCheckController extends BaseController{
 	 */
 	@RequiresPermissions(value={"train:userCheck:save"},logical=Logical.OR)
 	@RequestMapping(value = {"saveFranchise"})
-	public String saveFranchise(ModelFranchisee modelFranchisee,String opflag, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+	public String saveFranchise(ModelFranchisee modelFranchisee,String opflag,Integer pageNo, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		if((DateUtils.formatDate(modelFranchisee.getAuthEndDate(), "yyyy-MM-dd").compareTo(DateUtils.getDate()))<0){
 			addMessage(redirectAttributes, "授权时间无效，请重新选择授权时间");
 			return "redirect:" + adminPath + "/train/userCheck/findalllist";
@@ -186,7 +186,7 @@ public class UserCheckController extends BaseController{
 		}finally {
 			redisLock.unlock();
 		}
-		return "redirect:" + adminPath + "/train/userCheck/findalllist";
+		return "redirect:" + adminPath + "/train/userCheck/findalllist?pageNo="+pageNo;
 	}
 	
 	
@@ -198,7 +198,8 @@ public class UserCheckController extends BaseController{
 	 */
 	@RequiresPermissions(value={"train:userCheck:update",},logical=Logical.OR)
 	@RequestMapping(value={"form"})
-	public String form(UserCheck userCheck,Model model,String opflag){
+	public String form(UserCheck userCheck,Model model,String opflag,Integer pageNo){
+		model.addAttribute("pageNo", pageNo);
 		if ("setPermiss".equals(opflag)){
 			if("syr".equals(userCheck.getType())){
 				ModelFranchisee modelFranchisee = userCheckService.getModelFranchiseeByUserid(userCheck.getUserid());

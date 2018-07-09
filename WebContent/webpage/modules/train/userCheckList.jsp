@@ -110,6 +110,7 @@
 	    	    }
 			});
 		}
+		var pageNo = '${page.pageNo}';
 		function isPermiss(id,userid,auditType){
 			$.ajax({
 	             type: "GET",
@@ -118,7 +119,7 @@
 	             dataType: "json",
 	             success: function(data){
 	            	 if(data){
-	         			var urlPermiss = "${ctx}/train/userCheck/form?id="+id+"&userid="+userid+"&type="+auditType+"&opflag=setPermiss";
+	         			var urlPermiss = "${ctx}/train/userCheck/form?id="+id+"&userid="+userid+"&type="+auditType+"&pageNo="+pageNo+"&opflag=setPermiss";
 	         			openDialog('权限设置', urlPermiss,'800px', '550px')
 	            	 } else{
 	            		 layer.msg('此认证信息不能授权'); 
