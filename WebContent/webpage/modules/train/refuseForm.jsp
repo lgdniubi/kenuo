@@ -9,14 +9,14 @@
 		
 	<script type="text/javascript">
 	var validateForm;
-	function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
+	/* function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		if(validateForm.form()){
-       	  loading('正在提交，请稍等...');
+       	 // loading('正在提交，请稍等...');
 	      $("#inputForm").submit();
      	  return true;
 	  	}
 	  return false;
-	}
+	} */
 	$(function(){
 		validateForm = $("#inputForm").validate({ });
 	});
@@ -31,7 +31,7 @@
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 			<tbody>
 			    <tr>
-			        <td> <textarea name="remarks" id="label-reason" style="width:270px;height:170px" class="required" maxlength="50" placeholder="请输入拒绝理由（最多50个字）"></textarea></td>
+			        <td> <textarea name="remarks" id="reason" style="width:270px;height:170px" class="required" maxlength="50" placeholder="请输入拒绝理由（最多50个字）"></textarea></td>
 				</tr>
 			</tbody>
 		</table>  
