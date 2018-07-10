@@ -25,6 +25,7 @@
 		  f.bank_beneficiary AS 'bankBeneficiary',
 		  f.bank_code AS 'bankCode',
 		  f.bank_name AS 'bankName',
+		  f.is_real_franchisee AS 'isRealFranchisee',
 		  f.public_service_flag AS 'publicServiceFlag',
 		  f.status,
 		  f.description,
@@ -325,4 +326,19 @@
 			`sys_bank_account`
 		WHERE franchisee_id = #{id}
 	</select>
+	
+	<!-- 修改sys里面的"是否真实的商家"-->
+	<update id="updateIsRealFranchisee">
+		UPDATE sys_franchisee SET
+			is_real_franchisee = #{isRealFranchisee}
+		WHERE
+			id=#{id}
+	</update>
+	<!-- 同步mtmy里面的"是否真实的商家" -->
+	<update id="updateMtmyIsRealFranchisee">
+		UPDATE mtmydb.mtmy_franchisee SET
+			is_real_franchisee = #{isRealFranchisee}
+		WHERE
+			id=#{id}
+	</update>
 </mapper>

@@ -106,4 +106,16 @@ public interface FranchiseeDao extends TreeDao<Franchisee>{
 	 */
 	public List<BankAccount> findBankAccountList(Franchisee franchisee);
 
+	/**
+	 * 修改sys里面的"是否真实的商家"
+	 * @param franchisee
+	 */
+	public void updateIsRealFranchisee(Franchisee franchisee);
+
+	/**
+	 * 同步mtmy里面的"是否真实的商家"
+	 * @param franchisee
+	 */
+	public void updateMtmyIsRealFranchisee(Franchisee franchisee);
+
 }
