@@ -150,8 +150,6 @@ public class OrdersController extends BaseController {
 	
 	public static final String MTMY_ID = "mtmy_id_";//用户云币缓存前缀
 	
-	public static final String buying_limit_prefix = "buying_limit_";				//抢购活动商品限购数量
-	
 	@ModelAttribute
 	public Orders get(@RequestParam(required = false) String id) {
 		if (StringUtils.isNotBlank(id)) {
@@ -1599,11 +1597,10 @@ public class OrdersController extends BaseController {
 			if(result){
 				ordersService.cancellationOrder(orders);
 				goodsList=ordergoodService.orderlist(orders.getOrderid());
-				//验证是否为抢购活动订单
+				
+				//还缓存
 				for (int i = 0; i < goodsList.size(); i++){
-					if(goodsList.get(i).getActiontype()==1){
-						redisClientTemplate.hincrBy(buying_limit_prefix+goodsList.get(i).getActionid(), goodsList.get(i).getUserid()+"_"+goodsList.get(i).getGoodsid(),-goodsList.get(i).getGoodsnum());
-					}
+					redisGoodsLimitNum(goodsList.get(i).getActionid(),goodsList.get(i).getUserid(),goodsList.get(i).getGoodsid(),goodsList.get(i).getGoodsnum());
 				}
 				addMessage(redirectAttributes, "取消订单'" + orders.getOrderid() + "'成功");
 			}else{
@@ -1732,10 +1729,9 @@ public class OrdersController extends BaseController {
 					returnedGoodsService.insertForcedCancel(returnedGoods);
 					ordersService.updateOrderStatut(orders.getOrderid());
 					integral = integral + orderGoodsDao.getintegralByRecId(orderGoods.getRecid()+"") * orderGoods.getGoodsnum();
-					//验证是否为抢购活动订单
-					if(orderGoods.getActiontype()==1){
-						redisClientTemplate.hincrBy(buying_limit_prefix+orderGoods.getActionid(), orders.getUserid()+"_"+orderGoods.getGoodsid(),-orderGoods.getGoodsnum());
-					}
+					
+					//还缓存
+					redisGoodsLimitNum(orderGoods.getActionid(),orders.getUserid(),orderGoods.getGoodsid(),orderGoods.getGoodsnum());
 					
 					cancelOrders(orderGoods,id);   //平欠款，平次个数
 					
@@ -3829,5 +3825,17 @@ public class OrdersController extends BaseController {
 		}
 		return "modules/ec/editLogList";
 	}
-
+	
+	/**
+	 * 商品限购归还redis中限购的数量
+	 * @param actionId
+	 * @param userId
+	 * @param goodsId
+	 * @param goodsNum
+	 */
+	public void redisGoodsLimitNum(int actionId,int userId,int goodsId,int goodsNum){
+		if(redisClientTemplate.hexists(RedisConfig.buying_limit_user_prefix+actionId+"_0",userId+"_"+goodsId)){
+			redisClientTemplate.hincrBy(RedisConfig.buying_limit_user_prefix+actionId+"_0",userId+"_"+goodsId, -goodsNum);
+		}
+	}
 }
