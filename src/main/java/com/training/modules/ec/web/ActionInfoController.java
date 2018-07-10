@@ -24,6 +24,7 @@ import com.training.modules.ec.entity.ActionInfo;
 import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.service.ActionInfoService;
 import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.quartz.tasks.utils.RedisConfig;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
@@ -40,7 +41,6 @@ import com.training.modules.sys.utils.UserUtils;
 public class ActionInfoController extends BaseController {
 
 	public static final String GOOD_UNSHELVE_KEY = "GOOD_UNSHELVE_KEY"; //商品下架
-	public static final String buying_limit_prefix = "buying_limit_"; //商品限购前缀
 	
 	@Autowired
 	private ActionInfoService actionInfoService;
@@ -141,7 +141,7 @@ public class ActionInfoController extends BaseController {
 	public String addActionGoodsList(HttpServletRequest request, ActionInfo actionInfo, Model model) {
 		try {
 			List<Goods> list=actionInfoService.ActionGoodslist(actionInfo.getActionId());
-			list.stream().forEach(e -> e.setLimitNum(Integer.valueOf(redisClientTemplate.hget(buying_limit_prefix+e.getActionId()+"_0",e.getGoodsId()+"")==null?"0":redisClientTemplate.hget(buying_limit_prefix+e.getActionId()+"_0",e.getGoodsId()+""))));
+			list.stream().forEach(e -> e.setLimitNum(Integer.valueOf(redisClientTemplate.hget(RedisConfig.buying_limit_prefix+e.getActionId()+"_0",e.getGoodsId()+"")==null?"0":redisClientTemplate.hget(RedisConfig.buying_limit_prefix+e.getActionId()+"_0",e.getGoodsId()+""))));
 			model.addAttribute("list",list);
 			model.addAttribute("actionInfo", actionInfo);
 		} catch (Exception e) {
@@ -376,10 +376,10 @@ public class ActionInfoController extends BaseController {
 	
 		try {
 			//获取该商品的限购数量缓存
-			String ceiling = redisClientTemplate.hget(buying_limit_prefix+actionId+"_0", goodsId);
+			String ceiling = redisClientTemplate.hget(RedisConfig.buying_limit_prefix+actionId+"_0", goodsId);
 			
 			//将缓存中该活动中的该商品删除
-			redisClientTemplate.hdel(buying_limit_prefix+actionId+"_0", goodsId);
+			redisClientTemplate.hdel(RedisConfig.buying_limit_prefix+actionId+"_0", goodsId);
 			
 			Goods goods=new Goods();
 			goods.setActionId(0);
@@ -419,7 +419,7 @@ public class ActionInfoController extends BaseController {
 		String result = "";
 		try{
 			if(!"".equals(limitNum) && limitNum != null && !"".equals(goodsId) && goodsId != null && !"".equals(actionId) && actionId != null){
-				redisClientTemplate.hset(buying_limit_prefix+actionId+"_0", goodsId, limitNum);
+				redisClientTemplate.hset(RedisConfig.buying_limit_prefix+actionId+"_0", goodsId, limitNum);
 				
 				//插入日志
 				ActionInfo actionInfoLog = actionInfoService.get(actionId);
