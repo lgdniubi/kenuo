@@ -572,6 +572,9 @@
 							</div>
 							<div id="file_photo_queue"></div>
 				         </td>
+				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺短名称：</label></td>
+				         <td class="width-35"><form:input path="officeInfo.shortName" htmlEscape="false" maxlength="50" cssClass="form-control required" /></td>
+				         
 				      </tr>
 				     <tr>
 				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>邮政编码:</label></td>
