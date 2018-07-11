@@ -538,6 +538,13 @@ public class SystemService extends BaseService implements InitializingBean {
 				//新增用户时插入用户统计表
 				mtmyUsersDao.insterSaleStats(users);
 				userDao.insert(user);
+				
+				
+				/*##########[神策埋点{sign_up_fzx}-Begin]##########*/
+				user.setSourceType("5");
+				user.setActionSource("mg后台创建妃子校登云会员");
+				TrackUtils.trackSyncFzxUser(user);
+				/*##########[神策埋点end]##########*/
 			}
 			
 			//美容师头像
