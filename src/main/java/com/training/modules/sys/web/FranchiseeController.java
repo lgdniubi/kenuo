@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -326,6 +327,7 @@ public class FranchiseeController extends BaseController{
 	public String franchiseeDsecriptionForm(Franchisee franchisee,HttpServletRequest request,Model model){
 		try{
 			franchisee = franchiseeService.get(franchisee.getId());
+			franchisee.setDescription(HtmlUtils.htmlEscape(franchisee.getDescription()));
 			model.addAttribute("franchisee", franchisee);
 		}catch(Exception e){
 			logger.error("跳转商家详情页出现异常，异常信息为："+e.getMessage());
@@ -344,6 +346,7 @@ public class FranchiseeController extends BaseController{
 	@RequestMapping(value="saveFranchiseeDsecription")
 	public String saveFranchiseeDsecription(Franchisee franchisee,HttpServletRequest request,RedirectAttributes redirectAttributes){
 		try{
+			franchisee.setDescription(HtmlUtils.htmlUnescape(franchisee.getDescription()));
 			franchiseeService.saveFranchiseeDescription(franchisee.getDescription(),franchisee.getId());
 			franchiseeService.saveMtmyFranchiseeDescription(franchisee.getDescription(),franchisee.getId());
 			addMessage(redirectAttributes, "保存成功");
