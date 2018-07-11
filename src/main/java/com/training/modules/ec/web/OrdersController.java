@@ -34,6 +34,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.training.common.beanvalidator.BeanValidators;
 import com.training.common.persistence.Page;
+import com.training.common.utils.BeanUtil;
 import com.training.common.utils.CookieUtils;
 import com.training.common.utils.DateUtils;
 import com.training.common.utils.StringUtils;
@@ -136,8 +137,6 @@ public class OrdersController extends BaseController {
 	@Autowired
 	private OrderPushmoneyRecordService orderPushmoneyRecordService;
 	@Autowired
-	private RedisClientTemplate redisClientTemplate;
-	@Autowired
 	private OfficeService officeService;
 	@Autowired
 	private TurnOverDetailsService turnOverDetailsService;
@@ -147,6 +146,11 @@ public class OrdersController extends BaseController {
 	private ReturnedGoodsDao returnedGoodsDao;
 	@Autowired
 	private OrderGoodsDetailsDao orderGoodsDetailsDao;
+	
+	private static RedisClientTemplate redisClientTemplate;
+	static{
+		redisClientTemplate = (RedisClientTemplate) BeanUtil.getBean("redisClientTemplate");
+	}
 	
 	public static final String MTMY_ID = "mtmy_id_";//用户云币缓存前缀
 	
@@ -3833,7 +3837,7 @@ public class OrdersController extends BaseController {
 	 * @param goodsId
 	 * @param goodsNum
 	 */
-	public void redisGoodsLimitNum(int actionId,int userId,int goodsId,int goodsNum){
+	public static void redisGoodsLimitNum(int actionId,int userId,int goodsId,int goodsNum){
 		if(redisClientTemplate.hexists(RedisConfig.buying_limit_user_prefix+actionId+"_0",userId+"_"+goodsId)){
 			redisClientTemplate.hincrBy(RedisConfig.buying_limit_user_prefix+actionId+"_0",userId+"_"+goodsId, -goodsNum);
 		}
