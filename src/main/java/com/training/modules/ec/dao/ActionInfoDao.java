@@ -5,6 +5,7 @@ import java.util.List;
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.ec.entity.ActionInfo;
+import com.training.modules.ec.entity.Goods;
 
 
 /**
@@ -58,5 +59,11 @@ public interface ActionInfoDao extends CrudDao<ActionInfo>{
 	 * @param actionInfo
 	 */
 	public void insertActionGoodsLog(ActionInfo actionInfo);
-
+	
+	/**
+	 * 查询抢购活动对应商品
+	 * @param actionInfo
+	 * @return
+	 */
+	public List<Goods> queryActionGoods(Goods goods);
 }

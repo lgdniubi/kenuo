@@ -138,4 +138,15 @@ public class ActionInfoService extends CrudService<ActionInfoDao,ActionInfo> {
 	public void insertActionGoodsLog(ActionInfo actionInfo){
 		actionInfoDao.insertActionGoodsLog(actionInfo);
 	}
+	
+	/**
+	 * 查询抢购活动对应商品
+	 * @param actionInfo
+	 * @return
+	 */
+	public Page<Goods> queryActionGoods(Page<Goods> page, Goods goods){
+		goods.setPage(page);
+		page.setList(actionInfoDao.queryActionGoods(goods));
+		return page;
+	}
 }

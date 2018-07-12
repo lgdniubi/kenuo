@@ -343,11 +343,6 @@ public class ActionInfoController extends BaseController {
 					goods.setGoodsId(Integer.parseInt(idarry[i]));
 					goods.setActionType(actionType);
 					actionInfoService.updateActionId(goods);
-					
-					//插入日志
-					ActionInfo actionInfoLog = actionInfoService.get(String.valueOf(actionInfo.getActionId()));
-					actionInfoLog.setGoodsId(idarry[i]);
-					actionInfoService.insertActionGoodsLog(actionInfoLog);
 				}
 			
 			}
@@ -375,9 +370,6 @@ public class ActionInfoController extends BaseController {
 	public String dellGoods(String goodsId,String actionId,String actionType, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 	
 		try {
-			//获取该商品的限购数量缓存
-			String ceiling = redisClientTemplate.hget(RedisConfig.buying_limit_prefix+actionId+"_0", goodsId);
-			
 			//将缓存中该活动中的该商品删除
 			redisClientTemplate.hdel(RedisConfig.buying_limit_prefix+actionId+"_0", goodsId);
 			
@@ -386,14 +378,6 @@ public class ActionInfoController extends BaseController {
 			goods.setGoodsId(Integer.parseInt(goodsId));
 			goods.setActionType(actionType);
 			actionInfoService.updateActionId(goods);
-			
-			//插入日志
-			ActionInfo actionInfoLog = actionInfoService.get(actionId);
-			actionInfoLog.setGoodsId(goodsId);
-			actionInfoLog.setCeiling(Integer.valueOf(ceiling == null?"0":ceiling));
-			actionInfoLog.setDelFlag("1");
-			actionInfoService.insertActionGoodsLog(actionInfoLog);
-				
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "添加活动商品", e);
 			logger.error("方法：save，添加活动商品：" + e.getMessage());
@@ -420,13 +404,6 @@ public class ActionInfoController extends BaseController {
 		try{
 			if(!"".equals(limitNum) && limitNum != null && !"".equals(goodsId) && goodsId != null && !"".equals(actionId) && actionId != null){
 				redisClientTemplate.hset(RedisConfig.buying_limit_prefix+actionId+"_0", goodsId, limitNum);
-				
-				//插入日志
-				ActionInfo actionInfoLog = actionInfoService.get(actionId);
-				actionInfoLog.setGoodsId(goodsId);
-				actionInfoLog.setCeiling(Integer.valueOf(limitNum));
-				actionInfoService.insertActionGoodsLog(actionInfoLog);
-				
 				result = "success";
 			}
 		}catch(Exception e){
@@ -436,5 +413,67 @@ public class ActionInfoController extends BaseController {
 		}
 		return result;
 	}
+	
+	/**
+	 * 一键移除抢购活动对应的商品
+	 * @param actionInfo
+	 * @param request
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value="goodsRemove")
+	public String goodsRemove(ActionInfo actionInfo,HttpServletRequest request,RedirectAttributes redirectAttributes){
+		try{
+			if(actionInfo.getActionId() > 0){
+				List<Goods> list=actionInfoService.ActionGoodslist(actionInfo.getActionId());
+				list.stream().forEach(e -> {
+					Goods goods=new Goods();
+					goods.setActionId(0);
+					goods.setGoodsId(e.getGoodsId());
+					goods.setActionType("0");
+					actionInfoService.updateActionId(goods);
 
+					//查询该商品在redis中的缓存数量
+					String limitNum = redisClientTemplate.hget(RedisConfig.buying_limit_prefix+actionInfo.getActionId()+"_0", String.valueOf(e.getGoodsId()));
+					
+					//插入抢购活动对应商品的记录
+					actionInfo.setGoodsId(String.valueOf(e.getGoodsId()));
+					actionInfo.setCeiling(Integer.valueOf(limitNum == null?"0":limitNum));
+					actionInfo.setCreateBy(UserUtils.getUser());
+					actionInfoService.insertActionGoodsLog(actionInfo);
+				});
+				
+				//删除该抢购活动在缓存中的所有数据
+				redisClientTemplate.del(RedisConfig.buying_limit_prefix+actionInfo.getActionId()+"_0");
+				redisClientTemplate.del(RedisConfig.buying_limit_user_prefix+actionInfo.getActionId()+"_0");
+				addMessage(redirectAttributes, "移除成功！");
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "一键移除抢购活动对应的商品", e);
+			logger.error("一键移除抢购活动对应的商品失败信息：" + e.getMessage());
+			addMessage(redirectAttributes, "移除失败！");
+		}
+		return "redirect:"+adminPath+"/ec/action/list";
+	}
+	
+	/**
+	 * 查看抢购活动对应商品
+	 * @param actionInfo
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="actionGoods")
+	public String actionGoods(Goods goods,HttpServletRequest request,HttpServletResponse response,Model model){
+		try{
+			if(goods.getActionId() > 0){
+				Page<Goods> page = actionInfoService.queryActionGoods(new Page<Goods>(request, response), goods);
+				model.addAttribute("page", page);
+				model.addAttribute("actionId", goods.getActionId());
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "查看抢购活动对应商品", e);
+			logger.error("查看抢购活动对应商品页面出错信息：" + e.getMessage());
+		}
+		return "modules/ec/actionGoods";
+	}
 }

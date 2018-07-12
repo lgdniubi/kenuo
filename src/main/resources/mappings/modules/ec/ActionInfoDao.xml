@@ -33,7 +33,8 @@
 	<!-- 分页查询 -->
 	<select id="findList" resultType="ActionInfo">
 		SELECT
-		 <include refid="actionColunm"></include>
+		 <include refid="actionColunm"></include>,                                             
+		 (select count(*) from mtmydb.mtmy_action_goods_log where action_id = a.action_id) AS 'isRemove'
 		FROM mtmydb.mtmy_action_info a
 		WHERE 1=1
 		<if test="actionName != null and actionName!=''">
@@ -152,22 +153,26 @@
 			action_id,
 			goods_id,
 			limit_num,
-			start_time,
-			end_time,
-			show_time,
-			close_time,
-			create_date,
-			del_flag
+			create_by,
+			create_date
 		)VALUES(
 			#{actionId},
 			#{goodsId},
 			#{ceiling},
-			#{startTime},
-			#{endTime},
-			#{showTime},
-			#{closeTime},
-			SYSDATE(),
-			#{delFlag}
+			#{createBy.id},
+			SYSDATE()
 		)
 	</insert>
+	
+	<!-- 查询抢购活动对应商品 -->
+	<select id="queryActionGoods" resultType="Goods">
+		SELECT 
+			goods_id AS 'goodsId',
+			(select g.goods_name from mtmydb.mtmy_goods g where g.goods_id = goodsId) AS 'goodsName',
+			limit_num AS 'limitNum',
+			(select u. name from trains.sys_user u where u.id = create_by) AS 'createBy.name',
+			create_date AS 'createDate'
+		FROM mtmydb.mtmy_action_goods_log
+		WHERE action_id = #{actionId}
+	</select>
 </mapper>
