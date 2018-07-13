@@ -104,6 +104,7 @@
 		<input name="userid" value="${modelFranchisee.userid}" type="hidden">
 		<input name="applyid" value="${modelFranchisee.applyid}" type="hidden">
 		<input name="id" value="${modelFranchisee.id}" type="hidden">
+		<input name="pageNo" type="hidden" value="${pageNo}" />
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 			<tbody>
 			    <tr>
