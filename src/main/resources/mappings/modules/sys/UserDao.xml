@@ -151,15 +151,19 @@
 	<select id="get" resultType="User">
 		SELECT
 			<include refid="userColumns"/>,
-			
-			(SELECT group_concat(T2.name) FROM ( 
-			    SELECT 
-			        @r AS _id, 
-			        (SELECT @r := parent_id FROM trains.sys_office WHERE id = _id) AS parent_id
-			    FROM 
-			        (SELECT @r := (SELECT office_id FROM trains.sys_user WHERE id = #{id}) ) vars, 
-			        trains.sys_office h WHERE @r >= 0) T1 JOIN trains.sys_office T2 ON T1._id = T2.id
-			) AS parendNames
+			CONCAT(
+				(SELECT GROUP_CONCAT(`name`) FROM trains.sys_office WHERE id IN (
+						SELECT
+							substring_index(substring_index(b.parent_ids,',',c.help_topic_id+2),',',-1)
+						FROM
+							trains.sys_user a
+							LEFT JOIN trains.sys_office b ON a.office_id = b.id
+							JOIN mysql.help_topic c ON c.help_topic_id <![CDATA[ < ]]> (length(b.parent_ids) - length(replace(b.parent_ids,',','')) - 1)
+						WHERE
+							a.id = #{id}
+					)
+				),',',o.name
+			)AS parendNames
 			<!-- ,
 			ro.office_id AS "roleList.officeList.id" -->
 		FROM sys_user a

@@ -450,8 +450,8 @@
 				bed_num,
 				status,
 				details,
-				del_flag,
-				set_date,
+				del_flag
+				<!-- set_date,
 				business_license,
 				legal_person,
 				icardone,
@@ -463,7 +463,7 @@
 				credit_code,
 				cardup,
 				carddown,
-				companyType
+				companyType -->
 			) values (
 				#{id},
 				#{officeInfo.shortName},
@@ -480,8 +480,8 @@
 				#{officeInfo.bedNum},
 				#{officeInfo.status},
 				#{officeInfo.details},
-				#{DEL_FLAG_NORMAL},
-				#{officeInfo.setDate},
+				#{DEL_FLAG_NORMAL}
+				<!-- #{officeInfo.setDate},
 				#{officeInfo.charterImg},
 				#{officeInfo.legalPerson},
 				#{officeInfo.icardone},
@@ -493,7 +493,7 @@
 				#{officeInfo.creditCode},
 				#{officeInfo.cardup},
 				#{officeInfo.carddown},
-				#{officeInfo.companyType}
+				#{officeInfo.companyType} -->
 			)ON DUPLICATE KEY 
 				UPDATE 
 				short_name		 = #{officeInfo.shortName},
@@ -509,7 +509,7 @@
 				intro			 = #{officeInfo.intro},
 				details			 = #{officeInfo.details},
 				bed_num			 = #{officeInfo.bedNum},
-				set_date		 =	  #{officeInfo.setDate},				
+				<!-- set_date		 =	  #{officeInfo.setDate},				
 				business_license      =	  #{officeInfo.charterImg},          
 				legal_person     =	  #{officeInfo.legalPerson},        
 				icardone         =	  #{officeInfo.icardone},              
@@ -521,7 +521,7 @@
 				credit_code  =	  #{officeInfo.creditCode},     
 				cardup           =	  #{officeInfo.cardup},                
 				carddown         =	  #{officeInfo.carddown} ,
-				companyType         =	  #{officeInfo.companyType} ,
+				companyType         =	  #{officeInfo.companyType} , -->
 				<if test="grade == 1">
 					del_flag         = #{DEL_FLAG_NORMAL}
 				</if>
@@ -571,8 +571,8 @@
 			intro,
 			details,
 			bed_num 	AS bedNum,
-			status,
-			set_date,
+			status
+			<!-- set_date,
 			business_license AS charterImg,
 			legal_person,
 			icardone,
@@ -584,7 +584,7 @@
 			cardup,
 			credit_code,
 			carddown,
-			companyType
+			companyType -->
 		FROM sys_office_info
 		WHERE 
 			1=1

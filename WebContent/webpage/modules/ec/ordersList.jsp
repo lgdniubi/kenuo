@@ -417,7 +417,7 @@
 									<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-search-plus"></i>订单充值查看</a>
 								</c:if> --%>
 								<c:if test="${orders.orderstatus == -1}">
-									<a href="${ctx}/ec/orders/cancellationOrder?orderid=${orders.orderid}" onclick="return confirmx('确定取消订单吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>取消订单</a>
+									<a href="${ctx}/ec/orders/cancellationOrder?orderid=${orders.orderid}&userid=${orders.userid}" onclick="return confirmx('确定取消订单吗？', this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>取消订单</a>
 								</c:if>
 								<c:if test="${orders.orderstatus != -1}">
 									<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-trash"></i>取消订单</a>

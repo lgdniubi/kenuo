@@ -78,4 +78,30 @@ public class TrackUtils {
 		}
 		return new Date();
 	}
+	
+	/**
+	 * 方法说明：	fzx注册埋点事件
+	 * 创建时间：	2018年7月11日 上午10:13:50
+	 * 创建人：	kele
+	 * 修改记录：	修改人	修改记录	2018年7月11日 上午10:13:50
+	 * @param user
+	 */
+	public static void trackSyncFzxUser(User user) {
+		/*##########[神策埋点{sign_up}-Begin]##########*/
+		if(null != user && !"".equals(user.getId())) {
+			Map<String, Object> paramMap = new HashMap<String, Object>();
+			// 方法名称-注册
+			paramMap.put("METHOD_NAME", "sign_up_fzx");
+			// 用户ID
+			paramMap.put("DISTINCT_ID", user.getId());
+			// 来源类型
+			paramMap.put("SOURCE_TYPE", user.getSourceType());
+			// 来源类型名称
+			paramMap.put("ACTION_SOURCE", user.getActionSource());
+			
+			// 异步线程执行方法
+			Global.newFixed.execute(new TrackThread(paramMap));
+		}
+		/*##########[神策埋点end]##########*/
+	}
 }

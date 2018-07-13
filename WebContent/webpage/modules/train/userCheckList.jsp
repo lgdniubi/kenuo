@@ -40,7 +40,7 @@
 			window.location="${ctx}/train/userCheck/findalllist?status=3";
 		}
 		//审核按钮
-		function checkBtn(id,userid,type){
+		function checkBtn(id,userid,type,obj){
 			top.layer.open({
 			    type: 2, 
 			    area: ['800px', '650px'],
@@ -48,13 +48,27 @@
 			    content: "${ctx}/train/userCheck/form?id="+id+"&userid="+userid ,
 			    btn: ['通过','不通过'],
 			    yes: function(index, layero){ //或者使用btn1
-			    	window.location="${ctx}/train/userCheck/save?id="+id+"&userid="+userid+"&status=2";
+			    	var urlSave="${ctx}/train/userCheck/save?id="+id+"&userid="+userid+"&status=2";
+			    	$.ajax({
+			             type: "GET",
+			             url: urlSave,
+			             dataType: "json",
+			             success: function(data){
+			            	 if(data){
+								$(obj).parent().prev().html("已通过");
+						    	$(obj).hide()
+			            	 } else{
+			            		 layer.msg('审核失败'); 
+			            	 }       
+			        	 }
+					}); 
 					top.layer.close(index);
 				},
 				btn2: function(index, layero){
 			    //按钮【不通过】的回调
 			    	var url = "${ctx}/train/userCheck/refuseForm?id="+id+"&userid="+userid+"&status=1&auditType="+type;
-			    	openDialog('拒绝', url,'300px', '300px')
+			    	var urlsave = "${ctx}/train/userCheck/save?id="+id+"&userid="+userid+"&status=1&auditType="+type;
+			    	openRefuseForm('拒绝', url,'300px', '300px',urlsave,obj);
 			    	//window.location="${ctx}/train/userCheck/save?id="+id+"&userid="+userid+"&status=1";
 					top.layer.close(index);
 			    //return false 开启该代码可禁止点击该按钮关闭
@@ -65,6 +79,38 @@
 			});
 		}
 		
+		function openRefuseForm(title,url,width,height,urlsave,obj){
+			top.layer.open({
+			    type: 2, 
+			    area: [width, height],
+			    title:title,
+			    content: url,
+			    btn: ['确定','关闭'],
+			    yes: function(index, layero){ //或者使用btn1
+			    	var _iframe = layero.find("iframe")[0].contentWindow.reason;
+					var reason = $(_iframe).val();
+					var _url=urlsave+"&remarks="+reason;
+			    	$.ajax({
+			             type: "GET",
+			             url: _url,
+			             dataType: "json",
+			             success: function(data){
+			            	 if(data){
+								$(obj).parent().prev().html("未通过");
+						    	$(obj).hide()
+			            	 } else{
+			            		 layer.msg('审核失败'); 
+			            	 }       
+			        	 }
+					}); 
+			    	top.layer.close(index);
+			    },
+			    cancel: function(){ //或者使用btn2
+	    	           //按钮【按钮二】的回调
+	    	    }
+			});
+		}
+		var pageNo = '${page.pageNo}';
 		function isPermiss(id,userid,auditType){
 			$.ajax({
 	             type: "GET",
@@ -73,7 +119,7 @@
 	             dataType: "json",
 	             success: function(data){
 	            	 if(data){
-	         			var urlPermiss = "${ctx}/train/userCheck/form?id="+id+"&userid="+userid+"&type="+auditType+"&opflag=setPermiss";
+	         			var urlPermiss = "${ctx}/train/userCheck/form?id="+id+"&userid="+userid+"&type="+auditType+"&pageNo="+pageNo+"&opflag=setPermiss";
 	         			openDialog('权限设置', urlPermiss,'800px', '550px')
 	            	 } else{
 	            		 layer.msg('此认证信息不能授权'); 
@@ -171,7 +217,7 @@
 											</c:if> --%>
 										</c:if>
 										<c:if test="${userCheck.status == 0}">
-					    						<a href="#" onclick="checkBtn(${userCheck.id},'${userCheck.userid}','${userCheck.auditType}')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>
+					    						<a href="#" onclick="checkBtn(${userCheck.id},'${userCheck.userid}','${userCheck.auditType}',this)" id="${userCheck.id}" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>
 										</c:if>
 										<c:if test="${userCheck.status != 0}">
 					    				<a href="#" onclick="openDialogView('查看审核信息', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&opflag=view','800px', '700px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>查看</a>

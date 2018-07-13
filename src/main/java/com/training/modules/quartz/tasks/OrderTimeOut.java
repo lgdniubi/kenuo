@@ -16,6 +16,7 @@ import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.Orders;
 import com.training.modules.ec.service.OrderGoodsService;
 import com.training.modules.ec.service.OrdersService;
+import com.training.modules.ec.web.OrdersController;
 import com.training.modules.quartz.entity.TaskLog;
 import com.training.modules.quartz.tasks.utils.CommonService;
 import com.training.modules.quartz.tasks.utils.RedisConfig;
@@ -101,11 +102,9 @@ public class OrderTimeOut extends CommonService{
 						}
 						lo.unlock();
 						
-						/*logger.info("归还用户限购资源,活动id："+v.getActionid()+",用户id："+v.getUserid()+",商品id："+v.getGoodsid()+",数量："+v.getGoodsnum());
-					if(v.getActiontype() ==1){ //归还用户限购资源
-						redisClientTemplate.hincrBy(RedisConfig.buying_limit_prefix+v.getActionid(), v.getUserid()+"_"+v.getGoodsid(), -v.getGoodsnum());
-					}*/
-						
+						//还缓存
+						logger.info("归还用户限购资源,活动id："+0+",用户id："+v.getUserid()+",商品id："+v.getGoodsid()+",数量："+v.getGoodsnum());
+						OrdersController.redisGoodsLimitNum(0, v.getUserid(), v.getGoodsid(), v.getGoodsnum());
 					}
 					//归还优惠券
 					/*logger.info("归还优惠券，价格:"+vo.getCouponprice()+",订单："+vo.getOrderid());
@@ -190,7 +189,7 @@ public class OrderTimeOut extends CommonService{
 						
 						logger.info("归还用户限购资源,活动id："+v.getActionid()+",用户id："+v.getUserid()+",商品id："+v.getGoodsid()+",数量："+v.getGoodsnum());
 						if(v.getActiontype() ==1){ //归还用户限购资源
-							redisClientTemplate.hincrBy(RedisConfig.buying_limit_prefix+v.getActionid(), v.getUserid()+"_"+v.getGoodsid(), -v.getGoodsnum());
+							OrdersController.redisGoodsLimitNum(v.getActionid(), v.getUserid(), v.getGoodsid(), v.getGoodsnum());
 						}
 					}
 				}

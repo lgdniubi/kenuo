@@ -29,12 +29,17 @@ public class TrackConfig {
 	// 埋点地址列表
 	public static Map<String, String> trackConfigList = new HashMap<String, String>();
 	static {
-		// 注册
+		/*每天美耶*/
+		// 注册-同步每天美耶账号
 		trackConfigList.put("sign_up", "com.training.common.track.modules.TrackLoginPub");
+		
+		/*妃子校*/
 		// 用户审核 -通过
 		trackConfigList.put("user_authent_win", "com.training.common.track.modules.TrackUserAuditPub");
 		// 用户审核-失败
 		trackConfigList.put("user_authent_Loser", "com.training.common.track.modules.TrackUserAuditPub");
+		// 注册-妃子校账号
+		trackConfigList.put("sign_up_fzx", "com.training.common.track.modules.TrackLoginPub");
 	}
 
 	/**

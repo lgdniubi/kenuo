@@ -93,7 +93,7 @@
 		#{bazaarId},
 		#{shopId},
 		#{type},
-		#{officeId},
+		#{bazaarId},
 		#{createBy.id},
 		SYSDATE(),
 		#{remarks}
@@ -108,7 +108,8 @@
 			bazaar_id = #{bazaarId},
 			label_id = #{labelId},
 			shop_id = #{shopId},
-			remarks = #{remarks}
+			remarks = #{remarks},
+			office_id = #{bazaarId}
 		WHERE id = #{equipmentId}
 	</update>
 	
