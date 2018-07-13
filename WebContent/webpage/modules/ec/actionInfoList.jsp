@@ -8,6 +8,7 @@
 
 <script type="text/javascript">
 	function page(n, s) {
+		overShade();
 		$("#pageNo").val(n);
 		$("#pageSize").val(s);
 		$("#searchForm").submit();

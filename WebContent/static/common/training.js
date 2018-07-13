@@ -105,9 +105,11 @@ function confirmx(mess, href, closed){
 	top.layer.confirm(mess, {icon: 3, title:'系统提示'}, function(index){
 	    //do something
 		if (typeof href == 'function') {
+			overShade();
 			href();
 		}else{
 			resetTip(); //loading();
+			overShade();
 			location = href;
 		}
 	    top.layer.close(index);
