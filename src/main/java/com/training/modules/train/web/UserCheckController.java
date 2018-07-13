@@ -106,7 +106,7 @@ public class UserCheckController extends BaseController{
 			
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "保存审核信息出现异常,请与管理员联系");
-			logger.error("保存审核信息异常,异常信息为："+e.getMessage());
+			logger.error("保存审核信息异常,异常信息为："+e);
 		}
 		return flag;
 //		return "redirect:" + adminPath + "/train/userCheck/findalllist";
@@ -182,7 +182,7 @@ public class UserCheckController extends BaseController{
 			
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "保存权限设置出现异常,请与管理员联系");
-			logger.error("保存权限设置异常,异常信息为："+e.getMessage());
+			logger.error("保存权限设置异常,异常信息为："+e);
 		}finally {
 			redisLock.unlock();
 		}
