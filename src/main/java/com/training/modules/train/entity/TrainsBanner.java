@@ -16,7 +16,7 @@ public class TrainsBanner extends DataEntity<TrainsBanner>{
 	private static final long serialVersionUID = 1L;
 	private int adId;		//bannerid
 	private String adName;	//banner名称
-	private int adType;		//类型  0首页   1提问
+	private Integer adType =100;		//类型  0首页   1动态 2工作台，100是默认值查询全部
 	private String adPic;		//照片
 	private String adUrl;    //超链接
 	private String remark;		//备注
@@ -43,10 +43,10 @@ public class TrainsBanner extends DataEntity<TrainsBanner>{
 	public void setAdName(String adName) {
 		this.adName = adName;
 	}
-	public int getAdType() {
+	public Integer getAdType() {
 		return adType;
 	}
-	public void setAdType(int adType) {
+	public void setAdType(Integer adType) {
 		this.adType = adType;
 	}
 	public String getAdPic() {
