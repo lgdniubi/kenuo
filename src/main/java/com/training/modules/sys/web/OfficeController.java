@@ -384,8 +384,9 @@ public class OfficeController extends BaseController {
 		try {
 			User user = UserUtils.getUser();
 			String weburl = ParametersFactory.getTrainsParamValues("contract_data_path");
-			logger.info("##### web接口路径:"+weburl);
+			logger.info("##### web接口路径查询签约信息:"+weburl);
 			String parpm = "{\"office_id\":\""+office.getId()+"\"}";
+			logger.info("##### web接口路径查询签约信息参数:"+parpm);
 //		String url="http://172.50.3.16:8081/cs_service/pub/queryContractInfoAudit.htm";
 			String url=weburl;
 			String result = WebUtils.postCSObject(parpm, url);

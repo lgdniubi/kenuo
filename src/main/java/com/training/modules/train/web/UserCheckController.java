@@ -71,7 +71,9 @@ public class UserCheckController extends BaseController{
 	 */
 	@RequiresPermissions(value={"train:userCheck:save"},logical=Logical.OR)
 	@RequestMapping(value = {"save"})
-	public String savemodel(UserCheck userCheck, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+	@ResponseBody
+	public boolean savemodel(UserCheck userCheck, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		boolean flag = false;
 		try {
 			userCheckService.saveModel(userCheck);//保存审核信息保存用户审核状态
 			if ("1".equals(userCheck.getStatus())){
@@ -82,6 +84,7 @@ public class UserCheckController extends BaseController{
 //				userCheckService.pushMsg(userCheck,"你的申请资料信息已通过审核，等待平台给您赋予权限");
 //				userCheckService.updateTypeAndpushMsg(userCheck,"你的申请资料信息已通过审核，等待平台给您赋予权限");
 			}
+			flag = true;
 			addMessage(redirectAttributes, "成功");
 			
 			/*##########[神策埋点{user_authent_win|user_authent_Loser}-Begin]##########*/
@@ -105,7 +108,8 @@ public class UserCheckController extends BaseController{
 			addMessage(redirectAttributes, "保存审核信息出现异常,请与管理员联系");
 			logger.error("保存审核信息异常,异常信息为："+e.getMessage());
 		}
-		return "redirect:" + adminPath + "/train/userCheck/findalllist";
+		return flag;
+//		return "redirect:" + adminPath + "/train/userCheck/findalllist";
 	}
 	//创建发送拒绝审核通知消息：您申请认证手艺人用户未被通过，原因如下：====您申请认证企业用户未被通过，原因如下：
 	private String creatText(UserCheck userCheck) {
@@ -145,7 +149,7 @@ public class UserCheckController extends BaseController{
 	 */
 	@RequiresPermissions(value={"train:userCheck:save"},logical=Logical.OR)
 	@RequestMapping(value = {"saveFranchise"})
-	public String saveFranchise(ModelFranchisee modelFranchisee,String opflag, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+	public String saveFranchise(ModelFranchisee modelFranchisee,String opflag,Integer pageNo, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		if((DateUtils.formatDate(modelFranchisee.getAuthEndDate(), "yyyy-MM-dd").compareTo(DateUtils.getDate()))<0){
 			addMessage(redirectAttributes, "授权时间无效，请重新选择授权时间");
 			return "redirect:" + adminPath + "/train/userCheck/findalllist";
@@ -182,7 +186,7 @@ public class UserCheckController extends BaseController{
 		}finally {
 			redisLock.unlock();
 		}
-		return "redirect:" + adminPath + "/train/userCheck/findalllist";
+		return "redirect:" + adminPath + "/train/userCheck/findalllist?pageNo="+pageNo;
 	}
 	
 	
@@ -194,7 +198,8 @@ public class UserCheckController extends BaseController{
 	 */
 	@RequiresPermissions(value={"train:userCheck:update",},logical=Logical.OR)
 	@RequestMapping(value={"form"})
-	public String form(UserCheck userCheck,Model model,String opflag){
+	public String form(UserCheck userCheck,Model model,String opflag,Integer pageNo){
+		model.addAttribute("pageNo", pageNo);
 		if ("setPermiss".equals(opflag)){
 			if("syr".equals(userCheck.getType())){
 				ModelFranchisee modelFranchisee = userCheckService.getModelFranchiseeByUserid(userCheck.getUserid());
