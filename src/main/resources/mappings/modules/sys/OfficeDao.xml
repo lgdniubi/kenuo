@@ -980,4 +980,16 @@
 	         #{o.userRoleId}
 	    </foreach >
 	</delete>
+	
+	<select id="queryFvo" resultType="com.training.modules.sys.entity.Fvo">
+		select
+			id as officeId,
+			name as officeName,
+			parent_id as officePid,
+			parent_ids as officePids,
+			franchisee_id as franchiseeId,
+			is_cargo as isCargo
+		from sys_office 
+		where id = #{office_id}
+	</select>
 </mapper>

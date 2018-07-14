@@ -62,6 +62,7 @@ import com.training.modules.sys.entity.UserSpeciality;
 import com.training.modules.sys.entity.UserVo;
 import com.training.modules.sys.entity.Userinfo;
 import com.training.modules.sys.entity.Userinfocontent;
+import com.training.modules.sys.entity.Uvo;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.LogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
@@ -1539,4 +1540,8 @@ public class SystemService extends BaseService implements InitializingBean {
 		return list;
 	}
 	
+	
+	public Uvo findUvo(String user_id){
+		return userDao.findUvo(user_id);
+	}
 }

@@ -74,10 +74,10 @@
 			c.type = 'banner_type' 
 		AND 
 			c.del_flag = 0
-		<if test="user.loginName != 'admin'">
+		<!-- <if test="user.loginName != 'admin'">
 			AND 
 				f.create_franise_id = #{user.company.id}
-		</if>
+		</if> -->
 		<if test="adName != null and adName != ''">
 			AND  a.ad_name=#{adName } 
 		</if>
