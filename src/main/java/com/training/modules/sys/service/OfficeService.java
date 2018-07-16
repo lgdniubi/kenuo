@@ -27,6 +27,7 @@ import com.training.modules.sys.entity.User;
 import com.training.modules.sys.entity.UserRoleOffice;
 import com.training.modules.sys.entity.OfficeLog;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.dao.ProtocolModelDao;
 import com.training.modules.train.entity.ModelFranchisee;
 
 /**
@@ -40,6 +41,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	
 	@Autowired
 	private OfficeDao officeDao;
+	@Autowired
+	private ProtocolModelDao protocolModelDao;
 	
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
@@ -489,5 +492,14 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	
 	public Fvo queryFvo(String office_id){
 		return officeDao.queryFvo(office_id);
+	}
+	
+	/**
+	 * 修改签约信息，重签协议删除之前的协议
+	 * @param franchisee_id	商家
+	 */
+	@Transactional(readOnly = false)
+	public void deleteProtocolShopById(String franchisee_id) {
+		protocolModelDao.deleteProtocolShopById(franchisee_id);
 	}
 }
