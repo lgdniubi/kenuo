@@ -77,11 +77,11 @@ public class TaskService {
 			job.setJobStatus("0");//开启状态
 			List<Task> jobList = iTaskDao.findAllTasks(job);
 			logger.info("#####[开启-定时任务数量：]"+jobList.size());
-			/*if(jobList.size() > 0){
+			if(jobList.size() > 0){
 				for (Task task : jobList) {
 					addJob(task);
 				}
-			}*/
+			}
 			
 			taskLog.setJobDescription("[work] 定时器加载时间-进行redisCaChe缓存 | 开启-定时任务数量："+jobList.size());
 			taskLog.setStatus(0);//任务状态
