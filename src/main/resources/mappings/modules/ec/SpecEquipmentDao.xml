@@ -218,7 +218,7 @@
 	<!-- 新增店铺通用设备操作日志 -->
 	<insert id="insertComEquipmentLog">
 		INSERT INTO shop_common_equipment_log(
-			comEquipment_id,
+			com_equipment_id,
 			content,
 			create_date,
 			create_by
@@ -237,7 +237,7 @@
 			cel.create_date AS 'createDate',
 			(select name from sys_user where id = cel.create_by) AS 'createBy.name'
 		FROM shop_common_equipment_log cel
-		WHERE cel.comEquipment_id = #{comEquipmentId}
+		WHERE cel.com_equipment_id = #{comEquipmentId}
 		ORDER BY cel.create_date DESC
 	</select>
 </mapper>
