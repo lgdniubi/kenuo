@@ -114,7 +114,7 @@ public class TrackConfig {
 		
 		Map<String, Object> properties = new HashMap<String, Object>();
 		// 平台类型 (iOS/Android/WAP/INTERFACE)
-		properties.put("platformType", "INTERFACE");
+		properties.put("platformType", "mg后台");
 		// 是否是登录状态,默认登录
 		properties.put("is_login", true);
 		// 每天美耶用户ID

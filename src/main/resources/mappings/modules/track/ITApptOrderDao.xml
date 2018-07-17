@@ -3,7 +3,7 @@
 <mapper namespace="com.training.modules.track.dao.ITApptOrderDao">
 
     <!-- 查询订单详情 -->
-	<select id="queryApptOrderDetail" parameterType="map" resultType="TOrder">
+	<select id="queryApptOrderDetail" parameterType="map" resultType="TApptOrder">
 		SELECT
 			a.id AS 'appId',
 			a.user_id AS 'userId',
@@ -20,6 +20,7 @@
 		FROM
 			mtmydb.mtmy_appt_order a
 		LEFT JOIN mtmydb.mtmy_goods b ON b.goods_id = a.goods_id
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping c ON c.rec_id = a.goods_mapping_id
 		WHERE
 			a.id = #{apptId}
     </select>

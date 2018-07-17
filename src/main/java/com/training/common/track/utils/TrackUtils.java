@@ -109,7 +109,7 @@ public class TrackUtils {
 	public static TOffice getOffcieDetail(String officeId) {
 		IOfficeDaoService iOfficeDaoService = (IOfficeDaoService) BeanUtil.getBean("IOfficeDaoService");
 		Map<String, Object> map = new HashMap<String, Object>();
-	    map.put("offcieId", officeId);
+	    map.put("officeId", officeId);
 	    return iOfficeDaoService.queryOfficeDetail(map);
 	}
 }

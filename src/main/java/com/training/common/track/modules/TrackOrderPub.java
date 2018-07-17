@@ -212,7 +212,7 @@ public class TrackOrderPub {
 			// 订单ID
 			String orderId = String.valueOf(this.paramMap.get("ORDER_ID"));
 			// 订单商品ID
-			Integer recId = TrackUtils.convertInteger(this.paramMap.get("REC_ID"));
+			String recId = TrackUtils.convertStr(this.paramMap.get("REC_ID"));
 			
 			Map<String, Object> map = new HashMap<String, Object>();
 		    map.put("orderId", orderId);

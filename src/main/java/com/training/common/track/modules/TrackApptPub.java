@@ -68,42 +68,44 @@ public class TrackApptPub {
 			
 			// 预约项目类型
 			String depleteGoodsType = "";
-			Integer serviceTimes = tApptOrder.getServiceTimes();
+			Integer serviceTimes = TrackUtils.convertInteger(tApptOrder.getServiceTimes());
 			if(serviceTimes == 999) {
 				depleteGoodsType = "时限卡";
 			}else {
 				depleteGoodsType = "次数卡";
 			}
 			
-			Map<String, Object> properties = new HashMap<String, Object>();
-			// 预约id
-		    properties.put("appoint_id", apptId);
-		    // 预约时间
-		    properties.put("appoint_time", TrackUtils.getStrConvertDate(tApptOrder.getApptDate()));
-		    // 预约商品id
-		    properties.put("goods_id", TrackUtils.convertStr(tApptOrder.getGoodsId()));
-		    // 预约商品名称
-		    properties.put("goods_name", TrackUtils.convertStr(tApptOrder.getGoodsName()));
-		    // 美容师id
-		    properties.put("beautician_id", TrackUtils.convertStr(tApptOrder.getBeauticianId()));
-		    // 预约美容师名称
-		    properties.put("beautician_name", TrackUtils.convertStr(tApptOrder.getBeauticianName()));
-		    // 美容师店铺id
-		    properties.put("store_id", TrackUtils.convertStr(tApptOrder.getShopId()));
-		    // 美容师所属店铺名称
-		    properties.put("store_name", TrackUtils.convertStr(tApptOrder.getShopName()));
-		    // 预约消耗业绩
-		    properties.put("deplete_paymony", TrackUtils.convertDouble(tApptOrder.getDepletePayMoney()));
-		    // 服务费
-		    properties.put("service_charge", TrackUtils.convertDouble(tApptOrder.getServiceCharge()));
-		    // 预约项目类型
-		    properties.put("deplete_goods_type", depleteGoodsType);
-		    
-		    sa.track(distinctId, true, "deplete_achievement", properties);
-		    
-		    // 程序结束前，停止 Sensors Analytics SDK 所有服务
-		    sa.shutdown();
+			// 年卡不算业绩
+			if(serviceTimes != 999) {
+				Map<String, Object> properties = new HashMap<String, Object>();
+				// 预约id
+			    properties.put("appoint_id", apptId);
+			    // 预约时间
+			    properties.put("appoint_time", TrackUtils.convertStr(tApptOrder.getApptDate()));
+			    // 预约商品id
+			    properties.put("goods_id", TrackUtils.convertStr(tApptOrder.getGoodsId()));
+			    // 预约商品名称
+			    properties.put("goods_name", TrackUtils.convertStr(tApptOrder.getGoodsName()));
+			    // 美容师id
+			    properties.put("beautician_id", TrackUtils.convertStr(tApptOrder.getBeauticianId()));
+			    // 预约美容师名称
+			    properties.put("beautician_name", TrackUtils.convertStr(tApptOrder.getBeauticianName()));
+			    // 美容师店铺id
+			    properties.put("store_id", TrackUtils.convertStr(tApptOrder.getShopId()));
+			    // 美容师所属店铺名称
+			    properties.put("store_name", TrackUtils.convertStr(tApptOrder.getShopName()));
+			    // 预约消耗业绩
+			    properties.put("deplete_paymony", TrackUtils.convertDouble(tApptOrder.getDepletePayMoney()));
+			    // 服务费
+			    properties.put("service_charge", TrackUtils.convertDouble(tApptOrder.getServiceCharge()));
+			    // 预约项目类型
+			    properties.put("deplete_goods_type", depleteGoodsType);
+			    
+			    sa.track(distinctId, true, "deplete_achievement", properties);
+			}
 			
+			// 程序结束前，停止 Sensors Analytics SDK 所有服务
+			sa.shutdown();
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("埋点-消耗业绩统计[deplete_achievement],出现异常，信息为："+e.getMessage()); 
