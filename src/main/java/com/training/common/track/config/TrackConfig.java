@@ -32,6 +32,12 @@ public class TrackConfig {
 		/*每天美耶*/
 		// 注册-同步每天美耶账号
 		trackConfigList.put("sign_up", "com.training.common.track.modules.TrackLoginPub");
+		// 消耗业绩统计
+		trackConfigList.put("deplete_achievement", "com.training.common.track.modules.TrackApptPub");
+		// 充值信息
+		trackConfigList.put("order_recharge", "com.training.common.track.modules.TrackOrderPub");
+		// 支付订单
+		trackConfigList.put("pay_order", "com.training.common.track.modules.TrackOrderPub");
 		
 		/*妃子校*/
 		// 用户审核 -通过
@@ -107,13 +113,12 @@ public class TrackConfig {
 	    }
 		
 		Map<String, Object> properties = new HashMap<String, Object>();
-		// 平台类型 (iOS/Android/H5/WAP)
-		// wap端后台埋点，因此直接写死“WAP”
+		// 平台类型 (iOS/Android/WAP/INTERFACE)
 		properties.put("platformType", "INTERFACE");
-		// 是否是登录状态
-		String distinctId = String.valueOf(paramMap.get("DISTINCT_ID"));
+		// 是否是登录状态,默认登录
 		properties.put("is_login", true);
-		properties.put("com_mtmy_user_id", distinctId);
+		// 每天美耶用户ID
+		properties.put("com_mtmy_user_id", String.valueOf(paramMap.get("DISTINCT_ID")));
 		// 设置公共属性
 		sa.registerSuperProperties(properties);
 		
@@ -139,9 +144,8 @@ public class TrackConfig {
 	    }
 		
 		Map<String, Object> properties = new HashMap<String, Object>();
-		// 平台类型 (iOS/Android/H5/WAP)
-		// wap端后台埋点，因此直接写死“WAP”
-		properties.put("platformType", "INTERFACE");
+		// 平台类型
+		properties.put("platformType", "mg后台");
 		// 是否是登录状态
 		String distinctId = String.valueOf(paramMap.get("DISTINCT_ID")); 
 		properties.put("is_login", true);

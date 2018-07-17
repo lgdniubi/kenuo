@@ -41,8 +41,6 @@ import com.training.modules.ec.entity.GoodsSpecPrice;
 import com.training.modules.ec.entity.IntegralLog;
 import com.training.modules.ec.entity.IntegralsLog;
 import com.training.modules.ec.entity.MtmyRuleParam;
-import com.training.modules.ec.entity.OfficeAccount;
-import com.training.modules.ec.entity.OfficeAccountLog;
 import com.training.modules.ec.entity.OrderGoods;
 import com.training.modules.ec.entity.OrderGoodsCoupon;
 import com.training.modules.ec.entity.OrderGoodsDetails;
@@ -66,6 +64,7 @@ import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.track.core.TrackCore;
 import com.training.modules.train.utils.ScopeUtils;
 
 /**
@@ -976,6 +975,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderInvoiceRelevancy.setInvoiceId(orders.getInvoiceId());
 			ordersDao.saveOrderInvoiceRelevancy(orderInvoiceRelevancy);
 		}
+		
+		/*##########[神策埋点-支付订单{pay_order}-Begin]##########*/
+		TrackCore.payOrder(orderid);
+		/*##########[神策埋点end]##########*/
 	}
 	
 	/**
@@ -1333,6 +1336,9 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}
 		
+		/*##########[神策埋点-订单充值{order_recharge}-Begin]##########*/
+		TrackCore.orderRecharge(details);
+		/*##########[神策埋点end]##########*/
 	}
 	/**
 	 * 订单ID（26位）=临时订单标识（1）+退货标识（1）+yyyyMMDDHHMMSSsss(17)+用户ID（7）
@@ -1657,6 +1663,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderInvoiceRelevancy.setInvoiceId(orders.getInvoiceId());
 			ordersDao.saveOrderInvoiceRelevancy(orderInvoiceRelevancy);
 		}
+		
+		/*##########[神策埋点-支付订单{pay_order}-Begin]##########*/
+		TrackCore.payOrder(orderid);
+		/*##########[神策埋点end]##########*/
 	}
 
 	/**
@@ -2497,6 +2507,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderInvoiceRelevancy.setInvoiceId(orders.getInvoiceId());
 			ordersDao.saveOrderInvoiceRelevancy(orderInvoiceRelevancy);
 		}
+		
+		/*##########[神策埋点-支付订单{pay_order}-Begin]##########*/
+		TrackCore.payOrder(orderid);
+		/*##########[神策埋点end]##########*/
 	}
 	
 	/**
@@ -2854,6 +2868,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderInvoiceRelevancy.setInvoiceId(orders.getInvoiceId());
 			ordersDao.saveOrderInvoiceRelevancy(orderInvoiceRelevancy);
 		}
+		
+		/*##########[神策埋点-支付订单{pay_order}-Begin]##########*/
+		TrackCore.payOrder(orderid);
+		/*##########[神策埋点end]##########*/
 	}
 	
 	/**
@@ -3078,6 +3096,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			int type = 0;//类型是订单
 			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}
+		
+		/*##########[神策埋点-订单充值{order_recharge}-Begin]##########*/
+		TrackCore.orderRecharge(details);
+		/*##########[神策埋点end]##########*/
 		
 	}
 	
@@ -3685,6 +3707,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderInvoiceRelevancy.setInvoiceId(orders.getInvoiceId());
 			ordersDao.saveOrderInvoiceRelevancy(orderInvoiceRelevancy);
 		}
+		
+		/*##########[神策埋点-支付订单{pay_order}-Begin]##########*/
+		TrackCore.payOrder(orderid);
+		/*##########[神策埋点end]##########*/
 	}
 	
 	/**
@@ -3917,6 +3943,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderInvoiceRelevancy.setInvoiceId(orders.getInvoiceId());
 			ordersDao.saveOrderInvoiceRelevancy(orderInvoiceRelevancy);
 		}
+		
+		/*##########[神策埋点-支付订单{pay_order}-Begin]##########*/
+		TrackCore.payOrder(orderid);
+		/*##########[神策埋点end]##########*/
 	}
 	
 	/**
@@ -4265,6 +4295,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderInvoiceRelevancy.setInvoiceId(orders.getInvoiceId());
 			ordersDao.saveOrderInvoiceRelevancy(orderInvoiceRelevancy);
 		}
+		
+		/*##########[神策埋点-支付订单{pay_order}-Begin]##########*/
+		TrackCore.payOrder(orderid);
+		/*##########[神策埋点end]##########*/
 	}
 	
 	/**
@@ -4582,6 +4616,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			orderInvoiceRelevancy.setInvoiceId(orders.getInvoiceId());
 			ordersDao.saveOrderInvoiceRelevancy(orderInvoiceRelevancy);
 		}
+		
+		/*##########[神策埋点-支付订单{pay_order}-Begin]##########*/
+		TrackCore.payOrder(orderid);
+		/*##########[神策埋点end]##########*/
 	}
 	
 	/**
