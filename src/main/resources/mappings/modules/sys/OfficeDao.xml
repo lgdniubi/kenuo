@@ -921,7 +921,7 @@
 			office_id AS 'officeId',
 			type,
 			content,
-			(select name from sys_user u where u.id = update_bybm) AS 'updateBy.name',
+			(select name from sys_user u where u.id = update_by) AS 'updateBy.name',
 			update_date AS 'updateDate',
 			realtime,
 			IFNULL(realtime,update_date) AS 'finalTime'
