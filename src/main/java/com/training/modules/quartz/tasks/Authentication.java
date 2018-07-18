@@ -104,19 +104,19 @@ public class Authentication extends CommonService{
 			}
 		
 			try{
-//				String day = ParametersFactory.getTrainsParamValues("queryContractInfo");
-				int day = 2;
+				String prompt_day = ParametersFactory.getTrainsParamValues("prompt_day");
+				int day = prompt_day == null ? 7 : Integer.parseInt(prompt_day);
 				List<AuthenticationBean> l = authenticationService.querypastdueauthentication(2,day);
 				for(AuthenticationBean s : l){
 					if(null == redisClientTemplate.get("franchisee"+s.getId())){
-						if(!"qybz".equals(s.getMod_ename())){
+						if(!"qybz".equals(s.getMod_ename()) && ("qygj".equals(s.getMod_ename()) || "qyqj".equals(s.getMod_ename()))){
 							for(UserBean userbean : s.getUser_ids()){
 								pushUtils.pushMsg(userbean.getUser_id(),"尊敬"+userbean.getName()+"，您的妃子校"+s.getMod_name()+"还有"+day+"天到期，续费有优惠。",16,"授权到期");
 								redisClientTemplate.set("franchisee"+s.getId(), "0");
 								redisClientTemplate.expireAt("franchisee"+s.getId(), getNowDateEndTime());
 							}
 						}
-						if(!"syrmf".equals(s.getMod_ename())){
+						if(!"syrmf".equals(s.getMod_ename()) && "syrsf".equals(s.getMod_ename())){
 							pushUtils.pushMsg(s.getUser_id(), "尊敬的"+s.getName()+"，您的妃子校"+s.getMod_name()+"还有"+day+"天到期，续费有优惠。",16,"授权到期");
 							redisClientTemplate.set("franchisee"+s.getId(), "0");
 							redisClientTemplate.expireAt("franchisee"+s.getId(), getNowDateEndTime());

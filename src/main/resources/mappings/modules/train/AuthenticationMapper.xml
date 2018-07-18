@@ -9,7 +9,7 @@
 		<result property="name" column="name" />
 		<result property="mod_name" column="mod_name" />
 		<result property="mod_ename" column="mod_ename" />
-		<collection property="user_ids" column="franchisee_id" select="" javaType="ArrayList"></collection>
+		<collection property="user_ids" column="franchisee_id" select="queryuserids" javaType="ArrayList"></collection>
 	</resultMap>
 	
 	<select id="querypastdueauthentication" parameterType="java.lang.Integer" resultMap="AuthenticationBean">
@@ -32,9 +32,14 @@
 		AND `status` = 0
 	</select>
 	
-	<select id="queryuserids" parameterType="java.lang.Integer" resultType="com.training.modules.train.entity.UserBean">
+	<resultMap type="com.training.modules.train.entity.UserBean" id="UserBean">
+		<result column="name" property="name"/>
+		<result column="user_id" property="user_id"/>
+	</resultMap>
+	
+	<select id="queryuserids" parameterType="java.lang.Integer" resultMap="UserBean">
 		SELECT 
-			pu.user_id,
+			pu.user_id AS user_id,
 			(SELECT	name FROM trains.sys_user WHERE id = pu.user_id) AS name 
 		FROM pc_role pr
 		INNER JOIN pc_user_role pu ON pr.id = pu.pc_role_id
