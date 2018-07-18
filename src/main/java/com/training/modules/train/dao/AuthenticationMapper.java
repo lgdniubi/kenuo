@@ -28,8 +28,10 @@ public interface AuthenticationMapper {
 	* @author fengfeng  
 	* @date 2018年5月25日  
 	* @version 3.0.0  
+	 * @param flag 
+	 * @param num 
 	*/  
-	List<AuthenticationBean> querypastdueauthentication();
+	List<AuthenticationBean> querypastdueauthentication(@Param("flag") int flag,@Param("num") int num);
 
 	/**  
 	* <p>Title: 将认证授权状态改成已过去</p>  
