@@ -66,14 +66,33 @@
             <sys:message content="${message}"/>
             <div class="ibox-content">
                 <div class=" clearfix">
-                	<form id="searchForm" action="${ctx}/trains/banner/list" method="post" class="navbar-form navbar-left searcharea">
+                	<form id="searchForm" modelAttribute="trainsBanner" action="${ctx}/trains/banner/list" method="post" class="navbar-form navbar-left searcharea">
 						<!-- 翻页隐藏文本框 -->
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+						<label>banner图名称：</label><input name="adName" value="${trainsBanner.adName }" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
+						<label>类型：</label>
+<%-- 						<input name="adType" value="${trainsBanner.adType }" htmlEscape="false" maxlength="50" class=" form-control input-sm" /> --%>
+						<select class="form-control valid" id="adType" name="adType" aria-invalid="false">
+							<option value="100" >请选择</option>
+							<option value="0" <c:if test="${trainsBanner.adType ==0 }">selected="selected"</c:if> >首页</option>
+							<option value="1" <c:if test="${trainsBanner.adType ==1}">selected="selected"</c:if> >动态</option>
+							<option value="2" <c:if test="${trainsBanner.adType ==2}">selected="selected"</c:if> >工作台</option>
+						</select>
+						<label>状态：</label>
+						<select class="form-control valid" name="delFlag" aria-invalid="false">
+							<option value="0" <c:if test="${trainsBanner.delFlag ==0 }">selected="selected"</c:if> >显示</option>
+							<option value="1" <c:if test="${trainsBanner.delFlag ==1}">selected="selected"</c:if> >隐藏</option>
+						</select>
 					</form>
                     <!-- 工具栏 -->
+                   
 					<div class="row" style="padding-bottom: 5px;">
 						<div class="col-sm-12">
+							<div class="pull-right">
+								<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
+<!-- 								<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()" ><i class="fa fa-refresh"></i> 重置</button> -->
+							</div>
 	                        <div class="pull-left">
 	                        	<shiro:hasPermission name="trains:banner:add">
 	                        		<table:addRow url="${ctx}/trains/banner/form" title="banner图" width="600px" height="550px"></table:addRow>

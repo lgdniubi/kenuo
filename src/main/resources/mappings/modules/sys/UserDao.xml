@@ -1121,4 +1121,48 @@
 			#{value}
 		</foreach>
 	</select>
+	
+	<select id="findSuperManageUid" resultType="String">
+	select ur.user_id from fzx_role r
+	left join fzx_user_role ur on ur.fzx_role_id = r.id
+	where r.enname = 'sjgly' and ur.user_id is not null and r.mod_id = #{mode_id} 
+	</select>
+	<!-- 版本删除菜单的时候清除token -->
+	<select id="findUidByMenu" resultType="String">
+		SELECT DISTINCT
+			ur.user_id
+		FROM
+			fzx_role_menu rm
+		INNER JOIN fzx_user_role ur ON ur.fzx_role_id = rm.fzx_role_id
+		LEFT JOIN fzx_role r ON r.id = rm.fzx_role_id
+		WHERE
+			rm.fzx_menu_id IN 
+		<foreach collection="list" item="value" separator="," open="(" close=")">
+			#{value}
+		</foreach>
+		AND r.mod_id = #{modId}
+	</select>
+	<!-- 根据商家id找出所有用户id -->
+	<select id="findUidByCompanyId" resultType="String">
+		SELECT
+			a.id
+		FROM sys_user a
+		WHERE a.del_flag = '0'
+		AND a.company_id = #{companyId}
+	</select>
+	
+	<select id="findUvo" resultType="com.training.modules.sys.entity.Uvo">
+		select 
+			u.id as userId,
+			u.company_id as franchiseeId,
+			u.name as userName,
+			u.mobile as mobile,
+			u.login_name as loginName,
+			u.mtmy_user_id as mtmyId,
+			o.id as officeId,
+			o.name as officeName
+		from sys_user u 
+		left join sys_office o on o.id = u.office_id
+		where u.id = #{user_id}
+	</select>
 </mapper>

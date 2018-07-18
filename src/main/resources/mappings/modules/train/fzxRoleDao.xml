@@ -192,7 +192,7 @@
 	</update>
 	
 	<delete id="deleteRoleMenuForRoleId">
-		DELETE FROM fzx_role_menu WHERE fzx_menu_id = #{oldMenuid}
+		DELETE FROM fzx_role_menu WHERE fzx_menu_id = #{oldMenuid} AND fzx_role_id in (SELECT r.id FROM fzx_role r WHERE r.mod_id = #{modId});
 	</delete>	
 	<select id="findFzxRoleByModId" resultType="int">
 		SELECT r.id AS roleId FROM fzx_role r WHERE mod_id = #{modeid} AND del_flag = 0 AND r.enname = 'sjgly' AND company_id != 1

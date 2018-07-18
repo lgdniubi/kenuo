@@ -120,6 +120,7 @@
 		<input name="userid" value="${userid}" type="hidden">
 		<input name="id" value="${modelFranchisee.id}" type="hidden">
 		<input name="applyid" value="${applyid}" type="hidden">
+		<input name="pageNo" type="hidden" value="${pageNo}" />
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 			<tbody>
 			    <tr>
@@ -132,7 +133,7 @@
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">采购折扣:</label></td>
-			         <td colspan="2"><input id="discount" class=" form-control input-sm required" name="discount" value="${modelFranchisee.discount}" aria-required="true" placeholder="请输入0-1的2位小数" onkeyup="value=value.replace(/\.\d{2,}$/,value.substr(value.indexOf('.'),3))"></td>
+			         <td colspan="2"><input id="discount" class=" form-control input-sm required" name="discount" <c:if test="${modelFranchisee.modid == 3}">readonly="readonly"</c:if> value="${modelFranchisee.discount}" aria-required="true" placeholder="请输入0-1的2位小数" onkeyup="value=value.replace(/\.\d{2,}$/,value.substr(value.indexOf('.'),3))"></td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">授权期限:</label></td>

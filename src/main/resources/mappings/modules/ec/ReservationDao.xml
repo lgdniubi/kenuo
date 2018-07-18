@@ -42,10 +42,10 @@
 			</if>
 			
 			<if test="beginDate != null and beginDate != ''">
-				AND r.appt_date >= #{beginDate}
+				AND r.appt_date >= DATE_FORMAT(#{beginDate},'%Y-%m-%d')
 			</if>
 			<if test="endDate != null and endDate != ''">
-				<![CDATA[ AND r.appt_date <= #{endDate} ]]>
+				<![CDATA[ AND r.appt_date <= DATE_FORMAT(#{endDate},'%Y-%m-%d') ]]>
 			</if>
 			<if test="keyword != null and keyword != ''">
 				AND ( r.user_name LIKE 
@@ -416,7 +416,7 @@
 			mtmydb.mtmy_appt_order
 		WHERE
 			beautician_id = #{beauticianId}
-		AND DATE_FORMAT(appt_date,'%Y-%m-%d') = DATE_FORMAT(#{apptDate},'%Y-%m-%d')
+		AND appt_date = DATE_FORMAT(#{apptDate},'%Y-%m-%d')
 		AND appt_status IN (0,1,2)
 		AND 
 		(

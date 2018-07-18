@@ -63,12 +63,12 @@ public class CourseCommentsController extends BaseController{
 	 */
 	@RequiresPermissions(value={"train:comments:deletecomments"},logical=Logical.OR)
 	@RequestMapping(value = {"deletecomments", ""})
-	public String deletecomments(TrainLessonComments trainLessonComments, RedirectAttributes redirectAttributes){
+	public String deletecomments(TrainLessonComments trainLessonComments,HttpServletRequest request, RedirectAttributes redirectAttributes){
 		if (StringUtils.isNotBlank(trainLessonComments.getCommentId())){
 			trainLessonCommentsService.deleteCommentsForUpdate(trainLessonComments);
 			addMessage(redirectAttributes, "删除课程评论成功");
 		}
-		return "redirect:" + adminPath + "/train/comments/listcomments";
+		return "redirect:" + adminPath + "/train/comments/listcomments?lessonId="+request.getParameter("lessonId");
 	}
 	
 	/**
@@ -80,7 +80,7 @@ public class CourseCommentsController extends BaseController{
 	 */
 	@RequiresPermissions(value={"train:comments:batchdeletecomments"},logical=Logical.OR)
 	@RequestMapping(value = {"batchdeletecomments", ""})
-	public String batchdeletecomments(String[] ids, RedirectAttributes redirectAttributes) {
+	public String batchdeletecomments(String[] ids,HttpServletRequest request, RedirectAttributes redirectAttributes) {
 		if(null != ids && ids.length > 0){
 			for (int i = 0; i < ids.length; i++) {
 				TrainLessonComments trainLessonComments = new TrainLessonComments(ids[i]);
@@ -88,6 +88,6 @@ public class CourseCommentsController extends BaseController{
 	    	}
 	    	addMessage(redirectAttributes, "批量删除课程评论成功");
 		}
-		return "redirect:" + adminPath + "/train/comments/listcomments";
+		return "redirect:" + adminPath + "/train/comments/listcomments?lessonId="+request.getParameter("lessonId");
 	}
 }

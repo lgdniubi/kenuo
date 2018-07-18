@@ -16,6 +16,7 @@ import com.training.modules.sys.entity.UserLog;
 import com.training.modules.sys.entity.UserOfficeCode;
 import com.training.modules.sys.entity.UserPuTo;
 import com.training.modules.sys.entity.UserVo;
+import com.training.modules.sys.entity.Uvo;
 
 /**
  * 用户DAO接口
@@ -399,5 +400,21 @@ public interface UserDao extends CrudDao<User> {
 	 */
 	public List<String> findupdateUser(List<Integer> roleids);
 	
+	
+	public List<String> findSuperManageUid(@Param(value="mode_id")int mode_id);
+	/**
+	 * 根据版本id和菜单id找用户id
+	 * @param modId
+	 * @param ls1
+	 * @return
+	 */
+	public List<String> findUidByMenu(@Param(value="modId")Integer modId, @Param(value="list")List<Integer> list);
+	/**
+	 * 根据商家id查出所有用户id
+	 * @param id
+	 * @return
+	 */
+	public List<String> findUidByCompanyId(String companyId);
 
+	public Uvo findUvo(@Param("user_id")String user_id);
 }

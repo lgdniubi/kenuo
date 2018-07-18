@@ -17,11 +17,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.training.common.Thread.ClearTokenThread;
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.common.utils.DateUtils;
 import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.sys.dao.UserDao;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.User;
@@ -74,11 +76,11 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	@Autowired
 	private AuthenticationService authenticationService;
 	@Autowired
-	private RedisClientTemplate redisClientTemplate;
-	@Autowired
 	private TrainModelService trainModelService;
 	@Autowired
 	private ProtocolModelDao protocolModelDao;
+	@Autowired
+	private UserDao userDao;
 	
 	/**
 	 * 保存用户审核的结果
@@ -276,9 +278,20 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		modelFranchisee.setUserid(find.getUserid());
 		updateApplyStatus(modelFranchisee);
 		UserUtils.removeCache("officeList");//清除用户机构缓存，认证通过之后能在机构管理看见
+		clearUserToken(find.getCompanyId());//根据商家id查出所有用户id
 //		int a = 1/0;
 	}
 	
+	private void clearUserToken(String companyId) {
+		List<String> uids = this.userDao.findUidByCompanyId(companyId);
+		//删除菜单查找使用这菜单的所有用户清除token
+		if(uids != null && uids.size() > 0){
+			ClearTokenThread thread = new ClearTokenThread(uids);
+			new Thread(thread).start();
+		}
+		
+	}
+
 	//权益修改后如果支付方式改变就清除支付方式，重新签约--改变签约状态
 	private void clearPayInfoAndChangeStatus(ModelFranchisee findFranchisee, ModelFranchisee modelFranchisee) {
 		String parpm1 = "{\"franchisee_id\":"+Integer.valueOf(findFranchisee.getFranchiseeid())+"}";
@@ -291,10 +304,11 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	}
 	private void postCSData(String parpm, String key) {
 		String url = ParametersFactory.getTrainsParamValues(key);
-		logger.info("##### web接口路径:"+url);
+		logger.info("##### web接口路径trains:"+url);
 //		String parpm = "{\"id\":"+Integer.valueOf(find.getId())+",\"name\":\""+find.getCompanyName()+"\",\"type\":\""+find.getAddr().getType()+"\","
 //				+ "\"address\":\""+find.getAddress()+"\",\"legal_name\":\""+find.getLegalPerson()+"\",\"mobile\":\""+find.getMobile()
 //						+"\",\"charter_url\":\""+find.getCharterUrl()+"\"}";
+		logger.info("##### 打印参数param:"+parpm);
 		String result = WebUtils.postCSObject(parpm, url);
 		JSONObject jsonObject = JSONObject.fromObject(result);
 		logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
@@ -525,17 +539,18 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	private void saveSupplyFranchisee(UserCheck find) {
 		try {
 			String weburl = ParametersFactory.getMtmyParamValues("fzx_equally_franchisee");
-			logger.info("##### web接口路径:"+weburl);
-			String parpm = "{\"id\":"+Integer.valueOf(find.getId())+",\"name\":\""+find.getCompanyName()+"\",\"type\":\""+find.getAddr().getType()+"\","
+			logger.info("##### web接口路径同步供应链:"+weburl);
+			String parpm = "{\"id\":"+Integer.valueOf(find.getId())+",\"name\":\""+find.getCompanyName()+"\",\"type\":\"2\","
 					+ "\"address\":\""+find.getAddress()+"\",\"legal_name\":\""+find.getLegalPerson()+"\",\"mobile\":\""+find.getMobile()
 							+"\",\"charter_url\":\""+find.getCharterUrl()+"\"}";
 			String url=weburl;
+			logger.info("##### 打印参数param:"+parpm);
 			String result = WebUtils.postCSObject(parpm, url);
 			JSONObject jsonObject = JSONObject.fromObject(result);
 			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
 			/*if("200".equals(jsonObject.get("result"))){
 			}*/
-		} catch (NumberFormatException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

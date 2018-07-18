@@ -9,10 +9,12 @@ import org.apache.ibatis.annotations.Param;
 
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
+import com.training.modules.sys.entity.Fvo;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeAcount;
 import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.OfficeLog;
+import com.training.modules.sys.entity.UserRoleOffice;
 import com.training.modules.train.entity.ModelFranchisee;
 
 /**
@@ -270,5 +272,21 @@ public interface OfficeDao extends TreeDao<Office> {
 	 * @return
 	 */
 	public ModelFranchisee findPayType(String id);
+	/**
+	 * 删除机构时删除数据
+	 * @param officeId
+	 */
+	public void deleteUserOfficeById(String officeId);
+	
+	public List<UserRoleOffice> findUserRoleOffice(@Param("officeId")String officeId, @Param("flag")Integer flag);
+	/**
+	 * 删除一条数据权限
+	 * @param officeId
+	 */
+	public void deleteUserRoleOfficeById(String officeId);
+	
+	public void deleteUserRole(List<UserRoleOffice> list);
+	
+	public Fvo queryFvo(@Param("office_id")String office_id);
 
 }

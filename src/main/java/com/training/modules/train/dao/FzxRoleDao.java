@@ -124,5 +124,5 @@ public interface FzxRoleDao extends CrudDao<FzxRole>{
 	//找出改版本的超管角色id
 	public List<Integer> findFzxRoleByModId(String modId);
 
-	public void deleteRoleMenuForRoleId(Integer oldMenuid);
+	public void deleteRoleMenuForRoleId(@Param("oldMenuid")Integer oldMenuid, @Param("modId")Integer modId);
 }

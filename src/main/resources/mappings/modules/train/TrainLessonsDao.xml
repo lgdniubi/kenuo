@@ -20,13 +20,14 @@
 			t.is_show AS isShow,
 			t.is_open AS isOpen,
 			t.office_id AS "franchisee.id",
-			t.show_type AS 'showType'
+			t.show_type AS 'showType',
+			(SELECT `name` FROM sys_franchisee WHERE id = (SELECT franchisee_id FROM sys_office WHERE id = t.office_id)) AS "franchisee.name"
 		FROM
 			train_categorys c,
-			train_lessons t
 			<if test="franchisee != null and franchisee.id != null and franchisee.id != ''">
-				,(SELECT id FROM sys_office WHERE franchisee_id = #{franchisee.id} AND del_flag = 0) AS e
+				(SELECT id FROM sys_office WHERE franchisee_id = #{franchisee.id} AND del_flag = 0) AS e,
 			</if>
+			train_lessons t
 		<!-- 数据范围过滤 -->
 		${sqlMap.dsf}	
 			AND t.category_id = c.category_id

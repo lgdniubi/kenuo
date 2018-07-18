@@ -33,6 +33,9 @@
 		<if test="parentId != null and parentId != ''">
 			AND t.parent_id = #{parentId}
 		</if>
+		<if test="franchisee != null and franchisee.id != null and franchisee.id != ''">
+			AND so.franchisee_id = #{franchisee.id}
+		</if>
 			AND t.status != -1
 		ORDER BY t.sort DESC,T.CREATETIME DESC 
 	</select>

@@ -45,6 +45,7 @@ import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.ThreadUtils;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.track.core.TrackCore;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -382,7 +383,16 @@ public class MtmyMnappointmentController extends BaseController{
 				JSONObject jsonObject = JSONObject.fromObject(result);
 				logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
 				if("200".equals(jsonObject.get("code"))){
-					addMessage(redirectAttributes, "修改预约成功");										
+					addMessage(redirectAttributes, "修改预约成功");		
+					
+					/*##########[神策埋点-消耗业绩统计{deplete_achievement}-Begin]##########*/
+					// 预约状态（0：等待服务；1：已完成；2：已评价；3：已取消；4：客户爽约）
+					String status = reservation.getApptStatus();
+					if("1".equals(status) || "2".equals(status)) {
+						TrackCore.depleteAchievement(reservation.getReservationId());
+					}
+					/*##########[神策埋点end]##########*/
+					
 				}else{
 					addMessage(redirectAttributes, "修改预约失败:"+jsonObject.get("msg"));
 				}

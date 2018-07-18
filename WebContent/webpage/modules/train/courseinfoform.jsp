@@ -19,28 +19,6 @@
 	<script type="text/javascript" src="${ctxStatic}/jquery-validation/1.14.0/localization/messages_zh.min.js"></script>
 	<script type="text/javascript">
 		
-		//一级分类改变事件，联动二级分类
-		function categorychange(v){
-			$(".loading").show();//打开展示层
-			$.ajax({
-				type : "POST",   
-				url : "${ctx}/train/categorys/listtow?categoryId="+v,
-				dataType: 'json',
-				success: function(data) {
-					$(".loading").hide(); //关闭加载层
-					$("#categoryId").html("");
-					var categoryIdval = $("#categoryIdval").val();
-					$.each(data.listtow, function(index,item){
-						if(item.categoryId == categoryIdval){
-							$("#categoryId").prepend("<option value='"+item.categoryId+"' selected>"+item.name+"</option>");
-						}else{
-							$("#categoryId").prepend("<option value='"+item.categoryId+"'>"+item.name+"</option>");
-						}
-					});
-				}
-			});   
-		}
-	
 		//课程类型选择事件
 		function lessontypechange(v){
 			$("#lessontype").val(v);
@@ -56,22 +34,7 @@
 		}
 		
 		$(document).ready(function() {
-			
-			//课程分类
-			var parentIdval = $("#parentIdval").val();
-			if(null != parentIdval && '' != parentIdval){
-				categorychange(parentIdval);
-			}
-			
-			//课程类型回填
-			var lessontype = $("#lessontype").val();
-			$("#s1 option").each(function(){
-				$this = $(this).val();
-				if($this == lessontype){
-					$(this).attr("selected",true);
-				}
-			});
-			
+			categorychange(2);
 			//表单验证
 			validateForm = $("#inputForm").validate({
 				submitHandler: function(form){
@@ -116,7 +79,101 @@
 					}
 				}
 			});
+			
+			// 加载商家
+//			$("#companyButton, #companyName").click(function(){	    增加  , #companyName  文本框有点击事件
+			$("#companyButton").click(function(){
+				// 是否限制选择，如果限制，设置为disabled
+				if ($("#companyButton").hasClass("disabled")){
+					return true;
+				}
+				var labelValue = $("#companyName").val();
+				// 正常打开	
+				top.layer.open({
+				    type: 2, 
+				    area: ['300px', '420px'],
+				    title:"选择公司",
+				    ajaxData:{selectIds: $("#companyId").val()},
+				    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/franchisee/treeData")+"&module=&checked=&extId=&isAll=&selectIds=&labelValue="+labelValue ,
+				    btn: ['确定', '关闭']
+		    	       ,yes: function(index, layero){ //或者使用btn1
+								var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
+								var ids = [], names = [], nodes = [];
+								if ("" == "true"){
+									nodes = tree.getCheckedNodes(true);
+								}else{
+									nodes = tree.getSelectedNodes();
+								}
+								for(var i=0; i<nodes.length; i++) {//
+									if (nodes[i].level == 0){
+										//top.$.jBox.tip("不能选择根节点（"+nodes[i].name+"）请重新选择。");
+										top.layer.msg("不能选择根节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+										return false;
+									}//
+									if (nodes[i].isParent){
+										//top.$.jBox.tip("不能选择父节点（"+nodes[i].name+"）请重新选择。");
+										//layer.msg('有表情地提示');
+										top.layer.msg("不能选择父节点（"+nodes[i].name+"）请重新选择。", {icon: 0});
+										return false;
+									}//
+									ids.push(nodes[i].id);
+									names.push(nodes[i].name);//
+									break; // 如果为非复选框选择，则返回第一个选择  
+								}
+								$("#companyId").val(ids.join(",").replace(/u_/ig,""));
+								$("#companyName").val(names.join(","));
+								$("#companyName").focus();
+								top.layer.close(index);
+								categorychange(1);
+						    	       },
+		    	cancel: function(index){ //或者使用btn2
+		    	           //按钮【按钮二】的回调
+		    	       }
+				}); 
+			
+			});
 		});
+			
+		// 新选择分类
+		function categorychange(level){
+			$(".loading").show(); //关闭加载层
+			var ajaxUrl;
+			var ajaxChengeId;
+			if(level == 1){
+				ajaxUrl = "${ctx}/train/categorys/ajaxlistone?franchisee.id="+$('#companyId').val();
+				ajaxChengeId = "parentId";
+			}else{
+				ajaxUrl = "${ctx}/train/categorys/listtow?categoryId="+ $('#parentId').val() +"&franchisee.id="+$('#companyId').val();
+				ajaxChengeId = "categoryId";
+			}
+			$("#"+ajaxChengeId).empty();
+			$.ajax({
+				type : "POST",   
+				url : ajaxUrl,
+				dataType: 'json',
+				success: function(data) {
+					$(".loading").hide(); //关闭加载层
+					if(level == 1){
+						$.each(data.listone, function(index,item){
+							$("#"+ajaxChengeId).prepend("<option value='"+item.categoryId+"'>"+item.name+"</option>");
+						});
+						categorychange(2);
+					}else{
+						var categoryIdval = $("#categoryIdval").val();
+						$.each(data.listtow, function(index,item){
+							if(item.categoryId == categoryIdval){
+								$("#"+ajaxChengeId).prepend("<option value='"+item.categoryId+"' selected>"+item.name+"</option>");
+							}else{
+								$("#"+ajaxChengeId).prepend("<option value='"+item.categoryId+"'>"+item.name+"</option>");
+							}
+						});
+					}
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					$(".loading").hide(); //关闭加载层
+				}
+			});   
+		}
 	</script>
 </head>
 <body>
@@ -124,12 +181,20 @@
 		<form:hidden path="lessonId"/>
 		<sys:message content="${message}" />
 		<div class="modal-body">
+			<div class="input-item">
+				<span>选择商家：</span> 
+				<input id="companyId" name="company.id" class=" form-control input-sm" type="hidden" value="">
+				<input id="companyName" name="company.name" readonly="readonly" placeholder="" type="text" value="" data-msg-required="" class=" form-control input-sm" style="">
+	       		 <button type="button" id="companyButton" class="btn  btn-sm   btn-primary  "><i class="fa fa-search"></i>
+	             </button> 
+				 <label id="companyName-error" class="error" for="companyName" style="display:none"></label>
+			</div>
 			<div class="form-inline">
 				<div class="form-group">
 					<span style="color: red;">*</span>
 					<span>课程分类：</span> 
 					<input type="hidden" id="parentIdval" name="parentIdval" value="${trainLessons.parentId}"/>
-					<select class="form-control required" id="parentId" name="parentId" onchange="categorychange(this.options[this.options.selectedIndex].value)">
+					<select class="form-control required" id="parentId" name="parentId" onchange="categorychange(2)">
 						<c:forEach items="${listone}" var="trainCategorys">
 							<option ${trainCategorys.categoryId == trainLessons.parentId?'selected="selected"':''} value="${trainCategorys.categoryId}">${trainCategorys.name}</option>
 						</c:forEach>

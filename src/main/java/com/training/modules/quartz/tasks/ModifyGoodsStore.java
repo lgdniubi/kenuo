@@ -59,10 +59,17 @@ public class ModifyGoodsStore extends CommonService{
 			for(String s : l){
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("goods_id", Integer.parseInt(s));
+				if(null == redisClientTemplate.get(RedisConfig.GOODS_STORECOUNT_PREFIX+s) || "null".equals(redisClientTemplate.get(RedisConfig.GOODS_STORECOUNT_PREFIX+s)) || "".equals(redisClientTemplate.get(RedisConfig.GOODS_STORECOUNT_PREFIX+s))){
+					System.out.println("########商品总库存异常-->> 商品ID："+Integer.parseInt(s)+",对应Redis key值："+RedisConfig.GOODS_STORECOUNT_PREFIX+Integer.parseInt(s));
+				}
 				int count = Integer.parseInt(redisClientTemplate.get(RedisConfig.GOODS_STORECOUNT_PREFIX+s));
 				map.put("store_count", count);
 				//logger.info("[更新库存量]，商品id："+s+"，数量："+count);
-				goodsService.modifyStoreCount(map);
+				if(count >= 0){
+					goodsService.modifyStoreCount(map);
+				}else {
+					System.out.println("########商品总库存为负值-->> 商品ID："+Integer.parseInt(s)+",对应Redis key值："+RedisConfig.GOODS_STORECOUNT_PREFIX+Integer.parseInt(s));
+				}
 			}
 			
 			Set<String> lo = redisClientTemplate.smembers(RedisConfig.GOODS_SPECPRICE_HASH);
@@ -72,11 +79,17 @@ public class ModifyGoodsStore extends CommonService{
 				String [] t = str.split("#");
 				map.put("goods_id", t[0]);
 				map.put("spec_key", t[1]);
+				if(null == redisClientTemplate.get(RedisConfig.GOODS_SPECPRICE_PREFIX+str) || "null".equals(redisClientTemplate.get(RedisConfig.GOODS_SPECPRICE_PREFIX+str)) || "".equals(redisClientTemplate.get(RedisConfig.GOODS_SPECPRICE_PREFIX+str))){
+					System.out.println("########商品规格库存异常-->> 商品ID："+t[0]+",规格key："+t[1]+",对应Redis key值："+RedisConfig.GOODS_SPECPRICE_PREFIX+str);
+				}
 				int count = Integer.parseInt(redisClientTemplate.get(RedisConfig.GOODS_SPECPRICE_PREFIX+str));
 				//logger.info("[更新商品规格库存量]，商品id："+t[0]+"，规格key："+t[1]+",count："+count);
 				map.put("store_count", count);
-				
-				goodsService.modifySpecStoreCount(map);
+				if(count >= 0){
+					goodsService.modifySpecStoreCount(map);
+				}else {
+					System.out.println("########商品规格库存为负值-->> 商品ID："+t[0]+",规格key："+t[1]+",对应Redis key值："+RedisConfig.GOODS_SPECPRICE_PREFIX+str);
+				}
 			}
 			
 			Set<String> ai = redisClientTemplate.hkeys(RedisConfig.coupon_amountids_hash);

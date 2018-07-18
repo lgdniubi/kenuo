@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.training.common.Thread.ClearTokenThread;
 import com.training.common.service.CrudService;
 import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.sys.dao.UserDao;
@@ -42,6 +43,7 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	private MediaRoleService mediaRoleService;
 	@Autowired
 	private UserDao userDao;
+
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
 	
@@ -103,9 +105,11 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 		if(!trainModel.getMenuIds().isEmpty()){
 	        String[] ids = trainModel.getMenuIds().split(",");
 	        for (int i = 0; i < ids.length; i++) {
-	        	newModel.setId(trainModel.getId());
-	        	newModel.setMenuId(Integer.valueOf(ids[i]));
-	            dao.insertModpcMenu(newModel);
+	        	if(StringUtils.isNotBlank(ids[i])){
+	        		newModel.setId(trainModel.getId());
+	        		newModel.setMenuId(Integer.valueOf(ids[i]));
+	        		dao.insertModpcMenu(newModel);
+	        	}
 	        }
 	        //插入pc_role超级管理员角色，并赋予该角色菜单
 	        insertPCRoleAndMenu(trainModel);
@@ -146,20 +150,32 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	 * @param trainModel
 	 */
 	public void saveModfzxMenu(TrainModel trainModel,String oldMenuIds) {
+		//把新增加的菜单给各个超管
+		changeSuperMenu(trainModel.getId(),oldMenuIds,trainModel.getMenuIds(),2);
 		TrainModel newModel = new TrainModel();
 		dao.deleteModfzxMenu(trainModel);
 		if(!trainModel.getMenuIds().isEmpty()){
 	        String[] ids = trainModel.getMenuIds().split(",");
 	        for (int i = 0; i < ids.length; i++) {
-	        	newModel.setId(trainModel.getId());
-	        	newModel.setMenuId(Integer.valueOf(ids[i]));
-	            dao.insertModfzxMenu(newModel);
+	        	if(StringUtils.isNotBlank(ids[i])){
+		        	newModel.setId(trainModel.getId());
+		        	newModel.setMenuId(Integer.valueOf(ids[i]));
+		            dao.insertModfzxMenu(newModel);
+	        	}
 	        }
 	        //插入fzx_role超级管理员角色，并赋予该角色菜单
 	        insertFzxRoleAndMenu(trainModel);
 		}
-		//把新增加的菜单给各个超管
-		changeSuperMenu(trainModel.getId(),oldMenuIds,trainModel.getMenuIds(),2);
+	}
+	
+	//清除使用该版本商家超管token
+	private void clearToken(int mode_id){
+		List<String> uids = this.userDao.findSuperManageUid(mode_id);
+		if(uids != null && uids.size() > 0){
+			for(String uid : uids){
+				this.redisClientTemplate.del("UTOKEN_"+uid);
+			}
+		}
 	}
 	//插入fzx_role超级管理员角色，并赋予该角色菜单
 	private void insertFzxRoleAndMenu(TrainModel trainModel) {
@@ -218,9 +234,11 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 		if(!trainModel.getMenuIds().isEmpty()){
 	        String[] ids = trainModel.getMenuIds().split(",");
 	        for (int i = 0; i < ids.length; i++) {
-	        	newModel.setId(trainModel.getId());
-	        	newModel.setMenuId(Integer.valueOf(ids[i]));
-	            dao.insertModMediaMenu(newModel);
+	        	if(StringUtils.isNotBlank(ids[i])){
+		        	newModel.setId(trainModel.getId());
+		        	newModel.setMenuId(Integer.valueOf(ids[i]));
+		            dao.insertModMediaMenu(newModel);
+	        	}
 	        }
 	        //插入meida_role超级管理员角色，并赋予该角色菜单
 	        insertMeidaRoleAndMenu(trainModel);
@@ -281,13 +299,13 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	private void changeSuperMenu(String modId,String oldMenuIds, String newMenuIds, int sc) {
 		String[] omenuid = oldMenuIds.split(",");
 		//找出旧的有新的没有的菜单id，需要删除
-		List<String> ls1 = findDifMenuId(newMenuIds, omenuid);
+		List<Integer> ls1 = findDifMenuId(newMenuIds, omenuid);
 		if(ls1.size()>0){
-			deleteOldMenuId(ls1,sc);
+			deleteOldMenuId(modId,ls1,sc);
 		}
 		String[] nmenuid = newMenuIds.split(",");
 		//找出旧的没有新的有的菜单id，需要增加
-		List<String> ls2 = findDifMenuId(oldMenuIds, nmenuid);
+		List<Integer> ls2 = findDifMenuId(oldMenuIds, nmenuid);
 		if(ls2.size()>0){
 			addNewMenuIdForSuper(modId,ls2,sc);
 		}
@@ -299,13 +317,13 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	 * @param ls1
 	 * @param sc
 	 */
-	private void addNewMenuIdForSuper(String modId, List<String> ls1, int sc) {
+	private void addNewMenuIdForSuper(String modId, List<Integer> ls1, int sc) {
 		switch (sc) {
 		case 1://PC端菜单增加
 			List<Integer> roleids = pcRoleService.findpcRoleByModId(modId);
 			if(roleids !=null && roleids.size()>0){
-				for (String oldid : ls1) {
-					pcRoleService.insertUserRoleForRoleId(Integer.valueOf(oldid),roleids);
+				for (Integer oldid : ls1) {
+					pcRoleService.insertUserRoleForRoleId(oldid,roleids);
 				}
 				List<String> list = userDao.findupdateUser(roleids);
 				for (String userId : list) {
@@ -316,16 +334,18 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 		case 2://fzx端菜单增加
 			List<Integer> fzxRoleids = fzxRoleService.findFzxRoleByModId(modId);
 			if(fzxRoleids !=null && fzxRoleids.size()>0){
-				for (String oldid : ls1) {
-					fzxRoleService.insertUserRoleForRoleId(Integer.valueOf(oldid),fzxRoleids);
+				for (Integer oldid : ls1) {
+					fzxRoleService.insertUserRoleForRoleId(oldid,fzxRoleids);
 				}
 			}
+			//清除使用该版本商家超管token
+			clearToken(Integer.parseInt(modId));
 			break;
 		case 3://自媒体PC端菜单增加
 			List<Integer> mdRoleids = mediaRoleService.findMediaRoleByModId(modId);
 			if(mdRoleids !=null && mdRoleids.size()>0){
-				for (String oldid : ls1) {
-					mediaRoleService.insertUserRoleForRoleId(Integer.valueOf(oldid),mdRoleids);
+				for (Integer oldid : ls1) {
+					mediaRoleService.insertUserRoleForRoleId(oldid,mdRoleids);
 				}
 			}
 			break;
@@ -336,24 +356,31 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 
 	/**
 	 * 删除旧的菜单，不勾选的菜单
+	 * @param modId 
 	 * @param ls1
 	 * @param sc
 	 */
-	private void deleteOldMenuId(List<String> ls1, int sc) {
+	private void deleteOldMenuId(String modId, List<Integer> ls1, int sc) {
 		switch (sc) {
 		case 1://PC端删除
-			for (String oldid : ls1) {
-				pcRoleService.deleteRoleMenuForRoleId(Integer.valueOf(oldid));
+			for (Integer oldid : ls1) {
+				pcRoleService.deleteRoleMenuForRoleId(oldid,Integer.valueOf(modId));
 			}
 			break;
 		case 2://fzx端删除
-			for (String oldid : ls1) {
-				fzxRoleService.deleteRoleMenuForRoleId(Integer.valueOf(oldid));
+			List<String> uids = this.userDao.findUidByMenu(Integer.valueOf(modId),ls1);
+			//删除菜单查找使用这菜单的所有用户清除token
+			if(uids != null && uids.size() > 0){
+				ClearTokenThread thread = new ClearTokenThread(uids);
+				new Thread(thread).start();
+			}
+			for (Integer oldid : ls1) {
+				fzxRoleService.deleteRoleMenuForRoleId(oldid,Integer.valueOf(modId));
 			}
 			break;
 		case 3://自媒体PC端删除
-			for (String oldid : ls1) {
-				mediaRoleService.deleteRoleMenuForRoleId(Integer.valueOf(oldid));
+			for (Integer oldid : ls1) {
+				mediaRoleService.deleteRoleMenuForRoleId(oldid,Integer.valueOf(modId));
 			}
 			break;
 		default:
@@ -368,12 +395,20 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	 * @param omenuid
 	 * @return
 	 */
-	private List<String> findDifMenuId(String newMenuIds, String[] omenuid) {
-		List<String> ls = new ArrayList<>();
-		List<String> list = Arrays.asList(newMenuIds.split(","));
-		for (int i = 0; i < omenuid.length; i++) {
-			if(!list.contains(omenuid[i])){
-				ls.add(omenuid[i]);
+	private List<Integer> findDifMenuId(String newMenuIds, String[] omenuid) {
+		List<Integer> ls = new ArrayList<>();
+		if(StringUtils.isBlank(newMenuIds)){
+			for (int i = 0; i < omenuid.length; i++) {
+				if(StringUtils.isNotBlank(omenuid[i])){
+					ls.add(Integer.valueOf(omenuid[i]));
+				}
+			}
+		}else{
+			List<String> list = Arrays.asList(newMenuIds.split(","));
+			for (int i = 0; i < omenuid.length; i++) {
+				if(!list.contains(omenuid[i]) && StringUtils.isNotBlank(omenuid[i])){
+					ls.add(Integer.valueOf(omenuid[i]));
+				}
 			}
 		}
 		return ls;

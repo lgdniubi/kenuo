@@ -25,7 +25,6 @@ import com.training.common.persistence.Page;
 import com.training.common.security.Digests;
 import com.training.common.security.shiro.session.SessionDAO;
 import com.training.common.service.BaseService;
-import com.training.common.track.utils.TrackUtils;
 import com.training.common.utils.CacheUtils;
 import com.training.common.utils.Encodes;
 import com.training.common.utils.IdGen;
@@ -61,10 +60,12 @@ import com.training.modules.sys.entity.UserSpeciality;
 import com.training.modules.sys.entity.UserVo;
 import com.training.modules.sys.entity.Userinfo;
 import com.training.modules.sys.entity.Userinfocontent;
+import com.training.modules.sys.entity.Uvo;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.LogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.track.core.TrackCore;
 import com.training.modules.train.dao.UserCheckDao;
 import com.training.modules.train.entity.FzxRole;
 import com.training.modules.train.entity.MediaRole;
@@ -527,7 +528,7 @@ public class SystemService extends BaseService implements InitializingBean {
 				logger.info("#####[保存妃子校用户时插入每天美耶--返回每天美耶id]:"+user.getMtmyUserId());
 				
 				/*##########[神策埋点{sign_up}-Begin]##########*/
-				TrackUtils.trackSyncMtmyUser(user);
+				TrackCore.trackSyncMtmyUser(user);
 				/*##########[神策埋点end]##########*/
 				
 				//新增用户时插入用户账目表
@@ -537,6 +538,13 @@ public class SystemService extends BaseService implements InitializingBean {
 				//新增用户时插入用户统计表
 				mtmyUsersDao.insterSaleStats(users);
 				userDao.insert(user);
+				
+				
+				/*##########[神策埋点{sign_up_fzx}-Begin]##########*/
+				user.setSourceType("5");
+				user.setActionSource("mg后台创建妃子校登云会员");
+				TrackCore.trackSyncFzxUser(user);
+				/*##########[神策埋点end]##########*/
 			}
 			
 			//美容师头像
@@ -624,7 +632,7 @@ public class SystemService extends BaseService implements InitializingBean {
 						UserUtils.USER_CACHE_LIST_BY_OFFICE_ID_ + oldUser.getOffice().getId());
 			}
 
-			if (user.getUserinfo() != null) {
+			/*if (user.getUserinfo() != null) {
 				// 更新用户数据
 				Userinfo uinfo = userinfoDao.findByuserId(user.getId()); // 查询数据库里面的用户是否存在
 
@@ -668,7 +676,7 @@ public class SystemService extends BaseService implements InitializingBean {
 					lifeImgUrls = user.getUserinfocontent().getUrl();//必须是String类型的数据
 					reservationTime(2, currentUser.getCreateBy().getId(), null, null, lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
 				}
-			}
+			}*/
 			
 //begin     修改妃子校用户同时更新每天美耶用户开始   修改时间2017年1月23日
 			//用于验证每天美耶用户   
@@ -687,7 +695,7 @@ public class SystemService extends BaseService implements InitializingBean {
 					logger.info("#####[保存妃子校用户时插入每天美耶--返回每天美耶id]:"+user.getMtmyUserId());
 					
 					/*##########[神策埋点{sign_up}-Begin]##########*/
-					TrackUtils.trackSyncMtmyUser(user);
+					TrackCore.trackSyncMtmyUser(user);
 					/*##########[神策埋点end]##########*/
 					
 					//新增用户时插入用户账目表
@@ -703,7 +711,7 @@ public class SystemService extends BaseService implements InitializingBean {
 					logger.info("#####[保存妃子校用户时插入每天美耶--返回每天美耶id]:"+user.getMtmyUserId());
 					
 					/*##########[神策埋点{sign_up}-Begin]##########*/
-					TrackUtils.trackSyncMtmyUser(user);
+					TrackCore.trackSyncMtmyUser(user);
 					/*##########[神策埋点end]##########*/
 					
 					//新增用户时插入用户账目表
@@ -1530,5 +1538,9 @@ public class SystemService extends BaseService implements InitializingBean {
 		}
 		return list;
 	}
-
+	
+	
+	public Uvo findUvo(String user_id){
+		return userDao.findUvo(user_id);
+	}
 }

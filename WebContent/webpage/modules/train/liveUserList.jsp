@@ -14,7 +14,15 @@
 		return false;
 	}
 	
-	
+	function newReset(){//重置，页码清零
+		overShade();
+		$("#pageNo").val(0);
+		$("#searchForm div.form-group input").val("");
+		$("#searchForm div.form-group select").val("");
+		$("#auditId").val(0);
+		$("#searchForm").submit();
+			return false;
+	 }
 	
 	
 </script>
@@ -37,7 +45,7 @@
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 						<div class="form-group">
-							<label>直播申请编号：</label><input id="auditId"  name="auditId" value="${trainLiveUser.auditId}" maxlength="50" class=" form-control input-sm" />
+							<label>直播申请编号：</label><input id="auditId"  name="auditId" value="${trainLiveUser.auditId}" maxlength="50" class=" form-control input-sm" onkeyup="this.value=this.value.replace(/\D/g,0)"/>
 							<label>会员姓名：</label><form:input path="name" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
 							<label>手机号码：</label><form:input path="mobile" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
 							<label>直播主题：</label><form:input path="title" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
@@ -57,7 +65,7 @@
 							</div>
 							<div class="pull-right">
 								<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
-								<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()" ><i class="fa fa-refresh"></i> 重置</button>
+								<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="newReset()" ><i class="fa fa-refresh"></i> 重置</button>
 							</div>
 						</div>
 					</div>

@@ -372,6 +372,7 @@
 						<thead>
 							<tr>
 								<th width="120" style="text-align: center;"><input type="checkbox" name="" id="i-checks" class="i-checks"></th>
+								<th style="text-align: center;">归属商家</th>
 								<th style="text-align: center;">名称</th>
 								<th width="120" style="text-align: center;">课程类型</th>
 								<th width="120" style="text-align: center;">分类</th>
@@ -387,6 +388,7 @@
 							<c:forEach items="${page.list}" var="trainLessons">
 								<tr>
 									<td><input class="i-checks" type="checkbox" id="${trainLessons.lessonId}" name="ids"></td>
+									<td>${trainLessons.franchisee.name}</td>
 									<td><c:out value="${trainLessons.name}"></c:out></td>
 									<td>
 										<c:if test="${trainLessons.lessontype == 1}">

@@ -132,5 +132,5 @@ public interface PcRoleDao extends CrudDao<PcRole>{
 	
 	public void insertUserRoleForRoleId(@Param("menuid")Integer menuid, @Param("roleids")List<Integer> roleids);
 
-	public void deleteRoleMenuForRoleId(Integer oldMenuid);
+	public void deleteRoleMenuForRoleId(@Param("oldMenuid")Integer oldMenuid, @Param("modId")Integer modId);
 }

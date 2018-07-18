@@ -151,7 +151,7 @@ public class MediaRoleService extends CrudService<MediaRoleDao,MediaRole>{
 		return dao.findMediaRoleByModId(modId);
 	}
 
-	public void deleteRoleMenuForRoleId(Integer oldMenuid) {
-		dao.deleteRoleMenuForRoleId(oldMenuid);
+	public void deleteRoleMenuForRoleId(Integer oldMenuid, Integer modId) {
+		dao.deleteRoleMenuForRoleId(oldMenuid,modId);
 	}
 }

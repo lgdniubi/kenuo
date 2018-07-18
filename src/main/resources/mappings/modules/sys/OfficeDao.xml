@@ -450,8 +450,8 @@
 				bed_num,
 				status,
 				details,
-				del_flag,
-				set_date,
+				del_flag
+				<!-- set_date,
 				business_license,
 				legal_person,
 				icardone,
@@ -463,7 +463,7 @@
 				credit_code,
 				cardup,
 				carddown,
-				companyType
+				companyType -->
 			) values (
 				#{id},
 				#{officeInfo.shortName},
@@ -480,8 +480,8 @@
 				#{officeInfo.bedNum},
 				#{officeInfo.status},
 				#{officeInfo.details},
-				#{DEL_FLAG_NORMAL},
-				#{officeInfo.setDate},
+				#{DEL_FLAG_NORMAL}
+				<!-- #{officeInfo.setDate},
 				#{officeInfo.charterImg},
 				#{officeInfo.legalPerson},
 				#{officeInfo.icardone},
@@ -493,7 +493,7 @@
 				#{officeInfo.creditCode},
 				#{officeInfo.cardup},
 				#{officeInfo.carddown},
-				#{officeInfo.companyType}
+				#{officeInfo.companyType} -->
 			)ON DUPLICATE KEY 
 				UPDATE 
 				short_name		 = #{officeInfo.shortName},
@@ -509,7 +509,7 @@
 				intro			 = #{officeInfo.intro},
 				details			 = #{officeInfo.details},
 				bed_num			 = #{officeInfo.bedNum},
-				set_date		 =	  #{officeInfo.setDate},				
+				<!-- set_date		 =	  #{officeInfo.setDate},				
 				business_license      =	  #{officeInfo.charterImg},          
 				legal_person     =	  #{officeInfo.legalPerson},        
 				icardone         =	  #{officeInfo.icardone},              
@@ -521,7 +521,7 @@
 				credit_code  =	  #{officeInfo.creditCode},     
 				cardup           =	  #{officeInfo.cardup},                
 				carddown         =	  #{officeInfo.carddown} ,
-				companyType         =	  #{officeInfo.companyType} ,
+				companyType         =	  #{officeInfo.companyType} , -->
 				<if test="grade == 1">
 					del_flag         = #{DEL_FLAG_NORMAL}
 				</if>
@@ -571,8 +571,8 @@
 			intro,
 			details,
 			bed_num 	AS bedNum,
-			status,
-			set_date,
+			status
+			<!-- set_date,
 			business_license AS charterImg,
 			legal_person,
 			icardone,
@@ -584,7 +584,7 @@
 			cardup,
 			credit_code,
 			carddown,
-			companyType
+			companyType -->
 		FROM sys_office_info
 		WHERE 
 			1=1
@@ -949,5 +949,47 @@
 		SELECT fr.pay_type AS paytype FROM train_model_franchisee fr
 		LEFT JOIN sys_office off ON off.franchisee_id = fr.franchisee_id
 		WHERE off.id = #{id}
+	</select>
+	<!-- 删除机构删除数据 -->
+	<delete id="deleteUserOfficeById">
+		DELETE FROM sys_user_office WHERE office_id = #{officeId}
+	</delete>
+	<select id="findUserRoleOffice" resultType="UserRoleOffice">
+		SELECT
+			(SELECT COUNT(1) FROM fzx_user_role_office WHERE u_r_id = uro.u_r_id) AS count,
+			uro.u_r_id AS userRoleId,
+			uro.office_id AS officeId
+		FROM
+			fzx_user_role_office uro
+		WHERE
+			office_id = #{officeId}
+		<if test="flag == 1">
+			AND (SELECT COUNT(1) FROM fzx_user_role_office WHERE u_r_id = uro.u_r_id) =1
+		</if>
+		<if test="flag == 2">
+			AND (SELECT COUNT(1) FROM fzx_user_role_office WHERE u_r_id = uro.u_r_id) >1
+		</if>
+	</select>
+	
+	<delete id="deleteUserRoleOfficeById">
+		DELETE FROM fzx_user_role_office WHERE office_id = #{officeId}
+	</delete>
+	<delete id="deleteUserRole">
+		DELETE FROM fzx_user_role WHERE id IN
+		<foreach collection ="list" item="o"  open="(" separator="," close=")">
+	         #{o.userRoleId}
+	    </foreach >
+	</delete>
+	
+	<select id="queryFvo" resultType="com.training.modules.sys.entity.Fvo">
+		select
+			id as officeId,
+			name as officeName,
+			parent_id as officePid,
+			parent_ids as officePids,
+			franchisee_id as franchiseeId,
+			is_cargo as isCargo
+		from sys_office 
+		where id = #{office_id}
 	</select>
 </mapper>

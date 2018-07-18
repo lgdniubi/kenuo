@@ -6,9 +6,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.training.common.config.Global;
-import com.training.common.track.thread.TrackThread;
-import com.training.modules.sys.entity.User;
+import com.training.common.utils.BeanUtil;
+import com.training.modules.track.entity.TOffice;
+import com.training.modules.track.service.IOfficeDaoService;
 
 /**
  * 类名称：	TrackUtils
@@ -17,34 +17,6 @@ import com.training.modules.sys.entity.User;
  * 创建时间：    	2018年4月28日 上午11:00:42
  */
 public class TrackUtils {
-
-	/**
-	 * 方法说明：	同步每天美耶用户埋点方法
-	 * 创建时间：	2018年4月28日 上午11:01:18
-	 * 创建人：	kele
-	 * 修改记录：	修改人	修改记录	2018年4月28日 上午11:01:18
-	 * @param user
-	 */
-	public static void trackSyncMtmyUser(User user) {
-		/*##########[神策埋点{sign_up}-Begin]##########*/
-		if(null != user && 0 != user.getMtmyUserId()) {
-			Map<String, Object> paramMap = new HashMap<String, Object>();
-			// 方法名称-注册
-			paramMap.put("METHOD_NAME", "sign_up");
-			// 用户ID
-			paramMap.put("DISTINCT_ID", user.getMtmyUserId());
-			// 匿名ID
-			paramMap.put("ANONYMOUS_ID", "");
-			// 来源类型
-			paramMap.put("SOURCE_TYPE", user.getSourceType());
-			// 来源类型名称
-			paramMap.put("ACTION_SOURCE", user.getActionSource());
-			
-			// 异步线程执行方法
-			Global.newFixed.execute(new TrackThread(paramMap));
-		}
-		/*##########[神策埋点end]##########*/
-	}
 	
 	/**
 	 * 方法说明：	时间处理（秒）
@@ -77,5 +49,67 @@ public class TrackUtils {
 			e.printStackTrace();
 		}
 		return new Date();
+	}
+	
+	
+	
+	/**
+	 * 方法说明：	转换String类型
+	 * 创建时间：	2018年7月12日 下午4:30:33
+	 * 创建人：	kele
+	 * 修改记录：	修改人	修改记录	2018年7月12日 下午4:30:33
+	 * @param obj
+	 * @return
+	 */
+	public static String convertStr(Object obj) {
+		if(null != obj) {
+			return String.valueOf(obj);
+		}
+		return "";
+	}
+	
+	/**
+	 * 方法说明：	转换double类型
+	 * 创建时间：	2018年7月14日 下午3:38:51
+	 * 创建人：	kele
+	 * 修改记录：	修改人	修改记录	2018年7月14日 下午3:38:51
+	 * @param obj
+	 * @return
+	 */
+	public static double convertDouble(Object obj) {
+		if(null != obj) {
+			return (double) obj;
+		}
+		return 0.0;
+	}
+	
+	/**
+	 * 方法说明：	转换Integer类型
+	 * 创建时间：	2018年7月14日 下午3:39:37
+	 * 创建人：	kele
+	 * 修改记录：	修改人	修改记录	2018年7月14日 下午3:39:37
+	 * @param obj
+	 * @return
+	 */
+	public static Integer convertInteger(Object obj) {
+		if(null != obj) {
+			return (Integer) obj;
+		}
+		return 0;
+	}
+	
+	/**
+	 * 方法说明：	根据officeId查询机构详情
+	 * 创建时间：	2018年7月14日 下午4:54:49
+	 * 创建人：	kele
+	 * 修改记录：	修改人	修改记录	2018年7月14日 下午4:54:49
+	 * @param officeId
+	 * @return
+	 */
+	public static TOffice getOffcieDetail(String officeId) {
+		IOfficeDaoService iOfficeDaoService = (IOfficeDaoService) BeanUtil.getBean("IOfficeDaoService");
+		Map<String, Object> map = new HashMap<String, Object>();
+	    map.put("officeId", officeId);
+	    return iOfficeDaoService.queryOfficeDetail(map);
 	}
 }

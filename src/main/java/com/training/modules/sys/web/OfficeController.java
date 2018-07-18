@@ -85,8 +85,7 @@ public class OfficeController extends BaseController {
 	private TrainRuleParamDao trainRuleParamDao;
 	@Autowired
 	private ReservationDao reservationDao;
-	@Autowired
-	private ProtocolModelDao protocolModelDao;
+	
 	
 	@ModelAttribute("office")
 	public Office get(@RequestParam(required=false) String id) {
@@ -369,7 +368,7 @@ public class OfficeController extends BaseController {
 		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
 		if(office.getGrade().equals("2")){
-			return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
+			return "redirect:" + adminPath + "/sys/office/form?id="+office.getId()+"&opflag=2&parentIds="+office.getParentIds();
 		}else{
 			return "redirect:" + adminPath + "/sys/office/signInfo?id="+office.getId()+"&opflag=1&parentIds="+office.getParentIds();
 		}
@@ -384,8 +383,9 @@ public class OfficeController extends BaseController {
 		try {
 			User user = UserUtils.getUser();
 			String weburl = ParametersFactory.getTrainsParamValues("contract_data_path");
-			logger.info("##### web接口路径:"+weburl);
+			logger.info("##### web接口路径查询签约信息:"+weburl);
 			String parpm = "{\"office_id\":\""+office.getId()+"\"}";
+			logger.info("##### web接口路径查询签约信息参数:"+parpm);
 //		String url="http://172.50.3.16:8081/cs_service/pub/queryContractInfoAudit.htm";
 			String url=weburl;
 			String result = WebUtils.postCSObject(parpm, url);
@@ -395,6 +395,8 @@ public class OfficeController extends BaseController {
 				List<PayInfo> payInfos = JSONArray.toList(jsonObject.getJSONObject("data").getJSONArray("payInfos"), new PayInfo(),new JsonConfig());
 				model.addAttribute("payInfos", payInfos);
 				model.addAttribute("paylen", payInfos.size());
+			}else{
+				model.addAttribute("paylen", 0);
 			}
 			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
 			if(!"200".equals(jsonObject.get("result"))){
@@ -435,7 +437,7 @@ public class OfficeController extends BaseController {
 			if(!"200".equals(jsonObject.get("result"))){
 				throw new RuntimeException("保存签约信息失败");
 			}
-			protocolModelDao.deleteProtocolShopById(String.valueOf(contractInfo.getFranchisee_id()));
+			officeService.deleteProtocolShopById(String.valueOf(contractInfo.getFranchisee_id()));
 			addMessage(redirectAttributes, "保存签约信息成功");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -481,7 +483,7 @@ public class OfficeController extends BaseController {
 						np.setPay_username(username[i]);
 						np.setPay_account(account[i]);
 						np.setPay_mobile(mobile[i]);
-						np.setPay_name("支付宝");
+						np.setPay_name("微信");
 						np.setPay_type("1");
 						ns.add(np);
 					}
@@ -503,7 +505,7 @@ public class OfficeController extends BaseController {
 							np2.setPay_username(username2[i]);
 							np2.setPay_account(account2[i]);
 							np2.setPay_mobile(mobile2[i]);
-							np2.setPay_name("微信");
+							np2.setPay_name("支付宝");
 							np2.setPay_type("2");
 							ns.add(np2);
 						}

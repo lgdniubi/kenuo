@@ -234,8 +234,8 @@ public class FzxRoleService extends CrudService<FzxRoleDao,FzxRole>{
 		return dao.findFzxRoleByModId(modId);
 	}
 
-	public void deleteRoleMenuForRoleId(Integer oldMenuid) {
-		dao.deleteRoleMenuForRoleId(oldMenuid);
+	public void deleteRoleMenuForRoleId(Integer oldMenuid, Integer modId) {
+		dao.deleteRoleMenuForRoleId(oldMenuid,modId);
 	}
 
 }

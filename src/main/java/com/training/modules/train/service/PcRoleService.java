@@ -148,7 +148,7 @@ public class PcRoleService extends CrudService<PcRoleDao,PcRole>{
 		dao.insertUserRoleForRoleId(menuid,roleids);
 	}
 
-	public void deleteRoleMenuForRoleId(Integer oldMenuid) {
-		dao.deleteRoleMenuForRoleId(oldMenuid);
+	public void deleteRoleMenuForRoleId(Integer oldMenuid, Integer modId) {
+		dao.deleteRoleMenuForRoleId(oldMenuid,modId);
 	}
 }
