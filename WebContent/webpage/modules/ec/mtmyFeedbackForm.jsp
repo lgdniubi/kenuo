@@ -16,7 +16,7 @@
 				var arr = pictures.split(",");
     			for(var i=0;i<arr.length;i++){
     	        	   if(arr[i] != ''){
-    	        		   $("#photo").append("<a class='img' href="+arr[i]+"><img width='150px' height='150px' style='padding:3px' src='"+arr[i]+"'></a>");
+    	        		   $("#photo").append("<img width='150px' height='150px' style='padding:3px' src='"+arr[i]+"'>");
     	        	   }
     			}
     		}
