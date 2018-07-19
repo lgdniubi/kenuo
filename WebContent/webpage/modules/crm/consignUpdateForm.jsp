@@ -33,7 +33,7 @@
 	function number(){
 		var takenNum = parseInt($("#takenNum").val());//取走数量
 		var purchaseNum = parseInt($("#purchaseNum").val());//购买数量
-		var consignNum = parseInt($("#consignNum").val());//寄存数量
+		
 		if((takenNum > purchaseNum)|| (takenNum > consignNum)){
 			top.layer.alert('请输入正确取走数量', {icon: 0, title:'提醒'});
 			return false;
