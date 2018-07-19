@@ -40,6 +40,15 @@
 		}
 		return true;
 	}
+	
+	function NumberCheck(t){
+        var num = t.value;
+        var re=/^\d*$/;
+        if(!re.test(num)){
+            isNaN(parseInt(num))?t.value=0:t.value=parseInt(num);
+        }
+    }
+	
 	$(document).ready(function() {
 		validateForm = $("#inputForm").validate({
 			rules: {
@@ -124,7 +133,7 @@
 										<label class="pull-right"><font color="red">*</font>取走数量:</label>
 									</td>
 									<td class="width-20">
-										<input name="takenNum" id="takenNum" value="0" maxlength="50" class="form-control" style="width: 150px" />
+										<input name="takenNum" id="takenNum" value="0" maxlength="50" class="form-control required" onblur="NumberCheck(this)" style="width: 150px" />
 										<a href="#" id="compute" onclick="compute()">计算数量</a>
 										<input type="hidden" id="computType" name="computType" value="1"/>
 										<div id="updateCompute">
