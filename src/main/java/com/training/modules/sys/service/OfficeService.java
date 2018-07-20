@@ -123,6 +123,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Transactional(readOnly = false)
 	public void franchiseeUpdateOffice(Office office){
 		dao.franchiseeUpdateOffice(office);
+		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 	};
 	/**
 	 * 通过code查询对应店铺所属加盟商
