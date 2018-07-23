@@ -74,10 +74,17 @@
 			c.type = 'banner_type' 
 		AND 
 			c.del_flag = 0
-		<if test="user.loginName != 'admin'">
+		<!-- <if test="user.loginName != 'admin'">
 			AND 
 				f.create_franise_id = #{user.company.id}
+		</if> -->
+		<if test="adName != null and adName != ''">
+			AND  a.ad_name=#{adName } 
 		</if>
+		<if test="adType != null and adType != 100">
+			AND  a.ad_type=#{adType } 
+		</if>
+			AND  a.del_flag=#{delFlag } 
 		GROUP BY
 			a.ad_id
 		ORDER BY
