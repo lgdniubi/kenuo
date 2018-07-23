@@ -958,7 +958,7 @@ public class UserController extends BaseController {
 	@RequestMapping(value = "checkDelIdcard")
 	public User checkDelIdcard(String oldIdCard, String idCard) {
 		User users = new User();
-		if (idCard != null && systemService.getUserByIdCard(idCard) != null) {
+		if (StringUtils.isNotBlank(idCard)  && systemService.getUserByIdCard(idCard) != null) {
 			users = systemService.getUserByIdCard(idCard);
 			if ("0".equals(users.getDelFlag())) {
 				users.setDelindex("0");
