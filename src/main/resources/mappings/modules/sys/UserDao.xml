@@ -1150,4 +1150,19 @@
 		WHERE a.del_flag = '0'
 		AND a.company_id = #{companyId}
 	</select>
+	
+	<select id="findUvo" resultType="com.training.modules.sys.entity.Uvo">
+		select 
+			u.id as userId,
+			u.company_id as franchiseeId,
+			u.name as userName,
+			u.mobile as mobile,
+			u.login_name as loginName,
+			u.mtmy_user_id as mtmyId,
+			o.id as officeId,
+			o.name as officeName
+		from sys_user u 
+		left join sys_office o on o.id = u.office_id
+		where u.id = #{user_id}
+	</select>
 </mapper>

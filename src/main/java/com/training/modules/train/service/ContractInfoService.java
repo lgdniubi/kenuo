@@ -1,6 +1,5 @@
 package com.training.modules.train.service;
 
-
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -8,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.training.common.persistence.Page;
 import com.training.modules.ec.utils.WebUtils;
+import com.training.modules.sys.entity.Uvo;
+import com.training.modules.sys.service.OfficeService;
+import com.training.modules.sys.service.SystemService;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.ContractInfo;
@@ -19,8 +21,10 @@ import net.sf.json.JsonConfig;
 @Service
 public class ContractInfoService {
 
-		@Autowired
-		private ProtocolModelService protocolModelService;
+	@Autowired
+	private SystemService systemService;
+	@Autowired
+	private OfficeService officeService;
 	
 	public Page<ContractInfo> findPage(Page<ContractInfo> page, ContractInfo contractInfo){
 		JSONObject jsonO = new JSONObject();
@@ -48,17 +52,44 @@ public class ContractInfoService {
 		return json.getJSONObject("data");
 	}
 	
-	public void auditContractInfo(ContractInfo info){
+	public void auditContractInfo(ContractInfo info) throws Exception{
+		JSONObject j = new JSONObject();
+		
 		JSONObject jsonO = new JSONObject();
 		jsonO.put("office_id", info.getOffice_id());
 		jsonO.put("status", info.getStatus());
 		jsonO.put("remarks", info.getRemarks());
 		jsonO.put("update_user", UserUtils.getUser().getId());
 		JSONObject json = WebUtils.postCS(jsonO, ParametersFactory.getTrainsParamValues("contract_status_path"));
-		/*
-		if("200".equals(json.getString("result")) && "3".equals(jsonO.get("status"))){
-			//审核驳回清空已签协议
-			this.protocolModelService.deleteProtocolShopOfOffice(info.getOffice_id());
-		}*/
+		
+		if(!"200".equals(json.getString("result"))){
+			throw new Exception("RPC调用失败");
+		}
+		
+		if("2".equals(jsonO.get("status"))){
+			
+			j.put("office", officeService.queryFvo(info.getOffice_id()));
+			JSONObject j0 = new JSONObject();
+			j0.put("office_id", info.getOffice_id());
+			JSONObject js = WebUtils.postCS(j0, ParametersFactory.getTrainsParamValues("contract_data_path"));
+			if("200".equals(js.getString("result")) && js.get("data") != null){
+				
+				if(StringUtils.isNotBlank(js.getJSONObject("data").getString("cargo_userid"))){
+					Uvo vo = systemService.findUvo(js.getJSONObject("data").getString("cargo_userid"));
+					j.put("cargo", vo);
+				}
+				if(StringUtils.isNotBlank(js.getJSONObject("data").getString("audit_userid"))){
+					Uvo vo = systemService.findUvo(js.getJSONObject("data").getString("audit_userid"));
+					j.put("audit", vo);
+				}
+				if(StringUtils.isNotBlank(js.getJSONObject("data").getString("proxy_userid"))){
+					Uvo vo = systemService.findUvo(js.getJSONObject("data").getString("proxy_userid"));
+					j.put("proxy", vo);
+				}
+			}
+			JSONObject jso = WebUtils.postCS(j, ParametersFactory.getTrainsParamValues("syncAccountAndRole"));
+		}
+		
+		
 	}
 }
