@@ -500,6 +500,6 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	 */
 	@Transactional(readOnly = false)
 	public void deleteProtocolShopById(String franchisee_id) {
-		protocolModelDao.deleteProtocolShopById(franchisee_id);
+		protocolModelDao.deleteProtocolShopById(Integer.valueOf(franchisee_id));
 	}
 }
