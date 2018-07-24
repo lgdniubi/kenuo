@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.training.common.persistence.TreeDao;
 import com.training.common.persistence.annotation.MyBatisDao;
+import com.training.modules.sys.entity.Fvo;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeAcount;
 import com.training.modules.sys.entity.OfficeInfo;
@@ -285,11 +286,14 @@ public interface OfficeDao extends TreeDao<Office> {
 	public void deleteUserRoleOfficeById(String officeId);
 	
 	public void deleteUserRole(List<UserRoleOffice> list);
-	
+
 	/**
 	 * 查询店铺关闭店日志
 	 * @param officeId
 	 * @return
 	 */
 	public List<OfficeLog> queryOfficeLog(OfficeLog officeLog);
+
+	public Fvo queryFvo(@Param("office_id")String office_id);
+
 }

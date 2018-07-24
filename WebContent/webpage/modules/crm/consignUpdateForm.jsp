@@ -49,10 +49,22 @@
         }
     }
 	
+	function isnumber(num) {
+		 var regu = /^[1-9]\d*|0$/; 
+		 return regu.test(num);
+	}
+	
+	jQuery.validator.addMethod("isNumber", function(value, element) {
+	    var length = value.length;
+	    var temp = /^[1-9]\d*|0$/;   
+	    return this.optional(element) || (length >0 && temp.test(value));
+	}, "输入正确数量");
+	
 	$(document).ready(function() {
 		validateForm = $("#inputForm").validate({
 			rules: {
 			      takenNum: {
+			    	  isNumber:true,
 			            required : true,
 			            number:true,
 			            min:1
@@ -60,6 +72,7 @@
 			  },
 			  messages: {
 			      takenNum: {
+			    	  	isNumber:"请输入正确的数字",
 			            required : "这是必填字段",
 			            number:"请输入数字",
 			            min:"输入正确数字"
@@ -153,7 +166,7 @@
 									</td>
 									<td class="width-20" colspan="3">
 										<input id="begtime" name="createDate" type="text" maxlength="50" class="laydate-icon form-control layer-date input-sm "
-											value="<fmt:formatDate value="${consign.createDate}" pattern="yyyy-MM-dd"/>" style="width: 185px;" placeholder="开始时间" required="required" readonly = "readonly"  />
+											value="<fmt:formatDate value="${consign.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" style="width: 185px;" placeholder="开始时间" required="required" readonly = "readonly"  />
 									</td>
 								</tr>
 								<tr>

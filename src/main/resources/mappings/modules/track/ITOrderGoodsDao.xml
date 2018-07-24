@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.track.dao.ITOrderGoodsDao">
+
+    <!-- 查询订单充值详情 -->
+	<select id="queryOrderDetail" parameterType="map" resultType="TOrderGoodsRecharge">
+		SELECT
+			a.rec_id AS 'recId',
+			a.order_id AS 'orderId',
+			c.user_id AS 'userId',
+			a.goods_id AS 'goodsId',
+			a.goods_name AS 'goodsName',
+			a.goods_price AS 'goodsPrice',
+			a.advance_price AS 'goodsAdvancePrice',
+			sum(b.app_total_amount) AS 'orderTotalRecharge',
+			sum(b.app_arrearage) AS 'goodsArrears',
+			sum(b.use_balance) AS 'orderUnconsumed'
+		FROM
+			mtmydb.mtmy_order_goods_mapping a
+		LEFT JOIN mtmydb.mtmy_order_goods_details b ON b.goods_mapping_id = a.rec_id
+		LEFT JOIN mtmydb.mtmy_orders c ON c.order_id = a.order_id
+		WHERE
+			1 = 1
+		AND a.order_id = #{orderId}
+		AND a.rec_id = #{recId}
+    </select>
+    
+    <!-- 查询订单详情 -->
+	<select id="queryOrder" parameterType="map" resultType="TOrder">
+		SELECT
+			a.order_id AS 'orderId',
+			a.user_id AS 'userId',
+			a.order_amount AS 'orderAmount',
+			a.total_amount AS 'totalAmount',
+			a.pay_name AS 'payName',
+			a.coupon_price AS 'couponPrice',
+			a.shipping_price AS 'shippingPrice',
+			a.order_status AS 'orderStatus',
+			a.channel_flag AS 'channelFlag',
+			a.is_real AS 'isReal',
+			a.is_neworder AS 'isNeworder',
+			GROUP_CONCAT(c.id) AS 'couponIds',
+			GROUP_CONCAT(c.coupon_name) AS 'couponNames'
+		FROM
+			mtmydb.mtmy_orders a
+			LEFT JOIN mtmydb.mtmy_activity_coupon_user b ON b.order_id = a.order_id
+			LEFT JOIN mtmydb.mtmy_activity_coupon c ON c.id = b.coupon_id
+		WHERE a.order_id = #{orderId}
+		GROUP BY a.order_id
+	</select>
+	
+	<!-- 查询订单商品详情列表 -->
+	<select id="queryOrderGoodsList" parameterType="map" resultType="TOrderGoods">
+		SELECT
+			a.rec_id AS 'recId',
+			a.order_id AS 'orderId',
+			a.goods_id AS 'goodsId',
+			a.goods_name AS 'goodsName',
+			a.spec_key AS 'specKey',
+			a.spec_key_name AS 'specKeyName',
+			a.action_type AS 'actionType',
+			a.is_real AS 'isReal',
+			a.goods_price AS 'goodsPrice',
+			a.goods_num AS 'goodsNum',
+			a.coupon_price AS 'couponPrice',
+			a.order_amount AS 'orderAmount',
+			a.advance_price AS 'advancePrice',
+			c.name AS 'categoryNameOne',
+			c2.name AS 'categoryNameTwo',
+			b.franchisee_id AS 'franchiseeId',
+			f.name AS 'franchiseeName',
+			b.goodsbrand_id AS 'goodsBrandId',
+			e.name AS 'goodsBrandName'
+		FROM
+			mtmydb.mtmy_order_goods_mapping a
+		LEFT JOIN mtmydb.mtmy_goods b ON b.goods_id = a.goods_id
+		LEFT JOIN mtmydb.mtmy_goods_category c ON c.category_id = b.category_id
+		LEFT JOIN mtmydb.mtmy_goods_category c2 ON c2.category_id = c.parent_id
+		LEFT JOIN mtmydb.mtmy_brand e ON e.band_id = b.goodsbrand_id
+		LEFT JOIN mtmydb.mtmy_franchisee f ON f.id = b.franchisee_id
+		WHERE
+			a.order_id = #{orderId}
+	</select>
+	
+	<!-- 询用户订单数量 -->
+	<select id="queryUserOrderNum" parameterType="map" resultType="int">
+		SELECT
+			COUNT(1)
+		FROM
+			mtmydb.mtmy_orders a
+		WHERE
+			a.order_status > 0
+		AND a.user_id = #{userId}
+	</select>
+    
+</mapper>

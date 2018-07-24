@@ -85,8 +85,7 @@ public class OfficeController extends BaseController {
 	private TrainRuleParamDao trainRuleParamDao;
 	@Autowired
 	private ReservationDao reservationDao;
-	@Autowired
-	private ProtocolModelDao protocolModelDao;
+	
 	
 	@ModelAttribute("office")
 	public Office get(@RequestParam(required=false) String id) {
@@ -369,7 +368,7 @@ public class OfficeController extends BaseController {
 		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
 		if(office.getGrade().equals("2")){
-			return "redirect:" + adminPath + "/sys/office/list?id="+id+"&parentIds="+office.getParentIds();
+			return "redirect:" + adminPath + "/sys/office/form?id="+office.getId()+"&opflag=2&parentIds="+office.getParentIds();
 		}else{
 			return "redirect:" + adminPath + "/sys/office/signInfo?id="+office.getId()+"&opflag=1&parentIds="+office.getParentIds();
 		}
@@ -438,7 +437,7 @@ public class OfficeController extends BaseController {
 			if(!"200".equals(jsonObject.get("result"))){
 				throw new RuntimeException("保存签约信息失败");
 			}
-			protocolModelDao.deleteProtocolShopById(String.valueOf(contractInfo.getFranchisee_id()));
+			officeService.deleteProtocolShopById(String.valueOf(contractInfo.getFranchisee_id()));
 			addMessage(redirectAttributes, "保存签约信息成功");
 		} catch (Exception e) {
 			e.printStackTrace();

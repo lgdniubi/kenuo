@@ -52,7 +52,7 @@ public class TrainsBannerController extends BaseController {
 		trainsBanner.setUser(user);
 		Page<TrainsBanner> page=trainsBannerService.findPage(new Page<TrainsBanner>(request, response), trainsBanner);
 		model.addAttribute("page", page);
-		
+		model.addAttribute("trainsBanner", trainsBanner);
 		return "modules/train/bannerList";
 	}
 	

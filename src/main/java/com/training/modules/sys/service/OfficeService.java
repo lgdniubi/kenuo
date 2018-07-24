@@ -5,6 +5,7 @@ package com.training.modules.sys.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import com.training.modules.quartz.service.RedisClientTemplate;
 import com.training.modules.quartz.utils.RedisLock;
 import com.training.modules.sys.dao.OfficeDao;
 import com.training.modules.sys.entity.Franchisee;
+import com.training.modules.sys.entity.Fvo;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.OfficeAcount;
 import com.training.modules.sys.entity.OfficeInfo;
@@ -26,6 +28,7 @@ import com.training.modules.sys.entity.User;
 import com.training.modules.sys.entity.UserRoleOffice;
 import com.training.modules.sys.entity.OfficeLog;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.dao.ProtocolModelDao;
 import com.training.modules.train.entity.ModelFranchisee;
 
 /**
@@ -39,6 +42,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	
 	@Autowired
 	private OfficeDao officeDao;
+	@Autowired
+	private ProtocolModelDao protocolModelDao;
 	
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
@@ -123,6 +128,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Transactional(readOnly = false)
 	public void franchiseeUpdateOffice(Office office){
 		dao.franchiseeUpdateOffice(office);
+		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 	};
 	/**
 	 * 通过code查询对应店铺所属加盟商
@@ -495,5 +501,18 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	 */
 	public ModelFranchisee findPayType(String id) {
 		return officeDao.findPayType(id);
+	}
+	
+	public Fvo queryFvo(String office_id){
+		return officeDao.queryFvo(office_id);
+	}
+	
+	/**
+	 * 修改签约信息，重签协议删除之前的协议
+	 * @param franchisee_id	商家
+	 */
+	@Transactional(readOnly = false)
+	public void deleteProtocolShopById(String franchisee_id) {
+		protocolModelDao.deleteProtocolShopById(franchisee_id);
 	}
 }
