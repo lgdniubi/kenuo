@@ -56,6 +56,8 @@ public class TrainLiveAudit extends TreeEntity<TrainLiveAudit> {
 	private String isRecommend;			//是否推荐	        2017-11-7  土豆添加
 	private String isOpenRole; 			//是否公开(0,：公开；不公开则保存相应的商家id，以,拼接，用于每天美耶) 2018-2-24  土豆添加
 	
+	private int isTest;            //测试账号标识（0：正常；1：测试）
+	
 	private TrainLiveCategory category;		//直播分类
 	public TrainLiveCategory getCategory() {
 		return category;
@@ -374,5 +376,11 @@ public class TrainLiveAudit extends TreeEntity<TrainLiveAudit> {
 	public void setIsOpenRole(String isOpenRole) {
 		this.isOpenRole = isOpenRole;
 	}
-	
+	public int getIsTest() {
+		return isTest;
+	}
+
+	public void setIsTest(int isTest) {
+		this.isTest = isTest;
+	}
 }

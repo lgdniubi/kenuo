@@ -36,6 +36,8 @@ public class TrainLessons extends DataEntity<TrainLessons>{
 	private int showType = -1;			//课程类型，0:普通课程，1：新课推荐，2：热门课程，3：推荐和热门
 	private Franchisee franchisee;	//课程所属商家
 	
+	private int isTest;            //测试账号标识（0：正常；1：测试）
+	
 	
 	public TrainLessons(){
 		super();
@@ -216,5 +218,12 @@ public class TrainLessons extends DataEntity<TrainLessons>{
 
 	public void setFranchisee(Franchisee franchisee) {
 		this.franchisee = franchisee;
+	}
+	public int getIsTest() {
+		return isTest;
+	}
+
+	public void setIsTest(int isTest) {
+		this.isTest = isTest;
 	}
 }

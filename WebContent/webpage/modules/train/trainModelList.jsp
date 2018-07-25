@@ -33,7 +33,7 @@
 		<div class="warpper-content">
 			<div class="ibox">
 				<div class="ibox-title">
-					<h5>版本管理</h5>
+					<h5>版本设置</h5>
 				</div>
 				<div class="ibox-content">
 					<%-- <div class="searcharea clearfix">

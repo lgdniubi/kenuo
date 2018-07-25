@@ -19,6 +19,7 @@
 			t.sort,
 			t.is_show AS isShow,
 			t.is_open AS isOpen,
+			t.is_test AS isTest,
 			t.office_id AS "franchisee.id",
 			t.show_type AS 'showType',
 			(SELECT `name` FROM sys_franchisee WHERE id = (SELECT franchisee_id FROM sys_office WHERE id = t.office_id)) AS "franchisee.name"
@@ -168,6 +169,14 @@
 		  train_lessons 
 		SET
 		 is_open = #{isOpen}
+		WHERE lesson_id = #{lessonId} 
+	</update>
+	<!-- 修改课程状态 -->
+	<update id="updateIsTest">
+		UPDATE 
+		  train_lessons 
+		SET
+		 is_test = #{isTest}
 		WHERE lesson_id = #{lessonId} 
 	</update>
 	<!-- 课程统计总揽 -->

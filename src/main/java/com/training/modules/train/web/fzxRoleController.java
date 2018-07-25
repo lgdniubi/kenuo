@@ -97,13 +97,19 @@ public class fzxRoleController extends BaseController{
 	@RequestMapping(value = "form")
 	public String form(Model model,FzxRole fzxRole,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
+			String opflag = fzxRole.getOpflag();
 			if(fzxRole.getRoleId() != 0){
 				fzxRole = fzxRoleService.get(fzxRole);
 			}else{
 				fzxRole = new FzxRole();
 			}
 			TrainModel trainModel = new TrainModel();
-			trainModel.setModType("'qy','dy'");
+			if("pt".equals(opflag)){
+				trainModel.setModType("dy");
+			}else{
+				trainModel.setModType("qy");
+			}
+				
 			List<TrainModel> modList = trainModelService.findList(trainModel);	//查找所有的版本类型
 			model.addAttribute("fzxRole", fzxRole);
 			model.addAttribute("modList", modList);

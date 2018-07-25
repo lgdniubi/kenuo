@@ -19,7 +19,13 @@
 			r.del_flag = 0 
 			AND company_id = 1
 			<if test="modeid != null and modeid != ''">
-				AND mod_id = #{modeid}
+				AND r.mod_id = #{modeid}
+			</if>
+			<if test="opflag != null and opflag == 'pt'">
+				AND r.mod_id = 8
+			</if>
+			<if test="opflag != null and opflag == 'qy'">
+				AND r.mod_id != 8
 			</if>
 			<if test="name != null and name != ''">
 				AND r.name like 

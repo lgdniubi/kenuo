@@ -18,6 +18,12 @@
 			<if test="modeid != null and modeid != ''">
 				AND mod_id = #{modeid}
 			</if>
+			<if test="opflag != null and opflag == 'dy'">
+				AND r.mod_id = 8
+			</if>
+			<if test="opflag != null and opflag == 'qy'">
+				AND r.mod_id != 8
+			</if>
 			<if test="name != null and name != ''">
 				AND r.name like 
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>

@@ -51,7 +51,7 @@
 						<div class="pull-left">
 							<shiro:hasPermission name="train:fzxRole:add">
 								<!-- 增加按钮 -->
-								<table:addRow url="${ctx}/train/fzxRole/form" title="新增角色" width="800px" height="650px"></table:addRow>
+								<table:addRow url="${ctx}/train/fzxRole/form?opflag=${fzxRole.opflag }" title="角色" width="800px" height="650px"></table:addRow>
 							</shiro:hasPermission>
 						</div>
 						<div class="pull-right">

@@ -13,6 +13,31 @@
 		$("#searchForm").submit();
 		return false;
 	}
+	
+	//正式数据
+	function changeTestVal(flag,id,isTest){
+		$(".loading").show();//打开展示层
+		$.ajax({
+			type : "POST",
+			url : "${ctx}/train/live/updateIsTest?id="+id+"&isTest="+isTest,
+			dataType: 'json',
+			success: function(data) {
+				$(".loading").hide(); //关闭加载层
+				var STATUS = data.STATUS;
+				var ISTEST = data.ISTEST;
+				if("OK" == STATUS){
+	            	$("#"+flag+id).html("");//清除DIV内容	
+					if(ISTEST == '1'){
+						$("#"+flag+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTestVal('"+flag+"','"+id+"','0')\">");
+					}else if(ISTEST == '0'){
+						$("#"+flag+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTestVal('"+flag+"','"+id+"','1')\">");
+					} 
+				}else if("ERROR" == STATUS){
+					alert(data.MESSAGE);
+				}
+			}
+		});   
+	}
 </script>
 </head>
 
@@ -80,13 +105,14 @@
 						<tr>
 							<th style="text-align: center;">编号</th>
 							<th style="text-align: center;">申请人</th>
-							<th style="text-align: center;">申请人描述</th>
+							<!-- <th style="text-align: center;">申请人描述</th> -->
 							<th style="text-align: center;">直播id</th>
 							<th style="text-align: center;">直播主题</th>
-							<th style="text-align: center;">直播描述</th>
+							<!-- <th style="text-align: center;">直播描述</th> -->
 							<th style="text-align: center;">是否付费</th>
 							<th style="text-align: center;">直播时间</th>
 							<th style="text-align: center;">申请时间</th>
+							<th style="text-align: center;">正式数据</th>
 							<th style="text-align: center;">审核状态</th>
 							<th style="text-align: center;">审核人</th>
 							<th style="text-align: center;">操作</th>
@@ -97,10 +123,10 @@
 							<tr>
 								<td>${live.id}</td>
 								<td>${live.userName}</td>
-								<td>${live.remarks}</td>
+								<%-- <td>${live.remarks}</td> --%>
 								<td>${live.roomId}</td>
 								<td>${live.title}</td>
-								<td>${live.desc}</td>
+								<%-- <td>${live.desc}</td> --%>
 								<td>
 									<c:if test="${live.isPay==1}">
 										免费
@@ -114,6 +140,14 @@
 								</td>
 								<td><fmt:formatDate value="${live.bengTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								<td><fmt:formatDate value="${live.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+								<td style="text-align: center;" id="isTest${live.id}">
+									<c:if test="${live.isTest == 1}">
+										<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTestVal('isTest','${live.id}','0')">
+									</c:if>
+									<c:if test="${live.isTest == 0}">
+										<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTestVal('isTest','${live.id}','1')">
+									</c:if>
+								</td>
 								<td>
 									<c:if test="${live.auditStatus==0}">
 										审核失败
