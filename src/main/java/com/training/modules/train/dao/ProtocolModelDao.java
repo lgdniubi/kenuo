@@ -76,5 +76,7 @@ public interface ProtocolModelDao extends CrudDao<ProtocolModel> {
 	public void deleteProtocolShop(String typeId);
 	
 	public void deleteProtocolShopOfOffice(@Param("office_id")String office_id);
+	//根据id更新状态
+	public void updateModelStatusById(ProtocolModel protocolModel);
 	
 }
