@@ -54,4 +54,10 @@ public interface GoodsSpecPriceDao extends CrudDao<GoodsSpecPrice>{
 	 * @param gsp
 	 */
 	public void savespec(GoodsSpecPrice gsp);
+
+	/**
+	 * 修改套卡子项信息,需要修改套卡默认规格中的价格
+	 * @param gsp
+	 */
+	public void updateSpec(GoodsSpecPrice gsp);
 }

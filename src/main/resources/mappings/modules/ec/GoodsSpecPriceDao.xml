@@ -100,4 +100,15 @@
 			#{delFlag}
 		  )
 	</insert>
+	
+	<!-- 修改套卡子项信息,需要修改套卡默认规格中的价格 -->
+	<update id="updateSpec">
+		UPDATE mtmydb.mtmy_spec_goods_price 
+		SET 
+			cost_price = #{costPrice},
+			market_price = #{marketPrice},
+			price = #{price}
+		WHERE goods_id = #{goodsId}
+		AND del_flag = 0
+	</update>
 </mapper>
