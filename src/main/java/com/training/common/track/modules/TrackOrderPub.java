@@ -103,6 +103,8 @@ public class TrackOrderPub {
 		    properties.put("order_id", tOrder.getOrderId());
 		    // 订单金额
 		    properties.put("order_total_price_double", tOrder.getOrderAmount());
+		    //订单总价
+		    properties.put("goods_price", tOrder.getGoodsPrice());
 		    // 实付价格
 		    properties.put("order_price_double", tOrder.getTotalAmount());
 		    // 支付方式
