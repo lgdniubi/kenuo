@@ -838,6 +838,17 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 				
 				goodsCardDao.insert(goodsCard);//保存卡项
 			}
+			
+			//修改套卡的默认规格信息 begin
+			GoodsSpecPrice gsp = goodsSpecPriceDao.selectSuitCard(goods.getGoodsId());
+			
+			gsp.setCostPrice(goods.getCostPrice());
+			gsp.setMarketPrice(goods.getMarketPrice());
+			gsp.setPrice(goods.getShopPrice());
+			
+			goodsSpecPriceDao.updateSpec(gsp);
+			//修改套卡的默认规格信息 end
+			
 		}else if(goods.getIsReal().equals("3")){
 			//保存卡项子项表 begin
 			GoodsCard goodsCard = new GoodsCard();
