@@ -112,4 +112,36 @@ public class CookieUtils {
 		}
 		return value;
 	}
+	
+	/**
+	 * 获得指定Cookie的值      xiaoye  2018年6月22日
+	 * @param request 请求对象
+	 * @param response 响应对象
+	 * @param name 名字
+	 * @param path路径
+	 * @param isRemove 是否移除
+	 * @return 值
+	 * 注：想让cookie 失效,除了设置有效期为0,其他参数(path,domain)必须完全一样
+	 */
+	public static String getCookie(HttpServletRequest request, HttpServletResponse response, String name,String path,boolean isRemove) {
+		String value = null;
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals(name)) {
+					try {
+						value = URLDecoder.decode(cookie.getValue(), "utf-8");
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+					if (isRemove) {
+						cookie.setMaxAge(0);
+						cookie.setPath(path);
+						response.addCookie(cookie);
+					}
+				}
+			}
+		}
+		return value;
+	}
 }

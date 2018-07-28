@@ -17,6 +17,8 @@ public class OfficeLog extends TreeEntity<OfficeLog> {
 	private String content;		// 修改内容
 	private String remark;      // 备注
 	
+	private Date realtime;      //实际时间
+	private Date finalTime;     //最终时间
 	
 	public String getOfficeId() {
 		return officeId;
@@ -57,6 +59,18 @@ public class OfficeLog extends TreeEntity<OfficeLog> {
 	public void setParent(OfficeLog parent) {
 		// TODO Auto-generated method stub
 		
+	}
+	public Date getRealtime() {
+		return realtime;
+	}
+	public void setRealtime(Date realtime) {
+		this.realtime = realtime;
+	}
+	public Date getFinalTime() {
+		return finalTime;
+	}
+	public void setFinalTime(Date finalTime) {
+		this.finalTime = finalTime;
 	}
 	
 	

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
+import com.training.common.utils.CookieUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.SpecBeautician;
@@ -50,6 +51,15 @@ public class SpecBeauticianController extends BaseController{
 	@RequestMapping(value="list")
 	public String list(SpecBeautician specBeautician, HttpServletRequest request, HttpServletResponse response, Model model) {
 		try{
+			//若不是从重定向进来的，则清除cookie中的数据
+			if(!"1".equals(request.getParameter("removeCookie")) && request.getParameter("removeCookie") != "1"){
+				CookieUtils.getCookie(request, response, "specBeauticianCookie","/", true);
+			}
+			//若是从查询列表页进来的，则将查询条件保存到cookie
+			if(!"".equals(request.getParameter("cookieData")) && request.getParameter("cookieData") != null){
+				CookieUtils.setCookie(response, "specBeauticianCookie",request.getParameter("cookieData"),60*30);
+			}
+			
 			Page<SpecBeautician> page = specBeauticianService.findList(new Page<SpecBeautician>(request, response), specBeautician);
 			model.addAttribute("page", page);
 		}catch(Exception e){
@@ -144,7 +154,7 @@ public class SpecBeauticianController extends BaseController{
 			logger.error("方法：delete，删除特殊美容师出错信息：" + e.getMessage());
 			addMessage(redirectAttributes, "删除特殊美容师失败");
 		}
-		return "redirect:" + adminPath + "/sys/specBeautician/list";
+		return "redirect:" + adminPath + "/sys/specBeautician/list?removeCookie=1&"+CookieUtils.getCookie(request, "specBeauticianCookie");
 	}
 	
 	/**

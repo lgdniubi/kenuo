@@ -47,5 +47,9 @@ public interface ActivityCouponDao extends TreeDao<ActivityCoupon> {
 	 */
 	public List<ActivityCoupon> findByCouIdList(int actionId);
 	
-
+	/**
+	 * 删除活动对应的红包
+	 * @param id
+	 */
+	public void delCoupon(String id);
 }

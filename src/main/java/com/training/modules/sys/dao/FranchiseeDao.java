@@ -86,10 +86,36 @@ public interface FranchiseeDao extends TreeDao<Franchisee>{
 	public void updateMtmyPublicServiceFlag(Franchisee franchisee);
 
 	/**
+	 * 保存商品详情
+	 * @param description
+	 * @param id
+	 */
+	public void saveFranchiseeDescription(@Param(value="description")String description,@Param(value="id")String id);
+	
+	/**
+	 * 同步每天美耶保存商品详情
+	 * @param description
+	 * @param id
+	 */
+	public void saveMtmyFranchiseeDescription(@Param(value="description")String description,@Param(value="id")String id);
+	
+	/**
 	 *  查询商家认证时提交的银行信息
 	 * @param franchisee
 	 * @return
 	 */
 	public List<BankAccount> findBankAccountList(Franchisee franchisee);
+
+	/**
+	 * 修改sys里面的"是否真实的商家"
+	 * @param franchisee
+	 */
+	public void updateIsRealFranchisee(Franchisee franchisee);
+
+	/**
+	 * 同步mtmy里面的"是否真实的商家"
+	 * @param franchisee
+	 */
+	public void updateMtmyIsRealFranchisee(Franchisee franchisee);
 
 }

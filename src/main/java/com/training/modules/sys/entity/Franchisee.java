@@ -46,6 +46,8 @@ public class Franchisee extends TreeEntity<Franchisee>{
 	private String isRealFranchisee;  //是否真实的商家（0：否；1：是）
 	private String publicServiceFlag; //公共商品服务标识(0: 做 1: 不做)  土豆添加   2018-2-27
 	
+	private String description;      //商品详情
+	
 	@Override
 	public Franchisee getParent() {
 		return parent;
@@ -193,6 +195,12 @@ public class Franchisee extends TreeEntity<Franchisee>{
 	public void setPublicServiceFlag(String publicServiceFlag) {
 		this.publicServiceFlag = publicServiceFlag;
 	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
 	public String getLegalCard() {
 		return legalCard;
 	}
@@ -211,6 +219,5 @@ public class Franchisee extends TreeEntity<Franchisee>{
 	public void setShortName(String shortName) {
 		this.shortName = shortName;
 	}
-	
 	
 }

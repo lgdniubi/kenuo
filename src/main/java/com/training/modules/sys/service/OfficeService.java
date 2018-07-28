@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
 import com.google.common.collect.Lists;
+import com.training.common.persistence.Page;
 import com.training.common.service.BaseService;
 import com.training.common.service.TreeService;
 import com.training.common.utils.StringUtils;
@@ -127,6 +128,7 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	@Transactional(readOnly = false)
 	public void franchiseeUpdateOffice(Office office){
 		dao.franchiseeUpdateOffice(office);
+		UserUtils.removeCache(UserUtils.CACHE_OFFICE_LIST);
 	};
 	/**
 	 * 通过code查询对应店铺所属加盟商
@@ -448,7 +450,18 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	public Office checkOfficeCode(Office office) {
 		return officeDao.checkOfficeCode(office);
 	}
-
+	
+	/**
+	 * 查询店铺关闭店日志
+	 * @param officeId
+	 * @return
+	 */
+	public Page<OfficeLog> queryOfficeLog(Page<OfficeLog> page,OfficeLog officeLog){
+		officeLog.setPage(page);
+		page.setList(officeDao.queryOfficeLog(officeLog));
+		return page;
+	}
+	
 	/**
 	 * 查询机构账户
 	 * @param officeId

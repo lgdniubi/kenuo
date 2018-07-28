@@ -732,4 +732,26 @@ public class MtmyMnappointmentController extends BaseController{
 		
 		return mapList;
 	}
+	
+	/**
+	 * 单项目预约查询用户已购买的项目
+	 * @param userid
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="oneAlreadyBuyProject")
+	public String oneAlreadyBuyProject(String userid,String chooseRecId,HttpServletRequest request,Model model){
+		try{
+			if(!"".equals(userid) && userid != null){
+				List<OrderGoods> lists = reservationService.findOrderGoodsByUserId(Integer.valueOf(userid));
+				model.addAttribute("lists",lists);
+				model.addAttribute("chooseRecId",chooseRecId);
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "单项目预约查询用户已购买的项目", e);
+			logger.error("单项目预约查询用户已购买的项目错误信息:"+e.getMessage());
+		}
+		return "modules/ec/oneAlreadyBuyProject";
+	}
 }

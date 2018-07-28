@@ -90,13 +90,27 @@ public interface SpecEquipmentDao extends CrudDao<Equipment> {
 	 */
 	public int queryNum(@Param(value="bazaarId")String bazaarId, @Param(value="labelId")int labelId);
 	
-	
 	/**
 	 * 分页查询查询设备排班详情
 	 * @param equipmentLogs
 	 * @return
 	 */
 	public List<EquipmentLogs> findEquipmentLogsList(EquipmentLogs equipmentLogs);
+	
+	/**
+	 * 新增店铺通用设备操作日志
+	 * @param equipmentLogs
+	 */
+	public void insertComEquipmentLog(EquipmentLogs equipmentLogs);
+	
+	/**
+	 * 查看店铺通用设备操作日志
+	 * @param officeId
+	 * @return
+	 */
+	public List<EquipmentLogs> findAllLogs(EquipmentLogs equipmentLogs);
+
 	//删除与新增设备名称相同的数据
 	public void deleteSpecEquipmentByName(Equipment equipment);
+
 }

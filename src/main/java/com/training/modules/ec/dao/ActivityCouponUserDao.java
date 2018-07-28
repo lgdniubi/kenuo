@@ -45,12 +45,6 @@ public interface ActivityCouponUserDao extends CrudDao<ActivityCouponUser> {
 	 */
 	public int insertFeiSend(ActivityCouponUser couponUser);
 	/**
-	 * 查询数据数量 内部
-	 * @param amountId
-	 * @return
-	 */
-	public int findByCouponNum(String couponId);
-	/**
 	 * 
 	 * @param amountId
 	 * @param userId
@@ -63,12 +57,6 @@ public interface ActivityCouponUserDao extends CrudDao<ActivityCouponUser> {
 	 * @return
 	 */
 	public int insertUserCoupon(ActivityCouponUser couponUser);
-	/**
-	 * 查询非内部 是否有红包发放
-	 * @param amountId
-	 * @return
-	 */
-	public int findFeiByCouponNum(String amountId);
 	/**
 	 * 查询订单下的红包
 	 * @param orderId
@@ -88,4 +76,17 @@ public interface ActivityCouponUserDao extends CrudDao<ActivityCouponUser> {
 	 * @param id
 	 */
 	public void updateCouponUser(int id);
+	
+	/**
+	 * 查询内部用户数
+	 * @return
+	 */
+	public int queryInnerUserNum();
+	
+	/**
+	 * 查询非内部用户数
+	 * @return
+	 */
+	public int queryNotInnerUserNum();
+	
 }

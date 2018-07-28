@@ -53,6 +53,7 @@
 			 $("#msgContent").val(""); //清空
 			 $("#beginDate").val(""); //清空
 			 $("#endDate").val(""); //清空
+			 $("#msgType").val("");
 		}
 		function nowxiugai(a){
 			$(".loading").show();//打开展示层
@@ -90,10 +91,16 @@
 							<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
 							<input id="endDate" name="endDate" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm"
 								value="<fmt:formatDate value="${feedback.endDate}" pattern="yyyy-MM-dd"/>" readonly="readonly"/>
-							<!--  
-	                         &nbsp;&nbsp;&nbsp;未解决<label class="checked"><input type="radio" id="fbStatus" name="fbStatus" value="0" ></label>	
-							 &nbsp;&nbsp;&nbsp;已解决<label class="checked"><input type="radio" id="fbStatus" name="fbStatus" value="1" ></label>
-							 -->
+							<label >反馈类型：</label>
+							<select id="msgType" name="msgType" class="form-control">
+								<option value="">全部</option>
+								<option <c:if test="${feedback.msgType == '0'}">selected</c:if> value="0">功能异常</option>
+								<option <c:if test="${feedback.msgType == '1'}">selected</c:if> value="1">使用建议</option>
+								<option <c:if test="${feedback.msgType == '2'}">selected</c:if> value="2">功能需求</option>
+								<option <c:if test="${feedback.msgType == '3'}">selected</c:if> value="3">系统优化</option>
+								<option <c:if test="${feedback.msgType == '4'}">selected</c:if> value="4">其他</option>
+							</select>
+							
                         </div>
                         <div class="pull-right">
 							<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
@@ -106,11 +113,10 @@
                         <tr>
                             <th width="120" style="text-align: center;">反馈用户昵称</th>
                             <th width="120" style="text-align: center;">反馈用户名</th>
+                            <th width="120" style="text-align: center;">手机号码</th>
+                            <th width="120" style="text-align: center;">反馈类型</th>
                             <th style="text-align: center;">反馈内容</th>
                             <th width="200" style="text-align: center;">反馈时间</th>
-                            <!--  
-                            <th width="100">是否解决</th>
-                            -->
                             <th width="100" style="text-align: center;">是否解决</th>
                         </tr>
                     </thead>
@@ -119,6 +125,14 @@
 	                    	<tr>
 	                    		<td>${mtmyFeedback.users.nickname}</td>
 	                    		<td>${mtmyFeedback.users.name}</td>
+	                    		<td>${mtmyFeedback.mobile}</td>
+	                    		<td>
+	                    			<c:if test="${mtmyFeedback.msgType == 0}">功能异常</c:if>
+	                    			<c:if test="${mtmyFeedback.msgType == 1}">使用建议</c:if>
+	                    			<c:if test="${mtmyFeedback.msgType == 2}">功能需求</c:if>
+	                    			<c:if test="${mtmyFeedback.msgType == 3}">系统优化</c:if>
+	                    			<c:if test="${mtmyFeedback.msgType == 4}">其他</c:if>
+	                    		</td>
 	                            <td>
 	                            <a onclick="openDialogView('查看反馈基本信息 ', '${ctx}/ec/mtmyFeedback/feedbackForm?msgId=${mtmyFeedback.msgId}','750px', '600px')">
 									${mtmyFeedback.msgContent}

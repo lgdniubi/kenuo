@@ -51,9 +51,14 @@ public class BannerController extends BaseController {
 	 */
 	@RequestMapping(value = "list")
 	public String list(Banner banner,HttpServletRequest request, HttpServletResponse response,Model model) {
+		//查询可选择的商家
+		Franchisee franchisee = new Franchisee();
+		franchisee.setIsRealFranchisee("1");
+		List<Franchisee> franchiseeList = franchiseeService.findList(franchisee);
 		
 		Page<Banner> page=bannerService.findPage(new Page<Banner>(request, response), banner);
 		model.addAttribute("page", page);
+		model.addAttribute("franchiseeList", franchiseeList);
 		return "modules/ec/bannerList";
 	}
 	
@@ -132,6 +137,29 @@ public class BannerController extends BaseController {
 			BugLogUtils.saveBugLog(request, "banner图修改状态", e);
 			map.put("STATUS", "ERROR");
 			map.put("MESSAGE", "修改失败,出现异常");
+		}
+		return map;
+	}
+	
+	/**
+	 * banner删除功能(逻辑删除)
+	 * 土豆
+	 * 2018-6-26
+	 * @param banner
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("delete")
+	public Map<String, String> delete(Banner banner){
+		Map<String, String> map = new HashMap<String, String>();
+		try {
+			bannerService.delete(banner);
+			map.put("STATUS", "SUCCESS");
+			map.put("MESSAGE", "操作成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("STATUS", "ERROR");
+			map.put("MESSAGE", "操作失败");
 		}
 		return map;
 	}

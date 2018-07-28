@@ -185,29 +185,35 @@
 			coupon_id,
 			status,
 			add_time,
+			expiration_date,
 			used_time,
 			order_id,
 			order_price
-		)SELECT
-			mu.user_id,
+		)SELECT 
+			s.mtmy_user_id,
 			#{couponId},
 			'0',
 			SYSDATE(),
+			(CASE 
+				WHEN (SELECT a.expiration_type FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) = 0
+				THEN (SELECT a.expiration_date FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) 
+				ELSE (DATE_FORMAT(date_add(SYSDATE(),INTERVAL (SELECT a.expiration_day FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) DAY),'%Y-%m-%d 23:59:59'))
+				END
+			),
 			NULL,
 			NULL,
 			NULL
-		FROM
-			mtmydb.mtmy_users mu
-		WHERE
-			mu.del_flag = 0
-		AND user_id IN (
-			SELECT
-				su.mtmy_user_id
-			FROM
-				trains.sys_user su
-				WHERE su.del_flag = 0
+		FROM trains.sys_user s,mtmydb.mtmy_users u
+		WHERE s.mtmy_user_id = u.user_id
+		AND s.del_flag = 0
+		AND u.del_flag = 0
+		AND s.mtmy_user_id NOT IN (
+			SELECT user_id
+			FROM mtmydb.mtmy_activity_coupon_user
+			WHERE coupon_id = #{couponId}
+			GROUP BY user_id
+			HAVING COUNT(1) >= (SELECT ceiling FROM mtmydb.mtmy_activity_coupon WHERE id = #{couponId})
 		)
-
 	</insert>
 	<!-- 非内部红包推送 -->
 	<insert id="insertFeiSend">
@@ -216,29 +222,60 @@
 			coupon_id,
 			status,
 			add_time,
+			expiration_date,
 			used_time,
 			order_id,
 			order_price
-		)SELECT
-			mu.user_id,
+		)SELECT 
+			u.user_id,
 			#{couponId},
 			'0',
 			SYSDATE(),
+			(CASE 
+				WHEN (SELECT a.expiration_type FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) = 0
+				THEN (SELECT a.expiration_date FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) 
+				ELSE (DATE_FORMAT(date_add(SYSDATE(),INTERVAL (SELECT a.expiration_day FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) DAY),'%Y-%m-%d 23:59:59'))
+				END
+			),
 			NULL,
 			NULL,
 			NULL
-		FROM
-			mtmydb.mtmy_users mu
-		WHERE
-		mu.del_flag=0 
-		AND user_id NOT IN (
-			SELECT
-				su.mtmy_user_id
-			FROM
-				trains.sys_user su
-				WHERE su.del_flag = 0
-		)
+		FROM mtmydb.mtmy_users u
+		WHERE u.del_flag = 0
+		AND u.user_id NOT IN (
+			SELECT user_id
+			FROM mtmydb.mtmy_activity_coupon_user
+			WHERE coupon_id = #{couponId}
+			GROUP BY user_id
+			HAVING COUNT(1) >= (SELECT ceiling FROM mtmydb.mtmy_activity_coupon WHERE id = #{couponId}))
+		AND u.user_id NOT IN (
+			SELECT u.mtmy_user_id
+			FROM trains.sys_user u,mtmydb.mtmy_users u1
+			WHERE u.mtmy_user_id = u1.user_id
+			AND u1.del_flag = 0)
+		
 	</insert>
+	
+	<!-- 查询内部用户数 -->
+	<select id="queryInnerUserNum" resultType="Integer">
+		SELECT COUNT(1)
+		FROM trains.sys_user s,mtmydb.mtmy_users u
+		WHERE s.mtmy_user_id = u.user_id
+		AND s.del_flag = 0
+		AND u.del_flag = 0
+	</select>
+	
+	<!-- 查询非内部用户数 -->
+	<select id="queryNotInnerUserNum" resultType="Integer">
+		SELECT COUNT(1)
+		FROM mtmydb.mtmy_users u
+		WHERE u.user_id NOT IN (
+			SELECT u.mtmy_user_id
+			FROM trains.sys_user u,mtmydb.mtmy_users u1
+			WHERE u.mtmy_user_id = u1.user_id
+			AND u1.del_flag = 0)
+		AND u.del_flag = 0
+	</select>
 	
 	<!-- 指定用户插入 -->
 	<insert id="insertUserCoupon">
@@ -247,6 +284,7 @@
 			coupon_id,
 			status,
 			add_time,
+			expiration_date,
 			used_time,
 			order_id,
 			order_price
@@ -255,6 +293,12 @@
 			#{couponId},
 			#{status},
 			SYSDATE(),
+			(CASE 
+				WHEN (SELECT a.expiration_type FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) = 0
+				THEN (SELECT a.expiration_date FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) 
+				ELSE (DATE_FORMAT(date_add(SYSDATE(),INTERVAL (SELECT a.expiration_day FROM mtmydb.mtmy_activity_coupon ac LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id WHERE ac.id = #{couponId}) DAY),'%Y-%m-%d 23:59:59'))
+				END
+			),
 			null,
 			null,
 			null
@@ -262,55 +306,6 @@
 			
 
 	</insert>
-	<!-- 根据面值金额查询 内部-->
-	<select id="findByCouponNum" resultType="Integer">
-		SELECT
-			count(*) AS num
-		FROM
-			mtmydb.mtmy_activity_coupon_user
-		WHERE
-			coupon_id in (#{couponId}) AND `status`=0
-		AND user_id IN (
-			SELECT
-				mtmy_user_id
-			FROM
-				trains.sys_user
-			WHERE
-				mtmy_user_id IN (
-					SELECT
-						user_id
-					FROM
-						mtmydb.mtmy_users
-				)
-				AND del_flag = 0
-		)
-	
-	</select>
-	
-	<!-- 根据面值金额查询 非内部 -->
-	<select id="findFeiByCouponNum" resultType="Integer">
-		SELECT
-			count(*) AS num
-		FROM
-			mtmydb.mtmy_activity_coupon_user
-		WHERE
-			coupon_id IN (#{couponId}) AND `status`=0
-		AND user_id IN (
-			SELECT
-				user_id
-			FROM
-				mtmydb.mtmy_users
-			WHERE
-				user_id NOT IN (
-					SELECT
-						mtmy_user_id
-					FROM
-						trains.sys_user
-						WHERE del_flag = 0
-				)
-		)
-	
-	</select>
 	
 	<!-- 根据Aid and userId -->
 	<select id="findByAIdandUserId" resultType="Integer">
@@ -319,7 +314,7 @@
 		FROM
 			mtmydb.mtmy_activity_coupon_user
 		WHERE
-			coupon_id=#{couponId} and user_id=#{userId} and status=0
+			coupon_id=#{couponId} and user_id=#{userId}
 	</select>
 	<!-- 活动过期后将用户领取的红包修改为已过期 -->
 	<update id="updateCouponUser">
@@ -327,4 +322,5 @@
 			status = 2 
 		WHERE coupon_id = #{id} AND status = 0
 	</update>
+
 </mapper>

@@ -19,6 +19,7 @@
 				  return;
 			}
 			
+			$("#paycode").removeAttr("disabled"); 
 			 $("#inputForm").submit();
 			 return true;
 				 
@@ -53,6 +54,10 @@
 			}else{
 				$("#logistics").hide();
 			}*/
+			if($("#channelFlag").val() != "bm"){
+				$("#paycode").attr("disabled",true);
+			}
+			
 			if($("#isNeworder").val() == 0){
 				$("#beauticianMoney").show();
 				$("#shopMoney").show();

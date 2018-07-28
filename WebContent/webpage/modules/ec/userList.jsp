@@ -123,7 +123,7 @@
 	    })
 	    function lookmobile(num){
 	    	loading("正在查询，请稍后 . . .");
-	    	$("#userid").val(num);
+	    	$("#userid1").val(num);
 	    	$("#oldMobile").val("");
 	    	$.ajax({
 	    		type : 'post',
@@ -143,7 +143,7 @@
 			$.ajax({
 				 type : 'POST',
 				 url : '${ctx}/ec/mtmyuser/updateUser',
-				 data:{'userid':$("#userid").val(),'phone':$("#newPhone").val(),'mobile':$('#newMobile').val(),'password':$('#password').val()},
+				 data:{'userid':$("#userid1").val(),'phone':$("#newPhone").val(),'mobile':$('#newMobile').val(),'password':$('#password').val()},
 				 success:function(index,data){
 					closeTip();
 					showTip('修改用户成功','success');
@@ -156,7 +156,7 @@
 		}
 	    function updatepwd(num){
 	    	$("#password").val("");
-	    	$("#userid").val(num);
+	    	$("#userid1").val(num);
 	    	$('#resetpsd').modal('show');
 	    }
 	    
@@ -184,6 +184,7 @@
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 						<table:sortColumn id="orderBy" name="orderBy" value="${page.orderBy}" callback="sortOrRefresh();"/><!-- 支持排序 -->
 						<div class="form-group">
+							<input id="userid" name="userid" type="text" value="${users.userid }" class="form-control" placeholder="用户ID" onkeyup="this.value=this.value.replace(/\D/g,'')"> 
 							<input id="name" name="nickname" type="text" value="${users.nickname }" class="form-control" placeholder="用户名"> 
 							<input id="mobile" name="mobile" type="text" value="${users.mobile }" class="form-control" placeholder="手机号码" onkeyup="this.value=this.value.replace(/\D/g,'')"> 
 							<input id="realName" name="name" type="text" value="${users.name }" class="form-control" placeholder="真实姓名"> 
@@ -328,7 +329,7 @@
 	</div>
 	<div class="loading"></div>
 	<!--查看电话号码-->
-	<input type="hidden" value="" id="userid" name="userid">
+	<input type="hidden" value="" id="userid1" name="userid1">
 	<input type="hidden"  id="oldMobile" name="oldMobile">
 	<div class="modal fade bs-example-modal-lg in" id="telphone" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" style="display: none; padding-right: 17px;">
    		<form id="mobileFrom" class="modal-dialog modal-lg">
@@ -372,7 +373,6 @@
 					    	<td><label><input class="form-control" type="password" value="" id="password" name="password" maxlength="20"/></label><td>
 					    </tr>
 					</table>
-         				<!-- <input type="hidden" value="" id="pwduserid" name="userid"> -->
        			</div>
        			<div class="modal-footer">
        				<input type="submit" class="btn btn-success" value="保 存">

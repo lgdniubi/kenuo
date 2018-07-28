@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.training.modules.ec.dao.MtmyFeedbackDao">
 	<select id="findList" resultType="MtmyFeedback">
-		SELECT f.msg_id AS msgId,u.nickname AS "users.nickname",u.name AS "users.name",f.msg_status AS msgStatus,f.msg_content AS msgContent,f.msg_time AS msgTime
+		SELECT f.msg_id AS msgId,u.nickname AS "users.nickname",u.name AS "users.name",f.msg_status AS msgStatus,f.msg_content AS msgContent,f.msg_time AS msgTime,f.msg_type AS msgType,f.message_img AS messageImg,u.mobile
 			FROM  
 			mtmydb.mtmy_feedback f
 			LEFT JOIN mtmydb.mtmy_users u ON u.user_id = f.user_id
@@ -19,10 +19,13 @@
 					<if test="dbName == 'oracle'">'%'||#{msgContent}||'%'</if>
 					<if test="dbName == 'mysql'">CONCAT('%', #{msgContent}, '%')</if>
 			</if>
+			<if test="msgType != null and msgType != ''">
+				AND f.msg_type = #{msgType}
+			</if>
 			ORDER BY f.msg_time DESC
 	</select>
 	<select id="get" resultType="MtmyFeedback">
-		SELECT f.msg_id AS msgId,u.nickname AS "users.nickname",u.name AS "users.name",f.msg_status AS msgStatus,f.msg_content AS msgContent,f.msg_time AS msgTime,f.message_img AS messageImg
+		SELECT f.msg_id AS msgId,u.nickname AS "users.nickname",u.name AS "users.name",f.msg_status AS msgStatus,f.msg_content AS msgContent,f.msg_time AS msgTime,f.msg_type AS msgType,f.message_img AS messageImg,u.mobile
 			FROM  
 			mtmydb.mtmy_feedback f
 			LEFT JOIN mtmydb.mtmy_users u ON u.user_id = f.user_id

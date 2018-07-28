@@ -40,7 +40,10 @@
 	
 	function doSubmit() {//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		if (validateForm.form()) {
-
+			if($("#goodsId").val() == "" && $("#goodsCategoryIdId").val() == ""){
+				top.layer.alert('商品分类和商品id请至少选择一个!', {icon: 0, title:'提醒'}); 
+				return;
+			}
 			$("#inputForm").submit();
 			return true;
 		}
@@ -195,6 +198,7 @@
 							$("#goodselectId").val("");
 							$("#goodselectName").val("");
 							$("#consignee").val("");
+							$("#goodsId").val("");
 
 							$("#service").hide();
 							$("#specgoods").empty().append("<option value='0'>规格选择</option>");
@@ -205,6 +209,7 @@
 							$("#marketprice").val("");
 							$("#couponprice").val("");
 							$("#orderamount").val("");
+							$("#costPrice").val("");
 							
 							cateid=$("#goodsCategoryIdId").val();
 							top.layer.close(index);
@@ -362,6 +367,21 @@
 // 				});
 
 			});
+		
+		function findGoods(){
+			$("#goodsCategoryIdId").val("");
+			$("#goodselectId").val("");
+			$("#goodsCategoryIdName").val("");
+			$("#goodselectName").val("");
+			$("#marketprice").val("");
+			$("#couponprice").val("");
+			$("#orderamount").val("");
+			$("#costPrice").val("");
+			
+			$("#goodselectId").val($("#goodsId").val());
+			selectgood();
+			selecSpecgood();
+		}
 </script>
 </head>
 <body>
@@ -374,9 +394,9 @@
 							<label style="padding-top:5px;">分类选择：</label>
 						</div>
 						<div class="pull-left" style="width:200px;">
-							<input id="goodsCategoryIdId" class="form-control required" type="hidden" value="" name="goodsCategoryId" aria-required="true">
+							<input id="goodsCategoryIdId" class="form-control" type="hidden" value="" name="goodsCategoryId" aria-required="true">
 							<div class="input-group">
-								<input id="goodsCategoryIdName" class="form-control required" type="text" style="" data-msg-required="" 
+								<input id="goodsCategoryIdName" class="form-control" type="text" style="" data-msg-required="" 
 									value="" readonly="readonly" name="goodsCategory.name" aria-required="true"> <span class="input-group-btn">
 									<button id="goodsCategoryIdButton" class="btn btn-primary " type="button">
 										<i class="fa fa-search"></i>
@@ -389,10 +409,10 @@
 							<label style="padding-top:5px;">商品选择：</label>
 						</div>
 						<div class="pull-left" style="width:200px;">
-							<input id="goodselectId" name="goodsId" class="form-control required" type="hidden" value="" aria-required="true">
+							<input id="goodselectId" name="goodsId" class="form-control" type="hidden" value="" aria-required="true">
 							<div class="input-group">
 								<input id="goodselectName" name="goodsName" readonly="readonly" type="text" value="" data-msg-required="" 
-									class="form-control required" style="" aria-required="true">
+									class="form-control" style="" aria-required="true">
 								<span class="input-group-btn">
 									<button type="button" id="goodselectButton" class="btn   btn-primary  ">
 										<i class="fa fa-search"></i>
@@ -400,6 +420,10 @@
 								</span>
 							</div>
 							<label id="goodselectName-error" class="error" for="goodselectName" style="display: none"></label>
+						</div>
+						<div style="clear:both;padding-top:10px;" >
+							<label>商品id：&nbsp;&nbsp;&nbsp;&nbsp;</label>
+							<input id="goodsId" class="form-control"style="width:150px;height:30px;" onblur="findGoods()"/>
 						</div>
 						<div style="clear:both;padding-top:10px;" >
 							<label >规格选择：</label>

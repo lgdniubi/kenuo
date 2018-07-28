@@ -228,6 +228,10 @@
 					$this.find('input[class="isUpdate"]').val('1');
 				} 
 			});
+			//自动清除提示
+            setTimeout(() => {
+                    $('#messageBox').remove();
+            }, 2000);
 		});
 	</script>
 </body>

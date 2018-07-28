@@ -26,6 +26,7 @@ import com.training.modules.ec.service.SpecEquipmentService;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.utils.BugLogUtils;
+import com.training.modules.sys.utils.UserUtils;
 
 import net.sf.json.JSONObject;
 
@@ -232,6 +233,12 @@ public class SpecEquipmentController extends BaseController {
 				int num = querySum + i;
 				shopComEquipment.setName(name + num);
 				specEquipmentService.saveshopComEquipment(shopComEquipment);
+				
+				EquipmentLogs equipmentLogs = new EquipmentLogs();
+				equipmentLogs.setComEquipmentId(shopComEquipment.getShopComEquipmentId());
+				equipmentLogs.setContent("新增："+shopComEquipment.getName());
+				equipmentLogs.setCreateBy(UserUtils.getUser());
+				specEquipmentService.insertComEquipmentLog(equipmentLogs);
 			}
 			type = "success";
 		}catch(Exception e){
@@ -255,6 +262,16 @@ public class SpecEquipmentController extends BaseController {
 		try {
 			String flag = request.getParameter("flag");
 			specEquipmentService.updateType(Integer.valueOf(flag), shopComEquipment.getShopComEquipmentId());
+			
+			EquipmentLogs equipmentLogs = new EquipmentLogs();
+			equipmentLogs.setComEquipmentId(shopComEquipment.getShopComEquipmentId());
+			if("0".equals(flag)){
+				equipmentLogs.setContent("开启："+shopComEquipment.getName());
+			}else{
+				equipmentLogs.setContent("关闭："+shopComEquipment.getName());
+			}
+			equipmentLogs.setCreateBy(UserUtils.getUser());
+			specEquipmentService.insertComEquipmentLog(equipmentLogs);
 		} catch (Exception e) {
 			logger.error("修改店铺通用设备状态出错信息："+e.getMessage());
 			BugLogUtils.saveBugLog(request, "修改店铺通用设备状态", e);
@@ -328,5 +345,26 @@ public class SpecEquipmentController extends BaseController {
 		}
 		
 		return "modules/ec/equipmentLogs";
+	}
+	
+	/**
+	 * 查询店铺通用设备操作日志
+	 * @param equipmentLogs
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="editLog")
+	public String editLog(EquipmentLogs equipmentLogs,HttpServletRequest request,HttpServletResponse response,Model model){
+		try{
+			Page<EquipmentLogs> page = specEquipmentService.findAllLogs(new Page<EquipmentLogs>(request,response),equipmentLogs);
+			model.addAttribute("page", page);
+			model.addAttribute("comEquipmentId", equipmentLogs.getComEquipmentId());
+		}catch(Exception e){
+			logger.error("查询店铺通用设备操作日志出错信息："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "查询店铺通用设备操作日志出错信息", e);
+		}
+		return "modules/ec/commonEquipmentLogs";
 	}
 }

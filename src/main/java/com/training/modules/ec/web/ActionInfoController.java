@@ -24,6 +24,7 @@ import com.training.modules.ec.entity.ActionInfo;
 import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.service.ActionInfoService;
 import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.quartz.tasks.utils.RedisConfig;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
@@ -40,7 +41,6 @@ import com.training.modules.sys.utils.UserUtils;
 public class ActionInfoController extends BaseController {
 
 	public static final String GOOD_UNSHELVE_KEY = "GOOD_UNSHELVE_KEY"; //商品下架
-	
 	
 	@Autowired
 	private ActionInfoService actionInfoService;
@@ -96,7 +96,6 @@ public class ActionInfoController extends BaseController {
 			}
 			model.addAttribute("actionInfo",actionInfo);
 		} catch (Exception e) {
-			// TODO: handle exception
 			BugLogUtils.saveBugLog(request, "创建活动", e);
 			logger.error("创建活动页面：" + e.getMessage());
 		}
@@ -122,7 +121,6 @@ public class ActionInfoController extends BaseController {
 			model.addAttribute("list",list);
 			model.addAttribute("actionInfo",actionInfo);
 		} catch (Exception e) {
-			// TODO: handle exception
 			BugLogUtils.saveBugLog(request, "创建活动", e);
 			logger.error("创建活动页面：" + e.getMessage());
 		}
@@ -143,10 +141,10 @@ public class ActionInfoController extends BaseController {
 	public String addActionGoodsList(HttpServletRequest request, ActionInfo actionInfo, Model model) {
 		try {
 			List<Goods> list=actionInfoService.ActionGoodslist(actionInfo.getActionId());
+			list.stream().forEach(e -> e.setLimitNum(Integer.valueOf(redisClientTemplate.hget(RedisConfig.buying_limit_prefix+e.getActionId()+"_0",e.getGoodsId()+"")==null?"0":redisClientTemplate.hget(RedisConfig.buying_limit_prefix+e.getActionId()+"_0",e.getGoodsId()+""))));
 			model.addAttribute("list",list);
 			model.addAttribute("actionInfo", actionInfo);
 		} catch (Exception e) {
-			// TODO: handle exception
 			BugLogUtils.saveBugLog(request, "抢购商品列表", e);
 			logger.error("抢购商品列表：" + e.getMessage());
 		}
@@ -166,7 +164,6 @@ public class ActionInfoController extends BaseController {
 		try {
 			model.addAttribute("actionInfo", actionInfo);
 		} catch (Exception e) {
-			// TODO: handle exception
 			BugLogUtils.saveBugLog(request, "添加抢购商品", e);
 			logger.error("添加抢购商品页面：" + e.getMessage());
 		}
@@ -203,7 +200,6 @@ public class ActionInfoController extends BaseController {
 			}
 			
 		} catch (Exception e) {
-			// TODO: handle exception
 			BugLogUtils.saveBugLog(request, "创建活动", e);
 			logger.error("方法：save，创建活动：" + e.getMessage());
 			addMessage(redirectAttributes, "创建活动失败");
@@ -288,7 +284,6 @@ public class ActionInfoController extends BaseController {
 			}
 			addMessage(redirectAttributes, "操作成功");
 		} catch (Exception e) {
-			// TODO: handle exception
 			BugLogUtils.saveBugLog(request, "开启关闭活动", e);
 			addMessage(redirectAttributes, "操作失败！");
 			logger.error("开启关闭：" + e.getMessage());
@@ -316,7 +311,6 @@ public class ActionInfoController extends BaseController {
 			num=actionInfoService.numByGoodsId(goodsId);
 			
 		} catch (Exception e) {
-			// TODO: handle exception
 			BugLogUtils.saveBugLog(request, "添加活动商品", e);
 			logger.error("方法：save，添加活动商品：" + e.getMessage());
 			
@@ -354,7 +348,6 @@ public class ActionInfoController extends BaseController {
 			}
 			
 		} catch (Exception e) {
-			// TODO: handle exception
 			BugLogUtils.saveBugLog(request, "添加活动商品", e);
 			logger.error("方法：save，添加活动商品：" + e.getMessage());
 			return "error";
@@ -377,15 +370,15 @@ public class ActionInfoController extends BaseController {
 	public String dellGoods(String goodsId,String actionId,String actionType, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 	
 		try {
+			//将缓存中该活动中的该商品删除
+			redisClientTemplate.hdel(RedisConfig.buying_limit_prefix+actionId+"_0", goodsId);
 			
 			Goods goods=new Goods();
-			goods.setActionId(Integer.parseInt(actionId));
+			goods.setActionId(0);
 			goods.setGoodsId(Integer.parseInt(goodsId));
 			goods.setActionType(actionType);
 			actionInfoService.updateActionId(goods);
-				
 		} catch (Exception e) {
-			// TODO: handle exception
 			BugLogUtils.saveBugLog(request, "添加活动商品", e);
 			logger.error("方法：save，添加活动商品：" + e.getMessage());
 			return "error";
@@ -394,5 +387,93 @@ public class ActionInfoController extends BaseController {
 		return "success";
 
 	}
+	
+	/**
+	 * 修改抢购活动商品的限购数量
+	 * @param actionId
+	 * @param goodsId
+	 * @param limitNum
+	 * @param request
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="updateLimitNum")
+	public String updateLimitNum(String actionId,String goodsId,String limitNum,HttpServletRequest request,RedirectAttributes redirectAttributes){
+		String result = "";
+		try{
+			if(!"".equals(limitNum) && limitNum != null && !"".equals(goodsId) && goodsId != null && !"".equals(actionId) && actionId != null){
+				redisClientTemplate.hset(RedisConfig.buying_limit_prefix+actionId+"_0", goodsId, limitNum);
+				result = "success";
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "修改抢购活动商品的限购数量", e);
+			logger.error("方法：updateLimitNum，修改抢购活动商品的限购数量：" + e.getMessage());
+			result = "error";
+		}
+		return result;
+	}
+	
+	/**
+	 * 一键移除抢购活动对应的商品
+	 * @param actionInfo
+	 * @param request
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value="goodsRemove")
+	public String goodsRemove(ActionInfo actionInfo,HttpServletRequest request,RedirectAttributes redirectAttributes){
+		try{
+			if(actionInfo.getActionId() > 0){
+				List<Goods> list=actionInfoService.ActionGoodslist(actionInfo.getActionId());
+				list.stream().forEach(e -> {
+					Goods goods=new Goods();
+					goods.setActionId(0);
+					goods.setGoodsId(e.getGoodsId());
+					goods.setActionType("0");
+					actionInfoService.updateActionId(goods);
 
+					//查询该商品在redis中的缓存数量
+					String limitNum = redisClientTemplate.hget(RedisConfig.buying_limit_prefix+actionInfo.getActionId()+"_0", String.valueOf(e.getGoodsId()));
+					
+					//插入抢购活动对应商品的记录
+					actionInfo.setGoodsId(String.valueOf(e.getGoodsId()));
+					actionInfo.setCeiling(Integer.valueOf(limitNum == null?"0":limitNum));
+					actionInfo.setCreateBy(UserUtils.getUser());
+					actionInfoService.insertActionGoodsLog(actionInfo);
+				});
+				
+				//删除该抢购活动在缓存中的所有数据
+				redisClientTemplate.del(RedisConfig.buying_limit_prefix+actionInfo.getActionId()+"_0");
+				redisClientTemplate.del(RedisConfig.buying_limit_user_prefix+actionInfo.getActionId()+"_0");
+				addMessage(redirectAttributes, "移除成功！");
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "一键移除抢购活动对应的商品", e);
+			logger.error("一键移除抢购活动对应的商品失败信息：" + e.getMessage());
+			addMessage(redirectAttributes, "移除失败！");
+		}
+		return "redirect:"+adminPath+"/ec/action/list";
+	}
+	
+	/**
+	 * 查看抢购活动对应商品
+	 * @param actionInfo
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="actionGoods")
+	public String actionGoods(Goods goods,HttpServletRequest request,HttpServletResponse response,Model model){
+		try{
+			if(goods.getActionId() > 0){
+				Page<Goods> page = actionInfoService.queryActionGoods(new Page<Goods>(request, response), goods);
+				model.addAttribute("page", page);
+				model.addAttribute("actionId", goods.getActionId());
+			}
+		}catch(Exception e){
+			BugLogUtils.saveBugLog(request, "查看抢购活动对应商品", e);
+			logger.error("查看抢购活动对应商品页面出错信息：" + e.getMessage());
+		}
+		return "modules/ec/actionGoods";
+	}
 }

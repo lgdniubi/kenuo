@@ -44,7 +44,6 @@
 			var endTime=$("#endTime").val();
 			var showTime=$("#showTime").val();
 			var closeTime=$("#closeTime").val();
-			var ceiling=$("#ceiling").val()
 			
 			if(endTime<startTime){
 				top.layer.alert('结束时间要大于抢购时间!', {icon: 0, title:'提醒'}); 
@@ -56,15 +55,6 @@
 			}
 			if(closeTime<endTime){
 				top.layer.alert('关闭时间要大于结束时间!', {icon: 0, title:'提醒'}); 
-				  return;
-			}
-			var r = /^[0-9]+[0-9]*]*$/;
-			if(!r.test(ceiling)){
-				top.layer.alert('抢购数量输入整数!', {icon: 0, title:'提醒'}); 
-				  return;
-			}
-			if(ceiling<0){
-				top.layer.alert('抢购数量必须大于0!', {icon: 0, title:'提醒'}); 
 				  return;
 			}
 			$("#inputForm").submit();
@@ -227,8 +217,6 @@
 						<input id="closeTime" name="closeTime" class="Wdate form-control layer-date input-sm required" style="height: 30px;width: 200px" type="text" value="<fmt:formatDate value="${actionInfo.closeTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"
 							onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'endTime\')}'})"/><font color="red">*</font>
 						<p></p>
-						<label>限购数量：</label>
-						<input id="ceiling" name="ceiling" maxlength="10" style="width:200px;" class="form-control" value="${actionInfo.ceiling}"/><font color="red">*</font>
 						<label>用户等级：&nbsp;</label>
 						<form:select path="level" class="form-control required" style="width:200px;" >
 							<form:option value="0">0级以上</form:option>
@@ -243,7 +231,6 @@
 							<form:option value="9">9级以上</form:option>
 							<form:option value="10">10级以上</form:option>
  						</form:select><font color="red">*</font>
- 						<p></p>
  						<label>排&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;序：</label>
 						<input id="sort" name="sort" maxlength="10" style="width:200px;" class="form-control" value="${actionInfo.sort}"/><font color="red">*</font>
 					</form:form>

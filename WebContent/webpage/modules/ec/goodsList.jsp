@@ -17,14 +17,6 @@
 			reset();
 		}
 		
-		//分页按钮
-		function page(n,s){
-			$("#pageNo").val(n);
-			$("#pageSize").val(s);
-			$("#searchForm").submit();
-	    	return false;
-	    }
-		
 		//是否推荐/是否显示 改变事件
 		function changeTableVal(fromid,id,isyesno){
 			$(".loading").show();//打开展示层
@@ -96,7 +88,10 @@
 					<div class="searcharea clearfix">
 						<form:form id="searchForm" action="${ctx}/ec/goods/list" style="width: 100%;" modelAttribute="goods" method="post" class="navbar-form navbar-left searcharea">
 							<div class="form-group" style="width: 100%;margin-top: 5px;">
-								商品分类：
+								所属商家:<sys:treeselect id="franchisee" name="franchisee.id" value="${goods.franchisee.id}" labelName="franchisee.name" 
+									labelValue="${goods.franchisee.name}" title="所属商家" 
+									url="/sys/franchisee/treeData" cssClass=" form-control input-sm" allowClear="true" />
+								&nbsp;&nbsp;商品分类：
 								<sys:treeselect id="goodsCategoryId" name="goodsCategoryId" value="${goods.goodsCategoryId }" 
 									labelName="goodsCategory.name" labelValue="${goodsCategory.name }" 
 						     		title="商品分类" url="/ec/goodscategory/treeData" cssClass="form-control required" allowClear="true" notAllowSelectParent="true"/>
@@ -184,6 +179,7 @@
 								<!-- 分页必要字段 -->
 								<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 								<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
+								<input id="actionFlag" name="actionFlag" type="hidden" value="${actionFlag}">
 						</form:form>
 					</div>
 					<!-- 工具栏 -->
@@ -312,23 +308,23 @@
 										</shiro:hasPermission>
 										<c:if test="${goods.isReal != 2 && goods.isReal != 3}">
 											<shiro:hasPermission name="ec:goods:edit">
-				    							<a href="${ctx}/ec/goods/form?id=${goods.goodsId}&opflag=UPDATE&isReal=${goods.isReal}" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
+				    							<a href="${ctx}/ec/goods/form?id=${goods.goodsId}&opflag=UPDATE&isReal=${goods.isReal}&actionFlag=${actionFlag}" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 						    				</shiro:hasPermission>
 										</c:if>
 										<c:if test="${goods.isReal == 2 || goods.isReal == 3}">
 											<shiro:hasPermission name="ec:goods:view">
-				    							<a href="${ctx}/ec/goods/formCard?id=${goods.goodsId}&isReal=${goods.isReal}" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
+				    							<a href="${ctx}/ec/goods/formCard?id=${goods.goodsId}&isReal=${goods.isReal}&actionFlag=${actionFlag}" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 						    				</shiro:hasPermission>
 										</c:if>
 					    				<shiro:hasPermission name="ec:goods:del">
-											<a href="${ctx}/ec/goods/delete?id=${goods.goodsId}" onclick="return confirmx('要删除该商品吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
+											<a href="${ctx}/ec/goods/delete?id=${goods.goodsId}&actionId=${goods.actionId}&actionFlag=${actionFlag}" onclick="return confirmx('要删除该商品吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
 										</shiro:hasPermission>
 										<shiro:hasPermission name="ec:goods:del">
-											<a href="#" onclick="openDialog('添加商品库存', '${ctx}/ec/goods/fromspecstocks?id=${goods.goodsId}&actionId=${goods.actionId}','600px', '400px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 补仓</a>
+											<a href="#" onclick="openDialog('添加商品库存', '${ctx}/ec/goods/fromspecstocks?id=${goods.goodsId}&actionId=${goods.actionId}&actionFlag=${actionFlag}','600px', '400px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 补仓</a>
 										</shiro:hasPermission>
 										<c:if test="${goods.isReal != 2 && goods.isReal != 3}">
 											<shiro:hasPermission name="ec:goods:edit">
-												<a href="${ctx}/ec/goods/copyGood?goodsId=${goods.goodsId}&goodsName=${goods.goodsName}" onclick="return confirmx('确认复制该商品吗？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-file"></i>复制</a>
+												<a href="${ctx}/ec/goods/copyGood?goodsId=${goods.goodsId}&goodsName=${goods.goodsName}&actionId=${goods.actionId}&actionFlag=${actionFlag}" onclick="return confirmx('确认复制该商品吗？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-file"></i>复制</a>
 											</shiro:hasPermission>
 										</c:if>
 										<shiro:hasPermission name="ec:goods:edit">
@@ -340,7 +336,7 @@
 											</c:if>
 										</shiro:hasPermission> 
 										<shiro:hasPermission name="ec:goods:refreshRedis">
-											<a href="${ctx}/ec/goods/refreshRedis?goodsId=${goods.goodsId}" onclick="return confirmx('确认刷新该商品(详情)缓存吗？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-file"></i>刷新缓存</a>
+											<a href="${ctx}/ec/goods/refreshRedis?goodsId=${goods.goodsId}&actionId=${goods.actionId}&actionFlag=${actionFlag}" onclick="return confirmx('确认刷新该商品(详情)缓存吗？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-file"></i>刷新缓存</a>
 										</shiro:hasPermission>
 									</td>
 								</tr>

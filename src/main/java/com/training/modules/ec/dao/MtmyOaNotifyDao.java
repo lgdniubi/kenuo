@@ -24,4 +24,10 @@ public interface MtmyOaNotifyDao extends CrudDao<MtmyOaNotify> {
 	public List<String> selectCids(String notify_id);
 	
 	public void updateStatus(Map<String, Object> map);
+	
+	/**
+	 * 查询一定时间内未推送的需要定时推送的消息
+	 * @return
+	 */
+	public List<MtmyOaNotify> queryAutoPushMessage();
 }

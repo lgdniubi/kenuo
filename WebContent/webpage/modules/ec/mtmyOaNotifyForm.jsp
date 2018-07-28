@@ -4,6 +4,11 @@
 <head>
 	<title>通知管理</title>
 	<meta name="decorator" content="default"/>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no">
+	<link rel="stylesheet" href="${ctxStatic}/bootstrap-switch/lc_switch.css">
+  	<script src="${ctxStatic}/bootstrap-switch/js/lc_switch.js" type="text/javascript"></script>
+  	
 	<script src="http://malsup.github.io/min/jquery.form.min.js"></script>
 	<script type="text/javascript">
 		var validateForm;
@@ -26,6 +31,20 @@
 		  return false;
 		}
 		$(document).ready(function() {
+			var autoPushTime = {
+			    elem: '#autoPushTime',
+			    format: 'YYYY-MM-DD hh:mm:ss',
+			    event: 'focus',
+			    min: laydate.now(),
+			    istime: true,				//是否显示时间
+			    isclear: true,				//是否显示清除
+			    istoday: true,				//是否显示今天
+			    issure: true,				//是否显示确定
+			    festival: true			//是否显示节日
+			};
+			
+			laydate(autoPushTime);
+			
 			validateForm = $("#inputForm").validate({
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
@@ -42,43 +61,26 @@
 				} 
 			});
 			
-		   /*var start = {
-			    elem: '#startTime',
-			    format: 'YYYY-MM-DD',
-			    event: 'focus',
-			    max: $("#endTime").val(),   //最大日期
-			    istime: false,				//是否显示时间
-			    isclear: false,				//是否显示清除
-			    istoday: false,				//是否显示今天
-			    issure: false,				//是否显示确定
-			    festival: true,				//是否显示节日
-			    choose: function(datas){
-			         end.min = datas; 		//开始日选好后，重置结束日的最小日期
-			    }
-			};
-			var end = {
-			    elem: '#endTime',
-			    format: 'YYYY-MM-DD',
-			    event: 'focus',
-			    min: $("#startTime").val(),
-			    istime: false,
-			    isclear: false,
-			    istoday: false,
-			    issure: false,
-			    festival: true,
-			    choose: function(datas){
-			        start.max = datas; //结束日选好后，重置开始日的最大日期
-			    }
-			};
-			laydate(start);
-			laydate(end); */
 			if($("#pushType").val() == 1){
 				$("#tr").show();
 			}else if($("#pushType").val() == 2){
 				$("#group").show();
 			};
 			
+			if("${mtmyOaNotify.autoPushTime}" == null || "${mtmyOaNotify.autoPushTime}" == ""){
+				$("#time").hide();
+			}else{
+				$("#time").show();
+			}
 			push($("#type").val());
+			
+			$(".pd").lc_switch();
+			
+			$('body').delegate('.pd', 'lcs-statuschange', function() {
+			    var status = ($(this).is(':checked')) ? '0' : '1';
+			    $(".pd").val(status);
+			});
+			
 		});
 		function selectType(v){
 			if(v == 1 & ($("#status").val() == "" || $("#status").val() == "0")){
@@ -234,6 +236,15 @@
 		function selectImportType(){
 			$("#data").val("");
 		}
+		
+		function nowxiugai(){
+			if($(".pd").val() == "0"){
+				$("#time").show();
+			}else{
+				$("#time").hide();
+				$("#autoPushTime").val("");
+			}
+		}
 	</script>
 </head>
 <body>
@@ -260,7 +271,7 @@
 			       		<form:select path="pushType" class="form-control required" id="pushType" onchange="selectType(this.value)">
 							<%-- <form:option value="" label=""/>
 							<form:options items="${fns:getDictList('oa_push_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/> --%>
-							<form:option value="-1" >请选择类型</form:option>
+							<form:option value="" >请选择类型</form:option>
 							<form:options items="${fns:getDictList('mtmy_oa_push_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 						</form:select>
 					</td>
@@ -359,6 +370,26 @@
 			        </c:if>
 		        	</td> --%>
 		    	</tr>
+		    	<tr>
+		        	<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>自动推送：</label></td>
+	         		<td class="width-35" colspan="3">
+	         			<c:choose>
+							<c:when test="${mtmyOaNotify.autoPushTime == null || mtmyOaNotify.autoPushTime == ''}">
+								<a href="javascript:nowxiugai();">
+					 				<input type="checkbox"  name="check" class="pd" />
+								</a>
+							</c:when>
+							<c:otherwise>
+								<a href="javascript:nowxiugai();">
+									<input type="checkbox"  name="check" class="pd" checked="checked"  />
+								</a>
+							</c:otherwise>
+						</c:choose>
+						<span id="time">
+							<input id="autoPushTime" name="autoPushTime" type="text" maxlength="30" class="laydate-icon form-control layer-date input-sm required" value="<fmt:formatDate value="${mtmyOaNotify.autoPushTime}" pattern="yyyy-MM-dd HH:mm:ss"/>" style="width:185px;" placeholder="自动推送时间" readonly="readonly"/>
+						</span>
+	         		</td>
+	         	</tr>
 			</tbody>
 		</table>
 	</form:form>

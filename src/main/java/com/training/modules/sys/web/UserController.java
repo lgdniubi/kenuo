@@ -39,6 +39,7 @@ import com.training.common.beanvalidator.BeanValidators;
 import com.training.common.config.Global;
 import com.training.common.json.AjaxJson;
 import com.training.common.persistence.Page;
+import com.training.common.utils.CookieUtils;
 import com.training.common.utils.DateUtils;
 import com.training.common.utils.FileUtils;
 import com.training.common.utils.StringUtils;
@@ -135,6 +136,15 @@ public class UserController extends BaseController {
 	@RequiresPermissions("sys:user:index")
 	@RequestMapping(value = { "list", "" })
 	public String list(User user, HttpServletRequest request, HttpServletResponse response, Model model) {
+		//若不是从重定向进来的，则清除cookie中的数据
+		if(!"1".equals(request.getParameter("removeCookie")) && request.getParameter("removeCookie") != "1"){
+			CookieUtils.getCookie(request, response, "userCookie","/", true);
+		}
+		//若是从查询列表页进来的，则将查询条件保存到cookie
+		if(!"".equals(request.getParameter("cookieData")) && request.getParameter("cookieData") != null){
+			CookieUtils.setCookie(response, "userCookie",request.getParameter("cookieData"),60*30);
+		}
+				
 		Page<User> page = systemService.findUser(new Page<User>(request, response), user);
 		model.addAttribute("page", page);
 		return "modules/sys/userList";
@@ -282,7 +292,7 @@ public class UserController extends BaseController {
 							if(!user.getOffice().getId().equals(users.getOffice().getId()) || !user.getUserType().equals(users.getUserType())){
 								addMessage(redirectAttributes, "修改用户失败,此美容师有预约，不允许修改其关键信息");
 								UserUtils.clearCache(user);
-								return "redirect:" + adminPath + "/sys/user/list?repage";
+								return "redirect:" + adminPath + "/sys/user/list?repage&removeCookie=1&"+CookieUtils.getCookie(request, "userCookie");
 							}
 						}
 					}
@@ -360,7 +370,7 @@ public class UserController extends BaseController {
 			BugLogUtils.saveBugLog(request, "保存用户失败错误信息", e);
 		}
 		
-		return "redirect:" + adminPath + "/sys/user/list?repage";
+		return "redirect:" + adminPath + "/sys/user/list?repage&removeCookie=1&"+CookieUtils.getCookie(request, "userCookie");
 	}
 	/**
 	 * 
@@ -370,18 +380,18 @@ public class UserController extends BaseController {
 	 */
 	@RequiresPermissions("sys:user:del")
 	@RequestMapping(value = "delete")
-	public String delete(User user,RedirectAttributes redirectAttributes) {
+	public String delete(User user, HttpServletRequest request,RedirectAttributes redirectAttributes) {
 		if (Global.isDemoMode()) {
 			addMessage(redirectAttributes, "演示模式，不允许操作！");
-			return "redirect:" + adminPath + "/sys/user/list?repage";
+			return "redirect:" + adminPath + "/sys/user/list?repage&removeCookie=1&"+CookieUtils.getCookie(request, "userCookie");
 		}
 		if(reservationDao.findCountById(user.getId()) != 0){
 			addMessage(redirectAttributes, "删除用户失败, 当前用户存在未完成的预约");
-			return "redirect:" + adminPath + "/sys/user/list?repage";
+			return "redirect:" + adminPath + "/sys/user/list?repage&removeCookie=1&"+CookieUtils.getCookie(request, "userCookie");
 		}
 		if(specBeauticianDao.findSpecBeautician(user.getId()) != 0){
 			addMessage(redirectAttributes, "删除用户失败,当前用户属于特殊美容师,请先从特殊美容师列表删除");
-			return "redirect:" + adminPath + "/sys/user/list?repage";
+			return "redirect:" + adminPath + "/sys/user/list?repage&removeCookie=1&"+CookieUtils.getCookie(request, "userCookie");
 		}
 		if (UserUtils.getUser().getId().equals(user.getId())) {
 			addMessage(redirectAttributes, "删除用户失败, 不允许删除当前用户");
@@ -405,7 +415,7 @@ public class UserController extends BaseController {
 	 */
 	@RequiresPermissions("sys:user:del")
 	@RequestMapping(value = "offJob")
-	public String offJob(User user, RedirectAttributes redirectAttributes) {
+	public String offJob(User user,HttpServletRequest request, RedirectAttributes redirectAttributes) {
 		if (Global.isDemoMode()) {
 			addMessage(redirectAttributes, "演示模式，不允许操作！");
 			return "redirect:" + adminPath + "/sys/user/list?repage";
@@ -429,7 +439,7 @@ public class UserController extends BaseController {
 			redisClientTemplate.del("UTOKEN_"+user.getId());
 			addMessage(redirectAttributes, "用户离职成功");
 		}
-		return "redirect:" + adminPath + "/sys/user/list?repage";
+		return "redirect:" + adminPath + "/sys/user/list?repage&removeCookie=1&"+CookieUtils.getCookie(request, "userCookie");
 	}
 	
 	/**
@@ -440,15 +450,15 @@ public class UserController extends BaseController {
 	 */
 	@RequiresPermissions("sys:user:del")
 	@RequestMapping(value = "onJob")
-	public String onJob(User user, RedirectAttributes redirectAttributes) {
+	public String onJob(User user, HttpServletRequest request,RedirectAttributes redirectAttributes) {
 		if (Global.isDemoMode()) {
 			addMessage(redirectAttributes, "演示模式，不允许操作！");
-			return "redirect:" + adminPath + "/sys/user/list?repage";
+			return "redirect:" + adminPath + "/sys/user/list?repage&removeCookie=1&"+CookieUtils.getCookie(request, "userCookie");
 		}
 		user.preUpdate();
 		systemService.onJob(user);
 		addMessage(redirectAttributes, "回复成在职用户成功");
-		return "redirect:" + adminPath + "/sys/user/list?repage";
+		return "redirect:" + adminPath + "/sys/user/list?repage&removeCookie=1&"+CookieUtils.getCookie(request, "userCookie");
 	}
 
 	/**
@@ -553,7 +563,7 @@ public class UserController extends BaseController {
 			BugLogUtils.saveBugLog(request, "保存用户数据权限", e);
 			addMessage(redirectAttributes, "保存出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/sys/user/list?repage";
+		return "redirect:" + adminPath + "/sys/user/list?repage&removeCookie=1&"+CookieUtils.getCookie(request, "userCookie");
 	}
 
 	/**

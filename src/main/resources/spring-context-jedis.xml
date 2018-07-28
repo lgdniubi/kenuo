@@ -29,7 +29,7 @@
 					<constructor-arg name="timeout" value="${redis.timeout}"/>
 					<constructor-arg name="weight" value="${redis.weight}"/>
 					<!-- 生产环境打开 -->
-				    <!--	<property name="password" value="${redis.pass}"/>   -->
+					<!-- <property name="password" value="${redis.pass}"/> -->
 				</bean>
 			</list>
 		</constructor-arg>

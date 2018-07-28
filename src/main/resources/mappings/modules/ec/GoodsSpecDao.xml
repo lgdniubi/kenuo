@@ -109,4 +109,8 @@
 		WHERE spec_id = #{id}
 	</delete>
 	
+	<!-- 查看规格是否有商品使用 -->
+	<select id="findUseSpecById" resultType="int">
+		SELECT COUNT(1) AS num FROM mtmydb.mtmy_spec_goods_price WHERE LOCATE(#{specItemId},spec_key)>0;
+	</select>
 </mapper>

@@ -81,7 +81,7 @@
 	
 	function dellActionGoods(id){
 		var actionId=$("#actionId").val();
-		var num=0;
+		/* var num=0;
 		$.ajax({
 			type:"post",
 			async:false,
@@ -97,18 +97,18 @@
 			error:function(XMLHttpRequest,textStatus,errorThrown){
 						    
 			}
-		});
+		}); */
 		
-		if(num>0){
+		/* if(num>0){
 			top.layer.alert('该商品已经购买不可移除!', {icon: 0, title:'提醒'});
 			return;
-		}else{
+		}else{ */
 
 			$.ajax({
 				type:"post",
 				data:{
 					goodsId:id,
-					actionId:0,
+					actionId:actionId,
 					actionType:0
 				 },
 				url:"${ctx}/ec/action/dellGoods",
@@ -123,7 +123,7 @@
 							    
 				}
 			});
-		}
+		/* } */
 		
 	}
 	
@@ -217,6 +217,41 @@
 // 				});
 
 			});
+				
+		function editNum(goodsName,goodsId,limitNum){
+			$("#chooseGoodsId").val(goodsId);
+			$("#limitNum").val(limitNum);
+			$("#myModalLabel").html("修改<span style='color:red'>"+goodsName+"</span>的限购数量");
+			$('#limitNumModal').modal('show');
+		}
+		
+		function tijiao(){
+			if($("#limitNum").val() == ""){
+				top.layer.alert('限购数量不可为空!', {icon: 0, title:'提醒'}); 
+				return;
+			}
+			$.ajax({
+				type:"post",
+				data:{
+					'actionId':$("#actionId").val(),
+					'goodsId':$("#chooseGoodsId").val(),
+					'limitNum':$("#limitNum").val()
+				},
+				url:"${ctx}/ec/action/updateLimitNum",
+				success:function(data){
+						if(data="success"){
+							top.layer.alert('修改成功!', {icon: 0, title:'提醒'});
+							window.location="${ctx}/ec/action/addActionGoodsList?actionId="+$("#actionId").val();
+						}else{
+							top.layer.alert('修改失败!', {icon: 0, title:'提醒'});
+							window.location="${ctx}/ec/action/addActionGoodsList?actionId="+$("#actionId").val();
+						}
+				},
+				error:function(XMLHttpRequest,textStatus,errorThrown){
+							    
+				}
+			});
+		}
 </script>
 </head>
 <body>
@@ -239,12 +274,11 @@
 						<tr>
 							<th style="text-align: center;">ID</th>
 							<th style="text-align: center;">商品名称</th>
-							<th style="text-align: center;">货号</th>
 							<th style="text-align: center;">商品分类</th>
-							<th style="text-align: center;">成本价</th>
 							<th style="text-align: center;">总库存</th>
 							<th style="text-align: center;">剩余库存</th>
 							<th style="text-align: center;">抢购价</th>
+							<th style="text-align: center;">限购数量</th>
 							<th style="text-align: center;">操作</th>
 						</tr>
 					</thead>
@@ -253,14 +287,14 @@
 							<tr>
 								<td>${list.goodsId}</td>
 								<td>${list.goodsName}</td>
-								<td>${list.goodsSn}</td>
 								<td>${list.goodsCategory.name}</td>
-								<td>${list.costPrice}</td>
 								<td>${list.totalStore}</td>
 								<td>${list.storeCount}</td>
 							 	<td>${list.shopPrice}</td>
+							 	<td>${list.limitNum}</td>
 								<td>
-								 <a href="#" onclick="dellActionGoods(${list.goodsId})" class="btn btn-danger btn-xs" ><i class="fa fa-close"></i>移除</a>
+									<a onclick="editNum('${list.goodsName}',${list.goodsId},${list.limitNum})" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>修改限购数量</a>
+									<a href="#" onclick="dellActionGoods(${list.goodsId})" class="btn btn-danger btn-xs" ><i class="fa fa-close"></i>移除</a>
 								</td>
 							</tr>
 						</c:forEach>
@@ -269,6 +303,23 @@
 			</div>
 		</div>
 	</div>
-	
+	<!-- 限购数量 -->
+	<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="limitNumModal">
+ 		<div class="modal-dialog modal-lg">
+		    <div class="modal-content">
+		    	<div class="modal-header">
+		    		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title" id="myModalLabel"></h4>
+				</div>
+				<div class="modal-body">
+					<input type="text" id="limitNum" name="limitNum" style="width:200px;" class="form-control required">
+					<input type="hidden" id="chooseGoodsId" name="chooseGoodsId">
+		      	</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" onclick="tijiao()">确定</button>
+		      	</div>
+		    </div>
+		</div>
+	</div>
 </body>
 </html>
