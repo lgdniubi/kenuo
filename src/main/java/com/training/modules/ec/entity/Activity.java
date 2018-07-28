@@ -15,7 +15,7 @@ public class Activity extends TreeEntity<Activity> {
 	private static final long serialVersionUID = 1L;
 	private String name;						//活动名称
 	private int franchiseeId;					//所属机构
-	private int actionType;					//活动类型：1 红包活动 2 抢购活动 9 投票
+	private int actionType;					//活动类型：1.营销红包；2.生日红包；3.内部红包；4.团购红包；5.其它
 	private Date showTime;						//抢购活动展示的时间
 	private Date closeTime;						//抢购活动关闭时间
 	private Date startTime;						//红包领取时间
@@ -37,6 +37,12 @@ public class Activity extends TreeEntity<Activity> {
 	private int sendType;						//推送方式
 	
 	private String moreType;                    //多用户推送方式（0：手机号；1：用户ID）
+	
+	private String expirationType;            //红包过期时间类型（0：按照具体时间；1：按照天数）
+	private String expirationDay;             //红包过期天数
+	
+	private Date beginCreateTime;            //开始的创建时间
+	private Date endCreateTime;              //结束的创建时间
 	
 	public int getSendType() {
 		return sendType;
@@ -217,6 +223,37 @@ public class Activity extends TreeEntity<Activity> {
 	public void setMoreType(String moreType) {
 		this.moreType = moreType;
 	}
-	
+
+	public String getExpirationType() {
+		return expirationType;
+	}
+
+	public void setExpirationType(String expirationType) {
+		this.expirationType = expirationType;
+	}
+
+	public String getExpirationDay() {
+		return expirationDay;
+	}
+
+	public void setExpirationDay(String expirationDay) {
+		this.expirationDay = expirationDay;
+	}
+
+	public Date getBeginCreateTime() {
+		return beginCreateTime;
+	}
+
+	public void setBeginCreateTime(Date beginCreateTime) {
+		this.beginCreateTime = beginCreateTime;
+	}
+
+	public Date getEndCreateTime() {
+		return endCreateTime;
+	}
+
+	public void setEndCreateTime(Date endCreateTime) {
+		this.endCreateTime = endCreateTime;
+	}
 
 }

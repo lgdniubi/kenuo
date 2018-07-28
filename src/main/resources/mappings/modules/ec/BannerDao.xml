@@ -13,19 +13,28 @@
 			sort,
 			is_open AS 'isOpen',
 			franchisee_ids AS 'franchiseeIds',
-			del_flag AS 'isShow',
+			is_show AS 'isShow',
 			is_share AS 'isShare'
 		FROM
 			mtmydb.mtmy_banner
-		WHERE 1 = 1
+		WHERE del_flag = 0
+			<if test="bannerName != null and bannerName != ''">
+				AND banner_name LIKE CONCAT('%', #{bannerName}, '%')
+			</if>
 			<if test="isShow != null and isShow != '' and isShow != '-1'">
-				AND del_flag = #{isShow}
+				AND is_show = #{isShow}
 			</if>
 			<if test="isShare != null and isShare != '' and isShare != '-1'">
 				AND is_share = #{isShare}
 			</if>
 			<if test="bannerType != null and bannerType != '' and bannerType != '-1'">
 				AND banner_type = #{bannerType}
+			</if>
+			<if test="franchiseeIds != null and franchiseeIds != '' and franchiseeIds != '-1' and franchiseeIds != 0">
+				AND (LOCATE(#{franchiseeIds},franchisee_ids ) > 0 )
+			</if>
+			<if test="franchiseeIds != null and franchiseeIds != '' and franchiseeIds != '-1' and franchiseeIds == 0">
+				AND is_open = #{franchiseeIds}
 			</if>
 		ORDER BY sort DESC
 	</select>
@@ -95,7 +104,7 @@
 			sort = #{sort},
 			is_open = #{isOpen},
 			franchisee_ids = #{franchiseeIds},
-			del_flag = 1
+			is_show = 1
 		WHERE banner_id = #{bannerId}
 	</update>
 	
@@ -104,11 +113,18 @@
 		UPDATE mtmydb.mtmy_banner
 		SET
 		<if test="isShow != null and isShow != ''">
-			del_flag = #{isShow}
+			is_show = #{isShow}
 	  	</if>
 		<if test="isShare != null and isShare != ''">
 			is_share = #{isShare}
 		</if>
+		WHERE banner_id = #{bannerId}
+	</update>
+	
+	<!-- banner删除功能(逻辑删除) -->
+	<update id="deleteByLogic">
+		UPDATE mtmydb.mtmy_banner 
+		SET del_flag = 1
 		WHERE banner_id = #{bannerId}
 	</update>
 </mapper>

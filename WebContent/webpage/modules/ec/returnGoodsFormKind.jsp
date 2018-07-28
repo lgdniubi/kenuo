@@ -515,7 +515,11 @@
 									<td style="text-align: center;">${returnedGoods.consignerShippingName}</td>
 									<td style="text-align: center;">${returnedGoods.consignerShippingCode}</td>
 									<td style="text-align: center;"><fmt:formatDate value="${returnedGoods.consignerShippingTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
-									<td style="text-align: center;"><img alt="退货物流单号" src=" ${returnedGoods.consignerShippingImg}" style="width: 180px;height:100px;"></td>
+									<td style="text-align: center;">
+										<c:if test="${returnedGoods.consignerShippingImg != null}">
+											<img alt="退货物流单号" src="${returnedGoods.consignerShippingImg}" style="width: 180px;height:100px;">
+										</c:if>
+									</td>
 								</tr>
 							</tbody>
 						</table>

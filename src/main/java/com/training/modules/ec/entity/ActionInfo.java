@@ -24,6 +24,8 @@ public class ActionInfo extends DataEntity<ActionInfo>{
 	private int executeStatus;			//定时器执行状态 0 未执行 1已执行
 	private int sort;	// 排序
 	
+	private int isRemove;              //该抢购活动是否移除了
+	private int num;                   //该抢购活动下商品的个数
 	
 	public int getExecuteStatus() {
 		return executeStatus;
@@ -161,4 +163,20 @@ public class ActionInfo extends DataEntity<ActionInfo>{
 		this.sort = sort;
 	}
 
+	public int getIsRemove() {
+		return isRemove;
+	}
+
+	public void setIsRemove(int isRemove) {
+		this.isRemove = isRemove;
+	}
+
+	public int getNum() {
+		return num;
+	}
+
+	public void setNum(int num) {
+		this.num = num;
+	}
+	
 }

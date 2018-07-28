@@ -134,6 +134,7 @@
 			$("#good").show();
 			$("#categ").show();
 			$("#acttype").show();
+			$("#goodsIdsArea").show();
 			$("#oneCate").hide();
 		}
 	}
@@ -300,6 +301,7 @@
 		var val=$("#usedType").val();
 		var cateid=$("#categoryId").val();
 		var actionType=$("#actionType").val();
+		var goodsIds = $("#goodsIds").val();
 		var arr = new Array(); //数组定义标准形式，不要写成Array arr = new Array();
 	    var all = new Array(); //定义变量全部保存
 		$("#select1").empty();	
@@ -316,7 +318,7 @@
 			$.ajax({
 				 type:"get",
 				 dataType:"json",
-				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&actionType="+actionType+"&franchiseeId="+$("#franchiseeId").val(),
+				 url:"${ctx}/ec/goods/treeGoodsData?goodsCategory="+cateid+"&actionType="+actionType+"&franchiseeId="+$("#franchiseeId").val()+"&id="+goodsIds,
 				 success:function(date){
 					var data=date;
 // 					console.log(data);
@@ -644,7 +646,12 @@
 										<form:option value="2">团购</form:option>
 										<form:option value="3">促销优惠</form:option>
 									</form:select>
-									
+								</td>
+							</tr>
+							<tr id="goodsIdsArea"  style="display:none;">
+								<td><label class="pull-right">商品ids：</label></td>
+								<td>
+									<textarea id="goodsIds" name="goodsIds" rows="5" cols="50"></textarea>
 									<a href="#"  class="btn btn-primary btn-rounded btn-outline btn-sm pull-right" onclick="findGood()" ><i class="fa fa-search"></i> 查询</a>
 								</td>
 							</tr>

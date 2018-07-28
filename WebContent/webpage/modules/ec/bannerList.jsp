@@ -44,9 +44,9 @@
 					if("OK" == status){
 						$("#"+fromid+id).html("");//清除DIV内容	
 						if(FLAG == '0'){
-							$("#"+fromid+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"updateType('"+fromid+"','"+id+"','1')\">");
+							$("#"+fromid+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"updateType('"+fromid+"','"+id+"','1')\"><input type='hidden' id='"+id+"_isShow' value='0'>");
 						}else if(FLAG == '1'){
-							$("#"+fromid+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"updateType('"+fromid+"','"+id+"','0')\">");
+							$("#"+fromid+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"updateType('"+fromid+"','"+id+"','0')\"><input type='hidden' id='"+id+"_isShow' value='1'>");
 						}
 					}else if("ERROR" == status){
 						alert(data.MESSAGE);
@@ -54,7 +54,38 @@
 				}
 			}); 
 		}
-		
+		//确认是否删除
+		function  deleteBanner(bannerId){
+			var isShow = $("#"+bannerId+"_isShow").val();
+			if(isShow == 0){
+				top.layer.alert('此数据启用中,请重新选择!', {icon: 0, title:'提醒'});
+				return;
+			}else{
+				if(confirm("确认要删除吗？","提示框")){
+					isDelete(bannerId);			
+				}
+			}
+		}
+		//不启用的数据可以被删除
+		function isDelete(bannerId){
+			$(".loading").show();//打开展示层
+			$.ajax({
+				type : "POST",
+				url : "${ctx}/ec/banner/delete?bannerId="+bannerId,
+				dataType: 'json',
+				success: function(data) {
+					$(".loading").hide(); //关闭加载层
+					var status = data.STATUS;
+					if("SUCCESS" == status){
+						top.layer.alert(data.MESSAGE, {icon: 0, title:'提醒'});
+						window.location="${ctx}/ec/banner/list";
+					}else if("ERROR" == status){
+						top.layer.alert(data.MESSAGE, {icon: 0, title:'提醒'});
+						window.location="${ctx}/ec/banner/list";
+					}
+				}
+			}); 
+		}
     </script>
     <title>banner图管理</title>
 </head>
@@ -74,6 +105,7 @@
 								<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}" />
 								<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
 								<div class="form-group">
+									<form:input path="bannerName" htmlEscape="false" maxlength="50" class=" form-control input-sm" placeholder="banner图名称"/>
 									<label>是否显示：</label>
 									<form:select path="isShow" cssClass="form-control">
 										<form:option value="-1">全部</form:option>
@@ -88,7 +120,16 @@
 									</form:select>
 									<label>位置类型：</label>
 									<form:select path="bannerType" cssClass="form-control">
+										<form:option value="-1">全部</form:option>
 										<form:options items="${fns:getDictList('bannerType')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
+									</form:select>
+									<label>选择商家：</label>
+									<form:select path="franchiseeIds" cssClass="form-control" style="text-align: center;width: 130px;">
+										<form:option value="-1">全部</form:option>
+										<form:option value="0">公开</form:option>
+										<c:forEach items="${franchiseeList}" var="list">
+											<form:option value="${list.id}">${list.name}</form:option>
+										</c:forEach>
 									</form:select>
 								</div>
 							</div>	
@@ -143,9 +184,11 @@
 								<shiro:hasPermission name="ec:banner:update">
 									<c:if test="${banner.isShow  eq '1'}">
 										<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="updateType('ISSHOW','${banner.bannerId}','0')">
+										<input type="hidden" id="${banner.bannerId}_isShow" value="${banner.isShow}">
 									</c:if>
 									<c:if test="${banner.isShow eq '0'}">
 										<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="updateType('ISSHOW','${banner.bannerId}','1')">
+										<input type="hidden" id="${banner.bannerId}_isShow" value="${banner.isShow}">
 									</c:if>
 								</shiro:hasPermission>
 							</td>
@@ -166,6 +209,9 @@
 								</shiro:hasPermission>
 								<shiro:hasPermission name="ec:banner:edit">
 									<a href="#" onclick="openDialog('修改', '${ctx}/ec/banner/form?bannerId=${banner.bannerId}','600px', '550px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 修改</a>
+								</shiro:hasPermission>
+								<shiro:hasPermission name="ec:banner:view">
+									<a href="#" onclick="deleteBanner(${banner.bannerId})" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
 								</shiro:hasPermission>
 							</td>
 						</tr>

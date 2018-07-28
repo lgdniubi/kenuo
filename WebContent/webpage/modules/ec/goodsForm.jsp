@@ -122,9 +122,18 @@
 					<h5>添加商品</h5>
 				</c:if>
 				<h5 style="padding-left: 92%;margin-top: -10px;">
-	           		<a href="${ctx}/ec/goods/list?actionId=${goods.actionId}">
-	            		<button type="button" class="btn btn-info">返回</button>
-	            	</a>
+					<c:choose>
+						<c:when test="${actionFlag == '1'}">
+							<a href="${ctx}/ec/goods/list?actionId=${goods.actionId}&removeCookie=1&${actionGoodsCookie}&actionFlag=${actionFlag}">
+		            			<button type="button" class="btn btn-info">返回</button>
+		            		</a>
+						</c:when>
+						<c:otherwise>
+							<a href="${ctx}/ec/goods/list?removeCookie=1&${goodsCookie}">
+		            			<button type="button" class="btn btn-info">返回</button>
+		            		</a>
+						</c:otherwise>
+					</c:choose>
 	            </h5> 
 			</div>
 			<div class="ibox-content">
@@ -135,7 +144,7 @@
 		                <li><a href="#tab_goods_spec" data-toggle="tab">商品规格</a></li>                        
 		                <li><a href="#tab_goods_attr" data-toggle="tab">商品属性</a></li>                        
 		            </ul>
-		          <form:form id="goodsForm" modelAttribute="goods" action="${ctx}/ec/goods/save" method="post">
+		          <form:form id="goodsForm" modelAttribute="goods" action="${ctx}/ec/goods/save?actionFlag=${actionFlag}" method="post">
 		            <div class="tab-content" id="myTabContent">
 		            	<!-- 通用信息 Begin -->
 						<div class="tab-pane fade in active" id="tab_tongyong">
@@ -166,6 +175,11 @@
 										<span class="control-label col-sm-2"><font color="red">*</font>是否自营：</span>
 										<input type="radio" id="isSelfSupport" name="isSelfSupport" value="0" ${(goods.isSelfSupport == '0' || goods.isSelfSupport == null)?'checked="checked"':''}>否
 										<input type="radio" id="isSelfSupport" name="isSelfSupport" value="1" ${(goods.isSelfSupport == '1')?'checked="checked"':''}>是
+									</li>
+									<li class="form-group required">
+										<span class="control-label col-sm-2"><font color="red">*</font>是否发货：</span>
+										<input type="radio" id="isDelivery" name="isDelivery" value="0" ${(goods.isDelivery == '0' || goods.isDelivery == null)?'checked="checked"':''}>否
+										<input type="radio" id="isDelivery" name="isDelivery" value="1" ${(goods.isDelivery == '1')?'checked="checked"':''}>是
 									</li>
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>是否可在后台下单：</span>
@@ -205,8 +219,8 @@
 										<span class="control-label cannotEdit">(多条描述以逗号分开)</span>
 									</li>
 									<li class="form-group">
-										<span class="control-label col-sm-2"><font color="red">*</font>商品简单描述：</span>
-										<form:input path="goodsRemark" htmlEscape="false" maxlength="150" class="form-control required"/>
+										<span class="control-label col-sm-2">商品简单描述：</span>
+										<form:input path="goodsRemark" htmlEscape="false" maxlength="150" class="form-control"/>
 										<span class="control-label cannotEdit">(多条描述以逗号分开)</span>
 									</li>
 									<li class="form-group">
@@ -328,6 +342,14 @@
 											onfocus="if(value == '0'){value=''}"
 											onblur="if(value == ''){value='0'}"/>
 										<span class="control-label cannotEdit">(以克为单位)</span>
+									</li>
+									<li class="form-group">
+										<span class="control-label col-sm-2"><font color="red">*</font>限购数量：</span>
+										<form:input path="limitNum"  maxlength="50" class="form-control digits required" 
+											onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
+											onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+											onfocus="if(value == '0'){value=''}"
+											onblur="if(value == ''){value='0'}"/>
 									</li>					
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>赠送消费积分：</span>
@@ -950,10 +972,6 @@
 					}
 					if(goodsShortName==""){
 						top.layer.alert('短名称不能为空!', {icon: 0, title:'提醒'});
-						return;
-					}
-					if(goodsRemark==""){
-						top.layer.alert('商品描述不能为空!', {icon: 0, title:'提醒'});
 						return;
 					}
 					if(goodsSn==""){

@@ -23,5 +23,11 @@ public interface GoodsCardDao extends CrudDao<GoodsCard>{
 	 * @return
 	 */
 	public List<GoodsCard> selectSonsByCardId(int cardId);
+
+	/**
+	 * 根据卡项id删除子项商品
+	 * @param goodsId
+	 */
+	void deleteByCardId(int cardId);
 	
 }

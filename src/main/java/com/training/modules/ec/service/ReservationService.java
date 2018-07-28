@@ -1,5 +1,6 @@
 package com.training.modules.ec.service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import com.training.modules.sys.dao.AreaDao;
 import com.training.modules.sys.entity.Area;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.User;
+import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.Subscribe;
 
@@ -49,14 +51,19 @@ public class ReservationService extends CrudService<ReservationDao,Reservation>{
 	 * 查看所有预约
 	 */
 	public Page<Reservation> findPage(Page<Reservation> page,Reservation reservation){
-		if(reservation.getBeginDate() == null && reservation.getEndDate() == null){
-			reservation.setBeginDate(new Date());
-			reservation.setEndDate(new Date());
+		try{
+			if(reservation.getBeginDate() == null && reservation.getEndDate() == null){
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");  
+				reservation.setBeginDate(formatter.parse(formatter.format(new Date())));
+				reservation.setEndDate(formatter.parse(formatter.format(new Date())));
+			}
+			// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
+			reservation.getSqlMap().put("dsf", CommonScopeUtils.newDataScopeFilter("r"));
+			reservation.setPage(page);
+			page.setList(dao.findAllList(reservation));
+		}catch(Exception e){
+
 		}
-		// 生成数据权限过滤条件（dsf为dataScopeFilter的简写，在xml中使用 ${sqlMap.dsf}调用权限SQL）
-		reservation.getSqlMap().put("dsf", CommonScopeUtils.newDataScopeFilter("r"));
-		reservation.setPage(page);
-		page.setList(dao.findAllList(reservation));
 		return page;
 	}
 

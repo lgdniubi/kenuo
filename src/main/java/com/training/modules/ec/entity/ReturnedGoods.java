@@ -92,7 +92,7 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	private double marketPrice;				//商品市场价
 		
 	private String franchiseeId;			//区分商家id(CRM中使用,土豆添加2018-4-12)
-
+	private int isNeworder;					//新老订单(老订单编辑营业额置灰,土豆添加2018-6-25)
 	
 	public List<Integer> getRecIds() {
 		return recIds;
@@ -536,6 +536,12 @@ public class ReturnedGoods extends TreeEntity<ReturnedGoods> {
 	}
 	public void setFranchiseeId(String franchiseeId) {
 		this.franchiseeId = franchiseeId;
+	}
+	public int getIsNeworder() {
+		return isNeworder;
+	}
+	public void setIsNeworder(int isNeworder) {
+		this.isNeworder = isNeworder;
 	}
 	
 }

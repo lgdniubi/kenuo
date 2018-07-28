@@ -17,6 +17,7 @@ import com.training.common.service.CrudService;
 import com.training.common.utils.StringUtils;
 import com.training.modules.ec.dao.EquipmentLabelDao;
 import com.training.modules.ec.dao.GoodsAttributeDao;
+import com.training.modules.ec.dao.GoodsCardDao;
 import com.training.modules.ec.dao.GoodsDao;
 import com.training.modules.ec.dao.GoodsSpecPriceDao;
 import com.training.modules.ec.dao.GoodsStatisticsDao;
@@ -25,6 +26,7 @@ import com.training.modules.ec.entity.EquipmentLabel;
 import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.entity.GoodsAttribute;
 import com.training.modules.ec.entity.GoodsAttributeMappings;
+import com.training.modules.ec.entity.GoodsCard;
 import com.training.modules.ec.entity.GoodsEquipmentLabel;
 import com.training.modules.ec.entity.GoodsImages;
 import com.training.modules.ec.entity.GoodsPosition;
@@ -37,6 +39,7 @@ import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.quartz.entity.GoodsCollect;
 import com.training.modules.quartz.entity.StoreVo;
 import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.quartz.tasks.utils.RedisConfig;
 import com.training.modules.sys.dao.SkillDao;
 import com.training.modules.sys.entity.Skill;
 import com.training.modules.sys.utils.ParametersFactory;
@@ -76,7 +79,9 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 	private GoodsStatisticsDao goodsStatisticsDao;
 	@Autowired
 	private GoodsPositionService goodsPositionService;
-
+	@Autowired
+	private GoodsCardDao goodsCardDao;
+	
 	/**
 	 * 分页展示所有信息
 	 * 
@@ -125,6 +130,11 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 			
 			// 保存
 			dao.insert(goods);
+			
+			//同步商品限购数量到redis数据库
+			if(goods.getLimitNum() > 0){
+				redisClientTemplate.hset(RedisConfig.buying_limit_prefix+"0_0", goods.getGoodsId()+"", goods.getLimitNum()+"");
+			}
 			
 			//自媒体每天美耶商品信息同步
 			JSONObject jsonObject = new JSONObject();
@@ -405,6 +415,9 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 				goods.setPositionIds(goodsPosition.getParentId()+"_"+goodsPosition.getId());
 			}
 			updateGoods(goods);
+			
+			//同步商品限购数量到redis数据库
+			redisClientTemplate.hset(RedisConfig.buying_limit_prefix+"0_0", goods.getGoodsId()+"", goods.getLimitNum()+"");
 
 			//自媒体每天美耶商品信息同步
 			JSONObject jsonObject = new JSONObject();
@@ -709,6 +722,9 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 		}
 		updateGoods(goods);
 		
+		//同步商品限购数量到redis数据库
+		redisClientTemplate.hset(RedisConfig.buying_limit_prefix+"0_0", goods.getGoodsId()+"", goods.getLimitNum()+"");
+		
 		//自媒体每天美耶商品信息同步
 		JSONObject jsonObject = new JSONObject();
 		String updateMtmyGoodInfo = ParametersFactory.getMtmyParamValues("mtmy_updateMtmyGoodInfo");	
@@ -783,6 +799,85 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 				
 			}
 		}
+		
+		//卡项子项信息修改,先删除原先的卡项子项
+		goodsCardDao.deleteByCardId(goods.getGoodsId());
+		//判断是套卡还是通用卡,进行修改.
+		if(goods.getIsReal().equals("2")){
+			//保存卡项子项表 begin
+			GoodsCard goodsCard = new GoodsCard();
+			
+			goodsCard.setCardId(goods.getGoodsId());						//卡项ID
+			
+			List<Integer> goodsIds = goods.getGoodsIds();					//商品ID 集合
+			List<Integer> goodsNums = goods.getGoodsNums();					//次（个）数集合
+			List<Double> marketPrices = goods.getMarketPrices();			//市场单价集合
+			List<Double> prices = goods.getPrices();						//优惠价集合
+			List<Double> totalMarketPrices = goods.getTotalMarketPrices();	//市场价合计集合
+			List<Double> totalPrices = goods.getTotalPrices();				//优惠价合计集合
+			for (Integer i = 0; i < goodsIds.size(); i++) {
+				Integer goodsId = goodsIds.get(i);					//商品id
+				Integer goodsNum = goodsNums.get(i);				//次（个）数
+				Double marketPrice = marketPrices.get(i);			//市场价
+				Double price = prices.get(i);						//优惠价
+				Double totalMarketPrice = totalMarketPrices.get(i); //市场价合计
+				Double totalPrice = totalPrices.get(i);				//优惠价合计
+				//通过商品id查询商品的商品名称,商品原始图,服务时长（虚拟商品）,是否为实物（0：实物；1：虚拟；）,
+				Goods newgoods = goodsDao.findGoodsBygoodsId(goodsId);
+				
+				goodsCard.setGoodsId(newgoods.getGoodsId());
+				goodsCard.setGoodsName(newgoods.getGoodsName());
+				goodsCard.setOriginalImg(newgoods.getOriginalImg());
+				goodsCard.setGoodsNum(goodsNum);
+				goodsCard.setServiceMin(newgoods.getServiceMin());
+				goodsCard.setIsReal(newgoods.getIsReal());
+				goodsCard.setMarketPrice(marketPrice);
+				goodsCard.setPrice(price);
+				goodsCard.setTotalMarketPrice(totalMarketPrice);
+				goodsCard.setTotalPrice(totalPrice);
+				
+				goodsCardDao.insert(goodsCard);//保存卡项
+			}
+			
+			//修改套卡的默认规格信息 begin
+			GoodsSpecPrice gsp = goodsSpecPriceDao.selectSuitCard(goods.getGoodsId());
+			
+			gsp.setCostPrice(goods.getCostPrice());
+			gsp.setMarketPrice(goods.getMarketPrice());
+			gsp.setPrice(goods.getShopPrice());
+			
+			goodsSpecPriceDao.updateSpec(gsp);
+			//修改套卡的默认规格信息 end
+			
+		}else if(goods.getIsReal().equals("3")){
+			//保存卡项子项表 begin
+			GoodsCard goodsCard = new GoodsCard();
+			
+			goodsCard.setCardId(goods.getGoodsId());				//卡项ID
+			
+			List<Integer> goodsIds = goods.getGoodsIds();			//商品ID 集合
+			List<Integer> goodsNums = goods.getGoodsNums();			//数量
+			for (Integer i = 0; i < goodsIds.size(); i++) {
+				Integer goodsId = goodsIds.get(i);					//商品id
+				Integer goodsNum = goodsNums.get(i);				//数量
+				//通过商品id查询商品的商品名称,商品原始图,服务时长（虚拟商品）,是否为实物（0：实物；1：虚拟；）,
+				Goods newgoods = goodsDao.findGoodsBygoodsId(goodsId);
+				
+				goodsCard.setGoodsId(newgoods.getGoodsId());
+				goodsCard.setGoodsName(newgoods.getGoodsName());
+				goodsCard.setOriginalImg(newgoods.getOriginalImg());
+				goodsCard.setGoodsNum(goodsNum);
+				goodsCard.setServiceMin(newgoods.getServiceMin());
+				goodsCard.setIsReal(newgoods.getIsReal());
+				goodsCard.setMarketPrice(0);
+				goodsCard.setPrice(0);
+				goodsCard.setTotalMarketPrice(0);
+				goodsCard.setTotalPrice(0);
+				
+				goodsCardDao.insert(goodsCard);//保存卡项
+			}
+			//保存卡项子项表 end 
+		}
 	}
 
 	/**
@@ -803,7 +898,11 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 		List<GoodsSpecImage> goodsSpecImagesList = findspecimgbyid(goods);
 		// 根据商品ID，查询所有属性值内容
 		List<GoodsAttributeMappings> gamList = findGoodsAttributeMappings(goods);
-
+		//查看商品的技能标签
+		goods.setSkill(getSkillByGoodsId(goods.getGoodsId()));
+		//查看商品的特殊设备
+		goods.setEquipmentLabel(getEquipmentLabelByGoodsId(goods.getGoodsId()));
+		
 		if (goods != null) {
 			int num = dao.selectByMaxSort();
 			goods.setGoodsId(0);
@@ -811,6 +910,9 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 			goods.setActionId(0);
 			goods.setSort(num + 1);
 			goods.setStoreCount(0);
+			//复制商品默认不上架，不app显示
+			goods.setIsOnSale("0");
+			goods.setIsAppshow("0");
 			// 保存
 			dao.insert(goods);
 			int goodId = goods.getGoodsId();
@@ -877,6 +979,21 @@ public class GoodsService extends CrudService<GoodsDao, Goods> {
 			goods.setGoodsAttributeMappingsList(goodsAttributeList);
 			saveattribute(goods);
 		}
+		//复制商品-->复制其技能和标签
+		//更新商品技能标签
+		List<GoodsSkill> skillList = SpeArrSkillList(goods); // 获得技能标签list
+		skillDao.deleteGoodsSkill(goods.getGoodsId());
+		if (skillList.size() > 0) {
+			skillDao.insertGoodsSkill(skillList);
+		}
+
+		// 更新商品设备标签
+		List<GoodsEquipmentLabel> goodsEquipmentLabelList = SpeArrGoodsEquipmentLabelList(goods); // 获得设备标签list
+		equipmentLabelDao.deleteGoodsEquipmentLabel(goods.getGoodsId());
+		if (goodsEquipmentLabelList.size() > 0) {
+			equipmentLabelDao.insertGoodsEquipmentLabel(goodsEquipmentLabelList);
+		}
+		
 	}
 
 	/**

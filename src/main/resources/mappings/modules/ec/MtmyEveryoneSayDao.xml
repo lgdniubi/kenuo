@@ -18,7 +18,15 @@
 			es.user_level AS 'userLevel',
 			es.create_date AS 'createDate'
 		FROM mtmydb.mtmy_everyone_say es
-		LEFT JOIN mtmydb.mtmy_everyone_say_like esl ON esl.say_id = es.id 
+		<if test="positionType != null and positionType != '' and positionType == 1 and name != null and name != ''">
+			LEFT JOIN trains.sys_office o ON o.id = es.content_id
+		</if>
+		<if test="positionType != null and positionType != '' and positionType == 2 and name != null and name != ''">
+			LEFT JOIN trains.sys_user u ON u.id = es.content_id
+		</if>
+		<if test="positionType != null and positionType != '' and positionType == 3 and name != null and name != ''">
+			LEFT JOIN mtmydb.mtmy_goods g ON g.goods_id = es.content_id
+		</if>
 		WHERE es.del_flag = '0'
 		AND es.say_type = '1'
 		<if test="begtime != null and begtime != ''">
@@ -30,6 +38,9 @@
 		<if test="positionType != null and positionType != ''">
 			AND es.position_type = #{positionType}
 		</if>
+		<if test="positionType == null or positionType == ''">
+			AND es.position_type = '1'
+		</if>
 		<if test="positionType != null and positionType != '' and positionType == 1 and name != null and name != ''">
 			AND o.name LIKE CONCAT('%', #{name}, '%')
 		</if>
@@ -38,9 +49,6 @@
 		</if>
 		<if test="positionType != null and positionType != '' and positionType == 3 and name != null and name != ''">
 			AND g.goods_name LIKE CONCAT('%', #{name}, '%')
-		</if>
-		<if test="positionType == '' and name != null and name !=''">
-			AND (g.goods_name LIKE CONCAT('%', #{name}, '%') OR u.name LIKE CONCAT('%', #{name}, '%') OR o.name LIKE CONCAT('%', #{name}, '%'))
 		</if>
 		ORDER BY es.create_date DESC
 	</select>

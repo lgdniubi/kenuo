@@ -53,4 +53,13 @@
 		DELETE FROM mtmydb.mtmy_spec_item WHERE spec_id = #{specId} AND spec_item_id = #{specItemId}
 	</delete>
 	
+	<!-- 根据规格id获取到规格子项id集合 -->
+	<select id="getListBySpecId" resultType="Integer">
+		SELECT 
+			spec_item_id AS specItemId
+		FROM 
+			mtmydb.mtmy_spec_item 
+		WHERE 
+			spec_id = #{specId}
+	</select>
 </mapper>

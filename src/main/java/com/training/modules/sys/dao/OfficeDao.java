@@ -286,7 +286,14 @@ public interface OfficeDao extends TreeDao<Office> {
 	public void deleteUserRoleOfficeById(String officeId);
 	
 	public void deleteUserRole(List<UserRoleOffice> list);
-	
+
+	/**
+	 * 查询店铺关闭店日志
+	 * @param officeId
+	 * @return
+	 */
+	public List<OfficeLog> queryOfficeLog(OfficeLog officeLog);
+
 	public Fvo queryFvo(@Param("office_id")String office_id);
 
 }

@@ -13,6 +13,8 @@
 		a.start_time,
 		a.end_time,
 		a.expiration_date,
+		expiration_type AS 'expirationType',
+		expiration_day AS 'expirationDay',
 		a.`status`,
 		a.create_by AS "createBy.name",
 		a.create_date
@@ -46,6 +48,12 @@
 		<if test="status!=null and status!=''">
 			AND a.status=#{status}
 		</if>
+		<if test="beginCreateTime != null and beginCreateTime != ''">
+			AND DATE_FORMAT(a.create_date,'%Y-%m-%d') >= DATE_FORMAT(#{beginCreateTime},'%Y-%m-%d')
+		</if>
+		<if test="endCreateTime != null and endCreateTime != ''">
+			<![CDATA[AND DATE_FORMAT(a.create_date,'%Y-%m-%d') <= DATE_FORMAT(#{endCreateTime},'%Y-%m-%d')]]>
+		</if>
 		ORDER BY a.create_date DESC
 	</select>
 	<select id="findAllList" resultType="Activity">
@@ -76,6 +84,8 @@
 		end_time,
 		expiration_date,
 		status,
+		expiration_type,
+		expiration_day,
 		create_date,
 		create_by
 		)VALUES
@@ -87,6 +97,8 @@
 		#{endTime},
 		#{expirationDate},
 		#{status},
+		#{expirationType},
+		#{expirationDay},
 		SYSDATE(),
 		#{createBy.name}
 		
@@ -101,7 +113,9 @@
 		action_type=#{actionType},
 		start_time=#{startTime},
 		end_time=#{endTime},
-		expiration_date=#{expirationDate}
+		expiration_date=#{expirationDate},
+		expiration_type = #{expirationType},
+		expiration_day = #{expirationDay}
 		WHERE id=#{id}
 	
 	</update>

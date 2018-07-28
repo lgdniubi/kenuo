@@ -142,4 +142,38 @@ public class FranchiseeService extends TreeService<FranchiseeDao,Franchisee>{
 	public List<BankAccount> findBankAccountList(Franchisee franchisee) {
 		return franchiseeDao.findBankAccountList(franchisee);
 	}
+	
+	/**
+	 * 保存商品详情
+	 * @param description
+	 * @param id
+	 */
+	public void saveFranchiseeDescription(String description,String id){
+		franchiseeDao.saveFranchiseeDescription(description, id);
+	}
+	
+	/**
+	 * 同步每天美耶保存商品详情
+	 * @param description
+	 * @param id
+	 */
+	public void saveMtmyFranchiseeDescription(String description,String id){
+		franchiseeDao.saveMtmyFranchiseeDescription(description, id);
+	}
+
+	/**
+	 * 修改sys里面的"是否真实的商家"
+	 * @param franchisee
+	 */
+	public void updateIsRealFranchisee(Franchisee franchisee) {
+		franchiseeDao.updateIsRealFranchisee(franchisee);
+	}
+
+	/**
+	 * 同步mtmy里面的"是否真实的商家"
+	 * @param franchisee
+	 */
+	public void updateMtmyIsRealFranchisee(Franchisee franchisee) {
+		franchiseeDao.updateMtmyIsRealFranchisee(franchisee);
+	}
 }

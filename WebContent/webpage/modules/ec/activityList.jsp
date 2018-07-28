@@ -5,6 +5,7 @@
 <head>
 <title>活动列表</title>
 <meta name="decorator" content="default" />
+<link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
 <script type="text/javascript">
 	function page(n,s) {
 		$("#pageNo").val(n);
@@ -74,8 +75,40 @@
 			        start.max = datas; //结束日选好后，重置开始日的最大日期
 			    }
 			};
+		
+		var beginCreate = {
+			    elem: '#beginCreateTime',
+			    format: 'YYYY-MM-DD',
+			    event: 'focus',
+			    max: $("#endCreateTime").val(),   //最大日期
+			    istime: false,				//是否显示时间
+			    isclear: true,				//是否显示清除
+			    istoday: true,				//是否显示今天
+			    issure: true,				//是否显示确定
+			    festival: true,				//是否显示节日
+			    choose: function(datas){
+			    	endCreate.min = datas; 		//开始日选好后，重置结束日的最小日期
+			    	endCreate.start = datas 		//将结束日的初始值设定为开始日
+			    }
+			};
+		var endCreate = {
+			    elem: '#endCreateTime',
+			    format: 'YYYY-MM-DD',
+			    event: 'focus',
+			    min: $("#beginCreateTime").val(),
+			    istime: false,
+			    isclear: true,
+			    istoday: true,
+			    issure: true,
+			    festival: true,
+			    choose: function(datas){
+			    	beginCreate.max = datas; //结束日选好后，重置开始日的最大日期
+			    }
+			};
 			laydate(start);
 			laydate(end);
+			laydate(beginCreate);
+			laydate(endCreate);
     });
 </script>
 </head>
@@ -108,6 +141,10 @@
 									<form:option value="2">关闭</form:option>
 									<form:option value="3">结束</form:option>
 							</form:select>
+							<label>创建时间</label>
+							<input id="beginCreateTime" name="beginCreateTime" value="<fmt:formatDate value="${activity.beginCreateTime}" pattern="yyyy-MM-dd"/>"  placeholder="开始时间" readonly="readonly" type="text" style="width:185px;" class="laydate-icon form-control layer-date input-sm" >
+							一
+							<input id="endCreateTime" name="endCreateTime" value="<fmt:formatDate value="${activity.endCreateTime}" pattern="yyyy-MM-dd"/>" placeholder="结束时间" readonly="readonly" type="text" style="width:185px;" class="laydate-icon form-control layer-date input-sm">
 						</div>
 					</form:form>
 					<!-- 工具栏 -->
@@ -147,15 +184,25 @@
 								<td>${action.id}</td>
 								<td>${action.name}</td>
 								<td>${action.franchiseeName}</td>
-								<c:if test="${action.actionType==1}">
-									<td>红包活动</td>
-								</c:if>
+								<td>
+									<c:if test="${action.actionType==1}">营销红包</c:if>
+									<c:if test="${action.actionType==2}">生日红包</c:if>
+									<c:if test="${action.actionType==3}">内部红包</c:if>
+									<c:if test="${action.actionType==4}">团购活动</c:if>
+									<c:if test="${action.actionType==5}">其它</c:if>
+								</td>
 								<td><fmt:formatDate value="${action.startTime}"
 										pattern="yyyy-MM-dd HH:mm:ss" /> — <fmt:formatDate
 										value="${action.endTime}" pattern="yyyy-MM-dd HH:mm:ss" />
 								</td>
-								<td><fmt:formatDate value="${action.expirationDate}"
-										pattern="yyyy-MM-dd HH:mm:ss" /></td>
+								<td>
+									<c:if test="${action.expirationType == 0}">
+										<fmt:formatDate value="${action.expirationDate}" pattern="yyyy-MM-dd HH:mm:ss" />
+									</c:if>
+									<c:if test="${action.expirationType == 1}">
+										${action.expirationDay}天									
+									</c:if>
+								</td>
 								<td>${action.createBy.name}</td>
 								<td><fmt:formatDate value="${action.createDate}"
 										pattern="yyyy-MM-dd HH:mm:ss" /></td>	
@@ -241,5 +288,6 @@
 			</div>
 		</div>
 	</div>
+	<div class="loading"></div>
 </body>
 </html>
