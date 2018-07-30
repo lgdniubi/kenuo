@@ -161,7 +161,7 @@
 			     	    	var z = obj.document.getElementById("storeTurnover"+k).value; //获取业务员SUM营业额(存在已退)
 		     	    		
 			     	    	var re = /^([+-]?)\d*\.?\d{0,2}$/; 
-			     	    	if(!re.test(y)){
+			     	    	if(!re.test(y) || y == "" || y == null || y == undefined){
 			     	    		top.layer.alert('请输入正确的营业额(最多两位小数)', {icon: 0, title:'提醒'});
 			     	    		return;
 			     	    	}
