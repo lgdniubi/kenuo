@@ -115,7 +115,7 @@
 	</script>
 </head>
 <body>
-	<form:form id="inputForm" modelAttribute="modelFranchisee" action="${ctx}/train/userCheck/saveFranchise?opflag=syr" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="modelFranchisee" action="${ctx}/train/syr/saveFranchise?opflag=syr" method="post" class="form-horizontal">
 		<sys:message content="${message}"/>
 		<input name="userid" value="${userid}" type="hidden">
 		<input name="id" value="${modelFranchisee.id}" type="hidden">

@@ -52,7 +52,7 @@
                                <form:input path="name" cssClass="form-control required" maxlength="20" placeholder="请输入标题"/>
 						    </div>
                              <input type="checkbox"  name="status" value="1" id="status" onclick="showPids()" <c:if test="${protocolModel.status eq '1'}">checked="checked"</c:if> />是否启用
-                             <div style="display: none" id="sign"><input type="checkbox"  name="pids" value="0" id="isPidId"  />是否重新签订</div>
+                             <div <c:if test="${protocolModel.status ne '1'}">style="display: none"</c:if> id="sign"><input type="checkbox"  name="pids" value="0" id="isPidId"  />是否重新签订</div>
 					   </div>
 					    <div class="form-group">
                            <label class="col-sm-2 control-label">内容：</label>

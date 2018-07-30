@@ -42,6 +42,7 @@ import com.training.modules.train.entity.MediaRole;
 import com.training.modules.train.entity.ModelFranchisee;
 import com.training.modules.train.entity.PayAccount;
 import com.training.modules.train.entity.PcRole;
+import com.training.modules.train.entity.SyrFranchise;
 import com.training.modules.train.entity.TrainModel;
 import com.training.modules.train.entity.UserCheck;
 
@@ -765,6 +766,28 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 				}
 			}
 		}
+	}
+	/**
+	 * 授权的时候，通过商家id，找申请的管理员id
+	 * @param companyId
+	 * @return
+	 */
+	public String findUserIdByCompanyId(Integer companyId) {
+		return userCheckDao.findUserIdByCompanyId(companyId);
+	}
+
+	/**
+	 * 查找手艺人商家信息列表
+	 * @param page
+	 * @param syrFranchise
+	 * @return
+	 */
+	public Page<SyrFranchise> findSyrList(Page<SyrFranchise> page, SyrFranchise syrFranchise) {
+		// 设置分页参数
+		syrFranchise.setPage(page);
+		// 执行分页查询
+		page.setList(userCheckDao.findSyrList(syrFranchise));
+		return page;
 	}
 	
 	

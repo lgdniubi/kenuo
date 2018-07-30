@@ -233,6 +233,7 @@ public class UserCheckController extends BaseController{
 		model.addAttribute("userCheck", userCheck);
 		return "modules/train/userCheckForm";
 	}
+	
 	/**
 	 * 判断是否可以进行权限设置
 	 * 如果该用户同意其他商家邀请，就不能操作。
