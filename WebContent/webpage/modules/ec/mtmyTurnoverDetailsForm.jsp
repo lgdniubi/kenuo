@@ -87,6 +87,7 @@
 								<th style="text-align: center;">店名</th>
 								<th style="text-align: center;">店铺增减营业额</th>
 								<th style="text-align: center;">营业额占比</th>
+								<th style="text-align: center;">剩余总营业额</th>
 								<th style="text-align: center;">增减值</th>
 							</tr>
 						</thead>
