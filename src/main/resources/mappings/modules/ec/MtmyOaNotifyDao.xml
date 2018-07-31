@@ -26,6 +26,7 @@
 		a.CONTENT_ID AS "contentId",
 		a.PUSH_NUM AS "pushNum",
 	    b.read_num,
+	    a.auto_push_time AS 'autoPushTime',
 	    b.un_read_num
 	</sql>
 	
@@ -84,6 +85,7 @@
 			PUSH_TYPE,
 			group_import_type,
 			START_TIME,
+			auto_push_time,
 			END_TIME
 			
 		) VALUES (
@@ -102,6 +104,7 @@
 			#{pushType},
 			#{groupImportType},
 			#{startTime},
+			#{autoPushTime},
 			#{endTime}
 		)
 	</insert>
@@ -119,6 +122,7 @@
 			PUSH_TYPE = #{pushType},
 			group_import_type = #{groupImportType},
 			START_TIME = #{startTime},
+			auto_push_time = #{autoPushTime},
 			END_TIME = #{endTime}
 		WHERE id = #{id}
 	</update>
@@ -155,4 +159,15 @@
 		set status = #{status}
 		where id = #{notify_id}
 	</update>
+	
+	<!-- 查询一定时间内未推送的需要定时推送的消息 -->
+	<select id="queryAutoPushMessage" resultType="MtmyOaNotify">
+		SELECT 
+			id,
+			push_type AS "pushType"
+		FROM mtmydb.mtmy_oa_notify
+		WHERE del_flag = 0
+		AND status = 0
+		<![CDATA[AND DATE_FORMAT(auto_push_time,'%Y-%m-%d %H:%i:%S"') <= DATE_FORMAT(SYSDATE(),'%Y-%m-%d %H:%i:%S"')]]>
+	</select>
 </mapper>

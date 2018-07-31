@@ -8,6 +8,7 @@
 
 <script type="text/javascript">
 	function page(n, s) {
+		overShade();
 		$("#pageNo").val(n);
 		$("#pageSize").val(s);
 		$("#searchForm").submit();
@@ -235,15 +236,35 @@
 									</shiro:hasPermission> 
 									<shiro:hasPermission name="ec:action:edit">
 									<c:if test="${action.status==1}">
-										<a href=""  onclick='top.openTab("${ctx}/ec/goods/list?actionId=${action.actionId}","${action.actionName}列表", false)'  class="btn btn-primary btn-xs"><i class="fa fa-file"></i>修改商品</a>
+										<a href=""  onclick='top.openTab("${ctx}/ec/goods/list?actionId=${action.actionId}&cookieData=actionId=${action.actionId}&actionFlag=1","${action.actionName}列表", false)'  class="btn btn-primary btn-xs"><i class="fa fa-file"></i>修改商品</a>
 									</c:if>
 									<c:if test="${action.status==2}">
-										<a href=""  onclick='top.openTab("${ctx}/ec/goods/list?actionId=${action.actionId}","${action.actionName}列表", false)'  class="btn btn-primary btn-xs"><i class="fa fa-file"></i>修改商品</a>
+										<a href=""  onclick='top.openTab("${ctx}/ec/goods/list?actionId=${action.actionId}&cookieData=actionId=${action.actionId}&actionFlag=1","${action.actionName}列表", false)'  class="btn btn-primary btn-xs"><i class="fa fa-file"></i>修改商品</a>
 									</c:if>
 									<c:if test="${action.status==3}">
 										<a href="#" style="background: #C0C0C0; color: #FFF"
 												class="btn  btn-xs"><i class="fa fa-file"></i>修改商品</a>
 									</c:if>
+									</shiro:hasPermission>
+									<shiro:hasPermission name="ec:action:goodsRemove">
+										<c:choose>
+											<c:when test="${action.status==3 && action.isRemove <= 0 && action.num > 0}">
+												<a href="${ctx}/ec/action/goodsRemove?actionId=${action.actionId}" onclick="return confirmx('确定要移除吗？',this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>一键移除</a>
+											</c:when>
+											<c:otherwise>
+												<a style="background: #C0C0C0; color: #FFF" class="btn  btn-xs"><i class="fa fa-file"></i>一键移除</a>
+											</c:otherwise>
+										</c:choose>
+									</shiro:hasPermission>
+									<shiro:hasPermission name="ec:action:actionGoodsLog">
+										<c:choose>
+											<c:when test="${action.status==3 && action.isRemove > 0 && action.num == 0}">
+												<a href="#" onclick="openDialogView('活动商品', '${ctx}/ec/action/actionGoods?actionId=${action.actionId}','1100px','650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>活动商品</a>
+											</c:when>
+											<c:otherwise>
+												<a style="background: #C0C0C0; color: #FFF" class="btn  btn-xs"><i class="fa fa-file"></i>活动商品</a>
+											</c:otherwise>
+										</c:choose>
 									</shiro:hasPermission>
 								</td>
 							</tr>

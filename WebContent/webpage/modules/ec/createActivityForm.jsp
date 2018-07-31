@@ -5,6 +5,7 @@
 <head>
 <title>创建活动</title>
 <meta name="decorator" content="default" />
+<link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
 <!-- 内容上传 引用-->
 <style type="text/css">
 #one {
@@ -39,6 +40,11 @@
 	function doSubmit() {//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		if (validateForm.form()) {
 			
+			if($("#franchiseeId").val() == '0' || $("#franchiseeId").val() == '' || $("#franchiseeId").val() == null){
+				top.layer.alert('归属商家必选！', {icon: 0, title:'提醒'}); 
+				return;
+			}
+			loading("正在提交，请稍候...");
 			$("#inputForm").submit();
 			
 			return true;
@@ -137,7 +143,26 @@
 // 					event : 'focus' //响应事件。如果没有传入event，则按照默认的click
 // 				});
 
+				if("${activity.id}" != null && "${activity.id}" != ""){
+					typeChange("${activity.expirationType}");
+				}
 			});
+			
+	function typeChange(value){
+		if(value == '0'){
+			$("#rad0").attr("checked",true);
+			$("#expirationType").val(0);
+			$("#expirationDay").val("");
+			$("#expirationDay").attr("disabled",true);
+			$("#expirationDate").attr("disabled",false);
+		}else{
+			$("#rad1").attr("checked",true);
+			$("#expirationType").val(1);
+			$("#expirationDate").val("");
+			$("#expirationDate").attr("disabled",true);
+			$("#expirationDay").attr("disabled",false);
+		}
+	}
 </script>
 </head>
 <body>
@@ -147,6 +172,7 @@
 				<div class="clearfix">
 					<form:form id="inputForm" modelAttribute="activity" action="${ctx}/ec/activity/save" method="post" class="form-horizontal">
 					<form:hidden path="id"/>
+					<form:hidden path="expirationType"/>
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 							<tr>
 								<td><label class="pull-right" ><font color="red">*</font>活动名称：</label></td>
@@ -158,7 +184,7 @@
 								<td><label class="pull-right" ><font color="red">*</font>所属商家：</label></td>
 								<td>
 									<form:select path="franchiseeId" class="form-control" style="width:200px;">
-										<form:option value="0">所属商家</form:option>
+										<form:option value="0">请选择商家</form:option>
 										<c:forEach items="${franList}" var="list" varStatus="status">
 												<form:option value="${list.id}">${list.name}</form:option>
 										</c:forEach>
@@ -168,7 +194,11 @@
 							<tr>
 								<td><label class="pull-right"><font color="red">*</font>活动类型：</label></td>
 								<td><form:select path="actionType"  class="form-control" style="width:200px;" >
-										<form:option value="1">红包活动</form:option>
+										<form:option value="1">营销红包</form:option>
+										<form:option value="2">生日红包</form:option>
+										<form:option value="3">内部红包</form:option>
+										<form:option value="4">团购红包</form:option>
+										<form:option value="5">其它</form:option>
 									</form:select></td>
 							</tr>
 							<tr>
@@ -185,8 +215,10 @@
 							</tr>
 							<tr>
 								<td><label class="pull-right"><font color="red">*</font>有效期：</label></td>
-								<td><input id="expirationDate" name="expirationDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm required"
-									value="<fmt:formatDate value="${activity.expirationDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" style="width:200px;" placeholder="有效期" readonly="readonly" />
+								<td colspan="2"><input type="radio" onchange="typeChange('0')" id="rad0" name="exTime">日期范围<input id="expirationDate" name="expirationDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm required"
+									value="<fmt:formatDate value="${activity.expirationDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" style="width:200px;" placeholder="请选择日期" readonly="readonly" />
+									<p></p>
+									<br><input type="radio" onchange="typeChange('1')" id="rad1" name="exTime">固定天数<form:input path="expirationDay" htmlEscape="false" style="width:190px;" class="form-control required" placeholder="领取后到期天数"/>天
 								</td>
 							</tr>
 						</table>
@@ -197,6 +229,6 @@
 			</div>
 		</div>
 	</div>
-	
+	 <div class="loading"></div>
 </body>
 </html>

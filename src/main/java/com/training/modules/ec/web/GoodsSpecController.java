@@ -128,11 +128,17 @@ public class GoodsSpecController extends BaseController{
 	 */
 	@RequiresPermissions(value={"ec:goodsspec:del"},logical=Logical.OR)
 	@RequestMapping(value = {"delete"})
+	@ResponseBody
 	public String delete(GoodsSpec goodsSpec, Model model,HttpServletRequest request, RedirectAttributes redirectAttributes){
-		//逻辑删除
-		goodsSpecService.delete(goodsSpec);
-		addMessage(redirectAttributes, "删除商品规格信息成功");
-		return "redirect:" + adminPath + "/ec/goodsspec/list";
+		try {
+			//逻辑删除
+			goodsSpecService.delete(goodsSpec);
+			return "success";
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "error";
+		}
 	}
 	
 	/**
@@ -169,15 +175,20 @@ public class GoodsSpecController extends BaseController{
 					}
 				}else if("DELETE".equals(method)){
 					String specItemId = request.getParameter("SPECITEMID");//规格项Id
-					if(!StringUtils.isEmpty(specItemId)){
-						//删除
-						items.setSpecItemId(Integer.parseInt(specItemId));
-						goodsSpecItemService.deleteItems(items);
-						jsonMap.put("STATUS", "OK");
-						jsonMap.put("MESSAGE", "删除成功");
-					}else{
+					if(goodsSpecService.findUseSpecById(Integer.parseInt(specItemId)) > 0){//查询是否有商品在使用该规格
 						jsonMap.put("STATUS", "ERROR");
-						jsonMap.put("MESSAGE", "删除失败,规格项ID参数为空");
+						jsonMap.put("MESSAGE", "商品正在使用此规格,无法删除.");
+					}else{
+						if(!StringUtils.isEmpty(specItemId)){
+							//删除
+							items.setSpecItemId(Integer.parseInt(specItemId));
+							goodsSpecItemService.deleteItems(items);
+							jsonMap.put("STATUS", "OK");
+							jsonMap.put("MESSAGE", "删除成功");
+						}else{
+							jsonMap.put("STATUS", "ERROR");
+							jsonMap.put("MESSAGE", "删除失败,规格项ID参数为空");
+						}
 					}
 				}
 			}else{
@@ -191,4 +202,16 @@ public class GoodsSpecController extends BaseController{
 		}
 		return jsonMap;
 	}
+	
+	/**
+	 * 获取该删除的规格项是否有正在使用的商品
+	 * @param goodsSpec
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("getIsGoodsUseSpec")
+	public boolean getIsGoodsUseSpec(GoodsSpec goodsSpec){
+		return goodsSpecService.getIsGoodsUseSpec(goodsSpec);
+	}
+	
 }

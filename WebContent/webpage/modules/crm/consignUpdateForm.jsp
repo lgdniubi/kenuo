@@ -7,8 +7,16 @@
 <script type="text/javascript">
 	var validateForm;
 	var msg = "您真的确定要提交吗？\n\n请确认！"; 
+	var newconsignNum;//新的寄存数量
+	var consignNum;//寄存数量
+	var takenNum;//取走数量
 	function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 		if(validateForm.form()){
+			//先计算数量才能提交
+			if($("#computType").val() == 1){
+				top.layer.alert('请先计算数量!', {icon: 0, title:'提醒'});
+				return false;
+			}
 			var result = number();
 			if(result==true){
 		 		if (confirm(msg)==true){ 
@@ -17,7 +25,7 @@
 			    }
 			}
 		 }else{ 
-			 alert("请输入正确的数量");
+			 top.layer.alert('请输入正确取走数量', {icon: 0, title:'提醒'});
 			  return false; 
 		 } 
 	}
@@ -25,17 +33,38 @@
 	function number(){
 		var takenNum = parseInt($("#takenNum").val());//取走数量
 		var purchaseNum = parseInt($("#purchaseNum").val());//购买数量
-		var consignNum = parseInt($("#consignNum").val());//寄存数量
+		
 		if((takenNum > purchaseNum)|| (takenNum > consignNum)){
-			alert("输入正确取走数量");
+			top.layer.alert('请输入正确取走数量', {icon: 0, title:'提醒'});
 			return false;
 		}
 		return true;
 	}
+	
+	function NumberCheck(t){
+        var num = t.value;
+        var re=/^\d*$/;
+        if(!re.test(num)){
+            isNaN(parseInt(num))?t.value=0:t.value=parseInt(num);
+        }
+    }
+	
+	function isnumber(num) {
+		 var regu = /^[1-9]\d*|0$/; 
+		 return regu.test(num);
+	}
+	
+	jQuery.validator.addMethod("isNumber", function(value, element) {
+	    var length = value.length;
+	    var temp = /^[1-9]\d*|0$/;   
+	    return this.optional(element) || (length >0 && temp.test(value));
+	}, "输入正确数量");
+	
 	$(document).ready(function() {
 		validateForm = $("#inputForm").validate({
 			rules: {
 			      takenNum: {
+			    	  isNumber:true,
 			            required : true,
 			            number:true,
 			            min:1
@@ -43,6 +72,7 @@
 			  },
 			  messages: {
 			      takenNum: {
+			    	  	isNumber:"请输入正确的数字",
 			            required : "这是必填字段",
 			            number:"请输入数字",
 			            min:"输入正确数字"
@@ -50,6 +80,26 @@
 			  }
 		 });
 	});
+	//计算数量
+	function compute(){
+		consignNum = "${consign.consignNum}";//寄存数量
+		takenNum = $("#takenNum").val();//取走数量
+		newconsignNum = parseInt(consignNum)-parseInt(takenNum);//新的寄存数量
+		
+		if(takenNum == 0 || newconsignNum < 0){
+			top.layer.alert('请正确填写取走数量', {icon: 0, title:'提醒'});
+		}else{
+			$("#takenNum").attr("readonly",true);
+			$("#consignNum").val(newconsignNum);
+			$("#computType").val(0);
+		}
+	}
+	//修改数量
+	function updateCompute(){
+		$("#takenNum").attr("readonly",false);
+		$("#consignNum").val(consignNum);
+		$("#computType").val(1);
+	}
 </script>
 </head>
 <body>
@@ -96,7 +146,12 @@
 										<label class="pull-right"><font color="red">*</font>取走数量:</label>
 									</td>
 									<td class="width-20">
-										<input name="takenNum" id="takenNum" value="${consign.takenNum}" maxlength="50" class="form-control required" />
+										<input name="takenNum" id="takenNum" value="0" maxlength="50" class="form-control required" onblur="NumberCheck(this)" style="width: 150px" />
+										<a href="#" id="compute" onclick="compute()">计算数量</a>
+										<input type="hidden" id="computType" name="computType" value="1"/>
+										<div id="updateCompute">
+											<a href="#" id="compute" onclick="updateCompute()">修改数量</a>
+										</div>
 									</td>
 								</tr>
 								<tr>
@@ -111,7 +166,7 @@
 									</td>
 									<td class="width-20" colspan="3">
 										<input id="begtime" name="createDate" type="text" maxlength="50" class="laydate-icon form-control layer-date input-sm "
-											value="<fmt:formatDate value="${consign.createDate}" pattern="yyyy-MM-dd"/>" style="width: 185px;" placeholder="开始时间" required="required" readonly = "readonly"  />
+											value="<fmt:formatDate value="${consign.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" style="width: 185px;" placeholder="开始时间" required="required" readonly = "readonly"  />
 									</td>
 								</tr>
 								<tr>

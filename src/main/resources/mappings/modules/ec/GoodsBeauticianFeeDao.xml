@@ -32,6 +32,8 @@
 			a.goods_no,
 			a.create_by as "createBy.name",
 			a.create_date,
+			(select c2.name from mtmydb.mtmy_goods_category c1 left join mtmydb.mtmy_goods_category c2 on c2.category_id = c1.parent_id where c1.category_id = b.category_id) as 'firstParentName',
+			(select name from mtmydb.mtmy_goods_category where category_id = b.category_id) as 'secondParentName',
 			a.remarks
 		FROM mtmydb.mtmy_goods_beautician_fee a
 		LEFT JOIN mtmydb.mtmy_goods b ON a.goods_id=b.goods_id

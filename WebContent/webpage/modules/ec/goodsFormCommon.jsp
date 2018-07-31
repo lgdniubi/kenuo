@@ -196,6 +196,11 @@
 										<input type="radio" id="isSelfSupport" name="isSelfSupport" value="1" ${(goods.isSelfSupport == '1')?'checked="checked"':''}>是
 									</li>
 									<li class="form-group">
+										<span class="control-label col-sm-2"><font color="red">*</font>是否发货：</span>
+										<input type="radio" id="isDelivery" name="isDelivery" value="0" ${(goods.isDelivery == '0' || goods.isDelivery == null)?'checked="checked"':''}>否
+										<input type="radio" id="isDelivery" name="isDelivery" value="1" ${(goods.isDelivery == '1')?'checked="checked"':''}>是
+									</li>
+									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>是否可在后台下单：</span>
 										<input type="radio" id="isBmCreate" name="isBmCreate" value="0" ${(goods.isBmCreate == '0' || goods.isBmCreate == null)?'checked="checked"':''}>否
 										<input type="radio" id="isBmCreate" name="isBmCreate" value="1" ${(goods.isBmCreate == '1')?'checked="checked"':''}>是
@@ -224,8 +229,8 @@
 										<span class="control-label cannotEdit">(多条描述以逗号分开)</span>
 									</li>
 									<li class="form-group">
-										<span class="control-label col-sm-2"><font color="red">*</font>商品简单描述：</span>
-										<form:input path="goodsRemark" htmlEscape="false" maxlength="150" class="form-control required"/>
+										<span class="control-label col-sm-2">商品简单描述：</span>
+										<form:input path="goodsRemark" htmlEscape="false" maxlength="150" class="form-control"/>
 										<span class="control-label cannotEdit">(多条描述以逗号分开)</span>
 									</li>
 									<li class="form-group">
@@ -337,6 +342,14 @@
 											onblur="if(value == ''){value='0'}"/>
 										<span class="control-label cannotEdit">(以克为单位)</span>
 									</li>					
+									<li class="form-group">
+										<span class="control-label col-sm-2"><font color="red">*</font>限购数量：</span>
+										<form:input path="limitNum"  maxlength="50" class="form-control digits required" 
+											onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" 
+											onpaste="this.value=this.value.replace(/[^\d.]/g,'')"
+											onfocus="if(value == '0'){value=''}"
+											onblur="if(value == ''){value='0'}"/>
+									</li>	
 									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>赠送消费积分：</span>
 										<form:input path="giveIntegral"  maxlength="50" class="form-control digits required" 
@@ -843,10 +856,6 @@
 					}
 					if(goodsShortName==""){
 						top.layer.alert('短名称不能为空!', {icon: 0, title:'提醒'});
-						return;
-					}
-					if(goodsRemark==""){
-						top.layer.alert('商品描述不能为空!', {icon: 0, title:'提醒'});
 						return;
 					}
 					if(goodsSn==""){

@@ -36,6 +36,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.training.common.beanvalidator.BeanValidators;
 import com.training.common.config.Global;
+import com.training.common.persistence.Page;
 import com.training.common.service.BaseService;
 import com.training.common.utils.DateUtils;
 import com.training.common.utils.StringUtils;
@@ -58,7 +59,6 @@ import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.ProtocolModelDao;
 import com.training.modules.train.dao.TrainRuleParamDao;
-import com.training.modules.train.entity.ContractInfo;
 import com.training.modules.train.entity.ContractInfoVo;
 import com.training.modules.train.entity.ModelFranchisee;
 import com.training.modules.train.entity.PayInfo;
@@ -1183,7 +1183,7 @@ public class OfficeController extends BaseController {
 				String url=webReservationTime;
 				String result = WebUtils.postTrainObject(parpm, url);
 				jsonObject = JSONObject.fromObject(result);
-				logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+				logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",message:"+jsonObject.get("message")+",data:"+jsonObject.get("data"));
 			}
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "记录店铺首图、美容院和美容师图片上传相关信息", e);
@@ -1290,6 +1290,27 @@ public class OfficeController extends BaseController {
 		officeLog.setUpdateBy(UserUtils.getUser());
 		officeService.saveOfficeLog(officeLog);
     }
+    
+    /**
+     * 查看店铺开闭店日志
+     * @param officeLog
+     * @param request
+     * @param response
+     * @param model
+     * @return
+     */
+    @RequestMapping(value="shopLogs")
+    public String shopLogs(OfficeLog officeLog,HttpServletRequest request,HttpServletResponse response,Model model){
+    	try{
+    		Page<OfficeLog> page = officeService.queryOfficeLog(new Page<OfficeLog>(request,response),officeLog);
+    		model.addAttribute("page",page);
+    		model.addAttribute("officeId",officeLog.getOfficeId());
+    	}catch (Exception e) {
+    		BugLogUtils.saveBugLog(request, "查看店铺开闭店日志", e);
+			logger.error("查看店铺开闭店日志出错信息:"+e.getMessage());
+		}
+    	return "modules/sys/shopLogs";
+    }
     /**
      * 去信用额度编辑页面
      * @return
@@ -1321,7 +1342,6 @@ public class OfficeController extends BaseController {
      */
     @RequestMapping("updateOfficeCreditLimit")
     public String updateOfficeCreditLimit(OfficeAcount officeAcount,RedirectAttributes redirectAttributes,HttpServletRequest request){
-    	
     	try {
 			this.officeService.updateOfficeCreditLimit(officeAcount);
 			addMessage(redirectAttributes, "变更信用额度成功");
@@ -1334,7 +1354,6 @@ public class OfficeController extends BaseController {
 			BugLogUtils.saveBugLog(request, "变更信用额度", e);
 			addMessage(redirectAttributes, "变更信用额度失败");
 		}
-    	
     	return "redirect:" + adminPath + "/sys/office/list"; 
     }
 }

@@ -35,14 +35,14 @@
 							$("#itemlistdiv").append("<div id='items_"+data.ITEMID+"' style='padding:5px 0'><input type='text' id='item_"+data.ITEMID+"' disabled='disabled' value='"+itemsvalue+"'> <img width='20' height='20' style='margin-left:5px;' onclick=\"changeItemsVal('DELETE','"+data.ITEMID+"')\" src='/kenuo/static/ec/images/minus.png'></div>");
 							$("#newitems").val("");
 						}
-						alert(data.MESSAGE);
+						top.layer.alert(data.MESSAGE, {icon: 0, title:'提醒'});
 					}else{
-						alert(data.MESSAGE);
+						top.layer.alert(data.MESSAGE, {icon: 0, title:'提醒'});
 					}
 				},
 				error:function(data, status, e){ //服务器响应失败时的处理函数 
 					$(".loading").hide(); //关闭加载层
-					alert(data.MESSAGE);
+					top.layer.alert(data.MESSAGE, {icon: 0, title:'提醒'});
 		        } 
 			});
 		}

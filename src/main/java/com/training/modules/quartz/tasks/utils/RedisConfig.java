@@ -20,6 +20,7 @@ public class RedisConfig {
 	public static final String BEAUTIFUL_DAY_SCORE = "BEAUTIFUL_DAY_SCORE";//美容师当天学分累计
 	public static final String BEAUTIFUL_DAY_GOLD = "BEAUTIFUL_DAY_GOLD";//美容师当天金币累计
 	public static final String buying_limit_prefix = "buying_limit_"; //活动抢购商品限购
+	public static final String buying_limit_user_prefix = "buying_limit_user_"; //用户活动抢购商品限购
 	public static final String ORDER_TIMEOUT = "order_timeout";//过期时间
 	public static final String coupon_amountids_hash = "coupon_amountids";//存放缓存红包的id
 	public static final String coupon_store_prefix = "coupon_store_";//面值库存
@@ -41,4 +42,5 @@ public class RedisConfig {
 	public static final String GOODS_GROUPACTIVITY_SPECPRICE_HASH = "GOODS_GROUPACTIVITY_SPECPRICE_HASH";//团购活动商品规格hash key
 	public static final String GOODS_GROUPACTIVITY_STORECOUNT_PREFIX = "GOODSSTORE_GROUPACTIVITY_"; //团购活动商品库存
 	public static final String GOODS_GROUPACTIVITY_SPECPRICE_PREFIX = "SPECPRICE_GROUPACTIVITY_";//团购活动规格库存
+	
 }

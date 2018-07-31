@@ -122,6 +122,10 @@ public class Goods extends DataEntity<Goods> {
 	
 	private String isSelfSupport;       //是否自营（0：否，1：是）
 	
+	private String isDelivery;         //是否发货（0：否，1：是）
+	
+	private int limitNum;              //限购数量
+	
 	/**
 	 * get/set
 	 */
@@ -622,6 +626,18 @@ public class Goods extends DataEntity<Goods> {
 	}
 	public void setIsSelfSupport(String isSelfSupport) {
 		this.isSelfSupport = isSelfSupport;
+	}
+	public String getIsDelivery() {
+		return isDelivery;
+	}
+	public void setIsDelivery(String isDelivery) {
+		this.isDelivery = isDelivery;
+	}
+	public int getLimitNum() {
+		return limitNum;
+	}
+	public void setLimitNum(int limitNum) {
+		this.limitNum = limitNum;
 	}
 	
 }

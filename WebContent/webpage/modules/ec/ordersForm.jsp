@@ -19,6 +19,8 @@
 				  top.layer.alert('订单成交价格不能小于0元!', {icon: 0, title:'提醒'}); 
 				  return;
 			}
+			
+			$("#paycode").removeAttr("disabled"); 
 			 $("#inputForm").submit();
 			 return true;
 				 
@@ -42,6 +44,10 @@
 		}, "小数位不能超过三位"); 
 		
 		$(document).ready(function() {
+			if($("#channelFlag").val() != "bm"){
+				$("#paycode").attr("disabled",true);
+			}
+			
 			if($("#isNeworder").val() == 0){
 				$("#beauticianMoney").show();
 				$("#shopMoney").show();

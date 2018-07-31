@@ -138,6 +138,36 @@ public class GoodsSpecService extends CrudService<GoodsSpecDao,GoodsSpec>{
 	public void delete(GoodsSpec goodsSpec) {
 		dao.deleteByLogic(goodsSpec);
 		goodsSpecDao.deleteSpecItems(goodsSpec);//删除原商品规格表
+	}
+
+	/**
+	 * 获取该删除的规格项是否有正在使用的商品
+	 * @param goodsSpec
+	 * @return
+	 */
+	public boolean getIsGoodsUseSpec(GoodsSpec goodsSpec) {
+		//根据规格id获取到规格子项id集合
+		boolean flag = false;
+		List<Integer> list = goodsSpecItemDao.getListBySpecId(goodsSpec.getSpecId());
+		//用规格子项id集合去查询是否有正在使用的(循环规格子项id集合查询是否有正在使用的,如果有酒终止循环)
+		for (Integer specItemId : list) {
+			int num = goodsSpecDao.findUseSpecById(specItemId);//查看规格是否有商品使用
+			if(num > 0){//有,就终止循环
+				flag = true;
+				break;
+			}
+		}
+		return flag;
+	}
+
+	/**
+	 * 根据规格明细项id查询是否有正在使用该id的商品
+	 * @param b 
+	 * @param goodsSpecItem
+	 * @return
+	 */
+	public int findUseSpecById(int specItemId) {
+		return goodsSpecDao.findUseSpecById(specItemId);
 	} 
 	
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -367,6 +368,72 @@ public class FranchiseeController extends BaseController{
 			logger.error("保存权限设置异常,异常信息为："+e);
 		}finally {
 			redisLock.unlock();
+		}
+		return "redirect:" + adminPath + "/sys/franchisee/list";
+	}
+	/**
+	 * 是否真实的商家（0：否；1：是）
+	 * @param franchisee
+	 * @param redirectAttributes
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "changeIsRealFranchisee")
+	public Map<String, String> changeIsRealFranchisee(Franchisee franchisee, RedirectAttributes redirectAttributes,HttpServletRequest request){
+		Map<String, String> map = new HashMap<String, String>();
+		try {
+			franchiseeService.updateIsRealFranchisee(franchisee);//修改sys里面的"是否真实的商家"
+			franchiseeService.updateMtmyIsRealFranchisee(franchisee);//同步mtmy里面的"是否真实的商家"
+			map.put("FLAG", "OK");
+			map.put("MESSAGE", "修改成功");
+		} catch (Exception e) {
+			logger.error("修改是否真实的商家错误信息："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "是否真实的商家修改失败", e);
+			map.put("FLAG", "ERROR");
+			map.put("MESSAGE", "修改失败");
+		}
+		return map;
+	}
+	
+	/**
+	 * 跳转商家详情页
+	 * @param franchisee
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="franchiseeDsecriptionForm")
+	public String franchiseeDsecriptionForm(Franchisee franchisee,HttpServletRequest request,Model model){
+		try{
+			franchisee = franchiseeService.get(franchisee.getId());
+			franchisee.setDescription(HtmlUtils.htmlEscape(franchisee.getDescription()));
+			model.addAttribute("franchisee", franchisee);
+		}catch(Exception e){
+			logger.error("跳转商家详情页出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "跳转商家详情页出现异常", e);
+		}
+		return "modules/sys/franchiseeDsecriptionForm";
+	}
+	
+	/**
+	 * 保存商家详情
+	 * @param franchisee
+	 * @param request
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequestMapping(value="saveFranchiseeDsecription")
+	public String saveFranchiseeDsecription(Franchisee franchisee,HttpServletRequest request,RedirectAttributes redirectAttributes){
+		try{
+			franchisee.setDescription(HtmlUtils.htmlUnescape(franchisee.getDescription()));
+			franchiseeService.saveFranchiseeDescription(franchisee.getDescription(),franchisee.getId());
+			franchiseeService.saveMtmyFranchiseeDescription(franchisee.getDescription(),franchisee.getId());
+			addMessage(redirectAttributes, "保存成功");
+		}catch(Exception e){
+			logger.error("保存商家详情出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "保存商家详情出现异常", e);
+			addMessage(redirectAttributes, "保存失败");
 		}
 		return "redirect:" + adminPath + "/sys/franchisee/list";
 	}

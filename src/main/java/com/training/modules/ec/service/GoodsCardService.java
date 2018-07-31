@@ -27,6 +27,7 @@ import com.training.modules.ec.entity.GoodsStatisticsCountData;
 import com.training.modules.ec.utils.GoodsUtil;
 import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.quartz.tasks.utils.RedisConfig;
 import com.training.modules.sys.utils.ParametersFactory;
 
 import net.sf.json.JSONObject;
@@ -111,6 +112,11 @@ public class GoodsCardService extends CrudService<GoodsCardDao, GoodsCard> {
 		
 		// 保存
 		goodsDao.insert(goods);
+		
+		//同步商品限购数量到redis数据库
+		if(goods.getLimitNum() > 0){
+			redisClientTemplate.hset(RedisConfig.buying_limit_prefix+"0_0", goods.getGoodsId()+"", goods.getLimitNum()+"");
+		}
 		
 		//自媒体每天美耶商品信息同步
 		JSONObject jsonObject = new JSONObject();

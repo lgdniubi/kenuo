@@ -129,6 +129,9 @@
 									<shiro:hasPermission name="crm:consign:exe">
 										<a href="#" onclick="openDialog('查看寄存详情', '${ctx}/crm/consign/update?consignId=${item.consignId}&userId=${userId}&franchiseeId=${franchiseeId}','800px', '500px')" class="btn btn-success btn-xs"><i class="fa fa-search-plus"></i>修改</a>
 									</shiro:hasPermission>
+									<shiro:hasPermission name="crm:userInfo:edit">
+										<a href="#" onclick="openDialogView('操作日志', '${ctx}/crm/consign/logDetail?consignId=${item.consignId}','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 操作日志</a>
+									</shiro:hasPermission>
 								</td>
 							</tr>
 						</c:forEach>
@@ -142,18 +145,6 @@
 						</tr>
 					</tfoot>
 				</table>
-			</div>
-		</div>
-	</div>
-	<div class="wrapper wrapper-content">
-		<div class="ibox">
-			<!--用户联系信息 -->
-			<div class="ibox-content">
-				<div class="clearfix">
-					<shiro:hasPermission name="crm:userInfo:edit">
-						<a href="#" onclick="openDialogView('操作日志', '${ctx}/crm/user/logDetail?userId=${userId}&franchiseeId=${franchiseeId}&operatorType=4','850px','650px')" class="btn btn-info btn-xs" ><i class="fa fa-search-plus"></i> 操作日志</a>
-					</shiro:hasPermission>
-				</div>
 			</div>
 		</div>
 	</div>

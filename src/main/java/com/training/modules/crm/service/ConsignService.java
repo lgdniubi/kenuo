@@ -7,6 +7,7 @@ import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.modules.crm.dao.ConsignDao;
 import com.training.modules.crm.entity.Consign;
+import com.training.modules.crm.entity.CrmDepositLog;
 
 
 /**    
@@ -39,4 +40,25 @@ public class ConsignService extends CrudService<ConsignDao,Consign>{
 		page.setList(dao.findConsignList(dto));
 		return page;
 	}
+
+	/**
+	 * 记录物品存储档案的日志
+	 * @param log
+	 */
+	public void saveCrmDepositLog(CrmDepositLog log) {
+		dao.saveCrmDepositLog(log);
+	}
+
+	/**
+	 * 获取物品寄存操作日志记录
+	 * @param page
+	 * @param log
+	 * @return
+	 */
+	public Page<CrmDepositLog> findDepositList(Page<CrmDepositLog> page, CrmDepositLog log) {
+		log.setPage(page);
+		page.setList(dao.findDepositList(log));
+		return page;
+	}
+
 }

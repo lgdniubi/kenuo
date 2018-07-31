@@ -164,4 +164,25 @@ public class SpecEquipmentService extends CrudService<SpecEquipmentDao, Equipmen
 		page.setList(specEquipmentDao.findEquipmentLogsList(equipmentLogs));
 		return page;
 	}
+	
+	/**
+	 * 新增店铺通用设备操作日志
+	 * @param equipmentLogs
+	 */
+	public void insertComEquipmentLog(EquipmentLogs equipmentLogs){
+		specEquipmentDao.insertComEquipmentLog(equipmentLogs);
+	}
+	
+	/**
+	 * 查看店铺通用设备操作日志
+	 * @param officeId
+	 * @return
+	 */
+	public Page<EquipmentLogs> findAllLogs(Page<EquipmentLogs> page, EquipmentLogs equipmentLogs){
+		// 设置分页参数
+		equipmentLogs.setPage(page);
+		// 执行分页查询
+		page.setList(specEquipmentDao.findAllLogs(equipmentLogs));
+		return page;
+	}
 }

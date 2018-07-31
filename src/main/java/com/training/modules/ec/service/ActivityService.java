@@ -295,15 +295,6 @@ public class ActivityService extends TreeService<ActivityDao,Activity> {
 	}
 	
 	/**
-	 * 查询内部红包有没有发放
-	 * @param couponId
-	 * @return
-	 */
-	public int findByCouponNum(String couponId){
-		return activityCouponUserDao.findByCouponNum(couponId);
-	}
-	
-	/**
 	 * 推送内部红包
 	 * @param activityCouponUser
 	 * @return
@@ -329,17 +320,6 @@ public class ActivityService extends TreeService<ActivityDao,Activity> {
 	public int insertUserCoupon(ActivityCouponUser activityCouponUser){
 		return activityCouponUserDao.insertUserCoupon(activityCouponUser);
 	}
-	
-	
-	/**
-	 * 查询非内部红包有没有发放
-	 * @param couponId
-	 * @return
-	 */
-	public int findFeiByCouponNum(String couponId){
-		return activityCouponUserDao.findFeiByCouponNum(couponId);
-	}
-	
 	
 	/**
 	 * 推送内部红包
@@ -440,4 +420,28 @@ public class ActivityService extends TreeService<ActivityDao,Activity> {
 		return list;
 	}
 	
+	
+	/**
+	 * 查询内部用户数
+	 * @return
+	 */
+	public int queryInnerUserNum(){
+		return activityCouponUserDao.queryInnerUserNum();
+	}
+	
+	/**
+	 * 查询非内部用户数
+	 * @return
+	 */
+	public int queryNotInnerUserNum(){
+		return activityCouponUserDao.queryNotInnerUserNum();
+	}
+	
+	/**
+	 * 删除活动对应的红包
+	 * @param id
+	 */
+	public void delCoupon(String id){
+		activityCouponDao.delCoupon(id);
+	}
 }

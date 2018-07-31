@@ -129,7 +129,6 @@ public class ActionStatus extends CommonService{
 					actionInfo.setActionId(vo.getActionId());
 					actionInfo.setStatus(3);
 					int stnum=actionInfoService.updateStatus(actionInfo);
-					redisClientTemplate.del(RedisConfig.buying_limit_prefix+vo.getActionId());
 					logger.info("[活动过期]，过期活动数量："+stnum);
 					
 

@@ -12,6 +12,10 @@ import com.training.common.persistence.DataEntity;
  * 
  * @version 2013-12-05
  */
+/**
+ * @author xiaoye
+ *
+ */
 public class MtmyFeedback extends DataEntity<MtmyFeedback> {
 
 	private static final long serialVersionUID = 1L;
@@ -26,6 +30,10 @@ public class MtmyFeedback extends DataEntity<MtmyFeedback> {
 	
 	private Date beginDate;		// 开始日期
 	private Date endDate;		// 结束日期
+	
+	private String mobile;       //用户手机号
+	private String msgType;            //反馈类型（0：功能异常；1：使用建议；2：功能需求；3：系统优化；4：其他）
+	
 	public String getMsgId() {
 		return msgId;
 	}
@@ -86,4 +94,17 @@ public class MtmyFeedback extends DataEntity<MtmyFeedback> {
 	public void setUsers(Users users) {
 		this.users = users;
 	}
+	public String getMobile() {
+		return mobile;
+	}
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+	public String getMsgType() {
+		return msgType;
+	}
+	public void setMsgType(String msgType) {
+		this.msgType = msgType;
+	}
+	
 }

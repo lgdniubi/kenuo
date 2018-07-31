@@ -45,7 +45,7 @@
 	</script>
 </head>
 <body>
-	<form:form id="inputForm" modelAttribute="goods" action="${ctx}/ec/goods/savespecstocks" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="goods" action="${ctx}/ec/goods/savespecstocks?actionFlag=${actionFlag}" method="post" class="form-horizontal">
 		<form:hidden path="goodsId"/>
 		<form:hidden path="actionId"/>
 		<sys:message content="${message}" />

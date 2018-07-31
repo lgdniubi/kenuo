@@ -1397,7 +1397,7 @@ public class SystemService extends BaseService implements InitializingBean {
 				System.out.println(parpm);
 				String result = WebUtils.postTrainObject(parpm, url);
 				jsonObject = JSONObject.fromObject(result);
-				logger.info("##### web接口返回数据：code:"+jsonObject.get("code")+",msg:"+jsonObject.get("msg")+",data:"+jsonObject.get("data"));
+				logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",message:"+jsonObject.get("message")+",data:"+jsonObject.get("data"));
 			}
 			
 		} catch (Exception e) {
