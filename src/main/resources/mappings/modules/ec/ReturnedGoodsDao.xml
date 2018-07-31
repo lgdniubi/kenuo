@@ -801,6 +801,7 @@
 			a.details_id = #{detailsId}
 		AND 
 			a.del_flag = 0
+		ORDER BY a.create_date DESC 
 	</select>
 	<!-- 保存店营业额增减值 -->
 	<insert id="saveMtmyTurnoverDetails">
