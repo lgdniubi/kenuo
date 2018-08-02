@@ -9,9 +9,10 @@
 	<link rel="stylesheet" href="${ctxStatic}/ec/css/loading.css">
 	<script type="text/javascript">
 		//页面加载
-		/* $(document).ready(function() {
-			$("#treeTable").treeTable({expandLevel : 1,column:1}).show();
-	    }); */
+		$(document).ready(function() {
+			//$("#treeTable").treeTable({expandLevel : 1,column:1}).show();
+			
+	    });
 		
 		//重置表单
 		function resetnew(){
@@ -207,17 +208,9 @@
 									</td>
 									<td style="text-align: left;">
 									<shiro:hasPermission name="train:userCheck:update">
-										<c:if test="${userCheck.status == 2 || userCheck.status == 3}">
-						    						<a href="#" onclick="isPermiss('${userCheck.id}','${userCheck.userid }','${userCheck.auditType}')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
-											<%-- <c:if test="${userCheck.type eq 'qy' && userCheck.auditType eq userCheck.type}">
-						    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.auditType}&opflag=setPermiss','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
-											</c:if>
-											<c:if test="${userCheck.type eq 'pt' || userCheck.type eq 'syr'}">
-						    						<a href="#" onclick="openDialog('权限设置', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&type=${userCheck.auditType}&opflag=setPermiss','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
-											</c:if> --%>
-										</c:if>
 										<c:if test="${userCheck.status == 0}">
-					    						<a href="#" onclick="checkBtn(${userCheck.id},'${userCheck.userid}','${userCheck.auditType}',this)" id="${userCheck.id}" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>
+					    					<a href="#" onclick="openDialog('审核信息', '${ctx}/train/userCheck/authForm?id=${userCheck.id}&userid=${userCheck.userid }&auditType=${userCheck.auditType}&pageNo=${page.pageNo}&opflag=view','800px', '700px')" id="${userCheck.id}" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a>
+<%-- 					    					<a href="#" onclick="checkBtn(${userCheck.id},'${userCheck.userid}','${userCheck.auditType}',this)" id="${userCheck.id}" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>审核</a> --%>
 										</c:if>
 										<c:if test="${userCheck.status != 0}">
 					    				<a href="#" onclick="openDialogView('查看审核信息', '${ctx}/train/userCheck/form?id=${userCheck.id}&userid=${userCheck.userid }&opflag=view','800px', '700px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>查看</a>

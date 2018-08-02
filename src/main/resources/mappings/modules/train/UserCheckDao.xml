@@ -108,6 +108,7 @@
 			del_flag = 0 
 		AND tap.user_id = #{userid} 
 		<if test="id != null"> and tap.id = #{id} </if>
+		AND tap.audit_type = #{auditType}
 	</select>	
 	<!-- 查找银行卡信息 -->
 	<select id="findBankAccountInfo" resultType="BankAccount">

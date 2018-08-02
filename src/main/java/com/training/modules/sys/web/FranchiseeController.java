@@ -336,6 +336,7 @@ public class FranchiseeController extends BaseController{
 		}
 		UserCheck userCheck = new UserCheck();
 		userCheck.setUserid(modelFranchisee.getUserid());
+		userCheck.setAuditType(opflag);
 		UserCheck find = userCheckService.getUserCheck(userCheck);
 		boolean flag = "qy".equals(userCheck.getType()) && Integer.valueOf(userCheck.getStatus())==4;
 		boolean flagsyr = "syr".equals(opflag) && "qy".equals(find.getType());
