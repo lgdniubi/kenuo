@@ -12,12 +12,6 @@
 		var validRefForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 			if(validateForm.form()){
-				var r = $("#reason").val();
-				var v = $("#authBtn").val();
-				if(v == 0 && r==''){
-					 top.layer.alert('原因不能为空', {icon: 0, title:'提醒'});
-					 return false;
-				}
         	  loading('正在提交，请稍等...');
 		      $("#inputForm").submit();
 	     	  return true;
@@ -108,14 +102,14 @@
 		function changeTab(obj){
 			var cval = $(obj).val();
 			if(cval == 0){	//审核不通过
-				/* $("#inputForm").hide();
-				$("#refuseForm").show(); */
-				var HTMLC = $("#refuseForm").html();
-				$("#authForm").html(HTMLC);
+				$("#passForm").hide();
+				$("#refuseForm").show(); 
+				$("#inputForm").prop("action","${ctx}/train/userCheck/save");
 				
 			}else if(cval == 1){		//审核通过
-				var HTMLC = $("#passForm").html();
-				$("#authForm").html(HTMLC);
+				 $("#passForm").show();
+				$("#refuseForm").hide();
+				$("#inputForm").prop("action","${ctx}/train/userCheck/saveFranchise?opflag=qy");
 			}
 		}
 				
@@ -255,99 +249,58 @@
 	<div id="authForm">
 		<form:form id="inputForm" modelAttribute="modelFranchisee" action="${ctx}/train/userCheck/saveFranchise?opflag=qy" method="post" class="form-horizontal">
 			<sys:message content="${message}"/>
-			<input name="userid" value="${userCheck.userid}" type="hidden">
-			<input name="applyid" value="${applyid}" type="hidden">
-			<input name="pageNo" type="hidden" value="${pageNo}" />
-			<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
-				<tbody>
-				    <tr>
-				    	<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="4"><label class="pull-left">企业权益设置:</label></td>
-					</tr>
-				    <tr>
-				         <td style= "width:100px" class="active"><label class="pull-right">企业会员类型:</label></td>
-				         <td style= "width:160px"><input id="mod_id1" class=" input-sm required" name="modid" value="5" aria-required="true" <c:if test="${empty modelFranchisee.modid|| modelFranchisee.modid == 5}">checked="checked"</c:if>  type="radio">标准版</td>
-				         <td style= "width:160px"><input id="mod_id2" class=" input-sm required" name="modid" value="6" aria-required="true" <c:if test="${modelFranchisee.modid == 6}">checked="checked"</c:if> type="radio">高级版</td>
-				         <td style= "width:160px"><input id="mod_id3" class=" input-sm required" name="modid" value="7" aria-required="true" <c:if test="${modelFranchisee.modid == 7}">checked="checked"</c:if> type="radio">旗舰版</td>
-					</tr>
-				    <tr>
-				         <td class="active"><label class="pull-right">采购支付方式:</label></td>
-				         <td><input id="paytype1" class=" input-sm required" name="paytype" value="1" aria-required="true" <c:if test="${modelFranchisee.paytype == 1}">checked="checked"</c:if> type="radio">线上支付</td>
-				         <td colspan="2"><input id="paytype2" class=" input-sm required" name="paytype" value="0" aria-required="true" <c:if test="${modelFranchisee.paytype == 0}">checked="checked"</c:if> type="radio">线下支付</td>
-					</tr>
-				    <tr>
-				         <td class="active"><label class="pull-right">授权期限:</label></td>
-				         <td ><input id="auth_start_date" name="authStartDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
-								value="<fmt:formatDate value="${modelFranchisee.authStartDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="开始时间" readonly="readonly"/></td>
-				         <td align="center"><label class="center">----</label></td>
-				         <td ><input id="auth_end_date" name="authEndDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
-								value="<fmt:formatDate value="${modelFranchisee.authEndDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="结束时间" readonly="readonly"/></td>
-					</tr>
-				    <tr>
-				    	<td align="center" colspan="4">
-				    	<font color="red">点击确定相当于授权，不想授权请点击取消</font>
-				    	</td>
-					</tr>
-				</tbody>
-			</table>  
+			<div id="passForm">
+				<input name="userid" value="${userCheck.userid}" type="hidden">
+				<input name="applyid" value="${applyid}" type="hidden">
+				<input name="pageNo" type="hidden" value="${pageNo}" />
+				<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+					<tbody>
+					    <tr>
+					    	<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="4"><label class="pull-left">企业权益设置:</label></td>
+						</tr>
+					    <tr>
+					         <td style= "width:100px" class="active"><label class="pull-right">企业会员类型:</label></td>
+					         <td style= "width:160px"><input id="mod_id1" class=" input-sm required" name="modid" value="5" aria-required="true" <c:if test="${empty modelFranchisee.modid|| modelFranchisee.modid == 5}">checked="checked"</c:if>  type="radio">标准版</td>
+					         <td style= "width:160px"><input id="mod_id2" class=" input-sm required" name="modid" value="6" aria-required="true" <c:if test="${modelFranchisee.modid == 6}">checked="checked"</c:if> type="radio">高级版</td>
+					         <td style= "width:160px"><input id="mod_id3" class=" input-sm required" name="modid" value="7" aria-required="true" <c:if test="${modelFranchisee.modid == 7}">checked="checked"</c:if> type="radio">旗舰版</td>
+						</tr>
+					    <tr>
+					         <td class="active"><label class="pull-right">采购支付方式:</label></td>
+					         <td><input id="paytype1" class=" input-sm required" name="paytype" value="1" aria-required="true" <c:if test="${modelFranchisee.paytype == 1}">checked="checked"</c:if> type="radio">线上支付</td>
+					         <td colspan="2"><input id="paytype2" class=" input-sm required" name="paytype" value="0" aria-required="true" <c:if test="${modelFranchisee.paytype == 0}">checked="checked"</c:if> type="radio">线下支付</td>
+						</tr>
+					    <tr>
+					         <td class="active"><label class="pull-right">授权期限:</label></td>
+					         <td ><input id="auth_start_date" name="authStartDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
+									value="<fmt:formatDate value="${modelFranchisee.authStartDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="开始时间" readonly="readonly"/></td>
+					         <td align="center"><label class="center">----</label></td>
+					         <td ><input id="auth_end_date" name="authEndDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
+									value="<fmt:formatDate value="${modelFranchisee.authEndDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="结束时间" readonly="readonly"/></td>
+						</tr>
+					    <tr>
+					    	<td align="center" colspan="4">
+					    	<font color="red">点击确定相当于授权，不想授权请点击取消</font>
+					    	</td>
+						</tr>
+					</tbody>
+				</table>
+			</div> 
+			<div id="refuseForm" style="display: none">
+				<input name="userid" value="${userCheck.userid}" type="hidden">
+				<input name="id" value="${applyid}" type="hidden">
+				<input name="status" value="1" type="hidden">
+				<input name="auditType" value="${userCheck.auditType}" type="hidden">
+				<input name="pageNo" type="hidden" value="${pageNo}" />
+				<label>拒绝原因：</label>
+				<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+					<tbody>
+					    <tr>
+					        <td> <textarea name="remarks" id="reason" style="width:270px;height:170px" class="required" maxlength="50" placeholder="请输入拒绝理由（最多50个字）"></textarea></td>
+						</tr>
+					</tbody>
+				</table>  
+			</div> 
 		</form:form> 
 	</div>
-<div style="display: none">
-	<div id="passForm">
-	<form:form id="inputForm" modelAttribute="modelFranchisee" action="${ctx}/train/userCheck/saveFranchise?opflag=qy" method="post" class="form-horizontal">
-		<sys:message content="${message}"/>
-		<input name="userid" value="${userCheck.userid}" type="hidden">
-		<input name="applyid" value="${applyid}" type="hidden">
-		<input name="pageNo" type="hidden" value="${pageNo}" />
-		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
-			<tbody>
-			    <tr>
-			    	<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="4"><label class="pull-left">企业权益设置:</label></td>
-				</tr>
-			    <tr>
-			         <td style= "width:100px" class="active"><label class="pull-right">企业会员类型:</label></td>
-			         <td style= "width:160px"><input id="mod_id1" class=" input-sm required" name="modid" value="5" aria-required="true" <c:if test="${empty modelFranchisee.modid|| modelFranchisee.modid == 5}">checked="checked"</c:if>  type="radio">标准版</td>
-			         <td style= "width:160px"><input id="mod_id2" class=" input-sm required" name="modid" value="6" aria-required="true" <c:if test="${modelFranchisee.modid == 6}">checked="checked"</c:if> type="radio">高级版</td>
-			         <td style= "width:160px"><input id="mod_id3" class=" input-sm required" name="modid" value="7" aria-required="true" <c:if test="${modelFranchisee.modid == 7}">checked="checked"</c:if> type="radio">旗舰版</td>
-				</tr>
-			    <tr>
-			         <td class="active"><label class="pull-right">采购支付方式:</label></td>
-			         <td><input id="paytype1" class=" input-sm required" name="paytype" value="1" aria-required="true" <c:if test="${modelFranchisee.paytype == 1}">checked="checked"</c:if> type="radio">线上支付</td>
-			         <td colspan="2"><input id="paytype2" class=" input-sm required" name="paytype" value="0" aria-required="true" <c:if test="${modelFranchisee.paytype == 0}">checked="checked"</c:if> type="radio">线下支付</td>
-				</tr>
-			    <tr>
-			         <td class="active"><label class="pull-right">授权期限:</label></td>
-			         <td ><input id="auth_start_date" name="authStartDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
-							value="<fmt:formatDate value="${modelFranchisee.authStartDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="开始时间" readonly="readonly"/></td>
-			         <td align="center"><label class="center">----</label></td>
-			         <td ><input id="auth_end_date" name="authEndDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm"
-							value="<fmt:formatDate value="${modelFranchisee.authEndDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="结束时间" readonly="readonly"/></td>
-				</tr>
-			    <tr>
-			    	<td align="center" colspan="4">
-			    	<font color="red">点击确定相当于授权，不想授权请点击取消</font>
-			    	</td>
-				</tr>
-			</tbody>
-		</table>  
-	</form:form> 
-	</div>
-	<div id="refuseForm">
-		<form:form id="inputForm" name="refuse" modelAttribute="modelFranchisee" action="${ctx}/train/userCheck/save" method="post" class="form-horizontal">
-			<input name="userid" value="${userCheck.userid}" type="hidden">
-			<input name="id" value="${applyid}" type="hidden">
-			<input name="status" value="1" type="hidden">
-			<input name="auditType" value="${userCheck.auditType}" type="hidden">
-			<input name="pageNo" type="hidden" value="${pageNo}" />
-			<label>拒绝原因：</label>
-			<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
-				<tbody>
-				    <tr>
-				        <td> <textarea name="remarks" id="reason" style="width:270px;height:170px" class="required" maxlength="50" placeholder="请输入拒绝理由（最多50个字）"></textarea></td>
-					</tr>
-				</tbody>
-			</table>  
-		</form:form> 
-	</div>
-</div>
 </body>
 </html>

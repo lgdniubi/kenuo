@@ -32,6 +32,7 @@ import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.FranchiseeService;
 import com.training.modules.sys.service.OfficeService;
+import com.training.modules.sys.service.SystemService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
@@ -60,6 +61,8 @@ public class FranchiseeController extends BaseController{
 	private UserCheckService userCheckService;
 	@Autowired
 	private RedisClientTemplate redisClientTemplate;
+	@Autowired
+	private SystemService systemService;
 	/**
 	 * 加盟商列表
 	 * @param franchisee
@@ -109,8 +112,11 @@ public class FranchiseeController extends BaseController{
 				franchisee.setCode(String.valueOf(size));
 			}
 		}
-			
+		//查询超管手机和姓名
+		String userId = userCheckService.findUserIdByCompanyId(Integer.valueOf(franchisee.getId()));
+		User user = systemService.getUser(userId);
 		model.addAttribute("franchisee", franchisee);
+		model.addAttribute("user", user);
 		return "modules/sys/franchiseeFrom";
 	}
 	

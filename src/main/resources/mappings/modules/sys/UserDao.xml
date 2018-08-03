@@ -460,7 +460,9 @@
 			a.id, a.name, a.login_name
 		FROM sys_user a
 		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
-			AND a.company_id = #{company.id}
+			
+			<if test="company.id != null "> AND a.company_id = #{company.id}</if>
+			<if test="office.id != null "> AND a.office_id = #{office.id}</if>
 			<if test="mobile != null "> AND a.mobile = #{mobile}</if>
 		ORDER BY a.name
 	</select>
