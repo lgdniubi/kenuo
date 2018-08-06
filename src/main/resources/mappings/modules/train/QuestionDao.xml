@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.QuestionDao">
+    
+	<sql id="menuColumns">
+		q.`id`,
+		q.`name`,
+		q.`content`,
+		q.`status`,
+		q.`type`,
+		q.`create_by`,
+		q.`create_date`,
+		q.`update_by`,
+		q.`update_date`,
+		q.`del_flag`
+	</sql>
+	<select id="findList" resultType="Question">
+		SELECT <include refid="menuColumns"/>,h.name FROM `question` q
+			LEFT JOIN question_handbook qh ON qh.qid = q.id
+			LEFT JOIN handbook_type h ON h.id = qh.hid where q.`del_flag` = 0
+		<if test="type != null and type != ''">AND q.type = #{type}</if>
+	</select>
+	
+	<!-- 根据id查看 -->
+	<select id="get" resultType="Question">
+		SELECT
+			<include refid="menuColumns"/>
+		FROM
+			`question` q where q.id = #{id}
+	</select>
+	<!-- 添加 -->
+	<insert id="insert" useGeneratedKeys="true">
+		INSERT INTO question(
+			`name`,
+			`content`,
+			`status`,
+			`type`,
+			`create_by`,
+			`create_date`,
+			`update_by`,
+			`update_date`,
+			`del_flag`
+		) VALUES (
+			#{name},
+			#{content},
+			#{status},
+			#{type},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	<delete id="deleteByLogic">
+		DELETE FROM question WHERE id = #{id}
+	</delete>
+	<update id="update">
+		UPDATE question SET 
+			`name` = #{name},
+			`content` = #{content},
+			`type` = #{type},
+			`update_by` = #{updateBy.id},
+			`update_date` = #{updateDate}
+		WHERE id = #{id} 
+	</update>
+	<!-- 修改手册状态 -->
+	<update id="updateIsOpen">
+		UPDATE 
+		  question 
+		SET
+		 status = #{status}
+		WHERE id = #{id} 
+	</update>
+	
+</mapper>
