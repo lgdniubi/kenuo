@@ -33,17 +33,38 @@
 	function number(){
 		var takenNum = parseInt($("#takenNum").val());//取走数量
 		var purchaseNum = parseInt($("#purchaseNum").val());//购买数量
-		var consignNum = parseInt($("#consignNum").val());//寄存数量
+		
 		if((takenNum > purchaseNum)|| (takenNum > consignNum)){
 			top.layer.alert('请输入正确取走数量', {icon: 0, title:'提醒'});
 			return false;
 		}
 		return true;
 	}
+	
+	function NumberCheck(t){
+        var num = t.value;
+        var re=/^\d*$/;
+        if(!re.test(num)){
+            isNaN(parseInt(num))?t.value=0:t.value=parseInt(num);
+        }
+    }
+	
+	function isnumber(num) {
+		 var regu = /^[1-9]\d*|0$/; 
+		 return regu.test(num);
+	}
+	
+	jQuery.validator.addMethod("isNumber", function(value, element) {
+	    var length = value.length;
+	    var temp = /^[1-9]\d*|0$/;   
+	    return this.optional(element) || (length >0 && temp.test(value));
+	}, "输入正确数量");
+	
 	$(document).ready(function() {
 		validateForm = $("#inputForm").validate({
 			rules: {
 			      takenNum: {
+			    	  isNumber:true,
 			            required : true,
 			            number:true,
 			            min:1
@@ -51,6 +72,7 @@
 			  },
 			  messages: {
 			      takenNum: {
+			    	  	isNumber:"请输入正确的数字",
 			            required : "这是必填字段",
 			            number:"请输入数字",
 			            min:"输入正确数字"
@@ -124,7 +146,7 @@
 										<label class="pull-right"><font color="red">*</font>取走数量:</label>
 									</td>
 									<td class="width-20">
-										<input name="takenNum" id="takenNum" value="0" maxlength="50" class="form-control" style="width: 150px" />
+										<input name="takenNum" id="takenNum" value="0" maxlength="50" class="form-control required" onblur="NumberCheck(this)" style="width: 150px" />
 										<a href="#" id="compute" onclick="compute()">计算数量</a>
 										<input type="hidden" id="computType" name="computType" value="1"/>
 										<div id="updateCompute">
@@ -144,7 +166,7 @@
 									</td>
 									<td class="width-20" colspan="3">
 										<input id="begtime" name="createDate" type="text" maxlength="50" class="laydate-icon form-control layer-date input-sm "
-											value="<fmt:formatDate value="${consign.createDate}" pattern="yyyy-MM-dd"/>" style="width: 185px;" placeholder="开始时间" required="required" readonly = "readonly"  />
+											value="<fmt:formatDate value="${consign.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" style="width: 185px;" placeholder="开始时间" required="required" readonly = "readonly"  />
 									</td>
 								</tr>
 								<tr>

@@ -94,8 +94,7 @@
 							<input id="endtime" name="endtime" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${mtmyEveryoneSay.endtime}" pattern="yyyy-MM-dd"/>"  style="width:185px;" placeholder="结束时间" readonly="readonly"/>&nbsp;&nbsp;
 							<label>位置类型：</label>
 							<select id="positionType" name="positionType" class="form-control" style="width:185px;">
-								<option value="">全部</option>
-								<option value="1" ${(mtmyEveryoneSay.positionType == '1')?'selected="selected"':''}>店铺</option>
+								<option value="1" ${(mtmyEveryoneSay.positionType == '1' || mtmyEveryoneSay.positionType == '')?'selected="selected"':''}>店铺</option>
 								<option value="2" ${(mtmyEveryoneSay.positionType == '2')?'selected="selected"':''}>技师</option>
 								<option value="3" ${(mtmyEveryoneSay.positionType == '3')?'selected="selected"':''}>商品</option>
 							</select>

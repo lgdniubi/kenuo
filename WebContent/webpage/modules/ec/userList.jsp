@@ -123,7 +123,7 @@
 	    })
 	    function lookmobile(num){
 	    	loading("正在查询，请稍后 . . .");
-	    	$("#userid").val(num);
+	    	$("#userid1").val(num);
 	    	$("#oldMobile").val("");
 	    	$.ajax({
 	    		type : 'post',
@@ -143,7 +143,7 @@
 			$.ajax({
 				 type : 'POST',
 				 url : '${ctx}/ec/mtmyuser/updateUser',
-				 data:{'userid':$("#userid").val(),'phone':$("#newPhone").val(),'mobile':$('#newMobile').val(),'password':$('#password').val()},
+				 data:{'userid':$("#userid1").val(),'phone':$("#newPhone").val(),'mobile':$('#newMobile').val(),'password':$('#password').val()},
 				 success:function(index,data){
 					closeTip();
 					showTip('修改用户成功','success');
@@ -156,7 +156,7 @@
 		}
 	    function updatepwd(num){
 	    	$("#password").val("");
-	    	$("#userid").val(num);
+	    	$("#userid1").val(num);
 	    	$('#resetpsd').modal('show');
 	    }
 	    
@@ -329,7 +329,7 @@
 	</div>
 	<div class="loading"></div>
 	<!--查看电话号码-->
-	<input type="hidden" value="" id="userid" name="userid">
+	<input type="hidden" value="" id="userid1" name="userid1">
 	<input type="hidden"  id="oldMobile" name="oldMobile">
 	<div class="modal fade bs-example-modal-lg in" id="telphone" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" style="display: none; padding-right: 17px;">
    		<form id="mobileFrom" class="modal-dialog modal-lg">
@@ -373,7 +373,6 @@
 					    	<td><label><input class="form-control" type="password" value="" id="password" name="password" maxlength="20"/></label><td>
 					    </tr>
 					</table>
-         				<!-- <input type="hidden" value="" id="pwduserid" name="userid"> -->
        			</div>
        			<div class="modal-footer">
        				<input type="submit" class="btn btn-success" value="保 存">

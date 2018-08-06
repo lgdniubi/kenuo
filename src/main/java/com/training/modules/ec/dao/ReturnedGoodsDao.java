@@ -276,4 +276,10 @@ public interface ReturnedGoodsDao extends CrudDao<ReturnedGoods> {
 	 * @return
 	 */
 	public double getDeptPushmoney(OrderPushmoneyRecord orderPushmoneyRecord);
+	/**
+	 * 除本次售后外,各门店剩余分享营业额之和
+	 * @param turnOverDetails
+	 * @return
+	 */
+	public double getSurplusTurnover(TurnOverDetails turnOverDetails);
 }

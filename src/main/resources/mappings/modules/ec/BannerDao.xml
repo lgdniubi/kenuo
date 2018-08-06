@@ -30,8 +30,11 @@
 			<if test="bannerType != null and bannerType != '' and bannerType != '-1'">
 				AND banner_type = #{bannerType}
 			</if>
-			<if test="franchiseeIds != null and franchiseeIds != '' and franchiseeIds != '-1'">
+			<if test="franchiseeIds != null and franchiseeIds != '' and franchiseeIds != '-1' and franchiseeIds != 0">
 				AND (LOCATE(#{franchiseeIds},franchisee_ids ) > 0 )
+			</if>
+			<if test="franchiseeIds != null and franchiseeIds != '' and franchiseeIds != '-1' and franchiseeIds == 0">
+				AND is_open = #{franchiseeIds}
 			</if>
 		ORDER BY sort DESC
 	</select>

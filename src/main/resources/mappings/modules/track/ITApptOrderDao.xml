@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.track.dao.ITApptOrderDao">
+
+    <!-- 查询订单详情 -->
+	<select id="queryApptOrderDetail" parameterType="map" resultType="TApptOrder">
+		SELECT
+			a.id AS 'appId',
+			a.user_id AS 'userId',
+			a.goods_id AS 'goodsId',
+			b.goods_name AS 'goodsName',
+			a.beautician_id AS 'beauticianId',
+			a.beautician_name AS 'beauticianName',
+			a.shop_id AS 'shopId',
+			a.shop_name AS 'shopName',
+			a.basis_fee AS 'depletePayMoney',
+			a.post_fee AS 'serviceCharge',
+			a.appt_date AS 'apptDate',
+			c.service_times AS 'serviceTimes'
+		FROM
+			mtmydb.mtmy_appt_order a
+		LEFT JOIN mtmydb.mtmy_goods b ON b.goods_id = a.goods_id
+		LEFT JOIN mtmydb.mtmy_order_goods_mapping c ON c.rec_id = a.goods_mapping_id
+		WHERE
+			a.id = #{apptId}
+    </select>
+    
+</mapper>

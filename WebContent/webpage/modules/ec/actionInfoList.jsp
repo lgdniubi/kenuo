@@ -248,7 +248,7 @@
 									</shiro:hasPermission>
 									<shiro:hasPermission name="ec:action:goodsRemove">
 										<c:choose>
-											<c:when test="${action.status==3 && action.isRemove <= 0}">
+											<c:when test="${action.status==3 && action.isRemove <= 0 && action.num > 0}">
 												<a href="${ctx}/ec/action/goodsRemove?actionId=${action.actionId}" onclick="return confirmx('确定要移除吗？',this.href)" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>一键移除</a>
 											</c:when>
 											<c:otherwise>
@@ -258,7 +258,7 @@
 									</shiro:hasPermission>
 									<shiro:hasPermission name="ec:action:actionGoodsLog">
 										<c:choose>
-											<c:when test="${action.isRemove > 0}">
+											<c:when test="${action.status==3 && action.isRemove > 0 && action.num == 0}">
 												<a href="#" onclick="openDialogView('活动商品', '${ctx}/ec/action/actionGoods?actionId=${action.actionId}','1100px','650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>活动商品</a>
 											</c:when>
 											<c:otherwise>

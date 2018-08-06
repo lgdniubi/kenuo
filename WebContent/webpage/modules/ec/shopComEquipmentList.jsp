@@ -96,8 +96,8 @@
 							<th style="text-align: center;">设备名称</th>
 							<th style="text-align: center;">状态</th>
 							<shiro:hasPermission name="ec:specEquipment:editLog">
+								<th style="text-align: center;">日志</th>
 							</shiro:hasPermission>
-							<th style="text-align: center;">日志</th>
 						</tr>
 					</thead>
 					<tbody style="text-align: center;">

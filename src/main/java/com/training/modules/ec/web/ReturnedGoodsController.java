@@ -907,6 +907,11 @@ public class ReturnedGoodsController extends BaseController {
 		//获取店营业额明细列表(sum营业额)
 		List<TurnOverDetails> list = returnedGoodsService.getMtmyTurnoverDetailsList(turnOverDetails);
 		if(list.size() != 0 ){
+			//除本次售后外,各门店剩余分享营业额之和
+			double surplusTurnOver = returnedGoodsService.getSurplusTurnover(turnOverDetails);
+			shopTurnover = shopTurnover + 
+					"<input id='surplusTurnOver' type='hidden' value='"+surplusTurnOver+"' class='form-control'>";
+			
 			//查询店铺售后  sum增减值
 			List<TurnOverDetails> amountList = returnedGoodsService.getReturnedAmountList(turnOverDetails);
 			
@@ -938,6 +943,7 @@ public class ReturnedGoodsController extends BaseController {
 						"<td style='text-align: center;'>"+list.get(0).getBelongOfficeName()+"</td> "+
 						"<td style='text-align: center;'>"+added+"</td> "+
 						"<td style='text-align: center;'>"+turnoverRatio+"</td> "+
+						"<td style='text-align: center;'>"+storeTurnover+"</td> "+
 						"<td style='text-align: center;'>"+
 							"<input id='addeds0' name='addeds' type='hidden' value='"+added+"' class='form-control'>"+
 							"<input id='amount0' name='amount' value='' type='number' class='form-control'>"+
@@ -958,6 +964,7 @@ public class ReturnedGoodsController extends BaseController {
 						"<td style='text-align: center;'>"+list.get(i).getBelongOfficeName()+"</td> "+
 						"<td style='text-align: center;'>"+added+"</td> "+
 						"<td style='text-align: center;'>"+turnoverRatio+"</td> "+
+						"<td style='text-align: center;'>"+storeTurnover+"</td> "+
 						"<td style='text-align: center;'>"+
 							"<input id='addeds"+i+"' name='addeds' type='hidden' value='"+added+"' class='form-control'>"+
 							"<input id='amount"+i+"' name='amount' value='' type='number' class='form-control'>"+

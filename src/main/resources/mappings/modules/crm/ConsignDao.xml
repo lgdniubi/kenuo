@@ -75,7 +75,7 @@
 			#{takenNum}, 
 			#{remark}, 
 			#{createBy.id}, 
-			SYSDATE(), 
+			#{createDate}, 
 			#{officeId}
 		)
 	</insert>

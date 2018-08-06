@@ -118,9 +118,9 @@
 	 });
 		var start = {
 			    elem: '#begtime',
-			    format: 'YYYY-MM-DD',
+			    format: 'YYYY-MM-DD hh:mm:ss',
 			    event: 'focus',
-			    istime: false,				//是否显示时间
+			    istime: true,				//是否显示时间
 			    isclear: true,				//是否显示清除
 			    istoday: true,				//是否显示今天
 			    issure: true,				//是否显示确定
@@ -227,7 +227,7 @@
 								    </td>
 									<td class="width-20" colspan="3">
 										<input id="begtime" name="createDate" type="text" maxlength="50" class="laydate-icon form-control layer-date input-sm "
-											value="<fmt:formatDate value="${consign.createDate}" pattern="yyyy-MM-dd"/>" style="width:185px;" placeholder="开始时间" required="required"/>
+											value="<fmt:formatDate value="${consign.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" style="width:185px;" placeholder="开始时间" required="required"/>
 									</td>
 								</tr>
 								<tr>
