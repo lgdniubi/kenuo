@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.training.common.web.BaseController;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.train.entity.HandbookType;
+import com.training.modules.train.entity.Question;
 import com.training.modules.train.service.HandbookTypeService;
 
 /**
@@ -38,9 +39,18 @@ public class HandbookTypeController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "list")
-	public String list( Model model) {
-		List<HandbookType> typeList = handbookService.findTypeList();
+	public String list( String type,String isShop,Model model) {
+		List<HandbookType> typeList = null ;
+		if("1".equals(type)){
+			typeList = handbookService.findList(new HandbookType(type));
+		}else if("2".equals(type)){
+			typeList = handbookService.findList(new HandbookType(type));
+		}else if("3".equals(type)){
+			typeList = handbookService.findList(new HandbookType(type,isShop));
+		}
 		model.addAttribute("typeList", typeList);
+		model.addAttribute("type", type);
+		model.addAttribute("isShop", isShop);
 		return "modules/train/HandbookTypeList";
 	}
 	/**
@@ -50,7 +60,7 @@ public class HandbookTypeController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "form")
-	public String form( HandbookType handbookType,Model model) {
+	public String form( HandbookType handbookType,Model model,HttpServletRequest request) {
 		if(handbookType.getId() != null){
 			handbookType = handbookService.get(handbookType.getId());
 		}
@@ -73,7 +83,7 @@ public class HandbookTypeController extends BaseController {
 			logger.error("保存手册类型错误信息:"+e);
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/train/handbook/list";
+		return "redirect:" + adminPath + "/train/handbook/list?type="+handbookType.getType()+"&isShop="+handbookType.getIsShop();
 	}
 	/**
 	 * 判断是否可以删除类型
@@ -101,7 +111,7 @@ public class HandbookTypeController extends BaseController {
 			logger.error("删除分类错误信息:"+e);
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/train/handbook/list";
+		return "redirect:" + adminPath + "/train/handbook/list?type="+handbookType.getType();
 	}
 }
 

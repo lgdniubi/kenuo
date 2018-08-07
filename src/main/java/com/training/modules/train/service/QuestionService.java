@@ -11,11 +11,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.service.CrudService;
+import com.training.common.utils.StringUtils;
 import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.QuestionDao;
 import com.training.modules.train.entity.ContractInfoVo;
+import com.training.modules.train.entity.HandbookType;
 import com.training.modules.train.entity.PayInfo;
 import com.training.modules.train.entity.Question;
 import com.training.modules.train.entity.ProtocolType;
@@ -49,12 +51,31 @@ public class QuestionService extends CrudService<QuestionDao,Question> {
 	/**
 	 * 保存手册内容，还保存手册--分类id
 	 * @param question
+	 * @param listType 
 	 */
-	public void saveQuestion(Question question) {
+	public void saveQuestion(Question question, String listType) {
 		boolean isNewRecord = question.getIsNewRecord();
 		super.save(question);
-		if (isNewRecord){
-			questionDao.saveQuestionHandbook(question);
+		if (!isNewRecord){
+			questionDao.deleteQuestionHandbook(question.getId());
+		}
+		saveQuestionHandbook(question, listType);
+	}
+
+	private void saveQuestionHandbook(Question question, String listType) {
+		if("3".equals(listType)){
+//				String typeId = question.getTypeId();
+//				String[] tids = typeId.split(",");
+//				for (String tid : tids) {
+//				}
+			if(StringUtils.isNotEmpty(question.getTypeId())){
+				questionDao.saveQuestionHandbook(question.getId(),question.getTypeId());
+			}
+			if(StringUtils.isNotEmpty(question.getTypeId2())){
+				questionDao.saveQuestionHandbook(question.getId(),question.getTypeId2());
+			}
+		}else{
+			questionDao.saveQuestionHandbook(question.getId(),question.getTypeId());
 		}
 	}
 
@@ -64,6 +85,21 @@ public class QuestionService extends CrudService<QuestionDao,Question> {
 	 */
 	public void updateIsOpen(Question question) {
 		questionDao.updateIsOpen(question);
+	}
+
+	public Question getQuestion(Question question, String type) {
+		question = super.get(question.getId());
+		if("3".equals(type)){
+			List<HandbookType> handbookTypeList = questionDao.findBookType(question.getId());
+			for (HandbookType handbookType : handbookTypeList) {
+				if("0".equals(handbookType.getIsShop()) ){
+					question.setTypeId(handbookType.getId());
+				}else if("1".equals(handbookType.getIsShop())){
+					question.setTypeId2(handbookType.getId());
+				}
+			}
+		}
+		return question ;
 	}
 
 	

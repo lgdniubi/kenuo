@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -47,9 +48,20 @@ public class QuestionController extends BaseController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "fzxList")
-	public String fzxList( Model model) {
-		List<Question> questionList = questionService.findList(new Question("1"));
+	@RequestMapping(value = "list/{bookType}")
+	public String fzxList(@PathVariable("bookType") String bookType, Model model) {
+		List<Question> questionList = null;
+		if("1".equals(bookType)){
+			questionList = questionService.findList(new Question("1"));
+			model.addAttribute("type", 1);
+		}else if("2".equals(bookType)){
+			questionList = questionService.findList(new Question("2"));
+			model.addAttribute("type", 2);
+		}else if("3".equals(bookType)){
+			questionList = questionService.findList(new Question("3"));
+			model.addAttribute("type", 3);
+		}
+			
 		model.addAttribute("questionList", questionList);
 		return "modules/train/questionList";
 	}
@@ -57,12 +69,18 @@ public class QuestionController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form( Question question,String type,Model model) {
 		if(question.getId() != null){
-			question = questionService.get(question.getId());
+			question = questionService.getQuestion(question,type);
+			
 			String htmlEscape = HtmlUtils.htmlUnescape(question.getContent());
 			question.setContent(htmlEscape);
 		}
 		model.addAttribute("type", type);
-		List<HandbookType> typeList = handbookService.findTypeList();
+		List<HandbookType> typeList = handbookService.findList(new HandbookType(type,"0"));
+		if("3".equals(type)){
+			List<HandbookType> typeShopList = handbookService.findList(new HandbookType(type,"1"));
+			model.addAttribute("typeShopList", typeShopList);
+		}
+			
 		model.addAttribute("typeList", typeList);
 		model.addAttribute("question", question);
 		return "modules/train/questionForm";
@@ -78,19 +96,17 @@ public class QuestionController extends BaseController {
 	@RequestMapping(value = "save")
 	public String save(Question question,String listType,HttpServletRequest request,RedirectAttributes redirectAttributes){
 		try{	
-			if(listType == null){
-				listType="fzxList";
-			}
+			
 			String htmlEscape = HtmlUtils.htmlEscape(question.getContent());
 			question.setContent(htmlEscape);
-			questionService.saveQuestion(question);
+			questionService.saveQuestion(question,question.getType());
 			addMessage(redirectAttributes, "保存/修改成功!");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "保存手册", e);
 			logger.error("保存手册错误信息:"+e);
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/train/question/"+listType;
+		return "redirect:" + adminPath + "/train/question/list/"+question.getType();
 	}
 	@RequestMapping(value = "delete")
 	public String delete(Model model,Question question,String listType,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
@@ -117,7 +133,7 @@ public class QuestionController extends BaseController {
 		Map<String, String> jsonMap = new HashMap<String, String>();
 		try {
 			int ISOPEN = Integer.parseInt(isOpen);
-			if(!StringUtils.isEmpty(qId) && (ISOPEN == 0 || ISOPEN == 1)){
+			if(!StringUtils.isEmpty(qId) && (ISOPEN == 2 || ISOPEN == 1)){
 				Question question = new Question();
 				question.setId(qId);
 				question.setStatus(isOpen);

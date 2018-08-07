@@ -27,8 +27,12 @@ public class HandbookType extends DataEntity<HandbookType>{
 		super();
 		this.sort = 30;
 	}
-	public HandbookType(String id) {
-		super(id);
+	public HandbookType(String type) {
+		this.type = type;
+	}
+	public HandbookType(String type,String isShop) {
+		this.type = type;
+		this.isShop = isShop;
 	}
 	public String getName() {
 		return name;

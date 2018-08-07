@@ -52,12 +52,32 @@
                             <div class="col-sm-8">
                                <form:input path="name" cssClass="form-control required" maxlength="20" placeholder="请输入标题"/>
 						    </div>
-                            <label class="col-sm-2 control-label"><font color="red">*</font>分类： </label>
-                            <div class="col-sm-8">
-                                <form:select path="typeId"  class="form-control">
-									<form:options items="${typeList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
-								</form:select>
-						    </div>
+						    <c:choose>
+								<c:when test="${type eq '3'}">
+									<label class="col-sm-2 control-label"><font color="red">*</font>管理端分类： </label>
+		                            <div class="col-sm-8">
+		                                <form:select path="typeId"  class="form-control">
+		                                	<form:option value="">请选择</form:option>
+											<form:options items="${typeList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+										</form:select>
+								    </div>
+									<label class="col-sm-2 control-label"><font color="red">*</font>店铺端分类： </label>
+		                            <div class="col-sm-8">
+		                                <form:select path="typeId2"  class="form-control">
+		                                	<form:option value="">请选择</form:option>
+											<form:options items="${typeShopList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+										</form:select>
+								    </div>
+								</c:when>
+								<c:otherwise>
+									<label class="col-sm-2 control-label"><font color="red">*</font>分类： </label>
+		                            <div class="col-sm-8">
+		                                <form:select path="typeId"  class="form-control">
+											<form:options items="${typeList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+										</form:select>
+								    </div>
+								</c:otherwise>
+							</c:choose>
 					   </div>
 					    <div class="form-group">
                            <label class="col-sm-2 control-label">内容：</label>
@@ -138,7 +158,7 @@
 		
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-		  if(validateForm.form()){
+		  if(validateForm.form() && validType()){
 			  var content = $(".ke-edit-iframe").contents().find(".ke-content").html();
 				if(content.indexOf("style") >=0){
 					content = content.replace("&lt;style&gt;","<style>");
@@ -149,6 +169,19 @@
 			  return true;
 		  }
 		  return false;
+		}
+		
+		function validType(){
+			var t = '${type}';
+			if(t==3){
+				var tv = $("#typeId").val();
+				var tv2 = $("#typeId2").val();
+				if(tv == '' && tv2 == ''){
+					top.layer.alert('请选择分类', {icon: 0, title:'提醒'});
+					return false;
+				}
+			}
+			return true;
 		}
 		
 		

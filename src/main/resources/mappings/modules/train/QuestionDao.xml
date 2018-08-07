@@ -15,21 +15,25 @@
 		q.`del_flag`
 	</sql>
 	<select id="findList" resultType="Question">
-		SELECT <include refid="menuColumns"/>,h.name FROM `question` q
+		SELECT <include refid="menuColumns"/>,
+			(SELECT GROUP_CONCAT(h. NAME) FROM handbook_type h LEFT JOIN question_handbook qh ON qh.hid = h.id WHERE qh.qid= q.id) AS typeName FROM `question` q
 			LEFT JOIN question_handbook qh ON qh.qid = q.id
 			LEFT JOIN handbook_type h ON h.id = qh.hid where q.`del_flag` = 0
 		<if test="type != null and type != ''">AND q.type = #{type}</if>
+		GROUP BY q.id
 	</select>
 	
 	<!-- 根据id查看 -->
 	<select id="get" resultType="Question">
 		SELECT
-			<include refid="menuColumns"/>
+			<include refid="menuColumns"/>,GROUP_CONCAT(qh.hid) AS typeId
 		FROM
-			`question` q where q.id = #{id}
+			`question` q 
+		LEFT JOIN question_handbook qh ON qh.qid = q.id
+		where q.id = #{id}
 	</select>
 	<!-- 添加 -->
-	<insert id="insert" useGeneratedKeys="true">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO question(
 			`name`,
 			`content`,
@@ -52,8 +56,18 @@
 			#{delFlag}
 		)
 	</insert>
+	<insert id="saveQuestionHandbook">
+		INSERT INTO `trains`.`question_handbook`
+			(`qid`, `hid`)
+		VALUES
+			(#{id}, #{typeId});
+					
+	</insert>
 	<delete id="deleteByLogic">
 		DELETE FROM question WHERE id = #{id}
+	</delete>
+	<delete id="deleteQuestionHandbook">
+		DELETE FROM question_handbook WHERE qid = #{id}
 	</delete>
 	<update id="update">
 		UPDATE question SET 
@@ -72,5 +86,15 @@
 		 status = #{status}
 		WHERE id = #{id} 
 	</update>
-	
+	<select id="findBookType" resultType="HandbookType">
+		SELECT
+			h.id,
+			h.is_shop,
+			h. NAME
+		FROM
+			handbook_type h
+		LEFT JOIN question_handbook qh ON qh.hid = h.id
+		WHERE
+			qh.qid = #{id} 
+	</select>
 </mapper>

@@ -9,9 +9,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
-import com.training.modules.train.entity.ProtocolModel;
-import com.training.modules.train.entity.ProtocolType;
-import com.training.modules.train.entity.ProtocolUser;
+import com.training.modules.train.entity.HandbookType;
 import com.training.modules.train.entity.Question;
 
 /**
@@ -24,9 +22,21 @@ public interface QuestionDao extends CrudDao<Question> {
 
 	public List<Question> findTypeList();
 
-	public void saveQuestionHandbook(Question question);
+	public void saveQuestionHandbook(@Param("id")String id, @Param("typeId")String typeId);
 
 	public void updateIsOpen(Question question);
+	/**
+	 * 根据问题id删除中间数据
+	 * @param id
+	 */
+	public void deleteQuestionHandbook(String id);
+	
+	/**
+	 * 根据问题id查找类型集合
+	 * @param id
+	 * @return
+	 */
+	public List<HandbookType> findBookType(String id);
 
 	
 	

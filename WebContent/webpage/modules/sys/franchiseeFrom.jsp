@@ -309,13 +309,13 @@
 				</tr>
 				<tr>
 					<td class="width-15 active" class="active"><label class="pull-right"><font color="red">*</font>详细地址:</label></td>
-					<td class="width-35">
+					<%-- <td class="width-35">
 						<sys:treeselect id="addr" name="add.id"
 							value="${franchisee.area.id}" labelName="ass.name"
 							labelValue="${franchisee.area.name}" title="区域"
 							url="/sys/area/treeData" cssClass="form-control required" />
-					</td>
-					<td class="width-35" colspan="2"><form:textarea path="address" htmlEscape="false" rows="3" maxlength="200" class="form-control required" /></td>
+					</td> --%>
+					<td class="width-35" colspan="3"><form:textarea path="address" htmlEscape="false" rows="3" maxlength="200" class="form-control required" /></td>
 				</tr>
 					
 				<tr>

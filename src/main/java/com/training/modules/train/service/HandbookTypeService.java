@@ -42,10 +42,10 @@ public class HandbookTypeService extends CrudService<HandbookTypeDao,HandbookTyp
 	/**
 	 * 查找协议类型列表
 	 * @return
-	 */
+	 
 	public List<HandbookType> findTypeList() {
 		return dao.findTypeList();
-	}
+	}*/
 
 	public Integer findQuestionList(String id) {
 		return handbookTypeDao.findQuestionList(id);

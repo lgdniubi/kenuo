@@ -21,7 +21,7 @@
 				<div class="col-sm-12">
 					<div class="pull-left">
 <%-- 						<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/sys/speciality/list","特长管理", false)'><i class="fa fa-plus"></i> 特长管理</button> --%>
-							<table:addRow url="${ctx}/train/handbook/form" title="手册类型" width="800px" height="650px"></table:addRow>
+							<table:addRow url="${ctx}/train/handbook/form?type=${type}&isShop=${isShop}" title="手册类型" width="800px" height="650px"></table:addRow>
 					</div>
 				</div>
 			</div>
@@ -41,7 +41,7 @@
 									<td>${type.id }</td>
 								  	<td>${type.name }</td>
 								    <td>
-				    					<a href="${ctx}/train/handbook/delete?id=${type.id}"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>删除</a>
+				    					<a href="${ctx}/train/handbook/delete?id=${type.id}&type=${type.type}"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>删除</a>
 				    					<a href="#" onclick="openDialog('修改', '${ctx}/train/handbook/form?id=${type.id}','850px', '550px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>修改</a>
 								    </td>
 								</tr>

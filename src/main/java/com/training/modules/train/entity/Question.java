@@ -20,6 +20,7 @@ public class Question extends DataEntity<Question>{
 	private String name;			//问题名称
 	private String content;			//内容
 	private String typeId;			//手册类型id
+	private String typeId2;			//手册类型idpc有2个
 	private String typeName;			//手册类型名称
 	private String type;			//手册类型
 	private String status = "1";	//问题状态：1启用,2停用,
@@ -48,6 +49,12 @@ public class Question extends DataEntity<Question>{
 	}
 	public void setTypeId(String typeId) {
 		this.typeId = typeId;
+	}
+	public String getTypeId2() {
+		return typeId2;
+	}
+	public void setTypeId2(String typeId2) {
+		this.typeId2 = typeId2;
 	}
 	public String getTypeName() {
 		return typeName;

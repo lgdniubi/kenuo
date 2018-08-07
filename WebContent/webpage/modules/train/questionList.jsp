@@ -44,8 +44,16 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="pull-left">
-						<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/handbook/list","查看fzx分类", false)'><i class="fa fa-plus"></i> 查看fzx分类</button>
-							<table:addRow url="${ctx}/train/question/form" title="手册类型" width="800px" height="650px"></table:addRow>
+						<table:addRow url="${ctx}/train/question/form?type=${type}" title="手册" width="800px" height="650px"></table:addRow>
+						<c:choose>
+							<c:when test="${type eq '3'}">
+								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/handbook/list?type=${type}&isShop=0","查看分类", false)'><i class="fa fa-plus"></i> 查看管理端分类</button>
+								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/handbook/list?type=${type}&isShop=1","查看分类", false)'><i class="fa fa-plus"></i> 查看店铺端分类</button>
+							</c:when>
+							<c:otherwise>
+								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/handbook/list?type=${type}","查看分类", false)'><i class="fa fa-plus"></i> 查看分类</button>
+							</c:otherwise>
+						</c:choose>
 					</div>
 				</div>
 			</div>
@@ -77,7 +85,7 @@
 								  	</td>
 								    <td>
 				    					<a href="${ctx}/train/question/delete?id=${q.id}"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>删除</a>
-				    					<a href="#" onclick="openDialog('修改', '${ctx}/train/question/form?id=${q.id}&type=1','850px', '650px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>修改</a>
+				    					<a href="#" onclick="openDialog('修改', '${ctx}/train/question/form?id=${q.id}&type=${type}','850px', '650px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>修改</a>
 								    </td>
 								</tr>
 							</c:forEach>
