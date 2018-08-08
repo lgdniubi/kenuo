@@ -20,6 +20,8 @@
 			LEFT JOIN question_handbook qh ON qh.qid = q.id
 			LEFT JOIN handbook_type h ON h.id = qh.hid where q.`del_flag` = 0
 		<if test="type != null and type != ''">AND q.type = #{type}</if>
+		<if test="typeId != null and typeId != ''">AND h.id = #{typeId}</if>
+		<if test="typeId2 != null and typeId2 != ''">AND h.id = #{typeId2}</if>
 		GROUP BY q.id
 	</select>
 	

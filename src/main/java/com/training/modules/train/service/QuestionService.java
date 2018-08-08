@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.common.utils.StringUtils;
 import com.training.modules.ec.utils.WebUtils;
@@ -20,6 +21,7 @@ import com.training.modules.train.entity.ContractInfoVo;
 import com.training.modules.train.entity.HandbookType;
 import com.training.modules.train.entity.PayInfo;
 import com.training.modules.train.entity.Question;
+import com.training.modules.train.entity.UserCheck;
 import com.training.modules.train.entity.ProtocolType;
 import com.training.modules.train.entity.ProtocolUser;
 
@@ -101,8 +103,18 @@ public class QuestionService extends CrudService<QuestionDao,Question> {
 		}
 		return question ;
 	}
+	/**
+	 * 分页查询
+	 * @param page
+	 * @param question
+	 * @return
+	 */
+	public Page<Question> findList(Page<Question> page, Question question) {
+		question.setPage(page);
+		page.setList(dao.findList(question));
+		return page;
+	}
 
-	
 	
 	
 }

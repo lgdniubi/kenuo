@@ -19,12 +19,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.HtmlUtils;
 
+import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.train.entity.HandbookType;
 import com.training.modules.train.entity.Question;
 import com.training.modules.train.entity.TrainLessons;
+import com.training.modules.train.entity.UserCheck;
 import com.training.modules.train.service.HandbookTypeService;
 import com.training.modules.train.service.QuestionService;
 
@@ -49,8 +51,8 @@ public class QuestionController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "list/{bookType}")
-	public String fzxList(@PathVariable("bookType") String bookType, Model model) {
-		List<Question> questionList = null;
+	public String fzxList(Question question, @PathVariable("bookType")String bookType, Model model,HttpServletRequest request, HttpServletResponse response) {
+		/*List<Question> questionList = null;
 		if("1".equals(bookType)){
 			questionList = questionService.findList(new Question("1"));
 			model.addAttribute("type", 1);
@@ -60,9 +62,18 @@ public class QuestionController extends BaseController {
 		}else if("3".equals(bookType)){
 			questionList = questionService.findList(new Question("3"));
 			model.addAttribute("type", 3);
+		}*/
+		question.setType(bookType);
+		Page<Question> page = questionService.findList(new Page<Question>(request, response), question);	
+		model.addAttribute("type", bookType);
+		model.addAttribute("page", page);
+		List<HandbookType> typeList = handbookService.findList(new HandbookType(bookType,"0"));
+		if("3".equals(bookType)){
+			List<HandbookType> typeShopList = handbookService.findList(new HandbookType(bookType,"1"));
+			model.addAttribute("typeShopList", typeShopList);
 		}
 			
-		model.addAttribute("questionList", questionList);
+		model.addAttribute("typeList", typeList);
 		return "modules/train/questionList";
 	}
 	

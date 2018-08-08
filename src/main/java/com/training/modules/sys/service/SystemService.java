@@ -757,7 +757,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			}
 		}
 		/*if (StringUtils.isNotBlank(user.getId())) {
-			// 更新用户与角色关联
+			// 更新用户与角色关联--移出用户角色
 			userDao.deleteUserRole(user);
 			if (user.getRoleList() != null && user.getRoleList().size() > 0) {
 				userDao.insertUserRole(user);

@@ -40,6 +40,47 @@
                 <h5>手册列表</h5>
             </div>
 <%--             <sys:message content="${message}"/> --%>
+			<!-- 查询条件 -->
+			<div class="row">
+				<div class="col-sm-12">
+					<form:form id="searchForm" modelAttribute="question" action="${ctx}/train/question/list/${type}" method="post" class="form-inline">
+						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}" />
+						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
+						<!-- 支持排序 -->
+						<div class="form-group">
+							 <c:choose>
+								<c:when test="${type eq '3'}">
+									<span>管理端分类：</span>
+									<form:select path="typeId"  class="form-control">
+		                               	<form:option value="">请选择</form:option>
+										<form:options items="${typeList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+									</form:select>
+									<span>店铺端分类：</span>
+									<form:select path="typeId2"  class="form-control">
+		                               	<form:option value="">请选择</form:option>
+										<form:options items="${typeShopList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+									</form:select>
+								</c:when>
+								<c:otherwise>
+									<span>分类：</span>
+									<form:select path="typeId"  class="form-control">
+		                               	<form:option value="">请选择</form:option>
+										<form:options items="${typeList}" itemLabel="name" itemValue="id" htmlEscape="false"/>
+									</form:select>
+								</c:otherwise>
+							</c:choose>
+						</div>
+					</form:form>
+				</div>
+				<div class="pull-right">
+					<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()">
+						<i class="fa fa-search"></i> 查询
+					</button>
+					<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="reset()">
+						<i class="fa fa-refresh"></i> 重置
+					</button>
+				</div>
+			</div>
 			<!-- 工具栏 -->
 			<div class="row">
 				<div class="col-sm-12">
@@ -70,7 +111,7 @@
 							</tr>
 						</thead>
 						<tbody style="text-align: center;">
-							<c:forEach items="${questionList}" var="q">
+							<c:forEach items="${page.list}" var="q">
 								<tr>
 									<td>${q.id }</td>
 								  	<td>${q.name }</td>
@@ -91,6 +132,7 @@
 							</c:forEach>
 						</tbody>
 					</table>
+					<table:page page="${page}"></table:page>
 				</div>
 	        </div>
 	    </div>
