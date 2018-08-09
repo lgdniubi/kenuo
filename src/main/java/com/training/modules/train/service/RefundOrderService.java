@@ -87,9 +87,10 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 	 * 确认入账
 	 * @param order_id
 	 */
-	public void makeSureInAccount(String order_id,String office_id,double amount,String billmonth){
+	public void makeSureInAccount(String order_id,String office_id,double amount,String billmonth,String status){
 		//修改订单状态为已入账
-		this.refundOrderMapper.makeSureInAccount(order_id);
+		this.refundOrderMapper.makeSureInAccount(order_id,status);
+		if("3".equals(status))
 		new Thread(new RefundThread(office_id, order_id, amount,billmonth)).start();
 	}
 

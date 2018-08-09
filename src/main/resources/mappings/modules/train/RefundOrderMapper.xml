@@ -174,7 +174,7 @@
 	
 	<update id="makeSureInAccount">
 		update train_refund_order
-		set order_status = '3'
+		set order_status = #{status}
 		where order_id = #{order_id}
 	</update>
 </mapper>
