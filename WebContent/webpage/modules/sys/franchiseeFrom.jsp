@@ -336,16 +336,17 @@
 					<%-- <td class="width-35"><form:input path="legalName" htmlEscape="false" maxlength="50" class="form-control required" />${user.id }${user.mobile}${user.name }</td> --%>
 					<td class="width-35">
 						<div class="input-group">
-				         	<input value="${infoVo.cargo_mobile}" id="cargoMobile" name="cargo_mobile" class="form-control required" placeholder="请输入手机号">
+				         	<input value="${user.mobile}" id="superUserMobile" name="superUserPhone" class="form-control required" placeholder="请输入手机号">
 				       		 <span class="input-group-btn">
-					       		 <button type="button"  onclick="findUser('cargo')" class="btn btn-primary"><i class="fa fa-search">查询</i></button> 
+					       		 <button type="button"  onclick="findUser('superUser')" class="btn btn-primary"><i class="fa fa-search">查询</i></button> 
 				       		 </span>
 					    </div>
 			        </td>
 					<td class="width-15 active"><label class="pull-right">超管姓名:</label></td>
 					<td class="width-35">
-						<input id="cargoId" name="cargo_userid" class="form-control required" type="hidden" value="${infoVo.cargo_userid}"/>
-						<input id="cargoName" name="cargo_username" type="text" readonly="readonly" value="${infoVo.cargo_username}" class="form-control required" />
+						<input id="superUserId" name="superUserId" class="form-control required" type="hidden" value="${user.id }"/>
+						<input id="oldSuperUserId" name="oldSuperUserId" class="form-control required" type="hidden" value="${user.id }"/>
+						<input id="superUserName" name="superUserName" type="text" readonly="readonly" value="${user.name }" class="form-control required" />
 					</td>
 				</tr>
 				<tr>

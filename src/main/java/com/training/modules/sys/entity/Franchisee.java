@@ -49,6 +49,12 @@ public class Franchisee extends TreeEntity<Franchisee>{
 	private String description;      //商品详情
 	private int isTest;      //测试账号标识（0：正常；1：测试）
 	
+	//-------------------------2018-08-10
+	private String superUserName;			//该商家的超管姓名
+	private String superUserPhone;			//该商家的超管手机号
+	private String superUserId;				//该商家的超管id
+	private String oldSuperUserId;			//旧该商家的超管id
+	
 	@Override
 	public Franchisee getParent() {
 		return parent;
@@ -225,6 +231,30 @@ public class Franchisee extends TreeEntity<Franchisee>{
 	}
 	public void setIsTest(int isTest) {
 		this.isTest = isTest;
+	}
+	public String getSuperUserName() {
+		return superUserName;
+	}
+	public void setSuperUserName(String superUserName) {
+		this.superUserName = superUserName;
+	}
+	public String getSuperUserPhone() {
+		return superUserPhone;
+	}
+	public void setSuperUserPhone(String superUserPhone) {
+		this.superUserPhone = superUserPhone;
+	}
+	public String getSuperUserId() {
+		return superUserId;
+	}
+	public void setSuperUserId(String superUserId) {
+		this.superUserId = superUserId;
+	}
+	public String getOldSuperUserId() {
+		return oldSuperUserId;
+	}
+	public void setOldSuperUserId(String oldSuperUserId) {
+		this.oldSuperUserId = oldSuperUserId;
 	}
 	
 }

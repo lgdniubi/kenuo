@@ -159,6 +159,9 @@
 	<select id="checkEnname" resultType="int">
 		SELECT COUNT(1) FROM fzx_role WHERE mod_id = #{modeid} AND del_flag = 0 AND enname = 'sjgly'
 	</select>
+	<select id="findFzxSuperRoleId" resultType="int">
+		SELECT id FROM fzx_role WHERE company_id = #{franchid} AND del_flag = 0 AND enname = 'sjgly'
+	</select>
 	<!-- 验证同版本下不能有多个相同的角色 -->
 	<select id="checkName" resultType="int">
 		SELECT COUNT(1) FROM fzx_role WHERE mod_id = #{modeid} AND del_flag = 0 AND name = #{name} AND company_id= 1

@@ -130,6 +130,9 @@
 	<select id="checkEnname" resultType="int">
 		SELECT COUNT(1) FROM media_manage_role WHERE mod_id = #{modeid} AND del_flag = 0  
 	</select>
+	<select id="findMdSuperRoleId" resultType="int">
+		SELECT id FROM media_manage_role WHERE franchisee_id = #{franchid} AND del_flag = 0  AND type =2
+	</select>
 	<!-- 验证 角色名称是否重复 -->
 	<select id="checkRoleName" resultType="int">
 		SELECT COUNT(1) FROM media_manage_role WHERE mod_id = #{modeid} AND del_flag = 0 AND name = #{name}

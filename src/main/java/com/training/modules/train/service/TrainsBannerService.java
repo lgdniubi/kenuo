@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
 import com.training.common.utils.StringUtils;
+import com.training.modules.sys.entity.User;
+import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.TrainsBannerDao;
 import com.training.modules.train.entity.FranchiseeBanner;
 import com.training.modules.train.entity.TrainsBanner;
@@ -84,5 +86,26 @@ public class TrainsBannerService extends CrudService<TrainsBannerDao, TrainsBann
 	
 	public void deleteBanner(TrainsBanner trainsBanner){
 		dao.deleteBanner(trainsBanner);
+	}
+	/**
+	 * 保存广告图操作记录
+	 * @param trainsBanner
+	 */
+	public void saveAdvertLog(TrainsBanner trainsBanner) {
+		User user = UserUtils.getUser();
+		trainsBanner.setCreateBy(user);
+		dao.saveAdvertLog(trainsBanner);
+	}
+	
+	/**
+	 * 查找日志列表
+	 * @param page
+	 * @param trainsBanner
+	 * @return
+	 */
+	public Page<TrainsBanner> findLogPage(Page<TrainsBanner> page, TrainsBanner trainsBanner) {
+		trainsBanner.setPage(page);
+		page.setList(dao.findLogList(trainsBanner));
+		return page;
 	}
 }
