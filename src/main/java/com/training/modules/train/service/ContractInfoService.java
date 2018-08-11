@@ -1,5 +1,6 @@
 package com.training.modules.train.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +16,7 @@ import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.ContractInfo;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONNull;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 
@@ -38,6 +40,25 @@ public class ContractInfoService {
 		
 		List<ContractInfo> list = JSONArray.toList(json.getJSONObject("data").getJSONArray("list"), new ContractInfo(),new JsonConfig());
 		page.setCount(json.getJSONObject("data").getLong("count"));
+		page.setList(list);
+		contractInfo.setPage(page);
+		return page;
+	}
+	
+	public Page<ContractInfo> findSignedPage(Page<ContractInfo> page, ContractInfo contractInfo){
+		JSONObject jsonO = new JSONObject();
+		jsonO.put("page", page.getPageNo());
+		jsonO.put("size", page.getPageSize());
+		if(StringUtils.isNotBlank(contractInfo.getOffice_id()))
+			jsonO.put("office_id", contractInfo.getOffice_id());
+		
+		jsonO.put("status", 1);
+		JSONObject json = WebUtils.postCS(jsonO, ParametersFactory.getTrainsParamValues("queryContractInfoList"));
+		List<ContractInfo> list = new ArrayList<>();
+		if(!(json.get("data") instanceof JSONNull)){
+			list = JSONArray.toList(json.getJSONObject("data").getJSONArray("list"), new ContractInfo(),new JsonConfig());
+			page.setCount(json.getJSONObject("data").getLong("count"));
+		}
 		page.setList(list);
 		contractInfo.setPage(page);
 		return page;
