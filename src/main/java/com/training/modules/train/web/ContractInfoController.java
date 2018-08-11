@@ -55,7 +55,7 @@ public class ContractInfoController extends BaseController {
 	 * @param request
 	 * @return
 	 */
-	@RequiresPermissions(value="train:contractInfo:list")
+	@RequiresPermissions(value="train:contractInfo:signedList")
 	@RequestMapping(value="signedList")
 	public String queryContractInfoList(ContractInfo contractInfo,HttpServletRequest request, HttpServletResponse response,Model model){
 		try {
