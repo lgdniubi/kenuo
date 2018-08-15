@@ -126,7 +126,7 @@ public class CourseController extends BaseController{
 	 * @return
 	 */
 	@RequiresPermissions(value={"train:course:getcoursebyid"},logical=Logical.OR)
-	@RequestMapping(value = {"getcoursebyid", ""})
+	@RequestMapping(value = "getcoursebyid")
 	public String getcoursebyid(TrainLessons trainLessons, Model model){
 		TrainCategorys trainCategorys = new TrainCategorys();
 		trainCategorys.setPriority(1);
@@ -152,11 +152,13 @@ public class CourseController extends BaseController{
 	 * @throws IllegalStateException 
 	 */
 	@RequiresPermissions(value={"train:course:savecourse"},logical=Logical.OR)
-	@RequestMapping(value = {"savecourse", ""})
+	@RequestMapping(value = "savecourse")
 	public String savecourse(TrainLessons trainLessons, HttpServletRequest request, HttpServletResponse response, Model model, RedirectAttributes redirectAttributes) throws IllegalStateException, IOException{
 		
 		try {
 			trainLessons.setName(HtmlUtils.htmlUnescape(trainLessons.getName()));
+			String htmlEscape = HtmlUtils.htmlEscape(trainLessons.getIntroduce());
+			trainLessons.setIntroduce(htmlEscape);
 			if(null == trainLessons.getLessonId() || "".equals(trainLessons.getLessonId())){
 				trainLessons.setLessonId(IdGen.uuid());
 			}
@@ -185,7 +187,7 @@ public class CourseController extends BaseController{
 	 * @throws IllegalStateException 
 	 */
 	@RequiresPermissions(value={"train:course:updatecourse"},logical=Logical.OR)
-	@RequestMapping(value = {"updatecourse", ""})
+	@RequestMapping(value = "updatecourse")
 	public String updatecourse(TrainLessons trainLessons,RedirectAttributes redirectAttributes) throws IllegalStateException, IOException{
 		trainLessons.setName(HtmlUtils.htmlUnescape(trainLessons.getName()));
 		trainLessonsService.updatecourse(trainLessons);
