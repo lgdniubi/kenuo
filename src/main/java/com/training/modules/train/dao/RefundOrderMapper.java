@@ -67,7 +67,7 @@ public interface RefundOrderMapper extends CrudDao<RefundOrder> {
 	 * 确认入账
 	 * @param order_id
 	 */
-	public void makeSureInAccount(@Param("order_id")String order_id);
+	public void makeSureInAccount(@Param("order_id")String order_id,@Param("status")String status);
 
 	/**  
 	* <p>Title: 将订单改为逾期状态</p>  

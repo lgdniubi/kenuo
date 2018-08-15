@@ -67,16 +67,30 @@ public class RefundOrderController extends BaseController {
 		return "modules/train/refundOrderDetail";
 	}
 	/**
+	 * 审核账单
+	 * @param model
+	 * @param order_id
+	 * @return
+	 */
+	@RequestMapping(value="toAuditRefundOrder")
+	public String toAuditRefundOrder(Model model,String office_id,String order_id,double amount,String billmonth){
+		model.addAttribute("office_id", office_id);
+		model.addAttribute("order_id", order_id);
+		model.addAttribute("amount",amount);
+		model.addAttribute("billmonth", billmonth);
+		return "modules/train/auditRefundOrder";
+	}
+	/**
 	 * 确认入账
 	 * @param order_id
 	 * @return
 	 */
 	@RequiresPermissions(value="train:refundOrder:makeSureInAccount")
 	@RequestMapping(value="makeSureInAccount")
-	public String makesure(Model model,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,String order_id,String office_id,double amount,String billmonth){
+	public String makesure(Model model,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,String order_id,String office_id,double amount,String billmonth,String status){
 		try {
-			this.refundOrderService.makeSureInAccount(order_id,office_id,amount,billmonth);
-			addMessage(redirectAttributes, "已入账!");
+			this.refundOrderService.makeSureInAccount(order_id,office_id,amount,billmonth,status);
+			addMessage(redirectAttributes, "操作成功!");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "确认入账", e);
 			logger.error("确认入账错误信息:"+e.getMessage());
