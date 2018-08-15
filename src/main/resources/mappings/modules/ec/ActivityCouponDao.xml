@@ -4,6 +4,7 @@
 	<sql id="sqlColumns">
 		a.id,
 		a.action_id,
+		a.category,
 		a.coupon_name,
 		a.coupon_type,
 		a.used_type,
@@ -81,6 +82,7 @@
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO mtmydb.mtmy_activity_coupon (
 		action_id,
+		category,
 		coupon_name,
 		coupon_type,
 		used_type,
@@ -96,6 +98,7 @@
 		VALUES
 		(
 		#{actionId},
+		#{category},
 		#{couponName},
 		#{couponType},
 		#{usedType},
@@ -113,6 +116,7 @@
 	<!-- 更新数据 -->
 	<update id="update">
 		UPDATE mtmydb.mtmy_activity_coupon SET
+		category = #{category},
 		coupon_name=#{couponName},
 		coupon_type=#{couponType},
 		used_type=#{usedType},

@@ -47,7 +47,7 @@ public class AutoPushMtmyOaNotify extends CommonService{
 		long runTime;	//运行时间
 		
 		startDate = new Date();
-		taskLog.setJobName("shareAdvancePrice");
+		taskLog.setJobName("autoPushMtmyOaNotify");
 		taskLog.setStartDate(startDate);
 		
 		try {

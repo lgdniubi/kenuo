@@ -213,16 +213,16 @@
 			AND a.channel_flag=#{channelFlag}
 		</if>
 		<if test="begtime != null and begtime != ''">
-			AND DATE_FORMAT(a.add_time,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
+			AND a.add_time >= DATE_FORMAT(#{begtime},'%Y-%m-%d 00:00:00')
 		</if>
 		<if test="endtime!=null and endtime!=''">
-			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+			<![CDATA[AND a.add_time <= DATE_FORMAT(#{endtime},'%Y-%m-%d 23:59:59')]]>
 		</if>
 		<if test="payBegTime != null and payBegTime != ''">
-			AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') >= DATE_FORMAT(#{payBegTime},'%Y-%m-%d')
+			AND a.pay_time >= DATE_FORMAT(#{payBegTime},'%Y-%m-%d 00:00:00')
 		</if>
 		<if test="payEndTime !=null and payEndTime!=''">
-			<![CDATA[AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') <= DATE_FORMAT(#{payEndTime},'%Y-%m-%d')]]>
+			<![CDATA[AND a.pay_time <= DATE_FORMAT(#{payEndTime},'%Y-%m-%d 23:59:59')]]>
 		</if>
 		<if test="userid != null and userid != ''">
 			AND a.user_id = #{userid}
@@ -249,10 +249,10 @@
 			AND a.returned_id = #{returnedId}
 		</if>
 		<if test="actualBegTime != null and actualBegTime != ''">
-			AND DATE_FORMAT(a.reality_add_time,'%Y-%m-%d') >= DATE_FORMAT(#{actualBegTime},'%Y-%m-%d')
+			AND a.reality_add_time >= DATE_FORMAT(#{actualBegTime},'%Y-%m-%d 00:00:00')
 		</if>
 		<if test="actualEndTime !=null and actualEndTime != ''">
-			<![CDATA[AND DATE_FORMAT(a.reality_add_time,'%Y-%m-%d') <= DATE_FORMAT(#{actualEndTime},'%Y-%m-%d')]]>
+			<![CDATA[AND a.reality_add_time <= DATE_FORMAT(#{actualEndTime},'%Y-%m-%d 23:59:59')]]>
 		</if>
 		GROUP BY a.order_id
 		<!-- <if test="orderArrearageType == 2 "> 没有欠款
@@ -339,16 +339,16 @@
 			AND a.channel_flag=#{channelFlag}
 		</if>
 		<if test="begtime != null and begtime != ''">
-			AND DATE_FORMAT(a.add_time,'%Y-%m-%d') >= DATE_FORMAT(#{begtime},'%Y-%m-%d')
+			AND a.add_time >= DATE_FORMAT(#{begtime},'%Y-%m-%d 00:00:00')
 		</if>
 		<if test="endtime!=null and endtime!=''">
-			<![CDATA[AND DATE_FORMAT(a.add_time,'%Y-%m-%d') <= DATE_FORMAT(#{endtime},'%Y-%m-%d')]]>
+			<![CDATA[AND a.add_time <= DATE_FORMAT(#{endtime},'%Y-%m-%d 23:59:59')]]>
 		</if>
 		<if test="payBegTime != null and payBegTime != ''">
-			AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') >= DATE_FORMAT(#{payBegTime},'%Y-%m-%d')
+			AND a.pay_time >= DATE_FORMAT(#{payBegTime},'%Y-%m-%d 00:00:00')
 		</if>
 		<if test="payEndTime !=null and payEndTime!=''">
-			<![CDATA[AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') <= DATE_FORMAT(#{payEndTime},'%Y-%m-%d')]]>
+			<![CDATA[AND a.pay_time <= DATE_FORMAT(#{payEndTime},'%Y-%m-%d 23:59:59')]]>
 		</if>
 		<if test="userid != null and userid != ''">
 			AND a.user_id = #{userid}
@@ -369,10 +369,10 @@
 			AND a.del_flag=#{userDelFlag}
 		</if>
 		<if test="actualBegTime != null and actualBegTime != ''">
-			AND DATE_FORMAT(a.reality_add_time,'%Y-%m-%d') >= DATE_FORMAT(#{actualBegTime},'%Y-%m-%d')
+			AND a.reality_add_time >= DATE_FORMAT(#{actualBegTime},'%Y-%m-%d 00:00:00')
 		</if>
 		<if test="actualEndTime !=null and actualEndTime != ''">
-			<![CDATA[AND DATE_FORMAT(a.reality_add_time,'%Y-%m-%d') <= DATE_FORMAT(#{actualEndTime},'%Y-%m-%d')]]>
+			<![CDATA[AND a.reality_add_time <= DATE_FORMAT(#{actualEndTime},'%Y-%m-%d 23:59:59')]]>
 		</if>
 		GROUP BY a.order_id
 		<choose>

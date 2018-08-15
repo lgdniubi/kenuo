@@ -21,10 +21,10 @@
 		$(document).ready(function() {
 		    var start = {
 			    elem: '#beginDate',
-			    format: 'YYYY-MM-DD hh:mm:ss',
+			    format: 'YYYY-MM-DD',
 			    event: 'focus',
 			    max: $("#endDate").val(),   //最大日期
-			    istime: true,				//是否显示时间
+			    istime: false,				//是否显示时间
 			    isclear: false,				//是否显示清除
 			    istoday: false,				//是否显示今天
 			    issure: true,				//是否显示确定
@@ -36,10 +36,10 @@
 			};
 			var end = {
 			    elem: '#endDate',
-			    format: 'YYYY-MM-DD hh:mm:ss',
+			    format: 'YYYY-MM-DD',
 			    event: 'focus',
 			    min: $("#beginDate").val(),
-			    istime: true,
+			    istime: false,
 			    isclear: false,
 			    istoday: false,
 			    issure: true,
@@ -170,9 +170,9 @@
 							<input id="usersName" name="usersName" type="text" value="${comment.usersName }" class="form-control" placeholder="用户名"> 
 							<input id="userName" name="userName" type="text" value="${comment.userName }" class="form-control" placeholder="美容师"> 
 							<label>评论时间：</label>
-							<input id="beginDate" name="beginDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${comment.beginDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" placeholder="开始时间" readonly="readonly"/>
+							<input id="beginDate" name="beginDate" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${comment.beginDate }" pattern="yyyy-MM-dd"/>" placeholder="开始时间" readonly="readonly"/>
 							<label>&nbsp;&nbsp;--&nbsp;&nbsp;</label>
-							<input id="endDate" name="endDate" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${comment.endDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" placeholder="结束时间" readonly="readonly"/>
+							<input id="endDate" name="endDate" type="text" maxlength="20" class=" laydate-icon form-control layer-date input-sm" value="<fmt:formatDate value="${comment.endDate }" pattern="yyyy-MM-dd"/>" placeholder="结束时间" readonly="readonly"/>
 							<label>是否有图：</label>	
 							<select id ="whetherImg" name="whetherImg" class="form-control" style="width:185px;">
 								<option value="" <c:if test="${comment.whetherImg == ''}">selected</c:if>>全部</option>

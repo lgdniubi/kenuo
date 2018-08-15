@@ -125,6 +125,7 @@ public class Goods extends DataEntity<Goods> {
 	private String isDelivery;         //是否发货（0：否，1：是）
 	
 	private int limitNum;              //限购数量
+	private int esSort;                //搜索排序
 	
 	/**
 	 * get/set
@@ -638,6 +639,12 @@ public class Goods extends DataEntity<Goods> {
 	}
 	public void setLimitNum(int limitNum) {
 		this.limitNum = limitNum;
+	}
+	public int getEsSort() {
+		return esSort;
+	}
+	public void setEsSort(int esSort) {
+		this.esSort = esSort;
 	}
 	
 }

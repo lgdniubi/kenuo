@@ -52,11 +52,8 @@ public class ActivityCoupon extends TreeEntity<ActivityCoupon> {
 	
 	private String userId;				//用户id 集合
 
-	
-
-	//private int status;
-	//private String create_by;
-
+	private int category;             //优惠券类型（0：普通红包；1：充值红包）
+	private String useCouponId;           //用户领取的红包表id
 
 	public String getFranchiseeName() {
 		return franchiseeName;
@@ -299,6 +296,21 @@ public class ActivityCoupon extends TreeEntity<ActivityCoupon> {
 		// TODO Auto-generated method stub
 		
 	}
-	
 
+	public int getCategory() {
+		return category;
+	}
+
+	public void setCategory(int category) {
+		this.category = category;
+	}
+
+	public String getUseCouponId() {
+		return useCouponId;
+	}
+
+	public void setUseCouponId(String useCouponId) {
+		this.useCouponId = useCouponId;
+	}
+	
 }

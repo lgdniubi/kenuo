@@ -221,7 +221,7 @@
 	    });
 			
 	    	
-		    function TopUp(recid,singleRealityPrice,singleNormPrice,orderArrearage,servicetimes,remaintimes,goodsBalance){
+		    function TopUp(recid,singleRealityPrice,singleNormPrice,orderArrearage,servicetimes,remaintimes,goodsBalance,goodsid){
 		    	$(".loading").show();
 		    	var isCommitted = false;		//表单是否已经提交标识，默认为false
 		    	var orderid = $("#orderid").val();
@@ -232,7 +232,7 @@
 				    type: 2, 
 				    area: ['600px', '450px'],
 				    title:"充值",
-				    content: "${ctx}/ec/orders/addTopUp?orderid="+orderid+"&singleRealityPrice="+singleRealityPrice+"&userid="+userid+"&isReal="+isReal+"&goodsBalance="+goodsBalance+"&servicetimes="+servicetimes+"&orderArrearage="+orderArrearage,
+				    content: "${ctx}/ec/orders/addTopUp?orderid="+orderid+"&singleRealityPrice="+singleRealityPrice+"&userid="+userid+"&isReal="+isReal+"&goodsBalance="+goodsBalance+"&servicetimes="+servicetimes+"&orderArrearage="+orderArrearage+"&goodsid="+goodsid+"&recid="+recid,
 				    btn: ['确定', '关闭'],
 				    yes: function(index, layero){
 				    	var orderid = $("#orderid").val();
@@ -243,7 +243,22 @@
 						var jsmoney = obj.document.getElementById("jsmoney").value;
 						var loading = obj.document.getElementById("loading");
 						var belongOfficeId = obj.document.getElementById("belongOfficeId").value;
+						
+						var useCouponFlag = obj.document.getElementById("useCouponFlag").value;
+						var couponId = obj.document.getElementById("couponId").value;
+						var baseAmount = obj.document.getElementById("baseAmount").value;
+						var couponMoney = obj.document.getElementById("couponMoney").value;
+						var useCouponId = obj.document.getElementById("useCouponId").value;
+						
 						$(loading).show();
+						
+						if(useCouponFlag == "1"){
+							if(baseAmount - rechargeAmount > 0){
+								$(loading).hide();
+								top.layer.alert('充值金额不足红包满减金额！', {icon: 0, title:'提醒'});
+								return;
+							}
+						}
 						if(accountBalance == ''){
 							$(loading).hide();
 							top.layer.alert('账户余额必填！', {icon: 0, title:'提醒'});
@@ -320,7 +335,11 @@
 											isReal:isReal,
 											channelFlag:channelFlag,
 											belongOfficeId:belongOfficeId,
-											mtmyUserId:userid
+											mtmyUserId:userid,
+											useCouponFlag:useCouponFlag,
+											couponId:couponId,
+											couponMoney:couponMoney,
+											useCouponId:useCouponId
 										 },
 										url:"${ctx}/ec/orders/addOrderRechargeLog",
 										success:function(date){
@@ -770,7 +789,7 @@ window.onload=initStatus;
 									<th style="text-align: center;">异价价格</th>
 									<th style="text-align: center;">预约金</th>
 									<th style="text-align: center;">购买数量</th>
-									<th style="text-align: center;">红包面值</th>
+									<th style="text-align: center;">红包抵扣</th>
 									<th style="text-align: center;">折扣率</th>
 									<th style="text-align: center;">会员折扣</th>
 									<th style="text-align: center;">应付金额</th>
@@ -796,7 +815,7 @@ window.onload=initStatus;
 										<td align="center">${orderGood.ratioPrice }</td>
 										<td align="center">${orderGood.advancePrice}</td>
 										<td align="center">${orderGood.goodsnum }</td>
-										<td align="center">${orderGood.couponPrice }</td>
+										<td align="center"><fmt:formatNumber type="number" value="${orderGood.couponPrice + orderGood.couponAmount}" pattern="0.00" maxFractionDigits="2"/></td>
 										<td align="center">${orderGood.discount }</td>
 										<td align="center">${orderGood.membergoodsprice }</td>
 										<td align="center">${orderGood.orderAmount }</td>
@@ -810,7 +829,7 @@ window.onload=initStatus;
 											<c:if test="${type != 'view' }">
 												<c:if test="${orders.channelFlag == 'bm' || (orders.channelFlag != 'bm' && orders.isReal==1 && orderGood.advanceFlag != 1) || (orders.channelFlag != 'bm' && orders.isReal==0 && (orders.orderstatus == 1 || orders.orderstatus == 2 || orders.orderstatus == 4))}">
 													<c:if test="${orderGood.orderArrearage != 0}">
-														<a href="#" onclick="TopUp(${orderGood.recid},${orderGood.singleRealityPrice },${orderGood.singleNormPrice },${orderGood.orderArrearage },${orderGood.servicetimes },${orderGood.payRemaintimes },${orderGood.goodsBalance})"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>充值</a>
+														<a href="#" onclick="TopUp(${orderGood.recid},${orderGood.singleRealityPrice },${orderGood.singleNormPrice },${orderGood.orderArrearage },${orderGood.servicetimes },${orderGood.payRemaintimes },${orderGood.goodsBalance},${orderGood.goodsid})"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>充值</a>
 													</c:if>
 													<c:if test="${orderGood.orderArrearage == 0}">
 														<a href="#" style="background:#C0C0C0;color:#FFF" class="btn  btn-xs" ><i class="fa fa-edit"></i>充值</a>

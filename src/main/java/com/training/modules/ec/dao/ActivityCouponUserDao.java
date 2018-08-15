@@ -3,8 +3,11 @@ package com.training.modules.ec.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
+import com.training.modules.ec.entity.ActivityCoupon;
 import com.training.modules.ec.entity.ActivityCouponUser;
 import com.training.modules.ec.entity.OrderGoodsCoupon;
 
@@ -89,4 +92,26 @@ public interface ActivityCouponUserDao extends CrudDao<ActivityCouponUser> {
 	 */
 	public int queryNotInnerUserNum();
 	
+	/**
+	 * 查询订单中某商品可用的充值红包
+	 * @return
+	 */
+	public List<ActivityCoupon> queryRechargeCouponForGoods(@Param(value="userid")int userid,@Param(value="recid")String recid,@Param(value="goodsid")String goodsid);
+	
+	/**
+	 * 查询订单中的某个商品是否使用过充值红包
+	 * @param recid
+	 * @return
+	 */
+	public int queryUseNum(String recid);
+
+	/**
+	 * 若使用了红包就将该红包设置为已使用
+	 * @param orderId
+	 * @param mappingId
+	 * @param detailsId
+	 * @param userId
+	 * @param couponId
+	 */
+	public void updateUsedCoupon(@Param(value="orderId")String orderId,@Param(value="mappingId")String mappingId,@Param(value="detailsId")String detailsId,@Param(value="userId")int userId,@Param(value="couponId")String couponId,@Param(value="useCouponId")String useCouponId);
 }

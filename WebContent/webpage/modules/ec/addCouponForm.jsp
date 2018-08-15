@@ -139,58 +139,19 @@
 		}
 	}
 	
-	function retype(o){
-		var type = $("#couponType").val();
-		if(type==1){
-			$("#usetype").show();
-			$("#acttype").hide();
-			$("#usedType").val(1);
-			$("#categoryId").val("");
-			$("#categoryName").val("");
-			$("#select1").empty();
-			$("#select2").empty();
-			$("#categ").hide();
-			$("#oneCate").hide();
-			$("#good").hide();
-			$("#acttype").hide();
-		}else if(type==2){
-			$("#usetype").show();
-			$("#acttype").hide();
-			$("#usedType").val(1);
-			$("#categoryId").val("");
-			$("#categoryName").val("");
-			$("#select1").empty();
-			$("#select2").empty();
-			$("#categ").hide();
-			$("#oneCate").hide();
-			$("#good").hide();
-			$("#acttype").hide();
-		}else if(type==3){
-			$("#usetype").show();
-			$("#acttype").hide();
-			$("#usedType").val(1);
-			$("#categoryId").val("");
-			$("#categoryName").val("");
-			$("#select1").empty();
-			$("#select2").empty();
-			$("#categ").hide();
-			$("#oneCate").hide();
-			$("#good").hide();
-			$("#acttype").hide();
-		}else{
-			$("#usetype").show();
-			$("#acttype").hide();
-			$("#usedType").val(1);
-			$("#categoryId").val("");
-			$("#categoryName").val("");
-			$("#select1").empty();
-			$("#select2").empty();
-			$("#categ").hide();
-			$("#oneCate").hide();
-			$("#good").hide();
-			$("#acttype").hide();
-		}
+	function retype(){
+		$("#usetype").show();
+		$("#usedType").val(1);
+		$("#oneCategoryIdId").val("");
+		$("#oneCategoryIdName").val("");
+		$("#select1").empty();
+		$("#select2").empty();
+		$("#categ").hide();
+		$("#oneCate").hide();
+		$("#good").hide();
+		$("#acttype").hide();
 	}
+	
 	function ondeit(o){
 		var val=$(o).val();
 		if(val=="0.0"){
@@ -365,7 +326,13 @@
 	}, "小数位不能超过三位");
 
 	$(document).ready(function() {
-		
+		if("${activityCoupon.category}" == 0){
+			$("#type1").show();
+			$("#type2").hide();
+		}else{
+			$("#type1").hide();
+			$("#type2").show();
+		}
 		
 		$("#categoryIdButton").click(function(){
 			// 是否限制选择，如果限制，设置为disabled
@@ -553,6 +520,18 @@
 
 			});
 	window.onload = init;
+	
+	function changeCategory(value){
+		if(value == 0){
+			$("#type1").show();
+			$("#type2").hide();
+			retype();
+		}else{
+			$("#type1").hide();
+			$("#type2").show();
+			retype();
+		}
+	}
 </script>
 </head>
 <body>
@@ -567,17 +546,29 @@
 						<form:hidden path="id"/>
 						<input value="${franchiseeId }" type="hidden" id="franchiseeId"> <!-- 活动所属品牌 -->
 						<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
-
+							<tr>
+								<td width="150px"><label class="pull-right"><font color="red">*</font>优惠券类型：</label></td>
+								<td><select id="category"  name="category" class="form-control" style="width:200px;" onchange="changeCategory(this.value)">
+										<option value="0" <c:if test="${activityCoupon.category == 0}">selected</c:if>>普通红包</option>
+										<option value="1" <c:if test="${activityCoupon.category == 1}">selected</c:if>>充值红包</option>
+									</select></td>
+							</tr>
 							<tr>
 								<td><label class="pull-right"><font color="red">*</font>红包名称：</label></td>
 								<td><form:input path="couponName" htmlEscape="false" maxlength="50"
 									style="width:200px;" class="form-control required" /></td>
 							</tr>
-							<tr>
+							<tr id="type1" style="display: none">
 								<td><label class="pull-right"><font color="red">*</font>红包类型：</label></td>
-								<td><form:select path="couponType"  class="form-control" style="width:200px;" onchange="retype(this)">
+								<td><form:select path="couponType"  class="form-control" style="width:200px;" onchange="retype()">
 										<form:options items="${fns:getDictList('coupon_type')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 									</form:select></td>
+							</tr>
+							<tr id="type2" style="display: none">
+								<td><label class="pull-right"><font color="red">*</font>红包类型：</label></td>
+								<td><select id="couponType" name="couponType" class="form-control" style="width:200px;" onchange="retype()">
+										<option value="4">手工红包</option>
+									</select></td>
 							</tr>
 							<tr>
 								<td><label class="pull-right"><font color="red">*</font>满减金额：</label></td>

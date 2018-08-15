@@ -55,7 +55,8 @@
 		  g.advance_price AS 'advancePrice',
 		  g.supplier_id AS 'supplierId',
 		  g.limit_num AS 'limitNum',
-		  g.is_open AS 'goodsIsOpen'
+		  g.is_open AS 'goodsIsOpen',
+		  g.es_sort AS 'esSort'
 	</sql>
 	
 	<sql id="goodsJoins">
@@ -359,7 +360,8 @@
 		  advance_price,
 		  supplier_id,
 		  limit_num,
-		  is_open
+		  is_open,
+		  es_sort
 		) 
 		VALUES
 		  ( #{goodsCategoryId},
@@ -410,7 +412,8 @@
 		    #{advancePrice},
 		    #{supplierId},
 		    #{limitNum},
-		    #{goodsIsOpen}
+		    #{goodsIsOpen},
+		    #{esSort}
 		  )
 	</insert>
 	
@@ -464,7 +467,8 @@
 		      advance_price = #{advancePrice},
 			  supplier_id = #{supplierId},
 			  limit_num = #{limitNum},
-			  is_open = #{goodsIsOpen}
+			  is_open = #{goodsIsOpen},
+			  es_sort = #{esSort}
 			WHERE del_flag = 0 AND goods_id = #{goodsId}
 	</update>
 	<update id="updateTotalstore">

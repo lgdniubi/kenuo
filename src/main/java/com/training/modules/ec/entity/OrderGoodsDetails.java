@@ -46,6 +46,8 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 	
 	private String returnedId;              //退货订单ID
 	
+	private double couponAmount;           //充值红包抵扣的充值金额（实际抵扣的金额）
+	private double sumCouponAmount;        //总共使用的充值红包金额
 	
 	public double getSurplusAmount() {
 		return surplusAmount;
@@ -276,6 +278,22 @@ public class OrderGoodsDetails extends TreeEntity<OrderGoodsDetails> {
 
 	public void setRatioPrice(double ratioPrice) {
 		this.ratioPrice = ratioPrice;
+	}
+
+	public double getCouponAmount() {
+		return couponAmount;
+	}
+
+	public void setCouponAmount(double couponAmount) {
+		this.couponAmount = couponAmount;
+	}
+
+	public double getSumCouponAmount() {
+		return sumCouponAmount;
+	}
+
+	public void setSumCouponAmount(double sumCouponAmount) {
+		this.sumCouponAmount = sumCouponAmount;
 	}
 	
 }

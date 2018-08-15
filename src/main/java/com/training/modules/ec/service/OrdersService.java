@@ -1070,6 +1070,10 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 					}else{
 						orderGoods.setGoodsBalance(_orderGoods.getGoodsBalance());
 					}
+					
+					//红包实际抵扣金额
+					orderGoods.setCouponAmount(orderGoodsDetailsDao.queryCouponAmount(orderGoods.getRecid()));
+					
 				}
 			}
 		}
@@ -1138,13 +1142,19 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		int _servicetimes = oLog.getServicetimes(); //预计服务次数
 		
 		double orderArrearage = orderGoods.getOrderArrearage(); //欠款
-
+		
+		double rechargeAmount = oLog.getRechargeAmount();                  //充值页面填写的充值金额
+		String useCouponFlag = oLog.getUseCouponFlag();          //是否使用充值红包（0：未使用，1：已使用）
+		String couponId = oLog.getCouponId();               //红包id
+		double couponMoney = oLog.getCouponMoney();            //红包金额
+		
 		OrderGoodsDetails newDetails = orderGoodsDetailsDao.selectOrderBalance(oLog.getRecid());
 		double sumOrderBalance = newDetails.getOrderBalance();//该订单的该商品剩余的可用余额，充值时必须用
 		double sumAppTotalAmount = newDetails.getAppTotalAmount();//该订单的已付金额
 		double sumAppArrearage = newDetails.getAppArrearage();  //该订单仍欠的款
 		double ratioPrice = newDetails.getRatioPrice();    //异价后的价格
 		double orderAmount = newDetails.getOrderAmount();//商品应付价格
+		double sumCouponAmount = newDetails.getSumCouponAmount();   //该商品总共使用的充值红包抵扣金额
 		int integral = newDetails.getIntegral();        //充值完全以后送的云币
 		
 		double couponPrice = newDetails.getCouponPrice();      //红包面值
@@ -1162,6 +1172,18 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		double appArrearage = 0;   //app欠款金额
 		int userIntegral = 0;   //入库赠送的云币
 		
+		double couponAmount = 0; //充值红包实际抵扣的金额
+		
+		if("1".equals(useCouponFlag) || useCouponFlag == "1"){  //使用了充值红包
+			if(rechargeAmount <= couponMoney){   //当红包面值大于等于页面填写的充值金额时
+				couponAmount = rechargeAmount;
+			}else{
+				couponAmount = couponMoney;
+			}
+		}else{   //未使用充值红包
+			couponAmount = 0;
+		}
+		
 		if(1 == oLog.getIsReal()){ //虚拟
 			if(singleRealityPrice <= newTotalAmount && newTotalAmount < orderArrearage){
 				// 实际单次标价  < 实付款金额	< 欠款
@@ -1170,7 +1192,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				
 				newSpareMoneySum = -accountBalance;
 				newOrderBalance = Double.parseDouble(formater.format(newTotalAmount - totalAmount_in - sumOrderBalance));//商品余额（只放在details里的OrderBalance）
-				appTotalAmount =  Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app实付金额
+				appTotalAmount =  Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance-couponAmount));//app实付金额
 				appArrearage = -Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app欠款金额
 			}else if(newTotalAmount >= orderArrearage){
 				//实付款金额	>=  欠款
@@ -1181,12 +1203,12 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				newOrderBalance = -sumOrderBalance;//商品余额（只放在details里的OrderBalance）
 				
 				if("bm".equals(oLog.getChannelFlag())){
-					appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount));//app实付金额
+					appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount - couponAmount - sumCouponAmount));//app实付金额
 				}else{
 					if(couponPrice < advancePrice){
-						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - couponPrice - memberGoodsPrice));//app实付金额
+						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - couponPrice - memberGoodsPrice - couponAmount - sumCouponAmount));//app实付金额
 					}else{
-						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - advancePrice - memberGoodsPrice));//app实付金额
+						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - advancePrice - memberGoodsPrice - couponAmount - sumCouponAmount));//app实付金额
 					}
 				}
 				appArrearage = -sumAppArrearage;//app欠款金额
@@ -1223,7 +1245,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				
 				newSpareMoneySum = -accountBalance;
 				newOrderBalance = totalAmount;//商品余额（只放在details里的OrderBalance）
-				appTotalAmount =  Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app实付金额
+				appTotalAmount =  Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance-couponAmount));//app实付金额
 				appArrearage = -Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app欠款金额
 
 			}
@@ -1234,7 +1256,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				
 				newSpareMoneySum = -accountBalance;
 				newOrderBalance = 0;//商品余额（只放在details里的OrderBalance）
-				appTotalAmount =  Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app实付金额
+				appTotalAmount =  Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance-couponAmount));//app实付金额
 				appArrearage = -Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app欠款金额
 			}else if(newTotalAmount >= orderArrearage){
 				//实际付款 >= 欠款
@@ -1244,12 +1266,12 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				newOrderBalance = 0;//商品余额（只放在details里的OrderBalance）
 				
 				if("bm".equals(oLog.getChannelFlag())){
-					appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount));//app实付金额
+					appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount - couponAmount- sumCouponAmount));//app实付金额
 				}else{
 					if(couponPrice < advancePrice){
-						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice*goodsNum - sumAppTotalAmount - couponPrice - memberGoodsPrice));//app实付金额
+						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice*goodsNum - sumAppTotalAmount - couponPrice - memberGoodsPrice - couponAmount- sumCouponAmount));//app实付金额
 					}else{
-						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice*goodsNum - sumAppTotalAmount - advancePrice - memberGoodsPrice));//app实付金额
+						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice*goodsNum - sumAppTotalAmount - advancePrice - memberGoodsPrice - couponAmount- sumCouponAmount));//app实付金额
 					}
 				}
 				/*appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount));//app实付金额*/				
@@ -1277,6 +1299,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setServiceTimes(serviceTimes_in);	//剩余服务次数
 		details.setAppTotalAmount(appTotalAmount);//app实付金额
 		details.setAppArrearage(appArrearage);//app欠款金额
+		details.setCouponAmount(couponAmount);//充值红包实际抵扣的金额
 		details.setType(0);
 		details.setAdvanceFlag("3");
 		details.setCreateOfficeId(user.getOffice().getId());
@@ -1336,6 +1359,11 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}
 		
+		//若使用了充值红包则将对该充值红包进行操作
+		if("1".equals(useCouponFlag) || useCouponFlag == "1"){
+			activityCouponUserDao.updateUsedCoupon(details.getOrderId(), details.getGoodsMappingId(), details.getId(), oLog.getMtmyUserId(), couponId,oLog.getUseCouponId());
+		}
+				
 		/*##########[神策埋点-订单充值{order_recharge}-Begin]##########*/
 		TrackCore.orderRecharge(details);
 		/*##########[神策埋点end]##########*/
@@ -2888,13 +2916,19 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		int _servicetimes = oLog.getServicetimes(); //预计服务次数
 		
 		double orderArrearage = orderGoods.getOrderArrearage(); //欠款
-
+		
+		double rechargeAmount = oLog.getRechargeAmount();                  //充值页面填写的充值金额
+		String useCouponFlag = oLog.getUseCouponFlag();          //是否使用充值红包（0：未使用，1：已使用）
+		String couponId = oLog.getCouponId();               //红包id
+		double couponMoney = oLog.getCouponMoney();            //红包金额
+		
 		OrderGoodsDetails newDetails = orderGoodsDetailsDao.selectOrderBalance(oLog.getRecid());
 		double sumOrderBalance = newDetails.getOrderBalance();//该订单的该商品剩余的可用余额，充值时必须用
 		double sumAppTotalAmount = newDetails.getAppTotalAmount();//该订单的已付金额
 		double sumAppArrearage = newDetails.getAppArrearage();  //该订单仍欠的款
 		double ratioPrice = newDetails.getRatioPrice();    //异价后的价格
 		double orderAmount = newDetails.getOrderAmount();//商品应付价格
+		double sumCouponAmount = newDetails.getSumCouponAmount();   //该商品总共使用的充值红包抵扣金额
 		int integral = newDetails.getIntegral();        //充值完全以后送的云币
 		
 		double couponPrice = newDetails.getCouponPrice();      //红包面值
@@ -2912,6 +2946,18 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		double surplusAmount = 0;   //套卡剩余金额
 		int userIntegral = 0;   //入库赠送的云币
 		
+		double couponAmount = 0; //充值红包实际抵扣的金额
+		
+		if("1".equals(useCouponFlag) || useCouponFlag == "1"){  //使用了充值红包
+			if(rechargeAmount <= couponMoney){   //当红包面值大于等于页面填写的充值金额时
+				couponAmount = rechargeAmount;
+			}else{
+				couponAmount = couponMoney;
+			}
+		}else{   //未使用充值红包
+			couponAmount = 0;
+		}
+		
 		if(3 == oLog.getIsReal()){ //通用卡
 			if(singleRealityPrice <= newTotalAmount && newTotalAmount < orderArrearage){
 				// 实际单次标价  < 实付款金额	< 欠款
@@ -2920,7 +2966,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				
 				newSpareMoneySum = -accountBalance;
 				newOrderBalance = Double.parseDouble(formater.format(newTotalAmount - totalAmount_in - sumOrderBalance));//商品余额（只放在details里的OrderBalance）
-				appTotalAmount =  Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app实付金额
+				appTotalAmount =  Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance-couponAmount));//app实付金额
 				appArrearage = -Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app欠款金额
 			}else if(newTotalAmount >= orderArrearage){
 				//实付款金额	>=  欠款
@@ -2930,12 +2976,12 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				newSpareMoneySum = Double.parseDouble(formater.format(newTotalAmount - orderArrearage - accountBalance));//商品总余额(当实付大于欠款时，将多的存入个人账户余额中)
 				newOrderBalance = -sumOrderBalance;//商品余额（只放在details里的OrderBalance）
 				if("bm".equals(oLog.getChannelFlag())){
-					appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount));//app实付金额
+					appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount - couponAmount - sumCouponAmount));//app实付金额
 				}else{
 					if(couponPrice < advancePrice){
-						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - couponPrice - memberGoodsPrice));//app实付金额
+						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - couponPrice - memberGoodsPrice - couponAmount - sumCouponAmount));//app实付金额
 					}else{
-						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - advancePrice - memberGoodsPrice));//app实付金额
+						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - advancePrice - memberGoodsPrice - couponAmount - sumCouponAmount));//app实付金额
 					}
 				}
 				appArrearage = -sumAppArrearage;//app欠款金额
@@ -2971,7 +3017,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				
 				newSpareMoneySum = -accountBalance;
 				newOrderBalance = totalAmount;//商品余额（只放在details里的OrderBalance）
-				appTotalAmount =  Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app实付金额
+				appTotalAmount =  Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance-couponAmount));//app实付金额
 				appArrearage = -Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app欠款金额
 
 			}
@@ -2982,7 +3028,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				
 				newSpareMoneySum = -accountBalance;
 				newOrderBalance = 0;//商品余额（只放在details里的OrderBalance）
-				appTotalAmount =  Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app实付金额
+				appTotalAmount =  Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance-couponAmount));//app实付金额
 				appArrearage = -Double.parseDouble(formater.format(oLog.getRechargeAmount()+accountBalance));//app欠款金额
 				surplusAmount = totalAmount;     //套卡剩余金额
 			}else if(newTotalAmount >= orderArrearage){    
@@ -2992,12 +3038,12 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 				newSpareMoneySum = Double.parseDouble(formater.format(newTotalAmount - orderArrearage - accountBalance));//商品总余额(当实付大于欠款时，将多的存入个人账户余额中)
 				newOrderBalance = 0;//商品余额（只放在details里的OrderBalance）
 				if("bm".equals(oLog.getChannelFlag())){
-					appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount));//app实付金额
+					appTotalAmount =  Double.parseDouble(formater.format(orderAmount - sumAppTotalAmount - couponAmount - sumCouponAmount));//app实付金额
 				}else{
 					if(couponPrice < advancePrice){
-						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - couponPrice - memberGoodsPrice));//app实付金额
+						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - couponPrice - memberGoodsPrice - couponAmount - sumCouponAmount));//app实付金额
 					}else{
-						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - advancePrice - memberGoodsPrice));//app实付金额
+						appTotalAmount =  Double.parseDouble(formater.format(ratioPrice - sumAppTotalAmount - advancePrice - memberGoodsPrice - couponAmount - sumCouponAmount));//app实付金额
 					}
 				}
 				appArrearage = -sumAppArrearage;//app欠款金额
@@ -3044,6 +3090,7 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 		details.setServiceTimes(serviceTimes_in);	//剩余服务次数
 		details.setAppTotalAmount(appTotalAmount);//app实付金额
 		details.setAppArrearage(appArrearage); //app欠款金额
+		details.setCouponAmount(couponAmount);//充值红包实际抵扣的金额
 		details.setSurplusAmount(surplusAmount); //套卡剩余金额
 		details.setType(0);
 		details.setAdvanceFlag("3");
@@ -3097,6 +3144,11 @@ public class OrdersService extends TreeService<OrdersDao, Orders> {
 			insertUserAccountsLog(oLog.getOrderId(), oLog.getMtmyUserId(), newSpareMoneySum, type, _orders.getChannelFlag(), user, oLog.getRecid()+"");
 		}
 		
+		//若使用了充值红包则将对该充值红包进行操作
+		if("1".equals(useCouponFlag) || useCouponFlag == "1"){
+			activityCouponUserDao.updateUsedCoupon(details.getOrderId(), details.getGoodsMappingId(), details.getId(), oLog.getMtmyUserId(), couponId,oLog.getUseCouponId());
+		}
+				
 		/*##########[神策埋点-订单充值{order_recharge}-Begin]##########*/
 		TrackCore.orderRecharge(details);
 		/*##########[神策埋点end]##########*/

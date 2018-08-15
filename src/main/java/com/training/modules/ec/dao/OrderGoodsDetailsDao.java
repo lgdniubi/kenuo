@@ -208,4 +208,11 @@ public interface OrderGoodsDetailsDao extends TreeDao<OrderGoodsDetails> {
 	 * @return
 	 */
 	public OrderGoods querySomeThing(String recId);
+	
+	/**
+	 * 根据mappingId查询使用的充值红包抵扣金额
+	 * @param goodsMappingId
+	 * @return
+	 */
+	public double queryCouponAmount(int goodsMappingId);
 }

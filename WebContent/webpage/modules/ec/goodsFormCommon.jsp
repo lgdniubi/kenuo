@@ -258,6 +258,10 @@
 										<span class="control-label cannotEdit">(数字越大越靠前)</span>
 									</li>
 									<li class="form-group">
+										<span class="control-label col-sm-2">搜索排序：</span>
+										<form:input path="esSort" class="form-control digits" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';"/>
+									</li>
+									<li class="form-group">
 										<span class="control-label col-sm-2"><font color="red">*</font>所属商家：</span>
 										<div style="width: 40%;padding-left: 150px;">
 											<input id="franchiseeIdId" name="franchiseeId" class="form-control required" type="hidden" value="" aria-required="true">

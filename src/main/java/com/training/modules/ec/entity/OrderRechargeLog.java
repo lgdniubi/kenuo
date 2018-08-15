@@ -31,6 +31,11 @@ public class OrderRechargeLog extends TreeEntity<OrderRechargeLog> {
 	
 	private String belongOfficeId;           //归属机构id
 	
+	private String useCouponFlag;          //是否使用充值红包（0：未使用，1：已使用）
+	private String couponId;               //红包id
+	private double couponMoney;            //红包金额
+	private String useCouponId;            //用户领取的红包表id
+	
 	public int getIsReal() {
 		return isReal;
 	}
@@ -180,4 +185,36 @@ public class OrderRechargeLog extends TreeEntity<OrderRechargeLog> {
 		this.belongOfficeId = belongOfficeId;
 	}
 
+	public String getUseCouponFlag() {
+		return useCouponFlag;
+	}
+
+	public void setUseCouponFlag(String useCouponFlag) {
+		this.useCouponFlag = useCouponFlag;
+	}
+
+	public String getCouponId() {
+		return couponId;
+	}
+
+	public void setCouponId(String couponId) {
+		this.couponId = couponId;
+	}
+
+	public double getCouponMoney() {
+		return couponMoney;
+	}
+
+	public void setCouponMoney(double couponMoney) {
+		this.couponMoney = couponMoney;
+	}
+
+	public String getUseCouponId() {
+		return useCouponId;
+	}
+
+	public void setUseCouponId(String useCouponId) {
+		this.useCouponId = useCouponId;
+	}
+	
 }

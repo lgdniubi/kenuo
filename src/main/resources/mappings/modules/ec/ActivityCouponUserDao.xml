@@ -3,6 +3,7 @@
 <mapper namespace="com.training.modules.ec.dao.ActivityCouponUserDao">
 	<sql id="sqlColumns">
 		a.id,
+		a.category,
 		a.user_id,
 		a.coupon_id,
 		a.`status`,
@@ -27,6 +28,7 @@
 	<select id="findList" resultType="ActivityCouponUser">
 		SELECT
 			a.id,
+			a.category,
 			a.user_id,
 			f.id as "actionId",
 			f.`name` as "actionName",
@@ -183,6 +185,7 @@
 		INSERT INTO mtmydb.mtmy_activity_coupon_user (
 			user_id,
 			coupon_id,
+			category,
 			status,
 			add_time,
 			expiration_date,
@@ -192,6 +195,7 @@
 		)SELECT 
 			s.mtmy_user_id,
 			#{couponId},
+			(select category from mtmydb.mtmy_activity_coupon where id = #{couponId}),
 			'0',
 			SYSDATE(),
 			(CASE 
@@ -220,6 +224,7 @@
 		INSERT INTO mtmydb.mtmy_activity_coupon_user (
 			user_id,
 			coupon_id,
+			category,
 			status,
 			add_time,
 			expiration_date,
@@ -229,6 +234,7 @@
 		)SELECT 
 			u.user_id,
 			#{couponId},
+			(select category from mtmydb.mtmy_activity_coupon where id = #{couponId}),
 			'0',
 			SYSDATE(),
 			(CASE 
@@ -282,6 +288,7 @@
 		INSERT INTO mtmydb.mtmy_activity_coupon_user (
 			user_id,
 			coupon_id,
+			category,
 			status,
 			add_time,
 			expiration_date,
@@ -291,6 +298,7 @@
 		)VALUES(
 			#{userId},
 			#{couponId},
+			(select category from mtmydb.mtmy_activity_coupon where id = #{couponId}),
 			#{status},
 			SYSDATE(),
 			(CASE 
@@ -322,5 +330,51 @@
 			status = 2 
 		WHERE coupon_id = #{id} AND status = 0
 	</update>
-
+	
+	<!-- 查询订单中某商品可用的充值红包 -->
+	<select id="queryRechargeCouponForGoods" resultType="ActivityCoupon">
+		SELECT
+			acu.id AS 'useCouponId',
+			acu.coupon_id AS 'id',
+			ac.coupon_name AS 'couponName',
+		 	ac.base_amount AS 'baseAmount',
+			ac.coupon_money AS 'couponMoney'
+		FROM mtmydb.mtmy_activity_coupon_user acu
+		LEFT JOIN mtmydb.mtmy_activity_coupon ac ON ac.id = acu.coupon_id
+		LEFT JOIN mtmydb.mtmy_activity_coupon_category acc ON acc.coupon_id = acu.coupon_id
+		LEFT JOIN mtmydb.mtmy_activity_coupon_goods acg ON acg.coupon_id = acu.coupon_id
+		LEFT JOIN mtmydb.mtmy_activity a ON a.id = ac.action_id
+		WHERE acu.user_id = #{userid}
+		AND acu.category = 1
+		AND acu.expiration_date >= NOW()
+		AND acu.status = 0
+		AND a.franchisee_id = (SELECT goods_franchisee_id FROM mtmydb.mtmy_order_goods_mapping WHERE rec_id = #{recid}) 
+		AND ((acc.category_id = (SELECT category_id FROM mtmydb.mtmy_goods WHERE goods_id = #{goodsid})) OR (acg.goods_id = #{goodsid}) OR (ac.id = (SELECT id FROM mtmydb.mtmy_activity_coupon WHERE id = acu.coupon_id AND used_type = 1)))
+		GROUP BY acu.coupon_id
+		ORDER BY acu.expiration_date DESC
+	</select>
+	
+	<!-- 查询订单中的某个商品是否使用过充值红包 -->
+	<select id="queryUseNum" resultType="Integer">
+		SELECT COUNT(1)
+		FROM mtmydb.mtmy_activity_coupon_user 
+		WHERE category = 1
+		AND status = 1
+		AND mapping_id = #{recid}
+	</select>
+	
+	<!-- 若使用了红包就将该红包设置为已使用 -->
+	<update id="updateUsedCoupon">
+		UPDATE mtmydb.mtmy_activity_coupon_user 
+		SET 
+			status = 1,
+			used_time = NOW(),
+			order_id = #{orderId},
+			mapping_id = #{mappingId},
+			details_id = #{detailsId}
+		WHERE user_id = #{userId}
+		AND coupon_id = ${couponId}
+		AND id = #{useCouponId}
+		AND status = 0
+	</update>
 </mapper>

@@ -1,5 +1,6 @@
 package com.training.modules.ec.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -53,6 +54,11 @@ public class CommentService extends CrudService<CommentDao, Comment>{
 	 * @return
 	 */
 	public Page<Comment> findBeautyPage(Page<Comment> page,Comment comment){
+		if(comment.getBeginDate() == null && comment.getEndDate() == null){
+			comment.setBeginDate(new Date());
+			comment.setEndDate(new Date());
+		}
+		
 		comment.setPage(page);
 		return page.setList(dao.findList(comment));
 	}

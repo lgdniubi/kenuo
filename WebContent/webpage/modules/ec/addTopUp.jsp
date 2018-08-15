@@ -19,6 +19,11 @@
 	                <div class="tab-inner">
 	                	<input type="hidden" id="orderArrearage" name="orderArrearage" value="${orderArrearage }" />
 	                	<input type="hidden" id="userid" name="userid" value="${userid }" />
+	                	<input type="hidden" id="couponId" name="couponId" value="0">
+						<input type="hidden" id="baseAmount" name="baseAmount" value="0">
+						<input type="hidden" id="couponMoney" name="couponMoney" value="0">
+						<input type="hidden" id="useCouponFlag" name="useCouponFlag" value="0">
+						<input type="hidden" id="useCouponId" name="useCouponId" value="0">
 	                	<c:if test="${isReal == 1 && servicetimes != 999}"> <!-- 0实物 -->
 		                	<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">*</font>服务单次价：</label>
 		                	${singleRealityPrice }<font color="red">&nbsp;&nbsp;充值金额要满足单次价的倍数！</font>
@@ -33,6 +38,20 @@
 						&nbsp;<input type="checkbox" id="ichecks" /><label class="active">账户余额：</label>
 						<input type="text" id="accountBalance" name="accountBalance" readonly="readonly" style="width:150px;" value="0" class="form-control required" value="0" onkeyup="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onpaste="this.value=this.value.replace(/[^\d.]/g,&quot;&quot;)" onfocus="if(value == '0')value=''" onblur="if(this.value == '')this.value='0';"/>（可用余额：<label id="ye"></label>）
 						<p></p>
+						<c:if test="${fn:length(rechargeCouponList) > 0}">
+							<p style="position: relative;padding-left: 8em;">
+								<label class="active" style="position: absolute;left: 0;top: 0;">　 &nbsp;&nbsp;选择红包：</label>
+								<c:forEach items="${rechargeCouponList}" varStatus="status" step="2">
+								<span>
+									<span class="check-box"><input type="checkbox" id="${rechargeCouponList[status.index].id}" name="useCoupon" value="${rechargeCouponList[status.index].id}" onchange="change(${rechargeCouponList[status.index].id},${rechargeCouponList[status.index].baseAmount},${rechargeCouponList[status.index].couponMoney},${rechargeCouponList[status.index].useCouponId})"><label for="${rechargeCouponList[status.index].id}"></label>${rechargeCouponList[status.index].couponName}:￥${rechargeCouponList[status.index].couponMoney}</span>
+									<c:if test="${(status.index + 1) < fn:length(rechargeCouponList)}">
+									　　<span class="check-box"><input type="checkbox" id="${rechargeCouponList[status.index+1].id}" name="useCoupon" value="${rechargeCouponList[status.index+1].id}" onchange="change(${rechargeCouponList[status.index+1].id},${rechargeCouponList[status.index+1].baseAmount},${rechargeCouponList[status.index+1].couponMoney},${rechargeCouponList[status.index+1].useCouponId})"><label for="${rechargeCouponList[status.index+1].id}"></label>${rechargeCouponList[status.index+1].couponName}:￥${rechargeCouponList[status.index+1].couponMoney}</span>
+									</c:if>
+								</span><br>
+								</c:forEach>
+							</p>
+						</c:if>
+						<p>
 						<label class="active">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">*</font>总付款：</label>
 						<input type="hidden" id="topUpTotalAmount" name="topUpTotalAmount" readonly="readonly" class="form-control required" style="width:150px;" />
 						<input type="text" id="newTopUpTotalAmount" name="newTopUpTotalAmount" readonly="readonly" class="form-control required" style="width:150px;" />
@@ -101,6 +120,37 @@
 				return true;
 			}
 		}
+		
+		function change(couponId,baseAmount,couponMoney,useCouponId){
+			if($('input:checkbox[name=useCoupon]:checked').length == 0){
+				$("input[type=checkbox][name=useCoupon]").attr("disabled",false);
+				$("#useCouponFlag").val("0");
+				$("#couponId").val("0");
+				$("#baseAmount").val("0");
+				$("#couponMoney").val("0");
+				$("#useCouponId").val("0");
+			}else if($('input:checkbox[name=useCoupon]:checked').length == 1){
+				if($("#rechargeAmount").val() <= 0){
+					$("input[type=checkbox][name=useCoupon][id="+couponId+"]").attr("checked",false);
+					top.layer.alert('充值金额必须大于0！！！', {icon: 0, title:'提醒'});
+					return false;
+				}else{
+					if($("#rechargeAmount").val() < baseAmount){
+						$("input[type=checkbox][name=useCoupon][id="+couponId+"]").attr("checked",false);
+						top.layer.alert('充值金额不足该红包满减金额！！！', {icon: 0, title:'提醒'});
+						return false;
+					}else{
+						$("input[type=checkbox][name=useCoupon][value != "+couponId+"]").attr("disabled",true);
+						$("#useCouponFlag").val("1");
+						$("#couponId").val(couponId);
+						$("#baseAmount").val(baseAmount);
+						$("#couponMoney").val(couponMoney);
+						$("#useCouponId").val(useCouponId);
+					}
+				}
+			}
+		}
+		
 		$(document).ready(function() {
 			$("#ichecks").change(function(){
 				if($(this).is(":checked")){

@@ -63,6 +63,7 @@
 				var ceiling=obj.document.getElementById("ceiling");
 				var couponType=obj.document.getElementById("couponType");
 				var usedType=obj.document.getElementById("usedType");
+				var category=obj.document.getElementById("category");
 		        var arr = new Array(); //数组定义标准形式，不要写成Array arr = new Array();
 		        var all = new Array(); //定义变量全部保存
 		    	$(ifmObj).each(function () {
@@ -123,6 +124,7 @@
 					totalNumber:$(totalNumber).val(),
 					actionId:$("#id").val(),
 					ceiling:$(ceiling).val(),
+					category:$(category).val(),
 					couponType:$(couponType).val(),
 					usedType:$(usedType).val(),
 					goodsId:$("#goodsId").val(),
@@ -332,6 +334,7 @@
 						<tr>
 							<th style="text-align: center;">ID</th>
 							<th style="text-align: center;">红包名称</th>
+							<th style="text-align: center;">优惠券类型</th>
 							<th style="text-align: center;">红包类型</th>
 							<th style="text-align: center;">满减金额</th>
 							<th style="text-align: center;">红包金额</th>
@@ -350,6 +353,10 @@
 							<tr>
 								<td>${list.id}</td>
 								<td>${list.couponName}</td>
+								<td>
+									<c:if test="${list.category==0}">普通红包</c:if>
+									<c:if test="${list.category==1}">充值红包</c:if>
+								</td>
 								<c:if test="${list.couponType==1}">
 									<td>商品详情页</td>
 								</c:if>

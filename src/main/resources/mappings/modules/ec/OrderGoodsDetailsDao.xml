@@ -12,6 +12,7 @@
 			order_arrearage,
 			app_total_amount,
 			app_arrearage,
+			coupon_amount,
 			<if test="itemAmount!=null and itemAmount!=''">
 				item_amount,
 			</if>
@@ -39,6 +40,7 @@
 			#{orderArrearage},
 			#{appTotalAmount},
 			#{appArrearage},
+			#{couponAmount},
 			<if test="itemAmount != null and itemAmount != ''">
 				#{itemAmount},
 			</if>
@@ -225,6 +227,7 @@
 			SUM(ogd.app_total_amount) AS 'appTotalAmount',
 			SUM(ogd.app_arrearage) AS 'appArrearage',
 			SUM(ogd.order_arrearage) AS 'sumOrderArrearage',
+			SUM(ogd.coupon_amount) AS 'sumCouponAmount',
 			ogm.goods_price AS 'goodsPrice',
 			ogm.ratio_price AS 'ratioPrice',
 			ogm.order_amount AS 'orderAmount',
@@ -391,5 +394,10 @@
 			ogd.goods_mapping_id = #{mid}
 	</select>
 	
-	
+	<!-- 根据mappingId查询使用的充值红包抵扣金额 -->
+	<select id="queryCouponAmount" resultType="Double">
+		SELECT IFNULL(SUM(coupon_amount),0)
+		FROM mtmydb.mtmy_order_goods_details
+		WHERE goods_mapping_id = #{goodsMappingId}
+	</select>
 </mapper>

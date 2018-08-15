@@ -41,6 +41,7 @@ import com.training.common.utils.StringUtils;
 import com.training.common.utils.excel.ExportExcel;
 import com.training.common.utils.excel.ImportExcel;
 import com.training.common.web.BaseController;
+import com.training.modules.ec.dao.ActivityCouponUserDao;
 import com.training.modules.ec.dao.GoodsSpecPriceDao;
 import com.training.modules.ec.dao.MtmyUsersDao;
 import com.training.modules.ec.dao.OrderGoodsDao;
@@ -49,6 +50,7 @@ import com.training.modules.ec.dao.OrdersDao;
 import com.training.modules.ec.dao.ReturnedGoodsDao;
 import com.training.modules.ec.dao.SaleRebatesLogDao;
 import com.training.modules.ec.entity.AcountLog;
+import com.training.modules.ec.entity.ActivityCoupon;
 import com.training.modules.ec.entity.CourierResultXML;
 import com.training.modules.ec.entity.Goods;
 import com.training.modules.ec.entity.GoodsCategory;
@@ -146,6 +148,8 @@ public class OrdersController extends BaseController {
 	private ReturnedGoodsDao returnedGoodsDao;
 	@Autowired
 	private OrderGoodsDetailsDao orderGoodsDetailsDao;
+	@Autowired
+	private ActivityCouponUserDao activityCouponUserDao;
 	
 	private static RedisClientTemplate redisClientTemplate;
 	static{
@@ -1172,7 +1176,12 @@ public class OrdersController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "addTopUp")
-	public String addTopUp(String orderid,double singleRealityPrice,int userid,int isReal,double goodsBalance,int servicetimes,double orderArrearage,Model model){
+	public String addTopUp(String orderid,double singleRealityPrice,int userid,int isReal,double goodsBalance,int servicetimes,double orderArrearage,String goodsid,String recid,Model model){
+		List<ActivityCoupon> rechargeCouponList = new ArrayList<ActivityCoupon>();
+		if(activityCouponUserDao.queryUseNum(recid) <= 0){
+			rechargeCouponList = activityCouponUserDao.queryRechargeCouponForGoods(userid,recid, goodsid);
+		}
+		
 		model.addAttribute("orderid", orderid);
 		model.addAttribute("singleRealityPrice", singleRealityPrice);
 		model.addAttribute("userid", userid);
@@ -1180,6 +1189,7 @@ public class OrdersController extends BaseController {
 		model.addAttribute("goodsBalance",goodsBalance);
 		model.addAttribute("servicetimes",servicetimes);
 		model.addAttribute("orderArrearage",orderArrearage);
+		model.addAttribute("rechargeCouponList", rechargeCouponList);
 		return "modules/ec/addTopUp";
 	}
 	/**
@@ -2568,6 +2578,7 @@ public class OrdersController extends BaseController {
 			int num;
 			String pushMoneryDetails = "";
 			int newNum = 0;
+			DecimalFormat formater = new DecimalFormat("#0.##");
 			
 			List<List<OrderGoods>> result = new ArrayList<List<OrderGoods>>();    //分开存放每个卡项商品和它的子项
 			List<OrderGoods> resultSon = new ArrayList<OrderGoods>();              //存放每个卡项商品和它的子项
@@ -2620,7 +2631,7 @@ public class OrdersController extends BaseController {
 												"<td align='center'> "+lists.get(1).getServicetimes()+"</td> ";
 									}
 									suitCardSons = suitCardSons +			
-										"<td align='center' rowspan="+num+"> "+father.getCouponPrice()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+Double.parseDouble(formater.format((father.getCouponPrice()+father.getCouponAmount())))+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getDiscount()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getMembergoodsprice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getOrderAmount()+"</td> "+
@@ -2630,7 +2641,7 @@ public class OrdersController extends BaseController {
 							if(!"view".equals(type)){
 								if(father.getAdvanceFlag() != 1){                //不是预约金
 									if(father.getOrderArrearage() != 0){         //有欠款
-										suitCardSons = suitCardSons + "<a href='#' onclick='TopUp("+father.getRecid()+","+father.getSingleRealityPrice()+","+father.getSingleNormPrice()+","+father.getOrderArrearage()+","+father.getServicetimes()+","+father.getPayRemaintimes()+","+father.getGoodsBalance()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>充值</a>";
+										suitCardSons = suitCardSons + "<a href='#' onclick='TopUp("+father.getRecid()+","+father.getSingleRealityPrice()+","+father.getSingleNormPrice()+","+father.getOrderArrearage()+","+father.getServicetimes()+","+father.getPayRemaintimes()+","+father.getGoodsBalance()+","+father.getGoodsid()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>充值</a>";
 									}else if(father.getOrderArrearage() == 0){   //无欠款
 										suitCardSons = suitCardSons + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs' ><i class='fa fa-edit'></i>充值</a>";
 									} 
@@ -2678,7 +2689,7 @@ public class OrdersController extends BaseController {
 										"<td align='center' rowspan="+num+"> "+father.getAdvancePrice()+"</td> "+
 										"<td align='center'> "+lists.get(1).getGoodsnum()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getRemaintimes()+"</td> "+
-										"<td align='center' rowspan="+num+"> "+father.getCouponPrice()+"</td> "+
+										"<td align='center' rowspan="+num+"> "+Double.parseDouble(formater.format((father.getCouponPrice()+father.getCouponAmount())))+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getDiscount()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getMembergoodsprice()+"</td> "+
 										"<td align='center' rowspan="+num+"> "+father.getOrderAmount()+"</td> "+
@@ -2689,7 +2700,7 @@ public class OrdersController extends BaseController {
 							if(!"view".equals(type)){
 								if(father.getAdvanceFlag() != 1){                //不是预约金
 									if(father.getOrderArrearage() != 0){         //有欠款
-										suitCardSons = suitCardSons + "<a href='#' onclick='TopUp("+father.getRecid()+","+father.getSingleRealityPrice()+","+father.getSingleNormPrice()+","+father.getOrderArrearage()+","+father.getServicetimes()+","+father.getPayRemaintimes()+","+father.getGoodsBalance()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>充值</a>";
+										suitCardSons = suitCardSons + "<a href='#' onclick='TopUp("+father.getRecid()+","+father.getSingleRealityPrice()+","+father.getSingleNormPrice()+","+father.getOrderArrearage()+","+father.getServicetimes()+","+father.getPayRemaintimes()+","+father.getGoodsBalance()+","+father.getGoodsid()+")'  class='btn btn-success btn-xs' ><i class='fa fa-edit'></i>充值</a>";
 									}else if(father.getOrderArrearage() == 0){   //无欠款
 										suitCardSons = suitCardSons + "<a href='#' style='background:#C0C0C0;color:#FFF' class='btn  btn-xs' ><i class='fa fa-edit'></i>充值</a>";
 									} 
@@ -2857,14 +2868,21 @@ public class OrdersController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "addCardTopUp")
-	public String addCardTopUp(String orderid,double singleRealityPrice,int userid,int isReal,double goodsBalance,double orderArrearage,HttpServletRequest request,Model model,RedirectAttributes redirectAttributes){
+	public String addCardTopUp(String orderid,double singleRealityPrice,int userid,int isReal,double goodsBalance,double orderArrearage,String goodsid,String recid,HttpServletRequest request,Model model,RedirectAttributes redirectAttributes){
 		try{
+			List<ActivityCoupon> rechargeCouponList = new ArrayList<ActivityCoupon>();
+			
+			if(activityCouponUserDao.queryUseNum(recid) <= 0){
+				rechargeCouponList = activityCouponUserDao.queryRechargeCouponForGoods(userid,recid, goodsid);
+			}
+			
 			model.addAttribute("orderid", orderid);
 			model.addAttribute("singleRealityPrice", singleRealityPrice);
 			model.addAttribute("userid", userid);
 			model.addAttribute("isReal", isReal);
 			model.addAttribute("goodsBalance",goodsBalance);
 			model.addAttribute("orderArrearage",orderArrearage);
+			model.addAttribute("rechargeCouponList", rechargeCouponList);
 		}catch(Exception e){
 			BugLogUtils.saveBugLog(request, "跳转卡项充值页面", e);
 			logger.error("方法：addCardTopUp，跳转卡项充值页面出现错误：" + e.getMessage());

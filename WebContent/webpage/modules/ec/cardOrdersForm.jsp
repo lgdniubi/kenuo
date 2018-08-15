@@ -127,7 +127,7 @@
 	    });
 			
 	    	
-		    function TopUp(recid,singleRealityPrice,singleNormPrice,orderArrearage,servicetimes,remaintimes,goodsBalance){
+		    function TopUp(recid,singleRealityPrice,singleNormPrice,orderArrearage,servicetimes,remaintimes,goodsBalance,goodsid){
 		    	$(".loading").show();
 		    	var isCommitted = false;		//表单是否已经提交标识，默认为false
 		    	var orderid = $("#orderid").val();
@@ -138,7 +138,7 @@
 				    type: 2, 
 				    area: ['600px', '450px'],
 				    title:"充值",
-				    content: "${ctx}/ec/orders/addCardTopUp?orderid="+orderid+"&singleRealityPrice="+singleRealityPrice+"&userid="+userid+"&isReal="+isReal+"&goodsBalance="+goodsBalance+"&orderArrearage="+orderArrearage,
+				    content: "${ctx}/ec/orders/addCardTopUp?orderid="+orderid+"&singleRealityPrice="+singleRealityPrice+"&userid="+userid+"&isReal="+isReal+"&goodsBalance="+goodsBalance+"&orderArrearage="+orderArrearage+"&goodsid="+goodsid+"&recid="+recid,
 				    btn: ['确定', '关闭'],
 				    yes: function(index, layero){
 				    	var orderid = $("#orderid").val();
@@ -149,7 +149,22 @@
 						var jsmoney = obj.document.getElementById("jsmoney").value;
 						var loading = obj.document.getElementById("loading");
 						var belongOfficeId = obj.document.getElementById("belongOfficeId").value;
+						
+						var useCouponFlag = obj.document.getElementById("useCouponFlag").value;
+						var couponId = obj.document.getElementById("couponId").value;
+						var baseAmount = obj.document.getElementById("baseAmount").value;
+						var couponMoney = obj.document.getElementById("couponMoney").value;
+						var useCouponId = obj.document.getElementById("useCouponId").value;
 						$(loading).show();
+						
+						if(useCouponFlag == "1"){
+							if(baseAmount - rechargeAmount > 0){
+								$(loading).hide();
+								top.layer.alert('充值金额不足红包满减金额！', {icon: 0, title:'提醒'});
+								return;
+							}
+						}
+						
 						if(accountBalance == ''){
 							$(loading).hide();
 							top.layer.alert('账户余额必填！', {icon: 0, title:'提醒'});
@@ -216,7 +231,11 @@
 											isReal:isReal,
 											channelFlag:channelFlag,
 											belongOfficeId:belongOfficeId,
-											mtmyUserId:userid
+											mtmyUserId:userid,
+											useCouponFlag:useCouponFlag,
+											couponId:couponId,
+											couponMoney:couponMoney,
+											useCouponId:useCouponId
 										 },
 										url:"${ctx}/ec/orders/addCardOrderRechargeLog",
 										success:function(date){
@@ -695,7 +714,7 @@ window.onload=initStatus;
 									<c:if test="${(orders.isReal == 3) || (orders.isReal == 2 && orders.isNeworder == 1)}">
 										<th style="text-align: center;">实际次数</th>
 									</c:if>
-									<th style="text-align: center;">红包面值</th>
+									<th style="text-align: center;">红包抵扣</th>
 									<th style="text-align: center;">折扣率</th>
 									<th style="text-align: center;">会员折扣</th>
 									<th style="text-align: center;">应付金额</th>

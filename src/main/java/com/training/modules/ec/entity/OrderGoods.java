@@ -128,6 +128,8 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	
 	private int isOpean;			// 是否公开(商品是否公开)
 	
+	private double couponAmount;    //红包实际抵扣金额
+	
 	public int getAfterSaleNum() {
 		return afterSaleNum;
 	}
@@ -621,6 +623,12 @@ public class OrderGoods extends TreeEntity<OrderGoods> {
 	}
 	public void setIsOpean(int isOpean) {
 		this.isOpean = isOpean;
+	}
+	public double getCouponAmount() {
+		return couponAmount;
+	}
+	public void setCouponAmount(double couponAmount) {
+		this.couponAmount = couponAmount;
 	}
 	
 }
