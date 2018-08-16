@@ -456,7 +456,7 @@ public class OfficeController extends BaseController {
 				officeService.updateOfficeInfoDetailAddress(contractInfo);
 			}
 			if(oldOfficeName !=null && !oldOfficeName.equals(contractInfo.getOffice_name())){
-				officeService.updateOfficeInfoDetailAddress(contractInfo);
+				officeService.updateOfficeInfoOfficeName(contractInfo);
 			}
 			
 			addMessage(redirectAttributes, "保存签约信息成功");
