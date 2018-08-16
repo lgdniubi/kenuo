@@ -190,6 +190,8 @@ public class CourseController extends BaseController{
 	@RequestMapping(value = "updatecourse")
 	public String updatecourse(TrainLessons trainLessons,RedirectAttributes redirectAttributes) throws IllegalStateException, IOException{
 		trainLessons.setName(HtmlUtils.htmlUnescape(trainLessons.getName()));
+		String htmlEscape = HtmlUtils.htmlEscape(trainLessons.getIntroduce());
+		trainLessons.setIntroduce(htmlEscape);
 		trainLessonsService.updatecourse(trainLessons);
 		addMessage(redirectAttributes, "修改课程'" + trainLessons.getName() + "'修改成功");
 		return "redirect:" + adminPath + "/train/course/listcourse?beginDate=''&endDate=''";

@@ -246,8 +246,7 @@
 						<input type="hidden" id="parent.id" name="parent.id" value="${franchisee.parent.id}">
 						<input type="hidden" id="parentIds" name="parentIds" value="${franchisee.parent.parentIds}">
 					</td>
-					<td class="width-15 active"><label class="pull-right">数据类型:</label>
-					</td>
+					<td class="width-15 active"><label class="pull-right">数据类型:</label></td>
 					<td class="width-35">
 						<select id="isTest" name="isTest">
 							<option value="0"  >正式数据</option>
