@@ -450,6 +450,7 @@
 				bed_num,
 				status,
 				details,
+				shop_assistant_id,
 				del_flag
 				<!-- set_date,
 				business_license,
@@ -480,6 +481,7 @@
 				#{officeInfo.bedNum},
 				#{officeInfo.status},
 				#{officeInfo.details},
+				#{officeInfo.shopAssistantId},
 				#{DEL_FLAG_NORMAL}
 				<!-- #{officeInfo.setDate},
 				#{officeInfo.charterImg},
@@ -504,6 +506,7 @@
 				begin_time       = #{officeInfo.beginTime},
 				end_time         = #{officeInfo.endTime},
 				detailed_address = #{officeInfo.detailedAddress},
+				shop_assistant_id = #{officeInfo.shopAssistantId},
 				img				 = #{officeInfo.img},
 				tags			 = #{officeInfo.tags},
 				intro			 = #{officeInfo.intro},
@@ -570,6 +573,7 @@
 			tags,
 			intro,
 			details,
+			shop_assistant_id,
 			bed_num 	AS bedNum,
 			status
 			<!-- set_date,
@@ -694,6 +698,7 @@
 				tags,
 				intro,
 				details,
+				shop_assistant_id,
 				del_flag
 			) values (
 				#{id},
@@ -709,6 +714,7 @@
 				#{tags},
 				#{intro},
 				#{details},
+				#{shopAssistantId},
 				#{DEL_FLAG_NORMAL}
 			)
 	</insert>
@@ -1007,4 +1013,11 @@
 		from sys_office 
 		where id = #{office_id}
 	</select>
+	
+	<update id="updateOfficeInfoDetailAddress">
+		UPDATE sys_office_info SET detailed_address = #{office_address} WHERE id = #{office_id}
+	</update>
+	<update id="updateOfficeInfoOfficeName">
+		UPDATE sys_office SET name = #{office_name} WHERE id = #{office_id}
+	</update>
 </mapper>

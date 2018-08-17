@@ -83,6 +83,7 @@ public class MediaRoleController extends BaseController{
 	@RequestMapping(value = "form")
 	public String form(Model model,MediaRole mediaRole,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
+			String opflag = mediaRole.getOpflag();
 			if(mediaRole.getRoleId() != 0){
 				mediaRole = mediaRoleService.get(mediaRole);
 			}else{
@@ -91,6 +92,7 @@ public class MediaRoleController extends BaseController{
 			List<TrainModel> modList = trainModelService.findDYModelList();	//查找登云的所有的版本类型
 			model.addAttribute("mediaRole", mediaRole);
 			model.addAttribute("modList", modList);
+			model.addAttribute("opflag", opflag);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "查询PC角色详情", e);
 			logger.error("查询PC角色详情错误信息:"+e.getMessage());

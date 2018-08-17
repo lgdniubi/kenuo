@@ -1,5 +1,7 @@
 package com.training.modules.train.dao;
 
+import java.util.List;
+
 import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.FranchiseeBanner;
@@ -48,4 +50,12 @@ public interface TrainsBannerDao extends CrudDao<TrainsBanner>{
 	 * 2018年1月23日 兵子
 	 */
 	public int delteFranchiseeBanner(FranchiseeBanner fBanner);
+	
+	/**
+	 * 保存日志
+	 * @param trainsBanner
+	 */
+	public void saveAdvertLog(TrainsBanner trainsBanner);
+	
+	public List<TrainsBanner> findLogList(TrainsBanner trainsBanner);
 }

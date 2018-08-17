@@ -3,6 +3,7 @@ package com.training.modules.train.web;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -29,6 +30,7 @@ import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.service.FranchiseeService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.entity.TrainLessons;
 import com.training.modules.train.entity.TrainLiveAudit;
 import com.training.modules.train.entity.TrainLiveCategory;
 import com.training.modules.train.entity.TrainLiveOrder;
@@ -580,5 +582,35 @@ public class TrainLiveAuditController extends BaseController{
 			addMessage(redirectAttributes,"保存失败！");
 		}
 		return "redirect:" + adminPath + "/train/live/list";
+	}
+	/**
+	 * 直播测试数据
+	 * @param lessonId
+	 * @param isTest
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "updateIsTest")
+	public Map<String, String> updateIsTest(String id,String isTest){
+		Map<String, String> jsonMap = new HashMap<String, String>();
+		try {
+			int ISTEST = Integer.parseInt(isTest);
+			if(!StringUtils.isEmpty(id) && (ISTEST == 0 || ISTEST == 1)){
+				TrainLiveAudit live = new TrainLiveAudit();
+				live.setId(id);
+				live.setIsTest(ISTEST);
+				trainLiveAuditService.updateIsTest(live);
+				jsonMap.put("STATUS", "OK");
+				jsonMap.put("ISTEST", isTest);
+			}else{
+				jsonMap.put("STATUS", "ERROR");
+				jsonMap.put("MESSAGE", "修改失败,必要参数为空");
+			}
+		} catch (Exception e) {
+			logger.error("课程管理-修改课程状态 出现异常，异常信息为："+e.getMessage());
+			jsonMap.put("STATUS", "ERROR");
+			jsonMap.put("MESSAGE", "修改失败,出现异常");
+		}
+		return jsonMap;
 	}
 }

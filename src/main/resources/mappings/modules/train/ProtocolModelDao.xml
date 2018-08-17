@@ -36,7 +36,7 @@
 	
 	<!-- 根据类型查找模板列表 -->
 	<select id="findModelList" resultType="ProtocolModel">
-		SELECT <include refid="menuColumns"/> FROM `supply_protocol_model` m WHERE m.type_id = #{type} AND status = 1 AND del_flag = 0;
+		SELECT <include refid="menuColumns"/> FROM `supply_protocol_model` m WHERE m.type_id = #{type} AND pid = 0 AND del_flag = 0;
 	</select>
 	<!-- 根据类型查找模板列表 -->
 	<select id="findOldModelList" resultType="ProtocolModel">
@@ -89,6 +89,12 @@
 		UPDATE supply_protocol_model SET 
 			`name` = #{name},
 			`content` = #{content}
+		WHERE id = #{id} 
+	</update>
+	<!-- 更新单个协议内容状态 -->
+	<update id="updateModelStatusById">
+		UPDATE supply_protocol_model SET 
+			`status` = #{status}
 		WHERE id = #{id} 
 	</update>
 	<!-- 跟新协议类型状态 -->

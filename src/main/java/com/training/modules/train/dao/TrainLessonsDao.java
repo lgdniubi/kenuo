@@ -77,5 +77,9 @@ public interface TrainLessonsDao extends CrudDao<TrainLessons>{
 	 * @return
 	 */
 	public List<StatisticsUnitTotalExport> unitTotalExport(TrainLessons trainLessons);
+	/**
+	 * 修改课程正式数据
+	 */
+	public void updateIsTest(TrainLessons trainLessons);
 	
 }

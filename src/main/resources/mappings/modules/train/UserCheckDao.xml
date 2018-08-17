@@ -108,6 +108,7 @@
 			del_flag = 0 
 		AND tap.user_id = #{userid} 
 		<if test="id != null"> and tap.id = #{id} </if>
+		AND tap.audit_type = #{auditType}
 	</select>	
 	<!-- 查找银行卡信息 -->
 	<select id="findBankAccountInfo" resultType="BankAccount">
@@ -616,4 +617,42 @@
 	<delete id="deleteProtocolShop">
 		DELETE FROM supply_protocol_shop WHERE user_id = #{userid} AND type_id = #{typeId}
 	</delete>
+	
+	<select id="findUserIdByCompanyId" resultType="string">
+		SELECT pu.user_id FROM
+		 pc_role pr
+		LEFT JOIN pc_user_role pu ON pr.id = pu.pc_role_id
+		WHERE  pr.franchisee_id = #{companyId} AND pr.ename = 'sjgly' AND pr.del_flag =0
+	</select>
+	
+	
+	<select id="findSyrList" resultType="SyrFranchise">
+		SELECT
+			tap.id,
+			u.`name`,
+			u.nickname,
+			u.mobile,
+			u.type,
+			tap.user_id,
+			tap.apply_type AS applyType,
+			tap.audit_type AS auditType,
+			tap. STATUS,
+			mf.auth_end_date AS authEndDate,
+			mf.mod_id
+		FROM
+			train_apply tap
+		LEFT JOIN sys_user u ON tap.user_id = u.id
+		LEFT JOIN train_model_franchisee mf ON mf.user_id = tap.user_id
+		WHERE tap.`status`=3 AND tap.audit_type = 'syr'
+		<if test="mobile != null and mobile != ''">
+			AND u.mobile = #{mobile}
+		</if>
+		<if test="modId != null ">
+			AND mf.mod_id = #{modId}
+		</if>
+		<if test="name != null and name != ''">
+			AND u.name like CONCAT('%', #{name}, '%')
+		</if>
+		ORDER BY tap.create_date DESC
+	</select>
 </mapper>

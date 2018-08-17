@@ -44,8 +44,18 @@
 							<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}" />
 							<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
 							<div class="form-group">
+								<span>姓名：</span>
+								<form:input path="name" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
 								<span>手机号码：</span>
 								<form:input path="mobile" htmlEscape="false" maxlength="50" class=" form-control input-sm" />
+								<span>用户类型：</span>
+								<select name="type">
+									<option value="" >请选择</option>
+									<option value="yg" <c:if test="${user.type== 'yg' }">selected="selected"</c:if> >员工</option>
+									<option value="pt" <c:if test="${user.type== 'pt'}">selected="selected"</c:if> >普通会员</option>
+									<option value="syr" <c:if test="${user.type== 'syr'}">selected="selected"</c:if> >手艺人</option>
+									<option value="qy" <c:if test="${user.type== 'qy'}">selected="selected"</c:if> >企业</option>
+								</select>
 							</div>
 						</form:form>
 						<br />

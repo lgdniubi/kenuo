@@ -757,7 +757,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			}
 		}
 		/*if (StringUtils.isNotBlank(user.getId())) {
-			// 更新用户与角色关联
+			// 更新用户与角色关联--移出用户角色
 			userDao.deleteUserRole(user);
 			if (user.getRoleList() != null && user.getRoleList().size() > 0) {
 				userDao.insertUserRole(user);
@@ -1524,9 +1524,10 @@ public class SystemService extends BaseService implements InitializingBean {
 	 * @param officeId
 	 * @return
 	 */
-	public List<User> findUserByFranchiseeId(String officeId,String labelValue) {
+	public List<User> findUserByFranchiseeId(String companyId,String officeId,String labelValue) {
 		User user = new User();
 		user.setCompany(new Office(officeId));
+		user.setOffice(new Office(companyId));
 		if(StringUtils.isNotBlank(labelValue)){
 			user.setMobile(labelValue);
 		}else{

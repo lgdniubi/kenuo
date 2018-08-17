@@ -17,6 +17,14 @@
 	
 	<script type="text/javascript" src="${ctxStatic}/jquery-validation/1.14.0/jquery.validate.js"></script>
 	<script type="text/javascript" src="${ctxStatic}/jquery-validation/1.14.0/localization/messages_zh.min.js"></script>
+	<!-- 富文本框 -->
+	<link rel="stylesheet" href="${ctxStatic}/kindEditor/themes/default/default.css" />
+	<script src="${ctxStatic}/kindEditor/kindeditor-all.js" type="text/javascript"></script>
+	
+	<!-- 富文本框中新增的东西：上传照片，上传代码，商品分类，商品选择 -->
+	<script src="${ctxStatic}/kindEditor/themes/editJs/editJs.js" type="text/javascript"></script>
+	<!-- 富文本框上传图片样式引用 -->
+	<link rel="stylesheet" type="text/css" href="${ctxStatic}/kindEditor/themes/editCss/edit.css">
 	<script type="text/javascript">
 		
 		//课程类型选择事件
@@ -24,33 +32,48 @@
 			$("#lessontype").val(v);
 		}	
 	
+		var editor;
+		KindEditor.ready(function(K) {
+			editor = K.create('textarea[name="contents"]', {
+				width : "100%",
+				items : ['undo', 'redo', '|','plainpaste','image','link','fontname','fontsize','forecolor','hilitecolor','bold','italic','underline','|','justifyleft', 'justifycenter', 'justifyright','justifyfull','|','clearhtml','source','|','fullscreen']
+			});
+		});
+		
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-		  if(validateForm.form()){
-			  $("#inputForm").submit();
-			  return true;
-		  }
+			if(validateForm.form()){
+				var content = $(".ke-edit-iframe").contents().find(".ke-content").html();
+				if(content.indexOf("style") >=0){
+					content = content.replace("&lt;style&gt;","<style>");
+					content = content.replace("&lt;/style&gt;","</style>");
+				}
+				$("#contents").val(content);
+			 	$("#inputForm").submit();
+			 	return true;
+		 	}
 		  return false;
 		}
+		
+		
+		var newUploadURL = '<%=uploadURL%>';
+		
+		function LoadOver(){
+			$("#ke-dialog-num").val("1");
+			//给富文本框赋值
+			var content = $("#contents").val();
+			if(content.indexOf("style") >=0){
+				content = content.replace("<style>","&lt;style&gt;");
+				content = content.replace("</style>","&lt;/style&gt;");
+			}
+			$(".ke-edit-iframe").contents().find(".ke-content").html(content);
+		}
+		window.onload=LoadOver;
 		
 		$(document).ready(function() {
 			categorychange(2);
 			//表单验证
-			validateForm = $("#inputForm").validate({
-				submitHandler: function(form){
-					loading('正在提交，请稍等...');
-					form.submit();
-				},
-				errorContainer: "#messageBox",
-				errorPlacement: function(error, element) {
-					$("#messageBox").text("输入有误，请先更正。");
-					if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
-						error.appendTo(element.parent().parent());
-					} else {
-						error.insertAfter(element);
-					}
-				}
-			});
+			validateForm = $("#inputForm").validate({});
 			
 			//课程封面上传
 			$("#file_course_upload").uploadify({
@@ -179,6 +202,7 @@
 <body>
 	<form:form class="form-horizontal" id="inputForm" modelAttribute="trainLessons" action="${ctx}/train/course/updatecourse" method="post" enctype="multipart/form-data">
 		<form:hidden path="lessonId"/>
+		<input type="hidden" id="contents" name="introduce" value="${trainLessons.introduce}">
 		<sys:message content="${message}" />
 		<div class="modal-body">
 			<div class="input-item">
@@ -234,7 +258,7 @@
 				<div class="form-group input-item">
 					<span style="color: red;">*</span>
 					<span>课程介绍：</span> 
-					<textarea id="introduce" name="introduce" class="textarea-item required" rows="4" cols="40" style="width:250px;height:95px;font-size: 12px;padding-top:0px;resize: none;">${trainLessons.introduce}</textarea>
+					<textarea id="introduce" name="contents" class="textarea-item required" rows="4" cols="40" style="width:250px;height:95px;font-size: 12px;padding-top:0px;resize: none;">${trainLessons.introduce}</textarea>
 				</div>
 			</div>
 			<div class="form-inline">
@@ -279,5 +303,50 @@
 		</div>
 	</form:form>
 	<div class="loading"></div>
+	<!-- 富文本框上传图片弹出框 -->
+	<div class="ke-dialog-default ke-dialog ke-dalog-addpic" id="ke-dialog">
+		<div class="ke-dialog-content">
+			<div class="ke-dialog-header">图片<span class="ke-dialog-icon-close" id="close" title="关闭"></span></div>
+			<div class="ke-dialog-body">
+				<div class="ke-tabs" style="padding:20px;">
+					<input type="hidden" id="ke-dialog-num">
+					<ul class="ke-tabs-ul ke-clearfix">
+						<li class="ke-tabs-li ke-tabs-li-on ke-tabs-li-selected">网络图片</li>
+						<li class="ke-tabs-li">本地上传</li>
+					</ul>
+					<div class="tab1" style="display:block">
+						<div class="form-group">
+							图片地址：<input type="text" id="httpImg" class="" value="http://" style="width: 300px;height: 35px">
+						</div>
+						<div class="form-group">
+							图片宽度：<input type="text" id="w_httpImg" class="" style="width: 300px;height: 35px">
+						</div>
+						<div class="form-group">
+							图片高度：<input type="text" id="h_httpImg" class="" style="width: 300px;height: 35px">
+						</div>
+					</div>
+					<div class="tab2">
+				        <div class="upload" style="margin top:10px;">
+							<input type="file" name="file_img_upload" id="file_img_upload"> 
+						</div>
+						<div id="file_img_queue" style="margin top:10px;"></div> 
+						<div class="t3">
+							<div id="file_img_queue" style="margin top:10px;"></div> 
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="ke-dialog-footer">
+			    <span class="ke-button-common ke-button-outer ke-dialog-yes" title="确定">
+			        <input class="ke-button-common ke-button" type="button" value="确定" onclick="saveImg()">
+			    </span>
+			    <span class="ke-button-common ke-button-outer ke-dialog-no" title="取消">
+			        <input class="ke-button-common ke-button" id="newClose" type="button" value="取消">
+			    </span>
+			</div>
+			<div class="ke-dialog-shadow"></div>
+			<div class="ke-dialog-mask ke-add-mask"></div>
+		</div>
+	</div>
 </body>
 </html>

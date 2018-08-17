@@ -2,6 +2,7 @@ package com.training.modules.quartz.tasks;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,8 +16,10 @@ import com.training.common.utils.BeanUtil;
 import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.quartz.entity.TaskLog;
 import com.training.modules.quartz.tasks.utils.CommonService;
+import com.training.modules.quartz.utils.PushUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.train.entity.AuthenticationBean;
+import com.training.modules.train.entity.UserBean;
 import com.training.modules.train.service.AuthenticationService;
 
 /**  
@@ -55,11 +58,12 @@ public class Authentication extends CommonService{
 		startDate = new Date();
 		taskLog.setJobName("authentication");
 		taskLog.setStartDate(startDate);
+		PushUtils pushUtils = new PushUtils();
 		
 		try{
 			
 			//查询企业认证过期授权
-			List<AuthenticationBean> list = authenticationService.querypastdueauthentication();
+			List<AuthenticationBean> list = authenticationService.querypastdueauthentication(1,0);
 			Map<String, Object> map = new HashMap<String,Object>();
 			for(AuthenticationBean s : list){
 				//将认证授权状态改成已过期
@@ -81,9 +85,17 @@ public class Authentication extends CommonService{
 							
 						//删除商家协议
 						m.put("franchisee_id", s.getFranchisee_id());
+						//推送
+						if("qybz".equals(s.getMod_ename()))
+							for(UserBean userbean : s.getUser_ids()){
+								pushUtils.pushMsg(userbean.getUser_id(),"尊敬的"+userbean.getName()+"，您试用的妃子校"+s.getMod_name()+"已到期，请联系客服购买收费版，享受更多权益。",16,"体验到期");
+							}
 					}else if(s.getFranchisee_id() == 0){
 						//删除用户协议
 						m.put("user_id", s.getUser_id());
+						//推送
+						if("syrmf".equals(s.getMod_ename()))
+							pushUtils.pushMsg(s.getUser_id(), "尊敬的"+s.getName()+"，您试用的妃子校"+s.getMod_name()+"已到期，请联系客服购买收费版，享受更多权益。",16,"体验到期");
 					}
 					authenticationService.delsupplyprotocol(m);
 					
@@ -91,6 +103,29 @@ public class Authentication extends CommonService{
 				
 			}
 		
+			try{
+				String prompt_day = ParametersFactory.getTrainsParamValues("prompt_day");
+				int day = prompt_day == null ? 7 : Integer.parseInt(prompt_day);
+				List<AuthenticationBean> l = authenticationService.querypastdueauthentication(2,day);
+				for(AuthenticationBean s : l){
+					if(null == redisClientTemplate.get("franchisee"+s.getId())){
+						if(!"qybz".equals(s.getMod_ename()) && ("qygj".equals(s.getMod_ename()) || "qyqj".equals(s.getMod_ename()))){
+							for(UserBean userbean : s.getUser_ids()){
+								pushUtils.pushMsg(userbean.getUser_id(),"尊敬"+userbean.getName()+"，您的妃子校"+s.getMod_name()+"还有"+day+"天到期，续费有优惠。",16,"授权到期");
+								redisClientTemplate.set("franchisee"+s.getId(), "0");
+								redisClientTemplate.expireAt("franchisee"+s.getId(), getNowDateEndTime());
+							}
+						}
+						if(!"syrmf".equals(s.getMod_ename()) && "syrsf".equals(s.getMod_ename())){
+							pushUtils.pushMsg(s.getUser_id(), "尊敬的"+s.getName()+"，您的妃子校"+s.getMod_name()+"还有"+day+"天到期，续费有优惠。",16,"授权到期");
+							redisClientTemplate.set("franchisee"+s.getId(), "0");
+							redisClientTemplate.expireAt("franchisee"+s.getId(), getNowDateEndTime());
+						}
+					}
+				}
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 		
 		}catch (Exception e) {
 			logger.error("#####【定时任务authentication】认证协议,出现异常，异常信息为："+e.getMessage());
@@ -106,6 +141,16 @@ public class Authentication extends CommonService{
 		
 		logger.info("[work0],end,认证协议,结束时间："+df.format(new Date()));
 		
+	}
+	
+	private long getNowDateEndTime(){
+		Calendar todayEnd = Calendar.getInstance();	//当天23:59:59:000
+		todayEnd.set(Calendar.HOUR_OF_DAY, 23);
+        todayEnd.set(Calendar.MINUTE, 59);
+        todayEnd.set(Calendar.SECOND, 59);
+        todayEnd.set(Calendar.MILLISECOND, 000);
+		
+        return todayEnd.getTime().getTime() / 1000;
 	}
 	
 }

@@ -176,6 +176,59 @@
 				}
 			});
 		});
+		
+		var lastValue = "";
+		var lastId = "";
+		function findUser(id){
+			var msg = "更换超管后，旧超管将变为普通员工，归属机构为该商家，如果旧超管为申请人，那么员工资料请尽快补全！新超管保存后生效，是否继续保存？";
+			var value = $("#"+id+"Mobile").val()
+			
+			 if(value =="" ){
+				return;
+			} 
+			$(".loading").show();
+			// 如果和上次一次，就退出不查了。
+			if (lastValue === value && lastId == id) {
+				//等待样式隐藏
+				$(".loading").hide();
+				return;
+			}
+			if (value == "") {
+				//等待样式隐藏
+				$(".loading").hide();
+				return;
+			} 
+			top.layer.confirm(msg, {icon: 3, title:'系统提示'}, function(index){
+				top.layer.close(index);
+				// 保存最后一次
+				lastValue = value;
+				lastId = id;
+				$.ajax({
+					url:'${ctx}/sys/user/treeDataCompany?companyId=${franchisee.id}',
+					type:'post',
+					data:{mobile:value},
+				 	dataType:'json',
+				 	success:function(data){
+				 		if(data.code==0){
+				 			top.layer.msg("没有找到用户", {icon: 0});
+							$("#"+id+"Id").val('');
+					 		$("#"+id+"Name").val('');
+				 		}else{
+				 			$("#"+id+"Id").val(data.id);
+							$("#"+id+"Name").val(data.name); 
+				 		}
+				 		$(".loading").hide();
+				 	}
+				});
+				
+			});
+		}
+		function confirms(mess){
+			top.layer.confirm(mess, {icon: 3, title:'系统提示'}, function(index){
+			    top.layer.close(index);
+				return true;
+			});
+		}
 	</script>
 </head>
 <body>
@@ -187,11 +240,40 @@
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 			<tbody>
 				<tr>
-					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>上级机构:</label></td>
+					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>归属机构:</label></td>
 					<td class="width-35">
 						<form:input path="parent.name" htmlEscape="false" maxlength="50" class="form-control" readonly="true" />
 						<input type="hidden" id="parent.id" name="parent.id" value="${franchisee.parent.id}">
 						<input type="hidden" id="parentIds" name="parentIds" value="${franchisee.parent.parentIds}">
+					</td>
+					<td class="width-15 active"><label class="pull-right">数据类型:</label></td>
+					<td class="width-35">
+						<select id="isTest" name="isTest">
+							<option value="0"  >正式数据</option>
+							<option value="1" >测试数据</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					
+				</tr>
+				<tr>
+					<td class="width-15 active">
+						<label class="pull-right"><font color="red">*</font>企业名称:</label>
+					</td>
+					<td class="width-35"><form:input path="name" htmlEscape="false" maxlength="15" class="form-control required" />
+					</td>
+					<td class="width-15 active">
+						<label class="pull-right"><font color="red">*</font>企业简称:</label>
+					</td>
+					<td class="width-35"><form:input path="shortName" htmlEscape="false" maxlength="8" class="form-control" />
+				</tr>
+				<tr>
+					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>加盟类型:</label></td>
+					<td class="width-35">
+						<form:select path="type" class="form-control required">
+							<form:options items="${fns:getDictList('sys_office_type')}" itemLabel="label" itemValue="value" htmlEscape="false" />
+						</form:select>
 					</td>
 					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>加盟商编码:</label>
 					</td>
@@ -201,30 +283,19 @@
 				</tr>
 				<tr>
 					<td class="width-15 active">
-						<label class="pull-right"><font color="red">*</font>供应商名称:</label>
-					</td>
-					<td class="width-35"><form:input path="name" htmlEscape="false" maxlength="8" class="form-control required" />
-					</td>
-					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>机构类型:</label></td>
-					<td class="width-35">
-						<form:select path="type" class="form-control required">
-							<form:options items="${fns:getDictList('sys_office_type')}" itemLabel="label" itemValue="value" htmlEscape="false" />
-						</form:select>
-					</td>
-				</tr>
-				<tr>
-					<td class="width-15 active">
-						<label class="pull-right"><font color="red">*</font>供应商简称:</label>
-					</td>
-					<td class="width-35"><form:input path="shortName" htmlEscape="false" maxlength="8" class="form-control" />
-					<td class="width-15 active">
 						<label class="pull-right"><font color="red">*</font>成立日期:</label>
 					</td>
 					<td class="width-35">
 					<input name="${franchisee.setDate}" value="<fmt:formatDate value="${franchisee.setDate}" pattern="yyyy-MM-dd"/>" class="form-control calendars" readonly="readonly">
 					</td>
+					<td class="width-15 active"><label class="pull-right">邮政编码:</label></td>
+					<td class="width-35">
+						<form:input path="zipcode" htmlEscape="false" maxlength="50" class="form-control digits"/>
+					</td>
 				</tr>
 				<tr>
+					<td class="width-15 active"><label class="pull-right">固定电话:</label></td>
+					<td class="width-35"><form:input path="tel" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
 					<td class="width-15 active">
 						<label class="pull-right"><font color="red">*</font>归属区域:</label>
 					</td>
@@ -234,14 +305,19 @@
 							labelValue="${franchisee.area.name}" title="区域"
 							url="/sys/area/treeData" cssClass="form-control required" />
 					</td>
-					<td class="width-15 active"><label class="pull-right">邮政编码:</label></td>
-					<td class="width-35">
-						<form:input path="zipcode" htmlEscape="false" maxlength="50" class="form-control digits"/>
-					</td>
 				</tr>
 				<tr>
 					<td class="width-15 active" class="active"><label class="pull-right"><font color="red">*</font>详细地址:</label></td>
-					<td class="width-35"><form:textarea path="address" htmlEscape="false" rows="3" maxlength="200" class="form-control required" /></td>
+					<%-- <td class="width-35">
+						<sys:treeselect id="addr" name="add.id"
+							value="${franchisee.area.id}" labelName="ass.name"
+							labelValue="${franchisee.area.name}" title="区域"
+							url="/sys/area/treeData" cssClass="form-control required" />
+					</td> --%>
+					<td class="width-35" colspan="3"><form:textarea path="address" htmlEscape="false" rows="3" maxlength="200" class="form-control required" /></td>
+				</tr>
+					
+				<tr>
 					<td class="width-15 active" class="active"><label class="pull-right"><font color="red"></font>品牌logo:</label></td>
 					<td class="width-35">
 						<img id="iconUrlsrc" src="${franchisee.iconUrl}" alt="images" style="width: 200px;height: 100px;"/>
@@ -255,20 +331,45 @@
 					</td>
 				</tr>
 				<tr>
-					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>加盟法人:</label></td>
-					<td class="width-35"><form:input path="legalName" htmlEscape="false" maxlength="50" class="form-control required" /></td>
-					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>加盟商联系人:</label></td>
-					<td class="width-35"><form:input path="contacts" htmlEscape="false" maxlength="50" cssClass="form-control required" /></td>
+					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>超管手机号:</label></td>
+					<%-- <td class="width-35"><form:input path="legalName" htmlEscape="false" maxlength="50" class="form-control required" />${user.id }${user.mobile}${user.name }</td> --%>
+					<td class="width-35">
+						<div class="input-group">
+				         	<input value="${user.mobile}" id="superUserMobile" name="superUserPhone" class="form-control required" placeholder="请输入手机号">
+				       		 <span class="input-group-btn">
+					       		 <button type="button"  onclick="findUser('superUser')" class="btn btn-primary"><i class="fa fa-search">查询</i></button> 
+				       		 </span>
+					    </div>
+			        </td>
+					<td class="width-15 active"><label class="pull-right">超管姓名:</label></td>
+					<td class="width-35">
+						<input id="superUserId" name="superUserId" class="form-control required" type="hidden" value="${user.id }"/>
+						<input id="oldSuperUserId" name="oldSuperUserId" class="form-control required" type="hidden" value="${user.id }"/>
+						<input id="superUserName" name="superUserName" type="text" readonly="readonly" value="${user.name }" class="form-control required" />
+					</td>
 				</tr>
 				<tr>
+					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>加盟法人:</label></td>
+					<td class="width-35"><form:input path="legalName" htmlEscape="false" maxlength="50" class="form-control required" /></td>
 					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>法人身份证号:</label></td>
 					<td class="width-35"><form:input path="legalCard" htmlEscape="false" maxlength="50" cssClass="form-control required digits" /></td>
 				</tr>
 				<tr>
-					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>手机号码:</label></td>
+					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>加盟商联系人:</label></td>
+					<td class="width-35"><form:input path="contacts" htmlEscape="false" maxlength="50" cssClass="form-control required" /></td>
+					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>法人手机:</label></td>
 					<td class="width-35"><form:input path="mobile" htmlEscape="false" maxlength="50" cssClass="form-control required digits" /></td>
-					<td class="width-15 active"><label class="pull-right">固定电话:</label></td>
-					<td class="width-35"><form:input path="tel" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
+				</tr>
+				<tr>
+					<td class="width-15 active"><label class="pull-right">公共商品服务标识:</label></td>
+					<td class="width-35" id="isShow">
+		         		<c:if test="${franchisee.publicServiceFlag == 0}">
+							<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeType('${franchisee.id}',1)">&nbsp;&nbsp;做
+						</c:if>
+						<c:if test="${franchisee.publicServiceFlag == 1}">
+							<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeType('${franchisee.id}',0)">&nbsp;&nbsp;不做
+						</c:if>
+					</td>
 				</tr>
 				<tr>
 					<td class="width-15 active"><label class="pull-right">营业执照<br/>（照片）:</label></td>
@@ -294,7 +395,7 @@
 						</c:if>
 					</td>
 				</tr>
-				<c:forEach var="bank" items="${franchisee.bankAccount}">
+				<%-- <c:forEach var="bank" items="${franchisee.bankAccount}">
 					<tr>
 				         <td class="active"><label class="pull-left">账户名称:</label></td>
 				         <td >${bank.accountname}</td>
@@ -328,18 +429,10 @@
 				<tr>
 					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡号:</label></td>
 					<td class="width-35"><form:input path="bankCode" htmlEscape="false" maxlength="50" cssClass="form-control digits required" /></td>
-					<td class="width-15 active"><label class="pull-right">公共商品服务标识:</label></td>
-					<td class="width-35" id="isShow">
-		         		<c:if test="${franchisee.publicServiceFlag == 0}">
-							<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeType('${franchisee.id}',1)">&nbsp;&nbsp;做
-						</c:if>
-						<c:if test="${franchisee.publicServiceFlag == 1}">
-							<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeType('${franchisee.id}',0)">&nbsp;&nbsp;不做
-						</c:if>
-					</td>
-				</tr>
+					
+				</tr> --%>
 				<tr>
-					<td class="width-15 active"><label class="pull-right">是否真实的商家:</label></td>
+					<%-- <td class="width-15 active"><label class="pull-right">是否真实的商家:</label></td>
 					<td class="width-35" id="isRealFranchisee">
 		         		<c:if test="${franchisee.isRealFranchisee == 0}">
 							<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeIsRealFranchisee('${franchisee.id}',1)">&nbsp;&nbsp;否
@@ -347,7 +440,7 @@
 						<c:if test="${franchisee.isRealFranchisee == 1}">
 							<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeIsRealFranchisee('${franchisee.id}',0)">&nbsp;&nbsp;是
 						</c:if>
-					</td>
+					</td> --%>
 					<td class="width-15 active"><label class="pull-right">备注:</label></td>
 					<td class="width-35"><form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" class="form-control" /></td>
 				</tr>
@@ -355,5 +448,6 @@
 			</tbody>
 		</table>
 	</form:form>
+	<div class="loading"></div>
 </body>
 </html>

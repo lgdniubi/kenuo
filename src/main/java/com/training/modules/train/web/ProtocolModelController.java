@@ -3,7 +3,9 @@
  */
 package com.training.modules.train.web;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,15 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.HtmlUtils;
 
+import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.ec.entity.ArticleRepository;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.train.entity.ProtocolModel;
 import com.training.modules.train.entity.ProtocolType;
+import com.training.modules.train.entity.TrainLessons;
 import com.training.modules.train.service.ProtocolModelService;
 
 /**
@@ -154,6 +159,49 @@ public class ProtocolModelController extends BaseController {
 		return "redirect:" + adminPath + "/train/protocolModel/modelType";
 	}
 	
+	@ResponseBody
+	@RequestMapping(value = "deleteProtocolShop")
+	public String deleteProtocolShop(ProtocolModel protocolModel){
+		protocolModelService.deleteProtocolShop(protocolModel);
+		return "1";
+	}
+	@ResponseBody
+	@RequestMapping(value = "updateIsOpen")
+	public Map<String, String> updateIsOpen(String modelId,String isOpen){
+		Map<String, String> jsonMap = new HashMap<String, String>();
+		try {
+			int ISOPEN = Integer.parseInt(isOpen);
+			if(!StringUtils.isEmpty(modelId) && (ISOPEN == 3 || ISOPEN == 1)){
+				ProtocolModel protocolModel = new ProtocolModel();
+				protocolModel.setId(modelId);
+				protocolModel.setStatus(isOpen);
+				protocolModelService.updateIsOpen(protocolModel);
+				jsonMap.put("STATUS", "OK");
+				jsonMap.put("ISOPEN", isOpen);
+			}else{
+				jsonMap.put("STATUS", "ERROR");
+				jsonMap.put("MESSAGE", "修改失败,必要参数为空");
+			}
+		} catch (Exception e) {
+			logger.error("课程管理-修改课程状态 出现异常，异常信息为："+e.getMessage());
+			jsonMap.put("STATUS", "ERROR");
+			jsonMap.put("MESSAGE", "修改失败,出现异常");
+		}
+		return jsonMap;
+	}
+	/**
+	 * 是否启用弹出页面
+	 * @return
+	 */
+	@RequestMapping(value = "openProtocol")
+	public String openProtocol(Integer isOpen,Model model){
+		String msg = "协议启用是否重新签订";
+		if(isOpen == 3){
+			msg="是否确定停用该协议";
+		}
+		model.addAttribute("msg", msg);
+		return "modules/train/openProtocol";
+	}
 	
 }
 

@@ -56,7 +56,7 @@
                             <label>状态：
                             	<select name="status" id="status">
                             		<option value="" >-- 请选择 --</option>
-                            		<option value="0" <c:if test="${contractInfo.status eq '0'}">selected="selected"</c:if> >创建</option>
+                            		<option value="0" <c:if test="${contractInfo.status eq '0'}">selected="selected"</c:if> >待签约</option>
                             		<option value="1" <c:if test="${contractInfo.status eq '1'}">selected="selected"</c:if> >待审核</option>
                             		<option value="2" <c:if test="${contractInfo.status eq '2'}">selected="selected"</c:if> >审核通过</option>
                             		<option value="3" <c:if test="${contractInfo.status eq '3'}">selected="selected"</c:if> >审核驳回</option>
@@ -91,7 +91,7 @@
                                		${info.office_name}
                                	</td>
                                	<td style="text-align: center;">
-                               		<c:if test="${info.status eq '0'}">创建</c:if>
+                               		<c:if test="${info.status eq '0'}">待签约</c:if>
                                		<c:if test="${info.status eq '1'}">待审核</c:if>
                                		<c:if test="${info.status eq '2'}">审核通过</c:if>
                                		<c:if test="${info.status eq '3'}">审核驳回</c:if>

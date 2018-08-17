@@ -156,5 +156,10 @@ public interface TrainLiveAuditDao extends TreeDao<TrainLiveAudit>{
 	 * @return
 	 */
 	public TrainLiveAudit getCompanyIds(String id);
+	/**
+	 * 直播测试数据
+	 * @param live
+	 */
+	public void updateIsTest(TrainLiveAudit live);
 
 }

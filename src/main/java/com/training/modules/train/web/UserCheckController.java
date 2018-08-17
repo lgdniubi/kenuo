@@ -51,10 +51,11 @@ public class UserCheckController extends BaseController{
 	 */
 	@RequiresPermissions(value={"train:userCheck:findalllist"},logical=Logical.OR)
 	@RequestMapping(value = {"findalllist", ""})
-	public String findalllist(UserCheck userCheck,HttpServletRequest request, HttpServletResponse response, Model model){
+	public String findalllist(UserCheck userCheck,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes, Model model){
 		Page<UserCheck> page = userCheckService.findList(new Page<UserCheck>(request, response), userCheck);
 		model.addAttribute("page", page);
 		model.addAttribute("status", userCheck.getStatus());
+		addMessage(redirectAttributes, "成功");
 		return "modules/train/userCheckList";
 	}
 	
@@ -71,20 +72,19 @@ public class UserCheckController extends BaseController{
 	 */
 	@RequiresPermissions(value={"train:userCheck:save"},logical=Logical.OR)
 	@RequestMapping(value = {"save"})
-	@ResponseBody
-	public boolean savemodel(UserCheck userCheck, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
-		boolean flag = false;
+	public String savemodel(UserCheck userCheck,Integer pageNo, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+//		boolean flag = false;
 		try {
-			userCheckService.saveModel(userCheck);//保存审核信息保存用户审核状态
+//			userCheckService.saveModel(userCheck);//保存审核信息保存用户审核状态
 			if ("1".equals(userCheck.getStatus())){
 				String text = creatText(userCheck);
-				userCheckService.pushMsg(userCheck,text);
+//				userCheckService.pushMsg(userCheck,text);
 			}else if ("2".equals(userCheck.getStatus())){
 				//审核通过，发送消息并，更新用户type
 //				userCheckService.pushMsg(userCheck,"你的申请资料信息已通过审核，等待平台给您赋予权限");
 //				userCheckService.updateTypeAndpushMsg(userCheck,"你的申请资料信息已通过审核，等待平台给您赋予权限");
 			}
-			flag = true;
+//			flag = true;
 			addMessage(redirectAttributes, "成功");
 			
 			/*##########[神策埋点{user_authent_win|user_authent_Loser}-Begin]##########*/
@@ -108,8 +108,8 @@ public class UserCheckController extends BaseController{
 			addMessage(redirectAttributes, "保存审核信息出现异常,请与管理员联系");
 			logger.error("保存审核信息异常,异常信息为："+e);
 		}
-		return flag;
-//		return "redirect:" + adminPath + "/train/userCheck/findalllist";
+//		return flag;
+		return "redirect:" + adminPath + "/train/userCheck/findalllist?pageNo="+pageNo;
 	}
 	//创建发送拒绝审核通知消息：您申请认证手艺人用户未被通过，原因如下：====您申请认证企业用户未被通过，原因如下：
 	private String creatText(UserCheck userCheck) {
@@ -157,6 +157,7 @@ public class UserCheckController extends BaseController{
 		UserCheck userCheck = new UserCheck();
 		userCheck.setId(modelFranchisee.getApplyid());
 		userCheck.setUserid(modelFranchisee.getUserid());
+		userCheck.setAuditType(opflag);
 		UserCheck find = userCheckService.getUserCheck(userCheck);
 		boolean flag = "qy".equals(userCheck.getType()) && Integer.valueOf(userCheck.getStatus())==4;
 		boolean flagsyr = "syr".equals(opflag) && "qy".equals(find.getType());
@@ -170,10 +171,14 @@ public class UserCheckController extends BaseController{
 				if ("syr".equals(opflag)){
 					modelFranchisee.setFranchiseeid("0");
 					modelFranchisee.setPaytype("0");
+					ModelFranchisee modelSelect = userCheckService.getModelFranchiseeByUserid(modelFranchisee.getUserid());
 					userCheckService.saveModelFranchisee(modelFranchisee);//保存手艺人权益信息
+					userCheckService.pushMsg(modelFranchisee,modelSelect,opflag);//重新授权成功发送消息
 					userCheckService.pushMsg(userCheck, "您已具备手艺人用户的权益，开启新旅程吧。");//授权成功发送消息
 				}else if ("qy".equals(opflag)){
+					ModelFranchisee modelSelect = userCheckService.getModelFranchiseeByUserid(modelFranchisee.getUserid());
 					userCheckService.saveQYModelFranchisee(modelFranchisee,find);//保存企业权益信息
+					userCheckService.pushMsg(modelFranchisee,modelSelect,opflag);//重新授权成功发送消息
 					userCheckService.pushMsg(userCheck, "您已具备企业用户的权益，开启新旅程吧。");//授权成功发送消息
 				}
 				redisClientTemplate.del("UTOKEN_"+modelFranchisee.getUserid());
@@ -229,6 +234,31 @@ public class UserCheckController extends BaseController{
 		model.addAttribute("userCheck", userCheck);
 		return "modules/train/userCheckForm";
 	}
+	/**
+	 * 审核并授权
+	 * @param userCheck
+	 * @param model
+	 * @return
+	 */
+	@RequiresPermissions(value={"train:userCheck:update",},logical=Logical.OR)
+	@RequestMapping(value={"authForm"})
+	public String authForm(UserCheck userCheck,Model model,String opflag,Integer pageNo){
+		model.addAttribute("pageNo", pageNo);
+		model.addAttribute("applyid", userCheck.getId());
+//		if ("setPermiss".equals(opflag)){
+//			
+//		}
+		if (userCheck.getId() != null) {
+			userCheck =  userCheckService.getUserCheck(userCheck);
+			if("syr".equals(userCheck.getAuditType())){//如果认证类型是手艺人，跳转收益审核页面
+				model.addAttribute("userCheck", userCheck);
+				return "modules/train/syrAuthForm";
+			}
+		}
+		model.addAttribute("userCheck", userCheck);
+		return "modules/train/qyAuthForm";
+	}
+	
 	/**
 	 * 判断是否可以进行权限设置
 	 * 如果该用户同意其他商家邀请，就不能操作。

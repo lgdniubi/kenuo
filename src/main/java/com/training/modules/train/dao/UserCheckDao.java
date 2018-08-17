@@ -14,6 +14,7 @@ import com.training.modules.train.entity.MediaRole;
 import com.training.modules.train.entity.ModelFranchisee;
 import com.training.modules.train.entity.PayAccount;
 import com.training.modules.train.entity.PcRole;
+import com.training.modules.train.entity.SyrFranchise;
 import com.training.modules.train.entity.UserCheck;
 
 /**
@@ -194,5 +195,14 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	public void updateProtocolShopStatus(@Param("userid")String userid, @Param("typeId")int typeId);
 
 	public void deleteProtocolShop(@Param("userid")String userid, @Param("typeId")String typeId);
+
+	public String findUserIdByCompanyId(Integer companyId);
+
+	/**
+	 * 查找手艺人商家
+	 * @param syrFranchise
+	 * @return
+	 */
+	public List<SyrFranchise> findSyrList(SyrFranchise syrFranchise);
 	
 }

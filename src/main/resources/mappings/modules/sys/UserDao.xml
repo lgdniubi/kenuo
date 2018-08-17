@@ -281,13 +281,19 @@
 		LEFT JOIN train_model tm ON tm.id = tmf.mod_id-->
 		<!-- 数据范围过滤 -->
 		${sqlMap.dsf}
-		AND a.type in ('pt','syr')
-		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
+		<!-- AND a.type in ('pt','syr')
+		如果不是超级管理员，则不显示超级管理员用户 -->
 		<if test="!currentUser.admin">
 			AND a.id != '1'
 		</if>
 		<if test="mobile != null and mobile != ''">
 			AND a.mobile = #{mobile}
+		</if>
+		<if test="type != null and type != ''">
+			AND a.type = #{type}
+		</if>
+		<if test="name != null and name != ''">
+			AND a.name like CONCAT('%', #{name}, '%')
 		</if>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -454,7 +460,9 @@
 			a.id, a.name, a.login_name
 		FROM sys_user a
 		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
-			AND a.company_id = #{company.id}
+			
+			<if test="company.id != null "> AND a.company_id = #{company.id}</if>
+			<if test="office.id != null "> AND a.office_id = #{office.id}</if>
 			<if test="mobile != null "> AND a.mobile = #{mobile}</if>
 		ORDER BY a.name
 	</select>

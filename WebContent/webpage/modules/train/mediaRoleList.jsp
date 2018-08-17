@@ -49,10 +49,12 @@
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="pull-left">
+							<c:if test="${mediaRole.opflag eq 'dy'}">
 							<shiro:hasPermission name="train:mdrole:add">
 								<!-- 增加按钮 -->
 								<table:addRow url="${ctx}/train/mdrole/form" title="新增角色" width="800px" height="650px"></table:addRow>
 							</shiro:hasPermission>
+							</c:if>
 						</div>
 						<div class="pull-right">
 							<button class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()">

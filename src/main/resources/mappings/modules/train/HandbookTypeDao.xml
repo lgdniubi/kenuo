@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.train.dao.HandbookTypeDao">
+    
+	<sql id="menuColumns">
+		m.`id`,
+		m.`name`,
+		m.`sort`,
+		m.`type`,
+		m.`is_shop`,
+		m.`create_by`,
+		m.`create_date`,
+		m.`update_by`,
+		m.`update_date`,
+		m.`del_flag`
+	</sql>
+	<select id="findList" resultType="HandbookType">
+		SELECT <include refid="menuColumns"/> FROM `handbook_type` m where m.`del_flag`=0
+		<if test="type != null and type != ''">
+			AND m.type = #{type}
+			<if test="type == 3 and isShop != ''">
+				AND m.is_shop = #{isShop}
+			</if>  
+		</if>  
+	</select>
+	
+	<!-- 根据id查看 -->
+	<select id="get" resultType="HandbookType">
+		SELECT
+			<include refid="menuColumns"/>
+		FROM
+			`handbook_type` m where m.id = #{id}
+	</select>
+	<!-- 添加 -->
+	<insert id="insert">
+		INSERT INTO handbook_type(
+			`name`,
+			`sort`,
+			`type`,
+			`is_shop`,
+			`create_by`,
+			`create_date`,
+			`update_by`,
+			`update_date`,
+			`del_flag`
+		) VALUES (
+			#{name},
+			#{sort},
+			#{type},
+			#{isShop},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	<select id="findQuestionList" resultType="int">
+		SELECT count(1) FROM  question_handbook qh WHERE qh.hid = #{hid}
+	</select>
+	<delete id="deleteByLogic">
+		DELETE FROM handbook_type WHERE id = #{id}
+	</delete>
+	<update id="update">
+		UPDATE handbook_type SET 
+			`name` = #{name},
+			`sort` = #{sort}, 
+			`update_by` = #{updateBy.id},
+			`update_date` = #{updateDate}
+		WHERE id = #{id} 
+	</update>
+</mapper>

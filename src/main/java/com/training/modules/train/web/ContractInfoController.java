@@ -37,7 +37,7 @@ public class ContractInfoController extends BaseController {
 	 */
 	@RequiresPermissions(value="train:contractInfo:list")
 	@RequestMapping(value="list")
-	public String queryContractInfoList(ContractInfo contractInfo,HttpServletRequest request, HttpServletResponse response,Model model){
+	public String queryContractAuditInfoList(ContractInfo contractInfo,HttpServletRequest request, HttpServletResponse response,Model model){
 		try {
 			Page<ContractInfo> page = this.contractInfoService.findPage(new Page<ContractInfo>(request, response),contractInfo);
 			model.addAttribute("page", page);
@@ -49,6 +49,26 @@ public class ContractInfoController extends BaseController {
 		}
 		
 		return "modules/train/contractInfoList";
+	}
+	/**
+	 * 查询已签约列表
+	 * @param request
+	 * @return
+	 */
+	@RequiresPermissions(value="train:contractInfo:signedList")
+	@RequestMapping(value="signedList")
+	public String queryContractInfoList(ContractInfo contractInfo,HttpServletRequest request, HttpServletResponse response,Model model){
+		try {
+			Page<ContractInfo> page = this.contractInfoService.findSignedPage(new Page<ContractInfo>(request, response),contractInfo);
+			model.addAttribute("page", page);
+			model.addAttribute("contractInfo", contractInfo);
+		} catch (Exception e) {
+			logger.error("#####[妃子校签约审核-列表-出现异常：]" + e.getMessage());
+			BugLogUtils.saveBugLog(request, "妃子校签约审核-列表", e);
+			model.addAttribute("message", "查看出现异常，请与管理员联系");
+		}
+		
+		return "modules/train/contractInfoSignedList";
 	}
 	/**
 	 * 详情

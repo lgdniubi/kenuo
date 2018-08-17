@@ -19,7 +19,13 @@
 			r.del_flag = 0 
 			AND company_id = 1
 			<if test="modeid != null and modeid != ''">
-				AND mod_id = #{modeid}
+				AND r.mod_id = #{modeid}
+			</if>
+			<if test="opflag != null and opflag == 'pt'">
+				AND r.mod_id = 8
+			</if>
+			<if test="opflag != null and opflag == 'qy'">
+				AND r.mod_id != 8
 			</if>
 			<if test="name != null and name != ''">
 				AND r.name like 
@@ -152,6 +158,9 @@
 	<!-- 验证英文名称是否有效 -->
 	<select id="checkEnname" resultType="int">
 		SELECT COUNT(1) FROM fzx_role WHERE mod_id = #{modeid} AND del_flag = 0 AND enname = 'sjgly'
+	</select>
+	<select id="findFzxSuperRoleId" resultType="int">
+		SELECT id FROM fzx_role WHERE company_id = #{franchid} AND del_flag = 0 AND enname = 'sjgly'
 	</select>
 	<!-- 验证同版本下不能有多个相同的角色 -->
 	<select id="checkName" resultType="int">

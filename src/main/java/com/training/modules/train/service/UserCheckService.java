@@ -42,6 +42,7 @@ import com.training.modules.train.entity.MediaRole;
 import com.training.modules.train.entity.ModelFranchisee;
 import com.training.modules.train.entity.PayAccount;
 import com.training.modules.train.entity.PcRole;
+import com.training.modules.train.entity.SyrFranchise;
 import com.training.modules.train.entity.TrainModel;
 import com.training.modules.train.entity.UserCheck;
 
@@ -300,7 +301,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		}
 		String parpm2 = "{\"franchisee_id\":"+Integer.valueOf(findFranchisee.getFranchiseeid())+",\"update_user\":\""+String.valueOf(UserUtils.getUser().getId())+"\"}";
 		postCSData(parpm2, "resign");
-		protocolModelDao.deleteProtocolShopById(findFranchisee.getFranchiseeid());
+		protocolModelDao.deleteProtocolShopById(Integer.valueOf(findFranchisee.getFranchiseeid()));
 	}
 	private void postCSData(String parpm, String key) {
 		String url = ParametersFactory.getTrainsParamValues(key);
@@ -602,9 +603,10 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	 * @return
 	 */
 	public String pushMsg(UserCheck userCheck,String text) {
-		JSONArray jsonArray = new JSONArray();
-		String cid = userCheckDao.findCidByUserid(userCheck.getUserid());
-//		jsonArray.add("35be8ac9632c9475ac67f9be3c340665");
+		return prePush(userCheck.getUserid(), 1, text, 2, "审核通知");
+	}
+//		JSONArray jsonArray = new JSONArray();
+	/*//		jsonArray.add("35be8ac9632c9475ac67f9be3c340665");
 		jsonArray.add(cid);
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("cid_list", jsonArray);
@@ -617,9 +619,33 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		map.put("push_time", dateStr);
 		map.put("title", "审核通知");
 		jsonObj.put("content", map);
+		String json =  this.push(jsonObj);*/
+	/**
+	 * 发送消息组装方法
+	 * @param cid 用户的userid
+	 * @param push_type 推送类型1
+	 * @param text 消息内容
+	 * @param notify_type 通知类型2
+	 * @param title 消息标题
+	 * @return
+	 */
+	private String prePush(String userid,int push_type,String text,int notify_type,String title){
+		String cid1 = userCheckDao.findCidByUserid(userid);
+		JSONArray jsonArray = new JSONArray();
+		jsonArray.add(cid1);
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("cid_list", jsonArray);
+		jsonObj.put("push_type", push_type);
+		Map<String, Object> map = new HashMap<String, Object>();
+		String dateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+		map.put("content", text);
+		map.put("notify_id", UUID.randomUUID().toString().replace("-", ""));
+		map.put("notify_type", notify_type);
+		map.put("push_time", dateStr);
+		map.put("title", title);
+		jsonObj.put("content", map);
 		
-		String json =  this.push(jsonObj);
-		return json;
+		return this.push(jsonObj);
 	}
 	/*
 	 * 推送消息具体方法
@@ -667,4 +693,103 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	public int isPermiss(String userid) {
 		return userCheckDao.isPermiss(userid);
 	}
+	/**
+	 * 重新授权发送消息
+	 * 当版本重新授权后，系统给对应版本下各超级管理员推送消息，推送节点为完成续费。
+		文案标题：版本续费
+		文案内容：尊敬的*（姓名），您使用的妃子校*（版本名称）成功续费*（续费时长)天，已生效。
+		续费时长：若当前授权开始时间为A，结束时间为B,续费授权开始时间为C，结束时间为D,若C<=B,则续费时长为D-B;若C>B,则续费时长为D-C
+	 * @param modelFranchisee
+	 */
+	public void pushMsg(ModelFranchisee modelFranchisee,ModelFranchisee modelSelect, String opflag) {
+		if (StringUtils.isNotEmpty(modelFranchisee.getId())) {
+			User user = userDao.get(modelFranchisee.getUserid());
+//			ModelFranchisee modelSelect = null;
+//			if ("syr".equals(opflag)){
+//				modelSelect = getModelFranchiseeByUserid(modelFranchisee.getUserid());
+//			}else if ("qy".equals(opflag)){
+//				modelSelect = getQYModelFranchiseeByUserid(modelFranchisee.getUserid());
+//				
+//			}
+			if (modelSelect!= null){
+				boolean dflag = DateUtils.formatDate(modelFranchisee.getAuthStartDate(), "yyyy-MM-dd").compareTo(DateUtils.formatDate(modelSelect.getAuthEndDate(), "yyyy-MM-dd"))>0;
+				int day;
+				if(dflag){
+					//续费授权开始时间为C，结束时间为D,续费时长为D-C
+					day = DateUtils.differentDays(modelFranchisee.getAuthStartDate(),modelFranchisee.getAuthEndDate());
+				}else{
+					day = DateUtils.differentDays(modelSelect.getAuthEndDate(),modelFranchisee.getAuthEndDate());
+				}
+				String mname = "";
+				switch (modelFranchisee.getModid()) {
+				case "3":
+					mname = "手艺人免费版";
+					break;
+				case "4":
+					mname = "手艺人收费版";
+					break;
+				case "5":
+					mname = "企业标准版";
+					break;
+				case "6":
+					mname = "企业高级版";
+					break;
+				case "7":
+					mname = "企业旗舰版";
+					break;
+				default:
+					break;
+				}	
+				//尊敬的*（姓名），您使用的妃子校*（版本名称）成功续费*（续费时长)天，已生效。
+				StringBuilder sb = new StringBuilder();
+				sb.append("尊敬的");
+				sb.append(user.getName());
+				sb.append("，您使用的妃子校");
+				sb.append(mname);
+				sb.append("成功续费");
+				sb.append(day);
+				sb.append("天，已生效。");
+				System.out.println(sb.toString());
+				//发消息--尊敬的17600001145，您使用的妃子校企业标准版成功续费8天，已生效。
+				prePush(modelFranchisee.getUserid(), 1, sb.toString(), 2, "版本续费");
+				
+				//【版本升级】尊敬的XXX，恭喜您成功升级为企业（高级版），已开启更多权益！
+				if(Integer.valueOf(modelFranchisee.getModid())>Integer.valueOf(modelSelect.getModid())){
+					StringBuilder sb1 = new StringBuilder();
+					sb1.append("尊敬的");
+					sb1.append(user.getName());
+					sb1.append("，恭喜您成功升级为（");
+					sb1.append(mname);
+					sb1.append("），已开启更多权益！");
+					System.out.println(sb1.toString());
+					prePush(modelFranchisee.getUserid(), 1, sb1.toString(), 2, "版本升级");
+				}
+			}
+		}
+	}
+	/**
+	 * 授权的时候，通过商家id，找申请的管理员id
+	 * @param companyId
+	 * @return
+	 */
+	public String findUserIdByCompanyId(Integer companyId) {
+		return userCheckDao.findUserIdByCompanyId(companyId);
+	}
+
+	/**
+	 * 查找手艺人商家信息列表
+	 * @param page
+	 * @param syrFranchise
+	 * @return
+	 */
+	public Page<SyrFranchise> findSyrList(Page<SyrFranchise> page, SyrFranchise syrFranchise) {
+		// 设置分页参数
+		syrFranchise.setPage(page);
+		// 执行分页查询
+		page.setList(userCheckDao.findSyrList(syrFranchise));
+		return page;
+	}
+	
+	
+	
 }

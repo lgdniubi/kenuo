@@ -51,7 +51,8 @@
                             <div class="col-sm-8">
                                <form:input path="name" cssClass="form-control required" maxlength="20" placeholder="请输入标题"/>
 						    </div>
-                             <input type="checkbox"  name="pids" value="0" id="isPidId"  />是否重新签订
+                             <input type="checkbox"  name="status" value="1" id="status" onclick="showPids()" <c:if test="${protocolModel.status eq '1'}">checked="checked"</c:if> />是否启用
+                             <div <c:if test="${protocolModel.status ne '1'}">style="display: none"</c:if> id="sign"><input type="checkbox"  name="pids" value="0" id="isPidId"  />是否重新签订</div>
 					   </div>
 					    <div class="form-group">
                            <label class="col-sm-2 control-label">内容：</label>
@@ -105,6 +106,12 @@
 		  }
 		  return false;
 		}
+		
+		function showPids(){
+			var f = $("#status").is(':checked');
+			if (f){$("#sign").show()}else{$("#sign").hide()}
+		}
+		
 		$(document).ready(function() {
 			validateForm = $("#inputForm").validate();
 		});

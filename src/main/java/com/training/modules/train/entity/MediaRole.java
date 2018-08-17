@@ -42,6 +42,8 @@ public class MediaRole extends DataEntity<MediaRole> {
 	private String[] publictoArr;	//发布平台：a:妃子校，b:每天美耶，ab:每天美耶和妃子校
 	private List<Dict> publictoList;	//发布平台集合
 	
+	private String opflag;	//dy:平台，qy:企业
+	
 	public User getUser() {
 		return user;
 	}
@@ -179,6 +181,12 @@ public class MediaRole extends DataEntity<MediaRole> {
 		publictoList.add(c1);
 //		publictoList.add(c2);
 		return publictoList;
+	}
+	public String getOpflag() {
+		return opflag;
+	}
+	public void setOpflag(String opflag) {
+		this.opflag = opflag;
 	}
 	
 	

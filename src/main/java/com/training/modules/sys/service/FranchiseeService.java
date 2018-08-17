@@ -1,6 +1,8 @@
 package com.training.modules.sys.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -11,10 +13,18 @@ import org.springframework.transaction.annotation.Transactional;
 import com.training.common.service.TreeService;
 import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.sys.dao.FranchiseeDao;
+import com.training.modules.sys.dao.UserDao;
 import com.training.modules.sys.entity.Franchisee;
+import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
+import com.training.modules.sys.utils.UserUtils;
+import com.training.modules.train.dao.FzxRoleDao;
+import com.training.modules.train.dao.MediaRoleDao;
+import com.training.modules.train.dao.PcRoleDao;
+import com.training.modules.train.dao.UserCheckDao;
 import com.training.modules.train.entity.BankAccount;
+import com.training.modules.train.entity.PcRole;
 
 import net.sf.json.JSONObject;
 
@@ -29,6 +39,16 @@ public class FranchiseeService extends TreeService<FranchiseeDao,Franchisee>{
 
 	@Autowired
 	private FranchiseeDao franchiseeDao;
+	@Autowired
+	private UserCheckDao userCheckDao;
+	@Autowired
+	private PcRoleDao pcRoleDao;
+	@Autowired
+	private FzxRoleDao fzxRoleDao;
+	@Autowired
+	private MediaRoleDao mediaRoleDao;
+	@Autowired
+	private UserDao userDao;
 	
 	/**
 	 * 查询所有信息
@@ -107,7 +127,61 @@ public class FranchiseeService extends TreeService<FranchiseeDao,Franchisee>{
 				
 			}
 		}
+		//如果更换超管，操作
+		if(!franchisee.getOldSuperUserId().equals(franchisee.getSuperUserId())){
+			replaceSuperRole(franchisee.getId(),franchisee.getOldSuperUserId(),franchisee.getSuperUserId());
+		}
 		return res;
+	}
+	/**
+	 * 更换超管操作
+	 * 1清除旧管理员，pc、fzx、media的角色，user_office,user_role_office
+	 * 2不用改user表data_scope部门及以下
+	 * 3暂时不赋予
+	 * 4清除新的管理员，pc、fzx、media的角色，user_office,user_role_office
+	 * 5改user表data_scope部门及以下
+	 * 6赋予超管的角色数据
+	 * @param oldSuperUserId	就超管的id
+	 * @param superUserId	新超管的id
+	 * @param string 
+	 */
+	private void replaceSuperRole(String franchid, String oldSuperUserId, String superUserId) {
+		deleteUserRoleOrOffice(oldSuperUserId);
+		deleteUserRoleOrOffice(superUserId);
+		
+		User user = new User();
+		user.setDataScope(1);	//设置部门及以下
+		user.setId(superUserId);
+		user.preUpdate();
+		userDao.UpdateDataScope(user);
+		
+		int fzxRoleid = fzxRoleDao.findFzxSuperRoleId(franchid);
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("fzxUserRoleId", 0);
+		map.put("userid", superUserId);
+		map.put("roleid", fzxRoleid);
+		userCheckDao.insertFzxUserRole(map);
+		int fzxUserRoleId = (int) map.get("fzxUserRoleId");
+		//向fzx_user_role_office插入一条数据
+		userCheckDao.insertFzxUserRoleOffice(fzxUserRoleId,franchid);
+		
+		int pcRoleId = pcRoleDao.findPcSuperRoleId(franchid);
+		PcRole pcRole = new PcRole();
+		pcRole.setId(superUserId);
+		pcRole.setRoleId(pcRoleId);
+		pcRoleDao.insertUserRole(pcRole );
+		
+		int mdRoleId = mediaRoleDao.findMdSuperRoleId(franchid);
+		mediaRoleDao.insertUserRole(superUserId,mdRoleId);
+	}
+		
+
+	private void deleteUserRoleOrOffice(String superUserId) {
+		userCheckDao.deleteOldFzxRoleOffice(superUserId);
+		userCheckDao.deleteOldFzxRole(superUserId);
+		pcRoleDao.deleteUserRole(superUserId);
+		fzxRoleDao.deleteUserRole(superUserId);
+		mediaRoleDao.deleteUserRole(superUserId);
 	}
 
 	/**

@@ -18,6 +18,12 @@
 			<if test="modeid != null and modeid != ''">
 				AND mod_id = #{modeid}
 			</if>
+			<if test="opflag != null and opflag == 'dy'">
+				AND r.mod_id = 8
+			</if>
+			<if test="opflag != null and opflag == 'qy'">
+				AND r.mod_id != 8
+			</if>
 			<if test="name != null and name != ''">
 				AND r.name like 
 					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
@@ -123,6 +129,9 @@
 	<!-- 验证英文名称是否有效 -->
 	<select id="checkEnname" resultType="int">
 		SELECT COUNT(1) FROM media_manage_role WHERE mod_id = #{modeid} AND del_flag = 0  
+	</select>
+	<select id="findMdSuperRoleId" resultType="int">
+		SELECT id FROM media_manage_role WHERE franchisee_id = #{franchid} AND del_flag = 0  AND type =2
 	</select>
 	<!-- 验证 角色名称是否重复 -->
 	<select id="checkRoleName" resultType="int">

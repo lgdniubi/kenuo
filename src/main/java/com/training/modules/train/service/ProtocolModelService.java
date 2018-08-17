@@ -54,7 +54,7 @@ public class ProtocolModelService extends CrudService<ProtocolModelDao,ProtocolM
 	public void saveProtocolModel(ProtocolModel protocolModel) {
 		if(protocolModel.getIsNewRecord()){
 			protocolModel.preInsert();
-			protocolModel.setStatus("1");
+//			protocolModel.setStatus("1");
 			dao.insert(protocolModel);
 			//新增协议的同事修改供应链那边签约状态为变更状态。
 			
@@ -76,6 +76,9 @@ public class ProtocolModelService extends CrudService<ProtocolModelDao,ProtocolM
 					}
 					//更改签约状态变更
 				}*/
+			}
+			if(!findModel.getStatus().equals(protocolModel.getStatus())){	//如果状态不一样，更新状态
+				protocolModelDao.updateModelStatusById(protocolModel);
 			}
 		}
 		if(protocolModel.getAssign()){
@@ -183,6 +186,20 @@ public class ProtocolModelService extends CrudService<ProtocolModelDao,ProtocolM
 	 */
 	public void deleteProtocolShopOfOffice(String office_id){
 		this.protocolModelDao.deleteProtocolShopOfOffice(office_id);
+	}
+
+	/**
+	 * 更改状态
+	 * @param protocolModel
+	 */
+	public void updateIsOpen(ProtocolModel protocolModel) {
+		protocolModelDao.updateModelStatusById(protocolModel);
+	}
+
+
+	public void deleteProtocolShop(ProtocolModel protocolModel) {
+		protocolModelDao.deleteProtocolShopById(Integer.valueOf(protocolModel.getId()));
+		changeStatusForSupply();
 	}
 	
 }

@@ -37,9 +37,11 @@ public class AuthenticationService {
 	* @author fengfeng  
 	* @date 2018年5月25日  
 	* @version 3.0.0  
+	 * @param num 
+	 * @param falg 
 	*/  
-	public List<AuthenticationBean> querypastdueauthentication() {
-		return authenticationMapper.querypastdueauthentication();
+	public List<AuthenticationBean> querypastdueauthentication(int flag, int num) {
+		return authenticationMapper.querypastdueauthentication(flag,num);
 	}
 
 	/**  

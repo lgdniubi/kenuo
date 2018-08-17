@@ -64,6 +64,9 @@
 					}
 				}
 			});
+			
+			var obj = $("#modeid");
+			addEname(obj);
 		});
 		//自定义校验英文名称
 		jQuery.validator.addMethod("enameMethod", function(value, element) {
@@ -128,7 +131,7 @@
 		      <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font> 版本类型:</label></td>
 		         <td  class="width-35" >
-		         	<form:select path="modeid" onchange="addEname(this)" class="form-control">
+		         	<form:select path="modeid"  class="form-control">
 						<form:options items="${modList}" itemLabel="modName" itemValue="id" htmlEscape="false"/>
 					</form:select>
 				 </td>
