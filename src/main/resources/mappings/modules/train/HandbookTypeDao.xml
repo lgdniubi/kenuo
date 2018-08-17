@@ -6,7 +6,6 @@
 		m.`id`,
 		m.`name`,
 		m.`sort`,
-		m.`icon_url`,
 		m.`type`,
 		m.`is_shop`,
 		m.`create_by`,
@@ -37,7 +36,6 @@
 		INSERT INTO handbook_type(
 			`name`,
 			`sort`,
-			`icon_url`,
 			`type`,
 			`is_shop`,
 			`create_by`,
@@ -48,7 +46,6 @@
 		) VALUES (
 			#{name},
 			#{sort},
-			#{iconUrl},
 			#{type},
 			#{isShop},
 			#{createBy.id},
@@ -67,8 +64,7 @@
 	<update id="update">
 		UPDATE handbook_type SET 
 			`name` = #{name},
-			`sort` = #{sort},
-			<if test="iconUrl != null and iconUrl != ''">AND icon_url = #{iconUrl}</if>  
+			`sort` = #{sort}, 
 			`update_by` = #{updateBy.id},
 			`update_date` = #{updateDate}
 		WHERE id = #{id} 

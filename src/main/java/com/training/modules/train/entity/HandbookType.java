@@ -19,7 +19,6 @@ public class HandbookType extends DataEntity<HandbookType>{
 	private static final long serialVersionUID = 1L;
 	private String name;			//手册类型名称
 	private Integer sort;			//排序
-	private String iconUrl;			//图标链接地址
 	private String type = "0";			//类型，1妃子校，2每天美耶，3pc端
 	private String isShop = "0";	//PC端分类，0管理端，1店铺端
 	
@@ -45,12 +44,6 @@ public class HandbookType extends DataEntity<HandbookType>{
 	}
 	public void setSort(Integer sort) {
 		this.sort = sort;
-	}
-	public String getIconUrl() {
-		return iconUrl;
-	}
-	public void setIconUrl(String iconUrl) {
-		this.iconUrl = iconUrl;
 	}
 	public String getType() {
 		return type;

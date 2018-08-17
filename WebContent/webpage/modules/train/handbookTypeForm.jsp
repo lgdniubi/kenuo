@@ -94,7 +94,7 @@
 		         	<form:input path="sort" htmlEscape="false" maxlength="10" class="form-control "/>
 				 </td>
 		      </tr>
-		      <c:if test="${handbookType.type eq '2'}">
+		     <%--  <c:if test="${handbookType.type eq '2'}">
 		      <tr>
 		      	<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>图标:</label></td>
       			<td class="width-35" >
@@ -108,7 +108,7 @@
 					<div id="file_iconUrl_queue"></div>
 	        	</td>
 		      </tr>
-		      </c:if>
+		      </c:if> --%>
 		    </tbody>
 		  </table>
 	</form:form>
