@@ -176,7 +176,8 @@ public class UserCheckController extends BaseController{
 					userCheckService.pushMsg(modelFranchisee,modelSelect,opflag);//重新授权成功发送消息
 					userCheckService.pushMsg(userCheck, "您已具备手艺人用户的权益，开启新旅程吧。");//授权成功发送消息
 				}else if ("qy".equals(opflag)){
-					ModelFranchisee modelSelect = userCheckService.getModelFranchiseeByUserid(modelFranchisee.getUserid());
+					ModelFranchisee modelSelect = userCheckService.getQYModelFranchiseeByUserid(modelFranchisee.getUserid());
+					if(modelSelect == null){modelFranchisee.setId(null);}
 					userCheckService.saveQYModelFranchisee(modelFranchisee,find);//保存企业权益信息
 					userCheckService.pushMsg(modelFranchisee,modelSelect,opflag);//重新授权成功发送消息
 					userCheckService.pushMsg(userCheck, "您已具备企业用户的权益，开启新旅程吧。");//授权成功发送消息
