@@ -75,7 +75,7 @@ public class UserCheckController extends BaseController{
 	public String savemodel(UserCheck userCheck,Integer pageNo, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 //		boolean flag = false;
 		try {
-//			userCheckService.saveModel(userCheck);//保存审核信息保存用户审核状态
+			userCheckService.saveModel(userCheck);//保存审核信息保存用户审核状态
 			if ("1".equals(userCheck.getStatus())){
 				String text = creatText(userCheck);
 //				userCheckService.pushMsg(userCheck,text);

@@ -306,5 +306,10 @@ public interface OfficeDao extends TreeDao<Office> {
 	 * @param contractInfo
 	 */
 	public void updateOfficeInfoOfficeName(ContractInfoVo contractInfo);
+	/**
+	 * 查询平台机构
+	 * @return
+	 */
+	public List<Office> findDyOffice();
 
 }

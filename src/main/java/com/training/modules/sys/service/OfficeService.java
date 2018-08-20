@@ -533,4 +533,8 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		officeDao.updateOfficeInfoOfficeName(contractInfo);
 		
 	}
+
+	public List<Office> findDyOffice() {
+		return officeDao.findDyOffice();
+	}
 }

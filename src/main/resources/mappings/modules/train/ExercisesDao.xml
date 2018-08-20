@@ -82,7 +82,8 @@
 			TAGS,
 			OFFICE_CODE,
 			CREATEUSER,
-			office_id
+			office_id,
+			score
 		) VALUES (
 			#{exerciseId},
 			#{exerciseType},
@@ -97,7 +98,8 @@
 			select code from sys_office where id=(select office_id from sys_user where id=#{createuser})
 			),
 			#{createuser},
-			(SELECT office_id FROM trains.train_categorys WHERE category_id = #{categoryId})
+			(SELECT office_id FROM trains.train_categorys WHERE category_id = #{categoryId}),
+			#{score}
 		)
 	</insert>
 	<update id="update">
@@ -114,7 +116,8 @@
 			CATEGORY_ID = #{categoryId},
 			OFFICE_CODE = (select code from sys_office where id=(select office_id from sys_user where id=#{createuser})),
 			CREATEUSER = #{createuser},
-			office_id = (SELECT office_id FROM trains.train_categorys WHERE category_id = #{categoryId})
+			office_id = (SELECT office_id FROM trains.train_categorys WHERE category_id = #{categoryId}),
+			score = #{score}
 		WHERE EXERCISE_ID = #{exerciseId}
 	</update>
 	<select id="findByName" resultType="TrainCategorys">

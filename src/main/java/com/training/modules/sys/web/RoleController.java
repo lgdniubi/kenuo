@@ -197,7 +197,7 @@ public class RoleController extends BaseController {
 		model.addAttribute("role", role);
 		model.addAttribute("userList", userList);
 		model.addAttribute("selectIds", Collections3.extractToString(userList, "name", ","));
-		model.addAttribute("officeList", officeService.findAll());
+		model.addAttribute("officeList", officeService.findDyOffice());
 		return "modules/sys/selectUserToRole";
 	}
 	

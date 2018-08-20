@@ -271,11 +271,11 @@
 			</table>  
 		</div>
 		<div id="refuseForm" style="display: none">
-			<input name="userid" value="${userCheck.userid}" type="hidden">
+<%-- 			<input name="userid" value="${userCheck.userid}" type="hidden"> --%>
 			<input name="id" value="${applyid}" type="hidden">
 			<input name="status" value="1" type="hidden">
 			<input name="auditType" value="${userCheck.auditType}" type="hidden">
-			<input name="pageNo" type="hidden" value="${pageNo}" />
+<%-- 			<input name="pageNo" type="hidden" value="${pageNo}" /> --%>
 			<label>拒绝原因：</label>
 			<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 				<tbody>

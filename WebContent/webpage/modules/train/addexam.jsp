@@ -41,6 +41,7 @@
 				}else if($("#exerciseTitle1").val()==""){
 					$("#bt1").show();
 				}else{
+					if($("#score1").val()==""){$("#sc1").show();return}
 					huigun(num);
 				}
 			}
@@ -52,6 +53,7 @@
 				}else if($("#exerciseContent21").val()==""||$("#exerciseContent22").val()==""||$("#exerciseContent23").val()==""||$("#exerciseContent24").val()==""){
 					$("#da2").show();
 				}else{
+					if($("#score2").val()==""){ $("#sc2").show();return}
 					huigun(num);
 				}
 			}
@@ -65,6 +67,7 @@
 				}else if(document.querySelectorAll("input[type=checkbox]:checked").length<2){
 					$("#da").show();
 				}else{
+					if(document.getElementById("score3").value==""){$("#sc3").show();return}
 					huigun(num);
 				}
 			}
@@ -130,6 +133,10 @@
 	                <div class="tab-content" id="tab-content">
 	                    <div class="tab-inner">
                             <ul>
+                            	<li>
+                                	<span class="col-sm-2"><font color="red" size="2">*&nbsp;</font>分数：</span><input type="text" class="mradio" id="score1" name="score1"  maxlength="2">
+                                	<p id="sc1" style="display:none" ><span class="col-sm-2"></span><font color="red" size="2">*  分数不能为空</font></p>
+                                </li>
                                 <li>
                                     <span class="col-sm-2"><font color="red" size="2">*&nbsp;</font>添加题目：</span><textarea name="exerciseTitle1" id="exerciseTitle1" class="mtitle col-sm-8" name="mtitle" onfocus="a()" maxlength="255"></textarea>
                                     <p id="bt1" style="display:none" ><span class="col-sm-2"></span><font color="red" size="2">*  标题不能为空</font></p>
@@ -152,6 +159,10 @@
 	                    </div>
 	                    <div class="tab-inner hidden">
                             <ul>
+                            	<li>
+                                	<span class="col-sm-2"><font color="red" size="2">*&nbsp;</font>分数：</span><input type="text" class="mradio" id="score2" name="score2"  maxlength="2">
+                                	<p id="sc2" style="display:none" ><span class="col-sm-2"></span><font color="red" size="2">*  分数不能为空</font></p>
+                                </li>
                                 <li>
                                     <span class="col-sm-2"><font color="red" size="2">*&nbsp;</font>添加题目：</span><textarea name="exerciseTitle2" id="exerciseTitle2" class="mtitle col-sm-8" name="mtitle" onfocus="a()" maxlength="255"></textarea>
                                     <p id="bt2" style="display:none"><span class="col-sm-2"></span><font color="red" size="2">*  标题不能为空</font></p>
@@ -190,6 +201,10 @@
 	                    </div>
 	                    <div class="tab-inner hidden">
                             <ul>
+                            	<li>
+                                	<span class="col-sm-2"><font color="red" size="2">*&nbsp;</font>分数：</span><input type="text" class="mradio" id="score3" name="score3"  maxlength="2">
+                                	<p id="sc3" style="display:none" ><span class="col-sm-2"></span><font color="red" size="2">*  分数不能为空</font></p>
+                                </li>
                                 <li>
                                     <span class="col-sm-2"><font color="red" size="2">*&nbsp;</font>添加题目：</span><textarea name="exerciseTitle3" id="exerciseTitle3" class="mtitle col-sm-8" name="mtitle" onfocus="a()" maxlength="255"></textarea>
                                     <p id="bt3" style="display:none"><span class="col-sm-2"></span><font color="red" size="2">*  标题不能为空</font></p>

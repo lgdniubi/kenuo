@@ -132,6 +132,7 @@ public class ExamlistController extends BaseController{
 			}
 		String parentId=exercisesService.getParentId(exercisesCategorys.getExerciseId());
 		model.addAttribute("parentId", parentId);
+		model.addAttribute("score", exercisesCategorys.getScore());
 		model.addAttribute("exercisesCategorys", exercisesCategorys);
 		model.addAttribute("exerciseId",exercisesCategorys.getExerciseId());
 		model.addAttribute("categoryid",exercisesCategorys.getCategoryId());
@@ -207,6 +208,7 @@ public class ExamlistController extends BaseController{
 			exercises.setTags(request.getParameter("tags1"));
 			exercises.setCategoryId(request.getParameter("name") );
 			exercises.setCreateuser(userId);
+			exercises.setScore(request.getParameter("score1"));
 			exercisesService.addExam(exercises);
 			model.addAttribute("success", 1);
 		}
@@ -227,6 +229,7 @@ public class ExamlistController extends BaseController{
 			exercises.setTags(request.getParameter("tags2"));
 			exercises.setCategoryId(request.getParameter("name"));
 			exercises.setCreateuser(userId);
+			exercises.setScore(request.getParameter("score2"));
 			exercisesService.addExam(exercises);
 			model.addAttribute("success", 1);
 		}
@@ -248,6 +251,7 @@ public class ExamlistController extends BaseController{
 			exercises.setTags(request.getParameter("tags3"));
 			exercises.setCategoryId(request.getParameter("name"));
 			exercises.setCreateuser(userId);
+			exercises.setScore(request.getParameter("score3"));
 			exercisesService.addExam(exercises);
 			model.addAttribute("success", 1);
 		}
@@ -279,6 +283,7 @@ public class ExamlistController extends BaseController{
 			exercises.setTags(request.getParameter("tags1"));
 			exercises.setCategoryId(request.getParameter("name") );
 			exercises.setCreateuser(userId);
+			exercises.setScore(request.getParameter("score1"));
 			exercisesService.updateExam(exercises);
 		}
 		//修改单选题
@@ -297,6 +302,7 @@ public class ExamlistController extends BaseController{
 			exercises.setTags(request.getParameter("tags2"));
 			exercises.setCategoryId(request.getParameter("name"));
 			exercises.setCreateuser(userId);
+			exercises.setScore(request.getParameter("score2"));
 			exercisesService.updateExam(exercises);
 		}
 		//修改多选题
@@ -316,6 +322,7 @@ public class ExamlistController extends BaseController{
 			exercises.setTags(request.getParameter("tags3"));
 			exercises.setCategoryId(request.getParameter("name"));
 			exercises.setCreateuser(userId);
+			exercises.setScore(request.getParameter("score3"));
 			exercisesService.updateExam(exercises);
 		}
 		addMessage(redirectAttributes, "修改试题'" + exercises.getExerciseTitle() + "'成功");

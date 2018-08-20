@@ -127,6 +127,16 @@
 		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
 		ORDER BY a.code
 	</select>
+	<select id="findDyOffice" resultType="Office">
+		SELECT
+			<include refid="officeColumns"/>
+			,(SELECT COUNT(*) FROM sys_office AS B WHERE A.id=B.parent_id AND B.del_flag=0) AS 'num'
+		FROM sys_office a
+		<include refid="officeJoins"/>
+		WHERE a.del_flag = 0
+		and a.id = '1' 
+		ORDER BY a.code
+	</select>
 	
 	<select id="findListbyPID" resultType="Office">
 		SELECT

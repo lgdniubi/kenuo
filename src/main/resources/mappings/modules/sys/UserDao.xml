@@ -921,6 +921,7 @@
 			LEFT JOIN sys_office o ON o.id = a.office_id
 			${sqlMap.dsf}
 			AND a.del_flag = 0
+			AND a.company_id = 1
 			AND r.role_id = #{role.id}
 			ORDER BY  o.code,c.code, a.name
 	</select>
