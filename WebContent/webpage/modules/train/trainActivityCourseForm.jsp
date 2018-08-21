@@ -35,6 +35,7 @@
 								  $("#franchiseeId").val(ids2);
 							  }else{
 								  top.layer.alert('商家不可为空', {icon: 0, title:'提醒'});
+								  return ;
 							  }
 						 }else{
 							 $("#franchiseeId").val('');
