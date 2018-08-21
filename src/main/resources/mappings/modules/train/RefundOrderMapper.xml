@@ -175,6 +175,15 @@
 	<update id="makeSureInAccount">
 		update train_refund_order
 		set order_status = #{status}
+		<if test="remarks != null and remarks != ''">
+			,remarks=#{remarks}
+		</if>
 		where order_id = #{order_id}
+	</update>
+	
+	<update id="updateStatementStatus">
+		update sys_office_statement a,train_statement_order b 
+		set a.refund_order_status = #{status}
+		where a.id = b.statement_id and b.order_id = #{order_id}
 	</update>
 </mapper>

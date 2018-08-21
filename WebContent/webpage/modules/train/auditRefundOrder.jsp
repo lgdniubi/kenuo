@@ -38,15 +38,15 @@
         	  return false; 
 		}
 		
-		/* function checkValue(value){
-			if(value == 2){
+		function checkValue(value){
+			if(value == 3){
 				$("#remarks").hide();
 				$("#remarks [name='remarks']").removeClass("required");
-			}else if(value == 3){
+			}else if(value == 4){
 				$("#remarks").show();
 				$("#remarks [name='remarks']").addClass("required");
 			}
-		} */
+		}
 	</script>
 </head>
 <body>
@@ -63,15 +63,15 @@
 				</tr> -->
 			    <tr>
 			         <td class="active"><label class="pull-right">操作类型:</label></td>
-			         <td><input id="mod_id1" class=" input-sm required" name="status" value="3" aria-required="true" type="radio" >确认入账</td>
-			         <td><input id="mod_id2" class=" input-sm required" name="status" value="1" aria-required="true" type="radio" >审核驳回</td>
+			         <td><input id="mod_id1" class=" input-sm required" name="status" value="3" aria-required="true" type="radio" onclick="checkValue(this.value)">确认入账</td>
+			         <td><input id="mod_id2" class=" input-sm required" name="status" value="4" aria-required="true" type="radio" onclick="checkValue(this.value)">审核驳回</td>
 				</tr>
-			   <!--  <tr id="remarks">
+			    <tr id="remarks" hidden="true">
 			         <td class="active"><label class="pull-right">驳回原因:</label></td>
 			         <td colspan="2">
-			         	<textarea rows="5" name="remarks" class="input-medium form-control required"></textarea>
+			         	<textarea rows="5"  name="remarks" class="input-medium form-control"></textarea>
 			         </td>
-				</tr> -->
+				</tr>
 			</tbody>
 		</table>  
 	</form:form> 
