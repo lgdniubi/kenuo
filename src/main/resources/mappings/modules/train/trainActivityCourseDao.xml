@@ -8,6 +8,9 @@
 		<result property="startDate" column="startDate" />
 		<result property="endDate" column="endDate" />
 		<result property="amount" column="amount" />
+		<result property="franchiseeId" column="franchisee_id" />
+		<result property="label" column="label" />
+		<result property="isOpen" column="is_open" />
 		<result property="sort" column="sort" />
 		<result property="headImg" column="headImg" />
 		<collection property="trainActivityCourseContentList" ofType="TrainActivityCourseContent">
@@ -72,6 +75,9 @@
 			a.amount,
 			a.sort,
 			a.head_img AS headImg,
+			a.franchisee_id,
+			a.label,
+			a.is_open,
 			b.id AS 'trainActivityCourseContentList.cId',
 			b.type AS 'trainActivityCourseContentList.type',
 			b.img AS 'trainActivityCourseContentList.img'
@@ -94,7 +100,10 @@
 			sort,
 			create_by,
 			create_date,
-			del_flag
+			del_flag,
+			franchisee_id,
+			label,
+			is_open
 		)VALUES(
 			#{name},
 			#{startDate},
@@ -105,7 +114,10 @@
 			#{sort},
 			#{createBy.id}, 
 			SYSDATE(),
-			0
+			0,
+			#{franchiseeId},
+			#{label},
+			#{isOpen}
 		)
 	</insert>
 	<!-- 删除妃子校活动关联的内容 -->

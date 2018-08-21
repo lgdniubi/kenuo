@@ -27,7 +27,7 @@ public class Exercises extends DataEntity<Exercises>{
 	private String tags; 				//快捷搜索关键字
 	private String officeCode;			//机构管理CODE
 	private String createuser;			//创建者ID（用户ID）
-	private String score;				//试题分数
+	private Integer score;				//试题分数
 	
 	//试题导入
 	private String categoryName;		//课程名称
@@ -169,10 +169,10 @@ public class Exercises extends DataEntity<Exercises>{
 	public void setResult(String result) {
 		this.result = result;
 	}
-	public String getScore() {
+	public Integer getScore() {
 		return score;
 	}
-	public void setScore(String score) {
+	public void setScore(Integer score) {
 		this.score = score;
 	}
 	

@@ -8,6 +8,7 @@
 <head>
 	<title>菜单管理</title>
 	<meta name="decorator" content="default"/>
+	<%@include file="/webpage/include/treeview.jsp" %>
 	<!-- 内容上传 引用-->
 	<link rel="stylesheet" type="text/css" href="${ctxStatic}/train/uploadify/uploadify.css">
 	<script type="text/javascript" src="${ctxStatic}/train/uploadify/lang-cn.js"></script>
@@ -16,11 +17,28 @@
 	<link rel="stylesheet" href="${ctxStatic}/ec/css/moveImg.css">
 	<script type="text/javascript">
 		var validateForm;
+		var tree2;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
 			if($("#headImg").val() != null && $("#headImg").val() != ""){
 				var els =document.getElementsByName("img");
 				if(els.length != 0){
 					if(validateForm.form()){
+						if($("#isOpen").val()==1){
+							var ids2 = [], nodes2 = tree2.getCheckedNodes(true);
+							for (var i=0; i<nodes2.length; i++) {
+								var halfCheck = nodes2[i].getCheckStatus();
+								if (!halfCheck.half){//不为半选
+									ids2.push(nodes2[i].id);
+								}
+							}
+							  if(ids2.length > 0){
+								  $("#franchiseeId").val(ids2);
+							  }else{
+								  top.layer.alert('商家不可为空', {icon: 0, title:'提醒'});
+							  }
+						 }else{
+							 $("#franchiseeId").val('');
+						 }
 						if(confirm("活动添加后不可修改！确定添加？")){
 							$("#inputForm").submit();
 							return true;
@@ -178,6 +196,38 @@
 					}
 				}
 			});
+			//-------------商家树开始----------------
+			var setting = {check:{enable:true,autoCheckTrigger: true},view:{selectedMulti:false},
+					data:{simpleData:{enable:true}},callback:{beforeClick:function(id, node){
+						tree.checkNode(node, !node.checked, true, true);
+						return false;
+					}}};
+					
+			// 用户-机构
+			var zNodes2=[
+					<c:forEach items="${officeList}" var="office">{id:"${office.id}", pId:"${not empty office.parent?office.parent.id:0}", name:"${office.name}"},
+		            </c:forEach>];
+			// 初始化树结构
+			tree2 = $.fn.zTree.init($("#officeTree"), setting, zNodes2);
+			// 不选择父节点
+			tree2.setting.check.chkboxType = { "Y" : "s", "N" : "s" };
+			// 默认选择节点
+			var ids2 = "${trainActivityCourse.franchiseeId}".split(",");
+			for(var i=0; i<ids2.length; i++) {
+				var node = tree2.getNodeByParam("id", ids2[i]);
+				try{tree2.checkNode(node, true, false);}catch(e){}
+			}
+			// 默认展开全部节点
+			//tree2.expandAll(true);
+			tree2.selectNode(node,true,false);//  展开选中的节点
+			
+			// 刷新（显示/隐藏）机构
+			refreshOfficeTree();
+			$("#isOpen").change(function(){
+				refreshOfficeTree();
+			});
+			//---------商家树结束----------
+			
 		});
 		//上传图片，用户记录div的ID
 		var imagecount = 0;
@@ -222,6 +272,15 @@
 				$("#"+divname1).html(arr);
 			}
 		}
+		
+		
+		function refreshOfficeTree(){
+			if($("#isOpen").val()==1){
+				$("#officeTree").show();
+			}else{
+				$("#officeTree").hide();
+			}
+		}
 	</script>
 </head>
 <body>
@@ -250,6 +309,25 @@
 		         <td class="width-35" ><form:input path="amount" htmlEscape="false" class="form-control required number"/>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>排序:</label></td>
 		         <td class="width-35" ><form:input path="sort" htmlEscape="false" class="form-control required digits"/>
+		      </tr>
+		      <tr>
+		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>公开:</label></td>
+		         <td class="width-35" colspan="3">
+		         	<form:select path="isOpen" id="isOpen" cssClass="form-control" >
+						<form:option  value="0" label="公开"/>
+						<form:option  value="1" label="不公开"/>
+					</form:select>
+					<div class="controls" style="margin-top:3px;margin-left: 10px;">
+						<div id="officeTree" class="ztree" style="margin-top:3px;margin-left: 10px;"></div>
+						<form:hidden path="franchiseeId"/>
+					</div>
+		         </td>
+		         <%-- <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>选择商家:</label></td>
+		         <td class="width-35" ><form:input path="sort" htmlEscape="false" class="form-control required digits"/> --%>
+		      </tr>
+		      <tr>
+		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>标签:</label></td>
+		         <td class="width-35" colspan="3"><form:input path="label" htmlEscape="false" maxlength="4"  class="form-control required"/>
 		      </tr>
 		      <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>封面照片:</label></td>

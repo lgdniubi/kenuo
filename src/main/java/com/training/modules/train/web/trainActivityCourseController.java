@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
+import com.training.modules.sys.service.OfficeService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.train.entity.TrainActivityCourse;
 import com.training.modules.train.entity.TrainActivityCourseContent;
@@ -38,6 +39,8 @@ public class trainActivityCourseController extends BaseController{
 	
 	@Autowired
 	private TrainActivityCourseService trainActivityCourseService;
+	@Autowired
+	private OfficeService officeService;
 	
 	/**
 	 * 妃子校活动课程list
@@ -79,6 +82,7 @@ public class trainActivityCourseController extends BaseController{
 				trainActivityCourse = trainActivityCourseService.get(trainActivityCourse);
 			}
 			model.addAttribute("trainActivityCourse", trainActivityCourse);
+			model.addAttribute("officeList", officeService.findAll());
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "查询妃子校活动课程详情", e);
 			logger.error("查询妃子校活动课程详情错误信息:"+e.getMessage());
@@ -100,6 +104,8 @@ public class trainActivityCourseController extends BaseController{
 	public String save(Model model,TrainActivityCourse trainActivityCourse,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
 			String[] Images = request.getParameterValues("img");
+			String ids = trainActivityCourse.getFranchiseeId().substring(0, 5);
+			trainActivityCourse.setFranchiseeId(ids);
 			trainActivityCourseService.save(trainActivityCourse);
 			int acId = trainActivityCourse.getAcId();
 			if(acId != 0){
