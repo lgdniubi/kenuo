@@ -857,7 +857,7 @@ window.onload=initStatus;
 							<div class="pull-left">
 								<h4>订单备注信息：</h4>
 							</div>
-							<c:if test="${type != 'view' }">
+							<c:if test="${type != 'view' && orders.channelFlag != 'bm'}">
 								<div class="pull-right">
 									<a href="#" onclick="getRemarks()" class="btn btn-primary btn-xs" ><i class="fa fa-plus"></i>添加备注</a>
 								</div>

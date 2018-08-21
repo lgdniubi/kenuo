@@ -11,7 +11,7 @@ $(document).ready(function(){
 		    area: ['300px', '420px'],
 		    title:"选择商品分类",
 		    ajaxData:{selectIds: $("#newGoodsCategoryIdId").val()},
-		    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/goodscategory/treeData")+"&module=&checked=&extId=&isAll=" ,
+		    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/ec/goodscategory/treeData")+"&module=&checked=&extId=&isAll=" ,
 		    btn: ['确定', '关闭']
     	       ,yes: function(index, layero){ //或者使用btn1
 						var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
@@ -63,7 +63,7 @@ $(document).ready(function(){
 			    area: ['300px', '420px'],
 			    title:"商品选择",
 			    ajaxData:{selectIds: $("#goodselectId").val()},
-			    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?goodsCategory="+cateid+"&isAppshow=1")+"&module=&checked=&extId=&isAll=",
+			    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/ec/goods/treeGoodsData?goodsCategory="+cateid+"&isAppshow=1")+"&module=&checked=&extId=&isAll=",
 			    btn: ['确定', '关闭']
 	    	       ,yes: function(index, layero){ //或者使用btn1
 							var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
