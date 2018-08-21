@@ -305,7 +305,7 @@
 			    area: ['300px', '420px'],
 			    title:"选择店铺",
 			    ajaxData:{selectIds: $("#belongOfficeId").val()},
-			    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/office/treeData?type=2")+"&module=&checked=&extId=&isAll=&selectIds=" ,
+			    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/sys/office/treeData?type=2")+"&module=&checked=&extId=&isAll=&selectIds=" ,
 			    btn: ['确定', '关闭']
 	    	       ,yes: function(index, layero){ //或者使用btn1
 							var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
@@ -347,6 +347,12 @@
 	});
 	
 	function getRemarks(){
+		var tbody=document.getElementById('orderRemarks');
+		if(tbody.rows.length >= 1){
+			top.layer.alert('备注只能添加1条!', {icon: 0, title:'提醒'}); 
+			return;
+		}
+		
 		// 正常打开	
 		top.layer.open({
 		    type: 2, 

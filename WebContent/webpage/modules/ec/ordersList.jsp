@@ -120,16 +120,16 @@
 	    });
 		
 		function addVirtualOrder(){
-			openDialog("新增"+'虚拟订单',"/kenuo/a/ec/orders/createOrder","900px", "650px","");
+			openDialog("新增"+'虚拟订单',"${ctx}/ec/orders/createOrder","900px", "650px","");
 		}
 		function addKindOrder(){
-			openDialog("新增"+'实物订单&nbsp;&nbsp;&nbsp;&nbsp;<span style=\'color:red;\'>实物订单无法预约,如需创建服务项目,请添加虚拟订单</span>',"/kenuo/a/ec/orders/createKindOrder","900px", "650px","");
+			openDialog("新增"+'实物订单&nbsp;&nbsp;&nbsp;&nbsp;<span style=\'color:red;\'>实物订单无法预约,如需创建服务项目,请添加虚拟订单</span>',"${ctx}/ec/orders/createKindOrder","900px", "650px","");
 		}
 		function addSuitCardOrder(){
-			openDialog("新增"+'套卡订单',"/kenuo/a/ec/orders/createSuitCardOrder","900px", "650px","");
+			openDialog("新增"+'套卡订单',"${ctx}/ec/orders/createSuitCardOrder","900px", "650px","");
 		}        
 		function addCommonCardOrder(){
-			openDialog("新增"+'通用卡订单',"/kenuo/a/ec/orders/createCommonCardOrder","900px", "650px","");
+			openDialog("新增"+'通用卡订单',"${ctx}/ec/orders/createCommonCardOrder","900px", "650px","");
 		}
 		
 		//退货列表111
