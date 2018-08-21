@@ -409,7 +409,7 @@
 			    area: ['300px', '420px'],
 			    title:"选择部门",
 			    ajaxData:{selectIds: $("#belongOfficeId").val()},
-			    content: "/kenuo/a/tag/treeselect?url="+encodeURIComponent("/sys/office/treeData?type=2")+"&module=&checked=&extId=&isAll=&selectIds=" ,
+			    content: "${ctx}/tag/treeselect?url="+encodeURIComponent("/sys/office/treeData?type=2")+"&module=&checked=&extId=&isAll=&selectIds=" ,
 			    btn: ['确定', '关闭']
 	    	       ,yes: function(index, layero){ //或者使用btn1
 							var tree = layero.find("iframe")[0].contentWindow.tree;//h.find("iframe").contents();
@@ -480,6 +480,12 @@
 		});
 	}
 	function getRemarks(){
+		var tbody=document.getElementById('orderRemarks');
+		if(tbody.rows.length >= 1){
+			top.layer.alert('备注只能添加1条!', {icon: 0, title:'提醒'}); 
+			return;
+		}
+		
 		// 正常打开	
 		top.layer.open({
 		    type: 2, 
@@ -496,7 +502,7 @@
    					"<td align='center'>"+
    						"<div style='width:260px;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;'>"+remarks+"</div><input id='orderRemarks' name='orderRemarks' type='hidden' value='"+remarks+"' class='form-control' readonly='readonly'>"+
    					"</td>"+
-   					"<td><a href='#' class='btn btn-danger btn-xs' onclick='delFile(this)'><i class='fa fa-trash'></i> 删除</a></td>"+
+   					"<td><a href='#' class='btn btn-danger btn-xs' onclick='deleteFileRemarks(this)'><i class='fa fa-trash'></i> 删除</a></td>"+
    					"</tr>"
     			);
 				top.layer.close(index);
@@ -504,6 +510,10 @@
 		}); 
 	}
 	
+	//删除备注
+	function deleteFileRemarks(obj){
+		$(obj).parent().parent().remove();
+	}
 	
 	function invoiceVerify(){
 		$("#Ichecks").attr("disabled",true);
