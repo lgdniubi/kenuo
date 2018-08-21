@@ -393,6 +393,11 @@ public class MtmyMnappointmentController extends BaseController{
 					}
 					/*##########[神策埋点end]##########*/
 					
+					/*##########[神策埋点-统计预约已完成的预约{submit_appoint_success}-Begin]##########*/
+					if("1".equals(status)){
+						TrackCore.submitAppointSuccess(reservation.getReservationId());
+					}
+					/*##########[神策埋点end]##########*/
 				}else{
 					addMessage(redirectAttributes, "修改预约失败:"+jsonObject.get("msg"));
 				}

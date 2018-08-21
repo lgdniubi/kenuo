@@ -34,4 +34,15 @@ public class TApptOrderService {
 		return iTApptOrderDao.queryApptOrderDetail(map);
 	}
 	
+	/**
+	 * 方法说明：	根据预约ID，查询预约详情
+	 * 创建时间：	2018年8月21日10:33:00
+	 * 创建人：	xiaoye
+	 * @param map
+	 * @return
+	 */
+	public TApptOrder queryApptDetail(Map<String, Object> map) {
+		return iTApptOrderDao.queryApptDetail(map);
+	}
+	
 }

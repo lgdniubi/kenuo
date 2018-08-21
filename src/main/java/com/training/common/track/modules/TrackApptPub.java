@@ -111,4 +111,56 @@ public class TrackApptPub {
 			log.error("埋点-消耗业绩统计[deplete_achievement],出现异常，信息为："+e.getMessage()); 
 		}
 	}
+	
+	/**
+	 * 方法说明：	统计预约已完成的预约
+	 * 创建时间：	2018年8月21日10:23:22
+	 * 创建人：	xiaoye
+	 */
+	public void submit_appoint_success() {
+		try {
+			log.info("[埋点-消耗业绩统计 { submit_appoint_success } 入参：]"+this.paramMap.toString());
+			// 预约ID
+			String apptId = String.valueOf(this.paramMap.get("APPT_ID"));
+			
+			Map<String, Object> map = new HashMap<String, Object>();
+		    map.put("apptId", apptId);
+		    TApptOrder tApptOrder = tApptOrderService.queryApptDetail(map);
+
+		    // 登录用用户ID
+ 			String distinctId = TrackUtils.convertStr(tApptOrder.getUserId());
+ 			this.paramMap.put("DISTINCT_ID", distinctId);
+			
+			// 使用 DebugConsumer 初始化 SensorsAnalytics
+			final SensorsAnalytics sa = TrackConfig.getMtmySensorsAnalytics(this.paramMap);
+			
+			Map<String, Object> properties = new HashMap<String, Object>();
+			// 预约id
+		    properties.put("appoint_id", apptId);
+		    // 预约商品id
+		    properties.put("goods_id", TrackUtils.convertStr(tApptOrder.getGoodsId()));
+		    //预约商品是否是实物虚拟
+		    properties.put("goods_isReal", TrackUtils.convertStr(tApptOrder.getIsReal()));
+		    // 预约商品名称
+		    properties.put("goods_name", TrackUtils.convertStr(tApptOrder.getGoodsName()));
+		    // 美容师店铺id
+		    properties.put("store_id", TrackUtils.convertStr(tApptOrder.getShopId()));
+		    // 美容师所属店铺名称
+		    properties.put("store_name", TrackUtils.convertStr(tApptOrder.getShopName()));
+		    // 美容师id
+		    properties.put("beautician_id", TrackUtils.convertStr(tApptOrder.getBeauticianId()));
+		    // 预约美容师名称
+		    properties.put("beautician_name", TrackUtils.convertStr(tApptOrder.getBeauticianName()));
+		    // 预约时间
+		    properties.put("appoint_time", TrackUtils.convertStr(tApptOrder.getApptDate()));
+		    
+		    sa.track(distinctId, true, "submit_appoint_success", properties);
+			
+			// 程序结束前，停止 Sensors Analytics SDK 所有服务
+			sa.shutdown();
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("埋点-统计预约已完成的预约[submit_appoint_success],出现异常，信息为："+e.getMessage()); 
+		}
+	}
 }
