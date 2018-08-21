@@ -67,4 +67,27 @@ public class TrainActivityCourseService extends CrudService<TrainActivityCourseD
 		page.setList(dao.findTrainOrder(trainOrder));
 		return page;
 	}
+
+	/**
+	 * 保存课程
+	 * @param trainActivityCourse
+	 */
+	public void saveCourse(TrainActivityCourse trainActivityCourse) {
+		super.save(trainActivityCourse);
+		if(trainActivityCourse.getIsOpen() == 1){
+			int acId = trainActivityCourse.getAcId();
+			String[] cids = trainActivityCourse.getFranchiseeId().split(",");
+			dao.insertCourseOffice(acId,cids);
+		}
+		
+	}
+
+	/**
+	 * 通过课程id查询商家id
+	 * @param acId
+	 * @return
+	 */
+	public String findCompanyIds(int acId) {
+		return dao.findCompanyIds(acId);
+	}
 }

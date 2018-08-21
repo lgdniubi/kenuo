@@ -8,7 +8,6 @@
 		<result property="startDate" column="startDate" />
 		<result property="endDate" column="endDate" />
 		<result property="amount" column="amount" />
-		<result property="franchiseeId" column="franchisee_id" />
 		<result property="label" column="label" />
 		<result property="isOpen" column="is_open" />
 		<result property="sort" column="sort" />
@@ -75,7 +74,6 @@
 			a.amount,
 			a.sort,
 			a.head_img AS headImg,
-			a.franchisee_id,
 			a.label,
 			a.is_open,
 			b.id AS 'trainActivityCourseContentList.cId',
@@ -101,7 +99,6 @@
 			create_by,
 			create_date,
 			del_flag,
-			franchisee_id,
 			label,
 			is_open
 		)VALUES(
@@ -115,7 +112,6 @@
 			#{createBy.id}, 
 			SYSDATE(),
 			0,
-			#{franchiseeId},
 			#{label},
 			#{isOpen}
 		)
@@ -189,5 +185,16 @@
 				AND DATE_FORMAT(a.pay_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{lastDate},'%Y-%m-%d')
 			</if>
 		ORDER BY a.pay_time DESC
+	</select>
+	
+	<insert id="insertCourseOffice">
+		INSERT INTO `train_course_office` (`course_id`, `office_id`)
+		VALUES
+			 <foreach collection ="cids" item="cid" separator =",">
+		         (#{acId}, #{cid})
+		    </foreach >
+	</insert>
+	<select id="findCompanyIds" resultType="string">
+		SELECT GROUP_CONCAT(office_id) FROM train_course_office WHERE course_id = #{acId}
 	</select>
 </mapper>

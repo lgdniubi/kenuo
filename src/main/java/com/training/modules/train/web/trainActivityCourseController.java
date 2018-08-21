@@ -80,6 +80,10 @@ public class trainActivityCourseController extends BaseController{
 		try {
 			if(trainActivityCourse.getAcId() != 0){
 				trainActivityCourse = trainActivityCourseService.get(trainActivityCourse);
+				if(trainActivityCourse.getIsOpen()==1){
+					String companyIds = trainActivityCourseService.findCompanyIds(trainActivityCourse.getAcId());
+					trainActivityCourse.setFranchiseeId(companyIds);
+				}
 			}
 			model.addAttribute("trainActivityCourse", trainActivityCourse);
 			model.addAttribute("officeList", officeService.findAll());
@@ -104,9 +108,7 @@ public class trainActivityCourseController extends BaseController{
 	public String save(Model model,TrainActivityCourse trainActivityCourse,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
 			String[] Images = request.getParameterValues("img");
-			String ids = trainActivityCourse.getFranchiseeId().substring(0, 5);
-			trainActivityCourse.setFranchiseeId(ids);
-			trainActivityCourseService.save(trainActivityCourse);
+			trainActivityCourseService.saveCourse(trainActivityCourse);
 			int acId = trainActivityCourse.getAcId();
 			if(acId != 0){
 				List<TrainActivityCourseContent> list = new ArrayList<TrainActivityCourseContent>();
