@@ -38,6 +38,7 @@
                 <div class=" clearfix">
                     <form:form class="navbar-form navbar-left searcharea"  id="searchForm" modelAttribute="fzxRole" action="${ctx}/train/fzxRole/list" method="post">
                     	<!-- 分页隐藏文本框 -->
+						<form:hidden path="opflag"/>
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 						<div class="form-group">

@@ -37,6 +37,7 @@
             <div class="ibox-content">
                 <div class=" clearfix">
                     <form:form class="navbar-form navbar-left searcharea"  id="searchForm" modelAttribute="mediaRole" action="${ctx}/train/mdrole/list" method="post">
+                    	<form:hidden path="opflag"/>
                     	<!-- 分页隐藏文本框 -->
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
