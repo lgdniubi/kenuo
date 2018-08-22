@@ -162,4 +162,27 @@ public class TrackCore {
 			log.error("埋点-订单-支付订单[payOrder],出现异常，信息为："+e.getMessage()); 
 		}
 	}
+	
+	/**
+	 * 方法说明：	统计预约已完成的预约
+	 * 创建时间：	2018年8月21日10:20:35
+	 * 创建人：	xiaoye
+	 */
+	public static void submitAppointSuccess(Integer apptId) {
+		try {
+			
+			Map<String, Object> trackParamsMap = new HashMap<String, Object>();
+			// 方法名称-提交一键预约
+			trackParamsMap.put("METHOD_NAME", "submit_appoint_success");
+			// 预约ID
+			trackParamsMap.put("APPT_ID", apptId);
+			
+			// 异步线程执行方法
+			Global.newFixed.execute(new TrackThread(trackParamsMap));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("埋点-预约-统计预约已完成的预约[submitAppointSuccess],出现异常，信息为："+e.getMessage()); 
+		}
+	}
 }

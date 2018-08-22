@@ -39,6 +39,8 @@ public class TApptOrder extends DataEntity<TApptOrder>{
 	private String depleteGoodsType;
 	// 服务次数
 	private Integer serviceTimes;
+	//是否为实物（0：实物；1：虚拟；2：套卡；3：通用卡）
+	private Integer isReal;
 	
 	/**
 	 * @return the appId
@@ -207,5 +209,11 @@ public class TApptOrder extends DataEntity<TApptOrder>{
 	 */
 	public void setServiceTimes(Integer serviceTimes) {
 		this.serviceTimes = serviceTimes;
+	}
+	public Integer getIsReal() {
+		return isReal;
+	}
+	public void setIsReal(Integer isReal) {
+		this.isReal = isReal;
 	}
 }
