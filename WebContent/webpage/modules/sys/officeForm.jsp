@@ -26,6 +26,7 @@
 	
 	<!-- 富文本框上传图片样式引用 -->
 	<link rel="stylesheet" type="text/css" href="${ctxStatic}/kindEditor/themes/editCss/edit.css">
+	<link rel="stylesheet" href="${ctxStatic}/train/css/tips.css">
 	<style>
 	</style>
 	<script type="text/javascript">
@@ -422,7 +423,11 @@
 				   <tbody>
 						<tr><td colspan="4" class="active"><label class="pull-left">基本信息</label></td></tr>
 						<tr>
-				         	<td class="width-15 active"><label class="pull-right">机构类型:</label></td>
+				         	<td class="width-15 active"><label class="pull-right">
+				         		<span class="help-tip">
+									<span class="help-p">存在子类时不可修改为店铺</span>
+								</span>
+				         		机构类型:</label></td>
 <!-- 							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>是否为店铺:</label></td> -->
 					         <td class="width-35">
 					         	<c:choose>
@@ -493,7 +498,11 @@
 					     	</td>
 						</tr>
 						<tr>
-							<td class="width-15 active"><label class="pull-right"><font color="red">*</font>机构名称:</label></td>
+							<td class="width-15 active"><label class="pull-right">
+								<span class="help-tip">
+									<span class="help-p">此字段需从签约信息页面编辑</span>
+								</span>
+							<font color="red">*</font>机构名称:</label></td>
 				         	<td class="width-35"><input id="oldOfficeName" value="${office.name }" type="hidden">
 				         	<input id="name" name="name" value="${office.name }" maxlength="20" class="form-control required" <c:if test="${not empty office.name}">disabled="true"</c:if>></td>
 					        <td class="width-15 active"><label class="pull-right">归属机构:</label></td>
@@ -502,7 +511,11 @@
 				         
 						</tr>
 						<tr>
-							<td class="width-15 active"><label class="pull-right"><font color="red">*</font>机构缩写：</label></td>
+							<td class="width-15 active"><label class="pull-right">
+								<span class="help-tip">
+									<span class="help-p">最多8个字</span>
+								</span>
+							<font color="red">*</font>机构缩写：</label></td>
 				         	<td class="width-35"><form:input path="officeInfo.shortName" htmlEscape="false" maxlength="50" cssClass="form-control required" /></td>
 					        <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>归属区域:</label></td>
 					        <td class="width-35">
@@ -525,7 +538,11 @@
 				       <tr>
 				         <td  class="width-15 active"><label class="pull-right">机构编码:</label></td>
 				         <td class="width-35"><form:input path="code" htmlEscape="false" maxlength="50" class="form-control" readonly="true"/></td>
-				         <td class="width-15 active"><label class="pull-right">唯一编码:</label></td>
+				         <td class="width-15 active"><label class="pull-right">
+				         	<span class="help-tip">
+								<span class="help-p">只能输入数字字母和下划线</span>
+							</span>
+				         	唯一编码:</label></td>
 					     <td class="width-35">
 					     	<input id="oldOfficeCode" value="${office.officeCode }" type="hidden">
 					       	<input id="officeCode" name="officeCode" value="${office.officeCode }" class="form-control" onkeyup="this.value=this.value.replace(/[^\w]/ig,'')">
@@ -603,7 +620,11 @@
 				         <td class="width-35"><form:input path="officeInfo.contacts" htmlEscape="false" maxlength="50" cssClass="form-control required" /></td>
 				     </tr>
 				     <tr>
-						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>助理电话:</label></td>
+						<td class="width-15 active"><label class="pull-right">
+							<span class="help-tip">
+								<span class="help-p">接收预约短信</span>
+							</span>
+						<font color="red">*</font>助理电话:</label></td>
 						<%-- <td class="width-35"><form:input path="legalName" htmlEscape="false" maxlength="50" class="form-control required" />${user.id }${user.mobile}${user.name }</td> --%>
 						<td class="width-35">
 							<div class="input-group">
@@ -620,7 +641,11 @@
 						</td>
 					</tr>
 				     <tr>
-				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺电话：</label></td>
+				         <td class="width-15 active"><label class="pull-right">
+				         	<span class="help-tip">
+								<span class="help-p">仅手机号请填写到后输入框</span>
+							</span>
+				         <font color="red">*</font>店铺电话：</label></td>
 				         <td class="width-35"><form:input path="officeInfo.storePhone" htmlEscape="false" cssClass="form-control required"/></td>
 				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>邮政编码:</label></td>
 				         <td class="width-35"><form:input path="officeInfo.postalCode" htmlEscape="false" maxlength="50" cssClass="form-control required" onkeyup="this.value=this.value.replace(/\D/g,'')"/></td>
@@ -652,7 +677,11 @@
 				      <tr>
 				      	 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>床位：</label></td>
 				         <td class="width-35"><form:input path="officeInfo.bedNum" htmlEscape="false" maxlength="5" cssClass="form-control digits required"/></td>
-						 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>是否新店：</label></td>
+						 <td class="width-15 active"><label class="pull-right">
+						 	<span class="help-tip">
+								<span class="help-p">会在APP商家主页新店模块显示</span>
+							</span>
+						 <font color="red">*</font>是否新店：</label></td>
 						 <td id="isNew">
 						 	<c:if test="${not empty office.id}">
 				         		<c:if test="${office.isNew == 0}">

@@ -12,7 +12,7 @@
 	<link rel="stylesheet" type="text/css" href="${ctxStatic}/train/uploadify/uploadify.css">
 	<script type="text/javascript" src="${ctxStatic}/train/uploadify/lang-cn.js"></script>
 	<script type="text/javascript" src="${ctxStatic}/train/uploadify/jquery.uploadify.min.js"></script>
-	
+	<link rel="stylesheet" href="${ctxStatic}/train/css/tips.css">
 	<script type="text/javascript">
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
@@ -259,12 +259,20 @@
 				</tr>
 				<tr>
 					<td class="width-15 active">
-						<label class="pull-right"><font color="red">*</font>企业名称:</label>
+						<label class="pull-right">
+							<span class="help-tip">
+								<span class="help-p">最多输入15个字</span>
+							</span>
+						<font color="red">*</font>企业名称:</label>
 					</td>
 					<td class="width-35"><form:input path="name" htmlEscape="false" maxlength="15" class="form-control required" />
 					</td>
 					<td class="width-15 active">
-						<label class="pull-right"><font color="red">*</font>企业简称:</label>
+						<label class="pull-right">
+							<span class="help-tip">
+								<span class="help-p">最多输入8个字</span>
+							</span>
+						<font color="red">*</font>企业简称:</label>
 					</td>
 					<td class="width-35"><form:input path="shortName" htmlEscape="false" maxlength="8" class="form-control" />
 				</tr>
@@ -331,7 +339,12 @@
 					</td>
 				</tr>
 				<tr>
-					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>超管手机号:</label></td>
+					<td class="width-15 active"><label class="pull-right">
+						<span class="help-tip">
+							<span class="help-p">默认使用企业申请人的账号，可更换归属机构在商家级别的员工</span>
+						</span>
+						<font color="red">*</font>
+						超管手机号:</label></td>
 					<%-- <td class="width-35"><form:input path="legalName" htmlEscape="false" maxlength="50" class="form-control required" />${user.id }${user.mobile}${user.name }</td> --%>
 					<td class="width-35">
 						<div class="input-group">

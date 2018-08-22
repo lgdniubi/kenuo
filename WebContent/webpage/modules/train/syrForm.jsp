@@ -132,7 +132,11 @@
 			         <td><input id="mod_id2" class=" input-sm required" name="modid" value="3" aria-required="true" <c:if test="${modelFranchisee.modid == 3}">checked="checked"</c:if> type="radio" onclick="setDiscount(this.value)">免费版</td>
 				</tr>
 			    <tr>
-			         <td class="active"><label class="pull-right">采购折扣:</label></td>
+			         <td class="active"><label class="pull-right">
+			         	<span class="help-tip">
+							<span class="help-p">请输入折扣，范围0-1，保留小数点后两位</span>
+						</span>
+			         	采购折扣:</label></td>
 			         <td colspan="2"><input id="discount" class=" form-control input-sm required" name="discount" <c:if test="${modelFranchisee.modid == 3}">readonly="readonly"</c:if> value="${modelFranchisee.discount}" aria-required="true" placeholder="请输入0-1的2位小数" onkeyup="value=value.replace(/\.\d{2,}$/,value.substr(value.indexOf('.'),3))"></td>
 				</tr>
 			    <tr>

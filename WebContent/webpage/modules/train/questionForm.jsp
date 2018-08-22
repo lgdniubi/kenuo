@@ -8,6 +8,7 @@
     <meta charset="utf-8">
     <meta name="decorator" content="default"/>
     <link rel="stylesheet" type="text/css" href="${ctxStatic}/ec/css/loading.css">
+    <link rel="stylesheet" href="${ctxStatic}/train/css/tips.css">
     
     <!-- 日期控件 -->
 	<script type="text/javascript" src="${ctxStatic}/My97DatePicker/WdatePicker.js"></script>
@@ -54,7 +55,11 @@
 						    </div>
 						    <c:choose>
 								<c:when test="${type eq '3'}">
-									<label class="col-sm-2 control-label"><font color="red">*</font>管理端分类： </label>
+									<label class="col-sm-2 control-label">
+										<span class="help-tip">
+											<span class="help-p">管理端和店铺端分类最少选一个</span>
+										</span>
+										<font color="red">*</font>管理端分类： </label>
 		                            <div class="col-sm-8">
 		                                <form:select path="typeId"  class="form-control">
 		                                	<form:option value="">请选择</form:option>
