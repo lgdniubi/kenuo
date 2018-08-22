@@ -23,4 +23,13 @@ public interface ITApptOrderDao {
 	 * @return
 	 */
 	public TApptOrder queryApptOrderDetail(Map<String, Object> map);
+	
+	/**
+	 * 方法说明：	根据预约ID，查询预约详情
+	 * 创建时间：	2018年8月21日10:32:37
+	 * 创建人：	xiaoye
+	 * @param apptId
+	 * @return
+	 */
+	public TApptOrder queryApptDetail(Map<String, Object> map);
 }

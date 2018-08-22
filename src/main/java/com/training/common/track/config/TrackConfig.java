@@ -34,6 +34,8 @@ public class TrackConfig {
 		trackConfigList.put("sign_up", "com.training.common.track.modules.TrackLoginPub");
 		// 消耗业绩统计
 		trackConfigList.put("deplete_achievement", "com.training.common.track.modules.TrackApptPub");
+		// 统计预约已完成的预约
+		trackConfigList.put("submit_appoint_success", "com.training.common.track.modules.TrackApptPub");
 		// 充值信息
 		trackConfigList.put("order_recharge", "com.training.common.track.modules.TrackOrderPub");
 		// 支付订单
