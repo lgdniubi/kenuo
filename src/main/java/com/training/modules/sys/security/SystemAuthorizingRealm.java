@@ -84,7 +84,7 @@ public class SystemAuthorizingRealm extends AuthorizingRealm {
 		User user = getSystemService().getUserByLoginName(token.getUsername());
 		if (user != null) {
 			boolean flag = "1".equals(user.getCompany().getId()) && "1".equals(user.getOffice().getId());
-			if (Global.NO.equals(user.getLoginFlag()) || !flag){
+			if (Global.NO.equals(user.getLoginFlag()) || !flag || Global.YES.equals(user.getDelFlag())){
 				throw new AuthenticationException("msg:该帐号禁止登录.");
 			}
 			byte[] salt = Encodes.decodeHex(user.getPassword().substring(0,16));

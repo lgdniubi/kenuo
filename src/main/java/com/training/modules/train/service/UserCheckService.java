@@ -190,7 +190,6 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 	 * @param modelFranchisee
 	 */
 	private void save(ModelFranchisee modelFranchisee) {
-//		updateApplyStatus(modelFranchisee);
 		if (StringUtils.isEmpty(modelFranchisee.getId())) {
 			modelFranchisee.preInsert();
 			userCheckDao.saveModelFranchisee(modelFranchisee);
@@ -198,6 +197,11 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			modelFranchisee.preUpdate();
 			userCheckDao.editModelFranchisee(modelFranchisee);
 		}
+		//保存操作日志
+		User user = UserUtils.getUser();
+		modelFranchisee.setCreateBy(user);
+		modelFranchisee.setCreateDate(new Date());
+		userCheckDao.saveLogModel(modelFranchisee);
 	}
 	//权益期限修改更改用户菜单状态
 	private void updateUserMenu(String franchiseeid,String userid) {
@@ -370,16 +374,6 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		userCheckDao.deletePcUserRole(userid);
 		userCheckDao.deleteFzxUserRole(userid);
 		mediaRoleService.deleteUserRole(userid);
-//		List<PcRole> prList= userCheckDao.findAllPcCommonRoleIds(franchiseeid);
-//		if(prList != null && prList.size()>0){
-//			userCheckDao.deleteAllPcMenu(prList);
-//		}
-//		userCheckDao.deletePcCommonRole(franchiseeid);
-//		List<FzxRole> fzxList= userCheckDao.findAllFzxCommonRoleIds(franchiseeid);
-//		if(fzxList != null && fzxList.size()>0){
-//			userCheckDao.deleteAllFzxMenu(fzxList);
-//		}
-//		userCheckDao.deleteFzxCommonRole(franchiseeid);
 	}
 
 	/**
@@ -787,6 +781,18 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		syrFranchise.setPage(page);
 		// 执行分页查询
 		page.setList(userCheckDao.findSyrList(syrFranchise));
+		return page;
+	}
+
+	public List<ModelFranchisee> findModelLogById(String id) {
+		return userCheckDao.findModelLogById(id);
+	}
+
+	public Page<ModelFranchisee> findModelLogList(Page<ModelFranchisee> page, ModelFranchisee mf) {
+		// 设置分页参数
+		mf.setPage(page);
+		// 执行分页查询
+		page.setList(userCheckDao.findModelLogById(mf));
 		return page;
 	}
 	

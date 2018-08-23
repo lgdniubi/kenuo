@@ -2,6 +2,7 @@ package com.training.modules.train.web;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -273,4 +274,21 @@ public class UserCheckController extends BaseController{
 		if (count == 0) return true;
 		return false;
 	}
+	
+	/**
+	 * 查询权益日志
+	 * @param id 权益id
+	 * @return
+	 */
+	@RequestMapping(value={"log"})
+	public String modelLog(String id,Model model,HttpServletRequest request, HttpServletResponse response){
+		ModelFranchisee mf = new ModelFranchisee();
+		mf.setId(id);
+		Page<ModelFranchisee> page = userCheckService.findModelLogList(new Page<ModelFranchisee>(request, response), mf);
+		model.addAttribute("page", page);
+//		List<ModelFranchisee> mList = userCheckService.findModelLogById(id);
+//		model.addAttribute("mList", mList);
+		return "modules/train/mLogList";
+	}
+	
 }

@@ -24,6 +24,7 @@ public class SyrFranchise extends DataEntity<SyrFranchise>{
 	private String nickname;		//用户昵称
 	private Integer modId;		//版本id
 	private Date authEndDate;		//到期日期
+	private Integer mfId;		//权益id
 	
 	
 	//----------------手艺人审核信息--train_audituser_info
@@ -154,6 +155,12 @@ public class SyrFranchise extends DataEntity<SyrFranchise>{
 	}
 	public void setAuthEndDate(Date authEndDate) {
 		this.authEndDate = authEndDate;
+	}
+	public Integer getMfId() {
+		return mfId;
+	}
+	public void setMfId(Integer mfId) {
+		this.mfId = mfId;
 	}
 	
 }
