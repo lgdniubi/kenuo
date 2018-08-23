@@ -99,6 +99,10 @@
 			         <td class="active"><label class="pull-right">创建时间:</label></td>
 			         <td colspan="5">${refundOrder.addTime }</td>
 				</tr>
+				<tr>
+			         <td class="active"><label class="pull-right">驳回原因:</label></td>
+			         <td colspan="5">${refundOrder.remarks }</td>
+				</tr>
 				<c:if test="${refundOrder.orderType eq '2'}">
 					<tr>
 				    	<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="6"><label class="pull-left">线下支付信息:</label></td>

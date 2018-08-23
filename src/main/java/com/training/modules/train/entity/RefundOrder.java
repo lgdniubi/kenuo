@@ -30,7 +30,7 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	private String proof; //凭证
 	private String explains;//说明
 	private String openname;//开户姓名
-	
+	private String remarks; //驳回原因
 	public String getOrderId() {
 		return orderId;
 	}
@@ -180,5 +180,11 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	}
 	public void setOpenname(String openname) {
 		this.openname = openname;
+	}
+	public String getRemarks() {
+		return remarks;
+	}
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 }

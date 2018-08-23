@@ -62,18 +62,19 @@
                    			<!-- <th style="text-align: center;"><label for="i-checks"><input type="checkbox" name="" id="i-checks" class="i-checks"></label></th> -->
                    			<th style="text-align: center;">账单编号</th>
                    			<!-- <th style="text-align: center;">临时订单号</th> -->
-                   			<th style="text-align: center;">账单类型</th>
-                   			<th style="text-align: center;">账单月份</th>
-                   			<th style="text-align: center;">欠款金额</th>
+                   			<!-- <th style="text-align: center;">账单类型</th>
+                   			<th style="text-align: center;">账单月份</th> -->
+                   			
                    			<th style="text-align: center;">欠款商家</th>
                    			<th style="text-align: center;">欠款机构</th>
+                   			<th style="text-align: center;">欠款金额</th>
                    			<th style="text-align: center;">实付金额</th>
                    			<th style="text-align: center;">账单状态</th>
-                   			<th style="text-align: center;">支付类型</th>
+                   			<!-- <th style="text-align: center;">支付类型</th> -->
                    			<th style="text-align: center;">支付用户</th>
-                   			<th style="text-align: center;">渠道</th>
+                   			<!-- <th style="text-align: center;">渠道</th> -->
                    			<th style="text-align: center;">创建时间</th>
-                   			<th style="text-align: center;">支付时间</th>
+                   			<!-- <th style="text-align: center;">支付时间</th> -->
                    			<th style="text-align: center;">操作</th>
                    		</tr>
 	                 </thead>
@@ -86,21 +87,21 @@
                                	<%-- <td style="text-align: center;">
                                		${refund.tempOrderId}
                                	</td> --%>
-                               	<td style="text-align: center;">
+                               	<%-- <td style="text-align: center;">
                                		<c:if test="${refund.orderType eq '1'}">线上</c:if>
                                		<c:if test="${refund.orderType eq '2'}">线下</c:if>
                                	</td>
                                	<td style="text-align: center;">
                                		${refund.billmonth}
-                               	</td>
-                                <td style="text-align: center;">
-                               		${refund.arrearagePrice}
-                               	</td>
+                               	</td> --%>
                                	<td style="text-align: center;">
                                		${refund.franchiseeName}
                                	</td>
                                	<td style="text-align: center;">
                                		${refund.arrearageOfficeName}
+                               	</td>
+                               	<td style="text-align: center;">
+                               		${refund.arrearagePrice}
                                	</td>
                                	<td style="text-align: center;">
                                		${refund.amount}
@@ -109,24 +110,25 @@
                                		<c:if test="${refund.orderStatus eq '1'}">待支付</c:if>
                                		<c:if test="${refund.orderStatus eq '2'}">待审核</c:if>
                                		<c:if test="${refund.orderStatus eq '3'}">已入账</c:if>
+                               		<c:if test="${refund.orderStatus eq '4'}">已取消</c:if>
                                	</td>
-                               	<td style="text-align: center;">
+                               <%-- 	<td style="text-align: center;">
                                		${refund.payCode}
-                               	</td>
+                               	</td> --%>
                                	<td style="text-align: center;">
                                		${refund.userName}
                                	</td>
-                               	<td style="text-align: center;">
+                               <%-- 	<td style="text-align: center;">
                                		<c:if test="${refund.channelFlag eq 'wx'}">微信</c:if>
                                		<c:if test="${refund.channelFlag eq 'alipay'}">支付宝</c:if>
                                		<c:if test="${refund.channelFlag eq 'zz'}">转账</c:if>
-                               	</td>
+                               	</td> --%>
                                	<td style="text-align: center;">
                                		${refund.addTime}
                                	</td>
-                               	<td style="text-align: center;">
+                               	<%-- <td style="text-align: center;">
                                		${refund.payTime}
-                               	</td>
+                               	</td> --%>
 								<td style="text-align: center;">
 									<shiro:hasPermission name="train:refundOrder:makeSureInAccount">
 									<c:if test="${refund.orderType eq '2'}">
