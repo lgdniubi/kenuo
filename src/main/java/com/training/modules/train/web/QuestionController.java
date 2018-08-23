@@ -31,9 +31,9 @@ import com.training.modules.train.service.HandbookTypeService;
 import com.training.modules.train.service.QuestionService;
 
 /**
- * 协议模板--供应链
+ * 手册管理
  * @author: jingfeng
- * @date 2018年5月15日下午2:40:37
+ * @date 2018年8月15日下午2:40:37
  */
 @Controller
 @RequestMapping(value = "${adminPath}/train/question")
@@ -131,7 +131,7 @@ public class QuestionController extends BaseController {
 			logger.error("删除手册错误信息:"+e);
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/train/questionService/"+listType;
+		return "redirect:" + adminPath + "/train/question/list/"+listType;
 	}
 	
 	/**

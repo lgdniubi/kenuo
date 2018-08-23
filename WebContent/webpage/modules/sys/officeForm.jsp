@@ -504,7 +504,7 @@
 								</span>
 							<font color="red">*</font>机构名称:</label></td>
 				         	<td class="width-35"><input id="oldOfficeName" value="${office.name }" type="hidden">
-				         	<input id="name" name="name" value="${office.name }" maxlength="8" class="form-control required" <c:if test="${not empty office.name}">disabled="true"</c:if>></td>
+				         	<input id="name" name="name" value="${office.name }" maxlength="20" class="form-control required" <c:if test="${not empty office.name}">disabled="true"</c:if>></td>
 					        <td class="width-15 active"><label class="pull-right">归属机构:</label></td>
 					        <td class="width-35"><sys:treeselect id="office" name="parent.id" value="${office.parent.id}" labelName="parent.name" labelValue="${office.parent.name}"
 								title="机构" url="/sys/office/parentTreeData?isGrade=true" extId="${office.id}"  cssClass="form-control required" allowClear="${office.currentUser.admin}"/></td>

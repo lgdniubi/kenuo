@@ -125,7 +125,7 @@
 										</c:if>
 								  	</td>
 								    <td>
-				    					<a href="${ctx}/train/question/delete?id=${q.id}"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>删除</a>
+				    					<a href="${ctx}/train/question/delete?id=${q.id}&listType=${type}"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>删除</a>
 				    					<a href="#" onclick="openDialog('修改', '${ctx}/train/question/form?id=${q.id}&type=${type}','850px', '650px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>修改</a>
 								    </td>
 								</tr>
