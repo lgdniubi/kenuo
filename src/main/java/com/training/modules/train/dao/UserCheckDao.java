@@ -204,5 +204,18 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	 * @return
 	 */
 	public List<SyrFranchise> findSyrList(SyrFranchise syrFranchise);
+
+	/**
+	 * 保存操作日志
+	 * @param modelFranchisee
+	 */
+	public void saveLogModel(ModelFranchisee modelFranchisee);
+
+	/**
+	 * 查询操作日志
+	 * @param mf 权益id
+	 * @return
+	 */
+	public List<ModelFranchisee> findModelLogById(ModelFranchisee mf);
 	
 }

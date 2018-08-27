@@ -81,8 +81,8 @@
                                		${info.office_name}
                                	</td>
                                	<td style="text-align: center;">
-                               		<c:if test="${info.status eq '2'}">审核通过</c:if>
-                               		<c:if test="${info.status eq '3'}">审核驳回</c:if>
+                               		已签约
+<%--                                		<c:if test="${info.status eq '2'}">审核通过</c:if> --%>
                                	</td>
                                 <td style="text-align: center;">
                                		${info.sign_username}
