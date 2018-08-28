@@ -11,6 +11,7 @@ import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.ArrearageOfficeList;
 import com.training.modules.train.entity.RefundOrder;
+import com.training.modules.train.entity.RefundOrderLog;
 import com.training.modules.train.entity.Statement;
 
 /**  
@@ -80,4 +81,16 @@ public interface RefundOrderMapper extends CrudDao<RefundOrder> {
 	
 	
 	int updateStatementStatus(@Param("order_id")String order_id,@Param("status")int status);
+	/**
+	 * 插入账单日志
+	 * @param log
+	 * @return
+	 */
+	int insertRefundOrderLog(RefundOrderLog log);
+	/**
+	 * 查询账单日志列表
+	 * @param order_id
+	 * @return
+	 */
+	List<RefundOrderLog> queryRefundOrderLogList(@Param("order_id")String order_id);
 }
