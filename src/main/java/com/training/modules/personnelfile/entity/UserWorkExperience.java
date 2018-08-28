@@ -16,6 +16,7 @@ public class UserWorkExperience extends DataEntity<UserWorkExperience>{
     private String major;//专业
     private String languageAbili;//离职原因
     private Integer workType;//工作类型区分（工作1的还是工作2）
+    private Integer baseInfoId;		//user_base_info的id
 
     public String getUserId() {
         return userId;
@@ -80,4 +81,12 @@ public class UserWorkExperience extends DataEntity<UserWorkExperience>{
     public void setLanguageAbili(String languageAbili) {
         this.languageAbili = languageAbili;
     }
+
+	public Integer getBaseInfoId() {
+		return baseInfoId;
+	}
+
+	public void setBaseInfoId(Integer baseInfoId) {
+		this.baseInfoId = baseInfoId;
+	}
 }

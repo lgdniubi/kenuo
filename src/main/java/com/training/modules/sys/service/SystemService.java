@@ -25,6 +25,7 @@ import com.training.common.persistence.Page;
 import com.training.common.security.Digests;
 import com.training.common.security.shiro.session.SessionDAO;
 import com.training.common.service.BaseService;
+import com.training.common.service.ServiceException;
 import com.training.common.utils.CacheUtils;
 import com.training.common.utils.Encodes;
 import com.training.common.utils.IdGen;
@@ -756,7 +757,7 @@ public class SystemService extends BaseService implements InitializingBean {
     			}
 			}
 		}
-		/*if (StringUtils.isNotBlank(user.getId())) {
+		if (StringUtils.isNotBlank(user.getId())) {
 			// 更新用户与角色关联--移出用户角色
 			userDao.deleteUserRole(user);
 			if (user.getRoleList() != null && user.getRoleList().size() > 0) {
@@ -768,7 +769,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			UserUtils.clearCache(user);
 			// // 清除权限缓存
 			// systemRealm.clearAllCachedAuthorizationInfo();
-		}*/
+		}
 	}
 
 	@Transactional(readOnly = false)

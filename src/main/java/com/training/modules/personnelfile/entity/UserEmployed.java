@@ -32,6 +32,10 @@ public class UserEmployed extends DataEntity<UserEmployed> {
 	private String bankBeneficiary;//工资卡开户行
 	private String bankCode;//账号
 	private Date createDate;//创建时间
+	private Date hireDate;//入职时间
+	private String socialNo;//社保卡号
+	private String email;//邮箱
+	private String QQ;//QQ
 	
 	public String getPhoneNumber() {
 		return phoneNumber;
@@ -135,5 +139,29 @@ public class UserEmployed extends DataEntity<UserEmployed> {
 	}
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+	public String getSocialNo() {
+		return socialNo;
+	}
+	public void setSocialNo(String socialNo) {
+		this.socialNo = socialNo;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getQQ() {
+		return QQ;
+	}
+	public void setQQ(String qQ) {
+		QQ = qQ;
+	}	
+	public Date getHireDate() {
+		return hireDate;
+	}
+	public void setHireDate(Date hireDate) {
+		this.hireDate = hireDate;
 	}
 }

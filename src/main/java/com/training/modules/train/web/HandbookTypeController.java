@@ -111,7 +111,7 @@ public class HandbookTypeController extends BaseController {
 			logger.error("删除分类错误信息:"+e);
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/train/handbook/list?type="+handbookType.getType();
+		return "redirect:" + adminPath + "/train/handbook/list?type="+handbookType.getType()+"&isShop="+handbookType.getIsShop();
 	}
 }
 

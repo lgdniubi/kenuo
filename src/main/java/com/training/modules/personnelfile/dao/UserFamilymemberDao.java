@@ -19,7 +19,7 @@ public interface UserFamilymemberDao extends CrudDao<UserFamilymember> {
 
     int updateByPrimaryKey(UserFamilymember record);
 
-	UserFamilymember getObject(@Param("userID")String id, @Param("nameType")int nameType);
+	UserFamilymember getObject(@Param("baseInfoId")Integer baseInfoId, @Param("nameType")int nameType);
 
 	void deleteByUserId(@Param("userId")String id);
 }

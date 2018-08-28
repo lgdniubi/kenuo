@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
+import com.training.common.utils.StringUtils;
 import com.training.modules.personnelfile.dao.PersonnelFileDao;
 import com.training.modules.personnelfile.entity.PersonnelFile;
 import com.training.modules.personnelfile.entity.UserBaseInfo;
@@ -20,6 +21,7 @@ import com.training.modules.personnelfile.entity.UserImages;
 import com.training.modules.personnelfile.entity.UserSelfevaluation;
 import com.training.modules.personnelfile.entity.UserWorkExperience;
 import com.training.modules.sys.entity.Area;
+import com.training.modules.sys.entity.User;
 
 /**
  * 系统管理，安全相关实体的管理类,包括用户、角色、菜单.
@@ -64,7 +66,8 @@ public class PersonnelFileService extends CrudService<PersonnelFileDao, Personne
 		//user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "o", "a"));
 		
 		personnelFile.getSqlMap().put("dsf", dataScopeFilter(personnelFile.getCurrentUser(),"o"));
-		
+		User currentUser = personnelFile.getCurrentUser();
+		personnelFile.setOfficeId(currentUser.getCompany().getId());
 		
 		// 设置分页参数
 		personnelFile.setPage(page);
@@ -131,32 +134,37 @@ public class PersonnelFileService extends CrudService<PersonnelFileDao, Personne
 		//获得PersonnelFile中所有不是集合属性的关联查询
 		PersonnelFile _personnelFile = dao.getPersonnelFileBefor(personnelFile);
 		 UserBaseInfo userBaseInfo = _personnelFile.getUserBaseInfo();
-		 String[] dwellings = userBaseInfo.getDwelling().split(",");
-		String[] registerSites = userBaseInfo.getRegisterSite().split(",");
-		Area oneArea = new Area();
-		oneArea.setId(registerSites[0]);
-		oneArea.setName(registerSites[1]);
-		_personnelFile.setOneArea(oneArea);
-		_personnelFile.setDwelling1(registerSites[2]);
-		Area twoArea = new Area();
-		twoArea.setId(dwellings[0]);
-		twoArea.setName(dwellings[1]);
-		_personnelFile.setTwoArea(twoArea);
-		_personnelFile.setRegisterSite1(dwellings[2]);
+		if(StringUtils.isNotEmpty(userBaseInfo.getDwelling())){
+			String[] dwellings = userBaseInfo.getDwelling().split(",");
+			Area twoArea = new Area();
+			twoArea.setId(dwellings[0]);
+			twoArea.setName(dwellings[1]);
+			_personnelFile.setTwoArea(twoArea);
+			_personnelFile.setRegisterSite1(dwellings[2]);
+		}
+		if(StringUtils.isNotEmpty(userBaseInfo.getRegisterSite())){
+			String[] registerSites = userBaseInfo.getRegisterSite().split(",");
+			Area oneArea = new Area();
+			oneArea.setId(registerSites[0]);
+			oneArea.setName(registerSites[1]);
+			_personnelFile.setOneArea(oneArea);
+			_personnelFile.setDwelling1(registerSites[2]);
+		}
 		//获得图片对象
-		UserImages userImage1 =userImagesService.getImgObject(personnelFile.getId(),1);
-		UserImages userImage2 =userImagesService.getImgObject(personnelFile.getId(),2);
-		UserImages userImage3 =userImagesService.getImgObject(personnelFile.getId(),3);
-		UserImages userImage4 =userImagesService.getImgObject(personnelFile.getId(),4);
-		UserImages userImage5 =userImagesService.getImgObject(personnelFile.getId(),5);
-		_personnelFile.setUserImage1(userImage1);
-		_personnelFile.setUserImage2(userImage2);
-		_personnelFile.setUserImage3(userImage3);
-		_personnelFile.setUserImage4(userImage4);
-		_personnelFile.setUserImage5(userImage5);
+//		UserImages userImage1 =userImagesService.getImgObject(personnelFile.getId(),1);
+//		UserImages userImage2 =userImagesService.getImgObject(personnelFile.getId(),2);
+//		UserImages userImage3 =userImagesService.getImgObject(personnelFile.getId(),3);
+//		UserImages userImage4 =userImagesService.getImgObject(personnelFile.getId(),4);
+//		UserImages userImage5 =userImagesService.getImgObject(personnelFile.getId(),5);
+//		_personnelFile.setUserImage1(userImage1);
+//		_personnelFile.setUserImage2(userImage2);
+//		_personnelFile.setUserImage3(userImage3);
+//		_personnelFile.setUserImage4(userImage4);
+//		_personnelFile.setUserImage5(userImage5);
 		//获得工作经历集合
 		UserWorkExperience userWorkExperience = new UserWorkExperience();
 		userWorkExperience.setUserId(personnelFile.getId());
+		userWorkExperience.setBaseInfoId(personnelFile.getBaseInfoId());
 		List<UserWorkExperience> userWorkExperienceList = userWorkexperienceService.findList(userWorkExperience);
 		for (UserWorkExperience _userWorkExperience : userWorkExperienceList) {
 			if(1 == _userWorkExperience.getWorkType()){
@@ -166,14 +174,14 @@ public class PersonnelFileService extends CrudService<PersonnelFileDao, Personne
 			}
 		}
 		//获得家庭情况
-		UserFamily father = userFamilyService.getObject(personnelFile.getId(),1);
-		UserFamily mother = userFamilyService.getObject(personnelFile.getId(),2);
+		UserFamily father = userFamilyService.getObject(personnelFile.getBaseInfoId(),1);
+		UserFamily mother = userFamilyService.getObject(personnelFile.getBaseInfoId(),2);
 		_personnelFile.setFather(father);
 		_personnelFile.setMother(mother);
 		//主要家庭成员
-		UserFamilymember oneUser = userFamilymemberService.getObject(personnelFile.getId(),1);
-		UserFamilymember twoUser = userFamilymemberService.getObject(personnelFile.getId(),2);
-		UserFamilymember threeUser = userFamilymemberService.getObject(personnelFile.getId(),3);
+		UserFamilymember oneUser = userFamilymemberService.getObject(personnelFile.getBaseInfoId(),1);
+		UserFamilymember twoUser = userFamilymemberService.getObject(personnelFile.getBaseInfoId(),2);
+		UserFamilymember threeUser = userFamilymemberService.getObject(personnelFile.getBaseInfoId(),3);
 		_personnelFile.setOneUser(oneUser);
 		_personnelFile.setTwoUser(twoUser);
 		_personnelFile.setThreeUser(threeUser);

@@ -47,7 +47,7 @@
     select
     	<include refid="Base_Column_List" />
     from user_workexperience
-    where user_id = #{userId}
+    where  baseInfo_id = #{baseInfoId}
 	ORDER BY work_type;
   </select>
   

@@ -224,7 +224,8 @@
 			AND a.company_id = #{company.id} 
 		</if>
 		<if test="office != null and office.id != null and office.id != ''">
-			AND (o.id = #{office.id} OR o.parent_ids LIKE CONCAT('%,', #{office.id}, ',%'))
+			AND o.id = #{office.id} AND c.id = 1
+<!-- 			AND (o.id = #{office.id} OR o.parent_ids LIKE CONCAT('%,', #{office.id}, ',%')) -->
 		</if>
 		<if test="loginName != null and loginName != ''">
 			AND a.login_name like CONCAT('%', #{loginName}, '%')

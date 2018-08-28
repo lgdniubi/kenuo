@@ -41,7 +41,7 @@
 									<td>${type.id }</td>
 								  	<td>${type.name }</td>
 								    <td>
-				    					<a href="${ctx}/train/handbook/delete?id=${type.id}&type=${type.type}"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>删除</a>
+				    					<a href="${ctx}/train/handbook/delete?id=${type.id}&type=${type.type}&isShop=${type.isShop}"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>删除</a>
 				    					<a href="#" onclick="openDialog('修改', '${ctx}/train/handbook/form?id=${type.id}','850px', '550px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>修改</a>
 								    </td>
 								</tr>

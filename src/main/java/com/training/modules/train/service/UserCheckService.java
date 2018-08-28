@@ -784,10 +784,6 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		return page;
 	}
 
-	public List<ModelFranchisee> findModelLogById(String id) {
-		return userCheckDao.findModelLogById(id);
-	}
-
 	public Page<ModelFranchisee> findModelLogList(Page<ModelFranchisee> page, ModelFranchisee mf) {
 		// 设置分页参数
 		mf.setPage(page);

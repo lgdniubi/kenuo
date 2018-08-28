@@ -27,6 +27,8 @@ public class UserBaseInfo extends DataEntity<UserBaseInfo> {
 	private String dwelling1;//现居住地1
 	private String dwelling;//现居住地
 	private int sex;
+	private String isQuit;
+	private String position;//职位
 	
 	public Integer getAge() {
 		return age;
@@ -117,5 +119,17 @@ public class UserBaseInfo extends DataEntity<UserBaseInfo> {
 	}
 	public void setDwelling1(String dwelling1) {
 		this.dwelling1 = dwelling1;
+	}
+	public String getIsQuit() {
+		return isQuit;
+	}
+	public void setIsQuit(String isQuit) {
+		this.isQuit = isQuit;
+	}
+	public String getPosition() {
+		return position;
+	}
+	public void setPosition(String position) {
+		this.position = position;
 	}
 }

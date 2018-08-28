@@ -516,7 +516,7 @@
 									<span class="help-p">最多8个字</span>
 								</span>
 							<font color="red">*</font>机构缩写：</label></td>
-				         	<td class="width-35"><form:input path="officeInfo.shortName" htmlEscape="false" maxlength="50" cssClass="form-control required" /></td>
+				         	<td class="width-35"><form:input path="officeInfo.shortName" htmlEscape="false" maxlength="8" cssClass="form-control required" /></td>
 					        <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>归属区域:</label></td>
 					        <td class="width-35">
 						       <div id="area1">
@@ -628,7 +628,7 @@
 						<%-- <td class="width-35"><form:input path="legalName" htmlEscape="false" maxlength="50" class="form-control required" />${user.id }${user.mobile}${user.name }</td> --%>
 						<td class="width-35">
 							<div class="input-group">
-					         	<input value="${user.mobile}" id="shopAssistantMobile"  class="form-control required" placeholder="请输入手机号">
+					         	<input value="${user.mobile}" id="shopAssistantMobile"  class="form-control" placeholder="请输入手机号">
 					       		 <span class="input-group-btn">
 						       		 <button type="button"  onclick="findUser('shopAssistant')" class="btn btn-primary"><i class="fa fa-search">查询</i></button> 
 					       		 </span>
@@ -637,7 +637,7 @@
 						<td class="width-15 active"><label class="pull-right">店助理:</label></td>
 						<td class="width-35">
 							<input id="shopAssistantId" name="officeInfo.shopAssistantId" class="form-control required" type="hidden" value="${user.id }"/>
-							<input id="shopAssistantName" type="text" readonly="readonly" value="${user.name }" class="form-control required" />
+							<input id="shopAssistantName" type="text" readonly="readonly" value="${user.name }" class="form-control" />
 						</td>
 					</tr>
 				     <tr>

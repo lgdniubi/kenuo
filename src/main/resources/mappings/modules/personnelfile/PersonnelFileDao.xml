@@ -14,6 +14,7 @@
 		<result column="no" property="no"/>
 		<result column="idcard" property="idcard"/>
 		<result column="delFlag" property="delFlag"/>
+		<result column="baseInfo_id" property="baseInfoId"/>
 		<result column="oName" property="oName"/>
 		<result column="photo" property="photo"/>
 		<result column="mobile" property="mobile"/>
@@ -39,6 +40,7 @@
 			s.`name` as sName,
 			ubi.sex as sex,
 			sr.`name` as srName,
+			ubi.id as baseInfo_id,
 			ubi.birthday as birthday,
 			ubi.nation as nation,
 			ubi.native as native,
@@ -58,6 +60,7 @@
 		<!-- 数据范围过滤 -->
 		${sqlMap.dsf}
 		AND s.del_flag = #{parentDel}
+		AND ubi.franchisee_id = #{officeId}
 		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
 		<if test="!currentUser.admin">
 			AND s.id != '1'
@@ -74,9 +77,9 @@
 		<if test="filing == 1">
 			AND s.filing  = #{filing}
 		</if>
-		<if test="officeId != null and officeId != ''">
+		<!-- <if test="officeId != null and officeId != ''">
 			AND (o.id = #{officeId} OR o.parent_ids LIKE CONCAT('%,', #{officeId}, ',%'))
-		</if>
+		</if> -->
 		<if test="mobile != null and mobile != ''">
 			AND s.mobile = #{mobile}
 		</if>
@@ -113,6 +116,7 @@
 		<result column="photo" property="photo"/>
 		<result column="sex" property="sex"/>
 	    <result column="userBaseInfo.age" property="userBaseInfo.age"/>
+	    <result column="userBaseInfo.isQuit" property="userBaseInfo.isQuit"/>
 	    <result column="userBaseInfo.bloodType" property="userBaseInfo.bloodType"/>
 		<result column="userBaseInfo.birthday" property="userBaseInfo.birthday"/>
 		<result column="userBaseInfo.nation" property="userBaseInfo.nation"/>
@@ -122,6 +126,7 @@
 		<result column="userBaseInfo.joinParty" property="userBaseInfo.joinParty"/>
 		<result column="userBaseInfo.registerType" property="userBaseInfo.registerType"/>
 		<result column="userBaseInfo.registerSite" property="userBaseInfo.registerSite"/>
+		<result column="userBaseInfo.position" property="userBaseInfo.position"/>
 		<result column="userBaseInfo.dwelling" property="userBaseInfo.dwelling"/>
 		<result column="userEmployed.phoneNumber" property="userEmployed.phoneNumber"/>
 		<result column="userEmployed.officeTel" property="userEmployed.officeTel"/>
@@ -137,6 +142,10 @@
 		<result column="userEmployed.secondWork" property="userEmployed.secondWork"/>
 		<result column="userEmployed.bankBeneficiary" property="userEmployed.bankBeneficiary"/>
 		<result column="userEmployed.bankCode" property="userEmployed.bankCode"/>
+		<result column="userEmployed.socialNo" property="userEmployed.socialNo"/>
+		<result column="userEmployed.hireDate" property="userEmployed.hireDate"/>
+		<result column="userEmployed.email" property="userEmployed.email"/>
+		<result column="userEmployed.QQ" property="userEmployed.QQ"/>
 		<result column="userEducation.education" property="userEducation.education"/>
 		<result column="userEducation.degree" property="userEducation.degree"/>
 		<result column="userEducation.graduationDate" property="userEducation.graduationDate"/>
@@ -168,6 +177,7 @@
 			su.idcard as "idcard",
 			su.photo as photo,
 			ubi.age as "userBaseInfo.age",
+			ubi.is_quit as "userBaseInfo.isQuit",
 			ubi.blood_type as "userBaseInfo.bloodType",
 			ubi.birthday as "userBaseInfo.birthday",
 			ubi.nation as "userBaseInfo.nation",
@@ -178,7 +188,7 @@
 			ubi.register_type as "userBaseInfo.registerType",
 			ubi.register_site as "userBaseInfo.registerSite",
 			ubi.dwelling as "userBaseInfo.dwelling",
-			ue.phone_number as "userEmployed.phoneNumber",
+			sd.label as "userBaseInfo.position",
 			ue.office_tel as "userEmployed.officeTel",
 			ue.family_tel as "userEmployed.familyTel",
 			ue.source as "userEmployed.source",
@@ -192,6 +202,11 @@
 			ue.second_work as "userEmployed.secondWork",
 			ue.bank_beneficiary as "userEmployed.bankBeneficiary",
 			ue.bank_code as "userEmployed.bankCode",
+			ue.social_no as "userEmployed.socialNo",
+			ue.hire_date as "userEmployed.hireDate",
+			ue.email as "userEmployed.email",
+			ue.QQ as "userEmployed.QQ",
+			su.mobile as "userEmployed.phoneNumber",
 			ued.education  as "userEducation.education",
 			ued.degree as "userEducation.degree",
 			ued.graduation_date as "userEducation.graduationDate",
@@ -203,24 +218,17 @@
 			us.failing as "userSelfevaluation.failing",
 			us.expansibility as "userSelfevaluation.expansibility",
 			us.self_evaluation as "userSelfevaluation.selfEvaluation",
-			ud.isleaveoffice as "userDepartures.isleaveoffice",
-			ud.leaveoffice_date as "userDepartures.leaveofficeDate",
-			ud.stop_accountingwages as "userDepartures.stopAccountingwages",
-			ud.leaveoffice_reasons as "userDepartures.leaveofficeReasons",
-			ud.operation_log as "userDepartures.operationLog",
-			sr.`name` as srName,
 			ubi.sex as sex
 		FROM
 			sys_user su
 		LEFT JOIN user_base_info ubi ON ubi.user_id = su.id
-		LEFT JOIN user_employed ue ON ue.user_id = su.id
-		LEFT JOIN user_education ued ON ued.user_id = su.id
-		LEFT JOIN user_selfevaluation us ON us.user_id = su.id
-		LEFT JOIN user_departures  ud ON ud.user_id = su.id
-		LEFT JOIN sys_office so ON so.id = su.office_id
-		LEFT JOIN sys_user_role sur ON sur.user_id = su.id
-		LEFT JOIN sys_role sr ON sur.role_id = sr.id
-		WHERE su.id=#{id}
+		LEFT JOIN user_employed ue ON ue.baseInfo_id = ubi.id
+		LEFT JOIN user_education ued ON ued.baseInfo_id = ubi.id
+		LEFT JOIN user_selfevaluation us ON us.baseInfo_id = ubi.id
+		LEFT JOIN sys_office so ON so.id = ubi.office_id
+		LEFT JOIN sys_dict sd ON sd.value = su.user_type
+		and sd.type = 'sys_user_type'
+		WHERE su.id=#{id} and ubi.id = #{baseInfoId}
 	</select>
 	
 	<update id="updateUserInfo">
