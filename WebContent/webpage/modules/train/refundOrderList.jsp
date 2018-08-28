@@ -141,6 +141,7 @@
 									<shiro:hasPermission name="train:articlelist:deleteOne">
 										<a class="btn btn-success btn-xs"  onclick="openDialogView('对账单','${ctx}/train/refundOrder/queryStatementOfRefund?office_id=${refund.arrearageOffice}&billmonth=${refund.billmonth }', '800px', '500px')"><i class="fa fa-edit"></i>对账单详情</a>
 									</shiro:hasPermission>
+									<a class="btn btn-success btn-xs"  onclick="openDialogView('账单日志','${ctx}/train/refundOrder/queryRefundOrderLogList?order_id=${refund.orderId}', '800px', '500px')"><i class="fa fa-edit"></i>账单日志</a>
 									<a class="btn btn-success btn-xs"  onclick="openDialogView('详细信息','${ctx}/train/refundOrder/queryRefundOrderDetail?order_id=${refund.orderId}', '800px', '500px')"><i class="fa fa-edit"></i>详细信息</a>
 									
 								</td>
