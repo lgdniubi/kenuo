@@ -19,7 +19,6 @@ public class UserEducation extends DataEntity<UserEducation> {
 	private int education;//学历
 	private int degree;//学位
 	private Date graduationDate;//毕业时间
-	private Date hireDate;//入职时间
 	private String graduationSchool;//毕业学校
 	private String major;//专业
 	private String languageAbili;//外语能力
@@ -66,10 +65,5 @@ public class UserEducation extends DataEntity<UserEducation> {
 	public void setLanguageAbili(String languageAbili) {
 		this.languageAbili = languageAbili;
 	}
-	public Date getHireDate() {
-		return hireDate;
-	}
-	public void setHireDate(Date hireDate) {
-		this.hireDate = hireDate;
-	}
+
 }

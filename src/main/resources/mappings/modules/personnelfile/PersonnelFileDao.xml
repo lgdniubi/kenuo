@@ -39,26 +39,23 @@
 			s.id as id,
 			s.`name` as sName,
 			ubi.sex as sex,
-			sr.`name` as srName,
 			ubi.id as baseInfo_id,
 			ubi.birthday as birthday,
 			ubi.nation as nation,
 			ubi.native as native,
+			ubi.is_quit AS delFlag,
 			ue.probation_start_date as probationStartDate,
-			s.del_flag as delFlag,
 			o.name as oName,
 			s.filing as filing,
 			s.mobile as mobile,
 			s.induction_time as inductionTime
 		FROM
-			sys_user s
-		LEFT JOIN user_base_info ubi ON s.id = ubi.user_id
-		LEFT JOIN sys_user_role sur ON s.id = sur.user_id
-		LEFT JOIN sys_role sr ON sur.role_id = sr.id
+			user_base_info ubi
+		LEFT JOIN sys_user s ON s.id = ubi.user_id
 		LEFT JOIN user_employed ue ON ue.user_id = s.id
 		LEFT JOIN sys_office o ON o.id = s.office_id
 		<!-- 数据范围过滤 -->
-		${sqlMap.dsf}
+		where 1 =1
 		AND s.del_flag = #{parentDel}
 		AND ubi.franchisee_id = #{officeId}
 		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
@@ -71,11 +68,11 @@
 		<if test="filing != null and filing != ''">
 			AND s.filing  = #{filing}
 		</if>
-		<if test="filing == 0">
-			AND s.filing  = #{filing}
+		<if test="parentDel == 0">
+			AND ubi.is_quit  = 0
 		</if>
-		<if test="filing == 1">
-			AND s.filing  = #{filing}
+		<if test="parentDel == 1">
+			AND ubi.is_quit  = 1
 		</if>
 		<!-- <if test="officeId != null and officeId != ''">
 			AND (o.id = #{officeId} OR o.parent_ids LIKE CONCAT('%,', #{officeId}, ',%'))

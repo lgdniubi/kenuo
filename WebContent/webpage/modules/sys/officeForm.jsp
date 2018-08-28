@@ -582,7 +582,11 @@
 				         <td class="width-35"><form:input path="master" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
 				     </tr> --%>
 				     <tr id="a4">
-				         <td class="width-15 active"><label class="pull-right">机构地址:</label></td>
+				         <td class="width-15 active">
+				         	<span class="help-tip">
+								<span class="help-p">此字段需从签约信息页面编辑</span>
+							</span>
+				         	<label class="pull-right">机构地址:</label></td>
 				         <td class="width-35"><form:input path="address" htmlEscape="false" maxlength="50" cssClass="form-control" /></td><%-- <c:if test="${not empty office.address}">disabled="true"</c:if>/> --%>
 				     </tr>
 				    
@@ -724,7 +728,11 @@
 				         </td>
 					  </tr>
 				      <tr>
-				      	 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>详细地址:</label></td>
+				      	 <td class="width-15 active">
+				      	 	<span class="help-tip">
+								<span class="help-p">此字段需从签约信息页面编辑</span>
+							</span>
+				      	 	<label class="pull-right"><font color="red">*</font>详细地址:</label></td>
 				         <td class="width-35" colspan="3"><textarea name="officeInfo.detailedAddress" htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required" <c:if test="${not empty office.officeInfo.detailedAddress}">readonly="true"</c:if> >${office.officeInfo.detailedAddress}</textarea></td>
 				      </tr> 
 				      <tr>
