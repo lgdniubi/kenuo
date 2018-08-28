@@ -51,8 +51,8 @@ public class RefundOrderController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value="queryStatementOfRefund")
-	public String queryStatementOfRefund(Model model,String office_id,String billmonth){
-		model.addAttribute("statements", this.refundOrderService.queryStatementOfRefund(office_id,billmonth));
+	public String queryStatementOfRefund(Model model,String orderId){
+		model.addAttribute("statements", this.refundOrderService.queryStatementOfRefund(orderId));
 		return "modules/train/statementList";
 	}
 	/**
@@ -87,9 +87,9 @@ public class RefundOrderController extends BaseController {
 	 */
 	@RequiresPermissions(value="train:refundOrder:makeSureInAccount")
 	@RequestMapping(value="makeSureInAccount")
-	public String makesure(Model model,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,String order_id,String office_id,double amount,String billmonth,String status,String remarks){
+	public String makesure(Model model,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,String order_id,String office_id,double amount/*,String billmonth*/,String status,String remarks){
 		try {
-			this.refundOrderService.makeSureInAccount(order_id,office_id,amount,billmonth,status,remarks);
+			this.refundOrderService.makeSureInAccount(order_id,office_id,amount/*,billmonth*/,status,remarks);
 			addMessage(redirectAttributes, "操作成功!");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "确认入账", e);

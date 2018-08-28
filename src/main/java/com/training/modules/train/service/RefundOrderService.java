@@ -5,7 +5,6 @@ package com.training.modules.train.service;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,8 +74,8 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 	 * @param order_id
 	 * @return
 	 */
-	public List<Statement> queryStatementOfRefund(String office_id,String billmonth){
-		return this.refundOrderMapper.queryStatementOfRefund(office_id,billmonth);
+	public List<Statement> queryStatementOfRefund(String orderId){
+		return this.refundOrderMapper.queryStatementOfRefund(orderId);
 	}
 	/**
 	 * 查询支付信息
@@ -90,12 +89,12 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 	 * 确认入账
 	 * @param order_id
 	 */
-	public void makeSureInAccount(String order_id,String office_id,double amount,String billmonth,String status,String remarks){
+	public void makeSureInAccount(String order_id,String office_id,double amount,String status,String remarks){
 		//修改订单状态为已入账
 		this.refundOrderMapper.makeSureInAccount(order_id,status,remarks);
 		this.refundOrderMapper.updateStatementStatus(order_id, Integer.parseInt(status));
 		if("3".equals(status)){
-			new Thread(new RefundThread(office_id, order_id, amount,billmonth)).start();
+			new Thread(new RefundThread(office_id, order_id, amount)).start();
 		}
 		//记录日志
 		RefundOrderLog log = new RefundOrderLog();

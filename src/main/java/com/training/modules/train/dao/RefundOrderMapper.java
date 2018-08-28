@@ -57,7 +57,7 @@ public interface RefundOrderMapper extends CrudDao<RefundOrder> {
 	 * @param order_id
 	 * @return
 	 */
-	List<Statement> queryStatementOfRefund(@Param("office_id")String office_id,@Param("billmonth")String billmonth);
+	List<Statement> queryStatementOfRefund(@Param("orderId")String orderId);
 	/**
 	 * 查询支付信息
 	 * @param order_id
