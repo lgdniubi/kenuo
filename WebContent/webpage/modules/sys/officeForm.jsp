@@ -483,12 +483,16 @@
 							<td class="width-15 active"><label class="pull-right">是否可报货</label></td>
 					     	<td id="isCargo">
 					     		<c:if test="${not empty office.id }">
-					         		<c:if test="${office.isCargo == 1}">
+					     			<form:select path="isCargo" id="grade" cssClass="form-control" >
+										<form:option  value="1" label="否"/>
+										<form:option  value="0" label="是"/>
+									</form:select>
+					         		<%-- <c:if test="${office.isCargo == 1}">
 										<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('isCargo','${office.id}',0)">&nbsp;&nbsp;否
 									</c:if>
 									<c:if test="${office.isCargo == 0}">
 										<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('isCargo','${office.id}',1)">&nbsp;&nbsp;是
-									</c:if>
+									</c:if> --%>
 					         	</c:if>
 					         	<c:if test="${empty office.id }">
 					         		<select class="form-control required" id="isCargo" name="isCargo">
@@ -517,7 +521,7 @@
 								</span>
 							<font color="red">*</font>机构缩写：</label></td>
 				         	<td class="width-35"><form:input path="officeInfo.shortName" htmlEscape="false" maxlength="8" cssClass="form-control required" /></td>
-					        <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>归属区域:</label></td>
+					        <td class="width-15 active"><label class="pull-right"><font color="red">*</font>归属区域:</label></td>
 					        <td class="width-35">
 						       <div id="area1">
 							        <sys:treeselect id="area" name="area.id" value="${office.area.id}" labelName="area.name" labelValue="${office.area.name}" 
