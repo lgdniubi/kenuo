@@ -5,15 +5,18 @@ package com.training.modules.train.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.Thread.RefundThread;
 import com.training.common.service.CrudService;
+import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.RefundOrderMapper;
 import com.training.modules.train.entity.ArrearageOfficeList;
 import com.training.modules.train.entity.RefundOrder;
+import com.training.modules.train.entity.RefundOrderLog;
 import com.training.modules.train.entity.Statement;
 
 
@@ -94,6 +97,16 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 		if("3".equals(status)){
 			new Thread(new RefundThread(office_id, order_id, amount,billmonth)).start();
 		}
+		//记录日志
+		RefundOrderLog log = new RefundOrderLog();
+		log.setCreateBy(UserUtils.getUser().getId());
+		log.setOrderId(order_id);
+		if("4".equals(status))
+			log.setDescription("【取消账单】");
+		else
+			log.setDescription("【确认入账】");
+		this.refundOrderMapper.insertRefundOrderLog(log);
+			
 	}
 
 	/**  
@@ -105,5 +118,13 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 	*/  
 	public void updateOrderOverdueStatus() {
 		this.refundOrderMapper.updateOrderOverdueStatus();
+	}
+	/**
+	 * 查询账单日志
+	 * @param order_id
+	 * @return
+	 */
+	public List<RefundOrderLog> queryRefundOrderLogList(String order_id){
+		return this.refundOrderMapper.queryRefundOrderLogList(order_id);
 	}
 }

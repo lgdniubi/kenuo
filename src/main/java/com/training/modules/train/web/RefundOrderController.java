@@ -98,4 +98,15 @@ public class RefundOrderController extends BaseController {
 		}	
 		return "redirect:" + adminPath + "/train/refundOrder/list";
 	}
+	/**
+	 * 订单日志
+	 * @param model
+	 * @param order_id
+	 * @return
+	 */
+	@RequestMapping(value="queryRefundOrderLogList")
+	public String queryRefundOrderLogList(Model model,String order_id){
+		model.addAttribute("log", this.refundOrderService.queryRefundOrderLogList(order_id));
+		return "modules/train/refundOrderLogList";
+	}
 }

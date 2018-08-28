@@ -188,4 +188,31 @@
 		set a.refund_order_status = #{status}
 		where a.id = b.statement_id and b.order_id = #{order_id}
 	</update>
+	
+	<insert id="insertRefundOrderLog" parameterType="com.training.modules.train.entity.RefundOrderLog">
+		insert into train_refund_order_log(
+			order_id,
+			description,
+			create_by,
+			create_time
+		)
+		values(
+			#{orderId},
+			#{description},
+			#{createBy},
+			now()
+		)
+	</insert>
+	
+	<select id="queryRefundOrderLogList" resultType="com.training.modules.train.entity.RefundOrderLog">
+		select
+			a.order_id as orderId,
+			a.description,
+			a.create_by createBy,
+			DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,
+			b.name as createUsername
+		from train_refund_order_log a
+		left join sys_user b on a.create_by = b.id
+		where order_id = #{order_id}
+	</select>
 </mapper>
