@@ -106,15 +106,16 @@
 	
 	<select id="queryStatementOfRefund" resultType="Statement">
 		select 
-			id as stateId,
-			order_id as orderId,
-			office_id as officeId,
-			used_limit as usedLimit,
-			`from` as `from`,
-			type as type,
-			DATE_FORMAT(create_date,'%Y-%m-%d %H:%i:%s') as createTime
-		from sys_office_statement 
-		where order_id = #{orderId}
+			state.id as stateId,
+			state.order_id as orderId,
+			state.office_id as officeId,
+			state.used_limit as usedLimit,
+			state.`from` as `from`,
+			state.type as type,
+			DATE_FORMAT(state.create_date,'%Y-%m-%d %H:%i:%s') as createTime
+		from sys_office_statement state 
+		left join train_statement_order so on so.statement_id = state.id
+		where so.order_id = #{orderId}
 		
 	</select>
 	
