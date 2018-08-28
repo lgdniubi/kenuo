@@ -64,11 +64,11 @@ public class PersonnelFileService extends CrudService<PersonnelFileDao, Personne
 		
 		//2016-11-4 kele update 新的数据权限
 		//user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(), "o", "a"));
-		
-		personnelFile.getSqlMap().put("dsf", dataScopeFilter(personnelFile.getCurrentUser(),"o"));
-		User currentUser = personnelFile.getCurrentUser();
-		personnelFile.setOfficeId(currentUser.getCompany().getId());
-		
+		if(StringUtils.isEmpty(personnelFile.getOfficeId())){
+			personnelFile.getSqlMap().put("dsf", dataScopeFilter(personnelFile.getCurrentUser(),"o"));
+			User currentUser = personnelFile.getCurrentUser();
+			personnelFile.setOfficeId(currentUser.getCompany().getId());
+		}
 		// 设置分页参数
 		personnelFile.setPage(page);
 		// 执行分页查询
