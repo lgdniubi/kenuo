@@ -173,6 +173,7 @@ public class UserCheckController extends BaseController{
 					modelFranchisee.setFranchiseeid("0");
 					modelFranchisee.setPaytype("0");
 					ModelFranchisee modelSelect = userCheckService.getModelFranchiseeByUserid(modelFranchisee.getUserid());
+					if(modelSelect == null){modelFranchisee.setId(null);}
 					userCheckService.saveModelFranchisee(modelFranchisee);//保存手艺人权益信息
 					userCheckService.pushMsg(modelFranchisee,modelSelect,opflag);//重新授权成功发送消息
 					userCheckService.pushMsg(userCheck, "您已具备手艺人用户的权益，开启新旅程吧。");//授权成功发送消息

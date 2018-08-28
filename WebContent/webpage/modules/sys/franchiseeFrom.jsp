@@ -249,8 +249,8 @@
 					<td class="width-15 active"><label class="pull-right">数据类型:</label></td>
 					<td class="width-35">
 						<select id="isTest" name="isTest">
-							<option value="0"  >正式数据</option>
-							<option value="1" >测试数据</option>
+							<option value="0" <c:if test="${franchisee.isTest == 0}">selected="true"</c:if> >正式数据</option>
+							<option value="1" <c:if test="${franchisee.isTest == 1}">selected="true"</c:if> >测试数据</option>
 						</select>
 					</td>
 				</tr>
@@ -261,11 +261,11 @@
 					<td class="width-15 active">
 						<label class="pull-right">
 							<span class="help-tip">
-								<span class="help-p">最多输入15个字</span>
+								<span class="help-p">最多输入30个字</span>
 							</span>
 						<font color="red">*</font>企业名称:</label>
 					</td>
-					<td class="width-35"><form:input path="name" htmlEscape="false" maxlength="15" class="form-control required" />
+					<td class="width-35"><form:input path="name" htmlEscape="false" maxlength="30" class="form-control required" />
 					</td>
 					<td class="width-15 active">
 						<label class="pull-right">

@@ -517,24 +517,23 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		protocolModelDao.deleteProtocolShopById(Integer.valueOf(franchisee_id));
 	}
 
-	/**
-	 * 签约信息中更改了店铺地址或者名称同步
-	 * @param contractInfo
-	 */
-	public void updateOfficeInfoDetailAddress(ContractInfoVo contractInfo) {
-		officeDao.updateOfficeInfoDetailAddress(contractInfo);
-		
-	}
-	/**
-	 * 签约信息中更改了店铺地址或者名称同步
-	 * @param contractInfo
-	 */
-	public void updateOfficeInfoOfficeName(ContractInfoVo contractInfo) {
-		officeDao.updateOfficeInfoOfficeName(contractInfo);
-		
-	}
 
 	public List<Office> findDyOffice() {
 		return officeDao.findDyOffice();
+	}
+
+	/**
+	 * 签约信息中更改了店铺地址或者名称同步
+	 * 签约信息中更改了店铺地址或者名称同步
+	 * @param contractInfo
+	 */
+	@Transactional(readOnly = false)
+	public void updateAddressAndName(ContractInfoVo contractInfo, String oldOfficeAddress, String oldOfficeName) {
+		if(oldOfficeAddress !=null && !oldOfficeAddress.equals(contractInfo.getOffice_address())){
+			officeDao.updateOfficeInfoDetailAddress(contractInfo);
+		}
+		if(oldOfficeName !=null && !oldOfficeName.equals(contractInfo.getOffice_name())){
+			officeDao.updateOfficeInfoOfficeName(contractInfo);
+		}
 	}
 }

@@ -302,6 +302,14 @@ public class SystemService extends BaseService implements InitializingBean {
 		page.setList(userDao.findList(user));
 		return page;
 	}
+	public Page<User> findDyUser(Page<User> page, User user) {
+		user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(),"o"));
+		// 设置分页参数
+		user.setPage(page);
+		// 执行分页查询
+		page.setList(userDao.findDyList(user));
+		return page;
+	}
 	/**
 	 * 查找非员工类型的用户   type!= yg
 	 * @param page
