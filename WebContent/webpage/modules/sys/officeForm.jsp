@@ -355,10 +355,12 @@
 				isShop= 1;
 				$("#unfold,#area1,#signtab,#next,#signNext").show();
 				$("#a1,#a2,#a3,#a4,#a5,#sbutton,#area2").hide();
+				$("#otypeid").html("店铺创建成功无法变更机构类型");
 			}else{
 				isShop= 0;
 				$("#unfold,#area1,#signtab,#next,#signNext").hide();
 				$("#a1,#a2,#a3,#a4,#a5,#sbutton,#area2").show();
+				$("#otypeid").html("存在子类时不可修改为店铺");
 			}
 		}
 		function changeTableVal(type,id,isyesno){
@@ -425,7 +427,7 @@
 						<tr>
 				         	<td class="width-15 active"><label class="pull-right">
 				         		<span class="help-tip">
-									<span class="help-p">存在子类时不可修改为店铺</span>
+									<span class="help-p" id="otypeid">存在子类时不可修改为店铺</span>
 								</span>
 				         		机构类型:</label></td>
 <!-- 							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>是否为店铺:</label></td> -->
@@ -483,12 +485,26 @@
 							<td class="width-15 active"><label class="pull-right">是否可报货</label></td>
 					     	<td id="isCargo">
 					     		<c:if test="${not empty office.id }">
-					         		<c:if test="${office.isCargo == 1}">
+					     			<c:choose>
+					     				<c:when test="${not empty status and status eq '1' }">
+							     			<select name="isCargo" id="grade" class="form-control" >
+												<c:if test="${office.isCargo == 0}"><option  value="0" label="是"/></c:if>
+												<c:if test="${office.isCargo == 1}"><option  value="1" label="否"/></c:if>
+											</select>
+					     				</c:when>
+					     				<c:otherwise>
+							     			<form:select path="isCargo" id="grade" cssClass="form-control" >
+												<form:option  value="0" label="是"/>
+												<form:option  value="1" label="否"/>
+											</form:select>
+					     				</c:otherwise>
+					     			</c:choose>
+					         		<%-- <c:if test="${office.isCargo == 1}">
 										<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('isCargo','${office.id}',0)">&nbsp;&nbsp;否
 									</c:if>
 									<c:if test="${office.isCargo == 0}">
 										<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('isCargo','${office.id}',1)">&nbsp;&nbsp;是
-									</c:if>
+									</c:if> --%>
 					         	</c:if>
 					         	<c:if test="${empty office.id }">
 					         		<select class="form-control required" id="isCargo" name="isCargo">
@@ -517,7 +533,7 @@
 								</span>
 							<font color="red">*</font>机构缩写：</label></td>
 				         	<td class="width-35"><form:input path="officeInfo.shortName" htmlEscape="false" maxlength="8" cssClass="form-control required" /></td>
-					        <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>归属区域:</label></td>
+					        <td class="width-15 active"><label class="pull-right"><font color="red">*</font>归属区域:</label></td>
 					        <td class="width-35">
 						       <div id="area1">
 							        <sys:treeselect id="area" name="area.id" value="${office.area.id}" labelName="area.name" labelValue="${office.area.name}" 
@@ -729,10 +745,11 @@
 					  </tr>
 				      <tr>
 				      	 <td class="width-15 active">
+				      	 	<label class="pull-right">
 				      	 	<span class="help-tip">
 								<span class="help-p">此字段需从签约信息页面编辑</span>
 							</span>
-				      	 	<label class="pull-right"><font color="red">*</font>详细地址:</label></td>
+				      	 	<font color="red">*</font>详细地址:</label></td>
 				         <td class="width-35" colspan="3"><textarea name="officeInfo.detailedAddress" htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required" <c:if test="${not empty office.officeInfo.detailedAddress}">readonly="true"</c:if> >${office.officeInfo.detailedAddress}</textarea></td>
 				      </tr> 
 				      <tr>

@@ -32,6 +32,7 @@
 		  f.legal_card,
 		  f.short_name,
 		  f.set_date,
+		  f.is_test,
 		  f.remarks
 	</sql>
 	

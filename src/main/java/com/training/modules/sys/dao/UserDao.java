@@ -417,4 +417,10 @@ public interface UserDao extends CrudDao<User> {
 	public List<String> findUidByCompanyId(String companyId);
 
 	public Uvo findUvo(@Param("user_id")String user_id);
+	/**
+	 * 查询登云下用户
+	 * @param user
+	 * @return
+	 */
+	public List<User> findDyList(User user);
 }

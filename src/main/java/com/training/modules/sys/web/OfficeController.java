@@ -255,11 +255,31 @@ public class OfficeController extends BaseController {
 		}
 		model.addAttribute("office", office);
 		model.addAttribute("opflag", opflag);
-		
 		model.addAttribute("user", assistUser);
+		
+		if(StringUtils.isNotEmpty(office.getId())){
+			//0未签约，1已签约。
+			Integer status = getOfficeSignStatus(office.getId());
+			model.addAttribute("status", status);
+		}
 		return "modules/sys/officeForm";
 	}
 	
+	private Integer getOfficeSignStatus(String id) {
+		Integer status = null;
+		String url = ParametersFactory.getTrainsParamValues("contract_data_path");
+		logger.info("##### web接口路径查询机构签约状态:"+url);
+		String parpm = "{\"office_id\":\""+id+"\"}";
+		logger.info("##### web接口路径查询机构签约状态信息参数:"+parpm);
+		String result = WebUtils.postCSObject(parpm, url);
+		JSONObject jsonObject = JSONObject.fromObject(result);
+		if(!(jsonObject.get("data") instanceof JSONNull)){
+			status = jsonObject.getJSONObject("data").getInt("status");
+		}
+		logger.info("##### web接口查询机构状态返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+		return status;
+	}
+
 	/**
 	 * 机构管理-添加/修改
 	 * @param office
@@ -452,12 +472,7 @@ public class OfficeController extends BaseController {
 			
 			String oldOfficeAddress = request.getParameter("oldOfficeAddress");
 			String oldOfficeName = request.getParameter("oldOfficeName");
-			if(oldOfficeAddress !=null && !oldOfficeAddress.equals(contractInfo.getOffice_address())){
-				officeService.updateOfficeInfoDetailAddress(contractInfo);
-			}
-			if(oldOfficeName !=null && !oldOfficeName.equals(contractInfo.getOffice_name())){
-				officeService.updateOfficeInfoOfficeName(contractInfo);
-			}
+			officeService.updateAddressAndName(contractInfo, oldOfficeAddress, oldOfficeName);
 			
 			addMessage(redirectAttributes, "保存签约信息成功");
 		} catch (Exception e) {
@@ -466,6 +481,7 @@ public class OfficeController extends BaseController {
 		}
 		return "redirect:" + adminPath + "/sys/office/signInfo?id="+contractInfo.getOffice_id()+"&opflag=1";
 	}
+
 
 	private List<PayInfo> creatPayInfoList(Integer payWay, List<PayInfo> payInfos, String userid) {
 		List<PayInfo> ns = new ArrayList<>();
