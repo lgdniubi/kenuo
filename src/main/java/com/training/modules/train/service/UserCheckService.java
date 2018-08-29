@@ -119,6 +119,10 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		findCheck.setAddr(checkAddr);
 		return findCheck;
 	}
+	public UserCheck getUserCheckInfo(UserCheck userCheck) {
+		UserCheck findCheck = userCheckDao.getUserCheck(userCheck);
+		return findCheck;
+	}
 
 	/**
 	 * 分页查询审核信息记录

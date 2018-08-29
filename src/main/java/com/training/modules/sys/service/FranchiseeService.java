@@ -130,6 +130,8 @@ public class FranchiseeService extends TreeService<FranchiseeDao,Franchisee>{
 		//如果更换超管，操作
 		if(!franchisee.getOldSuperUserId().equals(franchisee.getSuperUserId())){
 			replaceSuperRole(franchisee.getId(),franchisee.getOldSuperUserId(),franchisee.getSuperUserId());
+			//更换train_apply的user_id
+			userCheckDao.updateApplyUserId(franchisee.getOldSuperUserId(),franchisee.getSuperUserId());
 		}
 		return res;
 	}

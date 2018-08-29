@@ -327,7 +327,7 @@
 		         <td class="width-35" ><form:input path="sort" htmlEscape="false" class="form-control required digits"/> --%>
 		      </tr>
 		      <tr>
-		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>标签:</label></td>
+		         <td  class="width-15 active"><label class="pull-right"><font color="red"></font>标签:</label></td>
 		         <td class="width-35" colspan="3"><form:input path="label" htmlEscape="false" maxlength="4"  class="form-control"/>
 		      </tr>
 		      <tr>

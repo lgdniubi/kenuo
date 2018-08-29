@@ -299,9 +299,11 @@
 			t.discount,
 			t.create_date,
 			t.pay_type AS paytype,
-			t.user_id
+			apply.id as applyid
 			from train_model_franchisee t
 			LEFT JOIN sys_user u ON u.company_id = t.franchisee_id 
+			LEFT JOIN train_apply apply ON apply.user_id = u.id
+			AND apply.audit_type = 'qy'
 			WHERE 	u.id = #{userid}
 			AND t.del_flag = 0
 	</select>
@@ -704,4 +706,8 @@
 			lo.id = #{id}
 		ORDER BY lo.create_date DESC
 	</select>
+	
+	<update id="updateApplyUserId">
+		UPDATE train_apply SET user_id = #{superUserId} WHERE user_id = #{oldSuperUserId} AND audit_type = 'qy'
+	</update>
 </mapper>

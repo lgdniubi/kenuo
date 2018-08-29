@@ -217,5 +217,12 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	 * @return
 	 */
 	public List<ModelFranchisee> findModelLogById(ModelFranchisee mf);
+
+	/**
+	 * 更换超管申请商家的userID
+	 * @param oldSuperUserId
+	 * @param superUserId
+	 */
+	public void updateApplyUserId(@Param("oldSuperUserId")String oldSuperUserId, @Param("superUserId")String superUserId);
 	
 }

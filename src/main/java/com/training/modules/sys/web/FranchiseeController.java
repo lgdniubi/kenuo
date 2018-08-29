@@ -325,7 +325,6 @@ public class FranchiseeController extends BaseController{
 				if(modelFranchisee == null){
 					modelFranchisee = new ModelFranchisee();
 				}
-//				modelFranchisee.setApplyid(userCheck.getId());
 				modelFranchisee.setUserid(userId);
 				model.addAttribute("modelFranchisee",modelFranchisee);
 				returnJsp = "modules/train/qySecondForm";
@@ -343,7 +342,7 @@ public class FranchiseeController extends BaseController{
 		UserCheck userCheck = new UserCheck();
 		userCheck.setUserid(modelFranchisee.getUserid());
 		userCheck.setAuditType(opflag);
-		UserCheck find = userCheckService.getUserCheck(userCheck);
+		UserCheck find = userCheckService.getUserCheckInfo(userCheck);
 		boolean flag = "qy".equals(userCheck.getType()) && Integer.valueOf(userCheck.getStatus())==4;
 		boolean flagsyr = "syr".equals(opflag) && "qy".equals(find.getType());
 		//缓存锁
@@ -361,7 +360,7 @@ public class FranchiseeController extends BaseController{
 					userCheckService.pushMsg(modelFranchisee,modelSelect,opflag);//重新授权成功发送消息
 					userCheckService.pushMsg(userCheck, "您已具备手艺人用户的权益，开启新旅程吧。");//授权成功发送消息
 				}else if ("qy".equals(opflag)){
-					ModelFranchisee modelSelect = userCheckService.getModelFranchiseeByUserid(modelFranchisee.getUserid());
+					ModelFranchisee modelSelect = userCheckService.getQYModelFranchiseeByUserid(modelFranchisee.getUserid());
 					userCheckService.saveQYModelFranchisee(modelFranchisee,find);//保存企业权益信息
 					userCheckService.pushMsg(modelFranchisee,modelSelect,opflag);//重新授权成功发送消息
 					userCheckService.pushMsg(userCheck, "您已具备企业用户的权益，开启新旅程吧。");//授权成功发送消息
