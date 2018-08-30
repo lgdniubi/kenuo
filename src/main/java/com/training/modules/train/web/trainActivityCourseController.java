@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
@@ -80,6 +81,8 @@ public class trainActivityCourseController extends BaseController{
 		try {
 			if(trainActivityCourse.getAcId() != 0){
 				trainActivityCourse = trainActivityCourseService.get(trainActivityCourse);
+				String htmlEscape = HtmlUtils.htmlUnescape(trainActivityCourse.getContent());
+				trainActivityCourse.setContent(htmlEscape);
 				if(trainActivityCourse.getIsOpen()==1){
 					String companyIds = trainActivityCourseService.findCompanyIds(trainActivityCourse.getAcId());
 					trainActivityCourse.setFranchiseeId(companyIds);
@@ -109,8 +112,10 @@ public class trainActivityCourseController extends BaseController{
 	public String save(Model model,TrainActivityCourse trainActivityCourse,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
 			String[] Images = request.getParameterValues("img");
+			String htmlEscape = HtmlUtils.htmlEscape(trainActivityCourse.getContent());
+			trainActivityCourse.setContent(htmlEscape);
 			trainActivityCourseService.saveCourse(trainActivityCourse);
-			int acId = trainActivityCourse.getAcId();
+			/*int acId = trainActivityCourse.getAcId();
 			if(acId != 0){
 				List<TrainActivityCourseContent> list = new ArrayList<TrainActivityCourseContent>();
 				for (int i = 0; i < Images.length; i++) {
@@ -124,7 +129,7 @@ public class trainActivityCourseController extends BaseController{
 				if(list.size() > 0){
 					trainActivityCourseService.saveContent(list,acId);
 				}
-			}
+			}*/
 			addMessage(redirectAttributes, "保存/修改课程活动成功!");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "保存妃子校课程活动", e);

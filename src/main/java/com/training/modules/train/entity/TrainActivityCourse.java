@@ -32,6 +32,7 @@ public class TrainActivityCourse extends DataEntity<TrainActivityCourse> {
 	private String franchiseeId;	//商家id
 	private String label;			//标签4个字
 	private Integer isOpen;			//是否公开，1不公开，选择商家
+	private String content;			//活动介绍文字，
 	
 	private List<TrainActivityCourseContent> trainActivityCourseContentList;	//内容详情
 	
@@ -124,6 +125,12 @@ public class TrainActivityCourse extends DataEntity<TrainActivityCourse> {
 	}
 	public void setIsOpen(Integer isOpen) {
 		this.isOpen = isOpen;
+	}
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
 	}
 	
 }

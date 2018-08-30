@@ -12,6 +12,7 @@
 		<result property="isOpen" column="is_open" />
 		<result property="sort" column="sort" />
 		<result property="headImg" column="headImg" />
+		<result property="content" column="content" />
 		<collection property="trainActivityCourseContentList" ofType="TrainActivityCourseContent">
 			<id property="cId" column="trainActivityCourseContentList.cId" />
 			<result property="type" column="trainActivityCourseContentList.type" />
@@ -74,17 +75,18 @@
 			a.amount,
 			a.sort,
 			a.head_img AS headImg,
+			a.content,
 			a.label,
-			a.is_open,
-			b.id AS 'trainActivityCourseContentList.cId',
+			a.is_open
+			<!-- b.id AS 'trainActivityCourseContentList.cId',
 			b.type AS 'trainActivityCourseContentList.type',
-			b.img AS 'trainActivityCourseContentList.img'
+			b.img AS 'trainActivityCourseContentList.img' -->
 		FROM 
 			train_activity_course a
-			LEFT JOIN train_activity_course_content b ON a.id = b.ac_id
+<!-- 			LEFT JOIN train_activity_course_content b ON a.id = b.ac_id -->
 		WHERE 
 			a.id = #{acId}
-		ORDER BY b.sort
+<!-- 		ORDER BY b.sort -->
 	</select>
 	<!-- 保存妃子校课程活动 -->
 	<insert id="insert" parameterType="TrainActivityCourse" useGeneratedKeys="true" keyProperty="acId">
@@ -95,6 +97,7 @@
 			amount,
 			is_on_sale,
 			head_img,
+			content,
 			sort,
 			create_by,
 			create_date,
@@ -108,6 +111,7 @@
 			#{amount},
 			#{isOnSale},
 			#{headImg},
+			#{content},
 			#{sort},
 			#{createBy.id}, 
 			SYSDATE(),
