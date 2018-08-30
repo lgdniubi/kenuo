@@ -345,7 +345,7 @@
 		      </tr>
 		      <tr>
 		         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>活动介绍:</label></td>
-		         <td class="width-35" colspan="3">
+		         <%-- <td class="width-35" colspan="3">
 		         	<div><font color="red">* 图片大小不能超过500KB</font></div>
 					<div id="myTabContent">
 						<div class="imgResult" id="img">
@@ -366,7 +366,7 @@
 						<input type="file" name="file_img_upload" id="file_img_upload">
 						<div id="file_img_queue"></div>
 					</div>
-		         </td>
+		         </td> --%>
 		      </tr>
 		    </tbody>
 		  </table>

@@ -20,7 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
-import com.training.modules.sys.service.OfficeService;
+import com.training.modules.sys.service.FranchiseeService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.train.entity.TrainActivityCourse;
 import com.training.modules.train.entity.TrainActivityCourseContent;
@@ -40,7 +40,7 @@ public class trainActivityCourseController extends BaseController{
 	@Autowired
 	private TrainActivityCourseService trainActivityCourseService;
 	@Autowired
-	private OfficeService officeService;
+	private FranchiseeService franchiseeService;
 	
 	/**
 	 * 妃子校活动课程list
@@ -86,7 +86,8 @@ public class trainActivityCourseController extends BaseController{
 				}
 			}
 			model.addAttribute("trainActivityCourse", trainActivityCourse);
-			model.addAttribute("officeList", officeService.findAll());
+			//查找所有商家
+			model.addAttribute("officeList", franchiseeService.findAllCompanyList());
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "查询妃子校活动课程详情", e);
 			logger.error("查询妃子校活动课程详情错误信息:"+e.getMessage());

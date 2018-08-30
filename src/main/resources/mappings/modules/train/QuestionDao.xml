@@ -24,6 +24,15 @@
 		<if test="typeId2 != null and typeId2 != ''">AND h.id = #{typeId2}</if>
 		GROUP BY q.id
 	</select>
+	<select id="findShopList" resultType="Question">
+		SELECT <include refid="menuColumns"/>,
+			(SELECT GROUP_CONCAT(h. NAME) FROM handbook_type h LEFT JOIN question_handbook qh ON qh.hid = h.id WHERE qh.qid= q.id) AS typeName 
+			FROM `question` q
+			LEFT JOIN question_handbook qh ON qh.qid = q.id
+			LEFT JOIN handbook_type h ON h.id = qh.hid
+			where q.`del_flag` = 0
+			AND q.type = #{type} AND h.is_shop = #{isShop}
+	</select>
 	
 	<!-- 根据id查看 -->
 	<select id="get" resultType="Question">

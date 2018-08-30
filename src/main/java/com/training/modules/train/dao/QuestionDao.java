@@ -37,6 +37,12 @@ public interface QuestionDao extends CrudDao<Question> {
 	 * @return
 	 */
 	public List<HandbookType> findBookType(String id);
+	/**
+	 * 筛选店铺管理端问题
+	 * @param question
+	 * @return
+	 */
+	public List<Question> findShopList(Question question);
 
 	
 	

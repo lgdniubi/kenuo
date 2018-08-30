@@ -29,6 +29,13 @@
 				}
 			});   
 		}
+	  	
+		function adminQList(){
+			window.location.href="${ctx}/train/question/shopList?isShop=0";	//管理端
+		}
+		function shopQList(){
+			window.location.href="${ctx}/train/question/shopList?isShop=1";	//管理端
+		}
     </script>
     <title>手册列表</title>
 </head>
@@ -90,6 +97,8 @@
 							<c:when test="${type eq '3'}">
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/handbook/list?type=${type}&isShop=0","查看分类", false)'><i class="fa fa-plus"></i> 查看管理端分类</button>
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/handbook/list?type=${type}&isShop=1","查看分类", false)'><i class="fa fa-plus"></i> 查看店铺端分类</button>
+								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="adminQList()" title="管理端问题">管理端问题列表</button>
+								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="shopQList()" title="店铺端问题">店铺端问题列表</button>
 							</c:when>
 							<c:otherwise>
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/handbook/list?type=${type}","查看分类", false)'><i class="fa fa-plus"></i> 查看分类</button>
@@ -125,6 +134,7 @@
 										</c:if>
 								  	</td>
 								    <td>
+				    					<a href="#" onclick="openDialogView('查看', '${ctx}/train/question/form?id=${q.id}&type=${type}','850px', '650px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>查看</a>
 				    					<a href="${ctx}/train/question/delete?id=${q.id}&listType=${type}"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>删除</a>
 				    					<a href="#" onclick="openDialog('修改', '${ctx}/train/question/form?id=${q.id}&type=${type}','850px', '650px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>修改</a>
 								    </td>

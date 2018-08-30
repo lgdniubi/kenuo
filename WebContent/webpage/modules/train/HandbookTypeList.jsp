@@ -5,6 +5,26 @@
     <meta charset="utf-8">
     <meta name="decorator" content="default"/>
     <script> 
+	    function isDelete(id,type,isShop){
+	  		var url = "${ctx}/train/handbook/delete?id="+id+"&type="+type+"&isShop="+isShop;
+	  		var msg = "sss";
+			$.ajax({
+				url:'${ctx}/train/handbook/isDelete',
+				type:'post',
+				data:{id:id},
+			 	dataType:'json',
+			 	success:function(data){
+			 		if(data){
+			 			top.layer.msg("分类下包含问题，无法删除，请把问题处理后在进行删除！", {icon: 0});
+			 		}else{
+				  		top.layer.confirm(msg, {icon: 3, title:'系统提示'}, function(index){
+							top.layer.close(index);
+							location.href = url;
+						});
+			 		}
+			 	}
+			});
+	    }
     </script>
     <title>手册类型列表</title>
 </head>
@@ -30,7 +50,7 @@
 					<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 						<thead>
 							<tr>
-								<th style="text-align: center;">ID</th>
+								<th style="text-align: center;">排序</th>
 								<th style="text-align: center;">分类名称</th>
 						    	<th style="text-align: center;">操作</th>
 							</tr>
@@ -38,10 +58,10 @@
 						<tbody style="text-align: center;">
 							<c:forEach items="${typeList}" var="type">
 								<tr>
-									<td>${type.id }</td>
+									<td>${type.sort }</td>
 								  	<td>${type.name }</td>
 								    <td>
-				    					<a href="${ctx}/train/handbook/delete?id=${type.id}&type=${type.type}&isShop=${type.isShop}"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>删除</a>
+				    					<a href="#" onclick="isDelete('${type.id}','${type.type}','${type.isShop}')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>删除</a>
 				    					<a href="#" onclick="openDialog('修改', '${ctx}/train/handbook/form?id=${type.id}','850px', '550px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>修改</a>
 								    </td>
 								</tr>

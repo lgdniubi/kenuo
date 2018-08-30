@@ -28,12 +28,12 @@
 		//已审核
 		function hasCheck(){
 			$("#status").val("2")
-			window.location="${ctx}/train/userCheck/findalllist?status=2";
+			window.location.href="${ctx}/train/userCheck/findalllist?status=2";
 		}
 		//待审核
 		function wait(){
 			$("#status").val("0")
-			window.location="${ctx}/train/userCheck/findalllist?status=0";
+			window.location.href="${ctx}/train/userCheck/findalllist?status=0";
 		}
 		//已授权
 		function hasAudit(){

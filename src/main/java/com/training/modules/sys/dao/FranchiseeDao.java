@@ -118,4 +118,10 @@ public interface FranchiseeDao extends TreeDao<Franchisee>{
 	 */
 	public void updateMtmyIsRealFranchisee(Franchisee franchisee);
 
+	/**
+	 * 查找所有商家出去普通和手艺人
+	 * @return
+	 */
+	public List<Franchisee> findAllCompanyList();
+
 }

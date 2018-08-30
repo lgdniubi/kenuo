@@ -76,6 +76,22 @@ public class QuestionController extends BaseController {
 		model.addAttribute("typeList", typeList);
 		return "modules/train/questionList";
 	}
+	@RequestMapping(value = "shopList")
+	public String shopList(Question question, Model model,HttpServletRequest request, HttpServletResponse response) {
+		String bookType= "3";
+		question.setType(bookType);
+		Page<Question> page = questionService.findShopList(new Page<Question>(request, response), question);	
+		model.addAttribute("type", bookType);
+		model.addAttribute("page", page);
+		List<HandbookType> typeList = handbookService.findList(new HandbookType(bookType,"0"));
+		if("3".equals(bookType)){
+			List<HandbookType> typeShopList = handbookService.findList(new HandbookType(bookType,"1"));
+			model.addAttribute("typeShopList", typeShopList);
+		}
+		
+		model.addAttribute("typeList", typeList);
+		return "modules/train/questionList";
+	}
 	
 	@RequestMapping(value = "form")
 	public String form( Question question,String type,Model model) {

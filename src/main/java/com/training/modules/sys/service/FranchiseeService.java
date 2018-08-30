@@ -252,4 +252,12 @@ public class FranchiseeService extends TreeService<FranchiseeDao,Franchisee>{
 	public void updateMtmyIsRealFranchisee(Franchisee franchisee) {
 		franchiseeDao.updateMtmyIsRealFranchisee(franchisee);
 	}
+
+	/**
+	 * 查找所有商家
+	 * @return
+	 */
+	public List<Franchisee> findAllCompanyList() {
+		return franchiseeDao.findAllCompanyList();
+	}
 }

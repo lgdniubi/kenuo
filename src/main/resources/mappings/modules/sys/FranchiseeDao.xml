@@ -118,6 +118,17 @@
 			</if>
 		ORDER BY f.code
 	</select>
+	<select id="findAllCompanyList" resultType="Franchisee">
+		SELECT 
+		  f.id,
+		  f.parent_id AS 'parent.id',
+		  f.parent_ids AS 'parentIds',
+		  f.name
+		FROM
+		  sys_franchisee f 
+		 
+		WHERE f.id not in ('999999','1000000')
+	</select>
 	
 	<!-- 查询code下一个值 -->
 	<select id="findListbyPID" resultType="Franchisee">

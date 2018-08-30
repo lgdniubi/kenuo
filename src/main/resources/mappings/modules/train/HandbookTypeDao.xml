@@ -29,7 +29,7 @@
 		SELECT
 			<include refid="menuColumns"/>
 		FROM
-			`handbook_type` m where m.id = #{id}
+			`handbook_type` m where m.id = #{id} ORDER BY sort DESC
 	</select>
 	<!-- 添加 -->
 	<insert id="insert">

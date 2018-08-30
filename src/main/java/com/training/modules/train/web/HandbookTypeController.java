@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.web.BaseController;
@@ -97,13 +98,13 @@ public class HandbookTypeController extends BaseController {
 	@RequestMapping(value = "delete")
 	public String delete(Model model,HandbookType handbookType,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
-			Integer count = handbookService.findQuestionList(handbookType.getId());	// 查询问题列表，有问题不能删除类型
-			String msg = "删除分类成功!";
+			/*Integer count = handbookService.findQuestionList(handbookType.getId());	// 查询问题列表，有问题不能删除类型
 			if(count !=null && count>0){
 				msg = "分类下有问题不能删除";
 			}else{
-				handbookService.delete(handbookType);
-			}
+			}*/
+			String msg = "删除分类成功!";
+			handbookService.delete(handbookType);
 				
 			addMessage(redirectAttributes, msg);
 		} catch (Exception e) {
@@ -112,6 +113,22 @@ public class HandbookTypeController extends BaseController {
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
 		return "redirect:" + adminPath + "/train/handbook/list?type="+handbookType.getType()+"&isShop="+handbookType.getIsShop();
+	}
+	/**
+	 * 是否可以删除，分类下没有问题可以删除
+	 * @param handbookType
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "isDelete")
+	public boolean isDelete(HandbookType handbookType){
+		Integer count = 0;
+		try {
+			count = handbookService.findQuestionList(handbookType.getId());	// 查询问题列表，有问题不能删除类型
+		} catch (Exception e) {
+			logger.error("判断可否删除分类错误信息:"+e);
+		}
+		return count>0;
 	}
 }
 

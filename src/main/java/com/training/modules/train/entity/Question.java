@@ -21,9 +21,10 @@ public class Question extends DataEntity<Question>{
 	private String content;			//内容
 	private String typeId;			//手册类型id
 	private String typeId2;			//手册类型idpc有2个
-	private String typeName;			//手册类型名称
+	private String typeName;		//手册类型名称
 	private String type;			//手册类型
 	private String status = "1";	//问题状态：1启用,2停用,
+	private String isShop;			//是否店铺端问题，0管理，1店铺，供搜索用
 	
 	public Question() {
 		super();
@@ -73,6 +74,12 @@ public class Question extends DataEntity<Question>{
 	}
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	public String getIsShop() {
+		return isShop;
+	}
+	public void setIsShop(String isShop) {
+		this.isShop = isShop;
 	}
 	
 	

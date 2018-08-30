@@ -115,6 +115,12 @@ public class QuestionService extends CrudService<QuestionDao,Question> {
 		return page;
 	}
 
+	public Page<Question> findShopList(Page<Question> page, Question question) {
+		question.setPage(page);
+		page.setList(dao.findShopList(question));
+		return page;
+	}
+
 	
 	
 }
