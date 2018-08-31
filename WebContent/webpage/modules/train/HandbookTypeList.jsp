@@ -7,7 +7,7 @@
     <script> 
 	    function isDelete(id,type,isShop){
 	  		var url = "${ctx}/train/handbook/delete?id="+id+"&type="+type+"&isShop="+isShop;
-	  		var msg = "sss";
+	  		var msg = "确认删除？";
 			$.ajax({
 				url:'${ctx}/train/handbook/isDelete',
 				type:'post',

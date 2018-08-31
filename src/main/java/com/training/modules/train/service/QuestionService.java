@@ -121,6 +121,15 @@ public class QuestionService extends CrudService<QuestionDao,Question> {
 		return page;
 	}
 
+	/**
+	 * 删除手册，并删除手册--分类中间表
+	 * @param question
+	 */
+	public void deleteQandType(Question question) {
+		super.delete(question);
+		questionDao.deleteQuestionHandbook(question.getId());
+	}
+
 	
 	
 }

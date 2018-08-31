@@ -139,7 +139,7 @@ public class QuestionController extends BaseController {
 	public String delete(Model model,Question question,String listType,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
 			String msg = "删除成功!";
-			questionService.delete(question);
+			questionService.deleteQandType(question);
 				
 			addMessage(redirectAttributes, msg);
 		} catch (Exception e) {
