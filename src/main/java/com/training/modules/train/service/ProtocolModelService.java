@@ -198,8 +198,14 @@ public class ProtocolModelService extends CrudService<ProtocolModelDao,ProtocolM
 
 
 	public void deleteProtocolShop(ProtocolModel protocolModel) {
-		protocolModelDao.deleteProtocolShopById(Integer.valueOf(protocolModel.getId()));
-		changeStatusForSupply();
+		ProtocolModel findModel = protocolModelDao.findModel(protocolModel);
+		if(!"1".equals(findModel.getType())){		//4是店铺签约
+			protocolModelDao.deleteProtocolShop(findModel.getType());
+	//		protocolModelDao.deleteProtocolShopById(Integer.valueOf(protocolModel.getId()));
+		}
+		if("4".equals(findModel.getType())){		//4是店铺签约
+			changeStatusForSupply();
+		}
 	}
 	
 }

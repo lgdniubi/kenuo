@@ -195,9 +195,9 @@ public class ProtocolModelController extends BaseController {
 	 */
 	@RequestMapping(value = "openProtocol")
 	public String openProtocol(Integer isOpen,Model model){
-		String msg = "协议启用是否重新签订";
+		String msg = "协议启用是否重新签订？";
 		if(isOpen == 3){
-			msg="是否确定停用该协议";
+			msg="是否确定停用该协议？";
 		}
 		model.addAttribute("msg", msg);
 		return "modules/train/openProtocol";

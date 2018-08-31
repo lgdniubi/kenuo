@@ -12,10 +12,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
 import com.training.common.web.BaseController;
+import com.training.modules.ec.utils.WebUtils;
 import com.training.modules.sys.utils.BugLogUtils;
+import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.train.entity.ContractInfo;
 import com.training.modules.train.service.ContractInfoService;
 import com.training.modules.train.service.ProtocolModelService;
+
+import net.sf.json.JSONNull;
+import net.sf.json.JSONObject;
 /**
  * 查询
  * @author QJL
@@ -120,4 +125,26 @@ public class ContractInfoController extends BaseController {
 		model.addAttribute("protocalUser", this.protocolModelService.findProtocolListOfOffice(office_id));
 		return "modules/train/protocolListOfOffice";
 	}
+	/**
+	 * 审核驳回原因
+	 * @param office_id
+	 * @param model
+	 * @return
+	
+	@RequestMapping(value="refuseReason")
+	public String refuseReason(String office_id,Model model){
+		String remarks = null;
+		String url = ParametersFactory.getTrainsParamValues("contract_data_path");
+		logger.info("##### web接口路径查询签约信息驳回原因:"+url);
+		String parpm = "{\"office_id\":\""+office_id+"\"}";
+		logger.info("##### web接口路径查询签约信息驳回原因参数:"+parpm);
+		String result = WebUtils.postCSObject(parpm, url);
+		JSONObject jsonObject = JSONObject.fromObject(result);
+		if(!(jsonObject.get("data") instanceof JSONNull)){
+			remarks = jsonObject.getJSONObject("data").getString("remarks");
+		}
+		model.addAttribute("remarks", remarks);
+		logger.info("##### web接口查询签约信息驳回原因数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+		return "modules/train/refuseReason";
+	} */
 }
