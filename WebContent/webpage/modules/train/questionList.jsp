@@ -36,6 +36,16 @@
 		function shopQList(){
 			window.location.href="${ctx}/train/question/shopList?isShop=1";	//管理端
 		}
+
+	    function isDelete(id,type){
+	    	/*${ctx}/train/question/delete?id=${q.id}&listType=${type}*/
+	  		var url = "${ctx}/train/question/delete?id="+id+"&listType="+type;
+	  		var msg = "确认删除？";
+	  		top.layer.confirm(msg, {icon: 3, title:'系统提示'}, function(index){
+				top.layer.close(index);
+				location.href = url;
+			});
+	    }
     </script>
     <title>手册列表</title>
 </head>
@@ -135,7 +145,7 @@
 								  	</td>
 								    <td>
 				    					<a href="#" onclick="openDialogView('查看', '${ctx}/train/question/form?id=${q.id}&type=${type}','850px', '650px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>查看</a>
-				    					<a href="${ctx}/train/question/delete?id=${q.id}&listType=${type}"  class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>删除</a>
+				    					<a href="#" onclick="isDelete('${q.id}','${type}')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>删除</a>
 				    					<a href="#" onclick="openDialog('修改', '${ctx}/train/question/form?id=${q.id}&type=${type}','850px', '650px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>修改</a>
 								    </td>
 								</tr>
