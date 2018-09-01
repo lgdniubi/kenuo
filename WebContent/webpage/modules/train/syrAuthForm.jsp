@@ -130,6 +130,9 @@
 	</script>
 </head>
 <body>
+	<style>
+	html, body{height: auto !important}
+	</style>
 	<sys:message content="${message}"/>
 	<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		<tbody>

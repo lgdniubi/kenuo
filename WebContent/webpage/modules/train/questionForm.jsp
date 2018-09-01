@@ -56,7 +56,7 @@
 						    <c:choose>
 								<c:when test="${type eq '3'}">
 									<label class="col-sm-2 control-label">
-										<span class="help-tip">
+										<span class="help-tip" style="z-index: 10">
 											<span class="help-p">管理端和店铺端分类最少选一个</span>
 										</span>
 										<font color="red">*</font>管理端分类： </label>
