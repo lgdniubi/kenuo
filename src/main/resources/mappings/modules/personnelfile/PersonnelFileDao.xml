@@ -20,9 +20,6 @@
 		<result column="mobile" property="mobile"/>
 		<result column="filing" property="filing"/>
 		<result column="inductionTime" property="inductionTime"/>
-		<collection property="rolelist" ofType="com.training.modules.sys.entity.Role">
-			<result column="srName" property="name" />
-		</collection>
 	</resultMap>	
 
 	<select id="get" resultMap="resultCount">
@@ -37,7 +34,7 @@
 	<select id="findPersonnelFileList" resultMap="resultCount">
 		SELECT
 			s.id as id,
-			s.`name` as sName,
+			ubi.`name` as sName,
 			ubi.sex as sex,
 			ubi.id as baseInfo_id,
 			ubi.birthday as birthday,
@@ -56,7 +53,6 @@
 		LEFT JOIN sys_office o ON o.id = s.office_id
 		<!-- 数据范围过滤 -->
 		where 1 =1
-		AND s.del_flag = #{parentDel}
 		AND ubi.franchisee_id = #{officeId}
 		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
 		<if test="!currentUser.admin">
