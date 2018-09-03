@@ -56,6 +56,7 @@
 					$("#details").val(content);
 					$("#tags").val($("#officeInfotagsName").val());//标签
 					$("#inputForm").submit();
+					$("#btn1,#btn2,#btn3").prop("disabled","disabled");
 					return true;
 				}
 			}
@@ -769,11 +770,11 @@
 		      	<input type="button" value="下一步" onclick="doSubmit()"/>
 		      </c:if> --%>
 		      <c:if test="${opflag == 1 }">
-		      	<input type="button" value="保存基础信息" onclick="doSubmit()"/>
+		      	<input type="button" id="btn1" value="保存基础信息" onclick="doSubmit()"/>
 		      </c:if>
 		      <c:if test="${opflag == 2}"><!-- 点击添加下级机构 -->
-		      <label class="pull-left" id="next" ><input type="button" value="保存并下一步" onclick="doSubmit()"/></label>
-		      <label class="pull-left" id="sbutton" ><input type="button" value="保存基础信息" onclick="doSubmit()"/></label>
+		      <label class="pull-left" id="next" ><input type="button" id="btn2" value="保存并下一步" onclick="doSubmit()"/></label>
+		      <label class="pull-left" id="sbutton" ><input type="button" id="btn3" value="保存基础信息" onclick="doSubmit()"/></label>
 		      </c:if>
 		</form:form>
 		<shiro:hasPermission name="sys:office:shopLogs">

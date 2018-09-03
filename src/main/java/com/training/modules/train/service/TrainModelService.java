@@ -92,7 +92,18 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	 * @param trainModel
 	 */
 	public TrainModel findmodpcMenu(TrainModel trainModel) {
-		return dao.findmodpcMenu(trainModel);
+		List<String> menuIds= dao.findmodpcMenu(trainModel);
+		concatMenuIds(trainModel, menuIds);
+		return trainModel;
+	}
+
+	private void concatMenuIds(TrainModel trainModel, List<String> menuIds) {
+		StringBuilder sb = new StringBuilder();
+		for (String m : menuIds) {
+			sb.append(",");
+			sb.append(m);
+		}
+		trainModel.setMenuIds(sb.toString().substring(1));
 	}
 
 	/**
@@ -142,7 +153,9 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	 * @param trainModel
 	 */
 	public TrainModel findmodfzxMenu(TrainModel trainModel) {
-		return dao.findmodfzxMenu(trainModel);
+		List<String> menuIds= dao.findmodfzxMenu(trainModel);
+		concatMenuIds(trainModel, menuIds);
+		return trainModel;
 	}
 
 	/**
@@ -222,7 +235,9 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 	 * @param trainModel
 	 */
 	public TrainModel findmodMediaMenu(TrainModel trainModel) {
-		return  dao.findmodMediaMenu(trainModel);
+		List<String> menuIds= dao.findmodMediaMenu(trainModel);
+		concatMenuIds(trainModel, menuIds);
+		return trainModel;
 	}
 	/**
 	 * 保存自媒体版本菜单
