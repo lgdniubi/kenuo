@@ -139,8 +139,35 @@
 		left join sys_user u on u.id = t.user_id
 		where t.order_id = #{order_id}
 	</select> -->
-	
-	<select id="queryRefundOrderDetail" resultType="RefundOrder">
+	<resultMap type="RefundOrder" id="refundOrderMap">
+		<result column="orderId" property="orderId"/>
+		<result column="tempOrderId" property="tempOrderId"/>
+		<result column="orderType" property="orderType"/>
+		<result column="arrearagePrice" property="arrearagePrice"/>
+		<result column="amount" property="amount"/>
+		<result column="addTime" property="addTime"/>
+		<result column="orderStatus" property="orderStatus"/>
+		<result column="payCode" property="payCode"/>
+		<result column="payTime" property="payTime"/>
+		<result column="chargeId" property="chargeId"/>
+		<result column="userId" property="userId"/>
+		<result column="userMobile" property="userMobile"/>
+		<result column="userOfficeId" property="userOfficeId"/>
+		<result column="channelFlag" property="channelFlag"/>
+		<result column="arrearageOfficeName" property="arrearageOfficeName"/>
+		<result column="userName" property="userName"/>
+		<result column="franchiseeName" property="franchiseeName"/>
+		<result column="billmonth" property="billmonth"/>
+		<result column="serialnumber" property="serialnumber"/>
+		<result column="bankaccount" property="bankaccount"/>
+		<result column="openbank" property="openbank"/>
+		<result column="proof" property="proof"/>
+		<result column="explains" property="explains"/>
+		<result column="openname" property="openname"/>
+		<result column="remarks" property="remarks"/>
+		<collection property="proofs" column="orderId" select="queryProofs" ofType="ArrayList"></collection>
+	</resultMap>
+	<select id="queryRefundOrderDetail" resultMap="refundOrderMap">
 		select 
 			ro.order_id as orderId,
 			ro.temp_order_id as tempOrderId,
@@ -173,6 +200,10 @@
 		left join sys_office o on o.id = arrearage_office
 		left join sys_franchisee f on f.id = o.franchisee_id
 		where order_id = #{order_id}
+	</select>
+	
+	<select id="queryProofs" parameterType="String" resultType="String">
+		select proof from train_refund_proof where order_id = #{orderId}
 	</select>
 	
 	<update id="makeSureInAccount">

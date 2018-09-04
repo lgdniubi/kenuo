@@ -1,5 +1,7 @@
 package com.training.modules.train.entity;
 
+import java.util.List;
+
 import com.training.common.persistence.DataEntity;
 
 public class RefundOrder extends DataEntity<RefundOrder> {
@@ -31,6 +33,8 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	private String explains;//说明
 	private String openname;//开户姓名
 	private String remarks; //驳回原因
+	
+	private List<String> proofs;
 	public String getOrderId() {
 		return orderId;
 	}
@@ -186,5 +190,11 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	}
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+	public List<String> getProofs() {
+		return proofs;
+	}
+	public void setProofs(List<String> proofs) {
+		this.proofs = proofs;
 	}
 }

@@ -126,9 +126,9 @@
 				    <tr>
 				         <td class="active"><label class="pull-right">凭证:</label></td>
 				         <td colspan="5">
-				         <c:if test="${!empty refundOrder.proof}">
-				         <img id="photosrc" src="${refundOrder.proof }" alt="images" style="width: 200px;height: 100px;"/>
-				         </c:if>
+				         <c:forEach items="${refundOrder.proofs }" var="ite">
+				         <img id="photosrc" src="${ite }" alt="images" style="width: 200px;height: 100px;"/>
+				         </c:forEach>
 				         </td>
 					</tr>
 				    <tr>

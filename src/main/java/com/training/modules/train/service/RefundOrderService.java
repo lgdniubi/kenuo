@@ -93,7 +93,7 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 		//修改订单状态为已入账
 		this.refundOrderMapper.makeSureInAccount(order_id,status,remarks);
 		this.refundOrderMapper.updateStatementStatus(order_id, Integer.parseInt(status));
-		if("3".equals(status)){
+		if("3".equals(status)){System.out.println("调用远程接口还款：office_id:"+office_id+",order_id:"+order_id+",amount:"+amount);
 			new Thread(new RefundThread(office_id, order_id, amount)).start();
 		}
 		//记录日志
