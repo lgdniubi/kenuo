@@ -89,10 +89,10 @@ public class MediaRoleController extends BaseController{
 			}else{
 				mediaRole = new MediaRole();
 			}
+			mediaRole.setOpflag(opflag);
 			List<TrainModel> modList = trainModelService.findDYModelList();	//查找登云的所有的版本类型
 			model.addAttribute("mediaRole", mediaRole);
 			model.addAttribute("modList", modList);
-			model.addAttribute("opflag", opflag);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "查询PC角色详情", e);
 			logger.error("查询PC角色详情错误信息:"+e.getMessage());
@@ -120,7 +120,7 @@ public class MediaRoleController extends BaseController{
 			logger.error("保存PC角色错误信息:"+e.getMessage());
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/train/mdrole/list";
+		return "redirect:" + adminPath + "/train/mdrole/list?opflag="+mediaRole.getOpflag();
 	}
 	
 	/**
@@ -144,7 +144,7 @@ public class MediaRoleController extends BaseController{
 			logger.error("删除PC角色错误信息:"+e.getMessage());
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/train/mdrole/list";
+		return "redirect:" + adminPath + "/train/mdrole/list?opflag="+mediaRole.getOpflag();
 	}
 	/**
 	 * 角色权限设置
@@ -160,12 +160,14 @@ public class MediaRoleController extends BaseController{
 	public String auth(Model model,MediaRole mediaRole,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
 			model.addAttribute("mediaMenu", mediaMenuService.findAllMenuByModid(mediaRole));
-			model.addAttribute("mediaRole", mediaRoleService.findRoleMenu(mediaRole));
+			MediaRole role = mediaRoleService.findRoleMenu(mediaRole);
+			role.setOpflag(mediaRole.getOpflag());
+			model.addAttribute("mediaRole", role);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "PC角色权限设置", e);
 			logger.error("PC角色权限设置错误信息:"+e.getMessage());
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
-			return "redirect:" + adminPath + "/train/mdrole/list";
+			return "redirect:" + adminPath + "/train/mdrole/list?opflag="+mediaRole.getOpflag();
 		}
 		return "modules/train/mediaRoleAuth";
 	}
@@ -244,7 +246,7 @@ public class MediaRoleController extends BaseController{
 			logger.error("保存PC角色菜单权限错误信息:"+e.getMessage());
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/train/mdrole/list";
+		return "redirect:" + adminPath + "/train/mdrole/list?opflag="+mediaRole.getOpflag();
 	}
 	
 	/**

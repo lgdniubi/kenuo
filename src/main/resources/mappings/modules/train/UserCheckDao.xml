@@ -52,11 +52,14 @@
 		<if test="status != '' and status == 0">
 			AND tap.status = 0
 		</if>
-		<if test="status == 2">
-			AND tap.status in (1,2)
+		<if test="status == 1">
+			AND tap.status = 1
 		</if>
 		<if test="status == 3">
-			AND tap.status = 3
+			AND tap.status in (2,3)
+		</if>
+		<if test="auditType != null and auditType != ''">
+			AND tap.audit_type = #{auditType}
 		</if>
 		ORDER BY tap.create_date DESC
 	</select>

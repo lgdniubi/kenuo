@@ -25,17 +25,17 @@
 		function refresh(){
 			window.location="${ctx}/train/userCheck/findalllist";
 		}
-		//已审核
-		function hasCheck(){
-			$("#status").val("2")
-			window.location.href="${ctx}/train/userCheck/findalllist?status=2";
+		//已审核--未通过1
+		function noPass(){
+			$("#status").val("1")
+			window.location.href="${ctx}/train/userCheck/findalllist?status=1";
 		}
 		//待审核
 		function wait(){
 			$("#status").val("0")
 			window.location.href="${ctx}/train/userCheck/findalllist?status=0";
 		}
-		//已授权
+		//已授权--已通过3
 		function hasAudit(){
 			$("#status").val("3")
 			window.location="${ctx}/train/userCheck/findalllist?status=3";
@@ -149,6 +149,14 @@
 							<div class="form-group">
 								<label>关键字：<input id="name" name="mobile" maxlength="11" type="text" class="form-control" value="${userCheck.mobile}" placeholder="请输入手机号"></label> 
 							</div>
+							<div class="form-group">
+								<select class="form-control valid" name="auditType" aria-invalid="false">
+									<option value=""  >请选择</option>
+									<option value="syr" <c:if test="${userCheck.auditType eq 'syr' }">selected="selected"</c:if> >手艺人</option>
+									<option value="qy" <c:if test="${userCheck.auditType eq 'qy'}">selected="selected"</c:if> >企业</option>
+								</select>
+							</div>
+							
 							<shiro:hasPermission name="train:userCheck:findalllist">
 								<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
 									<i class="fa fa-search"></i> 搜索
@@ -165,8 +173,8 @@
 							<div class="pull-left">
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="refresh()" title="刷新"><i class="glyphicon glyphicon-repeat"></i> 刷新</button>
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="wait()" title="待审核">待审核</button>
-								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="hasCheck()" title="已审核">已审核</button>
-								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="hasAudit()" title="已授权">已授权</button>
+								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="hasAudit()" title="已通过">已通过</button>
+								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="noPass()" title="未通过">未通过</button>
 							</div>
 						</div>
 					</div>

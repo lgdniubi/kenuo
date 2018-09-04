@@ -36,7 +36,7 @@
 	</select>
 	<!-- 角色详情 -->
 	<select id="get" resultType="FzxRole">
-		SELECT id AS roleId,name,enname,mod_id AS modeid,remarks FROM fzx_role WHERE id = #{roleId}
+		SELECT id AS roleId,name,enname,mod_id AS modeid,role_grade,remarks FROM fzx_role WHERE id = #{roleId}
 	</select>
 	<!-- 根据版本id和ename=sjgly查找超级管理员角色 -->
 	<select id="getFzxRoleByModAndEname" resultType="FzxRole">

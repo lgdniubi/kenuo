@@ -122,6 +122,7 @@
 	<input type="hidden" value="${fzxRole.name}" id="oldName"/>
 	<form:form id="inputForm" modelAttribute="fzxRole" action="${ctx}/train/fzxRole/save" method="post" class="form-horizontal">
 		<form:hidden path="roleId"/>
+		<form:hidden path="opflag"/>
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		   <tbody>
 		      <tr>

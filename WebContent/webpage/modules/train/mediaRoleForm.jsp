@@ -101,6 +101,7 @@
 <body>
 	<form:form id="inputForm" modelAttribute="mediaRole" action="${ctx}/train/mdrole/save" method="post" class="form-horizontal">
 		<form:hidden path="roleId"/>
+		<form:hidden path="opflag"/>
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		   <tbody>
 		      <tr>

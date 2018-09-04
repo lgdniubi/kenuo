@@ -103,6 +103,7 @@ public class fzxRoleController extends BaseController{
 			}else{
 				fzxRole = new FzxRole();
 			}
+			fzxRole.setOpflag(opflag);
 			TrainModel trainModel = new TrainModel();
 			if("pt".equals(opflag)){
 				trainModel.setModType("dy");
@@ -149,7 +150,7 @@ public class fzxRoleController extends BaseController{
 			logger.error("保存妃子校角色错误信息:"+e.getMessage());
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/train/fzxRole/list";
+		return "redirect:" + adminPath + "/train/fzxRole/list?opflag="+fzxRole.getOpflag() ;
 	}
 	
 	/**
@@ -223,7 +224,7 @@ public class fzxRoleController extends BaseController{
 			logger.error("删除妃子校角色错误信息:"+e.getMessage());
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/train/fzxRole/list";
+		return "redirect:" + adminPath + "/train/fzxRole/list?opflag="+fzxRole.getOpflag();
 	}
 	/**
 	 * 角色权限设置
@@ -239,12 +240,14 @@ public class fzxRoleController extends BaseController{
 	public String auth(Model model,FzxRole fzxRole,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
 			model.addAttribute("fzxMenu", fzxMenuService.findAllMenuByModid(fzxRole));
-			model.addAttribute("fzxRole", fzxRoleService.findRoleMenu(fzxRole));
+			FzxRole role = fzxRoleService.findRoleMenu(fzxRole);
+			role.setOpflag(fzxRole.getOpflag());
+			model.addAttribute("fzxRole", role);
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "妃子校角色权限设置", e);
 			logger.error("妃子校角色权限设置错误信息:"+e.getMessage());
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
-			return "redirect:" + adminPath + "/train/fzxRole/list";
+			return "redirect:" + adminPath + "/train/fzxRole/list?opflag="+fzxRole.getOpflag();
 		}
 		return "modules/train/fzxRoleAuth";
 	}
@@ -328,7 +331,7 @@ public class fzxRoleController extends BaseController{
 			logger.error("保存妃子校角色菜单权限错误信息:"+e.getMessage());
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/train/fzxRole/list";
+		return "redirect:" + adminPath + "/train/fzxRole/list?opflag="+fzxRole.getOpflag();
 	}
 	/**
 	 * 分配用户
@@ -479,7 +482,7 @@ public class fzxRoleController extends BaseController{
 			logger.error("保存妃子校角色菜单权限错误信息:"+e);
 			addMessage(redirectAttributes, "默认角色保存异常，请与管理员联系");
 		}
-		return "redirect:" + adminPath + "/train/fzxRole/list";
+		return "redirect:" + adminPath + "/train/fzxRole/list?opflag="+fzxRole.getOpflag();
 	}
 	
 }

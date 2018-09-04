@@ -365,7 +365,7 @@
 					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>加盟法人:</label></td>
 					<td class="width-35"><form:input path="legalName" htmlEscape="false" maxlength="50" class="form-control required" /></td>
 					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>法人身份证号:</label></td>
-					<td class="width-35"><form:input path="legalCard" htmlEscape="false" maxlength="50" cssClass="form-control required digits" /></td>
+					<td class="width-35"><form:input path="legalCard" htmlEscape="false" maxlength="18" cssClass="form-control required" /></td>
 				</tr>
 				<tr>
 					<td class="width-15 active"><label class="pull-right"><font color="red">*</font>加盟商联系人:</label></td>

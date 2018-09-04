@@ -245,6 +245,7 @@
 		  sys_franchisee
 		SET
 		  name = #{name},
+		  short_name = #{shortName},
 		  type = #{type},
 		  area_id = #{area.id},
 		  address = #{address},

@@ -53,7 +53,7 @@
 							<c:if test="${mediaRole.opflag eq 'dy'}">
 							<shiro:hasPermission name="train:mdrole:add">
 								<!-- 增加按钮 -->
-								<table:addRow url="${ctx}/train/mdrole/form" title="新增角色" width="800px" height="650px"></table:addRow>
+								<table:addRow url="${ctx}/train/mdrole/form?opflag=${mediaRole.opflag }" title="新增角色" width="800px" height="650px"></table:addRow>
 							</shiro:hasPermission>
 							</c:if>
 						</div>
@@ -103,15 +103,15 @@
 										<c:if test="${list.modeid eq '8'}">
 											<c:if test="${list.type ne '2'}">
 											<shiro:hasPermission name="train:mdrole:edit">
-						    					<a href="#" onclick="openDialog('修改角色', '${ctx}/train/mdrole/form?roleId=${list.roleId}','800px', '650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
+						    					<a href="#" onclick="openDialog('修改角色', '${ctx}/train/mdrole/form?roleId=${list.roleId}&opflag=${mediaRole.opflag }','800px', '650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 						    				</shiro:hasPermission>
 						    				<shiro:hasPermission name="train:mdrole:del">
-												<a href="${ctx}/train/mdrole/delete?roleId=${list.roleId}" onclick="return confirmx('要删除该角色吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
+												<a href="${ctx}/train/mdrole/delete?roleId=${list.roleId}&opflag=${mediaRole.opflag }" onclick="return confirmx('要删除该角色吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
 											</shiro:hasPermission>
 											</c:if>
 											<c:if test="${list.type eq '1'}">
 											<shiro:hasPermission name="train:mdrole:auth"> 
-												<a href="#" onclick="openDialog('权限设置', '${ctx}/train/mdrole/auth?roleId=${list.roleId}','350px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a> 
+												<a href="#" onclick="openDialog('权限设置', '${ctx}/train/mdrole/auth?roleId=${list.roleId}&opflag=${mediaRole.opflag }','350px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a> 
 											</shiro:hasPermission> 
 											</c:if>
 										</c:if>
