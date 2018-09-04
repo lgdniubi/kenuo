@@ -202,10 +202,10 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			userCheckDao.editModelFranchisee(modelFranchisee);
 		}
 		//保存操作日志
-		User user = UserUtils.getUser();
-		modelFranchisee.setCreateBy(user);
-		modelFranchisee.setCreateDate(new Date());
-		userCheckDao.saveLogModel(modelFranchisee);
+//		User user = UserUtils.getUser();
+//		modelFranchisee.setCreateBy(user);
+//		modelFranchisee.setCreateDate(new Date());
+		//userCheckDao.saveLogModel(modelFranchisee);
 	}
 	//权益期限修改更改用户菜单状态
 	private void updateUserMenu(String franchiseeid,String userid) {

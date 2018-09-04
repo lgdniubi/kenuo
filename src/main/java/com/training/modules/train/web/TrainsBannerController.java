@@ -96,11 +96,11 @@ public class TrainsBannerController extends BaseController {
 			trainsBannerService.update(trainsBanner,fBanner);
 			addMessage(redirectAttributes, "修改banner图成功！");
 		}
-		try {
-			trainsBannerService.saveAdvertLog(trainsBanner);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			trainsBannerService.saveAdvertLog(trainsBanner);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		return "redirect:" + adminPath + "/trains/banner/list";
 	}
 	
