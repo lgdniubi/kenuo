@@ -175,11 +175,11 @@ public class MediaRole extends DataEntity<MediaRole> {
 		c1.setLabel("每天美耶");
 		c1.setValue("b");
 		Dict c2  = new Dict();
-		c2.setLabel("每天美耶和妃子校");
-		c2.setValue("ab");
+		c2.setLabel("蓓丽莲娜");
+		c2.setValue("c");
 		publictoList.add(c);
 		publictoList.add(c1);
-//		publictoList.add(c2);
+		publictoList.add(c2);
 		return publictoList;
 	}
 	public String getOpflag() {

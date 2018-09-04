@@ -75,7 +75,6 @@ public class ContractInfoService {
 	
 	public void auditContractInfo(ContractInfo info) throws Exception{
 		JSONObject j = new JSONObject();
-		System.out.println("====================签约审核开始==============");
 		JSONObject jsonO = new JSONObject();
 		jsonO.put("office_id", info.getOffice_id());
 		jsonO.put("status", info.getStatus());
@@ -86,7 +85,6 @@ public class ContractInfoService {
 		if(!"200".equals(json.getString("result"))){
 			throw new Exception("RPC调用失败");
 		}
-		System.out.println("====================签约审核第啊欧总结束==============");
 		
 		if("2".equals(jsonO.get("status"))){
 			
@@ -113,6 +111,5 @@ public class ContractInfoService {
 		}
 		
 		
-		System.out.println("====================签约审核执行结束==============");
 	}
 }

@@ -6,7 +6,11 @@
 <head>
 	<title>企业审核</title>
 	<meta name="decorator" content="default"/>
-
+	<!-- 放大图片js -->
+	<script type="text/javascript" src="${ctxStatic}/train/imgZoom/jquery.mousewheel.js"></script>
+	<script type="text/javascript" src="${ctxStatic}/train/imgZoom/jquery.imgZoom.js"></script>
+	<script type="text/javascript" src="${ctxStatic}/train/imgZoom/jquery.drag.js"></script>
+	
 	<script type="text/javascript">
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
@@ -17,6 +21,7 @@
 		  	}
 		  return false;
 		}
+		
 	</script>
 </head>
 <body>
@@ -94,8 +99,8 @@
 			         <td class="active" colspan="6"><label class="pull-left">法人身份证:</label></td>
 			    </tr>
 			    <tr>
-			         <td height="100px" colspan="3"><img id="photosrc" src="${userCheck.icardone}" alt="images" style="width: 200px;height: 100px;"/></td>
-			         <td  colspan="3"><img id="photosrc" src="${userCheck.icardtwo}" alt="images" style="width: 200px;height: 100px;"/></td>
+			         <td height="100px" colspan="3"><img id="photosrc" src="${userCheck.icardone}" class='imgZoom' alt="images" style="width: 200px;height: 100px;"/></td>
+			         <td  colspan="3"><img id="photosrc" src="${userCheck.icardtwo}" alt="images" class='imgZoom' style="width: 200px;height: 100px;"/></td>
 				</tr>
 			    <tr>
 			    	  <td class="active" colspan="6"><label class="pull-left">账户信息</label></td>
@@ -117,14 +122,14 @@
 				    </tr>
 				    <tr>
 					         <td class=""><label class="pull-right">正面:</label></td>
-					         <td ><img id="photosrc" src="${bank.cardup}" alt="images" style="width: 200px;height: 100px;"/></td>
+					         <td ><img id="photosrc" src="${bank.cardup}" alt="images" class='imgZoom' style="width: 200px;height: 100px;"/></td>
 					         <td class=""><label class="pull-right">反面:</label></td>
-					         <td><img id="photosrc" src="${bank.carddown}" alt="images" style="width: 200px;height: 100px;"/></td>
+					         <td><img id="photosrc" src="${bank.carddown}" alt="images" class='imgZoom' style="width: 200px;height: 100px;"/></td>
 						</tr>
 				    <tr>
 			    </c:forEach>
 			         <td height="100px" class="active"><label class="pull-left">营业执照:</label></td>
-			    	 <td colspan="5"><img id="photosrc" src="${userCheck.charterUrl}" alt="images" style="width: 200px;height: 100px;"/></td>
+			    	 <td colspan="5"><img id="photosrc" src="${userCheck.charterUrl}" class='imgZoom' alt="images" style="width: 200px;height: 100px;"/></td>
 			    </tr>
 			    <tr>
 			         <td class="active" colspan="6"><label class="pull-left">企业介绍:</label></td>
@@ -144,5 +149,9 @@
 			</tbody>
 		</table>  
 	</form:form> 
+	<script type="text/javascript">
+		//点击放大图片
+		$(".imgZoom").imgZoom();
+	</script>
 </body>
 </html>
