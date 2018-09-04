@@ -533,7 +533,7 @@
 									<span class="help-p">最多8个字</span>
 								</span>
 							<font color="red">*</font>机构缩写：</label></td>
-				         	<td class="width-35"><form:input path="officeInfo.shortName" htmlEscape="false" maxlength="8" cssClass="form-control required" /></td>
+				         	<td class="width-35"><form:input path="shortName" htmlEscape="false" maxlength="8" cssClass="form-control required" /></td>
 					        <td class="width-15 active"><label class="pull-right"><font color="red">*</font>归属区域:</label></td>
 					        <td class="width-35">
 						       <div id="area1">

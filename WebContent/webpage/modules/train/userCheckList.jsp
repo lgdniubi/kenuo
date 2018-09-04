@@ -150,6 +150,7 @@
 								<label>关键字：<input id="name" name="mobile" maxlength="11" type="text" class="form-control" value="${userCheck.mobile}" placeholder="请输入手机号"></label> 
 							</div>
 							<div class="form-group">
+								<label>认证类型：</label>	
 								<select class="form-control valid" name="auditType" aria-invalid="false">
 									<option value=""  >请选择</option>
 									<option value="syr" <c:if test="${userCheck.auditType eq 'syr' }">selected="selected"</c:if> >手艺人</option>
@@ -211,7 +212,7 @@
 										<c:if test="${userCheck.status == 0}">待审核</c:if>
 										<c:if test="${userCheck.status == 1}">未通过</c:if>
 										<c:if test="${userCheck.status == 2}">已通过</c:if>
-										<c:if test="${userCheck.status == 3}">已授权</c:if>
+										<c:if test="${userCheck.status == 3}">已通过</c:if>
 										<c:if test="${userCheck.status == 4}">不能操作</c:if>
 									</td>
 									<td style="text-align: left;">

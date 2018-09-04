@@ -24,7 +24,7 @@ public class Office extends TreeEntity<Office> {
 //	private String parentIds; // 所有父级编号
 	private Area area;		// 归属区域
 	private String code; 	// 机构编码
-//	private String name; 	// 机构名称
+	private String shortName; 	// 机构缩写
 //	private Integer sort;		// 排序
 	private String type; 	// 机构类型（1：公司管理部；2：区域管理部；3：市场管理部；4：店铺管理部）
 	private String grade; 	// 是否为店铺(1:是 2：否)
@@ -353,6 +353,14 @@ public class Office extends TreeEntity<Office> {
 
 	public void setIsTest(int isTest) {
 		this.isTest = isTest;
+	}
+
+	public String getShortName() {
+		return shortName;
+	}
+
+	public void setShortName(String shortName) {
+		this.shortName = shortName;
 	}
 	
 }

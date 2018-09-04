@@ -30,6 +30,7 @@
 		a.longitude,
 		a.latitude,
 		a.del_flag,
+		a.short_name,
 		a.is_test AS 'isTest',
 		a.useable AS useable,
 		a.primary_person AS "primaryPerson.id",
@@ -344,7 +345,8 @@
 			useable,
 			primary_person,
 			deputy_person,
-			office_code
+			office_code,
+			short_name
 		) VALUES (
 			#{id}, 
 			#{parent.id}, 
@@ -382,7 +384,8 @@
 			#{useable},
 			#{primaryPerson.id},
 			#{deputyPerson.id},
-			#{officeCode}
+			#{officeCode},
+			#{shortName}
 		)
 	</insert>
 	
@@ -418,7 +421,8 @@
 			is_test = #{isTest},
 			primary_person=#{primaryPerson.id},
 			deputy_person=#{deputyPerson.id},
-			office_code=#{officeCode}
+			office_code=#{officeCode},
+			short_name=#{shortName}
 		WHERE id = #{id}
 	</update>
 	
