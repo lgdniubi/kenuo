@@ -288,7 +288,7 @@
 			CASE a.type 
 			WHEN 'pt' THEN '普通会员'
 			WHEN 'syr' THEN '手艺人用户'
-			WHEN 'yg' THEN '员工'
+			WHEN 'yg' THEN '登云'
 			WHEN 'qy' THEN '企业'
 			ELSE '' END AS type, 
 			CASE a.type
