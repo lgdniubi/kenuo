@@ -119,7 +119,7 @@
 										</c:if>
 										<c:if test="${syrFranchise.status != 0}">
 					    					<a href="#" onclick="openDialogView('手艺人信息', '${ctx}/train/userCheck/form?id=${syrFranchise.id}&userid=${syrFranchise.userid }&auditType=syr&opflag=view','800px', '700px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>查看</a>
-					    					<a href="#" onclick="openDialogView('日志', '${ctx}/train/userCheck/log?id=${syrFranchise.mfId}','800px', '700px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>日志</a>
+<%-- 					    					<a href="#" onclick="openDialogView('日志', '${ctx}/train/userCheck/log?id=${syrFranchise.mfId}','800px', '700px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>日志</a> --%>
 										</c:if>
 						    		</shiro:hasPermission>
 									</td>

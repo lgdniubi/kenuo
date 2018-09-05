@@ -122,7 +122,7 @@
 					<table id="contentTable" class="table table-striped table-bordered  table-hover table-condensed  dataTables-example dataTable no-footer">
 						<thead>
 							<tr>
-								<th style="text-align: center;">ID</th>
+								<th style="text-align: center;">序号</th>
 								<th style="text-align: center;">标题</th>
 								<th style="text-align: center;">分类名称</th>
 								<th style="text-align: center;">启用</th>

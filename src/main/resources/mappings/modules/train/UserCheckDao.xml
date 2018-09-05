@@ -627,7 +627,7 @@
 		SELECT pu.user_id FROM
 		 pc_role pr
 		LEFT JOIN pc_user_role pu ON pr.id = pu.pc_role_id
-		WHERE  pr.franchisee_id = #{companyId} AND pr.ename = 'sjgly' AND pr.del_flag =0
+		WHERE  pr.franchisee_id = #{companyId} AND pr.ename = 'sjgly' AND pr.del_flag =0 AND pu.user_id IS NOT NULL
 	</select>
 	
 	

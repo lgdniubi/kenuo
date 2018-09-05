@@ -361,7 +361,7 @@
 						  </td>
 					  </tr>
 				      <tr>
-					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>账户名称:</label></td>
+					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>持卡人姓名:</label></td>
 					      <td class="width-35"><input name="office_accountname" value="${infoVo.office_accountname}" htmlEscape="false" maxlength="20" class="form-control required" /></td>
 					      <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户银行:</label></td>
 					      <td class="width-35"><input name="office_openbank" value="${infoVo.office_openbank}" htmlEscape="false" maxlength="20" class="form-control required" /></td>

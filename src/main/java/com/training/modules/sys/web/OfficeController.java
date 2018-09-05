@@ -313,7 +313,7 @@ public class OfficeController extends BaseController {
 		User currentUser = UserUtils.getUser();//获取当前登录用户
 		List<String> lifeImgUrls = new ArrayList<String>();//店铺首图需要用到
 		String img = "";
-				
+		boolean notEmptyOfficeId = StringUtils.isNotEmpty(office.getId());
 		if("".equals(office.getId())){
 			if(office.getGrade().equals("2")){
 				//添加机构
@@ -393,7 +393,7 @@ public class OfficeController extends BaseController {
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
 		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
-		if(office.getGrade().equals("2") || StringUtils.isNotEmpty(office.getId())){
+		if(office.getGrade().equals("2") || notEmptyOfficeId){
 			return "redirect:" + adminPath + "/sys/office/form?id="+office.getId()+"&opflag=1&parentIds="+office.getParentIds();
 		}else{
 			return "redirect:" + adminPath + "/sys/office/signInfo?id="+office.getId()+"&opflag=1&parentIds="+office.getParentIds();
