@@ -411,6 +411,7 @@
 			phone = #{phone}, 
 			fax = #{fax}, 
 			email = #{email},
+			is_new = #{isNew}, 
 			is_cargo = #{isCargo}, 
 			update_by = #{updateBy.id}, 
 			update_date = #{updateDate}, 
@@ -529,6 +530,7 @@
 				intro			 = #{officeInfo.intro},
 				details			 = #{officeInfo.details},
 				bed_num			 = #{officeInfo.bedNum},
+				status			 = #{officeInfo.status},
 				<!-- set_date		 =	  #{officeInfo.setDate},				
 				business_license      =	  #{officeInfo.charterImg},          
 				legal_person     =	  #{officeInfo.legalPerson},        
@@ -593,19 +595,6 @@
 			shop_assistant_id,
 			bed_num 	AS bedNum,
 			status
-			<!-- set_date,
-			business_license AS charterImg,
-			legal_person,
-			icardone,
-			icardtwo,
-			accountname,
-			openbank,
-			bankaccount,
-			bankaddress,
-			cardup,
-			credit_code,
-			carddown,
-			companyType -->
 		FROM sys_office_info
 		WHERE 
 			1=1

@@ -645,7 +645,7 @@
 							<span class="help-tip">
 								<span class="help-p">接收预约短信</span>
 							</span>
-						<font color="red">*</font>助理电话:</label></td>
+							助理电话:</label></td>
 						<%-- <td class="width-35"><form:input path="legalName" htmlEscape="false" maxlength="50" class="form-control required" />${user.id }${user.mobile}${user.name }</td> --%>
 						<td class="width-35">
 							<div class="input-group">
@@ -705,12 +705,16 @@
 						 <font color="red">*</font>是否新店：</label></td>
 						 <td id="isNew">
 						 	<c:if test="${not empty office.id}">
-				         		<c:if test="${office.isNew == 0}">
+						 		<form:select class="form-control required"  path="isNew">
+									<form:option value='0'>否</form:option>
+									<form:option value='1'>是</form:option>
+								</form:select>
+				         		<%-- <c:if test="${office.isNew == 0}">
 									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('isNew','${office.id}',1)">&nbsp;&nbsp;否
 								</c:if>
 								<c:if test="${office.isNew == 1}">
 									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('isNew','${office.id}',0)">&nbsp;&nbsp;是
-								</c:if>
+								</c:if> --%>
 				         	</c:if>
 				         	<c:if test="${empty office.id}">
 				         		<select class="form-control required" id="isNew" name="isNew">
@@ -730,12 +734,16 @@
 						 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺状态(是否隐藏)：</label></td>
 				         <td class="width-35" id="status">
 				         	<c:if test="${not empty office.officeInfo.id}">
-								<c:if test="${office.officeInfo.status == 1}">
+				         		<form:select class="form-control required"  path="officeInfo.status">
+									<form:option value='0'>正常</form:option>
+									<form:option value='1'>隐藏</form:option>
+								</form:select>
+								<%-- <c:if test="${office.officeInfo.status == 1}">
 									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('status','${office.id}',0)">&nbsp;&nbsp;是
 								</c:if>
 				         		<c:if test="${office.officeInfo.status == 0}">
 									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('status','${office.id}',1)">&nbsp;&nbsp;否
-								</c:if>
+								</c:if> --%>
 				         	</c:if>
 				         	<c:if test="${empty office.officeInfo.id}">
 				         		<select id="officeInfo.status" name="officeInfo.status" class="form-control">

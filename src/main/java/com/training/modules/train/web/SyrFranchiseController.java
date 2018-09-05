@@ -56,7 +56,7 @@ public class SyrFranchiseController extends BaseController{
 	 * @param model
 	 * @return
 	 */
-	@RequiresPermissions(value={"train:userCheck:update",},logical=Logical.OR)
+	@RequiresPermissions(value={"train:syrFranchisee:permissEdit",},logical=Logical.OR)
 	@RequestMapping(value={"form"})
 	public String form(UserCheck userCheck,Model model,String opflag,Integer pageNo){
 		model.addAttribute("pageNo", pageNo);
@@ -96,7 +96,7 @@ public class SyrFranchiseController extends BaseController{
 	 * @return
 	 * @Description:保存权限设置信息
 	 */
-	@RequiresPermissions(value={"train:userCheck:save"},logical=Logical.OR)
+	@RequiresPermissions(value={"train:syrFranchisee:permissSave"},logical=Logical.OR)
 	@RequestMapping(value = {"saveFranchise"})
 	public String saveFranchise(ModelFranchisee modelFranchisee,String opflag,Integer pageNo, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		if((DateUtils.formatDate(modelFranchisee.getAuthEndDate(), "yyyy-MM-dd").compareTo(DateUtils.getDate()))<0){

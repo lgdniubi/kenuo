@@ -650,6 +650,7 @@
 		LEFT JOIN sys_user u ON tap.user_id = u.id
 		LEFT JOIN train_model_franchisee mf ON mf.user_id = tap.user_id
 		WHERE tap.`status`=3 AND tap.audit_type = 'syr'
+			AND u.type = 'syr'
 		<if test="mobile != null and mobile != ''">
 			AND u.mobile = #{mobile}
 		</if>

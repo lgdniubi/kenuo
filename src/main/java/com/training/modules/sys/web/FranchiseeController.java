@@ -306,7 +306,7 @@ public class FranchiseeController extends BaseController{
     	return map;
 	}
 	
-	@RequiresPermissions(value={"train:userCheck:update",},logical=Logical.OR)
+	@RequiresPermissions(value={"sys:franchisee:permissEdit"},logical=Logical.OR)
 	@RequestMapping(value={"permissform"})
 	public String permissform(UserCheck userCheck,Integer companyId ,Model model,String opflag){
 //		model.addAttribute("pageNo", pageNo);
@@ -332,7 +332,7 @@ public class FranchiseeController extends BaseController{
 		}
 		return returnJsp;
 	}
-	@RequiresPermissions(value={"train:userCheck:save"},logical=Logical.OR)
+	@RequiresPermissions(value={"sys:franchisee:permissSave"},logical=Logical.OR)
 	@RequestMapping(value = {"saveFranchise"})
 	public String saveFranchise(ModelFranchisee modelFranchisee,String opflag, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		if((DateUtils.formatDate(modelFranchisee.getAuthEndDate(), "yyyy-MM-dd").compareTo(DateUtils.getDate()))<0){
