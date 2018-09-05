@@ -32,7 +32,7 @@
 			         <td colspan="5">${refundOrder.orderId}</td>
 		         </tr>
 		         <tr>
-			         <td class="active"><label class="pull-right">临时订单号:</label></td>
+			         <td class="active"><label class="pull-right">临时单号:</label></td>
 			         <td colspan="5">${refundOrder.tempOrderId }</td>
 		         </tr>
 		         <tr>

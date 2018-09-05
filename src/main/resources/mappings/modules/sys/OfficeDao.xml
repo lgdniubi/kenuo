@@ -485,7 +485,7 @@
 				companyType -->
 			) values (
 				#{id},
-				#{officeInfo.shortName},
+				#{shortName},
 				#{officeInfo.postalCode},
 				#{officeInfo.contacts},
 				#{officeInfo.telephone},
@@ -516,7 +516,7 @@
 				#{officeInfo.companyType} -->
 			)ON DUPLICATE KEY 
 				UPDATE 
-				short_name		 = #{officeInfo.shortName},
+				short_name		 = #{shortName},
 				postal_code      = #{officeInfo.postalCode},
 				contacts         = #{officeInfo.contacts},
 				telephone        = #{officeInfo.telephone},

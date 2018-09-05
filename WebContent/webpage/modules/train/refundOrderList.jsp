@@ -60,21 +60,22 @@
 	                 <thead> 
 	                   	 <tr>
                    			<!-- <th style="text-align: center;"><label for="i-checks"><input type="checkbox" name="" id="i-checks" class="i-checks"></label></th> -->
-                   			<th style="text-align: center;">账单编号</th>
+                   			<th style="text-align: center;">还款单号</th>
                    			<!-- <th style="text-align: center;">临时订单号</th> -->
                    			<!-- <th style="text-align: center;">账单类型</th>
                    			<th style="text-align: center;">账单月份</th> -->
                    			
-                   			<th style="text-align: center;">欠款商家</th>
-                   			<th style="text-align: center;">欠款机构</th>
-                   			<th style="text-align: center;">欠款金额</th>
+                   			<th style="text-align: center;">还款商家</th>
+                   			<th style="text-align: center;">还款机构</th>
+                   			<th style="text-align: center;">还款金额</th>
                    			<th style="text-align: center;">实付金额</th>
                    			<th style="text-align: center;">账单状态</th>
                    			<!-- <th style="text-align: center;">支付类型</th> -->
-                   			<th style="text-align: center;">支付用户</th>
+                   			<th style="text-align: center;">支付人</th>
                    			<!-- <th style="text-align: center;">渠道</th> -->
-                   			<th style="text-align: center;">创建时间</th>
+<!--                    			<th style="text-align: center;">创建时间</th> -->
                    			<!-- <th style="text-align: center;">支付时间</th> -->
+                   			<th style="text-align: center;">账单时间</th>
                    			<th style="text-align: center;">操作</th>
                    		</tr>
 	                 </thead>
