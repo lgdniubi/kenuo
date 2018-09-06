@@ -104,6 +104,8 @@ public class TrainModelService extends CrudService<TrainModelDao,TrainModel> {
 			sb.append(m);
 		}
 		trainModel.setMenuIds(sb.toString().substring(1));
+		System.out.println("========================menuIds====concat==================");
+		System.out.println(sb.toString().substring(1));
 	}
 
 	/**
