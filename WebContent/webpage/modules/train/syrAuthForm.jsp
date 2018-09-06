@@ -6,7 +6,9 @@
 <head>
 	<title>手艺人审核</title>
 	<meta name="decorator" content="default"/>
-
+	<!-- 放大图片js -->
+	<script type="text/javascript" src="${ctxStatic}/train/imgZoom/jquery.imgZoom.js"></script>
+	
 	<script type="text/javascript">
 		var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
@@ -196,9 +198,9 @@
 				</tr>
 			    <tr>
 			         <td class=""><label class="pull-right">银行卡正面:</label></td>
-			         <td ><img id="photosrc" src="${bank.cardup}" alt="images" style="width: 200px;height: 100px;"/></td>
+			         <td ><img id="photosrc" src="${bank.cardup}" class='imgZoom' alt="images" style="width: 200px;height: 100px;"/></td>
 			         <td class=""><label class="pull-right">银行卡反面:</label></td>
-			         <td><img id="photosrc" src="${bank.carddown}" alt="images" style="width: 200px;height: 100px;"/></td>
+			         <td><img id="photosrc" src="${bank.carddown}" class='imgZoom' alt="images" style="width: 200px;height: 100px;"/></td>
 				</tr>
 			</c:forEach>
 			<c:forEach var="pay" items="${userCheck.payAccount}">
@@ -289,5 +291,9 @@
 			</table> 
 		</div>
 	</form:form> 
+	<script type="text/javascript">
+		//点击放大图片
+		$(".imgZoom").imgZoom();
+	</script>
 </body>
 </html>

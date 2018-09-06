@@ -600,10 +600,11 @@
 				     </tr> --%>
 				     <tr id="a4">
 				         <td class="width-15 active">
+				         	<label class="pull-right">
 				         	<span class="help-tip">
 								<span class="help-p">此字段需从签约信息页面编辑</span>
 							</span>
-				         	<label class="pull-right">机构地址:</label></td>
+							机构地址:</label></td>
 				         <td class="width-35"><form:input path="address" htmlEscape="false" maxlength="50" cssClass="form-control" /></td><%-- <c:if test="${not empty office.address}">disabled="true"</c:if>/> --%>
 				     </tr>
 				    

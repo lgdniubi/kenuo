@@ -7,9 +7,7 @@
 	<title>企业审核</title>
 	<meta name="decorator" content="default"/>
 	<!-- 放大图片js -->
-	<script type="text/javascript" src="${ctxStatic}/train/imgZoom/jquery.mousewheel.js"></script>
 	<script type="text/javascript" src="${ctxStatic}/train/imgZoom/jquery.imgZoom.js"></script>
-	<script type="text/javascript" src="${ctxStatic}/train/imgZoom/jquery.drag.js"></script>
 	
 	<script type="text/javascript">
 		var validateForm;

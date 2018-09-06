@@ -23,7 +23,7 @@
                     if (img.width > img.height) {
                         displayWidth = windowWidth / 2;
                         displayHeight = img.height * displayWidth / img.width;
-                        style = "z-index:6666;position:absolute;top:" +
+                        style = "z-index:6666;position:fixed;top:" +
                             windowHeight / 2 +
                             "px;margin-top:-" +
                             displayHeight / 2 +
@@ -40,7 +40,7 @@
                     } else {
                         displayHeight = windowHeight / 2;
                         displayWidth = displayHeight * img.width / img.height;
-                        style = "z-index:6666;position:absolute;top:" +
+                        style = "z-index:6666;position:fixed;top:" +
                             windowHeight / 2 +
                             "px;margin-top:-" +
                             displayHeight / 2 +
@@ -56,6 +56,7 @@
                             "' id='imgZoomImg'>";
                     }
                     $("body").append(dom);
+                    return false
                     $("#imgZoomImg").dragging({
                         move: "both", //拖动方向，x y both
                         randomPosition: false //初始位置是否随机
@@ -68,6 +69,7 @@
             $("#imgZoomMask").hide();
             $("#imgZoomImg").fadeOut().remove();
         });
+        return false
         $(document).on("mousewheel",function(e,d) {
             //d 1 上 -1 下
             if (d === 1) {

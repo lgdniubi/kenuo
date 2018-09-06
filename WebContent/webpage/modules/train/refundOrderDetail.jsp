@@ -4,9 +4,12 @@
 <%-- <%@ page import="com.training.modules.sys.utils.ParametersFactory"%> --%>
 <html>
 <head>
-	<title>企业审核</title>
+	<title>对账单详情</title>
 	<meta name="decorator" content="default"/>
 
+	<!-- 放大图片js -->
+	<script type="text/javascript" src="${ctxStatic}/train/imgZoom/jquery.imgZoom.js"></script>
+	
 	<script type="text/javascript">
 		/* var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
@@ -127,7 +130,7 @@
 				         <td class="active"><label class="pull-right">凭证:</label></td>
 				         <td colspan="5">
 				         <c:forEach items="${refundOrder.proofs }" var="ite">
-				         <img id="photosrc" src="${ite }" alt="images" style="width: 200px;height: 100px;"/>
+				         <img id="photosrc" src="${ite }" class='imgZoom' alt="images" style="width: 200px;height: 100px;"/>
 				         </c:forEach>
 				         </td>
 					</tr>
@@ -139,5 +142,9 @@
 			</tbody>
 		</table>  
 	</form:form> 
+	<script type="text/javascript">
+		//点击放大图片
+		$(".imgZoom").imgZoom();
+	</script>
 </body>
 </html>
