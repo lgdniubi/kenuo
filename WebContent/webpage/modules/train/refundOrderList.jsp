@@ -108,7 +108,7 @@
                                		${refund.amount}
                                	</td>
                                	<td style="text-align: center;">
-                               		<c:if test="${refund.orderStatus eq '1'}">待支付</c:if>
+<%--                                		<c:if test="${refund.orderStatus eq '1'}">待支付</c:if> --%>
                                		<c:if test="${refund.orderStatus eq '2'}">待审核</c:if>
                                		<c:if test="${refund.orderStatus eq '3'}">已入账</c:if>
                                		<c:if test="${refund.orderStatus eq '4'}">已取消</c:if>

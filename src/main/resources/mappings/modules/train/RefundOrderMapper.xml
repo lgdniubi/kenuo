@@ -97,6 +97,7 @@
 		left join sys_office o on o.id = arrearage_office
 		left join sys_franchisee f on f.id = o.franchisee_id
 		where 1=1
+		AND ro.order_status !=1
 		<if test="orderId != null and orderId !=''">
 			and order_id = #{orderId}
 		</if>
