@@ -194,8 +194,8 @@
 		         <td class="active" colspan="6"><label class="pull-left">法人身份证:</label></td>
 		    </tr>
 		    <tr>
-		         <td height="100px" colspan="3"><img id="photosrc" src="${userCheck.icardone}" alt="images" style="width: 200px;height: 100px;"/></td>
-		         <td  colspan="3"><img id="photosrc" src="${userCheck.icardtwo}" alt="images" style="width: 200px;height: 100px;"/></td>
+		         <td height="100px" colspan="3"><img id="photosrc" src="${userCheck.icardone}" class='imgZoom' alt="images" style="width: 200px;height: 100px;"/></td>
+		         <td  colspan="3"><img id="photosrc" src="${userCheck.icardtwo}" alt="images" class='imgZoom' style="width: 200px;height: 100px;"/></td>
 			</tr>
 		    <tr>
 		    	  <td class="active" colspan="6"><label class="pull-left">账户信息</label></td>
@@ -224,7 +224,7 @@
 			    <tr>
 		    </c:forEach>
 		         <td height="100px" class="active"><label class="pull-left">营业执照:</label></td>
-		    	 <td colspan="5"><img id="photosrc" src="${userCheck.charterUrl}" alt="images" style="width: 200px;height: 100px;"/></td>
+		    	 <td colspan="5"><img id="photosrc" src="${userCheck.charterUrl}" class='imgZoom' alt="images" style="width: 200px;height: 100px;"/></td>
 		    </tr>
 		    <tr>
 		         <td class="active" colspan="6"><label class="pull-left">企业介绍:</label></td>

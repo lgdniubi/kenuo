@@ -1,7 +1,8 @@
+
 (function ($) {
     $.fn.imgZoom = function () {
         var mask =
-            "<div style = 'position: absolute;width: 100%;z-index: 5555;height: 100%;top: 0;left: 0;background: rgba(0,0,0,0.5);display:none;' id='imgZoomMask'></div>";
+            "<div style = 'position: fixed;width: 100%;z-index: 5555;height: 100%;top: 0;left: 0;background: rgba(0,0,0,0.5);display:none;' id='imgZoomMask'></div>";
         $("html").append(mask);
         var windowWidth = $(window).width();
         var windowHeight = $(window).height();
