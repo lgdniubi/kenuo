@@ -24,7 +24,7 @@
                     if (img.width > img.height) {
                         displayWidth = windowWidth / 2;
                         displayHeight = img.height * displayWidth / img.width;
-                        style = "z-index:6666;position:fixed;top:" +
+                        style = "z-index:6666;position:fixed;transform: scale(1.6); top:" +
                             windowHeight / 2 +
                             "px;margin-top:-" +
                             displayHeight / 2 +
@@ -41,7 +41,7 @@
                     } else {
                         displayHeight = windowHeight / 2;
                         displayWidth = displayHeight * img.width / img.height;
-                        style = "z-index:6666;position:fixed;top:" +
+                        style = "z-index:6666;position:fixed;transform: scale(1.6);top:" +
                             windowHeight / 2 +
                             "px;margin-top:-" +
                             displayHeight / 2 +
