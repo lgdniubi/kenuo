@@ -344,14 +344,10 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		String mediaMenuIds = trainModel.getMenuIds();
 		trainModelService.findmodfzxMenu(trainModel);
 		String fzxMenuIds = trainModel.getMenuIds();
-		System.out.println("pcMenu==getMenuIds()");
-		System.out.println(pcMenuIds);
 		pcrole.setMenuIds(pcMenuIds);
 		fzxrole.setMenuIds(fzxMenuIds);
 		mdrole.setMenuIds(mediaMenuIds);
 		pcRoleService.saveRoleMenu(pcrole);
-		System.out.println("pcrole==getMenuIds()");
-		System.out.println(pcrole.getMenuIds());
 		fzxRoleService.saveRoleMenu(fzxrole);
 		mediaRoleService.saveRoleMenu(mdrole);
 	}
