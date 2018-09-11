@@ -750,6 +750,16 @@ public class SystemService extends BaseService implements InitializingBean {
 			 * 此处更新完用户之后将用户数据同步到报货，调用报货接口
 			 */
 			if (StringUtils.isNotBlank(user.getId())) {
+				// 更新用户与角色关联--移出用户角色
+				userDao.deleteUserRole(user);
+				if (user.getRoleList() != null && user.getRoleList().size() > 0) {
+					userDao.insertUserRole(user);
+				} else {
+					throw new ServiceException(user.getLoginName() + "没有设置角色！");
+				}
+				// 清除用户缓存
+				UserUtils.clearCache(user);
+				
 				User toUser = userDao.get(user);
 				String weburl = ParametersFactory.getMtmyParamValues("modifyToUser");
     			logger.info("##### web接口路径:"+weburl);
@@ -765,7 +775,7 @@ public class SystemService extends BaseService implements InitializingBean {
     			}
 			}
 		}
-		if (StringUtils.isNotBlank(user.getId())) {
+		/*if (StringUtils.isNotBlank(user.getId())) {
 			// 更新用户与角色关联--移出用户角色
 			userDao.deleteUserRole(user);
 			if (user.getRoleList() != null && user.getRoleList().size() > 0) {
@@ -777,7 +787,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			UserUtils.clearCache(user);
 			// // 清除权限缓存
 			// systemRealm.clearAllCachedAuthorizationInfo();
-		}
+		}*/
 	}
 
 	@Transactional(readOnly = false)

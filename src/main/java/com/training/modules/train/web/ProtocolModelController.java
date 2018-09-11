@@ -20,12 +20,9 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
-import com.training.modules.ec.entity.ArticleRepository;
-import com.training.modules.sys.entity.User;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.train.entity.ProtocolModel;
 import com.training.modules.train.entity.ProtocolType;
-import com.training.modules.train.entity.TrainLessons;
 import com.training.modules.train.service.ProtocolModelService;
 
 /**
@@ -74,7 +71,7 @@ public class ProtocolModelController extends BaseController {
 	public String modelForm( ProtocolModel protocolModel,Model model) {
 		if(protocolModel.getId() != null){
 			protocolModel = protocolModelService.findModel(protocolModel);
-			String htmlEscape = HtmlUtils.htmlUnescape(protocolModel.getContent());
+			String htmlEscape = HtmlUtils.htmlEscape(protocolModel.getContent());
 			protocolModel.setContent(htmlEscape);
 		}
 		model.addAttribute("protocolModel", protocolModel);
@@ -105,7 +102,7 @@ public class ProtocolModelController extends BaseController {
 	public String save(ProtocolModel protocolModel,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
 		try {
 			//保存数据的时候需要转码
-			String htmlEscape = HtmlUtils.htmlEscape(protocolModel.getContent());
+			String htmlEscape = HtmlUtils.htmlUnescape(protocolModel.getContent());
 			protocolModel.setContent(htmlEscape);
 			protocolModelService.saveProtocolModel(protocolModel);
 			addMessage(redirectAttributes, "保存协议内容成功!");

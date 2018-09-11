@@ -105,13 +105,13 @@
 						<table:addRow url="${ctx}/train/question/form?type=${type}" title="手册" width="800px" height="650px"></table:addRow>
 						<c:choose>
 							<c:when test="${type eq '3'}">
-								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/handbook/list?type=${type}&isShop=0","查看分类", false)'><i class="fa fa-plus"></i> 查看管理端分类</button>
-								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/handbook/list?type=${type}&isShop=1","查看分类", false)'><i class="fa fa-plus"></i> 查看店铺端分类</button>
+								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/handbook/list?type=${type}&isShop=0","查看分类", false)'> 查看管理端分类</button>
+								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/handbook/list?type=${type}&isShop=1","查看分类", false)'> 查看店铺端分类</button>
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="adminQList()" title="管理端问题">管理端问题列表</button>
 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick="shopQList()" title="店铺端问题">店铺端问题列表</button>
 							</c:when>
 							<c:otherwise>
-								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/handbook/list?type=${type}","查看分类", false)'><i class="fa fa-plus"></i> 查看分类</button>
+								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/handbook/list?type=${type}","查看分类", false)'> 查看分类</button>
 							</c:otherwise>
 						</c:choose>
 					</div>
