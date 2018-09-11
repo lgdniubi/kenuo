@@ -281,7 +281,7 @@ public class UserController extends BaseController {
 	@RequiresPermissions(value = { "sys:user:add", "sys:user:edit" }, logical = Logical.OR)
 	@RequestMapping(value = "save")
 	public String save(User user, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
-//		try {
+		try {
 			//自我评价转义
 //			user.getUserinfo().setSelfintro(HtmlUtils.htmlUnescape(user.getUserinfo().getSelfintro()));
 			/*if(null != user.getId() && "" != user.getId()){
@@ -362,13 +362,13 @@ public class UserController extends BaseController {
 			systemService.saveUser(user);
 			UserUtils.clearCache(user);		//清除指定用户缓存
 			addMessage(redirectAttributes, "保存用户'" + user.getLoginName() + "'成功");
-//		} catch (Exception e) {
-//			// TODO: handle exception
-//			UserUtils.clearCache(user);		//清除指定用户缓存
-//			addMessage(redirectAttributes, "保存用户失败！");
-//			logger.error("保存/修改 出现异常，异常信息为："+e.getMessage());
-//			BugLogUtils.saveBugLog(request, "保存用户失败错误信息", e);
-//		}
+		} catch (Exception e) {
+			// TODO: handle exception
+			UserUtils.clearCache(user);		//清除指定用户缓存
+			addMessage(redirectAttributes, "保存用户失败！");
+			logger.error("保存/修改 出现异常，异常信息为："+e.getMessage());
+			BugLogUtils.saveBugLog(request, "保存用户失败错误信息", e);
+		}
 		
 		return "redirect:" + adminPath + "/sys/user/list?repage&removeCookie=1&"+CookieUtils.getCookie(request, "userCookie");
 	}
