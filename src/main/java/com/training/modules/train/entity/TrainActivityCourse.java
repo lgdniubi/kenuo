@@ -29,6 +29,11 @@ public class TrainActivityCourse extends DataEntity<TrainActivityCourse> {
 	private Date beginDate;		//开始时间
 	private Date lastDate;		//结束时间
 	
+	private String franchiseeId;	//商家id
+	private String label;			//标签4个字
+	private Integer isOpen;			//是否公开，1不公开，选择商家
+	private String content;			//活动介绍文字，
+	
 	private List<TrainActivityCourseContent> trainActivityCourseContentList;	//内容详情
 	
 	public int getAcId() {
@@ -102,6 +107,30 @@ public class TrainActivityCourse extends DataEntity<TrainActivityCourse> {
 	}
 	public void setTrainActivityCourseContentList(List<TrainActivityCourseContent> trainActivityCourseContentList) {
 		this.trainActivityCourseContentList = trainActivityCourseContentList;
+	}
+	public String getFranchiseeId() {
+		return franchiseeId;
+	}
+	public void setFranchiseeId(String franchiseeId) {
+		this.franchiseeId = franchiseeId;
+	}
+	public String getLabel() {
+		return label;
+	}
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	public Integer getIsOpen() {
+		return isOpen;
+	}
+	public void setIsOpen(Integer isOpen) {
+		this.isOpen = isOpen;
+	}
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
 	}
 	
 }

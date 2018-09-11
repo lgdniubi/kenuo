@@ -11,6 +11,7 @@ import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.ArrearageOfficeList;
 import com.training.modules.train.entity.RefundOrder;
+import com.training.modules.train.entity.RefundOrderLog;
 import com.training.modules.train.entity.Statement;
 
 /**  
@@ -56,7 +57,7 @@ public interface RefundOrderMapper extends CrudDao<RefundOrder> {
 	 * @param order_id
 	 * @return
 	 */
-	List<Statement> queryStatementOfRefund(@Param("office_id")String office_id,@Param("billmonth")String billmonth);
+	List<Statement> queryStatementOfRefund(@Param("orderId")String orderId);
 	/**
 	 * 查询支付信息
 	 * @param order_id
@@ -67,7 +68,7 @@ public interface RefundOrderMapper extends CrudDao<RefundOrder> {
 	 * 确认入账
 	 * @param order_id
 	 */
-	public void makeSureInAccount(@Param("order_id")String order_id,@Param("status")String status);
+	public void makeSureInAccount(@Param("order_id")String order_id,@Param("status")String status,@Param("remarks")String remarks);
 
 	/**  
 	* <p>Title: 将订单改为逾期状态</p>  
@@ -77,4 +78,19 @@ public interface RefundOrderMapper extends CrudDao<RefundOrder> {
 	* @version 3.0.0  
 	*/  
 	void updateOrderOverdueStatus();
+	
+	
+	int updateStatementStatus(@Param("order_id")String order_id,@Param("status")int status);
+	/**
+	 * 插入账单日志
+	 * @param log
+	 * @return
+	 */
+	int insertRefundOrderLog(RefundOrderLog log);
+	/**
+	 * 查询账单日志列表
+	 * @param order_id
+	 * @return
+	 */
+	List<RefundOrderLog> queryRefundOrderLogList(@Param("order_id")String order_id);
 }

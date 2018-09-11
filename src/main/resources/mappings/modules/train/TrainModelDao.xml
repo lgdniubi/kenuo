@@ -71,7 +71,7 @@
 		train_model t
 		WHERE  t.del_flag = 0
 		<if test="modType != null and modType != ''">
-			AND t.mod_type in ('qy','dy')
+			AND t.mod_type = #{modType}
 		</if>
 		<if test="modEname != null and modEname != ''">
 			AND t.mod_ename LIKE
@@ -128,8 +128,8 @@
 		AND id = #{id} 
 	</select>
 	<!--  查找该版本下的pc菜单 -->
-	<select id="findmodpcMenu" resultType="TrainModel">
-		SELECT a.id AS id,group_concat(b.menu_id) AS menuIds FROM train_model a LEFT JOIN train_model_pcmenu b ON a.id = b.model_id WHERE a.id = #{id}
+	<select id="findmodpcMenu" resultType="String">
+		SELECT b.menu_id AS menuIds FROM train_model a LEFT JOIN train_model_pcmenu b ON a.id = b.model_id WHERE a.id = #{id}
 	</select>
 	<!-- 删除版本下所有pc菜单 -->
 	<delete id="deleteModpcMenu">
@@ -146,8 +146,8 @@
 		)
 	</insert>
 	<!--  查找该版本下的fzx菜单 -->
-	<select id="findmodfzxMenu" resultType="TrainModel">
-		SELECT a.id AS id,group_concat(b.menu_id) AS menuIds FROM train_model a LEFT JOIN train_model_fzxmenu b ON a.id = b.mod_id WHERE a.id = #{id}
+	<select id="findmodfzxMenu" resultType="String">
+		SELECT b.menu_id AS menuIds FROM train_model a LEFT JOIN train_model_fzxmenu b ON a.id = b.mod_id WHERE a.id = #{id}
 	</select>
 	<!-- 删除版本下所有fzx菜单 -->
 	<delete id="deleteModfzxMenu">
@@ -164,8 +164,8 @@
 		)
 	</insert>
 	<!--  查找该版本下的自媒体菜单 -->
-	<select id="findmodMediaMenu" resultType="TrainModel">
-		SELECT a.id AS id,group_concat(b.menu_id) AS menuIds FROM train_model a LEFT JOIN train_model_mdmenu b ON a.id = b.model_id WHERE a.id = #{id}
+	<select id="findmodMediaMenu" resultType="String">
+		SELECT b.menu_id AS menuIds FROM train_model a LEFT JOIN train_model_mdmenu b ON a.id = b.model_id WHERE a.id = #{id}
 	</select>
 	<!-- 删除版本下所有fzx菜单 -->
 	<delete id="deleteModMediaMenu">

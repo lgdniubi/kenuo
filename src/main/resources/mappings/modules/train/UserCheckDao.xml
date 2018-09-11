@@ -52,11 +52,14 @@
 		<if test="status != '' and status == 0">
 			AND tap.status = 0
 		</if>
-		<if test="status == 2">
-			AND tap.status in (1,2)
+		<if test="status == 1">
+			AND tap.status = 1
 		</if>
 		<if test="status == 3">
-			AND tap.status = 3
+			AND tap.status in (2,3)
+		</if>
+		<if test="auditType != null and auditType != ''">
+			AND tap.audit_type = #{auditType}
 		</if>
 		ORDER BY tap.create_date DESC
 	</select>
@@ -108,6 +111,7 @@
 			del_flag = 0 
 		AND tap.user_id = #{userid} 
 		<if test="id != null"> and tap.id = #{id} </if>
+		AND tap.audit_type = #{auditType}
 	</select>	
 	<!-- 查找银行卡信息 -->
 	<select id="findBankAccountInfo" resultType="BankAccount">
@@ -175,7 +179,7 @@
 	<select id="findMaxCode" resultType="long">
 		SELECT MAX(code) FROM sys_franchisee
 	</select>
-	<insert id="saveModelFranchisee" >
+	<insert id="saveModelFranchisee" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO `train_model_franchisee` (
 			`mod_id`,
 			`franchisee_id`,
@@ -298,9 +302,11 @@
 			t.discount,
 			t.create_date,
 			t.pay_type AS paytype,
-			t.user_id
+			apply.id as applyid
 			from train_model_franchisee t
 			LEFT JOIN sys_user u ON u.company_id = t.franchisee_id 
+			LEFT JOIN train_apply apply ON apply.user_id = u.id
+			AND apply.audit_type = 'qy'
 			WHERE 	u.id = #{userid}
 			AND t.del_flag = 0
 	</select>
@@ -616,4 +622,97 @@
 	<delete id="deleteProtocolShop">
 		DELETE FROM supply_protocol_shop WHERE user_id = #{userid} AND type_id = #{typeId}
 	</delete>
+	
+	<select id="findUserIdByCompanyId" resultType="string">
+		SELECT pu.user_id FROM
+		 pc_role pr
+		LEFT JOIN pc_user_role pu ON pr.id = pu.pc_role_id
+		WHERE  pr.franchisee_id = #{companyId} AND pr.ename = 'sjgly' AND pr.del_flag =0 AND pu.user_id IS NOT NULL
+	</select>
+	
+	
+	<select id="findSyrList" resultType="SyrFranchise">
+		SELECT
+			tap.id,
+			u.`name`,
+			u.nickname,
+			u.mobile,
+			u.type,
+			tap.user_id,
+			tap.apply_type AS applyType,
+			tap.audit_type AS auditType,
+			tap. STATUS,
+			mf.id AS mfId,
+			mf.auth_end_date AS authEndDate,
+			mf.mod_id
+		FROM
+			train_apply tap
+		LEFT JOIN sys_user u ON tap.user_id = u.id
+		LEFT JOIN train_model_franchisee mf ON mf.user_id = tap.user_id
+		WHERE tap.`status`=3 
+			AND tap.audit_type = 'syr'
+			AND u.type = 'syr'
+		<if test="mobile != null and mobile != ''">
+			AND u.mobile = #{mobile}
+		</if>
+		<if test="modId != null ">
+			AND mf.mod_id = #{modId}
+		</if>
+		<if test="name != null and name != ''">
+			AND u.name like CONCAT('%', #{name}, '%')
+		</if>
+		ORDER BY tap.create_date DESC
+	</select>
+	
+	<!-- 保存权益日志 -->
+	<insert id="saveLogModel">
+		INSERT INTO `train_model_franchisee_log` (
+			id,
+			`mod_id`,
+			`franchisee_id`,
+			`user_id`,
+			`auth_start_date`,
+			`auth_end_date`,
+			<if test="discount != null"> `discount`, </if>
+			`pay_type`,
+			`create_by`,
+			`create_date`
+		)
+		VALUES
+			(
+				#{id},
+				#{modid},
+				#{franchiseeid},
+			    #{userid},
+			    #{authStartDate},
+			    #{authEndDate},
+			    <if test="discount != null"> #{discount}, </if>
+			    #{paytype},
+			    #{createBy.id},
+			    SYSDATE()
+			);
+	</insert>
+	<select id="findModelLogById" resultType="ModelFranchisee">
+		SELECT
+			lo.`id`,
+			lo.`mod_id`,
+			lo.`franchisee_id`,
+			lo.`user_id`,
+			lo.`auth_start_date`,
+			lo.`auth_end_date`,
+			lo.`discount`,
+			lo.`pay_type`,
+			u. NAME AS 'createBy.name',
+			lo.`create_date`
+		FROM
+			`trains`.`train_model_franchisee_log` lo
+		LEFT JOIN sys_user u ON u.id = lo.create_by
+		WHERE
+			lo.id = #{id}
+		ORDER BY lo.create_date DESC
+	</select>
+	
+	<update id="updateApplyUserId">
+		UPDATE train_apply SET user_id = #{superUserId} WHERE user_id = #{oldSuperUserId} AND audit_type = 'qy'
+	</update>
 </mapper>

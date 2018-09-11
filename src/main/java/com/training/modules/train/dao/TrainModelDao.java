@@ -29,7 +29,7 @@ public interface TrainModelDao extends CrudDao<TrainModel>{
 	 * 查找该版本下的pc菜单
 	 * @param trainModel
 	 */
-	public TrainModel findmodpcMenu(TrainModel trainModel);
+	public List<String> findmodpcMenu(TrainModel trainModel);
 
 	/**
 	 * 删除以前的该版本下的pc菜单信息
@@ -47,7 +47,7 @@ public interface TrainModelDao extends CrudDao<TrainModel>{
 	 * 查找该版本下的fzx菜单
 	 * @param trainModel
 	 */
-	public TrainModel findmodfzxMenu(TrainModel trainModel);
+	public List<String> findmodfzxMenu(TrainModel trainModel);
 
 	/**
 	 * 删除以前的该版本下的fzx菜单信息
@@ -65,7 +65,7 @@ public interface TrainModelDao extends CrudDao<TrainModel>{
 	 * 查找该版本下的自媒体菜单
 	 * @param trainModel
 	 */
-	public TrainModel findmodMediaMenu(TrainModel trainModel);
+	public List<String> findmodMediaMenu(TrainModel trainModel);
 
 	/**
 	 * 删除以前的该版本下的自媒体菜单信息

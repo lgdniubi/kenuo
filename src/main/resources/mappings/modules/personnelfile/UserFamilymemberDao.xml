@@ -176,7 +176,7 @@
     	<include refid="Base_Column_List" />
     FROM
 		user_familymember
-	where user_id = #{userID}
+	where baseInfo_id = #{baseInfoId}
 	and name_type = #{nameType}
   </select>
   

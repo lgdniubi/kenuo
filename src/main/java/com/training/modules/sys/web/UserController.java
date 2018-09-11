@@ -1252,7 +1252,8 @@ public class UserController extends BaseController {
 	public Map<String, Object> treeDataCompany(@RequestParam(required = false) String officeId,String mobile,
 			HttpServletResponse response,HttpServletRequest request) {
 //		List<Map<String, Object>> mapList = Lists.newArrayList();
-		List<User> list = systemService.findUserByFranchiseeId(officeId,mobile);
+		String companyId = request.getParameter("companyId");
+		List<User> list = systemService.findUserByFranchiseeId(companyId,officeId,mobile);
 		Map<String, Object> map = Maps.newHashMap();
 		for (int i = 0; i < list.size(); i++) {
 			User e = list.get(i);

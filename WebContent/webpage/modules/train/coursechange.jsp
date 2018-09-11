@@ -225,6 +225,31 @@
 			});   
 		}
 		
+		//正式数据
+		function changeTestVal(flag,id,isTest){
+			$(".loading").show();//打开展示层
+			$.ajax({
+				type : "POST",
+				url : "${ctx}/train/course/updateIsTest?lessonId="+id+"&isTest="+isTest,
+				dataType: 'json',
+				success: function(data) {
+					$(".loading").hide(); //关闭加载层
+					var STATUS = data.STATUS;
+					var ISTEST = data.ISTEST;
+					if("OK" == STATUS){
+		            	$("#"+flag+id).html("");//清除DIV内容	
+						if(ISTEST == '1'){
+							$("#"+flag+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/cancel.png' onclick=\"changeTestVal('"+flag+"','"+id+"','0')\">");
+						}else if(ISTEST == '0'){
+							$("#"+flag+id).append("<img width='20' height='20' src='${ctxStatic}/ec/images/open.png' onclick=\"changeTestVal('"+flag+"','"+id+"','1')\">");
+						} 
+					}else if("ERROR" == STATUS){
+						alert(data.MESSAGE);
+					}
+				}
+			});   
+		}
+		
 		//选择归属商家
 		function companyButtion(){
 		top.layer.open({
@@ -379,6 +404,7 @@
 								<th width="200" style="text-align: center;">图片</th>
 								<th style="text-align: center;">是否显示</th>
 								<th style="text-align: center;">是否公开</th>
+								<th style="text-align: center;">正式数据</th>
 								<th style="text-align: center;">排序</th>
 								<th width="200" style="text-align: center">课程内容</th>
 								<th width="120" style="text-align: center;">课程操作</th>
@@ -417,6 +443,14 @@
 										</c:if>
 										<c:if test="${trainLessons.isOpen == 0}">
 											<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeOpenVal('isOpen','${trainLessons.lessonId}','1')">
+										</c:if>
+									</td>
+									<td style="text-align: center;" id="isTest${trainLessons.lessonId}">
+										<c:if test="${trainLessons.isTest == 1}">
+											<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTestVal('isTest','${trainLessons.lessonId}','0')">
+										</c:if>
+										<c:if test="${trainLessons.isTest == 0}">
+											<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTestVal('isTest','${trainLessons.lessonId}','1')">
 										</c:if>
 									</td>
 									<td>${trainLessons.sort}</td>

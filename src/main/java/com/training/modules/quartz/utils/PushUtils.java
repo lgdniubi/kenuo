@@ -48,31 +48,32 @@ public class PushUtils {
 	 * @return
 	 */
 	public String pushMsg(String user_id,String text,int notify_type,String title) {
-		JSONArray jsonArray = new JSONArray();
-		String cid = userCheckDao.findCidByUserid(user_id);
-		if(cid == null || cid == "")
-			return "";
-//		jsonArray.add("35be8ac9632c9475ac67f9be3c340665");
-		jsonArray.add(cid);
-		JSONObject jsonObj = new JSONObject();
-		jsonObj.put("cid_list", jsonArray);
-		jsonObj.put("push_type", 1);
-		Map<String, Object> map = new HashMap<String, Object>();
-		String dateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-		map.put("content", text);
-		map.put("notify_id",UUID.randomUUID().toString());
-		map.put("notify_type", notify_type);
-		map.put("push_time", dateStr);
-		map.put("title", title);
-		jsonObj.put("content", map);
-		
-		String json =  this.push(jsonObj);
-		return json;
+		try{
+			JSONArray jsonArray = new JSONArray();
+			String cid = userCheckDao.findCidByUserid(user_id);
+	//		jsonArray.add("35be8ac9632c9475ac67f9be3c340665");
+			jsonArray.add(cid);
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("cid_list", jsonArray);
+			jsonObj.put("push_type", 1);
+			Map<String, Object> map = new HashMap<String, Object>();
+			String dateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+			map.put("content", text);
+			map.put("notify_id",UUID.randomUUID().toString());
+			map.put("notify_type", notify_type);
+			map.put("push_time", dateStr);
+			map.put("title", title);
+			jsonObj.put("content", map);
+			this.push(jsonObj);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return "";
 	}
 	/*
 	 * 推送消息具体方法
 	 */
-	private String push(JSONObject jsonObj){
+	private String push(JSONObject jsonObj) throws Exception{
 		
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();

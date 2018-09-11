@@ -71,6 +71,7 @@ public class OfficeInfo extends DataEntity<OfficeInfo>{
 	private String creditCode;				//统一社会信用代码
 	private String companyType;				//统一社会信用代码
 	
+	private String shopAssistantId;				//店铺助理id
 	@JsonIgnore
 	@NotNull(message="上级机构编码不能为空")
 	@ExcelField(title="上级机构编码", type=0, align=2, sort=40)
@@ -390,6 +391,12 @@ public class OfficeInfo extends DataEntity<OfficeInfo>{
 	}
 	public void setCompanyType(String companyType) {
 		this.companyType = companyType;
+	}
+	public String getShopAssistantId() {
+		return shopAssistantId;
+	}
+	public void setShopAssistantId(String shopAssistantId) {
+		this.shopAssistantId = shopAssistantId;
 	}
 	
 }

@@ -83,10 +83,10 @@
 								<!-- 增加按钮 -->
 								<table:addRow url="${ctx}/sys/user/form" title="用户" width="800px" height="650px"></table:addRow>
 							</shiro:hasPermission>
+							<!-- 编辑按钮 
 							<shiro:hasPermission name="sys:user:edit">
-								<!-- 编辑按钮 -->
 								<table:editRow url="${ctx}/sys/user/form" id="contentTable" title="用户" width="800px" height="680px" target="officeContent"></table:editRow>
-							</shiro:hasPermission>
+							</shiro:hasPermission>-->
 							<shiro:hasPermission name="sys:user:del">
 								<!-- 删除按钮 -->
 								<table:delRow url="${ctx}/sys/user/deleteAll" id="contentTable"></table:delRow>

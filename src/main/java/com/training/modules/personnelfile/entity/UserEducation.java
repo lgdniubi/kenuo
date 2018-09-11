@@ -65,4 +65,5 @@ public class UserEducation extends DataEntity<UserEducation> {
 	public void setLanguageAbili(String languageAbili) {
 		this.languageAbili = languageAbili;
 	}
+
 }

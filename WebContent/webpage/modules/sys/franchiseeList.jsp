@@ -69,12 +69,17 @@
 										<shiro:hasPermission name="sys:franchisee:edit">
 				    						<a href="#" onclick="openDialog('修改商家', '${ctx}/sys/franchisee/form?id=${franchisee.id}&opflag=UPDATE','800px', '620px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 					    				</shiro:hasPermission>
-					    				<shiro:hasPermission name="sys:franchisee:del">
+					    				
+					    				<shiro:hasPermission name="sys:franchisee:permissEdit">  
+					    					<a href="#" onclick="openDialog('权限设置', '${ctx}/sys/franchisee/permissform?companyId=${franchisee.id}&type=qy&opflag=setPermiss','800px', '550px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>权限设置</a>
+					    				</shiro:hasPermission>
+					    				
+					    				<%-- <shiro:hasPermission name="sys:franchisee:del">
 											<a href="${ctx}/sys/franchisee/delete?id=${franchisee.id}" onclick="return confirmx('确定要删除该商家吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
-										</shiro:hasPermission>
-										<shiro:hasPermission name="sys:franchisee:description">
-											<a onclick="openDialog('商家详情', '${ctx}/sys/franchisee/franchiseeDsecriptionForm?id=${franchisee.id}','800px','620px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i>商家详情</a>
-										</shiro:hasPermission>
+										</shiro:hasPermission> --%>
+									<shiro:hasPermission name="sys:franchisee:description">
+										<a onclick="openDialog('商家详情', '${ctx}/sys/franchisee/franchiseeDsecriptionForm?id=${franchisee.id}','800px','620px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i>商家详情</a>
+									</shiro:hasPermission>
 										<%-- 
 										<c:if test="${franchisee.code == '1'}">
 											<shiro:hasPermission name="sys:franchisee:add">
@@ -91,4 +96,3 @@
 		</div>
 	</div>
 </body>
-</html>

@@ -23,7 +23,7 @@ public class ProtocolModel extends DataEntity<ProtocolModel>{
 	private String name;			//模板名称
 	private String content;			//内容
 	private String type;			//协议类型：1妃子校注册,2用户认证手艺人,3用户认证企业,4用户登录商家PC
-	private String status;			//协议模板状态：1启用,2停用,3变更
+	private String status = "3";			//协议模板状态：1启用,3停用,2变更后历史
 	
 	public String getName() {
 		return name;

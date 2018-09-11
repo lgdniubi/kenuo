@@ -133,4 +133,11 @@ public interface PcRoleDao extends CrudDao<PcRole>{
 	public void insertUserRoleForRoleId(@Param("menuid")Integer menuid, @Param("roleids")List<Integer> roleids);
 
 	public void deleteRoleMenuForRoleId(@Param("oldMenuid")Integer oldMenuid, @Param("modId")Integer modId);
+
+	/**
+	 * 根据商家id找出商家管理员角色id
+	 * @param franchid
+	 * @return
+	 */
+	public int findPcSuperRoleId(String franchid);
 }

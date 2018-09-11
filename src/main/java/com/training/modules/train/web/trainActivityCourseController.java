@@ -16,10 +16,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import com.training.common.persistence.Page;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
+import com.training.modules.sys.service.FranchiseeService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.train.entity.TrainActivityCourse;
 import com.training.modules.train.entity.TrainActivityCourseContent;
@@ -38,6 +40,8 @@ public class trainActivityCourseController extends BaseController{
 	
 	@Autowired
 	private TrainActivityCourseService trainActivityCourseService;
+	@Autowired
+	private FranchiseeService franchiseeService;
 	
 	/**
 	 * 妃子校活动课程list
@@ -77,8 +81,16 @@ public class trainActivityCourseController extends BaseController{
 		try {
 			if(trainActivityCourse.getAcId() != 0){
 				trainActivityCourse = trainActivityCourseService.get(trainActivityCourse);
+				String htmlEscape = HtmlUtils.htmlUnescape(trainActivityCourse.getContent());
+				trainActivityCourse.setContent(htmlEscape);
+				if(trainActivityCourse.getIsOpen()==1){
+					String companyIds = trainActivityCourseService.findCompanyIds(trainActivityCourse.getAcId());
+					trainActivityCourse.setFranchiseeId(companyIds);
+				}
 			}
 			model.addAttribute("trainActivityCourse", trainActivityCourse);
+			//查找所有商家
+			model.addAttribute("officeList", franchiseeService.findAllCompanyList());
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "查询妃子校活动课程详情", e);
 			logger.error("查询妃子校活动课程详情错误信息:"+e.getMessage());
@@ -100,8 +112,10 @@ public class trainActivityCourseController extends BaseController{
 	public String save(Model model,TrainActivityCourse trainActivityCourse,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
 			String[] Images = request.getParameterValues("img");
-			trainActivityCourseService.save(trainActivityCourse);
-			int acId = trainActivityCourse.getAcId();
+			String htmlEscape = HtmlUtils.htmlEscape(trainActivityCourse.getContent());
+			trainActivityCourse.setContent(htmlEscape);
+			trainActivityCourseService.saveCourse(trainActivityCourse);
+			/*int acId = trainActivityCourse.getAcId();
 			if(acId != 0){
 				List<TrainActivityCourseContent> list = new ArrayList<TrainActivityCourseContent>();
 				for (int i = 0; i < Images.length; i++) {
@@ -115,7 +129,7 @@ public class trainActivityCourseController extends BaseController{
 				if(list.size() > 0){
 					trainActivityCourseService.saveContent(list,acId);
 				}
-			}
+			}*/
 			addMessage(redirectAttributes, "保存/修改课程活动成功!");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "保存妃子校课程活动", e);

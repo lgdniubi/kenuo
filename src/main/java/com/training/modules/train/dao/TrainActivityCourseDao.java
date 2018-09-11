@@ -45,4 +45,13 @@ public interface TrainActivityCourseDao extends CrudDao<TrainActivityCourse>{
 	 * @return
 	 */
 	public List<TrainOrder> findTrainOrder(TrainOrder trainOrder);
+
+	/**
+	 * 批量插入课程机构
+	 * @param acId
+	 * @param cids
+	 */
+	public void insertCourseOffice(@Param(value="acId")int acId, @Param(value="cids")String[] cids);
+
+	public String findCompanyIds(int acId);
 }

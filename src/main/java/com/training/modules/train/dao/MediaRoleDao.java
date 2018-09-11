@@ -135,4 +135,11 @@ public interface MediaRoleDao extends CrudDao<MediaRole>{
 	public List<Integer> findMediaRoleByModId(String modId);
 
 	public void deleteRoleMenuForRoleId(@Param("oldMenuid")Integer oldMenuid, @Param("modId")Integer modId);
+
+	/**
+	 * 根据商家id找出商家管理员角色id
+	 * @param franchid
+	 * @return
+	 */
+	public int findMdSuperRoleId(String franchid);
 }

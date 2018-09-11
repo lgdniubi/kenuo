@@ -115,6 +115,7 @@
 							<shiro:hasPermission name="train:trainActivityCourse:add">
 								<!-- 增加按钮 -->
 								<table:addRow url="${ctx}/train/trainActivityCourse/form" title="活动" width="800px" height="650px"></table:addRow>
+<%-- 								<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/trainActivityCourse/form","添加活动", false)'><i class="fa fa-plus"></i>添加活动</button> --%>
 							</shiro:hasPermission>
 						</div>
 						<div class="pull-right">

@@ -15,6 +15,7 @@ import com.training.modules.sys.entity.OfficeAcount;
 import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.OfficeLog;
 import com.training.modules.sys.entity.UserRoleOffice;
+import com.training.modules.train.entity.ContractInfoVo;
 import com.training.modules.train.entity.ModelFranchisee;
 
 /**
@@ -295,5 +296,20 @@ public interface OfficeDao extends TreeDao<Office> {
 	public List<OfficeLog> queryOfficeLog(OfficeLog officeLog);
 
 	public Fvo queryFvo(@Param("office_id")String office_id);
+	/**
+	 * 同步地址
+	 * @param contractInfo
+	 */
+	public void updateOfficeInfoDetailAddress(ContractInfoVo contractInfo);
+	/**
+	 * 同步名称
+	 * @param contractInfo
+	 */
+	public void updateOfficeInfoOfficeName(ContractInfoVo contractInfo);
+	/**
+	 * 查询平台机构
+	 * @return
+	 */
+	public List<Office> findDyOffice();
 
 }

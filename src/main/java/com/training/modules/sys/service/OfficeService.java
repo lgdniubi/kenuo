@@ -29,6 +29,7 @@ import com.training.modules.sys.entity.UserRoleOffice;
 import com.training.modules.sys.entity.OfficeLog;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.ProtocolModelDao;
+import com.training.modules.train.entity.ContractInfoVo;
 import com.training.modules.train.entity.ModelFranchisee;
 
 /**
@@ -513,6 +514,26 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 	 */
 	@Transactional(readOnly = false)
 	public void deleteProtocolShopById(String franchisee_id) {
-		protocolModelDao.deleteProtocolShopById(franchisee_id);
+		protocolModelDao.deleteProtocolShopById(Integer.valueOf(franchisee_id));
+	}
+
+
+	public List<Office> findDyOffice() {
+		return officeDao.findDyOffice();
+	}
+
+	/**
+	 * 签约信息中更改了店铺地址或者名称同步
+	 * 签约信息中更改了店铺地址或者名称同步
+	 * @param contractInfo
+	 */
+	@Transactional(readOnly = false)
+	public void updateAddressAndName(ContractInfoVo contractInfo, String oldOfficeAddress, String oldOfficeName) {
+		if(oldOfficeAddress !=null && !oldOfficeAddress.equals(contractInfo.getOffice_address())){
+			officeDao.updateOfficeInfoDetailAddress(contractInfo);
+		}
+		if(oldOfficeName !=null && !oldOfficeName.equals(contractInfo.getOffice_name())){
+			officeDao.updateOfficeInfoOfficeName(contractInfo);
+		}
 	}
 }

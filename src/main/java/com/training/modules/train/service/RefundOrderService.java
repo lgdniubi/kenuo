@@ -11,9 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.Thread.RefundThread;
 import com.training.common.service.CrudService;
+import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.RefundOrderMapper;
 import com.training.modules.train.entity.ArrearageOfficeList;
 import com.training.modules.train.entity.RefundOrder;
+import com.training.modules.train.entity.RefundOrderLog;
 import com.training.modules.train.entity.Statement;
 
 
@@ -72,8 +74,8 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 	 * @param order_id
 	 * @return
 	 */
-	public List<Statement> queryStatementOfRefund(String office_id,String billmonth){
-		return this.refundOrderMapper.queryStatementOfRefund(office_id,billmonth);
+	public List<Statement> queryStatementOfRefund(String orderId){
+		return this.refundOrderMapper.queryStatementOfRefund(orderId);
 	}
 	/**
 	 * 查询支付信息
@@ -87,11 +89,23 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 	 * 确认入账
 	 * @param order_id
 	 */
-	public void makeSureInAccount(String order_id,String office_id,double amount,String billmonth,String status){
+	public void makeSureInAccount(String order_id,String office_id,double amount,String status,String remarks){
 		//修改订单状态为已入账
-		this.refundOrderMapper.makeSureInAccount(order_id,status);
-		if("3".equals(status))
-		new Thread(new RefundThread(office_id, order_id, amount,billmonth)).start();
+		this.refundOrderMapper.makeSureInAccount(order_id,status,remarks);
+		this.refundOrderMapper.updateStatementStatus(order_id, Integer.parseInt(status));
+		if("3".equals(status)){System.out.println("调用远程接口还款：office_id:"+office_id+",order_id:"+order_id+",amount:"+amount);
+			new Thread(new RefundThread(office_id, order_id, amount)).start();
+		}
+		//记录日志
+		RefundOrderLog log = new RefundOrderLog();
+		log.setCreateBy(UserUtils.getUser().getId());
+		log.setOrderId(order_id);
+		if("4".equals(status))
+			log.setDescription("【取消账单】");
+		else
+			log.setDescription("【确认入账】");
+		this.refundOrderMapper.insertRefundOrderLog(log);
+			
 	}
 
 	/**  
@@ -103,5 +117,13 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 	*/  
 	public void updateOrderOverdueStatus() {
 		this.refundOrderMapper.updateOrderOverdueStatus();
+	}
+	/**
+	 * 查询账单日志
+	 * @param order_id
+	 * @return
+	 */
+	public List<RefundOrderLog> queryRefundOrderLogList(String order_id){
+		return this.refundOrderMapper.queryRefundOrderLogList(order_id);
 	}
 }

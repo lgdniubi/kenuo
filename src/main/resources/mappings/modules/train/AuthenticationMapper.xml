@@ -6,10 +6,44 @@
 		<result property="id" column="id" />
 		<result property="franchisee_id" column="franchisee_id" />
 		<result property="user_id" column="user_id" />
+		<result property="name" column="name" />
+		<result property="mod_name" column="mod_name" />
+		<result property="mod_ename" column="mod_ename" />
+		<collection property="user_ids" column="franchisee_id" select="queryuserids" javaType="ArrayList"></collection>
 	</resultMap>
 	
-	<select id="querypastdueauthentication" resultMap="AuthenticationBean">
-		SELECT id,franchisee_id,user_id FROM trains.train_model_franchisee WHERE DATE_ADD(auth_end_date, interval 1 DAY) <![CDATA[<]]> NOW() AND `status` = 0
+	<select id="querypastdueauthentication" parameterType="java.lang.Integer" resultMap="AuthenticationBean">
+		SELECT 
+			mf.id,
+			mf.franchisee_id,
+			mf.user_id,
+			(SELECT name FROM trains.sys_user WHERE id = mf.user_id) AS name,
+			m.mod_name,
+			m.mod_ename
+		FROM trains.train_model_franchisee mf
+		LEFT JOIN trains.train_model m ON mf.mod_id = m.id
+		WHERE 
+			<if test="flag == 1">
+				DATE_ADD(mf.auth_end_date, INTERVAL 1 DAY) <![CDATA[<]]> NOW() 
+			</if>
+			<if test="flag == 2">
+				DATE_SUB(DATE_FORMAT(mf.auth_end_date,'%Y-%m-%d'), INTERVAL #{num} DAY) = DATE_FORMAT(NOW(),'%Y-%m-%d')
+			</if>
+		AND `status` = 0
+	</select>
+	
+	<resultMap type="com.training.modules.train.entity.UserBean" id="UserBean">
+		<result column="name" property="name"/>
+		<result column="user_id" property="user_id"/>
+	</resultMap>
+	
+	<select id="queryuserids" parameterType="java.lang.Integer" resultMap="UserBean">
+		SELECT 
+			pu.user_id AS user_id,
+			(SELECT	name FROM trains.sys_user WHERE id = pu.user_id) AS name 
+		FROM pc_role pr
+		INNER JOIN pc_user_role pu ON pr.id = pu.pc_role_id
+		WHERE pr.franchisee_id = #{franchisee_id} AND pr.ename = 'sjgly' AND pr.del_flag =0
 	</select>
 	
 	<update id="updateauthenticationstatus" parameterType="java.lang.Integer">

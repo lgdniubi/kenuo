@@ -21,8 +21,8 @@ public class UserFamilyService extends CrudService<UserFamilyDao, UserFamily>{
 		dao.insertSelective(userFamily);
 	}
 	
-	public UserFamily getObject(String userId, Integer num){
-		return dao.getObject(userId, num);
+	public UserFamily getObject(Integer baseInfoId, Integer num){
+		return dao.getObject(baseInfoId, num);
 	}
 
 	public void deleteByUserId(String id) {

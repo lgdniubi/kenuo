@@ -19,6 +19,7 @@ import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.TrainLiveAuditDao;
 import com.training.modules.train.dao.TrainLivePlaybackDao;
 import com.training.modules.train.dao.TrainLiveUserDao;
+import com.training.modules.train.entity.TrainLessons;
 import com.training.modules.train.entity.TrainLiveAudit;
 import com.training.modules.train.entity.TrainLiveOrder;
 import com.training.modules.train.entity.TrainLivePlayback;
@@ -399,5 +400,12 @@ public class TrainLiveAuditService  extends CrudService<TrainLiveAuditDao,TrainL
 	 */
 	public TrainLiveAudit getCompanyIds(String id) {
 		return trainLiveAuditDao.getCompanyIds(id);
+	}
+	/**
+	 * 修改直播正式数据
+	 * @param live
+	 */
+	public void updateIsTest(TrainLiveAudit live) {
+		dao.updateIsTest(live);
 	}
 }

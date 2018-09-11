@@ -224,6 +224,7 @@
 			AND a.company_id = #{company.id} 
 		</if>
 		<if test="office != null and office.id != null and office.id != ''">
+<!-- 			AND o.id = #{office.id} AND c.id = 1 -->
 			AND (o.id = #{office.id} OR o.parent_ids LIKE CONCAT('%,', #{office.id}, ',%'))
 		</if>
 		<if test="loginName != null and loginName != ''">
@@ -244,6 +245,35 @@
 			</otherwise>
 		</choose>
 	</select>
+	<!-- 分页查询登云用户信息 -->
+	<select id="findDyList" resultType="User">
+		SELECT
+			a.id,
+			a.login_name,
+			a. NAME,
+			a.phone,
+			a.mobile,
+			a.del_flag,
+			a.create_date AS createDate,
+			a.type,
+			c. NAME AS "company.name",
+			o. NAME AS "office.name"
+		FROM
+			sys_user a
+		LEFT JOIN sys_franchisee c ON c.id = a.company_id
+		LEFT JOIN sys_office o ON o.id = a.office_id
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		AND a.type in ('yg','qy')
+		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
+		<if test="!currentUser.admin">
+			AND a.id != '1'
+		</if>
+		<if test="office != null and office.id != null and office.id != ''">
+			AND o.id = #{office.id} AND c.id = 1
+		</if>
+		ORDER BY a.create_date desc, o.code,c.code, a.name
+	</select>
 	<!-- 分页查询非员工类型用户信息 -->
 	<select id="findSpecialUserList" resultType="User">
 		SELECT
@@ -258,10 +288,13 @@
 			CASE a.type 
 			WHEN 'pt' THEN '普通会员'
 			WHEN 'syr' THEN '手艺人用户'
+			WHEN 'yg' THEN '员工'
+			WHEN 'qy' THEN '企业'
 			ELSE '' END AS type, 
 			CASE a.type
 			WHEN 'syr' THEN (SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.user_id = a.id)
 			WHEN 'qy' THEN (SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.franchisee_id = a.company_id LIMIT 1) 
+			WHEN 'yg' THEN '登云'
 			ELSE '普通会员' END  AS modelName,
 <!-- 			IFNULL((SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.user_id = a.id), -->
 <!-- 			(SELECT m.mod_name FROM train_model m LEFT JOIN train_model_franchisee f ON m.id = f.mod_id WHERE f.franchisee_id = a.company_id LIMIT 1)) AS modelName,	 -->
@@ -281,13 +314,19 @@
 		LEFT JOIN train_model tm ON tm.id = tmf.mod_id-->
 		<!-- 数据范围过滤 -->
 		${sqlMap.dsf}
-		AND a.type in ('pt','syr')
-		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
+		<!-- AND a.type in ('pt','syr')
+		如果不是超级管理员，则不显示超级管理员用户 -->
 		<if test="!currentUser.admin">
 			AND a.id != '1'
 		</if>
 		<if test="mobile != null and mobile != ''">
 			AND a.mobile = #{mobile}
+		</if>
+		<if test="type != null and type != ''">
+			AND a.type = #{type}
+		</if>
+		<if test="name != null and name != ''">
+			AND a.name like CONCAT('%', #{name}, '%')
 		</if>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
@@ -454,7 +493,9 @@
 			a.id, a.name, a.login_name
 		FROM sys_user a
 		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
-			AND a.company_id = #{company.id}
+			
+			<if test="company.id != null "> AND a.company_id = #{company.id}</if>
+			<if test="office.id != null "> AND a.office_id = #{office.id}</if>
 			<if test="mobile != null "> AND a.mobile = #{mobile}</if>
 		ORDER BY a.name
 	</select>
@@ -913,6 +954,7 @@
 			LEFT JOIN sys_office o ON o.id = a.office_id
 			${sqlMap.dsf}
 			AND a.del_flag = 0
+			AND a.company_id = 1
 			AND r.role_id = #{role.id}
 			ORDER BY  o.code,c.code, a.name
 	</select>

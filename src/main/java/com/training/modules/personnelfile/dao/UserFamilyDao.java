@@ -25,7 +25,7 @@ public interface UserFamilyDao extends CrudDao<UserFamily> {
      * @param userFamily
      * @return
      */
-	UserFamily getObject(@Param("userId")String userId, @Param("nameType")Integer nameType);
+	UserFamily getObject(@Param("baseInfoId")Integer baseInfoId, @Param("nameType")Integer nameType);
 	
 	void deleteByUserId(@Param("userId")String id);
 }

@@ -21,18 +21,25 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.training.common.utils.DateUtils;
 import com.training.common.utils.StringUtils;
 import com.training.common.web.BaseController;
 import com.training.modules.ec.utils.WebUtils;
+import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.quartz.utils.RedisLock;
 import com.training.modules.sys.entity.Franchisee;
 import com.training.modules.sys.entity.Office;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.FranchiseeService;
 import com.training.modules.sys.service.OfficeService;
+import com.training.modules.sys.service.SystemService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.ParametersFactory;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.entity.BankAccount;
+import com.training.modules.train.entity.ModelFranchisee;
+import com.training.modules.train.entity.UserCheck;
+import com.training.modules.train.service.UserCheckService;
 
 import net.sf.json.JSONObject;
 
@@ -50,7 +57,12 @@ public class FranchiseeController extends BaseController{
 	
 	@Autowired
 	private OfficeService officeService;
-	
+	@Autowired
+	private UserCheckService userCheckService;
+	@Autowired
+	private RedisClientTemplate redisClientTemplate;
+	@Autowired
+	private SystemService systemService;
 	/**
 	 * 加盟商列表
 	 * @param franchisee
@@ -100,8 +112,11 @@ public class FranchiseeController extends BaseController{
 				franchisee.setCode(String.valueOf(size));
 			}
 		}
-			
+		//查询超管手机和姓名
+		String userId = userCheckService.findUserIdByCompanyId(Integer.valueOf(franchisee.getId()));
+		User user = systemService.getUser(userId);
 		model.addAttribute("franchisee", franchisee);
+		model.addAttribute("user", user);
 		return "modules/sys/franchiseeFrom";
 	}
 	
@@ -291,6 +306,77 @@ public class FranchiseeController extends BaseController{
     	return map;
 	}
 	
+	@RequiresPermissions(value={"sys:franchisee:permissEdit"},logical=Logical.OR)
+	@RequestMapping(value={"permissform"})
+	public String permissform(UserCheck userCheck,Integer companyId ,Model model,String opflag){
+//		model.addAttribute("pageNo", pageNo);
+		String returnJsp="";
+		String userId = userCheckService.findUserIdByCompanyId(companyId);
+		if ("setPermiss".equals(opflag)){
+			if("syr".equals(userCheck.getType())){
+				ModelFranchisee modelFranchisee = userCheckService.getModelFranchiseeByUserid(userId);
+				model.addAttribute("modelFranchisee",modelFranchisee);
+				model.addAttribute("userid",userId);
+				model.addAttribute("applyid",userCheck.getId());
+				returnJsp = "modules/train/syrSecondForm";
+			}
+			if("qy".equals(userCheck.getType())){
+				ModelFranchisee modelFranchisee = userCheckService.getQYModelFranchiseeByUserid(userId);
+				if(modelFranchisee == null){
+					modelFranchisee = new ModelFranchisee();
+				}
+				modelFranchisee.setUserid(userId);
+				model.addAttribute("modelFranchisee",modelFranchisee);
+				returnJsp = "modules/train/qySecondForm";
+			}
+		}
+		return returnJsp;
+	}
+	@RequiresPermissions(value={"sys:franchisee:permissSave"},logical=Logical.OR)
+	@RequestMapping(value = {"saveFranchise"})
+	public String saveFranchise(ModelFranchisee modelFranchisee,String opflag, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+		if((DateUtils.formatDate(modelFranchisee.getAuthEndDate(), "yyyy-MM-dd").compareTo(DateUtils.getDate()))<0){
+			addMessage(redirectAttributes, "授权时间无效，请重新选择授权时间");
+			return "redirect:" + adminPath + "/sys/franchisee/list";
+		}
+		UserCheck userCheck = new UserCheck();
+		userCheck.setUserid(modelFranchisee.getUserid());
+		userCheck.setAuditType(opflag);
+		UserCheck find = userCheckService.getUserCheckInfo(userCheck);
+		boolean flag = "qy".equals(userCheck.getType()) && Integer.valueOf(userCheck.getStatus())==4;
+		boolean flagsyr = "syr".equals(opflag) && "qy".equals(find.getType());
+		//缓存锁
+		RedisLock redisLock = new RedisLock(redisClientTemplate, "fzx_mobile_"+userCheck.getMobile());
+		try {
+			redisLock.lock();
+			if(flag || flagsyr){
+				addMessage(redirectAttributes, "该用户已经是企业用户，不能进行操作");
+			}else{
+				if ("syr".equals(opflag)){
+					modelFranchisee.setFranchiseeid("0");
+					modelFranchisee.setPaytype("0");
+					ModelFranchisee modelSelect = userCheckService.getModelFranchiseeByUserid(modelFranchisee.getUserid());
+					userCheckService.saveModelFranchisee(modelFranchisee);//保存手艺人权益信息
+					userCheckService.pushMsg(modelFranchisee,modelSelect,opflag);//重新授权成功发送消息
+//					userCheckService.pushMsg(userCheck, "您已具备手艺人用户的权益，开启新旅程吧。");//授权成功发送消息
+				}else if ("qy".equals(opflag)){
+					ModelFranchisee modelSelect = userCheckService.getQYModelFranchiseeByUserid(modelFranchisee.getUserid());
+					userCheckService.saveQYModelFranchisee(modelFranchisee,find);//保存企业权益信息
+					userCheckService.pushMsg(modelFranchisee,modelSelect,opflag);//重新授权成功发送消息
+//					userCheckService.pushMsg(userCheck, "您已具备企业用户的权益，开启新旅程吧。");//授权成功发送消息
+				}
+				redisClientTemplate.del("UTOKEN_"+modelFranchisee.getUserid());
+				addMessage(redirectAttributes, "成功");
+			}
+			
+		} catch (Exception e) {
+			addMessage(redirectAttributes, "保存权限设置出现异常,请与管理员联系");
+			logger.error("保存权限设置异常,异常信息为："+e);
+		}finally {
+			redisLock.unlock();
+		}
+		return "redirect:" + adminPath + "/sys/franchisee/list";
+	}
 	/**
 	 * 是否真实的商家（0：否；1：是）
 	 * @param franchisee

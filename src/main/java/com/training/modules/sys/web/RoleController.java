@@ -197,7 +197,7 @@ public class RoleController extends BaseController {
 		model.addAttribute("role", role);
 		model.addAttribute("userList", userList);
 		model.addAttribute("selectIds", Collections3.extractToString(userList, "name", ","));
-		model.addAttribute("officeList", officeService.findAll());
+		model.addAttribute("officeList", officeService.findDyOffice());
 		return "modules/sys/selectUserToRole";
 	}
 	
@@ -213,7 +213,7 @@ public class RoleController extends BaseController {
 		List<Map<String, Object>> mapList = Lists.newArrayList();
 		User user = new User();
 		user.setOffice(new Office(officeId));
-		Page<User> page = systemService.findUser(new Page<User>(1, -1), user);
+		Page<User> page = systemService.findDyUser(new Page<User>(1, -1), user);
 		for (User e : page.getList()) {
 			Map<String, Object> map = Maps.newHashMap();
 			map.put("id", e.getId());

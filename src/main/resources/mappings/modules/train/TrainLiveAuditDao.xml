@@ -33,6 +33,7 @@
 		a.is_show as isShow,
 		a.is_open_role AS isOpenRole,
 		a.is_recommend as isRecommend,
+		a.is_test AS isTest,
 		a.del_flag
 
 	</sql>
@@ -429,5 +430,13 @@
 			is_open_role = #{isOpenRole},
 			is_recommend = #{isRecommend}
 		WHERE id=#{id}
+	</update>
+	<!-- 修改直播测试数据 -->
+	<update id="updateIsTest">
+		UPDATE 
+		  train_live_audit 
+		SET
+		 is_test = #{isTest}
+		WHERE id = #{id} 
 	</update>
 </mapper>

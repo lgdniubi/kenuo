@@ -142,6 +142,7 @@
 							<td style="text-align: center;">
 								<shiro:hasPermission name="trains:banner:view">
 									<a href="#" onclick="openDialogView('查看', '${ctx}/trains/banner/form?adId=${trainsBanner.adId}','600px', '550px')" class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i> 查看</a>
+<%-- 									<a href="#" onclick="openDialogView('日志', '${ctx}/trains/banner/bannerLoglist?adId=${trainsBanner.adId}','800px', '650px')" class="btn btn-info btn-xs"><i class="fa fa-search-plus"></i> 日志</a> --%>
 								</shiro:hasPermission>
 								<shiro:hasPermission name="trains:banner:edit">
 									<a href="#" onclick="openDialog('修改', '${ctx}/trains/banner/form?adId=${trainsBanner.adId}','600px', '550px')" class="btn btn-success btn-xs"><i class="fa fa-edit"></i> 修改</a>

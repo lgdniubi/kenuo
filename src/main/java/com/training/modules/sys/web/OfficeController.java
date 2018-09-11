@@ -52,6 +52,7 @@ import com.training.modules.sys.entity.OfficeInfo;
 import com.training.modules.sys.entity.OfficeLog;
 import com.training.modules.sys.entity.User;
 import com.training.modules.sys.service.OfficeService;
+import com.training.modules.sys.service.SystemService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.sys.utils.DictUtils;
 import com.training.modules.sys.utils.OfficeThreadUtils;
@@ -85,7 +86,8 @@ public class OfficeController extends BaseController {
 	private TrainRuleParamDao trainRuleParamDao;
 	@Autowired
 	private ReservationDao reservationDao;
-	
+	@Autowired
+	private SystemService systemService;
 	
 	@ModelAttribute("office")
 	public Office get(@RequestParam(required=false) String id) {
@@ -224,6 +226,7 @@ public class OfficeController extends BaseController {
 //			office.setCode(office.getParent().getCode() + StringUtils.leftPad(String.valueOf(size > 0 ? size+1 : 1), 3, "0"));
 //		}
 		//当为实体店铺时查询其详细信息
+		User assistUser = new User();
 		if("1".equals(office.getGrade())){
 			OfficeInfo officeInfo = officeService.findbyid(office);
 			if(officeInfo != null){
@@ -233,6 +236,7 @@ public class OfficeController extends BaseController {
 				}
 				officeInfo.setDetails(HtmlUtils.htmlEscape(officeInfo.getDetails()));//详细介绍转码
 				office.setOfficeInfo(officeInfo);
+				assistUser = systemService.getUser(office.getOfficeInfo().getShopAssistantId());
 			}
 		}
 		//界面展示所属加盟商
@@ -241,8 +245,8 @@ public class OfficeController extends BaseController {
 		int b=codenum%4;
 		String c=office.getCode().substring(0, b+4);
 		o.setFranchiseeCode(c);
-		String a=officeService.findFNameByCode(o).getFranchiseeName();
-		model.addAttribute("a", a);
+		String companyId=officeService.findFNameByCode(o).getFranchiseeId();
+		model.addAttribute("companyId", companyId);
 		//判断机构类型
 		if("10001".equals(c)){
 			office.setType("1");
@@ -251,9 +255,31 @@ public class OfficeController extends BaseController {
 		}
 		model.addAttribute("office", office);
 		model.addAttribute("opflag", opflag);
+		model.addAttribute("user", assistUser);
+		
+		if(StringUtils.isNotEmpty(office.getId())){
+			//0未签约，1已签约。
+			Integer status = getOfficeSignStatus(office.getId());
+			model.addAttribute("status", status);
+		}
 		return "modules/sys/officeForm";
 	}
 	
+	private Integer getOfficeSignStatus(String id) {
+		Integer status = null;
+		String url = ParametersFactory.getTrainsParamValues("contract_data_path");
+		logger.info("##### web接口路径查询机构签约状态:"+url);
+		String parpm = "{\"office_id\":\""+id+"\"}";
+		logger.info("##### web接口路径查询机构签约状态信息参数:"+parpm);
+		String result = WebUtils.postCSObject(parpm, url);
+		JSONObject jsonObject = JSONObject.fromObject(result);
+		if(!(jsonObject.get("data") instanceof JSONNull)){
+			status = jsonObject.getJSONObject("data").getInt("status");
+		}
+		logger.info("##### web接口查询机构状态返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
+		return status;
+	}
+
 	/**
 	 * 机构管理-添加/修改
 	 * @param office
@@ -287,7 +313,7 @@ public class OfficeController extends BaseController {
 		User currentUser = UserUtils.getUser();//获取当前登录用户
 		List<String> lifeImgUrls = new ArrayList<String>();//店铺首图需要用到
 		String img = "";
-				
+		boolean notEmptyOfficeId = StringUtils.isNotEmpty(office.getId());
 		if("".equals(office.getId())){
 			if(office.getGrade().equals("2")){
 				//添加机构
@@ -367,8 +393,8 @@ public class OfficeController extends BaseController {
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
 		String id = "0".equals(office.getParentId()) ? "" : office.getParentId();
 		addMessage(redirectAttributes, "保存机构'" + office.getName() + "'成功");
-		if(office.getGrade().equals("2")){
-			return "redirect:" + adminPath + "/sys/office/form?id="+office.getId()+"&opflag=2&parentIds="+office.getParentIds();
+		if(office.getGrade().equals("2") || notEmptyOfficeId){
+			return "redirect:" + adminPath + "/sys/office/form?id="+office.getId()+"&opflag=1&parentIds="+office.getParentIds();
 		}else{
 			return "redirect:" + adminPath + "/sys/office/signInfo?id="+office.getId()+"&opflag=1&parentIds="+office.getParentIds();
 		}
@@ -401,6 +427,11 @@ public class OfficeController extends BaseController {
 			logger.info("##### web接口返回数据：result:"+jsonObject.get("result")+",msg:"+jsonObject.get("msg"));
 			if(!"200".equals(jsonObject.get("result"))){
 				throw new RuntimeException("获取签约信息失败");
+			}
+			if(infoVo==null ){
+				OfficeInfo officeInfo = officeService.findbyid(office);
+				infoVo = new ContractInfoVo();
+				infoVo.setOffice_address(officeInfo.getDetailedAddress());
 			}
 			ModelFranchisee mod = officeService.findPayType(office.getId());
 			model.addAttribute("infoVo", infoVo);
@@ -438,6 +469,11 @@ public class OfficeController extends BaseController {
 				throw new RuntimeException("保存签约信息失败");
 			}
 			officeService.deleteProtocolShopById(String.valueOf(contractInfo.getFranchisee_id()));
+			
+			String oldOfficeAddress = request.getParameter("oldOfficeAddress");
+			String oldOfficeName = request.getParameter("oldOfficeName");
+			officeService.updateAddressAndName(contractInfo, oldOfficeAddress, oldOfficeName);
+			
 			addMessage(redirectAttributes, "保存签约信息成功");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -445,6 +481,7 @@ public class OfficeController extends BaseController {
 		}
 		return "redirect:" + adminPath + "/sys/office/signInfo?id="+contractInfo.getOffice_id()+"&opflag=1";
 	}
+
 
 	private List<PayInfo> creatPayInfoList(Integer payWay, List<PayInfo> payInfos, String userid) {
 		List<PayInfo> ns = new ArrayList<>();

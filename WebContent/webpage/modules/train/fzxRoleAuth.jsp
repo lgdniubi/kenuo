@@ -72,6 +72,7 @@
 	<form:form id="inputForm" modelAttribute="fzxRole" action="${ctx}/train/fzxRole/saveAuth" method="post" class="form-horizontal">
 		<form:hidden path="roleId"/>
 		<form:hidden path="menuIds"/>
+		<form:hidden path="opflag"/>
 		<input type="hidden" value="${fzxRole.menuIds }" id="oldMenuIds" name="oldMenuIds">
 		<div id="menuTree" class="ztree" style="margin-top:3px;float:left;"></div>
 	</form:form>

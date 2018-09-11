@@ -72,6 +72,7 @@
 	<form:form id="inputForm" modelAttribute="mediaRole" action="${ctx}/train/mdrole/saveAuth" method="post" class="form-horizontal">
 		<form:hidden path="roleId"/>
 		<form:hidden path="menuIds"/>
+		<form:hidden path="opflag"/>
 		<input type="hidden" value="${mediaRole.menuIds }" id="oldMenuIds" name="oldMenuIds">
 		<div id="menuTree" class="ztree" style="margin-top:3px;float:left;"></div>
 	</form:form>

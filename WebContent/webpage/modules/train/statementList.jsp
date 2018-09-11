@@ -20,8 +20,8 @@
                 <table id="treeTable" class="table table-bordered table-hover table-striped">
 	                 <thead> 
 	                   	 <tr>
-                   			<th style="text-align: center;">账单编号</th>
-                   			<th style="text-align: center;">额度</th>
+                   			<th style="text-align: center;">订单编号</th>
+                   			<th style="text-align: center;">使用额度</th>
                    			<th style="text-align: center;">来源</th>
                    			<th style="text-align: center;">类型</th>
                    			<th style="text-align: center;">创建时间</th>

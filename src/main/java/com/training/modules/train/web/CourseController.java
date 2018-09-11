@@ -38,6 +38,7 @@ import com.training.modules.train.entity.StatisticsUnitTotalExport;
 import com.training.modules.train.entity.TrainCategorys;
 import com.training.modules.train.entity.TrainLessonContents;
 import com.training.modules.train.entity.TrainLessons;
+import com.training.modules.train.entity.TrainLiveAudit;
 import com.training.modules.train.service.TrainCategorysService;
 import com.training.modules.train.service.TrainLessonContentsService;
 import com.training.modules.train.service.TrainLessonsService;
@@ -125,7 +126,7 @@ public class CourseController extends BaseController{
 	 * @return
 	 */
 	@RequiresPermissions(value={"train:course:getcoursebyid"},logical=Logical.OR)
-	@RequestMapping(value = {"getcoursebyid", ""})
+	@RequestMapping(value = "getcoursebyid")
 	public String getcoursebyid(TrainLessons trainLessons, Model model){
 		TrainCategorys trainCategorys = new TrainCategorys();
 		trainCategorys.setPriority(1);
@@ -151,11 +152,13 @@ public class CourseController extends BaseController{
 	 * @throws IllegalStateException 
 	 */
 	@RequiresPermissions(value={"train:course:savecourse"},logical=Logical.OR)
-	@RequestMapping(value = {"savecourse", ""})
+	@RequestMapping(value = "savecourse")
 	public String savecourse(TrainLessons trainLessons, HttpServletRequest request, HttpServletResponse response, Model model, RedirectAttributes redirectAttributes) throws IllegalStateException, IOException{
 		
 		try {
 			trainLessons.setName(HtmlUtils.htmlUnescape(trainLessons.getName()));
+			String htmlEscape = HtmlUtils.htmlEscape(trainLessons.getIntroduce());
+			trainLessons.setIntroduce(htmlEscape);
 			if(null == trainLessons.getLessonId() || "".equals(trainLessons.getLessonId())){
 				trainLessons.setLessonId(IdGen.uuid());
 			}
@@ -184,9 +187,11 @@ public class CourseController extends BaseController{
 	 * @throws IllegalStateException 
 	 */
 	@RequiresPermissions(value={"train:course:updatecourse"},logical=Logical.OR)
-	@RequestMapping(value = {"updatecourse", ""})
+	@RequestMapping(value = "updatecourse")
 	public String updatecourse(TrainLessons trainLessons,RedirectAttributes redirectAttributes) throws IllegalStateException, IOException{
 		trainLessons.setName(HtmlUtils.htmlUnescape(trainLessons.getName()));
+		String htmlEscape = HtmlUtils.htmlEscape(trainLessons.getIntroduce());
+		trainLessons.setIntroduce(htmlEscape);
 		trainLessonsService.updatecourse(trainLessons);
 		addMessage(redirectAttributes, "修改课程'" + trainLessons.getName() + "'修改成功");
 		return "redirect:" + adminPath + "/train/course/listcourse?beginDate=''&endDate=''";
@@ -487,6 +492,37 @@ public class CourseController extends BaseController{
 				trainLessonsService.updateIsOpen(trainLessons);
 				jsonMap.put("STATUS", "OK");
 				jsonMap.put("ISOPEN", isOpen);
+			}else{
+				jsonMap.put("STATUS", "ERROR");
+				jsonMap.put("MESSAGE", "修改失败,必要参数为空");
+			}
+		} catch (Exception e) {
+			logger.error("课程管理-修改课程状态 出现异常，异常信息为："+e.getMessage());
+			jsonMap.put("STATUS", "ERROR");
+			jsonMap.put("MESSAGE", "修改失败,出现异常");
+		}
+		return jsonMap;
+	}
+	
+	/**
+	 * 课程测试数据
+	 * @param lessonId
+	 * @param isTest
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "updateIsTest")
+	public Map<String, String> updateIsTest(String lessonId,String isTest){
+		Map<String, String> jsonMap = new HashMap<String, String>();
+		try {
+			int ISTEST = Integer.parseInt(isTest);
+			if(!StringUtils.isEmpty(lessonId) && (ISTEST == 0 || ISTEST == 1)){
+				TrainLessons trainLessons = new TrainLessons();
+				trainLessons.setLessonId(lessonId);
+				trainLessons.setIsTest(ISTEST);
+				trainLessonsService.updateIsTest(trainLessons);
+				jsonMap.put("STATUS", "OK");
+				jsonMap.put("ISTEST", isTest);
 			}else{
 				jsonMap.put("STATUS", "ERROR");
 				jsonMap.put("MESSAGE", "修改失败,必要参数为空");

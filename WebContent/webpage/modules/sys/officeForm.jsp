@@ -26,6 +26,7 @@
 	
 	<!-- 富文本框上传图片样式引用 -->
 	<link rel="stylesheet" type="text/css" href="${ctxStatic}/kindEditor/themes/editCss/edit.css">
+	<link rel="stylesheet" href="${ctxStatic}/train/css/tips.css">
 	<style>
 	</style>
 	<script type="text/javascript">
@@ -55,6 +56,7 @@
 					$("#details").val(content);
 					$("#tags").val($("#officeInfotagsName").val());//标签
 					$("#inputForm").submit();
+					$("#btn1,#btn2,#btn3").prop("disabled","disabled");
 					return true;
 				}
 			}
@@ -105,7 +107,8 @@
 					},//设置了远程验证，在初始化时必须预先调用一次。
 					//添加唯一编码唯一性验证
 					officeCode:{
-						maxlength:20,						
+						maxlength:20,
+						officeCodeMethod:true,
 						remote:{
 							url:"${ctx}/sys/office/checkOfficeCode",
 							type:"post",
@@ -151,19 +154,6 @@
 						rangelength:"请输入13-19位数字",
 						number:"请输入13-19位数字"
 					}
-				},
-				submitHandler: function(form){
-					loading('正在提交，请稍等...');
-					form.submit();
-				},
-				errorContainer: "#messageBox",
-				errorPlacement: function(error, element) {
-					$("#messageBox").text("输入有误，请先更正。");
-					if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
-						error.appendTo(element.parent().parent());
-					} else {
-						error.insertAfter(element);
-					}
 				}
 			});
 			//判断经纬度最多6位小数
@@ -197,6 +187,9 @@
 			jQuery.validator.addMethod("creditCodeMethod", function(value, element) {   
 				 return this.optional(element) || /^[0-9A-Z]+$/.test(value);
 			}, "请输入18位数字或大写字母");//验证社会信用代码
+			jQuery.validator.addMethod("officeCodeMethod", function(value, element) {   
+				 return this.optional(element) || /^[0-9A-Za-z_]+$/.test(value);
+			}, "只能输入数字字母和下划线");//机构唯一编码  ^[0-9a-zA-Z_]{1,}$
 
 			//在ready函数中预先调用一次远程校验函数，是一个无奈的回避案。(刘高峰）
 			//否则打开修改对话框，不做任何更改直接submit,这时再触发远程校验，耗时较长，
@@ -363,10 +356,12 @@
 				isShop= 1;
 				$("#unfold,#area1,#signtab,#next,#signNext").show();
 				$("#a1,#a2,#a3,#a4,#a5,#sbutton,#area2").hide();
+				$("#otypeid").html("店铺创建成功无法变更机构类型");
 			}else{
 				isShop= 0;
 				$("#unfold,#area1,#signtab,#next,#signNext").hide();
 				$("#a1,#a2,#a3,#a4,#a5,#sbutton,#area2").show();
+				$("#otypeid").html("存在子类时不可修改为店铺");
 			}
 		}
 		function changeTableVal(type,id,isyesno){
@@ -431,136 +426,201 @@
 				   <tbody>
 						<tr><td colspan="4" class="active"><label class="pull-left">基本信息</label></td></tr>
 						<tr>
+				         	<td class="width-15 active"><label class="pull-right">
+				         		<span class="help-tip">
+									<span class="help-p" id="otypeid">存在子类时不可修改为店铺</span>
+								</span>
+				         		机构类型:</label></td>
+<!-- 							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>是否为店铺:</label></td> -->
+					         <td class="width-35">
+					         	<c:choose>
+					         		<c:when test="${office.num == '0' and office.grade == 1}">
+							         	<form:select path="grade" id="grade" cssClass="form-control" >
+											<form:option  value="1" label="店铺"/>
+										</form:select>
+										<span class="help-inline"><font color="red">注：更改此类时请重新选择归属区域</font></span>
+					         		</c:when>
+					         		<c:when test="${office.num == '0' and office.grade == 2}">
+							         	<form:select path="grade" id="grade" cssClass="form-control" onchange="unfold(this.options[this.options.selectedIndex].value)">
+											<form:option  value="2" label="非店铺"/>
+											<form:option  value="1" label="店铺"/>
+										</form:select>
+										<span class="help-inline"><font color="red">注：更改此类时请重新选择归属区域</font></span>
+					         		</c:when>
+					         		<c:when test="${office.num == '0' }">
+							         	<form:select path="grade" id="grade" cssClass="form-control" onchange="unfold(this.options[this.options.selectedIndex].value)">
+											<form:option  value="2" label="非店铺"/>
+											<form:option  value="1" label="店铺"/>
+										</form:select>
+										<span class="help-inline"><font color="red">注：更改此类时请重新选择归属区域</font></span>
+					         		</c:when>
+					         		<c:when test="${office.num != '0'}">
+										<form:hidden path="grade"/>	<!-- disabled="true" form表单提交的时候,就不会传值到后台 -->
+										<form:select path="grade" id="grade" cssClass="form-control" disabled="true">
+											<form:option  value="2" label="非店铺"/>
+										</form:select>
+										<span class="help-inline">存在子类时不可改为是店铺</span>
+					         		</c:when>
+					         	</c:choose>
+							</td>
+							<td class="width-15 active"><label class="pull-right">数据类型:</label></td>
+							<td class="width-35">
+								<shiro:hasPermission name="sys:office:isRealData">
+								<select id="isTest" name="isTest">
+									<option value="0" <c:if test="${office.isTest == 0}">selected="true"</c:if> >正式数据</option>
+									<option value="1" <c:if test="${office.isTest == 1}">selected="true"</c:if>>测试数据</option>
+								</select>
+						    	</shiro:hasPermission>
+							</td>
+							     <%-- <tr>
+							     	<td class="width-15 active"><label class="pull-right">是否正常数据</label></td>
+						     		<td>
+										<form:select path="isTest" class="form-control required">
+											<form:option value="0">正常数据</form:option>
+											<form:option value="1">测试数据</form:option>
+										</form:select>
+									</td>
+							     </tr> --%>
+						</tr>
+						<tr>
+							<td class="width-15 active"><label class="pull-right">是否可报货</label></td>
+					     	<td id="isCargo">
+					     		<c:if test="${not empty office.id }">
+					     			<c:choose>
+					     				<c:when test="${not empty status and status eq '1' }">
+							     			<select name="isCargo" id="grade" class="form-control" >
+												<c:if test="${office.isCargo == 0}"><option  value="0" label="是"/></c:if>
+												<c:if test="${office.isCargo == 1}"><option  value="1" label="否"/></c:if>
+											</select>
+					     				</c:when>
+					     				<c:otherwise>
+							     			<form:select path="isCargo" id="grade" cssClass="form-control" >
+												<form:option  value="0" label="是"/>
+												<form:option  value="1" label="否"/>
+											</form:select>
+					     				</c:otherwise>
+					     			</c:choose>
+					         		<%-- <c:if test="${office.isCargo == 1}">
+										<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('isCargo','${office.id}',0)">&nbsp;&nbsp;否
+									</c:if>
+									<c:if test="${office.isCargo == 0}">
+										<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('isCargo','${office.id}',1)">&nbsp;&nbsp;是
+									</c:if> --%>
+					         	</c:if>
+					         	<c:if test="${empty office.id }">
+					         		<select class="form-control required" id="isCargo" name="isCargo">
+										<option value='1'>否</option>
+									</select>
+					         	</c:if>
+					     	</td>
+						</tr>
+						<tr>
+							<td class="width-15 active"><label class="pull-right">
+								<span class="help-tip">
+									<span class="help-p">此字段需从签约信息页面编辑</span>
+								</span>
+							<font color="red">*</font>机构名称:</label></td>
+				         	<td class="width-35"><input id="oldOfficeName" value="${office.name }" type="hidden">
+				         	<input id="name" name="name" value="${office.name }" maxlength="20" class="form-control required" <c:if test="${not empty office.name}">disabled="true"</c:if>></td>
+					        <td class="width-15 active"><label class="pull-right">归属机构:</label></td>
+					        <td class="width-35"><sys:treeselect id="office" name="parent.id" value="${office.parent.id}" labelName="parent.name" labelValue="${office.parent.name}"
+								title="机构" url="/sys/office/parentTreeData?isGrade=true" extId="${office.id}"  cssClass="form-control required" allowClear="${office.currentUser.admin}"/></td>
+				         
+						</tr>
+						<tr>
+							<td class="width-15 active"><label class="pull-right">
+								<span class="help-tip">
+									<span class="help-p">最多8个字</span>
+								</span>
+							<font color="red">*</font>机构缩写：</label></td>
+				         	<td class="width-35"><form:input path="shortName" htmlEscape="false" maxlength="8" cssClass="form-control required" /></td>
+					        <td class="width-15 active"><label class="pull-right"><font color="red">*</font>归属区域:</label></td>
+					        <td class="width-35">
+						       <div id="area1">
+							        <sys:treeselect id="area" name="area.id" value="${office.area.id}" labelName="area.name" labelValue="${office.area.name}" 
+							        title="区域" url="/sys/area/treeData" cssClass="area1 form-control required" allowClear="true" notAllowSelectParent="true"/>
+						        </div>
+						        <div id="area2"> 
+							        <sys:treeselect id="areaInfo" name="areaInfo.id" value="${office.area.id}" labelName="areaInfo.name" labelValue="${office.area.name}" 
+							        title="区域" url="/sys/area/treeData" cssClass="area2 form-control required"/>
+						        </div>
+					        </td>
+						</tr>
+						<%-- <tr>
 							<td  class="width-15 active"><label class="pull-right"><font color="red"></font>所属商家:</label></td>
 				         	<td class="width-35">
 				         		<input value="${a }" class="form-control" readonly="readonly">
 				         	</td>
-				         	<td class="width-15 active"><label class="pull-right">机构类型:</label></td>
-					        <td class="width-35">
-					         	<form:hidden path="type"/>
-					         	<form:select path="type" id="type" class="form-control" disabled="true">
-									<form:options items="${fns:getDictList('sys_office_type')}" itemLabel="label" itemValue="value" htmlEscape="false" disabled="true"/>
-								</form:select>
-							</td>
-						</tr>
-				      	<tr>
-					         <td class="width-15 active"><label class="pull-right">上级机构:</label></td>
-					         <td class="width-35"><sys:treeselect id="office" name="parent.id" value="${office.parent.id}" labelName="parent.name" labelValue="${office.parent.name}"
-								title="机构" url="/sys/office/parentTreeData?isGrade=true" extId="${office.id}"  cssClass="form-control required" allowClear="${office.currentUser.admin}"/></td>
-					         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>归属区域:</label></td>
-					         <td class="width-35">
-						        <div id="area1">
-							         <sys:treeselect id="area" name="area.id" value="${office.area.id}" labelName="area.name" labelValue="${office.area.name}" 
-							         title="区域" url="/sys/area/treeData" cssClass="area1 form-control required" allowClear="true" notAllowSelectParent="true"/>
-						         </div>
-						         <div id="area2"> 
-							         <sys:treeselect id="areaInfo" name="areaInfo.id" value="${office.area.id}" labelName="areaInfo.name" labelValue="${office.area.name}" 
-							         title="区域" url="/sys/area/treeData" cssClass="area2 form-control required"/>
-						         </div>
-					         </td>
-				       </tr>
+				      	</tr> --%>
 				       <tr>
-				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>机构名称:</label></td>
-				         <td class="width-35"><input id="oldOfficeName" value="${office.name }" type="hidden"><input id="name" name="name" value="${office.name }" maxlength="20" class="form-control required"></td>
 				         <td  class="width-15 active"><label class="pull-right">机构编码:</label></td>
 				         <td class="width-35"><form:input path="code" htmlEscape="false" maxlength="50" class="form-control" readonly="true"/></td>
-				      </tr>
-				      <tr>
+				         <td class="width-15 active"><label class="pull-right">
+				         	<span class="help-tip">
+								<span class="help-p">只能输入数字字母和下划线</span>
+							</span>
+				         	唯一编码:</label></td>
+					     <td class="width-35">
+					     	<input id="oldOfficeCode" value="${office.officeCode }" type="hidden">
+					       	<input id="officeCode" name="officeCode" value="${office.officeCode }" class="form-control" onkeyup="this.value=this.value.replace(/[^\w]/ig,'')">
+					       	<span class="help-inline">只能输入数字字母和下划线</span>
+					     </td>
+				      	</tr>
+				      	<tr id="a1">
+					      	<td class="width-15 active"><label class="pull-right">主负责人:</label></td>
+					        <td class="width-35"><sys:treeselect id="primaryPerson" name="primaryPerson.id" value="${office.primaryPerson.id}" labelName="office.primaryPerson.name" labelValue="${office.primaryPerson.name}"
+								title="用户" url="/sys/office/treeData?type=3" cssClass="form-control" allowClear="true" notAllowSelectParent="true"/></td>
+							<td class="width-15 active"><label class="pull-right">联系人电话:</label></td>
+				         	<td class="width-35"><form:input path="phone" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
+				      	</tr>
+				      	 <tr id="a2">
+					     	 <td class="width-15 active"><label class="pull-right">邮箱:</label></td>
+					         <td class="width-35"><form:input path="email" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
+					         <td class="width-15 active"><label class="pull-right">邮政编码:</label></td>
+					         <td class="width-35"><form:input path="zipCode" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
+					     </tr>
+					     <tr id="a3">
+					        <td  class="width-15 active"><label class="pull-right">传真:</label></td>
+					        <td class="width-35"><form:input path="fax" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
+					     </tr>
+				      	<%-- <tr>
 				         <td class="width-15 active"><label class="pull-right">是否可用:</label></td>
 				         <td class="width-35"><form:select path="useable" class="form-control">
 							<form:options items="${fns:getDictList('yes_no')}" itemLabel="label" itemValue="value" htmlEscape="false" cssClass="form-control"/>
 							</form:select>
 							<span class="help-inline">“是”代表此账号允许登陆，“否”则表示此账号不允许登陆</span></td>
-				         <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>是否为店铺:</label></td>
-				         <td class="width-35">
-							<c:if test="${office.num == '0'}">
-					         	<form:select path="grade" id="grade" cssClass="form-control" onchange="unfold(this.options[this.options.selectedIndex].value)">
-									<form:options items="${fns:getDictList('sys_office_grade')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
-								</form:select>
-								<span class="help-inline"><font color="red">注：更改此类时请重新选择归属区域</font></span>
-							</c:if>
-							<c:if test="${office.num != '0'}">
-								<form:hidden path="grade"/>	<!-- disabled="true" form表单提交的时候,就不会传值到后台 -->
-								<form:select path="grade" id="grade" cssClass="form-control" onchange="unfold(this.options[this.options.selectedIndex].value)" disabled="true">
-									<form:options items="${fns:getDictList('sys_office_grade')}" itemLabel="label" itemValue="value" htmlEscape="false" disabled="true"/>
-								</form:select>
-								<span class="help-inline">存在子类时不可改为是店铺</span>
-							</c:if>
-						</td>
-				     </tr>
-				     <tr>
-				     	<td class="width-15 active"><label class="pull-right">是否可报货</label></td>
-				     	<td id="isCargo">
-				     		<c:if test="${not empty office.id }">
-				         		<c:if test="${office.isCargo == 1}">
-									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('isCargo','${office.id}',0)">&nbsp;&nbsp;否
-								</c:if>
-								<c:if test="${office.isCargo == 0}">
-									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('isCargo','${office.id}',1)">&nbsp;&nbsp;是
-								</c:if>
-				         	</c:if>
-				         	<c:if test="${empty office.id }">
-				         		<select class="form-control required" id="isCargo" name="isCargo">
-									<option value='1'>否</option>
-								</select>
-				         	</c:if>
-				     	</td>
-				     	<td class="width-15 active"><label class="pull-right">唯一编码:</label></td>
-				        <td class="width-35">
-				        	<input id="oldOfficeCode" value="${office.officeCode }" type="hidden">
-				        	<input id="officeCode" name="officeCode" value="${office.officeCode }" class="form-control" onkeyup="this.value=this.value.replace(/[^\w\.\/]/ig,'')">
-				        	<span class="help-inline">只能输入数字字母和下划线</span>
-				        </td>
-				     </tr>
-				     <shiro:hasPermission name="sys:office:isRealData">
-					     <tr>
-					     	<td class="width-15 active"><label class="pull-right">是否正常数据</label></td>
-				     		<td>
-								<form:select path="isTest" class="form-control required">
-									<form:option value="0">正常数据</form:option>
-									<form:option value="1">测试数据</form:option>
-								</form:select>
-							</td>
-					     </tr>
-				     </shiro:hasPermission>
-				     <tr id="a5">
-				         <td class="width-15 active"><label class="pull-right">主负责人:</label></td>
-				         <td class="width-35"><sys:treeselect id="primaryPerson" name="primaryPerson.id" value="${office.primaryPerson.id}" labelName="office.primaryPerson.name" labelValue="${office.primaryPerson.name}"
-							title="用户" url="/sys/office/treeData?type=3" cssClass="form-control" allowClear="true" notAllowSelectParent="true"/></td>
+				         
+				     	</tr> --%>
+				     <%-- <tr id="a5">
 						 <td class="width-15 active"><label class="pull-right">副负责人:</label></td>
 				         <td class="width-35"><sys:treeselect id="deputyPerson" name="deputyPerson.id" value="${office.deputyPerson.id}" labelName="office.deputyPerson.name" labelValue="${office.deputyPerson.name}"
 							title="用户" url="/sys/office/treeData?type=3" cssClass="form-control" allowClear="true" notAllowSelectParent="true"/></td>
-				     </tr>
-				     <tr id="a1">
 				         <td  class="width-15 active"><label class="pull-right">负责人:</label></td>
 				         <td class="width-35"><form:input path="master" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
-				         <td class="width-15 active"><label class="pull-right">联系地址:</label></td>
-				         <td class="width-35"><form:input path="address" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
-				     </tr>
-				     <tr id="a2">
-				     	 <td class="width-15 active"><label class="pull-right">邮箱:</label></td>
-				         <td class="width-35"><form:input path="email" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
-				         <td class="width-15 active"><label class="pull-right">邮政编码:</label></td>
-				         <td class="width-35"><form:input path="zipCode" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
-				     </tr>
-				     <tr id="a3">
-				         <td class="width-15 active"><label class="pull-right">电话:</label></td>
-				         <td class="width-35"><form:input path="phone" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
-				         <td  class="width-15 active"><label class="pull-right">传真:</label></td>
-				         <td class="width-35"><form:input path="fax" htmlEscape="false" maxlength="50" cssClass="form-control" /></td>
-				     </tr>
+				     </tr> --%>
 				     <tr id="a4">
+				         <td class="width-15 active">
+				         	<label class="pull-right">
+				         	<span class="help-tip">
+								<span class="help-p">此字段需从签约信息页面编辑</span>
+							</span>
+							机构地址:</label></td>
+				         <td class="width-35"><form:input path="address" htmlEscape="false" maxlength="50" cssClass="form-control" /></td><%-- <c:if test="${not empty office.address}">disabled="true"</c:if>/> --%>
+				     </tr>
+				    
+				    
+				     <tr id="a5">
 				         <td  class="width-15 active"><label class="pull-right">备注:</label></td>
 				         <td class="width-35"  colspan="3"><form:textarea path="remarks" htmlEscape="false" rows="3" cols="30" maxlength="200" class="form-control"/></td>
 				     </tr>
 			      </tbody>
 			      <tbody id="unfold">
-					<tr>
+					<%-- <tr>
 						<td colspan="4" class="active">
 							<label class="pull-left">店铺详细信息</label>
 							<form:hidden path="officeInfo.id"/>
 						</td>
-					</tr>
+					</tr> --%>
 			      	  <tr>
 				      	 <td  class="width-15 active"><label class="pull-right">店铺首图:</label></td>
 				         <td class="width-35">
@@ -572,21 +632,45 @@
 							</div>
 							<div id="file_photo_queue"></div>
 				         </td>
-				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺短名称：</label></td>
-				         <td class="width-35"><form:input path="officeInfo.shortName" htmlEscape="false" maxlength="50" cssClass="form-control required" /></td>
+				         
 				         
 				      </tr>
 				     <tr>
-				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>邮政编码:</label></td>
-				         <td class="width-35"><form:input path="officeInfo.postalCode" htmlEscape="false" maxlength="50" cssClass="form-control required" onkeyup="this.value=this.value.replace(/\D/g,'')"/></td>
+				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店长电话：</label></td>
+				         <td class="width-35"><form:input path="officeInfo.telephone" htmlEscape="false" cssClass="form-control required"/></td>
 				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店长/联系人：</label></td>
 				         <td class="width-35"><form:input path="officeInfo.contacts" htmlEscape="false" maxlength="50" cssClass="form-control required" /></td>
 				     </tr>
 				     <tr>
-				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺电话：</label></td>
+						<td class="width-15 active"><label class="pull-right">
+							<span class="help-tip">
+								<span class="help-p">接收预约短信</span>
+							</span>
+							助理电话:</label></td>
+						<%-- <td class="width-35"><form:input path="legalName" htmlEscape="false" maxlength="50" class="form-control required" />${user.id }${user.mobile}${user.name }</td> --%>
+						<td class="width-35">
+							<div class="input-group">
+					         	<input value="${user.mobile}" id="shopAssistantMobile"  class="form-control" placeholder="请输入手机号">
+					       		 <span class="input-group-btn">
+						       		 <button type="button"  onclick="findUser('shopAssistant')" class="btn btn-primary"><i class="fa fa-search">查询</i></button> 
+					       		 </span>
+						    </div>
+				        </td>
+						<td class="width-15 active"><label class="pull-right">店助理:</label></td>
+						<td class="width-35">
+							<input id="shopAssistantId" name="officeInfo.shopAssistantId" class="form-control required" type="hidden" value="${user.id }"/>
+							<input id="shopAssistantName" type="text" readonly="readonly" value="${user.name }" class="form-control" />
+						</td>
+					</tr>
+				     <tr>
+				         <td class="width-15 active"><label class="pull-right">
+				         	<span class="help-tip">
+								<span class="help-p">仅手机号请填写到后输入框</span>
+							</span>
+				         <font color="red">*</font>店铺电话：</label></td>
 				         <td class="width-35"><form:input path="officeInfo.storePhone" htmlEscape="false" cssClass="form-control required"/></td>
-				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店长电话：</label></td>
-				         <td class="width-35"><form:input path="officeInfo.telephone" htmlEscape="false" cssClass="form-control required"/></td>
+				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>邮政编码:</label></td>
+				         <td class="width-35"><form:input path="officeInfo.postalCode" htmlEscape="false" maxlength="50" cssClass="form-control required" onkeyup="this.value=this.value.replace(/\D/g,'')"/></td>
 				     </tr>
 			      	 <tr>
 				         <td class="width-15 active"><label class="pull-right"><font color="red">*</font>工作时间:</label></td>
@@ -615,15 +699,23 @@
 				      <tr>
 				      	 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>床位：</label></td>
 				         <td class="width-35"><form:input path="officeInfo.bedNum" htmlEscape="false" maxlength="5" cssClass="form-control digits required"/></td>
-						 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>是否新店：</label></td>
+						 <td class="width-15 active"><label class="pull-right">
+						 	<span class="help-tip">
+								<span class="help-p">会在APP商家主页新店模块显示</span>
+							</span>
+						 <font color="red">*</font>是否新店：</label></td>
 						 <td id="isNew">
 						 	<c:if test="${not empty office.id}">
-				         		<c:if test="${office.isNew == 0}">
+						 		<form:select class="form-control required"  path="isNew">
+									<form:option value='0'>否</form:option>
+									<form:option value='1'>是</form:option>
+								</form:select>
+				         		<%-- <c:if test="${office.isNew == 0}">
 									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('isNew','${office.id}',1)">&nbsp;&nbsp;否
 								</c:if>
 								<c:if test="${office.isNew == 1}">
 									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('isNew','${office.id}',0)">&nbsp;&nbsp;是
-								</c:if>
+								</c:if> --%>
 				         	</c:if>
 				         	<c:if test="${empty office.id}">
 				         		<select class="form-control required" id="isNew" name="isNew">
@@ -643,12 +735,16 @@
 						 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>店铺状态(是否隐藏)：</label></td>
 				         <td class="width-35" id="status">
 				         	<c:if test="${not empty office.officeInfo.id}">
-								<c:if test="${office.officeInfo.status == 1}">
+				         		<form:select class="form-control required"  path="officeInfo.status">
+									<form:option value='0'>正常</form:option>
+									<form:option value='1'>隐藏</form:option>
+								</form:select>
+								<%-- <c:if test="${office.officeInfo.status == 1}">
 									<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeTableVal('status','${office.id}',0)">&nbsp;&nbsp;是
 								</c:if>
 				         		<c:if test="${office.officeInfo.status == 0}">
 									<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeTableVal('status','${office.id}',1)">&nbsp;&nbsp;否
-								</c:if>
+								</c:if> --%>
 				         	</c:if>
 				         	<c:if test="${empty office.officeInfo.id}">
 				         		<select id="officeInfo.status" name="officeInfo.status" class="form-control">
@@ -658,9 +754,14 @@
 				         </td>
 					  </tr>
 				      <tr>
-				      	 <td class="width-15 active"><label class="pull-right"><font color="red">*</font>详细地址:</label></td>
-				         <td class="width-35" colspan="3"><form:textarea path="officeInfo.detailedAddress" htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required"/></td>
-				      </tr>
+				      	 <td class="width-15 active">
+				      	 	<label class="pull-right">
+				      	 	<span class="help-tip">
+								<span class="help-p">此字段需从签约信息页面编辑</span>
+							</span>
+				      	 	<font color="red">*</font>详细地址:</label></td>
+				         <td class="width-35" colspan="3"><textarea name="officeInfo.detailedAddress" htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required" <c:if test="${not empty office.officeInfo.detailedAddress}">readonly="true"</c:if> >${office.officeInfo.detailedAddress}</textarea></td>
+				      </tr> 
 				      <tr>
 				        <td class="width-15 active"><label class="pull-right">简介：</label></td>
 				        <td class="width-35" colspan="3"><form:textarea path="officeInfo.intro" htmlEscape="false" rows="3" style="width: 100%" maxlength="50" class="form-control"/></td>
@@ -674,16 +775,15 @@
 				      </tr>
 			      </tbody>
 		      </table>
-		      <c:if test="${opflag == 1 && office.grade == '1'}">	<!-- 点击修改opflag=1，根据机构数量判断是否是店铺 -->
+		      <%-- <c:if test="${opflag == 1 && office.grade == '1'}">	<!-- 点击修改opflag=1，根据机构数量判断是否是店铺 -->
 		      	<input type="button" value="下一步" onclick="doSubmit()"/>
-<%-- 		      <label class="pull-left" id="signNext" ><a href="${ctx}/sys/office/signInfo?id=${office.id}&opflag=${opflag}">下一步</a></label> --%>
-		      </c:if>
-		      <c:if test="${opflag == 1 && office.grade == '2'}">
-		      	<input type="button" value="保存基础信息" onclick="doSubmit()"/>
+		      </c:if> --%>
+		      <c:if test="${opflag == 1 }">
+		      	<input type="button" id="btn1" value="保存基础信息" onclick="doSubmit()"/>
 		      </c:if>
 		      <c:if test="${opflag == 2}"><!-- 点击添加下级机构 -->
-		      <label class="pull-left" id="next" ><input type="button" value="下一步" onclick="doSubmit()"/></label>
-		      <label class="pull-left" id="sbutton" ><input type="button" value="保存基础信息" onclick="doSubmit()"/></label>
+		      <label class="pull-left" id="next" ><input type="button" id="btn2" value="保存并下一步" onclick="doSubmit()"/></label>
+		      <label class="pull-left" id="sbutton" ><input type="button" id="btn3" value="保存基础信息" onclick="doSubmit()"/></label>
 		      </c:if>
 		</form:form>
 		<shiro:hasPermission name="sys:office:shopLogs">
@@ -794,6 +894,50 @@
 			$(".ke-edit-iframe").contents().find(".ke-content").html(content);
 		}
 		window.onload = LoadOver;
+		
+		var lastValue = "";
+		var lastId = "";
+		function findUser(id){
+			var value = $("#"+id+"Mobile").val()
+			
+			 if(value =="" ){
+				return;
+			} 
+			$(".loading").show();
+			// 如果和上次一次，就退出不查了。
+			if (lastValue === value && lastId == id) {
+				//等待样式隐藏
+				$(".loading").hide();
+				return;
+			}
+			if (value == "") {
+				//等待样式隐藏
+				$(".loading").hide();
+				return;
+			} 
+			// 保存最后一次
+			lastValue = value;
+			lastId = id;
+			$.ajax({
+				url:'${ctx}/sys/user/treeDataCompany?officeId=${companyId}',
+				type:'post',
+				data:{mobile:value},
+			 	dataType:'json',
+			 	success:function(data){
+			 		if(data.code==0){
+			 			top.layer.msg("没有找到用户", {icon: 0});
+						$("#"+id+"Id").val('');
+				 		$("#"+id+"Name").val('');
+			 		}else{
+			 			$("#"+id+"Id").val(data.id);
+						$("#"+id+"Name").val(data.name); 
+			 		}
+			 		$(".loading").hide();
+			 	}
+			});
+		}
+				
+			
 	</script>
 </body>
 </html>

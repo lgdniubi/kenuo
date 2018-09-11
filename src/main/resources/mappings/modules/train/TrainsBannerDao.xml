@@ -25,6 +25,32 @@
 			#{parentIds}
 		)
 	</insert>
+	<!-- 保存日志 -->
+	<insert id="saveAdvertLog" parameterType="TrainsBanner" >
+		INSERT INTO train_advert_log(
+			ad_id,
+			ad_name,
+			ad_type,
+			ad_pic,
+			ad_url,
+			remark,
+			sort,
+			create_by,
+			create_name,
+			create_date
+		) VALUES (
+			#{adId},
+			#{adName},
+			#{adType},
+			#{adPic},
+			#{adUrl},
+			#{remark},
+			#{sort},
+			#{createBy.id},
+			#{createBy.name},
+			SYSDATE()
+		)
+	</insert>
 	<!-- 插入banner商家权限 -->
 	<insert id="insertFranchiseeBanner">
 		INSERT INTO trains.train_franchisee_advert(
@@ -37,6 +63,19 @@
 			#{soFranchisee}
 		)
 	</insert>
+	<select id="findLogList" resultType="TrainsBanner">
+		SELECT 
+			ad_id,
+			ad_name,
+			ad_type,
+			ad_pic,
+			ad_url,
+			remark,
+			sort,
+			create_name as 'createBy.name',
+			create_date
+		 from  `train_advert_log` WHERE ad_id = #{adId}
+	</select>
 	<select id="findList" resultType="TrainsBanner">
 		SELECT
 			a.ad_id AS adId,

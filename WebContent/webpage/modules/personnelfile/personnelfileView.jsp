@@ -132,7 +132,7 @@
 	<div class="wrapper wrapper-content">
 		<div class="ibox">
 			<div class="ibox-title">
-				<h5>修改档案</h5>
+				<h5>查看档案</h5>
 				<h5 style="padding-left: 92%; margin-top: -10px;">
 					<a href="${ctx}/personnelfile/user/list">
 						<button type="button" class="btn btn-info">返回</button>
@@ -149,10 +149,12 @@
 							<td colspan="6" style="background-color: #5553;"><label class="pull-left">基本信息</label></td>
 						</tr>
 						<tr>
-							<td><label class="pull-right">登录名：</label></td>
-							<td>${personnelFile.loginName}</td>
+							<%-- <td><label class="pull-right">登录名：</label></td>
+							<td>${personnelFile.loginName}</td> --%>
 							<td style="width: 187px;"><label class="pull-right">姓名：</label></td>
 							<td>${personnelFile.sName}</td>
+							<td><label class="pull-right">归属机构：</label></td>
+							<td>${personnelFile.soName}</td>
 							<td rowspan="8" colspan="2" align="center">
 								<span id="item_img_user" style="margin-right: 8px;"> 
 									<c:if test="${not empty personnelFile.photo }">
@@ -165,16 +167,15 @@
 								</span>
 							</td>
 						</tr>
-						<tr>
-							<td><label class="pull-right">归属机构：</label></td>
-							<td>${personnelFile.soName}</td>
+						<%-- <tr>
+							
 							<td><label class="pull-right">角色：</label></td>
 							<td>
 								<c:forEach items="${personnelFile.rolelist}" var="role">
 									${role.name}
 								</c:forEach>
 							</td>
-						</tr>
+						</tr> --%>
 						<tr>
 							<td><label class="pull-right">员工编号：</label></td>
 							<td>
@@ -240,80 +241,12 @@
 								<input id="joinParty" name="userBaseInfo.joinParty" type="text" maxlength="20" class="laydate-icon form-control layer-date input-sm required" 
 								value="<fmt:formatDate value="${personnelFile.userBaseInfo.joinParty}" pattern="yyyy-MM-dd"/>" />
 							</td>
-						</tr>
-						<tr>
-							<td><label class="pull-right">身份证正面照：</label></td>
+							<td><label class="pull-right"><font color="red">*</font>职位：</label></td>
 							<td>
-								<span id="item_img_zm" style="margin-right: 8px;"> 
-									<c:if test="${empty personnelFile.userImage1.imgUrl}">
-											<img src="/kenuo/static/ec/images/zhengmian.jpg" onclick="specitemupload('zm')" /> 
-											<input type="hidden" value="" name="imgList[1].imgUrl" />
-										    <input type="hidden" value="1" name="imgList[1].imgType" />
-									</c:if>
-									<c:if test="${!empty personnelFile.userImage1.imgUrl}">
-											<img src="${personnelFile.userImage1.imgUrl}" onclick="specitemupload('zm')" /> 
-											<input type="hidden" value="${personnelFile.userImage1.imgUrl}" name="imgList[1].imgUrl" />
-										    <input type="hidden" value="1" name="imgList[1].imgType" />
-									</c:if>
-								</span>
-							</td>
-							<td><label class="pull-right">身份证反面照：</label></td>
-							<td>
-								<span id="item_img_fm" style="margin-right: 8px;"> 
-									<c:if test="${empty personnelFile.userImage2.imgUrl}">
-											<img src="/kenuo/static/ec/images/fanmian.jpg" onclick="specitemupload('fm')" /> 
-											<input type="hidden" value="" name="imgList[2].imgUrl" />
-										    <input type="hidden" value="2" name="imgList[2].imgType" />
-									</c:if>
-									<c:if test="${!empty personnelFile.userImage2.imgUrl}">
-											<img src="${personnelFile.userImage2.imgUrl}" onclick="specitemupload('fm')" /> 
-											<input type="hidden" value="${personnelFile.userImage2.imgUrl}" name="imgList[2].imgUrl" />
-										    <input type="hidden" value="2" name="imgList[2].imgType" />
-									</c:if>
-								</span>
+								<form:input path="userBaseInfo.position" htmlEscape="false" maxlength="10" class="form-control  max-width-600 required" />
 							</td>
 						</tr>
-						<tr>
-							<td><label class="pull-right">照片：</label></td>
-							<td colspan="5">
-								<span id="item_img_shz"	style="margin-right: 8px;"> 
-									<c:if test="${empty personnelFile.userImage3.imgUrl}">
-										<img src="/kenuo/static/ec/images/shenghuo.jpg" onclick="specitemupload('shz')" /> 
-										<input type="hidden" value="" name="imgList[3].imgUrl" />
-										<input type="hidden" value="3" name="imgList[3].imgType" />
-									</c:if>
-									<c:if test="${!empty personnelFile.userImage3.imgUrl}">
-										<img src="${personnelFile.userImage3.imgUrl}" onclick="specitemupload('shz')" /> 
-										<input type="hidden" value="${personnelFile.userImage3.imgUrl}" name="imgList[3].imgUrl" />
-										<input type="hidden" value="3" name="imgList[3].imgType" />
-									</c:if>
-								</span> 
-								<span id="item_img_gzz" style="margin-right: 8px;"> 
-									<c:if test="${empty personnelFile.userImage4.imgUrl}">
-										<img src="/kenuo/static/ec/images/gongzuo.jpg" onclick="specitemupload('gzz')" /> 
-										<input type="hidden" value="" name="imgList[4].imgUrl" />
-										<input type="hidden" value="4" name="imgList[4].imgType" />
-									</c:if>
-									<c:if test="${!empty personnelFile.userImage4.imgUrl}">
-										<img src="${personnelFile.userImage4.imgUrl }" onclick="specitemupload('gzz')" /> 
-										<input type="hidden" value="${personnelFile.userImage4.imgUrl }" name="imgList[4].imgUrl" />
-										<input type="hidden" value="4" name="imgList[4].imgType" />
-									</c:if>
-								</span> 
-								<span id="item_img_dphz" style="margin-right: 8px;"> 
-									<c:if test="${empty personnelFile.userImage5.imgUrl}">
-										<img src="/kenuo/static/ec/images/dianpu.jpg" onclick="specitemupload('dphz')" /> 
-										<input type="hidden" value="" name="imgList[5].imgUrl" />
-										<input type="hidden" value="5" name="imgList[5].imgType" />
-									</c:if>
-									<c:if test="${!empty personnelFile.userImage5.imgUrl}">
-										<img src="${personnelFile.userImage5.imgUrl }" onclick="specitemupload('dphz')" style="width: 150px;" /> 
-										<input type="hidden" value="${personnelFile.userImage5.imgUrl }" name="imgList[5].imgUrl" />
-										<input type="hidden" value="5" name="imgList[5].imgType" />
-									</c:if>
-								</span>
-							</td>
-						</tr>
+						
 						<tr>
 							<td><label class="pull-right"><font color="red">*</font>户籍类别：</label></td>
 							<td>
@@ -411,9 +344,24 @@
 							<td><form:input path="userEmployed.baseWages" htmlEscape="false"
 									maxlength="10" class="form-control  max-width-600 required" />
 							</td>
-							<td><label class="pull-right">第二工作职业：</label></td>
-							<td><form:input path="userEmployed.secondWork" htmlEscape="false"
-									maxlength="10" class="form-control  max-width-600" />
+							<td><label class="pull-right">在职状态：</label></td>
+							<td>
+								<c:if test="${personnelFile.userBaseInfo.isQuit == '1'}">离职</c:if>
+								<c:if test="${personnelFile.userBaseInfo.isQuit == '0'}">在职</c:if>
+							</td>
+						</tr>
+						<tr>
+							<td><label class="pull-right"><font color="red">*</font>社保账号：</label></td>
+							<td><form:input path="userEmployed.socialNo" htmlEscape="false"
+									maxlength="10" class="form-control  max-width-600 required" />
+							</td>
+							<td><label class="pull-right"><font color="red">*</font>QQ：</label></td>
+							<td><form:input path="userEmployed.QQ" htmlEscape="false"
+									maxlength="10" class="form-control  max-width-600 required" />
+							</td>
+							<td><label class="pull-right">邮箱：</label></td>
+							<td><form:input path="userEmployed.email" htmlEscape="false"
+									maxlength="10" class="form-control  max-width-600 required" />
 							</td>
 						</tr>
 						<tr>
@@ -422,9 +370,15 @@
 									maxlength="10" class="form-control  max-width-600 required" />
 							</td>
 							<td><label class="pull-right"><font color="red">*</font>账号：</label></td>
-							<td colspan="3">
+							<td>
 								<form:input path="userEmployed.bankCode" htmlEscape="false"
 									maxlength="10" class="form-control  max-width-600 required" onkeyup="this.value=this.value.replace(/\D/g,'')" />
+							</td>
+							<td><label class="pull-right"><font color="red">*</font>入职时间：</label></td>
+							<td>
+								<input id="graduationDate" name="userEducation.hireDate" class="Wdate form-control layer-date input-sm" style="height: 30px;width: 200px" type="text" 
+									value="<fmt:formatDate value="${personnelFile.userEmployed.hireDate}" pattern="yyyy-MM-dd"/>"
+									onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
 							</td>
 						</tr>
 						<tr>
@@ -580,40 +534,7 @@
 						<tr>
 							<td style="background-color: #5553;" colspan="6"><label class="pull-left">主要家庭成员信息</label></td>
 						</tr>
-						<tr>
-							<td><label class="pull-right">配偶姓名：</label></td>
-							<td>
-								<input class="form-control  max-width-600" name="userFamilymembers[0].name" type="text" maxlength="20" value="${personnelFile.oneUser.name}" />
-								<input type="hidden" name="userFamilymembers[0].nameType" value="1" />
-							</td>
-							<td><label class="pull-right">关系：</label></td>
-							<td>
-								<input class="form-control  max-width-600" name="userFamilymembers[0].relation" type="text" maxlength="20" value="${personnelFile.oneUser.relation}" />
-							</td>
-							<td><label class="pull-right">出生日期：</label></td>
-							<td>
-								<input id="contactBirthday" name="userFamilymembers[0].birthday" class="Wdate form-control layer-date input-sm" style="height: 30px;width: 200px" type="text" 
-									value="<fmt:formatDate value="${personnelFile.oneUser.birthday}" pattern="yyyy-MM-dd"/>"
-									onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
-							</td>
-						</tr>
-						<tr>
-							<td><label class="pull-right">工作单位：</label></td>
-							<td>
-								<input class="form-control  max-width-600" name="userFamilymembers[0].works" type="text" maxlength="20" value="${personnelFile.oneUser.works}" />
-							</td>
-							<td><label class="pull-right">联系电话：</label></td>
-							<td>
-								<input class="form-control  max-width-600" name="userFamilymembers[0].phone" type="text" maxlength="20" value="${personnelFile.oneUser.phone}" />
-							</td>
-							<td><label class="pull-right">是否有小孩：</label></td>
-							<td>
-								<select class="form-control max-width-150" name="userFamilymembers[0].ischild">
-									<option value="0" <c:if test="${personnelFile.oneUser.ischild == 0}">selected</c:if>>是</option>
-									<option value="1" <c:if test="${personnelFile.oneUser.ischild == 1}">selected</c:if>>否</option>
-								</select>
-							</td>
-						</tr>
+						
 						<tr>
 							<td><label class="pull-right"><font color="red">*</font>紧急联系人姓名：</label></td>
 							<td>
@@ -677,48 +598,6 @@
 									htmlEscape="false" maxlength="10"
 									class="form-control  max-width-600 required" /></td>
 						</tr>
-						<tr>
-							<td style="background-color: #5553;" colspan="6"><label class="pull-left">离职情况</label></td>
-						</tr>
-						<tr>
-							<td><label class="pull-right"><font color="red">*</font>是否离职：</label></td>
-							<td  colspan="5">
-								<select class="form-control max-width-150 required" name="userDepartures.isleaveoffice">
-									<option value="1" <c:if test="${personnelFile.userDepartures.isleaveoffice == 1}">selected</c:if> onclick="checkCount(1)">否</option>
-									<option value="0" <c:if test="${personnelFile.userDepartures.isleaveoffice == 0}">selected</c:if> onclick="checkCount(0)">是</option>
-								</select>
-								<input type="hidden" id="loffice" value="${personnelFile.userDepartures.isleaveoffice}" />
-							</td>
-						</tr>
-						<tbody id="leaveoffice">
-							<tr>
-								<td><label class="pull-right"><font color="red">*</font>离职日期：</label></td>
-								<td>
-									<input id="leaveofficeDate" name="userDepartures.leaveofficeDate" class="Wdate form-control layer-date input-sm" style="height: 30px;width: 200px" type="text" 
-										value="<fmt:formatDate value="${personnelFile.userDepartures.leaveofficeDate}" pattern="yyyy-MM-dd"/>"
-										onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
-								</td>
-								<td><label class="pull-right"><font color="red">*</font>停止核算工资：</label></td>
-								<td colspan="3">
-									<select class="form-control max-width-150" name="userDepartures.stopAccountingwages">
-										<option value="0" <c:if test="${personnelFile.userDepartures.stopAccountingwages == 0}">selected</c:if>>是</option>
-										<option value="1" <c:if test="${personnelFile.userDepartures.stopAccountingwages == 1}">selected</c:if>>否</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td><label class="pull-right"><font color="red">*</font>离职原因：</label></td>
-								<td colspan="5">
-									<form:textarea path="userDepartures.leaveofficeReasons" cols="150" rows="6" class="form-control  max-width-800 required"/>
-								</td>
-							</tr>
-							<tr>
-								<td><label class="pull-right"><font color="red">*</font>操作日志：</label></td>
-								<td colspan="5">
-									<form:textarea path="userDepartures.operationLog" cols="150" rows="6" class="form-control  max-width-800 required" />
-								</td>
-							</tr>
-						</tbody>
 					</tbody>
 					<tr>
 						<td colspan="6" align="center" style="background-color: #5553;">

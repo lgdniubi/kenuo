@@ -55,6 +55,22 @@ public class TrainsBannerController extends BaseController {
 		model.addAttribute("trainsBanner", trainsBanner);
 		return "modules/train/bannerList";
 	}
+	/**
+	 * 日志列表
+	 * @param trainsBanner
+	 * @param user
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "bannerLoglist")
+	public String bannerLoglist(TrainsBanner trainsBanner,User user,HttpServletRequest request, HttpServletResponse response,Model model) {
+		trainsBanner.setUser(user);
+		Page<TrainsBanner> page=trainsBannerService.findLogPage(new Page<TrainsBanner>(request, response), trainsBanner);
+		model.addAttribute("page", page);
+		return "modules/train/bannerLogList";
+	}
 	
 	@RequestMapping(value = "form")
 	public String form(TrainsBanner trainsBanner,User user,Model model,FranchiseeBanner franchiseeBanner){
@@ -80,6 +96,11 @@ public class TrainsBannerController extends BaseController {
 			trainsBannerService.update(trainsBanner,fBanner);
 			addMessage(redirectAttributes, "修改banner图成功！");
 		}
+//		try {
+//			trainsBannerService.saveAdvertLog(trainsBanner);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		return "redirect:" + adminPath + "/trains/banner/list";
 	}
 	

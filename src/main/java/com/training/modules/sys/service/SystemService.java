@@ -25,6 +25,7 @@ import com.training.common.persistence.Page;
 import com.training.common.security.Digests;
 import com.training.common.security.shiro.session.SessionDAO;
 import com.training.common.service.BaseService;
+import com.training.common.service.ServiceException;
 import com.training.common.utils.CacheUtils;
 import com.training.common.utils.Encodes;
 import com.training.common.utils.IdGen;
@@ -299,6 +300,14 @@ public class SystemService extends BaseService implements InitializingBean {
 		user.setPage(page);
 		// 执行分页查询
 		page.setList(userDao.findList(user));
+		return page;
+	}
+	public Page<User> findDyUser(Page<User> page, User user) {
+		user.getSqlMap().put("dsf", dataScopeFilter(user.getCurrentUser(),"o"));
+		// 设置分页参数
+		user.setPage(page);
+		// 执行分页查询
+		page.setList(userDao.findDyList(user));
 		return page;
 	}
 	/**
@@ -756,8 +765,8 @@ public class SystemService extends BaseService implements InitializingBean {
     			}
 			}
 		}
-		/*if (StringUtils.isNotBlank(user.getId())) {
-			// 更新用户与角色关联
+		if (StringUtils.isNotBlank(user.getId())) {
+			// 更新用户与角色关联--移出用户角色
 			userDao.deleteUserRole(user);
 			if (user.getRoleList() != null && user.getRoleList().size() > 0) {
 				userDao.insertUserRole(user);
@@ -768,7 +777,7 @@ public class SystemService extends BaseService implements InitializingBean {
 			UserUtils.clearCache(user);
 			// // 清除权限缓存
 			// systemRealm.clearAllCachedAuthorizationInfo();
-		}*/
+		}
 	}
 
 	@Transactional(readOnly = false)
@@ -1524,9 +1533,10 @@ public class SystemService extends BaseService implements InitializingBean {
 	 * @param officeId
 	 * @return
 	 */
-	public List<User> findUserByFranchiseeId(String officeId,String labelValue) {
+	public List<User> findUserByFranchiseeId(String companyId,String officeId,String labelValue) {
 		User user = new User();
 		user.setCompany(new Office(officeId));
+		user.setOffice(new Office(companyId));
 		if(StringUtils.isNotBlank(labelValue)){
 			user.setMobile(labelValue);
 		}else{

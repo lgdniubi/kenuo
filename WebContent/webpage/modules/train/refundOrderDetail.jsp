@@ -4,9 +4,12 @@
 <%-- <%@ page import="com.training.modules.sys.utils.ParametersFactory"%> --%>
 <html>
 <head>
-	<title>企业审核</title>
+	<title>对账单详情</title>
 	<meta name="decorator" content="default"/>
 
+	<!-- 放大图片js -->
+	<script type="text/javascript" src="${ctxStatic}/train/imgZoom/jquery.imgZoom.js"></script>
+	
 	<script type="text/javascript">
 		/* var validateForm;
 		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
@@ -32,7 +35,7 @@
 			         <td colspan="5">${refundOrder.orderId}</td>
 		         </tr>
 		         <tr>
-			         <td class="active"><label class="pull-right">临时订单号:</label></td>
+			         <td class="active"><label class="pull-right">临时单号:</label></td>
 			         <td colspan="5">${refundOrder.tempOrderId }</td>
 		         </tr>
 		         <tr>
@@ -99,6 +102,10 @@
 			         <td class="active"><label class="pull-right">创建时间:</label></td>
 			         <td colspan="5">${refundOrder.addTime }</td>
 				</tr>
+				<tr>
+			         <td class="active"><label class="pull-right">驳回原因:</label></td>
+			         <td colspan="5">${refundOrder.remarks }</td>
+				</tr>
 				<c:if test="${refundOrder.orderType eq '2'}">
 					<tr>
 				    	<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="6"><label class="pull-left">线下支付信息:</label></td>
@@ -122,9 +129,9 @@
 				    <tr>
 				         <td class="active"><label class="pull-right">凭证:</label></td>
 				         <td colspan="5">
-				         <c:if test="${!empty refundOrder.proof}">
-				         <img id="photosrc" src="${refundOrder.proof }" alt="images" style="width: 200px;height: 100px;"/>
-				         </c:if>
+				         <c:forEach items="${refundOrder.proofs }" var="ite">
+				         <img id="photosrc" src="${ite }" class='imgZoom' alt="images" style="width: 200px;height: 100px;"/>
+				         </c:forEach>
 				         </td>
 					</tr>
 				    <tr>
@@ -135,5 +142,9 @@
 			</tbody>
 		</table>  
 	</form:form> 
+	<script type="text/javascript">
+		//点击放大图片
+		$(".imgZoom").imgZoom();
+	</script>
 </body>
 </html>

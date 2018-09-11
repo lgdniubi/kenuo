@@ -27,6 +27,7 @@ public class PersonnelFile extends DataEntity<PersonnelFile> {
 	private int parentDel;
 	private Integer filing;
 	private Integer sex;
+	private Integer baseInfoId;
 	private Date birthday;
 	private String nation;
 	private String userNative;
@@ -523,6 +524,14 @@ public class PersonnelFile extends DataEntity<PersonnelFile> {
 
 	public void setMother(UserFamily mother) {
 		this.mother = mother;
+	}
+
+	public Integer getBaseInfoId() {
+		return baseInfoId;
+	}
+
+	public void setBaseInfoId(Integer baseInfoId) {
+		this.baseInfoId = baseInfoId;
 	}
 	
 }

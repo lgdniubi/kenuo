@@ -33,6 +33,7 @@ public class FzxRole extends DataEntity<FzxRole> {
 	private int modeid;		//模板id
 	private String modName;	//机构id
 	private String isDefault;	//0:非默认，1：默认角色
+	private String opflag;	//pt:平台，qy:企业
 	
 	public User getUser() {
 		return user;
@@ -123,6 +124,12 @@ public class FzxRole extends DataEntity<FzxRole> {
 	}
 	public void setIsDefault(String isDefault) {
 		this.isDefault = isDefault;
+	}
+	public String getOpflag() {
+		return opflag;
+	}
+	public void setOpflag(String opflag) {
+		this.opflag = opflag;
 	}
 	
 }

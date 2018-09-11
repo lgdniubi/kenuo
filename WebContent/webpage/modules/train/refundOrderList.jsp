@@ -60,20 +60,22 @@
 	                 <thead> 
 	                   	 <tr>
                    			<!-- <th style="text-align: center;"><label for="i-checks"><input type="checkbox" name="" id="i-checks" class="i-checks"></label></th> -->
-                   			<th style="text-align: center;">账单编号</th>
+                   			<th style="text-align: center;">还款单号</th>
                    			<!-- <th style="text-align: center;">临时订单号</th> -->
-                   			<th style="text-align: center;">账单类型</th>
-                   			<th style="text-align: center;">账单月份</th>
-                   			<th style="text-align: center;">欠款金额</th>
-                   			<th style="text-align: center;">欠款商家</th>
-                   			<th style="text-align: center;">欠款机构</th>
+                   			<!-- <th style="text-align: center;">账单类型</th>
+                   			<th style="text-align: center;">账单月份</th> -->
+                   			
+                   			<th style="text-align: center;">还款商家</th>
+                   			<th style="text-align: center;">还款机构</th>
+                   			<th style="text-align: center;">还款金额</th>
                    			<th style="text-align: center;">实付金额</th>
                    			<th style="text-align: center;">账单状态</th>
-                   			<th style="text-align: center;">支付类型</th>
-                   			<th style="text-align: center;">支付用户</th>
-                   			<th style="text-align: center;">渠道</th>
-                   			<th style="text-align: center;">创建时间</th>
-                   			<th style="text-align: center;">支付时间</th>
+                   			<!-- <th style="text-align: center;">支付类型</th> -->
+                   			<th style="text-align: center;">支付人</th>
+                   			<!-- <th style="text-align: center;">渠道</th> -->
+<!--                    			<th style="text-align: center;">创建时间</th> -->
+                   			<!-- <th style="text-align: center;">支付时间</th> -->
+                   			<th style="text-align: center;">账单时间</th>
                    			<th style="text-align: center;">操作</th>
                    		</tr>
 	                 </thead>
@@ -86,16 +88,13 @@
                                	<%-- <td style="text-align: center;">
                                		${refund.tempOrderId}
                                	</td> --%>
-                               	<td style="text-align: center;">
+                               	<%-- <td style="text-align: center;">
                                		<c:if test="${refund.orderType eq '1'}">线上</c:if>
                                		<c:if test="${refund.orderType eq '2'}">线下</c:if>
                                	</td>
                                	<td style="text-align: center;">
                                		${refund.billmonth}
-                               	</td>
-                                <td style="text-align: center;">
-                               		${refund.arrearagePrice}
-                               	</td>
+                               	</td> --%>
                                	<td style="text-align: center;">
                                		${refund.franchiseeName}
                                	</td>
@@ -103,42 +102,47 @@
                                		${refund.arrearageOfficeName}
                                	</td>
                                	<td style="text-align: center;">
+                               		${refund.arrearagePrice}
+                               	</td>
+                               	<td style="text-align: center;">
                                		${refund.amount}
                                	</td>
                                	<td style="text-align: center;">
-                               		<c:if test="${refund.orderStatus eq '1'}">待支付</c:if>
+<%--                                		<c:if test="${refund.orderStatus eq '1'}">待支付</c:if> --%>
                                		<c:if test="${refund.orderStatus eq '2'}">待审核</c:if>
                                		<c:if test="${refund.orderStatus eq '3'}">已入账</c:if>
+                               		<c:if test="${refund.orderStatus eq '4'}">已取消</c:if>
                                	</td>
-                               	<td style="text-align: center;">
+                               <%-- 	<td style="text-align: center;">
                                		${refund.payCode}
-                               	</td>
+                               	</td> --%>
                                	<td style="text-align: center;">
                                		${refund.userName}
                                	</td>
-                               	<td style="text-align: center;">
+                               <%-- 	<td style="text-align: center;">
                                		<c:if test="${refund.channelFlag eq 'wx'}">微信</c:if>
                                		<c:if test="${refund.channelFlag eq 'alipay'}">支付宝</c:if>
                                		<c:if test="${refund.channelFlag eq 'zz'}">转账</c:if>
-                               	</td>
+                               	</td> --%>
                                	<td style="text-align: center;">
                                		${refund.addTime}
                                	</td>
-                               	<td style="text-align: center;">
+                               	<%-- <td style="text-align: center;">
                                		${refund.payTime}
-                               	</td>
+                               	</td> --%>
 								<td style="text-align: center;">
 									<shiro:hasPermission name="train:refundOrder:makeSureInAccount">
 									<c:if test="${refund.orderType eq '2'}">
 										<c:if test="${refund.orderStatus eq '2'}">
-											<a href="${ctx}/train/refundOrder/makeSureInAccount?office_id=${refund.arrearageOffice}&order_id=${refund.orderId}&amount=${refund.amount}&billmonth=${refund.billmonth}"  onclick="return confirmx('确定已入账？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>确认入账</a>
-											<a class="btn btn-success btn-xs"  onclick="openDialog('审核','${ctx}/train/refundOrder/toAuditRefundOrder?office_id=${refund.arrearageOffice}&order_id=${refund.orderId}&amount=${refund.amount}&billmonth=${refund.billmonth}', '700px', '300px')"><i class="fa fa-edit"></i>审核</a>
+											<%-- <a href="${ctx}/train/refundOrder/makeSureInAccount?office_id=${refund.arrearageOffice}&order_id=${refund.orderId}&amount=${refund.amount}&billmonth=${refund.billmonth}"  onclick="return confirmx('确定已入账？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>确认入账</a> --%>
+											<a class="btn btn-success btn-xs"  onclick="openDialog('审核','${ctx}/train/refundOrder/toAuditRefundOrder?office_id=${refund.arrearageOffice}&order_id=${refund.orderId}&amount=${refund.amount}<%-- &billmonth=${refund.billmonth} --%>', '700px', '300px')"><i class="fa fa-edit"></i>审核</a>
 										</c:if>
 									</c:if>
 									</shiro:hasPermission>
 									<shiro:hasPermission name="train:articlelist:deleteOne">
-										<a class="btn btn-success btn-xs"  onclick="openDialogView('对账单','${ctx}/train/refundOrder/queryStatementOfRefund?office_id=${refund.arrearageOffice}&billmonth=${refund.billmonth }', '800px', '500px')"><i class="fa fa-edit"></i>对账单详情</a>
+										<a class="btn btn-success btn-xs"  onclick="openDialogView('对账单','${ctx}/train/refundOrder/queryStatementOfRefund?order_id=${refund.orderId }', '800px', '500px')"><i class="fa fa-edit"></i>对账单详情</a>
 									</shiro:hasPermission>
+									<a class="btn btn-success btn-xs"  onclick="openDialogView('账单日志','${ctx}/train/refundOrder/queryRefundOrderLogList?order_id=${refund.orderId}', '800px', '500px')"><i class="fa fa-edit"></i>账单日志</a>
 									<a class="btn btn-success btn-xs"  onclick="openDialogView('详细信息','${ctx}/train/refundOrder/queryRefundOrderDetail?order_id=${refund.orderId}', '800px', '500px')"><i class="fa fa-edit"></i>详细信息</a>
 									
 								</td>

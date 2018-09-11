@@ -39,6 +39,8 @@ private static final long serialVersionUID = 1L;
 	private String num3;			//判断题
 	private int newNum;				//用于将String类型的数量转换为int类型	
 	
+	private Integer score;				//试题分数
+	
 	private List<String> exList = Lists.newArrayList();		//排除的试题id
 	
 	public String getExerciseId() {
@@ -174,5 +176,11 @@ private static final long serialVersionUID = 1L;
 	}
 	public void setExList(List<String> exList) {
 		this.exList = exList;
+	}
+	public Integer getScore() {
+		return score;
+	}
+	public void setScore(Integer score) {
+		this.score = score;
 	}
 }

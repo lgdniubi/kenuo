@@ -56,9 +56,9 @@
                             <label>状态：
                             	<select name="status" id="status">
                             		<option value="" >-- 请选择 --</option>
-                            		<option value="0" <c:if test="${contractInfo.status eq '0'}">selected="selected"</c:if> >创建</option>
+                            		<option value="0" <c:if test="${contractInfo.status eq '0'}">selected="selected"</c:if> >待签约</option>
                             		<option value="1" <c:if test="${contractInfo.status eq '1'}">selected="selected"</c:if> >待审核</option>
-                            		<option value="2" <c:if test="${contractInfo.status eq '2'}">selected="selected"</c:if> >审核通过</option>
+<%--                             		<option value="2" <c:if test="${contractInfo.status eq '2'}">selected="selected"</c:if> >审核通过</option> --%>
                             		<option value="3" <c:if test="${contractInfo.status eq '3'}">selected="selected"</c:if> >审核驳回</option>
                             	</select>
                             </label>
@@ -91,7 +91,7 @@
                                		${info.office_name}
                                	</td>
                                	<td style="text-align: center;">
-                               		<c:if test="${info.status eq '0'}">创建</c:if>
+                               		<c:if test="${info.status eq '0'}">待签约</c:if>
                                		<c:if test="${info.status eq '1'}">待审核</c:if>
                                		<c:if test="${info.status eq '2'}">审核通过</c:if>
                                		<c:if test="${info.status eq '3'}">审核驳回</c:if>
@@ -107,7 +107,9 @@
 								    	<a class="btn btn-success btn-xs"  onclick="openDialog('审核','${ctx}/train/contractInfo/toAuditContractInfo?office_id=${info.office_id}', '700px', '300px')"><i class="fa fa-edit"></i>审核</a>
 								    </c:if>
 									<a class="btn btn-success btn-xs"  onclick="openDialogView('详情','${ctx}/train/contractInfo/queryContractInfoDetail?office_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>详情</a>
+									<%-- <c:if test="${info.status eq '3'}">
 									<a class="btn btn-success btn-xs"  onclick="openDialogView('已签协议','${ctx}/train/contractInfo/findProtocolListOfOffice?office_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>已签协议</a>
+								    </c:if> --%>
 								</td>
 							</tr>
 						</c:forEach>

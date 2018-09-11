@@ -38,6 +38,7 @@
                 <div class=" clearfix">
                     <form:form class="navbar-form navbar-left searcharea"  id="searchForm" modelAttribute="fzxRole" action="${ctx}/train/fzxRole/list" method="post">
                     	<!-- 分页隐藏文本框 -->
+						<form:hidden path="opflag"/>
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 						<div class="form-group">
@@ -51,7 +52,7 @@
 						<div class="pull-left">
 							<shiro:hasPermission name="train:fzxRole:add">
 								<!-- 增加按钮 -->
-								<table:addRow url="${ctx}/train/fzxRole/form" title="新增角色" width="800px" height="650px"></table:addRow>
+								<table:addRow url="${ctx}/train/fzxRole/form?opflag=${fzxRole.opflag }" title="角色" width="800px" height="650px"></table:addRow>
 							</shiro:hasPermission>
 						</div>
 						<div class="pull-right">
@@ -92,20 +93,20 @@
 											<c:when test="${list.modeid ==8}">
 													<c:if test="${list.enamer ne 'dy'}">
 													<shiro:hasPermission name="train:fzxRole:edit">
-								    					<a href="#" onclick="openDialog('修改角色', '${ctx}/train/fzxRole/form?roleId=${list.roleId}','800px', '650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
+								    					<a href="#" onclick="openDialog('修改角色', '${ctx}/train/fzxRole/form?roleId=${list.roleId}&opflag=${fzxRole.opflag }','800px', '650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 								    				</shiro:hasPermission>
 								    				<shiro:hasPermission name="train:fzxRole:del">
-														<a href="${ctx}/train/fzxRole/delete?roleId=${list.roleId}" onclick="return confirmx('要删除该角色吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
+														<a href="${ctx}/train/fzxRole/delete?roleId=${list.roleId}&opflag=${fzxRole.opflag }" onclick="return confirmx('要删除该角色吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
 													</shiro:hasPermission>
 													</c:if>
 											</c:when>
 											<c:otherwise>
 													<c:if test="${list.isDefault eq '0' && list.enamer ne 'sjgly' && list.enamer ne 'dy'}">
 													<shiro:hasPermission name="train:fzxRole:edit">
-								    					<a href="#" onclick="openDialog('修改角色', '${ctx}/train/fzxRole/form?roleId=${list.roleId}','800px', '650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
+								    					<a href="#" onclick="openDialog('修改角色', '${ctx}/train/fzxRole/form?roleId=${list.roleId}&opflag=${fzxRole.opflag }','800px', '650px')" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i> 修改</a>
 								    				</shiro:hasPermission>
 								    				<shiro:hasPermission name="train:fzxRole:del">
-														<a href="${ctx}/train/fzxRole/delete?roleId=${list.roleId}" onclick="return confirmx('要删除该角色吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
+														<a href="${ctx}/train/fzxRole/delete?roleId=${list.roleId}&opflag=${fzxRole.opflag }" onclick="return confirmx('要删除该角色吗？', this.href)" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i> 删除</a>
 													</shiro:hasPermission>
 													</c:if>
 											</c:otherwise>
@@ -114,17 +115,17 @@
 										<c:choose>
 											<c:when test="${list.modeid ==8}">
 												<c:if test="${list.enamer != 'dy'}">
-												<a href="#" onclick="openDialog('权限设置', '${ctx}/train/fzxRole/auth?roleId=${list.roleId}','350px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a> 
+												<a href="#" onclick="openDialog('权限设置', '${ctx}/train/fzxRole/auth?roleId=${list.roleId}&opflag=${fzxRole.opflag }','350px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a> 
 												</c:if>
 											</c:when>
 											<c:otherwise>
 												<c:if test="${list.enamer != 'sjgly' && list.enamer != 'dy' && list.enamer ne 'syrsf' && list.enamer ne 'syrmf' && list.enamer ne 'pthy'}">
-												<a href="#" onclick="openDialog('权限设置', '${ctx}/train/fzxRole/auth?roleId=${list.roleId}','350px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a> 
+												<a href="#" onclick="openDialog('权限设置', '${ctx}/train/fzxRole/auth?roleId=${list.roleId}&opflag=${fzxRole.opflag }','350px', '700px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i> 权限设置</a> 
 												</c:if>
 											</c:otherwise>
 										</c:choose>
 											<c:if test="${list.isDefault eq '0' && list.enamer != 'sjgly' && list.modeid !=8}">
-												<a href="${ctx}/train/fzxRole/setDefault?roleId=${list.roleId}&modeid=${list.modeid}"  class="btn btn-danger btn-xs" >默认</a>
+												<a href="${ctx}/train/fzxRole/setDefault?roleId=${list.roleId}&modeid=${list.modeid}&opflag=${fzxRole.opflag }"  class="btn btn-danger btn-xs" >默认</a>
 											</c:if>
 										</shiro:hasPermission>
 								    </td>

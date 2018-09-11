@@ -121,5 +121,12 @@ public class TrainLessonsService extends CrudService<TrainLessonsDao,TrainLesson
 	public List<StatisticsUnitTotalExport> unitTotalExport(TrainLessons trainLessons){
 		return dao.unitTotalExport(trainLessons);
 	}
+	/**
+	 * 修改课程正式数据
+	 * @param live
+	 */
+	public void updateIsTest(TrainLessons trainLessons) {
+		dao.updateIsTest(trainLessons);
+	}
 	
 }
