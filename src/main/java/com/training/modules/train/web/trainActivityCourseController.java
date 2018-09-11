@@ -1,8 +1,6 @@
 package com.training.modules.train.web;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +22,6 @@ import com.training.common.web.BaseController;
 import com.training.modules.sys.service.FranchiseeService;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.train.entity.TrainActivityCourse;
-import com.training.modules.train.entity.TrainActivityCourseContent;
 import com.training.modules.train.entity.TrainOrder;
 import com.training.modules.train.service.TrainActivityCourseService;
 
@@ -81,7 +78,7 @@ public class trainActivityCourseController extends BaseController{
 		try {
 			if(trainActivityCourse.getAcId() != 0){
 				trainActivityCourse = trainActivityCourseService.get(trainActivityCourse);
-				String htmlEscape = HtmlUtils.htmlUnescape(trainActivityCourse.getContent());
+				String htmlEscape = HtmlUtils.htmlEscape(trainActivityCourse.getContent());
 				trainActivityCourse.setContent(htmlEscape);
 				if(trainActivityCourse.getIsOpen()==1){
 					String companyIds = trainActivityCourseService.findCompanyIds(trainActivityCourse.getAcId());
@@ -111,8 +108,8 @@ public class trainActivityCourseController extends BaseController{
 	@RequestMapping(value = "save")
 	public String save(Model model,TrainActivityCourse trainActivityCourse,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes){
 		try {
-			String[] Images = request.getParameterValues("img");
-			String htmlEscape = HtmlUtils.htmlEscape(trainActivityCourse.getContent());
+//			String[] Images = request.getParameterValues("img");
+			String htmlEscape = HtmlUtils.htmlUnescape(trainActivityCourse.getContent());
 			trainActivityCourse.setContent(htmlEscape);
 			trainActivityCourseService.saveCourse(trainActivityCourse);
 			/*int acId = trainActivityCourse.getAcId();

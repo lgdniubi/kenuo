@@ -25,8 +25,6 @@ import com.training.common.web.BaseController;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.train.entity.HandbookType;
 import com.training.modules.train.entity.Question;
-import com.training.modules.train.entity.TrainLessons;
-import com.training.modules.train.entity.UserCheck;
 import com.training.modules.train.service.HandbookTypeService;
 import com.training.modules.train.service.QuestionService;
 
@@ -98,7 +96,7 @@ public class QuestionController extends BaseController {
 		if(question.getId() != null){
 			question = questionService.getQuestion(question,type);
 			
-			String htmlEscape = HtmlUtils.htmlUnescape(question.getContent());
+			String htmlEscape = HtmlUtils.htmlEscape(question.getContent());
 			question.setContent(htmlEscape);
 		}
 		model.addAttribute("type", type);
@@ -124,7 +122,7 @@ public class QuestionController extends BaseController {
 	public String save(Question question,String listType,HttpServletRequest request,RedirectAttributes redirectAttributes){
 		try{	
 			
-			String htmlEscape = HtmlUtils.htmlEscape(question.getContent());
+			String htmlEscape = HtmlUtils.htmlUnescape(question.getContent());
 			question.setContent(htmlEscape);
 			questionService.saveQuestion(question,question.getType());
 			addMessage(redirectAttributes, "保存/修改成功!");
