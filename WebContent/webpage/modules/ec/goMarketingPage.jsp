@@ -9,7 +9,7 @@
 	</head>
 	<body>
 		<div style="margin-top: 50px;margin-left: 50px;">
-			<a id="alink" style="font-size: 30px;font-weight: bold;" target="_blank" href="${mkmUrl}">进入营销工具系统</a>
+			<a id="alink" style="font-size: 30px;font-weight: bold;" target="_blank" href="${ctx}/ec/marketing/goMarketSystem">进入营销工具系统</a>
 		</div>
 		
 		<script>
