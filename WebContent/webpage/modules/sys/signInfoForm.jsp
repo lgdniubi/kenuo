@@ -43,26 +43,10 @@
 			});
 		  return false;
 		}
-		/* function validUserId(){
-			return isNullUserId('sign_usernameId') &&isNullUserId('cargo') &&isNullUserId('auditId')&&isNullUserId('proxyId');
-		}
-		//判断报货人那些userID是不是空
-		function isNullUserId(uid){
-			var userid = $("#"+uid).val();
-			if(userid == ''){
-				 top.layer.alert('姓名无效，请按手机号搜索', {icon: 0, title:'提醒'});
-				 return false;
-			}
-			 return true;
-		} */
 		function validateImgUrl(){
 			var flag = validOneImg('char')&&validOneImg('icardone')&&validOneImg('icardtwo')&&validOneImg('cardup')&&validOneImg('carddown')&&validOneImg('sign_fonturl')&&validOneImg('sign_backurl')&&validOneImg('cargo_fonturl')&&validOneImg('cargo_backurl')&&validOneImg('audit_fonturl')&&
 			validOneImg('audit_backurl')&&validOneImg('proxy_fonturl')&&validOneImg('proxy_backurl');
 			var backFlag = validBackImg();
-			/* if(a==0){
-				 top.layer.alert('支付信息不可为空！', {icon: 0, title:'提醒'});
-				 return false;
-			} */
 			return flag && backFlag;
 		}
 		//校验银行卡图片
@@ -218,12 +202,12 @@
 			uploadFile('pay_backurl') */
 			var paylen = '${paylen}';
 			a= parseInt(paylen);
-			if(payWay=='0'){
+			//if(payWay=='0'){
 				for (var len = 0; len < a; len++) {
 					uploadFile('payfonturl'+len)
 					uploadFile('paybackurl'+len)
 				}
-			}
+			//}
 			
 		});
 		var lastValue = "";
@@ -431,10 +415,10 @@
 				   <tbody>
 						<tr><td colspan="4" class=""><label class="pull-left">管理员</label></td></tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>联系电话:</label></td>
+							<td  class="width-15 active"><label class="pull-right">联系电话:</label></td>
 				         	<td class="width-35">
 				         		<div class="input-group">
-				         			<input value="${infoVo.sign_mobile}" id="signMobile" name="sign_mobile" class="form-control required" placeholder="请输入手机号">
+				         			<input value="${infoVo.sign_mobile}" id="signMobile" name="sign_mobile" class="form-control " placeholder="请输入手机号">
 					         		 <span class="input-group-btn">
 							       		 <button type="button"  onclick="findUser('sign')" class="btn btn-primary"><i class="fa fa-search">查询</i></button> 
 						       		 </span>
@@ -442,16 +426,16 @@
 				         	</td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
+							<td  class="width-15 active"><label class="pull-right">姓名:</label></td>
 				         	<td class="width-35">
-					         	<input id="signId" name="sign_userid" class="form-control required" type="hidden" value="${infoVo.sign_userid}"/>
-								<input id="signName" name="sign_username" type="text" readonly="readonly" value="${infoVo.sign_username}" class="form-control required" />
+					         	<input id="signId" name="sign_userid" class="form-control " type="hidden" value="${infoVo.sign_userid}"/>
+								<input id="signName" name="sign_username" type="text" readonly="readonly" value="${infoVo.sign_username}" class="form-control " />
 				         	<td class="width-35" rowspan="4">
 				         		<img id="officesign_fonturlImgsrc" src="${infoVo.sign_fonturl}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="sign_fonturl" name="sign_fonturl" value="${infoVo.sign_fonturl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_sign_fonturl_upload" class="required" id="file_sign_fonturl_upload">
+									<input type="file" name="file_sign_fonturl_upload" class="" id="file_sign_fonturl_upload">
 								</div>
 								<div id="file_sign_fonturl_queue"></div>
 				         	</td>
@@ -460,27 +444,27 @@
 								<input type="hidden" id="sign_backurl" name="sign_backurl" value="${infoVo.sign_backurl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_sign_backurl_upload" class="required" id="file_sign_backurl_upload">
+									<input type="file" name="file_sign_backurl_upload" class="" id="file_sign_backurl_upload">
 								</div>
 								<div id="file_sign_backurl_queue"></div>
 				         	</td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证:</label></td>
-				         	<td class="width-35"><input value="${infoVo.sign_idcard}" name="sign_idcard" class="form-control required"></td>
+							<td  class="width-15 active"><label class="pull-right">身份证:</label></td>
+				         	<td class="width-35"><input value="${infoVo.sign_idcard}" name="sign_idcard" class="form-control "></td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>e-mail:</label></td>
-				         	<td class="width-35"><input value="${infoVo.sign_email}" name="sign_email" class="form-control required"></td>
+							<td  class="width-15 active"><label class="pull-right">e-mail:</label></td>
+				         	<td class="width-35"><input value="${infoVo.sign_email}" name="sign_email" class="form-control "></td>
 						</tr>
 						
 						
 						<tr><td colspan="4" class=""><label class="pull-left">报货人</label></td></tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>联系电话:</label></td>
+							<td  class="width-15 active"><label class="pull-right">联系电话:</label></td>
 					        <td class="width-35">
 								<div class="input-group">
-						         	<input value="${infoVo.cargo_mobile}" id="cargoMobile" name="cargo_mobile" class="form-control required" placeholder="请输入手机号">
+						         	<input value="${infoVo.cargo_mobile}" id="cargoMobile" name="cargo_mobile" class="form-control " placeholder="请输入手机号">
 						       		 <span class="input-group-btn">
 							       		 <button type="button"  onclick="findUser('cargo')" class="btn btn-primary"><i class="fa fa-search">查询</i></button> 
 						       		 </span>
@@ -488,16 +472,16 @@
 					        </td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
+							<td  class="width-15 active"><label class="pull-right">姓名:</label></td>
 				         	<td class="width-35">
-				         		<input id="cargoId" name="cargo_userid" class="form-control required" type="hidden" value="${infoVo.cargo_userid}"/>
-								<input id="cargoName" name="cargo_username" type="text" readonly="readonly" value="${infoVo.cargo_username}" class="form-control required" />
+				         		<input id="cargoId" name="cargo_userid" class="form-control " type="hidden" value="${infoVo.cargo_userid}"/>
+								<input id="cargoName" name="cargo_username" type="text" readonly="readonly" value="${infoVo.cargo_username}" class="form-control " />
 				         	<td class="width-35" rowspan="4">
 				         		<img id="officecargo_fonturlImgsrc" src="${infoVo.cargo_fonturl}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="cargo_fonturl" name="cargo_fonturl" value="${infoVo.cargo_fonturl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_cargo_fonturl_upload" class="required" id="file_cargo_fonturl_upload">
+									<input type="file" name="file_cargo_fonturl_upload" class="" id="file_cargo_fonturl_upload">
 								</div>
 								<div id="file_cargo_fonturl_queue"></div>
 				         	</td>
@@ -506,27 +490,27 @@
 								<input type="hidden" id="cargo_backurl" name="cargo_backurl" value="${infoVo.cargo_backurl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_cargo_backurl_upload" class="required" id="file_cargo_backurl_upload">
+									<input type="file" name="file_cargo_backurl_upload" class="" id="file_cargo_backurl_upload">
 								</div>
 								<div id="file_cargo_backurl_queue"></div>
 				         	</td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证:</label></td>
-				         	<td class="width-35"><input value="${infoVo.cargo_idcard}" name="cargo_idcard" class="form-control required"></td>
+							<td  class="width-15 active"><label class="pull-right">身份证:</label></td>
+				         	<td class="width-35"><input value="${infoVo.cargo_idcard}" name="cargo_idcard" class="form-control "></td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>e-mail:</label></td>
-				         	<td class="width-35"><input value="${infoVo.cargo_email}" name="cargo_email" class="form-control required"></td>
+							<td  class="width-15 active"><label class="pull-right">e-mail:</label></td>
+				         	<td class="width-35"><input value="${infoVo.cargo_email}" name="cargo_email" class="form-control "></td>
 						</tr>
 						
 						
 						<tr><td colspan="4" class=""><label class="pull-left">审核人</label></td></tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>联系电话:</label></td>
+							<td  class="width-15 active"><label class="pull-right">联系电话:</label></td>
 				         	<td class="width-35">
 								<div class="input-group">
-						         	<input value="${infoVo.audit_mobile}" id="auditMobile" name="audit_mobile" class="form-control required" placeholder="请输入手机号">
+						         	<input value="${infoVo.audit_mobile}" id="auditMobile" name="audit_mobile" class="form-control " placeholder="请输入手机号">
 						       		 <span class="input-group-btn">
 							       		 <button type="button"  onclick="findUser('audit')" class="btn btn-primary"><i class="fa fa-search">查询</i></button> 
 						       		 </span>
@@ -534,16 +518,16 @@
 				         	</td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
+							<td  class="width-15 active"><label class="pull-right">姓名:</label></td>
 				         	<td class="width-35">
-				         		<input id="auditId" name="audit_userid" class="form-control required" type="hidden" value="${infoVo.audit_userid}"/>
-								<input id="auditName" name="audit_username" type="text" readonly="readonly" value="${infoVo.audit_username}" class="form-control required" />
+				         		<input id="auditId" name="audit_userid" class="form-control " type="hidden" value="${infoVo.audit_userid}"/>
+								<input id="auditName" name="audit_username" type="text" readonly="readonly" value="${infoVo.audit_username}" class="form-control " />
 				         	<td class="width-35" rowspan="4">
 				         		<img id="officeaudit_fonturlImgsrc" src="${infoVo.audit_fonturl}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="audit_fonturl" name="audit_fonturl" value="${infoVo.audit_fonturl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_audit_fonturl_upload" class="required" id="file_audit_fonturl_upload">
+									<input type="file" name="file_audit_fonturl_upload" class="" id="file_audit_fonturl_upload">
 								</div>
 								<div id="file_audit_fonturl_queue"></div>
 				         	</td>
@@ -552,27 +536,27 @@
 								<input type="hidden" id="audit_backurl" name="audit_backurl" value="${infoVo.audit_backurl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_audit_backurl_upload" class="required" id="file_audit_backurl_upload">
+									<input type="file" name="file_audit_backurl_upload" class="" id="file_audit_backurl_upload">
 								</div>
 								<div id="file_audit_backurl_queue"></div>
 				         	</td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证:</label></td>
-				         	<td class="width-35"><input value="${infoVo.audit_idcard}" name="audit_idcard" class="form-control required"></td>
+							<td  class="width-15 active"><label class="pull-right">身份证:</label></td>
+				         	<td class="width-35"><input value="${infoVo.audit_idcard}" name="audit_idcard" class="form-control "></td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>e-mail:</label></td>
-				         	<td class="width-35"><input value="${infoVo.audit_email}" name="audit_email" class="form-control required"></td>
+							<td  class="width-15 active"><label class="pull-right">e-mail:</label></td>
+				         	<td class="width-35"><input value="${infoVo.audit_email}" name="audit_email" class="form-control "></td>
 						</tr>
 						
 						
 						<tr><td colspan="4" class=""><label class="pull-left">付款人</label></td></tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>联系电话:</label></td>
+							<td  class="width-15 active"><label class="pull-right">联系电话:</label></td>
 			         		<td class="width-35">
 								<div class="input-group">
-					         		<input value="${infoVo.proxy_mobile}" id="proxyMobile" name="proxy_mobile" class="form-control required" placeholder="请输入手机号">
+					         		<input value="${infoVo.proxy_mobile}" id="proxyMobile" name="proxy_mobile" class="form-control " placeholder="请输入手机号">
 						       		 <span class="input-group-btn">
 							       		 <button type="button"  onclick="findUser('proxy')" class="btn btn-primary"><i class="fa fa-search">查询</i></button> 
 						       		 </span>
@@ -580,16 +564,16 @@
 			         		</td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
+							<td  class="width-15 active"><label class="pull-right">姓名:</label></td>
 				         	<td class="width-35">
-					         	<input id="proxyId" name="proxy_userid" class="form-control required" type="hidden" value="${infoVo.proxy_userid}"/>
-								<input id="proxyName" name="proxy_username" type="text" readonly="readonly" value="${infoVo.proxy_username}" class="form-control required" />
+					         	<input id="proxyId" name="proxy_userid" class="form-control " type="hidden" value="${infoVo.proxy_userid}"/>
+								<input id="proxyName" name="proxy_username" type="text" readonly="readonly" value="${infoVo.proxy_username}" class="form-control " />
 				         	<td class="width-35" rowspan="5">
 				         		<img id="officeproxy_fonturlImgsrc" src="${infoVo.proxy_fonturl}" alt="" style="width: 200px;height: 100px;"/>
 								<input type="hidden" id="proxy_fonturl" name="proxy_fonturl" value="${infoVo.proxy_fonturl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_proxy_fonturl_upload" class="required" id="file_proxy_fonturl_upload">
+									<input type="file" name="file_proxy_fonturl_upload" class="" id="file_proxy_fonturl_upload">
 								</div>
 								<div id="file_proxy_fonturl_queue"></div>
 				         	</td>
@@ -598,27 +582,26 @@
 								<input type="hidden" id="proxy_backurl" name="proxy_backurl" value="${infoVo.proxy_backurl}"><!-- 图片隐藏文本框 -->
 								<p>&nbsp;</p>
 			                   	<div class="upload">
-									<input type="file" name="file_proxy_backurl_upload" class="required" id="file_proxy_backurl_upload">
+									<input type="file" name="file_proxy_backurl_upload" class="" id="file_proxy_backurl_upload">
 								</div>
 								<div id="file_proxy_backurl_queue"></div>
 				         	</td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>身份证:</label></td>
-				         	<td class="width-35"><input value="${infoVo.proxy_idcard}" name="proxy_idcard" class="form-control required"></td>
+							<td  class="width-15 active"><label class="pull-right">身份证:</label></td>
+				         	<td class="width-35"><input value="${infoVo.proxy_idcard}" name="proxy_idcard" class="form-control "></td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>e-mail:</label></td>
-				         	<td class="width-35"><input value="${infoVo.proxy_email}" name="proxy_email" class="form-control required"></td>
+							<td  class="width-15 active"><label class="pull-right">e-mail:</label></td>
+				         	<td class="width-35"><input value="${infoVo.proxy_email}" name="proxy_email" class="form-control "></td>
 						</tr>
 						<tr>
-							<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>通讯地址:</label></td>
-				         	<td class="width-35"><input value="${infoVo.proxy_address}" name="proxy_address" class="form-control required"></td>
+							<td  class="width-15 active"><label class="pull-right">通讯地址:</label></td>
+				         	<td class="width-35"><input value="${infoVo.proxy_address}" name="proxy_address" class="form-control "></td>
 						</tr>
 						
 			      </tbody>
 		      </table>
-		     <!-- <c:if test="${payWay == 0}"> 0是线下支付 </c:if> -->
 	      	  <a href="#" onclick="checkPayType()"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加账户</a>
 	      	  <input type="hidden" value="0" id="payType">
 		      <div><label class="pull-left" style="color: red">	注：本商家付款方式（
@@ -626,19 +609,13 @@
 					<c:if test="${payWay == 1}">线上支付</c:if>
 			      	），还款方式（线下支付、在线支付）</label>
 		      </div>
-		     <!-- <c:if test="${payWay == 1}"> 1是线上支付
-		      	  <a href="#" onclick="addPayData(2,this)"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加支付宝</a>
-		      	  <a href="#" onclick="addPayData(1,this)"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加微信</a>
-		      </c:if> -->
 		      <table id="pay-info" class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		      	<tbody >
 		      	<tr><td colspan="6" class=""><label class="pull-left">付款账户</label></td></tr>
 		      	</tbody>
-<%-- 		      	<c:if test="${payWay == 0}"> --%>
 		      		<c:forEach items="${payInfos}" var="pay" varStatus="i">
 			      		<tbody class='bank'>
 			      			<tr>
-								<input value="0" name="payInfos[0].pay_type" type="hidden">
 								<td colspan="6" class="active"><label class="pull-left">银行卡
 								<c:if test="${payWay == 0}">（用于付款/还款）</c:if>
 								<c:if test="${payWay == 1}">（用于还款）</c:if>
@@ -680,10 +657,6 @@
 								<!-- <td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(0,this)"><i class="icon-add-pattern"></i>删除</div></td> -->
 							</tr>
 						</tbody>
-		      		<%--</c:forEach>
-		      	 </c:if>
-		      	<c:if test="${payWay == 1}"> 
-		      		<c:forEach items="${payInfos}" var="pay" varStatus="i">--%>
 				      	<c:if test="${pay.pay_type == 2}">
 				      		<tbody class='ali'>
 								<tr>
@@ -714,8 +687,8 @@
 								<tr>
 									<input value="1" name="payInfos[1].pay_type" type="hidden">
 									<td colspan="6" class="active"><label class="pull-left">微信
-									<c:if test="${payWay == 0}">（用于付款/还款）</c:if>
-									<c:if test="${payWay == 1}">（用于还款）</c:if>
+									<c:if test="${payWay == 0}">（用于还款）</c:if>
+									<c:if test="${payWay == 1}">（用于付款/还款）</c:if>
 									</label></td>
 								</tr>
 								<tr>
@@ -737,7 +710,6 @@
 				      	</c:if>
 		      			
 		      		</c:forEach>
-		      <%-- 	</c:if> --%>
 		      	
 		      </table>
 			   <c:if test="${opflag == 1}">

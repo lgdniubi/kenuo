@@ -485,40 +485,45 @@ public class OfficeController extends BaseController {
 
 	private List<PayInfo> creatPayInfoList(Integer payWay, List<PayInfo> payInfos, String userid) {
 		List<PayInfo> ns = new ArrayList<>();
-		if(payWay == 0){ //线下支付
+		PayInfo np ;
+//		if(payWay == 0){ //线下支付
 			PayInfo payInfo = payInfos.get(0);
-			String[] username = payInfo.getPay_username().split(",");
-			String[] account = payInfo.getPay_account().split(",");
-			String[] name = payInfo.getPay_name().split(",");
-			String[] font = payInfo.getPay_fonturl().split(",");
-			String[] back = payInfo.getPay_backurl().split(",");
-//			int a = back.length;
-			PayInfo np ;
-			for (int i = 0; i < back.length; i++) {
-				np = new PayInfo();
-				np.setCreate_user(userid);
-				np.setPay_username(username[i]);
-				np.setPay_account(account[i]);
-				np.setPay_name(name[i]);
-				np.setPay_type("0");
-				np.setPay_fonturl(font[i]);
-				np.setPay_backurl(back[i]);
-				ns.add(np);
-			}
-		}else if(payWay == 1){ //支付宝支付
-			PayInfo payInfo = payInfos.get(1);
 			if(payInfo!=null && payInfo.getPay_type() !=null){
 				String[] type = payInfo.getPay_type().split(",");
-				if("1".equals(type[0])){
+				if("0".equals(type[0])){
 					String[] username = payInfo.getPay_username().split(",");
 					String[] account = payInfo.getPay_account().split(",");
-					String[] mobile = payInfo.getPay_mobile().split(",");
-					PayInfo np ;
-					for (int i = 0; i < account.length; i++) {
+					String[] name = payInfo.getPay_name().split(",");
+					String[] font = payInfo.getPay_fonturl().split(",");
+					String[] back = payInfo.getPay_backurl().split(",");
+		//			int a = back.length;
+					for (int i = 0; i < back.length; i++) {
 						np = new PayInfo();
 						np.setCreate_user(userid);
 						np.setPay_username(username[i]);
 						np.setPay_account(account[i]);
+						np.setPay_name(name[i]);
+						np.setPay_type("0");
+						np.setPay_fonturl(font[i]);
+						np.setPay_backurl(back[i]);
+						ns.add(np);
+					}
+				}
+			}
+//		}else if(payWay == 1){ //支付宝支付
+			PayInfo payInfo1 = payInfos.get(1);
+			if(payInfo1!=null && payInfo1.getPay_type() !=null){
+				String[] type = payInfo1.getPay_type().split(",");
+				if("1".equals(type[0])){
+					String[] username1 = payInfo1.getPay_username().split(",");
+					String[] account1 = payInfo1.getPay_account().split(",");
+					String[] mobile = payInfo1.getPay_mobile().split(",");
+//					PayInfo np ;
+					for (int i = 0; i < account1.length; i++) {
+						np = new PayInfo();
+						np.setCreate_user(userid);
+						np.setPay_username(username1[i]);
+						np.setPay_account(account1[i]);
 						np.setPay_mobile(mobile[i]);
 						np.setPay_name("微信");
 						np.setPay_type("1");
@@ -549,7 +554,7 @@ public class OfficeController extends BaseController {
 					}	
 				}
 			}
-		}
+//		}
 		return ns;
 	}
 	
