@@ -109,6 +109,37 @@
 		}
 		//添加付款方式
 		var a = 0;
+		function setPayType(value) {
+			//console.log(value)
+			$('#payType').val(value)
+		}
+		function checkPayType(){
+			var html = '';
+			if(payWay=='1'){
+				html = '<div>' +
+			 	'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio" checked="checked"  name="payType" onclick="setPayType(2)">支付宝（在线支付）　　　　注：可用于付款和还款</p>'+
+				'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio"  name="payType" onclick="setPayType(1)" >微信（在线支付）　　　　注：可用于付款和还款</p>'+
+				'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio" name="payType" onclick="setPayType(0)">银行卡（线下支付）　　　　注：可用于还款</p>'+
+				' </div>';
+			}else{
+				html = '<div>' +
+			 	'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio" checked="checked"  name="payType" onclick="setPayType(2)">支付宝（在线支付）　　　　注：可用于付款</p>'+
+				'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio"  name="payType" onclick="setPayType(1)" >微信（在线支付）　　　　注：可用于付款</p>'+
+				'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio" name="payType" onclick="setPayType(0)">银行卡（线下支付）　　　　注：可用于还款和还款</p>'+
+				' </div>';
+			}
+			$('#payType').val(2)
+			layer.open({
+			  content: html
+			  ,area: ['400px', '300px']
+			  ,btn: ['确定', '取消']
+			  ,yes: function(index, layero){
+				 addPayData($('#payType').val())
+				 layer.close(index)
+			  }
+			  
+			});
+		}
 		function addPayData(value,obj){
 			a++;
 			if (value == 0) {//#pay-info
@@ -587,23 +618,32 @@
 						
 			      </tbody>
 		      </table>
-		      <c:if test="${payWay == 0}"><!-- 0是线下支付 -->
-		      	  <a href="#" onclick="addPayData(0,this)"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加账户</a>
-		      	  <!-- <div id="add-pattern" onclick="addPayData(0,this)"><i class="icon-add-pattern"></i>添加账户</div> -->
-		      </c:if>
-		      <c:if test="${payWay == 1}"><!-- 1是线上支付 -->
+		     <!-- <c:if test="${payWay == 0}"> 0是线下支付 </c:if> -->
+	      	  <a href="#" onclick="checkPayType()"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加账户</a>
+	      	  <input type="hidden" value="0" id="payType">
+		      <div><label class="pull-left" style="color: red">	注：本商家付款方式（
+			      	<c:if test="${payWay == 0}">线下支付</c:if>
+					<c:if test="${payWay == 1}">线上支付</c:if>
+			      	），还款方式（线下支付、在线支付）</label>
+		      </div>
+		     <!-- <c:if test="${payWay == 1}"> 1是线上支付
 		      	  <a href="#" onclick="addPayData(2,this)"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加支付宝</a>
 		      	  <a href="#" onclick="addPayData(1,this)"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加微信</a>
-			      <!-- <div id="add-pattern" onclick="addPayData(1,this)"><i class="icon-add-pattern"></i>添加支付宝</div>
-			      <div id="add-pattern" onclick="addPayData(2,this)"><i class="icon-add-pattern"></i>添加微信</div> -->
-		      </c:if>
+		      </c:if> -->
 		      <table id="pay-info" class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		      	<tbody >
 		      	<tr><td colspan="6" class=""><label class="pull-left">付款账户</label></td></tr>
 		      	</tbody>
-		      	<c:if test="${payWay == 0}">
+<%-- 		      	<c:if test="${payWay == 0}"> --%>
 		      		<c:forEach items="${payInfos}" var="pay" varStatus="i">
 			      		<tbody class='bank'>
+			      			<tr>
+								<input value="0" name="payInfos[0].pay_type" type="hidden">
+								<td colspan="6" class="active"><label class="pull-left">银行卡
+								<c:if test="${payWay == 0}">（用于付款/还款）</c:if>
+								<c:if test="${payWay == 1}">（用于还款）</c:if>
+								</label></td>
+							</tr>
 							<tr>
 								<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户银行</label></td>
 						        	<td class="width-35"><input value="${pay.pay_name}" name="payInfos[0].pay_name" class="form-control required"></td>
@@ -626,7 +666,7 @@
 									<div id="file_paybackurl${i.index}_queue"></div>
 						        	</td>
 							</tr>
-							<input value="0" name="payInfos[0].pay_type" type="hidden">
+							
 							<tr>
 								<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>账户名称:</label></td>
 						        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[0].pay_username" class="form-control required"></td>
@@ -640,15 +680,18 @@
 								<!-- <td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(0,this)"><i class="icon-add-pattern"></i>删除</div></td> -->
 							</tr>
 						</tbody>
-		      		</c:forEach>
-		      	</c:if>
-		      	<c:if test="${payWay == 1}">
-		      		<c:forEach items="${payInfos}" var="pay" varStatus="i">
+		      		<%--</c:forEach>
+		      	 </c:if>
+		      	<c:if test="${payWay == 1}"> 
+		      		<c:forEach items="${payInfos}" var="pay" varStatus="i">--%>
 				      	<c:if test="${pay.pay_type == 2}">
 				      		<tbody class='ali'>
 								<tr>
 								<input value="2" name="payInfos[2].pay_type" type="hidden">
-									<td colspan="6" class="active"><label class="pull-left">支付宝</label></td>
+									<td colspan="6" class="active"><label class="pull-left">支付宝
+									<c:if test="${payWay == 0}">（用于还款）</c:if>
+									<c:if test="${payWay == 1}">（用于付款/还款）</c:if>
+									</label></td>
 								</tr>
 								<tr>
 									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
@@ -670,7 +713,10 @@
 				      		<tbody class='wechat'>
 								<tr>
 									<input value="1" name="payInfos[1].pay_type" type="hidden">
-									<td colspan="6" class="active"><label class="pull-left">微信</label></td>
+									<td colspan="6" class="active"><label class="pull-left">微信
+									<c:if test="${payWay == 0}">（用于付款/还款）</c:if>
+									<c:if test="${payWay == 1}">（用于还款）</c:if>
+									</label></td>
 								</tr>
 								<tr>
 									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
@@ -691,7 +737,7 @@
 				      	</c:if>
 		      			
 		      		</c:forEach>
-		      	</c:if>
+		      <%-- 	</c:if> --%>
 		      	
 		      </table>
 			   <c:if test="${opflag == 1}">
@@ -706,6 +752,13 @@
 		<div class="payment-item" >
 			<table id="bank-pay">
 				<tbody class='bank'>
+					<tr>
+						<input value="0" name="payInfos[0].pay_type" type="hidden">
+						<td colspan="6" class="active"><label class="pull-left">银行卡
+						<c:if test="${payWay == 0}">（用于付款/还款）</c:if>
+						<c:if test="${payWay == 1}">（用于还款）</c:if>
+						</label></td>
+					</tr>
 					<tr>
 						<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户银行</label></td>
 			        	<td class="width-35"><input value="" name="payInfos[0].pay_name" class="form-control required"></td>
@@ -749,8 +802,11 @@
 			<table id="ali-pay">
 				<tbody class='ali'>
 					<tr>
-					<input value="2" name="payInfos[2].pay_type" type="hidden">
-						<td colspan="6" class="active"><label class="pull-left">支付宝</label></td>
+						<input value="2" name="payInfos[2].pay_type" type="hidden">
+						<td colspan="6" class="active"><label class="pull-left">支付宝
+						<c:if test="${payWay == 0}">（用于还款）</c:if>
+						<c:if test="${payWay == 1}">（用于付款/还款）</c:if>
+						</label></td>
 					</tr>
 					<tr>
 						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
@@ -775,7 +831,10 @@
 				<tbody class='wechat'>
 					<tr>
 						<input value="1" name="payInfos[1].pay_type" type="hidden">
-						<td colspan="6" class="active"><label class="pull-left">微信</label></td>
+						<td colspan="6" class="active"><label class="pull-left">微信
+						<c:if test="${payWay == 0}">（用于还款）</c:if>
+						<c:if test="${payWay == 1}">（用于付款/还款）</c:if>
+						</label></td>
 					</tr>
 					<tr>
 						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
