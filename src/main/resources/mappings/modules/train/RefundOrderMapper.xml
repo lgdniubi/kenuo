@@ -29,9 +29,7 @@
 			arrearage_price,
 			arrearage_office,
 			add_time,
-			order_status,
-			billmonth,
-			closingdate
+			order_status
 		)
 		VALUES
 		<foreach collection="subList" item="item" separator="," >  
@@ -40,9 +38,7 @@
 			${item.used_limit},
 			#{item.office_id},
 			NOW(),
-			1,
-			#{item.billmonth},
-			DATE_ADD(NOW(), interval 14 DAY)
+			1
 		)
 	    </foreach>
 		
@@ -57,10 +53,10 @@
 	</update>
 	
 	<update id="updateOrderOverdueStatus">
-		UPDATE 
+		<!-- UPDATE 
 			trains.train_refund_order
 		SET is_overdue = '1'
-		WHERE closingdate <![CDATA[<]]> NOW()
+		WHERE closingdate <![CDATA[<]]> NOW() -->
 	</update>
 	
 	
@@ -81,27 +77,80 @@
 			ro.user_mobile as userMobile,
 			ro.user_office_id as userOfficeId,
 			ro.channel_flag as channelFlag,
-			o.name as arrearageOfficeName,
 			u.name as userName,
+			o.name as arrearageOfficeName,
+<!-- 			o.short_name as arrearageOfficeName, -->
 			f.name as franchiseeName,
-			ro.billmonth,
-			ro.serialnumber,
-			ro.bankaccount,
-			ro.openbank,
-			ro.openname,
-			ro.proof,
+<!-- 			f.short_name as franchiseeName, -->
 			ro.explains,
 			ro.remarks
 		FROM train_refund_order ro
-		left join sys_user u on u.id = ro.user_id
 		left join sys_office o on o.id = arrearage_office
+		left join sys_user u on u.id = ro.user_id
 		left join sys_franchisee f on f.id = o.franchisee_id
 		where 1=1
 		AND ro.order_status !=1
 		<if test="orderId != null and orderId !=''">
 			and order_id = #{orderId}
 		</if>
-		order by ro.add_time desc
+		<if test="orderStatus != null and orderStatus !=''">
+			and ro.order_status = #{orderStatus}
+		</if>
+		<if test="orderType != null and orderType !=''">
+			and ro.order_type = #{orderType}
+		</if>
+		<if test="arrearageOffice != null and arrearageOffice !=''">
+			and ro.arrearage_office = #{arrearageOffice}
+		</if>
+		order by ro.order_status,ro.add_time desc
+	</select>
+	<select id="findExportList" resultType="RefundOrderExport">
+		SELECT 
+			ro.order_id as orderId,
+			o.name as arrearageOfficeName,
+			ro.arrearage_price as arrearagePrice,
+			ro.amount as amount,
+			CASE ro.order_status 
+						WHEN 1 THEN '待支付'
+						WHEN 2 THEN '待审核'
+						WHEN 3 THEN '已入账'
+						WHEN 4 THEN '已驳回'
+						ELSE '取消订单' END AS orderStatus,
+			u.name AS userName,
+			<!-- CASE ro.order_type 
+						WHEN 1 THEN '线上支付'
+						ELSE '线下支付' END AS orderType, -->
+			CASE ro.pay_code 
+						WHEN 'wx' THEN '微信'
+						WHEN 'alipay' THEN '支付宝'
+						ELSE '转账' END AS payCode,
+			refs.bankaccount,
+			refs.openbank,
+			refs.openname,
+			stat.order_id AS orderCode,
+			oaccount.credit_limit - oaccount.used_limit AS usedLimit,
+			
+			DATE_FORMAT(ro.add_time,'%Y-%m-%d %H:%i:%s') as addTime,
+			ro.explains
+		FROM train_refund_order ro
+		left join sys_office o on o.id = ro.arrearage_office
+		LEFT JOIN sys_user u ON u.id= ro.user_id
+		LEFT JOIN train_statement_order sod ON sod.order_id=ro.order_id
+		LEFT JOIN sys_office_statement stat ON stat.id= sod.statement_id
+		LEFT JOIN train_refund_serialnumber refs ON refs.order_id = ro.order_id
+		LEFT JOIN sys_office_account oaccount ON oaccount.office_id = ro.arrearage_office
+		where 1=1
+			AND ro.order_status !=1
+		<if test="orderId != null and orderId !=''">
+			and order_id = #{orderId}
+		</if>
+		<if test="orderStatus != null and orderStatus !=''">
+			and ro.order_status = #{orderStatus}
+		</if>
+		<if test="orderType != null and orderType !=''">
+			and ro.order_type = #{orderType}
+		</if>
+		ORDER BY ro.order_id,ro.add_time desc
 	</select>
 	
 	
@@ -120,31 +169,13 @@
 		
 	</select>
 	
-	<!-- <select id="queryTransferpay" resultType="Transferpay">
-		select
-			t.id as payId,
-			t.serialnumber,
-			t.bankaccount,
-			t.openbank,
-			t.office_id,
-			t.order_id,
-			t.repaymonth,
-			t.user_id,
-			t.proof,
-			t.`status` as `status`,
-			t.`explain` as `explain`,
-			t.openname,
-			DATE_FORMAT(t.create_time,'%Y-%m-%d %H:%i:%s') as create_time,
-			u.name as user_name
-		from sys_office_transferpay t
-		left join sys_user u on u.id = t.user_id
-		where t.order_id = #{order_id}
-	</select> -->
+	
 	<resultMap type="RefundOrder" id="refundOrderMap">
 		<result column="orderId" property="orderId"/>
 		<result column="tempOrderId" property="tempOrderId"/>
 		<result column="orderType" property="orderType"/>
 		<result column="arrearagePrice" property="arrearagePrice"/>
+		<result column="aftersalesPrice" property="aftersalesPrice"/>
 		<result column="amount" property="amount"/>
 		<result column="addTime" property="addTime"/>
 		<result column="orderStatus" property="orderStatus"/>
@@ -158,15 +189,15 @@
 		<result column="arrearageOfficeName" property="arrearageOfficeName"/>
 		<result column="userName" property="userName"/>
 		<result column="franchiseeName" property="franchiseeName"/>
-		<result column="billmonth" property="billmonth"/>
+		<!-- <result column="billmonth" property="billmonth"/>
 		<result column="serialnumber" property="serialnumber"/>
 		<result column="bankaccount" property="bankaccount"/>
 		<result column="openbank" property="openbank"/>
 		<result column="proof" property="proof"/>
-		<result column="explains" property="explains"/>
-		<result column="openname" property="openname"/>
+		<result column="openname" property="openname"/>-->
+		<result column="explains" property="explains"/> 
 		<result column="remarks" property="remarks"/>
-		<collection property="proofs" column="orderId" select="queryProofs" ofType="ArrayList"></collection>
+		<collection property="bankList" column="orderId" select="queryBankList" ofType="ArrayList"></collection>
 	</resultMap>
 	<select id="queryRefundOrderDetail" resultMap="refundOrderMap">
 		select 
@@ -174,6 +205,7 @@
 			ro.temp_order_id as tempOrderId,
 			ro.order_type as orderType,
 			ro.arrearage_price as arrearagePrice,
+			ro.aftersales_price as aftersalesPrice,
 			ro.arrearage_office as arrearageOffice,
 			ro.amount as amount,
 			DATE_FORMAT(add_time,'%Y-%m-%d %H:%i:%s') as addTime,
@@ -185,13 +217,7 @@
 			ro.user_mobile as userMobile,
 			ro.user_office_id as userOfficeId,
 			ro.channel_flag as channelFlag,
-			ro.billmonth as billmonth,
-			ro.serialnumber as serialnumber,
-			ro.bankaccount as bankaccount,
-			ro.openbank as openbank,
-			ro.proof as proof,
 			ro.explains as explains,
-			ro.openname as openname,
 			o.name as arrearageOfficeName,
 			u.name as userName,
 			f.name as franchiseeName,
@@ -203,8 +229,8 @@
 		where order_id = #{order_id}
 	</select>
 	
-	<select id="queryProofs" parameterType="String" resultType="String">
-		select proof from train_refund_proof where order_id = #{orderId}
+	<select id="queryBankList" parameterType="String" resultType="RefundSerialnumber">
+		SELECT * FROM train_refund_serialnumber WHERE order_id = #{orderId}
 	</select>
 	
 	<update id="makeSureInAccount">
@@ -215,6 +241,18 @@
 		</if>
 		where order_id = #{order_id}
 	</update>
+	<!-- 将待审核2的状态改已入账3 -->
+	<select id="auditAll"  resultType="RefundOrder">
+		SELECT 
+			ro.order_id as orderId,
+			ro.arrearage_office as arrearageOffice,
+			ro.amount as amount
+		FROM train_refund_order ro
+		where ro.order_id in
+		<foreach collection="array"  index="index" item="id" open="(" separator="," close=")"  >
+       		#{id}
+        </foreach>
+	</select>
 	
 	<update id="updateStatementStatus">
 		update sys_office_statement a,train_statement_order b 

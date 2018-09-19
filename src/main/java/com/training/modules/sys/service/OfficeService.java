@@ -463,38 +463,9 @@ public class OfficeService extends TreeService<OfficeDao, Office> {
 		return page;
 	}
 	
-	/**
-	 * 查询机构账户
-	 * @param officeId
-	 * @return
-	 */
-	public OfficeAcount findOfficeAcount(String officeId){
-		return this.officeDao.findOfficeAcount(officeId);
-	}
-	/**
-	 * 变更信用额度
-	 * @param OfficeAcount
-	 */
-	@Transactional(readOnly = false)
-	public void updateOfficeCreditLimit(OfficeAcount OfficeAcount){
-		//缓存锁
-		RedisLock redisLock = new RedisLock(redisClientTemplate, "account_lock_office_id"+OfficeAcount.getOfficeId());
-		redisLock.lock();
-		double usedLimit = this.officeDao.queryusedLimit(OfficeAcount);
-		if(OfficeAcount.getUseLimit() > usedLimit)
-			throw new RuntimeException("可用额度发生改变，暂不可修改");
-		this.officeDao.updateOfficeCreditLimit(OfficeAcount);
-		redisLock.unlock();
-	}
 	
-	/**
-	 * 创建账户
-	 * @param OfficeAcount
-	 */
-	@Transactional(readOnly = false)
-	public void saveOfficeAcount(OfficeAcount officeAcount){
-		this.officeDao.saveOfficeAcount(officeAcount);
-	}
+	
+	
 	/**
 	 * 查找支付方式，
 	 * @param id

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.sys.dao.OfficeAcountDao">
+
+	<sql id="Columns">
+		
+	</sql>
+	
+	<select id="findOfficeList" resultType="OfficeAcount">
+		SELECT
+			o.`name` AS officeName,
+			o.id AS officeId,
+			fr.`name` AS companyName,
+			oa.credit_limit,
+			oa.used_limit
+		FROM
+			sys_office o
+		LEFT JOIN sys_office_account oa ON oa.office_id = o.id
+		LEFT JOIN sys_franchisee fr ON fr.id = o.franchisee_id
+	</select>
+	
+	<select id="findOfficeAcount" parameterType="String" resultType="com.training.modules.sys.entity.OfficeAcount">
+		select
+			office_id as officeId,
+			amount as amount,
+			integral_earnings as integralEarnings,
+			credit_limit as creditLimit,
+			used_limit as usedLimit,
+			credit_limit - used_limit as useLimit,
+			pay_pwd as payPwd
+		from sys_office_account where office_id = #{value}
+	</select>
+	
+	<update id="updateOfficeCreditLimit" parameterType="com.training.modules.sys.entity.OfficeAcount">
+		update 
+			sys_office_account
+		set
+			credit_limit = #{creditLimit},
+			used_limit = #{usedLimit}
+		where office_id = #{officeId}
+	</update>
+	
+	<insert id="saveOfficeAcount" parameterType="com.training.modules.sys.entity.OfficeAcount">
+		insert into
+			sys_office_account(office_id)
+		values(#{officeId})
+	</insert>
+	
+	<select id="queryusedLimit" parameterType="com.training.modules.sys.entity.OfficeAcount" resultType="java.lang.Double">
+		SELECT used_limit FROM trains.sys_office_account WHERE office_id = #{officeId}
+	</select>
+	
+	<!--  -->
+	<insert id="saveOfficeCreditLog" parameterType="com.training.modules.sys.entity.OfficeAcount">
+		INSERT INTO `trains`.`sys_office_credit_log` (
+			`office_id`,
+			`credit_limit`,
+			`old_credit_limit`,
+			`create_by_id`,
+			`create_by_name`,
+			`create_date`
+		)
+		VALUES
+			(
+				#{officeId},
+				#{creditLimit},
+				#{oldCreditLimit},
+				#{createBy.id},
+				#{createBy.name},
+				SYSDATE()
+			)
+	</insert>
+	<select id="findCreditLogList">
+		SELECT
+			`office_id`,
+			`credit_limit`,
+			`old_credit_limit`,
+			`create_by_id`,
+			`create_by_name`,
+			`create_date`
+		FROM sys_office_credit_log
+		WHERE office_id = #{officeId}
+		ORDER BY create_date desc
+	</select>
+</mapper>

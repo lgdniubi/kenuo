@@ -52,11 +52,18 @@ public class FranchiseeService extends TreeService<FranchiseeDao,Franchisee>{
 	
 	/**
 	 * 查询所有信息
+	 * 供树形
 	 */
 	public List<Franchisee> findAllList(Franchisee franchisee){
 		return franchiseeDao.findAllList(franchisee);
 	}
-	
+	/**
+	 * 查询所有商家信息
+	 */
+	public List<Franchisee> findCompanyList(Franchisee franchisee){
+		return franchiseeDao.findCompanyList(franchisee);
+	}
+
 	/**
 	 * 通过父类ID查询  子类（用于机构管理--添加下级菜单时查询下级菜单中code最大的那个）
 	 * @param pid	父类ID

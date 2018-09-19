@@ -1,18 +1,26 @@
 package com.training.modules.sys.entity;
+
+import com.training.common.persistence.DataEntity;
+
 /**
  * 账户
  * @author QJL
  *
  */
-public class OfficeAcount {
+public class OfficeAcount extends DataEntity<OfficeAcount> {
 
+	private static final long serialVersionUID = 100009L;
 	private String officeId; //机构id
+	private String officeName; //机构名称
+	private String companyName; //商家名称
 	private double amount = 0;	//金额
 	private int integralEarnings = 0; //贡献登云平台总云币
 	private double creditLimit = 0;	//信用额度
+	private double oldCreditLimit = 0;	//修改前信用额度
 	private double usedLimit = 0;	//可使用额度
 	private double useLimit = 0;	//
 	private double payPwd;	//支付密码
+	private String lastRefundTime;		//最近还款时间
 	
 	
 	
@@ -58,6 +66,31 @@ public class OfficeAcount {
 	public void setPayPwd(double payPwd) {
 		this.payPwd = payPwd;
 	}
+	public String getOfficeName() {
+		return officeName;
+	}
+	public void setOfficeName(String officeName) {
+		this.officeName = officeName;
+	}
+	public String getCompanyName() {
+		return companyName;
+	}
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+	public String getLastRefundTime() {
+		return lastRefundTime;
+	}
+	public void setLastRefundTime(String lastRefundTime) {
+		this.lastRefundTime = lastRefundTime;
+	}
+	public double getOldCreditLimit() {
+		return oldCreditLimit;
+	}
+	public void setOldCreditLimit(double oldCreditLimit) {
+		this.oldCreditLimit = oldCreditLimit;
+	}
+	
 	
 	
 }

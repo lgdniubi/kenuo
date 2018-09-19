@@ -516,9 +516,12 @@
 						</tr>
 						<tr>
 							<td class="width-15 active"><label class="pull-right">
+							<c:if test="${not empty office.id }">
 								<span class="help-tip">
 									<span class="help-p">此字段需从签约信息页面编辑</span>
 								</span>
+				         	</c:if>
+								
 							<font color="red">*</font>机构名称:</label></td>
 				         	<td class="width-35"><input id="oldOfficeName" value="${office.name }" type="hidden">
 				         	<input id="name" name="name" value="${office.name }" maxlength="20" class="form-control required" <c:if test="${not empty office.name}">disabled="true"</c:if>></td>

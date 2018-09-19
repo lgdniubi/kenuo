@@ -11,6 +11,7 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	private String tempOrderId; //临时订单号
 	private String orderType;//订单类型（1：线上，转账）
 	private double arrearagePrice;//欠款金额
+	private double aftersalesPrice;//售后金额
 	private String arrearageOffice;//欠款机构
 	private double amount;//实付金额
 	private String addTime;//创建时间
@@ -25,16 +26,16 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	private String arrearageOfficeName; //欠款机构名
 	private String userName; //用户名
 	private String franchiseeName; //商家
-	private String billmonth; //账单月份
+	/*private String billmonth; //账单月份
 	private String serialnumber;//流水号
 	private String bankaccount; //银行账号
 	private String openbank; //开户行
 	private String proof; //凭证
+	private String openname;//开户姓名*/	
 	private String explains;//说明
-	private String openname;//开户姓名
 	private String remarks; //驳回原因
 	
-	private List<String> proofs;
+	private List<RefundSerialnumber> bankList;		//支付银行列表
 	public String getOrderId() {
 		return orderId;
 	}
@@ -58,6 +59,12 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	}
 	public void setArrearagePrice(double arrearagePrice) {
 		this.arrearagePrice = arrearagePrice;
+	}
+	public double getAftersalesPrice() {
+		return aftersalesPrice;
+	}
+	public void setAftersalesPrice(double aftersalesPrice) {
+		this.aftersalesPrice = aftersalesPrice;
 	}
 	public String getArrearageOffice() {
 		return arrearageOffice;
@@ -143,35 +150,12 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	public void setFranchiseeName(String franchiseeName) {
 		this.franchiseeName = franchiseeName;
 	}
-	public String getBillmonth() {
-		return billmonth;
+	
+	public String getRemarks() {
+		return remarks;
 	}
-	public void setBillmonth(String billmonth) {
-		this.billmonth = billmonth;
-	}
-	public String getSerialnumber() {
-		return serialnumber;
-	}
-	public void setSerialnumber(String serialnumber) {
-		this.serialnumber = serialnumber;
-	}
-	public String getBankaccount() {
-		return bankaccount;
-	}
-	public void setBankaccount(String bankaccount) {
-		this.bankaccount = bankaccount;
-	}
-	public String getOpenbank() {
-		return openbank;
-	}
-	public void setOpenbank(String openbank) {
-		this.openbank = openbank;
-	}
-	public String getProof() {
-		return proof;
-	}
-	public void setProof(String proof) {
-		this.proof = proof;
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 	public String getExplains() {
 		return explains;
@@ -179,22 +163,11 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	public void setExplains(String explains) {
 		this.explains = explains;
 	}
-	public String getOpenname() {
-		return openname;
+	public List<RefundSerialnumber> getBankList() {
+		return bankList;
 	}
-	public void setOpenname(String openname) {
-		this.openname = openname;
+	public void setBankList(List<RefundSerialnumber> bankList) {
+		this.bankList = bankList;
 	}
-	public String getRemarks() {
-		return remarks;
-	}
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
-	public List<String> getProofs() {
-		return proofs;
-	}
-	public void setProofs(List<String> proofs) {
-		this.proofs = proofs;
-	}
+	
 }

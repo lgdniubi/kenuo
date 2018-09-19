@@ -8,12 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.training.common.persistence.Page;
+import com.training.common.utils.DateUtils;
+import com.training.common.utils.excel.ExportExcel;
 import com.training.common.web.BaseController;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.train.entity.RefundOrder;
+import com.training.modules.train.entity.RefundOrderExport;
 import com.training.modules.train.service.RefundOrderService;
 
 @Controller
@@ -89,7 +93,7 @@ public class RefundOrderController extends BaseController {
 	@RequestMapping(value="makeSureInAccount")
 	public String makesure(Model model,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,String order_id,String office_id,double amount/*,String billmonth*/,String status,String remarks){
 		try {
-			this.refundOrderService.makeSureInAccount(order_id,office_id,amount/*,billmonth*/,status,remarks);
+			this.refundOrderService.makeSureInAccount(order_id,office_id,amount,status,remarks);
 			addMessage(redirectAttributes, "操作成功!");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "确认入账", e);
@@ -108,5 +112,37 @@ public class RefundOrderController extends BaseController {
 	public String queryRefundOrderLogList(Model model,String order_id){
 		model.addAttribute("log", this.refundOrderService.queryRefundOrderLogList(order_id));
 		return "modules/train/refundOrderLogList";
+	}
+	
+	@RequiresPermissions("train:refundOrder:export")
+	@RequestMapping(value = "export", method = RequestMethod.POST)
+	public String exportFile(RefundOrderExport refundOrder, HttpServletRequest request, HttpServletResponse response,
+			RedirectAttributes redirectAttributes) {
+		try {
+			String fileName = "信用账单" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
+//			Page<User> page = systemService.findUser(new Page<User>(request, response, -1), user);
+			Page<RefundOrderExport> page = this.refundOrderService.findExportPage(new Page<RefundOrderExport>(request,response,-1), refundOrder);
+			new ExportExcel("信用账单", RefundOrderExport.class).setDataList(page.getList()).write(response, fileName).dispose();
+			return null;
+		} catch (Exception e) {
+			addMessage(redirectAttributes, "导出用户失败！失败信息：" + e);
+		}
+		return "redirect:" + adminPath + "/train/refundOrder/list?repage";
+	}
+	/**
+	 * 将待审核2的状态改已入账3
+	 * @param ids
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequiresPermissions("train:refundOrder:audit")
+	@RequestMapping(value = "audit")
+	public String audit(String ids, RedirectAttributes redirectAttributes) {
+		String idArray[] = ids.split(",");
+		int successNum = idArray.length;
+		if(successNum>0)
+		refundOrderService.auditAll(idArray);
+		addMessage(redirectAttributes, "已成功审核 " + successNum + " 条用户" );
+		return "redirect:" + adminPath + "/train/refundOrder/list?repage";
 	}
 }

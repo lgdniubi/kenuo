@@ -10,11 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.training.common.Thread.RefundThread;
+import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
+import com.training.modules.sys.entity.OfficeAcount;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.RefundOrderMapper;
 import com.training.modules.train.entity.ArrearageOfficeList;
 import com.training.modules.train.entity.RefundOrder;
+import com.training.modules.train.entity.RefundOrderExport;
 import com.training.modules.train.entity.RefundOrderLog;
 import com.training.modules.train.entity.Statement;
 
@@ -126,4 +129,26 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 	public List<RefundOrderLog> queryRefundOrderLogList(String order_id){
 		return this.refundOrderMapper.queryRefundOrderLogList(order_id);
 	}
+
+	public Page<RefundOrderExport> findExportPage(Page<RefundOrderExport> page, RefundOrderExport refundOrder) {
+		// 设置分页参数
+		refundOrder.setPage(page);
+		// 执行分页查询
+		page.setList(refundOrderMapper.findExportList(refundOrder));
+		return page;
+	}
+	
+	/**
+	 * 将待审核2的状态改已入账3
+	 * @param idArray
+	 */
+	public void auditAll(String[] idArray) {
+		List<RefundOrder> roList = refundOrderMapper.auditAll(idArray);
+		//将所有的确认入账	
+		for (RefundOrder ro : roList) {
+			makeSureInAccount(ro.getOrderId(), ro.getArrearageOffice(), ro.getAmount(), "3", null);
+		}
+	}
+
+	
 }

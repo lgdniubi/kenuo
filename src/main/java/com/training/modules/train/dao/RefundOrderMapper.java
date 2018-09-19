@@ -11,6 +11,7 @@ import com.training.common.persistence.CrudDao;
 import com.training.common.persistence.annotation.MyBatisDao;
 import com.training.modules.train.entity.ArrearageOfficeList;
 import com.training.modules.train.entity.RefundOrder;
+import com.training.modules.train.entity.RefundOrderExport;
 import com.training.modules.train.entity.RefundOrderLog;
 import com.training.modules.train.entity.Statement;
 
@@ -92,5 +93,14 @@ public interface RefundOrderMapper extends CrudDao<RefundOrder> {
 	 * @param order_id
 	 * @return
 	 */
-	List<RefundOrderLog> queryRefundOrderLogList(@Param("order_id")String order_id);
+	public List<RefundOrderLog> queryRefundOrderLogList(@Param("order_id")String order_id);
+
+	/**
+	 * 查询导出
+	 * @param refundOrder
+	 * @return
+	 */
+	public List<RefundOrderExport> findExportList(RefundOrderExport refundOrder);
+
+	public List<RefundOrder> auditAll(String[] idArray);
 }
