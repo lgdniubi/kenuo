@@ -91,7 +91,7 @@
                                		${info.create_time}
                                	</td>
 								<td style="text-align: center;">
-									<a class="btn btn-success btn-xs"  onclick="openDialogView('详情','${ctx}/train/contractInfo/queryContractInfoDetail?office_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>详情</a>
+									<a class="btn btn-success btn-xs"  onclick="openDialogView('详情','${ctx}/train/contractInfo/querySignedContractInfoDetail?office_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>详情</a>
 									<a class="btn btn-success btn-xs"  onclick="openDialogView('已签协议','${ctx}/train/contractInfo/findProtocolListOfOffice?office_id=${info.office_id}', '800px', '500px')"><i class="fa fa-edit"></i>已签协议</a>
 								</td>
 							</tr>

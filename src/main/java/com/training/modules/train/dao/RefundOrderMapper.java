@@ -103,4 +103,11 @@ public interface RefundOrderMapper extends CrudDao<RefundOrder> {
 	public List<RefundOrderExport> findExportList(RefundOrderExport refundOrder);
 
 	public List<RefundOrder> auditAll(String[] idArray);
+
+	/**
+	 * 查凭证
+	 * @param order_id
+	 * @return
+	 */
+	public List<String> findProofList(String order_id);
 }

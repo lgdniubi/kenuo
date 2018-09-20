@@ -286,4 +286,14 @@
 		left join sys_user b on a.create_by = b.id
 		where order_id = #{order_id}
 	</select>
+	<!-- 查凭证 -->
+	<select id="findProofList" resultType="String">
+		SELECT
+			p.proof
+		FROM
+			train_refund_proof p
+		LEFT JOIN train_refund_serialnumber refs ON refs.serialnumber = p.serialnumber_id
+		WHERE
+			refs.order_id = #{order_id}
+	</select>
 </mapper>

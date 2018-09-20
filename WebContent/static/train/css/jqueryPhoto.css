@@ -1,0 +1,34 @@
+﻿@charset "utf-8";
+body{background:none}
+body, ul, dl, dd, dt, ol, li, p, h1, h2, h3, h4, h5, h6, textarea, form, select, fieldset, table, td, div, input{margin:0;padding:0;-webkit-text-size-adjust:none}
+div{text-align:left}
+a img{border:0}
+ul, ol, li{list-style-type:none;vertical-align:0}
+a{outline-style:none;color:#535353;text-decoration:none}
+a:hover{color:#D40000; text-decoration:none}
+
+/* 效果CSS开始 */
+.mod18{width:526px;position:relative;margin:0 auto;padding: 0 60px}
+.mod18 .btn{position:absolute;cursor:pointer;z-index:99;font-size:50px;font-weight:bold;}
+.mod18 .prev{left:10px;background:url(../images/prevBtn.png) no-repeat;}
+.mod18 #prevTop,.mod18 #nextTop{top:250px;width:32px;height:48px;}
+.mod18 #prev,.mod18 #next{top:490px;width:10px;height:16px;display: none;}
+.mod18 #prevTop{background:url(../images/prevBtnTop.png) 0 0 no-repeat;}
+.mod18 #nextTop{background:url(../images/nextBtnTop.png) 0 0 no-repeat;}
+.mod18 .next{right:10px;background:url(../images/nextBtn.png) no-repeat;}
+.mod18 li{float:left;}
+.mod18 .cf li{position:relative;color:#fff;}
+.mod18 .cf a{display:block;width:526px;height:377px;position:absolute;color:#fff;}
+.mod18 .cf li span{width:486px;position:absolute;left:0;bottom:0;padding:10px 20px;line-height:22px;text-align:left;background:rgba(0,0,0,0.6);filter:progid:DXImageTransform.Microsoft.gradient( GradientType = 0,startColorstr = "#60000000",endColorstr = "#60000000");}
+.mod18 .picBox{width:526px; height:378px;position:relative;overflow:hidden;margin:40px 0 20px;border-left: 1px solid #fff;border-right: 1px solid #fff;}
+.mod18 .picBox ul{height:377px;position:absolute; left:0;}
+.mod18 .picBox li{width:526px;height:375px;border-top: 1px solid #fff;border-bottom: 1px solid #fff; text-align: center;line-height: 377px;overflow: hidden;}
+.mod18 .picBox li img{vertical-align: middle;max-width:526px;max-height:377px; }
+
+.mod18 .listBox{width:528px;height:156px;margin:0 auto;position:relative;overflow:hidden;}
+.mod18 .listBox ul{height:130px;position:absolute;}
+.mod18 .listBox li{width:160px;height:130px;line-height: 130px; position:relative;margin-right: 18px; border:1px solid #999;text-align: center;overflow: hidden; cursor:pointer;position:relative;}
+.mod18 .listBox li img{max-width:160px;max-height:130px; vertical-align: middle;}
+.mod18 .listBox li i{display:none;}
+.mod18 .listBox li a{display:block;width:108px;height:77px;}
+.mod18 .listBox .on{border-color:#fff;}

@@ -73,6 +73,19 @@ public class ContractInfoService {
 		return json.getJSONObject("data");
 	}
 	
+	/**
+	 * 查询已签协议详情
+	 * @param office_id
+	 * @return
+	 */
+	public JSONObject querySignedContractInfoDetail(String office_id){
+		JSONObject jsonO = new JSONObject();
+		jsonO.put("office_id", office_id);
+		JSONObject json = WebUtils.postCS(jsonO, ParametersFactory.getTrainsParamValues("queryContractInfo"));
+		
+		return json.getJSONObject("data");
+	}
+	
 	public void auditContractInfo(ContractInfo info) throws Exception{
 		JSONObject j = new JSONObject();
 		JSONObject jsonO = new JSONObject();

@@ -14,6 +14,14 @@
 		.fixed-footer .btns{display: inline-block;line-height: 35px;width: 85px;text-align: center;font-size: 14px;color: #fff;margin-left: 20px;border-radius: 6px;cursor: pointer}
 		.yes-btn{background: #4d90fe;}
 		.cancel-btn{background: #999;}
+		
+		
+		/*{margin: 0;padding:0;} */
+		/*查看凭证，页面样式 */
+		#jqPhoto{position: fixed;left: 0;top: 0;width: 100%;height: 100%; z-index: 99999;background-color: rgba(0, 0, 0,.6);display: none;}
+		#jqPhoto #colorBtn{position: absolute;right: 5%;top: 5%;width: 50px;height: 50px;background: url('./images/close.png') center no-repeat;background-size: 50px;cursor: pointer;}
+		#jqPhotoPage{position: absolute;left:50%;top: 50%;margin-top: -350px;margin-left: -350px; border:none;overflow: hidden;width: 700px;height: 600px;}
+
 	</style>
 	<!-- 放大图片js -->
 	<script type="text/javascript" src="${ctxStatic}/train/imgZoom/jquery.imgZoom.js"></script>
@@ -143,7 +151,7 @@
 			         <td align="center">${bank.bankaccount}</td>
 			         <td align="center">${bank.openbank }</td>
 			         <td align="center">${bank.openname }</td>
-			         <td align="center">查看</td>
+			         <td align="center"><span class="jq-photo" data-link='${ctx}/train/refundOrder/proof'>查看</span></td>
 				</tr>
 				</c:forEach>
 			</tbody>
@@ -160,6 +168,28 @@
 			</c:if>
 			</tbody>
 		</table> 
+		<c:if test="${opflag eq '1'}">
+			<table id="treeTable"
+				class="table table-bordered table-hover table-striped">
+				<thead>
+					<tr>
+						<th style="text-align: center;">操作时间</th>
+						<th style="text-align: center;">操作人</th>
+						<th style="text-align: center;">操作描述</th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach items="${log}" var="state">
+						<tr style="text-align: center;">
+							<td style="text-align: center;">${state.createTime}</td>
+							<td style="text-align: center;">${state.createUsername }</td>
+							<td style="text-align: center;">${state.description }</td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+		</c:if>
+		
 		<c:if test="${opflag eq '0'}">
 			<div class="fixed-footer">
 				<span class="btns yes-btn" onclick="auditPass()">确认入账</span>
@@ -169,9 +199,24 @@
 			</div> 
 	   </c:if>
 	</form:form> 
+	<!-- 放在页面任何地方，查看凭证 -->
+	<div id="jqPhoto">
+		<div id="colorBtn"></div>
+		<iframe src="" id="jqPhotoPage"></iframe>
+	</div>
 	<script type="text/javascript">
 		//点击放大图片
 		$(".imgZoom").imgZoom();
+		$(function() {
+			$('.jq-photo').click(function(){
+				var url = $(this).attr('data-link')
+				$('#jqPhotoPage').attr({'src':url})
+				$('#jqPhoto').fadeIn()
+			})
+			$('#colorBtn').click(function(){
+				$('#jqPhoto').fadeOut()
+			})
+		})
 	</script>
 </body>
 </html>

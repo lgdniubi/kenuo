@@ -1,5 +1,7 @@
 package com.training.modules.train.web;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -69,6 +71,9 @@ public class RefundOrderController extends BaseController {
 	@RequestMapping(value="queryRefundOrderDetail")
 	public String queryRefundOrderDetail(Model model,String order_id,Integer opflag){
 		model.addAttribute("refundOrder", this.refundOrderService.queryRefundOrderDetail(order_id));
+		if("1".equals(opflag)){	//0是审核，1是详情
+			model.addAttribute("log", this.refundOrderService.queryRefundOrderLogList(order_id));
+		}
 		model.addAttribute("opflag", opflag);
 		return "modules/train/refundOrderDetail";
 	}
@@ -95,7 +100,7 @@ public class RefundOrderController extends BaseController {
 	@RequestMapping(value="makeSureInAccount")
 	public String makesure(Model model,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,String order_id,String office_id,double amount/*,String billmonth*/,String status,String remarks){
 		try {
-//			this.refundOrderService.makeSureInAccount(order_id,office_id,amount,status,remarks);
+			this.refundOrderService.makeSureInAccount(order_id,office_id,amount,status,remarks);
 			addMessage(redirectAttributes, "操作成功!");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "确认入账", e);
@@ -147,4 +152,13 @@ public class RefundOrderController extends BaseController {
 		addMessage(redirectAttributes, "已成功审核 " + successNum + " 条用户" );
 		return "redirect:" + adminPath + "/train/refundOrder/list?repage";
 	}
+	
+	
+	@RequestMapping(value = "proof")
+	public String proof(Model model,String order_id, RedirectAttributes redirectAttributes) {
+		List<String> proofList = refundOrderService.findProofList(order_id);
+		model.addAttribute("proofList",proofList);
+		return  "modules/train/proofList";
+	}
+	
 }

@@ -104,7 +104,7 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 		log.setCreateBy(UserUtils.getUser().getId());
 		log.setOrderId(order_id);
 		if("4".equals(status))
-			log.setDescription("【取消账单】");
+			log.setDescription("【驳回账单】");
 		else
 			log.setDescription("【确认入账】");
 		this.refundOrderMapper.insertRefundOrderLog(log);
@@ -148,6 +148,16 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 		for (RefundOrder ro : roList) {
 			makeSureInAccount(ro.getOrderId(), ro.getArrearageOffice(), ro.getAmount(), "3", null);
 		}
+	}
+
+	/**
+	 * 根据还款单id查凭证
+	 * @param order_id
+	 * @return
+	 */
+	public List<String> findProofList(String order_id) {
+		
+		return refundOrderMapper.findProofList(order_id) ;
 	}
 
 	
