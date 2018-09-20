@@ -19,7 +19,7 @@
 		/*{margin: 0;padding:0;} */
 		/*查看凭证，页面样式 */
 		#jqPhoto{position: fixed;left: 0;top: 0;width: 100%;height: 100%; z-index: 99999;background-color: rgba(0, 0, 0,.6);display: none;}
-		#jqPhoto #colorBtn{position: absolute;right: 5%;top: 5%;width: 50px;height: 50px;background: url('./images/close.png') center no-repeat;background-size: 50px;cursor: pointer;}
+		#jqPhoto #colorBtn{position: absolute;right: 5%;top: 5%;width: 50px;height: 50px;background: url('${ctxStatic}/train/images/close.png') center no-repeat;background-size: 50px;cursor: pointer;}
 		#jqPhotoPage{position: absolute;left:50%;top: 50%;margin-top: -350px;margin-left: -350px; border:none;overflow: hidden;width: 700px;height: 600px;}
 
 	</style>
@@ -151,7 +151,7 @@
 			         <td align="center">${bank.bankaccount}</td>
 			         <td align="center">${bank.openbank }</td>
 			         <td align="center">${bank.openname }</td>
-			         <td align="center"><span class="jq-photo" data-link='${ctx}/train/refundOrder/proof'>查看</span></td>
+			         <td align="center"><span class="jq-photo" data-link='${ctx}/train/refundOrder/proof?order_id=${refundOrder.orderId}'>查看</span></td>
 				</tr>
 				</c:forEach>
 			</tbody>

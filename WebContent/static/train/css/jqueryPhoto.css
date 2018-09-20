@@ -8,7 +8,7 @@ a{outline-style:none;color:#535353;text-decoration:none}
 a:hover{color:#D40000; text-decoration:none}
 
 /* 效果CSS开始 */
-.mod18{width:526px;position:relative;margin:0 auto;padding: 0 60px}
+.mod18{width:652px;position:relative;margin:0 auto;padding: 0 60px}
 .mod18 .btn{position:absolute;cursor:pointer;z-index:99;font-size:50px;font-weight:bold;}
 .mod18 .prev{left:10px;background:url(../images/prevBtn.png) no-repeat;}
 .mod18 #prevTop,.mod18 #nextTop{top:250px;width:32px;height:48px;}
