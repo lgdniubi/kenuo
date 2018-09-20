@@ -21,6 +21,10 @@
 			$("#pageNo").val(0);
 			$("#orderStatus").val("");
 			$("#orderType").val("");
+			$("#companyName").val("");
+			$("#companyId").val("");
+			$("#officeName").val("");
+			$("#officeId").val("");
 			$("#searchForm").submit();
 	 	 }
 		function page(n,s){//翻页
@@ -63,7 +67,14 @@
 									<form:option value='1'>线上支付</form:option>
 									<form:option value='2'>线下支付</form:option>
 								</form:select>
-                           
+                           <span>归属商家：</span>
+								<sys:treeselect id="company" name="franchiseeId" value="${refundOrder.franchiseeId}" labelName="franchiseeName" 
+									labelValue="${refundOrder.franchiseeName}" title="公司" 
+									url="/sys/franchisee/treeData" cssClass=" form-control input-sm" allowClear="true" />
+                           <span>归属机构：</span>
+								<sys:treeselect id="office" name="arrearageOffice" value="${refundOrder.arrearageOffice}" labelName="arrearageOfficeName" labelValue="${refundOrder.arrearageOfficeName}" title="部门"
+									url="/sys/office/treeData?type=2" cssClass=" form-control input-sm" allowClear="true"
+									notAllowSelectRoot="false" notAllowSelectParent="false" />
                         </div>
                         <div class="pull-right">
 							<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>

@@ -160,5 +160,9 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 		return refundOrderMapper.findProofList(order_id) ;
 	}
 
+	public void refundOrderTimeout(String timeout) {
+		 this.refundOrderMapper.refundOrderTimeout(timeout) ;
+	}
+
 	
 }

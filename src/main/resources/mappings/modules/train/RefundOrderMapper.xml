@@ -81,6 +81,7 @@
 			o.name as arrearageOfficeName,
 <!-- 			o.short_name as arrearageOfficeName, -->
 			f.name as franchiseeName,
+			f.id AS franchiseeId,
 <!-- 			f.short_name as franchiseeName, -->
 			ro.explains,
 			ro.remarks
@@ -101,6 +102,9 @@
 		</if>
 		<if test="arrearageOffice != null and arrearageOffice !=''">
 			and ro.arrearage_office = #{arrearageOffice}
+		</if>
+		<if test="franchiseeId != null and franchiseeId !=''">
+			AND o.franchisee_id = #{franchiseeId}
 		</if>
 		order by ro.order_status,ro.add_time desc
 	</select>
@@ -296,4 +300,11 @@
 		WHERE
 			refs.order_id = #{order_id}
 	</select>
+	<update id="refundOrderTimeout" parameterType="String">
+		UPDATE trains.train_refund_order
+		SET order_status = '5'
+		WHERE
+			order_status = '1'
+		AND add_time <![CDATA[<]]> DATE_SUB(NOW(),INTERVAL ${timeout} MINUTE)
+	</update>
 </mapper>

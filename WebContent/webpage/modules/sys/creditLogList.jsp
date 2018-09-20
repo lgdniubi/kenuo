@@ -54,10 +54,10 @@
                              		${officeAcount.createBy.name}
                              	</td>
                              	<td style="text-align: center;">
-                             		${officeAcount.oldCreditLimit - officeAcount.creditLimit}
+                             		${officeAcount.creditLimit - officeAcount.oldCreditLimit}
                              	</td>
                              	<td style="text-align: center;">
-                             		总额度由【officeAcount.oldCreditLimit】变更为【officeAcount.creditLimit】
+                             		总额度由【${officeAcount.oldCreditLimit}】变更为【${officeAcount.creditLimit}】
                              	</td>
 					</tr>
 				</c:forEach>

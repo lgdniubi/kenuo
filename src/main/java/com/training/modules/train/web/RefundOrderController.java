@@ -129,7 +129,9 @@ public class RefundOrderController extends BaseController {
 			String fileName = "信用账单" + DateUtils.getDate("yyyyMMddHHmmss") + ".xlsx";
 //			Page<User> page = systemService.findUser(new Page<User>(request, response, -1), user);
 			Page<RefundOrderExport> page = this.refundOrderService.findExportPage(new Page<RefundOrderExport>(request,response,-1), refundOrder);
-			new ExportExcel("信用账单", RefundOrderExport.class).setDataList(page.getList()).write(response, fileName).dispose();
+			if(page.getList() !=null && page.getList().size()>0){
+				new ExportExcel("信用账单", RefundOrderExport.class).setDataList(page.getList()).write(response, fileName).dispose();
+			}
 			return null;
 		} catch (Exception e) {
 			addMessage(redirectAttributes, "导出用户失败！失败信息：" + e);

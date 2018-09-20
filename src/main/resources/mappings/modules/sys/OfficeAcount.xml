@@ -84,7 +84,7 @@
 			`credit_limit`,
 			`old_credit_limit`,
 			`create_by_id`,
-			`create_by_name`,
+			`create_by_name` AS 'createBy.name',
 			`create_date`
 		FROM sys_office_credit_log
 		WHERE office_id = #{officeId}
