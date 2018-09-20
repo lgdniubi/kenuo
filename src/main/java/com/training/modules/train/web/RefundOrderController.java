@@ -57,6 +57,7 @@ public class RefundOrderController extends BaseController {
 	@RequestMapping(value="queryStatementOfRefund")
 	public String queryStatementOfRefund(Model model,String order_id){
 		model.addAttribute("statements", this.refundOrderService.queryStatementOfRefund(order_id));
+		model.addAttribute("order_id", order_id);
 		return "modules/train/statementList";
 	}
 	/**
@@ -66,8 +67,9 @@ public class RefundOrderController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value="queryRefundOrderDetail")
-	public String queryRefundOrderDetail(Model model,String order_id){
+	public String queryRefundOrderDetail(Model model,String order_id,Integer opflag){
 		model.addAttribute("refundOrder", this.refundOrderService.queryRefundOrderDetail(order_id));
+		model.addAttribute("opflag", opflag);
 		return "modules/train/refundOrderDetail";
 	}
 	/**
@@ -93,14 +95,14 @@ public class RefundOrderController extends BaseController {
 	@RequestMapping(value="makeSureInAccount")
 	public String makesure(Model model,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,String order_id,String office_id,double amount/*,String billmonth*/,String status,String remarks){
 		try {
-			this.refundOrderService.makeSureInAccount(order_id,office_id,amount,status,remarks);
+//			this.refundOrderService.makeSureInAccount(order_id,office_id,amount,status,remarks);
 			addMessage(redirectAttributes, "操作成功!");
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "确认入账", e);
 			logger.error("确认入账错误信息:"+e.getMessage());
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}	
-		return "redirect:" + adminPath + "/train/refundOrder/list";
+		return "redirect:" + adminPath + "/train/refundOrder/queryRefundOrderDetail?order_id="+order_id;
 	}
 	/**
 	 * 订单日志

@@ -7,9 +7,26 @@
     <meta name="decorator" content="default"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no">
      <link rel="stylesheet" href="${ctxStatic}/train/css/exam.css">
+     <!-- 引入layui.css -->
+	<link href="${ctxStatic}/layer-v2.0/layer/skin/layui.css" type="text/css" rel="stylesheet">
     <title>对账单列表</title>
 </head>
 <body>
+	<div class="ibox-content">
+		<div class="clearfix">
+			<div class="nav">
+				<ul class="layui-tab-title">
+					<li >
+						<a href="${ctx}/train/refundOrder/queryRefundOrderDetail?order_id=${order_id}">账单详情</a>
+					</li>
+					<li  class="layui-this">
+						<a href="${ctx}/train/refundOrder/queryStatementOfRefund?order_id=${order_id}">对账单信息</a>
+					</li>
+					
+				</ul>
+			</div>
+		</div>
+	</div>
 	<div class="wrapper-content">
         <div class="ibox">
             <div class="ibox-title">

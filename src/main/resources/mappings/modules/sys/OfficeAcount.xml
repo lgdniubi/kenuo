@@ -10,6 +10,7 @@
 		SELECT
 			o.`name` AS officeName,
 			o.id AS officeId,
+			fr.id AS companyId,
 			fr.`name` AS companyName,
 			oa.credit_limit,
 			oa.used_limit
@@ -17,6 +18,13 @@
 			sys_office o
 		LEFT JOIN sys_office_account oa ON oa.office_id = o.id
 		LEFT JOIN sys_franchisee fr ON fr.id = o.franchisee_id
+		WHERE 1=1
+		<if test="officeId != null and officeId !=''">
+			AND o.id = #{officeId}
+		</if>
+		<if test="companyId != null and companyId !=''">
+			AND o.franchisee_id = #{companyId}
+		</if>
 	</select>
 	
 	<select id="findOfficeAcount" parameterType="String" resultType="com.training.modules.sys.entity.OfficeAcount">
@@ -70,7 +78,7 @@
 				SYSDATE()
 			)
 	</insert>
-	<select id="findCreditLogList">
+	<select id="findCreditLogList" resultType="OfficeAcount">
 		SELECT
 			`office_id`,
 			`credit_limit`,

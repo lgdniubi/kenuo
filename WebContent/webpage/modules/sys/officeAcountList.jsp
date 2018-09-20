@@ -17,7 +17,10 @@
 	   }
 		function resetnew(){//重置，页码清零
 			$("#pageNo").val(0);
-			$("#orderId").val("");
+			$("#companyName").val("");
+			$("#companyId").val("");
+			$("#officeName").val("");
+			$("#officeId").val("");
 			$("#searchForm").submit();
 	 	 }
 		function page(n,s){//翻页
@@ -44,24 +47,16 @@
                     	<!-- 分页隐藏文本框 -->
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
-                        <%-- <div class="form-group">
-                            <label>还款单编号：<input id="orderId" name="orderId" type="text" value="${refundOrder.orderId}" class="form-control" placeholder="搜索账单编号"></label> 
-                            <label>账单状态：</label> 
-                            	<form:select class="form-control "  path="orderStatus">
-									<form:option value=''>全部</form:option>
-									<form:option value='2'>待审核</form:option>
-									<form:option value='3'>已入账</form:option>
-									<form:option value='4'>已驳回</form:option>
-									<form:option value='5'>已取消</form:option>
-								</form:select>
-                            <label>支付类型：</label> 
-                            	<form:select class="form-control "  path="orderType">
-									<form:option value=''>全部</form:option>
-									<form:option value='1'>线上支付</form:option>
-									<form:option value='2'>线下支付</form:option>
-								</form:select>
-                           
-                        </div> --%>
+                        <div class="form-group">
+                        	<span>归属商家：</span>
+								<sys:treeselect id="company" name="companyId" value="${officeAcount.companyId}" labelName="companyName" 
+									labelValue="${officeAcount.companyName}" title="公司" 
+									url="/sys/franchisee/treeData" cssClass=" form-control input-sm" allowClear="true" />
+                           <span>归属机构：</span>
+								<sys:treeselect id="office" name="officeId" value="${officeAcount.officeId}" labelName="officeName" labelValue="${officeAcount.officeName}" title="部门"
+									url="/sys/office/treeData?type=2" cssClass=" form-control input-sm" allowClear="true"
+									notAllowSelectRoot="false" notAllowSelectParent="false" />
+                        </div>
                         <div class="pull-right">
 							<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
 							<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="resetnew()" ><i class="fa fa-refresh"></i> 重置</button>
@@ -96,11 +91,11 @@
                                	</td>
 								<td style="text-align: center;">
 									<shiro:hasPermission name="sys:office:editCredit">
-										<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/sys/officeCredit/toEditCredit?office_id=${acount.officeId}","额度管理", false)'>额度管理</button>	
-										<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/sys/officeCredit/creditLogList?officeId=${acount.officeId}","额度日志", false)'>额度日志</button>	
+										<button class="btn btn-success btn-xs " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/sys/officeCredit/toEditCredit?office_id=${acount.officeId}","额度管理", false)'>额度管理</button>	
+<%-- 										<button class="btn btn-success btn-xs " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/sys/officeCredit/creditLogList?officeId=${acount.officeId}","额度日志", false)'>额度日志</button>	 --%>
 									</shiro:hasPermission>
 									 <shiro:hasPermission name="sys:office:refundList">
-										<button class="btn btn-white btn-sm " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/sys/officeCredit/refundList?arrearageOffice=${acount.officeId}","还款记录", false)'>还款记录</button>	
+										<button class="btn btn-success btn-xs " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/sys/officeCredit/refundList?arrearageOffice=${acount.officeId}","还款记录", false)'>还款记录</button>	
 									</shiro:hasPermission>
 								</td>
 							</tr>

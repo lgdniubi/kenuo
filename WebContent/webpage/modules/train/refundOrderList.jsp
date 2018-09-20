@@ -132,17 +132,19 @@
 								<td style="text-align: center;">
 									<shiro:hasPermission name="train:refundOrder:makeSureInAccount">
 										<c:if test="${refund.orderStatus eq '2'}">
-											<%-- <a href="${ctx}/train/refundOrder/makeSureInAccount?office_id=${refund.arrearageOffice}&order_id=${refund.orderId}&amount=${refund.amount}&billmonth=${refund.billmonth}"  onclick="return confirmx('确定已入账？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>确认入账</a> --%>
-											<a class="btn btn-success btn-xs"  onclick="openDialog('审核','${ctx}/train/refundOrder/toAuditRefundOrder?office_id=${refund.arrearageOffice}&order_id=${refund.orderId}&amount=${refund.amount}<%-- &billmonth=${refund.billmonth} --%>', '700px', '300px')"><i class="fa fa-edit"></i>审核</a>
+											<%-- <a href="${ctx}/train/refundOrder/makeSureInAccount?office_id=${refund.arrearageOffice}&order_id=${refund.orderId}&amount=${refund.amount}&billmonth=${refund.billmonth}"  onclick="return confirmx('确定已入账？', this.href)" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i>确认入账</a> 
+											<a class="btn btn-success btn-xs"  onclick="openDialog('审核','${ctx}/train/refundOrder/toAuditRefundOrder?office_id=${refund.arrearageOffice}&order_id=${refund.orderId}&amount=${refund.amount}&opflag=0', '700px', '300px')"><i class="fa fa-edit"></i>审核</a>--%>
+											<button class="btn btn-success btn-xs " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/refundOrder/queryRefundOrderDetail?order_id=${refund.orderId }&opflag=0","审核", false)'>审核</button>	
 										</c:if>
 									</shiro:hasPermission>
 									 <shiro:hasPermission name="train:articlelist:deleteOne">
 										<c:if test="${refund.orderStatus ne '2'}">
-										<a class="btn btn-success btn-xs"  onclick="openDialogView('对账单','${ctx}/train/refundOrder/queryStatementOfRefund?order_id=${refund.orderId }', '800px', '500px')"><i class="fa fa-edit"></i>对账单详情</a>
+										<button class="btn btn-success btn-xs " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/refundOrder/queryRefundOrderDetail?order_id=${refund.orderId }&opflag=1","详情", false)'>详情</button>	
+										
 										</c:if>
 									</shiro:hasPermission>
-									<a class="btn btn-success btn-xs"  onclick="openDialogView('账单日志','${ctx}/train/refundOrder/queryRefundOrderLogList?order_id=${refund.orderId}', '800px', '500px')"><i class="fa fa-edit"></i>账单日志</a>
-									<a class="btn btn-success btn-xs"  onclick="openDialogView('详细信息','${ctx}/train/refundOrder/queryRefundOrderDetail?order_id=${refund.orderId}', '800px', '500px')"><i class="fa fa-edit"></i>详细信息</a>
+									<%-- 	<a class="btn btn-success btn-xs"  onclick="openDialogView('账单日志','${ctx}/train/refundOrder/queryRefundOrderLogList?order_id=${refund.orderId}', '800px', '500px')"><i class="fa fa-edit"></i>账单日志</a>
+								<button class="btn btn-success btn-xs " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/refundOrder/queryRefundOrderDetail?order_id=${refund.orderId}","详细信息", false)'>详细信息</button>	queryStatementOfRefund --%>
 									
 								</td>
 							</tr>

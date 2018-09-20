@@ -4,7 +4,8 @@
 <head>
 	<title>编辑信用额度</title>
 	<meta name="decorator" content="default"/>
-	
+	<!-- 引入layui.css -->
+	<link href="${ctxStatic}/layer-v2.0/layer/skin/layui.css" type="text/css" rel="stylesheet">
 	
 	<%-- <link rel="stylesheet" href="${ctxStatic}/train/css/exam.css"> --%>
 	<script type="text/javascript">
@@ -67,6 +68,19 @@
 </head>
 <body>
 	<div class="ibox-content">
+		<div class="clearfix">
+			<div class="nav">
+				<ul class="layui-tab-title">
+					<li  class="layui-this">
+						<a href="${ctx}/sys/officeCredit/toEditCredit?office_id=${officeAcount.officeId}">额度调整</a>
+					</li>
+					<li >
+						<a href="${ctx}/sys/officeCredit/creditLogList?officeId=${officeAcount.officeId}">额度日志</a>
+					</li>
+					
+				</ul>
+			</div>
+		</div>
 		<form:form id="inputForm" modelAttribute="officeAcount" action="${ctx}/sys/officeCredit/updateOfficeCreditLimit" method="post" class="form-horizontal">
 			<input type="hidden" value="${officeAcount.officeId }" name="officeId">
 			<%-- <input type="hidden" name="usedLimit" id="usedLimit" value="${officeAcount.usedLimit}"> --%>

@@ -12,6 +12,7 @@ public class OfficeAcount extends DataEntity<OfficeAcount> {
 	private static final long serialVersionUID = 100009L;
 	private String officeId; //机构id
 	private String officeName; //机构名称
+	private String companyId; //商家ID
 	private String companyName; //商家名称
 	private double amount = 0;	//金额
 	private int integralEarnings = 0; //贡献登云平台总云币
@@ -71,6 +72,12 @@ public class OfficeAcount extends DataEntity<OfficeAcount> {
 	}
 	public void setOfficeName(String officeName) {
 		this.officeName = officeName;
+	}
+	public String getCompanyId() {
+		return companyId;
+	}
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
 	}
 	public String getCompanyName() {
 		return companyName;

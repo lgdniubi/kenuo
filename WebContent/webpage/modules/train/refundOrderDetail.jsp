@@ -6,25 +6,59 @@
 <head>
 	<title>对账单详情</title>
 	<meta name="decorator" content="default"/>
-
+	<!-- 引入layui.css -->
+	<link href="${ctxStatic}/layer-v2.0/layer/skin/layui.css" type="text/css" rel="stylesheet">
+	<style>
+		body{padding-bottom: 80px;}
+		.fixed-footer{position: fixed;left: 0;bottom: 0;width: 100%;box-sizing: border-box;z-index: 9999;background:#fff;border-top: 1px solid #dcdcdc;line-height: 35px;padding: 20px;text-align: right;}
+		.fixed-footer .btns{display: inline-block;line-height: 35px;width: 85px;text-align: center;font-size: 14px;color: #fff;margin-left: 20px;border-radius: 6px;cursor: pointer}
+		.yes-btn{background: #4d90fe;}
+		.cancel-btn{background: #999;}
+	</style>
 	<!-- 放大图片js -->
 	<script type="text/javascript" src="${ctxStatic}/train/imgZoom/jquery.imgZoom.js"></script>
 	
 	<script type="text/javascript">
-		/* var validateForm;
-		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-			if(validateForm.form()){
-        	  loading('正在提交，请稍等...');
-		      $("#inputForm").submit();
-	     	  return true;
-		  	}
-		  return false;
-		} */
+		function auditPass(){
+			var msg = "确认入账？";
+			top.layer.confirm(msg, {icon: 3, title:'系统提示'}, function(index){
+				top.layer.close(index);
+				$("#status").val('3');
+			    $("#inputForm").submit();
+			});
+		    
+		} 
+		function auditNoPass(){
+			var amount =  $("#amount").val();
+			var orderId =  $("#orderId").val();
+			var officeId =  $("#officeId").val();
+			var URL = "${ctx}/train/refundOrder/toAuditRefundOrder?office_id="+officeId+"&order_id="+orderId+"&amount="+amount;
+			openDialog('审核',URL, '300px', '300px');
+		} 
 	</script>
 </head>
 <body>
-	<form:form id="inputForm" modelAttribute="userCheck" action="${ctx}/train/userCheck/save" method="post" class="form-horizontal">
+	<div class="ibox-content">
+		<div class="clearfix">
+			<div class="nav">
+				<ul class="layui-tab-title">
+					<li  class="layui-this">
+						<a href="${ctx}/train/refundOrder/queryRefundOrderDetail?order_id=${refundOrder.orderId}">账单详情</a>
+					</li>
+					<li >
+						<a href="${ctx}/train/refundOrder/queryStatementOfRefund?order_id=${refundOrder.orderId }">对账单信息</a>
+					</li>
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+	<form:form id="inputForm" modelAttribute="refundOrder" action="${ctx}/train/refundOrder/makeSureInAccount" method="post" class="form-horizontal">
 		<sys:message content="${message}"/>
+		<input type="hidden" name="order_id" id="orderId" value="${refundOrder.orderId}"/>
+		<input type="hidden" name="office_id" id="officeId" value="${refundOrder.arrearageOffice}"/>
+		<input type="hidden" name="amount" id="amount" value="${refundOrder.amount}"/>
+		<input type="hidden" name="status" id="status" value="3"/>
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 			<tbody>
 			    <tr>
@@ -116,14 +150,24 @@
 			<tbody>
 				<tr>
 			         <td class="active"><label class="pull-right">说明:</label></td>
-			         <td colspan="4">${refundOrder.remarks }</td>
+			         <td colspan="4">${refundOrder.explains }</td>
 				</tr>
+			<c:if test="${refundOrder.orderStatus eq '4'}">
 				<tr>
 			         <td class="active"><label class="pull-right">驳回原因:</label></td>
 			         <td colspan="4">${refundOrder.remarks }</td>
 				</tr>
+			</c:if>
 			</tbody>
-		</table>  
+		</table> 
+		<c:if test="${opflag eq '0'}">
+			<div class="fixed-footer">
+				<span class="btns yes-btn" onclick="auditPass()">确认入账</span>
+				 <c:if test="${refundOrder.orderType eq '2'}">
+				<span class="btns cancel-btn" onclick="auditNoPass()">审核驳回</span>
+				 </c:if>
+			</div> 
+	   </c:if>
 	</form:form> 
 	<script type="text/javascript">
 		//点击放大图片
