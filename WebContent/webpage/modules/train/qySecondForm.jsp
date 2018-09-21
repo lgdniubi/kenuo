@@ -14,7 +14,7 @@
 			  //if(confirms('点击确定相当于授权，不想授权请点击取消')){
 	        	  loading('正在提交，请稍等...');
 			      $("#inputForm").submit();
-		     	  return true;
+		     	  return true; 
 		  	}
 		  return false;
 		}
@@ -94,7 +94,32 @@
 					}
 				}
 			});
+			
+			var c = '${modelFranchisee.paytype}';
+			$(".pay").on("click",function(e){
+				e.preventDefault();
+								
+				var that = $(this)
+				
+				if(c==that.val()){
+					return;
+				}
+				var msg = "修改支付方式之后，商家内店铺的支付账户性质会发生变化，之前的付款方式将仅用于还款，还款方式可以用于付款/还款，是否继续更改？";
+				top.layer.confirm(msg, {icon: 3, title:'系统提示'},function(index, layero){
+					c = that.val();
+					that.prop("checked",true);
+					top.layer.close(index);
+					}, function(index){
+					  
+				});
+			});
+			
 		});
+		
+		
+		
+		function changePay(){
+		}
 	</script>
 </head>
 <body>
@@ -118,8 +143,8 @@
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">采购支付方式:</label></td>
-			         <td><input id="paytype1" class=" input-sm required" name="paytype" value="1" aria-required="true" <c:if test="${modelFranchisee.paytype == 1}">checked="checked"</c:if> type="radio">线上支付</td>
-			         <td colspan="2"><input id="paytype2" class=" input-sm required" name="paytype" value="0" aria-required="true" <c:if test="${modelFranchisee.paytype == 0}">checked="checked"</c:if> type="radio">线下支付</td>
+			         <td><input id="paytype1" class="pay input-sm required" name="paytype" value="1" aria-required="true" <c:if test="${modelFranchisee.paytype == 1}">checked="checked"</c:if> type="radio">在线支付</td>
+			         <td colspan="2"><input id="paytype2" class="pay input-sm required" name="paytype" value="0" aria-required="true" <c:if test="${modelFranchisee.paytype == 0}">checked="checked"</c:if> type="radio">线下支付</td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">授权期限:</label></td>

@@ -271,7 +271,7 @@
 						</tr>
 					    <tr>
 					         <td class="active"><label class="pull-right">采购支付方式:</label></td>
-					         <td><input id="paytype1" class=" input-sm required" name="paytype" value="1" aria-required="true" <c:if test="${modelFranchisee.paytype == 1}">checked="checked"</c:if> type="radio">线上支付</td>
+					         <td><input id="paytype1" class=" input-sm required" name="paytype" value="1" aria-required="true" <c:if test="${modelFranchisee.paytype == 1}">checked="checked"</c:if> type="radio">在线支付</td>
 					         <td colspan="2"><input id="paytype2" class=" input-sm required" name="paytype" value="0" aria-required="true" <c:if test="${modelFranchisee.paytype == 0}">checked="checked"</c:if> type="radio">线下支付</td>
 						</tr>
 					    <tr>
