@@ -19,6 +19,7 @@
 	   }
 		function resetnew(){//重置，页码清零
 			$("#pageNo").val(0);
+			$("#orderId").val("");
 			$("#orderStatus").val("");
 			$("#orderType").val("");
 			$("#companyName").val("");
@@ -67,11 +68,11 @@
 									<form:option value='1'>线上支付</form:option>
 									<form:option value='2'>线下支付</form:option>
 								</form:select>
-                           <span>归属商家：</span>
+                           <span>还款商家：</span>
 								<sys:treeselect id="company" name="franchiseeId" value="${refundOrder.franchiseeId}" labelName="franchiseeName" 
 									labelValue="${refundOrder.franchiseeName}" title="公司" 
 									url="/sys/franchisee/treeData" cssClass=" form-control input-sm" allowClear="true" />
-                           <span>归属机构：</span>
+                           <span>还款机构：</span>
 								<sys:treeselect id="office" name="arrearageOffice" value="${refundOrder.arrearageOffice}" labelName="arrearageOfficeName" labelValue="${refundOrder.arrearageOfficeName}" title="部门"
 									url="/sys/office/treeData?type=2" cssClass=" form-control input-sm" allowClear="true"
 									notAllowSelectRoot="false" notAllowSelectParent="false" />
@@ -134,8 +135,8 @@
 <%--                                		<c:if test="${refund.orderStatus eq '1'}">待支付</c:if> --%>
                                		<c:if test="${refund.orderStatus eq '2'}">待审核</c:if>
                                		<c:if test="${refund.orderStatus eq '3'}">已入账</c:if>
-                               		<c:if test="${refund.orderStatus eq '4'}">已取消</c:if>
-                               		<c:if test="${refund.orderStatus eq '5'}">已驳回</c:if>
+                               		<c:if test="${refund.orderStatus eq '4'}">已驳回</c:if>
+                               		<c:if test="${refund.orderStatus eq '5'}">已取消</c:if>
                                	</td>
                                	<td style="text-align: center;">
                                		${refund.addTime}

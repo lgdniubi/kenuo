@@ -107,9 +107,9 @@
 				' </div>';
 			}else{
 				html = '<div>' +
-			 	'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio" checked="checked"  name="payType" onclick="setPayType(2)">支付宝（在线支付）　　　　注：可用于付款</p>'+
-				'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio"  name="payType" onclick="setPayType(1)" >微信（在线支付）　　　　注：可用于付款</p>'+
-				'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio" name="payType" onclick="setPayType(0)">银行卡（线下支付）　　　　注：可用于还款和还款</p>'+
+			 	'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio" checked="checked"  name="payType" onclick="setPayType(2)">支付宝（在线支付）　　　　注：可用于还款</p>'+
+				'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio"  name="payType" onclick="setPayType(1)" >微信（在线支付）　　　　注：可用于还款</p>'+
+				'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio" name="payType" onclick="setPayType(0)">银行卡（线下支付）　　　　注：可用于付款和还款</p>'+
 				' </div>';
 			}
 			$('#payType').val(2)
@@ -252,7 +252,7 @@
 			//pay_backurl	
 		
 			$("#file_"+str+"_upload").uploadify({
-				'buttonText' : ' 请选择图片',
+				'buttonText' : '请选择图片',
 				'method' : 'post',
 				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
 				'uploader' : '<%=uploadURL%>',
@@ -622,8 +622,8 @@
 								</label></td>
 							</tr>
 							<tr>
-								<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户银行</label></td>
-						        	<td class="width-35"><input value="${pay.pay_name}" name="payInfos[0].pay_name" class="form-control required"></td>
+								<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行账号:</label></td>
+						        <td class="width-35"><input value="${pay.pay_account}" name="payInfos[0].pay_account" class="form-control required"></td>
 						        	<td class="width-35" rowspan="3">
 						        		<img id="officepayfonturl${i.index}Imgsrc" src="${pay.pay_fonturl}" alt="" style="width: 200px;height: 100px;"/>
 									<input type="hidden" id="payfonturl${i.index}" name="payInfos[0].pay_fonturl" class="required" value="${pay.pay_fonturl}"><!-- 图片隐藏文本框 -->
@@ -645,12 +645,12 @@
 							</tr>
 							
 							<tr>
-								<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>账户名称:</label></td>
+								<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>持卡人姓名:</label></td>
 						        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[0].pay_username" class="form-control required"></td>
 							</tr>
 							<tr>
-								<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行账号:</label></td>
-						        <td class="width-35"><input value="${pay.pay_account}" name="payInfos[0].pay_account" class="form-control required"></td>
+								<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户行地址</label></td>
+					        	<td class="width-35"><input value="${pay.pay_name}" name="payInfos[0].pay_name" class="form-control required"></td>
 							</tr>
 							<tr>
 								<td colspan="6" class="active"><a href="#" onclick="delPayData(0,this)" class="btn btn-danger btn-xs"><i class="fa fa-trash">删除</i></a></td>
@@ -667,13 +667,13 @@
 									</label></td>
 								</tr>
 								<tr>
-									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
+									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>支付宝账号</label></td>
 						        	<td class="width-35"><input value="${pay.pay_account}" name="payInfos[2].pay_account" class="form-control required"></td>
 									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
 							        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[2].pay_username" class="form-control required"></td>
 								</tr>
 								<tr>
-									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
+									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>联系电话:</label></td>
 							        <td colspan="5" class="width-35"><input value="${pay.pay_mobile}" name="payInfos[2].pay_mobile" class="form-control required"></td>
 								</tr>
 								<tr>
@@ -692,14 +692,14 @@
 									</label></td>
 								</tr>
 								<tr>
-									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
+									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>微信号</label></td>
 							        <td class="width-35"><input value="${pay.pay_account}" name="payInfos[1].pay_account" class="form-control required"></td>
 									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
 							        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[1].pay_username" class="form-control required"></td>
 									
 								</tr>
 								<tr>
-									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
+									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>联系电话:</label></td>
 							        <td  colspan="5" class="width-35"><input value="${pay.pay_mobile}" name="payInfos[1].pay_mobile" class="form-control required"></td>
 								</tr>
 								<tr>
@@ -732,8 +732,8 @@
 						</label></td>
 					</tr>
 					<tr>
-						<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户银行</label></td>
-			        	<td class="width-35"><input value="" name="payInfos[0].pay_name" class="form-control required"></td>
+						<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行账号:</label></td>
+				        <td class="width-35"><input value="" name="payInfos[0].pay_account" class="form-control required"></td>
 			        	<td class="width-35" rowspan="3">
 				        	<img id="officepayfonturlImgsrc" src="" alt="" style="width: 200px;height: 100px;"/>
 							<input type="hidden" id="payfonturl" name="payInfos[0].pay_fonturl" class="required" value=""><!-- 图片隐藏文本框 -->
@@ -742,6 +742,7 @@
 								<input type="file" name="file_payfonturl_upload" class="required" id="file_payfonturl_upload">
 							</div>
 							<div id="file_payfonturl_queue"></div>
+							<div >选择银行卡正面</div>
 			        	</td>
 			        	<td class="width-35" rowspan="3">
 				        	<img id="officepaybackurlImgsrc" src="" alt="" style="width: 200px;height: 100px;"/>
@@ -751,16 +752,17 @@
 								<input type="file" name="file_paybackurl_upload" class="required" id="file_paybackurl_upload">
 							</div>
 							<div id="file_paybackurl_queue"></div>
+							<div >选择银行卡反面</div>
 			        	</td>
 					</tr>
 					<input value="0" name="payInfos[0].pay_type" type="hidden">
 					<tr>
-						<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>账户名称:</label></td>
+						<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>持卡人姓名:</label></td>
 				        <td class="width-35"><input value="" name="payInfos[0].pay_username" class="form-control required"></td>
 					</tr>
 					<tr>
-						<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行账号:</label></td>
-				        <td class="width-35"><input value="" name="payInfos[0].pay_account" class="form-control required"></td>
+						<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户行地址</label></td>
+			        	<td class="width-35"><input value="" name="payInfos[0].pay_name" class="form-control required"></td>
 					</tr>
 					<tr>
 						<td colspan="6" class="active"><a href="#" onclick="delPayData(0,this)" class="btn btn-danger btn-xs"><i class="fa fa-trash">删除</i></a></td>
@@ -781,13 +783,13 @@
 						</label></td>
 					</tr>
 					<tr>
-						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
+						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>支付宝账号</label></td>
 			        	<td class="width-35"><input value="" name="payInfos[2].pay_account" class="form-control required"></td>
 						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
 				        <td class="width-35"><input value="" name="payInfos[2].pay_username" class="form-control required"></td>
 					</tr>
 					<tr>
-						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
+						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>联系电话:</label></td>
 				        <td colspan="5" class="width-35"><input value="" name="payInfos[2].pay_mobile" class="form-control required"></td>
 					</tr>
 					<tr>
@@ -809,13 +811,13 @@
 						</label></td>
 					</tr>
 					<tr>
-						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
+						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>微信号</label></td>
 				        <td class="width-35"><input value="" name="payInfos[1].pay_account" class="form-control required"></td>
 						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
 				        <td class="width-35"><input value="" name="payInfos[1].pay_username" class="form-control required"></td>
 					</tr>
 					<tr>
-						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
+						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>联系电话:</label></td>
 				        <td colspan="5" class="width-35"><input value="" name="payInfos[1].pay_mobile" class="form-control required"></td>
 					</tr>
 					<tr>

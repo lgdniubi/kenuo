@@ -72,7 +72,7 @@ public class RefundOrderTimeout extends CommonService{
 		try{
 			
 			String timeout = ParametersFactory.getTrainsParamValues("refundOrderTimeout");
-			timeout = timeout.equals("-1")?"120":timeout;
+//			timeout = timeout.equals("-1")?"120":timeout;
 			refundOrderService.refundOrderTimeout(timeout);
 			
 		

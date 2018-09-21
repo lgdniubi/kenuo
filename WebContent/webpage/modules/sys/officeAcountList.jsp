@@ -52,7 +52,7 @@
 								<sys:treeselect id="company" name="companyId" value="${officeAcount.companyId}" labelName="companyName" 
 									labelValue="${officeAcount.companyName}" title="公司" 
 									url="/sys/franchisee/treeData" cssClass=" form-control input-sm" allowClear="true" />
-                           <span>归属机构：</span>
+                           <span>信用机构：</span>
 								<sys:treeselect id="office" name="officeId" value="${officeAcount.officeId}" labelName="officeName" labelValue="${officeAcount.officeName}" title="部门"
 									url="/sys/office/treeData?type=2" cssClass=" form-control input-sm" allowClear="true"
 									notAllowSelectRoot="false" notAllowSelectParent="false" />
