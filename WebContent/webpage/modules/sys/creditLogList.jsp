@@ -28,7 +28,7 @@
         <div class="ibox">
             <sys:message content="${message}"/>
               <div class=" clearfix">
-                  <form:form class="navbar-form navbar-left searcharea"  id="searchForm" modelAttribute="officeAcount" action="${ctx}/sys/officeCredit/refundList" method="post">
+                  <form:form class="navbar-form navbar-left searcharea"  id="searchForm" modelAttribute="officeAcount" action="${ctx}/sys/officeCredit/creditLogList?officeId=${officeAcount.officeId}" method="post">
                   	<!-- 分页隐藏文本框 -->
 				<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 				<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>

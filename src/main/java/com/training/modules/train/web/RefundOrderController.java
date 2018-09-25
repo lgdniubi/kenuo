@@ -78,18 +78,24 @@ public class RefundOrderController extends BaseController {
 		return "modules/train/refundOrderDetail";
 	}
 	/**
-	 * 审核账单
+	 * 审核账单--不用了2018-9-25 jf
 	 * @param model
 	 * @param order_id
 	 * @return
 	 */
 	@RequestMapping(value="toAuditRefundOrder")
-	public String toAuditRefundOrder(Model model,String office_id,String order_id,double amount,String billmonth){
+	public String toAuditRefundOrder(Model model,String office_id,String order_id,double amount,String billmonth,RedirectAttributes redirectAttributes){
+		RefundOrder refundOrderDetail = this.refundOrderService.queryRefundOrderDetail(order_id);
+		if(!"2".equals(refundOrderDetail.getOrderStatus())){
+			addMessage(redirectAttributes, "账单状态错误");
+			return "redirect:" + adminPath + "/train/refundOrder/list?repage";
+		}else{
 		model.addAttribute("office_id", office_id);
 		model.addAttribute("order_id", order_id);
 		model.addAttribute("amount",amount);
 		model.addAttribute("billmonth", billmonth);
 		return "modules/train/auditRefundOrder";
+		}
 	}
 	/**
 	 * 确认入账
@@ -100,14 +106,19 @@ public class RefundOrderController extends BaseController {
 	@RequestMapping(value="makeSureInAccount")
 	public String makesure(Model model,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,String order_id,String office_id,double amount/*,String billmonth*/,String status,String remarks){
 		try {
-			this.refundOrderService.makeSureInAccount(order_id,office_id,amount,status,remarks);
-			addMessage(redirectAttributes, "操作成功!");
+			RefundOrder refundOrderDetail = this.refundOrderService.queryRefundOrderDetail(order_id);
+			if(!"2".equals(refundOrderDetail.getOrderStatus())){
+				addMessage(redirectAttributes, "账单状态错误");
+			}else{
+				this.refundOrderService.makeSureInAccount(order_id,office_id,amount,status,remarks);
+				addMessage(redirectAttributes, "操作成功!");
+			}
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "确认入账", e);
 			logger.error("确认入账错误信息:"+e.getMessage());
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}	
-		return "redirect:" + adminPath + "/train/refundOrder/queryRefundOrderDetail?order_id="+order_id;
+		return "redirect:" + adminPath + "/train/refundOrder/queryRefundOrderDetail?opflag=1&order_id="+order_id;
 	}
 	/**
 	 * 订单日志

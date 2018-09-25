@@ -133,6 +133,7 @@
 				</tr>
 			</tbody>
 		</table>
+		<c:if test="${refundOrder.orderType eq '2'}">
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 			<tbody>
 			    <tr>
@@ -168,6 +169,41 @@
 			</c:if>
 			</tbody>
 		</table> 
+		</c:if>
+		<%-- <c:if test="${refundOrder.orderType eq '1'}">
+		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+			<tbody>
+			    <tr>
+			    	<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="5"><label class="pull-left">付款账户:</label></td>
+				</tr>
+				<tr>
+			         <th class="active" align="center">支付宝账号:</td>
+			         <th class="active" align="center">姓名:</td>
+			         <th class="active" align="center">电话:</td>
+				</tr>
+				<c:forEach items="${refundOrder.bankList}" var="bank">
+				<tr>
+			         <td align="center">${bank.bankaccount}</td>
+			         <td align="center">${bank.openbank }</td>
+			         <td align="center">${bank.openname }</td>
+				</tr>
+				</c:forEach>
+			</tbody>
+			<tbody>
+				<tr>
+			         <td class="active"><label class="pull-right">说明:</label></td>
+			         <td colspan="4">${refundOrder.explains }</td>
+				</tr>
+			<c:if test="${refundOrder.orderStatus eq '4'}">
+				<tr>
+			         <td class="active"><label class="pull-right">驳回原因:</label></td>
+			         <td colspan="4">${refundOrder.remarks }</td>
+				</tr>
+			</c:if>
+			</tbody>
+		</table> 
+		</c:if> --%>
+		
 		<c:if test="${opflag eq '1'}">
 			<table id="treeTable" class="table table-bordered table-hover table-striped">
 				<thead>

@@ -112,7 +112,7 @@
 									 <shiro:hasPermission name="train:articlelist:deleteOne">
 										<c:if test="${refund.orderStatus ne '2'}">
 <%-- 										<a class="btn btn-success btn-xs"  onclick="openDialogView('对账单','${ctx}/train/refundOrder/queryStatementOfRefund?order_id=${refund.orderId }', '800px', '500px')"><i class="fa fa-edit"></i>对账单详情</a> --%>
-												详情
+												<button class="btn btn-success btn-xs " data-toggle="tooltip" data-placement="left" onclick='top.openTab("${ctx}/train/refundOrder/queryRefundOrderDetail?order_id=${refund.orderId }&opflag=1","详情", false)'>详情</button>	
 										</c:if>
 									</shiro:hasPermission>
 								</td>
