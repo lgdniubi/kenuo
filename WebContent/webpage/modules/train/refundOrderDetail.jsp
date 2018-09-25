@@ -71,7 +71,7 @@
 			<tbody>
 			    <tr>
 			    	<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="3"><label class="pull-left">还款信息:</label></td>
-			         <td >
+			         <td style="height:1px;border-top:2px solid #555555; color: red;font-weight:bold" >
 <%-- 			         	<c:if test="${refundOrder.orderStatus eq '1'}">待支付</c:if> --%>
 			         	<c:if test="${refundOrder.orderStatus eq '2'}">待审核</c:if>
 			         	<c:if test="${refundOrder.orderStatus eq '3'}">已入账</c:if>
@@ -151,7 +151,7 @@
 			         <td align="center">${bank.bankaccount}</td>
 			         <td align="center">${bank.openbank }</td>
 			         <td align="center">${bank.openname }</td>
-			         <td align="center"><span class="jq-photo" data-link='${ctx}/train/refundOrder/proof?order_id=${refundOrder.orderId}'>查看</span></td>
+			         <td align="center"><span class="jq-photo" data-link='${ctx}/train/refundOrder/proof?order_id=${refundOrder.orderId}'><a style="color: #1c84c6">查看</a></span></td>
 				</tr>
 				</c:forEach>
 			</tbody>
@@ -169,9 +169,11 @@
 			</tbody>
 		</table> 
 		<c:if test="${opflag eq '1'}">
-			<table id="treeTable"
-				class="table table-bordered table-hover table-striped">
+			<table id="treeTable" class="table table-bordered table-hover table-striped">
 				<thead>
+					<tr>
+				    	<td align="center" style="height:1px;border-top:2px solid #555555;" colspan="3"><label class="pull-left">日志:</label></td>
+					</tr>
 					<tr>
 						<th style="text-align: center;">操作时间</th>
 						<th style="text-align: center;">操作人</th>

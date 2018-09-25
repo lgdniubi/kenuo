@@ -13,7 +13,8 @@
 			fr.id AS companyId,
 			fr.`name` AS companyName,
 			oa.credit_limit,
-			oa.used_limit
+			oa.used_limit,
+			DATE_FORMAT((SELECT MAX(pay_time) FROM train_refund_order WHERE arrearage_office = o.id ),'%Y-%m-%d %H:%i:%s') as lastRefundTime
 		FROM
 			sys_office o
 		LEFT JOIN sys_office_account oa ON oa.office_id = o.id

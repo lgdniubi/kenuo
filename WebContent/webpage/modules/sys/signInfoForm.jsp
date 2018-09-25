@@ -632,6 +632,7 @@
 										<input type="file" name="file_payfonturl${i.index}_upload" class="required" id="file_payfonturl${i.index}_upload">
 									</div>
 									<div id="file_payfonturl${i.index}_queue"></div>
+									<div >选择银行卡正面</div>
 						        	</td>
 						        	<td class="width-35" rowspan="3">
 						        		<img id="officepaybackurl${i.index}Imgsrc" src="${pay.pay_backurl}" alt="" style="width: 200px;height: 100px;"/>
@@ -641,6 +642,7 @@
 										<input type="file" name="file_paybackurl${i.index}_upload" class="required" id="file_paybackurl${i.index}_upload">
 									</div>
 									<div id="file_paybackurl${i.index}_queue"></div>
+									<div >选择银行卡反面</div>
 						        	</td>
 							</tr>
 							

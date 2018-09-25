@@ -69,7 +69,7 @@ public class RefundOrderController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value="queryRefundOrderDetail")
-	public String queryRefundOrderDetail(Model model,String order_id,Integer opflag){
+	public String queryRefundOrderDetail(Model model,String order_id,String opflag){
 		model.addAttribute("refundOrder", this.refundOrderService.queryRefundOrderDetail(order_id));
 		if("1".equals(opflag)){	//0是审核，1是详情
 			model.addAttribute("log", this.refundOrderService.queryRefundOrderLogList(order_id));

@@ -71,6 +71,7 @@
                    			<th style="text-align: center;">所属商家</th>
                    			<th style="text-align: center;">总额度</th>
                    			<th style="text-align: center;">欠款</th>
+                   			<th style="text-align: center;">最近还款</th>
                    			<th style="text-align: center;">操作</th>
                    		</tr>
 	                 </thead>
@@ -88,6 +89,9 @@
                                	</td>
                                	<td style="text-align: center;">
                                		${acount.creditLimit - acount.usedLimit}
+                               	</td>
+                               	<td style="text-align: center;">
+                               		${acount.lastRefundTime}
                                	</td>
 								<td style="text-align: center;">
 									<shiro:hasPermission name="sys:office:editCredit">
