@@ -48,7 +48,7 @@
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
                         <div class="form-group">
-                        	<span>归属商家：</span>
+                        	<span>所属商家：</span>
 								<sys:treeselect id="company" name="companyId" value="${officeAcount.companyId}" labelName="companyName" 
 									labelValue="${officeAcount.companyName}" title="公司" 
 									url="/sys/franchisee/treeData" cssClass=" form-control input-sm" allowClear="true" />

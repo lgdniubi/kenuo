@@ -26,6 +26,7 @@
 		<if test="companyId != null and companyId !=''">
 			AND o.franchisee_id = #{companyId}
 		</if>
+		ORDER BY oa.credit_limit DESC
 	</select>
 	
 	<select id="findOfficeAcount" parameterType="String" resultType="com.training.modules.sys.entity.OfficeAcount">

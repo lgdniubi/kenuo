@@ -131,7 +131,7 @@
 			refs.bankaccount,
 			refs.openbank,
 			refs.openname,
-			stat.order_id AS orderCode,
+			group_concat(stat.order_id) AS orderCode,
 			oaccount.credit_limit - oaccount.used_limit AS usedLimit,
 			
 			DATE_FORMAT(ro.add_time,'%Y-%m-%d %H:%i:%s') as addTime,
@@ -154,7 +154,7 @@
 		<if test="orderType != null and orderType !=''">
 			and ro.order_type = #{orderType}
 		</if>
-		GROUP BY stat.order_id
+		GROUP BY ro.order_id
 		ORDER BY ro.order_id,ro.add_time desc
 	</select>
 	

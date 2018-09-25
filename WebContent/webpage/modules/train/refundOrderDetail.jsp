@@ -228,7 +228,7 @@
 			</table>
 		</c:if>
 		
-		<c:if test="${opflag eq '0'}">
+		<c:if test="${opflag eq '0' and refundOrder.orderStatus eq '2'}">
 			<div class="fixed-footer">
 				<span class="btns yes-btn" onclick="auditPass()">确认入账</span>
 				 <c:if test="${refundOrder.orderType eq '2'}">
