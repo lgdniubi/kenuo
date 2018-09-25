@@ -4,7 +4,7 @@
 <%@ attribute name="url" type="java.lang.String" required="true"%>
 <%@ attribute name="label" type="java.lang.String" required="false"%>
 <%@ attribute name="isSelf" type="java.lang.Boolean" required="false" %>
-<button class="btn btn-white btn-sm" onclick="auditAll(this)" data-toggle="tooltip" data-placement="top"><i class="fa fa-trash-o"> ${label==null?'审核通过':label}</i>
+<button class="btn btn-white btn-sm" onclick="auditAll(this)" data-toggle="tooltip" data-placement="top"> ${label==null?'审核通过':label}
                         </button>
 <%-- 使用方法： 1.将本tag写在查询的form之前；2.传入table的id和controller的url --%>
 <script type="text/javascript">

@@ -485,8 +485,10 @@ public class OfficeController extends BaseController {
 
 	private List<PayInfo> creatPayInfoList(Integer payWay, List<PayInfo> payInfos, String userid) {
 		List<PayInfo> ns = new ArrayList<>();
+		if(payInfos == null) return ns; 
 		PayInfo np ;
 //		if(payWay == 0){ //线下支付
+		if(payInfos.size()>0){
 			PayInfo payInfo = payInfos.get(0);
 			if(payInfo!=null && payInfo.getPay_type() !=null){
 				String[] type = payInfo.getPay_type().split(",");
@@ -510,7 +512,9 @@ public class OfficeController extends BaseController {
 					}
 				}
 			}
+		}
 //		}else if(payWay == 1){ //支付宝支付
+		if(payInfos.size()>1){
 			PayInfo payInfo1 = payInfos.get(1);
 			if(payInfo1!=null && payInfo1.getPay_type() !=null){
 				String[] type = payInfo1.getPay_type().split(",");
@@ -531,6 +535,7 @@ public class OfficeController extends BaseController {
 					}
 				}	
 			}
+		}
 		 //微信支付
 			if(payInfos.size()>2){
 				PayInfo payInfo2 = payInfos.get(2);

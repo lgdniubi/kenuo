@@ -614,51 +614,54 @@
 		      	<tr><td colspan="6" class=""><label class="pull-left">付款账户</label></td></tr>
 		      	</tbody>
 		      		<c:forEach items="${payInfos}" var="pay" varStatus="i">
-			      		<tbody class='bank'>
-			      			<tr>
-								<td colspan="6" class="active"><label class="pull-left">银行卡
-								<c:if test="${payWay == 0}">（用于付款/还款）</c:if>
-								<c:if test="${payWay == 1}">（用于还款）</c:if>
-								</label></td>
-							</tr>
-							<tr>
-								<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行账号:</label></td>
-						        <td class="width-35"><input value="${pay.pay_account}" name="payInfos[0].pay_account" class="form-control required"></td>
-						        	<td class="width-35" rowspan="3">
-						        		<img id="officepayfonturl${i.index}Imgsrc" src="${pay.pay_fonturl}" alt="" style="width: 200px;height: 100px;"/>
-									<input type="hidden" id="payfonturl${i.index}" name="payInfos[0].pay_fonturl" class="required" value="${pay.pay_fonturl}"><!-- 图片隐藏文本框 -->
-									<p>&nbsp;</p>
-						                 	<div class="upload">
-										<input type="file" name="file_payfonturl${i.index}_upload" class="required" id="file_payfonturl${i.index}_upload">
-									</div>
-									<div id="file_payfonturl${i.index}_queue"></div>
-									<div >选择银行卡正面</div>
-						        	</td>
-						        	<td class="width-35" rowspan="3">
-						        		<img id="officepaybackurl${i.index}Imgsrc" src="${pay.pay_backurl}" alt="" style="width: 200px;height: 100px;"/>
-									<input type="hidden" id="paybackurl${i.index}" name="payInfos[0].pay_backurl" value="${pay.pay_backurl}"><!-- 图片隐藏文本框 -->
-									<p>&nbsp;</p>
-						                 	<div class="upload">
-										<input type="file" name="file_paybackurl${i.index}_upload" class="required" id="file_paybackurl${i.index}_upload">
-									</div>
-									<div id="file_paybackurl${i.index}_queue"></div>
-									<div >选择银行卡反面</div>
-						        	</td>
-							</tr>
-							
-							<tr>
-								<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>持卡人姓名:</label></td>
-						        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[0].pay_username" class="form-control required"></td>
-							</tr>
-							<tr>
-								<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户行地址</label></td>
-					        	<td class="width-35"><input value="${pay.pay_name}" name="payInfos[0].pay_name" class="form-control required"></td>
-							</tr>
-							<tr>
-								<td colspan="6" class="active"><a href="#" onclick="delPayData(0,this)" class="btn btn-danger btn-xs"><i class="fa fa-trash">删除</i></a></td>
-								<!-- <td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(0,this)"><i class="icon-add-pattern"></i>删除</div></td> -->
-							</tr>
-						</tbody>
+		      			<c:if test="${pay.pay_type == 0}">
+				      		<tbody class='bank'>
+				      			<tr>
+				      				<input value="0" name="payInfos[0].pay_type" type="hidden">
+									<td colspan="6" class="active"><label class="pull-left">银行卡
+									<c:if test="${payWay == 0}">（用于付款/还款）</c:if>
+									<c:if test="${payWay == 1}">（用于还款）</c:if>
+									</label></td>
+								</tr>
+								<tr>
+									<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行账号:</label></td>
+							        <td class="width-35"><input value="${pay.pay_account}" name="payInfos[0].pay_account" class="form-control required"></td>
+							        	<td class="width-35" rowspan="3">
+							        		<img id="officepayfonturl${i.index}Imgsrc" src="${pay.pay_fonturl}" alt="" style="width: 200px;height: 100px;"/>
+										<input type="hidden" id="payfonturl${i.index}" name="payInfos[0].pay_fonturl" class="required" value="${pay.pay_fonturl}"><!-- 图片隐藏文本框 -->
+										<p>&nbsp;</p>
+							                 	<div class="upload">
+											<input type="file" name="file_payfonturl${i.index}_upload" class="required" id="file_payfonturl${i.index}_upload">
+										</div>
+										<div id="file_payfonturl${i.index}_queue"></div>
+										<div >选择银行卡正面</div>
+							        	</td>
+							        	<td class="width-35" rowspan="3">
+							        		<img id="officepaybackurl${i.index}Imgsrc" src="${pay.pay_backurl}" alt="" style="width: 200px;height: 100px;"/>
+										<input type="hidden" id="paybackurl${i.index}" name="payInfos[0].pay_backurl" value="${pay.pay_backurl}"><!-- 图片隐藏文本框 -->
+										<p>&nbsp;</p>
+							                 	<div class="upload">
+											<input type="file" name="file_paybackurl${i.index}_upload" class="required" id="file_paybackurl${i.index}_upload">
+										</div>
+										<div id="file_paybackurl${i.index}_queue"></div>
+										<div >选择银行卡反面</div>
+							        	</td>
+								</tr>
+								
+								<tr>
+									<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>持卡人姓名:</label></td>
+							        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[0].pay_username" class="form-control required"></td>
+								</tr>
+								<tr>
+									<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户行地址</label></td>
+						        	<td class="width-35"><input value="${pay.pay_name}" name="payInfos[0].pay_name" class="form-control required"></td>
+								</tr>
+								<tr>
+									<td colspan="6" class="active"><a href="#" onclick="delPayData(0,this)" class="btn btn-danger btn-xs"><i class="fa fa-trash">删除</i></a></td>
+									<!-- <td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(0,this)"><i class="icon-add-pattern"></i>删除</div></td> -->
+								</tr>
+							</tbody>
+						</c:if>
 				      	<c:if test="${pay.pay_type == 2}">
 				      		<tbody class='ali'>
 								<tr>
