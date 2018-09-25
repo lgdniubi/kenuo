@@ -154,7 +154,7 @@
 		<if test="orderType != null and orderType !=''">
 			and ro.order_type = #{orderType}
 		</if>
-		GROUP BY ro.order_id
+		GROUP BY stat.order_id
 		ORDER BY ro.order_id,ro.add_time desc
 	</select>
 	
