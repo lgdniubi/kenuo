@@ -470,9 +470,9 @@ public class OfficeController extends BaseController {
 			}
 			officeService.deleteProtocolShopById(String.valueOf(contractInfo.getFranchisee_id()));
 			
-			String oldOfficeAddress = request.getParameter("oldOfficeAddress");
-			String oldOfficeName = request.getParameter("oldOfficeName");
-			officeService.updateAddressAndName(contractInfo, oldOfficeAddress, oldOfficeName);
+//			String oldOfficeAddress = request.getParameter("oldOfficeAddress");
+//			String oldOfficeName = request.getParameter("oldOfficeName");
+//			officeService.updateAddressAndName(contractInfo, oldOfficeAddress, oldOfficeName);
 			
 			addMessage(redirectAttributes, "保存签约信息成功");
 		} catch (Exception e) {
