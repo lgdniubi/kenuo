@@ -24,6 +24,11 @@ public class ModelFranchisee extends DataEntity<ModelFranchisee>{
 	private String paytype;		//支付类型（0：线上支付，1：线下支付）
 //	private String remarks;		//备注
 	private String status;		//过期状态（0：未过期，1：已过期）
+	
+	private Integer groupCount;		//用户可创建群组数量
+	private Integer groupUserCount;		//用户可创建的群组成员数值
+	private Integer memberCount;		//用户的专属会员数量
+	
 	public ModelFranchisee() {
 		super();
 	}
@@ -88,6 +93,25 @@ public class ModelFranchisee extends DataEntity<ModelFranchisee>{
 	}
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	
+	public Integer getGroupCount() {
+		return groupCount;
+	}
+	public void setGroupCount(Integer groupCount) {
+		this.groupCount = groupCount;
+	}
+	public Integer getGroupUserCount() {
+		return groupUserCount;
+	}
+	public void setGroupUserCount(Integer groupUserCount) {
+		this.groupUserCount = groupUserCount;
+	}
+	public Integer getMemberCount() {
+		return memberCount;
+	}
+	public void setMemberCount(Integer memberCount) {
+		this.memberCount = memberCount;
 	}
 	@Override
 	public String toString() {

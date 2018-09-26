@@ -19,9 +19,9 @@
 		/*{margin: 0;padding:0;} */
 		/*查看凭证，页面样式 */
 		#jqPhoto{position: fixed;left: 0;top: 0;width: 100%;height: 100%; z-index: 99999;background-color: rgba(0, 0, 0,.6);display: none;}
-		#jqPhoto #colorBtn{position: absolute;right: 5%;top: 5%;width: 50px;height: 50px;background: url('${ctxStatic}/train/images/close.png') center no-repeat;background-size: 50px;cursor: pointer;}
-		#jqPhotoPage{position: absolute;left:50%;top: 50%;margin-top: -350px;margin-left: -350px; border:none;overflow: hidden;width: 700px;height: 600px;}
-
+		#jqPhoto #colorBtn{position: absolute;right: 23px;top: 16px;width: 17px;height: 15px;background: url(${ctxStatic}/train/images/close.png) center no-repeat;background-size: 15px;cursor: pointer;z-index: 999;opacity: .8;}
+		#jqPhotoPage{position: absolute;left:0;top:0;width: 100%;height: 100%;border:none;overflow: hidden;}
+		
 	</style>
 	<!-- 放大图片js -->
 	<script type="text/javascript" src="${ctxStatic}/train/imgZoom/jquery.imgZoom.js"></script>
