@@ -44,8 +44,9 @@
 		  return false;
 		}
 		function validateImgUrl(){
-			var flag = validOneImg('char')&&validOneImg('icardone')&&validOneImg('icardtwo')&&validOneImg('cardup')&&validOneImg('carddown')&&validOneImg('sign_fonturl')&&validOneImg('sign_backurl')&&validOneImg('cargo_fonturl')&&validOneImg('cargo_backurl')&&validOneImg('audit_fonturl')&&
-			validOneImg('audit_backurl')&&validOneImg('proxy_fonturl')&&validOneImg('proxy_backurl');
+			var flag = validOneImg('char')&&validOneImg('icardone')&&validOneImg('icardtwo')&&validOneImg('cardup')&&validOneImg('carddown');
+			/* &&validOneImg('sign_fonturl')&&validOneImg('sign_backurl')&&validOneImg('cargo_fonturl')&&validOneImg('cargo_backurl')&&validOneImg('audit_fonturl')&&
+			validOneImg('audit_backurl')&&validOneImg('proxy_fonturl')&&validOneImg('proxy_backurl'); */
 			var backFlag = validBackImg();
 			return flag && backFlag;
 		}
