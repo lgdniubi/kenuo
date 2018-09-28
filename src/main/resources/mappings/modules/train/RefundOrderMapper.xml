@@ -101,9 +101,74 @@
 		<if test="orderId != null and orderId !=''">
 			and order_id = #{orderId}
 		</if>
+		<if test="orderStatus != null and orderStatus !=''">
+			and ro.order_status = #{orderStatus}
+		</if>
+		<if test="orderType != null and orderType !=''">
+			and ro.order_type = #{orderType}
+		</if>
+		<if test="arrearageOffice != null and arrearageOffice !=''">
+			and ro.arrearage_office = #{arrearageOffice}
+		</if>
+		<if test="franchiseeId != null and franchiseeId !=''">
+			AND o.franchisee_id = #{franchiseeId}
+		</if>
 		order by ro.add_time desc
 	</select>
-	
+	<select id="findExportList" resultType="RefundOrderExport">
+		SELECT 
+			ro.order_id as orderId,
+			o.name as arrearageOfficeName,
+			ro.arrearage_price as arrearagePrice,
+			ro.amount as amount,
+			CASE ro.order_status 
+						WHEN 1 THEN '待支付'
+						WHEN 2 THEN '待审核'
+						WHEN 3 THEN '已入账'
+						WHEN 4 THEN '已取消'
+						ELSE '取消订单' END AS orderStatus,
+			u.name AS userName,
+			<!-- CASE ro.order_type 
+						WHEN 1 THEN '线上支付'
+						ELSE '线下支付' END AS orderType, -->
+			CASE ro.pay_code 
+						WHEN 'wx' THEN '微信'
+						WHEN 'alipay' THEN '支付宝'
+						ELSE '转账' END AS payCode,
+			ro.bankaccount,
+			ro.openbank,
+			ro.openname,
+			group_concat(stat.order_id) AS orderCode,
+			IFNULL(0, 0) AS usedLimit,
+			
+			DATE_FORMAT(ro.add_time,'%Y-%m-%d %H:%i:%s') as addTime,
+			ro.explains
+		FROM train_refund_order ro
+		left join sys_office o on o.id = ro.arrearage_office
+		LEFT JOIN sys_user u ON u.id= ro.user_id
+		LEFT JOIN train_statement_order sod ON sod.order_id=ro.order_id
+		LEFT JOIN sys_office_statement stat ON stat.id= sod.statement_id
+		
+		where 1=1
+			AND ro.order_status !=1
+		<if test="orderId != null and orderId !=''">
+			and ro.order_id = #{orderId}
+		</if>
+		<if test="orderStatus != null and orderStatus !=''">
+			and ro.order_status = #{orderStatus}
+		</if>
+		<if test="orderType != null and orderType !=''">
+			and ro.order_type = #{orderType}
+		</if>
+		<if test="arrearageOffice != null and arrearageOffice !=''">
+			and ro.arrearage_office = #{arrearageOffice}
+		</if>
+		<if test="franchiseeId != null and franchiseeId !=''">
+			AND o.franchisee_id = #{franchiseeId}
+		</if>
+		GROUP BY ro.order_id
+		ORDER BY ro.order_id,ro.add_time desc
+	</select>
 	
 	<select id="queryStatementOfRefund" resultType="Statement">
 		select 

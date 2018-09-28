@@ -124,4 +124,9 @@ public interface FranchiseeDao extends TreeDao<Franchisee>{
 	 */
 	public List<Franchisee> findAllCompanyList();
 
+	/**
+	 * 查询所有商家信息信息列表
+	 */
+	public List<Franchisee> findCompanyList(Franchisee franchisee);
+	
 }
