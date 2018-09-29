@@ -445,7 +445,7 @@
 					
 				</tr> --%>
 				<tr>
-					<%-- <td class="width-15 active"><label class="pull-right">是否真实的商家:</label></td>
+					<td class="width-15 active"><label class="pull-right">是否真实的商家:</label></td>
 					<td class="width-35" id="isRealFranchisee">
 		         		<c:if test="${franchisee.isRealFranchisee == 0}">
 							<img width="20" height="20" src="${ctxStatic}/ec/images/cancel.png" onclick="changeIsRealFranchisee('${franchisee.id}',1)">&nbsp;&nbsp;否
@@ -453,7 +453,7 @@
 						<c:if test="${franchisee.isRealFranchisee == 1}">
 							<img width="20" height="20" src="${ctxStatic}/ec/images/open.png" onclick="changeIsRealFranchisee('${franchisee.id}',0)">&nbsp;&nbsp;是
 						</c:if>
-					</td> --%>
+					</td>
 					<td class="width-15 active"><label class="pull-right">备注:</label></td>
 					<td class="width-35"><form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="200" class="form-control" /></td>
 				</tr>
