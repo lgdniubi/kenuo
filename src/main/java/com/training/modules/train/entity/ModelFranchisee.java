@@ -109,6 +109,7 @@ public class ModelFranchisee extends DataEntity<ModelFranchisee>{
 	 */
 	private Integer getValue(Integer count,Integer defVal,Integer commonC,Integer topC,Integer superC,String modid) {
 		Integer value = count;
+		if(modid == null){modid = "5";}
 		if(count==null){
 			switch (modid) {
 			case "5":

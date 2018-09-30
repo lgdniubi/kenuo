@@ -260,6 +260,7 @@ public class UserCheckController extends BaseController{
 			}
 		}
 		model.addAttribute("userCheck", userCheck);
+		model.addAttribute("modelFranchisee", new ModelFranchisee());
 		return "modules/train/qyAuthForm";
 	}
 	
