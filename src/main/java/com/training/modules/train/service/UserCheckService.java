@@ -262,6 +262,9 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		}else{
 			//编辑的时候先删除超级管理员角色和公共的角色-----再重新设置新的版本的角色
 			ModelFranchisee franchisee = getQYModelFranchiseeByUserid(modelFranchisee.getUserid());
+			if(Integer.valueOf(franchisee.getModid())>Integer.valueOf(modelFranchisee.getModid())){	//如果版本降级清除IM1v1权限
+				//加大码
+			}
 			if(!franchisee.getModid().equals(modelFranchisee.getModid())){	//如果版本更换才重新设置
 //				deleteAllRolesForUser(modelFranchisee.getUserid(),franchisee.getFranchiseeid());
 				//设置该用户的超级管理员
@@ -282,6 +285,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			//权益修改后如果支付方式改变就清除支付方式，重新签约--改变签约状态
 //			clearPayInfoAndChangeStatus(franchisee,modelFranchisee);	2018-09-21熊猫修改不重签
 		}
+		updateFranchiseeIM(modelFranchisee);	//更新商家IM权限3个字段的值
 		updateInvitationAndPush(find);	//向邀请表和推送消息表更改数据，把所有推送消息设置为未通过，邀请记录：没同意的设置为3会员拒绝，同意的设置为2商家拒绝。
 		save(modelFranchisee);
 		modelFranchisee.setUserid(find.getUserid());
@@ -289,6 +293,13 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 		UserUtils.removeCache("officeList");//清除用户机构缓存，认证通过之后能在机构管理看见
 		clearUserToken(find.getCompanyId());//根据商家id查出所有用户id
 //		int a = 1/0;
+	}
+	
+	/*
+	 * 更新商家IM权限3个字段的值
+	 */
+	private void updateFranchiseeIM(ModelFranchisee modelFranchisee) {
+		userCheckDao.updateFranchiseeIM(modelFranchisee);
 	}
 	
 	private void clearUserToken(String companyId) {

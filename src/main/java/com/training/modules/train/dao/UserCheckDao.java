@@ -225,4 +225,10 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	 */
 	public void updateApplyUserId(@Param("oldSuperUserId")String oldSuperUserId, @Param("superUserId")String superUserId);
 	
+	/**
+	 * 更新商家IM权限3个字段的值
+	 * @param modelFranchisee
+	 */
+	public void updateFranchiseeIM(ModelFranchisee modelFranchisee);
+	
 }
