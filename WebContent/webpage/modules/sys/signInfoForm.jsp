@@ -607,7 +607,7 @@
 	      	  <input type="hidden" value="0" id="payType">
 		      <div><label class="pull-left" style="color: red">	注：本商家付款方式（
 			      	<c:if test="${payWay == 0}">线下支付</c:if>
-					<c:if test="${payWay == 1}">线上支付</c:if>
+					<c:if test="${payWay == 1}">在线支付</c:if>
 			      	），还款方式（线下支付、在线支付）</label>
 		      </div>
 		      <table id="pay-info" class="table table-bordered  table-condensed dataTables-example dataTable no-footer">

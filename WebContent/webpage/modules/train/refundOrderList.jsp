@@ -65,7 +65,7 @@
                             <label>支付类型：</label> 
                             	<form:select class="form-control "  path="orderType">
 									<form:option value=''>全部</form:option>
-									<form:option value='1'>线上支付</form:option>
+									<form:option value='1'>在线支付</form:option>
 									<form:option value='2'>线下支付</form:option>
 								</form:select>
                            <span>还款商家：</span>
