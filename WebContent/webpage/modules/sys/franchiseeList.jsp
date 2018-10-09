@@ -16,6 +16,12 @@
 		function refresh(){
 			window.location="${ctx}/sys/franchisee/list";
 		}
+		
+		//重置表单
+		function resetnew(){
+			$("#name").val("");
+			reset();
+		}
 	</script>
 </head>
 <body>
@@ -33,7 +39,7 @@
 							<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
 							<input id="status" name="status" type="hidden" value="${status}" />
 							<div class="form-group">
-								<label>关键字：<input id="name" name="name" maxlength="11" type="text" class="form-control" value="${franchisee.name}" placeholder="请输入企业名称"></label> 
+								<label>关键字：<input id="name" name="name" maxlength="30" type="text" class="form-control" value="${franchisee.name}" placeholder="请输入企业名称"></label> 
 							</div>
 							
 							<shiro:hasPermission name="train:userCheck:findalllist">
