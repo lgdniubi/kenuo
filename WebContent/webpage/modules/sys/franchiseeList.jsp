@@ -27,6 +27,25 @@
 					<h5>商家管理</h5>
 				</div>
 				<div class="ibox-content">
+					<div class="searcharea clearfix">
+						<form:form id="searchForm" action="${ctx}/sys/franchisee/list" method="post" class="navbar-form navbar-left searcharea">
+							<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}" />
+							<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}" />
+							<input id="status" name="status" type="hidden" value="${status}" />
+							<div class="form-group">
+								<label>关键字：<input id="name" name="name" maxlength="11" type="text" class="form-control" value="${franchisee.name}" placeholder="请输入企业名称"></label> 
+							</div>
+							
+							<shiro:hasPermission name="train:userCheck:findalllist">
+								<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="search()">
+									<i class="fa fa-search"></i> 搜索
+								</button>
+								<button type="button" class="btn btn-primary btn-rounded btn-outline btn-sm" onclick="resetnew()" >
+									<i class="fa fa-refresh"></i> 重置
+								</button>
+							</shiro:hasPermission>
+						</form:form>
+					</div>
 					<!-- 工具栏 -->
 					<div class="row">
 						<div class="col-sm-12">

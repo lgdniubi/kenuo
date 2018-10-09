@@ -153,6 +153,9 @@
 			<if test="publicServiceFlag != null and publicServiceFlag != ''">
 				AND f.public_service_flag = #{publicServiceFlag}
 			</if>
+			<if test="name != null and name != ''">
+				AND f.name like CONCAT('%', #{name}, '%')
+			</if>
 		ORDER BY f.code
 	</select>
 	<select id="findAllCompanyList" resultType="Franchisee">
