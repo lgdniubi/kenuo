@@ -210,7 +210,7 @@
 			ro.temp_order_id as tempOrderId,
 			ro.order_type as orderType,
 			ro.arrearage_price as arrearagePrice,
-			ro.aftersales_price as aftersalesPrice,
+			ABS(ro.aftersales_price) as aftersalesPrice,
 			ro.arrearage_office as arrearageOffice,
 			ro.amount as amount,
 			DATE_FORMAT(add_time,'%Y-%m-%d %H:%i:%s') as addTime,

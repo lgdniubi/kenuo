@@ -310,9 +310,9 @@
 			LEFT JOIN sys_user u ON u.company_id = t.franchisee_id 
 			LEFT JOIN train_apply apply ON apply.user_id = u.id
 			LEFT JOIN sys_franchisee fr ON fr.id = t.franchisee_id
-			AND apply.audit_type = 'qy'
 			WHERE 	u.id = #{userid}
 			AND t.del_flag = 0
+			AND apply.audit_type = 'qy'
 	</select>
 	
 	<!-- 修改权益设置信息 -->

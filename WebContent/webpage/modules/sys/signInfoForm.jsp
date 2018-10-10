@@ -39,7 +39,7 @@
 				if(validateImgUrl()){
 					$("#inputForm").submit();
 					//return true;
-				}
+				} 
 			});
 		  return false;
 		}
@@ -54,23 +54,24 @@
 		var payWay = '${payWay}';
 		var isHasBack = 0;
 		function validBackImg(id){
-			if(payWay=='0' && isHasBack==1){
+			var flagbank = true;
+			if(isHasBack==1){
 				$("#pay-info input[name='payInfos[0].pay_fonturl']").each(function(k,y){
 					var vl = $(this).val();
 					if(vl == null || vl == ""){
 					   top.layer.alert('银行卡正面图片不可为空！', {icon: 0, title:'提醒'});
-					   return false;
+					   flagbank = false;
 					}
 				})				
 				$("#pay-info input[name='payInfos[0].pay_backurl']").each(function(k,y){
 					var vl = $(this).val();
 					if(vl == null || vl == ""){
 					   top.layer.alert('银行卡图片反面不可为空！', {icon: 0, title:'提醒'});
-					   return false;
+					   flagbank = false;
 					}
 				})	
 			}
-			return true;
+			return flagbank;
 		}
 		
 		function validOneImg(id){
