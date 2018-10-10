@@ -17,7 +17,7 @@
 			<div class="nav">
 				<ul class="layui-tab-title">
 					<li >
-						<a href="${ctx}/train/refundOrder/queryRefundOrderDetail?order_id=${order_id}">账单详情</a>
+						<a href="${ctx}/train/refundOrder/queryRefundOrderDetail?opflag=0&order_id=${order_id}">账单详情</a>
 					</li>
 					<li  class="layui-this">
 						<a href="${ctx}/train/refundOrder/queryStatementOfRefund?order_id=${order_id}">对账单信息</a>
