@@ -99,16 +99,25 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 		if("3".equals(status)){System.out.println("调用远程接口还款：office_id:"+office_id+",order_id:"+order_id+",amount:"+amount);
 			new Thread(new RefundThread(office_id, order_id, amount)).start();
 		}
+		
+		//记录日志
+		String des = "";
+		if("4".equals(status)){
+			des = "【驳回账单】";
+		}else{
+			des = "【确认入账】";
+		}
+		insertRefundOrderLog(UserUtils.getUser().getId(),order_id, des);
+			
+	}
+
+	public void insertRefundOrderLog(String user_id, String order_id, String des) {
 		//记录日志
 		RefundOrderLog log = new RefundOrderLog();
-		log.setCreateBy(UserUtils.getUser().getId());
+		log.setCreateBy(user_id);
 		log.setOrderId(order_id);
-		if("4".equals(status))
-			log.setDescription("【驳回账单】");
-		else
-			log.setDescription("【确认入账】");
+		log.setDescription(des);
 		this.refundOrderMapper.insertRefundOrderLog(log);
-			
 	}
 
 	/**  
@@ -152,12 +161,12 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 
 	/**
 	 * 根据还款单id查凭证
-	 * @param order_id
+	 * @param id	train_refund_serialnumber的id
 	 * @return
 	 */
-	public List<String> findProofList(String order_id) {
+	public List<String> findProofList(String id) {
 		
-		return refundOrderMapper.findProofList(order_id) ;
+		return refundOrderMapper.findProofList(id) ;
 	}
 
 	public void refundOrderTimeout(String timeout) {

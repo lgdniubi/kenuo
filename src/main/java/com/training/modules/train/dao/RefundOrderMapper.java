@@ -109,7 +109,7 @@ public interface RefundOrderMapper extends CrudDao<RefundOrder> {
 	 * @param order_id
 	 * @return
 	 */
-	public List<String> findProofList(String order_id);
+	public List<String> findProofList(String id);
 
 	public void refundOrderTimeout(@Param("timeout")String timeout);
 }

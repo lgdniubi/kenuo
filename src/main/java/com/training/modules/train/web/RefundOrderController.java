@@ -168,8 +168,8 @@ public class RefundOrderController extends BaseController {
 	
 	
 	@RequestMapping(value = "proof")
-	public String proof(Model model,String order_id, RedirectAttributes redirectAttributes) {
-		List<String> proofList = refundOrderService.findProofList(order_id);
+	public String proof(Model model,String id, RedirectAttributes redirectAttributes) {
+		List<String> proofList = refundOrderService.findProofList(id);
 		model.addAttribute("proofList",proofList);
 		return  "modules/train/proofList";
 	}

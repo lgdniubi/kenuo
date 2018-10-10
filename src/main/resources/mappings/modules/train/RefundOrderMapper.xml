@@ -297,9 +297,8 @@
 			p.proof
 		FROM
 			train_refund_proof p
-		LEFT JOIN train_refund_serialnumber refs ON refs.serialnumber = p.serialnumber_id
 		WHERE
-			refs.order_id = #{order_id}
+			p.serialnumber_id = #{id}
 	</select>
 	<update id="refundOrderTimeout" parameterType="String">
 		UPDATE trains.train_refund_order

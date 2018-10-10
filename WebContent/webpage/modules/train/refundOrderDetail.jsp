@@ -51,7 +51,7 @@
 			<div class="nav">
 				<ul class="layui-tab-title">
 					<li  class="layui-this">
-						<a href="${ctx}/train/refundOrder/queryRefundOrderDetail?order_id=${refundOrder.orderId}">账单详情</a>
+						<a href="${ctx}/train/refundOrder/queryRefundOrderDetail?opflag=0&order_id=${refundOrder.orderId}">账单详情</a>
 					</li>
 					<li >
 						<a href="${ctx}/train/refundOrder/queryStatementOfRefund?order_id=${refundOrder.orderId }">对账单信息</a>
@@ -152,7 +152,7 @@
 			         <td align="center">${bank.bankaccount}</td>
 			         <td align="center">${bank.openbank }</td>
 			         <td align="center">${bank.openname }</td>
-			         <td align="center"><span class="jq-photo" data-link='${ctx}/train/refundOrder/proof?order_id=${refundOrder.orderId}'><a style="color: #1c84c6">查看</a></span></td>
+			         <td align="center"><span class="jq-photo" data-link='${ctx}/train/refundOrder/proof?id=${bank.id}'><a style="color: #1c84c6">查看</a></span></td>
 				</tr>
 				</c:forEach>
 			</tbody>
