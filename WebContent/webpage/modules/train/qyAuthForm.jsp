@@ -332,14 +332,14 @@
 						<tr>
 					         <td><label class="pull-right">创建群组人数上限:</label></td>
 					         <td >
-					         	<input id="groupUserCountId" name="groupUserCount" type="text" maxlength="4" class="form-control input-sm required number" value="${modelFranchisee.groupCount}" />
+					         	<input id="groupUserCountId" name="groupUserCount" type="text" maxlength="4" class="form-control input-sm required number" value="${modelFranchisee.groupUserCount}" />
 					         </td>
 				         	<td>(最多2500)</td>
 				        <tr>
 				        <tr>
 					         <td><label class="pull-right">个人可参与群组数:</label></td>
 					         <td >
-					         	<input id="groupCountId" name="groupCount" type="text" maxlength="3" class="form-control input-sm required number" value="${modelFranchisee.groupUserCount}" />
+					         	<input id="groupCountId" name="groupCount" type="text" maxlength="3" class="form-control input-sm required number" value="${modelFranchisee.groupCount}" />
 					         </td>
 				         	<td>(最多400)</td>
 				        </tr>
