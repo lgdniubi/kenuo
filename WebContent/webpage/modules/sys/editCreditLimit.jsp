@@ -14,7 +14,7 @@
 			var v = $("#creditLimit").val();
 			var usedLimit = $("#usedLimit").val();
 			var useLimit = $("#hasUsedCreditLimit").val();
-			if(v < useLimit ){
+			if(parseFloat(v) < parseFloat(useLimit) ){
 				alert("信用额度不能小于已用额度");
 				return;
 			}
