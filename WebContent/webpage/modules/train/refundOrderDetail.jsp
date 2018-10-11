@@ -149,8 +149,8 @@
 				<c:forEach items="${refundOrder.bankList}" var="bank">
 				<tr>
 			         <td align="center">${bank.serialnumber }</td>
-			         <td align="center">${bank.bankaccount}</td>
 			         <td align="center">${bank.openbank }</td>
+			         <td align="center">${bank.bankaccount}</td>
 			         <td align="center">${bank.openname }</td>
 			         <td align="center"><span class="jq-photo" data-link='${ctx}/train/refundOrder/proof?id=${bank.id}'><a style="color: #1c84c6">查看</a></span></td>
 				</tr>
