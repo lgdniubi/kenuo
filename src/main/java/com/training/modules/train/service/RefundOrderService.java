@@ -175,5 +175,9 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 		 this.refundOrderMapper.refundOrderTimeout(timeout) ;
 	}
 
+	public void refundOrderTimeoutUpdateOfficeState(String timeout) {
+		 this.refundOrderMapper.refundOrderTimeoutUpdateOfficeState(timeout) ;
+	}
+
 	
 }

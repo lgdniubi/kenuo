@@ -307,4 +307,19 @@
 			order_status = '1'
 		AND add_time <![CDATA[<]]> DATE_SUB(NOW(),INTERVAL ${timeout} MINUTE)
 	</update>
+	<update id="refundOrderTimeoutUpdateOfficeState" parameterType="String">
+		UPDATE trains.sys_office_statement os
+		INNER JOIN trains.train_statement_order so ON so.statement_id = os.id
+		SET os.refund_order_status = '5'
+		WHERE
+			so.order_id IN (
+				SELECT
+					order_id
+				FROM
+					trains.train_refund_order
+				WHERE
+					order_status = '1'
+				AND add_time  <![CDATA[<]]> DATE_SUB(NOW(),INTERVAL ${timeout} MINUTE)
+			)
+	</update>
 </mapper>
