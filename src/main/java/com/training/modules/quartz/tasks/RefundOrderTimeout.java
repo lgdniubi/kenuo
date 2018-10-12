@@ -73,8 +73,8 @@ public class RefundOrderTimeout extends CommonService{
 			
 			String timeout = ParametersFactory.getTrainsParamValues("refundOrderTimeout");
 //			timeout = timeout.equals("-1")?"120":timeout;
-			refundOrderService.refundOrderTimeout(timeout);
 			refundOrderService.refundOrderTimeoutUpdateOfficeState(timeout);//改机构--对账单的状态
+			refundOrderService.refundOrderTimeout(timeout);
 			
 		
 		}catch (Exception e) {
