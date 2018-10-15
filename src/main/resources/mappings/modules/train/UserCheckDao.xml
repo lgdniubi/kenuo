@@ -723,4 +723,8 @@
 	<update id="updateFranchiseeIM">
 		UPDATE sys_franchisee SET groupCount = #{groupCount}, groupUserCount =#{groupUserCount} ,memberCount = #{memberCount} where id = #{franchiseeid} 
 	</update>
+	
+	<delete id="deleteFranchiseeUser">
+		DELETE from train_franchisee_user WHERE franchisee_id =  #{franchiseeid}
+	</delete>
 </mapper>

@@ -230,5 +230,11 @@ public interface UserCheckDao extends CrudDao<UserCheck>{
 	 * @param modelFranchisee
 	 */
 	public void updateFranchiseeIM(ModelFranchisee modelFranchisee);
+
+	/**
+	 * 版本降级清除1V1权限
+	 * @param franchiseeid
+	 */
+	public void deleteFranchiseeUser(String franchiseeid);
 	
 }

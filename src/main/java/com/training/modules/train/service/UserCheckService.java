@@ -263,7 +263,7 @@ public class UserCheckService extends CrudService<UserCheckDao,UserCheck> {
 			//编辑的时候先删除超级管理员角色和公共的角色-----再重新设置新的版本的角色
 			ModelFranchisee franchisee = getQYModelFranchiseeByUserid(modelFranchisee.getUserid());
 			if(Integer.valueOf(franchisee.getModid())>Integer.valueOf(modelFranchisee.getModid())){	//如果版本降级清除IM1v1权限
-				//加大码
+				userCheckDao.deleteFranchiseeUser(franchisee.getFranchiseeid());
 			}
 			if(!franchisee.getModid().equals(modelFranchisee.getModid())){	//如果版本更换才重新设置
 //				deleteAllRolesForUser(modelFranchisee.getUserid(),franchisee.getFranchiseeid());

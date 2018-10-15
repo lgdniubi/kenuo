@@ -113,5 +113,5 @@ public interface RefundOrderMapper extends CrudDao<RefundOrder> {
 
 	public void refundOrderTimeout(@Param("timeout")String timeout);
 
-	public void refundOrderTimeoutUpdateOfficeState(String timeout);
+	public void refundOrderTimeoutUpdateOfficeState(@Param("timeout")String timeout);
 }
