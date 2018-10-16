@@ -553,7 +553,7 @@
 						</tr>
 						
 						
-						<tr><td colspan="4" class=""><label class="pull-left">付款人</label></td></tr>
+						<tr><td colspan="4" class=""><label class="pull-left">代付人</label></td></tr>
 						<tr>
 							<td  class="width-15 active"><label class="pull-right">联系电话:</label></td>
 			         		<td class="width-35">
