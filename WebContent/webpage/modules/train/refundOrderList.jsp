@@ -128,7 +128,7 @@
                                		${refund.amount}
                                	</td>
                                	<td style="text-align: center;">
-                               		<c:if test="${refund.orderType eq '1'}">线上支付</c:if>
+                               		<c:if test="${refund.orderType eq '1'}">在线支付</c:if>
                                		<c:if test="${refund.orderType eq '2'}">线下支付</c:if>
                                	</td>
                                	<td style="text-align: center;">

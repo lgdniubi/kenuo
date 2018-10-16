@@ -88,8 +88,8 @@
 				<tr>
 			         <td class="active"><label class="pull-right">支付类型:</label></td>
 			         <td >
-			         <c:if test="${refundOrder.orderType eq '1'}">线上</c:if>
-			         <c:if test="${refundOrder.orderType eq '2'}">线下</c:if>
+			         <c:if test="${refundOrder.orderType eq '1'}">在线支付</c:if>
+			         <c:if test="${refundOrder.orderType eq '2'}">线下支付</c:if>
 			         </td>
 			         <td class="active"><label class="pull-right">支付方式:</label></td>
 			         <td >
@@ -158,7 +158,7 @@
 			</tbody>
 			<tbody>
 				<tr>
-			         <td class="active"><label class="pull-right">说明:</label></td>
+			         <td class="active"><label class="pull-right">备注:</label></td>
 			         <td colspan="4">${refundOrder.explains }</td>
 				</tr>
 			<c:if test="${refundOrder.orderStatus eq '4'}">

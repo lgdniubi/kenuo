@@ -60,7 +60,7 @@
                             <label>支付类型：</label> 
                             	<form:select class="form-control "  path="orderType">
 									<form:option value=''>全部</form:option>
-									<form:option value='1'>线上支付</form:option>
+									<form:option value='1'>在线支付</form:option>
 									<form:option value='2'>线下支付</form:option>
 								</form:select>
                            
@@ -96,7 +96,7 @@
                                		${refund.userName}
                                	</td>
                                	<td style="text-align: center;">
-                               		<c:if test="${refund.orderType eq '1'}">线上支付</c:if>
+                               		<c:if test="${refund.orderType eq '1'}">在线支付</c:if>
                                		<c:if test="${refund.orderType eq '2'}">线下支付</c:if>
                                	</td>
                                	<td style="text-align: center;">
