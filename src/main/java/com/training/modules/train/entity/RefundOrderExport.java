@@ -1,7 +1,5 @@
 package com.training.modules.train.entity;
 
-import java.util.List;
-
 import com.training.common.persistence.DataEntity;
 import com.training.common.utils.excel.annotation.ExcelField;
 
