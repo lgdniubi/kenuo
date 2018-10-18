@@ -516,12 +516,12 @@
 						</tr>
 						<tr>
 							<td class="width-15 active"><label class="pull-right">
-								<span class="help-tip">
+								<!-- <span class="help-tip">
 									<span class="help-p">此字段需从签约信息页面编辑</span>
-								</span>
+								</span> -->
 							<font color="red">*</font>机构名称:</label></td>
 				         	<td class="width-35"><input id="oldOfficeName" value="${office.name }" type="hidden">
-				         	<input id="name" name="name" value="${office.name }" maxlength="20" class="form-control required" <c:if test="${not empty office.name}">disabled="true"</c:if>></td>
+				         	<input id="name" name="name" value="${office.name }" maxlength="20" class="form-control required"></td>
 					        <td class="width-15 active"><label class="pull-right">归属机构:</label></td>
 					        <td class="width-35"><sys:treeselect id="office" name="parent.id" value="${office.parent.id}" labelName="parent.name" labelValue="${office.parent.name}"
 								title="机构" url="/sys/office/parentTreeData?isGrade=true" extId="${office.id}"  cssClass="form-control required" allowClear="${office.currentUser.admin}"/></td>
@@ -601,9 +601,9 @@
 				     <tr id="a4">
 				         <td class="width-15 active">
 				         	<label class="pull-right">
-				         	<span class="help-tip">
+				         	<!-- <span class="help-tip">
 								<span class="help-p">此字段需从签约信息页面编辑</span>
-							</span>
+							</span> -->
 							机构地址:</label></td>
 				         <td class="width-35"><form:input path="address" htmlEscape="false" maxlength="50" cssClass="form-control" /></td><%-- <c:if test="${not empty office.address}">disabled="true"</c:if>/> --%>
 				     </tr>
@@ -756,11 +756,11 @@
 				      <tr>
 				      	 <td class="width-15 active">
 				      	 	<label class="pull-right">
-				      	 	<span class="help-tip">
+				      	 	<!-- <span class="help-tip">
 								<span class="help-p">此字段需从签约信息页面编辑</span>
-							</span>
+							</span> -->
 				      	 	<font color="red">*</font>详细地址:</label></td>
-				         <td class="width-35" colspan="3"><textarea name="officeInfo.detailedAddress" htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required" <c:if test="${not empty office.officeInfo.detailedAddress}">readonly="true"</c:if> >${office.officeInfo.detailedAddress}</textarea></td>
+				          <td class="width-35" colspan="3"><textarea name="officeInfo.detailedAddress" htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required"  >${office.officeInfo.detailedAddress}</textarea></td>
 				      </tr> 
 				      <tr>
 				        <td class="width-15 active"><label class="pull-right">简介：</label></td>

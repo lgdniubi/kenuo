@@ -20,6 +20,12 @@
 		function resetnew(){//重置，页码清零
 			$("#pageNo").val(0);
 			$("#orderId").val("");
+			$("#orderStatus").val("");
+			$("#orderType").val("");
+			$("#companyName").val("");
+			$("#companyId").val("");
+			$("#officeName").val("");
+			$("#officeId").val("");
 			$("#searchForm").submit();
 	 	 }
 		function page(n,s){//翻页
@@ -42,13 +48,33 @@
             <sys:message content="${message}"/>
             <div class="ibox-content">
                 <div class=" clearfix">
-                    <form:form class="navbar-form navbar-left searcharea"  id="searchForm" modelAttribute="exercise" action="${ctx}/train/refundOrder/list" method="post">
+                    <form:form class="navbar-form navbar-left searcharea"  id="searchForm" modelAttribute="refundOrder" action="${ctx}/train/refundOrder/list" method="post">
                     	<!-- 分页隐藏文本框 -->
 						<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 						<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
                         <div class="form-group">
-                            <label>账单编号：<input id="orderId" name="orderId" type="text" value="${refundOrder.orderId}" class="form-control" placeholder="搜索账单编号"></label> 
-                           
+                            <label>还款单编号：<input id="orderId" name="orderId" type="text" value="${refundOrder.orderId}" class="form-control" placeholder="搜索账单编号"></label> 
+                            <label>账单状态：</label> 
+                            	<form:select class="form-control "  path="orderStatus">
+									<form:option value=''>全部</form:option>
+									<form:option value='2'>待审核</form:option>
+									<form:option value='3'>已入账</form:option>
+									<form:option value='4'>已取消</form:option>
+								</form:select>
+                            <label>支付类型：</label> 
+                            	<form:select class="form-control "  path="orderType">
+									<form:option value=''>全部</form:option>
+									<form:option value='1'>线上支付</form:option>
+									<form:option value='2'>线下支付</form:option>
+								</form:select>
+                           <span>还款商家：</span>
+								<sys:treeselect id="company" name="franchiseeId" value="${refundOrder.franchiseeId}" labelName="franchiseeName" 
+									labelValue="${refundOrder.franchiseeName}" title="公司" 
+									url="/sys/franchisee/treeData" cssClass=" form-control input-sm" allowClear="true" />
+                           <span>还款机构：</span>
+								<sys:treeselect id="office" name="arrearageOffice" value="${refundOrder.arrearageOffice}" labelName="arrearageOfficeName" labelValue="${refundOrder.arrearageOfficeName}" title="部门"
+									url="/sys/office/treeData?type=2" cssClass=" form-control input-sm" allowClear="true"
+									notAllowSelectRoot="false" notAllowSelectParent="false" />
                         </div>
                         <div class="pull-right">
 							<button  class="btn btn-primary btn-rounded btn-outline btn-sm " onclick="search()" ><i class="fa fa-search"></i> 查询</button>
@@ -56,7 +82,17 @@
 						</div>
                     </form:form>
                 </div>
-                <table id="treeTable" class="table table-bordered table-hover table-striped">
+                <div class="row">
+					<div class="col-sm-12">
+						<div class="pull-left">
+							<!-- 导出按钮 -->
+							<shiro:hasPermission name="train:refundOrder:export">
+							<table:exportExcel url="${ctx}/train/refundOrder/export"></table:exportExcel>
+							</shiro:hasPermission>
+						</div>
+					</div>
+				</div>
+                <table id="contentTable" class="table table-bordered table-hover table-striped">
 	                 <thead> 
 	                   	 <tr>
                    			<!-- <th style="text-align: center;"><label for="i-checks"><input type="checkbox" name="" id="i-checks" class="i-checks"></label></th> -->

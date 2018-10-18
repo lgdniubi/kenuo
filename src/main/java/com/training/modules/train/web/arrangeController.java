@@ -373,8 +373,8 @@ public class arrangeController extends BaseController{
 				for (int i = 1; i <= map.get("maxDay"); i++) {
 					ArrangeEquipment arrangeEquipment = new ArrangeEquipment();
 					ArrangeEquipment updateArrangeEquipment = new ArrangeEquipment();
-					String shopId = request.getParameter(id+i);					// 排班（shopIp、修）
-					String isUpdate = request.getParameter("isUpdate"+id+i);	// 是否有过修改（0 否 1 是）
+					String shopId = request.getParameter(id+"_"+i);					// 排班（shopIp、修）
+					String isUpdate = request.getParameter("isUpdate"+id+"_"+i);	// 是否有过修改（0 否 1 是）
 					// 用于计算排班日期
 					int d = 1;	// 日
 					int t = 0;	// 0：上午  1：下午

@@ -72,7 +72,7 @@ public class FranchiseeController extends BaseController{
 	@RequiresPermissions("sys:franchisee:index")
 	@RequestMapping(value = {"list"})
 	public String list(Franchisee franchisee,Model model){
-		model.addAttribute("list", franchiseeService.findAllList(franchisee));
+		model.addAttribute("list", franchiseeService.findCompanyList(franchisee));
 		return "modules/sys/franchiseeList";
 	}
 	
