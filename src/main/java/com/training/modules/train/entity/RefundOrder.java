@@ -11,7 +11,9 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	private String tempOrderId; //临时订单号
 	private String orderType;//订单类型（1：线上，转账）
 	private double arrearagePrice;//欠款金额
+	private double aftersalesPrice;//售后金额
 	private String arrearageOffice;//欠款机构
+	private String franchiseeId;//欠款商家
 	private double amount;//实付金额
 	private String addTime;//创建时间
 	private String orderStatus;//订单状态（1：待支付；2：待审核；3：已入账）
@@ -59,11 +61,23 @@ public class RefundOrder extends DataEntity<RefundOrder> {
 	public void setArrearagePrice(double arrearagePrice) {
 		this.arrearagePrice = arrearagePrice;
 	}
+	public double getAftersalesPrice() {
+		return aftersalesPrice;
+	}
+	public void setAftersalesPrice(double aftersalesPrice) {
+		this.aftersalesPrice = aftersalesPrice;
+	}
 	public String getArrearageOffice() {
 		return arrearageOffice;
 	}
 	public void setArrearageOffice(String arrearageOffice) {
 		this.arrearageOffice = arrearageOffice;
+	}
+	public String getFranchiseeId() {
+		return franchiseeId;
+	}
+	public void setFranchiseeId(String franchiseeId) {
+		this.franchiseeId = franchiseeId;
 	}
 	public double getAmount() {
 		return amount;

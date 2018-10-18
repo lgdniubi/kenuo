@@ -98,8 +98,8 @@
 					                            		<c:when test="${officeId eq arrangeEquipments.shopId }">
 					                            			<td class="isYes">
 					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;">
-							                            			<input id="${ArrangeBeautician.equipmentId }${status.index+1 }" name="${ArrangeBeautician.equipmentId }${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden" class="shopId">
-							                            			<input id="isUpdate${ArrangeBeautician.equipmentId }${status.index+1 }" name="isUpdate${ArrangeBeautician.equipmentId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
+							                            			<input id="${ArrangeBeautician.equipmentId }_${status.index+1 }" name="${ArrangeBeautician.equipmentId }_${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden" class="shopId">
+							                            			<input id="isUpdate${ArrangeBeautician.equipmentId }_${status.index+1 }" name="isUpdate${ArrangeBeautician.equipmentId }_${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<span style="color: #5ec4ff">班</span>
 						                            			</div>
 						                            		</td>
@@ -107,8 +107,8 @@
 					                            		<c:when test="${arrangeEquipments.shopId == '1'}">
 					                            			<td class="isYes">
 					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;" title="${arrangeEquipments.shopName }">
-							                            			<input id="${ArrangeBeautician.equipmentId }${status.index+1 }" name="${ArrangeBeautician.equipmentId }${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden" class="shopId">
-							                            			<input id="isUpdate${ArrangeBeautician.equipmentId }${status.index+1 }" name="isUpdate${ArrangeBeautician.equipmentId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
+							                            			<input id="${ArrangeBeautician.equipmentId }_${status.index+1 }" name="${ArrangeBeautician.equipmentId }_${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden" class="shopId">
+							                            			<input id="isUpdate${ArrangeBeautician.equipmentId }_${status.index+1 }" name="isUpdate${ArrangeBeautician.equipmentId }_${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<c:if test="${arrangeEquipments.shopId == '1'}">
 							                            				<span style="color: #ff3000">${arrangeEquipments.shopName }</span>
 							                            			</c:if>
@@ -118,8 +118,8 @@
 					                            		<c:when test="${arrangeEquipments.shopId != '1' and arrangeEquipments.shopId != '' and arrangeEquipments.shopId != null}">
 					                            			<td class="isNo">
 					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;" title="${arrangeEquipments.shopName }">
-							                            			<input id="${ArrangeBeautician.equipmentId }${status.index+1 }" name="${ArrangeBeautician.equipmentId }${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden" class="shopId">
-							                            			<input id="isUpdate${ArrangeBeautician.equipmentId }${status.index+1 }" name="isUpdate${ArrangeBeautician.equipmentId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
+							                            			<input id="${ArrangeBeautician.equipmentId }_${status.index+1 }" name="${ArrangeBeautician.equipmentId }_${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden" class="shopId">
+							                            			<input id="isUpdate${ArrangeBeautician.equipmentId }_${status.index+1 }" name="isUpdate${ArrangeBeautician.equipmentId }_${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<span style="color: #999999">${arrangeEquipments.shopName }</span>
 						                            			</div>
 						                            		</td>
@@ -127,8 +127,8 @@
 					                            		<c:otherwise>
 					                            			<td class="isYes">
 					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;">
-							                            			<input id="${ArrangeBeautician.equipmentId }${status.index+1 }" name="${ArrangeBeautician.equipmentId }${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden" class="shopId">
-							                            			<input id="isUpdate${ArrangeBeautician.equipmentId }${status.index+1 }" name="isUpdate${ArrangeBeautician.equipmentId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
+							                            			<input id="${ArrangeBeautician.equipmentId }_${status.index+1 }" name="${ArrangeBeautician.equipmentId }_${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden" class="shopId">
+							                            			<input id="isUpdate${ArrangeBeautician.equipmentId }_${status.index+1 }" name="isUpdate${ArrangeBeautician.equipmentId }_${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<span></span>
 						                            			</div>
 						                            		</td>
@@ -141,8 +141,8 @@
 					                            		<c:when test="${officeId eq arrangeEquipments.shopId }">
 					                            			<td class="isNo">
 					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;">
-							                            			<input id="${ArrangeBeautician.equipmentId }${status.index+1 }" name="${ArrangeBeautician.equipmentId }${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden" class="shopId">
-							                            			<input id="isUpdate${ArrangeBeautician.equipmentId }${status.index+1 }" name="isUpdate${ArrangeBeautician.equipmentId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
+							                            			<input id="${ArrangeBeautician.equipmentId }_${status.index+1 }" name="${ArrangeBeautician.equipmentId }_${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden" class="shopId">
+							                            			<input id="isUpdate${ArrangeBeautician.equipmentId }_${status.index+1 }" name="isUpdate${ArrangeBeautician.equipmentId }_${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<span style="color: #5ec4ff">班</span>
 						                            			</div>
 						                            		</td>
@@ -150,8 +150,8 @@
 					                            		<c:when test="${arrangeEquipments.shopId == '1'}">
 					                            			<td class="isNo">
 					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;" title="${arrangeEquipments.shopName }">
-							                            			<input id="${ArrangeBeautician.equipmentId }${status.index+1 }" name="${ArrangeBeautician.equipmentId }${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden" class="shopId">
-							                            			<input id="isUpdate${ArrangeBeautician.equipmentId }${status.index+1 }" name="isUpdate${ArrangeBeautician.equipmentId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
+							                            			<input id="${ArrangeBeautician.equipmentId }_${status.index+1 }" name="${ArrangeBeautician.equipmentId }_${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden" class="shopId">
+							                            			<input id="isUpdate${ArrangeBeautician.equipmentId }_${status.index+1 }" name="isUpdate${ArrangeBeautician.equipmentId }_${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<c:if test="${arrangeEquipments.shopId == '1'}">
 							                            				<span style="color: #ff3000">${arrangeEquipments.shopName }</span>
 							                            			</c:if>
@@ -161,8 +161,8 @@
 					                            		<c:when test="${arrangeEquipments.shopId != '1' and arrangeEquipments.shopId != '' and arrangeEquipments.shopId != null}">
 					                            			<td class="isNo">
 					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;" title="${arrangeEquipments.shopName }">
-							                            			<input id="${ArrangeBeautician.equipmentId }${status.index+1 }" name="${ArrangeBeautician.equipmentId }${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden" class="shopId">
-							                            			<input id="isUpdate${ArrangeBeautician.equipmentId }${status.index+1 }" name="isUpdate${ArrangeBeautician.equipmentId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
+							                            			<input id="${ArrangeBeautician.equipmentId }_${status.index+1 }" name="${ArrangeBeautician.equipmentId }_${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden" class="shopId">
+							                            			<input id="isUpdate${ArrangeBeautician.equipmentId }_${status.index+1 }" name="isUpdate${ArrangeBeautician.equipmentId }_${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<span style="color: #999999">${arrangeEquipments.shopName }</span>
 						                            			</div>
 						                            		</td>
@@ -170,8 +170,8 @@
 					                            		<c:otherwise>
 					                            			<td class="isNo">
 					                            				<div style="width: 100px;max-width: 100px;overflow: hidden;height: 17px;line-height:17px;">
-							                            			<input id="${ArrangeBeautician.equipmentId }${status.index+1 }" name="${ArrangeBeautician.equipmentId }${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden" class="shopId">
-							                            			<input id="isUpdate${ArrangeBeautician.equipmentId }${status.index+1 }" name="isUpdate${ArrangeBeautician.equipmentId }${status.index+1 }" value="0" type="hidden" class="isUpdate">
+							                            			<input id="${ArrangeBeautician.equipmentId }_${status.index+1 }" name="${ArrangeBeautician.equipmentId }_${status.index+1 }" value="${arrangeEquipments.shopId }" type="hidden" class="shopId">
+							                            			<input id="isUpdate${ArrangeBeautician.equipmentId }_${status.index+1 }" name="isUpdate${ArrangeBeautician.equipmentId }_${status.index+1 }" value="0" type="hidden" class="isUpdate">
 							                            			<span></span>
 						                            			</div>
 						                            		</td>

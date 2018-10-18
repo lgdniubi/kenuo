@@ -104,11 +104,15 @@
 								<td><fmt:formatDate value="${user.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 								<%-- <td>${user.userStatus}</td> --%>
 								<td>
-									<shiro:hasPermission name="sys:user:auth">
+									<shiro:hasPermission name="sys:user:reset">
 										<a href="#" onclick="openDialog('重置密码', '${ctx}/train/specialUser/resetPassword?id=${user.id}','400px', '300px')" class="btn btn-primary btn-xs" ><i class="fa fa-edit"></i>重置密码</a>
+									</shiro:hasPermission>
+									<shiro:hasPermission name="sys:user:unfreeze">
 										<c:if test="${user.delFlag == 1}">
 										<a href="${ctx}/train/specialUser/freeze?id=${user.id}&opflag=1"  class="btn btn-success btn-xs" ><i class="fa fa-search-plus"></i>解冻</a>
 										</c:if>
+									</shiro:hasPermission>
+									<shiro:hasPermission name="sys:user:freeze">
 										<c:if test="${user.delFlag == 0}">
 										<a href="#" onclick="openDialog('冻结', '${ctx}/train/specialUser/freezeReason?id=${user.id}&opflag=2','300px', '300px')" class="btn btn-danger btn-xs" ><i class="fa fa-trash"></i>冻结</a>
 										</c:if>

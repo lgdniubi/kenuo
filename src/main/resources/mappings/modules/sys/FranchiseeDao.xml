@@ -81,8 +81,45 @@
 		ORDER BY a.code
 	</select>
 			
-	<!-- 查询所有数据  -->		
+	<!-- 查询所有数据只供生成树  -->		
 	<select id="findAllList" resultType="Franchisee">
+		SELECT 
+		  f.id,
+		  f.parent_id AS 'parent.id',
+		  f.parent_ids AS 'parentIds',
+		  f.name,
+		  f.sort,
+		  (CASE
+		      WHEN f.type = 1 
+		      THEN '直营店' 
+		      WHEN f.type = 2 
+		      THEN '加盟店' 
+		    END) AS 'type',
+		  f.code,
+		  f.area_id AS 'area.id',
+		  (SELECT NAME FROM sys_area WHERE CODE = a.code AND TYPE = 4) AS 'district',
+  		  (SELECT NAME FROM sys_area WHERE CODE = LEFT(a.code,9) AND TYPE = 3) AS 'city',
+  		  (SELECT NAME FROM sys_area WHERE CODE = LEFT(a.code,5) AND TYPE = 2) AS 'province',
+		  f.address,
+		  f.zipcode,
+		  f.contacts,
+		  f.mobile,
+		  f.tel 
+		FROM
+		  sys_franchisee f 
+		  LEFT JOIN sys_area a ON f.area_id = a.id
+		WHERE f.del_flag = 0  
+			AND a.del_flag = 0
+			<if test="isRealFranchisee != null and isRealFranchisee != ''">
+				AND f.is_real_franchisee = #{isRealFranchisee}
+			</if>
+			<if test="publicServiceFlag != null and publicServiceFlag != ''">
+				AND f.public_service_flag = #{publicServiceFlag}
+			</if>
+		ORDER BY f.code
+	</select>
+	<!-- 查询所有商家列表展示 -->
+	<select id="findCompanyList" resultType="Franchisee">
 		SELECT 
 		  f.id,
 		  f.parent_id AS 'parent.id',
@@ -127,7 +164,8 @@
 		FROM
 		  sys_franchisee f 
 		 
-		WHERE f.id not in ('999999','1000000')
+		WHERE f.del_flag = 0
+			AND f.id not in ('999999','1000000')
 	</select>
 	
 	<!-- 查询code下一个值 -->
