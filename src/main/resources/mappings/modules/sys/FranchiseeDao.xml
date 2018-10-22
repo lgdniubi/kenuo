@@ -168,7 +168,7 @@
 		  sys_franchisee f 
 		 
 		WHERE f.del_flag = 0
-			AND f.id not in ('999999','1000000')
+			<!-- AND f.id not in ('999999','1000000') -->
 	</select>
 	
 	<!-- 查询code下一个值 -->
