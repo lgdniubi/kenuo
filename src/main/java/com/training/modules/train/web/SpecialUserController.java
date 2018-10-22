@@ -95,6 +95,7 @@ public class SpecialUserController extends BaseController {
 	 * @param redirectAttributes
 	 * @return
 	 */
+	@RequiresPermissions(value = { "sys:user:freeze", "sys:user:unfreeze" }, logical = Logical.OR)
 	@RequestMapping(value = "freeze")
 	public String freeze(User user,Integer opflag, RedirectAttributes redirectAttributes) {
 		try {

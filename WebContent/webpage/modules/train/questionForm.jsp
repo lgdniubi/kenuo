@@ -51,7 +51,7 @@
                        <div class="form-group">
                             <label class="col-sm-2 control-label"><font color="red">*</font>标题： </label>
                             <div class="col-sm-8">
-                               <form:input path="name" cssClass="form-control required" maxlength="20" placeholder="请输入标题"/>
+                               <form:input path="name" cssClass="form-control required" maxlength="50" placeholder="请输入标题"/>
 						    </div>
 						    <c:choose>
 								<c:when test="${type eq '3'}">

@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.training.common.Thread.RefundThread;
 import com.training.common.persistence.Page;
 import com.training.common.service.CrudService;
-import com.training.modules.sys.entity.OfficeAcount;
 import com.training.modules.sys.utils.UserUtils;
 import com.training.modules.train.dao.RefundOrderMapper;
 import com.training.modules.train.entity.ArrearageOfficeList;
@@ -148,7 +147,6 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 		page.setList(refundOrderMapper.findExportList(refundOrder));
 		return page;
 	}
-	
 	/**
 	 * 将待审核2的状态改已入账3
 	 * @param idArray
@@ -178,6 +176,4 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 	public void refundOrderTimeoutUpdateOfficeState(String timeout) {
 		 this.refundOrderMapper.refundOrderTimeoutUpdateOfficeState(timeout) ;
 	}
-
-	
 }

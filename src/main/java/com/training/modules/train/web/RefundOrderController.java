@@ -173,5 +173,4 @@ public class RefundOrderController extends BaseController {
 		model.addAttribute("proofList",proofList);
 		return  "modules/train/proofList";
 	}
-	
 }
