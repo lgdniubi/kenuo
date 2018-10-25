@@ -9,6 +9,8 @@ public class RefundOrderExport extends DataEntity<RefundOrderExport> {
 	private String orderId; //订单号
 	private String arrearageOfficeName; //商家
 	private double arrearagePrice;//欠款金额
+	private String arrearageOffice;//欠款机构
+	private String franchiseeId;//欠款商家
 	private double amount;//实付金额
 	private String orderStatus;//订单状态（1：待支付；2：待审核；3：已入账）
 	private String userName; //支付人
@@ -135,6 +137,18 @@ public class RefundOrderExport extends DataEntity<RefundOrderExport> {
 	}
 	public void setOrderType(String orderType) {
 		this.orderType = orderType;
+	}
+	public String getArrearageOffice() {
+		return arrearageOffice;
+	}
+	public void setArrearageOffice(String arrearageOffice) {
+		this.arrearageOffice = arrearageOffice;
+	}
+	public String getFranchiseeId() {
+		return franchiseeId;
+	}
+	public void setFranchiseeId(String franchiseeId) {
+		this.franchiseeId = franchiseeId;
 	}
 	
 }
