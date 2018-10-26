@@ -13,6 +13,7 @@ public class ContractInfoVo  {
 	private String status; //状态：0创建，1：待审核，2：审核通过，3：审核驳回，4：补充协议
 	private int franchisee_id; //商家ID
 	private String office_name;	//机构名称
+	private String office_regist_name;	//机构名称
 	private String office_pid; //机构父ID
 	private String office_pids; //机构父IDS
 	
@@ -397,5 +398,11 @@ public class ContractInfoVo  {
 	}
 	public void setProxy_address(String proxy_address) {
 		this.proxy_address = proxy_address;
+	}
+	public String getOffice_regist_name() {
+		return office_regist_name;
+	}
+	public void setOffice_regist_name(String office_regist_name) {
+		this.office_regist_name = office_regist_name;
 	}
 }

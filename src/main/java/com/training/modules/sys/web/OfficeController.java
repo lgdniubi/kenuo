@@ -454,6 +454,10 @@ public class OfficeController extends BaseController {
 				List<PayInfo> list = creatPayInfoList(payWay, payInfos,contractInfo.getCreate_user());
 				contractInfo.setPayInfos(list);
 			}
+			//同步公司名称
+			Office office = officeService.get(contractInfo.getOffice_id());
+			contractInfo.setOffice_name(office.getName());
+			
 			JsonConfig config = new JsonConfig();
 			JSONObject j = JSONObject.fromObject(contractInfo,config);
 			System.out.println(j.toString());

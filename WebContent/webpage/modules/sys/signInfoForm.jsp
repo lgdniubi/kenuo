@@ -309,7 +309,7 @@
 						<tr><td colspan="4" class="active"><label class="pull-left">签约信息</label></td></tr>
 						<tr>
 							<td class="width-15 active"><label class="pull-right"><font color="red">*</font>公司名称：</label></td>
-							<td class="width-35"><input name="office_name" value="${infoVo.office_name}" htmlEscape="false" maxlength="50"  class="form-control required" /></td>
+							<td class="width-35"><input name="office_regist_name" value="${infoVo.office_regist_name}" htmlEscape="false" maxlength="50"  class="form-control required" /></td>
 							<td class="width-15 active"><label class="pull-right"><font color="red">*</font>成立日期:</label></td>
 							<td class="width-35"> <input name="office_setdate" id="start_date" value="${infoVo.office_setdate}" htmlEscape="false" maxlength="50" class="layer-date form-control required" readonly="readonly" placeholder="成立日期"/></td>
 						</tr>
