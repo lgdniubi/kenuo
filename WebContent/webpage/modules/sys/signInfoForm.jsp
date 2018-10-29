@@ -44,7 +44,8 @@
 		  return false;
 		}
 		function validateImgUrl(){
-			var flag = validOneImg('char')&&validOneImg('icardone')&&validOneImg('icardtwo')&&validOneImg('cardup')&&validOneImg('carddown');
+			var flag = validOneImg('char')&&validOneImg('icardone')&&validOneImg('icardtwo');
+			//&&validOneImg('cardup')&&validOneImg('carddown');
 			/* &&validOneImg('sign_fonturl')&&validOneImg('sign_backurl')&&validOneImg('cargo_fonturl')&&validOneImg('cargo_backurl')&&validOneImg('audit_fonturl')&&
 			validOneImg('audit_backurl')&&validOneImg('proxy_fonturl')&&validOneImg('proxy_backurl'); */
 			var backFlag = validBackImg();
@@ -371,47 +372,6 @@
 					         </td>
 				       </tr>
 				   </tbody>
-				   <tbody id="unfold">
-				      <tr>
-						  <td colspan="4" class="active">
-								<label class="pull-left">账户信息</label>
-						  </td>
-					  </tr>
-				      <tr>
-					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>持卡人姓名:</label></td>
-					      <td class="width-35"><input name="office_accountname" value="${infoVo.office_accountname}" htmlEscape="false" maxlength="20" class="form-control required" /></td>
-					      <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户银行:</label></td>
-					      <td class="width-35"><input name="office_openbank" value="${infoVo.office_openbank}" htmlEscape="false" maxlength="20" class="form-control required" /></td>
-					  </tr>
-				      <tr>
-					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡号:</label></td>
-					      <td class="width-35"><input name="office_bankaccount" value="${infoVo.office_bankaccount}" htmlEscape="false" maxlength="50" class="form-control required" /></td>
-<%-- 					      <td  class="width-15 active"><label class="pull-right">开户地址:</label></td>
-					      <td class="width-35"><input name="officeInfo.bankaddress" value="${infoVo.officeInfo.bankaddress}" htmlEscape="false" maxlength="50" class="form-control" /></td>
- --%>					  </tr>
-				      <tr>
-					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡正面:</label></td>
-					      <td class="width-35">
-					      	<img id="officecardupImgsrc" src="${infoVo.office_bankcardup}" alt="" style="width: 200px;height: 100px;"/>
-								<input type="hidden" id="cardup" name="office_bankcardup" value="${infoVo.office_bankcardup}"><!-- 图片隐藏文本框 -->
-								<p>&nbsp;</p>
-			                   	<div class="upload">
-									<input type="file" name="file_cardup_upload" id="file_cardup_upload">
-								</div>
-								<div id="file_cardup_queue"></div>
-					      </td>
-					      <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡反面:</label></td>
-					      <td class="width-35">
-					      	<img id="officecarddownImgsrc" src="${infoVo.office_bankcarddown}" alt="" style="width: 200px;height: 100px;"/>
-								<input type="hidden" id="carddown" name="office_bankcarddown" value="${infoVo.office_bankcarddown}"><!-- 图片隐藏文本框 -->
-								<p>&nbsp;</p>
-			                   	<div class="upload">
-									<input type="file" name="file_carddown_upload" id="file_carddown_upload">
-								</div>
-								<div id="file_carddown_queue"></div>
-					      </td>
-					  </tr>
-			      </tbody>
 			    </table>
 				<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 				   <tbody>
