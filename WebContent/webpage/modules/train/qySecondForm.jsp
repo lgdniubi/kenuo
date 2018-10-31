@@ -14,7 +14,7 @@
 			  //if(confirms('点击确定相当于授权，不想授权请点击取消')){
 	        	  loading('正在提交，请稍等...');
 			      $("#inputForm").submit();
-		     	  return true;
+		     	  return true; 
 		  	}
 		  return false;
 		}
@@ -66,7 +66,10 @@
 					},
 					authEndDate:{
 						required:true
-					}
+					},
+					memberCount:{max : 50000},
+					groupUserCount:{max : 2500},
+					groupCount:{max : 400}
 				},
 				messages:{
 					paytype:{
@@ -77,7 +80,10 @@
 					},
 					authEndDate:{
 						required:"选择结束时间"
-					}
+					},
+					memberCount:{max : "数量超过上限"},
+					groupUserCount:{max : "数量超过上限"},
+					groupCount:{max : "数量超过上限"}
 				},
 				submitHandler: function(form){
 						loading('正在提交，请稍等...');
@@ -94,7 +100,51 @@
 					}
 				}
 			});
+			
+			var c = '${modelFranchisee.paytype}';
+			$(".pay").on("click",function(e){
+				e.preventDefault();
+								
+				var that = $(this)
+				
+				if(c==that.val()){
+					return;
+				}
+				var msg = "修改支付方式之后，商家内店铺的支付账户性质会发生变化，之前的付款方式将仅用于还款，还款方式可以用于付款/还款，是否继续更改？";
+				top.layer.confirm(msg, {icon: 3, title:'系统提示'},function(index, layero){
+					c = that.val();
+					that.prop("checked",true);
+					top.layer.close(index);
+					}, function(index){
+					  
+				});
+			});
+			
 		});
+		
+		
+		
+		function changeIM(value){
+			switch(value)
+			{
+			case '5':
+				setValIM(0,0,50);
+			  break;
+			case '6':
+				setValIM(100,100,50);
+			  break;
+			case '7':
+				setValIM(50000,1000,300);
+			  break;
+			default:
+				setValIM(0,0,50);
+			}
+		}
+		function setValIM(memC,groupUserC,groupC){
+			$("#memberCountId").val(memC);
+			$("#groupUserCountId").val(groupUserC);
+			$("#groupCountId").val(groupC);
+		}
 	</script>
 </head>
 <body>
@@ -108,18 +158,18 @@
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 			<tbody>
 			    <tr>
-			    	<td align="center" class="active" style="height:1px;border-top:2px solid #555555;" colspan="4"><label class="pull-left">企业权益设置:</label></td>
+			    	<td align="center" style="height:1px;border-top:2px solid #555555;" colspan="4"><label class="pull-left">企业权益设置:</label></td>
 				</tr>
 			    <tr>
 			         <td style= "width:100px" class="active"><label class="pull-right">企业会员类型:</label></td>
-			         <td style= "width:160px"><input id="mod_id1" class=" input-sm required" name="modid" value="5" aria-required="true" <c:if test="${empty modelFranchisee.modid|| modelFranchisee.modid == 5}">checked="checked"</c:if>  type="radio">标准版</td>
-			         <td style= "width:160px"><input id="mod_id2" class=" input-sm required" name="modid" value="6" aria-required="true" <c:if test="${modelFranchisee.modid == 6}">checked="checked"</c:if> type="radio">高级版</td>
-			         <td style= "width:160px"><input id="mod_id3" class=" input-sm required" name="modid" value="7" aria-required="true" <c:if test="${modelFranchisee.modid == 7}">checked="checked"</c:if> type="radio">旗舰版</td>
+			         <td style= "width:160px"><input id="mod_id1" class=" input-sm required" name="modid" onclick="changeIM(this.value)" value="5" aria-required="true" <c:if test="${empty modelFranchisee.modid|| modelFranchisee.modid == 5}">checked="checked"</c:if>  type="radio">标准版</td>
+			         <td style= "width:160px"><input id="mod_id2" class=" input-sm required" name="modid" onclick="changeIM(this.value)" value="6" aria-required="true" <c:if test="${modelFranchisee.modid == 6}">checked="checked"</c:if> type="radio">高级版</td>
+			         <td style= "width:160px"><input id="mod_id3" class=" input-sm required" name="modid" onclick="changeIM(this.value)" value="7" aria-required="true" <c:if test="${modelFranchisee.modid == 7}">checked="checked"</c:if> type="radio">旗舰版</td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">采购支付方式:</label></td>
-			         <td><input id="paytype1" class=" input-sm required" name="paytype" value="1" aria-required="true" <c:if test="${modelFranchisee.paytype == 1}">checked="checked"</c:if> type="radio">线上支付</td>
-			         <td colspan="2"><input id="paytype2" class=" input-sm required" name="paytype" value="0" aria-required="true" <c:if test="${modelFranchisee.paytype == 0}">checked="checked"</c:if> type="radio">线下支付</td>
+			         <td><input id="paytype1" class="pay input-sm required" name="paytype" value="1" aria-required="true" <c:if test="${modelFranchisee.paytype == 1}">checked="checked"</c:if> type="radio">在线支付</td>
+			         <td colspan="2"><input id="paytype2" class="pay input-sm required" name="paytype" value="0" aria-required="true" <c:if test="${modelFranchisee.paytype == 0}">checked="checked"</c:if> type="radio">线下支付</td>
 				</tr>
 			    <tr>
 			         <td class="active"><label class="pull-right">授权期限:</label></td>
@@ -136,6 +186,34 @@
 				</tr>
 			</tbody>
 		</table>  
+		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+			<tbody>
+				<tr>
+			    	<td align="center"  style="height:1px;border-top:2px solid #555555;" colspan="3"><label class="pull-left">IM权限:</label></td>
+				</tr>
+		        <tr>
+			         <td><label class="pull-right">1V1尊享技师服务使用人数</label></td>
+			         <td >
+			         	<input id="memberCountId" name="memberCount" type="text" maxlength="5" class="form-control input-sm required number" value="${modelFranchisee.memberCount}" />
+			         </td>
+		         	<td>(最多50000)</td>
+				</tr>
+				<tr>
+			         <td><label class="pull-right">创建群组人数上限:</label></td>
+			         <td >
+			         	<input id="groupUserCountId" name="groupUserCount" type="text" maxlength="4" class="form-control input-sm required number" value="${modelFranchisee.groupUserCount}" />
+			         </td>
+		         	<td>(最多2500)</td>
+		        <tr>
+		        <tr>
+			         <td><label class="pull-right">个人可参与群组数:</label></td>
+			         <td >
+			         	<input id="groupCountId" name="groupCount" type="text" maxlength="3" class="form-control input-sm required number" value="${modelFranchisee.groupCount}" />
+			         </td>
+		         	<td>(最多400)</td>
+		        </tr>
+			</tbody>
+		</table>
 	</form:form> 
 </body>
 </html>

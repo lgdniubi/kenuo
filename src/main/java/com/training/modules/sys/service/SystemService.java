@@ -557,9 +557,9 @@ public class SystemService extends BaseService implements InitializingBean {
 			}
 			
 			//美容师头像
-			if(user.getPhoto() != null && user.getPhoto().length() != 0){
-				reservationTime(1, currentUser.getCreateBy().getId(), user.getPhoto(), "", lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
-			}
+//			if(user.getPhoto() != null && user.getPhoto().length() != 0){
+//				reservationTime(1, currentUser.getCreateBy().getId(), user.getPhoto(), "", lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
+//			}
 			
 			// userinfo.preInsert();
 			/*if (user.getUserinfo() != null) {
@@ -618,9 +618,9 @@ public class SystemService extends BaseService implements InitializingBean {
 			//判断美容师头像是否修改   和之前的美容师头像进行比较
 			String photo = user.getPhoto() == null ? "" : user.getPhoto();//修改之后的美容师头像
 			String oldPhoto = oldUser.getPhoto() == null ? "" : oldUser.getPhoto();//修改之前的美容师头像
-			if(!oldPhoto.equals(photo)){
-				reservationTime(1, currentUser.getCreateBy().getId(), user.getPhoto(), oldUser.getPhoto(), lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
-			}
+//			if(!oldPhoto.equals(photo)){
+//				reservationTime(1, currentUser.getCreateBy().getId(), user.getPhoto(), oldUser.getPhoto(), lifeImgUrls, user.getId(), "bm", null, oldLifeImgUrls);
+//			}
 			
 			JSONObject json = new JSONObject();
 			json.put("property", "[\"no\",\"name\",\"loginName\",\"idCard\",\"inductionTime\",\"email\",\"phone\",\"mobile\"]");

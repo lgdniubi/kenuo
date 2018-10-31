@@ -88,6 +88,18 @@ public class ContractInfoController extends BaseController {
 		return "modules/train/contractInfoDetail";
 	}
 	/**
+	 * 已签约协议--详情
+	 * @return
+	 */
+	@RequestMapping(value="querySignedContractInfoDetail")
+	public String querySignedContractInfoDetail(Model model,String office_id){
+		
+		
+		model.addAttribute("contractInfo", this.contractInfoService.querySignedContractInfoDetail(office_id));
+		
+		return "modules/train/contractInfoDetail";
+	}
+	/**
 	 * 跳转审核页面
 	 * @return
 	 */

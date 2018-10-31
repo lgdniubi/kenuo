@@ -302,13 +302,17 @@
 			t.discount,
 			t.create_date,
 			t.pay_type AS paytype,
+			fr.groupCount,
+			fr.groupUserCount,
+			fr.memberCount,
 			apply.id as applyid
 			from train_model_franchisee t
 			LEFT JOIN sys_user u ON u.company_id = t.franchisee_id 
 			LEFT JOIN train_apply apply ON apply.user_id = u.id
-			AND apply.audit_type = 'qy'
+			LEFT JOIN sys_franchisee fr ON fr.id = t.franchisee_id
 			WHERE 	u.id = #{userid}
 			AND t.del_flag = 0
+			AND apply.audit_type = 'qy'
 	</select>
 	
 	<!-- 修改权益设置信息 -->
@@ -715,4 +719,12 @@
 	<update id="updateApplyUserId">
 		UPDATE train_apply SET user_id = #{superUserId} WHERE user_id = #{oldSuperUserId} AND audit_type = 'qy'
 	</update>
+	<!-- 更新商家IM权限3个字段的值 -->
+	<update id="updateFranchiseeIM">
+		UPDATE sys_franchisee SET groupCount = #{groupCount}, groupUserCount =#{groupUserCount} ,memberCount = #{memberCount} where id = #{franchiseeid} 
+	</update>
+	
+	<delete id="deleteFranchiseeUser">
+		DELETE from train_franchisee_user WHERE franchisee_id =  #{franchiseeid}
+	</delete>
 </mapper>

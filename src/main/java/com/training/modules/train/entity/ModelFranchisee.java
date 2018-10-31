@@ -24,6 +24,11 @@ public class ModelFranchisee extends DataEntity<ModelFranchisee>{
 	private String paytype;		//支付类型（0：线上支付，1：线下支付）
 //	private String remarks;		//备注
 	private String status;		//过期状态（0：未过期，1：已过期）
+	
+	private Integer groupCount ;		//用户可创建群组数量
+	private Integer groupUserCount;		//用户可创建的群组成员数值
+	private Integer memberCount ;		//用户的专属会员数量
+	
 	public ModelFranchisee() {
 		super();
 	}
@@ -88,6 +93,55 @@ public class ModelFranchisee extends DataEntity<ModelFranchisee>{
 	}
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	
+	public Integer getGroupCount() {
+		return getValue(groupCount, 50,0, 100, 1000, modid);
+	}
+	/**
+	 * 
+	 * @param defVal	默认值-数据库查的
+	 * @param commonC	标准版
+	 * @param topC	高级版
+	 * @param superC	旗舰版
+	 * @param modid
+	 * @return
+	 */
+	private Integer getValue(Integer count,Integer defVal,Integer commonC,Integer topC,Integer superC,String modid) {
+		Integer value = count;
+		if(modid == null){modid = "5";}
+		if(count==null){
+			switch (modid) {
+			case "5":
+				value = commonC;
+				break;
+			case "6":
+				value = topC;
+				break;
+			case "7":
+				value=superC;
+				break;
+			default:
+				value = defVal;
+				break;
+			}
+		}
+		return value;
+	}
+	public void setGroupCount(Integer groupCount) {
+		this.groupCount = groupCount;
+	}
+	public Integer getGroupUserCount() {
+		return getValue(groupUserCount, 0,50, 50, 300, modid);
+	}
+	public void setGroupUserCount(Integer groupUserCount) {
+		this.groupUserCount = groupUserCount;
+	}
+	public Integer getMemberCount() {
+		return getValue(memberCount,0, 0, 100, 50000, modid);
+	}
+	public void setMemberCount(Integer memberCount) {
+		this.memberCount = memberCount;
 	}
 	@Override
 	public String toString() {

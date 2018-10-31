@@ -516,9 +516,11 @@
 						</tr>
 						<tr>
 							<td class="width-15 active"><label class="pull-right">
-								<!-- <span class="help-tip">
+						<%-- 	<c:if test="${not empty office.id }">
+								<span class="help-tip">
 									<span class="help-p">此字段需从签约信息页面编辑</span>
-								</span> -->
+								</span>
+				         	</c:if> --%>
 							<font color="red">*</font>机构名称:</label></td>
 				         	<td class="width-35"><input id="oldOfficeName" value="${office.name }" type="hidden">
 				         	<input id="name" name="name" value="${office.name }" maxlength="20" class="form-control required"></td>
@@ -760,7 +762,7 @@
 								<span class="help-p">此字段需从签约信息页面编辑</span>
 							</span> -->
 				      	 	<font color="red">*</font>详细地址:</label></td>
-				          <td class="width-35" colspan="3"><textarea name="officeInfo.detailedAddress" htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required"  >${office.officeInfo.detailedAddress}</textarea></td>
+				         <td class="width-35" colspan="3"><textarea name="officeInfo.detailedAddress" htmlEscape="false" rows="3" cols="30" maxlength="200" style="width: 100%" class="form-control required"  >${office.officeInfo.detailedAddress}</textarea></td>
 				      </tr> 
 				      <tr>
 				        <td class="width-15 active"><label class="pull-right">简介：</label></td>

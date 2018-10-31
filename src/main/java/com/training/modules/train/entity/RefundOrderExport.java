@@ -1,7 +1,5 @@
 package com.training.modules.train.entity;
 
-import java.util.List;
-
 import com.training.common.persistence.DataEntity;
 import com.training.common.utils.excel.annotation.ExcelField;
 
@@ -11,7 +9,6 @@ public class RefundOrderExport extends DataEntity<RefundOrderExport> {
 	private String orderId; //订单号
 	private String arrearageOfficeName; //商家
 	private double arrearagePrice;//欠款金额
-	private double aftersalesPrice;//售后金额
 	private String arrearageOffice;//欠款机构
 	private String franchiseeId;//欠款商家
 	private double amount;//实付金额
@@ -50,24 +47,12 @@ public class RefundOrderExport extends DataEntity<RefundOrderExport> {
 	public void setArrearagePrice(double arrearagePrice) {
 		this.arrearagePrice = arrearagePrice;
 	}
-	public double getAftersalesPrice() {
-		return aftersalesPrice;
-	}
-	public void setAftersalesPrice(double aftersalesPrice) {
-		this.aftersalesPrice = aftersalesPrice;
-	}
-	public String getArrearageOffice() {
+	/*public String getArrearageOffice() {
 		return arrearageOffice;
 	}
 	public void setArrearageOffice(String arrearageOffice) {
 		this.arrearageOffice = arrearageOffice;
-	}
-	public String getFranchiseeId() {
-		return franchiseeId;
-	}
-	public void setFranchiseeId(String franchiseeId) {
-		this.franchiseeId = franchiseeId;
-	}
+	}*/
 	@ExcelField(title="实付金额", align=2, sort=40)
 	public double getAmount() {
 		return amount;
@@ -152,6 +137,18 @@ public class RefundOrderExport extends DataEntity<RefundOrderExport> {
 	}
 	public void setOrderType(String orderType) {
 		this.orderType = orderType;
+	}
+	public String getArrearageOffice() {
+		return arrearageOffice;
+	}
+	public void setArrearageOffice(String arrearageOffice) {
+		this.arrearageOffice = arrearageOffice;
+	}
+	public String getFranchiseeId() {
+		return franchiseeId;
+	}
+	public void setFranchiseeId(String franchiseeId) {
+		this.franchiseeId = franchiseeId;
 	}
 	
 }

@@ -72,7 +72,7 @@ public class SpecialUserController extends BaseController {
 	 * @param redirectAttributes
 	 * @return
 	 */
-	@RequiresPermissions("sys:user:reset")
+	@RequiresPermissions(value = { "sys:user:reset"}, logical = Logical.OR)
 	@RequestMapping(value = "save")
 	public String save(User user, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 		String newPassword = user.getNewPassword();

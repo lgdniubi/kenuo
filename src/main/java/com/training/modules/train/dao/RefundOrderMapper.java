@@ -93,7 +93,7 @@ public interface RefundOrderMapper extends CrudDao<RefundOrder> {
 	 * @param order_id
 	 * @return
 	 */
-	List<RefundOrderLog> queryRefundOrderLogList(@Param("order_id")String order_id);
+	public List<RefundOrderLog> queryRefundOrderLogList(@Param("order_id")String order_id);
 
 	/**
 	 * 查询导出
@@ -102,4 +102,16 @@ public interface RefundOrderMapper extends CrudDao<RefundOrder> {
 	 */
 	public List<RefundOrderExport> findExportList(RefundOrderExport refundOrder);
 
+	public List<RefundOrder> auditAll(String[] idArray);
+
+	/**
+	 * 查凭证
+	 * @param order_id
+	 * @return
+	 */
+	public List<String> findProofList(String id);
+
+	public void refundOrderTimeout(@Param("timeout")String timeout);
+
+	public void refundOrderTimeoutUpdateOfficeState(@Param("timeout")String timeout);
 }

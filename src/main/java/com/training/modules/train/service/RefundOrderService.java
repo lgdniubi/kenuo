@@ -95,19 +95,30 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 		//修改订单状态为已入账
 		this.refundOrderMapper.makeSureInAccount(order_id,status,remarks);
 		this.refundOrderMapper.updateStatementStatus(order_id, Integer.parseInt(status));
-		if("3".equals(status)){System.out.println("调用远程接口还款：office_id:"+office_id+",order_id:"+order_id+",amount:"+amount);
+		RefundOrder refundOrder = refundOrderMapper.queryRefundOrderDetail(order_id);
+		if("3".equals(status) && "2".equals(refundOrder.getOrderType())){		//OrderType=2线下支付 ，status=3已入账状态
+			System.out.println("调用远程接口还款：office_id:"+office_id+",order_id:"+order_id+",amount:"+amount);
 			new Thread(new RefundThread(office_id, order_id, amount)).start();
 		}
+		
+		//记录日志
+		String des = "";
+		if("4".equals(status)){
+			des = "【驳回账单】";
+		}else{
+			des = "【确认入账】";
+		}
+		insertRefundOrderLog(UserUtils.getUser().getId(),order_id, des);
+			
+	}
+
+	public void insertRefundOrderLog(String user_id, String order_id, String des) {
 		//记录日志
 		RefundOrderLog log = new RefundOrderLog();
-		log.setCreateBy(UserUtils.getUser().getId());
+		log.setCreateBy(user_id);
 		log.setOrderId(order_id);
-		if("4".equals(status))
-			log.setDescription("【取消账单】");
-		else
-			log.setDescription("【确认入账】");
+		log.setDescription(des);
 		this.refundOrderMapper.insertRefundOrderLog(log);
-			
 	}
 
 	/**  
@@ -135,5 +146,34 @@ public class RefundOrderService extends CrudService<RefundOrderMapper, RefundOrd
 		// 执行分页查询
 		page.setList(refundOrderMapper.findExportList(refundOrder));
 		return page;
+	}
+	/**
+	 * 将待审核2的状态改已入账3
+	 * @param idArray
+	 */
+	public void auditAll(String[] idArray) {
+		List<RefundOrder> roList = refundOrderMapper.auditAll(idArray);
+		//将所有的确认入账	
+		for (RefundOrder ro : roList) {
+			makeSureInAccount(ro.getOrderId(), ro.getArrearageOffice(), ro.getAmount(), "3", null);
+		}
+	}
+
+	/**
+	 * 根据还款单id查凭证
+	 * @param id	train_refund_serialnumber的id
+	 * @return
+	 */
+	public List<String> findProofList(String id) {
+		
+		return refundOrderMapper.findProofList(id) ;
+	}
+
+	public void refundOrderTimeout(String timeout) {
+		 this.refundOrderMapper.refundOrderTimeout(timeout) ;
+	}
+
+	public void refundOrderTimeoutUpdateOfficeState(String timeout) {
+		 this.refundOrderMapper.refundOrderTimeoutUpdateOfficeState(timeout) ;
 	}
 }

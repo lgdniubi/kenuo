@@ -1,5 +1,7 @@
 package com.training.modules.train.web;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -57,6 +59,7 @@ public class RefundOrderController extends BaseController {
 	@RequestMapping(value="queryStatementOfRefund")
 	public String queryStatementOfRefund(Model model,String order_id){
 		model.addAttribute("statements", this.refundOrderService.queryStatementOfRefund(order_id));
+		model.addAttribute("order_id", order_id);
 		return "modules/train/statementList";
 	}
 	/**
@@ -66,23 +69,33 @@ public class RefundOrderController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value="queryRefundOrderDetail")
-	public String queryRefundOrderDetail(Model model,String order_id){
+	public String queryRefundOrderDetail(Model model,String order_id,String opflag){
 		model.addAttribute("refundOrder", this.refundOrderService.queryRefundOrderDetail(order_id));
+		if("1".equals(opflag)){	//0是审核，1是详情
+			model.addAttribute("log", this.refundOrderService.queryRefundOrderLogList(order_id));
+		}
+		model.addAttribute("opflag", opflag);
 		return "modules/train/refundOrderDetail";
 	}
 	/**
-	 * 审核账单
+	 * 审核账单--不用了2018-9-25 jf
 	 * @param model
 	 * @param order_id
 	 * @return
 	 */
 	@RequestMapping(value="toAuditRefundOrder")
-	public String toAuditRefundOrder(Model model,String office_id,String order_id,double amount,String billmonth){
+	public String toAuditRefundOrder(Model model,String office_id,String order_id,double amount,String billmonth,RedirectAttributes redirectAttributes){
+		RefundOrder refundOrderDetail = this.refundOrderService.queryRefundOrderDetail(order_id);
+		if(!"2".equals(refundOrderDetail.getOrderStatus())){
+			addMessage(redirectAttributes, "账单状态错误");
+			return "redirect:" + adminPath + "/train/refundOrder/list?repage";
+		}else{
 		model.addAttribute("office_id", office_id);
 		model.addAttribute("order_id", order_id);
 		model.addAttribute("amount",amount);
 		model.addAttribute("billmonth", billmonth);
 		return "modules/train/auditRefundOrder";
+		}
 	}
 	/**
 	 * 确认入账
@@ -93,14 +106,19 @@ public class RefundOrderController extends BaseController {
 	@RequestMapping(value="makeSureInAccount")
 	public String makesure(Model model,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,String order_id,String office_id,double amount/*,String billmonth*/,String status,String remarks){
 		try {
-			this.refundOrderService.makeSureInAccount(order_id,office_id,amount/*,billmonth*/,status,remarks);
-			addMessage(redirectAttributes, "操作成功!");
+			RefundOrder refundOrderDetail = this.refundOrderService.queryRefundOrderDetail(order_id);
+			if(!"2".equals(refundOrderDetail.getOrderStatus())){
+				addMessage(redirectAttributes, "账单状态错误");
+			}else{
+				this.refundOrderService.makeSureInAccount(order_id,office_id,amount,status,remarks);
+				addMessage(redirectAttributes, "操作成功!");
+			}
 		} catch (Exception e) {
 			BugLogUtils.saveBugLog(request, "确认入账", e);
 			logger.error("确认入账错误信息:"+e.getMessage());
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
 		}	
-		return "redirect:" + adminPath + "/train/refundOrder/list";
+		return "redirect:" + adminPath + "/train/refundOrder/queryRefundOrderDetail?opflag=1&order_id="+order_id;
 	}
 	/**
 	 * 订单日志
@@ -130,5 +148,29 @@ public class RefundOrderController extends BaseController {
 			addMessage(redirectAttributes, "导出用户失败！失败信息：" + e);
 		}
 		return "redirect:" + adminPath + "/train/refundOrder/list?repage";
+	}
+	/**
+	 * 将待审核2的状态改已入账3
+	 * @param ids
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@RequiresPermissions("train:refundOrder:audit")
+	@RequestMapping(value = "audit")
+	public String audit(String ids, RedirectAttributes redirectAttributes) {
+		String idArray[] = ids.split(",");
+		int successNum = idArray.length;
+		if(successNum>0)
+		refundOrderService.auditAll(idArray);
+		addMessage(redirectAttributes, "已成功审核 " + successNum + " 条用户" );
+		return "redirect:" + adminPath + "/train/refundOrder/list?repage";
+	}
+	
+	
+	@RequestMapping(value = "proof")
+	public String proof(Model model,String id, RedirectAttributes redirectAttributes) {
+		List<String> proofList = refundOrderService.findProofList(id);
+		model.addAttribute("proofList",proofList);
+		return  "modules/train/proofList";
 	}
 }

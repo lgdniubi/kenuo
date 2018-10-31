@@ -39,53 +39,40 @@
 				if(validateImgUrl()){
 					$("#inputForm").submit();
 					//return true;
-				}
+				} 
 			});
 		  return false;
 		}
-		/* function validUserId(){
-			return isNullUserId('sign_usernameId') &&isNullUserId('cargo') &&isNullUserId('auditId')&&isNullUserId('proxyId');
-		}
-		//判断报货人那些userID是不是空
-		function isNullUserId(uid){
-			var userid = $("#"+uid).val();
-			if(userid == ''){
-				 top.layer.alert('姓名无效，请按手机号搜索', {icon: 0, title:'提醒'});
-				 return false;
-			}
-			 return true;
-		} */
 		function validateImgUrl(){
-			var flag = validOneImg('char')&&validOneImg('icardone')&&validOneImg('icardtwo')&&validOneImg('cardup')&&validOneImg('carddown');
-			
+			var flag = validOneImg('char')&&validOneImg('icardone')&&validOneImg('icardtwo');
+			//&&validOneImg('cardup')&&validOneImg('carddown');
+			/* &&validOneImg('sign_fonturl')&&validOneImg('sign_backurl')&&validOneImg('cargo_fonturl')&&validOneImg('cargo_backurl')&&validOneImg('audit_fonturl')&&
+			validOneImg('audit_backurl')&&validOneImg('proxy_fonturl')&&validOneImg('proxy_backurl'); */
 			var backFlag = validBackImg();
-			/* if(a==0){
-				 top.layer.alert('支付信息不可为空！', {icon: 0, title:'提醒'});
-				 return false;
-			} */
 			return flag && backFlag;
 		}
 		//校验银行卡图片
 		var payWay = '${payWay}';
 		var isHasBack = 0;
 		function validBackImg(id){
-			if(payWay=='0' && isHasBack==1){
+			var flagbank = true;
+			if(isHasBack==1){
 				$("#pay-info input[name='payInfos[0].pay_fonturl']").each(function(k,y){
 					var vl = $(this).val();
 					if(vl == null || vl == ""){
 					   top.layer.alert('银行卡正面图片不可为空！', {icon: 0, title:'提醒'});
-					   return false;
+					   flagbank = false;
 					}
 				})				
 				$("#pay-info input[name='payInfos[0].pay_backurl']").each(function(k,y){
 					var vl = $(this).val();
 					if(vl == null || vl == ""){
 					   top.layer.alert('银行卡图片反面不可为空！', {icon: 0, title:'提醒'});
-					   return false;
+					   flagbank = false;
 					}
 				})	
 			}
-			return true;
+			return flagbank;
 		}
 		
 		function validOneImg(id){
@@ -109,6 +96,37 @@
 		}
 		//添加付款方式
 		var a = 0;
+		function setPayType(value) {
+			//console.log(value)
+			$('#payType').val(value)
+		}
+		function checkPayType(){
+			var html = '';
+			if(payWay=='1'){
+				html = '<div>' +
+			 	'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio" checked="checked"  name="payType" onclick="setPayType(2)">支付宝（在线支付）　　　　注：可用于付款和还款</p>'+
+				'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio"  name="payType" onclick="setPayType(1)" >微信（在线支付）　　　　注：可用于付款和还款</p>'+
+				'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio" name="payType" onclick="setPayType(0)">银行卡（线下支付）　　　　注：可用于还款</p>'+
+				' </div>';
+			}else{
+				html = '<div>' +
+			 	'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio" checked="checked"  name="payType" onclick="setPayType(2)">支付宝（在线支付）　　　　注：可用于还款</p>'+
+				'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio"  name="payType" onclick="setPayType(1)" >微信（在线支付）　　　　注：可用于还款</p>'+
+				'<p style="line-height: 20px;text-align:center;margin-bottom: 15px" ><input type="radio" name="payType" onclick="setPayType(0)">银行卡（线下支付）　　　　注：可用于付款和还款</p>'+
+				' </div>';
+			}
+			$('#payType').val(2)
+			layer.open({
+			  content: html
+			  ,area: ['400px', '300px']
+			  ,btn: ['确定', '取消']
+			  ,yes: function(index, layero){
+				 addPayData($('#payType').val())
+				 layer.close(index)
+			  }
+			  
+			});
+		}
 		function addPayData(value,obj){
 			a++;
 			if (value == 0) {//#pay-info
@@ -187,12 +205,12 @@
 			uploadFile('pay_backurl') */
 			var paylen = '${paylen}';
 			a= parseInt(paylen);
-			if(payWay=='0'){
+			//if(payWay=='0'){
 				for (var len = 0; len < a; len++) {
 					uploadFile('payfonturl'+len)
 					uploadFile('paybackurl'+len)
 				}
-			}
+			//}
 			
 		});
 		var lastValue = "";
@@ -237,7 +255,7 @@
 			//pay_backurl	
 		
 			$("#file_"+str+"_upload").uploadify({
-				'buttonText' : ' 请选择图片',
+				'buttonText' : '请选择图片',
 				'method' : 'post',
 				'swf' : '${ctxStatic}/train/uploadify/uploadify.swf',
 				'uploader' : '<%=uploadURL%>',
@@ -292,7 +310,7 @@
 						<tr><td colspan="4" class="active"><label class="pull-left">签约信息</label></td></tr>
 						<tr>
 							<td class="width-15 active"><label class="pull-right"><font color="red">*</font>公司名称：</label></td>
-							<td class="width-35"><input name="office_name" value="${infoVo.office_name}" htmlEscape="false" maxlength="50"  class="form-control required" /></td>
+							<td class="width-35"><input name="office_regist_name" value="${infoVo.office_regist_name}" htmlEscape="false" maxlength="50"  class="form-control required" /></td>
 							<td class="width-15 active"><label class="pull-right"><font color="red">*</font>成立日期:</label></td>
 							<td class="width-35"> <input name="office_setdate" id="start_date" value="${infoVo.office_setdate}" htmlEscape="false" maxlength="50" class="layer-date form-control required" readonly="readonly" placeholder="成立日期"/></td>
 						</tr>
@@ -354,47 +372,6 @@
 					         </td>
 				       </tr>
 				   </tbody>
-				   <tbody id="unfold">
-				      <tr>
-						  <td colspan="4" class="active">
-								<label class="pull-left">账户信息</label>
-						  </td>
-					  </tr>
-				      <tr>
-					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>持卡人姓名:</label></td>
-					      <td class="width-35"><input name="office_accountname" value="${infoVo.office_accountname}" htmlEscape="false" maxlength="20" class="form-control required" /></td>
-					      <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户银行:</label></td>
-					      <td class="width-35"><input name="office_openbank" value="${infoVo.office_openbank}" htmlEscape="false" maxlength="20" class="form-control required" /></td>
-					  </tr>
-				      <tr>
-					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡号:</label></td>
-					      <td class="width-35"><input name="office_bankaccount" value="${infoVo.office_bankaccount}" htmlEscape="false" maxlength="50" class="form-control required" /></td>
-<%-- 					      <td  class="width-15 active"><label class="pull-right">开户地址:</label></td>
-					      <td class="width-35"><input name="officeInfo.bankaddress" value="${infoVo.officeInfo.bankaddress}" htmlEscape="false" maxlength="50" class="form-control" /></td>
- --%>					  </tr>
-				      <tr>
-					      <td class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡正面:</label></td>
-					      <td class="width-35">
-					      	<img id="officecardupImgsrc" src="${infoVo.office_bankcardup}" alt="" style="width: 200px;height: 100px;"/>
-								<input type="hidden" id="cardup" name="office_bankcardup" value="${infoVo.office_bankcardup}"><!-- 图片隐藏文本框 -->
-								<p>&nbsp;</p>
-			                   	<div class="upload">
-									<input type="file" name="file_cardup_upload" id="file_cardup_upload">
-								</div>
-								<div id="file_cardup_queue"></div>
-					      </td>
-					      <td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行卡反面:</label></td>
-					      <td class="width-35">
-					      	<img id="officecarddownImgsrc" src="${infoVo.office_bankcarddown}" alt="" style="width: 200px;height: 100px;"/>
-								<input type="hidden" id="carddown" name="office_bankcarddown" value="${infoVo.office_bankcarddown}"><!-- 图片隐藏文本框 -->
-								<p>&nbsp;</p>
-			                   	<div class="upload">
-									<input type="file" name="file_carddown_upload" id="file_carddown_upload">
-								</div>
-								<div id="file_carddown_queue"></div>
-					      </td>
-					  </tr>
-			      </tbody>
 			    </table>
 				<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 				   <tbody>
@@ -536,7 +513,7 @@
 						</tr>
 						
 						
-						<tr><td colspan="4" class=""><label class="pull-left">付款人</label></td></tr>
+						<tr><td colspan="4" class=""><label class="pull-left">代付人</label></td></tr>
 						<tr>
 							<td  class="width-15 active"><label class="pull-right">联系电话:</label></td>
 			         		<td class="width-35">
@@ -587,77 +564,83 @@
 						
 			      </tbody>
 		      </table>
-		      <c:if test="${payWay == 0}"><!-- 0是线下支付 -->
-		      	  <a href="#" onclick="addPayData(0,this)"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加账户</a>
-		      	  <!-- <div id="add-pattern" onclick="addPayData(0,this)"><i class="icon-add-pattern"></i>添加账户</div> -->
-		      </c:if>
-		      <c:if test="${payWay == 1}"><!-- 1是线上支付 -->
-		      	  <a href="#" onclick="addPayData(2,this)"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加支付宝</a>
-		      	  <a href="#" onclick="addPayData(1,this)"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加微信</a>
-			      <!-- <div id="add-pattern" onclick="addPayData(1,this)"><i class="icon-add-pattern"></i>添加支付宝</div>
-			      <div id="add-pattern" onclick="addPayData(2,this)"><i class="icon-add-pattern"></i>添加微信</div> -->
-		      </c:if>
+	      	  <a href="#" onclick="checkPayType()"  class="btn  btn-warning btn-xs" ><i class="glyphicon glyphicon-plus"></i>添加账户</a>
+	      	  <input type="hidden" value="0" id="payType">
+		      <div><label class="pull-left" style="color: red">	注：本商家付款方式（
+			      	<c:if test="${payWay == 0}">线下支付</c:if>
+					<c:if test="${payWay == 1}">在线支付</c:if>
+			      	），还款方式（线下支付、在线支付）</label>
+		      </div>
 		      <table id="pay-info" class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 		      	<tbody >
 		      	<tr><td colspan="6" class=""><label class="pull-left">付款账户</label></td></tr>
 		      	</tbody>
-		      	<c:if test="${payWay == 0}">
 		      		<c:forEach items="${payInfos}" var="pay" varStatus="i">
-			      		<tbody class='bank'>
-							<tr>
-								<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户银行</label></td>
+		      			<c:if test="${pay.pay_type == 0}">
+				      		<tbody class='bank'>
+				      			<tr>
+				      				<input value="0" name="payInfos[0].pay_type" type="hidden">
+									<td colspan="6" class="active"><label class="pull-left">银行卡
+									<c:if test="${payWay == 0}">（用于付款/还款）</c:if>
+									<c:if test="${payWay == 1}">（用于还款）</c:if>
+									</label></td>
+								</tr>
+								<tr>
+									<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行账号:</label></td>
+							        <td class="width-35"><input value="${pay.pay_account}" name="payInfos[0].pay_account" class="form-control required"></td>
+							        	<td class="width-35" rowspan="3">
+							        		<img id="officepayfonturl${i.index}Imgsrc" src="${pay.pay_fonturl}" alt="" style="width: 200px;height: 100px;"/>
+										<input type="hidden" id="payfonturl${i.index}" name="payInfos[0].pay_fonturl" class="required" value="${pay.pay_fonturl}"><!-- 图片隐藏文本框 -->
+										<p>&nbsp;</p>
+							                 	<div class="upload">
+											<input type="file" name="file_payfonturl${i.index}_upload" class="required" id="file_payfonturl${i.index}_upload">
+										</div>
+										<div id="file_payfonturl${i.index}_queue"></div>
+										<div >选择银行卡正面</div>
+							        	</td>
+							        	<td class="width-35" rowspan="3">
+							        		<img id="officepaybackurl${i.index}Imgsrc" src="${pay.pay_backurl}" alt="" style="width: 200px;height: 100px;"/>
+										<input type="hidden" id="paybackurl${i.index}" name="payInfos[0].pay_backurl" value="${pay.pay_backurl}"><!-- 图片隐藏文本框 -->
+										<p>&nbsp;</p>
+							                 	<div class="upload">
+											<input type="file" name="file_paybackurl${i.index}_upload" class="required" id="file_paybackurl${i.index}_upload">
+										</div>
+										<div id="file_paybackurl${i.index}_queue"></div>
+										<div >选择银行卡反面</div>
+							        	</td>
+								</tr>
+								
+								<tr>
+									<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>持卡人姓名:</label></td>
+							        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[0].pay_username" class="form-control required"></td>
+								</tr>
+								<tr>
+									<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户行地址</label></td>
 						        	<td class="width-35"><input value="${pay.pay_name}" name="payInfos[0].pay_name" class="form-control required"></td>
-						        	<td class="width-35" rowspan="3">
-						        		<img id="officepayfonturl${i.index}Imgsrc" src="${pay.pay_fonturl}" alt="" style="width: 200px;height: 100px;"/>
-									<input type="hidden" id="payfonturl${i.index}" name="payInfos[0].pay_fonturl" class="required" value="${pay.pay_fonturl}"><!-- 图片隐藏文本框 -->
-									<p>&nbsp;</p>
-						                 	<div class="upload">
-										<input type="file" name="file_payfonturl${i.index}_upload" class="required" id="file_payfonturl${i.index}_upload">
-									</div>
-									<div id="file_payfonturl${i.index}_queue"></div>
-						        	</td>
-						        	<td class="width-35" rowspan="3">
-						        		<img id="officepaybackurl${i.index}Imgsrc" src="${pay.pay_backurl}" alt="" style="width: 200px;height: 100px;"/>
-									<input type="hidden" id="paybackurl${i.index}" name="payInfos[0].pay_backurl" value="${pay.pay_backurl}"><!-- 图片隐藏文本框 -->
-									<p>&nbsp;</p>
-						                 	<div class="upload">
-										<input type="file" name="file_paybackurl${i.index}_upload" class="required" id="file_paybackurl${i.index}_upload">
-									</div>
-									<div id="file_paybackurl${i.index}_queue"></div>
-						        	</td>
-							</tr>
-							<input value="0" name="payInfos[0].pay_type" type="hidden">
-							<tr>
-								<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>账户名称:</label></td>
-						        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[0].pay_username" class="form-control required"></td>
-							</tr>
-							<tr>
-								<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行账号:</label></td>
-						        <td class="width-35"><input value="${pay.pay_account}" name="payInfos[0].pay_account" class="form-control required"></td>
-							</tr>
-							<tr>
-								<td colspan="6" class="active"><a href="#" onclick="delPayData(0,this)" class="btn btn-danger btn-xs"><i class="fa fa-trash">删除</i></a></td>
-								<!-- <td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(0,this)"><i class="icon-add-pattern"></i>删除</div></td> -->
-							</tr>
-						</tbody>
-		      		</c:forEach>
-		      	</c:if>
-		      	<c:if test="${payWay == 1}">
-		      		<c:forEach items="${payInfos}" var="pay" varStatus="i">
+								</tr>
+								<tr>
+									<td colspan="6" class="active"><a href="#" onclick="delPayData(0,this)" class="btn btn-danger btn-xs"><i class="fa fa-trash">删除</i></a></td>
+									<!-- <td colspan="6" class="active"><div id="add-pattern" onclick="delPayData(0,this)"><i class="icon-add-pattern"></i>删除</div></td> -->
+								</tr>
+							</tbody>
+						</c:if>
 				      	<c:if test="${pay.pay_type == 2}">
 				      		<tbody class='ali'>
 								<tr>
 								<input value="2" name="payInfos[2].pay_type" type="hidden">
-									<td colspan="6" class="active"><label class="pull-left">支付宝</label></td>
+									<td colspan="6" class="active"><label class="pull-left">支付宝
+									<c:if test="${payWay == 0}">（用于还款）</c:if>
+									<c:if test="${payWay == 1}">（用于付款/还款）</c:if>
+									</label></td>
 								</tr>
 								<tr>
-									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
+									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>支付宝账号</label></td>
 						        	<td class="width-35"><input value="${pay.pay_account}" name="payInfos[2].pay_account" class="form-control required"></td>
 									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
 							        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[2].pay_username" class="form-control required"></td>
 								</tr>
 								<tr>
-									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
+									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>联系电话:</label></td>
 							        <td colspan="5" class="width-35"><input value="${pay.pay_mobile}" name="payInfos[2].pay_mobile" class="form-control required"></td>
 								</tr>
 								<tr>
@@ -670,17 +653,20 @@
 				      		<tbody class='wechat'>
 								<tr>
 									<input value="1" name="payInfos[1].pay_type" type="hidden">
-									<td colspan="6" class="active"><label class="pull-left">微信</label></td>
+									<td colspan="6" class="active"><label class="pull-left">微信
+									<c:if test="${payWay == 0}">（用于还款）</c:if>
+									<c:if test="${payWay == 1}">（用于付款/还款）</c:if>
+									</label></td>
 								</tr>
 								<tr>
-									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
+									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>微信号</label></td>
 							        <td class="width-35"><input value="${pay.pay_account}" name="payInfos[1].pay_account" class="form-control required"></td>
 									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
 							        <td class="width-35"><input value="${pay.pay_username}" name="payInfos[1].pay_username" class="form-control required"></td>
 									
 								</tr>
 								<tr>
-									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
+									<td class="width-15 active"><label class="pull-right"><font color="red">*</font>联系电话:</label></td>
 							        <td  colspan="5" class="width-35"><input value="${pay.pay_mobile}" name="payInfos[1].pay_mobile" class="form-control required"></td>
 								</tr>
 								<tr>
@@ -691,7 +677,6 @@
 				      	</c:if>
 		      			
 		      		</c:forEach>
-		      	</c:if>
 		      	
 		      </table>
 			   <c:if test="${opflag == 1}">
@@ -707,8 +692,15 @@
 			<table id="bank-pay">
 				<tbody class='bank'>
 					<tr>
-						<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户银行</label></td>
-			        	<td class="width-35"><input value="" name="payInfos[0].pay_name" class="form-control required"></td>
+						<input value="0" name="payInfos[0].pay_type" type="hidden">
+						<td colspan="6" class="active"><label class="pull-left">银行卡
+						<c:if test="${payWay == 0}">（用于付款/还款）</c:if>
+						<c:if test="${payWay == 1}">（用于还款）</c:if>
+						</label></td>
+					</tr>
+					<tr>
+						<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行账号:</label></td>
+				        <td class="width-35"><input value="" name="payInfos[0].pay_account" class="form-control required"></td>
 			        	<td class="width-35" rowspan="3">
 				        	<img id="officepayfonturlImgsrc" src="" alt="" style="width: 200px;height: 100px;"/>
 							<input type="hidden" id="payfonturl" name="payInfos[0].pay_fonturl" class="required" value=""><!-- 图片隐藏文本框 -->
@@ -717,6 +709,7 @@
 								<input type="file" name="file_payfonturl_upload" class="required" id="file_payfonturl_upload">
 							</div>
 							<div id="file_payfonturl_queue"></div>
+							<div >选择银行卡正面</div>
 			        	</td>
 			        	<td class="width-35" rowspan="3">
 				        	<img id="officepaybackurlImgsrc" src="" alt="" style="width: 200px;height: 100px;"/>
@@ -726,16 +719,17 @@
 								<input type="file" name="file_paybackurl_upload" class="required" id="file_paybackurl_upload">
 							</div>
 							<div id="file_paybackurl_queue"></div>
+							<div >选择银行卡反面</div>
 			        	</td>
 					</tr>
 					<input value="0" name="payInfos[0].pay_type" type="hidden">
 					<tr>
-						<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>账户名称:</label></td>
+						<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>持卡人姓名:</label></td>
 				        <td class="width-35"><input value="" name="payInfos[0].pay_username" class="form-control required"></td>
 					</tr>
 					<tr>
-						<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>银行账号:</label></td>
-				        <td class="width-35"><input value="" name="payInfos[0].pay_account" class="form-control required"></td>
+						<td  class="width-15 active"><label class="pull-right"><font color="red">*</font>开户行地址</label></td>
+			        	<td class="width-35"><input value="" name="payInfos[0].pay_name" class="form-control required"></td>
 					</tr>
 					<tr>
 						<td colspan="6" class="active"><a href="#" onclick="delPayData(0,this)" class="btn btn-danger btn-xs"><i class="fa fa-trash">删除</i></a></td>
@@ -749,17 +743,20 @@
 			<table id="ali-pay">
 				<tbody class='ali'>
 					<tr>
-					<input value="2" name="payInfos[2].pay_type" type="hidden">
-						<td colspan="6" class="active"><label class="pull-left">支付宝</label></td>
+						<input value="2" name="payInfos[2].pay_type" type="hidden">
+						<td colspan="6" class="active"><label class="pull-left">支付宝
+						<c:if test="${payWay == 0}">（用于还款）</c:if>
+						<c:if test="${payWay == 1}">（用于付款/还款）</c:if>
+						</label></td>
 					</tr>
 					<tr>
-						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
+						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>支付宝账号</label></td>
 			        	<td class="width-35"><input value="" name="payInfos[2].pay_account" class="form-control required"></td>
 						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
 				        <td class="width-35"><input value="" name="payInfos[2].pay_username" class="form-control required"></td>
 					</tr>
 					<tr>
-						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
+						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>联系电话:</label></td>
 				        <td colspan="5" class="width-35"><input value="" name="payInfos[2].pay_mobile" class="form-control required"></td>
 					</tr>
 					<tr>
@@ -775,16 +772,19 @@
 				<tbody class='wechat'>
 					<tr>
 						<input value="1" name="payInfos[1].pay_type" type="hidden">
-						<td colspan="6" class="active"><label class="pull-left">微信</label></td>
+						<td colspan="6" class="active"><label class="pull-left">微信
+						<c:if test="${payWay == 0}">（用于还款）</c:if>
+						<c:if test="${payWay == 1}">（用于付款/还款）</c:if>
+						</label></td>
 					</tr>
 					<tr>
-						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>账号</label></td>
+						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>微信号</label></td>
 				        <td class="width-35"><input value="" name="payInfos[1].pay_account" class="form-control required"></td>
 						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>姓名:</label></td>
 				        <td class="width-35"><input value="" name="payInfos[1].pay_username" class="form-control required"></td>
 					</tr>
 					<tr>
-						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>电话:</label></td>
+						<td class="width-15 active"><label class="pull-right"><font color="red">*</font>联系电话:</label></td>
 				        <td colspan="5" class="width-35"><input value="" name="payInfos[1].pay_mobile" class="form-control required"></td>
 					</tr>
 					<tr>

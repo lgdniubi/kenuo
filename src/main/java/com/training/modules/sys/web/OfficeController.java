@@ -454,6 +454,10 @@ public class OfficeController extends BaseController {
 				List<PayInfo> list = creatPayInfoList(payWay, payInfos,contractInfo.getCreate_user());
 				contractInfo.setPayInfos(list);
 			}
+			//同步公司名称
+			Office office = officeService.get(contractInfo.getOffice_id());
+			contractInfo.setOffice_name(office.getName());
+			
 			JsonConfig config = new JsonConfig();
 			JSONObject j = JSONObject.fromObject(contractInfo,config);
 			System.out.println(j.toString());
@@ -485,40 +489,49 @@ public class OfficeController extends BaseController {
 
 	private List<PayInfo> creatPayInfoList(Integer payWay, List<PayInfo> payInfos, String userid) {
 		List<PayInfo> ns = new ArrayList<>();
-		if(payWay == 0){ //线下支付
+		if(payInfos == null) return ns; 
+		PayInfo np ;
+//		if(payWay == 0){ //线下支付
+		if(payInfos.size()>0){
 			PayInfo payInfo = payInfos.get(0);
-			String[] username = payInfo.getPay_username().split(",");
-			String[] account = payInfo.getPay_account().split(",");
-			String[] name = payInfo.getPay_name().split(",");
-			String[] font = payInfo.getPay_fonturl().split(",");
-			String[] back = payInfo.getPay_backurl().split(",");
-//			int a = back.length;
-			PayInfo np ;
-			for (int i = 0; i < back.length; i++) {
-				np = new PayInfo();
-				np.setCreate_user(userid);
-				np.setPay_username(username[i]);
-				np.setPay_account(account[i]);
-				np.setPay_name(name[i]);
-				np.setPay_type("0");
-				np.setPay_fonturl(font[i]);
-				np.setPay_backurl(back[i]);
-				ns.add(np);
-			}
-		}else if(payWay == 1){ //支付宝支付
-			PayInfo payInfo = payInfos.get(1);
 			if(payInfo!=null && payInfo.getPay_type() !=null){
 				String[] type = payInfo.getPay_type().split(",");
-				if("1".equals(type[0])){
+				if("0".equals(type[0])){
 					String[] username = payInfo.getPay_username().split(",");
 					String[] account = payInfo.getPay_account().split(",");
-					String[] mobile = payInfo.getPay_mobile().split(",");
-					PayInfo np ;
-					for (int i = 0; i < account.length; i++) {
+					String[] name = payInfo.getPay_name().split(",");
+					String[] font = payInfo.getPay_fonturl().split(",");
+					String[] back = payInfo.getPay_backurl().split(",");
+		//			int a = back.length;
+					for (int i = 0; i < back.length; i++) {
 						np = new PayInfo();
 						np.setCreate_user(userid);
 						np.setPay_username(username[i]);
 						np.setPay_account(account[i]);
+						np.setPay_name(name[i]);
+						np.setPay_type("0");
+						np.setPay_fonturl(font[i]);
+						np.setPay_backurl(back[i]);
+						ns.add(np);
+					}
+				}
+			}
+		}
+//		}else if(payWay == 1){ //支付宝支付
+		if(payInfos.size()>1){
+			PayInfo payInfo1 = payInfos.get(1);
+			if(payInfo1!=null && payInfo1.getPay_type() !=null){
+				String[] type = payInfo1.getPay_type().split(",");
+				if("1".equals(type[0])){
+					String[] username1 = payInfo1.getPay_username().split(",");
+					String[] account1 = payInfo1.getPay_account().split(",");
+					String[] mobile = payInfo1.getPay_mobile().split(",");
+//					PayInfo np ;
+					for (int i = 0; i < account1.length; i++) {
+						np = new PayInfo();
+						np.setCreate_user(userid);
+						np.setPay_username(username1[i]);
+						np.setPay_account(account1[i]);
 						np.setPay_mobile(mobile[i]);
 						np.setPay_name("微信");
 						np.setPay_type("1");
@@ -526,6 +539,7 @@ public class OfficeController extends BaseController {
 					}
 				}	
 			}
+		}
 		 //微信支付
 			if(payInfos.size()>2){
 				PayInfo payInfo2 = payInfos.get(2);
@@ -549,7 +563,7 @@ public class OfficeController extends BaseController {
 					}	
 				}
 			}
-		}
+//		}
 		return ns;
 	}
 	
@@ -1348,49 +1362,5 @@ public class OfficeController extends BaseController {
 		}
     	return "modules/sys/shopLogs";
     }
-    /**
-     * 去信用额度编辑页面
-     * @return
-     */
-    @RequiresPermissions("sys:office:editCredit")
-    @RequestMapping("toEditCredit")
-    public String toEditCredit(String office_id,Model model,RedirectAttributes redirectAttributes,HttpServletRequest request){
-    	
-    	try {
-			OfficeAcount officeAcount = this.officeService.findOfficeAcount(office_id);
-			if(officeAcount == null){
-				officeAcount = new OfficeAcount();
-				officeAcount.setOfficeId(office_id);
-				this.officeService.saveOfficeAcount(officeAcount);
-			}
-			model.addAttribute("officeAcount", officeAcount);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-    	
-    	return "modules/sys/editCreditLimit";
-    }
-    /**
-     * 编辑信用额度
-     * @param officeAcount
-     * @param redirectAttributes
-     * @param request
-     * @return
-     */
-    @RequestMapping("updateOfficeCreditLimit")
-    public String updateOfficeCreditLimit(OfficeAcount officeAcount,RedirectAttributes redirectAttributes,HttpServletRequest request){
-    	try {
-			this.officeService.updateOfficeCreditLimit(officeAcount);
-			addMessage(redirectAttributes, "变更信用额度成功");
-		}catch (RuntimeException e) {
- 			e.printStackTrace();
- 			BugLogUtils.saveBugLog(request, "变更信用额度", e);
- 			addMessage(redirectAttributes, e.getMessage());
- 		}catch (Exception e) {
-			e.printStackTrace();
-			BugLogUtils.saveBugLog(request, "变更信用额度", e);
-			addMessage(redirectAttributes, "变更信用额度失败");
-		}
-    	return "redirect:" + adminPath + "/sys/office/list"; 
-    }
+   
 }
