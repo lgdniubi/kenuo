@@ -6,21 +6,28 @@
 <head>
 	<title>企业审核</title>
 	<meta name="decorator" content="default"/>
-
+	<style>
+		/*查看凭证，页面样式 */
+		#jqPhoto{position: fixed;left: 0;top: 0;width: 100%;height: 100%; z-index: 99999;background-color: rgba(0, 0, 0,.6);display: none;}
+		#jqPhoto #colorBtn{position: absolute;right: 23px;top: 16px;width: 17px;height: 15px;background: url(${ctxStatic}/train/images/close.png) center no-repeat;background-size: 15px;cursor: pointer;z-index: 999;opacity: .8;}
+		#jqPhotoPage{position: absolute;left:0;top:0;width: 100%;height: 100%;border:none;overflow: hidden;}
+	</style>
+	
 	<script type="text/javascript">
-		/* var validateForm;
-		function doSubmit(){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
-			if(validateForm.form()){
-        	  loading('正在提交，请稍等...');
-		      $("#inputForm").submit();
-	     	  return true;
-		  	}
-		  return false;
-		} */
+		$(function() {
+			$('.jq-photo').click(function(){
+				var url = $(this).attr('data-link')
+				$('#jqPhotoPage').attr({'src':url})
+				$('#jqPhoto').fadeIn()
+			})
+			$('#colorBtn').click(function(){
+				$('#jqPhoto').fadeOut()
+			})
+		})
 	</script>
 </head>
 <body>
-	<form:form id="inputForm" modelAttribute="userCheck" action="${ctx}/train/userCheck/save" method="post" class="form-horizontal">
+	<form:form id="inputForm" modelAttribute="userCheck" action="" method="post" class="form-horizontal">
 		<sys:message content="${message}"/>
 		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
 			<tbody>
@@ -31,6 +38,19 @@
 			         <td width="100px" class="active"><label class="pull-right">机构名称:</label></td>
 			         <td colspan="5">
 			         ${contractInfo.office_name }
+			         </td>
+		         </tr>
+			    <tr>
+			         <td width="100px" class="active"><label class="pull-right">公司名称:</label></td>
+			         <td colspan="5">
+			         ${contractInfo.office_regist_name }
+			         </td>
+		         </tr>
+			    <tr>
+			         <td width="100px" class="active"><label class="pull-right">营业执照:</label></td>
+			         <td colspan="5">
+			         <img id="officeInfoimgsrc" src="${contractInfo.office_license}" alt="" style="width: 200px;height: 100px;"/>
+			         <span class="jq-photo" data-link='${ctx}/train/contractInfo/licenseImg?imgUrl=${contractInfo.office_license}'><a style="color: #1c84c6">查看大图</a></span>
 			         </td>
 		         </tr>
 				<tr>
@@ -308,5 +328,10 @@
 			</tbody>
 		</table>  
 	</form:form> 
+	<!-- 放在页面任何地方，查看凭证 -->
+	<div id="jqPhoto">
+		<div id="colorBtn"></div>
+		<iframe src="" id="jqPhotoPage"></iframe>
+	</div>
 </body>
 </html>

@@ -17,6 +17,8 @@ import com.training.common.persistence.Page;
 import com.training.common.utils.DateUtils;
 import com.training.common.utils.excel.ExportExcel;
 import com.training.common.web.BaseController;
+import com.training.modules.quartz.service.RedisClientTemplate;
+import com.training.modules.quartz.utils.RedisLock;
 import com.training.modules.sys.utils.BugLogUtils;
 import com.training.modules.train.entity.RefundOrder;
 import com.training.modules.train.entity.RefundOrderExport;
@@ -28,6 +30,8 @@ public class RefundOrderController extends BaseController {
 
 	@Autowired
 	private RefundOrderService refundOrderService;
+	@Autowired
+	private RedisClientTemplate redisClientTemplate;		//redis缓存Service
 	/**
 	 * 账单列表
 	 * @param refundOrder
@@ -105,7 +109,10 @@ public class RefundOrderController extends BaseController {
 	@RequiresPermissions(value="train:refundOrder:makeSureInAccount")
 	@RequestMapping(value="makeSureInAccount")
 	public String makesure(Model model,HttpServletRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes,String order_id,String office_id,double amount/*,String billmonth*/,String status,String remarks){
+		RedisLock redisLock = new RedisLock(redisClientTemplate, order_id);
 		try {
+			redisLock.lock();
+			logger.info("确认入账操作makeSureInAccount"+order_id);
 			RefundOrder refundOrderDetail = this.refundOrderService.queryRefundOrderDetail(order_id);
 			if(!"2".equals(refundOrderDetail.getOrderStatus())){
 				addMessage(redirectAttributes, "账单状态错误");
@@ -117,6 +124,8 @@ public class RefundOrderController extends BaseController {
 			BugLogUtils.saveBugLog(request, "确认入账", e);
 			logger.error("确认入账错误信息:"+e.getMessage());
 			addMessage(redirectAttributes, "操作出现异常，请与管理员联系");
+		}finally {
+			redisLock.unlock();
 		}	
 		return "redirect:" + adminPath + "/train/refundOrder/queryRefundOrderDetail?opflag=1&order_id="+order_id;
 	}

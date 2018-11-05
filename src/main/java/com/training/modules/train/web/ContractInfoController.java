@@ -137,6 +137,18 @@ public class ContractInfoController extends BaseController {
 		model.addAttribute("protocalUser", this.protocolModelService.findProtocolListOfOffice(office_id));
 		return "modules/train/protocolListOfOffice";
 	}
+	
+	/**
+	 * 查看公司营业执照大图
+	 * @param imgUrl
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="licenseImg")
+	public String licenseImg(String imgUrl,Model model){
+		model.addAttribute("imgUrl", imgUrl);
+		return "modules/train/licenseImg";
+	}
 	/**
 	 * 审核驳回原因
 	 * @param office_id
