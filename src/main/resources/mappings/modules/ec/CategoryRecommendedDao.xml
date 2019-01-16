@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.training.modules.ec.dao.CategoryRecommendedDao">
+
+	<sql id="CommentColumns">
+		a.id,
+		a.category_id AS categoryId,
+		a.name,
+		a.img_url  AS imgUrl,
+		a.is_category_show AS isCategoryShow,
+		a.is_mall_show AS isMallShow,
+		a.sort
+	</sql>
+	
+	<!-- 查询所有数据列表 -->
+	<select id="findList" resultType="mtmyCategoryRecommended">
+		SELECT
+			<include refid="CommentColumns"/>
+			<!-- b.name AS categoryName  -->
+		FROM
+			mtmydb.mtmy_category_recommended a <!-- LEFT JOIN mtmy_goods_category b ON a.category_id = b.category_id -->
+		WHERE 1 = 1
+			<!-- <if test="isCategoryShow != null and isCategoryShow != '' and isCategoryShow != '-1'">
+				AND is_category_show = #{isCategoryShow}
+			</if>  -->
+		AND a.del_flag = 0
+		ORDER BY
+			a.sort DESC
+	</select>
+	
+	<!-- 根据id查询商家主页banner图 -->
+	<!-- <select id="getMtmyFranchiseeBannerById" resultType="mtmyFranchiseeBanner">
+		SELECT
+			<include refid="CommentColumns"/>,
+			b.name AS franchiseeName
+		FROM
+			mtmydb.mtmy_franchisee_banner a LEFT JOIN mtmydb.mtmy_franchisee b ON a.franchisee_id = b.id
+		WHERE 
+			a.id = #{id}
+	</select> -->
+	
+	<!-- 插入数据 -->
+	<!-- <insert id="insert" parameterType="mtmyFranchiseeBanner">
+		INSERT INTO mtmydb.mtmy_franchisee_banner(
+			franchisee_id,
+			banner_name,
+			img,
+			redirect_url,
+			is_show,
+			sort,
+			remark,
+			create_by,
+			create_date,
+			update_by,
+			update_date
+		) VALUES (
+			#{franchiseeId},
+			#{bannerName},
+			#{img},
+			#{redirectUrl},
+			#{isShow},
+			#{sort},
+			#{remark},
+			#{createBy.id},
+			SYSDATE(),
+			#{createBy.id},
+			SYSDATE()
+		)
+	</insert> -->
+	
+	<!-- 修改 -->
+	<!-- <update id="update" parameterType="mtmyFranchiseeBanner">
+		UPDATE mtmydb.mtmy_franchisee_banner
+		SET
+			franchisee_id = #{franchiseeId},
+			banner_name = #{bannerName},
+			img = #{img},
+			redirect_url = #{redirectUrl},
+			is_show = #{isShow},
+			sort = #{sort},
+			remark = #{remark},
+			update_by = #{updateBy.id},
+			update_date = SYSDATE()
+		WHERE id = #{id}
+	</update> -->
+	
+	<!-- 修改商家主页banner图是否显示  -->
+	<!-- <update id="changIsShow" parameterType="mtmyFranchiseeBanner">
+		UPDATE mtmydb.mtmy_franchisee_banner
+			SET 
+			  is_show = #{isShow}
+		WHERE id = #{id}
+		AND franchisee_id = #{franchiseeId}
+	</update>
+	
+	将当前商家的所有banner图都不显示
+	<update id="changeAll">
+		UPDATE mtmydb.mtmy_franchisee_banner
+		SET is_show = 0
+		WHERE franchisee_id = #{franchiseeId}
+	</update> -->
+	
+	<!-- 查询某商家的最新创建的商家主页banner图 -->
+	<!-- <select id="getMtmyFranchiseeBannerByCreateDate" resultType="mtmyFranchiseeBanner">
+		SELECT
+			<include refid="CommentColumns"/>
+		FROM mtmydb.mtmy_franchisee_banner a
+		WHERE a.franchisee_id = #{franchiseeId}
+		AND a.del_flag = 0
+		ORDER BY a.create_date DESC 
+		limit 1
+	</select> -->
+	
+	<!-- 逻辑删除商家的所有banner图 -->
+	<!-- <update id="deleteByLogic">
+		UPDATE mtmydb.mtmy_franchisee_banner
+		SET del_flag = 1
+		WHERE id = #{id}
+	</update> -->
+</mapper>
